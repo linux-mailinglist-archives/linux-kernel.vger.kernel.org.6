@@ -1,235 +1,259 @@
-Return-Path: <linux-kernel+bounces-172878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0E08BF7FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:05:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E228BF962
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B754E281199
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:05:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAA61C215F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAE13F8F0;
-	Wed,  8 May 2024 08:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="qofIE7br"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0029B74BF5;
+	Wed,  8 May 2024 09:12:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CACC4500B;
-	Wed,  8 May 2024 08:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155499; cv=fail; b=T5mq47qcGff5qxgsQu+URA6vA8VGZyA+J3CyNiOLY0WtMiyf3cwVdIFmp2bo9jRVm5xbrecNwTt5io9gaxFqUaLQqOUh1vXd3TwmDvT2Vjdvioc+oqLP1kgIHGtEsm2NQwqYZqLFfCNtfSDaVjaiMPFt8i7N6EOSoXruDfMkZbs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155499; c=relaxed/simple;
-	bh=3RTdHXaVfpT3waTXvd68MCym1ghp4qE/8gRbalj6JX0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XIsRbiuHHeSgxiG4b4Se2rlBRo4GUQChfnEGbrovjSBpWaoawRuRg5VfQpMlVm+RPsUCKy6R8JgOFzTVqlWKES2tjRkTjMDjo7BXXHbpCZ5zdsUuveb5zwZYdCdiC+NAmj5gv616op7PsXxL86358QG6xIAonGKa1D86FgTKXJU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=qofIE7br; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4484nVVJ002050;
-	Wed, 8 May 2024 01:04:52 -0700
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3xysfmjf5v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 01:04:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RGIFYIK6WQ7GADh0hWCmuW47Q4Pk9ZPxyEL95BHZKkL9nl7zEb383Odv8YvkiISefuLnEXB9lkfOpU38dPolMqPxFVURiX6KR+57zcIWT+aNfwn9cuf3ZaeHLCI17y6PJawbTbcl/ooQtQ6Kht8eVPnJgOKKxbXcyAxgiIBzyrgfIk6SNeNMW5+uv8hH5/34klFXUQfCMCypMDzCxixcVamkcgWTrFQ8UA78d3k8MBaKZZLprGF7rdbToyTULwXASi1zQ4si66ze4cHEwt7VwznbxN+HSPrYiNA9HGIlu6sI+CkKC37t1zidUgVFgeI6ufgZ+q1KeQOnA+yLUF+fGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3RTdHXaVfpT3waTXvd68MCym1ghp4qE/8gRbalj6JX0=;
- b=DdRglP5A+/1CNDsNufYvjUcaQzo9RycN/6DdR0GMPTECQQ/zQMSD9LGzO5tNLe1l82iH3cRxmEzr2mUR7AtuA9AoOs0YqS3Efz2W5ftZ4RwBBMZDJs2ZV3MnQIfLDLA+mL9ttUhpHTZb8l9mmtiWp7SH68iyQb4phXbwJBAVvcwYErc3N5j/dXwCPEe0BNpghmf+SJHI53FmKDJhuxNfTzHViCG7wvlYNVY13Cm+pngTZw+CIijmQu5dHPpvUbgrSh/sZXaS7YSUGHAhvKV5Omj/1jH2vii3fVnYRXDCTf95pJsmrCSmTZdduw/h1d9MjwNdZxc+fz8LiKbMYKsyDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3RTdHXaVfpT3waTXvd68MCym1ghp4qE/8gRbalj6JX0=;
- b=qofIE7bre8r5WzbC3192CVFetEo8YekJ1aTRBuuvfCQb1L+6+Fa0M9H8XpqiGU6zGlhGy4J8WRrGyv9ViYlu2ZQ87Zvm1Xoq1RS7hMcIAeLgq+vy8rMG04wLq6nYiqljTH7lneLW3YurCl9EjpBUpw3PSwhSr8g30lIJmqXo8WI=
-Received: from CO6PR18MB4098.namprd18.prod.outlook.com (2603:10b6:5:34b::5) by
- CH3PR18MB5700.namprd18.prod.outlook.com (2603:10b6:610:1b7::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Wed, 8 May
- 2024 08:04:49 +0000
-Received: from CO6PR18MB4098.namprd18.prod.outlook.com
- ([fe80::5331:f53:fcd:d7e1]) by CO6PR18MB4098.namprd18.prod.outlook.com
- ([fe80::5331:f53:fcd:d7e1%4]) with mapi id 15.20.7544.041; Wed, 8 May 2024
- 08:04:49 +0000
-From: Witold Sadowski <wsadowski@marvell.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC: "broonie@kernel.org" <broonie@kernel.org>,
-        "robh@kernel.org"
-	<robh@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org"
-	<krzysztof.kozlowski+dt@linaro.org>,
-        "conor+dt@kernel.org"
-	<conor+dt@kernel.org>,
-        "pthombar@cadence.com" <pthombar@cadence.com>,
-        Piyush
- Malgujar <pmalgujar@marvell.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v3 4/5] spi: cadence: Allow to read basic
- xSPI configuration from ACPI
-Thread-Topic: [EXTERNAL] Re: [PATCH v3 4/5] spi: cadence: Allow to read basic
- xSPI configuration from ACPI
-Thread-Index: AQHakS3IEG1hJ0bMHU6EYeq4uC1r/rFuT7AAgBEONvCAASjLAIAMkjUw
-Date: Wed, 8 May 2024 08:04:49 +0000
-Message-ID: 
- <CO6PR18MB40988BB723DB7576F5C25155B0E52@CO6PR18MB4098.namprd18.prod.outlook.com>
-References: <20240329194849.25554-1-wsadowski@marvell.com>
- <20240418011353.1764672-1-wsadowski@marvell.com>
- <20240418011353.1764672-5-wsadowski@marvell.com>
- <16a4a58c-cae6-4b62-859b-3661c052468a@linaro.org>
- <CO6PR18MB40989F97F92C9A37C6BA896DB01B2@CO6PR18MB4098.namprd18.prod.outlook.com>
- <2dc18bdd-0c82-47a2-b87d-b69028f3b251@linaro.org>
-In-Reply-To: <2dc18bdd-0c82-47a2-b87d-b69028f3b251@linaro.org>
-Accept-Language: en-US, pl-PL
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4098:EE_|CH3PR18MB5700:EE_
-x-ms-office365-filtering-correlation-id: d142f877-f15e-4935-53c8-08dc6f3588ac
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|366007|376005|38070700009;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?aVBmRHZGVDRZbXBDbHdvbTE1Q1FJMjE0ZC9GaThoc0tseTFPNy9wcU1PNUQ0?=
- =?utf-8?B?MWoxbU1hc1o2UGZqSzBhSnB4ZTJPVWZpYmFHSm5wWGM5dlRLeTJHYXhNZTlr?=
- =?utf-8?B?V0xEbTVlQ1ZUdFRNaG1FY2Vhc0pGMkx0UE96em5XSlFHTnJNTEh1Y0VPL2J2?=
- =?utf-8?B?WE8zMU9ZeTI1MGJKWVRlSjlKOFZRREgwbWhEYkc5bnY0dFRlM09QNUg3dVhH?=
- =?utf-8?B?UGdRUXF6QjRyWGtmVTV5UW8xb29SNVdGcUpyRVA1K2JHcGZRLzBRN3RFbDZR?=
- =?utf-8?B?MWlGRFlFR1ZZd3FTaXpIQW5ycHhabDBMdUFLbS9EOWc3UksvY3plWFZiWlBM?=
- =?utf-8?B?VkI3U0hHbXdjNkNWSllScXBKbThBNlp0NUx2Zldidm9lQW94STVUNlZlaFor?=
- =?utf-8?B?dnU2Rk9Rd1Q2TjlXTUNPU1A1eHhIV2JhVjZIVDZZUDFadlFtTC9lUmV3RmtY?=
- =?utf-8?B?bmZpckdDWDMvNXkwWUlUNDcwRVVqN21yUlA0ZWhOU0txNFJXUW9YNEhoMm5U?=
- =?utf-8?B?NGk4SjJOaEJ2WEZHQm5IbFhKM1F1VkJjWjNST29oSkhzRm9scGxxUmlsMURG?=
- =?utf-8?B?RGpRMkRzK2l1cEhiTEVMNnIxb2lCaUhQblNNNGoxa2VWdTNqSlNoL01haDlk?=
- =?utf-8?B?aWYxSEtFTGFzcUEyRDVzN2hSQ2lDVjVhYzNIQTJMTVdCc0xSQ2JuUFhvSUpW?=
- =?utf-8?B?N0NyQ2tKVkNDN0lhQllZaEhjbi9hSnNOajFhcXY4N0FETytYOThXYnhTZmll?=
- =?utf-8?B?N3pvdy9kSlJDNTNwWnVUZ2twS2RMclBWT21rbWd0VjJMWnJSRFljMUIzQ0RH?=
- =?utf-8?B?WnVVUFFyb1ZaQUZyNVhaU2lUU1QrZWNMZjFCa0owL21IUWFCNGl4cXlUaSsz?=
- =?utf-8?B?d24vQm0yWFpQcEhVNEpLRUpLcjNJKytXQVdRSE93T3kvWXNrM0lvMmpYY3lo?=
- =?utf-8?B?ZElNWU9NYUt1Y0xFdCsxbTFRMTN3aVZWWHZXTXhsd0REUkNqNDNTSnFZT3U0?=
- =?utf-8?B?N1F2dk9rTS9JMzlGaW1zcVdvZVo0SkhVVzFNWUJHYWtEVFYvR2FybHVGUG1x?=
- =?utf-8?B?M05pL29DMTg4VEJiRGJ0bE81S2FKWnZTa0xVSEVQZ3IySXZEcjZnY3BNSUVX?=
- =?utf-8?B?MTIvSlJqN0hPK00rcWVVazhSU0VrbEtXanJCbHRJcHJpSUZOT1UyNmZ4eG1B?=
- =?utf-8?B?cmFWZ0pEcnVJWjVFYkRIeWZuemFNMDZzWEF1bG5ydFB4MzlocFNoUjd5eFFS?=
- =?utf-8?B?Wk1JN1U4VWhrdnRNKzluVTdpOTAxbkxONXpJN0Z1NjBmS0h6QnZFakg4U3RZ?=
- =?utf-8?B?OHVrUW92VHArZ3ZZM1pDQlRGMUloY1pCSzk1bzJqKzcrd0dIRjk1NDZPbUFt?=
- =?utf-8?B?MlJhRGpoSUxjazFGUWJxWkp3UHRGbHVGMTJpWGcxaG4rcU9KbUdRSFMvNnFI?=
- =?utf-8?B?Mkx4T0lUODE3MVZUUk0yTUw4T1ZIaFZVVllpMmpTTVNCY0IyV2VqeXp5b1Az?=
- =?utf-8?B?ZkF0Y2g4ZzJIYmJvY1RJZjhPOW5INFpmeVVIZ2xPbmVxd1ZyQ1ZESzhZcThH?=
- =?utf-8?B?SE4ydDcwTThrelQ1WG5RQjdqOU1sMGIvRjl6Z0FYaWQxdjFDVDVaejg2TFBz?=
- =?utf-8?B?cmptZzdWTm1OV3F0b21SZkU3VmMyWlg4Wk95cVhLa3FQNllEdVFCUXlydzda?=
- =?utf-8?B?WU5nYkRGYmNGcEpoR1VrUVhOWlhyQk8wY0xWa2c0Nlh2VWNUN2hSS2RNK2gr?=
- =?utf-8?B?c1RxbEFxcm9WL3dQQXU0RzNucTZvTEVwRm9JRk1tNzJjYnkzVExsTXZVMkZG?=
- =?utf-8?B?cWt0MlhGNSs5QXFPbHZjUT09?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR18MB4098.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?ZWVNdzB3SExBZHhRUi9TcEk4RFhhY3VLN1IraGNIeEo4ZkxHSkU0dzhxUXpx?=
- =?utf-8?B?NmdIcnNyeWZOblVyb2ovcU5WUzVUVjg3UDRKMnZBTDZndElPL2Q4OG1SNlY1?=
- =?utf-8?B?U0JOUnNTdWt5MEcwYWpwNUNRYWhaMllRWGYveWNZWkg3M0VpNHA1QUErQkpX?=
- =?utf-8?B?bmpJdmNZTk8rdDZ6ck4wYXRFOVljOUJYYk03dVVYZU9Va095bkIrMmpYb2N6?=
- =?utf-8?B?M0x4QU94ZGhXSzJpQ1JjbXRKbWxKWnlXN1JXcXcwMEZrUU91VXZ6K2FUcEFI?=
- =?utf-8?B?K29wWm0xUk80VXBvR1F5ZU55NXNHdVFIY3k0Q1JZT0lkdEdaVVRRcjY0SGd3?=
- =?utf-8?B?M1o2QXFsbTlwakUxc2lPNmoyekRBczlqUm4rWW1vWEFVbC9PMTFOZTQyMFRr?=
- =?utf-8?B?OWtsS0g5MjhjeDZ1bmRlZHprR0U4L1IrenVXQlF4aDdWc29NK1hvY1hMbWtk?=
- =?utf-8?B?QnlHS1htQ1pPSVZzQXlJdkFtODZPTGRMTEVsK3ZtZ1VCMUV3UTcwOUdQVVFV?=
- =?utf-8?B?UmJPa2l0UG9HdE9yMVpRdWxZOVRmQ0h4RFBlL2ExWjhPS3BKTkRVeXNtaDV6?=
- =?utf-8?B?cFBkSXhBdFBKOGFlK1ppZlVYdXVUMENWVkI2WjlNN25uQTZ1MHZHbkZVUUhD?=
- =?utf-8?B?cEthbE82NEs5bTgyZTI3OUF6YmNSaFBuWktjN042VFRXeGdNcGllWXYrR2ps?=
- =?utf-8?B?MU5PVUZmOWdpVnBmMUlFTHZtcVZMdkhJSDg1NEtXNlY2VFE5QTRnYjBjeTEy?=
- =?utf-8?B?aURyNVBGTk81aGdkN1FmOFdZV0JQRXlwbFJ3a01TaWU3WE5QbFJHSnI2c05h?=
- =?utf-8?B?eUY3ZTYwK2tsWk1HbUZjUDg2aFBvTUd1YlE0cjFpNnBQY3d4cXdqMmZyUUhi?=
- =?utf-8?B?OTlHaXN3NDJGOHloWGJMaGlhUEhiMyt1ZmJZUVFrK0lMSVpFUmhlT1lDNEl5?=
- =?utf-8?B?OWUvNnpFYnVjWHpCSFNlL1VrdzZrVERKMmpmeGVhdVo5K0FMTUVqWU5sb2hX?=
- =?utf-8?B?bWU3SmlCdU5tdmtFZkYxd0RhS3dNb01MSWxuODJwMXFFdU13OWJsV2FLVmxu?=
- =?utf-8?B?cjFwbnJJd29yYVFFU1NRU2xGWnBlRGZrTFpzZ3RJcmMvcHN1dUdkNUxQU0Nq?=
- =?utf-8?B?VFFrTVNOYThwRnd6NTFWem9mTFJqZUhFN3lHNEh4Q0xSYjE0UERwOWM1OXNP?=
- =?utf-8?B?TFRPc2hSTjZ2a093ek02Z0xYd2xEQlcwNExLcU1CdHZ5dmFvL2x5MDhRY3hQ?=
- =?utf-8?B?MWQ4SmRGa25scm02U3h6L0F2bkQramJVNHBVMlI1UFpka0xEWXpDakE1M1Nw?=
- =?utf-8?B?ZHM4SzhUZ0NXMkU3cys4Qi8yR1R0Q1A1a0p0TC92OFBsTjVsbFNNVWhFQjhu?=
- =?utf-8?B?TDQxL0ZlSlk4dnhsMENWRWhsU2lCMEFSUVN6VUMwb2FPOGlZTlpuaU5BczdB?=
- =?utf-8?B?aDI0VzhZY3VhcERiUktOaXpVNG90Qklhcnp3eCtuaVNpbDFFajdRa1BnNnho?=
- =?utf-8?B?T1RaYkRiaFFHODNDT0w3WmtNdkVIYkpiRS9LSWxJandieXl0cVZlUm9Jc2pm?=
- =?utf-8?B?NEdqVlB3bFY1dC9kSFlyL1RMbTVDWjBETEVHM2RFM2hhMHVpQnd0WlVvS3ln?=
- =?utf-8?B?WW5XUlBwdjZCMzlXTDVwTXFlNEVxbEUrYStFOFBiUXhEVFBEeG9PVUFPb0gv?=
- =?utf-8?B?T01sdDdCQWh0aUZlY1JvNFI1OW5qZG10L01YSTVzRHF2bVBWUUQ1NEdDNVkx?=
- =?utf-8?B?bWhYODJTNC80dkVsVTY2dG9RWldIc2hnQWdJMzVOTXEvZXYzQ1kxN2JoWDlD?=
- =?utf-8?B?WUZ5T3h5dGhhYjNveDNRM1l2UUptL1lDMzhqNHJTS1Z2WHlZL1N6YnhCNkhN?=
- =?utf-8?B?TlRYRlZZREpLNVgxcFVmZVE5V08wY29HNzJKYnVzcFFLSjRReXJObVV5OGhX?=
- =?utf-8?B?VmlNa0hLN0V6SzhrVEZaYjlxUTBPQWloMHhvcEhkYXh3eXBNRGwrbmRPdFgy?=
- =?utf-8?B?aVU3TGNYakJBTkVkODZueENDSnVPQjRZaks5SVNTQXBEaG1PR09KbUVrTmpS?=
- =?utf-8?B?alJrT2F0N0Y2dGJ6YmJMVGFBZVIwNjgyQmxTRmY5eTY3aGFTZmFyeE5nejE3?=
- =?utf-8?Q?JED9d+JX9LeapgMxCLJR/GqmK?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB05171B49;
+	Wed,  8 May 2024 09:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715159576; cv=none; b=CC90jSLE3u9kYvcajjPU8qrSSdpi4oDBEBhMIHJzoKPT0K71VvEe31toFBcrb5PZqvfIuL50zklBqG8/QA80Ue7OE76BIV5xnjWWWwYwcmsP7eFnSHW9jMzPvmcWqMIPcOZkQ7H7dnfw/BFXL5ZVkBMCYrNxN2H7NrHr4gmz8+8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715159576; c=relaxed/simple;
+	bh=6XVaT/rOwjD6l7J+zEX/991xLR3yWl6JEhyuKgB9bEE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rn1LU82gR4fozlFHz5/VKh5uWP+W4xvUArSkaYBQWJwwNpMsiZ/mlI7DxBmkgdAiqdxbC2qNiscuiQftVxwjoz3xFYvaHngGhkWwsVigKR8nepcUwkvh3yiuxBFevh8kaLztgdzzXBanek9H8ADqsxPApMcvHbprLPzivoIJrPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZ8VL0CLvz6K63J;
+	Wed,  8 May 2024 17:09:46 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 35040140B2A;
+	Wed,  8 May 2024 17:12:51 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 8 May
+ 2024 10:12:50 +0100
+Date: Fri, 3 May 2024 10:52:45 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: John Groves <John@groves.net>
+CC: Dongsheng Yang <dongsheng.yang@easystack.cn>, Gregory Price
+	<gregory.price@memverge.com>, Dan Williams <dan.j.williams@intel.com>,
+	<axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+Message-ID: <20240503105245.00003676@Huawei.com>
+In-Reply-To: <wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
+References: <20240422071606.52637-1-dongsheng.yang@easystack.cn>
+	<66288ac38b770_a96f294c6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<ef34808b-d25d-c953-3407-aa833ad58e61@easystack.cn>
+	<ZikhwAAIGFG0UU23@memverge.com>
+	<bbf692ec-2109-baf2-aaae-7859a8315025@easystack.cn>
+	<ZiuwyIVaKJq8aC6g@memverge.com>
+	<98ae27ff-b01a-761d-c1c6-39911a000268@easystack.cn>
+	<ZivS86BrfPHopkru@memverge.com>
+	<8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
+	<wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4098.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d142f877-f15e-4935-53c8-08dc6f3588ac
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2024 08:04:49.6380
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xlcWbX2SWMK+cp6tm8yhG3Qenpnvr+P/+fbaRbZ/BribPM4BOJGIO/VTPOZQrhFQL62U5l/Q/cPLJW13BQXTpw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR18MB5700
-X-Proofpoint-GUID: kkeH0b5oWKgrOwGSbBoz3thgaFM3Mom_
-X-Proofpoint-ORIG-GUID: kkeH0b5oWKgrOwGSbBoz3thgaFM3Mom_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_04,2024-05-08_01,2023-05-22_02
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-ID4gT24gMjkvMDQvMjAyNCAxNjozMCwgV2l0b2xkIFNhZG93c2tpIHdyb3RlOg0KPiA+Pj4NCj4g
-Pj4+ICsjaWZkZWYgQ09ORklHX0FDUEkNCj4gPj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGFjcGlf
-ZGV2aWNlX2lkIGNkbnNfeHNwaV9hY3BpX21hdGNoW10gPSB7DQo+ID4+PiArCXsNCj4gPj4+ICsJ
-CS5pZCA9ICJjZG5zLHhzcGktbm9yIiwNCj4gPj4+ICsJCS5kcml2ZXJfZGF0YSA9IChrZXJuZWxf
-dWxvbmdfdCkgJmNkbnNfZHJpdmVyX2RhdGEsDQo+ID4+PiArCX0sDQo+ID4+PiArCXsNCj4gPj4+
-ICsJCS5pZCA9ICJtcnZsLHhzcGktbm9yIiwNCj4gPj4+ICsJCS5kcml2ZXJfZGF0YSA9IChrZXJu
-ZWxfdWxvbmdfdCkgJm1ydmxfZHJpdmVyX2RhdGEsDQo+ID4+DQo+ID4+IFVFRkkgcHJvdmlkZXMg
-Y29tcGF0aWJsZXMgZm9yIEFDUEk/IEkgdGhpbmsgdGhhdCdzIGZpcnN0IHN1Y2ggZm9ybWF0DQo+
-ID4+IGluIHRoZSBrZXJuZWwuDQo+ID4NCj4gPiBZZXMsIHRoYXQgY29kZSBpcyBub3QgZG9pbmcg
-d2hhdCB3YXMgZXhwZWN0ZWQuDQo+ID4gQ3VycmVudCB1c2FnZSBzY2VuYXJpbyBpbiBBQ1BJIG1v
-ZGUgaXM6DQo+ID4geFNQSSBibG9jayB3aXRoIEhJRCBQUlAwMDAxLCBhbmQgYWRkaXRpb25hbCBj
-b21wYXRpYmxlIHBhY2thZ2Ugc2V0IHRvDQo+ID4gY29ycmVjdCBjb21wYXRpYmxlIHN0cmluZyBX
-aXRoIHRoYXQgYXBwcm9hY2ggb25seSBpc3N1ZShpbiBBQ1BJIG1vZGUpDQo+ID4gaXMgd2l0aCBt
-YXRjaGluZyBkZXZpY2Ugd2l0aCBkYXRhIGZpZWxkIGZyb20gb2ZfZGV2aWNlX2lkLiBJdCBsb29r
-cw0KPiA+IGxpa2UgdGhlcmUgYXJlIGZ1bmN0aW9ucyB0byBtYXRjaCB0aGF0IHdoZW4gRFRCIGlz
-IHVzZWQsIGJ1dCBpbiBBQ1BJDQo+ID4gbW9kZSBpdCBmYWlscy4NCj4gPiBJIGJlbGlldmUgc29s
-dXRpb24gaXMgdG8gdHJhdmVyc2UgZGV2LT5kcml2ZXItPm9mX21hdGNoX3RhYmxlIG1hbnVhbGx5
-DQo+ID4gVG8gbWF0Y2ggZGV2aWNlIG5hbWUgd2l0aCBjb3JyZWN0IGNvbXBhdGlibGUgZGF0YSBz
-dHJ1Y3R1cmUuDQo+ID4gVGhhdCB3aWxsIGJlIGluY2x1ZGVkIGluIG5leHQgcGF0Y2hzZXQuDQo+
-IA0KPiBQUlAwMDAxIHNob3VsZCBiZSBoYW5kbGVkIGJ5IHJlZ3VsYXIgb2ZfZGV2aWNlX2lkIHRh
-YmxlLCBvZiBjb3Vyc2UNCj4gYXNzdW1pbmcgeW91ciBrZXJuZWwgaGFzIGJ1aWxkLWluIENPTkZJ
-R19PRi4NCg0KQW5kIGl0IGlzIGNvcnJlY3RseSBtYXRjaGVkIGJ5IGlkLCBidXQgZnVuY3Rpb25z
-IHRvIHJldHJpZXZlIGRhdGEgZmFpbHMuDQpJJ20gcmVmZXJyaW5nIHRvIG9mX2RldmljZV9nZXRf
-bWF0Y2hfZGF0YSAtIHRoZXJlIGlzIG5vIG9mIG5vZGUgaW4NCkFDUEkgY2FzZS4NCg0KSSBoYXZl
-IGNvbWUgdXAgd2l0aCBzb2x1dGlvbiwgYXMgSSB3YXNuJ3QgYWJsZSB0byBmaW5kIHNpbWlsYXIg
-ZnVuY3Rpb24gdGhhdA0Kd2lsbCB3b3JrIHdpdGggQUNQSSBhbmQgZHRiIG9uIHRoZSBzYW1lIHRp
-bWU6DQpzdGF0aWMgY29uc3Qgdm9pZCAqIGNkbnNfeHNwaV9nZXRfZGF0YShzdHJ1Y3QgZGV2aWNl
-ICpkZXYpDQp7DQoJY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCAqbWF0Y2hlcyA9IGRldi0+ZHJp
-dmVyLT5vZl9tYXRjaF90YWJsZTsNCg0KCWZvciAoOyBtYXRjaGVzLT5uYW1lWzBdIHx8IG1hdGNo
-ZXMtPnR5cGVbMF0gfHwgbWF0Y2hlcy0+Y29tcGF0aWJsZVswXTsgDQogICAgICAgICAgICAgbWF0
-Y2hlcysrKSB7DQoJCWlmIChkZXZpY2VfaXNfY29tcGF0aWJsZShkZXYsIG1hdGNoZXMtPmNvbXBh
-dGlibGUpKQ0KCQkJcmV0dXJuIG1hdGNoZXMtPmRhdGE7DQoJfQ0KDQoJcmV0dXJuIE5VTEw7DQp9
-DQoNCklzIHRoZXJlIGEgYmV0dGVyIHdheSB0byBoYW5kbGUgdGhhdD8NCg0KPiANCj4gQmVzdCBy
-ZWdhcmRzLA0KPiBLcnp5c3p0b2YNCg0KDQoNCg==
+On Sun, 28 Apr 2024 11:55:10 -0500
+John Groves <John@groves.net> wrote:
+
+> On 24/04/28 01:47PM, Dongsheng Yang wrote:
+> >=20
+> >=20
+> > =E5=9C=A8 2024/4/27 =E6=98=9F=E6=9C=9F=E5=85=AD =E4=B8=8A=E5=8D=88 12:1=
+4, Gregory Price =E5=86=99=E9=81=93: =20
+> > > On Fri, Apr 26, 2024 at 10:53:43PM +0800, Dongsheng Yang wrote: =20
+> > > >=20
+> > > >=20
+> > > > =E5=9C=A8 2024/4/26 =E6=98=9F=E6=9C=9F=E4=BA=94 =E4=B8=8B=E5=8D=88 =
+9:48, Gregory Price =E5=86=99=E9=81=93: =20
+> > > > >  =20
+> > > >=20
+> > > > In (5) of the cover letter, I mentioned that cbd addresses cache co=
+herence
+> > > > at the software level:
+> > > >=20
+> > > > (5) How do blkdev and backend interact through the channel?
+> > > > 	a) For reader side, before reading the data, if the data in this c=
+hannel
+> > > > may be modified by the other party, then I need to flush the cache =
+before
+> > > > reading to ensure that I get the latest data. For example, the blkd=
+ev needs
+> > > > to flush the cache before obtaining compr_head because compr_head w=
+ill be
+> > > > updated by the backend handler.
+> > > > 	b) For writter side, if the written information will be read by ot=
+hers,
+> > > > then after writing, I need to flush the cache to let the other part=
+y see it
+> > > > immediately. For example, after blkdev submits cbd_se, it needs to =
+update
+> > > > cmd_head to let the handler have a new cbd_se. Therefore, after upd=
+ating
+> > > > cmd_head, I need to flush the cache to let the backend see it.
+> > > >  =20
+> > >=20
+> > > Flushing the cache is insufficient.  All that cache flushing guarante=
+es
+> > > is that the memory has left the writer's CPU cache.  There are potent=
+ially
+> > > many write buffers between the CPU and the actual backing media that =
+the
+> > > CPU has no visibility of and cannot pierce through to force a full
+> > > guaranteed flush back to the media.
+> > >=20
+> > > for example:
+> > >=20
+> > > memcpy(some_cacheline, data, 64);
+> > > mfence();
+> > >=20
+> > > Will not guarantee that after mfence() completes that the remote host
+> > > will have visibility of the data.  mfence() does not guarantee a full
+> > > flush back down to the device, it only guarantees it has been pushed =
+out
+> > > of the CPU's cache.
+> > >=20
+> > > similarly:
+> > >=20
+> > > memcpy(some_cacheline, data, 64);
+> > > mfence();
+> > > memcpy(some_other_cacheline, data, 64);
+> > > mfence()
+> > >=20
+> > > Will not guarantee that some_cacheline reaches the backing media prior
+> > > to some_other_cacheline, as there is no guarantee of write-ordering in
+> > > CXL controllers (with the exception of writes to the same cacheline).
+> > >=20
+> > > So this statement:
+> > >  =20
+> > > > I need to flush the cache to let the other party see it immediately=
+ =20
+> > >=20
+> > > Is misleading.  They will not see is "immediately", they will see it
+> > > "eventually at some completely unknowable time in the future". =20
+> >=20
+> > This is indeed one of the issues I wanted to discuss at the RFC stage. =
+Thank
+> > you for pointing it out.
+> >=20
+> > In my opinion, using "nvdimm_flush" might be one way to address this is=
+sue,
+> > but it seems to flush the entire nd_region, which might be too heavy.
+> > Moreover, it only applies to non-volatile memory.
+> >=20
+> > This should be a general problem for cxl shared memory. In theory, FAMFS
+> > should also encounter this issue.
+> >=20
+> > Gregory, John, and Dan, Any suggestion about it?
+> >=20
+> > Thanx a lot =20
+> > >=20
+> > > ~Gregory
+> > >  =20
+>=20
+> Hi Dongsheng,
+>=20
+> Gregory is right about the uncertainty around "clflush" operations, but
+> let me drill in a bit further.
+>=20
+> Say you copy a payload into a "bucket" in a queue and then update an
+> index in a metadata structure; I'm thinking of the standard producer/
+> consumer queuing model here, with one index mutated by the producer and
+> the other mutated by the consumer.=20
+>=20
+> (I have not reviewed your queueing code, but you *must* be using this
+> model - things like linked-lists won't work in shared memory without=20
+> shared locks/atomics.)
+>=20
+> Normal logic says that you should clflush the payload before updating
+> the index, then update and clflush the index.
+>=20
+> But we still observe in non-cache-coherent shared memory that the payload=
+=20
+> may become valid *after* the clflush of the queue index.
+>=20
+> The famfs user space has a program called pcq.c, which implements a
+> producer/consumer queue in a pair of famfs files. The only way to=20
+> currently guarantee a valid read of a payload is to use sequence numbers=
+=20
+> and checksums on payloads.  We do observe mismatches with actual shared=20
+> memory, and the recovery is to clflush and re-read the payload from the=20
+> client side. (Aside: These file pairs theoretically might work for CBD=20
+> queues.)
+>=20
+> Anoter side note: it would be super-helpful if the CPU gave us an explici=
+t=20
+> invalidate rather than just clflush, which will write-back before=20
+> invalidating *if* the cache line is marked as dirty, even when software
+> knows this should not happen.
+>=20
+> Note that CXL 3.1 provides a way to guarantee that stuff that should not
+> be written back can't be written back: read-only mappings. This one of
+> the features I got into the spec; using this requires CXL 3.1 DCD, and=20
+> would require two DCD allocations (i.e. two tagged-capacity dax devices -=
+=20
+> one writable by the server and one by the client).
+>=20
+> Just to make things slightly gnarlier, the MESI cache coherency protocol
+> allows a CPU to speculatively convert a line from exclusive to modified,
+> meaning it's not clear as of now whether "occasional" clean write-backs
+> can be avoided. Meaning those read-only mappings may be more important
+> than one might think. (Clean write-backs basically make it
+> impossible for software to manage cache coherency.)
+
+My understanding is that clean write backs are an implementation specific
+issue that came as a surprise to some CPU arch folk I spoke to, we will
+need some path for a host to say if they can ever do that.
+
+Given this definitely effects one CPU vendor, maybe solutions that
+rely on this not happening are not suitable for upstream.
+
+Maybe this market will be important enough for that CPU vendor to stop
+doing it but if they do it will take a while...
+
+Flushing in general is as CPU architecture problem where each of the
+architectures needs to be clear what they do / specify that their
+licensees do.
+
+I'm with Dan on encouraging all memory vendors to do hardware coherence!
+
+J
+
+>=20
+> Keep in mind that I don't think anybody has cxl 3 devices or CPUs yet, an=
+d=20
+> shared memory is not explicitly legal in cxl 2, so there are things a cpu=
+=20
+> could do (or not do) in a cxl 2 environment that are not illegal because=
+=20
+> they should not be observable in a no-shared-memory environment.
+>=20
+> CBD is interesting work, though for some of the reasons above I'm somewhat
+> skeptical of shared memory as an IPC mechanism.
+>=20
+> Regards,
+> John
+>=20
+>=20
+>=20
+
 
