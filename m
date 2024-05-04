@@ -1,117 +1,204 @@
-Return-Path: <linux-kernel+bounces-168809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2778BBDE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 21:48:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65018BBDFA
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 22:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19DED1C20C0A
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 19:48:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83FABB21529
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B48284DEE;
-	Sat,  4 May 2024 19:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1227084D1C;
+	Sat,  4 May 2024 20:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="fwga94vN"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D043AC0C;
-	Sat,  4 May 2024 19:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AF7a2jdM"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FFE7318A;
+	Sat,  4 May 2024 20:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714852058; cv=none; b=J6TyXCgLDtPKrLHjvkYKejic5w/M6TtkCKrtLgxKuwqqRyQPw9wLLmXg+T54EZRCR196NHCB5PSl3Kjqk3vdUYy0/MxyIRFcDjh6ZUSbk7gft+8Bbso9t70wDlqxe63jm2lS2vM+EwuSKoURw4yxv9g5ZPgYnMVFwYYt3178m8I=
+	t=1714853604; cv=none; b=XOwf2wIoUOSvjw4wy5YMzkoX3Bkv6CiPFQ11MlfN2N0rZpVq8EbXv8iSKjSS0mLeMYYC8+pSqydZhKgrfN9+PxXesKJSg6t+kyoXr9lpM+jZRSnufsRQIruOc1VCyYUWiTHd5qhbctLotWg+hOsrojJnuYrsrWcuRx0LN6bSwPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714852058; c=relaxed/simple;
-	bh=WP/DYNvSKotR2gm471Emcoi2L5GfCI3FrPAL+CpOoaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QhKy74iKzdWwjs4OkgsoNa6xbToG4pXliOXDhCJFmZ5wnSRHuo1wAqwSj4bDQElDZvG9iGBHaPUse+lqUihvtA1CXksUYtRfIpmrw7SuL5KQ3hmcOFILxmkIGRS6xI7oVjUxzH4tlwpmY7WyJhtsqsJYP6+2Up66A+IE7aSVEBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=fwga94vN; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
-	serial F5FD910E8FE2121B897F7E55B84E351D
-	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
-	auth type TLS.CUNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1714852041; x=1716152041;
-	bh=7yfSd6sy5ZEav7FZcqSBsdjeGxYbxF+Zqi0qMbzYWl4=; h=From;
-	b=fwga94vN3MXCflEOEfT9X70mkC+bnzjLh2UMGyrLf8JZuuUf1N4XF5cyEtFb5uCen
-	 WE8emMc4FHuXeQgIyH5dYdqUkLvx8066pLBDzsPlZ02v7pLzpRPW/jfLaXYHXhS8AA
-	 QRq2RBfi10d13qFY3L0nQ7vpGOBH4AxqfWVkv6fkFkhYkzt4FE+ealQbdfLzkpUyYr
-	 mUI7hgOu/MztolaPs9u+j5mtKtn5kEo57B6oyQHIqOHm8QkbqwEuVLEL5N73f15eXg
-	 3F6VTNY1wKCeOiPP65KvkTVWTelDZ/7jUb23i20pPcb62E08HsmX0iAbADrhWdzvmG
-	 P7kVgg22Bv+Kw==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 444JlKT1074216
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Sat, 4 May 2024 21:47:21 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
-From: Karel Balej <balejk@matfyz.cz>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org
-Cc: =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        balejk@matfyz.cz
-Subject: [PATCH v6 5/5] MAINTAINERS: add myself for Marvell 88PM886 PMIC
-Date: Sat,  4 May 2024 21:37:08 +0200
-Message-ID: <20240504194632.2456-6-balejk@matfyz.cz>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240504194632.2456-1-balejk@matfyz.cz>
-References: <20240504194632.2456-1-balejk@matfyz.cz>
+	s=arc-20240116; t=1714853604; c=relaxed/simple;
+	bh=fhto2uEYgU4wqeL/mix3cVjrhwG4PTmSdbCpoGKNje0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aGo6C4MiNswYbj8bQgBmPxE6KlSX+Ng9hCypm3p8iOl94npK3d/rS+6xVcfHRSbKjjH9MCx/Tpd1Vvl1N5jOfpuXbi46YtXJjh5V9WU+5lMggo5vs5L0GO5IBP5ZYlw5JtTrFMaQ9KiTrGl5SajKGqLXpEnvX0bcjJ2308jkON4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AF7a2jdM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [167.220.2.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 79675207DBB5;
+	Sat,  4 May 2024 13:13:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 79675207DBB5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1714853596;
+	bh=Xjz+ah6dGJK98fSkhXGcgKoJ+WDVAsQMdYbME8KL/v4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AF7a2jdMT93DQfcuBJJyAee3iRGHkB6sAaFzHW3xa8rmM2fr/yng8b/vuFYOI6r1C
+	 mOake8mf6Ya2UDnxaN+IpyWI8rszWLoz+iix+kLcubqMjZSW2GP9OEzG1RuoPbRQBn
+	 oVcqMwODzceFEk90N4os+slDEJ+rrCu+IqwzfnOM=
+Message-ID: <ab7054cd-affd-47c3-bd98-2cf47d6a6376@linux.microsoft.com>
+Date: Sat, 4 May 2024 13:13:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v18 20/21] Documentation: add ipe documentation
+To: Bagas Sanjaya <bagasdotme@gmail.com>, corbet@lwn.net,
+ zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu,
+ ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+ eparis@redhat.com, paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
+ <1714775551-22384-21-git-send-email-wufan@linux.microsoft.com>
+ <ZjXsBjAFs-qp9xY4@archie.me>
+Content-Language: en-CA
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <ZjXsBjAFs-qp9xY4@archie.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add an entry to MAINTAINERS for the Marvell 88PM886 PMIC MFD, onkey and
-regulator drivers.
 
-Signed-off-by: Karel Balej <balejk@matfyz.cz>
----
 
-Notes:
-    RFC v3:
-    - Remove onkey bindings file.
-    RFC v2:
-    - Only mention 88PM886 in the commit message.
-    - Add regulator driver.
-    - Rename the entry.
+On 5/4/2024 1:04 AM, Bagas Sanjaya wrote:
+> On Fri, May 03, 2024 at 03:32:30PM -0700, Fan Wu wrote:
+>> +IPE does not mitigate threats arising from malicious but authorized
+>> +developers (with access to a signing certificate), or compromised
+>> +developer tools used by them (i.e. return-oriented programming attacks).
+>> +Additionally, IPE draws hard security boundary between userspace and
+>> +kernelspace. As a result, IPE does not provide any protections against a
+>> +kernel level exploit, and a kernel-level exploit can disable or tamper
+>> +with IPE's protections.
+> 
+> So how to mitigate kernel-level exploits then?
+>
+One possible way is to use hypervisor to protect the kernel integrity. 
+https://github.com/heki-linux is one project on this direction. Perhaps 
+I should also add this link to the doc.
 
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+>> +Allow only initramfs
+>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> <snipped>...
+>> +Allow any signed and validated dm-verity volume and the initramfs
+>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> <snipped>...
+> 
+> htmldocs build reports new warnings:
+> 
+> Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too short.
+> 
+> Allow any signed and validated dm-verity volume and the initramfs
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too short.
+> 
+> Allow any signed and validated dm-verity volume and the initramfs
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Documentation/arch/x86/resctrl.rst:577: WARNING: Title underline too short.
+> 
+> I have to match these sections underline length:
+> 
+> ---- >8 ----
+> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+> index 1a3bf1d8aa23f0..a47e14e024a90d 100644
+> --- a/Documentation/admin-guide/LSM/ipe.rst
+> +++ b/Documentation/admin-guide/LSM/ipe.rst
+> @@ -681,7 +681,7 @@ Allow all
+>      DEFAULT action=ALLOW
+>   
+>   Allow only initramfs
+> -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +~~~~~~~~~~~~~~~~~~~~
+>   
+>   ::
+>   
+> @@ -691,7 +691,7 @@ Allow only initramfs
+>      op=EXECUTE boot_verified=TRUE action=ALLOW
+>   
+>   Allow any signed and validated dm-verity volume and the initramfs
+> -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   
+>   ::
+>   
+> @@ -725,7 +725,7 @@ Allow only a specific dm-verity volume
+>      op=EXECUTE dmverity_roothash=sha256:401fcec5944823ae12f62726e8184407a5fa9599783f030dec146938 action=ALLOW
+>   
+>   Allow any fs-verity file with a valid built-in signature
+> -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   
+>   ::
+>   
+> @@ -735,7 +735,7 @@ Allow any fs-verity file with a valid built-in signature
+>      op=EXECUTE fsverity_signature=TRUE action=ALLOW
+>   
+>   Allow execution of a specific fs-verity file
+> -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   
+>   ::
+>   
+> 
+>> +Additional Information
+>> +----------------------
+>> +
+>> +- `Github Repository <https://github.com/microsoft/ipe>`_
+>> +- Documentation/security/ipe.rst
+> 
+> Link title to both this admin-side and developer docs can be added for
+> disambiguation (to avoid confusion on readers):
+> 
+> ---- >8 ----
+> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+> index a47e14e024a90d..25b17e11559149 100644
+> --- a/Documentation/admin-guide/LSM/ipe.rst
+> +++ b/Documentation/admin-guide/LSM/ipe.rst
+> @@ -7,7 +7,8 @@ Integrity Policy Enforcement (IPE)
+>   
+>      This is the documentation for admins, system builders, or individuals
+>      attempting to use IPE. If you're looking for more developer-focused
+> -   documentation about IPE please see Documentation/security/ipe.rst
+> +   documentation about IPE please see :doc:`the design docs
+> +   </security/ipe>`.
+>   
+>   Overview
+>   --------
+> @@ -748,7 +749,7 @@ Additional Information
+>   ----------------------
+>   
+>   - `Github Repository <https://github.com/microsoft/ipe>`_
+> -- Documentation/security/ipe.rst
+> +- :doc:`Developer and design docs for IPE </security/ipe>`
+>   
+>   FAQ
+>   ---
+> diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
+> index 07e3632241285d..fd1b1a852d2165 100644
+> --- a/Documentation/security/ipe.rst
+> +++ b/Documentation/security/ipe.rst
+> @@ -7,7 +7,7 @@ Integrity Policy Enforcement (IPE) - Kernel Documentation
+>   
+>      This is documentation targeted at developers, instead of administrators.
+>      If you're looking for documentation on the usage of IPE, please see
+> -   Documentation/admin-guide/LSM/ipe.rst
+> +   `IPE admin guide </admin-guide/LSM/ipe.rst>`_.
+>   
+>   Historical Motivation
+>   ---------------------
+> 
+> Thanks.
+> 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f6dc90559341..e1a0e02e098d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13044,6 +13044,15 @@ F:	drivers/net/dsa/mv88e6xxx/
- F:	include/linux/dsa/mv88e6xxx.h
- F:	include/linux/platform_data/mv88e6xxx.h
- 
-+MARVELL 88PM886 PMIC DRIVER
-+M:	Karel Balej <balejk@matfyz.cz>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/marvell,88pm886-a1.yaml
-+F:	drivers/input/misc/88pm886-onkey.c
-+F:	drivers/mfd/88pm886.c
-+F:	drivers/regulators/88pm886-regulator.c
-+F:	include/linux/mfd/88pm886.h
-+
- MARVELL ARMADA 3700 PHY DRIVERS
- M:	Miquel Raynal <miquel.raynal@bootlin.com>
- S:	Maintained
--- 
-2.45.0
-
+My apologies for these format issues and thanks for the suggestions. I 
+will fix them.
+-Fan
 
