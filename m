@@ -1,291 +1,176 @@
-Return-Path: <linux-kernel+bounces-168756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497C28BBD3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:42:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C53F28BBD41
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56EC1F21542
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:42:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A01A2B21535
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0986BFB0;
-	Sat,  4 May 2024 16:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B425A117;
+	Sat,  4 May 2024 16:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yb39St9m"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2+GG1X2"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6295B5DF1C;
-	Sat,  4 May 2024 16:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CEB4E1C9;
+	Sat,  4 May 2024 16:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714840916; cv=none; b=cEBUdC/4KBKLh8W6t0psvSIwv3EdSQN+j/uIfgPxPmlVMsUNjCWYY0KjoEf14ibirYJUGP93idjo5TQDEx0leL+YzdQE88FfIqMI+HInIKienQ24tAdRxb8IvwaXLCzbVM/q/kNt4+5gppwtB7jqJL15HRh4DkBe6s7c4UkI1qU=
+	t=1714841111; cv=none; b=Usg2OOmWAG1LBBPyb0pm7fhF+tvs6oS6BSQ7rQ14wwxzaQiEGIse68XxU0Hnt7OUpSbjFqJYcSIEkWG6KD4NycPdEB0T4EtNGBZHv72wQOibPhR+jgIq6l5FMUwv2c5vsukO6j1ycOJ7mLSm7IWViD8huCDpOzeJDYxaHbV8CaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714840916; c=relaxed/simple;
-	bh=nd8auf1E030iZxwEK18x3hBgOLwMWvigSUGa0hBYSXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fav5udRmlSclNk5JJ9MjqpuO9c5y9vKNRDYDL3C3VVsbDs1pQeOgP1cTcXffObsDRys09bcfoOkeJXRQauN2uaJHhQQ4chJf2u/OGY+4XqOi2K1aDxdAAAAOvRp4e6tqMEmn/Z6x7hYHyceXoKux2PbSIc2qPEaR17scBWOotZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yb39St9m; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1714841111; c=relaxed/simple;
+	bh=DJBQjy8UJmY6eVHNdIDiEW6MELxRUW51GKxDhKp3a5k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dFKXluvNtBAr/ZuyVOWyLtUDTXQNlZcXPY00zp4mImd/13VHsHYUbhx0N5Iro1lQKg6y7BraAAcP5K0EA1qGq2lMCzz5wiNGfMgRVw1MpwZ46KSy9zsLAOb+3swCatQWBUnEdKM2Cd+iBLkCSWjVKvGwHxYOB2tCldK4LU0SK5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2+GG1X2; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2dac77cdf43so8484751fa.2;
-        Sat, 04 May 2024 09:41:54 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34aa836b948so147313f8f.3;
+        Sat, 04 May 2024 09:45:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714840912; x=1715445712; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KvuBElpLIjGxzjO7db7ym6Relup8kmUL2RNSIZ6gPx8=;
-        b=Yb39St9m9ZiaERYWls3QqX0av6bjjpy0+uX56muH813yN8HUvmMzY4RCRy4YU+QIZO
-         TZbp4JMVx66PYll9bqBGBWSvEcSV2Nu7bjjJ/rp7Lmjv2OCV3XLU2Kz2XEyYpKWgkNjJ
-         WKEW/l4TtRAyLUvI3DsfFmKUf7mry4J1C3YwPA0TU6U6DraOBkeYTd8TsBPyPtuL4UZq
-         T4/k/W+ZPbAIzbXMboyzO1XFEZJr2XhkYPwJw0wb5zTHD3brEQYWDuas3KVDKcQk0TKX
-         F6wa5c6qbpe+8IDygDnW8gqD5JVeGlZ8ByTwl+10ccaDQdR5kVAFkM9IXuJAKdzwzSx+
-         w9DA==
+        d=gmail.com; s=20230601; t=1714841108; x=1715445908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QZOW0qVZhWfpI6frSKkoNbNeKGBazQ5SDm6EfeSZG3E=;
+        b=d2+GG1X25uHHfi50AL3cr9LAzggghQfGeRqcjl/5JnxCsXfEP5obbl22/iXegCB4UR
+         tVAqmgt8Zgfyu1IAIqN5T6NQNdaPLT0ztThRCoKvH0rl8pSN/eSr1QHKqALwJbU/PcX0
+         aMtC/42w7liy+DQVnIrQ8ZSoY2mXD8FqBtL09Wi++zkO3W4BeKc+8q9JyHnRjSjeSeQH
+         /ejgQhdURGE/kdOPZmx9KTVQ0HT9Q6biIySt3mNZ24BrmSjbdzTtEVVvyDKAtbErnw/C
+         3JOOz/kWDV5MhikyUl0XwToWEiErILUAMG/s10qF7madpenak43tTXIjnskdoE9G4PfG
+         KleA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714840912; x=1715445712;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KvuBElpLIjGxzjO7db7ym6Relup8kmUL2RNSIZ6gPx8=;
-        b=gUsyN4dqF81SSb3cMShkId32A4poLGXtLLA8xUKq0RjcBfyKYjB1cG9kssQAAAO+PQ
-         bJRz/GfsAJya4IneBkaGkzYTfTxollQ7sGqxYjdGGQXsq7EwYaVLo/pCjkIFokLEOxh3
-         FWUM+s14xCKr0zxlFSG/ZthWy+PGnIxxdm1ctxQxFqV78PG9z5jJTddR7bNQ6aIgCVsY
-         dTxfynlOYlxqdIEqtJ8ehcrQDt/eqpfXb2pJq50+DNrgg08VFm8sf4aLMZgXMkh+UJbD
-         PhAazu5C++IPYahFzR0oNE871V+whuDrGpv9GMYd7RPZzLG72badJY9luTOVrRtFL7mg
-         hQ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnDh4P0fm4O7/byMS5ML3yorOwPdEU6Ii10J7Q6eSmKNrJG40SgJsTYQP5iAQVKcxCA3pt8PnYwtJPnJlnFr3D8O4yPGpE/3L1AhhK9+qyepsYktDqMRSkPjNxAFZSQKkZTHtz4zH9FVh19PaMtMWzksIDxaozV5PmIhzFlobRw8qNW1L/
-X-Gm-Message-State: AOJu0Yw5OtqeZe1muhEHcyJbMYc0rurXc9pWkviiNvpUquAmJzYBUpRI
-	SDbFjkeF2mPKNDKqskmnP5jQwRksy2yCnI4eVS9r3wpN0VQV6kM9RBh7ibkL
-X-Google-Smtp-Source: AGHT+IEocSmjq4X37cUz6nwR7vn6BOdcVpC0zCot1/iG18BC37v1gjN+YjXW0tR++phm4L3LJFvPZA==
-X-Received: by 2002:ac2:5105:0:b0:51f:c112:9d67 with SMTP id q5-20020ac25105000000b0051fc1129d67mr2590494lfb.51.1714840912404;
-        Sat, 04 May 2024 09:41:52 -0700 (PDT)
-Received: from localhost.localdomain ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id q14-20020ac246ee000000b0051d2075cacbsm938267lfo.82.2024.05.04.09.41.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 09:41:52 -0700 (PDT)
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>,
-	Pavel Machek <pavel@ucw.cz>,
-	Arnaud Ferraris <arnaud.ferraris@collabora.com>,
-	Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Subject: [PATCH v3 2/2] media: gc2145: implement basic dvp bus support
-Date: Sat,  4 May 2024 19:41:15 +0300
-Message-ID: <20240504164115.64603-3-andrej.skvortzov@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240504164115.64603-1-andrej.skvortzov@gmail.com>
-References: <20240504164115.64603-1-andrej.skvortzov@gmail.com>
+        d=1e100.net; s=20230601; t=1714841108; x=1715445908;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QZOW0qVZhWfpI6frSKkoNbNeKGBazQ5SDm6EfeSZG3E=;
+        b=CTyrdT3BXpJnlOljbp5cYFDJDaHFXatjn++VldxacdLmneyF11JjHWlHDPEUKhLzBE
+         /ubWQBUz8L4q4reg1DKD2ECpFePahKsLzQU0e94POusS1PWx1QDgpVrWx/Hzsveiwf+u
+         8mfss/fv29x6gtknbg8tDX7ClM9EGhwA752Q3AbYJbML7iP2PI8X6p/cmTQmeVd6WM2E
+         6+2E1ssY5wt+wJUf+Q+UISY4XOtZCBAAGdKL7j8KBQVSmPu5waq0BJpGgcZ1PI4kh0uJ
+         r7duSrq2dX7nN5t1fQ5U2KF5VefwsZH0W+PaWbZ5WsGs0xiUY9LkWP9E1iO70I2ym5uo
+         ITEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiDX8Gvk8BJuPbZz5OfgKwodk6/N9NZlmDbKwDGzO8WfR4SBfR9vCj/EAeSMzytxjd9idVksaiAw2sFt3TZir0JCdD20D6QgpqzxNG59htvYGwD/q3GKzHjcH8+eC1AIbrdtepjRveGmeEjbcZ
+X-Gm-Message-State: AOJu0YzMSzSuSIkOfPMdWSlJHVTZbcB0RWUFuGpVrXCl2vtG9gJ1CnRb
+	6RvSLrrbdsVcyc+C5ATx64IVkd5GxCONLb4sECJnWaI07l0+4U6K
+X-Google-Smtp-Source: AGHT+IGxfBYqqld63E5ngU9ZN/rWoICx3xinPE5g5xR8vAnktoXPSpnOQULb1LMDTpNnvjCyQ0ESgQ==
+X-Received: by 2002:a5d:6390:0:b0:34e:bdf9:32ff with SMTP id p16-20020a5d6390000000b0034ebdf932ffmr1166014wru.1.1714841107380;
+        Sat, 04 May 2024 09:45:07 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:d20e:7300:1a4e:d69a:7803:ec18? ([2a01:4b00:d20e:7300:1a4e:d69a:7803:ec18])
+        by smtp.gmail.com with ESMTPSA id c7-20020a05600c0a4700b0041ba0439a78sm13514287wmq.45.2024.05.04.09.45.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 May 2024 09:45:06 -0700 (PDT)
+Message-ID: <f069c4b4-e358-4eac-9780-9ca9c598f7ae@gmail.com>
+Date: Sat, 4 May 2024 17:45:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kunit: Cover 'assert.c' with tests
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+To: Rae Moar <rmoar@google.com>
+Cc: brendan.higgins@linux.dev, davidgow@google.com,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <20240427220447.231475-1-ivan.orlov0322@gmail.com>
+ <CA+GJov45uEfrXVWSUxvzOLYKPCnTeYeGqHvk=W4n-W_TLYyRuQ@mail.gmail.com>
+ <89c0f7c2-145c-4d4c-a330-f0fff5bb4098@gmail.com>
+Content-Language: en-US
+In-Reply-To: <89c0f7c2-145c-4d4c-a330-f0fff5bb4098@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-That was tested on PinePhone with libcamera-based GNOME
-screenshot (45.2).
+On 5/3/24 12:10, Ivan Orlov wrote:
+> On 5/2/24 00:20, Rae Moar wrote:
+>> On Sat, Apr 27, 2024 at 6:04 PM Ivan Orlov <ivan.orlov0322@gmail.com> 
+>> wrote:
+>>>
+>>> There are multiple assertion formatting functions in the `assert.c`
+>>> file, which are not covered with tests yet. Implement the KUnit test
+>>> for these functions.
+>>>
+>>> The test consists of 11 test cases for the following functions:
+>>>
+>>> 1) 'is_literal'
+>>> 2) 'is_str_literal'
+>>> 3) 'kunit_assert_prologue', test case for multiple assert types
+>>> 4) 'kunit_assert_print_msg'
+>>> 5) 'kunit_unary_assert_format'
+>>> 6) 'kunit_ptr_not_err_assert_format'
+>>> 7) 'kunit_binary_assert_format'
+>>> 8) 'kunit_binary_ptr_assert_format'
+>>> 9) 'kunit_binary_str_assert_format'
+>>> 10) 'kunit_assert_hexdump'
+>>> 11) 'kunit_mem_assert_format'
+>>>
+>>> The test aims at maximizing the branch coverage for the assertion
+>>> formatting functions. As you can see, it covers some of the static
+>>> helper functions as well, so we have to import the test source in the
+>>> `assert.c` file in order to be able to call and validate them.
+>>>
+>>> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+>>
+>> Hello!
+>>
+>> This is a great patch and addition of KUnit tests. Happy to see it.
+>> Thank you very much!
+>>
+>> I do have a few comments below. But none of them are deal breakers.
+> 
+> 
+> Hi Rae,
+> 
+> Thank you so much for the detailed review.
+> 
+>>
+>>> ---
+>>>   lib/kunit/assert.c      |   4 +
+>>>   lib/kunit/assert_test.c | 416 ++++++++++++++++++++++++++++++++++++++++
+>>>   2 files changed, 420 insertions(+)
+>>>   create mode 100644 lib/kunit/assert_test.c
+>>>
+>>> diff --git a/lib/kunit/assert.c b/lib/kunit/assert.c
+>>> index dd1d633d0fe2..ab68c6daf546 100644
+>>> --- a/lib/kunit/assert.c
+>>> +++ b/lib/kunit/assert.c
+>>> @@ -270,3 +270,7 @@ void kunit_mem_assert_format(const struct 
+>>> kunit_assert *assert,
+>>>          }
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(kunit_mem_assert_format);
+>>> +
+>>> +#if IS_ENABLED(CONFIG_KUNIT_TEST)
+>>> +#include "assert_test.c"
+>>> +#endif
+>>
+>> I might consider using the macro VISIBLE_IF_KUNIT macro, found in
+>> include/kunit/visibility.h, to make the static functions in assert.c
+>> visible only if KUnit is enabled. To avoid having to add the include
+>> here. What do you think?
+>>
+> 
+> Wow, I haven't seen this macro before, thank you for the suggestion! 
+> I'll use it in the V2 of the patch.
+> 
+> I assume we need to use it in combination with EXPORT_SYMBOL_IF_KUNIT, 
+> otherwise GCC will complain on use of functions without definitions, right?
+> 
 
-Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
----
- drivers/media/i2c/gc2145.c | 112 ++++++++++++++++++++++++++++---------
- 1 file changed, 86 insertions(+), 26 deletions(-)
+Ah, alright, it seems like GCC is going to complain on missing 
+prototypes anyway, so we have to declare these static functions in the 
+header file if CONFIG_KUNIT is defined.
 
-diff --git a/drivers/media/i2c/gc2145.c b/drivers/media/i2c/gc2145.c
-index bef7b0e056a8..9808bd0ab6ae 100644
---- a/drivers/media/i2c/gc2145.c
-+++ b/drivers/media/i2c/gc2145.c
-@@ -39,6 +39,10 @@
- #define GC2145_REG_ANALOG_MODE1	CCI_REG8(0x17)
- #define GC2145_REG_OUTPUT_FMT	CCI_REG8(0x84)
- #define GC2145_REG_SYNC_MODE	CCI_REG8(0x86)
-+#define GC2145_SYNC_MODE_VSYNC_POL	BIT(0)
-+#define GC2145_SYNC_MODE_HSYNC_POL	BIT(1)
-+#define GC2145_SYNC_MODE_OPCLK_POL	BIT(2)
-+#define GC2145_SYNC_MODE_OPCLK_GATE	BIT(3)
- #define GC2145_SYNC_MODE_COL_SWITCH	BIT(4)
- #define GC2145_SYNC_MODE_ROW_SWITCH	BIT(5)
- #define GC2145_REG_BYPASS_MODE	CCI_REG8(0x89)
-@@ -598,6 +602,7 @@ struct gc2145 {
- 	struct v4l2_subdev sd;
- 	struct media_pad pad;
- 
-+	struct v4l2_fwnode_endpoint ep; /* the parsed DT endpoint info */
- 	struct regmap *regmap;
- 	struct clk *xclk;
- 
-@@ -773,6 +778,36 @@ static int gc2145_set_pad_format(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int gc2145_config_dvp_mode(struct gc2145 *gc2145,
-+				  const struct gc2145_format *gc2145_format)
-+{
-+	int ret = 0;
-+	u64 sync_mode;
-+	int flags = gc2145->ep.bus.parallel.flags;
-+
-+	ret = cci_read(gc2145->regmap, GC2145_REG_SYNC_MODE, &sync_mode, NULL);
-+	if (ret)
-+		return ret;
-+
-+	sync_mode &= ~(GC2145_SYNC_MODE_VSYNC_POL |
-+		       GC2145_SYNC_MODE_HSYNC_POL |
-+		       GC2145_SYNC_MODE_OPCLK_POL);
-+
-+	if (flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
-+		sync_mode |= GC2145_SYNC_MODE_VSYNC_POL;
-+
-+	if (flags & V4L2_MBUS_HSYNC_ACTIVE_LOW)
-+		sync_mode |= GC2145_SYNC_MODE_HSYNC_POL;
-+
-+	if (flags & V4L2_MBUS_PCLK_SAMPLE_FALLING)
-+		sync_mode |= GC2145_SYNC_MODE_OPCLK_POL;
-+
-+	cci_write(gc2145->regmap, GC2145_REG_SYNC_MODE, sync_mode, &ret);
-+	cci_write(gc2145->regmap, GC2145_REG_PAD_IO, 0x0f, &ret);
-+
-+	return ret;
-+}
-+
- static const struct cci_reg_sequence gc2145_common_mipi_regs[] = {
- 	{GC2145_REG_PAGE_SELECT, 0x03},
- 	{GC2145_REG_DPHY_ANALOG_MODE1, GC2145_DPHY_MODE_PHY_CLK_EN |
-@@ -895,10 +930,13 @@ static int gc2145_start_streaming(struct gc2145 *gc2145,
- 		goto err_rpm_put;
- 	}
- 
--	/* Perform MIPI specific configuration */
--	ret = gc2145_config_mipi_mode(gc2145, gc2145_format);
-+	/* Perform interface specific configuration */
-+	if (gc2145->ep.bus_type == V4L2_MBUS_CSI2_DPHY)
-+		ret = gc2145_config_mipi_mode(gc2145, gc2145_format);
-+	else
-+		ret = gc2145_config_dvp_mode(gc2145, gc2145_format);
- 	if (ret) {
--		dev_err(&client->dev, "%s failed to write mipi conf\n",
-+		dev_err(&client->dev, "%s failed to write interface conf\n",
- 			__func__);
- 		goto err_rpm_put;
- 	}
-@@ -924,6 +962,9 @@ static void gc2145_stop_streaming(struct gc2145 *gc2145)
- 			GC2145_CSI2_MODE_EN | GC2145_CSI2_MODE_MIPI_EN, 0,
- 			&ret);
- 	cci_write(gc2145->regmap, GC2145_REG_PAGE_SELECT, 0x00, &ret);
-+
-+	/* Disable dvp streaming */
-+	cci_write(gc2145->regmap, GC2145_REG_PAD_IO, 0x00, &ret);
- 	if (ret)
- 		dev_err(&client->dev, "%s failed to write regs\n", __func__);
- 
-@@ -1233,9 +1274,8 @@ static int gc2145_init_controls(struct gc2145 *gc2145)
- static int gc2145_check_hwcfg(struct device *dev)
- {
- 	struct fwnode_handle *endpoint;
--	struct v4l2_fwnode_endpoint ep_cfg = {
--		.bus_type = V4L2_MBUS_CSI2_DPHY
--	};
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct gc2145 *gc2145 = to_gc2145(sd);
- 	int ret;
- 
- 	endpoint = fwnode_graph_get_next_endpoint(dev_fwnode(dev), NULL);
-@@ -1244,36 +1284,55 @@ static int gc2145_check_hwcfg(struct device *dev)
- 		return -EINVAL;
- 	}
- 
--	ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &ep_cfg);
-+	gc2145->ep.bus_type = V4L2_MBUS_CSI2_DPHY;
-+	ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &gc2145->ep);
-+	if (ret) {
-+		gc2145->ep.bus_type = V4L2_MBUS_PARALLEL;
-+		ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &gc2145->ep);
-+	}
- 	fwnode_handle_put(endpoint);
--	if (ret)
-+	if (ret) {
-+		dev_err(dev, "could not parse endpoint\n");
- 		return ret;
--
--	/* Check the number of MIPI CSI2 data lanes */
--	if (ep_cfg.bus.mipi_csi2.num_data_lanes != 2) {
--		dev_err(dev, "only 2 data lanes are currently supported\n");
--		ret = -EINVAL;
--		goto out;
- 	}
- 
--	/* Check the link frequency set in device tree */
--	if (!ep_cfg.nr_of_link_frequencies) {
--		dev_err(dev, "link-frequency property not found in DT\n");
-+	switch (gc2145->ep.bus_type) {
-+	case V4L2_MBUS_CSI2_DPHY:
-+		/* Check the number of MIPI CSI2 data lanes */
-+		if (gc2145->ep.bus.mipi_csi2.num_data_lanes != 2) {
-+			dev_err(dev, "only 2 data lanes are currently supported\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		/* Check the link frequency set in device tree */
-+		if (!gc2145->ep.nr_of_link_frequencies) {
-+			dev_err(dev, "link-frequencies property not found in DT\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (gc2145->ep.nr_of_link_frequencies != 3 ||
-+		    gc2145->ep.link_frequencies[0] != GC2145_640_480_LINKFREQ ||
-+		    gc2145->ep.link_frequencies[1] != GC2145_1280_720_LINKFREQ ||
-+		    gc2145->ep.link_frequencies[2] != GC2145_1600_1200_LINKFREQ) {
-+			dev_err(dev, "Invalid link-frequencies provided\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		break;
-+	case V4L2_MBUS_PARALLEL:
-+		break;
-+	default:
-+		dev_err(dev, "unsupported bus type %u\n", gc2145->ep.bus_type);
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 
--	if (ep_cfg.nr_of_link_frequencies != 3 ||
--	    ep_cfg.link_frequencies[0] != GC2145_640_480_LINKFREQ ||
--	    ep_cfg.link_frequencies[1] != GC2145_1280_720_LINKFREQ ||
--	    ep_cfg.link_frequencies[2] != GC2145_1600_1200_LINKFREQ) {
--		dev_err(dev, "Invalid link-frequencies provided\n");
--		ret = -EINVAL;
--	}
-+	return 0;
- 
- out:
--	v4l2_fwnode_endpoint_free(&ep_cfg);
--
-+	v4l2_fwnode_endpoint_free(&gc2145->ep);
- 	return ret;
- }
- 
-@@ -1421,6 +1480,7 @@ static void gc2145_remove(struct i2c_client *client)
- 	if (!pm_runtime_status_suspended(&client->dev))
- 		gc2145_power_off(&client->dev);
- 	pm_runtime_set_suspended(&client->dev);
-+	v4l2_fwnode_endpoint_free(&gc2145->ep);
- }
- 
- static const struct of_device_id gc2145_dt_ids[] = {
 -- 
-2.43.0
+Kind regards,
+Ivan Orlov
 
 
