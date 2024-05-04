@@ -1,157 +1,95 @@
-Return-Path: <linux-kernel+bounces-168785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90DF8BBDA4
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:28:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357B08BBDAA
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849C7281D24
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D8D1C20C3A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1ACB7442F;
-	Sat,  4 May 2024 18:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C02745CB;
+	Sat,  4 May 2024 18:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icYxfyOv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbM8Sy3A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024855A0F9;
-	Sat,  4 May 2024 18:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E7D1DDF6;
+	Sat,  4 May 2024 18:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714847320; cv=none; b=i5BFwm3z43TeqIT/KTFcZsp0jEiSdeHNK5f6pYw8+LfNAxgVrFkt598jPFhn5IVhqgrSDFbZYj62vkryqmqe8sjBLf5WZiKGGv+4Y/aJGBF9Cgq76prgo3p3tAt/reWZioZsAyy5UYm+T4cLrwUulERLYd7N13pNsFKueSpn3Uc=
+	t=1714847648; cv=none; b=FnEsCspkVlvE72edKfjMCZbQE4tYBZ3K+BVYWgcqh4jioHr4MFZvF4SUwq3V8Ms3rKMVBxG9xltxWjRkZipDU7f0zCb7KoGsf/gI1XoMPBEANZajqPMAbclqA01zJgPrzN97Je5fZjxU5j7IlpPlU6yvsKR+VYfnE5CV2hFD/pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714847320; c=relaxed/simple;
-	bh=hYXK12g+YXp0eom7ZGnE3hBz1pg4fXoYGSAa74G/OX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTB2BBy1sjfJ3hqwxUbT+mPLzEk4UmiV59mrnVePHteSg56mrzYBzG/iqeVXzQtu3yvbNPfidFVA31UDH/dIpCGVkLLpUQjwBEN/WV/jPgd2yZwaImVr0zfD9DG8uo4njifJRTOagNS2VwlssXyjwF92f5GJerlWNZ2fzhDFZkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icYxfyOv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB41C072AA;
-	Sat,  4 May 2024 18:28:39 +0000 (UTC)
+	s=arc-20240116; t=1714847648; c=relaxed/simple;
+	bh=6HftrSu8b1ezVHLQUken8pjwxsgWWqlDrOx3oimesB8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bKDDfIEKWbkbd51LKCXb5vko66vy+xjAcmjP0qUaeTV3qYEFLNjDdGahyyQkYrkbL7ww/ZxR7mXJDwNGCcXMRz4mzGaeU/nMlI6EpdbaR3ydkzn9upgokcfND8CLjm1ZGhMnV6Jqdhuf0RYDp7yrHCLez//sqNM5eCzKE2cWL8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jbM8Sy3A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867F5C4AF14;
+	Sat,  4 May 2024 18:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714847319;
-	bh=hYXK12g+YXp0eom7ZGnE3hBz1pg4fXoYGSAa74G/OX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=icYxfyOvdKDIfgLpmhna3a0Ie3WKU3VqPYqMKrMD1CSQUtIjTKwAXcJ9isKwL05xa
-	 54MtGgLbephJUVDNHNFctzGVovj+EO9BT3hXHsYy9vcm5/dA23QAesfdgTqIdQCTqR
-	 D4SnhDCtHNLx83wqKqXNarZcX3seLDjVD4OyHHVfCs90R18qrtAaCVJw89oYssVfi6
-	 A3t1HQvT6vRHB/RnRNd0pz/UrmZ7PvgO51lTX+2SRbGrfHr5XhtkjjSwBH1lce+BVT
-	 u81iGRSCQ8mxSv5zTVLi2daeDK5JTo/UU7FvQjgfbyD+Wj5GYcxMGI1LKWagU1TKhu
-	 xyOgw6Hp1y8vg==
-Date: Sat, 4 May 2024 15:28:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	nabijaczleweli@nabijaczleweli.xyz, Leo Yan <leo.yan@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	Ben Gainey <ben.gainey@arm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Changbin Du <changbin.du@huawei.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Dima Kogan <dima@secretsauce.net>,
-	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
-	Paran Lee <p4ranlee@gmail.com>, Li Dong <lidong@vivo.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Chengen Du <chengen.du@canonical.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] perf dsos: Switch backing storage to array from
- rbtree/list
-Message-ID: <ZjZ-VPVqDhjkGxmC@x1>
-References: <20240429184614.1224041-1-irogers@google.com>
- <20240429184614.1224041-2-irogers@google.com>
- <ZjVHNB7pTKKWERFn@x1>
- <CAP-5=fXE6-atL+FdCdD529eqyveWUqgR6QbJgzvGy=5xR_TBRg@mail.gmail.com>
+	s=k20201202; t=1714847648;
+	bh=6HftrSu8b1ezVHLQUken8pjwxsgWWqlDrOx3oimesB8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jbM8Sy3AC1Tk8X7gAqQjhvY7QHGeD68MEbLd5IErSc8ps7z+CCJc5u62tNBYIuKQP
+	 zT0brJLuDRMEHsaH2kn5d/t/UMwUQCFt4wuDvxfXwDSF+hJi4yvqvYyCsO0THuT4Vk
+	 4PSAjsvnsds1WwfvHIALpAhwcQ55AP2dGWLaBAGmLjT+UtgX1x9MiGMvGlfFpIsuiX
+	 E1zbrqwxQ55Li3+kxTOs2qgw27ZJU5+lAU7XwGKqt4dsI2s+XlWDBiK9jG6it/anlV
+	 Yb0swhaegfUmKHaxIxWbiQSh0PpRBhAvRrOX6By88nlFD3lRksbp8LHGIUdw2hPMGF
+	 xyZQSVKcTjPcA==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH 01/10] kconfig: gconf: redraw pane correctly after loading a config file
+Date: Sun,  5 May 2024 03:33:24 +0900
+Message-Id: <20240504183333.2031860-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXE6-atL+FdCdD529eqyveWUqgR6QbJgzvGy=5xR_TBRg@mail.gmail.com>
 
-On Sat, May 04, 2024 at 11:14:52AM -0700, Ian Rogers wrote:
-> On Fri, May 3, 2024 at 1:21 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > On Mon, Apr 29, 2024 at 11:46:08AM -0700, Ian Rogers wrote:
-> > > DSOs were held on a list for fast iteration and in an rbtree for fast
-> > > finds. Switch to using a lazily sorted array where iteration is just
-> > > iterating through the array and binary searches are the same
-> > > complexity as searching the rbtree. The find may need to sort the
-> > > array first which does increase the complexity, but add operations
-> > > have lower complexity and overall the complexity should remain about
-> > > the same.
+Every time a config file is loaded (either by clicking the "Load" button
+or selecting "File" -> "Load" from the menu), a new tree structure is
+appended to the widget.
 
-> > With just this first one applied:
+The current tree needs to be cleared by calling gtk_tree_store_clear().
 
-> > ⬢[acme@toolbox perf-tools-next]$ git log --oneline -10
-> > 325557715f1d8593 (HEAD) perf dsos: Switch backing storage to array from rbtree/list
-> > 7b6dd7a923281a7c perf pmu: Assume sysfs events are always the same case
-> > 6debc5aa326fa2ee perf test pmu: Test all sysfs PMU event names are the same case
-> > 18eb2ca8c18f0612 perf test pmu: Add an eagerly loaded event test
-> > aa1551f299ba414c perf test pmu: Refactor format test and exposed test APIs
-> > 785623ee855e893d perf Document: Sysfs event names must be lower or upper case
-> > 97c48ea8ff1cd70f perf test pmu-events: Make it clearer that pmu-events tests JSON events
-> > 3cdd98b42d212160 (x1/perf-tools-next) perf maps: Remove check_invariants() from maps__lock()
-> > e3123079b906dc2e perf cs-etm: Improve version detection and error reporting
-> > bc5e0e1b93565e37 perf cs-etm: Remove repeated fetches of the ETM PMU
-> > ⬢[acme@toolbox perf-tools-next]$
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-> > root@number:~# perf -v
-> > perf version 6.9.rc5.g325557715f1d
-> > root@number:~# perf probe -l
-> > DSO [kernel.kallsyms] is still in rbtree when being deleted!
-> > DSO /lib/modules/6.8.7-200.fc39.x86_64/kernel/drivers/hid/hid-sensor-hub.ko.xz is still in rbtree when being deleted!
-> > DSO /lib/modules/6.8.7-200.fc39.x86_64/kernel/drivers/hid/uhid.ko.xz is still in rbtree when being deleted!
-> > DSO /lib/modules/6.8.7-200.fc39.x86_64/kernel/drivers/net/tun.ko.xz is still in rbtree when being deleted!
-> > DSO /lib/modules/6.8.7-200.fc39.x86_64/kernel/fs/overlayfs/overlay.ko.xz is still in rbtree when being deleted!
-> > DSO /lib/modules/6.8.7-200.fc39.x86_64/kernel/net/bluetooth/rfcomm/rfcomm.ko.xz is still in rbtree when being deleted!
-> > DSO /lib/modules/6.8.7-200.fc39.x86_64/kernel/drivers/input/misc/uinput.ko.xz is still in rbtree when being deleted!
-> > DSO /lib/modules/6.8.7-200.fc39.x86_64/kernel/sound/core/seq/snd-seq-dummy.ko.xz is still in rbtree when being deleted!
-> > <SNIP a lot of other modules, probably all of them>
+ scripts/kconfig/gconf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
+index 67a27c497c40..12b55f2e369b 100644
+--- a/scripts/kconfig/gconf.c
++++ b/scripts/kconfig/gconf.c
+@@ -487,7 +487,7 @@ load_filename(GtkFileSelection * file_selector, gpointer user_data)
+ 	if (conf_read(fn))
+ 		text_insert_msg("Error", "Unable to load configuration !");
+ 	else
+-		display_tree(&rootmenu);
++		display_tree_part();
+ }
  
-> Right, we don't have a test on this and this motivates the addition of
-> reference count checking on DSO in the later patches. With the series
-> applied, fixing the rebase issue, I see:
+ void on_load1_activate(GtkMenuItem * menuitem, gpointer user_data)
+@@ -1399,6 +1399,8 @@ static void display_tree_part(void)
+ 		display_tree(current);
+ 	else if (view_mode == SPLIT_VIEW)
+ 		display_tree(browsed);
++	else if (view_mode == FULL_VIEW)
++		display_tree(&rootmenu);
+ 	gtk_tree_view_expand_all(GTK_TREE_VIEW(tree2_w));
+ }
  
-> $ git log --oneline
-> eabe5dd91331 (HEAD) perf dso: Use container_of to avoid a pointer in dso_data
-> fd47ec98a05c perf dso: Reference counting related fixes
-> 962af2d2b092 perf dso: Add reference count checking and accessor functions
-> 48664a9a6ca4 perf dsos: Switch hand code to bsearch
-> ae7a9854dabd perf dsos: Remove __dsos__findnew_link_by_longname_id
-> e616a6b3739d perf dsos: Remove __dsos__addnew
-> e789368716dd perf dsos: Switch backing storage to array from rbtree/list
-> 7b6dd7a92328 (ptn/tmp.perf-tools-next, ptn/perf-tools-next) perf pmu:
-> Assume sysfs events are always the same case
-> ...
-> $ sudo /tmp/perf/perf -v
-> perf version 6.9.rc5.geabe5dd91331
-> $ sudo /tmp/perf/perf probe -l
-> $
- 
-> I'll see if I can find a fix to backport before sending a new series
-> to work around the 2 line rebase conflict.
+-- 
+2.40.1
 
-Thanks a lot for doing that!
-
-- Arnaldo
 
