@@ -1,166 +1,127 @@
-Return-Path: <linux-kernel+bounces-168693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62208BBC45
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:38:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6326B8BBC48
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EC242822FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90C2F1C20FB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A6038394;
-	Sat,  4 May 2024 13:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D8E3A1BC;
+	Sat,  4 May 2024 13:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RE4gRyoP"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq3KtuiI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259211799B;
-	Sat,  4 May 2024 13:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A54E3717F;
+	Sat,  4 May 2024 13:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714829876; cv=none; b=bRMLgBXgo2rNclPAlT6yOmo0DUaWfUv1MLTiJ2xiiWAQQEWIgcfvSVYDBlskQyGYYuhYNa4sc+rwENXDJX/KC7XiHuRWiYBqqbuXcmxvBDyVwAZfRf4jL3kNsbAe8SbKngBNgbJqEIZwHq0rDmEk07T9nS9oAbbdKgqH1HgSLCU=
+	t=1714830037; cv=none; b=dDU0tW/JzkNUsSCJ14yt0B9c9kiYQEq+VmKvapCTMHc686sMwk4mqksxzaJFHrddA5LyqNqvJyCv0nEQ+xiNYE/Ta09MShU9tcm69IFfcfT2NbG6fCZs/dgulEdOu0Of5Ftcprq4djZldEJdJ2PBGU6uq3mWVzVqWjobBIJ1rSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714829876; c=relaxed/simple;
-	bh=+CJXx3koQLYN1B1om5/4IRE7tuuotyHp4wQJJOV4Vyk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jmc+pmDt9wTBjduBAGVI+40te2lMojLzTx1QshrTTU9qLR1fiW5leayQNOCkFVm3V/stHqTBsif/ZztxV4JB5XpOo+feDq5Zc4kTpbiOh6nUp0VPKoyhvGUaeNwzk5l2f1seBo54PenDSivPcKvnurNoc9A56xzXUcFjZPEv+JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RE4gRyoP; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1e3ca546d40so4416355ad.3;
-        Sat, 04 May 2024 06:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714829874; x=1715434674; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4EGKr6FjTAXUcLBcVBwQzJVvnJMccoMO665tE3tYfk=;
-        b=RE4gRyoPM+vc418Qme2SDkwP4l09xPeJ+GkGZSevFmmLRDByhIViApofW7UGvPj8/r
-         3RBxmZreXZNX+eX8oi17QpcDBJGUwXQJhZT0dcKwv7GfZMXrbJU7QCnPwivF6jt9zh+Q
-         7Xwqy6LMB89c4jM60OeouxE+Ej7xHEPUGzfVlpnrf4AM12KZyEH7X3aod1lHq9U/tv4R
-         HwjDNLnI0Ho8jleWFXgYkUHSP0fPP5XVFtfKcEs2/CUaXnb+KDlm76UG6OLzzu4PlJrU
-         zL/RpMhAgnHuW8xnmmcw9OR5pDNS4RFBvJLI+Rol4py0vmo7cfrAu8rfVpEG49kJEapL
-         wYjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714829874; x=1715434674;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q4EGKr6FjTAXUcLBcVBwQzJVvnJMccoMO665tE3tYfk=;
-        b=J0sNX55+ZvYCwGb4i3z8pzh+4bDRWgTQPgxuJPwp0KswbLbmRBVnCwUwLrp6cOO+cF
-         3r0SdxzswrjxRVn4txf3Vcb5t9t7noY1/Q+QC0hgq94tMNJM0f1TvsRjKm3zRq8khAyy
-         v6vU+5MRuRguYnV5cZsXMusl8l/YW/cmOqBY+3QWp8Qm4zZ943dsC7NrPx3Pesq1PUkx
-         N5Q7l3S2u+bAJvq3lIe5VrW/QugMucCb/VSSl8qY+phm7iTM3DzEdNjkGKcNjYpjc55y
-         yQRFTgXoZrCMZsf/Uo15mJVkLjd99CZuT3vayWlMrNAxKwg3nNBKe2SvzAJsCJspylfu
-         rnAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULlN9qMLTtM2xm9gNermFDpLejoHtPoo97GkB66By3NjQ75piX9oH6jxKt8FzPDHuOwRy4Brkk/esv+cpA0woR8D0Gbw7SBrjcPYsSoZk61DyNZhiLetgTXH4m3mWrsm9Rt53AfdIPc/8=
-X-Gm-Message-State: AOJu0Yzftu+rsSwt4KaE8PvWUYxYuQfEfIVAJRylfSgZrzPKyf3nt/d2
-	KQx/7XR7zU/aC5fIvLmG8eofgle01vdppnLzXpcUXoTrsHueBms2
-X-Google-Smtp-Source: AGHT+IFg3r+K7gDnBpuBLEs/oU52paelf/WsWsHygn8lhr7kEz7oFnEyalsYUgRJVYpszLi2o89SpQ==
-X-Received: by 2002:a17:902:f682:b0:1e4:3c7f:c060 with SMTP id l2-20020a170902f68200b001e43c7fc060mr6182311plg.66.1714829874263;
-        Sat, 04 May 2024 06:37:54 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e14-20020a17090301ce00b001ec80dbb8b1sm5009265plh.73.2024.05.04.06.37.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 May 2024 06:37:53 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e85861b4-b129-48a0-9ce7-fb912d4eda34@roeck-us.net>
-Date: Sat, 4 May 2024 06:37:52 -0700
+	s=arc-20240116; t=1714830037; c=relaxed/simple;
+	bh=t3FONzaDjqiT8WtMX9xx77TxQj428dRPexrHMx5m5n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2qlwHVN+GqVUIL1SbnoiG4Mw2bm8D9PKJ4Y1Xv7cRmQYRFb72jy3l92MFNiPuJVGaLYbgmZC9m+hkVPaQYAOLxCBaNXFyPHR3/w7tgfFo8jO0+QT8P6Fqa+vnqyop0Wc+AULDcJHSbFDgAODIHLhqXBKxdBKJUgGuL2ggMhQks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq3KtuiI; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714830035; x=1746366035;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t3FONzaDjqiT8WtMX9xx77TxQj428dRPexrHMx5m5n8=;
+  b=Oq3KtuiI7OwHNSIgYOC08lx497qK0FDIAgIfdbTitxQSQblPxsK35p4c
+   e5fHlR7WEaDI/7ZVfezPIXgszdseRu9Wjwlnyl1Coiaw0vpaAQlpbKHNA
+   eoAn103KQzpWLi3zGNmAOJq/7wgV3xs1y57RnQVOVbilx9yeojy29liC5
+   wfwe2p60uqLykDfwW7oa3sDRFE3iH4UQZOZ9dWBhKQ+NCgI3FTaNk9KUL
+   pgY2M+wU9H5xoFZVa0v2+FiBs94OKWNAr92JwcxBoHpwNRWxeq+f754CV
+   yW4CNkWmJZOiO6yQreEtMIOJFCU79kcaUPUDJxb+4IcpnZKfK507hIihP
+   w==;
+X-CSE-ConnectionGUID: +9fA2hlMTQiah1AaZAx5TA==
+X-CSE-MsgGUID: Mt/C8b6ZSf6OGW7dTlUopA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="10846180"
+X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
+   d="scan'208";a="10846180"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2024 06:40:35 -0700
+X-CSE-ConnectionGUID: 9kMINrEcSMiLY7iXJfr8Dg==
+X-CSE-MsgGUID: qNN/0NVZQC+hOsLs1neCYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
+   d="scan'208";a="27750226"
+Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 04 May 2024 06:40:31 -0700
+Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s3Fcr-000CoO-1l;
+	Sat, 04 May 2024 13:40:29 +0000
+Date: Sat, 4 May 2024 21:39:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, andrew@lunn.ch, jiri@resnulli.us,
+	pkshih@realtek.com, larry.chiu@realtek.com,
+	Justin Lai <justinlai0215@realtek.com>
+Subject: Re: [PATCH net-next v17 12/13] realtek: Update the Makefile and
+ Kconfig in the realtek folder
+Message-ID: <202405042153.ugnyFsrz-lkp@intel.com>
+References: <20240502091847.65181-13-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] hwmon: (corsair-cpro) Fix issues when hidraw is used
-To: Aleksa Savic <savicaleksa83@gmail.com>, linux-hwmon@vger.kernel.org
-Cc: Jonas Malaco <jonas@protocubo.io>,
- Marius Zachmann <mail@mariuszachmann.de>, Jean Delvare <jdelvare@suse.com>,
- linux-kernel@vger.kernel.org
-References: <20240504092504.24158-1-savicaleksa83@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240504092504.24158-1-savicaleksa83@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502091847.65181-13-justinlai0215@realtek.com>
 
-On 5/4/24 02:25, Aleksa Savic wrote:
-> This patch series fixes the behavior of the corsair-cpro driver while
-> hidraw is used from userspace.
-> 
-> The first patch introduces a separate buffer for sending commands to
-> the device to prevent it from being overwritten thanks to a hidraw
-> userspace call.
-> 
-> The second patch replaces the complete() call in the raw event parsing
-> function with complete_all() to signify that the completion is done
-> until reinit.
-> 
-> The third patch introduces locking for the ccp->wait_input_report
-> completion as it's touched in functions that could be executing in
-> parallel.
-> 
-> Aleksa Savic (3):
->    hwmon: (corsair-cpro) Use a separate buffer for sending commands
->    hwmon: (corsair-cpro) Use complete_all() instead of complete() in
->      ccp_raw_event()
->    hwmon: (corsair-cpro) Protect ccp->wait_input_report with a spinlock
-> 
->   drivers/hwmon/corsair-cpro.c | 45 +++++++++++++++++++++++++-----------
->   1 file changed, 32 insertions(+), 13 deletions(-)
-> 
+Hi Justin,
 
-Series applied.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Guenter
+[auto build test ERROR on horms-ipvs/master]
+[cannot apply to net-next/main linus/master v6.9-rc6 next-20240503]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Justin-Lai/rtase-Add-pci-table-supported-in-this-module/20240502-172835
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git master
+patch link:    https://lore.kernel.org/r/20240502091847.65181-13-justinlai0215%40realtek.com
+patch subject: [PATCH net-next v17 12/13] realtek: Update the Makefile and Kconfig in the realtek folder
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240504/202405042153.ugnyFsrz-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240504/202405042153.ugnyFsrz-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405042153.ugnyFsrz-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/net/ethernet/realtek/rtase/rtase_main.c:67:10: fatal error: net/netdev_queues.h: No such file or directory
+      67 | #include <net/netdev_queues.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +67 drivers/net/ethernet/realtek/rtase/rtase_main.c
+
+6c114677e472d0 Justin Lai 2024-05-02 @67  #include <net/netdev_queues.h>
+6c114677e472d0 Justin Lai 2024-05-02  68  #include <net/page_pool/helpers.h>
+6c114677e472d0 Justin Lai 2024-05-02  69  #include <net/pkt_cls.h>
+6c114677e472d0 Justin Lai 2024-05-02  70  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
