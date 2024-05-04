@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-168721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E6A08BBCA3
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C008BBCA9
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6161C21136
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:03:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A821F21D5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E35141741;
-	Sat,  4 May 2024 15:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072F03FE2A;
+	Sat,  4 May 2024 15:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2WYKMKw"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Oux8UJYe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9695C4F890;
-	Sat,  4 May 2024 15:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184443C467;
+	Sat,  4 May 2024 15:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714835003; cv=none; b=ipWhSUidahn/L7oW3MgzUDOeBLyQvl4gS1fW1nUjNcBfnbh8kX7v0e5WkNMWmXJnODXfqUeLkhNAUiOHWTHYVP9YaR3F7/bEHIhZZ79httHAsrPdLgrykMn+UMQ9FKrocjOjnLOTKhyHgToinCEXFRjVzb6Otxf8mA3QJAzBbHc=
+	t=1714835750; cv=none; b=Ov9bb709Tg/blT/ltReUSCtvGKITUoz1fTKjhcMF3GDX58MRfUkqpWgFaOBcqLZDKm30AW+Zz2ef/UbN9dwgLJg1DAwNrvSuQ93I1spodAWhCKcI6QBjHltHbvW2pMaGkklBw3Ye1pPGQWn/h7L/S2Jx4AxuV3LlWthT+R58aR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714835003; c=relaxed/simple;
-	bh=jLGPDd62/VmNapLCYXtF14n4GE2XFUNRJLO80edDP9s=;
+	s=arc-20240116; t=1714835750; c=relaxed/simple;
+	bh=iL3o9XuOnHVJsXvmQP4e9aYfd/nUlJpHcT3bLgD4qdY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvmoErQXki1OJhMb4+kHmw0MaYM7d8xFIs16Zqib9rIvFFqFkk8hbDz/M8iF2XFQ/3x2P/yhk2caR0zPUT51MYeSwtMmUoRl8EQvurD/je2jbJ5nEuE/NkgupZNw55D+vNku6DI8j5KeY6ZZr5+eRvyOL587d8g+FbzNJ5Lxp+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2WYKMKw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F536C072AA;
-	Sat,  4 May 2024 15:03:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714835003;
-	bh=jLGPDd62/VmNapLCYXtF14n4GE2XFUNRJLO80edDP9s=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dMkrs/oiQtrrhM5rBhiJFYWc0TGLL8XqL0sGX+shwUXJifg/NM9aopjQ6DXy/Rwf8bGwbTN21GEXSMc2CklegnGj7qjzoGmOn8zuL5p3xbNnpX4CKTOi6p9fbVH6xeBHBBLT7yHh4Lqixq2JrZtHI31m4cF+C6G8T5BhMWh6eyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Oux8UJYe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 120F4C072AA;
+	Sat,  4 May 2024 15:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1714835749;
+	bh=iL3o9XuOnHVJsXvmQP4e9aYfd/nUlJpHcT3bLgD4qdY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A2WYKMKwx6cltikOJwmSgNOCJMaZ0PFn6LMyBEVfRrgEzhiE4OfKyCaK7xsXFG6yC
-	 8eZDayYNxgSIkJ/AjqYJ3QOG1+J1zZ7BX9r7EbXYWT0bzzPQFNSt/a67SYqFlQzKle
-	 2jx/w/v6j2zzD1iYKhmx0ah9C2eKs4lbKCJjte86BXaAfIjVeli8k5bAIr705ot0b2
-	 86NS7iritlXR3ScKXMRJFtmP8LieprUTRDEhrDKGGljsVZF5BfSlxaEC+0vuq+kyXY
-	 A9xkIC89z0aquXC1KdmntemaHbndqhclsvH7YsWioLmCCDLAseZED6zqfu2TZd34Bo
-	 Q1WBH4rlhwvcA==
-Date: Sat, 4 May 2024 16:03:19 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	netdev@vger.kernel.org,
-	"open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 2/2] IB/hfi1: Remove generic .ndo_get_stats64
-Message-ID: <20240504150319.GH2279@kernel.org>
-References: <20240503111333.552360-1-leitao@debian.org>
- <20240503111333.552360-2-leitao@debian.org>
+	b=Oux8UJYecQv3LOTu3Hp43ybMV/sYsGdCIUK7vMf3W/Dp8r7uda0pMnvViwo5vKCRr
+	 Hv5tInLdGco5vnGYr34YR6Wt47ojMjZJNRC8ZO274iy/isMm+CkJlgm6Al670VcBhi
+	 M6OkwdePclgDE5qLJieIcIZOJO0m+mxVmvp9BKtE=
+Date: Sat, 4 May 2024 17:15:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Connolly <caleb.connolly@linaro.org>
+Subject: Re: [PATCH v4] usb: typec: qcom-pmic-typec: split HPD bridge alloc
+ and registration
+Message-ID: <2024050415-retorted-gory-5fa6@gregkh>
+References: <20240424-qc-pmic-typec-hpd-split-v4-1-f7e10d147443@linaro.org>
+ <CAA8EJppCxfrBcctaR2jOrwPuO8ZFQw9vmi-0CH_sSWBm3ts7JQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +61,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240503111333.552360-2-leitao@debian.org>
+In-Reply-To: <CAA8EJppCxfrBcctaR2jOrwPuO8ZFQw9vmi-0CH_sSWBm3ts7JQ@mail.gmail.com>
 
-On Fri, May 03, 2024 at 04:13:32AM -0700, Breno Leitao wrote:
-> Commit 3e2f544dd8a33 ("net: get stats64 if device if driver is
-> configured") moved the callback to dev_get_tstats64() to net core, so,
-> unless the driver is doing some custom stats collection, it does not
-> need to set .ndo_get_stats64.
+On Sat, May 04, 2024 at 05:23:20PM +0300, Dmitry Baryshkov wrote:
+> On Wed, 24 Apr 2024 at 05:16, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > If a probe function returns -EPROBE_DEFER after creating another device
+> > there is a change of ending up in a probe deferral loop, (see commit
+> > fbc35b45f9f6 ("Add documentation on meaning of -EPROBE_DEFER"). In case
+> > of the qcom-pmic-typec driver the tcpm_register_port() function looks up
+> > external resources (USB role switch and inherently via called
+> > typec_register_port() USB-C muxes, switches and retimers).
+> >
+> > In order to prevent such probe-defer loops caused by qcom-pmic-typec
+> > driver, use the API added by Johan Hovold and move HPD bridge
+> > registration to the end of the probe function.
+> >
+> > The devm_drm_dp_hpd_bridge_add() is called at the end of the probe
+> > function after all TCPM start functions. This is done as a way to
+> > overcome a different problem, the DRM subsystem can not properly cope
+> > with the DRM bridges being destroyed once the bridge is attached. Having
+> > this function call at the end of the probe function prevents possible
+> > DRM bridge device creation followed by destruction in case one of the
+> > TCPM start functions returns an error.
+> >
+> > Reported-by: Caleb Connolly <caleb.connolly@linaro.org>
+> > Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> > Dependency: https://lore.kernel.org/lkml/20240418145730.4605-2-johan+linaro@kernel.org/
+> > ---
+> > Changes in v4:
+> > - Rebased on top of Johan's patches
+> > - Link to v3: https://lore.kernel.org/r/20240416-qc-pmic-typec-hpd-split-v3-1-fd071e3191a1@linaro.org
+> >
+> > Changes in v3:
+> > - Updated commit message to explain my decisions (Johan).
+> > - Link to v2: https://lore.kernel.org/r/20240408-qc-pmic-typec-hpd-split-v2-1-1704f5321b73@linaro.org
+> >
+> > Changes in v2:
+> > - Fix commit message (Bryan)
+> > - Link to v1: https://lore.kernel.org/r/20240405-qc-pmic-typec-hpd-split-v1-1-363daafb3c36@linaro.org
+> > ---
+> >  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
-> Since this driver is now relying in NETDEV_PCPU_STAT_TSTATS, then, it
-> doesn't need to set the dev_get_tstats64() generic .ndo_get_stats64
-> function pointer.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+> A stupid gracious ping. It would be nice to fix the issue in 6.10
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Is this a regression?  If so, what commit does it fix?  Or has it always
+just not worked?
 
+thanks,
+
+greg k-h
 
