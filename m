@@ -1,197 +1,214 @@
-Return-Path: <linux-kernel+bounces-168762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FD88BBD51
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 19:01:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DF78BBD57
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 19:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646E228280F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:01:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B471BB216B1
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722425A79B;
-	Sat,  4 May 2024 17:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA695D8EE;
+	Sat,  4 May 2024 17:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ed/EGp+I"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="hdBezUaa"
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01olkn2054.outbound.protection.outlook.com [40.92.65.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469703D971
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 17:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714842108; cv=none; b=TsHtlGmcOEGdrJaC7y6Rfn4iEwpNkxLM8yl5Ny6q96Pp8h0CrqhhB6yUTieSj+wBjf7xEwSa5n9JS34UOo4BNBzmIJUG9g1rd2JNoHOaPbDJXuMS3zRZtrxMtdu84qSGf7lSNhO8osPA9Q5ZVcukcAs84qjFG/VqaWyDzSIk8Qg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714842108; c=relaxed/simple;
-	bh=Ui289m/aD+ifRYLXt9sDXS8DUyCLcvxnyweT3Q+LgHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swxJSXYhj5aWT74w2HbWl+dmuqmGbKoXV5/EGENeRvaFHry40+cOYRti5ViwLaJwwKnYLydOtzL2vZ8W/NEY3KLh40MTDC/ZYGZk/s++SkvZI3sJenOYx6Y2qcD+Gd0NdzdG+PHv9S/UYsNUdX9mhbWmqkW2mbEWhskv+Ba9pFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ed/EGp+I; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f45f1179c3so317284b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 10:01:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714842106; x=1715446906; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ANbQzLbC04OT96qrkLQKxGMSo5LbgtdU/enMtsBUeUQ=;
-        b=Ed/EGp+IeDo/igMDy7R6cZHQVwMcUksysOSOMFs8d491hHusOTh4aNR5JjSdETXXYj
-         RhQY1RMxj2X3pveQ6c7LqD9mwRye2Cer3jWwFCKX8XhfcAzEA04c5HBOcnalECXbyneB
-         q6Tpye+gy6NbcZMpGnF/9TxgUOh50G3x1CSbaFoKRWOBPhe038lWYq4VkyKfXPFs1GuC
-         mdZNQJU1QKAJDFiCVwV2jGYxAPGilSx7mxJIM4uEgqsXyut9aLVTf1f/2gDwl8lt+/BB
-         lBY6cMEGjbEWR3WN88sLgBEBlb8MYMDcam0oegcob/+/BLDlrNvOA3yvsi6ki0CwqRqc
-         LbJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714842106; x=1715446906;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ANbQzLbC04OT96qrkLQKxGMSo5LbgtdU/enMtsBUeUQ=;
-        b=KDI2U1wZQfDmJB2MznshG1NDka4CJnvphqDAQGQ2JM399W+6zWKlfJzByu3EjbNF+F
-         5OPNHUIBuZ36UEBXorzfqtCYHwBGpHjqsB5x5AKX89bwP1aBCO752sQWRVBdz93gPgXa
-         /wDpQ+qfKSc/YQLnDWcRT8UAtICRgSvADARbzqTAP4VDDoupgeBhyy7471A8mjtZnCF4
-         xMVBlmdLNIbe8AhfTNd+iaxB3OWcH6wWPQwTYbIQi3lbYQHjhHEyAFRAT97mum3onyuq
-         GFUUgJ71AzAqL5L0z0a1SdknDoOLcyrEkID/elDxrlkNVA50bug73SeW/zhA/fP97Uem
-         K1lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoTAsvb34TxOzH8lwy4wNwjjU/474AIB3EcSvWgkZ/Nm1noxIi22fHGYYf0a0x3obn0alArbKAL7ZpcHFRbYgbP91C1xe1h+LTAL/P
-X-Gm-Message-State: AOJu0YzX9FaT9m2k7ZaFuP/IinGXbzAsp4CzngzWnUS6Sfy+7xkSIXuv
-	M+RUqAtiVmNvUNmcBIHxq5GNUDhEUqLo4fgt74Tnm2xjtz3ievlj3vWe4xR2aQ==
-X-Google-Smtp-Source: AGHT+IFoYFMT+P/n6MbXuyw0mxYc/wmFkYedDEEx3BgEqvaXl/D4ZN745Jr5wrhk+w+gEEPdlTJu0g==
-X-Received: by 2002:a05:6a00:92a5:b0:6e6:946b:a983 with SMTP id jw37-20020a056a0092a500b006e6946ba983mr6518136pfb.10.1714842106223;
-        Sat, 04 May 2024 10:01:46 -0700 (PDT)
-Received: from thinkpad ([220.158.156.237])
-        by smtp.gmail.com with ESMTPSA id ls30-20020a056a00741e00b006f4123491d2sm4954233pfb.108.2024.05.04.10.01.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 10:01:45 -0700 (PDT)
-Date: Sat, 4 May 2024 22:31:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Rob Herring <robh@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
-	Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH v3] PCI: dwc: keystone: Fix NULL pointer dereference in
- case of DT error in ks_pcie_setup_rc_app_regs()
-Message-ID: <20240504170139.GB4315@thinkpad>
-References: <20240329051947.28900-1-amishin@t-argos.ru>
- <20240503125726.46116-1-amishin@t-argos.ru>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332CD1DDF5;
+	Sat,  4 May 2024 17:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.65.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714842538; cv=fail; b=R6ckXVRwAz07t0s3fDvhN+8KOoPPGuACtFyPyF2AayY1d1RKvj4J7ve+MH9h485MhPmLj32C96ubZXLb3VgH+cRIzNpwLhWGSpjvZHzEddqpi2zUt3QoTtijrEudGnayw3nrOBl1hIsdxJcX85eiVMpJzf+GqYsZPs882pldx8o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714842538; c=relaxed/simple;
+	bh=MoeMOmfNN+q4Zk/jL8nH4mnTUTo9tz0BkC3htba9PUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LBGJP5W0o/bjD3E0DHhG3kh6114oYojLfuIMk8nDVOFFB06nQHtoS8TTzLu+8AvkWLuduNcyYN2ilI3TehCOD0mo9ZIltbHBskCu7TrVSAa9eyyaawXTqqW5MjIfGYafZNgMW/6b7/eO33RPZvyGkJDnR3pfbaj1tqJxDCvLGsM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=hdBezUaa; arc=fail smtp.client-ip=40.92.65.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R3gpbNwlx6Km71646pwqF+4RxeBY1tFpGcMFGwHnyEfJcqhzgxlaZ4t/4ToYYdYksHYX9DDLg2AwokkyQVKQBfRpLaeu54e6gge4OeBMKND+NUQYBAC5H7/H0YoNyff7zV4tdTFtZXyQL+BRUXwYlke1PXJumZrCVLYfr+R8+uUzGKksryafPLMCJ5dyE+0BzHkAGvQIcHe//n7PfIXk+0GGuX8r/MUUwVyhpGJOyyOTvdIwXXnD/v6hXXSyMlgBTnWI7EVxqoNFQT07HV3IsnVLzcHhOdtuWIYSGluJ2Ei7PydnYq/C2bfcjecNmyJAB6qS9UTkyf1A5k5VauVufA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cw8nzKpnOVpC5LmgD+kJADa5w994LoR5bUQd6sq39Mg=;
+ b=ktFF17cZIc+zTFmv4Dy40THJURLeMWe7uwWwuq77TiU+C/lXr91/Qaf0/xTiDEGmTrbX6Doc4vMpVGjeNZPzkXIiTnqBaD9AB19K1zDhnvNnPWcqrTnWwehywwbpDGgLYAheTMU+IYQskh89lb9DN6AucPAELzfpbFadl1v+Mbe6cMY4i2Dpl9bIJuBbGiQUzxsZzrZvrsuV6YBn2UAvsENRmVAK7GJu/4DY/s0Jihnq+DirmPCha8p7EI9hAslVlsj6ZQ5BAQmxis7oeGB3ElYbOxgFWbxZqqkMk4gen9H+X24jMERjnHpym/OTPiHr+YTjzkgvappc/LFu84zRAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cw8nzKpnOVpC5LmgD+kJADa5w994LoR5bUQd6sq39Mg=;
+ b=hdBezUaaNcdkP1o/PMekE0JV+A1y0opkJ1b4fccpMnkWDR0B5lP7oeBPSw7YaNPEWBvimXHQsh3BbHojC/m9Iif0uqE/P3oOApJyuJvFmrMhXVhPxknOwq9YyUiWHBvpRc2P8075yWI9J9BelXmQdXV7GMN7wPI+p3261yaljJ1sQFAc5qYDJtCMWMhjC1/kkJoLwVZOr1yA8kOdcF4wLqnt0lt3lYh/vh89HZmsYgRJxgEUBV0vcLeuz58mFEkOsPlnRdgKnixtdqLLuhZ4LLuQj80EbrWMqxfpfy5bt2FituOONxcdHJoWOLIm479p2M5r614VXD0aFIv9zGyTvg==
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
+ by DB5PR02MB10070.eurprd02.prod.outlook.com (2603:10a6:10:489::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.39; Sat, 4 May
+ 2024 17:08:52 +0000
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7544.036; Sat, 4 May 2024
+ 17:08:52 +0000
+Date: Sat, 4 May 2024 19:08:39 +0200
+From: Erick Archer <erick.archer@outlook.com>
+To: Sven Eckelmann <sven@narfation.org>
+Cc: Marek Lindner <mareklindner@neomailbox.ch>,
+	Simon Wunderlich <sw@simonwunderlich.de>,
+	Antonio Quartulli <a@unstable.cc>,
+	"David S.  Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Erick Archer <erick.archer@outlook.com>,
+	b.a.t.m.a.n@lists.open-mesh.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Alexander Lobakin <aleksander.lobakin@intel.com>
+Subject: Re: [PATCH v3] batman-adv: Add flex array to struct
+ batadv_tvlv_tt_data
+Message-ID:
+ <AS8PR02MB723738E5107C240933E4E0F28B1E2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+References: <AS8PR02MB72371F89D188B047410B755E8B192@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <3932737.ElGaqSPkdT@sven-l14>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3932737.ElGaqSPkdT@sven-l14>
+X-TMN: [QE19YAEU1vCHNCTe9yt0HLsdoXKNn/cq]
+X-ClientProxiedBy: MA2P292CA0026.ESPP292.PROD.OUTLOOK.COM (2603:10a6:250::12)
+ To AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
+X-Microsoft-Original-Message-ID: <20240504170839.GA3490@titan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240503125726.46116-1-amishin@t-argos.ru>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|DB5PR02MB10070:EE_
+X-MS-Office365-Filtering-Correlation-Id: eae39119-7b43-47e7-6299-08dc6c5cdf00
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|3412199016|440099019|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	bEi1YuNpgg+gE7nmCzg7q83ItAooLKXjJ5ftGYwihf8eTxawv6f8HpLh5ojK4wipcDExPah6TJEa1M42YzGTnWcmbew8f2oPBtJbP9ULGQVtiNAkqdkWDhtSv+4/q8ZBWODGiDsmb7E+sVqgHOaCrGorPTUGwMgGPVaKr3ob42ojbNNf/Eq2tYTNWESCNTU7IVB1bR9SF4o+XoZ5LRZ5Mgxy3h9nwcvxTY/oxaveq30cqbp1WXLqFTyGdnEuB3pvaTOcZ9lrRCMlhCqmdDrDU1rX6oCm9makQbrITSJRWibbM4EeSvrc+YbqjYWEpBoxGOSSiFTsKu253WBwJnvMoEgmXiOkIjkbVyI3ZRgYgT+OsBX1tQgT2kj5SpraXxmA46vAwO/3s7p1/wJinpbyNg2VioeSmkY8bk7eH2wzAYFhAl2mnxgug9wD1z8eBX8MaNbSUvNF1BMuIcOqTw1kMD76UeBpCofteT0X82e+ukJB4w+mHDLxyThZIn3+xMkEBmskyvP5y3zo3877wCPSa1zkp5WcJCt/iuL6kGAMLoYg6FtDwUI1dLdLFG9YdC25QiAufAl+tMoG3YPGENpDPHSsYeXrlGxbK97ZNkW9uuncMTfeuHIEnGSbv3mbXI4P
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?A2KDuKhXzzvdnmZzLYMMcsvi/I5S+4bP8SbQ1VW0QwvaLR0w2u2BktHv+fyO?=
+ =?us-ascii?Q?nOHv7BC9vfFvoVKFQw9mdQypxQs90cqlDFkq4e3dCyGo3dazFjaWBEqQOkm3?=
+ =?us-ascii?Q?GUO93SuKhwlJBFhF+y6MeYozQz1oJtL7YuLkRWDeRN7Odk9cFKVEqqfHFSd8?=
+ =?us-ascii?Q?jbXDFc+xN6idVgode0wPmx6QWG1Vil+jAKY90WKpWqmZjHPFkEg5mv4DcwrZ?=
+ =?us-ascii?Q?Two1B4rC9rWF4wz58NTPo3Gtt6no9u+sUOTzs/H8wvOObS8l9OT88GdQboWu?=
+ =?us-ascii?Q?EHxD5iVpWRlZBMbSFbz+07VCi/NUbVoaSrvNoakSn4JU66OvZ5JWYkmRNFHd?=
+ =?us-ascii?Q?AkY2jDxL3GHCd3fm40RQSdnZqZtw+GX65C1uQqB0+mTjTLxw9TVgKSnIFIRJ?=
+ =?us-ascii?Q?ifAN4dHN/pkeRyktvtNL6VF2sg3l+5JKj5zNEnpR5MyqGJDYU9R11qGhTqGZ?=
+ =?us-ascii?Q?xQHdfu7fYgnMm0cKAX5VG6E0qqhwvsuKMKKkqpM6L28Tqk+Pxj1ZDybNQmJv?=
+ =?us-ascii?Q?lvH13KpqWyEKdjwO5DpBYzn765yrHpQf0ySscaYOoaiLikbBFe3jSbk5KY1S?=
+ =?us-ascii?Q?lGucH1zIc9mWiacg4Vq6/hJPmC5daXfMk1olIsnz+HtlwR/LbRZQ42d8JXld?=
+ =?us-ascii?Q?Z2O7c0tao8AZplvhy3vbYfk42Z5Fm7tSZX1VoxCst8wAArSwmKCbPkLThO21?=
+ =?us-ascii?Q?0zcQW1Pj6x1yxN2CFqEof8abEWh4cEw9NCIoO1T+b7fsEFE/y55CJgag+VGO?=
+ =?us-ascii?Q?ym8ukTm+m/8FhTlw4bhYhRZRFSDo3Jo2i/z/QQw7fiaCzuLznbm7VJe6lstw?=
+ =?us-ascii?Q?KZmlRv3GVmMw5D7SEMaHfAh744kdMRw4jJrq5jUcirL/WA8WLqowHqel9VSf?=
+ =?us-ascii?Q?qt4fjJQcLOmGDb0DLsa3zQ4mCYIrFJqrhoMBrkYYK8eLCb3UgBOc3SDjiFoW?=
+ =?us-ascii?Q?uqympyP2kLb2pTvcUq4l2wpe4lJwH/8Dog0xmHvjC/WpQtXJUAw34oDl01OH?=
+ =?us-ascii?Q?10+HHm3t+OSJx4pidCxvx77GftNrNQJqc705FZsxEuGGmSg0koQUewb1oM9r?=
+ =?us-ascii?Q?s4UszanKY1lCqp+oMoi2syf1w+06OFcmgqEuDFNq/zi34floNkysPviTcumE?=
+ =?us-ascii?Q?oH1BAlk5eEerRKlaklgnxpbCjmfpDgJsf4Yn6aQpUD2+cgmHCJBlCXR7qLIz?=
+ =?us-ascii?Q?NXNi8sqCBJHa/NAgKpEcLKjGJOX7906asBhwIVTcpYNh2mzmIRoTkoBv24Wr?=
+ =?us-ascii?Q?1ZevmYiV+OTJQy2tWouf?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eae39119-7b43-47e7-6299-08dc6c5cdf00
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2024 17:08:52.2295
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR02MB10070
 
-On Fri, May 03, 2024 at 03:57:26PM +0300, Aleksandr Mishin wrote:
-> If IORESOURCE_MEM is not provided in Device Tree due to any error,
-> resource_list_first_type() will return NULL and
-> pci_parse_request_of_pci_ranges() will just emit a warning.
-> This will cause a NULL pointer dereference.
-> Fix this bug by adding NULL return check.
+Hi Sven,
+
+On Sat, May 04, 2024 at 11:35:38AM +0200, Sven Eckelmann wrote:
+> On Wednesday, 1 May 2024 17:02:42 CEST Erick Archer wrote:
+> > diff --git a/include/uapi/linux/batadv_packet.h b/include/uapi/linux/batadv_packet.h
+> > index 6e25753015df..dfbe30536995 100644
+> > --- a/include/uapi/linux/batadv_packet.h
+> > +++ b/include/uapi/linux/batadv_packet.h
+> [...]
+> > +/**
+> > + * struct batadv_tvlv_tt_data - tt data propagated through the tt tvlv container
+> > + * @flags: translation table flags (see batadv_tt_data_flags)
+> > + * @ttvn: translation table version number
+> > + * @num_vlan: number of announced VLANs. In the TVLV this struct is followed by
+> > + *  one batadv_tvlv_tt_vlan_data object per announced vlan
+> > + * @vlan_data: array of batadv_tvlv_tt_vlan_data objects
+> > + */
+> > +struct batadv_tvlv_tt_data {
+> > +       __u8   flags;
+> > +       __u8   ttvn;
+> > +       __be16 num_vlan;
+> > +       struct batadv_tvlv_tt_vlan_data vlan_data[] __counted_by_be(num_vlan);
+> > +};
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> Thanks for the updates. But I can't accept this at the moment because 
+> __counted_by_be is used in an uapi header without it being defined
+> include/uapi/linux/stddef.h (and this file is also not included in this 
+> header).
 > 
-> Fixes: 0f71c60ffd26 ("PCI: dwc: Remove storing of PCI resources")
-> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> See commit c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and 
+> identifier expansion") as an example for the similar __counted_by macro.
 
-One nitpick below. With that addressed,
+If I understand correctly, the following changes are also needed because
+the annotated struct is defined in a "uapi" header. Sorry if it's a stupid
+question, but I'm new to these topics.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+diff --git a/include/uapi/linux/batadv_packet.h b/include/uapi/linux/batadv_packet.h
+index 6e25753015df..41f39d7661c9 100644
+--- a/include/uapi/linux/batadv_packet.h
++++ b/include/uapi/linux/batadv_packet.h
+@@ -9,6 +9,7 @@
 
-> ---
-> v1->v2: Add return code processing as suggested by Bjorn
-> v2->v3: Return -ENODEV instead of -EINVAL as suggested by Manivannan
-> 
->  drivers/pci/controller/dwc/pci-keystone.c | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index 844de4418724..381f7b2b74ca 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -382,17 +382,22 @@ static void ks_pcie_clear_dbi_mode(struct keystone_pcie *ks_pcie)
->  	} while (val & DBI_CS2);
->  }
->  
-> -static void ks_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
-> +static int ks_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
->  {
->  	u32 val;
->  	u32 num_viewport = ks_pcie->num_viewport;
->  	struct dw_pcie *pci = ks_pcie->pci;
->  	struct dw_pcie_rp *pp = &pci->pp;
-> -	u64 start, end;
-> +	struct resource_entry *ft;
+ #include <asm/byteorder.h>
+ #include <linux/if_ether.h>
++#include <linux/stddef.h>
+ #include <linux/types.h>
 
-s/ft/entry
+ /**
+diff --git a/include/uapi/linux/stddef.h b/include/uapi/linux/stddef.h
+index 2ec6f35cda32..58154117d9b0 100644
+--- a/include/uapi/linux/stddef.h
++++ b/include/uapi/linux/stddef.h
+@@ -55,4 +55,12 @@
+ #define __counted_by(m)
+ #endif
 
-- Mani
++#ifndef __counted_by_le
++#define __counted_by_le(m)
++#endif
++
++#ifndef __counted_by_be
++#define __counted_by_be(m)
++#endif
++
+ #endif /* _UAPI_LINUX_STDDEF_H */
 
->  	struct resource *mem;
-> +	u64 start, end;
->  	int i;
->  
-> -	mem = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM)->res;
-> +	ft = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
-> +	if (!ft)
-> +		return -ENODEV;
-> +
-> +	mem = ft->res;
->  	start = mem->start;
->  	end = mem->end;
->  
-> @@ -403,7 +408,7 @@ static void ks_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
->  	ks_pcie_clear_dbi_mode(ks_pcie);
->  
->  	if (ks_pcie->is_am6)
-> -		return;
-> +		return 0;
->  
->  	val = ilog2(OB_WIN_SIZE);
->  	ks_pcie_app_writel(ks_pcie, OB_SIZE, val);
-> @@ -420,6 +425,8 @@ static void ks_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
->  	val = ks_pcie_app_readl(ks_pcie, CMD_STATUS);
->  	val |= OB_XLAT_EN_VAL;
->  	ks_pcie_app_writel(ks_pcie, CMD_STATUS, val);
-> +
-> +	return 0;
->  }
->  
->  static void __iomem *ks_pcie_other_map_bus(struct pci_bus *bus,
-> @@ -814,7 +821,10 @@ static int __init ks_pcie_host_init(struct dw_pcie_rp *pp)
->  		return ret;
->  
->  	ks_pcie_stop_link(pci);
-> -	ks_pcie_setup_rc_app_regs(ks_pcie);
-> +	ret = ks_pcie_setup_rc_app_regs(ks_pcie);
-> +	if (ret)
-> +		return ret;
-> +
->  	writew(PCI_IO_RANGE_TYPE_32 | (PCI_IO_RANGE_TYPE_32 << 8),
->  			pci->dbi_base + PCI_IO_BASE);
->  
-> -- 
-> 2.30.2
-> 
-> 
+If this is the right path, can these changes be merged into a
+single patch or is it better to add a previous patch to define
+__counted_by{le,be}?
 
--- 
-மணிவண்ணன் சதாசிவம்
+Regards,
+Erick
+
+> Kind regards,
+> 	Sven
 
