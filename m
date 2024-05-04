@@ -1,132 +1,102 @@
-Return-Path: <linux-kernel+bounces-168531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB418BB9B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:17:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A0F8BB9B7
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 215731F217F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 07:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BECFC283305
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 07:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CA16139;
-	Sat,  4 May 2024 07:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E6EFBF0;
+	Sat,  4 May 2024 07:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhB1eTvY"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gADPExCn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981D228EA;
-	Sat,  4 May 2024 07:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4234C79;
+	Sat,  4 May 2024 07:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714807065; cv=none; b=QW4UJDeoEszVW/hXRWiGQq03JM/mrKEmaWn/DOtZku52cygUMOpPMlVIeaiSu8FDQMMC4gMruSY0kcYataWbGb5TAMmE6xaFmz2YnLlQjiD7vicFsaTzsrMBIko3gTuqmd693Qq1oCRSC7slftQit3fYf7RxyEMyf/mk9RmNl54=
+	t=1714807503; cv=none; b=knPmQ6msnO8tWQrNQgGcJRF8gA8/ieys39Pxrq8N1f+J7Ic05xXd3j8ES7PYdFQ3i666li/V/SIkZ9VUW9ZOTPAotKrOi9fyiOkjU1c9d40GCjGs3LdsvyZJuU3FqzbsR3QyhkfaQhL6x9ir8dK/V4YQ8yrrBXFiD3pVBH22ywE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714807065; c=relaxed/simple;
-	bh=ejWxIT2n8p8dZWoM545mizb9Me9EE2+yOLIi4nbVIhk=;
+	s=arc-20240116; t=1714807503; c=relaxed/simple;
+	bh=WdmDyNf2NKYNL8b8araxldj2J5xKr2CLnPlzbU7nol0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NChiG2ynP0+ztIZ94IjWMAJmZiU+hPBBDwTm9keI6Y1Vh9ig22MDnTaXa/kI/duvIZbJpwLPm5/ZCYodKyDK9vsXDUFrwpVUSZ4RpGuajwO3P18yiF/+XtBamRRa8znc80I4rAZZaa9AUF7T6PbZ5xJDzVe/gov9a2vp+fzWs/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhB1eTvY; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so1692195ad.1;
-        Sat, 04 May 2024 00:17:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714807064; x=1715411864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7XC8N3tk53B+3ELEb4uOpOgXhdDIpoi23VgMeUZkbc4=;
-        b=HhB1eTvYPD+ktMHwXFp3GKlF1zSclijHiPwoZC23vftEygD4oayrFNXo7lM0auYl53
-         vdT7JyQ8644W1wciuQdFUAGlvVvKRS/aK/7ZExYpb6ArRrW7fUzEZUaIupCms7pHwX1o
-         GQSSFrXl9y1CPCI8d5Y7t03DrVQlgwsCy/976ZUSJtWS0uBzEEeIgsc7cV4Z5Jb+1uhw
-         tupTKtmqPEIn2O++PukbHZ3KDTB5F5mg6P98IHvJW/2/YNA7TxqV9mJhv5ZXf5BSPkUx
-         IoV96ZI8eOcksdj8wfBEPpFsrX+lM8kufeRs9HPpKzKeb7WUkuZpr7uCQeCap3OX1+X4
-         0Y+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714807064; x=1715411864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7XC8N3tk53B+3ELEb4uOpOgXhdDIpoi23VgMeUZkbc4=;
-        b=phNWQKp/VsBXyUL5I9Dss2Sp8t8dviee8a8ChIuGyelr+gtFJ7wWVeMWq7tncEjv/w
-         8XvA774akYtuiwkSFweId9cl5Efpi//h1tQ/MTnXFcIlWzbTaBwpDD9B076q/o5o7Nxb
-         jnTN7hsUwPChFZSCf/4P4SWyhXCpNcV2zHhT205aayLwcaBDx2KGI/mjZ+RKA1BbD2am
-         BD3aV8MHNWEG30xdVQdsbe1/xLaPWf/uKQtiH7MsIMrBLCIOlzdxIwJUJY+AwEbuDmmN
-         WhYADkFqYL7GgJg2nB2gkDT+k/b64H/XwqzVcddOIiJyrw84FZAsrrJ0JJOvpN896bm6
-         4WXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMtHnZR4ASGujl05UHJIWGDawLGNNe/LwtpTIdfeyS/9JrAmMDgLB8J2GP3wz2p0zC+/+7Qw+fHTScZrHSOkul4FQIMyyMRd1gl3iq
-X-Gm-Message-State: AOJu0YzmTX265orsRCxXqDZ6d5A1v5EzSggBtWu/R7ahHEMz71MvPd6s
-	ohYCaIeZZ1SwZhd35/KvSuzXQ4b09qlZYWm1hd25vHtHypQnQrGdepjPMg==
-X-Google-Smtp-Source: AGHT+IEb8mu9yDKo6GTL0CkxNwJE2by96WT7UiE/qOzFSZ1sKGTGQowxWrGnYBUzMHUIvVAMWGvE8Q==
-X-Received: by 2002:a17:902:f546:b0:1e6:34f9:f730 with SMTP id h6-20020a170902f54600b001e634f9f730mr4855974plf.52.1714807063714;
-        Sat, 04 May 2024 00:17:43 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id t12-20020a170902bc4c00b001e4565a2596sm4420092plz.92.2024.05.04.00.17.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 00:17:42 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 915FB18494A25; Sat, 04 May 2024 14:17:39 +0700 (WIB)
-Date: Sat, 4 May 2024 14:17:39 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Utkarsh Tripathi <utripathi2002@gmail.com>, corbet@lwn.net,
-	akiyks@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH v3] kernel-doc: Added "*" in $type_constants2 to fix
- 'make htmldocs' warning.
-Message-ID: <ZjXhExdIpDu23Y3K@archie.me>
-References: <20240503182650.7761-1-utripathi2002@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RCppYHe/ARV68Gu1tcgejto64CkXb7XcSr5RAauBE2TJ18FTryj4TMPptV+FI3nkcx/MWvYJou9TQYku++1m+/jO6DsPYBsUGQFuq0FVWbzBnqJdJCp+l9oFURbvQB24oOgce5KzD7V75cU1I/cJJqaiShwemd6ljclmda3RhPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gADPExCn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA647C072AA;
+	Sat,  4 May 2024 07:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1714807502;
+	bh=WdmDyNf2NKYNL8b8araxldj2J5xKr2CLnPlzbU7nol0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gADPExCnuVuNsa1mA67lj19b0lFVc6LhsdF4qHJciHwcSoqcksUeVPBvEEbuMlVuu
+	 GkN3u7MmS3g2wrsX0dJGkTZtnptuK/ru56gNLJTR8eLSWKFYUinTxEhXMDLYr+Kedx
+	 O+HDqymWhn3kgO/ZOMR/t2n7yHbidUflf6PazjdM=
+Date: Sat, 4 May 2024 09:24:58 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Jameson Thies <jthies@google.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Benson Leung <bleung@google.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Rajaram Regupathy <rajaram.regupathy@intel.com>,
+	Saranya Gopal <saranya.gopal@intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [v3 1/4] usb: typec: ucsi: Fix null pointer dereference in trace
+Message-ID: <2024050451-stonewall-mouse-4a31@gregkh>
+References: <20240503003920.1482447-2-jthies@google.com>
+ <96d63b0b-3258-4bf6-b75a-06eb4f4253bb@web.de>
+ <CAMFSARdhyWAFWr6qjsabPN6k=sK9LLxOaoSNkVLyTKNE=drSpg@mail.gmail.com>
+ <265db78b-1d69-4b12-a370-2589d8987833@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MK4xn+smwcKRqZrj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240503182650.7761-1-utripathi2002@gmail.com>
+In-Reply-To: <265db78b-1d69-4b12-a370-2589d8987833@web.de>
 
+On Sat, May 04, 2024 at 07:12:49AM +0200, Markus Elfring wrote:
+> > I don't think it is necessary to mention changes to the commit message
+> > in the section below the commit message.
+> 
+> Did you notice that other contributors occasionally share hints about
+> adjustments for parts of commit messages?
+> Will further information presentation become better supported?
 
---MK4xn+smwcKRqZrj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Fri, May 03, 2024 at 11:56:50PM +0530, Utkarsh Tripathi wrote:
-> diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-> index cb1be22afc65..58129b1cf3f4 100755
-> --- a/scripts/kernel-doc
-> +++ b/scripts/kernel-doc
-> @@ -62,7 +62,7 @@ my $anon_struct_union =3D 0;
-> =20
->  # match expressions used to find embedded type information
->  my $type_constant =3D '\b``([^\`]+)``\b';
-> -my $type_constant2 =3D '\%([-_\w]+)';
-> +my $type_constant2 =3D '\%([-_*\w]+)';
->  my $type_func =3D '(\w+)\(\)';
->  my $type_param =3D '\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)';
->  my $type_param_ref =3D '([\!~\*]?)\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)';
->=20
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-The warning gone away, thanks!
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
 
---=20
-An old man doll... just what I always wanted! - Clara
+thanks,
 
---MK4xn+smwcKRqZrj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjXhDwAKCRD2uYlJVVFO
-o751AP9fBDG7Usg1VtPWsrMMKjw89VtmkrfYeE9bjVJCLG5cSwD7Bo12xCxeaprJ
-NJTShYCz1OIAf0ws8jun+m2Qu0buWQ0=
-=zAKi
------END PGP SIGNATURE-----
-
---MK4xn+smwcKRqZrj--
+greg k-h's patch email bot
 
