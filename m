@@ -1,85 +1,59 @@
-Return-Path: <linux-kernel+bounces-168569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1B68BBA45
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:26:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC38BBA46
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037DD282806
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:26:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC754B20953
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835881CF8D;
-	Sat,  4 May 2024 09:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1e/seyg"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB1517BA6;
+	Sat,  4 May 2024 09:26:21 +0000 (UTC)
+Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4474918AEA;
-	Sat,  4 May 2024 09:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC04C17550
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 09:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714814739; cv=none; b=qMaIFijhUqKCMIgEIkxg5ml/hUD/nLrBcZOkxn5cApKbepPKc0wvT1uGw/pEelU7hs6YAH+NUD5d08FGaTnydWDeBfCft7OCCecfKfJbMrhNvYKgN7GSYz/jYc71EnhG/ZHCmAXIg2pQUi0Jt53EVcm0V5p7yKRyyPpUQ3tzGwo=
+	t=1714814781; cv=none; b=c3ZZFLva0SA5K3gkG+FVxoDOPzCz1EqgoyvsCBJeF8cmw85HFIX8K6E5v1pGrRz8yZROSiQIfu9C4vjV6Z0kADYBXRD+QPZz2nO19x1/ccgeAMUrpvHCXn6ucvK9MSiQf+Z9rJA0VDeRcUvbo4q8jKMWWDi8bpFNH/IwbjqdpMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714814739; c=relaxed/simple;
-	bh=JmqBOUqv0pEp2j8Vl0tU2XN/+m58FcCDXRY3FwvbYYU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KkzV/HTOVMD/C5uS9VCskREn/wrCYWCcP9APavdtj6jnZrei+X4s78rk+xjM+sRM5IxoYcX6mmlIZVW5oOhIGfdvoao1Kqo72rjzJwPKphjJFosiTq+0Tt9b6yLtLXE7rvkSjHNwejygYqNBDyGw2G2PzEMNUk2yECQyhBn6JdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1e/seyg; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59a8f0d941so53456666b.2;
-        Sat, 04 May 2024 02:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714814736; x=1715419536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6dDi1shqlNMKuzQzzByJJzGXL/6g55t36MtT1y0ff/Q=;
-        b=m1e/seygBoq8fNiO1lFwMG+yFvnr1fRl4UkCeIKMy+xjediPc10BRWI+I8BAEuDrFW
-         IiqWdvPpIQwJN6j89fNNpB447rVZyjseZRXzKg/I83vyw7cppAAh0HssFm9uXoPVY+uy
-         hMGCrCP+BPkVQXrlqdydtsZclDiWZXjKb1nBTUo1q9ZsrR/4HxK9BCoavDB9ivQp0Evi
-         ZhBjpHiNEcd6sLpdLDt9SVzBIFsldH5Nh5V3Vfv4mqrO2Os6GEmw4C+77cOTQn8OdUzj
-         a0j6F4pWBcNOsNicd4CdVm6erAQA6OGEACf8c4mXI4wg0qA829K/M51HzEilXCTUktnL
-         U4uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714814736; x=1715419536;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6dDi1shqlNMKuzQzzByJJzGXL/6g55t36MtT1y0ff/Q=;
-        b=ZuI+YR+WcwUIvSmlQ2dGOo8mvdPE2PcVP/+8rY4M534G4wvjozEyoOT72RGmticdtF
-         4N6JSCtVgaY8gqipw5uHvAWnXLGhhH5DiEi8I671DACucXcYCQwp81pL6iRUPQp1JCho
-         qREhHEb/eihsIMqaPlxtaebZz9M1dfSqRzjXwG8wTF0OsJ00qYm66W1txzmqXg/vMqW2
-         mvT1T8QdM290xnR8wW2xxVBqFyTVImQSwV6J7aeelRKdQAoA1KNHsHLPKaXOxpbLcC0r
-         6mla4zENXLLLUeDRs6PAbRoneiSyKIVQ4aw234jUNsJnqOFKi/tK1s1P85RvmZnG6ib5
-         B3eA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjW/8346pPy+KxUTRN5uZc4o94GDiLPaGIiIBt3eNCH/K7F23uvOII+zVHQuaBC5fjiXzm//kL8tmWBeNYQoyt3v/pyYjaHBPuz4+l
-X-Gm-Message-State: AOJu0YwE+sGTsVVx7S7Z7dRFxXanxjSf9GYoO05b9f0fklaZ73tGWkUF
-	3RlqXVbn7DZqFw7pgnGFDCHqUOQ74l1kUBoHX15JClGD+NjufxhJMBCOsALEkNI=
-X-Google-Smtp-Source: AGHT+IG0BCogiF1vRODFuxzzsfNseP/BLm5xLWn0pQKsI+b7CSjIr6iRoEOewsOZdZ5i9WslsfI+PA==
-X-Received: by 2002:a17:906:2c07:b0:a58:e86d:40e6 with SMTP id e7-20020a1709062c0700b00a58e86d40e6mr3023516ejh.26.1714814735853;
-        Sat, 04 May 2024 02:25:35 -0700 (PDT)
-Received: from fedora.. (cable-178-148-234-71.dynamic.sbb.rs. [178.148.234.71])
-        by smtp.gmail.com with ESMTPSA id ce3-20020a170906b24300b00a587831c09fsm2740231ejb.186.2024.05.04.02.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 02:25:34 -0700 (PDT)
-From: Aleksa Savic <savicaleksa83@gmail.com>
-To: linux-hwmon@vger.kernel.org
-Cc: Jonas Malaco <jonas@protocubo.io>,
-	Aleksa Savic <savicaleksa83@gmail.com>,
-	Marius Zachmann <mail@mariuszachmann.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] hwmon: (corsair-cpro) Protect ccp->wait_input_report with a spinlock
-Date: Sat,  4 May 2024 11:25:03 +0200
-Message-ID: <20240504092504.24158-4-savicaleksa83@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240504092504.24158-1-savicaleksa83@gmail.com>
-References: <20240504092504.24158-1-savicaleksa83@gmail.com>
+	s=arc-20240116; t=1714814781; c=relaxed/simple;
+	bh=AdDjbW/grP1x1u3VjOS+sOEPGRWpZymJUUHRPXG9+w4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=l31qUwHrQDMVye1qC1GRqsBSd5IWjG4xbzyHrzlldpck+2092S4xG/M/1Y6Gc+Y59eRATRawnr3gTJCUy34CbF+0Zxt90+HLeOqrnn89RFYvtFz9nQaHJcwdL4EHePUzO6v33SwDCbBeJAG9nco2mog8g1Xu1aGT2CZFYdKDoxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.66.195])
+	by sina.com (10.75.12.45) with ESMTP
+	id 6635FF2C00000D24; Sat, 4 May 2024 17:26:06 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 72955031457681
+X-SMAIL-UIID: F6B917177A7A48A99FB77799E769FF11-20240504-172606-1
+From: Hillf Danton <hdanton@sina.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Christian Konig <christian.koenig@amd.com>,
+	minhquangbui99@gmail.com,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Date: Sat,  4 May 2024 17:25:55 +0800
+Message-Id: <20240504092555.2071-1-hdanton@sina.com>
+In-Reply-To: <20240503212428.GY2118490@ZenIV>
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,87 +62,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Through hidraw, userspace can cause a status report to be sent
-from the device. The parsing in ccp_raw_event() may happen in
-parallel to a send_usb_cmd() call (which resets the completion
-for tracking the report) if it's running on a different CPU where
-bottom half interrupts are not disabled.
+On Fri, 3 May 2024 22:24:28 +0100 Al Viro wrote:
+> On Fri, May 03, 2024 at 02:11:30PM -0700, Linus Torvalds wrote:
+> > epoll is a mess, and does various invalid things in the name of
+> > performance.
+> > 
+> > Let's try to rein it in a bit. Something like this, perhaps?
+> 
+> > +/*
+> > + * The ffd.file pointer may be in the process of
+> > + * being torn down due to being closed, but we
+> > + * may not have finished eventpoll_release() yet.
+> > + *
+> > + * Technically, even with the atomic_long_inc_not_zero,
+> > + * the file may have been free'd and then gotten
+> > + * re-allocated to something else (since files are
+> > + * not RCU-delayed, they are SLAB_TYPESAFE_BY_RCU).
+> 
+> Can we get to ep_item_poll(epi, ...) after eventpoll_release_file()
+> got past __ep_remove()?  Because if we can, we have a worse problem -
 
-Add a spinlock around the complete_all() in ccp_raw_event() and
-reinit_completion() in send_usb_cmd() to prevent race issues.
+Nope but mtx can help poll go before remove, see below.
 
-Fixes: 40c3a4454225 ("hwmon: add Corsair Commander Pro driver")
-Signed-off-by: Aleksa Savic <savicaleksa83@gmail.com>
----
- drivers/hwmon/corsair-cpro.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+> epi freed under us.
+> 
+> If not, we couldn't possibly have reached ->release() yet, let
+> alone freeing anything.
 
-diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-index 6ab4d2478b1f..3e63666a61bd 100644
---- a/drivers/hwmon/corsair-cpro.c
-+++ b/drivers/hwmon/corsair-cpro.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
- #include <linux/types.h>
- 
- #define USB_VENDOR_ID_CORSAIR			0x1b1c
-@@ -77,6 +78,8 @@
- struct ccp_device {
- 	struct hid_device *hdev;
- 	struct device *hwmon_dev;
-+	/* For reinitializing the completion below */
-+	spinlock_t wait_input_report_lock;
- 	struct completion wait_input_report;
- 	struct mutex mutex; /* whenever buffer is used, lock before send_usb_cmd */
- 	u8 *cmd_buffer;
-@@ -118,7 +121,15 @@ static int send_usb_cmd(struct ccp_device *ccp, u8 command, u8 byte1, u8 byte2,
- 	ccp->cmd_buffer[2] = byte2;
- 	ccp->cmd_buffer[3] = byte3;
- 
-+	/*
-+	 * Disable raw event parsing for a moment to safely reinitialize the
-+	 * completion. Reinit is done because hidraw could have triggered
-+	 * the raw event parsing and marked the ccp->wait_input_report
-+	 * completion as done.
-+	 */
-+	spin_lock_bh(&ccp->wait_input_report_lock);
- 	reinit_completion(&ccp->wait_input_report);
-+	spin_unlock_bh(&ccp->wait_input_report_lock);
- 
- 	ret = hid_hw_output_report(ccp->hdev, ccp->cmd_buffer, OUT_BUFFER_SIZE);
- 	if (ret < 0)
-@@ -136,11 +147,12 @@ static int ccp_raw_event(struct hid_device *hdev, struct hid_report *report, u8
- 	struct ccp_device *ccp = hid_get_drvdata(hdev);
- 
- 	/* only copy buffer when requested */
--	if (completion_done(&ccp->wait_input_report))
--		return 0;
--
--	memcpy(ccp->buffer, data, min(IN_BUFFER_SIZE, size));
--	complete_all(&ccp->wait_input_report);
-+	spin_lock(&ccp->wait_input_report_lock);
-+	if (!completion_done(&ccp->wait_input_report)) {
-+		memcpy(ccp->buffer, data, min(IN_BUFFER_SIZE, size));
-+		complete_all(&ccp->wait_input_report);
-+	}
-+	spin_unlock(&ccp->wait_input_report_lock);
- 
- 	return 0;
- }
-@@ -515,7 +527,9 @@ static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 
- 	ccp->hdev = hdev;
- 	hid_set_drvdata(hdev, ccp);
-+
- 	mutex_init(&ccp->mutex);
-+	spin_lock_init(&ccp->wait_input_report_lock);
- 	init_completion(&ccp->wait_input_report);
- 
- 	hid_device_io_start(hdev);
--- 
-2.44.0
+Actually poll can see a file with zero f_count, and LT's idea with
+trival change survived the syzbot repro [1].
 
+I think fput currently can race with epoll wrt f_count, and checking
+it in dma-buf is necessary if his idea looks too aggressive.
+
+	wait_epoll()			__fput()
+	do_epoll_wait()			eventpoll_release_file()
+	ep_poll()
+	ep_send_events()
+	mutex_lock(&ep->mtx)
+	ep_item_poll()
+	vfs_poll()
+	mutex_unlock(&ep->mtx)
+					mutex_lock(&ep->mtx)
+					dispose = __ep_remove(ep, epi, true)
+					mutex_unlock(&ep->mtx)
+
+[1] https://lore.kernel.org/lkml/000000000000f1c99d061798ac6d@google.com/
 
