@@ -1,115 +1,188 @@
-Return-Path: <linux-kernel+bounces-168699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E488BBC58
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:14:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53548BBC5F
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D7751C20F82
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1007B1F21F4A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCF03AC0C;
-	Sat,  4 May 2024 14:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E1D3BBE5;
+	Sat,  4 May 2024 14:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im9dCCqL"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oc2a49Dv"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6677523763;
-	Sat,  4 May 2024 14:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BAC39FEB;
+	Sat,  4 May 2024 14:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714832082; cv=none; b=ggeMsLqEe8Cy+ZtBLJF9xZ4IECauVnjHzynLXxWV9tD27Dn94HbHLM48IrikTH7SKqJMQSDRlLb+OjHq672ggK8ZSAgb9g/wCa2Pb3fiy4sZMXee1tCCh4DWmArFTM6LCawIXU2FCK+ECLa9vt/ut1YZNP5GNngqzoVEaQ2o1fg=
+	t=1714832338; cv=none; b=DwvMrb0lWSJkgOlL1RnhKZF/fdBScvuuh7LxUzcFmfcwnddLZ4XFQ7tN29gR7CzUVxLVtsyFp6M+9DIDpXL20jfMyihHfmOH5T5WEmHbtekS6rtlZleDxOm9fqt2gC5p/hYxo644Sr4a8HPQZpKNvb/+6ykvDQJNaxG5Qpw3xW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714832082; c=relaxed/simple;
-	bh=OJnVS/NtFJbYm1maNW1dH8kYU19xbaLLvnyUffiEgnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZDiimB+mPz72JYe8+4qR+m8c+sxWk/zWUUANJQbEi/kpOVrKjKYSJmhK4R/b4EuvDQfM5vaE/tb2nnAKkNTIs65m+Ac0jW7XZbDsJwoWCW52InSMnZzb0u7dZIKF58ETl5Hb6mOKsFfHBRdvqKmtWspsC6xmEUUjVKltJ9NpPJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=im9dCCqL; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6edc61d0ff6so548639b3a.2;
-        Sat, 04 May 2024 07:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714832079; x=1715436879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=z92u8CiyGAKG3cIL0Enz9SQJzNtbEGb8aQGYpev0YAg=;
-        b=im9dCCqLsLkm2TbM58QKLboZB/VSnf0Te4GyBv/Cl2N7B5AL+8JMoQK0NYY55R0Drd
-         khMK0MxkaznhXLr8NHfqmhBwPi7eDCJP78dZ+KlajbYoaEsXcavzevU2hXuVdAWabNZg
-         I43nc+xy3W+DYAZb+V7WYA0c452DS4nnPd81Z2N+OUDDH6X0SY9gQkNhULlCNrTjfj5e
-         RCcjW4+JFPlAAxrP/GeR11EacpGqN5dsBps973wT0sNYP1NZgx9QJlxLEfLpzSQSEZvu
-         CA78KOGxVfijXvQTmTuj2UbFEPMV80yhkt21XQJXJk0rIZyYsgUq5vgGgWL7mCmSBLLr
-         eNzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714832079; x=1715436879;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z92u8CiyGAKG3cIL0Enz9SQJzNtbEGb8aQGYpev0YAg=;
-        b=ITt3obgRDmP7Tfm5R8ZCHEPhDmc77GRRI8dCJThWAlIHYvT8Yn5gG3VlctV809XS4f
-         4cE5Iwv6pn4Z0e8qH3WmCbyOAuokjO5bbbCViTaJGCDBSnx5c1FlN979QsNL0RFieMGo
-         f4v9dQSzrg53l17vqqVHSvVHLnqWk9NkwRnqRno5bBfoOott4CxcPnTqUNTPf5ZW3Ovq
-         hNm8zqiVlFtO4L01Y4QPDwBPe/uQTR3WCJaLAIz92IU+imkBqJiGMSDkjnYSUni744hX
-         zKURRrsjIe7J8oCHxB0o6zgHBA8ES9MLMZAVk5j9Ot4lvI8jnvcsJshVnrr4aaq5mygN
-         +RiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPHnw+Vqzdu7zMQqI0hUdEq+RpRDHm1EOTUF8wRuYDRh9tVAr1QNX8goJoHOQumSAf0jrVVGMnMyC+qugy7eG/WL7+lB1h3fUmQMiU
-X-Gm-Message-State: AOJu0YwNhKjr8sYEPtZbqIV2PSRHSOcPiXg5bwyRKaGlcRgpVBUdQL0B
-	yesojsEv3QKxtfP66i/9L0Hm81xt9mEBr8HsuEAEK182YN80TX2E
-X-Google-Smtp-Source: AGHT+IH56yTsJEv3YJNgnPDk/+mavE1hJ6ZNIbPKjHfl6oQR0WJgK6h1puW6GCW6lEFg1oy7IC+arQ==
-X-Received: by 2002:a05:6a00:ac8:b0:6ec:f097:1987 with SMTP id c8-20020a056a000ac800b006ecf0971987mr6285026pfl.31.1714832079522;
-        Sat, 04 May 2024 07:14:39 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h3-20020a635303000000b0061c3373e01fsm3465432pgb.48.2024.05.04.07.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 07:14:38 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-usb@vger.kernel.org,
+	s=arc-20240116; t=1714832338; c=relaxed/simple;
+	bh=w6bn/4no8NMVEJqPP561BcxXipVz/9y/dItL/1UBPSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=szivVnzZ6f1pzVAPUv2OItJDKGjGHxGtanoKnuNlV/auFSkWQvJj72/Bg9lif6tJAp/Ll13MWSQaw2MLaZMEdTH6bgWhO+lSBMZpSXB7LHBD5C0Px9vuC/03iI+tjCRkyWgxttUjXdhFrEkGOBv65xNnyFQlxCPd1HFGFZ+uOXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oc2a49Dv; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 85A2D33D;
+	Sat,  4 May 2024 16:17:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1714832273;
+	bh=w6bn/4no8NMVEJqPP561BcxXipVz/9y/dItL/1UBPSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oc2a49DvYCMivQW8QKuerCPDE3NB3M4O9gQMO9h7ew1S3EyQGPeuVqDZMxOQ0Rhx8
+	 noPhHVWfaI4WgcUwRiPdTUdxX6QxUwk259ygX79+BNPafprI95tRigE5Hftkcr53OA
+	 fLFvCGMtvo6Bbhyh2FDfgLBjJcV+gwxbyscJXnXg=
+Date: Sat, 4 May 2024 17:18:45 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Julien Massot <julien.massot@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
+	Dan Scally <djrscally@gmail.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Eugen Hristev <eugen.hristev@collabora.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Maxime Ripard <mripard@kernel.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Robert Foss <rfoss@kernel.org>,
+	Todor Tomov <todor.too@gmail.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Yong Deng <yong.deng@magewell.com>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	Benoit Parrot <bparrot@ti.com>, Jai Luthra <j-luthra@ti.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michal Simek <michal.simek@amd.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] MAINTAINERS: Remove {ehci,uhci}-platform.c from ARM/VT8500 entry
-Date: Sat,  4 May 2024 07:14:36 -0700
-Message-Id: <20240504141436.647782-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.39.2
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-staging@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 0/2] Introduce v4l2_async_nf_unregister_cleanup
+Message-ID: <20240504141845.GC24548@pendragon.ideasonboard.com>
+References: <20240502-master-v1-0-8bd109c6a3ba@collabora.com>
+ <20240502155626.GD15807@pendragon.ideasonboard.com>
+ <ZjO46Uo_tVcRTdA0@kekkonen.localdomain>
+ <20240502160830.GB11443@pendragon.ideasonboard.com>
+ <ZjO-JDBdHXVLbz5H@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZjO-JDBdHXVLbz5H@kekkonen.localdomain>
 
-ARM/VT8500 is marked as Orphan. It includes ehci-platform.c and
-uhci-platform.c in its file list, even though uhci-platform.c is included
-from uhci-hcd.c and ehci-platform.c is used by several platforms.
-Listing those files as part of an orphan platform does not add value,
-even more so since they are marked as supported as part of generic ehci
-and uhci support. Drop the files from the ARM/VT8500 entry.
+On Thu, May 02, 2024 at 04:24:04PM +0000, Sakari Ailus wrote:
+> On Thu, May 02, 2024 at 07:08:30PM +0300, Laurent Pinchart wrote:
+> > On Thu, May 02, 2024 at 04:01:45PM +0000, Sakari Ailus wrote:
+> > > On Thu, May 02, 2024 at 06:56:26PM +0300, Laurent Pinchart wrote:
+> > > > On Thu, May 02, 2024 at 05:22:20PM +0200, Julien Massot wrote:
+> > > > > Many drivers has
+> > > > >   v4l2_async_nf_unregister(&notifier);
+> > > > >   v4l2_async_nf_cleanup(&notifier);
+> > > > > 
+> > > > > Introduce a helper function to call both functions in one line.
+> > > > 
+> > > > Does this really go in the right direction ? For other objects (video
+> > > > devices, media devices, ...), the unregistration should be done at
+> > > > .remove() time, and the cleanup at .release() time (the operation called
+> > > > when the last reference to the object is released). This is needed to
+> > > > ensure proper lifetime management of the objects, and avoid a
+> > > > use-after-free for objects that can be reached from userspace.
+> > > > 
+> > > > It could be argued that the notifier isn't exposed to userspace, but can
+> > > > we guarantee that no driver will have a need to access the notifier in a
+> > > > code path triggered by a userspace operation ? I think it would be safer
+> > > > to adopt the same split for the nofifier unregistration and cleanup. In
+> > > > my opinion using the same rule across different APIs also make it easier
+> > > > for driver authors and for reviewers to get it right.
+> > > > 
+> > > > As shown by your series, lots of drivers call v4l2_async_nf_cleanup()
+> > > > and .remove() time instead of .release(). That's because most drivers
+> > > > get lifetime management wrong and don't even implement .release().
+> > > > That's something Sakari is addressing with ongoing work. This patch
+> > > > series seems to go in the opposite direction.
+> > > 
+> > > This still avoids the driver authors feeling they need to implement wrapper
+> > > functions for v4l2_async_nf_{unregister,cleanup}. I'd be in favour merging
+> > > this.
+> > > 
+> > > I don't see this getting in the way of adding use counts as the code will
+> > > need to be changed in any case.
+> > 
+> > Fixing the lifetime issues would essentially revert 2/2 and move the
+> > v4l2_async_nf_cleanup() call to .remove(). I don't think providing a
+> > helper that forces the cleanup at .remove() time is a good idea, it
+> > gives a false sense of doing things right to drivers. This is the same
+> > reason why devm_kzalloc() is so harmful, it gave the wrong message, and
+> > created (or participated in) all those lifetime issues.
+> 
+> I still prefer having devm_*alloc() functions than having the drivers open
+> coding the same -- with the same result. The frameworks won't enable doing
+> this right at the moment and I don't think drivers (or us!) should be
+> penalised for that.
 
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- MAINTAINERS | 2 --
- 1 file changed, 2 deletions(-)
+I don't really see where the penalty is. What's the urgency to switch
+from calling v4l2_async_nf_unregister() and v4l2_async_nf_cleanup() to a
+helper that we know goes in the wrong direction ?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ec0284125e8f..5374fdfce8c4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3022,8 +3022,6 @@ F:	drivers/mmc/host/wmt-sdmmc.c
- F:	drivers/pwm/pwm-vt8500.c
- F:	drivers/rtc/rtc-vt8500.c
- F:	drivers/tty/serial/vt8500_serial.c
--F:	drivers/usb/host/ehci-platform.c
--F:	drivers/usb/host/uhci-platform.c
- F:	drivers/video/fbdev/vt8500lcdfb.*
- F:	drivers/video/fbdev/wm8505fb*
- F:	drivers/video/fbdev/wmt_ge_rops.*
+> The driver authors will only change what they do, with
+> these patches or without, when told so. But we don't really have an
+> alternative today.
+
+There's already a .release() callback that can be used, and some drivers
+use it.
+
+> A similar situation exists with clk_unprepare() and clk_disable().
+
 -- 
-2.39.2
+Regards,
 
+Laurent Pinchart
 
