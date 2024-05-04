@@ -1,180 +1,228 @@
-Return-Path: <linux-kernel+bounces-168622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093E08BBAED
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 934D08BBAF1
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CFCE1C20EAD
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:49:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5E271C211CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489DB2C19E;
-	Sat,  4 May 2024 11:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26784210EC;
+	Sat,  4 May 2024 11:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGftKBHm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJyjbFcy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604F9225D0;
-	Sat,  4 May 2024 11:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504321CFB2;
+	Sat,  4 May 2024 11:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714823318; cv=none; b=XEoWOIgyBWw7ocm3M9orYUnGbUg6iFPyN2HUdQst65Bacq3+XwZoJv8TSHYBeLCFaIxNSfVyztax5COlIxKae5yu+3PWBV8f8Ehlbwuf31MyjwA0ByLUsM40U9vcL+DRl/qF0nwfnLzbA0J07G3rSXkwmZ54gQHfMTntI9GwHxw=
+	t=1714823391; cv=none; b=J0UkRUoAOSdoz2+PoAg2FOgCHnUI9ctRhsAO1ATjQh/476xggFVguG1RnQ9Cm/2OshV1nDq/jY1gB8051stl4wwTCQfuNzMF9qp4bEDR0figS+DVA+OSEck4tPll4sf+DR/Yx4MP/lumEiPLOcKea7sYqxzYXH1egXS6ejM1HZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714823318; c=relaxed/simple;
-	bh=voII0mkTi7kIEO2eH4xj6nNppqEkcLoZiSxAxpXu/vI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sMeFlFa48uAwucFUSYDWtkr2fM6oKKhztXhNZ/CYCLqlLpckmcQquE169RzbT/vJXWcYpBoZ6DRiB+f4LcRTi1GZ2vphqHMhYSlIa9W/HHmTTtuTOJxJbtMmMhyCtqZaJsnXy1+86kCFY7jkMwKIgnkK9iyYORKUPXK3Vj8paEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGftKBHm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3BCC072AA;
-	Sat,  4 May 2024 11:48:31 +0000 (UTC)
+	s=arc-20240116; t=1714823391; c=relaxed/simple;
+	bh=9un71h1CnJjVt8tBJvPZwVsdh4JYlqrTHLazMZbjLiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CC+nyhBdFMkwF7ixhyeBK58s5bZIHx4eqH411W1k8aqkwKWK6MuN1SS/Ifi2dTsULLVGeq0o4GaoGO0MOrxFlGLMl6dSO8aJqHyxRe+kTmXl+XqrXTXrpJe2KihJejxdBFpUTJCm40b8Is6BOcKAwCP8divXgotlT+BQM/Xf0eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJyjbFcy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0F5C072AA;
+	Sat,  4 May 2024 11:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714823317;
-	bh=voII0mkTi7kIEO2eH4xj6nNppqEkcLoZiSxAxpXu/vI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oGftKBHmR06VgOyEmJvGDxbSOSE8BJFfHLHlssNG6WSgEYd8KJQb7Cyt+v5azepUn
-	 Of5SVZKRUSf+c38gv7EfoohXUmo5z92P9max8v9/fYXz8Bj2vpBUDbYw78ZXK/yIF4
-	 fhrb8mipfJ9HIFmlkGiDcXGBEqU/skZq53fHSebIXGXSdygZQfvr7oifiWXEWmIwNP
-	 AbPNGomnr/OmINjq2VDoIaxpQznJaE1oRlhm8etsweOIneZ2wf6Mwbnqoib/aDa+a/
-	 6agoJh3cERHm5SqKuczpk5t0hDUCtz0cl2qt+jWpUeAetdG/Q8f8LKOBLUVJ+UMAjl
-	 JpaNm//u+oZnQ==
-Message-ID: <560df72c-ed3e-4eab-b9cd-6af1414c2663@kernel.org>
-Date: Sat, 4 May 2024 13:48:29 +0200
+	s=k20201202; t=1714823390;
+	bh=9un71h1CnJjVt8tBJvPZwVsdh4JYlqrTHLazMZbjLiQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aJyjbFcyaMaYDHOCIrP+p0a1e9+lsllBaB4bTlmUsb16OYh9zOhSy1lEtQT2GacEF
+	 TH4a/scM8ke5sv3kru8wTVAR67jXP4pxpzWmuHzF+uPgJWjbB0ykhoAIqeFF9/IwLM
+	 DmIVrZtQ0lIiJaF3Vrt9eQJz1dU+w4p6gctrGF3pc+AV0cfGF3AaxbD2S0zQ6Hhwq4
+	 y4jgo2K3h4kc8J03SL8FCRUu/RxIj/zHRcNj3O3WhjzfbRWjwK+1iTKP3X+/uI75XC
+	 qa+P7Mupl9WOFKgMd9t6GK15eeSuEp+OjCLtpK86H2WXFg+/pgX2OZy9prGEy04Uwe
+	 9AK7zNI79c18Q==
+Date: Sat, 4 May 2024 12:49:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Danila Tikhonov
+ <danila@jiaxyga.com>
+Subject: Re: [PATCH 1/2] iio: imu: bmi160: add support for bmi120
+Message-ID: <20240504124939.5ba414ec@jic23-huawei>
+In-Reply-To: <20240504-bmi120-v1-1-478470a85058@gmail.com>
+References: <20240504-bmi120-v1-0-478470a85058@gmail.com>
+	<20240504-bmi120-v1-1-478470a85058@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: phy: samsung,usb3-drd-phy: add gs101
- compatible
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, lee@kernel.org
-References: <20240501-usb-phy-gs101-v2-0-ed9f14a1bd6d@linaro.org>
- <20240501-usb-phy-gs101-v2-1-ed9f14a1bd6d@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240501-usb-phy-gs101-v2-1-ed9f14a1bd6d@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On 01/05/2024 11:19, André Draszik wrote:
-> Add a dedicated google,gs101-usb31drd-phy compatible for Google Tensor
-> gs101 SoC.
-> 
-> It needs additional clocks enabled for register access, and additional
-> memory regions (PCS & PMA) are required for successful configuration.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
+On Sat, 04 May 2024 01:45:24 +0200
+Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com> wrote:
+
+> From: Danila Tikhonov <danila@jiaxyga.com>
+>=20
+> Add support for bmi120 low power variant of bmi160.
+>=20
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> Co-developed-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
+
+Hi. A comment inline that is more about us doing things wrong
+in the past than the changes you are making.  However, I would
+like to fix that up whilst we are here.
+
+Thanks,
+
+Jonathan
+
 > ---
-> v2: avoid having nested else/if, and instead change the existing 'else'
->     to explicitly state the platforms using 'if'
-> ---
->  .../bindings/phy/samsung,usb3-drd-phy.yaml         | 61 +++++++++++++++++++++-
->  1 file changed, 59 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> index 452e584d9812..f99f055ec704 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> @@ -25,6 +25,7 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - google,gs101-usb31drd-phy
->        - samsung,exynos5250-usbdrd-phy
->        - samsung,exynos5420-usbdrd-phy
->        - samsung,exynos5433-usbdrd-phy
-> @@ -57,7 +58,18 @@ properties:
->        the OF graph bindings specified.
->  
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    items:
-> +      - description: PHY register base address.
-> +      - description: PCS register base address.
-> +      - description: PMA register base address.
-
-Drop redundant parts ("register base address.")... which leaves
-absolutely no information comparing to reg-names. Please provide
-description.
-
+>  drivers/iio/imu/bmi160/bmi160_core.c | 24 ++++++++++++++++++++----
+>  drivers/iio/imu/bmi160/bmi160_i2c.c  |  3 +++
+>  drivers/iio/imu/bmi160/bmi160_spi.c  |  3 +++
+>  3 files changed, 26 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/iio/imu/bmi160/bmi160_core.c b/drivers/iio/imu/bmi16=
+0/bmi160_core.c
+> index a77f1a8348ff..015801ad4d9a 100644
+> --- a/drivers/iio/imu/bmi160/bmi160_core.c
+> +++ b/drivers/iio/imu/bmi160/bmi160_core.c
+> @@ -26,6 +26,7 @@
+>  #include "bmi160.h"
+> =20
+>  #define BMI160_REG_CHIP_ID	0x00
+> +#define BMI120_CHIP_ID_VAL	0xD3
+>  #define BMI160_CHIP_ID_VAL	0xD1
+> =20
+>  #define BMI160_REG_PMU_STATUS	0x03
+> @@ -112,6 +113,11 @@
+>  	.ext_info =3D bmi160_ext_info,				\
+>  }
+> =20
+> +const u8 bmi_chip_ids[] =3D {
+> +	BMI120_CHIP_ID_VAL,
+> +	BMI160_CHIP_ID_VAL,
+> +};
 > +
-> +  reg-names:
-> +    minItems: 1
-> +    items:
-> +      - const: phy
-> +      - const: pcs
-> +      - const: pma
->  
->    samsung,pmu-syscon:
->      $ref: /schemas/types.yaml#/definitions/phandle
-> @@ -81,6 +93,34 @@ required:
->    - samsung,pmu-syscon
+>  /* scan indexes follow DATA register order */
+>  enum bmi160_scan_axis {
+>  	BMI160_SCAN_EXT_MAGN_X =3D 0,
+> @@ -704,6 +710,16 @@ static int bmi160_setup_irq(struct iio_dev *indio_de=
+v, int irq,
+>  	return bmi160_probe_trigger(indio_dev, irq, irq_type);
+>  }
+> =20
+> +static int bmi160_check_chip_id(const u8 chip_id)
+> +{
+> +	for (int i =3D 0; i < ARRAY_SIZE(bmi_chip_ids); i++) {
+> +		if (chip_id =3D=3D bmi_chip_ids[i])
+> +			return 0;
 
+This falls into a miss design issue on the original driver based on
+my understanding of what we should do with chip IDs back then.
 
-Best regards,
-Krzysztof
+My current thinking after discussing with DT maintainers is we should
+at most print a warning if we fail to match an ID.
+
+The intent being to allow for cases exactly like this one to work with
+an older kernel if a fallback compatible is in use.
+
+So whilst you are here, please could you relax the below error path
+to just do a dev_warn() or similar and return 0 anyway.
+
+Or better yet, push that warning print to the caller...
+
+> +	}
+> +
+> +	return -ENODEV;
+> +}
+> +
+>  static int bmi160_chip_init(struct bmi160_data *data, bool use_spi)
+>  {
+>  	int ret;
+> @@ -737,10 +753,10 @@ static int bmi160_chip_init(struct bmi160_data *dat=
+a, bool use_spi)
+>  		dev_err(dev, "Error reading chip id\n");
+>  		goto disable_regulator;
+>  	}
+> -	if (val !=3D BMI160_CHIP_ID_VAL) {
+> -		dev_err(dev, "Wrong chip id, got %x expected %x\n",
+> -			val, BMI160_CHIP_ID_VAL);
+> -		ret =3D -ENODEV;
+> +
+> +	ret =3D bmi160_check_chip_id(val);
+> +	if (ret) {
+> +		dev_err(dev, "Wrong chip id %x\n", val);
+>  		goto disable_regulator;
+
+For reasons given above, whilst we are hear I'd like this to change to dev_=
+warn() and
+carry on as if we did have a match.
+
+>  	}
+> =20
+> diff --git a/drivers/iio/imu/bmi160/bmi160_i2c.c b/drivers/iio/imu/bmi160=
+/bmi160_i2c.c
+> index a081305254db..d0ec5301ad9a 100644
+> --- a/drivers/iio/imu/bmi160/bmi160_i2c.c
+> +++ b/drivers/iio/imu/bmi160/bmi160_i2c.c
+> @@ -37,6 +37,7 @@ static int bmi160_i2c_probe(struct i2c_client *client)
+>  }
+> =20
+>  static const struct i2c_device_id bmi160_i2c_id[] =3D {
+> +	{"bmi120", 0},
+>  	{"bmi160", 0},
+>  	{}
+>  };
+> @@ -52,12 +53,14 @@ static const struct acpi_device_id bmi160_acpi_match[=
+] =3D {
+>  	 * the affected devices are from 2021/2022.
+>  	 */
+>  	{"10EC5280", 0},
+> +	{"BMI0120", 0},
+>  	{"BMI0160", 0},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(acpi, bmi160_acpi_match);
+> =20
+>  static const struct of_device_id bmi160_of_match[] =3D {
+> +	{ .compatible =3D "bosch,bmi120" },
+>  	{ .compatible =3D "bosch,bmi160" },
+>  	{ },
+>  };
+> diff --git a/drivers/iio/imu/bmi160/bmi160_spi.c b/drivers/iio/imu/bmi160=
+/bmi160_spi.c
+> index 8b573ea99af2..9f40500132f7 100644
+> --- a/drivers/iio/imu/bmi160/bmi160_spi.c
+> +++ b/drivers/iio/imu/bmi160/bmi160_spi.c
+> @@ -34,18 +34,21 @@ static int bmi160_spi_probe(struct spi_device *spi)
+>  }
+> =20
+>  static const struct spi_device_id bmi160_spi_id[] =3D {
+> +	{"bmi120", 0},
+>  	{"bmi160", 0},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(spi, bmi160_spi_id);
+> =20
+>  static const struct acpi_device_id bmi160_acpi_match[] =3D {
+> +	{"BMI0120", 0},
+>  	{"BMI0160", 0},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(acpi, bmi160_acpi_match);
+> =20
+>  static const struct of_device_id bmi160_of_match[] =3D {
+> +	{ .compatible =3D "bosch,bmi120" },
+>  	{ .compatible =3D "bosch,bmi160" },
+>  	{ },
+>  };
+>=20
 
 
