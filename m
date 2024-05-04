@@ -1,229 +1,166 @@
-Return-Path: <linux-kernel+bounces-168782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9127D8BBD9C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:27:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48FF8BBD9E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464FB2811A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A904B1C20C33
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B674432;
-	Sat,  4 May 2024 18:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B11A7318A;
+	Sat,  4 May 2024 18:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdUNsydj"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNlCvUbr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1BA11711;
-	Sat,  4 May 2024 18:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EBA77F08;
+	Sat,  4 May 2024 18:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714847214; cv=none; b=ECBdDr0XvOz/h4EE8rPTuh2IA9jRk3zZ4OQRQogVIkl8HbaWkEfpx+p5hJN/Z8QCnGO2DzuecKLtn8MI1qYyqNMZiOpgV/2v2Zoi0Xxrz1Zkbb6SmldmhuIb6AM9X8hc8O4RgD2RIQq3fwI1doOGLwJ14RizFwh8n1BL2YBZkUc=
+	t=1714847222; cv=none; b=Nhj3hNO0nkU0NLfHtwEbtl2YL7wYk6QA4dORd0q/L0IsNpM56Z7930xD+vt5S0W+TfPMSAp9GNLa36pU10FwCdUfFofvLBMooXm0C4KGkYIfuaSS0L7mSTzJZuSZlXxkc0vNA2HZWh2BwNNsyDXkxYvBDISMDp/X7fm7eXh7Ydg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714847214; c=relaxed/simple;
-	bh=lKT+dJGRVa9nO+Whcn2AOhSg0sUWKwZyVQKy1RwKXlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eUAa8zL+EQambCipIiKWJV3PhJ73/z9Y12XOawyrrggvvVsQLVjtp4/oYez+lW+w39sd7JR7I3o/u/XVPr/5sai8uToSa3lg3vhYpQGoJlizz20WH67ataBe9oIq3yjB6lVF0Wfp5F7AwWRWk91OO9kzJFBr8BrBh/Ax6dGkAW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LdUNsydj; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51ab4ee9df8so849139e87.1;
-        Sat, 04 May 2024 11:26:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714847210; x=1715452010; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zoaahDx30Yjm+Yu/cdeLoE3Gay/twrbht60gp9bVA6o=;
-        b=LdUNsydjK9b2tPTre1vJmUl06JI806U3XPYWLciDtgIccA26a4z9C3GgDtVjrcGAl1
-         kel7Z1iH/ZxciDYnZaQNwVTCcZuMLGX5ueQ+lEzpLmGFSb1rpQSPO8NxuXVzlKhXWQlA
-         XDrxWNXT3FBwX1T+gHIkjsQIG1+qhO7TIL14XCQFIn2fTJFN8EtiUbA2yhDke23TmFWN
-         RX95lpPCeUqJu6YLSAirVXW+sVz7Ch6jl5ARO/1T3vYoOhMtOtX/g7kaYBq3k1TDfbZH
-         w7R8nn6doQxR3q6OEJgZN9cwn8CJW9T/xG2457TqAICudlNxF1uD1Nv9AWKNijttMD9E
-         YDjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714847210; x=1715452010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zoaahDx30Yjm+Yu/cdeLoE3Gay/twrbht60gp9bVA6o=;
-        b=ekAizl0fR1l9KD05tma48HPtX9lBgAS+i1IyMC68lc9b5fBhkUWudM3phBp6ed/11Y
-         iL2NpItGMi717inpnntSs0XLDMj0W+DebFcUbzcHze5oSe8T0BaF60xcaYdWs9hZBG4X
-         ObpzNDkDrsChGdwrFbB94Vef4XbKT6cltuetc2toC2uQpfWhHTSadmsXTMow0fxCFGTP
-         xvMxeQ/Qs0nrH/NOmV3pOEWX7gVI+W75J/NWBZHVZCo0iajdZmzf7wOU9AS+8LVdaFFF
-         Xt+KbZ9WWXzMvkVw0oKzPhyEiDyW3eEVJBIjWRQvNw1tLd/m1eVcsxTxBQdVMh+ZgdpE
-         FBKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAf9YVC9KudX/PeOwJItqq5Cts4Cn7D/GngSqevnrch8sZgm1774ZZYjcVVb+6byTtUbhnQ5rFy2FAIkic3Ub/O8++d2OIERSuUlUL/k1c03t+t5dSP+MXeiYDlDDTfsYA6e/0LnJ1Uis=
-X-Gm-Message-State: AOJu0YzfbOqvBXEllgFRR9EH9cfEfNagLW9XN+i474BpGPNFmxdXjSfq
-	WyK1uUcmtvw59iV9sJrV2wuyPUx7XMv8pUaWZpTTmqSAaiy0tYp2J/QZAf6sg0Co+2YL35f7F5Z
-	BIZMdyfmarhV7nBBAOXCLwUtMHGA=
-X-Google-Smtp-Source: AGHT+IHi4hynLsRFJw62K7MVajcMudTrVZKNnD2uIBnw0tn9COIwbkXGGd2mjhNGSqG1Wz0p0GK29VoLq9d07Y7kVa4=
-X-Received: by 2002:a05:6512:131d:b0:51c:f21c:518f with SMTP id
- x29-20020a056512131d00b0051cf21c518fmr4921496lfu.12.1714847209888; Sat, 04
- May 2024 11:26:49 -0700 (PDT)
+	s=arc-20240116; t=1714847222; c=relaxed/simple;
+	bh=T8RL3GJ2WYtqHOh0klj9cA7pEI84E1fR8OclwOfdXAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8YSy5xktHBSiTW6PA25zPkWQt6wjdEwl8gvbtC1GT+F/dvH1Psv3gf9sL99l+GBgTVyfbu2k8YbKrwikAWgtxKl7b2T+4wzbUoPjg0rzoVO60Aui9mqqJHNraflLineXzil3G7Pa0aJvgyxpHLD4iF1l1ZxwURHUcLuOkrIOFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNlCvUbr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF97C072AA;
+	Sat,  4 May 2024 18:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714847222;
+	bh=T8RL3GJ2WYtqHOh0klj9cA7pEI84E1fR8OclwOfdXAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RNlCvUbrXvpZHxaA4dRj5dKMw3aulDKkFCI3qfiKbUZc21tH9gKQSivWi1Pb6O/Zb
+	 slz6pe8aXO5u4BVB+Gws6jsgCWiTn0ls1EPGTn5yzBiC+lOfwXlaH6a+jaWYCX6eDg
+	 681eQZVh4AajR/Ly6IGAW9feldHVpVdpcexgHnsVKWK4OfLXE+hyqOLQCwSPedVT2z
+	 SrcqB2x0oj8rraScmtK/VkCR4oWmirR/6rvvQo3tkpCp1Ltfqr8xUf9VAbJc5+e+d6
+	 qFsYO7d5F/7jAupWZkIR08ayKubZYYsy7OEEJTevZexojOS9T5/o69jYcuFGPt37h1
+	 h+9HSNBU6DX/w==
+Date: Sat, 4 May 2024 15:26:58 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 4/6] perf annotate-data: Check memory access with two
+ registers
+Message-ID: <ZjZ98gLSmr0qXih2@x1>
+References: <20240502060011.1838090-1-namhyung@kernel.org>
+ <20240502060011.1838090-5-namhyung@kernel.org>
+ <ZjOdkHraWXZIuSy_@x1>
+ <CAM9d7cg_YL1x8YfJ5+7+o+0dccFJJxUye8L_FLrgdGeAh81LBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000003002be06179e2f61@google.com>
-In-Reply-To: <0000000000003002be06179e2f61@google.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sun, 5 May 2024 03:26:33 +0900
-Message-ID: <CAKFNMo=EA9GHn8LehR8kbgs+z92G5v=FCmTcafwjtnV3+T3AOA@mail.gmail.com>
-Subject: Re: [syzbot] [nilfs?] kernel BUG in __block_write_begin_int (2)
-To: syzbot <syzbot+d3abed1ad3d367fa2627@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM9d7cg_YL1x8YfJ5+7+o+0dccFJJxUye8L_FLrgdGeAh81LBA@mail.gmail.com>
 
-On Sat, May 4, 2024 at 7:20=E2=80=AFPM syzbot wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    9e4bc4bcae01 Merge tag 'nfs-for-6.9-2' of git://git.linux=
--..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D12f2ae8718000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D3714fc09f933e=
-505
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd3abed1ad3d367f=
-a2627
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D150c697f180=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D140de53718000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/b98a742ff5ed/dis=
-k-9e4bc4bc.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/207a8191df7c/vmlinu=
-x-9e4bc4bc.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/7dd86c3ad0ba/b=
-zImage-9e4bc4bc.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/d35001c4b7=
-48/mount_0.gz
->
-> Bisection is inconclusive: the issue happens on the oldest tested release=
-.
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D15526d3718=
-0000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D17526d3718=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D13526d3718000=
-0
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+d3abed1ad3d367fa2627@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> kernel BUG at fs/buffer.c:2083!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 0 PID: 5084 Comm: syz-executor283 Not tainted 6.9.0-rc6-syzkaller-00=
-012-g9e4bc4bcae01 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 03/27/2024
-> RIP: 0010:__block_write_begin_int+0x19a7/0x1a70 fs/buffer.c:2083
-> Code: 31 ff e8 ac 35 78 ff 48 89 d8 48 25 ff 0f 00 00 74 27 e8 bc 30 78 f=
-f e9 c6 e7 ff ff e8 b2 30 78 ff 90 0f 0b e8 aa 30 78 ff 90 <0f> 0b e8 a2 30=
- 78 ff 90 0f 0b e8 ca 5d 62 09 48 8b 5c 24 08 48 89
-> RSP: 0018:ffffc90003327760 EFLAGS: 00010293
-> RAX: ffffffff821ddf06 RBX: 0000000000007b54 RCX: ffff88802eff3c00
-> RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000007b54
-> RBP: ffffc900033278c8 R08: ffffffff821dc733 R09: 1ffffd400006f810
-> R10: dffffc0000000000 R11: fffff9400006f811 R12: 00fff0000000920d
-> R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000007b54
-> FS:  000055556494d480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055838a10d7f0 CR3: 0000000078508000 CR4: 0000000000350ef0
-> Call Trace:
->  <TASK>
->  nilfs_prepare_chunk fs/nilfs2/dir.c:86 [inline]
->  nilfs_set_link+0xc5/0x2a0 fs/nilfs2/dir.c:411
->  nilfs_rename+0x5b2/0xaf0 fs/nilfs2/namei.c:416
->  vfs_rename+0xbdd/0xf00 fs/namei.c:4880
->  do_renameat2+0xd94/0x13f0 fs/namei.c:5037
->  __do_sys_rename fs/namei.c:5084 [inline]
->  __se_sys_rename fs/namei.c:5082 [inline]
->  __x64_sys_rename+0x86/0xa0 fs/namei.c:5082
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fa292c67f99
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd9d3b0198 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa292c67f99
-> RDX: 00007fa292c67f99 RSI: 0000000020000040 RDI: 0000000020000180
-> RBP: 0000000000000000 R08: 00007ffd9d3b01d0 R09: 00007ffd9d3b01d0
-> R10: 0000000000000f69 R11: 0000000000000246 R12: 00007ffd9d3b01d0
-> R13: 00007ffd9d3b0458 R14: 431bde82d7b634db R15: 00007fa292cb103b
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__block_write_begin_int+0x19a7/0x1a70 fs/buffer.c:2083
-> Code: 31 ff e8 ac 35 78 ff 48 89 d8 48 25 ff 0f 00 00 74 27 e8 bc 30 78 f=
-f e9 c6 e7 ff ff e8 b2 30 78 ff 90 0f 0b e8 aa 30 78 ff 90 <0f> 0b e8 a2 30=
- 78 ff 90 0f 0b e8 ca 5d 62 09 48 8b 5c 24 08 48 89
-> RSP: 0018:ffffc90003327760 EFLAGS: 00010293
-> RAX: ffffffff821ddf06 RBX: 0000000000007b54 RCX: ffff88802eff3c00
-> RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000007b54
-> RBP: ffffc900033278c8 R08: ffffffff821dc733 R09: 1ffffd400006f810
-> R10: dffffc0000000000 R11: fffff9400006f811 R12: 00fff0000000920d
-> R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000007b54
-> FS:  000055556494d480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055838a039e38 CR3: 0000000078508000 CR4: 0000000000350ef0
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+On Thu, May 02, 2024 at 11:14:50AM -0700, Namhyung Kim wrote:
+> On Thu, May 2, 2024 at 7:05 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> >
+> > On Wed, May 01, 2024 at 11:00:09PM -0700, Namhyung Kim wrote:
+> > > The following instruction pattern is used to access a global variable.
+> > >
+> > >   mov     $0x231c0, %rax
+> > >   movsql  %edi, %rcx
+> > >   mov     -0x7dc94ae0(,%rcx,8), %rcx
+> > >   cmpl    $0x0, 0xa60(%rcx,%rax,1)     <<<--- here
+> > >
+> > > The first instruction set the address of the per-cpu variable (here, it
+> > > is 'runqueus' of struct rq).  The second instruction seems like a cpu
+> >
+> > You mean 'runqueues', i.e. this one:
+> >
+> > kernel/sched/core.c
+> > DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+> >
+> > ?
+> 
+> Right, sorry for the typo.
+> 
+> >
+> > But that 0xa60 would be in an alignment hole, at least in:
+> >
+> > $ pahole --hex rq | egrep 0xa40 -A12
+> >         struct mm_struct *         prev_mm;              /* 0xa40   0x8 */
+> >         unsigned int               clock_update_flags;   /* 0xa48   0x4 */
+> >
+> >         /* XXX 4 bytes hole, try to pack */
+> >
+> >         u64                        clock;                /* 0xa50   0x8 */
+> >
+> >         /* XXX 40 bytes hole, try to pack */
+> >
+> >         /* --- cacheline 42 boundary (2688 bytes) --- */
+> >         u64                        clock_task __attribute__((__aligned__(64))); /* 0xa80   0x8 */
+> >         u64                        clock_pelt;           /* 0xa88   0x8 */
+> >         long unsigned int          lost_idle_time;       /* 0xa90   0x8 */
+> > $ uname -a
+> > Linux toolbox 6.7.11-200.fc39.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Mar 27 16:50:39 UTC 2024 x86_64 GNU/Linux
+> > $
+> 
+> This would be different on kernel version, config and
+> other changes like backports or local modifications.
+> 
+> On my system, it was cpu_stop_work.arg.
 
-This appears to be an issue with the same cause as the automatically
-obsoleted issue below:
+Sure, so please include the pahole output for the data that lead you to
+the conclusions in the explanation for the results obtained, so that we
+can have a better mental map of all the pieces and thus get convinced of
+the results and have a way to try to reproduce it in our systems.
 
-https://syzkaller.appspot.com/bug?extid=3D4936b06b07f365af31cc
+In the future we will be grateful to this effort when looking back at
+these patches :-)
 
-I would like to take a closer look.
+Thanks for all your work in these features!
 
-Ryusuke Konishi
+- Arnaldo
+ 
+> $ pahole --hex rq | grep 0xa40 -C1
+>     /* --- cacheline 41 boundary (2624 bytes) --- */
+>     struct cpu_stop_work       active_balance_work;  /* 0xa40  0x30 */
+>     int                        cpu;                  /* 0xa70   0x4 */
+> 
+> $ pahole --hex cpu_stop_work
+> struct cpu_stop_work {
+>     struct list_head           list;                 /*     0  0x10 */
+>     cpu_stop_fn_t              fn;                   /*  0x10   0x8 */
+>     long unsigned int          caller;               /*  0x18   0x8 */
+>     void *                     arg;                  /*  0x20   0x8 */
+>     struct cpu_stop_done *     done;                 /*  0x28   0x8 */
+> 
+>     /* size: 48, cachelines: 1, members: 5 */
+>     /* last cacheline: 48 bytes */
+> };
+> 
+> 
+> >
+> > The paragraph then reads:
+> >
+> > ----
+> > The first instruction set the address of the per-cpu variable (here, it
+> > is 'runqueues' of type 'struct rq').  The second instruction seems like
+> > a cpu number of the per-cpu base.  The third instruction get the base
+> > offset of per-cpu area for that cpu.  The last instruction compares the
+> > value of the per-cpu variable at the offset of 0xa60.
+> > ----
+> >
+> > Ok?
+> 
+> Yep, looks good.
+> 
+> Thanks,
+> Namhyung
 
