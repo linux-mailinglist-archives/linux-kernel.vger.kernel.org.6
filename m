@@ -1,128 +1,79 @@
-Return-Path: <linux-kernel+bounces-168708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6B68BBC82
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:47:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF198BBC85
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8961C2103B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:47:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA38AB218AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0F03BBEA;
-	Sat,  4 May 2024 14:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5533CF51;
+	Sat,  4 May 2024 14:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzXGSyGm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTjuRlls"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1C657CAE;
-	Sat,  4 May 2024 14:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914D057CAE;
+	Sat,  4 May 2024 14:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714834067; cv=none; b=HkzAHL8fmIO0re0TTvkQa+gTc0rMm4y8XZRXUzBWDzQnQ7BeZlNMEK4wdQfjS13pUreGYNGdWCYEaUby8LnIPDh2ODX52BuXHf0+5fEgm9cTgN9CY6ZRJGvH8pU8LP+cmAwXaw6g74KvLHtF4DWvZJlJ1Wq7Al4QLRWbTFppgIw=
+	t=1714834091; cv=none; b=rvJM2eUuypDmtNCQXd29CPVk6YMlZ64eiIxBvD+kEbac9Bb6NwZAdVvHhzTEQMRaZ71eQeKNM1s6vGJLrs7ic0l8Zvm0UZ4AhdFwga+lqjnOBVzWZSrzg5BJ9wxsPStMZV4Roq0MLqXm+amFieNg6pMAsmFV6ZCaq7Se5vx6JqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714834067; c=relaxed/simple;
-	bh=fw2E+aY9WkraiCEWaDZyCMF9dC7UfMVHORj8CW/uR0g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YacGQEmXfy9A3l7pGTjSrMZWB+wyieWxRr3MjpcGNNQMzst6TQSrsHXNmGLakdYf/AlWt16+7qzmBOKV0XjjxwBKuGpiT9oFpWGI1teVBMRkL2JZmq+Kz5lpKdVwYPgS1vOUpAOLFi918pxccCFFe+ZYwiuO5Y3jxK1Nj6b0XuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzXGSyGm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEAEC4AF1B;
-	Sat,  4 May 2024 14:47:47 +0000 (UTC)
+	s=arc-20240116; t=1714834091; c=relaxed/simple;
+	bh=mnWhwHwbu6vfOBX72yPCmIu8TRUsTLMhnSRh1zYW2oA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Du03qjVmNx+xgVTQAjNfvR+Y/k3or+GlgO25NG0imYXEYZvNXEh4IPVvo1KiB9BDFs/Xd0aM3/PS0GtvcwwAz1sMG9liGoaQQI151e9Lnh1p17+bKc7VKc4oGW3tDD+iSnPiMhQ9yDq8/X1iwea1RAg+94KZYRslEYOrjzXpXA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTjuRlls; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A53C5C072AA;
+	Sat,  4 May 2024 14:48:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714834067;
-	bh=fw2E+aY9WkraiCEWaDZyCMF9dC7UfMVHORj8CW/uR0g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mzXGSyGm1g4KLboYOZnYqdxlBtaTnrjBvVldARnANDvgEcIGSnrxbQ8Wq0QxWmt8p
-	 E60iFwtjyOkpclc9NAENAewTkcG5u1tLrVgPZH4pkw/EQdbuhgtmJB2M9tNPWxmm1p
-	 Uror41pvgooMZ4jw6F6DMGWALxvcxCWpzjMcV97aWgy8XJbtES2r6DRCLiZDHZC1hj
-	 1NnIO6L5UV0PLGOTJnuULOAp38kKPB/eNktUZJydJinhYRqXKFHlXmeTpmVKYs5APV
-	 /u1Gaqj+oIRlZZev2X+2AS7WYbreFZ9YLLJR2AnzpwNQ0g5CVu6IrvwJVMZqF4wEwM
-	 cHG15d3MApuMg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52006fbae67so515860e87.0;
-        Sat, 04 May 2024 07:47:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX7AJytXwaaCw7NvYuhua8pUehTOMuKDyE2XmyLIVy8JSZsunZA7pwMuJnRgybYraZ9ZzOTSsGW/1prI4Bxz2C30jV5Ph8H4X3Jq55FBg7fw+1KLX3AI0x1Mg4Fx8H3vPpAn/vyhiuzcH/Z
-X-Gm-Message-State: AOJu0Ywdm+UqgGNSQ3CX5iEvDYgAk2+9YN5f1yvkRBF3Dj9bKR9y/XEk
-	JENCtiaoY5BYAVSo9zBNyLZzIm8cX8JF6QUUHJzWZaSYBtvThqhtGdmtO66mNRo/1GKzryf6+2R
-	ghiB8vrLuO8ZYIUHWula+TybSl1g=
-X-Google-Smtp-Source: AGHT+IFOSGq47HKKFcUKJSh06Ja/FFHjVignPWbD0QM9nuebLoEw2ENPLsO5p+OTXJ9vN64CQGMNZCUS+asovex4G3Y=
-X-Received: by 2002:ac2:4214:0:b0:519:1e33:9d85 with SMTP id
- y20-20020ac24214000000b005191e339d85mr3467284lfh.36.1714834065760; Sat, 04
- May 2024 07:47:45 -0700 (PDT)
+	s=k20201202; t=1714834091;
+	bh=mnWhwHwbu6vfOBX72yPCmIu8TRUsTLMhnSRh1zYW2oA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OTjuRlls7beT4C4+N9maJy/KhaTRAZ/gauIYHdhqD3NUKTnYtw3OajltEC0pIT9Q3
+	 sl4023iOTIxTsQWPP1MfdWABYeqxAtKeMb8BmQ7GvvSCZfn4H1PHJbTtjmMk/B/U0Q
+	 u5Swrw/b1EPQMksmhSk1Z1ySi5ejMCMWkYebAvIRFDFb+kmuf8N/nXBKcjAM47uTv6
+	 g7U1Cd7URbGLeDlbjeTJCAey4964nkF5pi1KdumQDNlSOh3Xn4uDTasP9BJRBi8MHn
+	 Aw7HBhRiaQ8lC/1MFx2VgJYH4jBbNRgmHBKm59bNqc0JQBzWOFygzTNnlEm8op7jV0
+	 JaVqtxT17Rz0Q==
+Date: Sat, 4 May 2024 15:48:07 +0100
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Kalle Valo <kvalo@kernel.org>, netdev@vger.kernel.org,
+	merez@codeaurora.org, quic_ailizaro@quicinc.com,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH wireless-next] wil6210: Do not use embedded netdev in
+ wil6210_priv
+Message-ID: <20240504144807.GB2279@kernel.org>
+References: <20240503103304.339489-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502111613.1380453-1-emil.renner.berthing@canonical.com>
- <20240502111613.1380453-4-emil.renner.berthing@canonical.com>
- <CAK7LNATbseQCgjAUDemNoo9zPd_iSb+4Gz9TaW2YkOKcp3CSEQ@mail.gmail.com> <CAJM55Z-MMcePewnMsmTqHtcjLiCnmMMLawtJxPcXs8r1Sr6n4g@mail.gmail.com>
-In-Reply-To: <CAJM55Z-MMcePewnMsmTqHtcjLiCnmMMLawtJxPcXs8r1Sr6n4g@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 4 May 2024 23:47:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQDtxZMajHJOU=pD+18gsOHg1QMEeHAY=eHQqQvzgsf4w@mail.gmail.com>
-Message-ID: <CAK7LNAQDtxZMajHJOU=pD+18gsOHg1QMEeHAY=eHQqQvzgsf4w@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] kbuild: buildtar: install riscv compressed images
- as vmlinuz
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Nick Terrell <terrelln@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503103304.339489-1-leitao@debian.org>
 
-On Sat, May 4, 2024 at 11:02=E2=80=AFPM Emil Renner Berthing
-<emil.renner.berthing@canonical.com> wrote:
->
-> Masahiro Yamada wrote:
-> > On Thu, May 2, 2024 at 8:16=E2=80=AFPM Emil Renner Berthing
-> > <emil.renner.berthing@canonical.com> wrote:
-> > >
-> > > Use the KBUILD_IMAGE variable to determine the right kernel image to
-> > > install and install compressed images to /boot/vmlinuz-$version like =
-the
-> > > 'make install' target already does.
-> > >
-> > > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.c=
-om>
-> > > ---
-> > > This patch depends on Masahiro's patch at
-> > > https://lore.kernel.org/r/20240414174139.3001175-1-masahiroy@kernel.o=
-rg
-> >
-> > Thank you for fixing the issue for riscv.
-> > Only the question I have is how this patch series gets in.
-> > If it waits for the next development cycle, it will be
-> > cleanly applicable.
->
-> I'm ok with waiting, but otherwise Palmer could take patch 1 and 2 and yo=
-u
-> could take patch 3. The worst that can happen is that a bisect lands on y=
-our
-> branch that will only package the uncompressed Image in the tarballs even=
- if
-> Image.gz or Image.bz2 exist. CONFIG_EFI_ZBOOT=3Dy and CONFIG_XIP_KERNEL=
-=3Dy_kernels
-> will also be fine with only patch 3 applied.
+On Fri, May 03, 2024 at 03:32:56AM -0700, Breno Leitao wrote:
+> Embedding net_device into structures prohibits the usage of flexible
+> arrays in the net_device structure. For more details, see the discussion
+> at [1].
+> 
+> Un-embed the net_device from struct wil6210_priv by converting it
+> into a pointer. Then use the leverage alloc_netdev_dummy() to allocate
+> the net_device object at wil_if_add(). The free of the device
+> occurs at wil_if_remove().
+> 
+> [1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Ah, OK. 3/3 is independently applicable.
-
-I applied this to linux-kbuild now. Thanks.
-(I added braces around KBUILD_IMAGE to keep consistency)
-
-
-I leave the first two patches to Palmer.
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
