@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-168846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D368BBEC4
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 01:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE088BBEC6
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 01:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AA831C20D83
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 23:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6087281DB9
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 23:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A042C84FB8;
-	Sat,  4 May 2024 23:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371FE84FBC;
+	Sat,  4 May 2024 23:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nuY8doZR"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cL68Y2fO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DCC84E1F;
-	Sat,  4 May 2024 23:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F171E497;
+	Sat,  4 May 2024 23:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714863805; cv=none; b=o+B+Jze9djbnEtBv5nCv4tAaNwZdP+LCChJJqkoS4T4SUCn5CjyplCFe6MtTJeI0uxDvPwKqOzVtifqI8RSlBorxpX+8FHv2+7XSxooZseHYDXCtSzi1lL3DH5dET9F/4xpvkGsahv+eTRZ7Uga6X7eY0oi9glrZcYlGVeLr2D8=
+	t=1714864218; cv=none; b=kaFnXpFH6/EQUdffKKCavpQvHyBIUfWZ0u1Wy5y0hy/nlPWN1liUkdMv2FqaPZQRz8JEmCf3bVmNAKc8BFonaNGpoSiRXMYPYKjQrITO+2m1xmuXyWxbIcR+mfRrqO2ygFVbcONzpSsfE+sKVRLERxq59avYOUu5HXqX2B7mZak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714863805; c=relaxed/simple;
-	bh=ZInlZsOkTWK0vvjZbnibAQPQae7tkslsf9UrJVVqEVs=;
+	s=arc-20240116; t=1714864218; c=relaxed/simple;
+	bh=FW6qoHbDHK21pEFQTCdCfOoptYJ3bNepxrOzoRzW6Mc=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=QW/zc1djcNAL5+89ijpeXaxN3VZh7sWjuz4XWMFlI7XYn7w29yT/8Y9SC/LcFULBkfbfTJTiov/iwyVlqJ23Ly7TSD3wncPJPeOZw2zAGZfQtucm34wZkkT/aGZBO77I3fEW96v5BEeZbUaCVD147sbvgrZxyfWz0QmIHFt3KAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nuY8doZR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A7DC072AA;
-	Sat,  4 May 2024 23:03:15 +0000 (UTC)
+	 Mime-Version:Content-Type; b=KmWq/E3X66rtUofLihF92QC+LUZxgMLMJS6NluSf+UNDFlwmt1aT1Mtyxf2uoW2XaEBqe63c6LK4UEy2LBDyl97Bxrn0oOw/DU6aE1DxE2V3J00lA9IC1+eeQa9SjcQlKzV/Yo0umFy4u4HnS4MCiMUNiKADf+C22mMq1PQhV1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cL68Y2fO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF829C072AA;
+	Sat,  4 May 2024 23:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1714863805;
-	bh=ZInlZsOkTWK0vvjZbnibAQPQae7tkslsf9UrJVVqEVs=;
+	s=korg; t=1714864217;
+	bh=FW6qoHbDHK21pEFQTCdCfOoptYJ3bNepxrOzoRzW6Mc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nuY8doZRVNRzroY3YxRsdC1Ol3wcauUk6s/2q3pKvgrXdV0oAiSM/eVwICYRxfTe6
-	 3FNErWgTeE4+YgfdBtCdh2dRGxaJNaUDnaD2GJb6b8wAT3vZTbDf3GoHTrJw898ye4
-	 6zTPUZ7+fMkxeveKKwJirHntws+i9R/ZvN/3CkhY=
-Date: Sat, 4 May 2024 16:02:57 -0700
+	b=cL68Y2fO9JhsUEO7D7shlWzLxPAMDqhELYNeQWDMw2quJz1ADARZOuMJQU8RTRhJN
+	 APHGm25HCCPF9pqXA6rCffBxy5MnZzupzSunL7LONu06Ns4L1VHm2Vcwg1h8S6cnpk
+	 2R7n77vlxal9uoveCagkdkEf9tlk93HQVgqGG9YQ=
+Date: Sat, 4 May 2024 16:10:04 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Kuan-Wei Chiu
- <visitorckw@gmail.com>, Liam.Howlett@oracle.com, ndesaulniers@google.com,
- morbo@google.com, justinstitt@google.com, linux-kernel@vger.kernel.org,
- maple-tree@lists.infradead.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- jserv@ccns.ncku.edu.tw
-Subject: Re: [PATCH] maple_tree: Fix build failure with W=1 and LLVM=1
-Message-Id: <20240504160257.02e20addebc407cb4a18da48@linux-foundation.org>
-In-Reply-To: <20240503160821.GB3960118@thelio-3990X>
-References: <20240503095027.747838-1-visitorckw@gmail.com>
-	<ZjTWkM9hTnoIhzqV@casper.infradead.org>
-	<ZjTgEsuxYF29AVFJ@visitorckw-System-Product-Name>
-	<ZjTmqM4ePSZgSt9_@casper.infradead.org>
-	<20240503160821.GB3960118@thelio-3990X>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: kernel test robot <lkp@intel.com>, Minchan Kim <minchan@kernel.org>,
+ llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, Linux Memory
+ Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [PATCH 08/14] zram: check that backends array has at least one
+ backend
+Message-Id: <20240504161004.f5a0aab5e5aa1033d4696c20@linux-foundation.org>
+In-Reply-To: <20240504071416.GH14947@google.com>
+References: <20240503091823.3616962-9-senozhatsky@chromium.org>
+	<202405041440.UTBQZAaf-lkp@intel.com>
+	<20240504071416.GH14947@google.com>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,27 +61,28 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 3 May 2024 09:08:21 -0700 Nathan Chancellor <nathan@kernel.org> wrote:
+On Sat, 4 May 2024 16:14:16 +0900 Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
 
-> This patch has effectively been sent four times now:
+> On (24/05/04 14:54), kernel test robot wrote:
+> >          |                            ~~~~~~~~~~~~~~~~~~~~~~
+> > >> drivers/block/zram/zcomp.c:214:2: error: call to '__compiletime_assert_285' declared with 'error' attribute: BUILD_BUG_ON failed: ARRAY_SIZE(backends) <= 1
+> >      214 |         BUILD_BUG_ON(ARRAY_SIZE(backends) <= 1);
+> >          |         ^
 > 
-> https://lore.kernel.org/all/20220914101829.82000-1-jiapeng.chong@linux.alibaba.com/
-> https://lore.kernel.org/all/20230217084647.50471-1-jiapeng.chong@linux.alibaba.com/
-> https://lore.kernel.org/all/20230319132903.1702426-1-trix@redhat.com/
-> https://lore.kernel.org/all/20240503095027.747838-1-visitorckw@gmail.com/ (this change obviously)
+> So this is what that BUILD_BUG_ON() is supposed to catch. You don't
+> have any backends selected in your .config:
 > 
-> Your first comment from the 2022 patch:
+> # CONFIG_ZRAM_BACKEND_LZO is not set
+> # CONFIG_ZRAM_BACKEND_LZ4 is not set
+> # CONFIG_ZRAM_BACKEND_LZ4HC is not set
+> # CONFIG_ZRAM_BACKEND_ZSTD is not set
+> # CONFIG_ZRAM_BACKEND_DEFLATE is not set
+> CONFIG_ZRAM_DEF_COMP="unset-value"
 > 
->   They're not used now, but they will be in a release or two.
-> 
-> I think a few releases have passed since then :) I don't personally care
-> if there is a solution here or not, as I don't test with W=1 (there's
-> enough to do at W=0 :P), but maybe it is time for either __maybe_unused
-> (as that strikes at the heart of the issue) or at the very least a
-> comment saying "hey, these functions are currently unused but there are
-> plans for them to be used, so don't remove them", rather than just
-> saying the status quo?
+> Which is invalid configuration because it means that zram has no
+> compression enabled.
 
-We could just slap a #if 0 around them.  But I don't think it'll kill us to
-have to type them in again one day ;)
+We don't want s390 defconfig to be doing this!
+
+I guess just pick one if none were selected.
 
