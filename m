@@ -1,145 +1,140 @@
-Return-Path: <linux-kernel+bounces-168523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36448BB98A
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 07:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9FD8BB98C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FBC41F22905
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 05:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5E32837AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 06:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283B61097B;
-	Sat,  4 May 2024 05:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953A0613D;
+	Sat,  4 May 2024 06:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hJuy+ulU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m7JQzUgM"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC25A4C9B;
-	Sat,  4 May 2024 05:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE1A28FD
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 05:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714800684; cv=none; b=hY6/eFZB0be++gNCAL4HfnKadDUcTk0EzrPKArm7N2E7cEPn9sU69c4W4dOfcE9JxI+hkrzilDHalnh19t48ydxYsCQAxuI3riN8N3NDaU4fCGdR7ma3hVEL+fgbNLIMsyC1BdSoKCX1FuwM/rr8HS1x0svJwCiz5m7YY1vLzEM=
+	t=1714802400; cv=none; b=j6ciU1ziXXNRESIhl6uc9HycbcRsLhAQEUttGa1EjCLczRJIO55tKyQAWiA/F2VaqwmYU+cWPyT1nLY6VsTlV5hmSQKhmKaQZfLlvTHfJX7r0Z1NLB9gMPTqGJAyF/NVdnpdSr9rB3iUXAn4WNIjXeSPi4Pv+1q51J8qzLSWa2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714800684; c=relaxed/simple;
-	bh=sJjOB3zA6SjbS1+qIxhCf9ws/CS6ok9FeDp/n7Smlnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlKXLY0WyTD4e56iQEJwLh8IZ6RaU6OHh0o36GStUwgSU4cKPBgS09t0Mr3O0oMwKg4+7uisTOlSOlwuyjRg04Rg60fBzZUCSP7/5Q6Q+I7X854hvE7X5p+ynTVeZCJCAuamp9dkI/9ugHC7GIplbKhmbN0bxRPQD4Q4cqteB7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hJuy+ulU; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714800682; x=1746336682;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sJjOB3zA6SjbS1+qIxhCf9ws/CS6ok9FeDp/n7Smlnc=;
-  b=hJuy+ulUPDySTSpOs0CKLC0nJKdG50ucxEJVQr78i4CQoiMFAHrU8A1R
-   DFWy0Jc3vf/ekOfI9fsfgQEQ2iwvSWO543ueOkn88ag0/Z0ERU4kaCrWJ
-   w6Ve/DWbHMT6BP9a6YDpbCpPIR5BEerO2jrQT3RrvbhuJPtSDS8Kvkfe9
-   s2BFv01qvBjJ7tQyDeJRxiCetov2pks19l6TRGZRAhDjWvAQd5L3i60qg
-   DYvDK6jehQI/x3to64oAmMIVLmcZFCeaCDLUtLjhhy58i0InvzmgdbyLj
-   AskEutS7vGIfQRdriYGikBgwSAFdwmGsIoR309nhHgU7G5+xM22oapnGS
-   w==;
-X-CSE-ConnectionGUID: C6ek+s5pSG6WuacIS1rAUQ==
-X-CSE-MsgGUID: Dtr1sDT8SHy7TTmM9crMdw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="10542783"
-X-IronPort-AV: E=Sophos;i="6.07,252,1708416000"; 
-   d="scan'208";a="10542783"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2024 22:31:22 -0700
-X-CSE-ConnectionGUID: GJtR8RFyRlepBvvKPvRTjQ==
-X-CSE-MsgGUID: nSBnHCBQRGOzr6VphNgHqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,252,1708416000"; 
-   d="scan'208";a="32450736"
-Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 03 May 2024 22:31:18 -0700
-Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s37zO-000CSb-2k;
-	Sat, 04 May 2024 05:31:14 +0000
-Date: Sat, 4 May 2024 13:31:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-	manivannan.sadhasivam@linaro.org, andersson@kernel.org,
-	agross@kernel.org, konrad.dybcio@linaro.org, mani@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_msarkar@quicinc.com,
-	quic_kraravin@quicinc.com,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] PCI: qcom: Refactor common code
-Message-ID: <202405041326.aSnZgClv-lkp@intel.com>
-References: <20240501163610.8900-2-quic_schintav@quicinc.com>
+	s=arc-20240116; t=1714802400; c=relaxed/simple;
+	bh=SbdFdjFhFvN8AoQXproeaoaxltpuBUXf+3bSRn6+OTw=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a/I+vSJ7jjHMRI4kyMB8hkUmL7lqeqYMHwEswL41V7//mbXaAQ6gIBpZjBmPfVjASd5gcxetcBsYWSewpjeaLpVziIEMNLJ1aO9vQ9Zo7+2tgqKyxIkCLsy/ZfjQOk1RkpTBEmMShl7g1R5553czJ1L+433uF4wWRlh4bkMKlNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m7JQzUgM; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-69b782287f9so1985176d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 May 2024 22:59:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1714802398; x=1715407198; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pYUKHOIz20Zaag+mB5ITJHJPax3IqS8+eKF7gGGn3i0=;
+        b=m7JQzUgM1ZFtbtEGMDQAOA3kpJCURIjKG2nwIdPM6cuesQdNf+GG3AURh9PtNkWhmb
+         sIP5qa7J423aKlZ+0chV3WSeg9vLIeThtD6l8A4chhTbt9dlOiMn7M8XW0shyaI33um4
+         HrN6PMAiGuiIUDQrSFq7j8+n2ZEP7YGikcPyc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714802398; x=1715407198;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pYUKHOIz20Zaag+mB5ITJHJPax3IqS8+eKF7gGGn3i0=;
+        b=JDdEDUllEwne26DbRKSzqs3LsPlwqGI9W4Zpz9qd+3pvxc3bCRpXToQwG+Px6KrpHk
+         XvAYzypkDPQoqF7Ekr8aMuNRuBcYfeaFOFQXmHklyGAJfkoJ23pIjugAaqLyIC4RDykC
+         aDV2W40sNOFb9GZp0gQlzzJaDqFk4xyHxrd/NkbUdkbKsafSiC53ungZh4sYl9g/ld1C
+         3qFPUv+cAenfbHU5DsMXR3bS5LEqKXdRVnmgCSYns3UiGNmzyfEq1AxbgDSfAZMxbqIe
+         yrF+eCpr/s91LoMNTCvhzlDlltExwpD1ivW3EL3ISlYbR0QbGq88XXoh1lBosLRlmLj2
+         ZgvQ==
+X-Gm-Message-State: AOJu0YwDJGnfD6wLjlKk9fppGNHyIUO/egsbgYHomZ02kDwJdtPxWLx9
+	T41Vud7g2iFznC/bz4WwuQp7qYsO3IT1riyONLkIEqo/r7AVa7IbyjqenLeo1hB1S82UQPbCRG5
+	bzI+kS0LtXJCHz0gUnZZVvtbUg/0i4zePXF8z
+X-Google-Smtp-Source: AGHT+IFEvJdEhqjcviHSeTAGad+OdbhyV42PVCQRaUqM/rrkNHW2Qc3Zb94UjVibUGq+t/PlmzgKTqG5arIN0OFcXT4=
+X-Received: by 2002:a05:6214:b6c:b0:6a0:5baa:1103 with SMTP id
+ ey12-20020a0562140b6c00b006a05baa1103mr5520659qvb.39.1714802398361; Fri, 03
+ May 2024 22:59:58 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 3 May 2024 22:59:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240501163610.8900-2-quic_schintav@quicinc.com>
+In-Reply-To: <267391c1-948c-9f75-69e6-b5b49d34a7fe@quicinc.com>
+References: <20240502233017.419365-1-swboyd@chromium.org> <267391c1-948c-9f75-69e6-b5b49d34a7fe@quicinc.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Fri, 3 May 2024 22:59:57 -0700
+Message-ID: <CAE-0n50Wy0ZEmPfxyacBnwUMNvFgiZ5RXdR-fy+JEjFkNg8=Rg@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/arm_arch_timer: Mark
+ validate_timer_rate() init
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Mukesh Ojha <quic_mojha@quicinc.com>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Jisheng Zhang <jszhang@kernel.org>, 
+	Ionela Voinescu <ionela.voinescu@arm.com>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Shashank,
+Quoting Mukesh Ojha (2024-05-03 04:27:52)
+>
+>
+> On 5/3/2024 5:00 AM, Stephen Boyd wrote:
+> > Add the __init marking to validate_timer_rate() so that it gets
+> > discarded after init.
+> >
+> >    $ ./scripts/bloat-o-meter vmlinux.before vmlinux.after
+> >    add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-8 (-8)
+> >    Function                                     old     new   delta
+> >    arch_timer_register                         1724    1716      -8
+>
+> Have not used this tool bloat-o-meter
+> Just a question, why is it showing arch_timer_register is shrunk ?
 
-kernel test robot noticed the following build warnings:
+Hmm good question. There shouldn't be any difference if it gets inlined.
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master v6.9-rc6 next-20240503]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+It's an allmodconfig build. It looks like that causes noise in the build so it
+isn't stable. :( I diffed the objdump and the function is missing this ror and
+nop instruction. But then I built it again, and it became more different. If I
+build an allnoconfig it has zero difference.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shashank-Babu-Chinta-Venkata/PCI-qcom-Refactor-common-code/20240502-003801
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240501163610.8900-2-quic_schintav%40quicinc.com
-patch subject: [PATCH v4 1/3] PCI: qcom: Refactor common code
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240504/202405041326.aSnZgClv-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240504/202405041326.aSnZgClv-lkp@intel.com/reproduce)
+Before:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405041326.aSnZgClv-lkp@intel.com/
+  ffff800083021ed4:       974ba12d        bl      ffff80008030a388
+<free_percpu_irq>
+  ffff800083021ed8:       93d3f273        ror     x19, x19, #60
+  ffff800083021edc:       d503201f        nop
+  ffff800083021ee0:       d29858e0        mov     x0, #0xc2c7
+           // #49863
+  ffff800083021ee4:       910102b6        add     x22, x21, #0x40
+  ffff800083021ee8:       f2aeea20        movk    x0, #0x7751, lsl #16
+  ffff800083021eec:       f2ce7680        movk    x0, #0x73b4, lsl #32
+  ffff800083021ef0:       f2f09e20        movk    x0, #0x84f1, lsl #48
+  ffff800083021ef4:       ca000273        eor     x19, x19, x0
+  ffff800083021ef8:       97527f02        bl      ffff8000804c1b00
+<__sanitizer_cov_trace_pc>
 
-All warnings (new ones prefixed by >>):
+After:
 
-   drivers/pci/controller/dwc/pcie-qcom-common.c: In function 'qcom_pcie_common_icc_get_resource':
->> drivers/pci/controller/dwc/pcie-qcom-common.c:25:24: warning: returning 'long int' from a function with return type 'struct icc_path *' makes pointer from integer without a cast [-Wint-conversion]
-      25 |                 return PTR_ERR(icc_mem_p);
-         |                        ^~~~~~~~~~~~~~~~~~
+  ffff800083021ed4:       974ba12d        bl      ffff80008030a388
+<free_percpu_irq>
+  ffff800083021ed8:       d29f9f00        mov     x0, #0xfcf8
+           // #64760
+  ffff800083021edc:       910102b6        add     x22, x21, #0x40
+  ffff800083021ee0:       f2b03940        movk    x0, #0x81ca, lsl #16
+  ffff800083021ee4:       f2d5e700        movk    x0, #0xaf38, lsl #32
+  ffff800083021ee8:       f2ee1340        movk    x0, #0x709a, lsl #48
+  ffff800083021eec:       ca000273        eor     x19, x19, x0
+  ffff800083021ef0:       97527f04        bl      ffff8000804c1b00
+<__sanitizer_cov_trace_pc>
 
-
-vim +25 drivers/pci/controller/dwc/pcie-qcom-common.c
-
-    15	
-    16	#define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
-    17			Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
-    18	
-    19	struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
-    20	{
-    21		struct icc_path *icc_mem_p;
-    22	
-    23		icc_mem_p = devm_of_icc_get(pci->dev, path);
-    24		if (IS_ERR_OR_NULL(icc_mem_p))
-  > 25			return PTR_ERR(icc_mem_p);
-    26		return icc_mem_p;
-    27	}
-    28	EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_get_resource);
-    29	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Maybe kcov is making things different?
 
