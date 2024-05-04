@@ -1,94 +1,175 @@
-Return-Path: <linux-kernel+bounces-168775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C5A8BBD8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EA18BBD8C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA821F21512
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2821F21941
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1FB6BFB0;
-	Sat,  4 May 2024 18:03:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09D26BB30;
+	Sat,  4 May 2024 18:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihkPoQ16"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B9166B5E
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 18:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC911BF3F;
+	Sat,  4 May 2024 18:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714845784; cv=none; b=AZ50P2rI2+MT+u9oENCw+iHThv5dd2vBwzixCTU2LL+Ccr21dfy7+WRAzDJJOYVdqfZF8DIUPQZlzFNIzgIUy4lWuTX5prkYMr1IQmKGvnJdV/mUkl5zkZ4k/a6UPAAyUZyFEI4e5faiWGrwnNgxC/hYYSNPsl1MzAibBpO/wj4=
+	t=1714845886; cv=none; b=oVKjkTOLvwaZ3Le0wFcpvAEGHagt+zUqrlHFDlENKf76Dwp+vxG3Xj/YQdn5kJV9m9P9ikrqfinYZ8l+C6f9ti8HVVS1AvsPftRF01CcgLCcY0DGe2hC7IMWR34XSDyKVECDsgSAXwavrygMp6bC4iGMe2OSdFGi41ONEboDpZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714845784; c=relaxed/simple;
-	bh=TGOyrg0sf81JB2aKmDNGGn/8jsML6d2k85Lh7p/VWc0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=vAyqlZCmiJtBrp7uekv5CSn7BOv5Sv3ZBBg48ARPUrBthREP1cV5CDe+OGHDbMIRxw9K2Gz/QNVPtfGLbwG+dO446Aic4UXNK8d54ShvFEa0D6LdhJu2Ykw33UYBuaqhERJbhoVO35hrV0Hj/RPzLDwLPVYQ+VHC1OATbPZrFPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dece1fa472so66198239f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 11:03:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714845782; x=1715450582;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fUPcGyTMIX5rtLi/ARCE2IxHHhgwhiuh+5Rloinf3xA=;
-        b=flIy4VzYxXIu1y1wQwUOalkj1xYq+O83JvvsBSBZ2KirQQCGoDV7YJJ3pnzpHIEz8d
-         xCHm6jQfc2XwbDzKOJqRUgnKdSrWKzp5TS01DMp+ioxs+a3hHzglMelvAx0vG6Xwr+II
-         xiVu17RmnLpf8ZauGctXNx7Af7Dscz9qPNAjaxebu2FnumKmqa5Tif8xs0EV+2wQPvdJ
-         qlZSkfEOZtFWJlo0ujBSejiGjkiVkF2Pc2S/mQ4JMgtjqfVVZG2tjsAu2EX5INoL1Mrw
-         0a3Om1I0G24OpHrSPf2lVHLGaiVINtmeHHwhh5s3Xlw0sufxQrJsUZI9GQHAV/SjZyxA
-         S5Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdezWoXpuTkvJFrWWeaLgAow3NAz1e058EcC/YVpsvVUJptS9pfm15BAQlD9n0oMuiiS1RlrmogBM5LZwjBSnG10PVArx8U8OiJXvp
-X-Gm-Message-State: AOJu0Yxk45ebT5vYQM7JSZhm25LMR2gUIYCD+3o296fHPyjBoCBEoVYR
-	5kSkK+e1HijO8x8pdYKPkEGQ7u9/VRGYemLfpaIlDcLvaosTzHWPQJtiZzLuycDS5cCKHQO6qIC
-	KpsPMwNn7CitPrTN6i+jEAXMAK4BSSkBQ5GLaa82FpJqwvjykWfCUkxU=
-X-Google-Smtp-Source: AGHT+IHexZQjdMJ0UcNQiKItATZihzTrma90QUok5tG6gn9gMnSrxE72OaHcLmP4TLDaWgpBh6OjwcQtZdjnOXhshwTFiadLwhWr
+	s=arc-20240116; t=1714845886; c=relaxed/simple;
+	bh=+wyVW1UwYsK6Li/Fvim5+zqgGIr55z3YDX9h+nt3OM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TY0f/Dyzj/UzlqxdKZ6NOylqINZKcom1ok3qSXc2+53Ma51eJezoT4hrsMuxZH2OUc8yeL1B4A0BtYG7TZ3pSZXyNKAKgYYgK7xSgdyEfzaZvQ80+fwPi6G2AmByzWekJsvjsrY8ylfuxXjn7CBsR3RYzlfdzrVORmGxyxbOiVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihkPoQ16; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9712AC072AA;
+	Sat,  4 May 2024 18:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714845886;
+	bh=+wyVW1UwYsK6Li/Fvim5+zqgGIr55z3YDX9h+nt3OM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ihkPoQ1617Me500B5H4SIVvRBXEDTeNbrQJ6KQwuczx5q5l7R99FLxE6nJnUGShQT
+	 Ba65lNUeP985i3xi8t2BdEI3aB7IJ+q4bXQuShlktXY78+2n3pQ8Ixx1c1IBYAh3Em
+	 S8tYhGavdjoN55An4T/a7Yw94OpOebK+9/cuL7s6cIFM6byuXtCQfLXm90u3cmx06n
+	 H4U0He3+o6HzXwLleOyZoyW7LAHV9V+LYzQI6ZO4uDgs+W0GogvPY+hwku7ynY8tLq
+	 Mz6jzkV+sHzzUfw921LBM50p+E8jZieXL9dX1gOxgg5vs/qs0Qs5jQfWiKOrOTSQaK
+	 jW34U4w6x4Gjw==
+Date: Sat, 4 May 2024 15:04:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf trace: Disable syscall augmentation with record
+Message-ID: <ZjZ4u3EG1uhTHcCK@x1>
+References: <20240216172357.65037-1-irogers@google.com>
+ <Zc-dYrNMt3Wsinax@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2489:b0:488:75e3:f3ce with SMTP id
- x9-20020a056638248900b0048875e3f3cemr9923jat.0.1714845781990; Sat, 04 May
- 2024 11:03:01 -0700 (PDT)
-Date: Sat, 04 May 2024 11:03:01 -0700
-In-Reply-To: <0000000000004cc3030616474b1e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ae301f0617a4a52c@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] WARNING in __xdp_reg_mem_model
-From: syzbot <syzbot+f534bd500d914e34b59e@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
-	hawk@kernel.org, john.fastabend@gmail.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, lorenzo@kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, toke@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zc-dYrNMt3Wsinax@x1>
 
-syzbot has bisected this issue to:
+On Fri, Feb 16, 2024 at 02:37:38PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Feb 16, 2024 at 09:23:57AM -0800, Ian Rogers wrote:
+> > Syscall augmentation is causing samples not to be written to the
+> > perf.data file with "perf trace record". Disabling augmentation is
+> > sub-optimal, but it beats having a totally broken perf trace record.
+> 
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit 2b0cfa6e49566c8fa6759734cf821aa6e8271a9e
-Author: Lorenzo Bianconi <lorenzo@kernel.org>
-Date:   Mon Feb 12 09:50:54 2024 +0000
+I thought Namhyung had collected this one, doing it now.
 
-    net: add generic percpu page_pool allocator
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=151860d4980000
-start commit:   f99c5f563c17 Merge tag 'nf-24-03-21' of git://git.kernel.o..
-git tree:       net
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=171860d4980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=131860d4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fb1be60a193d440
-dashboard link: https://syzkaller.appspot.com/bug?extid=f534bd500d914e34b59e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ac600b180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1144b797180000
-
-Reported-by: syzbot+f534bd500d914e34b59e@syzkaller.appspotmail.com
-Fixes: 2b0cfa6e4956 ("net: add generic percpu page_pool allocator")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+- Arnaldo
+ 
+> 'perf trace record' needs to be more tested, we need to have a shell
+> 'perf test' for it, maybe Michael has something on his test suite?
+> 
+> Testing your patch:
+> 
+> root@number:~# perf trace record ls
+> anaconda-ks.cfg  bin  perf.all-number-20231219-104854.tar.bz2  perfconfig.off  perf.data  perf.data.baseline  perf.data.old
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.050 MB perf.data (170 samples) ]
+> root@number:~# perf evlist -v
+> raw_syscalls:sys_enter: type: 2 (PERF_TYPE_TRACEPOINT), size: 136, config: 0x168 (raw_syscalls:sys_enter), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|CPU|PERIOD|RAW|IDENTIFIER, read_format: ID|LOST, disabled: 1, inherit: 1, enable_on_exec: 1, sample_id_all: 1, exclude_guest: 1
+> raw_syscalls:sys_exit: type: 2 (PERF_TYPE_TRACEPOINT), size: 136, config: 0x167 (raw_syscalls:sys_exit), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|CPU|PERIOD|RAW|IDENTIFIER, read_format: ID|LOST, disabled: 1, inherit: 1, enable_on_exec: 1, sample_id_all: 1, exclude_guest: 1
+> dummy:u: type: 1 (PERF_TYPE_SOFTWARE), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|IDENTIFIER, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+> # Tip: use 'perf evlist --trace-fields' to show fields for tracepoint events
+> root@number:~# perf script | head -5
+>               ls  145954 [021] 64113.916047:  raw_syscalls:sys_exit: NR 59 = 0
+>               ls  145954 [021] 64113.916065: raw_syscalls:sys_enter: NR 12 (0, 528, 0, 0, 0, 27)
+>               ls  145954 [021] 64113.916065:  raw_syscalls:sys_exit: NR 12 = 94098335809536
+>               ls  145954 [021] 64113.916077: raw_syscalls:sys_enter: NR 158 (3001, 7fff9bc13790, 7f4bd6f4b4c0, 1, 3, 800)
+>               ls  145954 [021] 64113.916078:  raw_syscalls:sys_exit: NR 158 = -22
+> root@number:~# perf trace -i perf.data |& head 
+>          ? (         ): ls/145954  ... [continued]: execve())                                           = 0
+>      0.018 ( 0.000 ms): ls/145954 brk()                                                                 = 0x5594f9e14000
+>      0.030 ( 0.000 ms): ls/145954 arch_prctl(option: 0x3001, arg2: 0x7fff9bc13790)                      = -1 EINVAL (Invalid argument)
+>      0.045 ( 0.002 ms): ls/145954 access(filename: 0xd6f5b2c0, mode: R)                                 = -1 ENOENT (No such file or directory)
+>      0.050 ( 0.003 ms): ls/145954 openat(dfd: CWD, filename: 0xd6f5a144, flags: RDONLY|CLOEXEC)         = 3
+>      0.053 ( 0.001 ms): ls/145954 newfstatat(dfd: 3, filename: 0xd6f5ace8, statbuf: 0x7fff9bc129a0, flag: 4096) = 0
+>      0.055 ( 0.004 ms): ls/145954 mmap(len: 78087, prot: READ, flags: PRIVATE, fd: 3)                   = 0x7f4bd6f1c000
+>      0.059 ( 0.000 ms): ls/145954 close(fd: 3)                                                          = 0
+>      0.066 ( 0.003 ms): ls/145954 openat(dfd: CWD, filename: 0xd6f65fa0, flags: RDONLY|CLOEXEC)         = 3
+>      0.068 ( 0.001 ms): ls/145954 read(fd: 3, buf: 0x7fff9bc12b08, count: 832)                          = 832
+> root@number:~#
+> 
+> root@number:~# perf trace -v record ls
+> Syscall augmentation fails with record, disabling augmentationUsing CPUID GenuineIntel-6-B7-1
+> DEBUGINFOD_URLS=
+> nr_cblocks: 0
+> affinity: SYS
+> mmap flush: 1
+> comp level: 0
+> mmap size 4198400B
+> Control descriptor is not initialized
+> mmap size 528384B
+> anaconda-ks.cfg  bin  perf.all-number-20231219-104854.tar.bz2  perfconfig.off  perf.data  perf.data.baseline  perf.data.old
+> [ perf record: Woken up 1 times to write data ]
+> failed to write feature CPU_PMU_CAPS
+> [ perf record: Captured and wrote 0.050 MB perf.data (170 samples) ]
+> root@number:~#
+> 
+> There is a missing newline and we can avoid repeating a term, and I also
+> added some extra explanation about "augmentation":
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 192721261098832e..3f77dd3eb70dc37a 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -4865,7 +4865,7 @@ int cmd_trace(int argc, const char **argv)
+>  		goto skip_augmentation;
+>  
+>  	if ((argc >= 1) && (strcmp(argv[0], "record") == 0)) {
+> -		pr_debug("Syscall augmentation fails with record, disabling augmentation");
+> +		pr_debug("Syscall augmentation (reading pointer args using BPF) fails with record, disabling it.\n");
+>  		goto skip_augmentation;
+>  	}
+>  
+> I'll see if I come up with the test and a fix that allows augmentation
+> to work with 'perf trace record'.
+> 
+> - Arnaldo
+> 
+>  
+> > Closes: https://lore.kernel.org/lkml/CAP-5=fV9Gd1Teak+EOcUSxe13KqSyfZyPNagK97GbLiOQRgGaw@mail.gmail.com/
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/builtin-trace.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index 109b8e64fe69..192721261098 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -4864,6 +4864,11 @@ int cmd_trace(int argc, const char **argv)
+> >  	if (!trace.trace_syscalls)
+> >  		goto skip_augmentation;
+> >  
+> > +	if ((argc >= 1) && (strcmp(argv[0], "record") == 0)) {
+> > +		pr_debug("Syscall augmentation fails with record, disabling augmentation");
+> > +		goto skip_augmentation;
+> > +	}
+> > +
+> >  	trace.skel = augmented_raw_syscalls_bpf__open();
+> >  	if (!trace.skel) {
+> >  		pr_debug("Failed to open augmented syscalls BPF skeleton");
+> > -- 
+> > 2.44.0.rc0.258.g7320e95886-goog
+> > 
 
