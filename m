@@ -1,223 +1,399 @@
-Return-Path: <linux-kernel+bounces-168552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C668BBA10
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:26:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B5D8BBA16
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00AB31C2122E
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58A4282D9C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CB212E55;
-	Sat,  4 May 2024 08:25:51 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8D91171C;
+	Sat,  4 May 2024 08:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g3d/KUqr"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D673B57CAE;
-	Sat,  4 May 2024 08:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A09C1CD16
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 08:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714811151; cv=none; b=tEwoob+G8Sc/Oxiw3au/0NUnsMqrWWEAP1LMUOAf/11hSq4vPkaPSKl5CEhj8tVA/XTUft3TCaSVBL4XMjlAi/4+NvDtQ9JS/Z7muooBFB8Ek7W2tblMaAdCQq85sRoNfVEuxubDZxUMmjnw4h/Euk/2E8MgxxF3dgeWUmdsf8I=
+	t=1714811440; cv=none; b=fm8WANM7vJdkKt1r8P8KBJDAL/mX/2F0Tk/wRBA4s64N4Itvfm9rjcHHzRcWh6inDGd1mrVB411i/SYN88vcVUtMReaMawzS3mMVoo7qvLMuy4WCAUgmf3pOfaOLNeVFaYkBsFyznOAWfJJgFrxybN8bJPkIDIKsDI6B5RKwJyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714811151; c=relaxed/simple;
-	bh=fLeV6TQVWA84Es9rMG8vcDpeqrwOawiwQupR9rySaYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TXIBzkWbW39eMdByYkaNObAsRxyBHrs693ZNELoU/f0GwEbNi0zjIVUIVDwv1mU2AfjgmJtsjqA79hcfD+dNBQm/S1puTKy3/wRddanI6r6GG0BLyJwokWmXb8x36fFdozI8zr2x+uIc1/5OVn1zj4G+MplsKLOV1mFLDrnGLK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164C3C072AA;
-	Sat,  4 May 2024 08:25:43 +0000 (UTC)
-Message-ID: <5780ea67-eff1-4c0e-9443-1cd7d61aa581@xs4all.nl>
-Date: Sat, 4 May 2024 10:25:42 +0200
+	s=arc-20240116; t=1714811440; c=relaxed/simple;
+	bh=QlqayoLSETnrMZTkG+pD6MJRQVAmQiZIQF2Dsi7cGFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lA6FyiDH79k55U+uKpXOzmwo3UyijA96RzmDnDKGk812PP4lVUzBZRdDAPMLxXwsaQ2r+WaHoSiAYLlDaHPAu/FnrUOzgXd2sVbgEdb7+ix82eiH6NL8DhoOvC3i7O0gzsgJF/4HAJvs9gdwrnCgAJQ8SHvWvCBGFxEjwHqgy04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g3d/KUqr; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-436ed871225so123531cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 01:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1714811437; x=1715416237; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4oJQpDXIze0zw5t34tsxHgSF2mpOTPkFaVAJM4cFI5Q=;
+        b=g3d/KUqrItZeYk/iAlE6ueYRHCqfSowOBIx1CIJsjsMDLTaNcKHQ51y+hYCFDXZLpQ
+         amPH62ktXLttn1Jg5v8IcPXgqRdPhSYMTW1vIQo3ELKllHYW0LyzIoa0cbS/EmIDv81Z
+         jXIp0ZxreXYTxzy9w61euHW4Az6UHJqXSx4FRicY5sFG9PgtBczQxjJGBExvSHuvdwGL
+         DzcRMC15mpKtS8R6Y/7+7M5G/7KzDmWM8NhlxUupgwqZitEMU+hRPoa4XYPr5wKwI4uI
+         rjkUapsp35N52+PIpIJGkWXPYk9/SNX0vHz6abvYWOTs1fWPu6VAgi2Krk3CnI2rUyJl
+         EcrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714811437; x=1715416237;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4oJQpDXIze0zw5t34tsxHgSF2mpOTPkFaVAJM4cFI5Q=;
+        b=HIvlusMwN35Mbx7qZ7YygA77PJAdHyCxHuhgI0GM3JLQaktFsMXEZuXBHCST65Ud9x
+         HJyenSBteHm9/vtO+VF6dppUUYsknGGQyVdz2EH1jPSw4+iIiqssA6jwOz8/5LgyGiz4
+         ve3g6g04s1r/EuAQDqvInRCDjHThd4gernq94z34cZMc6pRi8E0daLkdXYxE6zf9p1nC
+         ukT7cLzoktJq0/54LJbzAGMpYteEILsESFy//K6KxJavXzWaw00merqiUGi7CVjKL9Lm
+         peyOjMolvJ0UjV3z9XQPfM8noWGLf0xMomcXyO1jph95MXTwVyrjksFwEmBFSIDCe+Wh
+         Qx3w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8+NENjD0oqkSLujhb8RixWmFeJJXW78KADUDQMI3USkCyhjzcl0h4Az/MVDYS0wrEpzecCNTYHQCoTifldJnSOxZVRvkktBVqwyUB
+X-Gm-Message-State: AOJu0YzKXkbiRRClkQ+16aS9WAVekPYGvsFq01MmT61pJWvptGxnNMMK
+	Y9KqJBXg9TEhASXgTrk9xJ3qyG7AacjJdRIMDlVkQie5oAfjocaWlD28YOeRK7M8VsxwPlUnIA+
+	4CvLe1AgLBBeZ1A/Ynk9g6ApXHwJ/FAbvhH/W
+X-Google-Smtp-Source: AGHT+IEKKjNF94/tQcRb2QIUjeBMH5UEmKlUpCU1PDh2BsvSCTMhvo7GdNy52lx7nNlyriGSFJrLmGHjeDwZZHrcU4I=
+X-Received: by 2002:a05:622a:413:b0:43a:b274:340e with SMTP id
+ d75a77b69052e-43d030aea06mr1583531cf.8.1714811436897; Sat, 04 May 2024
+ 01:30:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/26] media: v4l: async: refactor
- v4l2_async_create_ancillary_links
-Content-Language: en-US, nl
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Martin Tuma <martin.tuma@digiteqautomotive.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Dmitry Osipenko <digetx@gmail.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
-References: <20240419-fix-cocci-v2-0-2119e692309c@chromium.org>
- <20240419-fix-cocci-v2-9-2119e692309c@chromium.org>
- <40b9c015-8ccf-4313-800a-ecae9aa8cc27@xs4all.nl>
- <ZilMu614pUAzEGTa@kekkonen.localdomain>
- <20240424184603.GA6282@pendragon.ideasonboard.com>
- <CANiDSCucvz=dQYDguzBZ-f95ZP84zuhvoKnmEYoJqAs1YnZ3ZA@mail.gmail.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <CANiDSCucvz=dQYDguzBZ-f95ZP84zuhvoKnmEYoJqAs1YnZ3ZA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-2-sboyd@kernel.org>
+ <CABVgOSm_Qce1AZQjH8wE4t238hxLYTNswNf1AkEDbWtqDTK7Ow@mail.gmail.com> <15345b349077f57935e8f1d3d69f66f9.sboyd@kernel.org>
+In-Reply-To: <15345b349077f57935e8f1d3d69f66f9.sboyd@kernel.org>
+From: David Gow <davidgow@google.com>
+Date: Sat, 4 May 2024 16:30:24 +0800
+Message-ID: <CABVgOSm=h0gacXEAgag+9io1yXR5+8rHW_HzvnVTNuiAFBhOHA@mail.gmail.com>
+Subject: Re: [PATCH v4 01/10] of: Add test managed wrappers for of_overlay_apply()/of_node_put()
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, 
+	Christian Marangi <ansuelsmth@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Ripard <maxime@cerno.tech>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000097eea106179ca65e"
 
-On 29/04/2024 12:51, Ricardo Ribalda wrote:
-> Hi Hans
-> 
-> Your proposal is what I sent for v1:
-> https://lore.kernel.org/linux-media/20240415-fix-cocci-v1-9-477afb23728b@chromium.org/
+--00000000000097eea106179ca65e
+Content-Type: text/plain; charset="UTF-8"
 
-I decided to go for the v1. I prefer it, and more importantly, Sakari as
-maintainer of this code prefers it as well.
+On Fri, 3 May 2024 at 08:36, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting David Gow (2024-05-01 00:55:10)
+> > On Tue, 23 Apr 2024 at 07:24, Stephen Boyd <sboyd@kernel.org> wrote:
+> > > diff --git a/Documentation/dev-tools/kunit/api/index.rst b/Documentation/dev-tools/kunit/api/index.rst
+> > > index 2d8f756aab56..282befa17edf 100644
+> > > --- a/Documentation/dev-tools/kunit/api/index.rst
+> > > +++ b/Documentation/dev-tools/kunit/api/index.rst
+> > > @@ -9,11 +9,15 @@ API Reference
+> > >         test
+> > >         resource
+> > >         functionredirection
+> > > +       of
+> > >
+> > >
+> > >  This page documents the KUnit kernel testing API. It is divided into the
+> > >  following sections:
+> > >
+> > > +Core KUnit API
+> > > +==============
+> > > +
+> > >  Documentation/dev-tools/kunit/api/test.rst
+> > >
+> > >   - Documents all of the standard testing API
+> > > @@ -25,3 +29,10 @@ Documentation/dev-tools/kunit/api/resource.rst
+> > >  Documentation/dev-tools/kunit/api/functionredirection.rst
+> > >
+> > >   - Documents the KUnit Function Redirection API
+> > > +
+> > > +Driver KUnit API
+> > > +================
+> >
+> > If we're adding a separate 'Driver' section here, it's probably
+> > sensible to move the existing device/driver helper documentation here,
+> > rather than leaving it in resource.rst as-is. I'm happy to do that in
+> > a follow-up patch, though.
+>
+> To clarify, you're talking about "Managed Devices"? Looks like that can
+> be a follow-up to split it into a new file and then put it here. If
+> you're happy to do that then I'll leave it to you.
+>
+Yeah, this is "Managed Devices". I'll send out a follow-up patch to
+the documentation once this has landed so we don't conflict.
 
-Regards,
+> >
+> > > +
+> > > +Documentation/dev-tools/kunit/api/of.rst
+> > > +
+> > > + - Documents the KUnit device tree (OF) API
+> > > diff --git a/Documentation/dev-tools/kunit/api/of.rst b/Documentation/dev-tools/kunit/api/of.rst
+> > > new file mode 100644
+> > > index 000000000000..8587591c3e78
+> > > --- /dev/null
+> > > +++ b/Documentation/dev-tools/kunit/api/of.rst
+> > > @@ -0,0 +1,13 @@
+> > > +.. SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +====================
+> > > +Device Tree (OF) API
+> > > +====================
+> > > +
+> > > +The KUnit device tree API is used to test device tree (of_*) dependent code.
+> > > +
+> > > +.. kernel-doc:: include/kunit/of.h
+> > > +   :internal:
+> > > +
+> > > +.. kernel-doc:: drivers/of/of_kunit.c
+> > > +   :export:
+> > > diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+> > > index 251d33532148..0dfd05079313 100644
+> > > --- a/drivers/of/Makefile
+> > > +++ b/drivers/of/Makefile
+> > > @@ -19,6 +19,7 @@ obj-y += kexec.o
+> > >  endif
+> > >  endif
+> > >
+> > > +obj-$(CONFIG_KUNIT) += of_kunit.o
+> >
+> > I'm tempted to have this either live in lib/kunit, or be behind a
+> > separate Kconfig option, particularly since this will end up as a
+> > separate module, as-is.
+>
+> Is the idea to have a single module that has all the kunit "stuff" in it
+> so we can just load one module and be done? Is there any discussion on
+> the list I can read to see the argument for this?
 
-	Hans
+I don't think there's been any specific discussion around making sure
+KUnit lives in one module: this is just the first patch which would
+make CONFIG_KUNIT build several separate ones.
+Personally, I'd prefer to have the CONFIG_KUNIT option only build one
+module itself, and otherwise keep the corresponding code in lib/kunit,
+just so it's clearer what side effects enabling / disabling it has.
 
-> 
-> I have no strong opinion for any of the two, please feel free to land
-> whatever version you prefer.
-> 
-> 
-> Regards
-> 
-> On Wed, 24 Apr 2024 at 20:46, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
->>
->> On Wed, Apr 24, 2024 at 06:17:31PM +0000, Sakari Ailus wrote:
->>> On Wed, Apr 24, 2024 at 12:55:20PM +0200, Hans Verkuil wrote:
->>>> On 19/04/2024 11:47, Ricardo Ribalda wrote:
->>>>> Return 0 without checking IS_ERR or PTR_ERR if CONFIG_MEDIA_CONTROLLER
->>>>> is not enabled.
->>>>>
->>>>> This makes cocci happier:
->>>>>
->>>>> drivers/media/v4l2-core/v4l2-async.c:331:23-30: ERROR: PTR_ERR applied after initialization to constant on line 319
->>>>>
->>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>>>> ---
->>>>>  drivers/media/v4l2-core/v4l2-async.c | 7 +++----
->>>>>  1 file changed, 3 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
->>>>> index 4bb073587817..915a9f3ea93c 100644
->>>>> --- a/drivers/media/v4l2-core/v4l2-async.c
->>>>> +++ b/drivers/media/v4l2-core/v4l2-async.c
->>>>> @@ -316,9 +316,10 @@ v4l2_async_nf_try_all_subdevs(struct v4l2_async_notifier *notifier);
->>>>>  static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
->>>>>                                        struct v4l2_subdev *sd)
->>>>>  {
->>>>> - struct media_link *link = NULL;
->>>>> + struct media_link *link;
->>>>>
->>>>> -#if IS_ENABLED(CONFIG_MEDIA_CONTROLLER)
->>>>> + if (!IS_ENABLED(CONFIG_MEDIA_CONTROLLER))
->>>>> +         return 0;
->>>>>
->>>>>   if (sd->entity.function != MEDIA_ENT_F_LENS &&
->>>>>       sd->entity.function != MEDIA_ENT_F_FLASH)
->>>>> @@ -326,8 +327,6 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
->>>>>
->>>>>   link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
->>>>>
->>>>> -#endif
->>>>> -
->>>>>   return IS_ERR(link) ? PTR_ERR(link) : 0;
->>>>>  }
->>>>
->>>> I think I would prefer:
->>>>
->>>> static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
->>>>                                          struct v4l2_subdev *sd)
->>>> {
->>>> #if IS_ENABLED(CONFIG_MEDIA_CONTROLLER)
->>>>     struct media_link *link;
->>>>
->>>>     ...
->>>>
->>>>     return IS_ERR(link) ? PTR_ERR(link) : 0;
->>>> #else
->>>>     return 0;
->>>> #endif
->>>> }
->>>>
->>>
->>> Me, too.
->>
->> I actually prefer Ricardo's proposal :-)
->>
->> --
->> Regards,
->>
->> Laurent Pinchart
-> 
-> 
-> 
+But ultimately, this really is just another side effect of the
+discussion below about whether this is integrated as "part of KUnit",
+in which case it can live in lib/kunit and be under CONFIG_KUNIT, or
+if it's a part of of, in which case this is fine (though I'd rather it
+be behind a CONFIG_OF_KUNIT_HELPERS or similar, personally).
 
+
+> >
+> > >  obj-$(CONFIG_OF_KUNIT_TEST) += of_test.o
+> > >
+> > >  obj-$(CONFIG_OF_UNITTEST) += unittest-data/
+> > > diff --git a/drivers/of/of_kunit.c b/drivers/of/of_kunit.c
+> > > new file mode 100644
+> > > index 000000000000..f63527268a51
+> > > --- /dev/null
+> > > +++ b/drivers/of/of_kunit.c
+> > > @@ -0,0 +1,99 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Test managed device tree APIs
+> > > + */
+> > > +
+> > > +#include <linux/of.h>
+> > > +#include <linux/of_fdt.h>
+> > > +
+> > > +#include <kunit/of.h>
+> > > +#include <kunit/test.h>
+> > > +#include <kunit/resource.h>
+> > > +
+> > > +static void of_overlay_fdt_apply_kunit_exit(void *ovcs_id)
+> > > +{
+> > > +       of_overlay_remove(ovcs_id);
+> > > +}
+> > > +
+> > > +/**
+> > > + * of_overlay_fdt_apply_kunit() - Test managed of_overlay_fdt_apply()
+> > > + * @test: test context
+> > > + * @overlay_fdt: device tree overlay to apply
+> > > + * @overlay_fdt_size: size in bytes of @overlay_fdt
+> > > + * @ovcs_id: identifier of overlay, used to remove the overlay
+> > > + *
+> > > + * Just like of_overlay_fdt_apply(), except the overlay is managed by the test
+> > > + * case and is automatically removed with of_overlay_remove() after the test
+> > > + * case concludes.
+> > > + *
+> > > + * Return: 0 on success, negative errno on failure
+> > > + */
+> > > +int of_overlay_fdt_apply_kunit(struct kunit *test, void *overlay_fdt,
+> > > +                              u32 overlay_fdt_size, int *ovcs_id)
+> >
+> > We're using kunit_ as a prefix for the device helpers (e.g.
+> > kunit_device_register()), so it may make sense to do that here, too.
+> > It's not as important as with the platform_device helpers, which are
+> > very similar to the existing device ones, but if we want to treat
+> > these as "part of KUnit which deals with of_overlays", rather than
+> > "part of "of_overlay which deals with KUnit", this may fit better.
+> >
+> > Thoughts?
+>
+> I'm fine either way with the name. I recall that last time we put a
+> kunit postfix to make it easier to tab complete or something like that.
+>
+> I find it hard to understand the distinction you're trying to make
+> though. I guess you're saying the difference is what subsystem maintains
+> the code, kunit or of. When they're simple wrappers it is easier to
+> extract them out to lib/kunit and thus they can (should?) have the kunit
+> prefix. Maybe that always holds true, because kunit wrappers are
+> typically another API consumer, and if the API is exported either in a
+> linux/ header or as an exported symbol it can be wrapped in lib/kunit
+> easily. Did I follow correctly? When would of_overlay ever deal with
+> KUnit?
+
+Yeah, it's about what subsystem is maintaining the code, which impacts
+a bit of the naming, and depends a bit on the intended use-case.
+
+If these helpers are intended to test a particular subsystem, and are
+of no use outside it, it seems clear that they should be a part of
+that subsystem. For instance, the drm_kunit_helpers.
+If they're exposing kunit-specific wrappers around core APIs, it makes
+sense for them to be a part of KUnit. (The managed devices stuff, for
+instance, as the device model is used by pretty much everything. It
+also requires a KUnit-managed struct kunit_bus, which is hooked into
+KUnit at a lower level, so needs to be a part of kunit.)
+
+It gets more complicated for cases like of, where the helpers are both
+used for testing of itself, and for testing drivers which rely on it.
+So I think it could go either way. My gut instinct is that
+platform_device is generic enough to be a part of KUnit (to match the
+existing managed device stuff). For of_overlay, I could go either way,
+and just leaned to having it be part of KUnit as that's a bit more
+common, and it matches, e.g., the headers and documentation being
+under include/kunit and dev-tools/kunit respectively.
+
+> > > diff --git a/include/kunit/of.h b/include/kunit/of.h
+> > > new file mode 100644
+> > > index 000000000000..9981442ba578
+> > > --- /dev/null
+> > > +++ b/include/kunit/of.h
+> > > @@ -0,0 +1,94 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +#ifndef _KUNIT_OF_H
+> > > +#define _KUNIT_OF_H
+> > > +
+> > > +#include <kunit/test.h>
+> > > +
+> > > +struct device_node;
+> > > +
+> > > +#ifdef CONFIG_OF
+> >
+> > Do we also need to check for CONFIG_OF_OVERLAY here?
+> >
+> > Also, how useful is it to compile but skip tests without
+> > CONFIG_OF{,_OVERLAY} enabled? The other option is a compile error,
+> > which may make it more obvious that these are disabled if it's
+> > unexpected.
+> >
+> > Thoughts?
+>
+> I've tried to make it so that tests skip if an option isn't enabled. I
+> suppose the CONFIG_OF_OVERLAY check can be hoisted up here as well so
+> that the skip isn't buried in lower levels.
+
+Yeah, my feeling here is that if we're going to declare functions
+which interact with of_overlay, we should have the 'skip' fallbacks
+occur for either both CONFIG_OF and CONFIG_OF_OVERLAY here, or neither
+(and require the test use its own #include guards). Having CONFIG_OF
+checked here, and CONFIG_OF_OVERLAY checked elsewhere seems confusing
+to me.
+
+Cheers,
+-- David
+
+--00000000000097eea106179ca65e
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIETN56TU+Zyv4/Xmc6NmhAeOjWx39QgDubV8PTXD5gbEMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDUwNDA4MzAzN1owaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQATQrkf
+/KbZeMeWllE8hnVs5v4hUkMO5tZqJZ60AA62xWv8UqCpqX6+l0bOcovTrnCe2ovY+jLlSCxTpZaG
+ZUX7Ftat5yVsfIh/tyUZiykqhQUwS39QpJUALn78lsO+JCwpOnpyMTx1VMLrUKoH9o6aDiRmIEl8
+O6oXdxp7BTaLIiTCuIi36rZC2a7ktgFH3LvmBWv9z0PtXeRcHoA/LU4cq+Y8ppqtGmhs3RUSumqG
+zqxunSUGYiWB7dPkb2+kAL/vv5nYLiL6QkInj3pQ3+BIk3VyIH9Ulf06Kmak6ilzYAG1G5mfTCYK
+DhoggHKYjd/cxTDsPTHc0mEaawbgvylZ
+--00000000000097eea106179ca65e--
 
