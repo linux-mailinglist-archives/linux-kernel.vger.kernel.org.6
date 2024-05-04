@@ -1,151 +1,245 @@
-Return-Path: <linux-kernel+bounces-168548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AB88BB9F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:06:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7218BB9F0
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25094B21E7F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:05:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8E88B21B84
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D66E17565;
-	Sat,  4 May 2024 08:05:29 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A9D12B7F;
+	Sat,  4 May 2024 08:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2MPtTQT"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6199111AA;
-	Sat,  4 May 2024 08:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DBAD29E;
+	Sat,  4 May 2024 08:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714809929; cv=none; b=e81La9ZsdjKchRdPd6bkPtgRkLfVg0hQyDtIT6eP8S3JKR71qVZ/s+akHD60gMMO9pH9U4dFHm6ptzWAegSjyLi2zXedPfMEdr0G5jBKss6P7CBG/0XOu2r2vRRYW7sB6qZ9Q7US4TozU2e+wye50u1NzWntZZetW5afisMPci4=
+	t=1714809869; cv=none; b=Kgr6DSAxNcEM/nEoRD2/QLhSsYbECiMri96BOozGV7tN3HGyv8wGorBCI7HAGhKx7mus9nBLyWP5f61ittUmXfgWzi1O+XGEeGwjP4+IbcJagDMri18JaUNFKGrRvzqtu62Xn7vpnxd4k+x/74nWEbuUPE+Phbt+XJ0YBNd28P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714809929; c=relaxed/simple;
-	bh=PqEHoe9X1I+B/sJzkfzuM0O55hXfopFksPoGm8W8qGQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nFBxsIXI4xeCLfQOZAH5jelT4RdEkysMFiSP9twE1OKpICRnFNEApX1Ox8hmfHaS9fVx6ysem3qi2JrYF8xhnaOdrpG8VpIsHFg3ADFGWeQham4iWzFHO4zbEqlizxe1IJP7Lvy16S1m6BM5E/BONTysn/V8gahAoYC9zuI3S5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VWgFj05NJz4f3jZ7;
-	Sat,  4 May 2024 16:05:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 328261A0179;
-	Sat,  4 May 2024 16:05:18 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgCXaBE57DVmKbDhLg--.23467S6;
-	Sat, 04 May 2024 16:05:18 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	libaokun@huaweicloud.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: [PATCH 2/2] ext4: propagate errors from ext4_sb_bread() in ext4_xattr_block_cache_find()
-Date: Sat,  4 May 2024 15:55:26 +0800
-Message-Id: <20240504075526.2254349-3-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240504075526.2254349-1-libaokun@huaweicloud.com>
-References: <20240504075526.2254349-1-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1714809869; c=relaxed/simple;
+	bh=0hjZIw2e2IuhjYNugxhXSXZpWs5mVXjcsoZo1BqocAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ue9HDOTCe4j4gjig2I5kW18f3muEpv7ofXLBCkNYbB+0QclQdB4Cqx+eop9AdV3RyWRFpTdcWx/hovEZz0DGnnly0O+dp/E/hyfNkHqbhF6gqEH+hxpPwJh4LQ2YdtrCYJ1fktZT8a1VC0wZEcHeFt1FNVkC2KBVRpp2QD+bw9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j2MPtTQT; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6ed3cafd766so391268b3a.0;
+        Sat, 04 May 2024 01:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714809866; x=1715414666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Lj67rtK1QueWPk7ARNpfvxl9vOgAVWGxhUJDN/QBK8=;
+        b=j2MPtTQTx683nJWgf+VqG/CYiRVqskw/qKRynsLET/BuZX8Gx+lRoPor2Mbw77E/rs
+         f5PVcoklIFNoWE1RWFO5kyJxadfxcHOe93vboEbFAAR6eo1eO/Ojiu2xD1/ZLSYQgZVD
+         dNBAFTYTp+S45ULOfx3Gb5TClMgKwPE6cUWd7KZraDaORWL3p+Zu4h2Su3ynomL8e6LD
+         79/LzoGjVid/dmXwbAQMJIMFL9s8a6R+onCZxCrYzATbVGNaXht4nt62YZv976Bw3bOt
+         EQNcwi76REG8VUUY9c9FJC931NWCEBwxuZVEH7Oz07377xVwvG8hfW/mnCrYjJr9GJoR
+         WQBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714809866; x=1715414666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Lj67rtK1QueWPk7ARNpfvxl9vOgAVWGxhUJDN/QBK8=;
+        b=W/9dzpS/lLFJLoXjFbPJnwnrRBB4BRKasFPORn58kgupW5I6D2nCxYpPxGmsIaEBQ/
+         PgY/W+6LNNYNdgRqp7v3k2CR83+eGtgJTjNL77EfWHiWBN1pc1qhf/+AGirZ+T/CkmhJ
+         23TCkpvDGFZGJl0INYpBO2/VkZjI5Ft891YCX9AiugpNjGDGYKSFjDWXdlvInlGm5lIr
+         Ou6KaBBVBXAWwT4JJXzpetcQJjwfholBX+SSc1b8LI1NZ2FDbMlhn16orvoQphinZw57
+         ZB4aZZRCK9notumSDPq1TB3cvs/AkeVebzZ5RPwVtir/PGa1Y9mIjImT4WDg40m0NFyl
+         dRWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgXjfzAGqpZFd8V4eQ7FPaIReB6gBfvQp8Pd21tKLo97WCvi5PjVJncQsXy6aHX9EbG0gJX3OAOaeVkZASF5jbPRjbPc63YWcIDdDVXt5rBQmW/ax84o4AtD5yKzeFZolBzn0o2zsibhxLWZiVFoOnQopXNZqcLaMvGukLzVACXXbzAspKWKC3paLYd9go/Kp7hR05ZqZsLt3OHf+RuHfN1Klrw0BKRJses52aGIXYnWI6ceZpCiNLDwef7gWtZmENw0R3nBWbLg==
+X-Gm-Message-State: AOJu0YzESvWpYvlndTA/zG1moIQZJ9Zm1Gq3mrp1V9ezJtQHJ0V+o+7t
+	QQ9MI9lwRe27O8mBR6TVZsbkUDrvwJgRwCE4y/Q2XQuESGNMvOcB
+X-Google-Smtp-Source: AGHT+IG0qZqH9zc005lWKjgxwZgqZm5TyMRd8CrRzXUZbRqngw1NpFuolrIDkh7YQEN+G1GdDh8Ciw==
+X-Received: by 2002:a05:6a00:a81:b0:6f3:e9bc:7ed3 with SMTP id b1-20020a056a000a8100b006f3e9bc7ed3mr5704824pfl.17.1714809866257;
+        Sat, 04 May 2024 01:04:26 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id bn12-20020a056a00324c00b006edd05e3751sm4356202pfb.176.2024.05.04.01.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 May 2024 01:04:25 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 8A4001847D504; Sat, 04 May 2024 15:04:22 +0700 (WIB)
+Date: Sat, 4 May 2024 15:04:22 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
+	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu,
+	ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
+	snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [PATCH v18 20/21] Documentation: add ipe documentation
+Message-ID: <ZjXsBjAFs-qp9xY4@archie.me>
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
+ <1714775551-22384-21-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXaBE57DVmKbDhLg--.23467S6
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF17Zw4UZr18JF18tF4DCFg_yoW8tw4xpr
-	y3KryrtrW0gFy3uay3tF1UZw1fuan7GF4UKrW7K34rZa4UXw1SgFyIq3Z0vFyj9rZ7X3ZF
-	qF4qk34Uu3W5C3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7M4kE6xkIj40Ew7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC2
-	0s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI
-	0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv2
-	0xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2js
-	IE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZF
-	pf9x0JUBmhrUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nK/4++6p9aVBG6jQ"
+Content-Disposition: inline
+In-Reply-To: <1714775551-22384-21-git-send-email-wufan@linux.microsoft.com>
 
-From: Baokun Li <libaokun1@huawei.com>
 
-In ext4_xattr_block_cache_find(), when ext4_sb_bread() returns an error,
-we will either continue to find the next ea block or return NULL to try to
-insert a new ea block. But whether ext4_sb_bread() returns -EIO or -ENOMEM,
-the next operation is most likely to fail with the same error. So propagate
-the error returned by ext4_sb_bread() to make ext4_xattr_block_set() fail
-to reduce pointless operations.
+--nK/4++6p9aVBG6jQ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/ext4/xattr.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+On Fri, May 03, 2024 at 03:32:30PM -0700, Fan Wu wrote:
+> +IPE does not mitigate threats arising from malicious but authorized
+> +developers (with access to a signing certificate), or compromised
+> +developer tools used by them (i.e. return-oriented programming attacks).
+> +Additionally, IPE draws hard security boundary between userspace and
+> +kernelspace. As a result, IPE does not provide any protections against a
+> +kernel level exploit, and a kernel-level exploit can disable or tamper
+> +with IPE's protections.
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 9fdd13422073..11742e1f16d7 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2059,8 +2059,13 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
- 
- inserted:
- 	if (!IS_LAST_ENTRY(s->first)) {
--		new_bh = ext4_xattr_block_cache_find(inode, header(s->base),
--						     &ce);
-+		new_bh = ext4_xattr_block_cache_find(inode, header(s->base), &ce);
-+		if (IS_ERR(new_bh)) {
-+			error = PTR_ERR(new_bh);
-+			new_bh = NULL;
-+			goto cleanup;
-+		}
-+
- 		if (new_bh) {
- 			/* We found an identical block in the cache. */
- 			if (new_bh == bs->bh)
-@@ -3090,8 +3095,8 @@ ext4_xattr_cmp(struct ext4_xattr_header *header1,
-  *
-  * Find an identical extended attribute block.
-  *
-- * Returns a pointer to the block found, or NULL if such a block was
-- * not found or an error occurred.
-+ * Returns a pointer to the block found, or NULL if such a block was not
-+ * found, or an error pointer if an error occurred while reading ea block.
-  */
- static struct buffer_head *
- ext4_xattr_block_cache_find(struct inode *inode,
-@@ -3113,13 +3118,11 @@ ext4_xattr_block_cache_find(struct inode *inode,
- 
- 		bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
- 		if (IS_ERR(bh)) {
--			if (PTR_ERR(bh) == -ENOMEM) {
--				mb_cache_entry_put(ea_block_cache, ce);
--				return NULL;
--			}
--			bh = NULL;
--			EXT4_ERROR_INODE(inode, "block %lu read error",
--					 (unsigned long)ce->e_value);
-+			if (PTR_ERR(bh) != -ENOMEM)
-+				EXT4_ERROR_INODE(inode, "block %lu read error",
-+						 (unsigned long)ce->e_value);
-+			mb_cache_entry_put(ea_block_cache, ce);
-+			return bh;
- 		} else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
- 			*pce = ce;
- 			return bh;
--- 
-2.39.2
+So how to mitigate kernel-level exploits then?
 
+> +Allow only initramfs
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> <snipped>...
+> +Allow any signed and validated dm-verity volume and the initramfs
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> <snipped>...
+
+htmldocs build reports new warnings:
+
+Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too sho=
+rt.
+
+Allow any signed and validated dm-verity volume and the initramfs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too sho=
+rt.
+
+Allow any signed and validated dm-verity volume and the initramfs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Documentation/arch/x86/resctrl.rst:577: WARNING: Title underline too short.
+
+I have to match these sections underline length:
+
+---- >8 ----
+diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-gu=
+ide/LSM/ipe.rst
+index 1a3bf1d8aa23f0..a47e14e024a90d 100644
+--- a/Documentation/admin-guide/LSM/ipe.rst
++++ b/Documentation/admin-guide/LSM/ipe.rst
+@@ -681,7 +681,7 @@ Allow all
+    DEFAULT action=3DALLOW
+=20
+ Allow only initramfs
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++~~~~~~~~~~~~~~~~~~~~
+=20
+ ::
+=20
+@@ -691,7 +691,7 @@ Allow only initramfs
+    op=3DEXECUTE boot_verified=3DTRUE action=3DALLOW
+=20
+ Allow any signed and validated dm-verity volume and the initramfs
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=20
+ ::
+=20
+@@ -725,7 +725,7 @@ Allow only a specific dm-verity volume
+    op=3DEXECUTE dmverity_roothash=3Dsha256:401fcec5944823ae12f62726e818440=
+7a5fa9599783f030dec146938 action=3DALLOW
+=20
+ Allow any fs-verity file with a valid built-in signature
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=20
+ ::
+=20
+@@ -735,7 +735,7 @@ Allow any fs-verity file with a valid built-in signature
+    op=3DEXECUTE fsverity_signature=3DTRUE action=3DALLOW
+=20
+ Allow execution of a specific fs-verity file
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=20
+ ::
+=20
+
+> +Additional Information
+> +----------------------
+> +
+> +- `Github Repository <https://github.com/microsoft/ipe>`_
+> +- Documentation/security/ipe.rst
+
+Link title to both this admin-side and developer docs can be added for
+disambiguation (to avoid confusion on readers):
+
+---- >8 ----
+diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-gu=
+ide/LSM/ipe.rst
+index a47e14e024a90d..25b17e11559149 100644
+--- a/Documentation/admin-guide/LSM/ipe.rst
++++ b/Documentation/admin-guide/LSM/ipe.rst
+@@ -7,7 +7,8 @@ Integrity Policy Enforcement (IPE)
+=20
+    This is the documentation for admins, system builders, or individuals
+    attempting to use IPE. If you're looking for more developer-focused
+-   documentation about IPE please see Documentation/security/ipe.rst
++   documentation about IPE please see :doc:`the design docs
++   </security/ipe>`.
+=20
+ Overview
+ --------
+@@ -748,7 +749,7 @@ Additional Information
+ ----------------------
+=20
+ - `Github Repository <https://github.com/microsoft/ipe>`_
+-- Documentation/security/ipe.rst
++- :doc:`Developer and design docs for IPE </security/ipe>`
+=20
+ FAQ
+ ---
+diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
+index 07e3632241285d..fd1b1a852d2165 100644
+--- a/Documentation/security/ipe.rst
++++ b/Documentation/security/ipe.rst
+@@ -7,7 +7,7 @@ Integrity Policy Enforcement (IPE) - Kernel Documentation
+=20
+    This is documentation targeted at developers, instead of administrators.
+    If you're looking for documentation on the usage of IPE, please see
+-   Documentation/admin-guide/LSM/ipe.rst
++   `IPE admin guide </admin-guide/LSM/ipe.rst>`_.
+=20
+ Historical Motivation
+ ---------------------
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--nK/4++6p9aVBG6jQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjXsAgAKCRD2uYlJVVFO
+o5rXAQCS3HwJg98sIZ+dvHD4EtrdQXP2AZQEC3nP+kq7cOi47wD+P0ZrOINzS3p5
+azRTQTXUkE+0lznZFyE75YeW2OX1dQs=
+=ebwU
+-----END PGP SIGNATURE-----
+
+--nK/4++6p9aVBG6jQ--
 
