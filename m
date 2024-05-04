@@ -1,164 +1,92 @@
-Return-Path: <linux-kernel+bounces-168577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91F28BBA5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:48:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FD68BBA5E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 792091F2202B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:48:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D97B21C95
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DD217BD3;
-	Sat,  4 May 2024 09:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qXMsbgQr"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5058517BA6;
+	Sat,  4 May 2024 09:48:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328F45234;
-	Sat,  4 May 2024 09:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8983B1A716
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714816074; cv=none; b=HDglfoD/Db2lfA6ziiZMouDiPCZVw4BiW0TPX/SZAl3SXkZha4VNtsjBvz8tgVdn9xDEAW6msNuY6eY+uoHNc7NdKl/7NfcrNGmaxx+4McztgkHtwaOI7jP1g+OF/d28UISXxZ31WYIhR+YnxqFp5V9a5101Z2O05tMvFoAZVMg=
+	t=1714816085; cv=none; b=PCuHIadxOoqQ5KfKlG+F0g6cZalz04tKLMKChIy8aZm8FGQIAJiq94H4Bht0I1m0Sj6bQ7EYbJrudA5YjqNHvTiMkrfkSZ/GMcxo87OMG73s2Zmn4MjM3sd+8hDlK/XzKs7N0ACZaJQ3HCs1D5+209MdLp8Iw3xr5NDp4mETKrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714816074; c=relaxed/simple;
-	bh=0RAXrA9ddTunKzQ27o/B/H26iN61m5JOjlIACCixexs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EenVVEiJW1UilZBkGoHWdOFrIi/UXwO+u0vtWZKNabIIbi597ERFuJL2WsV0JnI3nfsSuHO0Q7YaQ9nh7099qEgddUGEzEiTgf1C2SxoLe9XISOhR4p+G4qG/aUcVxrPiBAoOy6oMkt2ay9GfzYCSOqW8UzYskCUWJwbivIM1BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qXMsbgQr; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 3BzasNrmCn00P3BzasC921; Sat, 04 May 2024 11:47:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714816063;
-	bh=+sxsfrfYccN7R5PHA2bf4kljLQPC2B5E2Xz86Gbnl54=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=qXMsbgQrYWfIaNijqNG3tjPKyVfI1+F11JfJnUUJLhwE4yxS3CcyRmvr0X4GwlSGq
-	 UHxO9k4aSt7BUvCHEWiQrt6CUGrj5+OEw5K4aBM4nNYZWqgBTIwx74v3IEYoKwBkZi
-	 Y/+PplttYcmno9WfdZKVJPVHf1q39sCfLdPV5+HjLoPER5NWjfbDWWSigG3MzaV216
-	 l0SEntzJt6EqDqxPzo3lbyNxev8urLdyTTTZRi0vWrN9jdfTGNeBFKcgxpz+7Bu1Pq
-	 zVW1J7kGjdvxb9hzCWSjzDV9pWkLOrreex3DMyh3AlwXV8VxLNTy579d8NCloIN0+s
-	 eJVLebX5kCnLw==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 04 May 2024 11:47:43 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH] usb: core: Remove the useless struct usb_devmap which is just a bitmap
-Date: Sat,  4 May 2024 11:47:05 +0200
-Message-ID: <1d818575ff7a1e8317674aecf761ee23c89fdc84.1714815990.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1714816085; c=relaxed/simple;
+	bh=mhuJM+GfCQH5IMMrJMXVP9OBz/wYR8fa+oIkbwJ0sFM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fJjNgJiOUUgWXm6egkD8TTSVq2OWMNafIIGYecUjqyaEJNb/isErowWtqUFM2rph1Iy6yPqK5o7KkOqAUBCbeeMm7Bf6J90uoE7DTw16QTJmEBUNl0C1oe7NVl8fK7PMOFn1YgaX8Mj7dShRdyetu06RX38e6qzWIc4CxRvI7Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7dec39bc0a4so50365139f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 02:48:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714816084; x=1715420884;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9vMfvjlUyZ95gb2Bl4Phjw9KVzOE/POZUXc/tMc9CNs=;
+        b=Fa77UZfD+QWa+yC0vE++h+aSsNJpxDhLa7UoFGKG0ju6zyyA5P6BJ6BPZO9CJy2D0h
+         wScORIElKmk/LUwF+AGW308/tM8UN4f5HZRT7kF0UOWpIxvF/QJdXUngRrFPiUydYy9I
+         ewU2fGYf0HvdYKh/UtACnXAp1k8GbqznR2DtR+b200USV5FLrTdUwGwLIR5jg+lGWxG/
+         LTpFQ8B+5RiOwYWpxddf/+D3eoU3ETDEbhuzwViP54AoaatGQMWqsCl3OqH9v2r4JDNV
+         o0yt+cyrSja/19EZq4WO93nBPHOUTPU0jMfIlDsKbkYyh0jFZPt0Ed4uNJUEC4tpXAIP
+         ComQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkoXVxP+vvIIPfCa8t31noRhfCT2sVRe/LPW7v6XO9Wim2ip8kWqclOMNuS/K41S3n2n8RzDAuovyHKc827vW00An0ru/qsTIpRhUc
+X-Gm-Message-State: AOJu0YzNIG4MjmXGlHgE1/+im1Bu9pNU0bA3aOJ1SQD3kn4ZNzWPjzTD
+	+bYN9Rh7/mfnVyAymmy45mCVzgt9/BnxBYShsbQeX06OvwBTZ39ueJv92RpUOpzMdzrj9NKXiba
+	rnEBsYdorpGhNbu98FCeRy6ytdGyo8I/DCZsixdWtEeAPmvY27HnmX4M=
+X-Google-Smtp-Source: AGHT+IHQXiciJ6Z11FdD4VBp4JCah2SN9/cx2OFqZQ7b69cg3huTCXgpZXSYi/CyAHP6kwLDQ3n7Nn+vJOJX7J3D0KyvntiXiiQT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:a58a:b0:488:59cc:eb41 with SMTP id
+ kd10-20020a056638a58a00b0048859cceb41mr36069jab.3.1714816083873; Sat, 04 May
+ 2024 02:48:03 -0700 (PDT)
+Date: Sat, 04 May 2024 02:48:03 -0700
+In-Reply-To: <00000000000078baec06178e6601@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000088e7bf06179dbbe8@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_trans_srcu_unlock
+From: syzbot <syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-struct usb_devmap is really just a bitmap. No need to have a dedicated
-structure for that.
+syzbot has bisected this issue to:
 
-Simplify code and use DECLARE_BITMAP() directly instead.
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+    bcachefs: Ignore unknown mount options
 
-I've re-used the comment related to struct usb_devmap for the devmap field
-in struct usb_bus, because it sounds better to me.
----
- drivers/usb/core/hcd.c | 4 ++--
- drivers/usb/core/hub.c | 9 ++++-----
- include/linux/usb.h    | 7 +------
- 3 files changed, 7 insertions(+), 13 deletions(-)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147f3908980000
+start commit:   f03359bca01b Merge tag 'for-6.9-rc6-tag' of git://git.kern..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167f3908980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127f3908980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d42c70980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ce8250980000
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index c0e005670d67..e3366f4d82b9 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -866,7 +866,7 @@ static int usb_rh_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
-  */
- static void usb_bus_init (struct usb_bus *bus)
- {
--	memset (&bus->devmap, 0, sizeof(struct usb_devmap));
-+	memset(&bus->devmap, 0, sizeof(bus->devmap));
- 
- 	bus->devnum_next = 1;
- 
-@@ -962,7 +962,7 @@ static int register_root_hub(struct usb_hcd *hcd)
- 
- 	usb_dev->devnum = devnum;
- 	usb_dev->bus->devnum_next = devnum + 1;
--	set_bit (devnum, usb_dev->bus->devmap.devicemap);
-+	set_bit(devnum, usb_dev->bus->devmap);
- 	usb_set_device_state(usb_dev, USB_STATE_ADDRESS);
- 
- 	mutex_lock(&usb_bus_idr_lock);
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 8939f1410644..4b93c0bd1d4b 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2207,13 +2207,12 @@ static void choose_devnum(struct usb_device *udev)
- 	mutex_lock(&bus->devnum_next_mutex);
- 
- 	/* Try to allocate the next devnum beginning at bus->devnum_next. */
--	devnum = find_next_zero_bit(bus->devmap.devicemap, 128,
--			bus->devnum_next);
-+	devnum = find_next_zero_bit(bus->devmap, 128, bus->devnum_next);
- 	if (devnum >= 128)
--		devnum = find_next_zero_bit(bus->devmap.devicemap, 128, 1);
-+		devnum = find_next_zero_bit(bus->devmap, 128, 1);
- 	bus->devnum_next = (devnum >= 127 ? 1 : devnum + 1);
- 	if (devnum < 128) {
--		set_bit(devnum, bus->devmap.devicemap);
-+		set_bit(devnum, bus->devmap);
- 		udev->devnum = devnum;
- 	}
- 	mutex_unlock(&bus->devnum_next_mutex);
-@@ -2222,7 +2221,7 @@ static void choose_devnum(struct usb_device *udev)
- static void release_devnum(struct usb_device *udev)
- {
- 	if (udev->devnum > 0) {
--		clear_bit(udev->devnum, udev->bus->devmap.devicemap);
-+		clear_bit(udev->devnum, udev->bus->devmap);
- 		udev->devnum = -1;
- 	}
- }
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index 9e52179872a5..1913a13833f2 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -440,11 +440,6 @@ int __usb_get_extra_descriptor(char *buffer, unsigned size,
- 
- /* ----------------------------------------------------------------------- */
- 
--/* USB device number allocation bitmap */
--struct usb_devmap {
--	unsigned long devicemap[128 / (8*sizeof(unsigned long))];
--};
--
- /*
-  * Allocated per bus (tree of devices) we have:
-  */
-@@ -472,7 +467,7 @@ struct usb_bus {
- 					 * round-robin allocation */
- 	struct mutex devnum_next_mutex; /* devnum_next mutex */
- 
--	struct usb_devmap devmap;	/* device address allocation map */
-+	DECLARE_BITMAP(devmap, 128);	/* USB device number allocation bitmap */
- 	struct usb_device *root_hub;	/* Root hub */
- 	struct usb_bus *hs_companion;	/* Companion EHCI bus, if any */
- 
--- 
-2.45.0
+Reported-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
