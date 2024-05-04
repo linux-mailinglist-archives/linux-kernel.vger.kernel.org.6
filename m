@@ -1,166 +1,259 @@
-Return-Path: <linux-kernel+bounces-168783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48FF8BBD9E
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:27:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A708BBDA3
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A904B1C20C33
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F300281ACF
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B11A7318A;
-	Sat,  4 May 2024 18:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNlCvUbr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9255476034;
+	Sat,  4 May 2024 18:27:56 +0000 (UTC)
+Received: from smtprelay02.ispgateway.de (smtprelay02.ispgateway.de [80.67.31.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EBA77F08;
-	Sat,  4 May 2024 18:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524C86EB68;
+	Sat,  4 May 2024 18:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.67.31.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714847222; cv=none; b=Nhj3hNO0nkU0NLfHtwEbtl2YL7wYk6QA4dORd0q/L0IsNpM56Z7930xD+vt5S0W+TfPMSAp9GNLa36pU10FwCdUfFofvLBMooXm0C4KGkYIfuaSS0L7mSTzJZuSZlXxkc0vNA2HZWh2BwNNsyDXkxYvBDISMDp/X7fm7eXh7Ydg=
+	t=1714847276; cv=none; b=IDLEJTGIRJpnQ7OfEmbX0HPXz2ztJ39/lkt0ubgC1ZTxIQ0GGJ9N7HC/Xcf1g7/aBwjrHbtoqyRufi4CZEE7UlubfU3u/4iMYeMpfmmqnqjw1Ba3kzvm9FhskeN5ROhXW7/l6ng+cyUsaS+EPDC8mUcix5aAqrySBK/DRxdVY3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714847222; c=relaxed/simple;
-	bh=T8RL3GJ2WYtqHOh0klj9cA7pEI84E1fR8OclwOfdXAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8YSy5xktHBSiTW6PA25zPkWQt6wjdEwl8gvbtC1GT+F/dvH1Psv3gf9sL99l+GBgTVyfbu2k8YbKrwikAWgtxKl7b2T+4wzbUoPjg0rzoVO60Aui9mqqJHNraflLineXzil3G7Pa0aJvgyxpHLD4iF1l1ZxwURHUcLuOkrIOFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNlCvUbr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF97C072AA;
-	Sat,  4 May 2024 18:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714847222;
-	bh=T8RL3GJ2WYtqHOh0klj9cA7pEI84E1fR8OclwOfdXAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RNlCvUbrXvpZHxaA4dRj5dKMw3aulDKkFCI3qfiKbUZc21tH9gKQSivWi1Pb6O/Zb
-	 slz6pe8aXO5u4BVB+Gws6jsgCWiTn0ls1EPGTn5yzBiC+lOfwXlaH6a+jaWYCX6eDg
-	 681eQZVh4AajR/Ly6IGAW9feldHVpVdpcexgHnsVKWK4OfLXE+hyqOLQCwSPedVT2z
-	 SrcqB2x0oj8rraScmtK/VkCR4oWmirR/6rvvQo3tkpCp1Ltfqr8xUf9VAbJc5+e+d6
-	 qFsYO7d5F/7jAupWZkIR08ayKubZYYsy7OEEJTevZexojOS9T5/o69jYcuFGPt37h1
-	 h+9HSNBU6DX/w==
-Date: Sat, 4 May 2024 15:26:58 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 4/6] perf annotate-data: Check memory access with two
- registers
-Message-ID: <ZjZ98gLSmr0qXih2@x1>
-References: <20240502060011.1838090-1-namhyung@kernel.org>
- <20240502060011.1838090-5-namhyung@kernel.org>
- <ZjOdkHraWXZIuSy_@x1>
- <CAM9d7cg_YL1x8YfJ5+7+o+0dccFJJxUye8L_FLrgdGeAh81LBA@mail.gmail.com>
+	s=arc-20240116; t=1714847276; c=relaxed/simple;
+	bh=xFJ6dbahCUZbUAhjcrhX4bh6Ij+UbOLcDakcsigJlvI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Zk3caJerawX8ieILrAJwK+V0t1TzN36q7iMtksjmJGM8oid4MBMyTitwfRibguB4hOvvdk7xlhhcwEFfM1XcFTBthfGOH9eew9epptT33kraUd7vCSU7lXHKWdCZthVWH7fkTUvLDXhebEUjGMN6/YO+l31dWGsB71AFrGEIVys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; arc=none smtp.client-ip=80.67.31.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+Received: from [92.206.191.65] (helo=framework.lan)
+	by smtprelay02.ispgateway.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <git@apitzsch.eu>)
+	id 1s3K6A-00000000348-3Dby;
+	Sat, 04 May 2024 20:27:02 +0200
+Message-ID: <3309a9f1f5848681d0acf3bfdf9b6525fc88e1bc.camel@apitzsch.eu>
+Subject: Re: [PATCH v2 2/3] leds: sy7802: Add support for Silergy SY7802
+ flash LED controller
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kees Cook <keescook@chromium.org>, "Gustavo A. R.
+ Silva" <gustavoars@kernel.org>,  Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+Date: Sat, 04 May 2024 20:27:11 +0200
+In-Reply-To: <20240503071953.GD1227636@google.com>
+References: <20240401-sy7802-v2-0-1138190a7448@apitzsch.eu>
+	 <20240401-sy7802-v2-2-1138190a7448@apitzsch.eu>
+	 <20240411124855.GJ1980182@google.com> <20240503071953.GD1227636@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7cg_YL1x8YfJ5+7+o+0dccFJJxUye8L_FLrgdGeAh81LBA@mail.gmail.com>
+X-Df-Sender: YW5kcmVAYXBpdHpzY2guZXU=
 
-On Thu, May 02, 2024 at 11:14:50AM -0700, Namhyung Kim wrote:
-> On Thu, May 2, 2024 at 7:05 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> >
-> > On Wed, May 01, 2024 at 11:00:09PM -0700, Namhyung Kim wrote:
-> > > The following instruction pattern is used to access a global variable.
-> > >
-> > >   mov     $0x231c0, %rax
-> > >   movsql  %edi, %rcx
-> > >   mov     -0x7dc94ae0(,%rcx,8), %rcx
-> > >   cmpl    $0x0, 0xa60(%rcx,%rax,1)     <<<--- here
-> > >
-> > > The first instruction set the address of the per-cpu variable (here, it
-> > > is 'runqueus' of struct rq).  The second instruction seems like a cpu
-> >
-> > You mean 'runqueues', i.e. this one:
-> >
-> > kernel/sched/core.c
-> > DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-> >
-> > ?
-> 
-> Right, sorry for the typo.
-> 
-> >
-> > But that 0xa60 would be in an alignment hole, at least in:
-> >
-> > $ pahole --hex rq | egrep 0xa40 -A12
-> >         struct mm_struct *         prev_mm;              /* 0xa40   0x8 */
-> >         unsigned int               clock_update_flags;   /* 0xa48   0x4 */
-> >
-> >         /* XXX 4 bytes hole, try to pack */
-> >
-> >         u64                        clock;                /* 0xa50   0x8 */
-> >
-> >         /* XXX 40 bytes hole, try to pack */
-> >
-> >         /* --- cacheline 42 boundary (2688 bytes) --- */
-> >         u64                        clock_task __attribute__((__aligned__(64))); /* 0xa80   0x8 */
-> >         u64                        clock_pelt;           /* 0xa88   0x8 */
-> >         long unsigned int          lost_idle_time;       /* 0xa90   0x8 */
-> > $ uname -a
-> > Linux toolbox 6.7.11-200.fc39.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Mar 27 16:50:39 UTC 2024 x86_64 GNU/Linux
-> > $
-> 
-> This would be different on kernel version, config and
-> other changes like backports or local modifications.
-> 
-> On my system, it was cpu_stop_work.arg.
+Am Freitag, dem 03.05.2024 um 08:19 +0100 schrieb Lee Jones:
+> On Thu, 11 Apr 2024, Lee Jones wrote:
+>=20
+> > On Mon, 01 Apr 2024, Andr=C3=A9 Apitzsch via B4 Relay wrote:
+> >=20
+> > > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > >=20
+> > > Add support for SY7802 flash LED controller. It can support up to
+> > > 1.8A
+> > > flash current.
+> >=20
+> > This is a very small commit message for a 500+ line change!
+> >=20
+> > Please, tell us more.
+> >=20
+> > > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > > ---
+> > > =C2=A0drivers/leds/flash/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+|=C2=A0 11 +
+> > > =C2=A0drivers/leds/flash/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0=C2=A0 1 +
+> > > =C2=A0drivers/leds/flash/leds-sy7802.c | 532
+> > > +++++++++++++++++++++++++++++++++++++++
+> > > =C2=A03 files changed, 544 insertions(+)
+> > >=20
+> > > diff --git a/drivers/leds/flash/Kconfig
+> > > b/drivers/leds/flash/Kconfig
+> > > index 809b6d98bb3e..f39f0bfe6eef 100644
+> > > --- a/drivers/leds/flash/Kconfig
+> > > +++ b/drivers/leds/flash/Kconfig
+> > > @@ -121,4 +121,15 @@ config LEDS_SGM3140
+> > > =C2=A0	=C2=A0 This option enables support for the SGM3140 500mA
+> > > Buck/Boost Charge
+> > > =C2=A0	=C2=A0 Pump LED Driver.
+> > > =C2=A0
+> > > +config LEDS_SY7802
+> > > +	tristate "LED support for the Silergy SY7802"
+> > > +	depends on I2C && OF
+> > > +	depends on GPIOLIB
+> > > +	select REGMAP_I2C
+> > > +	help
+> > > +	=C2=A0 This option enables support for the SY7802 flash LED
+> > > controller.
+> > > +	=C2=A0 SY7802 includes torch and flash functions with
+> > > programmable current.
+> > > +
+> > > +	=C2=A0 This driver can be built as a module, it will be
+> > > called "leds-sy7802".
+> > > +
+> > > =C2=A0endif # LEDS_CLASS_FLASH
+> > > diff --git a/drivers/leds/flash/Makefile
+> > > b/drivers/leds/flash/Makefile
+> > > index 91d60a4b7952..48860eeced79 100644
+> > > --- a/drivers/leds/flash/Makefile
+> > > +++ b/drivers/leds/flash/Makefile
+> > > @@ -11,3 +11,4 @@ obj-$(CONFIG_LEDS_QCOM_FLASH)	+=3D leds-qcom-
+> > > flash.o
+> > > =C2=A0obj-$(CONFIG_LEDS_RT4505)	+=3D leds-rt4505.o
+> > > =C2=A0obj-$(CONFIG_LEDS_RT8515)	+=3D leds-rt8515.o
+> > > =C2=A0obj-$(CONFIG_LEDS_SGM3140)	+=3D leds-sgm3140.o
+> > > +obj-$(CONFIG_LEDS_SY7802)	+=3D leds-sy7802.o
+> > > diff --git a/drivers/leds/flash/leds-sy7802.c
+> > > b/drivers/leds/flash/leds-sy7802.c
+> > > new file mode 100644
+> > > index 000000000000..c03a571b0e08
+> > > --- /dev/null
+> > > +++ b/drivers/leds/flash/leds-sy7802.c
+> > > @@ -0,0 +1,532 @@
+>=20
+> [...]
+>=20
+> > > +static int sy7802_torch_brightness_set(struct led_classdev
+> > > *lcdev, enum led_brightness level)
+> >=20
+> > s/level/brightness/
+> >=20
+> > > +{
+> > > +	struct sy7802_led *led =3D container_of(lcdev, struct
+> > > sy7802_led, flash.led_cdev);
+> > > +	u32 led_enable_mask =3D led->led_no =3D=3D SY7802_LED_JOINT ?
+> > > SY7802_LEDS_MASK_ALL :
+> > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SY7802_LEDS_MASK(led->led_no);
+> >=20
+> > Do all of the fancy multi-line assignment outside of the
+> > declaration block.
+> >=20
+> > > +	u32 enable_mask =3D SY7802_MODE_MASK | led_enable_mask;
+> > > +	u32 val =3D level ? led_enable_mask : SY7802_MODE_OFF;
+> > > +	struct sy7802 *chip =3D led->chip;
+> > > +	u32 curr;
+> >=20
+> > This is a temporary placeholder for fled_torch_used, right?
+> >=20
+> > fled_torch_used_tmp?=C2=A0 Sometimes abbreviated to tmp.
+> >=20
+> > > +	u32 mask;
+> >=20
+> > That's a lot of masks.=C2=A0 Which one is this?
+> >=20
+> > > +	int ret;
+> > > +
+> > > +	mutex_lock(&chip->mutex);
+> > > +
+> > > +	/*
+> > > +	 * There is only one set of flash control logic, and
+> > > this flag is used to check if 'strobe'
+> >=20
+> > The ',' before 'and' is superfluous.
+> >=20
+> > > +	 * is currently being used.
+> > > +	 */
+> >=20
+> > Doesn't the variable name kind of imply this?
+> >=20
+> > > +	if (chip->fled_strobe_used) {
+> > > +		dev_warn(chip->dev, "Please disable strobe first
+> > > [%d]\n", chip->fled_strobe_used);
+> >=20
+> > "Cannot set torch brightness whilst strobe is enabled"
+> >=20
+> > > +		ret =3D -EBUSY;
+> > > +		goto unlock;
+> > > +	}
+> > > +
+> > > +	if (level)
+> > > +		curr =3D chip->fled_torch_used | BIT(led->led_no);
+> > > +	else
+> > > +		curr =3D chip->fled_torch_used & ~BIT(led-
+> > > >led_no);
+> > > +
+> > > +	if (curr)
+> > > +		val |=3D SY7802_MODE_TORCH;
+> > > +
+> > > +	/* Torch needs to be disabled first to apply new
+> > > brightness */
+> >=20
+> > "Disable touch to apply brightness"
+> >=20
+> > > +	ret =3D regmap_update_bits(chip->regmap,
+> > > SY7802_REG_ENABLE, SY7802_MODE_MASK,
+> > > +				 SY7802_MODE_OFF);
+> > > +	if (ret)
+> > > +		goto unlock;
+> > > +
+> > > +	mask =3D led->led_no =3D=3D SY7802_LED_JOINT ?
+> > > SY7802_TORCH_CURRENT_MASK_ALL :
+> >=20
+> > Why not just use led->led_no in place of mask?
+>=20
+> mask and led->led_no are assigned the same value from this point on.
 
-Sure, so please include the pahole output for the data that lead you to
-the conclusions in the explanation for the results obtained, so that we
-can have a better mental map of all the pieces and thus get convinced of
-the results and have a way to try to reproduce it in our systems.
+Thanks for the clarification.
+How to you come to the conclusion that mask and led->led_no are
+assigned the same value from this point on?
 
-In the future we will be grateful to this effort when looking back at
-these patches :-)
+The value of led->led_no is used here only as part of the if condition
+(led->led_no =3D=3D SY7802_LED_JOINT) and not assigned to mask.
+>=20
+> > Easier to read if you drop SY7802_TORCH_CURRENT_MASK_ALL to its own
+> > line.
+> >=20
+> > > +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SY7802_TORCH_CURRENT_MASK(led-=
+>led_no);
+> > > +
+> > > +	/* Register expects brightness between 0 and
+> > > MAX_BRIGHTNESS - 1 */
+> > > +	if (level)
+> > > +		level -=3D 1;
+> > > +
+> > > +	level |=3D (level << SY7802_TORCH_CURRENT_SHIFT);
+> > > +
+> > > +	ret =3D regmap_update_bits(chip->regmap,
+> > > SY7802_REG_TORCH_BRIGHTNESS, mask, level);
+>=20
+> So why not kill the single-use 'mask' variable and use a cast version
+> of led->led_no here instead?
+>=20
+> > > +	if (ret)
+> > > +		goto unlock;
+> > > +
+> > > +	ret =3D regmap_update_bits(chip->regmap,
+> > > SY7802_REG_ENABLE, enable_mask, val);
+> > > +	if (ret)
+> > > +		goto unlock;
+> > > +
+> > > +	chip->fled_torch_used =3D curr;
+> > > +
+> > > +unlock:
+> > > +	mutex_unlock(&chip->mutex);
+> > > +	return ret;
+> > > +}
+>=20
 
-Thanks for all your work in these features!
-
-- Arnaldo
- 
-> $ pahole --hex rq | grep 0xa40 -C1
->     /* --- cacheline 41 boundary (2624 bytes) --- */
->     struct cpu_stop_work       active_balance_work;  /* 0xa40  0x30 */
->     int                        cpu;                  /* 0xa70   0x4 */
-> 
-> $ pahole --hex cpu_stop_work
-> struct cpu_stop_work {
->     struct list_head           list;                 /*     0  0x10 */
->     cpu_stop_fn_t              fn;                   /*  0x10   0x8 */
->     long unsigned int          caller;               /*  0x18   0x8 */
->     void *                     arg;                  /*  0x20   0x8 */
->     struct cpu_stop_done *     done;                 /*  0x28   0x8 */
-> 
->     /* size: 48, cachelines: 1, members: 5 */
->     /* last cacheline: 48 bytes */
-> };
-> 
-> 
-> >
-> > The paragraph then reads:
-> >
-> > ----
-> > The first instruction set the address of the per-cpu variable (here, it
-> > is 'runqueues' of type 'struct rq').  The second instruction seems like
-> > a cpu number of the per-cpu base.  The third instruction get the base
-> > offset of per-cpu area for that cpu.  The last instruction compares the
-> > value of the per-cpu variable at the offset of 0xa60.
-> > ----
-> >
-> > Ok?
-> 
-> Yep, looks good.
-> 
-> Thanks,
-> Namhyung
 
