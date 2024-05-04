@@ -1,93 +1,98 @@
-Return-Path: <linux-kernel+bounces-168636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCB68BBB16
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:14:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D67B8BBB1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C678F282B0B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 773551C21034
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D4423763;
-	Sat,  4 May 2024 12:14:38 +0000 (UTC)
-Received: from ms-10.1blu.de (ms-10.1blu.de [178.254.4.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C4E25776;
+	Sat,  4 May 2024 12:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNk+jcmV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5302A22616;
-	Sat,  4 May 2024 12:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.254.4.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6741097B;
+	Sat,  4 May 2024 12:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714824878; cv=none; b=psttxWOMMPGZuQ91400oTw3l4evqKrIy937vKZxto7s7DMEDibQ41h4nNC7vPXb8tAJSGKQzZbdgtr5EteyLtcuI1L7azrXLWIWWFMtQ/6p+HOB+sQ1S60hnWlymvndG80iziwHII/6Z9pfrliO1AM9bG76FwzH9DMKVrBgrxSc=
+	t=1714824884; cv=none; b=uRKo9WY4siiTpDmMmHIoiwk6uAqWXG2/z69PrN3ll1KEqcPb1y1dU7r//KYRLG4hsg6yqXlZHn7jc7K+UU9ZdXsUHtt/9Q4IWV132v2WENlW55CIJXl67fQyUlMUiAlypE/VlQbZifC9Msb9WkPEIM3x5cPIb53sy/SuuZ/WAi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714824878; c=relaxed/simple;
-	bh=DtSbZ3+OvoBO0Tvog94lU+WUttXC6WgpQYyQ3aTPybs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rZIOEX11dkcU26NWw13Atp6zcrzmzBsxkuGcIAEHHOz5SCKSjGrjkpsRFK/FlLL/mYuIeWz2wNlTyZv4blGZ0PnFw4rAXz8mOZZ4r4wBy8c5jOa3k6P4qA0ZTm5sCM2//3Si9eRaPOR7eRD5vYelS86DSAF2URzGfJQplqzzTx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de; spf=pass smtp.mailfrom=mariuszachmann.de; arc=none smtp.client-ip=178.254.4.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mariuszachmann.de
-Received: from [2.211.228.80] (helo=marius.localnet)
-	by ms-10.1blu.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <mail@mariuszachmann.de>)
-	id 1s3EHg-00FLWC-Gz;
-	Sat, 04 May 2024 14:14:32 +0200
-From: Marius Zachmann <mail@mariuszachmann.de>
-To: linux-hwmon@vger.kernel.org, Aleksa Savic <savicaleksa83@gmail.com>
-Cc: Jonas Malaco <jonas@protocubo.io>, Aleksa Savic <savicaleksa83@gmail.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 2/3] hwmon: (corsair-cpro) Use complete_all() instead of
- complete() in ccp_raw_event()
-Date: Sat, 04 May 2024 14:14:32 +0200
-Message-ID: <4888670.GXAFRqVoOG@marius>
-In-Reply-To: <20240504092504.24158-3-savicaleksa83@gmail.com>
-References:
- <20240504092504.24158-1-savicaleksa83@gmail.com>
- <20240504092504.24158-3-savicaleksa83@gmail.com>
+	s=arc-20240116; t=1714824884; c=relaxed/simple;
+	bh=BZotsts8Ss6E1tlPRELTAGgjW4d8FiJLqjJwmNAqcXk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=I07tctYY8XC50HbbpIsdiHwfN3xL9sPzlcKYFAi9Tysaq5uU+i8oGIChwv3P7RCNAuKcOpP1clNmDEqU8vSqFguKkgxLc63zjw/U7ILq/2+zKeb3U+e1CrpvojoF2KQSDpahRHTc2Xh9VM7WXI77SL6SuvSmCf/4G5Pi2HXgL74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNk+jcmV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4B7C4AF1B;
+	Sat,  4 May 2024 12:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714824884;
+	bh=BZotsts8Ss6E1tlPRELTAGgjW4d8FiJLqjJwmNAqcXk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=NNk+jcmVQkDZTPk1YRdRT+geY1ICaBO5k+04TSF+tAwbvZtvKOyk9+aOpJcb7enN0
+	 X/QSa13d/5bzrGns9N10z7n2T5mwNbg1ZqIaKTLRyGrwLXeuuvovoWgZQdVAqLM3Lf
+	 bfXW3vpO/lgkIlLa2DRlTZgL/EhQ0sKvMs5L4mhx2AkPuyX/a+gfVI6K2fJPrmYA22
+	 q3CVOj4/rWKUj7SsZXS4hg4g9ZzFzwtxRt5VRWVcY11bItjtvlBrGEJ+TGcxXz9Vpw
+	 bXadFx7fGjkcDkQs+kCetVW73sU2zKt1i9/gfr7hT8e1olN74poWtXsKp8mI+zGYCH
+	 hCoHjD+Uol9VA==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Adrien Thierry <athierry@redhat.com>, Mantas Pucka <mantas@8devices.com>, 
+ Abel Vesa <abel.vesa@linaro.org>, Komal Bajaj <quic_kbajaj@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>, 
+ Wesley Cheng <quic_wcheng@quicinc.com>, quic_ppratap@quicinc.com, 
+ Jack Pham <quic_jackp@quicinc.com>, 
+ Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
+In-Reply-To: <20240502082017.13777-1-quic_kbajaj@quicinc.com>
+References: <20240502082017.13777-1-quic_kbajaj@quicinc.com>
+Subject: Re: (subset) [PATCH v3 0/4] Add USB Support on Qualcomm's
+ QDU/QRU1000 Platform
+Message-Id: <171482487453.28322.6906999225104918671.b4-ty@kernel.org>
+Date: Sat, 04 May 2024 17:44:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-X-Con-Id: 241080
-X-Con-U: 0-mail
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 04.05.24 at 11:25:02 MESZ, Aleksa Savic wrote
-> In ccp_raw_event(), the ccp->wait_input_report completion is
-> completed once. Since we're waiting for exactly one report in
-> send_usb_cmd(), use complete_all() instead of complete()
-> to mark the completion as spent.
-> 
-> Fixes: 40c3a4454225 ("hwmon: add Corsair Commander Pro driver")
-> Signed-off-by: Aleksa Savic <savicaleksa83@gmail.com>
-> ---
->  drivers/hwmon/corsair-cpro.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-> index 8d85f66f8143..6ab4d2478b1f 100644
-> --- a/drivers/hwmon/corsair-cpro.c
-> +++ b/drivers/hwmon/corsair-cpro.c
-> @@ -140,7 +140,7 @@ static int ccp_raw_event(struct hid_device *hdev, struct hid_report *report, u8
->  		return 0;
->  
->  	memcpy(ccp->buffer, data, min(IN_BUFFER_SIZE, size));
-> -	complete(&ccp->wait_input_report);
-> +	complete_all(&ccp->wait_input_report);
->  
->  	return 0;
->  }
-> 
 
-Acked-by: Marius Zachmann <mail@mariuszachmann.de>
+On Thu, 02 May 2024 13:50:13 +0530, Komal Bajaj wrote:
+> This series adds support of USB3 PHY support for Qualcomm's QDU/QRU1000 Platform.
+> 
+> ---------
+> Changes in v3:
+> * Rebased on linux-next
+> * Link to v2: https://lore.kernel.org/linux-arm-msm/20240319090729.14674-1-quic_kbajaj@quicinc.com/
+> 
+> [...]
 
+Applied, thanks!
+
+[1/4] dt-bindings: phy: qcom,usb-snps-femto-v2: Add bindings for QDU1000
+      commit: fbd3b6fe36242562bcd70464cfa8ee0fb26882d6
+[2/4] dt-bindings: phy: qcom,qmp-usb: Add QDU1000 USB3 PHY
+      commit: f75a4b3a6efccfc879d078cc9b5c21ef8a8dc392
+[4/4] phy: qcpm-qmp-usb: Add support for QDU1000/QRU1000
+      commit: 495341664af1d9ab4bb5a71f3ffcb08659cf8fa7
+
+Best regards,
+-- 
+~Vinod
 
 
 
