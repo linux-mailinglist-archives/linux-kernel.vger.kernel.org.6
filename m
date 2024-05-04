@@ -1,78 +1,121 @@
-Return-Path: <linux-kernel+bounces-168559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893AE8BBA2A
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:52:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70148BBA2C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43C381F22298
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D59E1C212D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAD3134AB;
-	Sat,  4 May 2024 08:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D839412E48;
+	Sat,  4 May 2024 08:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpBHayf1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="degN7I7+"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A3B8BF3;
-	Sat,  4 May 2024 08:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9B4C8D
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 08:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714812746; cv=none; b=ZsKWz2Uun8FpDcx14CB/3X8yscPVgayiqbm6BHguWEHplzAEPEEwoAc0e8ZvXrYfJ465Qg2uYxvWYw+BOSYTvUPiFTkihYv7/OewZX+gqxL93g8p6cy3SYjr0ie7cj5R3Bg1vtWyVx1iX07rdqPohiTD1an7I/C/LW122cAb+QQ=
+	t=1714812804; cv=none; b=k5EmlCvPlxjSi0R7BoH+FxBJCPMF+Jx8efk5tWvLFEonpMCSeZ4UXX2/0aJQtJ2TNqN3fERwVEYFdT2hImpwgY80axxzkyxf3nuqzTO6rl3xCQ59TFvchVTmF8/GGUnllF8erBca6dZ8y4RLIbdaqXgfAsStiw/lVEpTqyqqxaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714812746; c=relaxed/simple;
-	bh=gjTbAWOHffRkjTY+E0llEHSkptTW2669uz+EGRUb2sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6mineg4pDaJdc/WWKF9/K/3Sf0HFmXcEEUGVy83k3u8a7eb7HVH6UeGLTMq76OVDWCvXg6onMv3mb3bUqyptw+Ciks/BPkhtS3OXQBsLxWysGAhVa1dprEc1pT0lpHeGsgrywjOpNOfSZSmPF2Z5z6YBdNdG+JwrctpgEXiUZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpBHayf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43910C2BBFC;
-	Sat,  4 May 2024 08:52:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714812745;
-	bh=gjTbAWOHffRkjTY+E0llEHSkptTW2669uz+EGRUb2sM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RpBHayf1+JklxgG0+ht0+m7wIkS+WwDAOQpMFsX+ffl33mYn9cmGQ1td5UN9bmePv
-	 yYmi7e8ZMyyqfzln0rP+5TmRpvXR+xJvRQXRRqT17NdBNDi2CC7wOpHiS0SkzAO/2G
-	 EYvcng3eP4EvKIkLjbWxaZIizbstWSg5iVOPYb+et06JmeDFYLk74sgjF1xymi0ab2
-	 yIOpz3+Itqg8GLYXrCaMLh5C8woEazLEnXa9RyD0yfuiqCnAoMQusneKuzdTCtBgxm
-	 x7z0PY00arVg+/yUm3L65btuFxK/5TRCCpmJ5h3XLSfEw1bGWHc05MIAwAxwz1em+l
-	 GvFnUCaEiXBcQ==
-Date: Sat, 4 May 2024 09:52:20 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rengarajan S <rengarajan.s@microchip.com>
-Cc: bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, richardcochran@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1] net: microchip: lan743x: Reduce PTP timeout
- on HW failure
-Message-ID: <20240504085220.GB3167983@kernel.org>
-References: <20240502050300.38689-1-rengarajan.s@microchip.com>
+	s=arc-20240116; t=1714812804; c=relaxed/simple;
+	bh=F9WZ+7ipilzLdMlYfhOYLZqygvVOA423pQDFbzl/QuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AbV3vqOJ6BO5T322FVL8G+WUSpGexXQ6FPrv0GtNER+1bLFeDR9LlWK+ArOUe2WXja3TylEAOmKSbroDV9Yr5q17BbaDm2D5EGAoZdJ06IJOmvtKCOr3dj3it0kG1QSfMdWjviVKzjOA4hgNK1AoXKVBMHY/LCPj6dGTD9l3NxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=degN7I7+; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 31E2C1BA6F4;
+	Sat,  4 May 2024 10:53:20 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1714812800; bh=r8mY2kiUlttRaIUpK7q7YlOxdcrNiVnu7avba+IRVxI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=degN7I7+pspwb3mLYxb0ogmlx8ejRLy7D2Ev0bUul/M+eylJC6YK2M56xK6FjEBU2
+	 wW6sEyvDaglmZHeggAAVR52WAMwIgekdTDY/SO0Diz/Q2oOk4FLWbY9Uhhr+OlziSe
+	 04W0X3GVEM/bu/Ys/86JeMrIulIQP9QR8MWQ++foPGmb2iG7+vokqGGmNzdpr0GfVN
+	 UJP1tWZTr9ILXWzkO+b4dE+ZWr6liB8m81ZyY05k/nZ8Z2ABwanwNvosupQ4+Bx+Lc
+	 cDJuPLXvBVnVwvpp1nRoY5oSdMwr1IjMWBSHk64PfSDn/DT7tRqSXeyoKfNb2EuOmZ
+	 uieRPXRj+i8UQ==
+Date: Sat, 4 May 2024 10:53:19 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>,
+ isaacmanjarres@google.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-direct: Set SG_DMA_SWIOTLB flag for dma-direct
+Message-ID: <20240504105319.75eec54a@meshulam.tesarici.cz>
+In-Reply-To: <20240503183713.1557480-1-tjmercier@google.com>
+References: <20240503183713.1557480-1-tjmercier@google.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502050300.38689-1-rengarajan.s@microchip.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 02, 2024 at 10:33:00AM +0530, Rengarajan S wrote:
-> The PTP_CMD_CTL is a self clearing register which controls the PTP clock
-> values. In the current implementation driver waits for a duration of 20
-> sec in case of HW failure to clear the PTP_CMD_CTL register bit. This
-> timeout of 20 sec is very long to recognize a HW failure, as it is
-> typically cleared in one clock(<16ns). Hence reducing the timeout to 1 sec
-> would be sufficient to conclude if there is any HW failure observed. The
-> usleep_range will sleep somewhere between 1 msec to 20 msec for each
-> iteration. By setting the PTP_CMD_CTL_TIMEOUT_CNT to 50 the max timeout
-> is extended to 1 sec.
+On Fri,  3 May 2024 18:37:12 +0000
+"T.J. Mercier" <tjmercier@google.com> wrote:
+
+> As of commit 861370f49ce4 ("iommu/dma: force bouncing if the size is
+> not cacheline-aligned") sg_dma_mark_swiotlb is called when
+> dma_map_sgtable takes the IOMMU path and uses SWIOTLB for some portion
+> of a scatterlist. It is never set for the direct path, so drivers
+> cannot always rely on sg_dma_is_swiotlb to return correctly after
+> calling dma_map_sgtable. Fix this by calling sg_dma_mark_swiotlb in the
+> direct path like it is in the IOMMU path.
 > 
-> Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> ---
+>  kernel/dma/direct.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 4d543b1e9d57..52f0dcb25ca2 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -12,7 +12,7 @@
+>  #include <linux/pfn.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/set_memory.h>
+> -#include <linux/slab.h>
+> +#include <linux/swiotlb.h>
+>  #include "direct.h"
+>  
+>  /*
+> @@ -497,6 +497,8 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+>  			goto out_unmap;
+>  		}
+>  		sg_dma_len(sg) = sg->length;
+> +		if (is_swiotlb_buffer(dev, dma_to_phys(dev, sg->dma_address)))
+> +			sg_dma_mark_swiotlb(sg);
+>  	}
+>  
+>  	return nents;
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+I'm not sure this does the right thing. IIUC when the scatterlist flags
+include SG_DMA_SWIOTLB, iommu_dma_sync_sg_for_*() will call
+iommu_dma_sync_single_for_*(), which in turn translates the DMA address
+to a physical address using iommu_iova_to_phys(). It seems to me that
+this function may not work correctly if there is no IOMMU, but it also
+seems to me that the scatterlist may contain such non-IOMMU addresses.
+
+I'm no expert, so correct DMA-to-physical translation might in fact be
+somehow implicitly guaranteed. If that's the case, could you explain it
+in the commit message, please?
+
+Petr T
 
