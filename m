@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-168616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61C38BBAE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2C38BBAE6
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F59B218DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E28281A22
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5B32031D;
-	Sat,  4 May 2024 11:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8E8200DE;
+	Sat,  4 May 2024 11:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdodTOiw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jwFTIK/Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B3017577;
-	Sat,  4 May 2024 11:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD171CF8D;
+	Sat,  4 May 2024 11:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714823059; cv=none; b=a5x0ImtR2RUX5vmL+S6uf8GIbPnUzGtRyXfV3H4/dfk5y4pRmn0KsOm8bxuT6VYfXuotigpI70ZB+vpYBdsQT2CIUXG7TaV0TQVHe+UioGDZ+9+K7kooPharFffo1Ssu65jQMLw7efm8gozA+9FbvSM9N1O7rUwR5dvNZoUamLM=
+	t=1714823193; cv=none; b=kmUr91DhmifZyoMtZQ58+abWZLR1sgTQqthkUkdac9Lavsf9b/JUWzP9vvYzB/de+XCMxck45hBUMGAZxLHZawgTjpZ9j33sYfLxCB52Akf03biV5jZMKNn9wAK6tdfWy72AEx0ELor08lg9wM/pNnPPPM07+iiAPcfKtggZUm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714823059; c=relaxed/simple;
-	bh=nhPPpbOqhYfSHBSbXUHRoGUDplochmKW9eJvPRWtz/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ESXcGAXYY/orG/MtHYdoDbCSEHh1r5GwZPzuLqZa0vSIeFoCHfbmcKyGjwLj0BVlwT1mWK5GxzJ3eJtWeXlLLgIVs+JNRQOr2p8w9tUgstewAic/UgT2vZljOoPPcn+on+rLAJHgdb4UFXEf/VspjMj9QPvDSqkcJLBISP8mm0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdodTOiw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7E5C072AA;
-	Sat,  4 May 2024 11:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714823058;
-	bh=nhPPpbOqhYfSHBSbXUHRoGUDplochmKW9eJvPRWtz/Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SdodTOiwwafOYFjvddOqmNk4bECY9u/MWGWPgX0XjO+XKZXF5kI/cc/74NeSCECRD
-	 IYFnQLaik9GXt2WXY04hKUD3SbnN4WV1ZVjeEX8tW5b+ybfIMipEdWChg0/XI0mcSU
-	 qd1/YWG/yFSV2ibQIYCclAUQnL0eLhkqWtn+DDj3NtKUan6Zqih/iGSOzcX2/uxjCE
-	 S4+YqXAMkWYgnRne6y0W9Svd09SkAbe7XB7oz/YCewb1IG4v1NtBgNPMHnUR94LQLs
-	 yA5jceGG4maEM3S8NbZUv4AbVxjGRJc8rItNHG2/NWmBwZGMLyF0o1qS0lmlaEp8qu
-	 WteNqIxbwGBcQ==
-Date: Sat, 4 May 2024 12:44:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: light: gp2ap020a00f: Remove some unused field in
- struct gp2ap020a00f_data
-Message-ID: <20240504124407.1ac6f07e@jic23-huawei>
-In-Reply-To: <57e9f29c7062d1bb846064bf6dbd7a8385a855e7.1714568099.git.christophe.jaillet@wanadoo.fr>
-References: <57e9f29c7062d1bb846064bf6dbd7a8385a855e7.1714568099.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714823193; c=relaxed/simple;
+	bh=qQXVDmyCOh7VCNUbBBWBaLbWHRimpTQLcNFH0D/M+ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOzqM452ywJFpgtn0bUXeynVDlPsLe71aVhaPLHkh8OyEBa1IsL7EeGBZeNv7G0dnDrqDyMoE8HBkBtawVo6XOIjBRM/29RiqFnWc/xCl6fK0DFEhoqX78tJQVUlsYze10KSLNovH+kdgaLCZtvg7qia5wPBhBOxuqY6Jlylbno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jwFTIK/Q; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714823192; x=1746359192;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qQXVDmyCOh7VCNUbBBWBaLbWHRimpTQLcNFH0D/M+ts=;
+  b=jwFTIK/Q8JsDVy6kkVuGtgbMPOZ4ea1BUwd2SyIAnaFU/f5RG+QZ0puu
+   0L3SKgt590mJFihgxhlrs+oARx+uUl6CD6pkubNIv0gnWCQju96TJjGVA
+   LZCIiLadje7QoBWsaSwSQ83kyKSaKE+/tLtmZc+XvIXC05HZbv4mZ1DrA
+   A1InqydvaQSjeEmkTC8Js6AUzs3i5/TEMa8js8CsIJd9peBV1JjMs6UXd
+   EyfuYxvJkuD5hgngsxs2ze1Wrmy9PBwUSULYX1Y8uYVXRSeFgGFnRVuK+
+   U+uJqx6F29H1UqUpstdaAcImp5CMBELslq3FxxOp1F8FhnCuOVv226h93
+   A==;
+X-CSE-ConnectionGUID: 58UNHcDbSH6k7DQME4FR4Q==
+X-CSE-MsgGUID: Q/h1b0sjQdeQMBhczRl6Sw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="36012712"
+X-IronPort-AV: E=Sophos;i="6.07,253,1708416000"; 
+   d="scan'208";a="36012712"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2024 04:46:31 -0700
+X-CSE-ConnectionGUID: UwtQGMebQa+3N6cKVb31yQ==
+X-CSE-MsgGUID: S5sYHNEeRVSJl+dF0XdkXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,253,1708416000"; 
+   d="scan'208";a="32506763"
+Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 04 May 2024 04:46:27 -0700
+Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s3DqT-000CjU-1h;
+	Sat, 04 May 2024 11:46:25 +0000
+Date: Sat, 4 May 2024 19:46:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Daniel Vetter <daniel@ffwll.ch>, Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] fbdev: Have CONFIG_FB_NOTIFY be tristate
+Message-ID: <202405041939.MNsieCv5-lkp@intel.com>
+References: <20240503192858.103640-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503192858.103640-1-florian.fainelli@broadcom.com>
 
-On Wed,  1 May 2024 14:55:17 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Hi Florian,
 
-> In "struct gp2ap020a00f_data", the 'pdata' field is unused.
-> 
-> Moreover the "struct gp2ap020a00f_platform_data" is defined nowhere.
-> Neither in this file, nor in a global .h file, so it is completely
-> pointless.
-> 
-> So, remove it.
-> 
-> Found with cppcheck, unusedStructMember.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied to the togreg branch of iio.git and pushed out as testing to let
-the bots play with it.
+kernel test robot noticed the following build errors:
 
-Note I'll be rebasing that tree on rc1 once available.
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on drm-tip/drm-tip linus/master v6.9-rc6 next-20240503]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
+url:    https://github.com/intel-lab-lkp/linux/commits/Florian-Fainelli/fbdev-Have-CONFIG_FB_NOTIFY-be-tristate/20240504-033139
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240503192858.103640-1-florian.fainelli%40broadcom.com
+patch subject: [PATCH] fbdev: Have CONFIG_FB_NOTIFY be tristate
+config: powerpc-randconfig-001-20240504 (https://download.01.org/0day-ci/archive/20240504/202405041939.MNsieCv5-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240504/202405041939.MNsieCv5-lkp@intel.com/reproduce)
 
-Jonathan
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405041939.MNsieCv5-lkp@intel.com/
 
-> ---
-> Compile tested only.
-> 
-> It was added in the initial commit bf29fbeaa13d ("iio: gp2ap020a00f: Add a
-> driver for the device") but was never used.
-> ---
->  drivers/iio/light/gp2ap020a00f.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/gp2ap020a00f.c b/drivers/iio/light/gp2ap020a00f.c
-> index 9f41724819b6..9a476697aa1f 100644
-> --- a/drivers/iio/light/gp2ap020a00f.c
-> +++ b/drivers/iio/light/gp2ap020a00f.c
-> @@ -237,7 +237,6 @@ enum gp2ap020a00f_thresh_val_id {
->  };
->  
->  struct gp2ap020a00f_data {
-> -	const struct gp2ap020a00f_platform_data *pdata;
->  	struct i2c_client *client;
->  	struct mutex lock;
->  	char *buffer;
+All errors (new ones prefixed by >>):
 
+   powerpc-linux-ld: drivers/leds/trigger/ledtrig-backlight.o: in function `bl_trig_deactivate':
+>> ledtrig-backlight.c:(.text+0x360): undefined reference to `fb_unregister_client'
+   powerpc-linux-ld: drivers/leds/trigger/ledtrig-backlight.o: in function `bl_trig_activate':
+>> ledtrig-backlight.c:(.text+0x3e8): undefined reference to `fb_register_client'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
