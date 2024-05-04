@@ -1,127 +1,277 @@
-Return-Path: <linux-kernel+bounces-168694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6326B8BBC48
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:40:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514B68BBC4C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90C2F1C20FB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:40:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC981F21D4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D8E3A1BC;
-	Sat,  4 May 2024 13:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED94F39FEB;
+	Sat,  4 May 2024 13:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oq3KtuiI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="BB+6xw/u"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A54E3717F;
-	Sat,  4 May 2024 13:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AE924B2A
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 13:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714830037; cv=none; b=dDU0tW/JzkNUsSCJ14yt0B9c9kiYQEq+VmKvapCTMHc686sMwk4mqksxzaJFHrddA5LyqNqvJyCv0nEQ+xiNYE/Ta09MShU9tcm69IFfcfT2NbG6fCZs/dgulEdOu0Of5Ftcprq4djZldEJdJ2PBGU6uq3mWVzVqWjobBIJ1rSI=
+	t=1714830889; cv=none; b=a7JBmNeExvxQBCMwh86enlsKjjFThBhII6iOXI+T1sGnNCyzoNKyx9Qq9MYNPT+n2V0UUplQlymXOJ7mHw6JKXvxyk6A3BzOFOmVyAKHWYxfHfDIpZvVtjJXmg+35fAw5LzxjaAdfbrppzDJqBeF69Sj4o7eeWPt2hNWWHEtVeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714830037; c=relaxed/simple;
-	bh=t3FONzaDjqiT8WtMX9xx77TxQj428dRPexrHMx5m5n8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2qlwHVN+GqVUIL1SbnoiG4Mw2bm8D9PKJ4Y1Xv7cRmQYRFb72jy3l92MFNiPuJVGaLYbgmZC9m+hkVPaQYAOLxCBaNXFyPHR3/w7tgfFo8jO0+QT8P6Fqa+vnqyop0Wc+AULDcJHSbFDgAODIHLhqXBKxdBKJUgGuL2ggMhQks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oq3KtuiI; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714830035; x=1746366035;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t3FONzaDjqiT8WtMX9xx77TxQj428dRPexrHMx5m5n8=;
-  b=Oq3KtuiI7OwHNSIgYOC08lx497qK0FDIAgIfdbTitxQSQblPxsK35p4c
-   e5fHlR7WEaDI/7ZVfezPIXgszdseRu9Wjwlnyl1Coiaw0vpaAQlpbKHNA
-   eoAn103KQzpWLi3zGNmAOJq/7wgV3xs1y57RnQVOVbilx9yeojy29liC5
-   wfwe2p60uqLykDfwW7oa3sDRFE3iH4UQZOZ9dWBhKQ+NCgI3FTaNk9KUL
-   pgY2M+wU9H5xoFZVa0v2+FiBs94OKWNAr92JwcxBoHpwNRWxeq+f754CV
-   yW4CNkWmJZOiO6yQreEtMIOJFCU79kcaUPUDJxb+4IcpnZKfK507hIihP
-   w==;
-X-CSE-ConnectionGUID: +9fA2hlMTQiah1AaZAx5TA==
-X-CSE-MsgGUID: Mt/C8b6ZSf6OGW7dTlUopA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="10846180"
-X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
-   d="scan'208";a="10846180"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2024 06:40:35 -0700
-X-CSE-ConnectionGUID: 9kMINrEcSMiLY7iXJfr8Dg==
-X-CSE-MsgGUID: qNN/0NVZQC+hOsLs1neCYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
-   d="scan'208";a="27750226"
-Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 04 May 2024 06:40:31 -0700
-Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s3Fcr-000CoO-1l;
-	Sat, 04 May 2024 13:40:29 +0000
-Date: Sat, 4 May 2024 21:39:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, andrew@lunn.ch, jiri@resnulli.us,
-	pkshih@realtek.com, larry.chiu@realtek.com,
-	Justin Lai <justinlai0215@realtek.com>
-Subject: Re: [PATCH net-next v17 12/13] realtek: Update the Makefile and
- Kconfig in the realtek folder
-Message-ID: <202405042153.ugnyFsrz-lkp@intel.com>
-References: <20240502091847.65181-13-justinlai0215@realtek.com>
+	s=arc-20240116; t=1714830889; c=relaxed/simple;
+	bh=3iKg45ushSHq8F9OfPaFQFgDANImax1q6EdgzZEUgmY=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z1E+0z3UJ728WyJlChl+5/RARfAcEnTxS8vbWyrvHIEnTPRhDRz3UWu2+5SFMMIBlvFXtQ1fcvulmjQIaktMdy27vmfuAFbPNkcmpZywLHLhJfDW/nqBVzmWC44zusG/Ap2/Av57x1Cdd6z/k+BTFVJVoyaqIf5oyhjj2a3c3Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=BB+6xw/u; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 340C83FE4F
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 13:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1714830880;
+	bh=0WjRr/tkWkr3Xh5WFmNS0edjBe9cmHkmJf/+9+FPMJg=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=BB+6xw/uWxLkIzEvgENzaWGM8KqG7FVp0MsjiXSevEnYiZj5GAFm+YoYWWZhpZNBT
+	 2f9IUJ+hU9HQaELEY/jrfxrGrjUnbP2JcRTDUDl+eszJMUXkmyC4xmrbxrO0ffW1m5
+	 kjNhKaMU/LCMFowSnAPF8X+oJbEdio90phQby4Mzp+ej7Y6wLoYqjIdyd8ooIX0yL2
+	 zN6C+x1QaQCcWgoGp0Nkh8aSrqQgpHKKpoXzISuMeAmdoiPVHVl/9sKmoL8i9RcnLl
+	 GV0xWXuLOvZnkLKloR2qpHrPPykIyH7LIp3oo1sjDzfPk5NVA79szNzzkNevUBm/Ic
+	 fNkkB32YHjv+g==
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-43d1c57e0b2so4963321cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 06:54:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714830879; x=1715435679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date
+         :mime-version:references:in-reply-to:from:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0WjRr/tkWkr3Xh5WFmNS0edjBe9cmHkmJf/+9+FPMJg=;
+        b=n0KJizGPnmCRzUQizHGGKZbahjlAnRM/lngMLaWFMMk5xmswgWH8PmTVtlfy1tIJEy
+         bEmmCQ80rZB9xGtbW3vz2F4XVH4arBkuhFaSDzXh7p9r69HmENlSYOfMZWnzU1EW768r
+         ZKvEeIffHXBgS3C2+SaEM3lgC6O7CcxBrj9n7zjUOrmQadDh78KM2rn/ClhVMiu6w3d+
+         7trjLAPfK8csYjrXtW8RrTGCRlu6taMTSvwrizcCvfRuf07bkrH+G6BFPoEOrfVTdewZ
+         NrAmBoHyFCRqljHHOkh4AnpTzYdB2WyP2DrnHL08nI02C0iodIZs+8cJ9UCTZ4Cq+8tR
+         mr3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUsrN8QF9xOcbsiL3wdBtM+lDeNLE6b+oq+XH4dMEdI7DOTcDyvHyXn72ow/fS5z/kalDccHg32CGnuzd0ILDY5WU4U/mkoE/uOj6Pf
+X-Gm-Message-State: AOJu0YzHRGiBA+Yr2l6p3cdFZBoLWXyYB7759BBqUOvryJKBT0tRlH8y
+	Jn9sNeN1UjNVeUZAjcbOzRm5V/g2EjEeUbDuL7dO8Y6wjPVwzAjELy/1FuDd0P5Z6o05Ed2pZa8
+	abOsBAm5E2yDFsRJS3Nb9S2Suq7dwT4zZ/t841sbfK1nJ2tu2zvguj7k5PmgRS/lf3yz01FZUa7
+	1QKirqDcgCJjCaC0qIH89NXaPfCjqlGZ+3qcJJtPronipqHDmz/Z2f
+X-Received: by 2002:a05:622a:296:b0:43a:b15c:e9cd with SMTP id z22-20020a05622a029600b0043ab15ce9cdmr5704950qtw.29.1714830878938;
+        Sat, 04 May 2024 06:54:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgNUPmd8Omg8BY6DSgks9Q18f2l7AQMWWDiPcpdB91lbabuImXrnY7zD1n0VbloJMoBfZD97i+xKm67tXuC4k=
+X-Received: by 2002:a05:622a:296:b0:43a:b15c:e9cd with SMTP id
+ z22-20020a05622a029600b0043ab15ce9cdmr5704920qtw.29.1714830878391; Sat, 04
+ May 2024 06:54:38 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Sat, 4 May 2024 13:54:37 +0000
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <CAK7LNASqwN1gd8TovcR3RDkxkE_M=BSDD5GoOoLOkDQnuNDAcA@mail.gmail.com>
+References: <20240502111613.1380453-1-emil.renner.berthing@canonical.com>
+ <20240502111613.1380453-2-emil.renner.berthing@canonical.com>
+ <87ttjgcqjv.fsf@all.your.base.are.belong.to.us> <CAK7LNASqwN1gd8TovcR3RDkxkE_M=BSDD5GoOoLOkDQnuNDAcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502091847.65181-13-justinlai0215@realtek.com>
+Mime-Version: 1.0
+Date: Sat, 4 May 2024 13:54:37 +0000
+Message-ID: <CAJM55Z-dorP1MgiCu=+VV_D+b6XXKWacUjT04QAsKvdmQtNv3g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] riscv: make image compression configurable
+To: Masahiro Yamada <masahiroy@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Nick Terrell <terrelln@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Justin,
+Masahiro Yamada wrote:
+> On Thu, May 2, 2024 at 10:05=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kern=
+el.org> wrote:
+> >
+> > Emil Renner Berthing <emil.renner.berthing@canonical.com> writes:
+> >
+> > > Previously the build process would always set KBUILD_IMAGE to the
+> > > uncompressed Image file (unless XIP_KERNEL or EFI_ZBOOT was enabled) =
+and
+> > > unconditionally compress it into Image.gz. However there are already
+> > > build targets for Image.bz2, Image.lz4, Image.lzma, Image.lzo and
+> > > Image.zstd, so let's make use of those, make the compression method
+> > > configurable and set KBUILD_IMAGE accordingly so that targets like
+> > > 'make install' and 'make bindeb-pkg' will use the chosen image.
+> > >
+> > > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.c=
+om>
+> > > ---
+> > >  arch/riscv/Kconfig         |  7 +++++++
+> > >  arch/riscv/Makefile        | 43 ++++++++++++++++++++----------------=
+--
+> > >  arch/riscv/boot/install.sh |  9 +++++---
+> > >  3 files changed, 36 insertions(+), 23 deletions(-)
+> > >
+> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > > index be09c8836d56..6c092d1ea7db 100644
+> > > --- a/arch/riscv/Kconfig
+> > > +++ b/arch/riscv/Kconfig
+> > > @@ -138,6 +138,13 @@ config RISCV
+> > >       select HAVE_GCC_PLUGINS
+> > >       select HAVE_GENERIC_VDSO if MMU && 64BIT
+> > >       select HAVE_IRQ_TIME_ACCOUNTING
+> > > +     select HAVE_KERNEL_BZIP2 if !XIP_KERNEL && !EFI_ZBOOT
+> > > +     select HAVE_KERNEL_GZIP if !XIP_KERNEL && !EFI_ZBOOT
+> > > +     select HAVE_KERNEL_LZ4 if !XIP_KERNEL && !EFI_ZBOOT
+> > > +     select HAVE_KERNEL_LZMA if !XIP_KERNEL && !EFI_ZBOOT
+> > > +     select HAVE_KERNEL_LZO if !XIP_KERNEL && !EFI_ZBOOT
+> > > +     select HAVE_KERNEL_UNCOMPRESSED if !XIP_KERNEL && !EFI_ZBOOT
+> > > +     select HAVE_KERNEL_ZSTD if !XIP_KERNEL && !EFI_ZBOOT
+> > >       select HAVE_KPROBES if !XIP_KERNEL
+> > >       select HAVE_KPROBES_ON_FTRACE if !XIP_KERNEL
+> > >       select HAVE_KRETPROBES if !XIP_KERNEL
+> > > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> > > index 5b3115a19852..29be676415d6 100644
+> > > --- a/arch/riscv/Makefile
+> > > +++ b/arch/riscv/Makefile
+> > > @@ -129,11 +129,27 @@ endif
+> > >  CHECKFLAGS +=3D -D__riscv -D__riscv_xlen=3D$(BITS)
+> > >
+> > >  # Default target when executing plain make
+> > > -boot         :=3D arch/riscv/boot
+> > > +boot :=3D arch/riscv/boot
+> > >  ifeq ($(CONFIG_XIP_KERNEL),y)
+> > >  KBUILD_IMAGE :=3D $(boot)/xipImage
+> > > +else ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_ARCH_CANAAN),yy)
+> > > +KBUILD_IMAGE :=3D $(boot)/loader.bin
+> > > +else ifeq ($(CONFIG_EFI_ZBOOT),y)
+> > > +KBUILD_IMAGE :=3D $(boot)/vmlinuz.efi
+> > > +else ifeq ($(CONFIG_KERNEL_GZIP),y)
+> > > +KBUILD_IMAGE :=3D $(boot)/Image.gz
+> > > +else ifeq ($(CONFIG_KERNEL_BZIP2),y)
+> > > +KBUILD_IMAGE :=3D $(boot)/Image.bz2
+> > > +else ifeq ($(CONFIG_KERNEL_LZ4),y)
+> > > +KBUILD_IMAGE :=3D $(boot)/Image.lz4
+> > > +else ifeq ($(CONFIG_KERNEL_LZMA),y)
+> > > +KBUILD_IMAGE :=3D $(boot)/Image.lzma
+> > > +else ifeq ($(CONFIG_KERNEL_LZO),y)
+> > > +KBUILD_IMAGE :=3D $(boot)/Image.lzo
+> > > +else ifeq ($(CONFIG_KERNEL_ZSTD),y)
+> > > +KBUILD_IMAGE :=3D $(boot)/Image.zst
+> > >  else
+> > > -KBUILD_IMAGE :=3D $(boot)/Image.gz
+> > > +KBUILD_IMAGE :=3D $(boot)/Image
+> > >  endif
+> >
+> > Really a nit/change if you want, but maybe doing something like
+> > arch/s390/boot/Makefile does is easier to read:
+> >
+> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> > index 024482c68835..70f08e9999b4 100644
+> > --- a/arch/riscv/Makefile
+> > +++ b/arch/riscv/Makefile
+> > @@ -128,6 +128,14 @@ endif
+> >  # arch specific predefines for sparse
+> >  CHECKFLAGS +=3D -D__riscv -D__riscv_xlen=3D$(BITS)
+> >
+> > +suffix-$(CONFIG_KERNEL_GZIP)  :=3D .gz
+> > +suffix-$(CONFIG_KERNEL_BZIP2) :=3D .bz2
+> > +suffix-$(CONFIG_KERNEL_LZ4)  :=3D .lz4
+> > +suffix-$(CONFIG_KERNEL_LZMA)  :=3D .lzma
+> > +suffix-$(CONFIG_KERNEL_LZO)  :=3D .lzo
+> > +suffix-$(CONFIG_KERNEL_XZ)  :=3D .xz
+> > +suffix-$(CONFIG_KERNEL_ZSTD)  :=3D .zst
+> > +
+> >  # Default target when executing plain make
+> >  boot :=3D arch/riscv/boot
+> >  ifeq ($(CONFIG_XIP_KERNEL),y)
+> > @@ -136,20 +144,8 @@ else ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_ARCH_CAN=
+AAN),yy)
+> >  KBUILD_IMAGE :=3D $(boot)/loader.bin
+> >  else ifeq ($(CONFIG_EFI_ZBOOT),y)
+> >  KBUILD_IMAGE :=3D $(boot)/vmlinuz.efi
+> > -else ifeq ($(CONFIG_KERNEL_GZIP),y)
+> > -KBUILD_IMAGE :=3D $(boot)/Image.gz
+> > -else ifeq ($(CONFIG_KERNEL_BZIP2),y)
+> > -KBUILD_IMAGE :=3D $(boot)/Image.bz2
+> > -else ifeq ($(CONFIG_KERNEL_LZ4),y)
+> > -KBUILD_IMAGE :=3D $(boot)/Image.lz4
+> > -else ifeq ($(CONFIG_KERNEL_LZMA),y)
+> > -KBUILD_IMAGE :=3D $(boot)/Image.lzma
+> > -else ifeq ($(CONFIG_KERNEL_LZO),y)
+> > -KBUILD_IMAGE :=3D $(boot)/Image.lzo
+> > -else ifeq ($(CONFIG_KERNEL_ZSTD),y)
+> > -KBUILD_IMAGE :=3D $(boot)/Image.zst
+> >  else
+> > -KBUILD_IMAGE :=3D $(boot)/Image
+> > +KBUILD_IMAGE :=3D $(boot)/Image$(suffix-y)
+> >  endif
+>
+>
+>
+>
+> Good idea.
+>
+>
+> If you avoid the 'else ifeq' chain completely,
+> you also could do like this:
+>
+>
+>
+> boot-image-$(CONFIG_KERNEL_GZIP)         :=3D Image.gz
+>    ...
+> boot-image-$(CONFIG_KERNEL_ZSTD)         :=3D Image.zst
+> boot-image-$(CONFIG_KERNEL_UNCOMPRESSED) :=3D Image
+> boot-image-$(CONFIG_RISCV_M_MODE)        :=3D loader.bin
+> boot-image-$(CONFIG_ARCH_CANAAN)         :=3D loader.bin
+> boot-image-$(CONFIG_EFI_ZBOOT)           :=3D vmlinuz.efi
+> boot-image-$(CONFIG_XIP_KERNEL)          :=3D xipImage
+>
+> KBUILD_IMAGE :=3D $(boot)/$(boot-image-y)
 
-kernel test robot noticed the following build errors:
+Hi Masahiro and Bj=C3=B6rn.
 
-[auto build test ERROR on horms-ipvs/master]
-[cannot apply to net-next/main linus/master v6.9-rc6 next-20240503]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I like this approach. But I think it doesn't quite do the same when fx.
+CONFIG_RISCV_M_MODE=3Dn but CONFIG_ARCH_CANAAN=3Dy which I think is a valid
+configuration for the new Kendryte K230 support. In this case boot-image-y
+would be overwritten with the loader.bin value even for S-mode kernels.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Justin-Lai/rtase-Add-pci-table-supported-in-this-module/20240502-172835
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git master
-patch link:    https://lore.kernel.org/r/20240502091847.65181-13-justinlai0215%40realtek.com
-patch subject: [PATCH net-next v17 12/13] realtek: Update the Makefile and Kconfig in the realtek folder
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240504/202405042153.ugnyFsrz-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240504/202405042153.ugnyFsrz-lkp@intel.com/reproduce)
+To keep the previous behaviour we'd need something like
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405042153.ugnyFsrz-lkp@intel.com/
+  boot-image-$(CONFIG_RISCV_M_MODE *and* CONFIG_ARCH_CANAAN) :=3D loader.bi=
+n
 
-All errors (new ones prefixed by >>):
+Maybe just
 
->> drivers/net/ethernet/realtek/rtase/rtase_main.c:67:10: fatal error: net/netdev_queues.h: No such file or directory
-      67 | #include <net/netdev_queues.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
+  ifeq ($(CONFIG_RISCV_M_MODE),y)
+  boot-image-$(CONFIG_ARCH_CANAAN) :=3D loader.bin
+  endif
 
+Do you guys have a better solution?
 
-vim +67 drivers/net/ethernet/realtek/rtase/rtase_main.c
+/Emil
 
-6c114677e472d0 Justin Lai 2024-05-02 @67  #include <net/netdev_queues.h>
-6c114677e472d0 Justin Lai 2024-05-02  68  #include <net/page_pool/helpers.h>
-6c114677e472d0 Justin Lai 2024-05-02  69  #include <net/pkt_cls.h>
-6c114677e472d0 Justin Lai 2024-05-02  70  
+>
+>
+>
+> Emil's current patch will work, of course.
+>
+>
+>
+>
+> BTW, this patch will conflict with
+> 3b938e231b660a278de2988ee77b832d665c5326
+> It lands in riscv subsystem.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Oh, you're right. I'll rebase on that for v2, thanks.
+
+/Emil
 
