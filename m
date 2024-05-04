@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-168728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E9C8BBCC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:34:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70BB8BBCC5
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF47C1F21805
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2500D1C2114D
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F534F88C;
-	Sat,  4 May 2024 15:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D104122C;
+	Sat,  4 May 2024 15:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q8oKj1vu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1qYw7ln"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31123EA76;
-	Sat,  4 May 2024 15:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B06E1EF15;
+	Sat,  4 May 2024 15:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714836843; cv=none; b=TTZ+IJncnL0/7nUEDL+kWmtR2hTO1LxBE7N7/jv+T03DF6NBRvuR8h45QaRRMTd8aVvxXUs00zzJFzsmx6DZPBQacmvGhRDR96O3Rh0tRGMGIJx252wWOC3+XqoWd3DElnQFfi+YDUDTC3lnMOrLUG09oKf/XnqxVaxE4BhN+EU=
+	t=1714836954; cv=none; b=BDhTaSr6Vj6khhJdwYXfClWN+03xpIyAhDV4e+GakU9XU22X0QTLeAhMJchgMbJsgCc598E4ghL0+bjx/TrZO41JzAroG/7WKWRanbLN4UfZgIexKKZarDsT3pd/R5x5i6uHtAzqltM/EXNXt7VQeJbE88gyB7mp2BBudscrJ9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714836843; c=relaxed/simple;
-	bh=Tw298gqXSpUNqvTJkAVfkw6zpwke5iNqzYaHmcCtz/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FK9Xc8t9TmdOeemweaxdiH+wOmgVU+jn4+AP1IyglZbjezGU5e1Dhn92KInAcZ4KVMDanxDhHYCOwjq1euBj9xhbgd0nd5Fy1xtYnBPh0/YX1I54QuMpo6h4xKvxr/gGEWjtwbGzboHc/NzSGCL0zTcugiOQzlpdxouD/vuNraA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q8oKj1vu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CF9C072AA;
-	Sat,  4 May 2024 15:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1714836842;
-	bh=Tw298gqXSpUNqvTJkAVfkw6zpwke5iNqzYaHmcCtz/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q8oKj1vuOdQlfRTomxMl8NGsRXqYO/Yop4wH6qOJ+VYQXhJj8oDV2Yd/oada14QOe
-	 Z0Bj4Rw/XlpEWO5oUJ4quoahtgdmSP3HgFBsAmdcfpqkzXvVUkp9wBmt/vJvzfFmeB
-	 MkbKMSmopKmujPR8NjtEqq5cFrhvzJClELB3a0PM=
-Date: Sat, 4 May 2024 17:33:59 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 0/5] ioctl()-based API to query VMAs from /proc/<pid>/maps
-Message-ID: <2024050424-drift-evil-27de@gregkh>
-References: <20240504003006.3303334-1-andrii@kernel.org>
- <20240504-rasch-gekrochen-3d577084beda@brauner>
+	s=arc-20240116; t=1714836954; c=relaxed/simple;
+	bh=Gk/mhS8TriKuywu+H3KzIpPCU/lc2/yHAJtYyq2QK8I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=SoiHGIvWfCVEscy65jJvOuOncgwuhq3qsuwkHFyUF3mgkYRb5wMIAqmEw+avUUrbaQXKLsJEwEwUNeIE2pG4W24AeCLXTynxDGWfCs5/8v0PrAcneFOkz5hI+ttC1UxcWI6vc1hZVERPk2OwrOICqF1OhOUKLMLzrxj4Gpvnayw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1qYw7ln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 394EAC072AA;
+	Sat,  4 May 2024 15:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714836953;
+	bh=Gk/mhS8TriKuywu+H3KzIpPCU/lc2/yHAJtYyq2QK8I=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=E1qYw7lndcDJNl9XAEYLPpuwwU9h+88xGdsUPSOMQDie+h0nBD/Xn//eeyCZMYGGK
+	 PcIt4ItYu2jjeJ13atj0aFNZepI8NxFpWC81rPT85e7H8txGnalBG5Vzix7LgCsyvi
+	 WfMf8FvDdY5WFvS3SVOqN68TXF7L7ArFTHd519+X58BxpaFx9a3XIxtUT5aZbmi8HN
+	 db8a0+QNk/EoEbP6w5iiSkHgnorbJ2//8oxjbeFJBvNDt9lJrzfLgu6UeW5+/oDzoL
+	 3509B6PuGT2OFUbrS5XyFeZY5+qW1yAL1kYJ3ZJZdNFHVpCCcOjVaOpNeFM88/YIW/
+	 HYO6RVrfNGBsw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240504-rasch-gekrochen-3d577084beda@brauner>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 04 May 2024 18:35:48 +0300
+Message-Id: <D10YYQKT9P1S.25CE053K7MQKI@kernel.org>
+Cc: "Ignat Korchagin" <ignat@cloudflare.com>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-team@cloudflare.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Ben Boeckel" <me@benboeckel.net>
+X-Mailer: aerc 0.17.0
+References: <20240503221634.44274-1-ignat@cloudflare.com>
+ <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org> <ZjY-UU8pROnwlTuH@farprobe>
+ <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org>
+In-Reply-To: <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org>
 
-On Sat, May 04, 2024 at 01:24:23PM +0200, Christian Brauner wrote:
-> On Fri, May 03, 2024 at 05:30:01PM -0700, Andrii Nakryiko wrote:
-> > Implement binary ioctl()-based interface to /proc/<pid>/maps file to allow
-> > applications to query VMA information more efficiently than through textual
-> > processing of /proc/<pid>/maps contents. See patch #2 for the context,
-> > justification, and nuances of the API design.
-> > 
-> > Patch #1 is a refactoring to keep VMA name logic determination in one place.
-> > Patch #2 is the meat of kernel-side API.
-> > Patch #3 just syncs UAPI header (linux/fs.h) into tools/include.
-> > Patch #4 adjusts BPF selftests logic that currently parses /proc/<pid>/maps to
-> > optionally use this new ioctl()-based API, if supported.
-> > Patch #5 implements a simple C tool to demonstrate intended efficient use (for
-> > both textual and binary interfaces) and allows benchmarking them. Patch itself
-> > also has performance numbers of a test based on one of the medium-sized
-> > internal applications taken from production.
-> 
-> I don't have anything against adding a binary interface for this. But
-> it's somewhat odd to do ioctls based on /proc files. I wonder if there
-> isn't a more suitable place for this. prctl()? New vmstat() system call
-> using a pidfd/pid as reference? ioctl() on fs/pidfs.c?
+On Sat May 4, 2024 at 5:51 PM EEST, Jarkko Sakkinen wrote:
+> On Sat May 4, 2024 at 4:55 PM EEST, Ben Boeckel wrote:
+> > On Sat, May 04, 2024 at 03:21:11 +0300, Jarkko Sakkinen wrote:
+> > > I have no idea for what the key created with this is even used, which
+> > > makes this impossible to review.
+> >
+> > Additionally, there is nothing in Documentation/ for how userspace migh=
+t
+> > use or create them. This includes things like their description format
+> > and describing available options.
+>
+> The whole user story is plain out broken. Documenting a feature that has
+> no provable use case won't fix that part.
+>
+> So it is better to start with the cover letter. With the *existing*
+> knowledge of the *real* issue I don't think we need this tbh.
 
-See my objection to the ioctl api in the patch review itself.
+As for code I'd suggest the "Describe your changes" part from=20
 
-Also, as this is a new user/kernel api, it needs loads of documentation
-(there was none), and probably also cc: linux-api, right?
+  https://www.kernel.org/doc/html/latest/process/submitting-patches.html
 
-thanks,
+and most essentially how to split them properly.
 
-greg k-h
+My best bet could something along the lines that perhaps there is some
+issue to be sorted out but I don't honestly believe that this will ever
+be a solution for any possible problem that exist in this planet.
+
+BR, Jarkko
 
