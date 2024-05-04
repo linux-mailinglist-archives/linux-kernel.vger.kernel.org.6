@@ -1,112 +1,270 @@
-Return-Path: <linux-kernel+bounces-168556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69EB8BBA1E
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:39:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A17D8BBA1F
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2F8FB21878
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2676F1C21300
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9628F12B7F;
-	Sat,  4 May 2024 08:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XgnpODUi"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AB3179B7;
+	Sat,  4 May 2024 08:40:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C79211C83
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 08:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1FF1755C
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 08:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714811979; cv=none; b=KB3Yh7W3ZBJIetFOe02ShFgqx3RP8i4PYgki8XJpYatkX64Y8nvX/znImx9YYevvp2WRbJ3gqdiRQyppEF95ajUyhANrxCLlaJUIOBmhXNHJ5iWBXH4Vs0QKo1YvD3bCB+n7yU5YFhBvRQuOcmgB9FAEdkiA1c6NEP8bJ20Z774=
+	t=1714812000; cv=none; b=Kp3hC6t8fLh5W5luvCMkjC3Iiz30GSAP+XDpI4Gcq+lsQnZQDURiLSzbmrfCb0JdHbNR4PV1pkxvwhEuTnwSIgYlDp1EWifj/ZhEwWiCTwUyqSpP2x6Q4BExLFoIvV/OXl+CT53CiBUwmsi/ebjbPwN3/mCI7D7luJ47J32hCMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714811979; c=relaxed/simple;
-	bh=pS9GUyr/Rb4KQ2oCmIUticmklLFBQYHkSGp5cW0WkQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NwOClsh7K11DaVBYWDkvGb2fN/A2IWkOgzhvU3mAP4YGfF/BoFGYR89LuBsA1gsg3Z1VsyfP7Yc9mNUxQathtSBBGrUc77UPFaQgxcGEpwOQASG2wrFn6VhvpdvYcmPRnONvM39g7BYlC9kvG79L0qeooKPsHsd3YOEl9wqIIjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XgnpODUi; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-418820e6effso21955e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 01:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1714811977; x=1715416777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0t5CPQQsxj2vgCF+u2Twafxclh98sEiPLbitj8vQ18=;
-        b=XgnpODUiCeKl4XODAAL1QxNO1WrnW/Mxf2KX1YFKFaWLQ6WHQsRlm2ixgSoyEJnkTp
-         GNudod9jl99+Yh79ZqKwUrX2m5mhChkUXbwpD2DlXAUD0GyxdmhpRa6rMckrn4R8QyQJ
-         wYz0aZeiFCSATLqwBXRKLVHB0mL1SHkxMUjxnJEpuEUSV+3fKPithK3YyynYON8UBJ5J
-         jZ9kY3z9AvKp1x/TOEsIHRBR5XngCfC1Pr+EGd2YmXLY09cgHkUARG7W8XXDeBZomIw1
-         JaqXiLPjm7oGHfq5AzGw/5u5MgpwiO762DmN18V6MeBxJPKwxh91u39NLeCHLq/ZpK+F
-         SFlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714811977; x=1715416777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A0t5CPQQsxj2vgCF+u2Twafxclh98sEiPLbitj8vQ18=;
-        b=VIyUswmu9b2kGdrutdKKuWNR+/Bg2SK/fn/IdfYQbrnemj6t8oXROlzs/jYMtvCXc9
-         gCdtlwwlIfSoRgz63Ea+9BSGcpsAS5MgS46+IB9fatdwVbH5iWXY3gtPG6ye88l7Gc+Z
-         t84Q8XkeWyFJyyRC0DuqUxwKtdA+Xn2SGxkufgiR6yOecolLF7OFJFGojp+cVHidqlut
-         xNS/QSyPOlRZiYCUhS4IgWvWXXgxwQwdO4vywmpbPu4Q40PNqhsXBQ5aK7Ljm8Xv095f
-         Qh2wSZNT3zxfRe5hjUNukQUBZizr/XqjK59NGu60XNKyThdcCLrQ928VHnQeJGglp0+7
-         gSyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfOdBxA9FnIR1tqfOSykPZrxQHYhy4hnu/Yo05cHvhn4RfMjobdRqB4XRlcoMZvd9SUtjU0f82m3zsz6smX7ZbMbQyJ1XHBJuIYOlY
-X-Gm-Message-State: AOJu0YxlLKI7/ArN36Oh6K3zzbe/V1aiIPSaweTTxTlnCrhe2+W7ua9n
-	oCG4T/fWCjhke8Wtbp5exm7ExXmVhW/A3X1c4jMtpXmaQK/u5zF6JdlbqwirOaXs171cBbKFXRb
-	ulObB/u0YhWeRv6hrKYb957wuQbvNddWGNNM=
-X-Google-Smtp-Source: AGHT+IHKZ79tYRwfIfKH6NTayUjVgFntgfvssDoGafTukL6FFYiULiu+lRJw1Y725qf7MWVs8Lup8faj9B/nOfFuzbc=
-X-Received: by 2002:a05:600c:1c24:b0:41b:8715:1158 with SMTP id
- 5b1f17b1804b1-41e5a4eb27emr1125985e9.6.1714811976712; Sat, 04 May 2024
- 01:39:36 -0700 (PDT)
+	s=arc-20240116; t=1714812000; c=relaxed/simple;
+	bh=HREBWNEpziSKqfLehwCByzvCKJd1VmHPzVy0N6iUuvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h1KfWKRZgpDQx3Qg7tqyMXf6bnGo9dOgcekbc4aFtTyLMYsSapirJO0bmMUxFVBjc3pwsJCWgAIPb5zaJ9vXQbUu+RRUoM8U7O9Or5j2hH3SJk21gx4xH+JghNHRliRSOMsmU11k1odAtT3YOXv4vQl5QMdPyjwLfhxmDY6mM8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 897D3C072AA;
+	Sat,  4 May 2024 08:39:58 +0000 (UTC)
+Date: Sat, 4 May 2024 04:39:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alex Constantino
+ <dreaming.about.electric.sheep@gmail.com>, Maxime Ripard
+ <mripard@kernel.org>, Timo Lindfors <timo.lindfors@iki.fi>, Dave Airlie
+ <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [BUG][v6.9-rc6] Deadlock with: Revert "drm/qxl: simplify
+ qxl_fence_wait"
+Message-ID: <20240504043957.417aa98c@rorschach.local.home>
+In-Reply-To: <20240502081641.457aa25f@gandalf.local.home>
+References: <20240502081641.457aa25f@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANDhNCq2n2HVUnVi0K+cw_7MUd1h49BzTxLEk6V3G2c=BBUYBw@mail.gmail.com>
- <ZjWh2MbDs1CF8PUB@slm.duckdns.org>
-In-Reply-To: <ZjWh2MbDs1CF8PUB@slm.duckdns.org>
-From: John Stultz <jstultz@google.com>
-Date: Sat, 4 May 2024 01:39:23 -0700
-Message-ID: <CANDhNCoefufFFR=nbqo3Gn-NAXBqnLMXuZujz-cTzD_weO84+A@mail.gmail.com>
-Subject: Re: WW_MUTEX_SELFTEST hangs w/ 6.9-rc workqueue changes
-To: Tejun Heo <tj@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>, Will Deacon <will@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 3, 2024 at 7:47=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
-> On Fri, May 03, 2024 at 06:01:49PM -0700, John Stultz wrote:
-> > Hey All,
-> >    In doing some local testing, I noticed I've started to see boot
-> > stalls with CONFIG_WW_MUTEX_SELFTEST with 6.9-rc on a 64cpu qemu
-> > environment.
-> >
-> > I've bisected the problem down to:
-> >   5797b1c18919 (workqueue: Implement system-wide nr_active enforcement
-> > for unbound workqueues)
-> > + the fix needed for that change:
-> >   15930da42f89 (workqueue: Don't call cpumask_test_cpu() with -1 CPU
-> > in wq_update_node_max_active())
->
-> This should be fixed by d40f92020c7a ("workqueue: The default node_nr_act=
-ive
-> should have its max set to max_active"). Can you please confirm the fix?
 
-Ah! Thank you, that does resolve the issue!
+Did anyone see this?
 
-> Thanks and sorry about the hassle.
+-- Steve
 
-Thanks so much for the quick response (can't beat a fix already in the tree=
-!)
--john
+
+On Thu, 2 May 2024 08:16:41 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> I went to run my tests on my VMs and the tests hung on boot up.
+> Unfortunately, the most I ever got out was:
+> 
+> [   93.607888] Testing event system initcall: OK
+> [   93.667730] Running tests on all trace events:
+> [   93.669757] Testing all events: OK
+> [   95.631064] ------------[ cut here ]------------
+> Timed out after 60 seconds
+> 
+> I ran a bisect and it came up with:
+> 
+>  # first bad commit: [07ed11afb68d94eadd4ffc082b97c2331307c5ea] Revert "drm/qxl: simplify qxl_fence_wait"
+> 
+> I checked out 07ed11afb68d94eadd4ffc082b97c2331307c5ea~1 and it booted
+> fine. Added back that commit, it failed to boot. I did this twice, and got
+> the same results.
+> 
+> But the last time I ran it, it did trigger this:
+> 
+>  ------------[ cut here ]------------
+>  
+>  ======================================================
+>  WARNING: possible circular locking dependency detected
+>  6.9.0-rc1-test-00021-g07ed11afb68d #5 Not tainted
+>  ------------------------------------------------------
+>  kworker/u24:3/119 is trying to acquire lock:
+>  ffffffff95aa4600 (console_owner){....}-{0:0}, at: console_flush_all+0x1f5/0x530
+>  
+>  but task is already holding lock:
+>  ffff93c4bbd37218 (&pool->lock){-.-.}-{2:2}, at: __flush_work+0xc1/0x440
+>  
+>  which lock already depends on the new lock.
+>  
+>  
+>  the existing dependency chain (in reverse order) is:
+>  
+>  -> #1 (&pool->lock){-.-.}-{2:2}:  
+>         _raw_spin_lock+0x33/0x40
+>         __queue_work+0xd6/0x610
+>         queue_work_on+0x8a/0x90
+>         soft_cursor+0x1a0/0x230
+>         bit_cursor+0x386/0x5f0
+>         hide_cursor+0x27/0xb0
+>         vt_console_print+0x474/0x490
+>         console_flush_all+0x22e/0x530
+>         console_unlock+0x56/0x160
+>         vprintk_emit+0x160/0x390
+>         dev_printk_emit+0xa5/0xd0
+>         _dev_info+0x79/0xa0
+>         __drm_fb_helper_initial_config_and_unlock+0x3a9/0x5f0
+>         drm_fbdev_generic_client_hotplug+0x69/0xc0
+>         drm_client_register+0x7b/0xc0
+>         qxl_pci_probe+0x107/0x1a0
+>         local_pci_probe+0x45/0xa0
+>         pci_device_probe+0xc7/0x240
+>         really_probe+0xd6/0x390
+>         __driver_probe_device+0x78/0x150
+>         driver_probe_device+0x1f/0x90
+>         __driver_attach+0xd6/0x1d0
+>         bus_for_each_dev+0x8f/0xe0
+>         bus_add_driver+0x119/0x220
+>         driver_register+0x59/0x100
+>         do_one_initcall+0x76/0x3c0
+>         kernel_init_freeable+0x3a5/0x5b0
+>         kernel_init+0x1a/0x1c0
+>         ret_from_fork+0x34/0x50
+>         ret_from_fork_asm+0x1a/0x30
+>  
+>  -> #0 (console_owner){....}-{0:0}:  
+>         __lock_acquire+0x13e7/0x2180
+>         lock_acquire+0xd9/0x300
+>         console_flush_all+0x212/0x530
+>         console_unlock+0x56/0x160
+>         vprintk_emit+0x160/0x390
+>         _printk+0x64/0x80
+>         __warn_printk+0x8e/0x180
+>         check_flush_dependency+0xfd/0x120
+>         __flush_work+0xfa/0x440
+>         qxl_queue_garbage_collect+0x83/0x90
+>         qxl_fence_wait+0xa4/0x1a0
+>         dma_fence_wait_timeout+0x98/0x1e0
+>         dma_resv_wait_timeout+0x7f/0xe0
+>         ttm_bo_delayed_delete+0x2b/0x90
+>         process_one_work+0x228/0x740
+>         worker_thread+0x1dc/0x3c0
+>         kthread+0xf2/0x120
+>         ret_from_fork+0x34/0x50
+>         ret_from_fork_asm+0x1a/0x30
+>  
+>  other info that might help us debug this:
+>  
+>   Possible unsafe locking scenario:
+>  
+>         CPU0                    CPU1
+>         ----                    ----
+>    lock(&pool->lock);
+>                                 lock(console_owner);
+>                                 lock(&pool->lock);
+>    lock(console_owner);
+>  
+>   *** DEADLOCK ***
+>  
+>  6 locks held by kworker/u24:3/119:
+>   #0: ffff93c440245948 ((wq_completion)ttm){+.+.}-{0:0}, at: process_one_work+0x43a/0x740
+>   #1: ffffa01380d83e60 ((work_completion)(&bo->delayed_delete)){+.+.}-{0:0}, at: process_one_work+0x1e2/0x740
+>   #2: ffffffff95b17880 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x86/0x440
+>   #3: ffff93c4bbd37218 (&pool->lock){-.-.}-{2:2}, at: __flush_work+0xc1/0x440
+>   #4: ffffffff95b149c0 (console_lock){+.+.}-{0:0}, at: _printk+0x64/0x80
+>   #5: ffffffff95b14a10 (console_srcu){....}-{0:0}, at: console_flush_all+0x7b/0x530
+>  
+>  stack backtrace:
+>  CPU: 2 PID: 119 Comm: kworker/u24:3 Not tainted 6.9.0-rc1-test-00021-g07ed11afb68d #5
+>  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+>  Workqueue: ttm ttm_bo_delayed_delete
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x77/0xb0
+>   check_noncircular+0x148/0x160
+>   __lock_acquire+0x13e7/0x2180
+>   lock_acquire+0xd9/0x300
+>   ? console_flush_all+0x1f5/0x530
+>   ? lock_release+0x147/0x2c0
+>   ? console_flush_all+0x1f5/0x530
+>   console_flush_all+0x212/0x530
+>   ? console_flush_all+0x1f5/0x530
+>   console_unlock+0x56/0x160
+>   vprintk_emit+0x160/0x390
+>   _printk+0x64/0x80
+>   ? __pfx_ttm_bo_delayed_delete+0x10/0x10
+>   ? __pfx_qxl_gc_work+0x10/0x10
+>   __warn_printk+0x8e/0x180
+>   ? __pfx_ttm_bo_delayed_delete+0x10/0x10
+>   ? __pfx_qxl_gc_work+0x10/0x10
+>   ? __pfx_qxl_gc_work+0x10/0x10
+>   check_flush_dependency+0xfd/0x120
+>   __flush_work+0xfa/0x440
+>   qxl_queue_garbage_collect+0x83/0x90
+>   qxl_fence_wait+0xa4/0x1a0
+>   dma_fence_wait_timeout+0x98/0x1e0
+>   dma_resv_wait_timeout+0x7f/0xe0
+>   ttm_bo_delayed_delete+0x2b/0x90
+>   process_one_work+0x228/0x740
+>   worker_thread+0x1dc/0x3c0
+>   ? __pfx_worker_thread+0x10/0x10
+>   kthread+0xf2/0x120
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork+0x34/0x50
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork_asm+0x1a/0x30
+>   </TASK>
+>  workqueue: WQ_MEM_RECLAIM ttm:ttm_bo_delayed_delete is flushing !WQ_MEM_RECLAIM events:qxl_gc_work
+>  WARNING: CPU: 2 PID: 119 at kernel/workqueue.c:3728 check_flush_dependency+0xfd/0x120
+>  Modules linked in:
+>  CPU: 2 PID: 119 Comm: kworker/u24:3 Not tainted 6.9.0-rc1-test-00021-g07ed11afb68d #5
+>  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+>  Workqueue: ttm ttm_bo_delayed_delete
+>  RIP: 0010:check_flush_dependency+0xfd/0x120
+>  Code: 8b 45 18 48 8d b2 70 01 00 00 49 89 e8 48 8d 8b 70 01 00 00 48 c7 c7 60 46 7b 95 c6 05 48 67 d2 01 01 48 89 c2 e8 63 40 fd ff <0f> 0b e9 1e ff ff ff 80 3d 33 67 d2 01 00 75 93 e9 4a ff ff ff 66
+>  RSP: 0000:ffffa01380d83c28 EFLAGS: 00010086
+>  RAX: 0000000000000000 RBX: ffff93c44004ee00 RCX: 0000000000000000
+>  RDX: 0000000080000003 RSI: 00000000ffffefff RDI: 0000000000000001
+>  RBP: ffffffff9497b100 R08: 0000000000000000 R09: 0000000000000003
+>  R10: ffffa01380d83ab8 R11: ffffffff95b14828 R12: ffff93c443980000
+>  R13: ffff93c440fbe300 R14: 0000000000000001 R15: ffff93c44004ee00
+>  FS:  0000000000000000(0000) GS:ffff93c4bbd00000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 0000000000000000 CR3: 000000007c864001 CR4: 0000000000170ef0
+>  Call Trace:
+>   <TASK>
+>   ? __warn+0x8c/0x180
+>   ? check_flush_dependency+0xfd/0x120
+>   ? report_bug+0x191/0x1c0
+>   ? prb_read_valid+0x1b/0x30
+>   ? handle_bug+0x3c/0x80
+>   ? exc_invalid_op+0x17/0x70
+>   ? asm_exc_invalid_op+0x1a/0x20
+>   ? __pfx_qxl_gc_work+0x10/0x10
+>   ? check_flush_dependency+0xfd/0x120
+>   ? check_flush_dependency+0xfd/0x120
+>   __flush_work+0xfa/0x440
+>   qxl_queue_garbage_collect+0x83/0x90
+>   qxl_fence_wait+0xa4/0x1a0
+>   dma_fence_wait_timeout+0x98/0x1e0
+>   dma_resv_wait_timeout+0x7f/0xe0
+>   ttm_bo_delayed_delete+0x2b/0x90
+>   process_one_work+0x228/0x740
+>   worker_thread+0x1dc/0x3c0
+>   ? __pfx_worker_thread+0x10/0x10
+>   kthread+0xf2/0x120
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork+0x34/0x50
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork_asm+0x1a/0x30
+>   </TASK>
+>  irq event stamp: 58
+>  hardirqs last  enabled at (57): [<ffffffff93fede30>] queue_work_on+0x60/0x90
+>  hardirqs last disabled at (58): [<ffffffff94ea7f66>] _raw_spin_lock_irq+0x56/0x60
+>  softirqs last  enabled at (0): [<ffffffff93fbae27>] copy_process+0xc07/0x2c60
+>  softirqs last disabled at (0): [<0000000000000000>] 0x0
+>  ---[ end trace 0000000000000000 ]---
+> 
+> So there's an issue with dma_fence and a workqueue.
+> 
+> -- Steve
+> 
+
 
