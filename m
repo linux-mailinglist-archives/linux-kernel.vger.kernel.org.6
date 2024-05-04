@@ -1,116 +1,103 @@
-Return-Path: <linux-kernel+bounces-168814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A408BBDFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 22:17:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 721DC8BBE02
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 22:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0D31F21796
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:17:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A149D1C20CBC
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0F884A51;
-	Sat,  4 May 2024 20:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e06MpcWj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A61584A51;
+	Sat,  4 May 2024 20:26:53 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F5B1BF3F;
-	Sat,  4 May 2024 20:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DC583CD3
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 20:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714853863; cv=none; b=SlkW6A8i5R+RcpU66miT/3GKffGj2V8LqrUoV/NzbJmw/35w0P1FFt2nckLPgSFglMGdzcPhSTU1Jo3t2jvSJVucniZmNgv258Ft9w4o+99NLiVkxHmaTqjkSyAg9ry0cNLxliEu0WFkLLTpWjZL6Ud3/VdMtnaMFaVzmyTOCDo=
+	t=1714854412; cv=none; b=sFxdcDnIsohiAVhzLive28WFE2uMbU6E71gGZrkzGlUDxcTPjJinsaW/4mS/3hec52p/g722bEa6Py/RXTH+ILy+HmThGX+EvP47w0kKkB8Bpi4wsvRqOLmw4cTPi174G6DBPDBsfl5PkoD0+o/E6emcKqV7sTG73USMx3gYCJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714853863; c=relaxed/simple;
-	bh=S7FTYcnhSj3UJkYyuYb6sPZpihdcm5gOjX8Oss6SzmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7l0cE1IrzqitrXRWGNShmiwAP31/HsNhO0SfqwN+wWV6frKdohWtW9haJtyHMPMD6YsxV5L4lF1gtvjgHXHtz1Bentray11+Altw+8VXFEfp5WvnL+me1uAcj35tmhgP7q2CorQEPvMDrLLSMFJTyE6UJ6kZK36FBFcR+P+ce0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e06MpcWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7760C072AA;
-	Sat,  4 May 2024 20:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714853862;
-	bh=S7FTYcnhSj3UJkYyuYb6sPZpihdcm5gOjX8Oss6SzmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e06MpcWjt3OAfVFB3793pMU6WPfPlcYWFM1pxTTwLY9Y2qRO8ySfu/24EaSkxznJ+
-	 lYgTOqG1nFXqvQc2VREARpFu8juJhNd6EB4RW4S6lGGyMEWnp1ahUcWqriWvPe2j+a
-	 EVJymBBx1EQk8SkfSWJ7IfmmGxk9/LRnJV7KS/ORL1IznmzHHOQirPsPsCKCG2voU0
-	 YAZTfpWRo5E2dOK56X7ymcpNr03Akra4rV9Hf4eLj+3uNLavNmtrQbYWbBdG/BKDZ/
-	 rBlcsSTp7eN/N6dk+KWCX9M11mn1/TlVUCavVRZ0vuh4KsBpQPwUhoD+EEouCHd6yV
-	 li++2WaYZw4Zg==
-Date: Sat, 4 May 2024 21:16:08 +0100
-From: Simon Horman <horms@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, kuba@kernel.org, jgg@nvidia.com,
-	leonro@nvidia.com, Andrew Morton <akpm@linux-foundation.org>,
-	Tal Gilboa <talgi@nvidia.com>,
-	"open list:LIBRARY CODE" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] lib: Allow for the DIM library to be modular
-Message-ID: <20240504201608.GJ2279@kernel.org>
-References: <20240503002540.7154-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1714854412; c=relaxed/simple;
+	bh=a7k/F1PKwS/4p3POLuiedXV28zFTkH7Y4HJyhJXdOLs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=C0ggMiDtu2FGqq5v4foaAywddnpbbb/Ixb2ZzhhxxxY2WvbtiFFnZjQhVBKDVpWgALmWfcmy13K2y2i+Srnm/KmBUGyuQdz7ByLkR2pXEv4lg6gSR8hPOcNC0aT+6zU2ELHLxmBn2kTG3bGA+4WXa4hEp3kDLHe2FUE6K9GITVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-74-R6kMj-4qPjKWBI3Zp6dTjQ-1; Sat, 04 May 2024 21:26:38 +0100
+X-MC-Unique: R6kMj-4qPjKWBI3Zp6dTjQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 4 May
+ 2024 21:26:07 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 4 May 2024 21:26:07 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Waiman Long' <longman@redhat.com>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>, "'peterz@infradead.org'"
+	<peterz@infradead.org>
+CC: "'mingo@redhat.com'" <mingo@redhat.com>, "'will@kernel.org'"
+	<will@kernel.org>, "'boqun.feng@gmail.com'" <boqun.feng@gmail.com>, "'Linus
+ Torvalds'" <torvalds@linux-foundation.org>,
+	"'virtualization@lists.linux-foundation.org'"
+	<virtualization@lists.linux-foundation.org>, 'Zeng Heng'
+	<zengheng4@huawei.com>
+Subject: RE: [PATCH next v2 5/5] locking/osq_lock: Optimise decode_cpu() and
+ per_cpu_ptr().
+Thread-Topic: [PATCH next v2 5/5] locking/osq_lock: Optimise decode_cpu() and
+ per_cpu_ptr().
+Thread-Index: Ado8NCf0vtha6NqURtGgfE7//QxHexhPrXlAAAq+3cAAADquAAAwkN2g
+Date: Sat, 4 May 2024 20:26:07 +0000
+Message-ID: <3078b5f07e3e4dc0a3e18aa08af2c9f1@AcuMS.aculab.com>
+References: <2b4e8a5816a742d2bd23fdbaa8498e80@AcuMS.aculab.com>
+ <7c1148fe64fb46a7a81c984776cd91df@AcuMS.aculab.com>
+ <9d4024ba-6422-4775-b934-bfa80a72a858@redhat.com>
+ <16557e30-8353-4cd1-995b-23ec763d2b07@redhat.com>
+ <a2c35933c3de481faec0b201ab1a0c16@AcuMS.aculab.com>
+ <8373c730-2e08-4abb-8d21-fd9a76116d2c@redhat.com>
+In-Reply-To: <8373c730-2e08-4abb-8d21-fd9a76116d2c@redhat.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503002540.7154-1-florian.fainelli@broadcom.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Thu, May 02, 2024 at 05:25:40PM -0700, Florian Fainelli wrote:
-> Allow the Dynamic Interrupt Moderation (DIM) library to be built as a
-> module. This is particularly useful in an Android GKI (Google Kernel
-> Image) configuration where everything is built as a module, including
-> Ethernet controller drivers. Having to build DIMLIB into the kernel
-> image with potentially no user is wasteful.
-> 
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  lib/Kconfig      | 2 +-
->  lib/dim/Makefile | 4 ++--
->  lib/dim/dim.c    | 2 ++
->  3 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index 4557bb8a5256..d33a268bc256 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -628,7 +628,7 @@ config SIGNATURE
->  	  Implementation is done using GnuPG MPI library
->  
->  config DIMLIB
-> -	bool
-> +	tristate
->  	help
->  	  Dynamic Interrupt Moderation library.
->  	  Implements an algorithm for dynamically changing CQ moderation values
-> diff --git a/lib/dim/Makefile b/lib/dim/Makefile
-> index 1d6858a108cb..c4cc4026c451 100644
-> --- a/lib/dim/Makefile
-> +++ b/lib/dim/Makefile
-> @@ -2,6 +2,6 @@
->  # DIM Dynamic Interrupt Moderation library
->  #
->  
-> -obj-$(CONFIG_DIMLIB) += dim.o
-> +obj-$(CONFIG_DIMLIB) += dimlib.o
->  
-> -dim-y := dim.o net_dim.o rdma_dim.o
-> +dimlib-objs := dim.o net_dim.o rdma_dim.o
-> diff --git a/lib/dim/dim.c b/lib/dim/dim.c
-> index e89aaf07bde5..c50e5b4dc46e 100644
-> --- a/lib/dim/dim.c
-> +++ b/lib/dim/dim.c
-> @@ -82,3 +82,5 @@ bool dim_calc_stats(struct dim_sample *start, struct dim_sample *end,
->  	return true;
->  }
->  EXPORT_SYMBOL(dim_calc_stats);
-> +
-> +MODULE_LICENSE("Dual BSD/GPL");
+RnJvbTogV2FpbWFuIExvbmcNCj4gU2VudDogMDMgTWF5IDIwMjQgMjM6MTQNCj4gDQo+IA0KPiBP
+biA1LzMvMjQgMTc6MTAsIERhdmlkIExhaWdodCB3cm90ZToNCj4gPiBGcm9tOiBXYWltYW4gTG9u
+Zw0KPiA+PiBTZW50OiAwMyBNYXkgMjAyNCAxNzowMA0KPiA+IC4uLg0KPiA+PiBEYXZpZCwNCj4g
+Pj4NCj4gPj4gQ291bGQgeW91IHJlc3BpbiB0aGUgc2VyaWVzIGJhc2VkIG9uIHRoZSBsYXRlc3Qg
+dXBzdHJlYW0gY29kZT8NCj4gPiBJJ3ZlIGp1c3QgcmVhcHBsaWVkIHRoZSBwYXRjaGVzIHRvICdt
+YXN0ZXInIGFuZCB0aGV5IGFsbCBhcHBseQ0KPiA+IGNsZWFubHkgYW5kIGRpZmZpbmcgdGhlIG5l
+dyBwYXRjaGVzIHRvIHRoZSBvbGQgb25lcyBnaXZlcyBubyBkaWZmZXJlbmNlcy4NCj4gPiBTbyBJ
+IHRoaW5rIHRoZXkgc2hvdWxkIHN0aWxsIGFwcGx5Lg0KPiA+DQo+ID4gV2VyZSB5b3Ugc2VlaW5n
+IGEgc3BlY2lmaWMgcHJvYmxlbT8NCj4gPg0KPiA+IEkgZG9uJ3QgcmVtZW1iZXIgYW55IHN1Z2dl
+c3RlZCBjaGFuZ2VkIGVpdGhlci4NCj4gPiAoQXBhcnQgZnJvbSBhIHZlcnkgbG9jYWwgdmFyaWFi
+bGUgSSB1c2VkIHRvIGtlZXAgYSBwYXRjaCBpc29sYXRlZC4pDQo+IA0KPiBObywgSSBqdXN0IHdh
+bnQgdG8gbWFrZSBzdXJlIHRoYXQgeW91ciBwYXRjaGVzIHdpbGwgc3RpbGwgYXBwbHkuIEFueXdh
+eSwNCj4gaXQgd2lsbCBiZSBlYXNpZXIgZm9yIHRoZSBtYWludGFpbmVyIHRvIG1lcmdlIHlvdXIg
+cmVtYWluaW5nIHBhdGNoZXMgaWYNCj4geW91IGNhbiBzZW5kIG91dCBhIG5ldyB2ZXJzaW9uIGV2
+ZW4gaWYgdGhleSBhcmUgYWxtb3N0IHRoZSBzYW1lIGFzIHRoZQ0KPiBvbGQgb25lcy4NCg0KSSBk
+b24ndCB0aGluayBhbnkgY2hhbmdlcyBhcmUgbmVlZGVkLg0KU28gdGhlIGV4aXN0aW5nIHZlcnNp
+b25zIGFyZSBmaW5lLg0KVGhleSBhcHBsaWVkICh3ZWxsIG15IGNvcHkgb2Ygd2hhdCBJIHRoaW5r
+IEkgc2VudCBhcHBsaWVkKSBhbmQgYnVpbHQuDQpTbyB0aGVyZSBzaG91bGRuJ3QgYmUgYW55IGlz
+c3Vlcy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxl
+eSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0
+aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-nit: If we follow this route then MODULE_DESCRIPTION should be added too,
-     right?
 
