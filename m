@@ -1,103 +1,174 @@
-Return-Path: <linux-kernel+bounces-168815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721DC8BBE02
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 22:26:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 429148BBE15
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 22:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A149D1C20CBC
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01EB8281DED
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A61584A51;
-	Sat,  4 May 2024 20:26:53 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F59383CDD;
+	Sat,  4 May 2024 20:40:20 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DC583CD3
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 20:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5D91DFEB;
+	Sat,  4 May 2024 20:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714854412; cv=none; b=sFxdcDnIsohiAVhzLive28WFE2uMbU6E71gGZrkzGlUDxcTPjJinsaW/4mS/3hec52p/g722bEa6Py/RXTH+ILy+HmThGX+EvP47w0kKkB8Bpi4wsvRqOLmw4cTPi174G6DBPDBsfl5PkoD0+o/E6emcKqV7sTG73USMx3gYCJM=
+	t=1714855219; cv=none; b=Z+D/f3rXnxMusu+O73paledxuZ+5Uxw0k2S+4YIbF5B3g7k0q1FqZZDO+q0oG/LFkYmoa0v9ZijanykXquOsaLAd29JtuaTY/IJ68adufhqQ95VTg9mJq3Vb8DoEPZQ/hvAKZYXVAX8Jcc+vP2wDzzE1GrRv9fPTTpVVPzBmFGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714854412; c=relaxed/simple;
-	bh=a7k/F1PKwS/4p3POLuiedXV28zFTkH7Y4HJyhJXdOLs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=C0ggMiDtu2FGqq5v4foaAywddnpbbb/Ixb2ZzhhxxxY2WvbtiFFnZjQhVBKDVpWgALmWfcmy13K2y2i+Srnm/KmBUGyuQdz7ByLkR2pXEv4lg6gSR8hPOcNC0aT+6zU2ELHLxmBn2kTG3bGA+4WXa4hEp3kDLHe2FUE6K9GITVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-74-R6kMj-4qPjKWBI3Zp6dTjQ-1; Sat, 04 May 2024 21:26:38 +0100
-X-MC-Unique: R6kMj-4qPjKWBI3Zp6dTjQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 4 May
- 2024 21:26:07 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 4 May 2024 21:26:07 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Waiman Long' <longman@redhat.com>, "'linux-kernel@vger.kernel.org'"
-	<linux-kernel@vger.kernel.org>, "'peterz@infradead.org'"
-	<peterz@infradead.org>
-CC: "'mingo@redhat.com'" <mingo@redhat.com>, "'will@kernel.org'"
-	<will@kernel.org>, "'boqun.feng@gmail.com'" <boqun.feng@gmail.com>, "'Linus
- Torvalds'" <torvalds@linux-foundation.org>,
-	"'virtualization@lists.linux-foundation.org'"
-	<virtualization@lists.linux-foundation.org>, 'Zeng Heng'
-	<zengheng4@huawei.com>
-Subject: RE: [PATCH next v2 5/5] locking/osq_lock: Optimise decode_cpu() and
- per_cpu_ptr().
-Thread-Topic: [PATCH next v2 5/5] locking/osq_lock: Optimise decode_cpu() and
- per_cpu_ptr().
-Thread-Index: Ado8NCf0vtha6NqURtGgfE7//QxHexhPrXlAAAq+3cAAADquAAAwkN2g
-Date: Sat, 4 May 2024 20:26:07 +0000
-Message-ID: <3078b5f07e3e4dc0a3e18aa08af2c9f1@AcuMS.aculab.com>
-References: <2b4e8a5816a742d2bd23fdbaa8498e80@AcuMS.aculab.com>
- <7c1148fe64fb46a7a81c984776cd91df@AcuMS.aculab.com>
- <9d4024ba-6422-4775-b934-bfa80a72a858@redhat.com>
- <16557e30-8353-4cd1-995b-23ec763d2b07@redhat.com>
- <a2c35933c3de481faec0b201ab1a0c16@AcuMS.aculab.com>
- <8373c730-2e08-4abb-8d21-fd9a76116d2c@redhat.com>
-In-Reply-To: <8373c730-2e08-4abb-8d21-fd9a76116d2c@redhat.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1714855219; c=relaxed/simple;
+	bh=k/XD+dv3MxZmFwZdPoHXkMTpr91p/aWWjGh7RYBOmyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C74EHbBOInNJFFtSlkP6Ob0yk4guCYsZexRA5CkP0RX1Ay4BEyFcogxADiiNLL0ZanNhUMlpemIt7GSAa29C6warE5/kQCVD412WjWx4lRs3PrZb2nvMwjLfnrCT18oEYn0RM38sDoqWDIIhkNJGC0wM7KmiB1WnN0d+XE2gsgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.30] (p4fee269d.dip0.t-ipconnect.de [79.238.38.157])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: buczek)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D3CFC61E5FE01;
+	Sat,  4 May 2024 22:39:00 +0200 (CEST)
+Message-ID: <bf4a737a-0c5b-4349-886d-4013683818ce@molgen.mpg.de>
+Date: Sat, 4 May 2024 22:38:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/3] openat2: add OA2_CRED_INHERIT flag
+To: Stas Sergeev <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
+Cc: Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@ACULAB.COM>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240427112451.1609471-1-stsp2@yandex.ru>
+ <20240427112451.1609471-4-stsp2@yandex.ru>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+From: Donald Buczek <buczek@molgen.mpg.de>
+In-Reply-To: <20240427112451.1609471-4-stsp2@yandex.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-RnJvbTogV2FpbWFuIExvbmcNCj4gU2VudDogMDMgTWF5IDIwMjQgMjM6MTQNCj4gDQo+IA0KPiBP
-biA1LzMvMjQgMTc6MTAsIERhdmlkIExhaWdodCB3cm90ZToNCj4gPiBGcm9tOiBXYWltYW4gTG9u
-Zw0KPiA+PiBTZW50OiAwMyBNYXkgMjAyNCAxNzowMA0KPiA+IC4uLg0KPiA+PiBEYXZpZCwNCj4g
-Pj4NCj4gPj4gQ291bGQgeW91IHJlc3BpbiB0aGUgc2VyaWVzIGJhc2VkIG9uIHRoZSBsYXRlc3Qg
-dXBzdHJlYW0gY29kZT8NCj4gPiBJJ3ZlIGp1c3QgcmVhcHBsaWVkIHRoZSBwYXRjaGVzIHRvICdt
-YXN0ZXInIGFuZCB0aGV5IGFsbCBhcHBseQ0KPiA+IGNsZWFubHkgYW5kIGRpZmZpbmcgdGhlIG5l
-dyBwYXRjaGVzIHRvIHRoZSBvbGQgb25lcyBnaXZlcyBubyBkaWZmZXJlbmNlcy4NCj4gPiBTbyBJ
-IHRoaW5rIHRoZXkgc2hvdWxkIHN0aWxsIGFwcGx5Lg0KPiA+DQo+ID4gV2VyZSB5b3Ugc2VlaW5n
-IGEgc3BlY2lmaWMgcHJvYmxlbT8NCj4gPg0KPiA+IEkgZG9uJ3QgcmVtZW1iZXIgYW55IHN1Z2dl
-c3RlZCBjaGFuZ2VkIGVpdGhlci4NCj4gPiAoQXBhcnQgZnJvbSBhIHZlcnkgbG9jYWwgdmFyaWFi
-bGUgSSB1c2VkIHRvIGtlZXAgYSBwYXRjaCBpc29sYXRlZC4pDQo+IA0KPiBObywgSSBqdXN0IHdh
-bnQgdG8gbWFrZSBzdXJlIHRoYXQgeW91ciBwYXRjaGVzIHdpbGwgc3RpbGwgYXBwbHkuIEFueXdh
-eSwNCj4gaXQgd2lsbCBiZSBlYXNpZXIgZm9yIHRoZSBtYWludGFpbmVyIHRvIG1lcmdlIHlvdXIg
-cmVtYWluaW5nIHBhdGNoZXMgaWYNCj4geW91IGNhbiBzZW5kIG91dCBhIG5ldyB2ZXJzaW9uIGV2
-ZW4gaWYgdGhleSBhcmUgYWxtb3N0IHRoZSBzYW1lIGFzIHRoZQ0KPiBvbGQgb25lcy4NCg0KSSBk
-b24ndCB0aGluayBhbnkgY2hhbmdlcyBhcmUgbmVlZGVkLg0KU28gdGhlIGV4aXN0aW5nIHZlcnNp
-b25zIGFyZSBmaW5lLg0KVGhleSBhcHBsaWVkICh3ZWxsIG15IGNvcHkgb2Ygd2hhdCBJIHRoaW5r
-IEkgc2VudCBhcHBsaWVkKSBhbmQgYnVpbHQuDQpTbyB0aGVyZSBzaG91bGRuJ3QgYmUgYW55IGlz
-c3Vlcy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxl
-eSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0
-aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On 4/27/24 13:24, Stas Sergeev wrote:
+> This flag performs the open operation with the fs credentials
+> (fsuid, fsgid, group_info) that were in effect when dir_fd was opened.
+> dir_fd must be opened with O_CRED_ALLOW, or EPERM is returned.
+> 
+> Selftests are added to check for these properties as well as for
+> the invalid flag combinations.
+> 
+> This allows the process to pre-open some directories and then
+> change eUID (and all other UIDs/GIDs) to a less-privileged user,
+> retaining the ability to open/create files within these directories.
+> 
+> Design goal:
+> The idea is to provide a very light-weight sandboxing, where the
+> process, without the use of any heavy-weight techniques like chroot
+> within namespaces, can restrict the access to the set of pre-opened
+> directories.
+> This patch is just a first step to such sandboxing. If things go
+> well, in the future the same extension can be added to more syscalls.
+> These should include at least unlinkat(), renameat2() and the
+> not-yet-upstreamed setxattrat().
+> 
+> Security considerations:
+> - Only the bare minimal set of credentials is overridden:
+>    fsuid, fsgid and group_info. The rest, for example capabilities,
+>    are not overridden to avoid unneeded security risks.
+> - To avoid sandboxing escape, this patch makes sure the restricted
+>    lookup modes are used. Namely, RESOLVE_BENEATH or RESOLVE_IN_ROOT.
+> - Magic /proc symlinks are discarded, as suggested by
+>    Andy Lutomirski <luto@kernel.org>> - O_CRED_ALLOW fds cannot be passed via unix socket and are always
+>    closed on exec() to prevent "unsuspecting userspace" from not being
+>    able to fully drop privs.
 
+What about hard links?
+
+== snip ==
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <linux/openat2.h>
+
+#define O_CRED_ALLOW 0x2000000
+#define OA2_CRED_INHERIT (1UL << 28)
+
+#define SYS_openat2 437
+long openat2(int dirfd, const char *pathname, struct open_how *how, size_t size) {
+     return syscall(SYS_openat2, dirfd, pathname, how, size);
+}
+
+
+__attribute__ ((noreturn, format(printf, 1, 2)))
+static void die(const char *restrict fmt, ...) {
+     va_list ap;
+     va_start(ap, fmt);
+     vfprintf(stderr, fmt, ap);
+     va_end(ap);
+     _exit(1);
+}
+
+int main() {
+
+     unlink("/tmp/d/test.dat");
+     unlink("/tmp/d/hostname");
+     if (rmdir("/tmp/d") != 0 && errno != ENOENT)
+         die("/tmp/d: %m\n");
+     
+     umask(0);
+     if (mkdir("/tmp/d", 0777) != 0)
+         die("/tmp/d: %m\n");
+
+     int dirfd = open("/tmp/d", O_RDONLY + O_CRED_ALLOW);
+     if (dirfd == -1)
+         die("/tmp/d: %m\n");
+
+     if (setuid(1000) != 0)
+         die("setuid: %m\n");
+
+     if (link("/etc/hostname", "/tmp/d/hostname") == -1)
+         die ("/etc/hostname: %m\n");
+
+     if(openat(dirfd, "hostname", O_RDWR) != -1)
+         die("/tmp/d/hostname could be opened by uid 1000");
+
+     {   struct open_how how = { .flags = O_RDWR + OA2_CRED_INHERIT, .resolve = RESOLVE_BENEATH };
+         if (openat2(dirfd, "hostname", &how, sizeof(how)) == -1)
+             die("hostname: %m\n");
+         printf("able to open /etc/hostname RDWR \n");
+     }
+}
+
+== snip ==
+
+
+buczek@dose:~$ gcc -O0 -Wall -Wextra -Werror -g -o test test.c
+buczek@dose:~$ sudo ./test
+able to open /etc/hostname RDWR
+buczek@dose:~$
+
+
+-- 
+Donald Buczek
+buczek@molgen.mpg.de
+Tel: +49 30 8413 1433
 
