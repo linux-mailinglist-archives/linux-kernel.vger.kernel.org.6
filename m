@@ -1,245 +1,212 @@
-Return-Path: <linux-kernel+bounces-168546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7218BB9F0
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:04:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F8F8BB9F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8E88B21B84
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:04:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F257B21574
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A9D12B7F;
-	Sat,  4 May 2024 08:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C90C107A6;
+	Sat,  4 May 2024 08:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2MPtTQT"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ticBPfxu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HO96QoYS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ticBPfxu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HO96QoYS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DBAD29E;
-	Sat,  4 May 2024 08:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE987BA42
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 08:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714809869; cv=none; b=Kgr6DSAxNcEM/nEoRD2/QLhSsYbECiMri96BOozGV7tN3HGyv8wGorBCI7HAGhKx7mus9nBLyWP5f61ittUmXfgWzi1O+XGEeGwjP4+IbcJagDMri18JaUNFKGrRvzqtu62Xn7vpnxd4k+x/74nWEbuUPE+Phbt+XJ0YBNd28P4=
+	t=1714810108; cv=none; b=eMhtgl9IHWSyCvdJipjMxiIYZ2MfdNMHAZCTp+evdz3bpyydl3pJjNPIRI80aO5FTJiBTZFvOqzLvAzh1eMIvBKeeCci6SXObbNGtg/BuI/xQKvtSytgAY3XPlryjrqOd5unaAJ0uRAMll1auzRh4Xf0I8CAHUErL2N5+6gxQt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714809869; c=relaxed/simple;
-	bh=0hjZIw2e2IuhjYNugxhXSXZpWs5mVXjcsoZo1BqocAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ue9HDOTCe4j4gjig2I5kW18f3muEpv7ofXLBCkNYbB+0QclQdB4Cqx+eop9AdV3RyWRFpTdcWx/hovEZz0DGnnly0O+dp/E/hyfNkHqbhF6gqEH+hxpPwJh4LQ2YdtrCYJ1fktZT8a1VC0wZEcHeFt1FNVkC2KBVRpp2QD+bw9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j2MPtTQT; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6ed3cafd766so391268b3a.0;
-        Sat, 04 May 2024 01:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714809866; x=1715414666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Lj67rtK1QueWPk7ARNpfvxl9vOgAVWGxhUJDN/QBK8=;
-        b=j2MPtTQTx683nJWgf+VqG/CYiRVqskw/qKRynsLET/BuZX8Gx+lRoPor2Mbw77E/rs
-         f5PVcoklIFNoWE1RWFO5kyJxadfxcHOe93vboEbFAAR6eo1eO/Ojiu2xD1/ZLSYQgZVD
-         dNBAFTYTp+S45ULOfx3Gb5TClMgKwPE6cUWd7KZraDaORWL3p+Zu4h2Su3ynomL8e6LD
-         79/LzoGjVid/dmXwbAQMJIMFL9s8a6R+onCZxCrYzATbVGNaXht4nt62YZv976Bw3bOt
-         EQNcwi76REG8VUUY9c9FJC931NWCEBwxuZVEH7Oz07377xVwvG8hfW/mnCrYjJr9GJoR
-         WQBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714809866; x=1715414666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Lj67rtK1QueWPk7ARNpfvxl9vOgAVWGxhUJDN/QBK8=;
-        b=W/9dzpS/lLFJLoXjFbPJnwnrRBB4BRKasFPORn58kgupW5I6D2nCxYpPxGmsIaEBQ/
-         PgY/W+6LNNYNdgRqp7v3k2CR83+eGtgJTjNL77EfWHiWBN1pc1qhf/+AGirZ+T/CkmhJ
-         23TCkpvDGFZGJl0INYpBO2/VkZjI5Ft891YCX9AiugpNjGDGYKSFjDWXdlvInlGm5lIr
-         Ou6KaBBVBXAWwT4JJXzpetcQJjwfholBX+SSc1b8LI1NZ2FDbMlhn16orvoQphinZw57
-         ZB4aZZRCK9notumSDPq1TB3cvs/AkeVebzZ5RPwVtir/PGa1Y9mIjImT4WDg40m0NFyl
-         dRWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgXjfzAGqpZFd8V4eQ7FPaIReB6gBfvQp8Pd21tKLo97WCvi5PjVJncQsXy6aHX9EbG0gJX3OAOaeVkZASF5jbPRjbPc63YWcIDdDVXt5rBQmW/ax84o4AtD5yKzeFZolBzn0o2zsibhxLWZiVFoOnQopXNZqcLaMvGukLzVACXXbzAspKWKC3paLYd9go/Kp7hR05ZqZsLt3OHf+RuHfN1Klrw0BKRJses52aGIXYnWI6ceZpCiNLDwef7gWtZmENw0R3nBWbLg==
-X-Gm-Message-State: AOJu0YzESvWpYvlndTA/zG1moIQZJ9Zm1Gq3mrp1V9ezJtQHJ0V+o+7t
-	QQ9MI9lwRe27O8mBR6TVZsbkUDrvwJgRwCE4y/Q2XQuESGNMvOcB
-X-Google-Smtp-Source: AGHT+IG0qZqH9zc005lWKjgxwZgqZm5TyMRd8CrRzXUZbRqngw1NpFuolrIDkh7YQEN+G1GdDh8Ciw==
-X-Received: by 2002:a05:6a00:a81:b0:6f3:e9bc:7ed3 with SMTP id b1-20020a056a000a8100b006f3e9bc7ed3mr5704824pfl.17.1714809866257;
-        Sat, 04 May 2024 01:04:26 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id bn12-20020a056a00324c00b006edd05e3751sm4356202pfb.176.2024.05.04.01.04.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 01:04:25 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 8A4001847D504; Sat, 04 May 2024 15:04:22 +0700 (WIB)
-Date: Sat, 4 May 2024 15:04:22 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu,
-	ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
-	snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v18 20/21] Documentation: add ipe documentation
-Message-ID: <ZjXsBjAFs-qp9xY4@archie.me>
-References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
- <1714775551-22384-21-git-send-email-wufan@linux.microsoft.com>
+	s=arc-20240116; t=1714810108; c=relaxed/simple;
+	bh=0hCEqZkQCaNOTmBz4GIo4hUWSZWinRrt3PGUXnoS1+o=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fmMiFmydWFXb5pEdMfD0XTSJEbYnTAfOzGkH8HVOpwljFpBZk3vO/MA43lld69C97PkCAvDozrsfyVi/jaLtJtNx1Q48jjqsz4+IlPsGjWfqxh4EbhM1Q9IIUs+7ZdgaqHfVKlvS0h3IoPhfuAsSTIL9n10MXGjubv1v6jNb2No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ticBPfxu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HO96QoYS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ticBPfxu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HO96QoYS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D0CF34270;
+	Sat,  4 May 2024 08:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1714810105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
+	b=ticBPfxux8E6ZoCtKtgyqlWC8TA8h+PiF27+kAJT8ANH1rTIX/c4k0QkrIHp0oNW5SdoEi
+	4LsN/DR2FGzWAtgZUXUFSHPSxnWZ27kTfCkeetAWECoPk7rMXmRD6oXjQIAsbQHUDQZFmu
+	nmfYSoZXl1O29kfzrA9q8szoR9G/Oc4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1714810105;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
+	b=HO96QoYShWT6eB8tv4I7LY+0mBWXjie8KE5Bm8m9keb5J40YQuYKtOMRwLmupYZpYiY9uR
+	9/p7/jfV9MUMJpDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ticBPfxu;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=HO96QoYS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1714810105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
+	b=ticBPfxux8E6ZoCtKtgyqlWC8TA8h+PiF27+kAJT8ANH1rTIX/c4k0QkrIHp0oNW5SdoEi
+	4LsN/DR2FGzWAtgZUXUFSHPSxnWZ27kTfCkeetAWECoPk7rMXmRD6oXjQIAsbQHUDQZFmu
+	nmfYSoZXl1O29kfzrA9q8szoR9G/Oc4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1714810105;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
+	b=HO96QoYShWT6eB8tv4I7LY+0mBWXjie8KE5Bm8m9keb5J40YQuYKtOMRwLmupYZpYiY9uR
+	9/p7/jfV9MUMJpDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A1251386E;
+	Sat,  4 May 2024 08:08:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id c1AZJPjsNWZxKgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 04 May 2024 08:08:24 +0000
+Date: Sat, 04 May 2024 10:08:38 +0200
+Message-ID: <871q6i9eyh.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<lgirdwood@gmail.com>,
+	<perex@perex.cz>,
+	<pierre-louis.bossart@linux.intel.com>,
+	<13916275206@139.com>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<liam.r.girdwood@intel.com>,
+	<bard.liao@intel.com>,
+	<yung-chuan.liao@linux.intel.com>,
+	<kevin-lu@ti.com>,
+	<cameron.berkenpas@gmail.com>,
+	<baojun.xu@ti.com>,
+	<soyer@irl.hu>,
+	<Baojun.Xu@fpt.com>
+Subject: Re: [PATCH v1] ALSA: ASoc/tas2781: Fix an issue reported by robot kernel test
+In-Reply-To: <20240504004704.1738-1-shenghao-ding@ti.com>
+References: <20240504004704.1738-1-shenghao-ding@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nK/4++6p9aVBG6jQ"
-Content-Disposition: inline
-In-Reply-To: <1714775551-22384-21-git-send-email-wufan@linux.microsoft.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,139.com,alsa-project.org,vger.kernel.org,intel.com,ti.com,irl.hu,fpt.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,intel.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 0D0CF34270
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -2.01
+
+On Sat, 04 May 2024 02:47:03 +0200,
+Shenghao Ding wrote:
+> 
+> Fix an issue reported by robot kernel test and two harmless changes.
+
+You need to describe more what was actually an issue reported by robot
+kernel test here.  Otherwise it's nothing but a voodoo magic.
+
+Also enumerate two harmless changes, too: it's an update of copyright
+year and a correction of the comments.
+
+Last but not least, the subject suffix should be "ASoC: tas2781: ..."
+(not "ASoc", and without "ALSA:")
 
 
---nK/4++6p9aVBG6jQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+thanks,
 
-On Fri, May 03, 2024 at 03:32:30PM -0700, Fan Wu wrote:
-> +IPE does not mitigate threats arising from malicious but authorized
-> +developers (with access to a signing certificate), or compromised
-> +developer tools used by them (i.e. return-oriented programming attacks).
-> +Additionally, IPE draws hard security boundary between userspace and
-> +kernelspace. As a result, IPE does not provide any protections against a
-> +kernel level exploit, and a kernel-level exploit can disable or tamper
-> +with IPE's protections.
+Takashi
 
-So how to mitigate kernel-level exploits then?
-
-> +Allow only initramfs
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> <snipped>...
-> +Allow any signed and validated dm-verity volume and the initramfs
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> <snipped>...
-
-htmldocs build reports new warnings:
-
-Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too sho=
-rt.
-
-Allow any signed and validated dm-verity volume and the initramfs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too sho=
-rt.
-
-Allow any signed and validated dm-verity volume and the initramfs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Documentation/arch/x86/resctrl.rst:577: WARNING: Title underline too short.
-
-I have to match these sections underline length:
-
----- >8 ----
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-gu=
-ide/LSM/ipe.rst
-index 1a3bf1d8aa23f0..a47e14e024a90d 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -681,7 +681,7 @@ Allow all
-    DEFAULT action=3DALLOW
-=20
- Allow only initramfs
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+~~~~~~~~~~~~~~~~~~~~
-=20
- ::
-=20
-@@ -691,7 +691,7 @@ Allow only initramfs
-    op=3DEXECUTE boot_verified=3DTRUE action=3DALLOW
-=20
- Allow any signed and validated dm-verity volume and the initramfs
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-=20
- ::
-=20
-@@ -725,7 +725,7 @@ Allow only a specific dm-verity volume
-    op=3DEXECUTE dmverity_roothash=3Dsha256:401fcec5944823ae12f62726e818440=
-7a5fa9599783f030dec146938 action=3DALLOW
-=20
- Allow any fs-verity file with a valid built-in signature
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-=20
- ::
-=20
-@@ -735,7 +735,7 @@ Allow any fs-verity file with a valid built-in signature
-    op=3DEXECUTE fsverity_signature=3DTRUE action=3DALLOW
-=20
- Allow execution of a specific fs-verity file
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-=20
- ::
-=20
-
-> +Additional Information
-> +----------------------
-> +
-> +- `Github Repository <https://github.com/microsoft/ipe>`_
-> +- Documentation/security/ipe.rst
-
-Link title to both this admin-side and developer docs can be added for
-disambiguation (to avoid confusion on readers):
-
----- >8 ----
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-gu=
-ide/LSM/ipe.rst
-index a47e14e024a90d..25b17e11559149 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -7,7 +7,8 @@ Integrity Policy Enforcement (IPE)
-=20
-    This is the documentation for admins, system builders, or individuals
-    attempting to use IPE. If you're looking for more developer-focused
--   documentation about IPE please see Documentation/security/ipe.rst
-+   documentation about IPE please see :doc:`the design docs
-+   </security/ipe>`.
-=20
- Overview
- --------
-@@ -748,7 +749,7 @@ Additional Information
- ----------------------
-=20
- - `Github Repository <https://github.com/microsoft/ipe>`_
--- Documentation/security/ipe.rst
-+- :doc:`Developer and design docs for IPE </security/ipe>`
-=20
- FAQ
- ---
-diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
-index 07e3632241285d..fd1b1a852d2165 100644
---- a/Documentation/security/ipe.rst
-+++ b/Documentation/security/ipe.rst
-@@ -7,7 +7,7 @@ Integrity Policy Enforcement (IPE) - Kernel Documentation
-=20
-    This is documentation targeted at developers, instead of administrators.
-    If you're looking for documentation on the usage of IPE, please see
--   Documentation/admin-guide/LSM/ipe.rst
-+   `IPE admin guide </admin-guide/LSM/ipe.rst>`_.
-=20
- Historical Motivation
- ---------------------
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---nK/4++6p9aVBG6jQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjXsAgAKCRD2uYlJVVFO
-o5rXAQCS3HwJg98sIZ+dvHD4EtrdQXP2AZQEC3nP+kq7cOi47wD+P0ZrOINzS3p5
-azRTQTXUkE+0lznZFyE75YeW2OX1dQs=
-=ebwU
------END PGP SIGNATURE-----
-
---nK/4++6p9aVBG6jQ--
+> 
+> Fixes: ef3bcde75d06 ("ASoc: tas2781: Add tas2781 driver")
+> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+> 
+> ---
+> v1:
+>  - Changed the copyright year to 2024
+>  - tasdevice-fmw.c --> tas2781-fmwlib.c
+>  - | Reported-by: kernel test robot <lkp@intel.com>
+>    | Closes: https://lore.kernel.org/oe-kbuild-all/202405021200.YHInjV43-lkp@intel.com/
+> ---
+>  sound/soc/codecs/tas2781-fmwlib.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+> index 45760fe19523..a6be81adcb83 100644
+> --- a/sound/soc/codecs/tas2781-fmwlib.c
+> +++ b/sound/soc/codecs/tas2781-fmwlib.c
+> @@ -1,8 +1,8 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  //
+> -// tasdevice-fmw.c -- TASDEVICE firmware support
+> +// tas2781-fmwlib.c -- TASDEVICE firmware support
+>  //
+> -// Copyright 2023 Texas Instruments, Inc.
+> +// Copyright 2023 - 2024 Texas Instruments, Inc.
+>  //
+>  // Author: Shenghao Ding <shenghao-ding@ti.com>
+>  
+> @@ -1878,7 +1878,7 @@ int tas2781_load_calibration(void *context, char *file_name,
+>  {
+>  	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *)context;
+>  	struct tasdevice *tasdev = &(tas_priv->tasdevice[i]);
+> -	const struct firmware *fw_entry;
+> +	const struct firmware *fw_entry = NULL;
+>  	struct tasdevice_fw *tas_fmw;
+>  	struct firmware fmw;
+>  	int offset = 0;
+> -- 
+> 2.34.1
+> 
 
