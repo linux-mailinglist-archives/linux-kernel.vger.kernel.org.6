@@ -1,187 +1,106 @@
-Return-Path: <linux-kernel+bounces-168591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9026A8BBA8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:34:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D98BBA92
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3BA7282E10
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77FB01C21077
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF1D1AACC;
-	Sat,  4 May 2024 10:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548681C6B9;
+	Sat,  4 May 2024 10:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIlKUOyJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIVHK8rJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1E2EEB2;
-	Sat,  4 May 2024 10:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8343F18C3D;
+	Sat,  4 May 2024 10:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714818885; cv=none; b=NxFbbsJ93z6+0XPakFlpb/Avfj66kQWyq1Yd72o6Q1qM/Um3k38GNnrc4nX3Z6bXhTKcGZ03KV2rGXmlINjjknMkqmS0i84Z2hxXg5+6WdaKrW7i+bVbjMxHt6BmwNIP5PkmZptNx0YntR/+3eEYPrdH7zGf47cRg1p44a+4R+I=
+	t=1714819475; cv=none; b=f9FlggnLAClQYuUGve9GDh9aVbeFY/wd5AcE5/Kri/xHMqsQPDU5rpO4fHJk3F7Ei3cpKwl9q895vRz9ZAkOWN/5IlarNWYLJ+qGn32SSZbgUwEmCxqyppGNISmL9EXa10/tyJv+vGPf7TthJfFt0uvNnsMYO0OZ/ZAlziPt11o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714818885; c=relaxed/simple;
-	bh=HV/JCs7Z7tqv/VPFIFyIpdPE4o8/rnvHPB7bkjF3Iko=;
+	s=arc-20240116; t=1714819475; c=relaxed/simple;
+	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+ZjpHVFM9CJflcB/6W58BVHqqQe+IhZbuKNFyQi8ehHfPPnvCPM/IShu/T78w4LrSIZ3DWGxX7KHTqK8B+LTfsVQtSc8JzyCOVEwgZTZP7SwEq3sbnRgD+Ay6oeBC/FifmSOgNl5Opx7ApeNEmSX8OEBqNjJANn+wzQO4xv3F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIlKUOyJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF03BC072AA;
-	Sat,  4 May 2024 10:34:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TemzpVE/UgkgN5DQgxQFuvb96KDELhEpvlfQdVso2SBFgj5XMQ17B+eSLWxCvl3RjepZm8TQ1/paDpdIXdeohFGFQEjeAEEk0qn+OKzDGNLYhb6r1WZF5d6iERXLreqLGcOoXLZM2WRlCCCCmKFBqnxH9xHzSJ1VatCR468qBhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIVHK8rJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3E0C072AA;
+	Sat,  4 May 2024 10:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714818885;
-	bh=HV/JCs7Z7tqv/VPFIFyIpdPE4o8/rnvHPB7bkjF3Iko=;
+	s=k20201202; t=1714819475;
+	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RIlKUOyJzPbnyCfPM+2Fi61ViHBurhkO0ZxpjLvCTVAMhPLTrRXSq6y0V1goT6C1y
-	 zzQoQetoe11khxsBy4ofYVf1/jW4qnuyp28ASFEs0pQdBBufzNB0pkUYzTXcOeq84i
-	 cneb/O8Qjnb0isq856Awyptf36mM8x86DN+aWWazdv7PRWPONlUdFhkkGL2Ip6oifd
-	 Qh2E+QfuO/oE9zXpy26FfuY7vi7Q9CusgCy47/MXgKyj87duFmYI+/vK/XM0IPGDMK
-	 nztCoU4+iFzegmIfF4Xgfbtu6xPnSy9p4i2kHkaJtN+IbijCbjxZc3LCugpae2eNwd
-	 r9Sy5ORihw2qg==
-Date: Sat, 4 May 2024 11:33:05 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Radu Pirea <radu-nicolae.pirea@oss.nxp.com>,
-	Jay Vosburgh <j.vosburgh@gmail.com>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Rahul Rameshbabu <rrameshbabu@nvidia.com>
-Subject: Re: [PATCH net-next v12 12/13] net: ethtool: tsinfo: Add support for
- hwtstamp provider and get/set hwtstamp config
-Message-ID: <20240504103305.GD3167983@kernel.org>
-References: <20240430-feature_ptp_netnext-v12-0-2c5f24b6a914@bootlin.com>
- <20240430-feature_ptp_netnext-v12-12-2c5f24b6a914@bootlin.com>
+	b=gIVHK8rJGTpZuS9PubMDG4bY2YumcGjk6TzRhJqqAh/plbNUsquxQFGCUWECGrJRE
+	 EzEvSIxTo4EYaTNfUE2NBTtvQOeoS6PxKjWcxkktWj4E/WHJr8O8fAnG3sfoTBN/4+
+	 G8i9tDMgpoyUa85xPHmgl+X+CQSc0wuLRN7dziptjOtID8DTpn20rQzI5uVZV/AEjb
+	 4Ape1g8W24bX7M1DAREc4k2jprCEjKPolqNkqjfYm83hFYMcF9DEBJfSs+DW6g3CfW
+	 1/6/xZZebHis+jmMY6X8+A/X1qDg3q6lPjUs79o8NavTNxTFe91+9fo0VupPerS0F3
+	 7PiA+rIodq4lg==
+Date: Sat, 4 May 2024 12:44:28 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <20240504-chatten-unbelastet-b308db41727c@brauner>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240503214531.GB2118490@ZenIV>
+ <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
+ <20240503220145.GD2118490@ZenIV>
+ <20240503220744.GE2118490@ZenIV>
+ <CAHk-=whULchE1i5LA2Fa=ZndSAzPXGWh_e5+a=YV3qT1BEST7w@mail.gmail.com>
+ <20240503233900.GG2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240430-feature_ptp_netnext-v12-12-2c5f24b6a914@bootlin.com>
+In-Reply-To: <20240503233900.GG2118490@ZenIV>
 
-On Tue, Apr 30, 2024 at 05:49:55PM +0200, Kory Maincent wrote:
-> Enhance 'get' command to retrieve tsinfo of hwtstamp providers within a
-> network topology and read current hwtstamp configuration.
+On Sat, May 04, 2024 at 12:39:00AM +0100, Al Viro wrote:
+> On Fri, May 03, 2024 at 04:16:15PM -0700, Linus Torvalds wrote:
+> > On Fri, 3 May 2024 at 15:07, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > Suppose your program calls select() on a pipe and dmabuf, sees data to be read
+> > > from pipe, reads it, closes both pipe and dmabuf and exits.
+> > >
+> > > Would you expect that dmabuf file would stick around for hell knows how long
+> > > after that?  I would certainly be very surprised by running into that...
+> > 
+> > Why?
+> > 
+> > That's the _point_ of refcounts. They make the thing they refcount
+> > stay around until it's no longer referenced.
+> > 
+> > Now, I agree that dmabuf's are a bit odd in how they use a 'struct
+> > file' *as* their refcount, but hey, it's a specialty use. Unusual
+> > perhaps, but not exactly wrong.
+> > 
+> > I suspect that if you saw a dmabuf just have its own 'refcount_t' and
+> > stay around until it was done, you wouldn't bat an eye at it, and it's
+> > really just the "it uses a struct file for counting" that you are
+> > reacting to.
 > 
-> Introduce support for ETHTOOL_MSG_TSINFO_SET ethtool netlink socket to
-> configure hwtstamp of a PHC provider. Note that simultaneous hwtstamp
-> isn't supported; configuring a new one disables the previous setting.
-> 
-> Also, add support for a specific dump command to retrieve all hwtstamp
-> providers within the network topology, with added functionality for
-> filtered dump to target a single interface.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> *IF* those files are on purely internal filesystem, that's probably
+> OK; do that with something on something mountable (char device,
+> sysfs file, etc.) and you have a problem with filesystem staying
+> busy.
 
-..
-
-> diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
-> index acb0cadb7512..ec6dd81a5add 100644
-> --- a/net/core/dev_ioctl.c
-> +++ b/net/core/dev_ioctl.c
-> @@ -270,10 +270,13 @@ static int dev_eth_ioctl(struct net_device *dev,
->  int dev_get_hwtstamp_phylib(struct net_device *dev,
->  			    struct kernel_hwtstamp_config *cfg)
->  {
-> -	if (dev->hwtstamp) {
-> -		struct ptp_clock *ptp = dev->hwtstamp->ptp;
-> +	struct hwtstamp_provider *hwtstamp;
->  
-> -		cfg->qualifier = dev->hwtstamp->qualifier;
-> +	hwtstamp = rtnl_dereference(dev->hwtstamp);
-> +	if (hwtstamp) {
-> +		struct ptp_clock *ptp = hwtstamp->ptp;
-> +
-> +		cfg->qualifier = hwtstamp->qualifier;
->  		if (ptp_clock_from_phylib(ptp))
->  			return phy_hwtstamp_get(ptp_clock_phydev(ptp), cfg);
->  
-> @@ -340,13 +343,15 @@ int dev_set_hwtstamp_phylib(struct net_device *dev,
->  {
->  	const struct net_device_ops *ops = dev->netdev_ops;
->  	struct kernel_hwtstamp_config old_cfg = {};
-> +	struct hwtstamp_provider *hwtstamp;
->  	struct phy_device *phydev;
->  	bool changed = false;
->  	bool phy_ts;
->  	int err;
->  
-> -	if (dev->hwtstamp) {
-> -		struct ptp_clock *ptp = dev->hwtstamp->ptp;
-> +	hwtstamp = rtnl_dereference(dev->hwtstamp);
-> +	if (hwtstamp) {
-> +		struct ptp_clock *ptp = hwtstamp->ptp;
->  
->  		if (ptp_clock_from_phylib(ptp)) {
->  			phy_ts = true;
-
-Hi Kory,
-
-A few lines beyond this hunk, within the "if (hwtstamp)" block,
-is the following:
-
-		cfg->qualifier = dev->hwtstamp->qualifier;
-
-Now that dev->hwtstamp is managed using RCU, I don't think it is correct
-to dereference it directly like this. Rather, the hwtstamp local variable,
-which has rcu_dereference'd this pointer should be used:
-
-		 cfg->qualifier = hwtstamp->qualifier;
-
-Flagged by Sparse.
-
-..
-
-> diff --git a/net/ethtool/tsinfo.c b/net/ethtool/tsinfo.c
-
-..
-
-> +static int ethnl_tsinfo_dump_one_dev(struct sk_buff *skb, struct net_device *dev,
-> +				     struct netlink_callback *cb)
-> +{
-> +	struct ethnl_tsinfo_dump_ctx *ctx = (void *)cb->ctx;
-> +	struct ptp_clock *ptp;
-> +	int ret;
-> +
-> +	netdev_for_each_ptp_clock_start(dev, ctx->pos_phcindex, ptp,
-> +					ctx->pos_phcindex) {
-> +		ret = ethnl_tsinfo_dump_one_ptp(skb, dev, cb, ptp);
-> +		if (ret < 0 && ret != -EOPNOTSUPP)
-> +			break;
-> +		ctx->pos_phcqualifier = HWTSTAMP_PROVIDER_QUALIFIER_PRECISE;
-> +	}
-> +
-> +	return ret;
-
-Perhaps it is not possible, but if the loop iterates zero times then
-ret will be used uninitialised here.
-
-Flagged by Smatch.
-
-> +}
-
-..
+In this instance it is ok because dma-buf is an internal fs. I had the
+exact same reaction you had initially but it doesn't matter for dma-buf
+afaict as that thing can never be unmounted.
 
