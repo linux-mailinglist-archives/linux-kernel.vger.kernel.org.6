@@ -1,181 +1,103 @@
-Return-Path: <linux-kernel+bounces-168765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0E48BBD5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 19:09:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113968BBD63
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 19:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782551F217EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:09:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C0A1C20E5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA205C614;
-	Sat,  4 May 2024 17:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FFD5D738;
+	Sat,  4 May 2024 17:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTi3d5Bv"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lFJy5wQ7"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF74B3CF63;
-	Sat,  4 May 2024 17:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279F611711;
+	Sat,  4 May 2024 17:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714842582; cv=none; b=KBaQOJE05QAuUWXO4NPQMiyHPGCY1F/diImtju8iFmOI839/rJhks4mxJUgOeTRoL6LUHBs9124ptLyKlc0Zi+U04KY8T+xBqmzQlxWmZzGCUho/cVXXsj4iS1rju5kQg0MJl3OsEUfaDW2xA5dWn3Q4sG8LZ2SZ0mTsrVGkH8I=
+	t=1714842857; cv=none; b=Wa428OUzm7csB73/yNq4P5dCFuVPGNUEFH3sX0+Lgg6sthjYeZcRXHlA+PTYC2IvCmWczb8n30RiH+G/WpwgWwfIrzz2zQQgJZWicO4xp+NNSU32rn59cT2uo8/9+la4E8rxkA1mLBxnlOtBLLnj8SdpHgC0w5VfOatMkhWSfIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714842582; c=relaxed/simple;
-	bh=RN8sM9rwjZwwdKGVaNRPJTpQKo7jfPTufLurlZ3XD3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S1LDUBou6wEjqoYvucZsfCqT+TLTFI5a6vaW9M4BO3jL22ex2WNAsvXFjswIhTyc+qbPEU6AYGwbPxLdnT4xCcpypdjMJuwhGKuWGXMrhrSlozPaXFuuwtOOCdCPO4S0W8gwwhKRYNUWRe1a8CYOt09ItliQhXGT+VJYZmmpFOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTi3d5Bv; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59b178b75bso47717266b.0;
-        Sat, 04 May 2024 10:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714842579; x=1715447379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ce7oQnjKrRdar2TNOfb/eaRIm+cuGYdS0Jy3xtMZjsU=;
-        b=WTi3d5BvJIvrz0ffw5mpoMPhS9jNp7+svdjQlgQRh1Jyr2qLIXVYSY6d1IKmFjiFtc
-         65M8QoP22j6N06nVHTtb18xtD5nbaO9QHcg1/L9e4Tv71JM23I6RmefBdehO238aS84I
-         RZsPlGe4kbdHpsgVnN6pTluY3QnEa0WN172aLQyft6caEiPlKJOYq2nEUONxApwgpf21
-         igRhY0nMhoDU3n2oELj2d8zhzmG4hzlFhF2mIqNqXc+Ye6I94z4cfJYrm5DVWL1R4RvJ
-         edkfAOka79Da/Q4k52eIrVVsMasVyG2YV7OLzrMWwXPLt+heEXy/+8BhVgRyxct7YJVu
-         B1eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714842579; x=1715447379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ce7oQnjKrRdar2TNOfb/eaRIm+cuGYdS0Jy3xtMZjsU=;
-        b=XD/SxNfCf0KqBV2DU5cOW2lQgSv1aGe5/iFtk5oiN+TK3uPddhbx9DgTifAtuR1x4u
-         29XVmRH2pGU6flFZUEULwZen4Dsx9auRZuwrXgzRhjVZ1QQBJCrCbqwp5TR2ctMTJU28
-         /iEqJf2ltdmw5yAFcmOyev4AUwCCT3z5xTTAOMcn/Rn9vK2aGLXp3VK38NfUUPk3ooIw
-         N0iclEEl48rXFN5bJkQIVj1Z0fWfb0f1iZTIriluWSx3ApTCRzAKzs0O0MofzCyZJTWR
-         kJhFlwDUogtaV0GpEP47qvl81YZ7gpPSh3BxZowyYi57noSLgVvQ1xvcop6mH7AeFmAa
-         kfOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkqnqDrKPhHMDHrNTXDXydAhDEWMYalhROjGo3orzkdA+DQfobbhw7deXBrls5+EO1mq0rFnFIyWmDmna+eyCk9zoY1uIEry8WzAFp
-X-Gm-Message-State: AOJu0YwFgpuNUJhcu0FCneB1avENN1l/8H1KO838+lUWwM/HSdNDXXKo
-	CD0kLMl7FHuj7pS0aZvj23rhNnJEg+UH08K5pOLFr4SlJk/tGYGyYmEYOg2/ebWFXHYW
-X-Google-Smtp-Source: AGHT+IHEZMxELsmkFExVZ32eKoE6VP7sNTw3UDjsB9mia7KxznttVdNLQa5l7PlqUnPTFxSru20zHA==
-X-Received: by 2002:a17:906:52cc:b0:a59:9f11:2b66 with SMTP id w12-20020a17090652cc00b00a599f112b66mr2113454ejn.36.1714842578767;
-        Sat, 04 May 2024 10:09:38 -0700 (PDT)
-Received: from xps-15.. ([194.110.115.30])
-        by smtp.googlemail.com with ESMTPSA id jl24-20020a17090775d800b00a599acaff03sm1776818ejc.19.2024.05.04.10.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 10:09:38 -0700 (PDT)
-From: Amer Al Shanawany <amer.shanawany@gmail.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Amer Al Shanawany <amer.shanawany@gmail.com>
-Subject: [PATCH] selftests/capabilities: fix warn_unused_result build warnings
-Date: Sat,  4 May 2024 19:09:16 +0200
-Message-ID: <20240504170916.131580-1-amer.shanawany@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1714842857; c=relaxed/simple;
+	bh=yYvpe30TBewlUx2P65x67BzzKgnMGIyCSOp63jycRHQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=c4OPhPQmi7b8niKuiB5heFWgv+SjLp7v84vlUMOnrFqN5zK/w5pGv2K7BL3ry0TgHuZk57hfLU3gH1ITE/i+gCJF9JKEssRezbEgpKobb7nc78Co19bD0q5Oc5YEV7ZZwbDDcZgVkwDndk4b1HtTb1itLn9lP4e0UUvqYJkFPE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lFJy5wQ7; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714842825; x=1715447625; i=markus.elfring@web.de;
+	bh=8EY+oLHPDjY0oukUia2BXNUBXF5grFb2F8ZohoyJXik=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lFJy5wQ7li0zCL65typnZJYkMNLu6NmXUhGreLZGe1vrXe48H1EIy3awM0iJACmc
+	 Hb+i5CqeGkHyIjQvhLU88SFQLdIc9wilwJYAZzv0LBVmMLrjE2uc4dQQ5WvKfuVeY
+	 VNcoXT/FEpf9gF2M2hDFW8MGRP9Qhol30x3hRMYsAniHB8aIp5wpR3uXNjNX2+u/Y
+	 SQAF4sLmKpld+Toe/qKMNTZm7Oar4yR4hpo/RjHFUHTGDiARzdNvopa0XVjAfd/Rm
+	 Gk+zVq9x039xBGgVxZsyj7ml72uOe4cBH/vfEAYV3O3cDLEZ4fuydRBuCIFCT9oKC
+	 9qBFRf/Qm5TuaR+0+Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MALeD-1rwOH53y1L-00BtK8; Sat, 04
+ May 2024 19:13:45 +0200
+Message-ID: <d56a6e3f-1371-4bb7-8947-1c2468e4d677@web.de>
+Date: Sat, 4 May 2024 19:13:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Evan Quan <evan.quan@amd.com>, Jesse Zhang <jesse.zhang@amd.com>,
+ Lijo Lazar <lijo.lazar@amd.com>, Ma Jun <Jun.Ma2@amd.com>,
+ Tim Huang <Tim.Huang@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ruan Jinjie <ruanjinjie@huawei.com>
+References: <502fda28-fde7-4851-b17f-4d48848955bc@moroto.mountain>
+Subject: Re: [PATCH] drm/amd/pm: Fix error code in vega10_hwmgr_backend_init()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <502fda28-fde7-4851-b17f-4d48848955bc@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:R4Feujz3Sedv4K1I8WBs3oUsw+U9QOY1XAljRflhO2ZnewvfQOp
+ pJcpDcxO7H96nyn7GHcdNBx8WOHb4Q1DHBNge0eq7YoqkC9nl8d2R4hxh8pkEYOA5LVkLXR
+ 6W9tDhP9UzdwArPm1T5GCkAsmFu7PaZrtFWFvjjQHU5DG5F8mkbpT+jKKOhtWp/snom2AQR
+ UOLrtdC2WYCqoexOk3lmA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bvJwyzYaISI=;TfPnbEQAbzZWhKUj8mDkvxLSi0u
+ owQKLx5owrGXInY2H374796VziZcc1vXJbLik9xYXVt5ACSCG0vyaosPn6bo8Bf8DfjM03v/N
+ 5DC3NJC8GKGIURIBc7+iCurS1iEpjhhPlPicdkIFWsahlT00Vk84WWCM63d47y6HQdTf+o67n
+ Hk2f5CMY0HUDWfSPiweNVntet0BFhdavzZSitC4mohUzCGYe/Djd4lCGwEUuDGrgRMokuZWdO
+ 5lzLz43pnVpEiSn11u9u9iVt9pb8RmzmL/uCKMM8eTO2/0BtjJwciEaiut65jbUIbVgnBseEn
+ rYY1XMGwAc2ZiVDkTaorDvdO1Gb+s/wj4a6pzBkVDfI3crSHRjR7s/k/UZ2yEqZ1NeGfiWIyI
+ 0KJZDGDVTQi49k0cOB57qQZhRAlat1O/z6dQkiNt6mnj38IcaO+X0+xkXsrxLcet85fIw87Nh
+ WRa2A2mgahgA7Q4dbUQAd8/2mhGrkxId2i5IfGbY0U9xvep7tTDfmTXhzB8e+KzjAi7RbYkAA
+ g1vXndabM3+rxB7ePjlL2XTGZ3l3MiOgM0SRqQTkJYV2Kya1Q+CASy94O8oziUrCBMjMJyUHv
+ RGeUwzun1mQefuZFluThXjsi2I0aCTR2iGJblVpiwTNszSfYTgfWu8uXU9+D4YT2pAd1HHnhe
+ mC7CwVnT9erz/SBPRR5HGnQ+EoDdHVdtxx5uJnXkVSih0DvYN3zlZeuyBGxQVqTfnHTAPl2rJ
+ fydvQmcx/I4efhQP2JFycLl9bJca695kTCUcysvWc7X3XP2j2uAJfljTuexNKh50t0xinvs78
+ ugG7ioFEDSOvS2XsfdtbtMtRRFZJV902hayI3Ec3MCnf4IFa54Oov++uSYAP9ALJed
 
-Fix the following warnings by adding return check and error handling.
+> Return -EINVAL on error instead of success.  Also on the success path,
+> return a literal zero instead of "return result;"
 
-test_execve.c: In function ‘do_tests’:
-test_execve.c:100:17: warning: ignoring return value of
- ‘capng_get_caps_process’
- declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  100 |                 capng_get_caps_process();
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
-validate_cap.c: In function ‘main’:
-validate_cap.c:47:9: warning: ignoring return value of
- ‘capng_get_caps_process’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
-   47 |         capng_get_caps_process();
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+How do you think about to omit the initialisation for the variable =E2=80=
+=9Cresult=E2=80=9D
+in another update step?
 
-Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
----
- tools/testing/selftests/capabilities/test_execve.c  | 12 +++++++++---
- tools/testing/selftests/capabilities/validate_cap.c |  7 ++++++-
- 2 files changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/capabilities/test_execve.c b/tools/testing/selftests/capabilities/test_execve.c
-index 7cde07a5df78..47bad7ddc5bc 100644
---- a/tools/testing/selftests/capabilities/test_execve.c
-+++ b/tools/testing/selftests/capabilities/test_execve.c
-@@ -82,7 +82,7 @@ static bool create_and_enter_ns(uid_t inner_uid)
- {
- 	uid_t outer_uid;
- 	gid_t outer_gid;
--	int i;
-+	int i, ret;
- 	bool have_outer_privilege;
- 
- 	outer_uid = getuid();
-@@ -97,7 +97,10 @@ static bool create_and_enter_ns(uid_t inner_uid)
- 			ksft_exit_fail_msg("setresuid - %s\n", strerror(errno));
- 
- 		// Re-enable effective caps
--		capng_get_caps_process();
-+		ret = capng_get_caps_process();
-+		if (ret == -1)
-+			ksft_exit_fail_msg("capng_get_caps_process failed\n");
-+
- 		for (i = 0; i < CAP_LAST_CAP; i++)
- 			if (capng_have_capability(CAPNG_PERMITTED, i))
- 				capng_update(CAPNG_ADD, CAPNG_EFFECTIVE, i);
-@@ -207,6 +210,7 @@ static void exec_validate_cap(bool eff, bool perm, bool inh, bool ambient)
- 
- static int do_tests(int uid, const char *our_path)
- {
-+	int ret;
- 	bool have_outer_privilege = create_and_enter_ns(uid);
- 
- 	int ourpath_fd = open(our_path, O_RDONLY | O_DIRECTORY);
-@@ -250,7 +254,9 @@ static int do_tests(int uid, const char *our_path)
- 			ksft_exit_fail_msg("chmod - %s\n", strerror(errno));
- 	}
- 
--	capng_get_caps_process();
-+	ret = capng_get_caps_process();
-+	if (ret == -1)
-+		ksft_exit_fail_msg("capng_get_caps_process failed\n");
- 
- 	/* Make sure that i starts out clear */
- 	capng_update(CAPNG_DROP, CAPNG_INHERITABLE, CAP_NET_BIND_SERVICE);
-diff --git a/tools/testing/selftests/capabilities/validate_cap.c b/tools/testing/selftests/capabilities/validate_cap.c
-index 60b4e7b716a7..65f2a1c89239 100644
---- a/tools/testing/selftests/capabilities/validate_cap.c
-+++ b/tools/testing/selftests/capabilities/validate_cap.c
-@@ -28,6 +28,7 @@ static bool bool_arg(char **argv, int i)
- int main(int argc, char **argv)
- {
- 	const char *atsec = "";
-+	int ret;
- 
- 	/*
- 	 * Be careful just in case a setgid or setcapped copy of this
-@@ -44,7 +45,11 @@ int main(int argc, char **argv)
- 		atsec = " (AT_SECURE is not set)";
- #endif
- 
--	capng_get_caps_process();
-+	ret = capng_get_caps_process();
-+	if (ret == -1) {
-+		ksft_print_msg("capng_get_caps_process failed\n");
-+		return 1;
-+	}
- 
- 	if (capng_have_capability(CAPNG_EFFECTIVE, CAP_NET_BIND_SERVICE) != bool_arg(argv, 1)) {
- 		ksft_print_msg("Wrong effective state%s\n", atsec);
--- 
-2.43.0
-
+Regards,
+Markus
 
