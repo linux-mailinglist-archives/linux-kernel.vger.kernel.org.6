@@ -1,229 +1,132 @@
-Return-Path: <linux-kernel+bounces-168658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8105C8BBB9C
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:50:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF0F8BBB9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAAC81F23A46
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE551C20D83
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6B322612;
-	Sat,  4 May 2024 12:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9475522611;
+	Sat,  4 May 2024 12:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYbc62O8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="L0C3/398"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B3AD55;
-	Sat,  4 May 2024 12:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4FDAD55
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 12:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714827021; cv=none; b=OLk65iykfObMnsJ0k97kWXXOupqdF3NKJi8IkUjZQ+Y1Vh5FpCWQYfaIjL3TX820CymYaaRM3sQ7BjtjJb196fdERXtb31kPoUmUE8F9mDOi1V1B/Yso0++uAqmvJ2YL2haY5lfLkae/Ax5KcgI1C02DfqSxbORsbLvOjYudPvg=
+	t=1714827011; cv=none; b=Kv4e8dChmOjYBUYAcPi8l8a+TxgqjdiHUcOo7SN12r8kNHG5vb7xx0yHuRXBG07GnYSOincWGFv7UzjCWyUWzdSHLZFUHeZvFsg51x2OD8XpO+2jrYZcLQxaB3w5qTyMxPsQuxxBcWDywWdqwcjWfPozh8bc1i2rrKLBgbz6Qr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714827021; c=relaxed/simple;
-	bh=15OnQaGp+w4QV1wpR/KVCGa9n/nGZ5yYchbybkXHSw8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ThHJ8fI1DBJ6qhebrS6e+0/Og/aCope5Eh/uaRpJ4SEP13JXlAu2BW59swevfGs8Lder5lsxjpW8sSn7UA0bdt2zeThQSJZpzw1kiad8K4q171sd3D/XtZcUcwciWFU4keLFmPrPtESz2R1hLwOJrJwEdIZYwPKmNibRXipUaQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYbc62O8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58495C4AF1D;
-	Sat,  4 May 2024 12:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714827021;
-	bh=15OnQaGp+w4QV1wpR/KVCGa9n/nGZ5yYchbybkXHSw8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eYbc62O8Cj25EWIqccM5lSCeaULjZIKfZTrdJicfLI2UFwkJTX2GnB16PjCF6+Nml
-	 bmiaaPbyj6jkR41ZHghLjAVtiazO5phLBMCv7sCn4ztBd2LLRY+Oa+hNompZ+Dyz1Y
-	 yD3l+FCp8ESw5WG9k84zLdoQBlsgQj2yBC5FnYiiKcY16S4ATXaekY9l3QvzsiHEH0
-	 QJs15Xor1N5gKDZCHhIa1Ed8SStvvj91RCDDl9Vl9Hwd+7eXZiz9rQrL4pV2hl6dQC
-	 XzP1gNHnhNwMyydv7SJIe4OeWt1VJzhN5KNz6+5onVJ4nfNfy2A5eXFmqeZfXewMQA
-	 1spNxVRNoXhCQ==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e1fa2ff499so21755411fa.0;
-        Sat, 04 May 2024 05:50:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVWdSQyBFwLJ2vVCb7UUFqr+migRgX17OLQ6l1db+Fsd0ah5whyuX0kFBr2HX30Zo08V26IMBfPC0klEzuIE1TJGnN2HIShs4w2Ajux6k2Lh2TT8y/ZXHqieDr/ZmYtxzvO+cyfd4zEtYVn
-X-Gm-Message-State: AOJu0YxQ2zM381fdFg+ZydGIhhgl0nHTs6SwMCpnyqGqJh3hsbkgBh0J
-	rEHe/IHsTv2Mie0QL11AD3e4d079bZrAjDyNOvhev/5Imd2G+vbFgQ3lZr+ci4Fx3gN6HedVFeL
-	nUfd23x+MMFUW3hbMC1RBx6GWvlI=
-X-Google-Smtp-Source: AGHT+IFoIWqnaCzFi5bNroPPVQfMUu5iH1qzKiswWoi1X1aOcGBHqnF36kOKqqTCGdOZmTez4jxeTBKoC2fUiC0UW2Y=
-X-Received: by 2002:a19:7714:0:b0:51f:16bc:18f9 with SMTP id
- s20-20020a197714000000b0051f16bc18f9mr2237701lfc.25.1714827019969; Sat, 04
- May 2024 05:50:19 -0700 (PDT)
+	s=arc-20240116; t=1714827011; c=relaxed/simple;
+	bh=kYRjptrSHqros01Q1vz/3AXRJUl/SkdHuuXPPuTN6dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8AHuHb1YCWbQG9nrJ3DCktGahkVIyGw8lZ5Xh8anrXm0j78Pr1r9neACdrRA+op7lchzMZi/TWrUcZ2gdLsDDqJ4nTrnUnO29QTQLuvVWXXGvi/UuY6HdNP2GbwSfODTzF3RD7BdHTAUoG19EwVR2uUUc3EUjxp+lxt801xN3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=L0C3/398; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8737540E0205;
+	Sat,  4 May 2024 12:50:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id aUrHA8Da0kcm; Sat,  4 May 2024 12:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1714827004; bh=R8hqKu4twXzDNkaRGcIA8trNt+axmGafimXuMcSBX8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L0C3/398AU8Ag7kgTXEOgn0COhlk9uv5us26rsI/wDnwkPyGFfV/QUmVMvLetppez
+	 ZnBE08rAF9NgEgR6Fwkc2RedwOtPkEkLtdFF8Pgxixa/ZNRLnCw/4MYb0mojfHNgg8
+	 r5u7DZvMrSalU1u40i3Kca7X3TuG9Us+OLHI5TfBAtsYLqV4xw5T3dsIYq41XBW9FC
+	 /CifoQqflsXGgD+Uxxn+WVxJIvBKEj3geLdOhiIqjWdexmpuOEj7/2zsQ/x6K4WC5u
+	 p/PezV1yf7WIBYWPD5/Nr19izHwEfTgxcUO0Zq/rP5oH5h9y758E8VTY8RuYbP8BYb
+	 No18gEek/P0BS3RGsUqR7b+PmD69HPN7m7rOqY90UjtDbTzMrRpRyuQSze74ZhwhyR
+	 a7+9brUnuGO/QHe5N92K6Gs/y75C+MezpE5/+Vy+Lv38lYWdOXk5RkTPUIuC1YRer+
+	 d31fLN6xnoW8tLF4W9qXtud08I/uQ/usEQ2sirywsrBtFKumKQbtrw65piboamEHEs
+	 Fc6GubeVmKI5zFK4KM7VkIixAbkNMgWcziMKXgh6ImweR7vcPZ6PgCfCQZl7jdxkkE
+	 8rvVNaaF1T0WKmXn371iscvSuGQYdWE4ldLsqcVSshJdSu43bV94BPdLg/h3O6tWX9
+	 kXwp4OqnxSIhMqV455Iqa6/w=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9904440E01A1;
+	Sat,  4 May 2024 12:49:56 +0000 (UTC)
+Date: Sat, 4 May 2024 14:49:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>,
+	kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
+	Srikanth Aithal <sraithal@amd.com>
+Subject: [PATCH 1/2] x86/alternatives: Check the correct cpu_data's caps
+Message-ID: <20240504124955.GBZjYu84GHwqBc1_Ht@fat_crate.local>
+References: <202404302233.f27f91b2-oliver.sang@intel.com>
+ <20240430172313.GCZjEpAfUECkEZ9S5L@fat_crate.local>
+ <ZjE7DkTBSbPlBN8k@google.com>
+ <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
+ <ZjFLpkgI3Zl4dsXs@google.com>
+ <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
+ <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502111613.1380453-1-emil.renner.berthing@canonical.com>
- <20240502111613.1380453-2-emil.renner.berthing@canonical.com> <87ttjgcqjv.fsf@all.your.base.are.belong.to.us>
-In-Reply-To: <87ttjgcqjv.fsf@all.your.base.are.belong.to.us>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 4 May 2024 21:49:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASqwN1gd8TovcR3RDkxkE_M=BSDD5GoOoLOkDQnuNDAcA@mail.gmail.com>
-Message-ID: <CAK7LNASqwN1gd8TovcR3RDkxkE_M=BSDD5GoOoLOkDQnuNDAcA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] riscv: make image compression configurable
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Nick Terrell <terrelln@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
 
-On Thu, May 2, 2024 at 10:05=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kernel=
-org> wrote:
->
-> Emil Renner Berthing <emil.renner.berthing@canonical.com> writes:
->
-> > Previously the build process would always set KBUILD_IMAGE to the
-> > uncompressed Image file (unless XIP_KERNEL or EFI_ZBOOT was enabled) an=
-d
-> > unconditionally compress it into Image.gz. However there are already
-> > build targets for Image.bz2, Image.lz4, Image.lzma, Image.lzo and
-> > Image.zstd, so let's make use of those, make the compression method
-> > configurable and set KBUILD_IMAGE accordingly so that targets like
-> > 'make install' and 'make bindeb-pkg' will use the chosen image.
-> >
-> > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com=
->
-> > ---
-> >  arch/riscv/Kconfig         |  7 +++++++
-> >  arch/riscv/Makefile        | 43 ++++++++++++++++++++------------------
-> >  arch/riscv/boot/install.sh |  9 +++++---
-> >  3 files changed, 36 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > index be09c8836d56..6c092d1ea7db 100644
-> > --- a/arch/riscv/Kconfig
-> > +++ b/arch/riscv/Kconfig
-> > @@ -138,6 +138,13 @@ config RISCV
-> >       select HAVE_GCC_PLUGINS
-> >       select HAVE_GENERIC_VDSO if MMU && 64BIT
-> >       select HAVE_IRQ_TIME_ACCOUNTING
-> > +     select HAVE_KERNEL_BZIP2 if !XIP_KERNEL && !EFI_ZBOOT
-> > +     select HAVE_KERNEL_GZIP if !XIP_KERNEL && !EFI_ZBOOT
-> > +     select HAVE_KERNEL_LZ4 if !XIP_KERNEL && !EFI_ZBOOT
-> > +     select HAVE_KERNEL_LZMA if !XIP_KERNEL && !EFI_ZBOOT
-> > +     select HAVE_KERNEL_LZO if !XIP_KERNEL && !EFI_ZBOOT
-> > +     select HAVE_KERNEL_UNCOMPRESSED if !XIP_KERNEL && !EFI_ZBOOT
-> > +     select HAVE_KERNEL_ZSTD if !XIP_KERNEL && !EFI_ZBOOT
-> >       select HAVE_KPROBES if !XIP_KERNEL
-> >       select HAVE_KPROBES_ON_FTRACE if !XIP_KERNEL
-> >       select HAVE_KRETPROBES if !XIP_KERNEL
-> > diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> > index 5b3115a19852..29be676415d6 100644
-> > --- a/arch/riscv/Makefile
-> > +++ b/arch/riscv/Makefile
-> > @@ -129,11 +129,27 @@ endif
-> >  CHECKFLAGS +=3D -D__riscv -D__riscv_xlen=3D$(BITS)
-> >
-> >  # Default target when executing plain make
-> > -boot         :=3D arch/riscv/boot
-> > +boot :=3D arch/riscv/boot
-> >  ifeq ($(CONFIG_XIP_KERNEL),y)
-> >  KBUILD_IMAGE :=3D $(boot)/xipImage
-> > +else ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_ARCH_CANAAN),yy)
-> > +KBUILD_IMAGE :=3D $(boot)/loader.bin
-> > +else ifeq ($(CONFIG_EFI_ZBOOT),y)
-> > +KBUILD_IMAGE :=3D $(boot)/vmlinuz.efi
-> > +else ifeq ($(CONFIG_KERNEL_GZIP),y)
-> > +KBUILD_IMAGE :=3D $(boot)/Image.gz
-> > +else ifeq ($(CONFIG_KERNEL_BZIP2),y)
-> > +KBUILD_IMAGE :=3D $(boot)/Image.bz2
-> > +else ifeq ($(CONFIG_KERNEL_LZ4),y)
-> > +KBUILD_IMAGE :=3D $(boot)/Image.lz4
-> > +else ifeq ($(CONFIG_KERNEL_LZMA),y)
-> > +KBUILD_IMAGE :=3D $(boot)/Image.lzma
-> > +else ifeq ($(CONFIG_KERNEL_LZO),y)
-> > +KBUILD_IMAGE :=3D $(boot)/Image.lzo
-> > +else ifeq ($(CONFIG_KERNEL_ZSTD),y)
-> > +KBUILD_IMAGE :=3D $(boot)/Image.zst
-> >  else
-> > -KBUILD_IMAGE :=3D $(boot)/Image.gz
-> > +KBUILD_IMAGE :=3D $(boot)/Image
-> >  endif
->
-> Really a nit/change if you want, but maybe doing something like
-> arch/s390/boot/Makefile does is easier to read:
->
-> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-> index 024482c68835..70f08e9999b4 100644
-> --- a/arch/riscv/Makefile
-> +++ b/arch/riscv/Makefile
-> @@ -128,6 +128,14 @@ endif
->  # arch specific predefines for sparse
->  CHECKFLAGS +=3D -D__riscv -D__riscv_xlen=3D$(BITS)
->
-> +suffix-$(CONFIG_KERNEL_GZIP)  :=3D .gz
-> +suffix-$(CONFIG_KERNEL_BZIP2) :=3D .bz2
-> +suffix-$(CONFIG_KERNEL_LZ4)  :=3D .lz4
-> +suffix-$(CONFIG_KERNEL_LZMA)  :=3D .lzma
-> +suffix-$(CONFIG_KERNEL_LZO)  :=3D .lzo
-> +suffix-$(CONFIG_KERNEL_XZ)  :=3D .xz
-> +suffix-$(CONFIG_KERNEL_ZSTD)  :=3D .zst
-> +
->  # Default target when executing plain make
->  boot :=3D arch/riscv/boot
->  ifeq ($(CONFIG_XIP_KERNEL),y)
-> @@ -136,20 +144,8 @@ else ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_ARCH_CANAA=
-N),yy)
->  KBUILD_IMAGE :=3D $(boot)/loader.bin
->  else ifeq ($(CONFIG_EFI_ZBOOT),y)
->  KBUILD_IMAGE :=3D $(boot)/vmlinuz.efi
-> -else ifeq ($(CONFIG_KERNEL_GZIP),y)
-> -KBUILD_IMAGE :=3D $(boot)/Image.gz
-> -else ifeq ($(CONFIG_KERNEL_BZIP2),y)
-> -KBUILD_IMAGE :=3D $(boot)/Image.bz2
-> -else ifeq ($(CONFIG_KERNEL_LZ4),y)
-> -KBUILD_IMAGE :=3D $(boot)/Image.lz4
-> -else ifeq ($(CONFIG_KERNEL_LZMA),y)
-> -KBUILD_IMAGE :=3D $(boot)/Image.lzma
-> -else ifeq ($(CONFIG_KERNEL_LZO),y)
-> -KBUILD_IMAGE :=3D $(boot)/Image.lzo
-> -else ifeq ($(CONFIG_KERNEL_ZSTD),y)
-> -KBUILD_IMAGE :=3D $(boot)/Image.zst
->  else
-> -KBUILD_IMAGE :=3D $(boot)/Image
-> +KBUILD_IMAGE :=3D $(boot)/Image$(suffix-y)
->  endif
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Date: Wed, 1 May 2024 11:26:16 +0200
+
+Commit
+
+  ee8962082a44 ("x86/alternatives: Catch late X86_FEATURE modifiers")
+
+added warns for when code modifies feature flags after alternatives have
+been patched.
+
+The clearing, however, checks whether the feature flag is previously
+set on the boot CPU but the @c argument supplied can be any CPU.
+
+Make sure that other CPU's feature flag is checked instead, as it should
+be.
+
+Fixes: ee8962082a44 ("x86/alternatives: Catch late X86_FEATURE modifiers")
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/kernel/cpu/cpuid-deps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index 5dd427c6feb2..93fa2afc0c67 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -114,7 +114,7 @@ static void do_clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int feature)
+ 	if (WARN_ON(feature >= MAX_FEATURE_BITS))
+ 		return;
+ 
+-	if (boot_cpu_has(feature))
++	if (c && cpu_has(c, feature))
+ 		WARN_ON(alternatives_patched);
+ 
+ 	clear_feature(c, feature);
+-- 
+2.43.0
 
 
+-- 
+Regards/Gruss,
+    Boris.
 
-
-Good idea.
-
-
-If you avoid the 'else ifeq' chain completely,
-you also could do like this:
-
-
-
-boot-image-$(CONFIG_KERNEL_GZIP)         :=3D Image.gz
-   ...
-boot-image-$(CONFIG_KERNEL_ZSTD)         :=3D Image.zst
-boot-image-$(CONFIG_KERNEL_UNCOMPRESSED) :=3D Image
-boot-image-$(CONFIG_RISCV_M_MODE)        :=3D loader.bin
-boot-image-$(CONFIG_ARCH_CANAAN)         :=3D loader.bin
-boot-image-$(CONFIG_EFI_ZBOOT)           :=3D vmlinuz.efi
-boot-image-$(CONFIG_XIP_KERNEL)          :=3D xipImage
-
-KBUILD_IMAGE :=3D $(boot)/$(boot-image-y)
-
-
-
-Emil's current patch will work, of course.
-
-
-
-
-BTW, this patch will conflict with
-3b938e231b660a278de2988ee77b832d665c5326
-It lands in riscv subsystem.
-
-
---=20
-Best Regards
-Masahiro Yamada
+https://people.kernel.org/tglx/notes-about-netiquette
 
