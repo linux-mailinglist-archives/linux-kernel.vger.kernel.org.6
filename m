@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-168567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643878BBA41
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:25:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF238BBA43
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A35E1F222AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:25:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F1BEB219CD
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6814E1804A;
-	Sat,  4 May 2024 09:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E891B812;
+	Sat,  4 May 2024 09:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mzy6H4hR"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GREEPBvf"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115CC171AB;
-	Sat,  4 May 2024 09:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD41617BD2;
+	Sat,  4 May 2024 09:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714814736; cv=none; b=SEHQyAjE0QTU3MgBCuZToWWHiEIqNo1qt1DbDiKZgViBqPi6tdp0dHzet/mDf5Iws55AIQCYcm5WP2m2SoI/w/OHqMzK64XDVP4UEUP0FNze3j1D+rQYZF8YVqjr8tCeUHqk5c/Zz+KzLgHZHHQIsEIbf++c97LDuuiLNQKU/4E=
+	t=1714814738; cv=none; b=GdbeWr8yYFY2zCgp24ALtelkiIjyyZgyjlkRM9/MV2yW6QZuARW7R3/Oq5lJTrvq2rnTOmJLvbZRkzYviE8n/EVPbJli8YZ+lTIyfbOR67ayiyiAoqBKDdTWZAYr3mqU+3CfvOqelmmFaiOya1os6KsDmJrrQMfxp2vIreqr1r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714814736; c=relaxed/simple;
-	bh=lgWGaO6LzlXcstlxO7ac8VqYmC+yW7DzTwsyoRKraBs=;
+	s=arc-20240116; t=1714814738; c=relaxed/simple;
+	bh=SBV0YTIGf4QZN2NAEEyjUbqt6W8cHbST+VRb3fNAfIg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GQvjchf+UjejEJbmmSn3rH3rKmQ7EK/GExK3MA7kVywvrh77mp77Ym5Tw+gqiLoNjQiEXn1eXI3peYujcGKv5JqYVFsbEaU1kE9FaXa4COUqVJ8QQAcyKZxZAg36mce1MOI9WmpFvR4Q8COxpKjIA/vfvpLRLqU569RfvJUlY4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mzy6H4hR; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=kM4QW5QYNcOLGVdxv0Ve720wqJs6shmVDxzwdVc2V2uCB74dvZgq/+H/8mqT+cgK67R7kb8mTENYstVLr8gVMneWk7h9m0vxoPOG8v8exgstWE6HtR2b92rL80JlbXQtyDXwoueYniAVGEO5vWY5jYcm9C5432VNO4KYs4APsVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GREEPBvf; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a599a298990so85788166b.2;
-        Sat, 04 May 2024 02:25:34 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2db2f6cb312so7159081fa.2;
+        Sat, 04 May 2024 02:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714814732; x=1715419532; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714814734; x=1715419534; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iVm0kTAiGaEirihJCdLOzEWROOpujxuN0/MjBFggZ0I=;
-        b=Mzy6H4hRGV5+1zzsHQ/Lrqxw9DSr/Kyj4ktC0iqIPEi9zEpzzY1sFXYGLFJT63Ypyq
-         e4CZeKjp+b6mAdMYBW3O2Q1dSGdDnjX6bcMXoSm1zqZld7/0Q3z4CX1YGcvyZjcXetuv
-         JwKlTkzWeHDpogB6sORSpXJ37+wEJ+qQ3FJ+jTN0Phnx3UBOWuPWY4uQUZxixl9kyOLU
-         CqGBmAzCSTGWiS91stfo67roAEttcrnsF3UumF7xoZ3kC3GuKfwJ5gbccHib48w58PrP
-         geVFtqTfDpkOKMS5HB/PwWzr891rU55DyWov3NNkhtrYze0XJCvRnNZhLs1PpkpiU0oX
-         l1Lg==
+        bh=Xuv0N0keGYPC/4l/S7SLIx1PoiOhwO//3OuTJ4xJaxo=;
+        b=GREEPBvfxfcyhwdgxQYzsrXlJoBu8ieKTSIzNUckxtm45V+6ZR9RoZhBFjx+amKLka
+         NHv6Ndw4aHmVU1fL/fjZfQQMPe6/N0YKxa0wa0BEXokFHdlQ6tewJIxWMPYk8cActvzH
+         HqUE0xpYqjWg98aLzcJFcDkaHSa9vbkSoiQ++qC3R8R7tMNTiDJOH1yLVM4ZugV7lkgC
+         EyOQ9IQ4lLlkSioSVxSuDxPqTGBksmkbtl70vNLtPHfD07DYgEkEsvW8a5GTohZGAlIa
+         hA9KLuFeG7lMIalZKhVxRUGDA8/yFAZaV+gm+QGb48S19Ny6PBXmghBW/a6NjK1ae50/
+         Bukg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714814732; x=1715419532;
+        d=1e100.net; s=20230601; t=1714814734; x=1715419534;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iVm0kTAiGaEirihJCdLOzEWROOpujxuN0/MjBFggZ0I=;
-        b=Vtsh8IPqwRW2vZW9mA/mM8RpsiZZwr4hwe8w+hIWl7UtGOa45dhxv3tZjqYy1zE8d6
-         UQzR9Pwwbk3B7I4lbhOr0DSGV3ahwDoUcDj+ImktXg+etg+DSVZpUrIZDLCCIthj/YST
-         Tl36JYbZHZV53gbTDxLntMjDk12lI1GDBNmfs6NzeK+ecQ1LV66yhPE8DchwT6hDzWA5
-         huz047IM9aC9acMuX4TLRoJz+uDNKmK1AVpVLI1ubgelSWGo2AdSRzMmUmNqgeoxz8+u
-         8iherks/HEDE8Rt+Bl3DQH7YejFv1+Sww0EcfaURGqQy7UkO1p4qsQHKBXnKtWPoPoO8
-         oRqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlHT/3uv6CfxGXIUDBblBMd6mAPs4aUDjs0sd3cCBNFZJoc1S7bkLY4EVSPUX5l+uQVO4o2mtWKEZ33UfJqMJSHfCiASQTgSj2nBoa
-X-Gm-Message-State: AOJu0Yy6nQRe8EL04o++xjpQ3ycJkt5dPqNSq/R9Q0WdU21mYbOguHEI
-	hWobTN9wkB72bGPFJHz5CklXsIxVUbt2YP0az3jElu4zqobdrYJlxBo7MfPWNGM=
-X-Google-Smtp-Source: AGHT+IFbOC91SBKTGN1oeeVamJxzS6WsH2BACjEdDuCbveB+0eGoZho1TMdWA2zGr5BY2LNigDYz6g==
-X-Received: by 2002:a17:906:a145:b0:a58:832d:c3e8 with SMTP id bu5-20020a170906a14500b00a58832dc3e8mr3248087ejb.58.1714814732249;
-        Sat, 04 May 2024 02:25:32 -0700 (PDT)
+        bh=Xuv0N0keGYPC/4l/S7SLIx1PoiOhwO//3OuTJ4xJaxo=;
+        b=PyscEPlP8Dip3oNw7GFtOBP6Q76ZNQMFuFo+M5lc7fGa2uJYaSdj9rIjZCq9BjjMra
+         ttzK1829yJgYw+yma7B/zwYz9+OZc3rtRZ441San3uEtHJ8jB/2LWDiZnqbbw5ZtQ7vv
+         pwLiR3TYJ3b5ocG+l6N5mRY0o6HArifFItNu/ucAtIUExn4GBc1X/Svj2OO6zvXXo63K
+         949AEIiIdVfAOCT/34oPTZweegEbNJnv5hDCkx8wRnu/ZU/dohtPrsxOQYJtTtk+cSSO
+         4i+XJmh+0Zedw26dyP7IPH3NwSlIRDOxV4DVVYEAJd2Gj9KMDje03RQBfeCBjTtAEBou
+         bquQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXz7/U+yYISyyCsKyYWUXU2KxcdYnO1N1Ocat8tkj1/Waf+jDrjdmKpJ7zceRWO5c71Vxv7yay/fJWrA2CaFIJ9SkDBkQiNmSm10WFr
+X-Gm-Message-State: AOJu0YzfBQ8GWDkfkAwtB8LYUkzbjKLo/tie8jc5kG1yboBUA4eYe1D+
+	Taec4qDZGubbQuCTktZxAffcoTJRc7uKim5kZvNGHmha8Ep0hQX57Bv1yTx7X8c=
+X-Google-Smtp-Source: AGHT+IH2XmqD0F04kkHlKF1h2w9FzRp+AlxlQ2eIArh/KXWOpF6s1B/oqchYzq8O9Ze9BZ9y4tAEmg==
+X-Received: by 2002:a2e:a406:0:b0:2e1:9c57:195a with SMTP id p6-20020a2ea406000000b002e19c57195amr4507372ljn.32.1714814734198;
+        Sat, 04 May 2024 02:25:34 -0700 (PDT)
 Received: from fedora.. (cable-178-148-234-71.dynamic.sbb.rs. [178.148.234.71])
-        by smtp.gmail.com with ESMTPSA id ce3-20020a170906b24300b00a587831c09fsm2740231ejb.186.2024.05.04.02.25.30
+        by smtp.gmail.com with ESMTPSA id ce3-20020a170906b24300b00a587831c09fsm2740231ejb.186.2024.05.04.02.25.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 02:25:31 -0700 (PDT)
+        Sat, 04 May 2024 02:25:33 -0700 (PDT)
 From: Aleksa Savic <savicaleksa83@gmail.com>
 To: linux-hwmon@vger.kernel.org
 Cc: Jonas Malaco <jonas@protocubo.io>,
@@ -74,9 +74,9 @@ Cc: Jonas Malaco <jonas@protocubo.io>,
 	Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] hwmon: (corsair-cpro) Use a separate buffer for sending commands
-Date: Sat,  4 May 2024 11:25:01 +0200
-Message-ID: <20240504092504.24158-2-savicaleksa83@gmail.com>
+Subject: [PATCH 2/3] hwmon: (corsair-cpro) Use complete_all() instead of complete() in ccp_raw_event()
+Date: Sat,  4 May 2024 11:25:02 +0200
+Message-ID: <20240504092504.24158-3-savicaleksa83@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240504092504.24158-1-savicaleksa83@gmail.com>
 References: <20240504092504.24158-1-savicaleksa83@gmail.com>
@@ -88,68 +88,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce cmd_buffer, a separate buffer for storing only
-the command that is sent to the device. Before this separation,
-the existing buffer was shared for both the command and the
-report received in ccp_raw_event(), which was copied into it.
-
-However, because of hidraw, the raw event parsing may be triggered
-in the middle of sending a command, resulting in outputting gibberish
-to the device. Using a separate buffer resolves this.
+In ccp_raw_event(), the ccp->wait_input_report completion is
+completed once. Since we're waiting for exactly one report in
+send_usb_cmd(), use complete_all() instead of complete()
+to mark the completion as spent.
 
 Fixes: 40c3a4454225 ("hwmon: add Corsair Commander Pro driver")
 Signed-off-by: Aleksa Savic <savicaleksa83@gmail.com>
 ---
- drivers/hwmon/corsair-cpro.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/hwmon/corsair-cpro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-index a284a02839fb..8d85f66f8143 100644
+index 8d85f66f8143..6ab4d2478b1f 100644
 --- a/drivers/hwmon/corsair-cpro.c
 +++ b/drivers/hwmon/corsair-cpro.c
-@@ -79,6 +79,7 @@ struct ccp_device {
- 	struct device *hwmon_dev;
- 	struct completion wait_input_report;
- 	struct mutex mutex; /* whenever buffer is used, lock before send_usb_cmd */
-+	u8 *cmd_buffer;
- 	u8 *buffer;
- 	int target[6];
- 	DECLARE_BITMAP(temp_cnct, NUM_TEMP_SENSORS);
-@@ -111,15 +112,15 @@ static int send_usb_cmd(struct ccp_device *ccp, u8 command, u8 byte1, u8 byte2,
- 	unsigned long t;
- 	int ret;
+@@ -140,7 +140,7 @@ static int ccp_raw_event(struct hid_device *hdev, struct hid_report *report, u8
+ 		return 0;
  
--	memset(ccp->buffer, 0x00, OUT_BUFFER_SIZE);
--	ccp->buffer[0] = command;
--	ccp->buffer[1] = byte1;
--	ccp->buffer[2] = byte2;
--	ccp->buffer[3] = byte3;
-+	memset(ccp->cmd_buffer, 0x00, OUT_BUFFER_SIZE);
-+	ccp->cmd_buffer[0] = command;
-+	ccp->cmd_buffer[1] = byte1;
-+	ccp->cmd_buffer[2] = byte2;
-+	ccp->cmd_buffer[3] = byte3;
+ 	memcpy(ccp->buffer, data, min(IN_BUFFER_SIZE, size));
+-	complete(&ccp->wait_input_report);
++	complete_all(&ccp->wait_input_report);
  
- 	reinit_completion(&ccp->wait_input_report);
- 
--	ret = hid_hw_output_report(ccp->hdev, ccp->buffer, OUT_BUFFER_SIZE);
-+	ret = hid_hw_output_report(ccp->hdev, ccp->cmd_buffer, OUT_BUFFER_SIZE);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -492,7 +493,11 @@ static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	if (!ccp)
- 		return -ENOMEM;
- 
--	ccp->buffer = devm_kmalloc(&hdev->dev, OUT_BUFFER_SIZE, GFP_KERNEL);
-+	ccp->cmd_buffer = devm_kmalloc(&hdev->dev, OUT_BUFFER_SIZE, GFP_KERNEL);
-+	if (!ccp->cmd_buffer)
-+		return -ENOMEM;
-+
-+	ccp->buffer = devm_kmalloc(&hdev->dev, IN_BUFFER_SIZE, GFP_KERNEL);
- 	if (!ccp->buffer)
- 		return -ENOMEM;
- 
+ 	return 0;
+ }
 -- 
 2.44.0
 
