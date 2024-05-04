@@ -1,117 +1,152 @@
-Return-Path: <linux-kernel+bounces-168696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BA28BBC4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:55:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699B38BBC52
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32D5282AC9
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:55:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CF87B217FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8B339FED;
-	Sat,  4 May 2024 13:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b="BKIGsNYc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kwh0vdut"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBC124B2A;
-	Sat,  4 May 2024 13:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9040C3B2A1;
+	Sat,  4 May 2024 13:59:23 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id EFB735234
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 13:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714830935; cv=none; b=ZbRdb4ElxFljcUZMHSy4a8w07efSCzlwgF1FrhTQwdS/5jQ/sGlUaGsBPTpbzxOz1O0Gs/qKk53+RCgCIBJU3NQuHSbqy1qKIjEJky0NX5Rq2kasbReirUq5ULQRZXAIj8w9QLlIp1H5Hfg0cRZGcgSKg/qTAUS70j+/3tj/+dY=
+	t=1714831163; cv=none; b=dGTvvTh093vgWL8/C//nE/OGO8kSHtCCY7MVlj9ZT9DkwSDquqI9qmbcY5NyYnZ5DhDQsBlsGLNHLhuCTwTpKTzU7jWhNKsWLiqfBRZTTGZlF52Py7Ksz8bkigMGDZi8gINREzRKN8u99Zs0sV9FGAFyR8diMKJfphCJbIZZWFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714830935; c=relaxed/simple;
-	bh=Dr6moDwcHaVY/M5vimL+8X/TwtPDRUKWxK9/5v3fnZc=;
+	s=arc-20240116; t=1714831163; c=relaxed/simple;
+	bh=A21xCyv6exiNvBZK0gTwjNFunBWRe/n4lX+encVLPEY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/YFH73uWBz/vE8sBuflowOstkg+lyS/VS3+6fEcqD/08L0OeMIC4r72VmGqJfdTrwFTGWKVxxBcdavfXsWJXGA2iO9XSo77yxo+21baerJ5yi2f8yFvJK5HoiuThX33hsN74yfJBdLHW7PZno78RKE96ZSEio9DVhEEQpRxrOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net; spf=pass smtp.mailfrom=benboeckel.net; dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b=BKIGsNYc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kwh0vdut; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=benboeckel.net
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id ADAA01380386;
-	Sat,  4 May 2024 09:55:31 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sat, 04 May 2024 09:55:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1714830931; x=
-	1714917331; bh=Dr6moDwcHaVY/M5vimL+8X/TwtPDRUKWxK9/5v3fnZc=; b=B
-	KIGsNYc5LsBPFCfjVZNHjuAvW1kYLsmljo4tpB+cckYIalyhPsyI/Vozr2aYYyxt
-	4+jeJiOegKOEWsv95VXuJ+ehHySzs9+p4t4mvS2P/H4huCc5EqIDy5ne+fq+xTZ8
-	6CGddwJtRMWD50TssP16tI8FMTpwx1GW+dBe5OtnFbKLk4sKAQwdu/eJ39NVecNb
-	S8o0OXs00weiv3AEy+Dw/1TYAb1ObvcdZD+GQFXDj/agzYgO59Cfof2CUYxDWgMo
-	g+4PFjUWRLQL8MD+8CbIWp/s9pPXTSWHMXorxITj2tJu/o6i/wqU4jnYZ18k0x3D
-	Kz6XA+wRNIM9DOVszhyqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1714830931; x=1714917331; bh=Dr6moDwcHaVY/M5vimL+8X/TwtPD
-	RUKWxK9/5v3fnZc=; b=Kwh0vduthkpU+Vl1YwNqRuiJi+Volo7we9c5i9iN+kID
-	1B8KM8qDZsMATWvM+8iyzaZ9efu5blHoCIrclzBy/aXGLNZLSNutATaog++iFVDb
-	u/OPSEyrgZV6/pzGINrUy1nkrsIXSP2XxGFatLW3LSmZYK1DrMJ5nW7s1yx59t3X
-	kh5vCDynAc/aynCDYFhSoLdvxWWnrYAeoH7leVn3wLCKne5GeLnbv/dgEEbJK5mZ
-	hGZ+c4lrLpmkXS0+yxgOsqPeXvfvO48Ursi7CJjtriZR++s+Gg7jitH38m+cIzNy
-	ZbkpdjehdidqJ7IjzVX2SvNUHpiiU8b+7Bfq2C5KKw==
-X-ME-Sender: <xms:Uj42ZoiAMYGbTF0weTitm7AOidAk8dJ_ZNcNgBI8hSS0zk2w7t0XVQ>
-    <xme:Uj42ZhAG5DAKgVRPqsviKpo5Ak4mqu3RfgrPwCemlNbrbex45fa06UMTt6GdQOYmN
-    npMqXOsGlw2zWazyZY>
-X-ME-Received: <xmr:Uj42ZgFNqRzdrCV6s-naXzg6WJC8RTNjkXTVDXCa-eOsgjx2Tf4Br4dRYSBz6aAKhOdkKaCGYzqs8kiHN6qf1lq7joQdHciXS7bD>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvvddgjedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghn
-    uceuohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrth
-    htvghrnhepffelgeffveelkeffkeehiefgtdeluedvtdfghfdtvdefgfejheffudeuveek
-    vddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    gvsegsvghnsghovggtkhgvlhdrnhgvth
-X-ME-Proxy: <xmx:Uj42ZpQbFG8LS3jUqS05X9HpPWZRbKB8bwzOxzj3lDsY2POXO-lZgg>
-    <xmx:Uj42Zlx6Cl1GwWky8db7CcV2aD-27hWfbPvBAeUvz8Nicj-6MLTQSg>
-    <xmx:Uj42Zn5dGx0AlMnjT5tlJ5ts9TOUFzvdBjs_xpuLsuCSA9OM0TdRpA>
-    <xmx:Uj42ZiyUa-FMsPcV7XD3kq-dbPK5i3yRckL9h0h0NqgxJ7qRc3UVeQ>
-    <xmx:Uz42Zor3FF79OMYHbo0i3mBo6IJMu5sTN9SY1mpYK3Kx6adyWcoXBF5L>
-Feedback-ID: iffc1478b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 4 May 2024 09:55:30 -0400 (EDT)
-Date: Sat, 4 May 2024 09:55:29 -0400
-From: Ben Boeckel <me@benboeckel.net>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Ignat Korchagin <ignat@cloudflare.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	serge@hallyn.com, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com
-Subject: Re: [RFC PATCH 0/2] TPM derived keys
-Message-ID: <ZjY-UU8pROnwlTuH@farprobe>
-References: <20240503221634.44274-1-ignat@cloudflare.com>
- <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFsIhC5c0q2CAGkCKJVNpxVdLUSWhEDQAfFQCfYmiCePVa69GYzYx93aDgs4S3wID9dBzs0atK2kcZ5CaoFQ/NHXbRhouft8CJABn6fp6q5G1VnXADgcaQFkUsj91UveDRhnPTqp0pIwB/eqHcHW1Lx6H7LTcYRwPTrnG+RKoho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 805310 invoked by uid 1000); 4 May 2024 09:59:12 -0400
+Date: Sat, 4 May 2024 09:59:12 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+  linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: core: Remove the useless struct usb_devmap which is
+ just a bitmap
+Message-ID: <1126b27f-c672-4d13-b4ce-baf720624823@rowland.harvard.edu>
+References: <1d818575ff7a1e8317674aecf761ee23c89fdc84.1714815990.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <1d818575ff7a1e8317674aecf761ee23c89fdc84.1714815990.git.christophe.jaillet@wanadoo.fr>
 
-On Sat, May 04, 2024 at 03:21:11 +0300, Jarkko Sakkinen wrote:
-> I have no idea for what the key created with this is even used, which
-> makes this impossible to review.
+On Sat, May 04, 2024 at 11:47:05AM +0200, Christophe JAILLET wrote:
+> struct usb_devmap is really just a bitmap. No need to have a dedicated
+> structure for that.
+> 
+> Simplify code and use DECLARE_BITMAP() directly instead.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> I've re-used the comment related to struct usb_devmap for the devmap field
+> in struct usb_bus, because it sounds better to me.
+> ---
 
-Additionally, there is nothing in Documentation/ for how userspace might
-use or create them. This includes things like their description format
-and describing available options.
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
---Ben
+>  drivers/usb/core/hcd.c | 4 ++--
+>  drivers/usb/core/hub.c | 9 ++++-----
+>  include/linux/usb.h    | 7 +------
+>  3 files changed, 7 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> index c0e005670d67..e3366f4d82b9 100644
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -866,7 +866,7 @@ static int usb_rh_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+>   */
+>  static void usb_bus_init (struct usb_bus *bus)
+>  {
+> -	memset (&bus->devmap, 0, sizeof(struct usb_devmap));
+> +	memset(&bus->devmap, 0, sizeof(bus->devmap));
+>  
+>  	bus->devnum_next = 1;
+>  
+> @@ -962,7 +962,7 @@ static int register_root_hub(struct usb_hcd *hcd)
+>  
+>  	usb_dev->devnum = devnum;
+>  	usb_dev->bus->devnum_next = devnum + 1;
+> -	set_bit (devnum, usb_dev->bus->devmap.devicemap);
+> +	set_bit(devnum, usb_dev->bus->devmap);
+>  	usb_set_device_state(usb_dev, USB_STATE_ADDRESS);
+>  
+>  	mutex_lock(&usb_bus_idr_lock);
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 8939f1410644..4b93c0bd1d4b 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -2207,13 +2207,12 @@ static void choose_devnum(struct usb_device *udev)
+>  	mutex_lock(&bus->devnum_next_mutex);
+>  
+>  	/* Try to allocate the next devnum beginning at bus->devnum_next. */
+> -	devnum = find_next_zero_bit(bus->devmap.devicemap, 128,
+> -			bus->devnum_next);
+> +	devnum = find_next_zero_bit(bus->devmap, 128, bus->devnum_next);
+>  	if (devnum >= 128)
+> -		devnum = find_next_zero_bit(bus->devmap.devicemap, 128, 1);
+> +		devnum = find_next_zero_bit(bus->devmap, 128, 1);
+>  	bus->devnum_next = (devnum >= 127 ? 1 : devnum + 1);
+>  	if (devnum < 128) {
+> -		set_bit(devnum, bus->devmap.devicemap);
+> +		set_bit(devnum, bus->devmap);
+>  		udev->devnum = devnum;
+>  	}
+>  	mutex_unlock(&bus->devnum_next_mutex);
+> @@ -2222,7 +2221,7 @@ static void choose_devnum(struct usb_device *udev)
+>  static void release_devnum(struct usb_device *udev)
+>  {
+>  	if (udev->devnum > 0) {
+> -		clear_bit(udev->devnum, udev->bus->devmap.devicemap);
+> +		clear_bit(udev->devnum, udev->bus->devmap);
+>  		udev->devnum = -1;
+>  	}
+>  }
+> diff --git a/include/linux/usb.h b/include/linux/usb.h
+> index 9e52179872a5..1913a13833f2 100644
+> --- a/include/linux/usb.h
+> +++ b/include/linux/usb.h
+> @@ -440,11 +440,6 @@ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+>  
+>  /* ----------------------------------------------------------------------- */
+>  
+> -/* USB device number allocation bitmap */
+> -struct usb_devmap {
+> -	unsigned long devicemap[128 / (8*sizeof(unsigned long))];
+> -};
+> -
+>  /*
+>   * Allocated per bus (tree of devices) we have:
+>   */
+> @@ -472,7 +467,7 @@ struct usb_bus {
+>  					 * round-robin allocation */
+>  	struct mutex devnum_next_mutex; /* devnum_next mutex */
+>  
+> -	struct usb_devmap devmap;	/* device address allocation map */
+> +	DECLARE_BITMAP(devmap, 128);	/* USB device number allocation bitmap */
+>  	struct usb_device *root_hub;	/* Root hub */
+>  	struct usb_bus *hs_companion;	/* Companion EHCI bus, if any */
+>  
+> -- 
+> 2.45.0
+> 
+> 
 
