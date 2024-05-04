@@ -1,194 +1,168 @@
-Return-Path: <linux-kernel+bounces-168627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AF58BBAFD
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:55:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986B78BBB02
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3391F21DBD
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0D41C2107D
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972A3210E6;
-	Sat,  4 May 2024 11:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFCB208A1;
+	Sat,  4 May 2024 11:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZBqNNX1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IR3uaWJw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA36200DE;
-	Sat,  4 May 2024 11:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C71CFAF
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 11:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714823727; cv=none; b=I2QaVrQLq5fG/rq7rz79tuacjc9zon76mjILS1czio5Ju5TVzmbghicwR+0Fs8/MPe3ZuMFPhyxrowJqyXAovnJ0svpEQQ21OUAa4vNCojdqk3779Xy/jjsEUY3VlT81EjlJ+N3B8CcT9Wrr760FlWPJMggT7v/2LrW6rW/Bj70=
+	t=1714823944; cv=none; b=W3so5Q9S7ztXhJ+wqpcp7JNxFQNsn4NIcYu0rNls62H3U9LkS0I80VpDDmAxSSyFlWAHKgFU8WE1rBlY3ikhhEeZZzpYozX8TgCdDW72Z2FjnUFt9U+AKjsZXkZ6mSuxamgOITvUKXR6G+IwXJ16Be2E+ffq+rQsAsixWGUpEXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714823727; c=relaxed/simple;
-	bh=NPoACW8DYNp6GZJ3amyL+KgYI51JmnSB/XDaYx9gg5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KTbXinBCGZaDEYhuhj/NlmxX/TrI4/egrl/TrqmE4NovpFluK4J/lxilXPZ5UBQnT4Bh/OnUgrWLH03+O3RPwGJS5LuvAUfI5ZUAwhY4iuojbJlJ4B8Iy0doQsSvEZtFvcsTYDFnFQTpABTumBXADxpceE44DPCihpc4GHLF/rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZBqNNX1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F025C072AA;
-	Sat,  4 May 2024 11:55:23 +0000 (UTC)
+	s=arc-20240116; t=1714823944; c=relaxed/simple;
+	bh=tHkDDYIJU8PS+ZwgvuIlZuzFtSgUX3xgqS/6qnXnSp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNDlGB/XrXh0hMNlZeIy7EDHbx9evaiDyerd3nk/hQINK5cBbyuxwduUXKt/yZuAopp8bSgWN32ciY8oXy17cw3WMgM173o3zt7fUn1xCXUKhqeDfLYCLRo+/w137AMAcjKKVuP0MTTJVbgy673rBXw3DgJ0/GfJrL8Fw5TW5OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IR3uaWJw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7278FC072AA;
+	Sat,  4 May 2024 11:59:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714823727;
-	bh=NPoACW8DYNp6GZJ3amyL+KgYI51JmnSB/XDaYx9gg5o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IZBqNNX18019PLh58E5UQmu+DFS4t0PboI5OlUpdtWCksRYRebFFM2a9M+cXc5v6W
-	 OAT1e5IBN45IrNU0hpsICzg2P3xmh9V/y8WhSxD76pqKuaRU7zGF7/UTBfkbSSd8yY
-	 a3DLCUDbAeptggnZnzkqgJDdbPyB+zPOmS9UnCLl1gZMEZDNIQswk8d5/Ol4L3LRyI
-	 2bzd/q0E90cZhdJ+U/DVrfUnTtRal8ElT34cMJaVTXiDJOdl+Fky7M+pnXCSFSAJ/E
-	 mksHd3LW/kHPjtx7lh0N8Iabced5M4D0izfo9YRd7tIrVB1j5AQple5uuOcYOUXiL4
-	 TSnVxJie/eing==
-Message-ID: <0a43b522-7c07-43a0-b4b0-155c3cf94177@kernel.org>
-Date: Sat, 4 May 2024 13:55:21 +0200
+	s=k20201202; t=1714823944;
+	bh=tHkDDYIJU8PS+ZwgvuIlZuzFtSgUX3xgqS/6qnXnSp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IR3uaWJwhf7qbZM6CQd1Id1zrPd6408b1hvcGk/k2JrQCIXAhZiI4R3sOu4icY4m9
+	 bYtizQ42wkei0Kte3UNKXV1pfAxdykrxIO6C6EnLpVruCLvVAcRxkMYXwDN4JE+BuI
+	 Lw6B86Wn2rt7bz+B2ZrzqLtCa21XLXUU37QPxIE4C9rYwv7iBG8uOoQruiFsOs1CuR
+	 OPWfoZHIc63ZSl7rAyQuD8/HZY6uGTaGsYzSOCOxfLQJkzGd6miViOMGlcICGI1dBq
+	 +bAIVE8r9qyte6nWLXdufrOw8ZNStRIGoLtXoMzSd/8pZCadggqdGjeoQ57TPfYu4N
+	 3F6tXbHAOU11g==
+Date: Sat, 4 May 2024 17:28:58 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Subject: Re: [PATCH 3/3] phy: zynqmp: Add debugfs support
+Message-ID: <ZjYjAjPlM5ClOGa4@matsya>
+References: <20240422185803.3575319-1-sean.anderson@linux.dev>
+ <20240422185803.3575319-4-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/17] dt-bindings: fsi: ast2600-fsi-master: Convert to
- json-schema
-To: Eddie James <eajames@linux.ibm.com>, linux-aspeed@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsi@lists.ozlabs.org, linux-spi@vger.kernel.org,
- linux-i2c@vger.kernel.org, lakshmiy@us.ibm.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, andi.shyti@kernel.org
-References: <20240429210131.373487-1-eajames@linux.ibm.com>
- <20240429210131.373487-9-eajames@linux.ibm.com>
- <af51132f-e4a3-4f45-b066-24b8c348eb28@kernel.org>
- <a7ca71c0-971c-49ab-b9f3-f6e6b32e9567@linux.ibm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <a7ca71c0-971c-49ab-b9f3-f6e6b32e9567@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240422185803.3575319-4-sean.anderson@linux.dev>
 
-On 01/05/2024 18:12, Eddie James wrote:
+On 22-04-24, 14:58, Sean Anderson wrote:
+> Add support for printing some basic status information to debugfs. This
+> is helpful when debugging phy consumers to make sure they are configuring
+> the phy appropriately.
 > 
-> On 4/30/24 02:04, Krzysztof Kozlowski wrote:
->> On 29/04/2024 23:01, Eddie James wrote:
->>> Convert to json-schema for the AST2600 FSI master documentation.
->> Please mention all the changes from pure conversion.
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
 > 
+>  drivers/phy/xilinx/phy-zynqmp.c | 54 +++++++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
 > 
-> Sure.
-> 
-> 
->>
->>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
->>> ---
->>> Changes since v3:
->>>   - Remove quotes around compatible strings
->>>   - Re-order allOf to below required
->>>   - Add child node in the example
->>>   - Change commit message to match similar commits
->>>
->>>   .../fsi/aspeed,ast2600-fsi-master.yaml        | 81 +++++++++++++++++++
->>>   .../bindings/fsi/fsi-master-aspeed.txt        | 36 ---------
->>>   2 files changed, 81 insertions(+), 36 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml
->>>   delete mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml b/Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml
->>> new file mode 100644
->>> index 000000000000..fcf7c4b93b78
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml
->>> @@ -0,0 +1,81 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Aspeed FSI master
->>> +
->>> +maintainers:
->>> +  - Eddie James <eajames@linux.ibm.com>
->>> +
->>> +description:
->>> +  The AST2600 and later contain two identical FSI masters. They share a
->>> +  clock and have a separate interrupt line and output pins.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - aspeed,ast2600-fsi-master
->>> +      - aspeed,ast2700-fsi-master
->> There was no such compatible before.
->>
->> How does this even validate? Where is fsi-master? You dropped a
->> compatible without any explanation.
-> 
-> 
-> I can make it a separate change to add ast2700.
-> 
-> 
-> I suppose I don't understand having two compatibles... Aspeed master 
-> shouldn't use "fsi-master" as that is too generic, right? Why wouldn't 
+> diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-zynqmp.c
+> index 08c88dcd7799..e2e86943e9f3 100644
+> --- a/drivers/phy/xilinx/phy-zynqmp.c
+> +++ b/drivers/phy/xilinx/phy-zynqmp.c
+> @@ -13,6 +13,7 @@
+>   */
+>  
+>  #include <linux/clk.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/kernel.h>
+> @@ -122,6 +123,15 @@
+>  #define ICM_PROTOCOL_DP			0x4
+>  #define ICM_PROTOCOL_SGMII		0x5
+>  
+> +static const char *const xpsgtr_icm_str[] = {
+> +	[ICM_PROTOCOL_PD] = "powered down",
+> +	[ICM_PROTOCOL_PCIE] = "PCIe",
+> +	[ICM_PROTOCOL_SATA] = "SATA",
+> +	[ICM_PROTOCOL_USB] = "USB",
+> +	[ICM_PROTOCOL_DP] = "DisplayPort",
+> +	[ICM_PROTOCOL_SGMII] = "SGMII",
+> +};
+> +
+>  /* Test Mode common reset control  parameters */
+>  #define TM_CMN_RST			0x10018
+>  #define TM_CMN_RST_EN			0x1
+> @@ -768,6 +778,48 @@ static struct phy *xpsgtr_xlate(struct device *dev,
+>  	return ERR_PTR(-EINVAL);
+>  }
+>  
+> +/*
+> + * DebugFS
+> + */
+> +
+> +static int xpsgtr_status_read(struct seq_file *seq, void *data)
+> +{
+> +	struct xpsgtr_phy *gtr_phy = seq->private;
+> +	struct clk *clk;
+> +	u32 pll_status;
+> +
+> +	mutex_lock(&gtr_phy->phy->mutex);
+> +	pll_status = xpsgtr_read_phy(gtr_phy, L0_PLL_STATUS_READ_1);
+> +	clk = gtr_phy->dev->clk[gtr_phy->refclk];
+> +
+> +	seq_printf(seq, "Lane:            %u\n", gtr_phy->lane);
+> +	seq_printf(seq, "Protocol:        %s\n",
+> +		   xpsgtr_icm_str[gtr_phy->protocol]);
+> +	seq_printf(seq, "Instance:        %u\n", gtr_phy->instance);
+> +	seq_printf(seq, "Reference clock: %u (%pC)\n", gtr_phy->refclk, clk);
+> +	seq_printf(seq, "Reference rate:  %lu\n", clk_get_rate(clk));
+> +	seq_printf(seq, "PLL locked:      %s\n",
+> +		   pll_status & PLL_STATUS_LOCKED ? "yes" : "no");
+> +
+> +	mutex_unlock(&gtr_phy->phy->mutex);
+> +	return 0;
+> +}
+> +
+> +static int xpsgtr_status_open(struct inode *inode, struct file *f)
+> +{
+> +	struct xpsgtr_phy *gtr_phy = inode->i_private;
+> +
+> +	return single_open(f, xpsgtr_status_read, gtr_phy);
+> +}
+> +
+> +static const struct file_operations xpsgtr_status_ops = {
+> +	.owner = THIS_MODULE,
+> +	.open = xpsgtr_status_open,
+> +	.release = single_release,
+> +	.read = seq_read,
+> +	.llseek = seq_lseek
+> +};
 
-Not necessarily, depends. Dropping it silently is confusing. What about
-other users? firmware, bootloaders, out-of-tree, other OS? Did you
-investigate all of them?
+There are debugfs simple helpers which should help you avoid all this
+open coding and just have the read call
 
-> it validate? Devicetrees using "fsi-master" also use 
-> "aspeed,ast2600-fsi-master" so they should be OK...
+> +
+>  /*
+>   * Power Management
+>   */
+> @@ -917,6 +969,8 @@ static int xpsgtr_probe(struct platform_device *pdev)
+>  
+>  		gtr_phy->phy = phy;
+>  		phy_set_drvdata(phy, gtr_phy);
+> +		debugfs_create_file("status", 0444, phy->debugfs, gtr_phy,
+> +				    &xpsgtr_status_ops);
 
-No, because the compatibles do not match. Run validation and you will
-see the errors.
+generic status does not make sense, how about device-name-status
 
-I am fine with dropping such compatible, which is not used by current
-kernel ABI, but first DTS must be fixed and second some explanation and
-justification is needed.
-
-Best regards,
-Krzysztof
-
+-- 
+~Vinod
 
