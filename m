@@ -1,212 +1,138 @@
-Return-Path: <linux-kernel+bounces-168550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F8F8BB9F7
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4418BBA0D
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F257B21574
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:08:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADEFB21622
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C90C107A6;
-	Sat,  4 May 2024 08:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1027911182;
+	Sat,  4 May 2024 08:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ticBPfxu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HO96QoYS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ticBPfxu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HO96QoYS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="DV+Xe+9J"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE987BA42
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 08:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2512110A0A;
+	Sat,  4 May 2024 08:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714810108; cv=none; b=eMhtgl9IHWSyCvdJipjMxiIYZ2MfdNMHAZCTp+evdz3bpyydl3pJjNPIRI80aO5FTJiBTZFvOqzLvAzh1eMIvBKeeCci6SXObbNGtg/BuI/xQKvtSytgAY3XPlryjrqOd5unaAJ0uRAMll1auzRh4Xf0I8CAHUErL2N5+6gxQt4=
+	t=1714810624; cv=none; b=MC+VdhPh6q9RxGZ4hVTgEdCw/GSyc2Amdv5BH389AnmXZNqNx0wb0lP6Oa1epkNLT10HvJAq9kCCvQidYohZm25sfEC7d2wRVv8wYhTF0o1EqmfAujw0SilTN/hmm7laXgyO9MfEnnp4woSzO3VubXFuIh5pzu2/j3uUBwR26yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714810108; c=relaxed/simple;
-	bh=0hCEqZkQCaNOTmBz4GIo4hUWSZWinRrt3PGUXnoS1+o=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fmMiFmydWFXb5pEdMfD0XTSJEbYnTAfOzGkH8HVOpwljFpBZk3vO/MA43lld69C97PkCAvDozrsfyVi/jaLtJtNx1Q48jjqsz4+IlPsGjWfqxh4EbhM1Q9IIUs+7ZdgaqHfVKlvS0h3IoPhfuAsSTIL9n10MXGjubv1v6jNb2No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ticBPfxu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HO96QoYS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ticBPfxu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HO96QoYS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1714810624; c=relaxed/simple;
+	bh=5KLQ5djW6HtWwiT2B9Pb+poWNF+1A6VF1v+gQJIH0bM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZJtZlIiTiJffFwPtaJdjmvC4zbZliemBUPGCs9HmX2Z4qv/kT7kHMYaSU7GfNZ9C1frr6rXFTpEbzlrxwPSo3f/J5J3MMKUa7XNoPbgqeDAstwjrOZROPdR8kNqeWhZGQ+HtfjvrjnHUeiox7M3oRoIrpkMGovpmZivJ45mlgVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=DV+Xe+9J; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D0CF34270;
-	Sat,  4 May 2024 08:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714810105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
-	b=ticBPfxux8E6ZoCtKtgyqlWC8TA8h+PiF27+kAJT8ANH1rTIX/c4k0QkrIHp0oNW5SdoEi
-	4LsN/DR2FGzWAtgZUXUFSHPSxnWZ27kTfCkeetAWECoPk7rMXmRD6oXjQIAsbQHUDQZFmu
-	nmfYSoZXl1O29kfzrA9q8szoR9G/Oc4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714810105;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
-	b=HO96QoYShWT6eB8tv4I7LY+0mBWXjie8KE5Bm8m9keb5J40YQuYKtOMRwLmupYZpYiY9uR
-	9/p7/jfV9MUMJpDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ticBPfxu;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=HO96QoYS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714810105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
-	b=ticBPfxux8E6ZoCtKtgyqlWC8TA8h+PiF27+kAJT8ANH1rTIX/c4k0QkrIHp0oNW5SdoEi
-	4LsN/DR2FGzWAtgZUXUFSHPSxnWZ27kTfCkeetAWECoPk7rMXmRD6oXjQIAsbQHUDQZFmu
-	nmfYSoZXl1O29kfzrA9q8szoR9G/Oc4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714810105;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OXpA3ThLOYoWjLP+Ess0XcrkiazJdwL2bihk4FANmH4=;
-	b=HO96QoYShWT6eB8tv4I7LY+0mBWXjie8KE5Bm8m9keb5J40YQuYKtOMRwLmupYZpYiY9uR
-	9/p7/jfV9MUMJpDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A1251386E;
-	Sat,  4 May 2024 08:08:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id c1AZJPjsNWZxKgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 04 May 2024 08:08:24 +0000
-Date: Sat, 04 May 2024 10:08:38 +0200
-Message-ID: <871q6i9eyh.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<13916275206@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<bard.liao@intel.com>,
-	<yung-chuan.liao@linux.intel.com>,
-	<kevin-lu@ti.com>,
-	<cameron.berkenpas@gmail.com>,
-	<baojun.xu@ti.com>,
-	<soyer@irl.hu>,
-	<Baojun.Xu@fpt.com>
-Subject: Re: [PATCH v1] ALSA: ASoc/tas2781: Fix an issue reported by robot kernel test
-In-Reply-To: <20240504004704.1738-1-shenghao-ding@ti.com>
-References: <20240504004704.1738-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 060441BA1D9;
+	Sat,  4 May 2024 10:16:52 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1714810612; bh=HIQTiZruIzF8K/sYeFSJkzkfpUCRGh0NaHzc0R77M4g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DV+Xe+9JkNy6B/5oNxKh9ZDZSsY1jtZZ6kQwSp+2wLf2OuF0HFTOw0w6z1Tv3OR80
+	 TQwBP6j/fwqAkMrg3Lj8JimDRpkYlqN2czE6jNikZSWzP1pyAPH+ua+LXisk7VSxSw
+	 mbQ+hP4l7EITxV7zt8BWkJ/Yz66kC/tONhSyjc+Lse3YhEDmbpvu04Q5dlEPVtrb3v
+	 NJ5EeEnAHeizDOUwfAMZp2LN1QK5HTOTpNM9C7FFh+hUroQgFYLU9Y6zT5Z2EHhkBi
+	 eJxhMDU6HNDsFn6vXteIH4jxFShl3PTMyYf4LP46W2ZTs33hXWxssYzDlFlef0eaHF
+	 0d+1+JigElsDA==
+Date: Sat, 4 May 2024 10:16:51 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, hch@infradead.org, robin.murphy@arm.com, joro@8bytes.org,
+ will@kernel.org, akpm@linux-foundation.org, isaacmanjarres@google.com,
+ iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Kelley <mhklinux@outlook.com>
+Subject: Re: [PATCH] swiotlb: iommu/dma: Clarify swiotlb options apply only
+ to dma-direct
+Message-ID: <20240504101651.7de5106f@meshulam.tesarici.cz>
+In-Reply-To: <20240503183527.1548119-1-tjmercier@google.com>
+References: <20240503183527.1548119-1-tjmercier@google.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,139.com,alsa-project.org,vger.kernel.org,intel.com,ti.com,irl.hu,fpt.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,intel.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 0D0CF34270
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -2.01
+Content-Transfer-Encoding: 7bit
 
-On Sat, 04 May 2024 02:47:03 +0200,
-Shenghao Ding wrote:
+On Fri,  3 May 2024 18:35:26 +0000
+"T.J. Mercier" <tjmercier@google.com> wrote:
+
+> IOMMU implementations now sometimes bounce memory through SWIOTLB to
+> achieve cacheline alignment [1], or prevent DMA attacks by untrusted
+> devices [2]. These uses of SWIOTLB differ conceptually from historical
+> use which was a solution to the problem of device addressing
+> limitations that prevent DMA to some portion of system memory
+> (typically beyond 4 GiB). IOMMUs also solve the problem of device
+> addressing limitations and therefore eliminate the need for SWIOTLB for
+> that purpose. However as mentioned, IOMMUs can use SWIOTLB for other
+> purposes.
 > 
-> Fix an issue reported by robot kernel test and two harmless changes.
-
-You need to describe more what was actually an issue reported by robot
-kernel test here.  Otherwise it's nothing but a voodoo magic.
-
-Also enumerate two harmless changes, too: it's an update of copyright
-year and a correction of the comments.
-
-Last but not least, the subject suffix should be "ASoC: tas2781: ..."
-(not "ASoc", and without "ALSA:")
-
-
-thanks,
-
-Takashi
-
+> The swiotlb kernel command line parameter does not impact IOMMU related
+> use of SWIOTLB, and that is intentional. IOMMUs cannot be forced to use
+> SWIOTLB for all buffers. Update the documentation for the swiotlb
+> parameter to clarify that SWIOTLB use can only be forced in scenarios
+> where an IOMMU is not involved.
 > 
-> Fixes: ef3bcde75d06 ("ASoc: tas2781: Add tas2781 driver")
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-> 
+> [1] https://lore.kernel.org/all/20230612153201.554742-16-catalin.marinas@arm.com
+> [2] https://lore.kernel.org/all/20190906061452.30791-1-baolu.lu@linux.intel.com/
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
 > ---
-> v1:
->  - Changed the copyright year to 2024
->  - tasdevice-fmw.c --> tas2781-fmwlib.c
->  - | Reported-by: kernel test robot <lkp@intel.com>
->    | Closes: https://lore.kernel.org/oe-kbuild-all/202405021200.YHInjV43-lkp@intel.com/
-> ---
->  sound/soc/codecs/tas2781-fmwlib.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  Documentation/admin-guide/kernel-parameters.txt | 1 +
+>  Documentation/arch/x86/x86_64/boot-options.rst  | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-> index 45760fe19523..a6be81adcb83 100644
-> --- a/sound/soc/codecs/tas2781-fmwlib.c
-> +++ b/sound/soc/codecs/tas2781-fmwlib.c
-> @@ -1,8 +1,8 @@
->  // SPDX-License-Identifier: GPL-2.0
->  //
-> -// tasdevice-fmw.c -- TASDEVICE firmware support
-> +// tas2781-fmwlib.c -- TASDEVICE firmware support
->  //
-> -// Copyright 2023 Texas Instruments, Inc.
-> +// Copyright 2023 - 2024 Texas Instruments, Inc.
->  //
->  // Author: Shenghao Ding <shenghao-ding@ti.com>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 213d0719e2b7..84c582ac246c 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6486,6 +6486,7 @@
+>  				 to a power of 2.
+>  			force -- force using of bounce buffers even if they
+>  			         wouldn't be automatically used by the kernel
+> +			         where a hardware IOMMU is not involved
+>  			noforce -- Never use bounce buffers (for debugging)
 >  
-> @@ -1878,7 +1878,7 @@ int tas2781_load_calibration(void *context, char *file_name,
->  {
->  	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *)context;
->  	struct tasdevice *tasdev = &(tas_priv->tasdevice[i]);
-> -	const struct firmware *fw_entry;
-> +	const struct firmware *fw_entry = NULL;
->  	struct tasdevice_fw *tas_fmw;
->  	struct firmware fmw;
->  	int offset = 0;
-> -- 
-> 2.34.1
-> 
+>  	switches=	[HW,M68k,EARLY]
+
+Yes, this part is correct. SWIOTLB cannot be forced if there is an IOMMU.
+
+> diff --git a/Documentation/arch/x86/x86_64/boot-options.rst b/Documentation/arch/x86/x86_64/boot-options.rst
+> index 137432d34109..066b4bc81583 100644
+> --- a/Documentation/arch/x86/x86_64/boot-options.rst
+> +++ b/Documentation/arch/x86/x86_64/boot-options.rst
+> @@ -285,7 +285,7 @@ iommu options only relevant to the AMD GART hardware IOMMU:
+>        Always panic when IOMMU overflows.
+>  
+>  iommu options only relevant to the software bounce buffering (SWIOTLB) IOMMU
+> -implementation:
+> +implementation where a hardware IOMMU is not involved:
+>  
+>      swiotlb=<slots>[,force,noforce]
+>        <slots>
+
+But this part needs some improvement. The "swiotlb" option is not
+entirely ignored if there is a hardware IOMMU. For example, the size of
+the SWIOTLB can be adjusted using "swiotlb=<slots>", and since SWIOTLB
+can be used by IOMMUs for other purposes (as you correctly note in the
+commit message), this setting is relevant even where a hardware IOMMU
+is involved.
+
+Petr T
 
