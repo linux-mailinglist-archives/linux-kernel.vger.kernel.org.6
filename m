@@ -1,119 +1,220 @@
-Return-Path: <linux-kernel+bounces-168773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC8B8BBD83
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 19:50:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61418BBD88
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 20:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED0B1F21BFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:50:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147D11C20DB6
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9476E60DCF;
-	Sat,  4 May 2024 17:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0D469953;
+	Sat,  4 May 2024 18:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A3JyYr/s"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WOyuJHAU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E934159B78
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 17:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219FE3B29D;
+	Sat,  4 May 2024 18:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714845051; cv=none; b=O2rZ5dVKMXZebDO5jpTtMQhqMMLwJ9r0ZbUOAH3SQ0UEOFSF1y63aVd+3GKocf3dlZ8ZkwsiwH1zixoX42VamkUHqXKbPCAWlMHAsg8+uLorz2tzzq87vlD3GNx4oE0sdLVXZfdjcizWZR6bS5PYO/G/1+74Ojyryd87HDjhMyo=
+	t=1714845709; cv=none; b=MGecM8Xn9wnZJ/aOOZWtt6KzRJkJhlX7KdntnE8A/Vbd5ATg+gVDKv9qOuqOAjVhj6jvZARm/KfoVdbOueBnbKQcJVa2vUqqRCBrj66uPo2kr4uAVqapRntLrir5tjEV/CBnV4YM7TBD3ffGmiIMrB/SZGVz2R++iiB6oGdlAxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714845051; c=relaxed/simple;
-	bh=vNJoGAUUvHdGoycuhcgj0oJQMe4+8XP0PvAVk1NVaj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGWXy+/2oTIY3JEgzuPmK7Pk1u7ji85mRhqDvNqgQrdqbzTySv0Utn23jaNqMdkoiAmJU+A/8T0dHfHdjhiAC/wCzlNrDSD/jG+hhfBn4BTRJrsj6zp00PlQFSz5gy46DVXqPxNJqhG2OlKiduEoU8P/UKHfozrhkqQV3MFAy/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A3JyYr/s; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a598e483ad1so144722766b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 10:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1714845048; x=1715449848; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRzbcihXI24SCuYOsVfgrVXS+13k3RWWLtY2qXmne2s=;
-        b=A3JyYr/scBjjeFKvt+K4O2zu8Fhz7LemuwfKnlQDeX+udqpxg1FKSWTD3K78UzKf1J
-         vsbGtoERFBEmNdml8R4QooQciBWmuYh+LVK/4dIP/QYibvoRa8+E9QklTvORbAqeDDdK
-         3gGNiQZhhwB1YNRh6LbV1ABu2847PIYMbGMvQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714845048; x=1715449848;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TRzbcihXI24SCuYOsVfgrVXS+13k3RWWLtY2qXmne2s=;
-        b=EOwaAkSvH3q877K+G4XJQ6uu4J0JDv1Jv7dkVeqbEqamDMYm24hsZBcEJLpLJ7IgQy
-         LcDAXCHlqtw15HP7ICQhN7uGomC8+yF1zOsTDNC9DNmM205aIl7VTRV8tU3f0zE18ZNF
-         2YDP7uUyPDLNyUb53AI7/H+pfxYIeRw/8S2gnTf6R6V44ITv2/jzk5KNT06mVrBEM5KG
-         I+0mHk4Bj6cEMbNmYgvIGsYlk+Nctxc0xrWDRFJvuaEm5HnjEATHsmfUooYC7yw9WN9P
-         hVZKxwZ/sRx39ldbB5bFA9fWi+NgwRAZHjUS5+XHxMrW6RDSr1XO8TmNuoFIOPsUUt16
-         +oKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzUeGiues9RMBrJySyZ3wdi5WyM+CjECazJQOCEZdzgV6c8emRtj+8MX9Hizhf9H0typcAuswu/EJgdtxNw0IEsRs65uwml7+c5V4n
-X-Gm-Message-State: AOJu0YzyTd2eE9Y4s2yWn4dKMUEaTy1vrqLtceVWLJaKxNwQIVlkK/vc
-	XXfL+QRoQ0Mbh1/WRT57tl6bkGOKkPckY2AK0SREon4ORN9ve/qTPbHGb1mBl+dcVHKyMnWCtRg
-	d0c2goQ==
-X-Google-Smtp-Source: AGHT+IEfOgGScB51i6Z8382yo7VcIT71+Pqy1l0IkZzOEsFJzQbGKrs+9KaaKhoN5jEDdlb/Z/JQeA==
-X-Received: by 2002:a17:907:7243:b0:a59:b490:6e62 with SMTP id ds3-20020a170907724300b00a59b4906e62mr763132ejc.40.1714845048029;
-        Sat, 04 May 2024 10:50:48 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id j21-20020a170906051500b00a59291b5551sm3147363eja.63.2024.05.04.10.50.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 May 2024 10:50:47 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a598e483ad1so144719166b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 10:50:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX4PYowdM0+sv5zwNkigDnEvxHVVkxK6K7Ckl+wCf9rhtRUkQvQik+94pRInIS7S5Q7eDY6mBaR0wB6Mj1zn7rTq9qLlKj88/WTX+iU
-X-Received: by 2002:a17:906:abd8:b0:a59:bbd6:bb39 with SMTP id
- kq24-20020a170906abd800b00a59bbd6bb39mr209514ejb.55.1714845046603; Sat, 04
- May 2024 10:50:46 -0700 (PDT)
+	s=arc-20240116; t=1714845709; c=relaxed/simple;
+	bh=wvW6UJrlvAGP4USmTQrRSEKApbgHmopSqmwR4tQPvYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQJtL4juA6Sgcv6ctdWjUKr2PCIVpqrXRkefv83b6COz3sQB44lVlRCLPeNpig5HPbYHvmvoPP86LUzyHoD6M349WN0PYtldSbhwImHDH/l18lvPGOthJ7Nk5qbVi/JfQljSZhYD4+w9Gw8/CBlyWsgUrljUxYxvsP0aWg7cbCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WOyuJHAU; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714845707; x=1746381707;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wvW6UJrlvAGP4USmTQrRSEKApbgHmopSqmwR4tQPvYY=;
+  b=WOyuJHAUadCQRwmAVxCBEF5r6t+vk62Y8Z8Xm4r8STx68nkNrxnbbEfL
+   3h4+l4+SC6yaV+lIuxvgvCtEcSCUxeS/gOZrdVGdy9abAsFIEIzNpiyYD
+   opbD8SWgOzes7NOPhcPg/lIB7+g3B87wmcqgvjZDhTq7aySOB4cmg4UuC
+   /0tWjUJnBZel3s9yTKVAT2Me8LfZkWv0e4oooRiS849IuGUViiQ+CchIb
+   8+Qb0acEAnLN8IqCQvJprBmnreb7zW+MfnBFE0EjKZABBvoHqrMqtabDO
+   +g/rXAAr7kvKBEyeOEYOFT8uPZNjR/uuPqKLiesESrVXzc+nRip/TWUfj
+   A==;
+X-CSE-ConnectionGUID: 7dTGewqnTQ6mOPcZOqsHSA==
+X-CSE-MsgGUID: TA68Q1L0RI6QTClfgFYFNw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="10487394"
+X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
+   d="scan'208";a="10487394"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2024 11:01:47 -0700
+X-CSE-ConnectionGUID: z2nWo+zyTvuXA3N9Y7ajYQ==
+X-CSE-MsgGUID: vi1PQ4tyRHGNSWY8ST9Ecw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
+   d="scan'208";a="32562285"
+Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 04 May 2024 11:01:42 -0700
+Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s3Jhc-000D2q-03;
+	Sat, 04 May 2024 18:01:40 +0000
+Date: Sun, 5 May 2024 02:01:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	andrew@lunn.ch, jiri@resnulli.us, pkshih@realtek.com,
+	larry.chiu@realtek.com, Justin Lai <justinlai0215@realtek.com>
+Subject: Re: [PATCH net-next v17 12/13] realtek: Update the Makefile and
+ Kconfig in the realtek folder
+Message-ID: <202405050111.thv4v0Bl-lkp@intel.com>
+References: <20240502091847.65181-13-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wi3iondeh_9V2g3Qz5oHTRjLsOpoy83hb58MVh=nRZe0A@mail.gmail.com>
- <892324fc-9b75-4e8a-b3b6-cf3c5b4c3506@paulmck-laptop> <CANpmjNOY=Qpm3hBu-eN4Xk8n-2VXQRvcQ3_PfwPwNw9MmC8ctw@mail.gmail.com>
- <CAHk-=whTakjVGgBC5OtoZ5Foo=hd4-g+NZ79nkMDVj6Ug7ARKQ@mail.gmail.com>
- <CAHk-=wiGzmJXZwHxCE6P0jVBqU4gHEm=zcfj3v+zM_S_9RF4_Q@mail.gmail.com>
- <1c886023-ae61-46ba-bb3c-b460c30de937@paulmck-laptop> <b3b81374-a19d-4bf5-abb3-15e48c72f01a@paulmck-laptop>
- <ZjPBPWSSdE_VcH_V@boqun-archlinux> <2beaba9f-6f83-4a7c-8835-fe5fe88a006c@paulmck-laptop>
- <CAHk-=wg4iAjQb_Na_1rf_EHxe7rsN24he6cjKgdOAPmn7N9oVw@mail.gmail.com> <3f2c415d-dc7e-4647-9002-4beb804d885c@paulmck-laptop>
-In-Reply-To: <3f2c415d-dc7e-4647-9002-4beb804d885c@paulmck-laptop>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 4 May 2024 10:50:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whz-pFHfC4nNdrBtWs4KOm7Q2d2quHmFFYzz1Dz7d7LnQ@mail.gmail.com>
-Message-ID: <CAHk-=whz-pFHfC4nNdrBtWs4KOm7Q2d2quHmFFYzz1Dz7d7LnQ@mail.gmail.com>
-Subject: Re: [PATCH v3] tty: tty_io: remove hung_up_tty_fops
-To: paulmck@kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>, Marco Elver <elver@google.com>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	syzbot <syzbot+b7c3ba8cdc2f6cf83c21@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Jiri Slaby <jirislaby@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502091847.65181-13-justinlai0215@realtek.com>
 
-On Fri, 3 May 2024 at 22:08, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> You are right, this is going to need some arch-specific code for a few
-> of the architectures.  Hey, I was hoping!!!
->
-> The compilers do not currently optimize these things, but things appear
-> to me to be heading in that direction.
+Hi Justin,
 
-Ok, so it sounds like right now it makes no sense - presumably
-__atomic_load_n() doesn't actually generate better code than
-READ_ONCE() does as-is, and we have the issue with having to make it
-per-architecture anyway.
+kernel test robot noticed the following build errors:
 
-But maybe in a couple of years we can revisit this when / if it
-actually generates better code and is more widely applicable.
+[auto build test ERROR on horms-ipvs/master]
+[cannot apply to net-next/main linus/master v6.9-rc6 next-20240503]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-            Linus
+url:    https://github.com/intel-lab-lkp/linux/commits/Justin-Lai/rtase-Add-pci-table-supported-in-this-module/20240502-172835
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git master
+patch link:    https://lore.kernel.org/r/20240502091847.65181-13-justinlai0215%40realtek.com
+patch subject: [PATCH net-next v17 12/13] realtek: Update the Makefile and Kconfig in the realtek folder
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240505/202405050111.thv4v0Bl-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 37ae4ad0eef338776c7e2cffb3896153d43dcd90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240505/202405050111.thv4v0Bl-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405050111.thv4v0Bl-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/net/ethernet/realtek/rtase/rtase_main.c:47:
+   In file included from include/linux/dma-mapping.h:7:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:173:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:1970:
+   include/linux/vmstat.h:502:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     502 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     503 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:509:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     509 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     510 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:516:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     516 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:521:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     521 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     522 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:530:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     530 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     531 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/net/ethernet/realtek/rtase/rtase_main.c:47:
+   In file included from include/linux/dma-mapping.h:10:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:75:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from drivers/net/ethernet/realtek/rtase/rtase_main.c:47:
+   In file included from include/linux/dma-mapping.h:10:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:75:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from drivers/net/ethernet/realtek/rtase/rtase_main.c:47:
+   In file included from include/linux/dma-mapping.h:10:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:75:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     692 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     700 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     708 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     717 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     726 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     735 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> drivers/net/ethernet/realtek/rtase/rtase_main.c:67:10: fatal error: 'net/netdev_queues.h' file not found
+      67 | #include <net/netdev_queues.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~
+   17 warnings and 1 error generated.
+
+
+vim +67 drivers/net/ethernet/realtek/rtase/rtase_main.c
+
+6c114677e472d0 Justin Lai 2024-05-02 @67  #include <net/netdev_queues.h>
+6c114677e472d0 Justin Lai 2024-05-02  68  #include <net/page_pool/helpers.h>
+6c114677e472d0 Justin Lai 2024-05-02  69  #include <net/pkt_cls.h>
+6c114677e472d0 Justin Lai 2024-05-02  70  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
