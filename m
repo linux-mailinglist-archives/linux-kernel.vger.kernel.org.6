@@ -1,91 +1,113 @@
-Return-Path: <linux-kernel+bounces-168600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79678BBAB2
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:25:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A438BBAB5
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B691C21076
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3482282F23
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DAF1CAB1;
-	Sat,  4 May 2024 11:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2EE1CD06;
+	Sat,  4 May 2024 11:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tu1gtAgG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LjOjICvf"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE5A12E4A;
-	Sat,  4 May 2024 11:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391BD18C3D
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 11:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714821917; cv=none; b=d3UEIneovagY0rH7uZ1slvSvtKoiRRdR+uuPvqCtnMc0/JoFkTAs5fOUYpemli7KjLh6XsQJ5qqyqOGGR9IFp/y99lVxdRTYPRY+YsydUnnjz3mvMk8/o6s8gkXm6R1kIQUYLjgCe7qXg97MoNAYIWhPTMONhSqFVh0JxHQmJh4=
+	t=1714821931; cv=none; b=BSFdcKzaGhFD/t83GSqIZnU1gDa/ohNzvWosOkj4e6JVa6yIKyDjSNEnttFh4d5SRnwKV0TfbM74jdhkhhF3RK8d4A79ggE1CXBUWtODbE6m2VdBs9Hk7Pjxsip+X4+07VCEiFeYYvqNub9xCbw8EFu7t4MMs98VU2725YEkIjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714821917; c=relaxed/simple;
-	bh=aoXtElC6QjfEFEfzT5AfaOXZlXtAWDSJADrXTUPIhJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iw+p2gYXchSk9PxM3LRIXLjEDaluYG0/MgZXGR39cLALH5fOXpj+WG45yctgD1+IBsFqyy7vk8xjz/asYAFgOGu7fo3d+TKm6sHE47fqDdMu7P9rpNoqtQo64Zsz6w8YNpz25KC0wxMu7ep74wpotNazKcF0uUCj0jBlHt/oHJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tu1gtAgG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C081C072AA;
-	Sat,  4 May 2024 11:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714821917;
-	bh=aoXtElC6QjfEFEfzT5AfaOXZlXtAWDSJADrXTUPIhJ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tu1gtAgG9z5Y+yIvIEIVmQ2fgyjD9Tn/RCv0n/DVuQsXojxeIcNqTROwRA0zGng4j
-	 Ya5SpoaGi4SNih9n8Sq3x2yfWbKEhYzBOqQZnSxnGf5l7dtD3PWZLGjvO1Ih20FJQD
-	 TReESyKIdZ7IsVIZsuw+P7sRyIFVtAbV56r6zgRm45YQ57ybcMMkFIXvmtn8AJNS7L
-	 SXuEjrVx4AQy13Z4yg9Rs4OpkuCPiiSzKbCIBkbCtfS15qjAPrPWQ8hxsqGMzicPgt
-	 RLgbpCGMpBjeLONT4v4OjIUqu4JFCpK+1qh829hJZmLNgsXGxStgLOER2GggkuhHv7
-	 8TOSwx7Ys5crA==
-Date: Sat, 4 May 2024 12:25:04 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Support Opensource <support.opensource@diasemi.com>,
- Cosmin Tanislav <cosmin.tanislav@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] iio: addac: ad74115: Use
- devm_regulator_get_enable_read_voltage()
-Message-ID: <20240504122504.0389b872@jic23-huawei>
-In-Reply-To: <20240429-regulator-get-enable-get-votlage-v2-4-b1f11ab766c1@baylibre.com>
-References: <20240429-regulator-get-enable-get-votlage-v2-0-b1f11ab766c1@baylibre.com>
-	<20240429-regulator-get-enable-get-votlage-v2-4-b1f11ab766c1@baylibre.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714821931; c=relaxed/simple;
+	bh=zThw4UDAOnEh6F/I9eYX3+ObEBgRTkhGcMAD0FioUnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BCXW9Y0Gb47jC3NAbyvIWY/+SgsL6yjI1F39HBcX+57MOfuwtKCwdCRgzFwZh5bunpswauSUMi7yTDReEsza+tpOcz0yZ84nqWRjfof9Vw/kd9iAgScRdMDb9y1gh0wKut1hquv2LksFxN8aAqn+5nuHcd/I9pi+Tcks7mz8PHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LjOjICvf; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-de477949644so478820276.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 04:25:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714821928; x=1715426728; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jPKRgPrnhQkyQvjVNzNYJS982z7u5glAR7kHzQu9FB8=;
+        b=LjOjICvfAs2LtW1qzETVjwP6Y1ALQ+praSuAoyouCEaJayFuzzvlikOgOwUS0x/wcQ
+         /E8oc+Pem8yya6aRg+bTt/oJL2lSc+CJq7SiCJmLHoRusCAmt16v3TVKbBPjbRU1cXdi
+         roAmS73itEGh2HHmhbYQUiPJVVbOS7sk1SwnANHB32oIxpNP1hMWyVOsWCXcWdL8fBsJ
+         sMIqb9qi+XsMG1deVhPsWXbJ2e1u0gQffw4C95XVy7FyqzFqmqRlPo37h4dRDmTWUJ//
+         yBpZL5ayrPqB5duXytrJYpAYXbMltwskJ9Bvgxus30BJWRX6cmofi/0KEY4QpvH/lqJl
+         hYsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714821928; x=1715426728;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jPKRgPrnhQkyQvjVNzNYJS982z7u5glAR7kHzQu9FB8=;
+        b=xTSgNobwa5/VsOdLWoxjeKvITdSyu/3nYBgLipJorKdRV5uwGO0SpfS+cZBCUvs9jD
+         RpHkeJt0OzZEIeP0O0MduwNyjVgmrBdoc+kl/GrDuwDR6XZ7sIREvZ+KYMr7ZF+sY2eb
+         bOqKwLRQo3M42T6zz1OeWjGt4q7A4BIhyZm7YJx7cxN6CpN5Ue5XkPt6j+BrHzq86lx7
+         rkDcY+UCjb90Gl+EZ4Sj7DrRBmPoTKCVcisqC4Npe6B6dCFjzREbW8LoSM4MAC1VnUew
+         4dQ800DkYLZNyJoF1ZV/GDAGQ7DAU5S4ILPA8Yti2+F4Cj4pttL/rUrTfpgOkZzVzOQR
+         D8LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaV9MIeWNOwLEQwwG7m3JEUsJC71GbUPc/5AmU4PXIKJ5NEEN6XcRcoDgGTtAzgPL4anFO0BX7CYza+sncprbFNY8BTYDAer1dsmVR
+X-Gm-Message-State: AOJu0YwfJVoDsVGxQvn2sQhgan1olAFiiEq1F/PRHteFKnZZnOZ6qTmv
+	B8eWwEcU/MYalVaoMP6YLd+aH/ILwCCHXHgglShQ3zWbMgKQcm08ljIcCSyZkgs=
+X-Google-Smtp-Source: AGHT+IHmoThEg6ZICI1nanJtD8NqubVsHGjSSagbRYqxHTK+797ThcIKk75RKEhweCH/CV76yxB55Q==
+X-Received: by 2002:a25:aba7:0:b0:dbd:8f9:a71 with SMTP id v36-20020a25aba7000000b00dbd08f90a71mr6069893ybi.28.1714821928012;
+        Sat, 04 May 2024 04:25:28 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id d72-20020a25684b000000b00de4f5e1e45bsm1055110ybc.54.2024.05.04.04.25.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 May 2024 04:25:27 -0700 (PDT)
+Date: Sat, 4 May 2024 14:25:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] thermal/cpufreq: increment i in cpufreq_get_requested_power()
+Message-ID: <a7c1fe73-b40e-437c-8ccb-7b3baad04df7@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Mon, 29 Apr 2024 18:40:12 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+We accidentally deleted the "i++" as part of a cleanup.  Restore it.
 
-> We can reduce boilerplate code by using
-> devm_regulator_get_enable_read_voltage().
-> 
-> To maintain backwards compatibility in the case a DT does not provide
-> an avdd-supply, we fall back to calling devm_regulator_get_enable()
-> so that there is no change in user-facing behavior (e.g. dummy regulator
-> will still be in sysfs).
-> 
-> Also add an informative error message when we failed to get the voltage
-> and knowing the voltage is required while we are touching this.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-A somewhat fiddly case.  I think you've done it the best way possible though.
+Fixes: 3f7ced7ac9af ("drivers/thermal/cpufreq_cooling : Refactor thermal_power_cpu_get_power tracing")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+This is based on static analysis and not tested.
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+ drivers/thermal/cpufreq_cooling.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/thermal/cpufreq_cooling.c b/drivers/thermal/cpufreq_cooling.c
+index 280071be30b1..a074192896de 100644
+--- a/drivers/thermal/cpufreq_cooling.c
++++ b/drivers/thermal/cpufreq_cooling.c
+@@ -249,6 +249,7 @@ static int cpufreq_get_requested_power(struct thermal_cooling_device *cdev,
+ 			load = 0;
+ 
+ 		total_load += load;
++		i++;
+ 	}
+ 
+ 	cpufreq_cdev->last_load = total_load;
+-- 
+2.43.0
+
 
