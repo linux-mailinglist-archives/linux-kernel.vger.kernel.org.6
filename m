@@ -1,102 +1,94 @@
-Return-Path: <linux-kernel+bounces-168662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E1E8BBBA9
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:58:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616D98BBBA2
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231C6281F71
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 188D3282220
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EF722F0F;
-	Sat,  4 May 2024 12:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5682322EFB;
+	Sat,  4 May 2024 12:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XY5D3DCF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U86SWI7j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974202C19E;
-	Sat,  4 May 2024 12:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9986B1C695;
+	Sat,  4 May 2024 12:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714827526; cv=none; b=mUWBIV/D59rk3NRcKWIL0jVCf0g4gkZt8xixbVrEeG7s+vM7o3+ONWrcsSkM5ivLKUXqPfFkpe/vCiypHmlgLPmoeRixRJQT9a80hsxSbepse+4bjtw4nuuuhIVPf/oWaZouJHSo+zU3jZgxiPpZGe5dy0ARu00SGq7k30WAI0A=
+	t=1714827504; cv=none; b=AusEFpny278qD7UN0RJ2/w/HvfECzLx17aa9J7eWOrAuUe+HdrQA/f0s44pphXGLCjXfv8qtlclOp/08RkUnWcLvnkDGS0FuaL/jD+4c5tt0N8l1O2IyJfKSwACuao6ByFFFbaPwJCmX7qgUO1REd3yCA+KCzrdlZOMs6lfAF7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714827526; c=relaxed/simple;
-	bh=hXNgSkWwV5LZLhpVWGiACGemV4ufWhJzafZAUIlL/Ow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hyfsX88hR1BKJYC/ULAtINlQo3Lt3s8NsS5njLE7VyudTXJ5J0QVx/TmTXQO7w2X4u/folGbB5zKjKn35mfELWRKwqp7ReQIyd8drL4ccqgx2iFNJPW9DDRcHERAciLtS4YYJtq+wqUS2d3k70KDqno4PUvpf2KaqUzJ9F4oU1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XY5D3DCF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34698C072AA;
-	Sat,  4 May 2024 12:58:46 +0000 (UTC)
+	s=arc-20240116; t=1714827504; c=relaxed/simple;
+	bh=fuUV6rbC9KtqaB3E4wMX4NKqb+NpCFrjFTSVLWFhbT4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fw4Ra5cwRVOknSuBbBhBWFd09Q7B3y5AzQ3LAWCvNgmS+gtRME20yEEhzNqOVR2ej9SXyyaSgEL6pD0DAwNhbadeXDJmqkyv0y5gZJjCERJgMBLodQ1qb+oUYCjxIoWzQ/rVgdVnNGD+48k9eLUEwqPMW/qjcEQ99r55OiQ2aTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U86SWI7j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74796C072AA;
+	Sat,  4 May 2024 12:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714827526;
-	bh=hXNgSkWwV5LZLhpVWGiACGemV4ufWhJzafZAUIlL/Ow=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XY5D3DCFrGDofD4I75mYiI07dMFEL4RGn44HFWdUfc0ryl9FZFN8BRFb0omeeKveY
-	 DhJU6AWBxpP1gwd0ELWjjQQke4D3P+HhNaakmlRRxmdCnJKqxaeOnjNR3XQAWOPUA5
-	 olRTI79+5ikFY0XkGz77Z+YVmBhP42Kp3EOS8LHyqkyUKoBT2glb2N9F8g+5fzoh7+
-	 NQT+lWRjctX/Ffzsxg70Awni0kfibrogmW0BC0bM3Cqhs+YgLtU3w9VLFOmyWTM1Lq
-	 c56xZqPLDe3IvqUWwp+RyHMBGoSAoGA1axgq7ImuRnrOLaafbd2bwdUAvWB6ah5t+p
-	 fN/CvDO5Tevow==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52006fbae67so429357e87.0;
-        Sat, 04 May 2024 05:58:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWXvQ2Ou2oWQE1TlhmCe0tF2H+lQ14Lot2WRAwg3K4otgMaTLpq5i/Zvv2CKDKTiaRbeJ+1EDqVghA+AQ4bbVagXP4ruiJVM0McD/pVQW71cPufZKIQnxdBxR5dqYGH43r9tKx0xqN1lgs
-X-Gm-Message-State: AOJu0YxsQS9hL1TXpehMuaG3SGGOYiyv1J+H40DhDn8wGA/DRDpFJok2
-	XPcoJwHImGDAeTVorHLi+GeWJFFfcJbjAzoXqZr0KNDVwxSB1quciEXvZXV7bj70cGmtpaJVBfr
-	7YVRDYlgtGTm7s0JlhFNDf9jXVyM=
-X-Google-Smtp-Source: AGHT+IFq7LW2EIDcLPPbgiqTYqA0fmtOzfyu2rvhKZGIplFMx7KFWO8jYCsN+xvmxPJWu7JvdXCHRan6u12lYo8HZ5g=
-X-Received: by 2002:a05:6512:34c9:b0:51d:5f0b:816f with SMTP id
- w9-20020a05651234c900b0051d5f0b816fmr3281626lfr.15.1714827524974; Sat, 04 May
- 2024 05:58:44 -0700 (PDT)
+	s=k20201202; t=1714827504;
+	bh=fuUV6rbC9KtqaB3E4wMX4NKqb+NpCFrjFTSVLWFhbT4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=U86SWI7jpijgYbli26YHih1UzmitBpjjOF18elIDhbPxqhwFWqrnVJzaaCyqDbS6h
+	 4m/1MNIC1PKoW3zEIkpMDUs/E7Y9SxvwZdKXm16q81FJULE/193GUDGBMwiIhSNcn/
+	 tUuounrhX7aoU04VkBdP25P/fAzX2BfyVGAeOdvA/ljqinHyfiqc9h7x0RVHucZRpE
+	 Vzdm0JFQnqB/YaHmbIHToWLmxPZc5BtHu6DUY2H+g5c+WX6A+UsPMyuu3XZ4kTRNBo
+	 txg4m1paRT0FxjnQSPPPHOW/SdJ5pcu0/f8BRhQk4DP0Av6QDv4fZzQ3nQUe40QmIA
+	 pkEsaTUuPvvBA==
+From: Vinod Koul <vkoul@kernel.org>
+To: linux-sound@vger.kernel.org, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org, 
+ pierre-louis.bossart@linux.intel.com, bard.liao@intel.com
+In-Reply-To: <20240429004321.2399754-1-yung-chuan.liao@linux.intel.com>
+References: <20240429004321.2399754-1-yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH 0/4] SoundWire: intel_ace2x: read DOAIS and DODS from
+ _DSD properties
+Message-Id: <171482750098.68782.2541610580303144917.b4-ty@kernel.org>
+Date: Sat, 04 May 2024 18:28:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502111613.1380453-1-emil.renner.berthing@canonical.com> <20240502111613.1380453-4-emil.renner.berthing@canonical.com>
-In-Reply-To: <20240502111613.1380453-4-emil.renner.berthing@canonical.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 4 May 2024 21:58:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATbseQCgjAUDemNoo9zPd_iSb+4Gz9TaW2YkOKcp3CSEQ@mail.gmail.com>
-Message-ID: <CAK7LNATbseQCgjAUDemNoo9zPd_iSb+4Gz9TaW2YkOKcp3CSEQ@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] kbuild: buildtar: install riscv compressed images
- as vmlinuz
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Nick Terrell <terrelln@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, May 2, 2024 at 8:16=E2=80=AFPM Emil Renner Berthing
-<emil.renner.berthing@canonical.com> wrote:
->
-> Use the KBUILD_IMAGE variable to determine the right kernel image to
-> install and install compressed images to /boot/vmlinuz-$version like the
-> 'make install' target already does.
->
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> ---
-> This patch depends on Masahiro's patch at
-> https://lore.kernel.org/r/20240414174139.3001175-1-masahiroy@kernel.org
-
-Thank you for fixing the issue for riscv.
-Only the question I have is how this patch series gets in.
-If it waits for the next development cycle, it will be
-cleanly applicable.
-
-Anyway,
-
-Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 
+On Mon, 29 Apr 2024 00:43:17 +0000, Bard Liao wrote:
+> The DOAIS, DODS, DODSE, and DOAISE fields are Intel specific and the
+> recommendation is to use settings read from DSD properties instead of
+> hard-coding the values.
+> 
+> Pierre-Louis Bossart (4):
+>   soundwire: intel_ace2x: cleanup DOAIS/DODS settings
+>   soundwire: intel_ace2x: use DOAIS and DODS settings from firmware
+>   soundwire: intel_ace2.x: add support for DODSE property
+>   soundwire: intel_ace2.x: add support for DOAISE property
+> 
+> [...]
+
+Applied, thanks!
+
+[1/4] soundwire: intel_ace2x: cleanup DOAIS/DODS settings
+      commit: 80962485f62c3c33730407a8059c6292194cb887
+[2/4] soundwire: intel_ace2x: use DOAIS and DODS settings from firmware
+      commit: 3b0b441a297e7fe11baab51439a81cd6a336ed64
+[3/4] soundwire: intel_ace2.x: add support for DODSE property
+      commit: 75933ba58dd49ded547ad0d00c74c0cb862530f9
+[4/4] soundwire: intel_ace2.x: add support for DOAISE property
+      commit: a0df7e04eab07cb2c08517209f792a8070504f0d
+
+Best regards,
+-- 
+~Vinod
 
 
---=20
-Best Regards
-Masahiro Yamada
 
