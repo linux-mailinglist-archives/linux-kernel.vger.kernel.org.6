@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-168604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1308BBABF
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:27:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E704B8BBAC2
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0DE1F21BBD
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A85262822E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558851CD15;
-	Sat,  4 May 2024 11:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538B91CAA1;
+	Sat,  4 May 2024 11:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="prEqzzzh"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWHfezVO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CD410A16
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 11:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EA510A16;
+	Sat,  4 May 2024 11:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714822064; cv=none; b=U3lZjiUA5W9BlYJaIuiIig5nMDCxT/AjQO16n12K/Ci9F05VxnEVc4Pwl3TOgZ1u5eZB7k8hKvr9+ZOXo/Or5LZls52NZC6A29ZpYRVNgSGz+e6iSZwQuKGkQS3insSutcO7hFRTTrdA/9KOE0tuVjlRW1tiuvoPxQZViKCKMc8=
+	t=1714822128; cv=none; b=AyosjvCnfMsOhmxNLtFfip09TZ4smXpzgmvX61nPXNzkB0gPaZ1fiAH/uFt2lxvR1syPHb84yRX5M4PfkPLW+JAh6QEFBkGiHa2+sCV5pTrDraKx0U1GFjsQTzs+0gJMsTotUAf/5N129Hwjpcvr0vEM7X+iJi71oarl20S9Md0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714822064; c=relaxed/simple;
-	bh=mG1J1A2jIPnJf3tOoKB1yMswAzjzXb2TIar27Fc09n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LU8Bsj+839qT1jpRMjXJJkNfCh8cp74EoOWpvy6obXmgib4CwxEcUxF4pMg4pxAkcQcboh+48MOC5RU+xMod+jmMe4t8XSRkE1rKcc1khEEz0sxIHVy5+XhkLRs2/DyEbMnTJQC2XAkZJ49eeRlIMH4GO0UExSd6vxGajTxylTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=prEqzzzh; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51ae2e37a87so597534e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 04:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714822061; x=1715426861; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5Pmu0YEcGf7H38ntSIh2K6f/volabjADstC17jZkDWU=;
-        b=prEqzzzh0PG+atud1WccLtx4yM4oQ5rlOtPxOzeoTPtfIHmRU3QOYfBR6pc2qZdfyY
-         v0cs+dJCN2cdrFTwYrKCRFlQMSNaj75VwVcYHX50qAUypWnZ/MjVdv4CDBg0XBwDa6PP
-         8i/ILVY5IJPLMmvs8TbmPCbiC2qgoQi5lleYbHcJoLThbCUxOJN7wWZovhtsVIV9G+A8
-         0dKf56jW/qSZgWa5xA07aCSyQ+GV0b/y/JLAlNeg1dCmNveIATC9u48lb8m+igF9bBdS
-         IU9JejvTlBM9xShWT/cX6Vx4dIMAQCkD5GE9YGAxYDQXZbpmKVoRilgbbkIAFCYfthQZ
-         OoIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714822061; x=1715426861;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Pmu0YEcGf7H38ntSIh2K6f/volabjADstC17jZkDWU=;
-        b=prFZ9/Uau3dZ7+9+2mSCo8ZQ/GAkYho99wROahm18QA3O08zv40QjH+icpYFy9kT4V
-         Y0pplRGx5BOdQAMI1uD+0PvhTq+jsnAZ2iFBXAMLp6NBvccT2SotAqQCn1O5qhmdaQEf
-         w6lv2OfnFY45fh4V1qD0KkoUbsa3Z/3Pdv6wXGYUxOPe2QHL+EA5yQKnt7ET0tOsjWVc
-         AiAB9P7U/IAkR+jM6GpAJyy+lIXKnvoIVMM5BBDwLWAO4TUrSJIXXP7+oEeKlsrpeXCH
-         hIgEfMHJRi1oWUexunlEigdBiQ96afxro1pMCeZ4hJ7+QIV/SgzBRk9zQVI0ODilpq3V
-         OOcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUE4sv7hDQTS3b2k216r1nDS69YzA8a4L3YC5m8Z0rqK2xXkotRwCA2YK5yOwfU8CQ3uwgF+o4jkBTr0cbQMIcoiir+ltTtLa7bD6Qf
-X-Gm-Message-State: AOJu0Ywrbr1Nr2tyLrQAbOgXpFq0SDdHqdXHe6lDaA3nsllmKr5Hm6p2
-	D8OxpWLeUYp1nRQTnMlP+pB05fh32tPfdXnBWfyMdE0FfPPxBNxFL1ME5lMlENY=
-X-Google-Smtp-Source: AGHT+IGflfEXs8kdkz28xNJC43CYFzY4D71i04lz4IE4xTdRC7EA2bcfAOv1A0BvNhzHrreOhzAxGw==
-X-Received: by 2002:a05:6512:1390:b0:518:e69b:25a2 with SMTP id fc16-20020a056512139000b00518e69b25a2mr4357763lfb.45.1714822060160;
-        Sat, 04 May 2024 04:27:40 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id dd22-20020a0560001e9600b0034d829982c5sm6052982wrb.5.2024.05.04.04.27.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 04:27:39 -0700 (PDT)
-Date: Sat, 4 May 2024 14:27:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
-Message-ID: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
+	s=arc-20240116; t=1714822128; c=relaxed/simple;
+	bh=Fnb+vdj/e1q9bTrUIyIq+b+Gwy/enK2PIKyaep0tiR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DlxtyCkCfBgN/02zkYM2Q7Up4lC58sw1riP5Cy9ejEmM9JaZPXshqPL9WDWN4btjFr9KP7umJLfLSaJOIEy8dMG4nrf762x66R1l4AEA350qoZ9fYNsYky9VY7G058wKwOa/76ybA5B29cr2CSNwC6BUdNQL4ISx7EBoWd6NxUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWHfezVO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A430C072AA;
+	Sat,  4 May 2024 11:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714822128;
+	bh=Fnb+vdj/e1q9bTrUIyIq+b+Gwy/enK2PIKyaep0tiR8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oWHfezVOSrsc9L6Gq3Tzix7Y9Twvotoa05UPaEL2lG86BfMQh8b4S2/unGIcwDkrN
+	 hztBZACwkJg+eaV/jD92hVTN5aQiDRRbG6Eydmh5tJmQCzNug2THVS+bQPJFNlC9bf
+	 zGbLQHBXviUiP81DdOkZUXH83/wA7F9IhtSNZRvWA4mWeGrhlUvIqY7fBy6x3/Rqhx
+	 GN+5Mz9Kv9BEPqPhiygI21Xc7lpkwwLUZvaJfQ457EMRC/QXUVlG4x8kdnTGZpAfZm
+	 oPsYtqK5a/tEJ3DphU6NugOYAeeiNSh5FFMatXEU/kX/2N3/nMM9vWQiHMXA43R3wS
+	 yf5dWGLH93WCw==
+Date: Sat, 4 May 2024 12:28:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Alexandru Ardelean
+ <alexandru.ardelean@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad9467: fix scan type sign
+Message-ID: <20240504122836.51277cfb@jic23-huawei>
+In-Reply-To: <20240503-ad9467-fix-scan-type-sign-v1-1-c7a1a066ebb9@baylibre.com>
+References: <20240503-ad9467-fix-scan-type-sign-v1-1-c7a1a066ebb9@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The fxr->file1_offset and fxr->file2_offset variables come from the user
-in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
-Check the they aren't negative.
+On Fri,  3 May 2024 14:45:05 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-From static analysis.  Untested.  Sorry!
+> According to the IIO documentation, the sign in the scan type should be
+> lower case. The ad9467 driver was incorrectly using upper case.
+> 
+> Fix by changing to lower case.
+> 
+> Fixes: 4606d0f4b05f ("iio: adc: ad9467: add support for AD9434 high-speed ADC")
+> Fixes: ad6797120238 ("iio: adc: ad9467: add support AD9467 ADC")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Applied to the fixes-togreg branch of iio.git.
 
- fs/xfs/xfs_exchrange.c | 3 +++
- 1 file changed, 3 insertions(+)
+I'll probably sit on this until after the merge window though.
 
-diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
-index c8a655c92c92..3465e152d928 100644
---- a/fs/xfs/xfs_exchrange.c
-+++ b/fs/xfs/xfs_exchrange.c
-@@ -337,6 +337,9 @@ xfs_exchange_range_checks(
- 	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
- 		return -ETXTBSY;
- 
-+	if (fxr->file1_offset < 0 || fxr->file2_offset < 0)
-+		return -EINVAL;
-+
- 	size1 = i_size_read(inode1);
- 	size2 = i_size_read(inode2);
- 
--- 
-2.43.0
+Marked for stable.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/ad9467.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad9467.c b/drivers/iio/adc/ad9467.c
+> index e85b763b9ffc..8f5b9c3f6e3d 100644
+> --- a/drivers/iio/adc/ad9467.c
+> +++ b/drivers/iio/adc/ad9467.c
+> @@ -243,11 +243,11 @@ static void __ad9467_get_scale(struct ad9467_state *st, int index,
+>  }
+>  
+>  static const struct iio_chan_spec ad9434_channels[] = {
+> -	AD9467_CHAN(0, 0, 12, 'S'),
+> +	AD9467_CHAN(0, 0, 12, 's'),
+>  };
+>  
+>  static const struct iio_chan_spec ad9467_channels[] = {
+> -	AD9467_CHAN(0, 0, 16, 'S'),
+> +	AD9467_CHAN(0, 0, 16, 's'),
+>  };
+>  
+>  static const struct ad9467_chip_info ad9467_chip_tbl = {
+> 
+> ---
+> base-commit: 827dca3129708a8465bde90c86c2e3c38e62dd4f
+> change-id: 20240503-ad9467-fix-scan-type-sign-425daca1bb83
 
 
