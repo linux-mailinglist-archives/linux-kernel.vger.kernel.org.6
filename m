@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-168709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF198BBC85
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:48:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C340F8BBC88
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA38AB218AD
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDB91F21860
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5533CF51;
-	Sat,  4 May 2024 14:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF83E3C08D;
+	Sat,  4 May 2024 14:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTjuRlls"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFTIeU2M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914D057CAE;
-	Sat,  4 May 2024 14:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36058381AF;
+	Sat,  4 May 2024 14:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714834091; cv=none; b=rvJM2eUuypDmtNCQXd29CPVk6YMlZ64eiIxBvD+kEbac9Bb6NwZAdVvHhzTEQMRaZ71eQeKNM1s6vGJLrs7ic0l8Zvm0UZ4AhdFwga+lqjnOBVzWZSrzg5BJ9wxsPStMZV4Roq0MLqXm+amFieNg6pMAsmFV6ZCaq7Se5vx6JqM=
+	t=1714834300; cv=none; b=obd49fLwRO3rZR0U4HLNwmE0WTXIqv1waePpgFZH708r1d69pLHbRdg0FiQRZq4Et3apG5IN8BoTH3FGpZIm604tjJ1aFBVcJBL7fGK/W9/SCnecdbN53pzJjEv8dAuMv+fkrFMEwSudaBGPniTewBeqKnEmgmSpgQugvl5J2tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714834091; c=relaxed/simple;
-	bh=mnWhwHwbu6vfOBX72yPCmIu8TRUsTLMhnSRh1zYW2oA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Du03qjVmNx+xgVTQAjNfvR+Y/k3or+GlgO25NG0imYXEYZvNXEh4IPVvo1KiB9BDFs/Xd0aM3/PS0GtvcwwAz1sMG9liGoaQQI151e9Lnh1p17+bKc7VKc4oGW3tDD+iSnPiMhQ9yDq8/X1iwea1RAg+94KZYRslEYOrjzXpXA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTjuRlls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A53C5C072AA;
-	Sat,  4 May 2024 14:48:09 +0000 (UTC)
+	s=arc-20240116; t=1714834300; c=relaxed/simple;
+	bh=aPJA8cLtuHwQ++7MGOOb5vV8YMm+YCTpLz9ofx2QDTY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=bQxzHdLeJtoy50ckAuMYcdzSWf6NTVc1gkWVfNK9dmIrv2BYLPy7qC3/caBNSzXmx4+uvWYV5g7nXqYxETqi3OoanpTqMt6Vqb+DRDIfRMkS+Fi5MsUQg0CWpV9WkOty5ijHCCap+x0BrAOcL0ER4WFQkyyzX7sG5hBdGWpb6/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFTIeU2M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73187C072AA;
+	Sat,  4 May 2024 14:51:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714834091;
-	bh=mnWhwHwbu6vfOBX72yPCmIu8TRUsTLMhnSRh1zYW2oA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OTjuRlls7beT4C4+N9maJy/KhaTRAZ/gauIYHdhqD3NUKTnYtw3OajltEC0pIT9Q3
-	 sl4023iOTIxTsQWPP1MfdWABYeqxAtKeMb8BmQ7GvvSCZfn4H1PHJbTtjmMk/B/U0Q
-	 u5Swrw/b1EPQMksmhSk1Z1ySi5ejMCMWkYebAvIRFDFb+kmuf8N/nXBKcjAM47uTv6
-	 g7U1Cd7URbGLeDlbjeTJCAey4964nkF5pi1KdumQDNlSOh3Xn4uDTasP9BJRBi8MHn
-	 Aw7HBhRiaQ8lC/1MFx2VgJYH4jBbNRgmHBKm59bNqc0JQBzWOFygzTNnlEm8op7jV0
-	 JaVqtxT17Rz0Q==
-Date: Sat, 4 May 2024 15:48:07 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Kalle Valo <kvalo@kernel.org>, netdev@vger.kernel.org,
-	merez@codeaurora.org, quic_ailizaro@quicinc.com,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH wireless-next] wil6210: Do not use embedded netdev in
- wil6210_priv
-Message-ID: <20240504144807.GB2279@kernel.org>
-References: <20240503103304.339489-1-leitao@debian.org>
+	s=k20201202; t=1714834299;
+	bh=aPJA8cLtuHwQ++7MGOOb5vV8YMm+YCTpLz9ofx2QDTY=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=DFTIeU2M/aA4EhAyhmcPJ28IRkmUiEFIIRzYRzza8DpNK0UEVRf1BvGdpD4aT32rc
+	 cj6hVVmfORvzICN5WqrqYXKVa7o6S6PkWNJniFQT3cKwIx51qejRa8zGQk+o6w45na
+	 PRU++DSR11RYTzxb0TfQcPpwuDguZ+cYaJueHNUMI2jx/hEnV/WCrkN2W9CA1rZJfV
+	 2CvIqYh7FlW2FSlunM3SqNlWjhxs0Arrf5caPdPi8lOInEzpdd8AzYlqAIXstAh8o/
+	 RT90wlHWyD3aLRM98/E9kEww/IJ/WestJtSNSREfuyI04clwwWhbqugYCb3/OSfULG
+	 4sySUVX7BdDCA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503103304.339489-1-leitao@debian.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 04 May 2024 17:51:33 +0300
+Message-Id: <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org>
+To: "Ben Boeckel" <me@benboeckel.net>
+Cc: "Ignat Korchagin" <ignat@cloudflare.com>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-team@cloudflare.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240503221634.44274-1-ignat@cloudflare.com>
+ <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org> <ZjY-UU8pROnwlTuH@farprobe>
+In-Reply-To: <ZjY-UU8pROnwlTuH@farprobe>
 
-On Fri, May 03, 2024 at 03:32:56AM -0700, Breno Leitao wrote:
-> Embedding net_device into structures prohibits the usage of flexible
-> arrays in the net_device structure. For more details, see the discussion
-> at [1].
-> 
-> Un-embed the net_device from struct wil6210_priv by converting it
-> into a pointer. Then use the leverage alloc_netdev_dummy() to allocate
-> the net_device object at wil_if_add(). The free of the device
-> occurs at wil_if_remove().
-> 
-> [1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+On Sat May 4, 2024 at 4:55 PM EEST, Ben Boeckel wrote:
+> On Sat, May 04, 2024 at 03:21:11 +0300, Jarkko Sakkinen wrote:
+> > I have no idea for what the key created with this is even used, which
+> > makes this impossible to review.
+>
+> Additionally, there is nothing in Documentation/ for how userspace might
+> use or create them. This includes things like their description format
+> and describing available options.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The whole user story is plain out broken. Documenting a feature that has
+no provable use case won't fix that part.
 
+So it is better to start with the cover letter. With the *existing*
+knowledge of the *real* issue I don't think we need this tbh.
+
+BR, Jarkko
 
