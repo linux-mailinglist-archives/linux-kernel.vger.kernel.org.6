@@ -1,111 +1,138 @@
-Return-Path: <linux-kernel+bounces-168570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC38BBA46
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:26:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AD18BBA49
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC754B20953
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E13F1C2138E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB1517BA6;
-	Sat,  4 May 2024 09:26:21 +0000 (UTC)
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB31F17565;
+	Sat,  4 May 2024 09:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wezq/xX7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ld8PUdy4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC04C17550
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 09:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EB95221;
+	Sat,  4 May 2024 09:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714814781; cv=none; b=c3ZZFLva0SA5K3gkG+FVxoDOPzCz1EqgoyvsCBJeF8cmw85HFIX8K6E5v1pGrRz8yZROSiQIfu9C4vjV6Z0kADYBXRD+QPZz2nO19x1/ccgeAMUrpvHCXn6ucvK9MSiQf+Z9rJA0VDeRcUvbo4q8jKMWWDi8bpFNH/IwbjqdpMs=
+	t=1714815339; cv=none; b=Jz7YPio+9C6JjjUHEmTW2gwXsAEieB7bnstooYP7H9RC0Joy2KaYI1a2Eb9P5+Y3b4tNx4Ar0iPW878R7n4XkKdH/nP0WuUqWlEHCMNCNsA40fTrurnEYNYQSEi82GofCv4qArKe3Jh6LGEjAS3yWa7eU69L5gkUlFvO9Kg2zcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714814781; c=relaxed/simple;
-	bh=AdDjbW/grP1x1u3VjOS+sOEPGRWpZymJUUHRPXG9+w4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l31qUwHrQDMVye1qC1GRqsBSd5IWjG4xbzyHrzlldpck+2092S4xG/M/1Y6Gc+Y59eRATRawnr3gTJCUy34CbF+0Zxt90+HLeOqrnn89RFYvtFz9nQaHJcwdL4EHePUzO6v33SwDCbBeJAG9nco2mog8g1Xu1aGT2CZFYdKDoxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.66.195])
-	by sina.com (10.75.12.45) with ESMTP
-	id 6635FF2C00000D24; Sat, 4 May 2024 17:26:06 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 72955031457681
-X-SMAIL-UIID: F6B917177A7A48A99FB77799E769FF11-20240504-172606-1
-From: Hillf Danton <hdanton@sina.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Kees Cook <keescook@chromium.org>,
-	Christian Konig <christian.koenig@amd.com>,
-	minhquangbui99@gmail.com,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Date: Sat,  4 May 2024 17:25:55 +0800
-Message-Id: <20240504092555.2071-1-hdanton@sina.com>
-In-Reply-To: <20240503212428.GY2118490@ZenIV>
-References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+	s=arc-20240116; t=1714815339; c=relaxed/simple;
+	bh=rirSMqQpo3rIWksqPbYyKWaw05Ls23tdgirteckiGOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TW+QZLeGe0Z2p1q+EL34PvMhuk0qRk6kaDq0NOcl776vkM1PI6foCiPfeznfIsolkIiCRcKU57FbnmUn9ZcYMay3fIfAJNRUb6R2Nyc9LzmjSnNfrkC2eDzxH9/U57ipiYWdrfdH31K+C34eowIdfADGx0vbnPyrEggvlctNNk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wezq/xX7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ld8PUdy4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 4 May 2024 11:35:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1714815335;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mprjEP9r9wSRznT2f4YFOHY7Ce6AUzgFEOg+L4BcIs8=;
+	b=wezq/xX7Tqsb2bXf/uYkEZrb6Se1F1l28Qkx7cVQ+9QB52XA9CvMa63CQWxc/hfZn3yTOQ
+	eqK4puQ9odbpmYhtx/9xGKP0f+AiocNH285JzfhDm/WnQAt/soJJvgVF2lCPwpwfpiR3P5
+	Cmhsax4PvdhupWAT139iYMI0fb57KSJnbIXA+J3Mf0z7NhZx64DOB4OVozQUqLKNwCvLVD
+	lPkl1M8wogoDlxNDeF/dLtE2y1puJ7hLhB1Zi3gZ+HKxy37+q11mun2fvTrsA6Tc2Naejg
+	5IwNuq9OQCzIZsrw6wqxn0ODtJ8FuLsaLAAZm9Y3tnr3R/QRWtPdw9as52bIsw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1714815335;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mprjEP9r9wSRznT2f4YFOHY7Ce6AUzgFEOg+L4BcIs8=;
+	b=ld8PUdy4DqTvvGyt0jVc2Cds0oBwCFG+hZUs+KM38c4ai0nT4i75hH8CH370OAi6jzwDS8
+	k0CX46clMsS2D2Cw==
+From: Nam Cao <namcao@linutronix.de>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rajesh Shah <rajesh.shah@intel.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] PCI: pciehp: bail out if pci_hp_add_bridge() fails
+Message-ID: <20240504093529.p8pbGxuK@linutronix.de>
+References: <cover.1714762038.git.namcao@linutronix.de>
+ <401e4044e05d52e4243ca7faa65d5ec8b19526b8.1714762038.git.namcao@linutronix.de>
+ <ZjX3t1NerOlGBhzw@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjX3t1NerOlGBhzw@wunner.de>
 
-On Fri, 3 May 2024 22:24:28 +0100 Al Viro wrote:
-> On Fri, May 03, 2024 at 02:11:30PM -0700, Linus Torvalds wrote:
-> > epoll is a mess, and does various invalid things in the name of
-> > performance.
+On Sat, May 04, 2024 at 10:54:15AM +0200, Lukas Wunner wrote:
+> On Fri, May 03, 2024 at 09:23:20PM +0200, Nam Cao wrote:
+> > If there is no bus number available for the downstream bus of the
+> > hot-plugged bridge, pci_hp_add_bridge() will fail. The driver proceeds
+> > regardless, and the kernel crashes.
 > > 
-> > Let's try to rein it in a bit. Something like this, perhaps?
+> > Abort if pci_hp_add_bridge() fails.
+> [...]
+> > --- a/drivers/pci/hotplug/pciehp_pci.c
+> > +++ b/drivers/pci/hotplug/pciehp_pci.c
+> > @@ -58,8 +58,13 @@ int pciehp_configure_device(struct controller *ctrl)
+> >  		goto out;
+> >  	}
+> >  
+> > -	for_each_pci_bridge(dev, parent)
+> > -		pci_hp_add_bridge(dev);
+> > +	for_each_pci_bridge(dev, parent) {
+> > +		if (pci_hp_add_bridge(dev)) {
+> > +			pci_stop_and_remove_bus_device(dev);
+> > +			ret = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +	}
 > 
-> > +/*
-> > + * The ffd.file pointer may be in the process of
-> > + * being torn down due to being closed, but we
-> > + * may not have finished eventpoll_release() yet.
-> > + *
-> > + * Technically, even with the atomic_long_inc_not_zero,
-> > + * the file may have been free'd and then gotten
-> > + * re-allocated to something else (since files are
-> > + * not RCU-delayed, they are SLAB_TYPESAFE_BY_RCU).
-> 
-> Can we get to ep_item_poll(epi, ...) after eventpoll_release_file()
-> got past __ep_remove()?  Because if we can, we have a worse problem -
+> Is the pci_stop_and_remove_bus_device() really necessary here?
+> Why not just leave the bridge as is, without any child devices?
 
-Nope but mtx can help poll go before remove, see below.
+pci_stop_and_remove_bus_device() is not necessary to prevent kernel
+crashing. But without this, we cannot hot-plug any other devices to this
+slot afterward, despite the bridge has already been removed. Below is what
+happens without pci_stop_and_remove_bus_device().
 
-> epi freed under us.
-> 
-> If not, we couldn't possibly have reached ->release() yet, let
-> alone freeing anything.
+First, we hotplug a bridge. That fails, so QEMU removes this bridge:
+(qemu) device_add pci-bridge,id=br2,bus=br1,chassis_nr=19,addr=1
+[    9.289609] shpchp 0000:01:00.0: Latch close on Slot(1-1)
+[    9.291145] shpchp 0000:01:00.0: Button pressed on Slot(1-1)
+[    9.292705] shpchp 0000:01:00.0: Card present on Slot(1-1)
+[    9.294369] shpchp 0000:01:00.0: PCI slot #1-1 - powering on due to button press
+[   15.529997] pci 0000:02:01.0: [1b36:0001] type 01 class 0x060400 conventional PCI bridge
+[   15.533907] pci 0000:02:01.0: BAR 0 [mem 0x00000000-0x000000ff 64bit]
+[   15.535802] pci 0000:02:01.0: PCI bridge to [bus 00]
+[   15.538519] pci 0000:02:01.0:   bridge window [io  0x0000-0x0fff]
+[   15.540261] pci 0000:02:01.0:   bridge window [mem 0x00000000-0x000fffff]
+[   15.543486] pci 0000:02:01.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+[   15.547151] pci 0000:02:01.0: No bus number available for hot-added bridge
+[   15.549067] shpchp 0000:01:00.0: Cannot add device at 0000:02:01
+[   15.553104] shpchp 0000:01:00.0: Latch open on Slot(1-1)
+[   15.555246] shpchp 0000:01:00.0: Card not present on Slot(1-1)
 
-Actually poll can see a file with zero f_count, and LT's idea with
-trival change survived the syzbot repro [1].
+Then, hot-plug an ethernet device. But the kernel still incorrectly
+thought the bridge is still there, and refuses this new ethernet device:
+(qemu) device_add e1000,bus=br1,addr=1
+[   58.163529] shpchp 0000:01:00.0: Latch close on Slot(1-1)
+[   58.165076] shpchp 0000:01:00.0: Button pressed on Slot(1-1)
+[   58.166650] shpchp 0000:01:00.0: Card present on Slot(1-1)
+[   58.168287] shpchp 0000:01:00.0: PCI slot #1-1 - powering on due to button press
+[   64.677492] shpchp 0000:01:00.0: Device 0000:02:01.0 already exists at 0000:02:01, cannot hot-add
+[   64.680007] shpchp 0000:01:00.0: Cannot add device at 0000:02:01
+[   64.682802] shpchp 0000:01:00.0: Latch open on Slot(1-1)
+[   64.684353] shpchp 0000:01:00.0: Card not present on Slot(1-1)
 
-I think fput currently can race with epoll wrt f_count, and checking
-it in dma-buf is necessary if his idea looks too aggressive.
-
-	wait_epoll()			__fput()
-	do_epoll_wait()			eventpoll_release_file()
-	ep_poll()
-	ep_send_events()
-	mutex_lock(&ep->mtx)
-	ep_item_poll()
-	vfs_poll()
-	mutex_unlock(&ep->mtx)
-					mutex_lock(&ep->mtx)
-					dispose = __ep_remove(ep, epi, true)
-					mutex_unlock(&ep->mtx)
-
-[1] https://lore.kernel.org/lkml/000000000000f1c99d061798ac6d@google.com/
+Best regards,
+Nam
 
