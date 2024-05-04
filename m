@@ -1,158 +1,105 @@
-Return-Path: <linux-kernel+bounces-168834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204868BBE49
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 23:51:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7A28BBE4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 23:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2CA1F21636
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 21:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F9128220A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 21:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B134E85283;
-	Sat,  4 May 2024 21:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522BD84E02;
+	Sat,  4 May 2024 21:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EHDbKHyj"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="bmJOHpxd"
+Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9356584FAF;
-	Sat,  4 May 2024 21:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B14F17578;
+	Sat,  4 May 2024 21:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714859454; cv=none; b=knOLB3hLtjC/qF+t82FMLeLpP5G+ie09VZ1KxL0t9BNXCIdVmw/2rcKlgZpZkqkLOqJSioYM4nVYq0lbjNfRc9oLRwzRYLA1F7697D4rFZ16lVL9VRvs2LBBaQ7bbhzvpOrlYa0OVVbTA6UF31SbnSeJmqltiE5vmNfsHGC6YsI=
+	t=1714859640; cv=none; b=flCYWkHXn4ePYrBKi2DV5JHNiDA4Xd8+v1wfhpCyRIAD8bUPqaiVvdMyUZe9EGKnaYxh+oXi4voDn/BW3OT6maXW3CHE2clwqCgCBEv8KK14W+Mtm5NsCmElypAKbLC/48CbwP78UiOnz2pOPhM+y2OWeBTaLlXbYMRZKEHWUNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714859454; c=relaxed/simple;
-	bh=a0aOHIvkMgWuJJUNgVDuyMPr6yqGUOevb/iI/fvcanw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TOnlnErgnQd4AutQneI+uvU/eH4TPB4IKL8qBaxMgGpcO2nS2zCmSTBnng8MDgg88luKN6xAJneCZFq148p4FhGAnVieZSZzOkZiOv1Xd9t75nvLlBURTCjL1nWClnvRXHzBu9ryumno8wt+h1N90G2bQn/W6Y09Kf396IV27ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EHDbKHyj; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6f44a2d1e3dso636013b3a.3;
-        Sat, 04 May 2024 14:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714859453; x=1715464253; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bRbD5K4zZTdGsoYmonQUDEJ6IC05hDKgzajoRSsce9g=;
-        b=EHDbKHyjdS9kRXwB787evdo2S5i6i7v58H8yBkeKIV1VghlYJLPjKYu+qlOvqSTvg2
-         pEzdtCpKEnKDiCZajdm9GadSqVWy4BmBmB4qQ+P3lexrUuxScNSP7QdNMbIj+CyeePh4
-         mETGly5rFYXSXs5pVQca2CJd1u12SAEKJeFRaTsmkNZHuu9H57dGDNospIUPBQqdP3JH
-         4HG+wMSgLtHDGbIINJ91wyxETE9Sy1nOkazdPnN2OQgV0zIpITPqVGucNxc+mt38Y3vc
-         k1Tl/nLjUHNs0WNRViZlQ3hS2KiZzw1NdGXTZGH6TT/tXxgDQ51I+dA0j52SIMNjP/yB
-         9AJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714859453; x=1715464253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bRbD5K4zZTdGsoYmonQUDEJ6IC05hDKgzajoRSsce9g=;
-        b=ScyoSaaWkPzy1sYVOEup4/6CPOkzRfhphqLahO7GnUxnd/A5nJb9kFs11kt/HHiuId
-         TK4nl+HoZDyQRT4qkMDs364vX+fi0E3eBcVaKKXdqA1gZ/9ioWjiwr1cRSb15WXfJsV4
-         0mXqLfTaR+OYt/9fidY8ZGsLaqE1MOOVJGZJqjTwJR7fmxuFgpFaRy138HOFANpTksbu
-         j6tfggI1uY1qqCpZyifus1qED+6mHb6RupzkZeQBjUdlaJEjmHnOiWYqew/xwPJuXmeq
-         xb5ljayONH0z8lD/vR+ACYYSUjirZpcyotNkWp7IFvg/edTeqovKt6w5C1UPnmAM1cf0
-         A13A==
-X-Forwarded-Encrypted: i=1; AJvYcCX0BIimcWZCAOm1qJAwLXFGH8wbqiCp7fAcFXpYTwcX+HnLKF8ej6fMZrZ0ATK4frkgytXzVoQJ93n7HW5FVuKLcvvXRDJk1RpEOg520e2qbsG3hPU1tb9LqJ6bBPAFIODc8YttxIFBF0Jr0Tx5OhhIetSlBlgmyq7mDppwxsinKw==
-X-Gm-Message-State: AOJu0Yyjhz/retU6vPLeaFqku/+r9o9nKoiCmdKYp8VqEWQl2gl/11PI
-	t17qR1iQSdH7ljZj9JBtrcRJyW3ss8F26dKVwI9/mQR3mVYZj8+txlpsf6aTzvZS5AK51z3I3c9
-	eB9ks5fFip5Ig5AOMCkm+5qGujkU=
-X-Google-Smtp-Source: AGHT+IFJG7mKnewTXcss2FhclEbK/u9dvFW2JvKWtk8LfLNNgKCzHSL2ouZ3o44Ga0XaN3kS1y+lKBfVqXyjDamvMVs=
-X-Received: by 2002:a05:6a21:33a6:b0:1ad:7e4d:2ea6 with SMTP id
- yy38-20020a056a2133a600b001ad7e4d2ea6mr6833735pzb.20.1714859452765; Sat, 04
- May 2024 14:50:52 -0700 (PDT)
+	s=arc-20240116; t=1714859640; c=relaxed/simple;
+	bh=xxmBtKWGvdkIJdYjdgbPDF52rIe+e3/MBmvVib6SB4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nOQ8M009oG51hxayBgCT9mt0SYh0bVTQwOZsj+ksSvnh8zy5+cBWDLc/cuEp137qBq+FL+qCFYHljW7p+4xoTiVyosRpELBDRb8rJBjpvOn6K+qK+9LWcfBYPgUDZ7EkEV5zCIZXWeDtGllhi21Tim0QWCskEvaojgnHK1cd0Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=bmJOHpxd; arc=none smtp.client-ip=161.97.139.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
+	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1s3NKI-005iKv-0e;
+	Sat, 04 May 2024 23:53:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2RcawxP+jTrDT6qeee4zOoQzPnevlA0bkObGmQR6Z3Y=; b=bmJOHpxd5DQQvlxGcWBSpSAPsT
+	5fND490WLv/7KpNaL2Mx93GZE5D8gJmGjh/e5xcukV/sgxXTlmEl4Pa4+Azizjl+TehTxVOQKjmAH
+	nw5gxX4+8MVVpiqvE6fsBWCIfXZ9sEsneYTeHKDl4TyUyDHmH0/i281mkBVMA/BhIgTa+VK7ttY6e
+	Yso/UtTF/+djGsy7tSUrWFs0yJNK9TvWeDXMeLJI+5m7mvR8n93aWLTheZoMdh+dPyIOriXs3VMNm
+	4bV0DdxyxqZ3Q18bS1/rj+GiOmcnODHgd8gg27NwqL3QzKSyitntx/09H80cw0U0zbNWJ7GIo+fS6
+	nzSqRVdw==;
+Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1s3NKE-000aXc-2K;
+	Sat, 04 May 2024 23:53:48 +0200
+Received: from andi by aktux with local (Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1s3NKF-003c4X-1X;
+	Sat, 04 May 2024 23:53:47 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	marex@denx.de,
+	leoyang.li@nxp.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 0/2] ARM: dts: mix: Add Kobo Clara HD rev B
+Date: Sat,  4 May 2024 23:53:42 +0200
+Message-Id: <20240504215344.861327-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504-rasch-gekrochen-3d577084beda@brauner>
-In-Reply-To: <20240504-rasch-gekrochen-3d577084beda@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Sat, 4 May 2024 14:50:40 -0700
-Message-ID: <CAEf4Bzb39_nuiB2DGLG3=2Vo+_qj9Ni2ooCpQyRx8BjZyYmOBg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] ioctl()-based API to query VMAs from /proc/<pid>/maps
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 4, 2024 at 4:24=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Fri, May 03, 2024 at 05:30:01PM -0700, Andrii Nakryiko wrote:
-> > Implement binary ioctl()-based interface to /proc/<pid>/maps file to al=
-low
-> > applications to query VMA information more efficiently than through tex=
-tual
-> > processing of /proc/<pid>/maps contents. See patch #2 for the context,
-> > justification, and nuances of the API design.
-> >
-> > Patch #1 is a refactoring to keep VMA name logic determination in one p=
-lace.
-> > Patch #2 is the meat of kernel-side API.
-> > Patch #3 just syncs UAPI header (linux/fs.h) into tools/include.
-> > Patch #4 adjusts BPF selftests logic that currently parses /proc/<pid>/=
-maps to
-> > optionally use this new ioctl()-based API, if supported.
-> > Patch #5 implements a simple C tool to demonstrate intended efficient u=
-se (for
-> > both textual and binary interfaces) and allows benchmarking them. Patch=
- itself
-> > also has performance numbers of a test based on one of the medium-sized
-> > internal applications taken from production.
->
-> I don't have anything against adding a binary interface for this. But
-> it's somewhat odd to do ioctls based on /proc files. I wonder if there
-> isn't a more suitable place for this. prctl()? New vmstat() system call
-> using a pidfd/pid as reference? ioctl() on fs/pidfs.c?
+Apparently there exists another revision of the Kobo Clara HD
+which has just different regulator setup. So add support for it.
 
-I did ioctl() on /proc/<pid>/maps because that's the file that's used
-for the same use cases and it can be opened from other processes for
-any target PID. I'm open to any suggestions that make more sense, this
-v1 is mostly to start the conversation.
+For details: https://gitlab.com/postmarketOS/pmaports/-/issues/2356
 
-prctl() probably doesn't make sense, as according to man page:
+Andreas Kemnade (2):
+  dt-bindings: arm: fsl: Add Kobo Clara HD rev B
+  ARM: dts: imx: Add Kobo Clara HD rev b
 
-       prctl() manipulates various aspects of the behavior of the
-       calling thread or process.
+ .../devicetree/bindings/arm/fsl.yaml          |  6 ++
+ arch/arm/boot/dts/nxp/imx/Makefile            |  1 +
+ .../dts/nxp/imx/imx6sll-kobo-clarahd-b.dts    | 79 +++++++++++++++++++
+ 3 files changed, 86 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dts
 
-And this facility is most often used from another (profiler or
-symbolizer) process.
+-- 
+2.39.2
 
-New syscall feels like an overkill, but if that's the only way, so be it.
-
-I do like the idea of ioctl() on top of pidfd (I assume that's what
-you mean by "fs/pidfs.c", right)? This seems most promising. One
-question/nuance. If I understand correctly, pidfd won't hold
-task_struct (and its mm_struct) reference, right? So if the process
-exits, even if I have pidfd, that task is gone and so we won't be able
-to query it. Is that right?
-
-If yes, then it's still workable in a lot of situations, but it would
-be nice to have an ability to query VMAs (at least for binary's own
-text segments) even if the process exits. This is the case for
-short-lived processes that profilers capture some stack traces from,
-but by the time these stack traces are processed they are gone.
-
-This might be a stupid idea and question, but what if ioctl() on pidfd
-itself would create another FD that would represent mm_struct of that
-process, and then we have ioctl() on *that* soft-of-mm-struct-fd to
-query VMA. Would that work at all? This approach would allow
-long-running profiler application to open pidfd and this other "mm fd"
-once, cache it, and then just query it. Meanwhile we can epoll() pidfd
-itself to know when the process exits so that these mm_structs are not
-referenced for longer than necessary.
-
-Is this pushing too far or you think that would work and be acceptable?
-
-But in any case, I think ioctl() on top of pidfd makes total sense for
-this, thanks.
 
