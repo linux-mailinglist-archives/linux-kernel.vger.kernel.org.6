@@ -1,104 +1,159 @@
-Return-Path: <linux-kernel+bounces-168735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2708BBCE2
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:51:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CC58BBCE6
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87F521C20EF4
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776961C20DBD
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF454CB55;
-	Sat,  4 May 2024 15:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDC551037;
+	Sat,  4 May 2024 15:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="US+DjQxE"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nBFZQmgd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EC4225D0;
-	Sat,  4 May 2024 15:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E6A3D0A4;
+	Sat,  4 May 2024 15:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714837861; cv=none; b=YLh9LflR3Y6gAsrSTC1+lYZcVm1isfVdrX+lTDN8fxS5ESf6jCw4tDTVwPbfkHZ62zEban8Iiqk8l4zUBMjQtRPfvu3GpznJHdqr4Kiy38NfzlcwsGHoVoNy0bEmrB4r9B7Pj7D3oCWVOYyOlrn2iCr7EwFySTdjB6wC+iZZtCE=
+	t=1714838022; cv=none; b=nmq8sN+SUE/JXepEpC2EPFAliw886bJoBEQiQITCyBbUPEH/30sQNXeU/VCx3cTj1+vMUuI1WN/ABZFIJgXXj+xtriDeNEtXxPOT9OB5zLZXc6jmDoeRBf8AxPMxT/EV/3HW1aGZbeaHuZoBqKTXBIrwKZM/kDtLqqu+xGUxmVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714837861; c=relaxed/simple;
-	bh=8Y5j+hHY5H5LYn2tND6jFGfaH8F4/fR8Qtsmq+cOp/A=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fobw+QDH3MVDeOO3Qhtdqykc5OcU5yXH6Mn/ur8qb3+hGtCRbXEJ8SF5SSm5M0DPDQdWhWQjiD4dlsbOIzds7xSLIWvQGOg+/iASyEpZd/B3UZGYJQW1pVOUjwwEA9m/TpN2CSDkEEXCFJT5KxMTT4MO+OBVpskkZdwgqccYino=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=US+DjQxE; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1714837856; x=1715097056;
-	bh=yDG0Dga8SN4IPSIg58hp6EWOUt/e8hhjmCWy38atFF0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=US+DjQxEAntVV0nXuFezrp71IoYp+ILzZOPBboCUyQ/P7cwQgUqX5lms+XVzHjyrC
-	 Wo4WTY66spY6a6ftoNLM8YOrrJNA4L2yW/QRFx2WhIwY2RmGglrtZayAvsEdNC+Nrk
-	 ci98hu+rbBHjuskMs8EDZ57aaN8PtaTNoxcDdeomNWsu9AF0VgaJpm4AaF/InwkPNf
-	 Kp6Vp2b7L8ahF6ilBMWWvIrRpVG0GpcAhqQxBKmD8jCj96quZTzlSIu4lb0HkfwVn0
-	 UPJSnM+IH5GVCvjjkyHVhDgE2TQ+wXtE8pdkYynnJeryy0xYE8+bsGB7SJzzlju5Nh
-	 nkyX53feZA78Q==
-Date: Sat, 04 May 2024 15:50:51 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 1/9] rust: list: add ListArc
-Message-ID: <ec5ae5ba-85eb-4dad-af4b-bd85fa189043@proton.me>
-In-Reply-To: <CAH5fLgj49zs2=O-e3h=VqkRDDzhozvV6p=-5AKN_Q9-caT++cQ@mail.gmail.com>
-References: <20240402-linked-list-v1-0-b1c59ba7ae3b@google.com> <20240402-linked-list-v1-1-b1c59ba7ae3b@google.com> <2f25f21e-fad8-48bb-aa2b-d61bf8909a41@proton.me> <CAH5fLgjqyfExjckh7KnSLnT+Ok+yjcoJ+DpDkj0gUZRmoz=M8Q@mail.gmail.com> <CAH5fLgj49zs2=O-e3h=VqkRDDzhozvV6p=-5AKN_Q9-caT++cQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: dd5e738b4551f3eb7829e604d9e22de8d31b309c
+	s=arc-20240116; t=1714838022; c=relaxed/simple;
+	bh=8I8m+ARERilkFj7kIbhJ3jfl4OiynemXtq1r//9ZZG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FhBGtJyylf5iAZ88WUvs1TvitYOzHA6qS3HnljX8GG2AyunmIpAvvvn/sElD2DlUqhr0va8NDzbS/See0kuSZsNaHXRnWiH3RxlLD4JNY8fv9IOII+yfV6MeBWJWqxSKs/tzsxILgKAovJN51SkdId921R+QZYrHl/eYLou6jU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nBFZQmgd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED39C072AA;
+	Sat,  4 May 2024 15:53:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1714838021;
+	bh=8I8m+ARERilkFj7kIbhJ3jfl4OiynemXtq1r//9ZZG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nBFZQmgdyX6pMsEUa7czdAYYb8afZ3p6iRVUD/H9YzuOfGgH1cZKo2dib2Jh93VK+
+	 8LPWbA2+H9SGLgmogKYkxW5/Q+Vq/loJY9A+poOwUtd5I2agVivdOgQXtTwcqUx+b6
+	 m+Duex3ZyppN9X/0T/ZfT4gefnqjqWMjeM41aIDI=
+Date: Sat, 4 May 2024 17:53:38 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Andrei Warkentin <andrei.warkentin@intel.com>,
+	Haibo1 Xu <haibo1.xu@intel.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Subject: Re: [PATCH v5 17/17] serial: 8250: Add 8250_acpi driver
+Message-ID: <2024050421-coil-payphone-f3a1@gregkh>
+References: <20240501121742.1215792-1-sunilvl@ventanamicro.com>
+ <20240501121742.1215792-18-sunilvl@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240501121742.1215792-18-sunilvl@ventanamicro.com>
 
-On 03.05.24 16:36, Alice Ryhl wrote:
-> On Thu, Apr 4, 2024 at 4:00=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->>
->> On Wed, Apr 3, 2024 at 5:51=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-me> wrote:
->>>
->>> On 02.04.24 14:16, Alice Ryhl wrote:
->>>> +impl<T: ListArcSafe<ID>, const ID: u64> ListArc<T, ID> {
->>>> +    /// Constructs a new reference counted instance of `T`.
->>>> +    pub fn try_new(contents: T) -> Result<Self, AllocError> {
->>>> +        Ok(Self::from_unique(UniqueArc::try_new(contents)?))
->>>> +    }
->>>> +
->>>> +    /// Use the given initializer to in-place initialize a `T`.
->>>> +    ///
->>>> +    /// If `T: !Unpin` it will not be able to move afterwards.
->>>> +    pub fn pin_init<E>(init: impl PinInit<T, E>) -> error::Result<Sel=
-f>
->>>> +    where
->>>> +        Error: From<E>,
->>>> +    {
->>>> +        Ok(Self::from_pin_unique(UniqueArc::pin_init(init)?))
->>>> +    }
->>>
->>> pin-init has a general trait for this: InPlaceInit. I don't know if the
->>> other functions that it provides would help you.
->>
->> I will use that.
->=20
-> Turns out it's not possible to use the trait in this case, for the
-> same reasons as why Arc isn't using them either.
+On Wed, May 01, 2024 at 05:47:42PM +0530, Sunil V L wrote:
+> RISC-V has non-PNP generic 16550A compatible UART which needs to be
+> enumerated as ACPI platform device. Add driver support for such devices
+> similar to 8250_of.
+> 
+> The driver is enabled when the CONFIG_SERIAL_ACPI_PLATFORM option is
+> enabled. Enable this option for RISC-V.
+> 
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> ---
+>  arch/riscv/configs/defconfig        |  1 +
+>  drivers/tty/serial/8250/8250_acpi.c | 96 +++++++++++++++++++++++++++++
+>  drivers/tty/serial/8250/Kconfig     |  8 +++
+>  drivers/tty/serial/8250/Makefile    |  1 +
+>  4 files changed, 106 insertions(+)
+>  create mode 100644 drivers/tty/serial/8250/8250_acpi.c
+> 
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 3cae018f9315..bea8241f52eb 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -150,6 +150,7 @@ CONFIG_SERIAL_8250=y
+>  CONFIG_SERIAL_8250_CONSOLE=y
+>  CONFIG_SERIAL_8250_DW=y
+>  CONFIG_SERIAL_OF_PLATFORM=y
+> +CONFIG_SERIAL_ACPI_PLATFORM=y
+>  CONFIG_SERIAL_SH_SCI=y
+>  CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+>  CONFIG_VIRTIO_CONSOLE=y
+> diff --git a/drivers/tty/serial/8250/8250_acpi.c b/drivers/tty/serial/8250/8250_acpi.c
+> new file mode 100644
+> index 000000000000..3682443bb69c
+> --- /dev/null
+> +++ b/drivers/tty/serial/8250/8250_acpi.c
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Serial Port driver for ACPI platform devices
+> + *
+> + * This driver is for generic 16550 compatible UART enumerated via ACPI
+> + * platform bus instead of PNP bus like PNP0501. This is not a full
+> + * driver but mostly provides the ACPI wrapper and uses generic
+> + * 8250 framework for rest of the functionality.
 
-Ugh that is annoying, I think we can change `InPlaceInit` to have a
-`PinnedSelf` associated type. I will create a good-first-issue.
+No copyright line?  Odd, but ok, I'll take it, glad to see your company
+finally realizes the lack of needing them :)
 
---=20
-Cheers,
-Benno
 
+And as Andy said, please use the existing driver and extend what you
+need, don't write a new one, we really don't need a new one.
+
+> +static int acpi_platform_serial_probe(struct platform_device *pdev)
+> +{
+> +	struct acpi_serial_info *data;
+> +	struct uart_8250_port port8250;
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *regs;
+> +
+> +	int ret, irq;
+> +
+> +	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!regs) {
+> +		dev_err(dev, "no registers defined\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	memset(&port8250, 0, sizeof(port8250));
+> +
+> +	spin_lock_init(&port8250.port.lock);
+
+Are you sure this works?
+
+thanks,
+
+greg k-h
 
