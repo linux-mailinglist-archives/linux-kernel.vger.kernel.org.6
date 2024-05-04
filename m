@@ -1,248 +1,202 @@
-Return-Path: <linux-kernel+bounces-168751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C381A8BBD17
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:31:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB5A8BBD1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C99282978
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:31:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2661C20D0F
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858DE59167;
-	Sat,  4 May 2024 16:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C058203;
+	Sat,  4 May 2024 16:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5pR3d7c"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihz00wg0"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB8D803;
-	Sat,  4 May 2024 16:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7511D52D;
+	Sat,  4 May 2024 16:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714840252; cv=none; b=uIbvLzm7Zhsg0bQLu11Jq89fHx9ryhst91rOCFHtP37vQ9pRBHffLk/VpEk9vxzIPX6E6DBpUIeo/ZRroSFsYvFbE7Sdk0xO2ODybNsS337I6nJnjoE+V7rgyeQM4NIc4fFDtBB4X8v5KKkjiHnLUhKENZiGr+IYH7ySOSbNCAc=
+	t=1714840283; cv=none; b=mnrePjC5/ecajWN0jAmVvKL1ak6nOITGdz8H7aNasnpGgMGC638w7qBGAeVMi3PCuNrHRyU7u1cs+6uwqWRASk0SReqHGYfHOt8WOliA9P3lCqe5LQ2G8TokNW6AmIAcBgW6gW3FQBZHyhqG86e0O8HJscmMAc3lLB+/T27mFu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714840252; c=relaxed/simple;
-	bh=J6dA8WkpHs/Co2YXGSCUbunvLkMry4Z9wSltZtBtbpQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXjsbR8ZBhxyZp5+oCPqURQixYpUgJp0/adARNjfuUs7I05rZxrQdV6OgflSYvgVJrCbn8HgMep/ss+KcsWhXBroHt5fP4Ui1MOMqjkxWCgTPC5KmRm/7VSSKIwZawJeIHy2PJAhbCG+Wl8y9WEkR8G+6/Fpx4MT06OkdbKgJ7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5pR3d7c; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1714840283; c=relaxed/simple;
+	bh=kzZY9lGQpdtSb8LBt6oSjwlOz7umExQkGa/hvChrAq4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INsLOEqGlwIU6o4Pep14JJs4ZH0DmNyh1wGhS6mwzUxpHj+NUYD6BN7ldv9nIyhFofoQ+/CPUGfjbCpnfVBpLOxLtXKTxC1kJ+U/RNHVjX6pLJKRRNt62JerPY2zjOg+S9rcf+7VvG8zhMArAldDjEmSZhDMwZsvCp+J51UJb+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihz00wg0; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f3761c96aso779924e87.3;
-        Sat, 04 May 2024 09:30:50 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso4835175ad.0;
+        Sat, 04 May 2024 09:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714840249; x=1715445049; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RX4fi+rOn5Iqa6Of2S6mMpsMevJrG0V9bnt+UXzeNC8=;
-        b=c5pR3d7ch0LvFtbWJc00zHcRWGHVyWNrrKTxJBJTfDJVHfwAdOCGO7/LFNBQfE2F8b
-         8aAlZysDnfh76z+aF0sYddgvSsOKjlUHyFVaUPi5OqOG7X3b3f6syRD1cC6L7WSwGM6w
-         0HhmNIFpC+fN36opGwRv6DGZzZjyGxeJRMuYUkMWnFw3XjA54AvbtJoJiQbOPJ9kZAQb
-         z7y8729eJP9xsh9ob101m8WW63IpSffA4Z2FP6oAK7XjghD5dCbVul7bqBOUFSNcoWLl
-         9lHPl7mjTx+VHOmYbdVWBH8SA8/UwgkSAM5qpza/QXJFLRwMre27Zu6fKRxGPDmn+jGA
-         9tGQ==
+        d=gmail.com; s=20230601; t=1714840282; x=1715445082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BVHkSDrp78uKW0uZrcyHhFLD98BFVYL6QDF1S7ek4Xk=;
+        b=ihz00wg0QF51IunlMa6GXXRhK7bvexHyTVCAGS7sH7TaVJlQOSak8YqJHQoep1DHeV
+         aSKPEZzerT1lb13HYrlr5MLLTQXByFB4p3kvu1tcHsO4PFXzC2zmElnymn1H/feo+v1V
+         i/+Y788Pfee315UUZKV7X/V3fg9iXS/Oa6b8kgEwVs805xDP7D5uxSA8/7Rk7X8JKjPE
+         aT/etabnnM2SDThLpOlp6KYeeBhbyVigBgD9lFAh7Xerlzk3MjDnsyDsFGoWgTWyiPpE
+         Nst4jFInRz20UjFiv2ZBIzJmryYH7P+vjUlKR/5e4zs9rYO2ZMWa0NxBN1c1oqe4/Eyy
+         zw6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714840249; x=1715445049;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RX4fi+rOn5Iqa6Of2S6mMpsMevJrG0V9bnt+UXzeNC8=;
-        b=Cmw1jgISnVTU4iZQAOXdpIOvOYHIx4lZCnbu3ds+6EMtcJlkuT1Suu7HB1wtr7KpOu
-         axOOe1OJoqp7lvC8uSblnyJXtzqFip2nvDXmlTywDBJ19Pq79qMobtVQuMqY4/z646PF
-         1MWAbmOTxDRrwMeDN9bONBBg5NLljZ2d2I57Yuu9Zbe1KO/7/FehpnO7zYKbEY4IdTq6
-         9vgOTbZAGBLZWu0Ox/J+HozhfbjkPXLDsDxGfWdhBp7Z0A1Jy/xLhaoewZIRcXvzm/cv
-         QKNlE6WQnSkvrUZps+Dj046I5XtQU9i4f54cRWpbXWQ2qmp22DiAHlZpiS3E71yITI0g
-         ZqbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXU9+5bv4TY1RO7dZip+7+dYX5LXXQaip5lWEUIObU/xVnLV0Wwo+LoLIrsnF5f1M5ZEP1A1IsHCw17ZFiUh3S7N+Sv02T4isqIamA+vKYsTTq1wu/q5r43d5UuGIy6TjICGCNpe2NtfVBqkGT11AkSk0IMYMBjUhVAWgHTTeFdQy67MTeW
-X-Gm-Message-State: AOJu0Yw5lgJrmbiyLwaS8PPFpkfbk/Z1FGdPWdIi62QHjW+L4z2eUk2z
-	2C+qaxUQ7un2ujFLzv3edZj0I9vsv+T4ln0XmE05kLqhdJpi7g479S54i9kv
-X-Google-Smtp-Source: AGHT+IE495vJai2198vLGWjTelR5thIbMzbq9jB52jVLtblJGSXnRx3LpyRjwzHQwi9WHh+7jCh4Fg==
-X-Received: by 2002:a19:914d:0:b0:51d:5ffd:efe4 with SMTP id y13-20020a19914d000000b0051d5ffdefe4mr4463354lfj.1.1714840248686;
-        Sat, 04 May 2024 09:30:48 -0700 (PDT)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id a15-20020a056512200f00b005194debc3e3sm936339lfb.212.2024.05.04.09.30.48
+        d=1e100.net; s=20230601; t=1714840282; x=1715445082;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BVHkSDrp78uKW0uZrcyHhFLD98BFVYL6QDF1S7ek4Xk=;
+        b=p+d7erpo7r6gK6xcvTkCOLMQNpAnTicIIGTcnnBOeoThIBvCAFq1RHSqwQg6z/6EsE
+         oU4g58RSnUiVphnHItlwQ2/ztgYKiEXxhWkyiMWV4pWYmAHv8D9eT2HyJNzfEWE+G/dT
+         CzY7NEFn/WDFd9e5rArH76zMniV6k0NWc0Rzl7hExjYnTWO0eylM71ZQr3uFPGLxBrYo
+         lBHQO/5T3eurTYTaOT4frSjl0BMjIpUqZHQ692WSKdBOnMPgVvddYe5fbPu3SqT4KpGk
+         EXDImMN3+Rv29BRRLbw87XClkz5NgzsNJVkPXdeLBm+J87R40A53ptnPkVnEbLxOYPlL
+         InfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMnytd8mcj2m7WBCXf/2vlNp1eHs42hPBoa+eQgF0xdqb0tRoNwmsUCXQwROYnL1VhY6i+B/YDGyBzZG4QG7Qba/BrTBbzH8z/u7kd
+X-Gm-Message-State: AOJu0YwK0hvdMJq7njEm8qA8AqkRlfAafZnWzJO8Z8WAIq2/y0S1acIW
+	fE3rPWMS/iBS0S3q6JGhfe2o0JgATGRxNX8Jh9rQYnB65elE5POFMMYO/Q==
+X-Google-Smtp-Source: AGHT+IHArHsW3DCfdQpbK2KIyCCirt6QvRblSevbGPQPn2t4LZFf5iduw2DZMI57WDH//nxVT0o+7A==
+X-Received: by 2002:a17:902:f649:b0:1e2:bf94:487 with SMTP id m9-20020a170902f64900b001e2bf940487mr7668589plg.57.1714840281493;
+        Sat, 04 May 2024 09:31:21 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:ae1c:de46:682a:206])
+        by smtp.gmail.com with ESMTPSA id jb13-20020a170903258d00b001ec4ed47ddesm5274490plb.86.2024.05.04.09.31.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 09:30:48 -0700 (PDT)
-Date: Sat, 4 May 2024 19:30:47 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
-	Pavel Machek <pavel@ucw.cz>,
-	Arnaud Ferraris <arnaud.ferraris@collabora.com>
-Subject: Re: [PATCH v2 2/2] media: gc2145: implement basic dvp bus support
-Message-ID: <ZjZit7sDmXJXDg56@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
-	Pavel Machek <pavel@ucw.cz>,
-	Arnaud Ferraris <arnaud.ferraris@collabora.com>
-References: <20240222062214.2627810-1-andrej.skvortzov@gmail.com>
- <20240222062214.2627810-3-andrej.skvortzov@gmail.com>
- <20240426163826.GA3095395@gnbcxd0016.gnb.st.com>
+        Sat, 04 May 2024 09:31:20 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Rob Clark <robdclark@chromium.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm/a6xx: Cleanup indexed regs const'ness
+Date: Sat,  4 May 2024 09:31:13 -0700
+Message-ID: <20240504163114.639228-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240426163826.GA3095395@gnbcxd0016.gnb.st.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Alain,
+From: Rob Clark <robdclark@chromium.org>
 
-thanks for the review.
+These tables were made non-const in commit 3cba4a2cdff3 ("drm/msm/a6xx:
+Update ROQ size in coredump") in order to avoid powering up the GPU when
+reading back a devcoredump.  Instead let's just stash the count that is
+potentially read from hw in struct a6xx_gpu_state_obj, and make the
+tables const again.
 
-On 24-04-26 18:38, Alain Volmat wrote:
-> Hi Andrey,
-> 
-> > --- a/drivers/media/i2c/gc2145.c
-> > +++ b/drivers/media/i2c/gc2145.c
-> > @@ -39,6 +39,10 @@
-> >  #define GC2145_REG_ANALOG_MODE1	CCI_REG8(0x17)
-> >  #define GC2145_REG_OUTPUT_FMT	CCI_REG8(0x84)
-> >  #define GC2145_REG_SYNC_MODE	CCI_REG8(0x86)
-> > +#define GC2145_SYNC_MODE_VSYNC_POL	BIT(0)
-> > +#define GC2145_SYNC_MODE_HSYNC_POL	BIT(1)
-> > +#define GC2145_SYNC_MODE_OPCLK_POL	BIT(2)
-> > +#define GC2145_SYNC_MODE_OPCLK_GATE	BIT(3)
-> 
-> OPCLK_GATE added but never used.
-All near bits were described. I decided to put description for this bit
-as well, so all bits 0-5 are described in source code.
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 15 +++++++++------
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h |  8 ++++----
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-> 
-> >  #define GC2145_SYNC_MODE_COL_SWITCH	BIT(4)
-> >  #define GC2145_SYNC_MODE_ROW_SWITCH	BIT(5)
-> >  #define GC2145_REG_BYPASS_MODE	CCI_REG8(0x89)
-> > @@ -53,6 +57,12 @@
-> >  #define GC2145_REG_GLOBAL_GAIN	CCI_REG8(0xb0)
-> >  #define GC2145_REG_CHIP_ID	CCI_REG16(0xf0)
-> >  #define GC2145_REG_PAD_IO	CCI_REG8(0xf2)
-> > +#define GC2145_REG_PLL_MODE1	CCI_REG8(0xf7)
-> > +#define GC2145_REG_PLL_MODE2	CCI_REG8(0xf8)
-> > +#define GC2145_REG_CM_MODE	CCI_REG8(0xf9)
-> > +#define GC2145_REG_CLK_DIV_MODE	CCI_REG8(0xfa)
-> > +#define GC2145_REG_ANALOG_PWC	CCI_REG8(0xfc)
-> 
-> All 5 define added but never used, those settings are part of the cci_sequences
-> table. Maybe either keep the define and update the tables or drop the
-> new define ?
-
-> > +#define GC2145_REG_PAD_IO	CCI_REG8(0xf2)
-> 
-> Was already defined in the existing code, see above.
-Thanks, I'll drop all unneeded defines in v3.
-
-
-> > @@ -773,6 +784,38 @@ static int gc2145_set_pad_format(struct v4l2_subdev *sd,
-> >  	return 0;
-> >  }
-> >  
-> > +static int gc2145_config_dvp_mode(struct gc2145 *gc2145,
-> > +				   const struct gc2145_format *gc2145_format)
-> 
-> alignment ?
-Thanks.
-
-> > +{
-> > +	int ret = 0;
-> > +	u64 sync_mode;
-> > +	int flags;
-> > +
-> > +	flags = gc2145->ep.bus.parallel.flags;
-> 
-> int flags = gc2145->ep.bus.parallel.flags;
-> ?
-Fix in v3.
-
-> > @@ -1244,36 +1292,57 @@ static int gc2145_check_hwcfg(struct device *dev)
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &ep_cfg);
-> > +
-> 
-> no new line here.
-ok.
-
-> > +	gc2145->ep.bus_type = V4L2_MBUS_CSI2_DPHY;
-> > +	ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &gc2145->ep);
-> > +	if (ret) {
-> > +		gc2145->ep.bus_type = V4L2_MBUS_PARALLEL;
-> > +		ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &gc2145->ep);
-> > +	}
-> >  	fwnode_handle_put(endpoint);
-> > -	if (ret)
-> > +	if (ret) {
-> > +		dev_err(dev, "could not parse endpoint\n");
-> >  		return ret;
-> > -
-> > -	/* Check the number of MIPI CSI2 data lanes */
-> > -	if (ep_cfg.bus.mipi_csi2.num_data_lanes != 2) {
-> > -		dev_err(dev, "only 2 data lanes are currently supported\n");
-> > -		ret = -EINVAL;
-> > -		goto out;
-> >  	}
-> >  
-> > -	/* Check the link frequency set in device tree */
-> > -	if (!ep_cfg.nr_of_link_frequencies) {
-> > -		dev_err(dev, "link-frequency property not found in DT\n");
-> > +	switch (gc2145->ep.bus_type) {
-> > +	case V4L2_MBUS_CSI2_DPHY:
-> > +		/* Check the link frequency set in device tree */
-> > +		if (!gc2145->ep.nr_of_link_frequencies) {
-> > +			dev_err(dev, "link-frequencies property not found in DT\n");
-> > +			ret = -EINVAL;
-> > +			goto out;
-> > +		}
-> 
-> any reason for change of the if order ? before num_data_lanes was
-> checked first, then nr_of_link_frequencies, then 3 link_frequencies.
-
-No reason. I'll change order like it was before in v3.
-
-> > +
-> > +		/* Check the number of MIPI CSI2 data lanes */
-> > +		if (gc2145->ep.bus.mipi_csi2.num_data_lanes != 2) {
-> > +			dev_err(dev, "only 2 data lanes are currently supported\n");
-> > +			ret = -EINVAL;
-> > +			goto out;
-> > +		}
-> > +
-> > +		if (gc2145->ep.nr_of_link_frequencies != 3 ||
-> > +			gc2145->ep.link_frequencies[0] != GC2145_640_480_LINKFREQ ||
-> > +			gc2145->ep.link_frequencies[1] != GC2145_1280_720_LINKFREQ ||
-> > +			gc2145->ep.link_frequencies[2] != GC2145_1600_1200_LINKFREQ) {
-> 
-> alignment
-Thanks.
-
-> 
-> > +			dev_err(dev, "Invalid link-frequencies provided\n");
-> > +			ret = -EINVAL;
-> > +			goto out;
-> > +		}
-> > +		break;
-> > +
-> 
-> no newline here
-ok
-
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+index 77146d30bcaa..0a7717a4fc2f 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+@@ -24,6 +24,7 @@
+ struct a6xx_gpu_state_obj {
+ 	const void *handle;
+ 	u32 *data;
++	u32 count;	/* optional, used when count potentially read from hw */
+ };
+ 
+ struct a6xx_gpu_state {
+@@ -1437,16 +1438,18 @@ static u32 a7xx_get_cp_roq_size(struct msm_gpu *gpu)
+ /* Read a block of data from an indexed register pair */
+ static void a6xx_get_indexed_regs(struct msm_gpu *gpu,
+ 		struct a6xx_gpu_state *a6xx_state,
+-		struct a6xx_indexed_registers *indexed,
++		const struct a6xx_indexed_registers *indexed,
+ 		struct a6xx_gpu_state_obj *obj)
+ {
++	u32 count = indexed->count;
+ 	int i;
+ 
+ 	obj->handle = (const void *) indexed;
+ 	if (indexed->count_fn)
+-		indexed->count = indexed->count_fn(gpu);
++		count = indexed->count_fn(gpu);
+ 
+-	obj->data = state_kcalloc(a6xx_state, indexed->count, sizeof(u32));
++	obj->data = state_kcalloc(a6xx_state, count, sizeof(u32));
++	obj->count = count;
+ 	if (!obj->data)
+ 		return;
+ 
+@@ -1454,7 +1457,7 @@ static void a6xx_get_indexed_regs(struct msm_gpu *gpu,
+ 	gpu_write(gpu, indexed->addr, 0);
+ 
+ 	/* Read the data - each read increments the internal address by 1 */
+-	for (i = 0; i < indexed->count; i++)
++	for (i = 0; i < count; i++)
+ 		obj->data[i] = gpu_read(gpu, indexed->data);
+ }
+ 
+@@ -1890,9 +1893,9 @@ static void a6xx_show_indexed_regs(struct a6xx_gpu_state_obj *obj,
+ 		return;
+ 
+ 	print_name(p, "  - regs-name: ", indexed->name);
+-	drm_printf(p, "    dwords: %d\n", indexed->count);
++	drm_printf(p, "    dwords: %d\n", obj->count);
+ 
+-	print_ascii85(p, indexed->count << 2, obj->data);
++	print_ascii85(p, obj->count << 2, obj->data);
+ }
+ 
+ static void a6xx_show_debugbus_block(const struct a6xx_debugbus_block *block,
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
+index 3b1ba514e8ee..dd4c28a8d923 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
+@@ -397,7 +397,7 @@ struct a6xx_indexed_registers {
+ 	u32 (*count_fn)(struct msm_gpu *gpu);
+ };
+ 
+-static struct a6xx_indexed_registers a6xx_indexed_reglist[] = {
++static const struct a6xx_indexed_registers a6xx_indexed_reglist[] = {
+ 	{ "CP_SQE_STAT", REG_A6XX_CP_SQE_STAT_ADDR,
+ 		REG_A6XX_CP_SQE_STAT_DATA, 0x33, NULL },
+ 	{ "CP_DRAW_STATE", REG_A6XX_CP_DRAW_STATE_ADDR,
+@@ -408,7 +408,7 @@ static struct a6xx_indexed_registers a6xx_indexed_reglist[] = {
+ 		REG_A6XX_CP_ROQ_DBG_DATA, 0, a6xx_get_cp_roq_size},
+ };
+ 
+-static struct a6xx_indexed_registers a7xx_indexed_reglist[] = {
++static const struct a6xx_indexed_registers a7xx_indexed_reglist[] = {
+ 	{ "CP_SQE_STAT", REG_A6XX_CP_SQE_STAT_ADDR,
+ 		REG_A6XX_CP_SQE_STAT_DATA, 0x33, NULL },
+ 	{ "CP_DRAW_STATE", REG_A6XX_CP_DRAW_STATE_ADDR,
+@@ -433,12 +433,12 @@ static struct a6xx_indexed_registers a7xx_indexed_reglist[] = {
+ 		REG_A6XX_CP_ROQ_DBG_DATA, 0, a7xx_get_cp_roq_size },
+ };
+ 
+-static struct a6xx_indexed_registers a6xx_cp_mempool_indexed = {
++static const struct a6xx_indexed_registers a6xx_cp_mempool_indexed = {
+ 	"CP_MEMPOOL", REG_A6XX_CP_MEM_POOL_DBG_ADDR,
+ 		REG_A6XX_CP_MEM_POOL_DBG_DATA, 0x2060, NULL,
+ };
+ 
+-static struct a6xx_indexed_registers a7xx_cp_bv_mempool_indexed[] = {
++static const struct a6xx_indexed_registers a7xx_cp_bv_mempool_indexed[] = {
+ 	{ "CP_MEMPOOL", REG_A6XX_CP_MEM_POOL_DBG_ADDR,
+ 		REG_A6XX_CP_MEM_POOL_DBG_DATA, 0x2100, NULL },
+ 	{ "CP_BV_MEMPOOL", REG_A7XX_CP_BV_MEM_POOL_DBG_ADDR,
 -- 
-Best regards,
-Andrey Skvortsov
+2.44.0
+
 
