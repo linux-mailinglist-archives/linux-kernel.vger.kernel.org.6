@@ -1,106 +1,77 @@
-Return-Path: <linux-kernel+bounces-168592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D98BBA92
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:44:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D657C8BBA96
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77FB01C21077
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:44:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C7A0B21917
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 10:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548681C6B9;
-	Sat,  4 May 2024 10:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIVHK8rJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D839C1BF3F;
+	Sat,  4 May 2024 10:51:42 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8343F18C3D;
-	Sat,  4 May 2024 10:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2C45258;
+	Sat,  4 May 2024 10:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714819475; cv=none; b=f9FlggnLAClQYuUGve9GDh9aVbeFY/wd5AcE5/Kri/xHMqsQPDU5rpO4fHJk3F7Ei3cpKwl9q895vRz9ZAkOWN/5IlarNWYLJ+qGn32SSZbgUwEmCxqyppGNISmL9EXa10/tyJv+vGPf7TthJfFt0uvNnsMYO0OZ/ZAlziPt11o=
+	t=1714819902; cv=none; b=nxZk9XLBdpSR3sXuqpx8uTuOyG3u3rzKzKLDBfzDVJUvOdGN860aHsP0gqpf2js02FpRWHwzPIOnjgG/EFtLQNEHn6PRO3zHC9FxoAX83/EobocZBmrChjYdlwyDRV5AkzwL67M+MklxNru2wFnewfy5/BHyyiWuOz7GKDX9PRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714819475; c=relaxed/simple;
-	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TemzpVE/UgkgN5DQgxQFuvb96KDELhEpvlfQdVso2SBFgj5XMQ17B+eSLWxCvl3RjepZm8TQ1/paDpdIXdeohFGFQEjeAEEk0qn+OKzDGNLYhb6r1WZF5d6iERXLreqLGcOoXLZM2WRlCCCCmKFBqnxH9xHzSJ1VatCR468qBhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIVHK8rJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3E0C072AA;
-	Sat,  4 May 2024 10:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714819475;
-	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gIVHK8rJGTpZuS9PubMDG4bY2YumcGjk6TzRhJqqAh/plbNUsquxQFGCUWECGrJRE
-	 EzEvSIxTo4EYaTNfUE2NBTtvQOeoS6PxKjWcxkktWj4E/WHJr8O8fAnG3sfoTBN/4+
-	 G8i9tDMgpoyUa85xPHmgl+X+CQSc0wuLRN7dziptjOtID8DTpn20rQzI5uVZV/AEjb
-	 4Ape1g8W24bX7M1DAREc4k2jprCEjKPolqNkqjfYm83hFYMcF9DEBJfSs+DW6g3CfW
-	 1/6/xZZebHis+jmMY6X8+A/X1qDg3q6lPjUs79o8NavTNxTFe91+9fo0VupPerS0F3
-	 7PiA+rIodq4lg==
-Date: Sat, 4 May 2024 12:44:28 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240504-chatten-unbelastet-b308db41727c@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240503214531.GB2118490@ZenIV>
- <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
- <20240503220145.GD2118490@ZenIV>
- <20240503220744.GE2118490@ZenIV>
- <CAHk-=whULchE1i5LA2Fa=ZndSAzPXGWh_e5+a=YV3qT1BEST7w@mail.gmail.com>
- <20240503233900.GG2118490@ZenIV>
+	s=arc-20240116; t=1714819902; c=relaxed/simple;
+	bh=X4Il8DnsZvuxyI5MynZ0dTBzMmmyjgraR9bTmVYz6dE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Na4YP6i8FKXVT1+QkTUelDsIF3jz6oU7sQU4gkUtz4o68brzptAy84jkqcwGFvAFaqYcK1Xnk/csr8jvzs3Egc95QcVbypOPhEVYjyvBcwa42K5dHIrrXN3WgDOGH6ZAT6VJF1MKkXl1kDVUt5inQo6wCmKU3JuPUmAWnRxPdHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b5d.versanet.de ([83.135.91.93] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1s3CzM-0001m9-Ud; Sat, 04 May 2024 12:51:33 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: Remove some unused fields in struct rockchip_mmc_clock
+Date: Sat,  4 May 2024 12:51:30 +0200
+Message-Id: <171481988029.3538483.14745694145472160421.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <410bc0f86c7b9f1c80f8a4e9a2a028a9a6ee1ec0.1713970085.git.christophe.jaillet@wanadoo.fr>
+References: <410bc0f86c7b9f1c80f8a4e9a2a028a9a6ee1ec0.1713970085.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240503233900.GG2118490@ZenIV>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 04, 2024 at 12:39:00AM +0100, Al Viro wrote:
-> On Fri, May 03, 2024 at 04:16:15PM -0700, Linus Torvalds wrote:
-> > On Fri, 3 May 2024 at 15:07, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > Suppose your program calls select() on a pipe and dmabuf, sees data to be read
-> > > from pipe, reads it, closes both pipe and dmabuf and exits.
-> > >
-> > > Would you expect that dmabuf file would stick around for hell knows how long
-> > > after that?  I would certainly be very surprised by running into that...
-> > 
-> > Why?
-> > 
-> > That's the _point_ of refcounts. They make the thing they refcount
-> > stay around until it's no longer referenced.
-> > 
-> > Now, I agree that dmabuf's are a bit odd in how they use a 'struct
-> > file' *as* their refcount, but hey, it's a specialty use. Unusual
-> > perhaps, but not exactly wrong.
-> > 
-> > I suspect that if you saw a dmabuf just have its own 'refcount_t' and
-> > stay around until it was done, you wouldn't bat an eye at it, and it's
-> > really just the "it uses a struct file for counting" that you are
-> > reacting to.
+On Wed, 24 Apr 2024 16:48:29 +0200, Christophe JAILLET wrote:
+> In "struct rockchip_mmc_clock", the 'id' field is unused.
+> Remove it.
 > 
-> *IF* those files are on purely internal filesystem, that's probably
-> OK; do that with something on something mountable (char device,
-> sysfs file, etc.) and you have a problem with filesystem staying
-> busy.
+> Found with cppcheck, unusedStructMember.
+> 
+> 
 
-In this instance it is ok because dma-buf is an internal fs. I had the
-exact same reaction you had initially but it doesn't matter for dma-buf
-afaict as that thing can never be unmounted.
+Applied, thanks!
+
+[1/1] clk: rockchip: Remove some unused fields in struct rockchip_mmc_clock
+      commit: 947b8f2a8b5155f6e9560af07ed65b3cc9aecd75
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
