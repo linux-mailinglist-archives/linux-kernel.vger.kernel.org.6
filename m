@@ -1,124 +1,101 @@
-Return-Path: <linux-kernel+bounces-168665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A888BBBB2
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076B58BBBB4
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 15:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3B91B21835
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:01:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BFF1B2170A
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 13:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E0A381BD;
-	Sat,  4 May 2024 13:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299782C190;
+	Sat,  4 May 2024 13:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0LgD052"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aWzKdYoN"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A3A23763;
-	Sat,  4 May 2024 13:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20884A1C;
+	Sat,  4 May 2024 13:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714827648; cv=none; b=VlVDfDzPRN7TGvIBq9l21BWE+uXQwtcs5dcNP+X71YAkS8VSuZgYrjK4iaSKKkl+DGKLjSnU/HFKmyulfRP/n2x9n66qIv9TLQmWWyoePoMKq4nETVr2MadfSd7aUg2Lt7l7QHlryA37eL173FOqY/zahclAm+3q3LhQtN1WaGk=
+	t=1714827965; cv=none; b=Wt+/UHtZcP+taqqCAz+7PLxoJkn47KkFQiG5cOy4Bq+SEZNWBJJv5JSmyvHyzDzzLn2MqCx0ja39X2oxhwDWDUE7lwPX7kN+cPEMQL3s9DZEbkTev5Ui/0x+44sHg0h3Napxwy8GDI0+02tHyp4uLmb5loRaKNQcKcEYiaJBJ8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714827648; c=relaxed/simple;
-	bh=1XLsS9UZ3/2QFzrtiwlhMbPrbRDok3+gNqxLDQ7l88A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X5v6MR0ff4C+bTg4nEzqDlSGSvBJV5NgJ0avGdFrUTFQ3PsdPzoc1E469IWAcrLTRaPjgYHjd5K7AmvEZ5s07tfr9DtTD1/EZtcUd866XipVd9QWU+ekb3+wsHYRl4QsJ0O2KcQgtlPnCl+vSelSDHEhx8LzSiNwcLP9KqnxvbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0LgD052; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-418e4cd2196so4376405e9.1;
-        Sat, 04 May 2024 06:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714827645; x=1715432445; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aIHGQYXLm+H3AT0/XK/EI9TEN++7QBgYZ3oaGHN9sJw=;
-        b=g0LgD052s4k4eR96/OJkr4+m8Erc7/BSv0iJy+TWoOrjL5AtM9m1QneqpuSQP+q069
-         FMSNIvaAbUwX1PBKNmCy3AzXeNqNj+4alocwyba810NMNFqIwDsV4/OyWrBOk9rDm+9C
-         Leh37TxDzpoMeSBFdOcKb5SyFnfIcL/n5v3y2jfuRJySxa3Hx5qWrdybwMnMXiy2nDlr
-         WThTHoygp6CsWoC4JG7Z7nE1BHG5+pmHLnC/ZfYQQwqPe4RlKJ2Q2zyLaMqDnbDi39/V
-         RXL049h+e2SxtHkEOuUD5dzdZJtxwBZNhcWTbYz3+7LuM1ODHEV6Qy8WpSNy8nyaWUD9
-         XqPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714827645; x=1715432445;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aIHGQYXLm+H3AT0/XK/EI9TEN++7QBgYZ3oaGHN9sJw=;
-        b=kZF8y7IKBdqnN3c59nFBRNCV/csDeWNb+IKwnEC4KlK1uorfzLdOu/sQyoqmQeuuPJ
-         B/qFAzzcVFwz13bzPJIC5QZUCv1cj0Fwh23MGcgfDKVb3rfWa0DDFzA9e1bByM/W1tTc
-         Y+2KmjBesZwncoWaOVh1qQoiGfBLDjPCpWVLKSaFCVJtcRsXP/No4H9/HWDlv0sXrhOr
-         4wwJTHUGJR737KIao9wXfor6xZSDBn1GeFdCQ29oDyk7lHzBacttiVb7uXCWChSNr0pa
-         xozqNE27IUbdqCiXyP/6srF7UhbgBJXhsUzivJmRKYmmiW3OE5xAwn8lTUuXaNHpP6PZ
-         A6KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTIEnbfnktv4TTPhXnFLwChg1BdQ8GFEGdWAdHaiI6SQxEBYc3oqjNXP7qZ6OshfFPf2vOt1xhzJM8yATmFv4LJokKx87Yjy/2cvcku/6b5ahy8X6us92wxzSxCuoo9M89kX1kwixvhQ==
-X-Gm-Message-State: AOJu0YxclTmv/fC6y4NbTqfHQdg2Lj1Oh2SMCmimoBDWVWOIB1sjA6qW
-	qLHNwaSggQCP4HEWN6CeP1NLvDs7hZfFJY0+wWuNo6vywU5HZAp2L7EYb78a
-X-Google-Smtp-Source: AGHT+IFXPso6D3OpBTPljSL2slSyWkyt71cnnck7i19mdvCVJ8hlHJfxiDrACzw264Taqq3o6Kqwug==
-X-Received: by 2002:a05:600c:3514:b0:41d:7c48:5555 with SMTP id h20-20020a05600c351400b0041d7c485555mr3895582wmq.20.1714827644972;
-        Sat, 04 May 2024 06:00:44 -0700 (PDT)
-Received: from [192.168.1.130] (BC24954B.unconfigured.pool.telekom.hu. [188.36.149.75])
-        by smtp.gmail.com with ESMTPSA id r13-20020a05600c35cd00b0041bf45c0665sm12888998wmq.15.2024.05.04.06.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 06:00:44 -0700 (PDT)
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Date: Sat, 04 May 2024 14:59:49 +0200
-Subject: [PATCH v2 2/2] dt-bindings: iio: imu: bmi160: add bmi120
+	s=arc-20240116; t=1714827965; c=relaxed/simple;
+	bh=rm7S5XO0N8eppi9nmL2W1Piw3+dLivBrLKsKCCKFKyg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kp5XwhF4H7+lojiLdQPQJV3Uw7VN+nt/hbL2SaN2g6j3hdhS480EgJ+5IPASQRERqGGnAWqTWWQakexBPif2ZPnyQTjuGskS0K1oP/D0VpZhCwA70tCzZlOjoc5CY0umaJlpajEqtoQadQl7fnjJRrPICDURaHCPHcYqZa6MVSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aWzKdYoN; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714827955; x=1715432755; i=markus.elfring@web.de;
+	bh=rm7S5XO0N8eppi9nmL2W1Piw3+dLivBrLKsKCCKFKyg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aWzKdYoNGt84UoCaMpAxp6uEC+Pozw5Cd8/9EcH+Qn7ykMw3jEOJ+8sP9pwDtELr
+	 Ug1TIYkwew6yYLc0evu/evZ59q5HZ7PAfCXTmk9TYUirK47n3O3/X0U/G1x4XNeta
+	 6xPS1OjM6b6QT1A3Js5LuCUPCNLQiJE58yPVXj8Dj37Bu7MR+N3ymaZgZobvaJAhE
+	 FqamEUQLeXnZJTaLCHEImnWoc73dnoB5W4iQ/pGX3UK8JiNC87+mkfeIsdOX8lhRF
+	 n4vfnz7D+LDwvYpgpknWm31lvFDAPPo02pZ5dY9q99Zvbvh1ISY3pItaXnpHzC9wc
+	 swItuOdo7SBVS6EpOA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpU1u-1sQRHL2WcO-00psPT; Sat, 04
+ May 2024 15:05:55 +0200
+Message-ID: <6d2dc0e6-e32a-4c47-92e5-bfb916dbeee0@web.de>
+Date: Sat, 4 May 2024 15:05:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240504-bmi120-v2-2-3b3ce6e1c3c6@gmail.com>
-References: <20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com>
-In-Reply-To: <20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>, 
- Danila Tikhonov <danila@jiaxyga.com>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+To: Levi Yun <ppbuk5246@gmail.com>, linux-mm@kvack.org,
+ kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240126152556.58791-1-ppbuk5246@gmail.com>
+Subject: Re: [PATCH] kswapd: Replace try_to_freeze to
+ kthread_freezable_should_stop.
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240126152556.58791-1-ppbuk5246@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7rUmHQbZFBJe+Vs3XzpJjKQH/XoTgUe3sTSmqk1ejiThXGI3AoI
+ 5GGO/CurzVJ1Au8Vk3F/y86KSddpAkF5Y/6EbjbHrEkOhvtWoTcyTTsMWPMcmxwU2rz1Kb8
+ Ce7ZWJ6m+xhI0BD2rf0VTTWGCdtbnl14fcndePw2QCa2GrTX0epJj8DXTMDdVOeOumMXuQy
+ CGDNmBOCj4jTaqhGeogmw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xxtRwIJ4vh0=;rhYShkHGJVZAI2gvklGkUC2/+NW
+ ez9wpkYG3wwptBN3wlNzbfsF0dnBbly1pk5uTZk4HnnrtjIfR2tecmxi6VAqy15K9u1vgiGOE
+ u/DYpSVAZxK1mRUS6eaLwBTYqMnkri70Z98Q1j5bVD12h8P6kYyKemRymo1bIkRCy0MYAK8cQ
+ 5djfK/rQbjpGLYAWbpCERqZM+T/vShSv8cJyjxryfCTOL06s96cpLE9HJ7t/80TUSNmrdPjpR
+ l3X8gBlFYvX6qJz+RH/3YL5sFukLjS1w+CLwkXMebtcX/B9OHfwpPG2nNb7++49biRkhFB9hY
+ pWgrVaIQfQu9WlMFwVxvXOnmSAH89ngOGrKsuPp3tG+s55X17Iy5B5Nd13acBfmzWSdj7E/Jm
+ ZaAB0WM2XI2XgusdoXzhlEpLxjLATdZolGLkNcZuO1tCtR575dNpLqOV8GM3FynO1p54YCkmY
+ kz5pI1/M1Lf/OjVSHSn3yCJTG0HT7wAZYsAhuDBhXrnIFcK86CPwQPnf/Litz3H2z5U8g3WHZ
+ bXZJzcos6SYAjV2qmACqZyu34jKjwu+yhUNW65Mbnwzoj51yN5C9bmmSUnqrNKfTeRkcDhCGd
+ Ki7+gh6gGnG+dlX3OOMPUKs9XImgrKt7LmXwbceudh22jglWmRTmd7GU8qgiYWK+PVJWmahvd
+ 3sD9Xwb4VXgS74EqIDJBoFxkUG221ux89PbVMBccT38wJjmPV/jmOLMwSHuUJqq3Ghit+4wYV
+ PcQRUwphPcIyUkAn4pzcKZrw9SmGtzBT5jWYPAhHOPwvUv28duOOnmBDVlPGQqO8phCCcjXg+
+ jxHLjrtBRP+JiUbLX5fjbTswJVa2kjCyzAgaVG9diLXukJVnvxrElZubv8xy4Qb3uS
 
-From: Danila Tikhonov <danila@jiaxyga.com>
+Will an adjustment become relevant for the summary phrase?
+Would you like to append parentheses to mentioned function names?
 
-Document bosch,bmi120 compatible.
 
-Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-Signed-off-by: Barnbás Czémán <trabarni@gmail.com>
----
- Documentation/devicetree/bindings/iio/imu/bosch,bmi160.yaml | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> Instead of using try_to_freeze, use kthread_freezable_should_stop in
+> kswapd.
+> By this, we can avoid unnecessary freezing when kswapd should stop.
 
-diff --git a/Documentation/devicetree/bindings/iio/imu/bosch,bmi160.yaml b/Documentation/devicetree/bindings/iio/imu/bosch,bmi160.yaml
-index 47cfba939ca6..3b0a2d8b2e91 100644
---- a/Documentation/devicetree/bindings/iio/imu/bosch,bmi160.yaml
-+++ b/Documentation/devicetree/bindings/iio/imu/bosch,bmi160.yaml
-@@ -16,7 +16,11 @@ description: |
- 
- properties:
-   compatible:
--    const: bosch,bmi160
-+    oneOf:
-+      - const: bosch,bmi160
-+      - items:
-+          - const: bosch,bmi120
-+          - const: bosch,bmi160
- 
-   reg:
-     maxItems: 1
+How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
 
--- 
-2.45.0
-
+Regards,
+Markus
 
