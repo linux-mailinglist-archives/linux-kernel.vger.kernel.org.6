@@ -1,102 +1,84 @@
-Return-Path: <linux-kernel+bounces-168742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0638BBCFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:08:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9884C8BBCFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE421F21B60
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B52282056
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8CD5A0E6;
-	Sat,  4 May 2024 16:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463E14122C;
+	Sat,  4 May 2024 16:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YkXYRX+S"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YaYlLbtj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B4C40C03;
-	Sat,  4 May 2024 16:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86ED740C03;
+	Sat,  4 May 2024 16:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714838921; cv=none; b=V51RGXuRbjYjXEoSGoMbGnQH43cvm+9yZbVWHEn8HnFclf8vNTwnmIaSdX7EhscnyiEJGOd/M7R/qRphspVRbMbUrtRstoeCRikznY9vHWVLIJvIdrVFUAuIWdqN4Kk9sW7nHD8KZkfPxqUbzEpMjPlYAN0fVZxn6rd3KB4m3iI=
+	t=1714838915; cv=none; b=emocBChL9Py1N1jHPemVzG3k4aiLIdTz2DgGtjN2nxM6tRx6RrHmVjA/xeixJmSnzP+14sRWqrHssQIiHM6lJuDMlrjyVqncFDi6nHpweaUMLaUbSJqJ4eUMDiGImASdkE6UTT/FVgYsoFIdxDYNmAGUqFIk3AatMkOjzZ+Z/oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714838921; c=relaxed/simple;
-	bh=CB5nxguzQ/abdMOLQ0vP5QKBOqXDtL8p9+UDyZXBqAo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=PAKtyWWf3KXPrgjP3gTWu0wK+5+6wJv1s4SY9R87utY1P6LKTzanNwDzDUVC8PKUoF+Wv6RCySx9JVFjHc74BMvSMR9tu3Xkbpx/tgd/il+MfkcfyOldvbhUeiyhpgzLeKAhn/2iQgwa3PJoZtJLyBmAIGZFkq+X9HhcNTOU408=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YkXYRX+S; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714838891; x=1715443691; i=markus.elfring@web.de;
-	bh=CB5nxguzQ/abdMOLQ0vP5QKBOqXDtL8p9+UDyZXBqAo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YkXYRX+SsalO/beBUJnywGogNd1ud4Uz0iYtyXevIwRfJiSfZtC7iljt629iKEM3
-	 0lLWg6JOs9VAmhbpFKxLIpahRhRSE5hWRoMd5zm/SQ4syuxy8kEsd91OjCtuZNEF8
-	 wgz+rdL9Cgh5FH+QjDPi1lDgdrhqLW1bd3DfJ5e7XutsiTSXduVMj5pIFSsFfOE64
-	 rlNOl1IvOis+xUXxgt8PC07eBbyysI8FNDNKkpZhbvam3myhks234/8p2DfEnMwES
-	 Bp/l58z1b/nplbGw0mK1dMWdVzQC6Bqhf5QGRUzNHML7oeOov95jWqUrGxbXl4LPT
-	 gU9WLQFJ60O5yWFqSg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MC0LH-1rvsrm2ViP-00CQyk; Sat, 04
- May 2024 18:08:11 +0200
-Message-ID: <321b2cdb-95e1-4bfb-9811-a853245beb17@web.de>
-Date: Sat, 4 May 2024 18:08:08 +0200
+	s=arc-20240116; t=1714838915; c=relaxed/simple;
+	bh=wwaTRDS9tEE5USkR/1JxhoWU+nwvf1phzHVbJVUzqA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCIkqYzg7vmsBfAkPsomb33kyAz/8fNyekKbeGgPnEzk4ikmlhDekRb+0g2zMF2wTG+/BUA/pltwmPhxca0RcvfMxVZPEeDsNA7khZZJIGXYcejYjaRvHUzZHjPA1jWCScvsODMGO5f2aFKNlxigxcLofBJdX5PWYMzWKW7REWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YaYlLbtj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A94C072AA;
+	Sat,  4 May 2024 16:08:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1714838915;
+	bh=wwaTRDS9tEE5USkR/1JxhoWU+nwvf1phzHVbJVUzqA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YaYlLbtjCKrLwbl2zTCOZsaIZ5NzeSfKY5zeUamsmHYVO8JclOuCzMfzta7+CKbQi
+	 qxcf+quMczY96vtiZsysJdN++RL6KWHK0jwwyfulKW1Bhb/SD1SVlDbwnda+KP/YSl
+	 59HA3TzWihmMifjtVgNyMTB8nLbyarkY6qBLaaVY=
+Date: Sat, 4 May 2024 18:08:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
+Subject: Re: [PATCH printk v5 12/30] serial: core: Implement processing in
+ port->lock wrapper
+Message-ID: <2024050424-agony-document-677c@gregkh>
+References: <20240502213839.376636-1-john.ogness@linutronix.de>
+ <20240502213839.376636-13-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jorge Harrisonn <jorge.harrisonn@usp.br>, Lais Nuto <laisnuto@usp.br>,
- linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240501215724.26655-2-jorge.harrisonn@usp.br>
-Subject: Re: [PATCH 1/2] iio: adc: ad7606: using claim_direct_scoped for code
- simplification
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240501215724.26655-2-jorge.harrisonn@usp.br>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TMeWClk2hCaquekmmyaU5QdHKlXEicCa872NxIwUstjhWnnqzWq
- h9Op9cZuwuie+E6bNvVgFHY4TqerNX1p2YmiRVCCQtqV7ZoLcJIP2XuL/LZK4CzuS/n67la
- 2gnAX6WS4OZAfz4ZWT6PKU6671zx43OIJRxqpEGt73rvwLUDpr6dL5yXtINCcHjbyPk6tIE
- BAuCPcPuaF+AIOPahhEew==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tt0HV3/HUI0=;BbJtvOtM/nU3xrTiM14k0iuNubn
- ecvSBdxcAetmK438gIkp3W1fY7+EH665/EBHq/WV2Sa7hxhzpbCTKEpE9Sr8pFqg0rFOrTYGF
- 1NU+rvShJz7PTE9IkMxEwaNrey3GerXj/PJQXkAblFoBJamqfwMDrKIaV13/CoKC7YkYKHwhe
- 7C215dMnnlaiJXt+QM4q80oPyYfHDYCLN6RAXA9pTjS+gHmwfYDEPWp52cgP/I2CMuOAJmdeD
- K6vlmDpBWpNBOCYn+LhEtFZY0mv2Qo8J08FGN8DQK7GvPT9Dp/DufBt9Wzyr/Qw2mddHUJbFP
- PR3WKpFUi/t6ZxBxoahDpPM84tq4pC6Ad5P9Uex4RWLt8eKL2aoblm/t0i9I3GqzcruALki0o
- Z38EQ6uGypjtyCt+6G+1/vII3WQnhOxceXy5SrfdxV/ox1ore4wy7v/2VrxUWU0jvwQ/3sMTk
- EbleZSki4mncuIPOpVLomsLZ5m6h7A/gAcp77zwSeJCGrZaN8er7njaqp0uY1I5Rx+eeijx4i
- YBSxHmgvMs4YWgiG1z5x7yzzb4CIbgxIrZ6BSM8vynI+Z0w4Y2yTU7QfpDnlyi7hgAGNm8See
- JpRVCeUJ7vNnQ8oSrNB75hAUKG/WLD4xHQoXKL4BpOjXZ5OSM8Oawagc9J0m8u2otxqVfVfri
- Ain27mFfGw04wYrHqmVScgUriTFfSc9g7mm3StsNu5O/iMOlmnZOC2eouOIsP/PiaZzWLBLKy
- qy2es/nInyzi9ytgbmPEGI+hPVfRQbh2tfKoCYonB4uYhhSB1QyP8SwHVcTw4pqureO4hTCmH
- ZprI9/k31+BIPGpz8KZu4TfQPEVPzme4KLDrLWQ45qXquPsvugkiqC1wQwLvS0gSDt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502213839.376636-13-john.ogness@linutronix.de>
 
-=E2=80=A6
-> _claim_direct_modeand later callingiio_device_release_direct_mode`
->
-> This should make code cleaner and error handling easier
+On Thu, May 02, 2024 at 11:44:21PM +0206, John Ogness wrote:
+> Currently the port->lock wrappers uart_port_lock(),
+> uart_port_unlock() (and their variants) only lock/unlock
+> the spin_lock.
+> 
+> If the port is an nbcon console, the wrappers must also
+> acquire/release the console and mark the region as unsafe. This
+> allows general port->lock synchronization to be synchronized
+> with the nbcon console ownership.
+> 
+> Note that __uart_port_using_nbcon() relies on the port->lock
+> being held while a console is added and removed from the
+> console list (i.e. all uart nbcon drivers *must* take the
+> port->lock in their device_lock() callbacks).
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> ---
+>  include/linux/serial_core.h | 82 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 80 insertions(+), 2 deletions(-)
 
-* Please avoid typos in such a change description.
-
-* Can imperative wordings be also more desirable here?
-
-
-Regards,
-Markus
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
