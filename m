@@ -1,158 +1,128 @@
-Return-Path: <linux-kernel+bounces-168707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB0D8BBC80
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6B68BBC82
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF34281E2B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8961C2103B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F10E3BBF2;
-	Sat,  4 May 2024 14:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0F03BBEA;
+	Sat,  4 May 2024 14:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nv0Rbvx5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzXGSyGm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F9222F00;
-	Sat,  4 May 2024 14:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1C657CAE;
+	Sat,  4 May 2024 14:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714833819; cv=none; b=IQs0LHZweXcECYugArnSJ/E/M4AsiGp/QddNiOYfPWtjXzNywwR7MVwonJy9wjn859ugcvlYvRU1s+kgmbFj4Vzlksn2jX598Udg0P+cxEG9itLHaXPo2/S2NFaOdk7HBEuDOSUT4+8eqiYYUFhJQ4uK+UmOZiyjEFrNctHFuW0=
+	t=1714834067; cv=none; b=HkzAHL8fmIO0re0TTvkQa+gTc0rMm4y8XZRXUzBWDzQnQ7BeZlNMEK4wdQfjS13pUreGYNGdWCYEaUby8LnIPDh2ODX52BuXHf0+5fEgm9cTgN9CY6ZRJGvH8pU8LP+cmAwXaw6g74KvLHtF4DWvZJlJ1Wq7Al4QLRWbTFppgIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714833819; c=relaxed/simple;
-	bh=QK3yMi1S/8aCei8cMMsyftn1fEwuuPm/A8gdwTqT+H4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0NfdLM4nJRsFiSIsNCyaWyeb1rKaplSOdeaYjcKm+tnPPjuJWdrArq+G4FosehyosPcNcrsH7n88fruebUW7HDiNgGQ1LmaI0ZsA1x7E1Qu8ZOy42+GVkF8CTTOxiuXwGoM4shx5cNtdV0cUPnpLf2IYkziRKScwlOpWfPrBc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nv0Rbvx5; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714833817; x=1746369817;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QK3yMi1S/8aCei8cMMsyftn1fEwuuPm/A8gdwTqT+H4=;
-  b=Nv0Rbvx5htOBbM/L71+I/gEo+q5LflgdCv91Fg2ivDzkBPHPDS96CRRl
-   pxN8VC1MB7TQie7k7E6VbpvQGYFD28o5cccnlbinfJcp5nsFcHpfPIsqe
-   K7VEVSH2ENhYYPZNMN4WkuqF1C6FY3aH8FT3xi7AfYDUS3iNmNuQ4Zafa
-   aaS5a+nBX1qh7r/M5WassNZFDzcu/WbJoTu+B4vX0SPJpIH7uAG+1K7Wo
-   R8v9x3xpopblaupudl5rplSmaONCLRUs1DlJWRIJBm1z21loKTy00ERjL
-   9tnF3Oe5m3o1xsQ2Y3G5ST0UsiOly8gx0QCnG1D/IDZjC9RwEn6V5nsDi
-   A==;
-X-CSE-ConnectionGUID: D5uTH7gWQKWUh7C/T9TbCA==
-X-CSE-MsgGUID: oHrOsWJlTTWh+KABbO2EgQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="14415714"
-X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
-   d="scan'208";a="14415714"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2024 07:43:37 -0700
-X-CSE-ConnectionGUID: O58T9WwERIikkTCU8Xm68A==
-X-CSE-MsgGUID: h9HwD30RSLK0+jb0uym5HQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,254,1708416000"; 
-   d="scan'208";a="27756532"
-Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 04 May 2024 07:43:33 -0700
-Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s3Gbr-000Cs4-1P;
-	Sat, 04 May 2024 14:43:31 +0000
-Date: Sat, 4 May 2024 22:42:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Daniel Vetter <daniel@ffwll.ch>, Helge Deller <deller@gmx.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] fbdev: Have CONFIG_FB_NOTIFY be tristate
-Message-ID: <202405042242.iXLDu4Xj-lkp@intel.com>
-References: <20240503192858.103640-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1714834067; c=relaxed/simple;
+	bh=fw2E+aY9WkraiCEWaDZyCMF9dC7UfMVHORj8CW/uR0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YacGQEmXfy9A3l7pGTjSrMZWB+wyieWxRr3MjpcGNNQMzst6TQSrsHXNmGLakdYf/AlWt16+7qzmBOKV0XjjxwBKuGpiT9oFpWGI1teVBMRkL2JZmq+Kz5lpKdVwYPgS1vOUpAOLFi918pxccCFFe+ZYwiuO5Y3jxK1Nj6b0XuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzXGSyGm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEAEC4AF1B;
+	Sat,  4 May 2024 14:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714834067;
+	bh=fw2E+aY9WkraiCEWaDZyCMF9dC7UfMVHORj8CW/uR0g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mzXGSyGm1g4KLboYOZnYqdxlBtaTnrjBvVldARnANDvgEcIGSnrxbQ8Wq0QxWmt8p
+	 E60iFwtjyOkpclc9NAENAewTkcG5u1tLrVgPZH4pkw/EQdbuhgtmJB2M9tNPWxmm1p
+	 Uror41pvgooMZ4jw6F6DMGWALxvcxCWpzjMcV97aWgy8XJbtES2r6DRCLiZDHZC1hj
+	 1NnIO6L5UV0PLGOTJnuULOAp38kKPB/eNktUZJydJinhYRqXKFHlXmeTpmVKYs5APV
+	 /u1Gaqj+oIRlZZev2X+2AS7WYbreFZ9YLLJR2AnzpwNQ0g5CVu6IrvwJVMZqF4wEwM
+	 cHG15d3MApuMg==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52006fbae67so515860e87.0;
+        Sat, 04 May 2024 07:47:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7AJytXwaaCw7NvYuhua8pUehTOMuKDyE2XmyLIVy8JSZsunZA7pwMuJnRgybYraZ9ZzOTSsGW/1prI4Bxz2C30jV5Ph8H4X3Jq55FBg7fw+1KLX3AI0x1Mg4Fx8H3vPpAn/vyhiuzcH/Z
+X-Gm-Message-State: AOJu0Ywdm+UqgGNSQ3CX5iEvDYgAk2+9YN5f1yvkRBF3Dj9bKR9y/XEk
+	JENCtiaoY5BYAVSo9zBNyLZzIm8cX8JF6QUUHJzWZaSYBtvThqhtGdmtO66mNRo/1GKzryf6+2R
+	ghiB8vrLuO8ZYIUHWula+TybSl1g=
+X-Google-Smtp-Source: AGHT+IFOSGq47HKKFcUKJSh06Ja/FFHjVignPWbD0QM9nuebLoEw2ENPLsO5p+OTXJ9vN64CQGMNZCUS+asovex4G3Y=
+X-Received: by 2002:ac2:4214:0:b0:519:1e33:9d85 with SMTP id
+ y20-20020ac24214000000b005191e339d85mr3467284lfh.36.1714834065760; Sat, 04
+ May 2024 07:47:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240503192858.103640-1-florian.fainelli@broadcom.com>
+References: <20240502111613.1380453-1-emil.renner.berthing@canonical.com>
+ <20240502111613.1380453-4-emil.renner.berthing@canonical.com>
+ <CAK7LNATbseQCgjAUDemNoo9zPd_iSb+4Gz9TaW2YkOKcp3CSEQ@mail.gmail.com> <CAJM55Z-MMcePewnMsmTqHtcjLiCnmMMLawtJxPcXs8r1Sr6n4g@mail.gmail.com>
+In-Reply-To: <CAJM55Z-MMcePewnMsmTqHtcjLiCnmMMLawtJxPcXs8r1Sr6n4g@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 4 May 2024 23:47:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQDtxZMajHJOU=pD+18gsOHg1QMEeHAY=eHQqQvzgsf4w@mail.gmail.com>
+Message-ID: <CAK7LNAQDtxZMajHJOU=pD+18gsOHg1QMEeHAY=eHQqQvzgsf4w@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] kbuild: buildtar: install riscv compressed images
+ as vmlinuz
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Nick Terrell <terrelln@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Florian,
+On Sat, May 4, 2024 at 11:02=E2=80=AFPM Emil Renner Berthing
+<emil.renner.berthing@canonical.com> wrote:
+>
+> Masahiro Yamada wrote:
+> > On Thu, May 2, 2024 at 8:16=E2=80=AFPM Emil Renner Berthing
+> > <emil.renner.berthing@canonical.com> wrote:
+> > >
+> > > Use the KBUILD_IMAGE variable to determine the right kernel image to
+> > > install and install compressed images to /boot/vmlinuz-$version like =
+the
+> > > 'make install' target already does.
+> > >
+> > > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.c=
+om>
+> > > ---
+> > > This patch depends on Masahiro's patch at
+> > > https://lore.kernel.org/r/20240414174139.3001175-1-masahiroy@kernel.o=
+rg
+> >
+> > Thank you for fixing the issue for riscv.
+> > Only the question I have is how this patch series gets in.
+> > If it waits for the next development cycle, it will be
+> > cleanly applicable.
+>
+> I'm ok with waiting, but otherwise Palmer could take patch 1 and 2 and yo=
+u
+> could take patch 3. The worst that can happen is that a bisect lands on y=
+our
+> branch that will only package the uncompressed Image in the tarballs even=
+ if
+> Image.gz or Image.bz2 exist. CONFIG_EFI_ZBOOT=3Dy and CONFIG_XIP_KERNEL=
+=3Dy_kernels
+> will also be fine with only patch 3 applied.
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on drm-tip/drm-tip linus/master v6.9-rc6 next-20240503]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Ah, OK. 3/3 is independently applicable.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Florian-Fainelli/fbdev-Have-CONFIG_FB_NOTIFY-be-tristate/20240504-033139
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20240503192858.103640-1-florian.fainelli%40broadcom.com
-patch subject: [PATCH] fbdev: Have CONFIG_FB_NOTIFY be tristate
-config: i386-randconfig-015-20240504 (https://download.01.org/0day-ci/archive/20240504/202405042242.iXLDu4Xj-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240504/202405042242.iXLDu4Xj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405042242.iXLDu4Xj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: drivers/leds/trigger/ledtrig-backlight.o: in function `bl_trig_deactivate':
->> drivers/leds/trigger/ledtrig-backlight.c:128:(.text+0x136): undefined reference to `fb_unregister_client'
-   ld: drivers/leds/trigger/ledtrig-backlight.o: in function `bl_trig_activate':
->> drivers/leds/trigger/ledtrig-backlight.c:117:(.text+0x1aa): undefined reference to `fb_register_client'
+I applied this to linux-kbuild now. Thanks.
+(I added braces around KBUILD_IMAGE to keep consistency)
 
 
-vim +128 drivers/leds/trigger/ledtrig-backlight.c
+I leave the first two patches to Palmer.
 
-e4786ba0db7b11 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  100  
-2282e125a406e0 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  101  static int bl_trig_activate(struct led_classdev *led)
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  102  {
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  103  	int ret;
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  104  
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  105  	struct bl_trig_notifier *n;
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  106  
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  107  	n = kzalloc(sizeof(struct bl_trig_notifier), GFP_KERNEL);
-e4786ba0db7b11 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  108  	if (!n)
-e4786ba0db7b11 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  109  		return -ENOMEM;
-e4786ba0db7b11 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  110  	led_set_trigger_data(led, n);
-9f9455ae710786 drivers/leds/ledtrig-backlight.c         Janusz Krzysztofik 2011-01-12  111  
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  112  	n->led = led;
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  113  	n->brightness = led->brightness;
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  114  	n->old_status = UNBLANK;
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  115  	n->notifier.notifier_call = fb_notifier_callback;
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  116  
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13 @117  	ret = fb_register_client(&n->notifier);
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  118  	if (ret)
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  119  		dev_err(led->dev, "unable to register backlight trigger\n");
-2282e125a406e0 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  120  
-2282e125a406e0 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  121  	return 0;
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  122  }
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  123  
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  124  static void bl_trig_deactivate(struct led_classdev *led)
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  125  {
-e4786ba0db7b11 drivers/leds/trigger/ledtrig-backlight.c Uwe Kleine-König   2018-07-02  126  	struct bl_trig_notifier *n = led_get_trigger_data(led);
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  127  
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13 @128  	fb_unregister_client(&n->notifier);
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  129  	kfree(n);
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  130  }
-132e9306beedd0 drivers/leds/ledtrig-backlight.c         Rodolfo Giometti   2008-10-13  131  
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
