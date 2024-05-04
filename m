@@ -1,160 +1,146 @@
-Return-Path: <linux-kernel+bounces-168642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8F68BBB27
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D47BB8BBB29
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60BA21C210A8
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:18:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CB51C21310
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A0F21342;
-	Sat,  4 May 2024 12:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E971622611;
+	Sat,  4 May 2024 12:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lksMPrXZ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i90fqYed"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2187E200C3
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 12:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E669210E6
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 12:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714825109; cv=none; b=m633VlcwM3re+OiQ6/Pb/FJItsHOZHa+gT5Hv+92XJ2bkmo+QMoBnx9pwFZAWfplaFcHrQ87H5iVxD7TwVEVeaqHdN9IpwIokcGXBbJtp7HdT7qmkjXlgTS+W06i9M+/2xpqeSGQFERhSqWd4R/FTWbZiKcawkkbwYs6xmo19SQ=
+	t=1714825125; cv=none; b=YlBzXELSnsre674COrcy/y6FnYPmUmCv19jRrI90FS0WVUySNq1uLeAdmaJONVpfijaALOntvTgX9jSF9/C0S6Z8Qw6c+Vps/RDZo+3r/Qa0bJ08IA4e0DDry6x3aWhk3PG3h8zqCQ4vnuynk2J8UNZYoPWZzwAmrctOLPPizJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714825109; c=relaxed/simple;
-	bh=7GXPWwTHqmRLsgDCIdVZZfwub4LNZ8k88BfM8ndw6IM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2bksYCNjjzrE9gQZb/5ajkszCddeN+hoDTA65g7edpxVbui4W20O+2cUTpeXqDhvCg4DQoJuAC2Jh/Agc+hiwASfFSoW7ifDVC4Rh1BkX0vNwabjqqi+ZDVA2xzpUvS4MfwmYzVrOaokuUCUNjEzuG0YzxQrOtPCRieaBNYxec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lksMPrXZ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 444C49NP005559;
-	Sat, 4 May 2024 12:18:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : reply-to : from :
- in-reply-to : content-type : content-transfer-encoding; s=pp1;
- bh=zN3t8sUelDUkstauCCZiRQa4SMjai6Pqy6Y7OcpCsRY=;
- b=lksMPrXZ/bN2ensk7PtgB9O9Wi0vbdjg6c4wVAdzTyu7RvsHCBV4j58MAZFe83bZlaLp
- kdj79E5c/raW5jWa8c+9iyy0nNVuryBfZ4P3yjCdEbwqAG/lAWWDbvTCLJ8KycB0neHC
- 5rSMG4VAepd0ThcNA3ynnyhUa4+eoOTRJaP9cEeU0MfZZh4VnYYAGa36hwFpCgbjJoRU
- 6VFoi0PspRzFRqwki8LqPxWOJLnqJc8HY7JJhMs2aMn/8SMu3PmkiEauCyZJluodc2aa
- KE8g6Nshe3eXrb10jdtCwuVqyT5homXlwQaYShfAFdBkoMH0TZxFwAT3FabYkAT4lWW+ lQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xwmpp80tq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 04 May 2024 12:18:12 +0000
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 444CIBXa025690;
-	Sat, 4 May 2024 12:18:11 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xwmpp80tm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 04 May 2024 12:18:11 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 444BKrtu006198;
-	Sat, 4 May 2024 12:18:10 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xscpq3ary-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 04 May 2024 12:18:10 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 444CI7xW22807106
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 4 May 2024 12:18:09 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 81D0C58043;
-	Sat,  4 May 2024 12:18:07 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 668525805D;
-	Sat,  4 May 2024 12:18:00 +0000 (GMT)
-Received: from [9.43.80.202] (unknown [9.43.80.202])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Sat,  4 May 2024 12:17:59 +0000 (GMT)
-Message-ID: <ba8c7408-2b8a-45e6-b5d0-87a815f37dde@linux.ibm.com>
-Date: Sat, 4 May 2024 17:47:57 +0530
+	s=arc-20240116; t=1714825125; c=relaxed/simple;
+	bh=KvX+tMQC35r8Zw36jjxi/3yW/6yDNWHuAjrkLFnobVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LvcDW5sAdCOpdixgsKoceFGiLCh48Y9I6qlrOwG30vxWq0QqxG97dlS2VVk2HHIcHaiFv0NOl3JvAqhWQipZLCSIqWmer7SLuNQ3/BLO4Y4e6mv8dYaQ8pJQAsrJVfO6Z0+d5OWghKO6v4y8VIDTTqxECb215o6CA/83h3uBHwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i90fqYed; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2db17e8767cso6198311fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 05:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714825121; x=1715429921; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z/7UJGubfMelKvbYDiZ/Mv2wY5bh+9xHKgfJKuvSMK4=;
+        b=i90fqYedibpTvviBchDodkq12U2OhNB/W7iLKyRNuxssS/Hq/N129zgAjj/clPE8C7
+         QqI4npdwuGmwB4p/ZNLbVNnHw8sLU773OO/B4PSKb2iG9PQPHpsxQEpRw+3QgCHCnmFq
+         KzoKAzX3AhjlgEhTv+DdvpQb6EsbXegSaJHxRuoaYWmVWha4MVpidQKmdku++zDx4pdy
+         mCEGj1MAgh91XyYVPXUjEmpDa6wHtxGzAuMtSVsARJniqvAxwM94EgbcNfRgqyI12NDd
+         61ap8tTw4eBOnF6j+5xiOhPjEKFzwI77Fh6c/vowCzbTZQaX4PLPPwrekhnJ/1tkM3ww
+         VGtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714825121; x=1715429921;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z/7UJGubfMelKvbYDiZ/Mv2wY5bh+9xHKgfJKuvSMK4=;
+        b=hoEOWwRW5lLpZfDJU2PKTV76Yo5UGtCUd88ioM6TMo1glfjaI2Ct9sjQQUjRqxzQL+
+         BspbpgV4bhI7pT1ZeNGoO9+uN1XpiXUpaCB6f/3mkb84JE4dcx99BqSoBfI2YEVuounm
+         i7HepBtgdNvztyJFNn1R0tiHToefvSRbSQh8hWbks9PuHEF8yPCbR78vjClm48arq8Wh
+         2f/d5Y6xzfmInVNfNDjodkx49HG6F4NsOAdsNL8L+d8v+UyTSAChBPBLf2XWJOQOOxGa
+         HPainaYG94HMHdfA32T4f/tTr+ILCWPpZpO9wbseLK1gwyKEKh2+4uip6/IbDILuuNO8
+         bNOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk1MXmyIsbitPCKyX13XJq5+tqWHFj44qqJjeKY/yPr8gRA8TG4rKceGSLEcXysEKdMc0fOuQ9TiQP5P1yr/ay1h63zgoBF51S3YDV
+X-Gm-Message-State: AOJu0Yx1nnYvys5+LlFi9YRGdEe6gxmmKqQFZK+WsjgSfSg4lTrd8QR/
+	lW486AcB97X/W9T28SgYRqK2LaA7GhjqzRJQSZ1Do5KJVZX/UGA3JSsxqaeB+io=
+X-Google-Smtp-Source: AGHT+IEMl3/9+VdMxzxvYyxuTl4RsZq5GUNid+YtiRDPqktYL2gYS0YU1UFZkgLtuk9S3nLdXGTH9w==
+X-Received: by 2002:a05:651c:201c:b0:2dd:c9fc:c472 with SMTP id s28-20020a05651c201c00b002ddc9fcc472mr3128640ljo.26.1714825121362;
+        Sat, 04 May 2024 05:18:41 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id y12-20020a5d614c000000b0034dd3849eeasm6105031wrt.106.2024.05.04.05.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 May 2024 05:18:41 -0700 (PDT)
+Date: Sat, 4 May 2024 15:18:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>,
+	florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, andrew@lunn.ch,
+	hkallweit1@gmail.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, kamilh@axis.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] net: phy: bcm-phy-lib: Implement BroadR-Reach
+ link modes
+Message-ID: <586a9bc8-aa2a-4312-8936-a10f18e1f9ce@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Add stats update for cfs_rq->exec_clock in
- update_curr() again
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira
- <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240503104605.1871571-1-dietmar.eggemann@arm.com>
-Content-Language: en-US
-Reply-To: 20240503104605.1871571-1-dietmar.eggemann@arm.com
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <20240503104605.1871571-1-dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: NebUhbNkmKf7CA9hLj2IElqMJsu3dm2i
-X-Proofpoint-ORIG-GUID: Bd3nZjIZDUoytlJV2QV2KMzcj1vkXoa7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-04_08,2024-05-03_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1011 mlxscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
- phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2405040088
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240503083719.899312-4-kamilh@axis.com>
 
-Hi Dietmar Eggemann,
+Hi Kamil,
 
-On 03/05/24 16:16, Dietmar Eggemann wrote:
-> Commit 5d69eca542ee ("sched: Unify runtime accounting across classes")
-> removed it and since then:
-> 
->   echo 1 > /proc/sys/kernel/sched_schedstats
->   cat /sys/kernel/debug/sched/debug | grep exec_clock
-> 
-> returns:
-> 
->   .exec_clock                    : 0.000000
-> 
-> for all cfs_rq's.
-> 
-> Put the schedstat_add() back to be able to watch the cfs_rq runtime
-> statistic.
-> 
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> ---
->  kernel/sched/fair.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 9eb63573110c..37bb3cee6fec 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1158,6 +1158,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
->  	delta_exec = update_curr_se(rq_of(cfs_rq), curr);
->  	if (unlikely(delta_exec <= 0))
->  		return;
-> +	schedstat_add(cfs_rq->exec_clock, delta_exec);
->  
->  	curr->vruntime += calc_delta_fair(delta_exec, curr);
->  	update_deadline(cfs_rq, curr);
+kernel test robot noticed the following build warnings:
 
-Able to see the stats now with the patch.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Kamil-Hor-k-2N/net-phy-bcm54811-New-link-mode-for-BroadR-Reach/20240503-164308
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240503083719.899312-4-kamilh%40axis.com
+patch subject: [PATCH v2 3/3] net: phy: bcm-phy-lib: Implement BroadR-Reach link modes
+config: i386-randconfig-141-20240504 (https://download.01.org/0day-ci/archive/20240504/202405041037.sjZak003-lkp@intel.com/config)
+compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
 
-Thanks and Regards
-Madadi Vineeth Reddy
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202405041037.sjZak003-lkp@intel.com/
 
+smatch warnings:
+drivers/net/phy/broadcom.c:627 bcm5481x_config_delay_swap() error: uninitialized symbol 'ret'.
+drivers/net/phy/broadcom.c:1249 bcm_read_master_slave() error: uninitialized symbol 'cfg'.
+
+vim +/ret +627 drivers/net/phy/broadcom.c
+
+f1e9c8e593d6ea Kamil Horák - 2N 2024-05-03  611  static int bcm5481x_config_delay_swap(struct phy_device *phydev)
+57bb7e222804c6 Anton Vorontsov  2008-03-04  612  {
+b14995ac2527b4 Jon Mason        2016-11-04  613  	struct device_node *np = phydev->mdio.dev.of_node;
+57bb7e222804c6 Anton Vorontsov  2008-03-04  614  	int ret;
+57bb7e222804c6 Anton Vorontsov  2008-03-04  615  
+f1e9c8e593d6ea Kamil Horák - 2N 2024-05-03  616  	/* Set up the delay. */
+042cb56478152b Tao Ren          2018-11-05  617  	bcm54xx_config_clock_delay(phydev);
+57bb7e222804c6 Anton Vorontsov  2008-03-04  618  
+b14995ac2527b4 Jon Mason        2016-11-04  619  	if (of_property_read_bool(np, "enet-phy-lane-swap")) {
+b14995ac2527b4 Jon Mason        2016-11-04  620  		/* Lane Swap - Undocumented register...magic! */
+b14995ac2527b4 Jon Mason        2016-11-04  621  		ret = bcm_phy_write_exp(phydev, MII_BCM54XX_EXP_SEL_ER + 0x9,
+b14995ac2527b4 Jon Mason        2016-11-04  622  					0x11B);
+b14995ac2527b4 Jon Mason        2016-11-04  623  		if (ret < 0)
+b14995ac2527b4 Jon Mason        2016-11-04  624  			return ret;
+b14995ac2527b4 Jon Mason        2016-11-04  625  	}
+
+"ret" not initialized on else path.
+
+b14995ac2527b4 Jon Mason        2016-11-04  626  
+57bb7e222804c6 Anton Vorontsov  2008-03-04 @627  	return ret;
+
+Also "return 0;" is always better.
+
+57bb7e222804c6 Anton Vorontsov  2008-03-04  628  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
