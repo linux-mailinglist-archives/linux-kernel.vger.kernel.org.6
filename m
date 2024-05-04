@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-168648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D458BBB65
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:34:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D976E8BBB62
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E180C282B1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:34:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 083421C213DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E247122F0A;
-	Sat,  4 May 2024 12:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60596225DA;
+	Sat,  4 May 2024 12:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LBWlm1z+"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ruubo49M"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D038F6D;
-	Sat,  4 May 2024 12:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043AF17736
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 12:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714826083; cv=none; b=W+whtp+z59pdbYCmPOIDBdUHXnNbz43CdMRR5jMMTO3hdaMx3AF096Y5HIbNPyiLlZy/RbrMaFIsaYXUnxM5TVCg6HXEYXBE9P3X7igQlK+EklJ85XyLlZrCw5YnOHevVpO3w5/mq7yHa/RYQ/NifalcKTPFkELTZkJdNK75fEY=
+	t=1714826055; cv=none; b=VMe9iY0e6cuOZygdGnjkKrYTSv13pLw5VHh0Jn/PNG+NKXejNjCCPiFCD11cXeGgyXx7jCAfKgZRSE3jtelbSArGNaGj5oqIt3O7vAV60VM/D7wl7uZbz3x496qkfp4NiJPTrdfYBli//hCmz01Whk8mDT6YGU4CIAvYUWokiXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714826083; c=relaxed/simple;
-	bh=Yoe79Eg/PZgOm5Mey4BVO1eNMWWZbUND/eB3W2VBhP8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=o5WTWhdbmtEJaUNKfwoePOiUVTUX831bxgJMeYOM81qhunzvx8vlxMxX+PeX6ioJ40G7ZnCsVqfsPu/M1zL5aBPAkWFab/CudkID2SuYiQOLaGWvkW6mPwjKAje7YVrtmXkv5HB2x5JKv9nghLCqeUvm/tkLqprYcTexQP42TEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LBWlm1z+; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714826050; x=1715430850; i=markus.elfring@web.de;
-	bh=Dw0wxRu3LYsn0DKAaT4XAl0e0WxvZkPx1TNVOzFQ9z4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LBWlm1z+TprBHaq4hs79isSLqS/7ZZKPiUAyhPGMUmrLBvgIPqJYiXvDb/4M9aDo
-	 I0LlL/JqCBK1Jc5PI+nf6d3Z/a4Di3++4FMhidtA14SPfnyrQzV4Y2VtM/p5kBohW
-	 Q62yhVaGcxUJUAjPaR/xVWgQJKz4z0X8SZySOeZ7+ZeV4uHASE+9u8x472MiUDPzm
-	 ysTC/8rjbHe3wdFEuRKlI2umwgDTTO59xikSXGKgeGmzyOBvB+bQy+Fuf1x4E2NHr
-	 8HkDKrKI+ct06Fj1eFMq7WqfMauVukbHZZBfqeXz2ZiXf3DnoEwvA2h1m/VM2kS11
-	 1Ex4y/2O5vD21YkTJA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkVsa-1sUHQC0gOs-00kLda; Sat, 04
- May 2024 14:34:10 +0200
-Message-ID: <182b7a9d-73f7-4529-b053-463eb3684c3f@web.de>
-Date: Sat, 4 May 2024 14:34:06 +0200
+	s=arc-20240116; t=1714826055; c=relaxed/simple;
+	bh=myLHPIhfgFbkH628RIi8WU1vNSV2EUucph5jsKt/cYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XsONu+GAdHMunetDeiLRdwu54ulOl5lHr6NOsRP0o/AoX7dPbeHPmcj+KkMnlVgIj1EQjodNC1vG2IvhEj2ns+URkeWDMP96cxrTRRzyaB5wtQfwIwkrHUA565xzHIQds1UA5poAir3dr9OwbcyokQKVQZxiuv9YTUDrGYeex+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ruubo49M; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51ffff16400so462449e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 05:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714826051; x=1715430851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X+lnXbFYNqLaoHCJuLp3bFaYd/ncglZZGKA3FZx3w8M=;
+        b=Ruubo49MlQ3sMnEEjuGJAXNB2FmeOgXd5XVZTOZm5i92HUlw1NQsilKl3MN/Igp4tP
+         UFP85z8M+0knhIOB2hQlFzXF7iic5/3szEhKLuum6hhlqmAO1uuH+phvO1NtriVptyyI
+         aLv8QoGCCc3LpfRV6d0c/pPS88lXvASz0IeyU+x+eTHyu41VBUHVlfHhrCUFv+xyfTES
+         E0hSH4LSDarjDqFudefwI20Z5dZ4WfFF32GJpVWFPDfgcoyp2IJLCDNq35c+m+K1caZQ
+         CVlI9XFV1KlFRMoekYXYzDU9fgUylAYnVFe+xSovc2MLuoMDK0YdkNHU7Gair5+0UElM
+         tAPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714826051; x=1715430851;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X+lnXbFYNqLaoHCJuLp3bFaYd/ncglZZGKA3FZx3w8M=;
+        b=PpKJJCF9R4AAFFJlJJedUOZgqyEj+nN+eLbDXuahYAakkhE6/9UTp2WabBogbNxrFg
+         tvngWmk75qsq/mNNoBc8rIWYDOzMgDDwdnz4DcRT5lfXqVD7Rj0m9Hrv0JS0OIqtZ1Ht
+         8nE0/HUPgmMUHhJ6+WaeV5zJNtIgtt+e7OAcdhkn78hnLjnqVizMobyVVYfl93O96ZJ/
+         ZuijLrhHxxfQmjXDjkvgGp4oAFRKINhR7WkkOZbXEM0x8v8Asll11GhZLpOWkCvho/PL
+         Q9O7uWMsyH2icBQp9SKdiS+t4pwDwwKLMEVtmLNqYXPlNVpUyXw4BZobIetlplBpFddz
+         bw6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVDkW0vlhJaxOPzCGZMBMMjKGEzALBivV2H9+rFmt7wBFbgVoHksXGJQoQfvxvmYYiCr9cDMInSFVmNhRTNVc3XQ5dyNnbNlCbO5inZ
+X-Gm-Message-State: AOJu0YzfeFneobhqpuJ19oL7t66cbi3Z7cSpO+JA2NIVcJIBH9lhMr5I
+	qKgylX7U7ijX042HX2JYkMO+AAM7CwGLvdq5VTw4igOIKS8Bhn2CgfjqJlT63ZA=
+X-Google-Smtp-Source: AGHT+IHmU8PDCbNVzWFd5gY0TJzPZTQqzGLxQZRkrw3sVNBB+IuvDNEduCEBRyYsD8WQ8jue2na0+w==
+X-Received: by 2002:a05:6512:ea8:b0:51f:9549:9c0d with SMTP id bi40-20020a0565120ea800b0051f95499c0dmr4855636lfb.48.1714826051126;
+        Sat, 04 May 2024 05:34:11 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id c25-20020a170906155900b00a599a2d9a45sm1601557ejd.100.2024.05.04.05.34.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 May 2024 05:34:10 -0700 (PDT)
+Message-ID: <3c2cf6f6-bf57-4fe6-9d79-5419addd6928@linaro.org>
+Date: Sat, 4 May 2024 14:34:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,61 +75,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
- Ben Segall <bsegall@google.com>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
- Steven Rostedt <rostedt@goodmis.org>, Suren Baghdasaryan
- <surenb@google.com>, Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240226211237.48415-1-ppbuk5246@gmail.com>
-Subject: Re: [PATCH v2] psi: Fix avg trigger being fired unexpectedly.
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240226211237.48415-1-ppbuk5246@gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: input: touchscreen: himax,hx83112b: add
+ HX83100A
+To: Felix Kaechele <felix@kaechele.ca>, Job Noorman <job@noorman.info>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240504020745.68525-1-felix@kaechele.ca>
+ <20240504020745.68525-2-felix@kaechele.ca>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240504020745.68525-2-felix@kaechele.ca>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rbevdbydq7HBhBf18M2b49EYFp3SFfcSm82k3YedcewesMYIJFA
- bA0cfw5Nwvcmwl8PVRIcVDOBkGehMObENLRnOtVdB0GeiOpFLnqJPFYLV4+WUn6OsWKgp5i
- Ei3gh6pE+54goZDG4vyeckTFocPCcitbiSGoRwG8a+5SDcwVtSx+2hDP43K15Dkwy67c0LK
- 46gF6tkwZq74qWU5y+Xpw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:di5ere2P8Pw=;Jtoe6CFNxGvFyXGjU+gQK4mcbUy
- OK+75fDBaCYatvTn0ly7SlBYmqKxCW1WS8j1hy/tZ1wS/wMxdG6/2TkFJijNHYntd0ewK4Ta7
- mt2RFAnXXPGPJ8EFP1/G3sN4dPSOPRDrVW7m7/xl1BZw8yT/dKaiPdGRmrIa0ENc2PVg3O+OA
- 0RjyEFR55HU9+4R51rCTsycWkFQzlApJ/c6LrXL4u+z9EKA04ah/+VvKpUsNhv8aLSvTVzOp3
- xEzXtV36J8dTV2TULz1954CAjC2DTA0t2TE78jcLC71f2czJh14gD/AIqm9o2vNnP50MCSkre
- 1KABePaUvHEJx8fL/mzyH8jE+E08id8ZxDJDElYC56xB0kn5f8Z3DXrJ1fhy+uMVb0gDdQVT9
- 3X16oSR7O1WBdy2d3kzt0349esNYW3PBgQ64aCm3orlGvnkXzcYLV1K19aTjxQxSRsVixh6Lz
- SRt+xYM8ZFJg79qs2K1x7J1b7tP0ZpS7SXfvxreODu0xJQ9Z7L42f6NFZ1uRGi1ehU4Ba9cPh
- EHRr8sx7qoJmDe6HmNT4/AsssLueBQEmjeWNqsjDbYGjIN8ugg970UKawnqL2gYeiul64Y9st
- wqhsGuQrvGebEFdrbVtkFvOAACJwYamNWQUHBQ8tWkzqcxf6vXEUEmjn6MNhizwUo4k26QiwO
- IOzWPKLugD4Cgrb3Ej28uy1zCZ+n0Jv7efjXnOWHQLEVtqxHNG0zwwQBf/WOhzoWKbeoFNKfw
- sMREHfuufTkwwDq3tTNjS8TL4J5bueFyyVjRJ7datzWfSi0uyxYz4nShi34hMVbBBn1q74Abg
- 0P/424JN2UP9wuD+LztZVu5OWbs/qlbV/LuZ4cnjOuwwUpYCem602sTzUprwI9yZDr
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> But, for PSI_AVGS, win->value should be initialized with group->total[PS=
-I_AVGS].
-> Moreover, to get exact initial value for win->value, it should be set
-> under each trigger lock to avoid concurrent changes to group->total[].
-=E2=80=A6
->  kernel/sched/psi.c | 8 +++++---
-=E2=80=A6
+On 04/05/2024 04:04, Felix Kaechele wrote:
+> This adds a compatible string for the Himax HX83100A touch controller
 
-* Can imperative wordings be desirable for such a change description?
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-* Is there a need to perform proposed adjustments as separate update steps=
-?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.9-rc6#n81
+> including the AVDD and VDD supply nodes used by this chip family.
+> 
+> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+> ---
+>  .../bindings/input/touchscreen/himax,hx83112b.yaml       | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/himax,hx83112b.yaml b/Documentation/devicetree/bindings/input/touchscreen/himax,hx83112b.yaml
+> index f42b23d532eb..5809afedb9a2 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/himax,hx83112b.yaml
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/himax,hx83112b.yaml
+> @@ -15,6 +15,7 @@ allOf:
+>  properties:
+>    compatible:
+>      enum:
+> +      - himax,hx83100a
+>        - himax,hx83112b
+>  
+>    reg:
+> @@ -26,6 +27,12 @@ properties:
+>    reset-gpios:
+>      maxItems: 1
+>  
+> +  avdd-supply:
+> +    description: Analog power supply regulator
+> +
+> +  vdd-supply:
+> +    description: Digital power supply regulator
 
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+These should not be allowed for other variant, so either you need
+allOf:if:then disallowing them (: false) or just create another binding
+file.
 
+Best regards,
+Krzysztof
 
-Regards,
-Markus
 
