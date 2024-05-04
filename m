@@ -1,94 +1,84 @@
-Return-Path: <linux-kernel+bounces-168740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620918BBCF9
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:03:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87CB8BBD7E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 19:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D1E1F21BC6
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D223B1C20C01
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 17:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A01650297;
-	Sat,  4 May 2024 16:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Do6M31KX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FF95FDD3;
+	Sat,  4 May 2024 17:42:44 +0000 (UTC)
+Received: from sxb1plsmtpa01-03.prod.sxb1.secureserver.net (sxb1plsmtpa01-03.prod.sxb1.secureserver.net [188.121.53.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49453225D0;
-	Sat,  4 May 2024 16:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F2E4500E
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 17:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714838596; cv=none; b=UDOz/5SheN7Dr+XMdy2Ib7YWlll3t2yvogDmHzSg8THg+c3uD+sP7dICWupOLP3V/Taexm6+fhiAjRaJ/D6kve5LyGPC7o507WG46NzRKZ08bkhynqTso8a0UpAWSL3TjVZhK0ymx95pFbrgwmzp3ft3Isa/Oa9bA01LQKMBytA=
+	t=1714844564; cv=none; b=vBUI2neL5AWLWSU9pL+b8iqM+ejxzMZBDLMzCgsVCZJ/ZTdI0GZ4MUWf4121Gya5J4F77PNBJfafT4ASTda5W2AllVkhnepypoBAp69d/n3KRn3Wj+cbbdxK4s80SxaCgGjQ736dHs8oRocWbYv14DuwwoFus8ZvwSTwK+2c6ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714838596; c=relaxed/simple;
-	bh=qQWj9cQTIT/uL819c+QTV1lqwO4CytNsjLuIpXZMtDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=loC2uBQ/TlNE8bnozS1BgMD0RdI9FpZG3lxBYkcHQX1d2MpKOoNY/z1QUvMMJU4MP4PjMS3mMF5u+GTGY3B0q1tQvoxME5ctERW/AhQwTSDJ3AyBflKKRKWtYmxEF38JW/ZzJsZS7zwtzUZ7WLufuNN+gSnGsAVNYB2JQ7sfOek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Do6M31KX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9785FC072AA;
-	Sat,  4 May 2024 16:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1714838596;
-	bh=qQWj9cQTIT/uL819c+QTV1lqwO4CytNsjLuIpXZMtDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Do6M31KXhTQ74JldmKCrmwhafuBv+BHvOjoedUEKv3WO/WlRtb0EZE26MXo2SYtws
-	 wDFTIc/W2+ok0gJBT1cA2TAqalVbTceIdHs4PCGcus33wdVbjRixrnjp+QN03DfMac
-	 N06v5LH1asuJie237NfQ1vcUMcb3yXmoYIi9MB08=
-Date: Sat, 4 May 2024 18:03:12 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Esben Haabendal <esben@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Sergey Organov <sorganov@gmail.com>,
-	Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] serial: imx: Introduce timeout when waiting on
- transmitter empty
-Message-ID: <2024050451-gangly-gloomily-e4eb@gregkh>
-References: <cf197182beab7acf6ea7ead54fb4324e97e18cbc.1712733269.git.esben@geanix.com>
- <919647898c337a46604edcabaf13d42d80c0915d.1712837613.git.esben@geanix.com>
- <87sez060el.fsf@geanix.com>
+	s=arc-20240116; t=1714844564; c=relaxed/simple;
+	bh=Gh536ipTsa3kSRdp4xPrYVoj6w/+qTJK/5whOeeBdfU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bo3MpjlcK1IYjuX1/VQx1VDUx/mOUXTwduu/wtmC5kFFCCrKPxWmH4qmxND+SxDrS9vhySzy8VZp+r6OjGVQAXufLQvQJjjf/AOOzKDhzd/TAj0IfvfLhAQxbPZyjnEbvZQ20AAjSb8vwaLTX4rJaUgt2cDMWZOkjJWYkUoq1nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exordes.com; spf=pass smtp.mailfrom=exordes.com; arc=none smtp.client-ip=188.121.53.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exordes.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exordes.com
+Received: from exordes.com ([87.92.66.153])
+	by :SMTPAUTH: with ESMTPSA
+	id 3GrzshGfI169Z3Gs2sJEKg; Sat, 04 May 2024 08:00:15 -0700
+X-CMAE-Analysis: v=2.4 cv=R+jIGsRX c=1 sm=1 tr=0 ts=66364d80
+ a=13ZijDARommhillvnyM9pA==:117 a=13ZijDARommhillvnyM9pA==:17 a=eCYXQZmkAAAA:8
+ a=C8WjyCjYx6-4fln_c68A:9 a=77AlN4CNbnqoG63BkLSu:22
+X-SECURESERVER-ACCT: dai.lu@exordes.com
+From: Lu Dai <dai.lu@exordes.com>
+To: shuah@kernel.org
+Cc: Lu Dai <dai.lu@exordes.com>,
+	javier.carrasco.cruz@gmail.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: kselftest_deps: fix l5_test() empty variable
+Date: Sat,  4 May 2024 18:01:06 +0300
+Message-Id: <20240504150106.265481-1-dai.lu@exordes.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sez060el.fsf@geanix.com>
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfKNzjYfLitl7aiLQuyIPRXt3TG++PfnQYp46/ZUycYkdDdafQqAxrYU5sMiaxukYtGuSvBEstHJekNDmJ8QHE4LkPwviwLSsVc5SkJiy3DJ0oJcQxp0j
+ PkL7qoRCYzlSC7jIvDC9tdDUCraZXZ8MEtgP0ndjHhAkhJ44/QVOI8uQ21FN0SFJCBAVKGJOU/gAKhX1/UuRKjisSJ+Jh1fZmylVFg2up2/CGQSuUjVBuIIX
+ SqRMHm4mCeF7DiHAxu9vrTLG+eYeODXMr7QkzokvgTY27jWBNCJfKePyBoO3UD0lY2XYZPcece9bB3feWBsC//Y0pvHACyg+8uH01vmHarQ=
 
-On Thu, May 02, 2024 at 11:14:26AM +0200, Esben Haabendal wrote:
-> Esben Haabendal <esben@geanix.com> writes:
-> 
-> > By waiting at most 1 second for USR2_TXDC to be set, we avoid a potential
-> > deadlock.
-> >
-> > In case of the timeout, there is not much we can do, so we simply ignore
-> > the transmitter state and optimistically try to continue.
-> >
-> > Signed-off-by: Esben Haabendal <esben@geanix.com>
-> > Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> > ---
-> >
-> > v2:
-> > - Fixed commit message typo
-> > - Remove reference to patch series it originated from. This is a
-> >   stand-alone patch
-> >
-> > v3:
-> > - Moved this version information into the correct patch section
-> 
-> Anything more needed in order to get this merged?
+In the function l5_test(), variable $tests is empty when there is no .mk
+file in the subsystem to be tested. It causes the following grep operation
+stuck.
 
-Sorry, but I don't see this in my review queue anymore.  If this isn't
-already accepted, please resend it, sorry about that.
+This fix check the variable $tests, return when it is empty.
 
-greg k-h
+Signed-off-by: Lu Dai <dai.lu@exordes.com>
+---
+ tools/testing/selftests/kselftest_deps.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/kselftest_deps.sh b/tools/testing/selftests/kselftest_deps.sh
+index de59cc8f03c3..487e49fdf2a6 100755
+--- a/tools/testing/selftests/kselftest_deps.sh
++++ b/tools/testing/selftests/kselftest_deps.sh
+@@ -244,6 +244,7 @@ l4_test()
+ l5_test()
+ {
+ 	tests=$(find $(dirname "$test") -type f -name "*.mk")
++	[[ -z "${tests// }" ]] && return
+ 	test_libs=$(grep "^IOURING_EXTRA_LIBS +\?=" $tests | \
+ 			cut -d "=" -f 2)
+ 
+-- 
+2.39.2
+
 
