@@ -1,97 +1,93 @@
-Return-Path: <linux-kernel+bounces-168635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7017D8BBB15
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:14:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCB68BBB16
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C4E282A59
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:14:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C678F282B0B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 12:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AF621362;
-	Sat,  4 May 2024 12:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ekw6rmWk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D4423763;
+	Sat,  4 May 2024 12:14:38 +0000 (UTC)
+Received: from ms-10.1blu.de (ms-10.1blu.de [178.254.4.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D44122EEF;
-	Sat,  4 May 2024 12:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5302A22616;
+	Sat,  4 May 2024 12:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.254.4.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714824874; cv=none; b=FAq+cn7Li20nsxGEdHfo9Ip8liQfpjD12GKMZcBnOosJe1mJkAwaauD1InH71l5cHjPwPXYCtdt5prqEtwef0YfNEwPuFdLQfpTdCA1KGQ7IY/f+U6rS+z8GOj0866q07tPcKMCuOzD1Ob+jNo1+Q3MNRZyAa82gXzoP/sroL5I=
+	t=1714824878; cv=none; b=psttxWOMMPGZuQ91400oTw3l4evqKrIy937vKZxto7s7DMEDibQ41h4nNC7vPXb8tAJSGKQzZbdgtr5EteyLtcuI1L7azrXLWIWWFMtQ/6p+HOB+sQ1S60hnWlymvndG80iziwHII/6Z9pfrliO1AM9bG76FwzH9DMKVrBgrxSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714824874; c=relaxed/simple;
-	bh=z88eMv/xF/Ek+JdWis3jLwaa6vsfEHEFdguAMsCL0PY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=L5MwSA6IEi2+rT+GOLCGn+JqRD/7xZvLo1ZHh8ZMnWVZuK4bDgR6Ddu483N5BTVF8zaSKGWsoabttIgOe6khwCn0qtdhcqd3045GZPOWhSd1YHY4lK9hfU6K9bF6jqnumlOdSZQUuTmE66dWEgB6TpOPk34PiIu8Ygu3WHg1m0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ekw6rmWk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6F0EC2BBFC;
-	Sat,  4 May 2024 12:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714824874;
-	bh=z88eMv/xF/Ek+JdWis3jLwaa6vsfEHEFdguAMsCL0PY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Ekw6rmWkVJcy+BVOEnGIME5WWM9XQ1+ivRfRk9l+kM543RgR1zxGCHUjkxhKDAQsb
-	 I3KN1NTzRXGqwGAvBO80EeJi9e1JytcPJVIETMPOZSwuLN2YPULbukE3TtP8xzCHlE
-	 cfuUp02pdiy16N1JKxZdBKuz1GGDQCwiVtghJiD6x74VNVtCnfHhj46ikHV+bkQ8ik
-	 nH1ekHHUJNfN7qCZxCn6DfFr98qAVG/0v2s9HpIiD2z7yFyJovZOirKtjkFax+t1AR
-	 seuwz5mU0OZUC5MJC4hREwV9P0ai9zs04q3LfKS1SCKjsovYim69i57nXycvQr6wUG
-	 Cln8UMr1B/6og==
-From: Vinod Koul <vkoul@kernel.org>
-To: andersson@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
- conor+dt@kernel.org, konrad.dybcio@linaro.org, 
- manivannan.sadhasivam@linaro.org, Mrinmay Sarkar <quic_msarkar@quicinc.com>
-Cc: quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com, 
- quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com, 
- quic_krichai@quicinc.com, quic_vbadigan@quicinc.com, 
- quic_schintav@quicinc.com, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Qiang Yu <quic_qianyu@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-In-Reply-To: <1714494089-7917-1-git-send-email-quic_msarkar@quicinc.com>
-References: <1714494089-7917-1-git-send-email-quic_msarkar@quicinc.com>
-Subject: Re: (subset) [PATCH v2 0/2] arm64: qcom: sa8775p: add support for
- x4 EP PCIe controller
-Message-Id: <171482486317.28322.7019120026005248383.b4-ty@kernel.org>
-Date: Sat, 04 May 2024 17:44:23 +0530
+	s=arc-20240116; t=1714824878; c=relaxed/simple;
+	bh=DtSbZ3+OvoBO0Tvog94lU+WUttXC6WgpQYyQ3aTPybs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rZIOEX11dkcU26NWw13Atp6zcrzmzBsxkuGcIAEHHOz5SCKSjGrjkpsRFK/FlLL/mYuIeWz2wNlTyZv4blGZ0PnFw4rAXz8mOZZ4r4wBy8c5jOa3k6P4qA0ZTm5sCM2//3Si9eRaPOR7eRD5vYelS86DSAF2URzGfJQplqzzTx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de; spf=pass smtp.mailfrom=mariuszachmann.de; arc=none smtp.client-ip=178.254.4.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mariuszachmann.de
+Received: from [2.211.228.80] (helo=marius.localnet)
+	by ms-10.1blu.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <mail@mariuszachmann.de>)
+	id 1s3EHg-00FLWC-Gz;
+	Sat, 04 May 2024 14:14:32 +0200
+From: Marius Zachmann <mail@mariuszachmann.de>
+To: linux-hwmon@vger.kernel.org, Aleksa Savic <savicaleksa83@gmail.com>
+Cc: Jonas Malaco <jonas@protocubo.io>, Aleksa Savic <savicaleksa83@gmail.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 2/3] hwmon: (corsair-cpro) Use complete_all() instead of
+ complete() in ccp_raw_event()
+Date: Sat, 04 May 2024 14:14:32 +0200
+Message-ID: <4888670.GXAFRqVoOG@marius>
+In-Reply-To: <20240504092504.24158-3-savicaleksa83@gmail.com>
+References:
+ <20240504092504.24158-1-savicaleksa83@gmail.com>
+ <20240504092504.24158-3-savicaleksa83@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-Con-Id: 241080
+X-Con-U: 0-mail
 
-
-On Tue, 30 Apr 2024 21:51:25 +0530, Mrinmay Sarkar wrote:
-> This series updates PHY and add EP PCIe node in dtsi file for
-> ep pcie1 controller that supports gen4 and x4 lane width.
+On 04.05.24 at 11:25:02 MESZ, Aleksa Savic wrote
+> In ccp_raw_event(), the ccp->wait_input_report completion is
+> completed once. Since we're waiting for exactly one report in
+> send_usb_cmd(), use complete_all() instead of complete()
+> to mark the completion as spent.
 > 
-> Dependency for Patch 2
-> ----------------------
+> Fixes: 40c3a4454225 ("hwmon: add Corsair Commander Pro driver")
+> Signed-off-by: Aleksa Savic <savicaleksa83@gmail.com>
+> ---
+>  drivers/hwmon/corsair-cpro.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Depends on:
-> https://lore.kernel.org/all/1714492540-15419-1-git-send-email-quic_msarkar@quicinc.com/
+> diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
+> index 8d85f66f8143..6ab4d2478b1f 100644
+> --- a/drivers/hwmon/corsair-cpro.c
+> +++ b/drivers/hwmon/corsair-cpro.c
+> @@ -140,7 +140,7 @@ static int ccp_raw_event(struct hid_device *hdev, struct hid_report *report, u8
+>  		return 0;
+>  
+>  	memcpy(ccp->buffer, data, min(IN_BUFFER_SIZE, size));
+> -	complete(&ccp->wait_input_report);
+> +	complete_all(&ccp->wait_input_report);
+>  
+>  	return 0;
+>  }
 > 
-> [...]
 
-Applied, thanks!
+Acked-by: Marius Zachmann <mail@mariuszachmann.de>
 
-[1/2] phy: qcom-qmp-pcie: add x4 lane EP support for sa8775p
-      commit: 82b7487b8eb93e82ace92866560de3d4952555db
-
-Best regards,
--- 
-~Vinod
 
 
 
