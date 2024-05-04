@@ -1,133 +1,121 @@
-Return-Path: <linux-kernel+bounces-168703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDF98BBC6D
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133988BBC72
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27561F21F56
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:28:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E771C20DD1
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 14:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461BC3BB48;
-	Sat,  4 May 2024 14:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O+Cinq1G"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CADC3C467;
+	Sat,  4 May 2024 14:31:48 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09CF381D9;
-	Sat,  4 May 2024 14:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D00533D8;
+	Sat,  4 May 2024 14:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714832882; cv=none; b=nFv0iz7/3P8a0Qw9XCsHdF+XR6r/MRYFrDWyRXmJzzTF+3fWsIb6vgTwpRXI+/ruDH7ClJaONzSVoFL/ZCeZBlH8u77irKlQkAjo6R0ISzp0/ZAMbSyRxQEb6EVBmKsWnaNs8a3AfbuRIXhOyeDhFSRIStGeIa5D7bR09ES7uNU=
+	t=1714833108; cv=none; b=fIOSrXyCvh+bzsE24U5gFKFs5cktDHYBHMLfOsodDlurRZSEDcaoWzKdyGtYfS+3HQQvtzboZvs3FijgcxmC5pQ5oW87QQt6bR2qe8rN9ga1cKmsECQnVyBkg28Tt/5Abm7D2LwAC7SPF19TeZ0vHL2FZOsKVOapNZPR2Azrzbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714832882; c=relaxed/simple;
-	bh=HwPv9+AKMyHTHzY4fmj1exHYqsjVJIW4ECxeKr4NcwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UEvxL9VbAvk1U2iebj6txM+e/nZH0BqiiPW16gtQN3vfzrWdZAGsqK7tv3BhCngdPEA3qkUjs1IUXj111DE9AwD1aV/9Fne5qtHrr5hujhXVl435kZSc5N5wLOPGKt6RFYWhVtS1zULE0qn2ZDxYkYLunFrJmddZD3+tzrbNtKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O+Cinq1G; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 3GMjsEyZGuPiV3GMks2HSj; Sat, 04 May 2024 16:27:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714832877;
-	bh=RqYKhXyxQzsUalkpz50XF6z0vFeF3FJ712ZCIzLOHG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=O+Cinq1GHFo+jJb97aeSNFRGj+H8OP8dSpV1RTewlr5gqGFWj53U9nVBYsLVvR17A
-	 aYOjbdrUmOsjkOoDotHQUmjYU3Eau+pmDq17bSYJHRJRtJKFy3jcUsqF5RNTc+ZJeM
-	 rgb6nt8YEfd/qknPKkLPGrOD5NrrNPFxuOilOnYZLx3kSn4yul/Is530EWIv8UT3kP
-	 Inj4NRv0/vpB9qdqvD8hZaqfWayVMZrgYvbkcl1rFOeW/C+5XlBThL2EIySkOokDiB
-	 3e46zWAq8OYdwC9URU18DTDrq2QVY+0Eyy0ldIVJhJilnkdSjyNoayU+kJMW/F+bao
-	 beI882/ZtHiMg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 04 May 2024 16:27:57 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <38193848-597d-47c1-9aea-5357e58f9983@wanadoo.fr>
-Date: Sat, 4 May 2024 16:27:53 +0200
+	s=arc-20240116; t=1714833108; c=relaxed/simple;
+	bh=ocpnnfd8vO1ZXDw0k7uVLJrLdgKTWsFe7g9KPbqBpRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ymnk2TiepjKVtDuM+OFkYusALG5F8X0SZN7h4De88iU1XZxpa/fxM4q2xPZRVW+CkE+pUtzYNt0WdL98uXaFsDkffr+yLiRkcuKEn+3BMMv8TFgg1JDzz689S7tLvzdfnkbXVKB9QcCWSeDYnrckRek/htO6L9RiDK0YEBfRAH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 8667D300102B7;
+	Sat,  4 May 2024 16:31:42 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 672E936599; Sat,  4 May 2024 16:31:42 +0200 (CEST)
+Date: Sat, 4 May 2024 16:31:42 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	linux-rdma@vger.kernel.org, Shuai Xue <xueshuai@linux.alibaba.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jijie Shao <shaojijie@huawei.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Khuong Dinh <khuong@os.amperecomputing.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D. Jones" <luke@ljones.dev>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	ibm-acpi-devel@lists.sourceforge.net,
+	Azael Avalos <coproscefalo@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo Jaervinen <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	Anil Gurumur thy <anil.gurumurthy@qlogic.com>,
+	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
+	Tyrel Datwyler <tyreld@linux.ibm.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	Don Brace <don.brace@microchip.com>, storagedev@microchip.com,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 0/6] Deduplicate string exposure in sysfs
+Message-ID: <ZjZGzg5LFU2AT3_D@wunner.de>
+References: <cover.1713608122.git.lukas@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/12] dmaengine: Add STM32 DMA3 support
-To: amelie.delaunay@foss.st.com
-Cc: alexandre.torgue@foss.st.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, mcoquelin.stm32@gmail.com,
- robh+dt@kernel.org, vkoul@kernel.org
-References: <20240423123302.1550592-1-amelie.delaunay@foss.st.com>
- <20240423123302.1550592-6-amelie.delaunay@foss.st.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240423123302.1550592-6-amelie.delaunay@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1713608122.git.lukas@wunner.de>
 
-Le 23/04/2024 à 14:32, Amelie Delaunay a écrit :
-> STM32 DMA3 driver supports the 3 hardware configurations of the STM32 DMA3
-> controller:
-> - LPDMA (Low Power): 4 channels, no FIFO
-> - GPDMA (General Purpose): 16 channels, FIFO from 8 to 32 bytes
-> - HPDMA (High Performance): 16 channels, FIFO from 8 to 256 bytes
-> Hardware configuration of the channels is retrieved from the hardware
-> configuration registers.
-> The client can specify its channel requirements through device tree.
-> STM32 DMA3 channels can be individually reserved either because they are
-> secure, or dedicated to another CPU.
-> Indeed, channels availability depends on Resource Isolation Framework
-> (RIF) configuration. RIF grants access to buses with Compartiment ID
-> (CIF) filtering, secure and privilege level. It also assigns DMA channels
-> to one or several processors.
-> DMA channels used by Linux should be CID-filtered and statically assigned
-> to CID1 or shared with other CPUs but using semaphore. In case CID
-> filtering is not configured, dma-channel-mask property can be used to
-> specify available DMA channels to the kernel, otherwise such channels
-> will be marked as reserved and can't be used by Linux.
+Dear Greg,
+
+On Sat, Apr 20, 2024 at 10:00:00PM +0200, Lukas Wunner wrote:
+> Introduce a generic ->show() callback to expose a string as a device
+> attribute in sysfs.  Deduplicate various identical callbacks across
+> the tree.
 > 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay-rj0Iel/JR4NBDgjK7y7TUQ@public.gmane.org>
-> ---
+> Result:  Minus 216 LoC, minus 1576 bytes vmlinux size (x86_64 allyesconfig).
+> 
+> This is a byproduct of my upcoming PCI device authentication v2 patches.
+> 
+> 
+> Lukas Wunner (6):
+>   driver core: Add device_show_string() helper for sysfs attributes
+>   hwmon: Use device_show_string() helper for sysfs attributes
+>   IB/qib: Use device_show_string() helper for sysfs attributes
+>   perf: Use device_show_string() helper for sysfs attributes
+>   platform/x86: Use device_show_string() helper for sysfs attributes
+>   scsi: Use device_show_string() helper for sysfs attributes
 
-..
+This series hasn't been applied to driver-core-next AFAICS and the
+merge window is drawing closer.
 
-> +	pm_runtime_set_active(&pdev->dev);
-> +	pm_runtime_enable(&pdev->dev);
-> +	pm_runtime_get_noresume(&pdev->dev);
-> +	pm_runtime_put(&pdev->dev);
-> +
-> +	dev_info(&pdev->dev, "STM32 DMA3 registered rev:%lu.%lu\n",
-> +		 FIELD_GET(VERR_MAJREV, verr), FIELD_GET(VERR_MINREV, verr));
-> +
-> +	return 0;
-> +
-> +err_clk_disable:
-> +	clk_disable_unprepare(ddata->clk);
-> +
-> +	return ret;
-> +}
-> +
-> +static void stm32_dma3_remove(struct platform_device *pdev)
-> +{
-> +	pm_runtime_disable(&pdev->dev);
+So far only patches 1, 2 and 5 have been ack'ed by the respective
+subsystem maintainers.  If the missing acks are the reason it hasn't
+been applied, would it be possibe to apply only 1, 2 and 5?
 
-Hi,
+I would then resubmit the other ones individually to the subsystem
+maintainers in the next cycle.
 
-missing clk_disable_unprepare(ddata->clk);?
+Thanks!
 
-as in the error handling path on the probe just above?
-
-CJ
-
-> +}
-
-..
-
+Lukas
 
