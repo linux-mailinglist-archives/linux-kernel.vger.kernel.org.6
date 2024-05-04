@@ -1,138 +1,138 @@
-Return-Path: <linux-kernel+bounces-168571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AD18BBA49
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:35:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88D98BBA4B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E13F1C2138E
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628FC28308F
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB31F17565;
-	Sat,  4 May 2024 09:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE2317999;
+	Sat,  4 May 2024 09:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wezq/xX7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ld8PUdy4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="okWKVeJ1"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EB95221;
-	Sat,  4 May 2024 09:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AE6639;
+	Sat,  4 May 2024 09:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714815339; cv=none; b=Jz7YPio+9C6JjjUHEmTW2gwXsAEieB7bnstooYP7H9RC0Joy2KaYI1a2Eb9P5+Y3b4tNx4Ar0iPW878R7n4XkKdH/nP0WuUqWlEHCMNCNsA40fTrurnEYNYQSEi82GofCv4qArKe3Jh6LGEjAS3yWa7eU69L5gkUlFvO9Kg2zcI=
+	t=1714815353; cv=none; b=UYJKa7PqiSR/vif1iXhsri5L6YNvsMuaOe6CKRoOy5+z5Zm2LfJObvND+ioFunt9bdQ/yGvTk3Ry5s6EGYeX1g4GDzRht+xsZdSZcVKsj2sHRpyL7a4ioBcTN57I0tfsKRE6KLz6RFrd9REy1pQgmHjbrDXxbojQsL5CWPZdMHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714815339; c=relaxed/simple;
-	bh=rirSMqQpo3rIWksqPbYyKWaw05Ls23tdgirteckiGOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TW+QZLeGe0Z2p1q+EL34PvMhuk0qRk6kaDq0NOcl776vkM1PI6foCiPfeznfIsolkIiCRcKU57FbnmUn9ZcYMay3fIfAJNRUb6R2Nyc9LzmjSnNfrkC2eDzxH9/U57ipiYWdrfdH31K+C34eowIdfADGx0vbnPyrEggvlctNNk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wezq/xX7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ld8PUdy4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 4 May 2024 11:35:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1714815335;
+	s=arc-20240116; t=1714815353; c=relaxed/simple;
+	bh=9dc1UlSXIXdl2vRtQFyLOal8xPLWWcPry+UL2rhypu0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GX53qumpWA7jLjigJdLHZvu8XIBZvvBOOKe44g3bSbkVDayzyjASaOzLcfjcnN//OjxATe+jm9uOemYXlAO8SESTSxq2FH4mQpe07Zggr28ggtDCt19KIuq8IijwB1oO1FN2wnde9mxSkPisJ+W/ohpJCehfZsqCQJIevZOAh/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=okWKVeJ1; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1714815342;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mprjEP9r9wSRznT2f4YFOHY7Ce6AUzgFEOg+L4BcIs8=;
-	b=wezq/xX7Tqsb2bXf/uYkEZrb6Se1F1l28Qkx7cVQ+9QB52XA9CvMa63CQWxc/hfZn3yTOQ
-	eqK4puQ9odbpmYhtx/9xGKP0f+AiocNH285JzfhDm/WnQAt/soJJvgVF2lCPwpwfpiR3P5
-	Cmhsax4PvdhupWAT139iYMI0fb57KSJnbIXA+J3Mf0z7NhZx64DOB4OVozQUqLKNwCvLVD
-	lPkl1M8wogoDlxNDeF/dLtE2y1puJ7hLhB1Zi3gZ+HKxy37+q11mun2fvTrsA6Tc2Naejg
-	5IwNuq9OQCzIZsrw6wqxn0ODtJ8FuLsaLAAZm9Y3tnr3R/QRWtPdw9as52bIsw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1714815335;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mprjEP9r9wSRznT2f4YFOHY7Ce6AUzgFEOg+L4BcIs8=;
-	b=ld8PUdy4DqTvvGyt0jVc2Cds0oBwCFG+hZUs+KM38c4ai0nT4i75hH8CH370OAi6jzwDS8
-	k0CX46clMsS2D2Cw==
-From: Nam Cao <namcao@linutronix.de>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rajesh Shah <rajesh.shah@intel.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/4] PCI: pciehp: bail out if pci_hp_add_bridge() fails
-Message-ID: <20240504093529.p8pbGxuK@linutronix.de>
-References: <cover.1714762038.git.namcao@linutronix.de>
- <401e4044e05d52e4243ca7faa65d5ec8b19526b8.1714762038.git.namcao@linutronix.de>
- <ZjX3t1NerOlGBhzw@wunner.de>
+	bh=mw7SFuN2SHyU67C8OH1gLXKRgrvpMA94gKGdBbC2U5Y=;
+	b=okWKVeJ1LP27/Ihu8TKZpJV5+kdcRHrkgkz0ecctRtlkJ282/Py2klIdLw6RKUKpJqZCuz
+	Q7Zq68Db9+BwMxEPvBY9lMElzorY66vigachpn46RQk2RGlW1eEGYjYcP3weo2837HXabl
+	7WVzBNxDpncV72/vcVthNbJj6zHVWjw=
+From: Sven Eckelmann <sven@narfation.org>
+To: Marek Lindner <mareklindner@neomailbox.ch>,
+ Simon Wunderlich <sw@simonwunderlich.de>, Antonio Quartulli <a@unstable.cc>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Erick Archer <erick.archer@outlook.com>
+Cc: Erick Archer <erick.archer@outlook.com>, b.a.t.m.a.n@lists.open-mesh.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+Subject:
+ Re: [PATCH v3] batman-adv: Add flex array to struct batadv_tvlv_tt_data
+Date: Sat, 04 May 2024 11:35:38 +0200
+Message-ID: <3932737.ElGaqSPkdT@sven-l14>
+In-Reply-To:
+ <AS8PR02MB72371F89D188B047410B755E8B192@AS8PR02MB7237.eurprd02.prod.outlook.com>
+References:
+ <AS8PR02MB72371F89D188B047410B755E8B192@AS8PR02MB7237.eurprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjX3t1NerOlGBhzw@wunner.de>
+Content-Type: multipart/signed; boundary="nextPart6497797.GXAFRqVoOG";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-On Sat, May 04, 2024 at 10:54:15AM +0200, Lukas Wunner wrote:
-> On Fri, May 03, 2024 at 09:23:20PM +0200, Nam Cao wrote:
-> > If there is no bus number available for the downstream bus of the
-> > hot-plugged bridge, pci_hp_add_bridge() will fail. The driver proceeds
-> > regardless, and the kernel crashes.
-> > 
-> > Abort if pci_hp_add_bridge() fails.
-> [...]
-> > --- a/drivers/pci/hotplug/pciehp_pci.c
-> > +++ b/drivers/pci/hotplug/pciehp_pci.c
-> > @@ -58,8 +58,13 @@ int pciehp_configure_device(struct controller *ctrl)
-> >  		goto out;
-> >  	}
-> >  
-> > -	for_each_pci_bridge(dev, parent)
-> > -		pci_hp_add_bridge(dev);
-> > +	for_each_pci_bridge(dev, parent) {
-> > +		if (pci_hp_add_bridge(dev)) {
-> > +			pci_stop_and_remove_bus_device(dev);
-> > +			ret = -EINVAL;
-> > +			goto out;
-> > +		}
-> > +	}
-> 
-> Is the pci_stop_and_remove_bus_device() really necessary here?
-> Why not just leave the bridge as is, without any child devices?
+--nextPart6497797.GXAFRqVoOG
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+Date: Sat, 04 May 2024 11:35:38 +0200
+Message-ID: <3932737.ElGaqSPkdT@sven-l14>
+MIME-Version: 1.0
 
-pci_stop_and_remove_bus_device() is not necessary to prevent kernel
-crashing. But without this, we cannot hot-plug any other devices to this
-slot afterward, despite the bridge has already been removed. Below is what
-happens without pci_stop_and_remove_bus_device().
+On Wednesday, 1 May 2024 17:02:42 CEST Erick Archer wrote:
+> diff --git a/include/uapi/linux/batadv_packet.h b/include/uapi/linux/batadv_packet.h
+> index 6e25753015df..dfbe30536995 100644
+> --- a/include/uapi/linux/batadv_packet.h
+> +++ b/include/uapi/linux/batadv_packet.h
+[...]
+> +/**
+> + * struct batadv_tvlv_tt_data - tt data propagated through the tt tvlv container
+> + * @flags: translation table flags (see batadv_tt_data_flags)
+> + * @ttvn: translation table version number
+> + * @num_vlan: number of announced VLANs. In the TVLV this struct is followed by
+> + *  one batadv_tvlv_tt_vlan_data object per announced vlan
+> + * @vlan_data: array of batadv_tvlv_tt_vlan_data objects
+> + */
+> +struct batadv_tvlv_tt_data {
+> +       __u8   flags;
+> +       __u8   ttvn;
+> +       __be16 num_vlan;
+> +       struct batadv_tvlv_tt_vlan_data vlan_data[] __counted_by_be(num_vlan);
+> +};
 
-First, we hotplug a bridge. That fails, so QEMU removes this bridge:
-(qemu) device_add pci-bridge,id=br2,bus=br1,chassis_nr=19,addr=1
-[    9.289609] shpchp 0000:01:00.0: Latch close on Slot(1-1)
-[    9.291145] shpchp 0000:01:00.0: Button pressed on Slot(1-1)
-[    9.292705] shpchp 0000:01:00.0: Card present on Slot(1-1)
-[    9.294369] shpchp 0000:01:00.0: PCI slot #1-1 - powering on due to button press
-[   15.529997] pci 0000:02:01.0: [1b36:0001] type 01 class 0x060400 conventional PCI bridge
-[   15.533907] pci 0000:02:01.0: BAR 0 [mem 0x00000000-0x000000ff 64bit]
-[   15.535802] pci 0000:02:01.0: PCI bridge to [bus 00]
-[   15.538519] pci 0000:02:01.0:   bridge window [io  0x0000-0x0fff]
-[   15.540261] pci 0000:02:01.0:   bridge window [mem 0x00000000-0x000fffff]
-[   15.543486] pci 0000:02:01.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-[   15.547151] pci 0000:02:01.0: No bus number available for hot-added bridge
-[   15.549067] shpchp 0000:01:00.0: Cannot add device at 0000:02:01
-[   15.553104] shpchp 0000:01:00.0: Latch open on Slot(1-1)
-[   15.555246] shpchp 0000:01:00.0: Card not present on Slot(1-1)
+Thanks for the updates. But I can't accept this at the moment because 
+__counted_by_be is used in an uapi header without it being defined
+include/uapi/linux/stddef.h (and this file is also not included in this 
+header).
 
-Then, hot-plug an ethernet device. But the kernel still incorrectly
-thought the bridge is still there, and refuses this new ethernet device:
-(qemu) device_add e1000,bus=br1,addr=1
-[   58.163529] shpchp 0000:01:00.0: Latch close on Slot(1-1)
-[   58.165076] shpchp 0000:01:00.0: Button pressed on Slot(1-1)
-[   58.166650] shpchp 0000:01:00.0: Card present on Slot(1-1)
-[   58.168287] shpchp 0000:01:00.0: PCI slot #1-1 - powering on due to button press
-[   64.677492] shpchp 0000:01:00.0: Device 0000:02:01.0 already exists at 0000:02:01, cannot hot-add
-[   64.680007] shpchp 0000:01:00.0: Cannot add device at 0000:02:01
-[   64.682802] shpchp 0000:01:00.0: Latch open on Slot(1-1)
-[   64.684353] shpchp 0000:01:00.0: Card not present on Slot(1-1)
+See commit c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and 
+identifier expansion") as an example for the similar __counted_by macro.
 
-Best regards,
-Nam
+Kind regards,
+	Sven
+--nextPart6497797.GXAFRqVoOG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAmY2AWoACgkQXYcKB8Em
+e0aJDw//f+el64xroKLns43gvY+Z/mPIwf7Iy+THUq6U9zVQ0wp3XbW9QTmXP/5K
+8it8yX2aNEEPu4Cd5w6eIrwxIdhDZW3pHxI9ipdgTjF/i0Jh40SpM9HOlgMLjCys
+Ls0Innvs24uQ99h4OSk4TGuHay+6Z0aMEV0PrFsj6jsoB7su7nmQ6ebEpdY40246
+soQfO7aJ3vrSYbuCJFOlMESNHm0wRxQu4QjK8RDmyk1wEyJIkQyVQ6QkjYj6ulkr
++eai2uDQWKEPav2vantbXXsTK4gu7nWEGTcHn2NoJJ/bqtzCrz1FS2u55PZ9l9P+
+auO/nPz1RB2hHAA3t8igC5jRK6AQ9CdjRMt3rQ8Pmk2jZKt5G153j0lgQdq4nDaf
+V6ji3IrDnjQvIAeUN5vkIlwqbmVo2BbIqHDXK1JMmUEryQCt9HHFCnLYVr0v2WuM
+tIj/T68pcEThoF4TU2B30ScZUfMeZ8e3im53RPU+29ljldyX6WCxIGLIyFZM2mbo
+U8cqULn7tN8LfMcB7CYf7+H6GDCOq+m+Xd50oQsIYb0LDIk5CuEAVBCA1/wNog5q
++HVplKYtp2LSIKQKMey2u0loQFq/EnwH0pS0Vv5SylRQMZ1PRFq54tWRDsjwDw4/
+BMP9cF5Njh9uyD2Db0uZRZ+OWKH0KC41A+cvue7gjWA5uNDv6uA=
+=qo9D
+-----END PGP SIGNATURE-----
+
+--nextPart6497797.GXAFRqVoOG--
+
+
+
 
