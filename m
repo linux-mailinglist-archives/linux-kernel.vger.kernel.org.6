@@ -1,202 +1,265 @@
-Return-Path: <linux-kernel+bounces-168752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB5A8BBD1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 980898BBD1E
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 18:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2661C20D0F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD801C20F6B
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 16:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C058203;
-	Sat,  4 May 2024 16:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670AC5A0E6;
+	Sat,  4 May 2024 16:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihz00wg0"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M+N16yS8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7511D52D;
-	Sat,  4 May 2024 16:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BF02943C
+	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 16:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714840283; cv=none; b=mnrePjC5/ecajWN0jAmVvKL1ak6nOITGdz8H7aNasnpGgMGC638w7qBGAeVMi3PCuNrHRyU7u1cs+6uwqWRASk0SReqHGYfHOt8WOliA9P3lCqe5LQ2G8TokNW6AmIAcBgW6gW3FQBZHyhqG86e0O8HJscmMAc3lLB+/T27mFu0=
+	t=1714840415; cv=none; b=c5u0SLsCeiic4syj4znFlxu9BwPUMPniiWBzIVCvBnzQm3CWK9nKdtNIg88iOewecbx8DzD/MYkl12+y88mNgF6q80ti+g9O4RUeqk2KIuBgqzirKmB39lvJkBdYBpWsPG8ht88VG/eeTfusf3/RSLv5pT88AV00fnCPsvx+BEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714840283; c=relaxed/simple;
-	bh=kzZY9lGQpdtSb8LBt6oSjwlOz7umExQkGa/hvChrAq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INsLOEqGlwIU6o4Pep14JJs4ZH0DmNyh1wGhS6mwzUxpHj+NUYD6BN7ldv9nIyhFofoQ+/CPUGfjbCpnfVBpLOxLtXKTxC1kJ+U/RNHVjX6pLJKRRNt62JerPY2zjOg+S9rcf+7VvG8zhMArAldDjEmSZhDMwZsvCp+J51UJb+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihz00wg0; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso4835175ad.0;
-        Sat, 04 May 2024 09:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714840282; x=1715445082; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BVHkSDrp78uKW0uZrcyHhFLD98BFVYL6QDF1S7ek4Xk=;
-        b=ihz00wg0QF51IunlMa6GXXRhK7bvexHyTVCAGS7sH7TaVJlQOSak8YqJHQoep1DHeV
-         aSKPEZzerT1lb13HYrlr5MLLTQXByFB4p3kvu1tcHsO4PFXzC2zmElnymn1H/feo+v1V
-         i/+Y788Pfee315UUZKV7X/V3fg9iXS/Oa6b8kgEwVs805xDP7D5uxSA8/7Rk7X8JKjPE
-         aT/etabnnM2SDThLpOlp6KYeeBhbyVigBgD9lFAh7Xerlzk3MjDnsyDsFGoWgTWyiPpE
-         Nst4jFInRz20UjFiv2ZBIzJmryYH7P+vjUlKR/5e4zs9rYO2ZMWa0NxBN1c1oqe4/Eyy
-         zw6A==
+	s=arc-20240116; t=1714840415; c=relaxed/simple;
+	bh=YxjQbrbwLcDjk/JustMM9PO1FznydgKs0lDkqtvLUpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yp7r9oLFAWcpOeh6u0Z6wUoXy8InZu7J/qLwyWaJwXaTJzMPxHGUny3A1SytCUrY5gqMX5axeXGl+ScrdmqD66NmFR9WzoacZas9yZjUSJWW5mDDu/OH6/39NE3k9aj12asEydgzzYegp+sU5EwI49KU5DfJe9zNFJrL8WOFR2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M+N16yS8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714840412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3dypqPXlAvUzD5Mu1WQB9bBe4CtLqMLj8PS/31o/pE=;
+	b=M+N16yS8rdvgQkTVrkaaTD9V5u9Ba+SclR6JqeBEjWRhe0x5ht8Ge5aVcFlyA6GoEFUk4K
+	ITy4gKw0Gm0sb4ezcGNK6MxpGoOVZsui6scP2JRq40og9fEsgRxJs70XPJNIJP5xHBU7Vp
+	OgmEKJXymDdL1Mpv/p0FmTcg+6bP3HY=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-148-Mhv4jYFiNu2BNPFeBZmG5A-1; Sat, 04 May 2024 12:33:31 -0400
+X-MC-Unique: Mhv4jYFiNu2BNPFeBZmG5A-1
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-61aca3c2a93so681391a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 09:33:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714840282; x=1715445082;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BVHkSDrp78uKW0uZrcyHhFLD98BFVYL6QDF1S7ek4Xk=;
-        b=p+d7erpo7r6gK6xcvTkCOLMQNpAnTicIIGTcnnBOeoThIBvCAFq1RHSqwQg6z/6EsE
-         oU4g58RSnUiVphnHItlwQ2/ztgYKiEXxhWkyiMWV4pWYmAHv8D9eT2HyJNzfEWE+G/dT
-         CzY7NEFn/WDFd9e5rArH76zMniV6k0NWc0Rzl7hExjYnTWO0eylM71ZQr3uFPGLxBrYo
-         lBHQO/5T3eurTYTaOT4frSjl0BMjIpUqZHQ692WSKdBOnMPgVvddYe5fbPu3SqT4KpGk
-         EXDImMN3+Rv29BRRLbw87XClkz5NgzsNJVkPXdeLBm+J87R40A53ptnPkVnEbLxOYPlL
-         InfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMnytd8mcj2m7WBCXf/2vlNp1eHs42hPBoa+eQgF0xdqb0tRoNwmsUCXQwROYnL1VhY6i+B/YDGyBzZG4QG7Qba/BrTBbzH8z/u7kd
-X-Gm-Message-State: AOJu0YwK0hvdMJq7njEm8qA8AqkRlfAafZnWzJO8Z8WAIq2/y0S1acIW
-	fE3rPWMS/iBS0S3q6JGhfe2o0JgATGRxNX8Jh9rQYnB65elE5POFMMYO/Q==
-X-Google-Smtp-Source: AGHT+IHArHsW3DCfdQpbK2KIyCCirt6QvRblSevbGPQPn2t4LZFf5iduw2DZMI57WDH//nxVT0o+7A==
-X-Received: by 2002:a17:902:f649:b0:1e2:bf94:487 with SMTP id m9-20020a170902f64900b001e2bf940487mr7668589plg.57.1714840281493;
-        Sat, 04 May 2024 09:31:21 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:ae1c:de46:682a:206])
-        by smtp.gmail.com with ESMTPSA id jb13-20020a170903258d00b001ec4ed47ddesm5274490plb.86.2024.05.04.09.31.19
+        d=1e100.net; s=20230601; t=1714840410; x=1715445210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z3dypqPXlAvUzD5Mu1WQB9bBe4CtLqMLj8PS/31o/pE=;
+        b=MwjnWuI300rvzpTX0sEnxJQqefw7YaSU+7/oOwtur6TlARe49h6wWlHTjFmeWP7pUM
+         N66a4Nx5J6ipE1U9Ek6HaGbjqJb3l5H15VCV274qYosvgUBsYJ7je0uIuj+6Bwc+vKpf
+         Mw3FLY7NSEu33/UE5o4p/HdigcmBc7A0u9QskIXQlm05AonekLSukYRiTAYD+UuuhK1+
+         Vt9yC/j1J05Q0EQzvrFIcQCJr5Jn4dJNXYLB5kRJMcR0Ox8NXDlFoazFW0GfNwp4Odru
+         7EUJIFB+gIYqWKVkKoJbAsjRNcDopwR99BhOcoA8yw8PPEU9oW1HJuEmCdjROx+LSVWf
+         urWA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/kRAbkpY/0Em78V7UlKAaY4yT4T5LJE1EoPmY4Fvso/tVEql5TWJderEAGqh3dHZm33lm4f1uyJzYL8OsB//mXTGK2ivIU8qpDQry
+X-Gm-Message-State: AOJu0YzmbsL8jL5oHUG3xK2IiU9BBFK1udKZSdUyHIIIbl5u/jH8ZJWy
+	sKjB1FF41E8y/EkAy9xf/+z1Wz9tseecCzTFS8ffMFqv6dAJQ8E/A2cAw3bGTHxOKVk/km5nrKV
+	2HAlUty8ZauHu7K3k8+esRG7SBv5cGTnSeSK7UPvEIQMk7PBQrE64+EVxCxL6T9I5QsBYzPX1
+X-Received: by 2002:a17:902:8f96:b0:1e2:6d57:c1bb with SMTP id z22-20020a1709028f9600b001e26d57c1bbmr5599258plo.21.1714840409952;
+        Sat, 04 May 2024 09:33:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRfDPksZrRebZczxRNrO70cxZhz+xVuAXwMbEAYqjmga2NGbuOJKY60f8fe7WXoFiiCEAp4A==
+X-Received: by 2002:a17:902:8f96:b0:1e2:6d57:c1bb with SMTP id z22-20020a1709028f9600b001e26d57c1bbmr5599233plo.21.1714840409487;
+        Sat, 04 May 2024 09:33:29 -0700 (PDT)
+Received: from zeus ([240b:10:83a2:bd00:6e35:f2f5:2e21:ae3a])
+        by smtp.gmail.com with ESMTPSA id kz15-20020a170902f9cf00b001ec46958680sm5247285plb.71.2024.05.04.09.33.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 09:31:20 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Rob Clark <robdclark@chromium.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm/a6xx: Cleanup indexed regs const'ness
-Date: Sat,  4 May 2024 09:31:13 -0700
-Message-ID: <20240504163114.639228-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.44.0
+        Sat, 04 May 2024 09:33:28 -0700 (PDT)
+Date: Sun, 5 May 2024 01:33:24 +0900
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syoshida@redhat.com,
+	syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v3] nfc: nci: Fix uninit-value in nci_rx_work
+Message-ID: <ZjZjVGy0e9BxvtCK@zeus>
+References: <20240502082323.250739-1-ryasuoka@redhat.com>
+ <b7c7fab7-07d5-4654-a903-473f0c6dd4aa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7c7fab7-07d5-4654-a903-473f0c6dd4aa@kernel.org>
 
-From: Rob Clark <robdclark@chromium.org>
+On Fri, May 03, 2024 at 11:07:49AM +0200, Krzysztof Kozlowski wrote:
+> On 02/05/2024 10:22, Ryosuke Yasuoka wrote:
+> > syzbot reported the following uninit-value access issue [1]
+> > 
+> > nci_rx_work() parses received packet from ndev->rx_q. It should be
+> > validated header size, payload size and total packet size before
+> > processing the packet. If an invalid packet is detected, it should be
+> > silently discarded.
+> > 
+> > Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+> > Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534 [1]
+> > Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> > ---
+> > 
+> > v3
+> > - As Simon pointed out, the valid packets will reach invalid_pkt_free
+> > and kfree_skb(skb) after being handled correctly in switch statement.
+> > It can lead to double free issues, which is not intended. So this patch
+> > uses "continue" instead of "break" in switch statement.
+> > 
+> > - In the current implementation, once zero payload size is detected, the
+> > for statement exits. It should continue processing subsequent packets. 
+> > So this patch just frees skb in invalid_pkt_free when the invalid 
+> > packets are detected.
+> > 
+> > v2
+> > https://lore.kernel.org/lkml/20240428134525.GW516117@kernel.org/T/
+> > 
+> > - The v1 patch only checked whether skb->len is zero. This patch also
+> >   checks header size, payload size and total packet size.
+> > 
+> > 
+> > v1
+> > https://lore.kernel.org/linux-kernel/CANn89iJrQevxPFLCj2P=U+XSisYD0jqrUQpa=zWMXTjj5+RriA@mail.gmail.com/T/
+> > 
+> > 
+> >  net/nfc/nci/core.c | 33 ++++++++++++++++++++++++---------
+> >  1 file changed, 24 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+> > index 0d26c8ec9993..e4f92a090022 100644
+> > --- a/net/nfc/nci/core.c
+> > +++ b/net/nfc/nci/core.c
+> > @@ -1463,6 +1463,16 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
+> >  				 ndev->ops->n_core_ops);
+> >  }
+> >  
+> > +static bool nci_valid_size(struct sk_buff *skb, unsigned int header_size)
+> > +{
+> > +	if (skb->len < header_size ||
+> > +	    !nci_plen(skb->data) ||
+> > +	    skb->len < header_size + nci_plen(skb->data)) {
+> > +		return false;
+> > +	}
+> > +	return true;
+> > +}
+> > +
+> >  /* ---- NCI TX Data worker thread ---- */
+> >  
+> >  static void nci_tx_work(struct work_struct *work)
+> > @@ -1516,30 +1526,35 @@ static void nci_rx_work(struct work_struct *work)
+> >  		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
+> >  				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
+> >  
+> > -		if (!nci_plen(skb->data)) {
+> > -			kfree_skb(skb);
+> > -			break;
+> > -		}
+> > +		if (!skb->len)
+> > +			goto invalid_pkt_free;
+> >  
+> >  		/* Process frame */
+> >  		switch (nci_mt(skb->data)) {
+> >  		case NCI_MT_RSP_PKT:
+> > +			if (!nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
+> > +				goto invalid_pkt_free;
+> >  			nci_rsp_packet(ndev, skb);
+> > -			break;
+> > +			continue;
+> 
+> I don't find this code readable.
+> 
+> >  
+> >  		case NCI_MT_NTF_PKT:
+> > +			if (!nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
+> > +				goto invalid_pkt_free;
+> >  			nci_ntf_packet(ndev, skb);
+> > -			break;
+> > +			continue;
+> >  
+> >  		case NCI_MT_DATA_PKT:
+> > +			if (!nci_valid_size(skb, NCI_DATA_HDR_SIZE))
+> > +				goto invalid_pkt_free;
+> >  			nci_rx_data_packet(ndev, skb);
+> > -			break;
+> > +			continue;
+> >  
+> >  		default:
+> >  			pr_err("unknown MT 0x%x\n", nci_mt(skb->data));
+> > -			kfree_skb(skb);
+> > -			break;
+> > +			goto invalid_pkt_free;
+> >  		}
+> > +invalid_pkt_free:
+> > +		kfree_skb(skb);
+> 
+> Why you cannot kfree in "default" and error cases? I don't think that
+> goto inside loop makes this code easier to follow.
 
-These tables were made non-const in commit 3cba4a2cdff3 ("drm/msm/a6xx:
-Update ROQ size in coredump") in order to avoid powering up the GPU when
-reading back a devcoredump.  Instead let's just stash the count that is
-potentially read from hw in struct a6xx_gpu_state_obj, and make the
-tables const again.
+Thank you for your review, Krzysztof.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 15 +++++++++------
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h |  8 ++++----
- 2 files changed, 13 insertions(+), 10 deletions(-)
+Yes, we can write this without goto statement. But if we don't use goto
+statement, we have to call kfree_skb() and break in each switch
+statement like below.
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-index 77146d30bcaa..0a7717a4fc2f 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-@@ -24,6 +24,7 @@
- struct a6xx_gpu_state_obj {
- 	const void *handle;
- 	u32 *data;
-+	u32 count;	/* optional, used when count potentially read from hw */
- };
- 
- struct a6xx_gpu_state {
-@@ -1437,16 +1438,18 @@ static u32 a7xx_get_cp_roq_size(struct msm_gpu *gpu)
- /* Read a block of data from an indexed register pair */
- static void a6xx_get_indexed_regs(struct msm_gpu *gpu,
- 		struct a6xx_gpu_state *a6xx_state,
--		struct a6xx_indexed_registers *indexed,
-+		const struct a6xx_indexed_registers *indexed,
- 		struct a6xx_gpu_state_obj *obj)
- {
-+	u32 count = indexed->count;
- 	int i;
- 
- 	obj->handle = (const void *) indexed;
- 	if (indexed->count_fn)
--		indexed->count = indexed->count_fn(gpu);
-+		count = indexed->count_fn(gpu);
- 
--	obj->data = state_kcalloc(a6xx_state, indexed->count, sizeof(u32));
-+	obj->data = state_kcalloc(a6xx_state, count, sizeof(u32));
-+	obj->count = count;
- 	if (!obj->data)
- 		return;
- 
-@@ -1454,7 +1457,7 @@ static void a6xx_get_indexed_regs(struct msm_gpu *gpu,
- 	gpu_write(gpu, indexed->addr, 0);
- 
- 	/* Read the data - each read increments the internal address by 1 */
--	for (i = 0; i < indexed->count; i++)
-+	for (i = 0; i < count; i++)
- 		obj->data[i] = gpu_read(gpu, indexed->data);
- }
- 
-@@ -1890,9 +1893,9 @@ static void a6xx_show_indexed_regs(struct a6xx_gpu_state_obj *obj,
- 		return;
- 
- 	print_name(p, "  - regs-name: ", indexed->name);
--	drm_printf(p, "    dwords: %d\n", indexed->count);
-+	drm_printf(p, "    dwords: %d\n", obj->count);
- 
--	print_ascii85(p, indexed->count << 2, obj->data);
-+	print_ascii85(p, obj->count << 2, obj->data);
- }
- 
- static void a6xx_show_debugbus_block(const struct a6xx_debugbus_block *block,
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
-index 3b1ba514e8ee..dd4c28a8d923 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h
-@@ -397,7 +397,7 @@ struct a6xx_indexed_registers {
- 	u32 (*count_fn)(struct msm_gpu *gpu);
- };
- 
--static struct a6xx_indexed_registers a6xx_indexed_reglist[] = {
-+static const struct a6xx_indexed_registers a6xx_indexed_reglist[] = {
- 	{ "CP_SQE_STAT", REG_A6XX_CP_SQE_STAT_ADDR,
- 		REG_A6XX_CP_SQE_STAT_DATA, 0x33, NULL },
- 	{ "CP_DRAW_STATE", REG_A6XX_CP_DRAW_STATE_ADDR,
-@@ -408,7 +408,7 @@ static struct a6xx_indexed_registers a6xx_indexed_reglist[] = {
- 		REG_A6XX_CP_ROQ_DBG_DATA, 0, a6xx_get_cp_roq_size},
- };
- 
--static struct a6xx_indexed_registers a7xx_indexed_reglist[] = {
-+static const struct a6xx_indexed_registers a7xx_indexed_reglist[] = {
- 	{ "CP_SQE_STAT", REG_A6XX_CP_SQE_STAT_ADDR,
- 		REG_A6XX_CP_SQE_STAT_DATA, 0x33, NULL },
- 	{ "CP_DRAW_STATE", REG_A6XX_CP_DRAW_STATE_ADDR,
-@@ -433,12 +433,12 @@ static struct a6xx_indexed_registers a7xx_indexed_reglist[] = {
- 		REG_A6XX_CP_ROQ_DBG_DATA, 0, a7xx_get_cp_roq_size },
- };
- 
--static struct a6xx_indexed_registers a6xx_cp_mempool_indexed = {
-+static const struct a6xx_indexed_registers a6xx_cp_mempool_indexed = {
- 	"CP_MEMPOOL", REG_A6XX_CP_MEM_POOL_DBG_ADDR,
- 		REG_A6XX_CP_MEM_POOL_DBG_DATA, 0x2060, NULL,
- };
- 
--static struct a6xx_indexed_registers a7xx_cp_bv_mempool_indexed[] = {
-+static const struct a6xx_indexed_registers a7xx_cp_bv_mempool_indexed[] = {
- 	{ "CP_MEMPOOL", REG_A6XX_CP_MEM_POOL_DBG_ADDR,
- 		REG_A6XX_CP_MEM_POOL_DBG_DATA, 0x2100, NULL },
- 	{ "CP_BV_MEMPOOL", REG_A7XX_CP_BV_MEM_POOL_DBG_ADDR,
--- 
-2.44.0
+	for (; (skb = skb_dequeue(&ndev->rx_q)); kcov_remote_stop()) {
+		kcov_remote_start_common(skb_get_kcov_handle(skb));
+
+		/* Send copy to sniffer */
+		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
+				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
+
+		if (!skb->len) {
+			kfree_skb(skb);   <<<---
+			continue;   <<<---
+		}
+
+		/* Process frame */
+		switch (nci_mt(skb->data)) {
+		case NCI_MT_RSP_PKT:
+			if (!nci_valid_size(skb, NCI_CTRL_HDR_SIZE)) {
+				kfree_skb(skb);   <<<---
+				break;   <<<---
+			}
+			nci_rsp_packet(ndev, skb);
+			break;
+
+		case NCI_MT_NTF_PKT:
+			if (!nci_valid_size(skb, NCI_CTRL_HDR_SIZE)) {
+				kfree_skb(skb);   <<<---
+				break;   <<<---
+			}
+			nci_ntf_packet(ndev, skb);
+			break;
+
+		case NCI_MT_DATA_PKT:
+			if (!nci_valid_size(skb, NCI_DATA_HDR_SIZE)) {
+				kfree_skb(skb);   <<<---
+				break;   <<<---
+			}
+			nci_rx_data_packet(ndev, skb);
+			break;
+
+		default:
+			pr_err("unknown MT 0x%x\n", nci_mt(skb->data));
+			kfree_skb(skb);   <<<---
+			break;   <<<---
+		}
+	}
+
+IMHO, using goto statement can avoid calling this statement repeatedly,
+and it might make these codes brief. I understand goto statement often
+makes codes complicated as you mention, So please let me know again if I
+should write these codes without goto. I'd like to respect your idea and
+I'm willing to send v4 patch.
+
+Thank you,
+Ryosuke
 
 
