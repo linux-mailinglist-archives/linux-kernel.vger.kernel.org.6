@@ -1,198 +1,189 @@
-Return-Path: <linux-kernel+bounces-168527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6418BB9AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:50:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761948BB9AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 08:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 326271C21427
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 06:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02AB51F223D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 06:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB1B4C9D;
-	Sat,  4 May 2024 06:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F3663C1;
+	Sat,  4 May 2024 06:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvDgUplk"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbCPyu5Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B4712B7D;
-	Sat,  4 May 2024 06:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FBE4689;
+	Sat,  4 May 2024 06:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714805410; cv=none; b=IOzDHDSAlFkW3DE5LRr7KQ9xCwNK6WGmLWO5Fp9D27QzVTY2svFNi0X//JNDZF5psmaWV3KGD8wv/PqFT8E5UQkHOgIFBumCSUG4CrP0xdDBXNfBOokLEkwMaeW3/CnBJyFy+Kc9TUXTQy9rLjcbC5ik+hNQgxwFOR+bBFd03Is=
+	t=1714805724; cv=none; b=bwDzhRPiP12hhrDu6OBDvD6RCUij60AhQWFAIHOmVN/n5IiXkumoa4nl0AQmvAPabSWYVvI94kNIsWeNDh7akwr5dJN52toCI1GbyoiYHr9lkQ1nRa/Izl/xkgvZ3jMCnmo/xN0zVIH/leZibZ64J6vAgyIvhL7ezAkNYOAJES8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714805410; c=relaxed/simple;
-	bh=R0TlPIIIm/V0GkqkwHs+5v9yj/zJg44U1G0GZwq2Xw8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEUFiiSfKOPYYLygpqtrJ4OUQ1pX+dSvUoDUoVMH6n9dYwYM1GP20lbClg4qoLVF5g0cEoDkiw3G5TXNfAAhMkeHiWeoOxJsDHJyzBn+zrRwdaeiE6TgcefeoDF1aQ0pKYNa+7RGHjVmBi26Ar8XUqLH4mqijvskV6twmzz8xBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvDgUplk; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5af23552172so338609eaf.1;
-        Fri, 03 May 2024 23:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714805407; x=1715410207; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O2sbKjYzT4x1UoL5RpmaK50wwtSEQgH7b73Ky6YXb1k=;
-        b=lvDgUplkraVsWnsSW5ndmK3tUHW+HuhAOgMVQ3kL6TwdjrOT5WGFMMxD9YQuUoD79T
-         1vlJ5EN3WTaFSiyJ9zzY6t0YVK2paueQDa1a/tZxHQTUV34q15pKrk8ny4LgbEJ+UU49
-         HwRhMD23yjY4GQjqJkbOTUXiyGdYm5r5JStBkAZkagGAt+H77MYCbZQztUYe8nJzdRFT
-         /UQGCUPGmxY//M5+UCrPkZTAR1c/BB29mptZywk8VG/KMcLJyPlEFeG6N/q28W+15LEF
-         FB0jTofTk6ghcGL51yw6WMImcjp7Y2T2kgZzBI+Bu1aoW34karJJeLOazAAgo2qB+4n6
-         aJAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714805407; x=1715410207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O2sbKjYzT4x1UoL5RpmaK50wwtSEQgH7b73Ky6YXb1k=;
-        b=mivFycyAdobWQRL7EkxR+pnnXfkpuifeZmejXAeKiLg6/EUxfi1g7kuAF4sNdYsfiI
-         Ts7bG3v2NsR8scA+41ire5b7FIuTD5OGQZSfXkba2yHC6LRbDaGTBqLKK/HhtKyJk0cj
-         AwXa13KTs/Kxm+AEjrHG2u0XQLpLuXnCG6I8ooI+WJymxv8vmIdCq1QJwFohdPN+bju4
-         0cynAtM+2rN9A/EOj+o4JzyPalyk+Zn3SzodymnDs9oZE/MskROpdI+iwms9tzI2KHGT
-         w/tWwcFfB5dnw87DbvqitNaIecRdZO5dFN6RjQYQY5inU3qU380Epq/ZOnKwuJSztIkb
-         WeVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJAxsOgon2igN3seRPemVjSxvujHxRej5S5+F7szsR5uaIhT4PzFc3r/QNAO2ZzsiLKdYlrue1W8W4Wm5xYWPu79U3MkDa+3HcjVgqqKavXmCBE+yoEIKTjuk+XN2GVvxoUq0MJOq7nNcUiedRwWwCiV3aGCzk39X0F4TnpOkQOrePzA==
-X-Gm-Message-State: AOJu0YxQA1i4oTGydfHbvd4jDaFkAN7xj42FVaFzZpodWQZ5Z8M4p1iy
-	fA9bmwDYb7xcxib2DI46b4OwImm2DrDdARvFD9B9ejGq22Fn2BIQ6UmE4F9KlbvjXGeKdguY4z+
-	okGTjv209A3Ar7yyZ02TvN8PHf7s=
-X-Google-Smtp-Source: AGHT+IGWGhtJnlnrAsPTnGzkKYDaCZgrwiomT047J2Lrj8CoCeY+IesKUjnqTtkUFM1xQM+nuPuMXVzwgBopTqoH23w=
-X-Received: by 2002:a4a:dd95:0:b0:5ac:9f5f:fbdf with SMTP id
- h21-20020a4add95000000b005ac9f5ffbdfmr4665249oov.4.1714805405859; Fri, 03 May
- 2024 23:50:05 -0700 (PDT)
+	s=arc-20240116; t=1714805724; c=relaxed/simple;
+	bh=Yn0D36pQGFB9Z5N/ogNbWoLa2KEjQsWkGtuLzv3u+O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVwMHTwTXU1H4IAkwvqGd1dXPpvTOVaeGnjp/khJD1uK6kLWQAyJ5K3uiyCdGHZbhyWzDmSlK30lGHOR7ON1sw+VNOxG/Xggbcd9MnAqHIMfW8HPTmcS5UNadN25XV0Oz2cG5VJYMXnztl3+/51zVdkHDzWDx4PujkrpK0fl2JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbCPyu5Z; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714805723; x=1746341723;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Yn0D36pQGFB9Z5N/ogNbWoLa2KEjQsWkGtuLzv3u+O0=;
+  b=FbCPyu5ZaUzbAamr1MmPgkZGbjfhp3LZ4mHRrK6Yu8UvL5mdOaAz6ZjA
+   oMZoFxd5X/Qw0sCWDW/SpjQY6cBo/NALnEB5W64JcNZ/URyPezSQmjjTB
+   zNMBNeDxmBCihZqmRZlART+Fj3taImqVNYT2XkZXWo3D5n8CVEDAGHVDH
+   WqSMuy7GpdRlByziGEUHfevualvNh5AeO3I1fuvdQ9zrx/Va/pAbeDzBG
+   d6lgD9LtsPQvw5s8IXcdTP4Z56mqXhJzg870Pk0jpLBNWgtqbUT8ixaL/
+   P7P8BFeLrQJ9YE1+qszTQA96brR9Gddk7ImuUNWJBWI3wP+itGcEzvoDS
+   Q==;
+X-CSE-ConnectionGUID: HUGe1w1bTNKRvG0pzEzMsA==
+X-CSE-MsgGUID: zxAZLb1gQs6ZJ0bEvX3b8g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11063"; a="10497685"
+X-IronPort-AV: E=Sophos;i="6.07,253,1708416000"; 
+   d="scan'208";a="10497685"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2024 23:55:22 -0700
+X-CSE-ConnectionGUID: 3dSA0I9IRgmC/HVcZTBYZw==
+X-CSE-MsgGUID: MG4LmfGMQAOJxy4CtmIt+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,253,1708416000"; 
+   d="scan'208";a="28243294"
+Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 03 May 2024 23:55:20 -0700
+Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s39Ij-000CW8-0d;
+	Sat, 04 May 2024 06:55:17 +0000
+Date: Sat, 4 May 2024 14:54:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Minchan Kim <minchan@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH 08/14] zram: check that backends array has at least one
+ backend
+Message-ID: <202405041440.UTBQZAaf-lkp@intel.com>
+References: <20240503091823.3616962-9-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501083242.773305-1-qiujingbao.dlmu@gmail.com> <PN1P287MB2818F3818BEBE875C460F158FE1F2@PN1P287MB2818.INDP287.PROD.OUTLOOK.COM>
-In-Reply-To: <PN1P287MB2818F3818BEBE875C460F158FE1F2@PN1P287MB2818.INDP287.PROD.OUTLOOK.COM>
-From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-Date: Sat, 4 May 2024 14:49:54 +0800
-Message-ID: <CAJRtX8SRudWy7q-ON3L-oTjQo8+GCKPX9_sP8Dq8p3t915yvMQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] riscv: pwm: sophgo: add pwm support for CV1800
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, dlan@gentoo.org, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503091823.3616962-9-senozhatsky@chromium.org>
 
-On Fri, May 3, 2024 at 9:47=E2=80=AFAM Chen Wang <unicorn_wang@outlook.com>=
- wrote:
->
-> Hi, Jingbao,
->
-> This patchset should also be sent to the linux-riscv mailinglist.
+Hi Sergey,
 
-I will do that.
+kernel test robot noticed the following build errors:
 
->
-> On 2024/5/1 16:32, Jingbao Qiu wrote:
-> > The Sophgo CV1800 chip provides a set of four independent
-> > PWM channel outputs.
-> > This series adds PWM controller support for Sophgo cv1800.
-> >
-> > Changes since v6:
-> > - add detailed Limitations
-> > - using BIT(n) instead BIT(0) << n
-> > - use 0 instead of disable macro
-> > - modify OE judgment criteria
-> > - add devm_regmap_init_mmio error message
-> > - delete unused variable
-> >
-> > v6: https://lore.kernel.org/all/20240406063413.3334639-1-qiujingbao.dlm=
-u@gmail.com/
-> >
-> > Changes since v5:
-> > - delete the OE function because we plan to use the counter subsystem
-> >    instead of capture, so there is no need to reuse this code.
-> > - fix set polarity reverse error.
-> >
-> > v5: https://lore.kernel.org/all/20240314100131.323540-1-qiujingbao.dlmu=
-@gmail.com/
-> >
-> > Changes since v4:
-> > - drop filename
-> > - fix macro
-> > - optimize cv1800_pwm_set_polarity()
-> > - optimize cv1800_pwm_set_oe()
-> > - add comment for cv1800_pwm_set_oe()
-> > - use ticks replace tem
-> > - fix duty_cycle larger than period_val
-> > - use devm_clk_rate_exclusive_get() replace
-> >    clk_rate_exclusive_get()
-> > - map linux polarity to register polarity
-> >
-> > v4: https://lore.kernel.org/all/20240304085933.1246964-1-qiujingbao.dlm=
-u@gmail.com/
-> >
-> > datasheet Link: https://github.com/milkv-duo/duo-files/blob/main/duo/da=
-tasheet/CV1800B-CV1801B-Preliminary-Datasheet-full-en.pdf
-> > page 614
-> >
-> > Changes since v3:
-> > - use macro instead of npwm number
-> > - add support for polarity feature
-> > - add support for Output-Enable/OE feature
-> >
-> > v3: https://lore.kernel.org/all/20240223082014.109385-1-qiujingbao.dlmu=
-@gmail.com/
-> >
-> > Changes since v2:
-> > - use 0x08 instead of macro
-> > - split if statements based on conditions
-> > - in order to round up, first calculate the
-> >    number of high-level cycles, then subtract
-> >    it from the PERIOD to obtain the number of HLPERIOD
-> > - use new pwmchip_alloc() API instead of old style
-> >
-> > v2: https://lore.kernel.org/all/20240212121729.1086718-1-qiujingbao.dlm=
-u@gmail.com/
-> >
-> > Changes since v1:
-> > - drop full stop from subject
-> > - re-order maintainers and description
-> > - pass checkpatch.pl --strict
-> > - fix naming errors
-> > - add "Limitations" section
-> > - use a driver specific prefix for all defines
-> > - using bool instead u32 in cv1800_pwm_enable
-> > - check and set state->polarity
-> > - use mul_u64_u64_div_u64
-> > - use clk_rate_exclusive_get(), balance with clk_rate_exclusive_put()
-> > - using macro definitions instead of shift operations
-> > - remove shift operation on 0
-> > - use priv replace cv_pwm
-> > - hardcode npwm
-> > - set atomic to true
-> > - remove MODULE_ALIAS
-> >
-> > v1: https://lore.kernel.org/all/20240207055856.672184-1-qiujingbao.dlmu=
-@gmail.com/
-> >
-> > Jingbao Qiu (2):
-> >    dt-bindings: pwm: sophgo: add pwm for Sophgo CV1800 series SoC
-> >    pwm: sophgo: add pwm support for Sophgo CV1800 SoC
-> >
-> >   .../bindings/pwm/sophgo,cv1800-pwm.yaml       |  45 +++
-> >   drivers/pwm/Kconfig                           |  10 +
-> >   drivers/pwm/Makefile                          |   1 +
-> >   drivers/pwm/pwm-cv1800.c                      | 293 +++++++++++++++++=
-+
-> >   4 files changed, 349 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,cv180=
-0-pwm.yaml
-> >   create mode 100644 drivers/pwm/pwm-cv1800.c
-> >
-> >
-> > base-commit: 32c44e1fa921aebf8a5ef9f778534a30aab39313
+[auto build test ERROR on axboe-block/for-next]
+[also build test ERROR on akpm-mm/mm-everything linus/master v6.9-rc6 next-20240503]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards
-Jingbao Qiu
+url:    https://github.com/intel-lab-lkp/linux/commits/Sergey-Senozhatsky/zram-move-from-crypto-API-to-custom-comp-backends-API/20240503-172335
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20240503091823.3616962-9-senozhatsky%40chromium.org
+patch subject: [PATCH 08/14] zram: check that backends array has at least one backend
+config: s390-defconfig (https://download.01.org/0day-ci/archive/20240504/202405041440.UTBQZAaf-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 37ae4ad0eef338776c7e2cffb3896153d43dcd90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240504/202405041440.UTBQZAaf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405041440.UTBQZAaf-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/block/zram/zcomp.c:12:
+   In file included from include/linux/cpu.h:17:
+   In file included from include/linux/node.h:18:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:173:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2208:
+   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     509 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     516 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     528 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     537 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/block/zram/zcomp.c:214:2: error: call to '__compiletime_assert_285' declared with 'error' attribute: BUILD_BUG_ON failed: ARRAY_SIZE(backends) <= 1
+     214 |         BUILD_BUG_ON(ARRAY_SIZE(backends) <= 1);
+         |         ^
+   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^
+   include/linux/compiler_types.h:449:2: note: expanded from macro 'compiletime_assert'
+     449 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^
+   include/linux/compiler_types.h:437:2: note: expanded from macro '_compiletime_assert'
+     437 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ^
+   include/linux/compiler_types.h:430:4: note: expanded from macro '__compiletime_assert'
+     430 |                         prefix ## suffix();                             \
+         |                         ^
+   <scratch space>:97:1: note: expanded from here
+      97 | __compiletime_assert_285
+         | ^
+   5 warnings and 1 error generated.
+
+
+vim +214 drivers/block/zram/zcomp.c
+
+   202	
+   203	struct zcomp *zcomp_create(const char *alg)
+   204	{
+   205		struct zcomp *comp;
+   206		int error;
+   207	
+   208		/*
+   209		 * The backends array has a sentinel NULL value, so the minimum
+   210		 * size is 1. In order to be valid the array, apart from the
+   211		 * sentinel NULL element, should have at least one compression
+   212		 * backend selected.
+   213		 */
+ > 214		BUILD_BUG_ON(ARRAY_SIZE(backends) <= 1);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
