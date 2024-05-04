@@ -1,112 +1,89 @@
-Return-Path: <linux-kernel+bounces-168845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666938BBEC3
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 00:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D368BBEC4
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 01:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97FFA1C20C3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 22:44:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AA831C20D83
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 23:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5710284FB8;
-	Sat,  4 May 2024 22:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A042C84FB8;
+	Sat,  4 May 2024 23:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VSZyDH0T"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nuY8doZR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D162BAE8;
-	Sat,  4 May 2024 22:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DCC84E1F;
+	Sat,  4 May 2024 23:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714862673; cv=none; b=XxT42EKvQKFrGLLtJg1Um9FUEuHOItIS+2EIb57+6gf8FiyXC78dwpXIsMgLyFarAqqIXEIzxIQfvsT2S483ysaTWsLe9jGpLjKMG0bziEnpX1YrzIoIZD1QKItquIlv8Jf5kAzXlDEoXnyVLVYHoYwTc15kBCpikFeleSahlME=
+	t=1714863805; cv=none; b=o+B+Jze9djbnEtBv5nCv4tAaNwZdP+LCChJJqkoS4T4SUCn5CjyplCFe6MtTJeI0uxDvPwKqOzVtifqI8RSlBorxpX+8FHv2+7XSxooZseHYDXCtSzi1lL3DH5dET9F/4xpvkGsahv+eTRZ7Uga6X7eY0oi9glrZcYlGVeLr2D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714862673; c=relaxed/simple;
-	bh=ChFP9soZFQfzF6V++qD6V6h/Ebfb4+XVe7SS9h8/Gpg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nyWy5GsU6hqkPltW9F7Agqh+RAs/zScR1Vdr0bokTeXhr/BvyD2P5xoV3XDMmwd5WAMd6UAuFkbFXf4FGilU8Su+5+GVbEYVWcpPv3K1jjXgPh81aDopeTK7BIZpH+7Xc/qXk5U1sQqtcExnmmv01ZF1yOH9UNflO19Wc+7+45c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VSZyDH0T; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 3O6BshQVn10G63O6Cs9BN7; Sun, 05 May 2024 00:43:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714862600;
-	bh=wWdMEMOIhPw6ppUn56CQKuUZeJb+o7tGdksRBeMqDTA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VSZyDH0T9T59uX3IKpq+l1xEvpEF0bAD/lH5CJFjzVFLNhxgYS/ys5kwHvkdsJ4DH
-	 b3DbVvZPyPAzu4wMVtRkS6coaACZrxKzwMa/yJOVPWIilfP391FCWgXybxbh585x+d
-	 I5R3mpKnoMPc/9vd+HXRtp9Qw72FAcMnt1xYvr7xFHvC1jXEYLCit83P5x9iuICSgV
-	 85ZxmwInjkdu0S5mlabpPDaqDDZRlY9uYnfoNlSU1DzVQSVppwZBr6HJZuTsnTZwWI
-	 yaNaCUPzZz8A6wZhiFQPf9IeSHvlEcJ+QYtuVO4B4/qpMu4JkFJIVGyI9DeSPQC+9M
-	 VIAYhZk85KEhQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 05 May 2024 00:43:20 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rtc@vger.kernel.org
-Subject: [PATCH] rtc: rx6110: Constify struct regmap_config
-Date: Sun,  5 May 2024 00:43:07 +0200
-Message-ID: <833a7f612c0de9dcb1179a0b75b189c237a335ac.1714862560.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1714863805; c=relaxed/simple;
+	bh=ZInlZsOkTWK0vvjZbnibAQPQae7tkslsf9UrJVVqEVs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QW/zc1djcNAL5+89ijpeXaxN3VZh7sWjuz4XWMFlI7XYn7w29yT/8Y9SC/LcFULBkfbfTJTiov/iwyVlqJ23Ly7TSD3wncPJPeOZw2zAGZfQtucm34wZkkT/aGZBO77I3fEW96v5BEeZbUaCVD147sbvgrZxyfWz0QmIHFt3KAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nuY8doZR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A7DC072AA;
+	Sat,  4 May 2024 23:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1714863805;
+	bh=ZInlZsOkTWK0vvjZbnibAQPQae7tkslsf9UrJVVqEVs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nuY8doZRVNRzroY3YxRsdC1Ol3wcauUk6s/2q3pKvgrXdV0oAiSM/eVwICYRxfTe6
+	 3FNErWgTeE4+YgfdBtCdh2dRGxaJNaUDnaD2GJb6b8wAT3vZTbDf3GoHTrJw898ye4
+	 6zTPUZ7+fMkxeveKKwJirHntws+i9R/ZvN/3CkhY=
+Date: Sat, 4 May 2024 16:02:57 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Kuan-Wei Chiu
+ <visitorckw@gmail.com>, Liam.Howlett@oracle.com, ndesaulniers@google.com,
+ morbo@google.com, justinstitt@google.com, linux-kernel@vger.kernel.org,
+ maple-tree@lists.infradead.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+ jserv@ccns.ncku.edu.tw
+Subject: Re: [PATCH] maple_tree: Fix build failure with W=1 and LLVM=1
+Message-Id: <20240504160257.02e20addebc407cb4a18da48@linux-foundation.org>
+In-Reply-To: <20240503160821.GB3960118@thelio-3990X>
+References: <20240503095027.747838-1-visitorckw@gmail.com>
+	<ZjTWkM9hTnoIhzqV@casper.infradead.org>
+	<ZjTgEsuxYF29AVFJ@visitorckw-System-Product-Name>
+	<ZjTmqM4ePSZgSt9_@casper.infradead.org>
+	<20240503160821.GB3960118@thelio-3990X>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'regmap_spi_config' and 'regmap_i2c_config' are not modified in this diver
-and are only used as a const struct regmap_config.
+On Fri, 3 May 2024 09:08:21 -0700 Nathan Chancellor <nathan@kernel.org> wrote:
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
+> This patch has effectively been sent four times now:
+> 
+> https://lore.kernel.org/all/20220914101829.82000-1-jiapeng.chong@linux.alibaba.com/
+> https://lore.kernel.org/all/20230217084647.50471-1-jiapeng.chong@linux.alibaba.com/
+> https://lore.kernel.org/all/20230319132903.1702426-1-trix@redhat.com/
+> https://lore.kernel.org/all/20240503095027.747838-1-visitorckw@gmail.com/ (this change obviously)
+> 
+> Your first comment from the 2022 patch:
+> 
+>   They're not used now, but they will be in a release or two.
+> 
+> I think a few releases have passed since then :) I don't personally care
+> if there is a solution here or not, as I don't test with W=1 (there's
+> enough to do at W=0 :P), but maybe it is time for either __maybe_unused
+> (as that strikes at the heart of the issue) or at the very least a
+> comment saying "hey, these functions are currently unused but there are
+> plans for them to be used, so don't remove them", rather than just
+> saying the status quo?
 
-On a x86_64, with allmodconfig:
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   8896	   1554	     32	  10482	   28f2	drivers/rtc/rtc-rx6110.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-   9536	    914	     32	  10482	   28f2	drivers/rtc/rtc-rx6110.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/rtc/rtc-rx6110.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-rx6110.c b/drivers/rtc/rtc-rx6110.c
-index 834274db8c3f..af6dd6ccbe3b 100644
---- a/drivers/rtc/rtc-rx6110.c
-+++ b/drivers/rtc/rtc-rx6110.c
-@@ -330,7 +330,7 @@ static int rx6110_probe(struct rx6110_data *rx6110, struct device *dev)
- }
- 
- #if IS_ENABLED(CONFIG_SPI_MASTER)
--static struct regmap_config regmap_spi_config = {
-+static const struct regmap_config regmap_spi_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = RX6110_REG_IRQ,
-@@ -410,7 +410,7 @@ static void rx6110_spi_unregister(void)
- #endif /* CONFIG_SPI_MASTER */
- 
- #if IS_ENABLED(CONFIG_I2C)
--static struct regmap_config regmap_i2c_config = {
-+static const struct regmap_config regmap_i2c_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = RX6110_REG_IRQ,
--- 
-2.45.0
-
+We could just slap a #if 0 around them.  But I don't think it'll kill us to
+have to type them in again one day ;)
 
