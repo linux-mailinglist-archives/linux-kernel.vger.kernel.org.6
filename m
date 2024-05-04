@@ -1,94 +1,74 @@
-Return-Path: <linux-kernel+bounces-168563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA738BBA31
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:02:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FC58BBA35
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 11:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805351F22089
-	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:02:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8202C1C2119D
+	for <lists+linux-kernel@lfdr.de>; Sat,  4 May 2024 09:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21EB13ACC;
-	Sat,  4 May 2024 09:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA85171C2;
+	Sat,  4 May 2024 09:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="QcMEOHKJ"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1sBN+Q5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C557712B7F
-	for <linux-kernel@vger.kernel.org>; Sat,  4 May 2024 09:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AA65221;
+	Sat,  4 May 2024 09:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714813347; cv=none; b=JjWkE21KkR4fEgMI1/lN5cvXEH9jpduVzc7zuLo4aAAgk3tDb3vrXT4/pUtX144EgvaS+QaT4hZaHhboxAla2UWRqvaFU2iBFoxdFPVAiJR0q34WogMklMf1Hb0mscNTzl1XOLx6JFzA4/TDPVenboJjhQTb5PMxxNbcvjqwZxg=
+	t=1714814058; cv=none; b=TDIu4epTzJVLl2vM/BlfNvC64NkQJHOlFPRIKkJAXfc4yarlyfd4W+S59JOnQtl3jPDhJLBhoU0V+Y+5fRhn+stuf9ofao0N9APf65dNDPhL3ScUaWyPnUFeZrsGRZVbRkVuQjURST5Q9+DUEg/Y09RVDncYmG30fqHqJQTIGWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714813347; c=relaxed/simple;
-	bh=1vE6pwhHDCeA5eZS4yNcrOWki7vm3bJvBPL6o+lt1D4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VT0zlvMHx+kCxtz/eYITZ8+7cUKtYenEcQHHFuOgn/Bs9CS+iZZxVAfU3ck50vi63jU27BB4lmzr16iG5vRHjcHR1XbjsS9PGpXsJiFDS69amq9+zChBmhnVbDdnEUWlsfq+V80eTYm0JQY+iopl8LUiT6FrJdjzxzzwLB+ceLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=QcMEOHKJ; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id BBC1B1BB71A;
-	Sat,  4 May 2024 11:02:23 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1714813343; bh=WTiMVR4lDzki0V9uKJuS4ncHuqC5yWy3Y5R0O+ilEHQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QcMEOHKJirmrZl1n0uO4HEKSY6I1E+XiaHCASjoWMSHlyqIWKWziwlzInyjhwD8AE
-	 oQCtFe7sAbp0LwSxDVo7+hTFDmXx1VdX5LiK286IzWsuCcEuh/hiMRC0IdICzEhPtI
-	 XqNnd0KMLd1xj+p5XYBlXi30hkTboQXUvio4dS3LqDCTNf8DUyWv2jU3rafTjUUcjM
-	 Xf51ovQU+Oyj1JGVPRGpw+uh40ftIb9zBod4dGvwWPQ3hudzGY2X5wf87jF1MFMX9K
-	 JuWLMkwPo39yk2/Sf1xLBniAocDwj0/GIRVGH9ib1HJjxoyVc2zKIbTywUBS8kWz0c
-	 Jyd2gvgZqdpZw==
-Date: Sat, 4 May 2024 11:02:23 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, Marek Szyprowski <m.szyprowski@samsung.com>, Robin
- Murphy <robin.murphy@arm.com>, Michael Kelley <mhkelley58@gmail.com>,
- Nikita Ioffe <ioffe@google.com>
-Subject: Re: [PATCH] swiotlb: Initialise restricted pool list_head when
- SWIOTLB_DYNAMIC=y
-Message-ID: <20240504110223.3a854f96@meshulam.tesarici.cz>
-In-Reply-To: <20240502125601.GA20723@lst.de>
-References: <20240502093723.16820-1-will@kernel.org>
-	<20240502125601.GA20723@lst.de>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1714814058; c=relaxed/simple;
+	bh=lmwJ8e6v/rnWG8UvFfWKN89Gdz+WCDrr4/jNs9H5PeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h8KKV6MU2DVeAspVKJx/bTZjwitaiuKjllo12wNAyLtWBOx+L9czVynGM+ZmDQSIs/sWQ47n7vdPdFYGe2KorasbHC6O3Ex0PR9wtJmaZlSxU3T6rQgSRIugBYlGX2jJbw4Y2mNgP+Ohk4lb+mkzWtqEmtax244AWj8H6sQtB+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1sBN+Q5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59A7C072AA;
+	Sat,  4 May 2024 09:14:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714814057;
+	bh=lmwJ8e6v/rnWG8UvFfWKN89Gdz+WCDrr4/jNs9H5PeQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g1sBN+Q5X99UoOqBmUsF8RafWcFlzX6xiicnM086S/yqIRgkKg77J6yVHHXgPTIkl
+	 /piu/jJOimZ5H4JS3JHnsgudvpwE49zMCec1euFlVRKWkGC5uyt1VLwBp554sV+vMh
+	 0qAlmsdMMHtiNkhnTtKJJyg5Lehu7NhNZNooYQxCC00fiMTvlTclWicSmdXuFJfz5y
+	 RjfEL6jloNjieytSvxaB0Td1VxeGeLp68M4hN9oUd/OSjA6LtTjBY0LvqZZC9MLQHp
+	 Kn65RzdZ8ijUSsYMXfSadiCErKCu0y8jvEZJxw2xfsFa78qzzkL8e/nL5/7ZGWWUnp
+	 Up/id+l+bC/qw==
+Date: Sat, 4 May 2024 10:14:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net-next v1 1/1] can: sja1000: plx_pci: Reuse predefined
+ CTI subvendor ID
+Message-ID: <20240504091413.GC3167983@kernel.org>
+References: <20240502123852.2631577-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502123852.2631577-1-andriy.shevchenko@linux.intel.com>
 
-On Thu, 2 May 2024 14:56:01 +0200
-Christoph Hellwig <hch@lst.de> wrote:
-
-> Thanks,
+On Thu, May 02, 2024 at 03:38:52PM +0300, Andy Shevchenko wrote:
+> There is predefined PCI_SUBVENDOR_ID_CONNECT_TECH, use it in the driver.
 > 
-> applied to the dma-mapping for-linus branch.
-> 
-> I plan to send it to Linus this weekend unless someone find a grave bug
-> in this pretty obvious one liner.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thank you, and big thanks to Will for the fix!
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Yes, the fix is obviously correct. During development, the pool list was
-never dereferenced when mem->can_grow was false, but I forgot to add
-the initialization when I optimized away the check for can_grow.
-
-BTW this mem->can_grow flag is also why mem->dyn_alloc can be left
-uninitialized, but now I wonder if it should be initialized even though
-it's unused, just to make the code more robust in case of future
-changes.
-
-Petr T
 
