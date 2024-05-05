@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-168910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDFA8BBF9B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D8F8BBF9D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C751C20DA3
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:26:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8037F1C209F7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE1B6FB9;
-	Sun,  5 May 2024 07:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C516FA8;
+	Sun,  5 May 2024 07:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTXMHCaT"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjZ2kmYV"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A466A6112;
-	Sun,  5 May 2024 07:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52728567F;
+	Sun,  5 May 2024 07:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714894006; cv=none; b=tdywGJCn/pqLnmQ7hhBZtJyb9iTk3MfLBTYtqa6p0/WSEsO/ejv7qhIaR/8MdpoLh9NCyFLEgINP5MCEmddhgYpJDRGxzCS3FNxlpu1Ao+6dCxqPMwwtrShL0t+lGI1sMnXxAEeK0v5Yl5PUskVyP70ALl9PYbpgu4+V3AztOzY=
+	t=1714894618; cv=none; b=nH6gr78yW7xme1ipO2DOERZ5wG2lUKMr+z7CG2cq+CepodoCW8cJzLk/AxtKIPN1Y6T4thOwdy0BnPuh99O5SVgtyONinJbXyeos9k/zzGt50/h0BTZrRnqE5E0qcCgoyWanV0uhjH3p+9R01TzF4El+/flqGqjiu/r3ZHb7IZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714894006; c=relaxed/simple;
-	bh=LeHHGetyMUSrlkFHEfG0Vt3DO6MMorzrOqzWDlUmXa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7hjeAbpnKJqEVHd2cbYQvlvYevJBfSsMCjwvaW02MVLFbGyLs04aw8hO3arHU2AXQs1RVEc71mrh7tBEJZ18om6cahdfLk4M+W5cTdyas8H9B04GqLqw9JGwpTLrnTLduyJ77qT0XbAZcXiZdsYZi/G8yrvvYgm75woKd25eM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTXMHCaT; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1714894618; c=relaxed/simple;
+	bh=kF+BXbMdzjv9zJwYvETsu6yuoGSvo6HZ2u28p8vg1gA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZPSA/AMTs9+ImLe9oSDIUz9o4IJCb9/S5TAlA2H4rp49jb5HgVz0pgBprkPv8nPulP6p8A6Py+Xk5XXEcqhtLMmFUhvxg5ZcdddSdfQEX/Su3x2Rry6lEKTR8MEzuTwec6MeCnXcFghbJdJkDWsctZS2ivGnrX6RJxDeFclcaZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjZ2kmYV; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59b49162aeso126718466b.3;
-        Sun, 05 May 2024 00:26:44 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51f74fa2a82so1032000e87.0;
+        Sun, 05 May 2024 00:36:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714894003; x=1715498803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=deKeI1G9ttkrRvHqpeAP9bWVRIz30uNCr5BsQ+5FlH8=;
-        b=mTXMHCaT2mpSONBZck8fE0HRpcxWGLXoxfc6uWGSfoqPdu7Z6CkeqmFwNH3nf0lFCF
-         n9Bpo2Ey8L8hukj0bP1yexJCraE6WZU966gA4cwncfZCgz0J7zYYS6Vr5o2XtBG4NO8g
-         sJTQrRLe/RucB73rFwPLiuYScVk1xMV0mdBjlUBpUDBeuLa+02u6y5jz4BCHe1r065mT
-         kiN/fNZl1hr7o95exkVHxlSLlvwnPFa+5L/3D5VG6vxBud9Ck2EcesvhjGTDXX08v9yp
-         2DeLm6S9pflsdKnYsJiU5z4Gh8kJLSotTM2pNEsZb50l7Mrz0/bvYIfNndoYruXd6Q2h
-         z5Kg==
+        d=gmail.com; s=20230601; t=1714894615; x=1715499415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sV9tEny9NKUbEgU1EhkDp3KbnE7GbZyEn7aGZ4ZCiGY=;
+        b=NjZ2kmYVgI/ulciGhreJq3aSl2R2I2r1uQEC/SKHOjvMo2dIMR6BfRVFpzP2ZswfRy
+         0ICxKxtvjDJB81ui1WtP9vpyVjnqqdqZZ1HfySzCTMiHIuZl+F91rC0OBCjjhoc5NYEC
+         pgh9jJi1fq6ErU1RU7ZBMJUSH9qgRWcq0jD1nNOe3R+N825AGeTnYk+MvFpzZbhTsR8y
+         /OlbTwRV/+VKcSTtG8cys9V16ZtOY6mCX0TOxNCs55Qys+P1nZoIn0IjrS4gpFgvLWd3
+         ymRnrzhqxQMtcmuFjdsYA/QCW8lfsFfXwxKl2R1omeQ1biL/NoF1f8o2NJ04ftphkN2i
+         Qzew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714894003; x=1715498803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1714894615; x=1715499415;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=deKeI1G9ttkrRvHqpeAP9bWVRIz30uNCr5BsQ+5FlH8=;
-        b=PxniLtgoc7OURk8QJbx1Qvdt5RppNLs+oc00iRobQO4T8vAmr5s8FWeFwry3HdVTRg
-         I8uiNWFwwsstrVqI27E7AKo/6Nq9ES6oCkqlI4GB48m1T9a5gLyKU4yk90z/s30EFHUo
-         XXBn2I+YbR3mEFDNHRZiqn2JFoIfF9SelIZUCrhUG+rTpjZHP1Dfe5vWEkbMXY2NWfMO
-         oV6OWRJRKVyFKxNHnXu8z9F+omIvLAbgrveGIfCZyAlP9HdSH+KiSNUYO8Lol9JrXaHF
-         dGpaOqaORTzEwFGcbWpnRNcUeREv2lFJuFFHBonBgRmIe/f13gZf0qjvyU6F9qCposEp
-         1hgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuX7Hts2npzm+l7G+8Ar94H1Z8Y95fyLObAqnemVKjctTpYiiX9EztpzsE6J523MUKR75OKQMjX4u8pCWYWWhFCQZoYAA+oiU4T6dCJkizLjF7U9b48VpBxro34vI/0n3QEdD+SaDltxpw
-X-Gm-Message-State: AOJu0YxFHscd82vgiyWzOqNp2vrk1D/l7wAk+1GULNEJKlg2nxAeAq/y
-	RczqZ4skg5+Y+/lvFhxhzmnLXWhjzXUBCVRi2UejIZ56oPL5RL5XSdvOSfpm
-X-Google-Smtp-Source: AGHT+IGAmi5n03zMIWrhIV3Cl2hz5vmpuQSwRrFBXAadNYWEGYZ+7Kxc2dpt7Laio4Ky598e5hwjjA==
-X-Received: by 2002:a50:8a96:0:b0:56e:2464:7c4b with SMTP id j22-20020a508a96000000b0056e24647c4bmr4567906edj.10.1714894002632;
-        Sun, 05 May 2024 00:26:42 -0700 (PDT)
-Received: from gmail.com (1F2EF54C.unconfigured.pool.telekom.hu. [31.46.245.76])
-        by smtp.gmail.com with ESMTPSA id er21-20020a056402449500b005726e5e8765sm3705962edb.3.2024.05.05.00.26.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 00:26:42 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sun, 5 May 2024 09:26:40 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Subject: Re: [GIT PULL] Kbuild updates for v6.9-rc1
-Message-ID: <Zjc0sJWqfMWFD0/p@gmail.com>
-References: <CAK7LNARXef6Myb_Gd4jyGfwujoBAjmjzLZBzgkm4T1KmfHP0MQ@mail.gmail.com>
- <ZjcRPelwZP34N42s@gmail.com>
- <ZjcSjk0mXYopAvVS@gmail.com>
- <ZjcaHRjZDdy/6/rn@gmail.com>
+        bh=sV9tEny9NKUbEgU1EhkDp3KbnE7GbZyEn7aGZ4ZCiGY=;
+        b=UVURVUjEjz47veeS9Bswpsg2wnCjWRFaWE6YNwwUQ2xorKKA1VUf6JMEnHGVdqE5aQ
+         HfNPJIS5lwjLyXzvnoaYH4RYcH62csTfgs0CZzB2FjY2xlWM7NW89pPD+YsBwgdl4dbL
+         Ht/55ar4I/YQ37sakRVEh4QwINgvMlGxkfmclXgiWEZpPz6anS6d+q6cKBeFnBgExzNk
+         7UwroLx2/equQckjX/D1NU+OSnK9RBNA6bl6bh+nMey9rlD0ZL2Le5yu2JMdgIBnownK
+         vUobOG5w8vInH0uwBfMrd2O3Axe8/iiMEXfTRwXJhKm8+BKTfpz8UStPb+pvGleVFVZq
+         Z/9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVNrN9oeVAwFoAntYRng/KflYreps2FLIouHFk2F5aMn5GxovzXNO3S7yOHmgOA7ndTSJPCPh5W8E93UBcfo6eFHTsk2EF5PL7P3tRdjY36/ZDQmiMT34OAa+rchz81FzNk7dMifBdX9MWQquuqxl0/iXU/gnV3HjE0mNM7SrJn/BU3NBQy
+X-Gm-Message-State: AOJu0YzGBKro+RrhJ9XsVBPbPlMXxj8wTubKeet6VPE7P6TJWpl2HEgN
+	Z/WezfPUd6PhWaLPpp4Saosh0xMDbPVxE6TfVgWup2YVEQvCPyeFDvBzyqks/35S34a+EAghN9V
+	xCiPF+Zi8jzzENmxZd/6eMgMcrJ8=
+X-Google-Smtp-Source: AGHT+IEhm1kOZjjK2ZFI6f9D/6GM/IBpz99QMQr9mvR814WhujoDVJK3uBymnjH6FbQ1lNiuvR+8f/dPCun7Wnovqlg=
+X-Received: by 2002:ac2:4e88:0:b0:51a:c2fe:9f73 with SMTP id
+ o8-20020ac24e88000000b0051ac2fe9f73mr4834131lfr.51.1714894615147; Sun, 05 May
+ 2024 00:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjcaHRjZDdy/6/rn@gmail.com>
+References: <20240417134237.23888-1-bavishimithil@gmail.com> <2e179356-425d-48cc-84db-0ea3e6203fba@kernel.org>
+In-Reply-To: <2e179356-425d-48cc-84db-0ea3e6203fba@kernel.org>
+From: Mithil <bavishimithil@gmail.com>
+Date: Sun, 5 May 2024 13:06:42 +0530
+Message-ID: <CAGzNGR=pvv67UJtNnkDUMhrpnPjNCCYEGeCaM7e_9=4G+Lcfgw@mail.gmail.com>
+Subject: Re: [PATCH v4] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Apr 17, 2024 at 7:33=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+> How did this happen? I see this was in v1, but I am quite surprised to
+> be listed here. I am for sure not a maintainer of this binding. Choose
+> driver maintainers or platform maintainers, worse case.
 
-> 
-> * Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > 
-> > * Ingo Molnar <mingo@kernel.org> wrote:
-> > 
-> > > Notes:
-> > > 
-> > > - Yes, those weird 'file' and ': No such file or directory' strings are 
-> > >   pasted as-is. No idea what it's about, and the build log doesn't say.
-> > 
-> > Forgot to mention that I also did a KBUILD_VERBOSE=2 build - which isn't 
-> > more verbose for this particular failure:
-> 
-> Another update - I reverted the 4 most recent commits to 
-> scripts/package/debian/rules:
-> 
->  b8d18fee7aa2 Revert "kbuild: deb-pkg: show verbose log for direct package builds"
->  82ac586caf3d Revert "kbuild: deb-pkg: make debian/rules quiet for 'make deb-pkg'"
->  0b806eac90d6 Revert "kbuild: deb-pkg: build binary-arch in parallel"
->  4b16391dc462 Revert "kbuild: deb-pkg: call more misc debhelper commands"
->  f96beb84eff6 kbuild: deb-pkg: call more misc debhelper commands
->  1d7bae8f8c85 kbuild: deb-pkg: build binary-arch in parallel
->  caf400c8b68a kbuild: deb-pkg: make debian/rules quiet for 'make deb-pkg'
->  cc3df32c9f3a kbuild: deb-pkg: show verbose log for direct package builds
-> 
-> And this resolved the issue, the debs are built successfully:
+I might have overlooked this, will fix it. There is no driver
+maintainer for it as far as I know.
+Should I include the module author?
 
-Update, the bad commit is:
+> Not much improved here. You miss $ref and optionally constraints.
+Something like this
+    $ref: /schemas/types.yaml#/definitions/string
+    enum: [mcpdm]
+Didnt really understand the "optionally constraints" part.
 
-   1d7bae8f8c85 kbuild: deb-pkg: build binary-arch in parallel
+> Missing constraints, so replace it with maxItems: 1
+Similar to how clock-names are handled?
 
-.. and reverting it solves the build bug.
+> List the items. I asked to open existing bindings and take a look how it
+> is there. Existing bindings would show you how we code this part.
+  clock-names:
+    items:
+      - const: pdmclk
+    minItems: 1
+    maxItems: 1
+Something like this?
 
-And my Make-fu is weak, I don't see what's wrong with the commit.
+> Just one blank line.
+Removed.
 
-Thanks,
+> That's wrong address. Old code does not have 0. Please do no change
+> parts of code without reason. If there is a reason, explain it in the
+> changelog.
+>
+The checks were giving a warning if 0 was not included hence, I'll put
+the real address if needed then.
 
-	Ingo
+> Include header and use common defines for flags. Just like all other
+> recent bindings.
+>
+There's no defines for them, this is how it is in the dts :(
+
+Best regards,
+Mithil
 
