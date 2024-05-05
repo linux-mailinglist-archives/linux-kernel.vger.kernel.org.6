@@ -1,127 +1,86 @@
-Return-Path: <linux-kernel+bounces-169113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786728BC344
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0629A8BC348
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D8D1F21AA7
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:35:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4C71F219B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18FF6EB46;
-	Sun,  5 May 2024 19:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74B16DCE8;
+	Sun,  5 May 2024 19:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsTvxLrC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="p0f3mQco"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF76E54C;
-	Sun,  5 May 2024 19:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7EF27462
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 19:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714937711; cv=none; b=hgTTMuz2czw4HpO13c+kLbkvHUH1Fyj+XWHnvheJPrws755fnge8iCuCha3AQJgdszoIxMwF8UcRfR8el8yIfTfZBBfoYpqoD3BVPrw8km1xIKOBd+MTsBeYXiQplWCQUuXDNEMA18tR+FWics3UUlGKDVh4ElzbUrWjo0u2Cjs=
+	t=1714938138; cv=none; b=innmcLVOl2i67uJkeVxvOX11fdto80BNcJBlnyM6R1NSQgmiOo3T/KfxQCnLV0VLAVReE6I2PZYVtkdBJODq4K+cPq8eB3Nng3DulqmiIkQ71pkT9SDoNekmvDTXz4HWVK3LY0MrcePy6J3atK8few60WZspbcahVQA2IClgslY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714937711; c=relaxed/simple;
-	bh=VkxMDtsny24XcJVYTcFBblK3g3hI+2cPLXzaBz3PeGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HiojWiuM0DhAAHBzu6TJXdTaALH3v0UfjQ0zBpzIrU5FnhDw83H20a/w4CO0j3iYeuW/zcSy3zZKkrxDrGJNgpRsWiZfqjZxtoYqkjqtsuxNVXGiemMUjWJawcKcy5WYetUlnTyqj+dTKGsN+KV7b77uMPV5I3Sx3w6xnbVB8K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsTvxLrC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44587C113CC;
-	Sun,  5 May 2024 19:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714937709;
-	bh=VkxMDtsny24XcJVYTcFBblK3g3hI+2cPLXzaBz3PeGE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dsTvxLrCKnhUIzmfWZOGyRXiMXsggzwEaXK+xm+fXGCrvZ+MlTfjqpgZgw3O7a041
-	 fl48q+3ST+nwbK38xAELnKKr2CkTxL05jns8yHcIuX98f2d5qp6hDT8WavsK4OBQAf
-	 M3uhe9pjVCnhgMB8NPt5ahGyWYWh6Ll5yfLO4QbIijH4CFA2OnFlsV7IT9IBMcCZsr
-	 FH4RlpTUNhqwcoCgldx6gYflTKVWT65AdH8J2mwqEAC5pSxrZOPT4Rr2qPRebfHu3b
-	 q+T/9kA3ls5YV9qVkyfhGoaRLW7FCkEEcXyohcrBUXWMLyGD6r8R6MSUPBGddd62AE
-	 3Jpd4gQetL6xA==
-Date: Sun, 5 May 2024 20:34:56 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 10/10] iio: pressure: bmp280: Add triggered buffer
- support
-Message-ID: <20240505203456.0c4c0c90@jic23-huawei>
-In-Reply-To: <20240429190046.24252-11-vassilisamir@gmail.com>
-References: <20240429190046.24252-1-vassilisamir@gmail.com>
-	<20240429190046.24252-11-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714938138; c=relaxed/simple;
+	bh=B60tiOZzqoQTSu/cNH9qcRRV0feyN5DtonS1lm6mRvg=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=oZNxk+/cPr6fZJf0b16HwcHS04+mSsWqU5nberxLepQLwX7HiqZZkdohfWWSjGGaxZkKuv85ttSf1l7IohdSSggKE4l7A6ZvTlLlKsJ8s3hBuwrjPuoPbSTDoJsaQhNk7die8+b5NAwQKWvLTht4x4XvyizEgb+NKJL8xQ8E88o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=p0f3mQco; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
+	s=ds202404; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AlIzxxDsty2bu3x5tAVljQA7dN9TE+4TZO8XfFxCw+k=; b=p0f3mQco+hvyzm8QByCtisqCxM
+	agOgNTzUKUdcc+s7SYJTjL2fcwxnarwe9DORWKHoUXWGLa4ep4Izju5C6PiZ7/jmwiH5htL00r9/I
+	uq+oT9rZ2UjIIOYd96nTBRZ/PJdO6xjgx0p1m1nqsEW4Hyii/OWPounZFUAT1t0VVOKylYnmuCYjW
+	s22IS52LeQ8Psfoedp5qnm5pwXC8sBp+ncDBQLGtmyW75n63aZc/geM17w8HkkG+esb2Apd1PXknz
+	DYz4addBl7yFPooDtns4cPdX0V6cfPGLRmDDVWD7nTcnvTvO/HtDLpeCVOi0WSttAsiwXAnZKT0yv
+	kRsW3DuA==;
+Received: from [2a02:fe1:7001:f100:29e9:e11:fac9:2a2] (port=53828)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <ywe_caerlyn@bit-x.org>)
+	id 1s3hkP-00DmIA-3L
+	for linux-kernel@vger.kernel.org;
+	Sun, 05 May 2024 21:42:09 +0200
+Message-ID: <ea8baee7-0bf6-48f5-9ba1-50b7206bc956@bit-x.org>
+Date: Sun, 5 May 2024 21:42:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
+Subject: Fair Pay Regions (The Main Political Cause Of Open Source)
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 29 Apr 2024 21:00:46 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+Yes, I updated my little chart on https://bit-x.org/BIT/BIT.html
 
-> BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
-> temperature, pressure and humidity readings. This facilitates the
-> use of burst/bulk reads in order to acquire data faster. The
-> approach is different from the one used in oneshot captures.
-> 
-> BMP085 & BMP1xx devices use a completely different measurement
-> process that is well defined and is used in their buffer_handler().
-> 
-> Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-Hi Vasileois,
+Stressing Fair Pay Regions.
 
-Just one question on this inline. (patches 8 and 9 look good to me)
+Many people claim the political systems of today are failed. Islamic 
+States, Republics, Democracies, Theocracies. Nothing seems to work.
 
-For v6, only need to send the patches that I haven't already applied.
+Typically the Republicans of America attack the Democrats reducing them 
+to feeble thumbsuckers. This solves nothing.
 
-Thanks,
+Indeed Fair Pay Regions through a computer system is the best thing to do.
 
-Jonathan
+For instance, for Norway, Sweden and Demark: Samilands. (Sometimes 
+called Scandinavia but this is a mixup with Scotland and should not be 
+used.)
 
->  
-> +static irqreturn_t bmp180_buffer_handler(int irq, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *indio_dev = pf->indio_dev;
-> +	struct bmp280_data *data = iio_priv(indio_dev);
-> +	int ret, chan_value;
-> +
-> +	guard(mutex)(&data->lock);
-> +
-> +	ret = bmp180_read_temp(data, &chan_value);
-> +	if (ret < 0)
-> +		return IRQ_HANDLED;
-> +
-> +	data->sensor_data[1] = chan_value;
-> +
-> +	ret = bmp180_read_press(data, &chan_value);
+The Light Be With You,
+Ywe.
 
-So I 'think' that after all the refactoring you end up reading the temperature
-twice.  To avoid that you need to pull the read_temp() and read_press()
-function implementations here and only do the (currently duplicated) steps once.
 
-You seem to have done this for the other case, but missed the bmp180?
-Maybe I'm missing some reason it doesn't work for this one!
-
-> +	if (ret < 0)
-> +		return IRQ_HANDLED;
-> +
-> +	data->sensor_data[0] = chan_value;
-> +
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +					   iio_get_time_ns(indio_dev));
-> +
-> +	iio_trigger_notify_done(indio_dev->trig);
-> +
-> +	return IRQ_HANDLED;
-> +}
 
