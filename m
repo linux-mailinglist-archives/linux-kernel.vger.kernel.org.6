@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-169171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC488BC470
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:15:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8B98BC472
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA66A1F21643
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:15:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5B728111D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC56137751;
-	Sun,  5 May 2024 22:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFC5136E3B;
+	Sun,  5 May 2024 22:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ZkR1H8sm"
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2057.outbound.protection.outlook.com [40.107.7.57])
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="h9C3cOlu"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2068.outbound.protection.outlook.com [40.107.247.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AF3136E31;
-	Sun,  5 May 2024 22:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358BA137772;
+	Sun,  5 May 2024 22:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.68
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714947301; cv=fail; b=uoydbMSlZYWbsOzDQ8b28GVsjSF/lHdiIRqi8ADLI3FtJjHf2h5YTUOwVe+50gG8rueW+ODZ8rG/rCzPnimSY6irTGfX+S+5v7B+A4vpa8w1JhNXMFW3XKnr/ib8JQvOXcvL3s6GeePCbgPsiEqSC3kBHYPNG/DOyAjVVS4qDZY=
+	t=1714947308; cv=fail; b=FMzMbaUn4Urk+G6uGxXBj4nFa4SD5SM9aSyL9RdJw6AnHr4/UyaoDfWMzUve7XeCVEhTVsrtHBTF38fePP5hQLYB6WXwARdcukiCyefpxdwm+MCeQysQfuJH6H2h7+Oz2D4IQEPeVbtsbzfVdluqjDPmmO6WInjVge8MTi8xWPQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714947301; c=relaxed/simple;
-	bh=xDHthho3clLMwVkgJtffn/O2I4fbcl26gyOATRJQtI4=;
+	s=arc-20240116; t=1714947308; c=relaxed/simple;
+	bh=lvnGvQQyO0bBhqqvNmrly2iuqrN37T3qPCXxuP9ypyM=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=q29f1SgvD7elKQ0XaKHu4/xtUsbS4gzKtxmg6S9pPPEUccdodJeKU+uosuTWO5Ign0ikWOlTGkBMU3GZ8BbVvhIwt4UGcOJNWMAGa9SC28oEdq/t7CqLDpo1OGKkel+ZlQ61slm65rr0B/T/VGs5syJbow23gtB+SiWHNDCNVcU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ZkR1H8sm; arc=fail smtp.client-ip=40.107.7.57
+	 To:Cc:MIME-Version; b=R6FOXeqMK/bKUqF33cPOsQy+2M53jdEvCalQ/n8wM5qnSucaw/finxvqd9W+avZA1bvLs+/vdrrgg1dNzleVWvqd9+Z/55BBTbiICCQcPt798hCG8tRlAmjsXfdhUur4jmLiJQqMn4z657jKpPZnRidVJzERSM+JBYd2zv38mjU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=h9C3cOlu; arc=fail smtp.client-ip=40.107.247.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZpXrHYkU1r9I7HIG8fd7j7p+wGF9em05g3MwAq0+6cYtm0YnvO/tCFpJhsejUN75LVxVpJV0frMWm8fnwkEQ6sT4rABHaa+gfyWrugsCn1B+jC2cB92/4Ic3lENSgrBA1VzHcVuxZ7n4wzXV4dTvvJsNHeft+5jnhaGqCaTLdM0bDg4gsPcXtQ2XkW799wVlalG6fqnGrx53bpVPx0B2qkguQYqhMV2lfjzr/M3DZrzlKYMjVjpGgV1AnQXyiBEr2P7Vja339WuhfjcdvOyqooRvnfRV9rRHL9BKsMKHQcPp8B0tYXbjhs1irJNJrVQKOq0mJi+I7HfL0CA2Mw/s3A==
+ b=m6SM5ZWJT0bTZG4xdFAozHwllfyKFQJ5Wl52oOFW1BvimqBb4wtGwkcJtHUIx/95ZOu7NNdt8f2ZpWhwZ/hpnxPYosgZBX2JjNA3XTuOtxk6ZaYBb27ojEh9vEqpbdDDHgSe79WF3vs3NmKwiLztU0aPbfiuwksXkrgPQR5J2hj8fxnsyZEM3n4rH4Fb09NGt909vFgR3MsNjVBFiocjFjmZLU489YR1bMzKFeVqHcLx63vjVdEblpUKvx+c1wG2qApqCk2x/M1PyhCWEbULAzwBMBkzXwVRKFqnnkjjhtrt/wccDS8G6cpuS2oJ2JEeROW0mmFWfD2JnuxEv9E9Uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N3LuyELaiSC0sVNX2XPvkzFPVBktsV4F8YpUGnJ4zDs=;
- b=e5yqHjgD8QvreJgU4WmzDzB3pU4LilfkkOamj1dg0HNlaoabRPSfTcgwjHe3xXcd/5bgdc1zxPxhTC8nPpXWhKG5mKYQlYILsJCQjC/CbwN7tYHUWIdvzrT+j4bh8vGPR4JaFcHEX0m9y6kpswvQSm3dpdSwNx3unOnUqL0g/GDXuEmSTQOGBmF52O/58/bs/N+2+AEcVIrau4wmfp1wo89Lh4LWtqLIxLMxBB4fMTbOT73qWYu+A8Dk1N4NQ74tBeSwZLbGSRP3wxMz24CJDRivFIrdaXfm7vUgVMta73r/dnnMnJohfMfBDp8ByL40Rpj2v68azFTuaq9q2Lh7zw==
+ bh=SZNkyAMFBL7cftc2WE4vA8Q9dxlitnW65qs6a5vNRQc=;
+ b=aVHszqKP4f+kOVQqe02QREwggJMu+VJvGnJ1W1fn5LfqkhOa191LMPDEArj50urF91xrRGXEpDDHk5Ee65SYd0eQCZEkOTUBnL02pKg+M4FBzyA/ENWPo0W6/hEzR9Y5K/uh00iYjykcv+ofLtAc146fvWk7gi9H64M9mEQJrBYTj6EAgmKcNn39WTwgPzy4MzluAq2vaDBl7H2XoTJv4S3hWHOqpgwkRr79GYdfwLOcR+e6vnwmJC/PeT5x6u0ZsIMSJO1SHii8VY+an1RSEp7x9M7yZsQ4YfZynhT0BaqSqUTudMegf1vUmr0SIsBXjd1fuZbxcvEXpm/nE5Zb9Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector2-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N3LuyELaiSC0sVNX2XPvkzFPVBktsV4F8YpUGnJ4zDs=;
- b=ZkR1H8smxeMOUjWqGVEFFcrtVpa835n2va2uAgHbRSzgnXa/wgmnW0i0UEvIiuC0Vobb9/uE/rrUESxzK+/aYMQOao7jFSKB6LxOGYFIQn+0SbXl+tU/scVwZRxwjZhuW4eMqXhO01/qhWxQIwzhPEU++FKcxZoVvLM3j2Q0JF4=
+ bh=SZNkyAMFBL7cftc2WE4vA8Q9dxlitnW65qs6a5vNRQc=;
+ b=h9C3cOlux6uVx610rywm0QwXrZoDJKo0R/gmXjzPJGGqH3YB3e+uvLk4iuxBUp10cUgDygc3Mk6etrY1lm+L7kR5/siOn+WMOQLPyuprlPcUfGE8dM5tNgyhgQBVYLHNASWUKCHgB0cUSvZeutcAUwGm2YiR/qLOctXcdu4hRfU=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
  by AM0PR04MB6818.eurprd04.prod.outlook.com (2603:10a6:208:186::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Sun, 5 May
- 2024 22:14:57 +0000
+ 2024 22:15:01 +0000
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7544.041; Sun, 5 May 2024
- 22:14:57 +0000
+ 22:15:01 +0000
 From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Mon, 06 May 2024 06:22:43 +0800
-Subject: [PATCH v5 1/3] dt-bindings: arm: fsl: add i.MX95 19x19 EVK board
+Date: Mon, 06 May 2024 06:22:44 +0800
+Subject: [PATCH v5 2/3] arm64: dts: freescale: add i.MX95 basic dtsi
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240506-imx95-dts-v3-v5-1-5ec9b99cfb2f@nxp.com>
+Message-Id: <20240506-imx95-dts-v3-v5-2-5ec9b99cfb2f@nxp.com>
 References: <20240506-imx95-dts-v3-v5-0-5ec9b99cfb2f@nxp.com>
 In-Reply-To: <20240506-imx95-dts-v3-v5-0-5ec9b99cfb2f@nxp.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -72,13 +72,13 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
  Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Peng Fan <peng.fan@nxp.com>, Conor Dooley <conor.dooley@microchip.com>
+ Peng Fan <peng.fan@nxp.com>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714947780; l=938;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1714947780; l=44290;
  i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=hxkVlQeaJgJhLHSlZ83jW3veqMTWVj/bEjw+HMyTvrY=;
- b=BRIU5KbIwrcLTQdj7pQTpe8T1iL5pd0Q+L7soD5+0K6lynEHlpQ1d3XbfxJk8zCFOOB5uBwzN
- lmTO8WmhJMlBRxk8iIzUdJBac40Jaa/SQUUafrz8PktNzI8GekoapAa
+ bh=v9IJGAiadaEsC7QsJs4a6vDPizygUCfvCuEi3UT/wEs=;
+ b=oQHuJ41rWm+1ZUEV5sX4c8Bc1/VYp/39YR3ndeCp4SKxDUsjrlXm0+nobhFrDTvA8zqLVMfQY
+ n6Xf9NIzyLoDap83ikwS+qmNpl89rSARAOPV7iPADd0gISbbeUlawZD
 X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
  pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
 X-ClientProxiedBy: SG3P274CA0023.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::35)
@@ -92,123 +92,1419 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AM0PR04MB6818:EE_
-X-MS-Office365-Filtering-Correlation-Id: 088dc564-2aec-4b38-65ff-08dc6d50cc2e
+X-MS-Office365-Filtering-Correlation-Id: 79715be2-e8e8-4187-be7b-08dc6d50ced9
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230031|366007|52116005|1800799015|7416005|376005|38350700005;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QXBhMG9TT0VGUVhsZ3VENUZ2MTFINEJIdnFHNXhFOEdvMVA3THlzSjhCTEVQ?=
- =?utf-8?B?WFlPZWhDbEs3eUFsMlRDT0toV0lod1JET3AzeXh5UDZjZFNJM0pxZGhiSkRD?=
- =?utf-8?B?azZzWnliQiswZVlrQUdodjY0Vnc3S29tUkdxN2trMkd3TmJ2L0t6RmR2R3JD?=
- =?utf-8?B?eVVxTjdiNlk1bW9yQTF5bGswWGUxMzZoSlE3Rmh6TzVtRnhJSmJRVkRqM3Fj?=
- =?utf-8?B?ZGcwQnhDUE1zckxyZEhGZXhTZEd1VTNacm9EbEtRTEtnSjlPMVEzck9SREFB?=
- =?utf-8?B?bzg0UFRWYWdqcXNVWktNZ3hVSzY5emVjRkVQVksvdWZONitDWEFyTHFzMjNE?=
- =?utf-8?B?UUw1R2IrODFML211ZWZnZlRBdDArRlFaZkhJYVQ2ODlMK3huL2lQY3dQTmcr?=
- =?utf-8?B?cHhNd1FTVlZucXk3ek1RRmpyOER6Vy80YTVBZmxROWtQcWdWK1k1RHltSWd6?=
- =?utf-8?B?U0ZHQ1ZvV2dLVGVMak9oNXJmODJpcEV0L3Q4b3djS256WHpIZjBqcUdNeEl2?=
- =?utf-8?B?a0dEUU1CSDZhVHVFY2NZWGhXSGlvVXNxQzJScXRxYXlSUW40UnJ2WUZod3Zp?=
- =?utf-8?B?dEFPcGp3K0hiWVdJVldIQkN6ZlJOakJYak1jWWFjWDZ4QVZpUXJZMkJ5bTMv?=
- =?utf-8?B?U2IrZTFrZEs0bkVqdHdFNG0vdy9kUXBBWnhPcjAxWnBpWHJER0JRNmZIb3ox?=
- =?utf-8?B?ZlFYZEVlOEdsTmRUZUg0T3JOY0lURkZuc2NuY0lLNE1rUzhJVWZFd3hVeTRj?=
- =?utf-8?B?WU9XZytJVkYxWFh2eVcrOHJlcUxzMHlSWjdmcklwOEl3bEZXVVhSbjEwdVpu?=
- =?utf-8?B?L1VnU01wWjZ6Y2Jpc0ppU0pybkptZkk1VllNWUs3RDR6OFFHY05SZ1Z1c090?=
- =?utf-8?B?OXVtUUJrbHkrWHcxbjFuSjZxSEpSR3hpeUd5Rzc0WXVLRlJReHJ3aEQzSnpF?=
- =?utf-8?B?clRvbGpuSWFvVVdoWjZXblRoWVlwczdENlFVeHF5UVhraWREVHYvS3NjWVR5?=
- =?utf-8?B?Y1Q0WiszU0RMRS9DUkdyQVVLbTNpNDBoV0tjbkczQUl6cDBUaEUxUFFLYm5q?=
- =?utf-8?B?ZFpzQUNWOXB2b2hQV1M4MFdBckdnZ2RyaUJzVTdub2dEaEN1MkdFbXY3Z3Bz?=
- =?utf-8?B?NERCVlRSajlHdk9nOVp4cEZ6ZGtIdjJiMWNadWc0eTFHOWNUbjZocXdpeUJX?=
- =?utf-8?B?ekU4ZGdLNFhQa0FQN3VBVDVXOHZPb1N3SlE3WnJmVXBkQ2p1eGFlOVM2cFhB?=
- =?utf-8?B?dFlYZVVCcVFqeEJoL3dPYjlWVE1xQ3JBRUl0dzlGbTJHbVlNMVhvWTljc2Y1?=
- =?utf-8?B?QWVxa3QzeGkxOE5MRWR3eUE1dmRxZ05rUFZCSU11UmgxQ3h6VVBTZWx6anRy?=
- =?utf-8?B?K2lVd0hpUDR5ajM1NkJRWlhUV2p6QytxZGhLcnVCZDJsajUyNHlyVDVWdzhi?=
- =?utf-8?B?eUFkRnp3Q0xqQjdGNHh2Rkk2UzlEVG9XTW9XbXA2QkpDVmlIKzhQNVh4RVVT?=
- =?utf-8?B?MkFGWlZjaTRGM0lnbXR0ZzBGN2U3WllGSXR2RUdTYUhYWTZaeE1XQkVjaFVQ?=
- =?utf-8?B?dEZLRUVXRUpnVEtLazZUcDBXKzlyWm0ycU1wREVUVFpibUpCSEV4WnRZVUFi?=
- =?utf-8?B?RjNCU0JTY0tJeVE5WUJhM2ZrcVNaZ1JpWVNrZnFkak1TeTZ0eW9tR0FqYm1T?=
- =?utf-8?B?T1Zud0dGS0loK25HOGc0c2JYRnI3QUJ6ZzdBd3ljUHhteEc4T25HL2JlL2wv?=
- =?utf-8?B?MnpLVWI3bll0NXo1OUhvQXdBaG5RY1hLcWRxb1NlaUpubjRLZitmOTArR21T?=
- =?utf-8?B?WDZHb0lqczk2TUxSOU1sQT09?=
+	=?utf-8?B?K2VLaUxVbDRwZDRmajFMajBFSUxKb254TjZOVG8ycDBLRCswMVhRaDZvcTlW?=
+ =?utf-8?B?d0dWQVNLQmx2N3FvRUUva0F2a1Jpa054TUJkaVZlWCt6VVhjZHZ5N0UyQ2VR?=
+ =?utf-8?B?bDdqUU5RU00xYVUwdmFTUk5zYlZNY2ZFcHc5aWttYlFBcTREZFdjNGw0WUs2?=
+ =?utf-8?B?V2RnOWpubGVZaHBzQUQ1aTBXeDdBOVRvSDhyY1lKVlEwdm5mc0ZDS29qVjdF?=
+ =?utf-8?B?d3ZJRG12cm93UUdza0NFNm5rZFVmZ2tLNHpGNFZZdHNRVk5PcUNQUW01VG45?=
+ =?utf-8?B?NUkyaTRmSytPbXVTTFZXcE9LMnJHVTFycTNsNlFYd1FrWEhBVlZSUDhRK2Rj?=
+ =?utf-8?B?VFBnaVhuYUFIR3hQQ2FkR09OQ3dlcmNaeUI4V3Q5RnRuRHVkUXNLV0tMOHJp?=
+ =?utf-8?B?bUtGVW5hcmJENFZ1OElqNDFrMzMwaUgvbWVod0drY25lS3lZMTJCNUh3SVRp?=
+ =?utf-8?B?cUwwNTZtSmZJZTVBWk00Q0pITkdCdGRnWnlSUUtHYVFWNTVKUXRUWHhDVnRJ?=
+ =?utf-8?B?NmZiSllqMlljbXl3bmZrZjIxQlVKMC9QNzlNdC9GNHc4ZGlHamExeUd2TkJV?=
+ =?utf-8?B?R2hHeFQrSGlhNVNFcDFuSlBZWUFzU0NrcDQvYVlPaHYxTVdzbG1xcjY4YmNk?=
+ =?utf-8?B?UENoY3BUUmgvVFUzb0NMTTdJaEE2S3l5V01FOFdVRUNtd2JmaDRjOUxhdThu?=
+ =?utf-8?B?d1pVcHpMOVJGZWZ6YXdLSVp3SlJHSEEyRmZ1b3NrS1FCZ2xqYnJDNDF1dURC?=
+ =?utf-8?B?VzhpWko2NE1CUjZ6V0pNa0pxbEE3dytDZFo4Sit0eGtKOUJQaWtJMkIrbXl3?=
+ =?utf-8?B?YkRrVVZhb1BCZ0xhQjU0RTlyVWRESWJXUEhGRTZ1MjJ3Z3ZoVTQ3U1c1MGpC?=
+ =?utf-8?B?UTgrOWM2VWZ1S3U5NjlPWUorTmdZRkhVdmR2MDYzbU84VysvQndZMUJJZFZC?=
+ =?utf-8?B?RTc0eWFadTBFSUQ3RE9jOHV2WnFUdGwvS1crdzBtS3JOcGZadkwyS0YzU2ZM?=
+ =?utf-8?B?S3VCTE90MlpPdWJWWHVqT0tKRW4rdUdyUWtCbEY5aXovWFhTOHlpaGFQcjVq?=
+ =?utf-8?B?Yy90ZVBabk5LWTFvcjZ2cmhIeXV3c1ZqZ2NrSjBtSlZ0UUpxUHlDYTFCd2p3?=
+ =?utf-8?B?Q3JVbThjY1BGbTgvaFdxRGVHS2wvdU1MWEhZaFhjekUxeWV4MFVLK2JhNmI4?=
+ =?utf-8?B?OHNnaU5FaUkyZURsYzY5N3dTQlBMK3RVVXBJcDhEbEZyK1EydjZpdXZLZ2tP?=
+ =?utf-8?B?WHJxdnlWakFaQXZ6aElTMDJwRHBBempFbHRFVWxUdnhTb2VPQzRXSWJNR3ln?=
+ =?utf-8?B?NkxQeUJLVjdtZU85UnlSQ0FoSTlINUNBY1RIT0RUczdnTWhYYUZkVDV2dlV0?=
+ =?utf-8?B?dzU5OGtHU0FuT1NqbGFIK25JMGIvais1bS9VanV4ZDlDd2RRd2xLVHZkTHMv?=
+ =?utf-8?B?RFVQV2FNWFlVbmlrci9hUjZnTUxnWjZLdTlhenUwWmRuR1FvV3ZaSDB5WGZS?=
+ =?utf-8?B?MVRYUmJrZ0E3OGYzMWROdnA5NWloS2RkYzBvMW1NZFNIK2xaZ0k2NFhZSXJw?=
+ =?utf-8?B?OTlsUEJOaUNuZlJMUUpXTVZHWWJwemVvNWNldkNQbExlanBGL2tHOHJ2R1VJ?=
+ =?utf-8?B?U1pOSWZNQjdXM2N0L2lqVkZybFlVTTVDRkF1MGFaakNtdkFremJEMHhIaW5o?=
+ =?utf-8?B?am5BVzdISUgzNjIwUytCZFl1dzBxQ05nU29Da040dUR2T2VPbW9IMUgxbXAv?=
+ =?utf-8?B?VEU3K2RVWlpNL0hjUlhoOEdWQTdLMFVCVHF6QllBWlIzMGtwOWE5U2Y2M0Q4?=
+ =?utf-8?B?dnRMZzlqUm9ON1hWMlFUZz09?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(52116005)(1800799015)(7416005)(376005)(38350700005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OWJ5a212aHFVS1psVURIZTZseSszT1V3Z1drbk96UnVFakFia2Z6Z1BiZmRl?=
- =?utf-8?B?L2gxWC85Z3p0ZkFjU3VMazFhSUYvR0tGRHpjYUQ4UWtGMyszQ2plODFnSG1U?=
- =?utf-8?B?R0NzbmQ1cThmTU8waUp3OVk4VEVnQnh5NkhFOHNyWGRqMFUvU3hLMlAzbWVQ?=
- =?utf-8?B?ZE5BK2tsK3RaVmRDZklEVlFZRGk2YkZCVVNuYmJuZ2crdE9pbzNCbmY4VlVp?=
- =?utf-8?B?SEE4d0ZLbXZQN1c1cHNxV0NDZUNidmRTL2JoTjg4ZWd4emU2d1dyU1YrMXp2?=
- =?utf-8?B?QWxjMG84a2VnM3dKV3FOdzVGUFFaekpLV2tuVldxeTBjUjh2ZTRwbkNmeHhN?=
- =?utf-8?B?bnI5ZGltamgydUhkT2lzUERvM0pXc2lveUZNK2tRODR0OEpkaW42d2tGVzVD?=
- =?utf-8?B?L2g3TkREclZ3R2Yya2c1T09POUtkZ1pkYnBhRjNDcXZXTi8rTGJkTG9TWlM5?=
- =?utf-8?B?NFFBbWZMR3pxUldBSmY4RUpUT1B0Ym9haEFhMVluVndjVUcwNWczbjZ5SGZX?=
- =?utf-8?B?cnJUaEU2MmNudmExSXVEenlVeVlzdmUxRnkrNnJhbWMxMUIrMWltWmxPdjZL?=
- =?utf-8?B?UHVidXRaVmd6VUU1SUliaHYySUNGb2lIK0FVTW11VThEYnJrZW85QUt4eU5K?=
- =?utf-8?B?M2lNU1hJbi82Um5Odk0rRTMxV0ZOeS9lS1FYdS9QNCtmWWRaZnkxbm9aU2VS?=
- =?utf-8?B?V1hJTU44cFczc3RXTWljNlZ0VTVpa2xKT0srcmcwdmdZdms1V0VmR1ZsakRz?=
- =?utf-8?B?UktZK0MrSmJqZUFHdnpXc3dtYm5PbEl0aUwyTkgyRGtoV2hPdG5RMkhKOFV4?=
- =?utf-8?B?RWlXaURQbDIwMHp4S1hCdGFoVFRaZlYzMmZnUWxyN0RyWnV2ZzhYRjBLTFhW?=
- =?utf-8?B?cmIxWHlLWmM1N2xPQzdHaDdqajFOemEzV24vcDZISE54ZzZXb3c2RVVSbU1H?=
- =?utf-8?B?MUphZy9UNHF4TExIdU1abi9LWTBDd3drR3E5VTJmL0FtS2xNTHNtblRlZS96?=
- =?utf-8?B?OW9jeC9MYldRaVFuSEdmaVFrejVLRE5ZcVlubklvY01TR1ptYUtEZGpsS2Zn?=
- =?utf-8?B?VytLV0RWR3RlVzBJMnMzbVZoekRPSVFra0dROGRKOUxsR2NaMHRnU0EzcUVL?=
- =?utf-8?B?SHQvRTdtR1ZhRTdtZ0JMMFdOb3lORDZvVmVEVU1NUFlvUEtnaHljZW9sVllC?=
- =?utf-8?B?MUljRDZuT0JkM2NmSldEN3FCbko0UGk0ZUgyNzNqWVA2NlJYNFJsQWxIUDAy?=
- =?utf-8?B?SW5ubHdVdGVsTHdpV2g0a1I2d1F4RTNDYlA0UWcvTVV3L0JLa3NiT1QrU0px?=
- =?utf-8?B?TUFqelY2dmNwOEdQbm9JYmw1RTVqbi9hN3dtazcrUnZDbzk0dzdUOW1USm5t?=
- =?utf-8?B?bmI4eE9kbFBkamJGTUJ2aGNBb0RHTVVSNjY5eUw2TUY4Nmk4Y3pqYkVKT1FY?=
- =?utf-8?B?czdGYnRqdTU1a3czdkVqSmczQlgvbmtoNW5xRDFib3h1bHFIMStQQ1FQa3Zz?=
- =?utf-8?B?akppbUtFajgzc0JnSkJXUStWSzMwL3ZjUzhIN1doL1BrNHlSQ0Jzam8zMC9k?=
- =?utf-8?B?aTVueW5TV2d6UkNoSFExODBMUURiLzloajlDVDI1QWFyRVFnNjJEcDFoV0dk?=
- =?utf-8?B?ZFV4UmcwRUgrdTdqQlR0L2pzeG9GVVR0WHQvRGQvUWVxT3g4ZUhuV1lMdDVN?=
- =?utf-8?B?d0VLeXVIQjNoWlI3TlJVL3FLZ1ZJd3lab1hreVVsTFN1b2ZHSTIrQi9mVDVT?=
- =?utf-8?B?Z2tiblJIMXlFMmxaVTQxb3ZEUjlvNElQb1Q2ckdOa0lmYXhvNGd2UXBzVnZw?=
- =?utf-8?B?NVllb0JHK1ROc3pISnZwRjFXRGNMSnEvZTBpTGkwYlZKQlNjT3FzMVFRbzZU?=
- =?utf-8?B?ejBnL3pRaGhFWDY5VjhNaEtiNHJNd3d2TG1pVDhYelk0akVSSURtSXBOYmw4?=
- =?utf-8?B?anI3bTJKMU5HRzREeDFHZEdXU3JWTGJVYXBxZElXekFZK0Q2ajNMaDJ4bFBy?=
- =?utf-8?B?bmdOV0RaaGs5SUQvSUZXQWlWb1dkWGp6ZG9oK2NRbHJIL0p5MWlCNEdjd1Uv?=
- =?utf-8?B?K3BPUmZEMVJIcFpRajRUcEJYTGlvTnFLa1VpWndyTlM1MWNIZFpiRnA3SG5t?=
- =?utf-8?Q?PEC6Q9u3ruy9uWcZT+KN79z0k?=
+	=?utf-8?B?S0RFZWNaMUZrOXdpNXg0UW9yeGo3UVlkekRFV01wc3RISC9qditsM01ZcmFo?=
+ =?utf-8?B?eW5kR3M3OUFKNzF0MS9YOXV4Rmt2M3laV3Rsb1Q4dlBJZGdob05ESUdPWVls?=
+ =?utf-8?B?QW9kaHhnOVYyTEdCTkFkRnJvbFJBdjIxL3FOWjllYUYwNWRqbHJabGVPdkdQ?=
+ =?utf-8?B?NjBVT0pvdThXSzJiL09NeUxDT2p3M3NxczZpSHlTc3BhVXMybU1iSnh3c3VS?=
+ =?utf-8?B?T0tmZFhKVW8xdTJJVWd6NVlhbzdUVFgwNzBzS1ZYc3ZOU2M3aWJpMnQ2RVIr?=
+ =?utf-8?B?WDF5U0c2WGg1d2FhcGo0ZTFVMjZKMlg0ME94RzBDUFZndlQzOEROSnZaVVBj?=
+ =?utf-8?B?ZWFYeEpnb2k3U0h5aDBmR2tjaU5veUxuQjBUajB1SndlelQ4cHQvVlJVZHkw?=
+ =?utf-8?B?cXF1SldCWGtsSTYwbCtPWXkzSU41OTdiVTJVZm9Uc0FGeVVZcTNzZm1zNy9h?=
+ =?utf-8?B?cS84ZWNYNlhDODNWTnYvQkJqUit4NkorVDNNZ3c5WklTdTdqc1VSanhTU3By?=
+ =?utf-8?B?TDQ4YWlQMkxJendNdnlrYkRBN1RiQzlyNUZadi9RS1lKZWEyWWFqcnJIQXhS?=
+ =?utf-8?B?K2hjazVEMG9Va0tGYWNxK2txK2RxdG1YbnZjYmJQRWNJU2xCQlhKMWpEZWhz?=
+ =?utf-8?B?aURmOTRVRHVCZkdDQVlkWGliTXExQ1VUeGsrM3dySnYxT2xsTUlYNFI2QjhX?=
+ =?utf-8?B?Y3dQQUM0SytLa3ljYlMyczVuT1JYdmRXMW1qZFhid2F2ckYvcnNHQnpCRGt0?=
+ =?utf-8?B?SDRLU3VYSFRQSDJsUFF0NUhneHNmbDUwL3JqN0p2ZmVLdWhYbzlzZ040Wkkz?=
+ =?utf-8?B?M1NtZTFmT1VnK3dTTlV0TlpOWmt4MTZjTU5Ib0hvSThQNktiZHhxazRqRFJT?=
+ =?utf-8?B?UmN1QUNtTUlNUjlDRHpGMjllVXpITmMyR0IzSUpOeWd5Mmw5Ylh0Q0dOUDlV?=
+ =?utf-8?B?WitJR3UxbkhSN3NOdmNLQWt2QVBncEQ5ZlVrZDhqcjhWMXBic2g5Nm90dWN4?=
+ =?utf-8?B?V0hPb2ZMWnZoTnZvdis0SXdqR2c3N3JtQWhJRTNqUGJpVnBXbGpEUDF3Rkw5?=
+ =?utf-8?B?UDJWcWlxU0grNy94bVpsVkxSSUdlK2V5Q3NFN3hydkNIZ0xmWXlQZlFTWlc5?=
+ =?utf-8?B?UXNsUXBWQVlJYXRoM3lmakdjUjFQOXZqWDJncmZCL0srS0RVQXhpYWZkQWZj?=
+ =?utf-8?B?ZytUVE9QSTlxbklHN1hPamtqazIzRGJXUFQvMnBHL0lVMHVmOHoza0EzaEd1?=
+ =?utf-8?B?YlNaeEluUXNrTnpKa1Z4NEpqSnNuK0xZRGVUeEVUYTJrYWFMNXFkV1dUZGNt?=
+ =?utf-8?B?ejdwbEN6T21tZnF0YXp0ZjJXTGxOajVrVUhNR0RxSy9lR0lKV3ZOSVlzQnR5?=
+ =?utf-8?B?Y090NUVUTEVCdTMrZlFDeGU2RE9EZk1lcnJmL2FEdTJLemdhV21TRW1CcDh3?=
+ =?utf-8?B?RXdONE1OZTArK3hDbmhXekFUTDBGMnlNVklHMlBuTTFjV2tUcjhwTW1QMGtj?=
+ =?utf-8?B?T2w4K0NudmpLUjhlZ05jeFFncjZaOEVZTEk5b0VQdVcwYkRIanFnTjJDWnJF?=
+ =?utf-8?B?YThINW1veUw2T0hNajZqOWtDSklLRlk5djhLNGNXTFVGZnZOemNMODRXTkhO?=
+ =?utf-8?B?RXkwcHp3bVMwTFVLQzN6NUpSS3EyM0tuY0ltdXo5MnFxdDRJcC96cXVWZFRh?=
+ =?utf-8?B?S2FYMTBITHB0emhkVUVIRFlVZittd0ZzYzNsMXhoU0srSHlwSnFjNEdQWGw0?=
+ =?utf-8?B?MlNFaWdnUVBZZUEvWVpXM0p6RXcvNmE3ZEY0TVVOUU5pSVBPR1VvdTc4cXNa?=
+ =?utf-8?B?VmROd3h4Z3M4SmpZSG8vb3R6VGZhQ1NabU0zR3JObEhmTnloYmZpcXRONVcy?=
+ =?utf-8?B?Wjg3b3laVVI0OWpQTDdZQlQ1dU9KSEtFZVhublhYOCtySEwxL2l0d3Z4TUxB?=
+ =?utf-8?B?SEJhS045dTVXVk85aldEbktxcUdGRkp6bnZlQ3U3ZUFLUkU1MEs5UkFCZ2ps?=
+ =?utf-8?B?Z3VURWZETnlQRnk3ZkxxeGxDS3k3WCt3VmlVS0tlOXI5dnkzbGNKUkpFT2lK?=
+ =?utf-8?B?Z2cwMUttbGxucUpnMTlmb0Z0SytDV0F6b3VmR1pMTEZQS2Y4SmpwdEpLUmdX?=
+ =?utf-8?Q?FM6Jo3HEyIeBBDo0v/4Xk13JP?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 088dc564-2aec-4b38-65ff-08dc6d50cc2e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79715be2-e8e8-4187-be7b-08dc6d50ced9
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2024 22:14:57.1205
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2024 22:15:01.7821
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KNuKalSa6t/p0V3GDjtH8n6QZwCa/Sa5CD2psM8nQLyxA5f3j1lurGSPH/EIjzDd5K3esdnsetFw8qUhYMcHEQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: P3b7JcKKuRWK5kiATk5nJaZiLURBfTBhu5AXmsnEAxpsxNvasH427ymKPl0vi1Dnb0aiSCgk7qMUoJT7ij/DRQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6818
 
 From: Peng Fan <peng.fan@nxp.com>
 
-Add DT compatible string for NXP i.MX95 19x19 EVK board.
+i.MX95 features 6 A55 Cores, ARM Mali GPU, ISP, ML acceleration NPU,
+and Edgelock secure enclave security. This patch is to add a minimal
+dtsi, with cpu cores, coresight, scmi, gic, uart, mu, sdhc, lpi2c added.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/freescale/imx95-clock.h |  187 +++++
+ arch/arm64/boot/dts/freescale/imx95-power.h |   55 ++
+ arch/arm64/boot/dts/freescale/imx95.dtsi    | 1050 +++++++++++++++++++++++++++
+ 3 files changed, 1292 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 6d185d09cb6a..5c9014087c17 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -1275,6 +1275,12 @@ properties:
-               - fsl,imx93-11x11-evk       # i.MX93 11x11 EVK Board
-           - const: fsl,imx93
- 
-+      - description: i.MX95 based Boards
-+        items:
-+          - enum:
-+              - fsl,imx95-19x19-evk       # i.MX95 19x19 EVK Board
-+          - const: fsl,imx95
+diff --git a/arch/arm64/boot/dts/freescale/imx95-clock.h b/arch/arm64/boot/dts/freescale/imx95-clock.h
+new file mode 100644
+index 000000000000..5badaace3148
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx95-clock.h
+@@ -0,0 +1,187 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
++/*
++ * Copyright 2024 NXP
++ */
 +
-       - description: i.MXRT1050 based Boards
-         items:
-           - enum:
++#ifndef __CLOCK_IMX95_H
++#define __CLOCK_IMX95_H
++
++/* The index should match i.MX95 SCMI Firmware */
++#define IMX95_CLK_32K                       1
++#define IMX95_CLK_24M                       2
++#define IMX95_CLK_FRO                       3
++#define IMX95_CLK_SYSPLL1_VCO               4
++#define IMX95_CLK_SYSPLL1_PFD0_UNGATED      5
++#define IMX95_CLK_SYSPLL1_PFD0              6
++#define IMX95_CLK_SYSPLL1_PFD0_DIV2         7
++#define IMX95_CLK_SYSPLL1_PFD1_UNGATED      8
++#define IMX95_CLK_SYSPLL1_PFD1              9
++#define IMX95_CLK_SYSPLL1_PFD1_DIV2         10
++#define IMX95_CLK_SYSPLL1_PFD2_UNGATED      11
++#define IMX95_CLK_SYSPLL1_PFD2              12
++#define IMX95_CLK_SYSPLL1_PFD2_DIV2         13
++#define IMX95_CLK_AUDIOPLL1_VCO             14
++#define IMX95_CLK_AUDIOPLL1                 15
++#define IMX95_CLK_AUDIOPLL2_VCO             16
++#define IMX95_CLK_AUDIOPLL2                 17
++#define IMX95_CLK_VIDEOPLL1_VCO             18
++#define IMX95_CLK_VIDEOPLL1                 19
++#define IMX95_CLK_RESERVED20                20
++#define IMX95_CLK_RESERVED21                21
++#define IMX95_CLK_RESERVED22                22
++#define IMX95_CLK_RESERVED23                23
++#define IMX95_CLK_ARMPLL_VCO                24
++#define IMX95_CLK_ARMPLL_PFD0_UNGATED       25
++#define IMX95_CLK_ARMPLL_PFD0               26
++#define IMX95_CLK_ARMPLL_PFD1_UNGATED       27
++#define IMX95_CLK_ARMPLL_PFD1               28
++#define IMX95_CLK_ARMPLL_PFD2_UNGATED       29
++#define IMX95_CLK_ARMPLL_PFD2               30
++#define IMX95_CLK_ARMPLL_PFD3_UNGATED       31
++#define IMX95_CLK_ARMPLL_PFD3               32
++#define IMX95_CLK_DRAMPLL_VCO               33
++#define IMX95_CLK_DRAMPLL                   34
++#define IMX95_CLK_HSIOPLL_VCO               35
++#define IMX95_CLK_HSIOPLL                   36
++#define IMX95_CLK_LDBPLL_VCO                37
++#define IMX95_CLK_LDBPLL                    38
++#define IMX95_CLK_EXT1                      39
++#define IMX95_CLK_EXT2                      40
++
++#define IMX95_CCM_NUM_CLK_SRC               41
++
++#define IMX95_CLK_ADC                      (IMX95_CCM_NUM_CLK_SRC + 0)
++#define IMX95_CLK_TMU                      (IMX95_CCM_NUM_CLK_SRC + 1)
++#define IMX95_CLK_BUSAON                   (IMX95_CCM_NUM_CLK_SRC + 2)
++#define IMX95_CLK_CAN1                     (IMX95_CCM_NUM_CLK_SRC + 3)
++#define IMX95_CLK_I3C1                     (IMX95_CCM_NUM_CLK_SRC + 4)
++#define IMX95_CLK_I3C1SLOW                 (IMX95_CCM_NUM_CLK_SRC + 5)
++#define IMX95_CLK_LPI2C1                   (IMX95_CCM_NUM_CLK_SRC + 6)
++#define IMX95_CLK_LPI2C2                   (IMX95_CCM_NUM_CLK_SRC + 7)
++#define IMX95_CLK_LPSPI1                   (IMX95_CCM_NUM_CLK_SRC + 8)
++#define IMX95_CLK_LPSPI2                   (IMX95_CCM_NUM_CLK_SRC + 9)
++#define IMX95_CLK_LPTMR1                   (IMX95_CCM_NUM_CLK_SRC + 10)
++#define IMX95_CLK_LPUART1                  (IMX95_CCM_NUM_CLK_SRC + 11)
++#define IMX95_CLK_LPUART2                  (IMX95_CCM_NUM_CLK_SRC + 12)
++#define IMX95_CLK_M33                      (IMX95_CCM_NUM_CLK_SRC + 13)
++#define IMX95_CLK_M33SYSTICK               (IMX95_CCM_NUM_CLK_SRC + 14)
++#define IMX95_CLK_MQS1                     (IMX95_CCM_NUM_CLK_SRC + 15)
++#define IMX95_CLK_PDM                      (IMX95_CCM_NUM_CLK_SRC + 16)
++#define IMX95_CLK_SAI1                     (IMX95_CCM_NUM_CLK_SRC + 17)
++#define IMX95_CLK_SENTINEL                 (IMX95_CCM_NUM_CLK_SRC + 18)
++#define IMX95_CLK_TPM2                     (IMX95_CCM_NUM_CLK_SRC + 19)
++#define IMX95_CLK_TSTMR1                   (IMX95_CCM_NUM_CLK_SRC + 20)
++#define IMX95_CLK_CAMAPB                   (IMX95_CCM_NUM_CLK_SRC + 21)
++#define IMX95_CLK_CAMAXI                   (IMX95_CCM_NUM_CLK_SRC + 22)
++#define IMX95_CLK_CAMCM0                   (IMX95_CCM_NUM_CLK_SRC + 23)
++#define IMX95_CLK_CAMISI                   (IMX95_CCM_NUM_CLK_SRC + 24)
++#define IMX95_CLK_MIPIPHYCFG               (IMX95_CCM_NUM_CLK_SRC + 25)
++#define IMX95_CLK_MIPIPHYPLLBYPASS         (IMX95_CCM_NUM_CLK_SRC + 26)
++#define IMX95_CLK_MIPIPHYPLLREF            (IMX95_CCM_NUM_CLK_SRC + 27)
++#define IMX95_CLK_MIPITESTBYTE             (IMX95_CCM_NUM_CLK_SRC + 28)
++#define IMX95_CLK_A55                      (IMX95_CCM_NUM_CLK_SRC + 29)
++#define IMX95_CLK_A55MTRBUS                (IMX95_CCM_NUM_CLK_SRC + 30)
++#define IMX95_CLK_A55PERIPH                (IMX95_CCM_NUM_CLK_SRC + 31)
++#define IMX95_CLK_DRAMALT                  (IMX95_CCM_NUM_CLK_SRC + 32)
++#define IMX95_CLK_DRAMAPB                  (IMX95_CCM_NUM_CLK_SRC + 33)
++#define IMX95_CLK_DISPAPB                  (IMX95_CCM_NUM_CLK_SRC + 34)
++#define IMX95_CLK_DISPAXI                  (IMX95_CCM_NUM_CLK_SRC + 35)
++#define IMX95_CLK_DISPDP                   (IMX95_CCM_NUM_CLK_SRC + 36)
++#define IMX95_CLK_DISPOCRAM                (IMX95_CCM_NUM_CLK_SRC + 37)
++#define IMX95_CLK_DISPUSB31                (IMX95_CCM_NUM_CLK_SRC + 38)
++#define IMX95_CLK_DISP1PIX                 (IMX95_CCM_NUM_CLK_SRC + 39)
++#define IMX95_CLK_DISP2PIX                 (IMX95_CCM_NUM_CLK_SRC + 40)
++#define IMX95_CLK_DISP3PIX                 (IMX95_CCM_NUM_CLK_SRC + 41)
++#define IMX95_CLK_GPUAPB                   (IMX95_CCM_NUM_CLK_SRC + 42)
++#define IMX95_CLK_GPU                      (IMX95_CCM_NUM_CLK_SRC + 43)
++#define IMX95_CLK_HSIOACSCAN480M           (IMX95_CCM_NUM_CLK_SRC + 44)
++#define IMX95_CLK_HSIOACSCAN80M            (IMX95_CCM_NUM_CLK_SRC + 45)
++#define IMX95_CLK_HSIO                     (IMX95_CCM_NUM_CLK_SRC + 46)
++#define IMX95_CLK_HSIOPCIEAUX              (IMX95_CCM_NUM_CLK_SRC + 47)
++#define IMX95_CLK_HSIOPCIETEST160M         (IMX95_CCM_NUM_CLK_SRC + 48)
++#define IMX95_CLK_HSIOPCIETEST400M         (IMX95_CCM_NUM_CLK_SRC + 49)
++#define IMX95_CLK_HSIOPCIETEST500M         (IMX95_CCM_NUM_CLK_SRC + 50)
++#define IMX95_CLK_HSIOUSBTEST50M           (IMX95_CCM_NUM_CLK_SRC + 51)
++#define IMX95_CLK_HSIOUSBTEST60M           (IMX95_CCM_NUM_CLK_SRC + 52)
++#define IMX95_CLK_BUSM7                    (IMX95_CCM_NUM_CLK_SRC + 53)
++#define IMX95_CLK_M7                       (IMX95_CCM_NUM_CLK_SRC + 54)
++#define IMX95_CLK_M7SYSTICK                (IMX95_CCM_NUM_CLK_SRC + 55)
++#define IMX95_CLK_BUSNETCMIX               (IMX95_CCM_NUM_CLK_SRC + 56)
++#define IMX95_CLK_ENET                     (IMX95_CCM_NUM_CLK_SRC + 57)
++#define IMX95_CLK_ENETPHYTEST200M          (IMX95_CCM_NUM_CLK_SRC + 58)
++#define IMX95_CLK_ENETPHYTEST500M          (IMX95_CCM_NUM_CLK_SRC + 59)
++#define IMX95_CLK_ENETPHYTEST667M          (IMX95_CCM_NUM_CLK_SRC + 60)
++#define IMX95_CLK_ENETREF                  (IMX95_CCM_NUM_CLK_SRC + 61)
++#define IMX95_CLK_ENETTIMER1               (IMX95_CCM_NUM_CLK_SRC + 62)
++#define IMX95_CLK_MQS2                     (IMX95_CCM_NUM_CLK_SRC + 63)
++#define IMX95_CLK_SAI2                     (IMX95_CCM_NUM_CLK_SRC + 64)
++#define IMX95_CLK_NOCAPB                   (IMX95_CCM_NUM_CLK_SRC + 65)
++#define IMX95_CLK_NOC                      (IMX95_CCM_NUM_CLK_SRC + 66)
++#define IMX95_CLK_NPUAPB                   (IMX95_CCM_NUM_CLK_SRC + 67)
++#define IMX95_CLK_NPU                      (IMX95_CCM_NUM_CLK_SRC + 68)
++#define IMX95_CLK_CCMCKO1                  (IMX95_CCM_NUM_CLK_SRC + 69)
++#define IMX95_CLK_CCMCKO2                  (IMX95_CCM_NUM_CLK_SRC + 70)
++#define IMX95_CLK_CCMCKO3                  (IMX95_CCM_NUM_CLK_SRC + 71)
++#define IMX95_CLK_CCMCKO4                  (IMX95_CCM_NUM_CLK_SRC + 72)
++#define IMX95_CLK_VPUAPB                   (IMX95_CCM_NUM_CLK_SRC + 73)
++#define IMX95_CLK_VPU                      (IMX95_CCM_NUM_CLK_SRC + 74)
++#define IMX95_CLK_VPUDSP                   (IMX95_CCM_NUM_CLK_SRC + 75)
++#define IMX95_CLK_VPUJPEG                  (IMX95_CCM_NUM_CLK_SRC + 76)
++#define IMX95_CLK_AUDIOXCVR                (IMX95_CCM_NUM_CLK_SRC + 77)
++#define IMX95_CLK_BUSWAKEUP                (IMX95_CCM_NUM_CLK_SRC + 78)
++#define IMX95_CLK_CAN2                     (IMX95_CCM_NUM_CLK_SRC + 79)
++#define IMX95_CLK_CAN3                     (IMX95_CCM_NUM_CLK_SRC + 80)
++#define IMX95_CLK_CAN4                     (IMX95_CCM_NUM_CLK_SRC + 81)
++#define IMX95_CLK_CAN5                     (IMX95_CCM_NUM_CLK_SRC + 82)
++#define IMX95_CLK_FLEXIO1                  (IMX95_CCM_NUM_CLK_SRC + 83)
++#define IMX95_CLK_FLEXIO2                  (IMX95_CCM_NUM_CLK_SRC + 84)
++#define IMX95_CLK_FLEXSPI1                 (IMX95_CCM_NUM_CLK_SRC + 85)
++#define IMX95_CLK_I3C2                     (IMX95_CCM_NUM_CLK_SRC + 86)
++#define IMX95_CLK_I3C2SLOW                 (IMX95_CCM_NUM_CLK_SRC + 87)
++#define IMX95_CLK_LPI2C3                   (IMX95_CCM_NUM_CLK_SRC + 88)
++#define IMX95_CLK_LPI2C4                   (IMX95_CCM_NUM_CLK_SRC + 89)
++#define IMX95_CLK_LPI2C5                   (IMX95_CCM_NUM_CLK_SRC + 90)
++#define IMX95_CLK_LPI2C6                   (IMX95_CCM_NUM_CLK_SRC + 91)
++#define IMX95_CLK_LPI2C7                   (IMX95_CCM_NUM_CLK_SRC + 92)
++#define IMX95_CLK_LPI2C8                   (IMX95_CCM_NUM_CLK_SRC + 93)
++#define IMX95_CLK_LPSPI3                   (IMX95_CCM_NUM_CLK_SRC + 94)
++#define IMX95_CLK_LPSPI4                   (IMX95_CCM_NUM_CLK_SRC + 95)
++#define IMX95_CLK_LPSPI5                   (IMX95_CCM_NUM_CLK_SRC + 96)
++#define IMX95_CLK_LPSPI6                   (IMX95_CCM_NUM_CLK_SRC + 97)
++#define IMX95_CLK_LPSPI7                   (IMX95_CCM_NUM_CLK_SRC + 98)
++#define IMX95_CLK_LPSPI8                   (IMX95_CCM_NUM_CLK_SRC + 99)
++#define IMX95_CLK_LPTMR2                   (IMX95_CCM_NUM_CLK_SRC + 100)
++#define IMX95_CLK_LPUART3                  (IMX95_CCM_NUM_CLK_SRC + 101)
++#define IMX95_CLK_LPUART4                  (IMX95_CCM_NUM_CLK_SRC + 102)
++#define IMX95_CLK_LPUART5                  (IMX95_CCM_NUM_CLK_SRC + 103)
++#define IMX95_CLK_LPUART6                  (IMX95_CCM_NUM_CLK_SRC + 104)
++#define IMX95_CLK_LPUART7                  (IMX95_CCM_NUM_CLK_SRC + 105)
++#define IMX95_CLK_LPUART8                  (IMX95_CCM_NUM_CLK_SRC + 106)
++#define IMX95_CLK_SAI3                     (IMX95_CCM_NUM_CLK_SRC + 107)
++#define IMX95_CLK_SAI4                     (IMX95_CCM_NUM_CLK_SRC + 108)
++#define IMX95_CLK_SAI5                     (IMX95_CCM_NUM_CLK_SRC + 109)
++#define IMX95_CLK_SPDIF                    (IMX95_CCM_NUM_CLK_SRC + 110)
++#define IMX95_CLK_SWOTRACE                 (IMX95_CCM_NUM_CLK_SRC + 111)
++#define IMX95_CLK_TPM4                     (IMX95_CCM_NUM_CLK_SRC + 112)
++#define IMX95_CLK_TPM5                     (IMX95_CCM_NUM_CLK_SRC + 113)
++#define IMX95_CLK_TPM6                     (IMX95_CCM_NUM_CLK_SRC + 114)
++#define IMX95_CLK_TSTMR2                   (IMX95_CCM_NUM_CLK_SRC + 115)
++#define IMX95_CLK_USBPHYBURUNIN            (IMX95_CCM_NUM_CLK_SRC + 116)
++#define IMX95_CLK_USDHC1                   (IMX95_CCM_NUM_CLK_SRC + 117)
++#define IMX95_CLK_USDHC2                   (IMX95_CCM_NUM_CLK_SRC + 118)
++#define IMX95_CLK_USDHC3                   (IMX95_CCM_NUM_CLK_SRC + 119)
++#define IMX95_CLK_V2XPK                    (IMX95_CCM_NUM_CLK_SRC + 120)
++#define IMX95_CLK_WAKEUPAXI                (IMX95_CCM_NUM_CLK_SRC + 121)
++#define IMX95_CLK_XSPISLVROOT              (IMX95_CCM_NUM_CLK_SRC + 122)
++#define IMX95_CLK_SEL_EXT                  (IMX95_CCM_NUM_CLK_SRC + 123 + 0)
++#define IMX95_CLK_SEL_A55C0                (IMX95_CCM_NUM_CLK_SRC + 123 + 1)
++#define IMX95_CLK_SEL_A55C1                (IMX95_CCM_NUM_CLK_SRC + 123 + 2)
++#define IMX95_CLK_SEL_A55C2                (IMX95_CCM_NUM_CLK_SRC + 123 + 3)
++#define IMX95_CLK_SEL_A55C3                (IMX95_CCM_NUM_CLK_SRC + 123 + 4)
++#define IMX95_CLK_SEL_A55C4                (IMX95_CCM_NUM_CLK_SRC + 123 + 5)
++#define IMX95_CLK_SEL_A55C5                (IMX95_CCM_NUM_CLK_SRC + 123 + 6)
++#define IMX95_CLK_SEL_A55P                 (IMX95_CCM_NUM_CLK_SRC + 123 + 7)
++#define IMX95_CLK_SEL_DRAM                 (IMX95_CCM_NUM_CLK_SRC + 123 + 8)
++#define IMX95_CLK_SEL_TEMPSENSE            (IMX95_CCM_NUM_CLK_SRC + 123 + 9)
++
++#endif	/* __DT_BINDINGS_CLOCK_IMX95_H */
+diff --git a/arch/arm64/boot/dts/freescale/imx95-power.h b/arch/arm64/boot/dts/freescale/imx95-power.h
+new file mode 100644
+index 000000000000..a43779317fed
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx95-power.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ *  Copyright 2024 NXP
++ */
++
++#ifndef __IMX95_POWER_H__
++#define __IMX95_POWER_H__
++
++#define IMX95_PD_ANA		0
++#define IMX95_PD_AON		1
++#define IMX95_PD_BBSM		2
++#define IMX95_PD_CAMERA		3
++#define IMX95_PD_CCMSRCGPC	4
++#define IMX95_PD_A55C0		5
++#define IMX95_PD_A55C1		6
++#define IMX95_PD_A55C2		7
++#define IMX95_PD_A55C3		8
++#define IMX95_PD_A55C4		9
++#define IMX95_PD_A55C5		10
++#define IMX95_PD_A55P		11
++#define IMX95_PD_DDR		12
++#define IMX95_PD_DISPLAY	13
++#define IMX95_PD_GPU		14
++#define IMX95_PD_HSIO_TOP	15
++#define IMX95_PD_HSIO_WAON	16
++#define IMX95_PD_M7		17
++#define IMX95_PD_NETC		18
++#define IMX95_PD_NOC		19
++#define IMX95_PD_NPU		20
++#define IMX95_PD_VPU		21
++#define IMX95_PD_WAKEUP		22
++
++#define IMX95_PERF_ELE		0
++#define IMX95_PERF_M33		1
++#define IMX95_PERF_WAKEUP	2
++#define IMX95_PERF_M7		3
++#define IMX95_PERF_DRAM		4
++#define IMX95_PERF_HSIO		5
++#define IMX95_PERF_NPU		6
++#define IMX95_PERF_NOC		7
++#define IMX95_PERF_A55		8
++#define IMX95_PERF_GPU		9
++#define IMX95_PERF_VPU		10
++#define IMX95_PERF_CAM		11
++#define IMX95_PERF_DISP		12
++#define IMX95_PERF_A55PER	13
++#define IMX95_PERF_A55P		14
++#define IMX95_PERF_A55C0	15
++#define IMX95_PERF_A55C1	16
++#define IMX95_PERF_A55C2	17
++#define IMX95_PERF_A55C3	18
++#define IMX95_PERF_A55C4	19
++#define IMX95_PERF_A55C5	20
++
++#endif
+diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
+new file mode 100644
+index 000000000000..3f1e73297343
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
+@@ -0,0 +1,1050 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
++/*
++ * Copyright 2024 NXP
++ */
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/thermal/thermal.h>
++
++#include "imx95-clock.h"
++#include "imx95-power.h"
++
++/ {
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		idle-states {
++			entry-method = "psci";
++
++			cpu_pd_wait: cpu-pd-wait {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x0010033>;
++				local-timer-stop;
++				entry-latency-us = <10000>;
++				exit-latency-us = <7000>;
++				min-residency-us = <27000>;
++				wakeup-latency-us = <15000>;
++				status = "disabled";
++			};
++		};
++
++		A55_0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			reg = <0x0>;
++			enable-method = "psci";
++			#cooling-cells = <2>;
++			cpu-idle-states = <&cpu_pd_wait>;
++			power-domains = <&scmi_devpd IMX95_PERF_A55>;
++			power-domain-names = "perf";
++			i-cache-size = <32768>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <128>;
++			d-cache-size = <32768>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			next-level-cache = <&l2_cache_l0>;
++		};
++
++		A55_1: cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			reg = <0x100>;
++			enable-method = "psci";
++			#cooling-cells = <2>;
++			cpu-idle-states = <&cpu_pd_wait>;
++			power-domains = <&scmi_devpd IMX95_PERF_A55>;
++			power-domain-names = "perf";
++			i-cache-size = <32768>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <128>;
++			d-cache-size = <32768>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			next-level-cache = <&l2_cache_l1>;
++		};
++
++		A55_2: cpu@200 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			reg = <0x200>;
++			enable-method = "psci";
++			#cooling-cells = <2>;
++			cpu-idle-states = <&cpu_pd_wait>;
++			power-domains = <&scmi_devpd IMX95_PERF_A55>;
++			power-domain-names = "perf";
++			i-cache-size = <32768>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <128>;
++			d-cache-size = <32768>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			next-level-cache = <&l2_cache_l2>;
++		};
++
++		A55_3: cpu@300 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			reg = <0x300>;
++			enable-method = "psci";
++			#cooling-cells = <2>;
++			power-domains = <&scmi_devpd IMX95_PERF_A55>;
++			power-domain-names = "perf";
++			i-cache-size = <32768>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <128>;
++			d-cache-size = <32768>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			next-level-cache = <&l2_cache_l3>;
++		};
++
++		A55_4: cpu@400 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			reg = <0x400>;
++			power-domains = <&scmi_devpd IMX95_PERF_A55>;
++			power-domain-names = "perf";
++			enable-method = "psci";
++			#cooling-cells = <2>;
++			cpu-idle-states = <&cpu_pd_wait>;
++			i-cache-size = <32768>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <128>;
++			d-cache-size = <32768>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			next-level-cache = <&l2_cache_l4>;
++		};
++
++		A55_5: cpu@500 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a55";
++			reg = <0x500>;
++			power-domains = <&scmi_devpd IMX95_PERF_A55>;
++			power-domain-names = "perf";
++			enable-method = "psci";
++			#cooling-cells = <2>;
++			cpu-idle-states = <&cpu_pd_wait>;
++			i-cache-size = <32768>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <128>;
++			d-cache-size = <32768>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			next-level-cache = <&l2_cache_l5>;
++		};
++
++		l2_cache_l0: l2-cache-l0 {
++			compatible = "cache";
++			cache-size = <65536>;
++			cache-line-size = <64>;
++			cache-sets = <256>;
++			cache-level = <2>;
++			cache-unified;
++			next-level-cache = <&l3_cache>;
++		};
++
++		l2_cache_l1: l2-cache-l1 {
++			compatible = "cache";
++			cache-size = <65536>;
++			cache-line-size = <64>;
++			cache-sets = <256>;
++			cache-level = <2>;
++			cache-unified;
++			next-level-cache = <&l3_cache>;
++		};
++
++		l2_cache_l2: l2-cache-l2 {
++			compatible = "cache";
++			cache-size = <65536>;
++			cache-line-size = <64>;
++			cache-sets = <256>;
++			cache-level = <2>;
++			cache-unified;
++			next-level-cache = <&l3_cache>;
++		};
++
++		l2_cache_l3: l2-cache-l3 {
++			compatible = "cache";
++			cache-size = <65536>;
++			cache-line-size = <64>;
++			cache-sets = <256>;
++			cache-level = <2>;
++			cache-unified;
++			next-level-cache = <&l3_cache>;
++		};
++
++		l2_cache_l4: l2-cache-l4 {
++			compatible = "cache";
++			cache-size = <65536>;
++			cache-line-size = <64>;
++			cache-sets = <256>;
++			cache-level = <2>;
++			cache-unified;
++			next-level-cache = <&l3_cache>;
++		};
++
++		l2_cache_l5: l2-cache-l5 {
++			compatible = "cache";
++			cache-size = <65536>;
++			cache-line-size = <64>;
++			cache-sets = <256>;
++			cache-level = <2>;
++			cache-unified;
++			next-level-cache = <&l3_cache>;
++		};
++
++		l3_cache: l3-cache {
++			compatible = "cache";
++			cache-size = <524288>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <3>;
++			cache-unified;
++		};
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&A55_0>;
++				};
++
++				core1 {
++					cpu = <&A55_1>;
++				};
++
++				core2 {
++					cpu = <&A55_2>;
++				};
++
++				core3 {
++					cpu = <&A55_3>;
++				};
++
++				core4 {
++					cpu = <&A55_4>;
++				};
++
++				core5 {
++					cpu = <&A55_5>;
++				};
++			};
++		};
++	};
++
++	clk_ext1: clock-ext1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <133000000>;
++		clock-output-names = "clk_ext1";
++	};
++
++	sai1_mclk: sai-mclk1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency= <0>;
++		clock-output-names = "sai1_mclk";
++	};
++
++	sai2_mclk: sai-mclk2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency= <0>;
++		clock-output-names = "sai2_mclk";
++	};
++
++	sai3_mclk: sai-mclk3 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency= <0>;
++		clock-output-names = "sai3_mclk";
++	};
++
++	sai4_mclk: sai-mclk4 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency= <0>;
++		clock-output-names = "sai4_mclk";
++	};
++
++	sai5_mclk: sai-mclk5 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency= <0>;
++		clock-output-names = "sai5_mclk";
++	};
++
++	osc_24m: osc-24m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++		clock-output-names = "osc_24m";
++	};
++
++	sram1: sram@20480000 {
++		compatible = "mmio-sram";
++		reg = <0x0 0x204c0000 0x0 0x18000>;
++		ranges = <0x0 0x0 0x204c0000 0x18000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++
++	firmware {
++		scmi {
++			compatible = "arm,scmi";
++			mboxes = <&mu2 5 0>, <&mu2 3 0>, <&mu2 3 1>;
++			shmem = <&scmi_buf0>, <&scmi_buf1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			scmi_devpd: protocol@11 {
++				reg = <0x11>;
++				#power-domain-cells = <1>;
++			};
++
++			scmi_perf: protocol@13 {
++				reg = <0x13>;
++				#power-domain-cells = <1>;
++			};
++
++			scmi_clk: protocol@14 {
++				reg = <0x14>;
++				#clock-cells = <1>;
++			};
++
++			scmi_sensor: protocol@15 {
++				reg = <0x15>;
++				#thermal-sensor-cells = <1>;
++			};
++		};
++	};
++
++	pmu {
++		compatible = "arm,cortex-a55-pmu";
++		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_HIGH)>;
++	};
++
++	thermal-zones {
++		a55-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <2000>;
++			thermal-sensors = <&scmi_sensor 1>;
++
++			trips {
++				cpu_alert0: trip0 {
++					temperature = <85000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++
++				cpu_crit0: trip1 {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device =
++						<&A55_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&A55_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&A55_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&A55_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&A55_4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&A55_5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
++		clock-frequency = <24000000>;
++		arm,no-tick-in-suspend;
++		interrupt-parent = <&gic>;
++	};
++
++	gic: interrupt-controller@48000000 {
++		compatible = "arm,gic-v3";
++		reg = <0 0x48000000 0 0x10000>,
++		      <0 0x48060000 0 0xc0000>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&gic>;
++		dma-noncoherent;
++		ranges;
++
++		its: msi-controller@48040000 {
++			compatible = "arm,gic-v3-its";
++			reg = <0 0x48040000 0 0x20000>;
++			msi-controller;
++			#msi-cells = <1>;
++			dma-noncoherent;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		aips2: bus@42000000 {
++			compatible = "fsl,aips-bus", "simple-bus";
++			reg = <0x0 0x42000000 0x0 0x800000>;
++			ranges = <0x42000000 0x0 0x42000000 0x8000000>,
++				 <0x28000000 0x0 0x28000000 0x10000000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			mu7: mailbox@42430000 {
++				compatible = "fsl,imx95-mu";
++				reg = <0x42430000 0x10000>;
++				interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				#mbox-cells = <2>;
++				status = "disabled";
++			};
++
++			wdog3: watchdog@42490000 {
++				compatible = "fsl,imx93-wdt";
++				reg = <0x42490000 0x10000>;
++				interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				timeout-sec = <40>;
++				status = "disabled";
++			};
++
++			tpm3: pwm@424e0000 {
++				compatible = "fsl,imx7ulp-pwm";
++				reg = <0x424e0000 0x1000>;
++				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			tpm4: pwm@424f0000 {
++				compatible = "fsl,imx7ulp-pwm";
++				reg = <0x424f0000 0x1000>;
++				clocks = <&scmi_clk IMX95_CLK_TPM4>;
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			tpm5: pwm@42500000 {
++				compatible = "fsl,imx7ulp-pwm";
++				reg = <0x42500000 0x1000>;
++				clocks = <&scmi_clk IMX95_CLK_TPM5>;
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			tpm6: pwm@42510000 {
++				compatible = "fsl,imx7ulp-pwm";
++				reg = <0x42510000 0x1000>;
++				clocks = <&scmi_clk IMX95_CLK_TPM6>;
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			lpi2c3: i2c@42530000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x42530000 0x10000>;
++				interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C3>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpi2c4: i2c@42540000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x42540000 0x10000>;
++				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C4>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi3: spi@42550000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x42550000 0x10000>;
++				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI3>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi4: spi@42560000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x42560000 0x10000>;
++				interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI4>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpuart3: serial@42570000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x42570000 0x1000>;
++				interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART3>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			lpuart4: serial@42580000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x42580000 0x1000>;
++				interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART4>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			lpuart5: serial@42590000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x42590000 0x1000>;
++				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART5>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			lpuart6: serial@425a0000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x425a0000 0x1000>;
++				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART6>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			lpuart7: serial@42690000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x42690000 0x1000>;
++				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART7>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			lpuart8: serial@426a0000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x426a0000 0x1000>;
++				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART8>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			lpi2c5: i2c@426b0000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x426b0000 0x10000>;
++				interrupts = <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C5>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpi2c6: i2c@426c0000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x426c0000 0x10000>;
++				interrupts = <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C6>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpi2c7: i2c@426d0000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x426d0000 0x10000>;
++				interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C7>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpi2c8: i2c@426e0000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x426e0000 0x10000>;
++				interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C8>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi5: spi@426f0000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x426f0000 0x10000>;
++				interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI5>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi6: spi@42700000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x42700000 0x10000>;
++				interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI6>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi7: spi@42710000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x42710000 0x10000>;
++				interrupts = <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI7>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi8: spi@42720000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x42720000 0x10000>;
++				interrupts = <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI8>,
++					 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			mu8: mailbox@42730000 {
++				compatible = "fsl,imx95-mu";
++				reg = <0x42730000 0x10000>;
++				interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++				#mbox-cells = <2>;
++				status = "disabled";
++			};
++		};
++
++		aips3: bus@42800000 {
++			compatible = "fsl,aips-bus", "simple-bus";
++			reg = <0 0x42800000 0 0x800000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0x42800000 0x0 0x42800000 0x800000>;
++
++			usdhc1: mmc@42850000 {
++				compatible = "fsl,imx95-usdhc", "fsl,imx8mm-usdhc";
++				reg = <0x42850000 0x10000>;
++				interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>,
++					 <&scmi_clk IMX95_CLK_WAKEUPAXI>,
++					 <&scmi_clk IMX95_CLK_USDHC1>;
++				clock-names = "ipg", "ahb", "per";
++				assigned-clocks = <&scmi_clk IMX95_CLK_USDHC1>;
++				assigned-clock-parents = <&scmi_clk IMX95_CLK_SYSPLL1_PFD1>;
++				assigned-clock-rates = <400000000>;
++				bus-width = <8>;
++				fsl,tuning-start-tap = <1>;
++				fsl,tuning-step= <2>;
++				status = "disabled";
++			};
++
++			usdhc2: mmc@42860000 {
++				compatible = "fsl,imx95-usdhc", "fsl,imx8mm-usdhc";
++				reg = <0x42860000 0x10000>;
++				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>,
++					 <&scmi_clk IMX95_CLK_WAKEUPAXI>,
++					 <&scmi_clk IMX95_CLK_USDHC2>;
++				clock-names = "ipg", "ahb", "per";
++				assigned-clocks = <&scmi_clk IMX95_CLK_USDHC2>;
++				assigned-clock-parents = <&scmi_clk IMX95_CLK_SYSPLL1_PFD1>;
++				assigned-clock-rates = <400000000>;
++				bus-width = <4>;
++				fsl,tuning-start-tap = <1>;
++				fsl,tuning-step= <2>;
++				status = "disabled";
++			};
++
++			usdhc3: mmc@428b0000 {
++				compatible = "fsl,imx95-usdhc", "fsl,imx8mm-usdhc";
++				reg = <0x428b0000 0x10000>;
++				interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>,
++					 <&scmi_clk IMX95_CLK_WAKEUPAXI>,
++					 <&scmi_clk IMX95_CLK_USDHC3>;
++				clock-names = "ipg", "ahb", "per";
++				assigned-clocks = <&scmi_clk IMX95_CLK_USDHC3>;
++				assigned-clock-parents = <&scmi_clk IMX95_CLK_SYSPLL1_PFD1>;
++				assigned-clock-rates = <400000000>;
++				bus-width = <4>;
++				fsl,tuning-start-tap = <1>;
++				fsl,tuning-step= <2>;
++				status = "disabled";
++			};
++		};
++
++		gpio2: gpio@43810000 {
++			compatible = "fsl,imx95-gpio", "fsl,imx8ulp-gpio";
++			reg = <0x0 0x43810000 0x0 0x1000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>,
++				 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++			clock-names = "gpio", "port";
++		};
++
++		gpio3: gpio@43820000 {
++			compatible = "fsl,imx95-gpio", "fsl,imx8ulp-gpio";
++			reg = <0x0 0x43820000 0x0 0x1000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>,
++				 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++			clock-names = "gpio", "port";
++		};
++
++		gpio4: gpio@43840000 {
++			compatible = "fsl,imx95-gpio", "fsl,imx8ulp-gpio";
++			reg = <0x0 0x43840000 0x0 0x1000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>,
++				 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++			clock-names = "gpio", "port";
++		};
++
++		gpio5: gpio@43850000 {
++			compatible = "fsl,imx95-gpio", "fsl,imx8ulp-gpio";
++			reg = <0x0 0x43850000 0x0 0x1000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>,
++				 <&scmi_clk IMX95_CLK_BUSWAKEUP>;
++			clock-names = "gpio", "port";
++		};
++
++		aips1: bus@44000000 {
++			compatible = "fsl,aips-bus", "simple-bus";
++			reg = <0x0 0x44000000 0x0 0x800000>;
++			ranges = <0x44000000 0x0 0x44000000 0x800000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			mu1: mailbox@44220000 {
++				compatible = "fsl,imx95-mu";
++				reg = <0x44220000 0x10000>;
++				interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSAON>;
++				#mbox-cells = <2>;
++				status = "disabled";
++			};
++
++			tpm1: pwm@44310000 {
++				compatible = "fsl,imx7ulp-pwm";
++				reg = <0x44310000 0x1000>;
++				clocks = <&scmi_clk IMX95_CLK_BUSAON>;
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			tpm2: pwm@44320000 {
++				compatible = "fsl,imx7ulp-pwm";
++				reg = <0x44320000 0x1000>;
++				clocks = <&scmi_clk IMX95_CLK_TPM2>;
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			lpi2c1: i2c@44340000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x44340000 0x10000>;
++				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C1>,
++					 <&scmi_clk IMX95_CLK_BUSAON>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpi2c2: i2c@44350000 {
++				compatible = "fsl,imx95-lpi2c", "fsl,imx7ulp-lpi2c";
++				reg = <0x44350000 0x10000>;
++				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPI2C2>,
++					 <&scmi_clk IMX95_CLK_BUSAON>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi1: spi@44360000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x44360000 0x10000>;
++				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI1>,
++					 <&scmi_clk IMX95_CLK_BUSAON>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpspi2: spi@44370000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx95-spi", "fsl,imx7ulp-spi";
++				reg = <0x44370000 0x10000>;
++				interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPSPI2>,
++					 <&scmi_clk IMX95_CLK_BUSAON>;
++				clock-names = "per", "ipg";
++				status = "disabled";
++			};
++
++			lpuart1: serial@44380000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x44380000 0x1000>;
++				interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART1>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			lpuart2: serial@44390000 {
++				compatible = "fsl,imx95-lpuart", "fsl,imx8ulp-lpuart",
++					     "fsl,imx7ulp-lpuart";
++				reg = <0x44390000 0x1000>;
++				interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_LPUART2>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			adc1: adc@44530000 {
++				compatible = "nxp,imx93-adc";
++				reg = <0x44530000 0x10000>;
++				interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_ADC>;
++				clock-names = "ipg";
++				status = "disabled";
++			};
++
++			mu2: mailbox@445b0000 {
++				compatible = "fsl,imx95-mu";
++				reg = <0x445b0000 0x1000>;
++				ranges;
++				interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				#mbox-cells = <2>;
++
++				sram0: sram@445b1000 {
++					compatible = "mmio-sram";
++					reg = <0x445b1000 0x400>;
++					ranges = <0x0 0x445b1000 0x400>;
++					#address-cells = <1>;
++					#size-cells = <1>;
++
++					scmi_buf0: scmi-sram-section@0 {
++						compatible = "arm,scmi-shmem";
++						reg = <0x0 0x80>;
++					};
++
++					scmi_buf1: scmi-sram-section@80 {
++						compatible = "arm,scmi-shmem";
++						reg = <0x80 0x80>;
++					};
++				};
++
++			};
++
++			mu3: mailbox@445d0000 {
++				compatible = "fsl,imx95-mu";
++				reg = <0x445d0000 0x10000>;
++				interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSAON>;
++				#mbox-cells = <2>;
++				status = "disabled";
++			};
++
++			mu4: mailbox@445f0000 {
++				compatible = "fsl,imx95-mu";
++				reg = <0x445f0000 0x10000>;
++				interrupts = <GIC_SPI 230 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSAON>;
++				#mbox-cells = <2>;
++				status = "disabled";
++			};
++
++			mu6: mailbox@44630000 {
++				compatible = "fsl,imx95-mu";
++				reg = <0x44630000 0x10000>;
++				interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&scmi_clk IMX95_CLK_BUSAON>;
++				#mbox-cells = <2>;
++				status = "disabled";
++			};
++		};
++
++		mailbox@47320000 {
++			compatible = "fsl,imx95-mu-v2x";
++			reg = <0x0 0x47320000 0x0 0x10000>;
++			interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++		};
++
++		mailbox@47350000 {
++			compatible = "fsl,imx95-mu-v2x";
++			reg = <0x0 0x47350000 0x0 0x10000>;
++			interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++		};
++
++		/* GPIO1 is under exclusive control of System Manager */
++		gpio1: gpio@47400000 {
++			compatible = "fsl,imx95-gpio", "fsl,imx8ulp-gpio";
++			reg = <0x0 0x47400000 0x0 0x1000>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			clocks = <&scmi_clk IMX95_CLK_M33>,
++				 <&scmi_clk IMX95_CLK_M33>;
++			clock-names = "gpio", "port";
++			status = "disabled";
++		};
++
++		elemu0: mailbox@47520000 {
++			compatible = "fsl,imx95-mu-ele";
++			reg = <0x0 0x47520000 0x0 0x10000>;
++			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		elemu1: mailbox@47530000 {
++			compatible = "fsl,imx95-mu-ele";
++			reg = <0x0 0x47530000 0x0 0x10000>;
++			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		elemu2: mailbox@47540000 {
++			compatible = "fsl,imx95-mu-ele";
++			reg = <0x0 0x47540000 0x0 0x10000>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		elemu3: mailbox@47550000 {
++			compatible = "fsl,imx95-mu-ele";
++			reg = <0x0 0x47550000 0x0 0x10000>;
++			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++		};
++
++		elemu4: mailbox@47560000 {
++			compatible = "fsl,imx95-mu-ele";
++			reg = <0x0 0x47560000 0x0 0x10000>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		elemu5: mailbox@47570000 {
++			compatible = "fsl,imx95-mu-ele";
++			reg = <0x0 0x47570000 0x0 0x10000>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		aips4: bus@49000000 {
++			compatible = "fsl,aips-bus", "simple-bus";
++			reg = <0x0 0x49000000 0x0 0x800000>;
++			ranges = <0x49000000 0x0 0x49000000 0x800000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			smmu: iommu@490d0000 {
++				compatible = "arm,smmu-v3";
++				reg = <0x490d0000 0x100000>;
++				interrupts = <GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
++					     <GIC_SPI 328 IRQ_TYPE_EDGE_RISING>,
++					     <GIC_SPI 334 IRQ_TYPE_EDGE_RISING>,
++					     <GIC_SPI 326 IRQ_TYPE_EDGE_RISING>;
++				interrupt-names = "eventq", "gerror", "priq", "cmdq-sync";
++				#iommu-cells = <1>;
++				status = "disabled";
++			};
++		};
++	};
++};
 
 -- 
 2.37.1
