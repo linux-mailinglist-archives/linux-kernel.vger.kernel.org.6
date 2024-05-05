@@ -1,149 +1,313 @@
-Return-Path: <linux-kernel+bounces-169056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488828BC273
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CF68BC27D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F03B20F51
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:21:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB0F28183E
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312643B2A2;
-	Sun,  5 May 2024 16:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F2C40848;
+	Sun,  5 May 2024 16:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ggpSEO1U"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEfwFIuy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EE21862C;
-	Sun,  5 May 2024 16:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10F33D76;
+	Sun,  5 May 2024 16:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714926062; cv=none; b=WWb5Dohb2A3PnqPezSXuzhOzyNOY2FHX0lpprS+92mMRbCYkbZiTtfsVIEaH4ZLdFBrl4GOHq9bkxDt74dClTS2AjCnxyF5wDUjS9LQWdawNGDR7AJjVBpAhQHho4hmxXS6/Ht9llGSmvJgdKwu+ypoVNWQY/CVJu2lCdX9TSVY=
+	t=1714926218; cv=none; b=MS5mN9gWLuLJfRkO6B+o9kqKqeIVmE4HOJGH0T/l0z5mIy2Y0ORJMEabyha1GV996lICbilhhLHgDlPO3jXaTLpqAmv/IV8kUb2JPGaXPweh0w8qIe2prb0I/q+Z2fw0hNyaFDAlpn/yc3zrRQ0e+v1WsIj32/rmvvakDQLAvRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714926062; c=relaxed/simple;
-	bh=fn1Y0Fvalw3p2xiNGMYhBKwqheSpAJk7ixl8Wk8aamo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X88XNBAIohm2rRvb5B3Y0nUFPAp4x9d+0vP4ygPku7h/XPUks9eWDirexnWa95ki40g+/MgN5gdoFca8O6QlMarLGq1e5ntNM/4YFwhsM3MJvxnOVG60bFl5SRoSyNQOZtI1yzycbB2y5TfR8xdG0uWDyypoycl6WAaVoOuj8x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ggpSEO1U; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 445GKsoH001827;
-	Sun, 5 May 2024 16:20:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=f16PTek0Bmvx5v9zUadis064ktYQgiNdbOEhCsQmxFI=; b=gg
-	pSEO1Ul1EY/ocAyYmnQOEI2R7EhbzsAypkD23jtGUaV4m151AfX6ayNiS8lprywO
-	p4LDv0osm6nOW/XpvzlOPugEBepwEHUCNEzvsDHz2J/j54sFhJnmAyhxg4PCB9Bz
-	3M4b6AGZf0AQTscN1vz95rbrsdhOPkOcJxYtdQ7T67729CH8vU4bUETDaXe3xNY7
-	s9FHfHbixHskOWRGyclGnvKOhhx/sXnjUNUjChqqNT1GuGLUlZ6m7fhBf3cWTVtL
-	kP8equFHH4sttbTRGeUqyAbljpK5wtYuoeC3iOPs1cKqz2V3bpVNhjpx0Vzqr/VA
-	tmU7/SHCwQ89YNgZYPFw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwdsmsw2b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 05 May 2024 16:20:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 445GKLO6028359
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 5 May 2024 16:20:21 GMT
-Received: from [10.216.45.66] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
- 09:20:18 -0700
-Message-ID: <8ca45837-cbed-28da-4a6f-0dcec8294f51@quicinc.com>
-Date: Sun, 5 May 2024 21:50:15 +0530
+	s=arc-20240116; t=1714926218; c=relaxed/simple;
+	bh=H1cURQ6SkyorBZNd5IEt8Gwv4rbQiQ4DjWPDOPmhYKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjtT1JXvxf62DGYT90ymz5frbM2H2lZS9nnqtQdAfb7JA5DJwArhdmeey/LIaXIhqRokQj2CGwIxEEOqvpoPypee2Dcl5WJmn8rx6b1du2WI5UwZEzWINizApCZt1xjU9S0EIrkoPQNwzvfVVe1lyotAw2UK2KzkYTfr0xzj6uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEfwFIuy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3597FC113CC;
+	Sun,  5 May 2024 16:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714926218;
+	bh=H1cURQ6SkyorBZNd5IEt8Gwv4rbQiQ4DjWPDOPmhYKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HEfwFIuy3AvRHt2jYMH+3uMLv8ZAvk9/br9CzlfPEC/VG2S93bHOQ+C9SEzcJWO1m
+	 fhrIB7tsIhSE1rCN0XHzC9/yHhXFN3wgZx/0vxjeZIqP7fYTMp5BFuweFUXGQzgTdZ
+	 9jWL5UwA5LnwpXmHgtQbNCYdCiXQrRznB88lN0iLlwSaBr5DDnGwSdNeMA9u8emK4z
+	 Rl+ZV5dKwfmwUNwLhjVlg37PJNqvYNs+1yn+WMvO5b4KJiHFMT6v1sbDFKFqUnEBC8
+	 KvOWgmEluP3P/28GNlKyII2qyePcDagWA09HH6ax4b8tQkrNe/uMfkKL5RLUug2qiY
+	 jMdML4uSrwkpw==
+Date: Sun, 5 May 2024 19:21:55 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Donald Dutile <ddutile@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Liviu Dudau <liviu@dudau.co.uk>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Sam Ravnborg <sam@ravnborg.org>, Song Liu <song@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	netdev@vger.kernel.org, sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v8 00/17] mm: jit/text allocator
+Message-ID: <ZjeyI8xbNTrAWn9m@kernel.org>
+References: <20240505142600.2322517-1-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] dmabuf: fix dmabuf file poll uaf issue
-Content-Language: en-US
-To: "T.J. Mercier" <tjmercier@google.com>
-CC: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        zhiguojiang
-	<justinjiang@vivo.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
-References: <20240327022903.776-1-justinjiang@vivo.com>
- <5cf29162-a29d-4af7-b68e-aac5c862d20e@amd.com>
- <cc7defae-60c1-4cc8-aee5-475d4460e574@vivo.com>
- <23375ba8-9558-4886-9c65-af9fe8e8e8b6@amd.com>
- <CABdmKX2Kf4ZmVzv3LGTz2GyP-9+rAtFY9hSAxdkrwK8mG0gDvQ@mail.gmail.com>
- <e55cad9b-a361-4d27-a351-f6a4f5b8b734@vivo.com>
- <40ac02bb-efe2-4f52-a4f2-7b56d9b93d2c@amd.com>
- <4fedd80c-d5b6-4478-bfd3-02d1ee1a26e5@vivo.com>
- <aab5ec51-fcff-44f2-a4f5-2979bd776a03@amd.com>
- <2ebca2fd-9465-4e64-b3cc-ffb88ef87800@vivo.com>
- <d4209754-5f26-422d-aca0-45cccbc44ad0@amd.com>
- <289b9ad6-58a3-aa39-48ae-a244fe108354@quicinc.com>
- <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
-From: Charan Teja Kalla <quic_charante@quicinc.com>
-In-Reply-To: <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: u7R16SvhkSPx1h5AvS-rjsiofvcdveX_
-X-Proofpoint-ORIG-GUID: u7R16SvhkSPx1h5AvS-rjsiofvcdveX_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-05_11,2024-05-03_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 mlxlogscore=853 bulkscore=0 malwarescore=0
- lowpriorityscore=0 mlxscore=0 adultscore=0 impostorscore=0 phishscore=0
- spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405050073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240505142600.2322517-1-rppt@kernel.org>
 
-Thanks T.J for the reply!!
+This is embarrassing, but these patches were from a wrong branch :(
+Please ignore.
 
-On 5/4/2024 4:43 AM, T.J. Mercier wrote:
-> It looks like a similar conclusion about epoll was reached at:
-> https://lore.kernel.org/all/a87d7ef8-2c59-4dc5-ba0a-b821d1effc72@amd.com/
+On Sun, May 05, 2024 at 05:25:43PM +0300, Mike Rapoport wrote:
+> From: "Mike Rapoport (IBM)" <rppt@kernel.org>
 > 
-I am unaware of this discussion. Thanks...
-
-> I agree with Christian that it should not be possible for the file to
-> be freed while inside dma_buf_poll. Aside from causing problems in
-> dma_buf_poll, ep_item_poll itself would have issues dereferencing the
-> freed file pointer.
+> Hi,
 > 
-Not sure about my understanding: ep_item_poll() always call the ->poll()
-interface with a stable 'struct file' because of ep->mtx. This lock
-ensures that:
-   a) If eventpoll_release_file() get the ep->mtx first, ->poll()
-corresponds to the epitem(target file) will never be called, because it
-is removed from the rdlist.
+> The patches are also available in git:
+> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=execmem/v8
+> 
+> v8:
+> * fix intialization of default_execmem_info
+> 
+> v7: https://lore.kernel.org/all/20240429121620.1186447-1-rppt@kernel.org
+> * define MODULE_{VADDR,END} for riscv32 to fix the build and avoid
+>   #ifdefs in a function body
+> * add Acks, thanks everybody
+> 
+> v6: https://lore.kernel.org/all/20240426082854.7355-1-rppt@kernel.org
+> * restore patch "arm64: extend execmem_info for generated code
+>   allocations" that disappeared in v5 rebase
+> * update execmem initialization so that by default it will be
+>   initialized early while late initialization will be an opt-in
+> 
+> v5: https://lore.kernel.org/all/20240422094436.3625171-1-rppt@kernel.org
+> * rebase on v6.9-rc4 to avoid a conflict in kprobes
+> * add copyrights to mm/execmem.c (Luis)
+> * fix spelling (Ingo)
+> * define MODULES_VADDDR for sparc (Sam)
+> * consistently initialize struct execmem_info (Peter)
+> * reduce #ifdefs in function bodies in kprobes (Masami) 
+> 
+> v4: https://lore.kernel.org/all/20240411160051.2093261-1-rppt@kernel.org
+> * rebase on v6.9-rc2
+> * rename execmem_params to execmem_info and execmem_arch_params() to
+>   execmem_arch_setup()
+> * use single execmem_alloc() API instead of execmem_{text,data}_alloc() (Song)
+> * avoid extra copy of execmem parameters (Rick)
+> * run execmem_init() as core_initcall() except for the architectures that
+>   may allocated text really early (currently only x86) (Will)
+> * add acks for some of arm64 and riscv changes, thanks Will and Alexandre
+> * new commits:
+>   - drop call to kasan_alloc_module_shadow() on arm64 because it's not
+>     needed anymore
+>   - rename MODULE_START to MODULES_VADDR on MIPS
+>   - use CONFIG_EXECMEM instead of CONFIG_MODULES on powerpc as per Christophe:
+>     https://lore.kernel.org/all/79062fa3-3402-47b3-8920-9231ad05e964@csgroup.eu/
+> 
+> v3: https://lore.kernel.org/all/20230918072955.2507221-1-rppt@kernel.org
+> * add type parameter to execmem allocation APIs
+> * remove BPF dependency on modules
+> 
+> v2: https://lore.kernel.org/all/20230616085038.4121892-1-rppt@kernel.org
+> * Separate "module" and "others" allocations with execmem_text_alloc()
+> and jit_text_alloc()
+> * Drop ROX entailment on x86
+> * Add ack for nios2 changes, thanks Dinh Nguyen
+> 
+> v1: https://lore.kernel.org/all/20230601101257.530867-1-rppt@kernel.org
+> 
+> = Cover letter from v1 (sligtly updated) =
+> 
+> module_alloc() is used everywhere as a mean to allocate memory for code.
+> 
+> Beside being semantically wrong, this unnecessarily ties all subsystmes
+> that need to allocate code, such as ftrace, kprobes and BPF to modules and
+> puts the burden of code allocation to the modules code.
+> 
+> Several architectures override module_alloc() because of various
+> constraints where the executable memory can be located and this causes
+> additional obstacles for improvements of code allocation.
+> 
+> A centralized infrastructure for code allocation allows allocations of
+> executable memory as ROX, and future optimizations such as caching large
+> pages for better iTLB performance and providing sub-page allocations for
+> users that only need small jit code snippets.
+> 
+> Rick Edgecombe proposed perm_alloc extension to vmalloc [1] and Song Liu
+> proposed execmem_alloc [2], but both these approaches were targeting BPF
+> allocations and lacked the ground work to abstract executable allocations
+> and split them from the modules core.
+> 
+> Thomas Gleixner suggested to express module allocation restrictions and
+> requirements as struct mod_alloc_type_params [3] that would define ranges,
+> protections and other parameters for different types of allocations used by
+> modules and following that suggestion Song separated allocations of
+> different types in modules (commit ac3b43283923 ("module: replace
+> module_layout with module_memory")) and posted "Type aware module
+> allocator" set [4].
+> 
+> I liked the idea of parametrising code allocation requirements as a
+> structure, but I believe the original proposal and Song's module allocator
+> was too module centric, so I came up with these patches.
+> 
+> This set splits code allocation from modules by introducing execmem_alloc()
+> and and execmem_free(), APIs, replaces call sites of module_alloc() and
+> module_memfree() with the new APIs and implements core text and related
+> allocations in a central place.
+> 
+> Instead of architecture specific overrides for module_alloc(), the
+> architectures that require non-default behaviour for text allocation must
+> fill execmem_info structure and implement execmem_arch_setup() that returns
+> a pointer to that structure. If an architecture does not implement
+> execmem_arch_setup(), the defaults compatible with the current
+> modules::module_alloc() are used.
+> 
+> Since architectures define different restrictions on placement,
+> permissions, alignment and other parameters for memory that can be used by
+> different subsystems that allocate executable memory, execmem APIs
+> take a type argument, that will be used to identify the calling subsystem
+> and to allow architectures to define parameters for ranges suitable for that
+> subsystem.
+> 
+> The new infrastructure allows decoupling of BPF, kprobes and ftrace from
+> modules, and most importantly it paves the way for ROX allocations for
+> executable memory.
+> 
+> [1] https://lore.kernel.org/lkml/20201120202426.18009-1-rick.p.edgecombe@intel.com/
+> [2] https://lore.kernel.org/all/20221107223921.3451913-1-song@kernel.org/
+> [3] https://lore.kernel.org/all/87v8mndy3y.ffs@tglx/
+> [4] https://lore.kernel.org/all/20230526051529.3387103-1-song@kernel.org
+> 
+> 
+> Mike Rapoport (IBM) (17):
+>   arm64: module: remove unneeded call to kasan_alloc_module_shadow()
+>   mips: module: rename MODULE_START to MODULES_VADDR
+>   nios2: define virtual address space for modules
+>   sparc: simplify module_alloc()
+>   module: make module_memory_{alloc,free} more self-contained
+>   mm: introduce execmem_alloc() and execmem_free()
+>   mm/execmem, arch: convert simple overrides of module_alloc to execmem
+>   mm/execmem, arch: convert remaining overrides of module_alloc to
+>     execmem
+>   riscv: extend execmem_params for generated code allocations
+>   arm64: extend execmem_info for generated code allocations
+>   powerpc: extend execmem_params for kprobes allocations
+>   arch: make execmem setup available regardless of CONFIG_MODULES
+>   x86/ftrace: enable dynamic ftrace without CONFIG_MODULES
+>   powerpc: use CONFIG_EXECMEM instead of CONFIG_MODULES where
+>     appropriate
+>   kprobes: remove dependency on CONFIG_MODULES
+>   bpf: remove CONFIG_BPF_JIT dependency on CONFIG_MODULES of
+>   fixup: convert remaining archs: defaults handling
+> 
+>  arch/Kconfig                         |  10 +-
+>  arch/arm/kernel/module.c             |  34 -------
+>  arch/arm/mm/init.c                   |  45 +++++++++
+>  arch/arm64/Kconfig                   |   1 +
+>  arch/arm64/kernel/module.c           | 126 -----------------------
+>  arch/arm64/kernel/probes/kprobes.c   |   7 --
+>  arch/arm64/mm/init.c                 | 140 ++++++++++++++++++++++++++
+>  arch/arm64/net/bpf_jit_comp.c        |  11 ---
+>  arch/loongarch/kernel/module.c       |   6 --
+>  arch/loongarch/mm/init.c             |  21 ++++
+>  arch/mips/include/asm/pgtable-64.h   |   4 +-
+>  arch/mips/kernel/module.c            |  10 --
+>  arch/mips/mm/fault.c                 |   4 +-
+>  arch/mips/mm/init.c                  |  23 +++++
+>  arch/nios2/include/asm/pgtable.h     |   5 +-
+>  arch/nios2/kernel/module.c           |  20 ----
+>  arch/nios2/mm/init.c                 |  21 ++++
+>  arch/parisc/kernel/module.c          |  12 ---
+>  arch/parisc/mm/init.c                |  23 ++++-
+>  arch/powerpc/Kconfig                 |   2 +-
+>  arch/powerpc/include/asm/kasan.h     |   2 +-
+>  arch/powerpc/kernel/head_8xx.S       |   4 +-
+>  arch/powerpc/kernel/head_book3s_32.S |   6 +-
+>  arch/powerpc/kernel/kprobes.c        |  22 +----
+>  arch/powerpc/kernel/module.c         |  38 -------
+>  arch/powerpc/lib/code-patching.c     |   2 +-
+>  arch/powerpc/mm/book3s32/mmu.c       |   2 +-
+>  arch/powerpc/mm/mem.c                |  64 ++++++++++++
+>  arch/riscv/include/asm/pgtable.h     |   3 +
+>  arch/riscv/kernel/module.c           |  12 ---
+>  arch/riscv/kernel/probes/kprobes.c   |  10 --
+>  arch/riscv/mm/init.c                 |  35 +++++++
+>  arch/riscv/net/bpf_jit_core.c        |  13 ---
+>  arch/s390/kernel/ftrace.c            |   4 +-
+>  arch/s390/kernel/kprobes.c           |   4 +-
+>  arch/s390/kernel/module.c            |  42 +-------
+>  arch/s390/mm/init.c                  |  30 ++++++
+>  arch/sparc/include/asm/pgtable_32.h  |   2 +
+>  arch/sparc/kernel/module.c           |  30 ------
+>  arch/sparc/mm/Makefile               |   2 +
+>  arch/sparc/mm/execmem.c              |  21 ++++
+>  arch/sparc/net/bpf_jit_comp_32.c     |   8 +-
+>  arch/x86/Kconfig                     |   1 +
+>  arch/x86/kernel/ftrace.c             |  16 +--
+>  arch/x86/kernel/kprobes/core.c       |   4 +-
+>  arch/x86/kernel/module.c             |  51 ----------
+>  arch/x86/mm/init.c                   |  29 ++++++
+>  include/linux/execmem.h              | 132 +++++++++++++++++++++++++
+>  include/linux/module.h               |   9 ++
+>  include/linux/moduleloader.h         |  15 ---
+>  kernel/bpf/Kconfig                   |   2 +-
+>  kernel/bpf/core.c                    |   6 +-
+>  kernel/kprobes.c                     |  63 +++++++-----
+>  kernel/module/Kconfig                |   1 +
+>  kernel/module/main.c                 | 105 +++++++++-----------
+>  kernel/trace/trace_kprobe.c          |  20 +++-
+>  mm/Kconfig                           |   3 +
+>  mm/Makefile                          |   1 +
+>  mm/execmem.c                         | 143 +++++++++++++++++++++++++++
+>  mm/mm_init.c                         |   2 +
+>  60 files changed, 903 insertions(+), 581 deletions(-)
+>  create mode 100644 arch/sparc/mm/execmem.c
+>  create mode 100644 include/linux/execmem.h
+>  create mode 100644 mm/execmem.c
+> 
+> 
+> base-commit: 0bbac3facb5d6cc0171c45c9873a2dc96bea9680
+> -- 
+> 2.43.0
+> 
+> 
 
-   b) If ep_send_events() get the ep->mtx() first, ->poll() will get
-called with a stable 'struct file', __but the refcount(->f_count) of a
-file can be zero__. I am saying that this is stable because the 'struct
-file' contents are still valid till we are in ->poll().
-
-Can you/Christian help me with what I am missing here to say that
-->poll() is receiving stale 'struct file*', please?
-
-And, If you are convinced with above, I think, It should have been the
-responsibility of ->poll() implementation to have taken refcount on a
-file that is going to be still valid even after ->poll() exits. Incase
-of dma_buf_poll() implementation, it took the refcount on a file that is
-not going to be valid once the dma_buf_poll() exits(because of mentioned
-race with the freeing of the 'struct file*').
-
-So, in dma_buf_poll(), Should we be using atomic_long_inc_not_zero()
-based implementation to take the refcount on a file?
-
-Thanks,
-Charan
+-- 
+Sincerely yours,
+Mike.
 
