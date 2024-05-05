@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-168889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DAA8BBF4B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCEC8BBF50
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC98E281E9B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DCBA1F2167A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434E63D8E;
-	Sun,  5 May 2024 05:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438A73D8E;
+	Sun,  5 May 2024 05:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lQ0S6AeN"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHEUNN93"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDCA184D
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 05:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C91F17FF;
+	Sun,  5 May 2024 05:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714885992; cv=none; b=pq1tU0aPKaz7P3/LmNFeBGdAGSUCk/iAd+xL9sNRNbVUifKz2tQ7RHijdNKHry9LDPlpIujlLXGSBgBzgU3/ThFcPYNRxrceal3w5TDjYSAvwoInle1So8qP9USAt0wlz06LDhxsVaqcA7Xqz1oeAhdRqBBcHUyKBL8R9fp49hY=
+	t=1714886459; cv=none; b=jX6BYYE7EX2PRC3y/nP4c9bMUXUwfCfMgjyeiBdvG3s11Qq9Am+ufXpvAuN1zdwTK58XlOxHj2TWbbDFm6KsvQIzmvXlcgv0b18yXhXHojuwMESXv6xtr8a5dn82xMxQZsY6xkpAgfp309fwxajkg7p5v991yg65mrcOX+neMzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714885992; c=relaxed/simple;
-	bh=lehZe/7AZUPc+TY69M7+JDOOMjWhzo3PGggFRdj3IxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ueOIYktWdD436K+XIiVVHDfzWGktBQJ953XJKFub965y1a75KAsOk8KI/TbBknApTLyrbHCO0/i4KGsz9YwhAPLrs5l5ZAp8QnrysOHKWX1hTmZs85VsBwQYoUMKrMEN3stOY7EZm2tsHd6XFZn+aSoUdBD6siW0b+i1JoZ/liw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lQ0S6AeN; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f44a2d1e3dso765129b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 22:13:11 -0700 (PDT)
+	s=arc-20240116; t=1714886459; c=relaxed/simple;
+	bh=nC6Z/HJC20OmHLzryYOjpxrk/Qut/kde/pRKSle0cFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LKN4PHKsVcFaR6tWG1fRJXylkxxSwVQCCa4nyfYGfKAqS4JuVyt+VaBPwAYADtcqXwQuc9YqNmD9x5tpq388PrxTgtN6Iqio8oDLak6nuU3STjcXWknB+GAHyiOtgn+Dzj4PJt69bwprjC3cd/Y1h7gBQB49I5LtM+uagcOs7/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHEUNN93; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2b338460546so688525a91.1;
+        Sat, 04 May 2024 22:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714885991; x=1715490791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NsfIaMjECuvVC7Z9W0Sqg9Q69W+YCDdoNBcIXl2QIwk=;
-        b=lQ0S6AeNmPbdX7bWqd7XTfvrp/l74zHlBTfz/rJwAsGHSd0i6sJQEshSHlEHNqxuxH
-         pkjf4mgpmtag+PI7mPu0VFRNj4OGf/ZHINipTjIPSIMhtp1dQ2lhs5qpphTlq2dnTFHp
-         swWICkzSZ2OKAPGhfHctiOlEsmHZN6wfbz0pc=
+        d=gmail.com; s=20230601; t=1714886457; x=1715491257; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8gMn+BR9RQx2vxREiKnQ7+NVvFwlE93xnFnB8nM0/NQ=;
+        b=VHEUNN93ZetH5UWnHDKXFf/cHexjgb2dXKjdFXhZ2btt2nRnym8MYvXdzfGtBKD9CJ
+         oyzk80mporGxocAbpDfSBS/cG10hDa/zb4SzT9hNgle4+6tbzqOJn9uFnhO6QEOrpy4J
+         ojKpb3ChS+/sAQMCCu2ynB7v8bpcwgbAK0CK8T9UzP5EEeGYPJsAx3GpTXdWgrz5oFyL
+         qTwm9qQif5ZPn8k313EO/RT8SE2AyaWrEsDIV5QBXROqFoKFMPe5JwNm9pToiNIprqZR
+         R6+L6OO4y4Pt5AXjgckbQrAeHuP6rbpu/avou76L9qPYHOMGuQpPW5ZQ7K5vt0gsAX8C
+         7ACQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714885991; x=1715490791;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NsfIaMjECuvVC7Z9W0Sqg9Q69W+YCDdoNBcIXl2QIwk=;
-        b=LTktZGltpLHsTi5pVWpwRfD012X9jKu6q3QzJqLi47HUUFor8hjcpiRVU6t2M7bS+i
-         bsFFNy373PcxrbtaQeJ/f2O53izqxN/+eARjPWA+Hr+mHAs/SF9MIqHx1jSyp2i23xe2
-         6QQztqLThkvImzihfBjzlyphCxxKM8RSSvxQoW2ffn8FKCRE1YlZI3g/aHy0DLbjtG/d
-         oidVxwWD1e0SDeawt2QZuga05oeFZJyBhQfCt7CP+/VhoRC0oa1SYmyIRn8wrUg0t+ls
-         xqqu3IEOISHeAJgdwku82m/DruXCFiBj7XdpJYsuFKBgjvkEDK3Dytk3mUmxxB7+CQ30
-         ZA0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXE/XSmLpVs3aKMJFpr3BY0rzlqYYe9FLKNecKBACnWyYn1f2Y9nUiLuE7Q4Zl2J06uT0sH7Njsyt0ta116rIqo3pWYx0y37UsxrWs3
-X-Gm-Message-State: AOJu0YzuEWOLKuJVNYgyW7k4CxrNxeZTa8r1qaTAPnYO14lDEpxyjNnl
-	EAmg9UlUxxGBpjx1N8eor4Q892sxtDZHNshIomUN6pfDqCbrdu0TgWoGNmulpw==
-X-Google-Smtp-Source: AGHT+IGx2K+j9TsopgjG/72ja+WbDJMY4Wn9iAnqvKY7ERj2M9PxcHA1IZC2lVKSrAM72Djm/H4zqw==
-X-Received: by 2002:a05:6a21:3405:b0:1af:8fa8:3116 with SMTP id yn5-20020a056a21340500b001af8fa83116mr2671010pzb.42.1714885990672;
-        Sat, 04 May 2024 22:13:10 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:8263:3b89:bcee:2ed4])
-        by smtp.gmail.com with ESMTPSA id jw19-20020a170903279300b001eab3ba8ccfsm5839237plb.285.2024.05.04.22.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 22:13:10 -0700 (PDT)
-Date: Sun, 5 May 2024 14:13:05 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel test robot <lkp@intel.com>, Minchan Kim <minchan@kernel.org>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH 08/14] zram: check that backends array has at least one
- backend
-Message-ID: <20240505051305.GB8623@google.com>
-References: <20240503091823.3616962-9-senozhatsky@chromium.org>
- <202405041440.UTBQZAaf-lkp@intel.com>
- <20240504071416.GH14947@google.com>
- <20240504161004.f5a0aab5e5aa1033d4696c20@linux-foundation.org>
- <20240505043957.GA8623@google.com>
+        d=1e100.net; s=20230601; t=1714886457; x=1715491257;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gMn+BR9RQx2vxREiKnQ7+NVvFwlE93xnFnB8nM0/NQ=;
+        b=DbxA1k4qOGAS5llGxSdy4sTFRVr1Ei1fu9fikZJyZcdk017f+fpa+/eFJ22Klyrbp3
+         tqH0qvKfmkei8F8NQ1h/0j/+oGWvIEHK9XDlpUbnjROcTGyQgoG0pIoFVX3Rvr9lq8vj
+         +9wp/w65iswYlBlPGhVTwOE+4/6Pk12q/z0kxn+6KzkreFkgxhWTSsS6xo2nbhyTEqdd
+         s5i5RdDBZ2/rmlbIiMGq/VKzogtg/COy++v0/FJtnjV4fBS0LG96CN0IYmSn1gWdPYLb
+         mWk04XpK/1RyH4advVkXrrhdjBBx9VV+Qo26DVfwzs2qMN2KGD7va5SGOEyKv4cKxkSO
+         o4KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN4RE7h23Ep6jKRbLS52abYNPvL7Idqh6O7MKhuPqyOMWVmm7bjjts8FvRQM+b/jplU87ma4adRi1fPwBL8wFh4AHMoO0aSitlJ3ZA67yC7baQPXnJQuWXUZhy/Ft09ch49Bq+AM4S
+X-Gm-Message-State: AOJu0YxYUWv0q+Rp5zqPAx8CqIU8fh6z4GXaIfGy1ZxUWMiBTABYoNhl
+	P5wyBghEhreZMU7PRfBhXoKXsCMx4mhzozX28eyWd5UxP+XMCFDk
+X-Google-Smtp-Source: AGHT+IHY3DF81k4z2ufQCLvcmibVb6Nyy3avI53nitB/6kPVYJ8UKnCNk/FQnAiI7Ugq7cAojanIGA==
+X-Received: by 2002:a17:902:ef46:b0:1e4:9616:d967 with SMTP id e6-20020a170902ef4600b001e49616d967mr8733452plx.15.1714886457362;
+        Sat, 04 May 2024 22:20:57 -0700 (PDT)
+Received: from ?IPV6:2402:e280:214c:86:54ee:ba66:1638:6278? ([2402:e280:214c:86:54ee:ba66:1638:6278])
+        by smtp.gmail.com with ESMTPSA id jo3-20020a170903054300b001e904b1d164sm5884513plb.177.2024.05.04.22.20.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 May 2024 22:20:57 -0700 (PDT)
+Message-ID: <9574a4a1-a7b8-4f35-88b0-754c4396b02e@gmail.com>
+Date: Sun, 5 May 2024 10:50:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240505043957.GA8623@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: typec: mux: replace of_node_put() with __free
+ [linux-next]
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: heikki.krogerus@linux.intel.com, dmitry.baryshkov@linaro.org,
+ neil.armstrong@linaro.org, christophe.jaillet@wanadoo.fr,
+ u.kleine-koenig@pengutronix.de, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@inria.fr>
+References: <20240410175804.5195-1-prosunofficial@gmail.com>
+ <2024050443-coerce-bonus-977a@gregkh>
+Content-Language: en-US
+From: R Sundar <prosunofficial@gmail.com>
+In-Reply-To: <2024050443-coerce-bonus-977a@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On (24/05/05 13:39), Sergey Senozhatsky wrote:
-[..]
-> > I guess just pick one if none were selected.
+On 04/05/24 21:48, Greg KH wrote:
+> On Wed, Apr 10, 2024 at 11:28:04PM +0530, R SUNDAR wrote:
+>> Signed-off-by: R SUNDAR <prosunofficial@gmail.com>
+> 
+> Please fix your name up for the next version.
 
-How do I pick one if none were selected? Does Kconfig support
-something like that?
+Hi,
 
-> : config ZRAM
-> :        tristate "Compressed RAM block device support"
-> :        depends on BLOCK && SYSFS && MMU
-> :        select ZSMALLOC
-> :        depends on (LZO_COMPRESS && LZO_DECOMPRESS) || \
-> :                (LZ4_COMPRESS && LZ4_DECOMPRESS) || \
-> :                (LZ4HC_COMPRESS && LZ4_DECOMPRESS) || \
-> :                (ZSTD_COMPRESS && ZSTD_DECOMPRESS) || \
-> :                (ZLIB_DEFLATE && ZLIB_INFLATE)
+This version of patch is sent  before comments provided for naming in 
+patch v1.
 
-The problem I'm having with this is that FOO_COMPRESS can be M while
-zram needs Y.
+The name and nitpick was fixed after suggestion provided in patch v1.
+
+https://lore.kernel.org/all/2024041103-doornail-professor-7c1e@gregkh/
+
+
+Link for patch after fixing name and nitpick:
+
+https://lore.kernel.org/all/20240426164705.2717-1-prosunofficial@gmail.com/
+
+
+
+Thanks,
+Sundar
 
