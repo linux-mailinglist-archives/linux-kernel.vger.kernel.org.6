@@ -1,88 +1,86 @@
-Return-Path: <linux-kernel+bounces-169196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E98A8BC4AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:03:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817878BC4B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF56AB20F71
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 23:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10BFB1F21708
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 23:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8ED14037E;
-	Sun,  5 May 2024 23:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47589140378;
+	Sun,  5 May 2024 23:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUwR+esL"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jt4PHsNP"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3F6136E1C;
-	Sun,  5 May 2024 23:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AD4374CB;
+	Sun,  5 May 2024 23:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714950216; cv=none; b=eQGpvQp7qCCp0SlUYleszIxQ738EyybFSWSfZLYuO+zSiRG/Rbp6d3SKX/zR9DtrkSQeh2WLUnr7/WWU9nbbEVt89JkrZm/FqCrQp0jBYgrARQ5Zo58ryvvKkBqHiOXbgqIpiEWqx6HSliQ+2f+g2uD05IFonVZjgrdUhD5ydog=
+	t=1714950497; cv=none; b=kbQsuzlPFhuuQmgL/+0+H6A+w4VjfxzYewIELF80G2ngqmMoIKf552ns4FFw29d9MxUZwV0jir9xinqRjkzub9jCTyECQ8G1DWdB6Jf3THWY3mgv6LKSSnYxZiHPwn8igmwN9ItYDBd9JeSSTHQ37newtrrbQV+SVhUnrCCQ2TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714950216; c=relaxed/simple;
-	bh=Yi/t1dwyhXI2XCfAAFmWGHdSihInEbM7eoNSA4XmDA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OM/sLbMZ40eqzjGdpQJnNGk3skBJumQDakQtZih92Sa92BwYOkBLq7/AMn8dKiXwso5VCLrng6aW1R8F7p9ez4hfrWJI2DXbhStpgL3HZZ+bAP8k0UmYMqeyYIOGyTHhoKt8Jqq8FBZuxAXj0UuDoHdK+7wvz29K5/b8Kr6jFGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUwR+esL; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1714950497; c=relaxed/simple;
+	bh=sO1bCtWtZNtX/y3txjwfHuSjDHCzKW6qrmiRBggkaHc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ao/IMDdchMc2J8T/zFORjEyDTScxmcZ/ge1kgIscUKHebFTja06erE8RnmGl2zvcOcw0L7tKssAyEZqdgufgH3M6rlNwXJGHBvbAvRX5lneYh3iGWhG3LGnL+Oow0hY9Snf1KCDQsjWCof1bjeTAV9GxvHmeVnv9w14mj8q0Ssg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jt4PHsNP; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f44d2b3130so1142236b3a.2;
-        Sun, 05 May 2024 16:03:34 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-572babec735so4654450a12.0;
+        Sun, 05 May 2024 16:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714950214; x=1715555014; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714950494; x=1715555294; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0ixh0Q49+td9KsqPLxjMpp3ISkgfUjGoiYb6DGMNR8c=;
-        b=eUwR+esLFvuqU1WQUsAFGbUwVtaR0At3aGAhizhfEVwxtEHtHmj4D1wQDO9Ppo7tT5
-         YsOFUDSlWYn1eWay2dDr4wpped3iPJjLTjFuzxgJn0xqG1YhU7jtcetk/L/gY5sR9WHQ
-         fqDdlAZ0Z2lLnugwO0E3N/bQYh+dpjdBHF5Cyc0U+Q0axRiJMLDl9FZ8aFi8KJVye47a
-         Aeyoyao3h3Lef4U0fpO/Xf844fL6iCaWs5u5mzzRhOmAIwY8OVpuDqP/GxrmdRcaouJt
-         OrQo+ReyatCZFp+Q54kmQdcCjo+GGAgiL9lRfOg2EPzi094V2e8lNUW3H0kEPi9DDEWs
-         IEtw==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tskK3STwMBeYl+RbxU4+ZeO0SLew6XfkR91Iyt3O2DQ=;
+        b=jt4PHsNPBjvyXGxcI36zkmFAluURyjQT+cf8/o8atcLfJ9YUowORTPxu4IBJXQiKAJ
+         rCSgtdyIJuvDEWt2SO8NB6jfAw+tgXHX/7LZ4S0RKLOHZq8kqRfq4eRyt/0WjP+B6Uhp
+         dSawqV4dCX7wMZQVn8+OeF8NTCJLp+4xPBpWf5QibF+BBFhpvTfDFqje7htkrmUF2UTA
+         RjrzL73tgBf7aKuD09e9i438kmxMQHJOkZZQaU5yjut88PPoEnUES87+O2i+M53IGgis
+         CDUbRVbvLa9omLqT3VQ2LMozN/4eGkNSPFtk7p6I/noz65GrEc0MlP4VMYzTUnZWm5PL
+         lJDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714950214; x=1715555014;
+        d=1e100.net; s=20230601; t=1714950494; x=1715555294;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0ixh0Q49+td9KsqPLxjMpp3ISkgfUjGoiYb6DGMNR8c=;
-        b=M/+8eTnLMOPiYHY/CFvSHAv9c9SP6HNIYFG5EpOxyim1vngGyxJuaa8NB5n7KnNp0r
-         IowUhZaxjq/xLExgVuKI8qT77knjnTECjSSqGBFjxL+hnvZrgoABpuECSpJX3PfelqyJ
-         3FZ+d7pVVQB+RUk42/tRTRGDoeWIKVdXORmwjx5a4pTGNoBTpH69TSSMtU1pGB3AzZx+
-         iEYixRWo3EWWBCybz7YySIOBFTluRkdAVDkudME4ul+dluJ0f0NF2LLLYGzHL1cP9wOt
-         q3hs56xviyBjLaD2kq3+cDP9INgQ1yOhOx4IzoeB/UQaWiRyL3vGmwAT5MAogxR8g0HW
-         tnJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUc1v7DhhrV9Ak5kfvj9FXQhTQaz1fwDqzdq10yqDZXv4JNKayWgFAJ7D0bpcQlL+nvp2BzNzBXpAMyebXTuz2HeCzzVIEv8j8PIt9Pq55PAb72qgCAuGn48M4gFLj+/9pPoMP57zgZ/KED45QHMwL04ZyH8+EugNaPp923P/U3bGPuiC9KgMy+ttyZP6PH+nE0pVdhuKZ70j1YZ9yiiUiXiry7maHCJ4b5/Q==
-X-Gm-Message-State: AOJu0YzxCMch0Ys/Wcqigi4mZQfNWbJ+mGQ1BZ5DS4qGxLhKIsZC6+84
-	L1236xJR39FLa5l1znDNkjPFy6gJKjE1pJFBhlABeWSiCWc7a9tA
-X-Google-Smtp-Source: AGHT+IE2mB8S1n9bJnbgreD36wclmulY+xR4ASpHRAO8hPEz1QLWrwuSmmAs2Yn6faTaIr07PlMCyw==
-X-Received: by 2002:a05:6a20:3241:b0:1aa:48d1:2144 with SMTP id hm1-20020a056a20324100b001aa48d12144mr6565070pzc.52.1714950214268;
-        Sun, 05 May 2024 16:03:34 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id jc18-20020a17090325d200b001e85d0b6a7dsm6931807plb.293.2024.05.05.16.03.32
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tskK3STwMBeYl+RbxU4+ZeO0SLew6XfkR91Iyt3O2DQ=;
+        b=WOhCcZFlj/a6HAZNAzWkQnJfaZT/csWNPqLcByaTM0ZUJLkBVPQwwGF+bQlVx5o9Lg
+         g+cLrfo7PFj7+f4z4SZNAzoJmuWywhEbirxLQvEEU1l4I7rc9kcggv5C65urBbBRgeso
+         2nlNUqgEvzmep+Uvn1A4Yi7Whm2x56vNT+c0Mk2ZSGcSmJjIrbDxq9NgpvfgH2MmkPOF
+         eVKkArC6yJdPwOUY91p7PTMAlBkvgz4sDXPbHE8gsKmFN7k3sJ7FMRkvchZVIzO5MCz3
+         luVfb4TdgPY9rJrAJffvlzI81SCtcv7h5Iq0VqNancxP7WKyj6XKnArlH27xGum21aUp
+         QQZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvkEwkkx5QKhtWPuWY2GiOTOGbAIynquq6LY3KzaP6o+wNM2I71j8P8F2f757yP3ke+j5skKWmK/4r+f8SKPFLzX5tT2vHtYKVJWV2G0GdATho+XH8akKeJ/nQ8KSiu6EX0LV3J+Uf
+X-Gm-Message-State: AOJu0Yw0m8Fzeq019ZWsta3MaGI8ZZs3AxpuXio1Dd3STOXANEOXbpKO
+	cRi6fLNENMLfSJ2FJ5SSOuTwuwVgp1wYgRMkj4iBMFEP3RYLJMwz46JhODk66YI=
+X-Google-Smtp-Source: AGHT+IHgRrQC8tDiAesdZ8UmjbR0R+Uqald3KXZGWxu3bOCU4iH8QjeLsUwa3tDDzCtXQ8r1AN+1aQ==
+X-Received: by 2002:a17:907:7d91:b0:a59:ccc3:544 with SMTP id oz17-20020a1709077d9100b00a59ccc30544mr1246280ejc.2.1714950493898;
+        Sun, 05 May 2024 16:08:13 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:7a5f:ec16:256e:4660])
+        by smtp.gmail.com with ESMTPSA id er21-20020a056402449500b005726e5e8765sm4423133edb.3.2024.05.05.16.08.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 16:03:33 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 5 May 2024 16:03:31 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, mlj@danelec.com,
-	rafael.j.wysocki@intel.com, lenb@kernel.org, jdelvare@suse.com,
-	andy.shevchenko@gmail.com, linux@weissschuh.net,
-	ilpo.jarvinen@linux.intel.com, linux-acpi@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v6] ACPI: fan: Add hwmon support
-Message-ID: <8c654bca-098f-41c4-8440-880bdbb88b82@roeck-us.net>
-References: <20240422195745.5089-1-W_Armin@gmx.de>
- <CAJZ5v0gLQYOWLTmpe24epb9GzV5o2qSuaP5t25eu-OXYoE2pAQ@mail.gmail.com>
- <4c4dbcf8-5c8e-4398-a17d-be5af93f2d6c@roeck-us.net>
- <7f97fa54-8240-4b71-acff-0fc5e92cb710@gmx.de>
- <558ac2ee-2817-4999-97bd-e1bd39681696@gmx.de>
+        Sun, 05 May 2024 16:08:13 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Mon, 6 May 2024 01:08:11 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	mazziesaccount@gmail.com, ak@it-klinger.de,
+	petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+	linus.walleij@linaro.org, semen.protsenko@linaro.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 05/10] iio: pressure: bmp280: Make return values
+ consistent
+Message-ID: <20240505230811.GA17986@vamoiridPC>
+References: <20240429190046.24252-1-vassilisamir@gmail.com>
+ <20240429190046.24252-6-vassilisamir@gmail.com>
+ <20240505200818.1e70c664@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,17 +89,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <558ac2ee-2817-4999-97bd-e1bd39681696@gmx.de>
+In-Reply-To: <20240505200818.1e70c664@jic23-huawei>
 
-On Sun, May 05, 2024 at 07:22:25PM +0200, Armin Wolf wrote:
+On Sun, May 05, 2024 at 08:08:18PM +0100, Jonathan Cameron wrote:
+> On Mon, 29 Apr 2024 21:00:41 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 > 
-> Any progress with this?
+> > Throughout the driver there are quite a few places were return
+> > values are treated as errors if they are negative or not-zero.
+> > This commit tries to make the return values of those functions
+> > consistent and treat them as errors in case there is a negative
+> > value since the vast majority of the functions are returning
+> > erorrs coming from regmap_*() functions.
+> 
+> The changes are fine, but that argument isn't correct.
+> regmap_*() functions never (that I can recall) return positive
+> values, so if (ret) would be valid for those and I'd have expected
+> the exact opposite outcome if you are looking at regmap*() return
+> values to make the decision.
+> 
+> The if (ret) pattern is sometimes used throughout because it
+> makes
+> 	return function()
+> 
+> consistent without needing to do
+> 
+> 	ret = function();
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	return 0;
+> 
+> That pattern isn't particularly common in this driver (there are few cases).
+> We also tend not to worry too much about that slight inconsistency though
+> in a few cases it has lead to compilers failing to detect that some paths
+> are not possible and reporting false warnings.
+> 
+> However, all arguments about which is 'better' aside, key is that consistency
+> (either choice) is better than a mix.  So I'm fine with ret < 0 on basis
+> it's the most common in this driver being your justification. Just don't
+> blame regmap*() return values!
 > 
 
-Not really. It all seems odd, and I returning -ENODATA doesn't seem right,
-but then I don't understand the specification or the logic behind it, and
-I don't have the time to read and understand it. No objection from my side
-against moving forward.
+Hi Jonathan!
 
-Guenter
+Thank you once again for the valueable feedback!
+
+Of course, if (ret) would be valid for the return values of the regmap_*()
+functions. I was just trying to understand which of the 2 options is more
+widely used in other drivers and I tried to implement that. In general,
+the if (ret) is used 65 times while the if (ret < 0) only 20. So, in
+terms of noise, changing the if (ret < 0) to if (ret) will create less
+noise. I chose the if (ret < 0) because I saw other people using it
+and it felt better in my eyes. I could check if if (ret) applies
+everywhere and update it in the v6.
+ 
+> > 
+> > While at it, add error messages that were not implemented before.
+> > 
+> > Finally, remove any extra error checks that are dead code.
+> 
+> Ideally this would be broken up a little more as, whilst all error
+> code related, these aren't all the same thing.
+> 
+> I'd have preferred:
+> 1) Dead code removal.
+> 2) Message updates.
+> 3) Switch to consistent ret handling.
+> 
+> However it isn't that bad as a single patch, so just address the question
+> above and I think this will be fine as one patch.
+> 
+
+Since from your comments in the next patches a v6 is for sure, I could split
+this as well!
+
+Cheers,
+Vasilis
+
+> > 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> 
+> Jonathan
 
