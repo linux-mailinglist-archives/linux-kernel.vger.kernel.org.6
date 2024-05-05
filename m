@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-169026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3749C8BC197
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:03:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8672C8BC1A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71097B21156
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:03:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875531C209CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF7B374CB;
-	Sun,  5 May 2024 15:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40721374D3;
+	Sun,  5 May 2024 15:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCC8jSVy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/ELJ4Lr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD14238FA8;
-	Sun,  5 May 2024 15:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760B91CD38;
+	Sun,  5 May 2024 15:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714921401; cv=none; b=j9kCyPEglsP821Yt7/OysI7ZR4j4+Y5xzgS9KQQFN3jdoHlrcjVujQHdWnqGkkcxO3w5BULpEt2HcwgUzoGlGmNeskQdUg1lLjBt5KOos82K33drHbILMycrlL+jEV0lm8y01p/j1yhxpggLEsBrl2myW3oxKseUAwMlwT1oCM8=
+	t=1714922105; cv=none; b=MdllWUOuVBq+U0j4qkQjkUZwJzAbsFzpXPZzWOoOYWog8n2KXHNUEJTPxChsEAv10XAUv0M2ghdGsqqWswjlbDVeA1xbG2bJx8X9tHqM7D3YJXWEL5z7Qpy699N4HDWnOXTp1ZUXTGGOdyaKBODe7gJkPIij+ZGkoNx8JrU9nPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714921401; c=relaxed/simple;
-	bh=+msvvbhi0Hm6QR6CtJbWTfEdCEiJNKIExOn3H/A3k6E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PdxpW7zybrWkOaJnK8mwFGMiekT2uSBSYmNN/LHOZ4OdGSvJ8pOHzNen02optN4HwZH8APcrByrbn/X7woHAJpU2mUvae3Z1K2zxw1OVdeu2D6wU3hY3UWh/IR4Hj96xU3DYwGdRDlm2zVioPx9QczVxnGF9wtj05XjZq4mjjgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCC8jSVy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86834C4AF67;
-	Sun,  5 May 2024 15:03:18 +0000 (UTC)
+	s=arc-20240116; t=1714922105; c=relaxed/simple;
+	bh=3Y6Ya7aQNSsFwpYMxH3lYUB7Xh+C9ZSem7RoTyTrDho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msz0VijYbOxRY2uLRyu0UkhT55+d6/LxcL51DqB018SjKGB8TTuuxnC7GbDiUst8LwlgmStavtCQOEOwGrkX+5+KnXjeV0OQw5AEy1uBU/KEexaNDjwdFrcOoASaVTz0ote1+KtzLfrmzRF67wggGTf4sIbwtzSirUpU22TZebo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/ELJ4Lr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A44C113CC;
+	Sun,  5 May 2024 15:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714921400;
-	bh=+msvvbhi0Hm6QR6CtJbWTfEdCEiJNKIExOn3H/A3k6E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hCC8jSVyLmHpWLgo/GE1Eb1SGZItAGBNaWpJUqACd3lPLTK0Ho6NxAl0A35HGapnk
-	 LANQIw3keMP6DkzhCu4Lz5j1i5peDWoYyHX/vhZQ5OdEss6W5kKAIioMzY4p9Rxf/g
-	 9clPTmP5w5q95h0B/GACg9eRH4iI34BMKXFEp470H1q32KEmEHM9iritVBrR2siwvB
-	 8LOITczpHNWz/kO/TFi8uNvoFv6/LM3z2ql8XyzEDJTurYAC7Z1klDwjNU8X49p0Ma
-	 bG8FRKdXfs1MzRoJdQMaCrLAs07gq6ZZ0dyWFyV0eZfosa02JSiaV7IFj8mP9kDiiQ
-	 T5dVOc+rhTZDQ==
+	s=k20201202; t=1714922104;
+	bh=3Y6Ya7aQNSsFwpYMxH3lYUB7Xh+C9ZSem7RoTyTrDho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/ELJ4LrM9ORUxUqlCfMupo9YSZBMJECkHdD9BMAJ61a8YQLlQovmZ9IG0suZpLdK
+	 seN/esI+XuR80NrjWv46kFX+1WF5S6x1wHdvh6KWH2FwUn2p6lZc4GLKh72hQgv6yd
+	 qYLulpsOSazFXaMtz7IphDmMB2iJ8zjbIMDHkZuKERPKqYjTYR4eNInve65ppqjuiz
+	 g1FOnhJnfyCXdszGCw3/jKoYtDLyQIT9SpsVrBZR4TOl9DEZcBCOanqnLFVhCcHGPD
+	 X5/BmO1i68hD6mi6Jn6RpxHmt6q4Ox5iRkQInwl0uRJnxQ0I984o/54Qpqe+K3GM+/
+	 a3/ug+jEOxpKw==
+Date: Mon, 6 May 2024 00:15:01 +0900
 From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org, 
- Ben Wolsieffer <ben.wolsieffer@hefring.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alain Volmat <alain.volmat@foss.st.com>
-In-Reply-To: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
-References: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
-Subject: Re: [PATCH v2] spi: stm32: enable controller before asserting CS
-Message-Id: <171492139831.1933695.13403053334190518230.b4-ty@kernel.org>
-Date: Mon, 06 May 2024 00:03:18 +0900
+To: Karel Balej <balejk@matfyz.cz>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v6 3/5] regulator: add regulators driver for Marvell
+ 88PM886 PMIC
+Message-ID: <ZjeidfoIbjvejphU@finisterre.sirena.org.uk>
+References: <20240504194632.2456-1-balejk@matfyz.cz>
+ <20240504194632.2456-4-balejk@matfyz.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uRnS6SowswNDaOxE"
+Content-Disposition: inline
+In-Reply-To: <20240504194632.2456-4-balejk@matfyz.cz>
+X-Cookie: lisp, v.:
 
-On Wed, 24 Apr 2024 09:52:38 -0400, Ben Wolsieffer wrote:
-> On the STM32F4/7, the MOSI and CLK pins float while the controller is
-> disabled. CS is a regular GPIO, and therefore always driven. Currently,
-> the controller is enabled in the transfer_one() callback, which runs
-> after CS is asserted.  Therefore, there is a period where the SPI pins
-> are floating while CS is asserted, making it possible for stray signals
-> to disrupt communications. An analogous problem occurs at the end of the
-> transfer when the controller is disabled before CS is released.
-> 
-> [...]
 
-Applied to
+--uRnS6SowswNDaOxE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+On Sat, May 04, 2024 at 09:37:06PM +0200, Karel Balej wrote:
 
-Thanks!
+> +static const struct regulator_ops pm886_ldo_ops = {
+> +	.list_voltage = regulator_list_voltage_table,
+> +	.map_voltage = regulator_map_voltage_iterate,
+> +	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.is_enabled = regulator_is_enabled_regmap,
+> +	.get_current_limit = pm886_regulator_get_ilim,
 
-[1/1] spi: stm32: enable controller before asserting CS
-      commit: 52b62e7a5d4fb53ae3db3c83aee73683e5f3d2d2
+Do these regulators actually enforce this limit or is this just a spec
+limit beyond which regulation may fail?  If it's just a spec limit I'd
+not expect this operation to be provided, it's more for a hard limit
+where the regulator will detect and act on issues.  I don't see an error
+interrupt or anything and this would be an unusual feature for a LDO.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--uRnS6SowswNDaOxE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY3onUACgkQJNaLcl1U
+h9BvkQf/TjTKRxV/vksAq6WKXBKwSrc1pWsXIi51Exrv1IpdrCb58IvaAuFOykV8
+NZABo6A/hS4k1XF7IppT4XInmZj31Og0LnSXgF0VMe3NsM+plc1Wd50KogVI6zQw
+S4cyXayPYmuG1tr1MB2saXTsvKhmCLRsr3zfqcLrti77mX+qdr2Z35VC5zepXZdg
++Dmbu8mYqbX6uW1vOn8DS9msb1FXeVAQKiQUoFd1cMe7/3EpzgOGZKE+FdIzBy2D
+Og0MXH689pniCS0lkbzTnnpq+q1GQqeIwgmqRXprHnnJKhbB6bOoRaK8+NAginEv
+8MMfIZqNOxcXrhh08DXhuUEc5mGgbg==
+=R4Zq
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--uRnS6SowswNDaOxE--
 
