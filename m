@@ -1,155 +1,107 @@
-Return-Path: <linux-kernel+bounces-169141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5845D8BC3B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950C38BC3B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CF9BB20BB0
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FC11C2169E
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354E7745D9;
-	Sun,  5 May 2024 20:28:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9E56D1A8;
-	Sun,  5 May 2024 20:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F9576026;
+	Sun,  5 May 2024 20:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UfQ6ajUK"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678421DA22;
+	Sun,  5 May 2024 20:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714940933; cv=none; b=I7KB4qm9mnS1/uZ6lrwj7MdydxENAzilmk8Ibi27LsR5Sz/KbvCWEw3nelFWqVcNhoiDzLDWvlk0mB2BKET9aJZN8Tyty8V3IAFsBh6b6eH44qB2HkfvdWWsHVRe8zwQF9OknKS09gK/Ps1ViF9nAfUEEwkJ34AsPK5mk8/zSFA=
+	t=1714941065; cv=none; b=NKyRKWXj+eYTNhy7E4LZF2DcC0H3qCUId+UmsImsGpmlMq1xXqgJMdoVKANuvh7bPnJusLykW8n/AkONyeXpMsUqbMg/uv9+3ZWNfqV4cqskaB4Pm2awVoBNqdU6ULh3MQKF1D6o1rkVNPqp61OR3NRwRVazZLxywfhe4NklxvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714940933; c=relaxed/simple;
-	bh=uESbJ3gRnZBQpJ7WWb9YkLM+GSeZA1GW9OYoZk1ZIRY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CGabTcdwGx3pL1LzBbP98dQN/qFefrtC14M1a0NxkWVZk1ScUzEgFMJIzF48p7cIFC1hen5jOFz5lSh54HIknsZrswl2f4hDuklgeMR+v49ahuiGwD0w6lws5+TtvDz4Ouax/YybhJT7w0SGZrhU8a4HCTBldSZei0MTrIPv0Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 698F51007;
-	Sun,  5 May 2024 13:29:10 -0700 (PDT)
-Received: from PF4Q20KV.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 305723F793;
-	Sun,  5 May 2024 13:28:42 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	James Clark <james.clark@arm.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH] perf maps: Process kcore maps in order
-Date: Sun,  5 May 2024 21:28:05 +0100
-Message-Id: <20240505202805.583253-1-leo.yan@arm.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1714941065; c=relaxed/simple;
+	bh=LsVx8cpGZ4aiXnbcdtdFjsafF8HGe3xu/guXdG44lpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgrjE5LrKV7N+P4aq1Rnk3u1jyuG7rb/CH78HxEd3CYurbX/dndbZ9jIUxYVIQhSPX9pC6SWqa9o0A8GXcBwVOm2u91MTyMugxg/QHMT9hd6MmRkzl7e9srbyZZfJk3eBjJhRTyu3JtEtWEysFM/EuBok9n9hlfrDnDbLXBofYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UfQ6ajUK; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5RAK72tlhDi40d79TYqG9Ma0z3H3FbbwyjJuCY2Mj0g=; b=UfQ6ajUKgstMS3HVj5tD2ob8VO
+	stYeg0HZNzZNfx4cYhUE7d0Scc8SqF1+moMBwFzuODitNrdwZpJZb47uoa530T3RPHmHdvRpbYjhS
+	Cv7MyQR3qW2lypos8PGtwndBWDLmiJsJnqaFLoWAH0NktoT3B1tkWoiWn2nVS28gzbs+fAo2qQTbw
+	2FOep8GKGHO+SqNuP6P0z0T/KamtEJ27/kG6GtUBxlK0dlEffF4UPW7O+asyiwGvX7QqdyZ7UTYcH
+	SK7bGmTeXoKeboHRTY5oplOGNkIIVSKCO7E2OSC1q5IwTKsim1m6ccbHnBYUgzQCfmpZc8gmFO9j6
+	7vuGcYvA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s3iVY-00DHdX-14;
+	Sun, 05 May 2024 20:30:52 +0000
+Date: Sun, 5 May 2024 21:30:52 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <20240505203052.GJ2118490@ZenIV>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+ <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
+ <20240505194603.GH2118490@ZenIV>
+ <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Arm64, after enabling the 'DEBUG=1' build option, the tool exits
-abnormally:
+On Sun, May 05, 2024 at 01:03:07PM -0700, Linus Torvalds wrote:
+> On Sun, 5 May 2024 at 12:46, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > I've no problem with having epoll grab a reference, but if we make that
+> > a universal requirement ->poll() instances can rely upon,
+> 
+> Al, we're note "making that a requirement".
+> 
+> It always has been.
 
-  # ./perf report --itrace=Zi10ibT
-  # perf: util/maps.c:42: check_invariants: Assertion `map__end(prev) <= map__start(map) || map__start(prev) == map__start(map)' failed.
-    Aborted
+Argh.   We keep talking past each other.
 
-The details for causing this error are described in below.
+0.	special-cased ->f_count rule for ->poll() is a wart and it's
+better to get rid of it.
 
-Firstly, machine__get_running_kernel_start() calculates the delta
-between the '_stext' symbol and the '_edata' symbol for the kernel map,
-alongside with eBPF maps:
+1.	fs/eventpoll.c is a steaming pile of shit and I'd be glad to see
+git rm taken to it.  Short of that, by all means, let's grab reference
+in there around the call of vfs_poll() (see (0)).
 
-  DSO              | Start address      | End address
-  -----------------+--------------------+--------------------
-  kernel.kallsyms    0xffff800080000000   0xffff800082229200
-  bpf_prog           0xffff800082545aac   0xffff800082545c94
-  ...
+2. 	having ->poll() instances grab extra references to file passed
+to them is not something that should be encouraged; there's a plenty
+of potential problems, and "caller has it pinned, so we are fine with
+grabbing extra refs" is nowhere near enough to eliminate those.
 
-Then, the perf tool retrieves kcore maps:
-
-  Kcore maps       | Start address      | End address
-  -----------------+--------------------+--------------------
-  kcore_text         0xffff800080000000   0xffff8000822f0000
-  vmalloc            0xffff800080000000   0xfffffdffbf800000
-  ...
-
-Finally, the function dso__load_kcore() extends the kernel maps based on
-the retrieved kcore info. Since it uses the inverted order for
-processing the kcore maps, it extends maps for the vmalloc region prior
-to the 'kcore_text' map:
-
-  DSO              | Start address      | End address
-  -----------------+--------------------+--------------------
-  kernel.kallsyms    0xffff800080000000   0xffff800082229200
-  kernel.kallsyms    0xffff800082229200   0xffff800082545aac -> Extended for vmalloc region
-  bpf_prog           0xffff800082545aac   0xffff800082545c94
-  ...
-
-  DSO              | Start address      | End address
-  -----------------+--------------------+--------------------
-  kernel.kallsyms    0xffff800080000000   0xffff8000822f0000 -> Updated for kcore_text map
-  kernel.kallsyms    0xffff800082229200   0xffff800082545aac
-  bpf_prog           0xffff800082545aac   0xffff800082545c94
-  ...
-
-As result, the two maps [0xffff800080000000..0xffff8000822f0000) and
-[0xffff800082229200..0xffff800082545aac) are overlapping and triggers
-failure.
-
-The current code processes kcore maps in inverted order. To fix it, this
-patch adds kcore maps in the tail of list, afterwards these maps will be
-processed in the order. Therefore, the kernel text section can be
-processed prior to handling the vmalloc region, which avoids using the
-inaccurate kernel text size when extending maps with the vmalloc region.
-
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/symbol.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 9ebdb8e13c0b..e15d70845488 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1266,7 +1266,24 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
- 	map__set_end(list_node->map, map__start(list_node->map) + len);
- 	map__set_pgoff(list_node->map, pgoff);
- 
--	list_add(&list_node->node, &md->maps);
-+	/*
-+	 * Kcore maps are ordered with:
-+	 *   [_text.._end): Kernel text section
-+	 *   [VMALLOC_START..VMALLOC_END): vmalloc
-+	 *   ...
-+	 *
-+	 * On Arm64, the '_text' and 'VMALLOC_START' are the same values
-+	 * but VMALLOC_END (~124TiB) is much bigger then the text end
-+	 * address. So '_text' region is the subset of the vmalloc region.
-+	 *
-+	 * Afterwards, when dso__load_kcore() adjusts kernel maps, we must
-+	 * process the kernel text size prior to handling vmalloc region.
-+	 * This can avoid to using any inaccurate kernel text size when
-+	 * extending maps with vmalloc region. For this reason, here it
-+	 * always adds kcore maps to the tail of list to make sure the
-+	 * sequential handling is in order.
-+	 */
-+	list_add_tail(&list_node->node, &md->maps);
- 
- 	return 0;
- }
--- 
-2.43.0
-
+3.	dma-buf uses of get_file() are probably safe (epoll shite aside),
+but they do look fishy.  That has nothing to do with epoll.
 
