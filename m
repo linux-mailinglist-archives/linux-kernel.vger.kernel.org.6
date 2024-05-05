@@ -1,138 +1,92 @@
-Return-Path: <linux-kernel+bounces-169133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8688BC39B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:17:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F08C8BC3A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DFECB20A67
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C460282597
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A88F76026;
-	Sun,  5 May 2024 20:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD1A71B30;
+	Sun,  5 May 2024 20:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TIE6fivG"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NTy2C9bi"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D92674C14
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 20:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC0D8C04
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 20:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714940232; cv=none; b=DQl1/v1YuRTt5ybmkJ9HH0LLV/xOC0P02uRO+vx+Pnjv22kfwqvuaMhPkh5zJM7KkwoFy10JiuanpTa1KufLI/quWtk+i+ZOMKg6+x0Jm0CfyfOiKOJAwZRP+71TnfAj7SSXRRkyBG7AtrOOF3hTAy+yb7BBokaFffUbigd8z2E=
+	t=1714940404; cv=none; b=pjhcwjdRnK7Lz85OwThnEHEvE8Pg3relOb7DWGzj//ibk2ppWw41Hrq7YiCboFbCzSiQSfzAMDdrvU6cud6pM/QueBAkUUiuaMdCchjBbvyPRxNLmWnjSbG2rZHbBARDBzOdRwoTWhJnDZLFXPnGG1OAzukjf/BOdmj2VE2hSVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714940232; c=relaxed/simple;
-	bh=YVUUiZWgMhQe0Pv8Ng+UCkY3LYOanihQ0/5fJzF5CqQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OuWzXQKdp6N6nii/4sSNIOJuL2iljwIa8Rl+9kYoo/+YaTIa2tuMDvI/VPcDV+G7dcjbjRHG2Rhhy4HC34zU8I7pFfXL17X4WNRWvVmpQIC+IWexU4UG+WyeAm5fk/kLxhuAC9xYeXfOyk2prdLsi4D00l8finB6wNH7zShiQp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TIE6fivG; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f4d2676d1so1334092e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 13:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1714940228; x=1715545028; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=89jyKA3wApx9BQCfs5IiJWmwTiyjcjG5A1RQj5E06Fo=;
-        b=TIE6fivGd9wAkCMMfINu1pQ+4riIGri8T5WnOfDZGn9xEiupO2A8RaHTFbY2spBmny
-         q8wF8IBSPGRHAi+so5pE+cx43/flXlDxkYxmd9JXsZx7eqZon9e2va3iU2jK5feXSiD1
-         frFMhT3UB31tXaVFW97l7KTrazCbKnOT6jTGU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714940228; x=1715545028;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=89jyKA3wApx9BQCfs5IiJWmwTiyjcjG5A1RQj5E06Fo=;
-        b=Wqgk97Ldnxa7w46Snq/9Rv2T6qlmFSB3MalvRUbsrwZLasionDJn8pq7p9Ozy5kHgN
-         d6gX8nDtu+OlS2XZGgUfsaqwAbNAqg/8/3PLb2iYpDT6eXi2EbYmw4u9vgBAIyRwSqfS
-         UtJzQzy0x09XKEa8toZn8GBxz3HMKct1oo/m/lj/bAb7GzWavQiNSQcpLWIpgt+E/l23
-         NviDGjSS+0IhmrvRQi2chWQTVj7dU3H6fYbzp+F5FvyDyl+1AMhuRK4Xf5oFsSC+qqp5
-         Nn3bHwNj2hXc2gxCV5M3BVEQNxQvgDYcRR1rVIDVOy0B90ueGYQVc1nQPAZAUu4kyos2
-         LZIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQWp4qszmz8+J4KIuPgdDrTlm9PSsQy55DyNRjY7wVe3IYvHNzdIoe2vKnl9VW5xO0qfQ5DXYJFSq8angqbthOHigRVI0nNB5YO1x1
-X-Gm-Message-State: AOJu0Yx9eUp1Y6Fx3EgOzqCF0QCS/oz/U2qjHf7USQNhq9seVTd2l9nb
-	cUB+F9UOqfVEKdxZ2bAUJxthajrWeM79KVy6ae6mBYi2qJWxNHzXKSjdqmxcbQGxulagQGfHoaz
-	AArrHjw==
-X-Google-Smtp-Source: AGHT+IE66iux1VehzAsbL/gLVTUEPrNg6fIaClwckvBSGn0HULkGdR0yTE4cZ8tgDqZXqKakkmluzQ==
-X-Received: by 2002:a05:6512:456:b0:51f:4c53:8e4c with SMTP id y22-20020a056512045600b0051f4c538e4cmr5106182lfk.33.1714940228703;
-        Sun, 05 May 2024 13:17:08 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id ld13-20020a170906f94d00b00a59cf137227sm290264ejb.89.2024.05.05.13.17.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 May 2024 13:17:08 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a4702457ccbso288928666b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 13:17:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWWixMXNf9PIWuez4d4jFcX+871w/eV+/H0Ov6OSzhYmO0yIerLhi2XgsywMMsj6fKh2OrphbttzloGXIQ3F++UWw3T2OKfZryV1Vx7
-X-Received: by 2002:a17:906:7188:b0:a59:cd18:92f5 with SMTP id
- h8-20020a170906718800b00a59cd1892f5mr599989ejk.11.1714940227970; Sun, 05 May
- 2024 13:17:07 -0700 (PDT)
+	s=arc-20240116; t=1714940404; c=relaxed/simple;
+	bh=qVs35hEwWtbavB4gLhsEY875kDmX1lKGP1TOBWI+DK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VUn+7a4OmO8SxwKzMAp/A1oF9VGiJaKXLKtUXGKP8L/F7IjNMt+Sg++gffZVd1WhecVdCLbBjtqHZLpHI0diYSzEI1cdKpgiBzf71YHo2z+FK23AS7yg3p9A+UcwogiZhsgikiZgVT8xxZjrKe0sK0pwWu1RCdypV0BZXgJNOZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NTy2C9bi; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=kC9z+BtIuwFPzCvxhtTRwUZVhh0RYTN2gDCiuvp4XGY=; b=NTy2C9biC9GYVcWV
+	rRJPQn6ywmXrIvHsk+3d5DRrwR3vnKnDrSSnrP+wrGE9qb2OhLltOtfOQFVePgIw2IiJFGsXycGo3
+	LGhR0QHLKPKfVGcUI1A6X8+CpBGzBEVa2GvZ3wzi3YKal80FuvcnNOgwDkWz5Zu+swNv52zc5HlJa
+	X2tPEHJxkoFS5el+1XVpL/1Uu/GHSrg/ZxwrGubnXvvYVOyWvzxHpEC40kwVe+WY2LiPeJfe/H25Y
+	N4iEBlnoUroknx0ICmg/Vuru0/LnFn4e5luPgzPv5iWltpi8OuM/Vl0cLfxf5CAOCHAHy8RqUNl2w
+	jfkX6Bm2X4fpIUkNWg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s3iKx-004oNu-2X;
+	Sun, 05 May 2024 20:19:55 +0000
+From: linux@treblig.org
+To: linux@armlinux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] arm: Remove unused struct 'mod_unwind_map'
+Date: Sun,  5 May 2024 21:19:51 +0100
+Message-ID: <20240505201951.623360-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
- <20240505175556.1213266-2-torvalds@linux-foundation.org> <12120faf79614fc1b9df272394a71550@AcuMS.aculab.com>
-In-Reply-To: <12120faf79614fc1b9df272394a71550@AcuMS.aculab.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 5 May 2024 13:16:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whxLdB_P=nW1bmVKn1m2jdcZRgkMksfvA722toFpT554w@mail.gmail.com>
-Message-ID: <CAHk-=whxLdB_P=nW1bmVKn1m2jdcZRgkMksfvA722toFpT554w@mail.gmail.com>
-Subject: Re: [PATCH v2] epoll: be better about file lifetimes
-To: David Laight <David.Laight@aculab.com>
-Cc: "axboe@kernel.dk" <axboe@kernel.dk>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "jack@suse.cz" <jack@suse.cz>, 
-	"keescook@chromium.org" <keescook@chromium.org>, "laura@labbott.name" <laura@labbott.name>, 
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"minhquangbui99@gmail.com" <minhquangbui99@gmail.com>, 
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, 
-	"syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com" <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>, 
-	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 5 May 2024 at 13:02, David Laight <David.Laight@aculab.com> wrote:
->
-> How much is the extra pair of atomics going to hurt performance?
-> IIRC a lot of work was done to (try to) make epoll lockless.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-If this makes people walk away from epoll, that would be absolutely
-*lovely*. Maybe they'd start using io_uring instead, which has had its
-problems, but is a lot more capable in the end.
+I think this has been unused since
+Commit b6f21d14f1ac ("ARM: 9204/2: module: Add all unwind tables when
+load module")
 
-Yes, doing things right is likely more expensive than doing things
-wrong. Bugs are cheap. That doesn't make buggy code better.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ arch/arm/kernel/module.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Epoll really isn't important enough to screw over the VFS subsystem over.
+diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
+index e74d84f58b77c..5aa7f2c6a5378 100644
+--- a/arch/arm/kernel/module.c
++++ b/arch/arm/kernel/module.c
+@@ -429,11 +429,6 @@ apply_relocate(Elf32_Shdr *sechdrs, const char *strtab, unsigned int symindex,
+ 	return 0;
+ }
+ 
+-struct mod_unwind_map {
+-	const Elf_Shdr *unw_sec;
+-	const Elf_Shdr *txt_sec;
+-};
+-
+ static const Elf_Shdr *find_mod_section(const Elf32_Ehdr *hdr,
+ 	const Elf_Shdr *sechdrs, const char *name)
+ {
+-- 
+2.45.0
 
-I did point out elsewhere how this could be fixed by epoll() removing
-the ep items at a different point:
-
-  https://lore.kernel.org/all/CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com/
-
-so if somebody actually wants to fix up epoll properly, that would
-probably be great.
-
-In fact, that model would allow epoll() to just keep a proper refcount
-as an fd is added to the poll events, and would probably fix a lot of
-nastiness. Right now those ep items stay around for basically random
-amounts of time.
-
-But maybe there are other ways to fix it. I don't think we have an
-actual eventpoll maintainer any more, but what I'm *not* willing to
-happen is eventpoll messing up other parts of the kernel. It was
-always a ugly performance hack, and was only acceptable as such. "ugly
-hack" is ok. "buggy ugly hack" is not.
-
-              Linus
 
