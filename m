@@ -1,80 +1,75 @@
-Return-Path: <linux-kernel+bounces-169189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F046D8BC49A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:45:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303DA8BC499
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BE128173F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC2C1F216F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF39140369;
-	Sun,  5 May 2024 22:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EF413FD9A;
+	Sun,  5 May 2024 22:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Axcs7LZf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ix6Q9/Gh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7E813FD88
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 22:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048926AC5;
+	Sun,  5 May 2024 22:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714949108; cv=none; b=UXRtXa4ah7axzjuuCu+NEna+7j+ZOs/987l/wk/BX2781ecn3HFYJ577gtNV4sv5tTXG8n+bgec/3Dt15X35QnMl0BuXoimOrqzuaSGXFYrd1c436VckcMYKs+w4w5mnGaCempKA6+ffWCjzwgSJa4gqaYeawpe5NdKX0WQktag=
+	t=1714949106; cv=none; b=uBksBQRv7PeeMvnr5z0rSi9Tg8TYxFa5qKvFW9dOK+2TcD36Eee9e8wneIgbCWvpyGJ49g6IBwQCHGXP6EJUtcHvAKcf0/WL2K3VqC9e34ieglPns7Bawq1Rjvz20LhtZ8XGkt+8hfVZYzjHvB8eQ6cc5j0w+7GZeP8WDUy5kjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714949108; c=relaxed/simple;
-	bh=1XfbBejj+k4DcvvOJV75CVqzmVhMF/QSd8w/S74/bFk=;
+	s=arc-20240116; t=1714949106; c=relaxed/simple;
+	bh=BUqWKmrS1hy8ktcWYFy8DvuJcpGKUeX//zZzMGcFbqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHQDl+GtCbP+JsG7533QZHQLtBdEd0gDfqHRTeVflLOkweGW2vPj1TaJZc4GkAwfZ9eKlBmAb7ctMrjidvQnzsC8/6mcvTS78yaef3a/mOqnMFTMp5j8S+s2mmHqb5Tl4hHLaTb4YcCrMRcwVqoBgswGZPiSFhS6nFMhqT6WXnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Axcs7LZf; arc=none smtp.client-ip=192.198.163.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1ox53plYIK20fql3qRpcu2nAa4CSsov9jPmwJ/hlkAQe+Dsn2SBOnftg0Ai0jm9+08Cytob57zV0LI16HsAzDkjR4MyU1B4dduZudH0ibCEVEK4mjIr4Xb3NF7ArPyfOIY/BrZJMZBFlELISVKKPv9fRyXRsWxvgqIKkTgS0k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ix6Q9/Gh; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714949107; x=1746485107;
+  t=1714949105; x=1746485105;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=1XfbBejj+k4DcvvOJV75CVqzmVhMF/QSd8w/S74/bFk=;
-  b=Axcs7LZf0RRLsMg0dA/WfopAx6pBof2NeYrn3SiU5BhGvjxTxZircDVs
-   XD38Z1NslCUI6HsoaRbI2Sa7kOfOiXdRuQMOMgu4tHCERvl5h6IlpXP/w
-   OZGRUX5X5AFkAl2Z/jAcCTsorGFAgoA3NxX1WrI755DVr37Ua2vBeUBNM
-   On5msAATID1/65TRUc2U4HNt7zXMW9NWRwhC0HXZv0ljot6NhMhaT9RwS
-   SyAacC0IyCT4uvOK8inxTdNJDwj+TYAROWByogn9hZ+2mPQNste3a5GkY
-   vwMak0/bMWObddTQhipXhuJiJKmUT4a5y78HSNP7LUEpmLNYOEdEG5cGq
+  bh=BUqWKmrS1hy8ktcWYFy8DvuJcpGKUeX//zZzMGcFbqU=;
+  b=ix6Q9/GhYCLaTjdo+BIsIQntKg5RLNI7M4RzHA0zHOg2haFc6Q9j+wg3
+   naXHIExfT/j0ysHSpKS2ExRB3N+fb0relFSjX1K4WToUS4cQkxgV11KS7
+   oCfIFcnhfhvlK6GZiJs2GX+UHSflapYmwFu1zws5EtA/0XOkHuAVzDTTx
+   nQop7HWgu/HzMkdTqOw5jOz5DPLYkEs+I1L2jwNOfF3GIWyOMeL4IgJjq
+   oRRDjMw+IRFz2KNzGjItrAEdXBxuY37X8Covz3vBlb8YW8QFyF2oD2L1i
+   bJI3QgI7boLtc+U+zpP5vSa9Hw7VP6EGUrU8jVvOsl5dTxTPiK4pdTl3h
    Q==;
-X-CSE-ConnectionGUID: aYLAaQN6TXaIgYM9XAhFyQ==
-X-CSE-MsgGUID: ZPQRyLF7ReCnWZjr5KkTCw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10900533"
+X-CSE-ConnectionGUID: uCpd9vucQXqbVLY7z6wqGg==
+X-CSE-MsgGUID: qrRGZrfEToGhYSfJqTAuHA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10805126"
 X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="10900533"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 15:45:06 -0700
-X-CSE-ConnectionGUID: TGAXBbSBSHWp3zebJTNr4Q==
-X-CSE-MsgGUID: /5Ztm97LQR6bEsBtoH/fog==
+   d="scan'208";a="10805126"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 15:45:05 -0700
+X-CSE-ConnectionGUID: 1EFi/TtDQruaiwa22Z29sg==
+X-CSE-MsgGUID: azTr283KRt6KGHOkJX7+Cg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="28053595"
+   d="scan'208";a="32460076"
 Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 05 May 2024 15:45:03 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 05 May 2024 15:45:02 -0700
 Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1s3kbM-0000GC-1r;
+	id 1s3kbM-0000GE-21;
 	Sun, 05 May 2024 22:45:00 +0000
-Date: Mon, 6 May 2024 06:44:32 +0800
+Date: Mon, 6 May 2024 06:44:33 +0800
 From: kernel test robot <lkp@intel.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH] platform/chrome: cros_kbd_led_backlight: enable probing
- through EC_FEATURE_PWM_KEYB
-Message-ID: <202405060653.uskC4eSJ-lkp@intel.com>
-References: <20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net>
+To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tanmay Shah <tanmay.shah@amd.com>
+Subject: Re: [PATCH 1/2] drivers: remoteproc: xlnx: add attach detach support
+Message-ID: <202405060611.jBQBF7iB-lkp@intel.com>
+References: <20240502231021.370047-2-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,103 +78,148 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net>
+In-Reply-To: <20240502231021.370047-2-tanmay.shah@amd.com>
 
-Hi Thomas,
+Hi Tanmay,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on 2fbe479c0024e1c6b992184a799055e19932aa48]
+[auto build test WARNING on 0496190c4d42965acb31b9da1b6dac3509791062]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Wei-schuh/platform-chrome-cros_kbd_led_backlight-enable-probing-through-EC_FEATURE_PWM_KEYB/20240505-174413
-base:   2fbe479c0024e1c6b992184a799055e19932aa48
-patch link:    https://lore.kernel.org/r/20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2%40weissschuh.net
-patch subject: [PATCH] platform/chrome: cros_kbd_led_backlight: enable probing through EC_FEATURE_PWM_KEYB
-config: x86_64-randconfig-014-20240506 (https://download.01.org/0day-ci/archive/20240506/202405060653.uskC4eSJ-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240506/202405060653.uskC4eSJ-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/drivers-remoteproc-xlnx-add-attach-detach-support/20240503-071225
+base:   0496190c4d42965acb31b9da1b6dac3509791062
+patch link:    https://lore.kernel.org/r/20240502231021.370047-2-tanmay.shah%40amd.com
+patch subject: [PATCH 1/2] drivers: remoteproc: xlnx: add attach detach support
+config: arm64-randconfig-r113-20240506 (https://download.01.org/0day-ci/archive/20240506/202405060611.jBQBF7iB-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240506/202405060611.jBQBF7iB-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405060653.uskC4eSJ-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405060611.jBQBF7iB-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+sparse warnings: (new ones prefixed by >>)
+   drivers/remoteproc/xlnx_r5_remoteproc.c:404:20: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/remoteproc/xlnx_r5_remoteproc.c:522:20: sparse: sparse: cast removes address space '__iomem' of expression
+>> drivers/remoteproc/xlnx_r5_remoteproc.c:731:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct rsc_tbl_data *rsc_data_va @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/xlnx_r5_remoteproc.c:731:21: sparse:     expected struct rsc_tbl_data *rsc_data_va
+   drivers/remoteproc/xlnx_r5_remoteproc.c:731:21: sparse:     got void [noderef] __iomem *
+>> drivers/remoteproc/xlnx_r5_remoteproc.c:748:18: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct resource_table *rsc_addr @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/xlnx_r5_remoteproc.c:748:18: sparse:     expected struct resource_table *rsc_addr
+   drivers/remoteproc/xlnx_r5_remoteproc.c:748:18: sparse:     got void [noderef] __iomem *
+>> drivers/remoteproc/xlnx_r5_remoteproc.c:802:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got struct resource_table *rsc_tbl_va @@
+   drivers/remoteproc/xlnx_r5_remoteproc.c:802:24: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/remoteproc/xlnx_r5_remoteproc.c:802:24: sparse:     got struct resource_table *rsc_tbl_va
 
-   drivers/platform/chrome/cros_kbd_led_backlight.c:218:42: error: redefinition of 'keyboard_led_drvdata_ec_pwm'
-     218 | static const struct keyboard_led_drvdata keyboard_led_drvdata_ec_pwm = {};
-         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/platform/chrome/cros_kbd_led_backlight.c:184:57: note: previous definition of 'keyboard_led_drvdata_ec_pwm' with type 'const struct keyboard_led_drvdata'
-     184 | static const __maybe_unused struct keyboard_led_drvdata keyboard_led_drvdata_ec_pwm = {
-         |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/platform/chrome/cros_kbd_led_backlight.c: In function 'keyboard_led_probe':
-   drivers/platform/chrome/cros_kbd_led_backlight.c:240:28: error: 'keyboard_led_drvdata_ec_pwm_mfd' undeclared (first use in this function); did you mean 'keyboard_led_drvdata_ec_pwm'?
-     240 |                 drvdata = &keyboard_led_drvdata_ec_pwm_mfd;
-         |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                            keyboard_led_drvdata_ec_pwm
-   drivers/platform/chrome/cros_kbd_led_backlight.c:240:28: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/platform/chrome/cros_kbd_led_backlight.c: At top level:
->> drivers/platform/chrome/cros_kbd_led_backlight.c:218:42: warning: 'keyboard_led_drvdata_ec_pwm' defined but not used [-Wunused-const-variable=]
-     218 | static const struct keyboard_led_drvdata keyboard_led_drvdata_ec_pwm = {};
-         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+vim +731 drivers/remoteproc/xlnx_r5_remoteproc.c
 
-
-vim +/keyboard_led_drvdata_ec_pwm +218 drivers/platform/chrome/cros_kbd_led_backlight.c
-
-   217	
- > 218	static const struct keyboard_led_drvdata keyboard_led_drvdata_ec_pwm = {};
-   219	
-   220	#endif /* IS_ENABLED(CONFIG_MFD_CROS_EC_DEV) */
-   221	
-   222	static int keyboard_led_is_mfd_device(struct platform_device *pdev)
-   223	{
-   224		if (!IS_ENABLED(CONFIG_MFD_CROS_EC_DEV))
-   225			return 0;
-   226	
-   227		if (!pdev->dev.parent)
-   228			return 0;
-   229	
-   230		return strcmp(pdev->dev.parent->driver->name, "cros-ec-dev") == 0;
-   231	}
-   232	
-   233	static int keyboard_led_probe(struct platform_device *pdev)
-   234	{
-   235		const struct keyboard_led_drvdata *drvdata;
-   236		struct keyboard_led *keyboard_led;
-   237		int error;
-   238	
-   239		if (keyboard_led_is_mfd_device(pdev))
- > 240			drvdata = &keyboard_led_drvdata_ec_pwm_mfd;
-   241		else
-   242			drvdata = device_get_match_data(&pdev->dev);
-   243		if (!drvdata)
-   244			return -EINVAL;
-   245	
-   246		keyboard_led = devm_kzalloc(&pdev->dev, sizeof(*keyboard_led), GFP_KERNEL);
-   247		if (!keyboard_led)
-   248			return -ENOMEM;
-   249		platform_set_drvdata(pdev, keyboard_led);
-   250	
-   251		if (drvdata->init) {
-   252			error = drvdata->init(pdev);
-   253			if (error)
-   254				return error;
-   255		}
-   256	
-   257		keyboard_led->cdev.name = "chromeos::kbd_backlight";
-   258		keyboard_led->cdev.flags |= LED_CORE_SUSPENDRESUME;
-   259		keyboard_led->cdev.max_brightness = drvdata->max_brightness;
-   260		keyboard_led->cdev.brightness_set = drvdata->brightness_set;
-   261		keyboard_led->cdev.brightness_set_blocking = drvdata->brightness_set_blocking;
-   262		keyboard_led->cdev.brightness_get = drvdata->brightness_get;
-   263	
-   264		error = devm_led_classdev_register(&pdev->dev, &keyboard_led->cdev);
-   265		if (error)
-   266			return error;
-   267	
-   268		return 0;
-   269	}
-   270	
+   702	
+   703	static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+   704	{
+   705		struct device *dev = r5_core->dev;
+   706		struct rsc_tbl_data *rsc_data_va;
+   707		struct resource_table *rsc_addr;
+   708		struct resource res_mem;
+   709		struct device_node *np;
+   710		int ret;
+   711	
+   712		/**
+   713		 * It is expected from remote processor firmware to provide resource
+   714		 * table address via struct rsc_tbl_data data structure.
+   715		 * Start address of first entry under "memory-region" property list
+   716		 * contains that data structure which holds resource table address, size
+   717		 * and some magic number to validate correct resource table entry.
+   718		 */
+   719		np = of_parse_phandle(r5_core->np, "memory-region", 0);
+   720		if (!np) {
+   721			dev_err(dev, "failed to get memory region dev node\n");
+   722			return -EINVAL;
+   723		}
+   724	
+   725		ret = of_address_to_resource(np, 0, &res_mem);
+   726		if (ret) {
+   727			dev_err(dev, "failed to get memory-region resource addr\n");
+   728			return -EINVAL;
+   729		}
+   730	
+ > 731		rsc_data_va = devm_ioremap_wc(dev, res_mem.start,
+   732					      sizeof(struct rsc_tbl_data));
+   733		if (!rsc_data_va) {
+   734			dev_err(dev, "failed to map resource table data address\n");
+   735			return -EIO;
+   736		}
+   737	
+   738		/**
+   739		 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
+   740		 * do not consider resource table address valid and don't attach
+   741		 */
+   742		if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
+   743		    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
+   744			dev_dbg(dev, "invalid magic number, won't attach\n");
+   745			return -EINVAL;
+   746		}
+   747	
+ > 748		rsc_addr = ioremap_wc(rsc_data_va->rsc_tbl,
+   749				      rsc_data_va->rsc_tbl_size);
+   750		if (!rsc_addr) {
+   751			dev_err(dev, "failed to get rsc_addr\n");
+   752			return -EINVAL;
+   753		}
+   754	
+   755		/**
+   756		 * As of now resource table version 1 is expected. Don't fail to attach
+   757		 * but warn users about it.
+   758		 */
+   759		if (rsc_addr->ver != 1)
+   760			dev_warn(dev, "unexpected resource table version %d\n",
+   761				 rsc_addr->ver);
+   762	
+   763		r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
+   764		r5_core->rsc_tbl_va = rsc_addr;
+   765	
+   766		return 0;
+   767	}
+   768	
+   769	static int zynqmp_r5_attach(struct rproc *rproc)
+   770	{
+   771		struct zynqmp_r5_core *r5_core = rproc->priv;
+   772		int i, pm_domain_id, ret;
+   773	
+   774		/*
+   775		 * Firmware is loaded in TCM. Request TCM power domains to notify
+   776		 * platform management controller that TCM is in use. This will be
+   777		 * released during unprepare callback.
+   778		 */
+   779		for (i = 0; i < r5_core->tcm_bank_count; i++) {
+   780			pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+   781			ret = zynqmp_pm_request_node(pm_domain_id,
+   782						     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+   783						     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+   784			if (ret < 0)
+   785				pr_warn("TCM %d can't be requested\n", i);
+   786		}
+   787	
+   788		return 0;
+   789	}
+   790	
+   791	static int zynqmp_r5_detach(struct rproc *rproc)
+   792	{
+   793		struct zynqmp_r5_core *r5_core = rproc->priv;
+   794	
+   795		/*
+   796		 * Generate last notification to remote after clearing virtio flag.
+   797		 * Remote can avoid polling on virtio reset flag if kick is generated
+   798		 * during detach by host and check virtio reset flag on kick interrupt.
+   799		 */
+   800		zynqmp_r5_rproc_kick(rproc, 0);
+   801	
+ > 802		iounmap(r5_core->rsc_tbl_va);
+   803		r5_core->rsc_tbl_va = NULL;
+   804	
+   805		return 0;
+   806	}
+   807	
 
 -- 
 0-DAY CI Kernel Test Service
