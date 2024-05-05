@@ -1,512 +1,256 @@
-Return-Path: <linux-kernel+bounces-168859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61F68BBEF3
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 02:42:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20498BBEE0
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 02:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0F31F21761
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 00:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9B2281D48
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 00:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E907A81F;
-	Sun,  5 May 2024 00:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oddbit.com header.i=@oddbit.com header.b="XFmGwIQ4"
-Received: from smtp84.iad3b.emailsrvr.com (smtp84.iad3b.emailsrvr.com [146.20.161.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951F9394;
+	Sun,  5 May 2024 00:10:32 +0000 (UTC)
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02olkn2081.outbound.protection.outlook.com [40.92.44.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FC317C2
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 00:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.84
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714869727; cv=none; b=kAYFE9+Ztvhz8T0Hq4WX+DTjBHd8ay4J5X8GRz5fXEhyjvbJqGG45V+ToRiRQ1R1o8KQGx029X4oavyVISGNMBpZ3YDoqe9nAH2wfNtRydDc8YAoz3IEj0I1i+OoQvkLKHgkOCidZ6nyL1E7L2zwRLl+F1z4NKHArbGdSmhhlpc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714869727; c=relaxed/simple;
-	bh=PPCcGpsRM/AIy4kHnfjDp1sQI38mXWJkKA1YyYFoOyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XrQ5BAU45NzrHbKPn/saYt/3ND5RjT9xYOXNlZGupvBI6g1CuQaHfnObTk0EYgk9VJyijkbL/zkv67CP+dngduEhWSeFdDBvoVAMWxuVSAe+9HpEi7hkCez7MN5VigEJQlfxs60M10UyiWwGi6bjkCv+/DMUKJ9Ywm/T57fsAI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oddbit.com; spf=pass smtp.mailfrom=oddbit.com; dkim=pass (1024-bit key) header.d=oddbit.com header.i=@oddbit.com header.b=XFmGwIQ4; arc=none smtp.client-ip=146.20.161.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oddbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oddbit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oddbit.com;
-	s=20180920-g2b7aziw; t=1714860974;
-	bh=PPCcGpsRM/AIy4kHnfjDp1sQI38mXWJkKA1YyYFoOyU=;
-	h=Date:From:To:Subject:From;
-	b=XFmGwIQ4m6VSaXYgUb6UiMyrHBmDJuIqc0nD5QTORQD5oMn04FLZgv9uvaeaNowAd
-	 T88yargU5PJSst6ZwVO/dffICKh3ukLanzR0JmJUDCFKUqAsWK1q/vMcHFPpBs+rXK
-	 hh+2kkITxq/cn1aydrmFNmgV/Qw4DxR/YjCJmm8k=
-X-Auth-ID: lars@oddbit.com
-Received: by smtp3.relay.iad3b.emailsrvr.com (Authenticated sender: lars-AT-oddbit.com) with ESMTPSA id 6B75740232;
-	Sat,  4 May 2024 18:16:14 -0400 (EDT)
-Date: Sat, 4 May 2024 18:16:14 -0400
-From: Lars Kellogg-Stedman <lars@oddbit.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, kuba@kernel.org, 
-	edumazet@google.com, davem@davemloft.net, jreuter@yaina.de
-Subject: Re: [PATCH net] ax25: Fix refcount leak issues of ax25_dev
-Message-ID: <movur4qy7wwavdyw2ugwfsz6kvshrqlvx32ym3fyx5gg66llge@citxuw5ztgwc>
-References: <20240501060218.32898-1-duoming@zju.edu.cn>
- <my4l7ljo35dnwxl33maqhyvw7666dmuwtduwtyhnzdlb6bbf5m@5sbp4tvg246f>
- <78ae8aa0-eac5-4ade-8e85-0479a22e98a3@moroto.mountain>
- <ekgwuycs3hioz6vve57e6z7igovpls6s644rvdxpxqqr7v7is6@u5lqegkuwcex>
- <1e14f4f1-29dd-4fe5-8010-de7df0866e93@moroto.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02C9191
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 00:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.44.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714867831; cv=fail; b=Cbrxu9JzzGKEWfbwKgpeUR9cNrwA0qcfZMXzRGTZF+qhmUOBpVmSKAlYp12rBmuFK1UonAg3s+l6W/Y+qgZOYI14XmJi/76IUW9NtABX03taoPoG3sSi/hES7M3MM3DQOuaGBSCFRBs5pUMeacTpLGXCHm0oCjxOpkSjY7HqSgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714867831; c=relaxed/simple;
+	bh=AkLTq1kMijzHuStmLnQquyGPCB/olYIG5Hji9tRFhrQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cytEdV3TUOda7+Z92u9JKjasqD4Fqo0/qrbsvCmoerlev1acl9Rpu1K2wb7ty5QqwCP79Jnbym6UufNUDAgfFdNo3ExHxwlMrNlizmkKWzsan4tX8NIPGYkP7U9rgP0MzRt25NfsBe8ozOEOsG9TKcA+1sp3zCr81bW15Y+1xQs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jsfamily.in; spf=pass smtp.mailfrom=jsfamily.in; arc=fail smtp.client-ip=40.92.44.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jsfamily.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jsfamily.in
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DKzsFYYpbVhyfW8OjwtxnsQKO4ua9Jn8EmSMAWEoG4E2aA4YIPaR99Zx6DKX0czAUFWr11/OZryHdM/HLaY0Rp8XL31rFyJZvrQa1osA1KxvY28BqXMij1uK4ihTrQeg1ceyu3KiY2ZY6Ip4SQWMPnQiKICHunoNrYxWzOTkBtDkZi7KAJ1QMvQJ82+2EJBYhsOtlwn9pSewIOgBgvejBmUfWBcRsoqDVpVNKfOiK2f5uP15MLAGv1X4lN+U+QGDEM1Vw2BzwA1a+QjMsxI+ryZhVczAppaHkPC6oQwbSOs/46kZNlkigxDbdKbz8xlbf2+DzAoHBLPA3nO8tYpW7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6yShcBahcuPmgQoZBW5kGDE5OeK7cEKEu0W0kS9FI0s=;
+ b=Z+KItYvQfECFpVSD/mI5fD6whaOLTiHEEVGyaUp3s/G6iKHJCJeHJwylerVjPaeO5YoIy46sYXEan85GJnqMsFPsTmWSfeKx08LQ4o2Xb6A5mVf+i0AxAlnTVTcXYdJvoRmzWY7Qetkcru+95NVMXRwhb6X9YUajr4Cqs6+Xc777Wxoy2PEeR2S3kRuvUtCUVg3v+FgA45tmPpr8ID7J8uAgBF9ffG/IAUERoDXWg9PhL2AtAWmU6TkEdDsuT50W7aV3K/4CsC/qc+8iXMGdKHobkEF1jkF9XheRlC3CWV+WJQPJ5dXI/SUeVg8ZHTqthWxqINw3R7F6cVNlNeZpWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from DM4PR02MB8959.namprd02.prod.outlook.com (2603:10b6:8:bb::12) by
+ CH2PR02MB6476.namprd02.prod.outlook.com (2603:10b6:610:67::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.39; Sun, 5 May 2024 00:10:26 +0000
+Received: from DM4PR02MB8959.namprd02.prod.outlook.com
+ ([fe80::f2a0:7076:1567:9f75]) by DM4PR02MB8959.namprd02.prod.outlook.com
+ ([fe80::f2a0:7076:1567:9f75%6]) with mapi id 15.20.7544.036; Sun, 5 May 2024
+ 00:10:26 +0000
+From: Joel Selvaraj <jo@jsfamily.in>
+To: Joel Selvaraj <jo@jsfamily.in>, Douglas Anderson <dianders@chromium.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Maxime
+ Ripard <mripard@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>, Chris Morgan
+	<macromorgan@hotmail.com>, Yuran Pereira <yuran.pereira@hotmail.com>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Sumit Semwal
+	<sumit.semwal@linaro.org>, Benni Steini <bennisteinir@gmail.com>, Marijn
+ Suijten <marijn.suijten@somainline.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Sam Ravnborg
+	<sam@ravnborg.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT PATCH v2 19/48] drm/panel: novatek-nt36672a: Don't call
+ unprepare+disable at shutdown/remove
+Thread-Topic: [RFT PATCH v2 19/48] drm/panel: novatek-nt36672a: Don't call
+ unprepare+disable at shutdown/remove
+Thread-Index: AQHanaIO/k7pPw0oNk2UsoHQMRYmRbGHwevFgAADXkw=
+Date: Sun, 5 May 2024 00:10:26 +0000
+Message-ID:
+ <DM4PR02MB89591952CC35EE0E488A92D0EA1D2@DM4PR02MB8959.namprd02.prod.outlook.com>
+References: <20240503213441.177109-1-dianders@chromium.org>
+ <20240503143327.RFT.v2.19.I67819ba5513d4ef85f254a68b22a3402b4cdf30f@changeid>
+ <DM4PR02MB89591040D0B0F2B088CD5ADEEA1E2@DM4PR02MB8959.namprd02.prod.outlook.com>
+In-Reply-To:
+ <DM4PR02MB89591040D0B0F2B088CD5ADEEA1E2@DM4PR02MB8959.namprd02.prod.outlook.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [uwscyyYQ0brqn0vly7Gag8vZcMpkW1II]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR02MB8959:EE_|CH2PR02MB6476:EE_
+x-ms-office365-filtering-correlation-id: 39a0e0fd-328f-4b35-3924-08dc6c97c440
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199019|102099023|440099019|3430499023|3412199016|1602099003|1710799017;
+x-microsoft-antispam-message-info:
+ jJk8HD6/7tJfovxv8kymB0r+gVqKkvGAdtIcQEcOCsqXzgjgliImjpkWjIEHyxfVAtZSdXAQtSvHELhO05+9ti/TSOYW5iTaeFrnt/dveBSNWpX1tahKnAa3smG3X59lOfPrB0Z3low0m7hwt4C1d5Fdv3gj1XfOrgUAvPTh7WuDwj7NzKX0TDaO2mkAtWxGYOWiPrkSyjItkVFPg1gmvJEjL4B/ubL96hwj2j/RkbZhlCw5Vk7+Nw5e+xyX+x7GcWDNsR6UTG3JRyRIfy7cY3PqGasNbUbvaHSU4lEGigsb+zWn5BOKVfcdJpuY5/fkmosIddpOBPt6SaDk+EfrU+YjkWHfs8hZA6Y/XUVKb+CpxoNfdPZnfGNeTlCreVi8aRLzJ5L670Z6GVare79tQYXRPFESDcCoYNYtqYzi2MgilMDiUGD+AXsRLLiITl1vsnTo4PJVcAdA/nKrHulcrJQJ2dh0ieQ3Suq7lCz0S5OPmYxoGY+RvGRZmoOz92OtAVCQOncuhgO1K61XLGEJ8bmUZcYmC0hSB3eRyeVMbFgPLj6Jra9GVn/c/B47nMr+0xwtHc47zmhmFgHvYWe5OfOOKT531pnMx4BOkRQiHwugYcWge2UVc6TIZZQCNiojPlwJ/c6DI0Akq6aIl9rWBCveC9C8NIwLF9waokxfEB+4tCHlMi/VnjlKkt+H/VpK
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?2PZvJAlLQsvfn0Nd93AoHJSo7bRY79c0OxQCaOYKK18wBTqq7gdq2bResagg?=
+ =?us-ascii?Q?tMgrUx5DXKHO3vZ2tFHux+hLuReAEbPA6jc8n0x7rIy+UM7oB+BurWrudhbM?=
+ =?us-ascii?Q?JS51oJ8J247n+jQ31GIxYEwXoWlinFctolJeLoEd255VHLex/Mi/KIM//wTy?=
+ =?us-ascii?Q?0yGrfIZMRjgCan4rBkgdCgcTYW1qY5XIiUinjBT5H9QQZI/N3cB/0c6FX2Nh?=
+ =?us-ascii?Q?dC2R81O3z9KQ5rYrHA0fknh1Y1l63yoWJsU4CNMARsOVmHqifdnJbBjAfmrp?=
+ =?us-ascii?Q?U7jZc5zg5IQ4MKVIUws/M0mwqcW6rknIvv/fMVq+oKd4b13NGC4HayIm7UzB?=
+ =?us-ascii?Q?He6TsZ/jkQbTLqnE6lEJmLzkVy1pDey4PdY+5AYDmzjEmI8Flrn6tBAmIJHL?=
+ =?us-ascii?Q?lTZEAYJ/khME+2wP4evptegiKl/k6ZwxWUSndf+i2S7f8qI38Gt6e6Exf10q?=
+ =?us-ascii?Q?rkdQOVr4cB+hT6GE8EnYRjg0sgGAGbNMKDnpLgDiomOCAGoqf5pzMYBn3LdC?=
+ =?us-ascii?Q?sAJoixLGoGejrqedo0gxl4ZaIPDcwebgAO+jXZcldXDHr9RdPrkdfqTsQG5Y?=
+ =?us-ascii?Q?MdRaMRH9cp70/QHhxfEtFx03YiWacL7o2W2kQekDCENDvzTW9dXfdS6Ysx3U?=
+ =?us-ascii?Q?mZKkaQjVngPw4Rd5Gl/xk+JKkWf72YVeN0LVF5yb353nRq/5QYopCRT4Jcm2?=
+ =?us-ascii?Q?QXP2I3JZN3BnePmrDcshQTZtdjnw+zXgPM6dabcgGLwGxu6+zD7Q1gVftmYT?=
+ =?us-ascii?Q?d3rP4fmGESTVMeXiOW+x4F9phAIbXoIMN4+hI1ptAS2DB4f7WpyVHyuTpzZ2?=
+ =?us-ascii?Q?W20bNfc5v9e9EjgTvm1W2zP1VGyDjOOAt2SZm10Q+BjUgrWd5AWoWd16cuMD?=
+ =?us-ascii?Q?XUiKJVOzaH/hvIRgSn+l5N3gnkk98dOFqYyvL9DyHtEnaEwd8nGqf5DBG3kv?=
+ =?us-ascii?Q?BAR3r7yOlVL+rXLjdpqyLnXB90jCJr9PdBPRUJy1CS9zYgnvgkw5cNYRixbg?=
+ =?us-ascii?Q?0u7VJBB7Q9EToJ2lQAnQMyovugZw35yC6q6uYyqK8+fbUeSRwklwYpPpnC2g?=
+ =?us-ascii?Q?iuog4gDjo9KFA+l8seJ5uaWeSX4GNgWmYz5vnYwyC6O7Yxv2qWkOFuUYSWzO?=
+ =?us-ascii?Q?2GwIOcXaqGkom3QFcQ1+PsDZ/3dZ0EpQ3MKnOR+niUMgwfkctz2fFvGnTDNY?=
+ =?us-ascii?Q?3Vu35hcasjzEFDjg4uKTIJQtgO/C3a+iBFA2korAZijeOta2UAmnYhvj9yw?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e14f4f1-29dd-4fe5-8010-de7df0866e93@moroto.mountain>
-X-Classification-ID: f435f6e0-f2bb-4f3f-be42-b9529eaace03-1-1
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-3d941.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR02MB8959.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39a0e0fd-328f-4b35-3924-08dc6c97c440
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 May 2024 00:10:26.7593
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6476
 
-On Sat, May 04, 2024 at 03:16:55PM +0300, Dan Carpenter wrote:
-> Wait, which panic is this?  The NULL dereference introduce by the
-> "ax25_dev" vs "res" typo?
+Sorry for the long lines. Had to use a different email client and ended mes=
+sing it up.
 
-Right, that one. Your diff was on top of Duoming's patches, which had
-earlier introduced that kernel panic. Just confirming that things are
-working (for some value of "working") with your latest change.
+Regards
+Joel Selvaraj
 
-> >   refcount_t: decrement hit 0; leaking memory.
-> >   refcount_t: underflow; use-after-free.
-> 
-> Hm...  Is there a missing netdev_hold() in ax25_bind() on the
-> "User already set interface with SO_BINDTODEVICE" path?
+________________________________________
+From: Joel Selvaraj <jo@jsfamily.in>
+Sent: 05 May 2024 05:28
+To: Douglas Anderson; dri-devel@lists.freedesktop.org; Maxime Ripard
+Cc: Linus Walleij; Chris Morgan; Yuran Pereira; Neil Armstrong; Sumit Semwa=
+l; Benni Steini; Marijn Suijten; Daniel Vetter; David Airlie; Jessica Zhang=
+; Maarten Lankhorst; Sam Ravnborg; Thomas Zimmermann; linux-kernel@vger.ker=
+nel.org
+Subject: Re: [RFT PATCH v2 19/48] drm/panel: novatek-nt36672a: Don't call u=
+nprepare+disable at shutdown/remove
 
-There's a missing netdev_hold() in the path for *inbound* packets
-(ax25_rcv -> ax25_accept).
+Hi Douglas Anderson,
 
-I added some tracepoints [1] so that we can see calls to
-netdev_{put,hold} in a function graph. Without my patches, the graph for
-an incoming connections looks like [2]:
+Poco F1 is one of the main user for this panel. I tested the patch in my Po=
+co F1 running postmarketOS. It works fine. Thank you. The panel itself requ=
+ires other extra fixes to work properly which I intend to upstream in the u=
+pcoming weeks. But your patch doesn't break anything and works as expected.=
+ So.
 
-    # tracer: function_graph
-    #
-    # CPU  TASK/PID         DURATION                  FUNCTION CALLS
-    # |     |    |           |   |                     |   |   |   |
-    ------------------------------------------
-    0)    <idle>-0    =>   kworker-29  
-    ------------------------------------------
+Tested-by: Joel Selvaraj <jo@jsfamily.in>
 
-    0)   kworker-29   |               |  ax25_kiss_rcv() {
-    0)   kworker-29   |               |    ax25_rcv.isra.0() {
-    0)   kworker-29   |   0.168 us    |      ax25_addr_parse();
-    0)   kworker-29   |   0.094 us    |      ax25_addr_size();
-    0)   kworker-29   |   0.136 us    |      ax25cmp();
-    0)   kworker-29   |   0.137 us    |      ax25_digi_invert();
-    0)   kworker-29   |               |      ax25_find_cb() {
-    0)   kworker-29   |   0.223 us    |        ax25cmp();
-    0)   kworker-29   |   0.194 us    |        ax25cmp();
-    0)   kworker-29   |   0.087 us    |        ax25cmp();
-    0)   kworker-29   |   0.975 us    |      }
-    0)   kworker-29   |               |      ax25_find_listener() {
-    0)   kworker-29   |   0.092 us    |        ax25cmp();
-    0)   kworker-29   |   0.084 us    |        ax25cmp();
-    0)   kworker-29   |   0.526 us    |      }
-    0)   kworker-29   |               |      ax25_make_new() {
-    0)   kworker-29   |               |        ax25_create_cb() {
-    0)   kworker-29   |   0.117 us    |          ax25_setup_timers();
-    0)   kworker-29   |   0.478 us    |        }
-    0)   kworker-29   |   1.813 us    |      }
-    0)   kworker-29   |               |      ax25_send_control() {
-    0)   kworker-29   |               |        ax25_transmit_buffer() {
-    0)   kworker-29   |   0.086 us    |          ax25_addr_size();
-    0)   kworker-29   |   0.094 us    |          ax25_addr_build();
-    0)   kworker-29   |   0.081 us    |          ax25_fwd_dev();
-    0)   kworker-29   |   4.854 us    |        }
-    0)   kworker-29   |   5.604 us    |      }
-    0)   kworker-29   |   0.108 us    |      ax25_cb_add();
-    0)   kworker-29   |   0.410 us    |      ax25_start_heartbeat();
-    0)   kworker-29   |   0.218 us    |      ax25_start_t3timer();
-    0)   kworker-29   |   0.099 us    |      ax25_start_idletimer();
-    0)   kworker-29   | + 14.957 us   |    }
-    0)   kworker-29   | + 16.116 us   |  }
-    ------------------------------------------
-    1)   ax25ipd-63   =>    ax25d-77   
-    ------------------------------------------
+Regards
+Joel Selvaraj
 
-    1)    ax25d-77    |   1.580 us    |  ax25_accept();
-    1)    ax25d-77    |   0.211 us    |  ax25_getname();
-    1)    ax25d-77    |   0.275 us    |  ax25_getname();
-    ------------------------------------------
-    0)   kworker-29   =>   axwrapp-83  
-    ------------------------------------------
+________________________________________
+From: Douglas Anderson <dianders@chromium.org>
+Sent: 04 May 2024 03:03
+To: dri-devel@lists.freedesktop.org; Maxime Ripard
+Cc: Linus Walleij; Chris Morgan; Yuran Pereira; Neil Armstrong; Douglas And=
+erson; Sumit Semwal; Benni Steini; Joel Selvaraj; Marijn Suijten; Daniel Ve=
+tter; David Airlie; Jessica Zhang; Maarten Lankhorst; Sam Ravnborg; Thomas =
+Zimmermann; linux-kernel@vger.kernel.org
+Subject: [RFT PATCH v2 19/48] drm/panel: novatek-nt36672a: Don't call unpre=
+pare+disable at shutdown/remove
 
-    0)   axwrapp-83   |               |  ax25_sendmsg() {
-    0)   axwrapp-83   |               |    ax25_output() {
-    0)   axwrapp-83   |               |      ax25_kick.part.0() {
-    0)   axwrapp-83   |               |        ax25_send_iframe() {
-    0)   axwrapp-83   |   0.679 us    |          ax25_start_idletimer();
-    0)   axwrapp-83   |               |          ax25_transmit_buffer() {
-    0)   axwrapp-83   |   0.093 us    |            ax25_addr_size();
-    0)   axwrapp-83   |   0.102 us    |            ax25_addr_build();
-    0)   axwrapp-83   |   0.145 us    |            ax25_fwd_dev();
-    0)   axwrapp-83   |   9.311 us    |          }
-    0)   axwrapp-83   | + 10.464 us   |        }
-    0)   axwrapp-83   |   0.096 us    |        ax25_t1timer_running();
-    0)   axwrapp-83   |   0.332 us    |        ax25_stop_t3timer();
-    0)   axwrapp-83   |   0.093 us    |        ax25_calculate_t1();
-    0)   axwrapp-83   |   0.439 us    |        ax25_start_t1timer();
-    0)   axwrapp-83   | + 18.839 us   |      }
-    0)   axwrapp-83   | + 19.479 us   |    }
-    0)   axwrapp-83   | + 22.647 us   |  }
-    ------------------------------------------
-    0)   ax25ipd-63   =>   axwrapp-83  
-    ------------------------------------------
+It's the responsibility of a correctly written DRM modeset driver to
+call drm_atomic_helper_shutdown() at shutdown time and that should be
+disabling / unpreparing the panel if needed. Panel drivers shouldn't
+be calling these functions themselves.
 
-    0)   axwrapp-83   |               |  ax25_sendmsg() {
-    0)   axwrapp-83   |               |    ax25_output() {
-    0)   axwrapp-83   |               |      ax25_kick.part.0() {
-    0)   axwrapp-83   |               |        ax25_send_iframe() {
-    0)   axwrapp-83   |   0.339 us    |          ax25_start_idletimer();
-    0)   axwrapp-83   |               |          ax25_transmit_buffer() {
-    0)   axwrapp-83   |   0.092 us    |            ax25_addr_size();
-    0)   axwrapp-83   |   0.097 us    |            ax25_addr_build();
-    0)   axwrapp-83   |   0.136 us    |            ax25_fwd_dev();
-    0)   axwrapp-83   |   9.116 us    |          }
-    0)   axwrapp-83   |   9.908 us    |        }
-    0)   axwrapp-83   |   0.091 us    |        ax25_t1timer_running();
-    0)   axwrapp-83   | + 10.810 us   |      }
-    0)   axwrapp-83   | + 11.168 us   |    }
-    0)   axwrapp-83   | + 14.362 us   |  }
-    ------------------------------------------
-    0)   axwrapp-83   =>   kworker-10  
-    ------------------------------------------
+A recent effort was made to fix as many DRM modeset drivers as
+possible [1] [2] [3] and most drivers are fixed now.
 
-    0)   kworker-10   |               |  ax25_kiss_rcv() {
-    0)   kworker-10   |               |    ax25_rcv.isra.0() {
-    0)   kworker-10   |   0.116 us    |      ax25_addr_parse();
-    0)   kworker-10   |   0.090 us    |      ax25_addr_size();
-    0)   kworker-10   |   0.144 us    |      ax25cmp();
-    0)   kworker-10   |   0.091 us    |      ax25_digi_invert();
-    0)   kworker-10   |               |      ax25_find_cb() {
-    0)   kworker-10   |   0.091 us    |        ax25cmp();
-    0)   kworker-10   |   0.087 us    |        ax25cmp();
-    0)   kworker-10   |   0.550 us    |      }
-    0)   kworker-10   |               |      ax25_std_frame_in() {
-    0)   kworker-10   |   0.105 us    |        ax25_decode();
-    0)   kworker-10   |   0.117 us    |        ax25_validate_nr();
-    0)   kworker-10   |               |        ax25_check_iframes_acked() {
-    0)   kworker-10   |   0.670 us    |          ax25_frames_acked();
-    0)   kworker-10   |               |          ax25_calculate_rtt() {
-    0)   kworker-10   |   0.086 us    |            ax25_t1timer_running();
-    0)   kworker-10   |   0.085 us    |            ax25_display_timer();
-    0)   kworker-10   |   0.465 us    |          }
-    0)   kworker-10   |   0.185 us    |          ax25_stop_t1timer();
-    0)   kworker-10   |   0.358 us    |          ax25_start_t3timer();
-    0)   kworker-10   |   2.186 us    |        }
-    0)   kworker-10   |               |        ax25_kick() {
-    0)   kworker-10   |   0.093 us    |          ax25_kick.part.0();
-    0)   kworker-10   |   0.277 us    |        }
-    0)   kworker-10   |   3.320 us    |      }
-    0)   kworker-10   |   5.927 us    |    }
-    0)   kworker-10   |   6.563 us    |  }
-    ------------------------------------------
-    0)   kworker-10   =>   axwrapp-83  
-    ------------------------------------------
+A grep through mainline for compatible strings used by this driver
+indicates that it is used by Qualcomm boards. The Qualcomm driver
+appears to be correctly calling drm_atomic_helper_shutdown() so we can
+remove the calls.
 
-    0)   axwrapp-83   |               |  ax25_release() {
-    0)   axwrapp-83   |   0.158 us    |    ax25_clear_queues();
-    0)   axwrapp-83   |               |    ax25_send_control() {
-    0)   axwrapp-83   |               |      ax25_transmit_buffer() {
-    0)   axwrapp-83   |   0.086 us    |        ax25_addr_size();
-    0)   axwrapp-83   |   0.086 us    |        ax25_addr_build();
-    0)   axwrapp-83   |   0.085 us    |        ax25_fwd_dev();
-    0)   axwrapp-83   |   3.972 us    |      }
-    0)   axwrapp-83   |   4.356 us    |    }
-    0)   axwrapp-83   |   0.142 us    |    ax25_stop_t2timer();
-    0)   axwrapp-83   |   0.145 us    |    ax25_stop_t3timer();
-    0)   axwrapp-83   |   0.094 us    |    ax25_stop_idletimer();
-    0)   axwrapp-83   |   0.093 us    |    ax25_calculate_t1();
-    0)   axwrapp-83   |   0.227 us    |    ax25_start_t1timer();
-    0)   axwrapp-83   |               |  /* netdev_put: dev=ax0 */
-    ------------------------------------------
-    1)    ax25d-77    =>   kworker-10  
-    ------------------------------------------
+[1] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium.org
+[2] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
+[3] https://lore.kernel.org/r/20230921192749.1542462-1-dianders@chromium.or=
+g
 
-    1)   kworker-10   |               |  ax25_kiss_rcv() {
-    1)   kworker-10   |               |    ax25_rcv.isra.0() {
-    1)   kworker-10   |   0.188 us    |      ax25_addr_parse();
-    1)   kworker-10   |   0.089 us    |      ax25_addr_size();
-    1)   kworker-10   |   0.177 us    |      ax25cmp();
-    1)   kworker-10   |   0.101 us    |      ax25_digi_invert();
-    1)   kworker-10   |               |      ax25_find_cb() {
-    1)   kworker-10   |   0.092 us    |        ax25cmp();
-    1)   kworker-10   |   0.085 us    |        ax25cmp();
-    1)   kworker-10   |   0.731 us    |      }
-    1)   kworker-10   |               |      ax25_std_frame_in() {
-    1)   kworker-10   |   0.098 us    |        ax25_decode();
-    1)   kworker-10   |               |        ax25_disconnect() {
-    1)   kworker-10   |   0.311 us    |          ax25_stop_t1timer();
-    1)   kworker-10   |   0.093 us    |          ax25_stop_t2timer();
-    1)   kworker-10   |   0.093 us    |          ax25_stop_t3timer();
-    1)   kworker-10   |   0.086 us    |          ax25_stop_idletimer();
-    1)   kworker-10   |   0.415 us    |          ax25_link_failed();
-    1)   kworker-10   |   1.778 us    |        }
-    1)   kworker-10   |   0.090 us    |        ax25_kick();
-    1)   kworker-10   |   2.523 us    |      }
-    1)   kworker-10   | + 10.078 us   |    }
-    1)   kworker-10   | + 12.054 us   |  }
-    0)   axwrapp-83   | * 13227.13 us |  }
-    ------------------------------------------
-    0)   axwrapp-83   =>    <idle>-0   
-    ------------------------------------------
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Benni Steini <bennisteinir@gmail.com>
+Cc: Joel Selvaraj <jo@jsfamily.in>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-    0)    <idle>-0    |               |  ax25_heartbeat_expiry() {
-    0)    <idle>-0    |               |    ax25_std_heartbeat_expiry() {
-    0)    <idle>-0    |               |      ax25_destroy_socket() {
-    0)    <idle>-0    |   0.249 us    |        ax25_cb_del();
-    0)    <idle>-0    |   0.107 us    |        ax25_stop_heartbeat();
-    0)    <idle>-0    |   0.140 us    |        ax25_stop_t1timer();
-    0)    <idle>-0    |   0.090 us    |        ax25_stop_t2timer();
-    0)    <idle>-0    |   0.146 us    |        ax25_stop_t3timer();
-    0)    <idle>-0    |   0.089 us    |        ax25_stop_idletimer();
-    0)    <idle>-0    |   0.740 us    |        ax25_clear_queues();
-    0)    <idle>-0    |   2.703 us    |      }
-    0)    <idle>-0    |   0.901 us    |      ax25_free_sock();
-    0)    <idle>-0    |   5.219 us    |    }
-    0)    <idle>-0    |   7.220 us    |  }
+Changes in v2:
+- Only handle 1 panel per patch.
+- Split removal of prepared/enabled from handling of remove/shutdown.
 
-Note the call to netdev_put() in ax25_release(), and note that there is
-never a corresponding call to netdev_hold(), which is why we end up with
-a refcount problem.
+ drivers/gpu/drm/panel/panel-novatek-nt36672a.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-My original patch corrected this by adding the call to netdev_hold()
-right next to the ax25_cb_add() in ax25_rcv(), which solves this
-problem. If it seems weird to have this login in ax25_rcv, we could move
-it to ax25_accept, right around line 1430 [3]; that would look
-something like:
+diff --git a/drivers/gpu/drm/panel/panel-novatek-nt36672a.c b/drivers/gpu/d=
+rm/panel/panel-novatek-nt36672a.c
+index 35aace79613a..c2abd20e0734 100644
+--- a/drivers/gpu/drm/panel/panel-novatek-nt36672a.c
++++ b/drivers/gpu/drm/panel/panel-novatek-nt36672a.c
+@@ -656,14 +656,6 @@ static void nt36672a_panel_remove(struct mipi_dsi_devi=
+ce *dsi)
+        struct nt36672a_panel *pinfo =3D mipi_dsi_get_drvdata(dsi);
+        int err;
 
-    diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-    index 8df2b00526e..e1ce1eeed7d 100644
-    --- a/net/ax25/af_ax25.c
-    +++ b/net/ax25/af_ax25.c
-    @@ -1383,6 +1383,8 @@ static int ax25_accept(struct socket *sock, struct socket *newsock, int flags,
-            DEFINE_WAIT(wait);
-            struct sock *sk;
-            int err = 0;
-    +       ax25_cb *ax25;
-    +       ax25_dev *ax25_dev;
+-       err =3D drm_panel_unprepare(&pinfo->base);
+-       if (err < 0)
+-               dev_err(&dsi->dev, "failed to unprepare panel: %d\n", err);
+-
+-       err =3D drm_panel_disable(&pinfo->base);
+-       if (err < 0)
+-               dev_err(&dsi->dev, "failed to disable panel: %d\n", err);
+-
+        err =3D mipi_dsi_detach(dsi);
+        if (err < 0)
+                dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", =
+err);
+@@ -671,14 +663,6 @@ static void nt36672a_panel_remove(struct mipi_dsi_devi=
+ce *dsi)
+        drm_panel_remove(&pinfo->base);
+ }
 
-            if (sock->state != SS_UNCONNECTED)
-                    return -EINVAL;
-    @@ -1436,6 +1438,10 @@ static int ax25_accept(struct socket *sock, struct socket *newsock, int flags,
-            kfree_skb(skb);
-            sk_acceptq_removed(sk);
-            newsock->state = SS_CONNECTED;
-    +       ax25 = sk_to_ax25(newsk);
-    +       ax25_dev = ax25->ax25_dev;
-    +       netdev_hold(ax25_dev->dev, &ax25->dev_tracker, GFP_ATOMIC);
-    +       ax25_dev_hold(ax25_dev);
+-static void nt36672a_panel_shutdown(struct mipi_dsi_device *dsi)
+-{
+-       struct nt36672a_panel *pinfo =3D mipi_dsi_get_drvdata(dsi);
+-
+-       drm_panel_disable(&pinfo->base);
+-       drm_panel_unprepare(&pinfo->base);
+-}
+-
+ static const struct of_device_id tianma_fhd_video_of_match[] =3D {
+        { .compatible =3D "tianma,fhd-video", .data =3D &tianma_fhd_video_p=
+anel_desc },
+        { },
+@@ -692,7 +676,6 @@ static struct mipi_dsi_driver nt36672a_panel_driver =3D=
+ {
+        },
+        .probe =3D nt36672a_panel_probe,
+        .remove =3D nt36672a_panel_remove,
+-       .shutdown =3D nt36672a_panel_shutdown,
+ };
+ module_mipi_dsi_driver(nt36672a_panel_driver);
 
-    out:
-            release_sock(sk);
+--
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
-This has the advantage that now ax25_accept() mirrors the behavior of
-ax25_bind() in terms of declaring a reference on the ax25 device, which
-makes a certain amount of sense.
-
-This seems to work out just as well as the previous patch; both
-eliminiate the refcount imbalance. With the above diff in place, the
-function graph looks like [4], with the call to netdev_hold() in
-ax25_accept:
-
-    # tracer: function_graph
-    #
-    # CPU  TASK/PID         DURATION                  FUNCTION CALLS
-    # |     |    |           |   |                     |   |   |   |
-    ------------------------------------------
-    1)    <idle>-0    =>   kworker-29  
-    ------------------------------------------
-
-    1)   kworker-29   |               |  ax25_kiss_rcv() {
-    1)   kworker-29   |               |    ax25_rcv.isra.0() {
-    1)   kworker-29   |   0.152 us    |      ax25_addr_parse();
-    1)   kworker-29   |   0.111 us    |      ax25_addr_size();
-    1)   kworker-29   |   0.149 us    |      ax25cmp();
-    1)   kworker-29   |   0.139 us    |      ax25_digi_invert();
-    1)   kworker-29   |               |      ax25_find_cb() {
-    1)   kworker-29   |   0.229 us    |        ax25cmp();
-    1)   kworker-29   |   0.243 us    |        ax25cmp();
-    1)   kworker-29   |   0.088 us    |        ax25cmp();
-    1)   kworker-29   |   1.076 us    |      }
-    1)   kworker-29   |               |      ax25_find_listener() {
-    1)   kworker-29   |   0.092 us    |        ax25cmp();
-    1)   kworker-29   |   0.085 us    |        ax25cmp();
-    1)   kworker-29   |   0.632 us    |      }
-    1)   kworker-29   |               |      ax25_make_new() {
-    1)   kworker-29   |               |        ax25_create_cb() {
-    1)   kworker-29   |   0.132 us    |          ax25_setup_timers();
-    1)   kworker-29   |   0.547 us    |        }
-    1)   kworker-29   |   1.965 us    |      }
-    1)   kworker-29   |               |      ax25_send_control() {
-    1)   kworker-29   |               |        ax25_transmit_buffer() {
-    1)   kworker-29   |   0.090 us    |          ax25_addr_size();
-    1)   kworker-29   |   0.089 us    |          ax25_addr_build();
-    1)   kworker-29   |   0.084 us    |          ax25_fwd_dev();
-    1)   kworker-29   |   5.682 us    |        }
-    1)   kworker-29   |   6.037 us    |      }
-    1)   kworker-29   |   0.100 us    |      ax25_cb_add();
-    1)   kworker-29   |   0.449 us    |      ax25_start_heartbeat();
-    1)   kworker-29   |   0.200 us    |      ax25_start_t3timer();
-    1)   kworker-29   |   0.104 us    |      ax25_start_idletimer();
-    1)   kworker-29   | + 16.757 us   |    }
-    1)   kworker-29   | + 18.240 us   |  }
-    ------------------------------------------
-    0)   ax25ipd-63   =>    ax25d-77   
-    ------------------------------------------
-
-    0)    ax25d-77    |               |  ax25_accept() {
-    0)    ax25d-77    |               |  /* netdev_hold: dev=ax0 */
-    0)    ax25d-77    |   2.067 us    |  }
-    0)    ax25d-77    |   0.140 us    |  ax25_getname();
-    0)    ax25d-77    |   0.189 us    |  ax25_getname();
-    ------------------------------------------
-    1)   kworker-29   =>   axwrapp-82  
-    ------------------------------------------
-
-    1)   axwrapp-82   |               |  ax25_sendmsg() {
-    1)   axwrapp-82   |               |    ax25_output() {
-    1)   axwrapp-82   |               |      ax25_kick.part.0() {
-    1)   axwrapp-82   |               |        ax25_send_iframe() {
-    1)   axwrapp-82   |   0.343 us    |          ax25_start_idletimer();
-    1)   axwrapp-82   |               |          ax25_transmit_buffer() {
-    1)   axwrapp-82   |   0.119 us    |            ax25_addr_size();
-    1)   axwrapp-82   |   0.118 us    |            ax25_addr_build();
-    1)   axwrapp-82   |   0.156 us    |            ax25_fwd_dev();
-    1)   axwrapp-82   |   9.965 us    |          }
-    1)   axwrapp-82   | + 10.844 us   |        }
-    1)   axwrapp-82   |   0.107 us    |        ax25_t1timer_running();
-    1)   axwrapp-82   |   0.345 us    |        ax25_stop_t3timer();
-    1)   axwrapp-82   |   0.112 us    |        ax25_calculate_t1();
-    1)   axwrapp-82   |   0.499 us    |        ax25_start_t1timer();
-    1)   axwrapp-82   | + 21.187 us   |      }
-    1)   axwrapp-82   | + 21.620 us   |    }
-    1)   axwrapp-82   | + 25.665 us   |  }
-    ------------------------------------------
-    1)   ax25ipd-63   =>   axwrapp-82  
-    ------------------------------------------
-
-    1)   axwrapp-82   |               |  ax25_sendmsg() {
-    1)   axwrapp-82   |               |    ax25_output() {
-    1)   axwrapp-82   |               |      ax25_kick.part.0() {
-    1)   axwrapp-82   |               |        ax25_send_iframe() {
-    1)   axwrapp-82   |   1.027 us    |          ax25_start_idletimer();
-    1)   axwrapp-82   |               |          ax25_transmit_buffer() {
-    1)   axwrapp-82   |   0.505 us    |            ax25_addr_size();
-    1)   axwrapp-82   |   0.522 us    |            ax25_addr_build();
-    1)   axwrapp-82   |   0.550 us    |            ax25_fwd_dev();
-    1)   axwrapp-82   | + 32.110 us   |          }
-    1)   axwrapp-82   | + 35.118 us   |        }
-    1)   axwrapp-82   |   0.526 us    |        ax25_t1timer_running();
-    1)   axwrapp-82   | + 38.770 us   |      }
-    1)   axwrapp-82   | + 40.359 us   |    }
-    1)   axwrapp-82   | + 50.019 us   |  }
-    ------------------------------------------
-    0)    ax25d-77    =>   kworker-10  
-    ------------------------------------------
-
-    0)   kworker-10   |               |  ax25_kiss_rcv() {
-    0)   kworker-10   |               |    ax25_rcv.isra.0() {
-    0)   kworker-10   |   0.632 us    |      ax25_addr_parse();
-    0)   kworker-10   |   0.467 us    |      ax25_addr_size();
-    0)   kworker-10   |   0.600 us    |      ax25cmp();
-    0)   kworker-10   |   0.506 us    |      ax25_digi_invert();
-    0)   kworker-10   |               |      ax25_find_cb() {
-    0)   kworker-10   |   0.572 us    |        ax25cmp();
-    0)   kworker-10   |   0.484 us    |        ax25cmp();
-    0)   kworker-10   |   2.737 us    |      }
-    0)   kworker-10   |               |      ax25_std_frame_in() {
-    0)   kworker-10   |   0.569 us    |        ax25_decode();
-    0)   kworker-10   |   0.607 us    |        ax25_validate_nr();
-    0)   kworker-10   |               |        ax25_check_iframes_acked() {
-    0)   kworker-10   |   4.171 us    |          ax25_frames_acked();
-    0)   kworker-10   |               |          ax25_calculate_rtt() {
-    0)   kworker-10   |   0.442 us    |            ax25_t1timer_running();
-    0)   kworker-10   |   0.500 us    |            ax25_display_timer();
-    0)   kworker-10   |   2.463 us    |          }
-    0)   kworker-10   |   0.889 us    |          ax25_stop_t1timer();
-    0)   kworker-10   |   1.559 us    |          ax25_start_t3timer();
-    0)   kworker-10   | + 11.534 us   |        }
-    0)   kworker-10   |               |        ax25_kick() {
-    0)   kworker-10   |   0.480 us    |          ax25_kick.part.0();
-    0)   kworker-10   |   1.467 us    |        }
-    0)   kworker-10   | + 16.917 us   |      }
-    0)   kworker-10   | + 27.062 us   |    }
-    0)   kworker-10   | + 30.583 us   |  }
-    1)   axwrapp-82   |               |  ax25_release() {
-    1)   axwrapp-82   |   0.932 us    |    ax25_clear_queues();
-    1)   axwrapp-82   |               |    ax25_send_control() {
-    1)   axwrapp-82   |               |      ax25_transmit_buffer() {
-    1)   axwrapp-82   |   0.516 us    |        ax25_addr_size();
-    1)   axwrapp-82   |   0.484 us    |        ax25_addr_build();
-    1)   axwrapp-82   |   0.451 us    |        ax25_fwd_dev();
-    1)   axwrapp-82   | + 91.128 us   |      }
-    1)   axwrapp-82   | + 94.596 us   |    }
-    1)   axwrapp-82   |   1.554 us    |    ax25_stop_t2timer();
-    1)   axwrapp-82   |   1.151 us    |    ax25_stop_t3timer();
-    1)   axwrapp-82   |   0.758 us    |    ax25_stop_idletimer();
-    1)   axwrapp-82   |   0.676 us    |    ax25_calculate_t1();
-    1)   axwrapp-82   |   1.642 us    |    ax25_start_t1timer();
-    1)   axwrapp-82   |               |  /* netdev_put: dev=ax0 */
-    1)   axwrapp-82   | ! 123.696 us  |  }
-    ------------------------------------------
-    1)   axwrapp-82   =>   kworker-10  
-    ------------------------------------------
-
-    1)   kworker-10   |               |  ax25_kiss_rcv() {
-    1)   kworker-10   |               |    ax25_rcv.isra.0() {
-    1)   kworker-10   |   0.568 us    |      ax25_addr_parse();
-    1)   kworker-10   |   0.428 us    |      ax25_addr_size();
-    1)   kworker-10   |   0.504 us    |      ax25cmp();
-    1)   kworker-10   |   0.453 us    |      ax25_digi_invert();
-    1)   kworker-10   |               |      ax25_find_cb() {
-    1)   kworker-10   |   0.425 us    |        ax25cmp();
-    1)   kworker-10   |   0.429 us    |        ax25cmp();
-    1)   kworker-10   |   2.511 us    |      }
-    1)   kworker-10   |               |      ax25_std_frame_in() {
-    1)   kworker-10   |   0.518 us    |        ax25_decode();
-    1)   kworker-10   |               |        ax25_disconnect() {
-    1)   kworker-10   |   0.840 us    |          ax25_stop_t1timer();
-    1)   kworker-10   |   0.459 us    |          ax25_stop_t2timer();
-    1)   kworker-10   |   0.444 us    |          ax25_stop_t3timer();
-    1)   kworker-10   |   0.413 us    |          ax25_stop_idletimer();
-    1)   kworker-10   |   1.123 us    |          ax25_link_failed();
-    1)   kworker-10   |   6.202 us    |        }
-    1)   kworker-10   |   0.428 us    |        ax25_kick();
-    1)   kworker-10   |   9.214 us    |      }
-    1)   kworker-10   | + 18.606 us   |    }
-    1)   kworker-10   | + 21.675 us   |  }
-    ------------------------------------------
-    0)   kworker-10   =>    <idle>-0   
-    ------------------------------------------
-
-    0)    <idle>-0    |               |  ax25_heartbeat_expiry() {
-    0)    <idle>-0    |               |    ax25_std_heartbeat_expiry() {
-    0)    <idle>-0    |               |      ax25_destroy_socket() {
-    0)    <idle>-0    |   0.202 us    |        ax25_cb_del();
-    0)    <idle>-0    |   0.116 us    |        ax25_stop_heartbeat();
-    0)    <idle>-0    |   0.100 us    |        ax25_stop_t1timer();
-    0)    <idle>-0    |   0.101 us    |        ax25_stop_t2timer();
-    0)    <idle>-0    |   0.158 us    |        ax25_stop_t3timer();
-    0)    <idle>-0    |   0.101 us    |        ax25_stop_idletimer();
-    0)    <idle>-0    |   0.321 us    |        ax25_clear_queues();
-    0)    <idle>-0    |   2.483 us    |      }
-    0)    <idle>-0    |   0.531 us    |      ax25_free_sock();
-    0)    <idle>-0    |   4.912 us    |    }
-    0)    <idle>-0    |   6.545 us    |  }
-
-[1]: https://gist.github.com/larsks/b658c0bd766648b16c31c8ed0fc1dc1f#file-0001-trace-netdev_hold-and-netdev_put-patch
-[2]: https://gist.github.com/larsks/b658c0bd766648b16c31c8ed0fc1dc1f#file-trace1-inbound-txt
-[3]: https://github.com/torvalds/linux/blob/7367539ad4b0f8f9b396baf02110962333719a48/net/ax25/af_ax25.c#L1430
-[4]: https://gist.github.com/larsks/b658c0bd766648b16c31c8ed0fc1dc1f#file-trace2-inbound-txt
-
--- 
-Lars Kellogg-Stedman <lars@oddbit.com> | larsks @ {irc,twitter,github}
-http://blog.oddbit.com/                | N1LKS
 
