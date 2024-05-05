@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-168973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8368BC069
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 14:47:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAA28BC06F
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AECA2B2127B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BBC21C20A9D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D801B7FD;
-	Sun,  5 May 2024 12:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="huAE6tgp"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3651BC5C;
+	Sun,  5 May 2024 13:04:03 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C84A21;
-	Sun,  5 May 2024 12:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56022182CC
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 13:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714913263; cv=none; b=c6/GXsc7AG5BgMMekuMVvJu6G8XGzaknWLvlK6WUEErVcF6JlsWJrMcOb4fhs4Y5/PU0rJEwf3mxfso33Qu8OlKUkSiF5XRwhlRXyHmsR6IBd4F6LFpoG7/ap6eOWMn90pKeJHVzmf5+neF6BGdkf16laQTOqWmJnpz3CbG1giE=
+	t=1714914243; cv=none; b=d5EopMKabq34b6Q1T5XDsXgYZZ+KxL9VEbpRkEnOIrit4OADuTAM7M+eK7qDipf2BNz0Ac/S8InV9Q8L2yOf/CpyxfbLzBBuwGjIkWNqY0HTNB0EUJrH2GSdEtKLYeBzi0NmwjtSiauDsUsOvtmRTa+Dm7K2S/QKQd2SpddESJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714913263; c=relaxed/simple;
-	bh=F2FHAydrM4Fu97BXK9d3X/PI9bvwXg2FTsbEBxWdXBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mCQDa+ixdW3a3/dSjV7TAn5Vtmx6vAPQBVHpOax4jUukQHBT/8TZ0tfLGglTG8jiXEoXUyZaWjrWE9N4L+emzdsIsCi8avYpQyuprSoAf9ruaBKoD8Mdy0s8xondhsmT5siGhvhuJP5lGZeA7143ehSPWumqOyIwS4tHrGEk8Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=huAE6tgp; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VXPT32w3zz6Cp2tZ;
-	Sun,  5 May 2024 12:47:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1714913253; x=1717505254; bh=5FHfIpSzEQFovv08YcFGiZz2
-	9l56wZcz2Up+cABevP8=; b=huAE6tgp2GeLmDMGShTWY6YYnljmzKcwAm35sqrJ
-	2a42oiar46O4zSWCo77BnNtskaNbp3HQUBSbP5vsOTvmFeorKxcc8d8nnzheAaZ9
-	5wQ0D3Vk9z4aTEBgO9z/8MnyRNF6KfxyibWh/yJmcwvZDGgO0tVBrgzezmuIjHBQ
-	5MQhX1rZ8UJMZqiIy1Id2LZBcM4GgpEh8fkCB2whLa6rvye3rZtCIdI73MEgD4Al
-	sDnNiXvka2GAvDaFJYXgfLGOLHFbTneCDnmO1xGjI452SFkfV9BgYaJGhDWO6sRB
-	vrUu5j5NeVTuwfTNRgs1yWV//VdlI/Fn+oVRw+1aMq+UYw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id RDwhh8cKXPIc; Sun,  5 May 2024 12:47:33 +0000 (UTC)
-Received: from [192.168.3.219] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VXPT04FgNz6Cnv3g;
-	Sun,  5 May 2024 12:47:32 +0000 (UTC)
-Message-ID: <32e6621b-cbd9-42be-8626-49c12c25f139@acm.org>
-Date: Sun, 5 May 2024 05:47:31 -0700
+	s=arc-20240116; t=1714914243; c=relaxed/simple;
+	bh=LWjHih/OHSy6SrCfOa9X/24rEFm3Ua2BeaQBjdKPJY4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=oGlwSRr4kyQI0V3lI6B3/klgUAFmVPdz0pMbc218i4BOvwRM99afhlJcL/8I66ze/Zb/BTltg5aYplpTu5rY3jcD06KzIHiFx++kgMz322ivIZlyEXqychMe2qf92DFym23BtOY0EUgFRkxsYsVsut855h1Jr+ytqFQ82eoQ7UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-273-fKqCY0TxOgquqS3S8_PQKQ-1; Sun, 05 May 2024 14:03:57 +0100
+X-MC-Unique: fKqCY0TxOgquqS3S8_PQKQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 5 May
+ 2024 14:03:23 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 5 May 2024 14:03:23 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Kuan-Wei Chiu' <visitorckw@gmail.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "yury.norov@gmail.com" <yury.norov@gmail.com>
+CC: "linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
+	"n26122115@gs.ncku.edu.tw" <n26122115@gs.ncku.edu.tw>,
+	"jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 1/2] lib/test_bitops: Add benchmark test for fns()
+Thread-Topic: [PATCH v3 1/2] lib/test_bitops: Add benchmark test for fns()
+Thread-Index: AQHam5eHsEz2ZjZaTki/tQEkD/csqLGIn56Q
+Date: Sun, 5 May 2024 13:03:23 +0000
+Message-ID: <44e9ab62e0f543439eb7566a9f134af6@AcuMS.aculab.com>
+References: <20240501071647.10228-1-visitorckw@gmail.com>
+ <20240501071647.10228-2-visitorckw@gmail.com>
+In-Reply-To: <20240501071647.10228-2-visitorckw@gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -mm 1/2] nilfs2: use integer type instead of enum req_op
- for event tracing header
-To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-nilfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-References: <20240430080019.4242-1-konishi.ryusuke@gmail.com>
- <20240430080019.4242-2-konishi.ryusuke@gmail.com>
- <650ed9f6-fa50-4a3b-939d-633f9e389137@acm.org>
- <CAKFNMomCzNMU0tjLkEchr=GQwSVW1zr1GAq7vUToeOvX-M3eVg@mail.gmail.com>
- <CAKFNMo=rkHF6urydfDbcvTbGzUEHmsTudVMm517pTE32vzqiwA@mail.gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <CAKFNMo=rkHF6urydfDbcvTbGzUEHmsTudVMm517pTE32vzqiwA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 5/2/24 12:01 PM, Ryusuke Konishi wrote:
-> If you haven't given up yet on solving the underlying problem, I would
-> like to withdraw this patch.
+From: Kuan-Wei Chiu
+> Sent: 01 May 2024 08:17
+>=20
+> Introduce a benchmark test for the fns(). It measures the total time
+> taken by fns() to process 1,000,000 test data generated using
+> get_random_long() for each n in the range [0, BITS_PER_LONG).
+>=20
+> example:
+> test_bitops: fns:          5876762553 ns, 64000000 iterations
 
-Has this untested change been considered?
+Great benchmark....
 
-diff --git a/include/trace/events/nilfs2.h b/include/trace/events/nilfs2.h
-index 8efc6236f57c..67fd2e002ca7 100644
---- a/include/trace/events/nilfs2.h
-+++ b/include/trace/events/nilfs2.h
-@@ -214,7 +214,7 @@ TRACE_EVENT(nilfs2_mdt_submit_block,
-  		      __entry->inode,
-  		      __entry->ino,
-  		      __entry->blkoff,
--		      __entry->mode)
-+		      (__force u32)__entry->mode)
-  );
+The compiler almost certainly optimises it all away.
 
-  #endif /* _TRACE_NILFS2_H */
+Assigning the result of fns() to a file scope (global) volatile int
+should stop that happening.
+
+And a real test would actually check the result - just in case
+someone does something silly.
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
