@@ -1,55 +1,49 @@
-Return-Path: <linux-kernel+bounces-168947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD288BC010
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:31:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34548BC011
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD021B210CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:31:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A3691C20B04
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE67125B2;
-	Sun,  5 May 2024 10:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Y8G8VjW0"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACCA11182;
+	Sun,  5 May 2024 10:36:55 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45981849;
-	Sun,  5 May 2024 10:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E1E566A
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 10:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714905062; cv=none; b=G5973t2PRoOHEo6hVcF7752BzFDRNeR536L9uyrgdtsKgNRbUW6T9kR/qoYCb1F08lwT29sth7/e8ywevH6oYbL20c4b8kiwzBf0nlrZdbneJmyq3gZA4xIxQa8OwsfGA7NwtYE9HQqmTllnigBZGlldWo0LOto5ex9FFsYWEJs=
+	t=1714905414; cv=none; b=btET42GARFtlakF4Yp1TQpiz3SCFi/C4FWhLrfqwfBRobMAUcTTGJ3O+e8Dv1GItCJKyZ0ovhsbkle/sPWPg1THMKRscRPOpYmNeovXdxJ8fEiuGALVuaXVhzQZFl4Urg1PfTnEGLT/wn1LhCFS8ldGGolfENK+vpKV8x7+4A1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714905062; c=relaxed/simple;
-	bh=lmYUyRZqt4VeqnRX5yKD8WzCCYGdm9jSGKvpPNU6ebE=;
+	s=arc-20240116; t=1714905414; c=relaxed/simple;
+	bh=4dGJOao/e2udAoNy0XvUDEsCmbPxU6hDszjW6HEIw/w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZqrtj4kuxHQiaIXZJctujX450uvd0MhtbGccYJwUVwPdwW0iBui+DDg5zqHs5WmobkpAnxKGNOpLRPWYgyXCCKR/ZdqWsTRhagMK4F0qeL2ZV8aSWNcEwwKt59R5ZG4GycLUFRsuW6qBiVWPK9VlNUDHQEQ5Ous2my4ccy6S3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Y8G8VjW0; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714905056; x=1715509856; i=markus.elfring@web.de;
-	bh=lmYUyRZqt4VeqnRX5yKD8WzCCYGdm9jSGKvpPNU6ebE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Y8G8VjW00jhjc+d55+67vkBiqupH0jCrTuvL68KC6MNA45BXOJ9njP+NnXWm9oQi
-	 Uaye+AfwQumd1sflKJ1XluvvdBXZS6LsxxRcYbvcFlCO01EkJN3hwrnFHMzRcQkB4
-	 nzCWl3Rbru9T2vDNoEsdomSjARcUVa3eDzk6WtP7AlI5o480k9ezCYvc4+5pY57UD
-	 N8JuCiQ/YzguG1k/1/pADuoI+CleFekkX+W60niL7mtz86FqI/M7aBflhf2g2FZmi
-	 TVW8Tm+pkoAJ1EjrGf4bqV4cKXhzuuN9GFnghD83kfN/mrBt1lj8hoLAjzG1bhyv0
-	 8l5Ds2XZIqO5tS1m+w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JAm-1s5Clh3dIg-003LgR; Sun, 05
- May 2024 12:30:56 +0200
-Message-ID: <31f78b18-0caa-45c0-af84-c95d525a13dc@web.de>
-Date: Sun, 5 May 2024 12:30:54 +0200
+	 In-Reply-To:Content-Type; b=S3EJ/WHTEjpKoPTlGD8teEi7qVU3uL52MV7/VWsLdDGBeBcoj96nE3SME7ylVQyJI2BYf6lo/ciq68fQ5pnJkbRkxNJ6/Qh+k57vKzZA6WZMi38xedMN4XBPEMrL9HQBUrFzTxP6gQ6E1/N4SDUnefKkj+m+GJY0Dj6dsvtHGv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 445AanF2024438;
+	Sun, 5 May 2024 19:36:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
+ Sun, 05 May 2024 19:36:49 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 445Aam07024433
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 5 May 2024 19:36:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <6d10f829-5a0c-405a-b39a-d7266f3a1a0b@I-love.SAKURA.ne.jp>
+Date: Sun, 5 May 2024 19:36:49 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,47 +51,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Bluetooth: qca: Use common error handling code in two functions
-To: Julia Lawall <julia.lawall@inria.fr>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <fd9f738e-8e78-4afb-96fd-907f72fb4e13@web.de>
- <alpine.DEB.2.22.394.2405051105000.3397@hadrien>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <alpine.DEB.2.22.394.2405051105000.3397@hadrien>
+Subject: [PATCH] nfc: nci: Fix kcov check in nci_rx_work()
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>, Jeremy Cline <jeremy@jcline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: syzbot <syzbot+0438378d6f157baae1a2@syzkaller.appspotmail.com>,
+        edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+        Aleksandr Nogikh <nogikh@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Dmitry Vyukov <dvyukov@google.com>
+References: <0000000000007b02500614b66e31@google.com>
+ <550cc81a3dffd07ec1235dc32fd7bbde22d9bf57.camel@sipsolutions.net>
+ <CA+fCnZe_fuT2y4ryFeb8A49k19MY3Nct79JCoGwQh0hjcq6bqA@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CA+fCnZe_fuT2y4ryFeb8A49k19MY3Nct79JCoGwQh0hjcq6bqA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gsfazNnTrq021Kj/cnctGof1DoBOC1zAs8MxqeLWz6QCZG83Njh
- YPVEZ3fTOC5k4wiGy10KB3ZJQ3wRpiZw3VLyEULZen5Qd6fRFB6AzZIFiPq7DuajXbD8Pda
- +eVKia6xWwRYoK1OPtT4ibzv3PblV9PN6zYS+rimPGPzmcsc/20j+diE77CB4AJGd3Fb9I4
- whT98KIigRHc9uhBmieWA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:C9cD6zfGOxE=;tV93v73JML6i1PpzlTZrOOrzw9L
- U5eR6xr1gf9QiVCI5VBzhYCRutSZkK/YZKvV8HggMxIoz7IF7sy7BlYZ1GGR5/NYCz2m2Fp8i
- YvNlage2+nAKpsyT7ncocGE6vRKhhjRHavq5zFSCPlb2a1OLAExwghZWqMkGvQdsdLNQU4iow
- 63Pi6dI0r8vnpkDs8+jVSCa6yPHJ+6VXqBKxjL9AOwH+YEHRmTdtr/uDITexhl1eU/1NV8v+1
- vl1Sjj5L/it97+I2qTpkAP0phAUB8sHGFrG8rNdE8NQfnt2mPYNOzH23MlaI0/KKp/nCMtec6
- yCNqkAtsAAWtrtpVcTgHovrBJAia3AsYWL5rmU5BFVw6/e/QplG8bFSPGYxl1QHgLkP1nCPQC
- ApavJ1lV2+EKvUfFrb+OSMuRIdMWUMqXN2YUhzWXKI1umoGIxspy63ciJ9JXG8FsGsmY5L4aO
- /iHsuYR4t3A5kSaC2nWOXqh/a8neFhiE83UIm+DD5Uj/B0J7NvKjMiksTgVT9YwhG0kFHcQdJ
- ASAFfRC1I5cyNBzpdqjn/UBNeeyIcLBTSpNiHOZIvE0chTvGGyt4juaPL87nfVQ6xdT9uYXTa
- 7R/rCZfgoecl4Qp+a8831prZGxhKqKQ3i3P1xzA9cfQVmiu3QEzp4VUaf4NrvIwTHioRQcq9G
- MgsMh5Muf+azTRjM1x8SxX5Mf/QgZtDRMdtHHxI9yK8lOL/dcU24TXBqpnvYjMZrifOywLNhS
- 1OiwSjW3uJgEuTcCrQyaEOZ5X+LcMdTLmj9rGNlaknoGX9kxFhEv/0QCIzY3AnjKGBIV6iQxZ
- XhxoX/Cb9n6eIFwhLjOEC3O0wBcjTWZeXuQBKgiLf5MAEmbcpZp2hDn83TDGBGLtE8
+Content-Transfer-Encoding: 7bit
 
->> Add a jump target so that the setting of an error code can be better re=
-used
->> at the end of these function implementations.
-=E2=80=A6
-> This reduces readability, and backwards jumps are rarely desirable.
+Commit 7e8cdc97148c ("nfc: Add KCOV annotations") added
+kcov_remote_start_common()/kcov_remote_stop() pair into nci_rx_work(),
+with an assumption that kcov_remote_stop() is called upon continue of
+the for loop. But commit d24b03535e5e ("nfc: nci: Fix uninit-value in
+nci_dev_up and nci_ntf_packet") forgot to call kcov_remote_stop() before
+break of the for loop.
 
-Would you like to support any other design approaches better for
-the reduction of questionable source code duplication?
+Reported-by: syzbot <syzbot+0438378d6f157baae1a2@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=0438378d6f157baae1a2
+Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+Debugged-by: Andrey Konovalov <andreyknvl@gmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ net/nfc/nci/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Markus
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index 0d26c8ec9993..b133dc55304c 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -1518,6 +1518,7 @@ static void nci_rx_work(struct work_struct *work)
+ 
+ 		if (!nci_plen(skb->data)) {
+ 			kfree_skb(skb);
++			kcov_remote_stop();
+ 			break;
+ 		}
+ 
+-- 
+2.34.1
+
 
