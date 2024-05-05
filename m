@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-168888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C691A8BBF48
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:10:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DAA8BBF4B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97819B21235
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:10:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC98E281E9B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F393FC2;
-	Sun,  5 May 2024 05:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434E63D8E;
+	Sun,  5 May 2024 05:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mrn1xhBN"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lQ0S6AeN"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A193184D
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 05:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDCA184D
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 05:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714885792; cv=none; b=V6StVRUT3ycE1+MS6wKSBAPPHuaFISSz0Dx8YiO6TwsFayV2MjkzFQnAZk2FT/2QpNseWp/CrMdJY/yfx3Qo+VLkThotX1EGqebkhtFPqCBU3u+KIgAIEZD52Mrponr10WnLs38s3L/5YjjFI0i5nnifqVX8wML9uzFQsRYvd9c=
+	t=1714885992; cv=none; b=pq1tU0aPKaz7P3/LmNFeBGdAGSUCk/iAd+xL9sNRNbVUifKz2tQ7RHijdNKHry9LDPlpIujlLXGSBgBzgU3/ThFcPYNRxrceal3w5TDjYSAvwoInle1So8qP9USAt0wlz06LDhxsVaqcA7Xqz1oeAhdRqBBcHUyKBL8R9fp49hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714885792; c=relaxed/simple;
-	bh=olH7hQHHDHDp2bsomJmiSdHdXsNU4KXMYOJHnmgtMxQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qu0H5qffKLdhw+Q3rJpx/utattk4eFcUKiKxzNyvSAIKTSd/xAFnPRlOY3PqoJi25KvIQRfGoBPfdKpfWI9S1VJR3/yGw+/Q1gMMIeeOAVlPbmDujWWqmHOykay06ICY3m39pp+/vSO7ubVtQ6FG8iqcO6Z7wr9Xxa3OZQSemSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mrn1xhBN; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ec182ab287so96025ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 22:09:51 -0700 (PDT)
+	s=arc-20240116; t=1714885992; c=relaxed/simple;
+	bh=lehZe/7AZUPc+TY69M7+JDOOMjWhzo3PGggFRdj3IxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueOIYktWdD436K+XIiVVHDfzWGktBQJ953XJKFub965y1a75KAsOk8KI/TbBknApTLyrbHCO0/i4KGsz9YwhAPLrs5l5ZAp8QnrysOHKWX1hTmZs85VsBwQYoUMKrMEN3stOY7EZm2tsHd6XFZn+aSoUdBD6siW0b+i1JoZ/liw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lQ0S6AeN; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f44a2d1e3dso765129b3a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 22:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1714885791; x=1715490591; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LFEOHbhdT8xlmXAZ79el6d0XvgZNSArYbb5H09rUb4=;
-        b=Mrn1xhBNBqxCE5yPD5OVx+e8FNRV17ekqQA2aKdNnVNULq8zWnwENBgC+uQl92OwtH
-         N8CSJy84/hyjZZjR6nTlf5NZYZVbhQvn0/s2xcrqoxO6hcBF9TVX8NkzWKg8cm25W1+0
-         0boxYbJxSq21MoP1RTNS/2jad52AnDomuT+zNIfSYmC0RsvYFALNXf3ssOYQmEWycu/e
-         65ZT8SB/V25cyTrikHt5DWMwAVwYH6IyNvxza9ZVNbcMQw9AFRxRAhIG+o9VGHsv1vms
-         R1I7anqnYCubCZwrkOusYF3KwLWw5hEqWk5W3DxnebOzRvc3dshcmd4SvE+TLp67Rn1T
-         rG+Q==
+        d=chromium.org; s=google; t=1714885991; x=1715490791; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NsfIaMjECuvVC7Z9W0Sqg9Q69W+YCDdoNBcIXl2QIwk=;
+        b=lQ0S6AeNmPbdX7bWqd7XTfvrp/l74zHlBTfz/rJwAsGHSd0i6sJQEshSHlEHNqxuxH
+         pkjf4mgpmtag+PI7mPu0VFRNj4OGf/ZHINipTjIPSIMhtp1dQ2lhs5qpphTlq2dnTFHp
+         swWICkzSZ2OKAPGhfHctiOlEsmHZN6wfbz0pc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714885791; x=1715490591;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+LFEOHbhdT8xlmXAZ79el6d0XvgZNSArYbb5H09rUb4=;
-        b=qUgCyCfe7pb3EqwLwdOkRxH9VKBwa70ivrb/lvnyOl5MA82bMkM888K8OoZXO3DlA9
-         wj40M57r2FnWCAkii1DbbMV7Mg9zrFtGx0fcu1+0rs5vJPU9OQUbSUYHyP6jAq5ApnF/
-         UENK5fEfAWztQ4RuuSx/943R3O74WY/IMplcMwgU2jT934XyzINWLQr7TfVv1WIUaWRM
-         oB00K5+02+zAFmabS7OAm23AXotFwpkNpMpQKjB4SuSZEZbKUBRJMJrnx3XDirTQMlua
-         vzaLPhKha3p5dOTPn1xiry0x5hwGJHQhR51L4SttlRENZfomVlDCs03hUM/X605HBVhu
-         q5mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWewG13qQiim7aHRG2gIJFd+hE2wte1MQrt6LNyI9cY+LoOx6/VMU5w/yjzgji59sbR2WjpN0L6zp3oBbRz5NhuhVsDDOXViKn8XoaE
-X-Gm-Message-State: AOJu0Yx+o9YFN5ThluWHD8vGAmpJGZfaS15P+itOEgwu03KkyhYya28T
-	bJXIJjk3m0xujxo/rcVaK8pssjSuIcRLUKNVP+HT1da8F6oph5J4vwyrCN4csFv0ZkJEESC6wKP
-	+c5fkgrAO2dY9g41PSK2A6omSqCfV64ZwbXKA
-X-Google-Smtp-Source: AGHT+IHGBa7tMMleiZKIyfq04qQxdw3xbaO8yY7nGHAFS1LwAn2FIimhO36Sml74NHR419/S58AeVS848bcSO81YVbs=
-X-Received: by 2002:a17:902:f789:b0:1e0:c571:d652 with SMTP id
- d9443c01a7336-1ed851171f3mr1404605ad.1.1714885790351; Sat, 04 May 2024
- 22:09:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714885991; x=1715490791;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NsfIaMjECuvVC7Z9W0Sqg9Q69W+YCDdoNBcIXl2QIwk=;
+        b=LTktZGltpLHsTi5pVWpwRfD012X9jKu6q3QzJqLi47HUUFor8hjcpiRVU6t2M7bS+i
+         bsFFNy373PcxrbtaQeJ/f2O53izqxN/+eARjPWA+Hr+mHAs/SF9MIqHx1jSyp2i23xe2
+         6QQztqLThkvImzihfBjzlyphCxxKM8RSSvxQoW2ffn8FKCRE1YlZI3g/aHy0DLbjtG/d
+         oidVxwWD1e0SDeawt2QZuga05oeFZJyBhQfCt7CP+/VhoRC0oa1SYmyIRn8wrUg0t+ls
+         xqqu3IEOISHeAJgdwku82m/DruXCFiBj7XdpJYsuFKBgjvkEDK3Dytk3mUmxxB7+CQ30
+         ZA0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXE/XSmLpVs3aKMJFpr3BY0rzlqYYe9FLKNecKBACnWyYn1f2Y9nUiLuE7Q4Zl2J06uT0sH7Njsyt0ta116rIqo3pWYx0y37UsxrWs3
+X-Gm-Message-State: AOJu0YzuEWOLKuJVNYgyW7k4CxrNxeZTa8r1qaTAPnYO14lDEpxyjNnl
+	EAmg9UlUxxGBpjx1N8eor4Q892sxtDZHNshIomUN6pfDqCbrdu0TgWoGNmulpw==
+X-Google-Smtp-Source: AGHT+IGx2K+j9TsopgjG/72ja+WbDJMY4Wn9iAnqvKY7ERj2M9PxcHA1IZC2lVKSrAM72Djm/H4zqw==
+X-Received: by 2002:a05:6a21:3405:b0:1af:8fa8:3116 with SMTP id yn5-20020a056a21340500b001af8fa83116mr2671010pzb.42.1714885990672;
+        Sat, 04 May 2024 22:13:10 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:8263:3b89:bcee:2ed4])
+        by smtp.gmail.com with ESMTPSA id jw19-20020a170903279300b001eab3ba8ccfsm5839237plb.285.2024.05.04.22.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 May 2024 22:13:10 -0700 (PDT)
+Date: Sun, 5 May 2024 14:13:05 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel test robot <lkp@intel.com>, Minchan Kim <minchan@kernel.org>,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH 08/14] zram: check that backends array has at least one
+ backend
+Message-ID: <20240505051305.GB8623@google.com>
+References: <20240503091823.3616962-9-senozhatsky@chromium.org>
+ <202405041440.UTBQZAaf-lkp@intel.com>
+ <20240504071416.GH14947@google.com>
+ <20240504161004.f5a0aab5e5aa1033d4696c20@linux-foundation.org>
+ <20240505043957.GA8623@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
- <2024050404-rectify-romp-4fdb@gregkh> <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
-In-Reply-To: <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Sat, 4 May 2024 22:09:39 -0700
-Message-ID: <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
- /proc/<pid>/maps APIs
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240505043957.GA8623@google.com>
 
-On Sat, May 4, 2024 at 2:57=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Sat, May 4, 2024 at 8:29=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
-> >
-> > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
-> > > Implement a simple tool/benchmark for comparing address "resolution"
-> > > logic based on textual /proc/<pid>/maps interface and new binary
-> > > ioctl-based PROCFS_PROCMAP_QUERY command.
-> >
-> > Of course an artificial benchmark of "read a whole file" vs. "a tiny
-> > ioctl" is going to be different, but step back and show how this is
-> > going to be used in the real world overall.  Pounding on this file is
-> > not a normal operation, right?
-> >
->
-> It's not artificial at all. It's *exactly* what, say, blazesym library
-> is doing (see [0], it's Rust and part of the overall library API, I
-> think C code in this patch is way easier to follow for someone not
-> familiar with implementation of blazesym, but both implementations are
-> doing exactly the same sequence of steps). You can do it even less
-> efficiently by parsing the whole file, building an in-memory lookup
-> table, then looking up addresses one by one. But that's even slower
-> and more memory-hungry. So I didn't even bother implementing that, it
-> would put /proc/<pid>/maps at even more disadvantage.
->
-> Other applications that deal with stack traces (including perf) would
-> be doing one of those two approaches, depending on circumstances and
-> level of sophistication of code (and sensitivity to performance).
+On (24/05/05 13:39), Sergey Senozhatsky wrote:
+[..]
+> > I guess just pick one if none were selected.
 
-The code in perf doing this is here:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
-ls/perf/util/synthetic-events.c#n440
-The code is using the api/io.h code:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
-ls/lib/api/io.h
-Using perf to profile perf it was observed time was spent allocating
-buffers and locale related activities when using stdio, so io is a
-lighter weight alternative, albeit with more verbose code than fscanf.
-You could add this as an alternate /proc/<pid>/maps reader, we have a
-similar benchmark in `perf bench internals synthesize`.
+How do I pick one if none were selected? Does Kconfig support
+something like that?
 
-Thanks,
-Ian
+> : config ZRAM
+> :        tristate "Compressed RAM block device support"
+> :        depends on BLOCK && SYSFS && MMU
+> :        select ZSMALLOC
+> :        depends on (LZO_COMPRESS && LZO_DECOMPRESS) || \
+> :                (LZ4_COMPRESS && LZ4_DECOMPRESS) || \
+> :                (LZ4HC_COMPRESS && LZ4_DECOMPRESS) || \
+> :                (ZSTD_COMPRESS && ZSTD_DECOMPRESS) || \
+> :                (ZLIB_DEFLATE && ZLIB_INFLATE)
 
->   [0] https://github.com/libbpf/blazesym/blob/ee9b48a80c0b4499118a1e8e5d9=
-01cddb2b33ab1/src/normalize/user.rs#L193
->
-> > thanks,
-> >
-> > greg k-h
->
+The problem I'm having with this is that FOO_COMPRESS can be M while
+zram needs Y.
 
