@@ -1,123 +1,147 @@
-Return-Path: <linux-kernel+bounces-168951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAE68BC01E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E50C28BC022
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5853F1C20C25
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:44:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE86C1C20BB7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A697F182CC;
-	Sun,  5 May 2024 10:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376C3171AB;
+	Sun,  5 May 2024 10:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBuoPbCP"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5L3jU3F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F4D134C4
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 10:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696ED6FBE;
+	Sun,  5 May 2024 10:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714905859; cv=none; b=hsLj3pJTn08ZfRnOLB7AN9TXrIEpN7eeigFPuuop0OAK6XO3mD5AXBeqn7yPg0doZS5rhHhIc8BvywvDwq7s8vTVoSqSlXmzkIfndfUu9Mc5keY79ALBsdJMP1fBAreO31UwfxT+wYHcEfOt1RJLJit7j+iU8+PiWljGN3grMjo=
+	t=1714906229; cv=none; b=soJMdOjZaGwMhR4aqiM5629NXU4eYLHED5bodNQIz69nUENirRuyO0dFVxwgwiijGeJggsyXG5kK4K2/uCuFO//+2bHVSt2w+YFphrPY33Mw2nZOuhycEAAWaeg1KN4QFZI2qS9ql2PKdHZscKenKgE2p7wsJLUWjbCLHAw/gBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714905859; c=relaxed/simple;
-	bh=gCDN8vSpXsgSqp6/aF3SDEonm9JaIJPtc5i44GKRcbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O8ZQuKF/hA4FGpdSK4PoEIjIrZATpwHJLPXcu1D5IuBCcBa2JkJWU0FLyzZECk7zKeeoPGHeEPRTgZN/8wUS1oCNSiofSOyBMtXOUJvmBSkKvB2xn3uBPIj0skKNqLZZJ8Vj07w220zMUj5C4dzPpuWt/iUx+1lG0yQ2nRkSs1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBuoPbCP; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f449ea8e37so969854b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 03:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714905857; x=1715510657; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gCDN8vSpXsgSqp6/aF3SDEonm9JaIJPtc5i44GKRcbo=;
-        b=KBuoPbCPl1f+nckI529MLdKE7krbCpYJ9jMrGjrr3oFce8fpkPV31PaDCb90mXokfe
-         nZKaB4gsFJuAkR4VooEJCL4IhXtoU18lvWgnehykyUrhtoXXEs4zp2iaXSIh/M9X3B03
-         CZ0+s9T4z/nCoYHL/AoLtEVzi5Uw6lW9VodAdYjYNJn94hAf/3aGQ7LczlSnWyDsYpcn
-         N4/J0FXRF2QVSJQkNZbThT+LaBuydrCrkenx2ouyrczhMveQA4H6PLEiu0ZM85DebwtW
-         2e9flaVW7zIu4ymqWjPutQAbBuCPhwigu5ZrzDoPdjgOfbbovl7urAAs01pBpB16z7nn
-         7emQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714905857; x=1715510657;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gCDN8vSpXsgSqp6/aF3SDEonm9JaIJPtc5i44GKRcbo=;
-        b=mX4y5OrXDtzTEDLTsCaqW4nzee8PQEhSGAJEQbUe3VBqIwPxTKO5V7PZCvPxNCLo/t
-         s9+tn3GKPsgptZkBvwlLi4LlgitPl5nyMHvYUJklXlRd3W+6I+jCIH3LsPSSuDByySsr
-         ECosbn6hHicwKqP/sT0GPlOOPHzy2JC1elgefBFPaVaJ0yCGEDByUeMnefFp/gSvcuPL
-         29rJCDmYDOYsjmf86IJuxt3NOMMwT9bJAovlrP0YbHiGi9kV21kj8Zk0oKtmxYoUnfiT
-         J8y6ZHsuUxRAztTZxTDOauAyDUiwTzb3d8+VvNxWIVdG7GP5497ESpYlaAmkUzy1KLsz
-         Y6kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvmhiJaVLqpZLhuVEjSx/rxgIr8cnE6Un3mVBBiBt65lCSd1liN5DlDFfG7e1ziwzjFETc5TasKJ2paJ6wzbzDIG6JI6s2Va9Xwrld
-X-Gm-Message-State: AOJu0YzQUYgB6RfRlHKN1NkL1bSKvuj+t0e4iKTHGE2k8kx+SL/Jg1Qx
-	kh4vZd/VgCdssVWacuW51fAKwt5iLD9RhNvnN4+seBuYfC8ywXpvMyykJg5pr7jEw3T8SHYQGXM
-	OwlXsO48+5BGWm4TUdv44P9lrjRI=
-X-Google-Smtp-Source: AGHT+IGVLcuJCQO8ZtaVJ6zUtvr+xIexPYoqf1aVfa8AKhUV9aw4qDoRseG4SiaBuv7b625uHalXRpGlahzy5H9xYeU=
-X-Received: by 2002:a05:6a00:8c4:b0:6f3:ea8a:f973 with SMTP id
- s4-20020a056a0008c400b006f3ea8af973mr11693922pfu.7.1714905857121; Sun, 05 May
- 2024 03:44:17 -0700 (PDT)
+	s=arc-20240116; t=1714906229; c=relaxed/simple;
+	bh=A0pA9gFmx/KX+0Pa4DEPpSZCbQRPr/bicmqz+Fp/D+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vn6SduIsAEwIq2fkHskltkNzBVbzydb3invgGkOlo0yOJYb2GIMcBpODNVNi4YjD8xHoYzY4Z9vuuJpo9Ukzpj0MNi3Hzoc9F4lmXF6U11YQSvJDlX4yB/KW8mlcRBaMb79Gnv00ljRD1/9hX/JqFREx+m7thY9FFHnatZYaCSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5L3jU3F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B1EC113CC;
+	Sun,  5 May 2024 10:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714906228;
+	bh=A0pA9gFmx/KX+0Pa4DEPpSZCbQRPr/bicmqz+Fp/D+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e5L3jU3FZTdPXwhW7v4hVB9ximQhq8UCZ0c9TGS4U1UkDy9SoEAFc5NcwjdpsIkoS
+	 y5500oXQvODSiP70b98akmj6jmj+4sIElipq9Sppz0r6ueMZ5+eoTun24p+V22Tcsc
+	 HaEAjxcM6qfbfzwdvMKKH0Bzaupg7FpgBHRmFAtU8wyAoJkMIQ+EcEkI2ftcOlZkWI
+	 aYekeYbhJGpP03mC0HcdhmtZ5hdyxwJFb24ZNgDWJ/rfxASaSIkLf4OS9WJJBKMSOh
+	 qzzyyX+Lq+QiMQ+t6jgW/KeVXyFOY4AUvFgw8NNBYWWqzu+JmgCOPLMaezQ+o0HooC
+	 CPk8Qe18RVxwQ==
+Date: Sun, 5 May 2024 12:50:21 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502092443.6845-2-visitorckw@gmail.com> <202405030808.UsoMKFNP-lkp@intel.com>
- <ZjQ/JOpcdgWZXo0y@visitorckw-System-Product-Name> <20240503041701.GA3660305@thelio-3990X>
- <ZjSSylciH+qJeEEG@visitorckw-System-Product-Name> <ZjSUk4vgsQ63wfcn@visitorckw-System-Product-Name>
- <20240503155401.GA3960118@thelio-3990X> <ZjVdbavKgDo8a0CZ@yury-ThinkPad>
-In-Reply-To: <ZjVdbavKgDo8a0CZ@yury-ThinkPad>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 5 May 2024 12:42:53 +0200
-Message-ID: <CANiq72mYPV_rNFirr1q=hjjz2yDzw98qrwqY5c14G3odt+shcA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] lib/test_bitops: Add benchmark test for fns()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Kuan-Wei Chiu <visitorckw@gmail.com>, 
-	kernel test robot <lkp@intel.com>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	Miguel Ojeda <ojeda@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
 
-On Fri, May 3, 2024 at 11:56=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
-rote:
->
-> + * The __used attribute guarantees that the attributed variable will be
+On Sat, May 04, 2024 at 08:40:25AM -0700, Linus Torvalds wrote:
+> On Sat, 4 May 2024 at 08:32, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Now, during this TOTALLY INNOCENT sock_poll(), in another thread, the
+> > file closing completes, eventpoll_release() finishes [..]
+> 
+> Actually, Al is right that ep_item_poll() should be holding the
+> ep->mtx, so eventpoll_release() -> eventpoll_release_file_file() ->
+> mutex_lock(&ep->mtx) should block and the file doesn't actually get
+> released.
 
-We should probably mention functions as Nathan said (unless it does
-not work for some reason).
+So I know you've seen it yourself but for my own peace of mind I've said
+that in the other mail and in the other thread already that all callers
+of ep_item_poll() do already hold the ep->mtx:
 
-> + * always emitted by a compiler. It doesn't prevent the compiler from
-> + * throwing the 'unused' warnings when it can't detect how the variable
+do_epoll_ctl()
+-> epoll_mutex_lock(&ep->mtx)
+-> ep_insert()
+   -> ep_item_poll()
 
-Nit: "throwing the" -> "throwing" (I think)
+do_epoll_ctl()
+-> epoll_mutex_lock(&ep->mtx)
+-> ep_modify()
+   -> ep_item_poll()
 
-Also, perhaps "when ..." -> "when it appears that the variable is not
-used" like in the documentation of the attribute or similar? (e.g. in
-the case that triggered the report, it is really unused, while one
-could read this as the compiler not being able to detect a use
-somewhere).
+ep_send_events()
+-> mutex_lock(&ep->mtx)
+-> ep_item_poll()
 
-> + * is actually used. It's a compiler implementation details either emit
-> + * the warning in that case or not.
+/* nested; and all callers of ep_item_poll() already hold ep->mtx */
+__ep_eventpoll_poll()
+-> mutex_lock_nested(&ep->mtx, wait)
+-> ep_item_poll()
 
-Is it an implementation detail or rather that they took different
-alternatives/options on purpose (even if not documented)? If we think
-it is just a consequence of their implementation, perhaps we should
-mention that and what GCC/Clang do today in their latest version, in
-case it changes (so that we know whether we need to remove the macro,
-for instance).
+So it's simply not possible to end up with a UAF in f_op->poll() because
+eventpoll_release_file_file() serializes on ep->mtx as well:
 
-None of the above is a big deal though -- thanks!
+__fput()
+-> eventpoll_release()
+   -> eventpoll_release_file()
+      {
+              // @file->f_count is zero _but file is not freed_
+              // so taking file->f_lock is absolutely fine
+              spin_lock(&file->f_lock);
+              // mark as dying
 
-Cheers,
-Miguel
+              // serialzed on ep->mtx
+              mutex_lock(&ep->mtx);
+              __ep_rmove(ep, epi);
+              ...
+
+      }
+      -> mutex_lock(&ep->mtx)
+
+-> f_op->release()
+-> kfree(file)
+
+So afaict it's simply not possible to end up with a UAF in f_op->poll().
+
+And I agree with you that for some instances it's valid to take another
+reference to a file from f_op->poll() but then they need to use
+get_file_active() imho and simply handle the case where f_count is zero.
+And we need to document that in Documentation/filesystems/file.rst or
+locking.rst.
+
+But if it's simply just dma buf that cares about that long-term
+reference then really we should just force them to take the reference
+like I suggested but don't penalize everyone else. When I took a glance
+at all f_op->poll() implementations I didn't spot one that did take
+extra references.
+
+But if you absolutely want to have epoll take the reference before it
+calls into f_op->poll() that's fine with me as well. But we might end up
+forcing epoll to do a lot of final fput()s which I'm not sure is all
+that desirable.
 
