@@ -1,177 +1,108 @@
-Return-Path: <linux-kernel+bounces-169088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370F38BC2F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:00:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D768BC2EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 526CDB20F4B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CA391C2098A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288816CDA5;
-	Sun,  5 May 2024 18:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5892E69D2B;
+	Sun,  5 May 2024 17:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CZtZ4Kss"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItLeR4cH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA302B9BE;
-	Sun,  5 May 2024 18:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9119879D2;
+	Sun,  5 May 2024 17:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714932004; cv=none; b=jPuvEXm/apwZQPPrqmjsIfHl/8jVpz6n0+cJ4PEgxx4lvHv7boUHKFE9vjOq840QVhBAbF7WNDEJWO2czM4lvMbcralLypXiGA8yH7eW3TD3fJbT1BnQFST6sxhAtuTaYAYVNeshHwO7I69D6kvM/53Ca7fSAQu7T+Ma7eJh7ks=
+	t=1714931901; cv=none; b=mvqQWlfFff0+K1tT4SSO6Q8UHoDmkLKaznBGltY0PYcZQ7jsfsMJ/rDn0ev4ofZyXKVFYDjvU4aRSZIli+iHwIONbMwFsNEgB39oz1cMjyMAW57UIoW+GDBsV8bRn9N8t/RMXihumRpogm+BIt6qHyCuOYI2ACUdav5nIKbvuvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714932004; c=relaxed/simple;
-	bh=TsViQ/wYOfXwpC4HIbCA3YZAn4taAzdXrsvEgMW9B4A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QCp7q94XPEgHGEIXe0ONMZhPJPx+7I/2c70O4s9MLjdYuzJ+rqZtMfFsNbYK7axDf9FPwOeITYq/F9Ab+h8+c9qJkPOqUzvG7waW0YvNxeJGJTK5l+qbaZlbhPRJnYcOX2MXs9N/nCV9L8j0NPjoXPRI6BWXFH8V2s1H+IcOzWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CZtZ4Kss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 563D9C113CC;
-	Sun,  5 May 2024 18:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1714932003;
-	bh=TsViQ/wYOfXwpC4HIbCA3YZAn4taAzdXrsvEgMW9B4A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CZtZ4Kss4M1ugKJ7mNWZqHBV202HqoMwtZlcRjCpwHl674Vss/9EoYPFiv6Kb4FeD
-	 tHC4/QlBc/TNWEyBH7IT/ScaeO/01P3qAeR+FGsapRFZT4Yn6EJc4pRu0BLRUe+fhe
-	 9HecR26VCfGEdlB9PzGLrIhnvWf+OU1PPMzCB+EE=
-From: Linus Torvalds <torvalds@linux-foundation.org>
-To: torvalds@linux-foundation.org
-Cc: axboe@kernel.dk,
-	brauner@kernel.org,
-	christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org,
-	io-uring@vger.kernel.org,
-	jack@suse.cz,
-	keescook@chromium.org,
-	laura@labbott.name,
-	linaro-mm-sig@lists.linaro.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	minhquangbui99@gmail.com,
-	sumit.semwal@linaro.org,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH v2] epoll: be better about file lifetimes
-Date: Sun,  5 May 2024 10:55:57 -0700
-Message-ID: <20240505175556.1213266-2-torvalds@linux-foundation.org>
-X-Mailer: git-send-email 2.44.0.330.g4d18c88175
-In-Reply-To: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
-References: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+	s=arc-20240116; t=1714931901; c=relaxed/simple;
+	bh=3GEudGU7ASMXSyyGWnReK03kwpORCk7RJpxQt9efhqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rDiIdUkTwGtkpyC6NBUJxf6h94CtYGHGo/qvv6oS1gxtiZxZHcibJ9eGF8MX20EgzUNM1bkZj4qhJJNz11TgZnjf3lA4cBxhHpIwp2a7LpJpxlumNtrpk/QKLziOm+8GZtdmw3qSPBw9dfYUAsB/kZnz6mvup0rjbA4o8vzFQFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItLeR4cH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0984C113CC;
+	Sun,  5 May 2024 17:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714931901;
+	bh=3GEudGU7ASMXSyyGWnReK03kwpORCk7RJpxQt9efhqY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ItLeR4cHWW45OS5rq+aGVndOX8kBINwEtq378D2RjWQiosFtPGJt8kSc7E2r5G4NZ
+	 Rx2Et9IL8XfJlCIC080wi9oq3bR14KyLpG5dsy149Y7VRR+HcjOwvH2xRbXgxSejRy
+	 2+OdkDptJ7Jwl7b/h0q7L5Oo8ZJR+aNFtdWuIe9cL3L6Hs+S/w0AsF4Br5crppyKqg
+	 AZwJkc0eaCmtH/egcnmrO3ARkP/bcg1JlaCSEwRJXnPXCq3gcUsDXpdv1Wqh8vzCt4
+	 KAGZ/K4JkMTy/Y7LstcKHvi9H/CM4h7QwEJspeBgDlpIrNbV6d+h9NbxUn6xtQHeXw
+	 w5tivJtdI4oSA==
+Date: Sun, 5 May 2024 18:58:09 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petar Stoykov <pd.pstoykov@gmail.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Rob
+ Herring <robh+dt@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Angel Iglesias
+ <ang.iglesiasg@gmail.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] iio: pressure: Add driver for Sensirion SDP500
+Message-ID: <20240505185809.7636403e@jic23-huawei>
+In-Reply-To: <CADFWO8EF0WxAV=k-ZAJ1McmaYv4SD5G+O4FhoMDsVQaRqe6sdg@mail.gmail.com>
+References: <CADFWO8HOb4zY7rPsCxWe2nvrzd8FjVNw0k8=8s4yB7C_BwS0ig@mail.gmail.com>
+	<20240116170337.00003a02@Huawei.com>
+	<CADFWO8EF0WxAV=k-ZAJ1McmaYv4SD5G+O4FhoMDsVQaRqe6sdg@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-epoll can call out to vfs_poll() with a file pointer that may race with
-the last 'fput()'. That would make f_count go down to zero, and while
-the ep->mtx locking means that the resulting file pointer tear-down will
-be blocked until the poll returns, it means that f_count is already
-dead, and any use of it won't actually get a reference to the file any
-more: it's dead regardless.
 
-Make sure we have a valid ref on the file pointer before we call down to
-vfs_poll() from the epoll routines.
+> > > +}
+> > > +
+> > > +static const struct iio_chan_spec sdp500_channels[] = {
+> > > +    {
+> > > +        .type = IIO_PRESSURE,
+> > > +        .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),  
+> >
+> > Looks like a simple linear scale.  Would be better to make scaling
+> > a userspace / consumer problem and provide IIO_CHAN_INFO_RAW
+> > and IIO_CHAN_INFO_SCALE.  
+> 
+> I prefer returning the pressure directly because there is no other calculation
+> that the user of this driver can do. If they make the calculation differently
+> then their pressure value would be wrong.
 
-Link: https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
-Reported-by: syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
----
+Ah. I missed this and just made the same comment on v2.
+Let me give some more info than in the original review.
 
-Changes since v1:
+The documentation on how to apply scale is simple and this scaling is
+pretty hard to get wrong.
 
- - add Link, Reported-by, and Jens' reviewed-by. And sign off on it
-   because it looks fine to me and we have some testing now.
+There are a couple of reasons we prefer to make it a userspace problem
+to do linear scaling and keep the actual channel value raw (if possible).
+1) Logging applications typically store the scale once, and each data
+   point is then much cheaper to store as a u16 than as a floating point
+   number.
+2) If you ever add buffered support, we do not support floating point
+   values in the buffer.  That basically means we have to have both
+   _PROCESSED and _RAW provided so that _SCALE makes sense for the buffer.
+   Horribly messy ABI is the result.
 
- - move epi_fget() closer to the user
+Hence, push the scaling to userspace.
 
- - more comments about the background
+Note that we can't always do this as some conversion functions are
+non linear and very hard to describe.  In those cases _PROCESSED makes
+sense.  That's not true here.
 
- - remove the rcu_read_lock(), with the comment explaining why it's not
-   needed
-
- - note about returning zero rather than something like EPOLLERR|POLLHUP
-   for a file that is going away
-
- fs/eventpoll.c | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 882b89edc52a..a3f0f868adc4 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -979,6 +979,37 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- 	return res;
- }
- 
-+/*
-+ * The ffd.file pointer may be in the process of
-+ * being torn down due to being closed, but we
-+ * may not have finished eventpoll_release() yet.
-+ *
-+ * Normally, even with the atomic_long_inc_not_zero,
-+ * the file may have been free'd and then gotten
-+ * re-allocated to something else (since files are
-+ * not RCU-delayed, they are SLAB_TYPESAFE_BY_RCU).
-+ *
-+ * But for epoll, users hold the ep->mtx mutex, and
-+ * as such any file in the process of being free'd
-+ * will block in eventpoll_release_file() and thus
-+ * the underlying file allocation will not be free'd,
-+ * and the file re-use cannot happen.
-+ *
-+ * For the same reason we can avoid a rcu_read_lock()
-+ * around the operation - 'ffd.file' cannot go away
-+ * even if the refcount has reached zero (but we must
-+ * still not call out to ->poll() functions etc).
-+ */
-+static struct file *epi_fget(const struct epitem *epi)
-+{
-+	struct file *file;
-+
-+	file = epi->ffd.file;
-+	if (!atomic_long_inc_not_zero(&file->f_count))
-+		file = NULL;
-+	return file;
-+}
-+
- /*
-  * Differs from ep_eventpoll_poll() in that internal callers already have
-  * the ep->mtx so we need to start from depth=1, such that mutex_lock_nested()
-@@ -987,14 +1018,23 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
- 				 int depth)
- {
--	struct file *file = epi->ffd.file;
-+	struct file *file = epi_fget(epi);
- 	__poll_t res;
- 
-+	/*
-+	 * We could return EPOLLERR | EPOLLHUP or something,
-+	 * but let's treat this more as "file doesn't exist,
-+	 * poll didn't happen".
-+	 */
-+	if (!file)
-+		return 0;
-+
- 	pt->_key = epi->event.events;
- 	if (!is_file_epoll(file))
- 		res = vfs_poll(file, pt);
- 	else
- 		res = __ep_eventpoll_poll(file, pt, depth);
-+	fput(file);
- 	return res & epi->event.events;
- }
- 
--- 
-2.44.0.330.g4d18c88175
-
+Jonathan
 
