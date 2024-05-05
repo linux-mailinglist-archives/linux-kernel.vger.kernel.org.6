@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-169106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2F38BC32E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:08:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BA78BC32B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 860401F21466
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB758B20EA6
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AD66D1A0;
-	Sun,  5 May 2024 19:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C026F6D1A4;
+	Sun,  5 May 2024 19:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="R4pNazCV"
-Received: from forward206c.mail.yandex.net (forward206c.mail.yandex.net [178.154.239.215])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDU9M3h6"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2891A2D60A
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 19:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4A2D60A;
+	Sun,  5 May 2024 19:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714936075; cv=none; b=oBVnzhOjrJP2LkhB2EXxy904zdWtDSQAGf+XJQ2G36heVAA/SX8/lKkqtwyKfIfX3ch1lpwqUWce0Dc5yYbHCza7il3X49rxDbB62J2dCYANBpwbdzwU0A97leSYOWsKp3wZCCxeHhD65jhbrbaLHyx4IoSUrXZwKoeQ7MEBlsY=
+	t=1714935919; cv=none; b=asAX3MadYgz07HdzOiMXqfGPOhXPHkL2kB0bFjGzKMwkJDsfEItW64caoe7WIPTsY3lHQRkhdfT8jWfsPI+w93nTCfoW5BLiQ57VzPvSTTIaidlX+u8dEoCkvJa9QaoviFxF2j3f2OOs+yZOuXezVvj5NvJKkmcBhTZhf5s2GRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714936075; c=relaxed/simple;
-	bh=S8PlWABCmLWnSmQqv1SuLK4MoT9GhFKeKAJ5XRb1CLw=;
-	h=From:To:Subject:MIME-Version:Date:Message-Id:Content-Type; b=fM/QYGkGPim91LQ64RwztJ8W0ICamD76oEudpTRV4JBh8iDoix5lWswyza/XQqtoFaLYWVrlPtE6kOksPdBqLRbHmiOT8IJ+wSUKMAwyv0on+C1Cm9YyB+aOFzDcw7iZo3yLx5FMZUaaVbzTDFbSdp2yZDDAPW4c6AYymkoAWI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=R4pNazCV; arc=none smtp.client-ip=178.154.239.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
-	by forward206c.mail.yandex.net (Yandex) with ESMTPS id 2517761E85
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 21:59:31 +0300 (MSK)
-Received: from mail-nwsmtp-mxback-production-main-42.sas.yp-c.yandex.net (mail-nwsmtp-mxback-production-main-42.sas.yp-c.yandex.net [IPv6:2a02:6b8:c08:7614:0:640:41cb:0])
-	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 40245609CA
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 21:59:23 +0300 (MSK)
-Received: from mail.yandex.ru (2a02:6b8:c10:1f18:0:640:b5ca:0 [2a02:6b8:c10:1f18:0:640:b5ca:0])
-	by mail-nwsmtp-mxback-production-main-42.sas.yp-c.yandex.net (mxback/Yandex) with HTTP id Ixb96I14fmI0-rTbSYLvc;
-	Sun, 05 May 2024 21:59:22 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1714935562; bh=5KGM6tuc0HgQlmm1JRTgnyOUav29t/QF3lgjx7ssiU4=;
-	h=Message-Id:Date:Subject:To:From;
-	b=R4pNazCVIjA9BOsNcDDnNqxn4URMyZ/PWW8XCAZOB/QFpSJYxg7T+uS4eIcbhcfbf
-	 GpvAnWlvLrQ9T1aqNApQ8lDOTWB7X6y2a70FzCsiZxfnw4ZRGBl7YNxKyNMW+epeVt
-	 YcNPQtK853Up6zNrOkL7K1QZ1mF7yMii25nbVsmU=
-Authentication-Results: mail-nwsmtp-mxback-production-main-42.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by dmcmxrwo3x2o7y3i.sas.yp-c.yandex.net with HTTP;
-	Sun, 05 May 2024 21:59:22 +0300
-From: Tranton Baddy <t.baddy@yandex.ru>
-Envelope-From: t-baddy@yandex.ru
-To: linux-kernel@vger.kernel.org
-Subject: Error in amd driver?
+	s=arc-20240116; t=1714935919; c=relaxed/simple;
+	bh=l4a0ArGONDNzKNTIOsu12f4Y+6X95zHt+Leq4K2WG6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HYbPDeWNF8vF8RYQoTL1LnNxtQyG55gQ3C5m3xy1yn68j9euzpeY5MYpryLcZ2igDxVxPuFLtJ24Sbbh2/KkiIXrtGz8sxXRPlSSwQthhRko5y/4Vuludw//8AlJ+Q7Fcuv7KUn4+S8+HTGp2Qq6askkwPdLlz8qI2c1jBzUFa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDU9M3h6; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e0b2ddc5d1so15837541fa.3;
+        Sun, 05 May 2024 12:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714935915; x=1715540715; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wad+9JCJl3oXkEa3SET7EwhW1F0CMBi3uJ0HqvgbGl8=;
+        b=jDU9M3h6KZx1n8RoViB/syh+uBulL8EQdEmU35WmCJueHcb49xWodtMqS6JBxqxNDA
+         l3vz3nJJjf+tlDnHELBidMbBRgN+Duhu5Hncw7/Ir9aqX8slilDETf5B3Yw3DZQpyTl6
+         QWA5Kupq9tmYujdB0cFHZ8+GJQlN5dich/hFDCRVG7XVAJUPhifasLXvLkEEHMJuqTey
+         4xsEu41pbnzaBknZG1GjrGHEdCK0Nlg+cIN6gHNMOXQ8lsHmxa7QM9WRfLO5TKQhfkth
+         ju2NoouVXr2qXsle6PvndxCv139m2ubEiBF0bkk2vFqSDO6KPVgduCIseGHNGd4eoMC0
+         cFgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714935915; x=1715540715;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wad+9JCJl3oXkEa3SET7EwhW1F0CMBi3uJ0HqvgbGl8=;
+        b=KPCs6LRzJGUdThqLU0hpFIDOLLH1+7O1aEeEObHFfIOnPz5MHy9PQSOAQxnqmZLJVq
+         Lv9wpTn4WNK1rE/pEQvsKl+RxvUkhDOoMJxnzA0egkaq4Im723Dft6Z2eze4uYW8n9ex
+         IJoK2l80nRLEWH6eDbHTR9jTEejrYR6uThrZ1Y3YAL1PNYCdMgCnLKDTzNOb8Op5YRQl
+         eVYI/a9dnbGvm+q5QVMTB9zjGzvCE9a6I3g1f5tsEosNK+KCF1sbKtMMdomJJLP/J35o
+         1LBORrmQS0xiwCx+GtP6uN7aTMajKDUe+adYvTm5qhOdF8GwB3zppbCHYDfjEfsKPq2/
+         w3WA==
+X-Forwarded-Encrypted: i=1; AJvYcCVacH7FIEf8fCyVjCehL7eNGzTWLytaWus08y6zW865UBKheePyIiCsNFU9HL7w2bg64S8t+1zd+8azeyNPXHicWUGkKwlJyKePsHwlsAeCDtQuUMQMzOM+s7vcMsrblOBn4+AXH7TtnFY=
+X-Gm-Message-State: AOJu0YwKCkCo+Qnvh5NwCsdqVPw4chXZcqkGWx4r0B+MdQWmmJpvgvt4
+	UOvHuLfGewDszzmIFO1vYCeIhaWto0zPZjWo5TONWKJEC5oI9bVqITzGNg0u0rjlrVi2dBGBqSD
+	irViTrjdZMh/2kL4MCfZeMg29epw=
+X-Google-Smtp-Source: AGHT+IHQGAH9I3d2xpvxt1OWJ5+/3R+Ok5+gszUhaQAR42Sc2pt/klNvVUHtO+OLHlwZ9WDp/4ixRmmmQ7JuEPr1Bbs=
+X-Received: by 2002:ac2:5322:0:b0:51a:f362:ab30 with SMTP id
+ f2-20020ac25322000000b0051af362ab30mr4989779lfh.7.1714935915272; Sun, 05 May
+ 2024 12:05:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date: Sun, 05 May 2024 21:59:22 +0300
-Message-Id: <1237381714935562@dmcmxrwo3x2o7y3i.sas.yp-c.yandex.net>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+References: <20240430080019.4242-1-konishi.ryusuke@gmail.com>
+ <20240430080019.4242-2-konishi.ryusuke@gmail.com> <650ed9f6-fa50-4a3b-939d-633f9e389137@acm.org>
+ <CAKFNMomCzNMU0tjLkEchr=GQwSVW1zr1GAq7vUToeOvX-M3eVg@mail.gmail.com>
+ <CAKFNMo=rkHF6urydfDbcvTbGzUEHmsTudVMm517pTE32vzqiwA@mail.gmail.com> <32e6621b-cbd9-42be-8626-49c12c25f139@acm.org>
+In-Reply-To: <32e6621b-cbd9-42be-8626-49c12c25f139@acm.org>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Mon, 6 May 2024 04:04:58 +0900
+Message-ID: <CAKFNMokSLHrB8jyGuNH-HBqcrAmJ5-SFwu-sTgt30X2j+=KykA@mail.gmail.com>
+Subject: Re: [PATCH -mm 1/2] nilfs2: use integer type instead of enum req_op
+ for event tracing header
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-nilfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I have this in my dmesg since version 6.8.6, not sure when it appeared. Is amdgpu driver has bug?
-[   64.253144] ==================================================================
-[   64.253162] BUG: KFENCE: use-after-free read in amdgpu_bo_move+0x51f/0x7a0
+On Sun, May 5, 2024 at 9:47=E2=80=AFPM Bart Van Assche wrote:
+>
+> On 5/2/24 12:01 PM, Ryusuke Konishi wrote:
+> > If you haven't given up yet on solving the underlying problem, I would
+> > like to withdraw this patch.
+>
+> Has this untested change been considered?
+>
+> diff --git a/include/trace/events/nilfs2.h b/include/trace/events/nilfs2.=
+h
+> index 8efc6236f57c..67fd2e002ca7 100644
+> --- a/include/trace/events/nilfs2.h
+> +++ b/include/trace/events/nilfs2.h
+> @@ -214,7 +214,7 @@ TRACE_EVENT(nilfs2_mdt_submit_block,
+>                       __entry->inode,
+>                       __entry->ino,
+>                       __entry->blkoff,
+> -                     __entry->mode)
+> +                     (__force u32)__entry->mode)
+>   );
+>
+>   #endif /* _TRACE_NILFS2_H */
 
-[   64.253183] Use-after-free read at 0x00000000671c48dd (in kfence-#111):
-[   64.253192]  amdgpu_bo_move+0x51f/0x7a0
-[   64.253202]  ttm_bo_handle_move_mem+0xcf/0x180
-[   64.253211]  ttm_mem_evict_first+0x1c5/0x500
-[   64.253218]  ttm_resource_manager_evict_all+0xa3/0x1e0
-[   64.253228]  amdgpu_device_prepare+0x66/0x110
-[   64.253237]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
-[   64.253248]  pci_pm_runtime_suspend+0x74/0x200
-[   64.253259]  vga_switcheroo_runtime_suspend+0x21/0xb0
-[   64.253268]  __rpm_callback+0x5f/0x190
-[   64.253277]  rpm_callback+0x7f/0x90
-[   64.253283]  rpm_suspend+0x120/0x6a0
-[   64.253290]  pm_runtime_work+0x9c/0xa0
-[   64.253297]  process_one_work+0x164/0x330
-[   64.253310]  worker_thread+0x302/0x430
-[   64.253320]  kthread+0xe4/0x110
-[   64.253329]  ret_from_fork+0x4c/0x60
-[   64.253341]  ret_from_fork_asm+0x1b/0x30
+No, I didn't think of that.  There was no warning in TP_printk()
+declaration of the nilfs2_mdt_submit_block trace point.
 
-[   64.253353] kfence-#111: 0x00000000d018cf03-0x0000000034e821d1, size=96, cache=kmalloc-96
+If you suggested this as an alternative idea, unfortunately the
+following warnings are still output:
 
-[   64.253363] allocated by task 152 on cpu 3 at 64.248952s:
-[   64.253418]  kmalloc_trace+0x283/0x340
-[   64.253427]  amdgpu_vram_mgr_new+0x8f/0x3f0
-[   64.253435]  ttm_resource_alloc+0x39/0x90
-[   64.253444]  ttm_bo_mem_space+0xa4/0x260
-[   64.253450]  ttm_mem_evict_first+0x18a/0x500
-[   64.253456]  ttm_resource_manager_evict_all+0xa3/0x1e0
-[   64.253465]  amdgpu_device_prepare+0x66/0x110
-[   64.253472]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
-[   64.253481]  pci_pm_runtime_suspend+0x74/0x200
-[   64.253489]  vga_switcheroo_runtime_suspend+0x21/0xb0
-[   64.253496]  __rpm_callback+0x5f/0x190
-[   64.253503]  rpm_callback+0x7f/0x90
-[   64.253509]  rpm_suspend+0x120/0x6a0
-[   64.253516]  pm_runtime_work+0x9c/0xa0
-[   64.253523]  process_one_work+0x164/0x330
-[   64.253532]  worker_thread+0x302/0x430
-[   64.253542]  kthread+0xe4/0x110
-[   64.253550]  ret_from_fork+0x4c/0x60
-[   64.253559]  ret_from_fork_asm+0x1b/0x30
+  CC [M]  fs/nilfs2/segment.o
+  CHECK   fs/nilfs2/segment.c
+fs/nilfs2/segment.c: note: in included file (through
+include/trace/trace_events.h, include/trace/define_trace.h,
+include/trace/events/nilfs2.h):
+/include/trace/events/nilfs2.h:191:1: warning: cast to restricted blk_opf_=
+t
+/include/trace/events/nilfs2.h:191:1: warning: restricted blk_opf_t
+degrades to integer
+/include/trace/events/nilfs2.h:191:1: warning: restricted blk_opf_t
+degrades to integer
 
-[   64.253570] freed by task 152 on cpu 3 at 64.253117s:
-[   64.253582]  ttm_resource_free+0x67/0x90
-[   64.253591]  ttm_bo_move_accel_cleanup+0x247/0x2e0
-[   64.253598]  amdgpu_bo_move+0x1bd/0x7a0
-[   64.253605]  ttm_bo_handle_move_mem+0xcf/0x180
-[   64.253612]  ttm_mem_evict_first+0x1c5/0x500
-[   64.253618]  ttm_resource_manager_evict_all+0xa3/0x1e0
-[   64.253626]  amdgpu_device_prepare+0x66/0x110
-[   64.253634]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
-[   64.253642]  pci_pm_runtime_suspend+0x74/0x200
-[   64.253650]  vga_switcheroo_runtime_suspend+0x21/0xb0
-[   64.253658]  __rpm_callback+0x5f/0x190
-[   64.253664]  rpm_callback+0x7f/0x90
-[   64.253671]  rpm_suspend+0x120/0x6a0
-[   64.253677]  pm_runtime_work+0x9c/0xa0
-[   64.253684]  process_one_work+0x164/0x330
-[   64.253693]  worker_thread+0x302/0x430
-[   64.253703]  kthread+0xe4/0x110
-[   64.253711]  ret_from_fork+0x4c/0x60
-[   64.253723]  ret_from_fork_asm+0x1b/0x30
+I also tried typecasting on the declaration header side of event
+tracing, but so far, the sparse warnings don't go away except for the
+patch I first proposed.
 
-[   64.253735] CPU: 3 PID: 152 Comm: kworker/3:2 Tainted: P           OE      6.8.9 #3 e7323d0d25f89e853881fc823e59523bdcc577c6
-[   64.253756] Hardware name: Hewlett-Packard HP Pavilion Notebook /80B9, BIOS F.54 05/27/2019
-[   64.253761] Workqueue: pm pm_runtime_work
-[   64.253771] ==================================================================
+But, better suggestions or solutions to the underlying problem are welcome.
+(Again, should we put the patch on hold?)
+
+Regards,
+Ryusuke Konishi
 
