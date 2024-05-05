@@ -1,75 +1,87 @@
-Return-Path: <linux-kernel+bounces-169203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130BD8BC4BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C76F8BC4BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC74A28131A
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 23:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1C02813C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 23:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1378140386;
-	Sun,  5 May 2024 23:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB7E140386;
+	Sun,  5 May 2024 23:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HeeL7fFh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmObuLwu"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D74F13FD9A;
-	Sun,  5 May 2024 23:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5832140375;
+	Sun,  5 May 2024 23:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714952913; cv=none; b=q2hOm7N8DPB6GLHiw21h/ojr9ZXrGdevufPkKwGD70W6xcmix/JmcHr9UGc6SKm5dJGAOYtLgPxpVmhoFP3qGnQ9bwpBZadjrzgsRDkVIe7QWoLg1ptsR55rLz5ybRWEAhSz2AzaCBI9cL4gYI7M8ev+i/NgJ31YOOnxx5PGxbI=
+	t=1714952878; cv=none; b=TN7SXSDHZ/TOCiidiSodEWJ43KLPjrjEMZ8kwwkjp3ygXD7LN9jppbFjnjZ/wjPcuPQoWfdRC+lkE4u0eYUEYsc3ntJu8aeaOAijJW1pAQF1dOmefHIvc9GhOxwYUyuH53/cf32DLpt+a7Ru2TUp/RO9byiApz8qxjzyNnfqOkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714952913; c=relaxed/simple;
-	bh=OlsWW3H2jfME86ICMK4S0BOTbn/IaLynpE4Luba9O4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUlmS+Me8v3JsmNGs7uTptJAkaqoGAbWfTB6psdAjjeLpYo4bH1E8nAWQOcOJOcLliUIKgPYV8AiyJMHUQm3NpnPjZeRC+tLpYrB0Oyd+N/BKx+scO6UCTu37lZBSrxiP5M6KtBWEVENz4TPyDowXZ23VVuTbulq9sLM1y7jaFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HeeL7fFh; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714952908; x=1746488908;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OlsWW3H2jfME86ICMK4S0BOTbn/IaLynpE4Luba9O4I=;
-  b=HeeL7fFhpabo3xWKijUJV9OvhDv5Pu542PbVTEbswmK47Ey4ek/lxEVW
-   1HQgwYPoLYXwfnQFqkeUpdZHiyGLAUp75rhg9UONyzg7e2BPUrn3MugS7
-   8dHmDchiQ44/+XdcFfZFPpW4dR1VFm4JTD5KRdWE9/GBm0LB6kGSOyZ0T
-   /ysDge7ia1aXfA+bXrGyDStmOZyUOQTJl3TzOF8FebP/yiisxEA8P5YoJ
-   TOXiTw98ZZnf2d2QTjUT+kXPNuxShuM2Guiaxc+bvO/k8o9dWKLYzYRMh
-   SaBRSZkb3qZ8Fag6Vc9N8Pyoo4YamRICSrPHiK+liy5nvnsPmYy2+kJbA
-   g==;
-X-CSE-ConnectionGUID: zbbOITm7QYSQqUjhAjerWg==
-X-CSE-MsgGUID: Q2RtISRCQCeG+sR4T21CVw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="14470041"
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="14470041"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 16:48:27 -0700
-X-CSE-ConnectionGUID: 4HLrUydASaqzR3zVhn/NHQ==
-X-CSE-MsgGUID: 28/LfuAERjqxoJZWArEAFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="28568782"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 05 May 2024 16:48:25 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s3lag-0000Hc-14;
-	Sun, 05 May 2024 23:48:22 +0000
-Date: Mon, 6 May 2024 07:47:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tanmay Shah <tanmay.shah@amd.com>
-Subject: Re: [PATCH 2/2] drivers: remoteproc: xlnx: add sram support
-Message-ID: <202405060759.yyzLUQXP-lkp@intel.com>
-References: <20240502231021.370047-3-tanmay.shah@amd.com>
+	s=arc-20240116; t=1714952878; c=relaxed/simple;
+	bh=uW0Efq/7j6ILo9wvhPCq3TZ1nqt5jydS5pL9qGvjD/I=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0hGIc+5QJPqXKSHqmHIzGFaxnLfop6aV7EidLwa0PxX4Q7f7Fht6njrrOChQpY3isFUaRWiHgHrLo4OrjXzZfhFpWijpnIDB/jcC/eaTpEwmUC4dcPwt/nG2gvaC8LevoLJ3kjdrFM1k7uw9HtR4gbVQ9faKXeZ8uCT+pmZlgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EmObuLwu; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59a0168c75so322316266b.1;
+        Sun, 05 May 2024 16:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714952874; x=1715557674; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPAeWzpOt4FqxqtoryBJoUZ5AXWGJf7y5C2KkdICfXA=;
+        b=EmObuLwuNWjC9kYpihLyAguQCiihyUoDN/6zY9+2h2k+3MR/iMEq5OZULBzH7eZk/e
+         rljT1NY/zy7sgEpky1ATFMr0+HP9MTCUX5evUIWanlfSXBZ/dzOZwAkV7QSIS+R8pA0N
+         1g+Hx58xi8rDG7VUXCTqRtxloeguEJwOQQSBJLfxYixSmImHahhm0yjdT7/YO3x711o4
+         SJZBkS1by+qXD4f9iY/ICGBhJjs9FwrI6ioKgFnQNFROSot5YqkCSB7uRntJHa9ZPSs7
+         n+tIMgEAdqUrCSAfAbPKfHB9d75Yh4Vef/tBaqMrJLTAx8qk7VYEWZ9YWh4WB1E/72l2
+         htDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714952874; x=1715557674;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EPAeWzpOt4FqxqtoryBJoUZ5AXWGJf7y5C2KkdICfXA=;
+        b=n4WHAq2oed7nu8c6XGMdzhfrXCTOvNefcDXlhUHGpQI2LVMYu7AYccxOBEvjD8NV9a
+         60L8RBKXB91nkxwQprfFV7ZA0gvH5ARQowQ5JhqT9kRUVcII7ZQ3vKHdvRDlRobp2b8L
+         eqmJJYTYNeYzsO4i4GtvYh5GJ6WZxeJraNgfLCz1w5v7c73ONSlMqHi8MWqN+JmAdU4D
+         UjI+ic02uTiWvy/3zTsZSf8jEl0rQQe8gE/PBERnvehvDGgtu+lKZNlJpgTmjYKPaqzz
+         /tFCWHL2C2GmKznAfr9qyLjJKB+kLm/qLI9lddNFZaRfb9SY/uxT6xfS2af9IYV0+8SO
+         sSFw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/4BRZqjRjGvmMaMujCX4F+hjzty+ZNyVKyB6ycHAt3qv9klFCc4QcWpIIvXe8q++j9uyrSV2n5XT+yyYoE2skILHOYKKSRAwsIArc27oCcSUja5FGOnwkW6G58Tb7qYXn9/GPVAJF
+X-Gm-Message-State: AOJu0YzyaluH0ie+wlAbpyipOslZbmpvSG6si9q9Y8gdOFjiT76Mem+2
+	YklSWS6L7ag3KQlrAXNM5ylHuYRR30GsplqciVMh6B6e04drtRNl7WMHezCZog8=
+X-Google-Smtp-Source: AGHT+IGW5qIzoz/GkKOPDTuzCAou9qBjlFLRF/ZKr4+b9Nt+RYNLw3FCm95pvRgCHhzRl4Lgur3TVw==
+X-Received: by 2002:a17:906:9817:b0:a59:a938:d92b with SMTP id lm23-20020a170906981700b00a59a938d92bmr2822729ejb.66.1714952873646;
+        Sun, 05 May 2024 16:47:53 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:7a5f:ec16:256e:4660])
+        by smtp.gmail.com with ESMTPSA id l5-20020a1709061c4500b00a59b594a067sm1712290ejg.66.2024.05.05.16.47.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 May 2024 16:47:53 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Mon, 6 May 2024 01:47:51 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	mazziesaccount@gmail.com, ak@it-klinger.de,
+	petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+	linus.walleij@linaro.org, semen.protsenko@linaro.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v5 06/10] iio: pressure: bmp280: Refactorize reading
+ functions
+Message-ID: <20240505234751.GB17986@vamoiridPC>
+References: <20240429190046.24252-1-vassilisamir@gmail.com>
+ <20240429190046.24252-7-vassilisamir@gmail.com>
+ <20240505202106.1c780044@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,273 +90,469 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240502231021.370047-3-tanmay.shah@amd.com>
+In-Reply-To: <20240505202106.1c780044@jic23-huawei>
 
-Hi Tanmay,
+On Sun, May 05, 2024 at 08:21:06PM +0100, Jonathan Cameron wrote:
+> On Mon, 29 Apr 2024 21:00:42 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > For BMP18x, BMP28x, BME280, BMP38x the reading of the pressure
+> > value requires an update of the t_fine variable which happens
+> > through reading the temperature value.
+> > 
+> > So all the bmpxxx_read_press() functions of the above sensors
+> > are internally calling the equivalent bmpxxx_read_temp() function
+> > in order to update the t_fine value. By just looking at the code
+> > this functionality is a bit hidden and is not easy to understand
+> > why those channels are not independent.
+> > 
+> > This commit tries to clear these things a bit by splitting the
+> > bmpxxx_{read/compensate}_{temp/press/humid}() to the following:
+> > 
+> > i. bmpxxx_read_{temp/press/humid}_adc(): read the raw value from
+> > the sensor.
+> > 
+> > ii. bmpxx_calc_t_fine(): calculate the t_fine variable.
+> > 
+> > iii. bmpxxx_get_t_fine(): get the t_fine variable.
+> > 
+> > iv. bmpxxx_compensate_{temp/press/humid}(): compensate the adc
+> > values and return the calculated value.
+> > 
+> > v. bmpxxx_read_{temp/press/humid}(): combine calls of the
+> > aforementioned functions to return the requested value.
+> > 
+> > Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> In general looks good, but a few details to consider inline.
+> 
+> Jonathan
+> 
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 351 ++++++++++++++++++-----------
+> >  drivers/iio/pressure/bmp280.h      |   6 -
+> >  2 files changed, 221 insertions(+), 136 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index 8290028824e9..5ebce38e99f6 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> > @@ -288,13 +288,33 @@ static int bme280_read_calib(struct bmp280_data *data)
+> >   *
+> >   * Taken from BME280 datasheet, Section 4.2.3, "Compensation formula".
+> >   */
+> > +static int bme280_read_humid_adc(struct bmp280_data *data, s32 *adc_humidity)
+> 
+> It's an u16, so why use an s32?   I can see using a signed value avoids a cast later,
+> but it makes this more confusing to read, so I'd push that cast up to the user.
+> 
 
-kernel test robot noticed the following build warnings:
+Bosch in general has messed up a bit with the signs on their raw values on all
+of those sensors that we use in this driver. I totally agree with you, that this
+value does not make any sense to be anything else apart from u16 but in the
+datasheet [1] in pages 25-26 you can clearly see that they use an s32 for this
+value...
 
-[auto build test WARNING on 0496190c4d42965acb31b9da1b6dac3509791062]
+[1]: https://www.mouser.com/datasheet/2/783/BST-BME280-DS002-1509607.pdf
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/drivers-remoteproc-xlnx-add-attach-detach-support/20240503-071225
-base:   0496190c4d42965acb31b9da1b6dac3509791062
-patch link:    https://lore.kernel.org/r/20240502231021.370047-3-tanmay.shah%40amd.com
-patch subject: [PATCH 2/2] drivers: remoteproc: xlnx: add sram support
-config: arm64-randconfig-r113-20240506 (https://download.01.org/0day-ci/archive/20240506/202405060759.yyzLUQXP-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240506/202405060759.yyzLUQXP-lkp@intel.com/reproduce)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = regmap_bulk_read(data->regmap, BME280_REG_HUMIDITY_MSB,
+> > +			       &data->be16, sizeof(data->be16));
+> > +	if (ret < 0) {
+> > +		dev_err(data->dev, "failed to read humidity\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	*adc_humidity = be16_to_cpu(data->be16);
+> 
+> Trivial, but on error return we normally aim for side effect free.
+> To do that here use an internal variable first.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405060759.yyzLUQXP-lkp@intel.com/
+I am sorry, but in this part, I cannot fully understand what you mean
+by side effect free. I can understand the issue of storing a u16 to an
+s32 might make accidentally the sign to matter but how is this thing
+that you proposed no side effect free? You also made this comment
+in various other places in this patch (because the same principle
+with the SKIPPED is used) and in the other places the values are
+20-bit and 24-bit long which confuses me a bit more on what you mean
+exactly.
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/remoteproc/xlnx_r5_remoteproc.c:423:20: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/remoteproc/xlnx_r5_remoteproc.c:604:20: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct rsc_tbl_data *rsc_data_va @@     got void [noderef] __iomem * @@
-   drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse:     expected struct rsc_tbl_data *rsc_data_va
-   drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse:     got void [noderef] __iomem *
-   drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct resource_table *rsc_addr @@     got void [noderef] __iomem * @@
-   drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse:     expected struct resource_table *rsc_addr
-   drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse:     got void [noderef] __iomem *
-   drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got struct resource_table *rsc_tbl_va @@
-   drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse:     expected void volatile [noderef] __iomem *addr
-   drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse:     got struct resource_table *rsc_tbl_va
->> drivers/remoteproc/xlnx_r5_remoteproc.c:995:26: sparse: sparse: Using plain integer as NULL pointer
+> 	s16 value;
+> 
+> ...
+> 
+> 	value = be16_to_cpu(data->be16)
+> 
+> 	if (value == BMP280_HUMIDITY_SKIPPED) {
+> 		dev_err(data->dev, "...
+> 		return -EIO;
+> 	}
+> This is the odd bit due to using an s32 to store a u16.
+> Have to rely on that size mismatch to avoid the sign accidentally mattering.
+> Which is ugly!
+> 
+> 	*adc_humidity = value;
+> 
+> 	return 0;
+> 
+> 
+> > +	if (*adc_humidity == BMP280_HUMIDITY_SKIPPED) {
+> > +		dev_err(data->dev, "reading humidity skipped\n");
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static u32 bme280_compensate_humidity(struct bmp280_data *data,
+> > -				      s32 adc_humidity)
+> > +				      s32 adc_humidity, s32 t_fine)
+> >  {
+> >  	struct bmp280_calib *calib = &data->calib.bmp280;
+> >  	s32 var;
+> >  
+> > -	var = ((s32)data->t_fine) - (s32)76800;
+> > +	var = ((s32)t_fine) - (s32)76800;
+> 
+> Casting an s32 to an s32.  For the const it shouldn't matter as it'll be at least
+> 32 bits and we don't care about the sign.
+> 
 
-vim +995 drivers/remoteproc/xlnx_r5_remoteproc.c
+In general, I kept the casting for the t_fine because it was used from before,
+but I don't see the point since it is already an s32 value. The casting in front
+of the const, I see it is used in the datasheet [1] in pages 25-26 so maybe they
+kept it for this reason. Since it will be again a 32 bit value, I don't see the
+point of casting it but I still kept it as it was, there originally.
 
-   798	
-   799	static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-   800	{
-   801		struct device *dev = r5_core->dev;
-   802		struct rsc_tbl_data *rsc_data_va;
-   803		struct resource_table *rsc_addr;
-   804		struct resource res_mem;
-   805		struct device_node *np;
-   806		int ret;
-   807	
-   808		/**
-   809		 * It is expected from remote processor firmware to provide resource
-   810		 * table address via struct rsc_tbl_data data structure.
-   811		 * Start address of first entry under "memory-region" property list
-   812		 * contains that data structure which holds resource table address, size
-   813		 * and some magic number to validate correct resource table entry.
-   814		 */
-   815		np = of_parse_phandle(r5_core->np, "memory-region", 0);
-   816		if (!np) {
-   817			dev_err(dev, "failed to get memory region dev node\n");
-   818			return -EINVAL;
-   819		}
-   820	
-   821		ret = of_address_to_resource(np, 0, &res_mem);
-   822		if (ret) {
-   823			dev_err(dev, "failed to get memory-region resource addr\n");
-   824			return -EINVAL;
-   825		}
-   826	
- > 827		rsc_data_va = devm_ioremap_wc(dev, res_mem.start,
-   828					      sizeof(struct rsc_tbl_data));
-   829		if (!rsc_data_va) {
-   830			dev_err(dev, "failed to map resource table data address\n");
-   831			return -EIO;
-   832		}
-   833	
-   834		/**
-   835		 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
-   836		 * do not consider resource table address valid and don't attach
-   837		 */
-   838		if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
-   839		    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
-   840			dev_dbg(dev, "invalid magic number, won't attach\n");
-   841			return -EINVAL;
-   842		}
-   843	
-   844		rsc_addr = ioremap_wc(rsc_data_va->rsc_tbl,
-   845				      rsc_data_va->rsc_tbl_size);
-   846		if (!rsc_addr) {
-   847			dev_err(dev, "failed to get rsc_addr\n");
-   848			return -EINVAL;
-   849		}
-   850	
-   851		/**
-   852		 * As of now resource table version 1 is expected. Don't fail to attach
-   853		 * but warn users about it.
-   854		 */
-   855		if (rsc_addr->ver != 1)
-   856			dev_warn(dev, "unexpected resource table version %d\n",
-   857				 rsc_addr->ver);
-   858	
-   859		r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
-   860		r5_core->rsc_tbl_va = rsc_addr;
-   861	
-   862		return 0;
-   863	}
-   864	
-   865	static int zynqmp_r5_attach(struct rproc *rproc)
-   866	{
-   867		struct zynqmp_r5_core *r5_core = rproc->priv;
-   868		int i, pm_domain_id, ret;
-   869	
-   870		/*
-   871		 * Firmware is loaded in TCM. Request TCM power domains to notify
-   872		 * platform management controller that TCM is in use. This will be
-   873		 * released during unprepare callback.
-   874		 */
-   875		for (i = 0; i < r5_core->tcm_bank_count; i++) {
-   876			pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-   877			ret = zynqmp_pm_request_node(pm_domain_id,
-   878						     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-   879						     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-   880			if (ret < 0)
-   881				pr_warn("TCM %d can't be requested\n", i);
-   882		}
-   883	
-   884		return 0;
-   885	}
-   886	
-   887	static int zynqmp_r5_detach(struct rproc *rproc)
-   888	{
-   889		struct zynqmp_r5_core *r5_core = rproc->priv;
-   890	
-   891		/*
-   892		 * Generate last notification to remote after clearing virtio flag.
-   893		 * Remote can avoid polling on virtio reset flag if kick is generated
-   894		 * during detach by host and check virtio reset flag on kick interrupt.
-   895		 */
-   896		zynqmp_r5_rproc_kick(rproc, 0);
-   897	
-   898		iounmap(r5_core->rsc_tbl_va);
-   899		r5_core->rsc_tbl_va = NULL;
-   900	
-   901		return 0;
-   902	}
-   903	
-   904	static const struct rproc_ops zynqmp_r5_rproc_ops = {
-   905		.prepare	= zynqmp_r5_rproc_prepare,
-   906		.unprepare	= zynqmp_r5_rproc_unprepare,
-   907		.start		= zynqmp_r5_rproc_start,
-   908		.stop		= zynqmp_r5_rproc_stop,
-   909		.load		= rproc_elf_load_segments,
-   910		.parse_fw	= zynqmp_r5_parse_fw,
-   911		.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-   912		.sanity_check	= rproc_elf_sanity_check,
-   913		.get_boot_addr	= rproc_elf_get_boot_addr,
-   914		.kick		= zynqmp_r5_rproc_kick,
-   915		.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
-   916		.attach		= zynqmp_r5_attach,
-   917		.detach		= zynqmp_r5_detach,
-   918	};
-   919	
-   920	/**
-   921	 * zynqmp_r5_add_rproc_core()
-   922	 * Allocate and add struct rproc object for each r5f core
-   923	 * This is called for each individual r5f core
-   924	 *
-   925	 * @cdev: Device node of each r5 core
-   926	 *
-   927	 * Return: zynqmp_r5_core object for success else error code pointer
-   928	 */
-   929	static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
-   930	{
-   931		struct zynqmp_r5_core *r5_core;
-   932		struct rproc *r5_rproc;
-   933		int ret;
-   934	
-   935		/* Set up DMA mask */
-   936		ret = dma_set_coherent_mask(cdev, DMA_BIT_MASK(32));
-   937		if (ret)
-   938			return ERR_PTR(ret);
-   939	
-   940		/* Allocate remoteproc instance */
-   941		r5_rproc = rproc_alloc(cdev, dev_name(cdev),
-   942				       &zynqmp_r5_rproc_ops,
-   943				       NULL, sizeof(struct zynqmp_r5_core));
-   944		if (!r5_rproc) {
-   945			dev_err(cdev, "failed to allocate memory for rproc instance\n");
-   946			return ERR_PTR(-ENOMEM);
-   947		}
-   948	
-   949		rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
-   950	
-   951		r5_rproc->auto_boot = false;
-   952		r5_core = r5_rproc->priv;
-   953		r5_core->dev = cdev;
-   954		r5_core->np = dev_of_node(cdev);
-   955		if (!r5_core->np) {
-   956			dev_err(cdev, "can't get device node for r5 core\n");
-   957			ret = -EINVAL;
-   958			goto free_rproc;
-   959		}
-   960	
-   961		/* Add R5 remoteproc core */
-   962		ret = rproc_add(r5_rproc);
-   963		if (ret) {
-   964			dev_err(cdev, "failed to add r5 remoteproc\n");
-   965			goto free_rproc;
-   966		}
-   967	
-   968		/*
-   969		 * Move rproc state to DETACHED to give one time opportunity to attach
-   970		 * if firmware is already available in the memory. This can happen if
-   971		 * firmware is loaded via debugger or by any other agent in the system.
-   972		 * If firmware isn't available in the memory and resource table isn't found,
-   973		 * then rproc state stay OFFLINE.
-   974		 */
-   975		if (!zynqmp_r5_get_rsc_table_va(r5_core))
-   976			r5_rproc->state = RPROC_DETACHED;
-   977	
-   978		r5_core->rproc = r5_rproc;
-   979		return r5_core;
-   980	
-   981	free_rproc:
-   982		rproc_free(r5_rproc);
-   983		return ERR_PTR(ret);
-   984	}
-   985	
-   986	static int zynqmp_r5_get_sram_pd(struct device *r5_core_dev,
-   987					 struct device_node *sram_np, int **power_domains,
-   988					 int *num_pd)
-   989	{
-   990		struct of_phandle_args out_args;
-   991		int pd_count, i, ret;
-   992		int *pd_list;
-   993	
-   994		if (!of_find_property(sram_np, "power-domains", NULL)) {
- > 995			num_pd = 0;
-   996			return 0;
-   997		}
-   998	
-   999		pd_count = of_count_phandle_with_args(sram_np, "power-domains",
-  1000						      "#power-domain-cells");
-  1001	
-  1002		pd_list = devm_kcalloc(r5_core_dev, pd_count, sizeof(int), GFP_KERNEL);
-  1003		if (!pd_list)
-  1004			return -ENOMEM;
-  1005	
-  1006		for (i = 0; i < pd_count; i++) {
-  1007			ret = of_parse_phandle_with_args(sram_np, "power-domains",
-  1008							 "#power-domain-cells",
-  1009							 i, &out_args);
-  1010			if (ret) {
-  1011				dev_err(r5_core_dev, "%s: power-domains idx %d parsing failed\n",
-  1012					sram_np->name, i);
-  1013				return ret;
-  1014			}
-  1015	
-  1016			of_node_put(out_args.np);
-  1017			pd_list[i] = out_args.args[0];
-  1018		}
-  1019	
-  1020		*power_domains = pd_list;
-  1021		*num_pd = pd_count;
-  1022	
-  1023		return 0;
-  1024	}
-  1025	
+[1]: https://www.mouser.com/datasheet/2/783/BST-BME280-DS002-1509607.pdf
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> >  	var = ((((adc_humidity << 14) - (calib->H4 << 20) - (calib->H5 * var))
+> >  		+ (s32)16384) >> 15) * (((((((var * calib->H6) >> 10)
+> >  		* (((var * (s32)calib->H3) >> 11) + (s32)32768)) >> 10)
+> > @@ -313,8 +333,27 @@ static u32 bme280_compensate_humidity(struct bmp280_data *data,
+> >   *
+> >   * Taken from datasheet, Section 3.11.3, "Compensation formula".
+> >   */
+> > -static s32 bmp280_compensate_temp(struct bmp280_data *data,
+> > -				  s32 adc_temp)
+> > +static int bmp280_read_temp_adc(struct bmp280_data *data, s32 *adc_temp)
+> 
+> As before, sign of the extra variable is confusing. It's not signed
+> as it's a raw ADC value. So I'd use a u32 for it.
+> 
+
+Again, as I said before, Bosch has messed this up. I agree (again) with you
+that this should have been a u16 but according to the datasheet [2] in pages
+45-46 it is an s32...
+
+[2]: https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf
+
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = regmap_bulk_read(data->regmap, BMP280_REG_TEMP_MSB,
+> > +			       data->buf, sizeof(data->buf));
+> > +	if (ret < 0) {
+> > +		dev_err(data->dev, "failed to read temperature\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	*adc_temp = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(data->buf));
+> > +	if (*adc_temp == BMP280_TEMP_SKIPPED) {
+> > +		dev_err(data->dev, "reading temperature skipped\n");
+> > +		return -EIO;
+> Same thing on side effects.  Best to avoid them if it is easy to do (like here!)
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static s32 bmp280_calc_t_fine(struct bmp280_data *data, s32 adc_temp)
+> >  {
+> >  	struct bmp280_calib *calib = &data->calib.bmp280;
+> >  	s32 var1, var2;
+> > @@ -324,9 +363,26 @@ static s32 bmp280_compensate_temp(struct bmp280_data *data,
+> >  	var2 = (((((adc_temp >> 4) - ((s32)calib->T1)) *
+> >  		  ((adc_temp >> 4) - ((s32)calib->T1))) >> 12) *
+> >  		((s32)calib->T3)) >> 14;
+> > -	data->t_fine = var1 + var2;
+> > +	return var1 + var2; /* t_fine = var1 + var2 */
+> > +}
+> > +
+> > +static int bmp280_get_t_fine(struct bmp280_data *data, s32 *t_fine)
+> > +{
+> > +	s32 adc_temp;
+> > +	int ret;
+> > +
+> > +	ret = bmp280_read_temp_adc(data, &adc_temp);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	*t_fine = bmp280_calc_t_fine(data, adc_temp);
+> >  
+> > -	return (data->t_fine * 5 + 128) >> 8;
+> > +	return 0;
+> > +}
+> > +
+> > +static s32 bmp280_compensate_temp(struct bmp280_data *data, s32 adc_temp)
+> > +{
+> > +	return (bmp280_calc_t_fine(data, adc_temp) * 5 + 128) / 256;
+> >  }
+> >  
+> >  /*
+> > @@ -336,13 +392,33 @@ static s32 bmp280_compensate_temp(struct bmp280_data *data,
+> >   *
+> >   * Taken from datasheet, Section 3.11.3, "Compensation formula".
+> >   */
+> > +static int bmp280_read_press_adc(struct bmp280_data *data, s32 *adc_press)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = regmap_bulk_read(data->regmap, BMP280_REG_PRESS_MSB,
+> > +			       data->buf, sizeof(data->buf));
+> > +	if (ret < 0) {
+> > +		dev_err(data->dev, "failed to read pressure\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	*adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(data->buf));
+> > +	if (*adc_press == BMP280_PRESS_SKIPPED) {
+> > +		dev_err(data->dev, "reading pressure skipped\n");
+> > +		return -EIO;
+> 
+> As above; avoid side effects.
+> 
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static u32 bmp280_compensate_press(struct bmp280_data *data,
+> > -				   s32 adc_press)
+> > +				   s32 adc_press, s32 t_fine)
+> >  {
+> >  	struct bmp280_calib *calib = &data->calib.bmp280;
+> >  	s64 var1, var2, p;
+> >  
+> > -	var1 = ((s64)data->t_fine) - 128000;
+> > +	var1 = ((s64)t_fine) - 128000;
+> >  	var2 = var1 * var1 * (s64)calib->P6;
+> >  	var2 += (var1 * (s64)calib->P5) << 17;
+> >  	var2 += ((s64)calib->P4) << 35;
+> > @@ -368,60 +444,35 @@ static int bmp280_read_temp(struct bmp280_data *data,
+> >  	s32 adc_temp, comp_temp;
+> >  	int ret;
+> >  
+> > -	ret = regmap_bulk_read(data->regmap, BMP280_REG_TEMP_MSB,
+> > -			       data->buf, sizeof(data->buf));
+> > -	if (ret < 0) {
+> > -		dev_err(data->dev, "failed to read temperature\n");
+> > +	ret = bmp280_read_temp_adc(data, &adc_temp);
+> > +	if (ret < 0)
+> >  		return ret;
+> > -	}
+> >  
+> > -	adc_temp = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(data->buf));
+> > -	if (adc_temp == BMP280_TEMP_SKIPPED) {
+> > -		/* reading was skipped */
+> > -		dev_err(data->dev, "reading temperature skipped\n");
+> > -		return -EIO;
+> > -	}
+> >  	comp_temp = bmp280_compensate_temp(data, adc_temp);
+> >  
+> > -	/*
+> > -	 * val might be NULL if we're called by the read_press routine,
+> > -	 * who only cares about the carry over t_fine value.
+> > -	 */
+> > -	if (val) {
+> > -		*val = comp_temp * 10;
+> > -		return IIO_VAL_INT;
+> > -	}
+> > -
+> > -	return 0;
+> > +	/* IIO units are in milli Celsius */
+> > +	*val = comp_temp * 10;
+> > +	return IIO_VAL_INT;
+> >  }
+> >  
+> >  static int bmp280_read_press(struct bmp280_data *data,
+> >  			     int *val, int *val2)
+> >  {
+> > +	s32 adc_press, t_fine;
+> >  	u32 comp_press;
+> > -	s32 adc_press;
+> >  	int ret;
+> >  
+> > -	/* Read and compensate temperature so we get a reading of t_fine. */
+> > -	ret = bmp280_read_temp(data, NULL, NULL);
+> > +	ret = bmp280_get_t_fine(data, &t_fine);
+> >  	if (ret < 0)
+> >  		return ret;
+> >  
+> > -	ret = regmap_bulk_read(data->regmap, BMP280_REG_PRESS_MSB,
+> > -			       data->buf, sizeof(data->buf));
+> > -	if (ret < 0) {
+> > -		dev_err(data->dev, "failed to read pressure\n");
+> > +	ret = bmp280_read_press_adc(data, &adc_press);
+> > +	if (ret < 0)
+> >  		return ret;
+> > -	}
+> >  
+> > -	adc_press = FIELD_GET(BMP280_MEAS_TRIM_MASK, get_unaligned_be24(data->buf));
+> > -	if (adc_press == BMP280_PRESS_SKIPPED) {
+> > -		/* reading was skipped */
+> > -		dev_err(data->dev, "reading pressure skipped\n");
+> > -		return -EIO;
+> > -	}
+> > -	comp_press = bmp280_compensate_press(data, adc_press);
+> > +	comp_press = bmp280_compensate_press(data, adc_press, t_fine);
+> >  
+> > +	/* IIO units are in kPa */
+> >  	*val = comp_press;
+> >  	*val2 = 256000;
+> >  
+> > @@ -430,30 +481,21 @@ static int bmp280_read_press(struct bmp280_data *data,
+> >  
+> >  static int bme280_read_humid(struct bmp280_data *data, int *val, int *val2)
+> >  {
+> > +	s32 adc_humidity, t_fine;
+> >  	u32 comp_humidity;
+> > -	s32 adc_humidity;
+> >  	int ret;
+> >  
+> > -	/* Read and compensate temperature so we get a reading of t_fine. */
+> > -	ret = bmp280_read_temp(data, NULL, NULL);
+> > +	ret = bmp280_get_t_fine(data, &t_fine);
+> >  	if (ret < 0)
+> >  		return ret;
+> >  
+> > -	ret = regmap_bulk_read(data->regmap, BME280_REG_HUMIDITY_MSB,
+> > -			       &data->be16, sizeof(data->be16));
+> > -	if (ret < 0) {
+> > -		dev_err(data->dev, "failed to read humidity\n");
+> > +	ret = bme280_read_humid_adc(data, &adc_humidity);
+> > +	if (ret < 0)
+> >  		return ret;
+> > -	}
+> >  
+> > -	adc_humidity = be16_to_cpu(data->be16);
+> > -	if (adc_humidity == BMP280_HUMIDITY_SKIPPED) {
+> > -		/* reading was skipped */
+> > -		dev_err(data->dev, "reading humidity skipped\n");
+> > -		return -EIO;
+> > -	}
+> > -	comp_humidity = bme280_compensate_humidity(data, adc_humidity);
+> > +	comp_humidity = bme280_compensate_humidity(data, adc_humidity, t_fine);
+> >  
+> > +	/* IIO units are in 1000 * % */
+> >  	*val = comp_humidity * 1000 / 1024;
+> >  
+> >  	return IIO_VAL_INT;
+> > @@ -930,9 +972,29 @@ static int bmp380_cmd(struct bmp280_data *data, u8 cmd)
+> >   * Taken from datasheet, Section Appendix 9, "Compensation formula" and repo
+> >   * https://github.com/BoschSensortec/BMP3-Sensor-API.
+> >   */
+> > -static s32 bmp380_compensate_temp(struct bmp280_data *data, u32 adc_temp)
+> > +static int bmp380_read_temp_adc(struct bmp280_data *data, u32 *adc_temp)
+> 
+> Interesting this one is unsigned.
+> 
+
+Yes, and it is also mentioned in the datasheet [3] in page 26.
+
+[3]: https://www.mouser.com/pdfdocs/BST-BMP388-DS001-01.pdf
+
+Cheers,
+Vasilis
+
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = regmap_bulk_read(data->regmap, BMP380_REG_TEMP_XLSB,
+> > +			       data->buf, sizeof(data->buf));
+> > +	if (ret < 0) {
+> > +		dev_err(data->dev, "failed to read temperature\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	*adc_temp = get_unaligned_le24(data->buf);
+> > +	if (*adc_temp == BMP380_TEMP_SKIPPED) {
+> Same as above.
+> > +		dev_err(data->dev, "reading temperature skipped\n");
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static s32 bmp380_calc_t_fine(struct bmp280_data *data, u32 adc_temp)
+> >  {
+> > -	s64 var1, var2, var3, var4, var5, var6, comp_temp;
+> > +	s64 var1, var2, var3, var4, var5, var6;
+> >  	struct bmp380_calib *calib = &data->calib.bmp380;
+> >  
+> >  	var1 = ((s64) adc_temp) - (((s64) calib->T1) << 8);
+> > @@ -941,7 +1003,29 @@ static s32 bmp380_compensate_temp(struct bmp280_data *data, u32 adc_temp)
+> >  	var4 = var3 * ((s64) calib->T3);
+> >  	var5 = (var2 << 18) + var4;
+> >  	var6 = var5 >> 32;
+> > -	data->t_fine = (s32) var6;
+> > +	return (s32) var6; /* t_fine = var6 */
+> > +}
+> > +
+> > +static int bmp380_get_t_fine(struct bmp280_data *data, s32 *t_fine)
+> > +{
+> > +	s32 adc_temp;
+> > +	int ret;
+> > +
+> > +	ret = bmp380_read_temp_adc(data, &adc_temp);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	*t_fine = bmp380_calc_t_fine(data, adc_temp);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int bmp380_compensate_temp(struct bmp280_data *data, u32 adc_temp)
+> > +{
+> > +	s64 comp_temp;
+> > +	s32 var6;
+> > +
+> > +	var6 = bmp380_calc_t_fine(data, adc_temp);
+> >  	comp_temp = (var6 * 25) >> 14;
+> >  
+> >  	comp_temp = clamp_val(comp_temp, BMP380_MIN_TEMP, BMP380_MAX_TEMP);
+> > @@ -955,27 +1039,48 @@ static s32 bmp380_compensate_temp(struct bmp280_data *data, u32 adc_temp)
+> >   * Taken from datasheet, Section 9.3. "Pressure compensation" and repository
+> >   * https://github.com/BoschSensortec/BMP3-Sensor-API.
+> >   */
+> > -static u32 bmp380_compensate_press(struct bmp280_data *data, u32 adc_press)
+> > +static int bmp380_read_press_adc(struct bmp280_data *data, u32 *adc_press)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = regmap_bulk_read(data->regmap, BMP380_REG_PRESS_XLSB,
+> > +			       data->buf, sizeof(data->buf));
+> > +	if (ret < 0) {
+> > +		dev_err(data->dev, "failed to read pressure\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	*adc_press = get_unaligned_le24(data->buf);
+> 
+> As above
+> 
+> > +	if (*adc_press == BMP380_PRESS_SKIPPED) {
+> > +		dev_err(data->dev, "reading pressure skipped\n");
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> 
+> Jonathan
+> 
 
