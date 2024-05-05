@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-168949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C4B8BC016
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:38:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDDE8BC01D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52221F21362
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:38:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7110C1C20CB9
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA78E14267;
-	Sun,  5 May 2024 10:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1D8125AC;
+	Sun,  5 May 2024 10:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="e6NjzObd"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQ49tr+D"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FC3566A;
-	Sun,  5 May 2024 10:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C0B11182
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 10:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714905500; cv=none; b=i9cj8NR6BhKFwaepbqRlncxCF6c8CZcntui0zjzK5HWGUY70v/5a9kHGQFPSoQuYAsFfiXSdyPgi5m2RHRSU4LU3kG2X2a23wrqjmks06GFlZvZlMzeNoGEgiZfH4qITLb6F6TMAUj0M8sOAYn4Hb8tbuoHp5dxTJ39gchrdgjA=
+	t=1714905856; cv=none; b=FA9sY0X0r429+cdgLFtHmOPl7zUh9oSqzvZsij5jKilRBs73LvqpWzmGv0TOINHZQRKoEq3K6hlICRjYOKczBxqyA7U8xnrS5AwDrbSOX1YcjxXidLQUCBcNg8M9DrdjMtsMWYJQG4c6ZhFkGSZC1pr9a96BDBIHft9Kp97RS+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714905500; c=relaxed/simple;
-	bh=NNdDnPQlRSRzHhYTvhUK9y1CX1nyF8zPfZQDyiTOiWU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PhO9WlwmZQNAv+exQvyS47XiAp3HnxuF+2eun9kaPeCugdHlPMqip9JDJ2AGPWOfV9+qd2w2oGeyYxdy/kNwn5utmhMWhVDTPdNc71jfYUEMwqG646rEnnyNVp+bE1WH+raaGw3DKkyS7rti0OUHf+Ntgs8CI5DzeZlQNfRaSHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=e6NjzObd; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1714905856; c=relaxed/simple;
+	bh=KHEhv3zmaRfP0djX9DxadejSI7CWrAi5q8BogsN6Uzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HXhhc3Td+3lXGbFjkJQ9sWY2V+8ukioL7IHTHRzQ1nUM3WbPoJShlq7cqqxfljCe9giwtFy7pzk2ODl7epJRXGMFd9V9YR65MKdqJAARrFjggGc109oPyzT7e7eqfO/ENQOSaD7suDcP/UihjH+6aMPgNPx/5bYS3UcwV6Ck1F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQ49tr+D; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5bdbe2de25fso798621a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 03:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=bnEpZ4ek9gyxr2Bjc24kTx45c9ZBkO1BONI1X2l8JAc=;
-  b=e6NjzObdZj0pnTiWmX/Kyx8s+zgErFHpasKDTDNtbCSezR8JsaBHIgG4
-   GFCDc+mBO43ATzEb6GuI+jMd+LN4Qc3tZH4YtWhnV7BnRt9U7a0QjPR0c
-   TxdrSc3nl/xfcsdRT5SxYJ4N6YvHgIQ669pcRuILvgZX4qnTODq5B1dEY
-   Q=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.07,256,1708383600"; 
-   d="scan'208";a="164542257"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 12:37:05 +0200
-Date: Sun, 5 May 2024 12:37:05 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-    Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Bluetooth: qca: Use common error handling code in two
- functions
-In-Reply-To: <31f78b18-0caa-45c0-af84-c95d525a13dc@web.de>
-Message-ID: <alpine.DEB.2.22.394.2405051236040.3397@hadrien>
-References: <fd9f738e-8e78-4afb-96fd-907f72fb4e13@web.de> <alpine.DEB.2.22.394.2405051105000.3397@hadrien> <31f78b18-0caa-45c0-af84-c95d525a13dc@web.de>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        d=gmail.com; s=20230601; t=1714905854; x=1715510654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KHEhv3zmaRfP0djX9DxadejSI7CWrAi5q8BogsN6Uzg=;
+        b=AQ49tr+Dckuz6Bg78RABuLyIWesNOLm2IKEFFy/Lfsa6eVKNnP9NQThh5Y2xvPSBEg
+         WCpX3r4zzvR9vaNjSRRhpxgm1SE0hY6XtI8JOcsmfwV//KlQi0jK6qs6QQPHZ2fiUgNK
+         +VWyz1i3Ae/1mCrxa62oAZfgWx0lqLInNTo5DOSmqLvc4lhtaVbiHEqRut2+u/3NsnkI
+         qXnKYyQD9XLkEyUXeKm+vjSjhHvzC2axohkcdiw8MN9Dq6twVmyo44r36wYWmirN/D3X
+         nOU15MeGeRjan15vqIoDItTXZi4dlOUMgGLKgJKT5rYzIHEJouxkr+tWA9rulzJxr69V
+         wn3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714905854; x=1715510654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KHEhv3zmaRfP0djX9DxadejSI7CWrAi5q8BogsN6Uzg=;
+        b=SmcZ/CAGuXVZTEBVwnRMb7Y/4goHFhMC/2IoKjd9957bhTyPOmIALjdWdCXOKg3Uv2
+         +snvmi5ZU07HWwzOtvIOJ5Ivflk0RyrLdzE3qGYcIpICOXB0UTy7CZ3StOzwGBA1rjBM
+         ccQg+wUy1WtmmmsREIpJRD4rYUuRrf/0QHJ/2SFOrNmYBSJSdpChmhD6DUqAsElk/pWn
+         onni7ZHl07BxxzF27FipgB1Sr4YoOtnYADTzHthkHDoinvG73cZdhztYQh5JXluwPriA
+         br3VVwkaRkKKh8P12NPUdrd+HoIajAHa6tkKr4h+ma+IpuwT+iojDjH1ew3G4QE2fHWI
+         g3lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIPIGS31olCqur0TV2lUKp+x3BYC5B7YLsMNZIiSwicmCAqy8RYyFlanzQlmui1TMOY+YWHyvtbAUPONm97KTHEGs5PNTtGHv9pYlN
+X-Gm-Message-State: AOJu0Yzh7diQu4LLeQeYFu5NSof0e/HcgNnPK1/Rd622Td8kTyM+qqYC
+	JZYC5uUqdgrsD84JXGbqmABqO2R2vzoM0AE9iLoOJqZ4OhStsSfFvVGXCqZm5tY+mlUHtE7+45L
+	1PcaAV26jACKeOVWHKEw/7TExf3M=
+X-Google-Smtp-Source: AGHT+IE/KQfFTavx9IjjwIVQyxMZ7eZmWGjgcGO/oqK1nSJ7M3enWhKtOEViDKSlx+ck20q3uRIjXvGpMgTk6YXz/fg=
+X-Received: by 2002:a17:90a:51a5:b0:2b2:d375:3b7c with SMTP id
+ u34-20020a17090a51a500b002b2d3753b7cmr6369408pjh.31.1714905854426; Sun, 05
+ May 2024 03:44:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1282540469-1714905425=:3397"
+References: <20240502092443.6845-2-visitorckw@gmail.com> <202405030808.UsoMKFNP-lkp@intel.com>
+ <ZjQ/JOpcdgWZXo0y@visitorckw-System-Product-Name> <20240503041701.GA3660305@thelio-3990X>
+ <ZjSSylciH+qJeEEG@visitorckw-System-Product-Name> <ZjSUk4vgsQ63wfcn@visitorckw-System-Product-Name>
+ <20240503155401.GA3960118@thelio-3990X> <ZjVdbavKgDo8a0CZ@yury-ThinkPad> <20240503222338.GA1908482@thelio-3990X>
+In-Reply-To: <20240503222338.GA1908482@thelio-3990X>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 5 May 2024 12:42:50 +0200
+Message-ID: <CANiq72mJPPp=H6qb7sG1K1hxR3uiHA9+WEVAZkvymSt_dW3CbA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] lib/test_bitops: Add benchmark test for fns()
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Yury Norov <yury.norov@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Kuan-Wei Chiu <visitorckw@gmail.com>, kernel test robot <lkp@intel.com>, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1282540469-1714905425=:3397
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Sun, 5 May 2024, Markus Elfring wrote:
-
-> >> Add a jump target so that the setting of an error code can be better reused
-> >> at the end of these function implementations.
-> …
-> > This reduces readability, and backwards jumps are rarely desirable.
+On Sat, May 4, 2024 at 12:23=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
 >
-> Would you like to support any other design approaches better for
-> the reduction of questionable source code duplication?
+> Adding Miguel as compiler attributes maintainer to make him aware of the
+> change. I think it would be reasonable to have you take it through the
+> bitops tree with your ack so that the test patch can make use of this as
+> the fix for the robot's issue.
 
-Maybe cleanup.h can be used to get rid of the kfree_skb.  I have no idea.
+Thanks Nathan!
 
-It would be nice to keep the patch in the message so that one could see
-what is being discussed from the message itself.
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-julia
---8323329-1282540469-1714905425=:3397--
+The new macro sounds OK to me. Perhaps we should add some docs to the
+other two attributes about their relationship and/or the existence of
+this new `__always_used` one (so that it is easier to find). And if
+so, then perhaps the docs for `__always_used` can be simplified.
+
+> One gotcha that might be worth mentioning is that this combination only
+> works on functions and non-local variables (i.e., static or global).
+
+Yeah, since the `unused` one only applies to that, right?
+
+Cheers,
+Miguel
 
