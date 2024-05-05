@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-168932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC2B8BBFE6
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:06:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3E08BBFE8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2604B1F217A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:06:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB13B210BF
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD279CA7A;
-	Sun,  5 May 2024 09:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaybnDSd"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF03479D8;
+	Sun,  5 May 2024 09:08:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8BD7462
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 09:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159A76FC7
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 09:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714899995; cv=none; b=EkXc5VR1rtw+aHoDugS+4+sWnrZSzPeIsdX2FvPa0NOBZjHj7T1R7tMoiexSODue8Qv2Szr5zEJZL7tKk+G+2bD2NAWI5PsR7OM4s149Y8yCOafF4dE75cCGpEpiSo37Nw0wOFSWPwENLj8iTafE+EgTMRy48PSTZVUlYii5Zu4=
+	t=1714900084; cv=none; b=nQ0MAe7X6DFX2NZ0MWgOzySchOPpuCJbENAydAjQF6JWDinBMp8+InCZ7+Nk47vbvB/92Uap4NaWY93LPCtNoiZkTvubk2XTIIVesZZQCEpObMYkEqvntkckgfFvjypTtMhsmogowD3SJfkPTZEHBQ8XBgqQKPOssn5uEm5i4gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714899995; c=relaxed/simple;
-	bh=qdReb408ivPwxm66qLDD4/I7wrw/SuqJSwzuohf9igY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Qkp7OCD45K4W1OiyaXfyOmdjh+2+BiNqFt2Z5ZdNIi1oy5fn8QJ/OKd5jnoDL04wALLAD6c1vQAwPXQLCKVgRpNu8TmdLSSKoY+oN547MctZ6x2dyPtO0D9spuj4Ko7KQuHM9/qljXOOg+U0LuoPe3jbtcJHsA2Dp/EGgvwsh3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaybnDSd; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59ad344f7dso140276166b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 02:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714899992; x=1715504792; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=NqnhFoMuJwmpFt3ZxxBv08O79AyxDAnpNsiQ/YPbRPA=;
-        b=KaybnDSd/uBXJED0gmGhKtAquW6SYWixfrYk5WDh6kF+Z5XL+z5JGLLPNV/TpgN1Je
-         0313XP/i99CzKH7rejgkLdR9faJVcKcuMgCUEFlcv68mL/mrJDw0JcyNA5XUfqvJ/psz
-         V20VI9iHkkyKTK3YTlEv0yOnJ0dgllTIEWOTcqd2E5QsTN5pTgHNRi+tAudnXLcFQZpg
-         POK65syTtSoTg1js0fmTOml3w7P8pQhBPh7rdcozQ5pPFEFYLVgbW63tagaH7tgy87sR
-         /Djkn340TA3XEE7KSff+P9WRKQ2JpreWmFRqkxX8UvD/7DMtz/9pND0bINFrLGaiVubD
-         DHnQ==
+	s=arc-20240116; t=1714900084; c=relaxed/simple;
+	bh=+kvNGsIf6cUqhl9egqdjJ1o07E9o3CD77g95IKWENsA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aolLKg4zJSwb5JRmZFpIX6OzEqkJbfDOYldmyhjc+8+R6ObA0DFeV3mtjeVWwiwtJMVxL1SVmGFxwCuMgEkrQvbCa/MMm0HwpnE+rt2c5kp9NFW0cciSlGrMJuJECo3/fyDslzgtBAG8U9Lr4KYDavfLX+0tWXgqurhl/7f0ymY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36c7533ed44so7964705ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 02:08:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714899992; x=1715504792;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NqnhFoMuJwmpFt3ZxxBv08O79AyxDAnpNsiQ/YPbRPA=;
-        b=cKyNf9BCO7tLE7eKlZISYKiJJQ+bIdnCoaz5ht4gjXCqCDfQW0S70Z3gxmlbiMuruK
-         rMtYT6KKv0IL5p5PqApUOhymUzLran3LD+unJfpmG7x+uSHNQI11ps2jmdD5pQWW0Jtm
-         bReIe7v6Gm2V1MQO3ArJXA2JQjdPjC9LV37fbqHN2ph47AGJqmHIi2Pb0zdRNbzWwhnN
-         aNi2irDxLhGPiJrkAI8HctJgLBcoN1MJseK+UPG5yB7DOnIFZ8ePihN5IHYZrUmNNoPi
-         sxRPkMJop4srjVk1MJZ33pOZlWWO6o8Gu5bXggTb+QKRA9SE0uXNVsc4/mP5FxipQ+4y
-         sc7w==
-X-Gm-Message-State: AOJu0Yyl9q20GG8vC/TDrWBRW4BuPjAhufS589b4O9r7RLPYmBDVtUjI
-	K6a/AkIYu8LH2Bw6b6Sv6ysT34n4aFvq7yGGDv0D4FVdgQdftuyW
-X-Google-Smtp-Source: AGHT+IFW7DLVZnMkMyptlpXf4g/P8g05ojjCqOzl2llnVV7NYFlH+mr1gVubAxf83sfnJKw+oBEnFw==
-X-Received: by 2002:a50:9ea9:0:b0:572:459f:c7a1 with SMTP id a38-20020a509ea9000000b00572459fc7a1mr4376483edf.16.1714899991310;
-        Sun, 05 May 2024 02:06:31 -0700 (PDT)
-Received: from gmail.com (1F2EF54C.unconfigured.pool.telekom.hu. [31.46.245.76])
-        by smtp.gmail.com with ESMTPSA id fj20-20020a0564022b9400b00572336c900asm3797550edb.74.2024.05.05.02.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 02:06:30 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sun, 5 May 2024 11:06:28 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Borislav Petkov <bp@alien8.de>, Marc Zyngier <maz@kernel.org>
-Subject: [GIT PULL] IRQ fix
-Message-ID: <ZjdMFHuNHvUrncEv@gmail.com>
+        d=1e100.net; s=20230601; t=1714900082; x=1715504882;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rR9uYo4pUV9Ptwo8tFdHdWFFeBKlQtLIoXS25vEOSGs=;
+        b=eNqZSItFhzn1rNhks4DwQl2vuJwYzDJvyTWomrf2jYgGsy0gKvQJjjElgFiQT4aHgt
+         X+1xL/TBgoX6omlgalxbAVHz2qnIKSV9ageEVp3WFysv89QP6wDFvhIZeZqpeIh6T7Xi
+         61TYhDPsP5wp058kevz42M4P+8/zZFYws67+DiiVLeRveyZ7cxN5MZIDLZNjmfTlSXr0
+         9xYkpZVhHv+7n44Ow2Zu6XSwSxZrCfmELy9cEJTohdzvnqng7P791J5tukkpPiLGUUP4
+         6S33Umbsc2wflLNtLp2TX/4r19lFefcWVoa+/VqOrWRgJk8nwpIeCVxGiwBHFm9A/GKP
+         i+8g==
+X-Forwarded-Encrypted: i=1; AJvYcCULwB8Syk5jda0sZB6DC4tn6eTMmV0DPAzjZztAu71hainjJDJ7RsogNYQbPm8rQAK5bhynuiCf6qKfP1Jyk8FzPyfIlsXj22PH+76v
+X-Gm-Message-State: AOJu0YxpD79gMWr1gyH4a3eyaCN9YeNwSNAA4OcIO5FOvEQ1fGkdQIY0
+	kpVQxhzF3EQUo6uV+LhXDqJz6EJlhVvlskSIeuS0d9F9oGEcCFX+DDqN4qX5eBjNlDXFMypo42o
+	cMRShmTjQD3Mhb5grqe676UQE9KyoCK6oBz+W+MocIv3cvm6wnW/OIcI=
+X-Google-Smtp-Source: AGHT+IFWDqLnTzsRcrBxqd5SqG2JiVps/sd0xHJP5/WtobEL4if6t3mOAZ+eSHsaUwj1B9Z/mqsH4Khq2dJl5U+pVISPV2pV1l3P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:216e:b0:36c:4cc9:5923 with SMTP id
+ s14-20020a056e02216e00b0036c4cc95923mr405376ilv.2.1714900082343; Sun, 05 May
+ 2024 02:08:02 -0700 (PDT)
+Date: Sun, 05 May 2024 02:08:02 -0700
+In-Reply-To: <000000000000c430800614b93936@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003bcdf30617b14ab6@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in hsr_dev_xmit (2)
+From: syzbot <syzbot+fbf74291c3b7e753b481@syzkaller.appspotmail.com>
+To: bigeasy@linutronix.de, davem@davemloft.net, edumazet@google.com, 
+	hdanton@sina.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Linus,
+syzbot has bisected this issue to:
 
-Please pull the latest irq/urgent Git tree from:
+commit 06afd2c31d338fa762548580c1bf088703dd1e03
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Tue Nov 29 16:48:12 2022 +0000
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2024-05-05
+    hsr: Synchronize sending frames to have always incremented outgoing seq nr.
 
-   # HEAD: 1dd1eff161bd55968d3d46bc36def62d71fb4785 softirq: Fix suspicious RCU usage in __do_softirq()
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=133c15f8980000
+start commit:   5829614a7b3b Merge branch 'net-sysctl-sentinel'
+git tree:       net-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10bc15f8980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=173c15f8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7c70a227bc928e1b
+dashboard link: https://syzkaller.appspot.com/bug?extid=fbf74291c3b7e753b481
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=144d20e4980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1532ab38980000
 
-Fix suspicious RCU usage in __do_softirq().
+Reported-by: syzbot+fbf74291c3b7e753b481@syzkaller.appspotmail.com
+Fixes: 06afd2c31d33 ("hsr: Synchronize sending frames to have always incremented outgoing seq nr.")
 
- Thanks,
-
-	Ingo
-
------------------->
-Zqiang (1):
-      softirq: Fix suspicious RCU usage in __do_softirq()
-
-
- kernel/softirq.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index b315b21fb28c..02582017759a 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -508,7 +508,7 @@ static inline bool lockdep_softirq_start(void) { return false; }
- static inline void lockdep_softirq_end(bool in_hardirq) { }
- #endif
- 
--asmlinkage __visible void __softirq_entry __do_softirq(void)
-+static void handle_softirqs(bool ksirqd)
- {
- 	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
- 	unsigned long old_flags = current->flags;
-@@ -563,8 +563,7 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
- 		pending >>= softirq_bit;
- 	}
- 
--	if (!IS_ENABLED(CONFIG_PREEMPT_RT) &&
--	    __this_cpu_read(ksoftirqd) == current)
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && ksirqd)
- 		rcu_softirq_qs();
- 
- 	local_irq_disable();
-@@ -584,6 +583,11 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
- 	current_restore_flags(old_flags, PF_MEMALLOC);
- }
- 
-+asmlinkage __visible void __softirq_entry __do_softirq(void)
-+{
-+	handle_softirqs(false);
-+}
-+
- /**
-  * irq_enter_rcu - Enter an interrupt context with RCU watching
-  */
-@@ -921,7 +925,7 @@ static void run_ksoftirqd(unsigned int cpu)
- 		 * We can safely run softirq on inline stack, as we are not deep
- 		 * in the task stack here.
- 		 */
--		__do_softirq();
-+		handle_softirqs(true);
- 		ksoftirqd_run_end();
- 		cond_resched();
- 		return;
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
