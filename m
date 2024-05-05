@@ -1,106 +1,94 @@
-Return-Path: <linux-kernel+bounces-168978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B488BC07D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:16:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2BCB8BC082
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ECD41C20A87
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74335281E6F
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCB51CA92;
-	Sun,  5 May 2024 13:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oa7L/8iL"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090721CFA9;
+	Sun,  5 May 2024 13:21:15 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5218C36
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 13:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B25F1B7FD
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 13:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714915009; cv=none; b=cbCH4B8V+lAvWzwi8XpxNHgEsDC+hGOuyDU2xB1uKcaHhjvTzHswE/IRCOd08uyRTUZnuK1a54WP1TeaO4o3jxxIR8Xk6emplJlUJ9yKrRadXeSEfJd8pGUJBkzgYz+iHthtsuyP9FfhIhor+0jKEMXxT79oa31CDcjIQWMcVaQ=
+	t=1714915274; cv=none; b=YBsf2aVJm4i55JYtrMPgFPjzhbxhbMcL3SRqWeopRqORcDEEq+DPsguOqswRvY5i95NEUJropnK/VSTthsMygHzu5iLzEibRFco7fjvWM221jC0UjJpOK3mHtWV9MfWCr4CxJ3PHPNJlR9uPBQt2kej6n8+drLGc16XZtUQ+bRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714915009; c=relaxed/simple;
-	bh=JUeAkc0VpjizPXONmHIR8AUIb0zyYhhxLFu/R8GLIAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVIHG/SkjGO/r8orHEpQCGJ1zzCOISdOMISgB76U6jcQF1fUhfH7kc//+UccGac6KaDTNL3PCfDMHdC/Vh1wfM1gWjXOIu0JHAWSej/re5qCl9gqXqhriyd395r5wH2gYkmIX+CWnVjq1PSO0jWZRq596XCQkO6vdswC7qnPDyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oa7L/8iL; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b516b36acfso92878a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 06:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1714915006; x=1715519806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p9gsKxFa2cb/3Cv8aGgzqyrtC++fhIDtBe2EGByMdvY=;
-        b=oa7L/8iLZcSq9/zs6B8J7j/VVxqgpjEb4n24EGHZ0E7xVgvS/nmjxb1hgPRhG7X6Qm
-         6WO1I/0d9k0JsdziUXuvIw5k9qhQUYNaDi3+mALOjoKV5pCS6eve297+Si8IIg65Rlqy
-         40Qi8o4E4uRR/QeSVP7g1FvrkJXLQolsXw8ZUzLbMzaOZfuaLSv6Xr7+4cO8ifOczVFG
-         uh79NT6opMcFbYebg3X4JyTxgRpUaTxRVJaOXMGfsuVEVvF7gdDOFreZwU+rJ0N97BId
-         5+QDvNnjM1XgUmht/LsRCL9obOLcj/2i0Sv3aVNhGtdv1BFWCFjFQl2nyujSyrnsfFxF
-         VhoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714915006; x=1715519806;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p9gsKxFa2cb/3Cv8aGgzqyrtC++fhIDtBe2EGByMdvY=;
-        b=Qj8AyFE4XnWPJf8VhnZ69tm/O9Un85WTeTrW7OP+VNme4vwr2NaNNFRx09ZNTGZUta
-         7d6o9xkLBt4wqQCFgeyoL3owrCcKnOUdsu5VX2RPDyUon0EC+ZUr7qTw7+Mv5ekk0T2w
-         7BD8WHEOkBq8XoNwIxEFeBEcet1ncuoBBVtApItyuBsLgmyE01qrT0UPq4fHGmYw1FQY
-         V4Dwqv6d2eCmd6PUsX4sgXaAKBiHqW4ILBrFcjrANwN9FuINnKF9Iu+f++iPnvjlmn1/
-         NhFKFCjWCXVY360sGsk05j8aeEdPgij70Cc46fs9py3h0jIseOzOKMMDEmk0VDpy36SU
-         9VVA==
-X-Gm-Message-State: AOJu0YwszamKT8ry2Ss4M+4bqucYD9HFu/v0S8lUmDecekSgAOM940GP
-	g9OBwK8ptQStihI0CDM0N2MsvyYS+vbEtw4G39lXs3I0NxWnzm5sJohGXip3yG0=
-X-Google-Smtp-Source: AGHT+IFVYhWBd6jHteuSZMdw9jRtZj/mjMdyHP4zXZreMovDGI55qccUxGeVr3BmjAf0Bb06UPxb2A==
-X-Received: by 2002:a17:90b:4a0a:b0:2af:d64:4887 with SMTP id kk10-20020a17090b4a0a00b002af0d644887mr7186558pjb.4.1714915005545;
-        Sun, 05 May 2024 06:16:45 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id w3-20020a17090a528300b002b4329ec537sm4711379pjh.53.2024.05.05.06.16.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 May 2024 06:16:44 -0700 (PDT)
-Message-ID: <01a5c073-463b-46e7-beae-c5de4eb0ee11@kernel.dk>
-Date: Sun, 5 May 2024 07:16:43 -0600
+	s=arc-20240116; t=1714915274; c=relaxed/simple;
+	bh=U8Zx21yumKBwvNpxrOL9i9gF2EPUJJL7/L/GmWttG2E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=XmoJsFDnlywCQk23wWu1SJnCSPJAvvKo+b7Zw4h5IakZfeQMjRMWkcsgz3Zg+RdjSrkd8I3as2VbcTKpubgubk2v3jtH53Rwbezw9usDepivShtFBMoGBsLZayPWhGraxYPgdpWtoZpZRA6DAebG+0rb3b71Hhb3WrnLAO8yqa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-89-FQgjpD-sPLqqUMvw5kHpyg-1; Sun, 05 May 2024 14:21:09 +0100
+X-MC-Unique: FQgjpD-sPLqqUMvw5kHpyg-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 5 May
+ 2024 14:20:35 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 5 May 2024 14:20:35 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Justin Stitt' <justinstitt@google.com>, Edward Liaw <edliaw@google.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shuah Khan
+	<shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, "H. Peter Anvin"
+	<hpa@linux.intel.com>, Andy Lutomirski <luto@mit.edu>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kernel-team@android.com" <kernel-team@android.com>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>
+Subject: RE: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for
+ elf_hash
+Thread-Topic: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for
+ elf_hash
+Thread-Index: AQHanAFdbmzmhwAPx0KMYxInfI6/rrGIpXPg
+Date: Sun, 5 May 2024 13:20:35 +0000
+Message-ID: <b55272cb757743548c789aa8c0efa448@AcuMS.aculab.com>
+References: <20240501180622.1676340-1-edliaw@google.com>
+ <osgrbhnqlyh5yw4y4x6wjggx56dogsgje5yy3mkpu75ubs3zwg@5tliydzky37k>
+In-Reply-To: <osgrbhnqlyh5yw4y4x6wjggx56dogsgje5yy3mkpu75ubs3zwg@5tliydzky37k>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 413/437] media/rc: convert to read/write iterators
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20240411153126.16201-1-axboe@kernel.dk>
- <20240411153126.16201-414-axboe@kernel.dk> <20240504133055.0ca70f7a@sal.lan>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240504133055.0ca70f7a@sal.lan>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 5/4/24 6:31 AM, Mauro Carvalho Chehab wrote:
-> Em Thu, 11 Apr 2024 09:19:13 -0600
-> Jens Axboe <axboe@kernel.dk> escreveu:
-> 
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> Please add a patch description to media patches. Also, please
-> c/c linux-media@vger.kernel.org, as otherwise patchwork.linuxtv.org
-> won't track it, and such patches will be silently ignored[1].
+From: Justin Stitt
+> Sent: 01 May 2024 20:55
+..
+> > static unsigned long elf_hash(const unsigned char *name)
+..
+> Is it possible to just change the types of the parameters of vdso_sym()
+> or does that trigger even more warnings on the callsites of vdso_sym()?
 
-Certainly, it's all just a RFC to get the full picture idea out in the
-open. Any individual patches/series will go out separately to the
-respective lists and maintainers, and it'll have actual commit message
-as well at that point.
+Isn't the problem the definition of elf_hash()?
+A '\0' terminated string really ought to be 'char *' not 'unsigned char *'.
 
--- 
-Jens Axboe
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
