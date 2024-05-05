@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-169081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578068BC2D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:29:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1EA8BC2D8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33CA21C20E0D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFC21F213E9
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8C153E16;
-	Sun,  5 May 2024 17:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570BE4084D;
+	Sun,  5 May 2024 17:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8OVTqJ6"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZSmH6zb3"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4571E861
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 17:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1924F88C
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 17:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714930164; cv=none; b=jcWoKnlMsYkYxPtgfUQ6nP7BZNQXJnBjNg8WisHc+On+JHYPwUbVZQanEsJIDPxMdpS/T00Rbg5PDgxXDByHSh6OMOTB1xZRywlnJ1s+aLCXksbyYqz/ft9xCGYTEM7H4m0o2OTtXHQUZkvMP+xDEhEPSH35ImXCYkjy7Orp/B4=
+	t=1714930288; cv=none; b=raDnhHTBV8wjJLowN+fNWm0vo5xgHV2I6ZVoPDtKMDmghKo7a3F/eBgfGN4DpNZd+4OgQWvM4CZaVvFxaXOn28GbfletZMfY5z/0lZ6yr77YvqX/SD/SqV0ZR5J8hv0l6J/moH4y9ItMKmbIrspfDdEBxwzngcQURlV5zaNuhN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714930164; c=relaxed/simple;
-	bh=V78LFVlUDneq9UmLjB6oxD2QC57zLMoM9j+jwK6P9Uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWaCvgyDPz47aCsEGyMEhv4NHzPgvjY11m2csSOs22mv1Un2miltn7U72GayGPKvM5LbGjYMTl6SO0FI0lfRYngieC0uVlGqGe1qqThUvLmADOWO2iDLoPAVmk6SaekPploOAyh4O8bDdvaBs2n1p3ttfvgqctmjTxxSGYW5Xjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8OVTqJ6; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2b370e63d96so353854a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 10:29:23 -0700 (PDT)
+	s=arc-20240116; t=1714930288; c=relaxed/simple;
+	bh=Xp6I8FdY/0gKMh+YqcCCNneHVsMFWZdpSaQbd9ikMJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKEvyPUJ+Qkc4E/dcifzQmUVdi3xBYbWBJKcjQmxD+P3pnpc0WQUeFkeVNnQcZOK+j7ZPZicajgb+VH+QHhDENNHtJ14OWb8gXzRlpxnh2kIOy+4XXjuTQrF89QA+dRjtQm+C/OL97qw4PKktdnzMpPB7kVV8CRCguXAk507mjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZSmH6zb3; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b516b36acfso123839a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 10:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714930162; x=1715534962; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvDbV6AO5TwPhUqCkiDvAp5iYLy3S0SId5y94yCn9JU=;
-        b=S8OVTqJ6UlhrWWcXoq2VgFAYk5mTDqGB0AQeAGycvGoKdEO0t7nerNLuw62JsgdoQB
-         kVV4qM7inGbEFrBnMwUbV5kfwi8yif8bEDCcglZt3jwIEKyvfb8Bxx1Y9mhUTvFz3Je3
-         RWl8/riI+cX44VIO6aU87P+D+WGQxcPgBHEpUgFYr03ef7Rk8pGczckX4Dryc0zMiTc8
-         04G4Qn5xlpx+RfLC+GMfe1GT++SbB1ollZu8cYC8l9qPahSKlMqi2y2z9b3G51+kGLXA
-         ptb0UHNrjaqspfUXJhmfcdGmIntCb0dnvJ8TVyPyhBid5mJEwT3Wakdu/nWpIBJcLeaw
-         K9FQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1714930285; x=1715535085; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2Cs+A1U1SHJpevw+hi+Q4AcgLtXTFmWGtCKoa+YyyIA=;
+        b=ZSmH6zb3X3WKFaYL2luJdgLRdJClSGZYwg56A5vwYjctCPSItYiPlQ8HKWBG2dMHFM
+         cI65hIq0JsZwivBD7eCnN/HDqdLwcSocNAbGJEUhhh3pN0QxjIXN7TBpmNs0+F5U0A9d
+         4yzfkZ7XGrjRrDsi76R4SLxguZnnM38VSaj2U0SJ5cHhHwarrE4QE2u1DgZtGc6rqe8U
+         4YJwbx0sqzuoDzGOdBCDHEUIS5ZlelDqTfWZ0Hn+xNoitvcqLTqyZaJ6+aY8xBvpbVwu
+         iev8y9zV6aKW3kjILTLCZEY5vogjK8uVMmzPt8TvLucPiw+Wy82NhFsqfFbl+m+Nu8Ka
+         o8PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714930162; x=1715534962;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wvDbV6AO5TwPhUqCkiDvAp5iYLy3S0SId5y94yCn9JU=;
-        b=i7BHyuCujRu5+TK9xKB1Liid/IJypH/m59B0X09g9KV9YwyEe0cFGkcbAoMNoaDKUV
-         zuSqyk0U/0MUlRNeymvwsA4sv4LokMYEIfGyYF8hrr51L8tfhO4ovSVeeIzUp5mtF3oM
-         o8ACkLecWBSyun4+zHWeO2qtwCzzPYQ3OI4320bPMCEvi4KXJu5ZnRFNhMBOJBLIdNrH
-         /b+tp0DIV5X5TwLFt9U02ZZs1JVU31Sz4uLmdN4vLVUJcms0bd0uCJxSp3sinWTNqsMI
-         FRwtpT8kIsTGn7bnFmFaDepbO4B+6194F0K/Gx9nTE5PYZo7/gwvA7qMcsnae39BqY78
-         Qrlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsQUP64peYmmxWixhcFRtNgyAJtk9MIvoMJpFP9Ku1CJG3Gz13L1gPUgU1OcbWSV3bYZbRl8IEpT1vrIrTjCSGIUkVZV6eHxwh/Q4B
-X-Gm-Message-State: AOJu0YxKf/oM6//90oQ2g4iV9O8ngWMz0AXzPf/3k6w9AtlnpA9hvm5V
-	XiO4kngXO4fOwKMNde0WdjwlH/zf4mJcwCDxNmnyTkqITi22zkkj
-X-Google-Smtp-Source: AGHT+IG//QOvSTwN6qrCuFg/+XAFJZ24X/iKGdlMiXevVnJdhQt2Ld+BUebUTjG7UC6LrVgIhaY92w==
-X-Received: by 2002:a05:6a21:8185:b0:1ad:455e:4ae4 with SMTP id pd5-20020a056a21818500b001ad455e4ae4mr9193605pzb.6.1714930162412;
-        Sun, 05 May 2024 10:29:22 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id ff3-20020a056a002f4300b006f0ba1c8ddesm6248458pfb.184.2024.05.05.10.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 10:29:21 -0700 (PDT)
-Date: Mon, 6 May 2024 01:29:18 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: David Laight <David.Laight@aculab.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"yury.norov@gmail.com" <yury.norov@gmail.com>,
-	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-	"n26122115@gs.ncku.edu.tw" <n26122115@gs.ncku.edu.tw>,
-	"jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] lib/test_bitops: Add benchmark test for fns()
-Message-ID: <ZjfB7j16fcsOZyQI@visitorckw-System-Product-Name>
-References: <20240501071647.10228-1-visitorckw@gmail.com>
- <20240501071647.10228-2-visitorckw@gmail.com>
- <44e9ab62e0f543439eb7566a9f134af6@AcuMS.aculab.com>
- <ZjfBeUJDRMHJKQMX@visitorckw-System-Product-Name>
+        d=1e100.net; s=20230601; t=1714930285; x=1715535085;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Cs+A1U1SHJpevw+hi+Q4AcgLtXTFmWGtCKoa+YyyIA=;
+        b=vObzp99ibb4MAohrU1mGp3VQkYj7iM9sQt0rIo6aVNpk+jVesaPMXRRdGlQkbSyTH6
+         +qxAu20GbtA84GXpO7wrYuMcqYCSo1ED3vpDhyy2S6jF2g6YPNWMlYZxFKD3+QhAA64R
+         /EMoFnEqYFAg6k4x9IYPF/Nu6GsQUCR2zagA4/Ur4bg+s5pILDtzl0PW3zYsdfE0s/Ds
+         BkGOf0EJVeyO9H2fuKN7xvVVq+fKuHkgSEaC+pC0Hl3lMNAXSz6yS1VMXMJXEQyn0V5x
+         j6LQT7BS60zKprPR2dFCd+Z8m0WuEaRioC2CjYeCpP5tw3qb4W44AxWbxa1TeeYl92Hl
+         T+9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ2YnSHn+753VBHUcpPSA+yosmmyEHL+60Rm+m75Poa7uhUa56GR7WTkfr7eW7laAhdbrjkgNw7u+r6HFPzh6jqZNR0KjyOIRdjLK5
+X-Gm-Message-State: AOJu0YxGONCY5gJ0KlKv8UEouSkJWzHZCEDPTPzf8/Y16+V9274X6jzW
+	REoLLRDnF9W9JosdI/1bg4XUX8MtPloycQHkfFRLkP6h2zxePvV7UCy30mLg+/M=
+X-Google-Smtp-Source: AGHT+IERglgqIQlQxZGy92cwbJYDFAAfOzd8bI+FwSdGNO4w8zW6pBYTMU1wp8NYvmMLo28t69VtUg==
+X-Received: by 2002:a05:6a20:841e:b0:1af:667c:466a with SMTP id c30-20020a056a20841e00b001af667c466amr10398624pzd.4.1714930285042;
+        Sun, 05 May 2024 10:31:25 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id ca29-20020a056a02069d00b00624e9960bb7sm1014794pgb.91.2024.05.05.10.31.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 10:31:24 -0700 (PDT)
+Message-ID: <a64eb06c-199b-45ef-94eb-c2ae620669a0@kernel.dk>
+Date: Sun, 5 May 2024 11:31:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjfBeUJDRMHJKQMX@visitorckw-System-Product-Name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+To: Linus Torvalds <torvalds@linux-foundation.org>, keescook@chromium.org
+Cc: brauner@kernel.org, christian.koenig@amd.com,
+ dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
+ laura@labbott.name, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ minhquangbui99@gmail.com, sumit.semwal@linaro.org,
+ syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240503211129.679762-2-torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 06, 2024 at 01:27:25AM +0800, Kuan-Wei Chiu wrote:
-> Hi David,
+On 5/3/24 3:11 PM, Linus Torvalds wrote:
+> epoll is a mess, and does various invalid things in the name of
+> performance.
 > 
-> On Sun, May 05, 2024 at 01:03:23PM +0000, David Laight wrote:
-> > From: Kuan-Wei Chiu
-> > > Sent: 01 May 2024 08:17
-> > > 
-> > > Introduce a benchmark test for the fns(). It measures the total time
-> > > taken by fns() to process 1,000,000 test data generated using
-> > > get_random_long() for each n in the range [0, BITS_PER_LONG).
-> > > 
-> > > example:
-> > > test_bitops: fns:          5876762553 ns, 64000000 iterations
-> > 
-> > Great benchmark....
-> > 
-> > The compiler almost certainly optimises it all away.
-> > 
-> > Assigning the result of fns() to a file scope (global) volatile int
-> > should stop that happening.
-> > 
-> Thank you for your review. There is an updated v5 of this patch [1],
-> which has already been accepted and included in Yury's bitmap-for-next
-> branch of the bitmap tree. In the v5 patch, we have addressed the issue
-> you mentioned regarding the use of volatile variables to avoid compiler
-> optimizations.
->
-[1]: https://lore.kernel.org/lkml/20240502092443.6845-2-visitorckw@gmail.com/
+> Let's try to rein it in a bit. Something like this, perhaps?
+> 
+> Not-yet-signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> ---
+> 
+> This is entirely untested, thus the "Not-yet-signed-off-by".  But I
+> think this may be kind of the right path forward. 
+> 
+> I suspect the ->poll() call is the main case that matters, but there are
+> other places where eventpoll just looks up the file pointer without then
+> being very careful about it.  The sock_from_file(epi->ffd.file) uses in
+> particular should probably also use this to look up the file. 
+> 
+> Comments?
 
-> > And a real test would actually check the result - just in case
-> > someone does something silly.
-> >
-> The fns() function is mainly a helper for find_nth_bit(), so its
-> accuracy should have been checked in find_nth_bit()'s tests. If you
-> want unit tests for fns() here too, that sounds good to me, but it
-> would likely be a separate patch. I'm happy to do it if you'd like.
-> 
-> Regards,
-> Kuan-Wei
-> 
-> > 	David
-> > 
-> > -
-> > Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> > Registration No: 1397386 (Wales)
-> > 
+FWIW, I agree that epoll is the odd one out and there's no reason NOT to
+close this gap, regardless of how safe we currently think the existing
+usage is.
+
+I've done some basic testing with this - both to verify it fixes the
+actual issue at hand (it does, crashes trivially without it), and
+networking/pipe based epoll usage and no ill effects observed. Also
+passes all ltp test cases as well, but I was less concerned about that
+side.
+
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+
+-- 
+Jens Axboe
+
 
