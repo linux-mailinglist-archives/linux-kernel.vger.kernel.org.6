@@ -1,123 +1,168 @@
-Return-Path: <linux-kernel+bounces-169121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D008BC360
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:02:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A8F8BC367
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E0F1C21402
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319BD2826C2
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7402D6F513;
-	Sun,  5 May 2024 20:02:14 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104616EB7C;
+	Sun,  5 May 2024 20:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="QZVeGXm2"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A506DD0D
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 20:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0834322611;
+	Sun,  5 May 2024 20:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714939334; cv=none; b=echbtHxh9G6C0gqdsx0b+zs04ymIjjGPixTaB2iMq5I8+NZV0nj1Vcpe49Gz6c8Oi7IadLhfSMaeyz5egql1TH5+sbRPJq8WURaFztMGBwXv6o13UnnjKau84t7J8g5DQfYIjKl4K6xBCwRSp4ZjlMioXlIEWOlGF2Chj6wuSNc=
+	t=1714939477; cv=none; b=g2AlhNeGWKdEKOBY0g/PMAP07suj5eNMKQ6mbqkJ5oWWztT1OD4yEJllAhtbYq1u55gAXlzqeyHuxDRBFWgQT2LGKk8a892TsAPE3ht+aWFBl4YVhO9e8vQVKt2Cmiiz+JOhKNqdviQMTUgupeaKWpaj1NqyOIka9jEgVUugDQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714939334; c=relaxed/simple;
-	bh=E3EXz8OizJveGJXsu2m1+CDPXknNWRauEOO9iEs/AhA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=a6jOqWJrrYXpzMsGCh2orXtKkpqR1BsNOnREplKen7MCrKiCZ5kRJMgSk5dxtO9aNUMl8huBr2YzGqs3i7aIHe/BFcQTL5temil5kTtY4kKli0LtWJ4SkdSWcgoI7wutXCFAzI6nMU8AnLKlLrfkfmr7X/AyxVOM+2UixChsz/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-214-jGM-Qg1LN-mdByA-tf6CNA-1; Sun, 05 May 2024 21:02:07 +0100
-X-MC-Unique: jGM-Qg1LN-mdByA-tf6CNA-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 5 May
- 2024 21:01:32 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 5 May 2024 21:01:32 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-CC: "axboe@kernel.dk" <axboe@kernel.dk>, "brauner@kernel.org"
-	<brauner@kernel.org>, "christian.koenig@amd.com" <christian.koenig@amd.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "jack@suse.cz"
-	<jack@suse.cz>, "keescook@chromium.org" <keescook@chromium.org>,
-	"laura@labbott.name" <laura@labbott.name>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "minhquangbui99@gmail.com"
-	<minhquangbui99@gmail.com>, "sumit.semwal@linaro.org"
-	<sumit.semwal@linaro.org>,
-	"syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com"
-	<syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
-	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: RE: [PATCH v2] epoll: be better about file lifetimes
-Thread-Topic: [PATCH v2] epoll: be better about file lifetimes
-Thread-Index: AQHanxYFUxCiqg1u6ES4w5URbGMRFrGJB6+A
-Date: Sun, 5 May 2024 20:01:32 +0000
-Message-ID: <12120faf79614fc1b9df272394a71550@AcuMS.aculab.com>
-References: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
- <20240505175556.1213266-2-torvalds@linux-foundation.org>
-In-Reply-To: <20240505175556.1213266-2-torvalds@linux-foundation.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1714939477; c=relaxed/simple;
+	bh=Pi2/TNVByX0JP5w+l9K3hAIMKCPKrqUeoG/wzKmCyy8=;
+	h=Message-ID:Date:MIME-Version:In-Reply-To:To:CC:From:Subject:
+	 Content-Type; b=BUt1+DY0QUDlwjWwDZ80Wvexjg01U0Ozd2gXFuITbuZzKJUvHaz4hNOgPhTZthfLjV2qE0+dMmYVrHielVzvyu0Bp+lzgw3jzHyNrNFQvwFa70QLeGDvL6kOmQxxRifjbFi3lBvb/1W6oBwaUNn1mx9couW1m1yYIhTvr9aazck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=QZVeGXm2; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 71468120004;
+	Sun,  5 May 2024 23:04:24 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 71468120004
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1714939464;
+	bh=baxPYAOBKBIEZGlkQCQ94G4LWTk3/f2RFWo2CGnbI50=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
+	b=QZVeGXm2O0TvVnYhTRgVcbUbOlA10QH3bYpOUDTG6g3ocuKRiTu/Cak1yHQ4IkB0M
+	 Swu+zNMXwo5hrIv7NjSLcwEwSmzDWOOZHgi8gMiKEWiPOqGVXMJyhRohreoLZ9lwP3
+	 dkZEFig6YIuH95ABNnmpvVkWWp3tBs5xUavLMTMZxkm3aelrbMMWGC3cbu9lm31aHn
+	 rNzFrX2NBMyKjUAFbClx0JOEbFfuLZhbXEPksySpQRTaf8ozhAtH38IQpAvD3gWQkb
+	 OEY2VcPaYL5hkLYHGpsoxVFrCGuGwMk/SK8srzcJ9ynuwu8sI5vPFaafEjF9T4JKkV
+	 0BNR+8cZm5AtQ==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sun,  5 May 2024 23:04:24 +0300 (MSK)
+Received: from [192.168.0.106] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 5 May 2024 23:04:23 +0300
+Message-ID: <d0550fea-58b6-3aa5-a8ac-27308183d6f8@salutedevices.com>
+Date: Sun, 5 May 2024 22:53:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240422100010-mutt-send-email-mst@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella
+	<sgarzare@redhat.com>, Jeongjun Park <aha310510@gmail.com>, Jason Wang
+	<jasowang@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<syzbot+6c21aeb59d0e82eb2782@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>, Krasnov Arseniy <oxffffaa@gmail.com>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Subject: Re: [PATCH virt] virt: fix uninit-value in vhost_vsock_dev_open
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185060 [May 05 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/05 18:13:00 #25098537
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-From: Linus Torvalds
-> Sent: 05 May 2024 18:56
->=20
-> epoll can call out to vfs_poll() with a file pointer that may race with
-> the last 'fput()'. That would make f_count go down to zero, and while
-> the ep->mtx locking means that the resulting file pointer tear-down will
-> be blocked until the poll returns, it means that f_count is already
-> dead, and any use of it won't actually get a reference to the file any
-> more: it's dead regardless.
->=20
-> Make sure we have a valid ref on the file pointer before we call down to
-> vfs_poll() from the epoll routines.
+> But now that it's explained, the bugfix as proposed is incomplete:
+> userspace can set features twice and the second time will leak
+> old VIRTIO_VSOCK_F_SEQPACKET bit value.
+> 
+> And I am pretty sure the Fixes tag is wrong.
+> 
+> So I wrote this, but I actually don't have a set for
+> seqpacket to test this. Arseny could you help test maybe?
+> Thanks!
 
-How much is the extra pair of atomics going to hurt performance?
-IIRC a lot of work was done to (try to) make epoll lockless.
+Hi! Sorry for late reply! Just run vsock test suite with this patch -
+seems everything is ok!
 
-Perhaps the 'hook' into epoll (usually) from sys_close should be
-done before any of the references are removed?
-(Which is different from Q6/A6 in man epoll - but that seems to be
-documenting a bug!)
-Then the ->poll() callback can't happen (assuming it is properly
-locked) after the ->release() one.
+> 
+> 
+> commit bcc17a060d93b198d8a17a9b87b593f41337ee28
+> Author: Michael S. Tsirkin <mst@redhat.com>
+> Date:   Mon Apr 22 10:03:13 2024 -0400
+> 
+> vhost/vsock: always initialize seqpacket_allow
+> 
+> There are two issues around seqpacket_allow:
+> 1. seqpacket_allow is not initialized when socket is
+> created. Thus if features are never set, it will be
+> read uninitialized.
+> 2. if VIRTIO_VSOCK_F_SEQPACKET is set and then cleared,
+> then seqpacket_allow will not be cleared appropriately
+> (existing apps I know about don't usually do this but
+> it's legal and there's no way to be sure no one relies
+> on this).
+> 
+> To fix:
+>     - initialize seqpacket_allow after allocation
+>     - set it unconditionally in set_features
+> 
+> Reported-by: syzbot+6c21aeb59d0e82eb2782@syzkaller.appspotmail.com
+> Reported-by: Jeongjun Park <aha310510@gmail.com>
+> Fixes: ced7b713711f ("vhost/vsock: support SEQPACKET for transport").
+> Cc: Arseny Krasnov <arseny.krasnov@kaspersky.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Stefan Hajnoczi <stefanha@redhat.com>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-It seems better to add extra atomics to the close/final-fput path
-rather than ever ->poll() call epoll makes.
+Acked-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
 
-I can get extra references to a driver by dup() open("/dev/fd/n")
-and mmap() - but epoll is definitely fd based.
-(Which may be why it has the fd number in its data.)
+> 
+> diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+> index ec20ecff85c7..bf664ec9341b 100644
+> --- a/drivers/vhost/vsock.c
+> +++ b/drivers/vhost/vsock.c
+> @@ -667,6 +667,7 @@ static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
+>  	}
+>  
+>  	vsock->guest_cid = 0; /* no CID assigned yet */
+> +	vsock->seqpacket_allow = false;
+>  
+>  	atomic_set(&vsock->queued_replies, 0);
+>  
+> @@ -810,8 +811,7 @@ static int vhost_vsock_set_features(struct vhost_vsock *vsock, u64 features)
+>  			goto err;
+>  	}
+>  
+> -	if (features & (1ULL << VIRTIO_VSOCK_F_SEQPACKET))
+> -		vsock->seqpacket_allow = true;
+> +	vsock->seqpacket_allow = features & (1ULL << VIRTIO_VSOCK_F_SEQPACKET);
+>  
+>  	for (i = 0; i < ARRAY_SIZE(vsock->vqs); i++) {
+>  		vq = &vsock->vqs[i];
 
-Is there another race between EPOLL_CTL_ADD and close() (from a
-different thread)?
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
 
 
