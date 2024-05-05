@@ -1,137 +1,154 @@
-Return-Path: <linux-kernel+bounces-168903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CCA8BBF88
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9598BBF89
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3201A281E8D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 06:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870821C20C12
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8176763CB;
-	Sun,  5 May 2024 06:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8OZwuB+"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F85CAC;
+	Sun,  5 May 2024 07:00:34 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4C0524F;
-	Sun,  5 May 2024 06:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE37D2901
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 07:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714892325; cv=none; b=rkxHkvicxZDEAArXkaOgETACGIybqMhZIJ+y628WqpppYaQ09/yhsbGCKp/wEjK66z2LWEw1ugJuayllTlM3wQBJWvwrXr/Un3NWWp2f4SmWYS2Qkjf73TYoKGvPKNcyZDI964zAcj5SFt0dCcfG49S7mrHpIfU2KZZqszBK5Aw=
+	t=1714892433; cv=none; b=MmKDYeuHaoenBkbJjzue6i5ohkRPzlt33mtrwTGPnzvwQ1VSYt3meroVh429uo/0awht9yjK/bI+i/4HrhbOFDhLaxvpmG2Hl5+EeAHxmTPua/PEEiQ7N4d+IjGPuLLnq6iDKCW9gmRzCqr2cu28XpFDBRoU3JDIrj10JG0NgQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714892325; c=relaxed/simple;
-	bh=2PBKlYW1qzVbuyWWgJD7yyagzyu9p+LO9Q6duh0Zt1s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ocpbVx8FBAsLCUrNmxknVzjS0EcnjKyg+7u9qpF3wKlxj7Ky2ZKQkg+bCN5M6L3BD+oPO+u7CABCBG9ecDjWalDLJCn3v7VGFMKQXaNRvT2zEPmkcP+HMnflgm3XH6vfYtoACsRd+glRd5z+6FavfLd8jlNSFtYvwxiTJM9ETC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8OZwuB+; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2343ae31a9bso635059fac.1;
-        Sat, 04 May 2024 23:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714892323; x=1715497123; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4vpukMfzbAPwm14bol0ui9iQpresRYINtD5OwU6MD8w=;
-        b=Q8OZwuB+o+twuVZmal+koXoUGXv5n3sBK6loUtKUQRQmZeVq4mIWGpvJHNWfcc7YoH
-         8QUr92ObNtHvZi+AGyxP9MyIc8vFz9S5noFnWmLilOs7FBx454nbXhLsbdEqwpNqRg+R
-         b9v3LLF/hQ7PFkXd8Dgqe/d8bGgb4/oH60ijBqSAm4wbbjUWcIwSRwXLgFE7eS9MKDRR
-         DXIo7dX8Duw87tx51XK88mrrZDNHDWurUtAoiYIH68NjdjmAgwwx+eSU+FIfwPcwE5bS
-         Hy40TKdsuco5WVh67ECiIPeBpFu+E8UP3v+XlZVn5QkdIB1xdzMnbbdgA4tz51NZYqgd
-         BsqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714892323; x=1715497123;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4vpukMfzbAPwm14bol0ui9iQpresRYINtD5OwU6MD8w=;
-        b=MexVUVcgP76xnBX96ZqLEv4XqPJZO36sagdvDxhjqntqBEGjmWwTSr1fsfMbnTWIIv
-         6SSS/HAjrsR39vSqr9VAL/rejqSzNna+zsxf5aKDvFq0K1z6cl2Zo06cctVtaQMa1QMy
-         uOjTLcu2YwaML71NrEbP9inHYPR2FtClqgzlVkAMBu7ZopmaeWX5EsfxZ/KFbfa5WdF+
-         DDjzZxLIQfc2MRuX3euAxdp2NdGDJYSv69tAfGGxi9l+DfodvhIYCNvutphA6QOCGisD
-         ku4peERRrAQp/n8BCXPTfbAmswFZ1qRvJEH4jho6Bksdn2py0QS59uqcrTSt4M5le+KL
-         VGZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWew2zJeVk4mGgdkJ7OCoSRkDs299YO4WBNWBzRu93KUyUigfrjxI3+ru5k1Dkgpvvc5Vpbpt4xzuzVG5UasSzzV+bn4Bb1ftRrnlIPfrOUCXrHW61/QBwgo5AaCxm4x0n3AlqlJV4q
-X-Gm-Message-State: AOJu0YwKZvVCE0Nbnu1xYkYdczhSpt2YPzC7ap1gDbeiZL+Y42Mm6PNT
-	4dgOgeGB8Zh30bBex8j2gAqr9hthwEq4GFpsovE1VLWZD6aIFWDOSLL1v6MI
-X-Google-Smtp-Source: AGHT+IGxsol5QytOUZjrb7i4kzhX0EYbteDvqcJ1KMaH4YM2PAb0vAHAIZVrR1XXrGxKuvnKhD+JZQ==
-X-Received: by 2002:a05:6870:5387:b0:23b:8a84:2e66 with SMTP id h7-20020a056870538700b0023b8a842e66mr8989034oan.15.1714892323379;
-        Sat, 04 May 2024 23:58:43 -0700 (PDT)
-Received: from ?IPV6:2402:e280:214c:86:54ee:ba66:1638:6278? ([2402:e280:214c:86:54ee:ba66:1638:6278])
-        by smtp.gmail.com with ESMTPSA id nw10-20020a17090b254a00b002b0e8d4c426sm7847133pjb.11.2024.05.04.23.58.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 May 2024 23:58:43 -0700 (PDT)
-Message-ID: <5c699755-0317-4485-af69-0a4256dce085@gmail.com>
-Date: Sun, 5 May 2024 12:28:38 +0530
+	s=arc-20240116; t=1714892433; c=relaxed/simple;
+	bh=Ti0NDrKYBP9Uy6IPNOgqqiIxHOwl6ehcRPGqiyLSeMI=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OXCMfhcapwbWwF1RrUzvLlmIZiJLb44pRJelgMX6iQP8VtWDKW7iTOsd0UIeiw5cKBEK+hXUtVxwcvADaHX6LwburKDFO9apvfknRplHKjcyn9H/ags478EQAH+JbDFy6WUnt/7aP7A/LDIajO6beWIGqGHc952pdoQ8rwv25E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VXFl32tWdzcdSC;
+	Sun,  5 May 2024 14:59:11 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id 10DC318007A;
+	Sun,  5 May 2024 15:00:21 +0800 (CST)
+Received: from [10.173.135.154] (10.173.135.154) by
+ canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Sun, 5 May 2024 15:00:20 +0800
+Subject: Re: [PATCH 3/3] mm/memory-failure: send SIGBUS in the event of thp
+ split fail
+To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240501232458.3919593-1-jane.chu@oracle.com>
+ <20240501232458.3919593-4-jane.chu@oracle.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <038cffc0-e027-b518-460f-40099819c588@huawei.com>
+Date: Sun, 5 May 2024 15:00:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: typec: mux: replace of_node_put() with __free
- [linux-next]
-From: R Sundar <prosunofficial@gmail.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: heikki.krogerus@linux.intel.com, dmitry.baryshkov@linaro.org,
- neil.armstrong@linaro.org, christophe.jaillet@wanadoo.fr,
- u.kleine-koenig@pengutronix.de, skhan@linuxfoundation.org,
- javier.carrasco.cruz@gmail.com, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@inria.fr>
-References: <20240410175804.5195-1-prosunofficial@gmail.com>
- <2024050443-coerce-bonus-977a@gregkh>
- <9574a4a1-a7b8-4f35-88b0-754c4396b02e@gmail.com>
+In-Reply-To: <20240501232458.3919593-4-jane.chu@oracle.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-In-Reply-To: <9574a4a1-a7b8-4f35-88b0-754c4396b02e@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
-On 05/05/24 10:50, R Sundar wrote:
-> On 04/05/24 21:48, Greg KH wrote:
->> On Wed, Apr 10, 2024 at 11:28:04PM +0530, R SUNDAR wrote:
->>> Signed-off-by: R SUNDAR <prosunofficial@gmail.com>
->>
->> Please fix your name up for the next version.
+On 2024/5/2 7:24, Jane Chu wrote:
+> When handle hwpoison in a GUP longterm pin'ed thp page,
+> try_to_split_thp_page() will fail. And at this point, there is little else
+> the kernel could do except sending a SIGBUS to the user process, thus
+> give it a chance to recover.
 > 
-> Hi,
-> 
-> This version of patch is sent  before comments provided for naming in 
-> patch v1.
-> 
-> The name and nitpick was fixed after suggestion provided in patch v1.
-> 
-> https://lore.kernel.org/all/2024041103-doornail-professor-7c1e@gregkh/
-> 
-> 
-> Link for patch after fixing name and nitpick:
-> 
-> https://lore.kernel.org/all/20240426164705.2717-1-prosunofficial@gmail.com/
-> 
-> 
-> 
-> Thanks,
-> Sundar
+> Signed-off-by: Jane Chu <jane.chu@oracle.com>
 
-Little more explanation on previous mail:
+Thanks for your patch. Some comments below.
 
-Nitpick mentioned above , referring to is  , suggestion to rewrite a 
-"nit in code" related to indentation in common path.
+> ---
+>  mm/memory-failure.c | 36 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 7fcf182abb96..67f4d24a98e7 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2168,6 +2168,37 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+>  	return rc;
+>  }
+>  
+> +/*
+> + * The calling condition is as such: thp split failed, page might have
+> + * been GUP longterm pinned, not much can be done for recovery.
+> + * But a SIGBUS should be delivered with vaddr provided so that the user
+> + * application has a chance to recover. Also, application processes'
+> + * election for MCE early killed will be honored.
+> + */
+> +static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
+> +			struct page *hpage)
+> +{
+> +	struct folio *folio = page_folio(hpage);
+> +	LIST_HEAD(tokill);
+> +	int res = -EHWPOISON;
+> +
+> +	/* deal with user pages only */
+> +	if (PageReserved(p) || PageSlab(p) || PageTable(p) || PageOffline(p))
+> +		res = -EBUSY;
+> +	if (!(PageLRU(hpage) || PageHuge(p)))
+> +		res = -EBUSY;
 
-https://lore.kernel.org/all/2024041103-doornail-professor-7c1e@gregkh/
+Above checks seems unneeded. We already know it's thp?
 
+> +
+> +	if (res == -EHWPOISON) {
+> +		collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
+> +		kill_procs(&tokill, true, pfn, flags);
+> +	}
+> +
+> +	if (flags & MF_COUNT_INCREASED)
+> +		put_page(p);
 
-So along with fixing name , I fixed that indentations also as suggested.
+This if block is broken. put_page() has been done when try_to_split_thp_page() fails?
 
-https://lore.kernel.org/all/20240426164705.2717-1-prosunofficial@gmail.com/
+> +
 
-Thanks,
-Sundar
+action_result is missing?
 
+> +	return res;
+> +}
+> +
+>  /**
+>   * memory_failure - Handle memory failure of a page.
+>   * @pfn: Page Number of the corrupted page
+> @@ -2297,6 +2328,11 @@ int memory_failure(unsigned long pfn, int flags)
+>  		 */
+>  		SetPageHasHWPoisoned(hpage);
+>  		if (try_to_split_thp_page(p) < 0) {
+
+Should hwpoison_filter() be called in this case?
+
+> +			if (flags & MF_ACTION_REQUIRED) {
+> +				pr_err("%#lx: thp split failed\n", pfn);
+> +				res = kill_procs_now(p, pfn, flags, hpage);
+
+Can we use hwpoison_user_mappings() directly here?
+
+Thanks.
+.
+
+> +				goto unlock_mutex;
+> +			}
+>  			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_IGNORED);
+>  			goto unlock_mutex;
+>  		}
+> 
 
 
