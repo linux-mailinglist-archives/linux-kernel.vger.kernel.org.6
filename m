@@ -1,111 +1,127 @@
-Return-Path: <linux-kernel+bounces-169112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E518BC342
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786728BC344
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775151C20F4E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D8D1F21AA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0E76F06A;
-	Sun,  5 May 2024 19:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18FF6EB46;
+	Sun,  5 May 2024 19:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="McWQbNDY"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsTvxLrC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05A1E861;
-	Sun,  5 May 2024 19:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF76E54C;
+	Sun,  5 May 2024 19:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714937625; cv=none; b=D3XbBtbWTpZeOGK+DrC1ZgO8s8053RdoJCIw9nmzw6rEwsR+2ghMuyCLelRqGqECFoDDNUVmRiFPBb9yWFkn6ke0jBA/zu8Ul/eQlWNXwMMQ7EA8xKVEKOUMWXZJE1P0iyZy6lTgflVEKIHm30FfOpbuueIZsOVePO8x8btmfDw=
+	t=1714937711; cv=none; b=hgTTMuz2czw4HpO13c+kLbkvHUH1Fyj+XWHnvheJPrws755fnge8iCuCha3AQJgdszoIxMwF8UcRfR8el8yIfTfZBBfoYpqoD3BVPrw8km1xIKOBd+MTsBeYXiQplWCQUuXDNEMA18tR+FWics3UUlGKDVh4ElzbUrWjo0u2Cjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714937625; c=relaxed/simple;
-	bh=FAa895ktb1uP1Vp93a9G7q8BSm2alQQQ6zACrN4BDCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLoxacyzy9oeAMGCyE+tnpKycRFnCKBJGPSofpNOp1GpHh1FentXLWmJTfeNzYKstObhv9K2Y4at5xfwo6P2jHgNEp1Y1vqpI+kQIkCJh+3nTEJtxSRS75HHmJwoOVz64Q8AWGnqg0zsMJtwqQlTpYxWryLmhp0Hsho5XjOCyJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=McWQbNDY; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ir7v3reFern2bMfdElsM96VZnzXzk0n4uUJTOAif+1Q=; b=McWQbNDYzuYXgpSXDP4LItZWas
-	c+G1yOfrbEspOzp1y83MmoVq+GjM65/lDs5ubikEffoKy6knBTT0Cnta994MJYbor6t7/xL39+xZY
-	ql5OkyzdVJnqVLsZA07ot1DBjiNfK/PRj32i+7icc4KxOKtjuizlh6PQ2yg/Gh2uW00MtWrZH+noT
-	DmGe+qrgLQzl+Vjiy6wLJXFRAfjYNsLD6oxZNRyY3G4+BY0/9l8y8NCR4bpLwA4zkQq+SpC8pRlQ7
-	1jq7R+FD/uXz6shSAQhD3+U1mfsV1BoTVZ/bSVu26krBG1rtN+CtsWnH1RZsq3KB14EYp0oR36XWz
-	2afx1NrA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s3hc8-0000000587A-2v0C;
-	Sun, 05 May 2024 19:33:36 +0000
-Date: Sun, 5 May 2024 12:33:36 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Donald Dutile <ddutile@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>,
-	Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Liviu Dudau <liviu@dudau.co.uk>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nadav Amit <nadav.amit@gmail.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Sam Ravnborg <sam@ravnborg.org>, Song Liu <song@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-mm@kvack.org, linux-modules@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	netdev@vger.kernel.org, sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH RESEND v8 00/16] mm: jit/text allocator
-Message-ID: <ZjffEEsRIb8r0jG6@bombadil.infradead.org>
-References: <20240505160628.2323363-1-rppt@kernel.org>
+	s=arc-20240116; t=1714937711; c=relaxed/simple;
+	bh=VkxMDtsny24XcJVYTcFBblK3g3hI+2cPLXzaBz3PeGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HiojWiuM0DhAAHBzu6TJXdTaALH3v0UfjQ0zBpzIrU5FnhDw83H20a/w4CO0j3iYeuW/zcSy3zZKkrxDrGJNgpRsWiZfqjZxtoYqkjqtsuxNVXGiemMUjWJawcKcy5WYetUlnTyqj+dTKGsN+KV7b77uMPV5I3Sx3w6xnbVB8K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsTvxLrC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44587C113CC;
+	Sun,  5 May 2024 19:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714937709;
+	bh=VkxMDtsny24XcJVYTcFBblK3g3hI+2cPLXzaBz3PeGE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dsTvxLrCKnhUIzmfWZOGyRXiMXsggzwEaXK+xm+fXGCrvZ+MlTfjqpgZgw3O7a041
+	 fl48q+3ST+nwbK38xAELnKKr2CkTxL05jns8yHcIuX98f2d5qp6hDT8WavsK4OBQAf
+	 M3uhe9pjVCnhgMB8NPt5ahGyWYWh6Ll5yfLO4QbIijH4CFA2OnFlsV7IT9IBMcCZsr
+	 FH4RlpTUNhqwcoCgldx6gYflTKVWT65AdH8J2mwqEAC5pSxrZOPT4Rr2qPRebfHu3b
+	 q+T/9kA3ls5YV9qVkyfhGoaRLW7FCkEEcXyohcrBUXWMLyGD6r8R6MSUPBGddd62AE
+	 3Jpd4gQetL6xA==
+Date: Sun, 5 May 2024 20:34:56 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
+ petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+ linus.walleij@linaro.org, semen.protsenko@linaro.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 10/10] iio: pressure: bmp280: Add triggered buffer
+ support
+Message-ID: <20240505203456.0c4c0c90@jic23-huawei>
+In-Reply-To: <20240429190046.24252-11-vassilisamir@gmail.com>
+References: <20240429190046.24252-1-vassilisamir@gmail.com>
+	<20240429190046.24252-11-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240505160628.2323363-1-rppt@kernel.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, May 05, 2024 at 07:06:12PM +0300, Mike Rapoport wrote:
-> From: "Mike Rapoport (IBM)" <rppt@kernel.org>
-> 
-> Hi,
-> 
-> The patches are also available in git:
-> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=execmem/v8
-> 
-> v8:
-> * fix intialization of default_execmem_info
+On Mon, 29 Apr 2024 21:00:46 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-Thanks, applied and pushed to modules-next. If we find fixes, let's
-please just now have separate patches on top of this series.
+> BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
+> temperature, pressure and humidity readings. This facilitates the
+> use of burst/bulk reads in order to acquire data faster. The
+> approach is different from the one used in oneshot captures.
+> 
+> BMP085 & BMP1xx devices use a completely different measurement
+> process that is well defined and is used in their buffer_handler().
+> 
+> Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Hi Vasileois,
 
-  Luis
+Just one question on this inline. (patches 8 and 9 look good to me)
+
+For v6, only need to send the patches that I haven't already applied.
+
+Thanks,
+
+Jonathan
+
+>  
+> +static irqreturn_t bmp180_buffer_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+> +	int ret, chan_value;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	ret = bmp180_read_temp(data, &chan_value);
+> +	if (ret < 0)
+> +		return IRQ_HANDLED;
+> +
+> +	data->sensor_data[1] = chan_value;
+> +
+> +	ret = bmp180_read_press(data, &chan_value);
+
+So I 'think' that after all the refactoring you end up reading the temperature
+twice.  To avoid that you need to pull the read_temp() and read_press()
+function implementations here and only do the (currently duplicated) steps once.
+
+You seem to have done this for the other case, but missed the bmp180?
+Maybe I'm missing some reason it doesn't work for this one!
+
+> +	if (ret < 0)
+> +		return IRQ_HANDLED;
+> +
+> +	data->sensor_data[0] = chan_value;
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
+> +					   iio_get_time_ns(indio_dev));
+> +
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
 
