@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-168883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16ED48BBF37
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 06:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E0A8BBF3A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 06:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67083B211D3
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 04:40:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A3FB21242
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 04:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4FE23A8;
-	Sun,  5 May 2024 04:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2251879;
+	Sun,  5 May 2024 04:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OiQLKpa3"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zqn6PL5Q"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BFC15CE
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 04:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E336815A8;
+	Sun,  5 May 2024 04:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714884004; cv=none; b=rQogPNc14+vjsBeiioiuJZtvXPtVvAyyq/3IfZkZ9+HNpSxLvqWu8eSRHvq0OvxHjEXZthFDCUuTH859WkLOJqI6rDmvE7c0w+luXxsubf5IzJa21SYvsQTu/CQmeHe9FowlBNfAS6vSz5t4Y1VhXlamgqdiqyJ4Gx93UZyImFc=
+	t=1714884932; cv=none; b=NCSINQ1ZI28LQU/qw3yUFSC0TbN4D1E/sZfhRj3eosfseITWlJYvyXYOVqHY9Falf9zGb+nvZrCVRG/VR/H0OafH4Af3tJiXEI+snWWvdGoDpgrPz2aLHWXMSOVj/8pWxTJCOUwNdnOG8NFhYp1wGcOkBbFWTnWiIVkOQEeX3Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714884004; c=relaxed/simple;
-	bh=zg1XkJMfhl0NSO0NTG2Ku336zIdH3gENBvcjq01QdDI=;
+	s=arc-20240116; t=1714884932; c=relaxed/simple;
+	bh=xbhjLy7QQi8imRqNOc0Votf1mG0I43W3i1qsh+O+skI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJitrj6QIz9Uh0w3UYCqli8z2z+QpfZA4QFB4j78LZibzhxg8Se4QLKe2Ovq3j6X6nAyI9rpJlTEeHaexP+MMB4g9CpCaRF8/pNZ6/bULo1RYCF2broAVLiLI1fjV16fRgW6iFRcFT2mRu8btHMmxtQh9rIqhlJKfY0VDuwlUi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OiQLKpa3; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ecd9dab183so24600415ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 21:40:03 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwfjS5a5uWOSvUhDzd7PvqMOCG8rGXxk171Odq70nDDOAWC/BlkFhZWcGRExLRkfvOaufynZqahwNk9lRbAxiJQ95lih7YPm3KNKI/aO1qAsFftrtU83rX3z/2HQSJgaCnCN1aIp2HD1gvtCNcR/0hB/mvfkKmkCCD35ve8VJ/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zqn6PL5Q; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a387fbc9so182968866b.1;
+        Sat, 04 May 2024 21:55:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714884003; x=1715488803; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714884929; x=1715489729; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TzpM7FU8Imvm8zuTPXcEgxBeaAl1FWkYeSH3YqD2Xns=;
-        b=OiQLKpa3uJLoDH6uGW1rVkG2MrjAs55QzEvNgDRwmHsSX9KRKrKyMnxClP2n0Sc6fR
-         siNY4zTSrJaHSMqNsKFYLldatBGlf35XlCsCDwogMYndmcP0SlFsuvCZ7ApTIbL60Qhr
-         mtHZsTvt3Le36c766TVffKRmiUjB8uHoS4Hbg=
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wE3YC1TeUYKgZ6zIEpaK2M8eOvPXoKAulTsczzk25cA=;
+        b=Zqn6PL5QsZw7LbAASrcb24zgQlmoC3/jJFb+0kSQdLolqqViPd9CPqqGFdL2yAC+WQ
+         nDTNGJ/Y7uixBiXkCcFMZUf94vJUrw8Bv7yQQo+yX6Oyhy9/VwDggKib9Oa6XEAnzfdA
+         alm/IuEDjcanXCkZ9xG6OdUc1cDcyZmZE8llJPVMjzkBanrNnzOjvRcTxfTWr2ZdOna8
+         lcH6M/DND5PkfI/NRYTuJ0EVkKOnnTlIOkYvVNyGIGlQM56gJYkiU8uvbMy6SSJ+JPub
+         BIfMoHWEFRvgMnKLro4MvxlK0r7NRoC5bOSff2YJ0McQwHiOsgAvrxUtQrrR5HIjkIXb
+         Etaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714884003; x=1715488803;
+        d=1e100.net; s=20230601; t=1714884929; x=1715489729;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TzpM7FU8Imvm8zuTPXcEgxBeaAl1FWkYeSH3YqD2Xns=;
-        b=FZfRuXVrI/sWLYa3RXhlm/sx9mJxtfKD0ZivW7okyXO1rMC7/j7rAcEvJOZi6buJ6x
-         nKN9QuoUu5kbhsXtVHi9C8zrHb3tf+xoq0cDrZpm0uAEOuuvn6ojC6hKghP2sJz/NKol
-         krXslxaU3gvkPnkxGoZaIXX0UGYFIX96Cc83YFE579xkJhBS9dAJRp9KxFjUw/akm3jy
-         JwnhQ3BZsmz0TkAFYewcACOl6qOfUfs6hZfCF+CkoHN8G3mNr4eGpVYwJ1s9P5rXPWxD
-         WYaTaAkbIOiHacfo4oMkMMvL3kT5uTqHebh9Ancn3nGiqE9kD1kb5sgxWEnpiEFOhpGa
-         79XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFZBnqEry1STLHWmxoYa+d3KBGMh//7CS0GDmxbYIQNGwQUUIE1ECSsr0bLOh2fgyILWdUMfsI5vaq7dK35gJJEYrGuPYvv1TvqIc6
-X-Gm-Message-State: AOJu0YzZyZ7UJsRcfKQx5MwMmqOzfuxtVSUbAi4ruP6ZZ+XBMbAXBKjW
-	3dHwd/mjZvgST0FgrxsBVB2gEaM0Kjcc8riGyZHUpygG7t09rnEsiOzFFsZIvw==
-X-Google-Smtp-Source: AGHT+IEeiKOrRPU5vIIqBtlS4HJNxQ0aabIvlspSUVAEeWBnpj7xpaPpcUt2xQ7IpYeR2DLXXzG+rw==
-X-Received: by 2002:a17:902:ecc4:b0:1e4:59a2:d7c1 with SMTP id a4-20020a170902ecc400b001e459a2d7c1mr15472258plh.33.1714884002658;
-        Sat, 04 May 2024 21:40:02 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:8263:3b89:bcee:2ed4])
-        by smtp.gmail.com with ESMTPSA id r12-20020a170902c60c00b001ec7a1a8702sm5789626plr.271.2024.05.04.21.40.00
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wE3YC1TeUYKgZ6zIEpaK2M8eOvPXoKAulTsczzk25cA=;
+        b=CrWGTRHv4rNAthP1mvxHdToTPPS/KVK6R0atJeF1ZG6Tu7TxiTFv1QjP4i8VJ/fh3p
+         0hBqo0FBuryyoiE6GKGjXzivpn7VsUa3ptmBBlV1edIwo90KhsHEQlv+C8YI+oBn2oIq
+         L2f153IGudeSwfgZh0dVThUk5gqn07e3J0SsIMu870q385CS2PLMHHwdigWXf0+3crUE
+         taaKjgnYuYLkVGWSHsxYKXMer8Cxo9h3zk+BFBkfSsNvj5JJ6scnGOh4XW3U1m3pDIM5
+         yeonx7knIX1+S+bDqAFWKt4s6+JzdJqlezB3NQqqFpdVayameJ/UZhVUS+bVJIEi8UG2
+         VpPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWH7TpljafO2fBw0FY/5tUPhFCsSHZ9ZoIltxel2Lherqd11vyhsy2FQlf57wZXsiWn7Cqx13/QatpppbNh3Xw7hVCgPd9LtfGUDvWy5VkM5ktZarPZVDW+EUb3sDmY5BkcKjxgAhls+4il
+X-Gm-Message-State: AOJu0YyJjgiTc9dpnbxlerW+U/jMw5z3vMK4PNP+EREoUVx+jRiJTb70
+	kPGIQqxMpjGwFKD1aefdJ8Y+YYLy+gpV6QqIL3lXftZqs99Gxs1V
+X-Google-Smtp-Source: AGHT+IE7xB6mr4BvHmWVm4ONwhj7vbYgt6+zAD0rzKuucAEn7BMqQoJlSz1jQ9lE0RZN9et6Op2pxw==
+X-Received: by 2002:a50:d783:0:b0:568:c6a2:f427 with SMTP id w3-20020a50d783000000b00568c6a2f427mr3933869edi.27.1714884928811;
+        Sat, 04 May 2024 21:55:28 -0700 (PDT)
+Received: from gmail.com (1F2EF54C.unconfigured.pool.telekom.hu. [31.46.245.76])
+        by smtp.gmail.com with ESMTPSA id ev11-20020a056402540b00b0057000a2cb5bsm3546973edb.18.2024.05.04.21.55.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 21:40:02 -0700 (PDT)
-Date: Sun, 5 May 2024 13:39:57 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	kernel test robot <lkp@intel.com>, Minchan Kim <minchan@kernel.org>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 08/14] zram: check that backends array has at least one
- backend
-Message-ID: <20240505043957.GA8623@google.com>
-References: <20240503091823.3616962-9-senozhatsky@chromium.org>
- <202405041440.UTBQZAaf-lkp@intel.com>
- <20240504071416.GH14947@google.com>
- <20240504161004.f5a0aab5e5aa1033d4696c20@linux-foundation.org>
+        Sat, 04 May 2024 21:55:28 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Sun, 5 May 2024 06:55:25 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: Re: [GIT PULL] Kbuild updates for v6.9-rc1
+Message-ID: <ZjcRPelwZP34N42s@gmail.com>
+References: <CAK7LNARXef6Myb_Gd4jyGfwujoBAjmjzLZBzgkm4T1KmfHP0MQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,52 +84,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240504161004.f5a0aab5e5aa1033d4696c20@linux-foundation.org>
+In-Reply-To: <CAK7LNARXef6Myb_Gd4jyGfwujoBAjmjzLZBzgkm4T1KmfHP0MQ@mail.gmail.com>
 
-On (24/05/04 16:10), Andrew Morton wrote:
-> > On (24/05/04 14:54), kernel test robot wrote:
-> > >          |                            ~~~~~~~~~~~~~~~~~~~~~~
-> > > >> drivers/block/zram/zcomp.c:214:2: error: call to '__compiletime_assert_285' declared with 'error' attribute: BUILD_BUG_ON failed: ARRAY_SIZE(backends) <= 1
-> > >      214 |         BUILD_BUG_ON(ARRAY_SIZE(backends) <= 1);
-> > >          |         ^
-> > 
-> > So this is what that BUILD_BUG_ON() is supposed to catch. You don't
-> > have any backends selected in your .config:
-> > 
-> > # CONFIG_ZRAM_BACKEND_LZO is not set
-> > # CONFIG_ZRAM_BACKEND_LZ4 is not set
-> > # CONFIG_ZRAM_BACKEND_LZ4HC is not set
-> > # CONFIG_ZRAM_BACKEND_ZSTD is not set
-> > # CONFIG_ZRAM_BACKEND_DEFLATE is not set
-> > CONFIG_ZRAM_DEF_COMP="unset-value"
-> > 
-> > Which is invalid configuration because it means that zram has no
-> > compression enabled.
-> 
-> We don't want s390 defconfig to be doing this!
-> 
-> I guess just pick one if none were selected.
 
-I'm looking into it.
+* Masahiro Yamada <masahiroy@kernel.org> wrote:
 
-We used to have "zram depends on crypto compression algorithm"
+>       kbuild: simplify dtbs_install by reading the list of compiled DTBs
+>       kbuild: deb-pkg: show verbose log for direct package builds
+>       kbuild: deb-pkg: make debian/rules quiet for 'make deb-pkg'
+>       kbuild: deb-pkg: build binary-arch in parallel
+>       kbuild: deb-pkg: call more misc debhelper commands
+>       kbuild: rpm-pkg: do not include depmod-generated files
+>       kbuild: rpm-pkg: mark installed files in /boot as %ghost
 
-: config ZRAM
-:        tristate "Compressed RAM block device support"
-:        depends on BLOCK && SYSFS && MMU
-:        depends on CRYPTO_LZO || CRYPTO_ZSTD || CRYPTO_LZ4 || CRYPTO_LZ4HC || CRYPTO_842
+Not sure whether it's related to these commits, but the kernel package 
+build on Ubuntu is broken currently - both the deb-pkg and bindeb-pkg 
+targets result in this build failure:
 
-I sort of wanted to change it and make zram select compression algorithm,
-instead of depending on some comp algorithm being already selected.
-But I can probably keep the old behaviour
+ $ make -j32 deb-pkg
+ ...
 
-: config ZRAM
-:        tristate "Compressed RAM block device support"
-:        depends on BLOCK && SYSFS && MMU
-:        select ZSMALLOC
-:        depends on (LZO_COMPRESS && LZO_DECOMPRESS) || \
-:                (LZ4_COMPRESS && LZ4_DECOMPRESS) || \
-:                (LZ4HC_COMPRESS && LZ4_DECOMPRESS) || \
-:                (ZSTD_COMPRESS && ZSTD_DECOMPRESS) || \
-:                (ZLIB_DEFLATE && ZLIB_INFLATE)
+   BTF [M] net/qrtr/qrtr-mhi.ko
+   BTF [M] net/qrtr/qrtr-tun.ko
+   BTF [M] net/batman-adv/batman-adv.ko
+   BTF [M] net/sctp/sctp.ko
+   BTF [M] net/mac80211/mac80211.ko
+ file
+ : No such file or directory
+ make[3]: *** [debian/rules:61: binary-image] Error 255
+ dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+ make[2]: *** [scripts/Makefile.package:121: deb-pkg] Error 2
+ make[1]: *** [/home/mingo/tip.localinstall/Makefile:1541: deb-pkg] Error 2
+ make: *** [Makefile:240: __sub-make] Error 2
+
+Notes:
+
+- Yes, those weird 'file' and ': No such file or directory' strings are 
+  pasted as-is. No idea what it's about, and the build log doesn't say.
+
+- The .config is an unremarkable .config derived from Ubuntu's own kernel 
+  config - can send it separately to you if it matters.
+
+- Software version is Ununtu 23.10 with the latest updates. Can send 
+  details if it matters. Is there an easy Make command to run to extract 
+  the software versions you'd need, instead of having to manually extract 
+  it from a zillion tools and packages? 'make build-environment' or so?
+
+- The kernel package build is also incredibly slow, as reported by others 
+  back in January AFAICS, which makes bisection impractical. There's no 
+  other build failure visible in the build log.
+
+  I did one strace of the build (which is even more incredibly slow, takes 
+  about an hour literally on a 4GHz box with 64 CPUs), which has shown this 
+  weird instance shortly before the failure:
+
+      3027593 newfstatat(AT_FDCWD, "deb-pkg", 0x7ffeef9f9960, 0) = -1 ENOENT  (No such file or directory)
+
+  ... which might or might not be normal Make behavior.
+
+Thanks,
+
+	Ingo
 
