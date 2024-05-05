@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-168959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67598BC033
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:14:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B553B8BC035
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E060B1C20DF6
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85281C20DC3
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B9917556;
-	Sun,  5 May 2024 11:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C51A208A8;
+	Sun,  5 May 2024 11:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qf0Gs6tE"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="zY1DDpmt"
 Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563161096F;
-	Sun,  5 May 2024 11:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E01114A96;
+	Sun,  5 May 2024 11:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714907670; cv=none; b=dSduynOa7wiTLrSZaOkEVqiZlv6tLjHet2h/i30ipMFopOShDRK54JVJ4N4/c87L9cNvi9eGAhCSRw13Sivzw5nLl+/K1h44u7ktUDE1lrs0+e3jo3yDVDUbG3ff7nlyKS54fVx5yuFc5G7hxM3Zb6VAY/dugXjqO+diAJ3iVJw=
+	t=1714907672; cv=none; b=hg0VTWRbJBDOX/8ab2+GmPsnh50NU3hz87jQDCBQg5AY7K2FPeQsvgYn6n/rPOHaPCDGSJiNiESSuU8Fdj2YyP3QUP9OGCtz4+AzubuwPVp5ZRITXguP60oVvklC+ZSzyluOkv9yt6dDuLvnkYSQYopbz6lseUQhALQyIRppRqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714907670; c=relaxed/simple;
-	bh=9eAXx8y5d8kDhI6LAXR0fz77K7tCB+kZ9tgT5yKzOe4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Uj75wYBZ/MANQBbstFjzk6qzYWM/2TArca2l0UYH/CCOZktn73n3kq3hJJ2fX8R/bojNoc8y0i1p71+17+WrzgzIHt5i/bqLo6UrlQb3vsy9un5gW5U9iOjc+uZ7WglbFEJ9ajYzKYJUNqs+FqI/299q1qu8NPtB+376dRtQ24Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qf0Gs6tE; arc=none smtp.client-ip=62.210.214.84
+	s=arc-20240116; t=1714907672; c=relaxed/simple;
+	bh=gXJdObYymSv+xu5zY8dz7G2l4mbXEFOwz6QHuVB14dg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IfUkZFInjFQyQ0zS5EUtYzlcSQui4IrJ3dnBfloqdKiqwSWbuXBiQ8+V4y1V0SK0KEyI8htd6ap9jxbZdFBVzvzhpeTI8TqHO5Y6QVpsiiIrzOdDv30cbKN/Y7XIdqI5IPEJNhVjWgcz4u/OshDbiusXojEFDBjKRDpnqKAWUs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=zY1DDpmt; arc=none smtp.client-ip=62.210.214.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
 Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id AC5C214C2DB;
-	Sun,  5 May 2024 13:14:15 +0200 (CEST)
+	by submarine.notk.org (Postfix) with ESMTPS id 74B6014C2DC;
+	Sun,  5 May 2024 13:14:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1714907659;
+	s=2; t=1714907663;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4LHR19hAFTP2QYCStLYSuCHVAdmTGJHkSdXxe3Jnvj8=;
-	b=qf0Gs6tEJbxr+ECx26CXin6ca2rLkO+gHjNsltw0Rt+uhwodyBvCxNJ89W+qBSdLnPwdMI
-	OT/VS2Xxd1Xv7yJ1/5RofZDUmDSWYQfqXqj8QzqEQFVOwt61gYV0WiS8fm6kYqLvHzRBzw
-	B2YBHzu7IBQ/m1uGJmk0XaDwaoJlBYumGnDgj07Clj3YU34BgO5mmqsu3TgMkwut77c+MC
-	Fb6MNuWlnhgVagaog6yjatbBE+ycGAvxbgl40xyImydYQqF9AgNCvz9xeP5FA1rC+f4N5g
-	TtJMb+PPYHd3AlrfPi33WnoaAjBeT+KXcVYiiARsnfJO+srOvdDlinyeQc3XJg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i9IsIqe9yWCkF+5W0tmJJpm3iiYQWxxVo7wE2Yz9kF0=;
+	b=zY1DDpmtB/4s5mSi/E4q6RjnGSGugZCcrHNgT0AZMwQ/lfPWjnih1WOqLxdM1XAa9WjEnK
+	UMv/uVvzNSYzFII/PF2iss0X8eeRZuVK+/MvSkv/D+8LMoO9mr+vfiulKKBnYxqusFmajq
+	NXfTVNhyluMY3qHuGPDNtJwfQuyRIVL67fig4QVjPr2AoORS40H/5+AHz6E6DfAtDgNY1S
+	NmoSFoTQNNy6WMkiPhIsx+DOzQmHpmVAoZnYnIm/uZEkGrihweuxnnhyqYeotmgIqffjEX
+	SRSCCSaoTc6FnaLUhJFwGQrFWHGh3tFg2TAdc7fNpQjcVxZ3dFt49yzvsTNNYg==
 Received: from [127.0.0.1] (localhost.lan [::1])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTP id 679dde65;
+	by gaia.codewreck.org (OpenSMTPD) with ESMTP id ed3b291f;
 	Sun, 5 May 2024 11:14:12 +0000 (UTC)
 From: Dominique Martinet <asmadeus@codewreck.org>
-Subject: [PATCH v2 0/3] perf probe: Allow names to start with digits
-Date: Sun, 05 May 2024 20:13:56 +0900
-Message-Id: <20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org>
+Date: Sun, 05 May 2024 20:13:57 +0900
+Subject: [PATCH v2 1/3] perf parse-events: pass parse_state to
+ add_tracepoint
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,9 +58,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPRpN2YC/23MQQqDMBCF4avIrJsSY2JoV96jSKnJGIeCkYnYF
- sndm7ru8n/wvh0SMmGCa7UD40aJ4lxCnSpw02MOKMiXBiWVllpasSCPd0+BVmGV1mYw6IdWQTk
- sjCO9D+zWl54orZE/h73Vv/Uvs9VCCmPRNda1TXPRnYseX4zueY4coM85fwG2KTm8qAAAAA==
+Message-Id: <20240505-perf_digit-v2-1-6ece307fdaad@codewreck.org>
+References: <20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org>
+In-Reply-To: <20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
  Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
  Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
@@ -68,70 +70,168 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Dominique Martinet <asmadeus@codewreck.org>
 X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1913;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6034;
  i=asmadeus@codewreck.org; h=from:subject:message-id;
- bh=9eAXx8y5d8kDhI6LAXR0fz77K7tCB+kZ9tgT5yKzOe4=;
- b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBmN2n/IyRsM+n+wtwdIZ8pvgEFgsboo3ARADr2j
- N1XDpfVPd2JAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZjdp/wAKCRCrTpvsapjm
- cMefD/4oJILrvU8XdYUq7zmeVntt8buSR6LvaaqCczEds/xjlCHtdFnQv6sZ2ZbhDZc9rM3Ules
- V0gDnm8rchvFIvDP2LmZfWUS0TSIc9sV3Rk6pSiM2E/RTh7pP/m11pQ6CnQO/F0nXYKzd9vuoc9
- UoPxklQ+7ZQtNGpTz3thKcSyMDJ9CbxXBOFUoka2+gZDsuPFvQQM0ykXAb1x9wGwamosyzOi+xC
- Q9Q9kVtWQ+vX6S9IBMVmZBMATE0mJt7JulYFJ2LASNMnAnVzd/MUhTwVcipQZsKUsf3n9+EC1Q4
- MmtkNTH0lzcqlbPFG7p6Udkcax2GVg7D90mfJYAl8U47iIFDvbQshwVJ8fXSj4NowJ3PYybDhZg
- Fsmoh0i2d8iPwFOZNdQaxU0r2t27pJGf3giZ80fa/oDdGv38XOCaHWa6vbAOh5bSTZNdHlwQ3HG
- OXcTg/j7FCzQI31RqkvoYZ/rcXNf+HjBnFphtzMNH5wHgtjCeyEuVt13ZSlvrSdW6dT/eB0NuBq
- 0DQjIyb45APb/jnIiyXZWGAvnwBiQML7AJA6EQkWqdAWyARTtDmfrESVGCKrXRJzr/3hVmI+BiK
- ICezt8cV9i/E7uRWk4hfk1/jK168M/2/4m/+LF5Pp7pNceHxZPt7GIlgfYWc2ooJbsx9ihKOro7
- M+pRnEnhjGqu/TQ==
+ bh=gXJdObYymSv+xu5zY8dz7G2l4mbXEFOwz6QHuVB14dg=;
+ b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBmN2oDqD59jkZvW5G/2dikehsD4v0MNEgObfnuZ
+ sFtJBti/MKJAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZjdqAwAKCRCrTpvsapjm
+ cMYHD/9NltkR4wwvRVz8vJL7hLdW9/u6MWfGtQhY5n5D2ezJ+kF54wDVt/Rk3otB7V5fawH54Rp
+ xAive80s/ED9Tchw2RTrKcuJDUZMlbE1UdCV/sfNJnXx+YZRwX/4e865+2ZRSH7gC4t47CR8HSl
+ 1U4JJ7tNxR6Jf1V4g2wJ4s298aemo2TNwJIPrDWYOnhUrnOds/FINurhd23UkOfOV5QpXOnpNTX
+ JrOhZ5NmKMY+KE1eWu4G1nF5fwojqCAsA/4uIpMk4RfllGpGWWAwnBi91eYsNtyXV7VU4FpLmB7
+ n5+2+5SGWngylaKQilI1geKlnzL5UxBVLoBqUqCu5pVZY/zjSguMzbSl4AghengikNYzog88XuN
+ jvvss+Br9u0dn7wCRiSKd1eAXhiGDdSBKEqwX/pZnEIjXBK8Q2ptqOF6BEYlCOFM8AACHJV6Fwk
+ BvFM6KeHq8wIWadDkcllVgc3hMiNCaAMw7o/tyx6r8X8sW7mO8+b/JZuNkxwfuHW8c4sQXMQady
+ vvL8msEo8hQY+WSIE8qb7f1fGe8vtD/jCvgMa5VkGLKEnvgHzypGZib/1jgAMijj6VMW5EaeAri
+ 6QETa/0Zdc/K00fjr6W1Lq/aqxhG3x7WFlyNiTTiKd31imHkNPf0KIy1WVOQXLzSQLMEM3uRwYn
+ bRahdOQ/JUC/eGA==
 X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
  fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
 
-This is a rebase of the patch orginally sent almost two years ago here:
-https://lkml.kernel.org/r/20220612061508.1449636-1-asmadeus@codewreck.org
+The next patch will add another flag to parse_state that we will want to
+pass to evsel__nwetp_idx(), so pass the whole parse_state all the way
+down instead of giving only the index
 
-At the time I was asked to add tests, and Jiri whipped up something to
-make the test pass even for probes that don't exist on most systems but
-that ended up never being formatted or sent... I asked what happened of
-it and got asked to send it myself, but obviously also totally forget
-about it myself until I needed it again now.
-
-I've taken the diff from that thread, adapted it a little bit to the
-current master branch and checked things still fall in place -- I didn't
-see any obvious problem.
-
-Thanks!
-
+Originally-by: Jiri Olsa <jolsa@kernel.org>
 Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 ---
-Changes in v2:
-- update Jiri's email in commit tags
-- (not a change, but after being brain-dead and Ian helpful
-reply I'm confirming patch 3/3 works as expected)
-- Link to v1: https://lore.kernel.org/r/20240407-perf_digit-v1-0-57ec37c63394@codewreck.org
+ tools/perf/util/parse-events.c | 31 ++++++++++++++++++-------------
+ tools/perf/util/parse-events.h |  3 ++-
+ tools/perf/util/parse-events.y |  2 +-
+ 3 files changed, 21 insertions(+), 15 deletions(-)
 
----
-Dominique Martinet (3):
-      perf parse-events: pass parse_state to add_tracepoint
-      perf parse-events: Add new 'fake_tp' parameter for tests
-      perf parse: Allow names to start with digits
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 6f8b0fa17689..6e8cba03f0ac 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -519,13 +519,14 @@ static void tracepoint_error(struct parse_events_error *e, int err,
+ 	parse_events_error__handle(e, column, strdup(str), strdup(help));
+ }
+ 
+-static int add_tracepoint(struct list_head *list, int *idx,
++static int add_tracepoint(struct parse_events_state *parse_state,
++			  struct list_head *list,
+ 			  const char *sys_name, const char *evt_name,
+ 			  struct parse_events_error *err,
+ 			  struct parse_events_terms *head_config, void *loc_)
+ {
+ 	YYLTYPE *loc = loc_;
+-	struct evsel *evsel = evsel__newtp_idx(sys_name, evt_name, (*idx)++);
++	struct evsel *evsel = evsel__newtp_idx(sys_name, evt_name, parse_state->idx++);
+ 
+ 	if (IS_ERR(evsel)) {
+ 		tracepoint_error(err, PTR_ERR(evsel), sys_name, evt_name, loc->first_column);
+@@ -544,7 +545,8 @@ static int add_tracepoint(struct list_head *list, int *idx,
+ 	return 0;
+ }
+ 
+-static int add_tracepoint_multi_event(struct list_head *list, int *idx,
++static int add_tracepoint_multi_event(struct parse_events_state *parse_state,
++				      struct list_head *list,
+ 				      const char *sys_name, const char *evt_name,
+ 				      struct parse_events_error *err,
+ 				      struct parse_events_terms *head_config, YYLTYPE *loc)
+@@ -578,7 +580,7 @@ static int add_tracepoint_multi_event(struct list_head *list, int *idx,
+ 
+ 		found++;
+ 
+-		ret = add_tracepoint(list, idx, sys_name, evt_ent->d_name,
++		ret = add_tracepoint(parse_state, list, sys_name, evt_ent->d_name,
+ 				     err, head_config, loc);
+ 	}
+ 
+@@ -592,19 +594,21 @@ static int add_tracepoint_multi_event(struct list_head *list, int *idx,
+ 	return ret;
+ }
+ 
+-static int add_tracepoint_event(struct list_head *list, int *idx,
++static int add_tracepoint_event(struct parse_events_state *parse_state,
++				struct list_head *list,
+ 				const char *sys_name, const char *evt_name,
+ 				struct parse_events_error *err,
+ 				struct parse_events_terms *head_config, YYLTYPE *loc)
+ {
+ 	return strpbrk(evt_name, "*?") ?
+-		add_tracepoint_multi_event(list, idx, sys_name, evt_name,
++		add_tracepoint_multi_event(parse_state, list, sys_name, evt_name,
+ 					   err, head_config, loc) :
+-		add_tracepoint(list, idx, sys_name, evt_name,
++		add_tracepoint(parse_state, list, sys_name, evt_name,
+ 			       err, head_config, loc);
+ }
+ 
+-static int add_tracepoint_multi_sys(struct list_head *list, int *idx,
++static int add_tracepoint_multi_sys(struct parse_events_state *parse_state,
++				    struct list_head *list,
+ 				    const char *sys_name, const char *evt_name,
+ 				    struct parse_events_error *err,
+ 				    struct parse_events_terms *head_config, YYLTYPE *loc)
+@@ -630,7 +634,7 @@ static int add_tracepoint_multi_sys(struct list_head *list, int *idx,
+ 		if (!strglobmatch(events_ent->d_name, sys_name))
+ 			continue;
+ 
+-		ret = add_tracepoint_event(list, idx, events_ent->d_name,
++		ret = add_tracepoint_event(parse_state, list, events_ent->d_name,
+ 					   evt_name, err, head_config, loc);
+ 	}
+ 
+@@ -1266,7 +1270,8 @@ static int get_config_chgs(struct perf_pmu *pmu, struct parse_events_terms *head
+ 	return 0;
+ }
+ 
+-int parse_events_add_tracepoint(struct list_head *list, int *idx,
++int parse_events_add_tracepoint(struct parse_events_state *parse_state,
++				struct list_head *list,
+ 				const char *sys, const char *event,
+ 				struct parse_events_error *err,
+ 				struct parse_events_terms *head_config, void *loc_)
+@@ -1282,14 +1287,14 @@ int parse_events_add_tracepoint(struct list_head *list, int *idx,
+ 	}
+ 
+ 	if (strpbrk(sys, "*?"))
+-		return add_tracepoint_multi_sys(list, idx, sys, event,
++		return add_tracepoint_multi_sys(parse_state, list, sys, event,
+ 						err, head_config, loc);
+ 	else
+-		return add_tracepoint_event(list, idx, sys, event,
++		return add_tracepoint_event(parse_state, list, sys, event,
+ 					    err, head_config, loc);
+ #else
++	(void)parse_state;
+ 	(void)list;
+-	(void)idx;
+ 	(void)sys;
+ 	(void)event;
+ 	(void)head_config;
+diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+index 809359e8544e..fd55a154ceff 100644
+--- a/tools/perf/util/parse-events.h
++++ b/tools/perf/util/parse-events.h
+@@ -189,7 +189,8 @@ int parse_events_terms__to_strbuf(const struct parse_events_terms *terms, struct
+ int parse_events__modifier_event(struct list_head *list, char *str, bool add);
+ int parse_events__modifier_group(struct list_head *list, char *event_mod);
+ int parse_events_name(struct list_head *list, const char *name);
+-int parse_events_add_tracepoint(struct list_head *list, int *idx,
++int parse_events_add_tracepoint(struct parse_events_state *parse_state,
++				struct list_head *list,
+ 				const char *sys, const char *event,
+ 				struct parse_events_error *error,
+ 				struct parse_events_terms *head_config, void *loc);
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index d70f5d84af92..0bab4263f8e3 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -537,7 +537,7 @@ tracepoint_name opt_event_config
+ 	if (!list)
+ 		YYNOMEM;
+ 
+-	err = parse_events_add_tracepoint(list, &parse_state->idx, $1.sys, $1.event,
++	err = parse_events_add_tracepoint(parse_state, list, $1.sys, $1.event,
+ 					error, $2, &@1);
+ 
+ 	parse_events_terms__delete($2);
 
- tools/perf/tests/parse-events.c | 11 +++++++++--
- tools/perf/tests/pmu-events.c   |  2 +-
- tools/perf/util/evlist.c        |  3 ++-
- tools/perf/util/evsel.c         | 20 +++++++++++++-------
- tools/perf/util/evsel.h         |  4 ++--
- tools/perf/util/metricgroup.c   |  3 ++-
- tools/perf/util/parse-events.c  | 38 +++++++++++++++++++++++---------------
- tools/perf/util/parse-events.h  |  9 ++++++---
- tools/perf/util/parse-events.l  |  4 ++--
- tools/perf/util/parse-events.y  |  2 +-
- 10 files changed, 61 insertions(+), 35 deletions(-)
----
-base-commit: 7367539ad4b0f8f9b396baf02110962333719a48
-change-id: 20240407-perf_digit-72445b5edb62
-
-Best regards,
 -- 
-Dominique Martinet | Asmadeus
+2.44.0
 
 
