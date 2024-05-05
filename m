@@ -1,94 +1,123 @@
-Return-Path: <linux-kernel+bounces-168979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BCB8BC082
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:21:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094F78BC087
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74335281E6F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:21:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 832C8B20E18
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090721CFA9;
-	Sun,  5 May 2024 13:21:15 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672FB210FF;
+	Sun,  5 May 2024 13:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5GHCqgu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B25F1B7FD
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 13:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929D16FA8;
+	Sun,  5 May 2024 13:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714915274; cv=none; b=YBsf2aVJm4i55JYtrMPgFPjzhbxhbMcL3SRqWeopRqORcDEEq+DPsguOqswRvY5i95NEUJropnK/VSTthsMygHzu5iLzEibRFco7fjvWM221jC0UjJpOK3mHtWV9MfWCr4CxJ3PHPNJlR9uPBQt2kej6n8+drLGc16XZtUQ+bRA=
+	t=1714915399; cv=none; b=IqkzMk1GcN7CqAFP/yp6062Bfe7z3tEdwxR4Mj8WmQCAYFIoZT0tmkhUCqVI8D/1nKRuqhnJRg8gv30+Pc/qi2ykxBaF+Dh/CyfI3KCCLyuAYIpB3UwDmO4XM/p67AzvAvEwbTvPlF0cRXYTF5/nLji00/5uEfnM/LjMIBfM83g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714915274; c=relaxed/simple;
-	bh=U8Zx21yumKBwvNpxrOL9i9gF2EPUJJL7/L/GmWttG2E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=XmoJsFDnlywCQk23wWu1SJnCSPJAvvKo+b7Zw4h5IakZfeQMjRMWkcsgz3Zg+RdjSrkd8I3as2VbcTKpubgubk2v3jtH53Rwbezw9usDepivShtFBMoGBsLZayPWhGraxYPgdpWtoZpZRA6DAebG+0rb3b71Hhb3WrnLAO8yqa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-89-FQgjpD-sPLqqUMvw5kHpyg-1; Sun, 05 May 2024 14:21:09 +0100
-X-MC-Unique: FQgjpD-sPLqqUMvw5kHpyg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 5 May
- 2024 14:20:35 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 5 May 2024 14:20:35 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Justin Stitt' <justinstitt@google.com>, Edward Liaw <edliaw@google.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shuah Khan
-	<shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
-	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, "H. Peter Anvin"
-	<hpa@linux.intel.com>, Andy Lutomirski <luto@mit.edu>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"kernel-team@android.com" <kernel-team@android.com>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>
-Subject: RE: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for
- elf_hash
-Thread-Topic: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for
- elf_hash
-Thread-Index: AQHanAFdbmzmhwAPx0KMYxInfI6/rrGIpXPg
-Date: Sun, 5 May 2024 13:20:35 +0000
-Message-ID: <b55272cb757743548c789aa8c0efa448@AcuMS.aculab.com>
-References: <20240501180622.1676340-1-edliaw@google.com>
- <osgrbhnqlyh5yw4y4x6wjggx56dogsgje5yy3mkpu75ubs3zwg@5tliydzky37k>
-In-Reply-To: <osgrbhnqlyh5yw4y4x6wjggx56dogsgje5yy3mkpu75ubs3zwg@5tliydzky37k>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1714915399; c=relaxed/simple;
+	bh=jjLgkhsN4WjaKTyfGnNOYYnBmrIQeAxiqhWYRqvmHnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mBO0L2ivwmNd/EFb4BmUz4MqAe7MQgGwQXE26if4JxzQrLXsRkUcpHRcSUv2zML6AUvZsBCGb5n0tqKcj8G64ms1nUs7xstn8sxio8+7WrkPRsM4icbwsobX4aISUHFVl/gwdCWeCtXGHAfJDd2uuAZALNtopQq8MEvUk605u54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5GHCqgu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5357AC113CC;
+	Sun,  5 May 2024 13:23:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714915399;
+	bh=jjLgkhsN4WjaKTyfGnNOYYnBmrIQeAxiqhWYRqvmHnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N5GHCqguzvr4zXSvt+GZwExP+D4+ViMFS5ymKVV8WJY+Di3qvsEp58G9bzM0BAvHF
+	 stRLiuNs0tAjzhnbTK/8wL+10XQCHTZHBZmaoU+SwNNRsdc3zzqE5WaLVDQBWFhIvC
+	 raDXBTYUnDUM4UtQUw45YXqktzY6vnT/akcSLM5mL4wzzUFTgqPDcpICsM95p6XfvX
+	 O4u+h30wrlLfM0mEibSSqU02f0NAECeoPPcaFHr27oYznJKIN+ZSxxnHDgLyJZSjxm
+	 mLLAI46IamcYUju5EL6BBITjFGKFCEyP7IgsxkDT4H6bFHDEu7oWOLwbNzfk28/Nrq
+	 GrAQIMAtf2uAg==
+Date: Sun, 5 May 2024 16:23:14 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Zhu Yanjun <zyjzyj2000@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"jack@suse.com" <jack@suse.com>
+Subject: Re: [RFC RESEND 16/16] nvme-pci: use blk_rq_dma_map() for NVMe SGL
+Message-ID: <20240505132314.GC68202@unreal>
+References: <cover.1709635535.git.leon@kernel.org>
+ <016fc02cbfa9be3c156a6f74df38def1e09c08f1.1709635535.git.leon@kernel.org>
+ <c9f9e29e-c2e1-4f99-b359-db0babd41dec@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9f9e29e-c2e1-4f99-b359-db0babd41dec@linux.dev>
 
-From: Justin Stitt
-> Sent: 01 May 2024 20:55
-..
-> > static unsigned long elf_hash(const unsigned char *name)
-..
-> Is it possible to just change the types of the parameters of vdso_sym()
-> or does that trigger even more warnings on the callsites of vdso_sym()?
+On Fri, May 03, 2024 at 04:41:21PM +0200, Zhu Yanjun wrote:
+> On 05.03.24 12:18, Leon Romanovsky wrote:
+> > From: Chaitanya Kulkarni <kch@nvidia.com>
 
-Isn't the problem the definition of elf_hash()?
-A '\0' terminated string really ought to be 'char *' not 'unsigned char *'.
+<...>
 
-=09David
+> > This is an RFC to demonstrate the newly added DMA APIs can be used to
+> > map/unmap bvecs without the use of sg list, hence I've modified the pci
+> > code to only handle SGLs for now. Once we have some agreement on the
+> > structure of new DMA API I'll add support for PRPs along with all the
+> > optimization that I've removed from the code for this RFC for NVMe SGLs
+> > and PRPs.
+> > 
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+<...>
 
+> > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> > index e6267a6aa380..140939228409 100644
+> > --- a/drivers/nvme/host/pci.c
+> > +++ b/drivers/nvme/host/pci.c
+> > @@ -236,7 +236,9 @@ struct nvme_iod {
+> >   	unsigned int dma_len;	/* length of single DMA segment mapping */
+> >   	dma_addr_t first_dma;
+> >   	dma_addr_t meta_dma;
+> > -	struct sg_table sgt;
+> > +	struct dma_iova_attrs iova;
+> > +	dma_addr_t dma_link_address[128];
+> 
+> Why the length of this array is 128? Can we increase this length of the
+> array?
+
+It is combination of two things:
+ * Good enough value for this nvme RFC to pass simple test, which Chaitanya did.
+ * Output of various NVME_CTRL_* defines
+
+Thanks
 
