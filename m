@@ -1,149 +1,362 @@
-Return-Path: <linux-kernel+bounces-168965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F35D8BC04C
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:49:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D61D8BC053
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 14:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA21281B2B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCF71C209F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C6418E3F;
-	Sun,  5 May 2024 11:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC6618EA5;
+	Sun,  5 May 2024 12:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMWe2S5e"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C2dxPyvi"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6C2566A;
-	Sun,  5 May 2024 11:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA111D556
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 12:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714909762; cv=none; b=JTksgPwrz1KbpFt7mR8ADtRrYhAoUk/miJxzr3XVTK9fYOPk5Sc8rPJZgcRkRiFI4gO1Cd1M7j5f6gXHD+CO5XhlHpa6aQ61bneUQb6ehjO6h8FF4sG9FVpFsP7MpYxTxb5T1BShyCQlVrTZL6J+E9P85IOAIC8x5HX6Bv3oFXo=
+	t=1714911237; cv=none; b=q0Qkm04ifwL9/UZIJ1h2cyvb6r2tME08elYOEJ38kuH4lOFio+dfZMgF5vVHRWMTPQtd0M/Yj1UsgWXXwPIi6QmwJjKvojP1REK8BDcqPEF6GLPDlhOgopIMCswL0udtxvbl8p3Zzq7R4/uEIHRtwa27J64UxuwfEAsakEHfE0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714909762; c=relaxed/simple;
-	bh=nZ9DoDxIAHGkGfKZpRm9W0RNc9mhT7mYOsvGO4dGogw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GKaOGDKDnUFy/YqyUbD8ir5XX+VoYJQTcYf/8qboMZoYhxOWzwX1/Cgx3HJ7pQ8xfMpL5R/sTkHWxsAHphrhj7cG1bC+u+ZLa9Kto6Z5QZjcH7X+HxQ0JZFlYrkhc7dnyqAMqrnEx9TGgNiOi+OY5+AAf4BsXJo8/t/TBHa9/OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMWe2S5e; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f0602bc58so3206168e87.0;
-        Sun, 05 May 2024 04:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714909759; x=1715514559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j91vB77d38iXmPuLzDqrLJwLXMLQrd7oPNcj1a35vlo=;
-        b=TMWe2S5eAWed7Pisw/0fXuNrK4RF9gexq5rF0FEn33cI4JQPSv5cdlx13eBpz9cVhR
-         cDoOiUAxqhUWFjXKj2Vdfj0wQ1rFG8ILYjwMJlP8knLlFd7URqj7eO4v7rDpPptlZshR
-         ogVgWIaVZVDR4Y9racwNSjLUeXKosXjhzN151H8KCmR2SfMgumENJU776yLWTeK0aXaT
-         NDXP178Ew5VBdKsJBnMp824ZaMrzpSAZXy6eXlZfCKSj+fLb3iN1rlM0jNjCJVOiljoc
-         EoKlEm0dpR2on0LDDO3iLbI/Wg+oiwohOASVkey1VByVJDsdGPXPeHv0LK9NNOsEFhN2
-         289g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714909759; x=1715514559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j91vB77d38iXmPuLzDqrLJwLXMLQrd7oPNcj1a35vlo=;
-        b=KRO574Z9k2yGzPmGBtvRzXlzb4FQ1ofoliEeti7dNqNhosQR6MC7JL2xGhcDJtqo/5
-         Tbm1UmDED1mvs953QHyWf2FVYEkeqSZV4mQ2SLaT7plUVJfap3Es8xluij0FxkoGdUx1
-         dg3OZlTePQaAKA8vnj3uwuVG+zRsXPeBWNYchRiuqt6Vxx7sAVwVEFpImGC1AUWKn2fv
-         OiQmECeEeupzQ4XQTteCsnaxgUVBbPqE4eG6CMVOiEnqvO6CHS0rhV/x4845UcZIcUfL
-         eUpnZtmEKNEVfNgTTs1cmlOen5jWyTKxTOZVIb85Eh2fvuL1AgGsy2E9hPlF2v+cmmzt
-         lI+g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Bz2kYYTEYyTnFOa8fP16AlrdUmZAn8/hRBvIDO+PZY9zHP+CIs7PNgE2ZBUs6DF8lamycoA4I9winA1XpIfosCGPnFB8U0mTR4xqYgB1y5ZIXmHNInQ3sqtNheWlIPWM+vake3XYAAytQBbQ7rV1Wg0GVyTF9TdZ6tKgeNNt8EUS8PRv
-X-Gm-Message-State: AOJu0YwnCkrFb2IZv6eBo3ERe+Uzjy2Cuv6U11JaMbQSCxdkdcbMUWdM
-	zACNDqjQenzXKwgN/5BbIKEFY0/uRKIBwggonTp+lvPu/+oCEmUsVjbtfIhbRBACfvizcKrpUJw
-	IWDjicwKPvY62s7KRRXFC6kf0rK1xdcYQQCvLXg==
-X-Google-Smtp-Source: AGHT+IHsdpwx3ip29NRHURwclH3Ar8qkby318NuJiCi8aLlLedYRsGKEWTiTF8yVLTEHPsDeXT5s4afAo5891NfAZEc=
-X-Received: by 2002:a05:6512:3ba5:b0:51b:a86:ab57 with SMTP id
- g37-20020a0565123ba500b0051b0a86ab57mr3556776lfv.22.1714909758530; Sun, 05
- May 2024 04:49:18 -0700 (PDT)
+	s=arc-20240116; t=1714911237; c=relaxed/simple;
+	bh=KN8bntASnPjM7TOcy4xJH/L/kU1+/OyICkgTuMoX9FI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U3IfP5NUl6o5QdyTEAAFKm0FV5lZ6LeSYelqKkrodgklNv1MLuzZo4u/NRUY3O+rUEhVuSi1szPLy0fWPu6PtfH8TP3MpQ/s91YdTmtF6UGk4QrOI2+K1O1vPz+wV5ERMVZ2GMKtMNSWrqa7zOgN5G2ZZKnQaKJEvEl9+Qa0VmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C2dxPyvi; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1604540E0244;
+	Sun,  5 May 2024 12:13:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gQ7-V4k4tIs6; Sun,  5 May 2024 12:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1714911227; bh=iXuHyguEjq+GHMucvMpZ87uVJIcG+yLUxh9sVFXvkHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C2dxPyvi3Sqg9Z1LdkGhza8vVMmHxp8Md+i+zkn+1EotL5dqt+pVond5T2ABRSNJy
+	 +XVTq99P5he2yHmxcGm5ZZYYBEsq+Yb3xRzGf0dSbkbfLhv3VRKSxBZM5tUSOnZ4TO
+	 xvnexOTY1/5g3Bfzx/Z14AcLhnvAV/POqQXYq8DSsUn0hbwn2ZPxhyhEjHICB3Nssd
+	 6BYnNwDOWC49d8siFpAOLIv9fJx6EeVBSl0rS/1skF5PbiyOHebrUmDz13gIbjJxEj
+	 NJN5U43CgsXmKQRtkJbVloP0v6G38fXumNRWkrmjWPkk2aCG6SCvVa+kBIRmJ2t6I8
+	 bcrLoI/nqKvlBJsXdHUMGwwxjDJgjsvDy/8Uy/WMhXKWoakOmerVGJj/8MHPQMVzNO
+	 Fmyk4oNwtOahs+pGU+sU+3FszuYhK2mZe5+/R8CWa7C3JgjfOSdzNIrW5AHQIvGN+i
+	 UtbL3An6aG+erzleTXWOXV/HI7au55/ozIULyePR4qyBptFlXbcbfPoW+k+N+NfVAH
+	 yUxs/WgoYM3LIVd7febnZWnlv5yuQqTLanlZe5IsV+6vwvlgVmLrUcRSUX8skJbCHX
+	 Btq9axNuZWb6xEYL8KTHISPA2chGh4zdXeFTQlua0yBqsTC7LZ/QniAQmwZp/eI9yC
+	 7Of1o/WQMG+6taOBnkJuzUsA=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3FEFF40E0192;
+	Sun,  5 May 2024 12:13:26 +0000 (UTC)
+Date: Sun, 5 May 2024 14:13:19 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>,
+	kexec@lists.infradead.org, linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv10 10/18] x86/tdx: Convert shared memory back to private
+ on kexec
+Message-ID: <20240505121319.GAZjd337gHC0uhk6aM@fat_crate.local>
+References: <20240409113010.465412-1-kirill.shutemov@linux.intel.com>
+ <20240409113010.465412-11-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417134237.23888-1-bavishimithil@gmail.com>
- <2e179356-425d-48cc-84db-0ea3e6203fba@kernel.org> <CAGzNGR=pvv67UJtNnkDUMhrpnPjNCCYEGeCaM7e_9=4G+Lcfgw@mail.gmail.com>
- <676ce61c-e850-4046-ad0f-e3382be3fe0c@kernel.org> <CAGzNGR=rDrd6LyAC2yB4XUcxn=H1VdY8LQO99NEOBR1sLGGT0Q@mail.gmail.com>
- <3425732a-390b-4c0f-ba1b-2a7e2219d581@kernel.org>
-In-Reply-To: <3425732a-390b-4c0f-ba1b-2a7e2219d581@kernel.org>
-From: Mithil <bavishimithil@gmail.com>
-Date: Sun, 5 May 2024 17:19:06 +0530
-Message-ID: <CAGzNGRmF8K7UDDERE_7UQw1EdC=J_jvvXqefU=M0v6FQcsnbhA@mail.gmail.com>
-Subject: Re: [PATCH v4] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240409113010.465412-11-kirill.shutemov@linux.intel.com>
 
-On Sun, May 5, 2024 at 5:02=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 05/05/2024 11:59, Mithil wrote:
-> >>>> Missing constraints, so replace it with maxItems: 1
-> >>> Similar to how clock-names are handled?
-> >>>
-> >>>> List the items. I asked to open existing bindings and take a look ho=
-w it
-> >>>> is there. Existing bindings would show you how we code this part.
-> >>>   clock-names:
-> >>>     items:
-> >>>       - const: pdmclk
-> >>>     minItems: 1
-> >>>     maxItems: 1
-> >>> Something like this?
-> >>
-> >> No. Do you see code like this anywhere? Please only list the items,
-> >> although without context impossible to judge.
-> >>
-> > Quick search on sources gave me
-> > Documentation/devicetree/bindings/usb/dwc2.yaml
->
-> Above code is different - it does not have maxItems, which you want to ad=
-d.
->
-> > which I used as reference for this prop
-> > clock-names:
-> >   description: Must be "pdmclk"
->
-> Again, no, please list the items.
-> items:
->  - const: foo
-Yep that was the old code for reference. Just items (no
-maxItems/minItems as well)
+On Tue, Apr 09, 2024 at 02:30:02PM +0300, Kirill A. Shutemov wrote:
+> TDX guests allocate shared buffers to perform I/O. It is done by
+> allocating pages normally from the buddy allocator and converting them
+> to shared with set_memory_decrypted().
+> 
+> The second kernel has no idea what memory is converted this way. It only
 
-> > compatible =3D "ti,omap4-mcpdm";
-> > reg =3D <0x40132000 0x7f>, /* MPU private access */
-> >         <0x49032000 0x7f>; /* L3 Interconnect */
-> > interrupts =3D <0 112 0x4>;
-> > Not really constants as they do change with platforms (omap4 vs 5 for
-> > example) but
->
-> That is not really relevant... This is not pi or other math constant.
->
-> > So do i just make up the constants for it then? Those just seem like
-> > magic numbers.
->
-> Hm? Did you look around for other SoC nodes? 0 looks like SPI, 4 like
-> LEVEL_HIGH, but it depends on number of meaning of the interrupt cells,
-> so who is parent interrupt controller.
->
-Ah the irq values, correct, I thought you meant the reg values.
-It should be <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>; not sure about 112 though.
+"The kexec-ed kernel..."
 
-I suppose these changes are enough right?
+is more precise.
 
-Best regards,
-Mithil
+> sees E820_TYPE_RAM.
+> 
+> Accessing shared memory via private mapping is fatal. It leads to
+> unrecoverable TD exit.
+> 
+> On kexec walk direct mapping and convert all shared memory back to
+> private. It makes all RAM private again and second kernel may use it
+> normally.
+> 
+> The conversion occurs in two steps: stopping new conversions and
+> unsharing all memory. In the case of normal kexec, the stopping of
+> conversions takes place while scheduling is still functioning. This
+> allows for waiting until any ongoing conversions are finished. The
+> second step is carried out when all CPUs except one are inactive and
+> interrupts are disabled. This prevents any conflicts with code that may
+> access shared memory.
+
+This is the missing bit of information I was looking for in the previous
+patch. This needs to be documented in the code.
+
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Tested-by: Tao Liu <ltao@redhat.com>
+> ---
+>  arch/x86/coco/tdx/tdx.c           | 72 +++++++++++++++++++++++++++++++
+>  arch/x86/include/asm/pgtable.h    |  5 +++
+>  arch/x86/include/asm/set_memory.h |  3 ++
+>  arch/x86/mm/pat/set_memory.c      | 35 +++++++++++++--
+>  4 files changed, 112 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+> index 979891e97d83..59776ce1c1d7 100644
+> --- a/arch/x86/coco/tdx/tdx.c
+> +++ b/arch/x86/coco/tdx/tdx.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/cpufeature.h>
+>  #include <linux/export.h>
+>  #include <linux/io.h>
+> +#include <linux/kexec.h>
+>  #include <asm/coco.h>
+>  #include <asm/tdx.h>
+>  #include <asm/vmx.h>
+> @@ -14,6 +15,7 @@
+>  #include <asm/insn.h>
+>  #include <asm/insn-eval.h>
+>  #include <asm/pgtable.h>
+> +#include <asm/set_memory.h>
+>  
+>  /* MMIO direction */
+>  #define EPT_READ	0
+> @@ -831,6 +833,73 @@ static int tdx_enc_status_change_finish(unsigned long vaddr, int numpages,
+>  	return 0;
+>  }
+>  
+> +/* Stop new private<->shared conversions */
+> +static void tdx_kexec_stop_conversion(bool crash)
+> +{
+> +	/*
+> +	 * Crash kernel reaches here with interrupts disabled: can't wait for
+> +	 * conversions to finish.
+> +	 *
+> +	 * If race happened, just report and proceed.
+> +	 */
+> +	bool wait_for_lock = !crash;
+
+You don't need that bool - use crash.
+
+> +
+> +	if (!stop_memory_enc_conversion(wait_for_lock))
+> +		pr_warn("Failed to stop shared<->private conversions\n");
+> +}
+> +
+> +static void tdx_kexec_unshare_mem(void)
+> +{
+> +	unsigned long addr, end;
+> +	long found = 0, shared;
+> +
+> +	/*
+> +	 * Walk direct mapping and convert all shared memory back to private,
+> +	 */
+
+Over the function name and end with a fullstop.
+
+> +
+> +	addr = PAGE_OFFSET;
+> +	end  = PAGE_OFFSET + get_max_mapped();
+> +
+> +	while (addr < end) {
+> +		unsigned long size;
+> +		unsigned int level;
+> +		pte_t *pte;
+> +
+> +		pte = lookup_address(addr, &level);
+> +		size = page_level_size(level);
+> +
+> +		if (pte && pte_decrypted(*pte)) {
+> +			int pages = size / PAGE_SIZE;
+> +
+> +			/*
+> +			 * Touching memory with shared bit set triggers implicit
+> +			 * conversion to shared.
+> +			 *
+> +			 * Make sure nobody touches the shared range from
+> +			 * now on.
+> +			 */
+
+lockdep_assert_irqs_disabled() ?
+
+> +			set_pte(pte, __pte(0));
+> +
+> +			if (!tdx_enc_status_changed(addr, pages, true)) {
+> +				pr_err("Failed to unshare range %#lx-%#lx\n",
+> +				       addr, addr + size);
+
+Why are we printing something here if we're not really acting up on it?
+
+Who should care here?
+
+> +			}
+> +
+> +			found += pages;
+> +		}
+> +
+> +		addr += size;
+> +	}
+> +
+> +	__flush_tlb_all();
+> +
+> +	shared = atomic_long_read(&nr_shared);
+> +	if (shared != found) {
+> +		pr_err("shared page accounting is off\n");
+> +		pr_err("nr_shared = %ld, nr_found = %ld\n", shared, found);
+> +	}
+
+Ok, we failed unsharing. And yet we don't do anything.
+
+But if we fail unsharing, we will die on a unrecoverable TD exit or
+whatever.
+
+Why aren't we failing kexec here?
+
+> +}
+> +
+>  void __init tdx_early_init(void)
+>  {
+>  	struct tdx_module_args args = {
+> @@ -890,6 +959,9 @@ void __init tdx_early_init(void)
+>  	x86_platform.guest.enc_cache_flush_required  = tdx_cache_flush_required;
+>  	x86_platform.guest.enc_tlb_flush_required    = tdx_tlb_flush_required;
+>  
+> +	x86_platform.guest.enc_kexec_stop_conversion = tdx_kexec_stop_conversion;
+> +	x86_platform.guest.enc_kexec_unshare_mem     = tdx_kexec_unshare_mem;
+> +
+>  	/*
+>  	 * TDX intercepts the RDMSR to read the X2APIC ID in the parallel
+>  	 * bringup low level code. That raises #VE which cannot be handled
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 315535ffb258..17f4d97fae06 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -140,6 +140,11 @@ static inline int pte_young(pte_t pte)
+>  	return pte_flags(pte) & _PAGE_ACCESSED;
+>  }
+>  
+> +static inline bool pte_decrypted(pte_t pte)
+> +{
+> +	return cc_mkdec(pte_val(pte)) == pte_val(pte);
+> +}
+> +
+>  #define pmd_dirty pmd_dirty
+>  static inline bool pmd_dirty(pmd_t pmd)
+>  {
+> diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+> index 9aee31862b4a..44b6d711296c 100644
+> --- a/arch/x86/include/asm/set_memory.h
+> +++ b/arch/x86/include/asm/set_memory.h
+> @@ -49,8 +49,11 @@ int set_memory_wb(unsigned long addr, int numpages);
+>  int set_memory_np(unsigned long addr, int numpages);
+>  int set_memory_p(unsigned long addr, int numpages);
+>  int set_memory_4k(unsigned long addr, int numpages);
+> +
+> +bool stop_memory_enc_conversion(bool wait);
+>  int set_memory_encrypted(unsigned long addr, int numpages);
+>  int set_memory_decrypted(unsigned long addr, int numpages);
+> +
+>  int set_memory_np_noalias(unsigned long addr, int numpages);
+>  int set_memory_nonglobal(unsigned long addr, int numpages);
+>  int set_memory_global(unsigned long addr, int numpages);
+> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> index 6c49f69c0368..21835339c0e6 100644
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@ -2188,12 +2188,41 @@ static int __set_memory_enc_pgtable(unsigned long addr, int numpages, bool enc)
+>  	return ret;
+>  }
+>  
+
+<--- insert comment here what this thing is guarding.
+
+> +static DECLARE_RWSEM(mem_enc_lock);
+> +
+> +/*
+> + * Stop new private<->shared conversions.
+> + *
+> + * Taking the exclusive mem_enc_lock waits for in-flight conversions to complete.
+> + * The lock is not released to prevent new conversions from being started.
+> + *
+> + * If sleep is not allowed, as in a crash scenario, try to take the lock.
+> + * Failure indicates that there is a race with the conversion.
+> + */
+> +bool stop_memory_enc_conversion(bool wait)
+
+This is a global function which means, it should be called:
+
+set_memory_enc_stop_conversion()
+
+or so. With the proper prefix and so on.
+
+> +{
+> +	if (!wait)
+> +		return down_write_trylock(&mem_enc_lock);
+> +
+> +	down_write(&mem_enc_lock);
+> +
+> +	return true;
+> +}
+> +
+>  static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+>  {
+> -	if (cc_platform_has(CC_ATTR_MEM_ENCRYPT))
+> -		return __set_memory_enc_pgtable(addr, numpages, enc);
+> +	int ret = 0;
+>  
+> -	return 0;
+> +	if (cc_platform_has(CC_ATTR_MEM_ENCRYPT)) {
+> +		if (!down_read_trylock(&mem_enc_lock))
+> +			return -EBUSY;
+
+This function is called on SEV* and HyperV and the respective folks need
+to at least ack this new approach.
+
+I see Ashish's patch adds the respective stuff:
+
+https://lore.kernel.org/r/c24516a4636a36d57186ea90ae26495b3c1cfb8b.1714148366.git.ashish.kalra@amd.com
+
+which leaves HyperV. You'd need to Cc them on the next submission.
+
+Thx.
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
