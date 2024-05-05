@@ -1,99 +1,88 @@
-Return-Path: <linux-kernel+bounces-168954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEC18BC026
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:55:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E578F8BC027
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91C461F21632
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0562817A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984C714267;
-	Sun,  5 May 2024 10:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSY2ZYDI"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D556214267;
+	Sun,  5 May 2024 10:55:36 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A054A8493;
-	Sun,  5 May 2024 10:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4E3DDBB
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 10:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714906515; cv=none; b=gXGiAVloXrhaWheVW+8IZv7ZL0Ao+icCsmH1e2gTMvsZRyDpheVQ1n9GhPslpNf5Cx2WkwSblPWT6WckITDzoETKFLkFbvlU+WlBtssR1GJsYsSS1b/yd+COzav9mM77o1zC+TGLjpfEo9j6uz6s6eEJPtrXNnYxDE1o7ylR6kQ=
+	t=1714906536; cv=none; b=mWuiXvceZ/IUIxFiPRFpvQBeysPfPuThNHsnAua+M2fEPoEl92WDx7y7ERZjMFLRDs/sSyC8RRaq6gn6Q4ZIY3a+IUJnTjTh/exe3l5xqxyVSwEi3Jo6JRfCWfwTrHgInA04JvEnQFMj5ND/hD8hfK7q2KDsjdoEjjbxwe0qgVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714906515; c=relaxed/simple;
-	bh=Y8uIhb44eBGk1+SFa+ZPEs7KLQ/mGjXAsl2J04Y3OvQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fu3pP8ikOmB39wAiAa9e4rw5nvK+q9Iq41n64naCgwqKbghnSRu49b3TfRGzAJSLH4DcHqLex93jd2arUSPxGaiTv6Jm01Ew6vTYE903WufXLTvxwvvKqJz0KCXiTvf7PqY0CpN7zO76rWzAX73z0LnhWsl7TmF+DZHD0PjWxSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gSY2ZYDI; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-78ef9ce897bso91945685a.0;
-        Sun, 05 May 2024 03:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714906512; x=1715511312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y8uIhb44eBGk1+SFa+ZPEs7KLQ/mGjXAsl2J04Y3OvQ=;
-        b=gSY2ZYDIrTSx3taEcP+pW3qJppbCnKqZnX2ZeS4dQvJeCOeHFt/EGFit56XJsoggmM
-         rD9aL5FyA+/NWejeuXddIDltG7zZtCJtdLcOIBnLB95qxkSTXLAFKfgSDsWWAyImrrpk
-         8fWxalO4sxl/LfPTHrmJQ3O8e5Gya680hCFGLYbNoh9bSR89Jbrb5JSNEtSYyxVeyEIz
-         wx4eC4r4+2XmvISp2sgfhfl7T8i1+d4jF2gozJCFrvACylPcux/XMQlXTKEoHMaHiiK6
-         yA355d0c3/u/9M2iqAl92Uf+xbh4h/b0bA6gkVXIdPwkRYlJJA+Bd/dw+Rw2eSjB6DxY
-         jAVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714906512; x=1715511312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y8uIhb44eBGk1+SFa+ZPEs7KLQ/mGjXAsl2J04Y3OvQ=;
-        b=wba4s5cE88+eByKBSwAIm8h+0G8aY6BIc7/1wwbuvwjRk2PwL1JjuemCWK+yDBhmyP
-         9zVXiRgot31S3qT/0NfA9CdxpW2hPDctqjhTZ7EYeEyZhbjj5ekUmyhjXM1JQbWHitQz
-         PAtYcbh80oXR6sXKqPzPfD3AKY2Lz/gF4ZIUL6s+8PHtAmS/n3rWkGRu9vQe4LKfaKbs
-         UIIsjPqtJ8bprIKSkcnayNQOd+dC0uImRjABWD2ROCzRBOKzHrsCE1JEjYn6TXsYbJ6C
-         uy7iV4gQmM/79rXMpJtxWtKB3sfDbUxTyj6o8Oys1ncylJIuf2aPmPUP7hLTtdKtCtD6
-         WYwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTI5noMqXsNUZj8efYFQHo18U1722ECA7VmIKBAzcIT09zYngJr4DMrg3MbUMEnorEWpO4QVt9s1e4s/YNcyhDB+HADzL7uAcpecEM
-X-Gm-Message-State: AOJu0YwkDUNZlgN2JkTdxnO11kILSA3Ua+2yAer3skGQns20nhuyiGSK
-	JaR5ltnGZTdbX5ONmtAAX0N0hdZL0+M8iCpDyNmFv6+avzgn0mVdt9hF+AMQoWJ6ulIwS0kU3t6
-	YmIo0X8f0vo3L3tOun4jGcZabASt2pg==
-X-Google-Smtp-Source: AGHT+IGYjv5lZQA60WfnvKsCM6Vjj8w+MbxD0sbZ3nWYAO60LffIYAUPQEtNUv3QqQWYhWIM7dwEsAv/ECTuHslPmu0=
-X-Received: by 2002:ac8:58d5:0:b0:43a:bcd9:5d56 with SMTP id
- u21-20020ac858d5000000b0043abcd95d56mr8392798qta.35.1714906512438; Sun, 05
- May 2024 03:55:12 -0700 (PDT)
+	s=arc-20240116; t=1714906536; c=relaxed/simple;
+	bh=sJ+juBy0G9A+u+mexxH8zMT6BNEytzWhP5Ac7Teg6rI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwL7k1jH/QkHgn1nUiqcVglp0GeshfFBSkWvgRkFHFevKXcS7ba+NSWvJ1SQxcC1Id+RrWH4SRCS9h8bXvISR4nhUCmXPDLEak1uJ2zmbdRkYxXIbTmcnI/oEPHqnGGvNiivXsBdgQ5wzItxliVKTebOHI1SH0jWNMhYHhAn6rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 445AtWdA027807;
+	Sun, 5 May 2024 19:55:32 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
+ Sun, 05 May 2024 19:55:32 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 445AtWdc027804
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 5 May 2024 19:55:32 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <dd5d511e-9b02-4481-b22b-28da7b188b29@I-love.SAKURA.ne.jp>
+Date: Sun, 5 May 2024 19:55:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501195116.62669-1-ppbuk5246@gmail.com> <20240505085709.82688-1-ppbuk5246@gmail.com>
- <49994298-fefc-447b-a074-c6c91f8e5ca9@web.de>
-In-Reply-To: <49994298-fefc-447b-a074-c6c91f8e5ca9@web.de>
-From: Yun Levi <ppbuk5246@gmail.com>
-Date: Sun, 5 May 2024 11:55:01 +0100
-Message-ID: <CAM7-yPRXN2kRss05HMm2Wcsm-iOnymaC7O3J4NZvqjgbnFkxqg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] time/timgr: Fix wrong reference when level 0 group
- allocation failed
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.9.0-rc2+ kernel hangs on boot (bisected, maybe LED related)
+To: Ben Greear <greearb@candelatech.com>, Lee Jones <lee@kernel.org>,
+        "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org,
+        Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Linux regressions mailing list <regressions@lists.linux.dev>
+References: <30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com>
+ <30819e01-43ce-638f-0cc6-067d6a8d03c7@candelatech.com>
+ <89a9eec3-337f-3c9f-6bbe-00a26a15287c@candelatech.com>
+ <20240411070718.GD6194@google.com>
+ <de43c7e1-7e8c-bdbe-f59e-7632c21da24a@candelatech.com>
+ <8736ebc8881e1e0cabfbbf033725a3123a5e8e90.camel@sipsolutions.net>
+ <bc420f3a-5809-4c4a-80ad-ccd8a46853b6@leemhuis.info>
+ <8ab88be5de30bcbd0d1cac3cfde6b2085dcfc8fb.camel@sipsolutions.net>
+ <0197efe8-828b-43ae-85c9-5d521913a289@leemhuis.info>
+ <20240502071908.GB5338@google.com>
+ <8054cc9c-fbfe-a08d-5968-57b90a25af65@candelatech.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <8054cc9c-fbfe-a08d-5968-57b90a25af65@candelatech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Markus :)
+On 2024/05/05 14:48, Ben Greear wrote:
+> If someone has a different suggested fix than the hack I posted, I will be happy to
+> test.  On my system with lots of radios, it is 100% reproducible.
+> Maybe email me directly as I don't keep close watch on LKML.
 
+Please collect stacktraces of all lock holders using
+https://lkml.kernel.org/r/77e32fdc-3f63-e124-588e-7d60dd66fc9a@I-love.SAKURA.ne.jp .
 
-> Does this change approach represent a subsequent patch version instead of=
- a =E2=80=9CRESEND=E2=80=9D?
->
-> How do you think about to add a patch changelog accordingly?
->
-Thanks I'll do
+Depending on the output, I might ask you to decode addresses using ./scripts/faddr2line .
 
-Thanks.
 
