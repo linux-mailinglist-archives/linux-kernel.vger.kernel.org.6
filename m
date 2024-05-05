@@ -1,170 +1,121 @@
-Return-Path: <linux-kernel+bounces-168864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542FA8BBF03
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 03:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E618BBF09
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 03:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2462281E81
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 01:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2DB91F217C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 01:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D360ED8;
-	Sun,  5 May 2024 01:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A194F17EF;
+	Sun,  5 May 2024 01:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cSGvdP03"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzR1SSdR"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1560281F
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 01:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992F617C2;
+	Sun,  5 May 2024 01:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714872330; cv=none; b=lCO8QqQPNEi77M7q/6gRPP3D7K4BCXcnVO5d8Q/X83VBMlDpl26w/Bwh8TbcTeBPvgFc3F70coFqkaZXJS2anflnHBkpqpfmtkzAgE0qdQ34mSeu/SIdHAdTlQWJiJ0UJVrcXt7WBjuFeAD2xEbdiqUSslKEcAiFR+fYkVGxtSw=
+	t=1714873797; cv=none; b=b6RlICUDwYQW2gF9RHmwKZWhGBR/mS5G6/4BnHLhlr9LxbVV2D82Hq8ZPG6pfepF0vMvDmojM7GZeI4bwGxsHsTRd0XKGp/sGgNnRwTYwnwC57XZENikidJK0MBYS0wcvY8k/VipEKXoYXOoDKKiAm2eu+c0y1NBwm5Ndq7eSZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714872330; c=relaxed/simple;
-	bh=JmIz5WrIUMBF0HxvEC8+Oe+zPi1CpdHGV0E6ZKKV7b4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=S9b1+nxgP2d0Tvxa88QT062B0s33uoehHiP7bVqbmAyWnVQIeZdAPbfYF9vHrD/GRu3/hLYxHbTf3bEV7LsD5XSMR2cdlALMwdTXC7Fz3oqCVD1PHXXOEqVMLVD5vA8S36b0fzwyHlnEy+HMlYX6nzVqzLffjF09yIlGbs0H+kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cSGvdP03; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4451NUiT002608;
-	Sun, 5 May 2024 01:25:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=J0e
-	UDGUOX7X2N/gQsRlJeX+THo1jPFVIBTxcxncVpj8=; b=cSGvdP03mZRPOr0PSO7
-	douvu9qByI3kkTvU2XQ2bM04FM4gK/J1ZZjQ4sHW6GwUXMdeIB8Ny6m1bUGwOmQP
-	v7M8OLHash6ZXCDYIJckzm0CJWr159xmlwSaKPMuKD1JW3h1bpxx5XJg/SCszkih
-	fei35kd4lEDkdZA3YkThCwyjNluEEWsE+TyQZAnp6PeuhZjTb/p7uJGDTWvbhf/Y
-	n7l79917VcijW0GwSzmfkLMa8AD2D/IgdIrjJ7DL2MmU1dhqBc8WqQQatv7mXd2o
-	N5RqyHri0ZHcz1Un0fMP3G4YELwfzGhICjxt+1njDEp8hrKD3lGUNSFC74CEc9Mp
-	LmA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwd3y97b6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 05 May 2024 01:25:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4451P9hZ013052
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 5 May 2024 01:25:09 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 4 May 2024
- 18:25:08 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 4 May 2024 18:25:07 -0700
-Subject: [PATCH] most: fix current kernel-doc warnings
+	s=arc-20240116; t=1714873797; c=relaxed/simple;
+	bh=gwS7SvCCQzpLEKN5XmF5rDHidC1WX6HSiHlxk5j+Kdw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lDPFLl9MYhVRphuDG6yudqiW7teFJA34gO1fZbrwwiRK5PasfHxeNXDrMOfTFHoNRfBCsDH8LuZ9S2syBXfNLAZK72TXZLP0J1yPCMNGpsQ5M40oVFK5byZX1c5GS20MR4+BivBzZoGoUFszhg2Ej/X4ZAzHWLi4FbaQoKWPS/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzR1SSdR; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6f0307322d5so263796a34.0;
+        Sat, 04 May 2024 18:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714873794; x=1715478594; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SKURNdYPj7HMqSPgV0Iuf+l9Ve2ja713YdXS96CYBIo=;
+        b=kzR1SSdR7R6/s2njsZ19/4W7FT2FjEJx8YNhWCbVyRxjABJaLmeawZy3iQy153ry/o
+         jmmFqOIsjVKoQ1sRBx2FQ7WdapNHO16I3sfIuLNMKNjv424Ak97kFrX7gbhcwMNhu8i+
+         gc6SMygpHKzne/Z/8GenPouA6GEZzXzkzAhOe0FWFrZQFw8PoWsCDLKYoxLf/rnmbhxD
+         Yr2BO7zUV/HWdTnjAk5sAMoFFwgfKQKtLYJDqO9CGmDBEWL/QIEnsZFdPx6Teb1rXTVE
+         X4+oagI6Kw2BN1NBB/E+xwOD/DRju2+vOKfF8zNmzRRHluePqlu2s5f9piywxGfiMybG
+         nN9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714873794; x=1715478594;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SKURNdYPj7HMqSPgV0Iuf+l9Ve2ja713YdXS96CYBIo=;
+        b=Jw6RFVjRSnJ+4gBOccDZVBCPzix05Jcl7cIGktwXIyyU4u2vubsXMMCeMDt9aSZQDq
+         yIfzP2sFB/xgx0zt1Yn7fID+gLUucukWi5+UhUZiVlPJxz/mmGSWfjl5Bjn2abmTh61D
+         xD58JQx0irvi+xeCrA05BoNcQxrrnBKz9UWfQw7K2nbxU0FKm3EoKKFlVvZYqAKbXJ/F
+         KE/DhNgRz8FIXzmTHz62yxumbJwUhOHKAV4BI3Jo0RZO0FZCqjGXR4NzeV23HzAX/ydh
+         XQDsXdjDNLIbTk+PiLbRPFnHpoNjYicuYFFE9vB90pRsTKylv0v9kMcepdBe7FEGwsJg
+         0f3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWiEeuTZRrKA+U+Pn+w1nk57BCRNCmLNeKl5+Mcp1VGmxJe75um3nQfTfGX0K6+NDyoZf8XwfZFb5aTRGsgHST9oWfsTcCH9D4GPmpa
+X-Gm-Message-State: AOJu0YzPf57Rjk5i4jurxzGD9rZBiKuklA+FjhiH8XkVUQ6nc5GpEe6E
+	6utK76EUB5XtkDFKnEkJY/sDYT5QYOAQH434Nu6n7jKCkdekP5fv/2kpcEZE
+X-Google-Smtp-Source: AGHT+IFC7+Y8m5ihDjkRKe7ei7TaJn3CEK9M1rcC9r9JFAJrNyCDbzo3sH5V7Mmxcwyy/AA+KhuzmQ==
+X-Received: by 2002:a05:6830:1314:b0:6ee:405b:5220 with SMTP id p20-20020a056830131400b006ee405b5220mr7390613otq.19.1714873794678;
+        Sat, 04 May 2024 18:49:54 -0700 (PDT)
+Received: from localhost.localdomain ([190.196.101.184])
+        by smtp.gmail.com with ESMTPSA id h64-20020a638343000000b0061a943e043fsm5070536pge.80.2024.05.04.18.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 May 2024 18:49:54 -0700 (PDT)
+From: Camila Alvarez <cam.alvarez.i@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Camila Alvarez <cam.alvarez.i@gmail.com>,
+	syzbot+d2a2c639d03ac200a4f1@syzkaller.appspotmail.com
+Subject: [PATCH] fix array-index-out-of-bounds in bpf_prog_select_runtime
+Date: Sat,  4 May 2024 21:46:43 -0400
+Message-Id: <20240505014641.203643-1-cam.alvarez.i@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240504-most-kdoc-v1-1-378c468ccd85@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAPLfNmYC/x3MQQqDMBBA0avIrDuQaNTiVUoXSRx1KCYyI0UQ7
- 27a5YPPP0FJmBSG6gShLyvnVGAfFcTFp5mQx2KoTe1MaxyuWXf8jDmiDU/buL6NXROg9JvQxMf
- /9XoXB6+EQXyKy++wet1J4Lpu5/4yeHQAAAA=
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-        "Christian
- Gromm" <christian.gromm@microchip.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kVUW8BoOo1F8PMgqCcm7MfjQ-2QfkU7W
-X-Proofpoint-GUID: kVUW8BoOo1F8PMgqCcm7MfjQ-2QfkU7W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-04_18,2024-05-03_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0 clxscore=1011
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405050004
+Content-Transfer-Encoding: 8bit
 
-Follow up on the prior work [1] from Randy Dunlap and fix the current
-set of W=1 kernel-doc warnings in drivers/most/:
+The error indicates that the verifier is letting through a program with
+a stack depth bigger than 512.
 
-drivers/most/most_snd.c:58: warning: Excess struct member 'opened' description in 'channel'
-drivers/most/most_usb.c:69: warning: Function parameter or struct member 'dev' not described in 'most_dci_obj'
-drivers/most/most_usb.c:69: warning: Excess struct member 'kobj' description in 'most_dci_obj'
-drivers/most/most_usb.c:122: warning: Function parameter or struct member 'dev' not described in 'most_dev'
-drivers/most/most_usb.c:122: warning: Function parameter or struct member 'clear_work' not described in 'most_dev'
-drivers/most/most_usb.c:122: warning: Function parameter or struct member 'on_netinfo' not described in 'most_dev'
-drivers/most/most_usb.c:650: warning: Function parameter or struct member 'on_netinfo' not described in 'hdm_request_netinfo'
+This is due to the verifier not checking the stack depth after
+instruction rewrites are perfomed. For example, the MAY_GOTO instruction
+adds 8 bytes to the stack, which means that if the stack at the moment
+was already 512 bytes it would overflow after rewriting the instruction.
 
-Link: https://lore.kernel.org/r/20230113063947.23174-1-rdunlap@infradead.org [1]
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+The fix involves adding a stack depth check after all instruction
+rewrites are performed.
+
+Reported-by: syzbot+d2a2c639d03ac200a4f1@syzkaller.appspotmail.com
+Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
 ---
- drivers/most/most_snd.c | 1 -
- drivers/most/most_usb.c | 6 +++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ kernel/bpf/verifier.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/most/most_snd.c b/drivers/most/most_snd.c
-index 45d762804c5e..3b19fa835206 100644
---- a/drivers/most/most_snd.c
-+++ b/drivers/most/most_snd.c
-@@ -36,7 +36,6 @@ static struct most_component comp;
-  * @period_pos: current period position (ring buffer)
-  * @buffer_pos: current buffer position (ring buffer)
-  * @is_stream_running: identifies whether a stream is running or not
-- * @opened: set when the stream is opened
-  * @playback_task: playback thread
-  * @playback_waitq: waitq used by playback thread
-  * @copy_fn: copy function for PCM-specific format and width
-diff --git a/drivers/most/most_usb.c b/drivers/most/most_usb.c
-index 485d5ca39951..3e5bab68fa47 100644
---- a/drivers/most/most_usb.c
-+++ b/drivers/most/most_usb.c
-@@ -58,7 +58,7 @@
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 63749ad5ac6b..a9e23b6b8e8f 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -21285,6 +21285,10 @@ int bpf_check(struct bpf_prog **prog, union bpf_attr *attr, bpfptr_t uattr, __u3
+ 	if (ret == 0)
+ 		ret = do_misc_fixups(env);
  
- /**
-  * struct most_dci_obj - Direct Communication Interface
-- * @kobj:position in sysfs
-+ * @dev: device structure
-  * @usb_device: pointer to the usb device
-  * @reg_addr: register address for arbitrary DCI access
-  */
-@@ -83,6 +83,7 @@ struct clear_hold_work {
- 
- /**
-  * struct most_dev - holds all usb interface specific stuff
-+ * @dev: device structure
-  * @usb_device: pointer to usb device
-  * @iface: hardware interface
-  * @cap: channel capabilities
-@@ -94,10 +95,12 @@ struct clear_hold_work {
-  * @channel_lock: synchronize channel access
-  * @padding_active: indicates channel uses padding
-  * @is_channel_healthy: health status table of each channel
-+ * @clear_work: list of work items to send clear_halt to USB pipes
-  * @busy_urbs: list of anchored items
-  * @io_mutex: synchronize I/O with disconnect
-  * @link_stat_timer: timer for link status reports
-  * @poll_work_obj: work for polling link status
-+ * @on_netinfo: call-back used to deliver network status to mostcore
-  */
- struct most_dev {
- 	struct device dev;
-@@ -638,6 +641,7 @@ static int hdm_configure_channel(struct most_interface *iface, int channel,
-  * hdm_request_netinfo - request network information
-  * @iface: pointer to interface
-  * @channel: channel ID
-+ * @on_netinfo: call-back used to deliver network status to mostcore
-  *
-  * This is used as trigger to set up the link status timer that
-  * polls for the NI state of the INIC every 2 seconds.
-
----
-base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
-change-id: 20240504-most-kdoc-1b813475c63b
++        /* max stack depth verification must be done after rewrites as well */
++        if (ret == 0)
++                ret = check_max_stack_depth(env);
++
+ 	/* do 32-bit optimization after insn patching has done so those patched
+ 	 * insns could be handled correctly.
+ 	 */
+-- 
+2.34.1
 
 
