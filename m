@@ -1,252 +1,237 @@
-Return-Path: <linux-kernel+bounces-169031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2247A8BC1AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:32:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405918BC1AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20DAAB20FB4
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:32:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD65281A09
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71576376E7;
-	Sun,  5 May 2024 15:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C004374F9;
+	Sun,  5 May 2024 15:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zenithal.me header.i=@zenithal.me header.b="pcMH5txY"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2104.outbound.protection.outlook.com [40.107.113.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvc51CfI"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3573F2232A;
-	Sun,  5 May 2024 15:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714923117; cv=fail; b=guvfM/l1xm5kleLwpPx9cy86ckExQBuiO8gwp6el0ic7QqXs4LbnOfcpQrycRxq/PAMY/jizDX8WmII3pQAw9/hOvzPQZzxYXBsoS8aNhAAyYQq659yzJ22eQRhLpuMqHVC5HAuXNnkqJ/oimYYQfFCZYMVSetwkuRb+hPplmxU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714923117; c=relaxed/simple;
-	bh=P6H+mqpy8+9mN0oCtx4hFsIed36ZRsmtKnPw6ECChFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ahyEs+qih4p2rNSAekoTYiH9O5sx77WrnAGHaJNBz8TFFDQLNNuI0Zd+UCCH/ZSxgmogEVp+ATc8MxFfBbsoPK8qZJRNr86jhJjoB20Beokv2hyRvtSlq8MQZlwqL2xe9/Ra/TkXUI3nG4JJRUe/Kx9W9xQdmN+46tHqgNp2coY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zenithal.me; spf=pass smtp.mailfrom=zenithal.me; dkim=pass (1024-bit key) header.d=zenithal.me header.i=@zenithal.me header.b=pcMH5txY; arc=fail smtp.client-ip=40.107.113.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zenithal.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zenithal.me
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ON4rQeXx0Ta3yBkU5hwP9riApJp4Ga1stVWqTTJ8NWrN0o3gQbBZYUcnKl1ybPhNGWcdg89xb/R38+vTa4jaqAu7pbI5YLwLRPBGD7EbNcW8GlTr13qoB7p0k9xzskVDhV84BO/t8xZgI5nRjVrJrPOTfxQE3VIAQaYqMn35BtPRNjdJ3F+oCXQDUoaomLI4qQtpZ92a57gOMUKZk1BXETNOAA1C7g03TJxYm0icHmwxEgImHNmUcQiWHkOe/LnHX3qiblWYKTBCE5KVw2Wmw3eLHe+hqO+2XtfR/qDOn1S2yZEeZR0f5wa3cXjCh7X0j7VwRIECB50ZrqiKHbo/Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=knVl2MWCjyAQkv53/ycOoJTR3C2W0EGM0Mc3kHm1Fms=;
- b=PEjHoT0/TtsSizgNJI8gz393dwAc+Rsue0SlitENJJjuUhwmOW9IowjYr2W72S7gSfua45IqKFTtzdjF5J7s1msMeXKv5PWY1LAV1+C3G+h+fkyayCwU8y0I/vGwO+bWfKWD9oMMDLm7Hmi1Yeh8KOsC73nkda71+skzoOdZDrGG2+1Pe24KYCb1OOZap0O/Y27vtWO9ufXJ5gqVSKs/3DC5ABrEG8PieBvs6FulzwTWCqpiJgVoxIrt8Sna+M+6eXKBZ9KGosyc6MSX3Fg5Kqh4sXzMHiEAN9Deb7NHPEgJ4zRsmwUeRj2xtjnkv1ndac9wQFAOEsLjz99MD0Nqeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=zenithal.me; dmarc=pass action=none header.from=zenithal.me;
- dkim=pass header.d=zenithal.me; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zenithal.me;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=knVl2MWCjyAQkv53/ycOoJTR3C2W0EGM0Mc3kHm1Fms=;
- b=pcMH5txYFnNxCLr5OplQDa1aWO30Z1zRJyB1zAg/DzJm+X1zxO5LJwDx80yoQYtsssvHXkSJhzrC2dPtg3lsZl4u6Sn17r4g4Lk5XEzBB+1XjIrosQ9PVsqmHSNH72nkxv9oMaaoTEjg2DEMGukzcCmQe2EozlkCUQqOOWd0Dns=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=zenithal.me;
-Received: from TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:c0::6) by
- OSZP286MB2031.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:181::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.41; Sun, 5 May 2024 15:31:52 +0000
-Received: from TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
- ([fe80::746a:424a:348:bab6]) by TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
- ([fe80::746a:424a:348:bab6%5]) with mapi id 15.20.7544.041; Sun, 5 May 2024
- 15:31:52 +0000
-Date: Sun, 5 May 2024 23:31:44 +0800
-From: Hongren Zheng <i@zenithal.me>
-To: Simon Holesch <simon@holesch.de>
-Cc: Valentina Manea <valentina.manea.m@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] usbip: Don't submit special requests twice
-Message-ID: <ZjemYB6CpAx4Kx5f@Sun>
-References: <20231217194624.102385-1-simon@holesch.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231217194624.102385-1-simon@holesch.de>
-X-Operating-System: Linux Sun 6.6.28
-X-Mailer: Mutt 2.2.13 (2024-03-09)
-X-ClientProxiedBy: BYAPR07CA0054.namprd07.prod.outlook.com
- (2603:10b6:a03:60::31) To TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:c0::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD2E1D52C;
+	Sun,  5 May 2024 15:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714923645; cv=none; b=WAjfmmp7GJ6i0F0JXu6TG0Hb6s5vu2GQZn3zLMhmmQJ+cKOQXyqik0t/TFvF7df4mzcZjd3xNtIraVZqScCQHUECG6LgF3IvLzbPol+99AY+Ln8O3cSUYAt+ei8Zc2SOlb7zqVsPj9UfbokniJhgaABMjUVsIR1n3vwnh9Dk5H4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714923645; c=relaxed/simple;
+	bh=VuGl7/KcBiX0f8OmxjJSQR7xNFs5a6L48y8V57OfLVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RKpulsGxrQO7iFkfSBPQKzIJhW+lmNsiGZbUQpip+dYMnMSpjLDSeAlTn4LIAX2O6eUyuTSCivqSxGWRPfDaP+cGH56hGDWwNRJ4tfGR0j8P/O7w6w2MsieEdlahEe/bWec901OKs7rEg/xJHHTQB9vVhticr4wL3o1ye60q1IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvc51CfI; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1e83a2a4f2cso3528465ad.1;
+        Sun, 05 May 2024 08:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714923643; x=1715528443; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=eE0CVTbql2E3iQeGGrq8uHBHFqZSfYMMKZoAncXEzm0=;
+        b=bvc51CfIqgNH8QcEcGoWrpYGdEQIiuz2k4qT5z48fRUfLG+uC5AP+ztQUA/mYiOTWh
+         AjvvT1C4H3ZxLUe92ifIOZnYV/QnbHh7nNiBmDeA6MBwfUqxaNII90Q7q1uvmLlzCEIn
+         ZDdyXO9PJXa2Ruf296wairdHSyUiXz2aDqekdA88dg0ADkiq7Fl0oXOMxOGFPFYecswO
+         EagaQyy/fjp2dDo/UqueL5N7ngjE2rqRQK4AgiJOZIiTKJzM1e5pUIZpUpx4SMwq3gOu
+         0tSq4SAPPdtfheue0odUV2bcSPTfLO1CzrpRYaLtJkyql391vChSboEUITx/Se/nQsMV
+         JVqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714923643; x=1715528443;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eE0CVTbql2E3iQeGGrq8uHBHFqZSfYMMKZoAncXEzm0=;
+        b=V2Mxkr0kBnprwnGuP33iG2OTi9AH5TU8Xbyx+ZvdkYIeUqIWNGf3iRnXZuqi54E3q8
+         xgbalKJjVaQCq8lVHwYMCS6/a59w5tEKLMOxi3wFxAfjs9SRXa4qqK9TnBAdvvTOCooz
+         bkY1kIyT4dY/pK1gNexZR/l3KxJyFnV/VP/9UMvfOs2ZmnErSY2YFXDOjam3xSiaR3kA
+         1Lhe+vuvbdBNOTJw/nSgVQRZSPKGw/TOTVgQVR23Tj5yiFmFSKo2shWjB/+fGpYTxrEI
+         7b/aMY1iFkdpFdWamGkzhObRoTx2oO3Gk8vGl9v0P3pH20GyOMe0d/Ztcr2m0Em9OpOx
+         wSGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUejdSGeN4x2jzr1vExaPGeivAERbY2aaqVG2DobGpp121HrMl+/u/KB+UFp9HeSgP8XZkmR1wF8oBETzzLgPXfnXN0KDEvpzedVyFQgXIJ3sZd4EJIm1dSt6e1XKLmPnxwBhc0Wpgn7Fn2zIeIl3n5wUGwoTvIhTGa+NM3AT772TMKqItp
+X-Gm-Message-State: AOJu0Yz4aLr7GTyilIyK6wagIIhu56FE+wTJuYXw+Z7du8unuvoxKAY+
+	UkgPw7ghGZg5h59EgeqvDNK6gYNIUUZkhc/hyiXLnrBy3zIH+DKA
+X-Google-Smtp-Source: AGHT+IEVj05uGSFLeQzz9q+zFFq13zIHwnGgmO7cy/Fr+Gjd1mEai0HodHzIQpt10b8ZFlWIIwEs+g==
+X-Received: by 2002:a17:902:d345:b0:1eb:75de:2a5b with SMTP id l5-20020a170902d34500b001eb75de2a5bmr8138282plk.62.1714923642784;
+        Sun, 05 May 2024 08:40:42 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h17-20020a170902f55100b001ead176d324sm6619971plf.200.2024.05.05.08.40.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 08:40:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <da94fde6-3286-44eb-a543-c2ac4d11cd32@roeck-us.net>
+Date: Sun, 5 May 2024 08:40:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB1393:EE_|OSZP286MB2031:EE_
-X-MS-Office365-Filtering-Correlation-Id: afb05ee6-281e-4d17-6649-08dc6d187ccb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005|41320700004;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8zt8ISaO2xyIjTEfW1GVQUcorEe43upsWSafYMMBWVAQwhA2HdSC7SBTHzx4?=
- =?us-ascii?Q?iWAuNAIQxGyMSDN1WsKqF0jBRU9vsEnFtdp60IGA7flE1Ru+KEmf5f2prTJW?=
- =?us-ascii?Q?cyVPoI3OodcAOnMT44GSndF2rtiZRIFM2sZ6uEA3xF4lEsL5zkjWpbZ20Hl6?=
- =?us-ascii?Q?iYDGxIA9oXpwH1v4MMkDU9A/KyworUM+3qzLmpdC+zbD6UW+1Rj69HRItEx0?=
- =?us-ascii?Q?gXwPqNOs2P0vHl6MDfVZ4/d5Guh654k+z/zajEbHT5/REJkG2UfJjGLS0DHc?=
- =?us-ascii?Q?BoiOTOzY3c+xCHlGvUdufNSS4WtRcKM2GEU42bwWgG9OnSVCJ63UILwszMAL?=
- =?us-ascii?Q?XqURGrQ8rQbnXF1+aWWPIEc74h2sYKdlrKKZXk003bxZZwb5L5xqEVUWPBQp?=
- =?us-ascii?Q?CYVw/xaKntk5WXGqJfTOl6uS1UZZXgV8dbpY++KprAzlJpCxeBa7omsv5gZL?=
- =?us-ascii?Q?yupkIFpiwUcjo4Yqe5Vl9wIfTHqACxQ7Py7iqLvPySC3Bm9ZVdbgUTduXeCy?=
- =?us-ascii?Q?FM8f7FANr2Koy32ROiqpAZwVEkNy6bnZK/qVcXZwYWEh+gAIsqjjjbv6pkfA?=
- =?us-ascii?Q?+Sv0G+Wb6rK2ibfRR1No3D2jAHz/PAx5nFKD7oPW7Am8sewTHsbkevyzk95l?=
- =?us-ascii?Q?WTOb6AzEVsPs7mMpIft0do+HsxjSX8UQTOoX2XS5petIBtX3hNOO+R9Dd32x?=
- =?us-ascii?Q?QMh0Y8WL0ls1nv6r1/rrtTzGjzP8sdIxCzjsiUCE9Tbga9d0ovx6eXoVvtJl?=
- =?us-ascii?Q?eVR+LOric5zsHSzIrw8MjNTPNwNcTdgpLIv2+SYFP2DHlmfdQU7OzxTJPsfj?=
- =?us-ascii?Q?wD6JzwunxUmZAvjJ4edYHqrpoeRzHTveFLYmZsjVEAUgqVlfdHSSSKX/tBma?=
- =?us-ascii?Q?BZ0KxfzRjVN0CXiVunCxNTm+5lU2gl4kdhD6ynAcRB4W9nj8xsdd03NQCMkU?=
- =?us-ascii?Q?3+UlTjayWG8XCFGocdvhbCKvaWltVWUiDr4Skx5xUO6QLkF6WsYwH+saNac7?=
- =?us-ascii?Q?VoBZgfTeNaArQGSzwkN/GrOnU2qFSjWXY8jxy1HKCgiIR6jZaGYRuU1NsZ9y?=
- =?us-ascii?Q?Js4/XghNi57Jy0cjL5IX74hCA8AifK2MjovBzq7M4hWBi4CIteGZ1T1FXHEw?=
- =?us-ascii?Q?ReeUP3aQgTET7Az3akJRblpI6S7PLA6yyEA5k7LOwz/EbwEVbF02eyzONTQF?=
- =?us-ascii?Q?FOtAyWfjTRt9jIkl01Y1g61KtPckc4Kvc9CE1NhKcWZebn031q0gVzFIpzhG?=
- =?us-ascii?Q?ij+MFY9YgOPqrkOwRJr1uIQHRAIlDviK+sgpv+5HIg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(41320700004);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GTfmgmq3eK16dIv12BxkTSv7lcWz57ath+6h2M7tsIFoCe6E333fa1Ku6S7h?=
- =?us-ascii?Q?kDp+DgWHn32h4AR3/+t5qA8EuW2h8wvRffmdnSUZuTA+hkNKbJsqZQhQ/aec?=
- =?us-ascii?Q?zZ0yDTVxHmm9eL7UpSmY2fIYNdaneuerOgnHwM3J6K2Ov59yJ7SGBNOas/O7?=
- =?us-ascii?Q?54i9R5nPLvVZ55uz+wY8xqKFFCqZCltQJC6i6hLFGPQ6mFhq052nOlDcP2Pl?=
- =?us-ascii?Q?5QA9N0zLJSLcWZ75NRXR+yvNGeDM8/L9ndEvFrdnQqBnvB1UfUgzWacsFFQL?=
- =?us-ascii?Q?tlpg3NlfSdkIAOMB/ndPubDpRVWJ4iTeeJVsRca4VhzkwZYeNEzU6D5pCUrJ?=
- =?us-ascii?Q?AeXmLiZZLk47SkIPm97mKK9MZyJ4bjzEBTth2Lj0VJwFb59ul/kECye18WYM?=
- =?us-ascii?Q?qukWpo5HOycfEvrYynRLudjSrprG0rsvAsp2Xo49QRQaim3LYPIwyoPeApa5?=
- =?us-ascii?Q?vcTAD+4NHZJm67ylMLWG7ssmtwktqqdS8w9GY1v5Me4VUIfVBf1aBrPoFDRY?=
- =?us-ascii?Q?hXaymzPPy3UMUYpk9I2rNXWPot2NwkIr9Oi+27pbbyoBSt6Cb3FiIuuML29+?=
- =?us-ascii?Q?cXczKNXh0an78pI9zPRAcChmVKr27B7EpWD8rUDKj4HZDnxUT/g53c/FsIDv?=
- =?us-ascii?Q?8wK2MqP+NEI1doAbcRplfNHzbl59PGQnaUftjk2syJbLrX91q/AQUpBjcsCG?=
- =?us-ascii?Q?BpEqoYCg6gF9w2dTK93GbxGpVrU2lHmqo6w+tAoSZKFQtdkNLdKE1R2bqJSd?=
- =?us-ascii?Q?If39sZMKNEc26NPZ2g4f/fXsIBxJiUYq1GuwRIVLkkVBW9HfoKSe7GEUiaea?=
- =?us-ascii?Q?BDjDKuIEAwMhPzF8E2vRyiOKn13bfDGGLt1JX7vTF3IhMVQLkM/cTUtbu1k0?=
- =?us-ascii?Q?FhMZ3bIgVws+eMmdM8zZMrHxfPBcKl/cw0A3JuuN6dgmSAFNOZoY+O0Ta0oy?=
- =?us-ascii?Q?9Z7vHj1hazoLhwJWge1bGc6FVlEs7hhMs1FFgKLaeDAGIvB/DGJsBjo8tKV5?=
- =?us-ascii?Q?N+XAneBKk2avKvzeuPcX4lT9k2Yzscfe3cAp2pXZ5jXzahqEFjJwX6EaMOKn?=
- =?us-ascii?Q?fTEa6X1ftc+OklQLkbsOk2zkn0toTMpyYI0vHX4Y3JI9/Eyluh4obwDMOw8K?=
- =?us-ascii?Q?DXzjeg45egi0bDBcZOQIhbHPu6gcGWdbTq7nrInVNuVOapT7hKqUTFFodAyI?=
- =?us-ascii?Q?fJmRwmHjb4K8NORlMyAgeX4CTO2D9TVHo3KVPSDpwQzBpu8WCEj98+BvAXGm?=
- =?us-ascii?Q?D33Yyh6gbXy9dbuzPy4C+m4TGGZHudfxT5ohF+hnsYDy5PBeHIkhYL6Stcae?=
- =?us-ascii?Q?2AH6XV2qWG2aBRmjZo6fgJKx47gtGAN9fR/cO3GZkU1QwvX1u6Zmgt9xbcuf?=
- =?us-ascii?Q?4yTzUtfxu8QLBEDlS/76UgMui/Wp4JySE4loQS15/OaFxumtkyYPI8ttBZZE?=
- =?us-ascii?Q?Bj+1O96YCrLOd6uuQNuRmYFuFepopDGYmSYw3laWJ+YtFijPmKBypGFQ3uf5?=
- =?us-ascii?Q?Xu2IZSUoIhMTuZD8Ob9NzZ1AxuEs9mm7WK33JnAAY4Si3v4PUJOVVYT5orBM?=
- =?us-ascii?Q?+bkMPPUdCHhJHI+ipuj91Fql7+7v87Qp2ix0SWOZ?=
-X-OriginatorOrg: zenithal.me
-X-MS-Exchange-CrossTenant-Network-Message-Id: afb05ee6-281e-4d17-6649-08dc6d187ccb
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2024 15:31:52.2431
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 436d481c-43b1-4418-8d7f-84c1e4887cf0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wyKtt/THKLAuXL9DILMS5MvMyBi9ZVesm+/dbrvuMqmTVxh0Zsd/laYCZ2oZWiY5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZP286MB2031
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] dt-bindings: hwmon: max31790: Add
+ maxim,pwmout-pin-as-tach-input property
+To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>, Jean Delvare
+ <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Justin Ledford
+ <justinledford@google.com>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>,
+ Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>
+References: <20240414042246.8681-1-chanh@os.amperecomputing.com>
+ <20240414042246.8681-4-chanh@os.amperecomputing.com>
+ <13b195e6-cbbd-4f74-a6fa-d874cb4aaa45@linaro.org>
+ <065243cc-09cf-4087-8842-bd4394fb324f@amperemail.onmicrosoft.com>
+ <d549cf2b-a7fa-4644-8fcb-3c420503ee01@amperemail.onmicrosoft.com>
+ <20240423-gallantly-slurp-24adbfbd6f09@spud>
+ <ab5cfd8c-0e88-4194-a77e-5ffbb6890319@amperemail.onmicrosoft.com>
+ <396b47f5-9604-44ab-881f-94d0664bcab8@roeck-us.net>
+ <0dcc8788-604a-49c1-8c6b-fdbfa9192039@amperemail.onmicrosoft.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <0dcc8788-604a-49c1-8c6b-fdbfa9192039@amperemail.onmicrosoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 17, 2023 at 08:30:40PM +0100, Simon Holesch wrote:
-> Skip submitting URBs, when identical requests were already sent in
-> tweak_special_requests(). Instead call the completion handler directly
-> to return the result of the URB.
-
-Reproduced the behavior and this patch fixed the bahavior
-
+On 5/5/24 03:08, Chanh Nguyen wrote:
 > 
-> Even though submitting those requests twice should be harmless, there
-> are USB devices that react poorly to some duplicated requests.
 > 
-> One example is the ChipIdea controller implementation in U-Boot: The
-> second SET_CONFIURATION request makes U-Boot disable and re-enable all
-> endpoints. Re-enabling an endpoint in the ChipIdea controller, however,
-> was broken until U-Boot commit b272c8792502 ("usb: ci: Fix gadget
-> reinit").
+> On 25/04/2024 21:05, Guenter Roeck wrote:
+>> On 4/25/24 03:33, Chanh Nguyen wrote:
+>>>
+>>>
+>>> On 24/04/2024 00:02, Conor Dooley wrote:
+>>>> [EXTERNAL EMAIL NOTICE: This email originated from an external sender. Please be mindful of safe email handling and proprietary information protection practices.]
+>>>>
+>>>
+>>
+>> The quote doesn't make much sense.
+>>
+>>> Sorry Conor, there may be confusion here. I mean the mapping of the PWM output to the TACH input, which is on the MAX31790, and it is not sure a common feature on all fan controllers.
+>>>
+>>
+>> I think the term "mapping" is a bit confusing here.
+>>
+>> tach-ch, as I understand it, is supposed to associate a tachometer input
+>> with a pwm output, meaning the fan speed measured with the tachometer input
+>> is expected to change if the pwm output changes.
+>>
+>> On MAX31790, it is possible to configure a pwm output pin as tachometer input pin.
+>> That is something completely different. Also, the association is fixed.
+>> If the first pwm channel is used as tachometer channel, it would show up as 7th
+>> tachometer channel. If the 6th pwm channel is configured to be used as tachometer
+>> input, it would show up as 12th tachometer channel.
+>>
+>> Overall, the total number of channels on MAX31790 is always 12. 6 of them
+>> are always tachometer inputs, the others can be configured to either be a
+>> pwm output or a tachometer input.
 > 
-> Signed-off-by: Simon Holesch <simon@holesch.de>
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
-
->  /*
-> @@ -468,6 +477,7 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
->  	int support_sg = 1;
->  	int np = 0;
->  	int ret, i;
-> +	int is_tweaked;
->  
->  	if (pipe == -1)
->  		return;
-> @@ -580,8 +590,7 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
->  		priv->urbs[i]->pipe = pipe;
->  		priv->urbs[i]->complete = stub_complete;
->  
-> -		/* no need to submit an intercepted request, but harmless? */
-> -		tweak_special_requests(priv->urbs[i]);
-> +		is_tweaked = tweak_special_requests(priv->urbs[i]);
-
-One question though, if there are mutiple urbs and one of them is
-SET CONFIGURATION, then all of them would not be submitted,
-as is_tweaked is a *global* flag instead of a per-urb flag.
-
-Now it is assumed that when the urb is SET CONFIGURATION then
-num_urbs is 1. I assume it just happens to be the case and I do
-not know if it holds for all scenario.
-
->  
->  		masking_bogus_flags(priv->urbs[i]);
->  	}
-> @@ -594,22 +603,32 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
->  
->  	/* urb is now ready to submit */
->  	for (i = 0; i < priv->num_urbs; i++) {
-> -		ret = usb_submit_urb(priv->urbs[i], GFP_KERNEL);
-> +		if (!is_tweaked) {
-> +			ret = usb_submit_urb(priv->urbs[i], GFP_KERNEL);
->  
-> -		if (ret == 0)
-> -			usbip_dbg_stub_rx("submit urb ok, seqnum %u\n",
-> -					pdu->base.seqnum);
-> -		else {
-> -			dev_err(&udev->dev, "submit_urb error, %d\n", ret);
-> -			usbip_dump_header(pdu);
-> -			usbip_dump_urb(priv->urbs[i]);
-> +			if (ret == 0)
-> +				usbip_dbg_stub_rx("submit urb ok, seqnum %u\n",
-> +						pdu->base.seqnum);
-> +			else {
-> +				dev_err(&udev->dev, "submit_urb error, %d\n", ret);
-> +				usbip_dump_header(pdu);
-> +				usbip_dump_urb(priv->urbs[i]);
->  
-> +				/*
-> +				 * Pessimistic.
-> +				 * This connection will be discarded.
-> +				 */
-> +				usbip_event_add(ud, SDEV_EVENT_ERROR_SUBMIT);
-> +				break;
-> +			}
-> +		} else {
->  			/*
-> -			 * Pessimistic.
-> -			 * This connection will be discarded.
-> +			 * An identical URB was already submitted in
-> +			 * tweak_special_requests(). Skip submitting this URB to not
-> +			 * duplicate the request.
->  			 */
-> -			usbip_event_add(ud, SDEV_EVENT_ERROR_SUBMIT);
-> -			break;
-> +			priv->urbs[i]->status = 0;
-> +			stub_complete(priv->urbs[i]);
->  		}
->  	}
->  
-> -- 
-> 2.43.0
+> Thank you, Guenter, for your explanation. That is also my understanding of the MAX31790 feature.
 > 
+> So, I think we should introduce a vendor property to configure the pwm output pins to become tachometer input pins. We shouldn't use the tach-ch property. Because they are completely different, I think.
+> 
+> What's your idea ? Please help share me, Guenter
+> 
+> 
+>>
+>> pwm outputs on MAX31790 are always tied to the matching tachometer inputs
+>> (pwm1 <--> tach1 etc) and can not be reconfigured, meaning tach-ch for
+>> channel X would always be X.
+>>
+>>> I would like to open a discussion about whether we should use the tach-ch property on the fan-common.yaml
+>>>
+>>> I'm looking forward to hearing comments from everyone. For me, both tach-ch and vendor property are good.
+>>>
+>>
+>> I am not even sure how to define tach-ch to mean "use the pwm output pin
+>> associated with this tachometer input channel not as pwm output
+>> but as tachometer input". That would be a boolean, not a number.
+>>
+> 
+> Thank Guenter,
+> 
+> I reviewed again the "tach-ch" property, which is used in the https://elixir.bootlin.com/linux/v6.9-rc6/source/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml#L68 and https://elixir.bootlin.com/linux/v6.9-rc6/source/drivers/hwmon/aspeed-g6-pwm-tach.c#L434
+> 
+> That is something completely different from my purpose.
+> 
+
+Based on its definition, tach-ch is associated with fans, and it looks
+like the .yaml file groups multiple sets of fans into a single
+fan node.
+
+In the simple case that would be
+	tach-ch = <1>
+..
+	tach-ch = <12>
+
+or, if all fans are controlled by a single pwm
+	tach-ch = <1 2 3 4 5 6 8 9 10 11 12>
+
+The existence of tachometer channel 7..12 implies that pwm channel (tachometer
+channel - 6) is used as tachometer channel. That should be sufficient to program
+the chip for that channel. All you'd have to do is to ensure that pwm channel
+"X" is not listed as tachometer channel "X + 6", and program pwm channel "X - 6"
+for tachometer channels 7..12 as tachometer channels.
+
+Hope this helps,
+Guenter
+
 
