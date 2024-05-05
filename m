@@ -1,238 +1,155 @@
-Return-Path: <linux-kernel+bounces-168971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A178BC063
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 14:34:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89FF8BC065
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 14:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1B01C20A6F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562FC1F218C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC241804A;
-	Sun,  5 May 2024 12:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD621BC31;
+	Sun,  5 May 2024 12:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cl/2yQvF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JH006p9c"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27858A21
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 12:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD7657C9A;
+	Sun,  5 May 2024 12:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714912454; cv=none; b=cViRS8feEptdgoarzAi03FL2OyhFLtbE5QqBj0jLeX73HsURDuEaa+Oz3cqYkaAYQ9E1PtSBspLiYXXE5kVWpEeHzRyb2oaJEryH5tOhSVUXxZh+9i69V5UOOsFNBubAGa/iocWBOsEptPhLeYlVF0cTyDiYzV/0vgIiAj66tYM=
+	t=1714912632; cv=none; b=Hwa6xnEsH2puCgoqZb9nUZTSsDH3qKbYatoHJP41oEtEhFQokT7cMCUlEuxaakYWGwSZMxGgqKD2hOuGlBnC7QAq3QR1qtjPFemhO3FM7Nr+fiU7+inhrrG2yEO9h+Voy5OOD0LIjwyk5sWcis1U3f8ejmxEkXrbbWQFr2QZQbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714912454; c=relaxed/simple;
-	bh=wz+6IsEcn6LI+h0NmGwwasc9Ns0cbM/wBeFTv4gFEqU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p+V49EERUWyIqsbxfO5BD1c5UInZ98+n23+kx22EKBx87yPf/FUQZPGebTuBltApguLowMvMLOa1qifXqss5QZDfIxodBXCsPL/fHBLue+pYcYipnyHohLLXRysX9TTojta1EW1SNaLnZ39Zv2CwO5gK4CEaGpixV4B4tqlqIB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cl/2yQvF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1ABC113CC;
-	Sun,  5 May 2024 12:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714912453;
-	bh=wz+6IsEcn6LI+h0NmGwwasc9Ns0cbM/wBeFTv4gFEqU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cl/2yQvF5CdVSqf3VIXcreHrM3u0luplWToFnRESPNukpIo0tZEH4F/YwnOyxYKDR
-	 Gd/ljuiwSa1AeA8F0Ake2FPTph4coQz7GUbyvgp67NwmDJ5glGt1gxHGoD1cXCykhl
-	 2QiEG29gcIHfsOLZ/ka7Zl0YBPSeoH+1Z1CBNJLBQI1KrJEoA4MYv4ZvMxoJCWAwpO
-	 9AmceNDq7a3tyOg/nIZwpjx3rE8kmGMDxkQot2nbgR6ZI1cZGUN/Xs0h3mvwVPTp06
-	 tmvXqocbUg7ZGA2hj77GWz6zjL7COqrkeb/pXNeDMu+45MmVy/f5Mnpi6n8k9pOA3H
-	 /GhWbdC6dAPyw==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: puranjay12@gmail.com
-Subject: [PATCH] riscv/atomic.h: optimize ops with acquire/release ordering
-Date: Sun,  5 May 2024 12:33:40 +0000
-Message-Id: <20240505123340.38495-1-puranjay@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1714912632; c=relaxed/simple;
+	bh=zDpolQWfbcUK7TyiyiEtd0WxsaMTnXf/81eP72pe0Dg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXztAqRq1koD1t0HnEjE+QGQYAiNXfnxHvzeia73wvEnQ0R9S/8QsJ0XcMdygjmWkLQz+uc07haQCeuvwB2uaiLsExHP8UvAmWaYqX4n5rWqW2emgYVLn6eO4lP7RFQiSVcOfx68+2OAcgO4Gsxej9YBHcaQy5dmXfpDWVdwF/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JH006p9c; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6f04f01f29aso185999a34.0;
+        Sun, 05 May 2024 05:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714912630; x=1715517430; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q7UNaT1dFoDbZk1Tb2yzB1trkO0W5vpyMHkgqY156n0=;
+        b=JH006p9c7URMROm3EAHfDeQInPBK0lW6D1Vynbyeg3Kol1FQxkcN1zvGakcXJhHwSj
+         FvD0C6yVT3gqTJcPPZvdMZQjE5nX6L0ETkm2Qu4/vGhuiDJtI8XWEwLTJ1dGE1T7qD7Z
+         EdMQonnNOS7+ENi464Skhl3hJIoNfSqhY2Ig6027LsDGQNzadSYnRENp3zpg1YzDHPSj
+         cVAVYkzziTGat/E0DkERbguD7sno8unnaDRs6Gq7EJsPTDu4MgUfB4jdpANWuBySIerF
+         iTgW5pj1XxkLpZJDFVzhwfsObi1PxzUCUH/vlum3CZQsZLWqL8bf0npwJ/zG2X+voCDw
+         v9Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714912630; x=1715517430;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q7UNaT1dFoDbZk1Tb2yzB1trkO0W5vpyMHkgqY156n0=;
+        b=nxJDa7TAjIrhIYKWd2m5U1/XhR5h7ElVeVqNh8aCAZa9M0Je1vWlTbhstNLit064eZ
+         oD+9zWaDIRmSsvPS0NZ7isDRLX9NPBzk6LGGWhqiUwVm8MYjPbWO6eZ0ezeYy4UkK60R
+         RiMuxI+kcHBztMipgKm3hiZNQF1V8Lan+SqcEBKtuojJxeJENojbEe+0nHJuAo7tzV9G
+         QjMeVsG3m+dnAlgeVBZWn4lBp4SOmpzforLuyIKKU7cuCAEzIx6OdCB3i+ROgv27kptJ
+         Fl7olu+/jTHwL8k+tVe4ytym+Gl0R/I9GicLsdOwHSMVtK/aDNQuk8b0L/5giXvuRu8B
+         8lYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKjUi0Y0I6KWLfXtLQxQogp6n4YfE7dJZ5FIfcfghyYs94yGwaqCPFELRNTK/7L4VmdkAkWcqyMLTqSY6G4homA3dZ2ex4HgCFp6da
+X-Gm-Message-State: AOJu0YwgTUE0eqs4/7VXzP8innd1Wl1vzekJxHxdfvTc3ULvisbiBinr
+	GlngXxn5C+xzp7otbhHolvnq3wU0S8G7QZpTpDZqaZ1ba7UMEpBF
+X-Google-Smtp-Source: AGHT+IGmeBFls7M1T2mDkcdo593tJ529+B6AdsEDseoNn6Uj4zHGCr/ZveECxUPEZJG73iGmf+Ajag==
+X-Received: by 2002:a05:6830:144a:b0:6ee:4ecc:3c39 with SMTP id w10-20020a056830144a00b006ee4ecc3c39mr8998993otp.25.1714912630187;
+        Sun, 05 May 2024 05:37:10 -0700 (PDT)
+Received: from ?IPV6:2600:1700:70:f700:3634:a35:99df:3386? ([2600:1700:70:f700:3634:a35:99df:3386])
+        by smtp.gmail.com with ESMTPSA id cv7-20020a056830688700b006ee377bd3aesm1478999otb.44.2024.05.05.05.37.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 05:37:09 -0700 (PDT)
+Message-ID: <1eb96465-0a81-4187-b8e7-607d85617d5f@gmail.com>
+Date: Sun, 5 May 2024 07:37:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Thunderbolt Host Reset Change Causes eGPU
+ Disconnection from 6.8.7=>6.8.8
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Micha Albert <kernel@micha.zone>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <wL3vtEh_zTQSCqS6d5YCJReErDDy_dw-dW5L9TSpp9VFDVHfkSN8lNo8i1ZVUD9NU-eIvF2M84nhfdt2O7spGu2Nv5-oz9FLohYO7SuJzWQ=@micha.zone>
+ <3f1f55cb-d8df-4834-b22f-c195d161cab5@leemhuis.info>
+Content-Language: en-US
+From: Mario Limonciello <superm1@gmail.com>
+In-Reply-To: <3f1f55cb-d8df-4834-b22f-c195d161cab5@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Currently, atomic ops with acquire or release ordering are implemented
-as atomic ops with relaxed ordering followed by or preceded by an
-acquire fence or a release fence.
 
-Section 8.1 of the "The RISC-V Instruction Set Manual Volume I:
-Unprivileged ISA", titled, "Specifying Ordering of Atomic Instructions"
-says:
 
-| To provide more efficient support for release consistency [5], each
-| atomic instruction has two bits, aq and rl, used to specify additional
-| memory ordering constraints as viewed by other RISC-V harts.
+On 5/4/24 23:59, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [CCing Mario, who asked for the two suspected commits to be backported]
+> 
+> On 05.05.24 03:12, Micha Albert wrote:
+>>
+>>      I have an AMD Radeon 6600 XT GPU in a cheap Thunderbolt eGPU board.
+>> In 6.8.7, this works as expected, and my Plymouth screen (including the
+>> LUKS password prompt) shows on my 2 monitors connected to the GPU as
+>> well as my main laptop screen. Upon entering the password, I'm put into
+>> userspace as expected. However, upon upgrading to 6.8.8, I will be
+>> greeted with the regular password prompt, but after entering my password
+>> and waiting for it to be accepted, my eGPU will reset and not function.
+>> I can tell that it resets since I can hear the click of my ATX power
+>> supply turning off and on again, and the status LED of the eGPU board
+>> goes from green to blue and back to green, all in less than a second.
+>>
+>>     I talked to a friend, and we found out that the kernel parameter
+>> thunderbolt.host_reset=false fixes the issue. He also thinks that
+>> commits cc4c94 (59a54c upstream) and 11371c (ec8162 upstream) look
+>> suspicious. I've attached the output of dmesg when the error was
+>> occurring, since I'm still able to use my laptop normally when this
+>> happens, just not with my eGPU and its connected displays.
+> 
+> Thx for the report. Could you please test if 6.9-rc6 (or a later
+> snapshot; or -rc7, which should be out in about ~18 hours) is affected
+> as well? That would be really important to know.
+> 
+> It would also be great if you could try reverting the two patches you
+> mentioned and see if they are really what's causing this. There iirc are
+> two more; maybe you might need to revert some or all of them in the
+> order they were applied.
 
-and
+There are two other things that I think would be good to understand this 
+issue.
 
-| If only the aq bit is set, the atomic memory operation is treated as
-| an acquire access.
-| If only the rl bit is set, the atomic memory operation is treated as a
-| release access.
+1) Is it related to trusted devices handling?
 
-So, rather than using two instructions (relaxed atomic op + fence), use
-a single atomic op instruction with acquire/release ordering.
+You can try to apply it both to 6.8.y or to 6.9-rc.
 
-Example program:
+https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/commit/?h=iommu/fixes&id=0f91d0795741c12cee200667648669a91b568735
 
-  atomic_t cnt = ATOMIC_INIT(0);
-  atomic_fetch_add_acquire(1, &cnt);
-  atomic_fetch_add_release(1, &cnt);
+2) Is it because you have amdgpu in your initramfs but not thunderbolt?
 
-Before:
+If so; there's very likely an ordering issue.
 
-  amoadd.w        a4,a5,(a4)  // Atomic add with relaxed ordering
-  fence   r,rw                // Fence to force Acquire ordering
+[    2.325788] [drm] GPU posting now...
+[   30.360701] ACPI: bus type thunderbolt registered
 
-  fence   rw,w                // Fence to force Release ordering
-  amoadd.w        a4,a5,(a4)  // Atomic add with relaxed ordering
+Can you remove amdgpu from your initramfs and wait for it to startup 
+after you pivot rootfs?  Does this still happen?
 
-After:
-
-  amoadd.w.aq     a4,a5,(a4)  // Atomic add with Acquire ordering
-
-  amoadd.w.rl     a4,a5,(a4)  // Atomic add with Release ordering
-
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
----
- arch/riscv/include/asm/atomic.h | 64 +++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
-
-diff --git a/arch/riscv/include/asm/atomic.h b/arch/riscv/include/asm/atomic.h
-index 5b96c2f61adb..024e83936910 100644
---- a/arch/riscv/include/asm/atomic.h
-+++ b/arch/riscv/include/asm/atomic.h
-@@ -98,6 +98,30 @@ c_type arch_atomic##prefix##_fetch_##op##_relaxed(c_type i,		\
- 	return ret;							\
- }									\
- static __always_inline							\
-+c_type arch_atomic##prefix##_fetch_##op##_acquire(c_type i,		\
-+					     atomic##prefix##_t *v)	\
-+{									\
-+	register c_type ret;						\
-+	__asm__ __volatile__ (						\
-+		"	amo" #asm_op "." #asm_type ".aq %1, %2, %0"	\
-+		: "+A" (v->counter), "=r" (ret)				\
-+		: "r" (I)						\
-+		: "memory");						\
-+	return ret;							\
-+}									\
-+static __always_inline							\
-+c_type arch_atomic##prefix##_fetch_##op##_release(c_type i,		\
-+					     atomic##prefix##_t *v)	\
-+{									\
-+	register c_type ret;						\
-+	__asm__ __volatile__ (						\
-+		"	amo" #asm_op "." #asm_type ".rl %1, %2, %0"	\
-+		: "+A" (v->counter), "=r" (ret)				\
-+		: "r" (I)						\
-+		: "memory");						\
-+	return ret;							\
-+}									\
-+static __always_inline							\
- c_type arch_atomic##prefix##_fetch_##op(c_type i, atomic##prefix##_t *v)	\
- {									\
- 	register c_type ret;						\
-@@ -117,6 +141,18 @@ c_type arch_atomic##prefix##_##op##_return_relaxed(c_type i,		\
-         return arch_atomic##prefix##_fetch_##op##_relaxed(i, v) c_op I;	\
- }									\
- static __always_inline							\
-+c_type arch_atomic##prefix##_##op##_return_acquire(c_type i,		\
-+					      atomic##prefix##_t *v)	\
-+{									\
-+	return arch_atomic##prefix##_fetch_##op##_acquire(i, v) c_op I;	\
-+}									\
-+static __always_inline							\
-+c_type arch_atomic##prefix##_##op##_return_release(c_type i,		\
-+					      atomic##prefix##_t *v)	\
-+{									\
-+	return arch_atomic##prefix##_fetch_##op##_release(i, v) c_op I;	\
-+}									\
-+static __always_inline							\
- c_type arch_atomic##prefix##_##op##_return(c_type i, atomic##prefix##_t *v)	\
- {									\
-         return arch_atomic##prefix##_fetch_##op(i, v) c_op I;		\
-@@ -138,23 +174,39 @@ ATOMIC_OPS(add, add, +,  i)
- ATOMIC_OPS(sub, add, +, -i)
- 
- #define arch_atomic_add_return_relaxed	arch_atomic_add_return_relaxed
-+#define arch_atomic_add_return_acquire	arch_atomic_add_return_acquire
-+#define arch_atomic_add_return_release	arch_atomic_add_return_release
- #define arch_atomic_sub_return_relaxed	arch_atomic_sub_return_relaxed
-+#define arch_atomic_sub_return_acquire	arch_atomic_sub_return_acquire
-+#define arch_atomic_sub_return_release	arch_atomic_sub_return_release
- #define arch_atomic_add_return		arch_atomic_add_return
- #define arch_atomic_sub_return		arch_atomic_sub_return
- 
- #define arch_atomic_fetch_add_relaxed	arch_atomic_fetch_add_relaxed
-+#define arch_atomic_fetch_add_acquire	arch_atomic_fetch_add_acquire
-+#define arch_atomic_fetch_add_release	arch_atomic_fetch_add_release
- #define arch_atomic_fetch_sub_relaxed	arch_atomic_fetch_sub_relaxed
-+#define arch_atomic_fetch_sub_acquire	arch_atomic_fetch_sub_acquire
-+#define arch_atomic_fetch_sub_release	arch_atomic_fetch_sub_release
- #define arch_atomic_fetch_add		arch_atomic_fetch_add
- #define arch_atomic_fetch_sub		arch_atomic_fetch_sub
- 
- #ifndef CONFIG_GENERIC_ATOMIC64
- #define arch_atomic64_add_return_relaxed	arch_atomic64_add_return_relaxed
-+#define arch_atomic64_add_return_acquire	arch_atomic64_add_return_acquire
-+#define arch_atomic64_add_return_release	arch_atomic64_add_return_release
- #define arch_atomic64_sub_return_relaxed	arch_atomic64_sub_return_relaxed
-+#define arch_atomic64_sub_return_acquire	arch_atomic64_sub_return_acquire
-+#define arch_atomic64_sub_return_release	arch_atomic64_sub_return_release
- #define arch_atomic64_add_return		arch_atomic64_add_return
- #define arch_atomic64_sub_return		arch_atomic64_sub_return
- 
- #define arch_atomic64_fetch_add_relaxed	arch_atomic64_fetch_add_relaxed
-+#define arch_atomic64_fetch_add_acquire	arch_atomic64_fetch_add_acquire
-+#define arch_atomic64_fetch_add_release	arch_atomic64_fetch_add_release
- #define arch_atomic64_fetch_sub_relaxed	arch_atomic64_fetch_sub_relaxed
-+#define arch_atomic64_fetch_sub_acquire	arch_atomic64_fetch_sub_acquire
-+#define arch_atomic64_fetch_sub_release	arch_atomic64_fetch_sub_release
- #define arch_atomic64_fetch_add		arch_atomic64_fetch_add
- #define arch_atomic64_fetch_sub		arch_atomic64_fetch_sub
- #endif
-@@ -175,16 +227,28 @@ ATOMIC_OPS( or,  or, i)
- ATOMIC_OPS(xor, xor, i)
- 
- #define arch_atomic_fetch_and_relaxed	arch_atomic_fetch_and_relaxed
-+#define arch_atomic_fetch_and_acquire	arch_atomic_fetch_and_acquire
-+#define arch_atomic_fetch_and_release	arch_atomic_fetch_and_release
- #define arch_atomic_fetch_or_relaxed	arch_atomic_fetch_or_relaxed
-+#define arch_atomic_fetch_or_acquire	arch_atomic_fetch_or_acquire
-+#define arch_atomic_fetch_or_release	arch_atomic_fetch_or_release
- #define arch_atomic_fetch_xor_relaxed	arch_atomic_fetch_xor_relaxed
-+#define arch_atomic_fetch_xor_acquire	arch_atomic_fetch_xor_acquire
-+#define arch_atomic_fetch_xor_release	arch_atomic_fetch_xor_release
- #define arch_atomic_fetch_and		arch_atomic_fetch_and
- #define arch_atomic_fetch_or		arch_atomic_fetch_or
- #define arch_atomic_fetch_xor		arch_atomic_fetch_xor
- 
- #ifndef CONFIG_GENERIC_ATOMIC64
- #define arch_atomic64_fetch_and_relaxed	arch_atomic64_fetch_and_relaxed
-+#define arch_atomic64_fetch_and_acquire	arch_atomic64_fetch_and_acquire
-+#define arch_atomic64_fetch_and_release	arch_atomic64_fetch_and_release
- #define arch_atomic64_fetch_or_relaxed	arch_atomic64_fetch_or_relaxed
-+#define arch_atomic64_fetch_or_acquire	arch_atomic64_fetch_or_acquire
-+#define arch_atomic64_fetch_or_release	arch_atomic64_fetch_or_release
- #define arch_atomic64_fetch_xor_relaxed	arch_atomic64_fetch_xor_relaxed
-+#define arch_atomic64_fetch_xor_acquire	arch_atomic64_fetch_xor_acquire
-+#define arch_atomic64_fetch_xor_release	arch_atomic64_fetch_xor_release
- #define arch_atomic64_fetch_and		arch_atomic64_fetch_and
- #define arch_atomic64_fetch_or		arch_atomic64_fetch_or
- #define arch_atomic64_fetch_xor		arch_atomic64_fetch_xor
--- 
-2.40.1
-
+> 
+> Ciao, Thorsten
+> 
+> P.s.: To be sure the issue doesn't fall through the cracks unnoticed,
+> I'm adding it to regzbot, the Linux kernel regression tracking bot:
+> 
+> #regzbot ^introduced v6.8.7..v6.8.8
+> #regzbot title thunderbolt: eGPU disconnected during boot
+> 
 
