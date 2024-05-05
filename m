@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-168907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C868BBF91
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:04:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6848BBF94
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8F9CB210CD
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0DD81C20B91
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9876FB6;
-	Sun,  5 May 2024 07:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE2A6AAD;
+	Sun,  5 May 2024 07:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VtxyHnJG"
-Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JDAK7KRb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gw6Wwoob"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDB263A5;
-	Sun,  5 May 2024 07:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F93FF1;
+	Sun,  5 May 2024 07:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714892634; cv=none; b=AN0A3jiCB6I1Ew3LSSOG5cFNDWg/H+4bi79ACAvZfuaAKlztuFaHHxnauAh1PiGlOVySm4BWe8haO6qkk6VYmQM55ikl82ldLg2vgioOdce583PTRQ2iWd6UfDyHx4rPEeBCbsv2mqAYd3j8+rOnEVnvV+5aqbSmkUpH+anNABg=
+	t=1714893303; cv=none; b=meFFJFMAeWo7MS3ephiyWV/WFdSCSBFqorNPxFY9SYVDBVzX30Y/V5JAkYxpEvLkyrPQa3G7ylyWkpBF4KDGC12J2mxVv7LneG4LKU9M6wAqpqR7hplsEpRemlSoFH2frr1MhtczBmGQwGoN+RK9z59TbaMzhjSy40IqZRdF3ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714892634; c=relaxed/simple;
-	bh=f/q3nMrO7XMwlLCGTSws8gHkh4NhAd0ArKeiJmSJAQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aUaHXVvoISL5wMvNdC+3Z+xFRWkJRDQSS5SU6YGelCVeOUbmHMLpNnCt4isJ1oi2U254oD15CW75v6fVjYssUyfWYlYWU61YpVjUhusPVfBW5T0AJ0wv+K6o4wmwsugELXame0CHGMZYybSSWYO6WqmXfVQc7jnHhOogKAP/D5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VtxyHnJG; arc=none smtp.client-ip=80.12.242.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 3VuNsRaqlrs7M3VuNs9A6s; Sun, 05 May 2024 09:03:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714892623;
-	bh=DBQKhsJ4mDyVp3IvupeuQ5SJkA9A1uQpu4XWLEOftUw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VtxyHnJGWGr3j8fB3UR8kqOOrgCuE3V6JuhSjgtXTc14Mz7o+9p4tkmSeJTAnMqkw
-	 kD02vNCyo3vtFwja0JsGNQ5GQocOxIFDoK4TwM59FD+o/3UMsRy8kYBfRA5crpxam4
-	 u0u8/2SM/6afGWWcCqpxoaRcdB0iIahCaNOinE0Gtjqga7y+I+i6h439I5RwqfUAO2
-	 qQWcPi1UXuhwmkkHfjdj9t4z9zS+GY7Amnf+ec3D4wRzvmi/JjYzN0LiFQC8z9RO6o
-	 NNKpxSp1pGtKcN4uqMoEkeAIhPUolss/Qbf5fsAcPzGFoE+SCLlr85EJtbdLNxbH08
-	 0Gqk7e2SmbgDA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 05 May 2024 09:03:43 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-leds@vger.kernel.org
-Subject: [PATCH] leds: is31fl319x: Constify struct regmap_config
-Date: Sun,  5 May 2024 09:03:32 +0200
-Message-ID: <82a5cb26ff8af1865a790286bdbc3c4a2bd149f1.1714892598.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1714893303; c=relaxed/simple;
+	bh=BVulq7jvYuSNxOCvmVODwOqwRezoCdGLo5njSKRe/DI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9e1oIq1R4TkDp583mkOj2g0kgqfh8upb1ORLP0yzBsFQarbEimLnP5LWUXfHyNMVZ1C2hoSwpOhkqijOttluhzppUqgjamAW7UtSGr0FzrtRqgN8XxPsazHyjHDOEueUNC2AVr7OKbDFjiCU21Ub/xDLzf04b1gBEm4yH7lVG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JDAK7KRb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gw6Wwoob; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 5 May 2024 09:14:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1714893300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dPPN98n3jaxZR8yyofe2Aj3eekBABTkauLh4tcAwKyA=;
+	b=JDAK7KRbtWNUXclDcXtHA//xuYI+UbDN+sGfixY0JHFlRJ/TQOLd8i8FijYmHUp7XKDEWT
+	pgkRD5JmA74lE9gaBiHXkXxGYWdZGTa39B2Mr3YanduB2RBCv29fTGxwY/7g9ePSWxEs3e
+	0kJc6isyGtihXl+XdB9yt15z8fwijzQ0TJD1I4FOinGGQMT887qY8+X+Uc8kL/wV6UB1Hj
+	Yg+7M/JN7YJyIEhdR3hE/mq68czn63OXcdbuKWfeVngy2JbUB2l3oeKzhP4JM7Svo95PX3
+	ZCffDiABwpMolPwe+pquS1UndpWX5IcFuH5MHA8BcUNIhvudc1cwwPu9dbVosg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1714893300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dPPN98n3jaxZR8yyofe2Aj3eekBABTkauLh4tcAwKyA=;
+	b=Gw6WwoobMQRe4UXyd+Nfolnqlj4O4LFHvIsP1eIgFa/HxzS6i7LviYWW2xrneOvR6ORJmY
+	0TguC+r/tPC0n2Dw==
+From: Nam Cao <namcao@linutronix.de>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 2/2] PCI: pciehp: Abort hot-plug if
+ pci_hp_add_bridge() fails
+Message-ID: <20240505071451.df3l6mdK@linutronix.de>
+References: <cover.1714838173.git.namcao@linutronix.de>
+ <f3db713f4a737756782be6e94fcea3eda352e39f.1714838173.git.namcao@linutronix.de>
+ <Zjcc6Suf5HmmZVM9@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zjcc6Suf5HmmZVM9@wunner.de>
 
-'is31fl3190_regmap_config' and 'is31fl3196_regmap_config' are not modified
-in this diver and are only used as a const struct regmap_config.
+On Sun, May 05, 2024 at 07:45:13AM +0200, Lukas Wunner wrote:
+> On Sat, May 04, 2024 at 06:15:22PM +0200, Nam Cao wrote:
+> > If a bridge is hot-added without any bus number available for its
+> > downstream bus, pci_hp_add_bridge() will fail. However, the driver
+> > proceeds regardless, and the kernel crashes.
+> [...]
+> > Fix this by aborting the hot-plug if pci_hp_add_bridge() fails.
+> [...]
+> > --- a/drivers/pci/hotplug/pciehp_pci.c
+> > +++ b/drivers/pci/hotplug/pciehp_pci.c
+> > @@ -58,8 +58,10 @@ int pciehp_configure_device(struct controller *ctrl)
+> >  		goto out;
+> >  	}
+> >  
+> > -	for_each_pci_bridge(dev, parent)
+> > -		pci_hp_add_bridge(dev);
+> > +	for_each_pci_bridge(dev, parent) {
+> > +		if (pci_hp_add_bridge(dev))
+> > +			goto out;
+> > +	}
+> >  
+> >  	pci_assign_unassigned_bridge_resources(bridge);
+> >  	pcie_bus_configure_settings(parent);
+> 
+> Are the curly braces even necessary?
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
+Nope. I thought this is the kernel's coding style, since checkpatch.pl
+didn't complain. But checkpatch also doesn't complain after I remove it,
+so no I guess that's not necessary.
 
-On a x86_64, with allmodconfig:
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  13827	   2002	     32	  15861	   3df5	drivers/leds/leds-is31fl319x.o
+> FWIW, the rationale for returning 0 (success) in this case is that
+> pciehp has done its job by bringing up the slot and enumerating the
+> bridge in the slot.  It's not pciehp's fault that the hierarchy
+> cannot be extended further below the hot-added bridge.
+>
+> Have you gone through the testing steps you spoke of earlier
+> (replacing the hot-added bridge with an Ethernet card) and do
+> they work correctly with this patch?
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  14467	   1370	     32	  15869	   3dfd	drivers/leds/leds-is31fl319x.o
+Yes.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/leds/leds-is31fl319x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Reviewed-by: Lukas Wunner <lukas@wunner.de>
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index 66c65741202e..5e1a4d39a107 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -140,7 +140,7 @@ static const struct reg_default is31fl3190_reg_defaults[] = {
- 	{ IS31FL3190_PWM(2), 0x00 },
- };
- 
--static struct regmap_config is31fl3190_regmap_config = {
-+static const struct regmap_config is31fl3190_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = IS31FL3190_RESET,
-@@ -178,7 +178,7 @@ static const struct reg_default is31fl3196_reg_defaults[] = {
- 	{ IS31FL3196_PWM(8), 0x00 },
- };
- 
--static struct regmap_config is31fl3196_regmap_config = {
-+static const struct regmap_config is31fl3196_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = IS31FL3196_REG_CNT,
--- 
-2.45.0
+Thanks for the review. I will send v3 with the brackets removed.
 
+Best regards,
+Nam
 
