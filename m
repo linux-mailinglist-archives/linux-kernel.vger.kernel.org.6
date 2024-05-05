@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-168906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D5A8BBF8E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C868BBF91
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E3228116B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8F9CB210CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7351A79E4;
-	Sun,  5 May 2024 07:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9876FB6;
+	Sun,  5 May 2024 07:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NsHxNlXI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VtxyHnJG"
+Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A823D76
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 07:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDB263A5;
+	Sun,  5 May 2024 07:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714892599; cv=none; b=Iw+K3UP3G+1KIcR8IpVquGj/MouvW7ATUTpFcHawEZTUVUzgqM1Auom4bLTgE37xXmz2QGcB82tUJN+7qsJzDlVHaVWoPQSeQsgscCUCGiwoA8yer8mD3Udf+RnOG9WXpIzNTh8hUYtShwKrzszKbmZ+SNjiAc1mSxi5lgRhy7Q=
+	t=1714892634; cv=none; b=AN0A3jiCB6I1Ew3LSSOG5cFNDWg/H+4bi79ACAvZfuaAKlztuFaHHxnauAh1PiGlOVySm4BWe8haO6qkk6VYmQM55ikl82ldLg2vgioOdce583PTRQ2iWd6UfDyHx4rPEeBCbsv2mqAYd3j8+rOnEVnvV+5aqbSmkUpH+anNABg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714892599; c=relaxed/simple;
-	bh=9hZnRh56Hgq6alvC3MohA6OZF2IYSHDrjE3HGOFKtuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pz22DrCdx84cE16gvGbudpnEwc0KL5kRkH4TqRxCsNKzXD3G6rFIuEoZ+r41/n3qH/kaOk+vivFB/Dbte856lIW94Uk5NSlFattBHOOPqk6JERArRkXAtFUXkKz5zWmoNGhoN/MwhVNnpuOYZD3L+NQPpVNrs0jPKgbMUy3+h48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NsHxNlXI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714892595;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S52qHVoar7wlTTIceOF47yDBu4Qxt+6rlWLzG9qUz8Q=;
-	b=NsHxNlXIorVvQeCaJpN7+gcKALOqe4xQ0N4wDP/3FF7f8CetlEXFAQjQe7hg4kdva7eQnQ
-	aVgC8ThSx+mWa5oSdNy0IVxNtImDWD4K2CFl+2wPzzKQoL1IRetk4AHXipE9iswWrLjR1j
-	ZxqrDmQTeeH4ePkxyRCQaY6EifqIT8o=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-3gqcqRtTPkC4Q8LzzG5xBQ-1; Sun, 05 May 2024 03:03:11 -0400
-X-MC-Unique: 3gqcqRtTPkC4Q8LzzG5xBQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 74A49101150D;
-	Sun,  5 May 2024 07:03:10 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.31])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 36F65C13FA1;
-	Sun,  5 May 2024 07:03:08 +0000 (UTC)
-Date: Sun, 5 May 2024 15:03:05 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 4/4] crash: Remove duplicate included header
-Message-ID: <ZjcvKd+n74MFCJtj@MiWiFi-R3L-srv>
-References: <20240502212631.110175-1-thorsten.blum@toblux.com>
- <20240502212631.110175-4-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1714892634; c=relaxed/simple;
+	bh=f/q3nMrO7XMwlLCGTSws8gHkh4NhAd0ArKeiJmSJAQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aUaHXVvoISL5wMvNdC+3Z+xFRWkJRDQSS5SU6YGelCVeOUbmHMLpNnCt4isJ1oi2U254oD15CW75v6fVjYssUyfWYlYWU61YpVjUhusPVfBW5T0AJ0wv+K6o4wmwsugELXame0CHGMZYybSSWYO6WqmXfVQc7jnHhOogKAP/D5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VtxyHnJG; arc=none smtp.client-ip=80.12.242.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 3VuNsRaqlrs7M3VuNs9A6s; Sun, 05 May 2024 09:03:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1714892623;
+	bh=DBQKhsJ4mDyVp3IvupeuQ5SJkA9A1uQpu4XWLEOftUw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=VtxyHnJGWGr3j8fB3UR8kqOOrgCuE3V6JuhSjgtXTc14Mz7o+9p4tkmSeJTAnMqkw
+	 kD02vNCyo3vtFwja0JsGNQ5GQocOxIFDoK4TwM59FD+o/3UMsRy8kYBfRA5crpxam4
+	 u0u8/2SM/6afGWWcCqpxoaRcdB0iIahCaNOinE0Gtjqga7y+I+i6h439I5RwqfUAO2
+	 qQWcPi1UXuhwmkkHfjdj9t4z9zS+GY7Amnf+ec3D4wRzvmi/JjYzN0LiFQC8z9RO6o
+	 NNKpxSp1pGtKcN4uqMoEkeAIhPUolss/Qbf5fsAcPzGFoE+SCLlr85EJtbdLNxbH08
+	 0Gqk7e2SmbgDA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 05 May 2024 09:03:43 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-leds@vger.kernel.org
+Subject: [PATCH] leds: is31fl319x: Constify struct regmap_config
+Date: Sun,  5 May 2024 09:03:32 +0200
+Message-ID: <82a5cb26ff8af1865a790286bdbc3c4a2bd149f1.1714892598.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502212631.110175-4-thorsten.blum@toblux.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Transfer-Encoding: 8bit
 
-On 05/02/24 at 11:26pm, Thorsten Blum wrote:
-> Remove duplicate included header file linux/kexec.h
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  kernel/crash_reserve.c | 1 -
->  1 file changed, 1 deletion(-)
+'is31fl3190_regmap_config' and 'is31fl3196_regmap_config' are not modified
+in this diver and are only used as a const struct regmap_config.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-> 
-> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-> index 066668799f75..c460e687edd6 100644
-> --- a/kernel/crash_reserve.c
-> +++ b/kernel/crash_reserve.c
-> @@ -13,7 +13,6 @@
->  #include <linux/memory.h>
->  #include <linux/cpuhotplug.h>
->  #include <linux/memblock.h>
-> -#include <linux/kexec.h>
->  #include <linux/kmemleak.h>
->  
->  #include <asm/page.h>
-> -- 
-> 2.44.0
-> 
+On a x86_64, with allmodconfig:
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  13827	   2002	     32	  15861	   3df5	drivers/leds/leds-is31fl319x.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  14467	   1370	     32	  15869	   3dfd	drivers/leds/leds-is31fl319x.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/leds/leds-is31fl319x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
+index 66c65741202e..5e1a4d39a107 100644
+--- a/drivers/leds/leds-is31fl319x.c
++++ b/drivers/leds/leds-is31fl319x.c
+@@ -140,7 +140,7 @@ static const struct reg_default is31fl3190_reg_defaults[] = {
+ 	{ IS31FL3190_PWM(2), 0x00 },
+ };
+ 
+-static struct regmap_config is31fl3190_regmap_config = {
++static const struct regmap_config is31fl3190_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.max_register = IS31FL3190_RESET,
+@@ -178,7 +178,7 @@ static const struct reg_default is31fl3196_reg_defaults[] = {
+ 	{ IS31FL3196_PWM(8), 0x00 },
+ };
+ 
+-static struct regmap_config is31fl3196_regmap_config = {
++static const struct regmap_config is31fl3196_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.max_register = IS31FL3196_REG_CNT,
+-- 
+2.45.0
 
 
