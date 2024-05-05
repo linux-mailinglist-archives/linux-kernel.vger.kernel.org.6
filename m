@@ -1,126 +1,125 @@
-Return-Path: <linux-kernel+bounces-169105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9BB8BC32D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:07:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A778BC330
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 510951F2149A
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:07:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06B6FB20D16
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484216D1AF;
-	Sun,  5 May 2024 19:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16836D1B5;
+	Sun,  5 May 2024 19:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ByPslHNq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnj2piaE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E789E2D60A;
-	Sun,  5 May 2024 19:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0992C2D60A;
+	Sun,  5 May 2024 19:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714936048; cv=none; b=o6H1mt1d0QUULQ0NTcxAcYJwYMgnQez/URORiuBpv7HVfHgIyaZnzYY6VJzrZ96gDyAWYdnL5DG+obdtnDjsPoqJDdp6dnsTbWeEAlSr4HWuqDzayD6CYdbS4jFTqyblkf2Mh7s3A6KiOYT+Rr9pNy1ocT8sDGRVkxCuJDhEdmk=
+	t=1714936112; cv=none; b=SuHgoBY+/xv8FxgzHvEogMACBTBPxOLU/YOT+yNBLGLFwCva+RfCXpfgL1nr+/UpBVhTnxVvFdOodKul+A/QFoE+wBr8UwzfgzqxJHthNJmTLghV611rAyezC2DeE/BOcP+kntxtrf4aGH1uCBLoPHyACyQ6TDeib1BS1F0gG/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714936048; c=relaxed/simple;
-	bh=szmmLD1H/yLONpMiDrT0u1oFFCwgq8o/2sETDaKXb5o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jvBLd/vXMY3lYoURH7tcgaopy/D29ciz0qSI+jSmOMhWWiii7vv8ACcwt+1JsBGwz26nRcp1HBb1Wul/SXjfKb2S9EXBy5Z+x4qfJH/dCZuHxiSBV4Aj/ecDNC49XPFfP2xLQO7FeFJiUgEhCGg1AZ123tKDmvZRfGKytmIjh50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ByPslHNq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 445J59tw002953;
-	Sun, 5 May 2024 19:07:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=9Pf
-	w+fy0XFrWu040MiyBr71x0qncZZp6Lk8F3FLG2fk=; b=ByPslHNq3jvHcAbZmhM
-	MeF0BC0JJamxQ6iemZtflyznpzm2Ww18DLvwt3LoFRNmLJ8gTR+dzQJGwhwdJ6as
-	nv/rBtBqKYu3zckBcKeLU7akJqDE8HiRynKarwUdTeiFFQ1nHgGXFyj0wXIXC3D4
-	Cvs1SUEYa8HZdlDz3f11qNDhOmPrv+D7/dSxO05+4jPg0aP/g751/2GH7IsFBVVi
-	dwIg7ONvsAEFbgkN6f3ePmO8yZeKbWmffr6v6YWKMCDqDBM01Vn5dhszbPtYqZ9K
-	3Mv2IIORXSxK/mWuhqcVYcjGrFnJ40NzJTb6vaVuRHq4ZnNDqJxVzcANKTirlTku
-	Dig==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwd8722eh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 05 May 2024 19:07:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 445J7DC7020183
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 5 May 2024 19:07:13 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
- 12:07:13 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 5 May 2024 12:07:12 -0700
-Subject: [PATCH] cpufreq: intel_pstate: fix struct cpudata::epp_cached
- kernel-doc
+	s=arc-20240116; t=1714936112; c=relaxed/simple;
+	bh=K16y/nn6xI0FhC18mkIVH38yRFOytXJYADZiDnJAY4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vj5Fkg+HZRphJYuwB5pbost3zTNusWkIBGEwiduS7J9MQ4d3O/nYXdqQ/+3HfGazyh9zma48GUIrB7/5tKh7iOGdqAzi9rWMMnHfH32Gbkf7BQcKEQTZUx62k1Mez3/+gztQupUzoCk/Yn+ESBCc7mwthbxsJgrFQJpVgCL/3EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnj2piaE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 021C7C113CC;
+	Sun,  5 May 2024 19:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714936111;
+	bh=K16y/nn6xI0FhC18mkIVH38yRFOytXJYADZiDnJAY4o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gnj2piaE8RInpdwYMyy6RgWw85A8XOf//mvl3UgTq2s3zxmhMZhSHNqWk6yGnwkVd
+	 gAFhvkU/YKPpBvIeoMxWC9U2cIVXNKZttlFZ3ypmzA9g+4ni4gcu2mb76HO7/HDnvZ
+	 1ed1+CTaBBwM9oXadxEut3uLyp2q2OmeDR9/9ZlCc5t2W5vaHkv+Gz8n7OA9EQPUeO
+	 PahxyRjJngJORHsD9+pllV71aUcaGGMfhbZeFRP21W12wUB+cdkFGGRNEkcvO3RAle
+	 bGsCnU0/CyWWpk45g2sHoOmizmaJjkSuP5IZWlCGeSoqW34xBMPHeYU6o6u53yg18L
+	 V/DUcBP+OPxQg==
+Date: Sun, 5 May 2024 20:08:18 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
+ petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+ linus.walleij@linaro.org, semen.protsenko@linaro.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 05/10] iio: pressure: bmp280: Make return values
+ consistent
+Message-ID: <20240505200818.1e70c664@jic23-huawei>
+In-Reply-To: <20240429190046.24252-6-vassilisamir@gmail.com>
+References: <20240429190046.24252-1-vassilisamir@gmail.com>
+	<20240429190046.24252-6-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240505-epp_cached-kdoc-v1-1-c03800fe0d63@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAN/YN2YC/x3MQQrCMBBG4auUWTuQtnahVxGR6eSvGcQ0TESE0
- rsbXX6L9zaqcEOlc7eR423V1tzQHzrSJPkOtthMQxiOYQoTo5SbiiZEfsRVWVTCqcc4yiLUquJ
- Y7PM/Xq7Ns1Tw7JI1/T5PqS847fsXqmNeCXoAAAA=
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown
-	<lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: W9ipNlg63xv7LTPfCWtzPAjHPyOMC1P2
-X-Proofpoint-GUID: W9ipNlg63xv7LTPfCWtzPAjHPyOMC1P2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-05_13,2024-05-03_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- clxscore=1011 priorityscore=1501 phishscore=0 mlxlogscore=999
- suspectscore=0 impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405050083
 
-make C=1 currently gives the following warning:
+On Mon, 29 Apr 2024 21:00:41 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-drivers/cpufreq/intel_pstate.c:262: warning: Function parameter or struct member 'epp_cached' not described in 'cpudata'
+> Throughout the driver there are quite a few places were return
+> values are treated as errors if they are negative or not-zero.
+> This commit tries to make the return values of those functions
+> consistent and treat them as errors in case there is a negative
+> value since the vast majority of the functions are returning
+> erorrs coming from regmap_*() functions.
 
-Add the missing ":" to fix the trivial kernel-doc syntax error.
+The changes are fine, but that argument isn't correct.
+regmap_*() functions never (that I can recall) return positive
+values, so if (ret) would be valid for those and I'd have expected
+the exact opposite outcome if you are looking at regmap*() return
+values to make the decision.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/cpufreq/intel_pstate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The if (ret) pattern is sometimes used throughout because it
+makes
+	return function()
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index dbbf299f4219..7ddf05c9ba88 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -213,7 +213,7 @@ struct global_params {
-  * @epp_policy:		Last saved policy used to set EPP/EPB
-  * @epp_default:	Power on default HWP energy performance
-  *			preference/bias
-- * @epp_cached		Cached HWP energy-performance preference value
-+ * @epp_cached:		Cached HWP energy-performance preference value
-  * @hwp_req_cached:	Cached value of the last HWP Request MSR
-  * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
-  * @last_io_update:	Last time when IO wake flag was set
+consistent without needing to do
 
----
-base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
-change-id: 20240505-epp_cached-kdoc-aca091e33afa
+	ret = function();
+	if (ret < 0)
+		return ret;
 
+	return 0;
+
+That pattern isn't particularly common in this driver (there are few cases).
+We also tend not to worry too much about that slight inconsistency though
+in a few cases it has lead to compilers failing to detect that some paths
+are not possible and reporting false warnings.
+
+However, all arguments about which is 'better' aside, key is that consistency
+(either choice) is better than a mix.  So I'm fine with ret < 0 on basis
+it's the most common in this driver being your justification. Just don't
+blame regmap*() return values!
+
+> 
+> While at it, add error messages that were not implemented before.
+> 
+> Finally, remove any extra error checks that are dead code.
+
+Ideally this would be broken up a little more as, whilst all error
+code related, these aren't all the same thing.
+
+I'd have preferred:
+1) Dead code removal.
+2) Message updates.
+3) Switch to consistent ret handling.
+
+However it isn't that bad as a single patch, so just address the question
+above and I think this will be fine as one patch.
+
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+
+Jonathan
 
