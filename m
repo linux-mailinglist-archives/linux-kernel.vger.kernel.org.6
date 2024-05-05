@@ -1,100 +1,244 @@
-Return-Path: <linux-kernel+bounces-169019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECEC8BC175
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:37:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3851C8BC17E
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 806C61F21468
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 14:37:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0CF1C2085B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 14:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D23A28DD1;
-	Sun,  5 May 2024 14:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9A72554B;
+	Sun,  5 May 2024 14:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ME86TJqO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iFEnMqQm"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9F41DA3D;
-	Sun,  5 May 2024 14:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A335328DD1
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 14:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714919864; cv=none; b=oSxofkor/9+ipoVfuDlNrZhB0XBTaOxOaHKyaCGbMyGDwaWX9401yHETnwGezS/h+BJD290xDebSTktpD8FXpLVonlNL70fr+z9H0UNpQaTI3RLSc4x+Z+mxeX/CBt3CgbfrRzCnZBqb8yACR+Cgcw7O/UWwdW/+1q0pRCpTe9U=
+	t=1714920476; cv=none; b=jD19rI39kFnVv+OILJI5zTPxJEcnDZ5ZvXe8OTtBlB/8DDjzNRn/2/uENQ0lZfiR7MYG8GIb5KtncfVVkmRn09hFAOxzL6tdYRphoFG/lAYv9zSwB0nZLiZHGvoi48CcTViyHqs/t3a/Csod12yW0TInQ0FAh6V8NjDjXaboP/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714919864; c=relaxed/simple;
-	bh=rIPum/FL5LeMcCcKG4Ukuj0FvMTsFLCFQUeQWnP4g/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+ecAg+F7UBfLiUY4aG9hNatUAtTvCqzWrIgFgGscElW6eTt6xX4dNlRsCd/VCa647M3TlUyNP48gmzJ/xCVPKevBK1AVkkNLctZHEiPJyqVfC7mFjadUIUHSSA6b6PkXetsVXtLnibfWdMeu36GZTSN8mEKeXv6hKZogDhKnCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ME86TJqO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52354C113CC;
-	Sun,  5 May 2024 14:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714919864;
-	bh=rIPum/FL5LeMcCcKG4Ukuj0FvMTsFLCFQUeQWnP4g/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ME86TJqO6LIWxxFZtpCONGaZ04hcxEZnyGCFlNWhTwMaxtAK56mCU/Tiy2M/0VNFL
-	 i738/LJLn/GYdNuZJXap5kG0YuK8Zme7Hm+ECwn9uHipeZplljBckgekjMQPag5lzs
-	 Qc7dR+Q/yYrQfKE6ooPmuLECGNJqy8hZ7WUyjq++qVIpW0SY83yqf4KmWWdP8hZP/C
-	 Ua2gdNRTsWwP0/xPEDvPPjwwVYuNxBFO5/kRnoOyBrIQ+KfhVoxdIVnxdKNZF4Uug6
-	 Oc4zwnHHcPLusjs1Tb9OATHp2M7DH9h/I4/N+ON2oIxXXKhyU/REY9dRy4z4bl7ECm
-	 qHvIjrLVTVDRg==
-Date: Sun, 5 May 2024 23:37:41 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"end.to.start" <end.to.start@mail.ru>, lgirdwood@gmail.com,
-	tiwai@suse.com
-Subject: Re: [PATCH 1/1] sound: Support microphone from device Acer 315-24p
-Message-ID: <ZjeZtXgs84Y6ukW0@finisterre.sirena.org.uk>
-References: <20240408152454.45532-1-end.to.start@mail.ru>
- <171268609844.62778.6340689132993321193.b4-ty@kernel.org>
- <9a683d7f-8bde-47f4-9f63-97b65744711b@perex.cz>
+	s=arc-20240116; t=1714920476; c=relaxed/simple;
+	bh=+DMiNVd2HWVjgTdx5Fs3V5Te9zWFm2HRZEQM0YLCGlA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zrl5hI2ZCwPu1WphpnkkiMyKc+onvLfYKCrxFOz0GAYudBpfem8aYfrIkTVSd7BDF7I5pE9Hq2BCbyDIK+FnzE+3CCTrdeD/95KP8OaZztObUioTsnuFSB7A/AHS3mjViBvvmRxNJ36Pm4MX4+STNJy6sD7MQf7o9syOXN6hV4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iFEnMqQm; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1714920470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Tc3YJvIL7QGAQVhuutxmpEra90eyjyBh3d8zSxBAx9g=;
+	b=iFEnMqQmdLFQwks9/CHAVbqQsE3uozNnXX+wc0pTfsp+AbLhkvabZEi2VqdUweAskLrUgg
+	XJI2ZsFeSlzVr5U135rs4dwbxcnRBVGlFq2PSK9QZ3cXIa9o9e8D3oXwo6muaKHbthnHMH
+	wfplZR91tw1UTxws3hA4hbxEPoomET0=
+From: Wen Yang <wen.yang@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	SShuah Khan <shuah@kernel.org>,
+	Andrei Vagin <avagin@google.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dave Young <dyoung@redhat.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: introduce additional eventfd test coverage
+Date: Sun,  5 May 2024 22:46:48 +0800
+Message-Id: <20240505144648.18347-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qN3lN1697Vc+bRLk"
-Content-Disposition: inline
-In-Reply-To: <9a683d7f-8bde-47f4-9f63-97b65744711b@perex.cz>
-X-Cookie: lisp, v.:
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Add several new test cases which assert corner cases on the eventfd
+mechanism, for example, the supplied buffer is less than 8 bytes,
+attempting to write a value that is too large, etc.
 
---qN3lN1697Vc+bRLk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+	./eventfd_test
+	# Starting 9 tests from 1 test cases.
+	#  RUN           global.eventfd01 ...
+	#            OK  global.eventfd01
+	ok 1 global.eventfd01
+	#  RUN           global.eventfd02 ...
+	#            OK  global.eventfd02
+	ok 2 global.eventfd02
+	#  RUN           global.eventfd03 ...
+	#            OK  global.eventfd03
+	ok 3 global.eventfd03
+	#  RUN           global.eventfd04 ...
+	#            OK  global.eventfd04
+	ok 4 global.eventfd04
+	#  RUN           global.eventfd05 ...
+	#            OK  global.eventfd05
+	ok 5 global.eventfd05
+	#  RUN           global.eventfd06 ...
+	#            OK  global.eventfd06
+	ok 6 global.eventfd06
+	#  RUN           global.eventfd07 ...
+	#            OK  global.eventfd07
+	ok 7 global.eventfd07
+	#  RUN           global.eventfd08 ...
+	#            OK  global.eventfd08
+	ok 8 global.eventfd08
+	#  RUN           global.eventfd09 ...
+	#            OK  global.eventfd09
+	ok 9 global.eventfd09
+	# PASSED: 9 / 9 tests passed.
+	# Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-On Fri, May 03, 2024 at 01:23:28PM +0200, Jaroslav Kysela wrote:
-> On 09. 04. 24 20:08, Mark Brown wrote:
-> > On Mon, 08 Apr 2024 18:24:54 +0300, end.to.start wrote:
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: SShuah Khan <shuah@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ .../filesystems/eventfd/eventfd_test.c        | 116 ++++++++++++++++++
+ 1 file changed, 116 insertions(+)
 
-> > [1/1] sound: Support microphone from device Acer 315-24p
-> >        commit: 4b9a474c7c820391c0913d64431ae9e1f52a5143
+diff --git a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
+index f142a137526c..eeab8df5b1b5 100644
+--- a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
++++ b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
+@@ -183,4 +183,120 @@ TEST(eventfd05)
+ 	close(fd);
+ }
+ 
++/*
++ * A write(2) fails with the error EINVAL if the size of the supplied buffer
++ * is less than 8 bytes, or if an attempt is made to write the value
++ * 0xffffffffffffffff.
++ */
++TEST(eventfd06)
++{
++	uint64_t value = 1;
++	ssize_t size;
++	int fd;
++
++	fd = sys_eventfd2(0, 0);
++	ASSERT_GE(fd, 0);
++
++	size = write(fd, &value, sizeof(int));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	value = (uint64_t)-1;
++	size = write(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	close(fd);
++}
++
++/*
++ * A read(2) fails with the error EINVAL if the size of the supplied buffer is
++ * less than 8 bytes.
++ */
++TEST(eventfd07)
++{
++	int value = 0;
++	ssize_t size;
++	int fd;
++
++	fd = sys_eventfd2(0, 0);
++	ASSERT_GE(fd, 0);
++
++	size = write(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	close(fd);
++}
++
++/*
++ * If EFD_SEMAPHORE was not specified and the eventfd counter has a nonzero
++ * value, then a read(2) returns 8 bytes containing that value, and the
++ * counter's value is reset to zero.
++ * If the eventfd counter is zero at the time of the call to read(2), then the
++ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
++ */
++TEST(eventfd08)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++	int i;
++
++	fd = sys_eventfd2(0, EFD_NONBLOCK);
++	ASSERT_GE(fd, 0);
++
++	value = 1;
++	for (i = 0; i < 10000000; i++) {
++		size = write(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++	}
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, sizeof(uint64_t));
++	EXPECT_EQ(value, 10000000);
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EAGAIN);
++
++	close(fd);
++}
++
++/*
++ * If EFD_SEMAPHORE was specified and the eventfd counter has a nonzero value,
++ * then a read(2) returns 8 bytes containing the value 1, and the counter's
++ * value is decremented by 1.
++ * If the eventfd counter is zero at the time of the call to read(2), then the
++ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
++ */
++TEST(eventfd09)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++	int i;
++
++	fd = sys_eventfd2(0, EFD_SEMAPHORE|EFD_NONBLOCK);
++	ASSERT_GE(fd, 0);
++
++	value = 1;
++	for (i = 0; i < 10000000; i++) {
++		size = write(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++	}
++
++	for (i = 0; i < 10000000; i++) {
++		size = read(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++		EXPECT_EQ(value, 1);
++	}
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EAGAIN);
++
++	close(fd);
++}
++
+ TEST_HARNESS_MAIN
+-- 
+2.25.1
 
-> Shall we really accept those anonymous contributions?
-
-I was on the edge here, what pushed me towards accepting it was that the
-change was just a data based quirk addition which is almost if not quite
-a trivial change.
-
---qN3lN1697Vc+bRLk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY3mbIACgkQJNaLcl1U
-h9D2QAf+OiMn33FIcy3GPYrEa5D9jknEuuokne8mUn80hPwRpNOvHA6Tx0xRj20u
-fNPeECswt2yZNoI/wgito13RlG0ODbltycO82Ps4C/S5PxP951IWU6O88/VbIcq9
-Ng15mK3V+PaSusUUWnj5TM75lPmESeee/2Z1KyiJYgnA9/K/neK1xcKcX8cuAcc+
-y1EWCQnpFWdxqytJcloN5l6JLtxyOJPtUTW++5OdFLfMBwezXg3DchVWz1el4efv
-UMKb//k8X4gDrbLA4ctBI7jTmhOyF7eq0lPaIBLWq1kEIZj7XxsWM54M8g0Oqdq2
-BxEJxWMgdJdbL63Eaf5G6PghFperCw==
-=0K7l
------END PGP SIGNATURE-----
-
---qN3lN1697Vc+bRLk--
 
