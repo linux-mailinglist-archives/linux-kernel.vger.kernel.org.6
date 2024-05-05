@@ -1,137 +1,152 @@
-Return-Path: <linux-kernel+bounces-168919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA9E8BBFC2
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:21:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527B68BBFC0
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DA9281F38
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F161F21638
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A953679E4;
-	Sun,  5 May 2024 08:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3E33FF1;
+	Sun,  5 May 2024 08:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hp+mC9HW"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WuyJz6sp"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCEBB672;
-	Sun,  5 May 2024 08:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32B663AE
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 08:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714897287; cv=none; b=EJiMdUFq11xLWe0tRER0nUZiqYFeOSca7eFxx2DESK72TxOdw8bzhaGsD8irkmIlsLR7fx7ZcaGhxWqnWNa1+qVyf1zL0TgchP2T6MImuAJYJb0oNMazz1+payudt+mBZJm6nqY9G0IkZCIPz8bIGO8pZ3a3cLerNrJTzw55Zo8=
+	t=1714897279; cv=none; b=JAt1FH4hGyctRuh1jsHmvpDiV4nEv0cnZw3w8tzHsMU2+cM24dOKJgb2kUgBdUS/jTW0f2mluC52qtCt+UAeW97ty/gbHjrG62yxjc+I5tTWwqNr0yaLgZXbC01+RHB1yRPa3u99RqtWVQFM8cqJ7fN5+0ewCm6+U9uFxmi1aLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714897287; c=relaxed/simple;
-	bh=nnWWU6Av9ppVhpFVlXtww6Fd+dstAUsmq49usKvTCRA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J7I14PJJiWI7sUSS+CNnrbHgaG2yUelS4sz1UbiY4CLRv0lqo2xJ7FIT16syQXpM8YOMOzFuMS5PFEB8qgobLHdb3WXjPcwx4MIE4fgfNKQgFjH4/qLnTRTkPKh53IowvS+2oY2RLN3Xgn9aWeKJAqGWcTVIxPxAtzpQJJJ//+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hp+mC9HW; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34da4d6f543so854129f8f.3;
-        Sun, 05 May 2024 01:21:25 -0700 (PDT)
+	s=arc-20240116; t=1714897279; c=relaxed/simple;
+	bh=0JpmG0pIcgVeHw+i2pFtmm6Dw3Q2/Rd+pfb71CqXHok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rc4XTh19TmSIptf17AU9Hv2ce1MABp59ys2Dui72ezv6vYvlWN/Rz++NURiUzuDkO0C29JYPrSL7hpQTm/ldU7wNKpbXCCQfDmMoXn9FkIZme6yAQb2IV/nAgWYFnkxTLF8MTgp0qOAEZ0zI34G44Fm4YIfmIY100tjSAIPEFEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WuyJz6sp; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a5f81af4so216459066b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 01:21:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714897284; x=1715502084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hocpwkdCzNkFP2oJ/Rkbamwkx4VeWwV1/HslBK8Y70c=;
-        b=Hp+mC9HW/CPfu0AW5Js9XCQ/l39B4P9Yt5oyI8y4CMNNkR+5BffS062qZy4B8asIEB
-         wTTQKCjF2bRf5KwNDqlIvDjnERFlfJS/bxs0I+NN6teYdNmNeSOSI7Xgr7kHz8VKvNWR
-         gkyV82vKR/3D0Axo26wlJL8iin/cKoH+IBb6H/BgiIwhBUElnP/U9UArnKVXojRZVjc8
-         V5C80uc96JNnO0HN3YO17tzrORvoXH8PDdLKw14wGRFTs/Kig12UFhE16VRO4RH+vJwt
-         Pt9VwnQhPPkw6DgNr7Nb+PCBvHTXoSTe7jKAR/GfvgmlGhCMs3zvVDuSfbxYyPRARZfc
-         Kukw==
+        d=linaro.org; s=google; t=1714897276; x=1715502076; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0JpmG0pIcgVeHw+i2pFtmm6Dw3Q2/Rd+pfb71CqXHok=;
+        b=WuyJz6splKZHm/5mxZd2mo8y0z4A0w8C+3IIGd04k7Sw5DP+VbBc4HmphNRb1KqwHW
+         lVEyIREqhvb7kYY/759jKhhKVn+uQ6i5GSR/MFBfBQWiE4BxZvaBQ49mmd/SnLlXo2XM
+         +jcz58Qi7Mz5uUjjKt4MNzrg4mA2RTFAqRUNjb/YXPD2KiQ6ASLs1pwE3GflbWDxq5lZ
+         S9Qf50jcJ0ZLB8XpNEjbYllbWVzLOlljOtjyMK51XgrVVOBXdBURNPUBZqXTNzzpd3AL
+         By2U4/kUbc5hnwJ8CoxUWO/T9d9Dcz4tSB2BqCAfb34nDpIUmV86E4Z0xiTvze1MCm3j
+         HEyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714897284; x=1715502084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hocpwkdCzNkFP2oJ/Rkbamwkx4VeWwV1/HslBK8Y70c=;
-        b=G/sHOkhhjdet+WTbqrXMb67GjVzITbRP02myjC+r71bgjDKp3/NtkXXgx4W+9mn9hD
-         e+FabkG3twe9PcSVUmwLwqb/YOOUErN08A4BPQgzO29LMn87CZYhlHGs9XyyiBy/fzWC
-         nFCfcxWrUGDsXidd47uR+kokkYbHeosj9YTZlunAP+uYI3PDWn5Jieddk6mbk212Prnw
-         38xTZoQvAgaRCZJGDjhPWRVA+0p58+vI+VXnZjFdyXdxYqKm9HbENweJa1C6e/nF26kw
-         biCffKeNGtRFcs6oB1YhbmgqxRVrVmjhkxp//pUHYWfEXGNAL5NqGLg11Gz+OqPswJMW
-         i70g==
-X-Forwarded-Encrypted: i=1; AJvYcCUAOMfPusq1JtjzU8uO7tAMivj1blGvrfSg6Sz2RpPdhBXT3zAuoMttMCXXkMJYx994Mv33IQpIJzQFeY6J67FsgM/mzDqpTl6TOvQ52/f+fLfZvbu9Amx41G1sweNsc2k7
-X-Gm-Message-State: AOJu0Yz2ciQPQnWTCj+FgddQ3DObs95mqwrz4kQJyI69hchjzel5ZPht
-	K8PuX9ZLzckhcOp1cJZYeHLfy2ZfUuRGTkNWcsMiNiG56jwfUE6JCxbFKNEEkxfjpsx1NXEF9+v
-	hBCA8DMMLpnwfSiT91Y0jrEihkl003Icb
-X-Google-Smtp-Source: AGHT+IHDFIkkKjfZL1rO+h6mO95Gz2E5ZxMtDsqUiyjTw4b/DcMlShLSqm+oM09OkPAb05xdy9JbW+ZUqRrj3TdlGjY=
-X-Received: by 2002:a05:6000:1cc8:b0:34f:595:a390 with SMTP id
- bf8-20020a0560001cc800b0034f0595a390mr685105wrb.63.1714897283436; Sun, 05 May
- 2024 01:21:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714897276; x=1715502076;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0JpmG0pIcgVeHw+i2pFtmm6Dw3Q2/Rd+pfb71CqXHok=;
+        b=kBgw7xOaj0zLTZ0nSxbtlk1pKzuYhur3hw8O7hiuom0DwOnG0lRK11uynmFXlvrSxK
+         4Xt4s0JgdZzt4rux6RgsIXN1+MGC/tM5JewV926S5bmsuCM6mwQctrTPTCDeK/Tx1qbS
+         faJziLvsxoS7J89el9Z4OA6yokmCO0EjVbfy3KkPlQ1zks7BwcEIUO3U93RNY63+8VyW
+         hohX1mS02FimNKhfzrZ58ju3aTM2SNqRUEHad8UianQQKmDVcAUp5d0/QPXOxbvmsyTm
+         gmuyP7N0HTH2R3WJdAAcgme3B3EkxJMvk23Rm59VeT2SnNza++cCSf0N3Tz/WPdEJUi+
+         l1Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWCpQRAdVXMJJpHJbNCnWZ/M+WdPrWoszLwjT6Sqma+iTc39d/eX9Mb6JCrjd3kqt9far9GMVxHpbwkRr9jMnwryZPojxaXCHZ85S68
+X-Gm-Message-State: AOJu0Yxv/jK+VEaLhja0BhNtYFha76qv10jJNkyq+koFe9lgpR0nliVM
+	MIQ67SLnQdXEzjtmSAqZxYPD28rv8+pTa4EeJjWYM/BK9S7nN3PonqbHkd/JBSs=
+X-Google-Smtp-Source: AGHT+IFLrBEYzXw46oeDZ5nNQ4Sgpdxm3SPwOem3NG+KW9JOrnE9jZK26Jb5ayn5NGktvDzfCRw9IQ==
+X-Received: by 2002:a50:ab18:0:b0:572:46db:8fa with SMTP id s24-20020a50ab18000000b0057246db08famr5034152edc.33.1714897276088;
+        Sun, 05 May 2024 01:21:16 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id q28-20020a50aa9c000000b00572469a7948sm3867176edc.45.2024.05.05.01.21.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 01:21:15 -0700 (PDT)
+Message-ID: <966282ee-c2b1-4c3a-a99f-1d6304e62ec5@linaro.org>
+Date: Sun, 5 May 2024 10:21:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240505014641.203643-1-cam.alvarez.i@gmail.com>
-In-Reply-To: <20240505014641.203643-1-cam.alvarez.i@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 5 May 2024 01:21:12 -0700
-Message-ID: <CAADnVQ+Y5k0XMytXo9CLGYDUnVNXcgtz+2mTLUdS-yWV7JDjeQ@mail.gmail.com>
-Subject: Re: [PATCH] fix array-index-out-of-bounds in bpf_prog_select_runtime
-To: Camila Alvarez <cam.alvarez.i@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	syzbot+d2a2c639d03ac200a4f1@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] media: gc2145: implement basic dvp bus support
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>, Pavel Machek
+ <pavel@ucw.cz>, Arnaud Ferraris <arnaud.ferraris@collabora.com>
+References: <20240504164115.64603-1-andrej.skvortzov@gmail.com>
+ <20240504164115.64603-3-andrej.skvortzov@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240504164115.64603-3-andrej.skvortzov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 4, 2024 at 6:49=E2=80=AFPM Camila Alvarez <cam.alvarez.i@gmail.=
-com> wrote:
->
-> The error indicates that the verifier is letting through a program with
-> a stack depth bigger than 512.
->
-> This is due to the verifier not checking the stack depth after
-> instruction rewrites are perfomed. For example, the MAY_GOTO instruction
-> adds 8 bytes to the stack, which means that if the stack at the moment
-> was already 512 bytes it would overflow after rewriting the instruction.
+On 04/05/2024 18:41, Andrey Skvortsov wrote:
+> That was tested on PinePhone with libcamera-based GNOME
+> screenshot (45.2).
 
-This is by design. may_goto and other constructs like bpf_loop
-inlining can consume a few words above 512 limit.
+This tells me nothing why and what you are doing...
 
-> The fix involves adding a stack depth check after all instruction
-> rewrites are performed.
->
-> Reported-by: syzbot+d2a2c639d03ac200a4f1@syzkaller.appspotmail.com
 
-This syzbot report is likely unrelated.
-It says that it bisected it to may_goto, but it has this report
-before may_goto was introduced, so bisection is incorrect.
+Best regards,
+Krzysztof
 
-pw-bot: cr
-
-> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
-> ---
->  kernel/bpf/verifier.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 63749ad5ac6b..a9e23b6b8e8f 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -21285,6 +21285,10 @@ int bpf_check(struct bpf_prog **prog, union bpf_=
-attr *attr, bpfptr_t uattr, __u3
->         if (ret =3D=3D 0)
->                 ret =3D do_misc_fixups(env);
->
-> +        /* max stack depth verification must be done after rewrites as w=
-ell */
-> +        if (ret =3D=3D 0)
-> +                ret =3D check_max_stack_depth(env);
-> +
->         /* do 32-bit optimization after insn patching has done so those p=
-atched
->          * insns could be handled correctly.
->          */
-> --
-> 2.34.1
->
 
