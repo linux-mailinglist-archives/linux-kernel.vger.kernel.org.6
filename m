@@ -1,161 +1,138 @@
-Return-Path: <linux-kernel+bounces-169132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAD58BC398
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:17:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8688BC39B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9381F2120C
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DFECB20A67
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A2874427;
-	Sun,  5 May 2024 20:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A88F76026;
+	Sun,  5 May 2024 20:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiTd0R+i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TIE6fivG"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025056EB58;
-	Sun,  5 May 2024 20:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D92674C14
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 20:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714940229; cv=none; b=l7L3n+8Wv2zpBSNTGTPuQQD3zh3n0keSidRl/OzRh8oDLQi6q9fIFyCgZtPKqU9dfX/G+zMQ/aafeUdPJGI6JX9nV4P0poYD+NS8YaT1HCHd0bdDnKMXxy85VCdaTFUOSeMjz+GlaQKpKDNRMWLKbTAtZqWbjC6eE6uQcXfjVSY=
+	t=1714940232; cv=none; b=DQl1/v1YuRTt5ybmkJ9HH0LLV/xOC0P02uRO+vx+Pnjv22kfwqvuaMhPkh5zJM7KkwoFy10JiuanpTa1KufLI/quWtk+i+ZOMKg6+x0Jm0CfyfOiKOJAwZRP+71TnfAj7SSXRRkyBG7AtrOOF3hTAy+yb7BBokaFffUbigd8z2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714940229; c=relaxed/simple;
-	bh=FF5vh+hxfO8q+2BL9JwG8I+0INO/yNYfJ9dDF0SsodA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MLYs6SRDPMemoW5CVyEXcr6ZgOCy4pFBqqSkmhLSUE2ac0rgz0HRZqkqRA3+2Q7u7bQzu7XYns5oN/SPPa0T/QcrZEV/M4mx53KsxLms56fULeBfBt1TSI2+z9LJSjvq11xOhhPMUYaHtXNAkLPjT6V1feD573+5/ZDmRz5TN6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiTd0R+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BF2C113CC;
-	Sun,  5 May 2024 20:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714940228;
-	bh=FF5vh+hxfO8q+2BL9JwG8I+0INO/yNYfJ9dDF0SsodA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oiTd0R+imy9Xa34yEzUhW4cL7B29WDmWMzoHDU8BCJS0jaeFCz0AFg6ccmJ77QXXz
-	 FmbtNttCPMBUCoZs45w3YEvQXDHGeVO08zsFldViono5dHmeMqSiTeXshXafp23ReI
-	 AzYCyqW2zBLeGn2Fk86Exoyc1Ph29gkSh525CrBRmFgkp5hx3hrtm8/JUly3uug7Xu
-	 vUp0oa5uf8a/TxPCkMQLoFKRQSZDKvRyIPy3Bwh//ZnyrOIoP4WfaQUN0YdBUqP9gg
-	 eNj4Cby3MN5LOglLVzxQ/PEXDk4F/LHXBeNVnadoxhm141tg3n/ASGZTBgsaKTOaoP
-	 Z1D0wiNalEqEg==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
-	Pu Lehui <pulehui@huawei.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	bpf@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: puranjay12@gmail.com
-Subject: [PATCH bpf] riscv, bpf: make some atomic operations fully ordered
-Date: Sun,  5 May 2024 20:16:33 +0000
-Message-Id: <20240505201633.123115-1-puranjay@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1714940232; c=relaxed/simple;
+	bh=YVUUiZWgMhQe0Pv8Ng+UCkY3LYOanihQ0/5fJzF5CqQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OuWzXQKdp6N6nii/4sSNIOJuL2iljwIa8Rl+9kYoo/+YaTIa2tuMDvI/VPcDV+G7dcjbjRHG2Rhhy4HC34zU8I7pFfXL17X4WNRWvVmpQIC+IWexU4UG+WyeAm5fk/kLxhuAC9xYeXfOyk2prdLsi4D00l8finB6wNH7zShiQp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TIE6fivG; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f4d2676d1so1334092e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 13:17:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1714940228; x=1715545028; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=89jyKA3wApx9BQCfs5IiJWmwTiyjcjG5A1RQj5E06Fo=;
+        b=TIE6fivGd9wAkCMMfINu1pQ+4riIGri8T5WnOfDZGn9xEiupO2A8RaHTFbY2spBmny
+         q8wF8IBSPGRHAi+so5pE+cx43/flXlDxkYxmd9JXsZx7eqZon9e2va3iU2jK5feXSiD1
+         frFMhT3UB31tXaVFW97l7KTrazCbKnOT6jTGU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714940228; x=1715545028;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=89jyKA3wApx9BQCfs5IiJWmwTiyjcjG5A1RQj5E06Fo=;
+        b=Wqgk97Ldnxa7w46Snq/9Rv2T6qlmFSB3MalvRUbsrwZLasionDJn8pq7p9Ozy5kHgN
+         d6gX8nDtu+OlS2XZGgUfsaqwAbNAqg/8/3PLb2iYpDT6eXi2EbYmw4u9vgBAIyRwSqfS
+         UtJzQzy0x09XKEa8toZn8GBxz3HMKct1oo/m/lj/bAb7GzWavQiNSQcpLWIpgt+E/l23
+         NviDGjSS+0IhmrvRQi2chWQTVj7dU3H6fYbzp+F5FvyDyl+1AMhuRK4Xf5oFsSC+qqp5
+         Nn3bHwNj2hXc2gxCV5M3BVEQNxQvgDYcRR1rVIDVOy0B90ueGYQVc1nQPAZAUu4kyos2
+         LZIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQWp4qszmz8+J4KIuPgdDrTlm9PSsQy55DyNRjY7wVe3IYvHNzdIoe2vKnl9VW5xO0qfQ5DXYJFSq8angqbthOHigRVI0nNB5YO1x1
+X-Gm-Message-State: AOJu0Yx9eUp1Y6Fx3EgOzqCF0QCS/oz/U2qjHf7USQNhq9seVTd2l9nb
+	cUB+F9UOqfVEKdxZ2bAUJxthajrWeM79KVy6ae6mBYi2qJWxNHzXKSjdqmxcbQGxulagQGfHoaz
+	AArrHjw==
+X-Google-Smtp-Source: AGHT+IE66iux1VehzAsbL/gLVTUEPrNg6fIaClwckvBSGn0HULkGdR0yTE4cZ8tgDqZXqKakkmluzQ==
+X-Received: by 2002:a05:6512:456:b0:51f:4c53:8e4c with SMTP id y22-20020a056512045600b0051f4c538e4cmr5106182lfk.33.1714940228703;
+        Sun, 05 May 2024 13:17:08 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id ld13-20020a170906f94d00b00a59cf137227sm290264ejb.89.2024.05.05.13.17.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 13:17:08 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a4702457ccbso288928666b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 13:17:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWWixMXNf9PIWuez4d4jFcX+871w/eV+/H0Ov6OSzhYmO0yIerLhi2XgsywMMsj6fKh2OrphbttzloGXIQ3F++UWw3T2OKfZryV1Vx7
+X-Received: by 2002:a17:906:7188:b0:a59:cd18:92f5 with SMTP id
+ h8-20020a170906718800b00a59cd1892f5mr599989ejk.11.1714940227970; Sun, 05 May
+ 2024 13:17:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+ <20240505175556.1213266-2-torvalds@linux-foundation.org> <12120faf79614fc1b9df272394a71550@AcuMS.aculab.com>
+In-Reply-To: <12120faf79614fc1b9df272394a71550@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 5 May 2024 13:16:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whxLdB_P=nW1bmVKn1m2jdcZRgkMksfvA722toFpT554w@mail.gmail.com>
+Message-ID: <CAHk-=whxLdB_P=nW1bmVKn1m2jdcZRgkMksfvA722toFpT554w@mail.gmail.com>
+Subject: Re: [PATCH v2] epoll: be better about file lifetimes
+To: David Laight <David.Laight@aculab.com>
+Cc: "axboe@kernel.dk" <axboe@kernel.dk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "jack@suse.cz" <jack@suse.cz>, 
+	"keescook@chromium.org" <keescook@chromium.org>, "laura@labbott.name" <laura@labbott.name>, 
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"minhquangbui99@gmail.com" <minhquangbui99@gmail.com>, 
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, 
+	"syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com" <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>, 
+	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-The BPF atomic operations with the BPF_FETCH modifier along with
-BPF_XCHG and BPF_CMPXCHG are fully ordered but the RISC-V JIT implements
-all atomic operations except BPF_CMPXCHG with relaxed ordering.
+On Sun, 5 May 2024 at 13:02, David Laight <David.Laight@aculab.com> wrote:
+>
+> How much is the extra pair of atomics going to hurt performance?
+> IIRC a lot of work was done to (try to) make epoll lockless.
 
-Section 8.1 of the "The RISC-V Instruction Set Manual Volume I:
-Unprivileged ISA" [1], titled, "Specifying Ordering of Atomic
-Instructions" says:
+If this makes people walk away from epoll, that would be absolutely
+*lovely*. Maybe they'd start using io_uring instead, which has had its
+problems, but is a lot more capable in the end.
 
-| To provide more efficient support for release consistency [5], each
-| atomic instruction has two bits, aq and rl, used to specify additional
-| memory ordering constraints as viewed by other RISC-V harts.
+Yes, doing things right is likely more expensive than doing things
+wrong. Bugs are cheap. That doesn't make buggy code better.
 
-and
+Epoll really isn't important enough to screw over the VFS subsystem over.
 
-| If only the aq bit is set, the atomic memory operation is treated as
-| an acquire access.
-| If only the rl bit is set, the atomic memory operation is treated as a
-| release access.
-|
-| If both the aq and rl bits are set, the atomic memory operation is
-| sequentially consistent.
+I did point out elsewhere how this could be fixed by epoll() removing
+the ep items at a different point:
 
-Fix this by setting both aq and rl bits as 1 for operations with
-BPF_FETCH and BPF_XCHG.
+  https://lore.kernel.org/all/CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com/
 
-[1] https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf
+so if somebody actually wants to fix up epoll properly, that would
+probably be great.
 
-Fixes: dd642ccb45ec ("riscv, bpf: Implement more atomic operations for RV64")
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
----
- arch/riscv/net/bpf_jit_comp64.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+In fact, that model would allow epoll() to just keep a proper refcount
+as an fd is added to the poll events, and would probably fix a lot of
+nastiness. Right now those ep items stay around for basically random
+amounts of time.
 
-diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-index ec9d692838fc..fb5d1950042b 100644
---- a/arch/riscv/net/bpf_jit_comp64.c
-+++ b/arch/riscv/net/bpf_jit_comp64.c
-@@ -498,33 +498,33 @@ static void emit_atomic(u8 rd, u8 rs, s16 off, s32 imm, bool is64,
- 		break;
- 	/* src_reg = atomic_fetch_<op>(dst_reg + off16, src_reg) */
- 	case BPF_ADD | BPF_FETCH:
--		emit(is64 ? rv_amoadd_d(rs, rs, rd, 0, 0) :
--		     rv_amoadd_w(rs, rs, rd, 0, 0), ctx);
-+		emit(is64 ? rv_amoadd_d(rs, rs, rd, 1, 1) :
-+		     rv_amoadd_w(rs, rs, rd, 1, 1), ctx);
- 		if (!is64)
- 			emit_zextw(rs, rs, ctx);
- 		break;
- 	case BPF_AND | BPF_FETCH:
--		emit(is64 ? rv_amoand_d(rs, rs, rd, 0, 0) :
--		     rv_amoand_w(rs, rs, rd, 0, 0), ctx);
-+		emit(is64 ? rv_amoand_d(rs, rs, rd, 1, 1) :
-+		     rv_amoand_w(rs, rs, rd, 1, 1), ctx);
- 		if (!is64)
- 			emit_zextw(rs, rs, ctx);
- 		break;
- 	case BPF_OR | BPF_FETCH:
--		emit(is64 ? rv_amoor_d(rs, rs, rd, 0, 0) :
--		     rv_amoor_w(rs, rs, rd, 0, 0), ctx);
-+		emit(is64 ? rv_amoor_d(rs, rs, rd, 1, 1) :
-+		     rv_amoor_w(rs, rs, rd, 1, 1), ctx);
- 		if (!is64)
- 			emit_zextw(rs, rs, ctx);
- 		break;
- 	case BPF_XOR | BPF_FETCH:
--		emit(is64 ? rv_amoxor_d(rs, rs, rd, 0, 0) :
--		     rv_amoxor_w(rs, rs, rd, 0, 0), ctx);
-+		emit(is64 ? rv_amoxor_d(rs, rs, rd, 1, 1) :
-+		     rv_amoxor_w(rs, rs, rd, 1, 1), ctx);
- 		if (!is64)
- 			emit_zextw(rs, rs, ctx);
- 		break;
- 	/* src_reg = atomic_xchg(dst_reg + off16, src_reg); */
- 	case BPF_XCHG:
--		emit(is64 ? rv_amoswap_d(rs, rs, rd, 0, 0) :
--		     rv_amoswap_w(rs, rs, rd, 0, 0), ctx);
-+		emit(is64 ? rv_amoswap_d(rs, rs, rd, 1, 1) :
-+		     rv_amoswap_w(rs, rs, rd, 1, 1), ctx);
- 		if (!is64)
- 			emit_zextw(rs, rs, ctx);
- 		break;
--- 
-2.40.1
+But maybe there are other ways to fix it. I don't think we have an
+actual eventpoll maintainer any more, but what I'm *not* willing to
+happen is eventpoll messing up other parts of the kernel. It was
+always a ugly performance hack, and was only acceptable as such. "ugly
+hack" is ok. "buggy ugly hack" is not.
 
+              Linus
 
