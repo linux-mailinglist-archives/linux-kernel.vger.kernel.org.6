@@ -1,97 +1,71 @@
-Return-Path: <linux-kernel+bounces-169022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBC58BC185
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:53:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A179F8BC19C
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2897B281DB8
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 14:53:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57EEA1F2150F
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C586836AF5;
-	Sun,  5 May 2024 14:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rONx/UNK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F50374DB;
+	Sun,  5 May 2024 15:06:23 +0000 (UTC)
+Received: from mail-a10.ithnet.com (mail-a10.ithnet.com [217.64.83.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E142D044;
-	Sun,  5 May 2024 14:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0D22D054
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 15:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.64.83.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714920819; cv=none; b=KLlcPpyxsGO2FrI6JAOOd4yabzK4c54Wh1DZdpAYCpo3mtCCTsnGLC7OtiSR9vdYaGKvb/KW589Cc5JrxdbpaoWSrff6U+9ZxgdYXcO2gw89qp7qkrunrHzg30mrWa37BAY+Vw9z62ff4SiOgN4eMy3QqdIFspR2gXXO2Pb33TM=
+	t=1714921582; cv=none; b=b5WZwvx3zCaDEcP5TXjznyfaGXMfu2YxT2kFc5TgRmoTQUxJXflUskvZzksBYasGkcSocYA5LSx4tbp8u5ZRHOJKBXEBMhmZajqhoqgImKAMEezBTOQDXUYhGxdInHDDXAeKfMfsa15YIfvffDJhxqltlYpyoD+/XvPeyil6OKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714920819; c=relaxed/simple;
-	bh=gfr6J8JaI0FQSBkoFj/QKJrcZ1kMMUOIbnAK47RI06o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EmIsiGw1g9BUHSGWroiNhKYv53WyOcoxvDu4hqXwfCB6Y+jcLqvVzJvQzV03NMk5nIOUKxOlmxLxztU1I1Nw/yreR7jPf5hoMLevMVZ0xPYkDY3SEXjwgGek1wVYC8szULaHDN7qVW+85o76WGyuQBH89D4hMdij5y2wacHEEgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rONx/UNK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 860EDC113CC;
-	Sun,  5 May 2024 14:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714920818;
-	bh=gfr6J8JaI0FQSBkoFj/QKJrcZ1kMMUOIbnAK47RI06o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rONx/UNK4fw/FNu8BIef7/Qx2Wlw4fTdIijYCTe41usY7p1zpLbtpQPrGWntvqCt4
-	 JZrpK422ntuev4jf2Re8uD5+2CSv9rQRsOabscJkzGOD9lav7Gc60718Doxjh6Mfh5
-	 Dq7tAh95kxelOg6WlG+VZ8uaRw4J4AZ8isuh2byflT/yHOoZ0vGmPxgoBIqfA8r9DI
-	 TdrG0ZzlUYLNDRcLO++qP5gHvRJ4iMtUXZF+MeS9/d+PbLM0ok6TtKDKkOXQ6D7/bW
-	 oqz48Ll/XY8wPSvQ0+lZdVAcAXGVHvqHHFiBu5FOl9ArRbhlVQuMk4u3THA/vkPuOq
-	 HBDXDG15zQRRQ==
-Date: Sun, 5 May 2024 23:53:36 +0900
-From: Mark Brown <broonie@kernel.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Shuah Khan <shuah@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-sound@vger.kernel.org,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kselftest@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
-Subject: Re: [PATCH] selftests/alsa: fix a build warning: return a value in
- all cases
-Message-ID: <ZjedcAW6ITmo9pXp@finisterre.sirena.org.uk>
-References: <20240504021330.33429-1-jhubbard@nvidia.com>
+	s=arc-20240116; t=1714921582; c=relaxed/simple;
+	bh=ZsOlA4Ula7eMfe3y9ZuSDs6FAEB3mdrccODG8ln8fNk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=DLibqAzdPan5QsuMduHCX2h3/7FuI3bt7+VegcbmQQtdDbA/B1JBFy+pC+pSE69J2viQl6P3hYhR/kJ8GQBYplZzXiKDA2QOv+BbEWvv0GveStreUUzITIwtrO2adwlTsQY3jav8/pooM5X1jT5QiWoopa2yGkJeVqEEpUIchj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ithnet.com; spf=pass smtp.mailfrom=ithnet.com; arc=none smtp.client-ip=217.64.83.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ithnet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ithnet.com
+Received: (qmail 15255 invoked by uid 0); 5 May 2024 14:59:35 -0000
+Received: from skraw.ml@ithnet.com by mail-a10 
+ (Processed in 1.962928 secs); 05 May 2024 14:59:35 -0000
+X-Virus-Status: No
+X-ExecutableContent: No
+Received: from dialin014-sr.ithnet.com (HELO ithnet.com) (217.64.64.14)
+  by mail-a10.ithnet.com with ESMTPS (ECDHE-RSA-AES256-GCM-SHA384 encrypted); 5 May 2024 14:59:33 -0000
+X-Sender-Authentication: SMTP AUTH verified <skraw.ml@ithnet.com>
+Date: Sun, 5 May 2024 16:59:32 +0200
+From: Stephan von Krawczynski <skraw.ml@ithnet.com>
+To: linux-kernel@vger.kernel.org
+Subject: How to find out about a new peer connection in wireguard?
+Message-ID: <20240505165932.5efba98e@ithnet.com>
+Organization: ith Kommunikationstechnik GmbH
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.39; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FQLEYbDtCxwwEBJN"
-Content-Disposition: inline
-In-Reply-To: <20240504021330.33429-1-jhubbard@nvidia.com>
-X-Cookie: lisp, v.:
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Hello all,
 
---FQLEYbDtCxwwEBJN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+since I cannot find any information about this pretty simple question I
+thought I present it to a broader audience here.
+Can anyone tell how one can find out that a new peer connection was just made
+to a wireguard interface?
+It is obvious that the wireguard hooks like PostUP are useless because they
+have no relation to peer connections at all.
+So how is some admin informed about a new peer connection - equally about a
+peer connection that just changed endpoint IP? Does the kernel give any hint
+about that?
+Please feel free to cc me in your answer, as else it may be hard to find for
+me. Thank you!
 
-On Fri, May 03, 2024 at 07:13:30PM -0700, John Hubbard wrote:
-> dump_config_tree() is declared to return an int, but the compiler cannot
-> prove that it always returns any value at all. This leads to a clang
-> warning, when building via:
-
-Though given that the function isn't referenced we could also just
-delete it.
-
---FQLEYbDtCxwwEBJN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY3nXAACgkQJNaLcl1U
-h9DBvAf/Tmp6oAlXkJLinQYYWlHXd/+lMb0PVv5TalZyil2L+ifp0pZbyknBloWc
-k8NEvKofzBymkugbsGsvrTBN9E4dLl2Nr6XHPBoADVT5IQx0mrXZYd6pdyZXYil0
-WaMGDMEDwMDFAkfTdVvvEntz2CRTUFNPVMzCZVmQYM3m0vCjPRY3ibI04z00SASb
-iHwq6VaX9lkIs4knd1XGb8amrWpABwSiZD6iE6MDmD/7xP309WkOpx9jBhy6607h
-PJsgk3k0mkhSTvKXoIN8HYtfIJlpHKzN9mOV2vhh9IlGG6zKa95rIWnq4iAbkTHF
-sxx38aBbSc9GBcSA4yHJJqFg0n6/9g==
-=lp+W
------END PGP SIGNATURE-----
-
---FQLEYbDtCxwwEBJN--
+-- 
+Regards,
+Stephan
 
