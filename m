@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-169135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F08C8BC3A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:20:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164648BC3AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C460282597
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 477DB1C2165A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD1A71B30;
-	Sun,  5 May 2024 20:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7332174432;
+	Sun,  5 May 2024 20:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NTy2C9bi"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="BOR8eryV"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC0D8C04
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 20:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8EF6EB51;
+	Sun,  5 May 2024 20:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714940404; cv=none; b=pjhcwjdRnK7Lz85OwThnEHEvE8Pg3relOb7DWGzj//ibk2ppWw41Hrq7YiCboFbCzSiQSfzAMDdrvU6cud6pM/QueBAkUUiuaMdCchjBbvyPRxNLmWnjSbG2rZHbBARDBzOdRwoTWhJnDZLFXPnGG1OAzukjf/BOdmj2VE2hSVg=
+	t=1714940546; cv=none; b=gVnx4Z7pticw22i3UXSW0+BqBfytopBUc9Z56D+30x5Bzsks7VoEvK5Hhu1CkqZzSOvHUvu/beMwvhPMFhjfAdPx8i5dD1OTjyDroojFuVdWWaKD5b1bTp3ExotUdGidjeGsgbWLq6YXLu77okLfgbYybx8Nn1VfVAWox7BTzBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714940404; c=relaxed/simple;
-	bh=qVs35hEwWtbavB4gLhsEY875kDmX1lKGP1TOBWI+DK8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VUn+7a4OmO8SxwKzMAp/A1oF9VGiJaKXLKtUXGKP8L/F7IjNMt+Sg++gffZVd1WhecVdCLbBjtqHZLpHI0diYSzEI1cdKpgiBzf71YHo2z+FK23AS7yg3p9A+UcwogiZhsgikiZgVT8xxZjrKe0sK0pwWu1RCdypV0BZXgJNOZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NTy2C9bi; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1714940546; c=relaxed/simple;
+	bh=6zZ9I+/S/0oQSwQS1c/S5AJHePAHDd8FWt0x5Yj2khg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xh1W7d75F4PkyDf175iB7Dhjr/Z9H508CUQ1XAnGzjWAQeuY+5K0BXe45MBGe+ujBz6sGvE7U/2MrTXMMrBthhWv8VwcDPs+HMcdITSSIdNP8tfTGPLNwA/S0Oo+S1ApMLaCJP2Le9BRMF+VtUekngOStqjpBB81GwYkJiDh838=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=BOR8eryV; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=kC9z+BtIuwFPzCvxhtTRwUZVhh0RYTN2gDCiuvp4XGY=; b=NTy2C9biC9GYVcWV
-	rRJPQn6ywmXrIvHsk+3d5DRrwR3vnKnDrSSnrP+wrGE9qb2OhLltOtfOQFVePgIw2IiJFGsXycGo3
-	LGhR0QHLKPKfVGcUI1A6X8+CpBGzBEVa2GvZ3wzi3YKal80FuvcnNOgwDkWz5Zu+swNv52zc5HlJa
-	X2tPEHJxkoFS5el+1XVpL/1Uu/GHSrg/ZxwrGubnXvvYVOyWvzxHpEC40kwVe+WY2LiPeJfe/H25Y
-	N4iEBlnoUroknx0ICmg/Vuru0/LnFn4e5luPgzPv5iWltpi8OuM/Vl0cLfxf5CAOCHAHy8RqUNl2w
-	jfkX6Bm2X4fpIUkNWg==;
+	:Subject; bh=0+NrnlGanpbDKBTcFpa/hRcO7lljTU+Kq8oaCV7xyAE=; b=BOR8eryVU1GPNyyM
+	GtH9Pb6owDZyBjngs3juuRmWnjOgkB7HgNLrmj85StCsiy3PoV+rIjjYblhUGpz+zFRkjUSGCE5PW
+	Pe2Hq26K3gDUMd/s2upf/1iRPBbBej7lbMwh4eFaSV9MJSdZJQDfFMBGLo6Iu5dFA5SLlo0soSn+S
+	Jc3/NRnGIP3bPk6TQsbQLTAPWrLBwEzPhhhc9Kthfy6gxmdS0/HtATuHbmeMgtZsAUa5OZHptE8UQ
+	QxrO7R0/zoHEWI3r8Lgtrcs9Qcxo4c+l/cK9bponnF5/6OflwhpJU1uRGAcvXSW8wx6dkbao6cnj5
+	Y8zwnaupKskvwVEGsg==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1s3iKx-004oNu-2X;
-	Sun, 05 May 2024 20:19:55 +0000
+	id 1s3iNI-004oPt-0X;
+	Sun, 05 May 2024 20:22:20 +0000
 From: linux@treblig.org
-To: linux@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org,
+To: aaro.koskinen@iki.fi
+Cc: tony@atomide.com,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] arm: Remove unused struct 'mod_unwind_map'
-Date: Sun,  5 May 2024 21:19:51 +0100
-Message-ID: <20240505201951.623360-1-linux@treblig.org>
+Subject: [PATCH] ARM: omap1: Remove unused struct 'dma_link_info'
+Date: Sun,  5 May 2024 21:22:14 +0100
+Message-ID: <20240505202214.623612-1-linux@treblig.org>
 X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,31 +63,42 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-I think this has been unused since
-Commit b6f21d14f1ac ("ARM: 9204/2: module: Add all unwind tables when
-load module")
+I think the last use of this was removed somewhere
+around the two:
+Commit 755cbfd8cf89 ("ARM: OMAP2+: Drop sdma interrupt handling for
+mach-omap2")
+and
+Commit 16630718ee46 ("ARM: omap1: move plat/dma.c to mach/omap-dma.c")
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- arch/arm/kernel/module.c | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm/mach-omap1/omap-dma.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
-index e74d84f58b77c..5aa7f2c6a5378 100644
---- a/arch/arm/kernel/module.c
-+++ b/arch/arm/kernel/module.c
-@@ -429,11 +429,6 @@ apply_relocate(Elf32_Shdr *sechdrs, const char *strtab, unsigned int symindex,
- 	return 0;
- }
+diff --git a/arch/arm/mach-omap1/omap-dma.c b/arch/arm/mach-omap1/omap-dma.c
+index 9ee472f8ead12..f091f78631d09 100644
+--- a/arch/arm/mach-omap1/omap-dma.c
++++ b/arch/arm/mach-omap1/omap-dma.c
+@@ -59,19 +59,6 @@ static struct omap_dma_dev_attr *d;
+ static int enable_1510_mode;
+ static u32 errata;
  
--struct mod_unwind_map {
--	const Elf_Shdr *unw_sec;
--	const Elf_Shdr *txt_sec;
+-struct dma_link_info {
+-	int *linked_dmach_q;
+-	int no_of_lchs_linked;
+-
+-	int q_count;
+-	int q_tail;
+-	int q_head;
+-
+-	int chain_state;
+-	int chain_mode;
+-
 -};
 -
- static const Elf_Shdr *find_mod_section(const Elf32_Ehdr *hdr,
- 	const Elf_Shdr *sechdrs, const char *name)
- {
+ static int dma_lch_count;
+ static int dma_chan_count;
+ static int omap_dma_reserve_channels;
 -- 
 2.45.0
 
