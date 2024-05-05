@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-169180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DB78BC485
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:29:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB5D8BC486
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF41281632
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:29:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09CDCB214D9
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128BF137741;
-	Sun,  5 May 2024 22:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A825F137740;
+	Sun,  5 May 2024 22:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BoMyT1Q/"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ss7d2scn"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3241F7EF0F;
-	Sun,  5 May 2024 22:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1FE7EF0F;
+	Sun,  5 May 2024 22:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714948170; cv=none; b=rYdTh+VlM+BKCMxI4DLioy90ZtYED0zjIOlX+9sf+CrRG+NiHAJGnsXgMqR4HEmZfq/hxi6nSlBoS6GY82TXOnDjFiglqJn8wwVvkxVjz67PoKaiGJNBCSkM2jjoOHH/MOKEpE6fLcImBDshEcQFXdVeImOpZaE18kJ2BQy36oo=
+	t=1714948201; cv=none; b=W1BHjA/XtJodSGN2MXQhNZAtD5esJ0UomChD8PuqWDM3JNCn7goOxMeEEC53xpp3uZSOM9vTNFRGi15vMEyGhuv3mvtW0iIowt/5DA/uKQye3LgX5zSuw3NZN6ms31iPPXjEVls9vzLbBAgf89IYN3Noqxm4+c7orqwnlftaaCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714948170; c=relaxed/simple;
-	bh=1X/GMcqTC6Fg01Iw1hhvaA2syJt0U8epBn1VmgI+33w=;
+	s=arc-20240116; t=1714948201; c=relaxed/simple;
+	bh=5xWlEfsfFFDZph44wbupuSRukevvKnNBayoCN3V19Zs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oclp4osZxiQh69fIuyC2EYkUD4DAfQNPznbmc1c5DWi/bWIYSVeY1rITrg/EeQScEgOzqoTu1tI/CB7n+2h4z5+Ay4aoIK6A1LQNEwpENwGZ9xFzCBrg03M6pkxjXhASmWGMQT8Tpe6JNBGJjsJbYk1i9oUPNcs3yfRneRmkUE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BoMyT1Q/; arc=none smtp.client-ip=209.85.210.170
+	 To:Cc:Content-Type; b=SNEg1kgn+omaTz2iga1ZGSEBCjHGo0DJLgju2WeHV3A6yxL409vJlEQYc7wMrDxf56/RSc6eILd5RlShM6MumcumFDlGMqVMSs+xshAKot9VvqXnw7CbDYGth47wSuqhvu1/P7IO+y3eLNvCh0SYHOnn+8qF4hnCfDGG3fTkxjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ss7d2scn; arc=none smtp.client-ip=209.85.167.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f44d2b3130so1132132b3a.2;
-        Sun, 05 May 2024 15:29:28 -0700 (PDT)
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3c7513a991cso1076061b6e.1;
+        Sun, 05 May 2024 15:29:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714948168; x=1715552968; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714948199; x=1715552999; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1X/GMcqTC6Fg01Iw1hhvaA2syJt0U8epBn1VmgI+33w=;
-        b=BoMyT1Q/RODFsj9AyeKemCFWHKIkozFdzO0/aXKl4UFcsJ4nFG0KrnA3bwk/WRDPgn
-         pF0Vo9+HyTBu41FbksXLExveYH7JMUo5c6MXfb4VtgCaToG20M4pnEcXVA1Yz1ca+PsY
-         5OVQA5CkA2xOtGfAZKY7UPYc16eLzJAjrw2zNGloq9EXC6F3C8dBNiJJCxoWmfB8JlDE
-         X7ETg3VUBKC3/Ny2KIKmjsNBKHBYXjdRAVdHQ+80oUTiy2k2TjfwkXyHHcPB4pnTdSMV
-         Jf8OZX5s+mtyXe4k7xTYfKrEjJoHgTXsi7d4Dpr8rCiOl1cDlBljvnrjcR77b8n4ZqFC
-         FCUQ==
+        bh=fnwxKudmox0Z7beb0U1kkwda4gN0K4skeLrb2kRmeoc=;
+        b=Ss7d2scnWl8odJiBtBhpo/gqi9XHlAi06ysr+LJfpuq/ETROpqVBilvJwknCtkXw7L
+         JH7fyDzB50Stevq2uJNdbVYH1b3lZ5+3dlZCXiDg0O7Kcslvy/1Kthq763a2ZkeXA8Kg
+         5SPFFU/gFlphVfCQ5OaGvziA8j+WRkhOmKaxRtFpZG+vyAUXTx6wX9QdB5Lu/MZ2J2Ph
+         AUf95ys+5vqtWeBZXz6y97egFQzJf0qHASFGs9pE0jmIHarWC6y/Y1MVRhBOpVJe4oDC
+         6M0akNoZNbCyYCHA0T6TzE2OS50cLjxrUHjiP8Dg+Xoo+QkqHTXwG0lXoJWUjFUFxj0X
+         na0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714948168; x=1715552968;
+        d=1e100.net; s=20230601; t=1714948199; x=1715552999;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1X/GMcqTC6Fg01Iw1hhvaA2syJt0U8epBn1VmgI+33w=;
-        b=Uzd5C8ysP8QnPPdcvW60VwxISrYo8VnxynMZjxzv98LB7A+h9I9mJuODaGGSxlTMyJ
-         OXmCFE4pMMgYXp5LAKuehIJqa6r01s7KyRyxZeLdGKt8acs1NLEBF1DhhAxSKaoah5WF
-         6SUhlh1tFbLH61eQZUwZOhg5+taRL8HcoPpOgliyPBJ4aUSzfVrUX8qyk6PWb8eybkWL
-         8ns57l9cm+Zg7g2Qh0c4sgmBhVo/hGjJqThiVbG15PIio0kCAy0qiTeCze5QNq/iKJLx
-         pJvKpJrtuYRcrdCb2+V7O43tEhdKd+f4vx7a9Wo5uUPxft8NLeK0drOb6igigADCcX+y
-         dqew==
-X-Forwarded-Encrypted: i=1; AJvYcCVMuYcPhOnifQvgkgJ7bMVrWB/IybrfwPZ9SzprwDR0Gq4rYLlUrQIrCBbXrIY4RFFg69mNIeFeEUjfySN5ZbuYPKn+cdFRs3NVuS3uBQQW3+HB6NHksXJlPP0LkO0NSnEDMfvNg5UMFf3nDqQ=
-X-Gm-Message-State: AOJu0Yx2Fou8T0TjzyW/dJYEcKpdy4V5yP2kGtsx/J0Wh6EUWF6wOpRy
-	GoX5kTRdv0KmTErMjj4soN7Q8K8JXZDzzVpn2MIbAvIGsW+tro5v4EhM3rcqSAYNLwuC8qmOBH5
-	jgpoRReEZaKBWOPn39VVflwTnIxc=
-X-Google-Smtp-Source: AGHT+IEAd+ygeHaOYLxfv3yWReoTtfiFIDKC/TVtHPQcOSIR7O1iirvaz7Y8pPvd9gd2lzKew9USEXuyPIBSc3U2Kes=
-X-Received: by 2002:a05:6a00:4f83:b0:6ee:1c9d:b471 with SMTP id
- ld3-20020a056a004f8300b006ee1c9db471mr9881294pfb.25.1714948168379; Sun, 05
- May 2024 15:29:28 -0700 (PDT)
+        bh=fnwxKudmox0Z7beb0U1kkwda4gN0K4skeLrb2kRmeoc=;
+        b=Dm2LW4nYYJw7MQr5dIBGpAhbTuMcRUfQGDUzwntQg8dn7yGWSabbvzebaJl52Gy0Df
+         VrVQR2WqUI86vRl90xx1VEk4f54VwoJo6DlfzkBw6lM7wfejHsmE7H3U80oniOggBNso
+         L5CN/wLiDe5reVRNcCdrm2iC4sWeLxdaLKSn/yOsVwV7bqb2Wg32xMt7PU84mNa/IOlF
+         xoK+RNUMqQ10/PiWYVxHskMDCm24/vvf1pPVKN5yWiAyMxQw0yzUFsUZULY2vXxkCgle
+         Bhtg+T/r2y3KiaaQmxImdOmjEe8BpX0SnJ641dDBJpOAUQedjUxdXl24X6RgazyyxgyO
+         pXPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgBh+FroPA1A2zM6yIoqr2upo7nzGiHNPuGn19N4fgW1EZI/U1P45qWGueZGKfwLfou4RWkDZj+GLxHYCUYfGpZ5ao+kqUsZ7NPjGqGiDz+eLon0bs8qO1HGzIwxYsAHQCK8KK/tSiOcp1QFk=
+X-Gm-Message-State: AOJu0YwXkRcTvTAoVJsHe9nBXMMkLn12Q9tlXTWkpO6icp/SGLZovGgL
+	HvGayG7xIRCV6X+vQcE/QucdgY6xVcq/1ImMcbPC6gULC08BqmPqaLBhC2+ZOD3S0FRklvJGpYf
+	kh/hIbDxeQpP32tfzkwvslnOr0NU=
+X-Google-Smtp-Source: AGHT+IF8aQhOptcBwHFDnQiYiFDTGDXVbsmmJnITpceh99MDRz6tqNrg8kvc4JPlex+GXX4nVzqb3+8pER/BD0QWeek=
+X-Received: by 2002:a05:6358:2181:b0:183:7d27:c08d with SMTP id
+ v1-20020a056358218100b001837d27c08dmr13774060rwb.32.1714948198723; Sun, 05
+ May 2024 15:29:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240411205428.537700-1-thorsten.blum@toblux.com>
-In-Reply-To: <20240411205428.537700-1-thorsten.blum@toblux.com>
+References: <eba70259-9b10-4bf7-ac4f-d7accf6b8891@smtp-relay.sendinblue.com>
+In-Reply-To: <eba70259-9b10-4bf7-ac4f-d7accf6b8891@smtp-relay.sendinblue.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 6 May 2024 00:28:03 +0200
-Message-ID: <CANiq72mEU2RJ2HE2aXkStCd3UsT999pFyT87k91fXFZYDooZiQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: helpers: Fix grammar in comment
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 6 May 2024 00:28:35 +0200
+Message-ID: <CANiq72=+iRTiL5Aisvq9Bea4FegF5CmHCLjn9AYPormgtwb62g@mail.gmail.com>
+Subject: Re: [PATCH] rust: update `dbg!()` to format column number
+To: dev@raxyte.com
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 11, 2024 at 10:55=E2=80=AFPM Thorsten Blum <thorsten.blum@toblu=
-x.com> wrote:
+On Sun, Apr 14, 2024 at 3:21=E2=80=AFPM <dev@raxyte.com> wrote:
 >
-> s/directly the bindings/the bindings directly/
+> In Rust 1.76.0, the `dbg!()` macro was updated to also format the column
+> number. The reason cited was usage of a few characters worth of
+> horizontal space while allowing direct jumps to the source location. [1]
 >
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Link: https://github.com/rust-lang/rust/pull/114962 [1]
+> Link: https://github.com/Rust-for-Linux/linux/issues/1065
+>
+> Signed-off-by: Raghav Narang <dev@raxyte.com>
+
+The commit author was:
+
+    dev@raxyte.com <dev@raxyte.com>
+
+and I fixed it to:
+
+    Raghav Narang <dev@raxyte.com>
+
+i.e. with the name from the Signed-off-by line. If this is not
+correct, please let me know!
+
+[ Fixed commit author name and removed spurious newline in message. - Migue=
+l ]
 
 Applied to `rust-next` -- thanks everyone!
 
