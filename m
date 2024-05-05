@@ -1,110 +1,188 @@
-Return-Path: <linux-kernel+bounces-169028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8672C8BC1A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:15:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6688BC1A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875531C209CB
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7A91F21507
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40721374D3;
-	Sun,  5 May 2024 15:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827A8374F9;
+	Sun,  5 May 2024 15:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/ELJ4Lr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="KAyUL/Kh"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760B91CD38;
-	Sun,  5 May 2024 15:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66F522611;
+	Sun,  5 May 2024 15:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714922105; cv=none; b=MdllWUOuVBq+U0j4qkQjkUZwJzAbsFzpXPZzWOoOYWog8n2KXHNUEJTPxChsEAv10XAUv0M2ghdGsqqWswjlbDVeA1xbG2bJx8X9tHqM7D3YJXWEL5z7Qpy699N4HDWnOXTp1ZUXTGGOdyaKBODe7gJkPIij+ZGkoNx8JrU9nPs=
+	t=1714922544; cv=none; b=peTjDrRDf9kRK3ysNwtgdtZYzG6ydQ8Zvucm7PcY00GQdTOoCXr9rRUhtXI+iKPg2BK+HeZz8zJZmpS8/IFjf0FZSkiRTwMqhycdUlqNbXvz8qFmy6ZUIxdmYKJTcRW3DG2eOyc+6kqhDi/lxUCvUflDK5ClislsecOWYRBrMFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714922105; c=relaxed/simple;
-	bh=3Y6Ya7aQNSsFwpYMxH3lYUB7Xh+C9ZSem7RoTyTrDho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msz0VijYbOxRY2uLRyu0UkhT55+d6/LxcL51DqB018SjKGB8TTuuxnC7GbDiUst8LwlgmStavtCQOEOwGrkX+5+KnXjeV0OQw5AEy1uBU/KEexaNDjwdFrcOoASaVTz0ote1+KtzLfrmzRF67wggGTf4sIbwtzSirUpU22TZebo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/ELJ4Lr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A44C113CC;
-	Sun,  5 May 2024 15:15:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714922104;
-	bh=3Y6Ya7aQNSsFwpYMxH3lYUB7Xh+C9ZSem7RoTyTrDho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/ELJ4LrM9ORUxUqlCfMupo9YSZBMJECkHdD9BMAJ61a8YQLlQovmZ9IG0suZpLdK
-	 seN/esI+XuR80NrjWv46kFX+1WF5S6x1wHdvh6KWH2FwUn2p6lZc4GLKh72hQgv6yd
-	 qYLulpsOSazFXaMtz7IphDmMB2iJ8zjbIMDHkZuKERPKqYjTYR4eNInve65ppqjuiz
-	 g1FOnhJnfyCXdszGCw3/jKoYtDLyQIT9SpsVrBZR4TOl9DEZcBCOanqnLFVhCcHGPD
-	 X5/BmO1i68hD6mi6Jn6RpxHmt6q4Ox5iRkQInwl0uRJnxQ0I984o/54Qpqe+K3GM+/
-	 a3/ug+jEOxpKw==
-Date: Mon, 6 May 2024 00:15:01 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Karel Balej <balejk@matfyz.cz>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v6 3/5] regulator: add regulators driver for Marvell
- 88PM886 PMIC
-Message-ID: <ZjeidfoIbjvejphU@finisterre.sirena.org.uk>
-References: <20240504194632.2456-1-balejk@matfyz.cz>
- <20240504194632.2456-4-balejk@matfyz.cz>
+	s=arc-20240116; t=1714922544; c=relaxed/simple;
+	bh=YOzXTa6rAiVOHldd14538pyVa5rmXqDYyMin9bW7Vvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eqnv/4fE8bHZ7At7B+qCYsLsgYWC925pYegcGI3FbNmq/6O5WbM8PGEA76Xp6DB7QDxO/yfw7lE579c35nbBZH/KQv0B7WqjYNQVBzb8OKJcxD8wmE5WonWRTKWULzPwmzbHPuqN/E6vZUizoZKbFTlPVdrmI3ACAFkBI0q/NYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=KAyUL/Kh; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1714922533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xuJ4u/ouTOrJt02FpiNU5j5yMZJgY6im3scH4wwajxE=;
+	b=KAyUL/Kh/ITipKh9aVVkTMWPz7Nd3C6g1uWP3LQzc+Ugg0RkDLcTp5BaZlW7tvnajUwbGT
+	fc5XyLz2pBTbE/p+ach8JwkkrD8RdoNvXeNYre3fZ+CVLXmHjeRpqJSbT5FzEQqombC3SW
+	qLxsGVAYRKQffO5yBGIIHNz6IotbfnA=
+From: Sven Eckelmann <sven@narfation.org>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Marek Lindner <mareklindner@neomailbox.ch>,
+ Simon Wunderlich <sw@simonwunderlich.de>, Antonio Quartulli <a@unstable.cc>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Erick Archer <erick.archer@outlook.com>, b.a.t.m.a.n@lists.open-mesh.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+Subject:
+ Re: [PATCH v3] batman-adv: Add flex array to struct batadv_tvlv_tt_data
+Date: Sun, 05 May 2024 17:22:10 +0200
+Message-ID: <9977759.T7Z3S40VBb@sven-l14>
+In-Reply-To:
+ <AS8PR02MB723738E5107C240933E4E0F28B1E2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+References:
+ <AS8PR02MB72371F89D188B047410B755E8B192@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <3932737.ElGaqSPkdT@sven-l14>
+ <AS8PR02MB723738E5107C240933E4E0F28B1E2@AS8PR02MB7237.eurprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uRnS6SowswNDaOxE"
-Content-Disposition: inline
-In-Reply-To: <20240504194632.2456-4-balejk@matfyz.cz>
-X-Cookie: lisp, v.:
+Content-Type: multipart/signed; boundary="nextPart12069128.nUPlyArG6x";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
+--nextPart12069128.nUPlyArG6x
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+To: Erick Archer <erick.archer@outlook.com>
+Date: Sun, 05 May 2024 17:22:10 +0200
+Message-ID: <9977759.T7Z3S40VBb@sven-l14>
+MIME-Version: 1.0
 
---uRnS6SowswNDaOxE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Saturday, 4 May 2024 19:08:39 CEST Erick Archer wrote:
+[...]
+> > Thanks for the updates. But I can't accept this at the moment because 
+> > __counted_by_be is used in an uapi header without it being defined
+> > include/uapi/linux/stddef.h (and this file is also not included in this 
+> > header).
+> > 
+> > See commit c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and 
+> > identifier expansion") as an example for the similar __counted_by macro.
+> 
+> If I understand correctly, the following changes are also needed because
+> the annotated struct is defined in a "uapi" header. Sorry if it's a stupid
+> question, but I'm new to these topics.
 
-On Sat, May 04, 2024 at 09:37:06PM +0200, Karel Balej wrote:
+No, it is absolutely no stupid question.
 
-> +static const struct regulator_ops pm886_ldo_ops = {
-> +	.list_voltage = regulator_list_voltage_table,
-> +	.map_voltage = regulator_map_voltage_iterate,
-> +	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-> +	.enable = regulator_enable_regmap,
-> +	.disable = regulator_disable_regmap,
-> +	.is_enabled = regulator_is_enabled_regmap,
-> +	.get_current_limit = pm886_regulator_get_ilim,
+> diff --git a/include/uapi/linux/batadv_packet.h b/include/uapi/linux/batadv_packet.h
+> index 6e25753015df..41f39d7661c9 100644
+> --- a/include/uapi/linux/batadv_packet.h
+> +++ b/include/uapi/linux/batadv_packet.h
+> @@ -9,6 +9,7 @@
+> 
+>  #include <asm/byteorder.h>
+>  #include <linux/if_ether.h>
+> +#include <linux/stddef.h>
+>  #include <linux/types.h>
+> 
+>  /**
 
-Do these regulators actually enforce this limit or is this just a spec
-limit beyond which regulation may fail?  If it's just a spec limit I'd
-not expect this operation to be provided, it's more for a hard limit
-where the regulator will detect and act on issues.  I don't see an error
-interrupt or anything and this would be an unusual feature for a LDO.
+This must definitely go into your "original" patch
 
---uRnS6SowswNDaOxE
+> diff --git a/include/uapi/linux/stddef.h b/include/uapi/linux/stddef.h
+> index 2ec6f35cda32..58154117d9b0 100644
+> --- a/include/uapi/linux/stddef.h
+> +++ b/include/uapi/linux/stddef.h
+> @@ -55,4 +55,12 @@
+>  #define __counted_by(m)
+>  #endif
+> 
+> +#ifndef __counted_by_le
+> +#define __counted_by_le(m)
+> +#endif
+
+If you want to add this (for completeness) then please put it in an extra 
+patch. It is simply not used by batman-adv and I would not be able to find any 
+justification why it should be part of the batman-adv patch.
+
+> +
+> +#ifndef __counted_by_be
+> +#define __counted_by_be(m)
+> +#endif
+> +
+
+This part can be either:
+
+* in the batman-adv patch
+* or together with the __counted_by_le change in an additional patch which is 
+  "in front" of the batman-adv patch (in the patch series).
+
+From my perspective, it is for you to decide - but of course, other 
+maintainers might have a different opinion about it.
+
+>  #endif /* _UAPI_LINUX_STDDEF_H */
+> 
+> If this is the right path, can these changes be merged into a
+> single patch or is it better to add a previous patch to define
+> __counted_by{le,be}?
+
+I don't have a perfect answer here. See the comments above. The file 
+include/uapi/linux/stddef.h doesn't have a specific maintainer (according to 
+/scripts/get_maintainer.pl) - so it should be fine to get modified through 
+the net-next tree.
+
+But maybe Kees Cook has a different opinion about it. At least there are a lot 
+of Signed-off-bys for this file by Kees.
+
+Kind regards,
+	Sven
+--nextPart12069128.nUPlyArG6x
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY3onUACgkQJNaLcl1U
-h9BvkQf/TjTKRxV/vksAq6WKXBKwSrc1pWsXIi51Exrv1IpdrCb58IvaAuFOykV8
-NZABo6A/hS4k1XF7IppT4XInmZj31Og0LnSXgF0VMe3NsM+plc1Wd50KogVI6zQw
-S4cyXayPYmuG1tr1MB2saXTsvKhmCLRsr3zfqcLrti77mX+qdr2Z35VC5zepXZdg
-+Dmbu8mYqbX6uW1vOn8DS9msb1FXeVAQKiQUoFd1cMe7/3EpzgOGZKE+FdIzBy2D
-Og0MXH689pniCS0lkbzTnnpq+q1GQqeIwgmqRXprHnnJKhbB6bOoRaK8+NAginEv
-8MMfIZqNOxcXrhh08DXhuUEc5mGgbg==
-=R4Zq
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAmY3pCIACgkQXYcKB8Em
+e0ZBhg//Sno8piH1PoF7IE8mPDXalzTPEW5L8W1iX0gbkT0DRJF3ngI31P7iYtLA
+TeYbI1z3YeRD5hNU2J7stFiqwoNbt5wWDmCYNcPoFf5zdimr5XbQYB2CGOVM5hG8
+SexX9t6qndx3MWNj2f83XLfSIJh9Sn+B7mLEFixcsISX8CLAvQZfwkwjNpola13v
+OZm+qoUsCeocQb18bR/XUhqfra69fMN3KRKHSvRg82xZqCox86RP3nukgcNr7Aw0
+mY+RvmuEHzVQezgfkMs7Wz+uSJSGKyXuTSCnkdIhy62kSMIKv9TZhFeIwCQEDWVl
+oCBLAqKXjMPr8sldjBScwkMM9mRAlCUgqD3XlIbZ32y2zCJoX9LsyRD+K6frc2tr
+z0j/9xAfCrYJCvYhXuWFhqak3bc6owQ08NxB0A0ePx0bBCMiz34J3R55BBtGOaTL
+YrXXEuNV79Z3/bI9P/Yk7mRmfuotPYa3p1r4fizuQEYa5294xJUdQkMF6aeH/R1G
+YK3IFiRiLHi0rVu4BvdO3nsVJL2nqa1YZeSRtqFtsKhXb9wdQSxuqaJD7YgQm1T6
+taFnTfK+6v7DXgEvlEdtUMqiKZkZM/pBDJoCZpI+oJHjYii7s0BiaYoDWHRfBwTj
+szbiK24wF/bXmY20iarKe1I1VVaFlhg6N3PXgCWsLJYh6gATkVY=
+=H+es
 -----END PGP SIGNATURE-----
 
---uRnS6SowswNDaOxE--
+--nextPart12069128.nUPlyArG6x--
+
+
+
 
