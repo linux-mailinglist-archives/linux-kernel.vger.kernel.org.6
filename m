@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-168901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9878BBF83
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:48:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD698BBF86
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03DA11F2174E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 06:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62DE11C20AC4
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 06:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D8F6FB6;
-	Sun,  5 May 2024 06:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659D163CB;
+	Sun,  5 May 2024 06:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m/u9CJUY"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1NV5ldG"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FD83D76
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 06:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1DB2F2E;
+	Sun,  5 May 2024 06:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714891719; cv=none; b=lueJONLqovzoaGchQ1r8n8XFYlehr7h++u4cdKJoNUKmJB1LRmZSGnJzIQAEI0M0LPYWR6kns3RPY+Tas8b6WqshPiDVoZwCZ905eibbozBj/NbnAUXQL8eFXsTI61iLHjBti19HE9eSMhSc6bDPm5aGZKGwyMVuXscoruRzW5A=
+	t=1714892257; cv=none; b=RymCzIYldExoA2/hZw/5pqkGc+55xzLi08wUtptX6XKVJPBw9krN8nynzeQrXf/lhCMLsdAY6SZkBrOZ1IjIMTzcIHTL19ZdNYLigzT9Rpb6KK9p1oGbCByaI8bVjNSvVGQTEg4cACbm2uC+s9hUbSASCTke9g/swIDh9R8sVo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714891719; c=relaxed/simple;
-	bh=RXOAbrpDgpGLFXAx46orQOJKxD+B8azOxvN9slFpzaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEEY9jfPRh7jxTSkMAPAa7OvrCtbesw8Yajx6oxyVMpjgX2vdJN2Cugd8bEKiCVmtVJJKwCBFBuTgS/rLt+LhPTAcC+LGGJcXuTfyLQ3TQjEjI0hnHJXY+UEX6U54mhpnJeIS6b5V7baIuIYpRiG99h9ZvP40l5BTgvq3ntY4/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m/u9CJUY; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ecd9dab183so24829915ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 23:48:37 -0700 (PDT)
+	s=arc-20240116; t=1714892257; c=relaxed/simple;
+	bh=rPYKWbw6mpc/6Z9Pr6SAf3qsbHVFx5dRNbBrmhKr1Pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d4n9ypIYON5EGFPC0YfDbjPIrU4TKzJe/xBNh/F8uVZVCYgsKv+yoHvy2nVRYUS1Tw3AOWBLJbJPXrkIzw4CSXdcLneL6/8Ea6oA1r0ZaP5+lL6Uf6rEFDqZHoZ8VCOkffuyAppbDf8GEEaS2k+UEdyzg0at1GW6sUQgW9VqzGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1NV5ldG; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43d4c5f7b1bso1056651cf.1;
+        Sat, 04 May 2024 23:57:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714891717; x=1715496517; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jHhjXzZFksYbod+Id4KGQBrNHX5j07+oNfn2k/vQfaE=;
-        b=m/u9CJUYgIhnVbD/S2wlLnDkC75h94E7KFUGjobsAQNKsnfNij5kfDsaDY5B0wufe5
-         BBuYTljSYdNBtfFvgmU2IhzoJCi3ZOOzOjWRK4q4HnsarugokEoCQxh6yTB6wg22btWW
-         MIMI8RCM+FGJoY+PKKmdsOngeWbvYKR8evOVA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714891717; x=1715496517;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1714892255; x=1715497055; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jHhjXzZFksYbod+Id4KGQBrNHX5j07+oNfn2k/vQfaE=;
-        b=KptLhxR0W0CZ1F2gaKuURC4WbBYErnvQNz3xknBFqdN+cKh3+/QipK8rXcq+xsRNbH
-         1UXRmCmzua3Zkzj0StWm8ImuM09gOOJU7XvMMp2+Fg5us9JesD+rpj9UAM19g0FKMDRt
-         jHsoxXIszMPrsDKC/5Vn9ajbPoc/1hWA/nWJrYjeWJyKoSF3Of9l7RNXeYqhMRBKlrgs
-         jqH9yb3nCWNuSKpXzYHz7nZTy73W/3wUcFfFDz65aQ1GegonV6sucYEPxTp6z1iusp3i
-         T7KXb+Xqmsc3vOwAU5qdo9zoAqKQg17gCO+iAXOCNGzgRsnbG85L7kHvIqEzeZKEsF1t
-         dnqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSdOibIrM/XrErPqTZDgy8BbAANeddR7SxC+m2XXYOKoUHpEP6Awun24aTv5usbLIG5ApwdAeHjYZy5guQ1I4zrmAo+N6UyQ3E1pQ0
-X-Gm-Message-State: AOJu0YwKSPaug1EmuaGF2s21sxr4MaMP00mr4sEUCxPGsVuaxj6H6Xbb
-	s4yOsSEVad4JIyktydrQzmRCDF40amFI5UMVgxaeWyBmJbC+Ga2/4KWPpG6w/X44cEo4QM/vFTk
-	=
-X-Google-Smtp-Source: AGHT+IGHFQZeorrILclN2v4X0ie/TALNwsi+wwr/27nntpfpvsDMRS89bEaJxITb4Y8FGrRf8qcf7Q==
-X-Received: by 2002:a17:902:dac1:b0:1eb:7162:82c7 with SMTP id q1-20020a170902dac100b001eb716282c7mr9274029plx.18.1714891717283;
-        Sat, 04 May 2024 23:48:37 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:8263:3b89:bcee:2ed4])
-        by smtp.gmail.com with ESMTPSA id j3-20020a170903028300b001e7c05cf1a2sm5978407plr.112.2024.05.04.23.48.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 23:48:36 -0700 (PDT)
-Date: Sun, 5 May 2024 15:48:32 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>, linux-kbuild@vger.kernel.org
-Cc: kernel test robot <lkp@intel.com>, Minchan Kim <minchan@kernel.org>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH 08/14] zram: check that backends array has at least one
- backend
-Message-ID: <20240505064832.GC8623@google.com>
-References: <20240503091823.3616962-9-senozhatsky@chromium.org>
- <202405041440.UTBQZAaf-lkp@intel.com>
- <20240504071416.GH14947@google.com>
- <20240504161004.f5a0aab5e5aa1033d4696c20@linux-foundation.org>
- <20240505043957.GA8623@google.com>
- <20240505051305.GB8623@google.com>
+        bh=rPYKWbw6mpc/6Z9Pr6SAf3qsbHVFx5dRNbBrmhKr1Pk=;
+        b=E1NV5ldGo16r3IFTAlbqqD7y72rkFo4rFHhRWNxCYZSNVBiIRpsJgB37Asl6kQDOzn
+         RuPB5cDW7zLN72/O0Snpw5zC72DeT9lySjurb8h61nLVlofHEiCd2d/jBif4M/jf9wtT
+         IHqaJY66EMR0L2rURwpIGu8ogNh5XD7oUQz1zEStQQbsAEF42FpgLpMA6ZlhDoQwDx2X
+         8pUOl3pvpG2KwP1XvXSlW7dvB0k/XEtvnYqKKrV8VpHDpiF+WkPu3ETPb7hjyxKLpnId
+         pr3TQ5BmOhQpFkzMoPxjIoUEOwwcVMy/FCbTuGA2D/tnK63W0JigriLjr2Sc0590EYw/
+         KviA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714892255; x=1715497055;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rPYKWbw6mpc/6Z9Pr6SAf3qsbHVFx5dRNbBrmhKr1Pk=;
+        b=rbRbSMrCdJ4Cln5a3Wt4U36/+XgLSKLbCQYG6XXxGbyk5ygl18u4fvRgaaCNUXtHxn
+         0jzOLc988RT1bZ6T86RIzU0f2r1bhLYM2Tq7NZr7Fnl8HmagOh1O1b3DtuCyANOwxfu0
+         oPTSfu5VhO5FQxTrg0F2XcFUHyiqP+ECPoCIct1MfnjtqllN9ZZAVn3tfWHQJ7lY4b1E
+         zHKGDzymWl0DQhQjh67D1YMREkSQ58uqOY4iv5auu9HuQH/vQ3W/9NfmIabxA06+bEwC
+         LpvPKVf/elWWRvAA4LsTuvR/T/ZzJySMfmqcbYBGOFajC8B8vytGuzyAeuPRCVY0RVYS
+         /9mA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnyDXl5viH+ch4vaBFwiQkjN2krzLwjnQuol6HpHo/GEBdfK2KIOCNEJVYFO2+UWCRfS3Xrr2jJKwbgrj2NyqXBCt7X/2rFIOGv+H/dZfMzki7xKerXwxmvvenbwUUBjhz38zJi5YHl9q3lg==
+X-Gm-Message-State: AOJu0YygE/BLU5wt1hoZwya76DqCZFws4Zl5X7o4CW77y1BcgJwNm/UA
+	7QDx12DNE2u6XNq4QhKw+lPAc9EZb/CVAKmbquGmbqMBrb3En+kisAJmoSWXlpskda/Zy09PoI8
+	skApXeBWpo4k/QKOHsNJQxdb3Ed4=
+X-Google-Smtp-Source: AGHT+IHMIar5qkt7K7JRjINCKZ22aXQO09DEOXtYscVzQFP3FlU/7M7jgEot7N+18mTrkGiD9s5UOLx5+qmTjbQeIzE=
+X-Received: by 2002:ad4:4ee2:0:b0:6a0:b905:96ed with SMTP id
+ dv2-20020ad44ee2000000b006a0b90596edmr9531257qvb.43.1714892254952; Sat, 04
+ May 2024 23:57:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240505051305.GB8623@google.com>
+References: <CAF+WW=oKQak6ktiOH75pHSDe7YEkYD-1ditgcsWB=z+aRKJogQ@mail.gmail.com>
+ <CAOQ4uxjh5iQ0_knRebNRS271vR2-2f_9bNZyBG5vUy3rw6xh-g@mail.gmail.com> <CAF+WW=rRz0L-P9X2tV9svGdTbhAhpBea=huf-_DDfkz29fXUyQ@mail.gmail.com>
+In-Reply-To: <CAF+WW=rRz0L-P9X2tV9svGdTbhAhpBea=huf-_DDfkz29fXUyQ@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 5 May 2024 09:57:23 +0300
+Message-ID: <CAOQ4uxiGpShrki9dnJM1hvz1GPPcDos6P8pAkAz_jksy4gJdsw@mail.gmail.com>
+Subject: Re: bug in may_dedupe_file allows to deduplicate files we aren't
+ allowed to write to
+To: Hugo Valtier <hugo@valtier.fr>
+Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Mark Fasheh <mark@fasheh.com>, "Darrick J. Wong" <djwong@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (24/05/05 14:13), Sergey Senozhatsky wrote:
-> On (24/05/05 13:39), Sergey Senozhatsky wrote:
-> [..]
-> > > I guess just pick one if none were selected.
-> 
-> How do I pick one if none were selected? Does Kconfig support
-> something like that?
+[change email for Mark Fashe]
 
-This triggers Kconfig error:
+On Sat, May 4, 2024 at 11:51=E2=80=AFPM Hugo Valtier <hugo@valtier.fr> wrot=
+e:
+>
+> > My guess is that not many users try to dedupe other users' files,
+> > so this feature was never used and nobody complained.
+>
+> +1
+>
+> Thx for the answer, I'm new to this to be sure I understood what you mean=
+t:
+> > You should add an xfstest for this and include a
+> > _fixed_by_kernel_commit and that will signal all the distros that
+> > care to backport the fix.
+>
+> So right now I wait for 6.9 to be released soon enough then
+> I then submit my patch which invert the condition.
 
-config ZRAM_EMPTY_BACKENDS_FIXUP
-       bool
-       depends on ZRAM && !ZRAM_BACKEND_LZO && !ZRAM_BACKEND_LZ4 && \
-               !ZRAM_BACKEND_LZ4HC && !ZRAM_BACKEND_ZSTD && \
-               !ZRAM_BACKEND_DEFLATE
-       select ZRAM_BACKEND_LZO
+There is no need to wait for the 6.9 release.
+Fixes can and should be posted at any time.
 
+> Once that is merged in some tree (fsdevel I guess ?) I submit a patch for
 
-drivers/block/zram/Kconfig:17:error: recursive dependency detected!
-drivers/block/zram/Kconfig:17:  symbol ZRAM_BACKEND_LZO is selected by ZRAM_EMPTY_BACKENDS_FIXUP
-drivers/block/zram/Kconfig:52:  symbol ZRAM_EMPTY_BACKENDS_FIXUP depends on ZRAM_BACKEND_LZO
+Yes, this is a good candidate for Christian Brauner's vfs tree.
+Please CC the VFS maintainers (from MAINTAINERS file) and fsdevel.
 
+A note about backporting to stable kernels.
+stable maintainer bots would do best effort to auto backport
+patches marked with a Fixes: commit to the supported LTS kernel,
+once the fix is merged to master,
+but if the fix does not apply cleanly, you will need to post the
+backport yourself (if you want the fix backported).
 
-I'm a little surprised by this - EMPTY_BACKENDS_FIXUP does not depend
-on ZRAM_BACKEND_LZO, it depends on NOT ZRAM_BACKEND_LZO.
+For your case, the fix will not apply cleanly before
+4609e1f18e19 ("fs: port ->permission() to pass mnt_idmap")
+so at lease from 6.1.y and backwards, you will need to post
+manual backports if you want the fix in LTS kernels or you can
+let the distros that find the new xfstest failure take care of that...
 
-Let me Cc linux-kbuild. Kbuild folks, how do I workaround this?
+> xfstest which adds a regression test and has _fixed_by_kernel_commit
+> mentioning the commit just merged in the fsdevel linux tree.
+
+Correct.
+You may take inspiration from existing dedupe tests
+[CC Darrick who wrote most of them]
+but I did not find any test coverage for may_dedupe_file() among them.
+
+There is one test that is dealing with permissions that you can
+use as a template:
+
+$ git grep -w _begin_fstest.*dedupe tests/generic/|grep perms
+tests/generic/674:_begin_fstest auto clone quick perms dedupe
+
+Hint: use $XFS_IO_PROG -r to open the destination file read only.
+
+Because there is currently no test coverage for read-only dest
+for the admin and user owned files, I suggest that you start with
+writing this test, making sure that your fix does not regress it and
+then add the other writable file case.
+
+Thanks,
+Amir.
 
