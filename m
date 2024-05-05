@@ -1,112 +1,86 @@
-Return-Path: <linux-kernel+bounces-168876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890158BBF1E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:29:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80EB8BBF2C
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE721C20BBB
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 03:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30C11C20C3F
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 03:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CD71869;
-	Sun,  5 May 2024 03:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nE5Me4Xl"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3F363B8;
+	Sun,  5 May 2024 03:40:22 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C5117C2;
-	Sun,  5 May 2024 03:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4969A566A
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 03:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714879782; cv=none; b=H7WIJZxLDN5OVrHJdzDCV0qD9/vl+JdIP3u0qnbnZLlP1E7fjGJbYJvuT+L2mfvUO1AfTYhHP7qbIrT5FpE6+NB41YDC/aUn3EYhiRe8YKD8rkqJJjGE9/f7ExX94CIWpQ0xMw72x5I2NuxrfkcGQiPFL1jAtYO3NgSdD0z9xKU=
+	t=1714880421; cv=none; b=aNP7iGc77urr3YFhc+AlNUn+31gYrzlkyXnwMH20XY+INvy4kNb6WbjilyKDoLRAzHmHcN0TACridG2ipNRdqNntovkidlFvmGWxKl6k9La0eacQBFV3oWBeRK4BO3P8r5huP+b3e+xlONVO25QUeZtx0MBw2Mpkgj8ZrmwPoAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714879782; c=relaxed/simple;
-	bh=4i0Oujjns/PW7PTcWJ+RumP3mTxmEGwuf9DHk12FuN0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nv3X2rXoYdofmZIFeR2S+X/JxNwoDmKS3XIms6xm7PH9vF50tWzosX1y+p4Oa2Hz3NrezArPMIMz0/BGGvYRvUHvx5yHaOk2cpS8u8YltansUaG2OWbR3rNbFBtunObpENqNczy3wsNrNWEWcPw570HzODvzQrGRWxPMf2R7pHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nE5Me4Xl; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-23d3d092a1bso340887fac.1;
-        Sat, 04 May 2024 20:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714879780; x=1715484580; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YoXNPfWEXlDGV6z3+1F8Nm/sflOvF+RNEkcMkhPNqA=;
-        b=nE5Me4XlXJdW7nXSo8Net9fttaP5g3hU1HYSKAGfM0ZmJKfl1LsdY9CNIQwh+S5y5Y
-         6H+UXpn7tmpVokC4kku8YKS61WWVVGtXjQro79nJB22EehnEwaNABtlgIKMRdjAWKuNf
-         tWcXvnl2hFxU3DDhwwtK2L5qZ1dK5JP8IjexwVutjPHDhKKjhiv/JAgoUA2oLEISJR+B
-         gYJpBTW2n6qN4zRxtFpJFTFyYDkm5bRtYbjYEgMzoNWzhUDLTYxaqxmAiLydq1Z1qnFc
-         cw3L7hjFm9GydKZmY1DSZ7jiDzZrUiR0qNjwIKNf3hyUrvpihwJ2ZrnvhUtfC+F+clOG
-         UiEw==
+	s=arc-20240116; t=1714880421; c=relaxed/simple;
+	bh=Kah9CIrso4VmA4GAgnN4rLSvj6Y+7OY1CGoXUozuv4U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WW1qZP9Om8aybIjBow35VzdY1ArdGjgaw1nLOs96qySbC01Z/S+Sak7tD3fQk9LR0GjhwzzrDw+Qx0MT+fGPPk5w1ySoQtpP+fQgZCWUQiz2MtGFyrszXH1Wku7J7oaknMSgHnwCIusd4kX/Aq2vfQCaiBPsqOd5Pn56NF/x1aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e15eaeef60so95866139f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 04 May 2024 20:40:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714879780; x=1715484580;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2YoXNPfWEXlDGV6z3+1F8Nm/sflOvF+RNEkcMkhPNqA=;
-        b=Hu/96pW27FGZCQTMGEe5HJPdNO3XzncWkSLuo0OMJrHwUlGZpzHyOVsijq1Agr8eMG
-         3rxBZhptEkufrYfnhR4+URiHcv7+g+krfy0CoWAIVY/m7lbRfvqAxGPTimmZadAq0/xx
-         X5piDj9atz+Ij13ENOVnpoez1UOkPwQ3eccoEmaNBHzDSX89MG1RySBt5+Jt5D2YkK0R
-         qSEbrXx+v4Hg0Kl7UK09Me7/gZ8AXjljGuEGqKuS+QlqSkBNw6rQvgIWjBsvNhmLPf0L
-         P/a3vMahh8w84zCLYwBD29OSGGZCON4pJ+tzkn5PapZu7Bu7LI1+R/WBm0Mp24rVQghq
-         vOjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFXeOv2J87ypLVY01Dz88678hX3KhQErY+fto4wBjphYgDLRNrUkxPYwz006LDkn8ksIY82O+mjjzGHxhZFDYUxql9JwzCbRRuLmd7Xo1B3rxcnkrNxFRrJaxjap1lr4CX4Gg4L4/j2Ps=
-X-Gm-Message-State: AOJu0YxPvbu/mckpKJDZvFbE0g3R1nmXmglFrRSRe87owCO0SVbUoXw5
-	nAQJFKHzCOc6rk1MVQK0LfI3wRpWL50m4jqR7D9tJvzJomJMP0LF
-X-Google-Smtp-Source: AGHT+IGgYyTHvEoeGNOUKKiSnusw8L7aboGNcu3Rc8CQOJQ5HVKXu1tfogFDqqKmbBC+bzbIrZ1XMg==
-X-Received: by 2002:a05:6870:508:b0:23c:7b6d:38d7 with SMTP id j8-20020a056870050800b0023c7b6d38d7mr8139676oao.36.1714879779645;
-        Sat, 04 May 2024 20:29:39 -0700 (PDT)
-Received: from ubuntukernelserver.. ([49.236.212.182])
-        by smtp.gmail.com with ESMTPSA id w11-20020aa7858b000000b006eceb4cb828sm5384732pfn.180.2024.05.04.20.29.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 20:29:39 -0700 (PDT)
-From: Roshan Khatri <topofeverest8848@gmail.com>
-To: hdegoede@redhat.com,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.com,
-	gregkh@linuxfoundation.org
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: atomisp: Fix spelling mistake in ia_css_eed1_8.host.c
-Date: Sun,  5 May 2024 09:14:30 +0545
-Message-Id: <20240505032931.133879-1-topofeverest8848@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1714880407; x=1715485207;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s9Y72YxdT1jhsuKJQ9UU14gSLltd69pv+xEHz2N37WU=;
+        b=FTHKzSbjjQLhOakLJTAqDKEN/X5pli2vtpbSn9Sdz+azYHT9Ozi73IowbtzVLUcZvf
+         NP5FoeHK67zNNhg1/t9zpkYNnNa8/vxE1kQdGLeFpLJXQ0ikL1XPDhR5K7bActkwNjbK
+         9oVdvHzMtg0E+ENzt16aS7qLFoDiujSRIg8MhTAvGMiC0UDp0nfhXNUOE8t0M+nDqCCA
+         qDx6eOMEwVxrWNzeEWlnM7sV43dPQkG7g1wqiXD0PeTxV7DvoDTGpbhLFbhwlSL7vW9j
+         LrQRZlKahzGnaGMz54Eb9IqGB8qjuGP7r0ZcYmd2F2IB1OXFSVnt84prxiRuEgfQEokl
+         329A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcTjSLoroUgP7hyevfMmnZZfCYFt5nm8fqgQlnpAckgwd3SbHwl2sPlgp1AX8/JyzO3fbtUwmch2h9Uj03KjTWEX3N0D5Ib8MaO7Qj
+X-Gm-Message-State: AOJu0YwvZ7bRV/oo156UxZiUjbsF2sxTxNL5+1I7Eqiz/cEnLQvM2pQa
+	UoAHc4W4pK4z1TRzJW27bhCL3SUBS95oDPdB4QzitbTxwy5kYl4vZ6xrceSYzytUobheLV0KN4I
+	qv49TxSmCB/Et9/366fipQfSPCaTvwDbi1Mnu3/PUtDDX2gnf2LxWXF8=
+X-Google-Smtp-Source: AGHT+IHSuW+CmNmcyXU5yL4HEMtOIDBuiQTUQHwHXD/Zv5Tl1T1gDnTzqLTHpjf74LLdVLle+bkqjnOd1Wg56aZXeOMaiXsy5eS6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a26:b0:36c:5029:1925 with SMTP id
+ g6-20020a056e021a2600b0036c50291925mr440601ile.0.1714880407145; Sat, 04 May
+ 2024 20:40:07 -0700 (PDT)
+Date: Sat, 04 May 2024 20:40:07 -0700
+In-Reply-To: <tencent_7040976837B44ADE740F760F669A3C493609@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000801cab0617acb578@google.com>
+Subject: Re: [syzbot] [net?] [virt?] [kvm?] KASAN: slab-use-after-free Read in vhost_task_fn
+From: syzbot <syzbot+98edc2df894917b3431f@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-codespell reported misspelled calculating in
-ia_css_eed1_8.host.c. This patch fixes the misspellings.
+Hello,
 
-Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
----
- .../media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
-index bfea78171f7c..e4fc90f88e24 100644
---- a/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
-+++ b/drivers/staging/media/atomisp/pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c
-@@ -161,7 +161,7 @@ ia_css_eed1_8_vmem_encode(
- 		assert(fcinv_x[j] > fcinv_x[j - 1]);
- 	}
- 
--	/* The implementation of the calulating 1/x is based on the availability
-+	/* The implementation of the calculating 1/x is based on the availability
- 	 * of the OP_vec_shuffle16 operation.
- 	 * A 64 element vector is split up in 4 blocks of 16 element. Each array is copied to
- 	 * a vector 4 times, (starting at 0, 16, 32 and 48). All array elements are copied or
--- 
-2.34.1
+Reported-and-tested-by: syzbot+98edc2df894917b3431f@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         bb7a2467 Add linux-next specific files for 20240426
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=157bf1f8980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6a0288262dd108
+dashboard link: https://syzkaller.appspot.com/bug?extid=98edc2df894917b3431f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16d29450980000
+
+Note: testing is done by a robot and is best-effort only.
 
