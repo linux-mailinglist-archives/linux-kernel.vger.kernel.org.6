@@ -1,151 +1,137 @@
-Return-Path: <linux-kernel+bounces-168902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD698BBF86
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:57:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CCA8BBF88
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62DE11C20AC4
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 06:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3201A281E8D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 06:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659D163CB;
-	Sun,  5 May 2024 06:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8176763CB;
+	Sun,  5 May 2024 06:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1NV5ldG"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8OZwuB+"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1DB2F2E;
-	Sun,  5 May 2024 06:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4C0524F;
+	Sun,  5 May 2024 06:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714892257; cv=none; b=RymCzIYldExoA2/hZw/5pqkGc+55xzLi08wUtptX6XKVJPBw9krN8nynzeQrXf/lhCMLsdAY6SZkBrOZ1IjIMTzcIHTL19ZdNYLigzT9Rpb6KK9p1oGbCByaI8bVjNSvVGQTEg4cACbm2uC+s9hUbSASCTke9g/swIDh9R8sVo0=
+	t=1714892325; cv=none; b=rkxHkvicxZDEAArXkaOgETACGIybqMhZIJ+y628WqpppYaQ09/yhsbGCKp/wEjK66z2LWEw1ugJuayllTlM3wQBJWvwrXr/Un3NWWp2f4SmWYS2Qkjf73TYoKGvPKNcyZDI964zAcj5SFt0dCcfG49S7mrHpIfU2KZZqszBK5Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714892257; c=relaxed/simple;
-	bh=rPYKWbw6mpc/6Z9Pr6SAf3qsbHVFx5dRNbBrmhKr1Pk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d4n9ypIYON5EGFPC0YfDbjPIrU4TKzJe/xBNh/F8uVZVCYgsKv+yoHvy2nVRYUS1Tw3AOWBLJbJPXrkIzw4CSXdcLneL6/8Ea6oA1r0ZaP5+lL6Uf6rEFDqZHoZ8VCOkffuyAppbDf8GEEaS2k+UEdyzg0at1GW6sUQgW9VqzGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1NV5ldG; arc=none smtp.client-ip=209.85.160.178
+	s=arc-20240116; t=1714892325; c=relaxed/simple;
+	bh=2PBKlYW1qzVbuyWWgJD7yyagzyu9p+LO9Q6duh0Zt1s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ocpbVx8FBAsLCUrNmxknVzjS0EcnjKyg+7u9qpF3wKlxj7Ky2ZKQkg+bCN5M6L3BD+oPO+u7CABCBG9ecDjWalDLJCn3v7VGFMKQXaNRvT2zEPmkcP+HMnflgm3XH6vfYtoACsRd+glRd5z+6FavfLd8jlNSFtYvwxiTJM9ETC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8OZwuB+; arc=none smtp.client-ip=209.85.160.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43d4c5f7b1bso1056651cf.1;
-        Sat, 04 May 2024 23:57:35 -0700 (PDT)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2343ae31a9bso635059fac.1;
+        Sat, 04 May 2024 23:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714892255; x=1715497055; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rPYKWbw6mpc/6Z9Pr6SAf3qsbHVFx5dRNbBrmhKr1Pk=;
-        b=E1NV5ldGo16r3IFTAlbqqD7y72rkFo4rFHhRWNxCYZSNVBiIRpsJgB37Asl6kQDOzn
-         RuPB5cDW7zLN72/O0Snpw5zC72DeT9lySjurb8h61nLVlofHEiCd2d/jBif4M/jf9wtT
-         IHqaJY66EMR0L2rURwpIGu8ogNh5XD7oUQz1zEStQQbsAEF42FpgLpMA6ZlhDoQwDx2X
-         8pUOl3pvpG2KwP1XvXSlW7dvB0k/XEtvnYqKKrV8VpHDpiF+WkPu3ETPb7hjyxKLpnId
-         pr3TQ5BmOhQpFkzMoPxjIoUEOwwcVMy/FCbTuGA2D/tnK63W0JigriLjr2Sc0590EYw/
-         KviA==
+        d=gmail.com; s=20230601; t=1714892323; x=1715497123; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4vpukMfzbAPwm14bol0ui9iQpresRYINtD5OwU6MD8w=;
+        b=Q8OZwuB+o+twuVZmal+koXoUGXv5n3sBK6loUtKUQRQmZeVq4mIWGpvJHNWfcc7YoH
+         8QUr92ObNtHvZi+AGyxP9MyIc8vFz9S5noFnWmLilOs7FBx454nbXhLsbdEqwpNqRg+R
+         b9v3LLF/hQ7PFkXd8Dgqe/d8bGgb4/oH60ijBqSAm4wbbjUWcIwSRwXLgFE7eS9MKDRR
+         DXIo7dX8Duw87tx51XK88mrrZDNHDWurUtAoiYIH68NjdjmAgwwx+eSU+FIfwPcwE5bS
+         Hy40TKdsuco5WVh67ECiIPeBpFu+E8UP3v+XlZVn5QkdIB1xdzMnbbdgA4tz51NZYqgd
+         BsqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714892255; x=1715497055;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rPYKWbw6mpc/6Z9Pr6SAf3qsbHVFx5dRNbBrmhKr1Pk=;
-        b=rbRbSMrCdJ4Cln5a3Wt4U36/+XgLSKLbCQYG6XXxGbyk5ygl18u4fvRgaaCNUXtHxn
-         0jzOLc988RT1bZ6T86RIzU0f2r1bhLYM2Tq7NZr7Fnl8HmagOh1O1b3DtuCyANOwxfu0
-         oPTSfu5VhO5FQxTrg0F2XcFUHyiqP+ECPoCIct1MfnjtqllN9ZZAVn3tfWHQJ7lY4b1E
-         zHKGDzymWl0DQhQjh67D1YMREkSQ58uqOY4iv5auu9HuQH/vQ3W/9NfmIabxA06+bEwC
-         LpvPKVf/elWWRvAA4LsTuvR/T/ZzJySMfmqcbYBGOFajC8B8vytGuzyAeuPRCVY0RVYS
-         /9mA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnyDXl5viH+ch4vaBFwiQkjN2krzLwjnQuol6HpHo/GEBdfK2KIOCNEJVYFO2+UWCRfS3Xrr2jJKwbgrj2NyqXBCt7X/2rFIOGv+H/dZfMzki7xKerXwxmvvenbwUUBjhz38zJi5YHl9q3lg==
-X-Gm-Message-State: AOJu0YygE/BLU5wt1hoZwya76DqCZFws4Zl5X7o4CW77y1BcgJwNm/UA
-	7QDx12DNE2u6XNq4QhKw+lPAc9EZb/CVAKmbquGmbqMBrb3En+kisAJmoSWXlpskda/Zy09PoI8
-	skApXeBWpo4k/QKOHsNJQxdb3Ed4=
-X-Google-Smtp-Source: AGHT+IHMIar5qkt7K7JRjINCKZ22aXQO09DEOXtYscVzQFP3FlU/7M7jgEot7N+18mTrkGiD9s5UOLx5+qmTjbQeIzE=
-X-Received: by 2002:ad4:4ee2:0:b0:6a0:b905:96ed with SMTP id
- dv2-20020ad44ee2000000b006a0b90596edmr9531257qvb.43.1714892254952; Sat, 04
- May 2024 23:57:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714892323; x=1715497123;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4vpukMfzbAPwm14bol0ui9iQpresRYINtD5OwU6MD8w=;
+        b=MexVUVcgP76xnBX96ZqLEv4XqPJZO36sagdvDxhjqntqBEGjmWwTSr1fsfMbnTWIIv
+         6SSS/HAjrsR39vSqr9VAL/rejqSzNna+zsxf5aKDvFq0K1z6cl2Zo06cctVtaQMa1QMy
+         uOjTLcu2YwaML71NrEbP9inHYPR2FtClqgzlVkAMBu7ZopmaeWX5EsfxZ/KFbfa5WdF+
+         DDjzZxLIQfc2MRuX3euAxdp2NdGDJYSv69tAfGGxi9l+DfodvhIYCNvutphA6QOCGisD
+         ku4peERRrAQp/n8BCXPTfbAmswFZ1qRvJEH4jho6Bksdn2py0QS59uqcrTSt4M5le+KL
+         VGZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWew2zJeVk4mGgdkJ7OCoSRkDs299YO4WBNWBzRu93KUyUigfrjxI3+ru5k1Dkgpvvc5Vpbpt4xzuzVG5UasSzzV+bn4Bb1ftRrnlIPfrOUCXrHW61/QBwgo5AaCxm4x0n3AlqlJV4q
+X-Gm-Message-State: AOJu0YwKZvVCE0Nbnu1xYkYdczhSpt2YPzC7ap1gDbeiZL+Y42Mm6PNT
+	4dgOgeGB8Zh30bBex8j2gAqr9hthwEq4GFpsovE1VLWZD6aIFWDOSLL1v6MI
+X-Google-Smtp-Source: AGHT+IGxsol5QytOUZjrb7i4kzhX0EYbteDvqcJ1KMaH4YM2PAb0vAHAIZVrR1XXrGxKuvnKhD+JZQ==
+X-Received: by 2002:a05:6870:5387:b0:23b:8a84:2e66 with SMTP id h7-20020a056870538700b0023b8a842e66mr8989034oan.15.1714892323379;
+        Sat, 04 May 2024 23:58:43 -0700 (PDT)
+Received: from ?IPV6:2402:e280:214c:86:54ee:ba66:1638:6278? ([2402:e280:214c:86:54ee:ba66:1638:6278])
+        by smtp.gmail.com with ESMTPSA id nw10-20020a17090b254a00b002b0e8d4c426sm7847133pjb.11.2024.05.04.23.58.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 May 2024 23:58:43 -0700 (PDT)
+Message-ID: <5c699755-0317-4485-af69-0a4256dce085@gmail.com>
+Date: Sun, 5 May 2024 12:28:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAF+WW=oKQak6ktiOH75pHSDe7YEkYD-1ditgcsWB=z+aRKJogQ@mail.gmail.com>
- <CAOQ4uxjh5iQ0_knRebNRS271vR2-2f_9bNZyBG5vUy3rw6xh-g@mail.gmail.com> <CAF+WW=rRz0L-P9X2tV9svGdTbhAhpBea=huf-_DDfkz29fXUyQ@mail.gmail.com>
-In-Reply-To: <CAF+WW=rRz0L-P9X2tV9svGdTbhAhpBea=huf-_DDfkz29fXUyQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 5 May 2024 09:57:23 +0300
-Message-ID: <CAOQ4uxiGpShrki9dnJM1hvz1GPPcDos6P8pAkAz_jksy4gJdsw@mail.gmail.com>
-Subject: Re: bug in may_dedupe_file allows to deduplicate files we aren't
- allowed to write to
-To: Hugo Valtier <hugo@valtier.fr>
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Mark Fasheh <mark@fasheh.com>, "Darrick J. Wong" <djwong@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: typec: mux: replace of_node_put() with __free
+ [linux-next]
+From: R Sundar <prosunofficial@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: heikki.krogerus@linux.intel.com, dmitry.baryshkov@linaro.org,
+ neil.armstrong@linaro.org, christophe.jaillet@wanadoo.fr,
+ u.kleine-koenig@pengutronix.de, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@inria.fr>
+References: <20240410175804.5195-1-prosunofficial@gmail.com>
+ <2024050443-coerce-bonus-977a@gregkh>
+ <9574a4a1-a7b8-4f35-88b0-754c4396b02e@gmail.com>
+Content-Language: en-US
+In-Reply-To: <9574a4a1-a7b8-4f35-88b0-754c4396b02e@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-[change email for Mark Fashe]
+On 05/05/24 10:50, R Sundar wrote:
+> On 04/05/24 21:48, Greg KH wrote:
+>> On Wed, Apr 10, 2024 at 11:28:04PM +0530, R SUNDAR wrote:
+>>> Signed-off-by: R SUNDAR <prosunofficial@gmail.com>
+>>
+>> Please fix your name up for the next version.
+> 
+> Hi,
+> 
+> This version of patch is sent  before comments provided for naming in 
+> patch v1.
+> 
+> The name and nitpick was fixed after suggestion provided in patch v1.
+> 
+> https://lore.kernel.org/all/2024041103-doornail-professor-7c1e@gregkh/
+> 
+> 
+> Link for patch after fixing name and nitpick:
+> 
+> https://lore.kernel.org/all/20240426164705.2717-1-prosunofficial@gmail.com/
+> 
+> 
+> 
+> Thanks,
+> Sundar
 
-On Sat, May 4, 2024 at 11:51=E2=80=AFPM Hugo Valtier <hugo@valtier.fr> wrot=
-e:
->
-> > My guess is that not many users try to dedupe other users' files,
-> > so this feature was never used and nobody complained.
->
-> +1
->
-> Thx for the answer, I'm new to this to be sure I understood what you mean=
-t:
-> > You should add an xfstest for this and include a
-> > _fixed_by_kernel_commit and that will signal all the distros that
-> > care to backport the fix.
->
-> So right now I wait for 6.9 to be released soon enough then
-> I then submit my patch which invert the condition.
+Little more explanation on previous mail:
 
-There is no need to wait for the 6.9 release.
-Fixes can and should be posted at any time.
+Nitpick mentioned above , referring to is  , suggestion to rewrite a 
+"nit in code" related to indentation in common path.
 
-> Once that is merged in some tree (fsdevel I guess ?) I submit a patch for
+https://lore.kernel.org/all/2024041103-doornail-professor-7c1e@gregkh/
 
-Yes, this is a good candidate for Christian Brauner's vfs tree.
-Please CC the VFS maintainers (from MAINTAINERS file) and fsdevel.
 
-A note about backporting to stable kernels.
-stable maintainer bots would do best effort to auto backport
-patches marked with a Fixes: commit to the supported LTS kernel,
-once the fix is merged to master,
-but if the fix does not apply cleanly, you will need to post the
-backport yourself (if you want the fix backported).
+So along with fixing name , I fixed that indentations also as suggested.
 
-For your case, the fix will not apply cleanly before
-4609e1f18e19 ("fs: port ->permission() to pass mnt_idmap")
-so at lease from 6.1.y and backwards, you will need to post
-manual backports if you want the fix in LTS kernels or you can
-let the distros that find the new xfstest failure take care of that...
-
-> xfstest which adds a regression test and has _fixed_by_kernel_commit
-> mentioning the commit just merged in the fsdevel linux tree.
-
-Correct.
-You may take inspiration from existing dedupe tests
-[CC Darrick who wrote most of them]
-but I did not find any test coverage for may_dedupe_file() among them.
-
-There is one test that is dealing with permissions that you can
-use as a template:
-
-$ git grep -w _begin_fstest.*dedupe tests/generic/|grep perms
-tests/generic/674:_begin_fstest auto clone quick perms dedupe
-
-Hint: use $XFS_IO_PROG -r to open the destination file read only.
-
-Because there is currently no test coverage for read-only dest
-for the admin and user owned files, I suggest that you start with
-writing this test, making sure that your fix does not regress it and
-then add the other writable file case.
+https://lore.kernel.org/all/20240426164705.2717-1-prosunofficial@gmail.com/
 
 Thanks,
-Amir.
+Sundar
+
+
 
