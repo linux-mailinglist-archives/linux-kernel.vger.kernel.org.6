@@ -1,141 +1,157 @@
-Return-Path: <linux-kernel+bounces-168928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4C88BBFDB
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:46:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283998BBFD7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9BAF1F21630
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D31281C10
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B37DDDBB;
-	Sun,  5 May 2024 08:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5FA747F;
+	Sun,  5 May 2024 08:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwJRP0bR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3LNltPt"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0B1B67F;
-	Sun,  5 May 2024 08:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5787863D0
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 08:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714898788; cv=none; b=SdTgAM+92Vm40J6HTXwv5Eqw3GnUguMVQIfHr2n3HuCQa8xWx5MiFGueH+jLLAeYe0dsrzTo7eT4pXXk8tyR4O5UlpOUCFPOE7lg4lfxVGcAIA9pLAi6ngiVg5uQDxwwEsdYbrtFchROkH5VDpUXwaLy8VuKaA5Es8TiFAAYsqI=
+	t=1714898786; cv=none; b=TuNLmnVigXwHq22ua0CwxVFeuzIXmjAueiw3XXOGuCIhm36tgym358Bej6l7MMHmGqcpQrS2Lubpw3iW/3nWW3oWaUfHW/f5kSLI4MHXcG4iDxRPww5fUps6xEbGZ+Ld1sfqvmbAAzTLvMy7u6/5d2HCKYEuziXkyR+dVgoYdhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714898788; c=relaxed/simple;
-	bh=5YmmNGfbg0xZ8zOB/za0EUDay16V2M1y+3r8YN9H4f0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lrIpBKrccuQpe/Kc44qpSdIgo88Jmxp9kaZolYApOcl6LrRSS0ckmU1Dt7l9Hw97Yy+h36BapRE1jBblkNFsH+ovOj5Q5Ib16L9WbdPDaS0H1KJ9azA70vF5uofLjo83WnztbqDy6XxAppmKoy/iMQDrMTm/EgDrfsY4icIO0fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwJRP0bR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BEDC4DDE0;
-	Sun,  5 May 2024 08:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714898787;
-	bh=5YmmNGfbg0xZ8zOB/za0EUDay16V2M1y+3r8YN9H4f0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BwJRP0bRdEaICL4NJXisJzKbVhgRNWWymzAnQ6MPkGzeNQspp6Bh+FZv+Z/Dexn91
-	 nXoRSWnrkoRt71J5Gz+rS4YZDEgNJdpq4O64vj1wnHeERdqszl6n+Yy/lTj8KwSpKB
-	 vxstLxi12N8paICUglEhZtUORvQ1EnE9BIlJkgXJUiC5g9sDbuxdQpTQTH+1zDVq1X
-	 /0cdLp5fzFUMMxAWZmUncbi4aGZiAXqRgzx8RUor/Z22smhobi1IgNnmpyk3sBbSt7
-	 UA4lU1Q6mwEj3MsfOY6nYY8sJp/smnXShlQymasNh92wcsb4CI4ayhzrPQDFsCpDLu
-	 qIxlifWwKtSCA==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-518931f8d23so905672e87.3;
-        Sun, 05 May 2024 01:46:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVmYrpPYvlQ37BJ4ntk8NdbcR5ed9iKS+4vQMWCmUJlcqZY/JBSTvjL/+f+pm2c59DHkhe53hDBflrZFmztiTJMYRAUgXcIiQRFuSKKMIapV5bUZKvpgJn4jbTAx5tWhNlOMxBgwdnhYaz6
-X-Gm-Message-State: AOJu0YztiOqUq55yF7lpt+EKWxmHG0ayx1WIdopBAnJ0CvsQd5wtr3m9
-	F8jOl1W01uA7NIfwWnkOFcT09zR2B4IAviP6g0neHeY6IFr52FRNeFC542mj/4pZ8bjBwXj5hBn
-	CqdpkSwCM0PUq1FMxxrDg2IRauPo=
-X-Google-Smtp-Source: AGHT+IFgYJGMIyx/Nk7hWsAZya+78Uc/8M3cOFCqp3BcgOPyaz+ZfswbVsLbyE/uUi8RXwOdB9dLaZXTf4nuKCHQKXI=
-X-Received: by 2002:a19:8c16:0:b0:51f:4a03:a053 with SMTP id
- o22-20020a198c16000000b0051f4a03a053mr4849843lfd.4.1714898786460; Sun, 05 May
- 2024 01:46:26 -0700 (PDT)
+	s=arc-20240116; t=1714898786; c=relaxed/simple;
+	bh=fRj5AQbtFpPAQ5l9HTpcKDEJ0uqHi3XFIHVzaMmxJ68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qbr5K7e1GkscSZ//8BukG0L4+r9Zh/BXA3nM0GQoQqBs9i8x7bSxo94cxWSMAJdo0SjdYgIjxGiBibY4XQ8wUJV64T2+1ejgqojiHjtkgPlVSAyCtxHY1Z0Q9wShL3Mt3OrUJi41NBmqzNFx1zYkv9VL3arDOKByFbrKqjAxXIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A3LNltPt; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34da4d6f543so862072f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 01:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714898783; x=1715503583; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8rvqUn0JVMmaEtYEVilljD5LiJGeISCvOsUZtPDUnlA=;
+        b=A3LNltPtC4xWNMbpMmDIxoexfABDgmW38k5kcxii7JLnPqhU4Bt8PZyTDuQvsZLV7y
+         wvT8CnkM8bXdiOJ82a/NEI+7dHEVegc1QZ7HnDBO6BR+J8gg40NBjyDN4bIOt1FO5qh+
+         LquE/KKnhN3HtGkatnWW0dpDclBpeMg/FidFB8s5s5IiSJTiox1H34mhbfYJOH1n0qOQ
+         ORvQnJqMQkljB9yLH0nrKVMI+mBM4it7vAEqJXxUHQmES74FWhQYWf51QjrIG+lGYDIX
+         nTWFXIoSBOsJmn9wCFpVOd/DaJX1/UEmY9jTY7je+G688MJIFJzXIbPRbp6ekc3VPMuA
+         0nRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714898783; x=1715503583;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8rvqUn0JVMmaEtYEVilljD5LiJGeISCvOsUZtPDUnlA=;
+        b=fPNnqlB461mG9r3wS+K1eZWFx2M7+eT35kA2P+IPZfX5k/AHtglGKjOM2GGkkLSx4k
+         s5dhgAaF1wysQyRdfCJKhfmx7BIl0Y4yj5sGK0/z+2vEJt80Z9ESC95yKCgSR5kEnLQY
+         PQT3LRN5GyMxIEh579XGvMP0+nA5BJ9h13NwT7I3S/8v96N6QPRGqA1hVWL87p/pEOlQ
+         HG+vsxGsKH8bbORDf3Zkny9QeCmczB/02l8WpCmAXMU9wXnxNvaB3HY/CKZ7WqADlZ2W
+         4WBPtaAsb8r/jWxDkrI/pmP5+kJrk3CSO97GQex8G5pKAHj0aia0/yVZ86IDjmKTV7a2
+         l/4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhx4Sgbd3d7NZaajHDAvjhRgyb0Inm9dX5u+TO/KRb1Vbb4E3EDXBmMu522v9E69WCuCHr7nR+xvp0r2nXXKbNJFJYH5ki1KElEsk6
+X-Gm-Message-State: AOJu0YxCiE7Wj9efVOPdi9nwHzX3hjfOsx6fHJ2ncbYZtUkY4T4yhayF
+	kBWs7T6xlWRTMudcNkplvaeyIpTVV/ILL32OE65JBMrNM2491tv3k2eeI7bLJIY=
+X-Google-Smtp-Source: AGHT+IEAIRhFGaEyDg154ublccIoPbU+wBOiO4gHoxXjddQxdSA8q12a5Tt5YvOHYA6M/h8U+EvPGQ==
+X-Received: by 2002:a5d:55ca:0:b0:34d:aaca:2f6f with SMTP id i10-20020a5d55ca000000b0034daaca2f6fmr4816765wrw.69.1714898782639;
+        Sun, 05 May 2024 01:46:22 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id f20-20020a05600c4e9400b0041b5500e438sm11840163wmq.23.2024.05.05.01.46.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 May 2024 01:46:22 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ming Qian <ming.qian@nxp.com>,
+	Zhou Peng <eagle.zhou@nxp.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jeff LaBundy <jeff@labundy.com>,
+	Shijie Qin <shijie.qin@nxp.com>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: Use full path to other schemas
+Date: Sun,  5 May 2024 10:46:18 +0200
+Message-ID: <20240505084618.135705-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNARXef6Myb_Gd4jyGfwujoBAjmjzLZBzgkm4T1KmfHP0MQ@mail.gmail.com>
- <ZjcRPelwZP34N42s@gmail.com> <ZjcSjk0mXYopAvVS@gmail.com> <ZjcaHRjZDdy/6/rn@gmail.com>
- <Zjc0sJWqfMWFD0/p@gmail.com>
-In-Reply-To: <Zjc0sJWqfMWFD0/p@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 5 May 2024 17:45:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASRjczOYLYRYS6OTHkMYe8rpHTP_MHzfLUd0r0bfBgJGg@mail.gmail.com>
-Message-ID: <CAK7LNASRjczOYLYRYS6OTHkMYe8rpHTP_MHzfLUd0r0bfBgJGg@mail.gmail.com>
-Subject: Re: [GIT PULL] Kbuild updates for v6.9-rc1
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 5, 2024 at 4:26=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrote=
-:
->
->
-> * Ingo Molnar <mingo@kernel.org> wrote:
->
-> >
-> > * Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > >
-> > > * Ingo Molnar <mingo@kernel.org> wrote:
-> > >
-> > > > Notes:
-> > > >
-> > > > - Yes, those weird 'file' and ': No such file or directory' strings=
- are
-> > > >   pasted as-is. No idea what it's about, and the build log doesn't =
-say.
-> > >
-> > > Forgot to mention that I also did a KBUILD_VERBOSE=3D2 build - which =
-isn't
-> > > more verbose for this particular failure:
-> >
-> > Another update - I reverted the 4 most recent commits to
-> > scripts/package/debian/rules:
-> >
-> >  b8d18fee7aa2 Revert "kbuild: deb-pkg: show verbose log for direct pack=
-age builds"
-> >  82ac586caf3d Revert "kbuild: deb-pkg: make debian/rules quiet for 'mak=
-e deb-pkg'"
-> >  0b806eac90d6 Revert "kbuild: deb-pkg: build binary-arch in parallel"
-> >  4b16391dc462 Revert "kbuild: deb-pkg: call more misc debhelper command=
-s"
-> >  f96beb84eff6 kbuild: deb-pkg: call more misc debhelper commands
-> >  1d7bae8f8c85 kbuild: deb-pkg: build binary-arch in parallel
-> >  caf400c8b68a kbuild: deb-pkg: make debian/rules quiet for 'make deb-pk=
-g'
-> >  cc3df32c9f3a kbuild: deb-pkg: show verbose log for direct package buil=
-ds
-> >
-> > And this resolved the issue, the debs are built successfully:
->
-> Update, the bad commit is:
->
->    1d7bae8f8c85 kbuild: deb-pkg: build binary-arch in parallel
->
-> ... and reverting it solves the build bug.
->
-> And my Make-fu is weak, I don't see what's wrong with the commit.
->
-> Thanks,
->
->         Ingo
+When referencing other schema, it is preferred to use an absolute path
+(/schemas/....), which allows also an seamless move of particular schema
+out of Linux kernel to dtschema.
 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-"make -j$(nproc) deb-pkg" works fine for me
-on Ubuntu 23.10
+---
 
+Rob, maybe you can take it directly? Should apply cleanly on your tree.
+---
+ Documentation/devicetree/bindings/input/azoteq,iqs7222.yaml | 2 +-
+ Documentation/devicetree/bindings/media/amphion,vpu.yaml    | 2 +-
+ Documentation/devicetree/bindings/mtd/mtd.yaml              | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-If you provide the .config, I will test it on my machine.
+diff --git a/Documentation/devicetree/bindings/input/azoteq,iqs7222.yaml b/Documentation/devicetree/bindings/input/azoteq,iqs7222.yaml
+index 5b1769c19b17..418c168b223b 100644
+--- a/Documentation/devicetree/bindings/input/azoteq,iqs7222.yaml
++++ b/Documentation/devicetree/bindings/input/azoteq,iqs7222.yaml
+@@ -784,7 +784,7 @@ patternProperties:
+       gpio-2: GPIO4
+ 
+     allOf:
+-      - $ref: ../pinctrl/pincfg-node.yaml#
++      - $ref: /schemas/pinctrl/pincfg-node.yaml#
+ 
+     properties:
+       drive-open-drain: true
+diff --git a/Documentation/devicetree/bindings/media/amphion,vpu.yaml b/Documentation/devicetree/bindings/media/amphion,vpu.yaml
+index c0d83d755239..9801de3ed84e 100644
+--- a/Documentation/devicetree/bindings/media/amphion,vpu.yaml
++++ b/Documentation/devicetree/bindings/media/amphion,vpu.yaml
+@@ -44,7 +44,7 @@ patternProperties:
+     description:
+       Each vpu encoder or decoder correspond a MU, which used for communication
+       between driver and firmware. Implement via mailbox on driver.
+-    $ref: ../mailbox/fsl,mu.yaml#
++    $ref: /schemas/mailbox/fsl,mu.yaml#
+ 
+ 
+   "^vpu-core@[0-9a-f]+$":
+diff --git a/Documentation/devicetree/bindings/mtd/mtd.yaml b/Documentation/devicetree/bindings/mtd/mtd.yaml
+index ee442ecb11cd..bbb56216a4e2 100644
+--- a/Documentation/devicetree/bindings/mtd/mtd.yaml
++++ b/Documentation/devicetree/bindings/mtd/mtd.yaml
+@@ -48,8 +48,8 @@ patternProperties:
+     type: object
+ 
+     allOf:
+-      - $ref: ../nvmem/nvmem.yaml#
+-      - $ref: ../nvmem/nvmem-deprecated-cells.yaml#
++      - $ref: /schemas/nvmem/nvmem.yaml#
++      - $ref: /schemas/nvmem/nvmem-deprecated-cells.yaml#
+ 
+     unevaluatedProperties: false
+ 
+-- 
+2.43.0
 
-
-
---=20
-Best Regards
-Masahiro Yamada
 
