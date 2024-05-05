@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-169087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D768BC2EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A938BC2FC
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CA391C2098A
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90FB01F214DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5892E69D2B;
-	Sun,  5 May 2024 17:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA466CDBD;
+	Sun,  5 May 2024 18:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItLeR4cH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="w4/h85cP"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9119879D2;
-	Sun,  5 May 2024 17:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C5E2B9BE
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 18:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714931901; cv=none; b=mvqQWlfFff0+K1tT4SSO6Q8UHoDmkLKaznBGltY0PYcZQ7jsfsMJ/rDn0ev4ofZyXKVFYDjvU4aRSZIli+iHwIONbMwFsNEgB39oz1cMjyMAW57UIoW+GDBsV8bRn9N8t/RMXihumRpogm+BIt6qHyCuOYI2ACUdav5nIKbvuvQ=
+	t=1714932286; cv=none; b=BPTDZ7BYjUHn6TRKAEAu+NfzTGxqpsIQeI8QdTHTY3ejvmP29emumGjwSYIpygOIH9eg3rCv6trHs+zwMZgKHUTyVrLftqU7gSrmJrwLnTbSE0z8NrEWJ00rAodUGvYp2J9lIRXLkC1RcufxzCOGnz/4GEYTL0L508oUIMIc2p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714931901; c=relaxed/simple;
-	bh=3GEudGU7ASMXSyyGWnReK03kwpORCk7RJpxQt9efhqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rDiIdUkTwGtkpyC6NBUJxf6h94CtYGHGo/qvv6oS1gxtiZxZHcibJ9eGF8MX20EgzUNM1bkZj4qhJJNz11TgZnjf3lA4cBxhHpIwp2a7LpJpxlumNtrpk/QKLziOm+8GZtdmw3qSPBw9dfYUAsB/kZnz6mvup0rjbA4o8vzFQFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItLeR4cH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0984C113CC;
-	Sun,  5 May 2024 17:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714931901;
-	bh=3GEudGU7ASMXSyyGWnReK03kwpORCk7RJpxQt9efhqY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ItLeR4cHWW45OS5rq+aGVndOX8kBINwEtq378D2RjWQiosFtPGJt8kSc7E2r5G4NZ
-	 Rx2Et9IL8XfJlCIC080wi9oq3bR14KyLpG5dsy149Y7VRR+HcjOwvH2xRbXgxSejRy
-	 2+OdkDptJ7Jwl7b/h0q7L5Oo8ZJR+aNFtdWuIe9cL3L6Hs+S/w0AsF4Br5crppyKqg
-	 AZwJkc0eaCmtH/egcnmrO3ARkP/bcg1JlaCSEwRJXnPXCq3gcUsDXpdv1Wqh8vzCt4
-	 KAGZ/K4JkMTy/Y7LstcKHvi9H/CM4h7QwEJspeBgDlpIrNbV6d+h9NbxUn6xtQHeXw
-	 w5tivJtdI4oSA==
-Date: Sun, 5 May 2024 18:58:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petar Stoykov <pd.pstoykov@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Rob
- Herring <robh+dt@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Angel Iglesias
- <ang.iglesiasg@gmail.com>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] iio: pressure: Add driver for Sensirion SDP500
-Message-ID: <20240505185809.7636403e@jic23-huawei>
-In-Reply-To: <CADFWO8EF0WxAV=k-ZAJ1McmaYv4SD5G+O4FhoMDsVQaRqe6sdg@mail.gmail.com>
-References: <CADFWO8HOb4zY7rPsCxWe2nvrzd8FjVNw0k8=8s4yB7C_BwS0ig@mail.gmail.com>
-	<20240116170337.00003a02@Huawei.com>
-	<CADFWO8EF0WxAV=k-ZAJ1McmaYv4SD5G+O4FhoMDsVQaRqe6sdg@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714932286; c=relaxed/simple;
+	bh=MvgFEIdHJtRnDvyKBZhufXdImvNjTp+dD0weVzheZjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YB1mRI8zyOWUUpoH4B/PlqFJilrNbKMhstz0grUW/0RK28AOTV6MApBlx63DbzCAvIKzvI88UrOTdwiNVnMTn/isvGvJ7yWDb4QnmS71XUwzqn1Pj0f9k6RO9zjkPR0cInF5DJMH48MlSPpHVT1U+Abso3aWtwISgUul0T4Q8lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=w4/h85cP; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ec4f928c57so3928565ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 11:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1714932283; x=1715537083; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mE6ET/wemNoj1wnsoN5H46vn2H9jFrdPiFfXm3O1q/E=;
+        b=w4/h85cPoz9JrKVApFfzhwqyTk3hafzehD2XG7NNtSIJkUN6u2EfIyUUtNpf9SG2yL
+         W6rdALus2jNJXXvwjvuJ2YTV3zYJdblncEoF1uPLQnao+u8nh1XX1PhOUsQmFsR14I4W
+         MC1Umr7tv0fgbJv1+sUuAzexxKG8j0Uj6G57/BMOdrmG69VYAhAmV/BbzdpOTlDReEkf
+         mJx+YNH5SKRZWCOs6stpErBvVEiEsfx7qfzIwwNWCG07N+gsyJtt+usEjJaQFxA8kU3P
+         lZftFf0JTUkH9nuom4Fw3Va4yeUEtyb+U356wx0/ujdiep7C/KvDYPIRxp/cZcrzb9Hy
+         bvVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714932283; x=1715537083;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mE6ET/wemNoj1wnsoN5H46vn2H9jFrdPiFfXm3O1q/E=;
+        b=NISlWAX1DhyJLtgbmuq2ptuwdnuBjrgM3gGMLzN9En+wVHXjlJkuvPOCnM9EUveT9V
+         LI0X0GSCoRkUoXBMun9ovfCHBv2WCEcc8VzTDu3TUkOBQgsuPFrp/4TVNuwwkFKRngry
+         Vn9kHYM6aXYLApb1N47K0rLpE4tIIKnbRGI3h5Ic4FCjeQM/v+8qwninZ34UuUjIA6Iv
+         fENevnzrrFPD/tUhGxcjq+6U+pGWDpJF3AGIHwMwbNgnPt5oMasxwVgf9pRsY4f+nwEo
+         p0WDFkx1ZfV4AW1McZNBLH4tAkFG7KSFCMPmOaeCJnyQk/+SVVHGUeglqEoSz7pKE7Zo
+         2tog==
+X-Forwarded-Encrypted: i=1; AJvYcCXlaGzzzzHBWez1lt0y9MC8rNt/Gv5mIMwoA24GcfyjJtGhoaV6D5hXI5w/uL/sF2f4XPcTMMqkqrb86fF/SN3b9OqJJj68ay0x7Xyf
+X-Gm-Message-State: AOJu0YwRgQHwEcjkxV+EVS6FOth3Yja8wuQk1KcNTQ9Msn4HxDCt99Nc
+	YBnGHwOYg97EC8TdbCuwuqwWLcMGyZAv4gqtz1rTSIN9kwR7ySWokKUDHHHGeIs=
+X-Google-Smtp-Source: AGHT+IGWjfUE/TDqZn5+tc9zv5WMH1AwiF3VlKR+EV8RVaOEHMWP8GFvz9bqpeX6sGO+oAr45ebqrg==
+X-Received: by 2002:a17:902:d2d0:b0:1e8:4063:6ded with SMTP id n16-20020a170902d2d000b001e840636dedmr11260813plc.1.1714932282996;
+        Sun, 05 May 2024 11:04:42 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id l18-20020a170903121200b001eb03a2bb0asm6700128plh.53.2024.05.05.11.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 11:04:42 -0700 (PDT)
+Message-ID: <be4fe24b-daa4-40af-806b-40db570e37b2@kernel.dk>
+Date: Sun, 5 May 2024 12:04:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] epoll: be better about file lifetimes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: brauner@kernel.org, christian.koenig@amd.com,
+ dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
+ keescook@chromium.org, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+ sumit.semwal@linaro.org,
+ syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+ <20240505175556.1213266-2-torvalds@linux-foundation.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240505175556.1213266-2-torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-> > > +}
-> > > +
-> > > +static const struct iio_chan_spec sdp500_channels[] = {
-> > > +    {
-> > > +        .type = IIO_PRESSURE,
-> > > +        .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),  
-> >
-> > Looks like a simple linear scale.  Would be better to make scaling
-> > a userspace / consumer problem and provide IIO_CHAN_INFO_RAW
-> > and IIO_CHAN_INFO_SCALE.  
+On 5/5/24 11:55 AM, Linus Torvalds wrote:
+> epoll can call out to vfs_poll() with a file pointer that may race with
+> the last 'fput()'. That would make f_count go down to zero, and while
+> the ep->mtx locking means that the resulting file pointer tear-down will
+> be blocked until the poll returns, it means that f_count is already
+> dead, and any use of it won't actually get a reference to the file any
+> more: it's dead regardless.
 > 
-> I prefer returning the pressure directly because there is no other calculation
-> that the user of this driver can do. If they make the calculation differently
-> then their pressure value would be wrong.
+> Make sure we have a valid ref on the file pointer before we call down to
+> vfs_poll() from the epoll routines.
+> 
+> Link: https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
+> Reported-by: syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com
+> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> ---
+> 
+> Changes since v1:
+> 
+>  - add Link, Reported-by, and Jens' reviewed-by. And sign off on it
+>    because it looks fine to me and we have some testing now.
+> 
+>  - move epi_fget() closer to the user
+> 
+>  - more comments about the background
+> 
+>  - remove the rcu_read_lock(), with the comment explaining why it's not
+>    needed
+> 
+>  - note about returning zero rather than something like EPOLLERR|POLLHUP
+>    for a file that is going away
 
-Ah. I missed this and just made the same comment on v2.
-Let me give some more info than in the original review.
+I did look at that 0 return as well and agreed this is the right choice,
+but adding the comment is a good idea.
 
-The documentation on how to apply scale is simple and this scaling is
-pretty hard to get wrong.
+Anyway, patch still looks fine to me. I'd word wrap the comment section
+above epi_fget() wider, but that's just a stylistic choice...
 
-There are a couple of reasons we prefer to make it a userspace problem
-to do linear scaling and keep the actual channel value raw (if possible).
-1) Logging applications typically store the scale once, and each data
-   point is then much cheaper to store as a u16 than as a floating point
-   number.
-2) If you ever add buffered support, we do not support floating point
-   values in the buffer.  That basically means we have to have both
-   _PROCESSED and _RAW provided so that _SCALE makes sense for the buffer.
-   Horribly messy ABI is the result.
+-- 
+Jens Axboe
 
-Hence, push the scaling to userspace.
-
-Note that we can't always do this as some conversion functions are
-non linear and very hard to describe.  In those cases _PROCESSED makes
-sense.  That's not true here.
-
-Jonathan
 
