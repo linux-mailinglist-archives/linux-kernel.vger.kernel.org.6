@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-169178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009838BC483
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:28:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5521E8BC484
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31FFC1C20944
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D612815D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98787137740;
-	Sun,  5 May 2024 22:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB86137743;
+	Sun,  5 May 2024 22:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjtHe+N5"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7Q7Z/m8"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16567EF0F;
-	Sun,  5 May 2024 22:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F3D136E36;
+	Sun,  5 May 2024 22:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714948122; cv=none; b=INyE9wSDJip91spGmGi7cimM28E27zWSM+O9Tjg+7gRMftvv90h80hi7h0MYKR44ipvkFbuI1HbTwA4bys4jVZmP+h4vInBpL5pJS3i4iRN4OjGve3naxAEuHQYpNvLmP20Ldkny/3k0JHFDmV2bBmFxv6Rbu8pXz8D0IW0ZJ48=
+	t=1714948144; cv=none; b=UCfSGbrmY9XpyH2zNDTmCL5d0sNLdDSGOUwQ0xaiGrQrnX8UrWeruNzco0gPsE/qRQBp2Q9AF0M8zjwk1n6RlwiQFlIkwyiNsEyzKvTfLthFe/8AmgtfJzMV2QueL83jJElSP4ISNhJsrIFbOjgEFr/ljFWkEY6SsSCuF7YOtSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714948122; c=relaxed/simple;
-	bh=dOMv06zfp+EfFEk9ksXdm4XuRLTgcKDRnrVHao70bRc=;
+	s=arc-20240116; t=1714948144; c=relaxed/simple;
+	bh=eUQQleMvSVLVulCJRkbWmyly+60mD86dyOdlya7uQY4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nt3aONqLf0KCOC62kHnMCUY6ugX4f0vPr0296ZR/pmyo1rgmUvALPf+5CYL5xyatp703xboZgnKHfT5ZcbJHJPl272SpUO1xAsbCF9d0FQWHixRoeWyRsSynoxWEMZ6uU3xIAgt6vNjHRkj+sNId7exaZI1OuFAKsQVIiEx3Mpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjtHe+N5; arc=none smtp.client-ip=209.85.215.170
+	 To:Cc:Content-Type; b=S6MUhfu74L9md/gmc3zk5g7Qo96XpJ2TxJDZ4P84EkWU/uomO8Q1rz7o2dLTaISbYotwRxAl2I1wfJ6/5cJx73uNbaNVR6wjDTQlEI1VkvfI5aEli2Xy7HAueqiNj5m9E7yr/vVSFT8wTfxalz+Y/TXANebDk5T2MLfJ7A8ySpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7Q7Z/m8; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5d8b887bb0cso1214287a12.2;
-        Sun, 05 May 2024 15:28:41 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b273cbbdfdso942747a91.1;
+        Sun, 05 May 2024 15:29:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714948121; x=1715552921; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714948143; x=1715552943; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dOMv06zfp+EfFEk9ksXdm4XuRLTgcKDRnrVHao70bRc=;
-        b=YjtHe+N5YGgyKPdVSxLzyiBU4AIH1iDbDzyvEu7iWY1P3KIutFKJaN/F7hbAmlBWD3
-         OomuTE6ZwyN1HqM3UpfjQWUAh7UQS4Bbpc9ShGuBfhJJSfD6n3mSrsLvxpnJikrR+Mpr
-         8zg1W8Jx5X4A42KE66Il0VKFpKuFe/yba4c+BLN/4Bj7FesZNtmyfIFu90Jnti8aTXOK
-         875YpPOY+GzYmuqsdqO2psc3tjja8dT2bn65C8F8OwC1PIXuYpJ21LO6EoZr/5ybqi2y
-         TTO19kwYijwMJNoPBO6i8X6kntm1h4mLnjr+fGQx/1ARg0SEqiNt5TBa7ZN5a88E3iKB
-         gdug==
+        bh=eUQQleMvSVLVulCJRkbWmyly+60mD86dyOdlya7uQY4=;
+        b=T7Q7Z/m8PCYb+xcyBGYtfiMiA4e5OVoq7/hi4USks+PAZ5ppKhQ4QcZx5b5iyikxSx
+         BrrITuckqRdXhInCMVfa6F7i+WOVoXhtV8GAVXLACZgHHykt+Y+ZlVba5ARzcwhi/HIE
+         HndRmQFMVicbvOHfe0tWf9+vdNzhKnXRfSdp8tmc7NxqCcaQSRAAGuOiUmkgIu8b5ec5
+         vrOgK441foetgFhVUo0NieL2VFWLlXC0fTmrkJ07qAv4O4Adq5QpjcKVFVy2D/3xQeVg
+         0HQDXUcB4mySsqzVnEQdLPouLP9yc7yXwIZh0LRQcM6wQIZeEsaaCfD8bp/ijonCMqf3
+         AeQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714948121; x=1715552921;
+        d=1e100.net; s=20230601; t=1714948143; x=1715552943;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dOMv06zfp+EfFEk9ksXdm4XuRLTgcKDRnrVHao70bRc=;
-        b=HJXSnIIVEs52YLglaxmRPZ2fF98ugbjOQn+pR61MgeaoJgKFtQlQu9DPrTXBWn1ibh
-         XwYN4Iw67K4509M9TShnaBV+H/o4u8V8qhsZLntX5dlr8g29h3r1Y4Pz7U3/uuX/dp0n
-         aOcjZNErzvmuIwSJarvgh5IX6OZFB0QFH0XG2QhRBWspoMWbfWqD/Oxu8VmnNKe4kaF+
-         rObKNBVloFzDIjVPmLMGfa8ESIiskN95oug3B04g2DYd4kYP88PhXRjlxT38l/NXNlhM
-         yY15aTTYRdUk2FcWi53PsNCsxKkNfw5bmX4RlMAPxLipR7cJeccN/tYlR2mnns/nLclc
-         tPsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjYBo80LMsv0j8BAJ4r9BLxPZsQdat28fxXpmd0salditvdxmXJyEHFXsXroLXUfWLbxNvBjWjUPTlQKHHrnAxpddWpXC+7yYTgtkTP5hkbZjkyvBDME41N8Pjso1Of0IufcU8H4ZM1/VVoPw=
-X-Gm-Message-State: AOJu0YzHAK9QzXj5Y3oTRzr1GdppCrxXNMHjv8ZL20/n+rxZUIEEpDPr
-	A1gWs1gTW24kb5ZWN0Z+IY2XT9rCHbVQX2532kLRfPzkmz1I01dmDsWmJEVZ0BmUXx2dmXq9+u2
-	wXfzeyOr6QVyj6kprlqpSKpXz2BU=
-X-Google-Smtp-Source: AGHT+IFpBns3DJkAT9PiPBuCMSjmLQYVP6LQs/9/sJPI+idAdC4t6wp4kkoSe/2MeKmk4zePFseW29ptJ55KYe2TPIY=
-X-Received: by 2002:a05:6a21:3395:b0:1a7:5780:1f4b with SMTP id
- yy21-20020a056a21339500b001a757801f4bmr12340587pzb.24.1714948120941; Sun, 05
- May 2024 15:28:40 -0700 (PDT)
+        bh=eUQQleMvSVLVulCJRkbWmyly+60mD86dyOdlya7uQY4=;
+        b=QQ/BjkAPibh+PYkhbyoci3C5YRUG1tLt/2ncyVPVen5vEIK7oLbVkEOpX19vAeR5hY
+         gxWVpPNVCys5XXKcQej6B7FIesT16kR/y+yrtzlQNhKc3Yg52SmhdQq3tui6RMYtS59H
+         cSxXDSjLDzmSYoXPGyATmrx8+FLXcyXCEX8s4awEOYfAJLsX81Eqbb6J4EuHJzuZx8Pb
+         VHntMWpyKeH5KE36L+t6XQrwKDN24VEpovUsOGOdNcEyEkTXyXNshg6kD/yudMKIYAhZ
+         y7DjygcX+f1YnLTLrX9Nr5lsueu9DjP61kExLLKXh5GC2WLzFRWBiKMAg2K0ILWA6O9R
+         7xNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSfvPDU67pyoHUO4DI37MN57CoQUKGCoCcPNRYsAIQu+lHRjU6OVyuiRYgcao5wv4LAeSyrRnScMpqT4LAHciHdYQ+nHRc3VBvyyyu0rmQnt3DxChce1+TgPwbIUDl93qIpIm+kz9KX/b+YUI=
+X-Gm-Message-State: AOJu0YwP9bo5qfOt1K12G7+h1oD8o99rUEu32gYrC7/whzlzcmnqoDL+
+	yQNQqMU14kffCM8Dw4kT3YABVwjjSY9drSDjkbsQmn2NCNiukUaL8mEPDJEK0VhhKFrroxMmo2t
+	IPIIR0Yx6VIA3N/2RCCbCDVusEwo=
+X-Google-Smtp-Source: AGHT+IG7V8Yp60YHqPzYcVkmvmzJBA8elpk/TeoONqKz1nK8Sb2c3DB6W15/4bZHGcFEDFIVMRLFZV9ssKg0YXM9hV4=
+X-Received: by 2002:a17:90a:f289:b0:2b1:817d:982b with SMTP id
+ fs9-20020a17090af28900b002b1817d982bmr6831234pjb.14.1714948142788; Sun, 05
+ May 2024 15:29:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240402-arc-for-list-v4-0-54db6440a9a9@google.com>
-In-Reply-To: <20240402-arc-for-list-v4-0-54db6440a9a9@google.com>
+References: <20240403194321.88716-1-benno.lossin@proton.me>
+In-Reply-To: <20240403194321.88716-1-benno.lossin@proton.me>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 6 May 2024 00:27:17 +0200
-Message-ID: <CANiq72m6bgxtjax2not-8YVe88WFO6tLhqeK5wmYAzgVmKmh0A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] Arc methods for linked list
-To: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 6 May 2024 00:27:39 +0200
+Message-ID: <CANiq72k_2gY2X8bhDmjEax9aGP0yXJfEsN_Cp5ebJ6Mf1PwmFw@mail.gmail.com>
+Subject: Re: [PATCH] rust: init: change the generated name of guard variables
+To: Benno Lossin <benno.lossin@proton.me>
 Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
 	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 2, 2024 at 3:07=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
+On Wed, Apr 3, 2024 at 9:43=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
+> wrote:
 >
-> This patchset contains two useful methods for the Arc type. They will be
-> used in my Rust linked list implementation [1], which Rust Binder uses. S=
-ee
-> the Rust Binder RFC [2] for more information.
+> The initializers created by the `[try_][pin_]init!` macros utilize the
+> guard pattern to drop already initialized fields, when initialization
+> fails mid-way. These guards are generated to have the same name as the
+> field that they handle. To prevent namespacing issues when the field
+> name is the same as e.g. a constant name, add `__` as a prefix and
+> `_guard` as the suffix.
 >
-> Link: https://lore.kernel.org/rust-for-linux/20240402-linked-list-v1-0-b1=
-c59ba7ae3b@google.com/ [1]
-> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08=
-ba9197f637@google.com/ [2]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
-[ Replace `try_new` with `new` in example since we now have the new
-allocation APIs. - Miguel ]
+[ Added Benno's link and Gary's simplified example. - Miguel ]
 
 Applied to `rust-next` -- thanks everyone!
 
