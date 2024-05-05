@@ -1,117 +1,157 @@
-Return-Path: <linux-kernel+bounces-168938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461DA8BBFF4
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:58:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F20898BBFF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601511C20C3F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 09:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211201C20992
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6D579D8;
-	Sun,  5 May 2024 09:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DECB65D;
+	Sun,  5 May 2024 10:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Eyq36By/"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUaJVexN"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AC4B653;
-	Sun,  5 May 2024 09:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C5A567F;
+	Sun,  5 May 2024 09:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714903075; cv=none; b=cL6W1BOyO8KcG3FGpaa1TGBKAPSJ5BI58MtNUjisGVGHF/ni5GwyjAU7nLMTsdc64s/mJ36fH0IBYDRTQwCv+K410/DpZAR1jxo4xkTbJAI9Pe1aB9x5AxeAkD5DbmrvTY9i6i2pXuORD5ddUowipXf1V1b6I+l2FqzlOHOq0Io=
+	t=1714903200; cv=none; b=tYvjUIJRE7ZH5Z4hY8YT3NofRvrBMLljdHIVhzY6lhFE0v+2sPReFjrKaRPpUO89zQ58iOrUe6J7yz+2oUBPQWmVM1ozCcE1FcSzccBbBUfTS4PqOxup44md3Ws+I5XpIcLZvIOaTDKp+btGPoC3AAv8mnmuQc7lgWzdQn1c2/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714903075; c=relaxed/simple;
-	bh=UJ7kG3CgwYTS1JYqa38g1qK01f7K30E654IZFD1W8qU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HTUDdF1GniBYpGMrqE+bZH3zODrcGHi2A5VL39pVNRMFKlfzYsws3SmCuFrwOtvt7p3iSVNND6XqUQToJ0XLjpHvxxuMDUZFZZ/Pl5bhXb/3Ht08Yu0pwbDMhoibpSopxgYHlU7+/EttUGcUmP5HVxNXkbtysnH6rim9QARpC88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Eyq36By/; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 33B8040E01A1;
-	Sun,  5 May 2024 09:57:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7M5ZAwj60ufJ; Sun,  5 May 2024 09:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1714903067; bh=DvC/cXMibLd7eYUFXxsA0ZgtnUWc2cEbaj+9sCn8hF0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Eyq36By/gAW7uL3tcE1TkLwxdVaF6uPOALP8nMezsgqQAEd8UYSixhriMEIr4SxN5
-	 z97ArKJKC12XRUY1GV1d5qZiEaCq95VQrYY4iS7kYjaAufaO/VEnFsfWCWhy1Bxydl
-	 Mu0LOkc88DS9CWfOpAuW6gARm6QltdcrzPLerwKf0kRSHGFYXamdO9tWhdB9gCBWZd
-	 vqCWq2RZl8j0WzlG+m8O72U+EAQbfRZ+mWKjKLfaqICL0uIEwXXxjKepil6E+4+tn4
-	 5zt5G1K8r+Lwwmu+nt/+G64oCaSeChBUMfc7F85J1PjmJOYQKJ6RXY1/BEjGOgE1gp
-	 5m03Hu2gFhBd4Whktyy6YW1oDmenljbHpId9Aw2c1HoDX/DydpOnx+M34+Ai5Ygrll
-	 ohh15TwfDFw7hDUfgfcI8NJfGsEOs3uoSENo+g7+2SaSAkFLgQ2Q9tw61A5VArNsLe
-	 52umVw9aeOVXNSrR1+PTrRKixY2R2uKVihbn+jkHJXGFQf5uq7Z+YoNqXPTErC+8my
-	 23vf0tRptTK+5/Gb3C1Z2O2YWE95i9FH39KHF596HfU/lJGdl0WiN55kSp7HCwWpmA
-	 bgo2NyloQPPaA+8SIDkszWZK+CJ8/Zn24Hpqrm6Cl4jBChm7EUhP2dQhGHGNMkJdk7
-	 yT+EtHm4w/ara/VNDagOqFio=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EC79040E0187;
-	Sun,  5 May 2024 09:57:43 +0000 (UTC)
-Date: Sun, 5 May 2024 11:57:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC urgent for v6.9-rc7
-Message-ID: <20240505095735.GAZjdYD8m5ZAhNGd4_@fat_crate.local>
+	s=arc-20240116; t=1714903200; c=relaxed/simple;
+	bh=WjqcudRZG79zEdBc9lj8LC/nE2+uRAM7JJ+N4z0GaV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n5df/o9a2zIRnaLvg0ZNTVAZghF9E55+3F4tKyA44a8GFZz/JEotWFcL13OKk2e9OOeldM5/9F1i/01llSH6AwoGhNyr26uLxV2ha+kGAmC9oZGmWXw3nEAY3EPS3tGFvxtnGVFYMV4LWdU+pSfYihc/9R8ZOK1kuKxNgHEVUJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUaJVexN; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2df83058d48so12119761fa.1;
+        Sun, 05 May 2024 02:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714903197; x=1715507997; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BnOYLn7A3Dzrt0EMeWWO5zlZhCq8i4H9V/YCQDvuc9U=;
+        b=kUaJVexN5oB4NCaHv4s/Tjosl6zvvBBLhiG2D03ikY4Y2EZX8mMn/FG6q1xtR2hTuW
+         Y5hRzhJru0QeCu//+Gbf6s3XqtDd3Zh2cOAJycLAibn8Eh/lQ8X9pAA2atwpzMQuktRG
+         gm5LpEBQb4KQfUr4cj5UHozZ7sG68kM3P3csvqcyxl0rm9erkwgRDH7yh4//7NUkODez
+         cOQyOjJlBIPNBA/ZwN6wlk1hsGdkEmEd6/SRtXnuJk3Dskv/6mhD3EHRQbVsyEOOrz1W
+         He/+FRR2HaZrwQTtqDgarOaisEJ9fX7L2gtiIbqvmBAABDoODPR5PbUNNRcIk3r76Pmi
+         oM+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714903197; x=1715507997;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BnOYLn7A3Dzrt0EMeWWO5zlZhCq8i4H9V/YCQDvuc9U=;
+        b=I/uuULxz8v6J92jEWfKPlHhwpZ6c4j/u7fnoRES9t6phuBTmdI5Q9G0p3wOaipLLIZ
+         oWoPRCQJju753ZndNOgBtR6gNlc5bTNA1bBhWPUNzsv6muCszZA+LxgyCprw3Om9UO8I
+         /yy6pLRnZ732d0Tb6ekiItPLO3X/CKUH6wqAN6mmLM04XypglQ4m0GiyvmeXxBX8DDeV
+         9m1WUpA0eVIpazfee8wALLAvfki/jtC6Lr081HjgrSiB2MPXeorYXQFJ76eVNXOy4gvT
+         cck0BG7PWlldlzdA/NG8bD0CvWVRnC+nyeKJQ89Uu8EYU+i12YMngVdsYJs3CgJN+V2V
+         zm+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4GxvnRlf9QNy738czH0GHhP1IzE1iDr1RL/LI8yrKSf3zl8Uuc68LrjwUYo74HUFR9Uqc0+NALcX8JRkw31K+Ve/Hh3Gf2CF8No7P8iqnyMn9TI6+EWv1PDtFhhH3tHNnnklXSpyXnf2gbkqmClWonEYDX+ggGmSMZJ/cxa0vmtrwrtbE
+X-Gm-Message-State: AOJu0Yw9Plw+kC6812wo/WWe8tKv+jn5rbLTjo1PxCrkuO5u/hfYIvVu
+	GE/oZKlGPQ6WjUvAD+V5/GXc76K4tpgKVhXmb0MQ97kesn3D2E7INNB1CGC1rBERhg45kl52gRq
+	nHnzsw1p2Rso4B4z4JGuux/PzjY7U6eVNCJ3U+g==
+X-Google-Smtp-Source: AGHT+IHYw9oXLwIFgqrXTGRWT0MPYTc23B1WtRMrcOZBCOXwRFrQFAfLrcpHBGbFINGr30T8hYxstm0uO166Fa7dSbk=
+X-Received: by 2002:a19:8c50:0:b0:518:8d15:8810 with SMTP id
+ i16-20020a198c50000000b005188d158810mr4370888lfj.14.1714903196330; Sun, 05
+ May 2024 02:59:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240417134237.23888-1-bavishimithil@gmail.com>
+ <2e179356-425d-48cc-84db-0ea3e6203fba@kernel.org> <CAGzNGR=pvv67UJtNnkDUMhrpnPjNCCYEGeCaM7e_9=4G+Lcfgw@mail.gmail.com>
+ <676ce61c-e850-4046-ad0f-e3382be3fe0c@kernel.org>
+In-Reply-To: <676ce61c-e850-4046-ad0f-e3382be3fe0c@kernel.org>
+From: Mithil <bavishimithil@gmail.com>
+Date: Sun, 5 May 2024 15:29:44 +0530
+Message-ID: <CAGzNGR=rDrd6LyAC2yB4XUcxn=H1VdY8LQO99NEOBR1sLGGT0Q@mail.gmail.com>
+Subject: Re: [PATCH v4] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+> Or platform maintainers or whoever is interested in this hardware.
+Aight will do it in the next patch.
 
-please pull a couple of urgent EDAC Versal driver fixes for v6.9-rc7.
+> >> Not much improved here. You miss $ref and optionally constraints.
+> > Something like this
+> >     $ref: /schemas/types.yaml#/definitions/string
+> >     enum: [mcpdm]
+> > Didnt really understand the "optionally constraints" part.
+>
+> Sorry, you stripped out *entire* context. No clue what you refer to.
+Its regarding the ti,hwmods prop
+ti,hwmods:
+  description: Name of the hwmod associated to the McPDM, likely "mcpdm"
 
-Thx.
+> >> Missing constraints, so replace it with maxItems: 1
+> > Similar to how clock-names are handled?
+> >
+> >> List the items. I asked to open existing bindings and take a look how it
+> >> is there. Existing bindings would show you how we code this part.
+> >   clock-names:
+> >     items:
+> >       - const: pdmclk
+> >     minItems: 1
+> >     maxItems: 1
+> > Something like this?
+>
+> No. Do you see code like this anywhere? Please only list the items,
+> although without context impossible to judge.
+>
+Quick search on sources gave me
+Documentation/devicetree/bindings/usb/dwc2.yaml
+which I used as reference for this prop
+clock-names:
+  description: Must be "pdmclk"
 
----
+> >
+> >> Just one blank line.
+> > Removed.
+> >
+> >> That's wrong address. Old code does not have 0. Please do no change
+> >> parts of code without reason. If there is a reason, explain it in the
+> >> changelog.
+> >>
+> > The checks were giving a warning if 0 was not included hence, I'll put
+> > the real address if needed then.
+> >
+> >> Include header and use common defines for flags. Just like all other
+> >> recent bindings.
+> >>
+> > There's no defines for them, this is how it is in the dts :(
+>
+> It does not matter whether some particular DTS uses values or defines,
+> if these are the well known constants. Again, stripping entire context
+> and replying after 2-3 weeks does not help me to understand this at all.
+> Between these 2-3 weeks I got another 200 patches to review.
+>
+> Best regards,
+> Krzysztof
 
-The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
+compatible = "ti,omap4-mcpdm";
+reg = <0x40132000 0x7f>, /* MPU private access */
+        <0x49032000 0x7f>; /* L3 Interconnect */
+interrupts = <0 112 0x4>;
+Not really constants as they do change with platforms (omap4 vs 5 for
+example) but
+So do i just make up the constants for it then? Those just seem like
+magic numbers.
 
-  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.9_rc7
-
-for you to fetch changes up to 1a24733e80771d8eef656e515306a560519856a9:
-
-  EDAC/versal: Do not log total error counts (2024-04-25 18:08:05 +0200)
-
-----------------------------------------------------------------
-- Fix error logging and check user-supplied data when injecting an error
-  in the versal EDAC driver
-
-----------------------------------------------------------------
-Shubhrajyoti Datta (3):
-      EDAC/versal: Do not register for NOC errors
-      EDAC/versal: Check user-supplied data before injecting an error
-      EDAC/versal: Do not log total error counts
-
- drivers/edac/versal_edac.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+Mithil
 
