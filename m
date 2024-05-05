@@ -1,99 +1,94 @@
-Return-Path: <linux-kernel+bounces-169033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9786B8BC1B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:46:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBDE8BC1B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323D4281A7B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:46:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64242B20F55
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E913376E6;
-	Sun,  5 May 2024 15:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A0837708;
+	Sun,  5 May 2024 16:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cZDC+zYd"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvF+81tI"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D6A22611
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 15:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A3629413;
+	Sun,  5 May 2024 16:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714924004; cv=none; b=rmwKjJjIjEnlCEnaQyhokdkjRpvzW+8Gl/QtryD/DiudgNcAuVx35YZjXW2Nk3xbuE4vBojwGJ4TpZfkimVLDegbEvWQjrqbd2H+Ktq1uWoSjy4zAu+T3ghyFJ3ucImgGK5IHfsyXVU3sVJNk00MZ9zxt1J3hcBvMi8J8OhOmzY=
+	t=1714925112; cv=none; b=Gog30UAU5xL+NXzeRaT91k77ct+BIykgi0vs/wktCwzRR0bVd+1jz5FYw5eLAZPo7RDS6zq286L35oI2b8ZXH2+x5ZIEim1mxEfo15HIPhuz8QrvA+W3yYxthlyfqA0lhNP09jhd3h91WVNurcAgzPkCUjI8qItBcVRXgToAxcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714924004; c=relaxed/simple;
-	bh=oWz45KAsZZuOgIMJRc1/NZXuBkXIfJ4cn2zOApfqg1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V931y/9x8o9zHyCnnlZVQiKGkBoV6XGN64FCrjfUN+ef4Ht5SEujdTMl/OQdhf3vU0AchYrE5upYS/9iY1PwGv4OupiRmlO/IyMb9kKLItjHvQfvjflRnZ5IhT5x96sJ7q1K3oruOj8faOGkekBb4R7tzOFGp46JiUKe1+89caA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cZDC+zYd; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ec4dc64c6cso7858635ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 08:46:42 -0700 (PDT)
+	s=arc-20240116; t=1714925112; c=relaxed/simple;
+	bh=IjayBAJPbDerILH5aOgSqtqbYYyN4iTYWVaVyL0Teaw=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8yot2E9JIzoB1SlfsgA4M4rdFZ0Y65r7g8h4K53H+VQM6OS1nSwpl4u7bnJynBzqs3GUHaCY+Kp4F76AL2HDcatZqmQWfbFaaE+hjkm1qRCVT/JU0GUBOV/l3zQmpZyxW7SEfriEGZWLcQH7nfCGwdGebINmz4hEsQCNtIOctE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvF+81tI; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41b79451145so8605875e9.3;
+        Sun, 05 May 2024 09:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1714924002; x=1715528802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kaQDafqzubUAw9+/semCOIrnrfAwnNkCHgeJ4BoA7Vg=;
-        b=cZDC+zYdRlCNwGfVsiFYydWFkkpcY1XS7xpQOSxZogWcuQ3bSrSLiDkPXEPD2TjIs7
-         oO4SSE6k4pgAYhRniV4QplJb+/e2QIHlWO8Gu5rMQ+BoP01OaVkIdptfEXW+0wCxZ9Q+
-         ELAQ9MMz8AqngnFwTv8yYq+nAO5f70INe8wsNclefTcUEYu16St8e65KZaIShNeBhdpH
-         hpCM/RQTKZEkCeT7YxNBFZBtQeDvfTGHQweG5+1aWNHhCGj3nc/jaT9l6WW0suQ7REZD
-         KEAJ3P29thGxbUdJTmdbyGV8Dq+wWUq9MCL+nHpw9PHy4hXBUV3/9sgGVuTSP59i7g86
-         KAgA==
+        d=gmail.com; s=20230601; t=1714925109; x=1715529909; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPKvOC0kv57T+hZCAMC/aTMq0cAEumBEh1pmaz4DRJc=;
+        b=JvF+81tIGKkjp2KNPKPAqsgVdmaqtJ2wT9tPkwt/fnrrsaqBgULeJr4auoFb4p7b68
+         racl4Jed25pu3MGj25CKauQ8X8muxAhXUva150P0300fm5gAhlsdugjqdk63+RUx+0Td
+         +N63+EMn5mh6gwetWKYWKcQOQrBYvQXeC7uMWd3xgY6KB9qOJjsOe7Nsmb8R0709tFi9
+         eRRy78VlL4qBLgm50D5hLqEuC5zzTyJIpViUnNo0vsdVJSg9Fw8EbitQkB+UiJx0FC0e
+         MKPysz+3vuwAbeADBWqu0ASMWzotCArLVWUZqSptpD0oP5dwFPqyD2BKdThQMvNmLpTY
+         bDmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714924002; x=1715528802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1714925109; x=1715529909;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kaQDafqzubUAw9+/semCOIrnrfAwnNkCHgeJ4BoA7Vg=;
-        b=asGZk93U6WgGfagsXGOLld+H8ZjO44p1QohNdC09Qeq3yFEwqt8PbNcbzz+yIUfTJN
-         Ogf6z7OcYruUo5HEcw8E7XHz7U2FO6V0PkpcwsgmNkXZtH/5ydT26Q6hzE9jsKz4rhf9
-         Qlyo+xJlZiw1j/dPQLV2s9g0WJoC03M4ZCj2fZz3Nr6jU1oeAOmmrbDGjZSYNOcfkNoX
-         qhlnO8dwqwmv1MnLuwDQZbuNopNAnBYDnFCXOuJRsaRQdPjbw6+78+82H+BSzsL0yzbS
-         grnMckcYxzooJLwUf28DbX+4KzE7LwDZcmbmdirYj2EIuPihP/8JRi9eW2iySjxPy7fe
-         sBxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkRDTEr4yK7rQmV0mSSDyrPMxGZkwHOq2kzCWdjM9x6zn4g8wmAUvFaaDqXNf2Y/u31Ifj7f+SMoLJh2VhmLYdNKVVABJ4iOQW099+
-X-Gm-Message-State: AOJu0YwwftmeaXQX8F5UQvRbmEkt9uB01fzoCq2xjq3GNbgC1NJfzneq
-	yG5n4WeexW6Qflvpf2jy4kih/UfYIfcc8HSiD/hQqHxFsgmxZgjimBHlmQjQSdo=
-X-Google-Smtp-Source: AGHT+IGrseAAt2y4uabYtqTQP/jWY6so2eoXUE8to+FlmXTVhjcIh8I045DqPXerpxzSkWzODtLLfw==
-X-Received: by 2002:a17:902:bb17:b0:1eb:f263:d2fc with SMTP id im23-20020a170902bb1700b001ebf263d2fcmr8161144plb.54.1714924001967;
-        Sun, 05 May 2024 08:46:41 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id i10-20020a170902c94a00b001eb4a71cb58sm6639923pla.114.2024.05.05.08.46.40
+        bh=EPKvOC0kv57T+hZCAMC/aTMq0cAEumBEh1pmaz4DRJc=;
+        b=Jx6CW/20KuFWNM3i/Wl9s+IcL90pOEB7ge3aS4s38bzVlXpQJPiz0TCqNA3zENyRjD
+         xfHq/wc5f7ScmhfJvGPoKOFOV/mjfftiAf2UDDBp2A8snSC1TZzldIdOGEhm+XPx1IRH
+         vOjjGa2K3hy+ogwC5GMxcyJ/+zcaQTwVqo33+QWmPQP3pPw980/RBHnfpB3Oz5qaMwIS
+         speK6syQxlss8QFPeQ/Qj1PM2OoB3hG+/vOZtoPnhHINJs0+/LGQy0qNXXZ1+EiJze0X
+         6x+o8KgniZ8tpdB5PlQBapE1UxrvI0IsDln2s7dCxCR1BSB5S1QdScDqv4AE80hXpyuA
+         VUzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcV+RPYG1bX/KzLgXBEM/hR0g8VVn0NL911QBeGkNkd/Y3Q7ClpRH+rJMV7V20/1GEWCreToRjNTvg/M8RZBL7xZgJMeLvibGAc2JtKKrTQ6jCblI8VDz18DQ59f8LaDXLKeMebMFrDgB2L8qKWLDKEiRVx2582zkaQep29K/+h6Ne5JE=
+X-Gm-Message-State: AOJu0Yzc+SWWucvMUt4KnOM9VcTawbOqFYwEoDGTrFS6pgi+BvM40WqR
+	WbV4BaClfThrFx3vjQTbZ4z8Nioks0kOecJk5x6MYhRZiF+COFQ6
+X-Google-Smtp-Source: AGHT+IENo1CtEqRzVAmPZUVKx9nwiCJBYYww7/4t37T4vijPmdtR/tSw+WnXpMrEZtFD3qgB6YMD9Q==
+X-Received: by 2002:a05:600c:4ece:b0:41a:5d49:6143 with SMTP id g14-20020a05600c4ece00b0041a5d496143mr5948246wmq.12.1714925108913;
+        Sun, 05 May 2024 09:05:08 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id u17-20020a05600c19d100b0041bb11ff5a7sm16728012wmq.8.2024.05.05.09.05.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 08:46:41 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1s3e4V-00G2MH-FF;
-	Sun, 05 May 2024 12:46:39 -0300
-Date: Sun, 5 May 2024 12:46:39 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Nick Kossifidis <mick@ics.forth.gr>,
-	Sebastien Boeuf <seb@rivosinc.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux@rivosinc.com
-Subject: Re: [PATCH v3 7/7] iommu/riscv: Paging domain support
-Message-ID: <20240505154639.GD901876@ziepe.ca>
-References: <cover.1714494653.git.tjeznach@rivosinc.com>
- <b83f81c04d1f3885d860b1eec03761fe63a33183.1714494653.git.tjeznach@rivosinc.com>
- <20240501145621.GD1723318@ziepe.ca>
- <CAH2o1u63GjMnYrfa8W-c1hdp+TAA0R-FyxXM4dEiFF+KEGWwbA@mail.gmail.com>
- <20240503181059.GC901876@ziepe.ca>
- <CAH2o1u7av8zMucB2sKxBOZtd1eqEC4Qmgin=8VQ03pWbQdZUUg@mail.gmail.com>
+        Sun, 05 May 2024 09:05:08 -0700 (PDT)
+Message-ID: <6637ae34.050a0220.36c0b.6b25@mx.google.com>
+X-Google-Original-Message-ID: <ZjeuMq-4JPxpoiJi@Ansuel-XPS.>
+Date: Sun, 5 May 2024 18:05:06 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel =?iso-8859-1?Q?Gonz=E1lez?= Cabanelas <dgcbueu@gmail.com>
+Subject: Re: [PATCH 3/6] dt-bindings: mips: brcm: Document mips-cbr-reg
+ property
+References: <20240503135455.966-1-ansuelsmth@gmail.com>
+ <20240503135455.966-4-ansuelsmth@gmail.com>
+ <20240503-oncoming-taste-bab71375b67c@spud>
+ <66353c11.5d0a0220.bb93c.fb57@mx.google.com>
+ <20240503-dreamboat-satin-4e51e27643b1@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,92 +97,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH2o1u7av8zMucB2sKxBOZtd1eqEC4Qmgin=8VQ03pWbQdZUUg@mail.gmail.com>
+In-Reply-To: <20240503-dreamboat-satin-4e51e27643b1@spud>
 
-On Fri, May 03, 2024 at 12:44:09PM -0700, Tomasz Jeznach wrote:
-> > For detach I think yes:
-> >
-> >    Inv CPU                                   Detach CPU
-> >
-> >   write io_pte                               Update device descriptor
-> >   rcu_read_lock
-> >     list_for_each
-> >       <make invalidation command>            <make description inv cmd>
-> >       dma_wmb()                              dma_wmb()
-> >       <doorbell>                             <cmd doorbell>
-> >   rcu_read_unlock
-> >                                              list_del_rcu()
-> >                                              <wipe ASID>
-> >
-> > In this case I think we never miss an invalidation, the list_del is
-> > always after the HW has been fully fenced, so I don't think we can
-> > have any issue. Maybe a suprious invalidation if the ASID gets
-> > re-used, but who cares.
-> >
-> > Attach is different..
-> >
-> >    Inv CPU                                   Attach CPU
-> >
-> >   write io_pte
-> >   rcu_read_lock
-> >     list_for_each // empty
-> >                                              list_add_rcu()
-> >                                              Update device descriptor
-> >                                              <make description inv cmd>
-> >                                              dma_wmb()
-> >                                              <cmd doorbell>
-> >   rcu_read_unlock
-> >
-> > As above shows we can "miss" an invalidation. The issue is narrow, the
-> > io_pte could still be sitting in write buffers in "Inv CPU" and not
-> > yet globally visiable. "Attach CPU" could get the device descriptor
-> > installed in the IOMMU and the IOMMU could walk an io_pte that is in
-> > the old state. Effectively this is because there is no release/acquire
-> > barrier passing the io_pte store from the Inv CPU to the Attach CPU to the
-> > IOMMU.
-> >
-> > It seems like it should be solvable somehow:
-> >  1) Inv CPU releases all the io ptes
-> >  2) Attach CPU acquires the io ptes before updating the DDT
-> >  3) Inv CPU acquires the RCU list in such a way that either attach
-> >     CPU will acquire the io_pte or inv CPU will acquire the RCU list.
-> >  4) Either invalidation works or we release the new iopte to the SMMU
-> >     and don't need it.
-> >
-> > But #3 is a really weird statement. smb_mb() on both sides may do the
-> > job??
-> >
+On Fri, May 03, 2024 at 11:14:10PM +0100, Conor Dooley wrote:
+> On Fri, May 03, 2024 at 09:33:35PM +0200, Christian Marangi wrote:
+> > On Fri, May 03, 2024 at 05:21:41PM +0100, Conor Dooley wrote:
+> > > On Fri, May 03, 2024 at 03:54:03PM +0200, Christian Marangi wrote:
+> > > > Document mips-cbr-reg and mips-broken-cbr-reg property.
+> > > > 
+> > > > Some SoC suffer from a BUG where read_c0_brcm_cbr() might return 0
+> > > > if called from TP1. The CBR address is always the same on the SoC
+> > > > hence it can be provided in DT to handle broken case where bootloader
+> > > > doesn't init it or SMP where read_c0_brcm_cbr() returns 0 from TP1.
+> > > > 
+> > > > Usage of this property is to give an address also in these broken
+> > > > configuration/bootloader.
+> > > > 
+> > > > If the SoC/Bootloader ALWAYS provide a broken CBR address the property
+> > > > "mips-broken-cbr-reg" can be used to ignore any value already set in the
+> > > > registers for CBR address.
+> > > > 
+> > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > > ---
+> > > >  .../devicetree/bindings/mips/brcm/soc.yaml    | 32 +++++++++++++++++++
+> > > >  1 file changed, 32 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/mips/brcm/soc.yaml b/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+> > > > index 975945ca2888..12d394b7e011 100644
+> > > > --- a/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+> > > > +++ b/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+> > > > @@ -55,6 +55,21 @@ properties:
+> > > >           under the "cpus" node.
+> > > >          $ref: /schemas/types.yaml#/definitions/uint32
+> > > >  
+> > > > +      mips-broken-cbr-reg:
+> > > > +        description: Declare that the Bootloader init a broken
+> > > > +          CBR address in the registers and the one provided from
+> > > > +          DT should always be used.
+> > > 
+> > > Why is this property even needed, is it not sufficient to just add the
+> > > mips-cbr-reg property to the DT for SoCs that need it and use the
+> > > property when present?
+> > >
+> > 
+> > I described this in the cover letter.
 > 
-> Actual attach sequence is slightly different.
+> It needs to be described in /this patch/. Cover letters usually don't
+> end up in the commit history and I din't read them while looking for the
+> justification for a change :)
 > 
->  Inv CPU                            Attach CPU
+> > CBR might be set by the Bootloader
+> > and might be not 0. In that case the value is ignored as an extra
+> > precaution and the broken propetry is needed.
 > 
->  write io_pte
->   rcu_read_lock
->     list_for_each // empty
->                                     list_add_rcu()
->                                     IOTLB.INVAL(PSCID)
->                                     <make description inv cmd>
->                                     dma_wmb()
->                                     <cmd doorbell>
->  rcu_read_unlock
-> 
-> I've tried to cover this case with riscv_iommu_iotlb_inval() called
-> before the attached domain is visible to the device.
+> I dunno, if the bootloader is bad, you need to set a property anyway,
+> so why not set mips-cbr-reg?
+>
 
-That invalidation shouldn't do anything. If this is the first attach
-of a PSCID then the PSCID had better already be empty, it won't become
-non-empty until the DDT entry is installed.
+Florian any help here? Should I drop the additional property and set the
+value directly?
 
-And if it is the second attach then the Inv CPU is already taking care
-of things, no need to invalidate at all.
+One usecase we would use would be to set the CBR addr in the .dtsi and
+maybe for the specific broken device use the additional property in the
+dts.
 
-Regardless, there is still a theortical race that the IOPTEs haven't
-been made visible yet because there is still no synchronization with
-the CPU writing them.
+> > > > +        type: boolean
+> > > > +
+> > > > +      mips-cbr-reg:
+> > > 
+> > > Missing a vendor prefix.
+> > > 
+> > 
+> > I will change this to bmips,cbr-reg hope it's O.K.
+> > 
+> > > > +        description: Reference address of the CBR.
+> > > > +          Some SoC suffer from a BUG where read_c0_brcm_cbr() might
+> > > > +          return 0 if called from TP1. The CBR address is always the
+> > > > +          same on the SoC hence it can be provided in DT to handle
+> > > > +          broken case where bootloader doesn't init it or SMP where
+> > > 
+> > > s/init/initialise/ please :)
+> > > 
+> > 
+> > Sure!
+> > 
+> > > Thanks,
+> > > Conor.
+> > > 
+> > > > +          read_c0_brcm_cbr() returns 0 from TP1.
+> > > > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +
+> > > >      patternProperties:
+> > > >        "^cpu@[0-9]$":
+> > > >          type: object
+> > > > @@ -64,6 +79,23 @@ properties:
+> > > >      required:
+> > > >        - mips-hpt-frequency
+> > > >  
+> > > > +dependencies:
+> > > > +  mips-broken-cbr-reg: [ mips-cbr-reg ]
+> > > > +
+> > > > +if:
+> > > > +  properties:
+> > > > +    compatible:
+> > > > +      contains:
+> > > > +        anyOf:
+> > > > +          - const: brcm,bcm6358
+> > > > +          - const: brcm,bcm6368
+> > > > +
+> > > > +then:
+> > > > +  properties:
+> > > > +    cpus:
+> > > > +      required:
+> > > > +        - mips-cbr-reg
+> > > > +
+> > > >  additionalProperties: true
+> > > >  
+> > > >  examples:
+> > > > -- 
+> > > > 2.43.0
+> > > > 
+> > 
+> > 
+> > 
+> > -- 
+> > 	Ansuel
 
-So, I don't think this solves any problem. I belive you need the
-appropriate kind of CPU barrier here instead of an invalidation.
 
-Jason
+
+-- 
+	Ansuel
 
