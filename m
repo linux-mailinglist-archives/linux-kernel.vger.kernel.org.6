@@ -1,611 +1,153 @@
-Return-Path: <linux-kernel+bounces-169067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E9A8BC2A6
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:53:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228538BC292
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B6D281E42
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCB528184B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0496E619;
-	Sun,  5 May 2024 16:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ABA3FBB7;
+	Sun,  5 May 2024 16:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="cnmCwKrQ"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jh0m25dd"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE81381D1;
-	Sun,  5 May 2024 16:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9DF26AFC
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 16:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714927957; cv=none; b=n1/zeOEl1tcU4pe6IsbdWQ0PKB+Rt7vxkuK3pqJcy+VT6pK2iGTzvy/nji5oEV+sMIPsd5rWmgp3Br9eE0sRlUGZ1lEXx4Ofh+q65jj42mhXCs1fYWIGgmTYebgYqV6owhyw5FSrPdBe7ykBoW1Ego0wnQy+0F316GGzU7r1LaM=
+	t=1714927588; cv=none; b=cXxO/EUu/U2TndvjHHQhdkUuMsZcKHvdVnWkcb0nRM/Y1653FIWSgtYYsyh8GOtbHgnuuH3K4UdcNJA1M828NpCfs8T79vZdIgSl5ng94Z7e+Oh27eOlmhNXzVEyIGyJ9S+c6cp+EwGZjcjyNyAhUn7i7zpAxMc+1kcCsmyFs4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714927957; c=relaxed/simple;
-	bh=EcV8ZD+P458u487RgAGjM2Ou70RwyI3RjnlF1+xjQd4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hR7gJbSjdppO6NLiXgw8eY2AfHxwdx62Q6/4sehWxP5oxY5V6CwC6lCzFyAoNA0ZQiRgnHzRk3vqm0obedQ5YEZISguwVztKFiXa3LCZbTgS1Fpi0m0+KE7nar9PMzliR0xCshm6Jy5yFIQ+ftvYASFUqHcu1b/YY7rN8UXVC5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=cnmCwKrQ; arc=none smtp.client-ip=134.0.28.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout3.routing.net (Postfix) with ESMTP id 61DA060387;
-	Sun,  5 May 2024 16:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1714927563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WfQqspoj71+FxpGCEJ8ZWeoj7IsIk6d99GjgkZWahNc=;
-	b=cnmCwKrQSPXqzhZTZ4AxUhETYeALYGqYiPa+OjzvcawVDU6mz6v5VjOmXJxBi2hRprcBJQ
-	TJQ8Mv9GzKVRDm5pRQK4djzE+dpXjscgrCB+gdxBA0phVqD+VsyZwXPQWZLhuu3aJpCewy
-	si0y4NawJlveYc8HVz0cpyFVqwseTbM=
-Received: from frank-G5.. (fttx-pool-217.61.153.24.bambit.de [217.61.153.24])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 541473604D6;
-	Sun,  5 May 2024 16:46:02 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Eric Woudstra <ericwouds@gmail.com>,
-	Tianling Shen <cnsztl@immortalwrt.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Tianling Shen <cnsztl@gmail.com>
-Subject: [RFC v1 5/5] arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
-Date: Sun,  5 May 2024 18:45:49 +0200
-Message-Id: <20240505164549.65644-6-linux@fw-web.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240505164549.65644-1-linux@fw-web.de>
-References: <20240505164549.65644-1-linux@fw-web.de>
+	s=arc-20240116; t=1714927588; c=relaxed/simple;
+	bh=CLhNByDrSyy3KlkeokG4swipYxw1p9LkQ6WM4wj072Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ui1HaqqxnTt3u3uHJN6zWMlVxb/WyRtHrw665z5DlaaS4sm1g+KF7GaUqyHYM7iioNItGzjp8H4s3Qke3wxS3CzYZ7CXCsVJbaC4xGL/+6rFBJAY+qZrQJTD88VnVsPTQJkaaNAIX2e+gAJIvqj4y/4BOleMf6EEKdGXPWXCF/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jh0m25dd; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d8a2cbe1baso14355261fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 09:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1714927584; x=1715532384; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aYdtp3YANTth8Vi9S+yHKBJaPcPwhcLOgY9vMAI/QdY=;
+        b=Jh0m25ddNdP2B2AMRer6g2SsW4aWlFV4wvbACB4nQ9lt2L9qHjX30wG6XAmXRJqb9b
+         cnDKyodeqsI4AtByabWH8SPehOzuKTxu659W1aKn8zxvej/pit6U6xPJg7vIiRNCPxJT
+         Pmhip1fNYVkrmjHVLDxwcOUHdbIpck4jh1lVc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714927584; x=1715532384;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aYdtp3YANTth8Vi9S+yHKBJaPcPwhcLOgY9vMAI/QdY=;
+        b=P0UPvhZxOrJD9dhxSex97DYSPKF87b5VP4vQO5RhsfpFwxJi/FB86+bZtT138FDSHE
+         5c/GR037gjB+LuV3FFqvi+PkRskljCigm8tKrQ51rcj9GdPtpJ0tI/IWWeSEsnhbeszz
+         RwNLoMtuNrGgpvD5wU0uFDu1OH3WoIrmlarIvUWWZ8mUCWE6E1vR3Dn45/U1OZK2a4qW
+         u3qHHu8eGcOIUdvTaWhSBYAyfCWsZyl3/C+xRlb5Pj1g42SDg5P9S8JvDC5LlOdtpeBb
+         l6AUBN2rZ9j3dVDdUY+h2uxOt5dMAsJN5wyK6HSQhHQ/DyxMufBnlgrVpzw2qjHuJrpa
+         jvFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Da6jawq0oi5uPTmLC9ELlzAY1owPEPeABg88mhNGeAtlLycimwksH7MNeXE9Pyp2AoN9U5d5Mx1NH+2wr4cZ26atayFrdg4y5smk
+X-Gm-Message-State: AOJu0Yx3urAZnzVdULbLD5WIB02n2/ciLalFc5UNmKaFtfCMJRPJWceC
+	LFBjgHdIwm1JOZMaeuZAUDh74kEg/99wvhbmtMHLpmZ09aj3hB5gh1DWK8WuMTMo81Tb1cMHtXY
+	2Kv/1Bw==
+X-Google-Smtp-Source: AGHT+IH9iEJtWKYh3Qw/ZQsySKIQ9iveTfcgBDFx0ShrVtrkg4KMDJ7cRs2jaG73c7lUCQ1EVEyxDA==
+X-Received: by 2002:a05:6512:2024:b0:51d:1d42:3eef with SMTP id s4-20020a056512202400b0051d1d423eefmr6568478lfs.29.1714927584187;
+        Sun, 05 May 2024 09:46:24 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id rs21-20020a170907037500b00a59b259e2ffsm1471842ejb.93.2024.05.05.09.46.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 09:46:23 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a52223e004dso220762266b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 09:46:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6rJJBCaBodS10LFnYkI+y0UfMa/VrSJA9DdktU92Y+Q6Vl0UVHEY6zCU2hCSF7hZN1xQP5lkTbgpxrW6/0wozbNVS1JcbERglBe2u
+X-Received: by 2002:a17:907:3f9a:b0:a59:c5c2:a31c with SMTP id
+ hr26-20020a1709073f9a00b00a59c5c2a31cmr2077374ejc.33.1714927582181; Sun, 05
+ May 2024 09:46:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: e9e85cae-a0b8-45d3-a30a-40942efcc1a2
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com> <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+In-Reply-To: <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 5 May 2024 09:46:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+Message-ID: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Sun, 5 May 2024 at 03:50, Christian Brauner <brauner@kernel.org> wrote:
+>
+> And I agree with you that for some instances it's valid to take another
+> reference to a file from f_op->poll() but then they need to use
+> get_file_active() imho and simply handle the case where f_count is zero.
 
-Add device Tree for Bananapi R3 Mini SBC.
+I think this is
 
-Co-developed-by: Eric Woudstra <ericwouds@gmail.com>
-Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-Co-developed-by: Tianling Shen <cnsztl@gmail.com>
-Signed-off-by: Tianling Shen <cnsztl@gmail.com>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- arch/arm64/boot/dts/mediatek/Makefile         |   1 +
- .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 486 ++++++++++++++++++
- 2 files changed, 487 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+ (a) practically impossible to find (since most f_count updates are in
+various random helpers)
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 37b4ca3a87c9..1763b001ab06 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7981b-xiaomi-ax3000t.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-acelink-ew-7886cax.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-mini.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
-diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-new file mode 100644
-index 000000000000..c764b4dc4752
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-@@ -0,0 +1,486 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2021 MediaTek Inc.
-+ * Authors: Frank Wunderlich <frank-w@public-files.de>
-+ *          Eric Woudstra <ericwouds@gmail.com>
-+ *          Tianling Shen <cnsztl@immortalwrt.org>
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/mt65xx.h>
-+
-+#include "mt7986a.dtsi"
-+
-+/ {
-+	model = "Bananapi BPI-R3 Mini";
-+	chassis-type = "embedded";
-+	compatible = "bananapi,bpi-r3mini", "mediatek,mt7986a";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		ethernet0 = &gmac0;
-+		ethernet1 = &gmac1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	dcin: regulator-12vd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "12vd";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	fan: pwm-fan {
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		/* cooling level (0, 1, 2) - pwm inverted */
-+		cooling-levels = <255 96 0>;
-+		pwms = <&pwm 0 10000>;
-+		status = "okay";
-+	};
-+
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1.8vd";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		vin-supply = <&dcin>;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3.3vd";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		vin-supply = <&dcin>;
-+	};
-+
-+	usb_vbus: regulator-usb-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpios = <&pio 20 GPIO_ACTIVE_LOW>;
-+		regulator-boot-on;
-+	};
-+
-+	en8811_a: regulator-phy1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "phy1";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&pio 16 GPIO_ACTIVE_LOW>;
-+		regulator-always-on;
-+	};
-+
-+	en8811_b: regulator-phy2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "phy2";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&pio 17 GPIO_ACTIVE_LOW>;
-+		regulator-always-on;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		green_led: led-0 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_POWER;
-+			gpios = <&pio 19 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		reset-key {
-+			label = "reset";
-+			linux,code = <KEY_RESTART>;
-+			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+};
-+
-+&cpu_thermal {
-+	cooling-maps {
-+		map0 {
-+			/* active: set fan to cooling level 2 */
-+			cooling-device = <&fan 2 2>;
-+			trip = <&cpu_trip_active_high>;
-+		};
-+
-+		map1 {
-+			/* active: set fan to cooling level 1 */
-+			cooling-device = <&fan 1 1>;
-+			trip = <&cpu_trip_active_med>;
-+		};
-+
-+		map2 {
-+			/* active: set fan to cooling level 0 */
-+			cooling-device = <&fan 0 0>;
-+			trip = <&cpu_trip_active_low>;
-+		};
-+	};
-+};
-+
-+&crypto {
-+	status = "okay";
-+};
-+
-+&eth {
-+	status = "okay";
-+
-+	gmac0: mac@0 {
-+		compatible = "mediatek,eth-mac";
-+		reg = <0>;
-+		phy-mode = "2500base-x";
-+		phy-handle = <&phy14>;
-+	};
-+
-+	gmac1: mac@1 {
-+		compatible = "mediatek,eth-mac";
-+		reg = <1>;
-+		phy-mode = "2500base-x";
-+		phy-handle = <&phy15>;
-+	};
-+
-+	mdio: mdio-bus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default", "state_uhs";
-+	pinctrl-0 = <&mmc0_pins_default>;
-+	pinctrl-1 = <&mmc0_pins_uhs>;
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+};
-+
-+
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c_pins>;
-+	status = "okay";
-+
-+	/* MAC Address EEPROM */
-+	eeprom@50 {
-+		compatible = "atmel,24c02";
-+		reg = <0x50>;
-+
-+		address-width = <8>;
-+		pagesize = <8>;
-+		size = <256>;
-+	};
-+};
-+
-+&mdio {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	phy14: ethernet-phy@14 {
-+		reg = <14>;
-+		interrupts-extended = <&pio 48 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&pio 49 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <20000>;
-+		phy-mode = "2500base-x";
-+		full-duplex;
-+		pause;
-+		airoha,pnswap-rx;
-+
-+		leds {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			led@0 { /* en8811_a_gpio5 */
-+				reg = <0>;
-+				color = <LED_COLOR_ID_YELLOW>;
-+				function = LED_FUNCTION_LAN;
-+				function-enumerator = <1>;
-+				default-state = "keep";
-+				linux,default-trigger = "netdev";
-+			};
-+			led@1 { /* en8811_a_gpio4 */
-+				reg = <1>;
-+				color = <LED_COLOR_ID_GREEN>;
-+				function = LED_FUNCTION_LAN;
-+				function-enumerator = <2>;
-+				default-state = "keep";
-+				linux,default-trigger = "netdev";
-+			};
-+		};
-+	};
-+
-+	phy15: ethernet-phy@15 {
-+		reg = <15>;
-+		interrupts-extended = <&pio 46 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&pio 47 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <20000>;
-+		phy-mode = "2500base-x";
-+		full-duplex;
-+		pause;
-+		airoha,pnswap-rx;
-+
-+		leds {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			led@0 { /* en8811_b_gpio5 */
-+				reg = <0>;
-+				color = <LED_COLOR_ID_YELLOW>;
-+				function = LED_FUNCTION_WAN;
-+				function-enumerator = <1>;
-+				default-state = "keep";
-+				linux,default-trigger = "netdev";
-+			};
-+			led@1 { /* en8811_b_gpio4 */
-+				reg = <1>;
-+				color = <LED_COLOR_ID_GREEN>;
-+				function = LED_FUNCTION_WAN;
-+				function-enumerator = <2>;
-+				default-state = "keep";
-+				linux,default-trigger = "netdev";
-+			};
-+		};
-+	};
-+};
-+
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie_pins>;
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	status = "okay";
-+};
-+
-+&pio {
-+	i2c_pins: i2c-pins {
-+		mux {
-+			function = "i2c";
-+			groups = "i2c";
-+		};
-+	};
-+
-+	mmc0_pins_default: mmc0-pins {
-+		mux {
-+			function = "emmc";
-+			groups = "emmc_51";
-+		};
-+		conf-cmd-dat {
-+			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
-+			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
-+			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
-+			input-enable;
-+			drive-strength = <4>;
-+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-+		};
-+		conf-clk {
-+			pins = "EMMC_CK";
-+			drive-strength = <6>;
-+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-+		};
-+		conf-ds {
-+			pins = "EMMC_DSL";
-+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-+		};
-+		conf-rst {
-+			pins = "EMMC_RSTB";
-+			drive-strength = <4>;
-+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-+		};
-+	};
-+
-+	mmc0_pins_uhs: mmc0-uhs-pins {
-+		mux {
-+			function = "emmc";
-+			groups = "emmc_51";
-+		};
-+		conf-cmd-dat {
-+			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
-+			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
-+			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
-+			input-enable;
-+			drive-strength = <4>;
-+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-+		};
-+		conf-clk {
-+			pins = "EMMC_CK";
-+			drive-strength = <6>;
-+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-+		};
-+		conf-ds {
-+			pins = "EMMC_DSL";
-+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-+		};
-+		conf-rst {
-+			pins = "EMMC_RSTB";
-+			drive-strength = <4>;
-+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-+		};
-+	};
-+
-+	pcie_pins: pcie-pins {
-+		mux {
-+			function = "pcie";
-+			groups = "pcie_clk", "pcie_wake", "pcie_pereset";
-+		};
-+	};
-+
-+	pwm_pins: pwm-pins {
-+		mux {
-+			function = "pwm";
-+			groups = "pwm0";
-+		};
-+	};
-+
-+	spi_flash_pins: spi-flash-pins {
-+		mux {
-+			function = "spi";
-+			groups = "spi0", "spi0_wp_hold";
-+		};
-+	};
-+
-+	usb_ngff_pins: usb-ngff-pins {
-+		ngff-gnss-off-conf {
-+			pins = "GPIO_6";
-+			drive-strength = <8>;
-+			mediatek,pull-up-adv = <1>;
-+		};
-+		ngff-pe-rst-conf {
-+			pins = "GPIO_7";
-+			drive-strength = <8>;
-+			mediatek,pull-up-adv = <1>;
-+		};
-+		ngff-wwan-off-conf {
-+			pins = "GPIO_8";
-+			drive-strength = <8>;
-+			mediatek,pull-up-adv = <1>;
-+		};
-+		ngff-pwr-off-conf {
-+			pins = "GPIO_9";
-+			drive-strength = <8>;
-+			mediatek,pull-up-adv = <1>;
-+		};
-+		ngff-rst-conf {
-+			pins = "GPIO_10";
-+			drive-strength = <8>;
-+			mediatek,pull-up-adv = <1>;
-+		};
-+		ngff-coex-conf {
-+			pins = "SPI1_CS";
-+			drive-strength = <8>;
-+			mediatek,pull-up-adv = <1>;
-+		};
-+	};
-+
-+	wf_2g_5g_pins: wf-2g-5g-pins {
-+		mux {
-+			function = "wifi";
-+			groups = "wf_2g", "wf_5g";
-+		};
-+		conf {
-+			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
-+			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
-+			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
-+			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
-+			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
-+			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
-+			       "WF1_TOP_CLK", "WF1_TOP_DATA";
-+			drive-strength = <4>;
-+		};
-+	};
-+
-+	wf_dbdc_pins: wf-dbdc-pins {
-+		mux {
-+			function = "wifi";
-+			groups = "wf_dbdc";
-+		};
-+		conf {
-+			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
-+			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
-+			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
-+			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
-+			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
-+			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
-+			       "WF1_TOP_CLK", "WF1_TOP_DATA";
-+			drive-strength = <4>;
-+		};
-+	};
-+
-+	wf_led_pins: wf-led-pins {
-+		mux {
-+			function = "led";
-+			groups = "wifi_led";
-+		};
-+	};
-+};
-+
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pins>;
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_flash_pins>;
-+	status = "okay";
-+};
-+
-+&ssusb {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usb_ngff_pins>;
-+	vusb33-supply = <&reg_3p3v>;
-+	vbus-supply = <&usb_vbus>;
-+	status = "okay";
-+};
-+
-+&trng {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&usb_phy {
-+	status = "okay";
-+};
-+
-+&watchdog {
-+	status = "okay";
-+};
-+
-+&wifi {
-+	status = "okay";
-+	pinctrl-names = "default", "dbdc";
-+	pinctrl-0 = <&wf_2g_5g_pins>, <&wf_led_pins>;
-+	pinctrl-1 = <&wf_dbdc_pins>, <&wf_led_pins>;
-+
-+	led {
-+		led-active-low;
-+	};
-+};
-+
--- 
-2.34.1
+ (b) not tenable in the first place, since *EVERYBODY* does a f_count
+update as part of the bog-standard pollwait
 
+So (b) means that the notion of "warn if somebody increments f_count
+from zero" is broken to begin with - but it's doubly broken because it
+wouldn't find anything *anyway*, since this never happens in any
+normal situation.
+
+And (a) means that any non-automatic finding of this is practically impossible.
+
+> And we need to document that in Documentation/filesystems/file.rst or
+> locking.rst.
+
+WHY?
+
+Why cannot you and Al just admit that the problem is in epoll. Always
+has been, always will be.
+
+The fact is, it's not dma-buf that is violating any rules. It's epoll.
+It's calling out to random driver functions with a file pointer that
+is no longer valid.
+
+It really is that simple.
+
+I don't see why you are arguing for "unknown number of drivers - we
+know at least *one* - have to be fixed for a bug that is in epoll".
+
+If it was *easy* to fix, and if it was *easy* to validate, then  sure.
+But that just isn't the case.
+
+In contrast, in epoll it's *trivial* to fix the one case where it does
+a VFS call-out, and just say "you have to follow the rules".
+
+So explain to me again why you want to mess up the driver interface
+and everybody who has a '.poll()' function, and not just fix the ONE
+clearly buggy piece of code.
+
+Because dammit,. epoll is clearly buggy. It's not enough to say "the
+file allocation isn't going away", and claim that that means that it's
+not buggy - when the file IS NO LONGER VALID!
+
+                      Linus
 
