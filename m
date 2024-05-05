@@ -1,176 +1,124 @@
-Return-Path: <linux-kernel+bounces-169123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABB48BC36F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:09:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC958BC372
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBCF2821B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:09:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37922B216D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265CC6EB51;
-	Sun,  5 May 2024 20:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2846EB60;
+	Sun,  5 May 2024 20:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M0/5+J/R"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="psmaQEc7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ABF22611
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 20:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BDD66B5E;
+	Sun,  5 May 2024 20:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714939739; cv=none; b=piHJitk1awgPfrnDSiUbjcI5gXHv2PoE3ciPVFJYEQV+Sg/tsUqSq5TrjpZAJVHZMzDfkkrCj/76EmtBFvl987OklPSzJ9n+k9bp+rPNh2sMSM9qaitWfAP0meGcIlqbjfodAnwyzsJSSk4KPQ6IFoFonR4F+0v0QAFrdLKCE8M=
+	t=1714939782; cv=none; b=MjqNax3ogeo4UoMjALs8UEgc4/zl0k6jGD0pcp02BgIBdp04xDO9amVyYZDkSd8Upbrir09RXTA8UHsE1SiQM/5UWtErJvZPwGpag7YFId/ju2hfpdInF6xRkdWaCGxMsCUwCuHySWbNyzCIxr+pbgimcBoQM6W7FKiFExX2iZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714939739; c=relaxed/simple;
-	bh=wWs9rnVSNPVg9flRopfXNHpvrjJqY4eLW8+/eL6ffhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nebOfSiu/mGbcfLviMOViv1JbQ2exccuHmCdKiVzHVuPrCKqu0dEMNQ9SIpYLkup5z1rW8FzguztPXALF6V8M2dnlkezmpIoK/e6oF6pB+QLqz0ABE9IZ4yb+jAC78or/YzRSqCBcHRWPdP/aNTaOJ9T5qycaAiiHzDXFURpshA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=M0/5+J/R; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59ad344f7dso195146166b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 13:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1714939735; x=1715544535; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHEpVJVmF2eGrGo8U8tgs6RR34ElBujEmi1VC80nQxg=;
-        b=M0/5+J/RYH984EJ9cayE3N7mzUbx0nVaO9CJ2Ku52bXfoF1ATmmyuHnVFML1Z+wjiR
-         qgrlDmIin6sNR6lgqxs2vjjN3YcnrUfNLD+ujG1vbZw275Tw2uzUrx4N5imOJocxdvv8
-         q4Ju8BzdmVOliOzhwMCPQFbDad4cOuBq01iUo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714939735; x=1715544535;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EHEpVJVmF2eGrGo8U8tgs6RR34ElBujEmi1VC80nQxg=;
-        b=Y2vnzWxK17mtRNa0266FjYRRbrKiRDItVFnQbAA/RPbzUg77oVjsDIpJYnDpB5W+xX
-         O6CbbfLpW+mZVGLJ9QZ/1Y4wyL5UsR+w3NuKYdm2uzR3uq0jvmx4/jtpH8g+zllNb+my
-         u07mAKhxDc17TX9HSL4QV9buLj2yFSNJZxqkuITlr5Mi+3POtpRO57Ho10pLQ9bgqeHO
-         s21JCm4S9W9fxcaIciAbC79n+w2r8XyiaKv3c7OMBggQltwrrSicwm9h28RA7jzs+Jdu
-         I51Xkoj6q4yeZa+G8LTHhg/+GiH4LE2TaIsqiBL1axGlPNPVPBgJuNgM4RjbFrRXEHMQ
-         LR3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVboFw25JFLCXsyJGkJqiZ9x3mL501lusz949bsGI9w5v0E62V1daytH99sgWMDXBTux6KxNrXmKVZuCzmIeHVs6Vu7+3PxRq10gmd
-X-Gm-Message-State: AOJu0YwINuV74S1cyK7qTcFlb+w5TimZNDzK9GJlg3ahEo6ZuvnsoeQ+
-	ys6TQeJUjocU+aalHkClNq8wvjsDrBC4EW2PE39D2jjnm+RfLrMNqvsEXzwvN5W84spm/BKowia
-	Rdp8Txw==
-X-Google-Smtp-Source: AGHT+IGvKu9gC8Uld+PZup9YumA8JmjqGWF0aG2ALU5/IAK1fTwnmr2b3A2zGmchY3uBvXBVpa7BhQ==
-X-Received: by 2002:a17:907:20b4:b0:a59:8786:3850 with SMTP id pw20-20020a17090720b400b00a5987863850mr4874270ejb.72.1714939735107;
-        Sun, 05 May 2024 13:08:55 -0700 (PDT)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
-        by smtp.gmail.com with ESMTPSA id rn9-20020a170906d92900b00a59a229564fsm2450882ejb.108.2024.05.05.13.08.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 May 2024 13:08:54 -0700 (PDT)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-41ba0bb5837so8724605e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 13:08:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgmxkdRVJjdaKoUi3cH1Zw5aL7nC5TKFCtGB/sXv0LtDscRjYXpy9WsgCvRNQbO4cR8mhlNhLHb0prCwV1+VrW8RrN5kZEIpTNgKLV
-X-Received: by 2002:a05:6512:202c:b0:518:c057:6ab1 with SMTP id
- s12-20020a056512202c00b00518c0576ab1mr4629192lfs.66.1714939404009; Sun, 05
- May 2024 13:03:24 -0700 (PDT)
+	s=arc-20240116; t=1714939782; c=relaxed/simple;
+	bh=l0Is6svymKjamH4uZS0/HWAPWOtqAeuFISJUmCiMhqg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=XV8wXfTNLUcLC5kfhbKYOrSGi2UQRAqWSurGnBKhcnDn3gzv0b6u7EZvoaCQxWQzTzo94R2UKWTmmEwfG11pIetqGA1NnOZ8upvDP7+wdgflXjlAWE3ocwEOHo6xxRCmyL5kDeo62PdcR1gNiLnKbXEzaDyvuXXaXwgoJTbvLLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=psmaQEc7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 445Jr06L007852;
+	Sun, 5 May 2024 20:09:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=dhI
+	dUAuP7SIFps+tLvU0oNcUTcpH05sfx3iIi6J+ck8=; b=psmaQEc7B6frIL0kfKL
+	dvlIOCpSKTJBce8eljit4k6nxXXWS0eNqKQ76iFVhcsS4pNQYPYXhqZaiIr8Ec7m
+	rpl0OeJJ/P8k6UgBXEEtNk6wkSL5OL1mudziQ8V5ckSAt/s24BHRIpcXziJUtMo+
+	2q+mYfeijXnXXYNoSF/IrkaTbH55ju9l0hPM3A+l4xO0Yj0U2exoGnGfoCtYAso5
+	YmiVbadbg/m2uTNbBJo0PdKtRFnm7nyLtNTnucrF2JCs2kAJW2AJ45Y/ndZnQUSe
+	NhdBejozC1gsB3DwDTpRNQM1qENLe6i7sxxhWPXlWJPsUwoOz4GBnvY8WKeSuBOp
+	4eQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwead21kc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 May 2024 20:09:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 445K9WjD020850
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 5 May 2024 20:09:32 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
+ 13:09:32 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 5 May 2024 13:09:31 -0700
+Subject: [PATCH] net: dccp: Fix ccid2_rtt_estimator() kernel-doc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com> <20240505194603.GH2118490@ZenIV>
-In-Reply-To: <20240505194603.GH2118490@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 5 May 2024 13:03:07 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
-Message-ID: <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, keescook@chromium.org, axboe@kernel.dk, 
-	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240505-ccid2_rtt_estimator-kdoc-v1-1-09231fcb9145@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHrnN2YC/x3M0QrCMAxA0V8ZeTZQ6+bEXxEZWZu6IGslKSKM/
+ bvVx/Nw7wbGKmxw7TZQfotJyQ3HQwdhofxglNgM3vneDW7AECT6SWud2KqsVIviM5aA46k/p4v
+ nkVKElr+Uk3z+69u9eSZjnJVyWH7Dlayywr5/AY1jhrWDAAAA
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>
+CC: <dccp@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3Fggkg7K3SlZPCBekCTKWIyMZGO0QxY5
+X-Proofpoint-ORIG-GUID: 3Fggkg7K3SlZPCBekCTKWIyMZGO0QxY5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-05_14,2024-05-03_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=830 bulkscore=0 suspectscore=0 clxscore=1011 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405050086
 
-On Sun, 5 May 2024 at 12:46, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> I've no problem with having epoll grab a reference, but if we make that
-> a universal requirement ->poll() instances can rely upon,
+make C=1 reports:
 
-Al, we're note "making that a requirement".
+warning: Function parameter or struct member 'mrtt' not described in 'ccid2_rtt_estimator'
 
-It always has been.
+So document the 'mrtt' parameter.
 
-Otgherwise, the docs should have shouted out DAMN LOUDLY that you
-can't rely on all the normal refcounting of 'struct file' THAT EVERY
-SINGLE NORMAL VFS FUNCTION CAN.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ net/dccp/ccids/ccid2.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Lookie herte: epoll is unimportant and irrelevant garbage compared to
-something fundamental like "read()", and what does read() do?
+diff --git a/net/dccp/ccids/ccid2.c b/net/dccp/ccids/ccid2.c
+index 4d9823d6dced..d6b30700af67 100644
+--- a/net/dccp/ccids/ccid2.c
++++ b/net/dccp/ccids/ccid2.c
+@@ -353,6 +353,7 @@ static void ccid2_hc_tx_packet_sent(struct sock *sk, unsigned int len)
+ /**
+  * ccid2_rtt_estimator - Sample RTT and compute RTO using RFC2988 algorithm
+  * @sk: socket to perform estimator on
++ * @mrtt: measured RTT
+  *
+  * This code is almost identical with TCP's tcp_rtt_estimator(), since
+  * - it has a higher sampling frequency (recommended by RFC 1323),
 
-It does this:
+---
+base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
+change-id: 20240505-ccid2_rtt_estimator-kdoc-7346f82e7afd
 
-        struct fd f = fdget_pos(fd);
-
-        if (f.file) {
-                ...
-
-which is being DAMN CAREFUL to make sure that the file has the proper
-refcounts before it then calls "vfs_read()". There's a lot of very
-careful and subtle code in fdget_pos() to make this all proper, and
-that even if the file is closed by another thread concurrently, we
-*always* have a refcount to it, and it's always live over the whole
-'vfs_read()' sequence.
-
-'vfs_poll()' is NOT DIFFERENT in this regard. Not at all.
-
-Now, you have two choices that are intellectually honest:
-
- - admit that epoll() - which is a hell of a lot less important -
-should spend a small fraction of that effort on making its vfs_poll()
-use sane
-
- - say that all this fdget_pos() care is uncalled for in the read()
-path, and we should make all the filesystem .read() functions be aware
-that the file pointer they get may be garbage, and they should use
-get_file_active() to make sure every 'struct file *' use they have is
-safe?
-
-because if your choice is that "epoll can do whatever the f*&k it
-wants", then it's in clear violation of all the effort we go to in a
-MUCH MORE IMPORTANT code path, and is clearly not consistent or
-logical.
-
-Neither you nor Christian have explained why you think it's ok for
-that epoll() garbage to magically violate all our regular rules.
-
-Your claim that those regular rules are some new conditional
-requirement that we'd be imposing. NO. They are the rules that
-*anybody* who gets a 'struct file *' pointer should always be able to
-rely on by default: it's damn well a ref-counted thing, and the caller
-holds the refcount.
-
-The exceptional case is exactly the other way around: if you do random
-crap with unrefcounted poitners, it's *your* problem, and *you* are
-the one who has to be careful. Not some unrelated poor driver that
-didn't know about your f*&k-up.
-
-Dammit, epoll is CLEARLY BUGGY. It's passing off random kernel
-pointers without holding a refcount to them. THAT'S A BUG.
-
-And fixing that bug is *not* somehow changing existing rules as you
-are trying to claim. No. It's just fixing a bug.
-
-So stop claiming that this is some "new requirement". It is absolutely
-nothing of the sort. epoll() actively MISUSED file pointer, because
-file pointers are fundamentally refcounted (as are pretty much all
-sane kernel interfaces).
-
-                Linus
 
