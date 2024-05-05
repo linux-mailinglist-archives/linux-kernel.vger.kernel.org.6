@@ -1,78 +1,115 @@
-Return-Path: <linux-kernel+bounces-169116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB2B8BC34C
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 335EE8BC358
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD0F1C20FE5
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:44:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 644291C2120B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26A06EB7E;
-	Sun,  5 May 2024 19:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB5774E37;
+	Sun,  5 May 2024 19:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdoyYM3D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4iEXlVw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81C66E611
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 19:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4766F06A;
+	Sun,  5 May 2024 19:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714938237; cv=none; b=Gv9SMUvTezr6zQH/51zg28hBV9DoU/G7e+YPOxfLWKz3PEozrD6Yr5eYek6GdMTMk1esS5CbKNtpy6ZvgDGIVRv41JqPZlyGd/uf+h2neKX494MXjhkyyTbqqglMJoK8oKU6ffvW8cIxqZLPnskxmETudCzc5BxzmNFfjKpFF4I=
+	t=1714938378; cv=none; b=qycwqr+u2IZYFJX2R0c6D+2wd7dICvVlqarPg/CtDW6tzof0rPUlmjbSvvBfaEtnQrutiTygff8R1sFXXOy3kekBzous67Mtl93IWLcumd/UGGo6r4vF30jWF9YMuCBVKivZvhVTPJ/R7k1t2EYlIiMQOjDsanJwECbQG3mQn+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714938237; c=relaxed/simple;
-	bh=KyuBQsAa5lBeTTYE4+PFwcnjamOstKxEe6m7tOytGQA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jQXGpcsHKUNtZttfUbIYwJcZdtDIpcz5Bl+uzxnTJw2yQCud+hGLJLKlH19JODqdyB/073UMSTF5xC6y58tPUIn6c8jmSkpGXMIzZ7Jc1A22eubFjF9p+wI7et0tWyWzPHkxjvYSq98Z/d645PqzSEjOM13UHfpaTB7br7s6ZJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdoyYM3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CAA73C116B1;
-	Sun,  5 May 2024 19:43:56 +0000 (UTC)
+	s=arc-20240116; t=1714938378; c=relaxed/simple;
+	bh=0xWVR+hZm1hbLhnVuDoCeCqqADDcUffOxV9wWM5nJTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FPC7gUBe4DuoBZwMtD4eBrpAIUrlUP8y+stme7myudLiJ1xTmS0B8ZBCsr9TNpmPVOV9uCDdcWi0SvtjzkUD2bCRxh8hC741Efa3r5kGIZ23nG32xi9nTdb2H7oLXqxBa+W98qmvLAW+wa85+U24bpqxmufLBeIx/bLDVb7sCNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4iEXlVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D52C116B1;
+	Sun,  5 May 2024 19:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714938236;
-	bh=KyuBQsAa5lBeTTYE4+PFwcnjamOstKxEe6m7tOytGQA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=RdoyYM3DgMeJ+z0fzHP5l1uTHve4uFTjZjKQA9OqXhkRRReBqQVBh0md7NehiFi8z
-	 DyBlYuZYTz2j9Z98zSHXRR3/vWtf+fcMuXGuuIuWuhAfI6ujah3iW7g4xT809RW601
-	 eKAk59bcPXJoX95zCC5QszsnTVUz3PdHuZ2+F6R8A5jeGyeEpXA/z9kIt2txR5KHIz
-	 kjoGyDTnuNy/zkzSFNoi7AlOenOOzH5t7518mKBQo6ZTRtHE/FiLk2BljF6Fyssl+Y
-	 +qGr7zGj9cXHjdpNHmFF6itb93P235ifHIEz/y45se2oq8TaFq2Ovn3KowR+oBTfIf
-	 BQ3TT+Ni7ZMfA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1A2DC4339F;
-	Sun,  5 May 2024 19:43:56 +0000 (UTC)
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.9-4 tag
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <87fruxumnu.fsf@mail.lhotse>
-References: <87fruxumnu.fsf@mail.lhotse>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87fruxumnu.fsf@mail.lhotse>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.9-4
-X-PR-Tracked-Commit-Id: 49a940dbdc3107fecd5e6d3063dc07128177e058
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ef095257750bb434959648331e48e44705d802e9
-Message-Id: <171493823678.6787.2479407685189394456.pr-tracker-bot@kernel.org>
-Date: Sun, 05 May 2024 19:43:56 +0000
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, gbatra@linux.ibm.com, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, nayna@linux.ibm.com, ajd@linux.ibm.com
+	s=k20201202; t=1714938378;
+	bh=0xWVR+hZm1hbLhnVuDoCeCqqADDcUffOxV9wWM5nJTQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=E4iEXlVwv03Q1LXj60ldMa3YKet2nlH76YkVFc6V/+H3oTyRcrtr/hnRfT4zgZtUn
+	 PKfGNdrVT/CDB9d63NfQAMPH/ZARA8WyU5wSqWm9r1S1TyBPpBg1njo4jNvwEUf71A
+	 MUKNRGjwhWP4hxiM/x8/vRKT+FMhCH+61w1ktYgp6yZFAlKuABTmEeV52YNJC7Idn9
+	 Xdcp4dPyJchJ9EolLB5C0HK/RK9gsAS62/txGmeFN/dvX+4UWUFFX9gQ/fWRPOO1Kq
+	 yJxkRtbsWW5MN3cRYbzb1uFpYELxY+59/qO91D5lDlskT2dWReVNfK8ch7zd5gINQU
+	 SFdQT2E8h8fcg==
+Date: Sun, 5 May 2024 20:46:02 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Alisa-Dariana Roman <alisadariana@gmail.com>,
+ michael.hennerich@analog.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alexandru.tachici@analog.com, lars@metafoo.de, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, andy@kernel.org,
+ nuno.sa@analog.com, marcelo.schmitt@analog.com, bigunclemax@gmail.com,
+ dlechner@baylibre.com, okan.sahin@analog.com, fr0st61te@gmail.com,
+ alisa.roman@analog.com, marcus.folkesson@gmail.com, schnelle@linux.ibm.com,
+ liambeguin@gmail.com
+Subject: Re: [PATCH v7 5/6] dt-bindings: iio: adc: ad7192: Add AD7194
+ support
+Message-ID: <20240505204602.5d4cbfa0@jic23-huawei>
+In-Reply-To: <20240430-winnings-wrongness-32328ccfe3b5@spud>
+References: <20240430162946.589423-1-alisa.roman@analog.com>
+	<20240430162946.589423-6-alisa.roman@analog.com>
+	<20240430-winnings-wrongness-32328ccfe3b5@spud>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sun, 05 May 2024 10:28:53 +1000:
+On Tue, 30 Apr 2024 18:21:01 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.9-4
+> On Tue, Apr 30, 2024 at 07:29:45PM +0300, Alisa-Dariana Roman wrote:
+> > +      diff-channels:
+> > +        description:
+> > +          Both inputs can be connected to pins AIN1 to AIN16 by choosing the
+> > +          appropriate value from 1 to 16.
+> > +        items:
+> > +          minimum: 1
+> > +          maximum: 16
+> > +
+> > +      single-channel:
+> > +        description:
+> > +          Positive input can be connected to pins AIN1 to AIN16 by choosing the
+> > +          appropriate value from 1 to 16. Negative input is connected to AINCOM.
+> > +        items:
+> > +          minimum: 1
+> > +          maximum: 16  
+> 
+> Up to 16 differential channels and 16 single-ended channels, but only 16
+> pins? Would the number of differential channels not max out at 8?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ef095257750bb434959648331e48e44705d802e9
+May not really be limited to 16 differential. Many chips use general purpose
+muxes on both sides so you can do all combinations. In practice that's normally
+pointless.
 
-Thank you!
+A more useful case is to do all but one channel as positive inputs and the remaining
+channel as the negative for those 15 differential channels.
+This is effectively the same as doing pseudo differential channels, but
+on more flexible hardware.  This is in contrast to a device that only supports
+pseudo differential where there is a special pin for the negative
+(this device has that as well as full muxes on the other 16 lines).
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Having said all that.  The ad7194 datasheet says 8 differential channels..
+I have no idea why though... Maybe something to do with the mux switching?
+Or maybe assumption is that if you want to do pseudo differential you'll use
+the pseudo differential mode rather than wasting hardware?
+
+Jonathan
+
+
 
