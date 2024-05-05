@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-169024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AC58BC193
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:03:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5EC8BC195
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC1B91C20976
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:03:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 633BAB20D89
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3C9364A4;
-	Sun,  5 May 2024 15:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D9C37714;
+	Sun,  5 May 2024 15:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzXH59Z/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsPiD4mE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FAF1D555;
-	Sun,  5 May 2024 15:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192EC2C6A3;
+	Sun,  5 May 2024 15:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714921389; cv=none; b=fcq8DpeFYBB6V+f2+DQ/JzHWEWT6N4wYeWDfxyV6OyJTVfdtjPjm3JNfV+F3GLh5FxuzZEskIKiaFgy3YBpjcAon9yGPkp2AHV+RTM9HkrH+7HK8shVXsuXwWojllqvB0tC2WrJD20XqCQ+2CDe2Nz+MCpRlxB/5U3sqes0X76c=
+	t=1714921396; cv=none; b=VX2RsZbe+7VQJw0cgiU5vjyleWLeIVZv0hGMRqzkoRLBCzhbN4iFA3I7H11yj7CNjogpaBJlg/MlvTiaTE11eH2AK0tq9c36aUIx1y18XhRTzFZCAkFyP8ZwWKM5JCkekQW+bm8lDJV4soOtM6pthQh2wm5mLbohPbpeOf9jiN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714921389; c=relaxed/simple;
-	bh=cDCbqGq4PYQvTiMigUTFtTPKjHRT31+tOJuaLyRVt6Y=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kEW04DxGMKeakGU0wkqIo5dlPejIMJOhnc647U+u7qJSeRiKwpqFrrTO/y3otsqT4aoMUKnvxNk8tvtCRhUxx5dgunkxhbRD1UDubCkRtjM/vMvr/gJy4UsEQdr0hjJroM2nMh4PVhiznF2mDA/XzBKVBeVxvNZbwU2ikA0GxjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzXH59Z/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CD4C113CC;
-	Sun,  5 May 2024 15:03:06 +0000 (UTC)
+	s=arc-20240116; t=1714921396; c=relaxed/simple;
+	bh=oPE8LDuukrepCZDNBL3OUxIxwDD30ihJBAhHLx9X8t4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=exuTnTyX034pIOIvdZ3Mh04kbMsj+VrPknGsEFjvlGdvyU2RmRueiq1bWsnf2tDXsvyhp5t82a+ql0ILvTBCERtof7lNZiVaAPkyox5p3DY0gzOlLDTYy5SB8l/3e8yCpge0w0FTL5S+3IFFiUxmApqr4rhl23SZeCiCyCUxq0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsPiD4mE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01065C4AF67;
+	Sun,  5 May 2024 15:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714921388;
-	bh=cDCbqGq4PYQvTiMigUTFtTPKjHRT31+tOJuaLyRVt6Y=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=CzXH59Z/++xMm24MJj7aUh0VZgQii1lcxPVDI6FCQEN3nRBcJzgNncL2NVZ7lEqy4
-	 MQndcsRsvaG4qfiSVV4D6dewqU5WDQgkUohfu76uCckYmPbMoJCsMa9SeCx91d5yQC
-	 a9135QZvjsVKojDbHbF0ZKaFghZWCZOgZAarVKrNcZCeXZFDHnREg/ldS05qNpy5wv
-	 rM9FevbtNnGpJideGTWk67dhg3lgXildxXOaqsxc+5DNJd1VTkT14ENjUAXB0d9cGs
-	 QyKx+RIyaqQ7sAQwbU3NCVf9b+sDOzI+4dXVl/8ZndExhmBVtWjUU6xO8c/EMtDSmg
-	 fKGP5Do86Ubjg==
+	s=k20201202; t=1714921395;
+	bh=oPE8LDuukrepCZDNBL3OUxIxwDD30ihJBAhHLx9X8t4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=lsPiD4mEIK71p5yF+C4j4SpIWv7eIH7svdqYO9zD03Ks/sAQvupfnwWcXA0njDKdH
+	 yNWYMrm/ON4piogM26WUP3466UZDkuTN9aJhLYYpSxsEuMUAHLx5CMJWk0EH6WlB9e
+	 +852GDSY1dLJmnTnQXXgHPTo1ZHGEUrtv1QegJ30kH4XQvggtq4M0sVpxPpLFQezuj
+	 kjb3ttQU4WT17yoZCvgL4rpUxjbOJDRkoF5XDwLtXyJeauWc/lPFU7ODmnK7ZRVSTl
+	 Ig2e42fgDtXOfKT9PSIblf06jmf6ZogVP4jkXLI1fMSE0yFlmzpcx3I4EjJGnotyNd
+	 HynQPdrq34aMg==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240501175127.34301-1-krzysztof.kozlowski@linaro.org>
-References: <20240501175127.34301-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2] ASoC: Use inline function for type safety in
- snd_soc_substream_to_rtd()
-Message-Id: <171492138663.1933443.10503961369232756319.b4-ty@kernel.org>
-Date: Mon, 06 May 2024 00:03:06 +0900
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: alsa-devel@alsa-project.org, venkataprasad.potturu@amd.com, 
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Syed Saba Kareem <Syed.SabaKareem@amd.com>, 
+ V Sujith Kumar Reddy <vsujithkumar.reddy@amd.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Jarkko Nikula <jarkko.nikula@bitmer.com>, 
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, 
+ open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <20240502140340.4049021-1-Vijendar.Mukunda@amd.com>
+References: <20240502140340.4049021-1-Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH 1/2] ASoC: amd: acp: fix for acp platform device
+ creation failure
+Message-Id: <171492139176.1933443.4741403457538760265.b4-ty@kernel.org>
+Date: Mon, 06 May 2024 00:03:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,14 +68,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev
 
-On Wed, 01 May 2024 19:51:27 +0200, Krzysztof Kozlowski wrote:
-> A common pattern in sound drivers is getting 'struct snd_soc_pcm_runtime'
-> from 'struct snd_pcm_substream' opaque pointer private_data field with
-> snd_soc_substream_to_rtd().  However 'private_data' appears in several
-> other structures as well, including 'struct snd_compr_stream'.  The
-> field might not hold the same type for every structure, although seems
-> the case at least for 'struct snd_compr_stream', so code can easily make
-> a mistake by using macro for wrong structure passed as argument.
+On Thu, 02 May 2024 19:33:25 +0530, Vijendar Mukunda wrote:
+> ACP pin configuration varies based on acp version.
+> ACP PCI driver should read the ACP PIN config value and based on config
+> value, it has to create a platform device in below two conditions.
+> 1) If ACP PDM configuration is selected from BIOS and ACP PDM controller
+> exists.
+> 2) If ACP I2S configuration is selected from BIOS.
 > 
 > [...]
 
@@ -78,8 +84,10 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: Use inline function for type safety in snd_soc_substream_to_rtd()
-      commit: 9723cab054d59d770cd1927f92fe315c26cc6a78
+[1/2] ASoC: amd: acp: fix for acp platform device creation failure
+      commit: 09068d624c490c0e89f33f963c402f1859964467
+[2/2] ASoC: amd: acp: move chip->flag variable assignment
+      (no commit info)
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
