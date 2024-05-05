@@ -1,138 +1,194 @@
-Return-Path: <linux-kernel+bounces-168925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840C68BBFCF
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396C88BBFD1
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2573E1F21652
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AFDE1C20B91
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2175C6FB6;
-	Sun,  5 May 2024 08:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5337482;
+	Sun,  5 May 2024 08:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="C2fco+Mi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BRcJ5W2V"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C86186A
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 08:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BD02582;
+	Sun,  5 May 2024 08:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714898142; cv=none; b=QEIkj8AAmqW9CSIc8Vw1ALs9HNQZygRbASfIlnh275PT4/EqDRIBt3DBOrfk7rFubrEsDQgUxHpsvlvlIVGiEx6LPhMrWPYnSML9bTcJx4vA4nn7Jhfz5+rUs6ED+oP/GTCIzNCtb0L08fDxwsOnIZyEytzGPp4pn1QTIRKkrak=
+	t=1714898359; cv=none; b=CgDKd7gf/QRFMDslUn1wtiJXAy8HjBD4XicDaP1f5taUmO3JxknhQrydm/y1dNxxhH0v54PUrGdHS/0q9wyHNjtl9QX4mKcWNauzOWRD9nhGK1B6xJidC+unKk+P6AiGL0av3XPm0OuG6/lkyD0vz3ai1K48EyIT0CS3+syG0mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714898142; c=relaxed/simple;
-	bh=ZQ88QZihUyP/rwFP3gPP60mEMZO3Ifd6+copEtXSy38=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=vEKA0bfWIMe+Vhd0878IH54QjQOy8/1jpoHmi9JTmA7EigR1fzz+nztEj11SdNQF0L6o0JlBRu5niBDpO/rnicWsUUzZoV3/8ASj13APaTUCtZOP5gsuYD5+Y82TYstegLrheqK2WqMcsVKYZlH5H7qbezzM1q4c0/pkAZGZgJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=C2fco+Mi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8AEC113CC;
-	Sun,  5 May 2024 08:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1714898142;
-	bh=ZQ88QZihUyP/rwFP3gPP60mEMZO3Ifd6+copEtXSy38=;
-	h=Date:From:To:Cc:Subject:From;
-	b=C2fco+MiD031W+QX0sFLFvu/6AURYw0dBvpVZYhDX40izbhP17BK4aP/b/9iI1cMa
-	 c5+E+jV5i1uOyNEOE1dUwM+qx79h0PR4bg+zifx2h7ZlU+nDskJ77LXVRVSif/Lura
-	 0h4O4Ai3peo7taLqHIFHrgx5HQ6VPWenUvWXVhfg=
-Date: Sun, 5 May 2024 09:35:39 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 6.9-rc7
-Message-ID: <ZjdE2yWk-I3YmLf1@kroah.com>
+	s=arc-20240116; t=1714898359; c=relaxed/simple;
+	bh=n1mdYuAeP4uvVo+sfymUmrxvP4vV2KCkX9GBScpWDHI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=YbTTs0xCPgGa4jZUI6FoqpWnoALqN8jqzR6LhRP6tj646GN9eBsarYqqg63xuTsop2+Y7MGRDT/uPEpblYhecafZOECpDW+/PjGFlhz0VRz0d5Vr774KA2F65kIasOVQMBMHyX+zIWACsk6VhN5A0NvLPCGUh0THGHKZG2rU6Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BRcJ5W2V; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714898354; x=1715503154; i=markus.elfring@web.de;
+	bh=Hmm67Eh9H6ov9LhnYrM6BTLWBoQqSoIzaLVwbXrd8B4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BRcJ5W2VVGsmgIoCIqI+Sk56PveDllTGg6KYSfsK0Sjh8n9GzjNm6izFXHw3ldm2
+	 qV1eh/ZajNfQxYr8WIohMa1kdJjLGLkGX2y6RzBml7IOj5T69e3uhYR2WrVKMXW7j
+	 v4hjMlwBx8er3YA3Qsmw7gBPXzrw5fbYF6cG4yv57GprhbeBFpGPJZZuelz8H18ap
+	 JtoGDb7ZFHQvIKDLBfmah1g+CGOjn3mMKvqLtHIQ8w2qDagLQmVYOn3udzF3zPoUj
+	 zu9xUJLoSVZG/M7FJ68IWWv6dQkUnq4yaZP+0Whh6y0uxt9HOXS8ouyyPGM+VX8pl
+	 1JUZUV4dgrhuAbddPw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MidHZ-1sWYtB1hGJ-00e3zy; Sun, 05
+ May 2024 10:39:14 +0200
+Message-ID: <fd9f738e-8e78-4afb-96fd-907f72fb4e13@web.de>
+Date: Sun, 5 May 2024 10:39:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Marcel Holtmann <marcel@holtmann.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] Bluetooth: qca: Use common error handling code in two
+ functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0iNeMSH+GmRX8I7zfctCspvLyk3Uw/CSkBS/P8/9bpnr0uZPK7G
+ IAuxQmB4gsT+bMhVjantpvy4PWwtw1mNl/qDSbFYsIhYe5HWMOS6JBm2PF976kKDWuvoJMC
+ y7qOa0bdmKP1D2+gWyggCoSB7HxwpOg+UOqrHut1WhB7wDacSXoeemwdIkIfkrJd4yIumEK
+ yVHb38r0ZgVg/RjrsGzJA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gKFNHLjIIng=;aQeYxwQH4dG1wm0nev68l75Rw38
+ 6dr1zAuiXC1aLQHo3R7uoCUMWJzyiIkLcTtlVGUUuGaEvf33EXIcQgqQJrPBmT92DGgvVMp6e
+ 7mI/kh+KKPe3cl2HxbgjW4hEmoS56kOiYpULZ9/A08bRA4dHz+DxmHe2h5qrsmdUClHSlOZ54
+ aMXul2ictR7RA33doJv/5rwz9jXmA/ONdg4rFgB121sAFXoefLsESYEpaBVC2wVXmP+I59WAL
+ RgmGzoMwQqPht9yyBO6wd13FlPY3jQnbBKm4axjzzrRPAk9MgbQd5+c3oF6bKf4A3+aO67Ucc
+ 3B7zsgy7fqAg8xug0zrPYNiTRl0IOndnDd2hO8c10cq/7J3gmvfbFTOtIDGXV++vhkP/0moTW
+ ptgNtJwzSQk1WZuyYvQ6QWA5SIWDAvm76SdXu/uOiS0swXTwNVoCRCj88NntrkJV91PGm/6r+
+ AFD4wTHKHRMu/DLtI0YgSdCfo4LVBm+1sDMVXMpCQoijwGei+9vC/zoYitaRNz5AlJ7Mu8c4k
+ JeCz+5tCcl1IL/YX8+Q9jqzfsmXKb8UqeFJmN/gbU0TOIotZMWOa5MixijdCecL7DexgUv0yP
+ 4oBUq9sHhg57gom3604PMVnGp2dN3ld98xHlASKr1YQpO0x76recJZ2ZDEntd0YdDloI9lEul
+ wFfhBDIpRnntG9yQgjQHe1Oge+7GecpSWsoJ9OGsN4BDWSguo59oZx1GcJKDflzM05I3vxMZH
+ QuCgEdBjDa4/jbgyNPxBJ+/vbbUSSOx0h3wMSwApy/xTRPI+cWps4bV/QgQ2JsfWmrAEZA4ee
+ HlrZ1QzKvM5h9XIDO6a7/G3Ze/YwK3CYa2FkWYC0HY2uB+BW4p+e5prjY6Pqlj3/fS
 
-The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 5 May 2024 10:30:28 +0200
 
-  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
+Add a jump target so that the setting of an error code can be better reuse=
+d
+at the end of these function implementations.
 
-are available in the Git repository at:
+This issue was transformed by using the Coccinelle software.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.9-rc7
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/bluetooth/btqca.c | 35 +++++++++++++++++------------------
+ 1 file changed, 17 insertions(+), 18 deletions(-)
 
-for you to fetch changes up to 98241a774db49988f25b7b3657026ce51ccec293:
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index cc61014ffbc9..1833aaa6d87b 100644
+=2D-- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -108,10 +108,8 @@ static int qca_read_fw_build_info(struct hci_dev *hde=
+v)
+ 		return err;
+ 	}
 
-  slimbus: qcom-ngd-ctrl: Add timeout for wait operation (2024-05-03 07:30:32 +0200)
+-	if (skb->len < sizeof(*edl)) {
+-		err =3D -EILSEQ;
+-		goto out;
+-	}
++	if (skb->len < sizeof(*edl))
++		goto e_ilseq;
 
-----------------------------------------------------------------
-Char/Misc driver fixes for 6.9-rc7
+ 	edl =3D (struct edl_event_hdr *)(skb->data);
 
-Here are some small char/misc/other driver fixes and new device ids for
-6.9-rc7 that resolve some reported problems.
+@@ -123,17 +121,13 @@ static int qca_read_fw_build_info(struct hci_dev *hd=
+ev)
+ 		goto out;
+ 	}
 
-Included in here are:
-  - iio driver fixes
-  - mei driver fix and new device ids
-  - dyndbg bugfix
-  - pvpanic-pci driver bugfix
-  - slimbus driver bugfix
-  - fpga new device id
+-	if (skb->len < sizeof(*edl) + 1) {
+-		err =3D -EILSEQ;
+-		goto out;
+-	}
++	if (skb->len < sizeof(*edl) + 1)
++		goto e_ilseq;
 
-All have been in linux-next with no reported problems.
+ 	build_lbl_len =3D edl->data[0];
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+-	if (skb->len < sizeof(*edl) + 1 + build_lbl_len) {
+-		err =3D -EILSEQ;
+-		goto out;
+-	}
++	if (skb->len < sizeof(*edl) + 1 + build_lbl_len)
++		goto e_ilseq;
 
-----------------------------------------------------------------
-Alexander Usyskin (1):
-      mei: me: add lunar lake point M DID
+ 	build_label =3D kstrndup(&edl->data[1], build_lbl_len, GFP_KERNEL);
+ 	if (!build_label)
+@@ -145,6 +139,10 @@ static int qca_read_fw_build_info(struct hci_dev *hde=
+v)
+ out:
+ 	kfree_skb(skb);
+ 	return err;
++
++e_ilseq:
++	err =3D -EILSEQ;
++	goto out;
+ }
 
-Daniele Ceraolo Spurio (1):
-      mei: pxp: match against PCI_CLASS_DISPLAY_OTHER
+ static int qca_send_patch_config_cmd(struct hci_dev *hdev)
+@@ -224,8 +222,7 @@ static int qca_read_fw_board_id(struct hci_dev *hdev, =
+u16 *bid)
+ 	edl =3D skb_pull_data(skb, sizeof(*edl));
+ 	if (!edl) {
+ 		bt_dev_err(hdev, "QCA read board ID with no header");
+-		err =3D -EILSEQ;
+-		goto out;
++		goto e_ilseq;
+ 	}
 
-Greg Kroah-Hartman (2):
-      Merge tag 'iio-fixes-for-6.9a' of https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus
-      Merge tag 'fpga-for-6.9-final' of git://git.kernel.org/pub/scm/linux/kernel/git/fpga/linux-fpga into char-misc-linus
+ 	if (edl->cresp !=3D EDL_CMD_REQ_RES_EVT ||
+@@ -235,10 +232,8 @@ static int qca_read_fw_board_id(struct hci_dev *hdev,=
+ u16 *bid)
+ 		goto out;
+ 	}
 
-Hans de Goede (2):
-      iio: accel: mxc4005: Interrupt handling fixes
-      iio: accel: mxc4005: Reset chip on probe() and resume()
+-	if (skb->len < 3) {
+-		err =3D -EILSEQ;
+-		goto out;
+-	}
++	if (skb->len < 3)
++		goto e_ilseq;
 
-Javier Carrasco (1):
-      dt-bindings: iio: health: maxim,max30102: fix compatible check
+ 	*bid =3D (edl->data[1] << 8) + edl->data[2];
+ 	bt_dev_dbg(hdev, "%s: bid =3D %x", __func__, *bid);
+@@ -246,6 +241,10 @@ static int qca_read_fw_board_id(struct hci_dev *hdev,=
+ u16 *bid)
+ out:
+ 	kfree_skb(skb);
+ 	return err;
++
++e_ilseq:
++	err =3D -EILSEQ;
++	goto out;
+ }
 
-Jim Cromie (1):
-      dyndbg: fix old BUG_ON in >control parser
+ int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
+=2D-
+2.44.0
 
-Peter Colberg (1):
-      fpga: dfl-pci: add PCI subdevice ID for Intel D5005 card
-
-Ramona Gradinariu (1):
-      iio:imu: adis16475: Fix sync mode setting
-
-Thomas Weiﬂschuh (1):
-      misc/pvpanic-pci: register attributes via pci_driver
-
-Vasileios Amoiridis (2):
-      iio: pressure: Fixes BME280 SPI driver data
-      iio: pressure: Fixes SPI support for BMP3xx devices
-
-Viken Dadhaniya (1):
-      slimbus: qcom-ngd-ctrl: Add timeout for wait operation
-
- .../bindings/iio/health/maxim,max30102.yaml        |  2 +-
- drivers/fpga/dfl-pci.c                             |  3 +
- drivers/iio/accel/mxc4005.c                        | 92 ++++++++++++++++++++--
- drivers/iio/imu/adis16475.c                        |  4 +-
- drivers/iio/pressure/bmp280-core.c                 |  1 +
- drivers/iio/pressure/bmp280-spi.c                  | 13 +--
- drivers/iio/pressure/bmp280.h                      |  1 +
- drivers/misc/mei/hw-me-regs.h                      |  2 +
- drivers/misc/mei/pci-me.c                          |  2 +
- drivers/misc/mei/pxp/mei_pxp.c                     |  7 +-
- drivers/misc/pvpanic/pvpanic-pci.c                 |  4 +-
- drivers/slimbus/qcom-ngd-ctrl.c                    |  6 +-
- lib/dynamic_debug.c                                |  6 +-
- 13 files changed, 118 insertions(+), 25 deletions(-)
 
