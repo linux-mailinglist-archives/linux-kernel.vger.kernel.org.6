@@ -1,158 +1,149 @@
-Return-Path: <linux-kernel+bounces-169055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F448BC267
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 488828BC273
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A041DB2125F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F03B20F51
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 16:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AF73B7AC;
-	Sun,  5 May 2024 16:14:43 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312643B2A2;
+	Sun,  5 May 2024 16:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ggpSEO1U"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7872479D2
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 16:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EE21862C;
+	Sun,  5 May 2024 16:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714925682; cv=none; b=dBm6skBLIIWLTFGOmD3GaxAYjebAeipMjKdUQ1oZ/LaYTFtFLkFhsLpdHwBbqYbYRwU+yqrQrb+BcMqRRcX6He1h5z1Zv62dBvY1V73Hww6MCgqsI+oeM7feArQLVNIZWoWgSFRoXQ7i5whfnvMbP+ZivRgRwoJsmKqqa9f0WPM=
+	t=1714926062; cv=none; b=WWb5Dohb2A3PnqPezSXuzhOzyNOY2FHX0lpprS+92mMRbCYkbZiTtfsVIEaH4ZLdFBrl4GOHq9bkxDt74dClTS2AjCnxyF5wDUjS9LQWdawNGDR7AJjVBpAhQHho4hmxXS6/Ht9llGSmvJgdKwu+ypoVNWQY/CVJu2lCdX9TSVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714925682; c=relaxed/simple;
-	bh=QIz43+speCYoyC4F7oRZF3N8UpU9Lm96tmkLZxNpOhs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TacFwlq/PVkcghh+nzKuy9mJsj9uRH3Ws/j8PworStwN23/UJPvHLKAJT27gKjB4tJJQmDdayWPSWWZhDAJU2MD5QHqMNl9V0IVzv9K/2ZLXLSacpADctB/MWqbVORBCsUQtq10Uyd7PkWsTW08VZ9z0LFYrm3RuVbTkTdPXDP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-36c80caae04so16405255ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 09:14:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714925680; x=1715530480;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3Y7O1nOaScM4M/3DUeCIB71VrhmW7zyenpvPyEqNVEc=;
-        b=FuO6R4QSXDZAJ/Dtx/PChl7OjSGH80JJhIr0UuFDA6q8PW+3NIZEBdbXNvFMcQWx+g
-         OGgKLBfyazs4i/fBCSRlmhgd7s96j52c3vGlVKubgdBaNpm4fx9fRb7HVaRVqz5/rCQ1
-         mmLCBHR3Jf110rJ8aRvso05WHZSRZgd1zFvjhzyfa+2ePXKP+Yl5NeDnMcFMJVv8TxAX
-         Nl5z4IHq00m+/ZwS4qyO/oYpuVYDajgftsnzlrCwGEy6e3IOCmZnrjZ8K8VasffBycB6
-         aSSHtBxtixYfCseT4Vv7Q1Bbg7rVNdjf/57cAvGMXu68C3ovtwsLG+5Cvziw9IMcgshr
-         ej5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVxMm0yrHEuHCWTvniIRwEPByrN5ij2bNsZ/8W8ZmtId9WBPVOz9TiScK8AMEymBk35z4BCPgDCXt5eYn4lchH8wcrHoVy1QU86CeEU
-X-Gm-Message-State: AOJu0YzllDyfdJ74JPk/RPW7/dIj/KIxxmrwaIp897NCMGufphU/uwyX
-	C76Uuipx8UmeLQbwtfs5YzO2PIeUEKJcFWGjKHsy9gcGtgd9x728h9AuWI10ge+I7hjK2nLnHBT
-	W13quI3HCntjG8qIN1nimd1Argyn8OHiXQoFFwv+KBSYqk4fTYoEbhng=
-X-Google-Smtp-Source: AGHT+IGiSS9UF64KGVYYTZho6dcuKXx7CzilFmdBCiB1PHNxcYMJ11mnCSTyOCNpViBA93+eYtCw19IB4OzzKhTSfsw+4cM7PnKE
+	s=arc-20240116; t=1714926062; c=relaxed/simple;
+	bh=fn1Y0Fvalw3p2xiNGMYhBKwqheSpAJk7ixl8Wk8aamo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X88XNBAIohm2rRvb5B3Y0nUFPAp4x9d+0vP4ygPku7h/XPUks9eWDirexnWa95ki40g+/MgN5gdoFca8O6QlMarLGq1e5ntNM/4YFwhsM3MJvxnOVG60bFl5SRoSyNQOZtI1yzycbB2y5TfR8xdG0uWDyypoycl6WAaVoOuj8x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ggpSEO1U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 445GKsoH001827;
+	Sun, 5 May 2024 16:20:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=f16PTek0Bmvx5v9zUadis064ktYQgiNdbOEhCsQmxFI=; b=gg
+	pSEO1Ul1EY/ocAyYmnQOEI2R7EhbzsAypkD23jtGUaV4m151AfX6ayNiS8lprywO
+	p4LDv0osm6nOW/XpvzlOPugEBepwEHUCNEzvsDHz2J/j54sFhJnmAyhxg4PCB9Bz
+	3M4b6AGZf0AQTscN1vz95rbrsdhOPkOcJxYtdQ7T67729CH8vU4bUETDaXe3xNY7
+	s9FHfHbixHskOWRGyclGnvKOhhx/sXnjUNUjChqqNT1GuGLUlZ6m7fhBf3cWTVtL
+	kP8equFHH4sttbTRGeUqyAbljpK5wtYuoeC3iOPs1cKqz2V3bpVNhjpx0Vzqr/VA
+	tmU7/SHCwQ89YNgZYPFw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwdsmsw2b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 May 2024 16:20:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 445GKLO6028359
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 5 May 2024 16:20:21 GMT
+Received: from [10.216.45.66] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
+ 09:20:18 -0700
+Message-ID: <8ca45837-cbed-28da-4a6f-0dcec8294f51@quicinc.com>
+Date: Sun, 5 May 2024 21:50:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1522:b0:36a:190f:1c93 with SMTP id
- i2-20020a056e02152200b0036a190f1c93mr342001ilu.5.1714925680752; Sun, 05 May
- 2024 09:14:40 -0700 (PDT)
-Date: Sun, 05 May 2024 09:14:40 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000498630617b740d3@google.com>
-Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in rewrite_old_nodes_pred
-From: syzbot <syzbot+594427aebfefeebe91c6@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] dmabuf: fix dmabuf file poll uaf issue
+Content-Language: en-US
+To: "T.J. Mercier" <tjmercier@google.com>
+CC: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        zhiguojiang
+	<justinjiang@vivo.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
+References: <20240327022903.776-1-justinjiang@vivo.com>
+ <5cf29162-a29d-4af7-b68e-aac5c862d20e@amd.com>
+ <cc7defae-60c1-4cc8-aee5-475d4460e574@vivo.com>
+ <23375ba8-9558-4886-9c65-af9fe8e8e8b6@amd.com>
+ <CABdmKX2Kf4ZmVzv3LGTz2GyP-9+rAtFY9hSAxdkrwK8mG0gDvQ@mail.gmail.com>
+ <e55cad9b-a361-4d27-a351-f6a4f5b8b734@vivo.com>
+ <40ac02bb-efe2-4f52-a4f2-7b56d9b93d2c@amd.com>
+ <4fedd80c-d5b6-4478-bfd3-02d1ee1a26e5@vivo.com>
+ <aab5ec51-fcff-44f2-a4f5-2979bd776a03@amd.com>
+ <2ebca2fd-9465-4e64-b3cc-ffb88ef87800@vivo.com>
+ <d4209754-5f26-422d-aca0-45cccbc44ad0@amd.com>
+ <289b9ad6-58a3-aa39-48ae-a244fe108354@quicinc.com>
+ <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
+From: Charan Teja Kalla <quic_charante@quicinc.com>
+In-Reply-To: <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: u7R16SvhkSPx1h5AvS-rjsiofvcdveX_
+X-Proofpoint-ORIG-GUID: u7R16SvhkSPx1h5AvS-rjsiofvcdveX_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-05_11,2024-05-03_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 mlxlogscore=853 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 adultscore=0 impostorscore=0 phishscore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405050073
 
-Hello,
+Thanks T.J for the reply!!
 
-syzbot found the following issue on:
+On 5/4/2024 4:43 AM, T.J. Mercier wrote:
+> It looks like a similar conclusion about epoll was reached at:
+> https://lore.kernel.org/all/a87d7ef8-2c59-4dc5-ba0a-b821d1effc72@amd.com/
+> 
+I am unaware of this discussion. Thanks...
 
-HEAD commit:    7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=133dd354980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-dashboard link: https://syzkaller.appspot.com/bug?extid=594427aebfefeebe91c6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d1b2a0980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=135c2ca8980000
+> I agree with Christian that it should not be possible for the file to
+> be freed while inside dma_buf_poll. Aside from causing problems in
+> dma_buf_poll, ep_item_poll itself would have issues dereferencing the
+> freed file pointer.
+> 
+Not sure about my understanding: ep_item_poll() always call the ->poll()
+interface with a stable 'struct file' because of ep->mtx. This lock
+ensures that:
+   a) If eventpoll_release_file() get the ep->mtx first, ->poll()
+corresponds to the epitem(target file) will never be called, because it
+is removed from the rdlist.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/03bd77f8af70/disk-7367539a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/eb03a61f9582/vmlinux-7367539a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e4c5c654b571/bzImage-7367539a.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7aefb3ba7f27/mount_0.gz
+   b) If ep_send_events() get the ep->mtx() first, ->poll() will get
+called with a stable 'struct file', __but the refcount(->f_count) of a
+file can be zero__. I am saying that this is stable because the 'struct
+file' contents are still valid till we are in ->poll().
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+594427aebfefeebe91c6@syzkaller.appspotmail.com
+Can you/Christian help me with what I am missing here to say that
+->poll() is receiving stale 'struct file*', please?
 
-bcachefs (loop0): journal_replay... done
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): scanning for old btree nodes: min_version 0.24: unwritten_extents
-bcachefs (loop0): going read-write
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/move.c:986:31
-shift exponent 64 is too large for 64-bit type 'unsigned long long'
-CPU: 0 PID: 5081 Comm: syz-executor477 Not tainted 6.9.0-rc6-syzkaller-00234-g7367539ad4b0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- bformat_needs_redo fs/bcachefs/move.c:986 [inline]
- rewrite_old_nodes_pred+0x45e/0x620 fs/bcachefs/move.c:1002
- bch2_move_btree+0x792/0xde0 fs/bcachefs/move.c:886
- bch2_scan_old_btree_nodes+0x14b/0x3c0 fs/bcachefs/move.c:1016
- bch2_fs_recovery+0x534e/0x6390 fs/bcachefs/recovery.c:887
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1043
- bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2102
- bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1903
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1779
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc4970e98fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff723ad538 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fff723ad540 RCX: 00007fc4970e98fa
-RDX: 0000000020011a00 RSI: 0000000020000100 RDI: 00007fff723ad540
-RBP: 0000000000000004 R08: 00007fff723ad580 R09: 005f617461646174
-R10: 0000000003004081 R11: 0000000000000282 R12: 00007fff723ad580
-R13: 0000000000000003 R14: 0000000001000000 R15: 0000000000000001
- </TASK>
----[ end trace ]---
+And, If you are convinced with above, I think, It should have been the
+responsibility of ->poll() implementation to have taken refcount on a
+file that is going to be still valid even after ->poll() exits. Incase
+of dma_buf_poll() implementation, it took the refcount on a file that is
+not going to be valid once the dma_buf_poll() exits(because of mentioned
+race with the freeing of the 'struct file*').
 
+So, in dma_buf_poll(), Should we be using atomic_long_inc_not_zero()
+based implementation to take the refcount on a file?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Charan
 
