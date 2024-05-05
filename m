@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-168974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAA28BC06F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB95F8BC077
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BBC21C20A9D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:04:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77751C20EED
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3651BC5C;
-	Sun,  5 May 2024 13:04:03 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338FC1CF8A;
+	Sun,  5 May 2024 13:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyFIsDIc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56022182CC
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 13:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669F218C36;
+	Sun,  5 May 2024 13:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714914243; cv=none; b=d5EopMKabq34b6Q1T5XDsXgYZZ+KxL9VEbpRkEnOIrit4OADuTAM7M+eK7qDipf2BNz0Ac/S8InV9Q8L2yOf/CpyxfbLzBBuwGjIkWNqY0HTNB0EUJrH2GSdEtKLYeBzi0NmwjtSiauDsUsOvtmRTa+Dm7K2S/QKQd2SpddESJk=
+	t=1714914589; cv=none; b=iz5fEvSiFly5GzszwxJeG6r2zUwIY6zFQFSpEn8QgKONtQtGpYtC1bfU84uGch0VRupZ61/VUa4+akLFrINB016ejwK/Axb7qDrZSdyKje+8YOxW3DhpgshB4xqRls3D13yusYk+7kU/PbdmWLJhrBRgUul4+zlvwWfLW91QX38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714914243; c=relaxed/simple;
-	bh=LWjHih/OHSy6SrCfOa9X/24rEFm3Ua2BeaQBjdKPJY4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=oGlwSRr4kyQI0V3lI6B3/klgUAFmVPdz0pMbc218i4BOvwRM99afhlJcL/8I66ze/Zb/BTltg5aYplpTu5rY3jcD06KzIHiFx++kgMz322ivIZlyEXqychMe2qf92DFym23BtOY0EUgFRkxsYsVsut855h1Jr+ytqFQ82eoQ7UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-273-fKqCY0TxOgquqS3S8_PQKQ-1; Sun, 05 May 2024 14:03:57 +0100
-X-MC-Unique: fKqCY0TxOgquqS3S8_PQKQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 5 May
- 2024 14:03:23 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 5 May 2024 14:03:23 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Kuan-Wei Chiu' <visitorckw@gmail.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "yury.norov@gmail.com" <yury.norov@gmail.com>
-CC: "linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-	"n26122115@gs.ncku.edu.tw" <n26122115@gs.ncku.edu.tw>,
-	"jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 1/2] lib/test_bitops: Add benchmark test for fns()
-Thread-Topic: [PATCH v3 1/2] lib/test_bitops: Add benchmark test for fns()
-Thread-Index: AQHam5eHsEz2ZjZaTki/tQEkD/csqLGIn56Q
-Date: Sun, 5 May 2024 13:03:23 +0000
-Message-ID: <44e9ab62e0f543439eb7566a9f134af6@AcuMS.aculab.com>
-References: <20240501071647.10228-1-visitorckw@gmail.com>
- <20240501071647.10228-2-visitorckw@gmail.com>
-In-Reply-To: <20240501071647.10228-2-visitorckw@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1714914589; c=relaxed/simple;
+	bh=xlRUYoJPou2/MPpAB5hzWLpalR+ZAUvBv9HmZG5I9+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5h9egQu9yFIYyQulPXPhgYqqjFbJjlEzpkHcE+8TiMgFxlnENQKN02y+QIIipEVsvYRDMfR3vhY6VIxpVYeHvYxByb/L6GIb+crRDHtkQqxSSeIBvp4hrhDozEAYYAlAoeHbvHM0yFekATz4uPN/XPK91BdZnGKuI6Pjpf3CaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyFIsDIc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E851C113CC;
+	Sun,  5 May 2024 13:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714914588;
+	bh=xlRUYoJPou2/MPpAB5hzWLpalR+ZAUvBv9HmZG5I9+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DyFIsDIcBCXPdf5m999VIskZIZ3Ju5s8JfJ7pbM8DKPrNCCZI9ot8LqlAFcA7zGeH
+	 xEfZUHP+pTYlQEqLs5pArOYOcT/l+a+8A+7Li6FYOIOb0T0Q92zUCdc02p38J1kKkN
+	 fGz+U2FNMt6C6ocJrCG3jWrFuT2kSuaQOuVPdsE/3Xt5+iiIhD2KTKWkyHVbirLHfh
+	 32cMVlj5dqsjTbb6WCnYlM6luqPotng5VtG5kZVmmJPSVMiRB1wsc8tj4jsVypNjmR
+	 0qe5FzwC3I1L1tkbGk2SvbABZQgkwvc244O3J4xGB0zePEAC4wEw7a2mGw3vkLSbks
+	 1+K3E3asdqGhg==
+Date: Sun, 5 May 2024 16:09:45 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	dri-devel@lists.freedesktop.org,
+	LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Dean Luick <dean.luick@cornelisnetworks.com>
+Subject: Re: [PATCH 3/3] RDMA/hfi1: Use RMW accessors for changing LNKCTL2
+Message-ID: <20240505130945.GB68202@unreal>
+References: <20240215133155.9198-1-ilpo.jarvinen@linux.intel.com>
+ <20240215133155.9198-4-ilpo.jarvinen@linux.intel.com>
+ <26be3948-e687-f510-0612-abcac5d919af@linux.intel.com>
+ <20240503130416.GA901876@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240503130416.GA901876@ziepe.ca>
 
-From: Kuan-Wei Chiu
-> Sent: 01 May 2024 08:17
->=20
-> Introduce a benchmark test for the fns(). It measures the total time
-> taken by fns() to process 1,000,000 test data generated using
-> get_random_long() for each n in the range [0, BITS_PER_LONG).
->=20
-> example:
-> test_bitops: fns:          5876762553 ns, 64000000 iterations
+On Fri, May 03, 2024 at 10:04:16AM -0300, Jason Gunthorpe wrote:
+> On Fri, May 03, 2024 at 01:18:35PM +0300, Ilpo Järvinen wrote:
+> > On Thu, 15 Feb 2024, Ilpo Järvinen wrote:
+> > 
+> > > Convert open coded RMW accesses for LNKCTL2 to use
+> > > pcie_capability_clear_and_set_word() which makes its easier to
+> > > understand what the code tries to do.
+> > > 
+> > > LNKCTL2 is not really owned by any driver because it is a collection of
+> > > control bits that PCI core might need to touch. RMW accessors already
+> > > have support for proper locking for a selected set of registers
+> > > (LNKCTL2 is not yet among them but likely will be in the future) to
+> > > avoid losing concurrent updates.
+> > > 
+> > > Suggested-by: Lukas Wunner <lukas@wunner.de>
+> > > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> > > Reviewed-by: Dean Luick <dean.luick@cornelisnetworks.com>
+> > 
+> > I found out from Linux RDMA and InfiniBand patchwork that this patch had 
+> > been silently closed as "Not Applicable". Is there some reason for
+> > that?
+> 
+> It is part of a series that crosses subsystems, series like that
+> usually go through some other trees.
 
-Great benchmark....
+Exactly, this is why I marked it as "Not Applicable".
 
-The compiler almost certainly optimises it all away.
-
-Assigning the result of fns() to a file scope (global) volatile int
-should stop that happening.
-
-And a real test would actually check the result - just in case
-someone does something silly.
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+> 
+> If you want single patches applied then please send single
+> patches.. It is hard to understand intent from mixed series.
+> 
+> Jason
 
