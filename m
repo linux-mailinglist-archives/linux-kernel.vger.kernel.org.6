@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-168923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16ADF8BBFCC
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:31:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BEC8BBFCE
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62A42B20F88
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:31:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86301C20AA1
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F306FC5;
-	Sun,  5 May 2024 08:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE146FBF;
+	Sun,  5 May 2024 08:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U36Yzl3i"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wpPJP+9k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8336FA2A;
-	Sun,  5 May 2024 08:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88253186A;
+	Sun,  5 May 2024 08:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714897889; cv=none; b=Ro5vVluH0D5SniLo3xwnwP2ZQliX7xsOS6zqNNEamYh4UwBaZ/LYg8vrq2A2WGGfgwY5lkKfdD7BZHFIiX4M5g+/p9KA5s6N5Ww/J8rSPCkW+ww8spxt1Lt2me+PrwXg/JdWZLUNchAp1y2iRGVn9jmj1o59IkGInVvQ1ziuZvg=
+	t=1714898123; cv=none; b=IJRXcKcAfzPDPE0nO0dhHuld5io5PbjNssYay32QfFPkFPBF8/4A6dEZujEocyjCtM5wRzwLpZWqtalUy0MjVyssSmgFsEE2xUA6QnJZ7dYCUPc9h9ctbVdkuSPYDflXLROWAlZ59QR5n0aj5z9t9P0SmIIGCWbNhrR1JIEoTSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714897889; c=relaxed/simple;
-	bh=SCQJlW8vnsW1UnLFfoee8BGGAzdVC5DswNE/pSPGu98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O4TflC3U7/MnToi/pard/+/1dC8LO2DizWRpCFREwMa2ctHFSdMPrpE0jZMtSx9vbn9v2hzgdvA6XnG6LzflJA4N2n4qhBDQS/NQssbDGie1MEYyh0ENmu7IvsquBBXrhV8I38Q83qCXAh7XwtpjoT9Zg9h44L6MfWQYKpcUIks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U36Yzl3i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3183AC113CC;
-	Sun,  5 May 2024 08:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714897889;
-	bh=SCQJlW8vnsW1UnLFfoee8BGGAzdVC5DswNE/pSPGu98=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U36Yzl3iy92i0pgY2ZAaxmZ8HJgWgLykXEJZorWend4TgdZp7aEFGyXeg+ajRlQk9
-	 BMgTEjhp4pYi2e6r66QwdthQCE+Yi+8vgRhaFxBxW8lXGkFRmWtyDLAFE7bGJAH5CP
-	 Vfn12fKSOYEAa6Fg6sIKvKhTiQ85L7rIeda69zq/ApFIsV1RpFbRGAC7gmze+jxIV4
-	 6eHrpuv6hcDhlkjmX6d1I/eaRocDKnY+BseoFjbZDFIp5Y+l+Gd3LywqSkww4Ck4l5
-	 xtMsuwB0xAo0gEy1ZMTI6cZiteMMEjNBfwkPWBfo+esNWa7UVOmwDwtMKB/yXAYOcp
-	 alOpHfJErtFNQ==
-Message-ID: <6e68b278-babb-4567-a0e2-f759abb20126@kernel.org>
-Date: Sun, 5 May 2024 10:31:23 +0200
+	s=arc-20240116; t=1714898123; c=relaxed/simple;
+	bh=kfRg1x/iwrvmpSvQGJJsu2tMA5F4zShZabXJ/5yEDE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PVPGuCOxqPzUl0BRWDeEvXE0pRm2k1Lb6VnOilBBrGdRen8FAIxjSdWg0VCNu/IuuJCKKLfXTvYAtAbVp+P3ZbBApUItY3kqfHk9AV3YTb2JxOSvkR+g48cK+Sjf8f5yRsuoLPFDYPaD2FXPJjg9a2qnlecw8XTfs38cSJItLbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wpPJP+9k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9595FC113CC;
+	Sun,  5 May 2024 08:35:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1714898123;
+	bh=kfRg1x/iwrvmpSvQGJJsu2tMA5F4zShZabXJ/5yEDE0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=wpPJP+9k5j0phuTQaHp1hB9lX+0LzVmgvIn9qGxLIEg+3+8iwy4O9SXccFkUF4QDF
+	 NJtcl19abkd5xRVV6gftDsdtI7Hqlc6WiIqjzFG/uyYkYHIiSaBFrViKfKEA5Dgqai
+	 cr2oNb/yOh13LcQuKfe+EYWjCDtFzn5f2n8JhRoo=
+Date: Sun, 5 May 2024 09:35:20 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB driver fixes for 6.9-rc7
+Message-ID: <ZjdEyLmMIZ1_TPA3@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] dt-bindings: iio: imu: bmi160: add bmi120
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Danila Tikhonov <danila@jiaxyga.com>
-References: <20240505-bmi120-v3-0-15cee3d0b2ef@gmail.com>
- <20240505-bmi120-v3-2-15cee3d0b2ef@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240505-bmi120-v3-2-15cee3d0b2ef@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 05/05/2024 07:36, Barnabás Czémán wrote:
-> From: Danila Tikhonov <danila@jiaxyga.com>
-> 
-> Document bosch,bmi120 compatible.
-> 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> Signed-off-by: Barnbás Czémán <trabarni@gmail.com>
-> ---
+The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
 
-Best regards,
-Krzysztof
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.9-rc7
+
+for you to fetch changes up to ae11f04b452b5205536e1c02d31f8045eba249dd:
+
+  usb: typec: tcpm: Check for port partner validity before consuming it (2024-04-30 19:44:45 +0200)
+
+----------------------------------------------------------------
+USB driver fixes for 6.9-rc7
+
+Here are some small USB driver fixes for reported problems for 6.9-rc7.
+Included in here are:
+  - usb core fixes for found issues
+  - typec driver fixes for reported problems
+  - usb gadget driver fixes for reported problems
+  - xhci build fixes
+  - dwc3 driver fixes for reported issues
+
+All of these have been in linux-next this past week with no reported
+problems.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Alan Stern (2):
+      USB: core: Fix access violation during port device removal
+      usb: Fix regression caused by invalid ep0 maxpacket in virtual SuperSpeed device
+
+Amit Sunil Dhamne (1):
+      usb: typec: tcpm: unregister existing source caps before re-registration
+
+Badhri Jagan Sridharan (1):
+      usb: typec: tcpm: Check for port partner validity before consuming it
+
+Chris Wulff (1):
+      usb: gadget: f_fs: Fix a race condition when processing setup packets.
+
+Guenter Roeck (1):
+      usb: ohci: Prevent missed ohci interrupts
+
+Ivan Avdeev (1):
+      usb: gadget: uvc: use correct buffer size when parsing configfs lists
+
+Johan Hovold (2):
+      usb: typec: qcom-pmic: fix use-after-free on late probe errors
+      usb: typec: qcom-pmic: fix pdphy start() error handling
+
+Peter Korsgaard (1):
+      usb: gadget: composite: fix OS descriptors w_value logic
+
+RD Babiera (3):
+      usb: typec: tcpm: queue correct sop type in tcpm_queue_vdm_unlocked
+      usb: typec: tcpm: clear pd_event queue in PORT_RESET
+      usb: typec: tcpm: enforce ready state when queueing alt mode vdm
+
+Thinh Nguyen (2):
+      usb: xhci-plat: Don't include xhci.h
+      usb: dwc3: core: Prevent phy suspend during init
+
+Wesley Cheng (1):
+      usb: gadget: f_fs: Fix race between aio_cancel() and AIO request complete
+
+ drivers/usb/core/hub.c                             |  5 +-
+ drivers/usb/core/port.c                            |  8 +-
+ drivers/usb/dwc3/core.c                            | 90 +++++++++-------------
+ drivers/usb/dwc3/core.h                            |  1 +
+ drivers/usb/dwc3/gadget.c                          |  2 +
+ drivers/usb/dwc3/host.c                            | 27 +++++++
+ drivers/usb/gadget/composite.c                     |  6 +-
+ drivers/usb/gadget/function/f_fs.c                 |  9 ++-
+ drivers/usb/gadget/function/uvc_configfs.c         |  4 +-
+ drivers/usb/host/ohci-hcd.c                        |  8 ++
+ drivers/usb/host/xhci-plat.h                       |  4 +-
+ drivers/usb/host/xhci-rzv2m.c                      |  1 +
+ drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c      |  8 +-
+ .../usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c    | 11 ++-
+ drivers/usb/typec/tcpm/tcpm.c                      | 42 +++++++---
+ 15 files changed, 147 insertions(+), 79 deletions(-)
 
