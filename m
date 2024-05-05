@@ -1,167 +1,168 @@
-Return-Path: <linux-kernel+bounces-168963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63108BC038
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:18:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95548BC03A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265511F216E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46561C20DE6
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617F4171A5;
-	Sun,  5 May 2024 11:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E94A17BD9;
+	Sun,  5 May 2024 11:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="OuGIFNRH"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JimJYdjz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8E2111A8
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 11:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55642566A;
+	Sun,  5 May 2024 11:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714907885; cv=none; b=Aull+9UUWwkYuydRG159bbwATrvFH6rfbAC3DcQtA4ujFbPK3a6mHmNopHiF36gFb73MqYhkkdpTTiU4shTzSj2fdsMQzRKBCuYf96qg5Udbyit3xKPK1x8ZWvW6t8+RroJi4sNueSL0cLdNTT3KHXQW254+po3udVqCMP7adIo=
+	t=1714908731; cv=none; b=IVve0SeRm1aP6PzZ8qaxu0x93ma/eflVDuiTLaBbCy7cTgpkb/URqIT7onYYcb0tuMAO/Bj/Ac/eSsOmCuOPQtTySn18HBy40r9+OLUJsvNUhmCgK2G/ygdtMUtnRgaKzvDPBeIsrPl6XVxOci9JQx8BFW6DFd8QX7nTsJnk1iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714907885; c=relaxed/simple;
-	bh=ru7fMimQdej2rZlpz1llHVTGQwDFG6DuHrBFcI9/v7g=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=RTfkj8ggyrdgjwlCZ2sQuSvfNekdGG7ebwRjoyTEhHeeaX/+3j61dpYxlLd/Y6xSDgMkq0VAE5r1x4DF7+8v6Uyn9TgJnrOkz48cxm+fXuI6tSU9F+XTJzdPlyBHwcHjYi1uPWXIirQwwyoFh6qYKDFjkhAiuj/iVBnLHwYAYfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=OuGIFNRH; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=yZOSHiPoDXg5BRuJhBvEzO5qE3MrmYzEHwcoLAo9s4s=;
-  b=OuGIFNRHPgF5RalHmd3KO4xsmAfZlMdLa8ltCv3pTAzCrYz5Wv95uTvm
-   BScMftIndrE1QWY9b54luXrz4pQqAiP4+phHv5CaMvuDaS6F/1owZCFnz
-   2cSiRx3fCiXmXmZH1P6DcA10oPpzL07WjUHBO8gew5aPcY/2XtuL1XU6e
-   s=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.07,256,1708383600"; 
-   d="scan'208";a="164543578"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 13:17:59 +0200
-Date: Sun, 5 May 2024 13:17:59 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-cc: Matt Roper <matthew.d.roper@intel.com>, linux-kernel@vger.kernel.org, 
-    oe-kbuild-all@lists.linux.dev
-Subject: drivers/gpu/drm/xe/xe_guc_ads.c:103:21-27: WARNING use flexible-array
- member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
- (fwd)
-Message-ID: <alpine.DEB.2.22.394.2405051317090.3397@hadrien>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1714908731; c=relaxed/simple;
+	bh=zo6MNQZCEBD6b3AWALFdLcV6B6KTtGSpb1td+DtvigY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E/Hde0lqAlZp8aip9/E2hqckhS9lxTP1On+2Pk9mtTHgPPavuIQh+SOUEwYuEvzOyziXY0acsONEWFUVOS+81IDUX5T8HRQZi1BqO6qHaREKrzcq4Ovi7dXKOanApjsOKAFWDcXRW60onilc5xO0EZKJ30E/DuKQt5Hz0jVDzeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JimJYdjz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F356AC113CC;
+	Sun,  5 May 2024 11:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714908730;
+	bh=zo6MNQZCEBD6b3AWALFdLcV6B6KTtGSpb1td+DtvigY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JimJYdjzvynBymUsAse5opQYcEnpmDDbXTJVjMvtlQTb/XUoJAJDQZ7U/bZkBRerO
+	 DCkMG5xFviIHmjnP7eiPa95q9/KEobvzcsT+mL7f9mo7pvvgDJodKDfU2CqEBZtEk/
+	 ip/1hZ7wU12o1x3b4fpKzwe4pHGECDV/2osOX0j3iGapcgeSa0N/S/kp+UFb3VEALC
+	 seNWeALtUoXxoRyr6ErVRD+zyWyrwXT07pgE3kkCABtzgxzLzR+pwk0EKbo574a0S5
+	 5FpIHDjY+p08XkISXyO5FcHaNnHYb5eStSIZbCOAeXVJcNeXtzFwT6RD+FDaZfTgbk
+	 ZVvnYhONvv92Q==
+Message-ID: <3425732a-390b-4c0f-ba1b-2a7e2219d581@kernel.org>
+Date: Sun, 5 May 2024 13:32:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Mithil <bavishimithil@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240417134237.23888-1-bavishimithil@gmail.com>
+ <2e179356-425d-48cc-84db-0ea3e6203fba@kernel.org>
+ <CAGzNGR=pvv67UJtNnkDUMhrpnPjNCCYEGeCaM7e_9=4G+Lcfgw@mail.gmail.com>
+ <676ce61c-e850-4046-ad0f-e3382be3fe0c@kernel.org>
+ <CAGzNGR=rDrd6LyAC2yB4XUcxn=H1VdY8LQO99NEOBR1sLGGT0Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAGzNGR=rDrd6LyAC2yB4XUcxn=H1VdY8LQO99NEOBR1sLGGT0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Can a flexible array be used at the end of this structure?
+On 05/05/2024 11:59, Mithil wrote:
+>>>> Missing constraints, so replace it with maxItems: 1
+>>> Similar to how clock-names are handled?
+>>>
+>>>> List the items. I asked to open existing bindings and take a look how it
+>>>> is there. Existing bindings would show you how we code this part.
+>>>   clock-names:
+>>>     items:
+>>>       - const: pdmclk
+>>>     minItems: 1
+>>>     maxItems: 1
+>>> Something like this?
+>>
+>> No. Do you see code like this anywhere? Please only list the items,
+>> although without context impossible to judge.
+>>
+> Quick search on sources gave me
+> Documentation/devicetree/bindings/usb/dwc2.yaml
 
-julia
+Above code is different - it does not have maxItems, which you want to add.
 
----------- Forwarded message ----------
-Date: Sun, 5 May 2024 19:06:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: oe-kbuild@lists.linux.dev
-Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
-Subject: drivers/gpu/drm/xe/xe_guc_ads.c:103:21-27: WARNING use flexible-array
-    member instead
-    (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-
-    and-one-element-arrays)
+> which I used as reference for this prop
+> clock-names:
+>   description: Must be "pdmclk"
 
-BCC: lkp@intel.com
-CC: oe-kbuild-all@lists.linux.dev
-CC: linux-kernel@vger.kernel.org
-TO: Lucas De Marchi <lucas.demarchi@intel.com>
-CC: Matt Roper <matthew.d.roper@intel.com>
+Again, no, please list the items.
+items:
+ - const: foo
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7367539ad4b0f8f9b396baf02110962333719a48
-commit: 237412e45390805e14a6936fb998d756c4eac9d8 drm/xe: Enable 32bits build
-date:   3 months ago
-:::::: branch date: 2 days ago
-:::::: commit date: 3 months ago
-config: i386-randconfig-054-20240505 (https://download.01.org/0day-ci/archive/20240505/202405051824.AmjAI5Pg-lkp@intel.com/config)
-compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Julia Lawall <julia.lawall@inria.fr>
-| Closes: https://lore.kernel.org/r/202405051824.AmjAI5Pg-lkp@intel.com/
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/xe/xe_guc_ads.c:103:21-27: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+> 
+> compatible = "ti,omap4-mcpdm";
+> reg = <0x40132000 0x7f>, /* MPU private access */
+>         <0x49032000 0x7f>; /* L3 Interconnect */
+> interrupts = <0 112 0x4>;
+> Not really constants as they do change with platforms (omap4 vs 5 for
+> example) but
 
-vim +103 drivers/gpu/drm/xe/xe_guc_ads.c
+That is not really relevant... This is not pi or other math constant.
 
-dd08ebf6c3525a Matthew Brost 2023-03-30   53
-dd08ebf6c3525a Matthew Brost 2023-03-30   54  /*
-dd08ebf6c3525a Matthew Brost 2023-03-30   55   * The Additional Data Struct (ADS) has pointers for different buffers used by
-dd08ebf6c3525a Matthew Brost 2023-03-30   56   * the GuC. One single gem object contains the ADS struct itself (guc_ads) and
-dd08ebf6c3525a Matthew Brost 2023-03-30   57   * all the extra buffers indirectly linked via the ADS struct's entries.
-dd08ebf6c3525a Matthew Brost 2023-03-30   58   *
-dd08ebf6c3525a Matthew Brost 2023-03-30   59   * Layout of the ADS blob allocated for the GuC:
-dd08ebf6c3525a Matthew Brost 2023-03-30   60   *
-dd08ebf6c3525a Matthew Brost 2023-03-30   61   *      +---------------------------------------+ <== base
-dd08ebf6c3525a Matthew Brost 2023-03-30   62   *      | guc_ads                               |
-dd08ebf6c3525a Matthew Brost 2023-03-30   63   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   64   *      | guc_policies                          |
-dd08ebf6c3525a Matthew Brost 2023-03-30   65   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   66   *      | guc_gt_system_info                    |
-dd08ebf6c3525a Matthew Brost 2023-03-30   67   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   68   *      | guc_engine_usage                      |
-dd08ebf6c3525a Matthew Brost 2023-03-30   69   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   70   *      | guc_um_init_params                    |
-dd08ebf6c3525a Matthew Brost 2023-03-30   71   *      +---------------------------------------+ <== static
-dd08ebf6c3525a Matthew Brost 2023-03-30   72   *      | guc_mmio_reg[countA] (engine 0.0)     |
-dd08ebf6c3525a Matthew Brost 2023-03-30   73   *      | guc_mmio_reg[countB] (engine 0.1)     |
-dd08ebf6c3525a Matthew Brost 2023-03-30   74   *      | guc_mmio_reg[countC] (engine 1.0)     |
-dd08ebf6c3525a Matthew Brost 2023-03-30   75   *      |   ...                                 |
-dd08ebf6c3525a Matthew Brost 2023-03-30   76   *      +---------------------------------------+ <== dynamic
-dd08ebf6c3525a Matthew Brost 2023-03-30   77   *      | padding                               |
-dd08ebf6c3525a Matthew Brost 2023-03-30   78   *      +---------------------------------------+ <== 4K aligned
-dd08ebf6c3525a Matthew Brost 2023-03-30   79   *      | golden contexts                       |
-dd08ebf6c3525a Matthew Brost 2023-03-30   80   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   81   *      | padding                               |
-dd08ebf6c3525a Matthew Brost 2023-03-30   82   *      +---------------------------------------+ <== 4K aligned
-dd08ebf6c3525a Matthew Brost 2023-03-30   83   *      | capture lists                         |
-dd08ebf6c3525a Matthew Brost 2023-03-30   84   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   85   *      | padding                               |
-dd08ebf6c3525a Matthew Brost 2023-03-30   86   *      +---------------------------------------+ <== 4K aligned
-dd08ebf6c3525a Matthew Brost 2023-03-30   87   *      | UM queues                             |
-dd08ebf6c3525a Matthew Brost 2023-03-30   88   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   89   *      | padding                               |
-dd08ebf6c3525a Matthew Brost 2023-03-30   90   *      +---------------------------------------+ <== 4K aligned
-dd08ebf6c3525a Matthew Brost 2023-03-30   91   *      | private data                          |
-dd08ebf6c3525a Matthew Brost 2023-03-30   92   *      +---------------------------------------+
-dd08ebf6c3525a Matthew Brost 2023-03-30   93   *      | padding                               |
-dd08ebf6c3525a Matthew Brost 2023-03-30   94   *      +---------------------------------------+ <== 4K aligned
-dd08ebf6c3525a Matthew Brost 2023-03-30   95   */
-dd08ebf6c3525a Matthew Brost 2023-03-30   96  struct __guc_ads_blob {
-dd08ebf6c3525a Matthew Brost 2023-03-30   97  	struct guc_ads ads;
-dd08ebf6c3525a Matthew Brost 2023-03-30   98  	struct guc_policies policies;
-dd08ebf6c3525a Matthew Brost 2023-03-30   99  	struct guc_gt_system_info system_info;
-dd08ebf6c3525a Matthew Brost 2023-03-30  100  	struct guc_engine_usage engine_usage;
-dd08ebf6c3525a Matthew Brost 2023-03-30  101  	struct guc_um_init_params um_init_params;
-dd08ebf6c3525a Matthew Brost 2023-03-30  102  	/* From here on, location is dynamic! Refer to above diagram. */
-dd08ebf6c3525a Matthew Brost 2023-03-30 @103  	struct guc_mmio_reg regset[0];
-dd08ebf6c3525a Matthew Brost 2023-03-30  104  } __packed;
-dd08ebf6c3525a Matthew Brost 2023-03-30  105
+> So do i just make up the constants for it then? Those just seem like
+> magic numbers.
 
-:::::: The code at line 103 was first introduced by commit
-:::::: dd08ebf6c3525a7ea2186e636df064ea47281987 drm/xe: Introduce a new DRM driver for Intel GPUs
+Hm? Did you look around for other SoC nodes? 0 looks like SPI, 4 like
+LEVEL_HIGH, but it depends on number of meaning of the interrupt cells,
+so who is parent interrupt controller.
 
-:::::: TO: Matthew Brost <matthew.brost@intel.com>
-:::::: CC: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To work with DT bindings it is necessary to have minimum basic knowledge
+about DTS. Maybe it would be good to start with some guides/tutorials
+about DTS. elinux has quite some tutorial and also resources pointing to
+various conference talks.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
+
 
