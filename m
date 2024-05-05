@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-168886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57078BBF44
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:00:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A70A8BBF46
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45FA11F21707
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:00:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012C41F216C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527F81C20;
-	Sun,  5 May 2024 05:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1813B1878;
+	Sun,  5 May 2024 05:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="wacr2QJ5"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IhMr6pTm"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE932A35;
-	Sun,  5 May 2024 04:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6899A35;
+	Sun,  5 May 2024 05:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714885202; cv=none; b=lbBSgutRsNNVXr9M18aYe1/TFKqyzm0ZXNTTHiV+DZ70wYJamdsOiho6G0H7kdd7gXBAlpr3u1UMNA1BB0lsZyx73v3QnhgTPZrviVYfLPo6AN+yTWZw82wyEO2EsyeQ0IEK9N2yPVWc+GXh6/NGjRoK+zH1dJDscxbo/iGximo=
+	t=1714885268; cv=none; b=SxMbLc5tF0oigPQzOpNS3IKnLH+TsXpGv3YhatuWZumTzMuXlpURLb6DRDGbA2Zt6gYvl0GTdWSSJ6HQQrhwUI+IbXCP4fti8QVIJGSJJU+kNZuosCkCXi1Bwck5TgpApK6zqakMgGjTI+1WgPe91NXVXrwwrAgh12sFsd7tup0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714885202; c=relaxed/simple;
-	bh=gZWYN8TIJRhzisv1ghmJGD7uF7Ek/ub2Pify1gP8OTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQPj+0zJoBhl4ET/0iJK86FD5W4wT0fYspvWcZvUGTff8QSt4Tf+04OUjgBX4A8B+34Pci5kAPrPFVSkQso+6qlf8RTtLzENsT4Xu3cpiXaF/RZfbK1pJUF3GB0T5IDE9t1Pa+OYL+XMAKVlbY5+p0kGhwbyeKCeLBGd9zUKvxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=wacr2QJ5; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=FqdPLKiJZZINToP0SO0egCn3nMeBdaZBsgYm9Al6woM=;
-	t=1714885200; x=1715317200; b=wacr2QJ5e7ejSawzg3W4/7SoEO9vMizQP5Beqtghws31X5g
-	Q5h0jFhzg+iomDmxjA/b6lBqep2cOUpUs3YMQZizen89BoC7LTzqkAX7biavtx34io/0JiR6i1ZTK
-	cKgKmdkZ73dUg5XhTHHLlvazPipA8UZ1IbReQcN2lrTUYokTHzl9VcLx0GVxYULYrkxSqAF6celIV
-	Y6d6OyjFLZ1/4kYmNUJCMzSlWVjtbEKQHTbUWkGnJxZBV6A7dwLaDi/pg8LamBIbdPcgEIn2QRigC
-	/f6UpBzVKomrPQynBCo2f59tFbKu3eP0AO0GH2HXmlFteuqKtg9Pvx1hCvNz2zIA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1s3Tyf-00055A-Fc; Sun, 05 May 2024 06:59:57 +0200
-Message-ID: <3f1f55cb-d8df-4834-b22f-c195d161cab5@leemhuis.info>
-Date: Sun, 5 May 2024 06:59:56 +0200
+	s=arc-20240116; t=1714885268; c=relaxed/simple;
+	bh=iCv8VKH7FCqMmNScop6T5aCa+t9fP0ZnGfE3+nGdSzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BiRtIEKf6Fnjg6zbnDtlYhMKGRauWsnRfyqBzMXwtNaLalOEfcuWAB0YEfkGJsoP/9uQkc3rQI86QWwuOg3Fa7vEkj6RIXJ5vYJP/1QnEFxbIZh9bY2js9ETew3XsSeWvCg896SFNbcj3+O89LMP+EEzusKzAV4rVYQPeNJ2z/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IhMr6pTm; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59a17fcc6bso182528866b.1;
+        Sat, 04 May 2024 22:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714885265; x=1715490065; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3BGj2iZw0M3WP22RDQd4lrzhL8TXQXwvu+PNvjBKii0=;
+        b=IhMr6pTm9UC+Sf7JxCcNn9GYEmlcEtvL8/XFwRH/E88Yjzvb/RUV6YoDE73opsPsOZ
+         lB12HFiYMtM9Hj+iiHYnNaXpSvExSK9lywiURnqe5y3fC5WtkMBcSAkQHPD1Iu/1vmYV
+         ocbl7rPeZb/71rlNt24LgnXqSsLgcb0bRduHsXBqUFaJWpqN5wRuWFDlax7Hj4RKz4L8
+         ZbCOa+Vy/vMsocRL2EURwIi+V1L2HfZPVbOWifHY949NmQPLxkZIO0N+zx1De9E+2oG5
+         2bskW3H0yhliQ2QYmSboAkp92BAVsHYtebIyfK766eIf2Cukm4CjuBKQZwJdqdST4zMX
+         /XdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714885265; x=1715490065;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3BGj2iZw0M3WP22RDQd4lrzhL8TXQXwvu+PNvjBKii0=;
+        b=BITTYyw6wgdr0TKATXVUnrTIDCiSoTE6zoxjdo93vKDvHKfBjNuUzWYht1No6QrV8c
+         pyu6uhtjBTYBcRm/NbKWtq1SUf9Z+xylg45/I3jxFTrbN4TbZSah/9PQcWTZkq9BLKcw
+         oKeTU2dAmD5+PrK2Xt/OlGd5IcARMgRZNU8XrEydwT/6OIVyAEIKxbiDYS1rmMFXBrAQ
+         6hJVIKNUa1/9tIwEpu9F+p+c/xHHoLqb+iBI/VJ5zrcuyjNmn7WUKstdP3B9Iul7fEog
+         zpVESo6fIsy3fE90vTP/OmvQKf4Fq95+HMU3nA2w5bRHliZJcFcU8AQDFAz/jhVuBXt/
+         v5YA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvajsEPcmNxC7h6BnQzNk6YjPa7rBinvHLqtzRhkGdZ2hLCYvxnQNqOlmbBamxfJxhzC1WcCb04FbyzeP8fcIGqcJaPru9K2PSo7Kyao7wEYmXRQFt7e40S6Zn2nnT0R6dqpaUbyuLZcYV
+X-Gm-Message-State: AOJu0YyP/c8o8dlTodbbgobqHv0AtTWOkjbWXMEHzQkbffQ2ClrySea8
+	3+6R3GNL2Cmg+gqp9ruQHNmm/tnt9TqUm1g15uv0c2C4lsbMAws5
+X-Google-Smtp-Source: AGHT+IGHeyGso2i/asF/MEqy/032+R0eOOXgXpAYUc6lEQQIGhl6k9eItFlyqQAng1bgpzGs+BRRhQ==
+X-Received: by 2002:a17:907:e86:b0:a59:c889:ed29 with SMTP id ho6-20020a1709070e8600b00a59c889ed29mr154167ejc.38.1714885264652;
+        Sat, 04 May 2024 22:01:04 -0700 (PDT)
+Received: from gmail.com (1F2EF54C.unconfigured.pool.telekom.hu. [31.46.245.76])
+        by smtp.gmail.com with ESMTPSA id lk11-20020a170906cb0b00b00a59a0174c01sm1915440ejb.180.2024.05.04.22.01.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 May 2024 22:01:04 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Sun, 5 May 2024 07:01:02 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Subject: Re: [GIT PULL] Kbuild updates for v6.9-rc1
+Message-ID: <ZjcSjk0mXYopAvVS@gmail.com>
+References: <CAK7LNARXef6Myb_Gd4jyGfwujoBAjmjzLZBzgkm4T1KmfHP0MQ@mail.gmail.com>
+ <ZjcRPelwZP34N42s@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Thunderbolt Host Reset Change Causes eGPU
- Disconnection from 6.8.7=>6.8.8
-To: Micha Albert <kernel@micha.zone>
-Cc: "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <wL3vtEh_zTQSCqS6d5YCJReErDDy_dw-dW5L9TSpp9VFDVHfkSN8lNo8i1ZVUD9NU-eIvF2M84nhfdt2O7spGu2Nv5-oz9FLohYO7SuJzWQ=@micha.zone>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <wL3vtEh_zTQSCqS6d5YCJReErDDy_dw-dW5L9TSpp9VFDVHfkSN8lNo8i1ZVUD9NU-eIvF2M84nhfdt2O7spGu2Nv5-oz9FLohYO7SuJzWQ=@micha.zone>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1714885200;7b11026f;
-X-HE-SMSGID: 1s3Tyf-00055A-Fc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjcRPelwZP34N42s@gmail.com>
 
-[CCing Mario, who asked for the two suspected commits to be backported]
 
-On 05.05.24 03:12, Micha Albert wrote:
+* Ingo Molnar <mingo@kernel.org> wrote:
+
+> Notes:
 > 
->     I have an AMD Radeon 6600 XT GPU in a cheap Thunderbolt eGPU board.
-> In 6.8.7, this works as expected, and my Plymouth screen (including the
-> LUKS password prompt) shows on my 2 monitors connected to the GPU as
-> well as my main laptop screen. Upon entering the password, I'm put into
-> userspace as expected. However, upon upgrading to 6.8.8, I will be
-> greeted with the regular password prompt, but after entering my password
-> and waiting for it to be accepted, my eGPU will reset and not function.
-> I can tell that it resets since I can hear the click of my ATX power
-> supply turning off and on again, and the status LED of the eGPU board
-> goes from green to blue and back to green, all in less than a second.
-> 
->    I talked to a friend, and we found out that the kernel parameter
-> thunderbolt.host_reset=false fixes the issue. He also thinks that
-> commits cc4c94 (59a54c upstream) and 11371c (ec8162 upstream) look
-> suspicious. I've attached the output of dmesg when the error was
-> occurring, since I'm still able to use my laptop normally when this
-> happens, just not with my eGPU and its connected displays.
+> - Yes, those weird 'file' and ': No such file or directory' strings are 
+>   pasted as-is. No idea what it's about, and the build log doesn't say.
 
-Thx for the report. Could you please test if 6.9-rc6 (or a later
-snapshot; or -rc7, which should be out in about ~18 hours) is affected
-as well? That would be really important to know.
+Forgot to mention that I also did a KBUILD_VERBOSE=2 build - which isn't 
+more verbose for this particular failure:
 
-It would also be great if you could try reverting the two patches you
-mentioned and see if they are really what's causing this. There iirc are
-two more; maybe you might need to revert some or all of them in the
-order they were applied.
 
-Ciao, Thorsten
+   BTF [M] net/qrtr/qrtr.ko - due to: vmlinux
+   BTF [M] net/qrtr/qrtr-smd.ko - due to: vmlinux
+   BTF [M] net/qrtr/qrtr-tun.ko - due to: vmlinux
+   BTF [M] net/qrtr/qrtr-mhi.ko - due to: vmlinux
+ file
+ : No such file or directory
+ make[3]: *** [debian/rules:61: binary-image] Error 255
+ dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+ make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+ make[1]: *** [/home/mingo/tip.localinstall/Makefile:1541: bindeb-pkg] Error 2
+ make: *** [Makefile:240: __sub-make] Error 2
+ kepler:~/tip.localinstall> 
 
-P.s.: To be sure the issue doesn't fall through the cracks unnoticed,
-I'm adding it to regzbot, the Linux kernel regression tracking bot:
+Thanks,
 
-#regzbot ^introduced v6.8.7..v6.8.8
-#regzbot title thunderbolt: eGPU disconnected during boot
+	Ingo
 
