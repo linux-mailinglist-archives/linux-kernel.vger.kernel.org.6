@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-169129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE848BC38B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:13:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAD58BC398
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EDDDB21CCE
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9381F2120C
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F24A7442F;
-	Sun,  5 May 2024 20:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A2874427;
+	Sun,  5 May 2024 20:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CnaLgPQ6"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiTd0R+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B23F8C04;
-	Sun,  5 May 2024 20:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025056EB58;
+	Sun,  5 May 2024 20:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714939984; cv=none; b=PU8GcCwsV2JCm1alvvUOoDRdTlCVWT3R3529Q589GDOyDMrpueRFtsTlMfHeV3IRYBNf5L3yFgOIvgm2MBNNyy3dq6mb+zHbte1caCtDkNi1dCnix2fOldvEldcyhHs440WRfkvSOAaFmAa9XTZFHvVoVBsUnp4ey7u5gPXpuc4=
+	t=1714940229; cv=none; b=l7L3n+8Wv2zpBSNTGTPuQQD3zh3n0keSidRl/OzRh8oDLQi6q9fIFyCgZtPKqU9dfX/G+zMQ/aafeUdPJGI6JX9nV4P0poYD+NS8YaT1HCHd0bdDnKMXxy85VCdaTFUOSeMjz+GlaQKpKDNRMWLKbTAtZqWbjC6eE6uQcXfjVSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714939984; c=relaxed/simple;
-	bh=tmAv/wT9BVLewINzzauNm7tN7lL7n2Hb+NTBjGmgZGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ew0mvybEtNNnMexvBDLK/AvR8JlK5XQRvhCZnTTFnS1p2DK9fy+117pc4z9J8gssZqWa+xH82TbYf7WXociwveON6rgUOopcddtb8M3SM/8Z0Nd3cX49iX8GILkqadCDzrAuopkEgth1ywBP0woR7Ra0oqMpQIaDK1gg91cHbRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CnaLgPQ6; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FIBoGZquZ/VQe2BKe30XapKIaNM49ftHl1jJXnJm4k8=; b=CnaLgPQ6MmvvpktCsT6C2eJz3J
-	oqeWQSgZ0Dw3Z1EwSS6+OhHluY6tG92atgAY7KqTo8lvS0C4CTfQS+YJdqrXUmNiCcgIWA/qDCv4F
-	s39hw0eIJcULyRbooAxulMm+VWMPzYxFEtZRNKC6y8s03L9r9hOjO8MVk+OxNQxEtohB3mdEPcwq5
-	6/svRI0/B+7pstJPhzIp6uyDiT4G31Y96bNSnZYHdZOFYnk3S4Ug7be4CUKX33+ebiIFEa1lDFzTN
-	xhRECPgfGVbrmNkgd137h6fDVgyJHDe3j4aMst3q7MaunQnGbEO5wbFc8SEimuuHg5ZTrfxyAuqHm
-	6pSrN7Nw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s3iEA-00DH5K-0Z;
-	Sun, 05 May 2024 20:12:54 +0000
-Date: Sun, 5 May 2024 21:12:54 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, keescook@chromium.org,
-	axboe@kernel.dk, christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
-	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
-	sumit.semwal@linaro.org,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240505201254.GI2118490@ZenIV>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <20240505-gelehnt-anfahren-8250b487da2c@brauner>
- <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+	s=arc-20240116; t=1714940229; c=relaxed/simple;
+	bh=FF5vh+hxfO8q+2BL9JwG8I+0INO/yNYfJ9dDF0SsodA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MLYs6SRDPMemoW5CVyEXcr6ZgOCy4pFBqqSkmhLSUE2ac0rgz0HRZqkqRA3+2Q7u7bQzu7XYns5oN/SPPa0T/QcrZEV/M4mx53KsxLms56fULeBfBt1TSI2+z9LJSjvq11xOhhPMUYaHtXNAkLPjT6V1feD573+5/ZDmRz5TN6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiTd0R+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BF2C113CC;
+	Sun,  5 May 2024 20:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714940228;
+	bh=FF5vh+hxfO8q+2BL9JwG8I+0INO/yNYfJ9dDF0SsodA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oiTd0R+imy9Xa34yEzUhW4cL7B29WDmWMzoHDU8BCJS0jaeFCz0AFg6ccmJ77QXXz
+	 FmbtNttCPMBUCoZs45w3YEvQXDHGeVO08zsFldViono5dHmeMqSiTeXshXafp23ReI
+	 AzYCyqW2zBLeGn2Fk86Exoyc1Ph29gkSh525CrBRmFgkp5hx3hrtm8/JUly3uug7Xu
+	 vUp0oa5uf8a/TxPCkMQLoFKRQSZDKvRyIPy3Bwh//ZnyrOIoP4WfaQUN0YdBUqP9gg
+	 eNj4Cby3MN5LOglLVzxQ/PEXDk4F/LHXBeNVnadoxhm141tg3n/ASGZTBgsaKTOaoP
+	 Z1D0wiNalEqEg==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
+	Pu Lehui <pulehui@huawei.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	bpf@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: puranjay12@gmail.com
+Subject: [PATCH bpf] riscv, bpf: make some atomic operations fully ordered
+Date: Sun,  5 May 2024 20:16:33 +0000
+Message-Id: <20240505201633.123115-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 05, 2024 at 09:46:05AM -0700, Linus Torvalds wrote:
+The BPF atomic operations with the BPF_FETCH modifier along with
+BPF_XCHG and BPF_CMPXCHG are fully ordered but the RISC-V JIT implements
+all atomic operations except BPF_CMPXCHG with relaxed ordering.
 
-> WHY?
-> 
-> Why cannot you and Al just admit that the problem is in epoll. Always
-> has been, always will be.
+Section 8.1 of the "The RISC-V Instruction Set Manual Volume I:
+Unprivileged ISA" [1], titled, "Specifying Ordering of Atomic
+Instructions" says:
 
-Nobody (well, nobody who'd ever read epoll) argues that epoll is not
-a problem.
+| To provide more efficient support for release consistency [5], each
+| atomic instruction has two bits, aq and rl, used to specify additional
+| memory ordering constraints as viewed by other RISC-V harts.
 
-> The fact is, it's not dma-buf that is violating any rules.
+and
 
-Now, that is something I've a trouble with.  Use of get_file() in there
-actually looks rather fishy, regardless of epoll.
+| If only the aq bit is set, the atomic memory operation is treated as
+| an acquire access.
+| If only the rl bit is set, the atomic memory operation is treated as a
+| release access.
+|
+| If both the aq and rl bits are set, the atomic memory operation is
+| sequentially consistent.
 
-At the very least it needs a comment discouraging other instances from
-blindly copying this.  A reference to struct file pins down more than
-driver-internal objects; if nothing else, it pins down a mount and
-if you don't have SB_NOUSER on file_inode(file)->i_sb->s_flags, it's
-really not a good idea.
+Fix this by setting both aq and rl bits as 1 for operations with
+BPF_FETCH and BPF_XCHG.
 
-What's more, the reason for that get_file() is, AFAICS, that nodes
-we put into callback queue for fence(s) in question[*] are embedded
-into dmabuf and we don't want them gone before the callbacks have
-happened.  Which looks fishy - it would make more sense to cancel
-these callbacks and drop the fence(s) in question from ->release().
+[1] https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf
 
-I've no problem whatsoever with fs/eventpoll.c grabbing/dropping
-file reference around vfs_poll() calls.  And I don't believe that
-"try to grab" has any place in dma_buf_poll(); it's just that I'm not
-happy about get_file() call being there in the first place.
+Fixes: dd642ccb45ec ("riscv, bpf: Implement more atomic operations for RV64")
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+ arch/riscv/net/bpf_jit_comp64.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Sure, the call of ->poll() can bloody well lead to references being
-grabbed - by the pollwait callback, which the caller of ->poll()
-is aware of.  It's ->poll() instance *itself* grabbing such references
-with vfs_poll() caller having no idea what's going on that has
-potential for being unpleasant.  And we can't constify 'file' argument
-of ->poll() because of poll_wait(), so it's hard to catch those who
-do that kind of thing; I've explicitly said so upthread, I believe.
+diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+index ec9d692838fc..fb5d1950042b 100644
+--- a/arch/riscv/net/bpf_jit_comp64.c
++++ b/arch/riscv/net/bpf_jit_comp64.c
+@@ -498,33 +498,33 @@ static void emit_atomic(u8 rd, u8 rs, s16 off, s32 imm, bool is64,
+ 		break;
+ 	/* src_reg = atomic_fetch_<op>(dst_reg + off16, src_reg) */
+ 	case BPF_ADD | BPF_FETCH:
+-		emit(is64 ? rv_amoadd_d(rs, rs, rd, 0, 0) :
+-		     rv_amoadd_w(rs, rs, rd, 0, 0), ctx);
++		emit(is64 ? rv_amoadd_d(rs, rs, rd, 1, 1) :
++		     rv_amoadd_w(rs, rs, rd, 1, 1), ctx);
+ 		if (!is64)
+ 			emit_zextw(rs, rs, ctx);
+ 		break;
+ 	case BPF_AND | BPF_FETCH:
+-		emit(is64 ? rv_amoand_d(rs, rs, rd, 0, 0) :
+-		     rv_amoand_w(rs, rs, rd, 0, 0), ctx);
++		emit(is64 ? rv_amoand_d(rs, rs, rd, 1, 1) :
++		     rv_amoand_w(rs, rs, rd, 1, 1), ctx);
+ 		if (!is64)
+ 			emit_zextw(rs, rs, ctx);
+ 		break;
+ 	case BPF_OR | BPF_FETCH:
+-		emit(is64 ? rv_amoor_d(rs, rs, rd, 0, 0) :
+-		     rv_amoor_w(rs, rs, rd, 0, 0), ctx);
++		emit(is64 ? rv_amoor_d(rs, rs, rd, 1, 1) :
++		     rv_amoor_w(rs, rs, rd, 1, 1), ctx);
+ 		if (!is64)
+ 			emit_zextw(rs, rs, ctx);
+ 		break;
+ 	case BPF_XOR | BPF_FETCH:
+-		emit(is64 ? rv_amoxor_d(rs, rs, rd, 0, 0) :
+-		     rv_amoxor_w(rs, rs, rd, 0, 0), ctx);
++		emit(is64 ? rv_amoxor_d(rs, rs, rd, 1, 1) :
++		     rv_amoxor_w(rs, rs, rd, 1, 1), ctx);
+ 		if (!is64)
+ 			emit_zextw(rs, rs, ctx);
+ 		break;
+ 	/* src_reg = atomic_xchg(dst_reg + off16, src_reg); */
+ 	case BPF_XCHG:
+-		emit(is64 ? rv_amoswap_d(rs, rs, rd, 0, 0) :
+-		     rv_amoswap_w(rs, rs, rd, 0, 0), ctx);
++		emit(is64 ? rv_amoswap_d(rs, rs, rd, 1, 1) :
++		     rv_amoswap_w(rs, rs, rd, 1, 1), ctx);
+ 		if (!is64)
+ 			emit_zextw(rs, rs, ctx);
+ 		break;
+-- 
+2.40.1
 
-But similar calls of get_file() in ->poll() instances (again, not
-the ones that are made by pollwait callback) are something to
-watch out for and having the caller pin struct file does not solve
-the problem.
-
-[*] at most one per direction, and I've no idea whether there can be more
-than one signalling fence for given dmabuf) 
 
