@@ -1,267 +1,526 @@
-Return-Path: <linux-kernel+bounces-169083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21C48BC2D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:31:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43488BC2E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1BCE1C20AF3
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1811F2148F
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 17:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583225A0F9;
-	Sun,  5 May 2024 17:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D201858ACC;
+	Sun,  5 May 2024 17:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="fcQziIs5"
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04olkn2078.outbound.protection.outlook.com [40.92.75.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQg3g+Tp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B964084D;
-	Sun,  5 May 2024 17:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.75.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714930304; cv=fail; b=jLL+mHq5N2STHHtitfz7c4T3tzehVOCDOJjRMrrIl6cSoriZqxNzmh4OT5/sx6yz1cJJ9tRxxfq+RCwpSZj2p4XVOFL6v+1Dmw7CKINKhov3eiVGVGbimIvIybG3fV8pjbnnXW2yRgC6PYxHbK8jVTTe/C5TKFB4bH9LxvFto9w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714930304; c=relaxed/simple;
-	bh=u41/1A9u74T2+KjJZXraw6u2NAXlA17C2IM79388iD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gu6xEE+kwm37BKKrEjT2ZdlIfHD1ja06tAs0chr0RpVEsmPLwYyCsDComj5ZtdC3IPl68UW8F/FTv+XYRp7liiMqWy4SpLDLoPl97+T5Kg88IfmgX5SBw1xAbY9XkOqvbyCdMl9d59jeFU+NdLd7T+10s6r2jMLHBcMYqJhkfBU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=fail (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=fcQziIs5 reason="signature verification failed"; arc=fail smtp.client-ip=40.92.75.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=h3FGVxDBWBMeCrqxDQAr/cci1WUeD0anOm7oZ0BJJB6+DZgj81GVdb6poXNZ0B53fEmtaFnzcey/cu9qOE9tqyHuHzVFQ9GR0uCQg13CUr2Sbrsjr47TukC1MYUUHOAvsVfa5bGXxC6lQh1uLKi3FzalPHeTFD0jI/grdr631i3zH84mVB3zhtTDNRDt525pIgGz2QpM9DX+h+IP2fDosMnnCLCNR20EjEo4d6sVjOFkvkuKgBA9C9AaKvFqI4O8fqbQyLE4D4JX7KZL8osdM594Ldy1Eu7ozdKZRGSuYS3VDhbQ8uHOG2D+gBCZVm/BgxX8POeYFliY7OsHegAx0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XUNUXFPHtUdNq4qEGh9aKFnsJp8/vq670J34k5Beov8=;
- b=K1TUkMZ0xSl5nzT83KOi8tL82Q1qON8u57rRjUgEPEhTIK3JIWsUGdAs4HQWWaY5yjOk82OHQ+LAfwqGyc5jQiQj4mM/Lg8aS83p/njbWVCfUtUhAV+UAWFy8jdKZ9P2O7k3lW58YUoQqLdqOxz3WB+zcUkqpC0bm5fCzzB4syQuJvAo4wIpy0zJASS/LOxfIOmMcX4ksQOvGKODo+69V00oJspIl1kF6wg5NvG6UGzv6p5HLZ15v1T675a0uwnilkeK66KCN6KdkPwmh2hlhwNVF6bATDManonjg+cz2ifkn0xHjfbUh3dbXvIZSDSgI7o2GrjCh7QdH9f2/+ljwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XUNUXFPHtUdNq4qEGh9aKFnsJp8/vq670J34k5Beov8=;
- b=fcQziIs5n2k2PXbFUgjmksmwVMJ7i0CuJMF9tCmpHO9Xge8NXyzhhdvr7dxLHlAtS89wCO0kCxcTn01e7SyRpyJrhHNnAxrh81XouMLCsFSva2o12kZhq+M4oH7GG75T1QPTXAcKLbrxSnN1PTsJwlYC3CIJV4AltXmIigcPb8O0MsI2p/O9QzyR8g0Mh7rBrPKi5kfxhmrTW9SYHtxLNym7kNCI8Yt2t+jA2VfOvvhx+ZuXT1A2I4SzCKzyYYvLB9krMPNlbyou02ojHYdDVPYFlzGKSdZgPcxxkPJjauxFLAMmnbasTcll8eUMHllhEvQ7hB6NfLJCO7CgNV6SHw==
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
- by AS8PR02MB9909.eurprd02.prod.outlook.com (2603:10a6:20b:61a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Sun, 5 May
- 2024 17:31:38 +0000
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7544.041; Sun, 5 May 2024
- 17:31:38 +0000
-Date: Sun, 5 May 2024 19:31:24 +0200
-From: Erick Archer <erick.archer@outlook.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Erick Archer <erick.archer@outlook.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] perf/ring_buffer: Prefer struct_size over open coded
- arithmetic
-Message-ID:
- <AS8PR02MB7237EF9D1962834BE4D2C5F88B1D2@AS8PR02MB7237.eurprd02.prod.outlook.com>
-References: <AS8PR02MB7237569E4FBE0B26F62FDFDB8B1D2@AS8PR02MB7237.eurprd02.prod.outlook.com>
- <51a49bae-bd91-428e-b476-f862711453a0@wanadoo.fr>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51a49bae-bd91-428e-b476-f862711453a0@wanadoo.fr>
-X-TMN: [APEankQk6qw0n8e7U4FMI740wFZB2FQh]
-X-ClientProxiedBy: MA3P292CA0014.ESPP292.PROD.OUTLOOK.COM
- (2603:10a6:250:2c::15) To AS8PR02MB7237.eurprd02.prod.outlook.com
- (2603:10a6:20b:3f1::10)
-X-Microsoft-Original-Message-ID: <20240505173124.GA3980@titan>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92F936AF5;
+	Sun,  5 May 2024 17:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714931228; cv=none; b=hjuXKhtcBdwFgttnJoOF4wBi11PIPs3znEd1pmtfNWBPdDZ2QfJ4+XeszSEAdCeqTZPobjAi+eG31h4CHku8I0WSiGlwR1hkGkU5ZeTtQlxCqJVzT/9CWMpGQ3s1W7RnC1rSI2zpPhYvRttOeCPbqaz7gjR+zm6K+YlLnLnx4TE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714931228; c=relaxed/simple;
+	bh=lgGXd0jwUma2idY22GRkaZNyTPzjVvVloiGCuFF4b2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kiIm1FdeykZBSxbMoRC3OmXfuWGfNCC1SCCXYNIGEpeLsu/fzvMeZwmeggOGXHGgL95klEjmXRQSKPyAUuk4n3Nrjx6h2Y+eU76w5OLaz+VOBnyUo5HLl5gLzPGJt67cq5fpd0+6M/Yd8HtM+LCAVZBqx3fhK5cDtWN0+rMMJc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQg3g+Tp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11AD2C113CC;
+	Sun,  5 May 2024 17:47:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714931228;
+	bh=lgGXd0jwUma2idY22GRkaZNyTPzjVvVloiGCuFF4b2o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SQg3g+Tp/N9rX8FDicZSCpjIRvkbVCwoZpuDkY0Yt2cyCZhqWKUuiBAgp37GColwG
+	 lSeQm++Gxckeh4y/xrUc0DcdIagI1VDsaAYmjzsoc/sAbDY82U5LJo9zYhrIXWcjkq
+	 Y6AhenlE5WnwscgModMv5GjogGNHk5o0Ml+sw/qLLlHTxHRuyy7Ga31S8PkhVxgY2Q
+	 ucG3Lq5ak9DaYJVsnh6eEXkriYHdR4U5pjaeRdeU70B0lLCv0bhlrmlYqAIncI5v71
+	 pPIqp7an6LgyaeL4LmMP9YIG3WmUSSGLB7NuICxFgLPhjJa4oWbmusG4BPBJYDIUzT
+	 7XJvArkiBelsQ==
+Date: Sun, 5 May 2024 18:47:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Andrew Hepp
+ <andrew.hepp@ahepp.dev>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] iio: temperature: mcp9600: add threshold events
+ support
+Message-ID: <20240505184700.5c85b2ba@jic23-huawei>
+In-Reply-To: <20240430120535.46097-6-dima.fedrau@gmail.com>
+References: <20240430120535.46097-1-dima.fedrau@gmail.com>
+	<20240430120535.46097-6-dima.fedrau@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|AS8PR02MB9909:EE_
-X-MS-Office365-Filtering-Correlation-Id: 411f1f26-1c16-4bfc-22f5-08dc6d293828
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|440099019|3412199016|56899024|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	VXkplHxuGEUFJylQiOBQeLyVeRz+3zeYzoew2Ds0TLWHqRYjrV6M1T2XZgXn/TfRjMSpKE6IR5y/wVRjEaNdAVCTPRmuHJA8zDtEvD8/OiL+QgcNlqmqqeObzU6ZzNzw5+fZNuXc5XVIhWD8P1TVvn/IoV1I1q0KTQwCi/cMAiAJQM03WgwqP3/JbzjhuViOj+S71Xeb/Nes1GwQ+F/HgpcZdldTFAaw0NQPvbwzfAeSS7currwD+j4KghjmrCE7l1W4cXnvWQ9CtNimLyPk7TW+LACg1nSLRu+7vO5KcUglkKR5zbpx5S2JzDL5F1BkvA7PQ5Z1hhyyCU3/eou0Ho1/DOlAdedl2G8czODRAhMXFEXfWITZwfWitCW8wZaoj2HvxXIcJt+zfYsNFNyA8rcdd277Q2gZD44x/R84Rpv3s2GhJG6vC/WvenGN+EVffa5kVoalyFJ8u/aIKtAPzOZsh6Yn9uKxJ3DLFUIecYb+/Z4XL6mCxpah2GIqtHjb74vxV/yAOyHd9CbQrlZKfDSua60Pkp2hTntToSl7DuIkmyq5KN69leFaeyQetPOcDtxto/PebBLjD5depnyvDTw0Luk+VFF+1q2kXEIx/jc=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?DlWfybdKFHUzdbcdrbJzPkG0gOOhGRqnEwr7Z1oVkucwr3E4bGfhLyKObw?=
- =?iso-8859-1?Q?of3HSZc3MeOLa/NI2LLsE4uXxaIbWog90r5a8Cwjh3mtLLC8MjUtjizkUo?=
- =?iso-8859-1?Q?p70glhZ/GcPAysUk7RuIOMKfWq/WVwsjd+ApMNeMIfJHyc0zvK5GMOtama?=
- =?iso-8859-1?Q?EcL/Hp7js89gHRvBFojA6fKcLJrIVz71uuZTrt2NIrN/idGgupyAA/+yLh?=
- =?iso-8859-1?Q?j9b1zrQXuLGYxZdWFB60FzbQ3qo09cMNZMfH9wwkflbdCt9SetItT66mwH?=
- =?iso-8859-1?Q?KoCGAY0j0T/HHY76/VPvbAbjJEKgvJjzFtVpV5oe3PZShn7oqUG//xbFxq?=
- =?iso-8859-1?Q?9uaVivtxRX9W0o/G88ZmpCCQ/uIVQb8530zUXD+atM6a4mxHQ1d4LxzT4l?=
- =?iso-8859-1?Q?MKAy4gmMKL+xOR47hNHzoEqIHjgugXI31UTU1RdvtKU9LLot1WHKe9BTl9?=
- =?iso-8859-1?Q?xFH7c1O/rsMQ3H2bxJTQutfNJ5jjABGnd0c1YgUzXRXdscN0VbI7Z/iLJN?=
- =?iso-8859-1?Q?HabTnGsqribVVqgIIlIRPZM5wh8tdBbQgyDcN4RFvSccBue0OKS+XarNjR?=
- =?iso-8859-1?Q?7IGbF8YjxE24yjMcIo6N6enoWRpCjEgeOtqHLvc40vFKG/oAFpYKTUrhh+?=
- =?iso-8859-1?Q?lHcPyz2gQ5v0UdvNlHkMetrrjbo9Fxur6kZ5vW6ONlrkPn6akU6v6Mlwn3?=
- =?iso-8859-1?Q?V82zDKdc7bXmPOz3qDqJVho+7kcyDpxHJHPolSJosDikiCIrwn5NMfObNh?=
- =?iso-8859-1?Q?1QQHZ5hnq7pKDExAHAduGTw1Wap1VsPO+eYygAgdbvGDBfAsM8rGhmwZFz?=
- =?iso-8859-1?Q?Y//JdGZV4Gh0kYMXfVC7aPhJHZgo0N4hmOKXd7Egcy6vaQlvDxqfaC6SiD?=
- =?iso-8859-1?Q?WoJyYzbzVHUWQXajQh/A3l4Lu2k1lMq2Smi1wA3mt5fUkWF2+CatT0fMYs?=
- =?iso-8859-1?Q?g2w2tC5+lxuNQD5XvMu5X6xNo9/34YCiyMVGH6Jt0ZuA5ADXQhHAnzF0jk?=
- =?iso-8859-1?Q?opr8IkHG0UFJnNniyxEVynmIoK4p4Ge/mFor0hiATnibSqQaahNANdtITf?=
- =?iso-8859-1?Q?2ggYqJAnxy3FH9ZfAiMlq0Abg9h3cioEb0voH7pcWy97DTdRnw1O9fs3eZ?=
- =?iso-8859-1?Q?nWXp7F54/2fGyrkUF21m24duB1GGlPbGBpQGHLML6nw/+TRKl12WPR9PcH?=
- =?iso-8859-1?Q?VpSGnBo3kpMpKxA1buSEMMBqfaWRTRD/ONZIyeZFVklQQJluPDpQNnz23o?=
- =?iso-8859-1?Q?ZXgS8tZN8yWbDFl+bpP43/MeZcpyU9WIKCslYVkIZ+DuDRcs9Zlm3EEHNO?=
- =?iso-8859-1?Q?AsAA?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 411f1f26-1c16-4bfc-22f5-08dc6d293828
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2024 17:31:38.5531
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR02MB9909
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 05, 2024 at 05:24:55PM +0200, Christophe JAILLET wrote:
-> Le 05/05/2024 à 16:15, Erick Archer a écrit :
-> > diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-> > index 4013408ce012..080537eff69f 100644
-> > --- a/kernel/events/ring_buffer.c
-> > +++ b/kernel/events/ring_buffer.c
-> > @@ -822,9 +822,7 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
-> >   	unsigned long size;
-> 
-> Hi,
-> 
-> Should size be size_t?
+On Tue, 30 Apr 2024 14:05:35 +0200
+Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
 
-I'm sorry, but I don't have enough knowledge to answer this question.
-The "size" variable is used as a return value by struct_size and as
-a parameter to the order_base_2() and kzalloc_node() functions.
+> The device has four programmable temperature alert outputs which can be
+> used to monitor hot or cold-junction temperatures and detect falling and
+> rising temperatures. It supports up to 255 degree celsius programmable
+> hysteresis. Each alert can be individually configured by setting following
+> options in the associated alert configuration register:
+>   - monitor hot or cold junction temperature
+>   - monitor rising or falling temperature
+>   - set comparator or interrupt mode
+>   - set output polarity
+>   - enable alert
+>=20
+> This patch binds alert outputs to iio events:
+>   - alert1: hot junction, rising temperature
+>   - alert2: hot junction, falling temperature
+>   - alert3: cold junction, rising temperature
+>   - alert4: cold junction, falling temperature
+>=20
+> All outputs are set in comparator mode and polarity depends on interrupt
+> configuration.
+>=20
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> ---
+Various comments inline.
 
-The size type for the kzalloc_node function is "size_t" but for the
-order_base_2() macro it is necessary an unsigned type (since this
-is expanded to "__ilog2_u32(u32 n)" or "__ilog2_u64(u64 n)").
+Jonathan
 
-So, I don't know if it is correct to change the type to size_t.
-Maybe someone can help with this.
+>  drivers/iio/temperature/mcp9600.c | 358 +++++++++++++++++++++++++++++-
+>  1 file changed, 354 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/=
+mcp9600.c
+> index cb1c1c1c361d..f7e1b4e3253d 100644
+> --- a/drivers/iio/temperature/mcp9600.c
+> +++ b/drivers/iio/temperature/mcp9600.c
+> @@ -6,21 +6,80 @@
+>   * Author: <andrew.hepp@ahepp.dev>
+>   */
+> =20
+> +#include <linux/bitfield.h>
+> +#include <linux/bitops.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/init.h>
+> +#include <linux/math.h>
+> +#include <linux/minmax.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/units.h>
+> =20
+> +#include <linux/iio/events.h>
+>  #include <linux/iio/iio.h>
+> =20
+>  /* MCP9600 registers */
+> -#define MCP9600_HOT_JUNCTION 0x0
 
-> 
-> >   	int i, node;
-> > -	size = sizeof(struct perf_buffer);
-> > -	size += nr_pages * sizeof(void *);
-> > -
-> > +	size = struct_size(rb, data_pages, nr_pages);
-> >   	if (order_base_2(size) > PAGE_SHIFT+MAX_PAGE_ORDER)
-> >   		goto fail;
-> > @@ -833,6 +831,7 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
-> >   	if (!rb)
-> >   		goto fail;
-> > +	rb->nr_pages = nr_pages;
-> >   	rb->user_page = perf_mmap_alloc_page(cpu);
-> >   	if (!rb->user_page)
-> >   		goto fail_user_page;
-> > @@ -843,8 +842,6 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
-> >   			goto fail_data_pages;
-> >   	}
-> > -	rb->nr_pages = nr_pages;
-> > -
-> >   	ring_buffer_init(rb, watermark, flags);
-> >   	return rb;
-> > @@ -916,18 +913,15 @@ void rb_free(struct perf_buffer *rb)
-> >   struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
-> >   {
-> >   	struct perf_buffer *rb;
-> > -	unsigned long size;
-> >   	void *all_buf;
-> >   	int node;
-> > -	size = sizeof(struct perf_buffer);
-> > -	size += sizeof(void *);
-> > -
-> >   	node = (cpu == -1) ? cpu : cpu_to_node(cpu);
-> > -	rb = kzalloc_node(size, GFP_KERNEL, node);
-> > +	rb = kzalloc_node(struct_size(rb, data_pages, 1), GFP_KERNEL, node);
-> >   	if (!rb)
-> >   		goto fail;
-> > +	rb->nr_pages = nr_pages;
-> 
-> I don't think this is correct.
+As below. Reformating in a precursor patch. I wouldn't necessarily bother
+though as aligning defines is usually more effort than it is worth over tim=
+e.
 
-I think you are right. My bad :(
+> -#define MCP9600_COLD_JUNCTION 0x2
+> -#define MCP9600_DEVICE_ID 0x20
+> +#define MCP9600_HOT_JUNCTION		0x0
+> +#define MCP9600_COLD_JUNCTION		0x2
+> +#define MCP9600_STATUS			0x4
+> +#define MCP9600_STATUS_ALERT(x)		BIT(x)
+> +#define MCP9600_ALERT_CFG1		0x8
+> +#define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
+> +#define MCP9600_ALERT_CFG_ENABLE	BIT(0)
+> +#define MCP9600_ALERT_CFG_ACTIVE_HIGH	BIT(2)
+> +#define MCP9600_ALERT_CFG_FALLING	BIT(3)
+> +#define MCP9600_ALERT_CFG_COLD_JUNCTION	BIT(4)
+> +#define MCP9600_ALERT_HYSTERESIS1	0xc
+> +#define MCP9600_ALERT_HYSTERESIS(x)	(MCP9600_ALERT_HYSTERESIS1 + (x - 1))
+> +#define MCP9600_ALERT_LIMIT1		0x10
+> +#define MCP9600_ALERT_LIMIT(x)		(MCP9600_ALERT_LIMIT1 + (x - 1))
+> +
+> +#define MCP9600_DEVICE_ID		0x20
+> =20
+>  /* MCP9600 device id value */
+> -#define MCP9600_DEVICE_ID_MCP9600 0x40
+> +#define MCP9600_DEVICE_ID_MCP9600	0x40
 
-> There is already a logic in place about it a few lines below:
-> 
-> 	all_buf = vmalloc_user((nr_pages + 1) * PAGE_SIZE);
-> 	if (!all_buf)
-> 		goto fail_all_buf;
-> 
-> 	rb->user_page = all_buf;
-> 	rb->data_pages[0] = all_buf + PAGE_SIZE;
-> 	if (nr_pages) {					<--- here
-> 		rb->nr_pages = 1;			<---
-> 		rb->page_order = ilog2(nr_pages);
-> 	}
-> 
-> I think that what is needed is to move this block just 2 lines above,
-> (before rb->data_pages[0] = ...)
-> 
-> 
-> I'm also wondering what should be done if nr_pages = 0.
+If you want to reformatting existing lines, do it in a precursor patch - not
+buried in here.
 
-Perhaps this is enough since we only allocate memory for one
-member of the array.
+> =20
+>  struct mcp9600_data {
+>  	struct i2c_client *client;
+> +	struct mutex lock[MCP9600_ALERT_COUNT];
 
-@@ -916,18 +913,15 @@ void rb_free(struct perf_buffer *rb)
- struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
- {
-        struct perf_buffer *rb;
--       unsigned long size;
-        void *all_buf;
-        int node;
+All locks need documentation.  What data is this protecting?
 
--       size = sizeof(struct perf_buffer);
--       size += sizeof(void *);
--
-        node = (cpu == -1) ? cpu : cpu_to_node(cpu);
--       rb = kzalloc_node(size, GFP_KERNEL, node);
-+       rb = kzalloc_node(struct_size(rb, data_pages, 1), GFP_KERNEL, node);
-        if (!rb)
-                goto fail;
+> +	int irq[MCP9600_ALERT_COUNT];
+>  };
+> =20
+>  static int mcp9600_read(struct mcp9600_data *data,
+> @@ -83,10 +148,292 @@ static int mcp9600_read_raw(struct iio_dev *indio_d=
+ev,
+>  	}
+>  }
+> =20
+> +static int mcp9600_get_alert_index(int channel2, enum iio_event_directio=
+n dir)
+> +{
+> +	switch (channel2) {
+> +	case IIO_MOD_TEMP_OBJECT:
+> +		if (dir =3D=3D IIO_EV_DIR_RISING)
+> +			return MCP9600_ALERT1;
+> +		else
+> +			return MCP9600_ALERT2;
+> +	case IIO_MOD_TEMP_AMBIENT:
+> +		if (dir =3D=3D IIO_EV_DIR_RISING)
+> +			return MCP9600_ALERT3;
+> +		else
+> +			return MCP9600_ALERT4;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int mcp9600_read_event_config(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir)
+> +{
+> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
+> +	struct i2c_client *client =3D data->client;
+> +	int i, ret;
+> +
+> +	i =3D mcp9600_get_alert_index(chan->channel2, dir);
+> +	if (i < 0)
+> +		return i;
+> +
+> +	ret =3D i2c_smbus_read_byte_data(client, MCP9600_ALERT_CFG(i + 1));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return (ret & MCP9600_ALERT_CFG_ENABLE);
 
-+       rb->nr_pages = 1;
-        INIT_WORK(&rb->work, rb_free_work);
+FIELD_GET() even if it happens to be bit(0) as then we don't have to go
+check that's the case.
 
-        all_buf = vmalloc_user((nr_pages + 1) * PAGE_SIZE);
+> +}
+> +
+> +static int mcp9600_write_event_config(struct iio_dev *indio_dev,
+> +				      const struct iio_chan_spec *chan,
+> +				      enum iio_event_type type,
+> +				      enum iio_event_direction dir,
+> +				      int state)
+> +{
+> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
+> +	struct i2c_client *client =3D data->client;
+> +	int i, ret;
+> +
+> +	i =3D mcp9600_get_alert_index(chan->channel2, dir);
+> +	if (i < 0)
+> +		return i;
+> +
+> +	ret =3D i2c_smbus_read_byte_data(client, MCP9600_ALERT_CFG(i + 1));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (state)
+> +		ret |=3D MCP9600_ALERT_CFG_ENABLE;
+> +	else
+> +		ret &=3D ~MCP9600_ALERT_CFG_ENABLE;
+> +
+> +	return i2c_smbus_write_byte_data(client, MCP9600_ALERT_CFG(i + 1), ret);
 
-I think that we don't need to deal with the "nr_pages = 0" case
-since the flex array will always have a length of one.
+A read modify write cycle like this normally needs some locking to ensure a=
+nother
+access didn't change the other bits in the register.
 
-Kees, can you help us with this?
 
-Regards,
-Erick
+> +}
+> +
+> +static int mcp9600_read_thresh(struct iio_dev *indio_dev,
+> +			       const struct iio_chan_spec *chan,
+> +			       enum iio_event_type type,
+> +			       enum iio_event_direction dir,
+> +			       enum iio_event_info info, int *val, int *val2)
+> +{
+> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
+> +	struct i2c_client *client =3D data->client;
+> +	s32 ret;
+> +	int i;
+> +
+> +	i =3D mcp9600_get_alert_index(chan->channel2, dir);
+> +	if (i < 0)
+> +		return i;
+> +
+> +	guard(mutex)(&data->lock[i]);
+> +	ret =3D i2c_smbus_read_word_swapped(client, MCP9600_ALERT_LIMIT(i + 1));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * Temperature is stored in two=E2=80=99s complement format in bits(15:=
+2),
+> +	 * LSB is 0.25 degree celsius.
+> +	 */
+> +	*val =3D sign_extend32(ret, 15) >> 2;
+Use sign_extend32(FIELD_GET(...), 13)
+So which bits are extracted is obvious in the code.
 
-> CJ
-> 
-> >   	INIT_WORK(&rb->work, rb_free_work);
-> >   	all_buf = vmalloc_user((nr_pages + 1) * PAGE_SIZE);
-> 
+> +	*val2 =3D 4;
+> +	if (info =3D=3D IIO_EV_INFO_VALUE)
+> +		return IIO_VAL_FRACTIONAL;
+> +
+> +	ret =3D i2c_smbus_read_byte_data(client, MCP9600_ALERT_HYSTERESIS(i + 1=
+));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * Hysteresis is stored as offset which is not signed, therefore we have
+> +	 * to include directions when calculating the real hysteresis value.
+> +	 */
+> +	if (dir =3D=3D IIO_EV_DIR_RISING)
+> +		*val -=3D (*val2 * ret);
+> +	else
+> +		*val +=3D (*val2 * ret);
+
+I don't follow this maths.  Hysteresis is an unsigned offset.  Maybe some c=
+onfusion
+over the ABI? =20
+
+> +
+> +	return IIO_VAL_FRACTIONAL;
+> +}
+> +
+> +static int mcp9600_write_thresh(struct iio_dev *indio_dev,
+> +				const struct iio_chan_spec *chan,
+> +				enum iio_event_type type,
+> +				enum iio_event_direction dir,
+> +				enum iio_event_info info, int val, int val2)
+> +{
+> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
+> +	struct i2c_client *client =3D data->client;
+> +	int s_val, s_thresh, i;
+> +	s16 thresh;
+> +	s32 ret;
+> +	u8 hyst;
+> +
+> +	/* Scale value to include decimal part into calculations */
+> +	s_val =3D (val < 0) ? ((val * (int)MICRO) - val2) :
+> +			    ((val * (int)MICRO) + val2);
+> +
+> +	/* Hot junction temperature range is from =E2=80=93200 to 1800 degree c=
+elsius */
+> +	if (chan->channel2 =3D=3D IIO_MOD_TEMP_OBJECT &&
+> +	   (s_val < (MCP9600_MIN_TEMP_HOT_JUNCTION * (int)MICRO) ||
+> +	    s_val > (MCP9600_MAX_TEMP_HOT_JUNCTION * (int)MICRO)))
+
+Why the casts?
+
+> +		return -EINVAL;
+> +
+> +	/* Cold junction temperature range is from =E2=80=9340 to 125 degree ce=
+lsius */
+> +	if (chan->channel2 =3D=3D IIO_MOD_TEMP_AMBIENT &&
+> +	   (s_val < (MCP9600_MIN_TEMP_COLD_JUNCTION * (int)MICRO) ||
+> +	    s_val > (MCP9600_MAX_TEMP_COLD_JUNCTION * (int)MICRO)))
+> +		return -EINVAL;
+> +
+> +	i =3D mcp9600_get_alert_index(chan->channel2, dir);
+> +	if (i < 0)
+> +		return i;
+> +
+> +	guard(mutex)(&data->lock[i]);
+> +	if (info =3D=3D IIO_EV_INFO_VALUE) {
+
+I would use a switch statement so it is obvious what each case is.
+
+> +		/*
+> +		 * Shift length 4 bits =3D 2(15:2) + 2(0.25 LSB), temperature is
+> +		 * stored in two=E2=80=99s complement format.
+> +		 */
+> +		thresh =3D (s16)(s_val / (int)(MICRO >> 4));
+> +		return i2c_smbus_write_word_swapped(client,
+> +						    MCP9600_ALERT_LIMIT(i + 1),
+> +						    thresh);
+> +	}
+> +
+> +	/* Read out threshold, hysteresis is stored as offset */
+> +	ret =3D i2c_smbus_read_word_swapped(client, MCP9600_ALERT_LIMIT(i + 1));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Shift length 4 bits =3D 2(15:2) + 2(0.25 LSB), see above. */
+> +	s_thresh =3D sign_extend32(ret, 15) * (int)(MICRO >> 4);
+> +
+> +	/*
+> +	 * Hysteresis is stored as offset, for rising temperatures, the
+> +	 * hysteresis range is below the alert limit where, as for falling
+> +	 * temperatures, the hysteresis range is above the alert limit.
+> +	 */
+> +	hyst =3D min(255, abs(s_thresh - s_val) / MICRO);
+> +
+> +	return i2c_smbus_write_byte_data(client,
+> +					 MCP9600_ALERT_HYSTERESIS(i + 1),
+> +					 hyst);
+> +}
+> +
+>  static const struct iio_info mcp9600_info =3D {
+>  	.read_raw =3D mcp9600_read_raw,
+> +	.read_event_config =3D mcp9600_read_event_config,
+> +	.write_event_config =3D mcp9600_write_event_config,
+> +	.read_event_value =3D mcp9600_read_thresh,
+> +	.write_event_value =3D mcp9600_write_thresh,
+>  };
+> =20
+> +static irqreturn_t mcp9600_alert_handler(int irq, void *private)
+> +{
+> +	struct iio_dev *indio_dev =3D private;
+> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
+> +	enum iio_event_direction dir;
+> +	enum iio_modifier mod;
+> +	int i, ret;
+> +
+> +	for (i =3D 0; i < MCP9600_ALERT_COUNT; i++) {
+> +		if (data->irq[i] =3D=3D irq)
+
+This search for a match is a little messy. I'd be tempted
+to wrap the generic handler in a per instance interrupt handler
+(so have 4 functions) and thus move this matching to the place
+where they are registered, not the interrupt handler.
+
+There isn't a lot of shared code in here so you may be better
+off just having 4 separate interrupt handler implementations.
+
+> +			break;
+> +	}
+> +
+> +	if (i >=3D MCP9600_ALERT_COUNT)
+> +		return IRQ_NONE;
+> +
+> +	ret =3D i2c_smbus_read_byte_data(data->client, MCP9600_STATUS);
+> +	if (ret < 0)
+> +		return IRQ_HANDLED;
+> +
+> +	switch (ret & MCP9600_STATUS_ALERT(i)) {
+> +	case 0:
+> +		return IRQ_NONE;
+> +	case MCP9600_STATUS_ALERT(MCP9600_ALERT1):
+> +		mod =3D IIO_MOD_TEMP_OBJECT;
+> +		dir =3D IIO_EV_DIR_RISING;
+> +		break;
+> +	case MCP9600_STATUS_ALERT(MCP9600_ALERT2):
+> +		mod =3D IIO_MOD_TEMP_OBJECT;
+> +		dir =3D IIO_EV_DIR_FALLING;
+> +		break;
+> +	case MCP9600_STATUS_ALERT(MCP9600_ALERT3):
+> +		mod =3D IIO_MOD_TEMP_AMBIENT;
+> +		dir =3D IIO_EV_DIR_RISING;
+> +		break;
+> +	case MCP9600_STATUS_ALERT(MCP9600_ALERT4):
+> +		mod =3D IIO_MOD_TEMP_AMBIENT;
+> +		dir =3D IIO_EV_DIR_FALLING;
+> +		break;
+> +	default:
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	iio_push_event(indio_dev,
+> +		       IIO_MOD_EVENT_CODE(IIO_TEMP, 0, mod,
+> +					  IIO_EV_TYPE_THRESH, dir),
+> +		       iio_get_time_ns(indio_dev));
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int mcp9600_probe_alerts(struct iio_dev *indio_dev)
+> +{
+> +	struct mcp9600_data *data =3D iio_priv(indio_dev);
+> +	struct i2c_client *client =3D data->client;
+> +	struct device *dev =3D &client->dev;
+> +	struct fwnode_handle *fwnode =3D dev_fwnode(dev);
+> +	unsigned int irq_type;
+> +	int ret, irq, i;
+> +	u8 val;
+> +
+> +	/*
+> +	 * alert1: hot junction, rising temperature
+> +	 * alert2: hot junction, falling temperature
+> +	 * alert3: cold junction, rising temperature
+> +	 * alert4: cold junction, falling temperature
+> +	 */
+> +	for (i =3D 0; i < MCP9600_ALERT_COUNT; i++) {
+> +		data->irq[i] =3D 0;
+
+All of data is zeroed already so this should not be needed.
+
+> +		mutex_init(&data->lock[i]);
+
+Why per interrupt locks?  Seems unlikely to be a big problem
+to share one.
+
+> +		irq =3D fwnode_irq_get_byname(fwnode, mcp9600_alert_name[i]);
+> +		if (irq <=3D 0)
+> +			continue;
+> +
+> +		val =3D 0;
+> +		irq_type =3D irq_get_trigger_type(irq);
+> +		if (irq_type =3D=3D IRQ_TYPE_EDGE_RISING)
+> +			val |=3D MCP9600_ALERT_CFG_ACTIVE_HIGH;
+> +
+> +		if (i =3D=3D MCP9600_ALERT2 || i =3D=3D MCP9600_ALERT4)
+> +			val |=3D MCP9600_ALERT_CFG_FALLING;
+> +
+> +		if (i =3D=3D MCP9600_ALERT3 || i =3D=3D MCP9600_ALERT4)
+> +			val |=3D MCP9600_ALERT_CFG_COLD_JUNCTION;
+> +
+> +		ret =3D i2c_smbus_write_byte_data(client,
+> +						MCP9600_ALERT_CFG(i + 1),
+> +						val);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		ret =3D devm_request_threaded_irq(dev, irq, NULL,
+> +						mcp9600_alert_handler,
+> +						IRQF_ONESHOT, "mcp9600",
+> +						indio_dev);
+> +		if (ret)
+> +			return ret;
+> +
+> +		data->irq[i] =3D irq;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int mcp9600_probe(struct i2c_client *client)
+>  {
+>  	struct device *dev =3D &client->dev;
+> @@ -109,6 +456,8 @@ static int mcp9600_probe(struct i2c_client *client)
+>  	data =3D iio_priv(indio_dev);
+>  	data->client =3D client;
+> =20
+> +	mcp9600_probe_alerts(indio_dev);
+
+Why no error check?=20
+
+> +
+>  	indio_dev->info =3D &mcp9600_info;
+>  	indio_dev->name =3D "mcp9600";
+>  	indio_dev->modes =3D INDIO_DIRECT_MODE;
+> @@ -140,6 +489,7 @@ static struct i2c_driver mcp9600_driver =3D {
+>  };
+>  module_i2c_driver(mcp9600_driver);
+> =20
+> +MODULE_AUTHOR("Dimitri Fedrau <dima.fedrau@gmail.com>");
+>  MODULE_AUTHOR("Andrew Hepp <andrew.hepp@ahepp.dev>");
+>  MODULE_DESCRIPTION("Microchip MCP9600 thermocouple EMF converter driver"=
+);
+>  MODULE_LICENSE("GPL");
+
 
