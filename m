@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-169104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BA78BC32B
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:05:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9BB8BC32D
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB758B20EA6
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 510951F2149A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C026F6D1A4;
-	Sun,  5 May 2024 19:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484216D1AF;
+	Sun,  5 May 2024 19:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDU9M3h6"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ByPslHNq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4A2D60A;
-	Sun,  5 May 2024 19:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E789E2D60A;
+	Sun,  5 May 2024 19:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714935919; cv=none; b=asAX3MadYgz07HdzOiMXqfGPOhXPHkL2kB0bFjGzKMwkJDsfEItW64caoe7WIPTsY3lHQRkhdfT8jWfsPI+w93nTCfoW5BLiQ57VzPvSTTIaidlX+u8dEoCkvJa9QaoviFxF2j3f2OOs+yZOuXezVvj5NvJKkmcBhTZhf5s2GRA=
+	t=1714936048; cv=none; b=o6H1mt1d0QUULQ0NTcxAcYJwYMgnQez/URORiuBpv7HVfHgIyaZnzYY6VJzrZ96gDyAWYdnL5DG+obdtnDjsPoqJDdp6dnsTbWeEAlSr4HWuqDzayD6CYdbS4jFTqyblkf2Mh7s3A6KiOYT+Rr9pNy1ocT8sDGRVkxCuJDhEdmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714935919; c=relaxed/simple;
-	bh=l4a0ArGONDNzKNTIOsu12f4Y+6X95zHt+Leq4K2WG6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HYbPDeWNF8vF8RYQoTL1LnNxtQyG55gQ3C5m3xy1yn68j9euzpeY5MYpryLcZ2igDxVxPuFLtJ24Sbbh2/KkiIXrtGz8sxXRPlSSwQthhRko5y/4Vuludw//8AlJ+Q7Fcuv7KUn4+S8+HTGp2Qq6askkwPdLlz8qI2c1jBzUFa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDU9M3h6; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e0b2ddc5d1so15837541fa.3;
-        Sun, 05 May 2024 12:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714935915; x=1715540715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wad+9JCJl3oXkEa3SET7EwhW1F0CMBi3uJ0HqvgbGl8=;
-        b=jDU9M3h6KZx1n8RoViB/syh+uBulL8EQdEmU35WmCJueHcb49xWodtMqS6JBxqxNDA
-         l3vz3nJJjf+tlDnHELBidMbBRgN+Duhu5Hncw7/Ir9aqX8slilDETf5B3Yw3DZQpyTl6
-         QWA5Kupq9tmYujdB0cFHZ8+GJQlN5dich/hFDCRVG7XVAJUPhifasLXvLkEEHMJuqTey
-         4xsEu41pbnzaBknZG1GjrGHEdCK0Nlg+cIN6gHNMOXQ8lsHmxa7QM9WRfLO5TKQhfkth
-         ju2NoouVXr2qXsle6PvndxCv139m2ubEiBF0bkk2vFqSDO6KPVgduCIseGHNGd4eoMC0
-         cFgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714935915; x=1715540715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wad+9JCJl3oXkEa3SET7EwhW1F0CMBi3uJ0HqvgbGl8=;
-        b=KPCs6LRzJGUdThqLU0hpFIDOLLH1+7O1aEeEObHFfIOnPz5MHy9PQSOAQxnqmZLJVq
-         Lv9wpTn4WNK1rE/pEQvsKl+RxvUkhDOoMJxnzA0egkaq4Im723Dft6Z2eze4uYW8n9ex
-         IJoK2l80nRLEWH6eDbHTR9jTEejrYR6uThrZ1Y3YAL1PNYCdMgCnLKDTzNOb8Op5YRQl
-         eVYI/a9dnbGvm+q5QVMTB9zjGzvCE9a6I3g1f5tsEosNK+KCF1sbKtMMdomJJLP/J35o
-         1LBORrmQS0xiwCx+GtP6uN7aTMajKDUe+adYvTm5qhOdF8GwB3zppbCHYDfjEfsKPq2/
-         w3WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVacH7FIEf8fCyVjCehL7eNGzTWLytaWus08y6zW865UBKheePyIiCsNFU9HL7w2bg64S8t+1zd+8azeyNPXHicWUGkKwlJyKePsHwlsAeCDtQuUMQMzOM+s7vcMsrblOBn4+AXH7TtnFY=
-X-Gm-Message-State: AOJu0YwKCkCo+Qnvh5NwCsdqVPw4chXZcqkGWx4r0B+MdQWmmJpvgvt4
-	UOvHuLfGewDszzmIFO1vYCeIhaWto0zPZjWo5TONWKJEC5oI9bVqITzGNg0u0rjlrVi2dBGBqSD
-	irViTrjdZMh/2kL4MCfZeMg29epw=
-X-Google-Smtp-Source: AGHT+IHQGAH9I3d2xpvxt1OWJ5+/3R+Ok5+gszUhaQAR42Sc2pt/klNvVUHtO+OLHlwZ9WDp/4ixRmmmQ7JuEPr1Bbs=
-X-Received: by 2002:ac2:5322:0:b0:51a:f362:ab30 with SMTP id
- f2-20020ac25322000000b0051af362ab30mr4989779lfh.7.1714935915272; Sun, 05 May
- 2024 12:05:15 -0700 (PDT)
+	s=arc-20240116; t=1714936048; c=relaxed/simple;
+	bh=szmmLD1H/yLONpMiDrT0u1oFFCwgq8o/2sETDaKXb5o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jvBLd/vXMY3lYoURH7tcgaopy/D29ciz0qSI+jSmOMhWWiii7vv8ACcwt+1JsBGwz26nRcp1HBb1Wul/SXjfKb2S9EXBy5Z+x4qfJH/dCZuHxiSBV4Aj/ecDNC49XPFfP2xLQO7FeFJiUgEhCGg1AZ123tKDmvZRfGKytmIjh50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ByPslHNq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 445J59tw002953;
+	Sun, 5 May 2024 19:07:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=9Pf
+	w+fy0XFrWu040MiyBr71x0qncZZp6Lk8F3FLG2fk=; b=ByPslHNq3jvHcAbZmhM
+	MeF0BC0JJamxQ6iemZtflyznpzm2Ww18DLvwt3LoFRNmLJ8gTR+dzQJGwhwdJ6as
+	nv/rBtBqKYu3zckBcKeLU7akJqDE8HiRynKarwUdTeiFFQ1nHgGXFyj0wXIXC3D4
+	Cvs1SUEYa8HZdlDz3f11qNDhOmPrv+D7/dSxO05+4jPg0aP/g751/2GH7IsFBVVi
+	dwIg7ONvsAEFbgkN6f3ePmO8yZeKbWmffr6v6YWKMCDqDBM01Vn5dhszbPtYqZ9K
+	3Mv2IIORXSxK/mWuhqcVYcjGrFnJ40NzJTb6vaVuRHq4ZnNDqJxVzcANKTirlTku
+	Dig==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwd8722eh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 May 2024 19:07:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 445J7DC7020183
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 5 May 2024 19:07:13 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
+ 12:07:13 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 5 May 2024 12:07:12 -0700
+Subject: [PATCH] cpufreq: intel_pstate: fix struct cpudata::epp_cached
+ kernel-doc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240430080019.4242-1-konishi.ryusuke@gmail.com>
- <20240430080019.4242-2-konishi.ryusuke@gmail.com> <650ed9f6-fa50-4a3b-939d-633f9e389137@acm.org>
- <CAKFNMomCzNMU0tjLkEchr=GQwSVW1zr1GAq7vUToeOvX-M3eVg@mail.gmail.com>
- <CAKFNMo=rkHF6urydfDbcvTbGzUEHmsTudVMm517pTE32vzqiwA@mail.gmail.com> <32e6621b-cbd9-42be-8626-49c12c25f139@acm.org>
-In-Reply-To: <32e6621b-cbd9-42be-8626-49c12c25f139@acm.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Mon, 6 May 2024 04:04:58 +0900
-Message-ID: <CAKFNMokSLHrB8jyGuNH-HBqcrAmJ5-SFwu-sTgt30X2j+=KykA@mail.gmail.com>
-Subject: Re: [PATCH -mm 1/2] nilfs2: use integer type instead of enum req_op
- for event tracing header
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-nilfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240505-epp_cached-kdoc-v1-1-c03800fe0d63@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAN/YN2YC/x3MQQrCMBBG4auUWTuQtnahVxGR6eSvGcQ0TESE0
+ rsbXX6L9zaqcEOlc7eR423V1tzQHzrSJPkOtthMQxiOYQoTo5SbiiZEfsRVWVTCqcc4yiLUquJ
+ Y7PM/Xq7Ns1Tw7JI1/T5PqS847fsXqmNeCXoAAAA=
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown
+	<lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jeff Johnson
+	<quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: W9ipNlg63xv7LTPfCWtzPAjHPyOMC1P2
+X-Proofpoint-GUID: W9ipNlg63xv7LTPfCWtzPAjHPyOMC1P2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-05_13,2024-05-03_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ clxscore=1011 priorityscore=1501 phishscore=0 mlxlogscore=999
+ suspectscore=0 impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405050083
 
-On Sun, May 5, 2024 at 9:47=E2=80=AFPM Bart Van Assche wrote:
->
-> On 5/2/24 12:01 PM, Ryusuke Konishi wrote:
-> > If you haven't given up yet on solving the underlying problem, I would
-> > like to withdraw this patch.
->
-> Has this untested change been considered?
->
-> diff --git a/include/trace/events/nilfs2.h b/include/trace/events/nilfs2.=
-h
-> index 8efc6236f57c..67fd2e002ca7 100644
-> --- a/include/trace/events/nilfs2.h
-> +++ b/include/trace/events/nilfs2.h
-> @@ -214,7 +214,7 @@ TRACE_EVENT(nilfs2_mdt_submit_block,
->                       __entry->inode,
->                       __entry->ino,
->                       __entry->blkoff,
-> -                     __entry->mode)
-> +                     (__force u32)__entry->mode)
->   );
->
->   #endif /* _TRACE_NILFS2_H */
+make C=1 currently gives the following warning:
 
-No, I didn't think of that.  There was no warning in TP_printk()
-declaration of the nilfs2_mdt_submit_block trace point.
+drivers/cpufreq/intel_pstate.c:262: warning: Function parameter or struct member 'epp_cached' not described in 'cpudata'
 
-If you suggested this as an alternative idea, unfortunately the
-following warnings are still output:
+Add the missing ":" to fix the trivial kernel-doc syntax error.
 
-  CC [M]  fs/nilfs2/segment.o
-  CHECK   fs/nilfs2/segment.c
-fs/nilfs2/segment.c: note: in included file (through
-include/trace/trace_events.h, include/trace/define_trace.h,
-include/trace/events/nilfs2.h):
-/include/trace/events/nilfs2.h:191:1: warning: cast to restricted blk_opf_=
-t
-/include/trace/events/nilfs2.h:191:1: warning: restricted blk_opf_t
-degrades to integer
-/include/trace/events/nilfs2.h:191:1: warning: restricted blk_opf_t
-degrades to integer
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/cpufreq/intel_pstate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I also tried typecasting on the declaration header side of event
-tracing, but so far, the sparse warnings don't go away except for the
-patch I first proposed.
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index dbbf299f4219..7ddf05c9ba88 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -213,7 +213,7 @@ struct global_params {
+  * @epp_policy:		Last saved policy used to set EPP/EPB
+  * @epp_default:	Power on default HWP energy performance
+  *			preference/bias
+- * @epp_cached		Cached HWP energy-performance preference value
++ * @epp_cached:		Cached HWP energy-performance preference value
+  * @hwp_req_cached:	Cached value of the last HWP Request MSR
+  * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
+  * @last_io_update:	Last time when IO wake flag was set
 
-But, better suggestions or solutions to the underlying problem are welcome.
-(Again, should we put the patch on hold?)
+---
+base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
+change-id: 20240505-epp_cached-kdoc-aca091e33afa
 
-Regards,
-Ryusuke Konishi
 
