@@ -1,112 +1,137 @@
-Return-Path: <linux-kernel+bounces-168958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F2A8BC031
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:05:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67598BC033
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE221C20A02
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:05:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E060B1C20DF6
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 11:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1F81429E;
-	Sun,  5 May 2024 11:05:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59ED1EDC
-	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 11:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B9917556;
+	Sun,  5 May 2024 11:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qf0Gs6tE"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563161096F;
+	Sun,  5 May 2024 11:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714907150; cv=none; b=qpuPl7cFH1hJp/+Q7TBphvR9ZwECfxB3n3KFdjufFJRtFdI5ZcNvDJmfazceFVzc8W3aD6GdT7mBs9cIGkXPdT21k9H/4d3T9cDowdmNxkaSTyjjLroBUGrGapDpOaa0qZTQn1HlPtJQ+++3RO+0D0b0GWTLnhqsMamaCHVhhiI=
+	t=1714907670; cv=none; b=dSduynOa7wiTLrSZaOkEVqiZlv6tLjHet2h/i30ipMFopOShDRK54JVJ4N4/c87L9cNvi9eGAhCSRw13Sivzw5nLl+/K1h44u7ktUDE1lrs0+e3jo3yDVDUbG3ff7nlyKS54fVx5yuFc5G7hxM3Zb6VAY/dugXjqO+diAJ3iVJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714907150; c=relaxed/simple;
-	bh=eZA4s+ZMBw5TRGVx3Jl/8HUiKxeUMzduwhYJ0+bftno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kGKEepFD3AG8/pWLBlMdbBLM6y+Xks3okhhLGeTJx/YoQrYF3I6asTqeJIM4JhpDj09c1OGcFAxP6Tc8MjZ8/ZDmqGNb0oqyorTt5MN6+KQpZYvWkU9vaSKYfDc+zItkBi8nC22ZPoJXPXca8Gk/PecL55+b1Mf0Ntj9iw/YHsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1s3Zgd-0000ZH-1d; Sun, 05 May 2024 13:05:43 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1s3Zgb-00G45Z-Bs; Sun, 05 May 2024 13:05:41 +0200
-Received: from pengutronix.de (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 059742C9C8F;
-	Sun,  5 May 2024 11:05:41 +0000 (UTC)
-Date: Sun, 5 May 2024 13:05:39 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Francesco Valla <valla.francesco@gmail.com>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, fabio@redaril.me
-Subject: Re: [PATCH v4 0/1] Documentation: networking: document ISO 15765-2
-Message-ID: <20240505-mustard-scallop-of-passion-778627-mkl@pengutronix.de>
-References: <20240501092413.414700-1-valla.francesco@gmail.com>
+	s=arc-20240116; t=1714907670; c=relaxed/simple;
+	bh=9eAXx8y5d8kDhI6LAXR0fz77K7tCB+kZ9tgT5yKzOe4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Uj75wYBZ/MANQBbstFjzk6qzYWM/2TArca2l0UYH/CCOZktn73n3kq3hJJ2fX8R/bojNoc8y0i1p71+17+WrzgzIHt5i/bqLo6UrlQb3vsy9un5gW5U9iOjc+uZ7WglbFEJ9ajYzKYJUNqs+FqI/299q1qu8NPtB+376dRtQ24Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qf0Gs6tE; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id AC5C214C2DB;
+	Sun,  5 May 2024 13:14:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1714907659;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4LHR19hAFTP2QYCStLYSuCHVAdmTGJHkSdXxe3Jnvj8=;
+	b=qf0Gs6tEJbxr+ECx26CXin6ca2rLkO+gHjNsltw0Rt+uhwodyBvCxNJ89W+qBSdLnPwdMI
+	OT/VS2Xxd1Xv7yJ1/5RofZDUmDSWYQfqXqj8QzqEQFVOwt61gYV0WiS8fm6kYqLvHzRBzw
+	B2YBHzu7IBQ/m1uGJmk0XaDwaoJlBYumGnDgj07Clj3YU34BgO5mmqsu3TgMkwut77c+MC
+	Fb6MNuWlnhgVagaog6yjatbBE+ycGAvxbgl40xyImydYQqF9AgNCvz9xeP5FA1rC+f4N5g
+	TtJMb+PPYHd3AlrfPi33WnoaAjBeT+KXcVYiiARsnfJO+srOvdDlinyeQc3XJg==
+Received: from [127.0.0.1] (localhost.lan [::1])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTP id 679dde65;
+	Sun, 5 May 2024 11:14:12 +0000 (UTC)
+From: Dominique Martinet <asmadeus@codewreck.org>
+Subject: [PATCH v2 0/3] perf probe: Allow names to start with digits
+Date: Sun, 05 May 2024 20:13:56 +0900
+Message-Id: <20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="giijojktyeere3x7"
-Content-Disposition: inline
-In-Reply-To: <20240501092413.414700-1-valla.francesco@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPRpN2YC/23MQQqDMBCF4avIrJsSY2JoV96jSKnJGIeCkYnYF
+ sndm7ru8n/wvh0SMmGCa7UD40aJ4lxCnSpw02MOKMiXBiWVllpasSCPd0+BVmGV1mYw6IdWQTk
+ sjCO9D+zWl54orZE/h73Vv/Uvs9VCCmPRNda1TXPRnYseX4zueY4coM85fwG2KTm8qAAAAA==
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dominique Martinet <asmadeus@codewreck.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1913;
+ i=asmadeus@codewreck.org; h=from:subject:message-id;
+ bh=9eAXx8y5d8kDhI6LAXR0fz77K7tCB+kZ9tgT5yKzOe4=;
+ b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBmN2n/IyRsM+n+wtwdIZ8pvgEFgsboo3ARADr2j
+ N1XDpfVPd2JAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZjdp/wAKCRCrTpvsapjm
+ cMefD/4oJILrvU8XdYUq7zmeVntt8buSR6LvaaqCczEds/xjlCHtdFnQv6sZ2ZbhDZc9rM3Ules
+ V0gDnm8rchvFIvDP2LmZfWUS0TSIc9sV3Rk6pSiM2E/RTh7pP/m11pQ6CnQO/F0nXYKzd9vuoc9
+ UoPxklQ+7ZQtNGpTz3thKcSyMDJ9CbxXBOFUoka2+gZDsuPFvQQM0ykXAb1x9wGwamosyzOi+xC
+ Q9Q9kVtWQ+vX6S9IBMVmZBMATE0mJt7JulYFJ2LASNMnAnVzd/MUhTwVcipQZsKUsf3n9+EC1Q4
+ MmtkNTH0lzcqlbPFG7p6Udkcax2GVg7D90mfJYAl8U47iIFDvbQshwVJ8fXSj4NowJ3PYybDhZg
+ Fsmoh0i2d8iPwFOZNdQaxU0r2t27pJGf3giZ80fa/oDdGv38XOCaHWa6vbAOh5bSTZNdHlwQ3HG
+ OXcTg/j7FCzQI31RqkvoYZ/rcXNf+HjBnFphtzMNH5wHgtjCeyEuVt13ZSlvrSdW6dT/eB0NuBq
+ 0DQjIyb45APb/jnIiyXZWGAvnwBiQML7AJA6EQkWqdAWyARTtDmfrESVGCKrXRJzr/3hVmI+BiK
+ ICezt8cV9i/E7uRWk4hfk1/jK168M/2/4m/+LF5Pp7pNceHxZPt7GIlgfYWc2ooJbsx9ihKOro7
+ M+pRnEnhjGqu/TQ==
+X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
+ fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
 
+This is a rebase of the patch orginally sent almost two years ago here:
+https://lkml.kernel.org/r/20220612061508.1449636-1-asmadeus@codewreck.org
 
---giijojktyeere3x7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+At the time I was asked to add tests, and Jiri whipped up something to
+make the test pass even for probes that don't exist on most systems but
+that ended up never being formatted or sent... I asked what happened of
+it and got asked to send it myself, but obviously also totally forget
+about it myself until I needed it again now.
 
-On 01.05.2024 11:24:12, Francesco Valla wrote:
-> While the in-kernel ISO 15765-2 (ISO-TP) stack is fully functional and
-> easy to use, no documentation exists for it.
->=20
-> This patch adds such documentation, containing the very basics of the
-> protocol, the APIs and a basic example.
+I've taken the diff from that thread, adapted it a little bit to the
+current master branch and checked things still fall in place -- I didn't
+see any obvious problem.
 
-Applied to linux-can-next.
+Thanks!
 
-Thanks,
-Marc
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+---
+Changes in v2:
+- update Jiri's email in commit tags
+- (not a change, but after being brain-dead and Ian helpful
+reply I'm confirming patch 3/3 works as expected)
+- Link to v1: https://lore.kernel.org/r/20240407-perf_digit-v1-0-57ec37c63394@codewreck.org
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+---
+Dominique Martinet (3):
+      perf parse-events: pass parse_state to add_tracepoint
+      perf parse-events: Add new 'fake_tp' parameter for tests
+      perf parse: Allow names to start with digits
 
---giijojktyeere3x7
-Content-Type: application/pgp-signature; name="signature.asc"
+ tools/perf/tests/parse-events.c | 11 +++++++++--
+ tools/perf/tests/pmu-events.c   |  2 +-
+ tools/perf/util/evlist.c        |  3 ++-
+ tools/perf/util/evsel.c         | 20 +++++++++++++-------
+ tools/perf/util/evsel.h         |  4 ++--
+ tools/perf/util/metricgroup.c   |  3 ++-
+ tools/perf/util/parse-events.c  | 38 +++++++++++++++++++++++---------------
+ tools/perf/util/parse-events.h  |  9 ++++++---
+ tools/perf/util/parse-events.l  |  4 ++--
+ tools/perf/util/parse-events.y  |  2 +-
+ 10 files changed, 61 insertions(+), 35 deletions(-)
+---
+base-commit: 7367539ad4b0f8f9b396baf02110962333719a48
+change-id: 20240407-perf_digit-72445b5edb62
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-- 
+Dominique Martinet | Asmadeus
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmY3aAAACgkQKDiiPnot
-vG8mhwf5AXTWznnRJGWOZhBh/1fljmHZTelVngc4GrTuauVHbqciNyeFWZ8fJXnM
-mRaGxxzTRn2yeTVWyQ6kV8FVqcnqy5WCBzlyMDBu6GDM7ev+o5E+8ayiZUpk3z6O
-rnI1N27r31iooqGkoRxf+UwhXL9YkXk8CgUIV5urhkQzLhtWNgE1X4lsObsOwll+
-Z7GoULauDqw5lwcnp78upHVCVmjTgYDkruYOZO3UR+22aGSaejvoF+mQgFPi/xtq
-ReEwbJgIzc9gJNwx8raX1CF6Y64yG97ctQhw3tu/LvUwfziGQGbMQAG2JXXSUGi9
-6+1jUJUh/xhMgvZXn5OejgQd/9K0Yw==
-=zLcO
------END PGP SIGNATURE-----
-
---giijojktyeere3x7--
 
