@@ -1,121 +1,256 @@
-Return-Path: <linux-kernel+bounces-168981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F4A8BC089
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:24:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B487D8BC08E
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 15:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B486F280D2D
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D74221C2098A
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 13:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3956620314;
-	Sun,  5 May 2024 13:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjTrFV1z"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4611D54A;
+	Sun,  5 May 2024 13:37:29 +0000 (UTC)
+Received: from mailout01.t-online.de (mailout01.t-online.de [194.25.134.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8521C695;
-	Sun,  5 May 2024 13:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957D01CF8F;
+	Sun,  5 May 2024 13:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.25.134.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714915435; cv=none; b=uIDVWQu2hGMltC6QwUx3z22ju9hwIpPP1IWjefUTVL9jJIAGCiVtA+0RXPKasR7vSt3hTOElaxuFxRPVMxtk3QXRNvtIcmcz9m/PU77H5iEcXOM6uZh9oYDZ1I3VpSY27lKmRKhb68QTANTy0RdpWSxVEC3eCunWDC2zcqmDMCA=
+	t=1714916248; cv=none; b=CAp4qaqDTNzrKo2B6fFFydfDTMa9fjtwvsqEtNF7K0XQA/P9fmI94C1yEqb36AC0iy3V4OSNonfvLUrqw/LIlrPSnyeLhWYb7UkcpqTld48aJ2FJkEYs/JUpuww44kWIxRy89gRfyj1pCDeBgmuzBCPpDSFtRKC9wD9aK5uqGZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714915435; c=relaxed/simple;
-	bh=RZBU9BLwoMqxabCjuE4NgICjeuHsBhDACgoIfR0UVsg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RWPs/qfmzbMjd+zhWSODyLkN2ZlchSGoGzVANRs3QrGKkTMQEPtHwalKtr+3/UQ56h3auQ0Csc5HLyOjUJ7nAIpx58arNIt8gnl19YiHRQnRIyV2V8OXEMkI3FJZm6j8eVvqr21PDXl7RxhKMNNSg1M7cXFl6gRUBln2ALsTdnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjTrFV1z; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ec486198b6so7335195ad.1;
-        Sun, 05 May 2024 06:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714915433; x=1715520233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mc0FzHEhUeqDsgURvEW8MExped5cfDIKcyo64gW0V3A=;
-        b=bjTrFV1zQ9jGXogYzUooilqMOz2ODpKXt8J38Hxh2xf08fKOcxfyBk6OSIyypzIWTv
-         EVMPzgf91JmKBup+CfG+Lsnkf3e0JRMTCg65fnsloFvC1fHYbvq8/EyWlwG+McYiVrJU
-         YtfYTDy08vwUw8VqmHuOv2yphdOeWrswM9vTWCosfpXwdnY4CTKJsh6E6fKkzA3dXo7n
-         juc/yON8irkbk3yH5Cfed7aHCIUmTmMloRK22yMwFQCEcXO5BCRqPvN/myXQn956/Jt9
-         U6sJOi4btTMOWT9JRAeW75hNUCHGnb5ExwpWk29/wg5HPr3QMRatzr7sGSGZ+EEk4DV4
-         7s4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714915433; x=1715520233;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mc0FzHEhUeqDsgURvEW8MExped5cfDIKcyo64gW0V3A=;
-        b=VlF/4/uH2rX/ONXBg2Bs13RcHEM6e71J8qjjevH9pzvLjGYyXWOHC8EzuXjPReEy/R
-         5rLAqTP6DCdXpeL6wqEpKVG8oOURgKb0Z5QmSlG3zZxwM7vSBKSdBjb3mJ81M0v519f9
-         iJvcg+NrBcQ2zCdAvZLWRViRE04uCDAzc9lSfZsey9sxC+coy64RLUxDs5FB4x4wzbsN
-         l2J88YlilMp9xlkSZ0WPuRgm9KFCtdQ7mFnwa4aJpj2Eh2p52Ii8xGrz33Jl0dtaw+2c
-         XRRjeBeNpp3F8pUIMYVe/LqUkBf8oHnvpKuQYB8WSrZE193IxKzHLcMr69qp0tOZuL02
-         MAkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUU69Y+sJbJNv1CUsmS43P6bT2tuyxlasrPPUiCW7PnANtgtmev1DnfJK8ITP+i4nbd1uGpyLhMYd1CL+Xtu30+tBFBWSlv+7Gp+5N2hJcd+0aZgby7PrysfZ1Xn9eKu/Eg9Tuat3ag30g=
-X-Gm-Message-State: AOJu0YxAXwCvLvwkwCd840vy3UpDrIlmXP2zpJGsNivbzSpLN14hYlDc
-	Y6VGl3FhFei5gXILI3KFyQZIbot/nPD32sOOejag2prTRsEdlFLf
-X-Google-Smtp-Source: AGHT+IERzKT6ecipwoJu1Z+lrbemytWDosmvEMrqC5CfWS5gLeUzk4VxGRn1IuPLY4snAEp9Aa/hYw==
-X-Received: by 2002:a17:902:64c2:b0:1dd:2eed:52a5 with SMTP id y2-20020a17090264c200b001dd2eed52a5mr6903295pli.37.1714915433499;
-        Sun, 05 May 2024 06:23:53 -0700 (PDT)
-Received: from ubuntukernelserver.. ([49.236.212.182])
-        by smtp.gmail.com with ESMTPSA id jb13-20020a170903258d00b001ec4ed47ddesm6511645plb.86.2024.05.05.06.23.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 06:23:53 -0700 (PDT)
-From: Roshan Khatri <topofeverest8848@gmail.com>
-To: hdegoede@redhat.com,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.com,
-	gregkh@linuxfoundation.org
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: atomisp: Fix spelling mistake in hmm_bo.c
-Date: Sun,  5 May 2024 19:08:44 +0545
-Message-Id: <20240505132345.135528-1-topofeverest8848@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1714916248; c=relaxed/simple;
+	bh=8MWH3jY9drwF3ETc0Bgb/plxlh0m2NIwn+SbPNG0UiQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l3//HZARJtEhJ52F2O3USGJiy+7xiubGzyl9lUP6F/pHVCikAP87NhKfgf0LfnFSkCUCiOqWl7nXmwBMmRd5ss4/etDTOvNZWL54QiSWYQ0B9+OC9v4cJMJscyUpSqG2xGx8mS6U7RwngGPHK3Dfq5kkgZqCDq8TTX4quxN0bzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-online.de; spf=pass smtp.mailfrom=t-online.de; arc=none smtp.client-ip=194.25.134.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-online.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-online.de
+Received: from fwd75.aul.t-online.de (fwd75.aul.t-online.de [10.223.144.101])
+	by mailout01.t-online.de (Postfix) with SMTP id 4613A10240;
+	Sun,  5 May 2024 15:27:15 +0200 (CEST)
+Received: from dino2.dhome ([77.47.123.226]) by fwd75.t-online.de
+	with (TLSv1.3:TLS_AES_256_GCM_SHA384 encrypted)
+	esmtp id 1s3bta-06MK8H0; Sun, 5 May 2024 15:27:14 +0200
+Message-ID: <6d872479ea873d25bd1f0d893439c6ceafd11327.camel@t-online.de>
+Subject: Re: [PATCH v3 1/1] drivers/rtc: rtc-sun6i: AutoCal Internal OSC
+ Clock
+From: Alois Fertl <A.Fertl@t-online.de>
+Reply-To: 20240503121304.5fc6add5@donnerap.manchester.arm.com
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: a.zummo@towertech.it, alexandre.belloni@bootlin.com, wens@csie.org, 
+	jernej.skrabec@gmail.com, samuel@sholland.org, linux-rtc@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, Ryan Walklin
+	 <ryan@testtoast.com>
+Date: Sun, 05 May 2024 15:27:05 +0200
+In-Reply-To: <20240503121304.5fc6add5@donnerap.manchester.arm.com>
+References: <20240502180736.7330-1-a.fertl@t-online.de>
+	 <20240503121304.5fc6add5@donnerap.manchester.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TOI-EXPURGATEID: 150726::1714915634-3F9E2C7B-0934CFAC/0/0 CLEAN NORMAL
+X-TOI-MSGID: 75600d42-4875-4f16-b473-b116d7b38c45
 
-codespell reported misspelled unchanged in hmm_bo.c at two places.
-This patch fixes the misspellings.
+On Fri, 2024-05-03 at 12:13 +0100, Andre Przywara wrote:
 
-Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
----
- drivers/staging/media/atomisp/pci/hmm/hmm_bo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Andre and Ryan, thanks for responding, and sorry.
+Andre's reply was somehow lost and I just found it on the
+archive mirror. So hopefully my reply is correct.
 
-diff --git a/drivers/staging/media/atomisp/pci/hmm/hmm_bo.c b/drivers/staging/media/atomisp/pci/hmm/hmm_bo.c
-index 095cd0ba8c21..b90efac771e2 100644
---- a/drivers/staging/media/atomisp/pci/hmm/hmm_bo.c
-+++ b/drivers/staging/media/atomisp/pci/hmm/hmm_bo.c
-@@ -288,7 +288,7 @@ static void __bo_take_off_handling(struct hmm_buffer_object *bo)
- 		/* 3. when bo->prev != NULL && bo->next == NULL, bo is not a rbtree
- 		 *	node, bo is the last element of the linked list after rbtree
- 		 *	node, to take off this bo, we just need set the "prev/next"
--		 *	pointers to NULL, the free rbtree stays unchaged
-+		 *	pointers to NULL, the free rbtree stays unchanged
- 		 */
- 	} else if (bo->prev && !bo->next) {
- 		bo->prev->next = NULL;
-@@ -296,7 +296,7 @@ static void __bo_take_off_handling(struct hmm_buffer_object *bo)
- 		/* 4. when bo->prev != NULL && bo->next != NULL ,bo is not a rbtree
- 		 *	node, bo is in the middle of the linked list after rbtree node,
- 		 *	to take off this bo, we just set take the "prev/next" pointers
--		 *	to NULL, the free rbtree stays unchaged
-+		 *	to NULL, the free rbtree stays unchanged
- 		 */
- 	} else if (bo->prev && bo->next) {
- 		bo->next->prev = bo->prev;
--- 
-2.34.1
+And it is my first journey to do a patch.
 
+> On Thu,=C2=A0 2 May 2024 20:07:36 +0200
+> Alois Fertl <a.fertl@t-online.de> wrote:
+>=20
+> Hi Alois,
+>=20
+> many thanks for taking care and sending a patch! I think this problem
+> is
+> plaguing some people.
+>=20
+> > I have a M98-8K PLUS Magcubic TV-Box based on the Allwinner H618
+> > SOC.
+> > On board is a Sp6330 wifi/bt module that requires a 32kHz clock to
+> > operate correctly. Without this change the clock from the SOC is
+> > ~29kHz and BT module does not start up. The patch enables the
+> > Internal
+> > OSC Clock Auto Calibration of the H616/H618 which than provides the
+> > necessary 32kHz and the BT module initializes successfully.
+> > Add a flag and set it for H6 AND H616. The H618 is the same as H616
+> > regarding rtc.
+>=20
+> (many thanks to Ryan for the head up on this)
+>=20
+> So what tree is this patch based on? It certainly is not mainline, is
+> it?
+I'm running armbian based on linux-kernel-worktree/6.7__sunxi64__arm64=20
+which has one other rtc/rtc-sun6i.c patch applied before.
+ "[PATCH] drv:rtc:sun6i: support RTCs without external LOSCs"
+
+> Mainline never supported the H616 RTC clocks via the RTC driver, this
+> was
+> only through the new driver in the clk
+> directory, in drivers/clk/sunxi-ng/ccu-sun6i-rtc.c:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D8a93720329d4d2
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Dd91612d7f01aca
+I have found some code in for calibration in the sunxi-ng directory
+that was never called and I doubt that it gives working calibration.
+Should a kernel then use exclusively use the one or the other driver?
+
+>=20
+> Please note that the H6 RTC clocks were intended to be handled via
+> the new
+> driver as well, but this part was reverted:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D60d9f050da63b
+>=20
+> Please only send patches based on the mainline tree.
+>=20
+> I doesn't look that hard to adjust the patch to mainline, though to
+> cover
+> the H6 is well this would require this code in both drivers. So when
+> we
+> want to address the H6 as well, it might make sense to solve the
+> problem
+> that triggered the revert first, to only have that change only in one
+> file.=20
+Yes, the code would be useful for H6 when no external crystal is
+present.
+
+>=20
+> > Signed-off-by: Alois Fertl <a.fertl@t-online.de>
+> > ---
+> >=20
+> > v1->v2
+> > - add flag and activate for H6 AND H616
+> >=20
+> > v2->v3
+> > - correct findings from review
+> >=20
+> > I was hoping to get some feedback regarding the situation on H6,
+> > where an external 32k crystal can be present.
+> > From what I understand from the H6 manual there should be no
+> > conflict as one can select which souce will drive the output.
+> > Should certainly be tested but I don`t have H6 hardware.
+>=20
+> I think I should have H6 boards both with and without an external
+> crystal
+> oscillator, so can check the situation there, but only next week.
+>=20
+> > =C2=A0drivers/rtc/rtc-sun6i.c | 17 ++++++++++++++++-
+> >=20
+> > =C2=A01 file changed, 16 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+> > index e0b85a0d5645..20e81ccdef29 100644
+> > --- a/drivers/rtc/rtc-sun6i.c
+> > +++ b/drivers/rtc/rtc-sun6i.c
+> > @@ -42,6 +42,11 @@
+> > =C2=A0
+> > =C2=A0#define SUN6I_LOSC_CLK_PRESCAL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0008
+> > =C2=A0
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x000c
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL_16MS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BIT(2)
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL_ENABLE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0BIT(1)
+> > +#define SUN6I_LOSC_CLK_AUTO_CAL_SEL_CAL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BIT(0)
+> > +
+> > =C2=A0/* RTC */
+> > =C2=A0#define SUN6I_RTC_YMD=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0010
+> > =C2=A0#define SUN6I_RTC_HMS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0014
+> > @@ -126,7 +131,6 @@
+> > =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0 registers (R40, H6)
+> > =C2=A0 *=C2=A0=C2=A0 - SYS power domain controls (R40)
+> > =C2=A0 *=C2=A0=C2=A0 - DCXO controls (H6)
+> > - *=C2=A0=C2=A0 - RC oscillator calibration (H6)
+> > =C2=A0 *
+> > =C2=A0 * These functions are not covered by this driver.
+> > =C2=A0 */
+> > @@ -138,6 +142,7 @@ struct sun6i_rtc_clk_data {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int has_losc_e=
+n : 1;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int has_auto_s=
+wt : 1;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int no_ext_los=
+c : 1;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int has_auto_cal : =
+1;
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0#define RTC_LINEAR_DAY=C2=A0BIT(0)
+> > @@ -268,6 +273,14 @@ static void __init sun6i_rtc_clk_init(struct
+> > device_node *node,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0writel(reg, rtc->base +=
+ SUN6I_LOSC_CTRL);
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rtc->data->has_auto_cal)=
+ {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0/* Enable internal OSC clock auto calibration */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0reg =3D SUN6I_LOSC_CLK_AUTO_CAL_16MS |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SUN6I_=
+LOSC_CLK_AUTO_CAL_ENABLE |
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SUN6I_=
+LOSC_CLK_AUTO_CAL_SEL_CAL;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0writel(reg, rtc->base + SUN6I_LOSC_CLK_AUTO_CAL);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > +
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Yes, I know, this is=
+ ugly. */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sun6i_rtc =3D rtc;
+> > =C2=A0
+> > @@ -380,6 +393,7 @@ static const struct sun6i_rtc_clk_data
+> > sun50i_h6_rtc_data =3D {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_out_clk =3D 1,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_losc_en =3D 1,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_auto_swt =3D 1,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_auto_cal =3D 1,
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0static void __init sun50i_h6_rtc_clk_init(struct device_node
+> > *node)
+> > @@ -395,6 +409,7 @@ static const struct sun6i_rtc_clk_data
+> > sun50i_h616_rtc_data =3D {
+>=20
+> For the records: this whole struct does not exist in mainline.
+>=20
+> Cheers,
+> Andre
+>=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_prescaler =3D 1,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_out_clk =3D 1,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.no_ext_losc =3D 1,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.has_auto_cal =3D 1,
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0static void __init sun50i_h616_rtc_clk_init(struct device_node
+> > *node)
+>=20
+Cheers,
+Alois
 
