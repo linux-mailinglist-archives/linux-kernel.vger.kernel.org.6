@@ -1,104 +1,97 @@
-Return-Path: <linux-kernel+bounces-169179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5521E8BC484
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16DB78BC485
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D612815D0
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:29:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF41281632
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB86137743;
-	Sun,  5 May 2024 22:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128BF137741;
+	Sun,  5 May 2024 22:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7Q7Z/m8"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BoMyT1Q/"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F3D136E36;
-	Sun,  5 May 2024 22:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3241F7EF0F;
+	Sun,  5 May 2024 22:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714948144; cv=none; b=UCfSGbrmY9XpyH2zNDTmCL5d0sNLdDSGOUwQ0xaiGrQrnX8UrWeruNzco0gPsE/qRQBp2Q9AF0M8zjwk1n6RlwiQFlIkwyiNsEyzKvTfLthFe/8AmgtfJzMV2QueL83jJElSP4ISNhJsrIFbOjgEFr/ljFWkEY6SsSCuF7YOtSo=
+	t=1714948170; cv=none; b=rYdTh+VlM+BKCMxI4DLioy90ZtYED0zjIOlX+9sf+CrRG+NiHAJGnsXgMqR4HEmZfq/hxi6nSlBoS6GY82TXOnDjFiglqJn8wwVvkxVjz67PoKaiGJNBCSkM2jjoOHH/MOKEpE6fLcImBDshEcQFXdVeImOpZaE18kJ2BQy36oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714948144; c=relaxed/simple;
-	bh=eUQQleMvSVLVulCJRkbWmyly+60mD86dyOdlya7uQY4=;
+	s=arc-20240116; t=1714948170; c=relaxed/simple;
+	bh=1X/GMcqTC6Fg01Iw1hhvaA2syJt0U8epBn1VmgI+33w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S6MUhfu74L9md/gmc3zk5g7Qo96XpJ2TxJDZ4P84EkWU/uomO8Q1rz7o2dLTaISbYotwRxAl2I1wfJ6/5cJx73uNbaNVR6wjDTQlEI1VkvfI5aEli2Xy7HAueqiNj5m9E7yr/vVSFT8wTfxalz+Y/TXANebDk5T2MLfJ7A8ySpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7Q7Z/m8; arc=none smtp.client-ip=209.85.216.47
+	 To:Cc:Content-Type; b=Oclp4osZxiQh69fIuyC2EYkUD4DAfQNPznbmc1c5DWi/bWIYSVeY1rITrg/EeQScEgOzqoTu1tI/CB7n+2h4z5+Ay4aoIK6A1LQNEwpENwGZ9xFzCBrg03M6pkxjXhASmWGMQT8Tpe6JNBGJjsJbYk1i9oUPNcs3yfRneRmkUE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BoMyT1Q/; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b273cbbdfdso942747a91.1;
-        Sun, 05 May 2024 15:29:03 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f44d2b3130so1132132b3a.2;
+        Sun, 05 May 2024 15:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714948143; x=1715552943; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714948168; x=1715552968; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eUQQleMvSVLVulCJRkbWmyly+60mD86dyOdlya7uQY4=;
-        b=T7Q7Z/m8PCYb+xcyBGYtfiMiA4e5OVoq7/hi4USks+PAZ5ppKhQ4QcZx5b5iyikxSx
-         BrrITuckqRdXhInCMVfa6F7i+WOVoXhtV8GAVXLACZgHHykt+Y+ZlVba5ARzcwhi/HIE
-         HndRmQFMVicbvOHfe0tWf9+vdNzhKnXRfSdp8tmc7NxqCcaQSRAAGuOiUmkgIu8b5ec5
-         vrOgK441foetgFhVUo0NieL2VFWLlXC0fTmrkJ07qAv4O4Adq5QpjcKVFVy2D/3xQeVg
-         0HQDXUcB4mySsqzVnEQdLPouLP9yc7yXwIZh0LRQcM6wQIZeEsaaCfD8bp/ijonCMqf3
-         AeQw==
+        bh=1X/GMcqTC6Fg01Iw1hhvaA2syJt0U8epBn1VmgI+33w=;
+        b=BoMyT1Q/RODFsj9AyeKemCFWHKIkozFdzO0/aXKl4UFcsJ4nFG0KrnA3bwk/WRDPgn
+         pF0Vo9+HyTBu41FbksXLExveYH7JMUo5c6MXfb4VtgCaToG20M4pnEcXVA1Yz1ca+PsY
+         5OVQA5CkA2xOtGfAZKY7UPYc16eLzJAjrw2zNGloq9EXC6F3C8dBNiJJCxoWmfB8JlDE
+         X7ETg3VUBKC3/Ny2KIKmjsNBKHBYXjdRAVdHQ+80oUTiy2k2TjfwkXyHHcPB4pnTdSMV
+         Jf8OZX5s+mtyXe4k7xTYfKrEjJoHgTXsi7d4Dpr8rCiOl1cDlBljvnrjcR77b8n4ZqFC
+         FCUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714948143; x=1715552943;
+        d=1e100.net; s=20230601; t=1714948168; x=1715552968;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eUQQleMvSVLVulCJRkbWmyly+60mD86dyOdlya7uQY4=;
-        b=QQ/BjkAPibh+PYkhbyoci3C5YRUG1tLt/2ncyVPVen5vEIK7oLbVkEOpX19vAeR5hY
-         gxWVpPNVCys5XXKcQej6B7FIesT16kR/y+yrtzlQNhKc3Yg52SmhdQq3tui6RMYtS59H
-         cSxXDSjLDzmSYoXPGyATmrx8+FLXcyXCEX8s4awEOYfAJLsX81Eqbb6J4EuHJzuZx8Pb
-         VHntMWpyKeH5KE36L+t6XQrwKDN24VEpovUsOGOdNcEyEkTXyXNshg6kD/yudMKIYAhZ
-         y7DjygcX+f1YnLTLrX9Nr5lsueu9DjP61kExLLKXh5GC2WLzFRWBiKMAg2K0ILWA6O9R
-         7xNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSfvPDU67pyoHUO4DI37MN57CoQUKGCoCcPNRYsAIQu+lHRjU6OVyuiRYgcao5wv4LAeSyrRnScMpqT4LAHciHdYQ+nHRc3VBvyyyu0rmQnt3DxChce1+TgPwbIUDl93qIpIm+kz9KX/b+YUI=
-X-Gm-Message-State: AOJu0YwP9bo5qfOt1K12G7+h1oD8o99rUEu32gYrC7/whzlzcmnqoDL+
-	yQNQqMU14kffCM8Dw4kT3YABVwjjSY9drSDjkbsQmn2NCNiukUaL8mEPDJEK0VhhKFrroxMmo2t
-	IPIIR0Yx6VIA3N/2RCCbCDVusEwo=
-X-Google-Smtp-Source: AGHT+IG7V8Yp60YHqPzYcVkmvmzJBA8elpk/TeoONqKz1nK8Sb2c3DB6W15/4bZHGcFEDFIVMRLFZV9ssKg0YXM9hV4=
-X-Received: by 2002:a17:90a:f289:b0:2b1:817d:982b with SMTP id
- fs9-20020a17090af28900b002b1817d982bmr6831234pjb.14.1714948142788; Sun, 05
- May 2024 15:29:02 -0700 (PDT)
+        bh=1X/GMcqTC6Fg01Iw1hhvaA2syJt0U8epBn1VmgI+33w=;
+        b=Uzd5C8ysP8QnPPdcvW60VwxISrYo8VnxynMZjxzv98LB7A+h9I9mJuODaGGSxlTMyJ
+         OXmCFE4pMMgYXp5LAKuehIJqa6r01s7KyRyxZeLdGKt8acs1NLEBF1DhhAxSKaoah5WF
+         6SUhlh1tFbLH61eQZUwZOhg5+taRL8HcoPpOgliyPBJ4aUSzfVrUX8qyk6PWb8eybkWL
+         8ns57l9cm+Zg7g2Qh0c4sgmBhVo/hGjJqThiVbG15PIio0kCAy0qiTeCze5QNq/iKJLx
+         pJvKpJrtuYRcrdCb2+V7O43tEhdKd+f4vx7a9Wo5uUPxft8NLeK0drOb6igigADCcX+y
+         dqew==
+X-Forwarded-Encrypted: i=1; AJvYcCVMuYcPhOnifQvgkgJ7bMVrWB/IybrfwPZ9SzprwDR0Gq4rYLlUrQIrCBbXrIY4RFFg69mNIeFeEUjfySN5ZbuYPKn+cdFRs3NVuS3uBQQW3+HB6NHksXJlPP0LkO0NSnEDMfvNg5UMFf3nDqQ=
+X-Gm-Message-State: AOJu0Yx2Fou8T0TjzyW/dJYEcKpdy4V5yP2kGtsx/J0Wh6EUWF6wOpRy
+	GoX5kTRdv0KmTErMjj4soN7Q8K8JXZDzzVpn2MIbAvIGsW+tro5v4EhM3rcqSAYNLwuC8qmOBH5
+	jgpoRReEZaKBWOPn39VVflwTnIxc=
+X-Google-Smtp-Source: AGHT+IEAd+ygeHaOYLxfv3yWReoTtfiFIDKC/TVtHPQcOSIR7O1iirvaz7Y8pPvd9gd2lzKew9USEXuyPIBSc3U2Kes=
+X-Received: by 2002:a05:6a00:4f83:b0:6ee:1c9d:b471 with SMTP id
+ ld3-20020a056a004f8300b006ee1c9db471mr9881294pfb.25.1714948168379; Sun, 05
+ May 2024 15:29:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240403194321.88716-1-benno.lossin@proton.me>
-In-Reply-To: <20240403194321.88716-1-benno.lossin@proton.me>
+References: <20240411205428.537700-1-thorsten.blum@toblux.com>
+In-Reply-To: <20240411205428.537700-1-thorsten.blum@toblux.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 6 May 2024 00:27:39 +0200
-Message-ID: <CANiq72k_2gY2X8bhDmjEax9aGP0yXJfEsN_Cp5ebJ6Mf1PwmFw@mail.gmail.com>
-Subject: Re: [PATCH] rust: init: change the generated name of guard variables
-To: Benno Lossin <benno.lossin@proton.me>
+Date: Mon, 6 May 2024 00:28:03 +0200
+Message-ID: <CANiq72mEU2RJ2HE2aXkStCd3UsT999pFyT87k91fXFZYDooZiQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: helpers: Fix grammar in comment
+To: Thorsten Blum <thorsten.blum@toblux.com>
 Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
 	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, rust-for-linux@vger.kernel.org, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 3, 2024 at 9:43=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
-> wrote:
+On Thu, Apr 11, 2024 at 10:55=E2=80=AFPM Thorsten Blum <thorsten.blum@toblu=
+x.com> wrote:
 >
-> The initializers created by the `[try_][pin_]init!` macros utilize the
-> guard pattern to drop already initialized fields, when initialization
-> fails mid-way. These guards are generated to have the same name as the
-> field that they handle. To prevent namespacing issues when the field
-> name is the same as e.g. a constant name, add `__` as a prefix and
-> `_guard` as the suffix.
+> s/directly the bindings/the bindings directly/
 >
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-
-[ Added Benno's link and Gary's simplified example. - Miguel ]
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
 Applied to `rust-next` -- thanks everyone!
 
