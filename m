@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-169137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164648BC3AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:22:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF5A8BC3AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 477DB1C2165A
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8B21F22037
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7332174432;
-	Sun,  5 May 2024 20:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE64B74437;
+	Sun,  5 May 2024 20:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="BOR8eryV"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="AxeCn8mU"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8EF6EB51;
-	Sun,  5 May 2024 20:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E346DD08
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 20:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714940546; cv=none; b=gVnx4Z7pticw22i3UXSW0+BqBfytopBUc9Z56D+30x5Bzsks7VoEvK5Hhu1CkqZzSOvHUvu/beMwvhPMFhjfAdPx8i5dD1OTjyDroojFuVdWWaKD5b1bTp3ExotUdGidjeGsgbWLq6YXLu77okLfgbYybx8Nn1VfVAWox7BTzBA=
+	t=1714940746; cv=none; b=L4IUPoHSRMerocVkvjQnWIEenM1I1uslCGuV20u/XgvCOrtj28zCW08FMY5Jylo2LgS9VICvPP0kBXLS8a4P/6beMw6ETxnNkMZjyoKEGTKtgPqDiRWUj+MJbPPXy7bsF/SbaU2+wMbf/mPdMMVp4yj93u3lT+TGlrZ5O6yOVik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714940546; c=relaxed/simple;
-	bh=6zZ9I+/S/0oQSwQS1c/S5AJHePAHDd8FWt0x5Yj2khg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xh1W7d75F4PkyDf175iB7Dhjr/Z9H508CUQ1XAnGzjWAQeuY+5K0BXe45MBGe+ujBz6sGvE7U/2MrTXMMrBthhWv8VwcDPs+HMcdITSSIdNP8tfTGPLNwA/S0Oo+S1ApMLaCJP2Le9BRMF+VtUekngOStqjpBB81GwYkJiDh838=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=BOR8eryV; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=0+NrnlGanpbDKBTcFpa/hRcO7lljTU+Kq8oaCV7xyAE=; b=BOR8eryVU1GPNyyM
-	GtH9Pb6owDZyBjngs3juuRmWnjOgkB7HgNLrmj85StCsiy3PoV+rIjjYblhUGpz+zFRkjUSGCE5PW
-	Pe2Hq26K3gDUMd/s2upf/1iRPBbBej7lbMwh4eFaSV9MJSdZJQDfFMBGLo6Iu5dFA5SLlo0soSn+S
-	Jc3/NRnGIP3bPk6TQsbQLTAPWrLBwEzPhhhc9Kthfy6gxmdS0/HtATuHbmeMgtZsAUa5OZHptE8UQ
-	QxrO7R0/zoHEWI3r8Lgtrcs9Qcxo4c+l/cK9bponnF5/6OflwhpJU1uRGAcvXSW8wx6dkbao6cnj5
-	Y8zwnaupKskvwVEGsg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1s3iNI-004oPt-0X;
-	Sun, 05 May 2024 20:22:20 +0000
-From: linux@treblig.org
-To: aaro.koskinen@iki.fi
-Cc: tony@atomide.com,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] ARM: omap1: Remove unused struct 'dma_link_info'
-Date: Sun,  5 May 2024 21:22:14 +0100
-Message-ID: <20240505202214.623612-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1714940746; c=relaxed/simple;
+	bh=MoTZYJkUoOWyleyusoyvgj/FFkcL9ArrzwXmf6mrbvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HYcIMjaE2/9Vkua/FlMerNbvZtEHXTKSB3SBmlIQ2RH4unw8MyWNgQWuR8VWsyY2It2RczQQeYzeDPmPtFh3BXiWSsGv+eQZmDKpcuUjxgFuwkqgN6hTS3FVvizwcUwq2A3DNFlMmDfMO9PbBh28EhShxaTQBZNy6rfDhkpRerM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=AxeCn8mU; arc=none smtp.client-ip=167.172.40.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-e1b5cab7be; t=1714940733;
+ bh=yYQHFmGpW55zkbj8zsWMJat5Z4fq40uha7pgN/y0H0k=;
+ b=AxeCn8mUsoqrUcxYmZrNm+2pecQHAy/NZIDtA7zLp7abZA/f4bE9RGrP4yQ9wllUAp3M8OcDo
+ IoTh+ZvVtcajA0vAZB/laZpOcWCtY6mohdy7VzrbGq+PcA57Ig6/flSSymyQznwaObbUaQ2SjJ6
+ rvsl6JvL9lscjUyAgrMRM8EzQYetjASKfjVEOFRjDcrTjmZcPEmzWIJ6oMfl/qszYqPKpYb1eZj
+ I5rEJoYtdPuoEjJvBK22GF5gcxB8SKKWJ4NRwQwNa7VVIuHGMDlOJ4AHsK6kgI365dSbb8Pwrwx
+ QRbMfXi3iaxDHTrwPPILF2z4uRlF7nHGBCuK1hcqGgfg==
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas
+ Karlman <jonas@kwiboo.se>
+Subject: [PATCH 0/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+Date: Sun,  5 May 2024 20:25:15 +0000
+Message-ID: <20240505202522.2999503-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,46 +56,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 167.172.40.54
+X-ForwardEmail-ID: 6637eb3b50d779b5c30d1117
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+This series adds initial support for the Xunlong Orange Pi 3B board.
 
-I think the last use of this was removed somewhere
-around the two:
-Commit 755cbfd8cf89 ("ARM: OMAP2+: Drop sdma interrupt handling for
-mach-omap2")
-and
-Commit 16630718ee46 ("ARM: omap1: move plat/dma.c to mach/omap-dma.c")
+The Xunlong Orange Pi 3B is a single-board computer based on the
+Rockchip RK3566 SoC.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- arch/arm/mach-omap1/omap-dma.c | 13 -------------
- 1 file changed, 13 deletions(-)
+Schematic for Orange Pi 3B can be downloaded from:
+http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-3B.html
 
-diff --git a/arch/arm/mach-omap1/omap-dma.c b/arch/arm/mach-omap1/omap-dma.c
-index 9ee472f8ead12..f091f78631d09 100644
---- a/arch/arm/mach-omap1/omap-dma.c
-+++ b/arch/arm/mach-omap1/omap-dma.c
-@@ -59,19 +59,6 @@ static struct omap_dma_dev_attr *d;
- static int enable_1510_mode;
- static u32 errata;
- 
--struct dma_link_info {
--	int *linked_dmach_q;
--	int no_of_lchs_linked;
--
--	int q_count;
--	int q_tail;
--	int q_head;
--
--	int chain_state;
--	int chain_mode;
--
--};
--
- static int dma_lch_count;
- static int dma_chan_count;
- static int omap_dma_reserve_channels;
+Jonas Karlman (2):
+  dt-bindings: arm: rockchip: Add Xunlong Orange Pi 3B
+  arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../boot/dts/rockchip/rk3566-orangepi-3b.dts  | 694 ++++++++++++++++++
+ 2 files changed, 699 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b.dts
+
 -- 
-2.45.0
+2.43.2
 
 
