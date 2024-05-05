@@ -1,135 +1,171 @@
-Return-Path: <linux-kernel+bounces-168943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C228BC004
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:20:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730478BC007
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586B91C20C00
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:20:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C67BB210E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1D8B673;
-	Sun,  5 May 2024 10:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AA9BE55;
+	Sun,  5 May 2024 10:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8e4nQqY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="swtg70tW"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF86BA45;
-	Sun,  5 May 2024 10:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEBA79C0
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 10:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714904430; cv=none; b=JTinHWljxhqos8Gi1BXrjNTbLoHKRAqsiRR/oBeNZt0CRsupewxDPQUM6ueXPIAYFnTSuRlEhQJ31nGX6ITnT4mzYTqWbtzRpjV0xkqLF2HY2T7BlC6uqfp0aDmGb74vuMGHnIlBgGSCRpiKXGH6Z0hzwhEJ7jUjtSnDL25iZe8=
+	t=1714904614; cv=none; b=NEGv0vhkijh9iR5P02hfpWetYg3kzDlmXvIjeNAq1GmorPZ1kJOKTCeX3WkOuVTTLBWfxlrCAGPjSDwZNOQlSnM9fP6jPoqBMf8nLIGv/9ijWAZ/qrShCD7s/zRSPyjt7D0oWtplrfWUNXm/6ZKSIOofvSI1X+t7PRjP5grexy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714904430; c=relaxed/simple;
-	bh=dpjRYpT+BU4zpN6asVLx0KY/cBkt90r8VxWECtL1bJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rgzOMO3amY1M3U4yhPN2maQXlkIop5jJuciiHyDO/u7F4krY3JXEMLVZtjJQJlrLLLmsLfGBNU7+5IzkBIdWSZ6ino5lzFb5byS++joRHpgStzsORiAC7L0b0qP0oDnW0GWULQDF2ix3WaPjpzMJg3qPoBpvrJ3ikWiKxvhWfwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8e4nQqY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E0E8C113CC;
-	Sun,  5 May 2024 10:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714904429;
-	bh=dpjRYpT+BU4zpN6asVLx0KY/cBkt90r8VxWECtL1bJ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P8e4nQqYf2G9m+a5OTjWQXyxV5an+WlSUTTfLQ7ZiHX1JqJzPnfimpxl98jv4eFRR
-	 ZIuRrbAWUSKki+lNoIJu2U9eFPwLtWXL4MBAhsh0Tph6Onwp6vvEJVSp8hqDz1UWsH
-	 H717/UmlHR0g5IF2TF2cDxtmPnflxMeFFcIZou6EIrUXoRRdIrEGrfwCs/6ZXrY4Be
-	 pdCtQZn6LGaghMbt7aQG1QVNvznNqGrICOYXAnLWxZzZVfEcKiTQHfl/wKARIsrLKt
-	 bQ3EebNCnLYNSKDBLzVhFCgoqEaJLlZTH3og+Ds6DE8QIj5OtH21huu2CKrXfh/rJt
-	 26NZFQ/XOnqZw==
-Date: Sun, 5 May 2024 11:20:17 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Petar Stoykov <pd.pstoykov@gmail.com>
-Cc: linux-iio@vger.kernel.org, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh+dt@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Angel Iglesias
- <ang.iglesiasg@gmail.com>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: iio: pressure: Add Sensirion SDP500
-Message-ID: <20240505112017.69e6787c@jic23-huawei>
-In-Reply-To: <CADFWO8GC6RP6A7H-Cq5UZHfBY3VJZTCqssdZet61hH031euhwQ@mail.gmail.com>
-References: <CADFWO8GC6RP6A7H-Cq5UZHfBY3VJZTCqssdZet61hH031euhwQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714904614; c=relaxed/simple;
+	bh=FS4Q8oZSY5wWF9QVF8HBQN8KSr/cHh2uGVXPASjvb0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tvmOpBFyr4GCC8HtRtLrCyAjucFxctGNnq1uvYv/8r02tNAZrR/qF8Yeu1ufeSR+FfJdaJ1Ub1glBBHeoRpAW+iDzO/v4FFaK1wjhi5khC1r3zz6BhbrNc6mXj90PyCWQpuFUGYIRJw+grl8/+wSX5ar1ygGWltoGaBkiQK8uoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=swtg70tW; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59b81d087aso128584066b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 03:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714904611; x=1715509411; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G+VqfS0gaJPl0mFJeInohOEm9mx45ofqXd3qqexPO1s=;
+        b=swtg70tWJZXv/hsnbLbXvsMJWqm5hjtr7wibujGMM5wZvKz8IIs3aGhLOBS7uXMW0i
+         J6tp8uwWMEmdZ2iqBTzel76bMRT6rUZHoIrQQfkf/DKpM9g9zo4Ih1P2yM+HGGJOILCB
+         uapOT55zpoYEDCk1hzhROQMlTj9RiLM51tWp3dV5H16l8dLGkLb3rOWyeTtHomwdCvmh
+         4ZZJvKuzY+S46XwynhaTlu5+fJ083fHs5S5wkjoiel9YUxjrusThsECAfqyE48qqBGBP
+         Fowa0FrrV/7oOwuBczrMTpv8sWEMbSTS4qtegEyiTFEvii7ZlXFP7ZlXUNqN2xiP/p+u
+         F59Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714904611; x=1715509411;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G+VqfS0gaJPl0mFJeInohOEm9mx45ofqXd3qqexPO1s=;
+        b=Bs9XK6cT5RokEcyWWx8PgGI6Cf//sTkjyqgwJNzAtRyH2u9/bQ4xgbf5XQIj8mVxly
+         v56vKnyNG+Yec3fgfGuPAgUOWrEFC/3Ek2n1gmYmN90XuOL3CXQhAOll2HdloshiQx6m
+         o2LzHKEBLeOC/IJJTqL+5MvZD3V41s3JTn8VFJjppyagQQvsF+6x6wI9KWv0OkX0clVI
+         +5ZK/p0AUMaqehcIVMU7KG7F0QjCB3oNITz2vjkAiwqBUySM3PRNzlIDTHogr4Xo3wDg
+         uB9OR2QpFyP4n9LxDuZucn8zlAo3Ev+2SZHomflpZ1EuAV1OEbWSii/X/XUWq+sMfxAW
+         zVvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqp6ksbccxCcjVZ1ulOERRAg8Uj3A3foqYHoEJJW6yn4dV1/h6l04cUgiofgggRDg2Qj0GwfAQdZE9rOEEc2cNUxQLaYyIYylcbPAF
+X-Gm-Message-State: AOJu0Yxm1VDs/hOn4eFXInD5J7jpenVH2NpIciODAx+QKF5mXRno1U4e
+	Ymz2WMq+4FVek7CT9USRR3p9aaFpcVhRKyjzRPwRWKvYXCI1rz4ri5dHn0t1oxA=
+X-Google-Smtp-Source: AGHT+IGfhzp4LBo/uTi8W9H8sz2Pdqd56qw6vaePUhEJdWURAFpghf9NUiGKyhyRCYt8B0l6aXIV2A==
+X-Received: by 2002:a50:f689:0:b0:572:4e6b:958 with SMTP id d9-20020a50f689000000b005724e6b0958mr6792259edn.2.1714904611325;
+        Sun, 05 May 2024 03:23:31 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id l20-20020aa7cad4000000b00572e91cf988sm1103013edt.93.2024.05.05.03.23.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 03:23:30 -0700 (PDT)
+Message-ID: <10c9c895-d877-4aaf-89c4-79d53b00fe50@linaro.org>
+Date: Sun, 5 May 2024 12:23:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: add galaxycore,gc2145 DVP
+ bus support
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>,
+ Pavel Machek <pavel@ucw.cz>, Arnaud Ferraris <arnaud.ferraris@collabora.com>
+References: <20240504164115.64603-1-andrej.skvortzov@gmail.com>
+ <20240504164115.64603-2-andrej.skvortzov@gmail.com>
+ <2d96a3d4-c361-4aac-b97f-0d408d39ae45@linaro.org>
+ <ZjdLohzrTA80sE8M@skv.local>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <ZjdLohzrTA80sE8M@skv.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 30 Apr 2024 17:27:20 +0200
-Petar Stoykov <pd.pstoykov@gmail.com> wrote:
-
-> From 60f5cc7f65b07124f19428a713c3bc33b9e4a7a7 Mon Sep 17 00:00:00 2001
-> From: Petar Stoykov <pd.pstoykov@gmail.com>
-> Date: Mon, 15 Jan 2024 14:29:25 +0100
-> Subject: [PATCH 1/3] dt-bindings: iio: pressure: Add Sensirion SDP500
+On 05/05/2024 11:04, Andrey Skvortsov wrote:
+> Hi Krzysztof,
 > 
-> Sensirion SDP500 is a digital differential pressure sensor. It provides
-> a digital I2C output. Add devicetree bindings requiring the compatible
-> string and I2C slave address (reg).
-> 
-> Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
-> ---
->  .../iio/pressure/sensirion,sdp500.yaml        | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/iio/pressure/sensirion,sdp500.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/pressure/sensirion,sdp500.yaml
-> b/Documentation/devicetree/bindings/iio/pressure/sensirion,sdp500.yaml
-> new file mode 100644
-> index 000000000000..3cdf17df7d52
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/pressure/sensirion,sdp500.yaml
-> @@ -0,0 +1,39 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/pressure/sdp500.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: sdp500/sdp510 pressure sensor with I2C bus interface
-> +
-> +maintainers:
-> +  - Petar Stoykov <pd.pstoykov@gmail.com>
-> +
-> +description: |
-> +  Pressure sensor from Sensirion with I2C bus interface.
-> +  There is no software difference between sdp500 and sdp510.
-> +
-> +properties:
-> +  compatible:
-> +    const: sensirion,sdp500
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      pressure@40 {
-> +        compatible = "sensirion,sdp500";
-> +        reg = <0x40>;
-> +        vdd-supply = <&foo>;
+> On 24-05-05 10:20, Krzysztof Kozlowski wrote:
+>> On 04/05/2024 18:41, Andrey Skvortsov wrote:
+>>> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> Not true. I never acked patch with empty commit and such content.
+>>
+> Sorry about that. You've acked v1, so I've kept it. I'll remove it in
+> v4.
 
-This isn't in the binding that I can see.  It should be! 
+I acked entirely different version. It had even commit msg. Empty commit
+would have never been acked.
 
-> +      };
-> +    };
+> 
+>> Drop fake tag and send new version with proper commit msg and proper
+>> changelog under ---.
+> There is changelog in cover letter. Should I include corresponding changelog in each
+> patch as well?
+
+It's fine there although nothing explains why you did these changes or
+why commit msg is gone.
+
+Best regards,
+Krzysztof
 
 
