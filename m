@@ -1,157 +1,90 @@
-Return-Path: <linux-kernel+bounces-168939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20898BBFF7
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:00:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB668BBFFA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 12:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211201C20992
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061C3281ADA
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DECB65D;
-	Sun,  5 May 2024 10:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0BAB662;
+	Sun,  5 May 2024 10:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUaJVexN"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lY1V24ma"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C5A567F;
-	Sun,  5 May 2024 09:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C8D5680;
+	Sun,  5 May 2024 10:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714903200; cv=none; b=tYvjUIJRE7ZH5Z4hY8YT3NofRvrBMLljdHIVhzY6lhFE0v+2sPReFjrKaRPpUO89zQ58iOrUe6J7yz+2oUBPQWmVM1ozCcE1FcSzccBbBUfTS4PqOxup44md3Ws+I5XpIcLZvIOaTDKp+btGPoC3AAv8mnmuQc7lgWzdQn1c2/U=
+	t=1714903465; cv=none; b=scw1unVYQK6j7Dl7t/h68p165Cua02usbtEplhckzyfue3iz4vu1VLFUIfgWwzObUdRYO7S2NHtYnqsXnbOnsBwoJTPhWkWzl0cQ6phx32GjSMbahZ9esP8xoN6koOdoRhhEYSdBvb/4zEqGVI4j4Ec7i9Ei+KACC+nVtjOl+hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714903200; c=relaxed/simple;
-	bh=WjqcudRZG79zEdBc9lj8LC/nE2+uRAM7JJ+N4z0GaV8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5df/o9a2zIRnaLvg0ZNTVAZghF9E55+3F4tKyA44a8GFZz/JEotWFcL13OKk2e9OOeldM5/9F1i/01llSH6AwoGhNyr26uLxV2ha+kGAmC9oZGmWXw3nEAY3EPS3tGFvxtnGVFYMV4LWdU+pSfYihc/9R8ZOK1kuKxNgHEVUJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUaJVexN; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2df83058d48so12119761fa.1;
-        Sun, 05 May 2024 02:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714903197; x=1715507997; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnOYLn7A3Dzrt0EMeWWO5zlZhCq8i4H9V/YCQDvuc9U=;
-        b=kUaJVexN5oB4NCaHv4s/Tjosl6zvvBBLhiG2D03ikY4Y2EZX8mMn/FG6q1xtR2hTuW
-         Y5hRzhJru0QeCu//+Gbf6s3XqtDd3Zh2cOAJycLAibn8Eh/lQ8X9pAA2atwpzMQuktRG
-         gm5LpEBQb4KQfUr4cj5UHozZ7sG68kM3P3csvqcyxl0rm9erkwgRDH7yh4//7NUkODez
-         cOQyOjJlBIPNBA/ZwN6wlk1hsGdkEmEd6/SRtXnuJk3Dskv/6mhD3EHRQbVsyEOOrz1W
-         He/+FRR2HaZrwQTtqDgarOaisEJ9fX7L2gtiIbqvmBAABDoODPR5PbUNNRcIk3r76Pmi
-         oM+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714903197; x=1715507997;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BnOYLn7A3Dzrt0EMeWWO5zlZhCq8i4H9V/YCQDvuc9U=;
-        b=I/uuULxz8v6J92jEWfKPlHhwpZ6c4j/u7fnoRES9t6phuBTmdI5Q9G0p3wOaipLLIZ
-         oWoPRCQJju753ZndNOgBtR6gNlc5bTNA1bBhWPUNzsv6muCszZA+LxgyCprw3Om9UO8I
-         /yy6pLRnZ732d0Tb6ekiItPLO3X/CKUH6wqAN6mmLM04XypglQ4m0GiyvmeXxBX8DDeV
-         9m1WUpA0eVIpazfee8wALLAvfki/jtC6Lr081HjgrSiB2MPXeorYXQFJ76eVNXOy4gvT
-         cck0BG7PWlldlzdA/NG8bD0CvWVRnC+nyeKJQ89Uu8EYU+i12YMngVdsYJs3CgJN+V2V
-         zm+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4GxvnRlf9QNy738czH0GHhP1IzE1iDr1RL/LI8yrKSf3zl8Uuc68LrjwUYo74HUFR9Uqc0+NALcX8JRkw31K+Ve/Hh3Gf2CF8No7P8iqnyMn9TI6+EWv1PDtFhhH3tHNnnklXSpyXnf2gbkqmClWonEYDX+ggGmSMZJ/cxa0vmtrwrtbE
-X-Gm-Message-State: AOJu0Yw9Plw+kC6812wo/WWe8tKv+jn5rbLTjo1PxCrkuO5u/hfYIvVu
-	GE/oZKlGPQ6WjUvAD+V5/GXc76K4tpgKVhXmb0MQ97kesn3D2E7INNB1CGC1rBERhg45kl52gRq
-	nHnzsw1p2Rso4B4z4JGuux/PzjY7U6eVNCJ3U+g==
-X-Google-Smtp-Source: AGHT+IHYw9oXLwIFgqrXTGRWT0MPYTc23B1WtRMrcOZBCOXwRFrQFAfLrcpHBGbFINGr30T8hYxstm0uO166Fa7dSbk=
-X-Received: by 2002:a19:8c50:0:b0:518:8d15:8810 with SMTP id
- i16-20020a198c50000000b005188d158810mr4370888lfj.14.1714903196330; Sun, 05
- May 2024 02:59:56 -0700 (PDT)
+	s=arc-20240116; t=1714903465; c=relaxed/simple;
+	bh=IyOAFf/MqC1uuBz8L2TYQ5f6j8MCCE42y+QHIJNMSUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nBjEZerN/fogC5k6f2zFI/Hbe7hZau+ivj8eL/uv72jyuO7HvJZMIKZ25TpamC2Oovz8S0esXl+lsH5T7FxrmjnlZZ50rrjIjqrmdv9SaZot/2WigJTyU59qY2qfWu6g1XGPiEPXOmFPcG/jG73FzeLJKPWN2rn8G8FuvtprLuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lY1V24ma; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246AAC113CC;
+	Sun,  5 May 2024 10:04:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714903465;
+	bh=IyOAFf/MqC1uuBz8L2TYQ5f6j8MCCE42y+QHIJNMSUM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lY1V24mafr923WZYtUTl0sJEolDj8eF91Mt0U5GG1lzxfcHC7/U+/ftFJJ7gh9JeQ
+	 gFPWSNjzV5FK1WRjk3dzLSyHghvXqSzLIcwfXlhKKmBqoekLb6eyBBhR4qP1rZIGJ0
+	 vMgt4lxTuVDOWCiuVn4R2QtjwIG2WWm5zJGiUF3y2zSSw8R4EyvLpspuOYdfRrnTAa
+	 2tA1omUpdg2f7HW3quyRk7cBsnUXJqkZeT0LskIkkAuKPEeN5ec5kpAe0a+QW/9QtA
+	 yQYSuoGHWMMCVhJSN+s7Fn8Ld49IfnX0lxwp6p4fzGttnHzequEnOhsj25MbPFMn/Y
+	 K8IaBlf3oPKaA==
+Date: Sun, 5 May 2024 11:04:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, nuno.sa@analog.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: dac: fix ad354xr output range
+Message-ID: <20240505110412.0c17cd5e@jic23-huawei>
+In-Reply-To: <e750ac0c-0794-4c48-860b-1f9a1e751813@kernel.org>
+References: <20240503185528.2043127-1-adureghello@baylibre.org>
+	<e750ac0c-0794-4c48-860b-1f9a1e751813@kernel.org>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417134237.23888-1-bavishimithil@gmail.com>
- <2e179356-425d-48cc-84db-0ea3e6203fba@kernel.org> <CAGzNGR=pvv67UJtNnkDUMhrpnPjNCCYEGeCaM7e_9=4G+Lcfgw@mail.gmail.com>
- <676ce61c-e850-4046-ad0f-e3382be3fe0c@kernel.org>
-In-Reply-To: <676ce61c-e850-4046-ad0f-e3382be3fe0c@kernel.org>
-From: Mithil <bavishimithil@gmail.com>
-Date: Sun, 5 May 2024 15:29:44 +0530
-Message-ID: <CAGzNGR=rDrd6LyAC2yB4XUcxn=H1VdY8LQO99NEOBR1sLGGT0Q@mail.gmail.com>
-Subject: Re: [PATCH v4] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Or platform maintainers or whoever is interested in this hardware.
-Aight will do it in the next patch.
+On Sat, 4 May 2024 13:43:07 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> >> Not much improved here. You miss $ref and optionally constraints.
-> > Something like this
-> >     $ref: /schemas/types.yaml#/definitions/string
-> >     enum: [mcpdm]
-> > Didnt really understand the "optionally constraints" part.
->
-> Sorry, you stripped out *entire* context. No clue what you refer to.
-Its regarding the ti,hwmods prop
-ti,hwmods:
-  description: Name of the hwmod associated to the McPDM, likely "mcpdm"
-
-> >> Missing constraints, so replace it with maxItems: 1
-> > Similar to how clock-names are handled?
-> >
-> >> List the items. I asked to open existing bindings and take a look how it
-> >> is there. Existing bindings would show you how we code this part.
-> >   clock-names:
-> >     items:
-> >       - const: pdmclk
-> >     minItems: 1
-> >     maxItems: 1
-> > Something like this?
->
-> No. Do you see code like this anywhere? Please only list the items,
-> although without context impossible to judge.
->
-Quick search on sources gave me
-Documentation/devicetree/bindings/usb/dwc2.yaml
-which I used as reference for this prop
-clock-names:
-  description: Must be "pdmclk"
-
-> >
-> >> Just one blank line.
-> > Removed.
-> >
-> >> That's wrong address. Old code does not have 0. Please do no change
-> >> parts of code without reason. If there is a reason, explain it in the
-> >> changelog.
-> >>
-> > The checks were giving a warning if 0 was not included hence, I'll put
-> > the real address if needed then.
-> >
-> >> Include header and use common defines for flags. Just like all other
-> >> recent bindings.
-> >>
-> > There's no defines for them, this is how it is in the dts :(
->
-> It does not matter whether some particular DTS uses values or defines,
-> if these are the well known constants. Again, stripping entire context
-> and replying after 2-3 weeks does not help me to understand this at all.
-> Between these 2-3 weeks I got another 200 patches to review.
->
+> On 03/05/2024 20:55, Angelo Dureghello wrote:
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Fix output range, as per datasheet must be -2.5 to 7.5.
+> > 
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---  
+> 
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
 > Best regards,
 > Krzysztof
+> 
+I added a fixes tag to the commit that introduced this doc.
 
-compatible = "ti,omap4-mcpdm";
-reg = <0x40132000 0x7f>, /* MPU private access */
-        <0x49032000 0x7f>; /* L3 Interconnect */
-interrupts = <0 112 0x4>;
-Not really constants as they do change with platforms (omap4 vs 5 for
-example) but
-So do i just make up the constants for it then? Those just seem like
-magic numbers.
+Applied to the fixes-togreg branch of iio.git.
 
-Regards,
-Mithil
+Thanks,
+
+Jonathan
+
+
 
