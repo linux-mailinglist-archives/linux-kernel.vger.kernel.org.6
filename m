@@ -1,78 +1,125 @@
-Return-Path: <linux-kernel+bounces-169110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D49D8BC337
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6EB8BC339
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 21:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CCF1B20C7E
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0790C2816ED
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 19:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9829F6DD0D;
-	Sun,  5 May 2024 19:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D00D6E611;
+	Sun,  5 May 2024 19:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWekGzmg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mD+RUxaM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D646BFCC;
-	Sun,  5 May 2024 19:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BEE6D1B5;
+	Sun,  5 May 2024 19:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714936967; cv=none; b=jQ/SGPQ4PUuu9g0P61vPP9MBrdKiLytm+f3JQf6Xo+Z15baa3P6Pfpq8TNOEuuBkhycI/fEYRy1WsnisQLJaQkoJYmjXHbeoj7Ls4+ZHgO1rnboreUM4RCN4uv9GjOvZ7QPXCtkRWl8xRWOpkRAal019dLo//M1i+s2LYd4pqS0=
+	t=1714937564; cv=none; b=CtW5i/1p+06pjLb5nR3P6CexHLaMdnRqfU/RnoeHR2/Bd7WE55U7VSDM0AFTUcXC5R6aphQDNDW/qtzE8KjttTWnW17pgtiATXi/pR9k0hU6rI+vzwobJ5UsXKfjqazToPdtwq/h9ASCxKGrj3avhS48tP4tPlM2Die2gQD+3Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714936967; c=relaxed/simple;
-	bh=Lt8WVoUDyxHbAr6/NPiYItA14a9yJ6MV4bxPM/leayA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DdzVc8uTS8yxfJH+Dn7+PPcfiwEMytAlldd7d/MKD7uN2n4BpTMf6ppzvEJblKM1H553qRkQf6WT/m9RVT4qKsi0BMHV53ndQ1XEd8xo+hJCj+O9tE2BndUZryFoIbnwffQ9DXMJ1p81duTk6a/JGUwxbfhtyjOPjfQfQ9i3sD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWekGzmg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B83D6C113CC;
-	Sun,  5 May 2024 19:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714936967;
-	bh=Lt8WVoUDyxHbAr6/NPiYItA14a9yJ6MV4bxPM/leayA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OWekGzmg4cDCyeYscf357lm6Tj2eGXS6Kz6OZoIT1jGc6pK4PkQpnTilhPHAvjqro
-	 Mj+veFYDDLHHMG9zv9JFP7JhVWyPAwnz9RBuiNUqwR3goim9QXV1pgc15f/wpJOdoD
-	 f63bWecjJBftSfe7eBboTWWbaTcgdp9sZRoR9Yzta1D16nV8mrvH8jC0tYiadLim+7
-	 UMiy/ucTYT3qx/fcdGI3w6jDFWDMiv5MxqbDKkBfnVHCsNxs5gBxzIBS2SXrWlTCCW
-	 41Wm70UsP7V4/JEbRwiynB+f7Zt6Pu3QKVWkk+AhYb9liwnTr3TqnH9zwnpKXM3Lr/
-	 6eVSCM4ZLLyFQ==
-Date: Sun, 5 May 2024 20:22:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v5 07/10] iio: pressure: bmp280: Introduce new cleanup
- routines
-Message-ID: <20240505202234.33662b4d@jic23-huawei>
-In-Reply-To: <20240429190046.24252-8-vassilisamir@gmail.com>
-References: <20240429190046.24252-1-vassilisamir@gmail.com>
-	<20240429190046.24252-8-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714937564; c=relaxed/simple;
+	bh=Lpq+LX5JLZxxETWe0FBuP2CqguytIjkBt1vjtoYQDZE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=b/KsE3GWRftUyTH8nTiZk10/tPl1Q9TysMvL+Y/V3kM5lB3ZVuhnlwiI035qUVBDLdkmC9TY+3ztoOCgqzD4XmO8SYe6bW5/8TGFxD9vWy3y8xS9vQqJzn4077330KSq4BiZghgsVYUAc1PzBsVw225iKk9KGo7A/mQXS3pyqi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mD+RUxaM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 445JWE5R017354;
+	Sun, 5 May 2024 19:32:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=Ljt
+	1/ZyWs9w6kIyMNglv/210K3hZUYkvO9vHBc3CBwA=; b=mD+RUxaMhBXZa0khXc2
+	iwcv6iHldsu8i0CQB2ILq11Yk/n/hsM5VZvls8KXp5P/jhZ4QaKclxwYdrpmNSU8
+	CR4BPbO/5YRhMkRk8HY28F0A8l9YNd5pTFtnf+zlbJDvFD0ZqqqNp8WRV1H7UIbY
+	wSHBJ1KlsqbqGG/bcCgX6eSjbrxvC0codB2xN4vFp91iFKVUe7mAaFtncBw2YiFH
+	CgXGkmDOt8Fh3n6IK3BYYnVTeaS6Uu1jPuweOPS1zJNp3BTko1zz9TlwtOKiemGQ
+	vZN/6kz7WaYIlGtxIqzV9J05nJaUgpGvWKXS920CLtE/jHL4+dOdZ06QJasli2mF
+	/3Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwcbpj47b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 May 2024 19:32:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 445JWDcH021687
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 5 May 2024 19:32:13 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
+ 12:32:12 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 5 May 2024 12:32:12 -0700
+Subject: [PATCH] dmaengine: xilinx: xdma: fix struct xdma_chan kernel-doc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240505-xdma_chan-kdoc-v1-1-18cefca3f168@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALveN2YC/x3M0QrCMAyF4VcZuTZQ44bDVxGRtM1ckHWSiAzG3
+ n2dlx+H86/gYioOt2YFk5+6zqXifGogjVxegpqrgQK1oQsdLnni5zHhO88J49ATX3q6ZmKop4/
+ JoMs/eH9UR3bBaFzSeGQm9q8YbNsOrN9HaXkAAAA=
+To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>,
+        "Raj Kumar
+ Rampelli" <raj.kumar.rampelli@amd.com>,
+        Vinod Koul <vkoul@kernel.org>, "Michal Simek" <michal.simek@amd.com>
+CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: f-anGE996OxrQQ3cImWDGjGMf8vKpESt
+X-Proofpoint-GUID: f-anGE996OxrQQ3cImWDGjGMf8vKpESt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-05_13,2024-05-03_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 clxscore=1011 spamscore=0
+ mlxlogscore=606 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405050083
 
-On Mon, 29 Apr 2024 21:00:43 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+make C=1 reports:
 
-> Introduce new linux/cleanup.h with the guard(mutex) functionality
-> in the {read,write}_raw() functions.
-> 
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-Looks good to me.
+warning: Function parameter or struct member 'last_interrupt' not described in 'xdma_chan'
+warning: Function parameter or struct member 'stop_requested' not described in 'xdma_chan'
+
+So add missing documentation for these members.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/dma/xilinx/xdma.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+index 313b217388fe..43488678ef9e 100644
+--- a/drivers/dma/xilinx/xdma.c
++++ b/drivers/dma/xilinx/xdma.c
+@@ -61,6 +61,8 @@ struct xdma_desc_block {
+  * @dir: Transferring direction of the channel
+  * @cfg: Transferring config of the channel
+  * @irq: IRQ assigned to the channel
++ * @last_interrupt: Completion variable to signal the last interrupt
++ * @stop_requested: Stop Requested flag of the channel
+  */
+ struct xdma_chan {
+ 	struct virt_dma_chan		vchan;
+
+---
+base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
+change-id: 20240505-xdma_chan-kdoc-bf82a3827d2a
+
 
