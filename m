@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-168892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D8D8BBF56
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:33:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFEF8BBF59
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 07:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7222E281F41
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738CA281554
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 05:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373532901;
-	Sun,  5 May 2024 05:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EFF4428;
+	Sun,  5 May 2024 05:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYJNtstx"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ll6ej+NL"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E095B1869;
-	Sun,  5 May 2024 05:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E499F1878;
+	Sun,  5 May 2024 05:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714887203; cv=none; b=TAYoutn651aXbnYQ/Dz+E5/YSj6iIJ20DRLQ5GD8O1oGmAld2EsoANulEQJS3KZ4QF0gzvOo+wAT12bCNLURm5JcAH7Gam/o3Ddwwx3lpf5cOWz40NBXZhoBjxVQLVuJuXCQvIYhYPImPeoL4Uv60TOe6GmZ6ssT0ggNnE27EB8=
+	t=1714887444; cv=none; b=PioK/YySiTN/k8Q950vUYGFfiIGmsaDi5OoRg0xlmF+MjPlifQVSlogATuQz2Ay4MNcLi9Kmb54TH6EsnKyN04yU8qXp3OTRdTAzYNZ/QnH8LZXDA/w4HmETtvI6y0R/5vZ5Fau8CxwNUuqst2i/LGF0j0iSbuhhdnUK3lvp7lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714887203; c=relaxed/simple;
-	bh=jgTuXIYNgK/keCCQEhuADErR0CCxmTANNyFYfmtAwOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pH8WxSjgtmT8FW+208OaWtLJGoH0mbgyX4/yxvV3D3hj+k0nnDdAcxK0W/AXMqwlZGZ1CbSa7TCSPMHNmokZY3P/E3kGOUaCGg9fAw6QB+6SaUSkmNLXBQMBJ5ts4wWfb6OARCDL1nqwyjy36Hadi7h0ENInrQetB00V4gvSpQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYJNtstx; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1714887444; c=relaxed/simple;
+	bh=A5nODOLSli5V7F6Mz5u6XoiTZeNafnfsiBZ/DsLy1ek=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HGL+5ILhYHNiPWNUcWj6nMB+8E6uYEH3Uh4rdeGWjfTob7/PlqB4Q8Wwcvn80pF7QdUlFQxDBNPqPS2LFzbcnibhIObd/032ojGx/JYVd7+w6bMlbSV5gaYsWaAz7jPxADYllnvGEy5ETr7zicU57KQ1H6a8Z7fDjfpOA53w83Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ll6ej+NL; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59b81d087aso99800966b.3;
-        Sat, 04 May 2024 22:33:21 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-418e4cd2196so7492915e9.1;
+        Sat, 04 May 2024 22:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714887200; x=1715492000; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IhbKPoUo2AfEKlEHAGtLiiesjNpccXRJK9R/FHDexKs=;
-        b=MYJNtstxE4Bz6aR4oWsuxaNEt2B5P3fD4MMVRuMyKEBUCFpa2dl91v1MMstNcjfo+F
-         mC+MOuPZydhukNEeiqFnLWPNRK8TfJ/KY0K89PCmAB/xuPQYYmiA1lSYutnzwlrsVaRE
-         1H13GG/7UT7H/JD1A/c+D/5wPSR/dEVMN+rD1+MqwVQMY2o/PfgH7Wccz+Je+M8rhy/9
-         fC6KMuwLz2PiD3aJKKxD0KVCD9VJv33ge/qyWj0YpZjDgpUst+Lu1RtzV5u4ZoqT64pd
-         5i1IAOocJKS1FAyoZoCZILekf6mOeCkPd+9N4JUSwY+m2vfx8rfAxxkxdJI2CriXACku
-         JC7Q==
+        d=gmail.com; s=20230601; t=1714887441; x=1715492241; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AOJOmoHVAZq86+Q/R6H9fMbgkb1KdxJ80wkb3FviG58=;
+        b=ll6ej+NLuhKCklhp01Xv4me9b35woOcGwELYLbNBW8iQLVPcyDWNr5JClskrBs/SG/
+         y+HqjvZQAqzetJndZ8aF7g8oEvYchMjdf3MapU1B70HR/6yG3lIgpVnl4BYX9E2nerAk
+         qn9EjqjJQy8/mG87DQtM4WFV9t+SSgJpD4j1xnK3xua+L39XJmajZHc1MR8RPWg/FYTj
+         5RaJ4skk7Sbi0zhudJ0YFm31akhBIp61/7DlOUYA4bQ//35jqqFghGEv3zFKOkQJAtw7
+         qPF9SnWJUk6CCETm8IhX4FEQInsktRGUFYun2M4CxqwAv7JtOxwPocfsefndJ2pYAHFS
+         4p4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714887200; x=1715492000;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IhbKPoUo2AfEKlEHAGtLiiesjNpccXRJK9R/FHDexKs=;
-        b=X7RJ+wCAZt8yWRziRs9IH7bKXiNsWK+GMmH1tkeZ0mF5D/fpnaII2nmJmyubLlX2xX
-         aZMFxzhrEvueLardINPjcF724DRqg6KcBA59a76EAWRAVP6o5xXQSSDNKQD8BPBZz3sY
-         3lq9INO/I1BCBnsexEiin/JnLnVPStEdRKRHnrHsDiO8sbAiK/LkZIuwpvSHqmiMTZ0U
-         fjFOldAE3GWuaeDmz8Vr0y2gg8tjdHpkTOib6iC2K3whs27tmCImPcbSWWYATQsOcf44
-         D7IxKUZ+0EvEKKcbOpbPvTIcCRTU45O1XBRxHCcdEPym13S0XH6MiWqcHRc1GEXh3mna
-         dF2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWH7JLuCHrAzsZpKe9pu9AlzlFe7d7X72LTU82rxo4LYzhitZ4NwHw6rklKwxqlbeGid00HaWNuIhkGv3VVq6C99Nwn8kGyILmhHjOQ7/ah+vCB/DwTilejYxQTcSZUxYopcZt1UPaJJsb4
-X-Gm-Message-State: AOJu0YwD355KyUv04T9CwLL28CT+vgjHI3AvPvKkA9dFtSdbTiDwuLro
-	55fUHwqbfAOmj84/3PrNIUHRMag68Jj4YRQ0gL2BzO9D8dTVCgf1J3vttk3X
-X-Google-Smtp-Source: AGHT+IFoq++RFvtGCWJvnNfQHGZGxoj9s5odKIJyOOjxf/ws01TzZimd2+XIy2K4iqyd1+/GXBGVkA==
-X-Received: by 2002:a50:874b:0:b0:572:a14b:2d2d with SMTP id 11-20020a50874b000000b00572a14b2d2dmr6442288edv.31.1714887199857;
-        Sat, 04 May 2024 22:33:19 -0700 (PDT)
-Received: from gmail.com (1F2EF54C.unconfigured.pool.telekom.hu. [31.46.245.76])
-        by smtp.gmail.com with ESMTPSA id u21-20020a50a415000000b00572890bd6aasm3751518edb.95.2024.05.04.22.33.18
+        d=1e100.net; s=20230601; t=1714887441; x=1715492241;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AOJOmoHVAZq86+Q/R6H9fMbgkb1KdxJ80wkb3FviG58=;
+        b=KbeM6VIoKOaCUZIrd9I5DrjlHZzygn09DlsZp55x4zUuPEwV0n8qLUclNmJC/+wCA4
+         wDnC8BGeUSVPeMpsR5dHS35cCHXeEcQ83s3sQ/SSgNL2UbeMv6Oz10yphC1r9GBPlJP4
+         be1u5EZ2TLqCaKJ9NYlwjaRlkO4S/4gEoe8xlC+TmpKbtlmwHetJj9ynVmrVDovVCUEf
+         exdS6+s+KoWnrMbP/JnzbJPqIZlABPolf0wIFoSY1iCkyJQQlMxGqB+9iAueyJRatIx5
+         z9V0tJBKHI9vh2LZ+YH7IumRvmxF9iZijKaSTM0E+lN7lnwr4y8vtuO/RgJVjXCDpFkZ
+         3xgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiQqa4l+sza5fbXiuXr2ALVnaUFs1x5nQ3dUZG03tOcMCZMA70WjQTLnfVRNqOF0OUUqaVfZ+XUKtTtwZTl+6DbAwFG4xGk5lasM7D6P1VTZmReLqONbCTh3+HYd+tM//eZ/YPVbFKrA==
+X-Gm-Message-State: AOJu0Yxn5eAgesZCQCjqf7eBtcblgN+ogjIlq4EZPy2AZlb54pyopqbU
+	AhCV45riHyP6F3CZ9LyPElh7viL91K/qrxpDYCE5MkIHSXpicHRy
+X-Google-Smtp-Source: AGHT+IEGfbdY2vLr1/1vkwRMhijMJiJaSh1ZLsK4T0C1NBd1bLeiDNO6PS57hPG+cfcr+XvuKJnvZw==
+X-Received: by 2002:a05:600c:4f0c:b0:41c:9155:fbe6 with SMTP id l12-20020a05600c4f0c00b0041c9155fbe6mr5514648wmq.17.1714887441182;
+        Sat, 04 May 2024 22:37:21 -0700 (PDT)
+Received: from [192.168.1.130] (51B6DCE0.unconfigured.pool.telekom.hu. [81.182.220.224])
+        by smtp.gmail.com with ESMTPSA id h11-20020a05600c314b00b00418f72d9027sm15050957wmo.18.2024.05.04.22.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 22:33:19 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sun, 5 May 2024 07:33:17 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Subject: Re: [GIT PULL] Kbuild updates for v6.9-rc1
-Message-ID: <ZjcaHRjZDdy/6/rn@gmail.com>
-References: <CAK7LNARXef6Myb_Gd4jyGfwujoBAjmjzLZBzgkm4T1KmfHP0MQ@mail.gmail.com>
- <ZjcRPelwZP34N42s@gmail.com>
- <ZjcSjk0mXYopAvVS@gmail.com>
+        Sat, 04 May 2024 22:37:20 -0700 (PDT)
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
+Subject: [PATCH v3 0/2] Add support for bosch bmi120
+Date: Sun, 05 May 2024 07:36:53 +0200
+Message-Id: <20240505-bmi120-v3-0-15cee3d0b2ef@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjcSjk0mXYopAvVS@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPUaN2YC/22MQQ6CMBBFr0K6tmbaKdC48h7GBQwjTCJgWtNoC
+ He3sDLR5fv57y0qchCO6lQsKnCSKPOUAQ+FoqGZetbSZVYWrIMSnG5HMRZ0h+R9Ry1CjSqfH4F
+ v8tpDl2vmQeJzDu+9m8y2/iSS0aBd7V0NjS+h9Od+bOR+pHlUWyLZ/5rNGrZIXLEhpOpbW9f1A
+ 3RS+sjTAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>, 
+ Danila Tikhonov <danila@jiaxyga.com>
+X-Mailer: b4 0.13.0
 
+Add support for bosch bmi120. 
+BMI120 is an energy-efficient version of BMI160. Despite having a different
+CHIPID value, this variant seems to be fully compatible with BMI160.
+It could be find in many phones like xiaomi-vince or xiaomi-tissot.
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+---
+Changes in v3:
+- Make chipids static.
+- Link to v2: https://lore.kernel.org/r/20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com
 
-> 
-> * Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > Notes:
-> > 
-> > - Yes, those weird 'file' and ': No such file or directory' strings are 
-> >   pasted as-is. No idea what it's about, and the build log doesn't say.
-> 
-> Forgot to mention that I also did a KBUILD_VERBOSE=2 build - which isn't 
-> more verbose for this particular failure:
+Changes in v2:
+- Add bosch,bmi120 as a fallback compatible.
+- Remove error path if chipid is not found.
+- Link to v1: https://lore.kernel.org/r/20240504-bmi120-v1-0-478470a85058@gmail.com
 
-Another update - I reverted the 4 most recent commits to 
-scripts/package/debian/rules:
+---
+Danila Tikhonov (2):
+      iio: imu: bmi160: add support for bmi120
+      dt-bindings: iio: imu: bmi160: add bmi120
 
- b8d18fee7aa2 Revert "kbuild: deb-pkg: show verbose log for direct package builds"
- 82ac586caf3d Revert "kbuild: deb-pkg: make debian/rules quiet for 'make deb-pkg'"
- 0b806eac90d6 Revert "kbuild: deb-pkg: build binary-arch in parallel"
- 4b16391dc462 Revert "kbuild: deb-pkg: call more misc debhelper commands"
- f96beb84eff6 kbuild: deb-pkg: call more misc debhelper commands
- 1d7bae8f8c85 kbuild: deb-pkg: build binary-arch in parallel
- caf400c8b68a kbuild: deb-pkg: make debian/rules quiet for 'make deb-pkg'
- cc3df32c9f3a kbuild: deb-pkg: show verbose log for direct package builds
+ .../devicetree/bindings/iio/imu/bosch,bmi160.yaml  |  6 ++++-
+ drivers/iio/imu/bmi160/bmi160_core.c               | 26 +++++++++++++++++-----
+ drivers/iio/imu/bmi160/bmi160_i2c.c                |  3 +++
+ drivers/iio/imu/bmi160/bmi160_spi.c                |  3 +++
+ 4 files changed, 31 insertions(+), 7 deletions(-)
+---
+base-commit: 9221b2819b8a4196eecf5476d66201be60fbcf29
+change-id: 20240504-bmi120-d3c88dcb3073
 
-And this resolved the issue, the debs are built successfully:
+Best regards,
+-- 
+Barnabás Czémán <trabarni@gmail.com>
 
- ...
- dpkg-deb: building package 'linux-image-6.9.0-rc6-tip-00478-gb8d18fee7aa2-dbg' in '../linux-image-6.9.0-rc6-tip-00478-gb8d18fee7aa2-dbg_6.9.0-rc6-00478-gb8d18fee7aa2-8_amd64.deb'.
-  dpkg-genbuildinfo --build=binary -O../linux-upstream_6.9.0-rc6-00478-gb8d18fee7aa2-8_amd64.buildinfo
-  dpkg-genchanges --build=binary -O../linux-upstream_6.9.0-rc6-00478-gb8d18fee7aa2-8_amd64.changes
- dpkg-genchanges: info: binary-only upload (no source code included)
-  dpkg-source --after-build .
- dpkg-buildpackage: info: binary-only upload (no source included)
- 
-Thanks,
-
-	Ingo
 
