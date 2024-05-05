@@ -1,111 +1,80 @@
-Return-Path: <linux-kernel+bounces-169100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236578BC31F
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A488BC323
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 20:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5963E1C2039A
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C803D28165F
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 18:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9536D1A8;
-	Sun,  5 May 2024 18:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1B76CDD5;
+	Sun,  5 May 2024 18:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="QuRRHMOs"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4OveRWX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C8250297;
-	Sun,  5 May 2024 18:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD9B2D60A;
+	Sun,  5 May 2024 18:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714935114; cv=none; b=rdqXDtf4hFQo0AtkpiY392TAeVp7cdpYza1qHeSrszDTi9bnNN5JidXqV0P3y1swpoaFfp8tfjrYYalHNP83anqe9U/tnl04t6RvvNkfDPzJ+gSeK+xV2PzcEhBgUm5bzw9Qrgn2Sj2luTCoZEIHGEKaeEltLrPhby0QzYbVjp8=
+	t=1714935241; cv=none; b=N8ODulYX1ZZIz/3V8FUoUKmFGlIrK7laNOqJnsauEb/3qfKw2QMxMyZU6r5XKgin4nQv7k9/noOFvDETat88e+PRn0rAnhSk8DwIAhPReuZwlYMPmJ+EIPw+ZFHb0bN4Hp8FEISOg3b+uE/k8Bo+4zwp5VcSff1UeZlEL1UNKJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714935114; c=relaxed/simple;
-	bh=XV/wisvfDecsJK1pH+e3lMIkinGg4Z0g8h7jG8NBLfw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:From:
-	 References:In-Reply-To; b=Gq/E6lAwynOWbhJoQk816M7ddHngg2ZwAhbDYLvErklIEWR3RfIoNctHkqwW0l+AMW/ksGsO6YZXw/hczvKA1h41J2PduZHbe16E8soLosUgiCxYftbm622mORUl3sGDCCDZFQpNoJvtL6QsraxkETPImHNdOc4plb66eNqM/J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=QuRRHMOs; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
-	serial F5FD910E8FE2121B897F7E55B84E351D
-	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
-	auth type TLS.CUNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1714935092; x=1716235092;
-	bh=YGxFQsbI+PnN98hU4cHyHP9LF765mb9ESjBSIrA+jBA=; h=From;
-	b=QuRRHMOskR69TFkqDXQ4lTIkl4bpFt1ARaYeCqJVTbIpnQeECM3zCn43TSNXlRMLY
-	 kdlrgioDh5gkt0j1ivNgNnwAlEPgIEjs8XEvsvBDbnKLI68na8xS+cSJy/VD04I6y6
-	 DnZ6gGV/zJSssINrELqjKRfR4JiWBXbUsgFG/RCJn6wF4fi2kFGaxIdupOsDdkWSJ4
-	 2ozcoGtgFqE7aeTtxs/ekOrMltieep3yFvFZVQ1e4MPEwRFm1VikvNRNHK7nRsHIvO
-	 vxzBEGmSeNL7GlHVh/mJq7acer4rusmQLnql2lswKBXyvlYK/4q9jBEvdzkr3JmRiK
-	 IyTyYsJtL5oPQ==
-Received: from localhost (koleje-wifi-0024.koleje.cuni.cz [78.128.191.24])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 445IpVNr027317
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Sun, 5 May 2024 20:51:32 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
+	s=arc-20240116; t=1714935241; c=relaxed/simple;
+	bh=E35JbgzFB3vX8SM4Q4jRMbpTBuZcCRNlYDexqfXxnPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tny32RKIjkKOdiQYSU8o0SVMlNDHcPAf3B3rlFHKasVj+WMsYJx7EBvzXkbzTk6FdwQa15ETxpZOe2/k07HE8dHiwjAW2yGdynmbDXBP9llHaL+h1G08g2ZkIY+TMiw+NQtHRJdplheKTSwQDNw7Wk35bhVEoQoowXK4vbIT/yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4OveRWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3472C113CC;
+	Sun,  5 May 2024 18:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714935240;
+	bh=E35JbgzFB3vX8SM4Q4jRMbpTBuZcCRNlYDexqfXxnPg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=p4OveRWX/Odgzcg0JLkUBXsfdudpCxAmYa4vAJIaKmWaOhml76pvVff/CnLHvbygY
+	 eWlr1znCBL4j/Lux50zWaf+xF8yc8Uys9vF9rx5wZyFx6osqRHK+piGhU1iHtObSh2
+	 Ao8WWK21Uv9q/hUGfYo156U8WeIQc9kWXCsCaiVWeyf1DhLlaJAI0uiyNrd77yC15W
+	 hVRgo1lhdDAHHI4SOsYwxL3uMJ4sDHw/6e3D7YJPGvfJXLWx6Vj7e9+Anx+3S9vWAm
+	 DsVqPUdyaQkUsPkgiQ0+HnE4dUE3i8cbx5V81ghliKX7z2CUEcdr8OaU6SyvXPWJfW
+	 FrqXD4t8Hxh+A==
+Date: Sun, 5 May 2024 19:53:46 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
+ petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+ linus.walleij@linaro.org, semen.protsenko@linaro.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] iio: pressure: bmp280: Use BME prefix for
+ BME280 specifics
+Message-ID: <20240505195346.4cbc174b@jic23-huawei>
+In-Reply-To: <20240429190046.24252-3-vassilisamir@gmail.com>
+References: <20240429190046.24252-1-vassilisamir@gmail.com>
+	<20240429190046.24252-3-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 05 May 2024 20:52:06 +0200
-Message-Id: <D11XRKUAK8EM.20N91SDPCH584@matfyz.cz>
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        "Conor Dooley"
- <conor+dt@kernel.org>,
-        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
-        "Liam
- Girdwood" <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-        <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>
-Subject: Re: [PATCH v6 3/5] regulator: add regulators driver for Marvell
- 88PM886 PMIC
-To: "Mark Brown" <broonie@kernel.org>
-From: "Karel Balej" <balejk@matfyz.cz>
-References: <20240504194632.2456-1-balejk@matfyz.cz>
- <20240504194632.2456-4-balejk@matfyz.cz>
- <ZjeidfoIbjvejphU@finisterre.sirena.org.uk>
-In-Reply-To: <ZjeidfoIbjvejphU@finisterre.sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Mark Brown, 2024-05-06T00:15:01+09:00:
-> On Sat, May 04, 2024 at 09:37:06PM +0200, Karel Balej wrote:
->
-> > +static const struct regulator_ops pm886_ldo_ops =3D {
-> > +	.list_voltage =3D regulator_list_voltage_table,
-> > +	.map_voltage =3D regulator_map_voltage_iterate,
-> > +	.set_voltage_sel =3D regulator_set_voltage_sel_regmap,
-> > +	.get_voltage_sel =3D regulator_get_voltage_sel_regmap,
-> > +	.enable =3D regulator_enable_regmap,
-> > +	.disable =3D regulator_disable_regmap,
-> > +	.is_enabled =3D regulator_is_enabled_regmap,
-> > +	.get_current_limit =3D pm886_regulator_get_ilim,
->
-> Do these regulators actually enforce this limit or is this just a spec
-> limit beyond which regulation may fail?  If it's just a spec limit I'd
-> not expect this operation to be provided, it's more for a hard limit
-> where the regulator will detect and act on issues.  I don't see an error
-> interrupt or anything and this would be an unusual feature for a LDO.
+On Mon, 29 Apr 2024 21:00:38 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-I'm afraid I don't have the answer -- my only reference is the vendor
-version of the driver and I don't see anything there based on which I
-would be able to tell.
+> Change the rest of the defines and function names that are
+> used specifically by the BME280 humidity sensor to BME280
+> as it is done for the rest of the BMP{0,1,3,5}80 sensors.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Applied,
 
-But based on what you write, my guess would be that it's just a spec limit.
+Thanks,
 
-Should I then drop this op and the max_uA values from all the
-regulators?
-
-Thank you,
-K. B.
+Jonathan
 
