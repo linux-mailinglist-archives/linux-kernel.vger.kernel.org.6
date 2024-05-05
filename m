@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-168922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-168923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28CC8BBFC9
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:29:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16ADF8BBFCC
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 10:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB9A1C20CE6
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:29:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62A42B20F88
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 08:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66006FBF;
-	Sun,  5 May 2024 08:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F306FC5;
+	Sun,  5 May 2024 08:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ik7WBcTU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U36Yzl3i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C9263B8;
-	Sun,  5 May 2024 08:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8336FA2A;
+	Sun,  5 May 2024 08:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714897743; cv=none; b=k6jZ+jybt2ewxqUlo7nYEd0gXy4v6Y7C4IjXSEPFr7Ucbb96yq9hGeaBOVdbTlTcI8eJR2wguO8Jsj0mfvWLXnECWajnT1kl6filjiaRRZnqKsySSgcP4YdfDjm3fyNXjUDyTMIC9nsDzmVrcy4SfPKt1bh6z4990EyY1JjWrwU=
+	t=1714897889; cv=none; b=Ro5vVluH0D5SniLo3xwnwP2ZQliX7xsOS6zqNNEamYh4UwBaZ/LYg8vrq2A2WGGfgwY5lkKfdD7BZHFIiX4M5g+/p9KA5s6N5Ww/J8rSPCkW+ww8spxt1Lt2me+PrwXg/JdWZLUNchAp1y2iRGVn9jmj1o59IkGInVvQ1ziuZvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714897743; c=relaxed/simple;
-	bh=UgEPQ4n2bAiRTFzlzU/+ncEg62effzDy0vZKp7zNxTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WhHVl3amk5rqjGEiBl1hPaE/TXdYDG5XFg0Ykr68ShEoJ4VFvyYEBWA27Y+LlD5kvHxef1tDEwguuwqUE0f7ah3vSWcbLAkk8/uzIp/1UWRmtlDwPRTG3/61l4dX+ELCLRsJoHtCU4yL9v44aJfFRumAZf8I1oPdsenv7RgROOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ik7WBcTU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91DFC113CC;
-	Sun,  5 May 2024 08:28:58 +0000 (UTC)
+	s=arc-20240116; t=1714897889; c=relaxed/simple;
+	bh=SCQJlW8vnsW1UnLFfoee8BGGAzdVC5DswNE/pSPGu98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O4TflC3U7/MnToi/pard/+/1dC8LO2DizWRpCFREwMa2ctHFSdMPrpE0jZMtSx9vbn9v2hzgdvA6XnG6LzflJA4N2n4qhBDQS/NQssbDGie1MEYyh0ENmu7IvsquBBXrhV8I38Q83qCXAh7XwtpjoT9Zg9h44L6MfWQYKpcUIks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U36Yzl3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3183AC113CC;
+	Sun,  5 May 2024 08:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714897742;
-	bh=UgEPQ4n2bAiRTFzlzU/+ncEg62effzDy0vZKp7zNxTY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Ik7WBcTUTDgcKnqqs3gE2Zwmp/qhVfZ8uI3uQiyDR5F8I88yFoekWDJF6tTlxJRJs
-	 VP0uZG81gJ8g/ImfO0Y3gWr8PI4dy7oR4YdPGoxEY7A+7jk20CbCZqOIuX3fA6c2pQ
-	 dQ63gqVWijMYBs3UGM+M10y9jp6822CBwiIrstVuHTgfK9uxz+bcGoGq+fI2aVgsCC
-	 wqoVO+zyebHlBy5bh/LYpIhDdMF24x+zzOaxjHB5pIPalXX9wdY9L1JBgkTg4vcZ+A
-	 LrQGkqDA8K7NTwxLZsKvgYDPnYIII40HoZBretPorxVA01p8JlRpP9To32JWDJGUPT
-	 1OmrC1VKTJ75w==
-Message-ID: <05fae8a8-11f7-41eb-af6e-8b2b6abcabbd@kernel.org>
-Date: Sun, 5 May 2024 10:28:57 +0200
+	s=k20201202; t=1714897889;
+	bh=SCQJlW8vnsW1UnLFfoee8BGGAzdVC5DswNE/pSPGu98=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U36Yzl3iy92i0pgY2ZAaxmZ8HJgWgLykXEJZorWend4TgdZp7aEFGyXeg+ajRlQk9
+	 BMgTEjhp4pYi2e6r66QwdthQCE+Yi+8vgRhaFxBxW8lXGkFRmWtyDLAFE7bGJAH5CP
+	 Vfn12fKSOYEAa6Fg6sIKvKhTiQ85L7rIeda69zq/ApFIsV1RpFbRGAC7gmze+jxIV4
+	 6eHrpuv6hcDhlkjmX6d1I/eaRocDKnY+BseoFjbZDFIp5Y+l+Gd3LywqSkww4Ck4l5
+	 xtMsuwB0xAo0gEy1ZMTI6cZiteMMEjNBfwkPWBfo+esNWa7UVOmwDwtMKB/yXAYOcp
+	 alOpHfJErtFNQ==
+Message-ID: <6e68b278-babb-4567-a0e2-f759abb20126@kernel.org>
+Date: Sun, 5 May 2024 10:31:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: Add Kobo Clara HD rev B
-To: Andreas Kemnade <andreas@kemnade.info>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- marex@denx.de, leoyang.li@nxp.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20240504215344.861327-1-andreas@kemnade.info>
- <20240504215344.861327-2-andreas@kemnade.info>
+Subject: Re: [PATCH v3 2/2] dt-bindings: iio: imu: bmi160: add bmi120
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Danila Tikhonov <danila@jiaxyga.com>
+References: <20240505-bmi120-v3-0-15cee3d0b2ef@gmail.com>
+ <20240505-bmi120-v3-2-15cee3d0b2ef@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,19 +103,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240504215344.861327-2-andreas@kemnade.info>
+In-Reply-To: <20240505-bmi120-v3-2-15cee3d0b2ef@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/05/2024 23:53, Andreas Kemnade wrote:
-> Add a board revision of the Kobo Clara HD with different regulator
-> setup. Since the original compatible seems to be found in userspace
-> in the wild, keep it as a fallback compatible.
+On 05/05/2024 07:36, Barnabás Czémán wrote:
+> From: Danila Tikhonov <danila@jiaxyga.com>
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Document bosch,bmi120 compatible.
+> 
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> Signed-off-by: Barnbás Czémán <trabarni@gmail.com>
 > ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
 
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
