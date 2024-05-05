@@ -1,227 +1,160 @@
-Return-Path: <linux-kernel+bounces-169188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303DA8BC499
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:45:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F648BC49B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC2C1F216F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:45:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53041C20B6B
+	for <lists+linux-kernel@lfdr.de>; Sun,  5 May 2024 22:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EF413FD9A;
-	Sun,  5 May 2024 22:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C10313FD95;
+	Sun,  5 May 2024 22:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ix6Q9/Gh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W2/4M5Gw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048926AC5;
-	Sun,  5 May 2024 22:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2E571743
+	for <linux-kernel@vger.kernel.org>; Sun,  5 May 2024 22:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714949106; cv=none; b=uBksBQRv7PeeMvnr5z0rSi9Tg8TYxFa5qKvFW9dOK+2TcD36Eee9e8wneIgbCWvpyGJ49g6IBwQCHGXP6EJUtcHvAKcf0/WL2K3VqC9e34ieglPns7Bawq1Rjvz20LhtZ8XGkt+8hfVZYzjHvB8eQ6cc5j0w+7GZeP8WDUy5kjY=
+	t=1714949127; cv=none; b=XRpLasJONWxOeI28twhKssMYQ4DjafhEAOuJl/vGX1/3ICPIIC0hWF/3C1jevr0BoG74/wPWiqspWDpJJZ1kr1CaC74Kg1WE/05I+zymxLKQbRViPkbdewo8ASxzENwHHN3SkNs3+K3JNLV0JPHjsm2oeST7uIO2v0QBdYaclkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714949106; c=relaxed/simple;
-	bh=BUqWKmrS1hy8ktcWYFy8DvuJcpGKUeX//zZzMGcFbqU=;
+	s=arc-20240116; t=1714949127; c=relaxed/simple;
+	bh=sAsSSNJDnKhIa5F2tT1SnCoPw77rBtQwHK6tqCOkQyU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1ox53plYIK20fql3qRpcu2nAa4CSsov9jPmwJ/hlkAQe+Dsn2SBOnftg0Ai0jm9+08Cytob57zV0LI16HsAzDkjR4MyU1B4dduZudH0ibCEVEK4mjIr4Xb3NF7ArPyfOIY/BrZJMZBFlELISVKKPv9fRyXRsWxvgqIKkTgS0k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ix6Q9/Gh; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714949105; x=1746485105;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BUqWKmrS1hy8ktcWYFy8DvuJcpGKUeX//zZzMGcFbqU=;
-  b=ix6Q9/GhYCLaTjdo+BIsIQntKg5RLNI7M4RzHA0zHOg2haFc6Q9j+wg3
-   naXHIExfT/j0ysHSpKS2ExRB3N+fb0relFSjX1K4WToUS4cQkxgV11KS7
-   oCfIFcnhfhvlK6GZiJs2GX+UHSflapYmwFu1zws5EtA/0XOkHuAVzDTTx
-   nQop7HWgu/HzMkdTqOw5jOz5DPLYkEs+I1L2jwNOfF3GIWyOMeL4IgJjq
-   oRRDjMw+IRFz2KNzGjItrAEdXBxuY37X8Covz3vBlb8YW8QFyF2oD2L1i
-   bJI3QgI7boLtc+U+zpP5vSa9Hw7VP6EGUrU8jVvOsl5dTxTPiK4pdTl3h
-   Q==;
-X-CSE-ConnectionGUID: uCpd9vucQXqbVLY7z6wqGg==
-X-CSE-MsgGUID: qrRGZrfEToGhYSfJqTAuHA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10805126"
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="10805126"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 15:45:05 -0700
-X-CSE-ConnectionGUID: 1EFi/TtDQruaiwa22Z29sg==
-X-CSE-MsgGUID: azTr283KRt6KGHOkJX7+Cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="32460076"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 05 May 2024 15:45:02 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s3kbM-0000GE-21;
-	Sun, 05 May 2024 22:45:00 +0000
-Date: Mon, 6 May 2024 06:44:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tanmay Shah <tanmay.shah@amd.com>
-Subject: Re: [PATCH 1/2] drivers: remoteproc: xlnx: add attach detach support
-Message-ID: <202405060611.jBQBF7iB-lkp@intel.com>
-References: <20240502231021.370047-2-tanmay.shah@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pwesjmNAnCTuAmLw4Eln81aBwODMQFpbWlcvgMlS55g6llQvq9JUE97+xn3IDAYk+Fd5r8D0k0oj2+gvVPhf/V+u6gEhv/rtrSz5Pd1HRQ7n1QN7HRjdvCZyDQBhTeNq6r1+5mcaN21FZ/m+qq9dD2LGhWDpzPlnYxx7vx53nLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W2/4M5Gw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1EF7B40E0249;
+	Sun,  5 May 2024 22:45:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id YXcF-TBVowou; Sun,  5 May 2024 22:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1714949118; bh=NjS5kxLZOJz81OAxMXF66zLJMhQsI82kKAEn8JwPuUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W2/4M5GwlZIEVqb8ZeZgvXi8BXp8gZy7RBkdwiWFad50NS4j7l43LeET3IyXp12YE
+	 x2lW5bXlIct2ZM9aYU3hP4lF1O6c2bt3XxeVixMgImWDUwAtMcv1hypWgTEKFDK3OY
+	 MvQuNrk8uwugOEtlyOhSkEuh6aBdvP9Hn3y9LN7AFoBl8djHbCux+1j5/48a1UmvZW
+	 xHssIuO2mJprnXviqqPX74Uvs1smkR/+6e5mPpkWZuAb7rr17iVt+uJ8kjzil53MCL
+	 6LZoO1mV9qbjJ8ld6Us+GacZXqMIy1JKYWI2o7k9IxcHLB8OQfC6rg2JaspHKPz8Yr
+	 ol1Ax/9vatYYaDgG++5dkhnf6WPukYKUiVTp3duj+5BX/Hw6HGfLavvfp1+ovGGFLd
+	 DHg2LNl73DBwMp6xJstelWu32FjfpopCv98ko0KEpxn8HQyMn8aKg8WWUW97l48HSY
+	 3Syo6mbOtilwcmlz6PSpJoQo5GD45jQGDY1LnnGeQX9AL0J7HCEXZ24QfHNN9z7pnO
+	 ntjjq5Or3Jo21+IZIiy0PcbvKpyS3zdEwahE8FEF5/sIR9CMIJXTtbZM8R5RnArdfJ
+	 G9M7U+Q0hwNlqPU4yJQYMNIq6b3TgdihxRFicgTyAJ1s7IDpse7hPtDtVT9awfhBSu
+	 5PatFEUJRfbz/KPylqF+12ec=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 184B840E0192;
+	Sun,  5 May 2024 22:45:15 +0000 (UTC)
+Date: Mon, 6 May 2024 00:45:08 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tranton Baddy <t.baddy@yandex.ru>, amd-gfx@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Error in amd driver?
+Message-ID: <20240505224508.GAZjgL9PO9Y5QaAO2t@fat_crate.local>
+References: <1237381714935562@dmcmxrwo3x2o7y3i.sas.yp-c.yandex.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240502231021.370047-2-tanmay.shah@amd.com>
+In-Reply-To: <1237381714935562@dmcmxrwo3x2o7y3i.sas.yp-c.yandex.net>
 
-Hi Tanmay,
++ amd-gfx@lists.freedesktop.org
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 0496190c4d42965acb31b9da1b6dac3509791062]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/drivers-remoteproc-xlnx-add-attach-detach-support/20240503-071225
-base:   0496190c4d42965acb31b9da1b6dac3509791062
-patch link:    https://lore.kernel.org/r/20240502231021.370047-2-tanmay.shah%40amd.com
-patch subject: [PATCH 1/2] drivers: remoteproc: xlnx: add attach detach support
-config: arm64-randconfig-r113-20240506 (https://download.01.org/0day-ci/archive/20240506/202405060611.jBQBF7iB-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240506/202405060611.jBQBF7iB-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405060611.jBQBF7iB-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   drivers/remoteproc/xlnx_r5_remoteproc.c:404:20: sparse: sparse: cast removes address space '__iomem' of expression
-   drivers/remoteproc/xlnx_r5_remoteproc.c:522:20: sparse: sparse: cast removes address space '__iomem' of expression
->> drivers/remoteproc/xlnx_r5_remoteproc.c:731:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct rsc_tbl_data *rsc_data_va @@     got void [noderef] __iomem * @@
-   drivers/remoteproc/xlnx_r5_remoteproc.c:731:21: sparse:     expected struct rsc_tbl_data *rsc_data_va
-   drivers/remoteproc/xlnx_r5_remoteproc.c:731:21: sparse:     got void [noderef] __iomem *
->> drivers/remoteproc/xlnx_r5_remoteproc.c:748:18: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct resource_table *rsc_addr @@     got void [noderef] __iomem * @@
-   drivers/remoteproc/xlnx_r5_remoteproc.c:748:18: sparse:     expected struct resource_table *rsc_addr
-   drivers/remoteproc/xlnx_r5_remoteproc.c:748:18: sparse:     got void [noderef] __iomem *
->> drivers/remoteproc/xlnx_r5_remoteproc.c:802:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got struct resource_table *rsc_tbl_va @@
-   drivers/remoteproc/xlnx_r5_remoteproc.c:802:24: sparse:     expected void volatile [noderef] __iomem *addr
-   drivers/remoteproc/xlnx_r5_remoteproc.c:802:24: sparse:     got struct resource_table *rsc_tbl_va
-
-vim +731 drivers/remoteproc/xlnx_r5_remoteproc.c
-
-   702	
-   703	static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-   704	{
-   705		struct device *dev = r5_core->dev;
-   706		struct rsc_tbl_data *rsc_data_va;
-   707		struct resource_table *rsc_addr;
-   708		struct resource res_mem;
-   709		struct device_node *np;
-   710		int ret;
-   711	
-   712		/**
-   713		 * It is expected from remote processor firmware to provide resource
-   714		 * table address via struct rsc_tbl_data data structure.
-   715		 * Start address of first entry under "memory-region" property list
-   716		 * contains that data structure which holds resource table address, size
-   717		 * and some magic number to validate correct resource table entry.
-   718		 */
-   719		np = of_parse_phandle(r5_core->np, "memory-region", 0);
-   720		if (!np) {
-   721			dev_err(dev, "failed to get memory region dev node\n");
-   722			return -EINVAL;
-   723		}
-   724	
-   725		ret = of_address_to_resource(np, 0, &res_mem);
-   726		if (ret) {
-   727			dev_err(dev, "failed to get memory-region resource addr\n");
-   728			return -EINVAL;
-   729		}
-   730	
- > 731		rsc_data_va = devm_ioremap_wc(dev, res_mem.start,
-   732					      sizeof(struct rsc_tbl_data));
-   733		if (!rsc_data_va) {
-   734			dev_err(dev, "failed to map resource table data address\n");
-   735			return -EIO;
-   736		}
-   737	
-   738		/**
-   739		 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
-   740		 * do not consider resource table address valid and don't attach
-   741		 */
-   742		if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
-   743		    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
-   744			dev_dbg(dev, "invalid magic number, won't attach\n");
-   745			return -EINVAL;
-   746		}
-   747	
- > 748		rsc_addr = ioremap_wc(rsc_data_va->rsc_tbl,
-   749				      rsc_data_va->rsc_tbl_size);
-   750		if (!rsc_addr) {
-   751			dev_err(dev, "failed to get rsc_addr\n");
-   752			return -EINVAL;
-   753		}
-   754	
-   755		/**
-   756		 * As of now resource table version 1 is expected. Don't fail to attach
-   757		 * but warn users about it.
-   758		 */
-   759		if (rsc_addr->ver != 1)
-   760			dev_warn(dev, "unexpected resource table version %d\n",
-   761				 rsc_addr->ver);
-   762	
-   763		r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
-   764		r5_core->rsc_tbl_va = rsc_addr;
-   765	
-   766		return 0;
-   767	}
-   768	
-   769	static int zynqmp_r5_attach(struct rproc *rproc)
-   770	{
-   771		struct zynqmp_r5_core *r5_core = rproc->priv;
-   772		int i, pm_domain_id, ret;
-   773	
-   774		/*
-   775		 * Firmware is loaded in TCM. Request TCM power domains to notify
-   776		 * platform management controller that TCM is in use. This will be
-   777		 * released during unprepare callback.
-   778		 */
-   779		for (i = 0; i < r5_core->tcm_bank_count; i++) {
-   780			pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-   781			ret = zynqmp_pm_request_node(pm_domain_id,
-   782						     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-   783						     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-   784			if (ret < 0)
-   785				pr_warn("TCM %d can't be requested\n", i);
-   786		}
-   787	
-   788		return 0;
-   789	}
-   790	
-   791	static int zynqmp_r5_detach(struct rproc *rproc)
-   792	{
-   793		struct zynqmp_r5_core *r5_core = rproc->priv;
-   794	
-   795		/*
-   796		 * Generate last notification to remote after clearing virtio flag.
-   797		 * Remote can avoid polling on virtio reset flag if kick is generated
-   798		 * during detach by host and check virtio reset flag on kick interrupt.
-   799		 */
-   800		zynqmp_r5_rproc_kick(rproc, 0);
-   801	
- > 802		iounmap(r5_core->rsc_tbl_va);
-   803		r5_core->rsc_tbl_va = NULL;
-   804	
-   805		return 0;
-   806	}
-   807	
+On Sun, May 05, 2024 at 09:59:22PM +0300, Tranton Baddy wrote:
+> I have this in my dmesg since version 6.8.6, not sure when it appeared. Is amdgpu driver has bug?
+> [   64.253144] ==================================================================
+> [   64.253162] BUG: KFENCE: use-after-free read in amdgpu_bo_move+0x51f/0x7a0
+> 
+> [   64.253183] Use-after-free read at 0x00000000671c48dd (in kfence-#111):
+> [   64.253192]  amdgpu_bo_move+0x51f/0x7a0
+> [   64.253202]  ttm_bo_handle_move_mem+0xcf/0x180
+> [   64.253211]  ttm_mem_evict_first+0x1c5/0x500
+> [   64.253218]  ttm_resource_manager_evict_all+0xa3/0x1e0
+> [   64.253228]  amdgpu_device_prepare+0x66/0x110
+> [   64.253237]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
+> [   64.253248]  pci_pm_runtime_suspend+0x74/0x200
+> [   64.253259]  vga_switcheroo_runtime_suspend+0x21/0xb0
+> [   64.253268]  __rpm_callback+0x5f/0x190
+> [   64.253277]  rpm_callback+0x7f/0x90
+> [   64.253283]  rpm_suspend+0x120/0x6a0
+> [   64.253290]  pm_runtime_work+0x9c/0xa0
+> [   64.253297]  process_one_work+0x164/0x330
+> [   64.253310]  worker_thread+0x302/0x430
+> [   64.253320]  kthread+0xe4/0x110
+> [   64.253329]  ret_from_fork+0x4c/0x60
+> [   64.253341]  ret_from_fork_asm+0x1b/0x30
+> 
+> [   64.253353] kfence-#111: 0x00000000d018cf03-0x0000000034e821d1, size=96, cache=kmalloc-96
+> 
+> [   64.253363] allocated by task 152 on cpu 3 at 64.248952s:
+> [   64.253418]  kmalloc_trace+0x283/0x340
+> [   64.253427]  amdgpu_vram_mgr_new+0x8f/0x3f0
+> [   64.253435]  ttm_resource_alloc+0x39/0x90
+> [   64.253444]  ttm_bo_mem_space+0xa4/0x260
+> [   64.253450]  ttm_mem_evict_first+0x18a/0x500
+> [   64.253456]  ttm_resource_manager_evict_all+0xa3/0x1e0
+> [   64.253465]  amdgpu_device_prepare+0x66/0x110
+> [   64.253472]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
+> [   64.253481]  pci_pm_runtime_suspend+0x74/0x200
+> [   64.253489]  vga_switcheroo_runtime_suspend+0x21/0xb0
+> [   64.253496]  __rpm_callback+0x5f/0x190
+> [   64.253503]  rpm_callback+0x7f/0x90
+> [   64.253509]  rpm_suspend+0x120/0x6a0
+> [   64.253516]  pm_runtime_work+0x9c/0xa0
+> [   64.253523]  process_one_work+0x164/0x330
+> [   64.253532]  worker_thread+0x302/0x430
+> [   64.253542]  kthread+0xe4/0x110
+> [   64.253550]  ret_from_fork+0x4c/0x60
+> [   64.253559]  ret_from_fork_asm+0x1b/0x30
+> 
+> [   64.253570] freed by task 152 on cpu 3 at 64.253117s:
+> [   64.253582]  ttm_resource_free+0x67/0x90
+> [   64.253591]  ttm_bo_move_accel_cleanup+0x247/0x2e0
+> [   64.253598]  amdgpu_bo_move+0x1bd/0x7a0
+> [   64.253605]  ttm_bo_handle_move_mem+0xcf/0x180
+> [   64.253612]  ttm_mem_evict_first+0x1c5/0x500
+> [   64.253618]  ttm_resource_manager_evict_all+0xa3/0x1e0
+> [   64.253626]  amdgpu_device_prepare+0x66/0x110
+> [   64.253634]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
+> [   64.253642]  pci_pm_runtime_suspend+0x74/0x200
+> [   64.253650]  vga_switcheroo_runtime_suspend+0x21/0xb0
+> [   64.253658]  __rpm_callback+0x5f/0x190
+> [   64.253664]  rpm_callback+0x7f/0x90
+> [   64.253671]  rpm_suspend+0x120/0x6a0
+> [   64.253677]  pm_runtime_work+0x9c/0xa0
+> [   64.253684]  process_one_work+0x164/0x330
+> [   64.253693]  worker_thread+0x302/0x430
+> [   64.253703]  kthread+0xe4/0x110
+> [   64.253711]  ret_from_fork+0x4c/0x60
+> [   64.253723]  ret_from_fork_asm+0x1b/0x30
+> 
+> [   64.253735] CPU: 3 PID: 152 Comm: kworker/3:2 Tainted: P           OE      6.8.9 #3 e7323d0d25f89e853881fc823e59523bdcc577c6
+> [   64.253756] Hardware name: Hewlett-Packard HP Pavilion Notebook /80B9, BIOS F.54 05/27/2019
+> [   64.253761] Workqueue: pm pm_runtime_work
+> [   64.253771] ==================================================================
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
