@@ -1,172 +1,116 @@
-Return-Path: <linux-kernel+bounces-169996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EB48BD066
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:36:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B8D8BD06C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A751C22111
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7319289862
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD29D152DF1;
-	Mon,  6 May 2024 14:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A6D15251B;
+	Mon,  6 May 2024 14:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3PDVwHX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="COVf006+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54183613D;
-	Mon,  6 May 2024 14:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B6C393;
+	Mon,  6 May 2024 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006145; cv=none; b=TYQ9fNDNXWtzfy42S3Oe6Gja/WL31C6Uum839eYwuHJmPvPlj4O7jAPQa2e5GMv0FinXKtI7lN3kIgs3YFkPbwmp0YhaOzU63J75Kfc4mLcyrGZ6+XlUnooMKHdk9bUe3Acvp63Rt70RsIyaUT9zxcAj1efnHR80j/nXb4nFM4I=
+	t=1715006190; cv=none; b=N453hYpxke5bPIzRo/KaqkLDGohZWIFBLSeCLbc4I7kn25xfh+uO7gvBd1M8y1HmjV7CrDvP6ewHj/dOvU11td6UDMNcdujaxlAScI2N911syqSlPtlWiWAbmsIoYa2PIfosYsvGp33YzBR27K0N1qEboyN2QxUHsaWtZe9y3HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006145; c=relaxed/simple;
-	bh=e7HTaiEOkmkyJLnFpjteHG7h39udIJBpDlEILJ0M2T0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=c01CfVzxXdforLp8x6Ry38OH11KqyDlinfGhXMi/9qtGiwpScyMavWxnaAKUsnbPYz8Wx717LLcbLa1PCtYj+HotoaZD2Sf0wv/61OtlpNl0s0gbj26ZtzGywnTuV6XGZX7/r3LjJuzgLxIfmFAHh0RiMOPHzaQU7nV+HyRIZoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3PDVwHX; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715006144; x=1746542144;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=e7HTaiEOkmkyJLnFpjteHG7h39udIJBpDlEILJ0M2T0=;
-  b=F3PDVwHXQHBh2uUprIcf6AvgWs5P4y9pq3zwq+r7d1YmItzMZSjK0VJ9
-   yJfm2uekJxDxjSLWavP+BEWCiHeYc1ic/E6D3fwB6KPSyjteX15w1SYRY
-   1NW34aoz1DNfVAGWOaXD1vpA6iSZnGxcHPCNiqITea2zQoWKFMU+kSNtQ
-   UBxRZDlF+hJ5KOriLt0L228f0rU/glMxGnO1+yt3KzIBO3WzWOqfn9Bva
-   o49xGa+YbOa7rQURes7IQRTSP8Ap70WxEj8A7JlN9NS9bsz5S1/2tYOAv
-   RhDOCGZ5IXZ0Qb4VK2bZE5odzq7j14b0oCOSUFNY+8QZh/ujK/9KYsJs0
-   g==;
-X-CSE-ConnectionGUID: XnpfjLGvSrSqhF3TFI6fZA==
-X-CSE-MsgGUID: TUT9evfoTISSYy2T1kQoow==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="14535896"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="14535896"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:35:43 -0700
-X-CSE-ConnectionGUID: A40k2weoTG65ZydoWdBO0w==
-X-CSE-MsgGUID: l0S3Bw+/R/2Wl8ZHpd+pBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="28184155"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:35:40 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 6 May 2024 17:35:34 +0300 (EEST)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, Lukas Wunner <lukas@wunner.de>, 
-    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 1/2] PCI: Add TLP Prefix reading into
- pcie_read_tlp_log()
-In-Reply-To: <20240503225305.GA1609388@bhelgaas>
-Message-ID: <816d5e04-1af7-884c-1ec2-ad70c18068a7@linux.intel.com>
-References: <20240503225305.GA1609388@bhelgaas>
+	s=arc-20240116; t=1715006190; c=relaxed/simple;
+	bh=epnKmSLmSfc49HA+0nn+hCuYqMrBtCrmccfzKmBeUjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=B4ZdmzhLOhr1aylN5LCnMxktY8J3W1aw1RUftgT9aNhkK44fow9wOj9mCl3+zLQnICOcuFRadUUq6eGkyfylbuduWj/9x/Y40NdsN58jNEQT7ZeOO9ym2uWuI70aIzpkgBgimOT75jWhR7O6fZoa4ZTlRGjk2ezPYhEQX7tKaQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=COVf006+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 068BFC116B1;
+	Mon,  6 May 2024 14:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715006190;
+	bh=epnKmSLmSfc49HA+0nn+hCuYqMrBtCrmccfzKmBeUjc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=COVf006+4LUh9tpH9/x1fyFrKQB4M58metJs3z4CDtyVj9gd0FPOtjLgwP8q2u0PP
+	 MvAkeQr835kn7NUTaQ6NGCLDMmTino4vsX1SfOnLwgfZ09eOSEknM12iUdoF89fovm
+	 l8LRQ4eFv2UxvMJX31UVlYfqxzYQEszz54qmTzK86eOLQbauHEGQvqGKaVFZm5D0rp
+	 n3xFRaxUQUa/9G66kN1tWJ2N269uSbergwrOR/fuB4q5k+dT0DfX8ThhiIjgoS2Hkv
+	 Cg2eXaI25JVkcogM2HeYuNhfaXOLDB/ggM/2GruBHJqDlfE9sUT06x7avGJFNTgOsL
+	 VXGub0uvz6uRQ==
+From: bentiss@kernel.org
+To: Jiri Kosina <jikos@kernel.org>,
+	Peter Hutterer <peter.hutterer@who-t.net>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org,
+	Martin Sivak <mars@montik.net>,
+	Ping Cheng <pinglinux@gmail.com>,
+	Jason Gerecke <killertofu@gmail.com>,
+	Aaron Armstrong Skomra <skomra@gmail.com>,
+	Joshua Dickens <Joshua@joshua-dickens.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 19/18] selftests/hid: skip tests with HID-BPF if udev-hid-bpf is not installed
+Date: Mon,  6 May 2024 16:36:12 +0200
+Message-ID: <20240506143612.148031-1-bentiss@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240410-bpf_sources-v1-0-a8bf16033ef8@kernel.org>
+References: <20240410-bpf_sources-v1-0-a8bf16033ef8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1733933349-1715004351=:1111"
-Content-ID: <c4cc418c-1dd3-ce34-6759-6c90ef46b8f8@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Benjamin Tissoires <bentiss@kernel.org>
 
---8323328-1733933349-1715004351=:1111
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <a6b0eafc-f653-302c-44ae-97c6bf23ef83@linux.intel.com>
+udev-hid-bpf is still not installed everywhere, and we should probably
+not assume it is installed automatically.
 
-On Fri, 3 May 2024, Bjorn Helgaas wrote:
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+---
 
-> On Fri, Apr 12, 2024 at 04:36:34PM +0300, Ilpo J=E4rvinen wrote:
-> > pcie_read_tlp_log() handles only 4 TLP Header Log DWORDs but TLP Prefix
-> > Log (PCIe r6.1 secs 7.8.4.12 & 7.9.14.13) may also be present.
-> >=20
-> > Generalize pcie_read_tlp_log() and struct pcie_tlp_log to handle also
-> > TLP Prefix Log. The layout of relevant registers in AER and DPC
-> > Capability is not identical because the offsets of TLP Header Log and
-> > TLP Prefix Log vary so the callers must pass the offsets to
-> > pcie_read_tlp_log().
->=20
-> I think the layouts of the Header Log and the TLP Prefix Log *are*
-> identical, but they are at different offsets in the AER Capability vs
-> the DPC Capability.  Lukas and I have both stumbled over this.
+I wanted to apply this series given that it wasn't reviewed in a month,
+but I thought that maybe I should not enforce ude-hid-bpf to be
+installed everywhere.
 
-I'll try to reword it once again.
+I'll probably push this series tomorrow so it makes the 6.10 cut.
 
-The way it's spec'ed, there actually also a small difference in sizes too=
-=20
-(PCIe r6 7.9.14.13 says DPC one can be < 4 DWs whereas AER on is always 4=
-=20
-DWs regardless of the number of supported E-E Prefixes) so I'll just=20
-rewrite it so it doesn't focus just on the offset.
+Cheers,
+Benjamin
 
-> Similar and more comments at:
-> https://lore.kernel.org/r/20240322193011.GA701027@bhelgaas
+ tools/testing/selftests/hid/tests/base.py | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I'm really sorry, I missed those comments and only focused on that ixgbe=20
-part.
+diff --git a/tools/testing/selftests/hid/tests/base.py b/tools/testing/selftests/hid/tests/base.py
+index 2d006c0f5fcd..3a465768e507 100644
+--- a/tools/testing/selftests/hid/tests/base.py
++++ b/tools/testing/selftests/hid/tests/base.py
+@@ -8,6 +8,7 @@
+ import libevdev
+ import os
+ import pytest
++import shutil
+ import subprocess
+ import time
+ 
+@@ -240,6 +241,10 @@ class BaseTestCase:
+             root_dir = (script_dir / "../../../../..").resolve()
+             bpf_dir = root_dir / "drivers/hid/bpf/progs"
+ 
++            udev_hid_bpf = shutil.which("udev-hid-bpf")
++            if not udev_hid_bpf:
++                pytest.skip("udev-hid-bpf not found in $PATH, skipping")
++
+             wait = False
+             for _, rdesc_fixup in self.hid_bpfs:
+                 if rdesc_fixup:
+-- 
+2.44.0
 
-> > Convert eetlp_prefix_path into integer called eetlp_prefix_max and
-> > make is available also when CONFIG_PCI_PASID is not configured to
-> > be able to determine the number of E-E Prefixes.
->=20
-> s/make is/make it/
->=20
-> I think this could be a separate patch.
-
-Sure, I can make it own patch.
-
-> > --- a/include/linux/aer.h
-> > +++ b/include/linux/aer.h
-> > @@ -20,6 +20,7 @@ struct pci_dev;
-> > =20
-> >  struct pcie_tlp_log {
-> >  =09u32 dw[4];
-> > +=09u32 prefix[4];
-> >  };
-> > =20
-> >  struct aer_capability_regs {
-> > @@ -37,7 +38,9 @@ struct aer_capability_regs {
-> >  =09u16 uncor_err_source;
-> >  };
-> > =20
-> > -int pcie_read_tlp_log(struct pci_dev *dev, int where, struct pcie_tlp_=
-log *log);
-> > +int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
-> > +=09=09      unsigned int tlp_len, struct pcie_tlp_log *log);
-> > +unsigned int aer_tlp_log_len(struct pci_dev *dev);
->=20
-> I think it was a mistake to expose pcie_read_tlp_log() outside
-> drivers/pci, and I don't think we should expose aer_tlp_log_len()
-> either.
-
-Ah, my intention was to remove the exposure but I only ended up removing=20
-the actual EXPORT and didn't realize I should have also moved the=20
-prototype into another header.
-
-I'll add also a patch to remove pcie_read_tlp_log() EXPORT too but I'm=20
-wondering now whether I should also move these function(s) into=20
-pcie/aer.c (or somewhere else that is only build if AER is enabled) since=
-=20
-there won't be callers ourside of AER/DPC?
-
-> We might be stuck with exposing struct pcie_tlp_log since it looks
-> like ras_event.h uses it.
-
-Yes.
-
---=20
- i.
---8323328-1733933349-1715004351=:1111--
 
