@@ -1,89 +1,124 @@
-Return-Path: <linux-kernel+bounces-170345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1778BD57A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:35:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337648BD57D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967CA283362
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648461C22655
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE5715AADD;
-	Mon,  6 May 2024 19:35:08 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E085C15AAD6;
+	Mon,  6 May 2024 19:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="b2XTXZxI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0507115AAC5
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78E715AAC9;
+	Mon,  6 May 2024 19:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024108; cv=none; b=I/bPQECp+i6rl6FwlGd19i792VGLdoeGlZbtsFcWnDZngyboMlZmDoYzjEoEDxXxLESmRy/F+Gq3lrrO89u1A+6/2eFURKSlsQZio0p34KP9hqie/ZqlwcZWdma8IgChthjLw4dPF53fka5jWBqLbgWoq+9EwxGQ0VGuhyH/Jho=
+	t=1715024115; cv=none; b=TldQnzceTpmUlwafiURAI4fKnquC0KU85romDzsr8N4i0iVR55jS8WTHLcKFpIzrnp4Gg7b+a7KIsWbafjBeL7mtRaArobeI4U1f4rRT2gcTDGZnpqdcQ5XN2j/JLN+vXDXN1SVyLlTutAAMPoHWb45Q5G9UT58rKYeah6JBOGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024108; c=relaxed/simple;
-	bh=r0WUpWmKbYhSZY5mZSEV3lVk9p3x2tNUijIrZnlk1oY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=iLC+haPNThgWJ4K4DL/KlitRWutCxPih52FW6lYM+C0buA5ZQ3xXDsD23PSPH7/dLjBthVrtW+k/1pOaNgXnzvpQKdbdqu3pajACNWWXsM5tp6ZqBxt+qhKmZotY1nPlSQymSNjWmxYLvADsLCAXyrKWzdyByFCVzMGlGQDUvwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-83-XDilHoh7OGOqbgSr_C4z7g-1; Mon, 06 May 2024 20:35:04 +0100
-X-MC-Unique: XDilHoh7OGOqbgSr_C4z7g-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 6 May
- 2024 20:34:24 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 6 May 2024 20:34:24 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Andy Lutomirski' <luto@amacapital.net>, Aleksa Sarai <cyphar@cyphar.com>
-CC: Stas Sergeev <stsp2@yandex.ru>, "Serge E. Hallyn" <serge@hallyn.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Stefan
- Metzmacher" <metze@samba.org>, Eric Biederman <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton
-	<jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Alexander Aring
-	<alex.aring@gmail.com>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-api@vger.kernel.org"
-	<linux-api@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-	=?utf-8?B?Q2hyaXN0aWFuIEfDtnR0c2NoZQ==?= <cgzones@googlemail.com>
-Subject: RE: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Thread-Topic: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Thread-Index: AQHan9rzUUvHBi3CRk+0pc3o5ZO9aLGKmP4A
-Date: Mon, 6 May 2024 19:34:24 +0000
-Message-ID: <f8fafe1953ed41828a4c98187964477b@AcuMS.aculab.com>
-References: <20240426133310.1159976-1-stsp2@yandex.ru>
- <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
- <20240428.171236-tangy.giblet.idle.helpline-y9LqufL7EAAV@cyphar.com>
- <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
-In-Reply-To: <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1715024115; c=relaxed/simple;
+	bh=+W2lA0MWv2z0t6GRwxjdfi6W408kM+so6uKqeK9p4ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGp5YwXgoXf5oWHxDAKt/abMjtPA7mnM4oW8MyZbG4NuqNxMLRbJqOePGICRCQfKBRwWz1CbByMmwLWfn2bMEfyzqTsC+kOmRSScLtIEYazN7kHBDa4b6h7mxpOVrDhnUrIVwsB4ir02zjHbfZbUqEWEgsxTRWVZdU0VmXNCoKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=b2XTXZxI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=F+GVANw34gec2LcUlN4q8Pr0ShGOdG4tQUMwECB93ug=; b=b2
+	XTXZxI5nsZ/7IfqX5js6EGbSrInFnKK1CU5366RX0Y7jZcE08wGUhj0uPzaUoYxBLnkMftF0lBdPB
+	SFHpVcveRLC8iH9ufx9p7USgnMVBDETgxrQ1iLr4NOecn/mteum5/OkglcIKRkt4z8Bxn/S5ui05H
+	VQzwvXYJHE/lNRU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s447B-00EnDS-3V; Mon, 06 May 2024 21:35:09 +0200
+Date: Mon, 6 May 2024 21:35:09 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	hkallweit1@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] net: phy: bcm-phy-lib: Implement BroadR-Reach
+ link modes
+Message-ID: <efaf2c2c-45a9-4b22-8f71-c8e41d680912@lunn.ch>
+References: <20240506144015.2409715-1-kamilh@axis.com>
+ <20240506144015.2409715-4-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240506144015.2409715-4-kamilh@axis.com>
 
-Li4uDQo+IFNvIEkgd2FudCBhIHdheSB0byBnaXZlICphbiBlbnRpcmUgY29udGFpbmVyKiBhY2Nl
-c3MgdG8gYSBkaXJlY3RvcnkuDQo+IENsYXNzaWMgVU5JWCBEQUMgaXMganVzdCAqd3JvbmcqIGZv
-ciB0aGlzIHVzZSBjYXNlLiAgTWF5YmUgaWRtYXBzDQo+IGNvdWxkIGxlYXJuIGEgd2F5IHRvIHNx
-dWFzaCBtdWx0aXBsZSBpZHMgZG93biB0byBvbmUuICBPciBtYXliZQ0KPiBzb21ldGhpbmcgbGlr
-ZSBteSBzaWxseSBjcmVkZW50aWFsLWNhcHR1cmluZyBtb3VudCBwcm9wb3NhbCBjb3VsZA0KPiB3
-b3JrLiAgQnV0IHRoZSBzdGF0dXMgcXVvIGlzIG5vdCBhY3R1YWxseSBhbWF6aW5nIElNTy4NCg0K
-SXNuJ3QgdGhhdCB3aGF0IGdpZHMgYXJlIGZvciA6LSkNCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVy
-ZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5
-bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Mon, May 06, 2024 at 04:40:15PM +0200, Kamil Horák - 2N wrote:
+> Implement single-pair BroadR-Reach modes on bcm5481x PHY by Broadcom.
+> Create set of functions alternative to IEEE 802.3 to handle configuration
+> of these modes on compatible Broadcom PHYs.
+> 
+> Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
+> ---
+>  drivers/net/phy/bcm-phy-lib.c | 122 ++++++++++++
+>  drivers/net/phy/bcm-phy-lib.h |   4 +
+>  drivers/net/phy/broadcom.c    | 338 ++++++++++++++++++++++++++++++++--
+>  3 files changed, 449 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/net/phy/bcm-phy-lib.c b/drivers/net/phy/bcm-phy-lib.c
+> index 876f28fd8256..9fa2a20e641f 100644
+> --- a/drivers/net/phy/bcm-phy-lib.c
+> +++ b/drivers/net/phy/bcm-phy-lib.c
+> @@ -794,6 +794,46 @@ static int _bcm_phy_cable_test_get_status(struct phy_device *phydev,
+>  	return ret;
+>  }
+>  
+> +static int bcm_setup_forced(struct phy_device *phydev)
+> +{
+> +	u16 ctl = 0;
+> +
+> +	phydev->pause = 0;
+> +	phydev->asym_pause = 0;
+> +
+> +	if (phydev->speed == SPEED_100)
+> +		ctl |= LRECR_SPEED100;
+> +
+> +	if (phydev->duplex != DUPLEX_FULL)
+> +		return -EOPNOTSUPP;
 
+Is this even possible? I don't actually known, but you don't define a
+HALF link mode, so how is this requested?
+
+> +/**
+> + * bcm_linkmode_adv_to_mii_adv_t
+> + * @advertising: the linkmode advertisement settings
+> + *
+> + * A small helper function that translates linkmode advertisement
+> + * settings to phy autonegotiation advertisements for the
+> + * MII_BCM54XX_LREANAA register.
+> + */
+> +static inline u32 bcm_linkmode_adv_to_mii_adv_t(unsigned long *advertising)
+
+No inline functions in .c files please, let the compiler decide.
+
+> +int bcm_setup_master_slave(struct phy_device *phydev);
+> +int bcm_config_aneg(struct phy_device *phydev, bool changed);
+> +int bcm_config_advert(struct phy_device *phydev);
+
+These are all BroadReach specific, so i would put something in there
+name to indicate this. Otherwise somebody is going to try to use them
+when not appropriate.
+
+     Andrew
 
