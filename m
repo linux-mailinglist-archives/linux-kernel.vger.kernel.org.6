@@ -1,385 +1,160 @@
-Return-Path: <linux-kernel+bounces-169482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4770A8BC95B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:18:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF5F8BC961
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3BB21F21EEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:18:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17787B21A08
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219021420BB;
-	Mon,  6 May 2024 08:18:29 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B18137747;
-	Mon,  6 May 2024 08:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587C414198A;
+	Mon,  6 May 2024 08:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wygiJNn2"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2321E1411CB
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714983508; cv=none; b=f/ilFTn2Vj6TuqjQy3kSVbRDD+s1Y4uDLnYCjB3fz75srTsZ2WIpG7zH2bOVEaPnHAr0OqHBtKf/l1oSep8XR/lAd8xJvDqOCvfys8ECqVj2fj2U/4jkWW/6V3EM0ixm8IudDls6ii0/6v9n0rNj3bHmawNzZoR3sByEodp1GEc=
+	t=1714983527; cv=none; b=PBv8ElUKm11V+VAjfWT7n9P5aR2dvpUsREyK0kN9Taqrduj3VfkwimeeCOzXEAyWg60En/QJXviD7s93+edL92m5uyED1P60cE9cW1wABaqdDcXAjQCIjMlWvOzO/4aZLLP94fucOx1yP3sUmKrM2FPj8kMe+LSVArt6beQHkR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714983508; c=relaxed/simple;
-	bh=Tm7e00qyebecgwivC1BkQamu4DhNzbPMiKV64HvVr48=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=IEQB/IC2mKdyGLLtf/CGUWaZVHhz0qzdL74eMeqyGOMGHUPUaEiM67ukYx8gXqFX+Orwj8LqwEZuGzIxS0I9fc4ZH6iElaoz+qM3j0iUPm0c4mUruy6ySTVrVnlnsCMRPbwJZoOvGwQEMT9XpiKvcTvDtYtVIfktXryVNv+PIuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8Ax5epOkjhmlgsIAA--.10807S3;
-	Mon, 06 May 2024 16:18:22 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Cx4VVKkjhm4lMSAA--.20386S3;
-	Mon, 06 May 2024 16:18:20 +0800 (CST)
-Subject: Re: [PATCH v8 4/6] LoongArch: KVM: Add vcpu search support from
- physical cpuid
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org
-References: <20240428100518.1642324-1-maobibo@loongson.cn>
- <20240428100518.1642324-5-maobibo@loongson.cn>
- <CAAhV-H6kBO_RTTHoLfKdAtLO1Aqb0KmAJ6wn0wZrvbCkzMszDQ@mail.gmail.com>
- <7335dcde-1b3a-1260-ac62-d2d9fcbd6a78@loongson.cn>
- <CAAhV-H5WJ0o3bJZBq2zx7ejjFkFwYVTyVJEzJuAHEs+uMg-sxw@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <b10b46ce-8219-8863-470f-9bfa173b22b0@loongson.cn>
-Date: Mon, 6 May 2024 16:18:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1714983527; c=relaxed/simple;
+	bh=kzfYfX4dTePltpXsVTcDHuYgC7qgsQPKl6wVl5oUu5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HB44fwk4ttYEMScFSxFtrK5i3b/27Qnl5NiZjmjkEIG1E/2Ak0lQiwzfDC1wRMTqUb0EPloLxdaUxsmuOKNxh2EnpjbnZHcXwd+UGtLtu4HNmi314ay3wBJppHtFnpACCp3nSiN0a34NZ/xm/QeA9GdqSj7j6FumFnTa04kbMec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wygiJNn2; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a934ad50so321756266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 01:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714983524; x=1715588324; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yF2PY372A06TG1ZrARmVPbaU8+5CywxP38mhOMI8D+U=;
+        b=wygiJNn2isKxTuV/rXrPvzkukJvE3Q31lS7jJFfAeGcz7ThIX16CghOmn8+Zly3I6D
+         psyw2mzAFs20paBNsw/VsW82KAph/ryeb+zteO6RNXIkimAr0dkAxOeU7qUqB4j6+oEC
+         eFcanxZoXyJVrTfvathOt46NEh/k/UXj6Yap6hHw4K1ER0Ma5u/K/oG94CF+qGqM8ILP
+         iAUURMPDrdnUDfYNAm2wGbkW3aiGJZdA2a0xcdCj68jckWe4GiB8XghGyAb63oOUVEto
+         35vldV9WbUB5dkeHx54ob3ClGYVoOwP/TMqTO6OKsU1/a/tS/bmVj+sQ0EZpeuRGtrv5
+         3uUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714983524; x=1715588324;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yF2PY372A06TG1ZrARmVPbaU8+5CywxP38mhOMI8D+U=;
+        b=MiZtpZmySxW0U5agCcplzUP+aJnrrUPcqmKFc29g4oIKCOW/zaAVSvoKPpshLKqPKn
+         3FU1HsRE4CLctj5ITYYenmCYZHKBnYAgjsp/e3VV0+kIrB1kVs11ADhoEvLPtuaVjygH
+         jHelGMtkJ6ly/7l34iWPY8DCRlOM0r8x8YPvGKvAzEUME/u3hF6J2fFxhKKWVu+jhPaB
+         GHEmD7TnzgJOILrAjMyqpN3EVBvNXJVDNw/28rMQV+rUo8BZzJcotV7665T18D1I4mpC
+         MKTTERu9z90DVhzktPNsr16VYQjwxCy5R3XQ17kv/a59PW/ycgVbdAd95VgH627LviM2
+         17Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV/iuBwvrh+j2U0+tnWwp/YVVzt5vx756oYEyLlRXw5A1yttQVgLE7t0dbHhYi20q4F26a4SSoi4V2b9l6CvBnVWxXwl2f802rhu33
+X-Gm-Message-State: AOJu0Yx8RyOlghXZK4AQPVkerCQUCmp5StfK/YDvuQ1b2jrPNk9f8CGt
+	N0qa7+wQfVMmSRGdxKiAUlv7hpgx4dA+lKBQZQeNEWilcV9XGedlhxDn5ZMl+Y4=
+X-Google-Smtp-Source: AGHT+IGkXHLj7TZIljpsAuYgZI4b/vPFjApDJ1jdpylvcEBdmY6+JzDb2ahXllr2WdjayC/CG56vPA==
+X-Received: by 2002:a17:907:809:b0:a59:db0f:6bd5 with SMTP id wv9-20020a170907080900b00a59db0f6bd5mr793266ejb.9.1714983524678;
+        Mon, 06 May 2024 01:18:44 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id og14-20020a1709071dce00b00a59bfcac17dsm1823671ejc.39.2024.05.06.01.18.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 01:18:44 -0700 (PDT)
+Message-ID: <9f8237c4-f603-459a-9d34-9cda556874b8@linaro.org>
+Date: Mon, 6 May 2024 10:18:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5WJ0o3bJZBq2zx7ejjFkFwYVTyVJEzJuAHEs+uMg-sxw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v1 2/5] dt-bindings: clock: mediatek: add address-cells and
+ size-cells to ethsys
+To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+ Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240505164549.65644-1-linux@fw-web.de>
+ <20240505164549.65644-3-linux@fw-web.de>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Cx4VVKkjhm4lMSAA--.20386S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3KrWktF43GrW8CF15Cr13Jrc_yoWDAF13pr
-	Wqkan8ur48Jr17tw10qw1q9rnIvrWkKr17ZasrKa45Ar1qvF9xJrs5CryUuF1kJr1rGF4I
-	vF1DJa43uFWFyacCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4SoGDU
-	UUU
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240505164549.65644-3-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/5/6 下午3:06, Huacai Chen wrote:
-> Hi, Bibo,
+On 05/05/2024 18:45, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> On Mon, May 6, 2024 at 2:36 PM maobibo <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2024/5/6 上午9:49, Huacai Chen wrote:
->>> Hi, Bibo,
->>>
->>> On Sun, Apr 28, 2024 at 6:05 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>
->>>> Physical cpuid is used for interrupt routing for irqchips such as
->>>> ipi/msi/extioi interrupt controller. And physical cpuid is stored
->>>> at CSR register LOONGARCH_CSR_CPUID, it can not be changed once vcpu
->>>> is created and physical cpuid of two vcpus cannot be the same.
->>>>
->>>> Different irqchips have different size declaration about physical cpuid,
->>>> max cpuid value for CSR LOONGARCH_CSR_CPUID on 3A5000 is 512, max cpuid
->>>> supported by IPI hardware is 1024, 256 for extioi irqchip, and 65536
->>>> for MSI irqchip.
->>>>
->>>> The smallest value from all interrupt controllers is selected now,
->>>> and the max cpuid size is defines as 256 by KVM which comes from
->>>> extioi irqchip.
->>>>
->>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>>> ---
->>>>    arch/loongarch/include/asm/kvm_host.h | 26 ++++++++
->>>>    arch/loongarch/include/asm/kvm_vcpu.h |  1 +
->>>>    arch/loongarch/kvm/vcpu.c             | 93 ++++++++++++++++++++++++++-
->>>>    arch/loongarch/kvm/vm.c               | 11 ++++
->>>>    4 files changed, 130 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
->>>> index 2d62f7b0d377..3ba16ef1fe69 100644
->>>> --- a/arch/loongarch/include/asm/kvm_host.h
->>>> +++ b/arch/loongarch/include/asm/kvm_host.h
->>>> @@ -64,6 +64,30 @@ struct kvm_world_switch {
->>>>
->>>>    #define MAX_PGTABLE_LEVELS     4
->>>>
->>>> +/*
->>>> + * Physical cpu id is used for interrupt routing, there are different
->>>> + * definitions about physical cpuid on different hardwares.
->>>> + *  For LOONGARCH_CSR_CPUID register, max cpuid size if 512
->>>> + *  For IPI HW, max dest CPUID size 1024
->>>> + *  For extioi interrupt controller, max dest CPUID size is 256
->>>> + *  For MSI interrupt controller, max supported CPUID size is 65536
->>>> + *
->>>> + * Currently max CPUID is defined as 256 for KVM hypervisor, in future
->>>> + * it will be expanded to 4096, including 16 packages at most. And every
->>>> + * package supports at most 256 vcpus
->>>> + */
->>>> +#define KVM_MAX_PHYID          256
->>>> +
->>>> +struct kvm_phyid_info {
->>>> +       struct kvm_vcpu *vcpu;
->>>> +       bool            enabled;
->>>> +};
->>>> +
->>>> +struct kvm_phyid_map {
->>>> +       int max_phyid;
->>>> +       struct kvm_phyid_info phys_map[KVM_MAX_PHYID];
->>>> +};
->>>> +
->>>>    struct kvm_arch {
->>>>           /* Guest physical mm */
->>>>           kvm_pte_t *pgd;
->>>> @@ -71,6 +95,8 @@ struct kvm_arch {
->>>>           unsigned long invalid_ptes[MAX_PGTABLE_LEVELS];
->>>>           unsigned int  pte_shifts[MAX_PGTABLE_LEVELS];
->>>>           unsigned int  root_level;
->>>> +       spinlock_t    phyid_map_lock;
->>>> +       struct kvm_phyid_map  *phyid_map;
->>>>
->>>>           s64 time_offset;
->>>>           struct kvm_context __percpu *vmcs;
->>>> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
->>>> index 0cb4fdb8a9b5..9f53950959da 100644
->>>> --- a/arch/loongarch/include/asm/kvm_vcpu.h
->>>> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
->>>> @@ -81,6 +81,7 @@ void kvm_save_timer(struct kvm_vcpu *vcpu);
->>>>    void kvm_restore_timer(struct kvm_vcpu *vcpu);
->>>>
->>>>    int kvm_vcpu_ioctl_interrupt(struct kvm_vcpu *vcpu, struct kvm_interrupt *irq);
->>>> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid);
->>>>
->>>>    /*
->>>>     * Loongarch KVM guest interrupt handling
->>>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->>>> index 3a8779065f73..b633fd28b8db 100644
->>>> --- a/arch/loongarch/kvm/vcpu.c
->>>> +++ b/arch/loongarch/kvm/vcpu.c
->>>> @@ -274,6 +274,95 @@ static int _kvm_getcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 *val)
->>>>           return 0;
->>>>    }
->>>>
->>>> +static inline int kvm_set_cpuid(struct kvm_vcpu *vcpu, u64 val)
->>>> +{
->>>> +       int cpuid;
->>>> +       struct loongarch_csrs *csr = vcpu->arch.csr;
->>>> +       struct kvm_phyid_map  *map;
->>>> +
->>>> +       if (val >= KVM_MAX_PHYID)
->>>> +               return -EINVAL;
->>>> +
->>>> +       cpuid = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
->>>> +       map = vcpu->kvm->arch.phyid_map;
->>>> +       spin_lock(&vcpu->kvm->arch.phyid_map_lock);
->>>> +       if (map->phys_map[cpuid].enabled) {
->>>> +               /*
->>>> +                * Cpuid is already set before
->>>> +                * Forbid changing different cpuid at runtime
->>>> +                */
->>>> +               if (cpuid != val) {
->>>> +                       /*
->>>> +                        * Cpuid 0 is initial value for vcpu, maybe invalid
->>>> +                        * unset value for vcpu
->>>> +                        */
->>>> +                       if (cpuid) {
->>>> +                               spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->>>> +                               return -EINVAL;
->>>> +                       }
->>>> +               } else {
->>>> +                        /* Discard duplicated cpuid set */
->>>> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->>>> +                       return 0;
->>>> +               }
->>>> +       }
->>> I have changed the logic and comments when I apply, you can double
->>> check whether it is correct.
->> I checkout the latest version, the modification in function
->> kvm_set_cpuid() is good for me.
-> Now the modified version is like this:
-> 
-> + if (map->phys_map[cpuid].enabled) {
-> + /* Discard duplicated CPUID set operation */
-> + if (cpuid == val) {
-> + spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
-> + return 0;
-> + }
-> +
-> + /*
-> + * CPUID is already set before
-> + * Forbid changing different CPUID at runtime
-> + * But CPUID 0 is the initial value for vcpu, so allow
-> + * changing from 0 to others
-> + */
-> + if (cpuid) {
-> + spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
-> + return -EINVAL;
-> + }
-> + }
-> But I still doubt whether we should allow changing from 0 to others
-> while map->phys_map[cpuid].enabled is 1.
-It is necessary since the default sw cpuid is zero :-( And we can 
-optimize it in later, such as set INVALID cpuid in function 
-kvm_arch_vcpu_create() and logic will be simple in function kvm_set_cpuid().
+> Add missing properties already used in mt7986a.dtsi.
 
-Regards
-Bibo Mao
+Missing for what? Or why? Provide context, IOW, explain why they are
+missing.
 
-> 
-> Huacai
-> 
->>>
->>>> +
->>>> +       if (map->phys_map[val].enabled) {
->>>> +               /*
->>>> +                * New cpuid is already set with other vcpu
->>>> +                * Forbid sharing the same cpuid between different vcpus
->>>> +                */
->>>> +               if (map->phys_map[val].vcpu != vcpu) {
->>>> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->>>> +                       return -EINVAL;
->>>> +               }
->>>> +
->>>> +               /* Discard duplicated cpuid set operation*/
->>>> +               spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->>>> +               return 0;
->>>> +       }
->>>> +
->>>> +       kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, val);
->>>> +       map->phys_map[val].enabled      = true;
->>>> +       map->phys_map[val].vcpu         = vcpu;
->>>> +       if (map->max_phyid < val)
->>>> +               map->max_phyid = val;
->>>> +       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid)
->>>> +{
->>>> +       struct kvm_phyid_map  *map;
->>>> +
->>>> +       if (cpuid >= KVM_MAX_PHYID)
->>>> +               return NULL;
->>>> +
->>>> +       map = kvm->arch.phyid_map;
->>>> +       if (map->phys_map[cpuid].enabled)
->>>> +               return map->phys_map[cpuid].vcpu;
->>>> +
->>>> +       return NULL;
->>>> +}
->>>> +
->>>> +static inline void kvm_drop_cpuid(struct kvm_vcpu *vcpu)
->>>> +{
->>>> +       int cpuid;
->>>> +       struct loongarch_csrs *csr = vcpu->arch.csr;
->>>> +       struct kvm_phyid_map  *map;
->>>> +
->>>> +       map = vcpu->kvm->arch.phyid_map;
->>>> +       cpuid = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
->>>> +       if (cpuid >= KVM_MAX_PHYID)
->>>> +               return;
->>>> +
->>>> +       if (map->phys_map[cpuid].enabled) {
->>>> +               map->phys_map[cpuid].vcpu = NULL;
->>>> +               map->phys_map[cpuid].enabled = false;
->>>> +               kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, 0);
->>>> +       }
->>>> +}
->>> While kvm_set_cpuid() is protected by a spinlock, do kvm_drop_cpuid()
->>> and kvm_get_vcpu_by_cpuid() also need it?
->>>
->> It is good to me that spinlock is added in function kvm_drop_cpuid().
->> And thinks for the efforts.
->>
->> Regards
->> Bibo Mao
->>>> +
->>>>    static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 val)
->>>>    {
->>>>           int ret = 0, gintc;
->>>> @@ -291,7 +380,8 @@ static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 val)
->>>>                   kvm_set_sw_gcsr(csr, LOONGARCH_CSR_ESTAT, gintc);
->>>>
->>>>                   return ret;
->>>> -       }
->>>> +       } else if (id == LOONGARCH_CSR_CPUID)
->>>> +               return kvm_set_cpuid(vcpu, val);
->>>>
->>>>           kvm_write_sw_gcsr(csr, id, val);
->>>>
->>>> @@ -943,6 +1033,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
->>>>           hrtimer_cancel(&vcpu->arch.swtimer);
->>>>           kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
->>>>           kfree(vcpu->arch.csr);
->>>> +       kvm_drop_cpuid(vcpu);
->>> I think this line should be before the above kfree(), otherwise you
->>> get a "use after free".
->>>
->>> Huacai
->>>
->>>>
->>>>           /*
->>>>            * If the vCPU is freed and reused as another vCPU, we don't want the
->>>> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
->>>> index 0a37f6fa8f2d..6006a28653ad 100644
->>>> --- a/arch/loongarch/kvm/vm.c
->>>> +++ b/arch/loongarch/kvm/vm.c
->>>> @@ -30,6 +30,14 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->>>>           if (!kvm->arch.pgd)
->>>>                   return -ENOMEM;
->>>>
->>>> +       kvm->arch.phyid_map = kvzalloc(sizeof(struct kvm_phyid_map),
->>>> +                               GFP_KERNEL_ACCOUNT);
->>>> +       if (!kvm->arch.phyid_map) {
->>>> +               free_page((unsigned long)kvm->arch.pgd);
->>>> +               kvm->arch.pgd = NULL;
->>>> +               return -ENOMEM;
->>>> +       }
->>>> +
->>>>           kvm_init_vmcs(kvm);
->>>>           kvm->arch.gpa_size = BIT(cpu_vabits - 1);
->>>>           kvm->arch.root_level = CONFIG_PGTABLE_LEVELS - 1;
->>>> @@ -44,6 +52,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->>>>           for (i = 0; i <= kvm->arch.root_level; i++)
->>>>                   kvm->arch.pte_shifts[i] = PAGE_SHIFT + i * (PAGE_SHIFT - 3);
->>>>
->>>> +       spin_lock_init(&kvm->arch.phyid_map_lock);
->>>>           return 0;
->>>>    }
->>>>
->>>> @@ -51,7 +60,9 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
->>>>    {
->>>>           kvm_destroy_vcpus(kvm);
->>>>           free_page((unsigned long)kvm->arch.pgd);
->>>> +       kvfree(kvm->arch.phyid_map);
->>>>           kvm->arch.pgd = NULL;
->>>> +       kvm->arch.phyid_map = NULL;
->>>>    }
->>>>
->>>>    int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->>>> --
->>>> 2.39.3
->>>>
->>
+
+Best regards,
+Krzysztof
 
 
