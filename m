@@ -1,165 +1,174 @@
-Return-Path: <linux-kernel+bounces-169272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CBB8BC5F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:59:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1F68BC613
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2432F1F21DB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB851C20E1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE2941A88;
-	Mon,  6 May 2024 02:59:43 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925044206C;
+	Mon,  6 May 2024 03:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bgaxpav/"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8EC358A7;
-	Mon,  6 May 2024 02:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F56358A7;
+	Mon,  6 May 2024 03:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714964383; cv=none; b=Ai55f3nIE1bHLn50ChFx3sBxdyelR4yxYgeT2ni+3ItbqBPzpW6zhxbhxD/GVBbNoAHIVsIdTMtkPljUsrANXT38ayfA3PWAHhX10oLjizOgthw1AvNa1nzJU2mR7YQ7LEPg1aBzCjr7YyIuPeiHuGUolKqvDzKIaePhDn2NaHg=
+	t=1714964954; cv=none; b=ZS+BNAgtr6X+GKA/OI8zjPJWR080r3Qn8m4dvSWNLOyPalJNmGc9kb+DH1+Y9X0aP1yuJwsO1Gr7wRKuX9Gbk27LkUc154oavnsqJN/ho2vJa+AO+6lyOPSZ/N1fQCc5m4dqTVl6qy+BT8tB4PLD1CjArtMDtZunZGc+Hq6kYZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714964383; c=relaxed/simple;
-	bh=IKOlGJFWtXHnjZ6QppAGH3LxjDXAOqPBOHtxGdKHjr4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mq5o/nyz6RSOi/oDly883uv05P5V7DJduTnirwCxxdeYpFWTPD5TjBV5JSL3KBK+7rjH/m2HkORojwh3YR2seMWXuW8eoPkaScUqR3xwWOG1gyLa++LQt+TfhDOWZieMoAoWJUI08kyHOqXZyz4t5gw4kYEpIyXkde7AfUGb8xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4462xNshD1853303, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 4462xNshD1853303
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 6 May 2024 10:59:23 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 10:59:24 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 10:59:23 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Mon, 6 May 2024 10:59:23 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Simon Horman <horms@kernel.org>
-CC: "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
-Subject: RE: [PATCH net-next v17 12/13] realtek: Update the Makefile and Kconfig in the realtek folder
-Thread-Topic: [PATCH net-next v17 12/13] realtek: Update the Makefile and
- Kconfig in the realtek folder
-Thread-Index: AQHanHJwtQlHSOPjc0iBIoHkieL8ZLGEqrkAgATePEA=
-Date: Mon, 6 May 2024 02:59:23 +0000
-Message-ID: <d1936d4110594bc1a7914f9aa5616366@realtek.com>
-References: <20240502091847.65181-1-justinlai0215@realtek.com>
- <20240502091847.65181-13-justinlai0215@realtek.com>
- <20240503083534.GL2821784@kernel.org>
-In-Reply-To: <20240503083534.GL2821784@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1714964954; c=relaxed/simple;
+	bh=S/Ajd4gIOZDBgz/1XvoiLuSZ7ZD3B1/wz2XJi1Un59Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P3xoYNRjxekiTXi0N+7QYDxHF69zDGCJPBwx5pWQKpWu4dKq35+hMSPGbXjZW1X3rPLfBHl06xpz+FI06vLfIcKWfwjcEfp5GU0wdSqukeEm2K3DrgdTCHPeNkho3hamrJr5tcARIsew7pabTbe3CHliWmwdwavp63NwhWAU3BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bgaxpav/; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714964950; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=JRlGN2mptAj2Ko2vwpIZlWC6irfwwV0f+NG6BmfBNHY=;
+	b=bgaxpav/wihm7Q+DiZbibH3iZqW2kjycp6gQ/BBD6iLWEdIntHgo502lqiIO+3MOmIM+vcrMB/MqMFItlLdItMDwYeGLQrPdzuACng7Dl5pWwKA1HRjQ5nsIZhaLt8JFRgWlz6WbIPo1TAP62MbTsa2sPov+K6zRZYSHyr+CC/8=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W5rA8vh_1714964947;
+Received: from 30.221.146.217(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W5rA8vh_1714964947)
+          by smtp.aliyun-inc.com;
+          Mon, 06 May 2024 11:09:09 +0800
+Message-ID: <625acc9e-b871-4912-965e-82fe3f9228d7@linux.alibaba.com>
+Date: Mon, 6 May 2024 11:09:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/12] cachefiles: never get a new anon fd if ondemand_id
+ is valid
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-9-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240424033916.2748488-9-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> On Thu, May 02, 2024 at 05:18:46PM +0800, Justin Lai wrote:
-> > 1. Add the RTASE entry in the Kconfig.
-> > 2. Add the CONFIG_RTASE entry in the Makefile.
-> >
-> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> > ---
-> >  drivers/net/ethernet/realtek/Kconfig  | 17 +++++++++++++++++
-> > drivers/net/ethernet/realtek/Makefile |  1 +
-> >  2 files changed, 18 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/realtek/Kconfig
-> > b/drivers/net/ethernet/realtek/Kconfig
-> > index 93d9df55b361..57ef924deebd 100644
-> > --- a/drivers/net/ethernet/realtek/Kconfig
-> > +++ b/drivers/net/ethernet/realtek/Kconfig
-> > @@ -113,4 +113,21 @@ config R8169
-> >         To compile this driver as a module, choose M here: the module
-> >         will be called r8169.  This is recommended.
-> >
-> > +config RTASE
-> > +     tristate "Realtek Automotive Switch
-> 9054/9068/9072/9075/9068/9071 PCIe Interface support"
-> > +     depends on PCI
-> > +     select CRC32
->=20
-> Hi Justin,
->=20
-> I believe that you also need:
->=20
->         select PAGE_POOL
->=20
-> As the driver uses page_pool_alloc_pages()
->=20
-> FWIIW, I observed this when using a config based on make tinyconfig with =
-PCI
-> and NET enabled, all WiFi drivers disabled, and only and only this Ethern=
-et
-> driver enabled.
 
-Thank you for your feedback, I will modify this part.
->=20
-> > +     help
-> > +       Say Y here if you have a Realtek Ethernet adapter belonging to
-> > +       the following families:
-> > +       RTL9054 5GBit Ethernet
-> > +       RTL9068 5GBit Ethernet
-> > +       RTL9072 5GBit Ethernet
-> > +       RTL9075 5GBit Ethernet
-> > +       RTL9068 5GBit Ethernet
-> > +       RTL9071 5GBit Ethernet
-> > +
-> > +       To compile this driver as a module, choose M here: the module
-> > +       will be called rtase. This is recommended.
->=20
-> The advice above to chose Y and M seem to conflict.
-> Perhaps this can be edited somehow.
->=20
 
-I will confirm and modify this part again, thank you for your suggestion.
-> > +
-> >  endif # NET_VENDOR_REALTEK
-> > diff --git a/drivers/net/ethernet/realtek/Makefile
-> > b/drivers/net/ethernet/realtek/Makefile
-> > index 2e1d78b106b0..0c1c16f63e9a 100644
-> > --- a/drivers/net/ethernet/realtek/Makefile
-> > +++ b/drivers/net/ethernet/realtek/Makefile
-> > @@ -8,3 +8,4 @@ obj-$(CONFIG_8139TOO) +=3D 8139too.o
-> >  obj-$(CONFIG_ATP) +=3D atp.o
-> >  r8169-objs +=3D r8169_main.o r8169_firmware.o r8169_phy_config.o
-> >  obj-$(CONFIG_R8169) +=3D r8169.o
-> > +obj-$(CONFIG_RTASE) +=3D rtase/
-> > --
-> > 2.34.1
-> >
-> >
+On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Now every time the daemon reads an open request, it requests a new anon fd
+> and ondemand_id. With the introduction of "restore", it is possible to read
+> the same open request more than once, and therefore have multiple anon fd's
+> for the same object.
+> 
+> To avoid this, allocate a new anon fd only if no anon fd has been allocated
+> (ondemand_id == 0) or if the previously allocated anon fd has been closed
+> (ondemand_id == -1). Returns an error if ondemand_id is valid, letting the
+> daemon know that the current userland restore logic is abnormal and needs
+> to be checked.
+
+I have no obvious preference on strengthening this on kernel side or
+not.  Could you explain more about what will happen if the daemon gets
+several distinct anon fd corresponding to one same object?  IMHO the
+daemon should expect the side effect if it issues a 'restore' command
+when the daemon doesn't crash.  IOW, it's something that shall be fixed
+or managed either on the kernel side, or on the daemon side.
+
+> ---
+>  fs/cachefiles/ondemand.c | 34 ++++++++++++++++++++++++++++------
+>  1 file changed, 28 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index b5e6a851ef04..0cf63bfedc9e 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -14,11 +14,18 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
+>  					  struct file *file)
+>  {
+>  	struct cachefiles_object *object = file->private_data;
+> -	struct cachefiles_cache *cache = object->volume->cache;
+> -	struct cachefiles_ondemand_info *info = object->ondemand;
+> +	struct cachefiles_cache *cache;
+> +	struct cachefiles_ondemand_info *info;
+>  	int object_id;
+>  	struct cachefiles_req *req;
+> -	XA_STATE(xas, &cache->reqs, 0);
+> +	XA_STATE(xas, NULL, 0);
+> +
+> +	if (!object)
+> +		return 0;
+> +
+> +	info = object->ondemand;
+> +	cache = object->volume->cache;
+> +	xas.xa = &cache->reqs;
+>  
+>  	xa_lock(&cache->reqs);
+>  	spin_lock(&info->lock);
+> @@ -269,22 +276,39 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>  		goto err_put_fd;
+>  	}
+>  
+> +	spin_lock(&object->ondemand->lock);
+> +	if (object->ondemand->ondemand_id > 0) {
+> +		spin_unlock(&object->ondemand->lock);
+> +		ret = -EEXIST;
+> +		/* Avoid performing cachefiles_ondemand_fd_release(). */
+> +		file->private_data = NULL;
+> +		goto err_put_file;
+> +	}
+> +
+>  	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+>  	fd_install(fd, file);
+>  
+>  	load = (void *)req->msg.data;
+>  	load->fd = fd;
+>  	object->ondemand->ondemand_id = object_id;
+> +	spin_unlock(&object->ondemand->lock);
+>  
+>  	cachefiles_get_unbind_pincount(cache);
+>  	trace_cachefiles_ondemand_open(object, &req->msg, load);
+>  	return 0;
+>  
+> +err_put_file:
+> +	fput(file);
+>  err_put_fd:
+>  	put_unused_fd(fd);
+>  err_free_id:
+>  	xa_erase(&cache->ondemand_ids, object_id);
+>  err:
+> +	spin_lock(&object->ondemand->lock);
+> +	/* Avoid marking an opened object as closed. */
+> +	if (object->ondemand->ondemand_id <= 0)
+> +		cachefiles_ondemand_set_object_close(object);
+> +	spin_unlock(&object->ondemand->lock);
+>  	cachefiles_put_object(object, cachefiles_obj_put_ondemand_fd);
+>  	return ret;
+>  }
+> @@ -367,10 +391,8 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>  
+>  	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>  		ret = cachefiles_ondemand_get_fd(req);
+> -		if (ret) {
+> -			cachefiles_ondemand_set_object_close(req->object);
+> +		if (ret)
+>  			goto out;
+> -		}
+>  	}
+>  
+>  	msg->msg_id = xas.xa_index;
+
+-- 
+Thanks,
+Jingbo
 
