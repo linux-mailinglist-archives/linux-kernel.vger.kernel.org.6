@@ -1,97 +1,82 @@
-Return-Path: <linux-kernel+bounces-170078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAD38BD198
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 845F38BD19C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF2481C21D25
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A856A1C21EA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A00155341;
-	Mon,  6 May 2024 15:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F337B15538A;
+	Mon,  6 May 2024 15:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cQFpOZH5"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BU5s3pTv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14BB15535E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BBF1DDD1
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715009796; cv=none; b=s4w9GcY0BGGIk39pWB0t4/SmTDxN0WPdbwmda0YqVKw/XW1SZi9WKtvgjj474iCot/f84cQMd8sIwGiEnShWjFbLIDuZqG0wJYuyOUFcXog53YCA6mZg9x9ffoVElEF3mp5YSNHKDGxuNosFJXkYeAsPIArbe6041i4TxePZc3s=
+	t=1715009849; cv=none; b=C0O7Cjy1E+ComYU2Pk+6c5pkK1dhfumP02aPXFu2Xr8tqpfwBHnqpt+PhKqEI8r5y5A7+6AI4rc/xPRKwFdMBzzZ0sGdrJTd7bOQJ7lqzY+8X9cGQEUJEtd+vZU8ZN3dey6Rg1rSSztZdAZL0z6Wrlh8/ILAuXxQgp74gCjc7Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715009796; c=relaxed/simple;
-	bh=okolZHTegM6x+ttsho59LkzT+8+G6g01I/qGFOeSb1A=;
+	s=arc-20240116; t=1715009849; c=relaxed/simple;
+	bh=u4Wbi+kWAVVOkhZHAsKkhw70PBDqYs/mFsVXLQcsk3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTK5+oqpoOWnnL9glmWMoJdtwaYRa7EY9kmsuvCjq39Z9LcIP8waZ5Hf2d7yFD5UCKnNsj1qUpwBW53RBxoOMVzzNSG3qOJY7IW/aA+y++ji7gXu3NX7zzQsLnyuwd7ei7CUOryw0QO9ufx1Mms0qCxNXyJtzcO1ScEZV0KTAVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cQFpOZH5; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41b79451153so17563485e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:36:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715009793; x=1715614593; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IgNpmP+KnJqaBxDJdkx9mmwg/WMduzGDywLz1udliyw=;
-        b=cQFpOZH5Xpzym7IOsT74wRI3xbCyAlwMdjKhDrUwSQkh3C6YmrBWl84NQNRZmfINMs
-         JUkE26V2JcrNSE5moXI+qSVg3YcsTvo9jXI6QLvk8FNOuOeAw6A6o+L8HjozxigwyYp/
-         k4k1wYHcFVbmvO0DJlZNG3Q8s8KWLlY5n+MpkhY7lPwIcWlPOixgRrQXxFpnPU7Nburh
-         Gj3SCMhK2k+yLHioZ372OOb43rKXJ8I4nw6RORWJGV1tToFgzHdCLYx5tLw0w+Yj9o4L
-         riur0ex102/RYl7UW8fwIdSUVGbC1GBT10VyLWXDchWzg+ObsTMF8l9HmFXmiyS0PHLp
-         ZDeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715009793; x=1715614593;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IgNpmP+KnJqaBxDJdkx9mmwg/WMduzGDywLz1udliyw=;
-        b=LL1PwlUI2lvc4jf1KUAAl3LKK4WiAY8hCWgd+FqU9VhllfFGG1GYrQUkOGbeqUnv4p
-         enzoxOQ7CqJLDHhN0dPHkc8v0G9rFu/llPNSSk/af80AnNoqj8Zw8Br2YiPjqDAVa5mN
-         NpMV0vXO9J4k0vZ4rl0ScjKmd02sLupd11xVNu+PqVLMz0ocUP51oOsID/dPr/fbm660
-         bAL73iHaY57KINZsH1S3TE0/oykqgrB0bIxa7Gh0oYtH39Jx5syIBemHv42nEAlqAwiY
-         Vld0k8bKKG07EcoqUUxbnLHs1WF7PZzkD7d5KofKZ8kHbbcS0wNpEaCJdqgThHltwMDb
-         QB6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUq1thKuNbq3O+BVFIP1Q3tCxl8oJmAvIPNI0EAn3ocyHlOrYLwBJHNgf/6ha8UPwJYapsw9aoWkqb0+xoVmuxMTjIp3MDQjbj81XTQ
-X-Gm-Message-State: AOJu0YzZrQy8jowq69JHJoiMnJeC4EeZjnTl5NXPXsmiIJt15Pm3C8Nb
-	pCz12KxcjcQ9OnBT0Cs0B1eFmSrcTC/89gLGScaKAiGpRiMkpI1EJqxUQT/Hy/g=
-X-Google-Smtp-Source: AGHT+IGbZTNMLu6hbhyt1bmjEn3Jajf73supUMbIrefeBp7HlOrwI13gU2mgVw4zZHXxgYrif3Od3g==
-X-Received: by 2002:a5d:5742:0:b0:34e:3cb3:6085 with SMTP id q2-20020a5d5742000000b0034e3cb36085mr7080161wrw.62.1715009793016;
-        Mon, 06 May 2024 08:36:33 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id k3-20020adff5c3000000b00349a5b8eba6sm10895265wrp.34.2024.05.06.08.36.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 08:36:32 -0700 (PDT)
-Date: Mon, 6 May 2024 17:36:30 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: yoann.congal@smile.fr
-Cc: linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	x86@kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Borislav Petkov <bp@alien8.de>, Darren Hart <dvhart@infradead.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Subject: Re: [PATCH RESEND v6 3/3] printk: Remove redundant CONFIG_BASE_FULL
-Message-ID: <Zjj4_hWkz9-qHnWe@pathway.suse.cz>
-References: <20240505080343.1471198-1-yoann.congal@smile.fr>
- <20240505080343.1471198-4-yoann.congal@smile.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMZl8txZHo6GQ6cDVWxjT4oZrLLmg9DB8u21hogdtjbbgyoL91EaTF++0vNKryjSxURd0YMRit01yU+lFvWo/evc055X29HDHNAr0ThZXhaTcvOV0DvhSHzhTZMAcuYrGKx68MSCdbCgdBXaE6sI5sSyHXVgm54BtZl+PUhrSo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BU5s3pTv; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715009846; x=1746545846;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u4Wbi+kWAVVOkhZHAsKkhw70PBDqYs/mFsVXLQcsk3I=;
+  b=BU5s3pTvTQbvLxo13/pKxVagcRlA+QY6JLZ74zpPHpL5XcQggQczNvVv
+   pgBZ2tFuqUhhhWAUmRCPeiGMCAGqVoxqcbCVTYOtGOqzKebwCIze8bufS
+   q3e8WrUweySQBGxYgYaYbym23o5ycUdhszd6TcgxEDNheekGqY/LZfyYc
+   2Z3put3m3QJTyJXaUGnjfq+V4F89MVfP8t0kI+opoxBWTwqty4077bjMa
+   qj6UmdFQ8nhoHZGJVvyW1G9ZJ5bHBAoKWwL6ngUeCnxWBhOao39Gzf3ZD
+   gCwmLaeRgWxmLramyBsMp2N89kwn4A1WKJ25cDk+hTW4XvzZqRUAc/VLw
+   Q==;
+X-CSE-ConnectionGUID: /4zh8ZKkTlSpWN/Khr8dEg==
+X-CSE-MsgGUID: WV4HnkVDRuObGl7iATKYKw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10608288"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="10608288"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 08:37:26 -0700
+X-CSE-ConnectionGUID: 3HZKYHL6T1iq+bktUHzxsg==
+X-CSE-MsgGUID: Qu6O7tEHQ1+L0dn0IGA/aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="59384212"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 06 May 2024 08:37:21 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 9D7D9161; Mon, 06 May 2024 18:37:19 +0300 (EEST)
+Date: Mon, 6 May 2024 18:37:19 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Elena Reshetova <elena.reshetova@intel.com>, 
+	Jun Nakajima <jun.nakajima@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish" <ashish.kalra@amd.com>, 
+	Sean Christopherson <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>, 
+	kexec@lists.infradead.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv10 10/18] x86/tdx: Convert shared memory back to private
+ on kexec
+Message-ID: <bpmagk7v6swftzjjpchplzjwgx3pbdqzklcxybrmrhprqizk45@lxmvva42z36g>
+References: <20240409113010.465412-1-kirill.shutemov@linux.intel.com>
+ <20240409113010.465412-11-kirill.shutemov@linux.intel.com>
+ <20240505121319.GAZjd337gHC0uhk6aM@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,30 +85,145 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240505080343.1471198-4-yoann.congal@smile.fr>
+In-Reply-To: <20240505121319.GAZjd337gHC0uhk6aM@fat_crate.local>
 
-On Sun 2024-05-05 10:03:43, yoann.congal@smile.fr wrote:
-> From: Yoann Congal <yoann.congal@smile.fr>
+On Sun, May 05, 2024 at 02:13:19PM +0200, Borislav Petkov wrote:
+> On Tue, Apr 09, 2024 at 02:30:02PM +0300, Kirill A. Shutemov wrote:
+> > TDX guests allocate shared buffers to perform I/O. It is done by
+> > allocating pages normally from the buddy allocator and converting them
+> > to shared with set_memory_decrypted().
+> > 
+> > The second kernel has no idea what memory is converted this way. It only
 > 
-> CONFIG_BASE_FULL is equivalent to !CONFIG_BASE_SMALL and is enabled by
-> default: CONFIG_BASE_SMALL is the special case to take care of.
-> So, remove CONFIG_BASE_FULL and move the config choice to
-> CONFIG_BASE_SMALL (which defaults to 'n')
+> "The kexec-ed kernel..."
 > 
-> For defconfigs explicitely disabling BASE_FULL, explicitely enable
-> BASE_SMALL.
-> For defconfigs explicitely enabling BASE_FULL, drop it as it is the
-> default.
+> is more precise.
+
+"second kernel" is nomenclature kexec folks are using, but okay.
+
+
+> > @@ -831,6 +833,73 @@ static int tdx_enc_status_change_finish(unsigned long vaddr, int numpages,
+> >  	return 0;
+> >  }
+> >  
+> > +/* Stop new private<->shared conversions */
+> > +static void tdx_kexec_stop_conversion(bool crash)
+> > +{
+> > +	/*
+> > +	 * Crash kernel reaches here with interrupts disabled: can't wait for
+> > +	 * conversions to finish.
+> > +	 *
+> > +	 * If race happened, just report and proceed.
+> > +	 */
+> > +	bool wait_for_lock = !crash;
 > 
-> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+> You don't need that bool - use crash.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Dave suggested the variable for documentation purposes.
 
-Best Regards,
-Petr
+https://lore.kernel.org/all/0b70ee1e-4bb5-4867-9378-f5723ca091d5@intel.com
 
-PS: I am going to take the series via the printk tree. I am sorry
-    for the delay. I somehow expected that it would go via some
-    arch tree...
-    
+I'm fine either way.
+
+> > +
+> > +	addr = PAGE_OFFSET;
+> > +	end  = PAGE_OFFSET + get_max_mapped();
+> > +
+> > +	while (addr < end) {
+> > +		unsigned long size;
+> > +		unsigned int level;
+> > +		pte_t *pte;
+> > +
+> > +		pte = lookup_address(addr, &level);
+> > +		size = page_level_size(level);
+> > +
+> > +		if (pte && pte_decrypted(*pte)) {
+> > +			int pages = size / PAGE_SIZE;
+> > +
+> > +			/*
+> > +			 * Touching memory with shared bit set triggers implicit
+> > +			 * conversion to shared.
+> > +			 *
+> > +			 * Make sure nobody touches the shared range from
+> > +			 * now on.
+> > +			 */
+> 
+> lockdep_assert_irqs_disabled() ?
+
+Yep.
+
+> > +			set_pte(pte, __pte(0));
+> > +
+> > +			if (!tdx_enc_status_changed(addr, pages, true)) {
+> > +				pr_err("Failed to unshare range %#lx-%#lx\n",
+> > +				       addr, addr + size);
+> 
+> Why are we printing something here if we're not really acting up on it?
+> 
+> Who should care here?
+
+The only thing we can do at this point on failure is panic. It think
+it is reasonable to proceed, especially for crash case.
+
+The print leaves a trace in the log to give a clue for debug.
+
+One possible reason for the failure is if kdump raced with memory
+conversion. In this case shared bit in page table got set (or not cleared
+form shared->private conversion), but the page is actually private. So this
+failure is not going to affect the kexec'ed kernel.
+
+> > +static DECLARE_RWSEM(mem_enc_lock);
+> > +
+> > +/*
+> > + * Stop new private<->shared conversions.
+> > + *
+> > + * Taking the exclusive mem_enc_lock waits for in-flight conversions to complete.
+> > + * The lock is not released to prevent new conversions from being started.
+> > + *
+> > + * If sleep is not allowed, as in a crash scenario, try to take the lock.
+> > + * Failure indicates that there is a race with the conversion.
+> > + */
+> > +bool stop_memory_enc_conversion(bool wait)
+> 
+> This is a global function which means, it should be called:
+> 
+> set_memory_enc_stop_conversion()
+> 
+> or so. With the proper prefix and so on.
+
+Sure.
+
+> > +{
+> > +	if (!wait)
+> > +		return down_write_trylock(&mem_enc_lock);
+> > +
+> > +	down_write(&mem_enc_lock);
+> > +
+> > +	return true;
+> > +}
+> > +
+> >  static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+> >  {
+> > -	if (cc_platform_has(CC_ATTR_MEM_ENCRYPT))
+> > -		return __set_memory_enc_pgtable(addr, numpages, enc);
+> > +	int ret = 0;
+> >  
+> > -	return 0;
+> > +	if (cc_platform_has(CC_ATTR_MEM_ENCRYPT)) {
+> > +		if (!down_read_trylock(&mem_enc_lock))
+> > +			return -EBUSY;
+> 
+> This function is called on SEV* and HyperV and the respective folks need
+> to at least ack this new approach.
+> 
+> I see Ashish's patch adds the respective stuff:
+> 
+> https://lore.kernel.org/r/c24516a4636a36d57186ea90ae26495b3c1cfb8b.1714148366.git.ashish.kalra@amd.com
+> 
+> which leaves HyperV. You'd need to Cc them on the next submission.
+
+Okay.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
