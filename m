@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-170000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B698BD071
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B218BD070
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F97289889
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D23A28986D
 	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6130115351B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA3D153519;
 	Mon,  6 May 2024 14:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rSRwuZut"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FLCl/YV3"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1302D152DF1
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254B5152E19;
+	Mon,  6 May 2024 14:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006319; cv=none; b=MYlrK/XiEWCVpT4OeLoMWRIygytZ9ckv2mYsqYcf5Ysqm4hy7skQKPN+FKogeN3ezv814+HB+/0vALHk+TubQtEHSxsLfBY6Z6f4fq1B8xe22fTeqRNUNC7SscqiWjJmo+4txWmj3MA9FIIiHIaZ/FQlH5NL9Hh4ycjGMyfsSi0=
+	t=1715006319; cv=none; b=e/kw+f2x7kZQUUkkvxIfsOnvjndCITSCg5GmU5QEI/ezqVwgvm6IcVDUEFWzjpBeeCrjoG2COhnZ7O31Xl/GAbutWlfxMZCrLPnyfozmCqTKxGk+TzU28MdRUkePrjuh40yvnPnoeW7GH/c4bMrYpXcTLfOCWL/f8z2ENVeQMz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715006319; c=relaxed/simple;
-	bh=xL+slvlMHKNXO7juHQ1bTxdfrJhU58SOc3JoQytqDE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qiyVz0uDAoqpoHnfaNSKMf3C4/BVRHnVVR3HfGekSMf+o6map44m43rYdKAeIT8PeBunDV2/HDQgB4A4Qn01FYn/MFTK1rnpTDxF+nt7avmfGy4r7SJIcQlTMw8lnQpg6Bnrr5hS1ldv98eY1pNrr4+PXwkb9z4c1blyjV7lsCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rSRwuZut; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59a0e4b773so461848766b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715006316; x=1715611116; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=102JG5apXBGrIa57cE4M29Xyb7pBgwDBKRD4HbgTxuc=;
-        b=rSRwuZutZCX7eg4MS59Kx0nsKunFdsvDbBXgMEXJu/6D4BgdLLXKhw3FLjPXYFbquM
-         6rHTlxM4IWoXWXhV2Uv0bILHiwz4XjjNZVFMq0k+SJmYqNNheOpOwR2Rp1lRiy2eUEd0
-         4u0FHEgiy4AtRTMTwYds0tUslLUeky7EwFVMdeI4SmPKcUn9hvszSLmUtF8SYCGFPZUl
-         12KMFyzQHV07itlpvdalGpIypc0Flcl+EwdGdWpDnyCdhlH3bk4/g2QtWhBbxeu6oqv/
-         RQsqqDywOlzoRV7b6v645Zv0ydgLAXJRByhuE9Zde+V2IeLJvwQGoMoieEOKNgf0ZYR5
-         oU1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715006316; x=1715611116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=102JG5apXBGrIa57cE4M29Xyb7pBgwDBKRD4HbgTxuc=;
-        b=P6WUERNAkkJ5bsossVxf8BAMSDregeb7IcbpBtW8fgZWMRddbL668l5tYkg/mYY2Bs
-         ge5lI6sscgcO+2MtLLiitUOktAuXr3MqRtku+cI1qnHAqEiiple8IrXgs2Ws9GkFUvGm
-         syIS4e/iRn7DfEIdKGxKKb+Kcb9hW3lX0LtktTDYSDhxBX1T4VUwNBQpE4nZobxqMmfk
-         FAETGbh7TZDD1/Lo79/vrhBi3H3f/VxhlwTQnNKeBiL8vGfWtUi2aSyBbD9WrJrrqjPa
-         S0Rd08d1J+z5u+8cbaq9akojpuFXKgOy85nXiMbd401GHMarQmFlyk0gi3EukhoSDUEd
-         q34A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWPQ/6mM50A+s42QHwQGC3rxPJ03crGbVM6q8fzTMImnQiXE/HgmTJNpCG3V6aQtAZnPjjR+kH78t16ewbrMHUQ9JNeLYJPfwMOHJ2
-X-Gm-Message-State: AOJu0Yw0z6UMmz81nKx6731xt7zPrvDu0mI4Vc4KsUNX497HE2FG7S1I
-	nhy/3NMIpk8b59eHtBc0HparLxfu6p3h5ZtXm2saZFE9LfU3ADbmKCyXHMXgeNhd2yo+cZAbrrp
-	ZG5TkAlWz0Lu9eTrWkcpEKT4Z441Me/uUpvuN
-X-Google-Smtp-Source: AGHT+IFFyrHpfeF9cVImvJkE9ObGZRWKkpGXrbBpT6xCxnHxBmUGcgIO91KRtNxfWTXkngygP76Edx6YtUr+eGGWeKw=
-X-Received: by 2002:a17:907:100a:b0:a59:a727:1e8b with SMTP id
- ox10-20020a170907100a00b00a59a7271e8bmr3866049ejb.1.1715006316077; Mon, 06
- May 2024 07:38:36 -0700 (PDT)
+	bh=KGPDfZwI4ubFEcvrrWnuUTNMJQCXV8Ilj2eLN3CMFYk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TRjnL7VxohJLzfq+VCQtLiPi/rrPYtrVERfXWFD3xz8Wa70KdyLoS4caPsR3NwESPwFE146389cCe+UeKKQyjp53zlms3448G8eBeRi/acLFShmgzHJSOy+8jtLzatejeidalMGZYz3pXrJvQjtWTes19ZcIssnsM1nyABPigL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FLCl/YV3; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715006316;
+	bh=KGPDfZwI4ubFEcvrrWnuUTNMJQCXV8Ilj2eLN3CMFYk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=FLCl/YV3TJSICHUDZL5pxebArkcfqWznV0LA/FTCX5sNREJSSLO+gHG07AcCkfvdT
+	 0gmBg4LSzEFFoKzCVkPbvoqQhCn0x4nwpYtW5jUET+ib7no9Lfb8ZBjosbe08r+Z9P
+	 u2jBplgHw9tqT8Rv2O6HpGlmrrbRHqt/cYnnBlBtvqCgegZsH+JbqvYhW2icaAS+nh
+	 bS3YheixnaWj3WY1SGzkuoR6ZN0VchuaBnY3VWEIXJtP1pCbyPUUWFjNFM37cZsLHl
+	 szq8g7lx9zv3fJdwBjJsg7AUyEj9BhB/mWbaoi1r9QUUgcNvnX6FhZSwEszzRVjgpk
+	 3Wa9VzavpqEVw==
+Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: benjamin.gaignard)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BC0FA3781107;
+	Mon,  6 May 2024 14:38:35 +0000 (UTC)
+Message-ID: <3dde932a-1b62-4824-a9e0-722f82faaaa6@collabora.com>
+Date: Mon, 6 May 2024 16:38:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240418012835.3360429-1-yosryahmed@google.com>
-In-Reply-To: <20240418012835.3360429-1-yosryahmed@google.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 6 May 2024 07:37:57 -0700
-Message-ID: <CAJD7tkZmDQi2HBOxe5u-Lji88NDuZKCQ_=N_O5aE1nq23aUPqw@mail.gmail.com>
-Subject: Re: [PATCH tip:x86/mm v3 1/3] x86/mm: Use IPIs to synchronize LAM enablement
-To: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: verisilicon: Fix auxiliary buffers allocation size
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>, ezequiel@vanguardiasur.com.ar,
+ p.zabel@pengutronix.de, mchehab@kernel.org, heiko@sntech.de
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+References: <20240328093439.18712-1-benjamin.gaignard@collabora.com>
+ <20240328093439.18712-2-benjamin.gaignard@collabora.com>
+ <c8de69fc6cb6029e96f3e6b6c1eeb1de9304ccff.camel@ndufresne.ca>
+ <2a3b897a-71f7-4a94-a13c-1aa8b2d96e78@collabora.com>
+Content-Language: en-US
+In-Reply-To: <2a3b897a-71f7-4a94-a13c-1aa8b2d96e78@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 17, 2024 at 6:28=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> LAM can only be enabled when a process is single-threaded.  But _kernel_
-> threads can temporarily use a single-threaded process's mm.
->
-> If LAM is enabled by a userspace process while a kthread is using its
-> mm, the kthread will not observe LAM enablement (i.e.  LAM will be
-> disabled in CR3). This could be fine for the kthread itself, as LAM only
-> affects userspace addresses. However, if the kthread context switches to
-> a thread in the same userspace process, CR3 may or may not be updated
-> because the mm_struct doesn't change (based on pending TLB flushes). If
-> CR3 is not updated, the userspace thread will run incorrectly with LAM
-> disabled, which may cause page faults when using tagged addresses.
-> Example scenario:
->
-> CPU 1                                   CPU 2
-> /* kthread */
-> kthread_use_mm()
->                                         /* user thread */
->                                         prctl_enable_tagged_addr()
->                                         /* LAM enabled on CPU 2 */
-> /* LAM disabled on CPU 1 */
->                                         context_switch() /* to CPU 1 */
-> /* Switching to user thread */
-> switch_mm_irqs_off()
-> /* CR3 not updated */
-> /* LAM is still disabled on CPU 1 */
->
-> Synchronize LAM enablement by sending an IPI from
-> prctl_enable_tagged_addr() to all CPUs running with the mm_struct to
-> enable LAM. This makes sure LAM is enabled on CPU 1 in the above
-> scenario before prctl_enable_tagged_addr() returns and userspace starts
-> using tagged addresses, and before it's possible to run the userspace
-> process on CPU 1.
->
-> In switch_mm_irqs_off(), move reading the LAM mask until after
-> mm_cpumask() is updated. This ensures that if an outdated LAM mask is
-> written to CR3, an IPI is received to update it right after IRQs are
-> re-enabled.
->
-> Fixes: 82721d8b25d7 ("x86/mm: Handle LAM on context switch")
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-The merge window is approaching, is this patchset ready to be picked
-up? Is any further action needed?
+Le 05/04/2024 à 10:13, Benjamin Gaignard a écrit :
+>
+> Le 04/04/2024 à 20:00, Nicolas Dufresne a écrit :
+>> Hi,
+>>
+>> Le jeudi 28 mars 2024 à 10:34 +0100, Benjamin Gaignard a écrit :
+>>> Use v4l2_av1_tile_info->tile_cols to know the number of colons
+>>> in the frame. This made auxiliary buffers meory size computation
+>>> more accurate.
+>> Seems like this is potentially going to impact some conformance 
+>> tests. Anything
+>> to report from fluster results ?
+>
+> Flusters AV1 score is the same.
+> Maybe we have been lucky when allocating memory until now.
+> That said the test stream have 8 tile columns which is unusual but 
+> admitted by AV1 specifications.
+
+Gentle ping,
+Regards,
+Benjamin
+
+>
+> Benjamin
+>
+>>
+>> Nicolas
+>>
+>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>>> Fixes: 727a400686a2 ("media: verisilicon: Add Rockchip AV1 decoder")
+>>> ---
+>>> .../media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c | 3 ++-
+>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git 
+>>> a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c 
+>>> b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+>>> index cc4483857489..65e8f2d07400 100644
+>>> --- a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+>>> +++ b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+>>> @@ -257,7 +257,8 @@ static int 
+>>> rockchip_vpu981_av1_dec_tiles_reallocate(struct hantro_ctx *ctx)
+>>>       struct hantro_dev *vpu = ctx->dev;
+>>>       struct hantro_av1_dec_hw_ctx *av1_dec = &ctx->av1_dec;
+>>>       struct hantro_av1_dec_ctrls *ctrls = &av1_dec->ctrls;
+>>> -    unsigned int num_tile_cols = 1 << 
+>>> ctrls->tile_group_entry->tile_col;
+>>> +    const struct v4l2_av1_tile_info *tile_info = 
+>>> &ctrls->frame->tile_info;
+>>> +    unsigned int num_tile_cols = tile_info->tile_cols;
+>>>       unsigned int height = ALIGN(ctrls->frame->frame_height_minus_1 
+>>> + 1, 64);
+>>>       unsigned int height_in_sb = height / 64;
+>>>       unsigned int stripe_num = ((height + 8) + 63) / 64;
+>>
 
