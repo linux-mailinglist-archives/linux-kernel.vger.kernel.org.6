@@ -1,90 +1,117 @@
-Return-Path: <linux-kernel+bounces-169527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104AF8BC9F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:48:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564968BC9BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC4A1C20CF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 112BD281293
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706B61422B4;
-	Mon,  6 May 2024 08:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1A31411C5;
+	Mon,  6 May 2024 08:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PJAc57vG"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K04aJ6ld"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FC01419BC;
-	Mon,  6 May 2024 08:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA4D42052;
+	Mon,  6 May 2024 08:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714985286; cv=none; b=W8qpJlPYQH8R1sbIy9nrieeSb8B8PtdLZLDEBdhGAzucn6bUJdRpDQLUZTVmBroA+Eqr8ENcIVAzxCY8uoayHpBHW+CBqRvO28/GAKuEz5vgoFf/cPMMrhh1bl1FI68hYyq8VK21gP1Q4rXlwf0QQQoXajmWmgIOxaCyP6WaWZs=
+	t=1714984825; cv=none; b=WS/Z/9oP7w56K5uM0XGhlHXuMm8zqv7Fj8KbHqcVPJmcdtisIxC2jKDEKQNigIZr8EMJ6xHfxjnAYWLzAAUuKkN4wELFKDQ52ItR/Fb36aK6LukrrlEABYPytLbg8a/OCSVltNHN62CqlgqkLG/1TKBOvpkokkA6qvQbCBG6NTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714985286; c=relaxed/simple;
-	bh=qec4JOlCq2MSVwUU+8VRmsKAw88MzHZzy9yA4DQOIHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BXNe5uNnphl6Ze3Ue/14yb8LjTEwJBsWepnar3L+FV4BX4PWZOccb4hO2b5d52YqIOZaI3DngxZwmcUSpfTDswFAnVCritPCxAvX2pgWBI9vzIkGvy/16AiuE9Pq6NwZCtgL93V7iIAb3Uun8Q0+2lntsV34bP1seFsY/KMt0ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PJAc57vG; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 47A84FF80D;
-	Mon,  6 May 2024 08:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1714985276;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qec4JOlCq2MSVwUU+8VRmsKAw88MzHZzy9yA4DQOIHs=;
-	b=PJAc57vGVhbV9olxuDC0j3hEPIgju5U6MTQ6IIAoX0CMlsroo8tcN+BdsZCA+A4G526nxI
-	7DfJNRfmkRJP+Hod/+t0vf+P8DNxHLtvPdqs29gr3XCkhL4XNIvLTiwmmJh8OWVWcMaule
-	4avCb8cj0JtGuNztJMWFh6PO/4RDZ9WnmRSF5NxnCqBR2guX8TceIoL3osnPgcNraPs2ei
-	JuxUqoFdobsXA/ngbkJZp+bqnBvcnl3X+mTCmK69l5bhJi/SDvZP2GJW2i/9ClD/ZLktSh
-	h4nzCt0+AnNa+ewY5wWoZjuSlbPPIjkiE8/FzBObfRkilGJvGzjdDcuPfYyhNQ==
-Date: Mon, 6 May 2024 10:47:53 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
- <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
- <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <oxffffaa@gmail.com>, <kernel@sberdevices.ru>
-Subject: Re: [PATCH v5 2/2] mtd: rawnand: meson: support R/W mode for boot
- ROM
-Message-ID: <20240506104753.25e5f8cd@xps-13>
-In-Reply-To: <2e5b39a1-ffe6-1186-2ce7-51b61c5006d3@salutedevices.com>
-References: <20240416085101.740458-1-avkrasnov@salutedevices.com>
-	<20240416085101.740458-3-avkrasnov@salutedevices.com>
-	<2e5b39a1-ffe6-1186-2ce7-51b61c5006d3@salutedevices.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714984825; c=relaxed/simple;
+	bh=IJfokw2N7A5py7k8ePC8gToDa+6No8AkVv40u96rl0U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WtPMYClhr1GB3titST2PluY4nVUV19mhGgq6uVU11oYFVfpYLZxGDCG9HtgRKR0zkzDACoiOVYnupxm4/pkxezXrUjWrUocNz+3WQZ8vLPjAaTTcmuEwfYvva+Ps56aFQiIR+nOuMYik+W0HCOoAtq2bx4hgSGdnsgxKjVTDuk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K04aJ6ld; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714984824; x=1746520824;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IJfokw2N7A5py7k8ePC8gToDa+6No8AkVv40u96rl0U=;
+  b=K04aJ6ld41uVsmR3Esi0y6TqzM7C6JfAuiKaHSnk5f8xyWBZtPjdY+nR
+   UIybn3btWd6KvtkYQG6oNx9Ysgi5gGAbleXtCOWIPmphR9RooTwMLEI76
+   10E/bwmQR02Q7+WgBpiiunIyiJAJIx2i394zOvk7LQ2MY4KnkWmFtg3Pl
+   xpN1Jjc+KfrWnqp68VnTy/7FS6d0VntLPEx62wEKky6kkgr/349bSxTrA
+   smMbZSN+yGMtLujoAs8YG8GykYgslPzZ13Jcsj/VobE761JwicMrMu94t
+   aXFUN7D7EOBfUVaO3Wsi0vkpLQu4npPVrTBPc6LUOi49lixfQISjiJrRj
+   A==;
+X-CSE-ConnectionGUID: 6ZfepsbERpir6OrjInoF6w==
+X-CSE-MsgGUID: pfU8bws0TfifXgWD2VIfig==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10562711"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="10562711"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 01:40:23 -0700
+X-CSE-ConnectionGUID: bBKWrYWJRkaIUPF8fPgWdA==
+X-CSE-MsgGUID: 6R2UT/2ARYKIXMmUR2xudg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="32604461"
+Received: from zwan2-desk1.sh.intel.com ([10.239.160.154])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 01:40:21 -0700
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+To: peterz@infradead.org
+Cc: kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Rui Zhang <rui.zhang@intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@intel.com>,
+	Wendy Wang <wendy.wang@intel.com>
+Subject: [PATCH] perf/x86/intel/cstate: Add pkg C2 residency counter for Sierra Forest
+Date: Mon,  6 May 2024 16:48:06 +0800
+Message-ID: <20240506084806.495816-1-zhenyuw@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Arseniy,
+Package C2 residency counter is also available on Sierra Forest.
+So add it support in srf_cstates.
 
-avkrasnov@salutedevices.com wrote on Thu, 2 May 2024 08:09:34 +0300:
+Cc: Rui Zhang <rui.zhang@intel.com>
+Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
+Cc: Wendy Wang <wendy.wang@intel.com>
+Fixes: 3877d55a0db2 ("perf/x86/intel/cstate: Add Sierra Forest support")
+Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+---
+ arch/x86/events/intel/cstate.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> Hello, sorry, pls ping, 2 weeks :)
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index 08bba679678c..cdf44500783e 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -64,7 +64,7 @@
+  *			       perf code: 0x00
+  *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
+  *						KBL,CML,ICL,ICX,TGL,TNT,RKL,ADL,
+- *						RPL,SPR,MTL
++ *						RPL,SPR,MTL,SRF
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
+  *			       perf code: 0x01
+@@ -689,7 +689,8 @@ static const struct cstate_model srf_cstates __initconst = {
+ 	.core_events		= BIT(PERF_CSTATE_CORE_C1_RES) |
+ 				  BIT(PERF_CSTATE_CORE_C6_RES),
+ 
+-	.pkg_events		= BIT(PERF_CSTATE_PKG_C6_RES),
++	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
++				  BIT(PERF_CSTATE_PKG_C6_RES),
+ 
+ 	.module_events		= BIT(PERF_CSTATE_MODULE_C6_RES),
+ };
+-- 
+2.43.0
 
-I was on vacation, I am currently late by 30+ patches, yours is on the
-list ;)
-
-Thanks,
-Miqu=C3=A8l
 
