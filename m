@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-170085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D060F8BD1B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:45:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194868BD1B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853B11F23235
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B1FFB22014
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB9A15538A;
-	Mon,  6 May 2024 15:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E3B1553BF;
+	Mon,  6 May 2024 15:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diLewifh"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ENp7PUsp"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B65E155380;
-	Mon,  6 May 2024 15:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715010330; cv=none; b=HXho3ZZ6EBfMDZpkPqFIi/D1BtD+hM8dGVOF9v8J2F3t+9Z2ILYrqO8lfbMg2D++9U5qFXJzfFo5oWjbX6oofTHNd2TsASI5XP8w3e1nr0r6AUxkbTvnLh3xTrPOu11dXgzpvqQdIrr0uXsy9YfP5nNW5goPJw9V9IW1YHITm9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715010330; c=relaxed/simple;
-	bh=HPGmG1g0spRhjEW8ciDZ98jGlZGqzMjL73XubFM+0eo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MY+4CDflX3YyrB7tUhW4vZ+hXkcF0jTbNvQ46nF6tVOhbU2Y17lqdgUptBnU0aNIvuVBp79q1Vrh5RLLJziqX+t4GWg6cmGLIn1yl+Qgyi4SkzWb2tPziSSzGZRUuE54cJ62j3YEwQODgp7yvGaR9voqDHjGTLv5QxL3oUj9sSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diLewifh; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e8so12810215e9.1;
-        Mon, 06 May 2024 08:45:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715010327; x=1715615127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjI/Xv3XiaQOPqjj6v/x4n5zCExnJZ+JWbWl24FY9n0=;
-        b=diLewifhmxQGBGKI36HMtSAwu+CC5StdXks0Fks4BBU4VC3Yq4PMDIERr3DVy8snbi
-         321fBgQcMQuV5BaCdN0m+Qmp11VK5o0rDijLVXO/35hy2YnZAsXSD9PF0cqRY9IwZ+62
-         Ys4r59RrSOfVlBT3cwai3TGFnG4M7V89sjZX1QiS6owNEAe5y85429tUNKG+SQUj5gz9
-         GXPHJt8NThVKx04hXgo+eTZPIQtvo1+J+qj+Ykc7GmsGz100X+tXLgUw4pP5S/oy1tJw
-         KVqGZpYK5Nw06HdjH4eY4B5s/yS8m4/m2cbyaIuWMuVzTNdihNuCOy6AeJjBUfnc/1XE
-         W9hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715010327; x=1715615127;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rjI/Xv3XiaQOPqjj6v/x4n5zCExnJZ+JWbWl24FY9n0=;
-        b=H05q9dfCPTwAM2qpKk3RjFb28hISVjk3cRd8ePyOH8+HAk6gROsnL60lEw11AcBiI3
-         BYqkB0rC0F8gOZ5z87jmP2gOsAL5UbTTctEwhCr11NRG2E4DHKFNRS7wlqXaKQ/4v+ZN
-         5/ucQ2fNvczNUblstlpiN6z5V2nFcckyLhCRa5v+Fuv8DuBr/e0X6PQgll5kUfNHZzQD
-         ysi/vVWdZblFMcNTjCGaQAoQOO4i8A0+MaxheLtQuvv8sK/uilTWQydKszpy2rfRrxCV
-         ldBu39Kz3iRpe+zfyDvvu6Q6GlczBW0l2Zb3PH4TN+eSN61pOVr0rwaY9wEsAV+KUEdF
-         LesA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNpPgUm590QbB4e1kcE2v1M2f5t4k5oG5k3pblLRfsU4zUTtbAK5H2RHwn00iRPM52yZUdNjyWkpEk55nsoBofZCj3xebIiL7AHr6296tctM33p1VVV6O4Ae/6ZpX9K86B+TzfOmZY
-X-Gm-Message-State: AOJu0YxNYVhTropGQr07nYVFVdDak7dW5PsLWaaLUa+R80M7nq6knyb8
-	GuWPXTZvtSpCe8JBHhpCa2lW8peuJsxTtFk0tHdP+0b218z1kfKB
-X-Google-Smtp-Source: AGHT+IECONYbtaCBzXAkPTz+LRCH/C/3z1JRYbIrJspc52OTuux8byJWAsNbW0K7sWtwu2YrBUcQvw==
-X-Received: by 2002:a05:600c:1caa:b0:41a:7065:430a with SMTP id k42-20020a05600c1caa00b0041a7065430amr6226192wms.41.1715010325957;
-        Mon, 06 May 2024 08:45:25 -0700 (PDT)
-Received: from mfe-desktop.Sonatest.net (ipagstaticip-d73c7528-4de5-0861-800b-03d8b15e3869.sdsl.bell.ca. [174.94.156.236])
-        by smtp.googlemail.com with ESMTPSA id fc16-20020a05600c525000b00418d68df226sm20241486wmb.0.2024.05.06.08.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 08:45:25 -0700 (PDT)
-From: marc.ferland@gmail.com
-X-Google-Original-From: marc.ferland@sonatest.com
-To: michal.simek@amd.com
-Cc: andi.shyti@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marc Ferland <marc.ferland@sonatest.com>
-Subject: [PATCH] i2c: xiic: print error code when xiic_start_xfer fails
-Date: Mon,  6 May 2024 11:45:20 -0400
-Message-Id: <20240506154520.3886867-1-marc.ferland@sonatest.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C348002A;
+	Mon,  6 May 2024 15:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715010388; cv=fail; b=HwTbLWHgbDgicdjAGB4hKOVIXm++2M/3MjV+1SWom7GlwNWuTUcf56k34+Hvj8mbOC+q0N3LN6DddkUWhQ415BkttzkBAgwq+sxecAG68ya4nXxtWKMi7/1XwKHUkfaFYK4gJuAld6lHZ8ORvxL+xAJP9h+24rerEnNRykCOcJY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715010388; c=relaxed/simple;
+	bh=mUJi1OBGETCns/05GOpYSavqY2U7KlMdz4AGzBvDCQ0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D/Xl68nKUVqkMF5r5602BL36Co2zqhufR53s+JD/LDWhUy44q/GIOIV31QjIXB7TkrpaLpFfRgqnLSPmBhuNAj5Aj2n2Ja8K73hNJoclLCKtwv451H/k8WDfZnlvKYBAWVhj62KE1G/8UmFS/AhAvQhNhF6Bz7SKwJJuVGgDX5A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ENp7PUsp; arc=fail smtp.client-ip=40.107.92.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JqnZDLyc95DkmSLxVOWe6Au3TjN9SKtuNuAUg7RBqdpIydZIw1vazYSxkWrIrilK3WBfKv9VYHZkU3AHah5P/FjALzOAjnfMiWqgHgwIQLLb/kSBh7Wdf3CqXvGmf7VgttwtJWq9KpBTxVCOYN9adp70jYhuEeyKOdDI1ywtCtcParj1tU6cUIvLDsAmksS3y/QrXDQfxMvlWPw93VB5nnAZlLnK9uHZRaQxKvq7N7ok5Ri1sqLJ63TKthNt+qcdPRzpdue3TTIt/aN0vspxbO1ZaJl5HyM5S7kUZwfbNNiPYc8tunMqU9WbEaTle7vqj/Q/jnIBloFG3ngjYAzu/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n3JkJKMh+qRRJKCXkDMKFYu6EnJwxDOoF/I/goB5mZw=;
+ b=ocW0+epANfCZLs353KYqzwZJVVmEK+O2E/5jAPIOqUHQw5aa2pTtf30GQ8vGUanQ4+3VDJxosZSMDTM9u9DvCRxWh1nvHOC2Ss+PfF8YpcEpWVhObSzFiLE1a/2l7oODJ+hKOLrJ+u6EEjGtO4gnYPEsWPxBA9TLTQqJWtrw4ad1seFA/ipZIHfAl739IcdH3Nk2FehhFSU/pAUBN1A97Htv8qRXofOI9ZclQz/vbrj4N4MVy0aVXsNITlEEOftEuWydrxUn14B+5T/Si2OcsU3JCu1LAtTUndstJT7DK6phle017I9FgC4N0CcCC5ocgxgo3roaq6RD18uh0sDEPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n3JkJKMh+qRRJKCXkDMKFYu6EnJwxDOoF/I/goB5mZw=;
+ b=ENp7PUspqyRm1xvXsz4txvoAhU0/1C36nT1La4MdQjdvJ7WKo2l9Qh/Vpv0nHwy0YKvI2zAr6XPx94FeY3XmY1gg8XOG20tf2PE/pBYaG4OOIufUv9843+sWOTrcodpD4vf7kft/FnUknLmws728v3vckUmhdWfySKPbAj/j08w=
+Received: from SA0PR11CA0149.namprd11.prod.outlook.com (2603:10b6:806:131::34)
+ by PH7PR12MB7914.namprd12.prod.outlook.com (2603:10b6:510:27d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Mon, 6 May
+ 2024 15:46:20 +0000
+Received: from SA2PEPF00001507.namprd04.prod.outlook.com
+ (2603:10b6:806:131:cafe::a2) by SA0PR11CA0149.outlook.office365.com
+ (2603:10b6:806:131::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42 via Frontend
+ Transport; Mon, 6 May 2024 15:46:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00001507.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Mon, 6 May 2024 15:46:20 +0000
+Received: from jallen-jump-host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 6 May
+ 2024 10:46:18 -0500
+From: John Allen <john.allen@amd.com>
+To: <bp@alien8.de>, <linux-edac@vger.kernel.org>, <tony.luck@intel.com>,
+	<yazen.ghannam@amd.com>
+CC: <linux-kernel@vger.kernel.org>, <avadhut.naik@amd.com>,
+	<muralidhara.mk@amd.com>, John Allen <john.allen@amd.com>
+Subject: [PATCH v4 0/4] RAS: ATL: DF 4.5 NP2 Denormalization
+Date: Mon, 6 May 2024 15:46:01 +0000
+Message-ID: <20240506154605.71814-1-john.allen@amd.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,35 +84,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001507:EE_|PH7PR12MB7914:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e6f1e2e-bd9c-47b9-0aae-08dc6de3acd2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|1800799015|82310400017|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6I/IzZRCZPE5Bxd9EylwTPtxtAC7v0V4kdOuz8Wya64GvBJ+hco0soZnOHBL?=
+ =?us-ascii?Q?+TK93cLJQB8k8tiJN8rsdQLog/mT5h99L9lNbfsbqVjzepiINQQbKVmQ6ERn?=
+ =?us-ascii?Q?gkschjw5cqOhSytv90NT4dxUyJKSUV8lnFdBScSnYlTnhTbmQ5Il8jW1q6by?=
+ =?us-ascii?Q?X3j38sBBgBTjUBI/9sTSq7xu5+fVposwqY2Tj/xMmbfxsbksiwIvvWZTCXvb?=
+ =?us-ascii?Q?MRH3WOPLd9bi6dT8w8NDnmE103NE2VYDkaOQg3BzgpQJZICT+yotXtBYAr8i?=
+ =?us-ascii?Q?eHIOYzuPsgdoOWaDHwE5Nt5XrBWs4IvtA2XIdv0Kbj5Ptw2fZUVSZ7Jx1PZr?=
+ =?us-ascii?Q?ejGWA/3NLB+W/X38zbKKpJZjCcGOPbiAtdvUSKe5mvy2F1Fn3veP8qxKXQNY?=
+ =?us-ascii?Q?al5FmK7p3tD7OXDtA/rz9xLed49wCH4kBkhDg2LA+F+vSfit+xUUSm3pbp/R?=
+ =?us-ascii?Q?95Mh5Zma9C9hZPySCSXk4YTYOc9MQE3NWOAdpl8UI885cDZkfQeYw9NCFElv?=
+ =?us-ascii?Q?n75kNFGqqCui9wOZ6adnDzqECTN6EbY2uHIhZtAPP5By7/1CYO6itOKQjw2A?=
+ =?us-ascii?Q?Y096rkELYhCQhDuBTuoKgk6zOAb9jwREPozcYd1vyZgZVS83bWWEDdTedFqa?=
+ =?us-ascii?Q?FWH+FugH9eBCgEZ2QkBH2taL0Zy/1akOmGKNvRI1MiUV0PzRLMbuYXkeHceg?=
+ =?us-ascii?Q?gSWo66MYgyQzTD401ZdGvs7YhNUcRQt0ikgt+VWDRicfVHeYX1jK/czqiq8c?=
+ =?us-ascii?Q?JLfnipTu1hBXwhlOgakePXXMYB4D/ktaxOMDo5Z+MqxRka1bKwah9HUa8nr8?=
+ =?us-ascii?Q?5eEfQFrlOGCib8tGjniilhu3A05TgEleqn95Ggc3ZPW2muVOZCJBHSdxD6gv?=
+ =?us-ascii?Q?pV1tCU0W/AasJVEjHxEHj558DpwIbnjDNuJMtVkWxAq/guM7vR8Nr/CR82J9?=
+ =?us-ascii?Q?7BXmYtFzrJ666LiK7+0rF6GUEA8VPVTtDuXRY+E38mRoDWN5bbJmDRZUB0MJ?=
+ =?us-ascii?Q?CTxj7KssqLiZe641ZcVjdpdFFdfFtr1CwJDZpXvXnWxGUsq6hpbidkvm41Yw?=
+ =?us-ascii?Q?AedVSAVVfebI9MvpBTglJtPdjRlYS5fuqg24yw+ZLLA9LqsULB/ipHHs7wo5?=
+ =?us-ascii?Q?DB3ZscrwmgRiY3xrfBnMic9VBrkgVPiVMgKbwRTczLn6vXi/DvfoksPmrIQY?=
+ =?us-ascii?Q?cQOm2RtGGrQw43O5U2cHUg6wLyeBRy6airtebZGZ4GC1J5Qlk1sE40QN5P3R?=
+ =?us-ascii?Q?hJ863TwD3YdY/WdlAR9ziqpNn5iVRoHoMyjb1Rr13WPgF3a87kVjom1Vc9LB?=
+ =?us-ascii?Q?feaoMyLsTX9/r33VmQth4rn+4L9lY/y4ZEBilnH+AbbLYlMZNjmr0XblVgcm?=
+ =?us-ascii?Q?wKwvZgbHoABRk9Ltig2/p5jzWgWn?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(1800799015)(82310400017)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 15:46:20.3593
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e6f1e2e-bd9c-47b9-0aae-08dc6de3acd2
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001507.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7914
 
-From: Marc Ferland <marc.ferland@sonatest.com>
+Implement non-power-of-two denormalization for Data Fabric 4.5 in the
+AMD address translation library.
 
-xiic_start_xfer can fail for different reasons:
+Tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git
+Base commit:
+bd17b7c34fadef645becde1245b9394f69f31702
+(origin/edac-amd-atl)
 
-- EBUSY: bus is busy or i2c messages still in tx_msg or rx_msg
-- ETIMEDOUT: timed-out trying to clear the RX fifo
-- EINVAL: wrong clock settings
+v2:
+  - Fix compilation error.
+  - Make remove_base_and_hole the inverse of add_base_and_hole.
+  - Move all map validation checks to validate_address_map at the
+    beginning of translation
+v3:
+  - Fix bug where the legacy hole was not getting removed properly.
+  - Minor rework of functions for matching the normalized address and
+    logical cs fabric id.
+v4:
+  - Merge common cases in map validation function.
+  - Fix map validation for cases that don't have explicit checks.
 
-Printing the error code helps identifying the root cause.
+John Allen (4):
+  RAS/AMD/ATL: Read DRAM hole base early
+  RAS/AMD/ATL: Expand helpers for adding and removing base and hole
+  RAS/AMD/ATL: Validate address map when information is gathered
+  RAS/AMD/ATL: Implement DF 4.5 NP2 denormalization
 
-Signed-off-by: Marc Ferland <marc.ferland@sonatest.com>
----
- drivers/i2c/busses/i2c-xiic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ras/amd/atl/core.c        |  48 +--
+ drivers/ras/amd/atl/dehash.c      |  43 ---
+ drivers/ras/amd/atl/denormalize.c | 523 ++++++++++++++++++++++++++++++
+ drivers/ras/amd/atl/internal.h    |  45 +++
+ drivers/ras/amd/atl/map.c         |  97 ++++++
+ drivers/ras/amd/atl/system.c      |  21 ++
+ 6 files changed, 711 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
-index 71391b590ada..73729f0180a1 100644
---- a/drivers/i2c/busses/i2c-xiic.c
-+++ b/drivers/i2c/busses/i2c-xiic.c
-@@ -1165,7 +1165,7 @@ static int xiic_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 
- 	err = xiic_start_xfer(i2c, msgs, num);
- 	if (err < 0) {
--		dev_err(adap->dev.parent, "Error xiic_start_xfer\n");
-+		dev_err(adap->dev.parent, "Error xiic_start_xfer: %d\n", err);
- 		goto out;
- 	}
- 
 -- 
 2.34.1
 
