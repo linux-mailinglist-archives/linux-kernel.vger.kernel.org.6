@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-169641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8388BCBA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:06:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547C28BCB99
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F422848E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:06:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9F0B231C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9E6142907;
-	Mon,  6 May 2024 10:06:11 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB751428ED;
+	Mon,  6 May 2024 10:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Px6qogDZ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A16140366;
-	Mon,  6 May 2024 10:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B974205F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989971; cv=none; b=oSc2SL65hgtGAgJywtl/0ZwYyQRPFJHQag/+O089fchNx0b1pZ/gDuIe7CwGWAuL86bTscziK4g1QrazzkK8yQKMgti5SKWIrCwQx7d7ukJZLOqnE0jZF/9DzaJWPCmO+JSUDx/GF7mbQrE2KEu/zbosXz8u2PjalTlWorgD0Rg=
+	t=1714989955; cv=none; b=a/VKrLZg6N0ftMJbvcn1MuoTs9TwOlM9vCJWZSPFZx+umc1mQVYz0i03kPA3AlZ+nKb1MsfNJZTP8P7OuUrvT5sbF9tBisdt/sHueH+Odzo8GSjvHo6tnsJUFVxfZD38eQ/ABJD9kKDNNq98u5eptMOwolI4be+perpmUjjnjbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989971; c=relaxed/simple;
-	bh=3bKywxWdwXQJn9t7WE5tCeMMFA6vA0dUvFi3njX5doo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yx99Cws+Mn02v9a28WeNX/Uw9MyZfPlp4znWlE7U9Q+QQb6cFhLf8Yu7G+Pw0x03Kh5rTtPs3sAlHkepPF8y1NA2ejgYbVwU1OagdFpU/gJspPA/3P91YfYKyTu+RPOOQwzWP0wFCObGhIViGNyejBLhfDOXCcW7XSSEwPw1wFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXxMR3twyz9xGXN;
-	Mon,  6 May 2024 17:44:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 6DCB91404D9;
-	Mon,  6 May 2024 18:05:58 +0800 (CST)
-Received: from [10.81.216.243] (unknown [10.81.216.243])
-	by APP1 (Coremail) with SMTP id LxC2BwCHexR2qzhmIrWjBw--.20188S2;
-	Mon, 06 May 2024 11:05:57 +0100 (CET)
-Message-ID: <c97f0529-5a8f-4a82-8e14-0078d4372bdc@huaweicloud.com>
-Date: Mon, 6 May 2024 12:05:39 +0200
+	s=arc-20240116; t=1714989955; c=relaxed/simple;
+	bh=EHVAhxJUUskPmEprZXUYYP2CVf27DfLU1+UviOggadA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kji1trTn42oUQeYz7RkCZa7ULoVZYbBr/j5KAUmdFxAwNWqeQxkTEIi7TZn6QqPoW71Kwcf8gWVBrczqxKRnFM55EPFGBx7MoUAuL1YVfGeZ7Qt1AYiyX1fFLvhfrIQBZ27jwh/KTRSR45s0dPI5dERLNdmHGHvSXycPynErOks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Px6qogDZ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1eca195a7c8so12228545ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 03:05:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1714989952; x=1715594752; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EHVAhxJUUskPmEprZXUYYP2CVf27DfLU1+UviOggadA=;
+        b=Px6qogDZ74sIj76MnfPZEftB4i9CXxmbjl5Kai4YZc0EMZ4ZUlAY5NJdzZp1qpscCF
+         DcAPfjSdBXEhfXaoCNBktYMzY1NPjvitKd2f5K1EHu69a4qF/x24gueo/qRT6mZQm4Mx
+         g/3Im7IWCRo6YRR2RbYaLf9XhiYDE1b2kKqM9xu7RI5bGMLIYcnWO0Tt2jr5oLJsDl80
+         gtrBQjHBliIE6b2vh7dNvngGrTX4NfbiaBzmfx+o0aK2TLi5XhuSgf4zB9UkNiV1u8QY
+         UlqKXtsgHcaCHsCGP9C0a9D858+mTnh6FMZ855pdZdfK9VuMAgykIfjYpa+YUFHN3Rt0
+         rsGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714989952; x=1715594752;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EHVAhxJUUskPmEprZXUYYP2CVf27DfLU1+UviOggadA=;
+        b=H9jYJPRq2EW4FJwSXNQlzlW4GO4OGbi3ZnOQ0b1rM40rvB3z/SCuN0O8YeOlqD98IB
+         lKrWc0Vqh2dy5cws2rEyGW/OG7Q6gj+DGia1PvQ7LIATsFcRGvVNgqMbeox+UOEd+cGt
+         3KD5gQsULjy+sYy1uiFT+eFMK6riuvT1kY9iDs4mGe/P7HSZI6wZGmCoEdjXdzELhbYu
+         T/Y7x23XSzay46MHjq1YrcAof5FtdapMkxV3yLwFgxLXxtF3QJBXj5vxibfr9MrIJKdT
+         sdHVrwI5O7oGthwg1sNmrET6uCIp3ePMsqXGCqrz+dMMGhElxa6iGJfQp1iOVK1lCnkx
+         jB2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVeL9M6GeR2eFFnKLHA4AbNfr1I40iGfVwbkuwLwc5HNia/Yc7XcAt294ePnMYfN6HkMDbjjyXmubGttl4HsO0/7GUyR7mb/r5ERZGE
+X-Gm-Message-State: AOJu0Yzzzm+QPqFG1yqwvo1RSLEYrGwDliM+JyOSzmczNNvp3xeWVKj0
+	gddZXuWP3nbp5YBUZmTqX31NXHX/T8geXgzcZLjB81Le6w5iweuB4IEmJ2emdII+yQCdY/kpmI0
+	WDq2eS4eZkkYT6dvOz9xipaz1Hb4XZtTRGFrKjg==
+X-Google-Smtp-Source: AGHT+IGzw4nooSD+qK1cXQQ4lfrb6udoqefgbhSIEUdE+dY70rCPEtAtCshhxq/u9d9ODfZCzLMX/bw/b0jv3tpzoxE=
+X-Received: by 2002:a17:90a:c505:b0:2b4:36d7:b6b5 with SMTP id
+ k5-20020a17090ac50500b002b436d7b6b5mr8376894pjt.34.1714989951948; Mon, 06 May
+ 2024 03:05:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH memory-model 2/4] Documentation/litmus-tests: Demonstrate
- unordered failing cmpxchg
-To: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, kernel-team@meta.com, mingo@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, Frederic Weisbecker <frederic@kernel.org>,
- Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>,
- Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org
-References: <42a43181-a431-44bd-8aff-6b305f8111ba@paulmck-laptop>
- <20240501232132.1785861-2-paulmck@kernel.org>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <20240501232132.1785861-2-paulmck@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwCHexR2qzhmIrWjBw--.20188S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr45urWDKw47Ary5Kw1Dtrb_yoW8Gw17pF
-	WUKF43Kry7J39Ykwn5Za43X348uayftan5Gry3GrWqv3Z8CFyjvFyrtFWSgFy3Jrsaka1j
-	vr1a934xZrWUAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+References: <20240416171720.2875916-1-naresh.solanki@9elements.com>
+ <20240416171720.2875916-2-naresh.solanki@9elements.com> <ecddd7f3-fc25-4021-9758-b00893ac9622@roeck-us.net>
+ <CABqG17hebvkpvxwGVfp0nT_YMrvgdkEqU2_XjijCpdtgU6C+1A@mail.gmail.com> <1294114a-4509-4c8a-a0a2-39f6e5f83227@roeck-us.net>
+In-Reply-To: <1294114a-4509-4c8a-a0a2-39f6e5f83227@roeck-us.net>
+From: Naresh Solanki <naresh.solanki@9elements.com>
+Date: Mon, 6 May 2024 15:35:40 +0530
+Message-ID: <CABqG17hamhz9+bZ44FNkoSU5MxHLB13OZWGgzhr6xdDjdb=2xg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] hwmon: (max6639) : Utilise pwm subsystem
+To: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>
+Cc: krzysztof.kozlowski+dt@linaro.org, u.kleine-koenig@pengutronix.de, 
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
++Rob Herring
+
+Hi Guenter,
 
 
+On Mon, 22 Apr 2024 at 18:07, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 4/22/24 03:39, Naresh Solanki wrote:
+> > Hi Guenter,
+> >
+> > On Wed, 17 Apr 2024 at 02:52, Guenter Roeck <linux@roeck-us.net> wrote:
+> >>
+> >> On Tue, Apr 16, 2024 at 10:47:15PM +0530, Naresh Solanki wrote:
+> >>> Utilise pwm subsystem for fan pwm handling
+> >>>
+> >>> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> >>
+> >> That adds a lot of complexity to the driver. I am missing the benefits.
+> >> You are supposed to explain why you are making changes, not just that
+> >> you are making them.
+> >>
+> >> Why are you making those changes ?
+> > Sure.
+> > This is to align with fan-common.yml wherein chip pwm is exposed.
+> > I'll update commit message
+> >
+>
+> Adding lots of complexity to a driver just to have it match a yaml file ?
+> I'll want to see a use case. Explain why you need the pwm exposed.
+> "because the yaml file demands it" is not a use case.
+The idea behind this was that this approach provides flexibility with
+hardware routing i.e., PWM0 might be connected to Fan1 & vise
+versa instead of assuming 1:1 mapping.
 
-Am 5/2/2024 um 1:21 AM schrieb Paul E. McKenney:
-> This commit adds four litmus tests showing that a failing cmpxchg()
-> operation is unordered unless followed by an smp_mb__after_atomic()
-> operation.
-
-So far, my understanding was that all RMW operations without suffix 
-(xchg(), cmpxchg(), ...) will be interpreted as F[Mb];...;F[Mb].
-
-I guess this shows again how important it is to model these full 
-barriers explicitly inside the cat model, instead of relying on implicit 
-conversions internal to herd.
-
-I'd like to propose a patch to this effect.
-
-What is the intended behavior of a failed cmpxchg()? Is it the same as a 
-relaxed one?
-
-My suggestion would be in the direction of marking read and write events 
-of these operations as Mb, and then defining
-
-(* full barrier events that appear in non-failing RMW *)
-let RMW_MB = Mb & (dom(rmw) | range(rmw))
-
-
-let mb =
-     [M] ; fencerel(Mb) ; [M]
-   | [M] ; (po \ si ; rmw) ; [RMW_MB] ; po^? ; [M]
-   | [M] ; po^? ; [RMW_MB] ; (po \ rmw ; si) ; [M]
-   | ...
-
-The po \ si;rmw is because ordering is not provided internally of the 
-rmw, although I suspect that after we added release sequences it could 
-perhaps be simplified to
-
-
-let mb =
-     [M] ; fencerel(Mb) ; [M]
-   | [M] ; po ; [RMW_MB] ; po^? ; [M]
-   | [M] ; po^? ; [RMW_MB] ; po ; [M]
-   | ...
-
-or
-
-let mb =
-     [M] ; fencerel(Mb) ; [M]
-   | [M] ; po & (po^? ; [RMW_MB] ; po^?) ; [M]
-   | ...
-
-(the po & is necessary to avoid trivial hb cycles of an RMW event 
-happening before itself)
-
-
-Any interest?
-
-Have fun,
-jonas
-
-
+Regards,
+Naresh
+>
+> Guenter
+>
 
