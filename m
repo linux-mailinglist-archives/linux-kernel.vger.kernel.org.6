@@ -1,186 +1,153 @@
-Return-Path: <linux-kernel+bounces-169926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FD18BCF66
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 591318BCF76
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 655F11C21538
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:48:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD091F21A0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9797FBD2;
-	Mon,  6 May 2024 13:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E9080046;
+	Mon,  6 May 2024 13:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="O1mD1gye"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mauWTkRJ"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D301DA5F;
-	Mon,  6 May 2024 13:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD6080026;
+	Mon,  6 May 2024 13:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715003295; cv=none; b=qhK1atr2kft8FSM8KXK9vU7/gmw1kNzTTf8km8Svh70CKf44aBxwcN54y7dUEA5tMpPqhEWYA23sAMpLJViQb+rkra8Y30lLW29YofjO8TNs6jQ//A4AEo64DPtfi0QzBq55sjDb9jomLZ386wRyY9c2zjOaYIZfql5m9dyd78s=
+	t=1715003346; cv=none; b=k35EVLpPAIKsaj8hVbZdiLL1B9z4fSskSZwgc69MGTDBiXrgcILBHxH1rtG+nwQy1btCRf4QJGOVtjkLz2/SqlM4F4EUTVRPqXryc8Icr3TCQZVw4QfiZP4RTJay37XVzQov+sgU/NkAS+iJpfltC+vSsDbfFx/eUXu6sSn6LxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715003295; c=relaxed/simple;
-	bh=lO4daNRtURIN7s30wcs18ZIWlnxVpekm8aU9a9t1tPg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MP07igd2FmJ8PElEXUGhmpV34t26/iAIt/ZUdd/FCMsAGCUaic0btRbB/Z2ftSg1SmpLWlbEUOPKqQ9CkLib6nu5aCu1bEfWfKYvrEd7o4YTVNXj34o4nkFZqj6yqOIQcX+Jxwl2SlU/691IWQtsB3JHi40pBD4NZTw7dwsgdi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=O1mD1gye; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 60933100006;
-	Mon,  6 May 2024 16:48:02 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 60933100006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715003282;
-	bh=C6xCIPqri8hszP1/uAyU20bgm4X9w+t66Kn7K2I4Cjk=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
-	b=O1mD1gye/Ty8pe/LCt05+rgMEvKmXUjoC8sBj+UUp3Y8ortjuHE+8JwTR9Bg5KbDP
-	 t2N0lVMvoZubbQ+mt7ACU1KW0u/cg/JQaXFk6f+2tv40VROIcNry2kmjvIkxGJJ6ae
-	 XeSWh/+ybCe9JTT1giWjan7WqRtwBjXrE4UoIn28X+3zwcYHUTNKZOKtNvfBJlc3lw
-	 +nKP7WVXK3Lc6eD0wQFddT91C4ooMj/tpDgqAepw6r3vW4CJOx3rBR4P3yCPR5UJGw
-	 TJvN3bKlQpwVzoDAH0GFYHzcrP1v+mexbUemsdOQeMFC2QHB7u77ysg507NgIBNjfY
-	 UKGR70IW1RWzQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon,  6 May 2024 16:48:02 +0300 (MSK)
-Received: from p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 6 May 2024 16:48:01 +0300
-Received: from p-i-exch-sc-m02.sberdevices.ru ([fe80::10c3:6e04:fd07:c511]) by
- p-i-exch-sc-m02.sberdevices.ru ([fe80::10c3:6e04:fd07:c511%9]) with mapi id
- 15.02.1118.040; Mon, 6 May 2024 16:48:01 +0300
-From: Alexey Romanov <avromanov@salutedevices.com>
-To: Conor Dooley <conor@kernel.org>
-CC: "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "khilman@baylibre.com"
-	<khilman@baylibre.com>, "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-	"martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, kernel <kernel@sberdevices.ru>
-Subject: Re: [PATCH v7 17/23] dt-bindings: crypto: meson: remove clk and
- second interrupt line for GXL
-Thread-Topic: [PATCH v7 17/23] dt-bindings: crypto: meson: remove clk and
- second interrupt line for GXL
-Thread-Index: AQHajBWjbcqi/hz3Ckugw/49eH+udbFpXY+AgCDP+AA=
-Date: Mon, 6 May 2024 13:48:01 +0000
-Message-ID: <20240506134754.jl633ncne7ct6szo@cab-wsm-0029881>
-References: <20240411133832.2896463-1-avromanov@salutedevices.com>
- <20240411133832.2896463-18-avromanov@salutedevices.com>
- <20240415-schnapps-plating-eb0895459004@spud>
-In-Reply-To: <20240415-schnapps-plating-eb0895459004@spud>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FC46FF8DA00B1E429496D3165922BA1E@sberdevices.ru>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1715003346; c=relaxed/simple;
+	bh=N+8SlHv+BG10Ed56ABIsCFuAhTqmY99V5r9tlcdPXOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dTyHKyOeCaFWunj+1w+GVbf46mkQZq31vVHU3D747r5jW2AA/HN/G/62mZ8WCM588haleyNwbQOviklhZW31leK8307GhFnSlwqtq8i1XbvsdedsynGtMX3+OCp9nbD+lGTlfbtqAk0rgUW5+ueQdd7JaImAL8H7Om7kuV4gt0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mauWTkRJ; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E3A7F1BF20E;
+	Mon,  6 May 2024 13:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715003341;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IiYk/OF8J/A5XkO49NEeG0JReklIrIL4u4kDqBfVQe0=;
+	b=mauWTkRJEwC2lvjJlXWeuOXCeuQOgxLTQoZe+3vo06UVOGbnAcLbx+bNbmOKRWY6N/2LMh
+	ZDPxv8XA2VsvMlJhgiYmdv0114okHcldvzL+KSx6iGlunRr5ydNL7c1Mq0g087+atQRTLh
+	Fcxkxsn0rh1VeFRBkpGPfu7kOn8og+qC/lMfPl6ICDW6CAsuZmoH0jM9hFYKEDUbm7LxvN
+	r/+W7vfKhw7rXY92GmeNbGyQxRdUAINnUkE2S2ksf/xbJYBm/OOO6MkCinkF6tem/bUGTb
+	tYehaTyf0yxIyTjRNJDaA02iiBlYKZzDvBhnU+bDdBPdzk4dlsD1AkVCAv+VZA==
+Date: Mon, 6 May 2024 15:48:58 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+ <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <oxffffaa@gmail.com>, <kernel@sberdevices.ru>
+Subject: Re: [PATCH v5 1/2] dt-bindings: mtd: amlogic,meson-nand: support
+ fields for boot ROM code
+Message-ID: <20240506154858.003bab54@xps-13>
+In-Reply-To: <20240416085101.740458-2-avkrasnov@salutedevices.com>
+References: <20240416085101.740458-1-avkrasnov@salutedevices.com>
+	<20240416085101.740458-2-avkrasnov@salutedevices.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185086 [May 06 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: avromanov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/06 12:01:00 #25108659
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, Apr 15, 2024 at 05:43:15PM +0100, Conor Dooley wrote:
-> On Thu, Apr 11, 2024 at 04:38:26PM +0300, Alexey Romanov wrote:
-> > GXL crypto IP isn't connected to clk and seconnd interrput line,
-> > so we must remove them from dt-bindings.
->=20
-> How does the device work without a clock?
+Hi Arseniy,
 
-It's clocked by a common clock, the vendor didn't provide more
-information. It doesn't have any special clock domains.
+avkrasnov@salutedevices.com wrote on Tue, 16 Apr 2024 11:51:00 +0300:
+
+> Boot ROM code on Meson requires that some pages on NAND must be written
+> in special mode: "short" ECC mode where each block is 384 bytes and
+> scrambling mode is on.
+
+Ok
+
+> Such pages located with the specified interval within specified offset.
+
+I'm sorry I don't get that sentence.
+
+> Both interval and offset are located in the
+> device tree and used by driver if 'nand-is-boot-medium' is set for
+> NAND chip.
+
+This sentence is probably not needed.
 
 >=20
-> Cheers,
-> Conor.
+> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+> ---
+>  .../bindings/mtd/amlogic,meson-nand.yaml           | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 >=20
-> >=20
-> > Fixes: 7f7d115dfb51 ("dt-bindings: crypto: Add DT bindings
-> > documentation for amlogic-crypto")
-> >=20
-> > Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> > ---
-> >  .../bindings/crypto/amlogic,gxl-crypto.yaml         | 13 +------------
-> >  1 file changed, 1 insertion(+), 12 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypt=
-o.yaml b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > index 948e11ebe4ee..d3af7b4d5f39 100644
-> > --- a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > +++ b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> > @@ -20,20 +20,11 @@ properties:
-> >    interrupts:
-> >      items:
-> >        - description: Interrupt for flow 0
-> > -      - description: Interrupt for flow 1
-> > -
-> > -  clocks:
-> > -    maxItems: 1
-> > -
-> > -  clock-names:
-> > -    const: blkmv
-> > =20
-> >  required:
-> >    - compatible
-> >    - reg
-> >    - interrupts
-> > -  - clocks
-> > -  - clock-names
-> > =20
-> >  additionalProperties: false
-> > =20
-> > @@ -46,7 +37,5 @@ examples:
-> >      crypto: crypto-engine@c883e000 {
-> >          compatible =3D "amlogic,gxl-crypto";
-> >          reg =3D <0xc883e000 0x36>;
-> > -        interrupts =3D <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>, <GIC_SPI 18=
-9 IRQ_TYPE_EDGE_RISING>;
-> > -        clocks =3D <&clkc CLKID_BLKMV>;
-> > -        clock-names =3D "blkmv";
-> > +        interrupts =3D <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>;
-> >      };
-> > --=20
-> > 2.34.1
-> >=20
+> diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yam=
+l b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
+> index 57b6957c8415..67b2f7c1259c 100644
+> --- a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
+> @@ -64,11 +64,25 @@ patternProperties:
+>          items:
+>            maximum: 0
+> =20
+> +      amlogic,boot-pages:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Number of pages starting from 0, where special ECC
+
+from *offset* 0 I guess?
+
+> +          algorithm will be used by the driver.
+
+"where a special ECC configuration must be used because it is accessed
+by the ROM code"? Maybe you can even detail what are these values if
+they are fixed.
+
+You should probably inform that scrambling shall be on as well.
+=20
+> +
+> +      amlogic,boot-page-step:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Interval between pages, read/written by the driver with
+> +          special ECC algorithm.
+
+I'm not sure I fully get the description. What is the unit here? can
+you draw a small ascii-art diagram?
+
+> +
+>      unevaluatedProperties: false
+> =20
+>      dependencies:
+>        nand-ecc-strength: [nand-ecc-step-size]
+>        nand-ecc-step-size: [nand-ecc-strength]
+> +      amlogic,boot-pages: [nand-is-boot-medium, "amlogic,boot-page-step"]
+> +      amlogic,boot-page-step: [nand-is-boot-medium, "amlogic,boot-pages"]
+> =20
+> =20
+>  required:
 
 
-
-
---=20
-Thank you,
-Alexey=
+Thanks,
+Miqu=C3=A8l
 
