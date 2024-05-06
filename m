@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-170265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B79E8BD449
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 105DF8BD44A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC321F24B2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B92061F23A7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8305D15885C;
-	Mon,  6 May 2024 18:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0744B158A1A;
+	Mon,  6 May 2024 18:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Q775u8SO"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k7fSDQaK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vHAV4Ky1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802F815534E;
-	Mon,  6 May 2024 18:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479C197
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715018488; cv=none; b=Bw+/0MEmTfvkRHIfUIhgf6vrMsN4LGN5ESajQXnVWXv9G9fpV/2UiJwNEPJFroPzFTgooSKYgukfes4o5vrrvHulP/kowjbR3Bjm+C7S6nu36pjhb9W4lak6nOvDmQmSVZsymhMZ3tTOjT9YH93bg7TE8RiUJpWznqCACfCy2l4=
+	t=1715018490; cv=none; b=J4XAkOcT7no15ks+h7zUQw0eyKZsnI+IUdcKJ3GRtodCIcZZ7AIl3+roZdO+NKC4DAx54RfpDdCj2Duz9xmnIui0gGx+hKo4/h0oHcQDktZuPMw7wm9UC3jKFHiwQuxYTi/Su6qSQeBq+ERpYLy9B0D73nPqTGo9un7Nnd+aYEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715018488; c=relaxed/simple;
-	bh=fH7BBWiU0gyegoCGKrDec9mhUjeyWkX6bisz1Hls3Wk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RT7TxENUKchTqjboJJ4rNIRKYaHUu1jC938rET0IT6DNHrMNxVezW8h9h6i25SYH2w0wXQ36UP17x5Prk5tzuN+7anIivHFmTvUrui0z4b9Ho0OEN3ZZxqyJOU3KdxtyKOLhrTMw55vSzQ2VRTJG4skfeimZVSNa0kQ9EGz/Iz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Q775u8SO; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F20C114D;
-	Mon,  6 May 2024 20:01:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715018484;
-	bh=fH7BBWiU0gyegoCGKrDec9mhUjeyWkX6bisz1Hls3Wk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q775u8SOOGsFUzxugK3stetnFZTtRMgBCwyF34dXPP0Ul+CpRMrc4eAOiL1VC22gI
-	 bLxlxnl6b9fvcNOt6UHpqP5gGOd8lC3z0+EUnjt50PhTB4kmaoKbL1hMDXckQWuZ/2
-	 ORYnT+cEZDucrovwsXS3+hDZYj4o5xY2ntykVi+A=
-Date: Mon, 6 May 2024 21:01:18 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 2/3] media: bcm2835-unicam: Do not print error when irq
- not found
-Message-ID: <20240506180118.GF29108@pendragon.ideasonboard.com>
-References: <20240430-fix-broad-v1-0-cf3b81bf97ff@chromium.org>
- <20240430-fix-broad-v1-2-cf3b81bf97ff@chromium.org>
+	s=arc-20240116; t=1715018490; c=relaxed/simple;
+	bh=7N+REMc4zvb+uMii4vy3Hs+O/HYMyAG62ctzR9wojo8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=udsgEQW8wtSBi+1BURx5TtNU+7lXSAJMF4PeKCmdYdLIQhYxB8SBfFxSXYqn2hKW2oL7/cZYQwMU6xzz0GDrOYpG/QtVLGxCd1rtYL6kdzkyHMILXBZwo9ED97cktQKjgTMj9OqQhN/DBrlSxvTs+gYljyt7Hua+GdqqMalGGLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k7fSDQaK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vHAV4Ky1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715018487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mOsFk8JYA/hRSXPw6ETncdgH91U/gXtdxgFmZyAkpwI=;
+	b=k7fSDQaK9zKAyyW6VKqkj42mPiBsdcZXdtCsMvpoYwxz39Ay0zPp7/OMApzp98/HOiSG1T
+	A0QInuknsKfy7hWawqpXjaBDGw4jAbc3/FmUmSBoJSfl/VxVdFnim7sYD1VhocPt7Bn0sT
+	0DTPvQNAvsLaFIXn5SFyqpTh8jjM/lPVCAK9jYw+a5PyXtGlJ5waMOOm0VGAEgpL8eYMCQ
+	xAaS4xJbiBjdDvNaMrQLQwb8btZibz5j0zZVZ/hCACNWpxDOsnK8duHDbdGFA5Wg7B3fzw
+	uqpkFHcDUDqx8swOWOmWoD8X8vFfRShGalACsbCcXeIGqvSekmFDzlGouOJ20Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715018487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mOsFk8JYA/hRSXPw6ETncdgH91U/gXtdxgFmZyAkpwI=;
+	b=vHAV4Ky1ZcTVFCI9eG2UsbymomSvOWUYKxmkVwG0wDqZNVwGd7moYK0vsAcUXr8chYebGS
+	wZGGNzLYFSMMaqDw==
+To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org
+Cc: ruanjinjie@huawei.com
+Subject: Re: [PATCH] genirq/irqdomain: Clean code for __irq_domain_create()
+In-Reply-To: <20240430093353.1919862-1-ruanjinjie@huawei.com>
+References: <20240430093353.1919862-1-ruanjinjie@huawei.com>
+Date: Mon, 06 May 2024 20:01:26 +0200
+Message-ID: <87pltyrf9l.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240430-fix-broad-v1-2-cf3b81bf97ff@chromium.org>
+Content-Type: text/plain
 
-Hi Ricardo,
+On Tue, Apr 30 2024 at 17:33, Jinjie Ruan wrote:
+> Introduce irq_domain_alloc_name() function to handle name allocation for
+> the irq domain, add "out_free_domain" label to free the irq domain, and
+> when "is_fwnode_irqchip(fwnode)" is true, "domain->fwnode = fwnode" is
+> the common action, so do it outside the switch, which can make the code
+> more clearer.
 
-Thank you for the patch.
+First of all changelogs should describe the reason for the change and
+not enumerate a list of things which the patch does. The latter can be
+seen from the patch itself.
 
-On Tue, Apr 30, 2024 at 07:51:27AM +0000, Ricardo Ribalda wrote:
-> platform_get_irq() already prints an error for us.
-> 
-> Fixes cocci:
-> drivers/media/platform/broadcom/bcm2835-unicam.c:2664:2-9: line 2664 is redundant because platform_get_irq() already prints an error
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> +static int irq_domain_alloc_name(struct fwnode_handle *fwnode,
+> +				 struct irq_domain *domain,
+> +				 int unknown_domains, char *in_name)
+> +{
+> +	char *name;
+> +
+> +	if (fwnode == NULL) {
+> +		if (unknown_domains)
+> +			domain->name = kasprintf(GFP_KERNEL, "unknown-%d",
+> +						 unknown_domains);
+> +		else
+> +			domain->name = kstrdup(in_name, GFP_KERNEL);
+> +		if (!domain->name)
+> +			return -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * fwnode paths contain '/', which debugfs is legitimately
+> +	 * unhappy about. Replace them with ':', which does
+> +	 * the trick and is not as offensive as '\'...
+> +	 */
+> +	name = kasprintf(GFP_KERNEL, "%pfw", fwnode);
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +	domain->name = strreplace(name, '/', ':');
+> +
+> +out:
+> +	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
+> +	return 0;
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This function is horrible. The only shared thing here is the
+domain->flags manipulation. I'm not seeing how this is an improvement.
 
-> ---
->  drivers/media/platform/broadcom/bcm2835-unicam.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> index 2a3a27ac70ba..b2b23d24da19 100644
-> --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> @@ -2661,7 +2661,6 @@ static int unicam_probe(struct platform_device *pdev)
->  
->  	ret = platform_get_irq(pdev, 0);
->  	if (ret < 0) {
-> -		dev_err(&pdev->dev, "No IRQ resource\n");
->  		if (ret != -EPROBE_DEFER)
->  			ret = -EINVAL;
->  		goto err_unicam_put;
+Thanks,
 
--- 
-Regards,
-
-Laurent Pinchart
+        tglx
 
