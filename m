@@ -1,180 +1,104 @@
-Return-Path: <linux-kernel+bounces-170494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B257E8BD80B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:10:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C8C8BD810
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D50FB1C21435
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3D11F219FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE76015CD7C;
-	Mon,  6 May 2024 23:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5144F15CD7A;
+	Mon,  6 May 2024 23:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFF/q6E/"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dmMcYWU8"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1F51E492;
-	Mon,  6 May 2024 23:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7F28488
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 23:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715037003; cv=none; b=p3PvvQdHYLfBGQ4RK8RDYMRSGf9KY8v8p+dercix1asilymhWj/C0g795D85t8dNFJtmlTQygwCeMM40oxzCo8JQKBuZX0FJWt6No1KnueafZKIDK+0XCFLyuCEzm758AFR7PUVK3Y19Om4uifmD1lGZ5K+L1ZHe3KrECvjNPZ0=
+	t=1715037057; cv=none; b=fQiTWfuw9GfX7LpfI12u4ySJdJPTksiHR5KHiCV3cyNxsRoWikwLTZc2+RzDx9hIg9rEt2ZZ6YIuSt2K7RZJPd9qHDTWx919lIF35mbQ7MPhGS2Y6WVHtF3kHoc7OfwVR1PkQEHDrJ0NnzNwMQPAzokY7KKAtuyj4aCTewK/YEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715037003; c=relaxed/simple;
-	bh=jb6AoaZ4+1JJOP5y0uiexhZgPhIBpaMIIaYEadS16Q4=;
+	s=arc-20240116; t=1715037057; c=relaxed/simple;
+	bh=FCWmkGKtCYFY82UHw0ipUvRiJnRCs/R5WWby7amO1H0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dq7d/ztGS7bwT+R6gunl+rpBaUKKlGmSa6F4pTPuShoYV5XwtRNedSihydA/WtCkmPNKQUxWdsw/Cdxj/MhRNrMMwUhpWJwvnlRQNa6LKl+NfBOhYrXmFbEfXaV9sPvCdGSyx1EELzeYyysKInyuw5C79161SC/c8tGZNsBhOLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFF/q6E/; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-34db6a29a1eso1571042f8f.1;
-        Mon, 06 May 2024 16:10:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=KonaM6OpMuumXCIamyRLGcIovwwFmMUH/XjXh8ouyjf/8nGCrvRSVb3PjskDjXX0tRdjRiIcl6+U1Tn+KkAqCjaSSThZYzF3CUGE8XZURaa+fDy3DAi0UgPE3QiOzqStSQy9Pq7dHDzksWg9AbXkW5gOBp8/Yp3uZq/XQF4gqOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dmMcYWU8; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso8304a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 16:10:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715037000; x=1715641800; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715037054; x=1715641854; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2djqDQE+yQ6VgjclssSW7VHfPd80JOhsReXmW/fEqXY=;
-        b=nFF/q6E/ncV3MYvnMC7xKGOyT/arhdI5FKJ2nO17qmvlhvec75Ip4UFkbelMBZm7u+
-         PBybAqvSwcZ9oDJ8hZ65h3OUtU6K6Tuy4OkIGMJU59xY9PCjEXwEAGoDPocnQ+odxFom
-         N4Er+uN2wFHGu3eg6asD6OXFTuW6yF4gNJU933BhbVd4uV4tZ6+URa8Jwqd66UlaKEXz
-         FEA2YE5NWTnaVcLhc7lKdA+UZIO5JJc7OE0mGh0wB5dw8+AOkZN8ljykJ0/x5DDTqv8I
-         +nfXwAZgQyqRLuTHKeUPhB9EQwjDvTRuBnfJV5zlxfON94q4okZL4aKm22KMg0a5rCoU
-         77jw==
+        bh=To7fxBOaNRZwDFrn2W07ozUB1mmlkd6/wYo0eU+RqtA=;
+        b=dmMcYWU8qp3CHI3X4SLQNBnbXQg83gvQwgl+1AwyLqyanHLav25FCMG6UPCgH1an8Z
+         Ye46XUbnT7DShnv3bcfaAxyRIau58uA68YgSfYF2IxLfrdZRss8gwuYqBX2xfvH+C7r6
+         6nbmycAdxLhUf8d7BALfPi+bt8m5WQsGV4Ap/5d3dKuQMqe76UBjDp8NIe9eOqTfzP5X
+         6wlgU93yWp65pt5+8nlrm478+TyY7TPH0NuDaNQ/mpifQHkBDfxEley7INR2pkkU2rhF
+         Uf7sa0GEADpLfJD2QvvPl9FxeJ5H2h8NLtTInO2CmGjumTavrHn8mKRP+gTdJIxDLwpb
+         lyFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715037000; x=1715641800;
+        d=1e100.net; s=20230601; t=1715037054; x=1715641854;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2djqDQE+yQ6VgjclssSW7VHfPd80JOhsReXmW/fEqXY=;
-        b=GaQdPszgEpeawo3JT8tP1hTAO04LdGbkLuwmnMF5k9+FiNe9ikF2g8dgHY/iTVaqn2
-         QExx9KJgqi2XrNYK6XUhBmP06jo4TO/obfKkG5vH2uOOp2yVDE2RseuD7jJ3P38Kfo12
-         i0dQiiYiCDYH3GOwV1MxmcUr5OTn9d/3fSRb6HrLwZOGIPj1NIBG4iys3BKAKJRNQPkc
-         Y39/1DsJlK+uTbiDY8KvJ6UBRY0qCl7H2VFQ78lnM1gP/R7I0Zybzh7ZdWbUIw/Z1JkM
-         /vRIsPAzucIrNmB+6lWg8cHZxeu5uZN7vE/mYLjODOoLbA++Vl7U2FmCkbw2/QTmOAJr
-         ZZ8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUaK882yAs7A/4I5W3SbVLAoLMrcy0nHYyak7mj5O7c+Hbrqn7BR12EfPEQSsWKRxjwIMCvyCHopGjpmcLmkC9+xbXZAYCJ3bMDumqOZVVj10hfF8NzN6R3fnBS4w1/r1ghl/lQ0j3Hhzfzd0zYYg0lMoT0GILyGM4p
-X-Gm-Message-State: AOJu0YwXiLNQZKp11BEH1vJXozsm/o7CPlhnvv2FoznjxEQjEfl/rvpx
-	mvMI2t9aD2zKDuZ1LTi82ZFnvMkPgmXNk4+reoPZJUOCLjlrRmLpeynVvEPL3K2WgGrClApeLjU
-	9nEhgpMBIt8Ib/U5eE2pKEC6VAY4=
-X-Google-Smtp-Source: AGHT+IGxLV8o+I20/ACsrxFvjlgXJfW+QBAHlbBignGmLULqLzAKyI21XMdrf96e9JbOwJvccCh16JA6cXe8ZtJOOVs=
-X-Received: by 2002:adf:e60c:0:b0:34d:b993:fe6e with SMTP id
- p12-20020adfe60c000000b0034db993fe6emr8100162wrm.0.1715036999414; Mon, 06 May
- 2024 16:09:59 -0700 (PDT)
+        bh=To7fxBOaNRZwDFrn2W07ozUB1mmlkd6/wYo0eU+RqtA=;
+        b=Epv4/PvTz2P/m8RkYGiNvcau/3EciWC0Z1JTcdNiUZ8fZHGsEBOJZ8HL8K6KVb7RQF
+         jCWfZIrnm8D9n+VjXsFysU/OYvkhdHjdePkS5eFmHraRy1TWVg6/tTqxP79cPTqtIpzy
+         ORvL+z1kE7Id2yyRqtQaBfUgDb/O09vd7xM87SMDewq1eVhaK5buWHXco0q3f8ToX0QA
+         YeL6j9BKkbMUK44HnixXX7BCwrwXTRVd30yizt99gbiA0jwnhxMdiQW6aVsNOBHf7ma+
+         Ucc3wRqvvNp3TG3xevAX6NXNDxVU3jaSEr4HbbjIZ+N5wWngpuPMnZyAMZr3+UudrdJC
+         VIVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhVmDmSQ2KMHpxBYxdriJHvr9fH2iAn9sONTzonyp1oibTuEjEq++sueQZksn2Qa50+VWNWH2rO8Xec3ZBJX8dSnp4xA56bB9IKHHk
+X-Gm-Message-State: AOJu0Yy/29xYyxRcPnVKPvge/UF/Eq8C1B1WU2M2L3FCU81tDzQX1IDS
+	RD6XmzPFByeH2CqySuxGKMu2c8JYo5TU9a+AESsSkM1eH5hD5e2zpGEvLoQm6ZXglEl8lHbcY6q
+	zOTowP3ul4Qc/Jx7o+QVyu3+04pp2gDtDcVHM
+X-Google-Smtp-Source: AGHT+IHGZfGOFMLPDtfPud/GsrF7tdooNnrZe5MoO9klCGmWbiy/B/k6yjkc3wPHejQWyh/ZbyKrPPcGutS3l9Xw+Rg=
+X-Received: by 2002:a05:6402:4304:b0:572:7c06:9c0 with SMTP id
+ 4fb4d7f45d1cf-57311c1506amr107766a12.0.1715037053475; Mon, 06 May 2024
+ 16:10:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503182957.1042122-1-bigeasy@linutronix.de>
- <20240503182957.1042122-15-bigeasy@linutronix.de> <87y18mohhp.fsf@toke.dk>
-In-Reply-To: <87y18mohhp.fsf@toke.dk>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 6 May 2024 16:09:47 -0700
-Message-ID: <CAADnVQJkiwaYXUo+LyKoV96VFFCFL0VY5Jgpuv_0oypksrnciA@mail.gmail.com>
-Subject: Re: [PATCH net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-To: =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Eric Dumazet <edumazet@google.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Hao Luo <haoluo@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Stanislav Fomichev <sdf@google.com>, Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>
+References: <20240501180622.1676340-1-edliaw@google.com> <osgrbhnqlyh5yw4y4x6wjggx56dogsgje5yy3mkpu75ubs3zwg@5tliydzky37k>
+ <b55272cb757743548c789aa8c0efa448@AcuMS.aculab.com> <CAFhGd8rAW4Mkctq5VkcfVjw_yr=jVdXaWbYXP-vmeVpw7q4ruQ@mail.gmail.com>
+ <CAG4es9WYrN_tOV1Uxi_ytO2qDRRZW5_uN=2p3iCg=P0r3mM3Og@mail.gmail.com> <7332ff979f3440bd8362d37d4d1f34b8@AcuMS.aculab.com>
+In-Reply-To: <7332ff979f3440bd8362d37d4d1f34b8@AcuMS.aculab.com>
+From: Edward Liaw <edliaw@google.com>
+Date: Mon, 6 May 2024 16:10:27 -0700
+Message-ID: <CAG4es9Vn2F34UEmyG3upO-frtCZ00DVN8vgK4mRfX2548FKxVw@mail.gmail.com>
+Subject: Re: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for elf_hash
+To: David Laight <David.Laight@aculab.com>
+Cc: Justin Stitt <justinstitt@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Andy Lutomirski <luto@mit.edu>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"kernel-team@android.com" <kernel-team@android.com>, "llvm@lists.linux.dev" <llvm@lists.linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 6, 2024 at 12:41=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen <t=
-oke@redhat.com> wrote:
+On Mon, May 6, 2024 at 12:32=E2=80=AFPM David Laight <David.Laight@aculab.c=
+om> wrote:
 >
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
 >
-> > The XDP redirect process is two staged:
-> > - bpf_prog_run_xdp() is invoked to run a eBPF program which inspects th=
-e
-> >   packet and makes decisions. While doing that, the per-CPU variable
-> >   bpf_redirect_info is used.
-> >
-> > - Afterwards xdp_do_redirect() is invoked and accesses bpf_redirect_inf=
-o
-> >   and it may also access other per-CPU variables like xskmap_flush_list=
-.
-> >
-> > At the very end of the NAPI callback, xdp_do_flush() is invoked which
-> > does not access bpf_redirect_info but will touch the individual per-CPU
-> > lists.
-> >
-> > The per-CPU variables are only used in the NAPI callback hence disablin=
-g
-> > bottom halves is the only protection mechanism. Users from preemptible
-> > context (like cpu_map_kthread_run()) explicitly disable bottom halves
-> > for protections reasons.
-> > Without locking in local_bh_disable() on PREEMPT_RT this data structure
-> > requires explicit locking.
-> >
-> > PREEMPT_RT has forced-threaded interrupts enabled and every
-> > NAPI-callback runs in a thread. If each thread has its own data
-> > structure then locking can be avoided.
-> >
-> > Create a struct bpf_net_context which contains struct bpf_redirect_info=
-.
-> > Define the variable on stack, use bpf_net_ctx_set() to save a pointer t=
-o
-> > it. Use the __free() annotation to automatically reset the pointer once
-> > function returns.
-> > The bpf_net_ctx_set() may nest. For instance a function can be used fro=
-m
-> > within NET_RX_SOFTIRQ/ net_rx_action which uses bpf_net_ctx_set() and
-> > NET_TX_SOFTIRQ which does not. Therefore only the first invocations
-> > updates the pointer.
-> > Use bpf_net_ctx_get_ri() as a wrapper to retrieve the current struct
-> > bpf_redirect_info.
-> >
-> > On PREEMPT_RT the pointer to bpf_net_context is saved task's
-> > task_struct. On non-PREEMPT_RT builds the pointer saved in a per-CPU
-> > variable (which is always NODE-local memory). Using always the
-> > bpf_net_context approach has the advantage that there is almost zero
-> > differences between PREEMPT_RT and non-PREEMPT_RT builds.
->
-> Did you ever manage to get any performance data to see if this has an
-> impact?
->
-> [...]
->
-> > +static inline struct bpf_net_context *bpf_net_ctx_get(void)
-> > +{
-> > +     struct bpf_net_context *bpf_net_ctx =3D this_cpu_read(bpf_net_con=
-text);
-> > +
-> > +     WARN_ON_ONCE(!bpf_net_ctx);
->
-> If we have this WARN...
->
-> > +static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
-> > +{
-> > +     struct bpf_net_context *bpf_net_ctx =3D bpf_net_ctx_get();
-> > +
-> > +     if (!bpf_net_ctx)
-> > +             return NULL;
->
-> ... do we really need all the NULL checks?
+> That makes a lot more sense.
 
-Indeed.
-Let's drop all NULL checks, since they definitely add overhead.
-I'd also remove ifdef CONFIG_PREEMPT_RT and converge on single implementati=
-on:
-static inline struct bpf_net_context * bpf_net_ctx_get(void)
-{
- return current->bpf_net_context;
-}
+I sent v4 https://lore.kernel.org/all/20240506181951.1804451-1-edliaw@googl=
+e.com/.
+I updated the commit log to reflect the change but I'm not sure if I
+did it right for the mailing list.  Should I have added --in-reply-to
+this thread?
+
+Edward
 
