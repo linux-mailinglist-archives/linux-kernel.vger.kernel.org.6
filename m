@@ -1,94 +1,122 @@
-Return-Path: <linux-kernel+bounces-169210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B018BC4EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B6D8BC4EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41C34B2163C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:40:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59FEAB21644
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792E863BF;
-	Mon,  6 May 2024 00:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D2D6FD3;
+	Mon,  6 May 2024 00:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="qlYKp4u+"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cD3JvVJV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C921FB5;
-	Mon,  6 May 2024 00:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0F979C0;
+	Mon,  6 May 2024 00:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714956034; cv=none; b=YlZhxPkHHfY+OIQSXhHW3xz97920etkGvc7bSxogKqDb3TAaVt1r5S6KQzQiz1pARTCAHBYYA3ZfnqKCKDSLd2NlsQCYLnUvyVY/eStjM2HzZ+ubW5Okx1yYO8ZqI0OUeg3wL2yWDnDdKdV4fY9N6cH2ONKRgustimxMb94pA90=
+	t=1714956143; cv=none; b=kQ/6NnLt0ifVq1EjoVUw6eAPREYs75/xqVq28wW18OdAG02HHKSpCEYReRTPDyW+yfaWSTG0+obJ1auxTrbVuXmqP2qk8ekBjEKS5gpLXCtOtYVEWJ43OWgKBK7DlJU/cwK3JavQHMffd/UEqS7WiMbQU3AqFIRbXLDNkSUrNWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714956034; c=relaxed/simple;
-	bh=Zm6ll3FEAXahkq1OIN9xIIhtasqCrGYzDDOCbIaZh7A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bgKYGT6mfhDNZqqCvaJTbTyiBkXkRcY0tpBVOdCnIgZwpFB/z11ZWDUicb93v5fb99pZ0aYhbDUgzRLG+2HOazEJ7B2x3nH/ER8buR+Fn3NERVGtTlG37dkyg/2Zg0kUxt3DzBklMpy3ktAl1wdjm851QoPuCzvAa35HsB9Plqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=qlYKp4u+; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=e0tx6Bela2CqZ7OGR87TCeW+BT6kGw+m9pXjhCP7LkU=; b=qlYKp4u+sBvV8taZ
-	7AArr51PjRktN7xJ8xP9WpQ2kp2P+tApXRWgOJP8EIaNp3XHBIf2S6jDQTVu9muUQl/F99NIPl6HP
-	79ipq37FIamYPQxR2/QhxOlHa5YLh8g0Z7fppXjHBfQ1CpqreboZ+nNOqR/ZBqNdyUQMpcq+rGO6w
-	sfjesmdZ/G3vDzAcs36jGbnkPDveEgwYBqaTSH3WhmEsi3tHRPhBi5zXKazfop0EbSFZpZ+jXk+Vb
-	20EImGfeS1Y3zUAaqdPReSQwu5LRv5+jLy6d5ds+8u/6QcETNYHUHALmbEXMXKYVFwKHPAKop4IJ0
-	X6Y7pA1lRfE4+GS5JQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1s3mOt-004pfV-0c;
-	Mon, 06 May 2024 00:40:15 +0000
-From: linux@treblig.org
-To: jolsa@kernel.org,
-	peterz@infradead.org
-Cc: linux-perf-users@vger.kernel.org,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf/x86/cstate: Remove unused struct 'perf_cstate_msr'
-Date: Mon,  6 May 2024 01:40:09 +0100
-Message-ID: <20240506004009.770451-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1714956143; c=relaxed/simple;
+	bh=ajrFI+J3JcdhdA2HeoUPpfM5ZMPTY5FKfst1aUw5uSc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=EO/r3BO9/EqKR4TOL8otlArBGYvaiuls8pJenGHUV4U6CbDvGyCCoLak/fS6Z20pZ6h7X6XXZP2zORg+w3itMzim/adZ6+nyJUrcFUZ+36iUmap/YB07WreDz6mHb87DcI9jYr0sI+Xonh2XQmv+00iwH9eBDMhMKWe3o9FVsCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cD3JvVJV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4460LfVg006531;
+	Mon, 6 May 2024 00:42:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=ODT
+	j5D3lgHO399eys7ryhJlFJrnDxjR/8CwWSw4KajA=; b=cD3JvVJVMRTwtQbXOW3
+	pooyZAEYYNFazp02zOmMqc+te0ZZZdpsSKJOt59AOu3bj/ohOhDa7dwQhT/WvS5g
+	QcFc4olrhFV4rt5hHsqA0jHr3TMnYtiGVQFB90/ybFeA3RYkJvtVxCab8ECw0xDx
+	fgtcuC37qEPA9YmL1uLTQccZcssGm/9SUXos1FMqP3qYHYDai2uQqbwiqnJMnWWc
+	vuGmVzqh2hjnph33B1CndAxGZ37qMIIRly8RD/LIbshscn0bp+lKAJhgWF0fmX3W
+	hthhh34CqM/arPbI2cvJyXDIrPKSXQQ9MR5FM2DLm2nvlwpHm6r9p3/4bAVXLNh2
+	3Mg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwddc2ada-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 00:42:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4460gGVt031998
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 6 May 2024 00:42:16 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
+ 17:42:16 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 5 May 2024 17:42:16 -0700
+Subject: [PATCH] cpuidle: ladder: fix ladder_do_selection() kernel-doc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240505-ladder_do_selection-kdoc-v1-1-fa0da92735dd@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGcnOGYC/x3MWwrCMBCF4a2UeXYgrSmNbkWk5DLawZjKTJVC6
+ d6NPn5wzr+BkjApnJsNhD6sPJeK9tBAnHy5E3Kqhs501vSmx+xTIhnTPCplikvd4yPNEU9Dao/
+ O2eDsAPX+Errx+k9frtXBK2EQX+L0C2Yu7xWfXhcS2PcvjW/NLIkAAAA=
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano
+	<daniel.lezcano@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jeff Johnson
+	<quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TBOsQ61D6-iMnJU4kuWm-UX8keM2eZad
+X-Proofpoint-GUID: TBOsQ61D6-iMnJU4kuWm-UX8keM2eZad
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-05_16,2024-05-03_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=920
+ priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0 suspectscore=0
+ impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 clxscore=1011
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405060001
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+make C=1 reports:
 
-This looks like it's unused since
-Commit 8f2a28c5859b ("perf/x86/cstate: Use new probe function")
+warning: Function parameter or struct member 'dev' not described in 'ladder_do_selection'
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Document 'dev' for this function.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- arch/x86/events/intel/cstate.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/cpuidle/governors/ladder.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 326c8cd5aa2d2..dcf3f152a2a64 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -143,12 +143,6 @@ struct cstate_model {
- #define SLM_PKG_C6_USE_C7_MSR	(1UL << 0)
- #define KNL_CORE_C6_MSR		(1UL << 1)
+diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
+index 8e9058c4ea63..6617eb494a11 100644
+--- a/drivers/cpuidle/governors/ladder.c
++++ b/drivers/cpuidle/governors/ladder.c
+@@ -44,6 +44,7 @@ static DEFINE_PER_CPU(struct ladder_device, ladder_devices);
  
--struct perf_cstate_msr {
--	u64	msr;
--	struct	perf_pmu_events_attr *attr;
--};
--
--
- /* cstate_core PMU */
- static struct pmu cstate_core_pmu;
- static bool has_cstate_core;
--- 
-2.45.0
+ /**
+  * ladder_do_selection - prepares private data for a state change
++ * @dev: the CPU
+  * @ldev: the ladder device
+  * @old_idx: the current state index
+  * @new_idx: the new target state index
+
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240505-ladder_do_selection-kdoc-97d13884b847
 
 
