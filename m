@@ -1,153 +1,167 @@
-Return-Path: <linux-kernel+bounces-169854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C71C8BCE8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:54:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB1A8BCE9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C05287E26
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:54:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D11D91C227D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8995574BF8;
-	Mon,  6 May 2024 12:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66756BB29;
+	Mon,  6 May 2024 12:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BF3fbcQo"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NVCEXrDK"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131966BB29;
-	Mon,  6 May 2024 12:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEF943687
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715000057; cv=none; b=l8QTkWOXFc1UVn4og53tVbAI/RTOhRfTa/9iaJ/6ix4vO08GWdXzHammSoM2ciMz2JnvQxu8wP2raBpPhfxkS+Oijrk7AW33MAikcA4lB/NUHOx34+jVR/MZH7m9Cpm0UoG4WY+Ajxz6Ql9jgDMWTB+QUMENvi/8pv84AuaJatU=
+	t=1715000270; cv=none; b=nr4RxG5W/9G7pmdZZB5rFQIJeg6k4/9PaBHPzcFNgsYhG78/7hbyKGKC9KNta52jha/tlYiom7RvTOMV6wmuTKwcQjrV0F37XVORsnDHJi86SPTRIxpVXuS3Wq9K6KEBpnvT4HApCMzELxqQuJq7VmOA8cx8sv/CRXTVPgsBLGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715000057; c=relaxed/simple;
-	bh=E29O+zMWl54OXMlXahFL9wvPKNx96W/D2EieMI10Y/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KHQVro7JaSP8wBlLi44b4jv1ii6pSlsmSD3hlqeIV284RQvu/Y7OS99H6d5Wpn6GaxvFz64RshGTJtTFl4gsGCSbAxWGFKkslUE3feqABrMZlI0bPowuOUnvJUtPsStqmQXEiAd9s4U0bkfI48wttIzTeQLPE2ot1/nuHsc8UAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BF3fbcQo; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f29e80800so2020175e87.2;
-        Mon, 06 May 2024 05:54:15 -0700 (PDT)
+	s=arc-20240116; t=1715000270; c=relaxed/simple;
+	bh=UsBddcet5Sd4zyP9X920l8bRMzFSxcgmySjLBhYkM0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qnLeAc9yhNlTgX1XmcWmcykH68tJ11o+AqLnqoxbPJPY3dfD3LOHIVMHFOEFJQtBhm+MAtheAmlNlg4AGmrTfKz8xyt4qQTwIq51sh0pvcsehycW4+mxFAH+SO4UcOqryWOjBbNUKIA4VZjeRiz9FoRz3ucgvPdimbLXJfBYDcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NVCEXrDK; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5acdbfa7a45so646577eaf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715000054; x=1715604854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IYJUMLyOfuPVkBGsjqvkIOkmksaH29NkjD+X1QlY6WE=;
-        b=BF3fbcQoIMk3XTJYeL5bDMvtsnGmu+My9/JmRckN6IjsfWsaN37APcJrKTeXzGDLHf
-         eG7kUdnLzpeS2+AhUrcATHPW9YB7m2vChQItecg3TzhaBvJVlCHlWgy0cL8GrII4/835
-         zEXLOkqXIk2dr/pYVj03aGUHWXiu2DwrbRvO0wJkiBafst4FPt0hXrTcMoVZ4z2fEKrQ
-         ngxc63zvUOrQ0YTRg0Js9a6BaBoXP8j4T0a/CP9rc8kSEaNd5hDIOp3HMYQVWfO7iMqQ
-         GZGZBKsRo0oeuyY3w+Tv3B0kdIZZe2eiJIoPQubCVQTxVCA2LvF4gdvkv3L79IEl04ke
-         5BUw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715000266; x=1715605066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nMciShd0EGYC7XDcTrn2YNrkROd7Rswy9QEQRWNAjUM=;
+        b=NVCEXrDKTUkIuOCgrmgGGD5CuP2Eij/BIo8wwbA8G+VlhtrKjkxwVdUDVYCvRmrvfN
+         w1dCBueomJ0PoqYxgtVto0zW2tnbPWTOdVQpTxOHrditzFV9CuWfUPbO6l5cgIdvqcb/
+         KXNoYBV6zpS+iGOjfiN7RDZzyG9EmJM6I1hejS1/1GMttki27x2lGCVOFEj0I29KZ6r8
+         bGJNLSOC2mqzTe5Kb2zWiYZMRi7Ws9F7QEcEcrue7OiKy5aQXUzGqdgIUHY2s2Ty8RWC
+         cxJJn6IGDHN3RRfuw0uxrKx5yEag9uhFxmAUk896yoXkXONtz7ns4xxN2QPcys89co+8
+         vZ8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715000054; x=1715604854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IYJUMLyOfuPVkBGsjqvkIOkmksaH29NkjD+X1QlY6WE=;
-        b=O88JYHySBcZuCSkEEkUOQw6VZqBj6AZRTfg0T+3vScNGh8Y8tV3PXoZxtXE4ppBWf2
-         +J1HgvDqTLkPfNnPSlnzYuRyARilllQuJERxyuiwYWiizDgK2AatR3ozE+WJI35zLI/Q
-         Yx14Y26AHpBv+x7dCvGwivPkcbTsPtuL6YUad7FyMCZrIpmht89XqsLHWTWKygvQlrWf
-         P6B1FghXG7dDshfxaB++meFt9o8eXUINtNLOjmeILBcY1o1lDChCqbkqsNgu6kAQJ3yk
-         HZle4e93rI6C/BguVLOgBicqaW8NlGnLAKjGQks47AYhngoHQDMowrDBv9UZIs0QlKEN
-         TmQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYvUUb334/0gme1cf6H1iO9qWVXppxT8MQEtvla43ZTCCQz0wK2cJBBbrNePiY46p0lTDvJsKjISz0aJ/WGGK9rXJxWMJVf6IT9pmdG/SsXUykSLLa2ZTyd2jWn9TlcPCVmxYNfIAqkw==
-X-Gm-Message-State: AOJu0YwLVxa/Acr3unn+vvvf/vUnpWdOgw1Zgo8AbgIyjuG2c2B5Fzn1
-	ZbMSrxBDSMZFsZMO/uTdm7JNry0/nLhev/JkQTuxhjHv2kSeALi7rSWqb59Sr69d36i01yKFgwu
-	PJHrzmWIXsvXRTJR1p7JZNmQCouI=
-X-Google-Smtp-Source: AGHT+IEuu9HAQAASDPOvUv+eo4vaDmGpspytyOqJN4kLuzL+gyh+71AymJnLzYz3lQHVXAn61CiMQkJLULyWq0AKhf4=
-X-Received: by 2002:a19:f51a:0:b0:51e:eeb1:f24b with SMTP id
- j26-20020a19f51a000000b0051eeeb1f24bmr5882309lfb.34.1715000053829; Mon, 06
- May 2024 05:54:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715000266; x=1715605066;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nMciShd0EGYC7XDcTrn2YNrkROd7Rswy9QEQRWNAjUM=;
+        b=ShUdslRJ113qToIF6ZCux6rBSubiqYa5A9eqxZNRJtZiqF8zCjG7VofsGgnt1JiAu2
+         yF1C0TivuN9qQHlCTpHZwxX3rTT8TmaSl1BAB1W9pXeTms3Fi8bIxz+bLouJrqnAJZSw
+         CSp3WhuN2hJDLtu5ALp4BnxswomZriTUnARVdnFhNSEL5YvbpIwbDZi2KDdsQiFvVzJ8
+         UxJWqnfAQ3J5eyMSuowVw1R+fN1IrUvFinyvyfN6ZMCryD1XNM57ZBxKbNJkZKOKmWyn
+         geFBLdyl5upHG3t7/lulBX7Qs4KwvqhYPSlc3jsg9PMdqxjkxoctta7hGKN+8BoyfjER
+         9X+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUgEfOT0cpYdAHS731dypEB5BBSxF2/WD51O0XKeK+gBGiysCqghbUFI4RogkHGAI8qaJKiT0QVYPSPnMmYKwyOyZMNItSy1oO8eFfg
+X-Gm-Message-State: AOJu0Yz1qhWNnBb3bpr84jYUnM9R0AIG7mjUSsM+H2ON+liuvIuqc77z
+	FwaldwzDagGg2iYNTtTuPHGwsL8lECyRfPKNB1cI8fmn/qt7QT3+vfPRXKdOl5M=
+X-Google-Smtp-Source: AGHT+IF0uaJyxDYlhm9O/TvO/iJ/Fz0qp7mFPyXdDKipzsEKCgfH9GqZEiBJUkM2K4CJPBtVCta/PQ==
+X-Received: by 2002:a05:6870:b4a7:b0:23c:9036:1f61 with SMTP id y39-20020a056870b4a700b0023c90361f61mr12457322oap.1.1715000266357;
+        Mon, 06 May 2024 05:57:46 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id g9-20020aa79dc9000000b006eae2d9298esm7596322pfq.194.2024.05.06.05.57.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 05:57:45 -0700 (PDT)
+Message-ID: <71c1f01f-f740-43b0-9962-afcf08cab686@kernel.dk>
+Date: Mon, 6 May 2024 06:57:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
- <20240506-rk-dts-additions-v4-2-271023ddfd40@gmail.com> <2543817.5xW6y1K4kI@bagend>
-In-Reply-To: <2543817.5xW6y1K4kI@bagend>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Mon, 6 May 2024 16:54:02 +0400
-Message-ID: <CABjd4Yw-JA5=SfcgtVNYZN37hFbqf14Ut1yHTSz1YZiZ3NQ-pw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] arm64: dts: rockchip: enable thermal management on
- all RK3588 boards
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Dragan Simic <dsimic@manjaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rsrc: Add support for multi-folio buffer
+ coalescing
+To: Chenliang Li <cliang01.li@samsung.com>, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peiwei.li@samsung.com, joshi.k@samsung.com, kundan.kumar@samsung.com,
+ gost.dev@samsung.com
+References: <CGME20240506075314epcas5p25333b80c8d6a3217d5352a5a7ed89278@epcas5p2.samsung.com>
+ <20240506075303.25630-1-cliang01.li@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240506075303.25630-1-cliang01.li@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Diederik,
+On 5/6/24 1:53 AM, Chenliang Li wrote:
+> Currently fixed buffers consisting of pages in one same folio(huge page)
+> can be coalesced into a single bvec entry at registration.
+> This patch expands it to support coalescing fixed buffers
+> with multiple folios, by:
+> 1. Add a helper function and a helper struct to do the coalescing work
+> at buffer registration;
+> 2. Add the bvec setup procedure of the coalsced path;
 
-On Mon, May 6, 2024 at 4:29=E2=80=AFPM Diederik de Haas <didi.debian@cknow.=
-org> wrote:
->
-> Hi,
->
-> On Monday, 6 May 2024 11:36:33 CEST Alexey Charkov wrote:
-> > This enables the on-chip thermal monitoring sensor (TSADC) on all
-> > RK3588(s) boards that don't have it enabled yet. It provides temperatur=
-e
-> > monitoring for the SoC and emergency thermal shutdowns, and is thus
-> > important to have in place before CPU DVFS is enabled, as high CPU
-> > operating performance points can overheat the chip quickly in the
-> > absence of thermal management.
-> >
-> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4 ++++
-> >  8 files changed, 32 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
-> > b8e15b76a8a6..21e96c212dd8 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > @@ -742,6 +742,10 @@ regulator-state-mem {
-> >       };
-> >  };
-> >
-> > +&tsadc {
-> > +     status =3D "okay";
-> > +};
-> > +
-> >  &uart2 {
-> >       pinctrl-0 =3D <&uart2m0_xfer>;
-> >       status =3D "okay";
->
-> I built a kernel with v3 of your patch set and someone tested it on a ROC=
-K 5B
-> 'for me' and it had the following line in dmesg:
->
-> rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
->
-> I'm guessing that turned up due to enabling tsadc, but (also) in v4 I did=
-n't
-> see a change wrt "rockchip,grf".
-> Should that be done? (asking; I don't know)
+coalesced
 
-I'm getting the same. Neither the mainline TSADC driver [1], nor the
-downstream one [2] seems to use the grf pointer on RK3588 at all. It
-still works in spite of that warning, although I can't see how (or if)
-it configures the reset mechanism without those GRF registers.
+> 3. store page_mask and page_shift into io_mapped_ubuf for
+> later use in io_import_fixed.
 
-Best regards,
-Alexey
+Can you add some justification to this commit message? A good commit
+message should basically be the WHY of why this commit exists in the
+first place. Your commit message just explains what the patch does,
+which I can just read the code to see for myself.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/thermal/rockchip_thermal.c#n818
-[2] https://github.com/radxa/kernel/blob/stable-5.10-rock5/drivers/thermal/=
-rockchip_thermal.c#L961
+As it stands, it's not clear to me or anyone casually reading this
+commit message why the change is being done in the first place.
+
+Outside of that, you probably want to split this into two parts - one
+that adds the helper for the existing code, then one that modifies it
+for your change. We need this to be as simple as possible to review, as
+we've had a security issue with page coalescing in this code in the
+past.
+
+Minor comments below, will wait with a full review until this is split
+to be more easily reviewable.
+
+> +/*
+> + * For coalesce to work, a buffer must be one or multiple
+> + * folios, all the folios except the first and last one
+> + * should be of the same size.
+> + */
+> +static bool io_sqe_buffer_try_coalesce(struct page **pages,
+> +				       unsigned int nr_pages,
+> +				       struct io_imu_folio_stats *stats)
+> +{
+> +	struct folio	*folio = NULL, *first_folio = NULL;
+> +	unsigned int	page_cnt;
+> +	int		i, j;
+
+Please don't make up your own style, follow the style that's already in
+the file to begin with.
+
+> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+> index c032ca3436ca..4c655e446150 100644
+> --- a/io_uring/rsrc.h
+> +++ b/io_uring/rsrc.h
+> @@ -47,9 +47,18 @@ struct io_mapped_ubuf {
+>  	u64		ubuf_end;
+>  	unsigned int	nr_bvecs;
+>  	unsigned long	acct_pages;
+> +	unsigned int	page_shift;
+> +	unsigned long	page_mask;
+>  	struct bio_vec	bvec[] __counted_by(nr_bvecs);
+>  };
+
+When adding members to a struct, please be cognizant of how it packs.
+I'd suggest making the above:
+
+  	u64		ubuf_end;
+  	unsigned int	nr_bvecs;
+	unsigned int	page_shift;
+	unsigned long	page_mask;
+  	unsigned long	acct_pages;
+	struct bio_vec	bvec[] __counted_by(nr_bvecs);
+
+which should pack much nicer and actually save memory.
+
+-- 
+Jens Axboe
+
 
