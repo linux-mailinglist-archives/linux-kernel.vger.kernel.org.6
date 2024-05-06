@@ -1,142 +1,85 @@
-Return-Path: <linux-kernel+bounces-170236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE208BD3E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:36:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B048C8BD3E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F752B21F60
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2921C21964
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9E6157499;
-	Mon,  6 May 2024 17:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DD5157498;
+	Mon,  6 May 2024 17:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UBUlIBpH"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="U/lKhD5X"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0499157461
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 17:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFAC142909
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 17:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715016971; cv=none; b=e5ZDSkyO9lvcOx7dtjphmw8dGp80gFq1Jeb/E1iyjFjZGNfbJvDGdNIekq6Z59XXwJnMV8b9jRClOMoS6yzqnNi4Hysb6sGPbclR1ICEOHg5IMDUeM3QLWIxZJmMdUgOObtbfdQh0TqefZ+ex1nNijHSP8V1WAw2mvg+Tu0cx9c=
+	t=1715017101; cv=none; b=sx8MbyF4FYwooHntsfNGUkYt1UWtjOIlYai+o/bMRKXFaTSPCMN4jMHLn680UoSEjuddCavMWPbK3yxTuewmV+WuiODDMvXjHiMbwO64CjaoZQaDHwTE2mY4g3fRoZVjY7acaSQ1lwtOVTWJHzvZu+KtUsKk8fMoS1G4JDGB7lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715016971; c=relaxed/simple;
-	bh=BOv4/FKnDwPV8GTCpu8TlwRJ40xZi31sTqgRiYOmAZ0=;
+	s=arc-20240116; t=1715017101; c=relaxed/simple;
+	bh=4XFC9LixjSuuTuMODWQ2jae7SIkFY3aM9gnz3hQ/Sfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IIQDvTdDdwp6my71goHranHdz5ymtnyEiCGV4JZ1zNIBJwNywVgjVdlsY5biCUAFTa8OjslbhCpLxcSY3KvlUMBOshyCA/6cSsvXGbCfOB9scjhLnt2I/uyBc073tbW9fU9dgC8VN7fqt8p/v/RV03zc7SoDPm2FCEJTrzwS5lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UBUlIBpH; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f489e64eb3so425074b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 10:36:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715016969; x=1715621769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M1cirPsDQQFnLCIO2tBGU3gB6zTRLcomHcl4pwwjw8s=;
-        b=UBUlIBpH0pseQyy/9SHrVlyC/Kh5tqm+TYI/+LxlHPiF/2y72manS6eh6t+GQTJQsN
-         L35Y11H9E1ga+wDVqfPn69BgcZO8Ze1yhDRG0MnSuM+MO6hdbOF4MMIbYlZOAAtKwt+G
-         Ghmfb0NLpmsQxvizzWoypqfAwMkil4AjF9Yko=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715016969; x=1715621769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M1cirPsDQQFnLCIO2tBGU3gB6zTRLcomHcl4pwwjw8s=;
-        b=kuHt6NPgv62Bg6zMYRV5ReJZP6+xoBOcMbdvdl/czmxtBSYoFf/POK+d6bWbKJkx6w
-         Z4StpMyBRFZHX1x5xn+wvdo5xHwSETWaqFi9xT7XMnw6b61eSVXewN1FzfbVl6URL8Hr
-         bju3iYkzFdaKzHW+NvsD/4jGBdb2WxOiwjB/0h5OUVvqGJaQ0Im2y0tw6pMlcfFlHfpm
-         lbGK5M7ra2yBd5ZC6NCWceo9QnRmsWsTY6rLVeGB/Ub4j9lprfmnFqTQV6yDAIr9hxHs
-         XHXLL7RdZxajIdbI9Y83DYmftbeEag9nhRzISNyGGmsnrrAavtGM7zUn3RbpxqP8hs0g
-         BKwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSsx0s9fXxa53UVLvMPuxqJg9LrR3MwiwXRlkFoD5WrhO/4RjwhXDmbcKg60h2Cs4s1YB6FqBGZwBNVZco2n0KUmxxOqmBI1I64HhJ
-X-Gm-Message-State: AOJu0YzJ7bMnpPBF//JEfbpBPQm8acBLAeNU9tFaueXpD9THeAKkXM/8
-	LHTNYcEcFfUwLWiZ/4Q7QQ97BWan7gJShiqVy4pvDYuZjwJP3mHsGzH/8FwXQA==
-X-Google-Smtp-Source: AGHT+IH64A0FOEe5/2xo0QYeaE7m5Kei+LLQ4NIRMhtTPpqVuiCTUVzsc6UrWFJLgPQ8RmxEHZY8ew==
-X-Received: by 2002:a05:6a20:9c8d:b0:1af:8ca1:8fec with SMTP id mj13-20020a056a209c8d00b001af8ca18fecmr7727792pzb.16.1715016969024;
-        Mon, 06 May 2024 10:36:09 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id i7-20020a056a00004700b006f45e6e9470sm4250255pfk.209.2024.05.06.10.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 10:36:07 -0700 (PDT)
-Date: Mon, 6 May 2024 10:36:06 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Joao Moreira <joao@overdrivepizza.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] x86/ibt: Implement FineIBT
-Message-ID: <202405061031.43EE1C4@keescook>
-References: <Y06rtoE9BsERG9uv@hirez.programming.kicks-ass.net>
- <202210181020.79AF7F7@keescook>
- <Y08H8zJ5lQ62jel5@hirez.programming.kicks-ass.net>
- <c561dd8ec384bfc77998a6db6ed824e7@overdrivepizza.com>
- <Y08M4+GxoqvuZ+bq@hirez.programming.kicks-ass.net>
- <d219d61420c48a90a2e8bdc29cb8a579@overdrivepizza.com>
- <202210182218.56AD2871@keescook>
- <baced047981ff5fce633156e3e374dfd@overdrivepizza.com>
- <202211011437.F82B61B8C@keescook>
- <1f6069657f4630c36d60baab2e9b3d10@overdrivepizza.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdTpDHV+dzg3MQWkiGQJqvL57wh78XKR6DoDR8MpMASLx0MDBtqZ/ArAnVRFYiRNiNaZjyrdmo06mkSKq6Wd1aan552SuPm9rf/62Oi/ZrJk2nLNzp231l7UWt5MZubyq7PorwoPVVlxL3DKUesILmOsb+Lprlo8LnEuWxMuYNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=U/lKhD5X; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715017089;
+	bh=4XFC9LixjSuuTuMODWQ2jae7SIkFY3aM9gnz3hQ/Sfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U/lKhD5XrgXw8BC4RZYX+Zbzpkz+aHyxToifuGZ+c4dFH60sdVZkO4x4ksCCEE/ni
+	 s2OCOD3gW/B5gjKkO7RSWBTtvW3EKtgrbYhBidaHLZ6NHeZ1TEkv5GYVOy8ltPxJpJ
+	 jIcuOpPYmsahVEHWALirlCZFqftaDaDAEgqu4QVg=
+Date: Mon, 6 May 2024 19:38:09 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>
+Subject: Re: [PATCH] platform/chrome: cros_kbd_led_backlight: enable probing
+ through EC_FEATURE_PWM_KEYB
+Message-ID: <ae29f036-5e39-47ee-98d3-c023a263a3ef@t-8ch.de>
+References: <20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net>
+ <cd9c5b6a-0155-434a-b868-a9ea52e878c9@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1f6069657f4630c36d60baab2e9b3d10@overdrivepizza.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cd9c5b6a-0155-434a-b868-a9ea52e878c9@amd.com>
 
-*thread necromancy*
-
-On Tue, Nov 01, 2022 at 02:50:22PM -0700, Joao Moreira wrote:
-> On 2022-11-01 14:39, Kees Cook wrote:
-> > On Mon, Oct 31, 2022 at 12:13:50PM -0700, Joao Moreira wrote:
-> > > On 2022-10-18 22:19, Kees Cook wrote:
-> > > > On Tue, Oct 18, 2022 at 09:48:42PM -0700, Joao Moreira wrote:
-> > > > > > > Is it useful to get the compiler to emit 0xcc with
-> > > > > > > -fpatchable-function-entry under any circumstance? I can probably
-> > > > > > > change
-> > > > > > > that quickly if needed/useful.
-> > > > > >
-> > > > > > Having it emit 0xcc for the bytes in front of the symbol might be
-> > > > > > interesting. It would mean a few kernel changes, but nothing too hard.
-> > > 
-> > > Should I push for this within clang? I have the patch semi-ready
-> > > (below) and
-> > > would have some cycles this week for polishing it.
-> > 
-> > Sure! While the NOP vs CC issue isn't very interesting when IBT is
-> > available, it's nice for non-IBT to make attackers have to target
-> > addresses precisely.
-> > 
-> > If it's really invasive or hard to maintain in Clang (or objtool),
-> > then I'd say leave it as-is.
+On 2024-05-05 08:42:21+0000, Mario Limonciello wrote:
+> On 5/5/2024 04:41, Thomas Weißschuh wrote:
+> > The ChromeOS EC used in Framework laptops supports the standard cros
+> > keyboard backlight protocol.
+> > However the firmware on these laptops don't implement the ACPI ID
+> > GOOG0002 that is recognized by cros_kbd_led_backlight and they also
+> > don't use device tree.
 > 
-> The Clang implementation is actually quite simple and, IIRC, I heard in the
-> past someone mentioning that trapping instructions actually provide benefits
-> for holding undesired straight-line speculation. Maybe someone can comment
-> on that, or even if that is really relevant.
-> 
-> Meanwhile I'll work on pushing it then.
+> Something I'd wonder is if the GOOG0002 ACPI ID can go away entirely with
+> this type of change.  Presumably the Chromebooks with ChromeOS EC /also/
+> advertise EC_FEATURE_PWM_KEYB.
 
-I happened to be looking at in-memory CFI preambles again and noticed
-that there's still a NOP sled at every function that got a __cfi_...
-target (which only matters in the non-IBT world).
+Sounds good to me in general. It would make the code cleaner.
 
-I can't find a PR for your NOP->INT3 patch:
-https://github.com/lvwr/llvm-project/commit/ca9029c4536d0544e35dff85e4806803e256841f
+But I have no idea how CrOS kernels are set up in general.
+If they are not using CONFIG_MFD_CROS_EC_DEV for some reason that
+wouldn't work.
 
-Are you able to get this refreshed and landed?
+If the CrOS folks agree with that aproach I'll be happy to implement it.
 
-Thanks!
+> <snip>
 
--Kees
-
--- 
-Kees Cook
+Thomas
 
