@@ -1,172 +1,105 @@
-Return-Path: <linux-kernel+bounces-169751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F448BCD10
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:45:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B008BCD15
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964EC1C21311
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:45:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E82E1F22A70
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668B142E87;
-	Mon,  6 May 2024 11:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404FF143745;
+	Mon,  6 May 2024 11:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OBdxxJFJ"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="S97BmLBf"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27A0142E84
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 11:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC54414262C;
+	Mon,  6 May 2024 11:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714995939; cv=none; b=FCRE5BjnKWo0w/IgyLOgYQnjOnPv276zZsyJpR0DroNk74HrcDRfAuv5bEiK2tQKPqQumYY2wibqaJmkBf628HEP5Mk0oR5NaraD89pR0gUbCQ/3PhJiz29VOB6A7viEtJuBwzP6VW0sCeIviWja+3udOsPljyfVOCvUUVwv7kY=
+	t=1714995981; cv=none; b=bNPHafHSsxB9K2r5+1j4B6cutZgyG44yW0d0HJf45mmsR+Y1xao3ZfLwUUV4iM5r7UKXZgcNb86c8MINDHyjtORr/nd/+vRetyJRGX1PH8HJNZ/v9izuRAGXBSs46EYVyDIo9beN6EexqvrjWgWJkNj139npxYAJsvZEk23AwYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714995939; c=relaxed/simple;
-	bh=+ehF7BaalUWIfwGCQQBBdo1Vc67pvkdUy+vFzLc1VGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQ6pDRiQjX65K0dw1g7kHWoOvX1lBI9RWiEv5S7O/6JXfYI6W5bPz25OvRJbwMb/k69Z059FfQOTHnMMKRYVlxojge2B9vtO0IG5aaWdf11DTJfURA9KdLy7VDg2SimpENIaMbZ+H5WHls3asaI79ASifSnlbWteLQX6Lhg77rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OBdxxJFJ; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-23eff8c9a1dso1041184fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 04:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1714995937; x=1715600737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mru4lIZY8M9ZaXmhBpUJWDHWUyRRfxkrVAZooaEo0w=;
-        b=OBdxxJFJhY+dbRNDtdO3Uuzj1svc3C7LVqt9LFQGsgz57PaAklRnLVOPyt5b9OW8tE
-         AA6HhV8sMHZDsWIcd2DB5KRboHuxg7upuMGsiQwBlnH/K7BP9arJB6Eu5d7q8h8JXtPn
-         7Mwr3DpgqNuJvW3Xp0vhVg5m2Bd5nU9KJZIebhVxgdQBbLAqZ85LowQmjVuxgrp0g9AB
-         Eu35bHoO1vFFNaBNtCIAwpXycgw+R8JAihC5oagSgc+fDwJIlQU8aI93bqaoFdoBZ+X1
-         L0FEPr+3EPdKMW2uisPE68lETg0KIab9nifd2bBArmyRSTnmqZGKt53qegQnTtWxxE7S
-         Y+EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714995937; x=1715600737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mru4lIZY8M9ZaXmhBpUJWDHWUyRRfxkrVAZooaEo0w=;
-        b=n6xcA+ExyJ0a6ziEW9Qu4ZEQZQNicyA0mb4ikYaID8ZTeAS2EgP6sjOjWI6vLYtrFH
-         kFIL89ixN26IZIM+Va0g9PDZNlhXp943/rZX+ByEcV5vHVl9eVSael94gMMnt3F3sj4a
-         j4Ze+jaeXzoGBGTOuunW2SLxa4Tle3EmTmXgcRlByPIbnOiz+wtekRfdlwZBTl9aKx9d
-         l7df57e3DyrhaI2zGabF2X7QH/dZs7iB774oFJPUAqbEO1ksd9ESqcSzKwi53U1OKy/5
-         e4ErXFNI+wilThtgQ2KlDcmGyNA08WxiwP0Te7DmxocmaQVt6/GRA/cwepg5iOk33RjH
-         cZCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqyMiDwDw3iqTNiu6mdEGRB7YQEWGUUazdy7xU/6cZfnEVt5VKOS7A7vqkm4cy3ag8QNeydqradtTgjMb+IoQEMmvg9s2RqVButRTS
-X-Gm-Message-State: AOJu0YzOMACc0f0Kkvg0qcpkZdM2qm1KEPnBXuO8WBmLJn1JfxRrIwUF
-	+iPCs5V0fVJ7A331wM4lH/R8+igRZPsWu8hOR4HlCYij7WH7ZUhYDdGupVv30Fc=
-X-Google-Smtp-Source: AGHT+IFyCeIGGLi6q/4GvP57e6HELJs2LVP51SvO1LEbo9QoA+TRsrBFgkTO9NTNLl1fhCADnp5IPw==
-X-Received: by 2002:a05:6870:1589:b0:233:5b4d:ff90 with SMTP id j9-20020a056870158900b002335b4dff90mr14085436oab.50.1714995936945;
-        Mon, 06 May 2024 04:45:36 -0700 (PDT)
-Received: from sunil-laptop ([106.51.191.139])
-        by smtp.gmail.com with ESMTPSA id ch13-20020a056830638d00b006ebcceb7f8fsm89603otb.62.2024.05.06.04.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 04:45:36 -0700 (PDT)
-Date: Mon, 6 May 2024 17:15:22 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
-	acpica-devel@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Anup Patel <anup@brainfault.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Robert Moore <robert.moore@intel.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Andrei Warkentin <andrei.warkentin@intel.com>,
-	Haibo1 Xu <haibo1.xu@intel.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Subject: Re: [PATCH v5 17/17] serial: 8250: Add 8250_acpi driver
-Message-ID: <ZjjC0vigpqwe6R/c@sunil-laptop>
-References: <20240501121742.1215792-1-sunilvl@ventanamicro.com>
- <20240501121742.1215792-18-sunilvl@ventanamicro.com>
- <ZjNaR-YtVTm4pbP7@smile.fi.intel.com>
- <ZjNh0Llcx+0VHevy@sunil-laptop>
- <ZjNmdfR2J6hNnYle@smile.fi.intel.com>
- <ZjN3GQI3gegYOIgS@sunil-laptop>
- <ZjOy2G0qN5G076i0@smile.fi.intel.com>
- <ZjTtx88zk4GvCImk@sunil-laptop>
- <ZjUDeuCQNCuYgATA@smile.fi.intel.com>
+	s=arc-20240116; t=1714995981; c=relaxed/simple;
+	bh=EyvbrIJwt9cxluE2XvCnMCN53rIcsqLY/iQwqX1dse0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=qz3IE6YnpudqArXICSQLJLhU53ZC7avQjAfP6tIDVampbdg3bRMq9D1WMqsbbIS1mxmRGgiLSnbnW3GrIU5Bp5tFIGx5urA6t1ciZWamUqZf1sIAQrhTzKlho35p6ALcuRgjDtfjYGPsuKKW03DX0eKGVyjE9uat5haovWzjevE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=S97BmLBf; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjUDeuCQNCuYgATA@smile.fi.intel.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1714995976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TDHj3I2bKZV0Oufn+FLrJiGvu/3S5EEePKKlBJVETJA=;
+	b=S97BmLBfNTDEVmteDIRcwYLH9I05+zB3fB6YiZTR6PiQOmLotWIdYE/aO9rD9W9/sqICDZ
+	kEzZT2uhtq2RuNajIuoFtb4kwOStatPh/hugkxSv2S6TUKeWrr9dnThyeOrijbs9Gt4scX
+	IBoM7HjShWnynpz9lmPno4w1dyLR+XkR0blLtR3ggZBQKTrNShbxdM1ZYLyZUGsy2CVLaK
+	tvpomTvp4FOrfDKLJHKaMNaG+8yIes03eZa4YF+r3zZNBiqQKuXAFWuzEeAiQJFwweK8vo
+	kA37V9fEWXflnjsmrAw7XjTYs5NdGQC14wIUOOwpMTQfpOI4MCnWior3MnFI9g==
+Date: Mon, 06 May 2024 13:46:15 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Lee
+ Jones <lee@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] dt-bindings: arm: rockchip: Add Radxa ROCK 3B
+In-Reply-To: <ade304a1-ea43-46cb-b425-b08055db49dc@linaro.org>
+References: <20240505134120.2828885-1-jonas@kwiboo.se>
+ <20240505134120.2828885-4-jonas@kwiboo.se>
+ <ade304a1-ea43-46cb-b425-b08055db49dc@linaro.org>
+Message-ID: <c306b46bc695a256c35e506d98a08e47@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Fri, May 03, 2024 at 06:32:10PM +0300, Andy Shevchenko wrote:
-> On Fri, May 03, 2024 at 07:29:35PM +0530, Sunil V L wrote:
-> > On Thu, May 02, 2024 at 06:35:52PM +0300, Andy Shevchenko wrote:
-> > > On Thu, May 02, 2024 at 04:50:57PM +0530, Sunil V L wrote:
-> > > > On Thu, May 02, 2024 at 01:09:57PM +0300, Andy Shevchenko wrote:
-> > > > > On Thu, May 02, 2024 at 03:20:08PM +0530, Sunil V L wrote:
-> > > > > > On Thu, May 02, 2024 at 12:17:59PM +0300, Andy Shevchenko wrote:
-> 
-> ...
-> 
-> > > > > > This driver is not a duplicate of 8250_pnp. It just relies on UART
-> > > > > > enumerated as platform device instead of using PNP interfaces.
-> > > > > > Isn't it better and simple to have an option to enumerate as platform
-> > > > > > device instead of PNP? 
-> > > > > 
-> > > > > Ah, then extract platform driver first from 8250_core.c.
-> > > > > 
-> > > > Let me know if I understand your suggestion correctly. Do you mean call
-> > > > something like serial8250_acpi_init() from serial8250_init() and
-> > > > register the driver directly in serial8250_acpi_init()?
-> > > 
-> > > Extract the code to be 8250_platform.c and update that file.
-> > > I have locally the extraction of RSA code, I will see if I can help you
-> > > with the rest.
-> > > 
-> > Thanks!. That will be helpful. TBH, I don't understand what to do for
-> > extracting the platform driver code. There are already several vendor
-> > specific UART drivers (ex: 8250_fsl.c) which are enumerated as platform
-> > devices. 8250_core.c looks cleanly supporting such drivers which can
-> > register themselves with the core. For generic UART, DT has 8250_of.c
-> > and ACPI has 8250_pnp.c. But 8250_pnp.c comes with baggage of PNP
-> > contract. So, the driver in this patch is similar to vendor specific
-> > drivers to support generic uart devices which are enumerated as platform
-> > device.
-> 
-> > I can rename 8250_acpi.c to 8250_platform.c if that is better.
-> 
-> No, that's not what I meant. We _already_ have a generic platform driver,
-> it's just inline in the 8250_core.c and needs to be extracted. When it's done,
-> you may simply add an ACPI table to it.
-> 
-> > Could you please help with a patch even if not compiled so that I can
-> > understand your suggestion better? 
-> 
-Okay, Thanks! Andy.
+Hello Krzysztof,
 
-IIUC, you want to extract serial8250_isa_driver from 8250_core and
-then add ACPI support. I was not sure about that since I thought it was
-only for legacy ISA devices and they seem to be created by OS itself
-instead of discovery. ISA driver has some ordering dependency on PNP
-driver as well. Anyway, let me try if that is the acceptable way
-forward.
+On 2024-05-06 12:48, Krzysztof Kozlowski wrote:
+> On 05/05/2024 15:41, Jonas Karlman wrote:
+>> Add devicetree binding documentation for the Radxa ROCK 3B board.
+>> 
+>> The Radxa ROCK 3B is a single-board computer based on the Pico-ITX 
+>> form
+>> factor (100mm x 75mm). Two versions of the ROCK 3B exists, a community
+>> version based on the RK3568 SoC and an industrial version based on the
+>> RK3568J SoC.
+>> 
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+>> ---
+>>  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml 
+>> b/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> index 51cdaabaf0d9..41f2ab79e612 100644
+>> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+>> @@ -799,6 +799,11 @@ properties:
+>>            - const: radxa,rock3a
+>>            - const: rockchip,rk3568
+>> 
+>> +      - description: Radxa ROCK 3B
+> 
+> Does not look like it matches recent fixups for names.
 
-Thanks,
-Sunil
-
-
+Actually, I can confirm that "Radxa ROCK 3B" conforms to the recently
+employed naming scheme for Radxa boards.
 
