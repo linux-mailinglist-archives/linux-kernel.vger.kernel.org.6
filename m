@@ -1,49 +1,48 @@
-Return-Path: <linux-kernel+bounces-169894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BBD8BCF17
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:36:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4988BCF20
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5B01C227DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:36:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C8711C22804
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BF87E0E4;
-	Mon,  6 May 2024 13:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9699D7F7D1;
+	Mon,  6 May 2024 13:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtKnAA/X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVbJ0rfY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF17078C9E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ECA7E56B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715002503; cv=none; b=Sr9ZQV1QfvNKDib5m8BYASaa2cETCu1ZitZ7020wMWa40YVtlt3kqbk1FxOGGyXIoSwMlQPVQEpeIFCSJ+CPDcodM62X09csxkdkDs/Lb4uKyzcA9WFS2FdEdEQqaQGGxSy2iSfOeI1HMASO9V+KyduB46ulU3pHQbJqpYza7tg=
+	t=1715002508; cv=none; b=daLMWCCLloaWHTVIw9RsegGhn4qdFF6Dk75ZzPQBBho/n0/FxZ05nwi87OsqTg9JrF0y8kBs8oUVhDrsczwezN9UMmOwb8VpCLQWeaT11lNTczywt9DT+cbO5p7rPvZQ7zpVYJvOHflki6+fsXraZvAcgU7i3yPWSqD1J8kwtUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715002503; c=relaxed/simple;
-	bh=7KQKdwRJtBFZkLdfMhs2OLN3qUwlGvTF8MBUDqOjd3s=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KHLsthptXWe7tsLOqF2mj8m6FMwU3biE1eDf0tZ2eUWKjC7Ld76oZxd3kF/VvCKFCMxelOFgL5hF9AsSSsIbdsSpb3+KuPrtvYl4YUW6t6p/U2uc1GqpZ6rf3AeG4XP7dQGdOAI40Lafi8F9iB3JQQCg/yDLwqWzQqYJj5bqm38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtKnAA/X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0E4C116B1;
-	Mon,  6 May 2024 13:34:58 +0000 (UTC)
+	s=arc-20240116; t=1715002508; c=relaxed/simple;
+	bh=2gxAViJr9NJSI0wyF8/7Q/WmZNqJmwnGrC0yrjFayzk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QRTrqI+mnpBU1n7QuyLCgF6DTRB88aV0xqTJxT4LgCGRkm1RreDcPoPETZoplriOm+8uq9lMWMp9qRwszxOC3ZPKyJIO4k1qTS9KiSnnKdpXk5Kg5g85UZqd5B90i4mXUYJFxEEBQaMVIbh+guwUOek5a1U9+4eIRGCapHkwky0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVbJ0rfY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B95C3277B;
+	Mon,  6 May 2024 13:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715002503;
-	bh=7KQKdwRJtBFZkLdfMhs2OLN3qUwlGvTF8MBUDqOjd3s=;
-	h=From:Subject:Date:To:Cc:From;
-	b=XtKnAA/XWOfsPqfFPNMzDVsGyICjYHcSlf8yN7QfZtjlSZqSiy5hAzHxSY8rsgFJw
-	 3/hyujLhOEw1+5r+M6JvWl7pIFUa759fB+oMeFWlMjrnpyy/jbd6Wcgfw5Y7L8e4ew
-	 FOZG46X4xaoX09TdyFSn6ZQf1dSKkjYei64HiVGsq42hEqOtxuBnw7BwPEPZRpVhhy
-	 KTQDbLBkXcbirv4Ug2rw8AvhFbgFpQcT2myKjRx2vLHBf83Szm0wich1/Jp9Zq51Ge
-	 s0S261RfU+xxKJ0DjL64p/1LO0WzWkNKtRwEyPkWRG/lQJshAOVx0XKzGhpo1TToeS
-	 9xAidLnwcpCgg==
+	s=k20201202; t=1715002508;
+	bh=2gxAViJr9NJSI0wyF8/7Q/WmZNqJmwnGrC0yrjFayzk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=GVbJ0rfY3xs6Ux0UxSoIfjcF29PmoHxtN3SrZJzOiF4gjY6sEQ5ignodSdmCheGi1
+	 CXDdWHGpV7NtdHJeEuDVvMHAFb8xiVlY30Y7lruDFe37+n9bE4e+JYRLJ9xz88nIsR
+	 DfumMVuId5PtRdGCcKxv+PGuiZ5jtcqEPjiVb+GeyoIDjefa43RHYbpMHWOHi8kb6s
+	 jDu75XS7G6pLuFk+SwyxyqJCxneAM/tiialtVN+aX1fFhLp6Wm4qL+A33iJjFMeyGA
+	 VH685LOmQKsjuF3229lcd00iPmIurLhYWyMnC54vhk5wlRCgM8SXUijj5zb1BXX7sg
+	 5DE/nd2ifTc/Q==
 From: Michael Walle <mwalle@kernel.org>
-Subject: [PATCH 00/20] drm/bridge: tc358775: proper bridge bringup and code
- cleanup
-Date: Mon, 06 May 2024 15:34:29 +0200
-Message-Id: <20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org>
+Date: Mon, 06 May 2024 15:34:30 +0200
+Subject: [PATCH 01/20] drm/bridge: add dsi_lp11_notify mechanism
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,9 +51,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGXcOGYC/x2Myw5AMBAAf0X2bJOlreJXxEFY7IWm9Uoa/65xn
- ExmIgT2wgHaLILnS4LsW4Iiz2Bch21hlCkxlFRqMlThMSpTW2twlgfdfrM/HRo164ZIq8I2kFL
- nOel/2/Xv+wEve/DHZgAAAA==
+Message-Id: <20240506-tc358775-fix-powerup-v1-1-545dcf00b8dd@kernel.org>
+References: <20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org>
+In-Reply-To: <20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
  Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
  Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
@@ -73,71 +72,91 @@ Cc: Daniel Semkowicz <dse@thaumatec.com>, dri-devel@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, Michael Walle <mwalle@kernel.org>
 X-Mailer: b4 0.12.4
 
-This patchset fixes the bridge initialization according to the
-datasheet. Not sure how that even worked before. Maybe because the
-initialization was done prior to linux (?).
+Some bridges have very strict power-up reqirements. In this case, the
+Toshiba TC358775. The reset has to be deasserted while *both* the DSI
+clock and DSI data lanes are in LP-11 mode. After the reset is relased,
+the bridge needs the DSI clock to actually be able to process I2C
+access. This access will configure the DSI side of the bridge during
+which the DSI data lanes have to be in LP-11 mode. After everything is
+configured the video stream can finally be enabled.
 
-The bridge has some peculiarities:
- (1) The reset has to be deasserted in LP-11 mode
- (2) For I2C access the bridge needs the DSI clock
- (3) The bridge has to be configured while the video stream is
-     disabled.
- (4) The bridge has limitations on the display timings. In particular,
-     the horizontal pulse width has to be at least 8 pixels wide and
-     both the horizontal pulse width as well as the back porch has to
-     be even. According to the datasheet the horizontal front porch as
-     well but in line sync mode, this is ignored. Also line sync is the
-     only supported mode for this bridge, therefore, the front porch
-     is always ignored.
+This means:
+ (1) The bridge has to be configured completely in .pre_enable() op
+     (with the clock turned on and data lanes in LP-11 mode, thus
+     .pre_enable_prev_first has to be set).
+ (2) The bridge will enable its output in the .enable() op
+ (3) There must be some mechanism before (1) where the bridge can
+     release its reset while the clock lane is still in LP-11 mode.
 
-The most controversial patch is probably "drm/bridge: add
-dsi_lp11_notify mechanism" which is needed for (1) above. Some time ago
-there was a series [1] to add a manual power-up, which was abandoned and
-which didn't suite the needs for this bridge anyway.
-
-Also, this will gradually change the tc_ prefix to tc358775_ while the
-functions are refactored.
-
-The bridge was successfully tested on a Mediatek MT8195 SoC with the
-following panels:
- - Innolux G101ICE
- - AUO G121EAN01.0
- - Innolux G156HCE (dual-link LVDS)
-
-[1] https://lore.kernel.org/r/20231016165355.1327217-1-dmitry.baryshkov@linaro.org/
+Unfortunately, (3) is crucial for a correct operation of the bridge.
+To satisfy this requriment, introduce a new callback .dsi_lp11_notify()
+which will be called by the DSI host driver.
 
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
-Michael Walle (20):
-      drm/bridge: add dsi_lp11_notify mechanism
-      drm/mediatek: dsi: provide LP-11 mode during .pre_enable
-      drm/mediatek: dsi: add support for .dsi_lp11_notity()
-      drm/bridge: tc358775: fix regulator supply id
-      drm/bridge: tc358775: add crtc modes fixup
-      drm/bridge: tc358775: redefine LV_MX()
-      drm/bridge: tc358775: use regmap instead of open coded access functions
-      drm/bridge: tc358775: remove error message if regulator is missing
-      drm/bridge: tc358775: remove complex vsdelay calculation
-      drm/bridge: tc358775: simplify lvds_link property
-      drm/bridge: tc358775: reformat weird indentation
-      drm/bridge: tc358775: correctly configure LVDS clock
-      drm/bridge: tc358775: split the init code
-      drm/bridge: tc358775: configure PLL depending on the LVDS clock
-      drm/bridge: tc358775: dynamically configure DSI link settings
-      drm/bridge: tc358775: use proper defines to configure LVDS timings
-      drm/bridge: tc358775: move bridge power up/down into functions
-      drm/bridge: tc358775: fix the power-up/down delays
-      drm/bridge: tc358775: fix power-up sequencing
-      drm/bridge: tc358775: use devm_drm_bridge_add()
+ drivers/gpu/drm/drm_bridge.c | 16 ++++++++++++++++
+ include/drm/drm_bridge.h     | 12 ++++++++++++
+ 2 files changed, 28 insertions(+)
 
- drivers/gpu/drm/bridge/Kconfig     |   1 +
- drivers/gpu/drm/bridge/tc358775.c  | 601 ++++++++++++++++++++-----------------
- drivers/gpu/drm/drm_bridge.c       |  16 +
- drivers/gpu/drm/mediatek/mtk_dsi.c |   8 +-
- include/drm/drm_bridge.h           |  12 +
- 5 files changed, 355 insertions(+), 283 deletions(-)
----
-base-commit: 9221b2819b8a4196eecf5476d66201be60fbcf29
-change-id: 20240506-tc358775-fix-powerup-53f490043179
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index 28abe9aa99ca..98cd6558aecb 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -1339,6 +1339,22 @@ void drm_bridge_hpd_notify(struct drm_bridge *bridge,
+ }
+ EXPORT_SYMBOL_GPL(drm_bridge_hpd_notify);
+ 
++/**
++ * drm_bridge_dsi_lp11_notify - notify clock/data lanes LP-11 mode
++ * @bridge: bridge control structure
++ *
++ * DSI host drivers shall call this function while the clock and data lanes
++ * are still in LP-11 mode.
++ *
++ * This function shall be called in a context that can sleep.
++ */
++void drm_bridge_dsi_lp11_notify(struct drm_bridge *bridge)
++{
++	if (bridge->funcs->dsi_lp11_notify)
++		bridge->funcs->dsi_lp11_notify(bridge);
++}
++EXPORT_SYMBOL_GPL(drm_bridge_dsi_lp11_notify);
++
+ #ifdef CONFIG_OF
+ /**
+  * of_drm_find_bridge - find the bridge corresponding to the device node in
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 4baca0d9107b..4ef61274e0a8 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -630,6 +630,17 @@ struct drm_bridge_funcs {
+ 	 */
+ 	void (*hpd_disable)(struct drm_bridge *bridge);
+ 
++	/**
++	 * dsi_lp11_notify:
++	 *
++	 * Will be called by the DSI host driver while both the DSI clock
++	 * lane as well as the DSI data lanes are in LP-11 mode. Some bridges
++	 * need this state while releasing the reset, for example.
++	 * Not all DSI host drivers will support this. Therefore, the DSI
++	 * bridge driver must not rely on this op to be called.
++	 */
++	void (*dsi_lp11_notify)(struct drm_bridge *bridge);
++
+ 	/**
+ 	 * @debugfs_init:
+ 	 *
+@@ -898,6 +909,7 @@ void drm_bridge_hpd_enable(struct drm_bridge *bridge,
+ void drm_bridge_hpd_disable(struct drm_bridge *bridge);
+ void drm_bridge_hpd_notify(struct drm_bridge *bridge,
+ 			   enum drm_connector_status status);
++void drm_bridge_dsi_lp11_notify(struct drm_bridge *bridge);
+ 
+ #ifdef CONFIG_DRM_PANEL_BRIDGE
+ bool drm_bridge_is_panel(const struct drm_bridge *bridge);
+
+-- 
+2.39.2
 
 
