@@ -1,144 +1,225 @@
-Return-Path: <linux-kernel+bounces-169808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFDD8BCDE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:26:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AF78BCDE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A060287568
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52C41F24AE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F26E143C77;
-	Mon,  6 May 2024 12:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7896C143C4F;
+	Mon,  6 May 2024 12:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZCvgzkq2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmZvDsXC"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238D0143C44;
-	Mon,  6 May 2024 12:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD26143888
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714998368; cv=none; b=Q002/L4pmiYx997PeZVbZjPnUm/aFVmisAjm4LDa/NBpSLWrLhIJHWiHWhZSGaB5EdjqiFDGyYv+kASaFwq4d7uft63vosPuw80+BVN4W0ak0iMVzb4H1fZb3nKRvSqeDAVHOPtYCMYbA2PrG5n9NnAbSnmgg3svNWbGy72MT5s=
+	t=1714998436; cv=none; b=pRArDizGtU80TkbGEZkpi0Af2ggxpEuTVLuRqAmtl/qyovRjiVUeogdtlzhXQ1adEtoFGtbfEbqjexJol6gNwJAkZ19zElDpAVRACESouou9lgPN244U9J1C8yExNwqOJgENFWz3RE3Z9TFoBms7DeLv7WQdJVlR5fEOKOvPK3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714998368; c=relaxed/simple;
-	bh=yim39yRqN4bdpfi/yZPkyOfIHeiJsr3OoFhecZ7dSX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RxROAHW2OjO7yC5130xPZBiVPJ6PmvkTPpp28aDbW2AYZRTMLuzFolOZ80dJil5pij4eAQGG3mDH6Gxc4uZ8Djgi6xS8WF27BSz1Pkg/1LL6TLFxSIbdWMFLsjCFhr6pZVNxROAgN0YErn20JEM1SLIKRTITCBtumUiVANxodbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZCvgzkq2; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714998366; x=1746534366;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yim39yRqN4bdpfi/yZPkyOfIHeiJsr3OoFhecZ7dSX8=;
-  b=ZCvgzkq2FrVYthP2jVKlAfB01bIBcwCDZcUWMke/J9PPTn6+3MnqV9hO
-   zeBEoBCM0LvLVsocgxvSzx3CDR4P2JtEbBazL/Hu0RqutrTH1wrMKQyat
-   anxDzndHigUmTiiaYQCx59a0PWm6Hx36Vt1qVeZJwsUZ5CeBEIP4hkYxS
-   Q9aV/IKi2P7es8Rtx7aqWAyW4vS53IQYbkrR4dB9RHDefxmY39wVtNNGR
-   pBR2ikBAjU2vDERWBgVHryGU0LBr4SOreplQKoQ8ICLlfu9iN5oVILQvg
-   kZaitMf1A+RPr5OC9/mOM/l7YePioDeTqMU7yGU/2VWcObQTUQL7gvRhp
-   w==;
-X-CSE-ConnectionGUID: 8A2f7UADSgi9LQWnGahorA==
-X-CSE-MsgGUID: uUZbPi9UQYe73UyGMy/jXA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21352626"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="21352626"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:26:05 -0700
-X-CSE-ConnectionGUID: i/6U48ZHSka9s8R3PJyNXw==
-X-CSE-MsgGUID: UQissWGdTaOeNacEhtYQ9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="28116539"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:25:58 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s3xPl-00000004gZr-3aNZ;
-	Mon, 06 May 2024 15:25:53 +0300
-Date: Mon, 6 May 2024 15:25:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Subject: Re: [PATCH v3 4/5] PCI: imx6: Convert to agnostic GPIO API
-Message-ID: <ZjjMUSj3cZTI56wE@smile.fi.intel.com>
-References: <20240429102510.2665280-1-andriy.shevchenko@linux.intel.com>
- <20240429102510.2665280-5-andriy.shevchenko@linux.intel.com>
- <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
+	s=arc-20240116; t=1714998436; c=relaxed/simple;
+	bh=xodOjtZMLhwfIlqINTkikrDZ2heude9b/24eDh7aDM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KJRVsF3F4U3icwELOCV7CrCKBhWgjoPMS1u2aF+A7s4cIIfWwCxp6/ZO4kwnXldllEC6wBAi2Nc5sRe66xAWLMllLfBK4m8KHai54mVtOhfuRgPIz5mWG0z2t+bJvUqp1GpCgDa0VriajVsPu4LZqabwlOaVoBVOupLEm9ljunY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmZvDsXC; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-7f17efe79a1so775462241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714998434; x=1715603234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3REQiNx8W32vr+UQbDqQaLWxlDjL0bY+bOsvnNcIwDc=;
+        b=HmZvDsXC9qOaRlxBa9nWLZkNXb4fwg36/syYsK+6DSJM3t3UPX7lBZ/klLFn94W7Qa
+         9rPb0MMynQgygn79nKsKnP6VQGCJJ6luvbF09aeXiyGiLWAywx5TJo1e7FtNFjbEakis
+         9xp87tOuos13PeRBQPnnNDM3W2D5pEr8Znag8hXsQSJmtvekRQu1blels9KM5Ou66kRN
+         IIzDfdlhsklZjleku604aVyEjexxBtU2tZtMcWeJCVNc0ad+xt9FbQNhy4TbAggY2lRU
+         NqLVu1RdT/uPCGX4hZ95IbzdEH2DhlrQcixNVchxWo2xX1XssquVNEpvYDLGrwtt7cbI
+         Sxzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714998434; x=1715603234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3REQiNx8W32vr+UQbDqQaLWxlDjL0bY+bOsvnNcIwDc=;
+        b=eLuVgHbElvNCWzZbYx00ogev6DX3a/iqjANvVGe+3rAAXBt9fu5r9b8JSsyQCKhZzA
+         KE8TFQrNLjE0QSLkRdwfHEuh18vfAFj4l2TWux7FOUWaZBlWlE51qOpbVO9wfvLw4NGU
+         NQQ9uLUUhjB5pMzvV9bFXjQeDam4Py5rAZ+j/hxVk+k6u7fC9OhI83cbywDs5ZiSUrVp
+         9z0jwoohSnegZkCydT0B+v0muCZV7heXu29bIRc2QZiwZ5q014REhc+cHWxm6yGEtWnf
+         p8ieC7LKvV04KtVR1rxa6IeBj/2l+7lMbN9B4KU7Ot6CU+qd7sz6y4m1iiffpVbfOnfe
+         r4Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSDp/OZDgORB1+0nJWA0iJ7bPee67TP2cDHHHelcGxALYucS3CWEPdzAxgSmbgxrZeTJm1zifJlhwcxsfuwTMTwuEMvP3hB6sggppz
+X-Gm-Message-State: AOJu0YyC91VC8p/B2xFcMdXuyTO1HGXVQHSYlJvv6jQzVuzcn6/J0f9Q
+	DREMKaBtQK9dh8zz0H9vGlZ3qFk8AJBhBI/kPhGenrC0GK9BJ3zPcOiWa020dZA0TVzgPt0JfFn
+	murOvO6sDojLEmYSKf/Ufmui4ZXM=
+X-Google-Smtp-Source: AGHT+IGBuoH8XvTyRkFu2MBgE/jNhULNXD8Gg5uDj4+D5Uc4iI/wUmjoWTQTk+aJs5ghFyaErFRR+dlYOLqfkADwuf8=
+X-Received: by 2002:a05:6122:3194:b0:4da:ced8:b09a with SMTP id
+ ch20-20020a056122319400b004daced8b09amr9499070vkb.0.1714998433913; Mon, 06
+ May 2024 05:27:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240503005023.174597-1-21cnbao@gmail.com> <20240503005023.174597-7-21cnbao@gmail.com>
+ <0226a6f7-26ac-48b0-932d-1b7201cde1d7@redhat.com>
+In-Reply-To: <0226a6f7-26ac-48b0-932d-1b7201cde1d7@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 7 May 2024 00:27:02 +1200
+Message-ID: <CAGsJ_4zHfbzUfYJSh1d8hMa0eQDidsQ0saYOTE3oD+evQhHm5w@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] mm: swap: entirely map large folios found in swapcache
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
+	hannes@cmpxchg.org, hughd@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, ryan.roberts@arm.com, surenb@google.com, 
+	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
+	ying.huang@intel.com, yosryahmed@google.com, yuzhao@google.com, 
+	ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 06, 2024 at 02:10:24PM +0200, Linus Walleij wrote:
-> On Mon, Apr 29, 2024 at 12:25 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > The of_gpio.h is going to be removed. In preparation of that convert
-> > the driver to the agnostic API.
+On Tue, May 7, 2024 at 12:05=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 03.05.24 02:50, Barry Song wrote:
+> > From: Chuanhua Han <hanchuanhua@oppo.com>
 > >
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> I think there is a bug here, the code is respecting the OF property
-> "reset-gpio-active-high"
-> but the code in drivers/gpio/gpiolib-of.h actually has a quirk for
-> this so you can just
-> delete all the active high handling and rely on 1 = asserted and 0 =
-> deasserted when
-> using GPIO descriptors.
-> 
-> Just delete this thing:
-> imx6_pcie->gpio_active_high = of_property_read_bool(node,
->                                            "reset-gpio-active-high");
+> > When a large folio is found in the swapcache, the current implementatio=
+n
+> > requires calling do_swap_page() nr_pages times, resulting in nr_pages
+> > page faults. This patch opts to map the entire large folio at once to
+> > minimize page faults. Additionally, redundant checks and early exits
+> > for ARM64 MTE restoring are removed.
+> >
+> > Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
+> > Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > ---
+> >   mm/memory.c | 60 ++++++++++++++++++++++++++++++++++++++++++----------=
+-
+> >   1 file changed, 48 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 22e7c33cc747..940fdbe69fa1 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -3968,6 +3968,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       pte_t pte;
+> >       vm_fault_t ret =3D 0;
+> >       void *shadow =3D NULL;
+> > +     int nr_pages =3D 1;
+> > +     unsigned long page_idx =3D 0;
+> > +     unsigned long address =3D vmf->address;
+> > +     pte_t *ptep;
+> >
+> >       if (!pte_unmap_same(vmf))
+> >               goto out;
+> > @@ -4166,6 +4170,36 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >               goto out_nomap;
+> >       }
+> >
+> > +     ptep =3D vmf->pte;
+> > +     if (folio_test_large(folio) && folio_test_swapcache(folio)) {
+> > +             int nr =3D folio_nr_pages(folio);
+> > +             unsigned long idx =3D folio_page_idx(folio, page);
+> > +             unsigned long folio_start =3D vmf->address - idx * PAGE_S=
+IZE;
+> > +             unsigned long folio_end =3D folio_start + nr * PAGE_SIZE;
+> > +             pte_t *folio_ptep;
+> > +             pte_t folio_pte;
+> > +
+> > +             if (unlikely(folio_start < max(vmf->address & PMD_MASK, v=
+ma->vm_start)))
+> > +                     goto check_folio;
+> > +             if (unlikely(folio_end > pmd_addr_end(vmf->address, vma->=
+vm_end)))
+> > +                     goto check_folio;
+> > +
+> > +             folio_ptep =3D vmf->pte - idx;
+> > +             folio_pte =3D ptep_get(folio_ptep);
+> > +             if (!pte_same(folio_pte, pte_move_swp_offset(vmf->orig_pt=
+e, -idx)) ||
+> > +                 swap_pte_batch(folio_ptep, nr, folio_pte) !=3D nr)
+> > +                     goto check_folio;
+> > +
+> > +             page_idx =3D idx;
+> > +             address =3D folio_start;
+> > +             ptep =3D folio_ptep;
+> > +             nr_pages =3D nr;
+> > +             entry =3D folio->swap;
+> > +             page =3D &folio->page;
+> > +     }
+> > +
+> > +check_folio:
+> > +
+> >       /*
+> >        * PG_anon_exclusive reuses PG_mappedtodisk for anon pages. A swa=
+p pte
+> >        * must never point at an anonymous page in the swapcache that is
+> > @@ -4225,12 +4259,13 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >        * We're already holding a reference on the page but haven't mapp=
+ed it
+> >        * yet.
+> >        */
+> > -     swap_free_nr(entry, 1);
+> > +     swap_free_nr(entry, nr_pages);
+> >       if (should_try_to_free_swap(folio, vma, vmf->flags))
+> >               folio_free_swap(folio);
+> >
+> > -     inc_mm_counter(vma->vm_mm, MM_ANONPAGES);
+> > -     dec_mm_counter(vma->vm_mm, MM_SWAPENTS);
+> > +     folio_ref_add(folio, nr_pages - 1);
+> > +     add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
+> > +     add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
+> >       pte =3D mk_pte(page, vma->vm_page_prot);
+> >
+> >       /*
+> > @@ -4240,34 +4275,35 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >        * exclusivity.
+> >        */
+> >       if (!folio_test_ksm(folio) &&
+> > -         (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+> > +         (exclusive || (folio_ref_count(folio) =3D=3D nr_pages &&
+> > +                        folio_nr_pages(folio) =3D=3D nr_pages))) {
+> >               if (vmf->flags & FAULT_FLAG_WRITE) {
+> >                       pte =3D maybe_mkwrite(pte_mkdirty(pte), vma);
+> >                       vmf->flags &=3D ~FAULT_FLAG_WRITE;
+>
+> I fail to convince myself that this change is correct, and if it is
+> correct, it's confusing (I think there is a dependency on
+> folio_free_swap() having been called and succeeding, such that we don't
+> have a folio that is in the swapcache at this point).
+>
+> Why can't we move the folio_ref_add() after this check and just leave
+> the check as it is?
+>
+> "folio_ref_count(folio) =3D=3D 1" is as clear as it gets: we hold the sin=
+gle
+> reference, so we can do with this thing whatever we want: it's certainly
+> exclusive. No swapcache, no other people mapping it.
 
-Good catch! Thank you, I'll update it in the next version. Can you review
-the rest meanwhile?
+Right.
+I believe the code works correctly but is a bit confusing. as you said,
+we might move folio_ref_add() behind folio_ref_count(folio) =3D=3D 1.
 
--- 
-With Best Regards,
-Andy Shevchenko
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
-
+Thanks
+Barry
 
