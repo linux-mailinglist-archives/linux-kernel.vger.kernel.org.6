@@ -1,312 +1,203 @@
-Return-Path: <linux-kernel+bounces-169831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2E58BCE4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:47:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB838BCE59
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66452284373
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:46:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2A61F218AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BA93FE2A;
-	Mon,  6 May 2024 12:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40886BFD2;
+	Mon,  6 May 2024 12:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/vraFal"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KQu4Z5zN"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F8B3B782;
-	Mon,  6 May 2024 12:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD47138FA1
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999612; cv=none; b=epF4Jcyd0RYLNbLg3+bBZtK5sAssA42Y+rAtPjeE1wQertEOwgYFDZlTBqAa34ElMTNc6ZfVZhwBYu7DReL8Y5QCV8e8mnrbeTNbDRla8hSAetLnscERdvkDrOmIK2+031TbmN4HcMIDZa2o24k54ABAHik2ukV9bWKXwZOL5/8=
+	t=1714999649; cv=none; b=rfRMmjVDUON84QXaY5n9LjAEEbG/O4jgxxfb3TV3X6Tsr9YmQBDKRQzhH3LOghkmKEtWkxXdCuUqcKhxo/7gRxZ/q7ZfGKBOeR2XiWoIUHE3ArcF1sh0Oddb5W7HM2n/SZbDovgVoBhKGRQFV/L1zAEXxnoOfVP4RQBqFYGr48Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999612; c=relaxed/simple;
-	bh=2+5X5YdRXHQN5cM9cGGaOkH0YnShbzy7xMh8tModicA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NaMS3IUCWPzuVbL8psjn35RQAhl8O7r+/TzRnpJZp5WLlKOWnUc2cavLVxVaSoeRWfmNGTa1NhnHNkeuEJyMrIdTO2sSQpCE8LdE7rvvtAocpFSBbZrdEzPGmlVDNyacdRMJy5wO9B9qJ596piZOGdrxPC3EfQ+v0wC74GQDMcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/vraFal; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7571C116B1;
-	Mon,  6 May 2024 12:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714999611;
-	bh=2+5X5YdRXHQN5cM9cGGaOkH0YnShbzy7xMh8tModicA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J/vraFalZgRorHN4T3WKSiTwAjT3MHmBX43JRsWeRewY/K3Q4w0tdB28QlL5GwY38
-	 SzF73LZ1Al5UT6un3QeRu1Pn1YSCtzg8j7pEwibDe98pSlWd7p3Zz/SrKtGyg9gG8Q
-	 FrZMLjXCLIgUTtSj4gyHknid6RzGTNKBeHDM1fo7neYiqTWaxsv3S8xe3PzWP5dF5+
-	 GqRhbCg3MrZShoAvCMpDe6ovl/TRxXP8rUQi2alBrdiMGRCqmF+u8P321mq8tayKEu
-	 /fc3++7c5Wzn+8y6wY74LalbPWgkpfRBnGfFoehxY28VLYKmZky26lsNZeyU7I1mNE
-	 89ZzF+H8JdTQg==
-Date: Mon, 6 May 2024 13:46:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v5 06/10] iio: pressure: bmp280: Refactorize reading
- functions
-Message-ID: <20240506134638.297cfbfd@jic23-huawei>
-In-Reply-To: <20240505234751.GB17986@vamoiridPC>
-References: <20240429190046.24252-1-vassilisamir@gmail.com>
-	<20240429190046.24252-7-vassilisamir@gmail.com>
-	<20240505202106.1c780044@jic23-huawei>
-	<20240505234751.GB17986@vamoiridPC>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714999649; c=relaxed/simple;
+	bh=WFB++vRNFt5kSLDzQ1XCDy3jGT+hv6nsVwYz20LDtN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6Xj0p+xR8n5ev3lwi4wplGUzSVV3OiNV3/XW9wTn2l1iAeOwFM86b0+SGnJJnrl2WQSUfVBi0TWilcutv/mkdVRtYLEB1l/97oelcUDH0WtFJiwAidw19Sr5vqtTqBgv9hjYD/hRzml/o1WGiOe6Oq6HBjTmXAmemK8+1st3QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=KQu4Z5zN; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-34cb2bf85easo152146f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1714999646; x=1715604446; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FzcPHN6WlIJ1C164IWBqCbC21dWtLB5dXSLGK/0dvq0=;
+        b=KQu4Z5zNywDwxFsNiTrA2dANGza8Nnel1ABebzYPju1B1u48vqKbIUn/uH4Hsuy47q
+         +sMLWQdp0Lw6ghydYx/bnHaErfAtls1OIzVBxXcpc8D7HX+Jf/ONAZZW9DITmJOf7s60
+         EKMIASncpR9mXywaBd9p6NKJldz71jQg/VfBE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714999646; x=1715604446;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FzcPHN6WlIJ1C164IWBqCbC21dWtLB5dXSLGK/0dvq0=;
+        b=xVVmNZZIsKg/ulIu+5a1/Czkxhdw2dEbR9OUt5zc2Xj0ZwCOhl0M48VGpgQ4XWfuSh
+         vOZxKfKMUUqrchpDEYtXahVl2WGJPC6ywMPlBPKOqRsKbsqEmXVndL05W/AlPNHFtFiW
+         NMRHk46mAixGvzyUS1xwG9vU2o6UGVfW+xfM69Pnf/F3CuyClThyMPz6yMlUHsNUr4Dk
+         bBSZa6284PaGtl7QKT+u19DgQSsa1DuP/0mxWb+1YZ2Gf+pPnUftLWmJby4Oa2s2as4s
+         deYOnI9N5dMfxreL0IYPQ9Jqs7zCkIIalCe8hKJ3ZUwnueFsbBb5FS186eYTbulpWfuj
+         hv9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTKEB4POhRZ06PdcIMG99l6aUwMc2fkUzSKpPxKe+6gl36A3FmFf7jCkRRUylejOpwPBWLNVD9rP4qHnM8QFk9Y7QO9WIS+yB6IyC/
+X-Gm-Message-State: AOJu0YyNKIz0o5DL+M5nl6YQBEX4eWlhAqO0ExRtVaqc4+g8/xgUieds
+	y3AK98yQlFFS98UrEHjZyu1aDY0iY1ehmN2r0ovHC+w8/cl+u6eKjjKR5hZG8nQ=
+X-Google-Smtp-Source: AGHT+IEcjHlHcMPoNa6JKDX9W5QYo0xQvj2/BGYXVfuM3DvK3Nqva0gT+wcQ0vVg5ycmh5nDVF4Cvw==
+X-Received: by 2002:a05:600c:5118:b0:418:9941:ca28 with SMTP id o24-20020a05600c511800b004189941ca28mr7020552wms.2.1714999646201;
+        Mon, 06 May 2024 05:47:26 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id p12-20020a05600c1d8c00b0041bcb898984sm16038937wms.31.2024.05.06.05.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 05:47:25 -0700 (PDT)
+Date: Mon, 6 May 2024 14:47:23 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <ZjjRWybmAmClMMI9@phenom.ffwll.local>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+References: <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+ <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
+ <20240505194603.GH2118490@ZenIV>
+ <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
+ <20240505203052.GJ2118490@ZenIV>
+ <CAHk-=whFg8-WyMbVUGW5c0baurGzqmRtzFLoU-gxtRXq2nVZ+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whFg8-WyMbVUGW5c0baurGzqmRtzFLoU-gxtRXq2nVZ+w@mail.gmail.com>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On Mon, 6 May 2024 01:47:51 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+On Sun, May 05, 2024 at 01:53:48PM -0700, Linus Torvalds wrote:
+> On Sun, 5 May 2024 at 13:30, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > 0.      special-cased ->f_count rule for ->poll() is a wart and it's
+> > better to get rid of it.
+> >
+> > 1.      fs/eventpoll.c is a steaming pile of shit and I'd be glad to see
+> > git rm taken to it.  Short of that, by all means, let's grab reference
+> > in there around the call of vfs_poll() (see (0)).
+> 
+> Agreed on 0/1.
+> 
+> > 2.      having ->poll() instances grab extra references to file passed
+> > to them is not something that should be encouraged; there's a plenty
+> > of potential problems, and "caller has it pinned, so we are fine with
+> > grabbing extra refs" is nowhere near enough to eliminate those.
+> 
+> So it's not clear why you hate it so much, since those extra
+> references are totally normal in all the other VFS paths.
+> 
+> I mean, they are perhaps not the *common* case, but we have a lot of
+> random get_file() calls sprinkled around in various places when you
+> end up passing a file descriptor off to some asynchronous operation
+> thing.
+> 
+> Yeah, I think most of them tend to be special operations (eg the tty
+> TIOCCONS ioctl to redirect the console), but it's not like vfs_ioctl()
+> is *that* different from vfs_poll. Different operation, not somehow
+> "one is more special than the other".
+> 
+> cachefiles and backing-file does it for regular IO, and drop it at IO
+> completion - not that different from what dma-buf does. It's in
+> ->read_iter() rather than ->poll(), but again: different operations,
+> but not "one of them is somehow fundamentally different".
+> 
+> > 3.      dma-buf uses of get_file() are probably safe (epoll shite aside),
+> > but they do look fishy.  That has nothing to do with epoll.
+> 
+> Now, what dma-buf basically seems to do is to avoid ref-counting its
+> own fundamental data structure, and replaces that by refcounting the
+> 'struct file' that *points* to it instead.
+> 
+> And it is a bit odd, but it actually makes some amount of sense,
+> because then what it passes around is that file pointer (and it allows
+> passing it around from user space *as* that file).
+> 
+> And honestly, if you look at why it then needs to add its refcount to
+> it all, it actually makes sense.  dma-bufs have this notion of
+> "fences" that are basically completion points for the asynchronous
+> DMA. Doing a "poll()" operation will add a note to the fence to get
+> that wakeup when it's done.
+> 
+> And yes, logically it takes a ref to the "struct dma_buf", but because
+> of how the lifetime of the dma_buf is associated with the lifetime of
+> the 'struct file', that then turns into taking a ref on the file.
+> 
+> Unusual? Yes. But not illogical. Not obviously broken. Tying the
+> lifetime of the dma_buf to the lifetime of a file that is passed along
+> makes _sense_ for that use.
+> 
+> I'm sure dma-bufs could add another level of refcounting on the
+> 'struct dma_buf' itself, and not make it be 1:1 with the file, but
+> it's not clear to me what the advantage would really be, or why it
+> would be wrong to re-use a refcount that is already there.
 
-> On Sun, May 05, 2024 at 08:21:06PM +0100, Jonathan Cameron wrote:
-> > On Mon, 29 Apr 2024 21:00:42 +0200
-> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> >   
-> > > For BMP18x, BMP28x, BME280, BMP38x the reading of the pressure
-> > > value requires an update of the t_fine variable which happens
-> > > through reading the temperature value.
-> > > 
-> > > So all the bmpxxx_read_press() functions of the above sensors
-> > > are internally calling the equivalent bmpxxx_read_temp() function
-> > > in order to update the t_fine value. By just looking at the code
-> > > this functionality is a bit hidden and is not easy to understand
-> > > why those channels are not independent.
-> > > 
-> > > This commit tries to clear these things a bit by splitting the
-> > > bmpxxx_{read/compensate}_{temp/press/humid}() to the following:
-> > > 
-> > > i. bmpxxx_read_{temp/press/humid}_adc(): read the raw value from
-> > > the sensor.
-> > > 
-> > > ii. bmpxx_calc_t_fine(): calculate the t_fine variable.
-> > > 
-> > > iii. bmpxxx_get_t_fine(): get the t_fine variable.
-> > > 
-> > > iv. bmpxxx_compensate_{temp/press/humid}(): compensate the adc
-> > > values and return the calculated value.
-> > > 
-> > > v. bmpxxx_read_{temp/press/humid}(): combine calls of the
-> > > aforementioned functions to return the requested value.
-> > > 
-> > > Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>  
-> > In general looks good, but a few details to consider inline.
-> > 
-> > Jonathan
-> >   
-> > > ---
-> > >  drivers/iio/pressure/bmp280-core.c | 351 ++++++++++++++++++-----------
-> > >  drivers/iio/pressure/bmp280.h      |   6 -
-> > >  2 files changed, 221 insertions(+), 136 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> > > index 8290028824e9..5ebce38e99f6 100644
-> > > --- a/drivers/iio/pressure/bmp280-core.c
-> > > +++ b/drivers/iio/pressure/bmp280-core.c
-> > > @@ -288,13 +288,33 @@ static int bme280_read_calib(struct bmp280_data *data)
-> > >   *
-> > >   * Taken from BME280 datasheet, Section 4.2.3, "Compensation formula".
-> > >   */
-> > > +static int bme280_read_humid_adc(struct bmp280_data *data, s32 *adc_humidity)  
-> > 
-> > It's an u16, so why use an s32?   I can see using a signed value avoids a cast later,
-> > but it makes this more confusing to read, so I'd push that cast up to the user.
-> >   
-> 
-> Bosch in general has messed up a bit with the signs on their raw values on all
-> of those sensors that we use in this driver. I totally agree with you, that this
-> value does not make any sense to be anything else apart from u16 but in the
-> datasheet [1] in pages 25-26 you can clearly see that they use an s32 for this
-> value...
-> 
-> [1]: https://www.mouser.com/datasheet/2/783/BST-BME280-DS002-1509607.pdf
-I would be tempted to ignore that and use the more appropriate size, but be
-careful that any necessary casts are in place when you use the value.
+So there is generally another refcount, because dma_buf is just the
+cross-driver interface to some kind of real underlying buffer object from
+the various graphics related subsystems we have.
 
-> 
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	ret = regmap_bulk_read(data->regmap, BME280_REG_HUMIDITY_MSB,
-> > > +			       &data->be16, sizeof(data->be16));
-> > > +	if (ret < 0) {
-> > > +		dev_err(data->dev, "failed to read humidity\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	*adc_humidity = be16_to_cpu(data->be16);  
-> > 
-> > Trivial, but on error return we normally aim for side effect free.
-> > To do that here use an internal variable first.  
-> 
-> I am sorry, but in this part, I cannot fully understand what you mean
-> by side effect free. I can understand the issue of storing a u16 to an
-> s32 might make accidentally the sign to matter but how is this thing
-> that you proposed no side effect free? You also made this comment
-> in various other places in this patch (because the same principle
-> with the SKIPPED is used) and in the other places the values are
-> 20-bit and 24-bit long which confuses me a bit more on what you mean
-> exactly.
-If you get an error, e.g. if (*adc_humidty == BMP280_HUMIDITY_SKIPPED) then you 
-should not set *adc_humidity.  Setting it is the side effect. Normal aim
-is that a function that returns an error should ensure it leave no other
-effects in data it can access.
-This make reasoning about error paths much simpler because you only
-have to deal with the return values.
-Hence the code example I included though I make it more confusing by
-commenting on the types in the middle of the code.
+And since it's a pure file based api thing that ceases to serve any
+function once the fd/file is gone we tied all the dma_buf refcounting to
+the refcount struct file already maintains. But the underlying buffer
+object can easily outlive the dma_buf, and over the lifetime of an
+underlying buffer object you might actually end up creating different
+dma_buf api wrappers for it (but at least in drm we guarantee there's at
+most one, hence why vmwgfx does the atomic_inc_unless_zero trick, which I
+don't particularly like and isn't really needed).
 
-Key is I don't want *adc_humidity to be modified if we aren't going to
-return 0.
+But we could add another refcount, it just means we have 3 of those then
+when only really 2 are needed.
 
-> 
-> > 	s16 value;
-> > 
-> > ...
-> > 
-> > 	value = be16_to_cpu(data->be16)
-> > 
-> > 	if (value == BMP280_HUMIDITY_SKIPPED) {
-> > 		dev_err(data->dev, "...
-> > 		return -EIO;
-> > 	}
-> > This is the odd bit due to using an s32 to store a u16.
-> > Have to rely on that size mismatch to avoid the sign accidentally mattering.
-> > Which is ugly!
-> > 
-> > 	*adc_humidity = value;
-> > 
-> > 	return 0;
-> > 
-> >   
-> > > +	if (*adc_humidity == BMP280_HUMIDITY_SKIPPED) {
-> > > +		dev_err(data->dev, "reading humidity skipped\n");
-> > > +		return -EIO;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static u32 bme280_compensate_humidity(struct bmp280_data *data,
-> > > -				      s32 adc_humidity)
-> > > +				      s32 adc_humidity, s32 t_fine)
-> > >  {
-> > >  	struct bmp280_calib *calib = &data->calib.bmp280;
-> > >  	s32 var;
-> > >  
-> > > -	var = ((s32)data->t_fine) - (s32)76800;
-> > > +	var = ((s32)t_fine) - (s32)76800;  
-> > 
-> > Casting an s32 to an s32.  For the const it shouldn't matter as it'll be at least
-> > 32 bits and we don't care about the sign.
-> >   
-> 
-> In general, I kept the casting for the t_fine because it was used from before,
-> but I don't see the point since it is already an s32 value. The casting in front
-> of the const, I see it is used in the datasheet [1] in pages 25-26 so maybe they
-> kept it for this reason. Since it will be again a 32 bit value, I don't see the
-> point of casting it but I still kept it as it was, there originally.
-> 
-> [1]: https://www.mouser.com/datasheet/2/783/BST-BME280-DS002-1509607.pdf
-
-As you are tidying up the code, drop the unnecessary cast. Good to mention it
-in the patch description though.
-
-> 
-> > >  	var = ((((adc_humidity << 14) - (calib->H4 << 20) - (calib->H5 * var))
-> > >  		+ (s32)16384) >> 15) * (((((((var * calib->H6) >> 10)
-> > >  		* (((var * (s32)calib->H3) >> 11) + (s32)32768)) >> 10)
-> > > @@ -313,8 +333,27 @@ static u32 bme280_compensate_humidity(struct bmp280_data *data,
-> > >   *
-> > >   * Taken from datasheet, Section 3.11.3, "Compensation formula".
-> > >   */
-> > > -static s32 bmp280_compensate_temp(struct bmp280_data *data,
-> > > -				  s32 adc_temp)
-> > > +static int bmp280_read_temp_adc(struct bmp280_data *data, s32 *adc_temp)  
-> > 
-> > As before, sign of the extra variable is confusing. It's not signed
-> > as it's a raw ADC value. So I'd use a u32 for it.
-> >   
-> 
-> Again, as I said before, Bosch has messed this up. I agree (again) with you
-> that this should have been a u16 but according to the datasheet [2] in pages
-> 45-46 it is an s32...
-> 
-> [2]: https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf
-> 
-What they have is not incorrect, but it is relaxed in a rather lazy fashion!
-
-..
-
-> > > @@ -430,30 +481,21 @@ static int bmp280_read_press(struct bmp280_data *data,
-> > >  
-> > >  static int bme280_read_humid(struct bmp280_data *data, int *val, int *val2)
-> > >  {
-> > > +	s32 adc_humidity, t_fine;
-> > >  	u32 comp_humidity;
-> > > -	s32 adc_humidity;
-> > >  	int ret;
-> > >  
-> > > -	/* Read and compensate temperature so we get a reading of t_fine. */
-> > > -	ret = bmp280_read_temp(data, NULL, NULL);
-> > > +	ret = bmp280_get_t_fine(data, &t_fine);
-> > >  	if (ret < 0)
-> > >  		return ret;
-> > >  
-> > > -	ret = regmap_bulk_read(data->regmap, BME280_REG_HUMIDITY_MSB,
-> > > -			       &data->be16, sizeof(data->be16));
-> > > -	if (ret < 0) {
-> > > -		dev_err(data->dev, "failed to read humidity\n");
-> > > +	ret = bme280_read_humid_adc(data, &adc_humidity);
-> > > +	if (ret < 0)
-> > >  		return ret;
-> > > -	}
-> > >  
-> > > -	adc_humidity = be16_to_cpu(data->be16);
-> > > -	if (adc_humidity == BMP280_HUMIDITY_SKIPPED) {
-> > > -		/* reading was skipped */
-> > > -		dev_err(data->dev, "reading humidity skipped\n");
-> > > -		return -EIO;
-> > > -	}
-> > > -	comp_humidity = bme280_compensate_humidity(data, adc_humidity);
-> > > +	comp_humidity = bme280_compensate_humidity(data, adc_humidity, t_fine);
-> > >  
-> > > +	/* IIO units are in 1000 * % */
-> > >  	*val = comp_humidity * 1000 / 1024;
-> > >  
-> > >  	return IIO_VAL_INT;
-> > > @@ -930,9 +972,29 @@ static int bmp380_cmd(struct bmp280_data *data, u8 cmd)
-> > >   * Taken from datasheet, Section Appendix 9, "Compensation formula" and repo
-> > >   * https://github.com/BoschSensortec/BMP3-Sensor-API.
-> > >   */
-> > > -static s32 bmp380_compensate_temp(struct bmp280_data *data, u32 adc_temp)
-> > > +static int bmp380_read_temp_adc(struct bmp280_data *data, u32 *adc_temp)  
-> > 
-> > Interesting this one is unsigned.
-> >   
-> 
-> Yes, and it is also mentioned in the datasheet [3] in page 26.
-> 
-> [3]: https://www.mouser.com/pdfdocs/BST-BMP388-DS001-01.pdf
-
-I'd take the datasheet maths as 'an implementation' rather than something
-we have to match.   So go for types that make sense, not what they used!
-
-Jonathan
-
-> 
-> Cheers,
-> Vasilis
+Also maybe here two: dma_fence are bounded like other disk i/o (including
+the option of timeouts if things go very wrong), so it's very much not
+forever but at most a few seconds worst case (shit hw/driver excluded, as
+usual).
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
