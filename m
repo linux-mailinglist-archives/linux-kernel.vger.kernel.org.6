@@ -1,352 +1,463 @@
-Return-Path: <linux-kernel+bounces-170492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C0B8BD805
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:58:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4F68BD808
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9BA0283B75
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C10F283BA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB1015B995;
-	Mon,  6 May 2024 22:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXnBE2CB"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAC81E492;
+	Mon,  6 May 2024 23:06:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571C1157499
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 22:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A891B14037D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 23:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715036320; cv=none; b=hRkzS51fKZBh+8/Xu/q6JpGZo4dy+cDVu96t5ZkuTwyDfqtOtTor4InEZicS40nO0QmAzVCq3IpAV74bsXXlZ7TQcevRk4zaUxXqRT/NLKO4130MzzmnQjgBvQYyGcXJQH6sqCdmDO1DLlw6snu7Uu7YFd1OFZsSdRu1vpnW0K4=
+	t=1715036813; cv=none; b=OUBNwZbR+5dPRNRS1kJuYqt5M9YURloxL4XU89tc3OS8kDI1qDP6lo8kJZBipxYhWUpAhD3weLBXkWyfITLmKyNg7rhP5p7kLV1wHEIJWhx8OU2yXeEYJCnRd7GBHM9HrTXdOlF/OyTzJBeD/AO1p0KanhpnnLpRJ+E8UdGjMAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715036320; c=relaxed/simple;
-	bh=uG2zw3heoV9QpOpZjSTtFU37KbvabkqXgW7P2FR97Bg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pCUOVpXkx55aMN1+c8IB9yr6Xd6qSGm3nAcI9ncx1IVIvPAcOqpDBF0EP7conczonCpyNIuBSmAaiL9ORMTICklYpkdJLifX/M7vhlHgdkaahcAMForj0fXpiUitUJVT5D3Lg9A+nwDtA5l4SDoCwUb1/Q4QPcw7senhO1m2LZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXnBE2CB; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-47ef11b1a31so501528137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 15:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715036317; x=1715641117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JEzMrpo9xpl1ECD3kombTAPF1tytR8JwyhRQEB9Ne7Q=;
-        b=XXnBE2CBUPXWcwvBHcLDMl9nJht2/uby170iNCmEQcWFiDNFJ2pOZypc4uAE2Kugws
-         XPUsvAN9Yrys4cnVeadsrhtEhx7rBkQpoLvdIzKgqpzyhKHUP/dQ1my908VaKcoOk8qv
-         +v+8sxOdDQ6Z4A/pD0fM+l11wPfdKXOOMeQaC3WByJyPnX98o1Y9RfRSmEvsRGG1up+Z
-         pyKCF+J6zBlZLggHnzqU8tdJkDlKBT0dmk9+z1C7lVNYb38M071BHBDtul3sej//aO6j
-         hSVGMGlZb01GApmOo7xDQ1WACGZifd9oieerioxivG4ji3/rpCWVciT0kNMet/mRcLp/
-         Q2IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715036317; x=1715641117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JEzMrpo9xpl1ECD3kombTAPF1tytR8JwyhRQEB9Ne7Q=;
-        b=Vc92KTvE64HDkZUyf8ti8lNjme0JHTQyRTIDFP5g9rBG6jK7lU5jQqxigBudsn8N2L
-         SQVB+1/qvm/nyE8NZX6VM+mhZ6/6S63nQjzpec+KplybjVVRbyL1pfTTKrjuhf5M0IoX
-         Y5PKJzFJGDT/ktt8onLjDXaz4fq3OHgBwdykUCT1HG66gzogj5j+1PcHxML6gi59HWtZ
-         4/vSRX/znbvxFtlrnPpx7dRwNXMufaDhpvcI0oSAhX8NULpxOCjiAP1A/l36HeNKHasz
-         7D6ae6qACjgpCmgRx3Ap+kp+A/aefdxXvhk7qhi/MjIcXMZboU1Pr1FUR7gTz/t9EAtX
-         ZK9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuWd0d7wLP70Ndz7xMpulkHZ31u31T3zYwRALBfP5kSv640mrJkmB4CEt08AL+wllz1EfjZg1q3f3P4pLBQlBSoEykQmAVLUykgCrR
-X-Gm-Message-State: AOJu0YwaSU73Dr+TcJSm2csLwSX0TXAB0btXQxRB4MTKKD/nbhvTqkV2
-	lV7Rud9bUMivxCmoWIBy6bRf93UQeSgQ81+nm0/jZWvyyF30mxx4XaT0CrcEYUu+9fdq2aATm47
-	5EC3saq1kFf12gMLeF3VcZNhfOIo=
-X-Google-Smtp-Source: AGHT+IGolnkqh/0cQmoY1ihS/u6BKEbTqfLlttDItVi1BvrDJ55vkA4yD+lxtzH6jgs1GPeggzymYNaU6QvNglRJQeI=
-X-Received: by 2002:a67:f4d5:0:b0:47c:14eb:5fdd with SMTP id
- s21-20020a67f4d5000000b0047c14eb5fddmr12813837vsn.29.1715036316957; Mon, 06
- May 2024 15:58:36 -0700 (PDT)
+	s=arc-20240116; t=1715036813; c=relaxed/simple;
+	bh=9HN86MYQ33YdNbS0Pmv0lByag7ERw0yRrumYfb+xENQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=e3kp2kC8MV43CpLk5hJnSJQrYbec6rTukIwU4iSlkssWLcLGcGdOiOZbSMEc7N3bsR83/0ujQKDNejEtwcFOoZNFGGQsAusHXhsezIQ5p0UPB0u65g9zSU0s08D0YeXlqITwzTq7SPp0XLtLHBKqSbbMIvjkfJNXAG1sTgmOZrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1s47Pw-0004CD-FD; Tue, 07 May 2024 01:06:44 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1s47Pu-00GMw9-Mp; Tue, 07 May 2024 01:06:42 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1s47Pu-00FAuL-0Z;
+	Tue, 07 May 2024 01:06:42 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Date: Tue, 07 May 2024 01:06:41 +0200
+Subject: [PATCH] usb: dwc3: gadget: create per ep interrupts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503005023.174597-1-21cnbao@gmail.com> <20240503005023.174597-7-21cnbao@gmail.com>
- <0b4d4d4b-91d8-4fd5-af4e-aebe9ee08b89@arm.com> <CAGsJ_4wm6v+xgh4jQ+u2-EzOXCLsz6L6nRJi_=FfWuGDUjxRYg@mail.gmail.com>
- <ff5b371a-16f6-4d03-b80d-b56af0f488c3@redhat.com> <CAGsJ_4z93FwPZx7w2VuCEkHP_JCwkO0whKwymonRJ9bSiKMVyQ@mail.gmail.com>
- <CAGsJ_4xssg3CcjifePMmgk4aqLO+iAon0YdT9p=Uq-D8vFMxyQ@mail.gmail.com> <5b770715-7516-42a8-9ea0-3f61572d92af@redhat.com>
-In-Reply-To: <5b770715-7516-42a8-9ea0-3f61572d92af@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 7 May 2024 10:58:25 +1200
-Message-ID: <CAGsJ_4xP1jPjH-SH7BgnFHiT4m+2gB0tP7ie_cUFynVpD_zpxQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] mm: swap: entirely map large folios found in swapcache
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
-	hannes@cmpxchg.org, hughd@google.com, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, xiang@kernel.org, ying.huang@intel.com, 
-	yosryahmed@google.com, yuzhao@google.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240507-dwc3_per_ep_irqthread-v1-1-f14dec6de19f@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAIBiOWYC/x2N2wrCMBAFf6Xss4Gk3sBfEQm5HM1CiXGjtlD67
+ y4+zsAwK3UIo9NlWEnw5c7PquB2A6US6gOGszKNdjzYoz2bPKe9bxCP5lle7yII2WTr4ELMCad
+ E2sbQYaKEmorW9TNNKpvgzst/dr1t2w+jR8iNfAAAAA==
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: michael.riesch@wolfvision.net, kernel@pengutronix.de, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10879;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=9HN86MYQ33YdNbS0Pmv0lByag7ERw0yRrumYfb+xENQ=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmOWKC1GjeiNy2Qy5NxhR++0X3N3yWLNeUPlNF0
+ hxcgCLV0xqJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZjliggAKCRC/aVhE+XH0
+ q36ED/oCXb1ah+WzibYE5zj1bJV7PpYrWjOsmSsyZDsbNG/jQswx1jY49hCIoa3km/qsreKsPzl
+ ZkkwGsm9UtZ0AtQwlM99LR34YZK476ONQpvI0olbSMrLFtEhDuqRMDkRR3Ydj9AL25IXrDWpxnW
+ ljsOpVjl5kLVP2y9mdIDxJeipL5Vv449RlCzSc05VdGRYbV1xMEpMiSY74fFExh6G65nq4zE9xI
+ tzY2qNq+evkuQkY1D84RspP9GrgnDwE7RbLa0Gh3Qcu41ovG+WtnSDk6hGPDqnlqvfLIqhJWrDH
+ r7Hz4ENkR4beKjC16onbLB5JzMD8Iv2zlvbUFAurlYKaQuKnxx2h4Q7Ec72kNIrcwKXy9jlSCoA
+ ZYnOLODjB+sNViu0h7XbZVHeg87CoKQTRsnwEr1Q80fYC/sYCg+7+k1GBFjcMB7UqmpZDWeGYqr
+ k4P+WS/zXf6Y4Djbg/6gbq7BoUmYpCGWcWYcGAp/zBzIfNOgHpfMoysrKr6Bop2VE/6tJQ6C3GD
+ Cs0EFGB7anC+1kmJkM396TazGhdEWq6aGFBHyEuufkY2JmzDR3sA4MWX/2gP3DS+dZcu8RTN421
+ oznNw78p0gzj824LdXr7moh1KCqFCuXznm831YHagsDSIV1aSfkhPnkPR9r2+KZrsgIvKdQTN+q
+ D9r9dnWYjbKXplQ==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, May 7, 2024 at 1:16=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 06.05.24 14:58, Barry Song wrote:
-> > On Tue, May 7, 2024 at 12:38=E2=80=AFAM Barry Song <21cnbao@gmail.com> =
-wrote:
-> >>
-> >> On Tue, May 7, 2024 at 12:07=E2=80=AFAM David Hildenbrand <david@redha=
-t.com> wrote:
-> >>>
-> >>> On 04.05.24 01:23, Barry Song wrote:
-> >>>> On Fri, May 3, 2024 at 6:50=E2=80=AFPM Ryan Roberts <ryan.roberts@ar=
-m.com> wrote:
-> >>>>>
-> >>>>> On 03/05/2024 01:50, Barry Song wrote:
-> >>>>>> From: Chuanhua Han <hanchuanhua@oppo.com>
-> >>>>>>
-> >>>>>> When a large folio is found in the swapcache, the current implemen=
-tation
-> >>>>>> requires calling do_swap_page() nr_pages times, resulting in nr_pa=
-ges
-> >>>>>> page faults. This patch opts to map the entire large folio at once=
- to
-> >>>>>> minimize page faults. Additionally, redundant checks and early exi=
-ts
-> >>>>>> for ARM64 MTE restoring are removed.
-> >>>>>>
-> >>>>>> Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
-> >>>>>> Co-developed-by: Barry Song <v-songbaohua@oppo.com>
-> >>>>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> >>>>>
-> >>>>> With the suggested changes below:
-> >>>>>
-> >>>>> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> >>>>>
-> >>>>>> ---
-> >>>>>>    mm/memory.c | 60 ++++++++++++++++++++++++++++++++++++++++++----=
--------
-> >>>>>>    1 file changed, 48 insertions(+), 12 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/mm/memory.c b/mm/memory.c
-> >>>>>> index 22e7c33cc747..940fdbe69fa1 100644
-> >>>>>> --- a/mm/memory.c
-> >>>>>> +++ b/mm/memory.c
-> >>>>>> @@ -3968,6 +3968,10 @@ vm_fault_t do_swap_page(struct vm_fault *vm=
-f)
-> >>>>>>         pte_t pte;
-> >>>>>>         vm_fault_t ret =3D 0;
-> >>>>>>         void *shadow =3D NULL;
-> >>>>>> +     int nr_pages =3D 1;
-> >>>>>> +     unsigned long page_idx =3D 0;
-> >>>>>> +     unsigned long address =3D vmf->address;
-> >>>>>> +     pte_t *ptep;
-> >>>>>
-> >>>>> nit: Personally I'd prefer all these to get initialised just before=
- the "if
-> >>>>> (folio_test_large()..." block below. That way it is clear they are =
-fresh (incase
-> >>>>> any logic between here and there makes an adjustment) and its clear=
- that they
-> >>>>> are only to be used after that block (the compiler will warn if usi=
-ng an
-> >>>>> uninitialized value).
-> >>>>
-> >>>> right. I agree this will make the code more readable.
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>         if (!pte_unmap_same(vmf))
-> >>>>>>                 goto out;
-> >>>>>> @@ -4166,6 +4170,36 @@ vm_fault_t do_swap_page(struct vm_fault *vm=
-f)
-> >>>>>>                 goto out_nomap;
-> >>>>>>         }
-> >>>>>>
-> >>>>>> +     ptep =3D vmf->pte;
-> >>>>>> +     if (folio_test_large(folio) && folio_test_swapcache(folio)) =
-{
-> >>>>>> +             int nr =3D folio_nr_pages(folio);
-> >>>>>> +             unsigned long idx =3D folio_page_idx(folio, page);
-> >>>>>> +             unsigned long folio_start =3D vmf->address - idx * P=
-AGE_SIZE;
-> >>>>>> +             unsigned long folio_end =3D folio_start + nr * PAGE_=
-SIZE;
-> >>>>>> +             pte_t *folio_ptep;
-> >>>>>> +             pte_t folio_pte;
-> >>>>>> +
-> >>>>>> +             if (unlikely(folio_start < max(vmf->address & PMD_MA=
-SK, vma->vm_start)))
-> >>>>>> +                     goto check_folio;
-> >>>>>> +             if (unlikely(folio_end > pmd_addr_end(vmf->address, =
-vma->vm_end)))
-> >>>>>> +                     goto check_folio;
-> >>>>>> +
-> >>>>>> +             folio_ptep =3D vmf->pte - idx;
-> >>>>>> +             folio_pte =3D ptep_get(folio_ptep);
-> >>>>>> +             if (!pte_same(folio_pte, pte_move_swp_offset(vmf->or=
-ig_pte, -idx)) ||
-> >>>>>> +                 swap_pte_batch(folio_ptep, nr, folio_pte) !=3D n=
-r)
-> >>>>>> +                     goto check_folio;
-> >>>>>> +
-> >>>>>> +             page_idx =3D idx;
-> >>>>>> +             address =3D folio_start;
-> >>>>>> +             ptep =3D folio_ptep;
-> >>>>>> +             nr_pages =3D nr;
-> >>>>>> +             entry =3D folio->swap;
-> >>>>>> +             page =3D &folio->page;
-> >>>>>> +     }
-> >>>>>> +
-> >>>>>> +check_folio:
-> >>>>>
-> >>>>> Is this still the correct label name, given the checks are now abov=
-e the new
-> >>>>> block? Perhaps "one_page" or something like that?
-> >>>>
-> >>>> not quite sure about this, as the code after one_page can be multipl=
-e_pages.
-> >>>> On the other hand, it seems we are really checking folio after "chec=
-k_folio"
-> >>>> :-)
-> >>>>
-> >>>>
-> >>>> BUG_ON(!folio_test_anon(folio) && folio_test_mappedtodisk(folio));
-> >>>> BUG_ON(folio_test_anon(folio) && PageAnonExclusive(page));
-> >>>>
-> >>>> /*
-> >>>> * Check under PT lock (to protect against concurrent fork() sharing
-> >>>> * the swap entry concurrently) for certainly exclusive pages.
-> >>>> */
-> >>>> if (!folio_test_ksm(folio)) {
-> >>>>
-> >>>>
-> >>>>>
-> >>>>>> +
-> >>>>>>         /*
-> >>>>>>          * PG_anon_exclusive reuses PG_mappedtodisk for anon pages=
- A swap pte
-> >>>>>>          * must never point at an anonymous page in the swapcache =
-that is
-> >>>>>> @@ -4225,12 +4259,13 @@ vm_fault_t do_swap_page(struct vm_fault *v=
-mf)
-> >>>>>>          * We're already holding a reference on the page but haven=
-'t mapped it
-> >>>>>>          * yet.
-> >>>>>>          */
-> >>>>>> -     swap_free_nr(entry, 1);
-> >>>>>> +     swap_free_nr(entry, nr_pages);
-> >>>>>>         if (should_try_to_free_swap(folio, vma, vmf->flags))
-> >>>>>>                 folio_free_swap(folio);
-> >>>>>>
-> >>>>>> -     inc_mm_counter(vma->vm_mm, MM_ANONPAGES);
-> >>>>>> -     dec_mm_counter(vma->vm_mm, MM_SWAPENTS);
-> >>>>>> +     folio_ref_add(folio, nr_pages - 1);
-> >>>>>> +     add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
-> >>>>>> +     add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
-> >>>>>>         pte =3D mk_pte(page, vma->vm_page_prot);
-> >>>>>>
-> >>>>>>         /*
-> >>>>>> @@ -4240,34 +4275,35 @@ vm_fault_t do_swap_page(struct vm_fault *v=
-mf)
-> >>>>>>          * exclusivity.
-> >>>>>>          */
-> >>>>>>         if (!folio_test_ksm(folio) &&
-> >>>>>> -         (exclusive || folio_ref_count(folio) =3D=3D 1)) {
-> >>>>>> +         (exclusive || (folio_ref_count(folio) =3D=3D nr_pages &&
-> >>>>>> +                        folio_nr_pages(folio) =3D=3D nr_pages))) =
-{
-> >>>>>
-> >>>>> I think in practice there is no change here? If nr_pages > 1 then t=
-he folio is
-> >>>>> in the swapcache, so there is an extra ref on it? I agree with the =
-change for
-> >>>>> robustness sake. Just checking my understanding.
-> >>>>
-> >>>> This is the code showing we are reusing/(mkwrite) a folio either
-> >>>> 1. we meet a small folio and we are the only one hitting the small f=
-olio
-> >>>> 2. we meet a large folio and we are the only one hitting the large f=
-olio
-> >>>>
-> >>>> any corner cases besides the above two seems difficult. for example,
-> >>>>
-> >>>> while we hit a large folio in swapcache but if we can't entirely map=
- it
-> >>>> (nr_pages=3D=3D1) due to partial unmap, we will have folio_ref_count=
-(folio)
-> >>>> =3D=3D nr_pages =3D=3D 1
-> >>>
-> >>> No, there would be other references from the swapcache and
-> >>> folio_ref_count(folio) > 1. See my other reply.
-> >>
-> >> right. can be clearer by:
-> >
-> > Wait, do we still need folio_nr_pages(folio) =3D=3D nr_pages even if we=
- use
-> > folio_ref_count(folio) =3D=3D 1 and moving folio_ref_add(folio, nr_page=
-s - 1)?
->
-> I don't think that we will "need" it.
->
-> >
-> > one case is that we have a large folio with 16 PTEs, and we unmap
-> > 15 swap PTE entries, thus we have only one swap entry left. Then
-> > we hit the large folio in swapcache.  but we have only one PTE thus we =
-will
-> > map only one PTE. lacking folio_nr_pages(folio) =3D=3D nr_pages, we reu=
-se the
-> > large folio for one PTE. with it, do_wp_page() will migrate the large
-> > folio to a small one?
->
-> We will set PAE bit and do_wp_page() will unconditionally reuse that page=
-.
->
-> Note that this is the same as if we had pte_swp_exclusive() set and
-> would have run into "exclusive=3Dtrue" here.
->
-> If we'd want a similar "optimization" as we have in
-> wp_can_reuse_anon_folio(), you'd want something like
->
-> exclusive || (folio_ref_count(folio) =3D=3D 1 &&
->               (!folio_test_large(folio) || nr_pages > 1)
+This patch is splitting up the interrupt event handling from one
+interrupt thread to separate per endpoint interrupt threads.
 
-I feel like
+To achieve this we create a new dwc3 interrupt domain in which
+we map all claimed interrupts to individual interrupt threads.
 
-A :   !folio_test_large(folio) || nr_pages > 1
+Although the gadget layer is preparing the claimed parameter
+of each usb_ep which could be checked if the endpoint is
+to used or not, the claimed value was 0 for each ep in gadget_start.
+This was tested when describing some composite gadget using configfs.
 
-equals
+As a workaround we check the ep->address value instead for now.
 
-B:    folio_nr_pages(folio) =3D=3D nr_pages
+The ep0 is handling in and out events both in one common thread.
 
-if folio is small,  folio_test_large(folio) is false, both A and B will be =
-true;
-if folio is large, and we map the whole large folio, A will be true
-because of nr_pages > 1;
-B is also true;
-if folio is large, and we map single one PTE, A will be false;
-B is also false, because nr_pages =3D=3D 1 but  folio_nr_pages(folio) > 1;
+There is still some work left to improve.
 
-right?
+1) The big dwc->lock can block other endpoint threads. To solve this,
+   the endpoint need their own locks. While the ep0 device events
+   have still to be handled priviliged.
 
-However, I agree that delving into this complexity might not be necessary
-at the moment.
+2) The smp_affinity is currently not possible to change which will make
+   the per ep threads run on the same cpu as the current irq. To gain
+   benefit from running the ep threads on different cores, the big
+   dwc->lock is needs to be solved first anyways.
 
->
-> ... but I am not sure if that is really worth the complexity here.
->
-> >
-> > 1AM, tired and sleepy. not quite sure I am correct.
-> > I look forward to seeing your reply tomorrow morning :-)
->
-> Heh, no need to dream about this ;)
->
-> --
-> Cheers,
->
-> David / dhildenb
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+ drivers/usb/dwc3/core.h   |  14 ++++
+ drivers/usb/dwc3/gadget.c | 202 +++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 215 insertions(+), 1 deletion(-)
 
-Thanks
-Barry
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 180dd8d29287c..53cc34ce71682 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -733,6 +733,18 @@ struct dwc3_ep {
+ 	struct list_head	pending_list;
+ 	struct list_head	started_list;
+ 
++	unsigned int irq_endpoint;
++
++	spinlock_t event_lock;
++	u32 ep_event_buffer[256];
++	int ep_event_w_index;
++	int ep_event_r_index;
++
++	int givebacks_current_turn;
++
++#define DWC3_EP_EVENT_OVERFLOW		BIT(0)
++	unsigned int ep_event_flags;
++
+ 	void __iomem		*regs;
+ 
+ 	struct dwc3_trb		*trb_pool;
+@@ -1173,6 +1185,8 @@ struct dwc3 {
+ 	struct usb_gadget	*gadget;
+ 	struct usb_gadget_driver *gadget_driver;
+ 
++	struct irq_domain	*ep_irq_domain;
++
+ 	struct clk		*bus_clk;
+ 	struct clk		*ref_clk;
+ 	struct clk		*susp_clk;
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index f94f68f1e7d2b..3b49d80fc8dfa 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -16,6 +16,9 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <linux/irqdomain.h>
+ #include <linux/list.h>
+ #include <linux/dma-mapping.h>
+ 
+@@ -1049,6 +1052,106 @@ static int __dwc3_gadget_ep_disable(struct dwc3_ep *dep)
+ 
+ /* -------------------------------------------------------------------------- */
+ 
++static irqreturn_t dwc3_endpoint_irq(int irq, void *_dep)
++{
++	return IRQ_WAKE_THREAD;
++}
++
++static void dwc3_process_event_entry(struct dwc3 *dwc,
++				     const union dwc3_event *event);
++
++static irqreturn_t dwc3_endpoint_thread_irq(int irq, void *_dep)
++{
++	struct dwc3_ep *dep = _dep;
++	struct dwc3 *dwc = dep->dwc;
++	const union dwc3_event *event;
++	int count_processed = 0;
++	u32 event_raw;
++	unsigned long flags;
++
++	dep->givebacks_current_turn = 0;
++
++	spin_lock_irqsave(&dep->event_lock, flags);
++
++	if (dep->ep_event_flags & DWC3_EP_EVENT_OVERFLOW) {
++		dev_err(dwc->dev, "ep%d: event buffer overflow\n", dep->number);
++		dep->ep_event_flags &= ~DWC3_EP_EVENT_OVERFLOW;
++	}
++
++	while (dep->ep_event_r_index != dep->ep_event_w_index) {
++
++		event_raw = dep->ep_event_buffer[dep->ep_event_r_index];
++
++		/*
++		 * we have a copy of the event, so we can release the lock
++		 */
++		spin_unlock_irqrestore(&dep->event_lock, flags);
++
++		event = (const union dwc3_event *) &event_raw;
++
++		spin_lock(&dwc->lock);
++		dwc3_process_event_entry(dwc, event);
++		spin_unlock(&dwc->lock);
++
++		/*
++		 * we need to re-acquire the lock to update the read index
++		 */
++		spin_lock_irqsave(&dep->event_lock, flags);
++
++		dep->ep_event_r_index = (dep->ep_event_r_index + 1) %
++					 ARRAY_SIZE(dep->ep_event_buffer);
++
++		count_processed += 1;
++	}
++
++	spin_unlock_irqrestore(&dep->event_lock, flags);
++
++	return IRQ_HANDLED;
++}
++
++static int dwc3_gadget_init_endpoint_irq(struct dwc3 *dwc, struct dwc3_ep *dep)
++{
++	char *irq_name;
++	int ret = 0;
++
++	/* FIXME: endpoint.claimed would be better here, but somehow
++	 * the composite gadget layer is leaving the claimed value to 0
++	 * after calling usb_ep_autoconfig_reset after the final bind
++	 */
++	/* ep0in and ep0out share the same interrupt thread */
++	if (!dep->endpoint.address && dep->number)
++		return 0;
++
++	dep->irq_endpoint = irq_create_mapping(dwc->ep_irq_domain, dep->number);
++	if (dep->irq_endpoint < 0) {
++		ret = dep->irq_endpoint;
++
++		dev_err(dwc->dev, "failed to map irq for ep%d --> %d\n",
++				dep->number, ret);
++		return ret;
++	}
++
++	irq_name = kzalloc(16, GFP_KERNEL);
++	if (!dep->number)
++		snprintf(irq_name, 16, "ep0");
++	else
++		snprintf(irq_name, 16, "ep%d%s", dep->number >> 1, dep->direction ?
++			"in" : "out");
++
++	ret = request_threaded_irq(dep->irq_endpoint, dwc3_endpoint_irq,
++				   dwc3_endpoint_thread_irq, IRQF_SHARED,
++				   irq_name, dep);
++	if (ret) {
++		irq_dispose_mapping(irq_find_mapping(dwc->ep_irq_domain, dep->number));
++		dev_err(dwc->dev, "failed to request irq #%d --> %d\n",
++				dep->irq_endpoint, ret);
++	}
++
++	return ret;
++}
++
++/* -------------------------------------------------------------------------- */
++
+ static int dwc3_gadget_ep0_enable(struct usb_ep *ep,
+ 		const struct usb_endpoint_descriptor *desc)
+ {
+@@ -2939,6 +3042,7 @@ static int dwc3_gadget_start(struct usb_gadget *g,
+ 		struct usb_gadget_driver *driver)
+ {
+ 	struct dwc3		*dwc = gadget_to_dwc(g);
++	u8			epnum;
+ 	unsigned long		flags;
+ 	int			ret;
+ 	int			irq;
+@@ -2952,6 +3056,17 @@ static int dwc3_gadget_start(struct usb_gadget *g,
+ 		return ret;
+ 	}
+ 
++	for (epnum = 0; epnum < dwc->num_eps; epnum++) {
++		int			ret;
++		/* ep0in and ep0out share the same interrupt thread */
++		if (epnum == 1)
++			continue;
++
++		ret = dwc3_gadget_init_endpoint_irq(dwc, dwc->eps[epnum]);
++		if (ret)
++			return ret;
++	}
++
+ 	spin_lock_irqsave(&dwc->lock, flags);
+ 	dwc->gadget_driver	= driver;
+ 	spin_unlock_irqrestore(&dwc->lock, flags);
+@@ -2972,6 +3087,7 @@ static void __dwc3_gadget_stop(struct dwc3 *dwc)
+ static int dwc3_gadget_stop(struct usb_gadget *g)
+ {
+ 	struct dwc3		*dwc = gadget_to_dwc(g);
++	u8			epnum;
+ 	unsigned long		flags;
+ 
+ 	if (dwc->sys_wakeup)
+@@ -2982,6 +3098,18 @@ static int dwc3_gadget_stop(struct usb_gadget *g)
+ 	dwc->max_cfg_eps = 0;
+ 	spin_unlock_irqrestore(&dwc->lock, flags);
+ 
++	for (epnum = 0; epnum < dwc->num_eps; epnum++) {
++		struct dwc3_ep		*dep;
++
++		if (epnum == 1)
++			continue;
++
++		dep = dwc->eps[epnum];
++
++		free_irq(dep->irq_endpoint, dwc->eps[epnum]);
++		irq_dispose_mapping(dep->irq_endpoint);
++	}
++
+ 	free_irq(dwc->irq_gadget, dwc->ev_buf);
+ 
+ 	return 0;
+@@ -3298,6 +3426,8 @@ static int dwc3_gadget_init_endpoint(struct dwc3 *dwc, u8 epnum)
+ 	INIT_LIST_HEAD(&dep->started_list);
+ 	INIT_LIST_HEAD(&dep->cancelled_list);
+ 
++	spin_lock_init(&dep->event_lock);
++
+ 	dwc3_debugfs_create_endpoint_dir(dep);
+ 
+ 	return 0;
+@@ -4403,7 +4533,9 @@ static irqreturn_t dwc3_process_event_buf(struct dwc3_event_buffer *evt)
+ {
+ 	struct dwc3 *dwc = evt->dwc;
+ 	irqreturn_t ret = IRQ_NONE;
++	unsigned long flags;
+ 	int left;
++	int i;
+ 
+ 	left = evt->count;
+ 
+@@ -4412,10 +4544,36 @@ static irqreturn_t dwc3_process_event_buf(struct dwc3_event_buffer *evt)
+ 
+ 	while (left > 0) {
+ 		union dwc3_event event;
++		struct dwc3_ep *dep;
++		int epnum = 0;
+ 
+ 		event.raw = *(u32 *) (evt->cache + evt->lpos);
+ 
+-		dwc3_process_event_entry(dwc, &event);
++		if (!event.type.is_devspec) {
++			struct dwc3_event_depevt *depevt = &event.depevt;
++
++			epnum = depevt->endpoint_number;
++			/* ep0in and ep0out share the same interrupt thread */
++			if (epnum <= 1)
++				epnum &= ~0x01;
++
++			if (epnum < 0 || epnum >= dwc->num_eps) {
++				dev_err(dwc->dev, "invalid epnum %d\n", epnum);
++				continue;
++			}
++		}
++
++		dep = dwc->eps[epnum];
++
++		spin_lock(&dep->event_lock);
++		dep->ep_event_buffer[dep->ep_event_w_index] = event.raw;
++		dep->ep_event_w_index = (dep->ep_event_w_index + 1) %
++					 ARRAY_SIZE(dep->ep_event_buffer);
++
++		if (dep->ep_event_w_index == dep->ep_event_r_index)
++			dep->ep_event_flags |= DWC3_EP_EVENT_OVERFLOW;
++
++		spin_unlock(&dep->event_lock);
+ 
+ 		/*
+ 		 * FIXME we wrap around correctly to the next entry as
+@@ -4430,6 +4588,22 @@ static irqreturn_t dwc3_process_event_buf(struct dwc3_event_buffer *evt)
+ 		left -= 4;
+ 	}
+ 
++	for (i = 0; i < dwc->num_eps; i++) {
++		struct dwc3_ep *dep = dwc->eps[i];
++
++		/* ep0in and ep0out share the same interrupt thread */
++		if (i == 1)
++			continue;
++
++		spin_lock_irqsave(&dep->event_lock, flags);
++
++		// TODO: improve
++		if (dep->ep_event_r_index != dep->ep_event_w_index)
++			generic_handle_domain_irq_safe(dwc->ep_irq_domain, i);
++
++		spin_unlock_irqrestore(&dep->event_lock, flags);
++	}
++
+ 	evt->count = 0;
+ 	ret = IRQ_HANDLED;
+ 
+@@ -4553,6 +4727,22 @@ static void dwc_gadget_release(struct device *dev)
+ 	kfree(gadget);
+ }
+ 
++static const struct irq_chip ep_irq_chip = {
++	.name = "dwc3-ep",
++};
++
++static int ep_irq_domain_map(struct irq_domain *d, unsigned int virq, irq_hw_number_t hwirq)
++{
++	irq_set_chip_and_handler(virq, &ep_irq_chip, handle_simple_irq);
++
++	return 0;
++}
++
++static const struct irq_domain_ops ep_irq_dom_ops = {
++	.map = ep_irq_domain_map,
++	.xlate = irq_domain_xlate_onetwocell,
++};
++
+ /**
+  * dwc3_gadget_init - initializes gadget related registers
+  * @dwc: pointer to our controller context structure
+@@ -4573,6 +4763,13 @@ int dwc3_gadget_init(struct dwc3 *dwc)
+ 
+ 	dwc->irq_gadget = irq;
+ 
++	dwc->ep_irq_domain = irq_domain_add_simple(NULL, dwc->num_eps, 0, &ep_irq_dom_ops, dwc);
++	if (!dwc->ep_irq_domain) {
++		dev_err(dwc->dev, "failed to create ep irq domain\n");
++		ret = -ENOMEM;
++		goto err0;
++	}
++
+ 	dwc->ep0_trb = dma_alloc_coherent(dwc->sysdev,
+ 					  sizeof(*dwc->ep0_trb) * 2,
+ 					  &dwc->ep0_trb_addr, GFP_KERNEL);
+@@ -4691,7 +4888,10 @@ void dwc3_gadget_exit(struct dwc3 *dwc)
+ 	if (!dwc->gadget)
+ 		return;
+ 
++	irq_domain_remove(dwc->ep_irq_domain);
++
+ 	dwc3_enable_susphy(dwc, false);
++
+ 	usb_del_gadget(dwc->gadget);
+ 	dwc3_gadget_free_endpoints(dwc);
+ 	usb_put_gadget(dwc->gadget);
+
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240507-dwc3_per_ep_irqthread-d01e1abdce6c
+
+Best regards,
+-- 
+Michael Grzeschik <m.grzeschik@pengutronix.de>
+
 
