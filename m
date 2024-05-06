@@ -1,224 +1,230 @@
-Return-Path: <linux-kernel+bounces-170467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90AC8BD78C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3B18BD78F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16E31C22C68
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2AA61C22DFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB27F15CD52;
-	Mon,  6 May 2024 22:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214C115CD57;
+	Mon,  6 May 2024 22:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KMZYMBF4"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZegWJyJi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB6815CD49
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 22:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715033492; cv=none; b=OXvUEaLwQjHKBhnUke8Udv3Vfk8tLwUNp0WHY4YOoN3oQeKN6fg86bqLQLNjNKLzB6bXnsrJqP0QJ1cuc4MShW3PRe8UDEPSt0lLX4sX0r1p/VLoGua029ey/5CA64J9L/0MSe+JyEY+fvA0BPeEQ03Nt2ZIC4+mIifrBPatUYc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715033492; c=relaxed/simple;
-	bh=/Kkn3iylTA0/DbNE6xbIHvO5QRrH6fjFBRnumk+mQzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LTJNQ2AcXaUZ2GjeTQAkhUZQA/NXdIDfgV2slV5Yml+YvBVLsJsFbNfi11y0AdwzI1yKiYS/9OiMob6Cfsz9KpjtSBIFLgT2g67+rT0ZI3TiI126U+1urIqEcaz9D9rnQ42WHCMMqMml0AzqU3wsvDGdAGmbEbiItdEkgMMVf5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KMZYMBF4; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f171eee4-fa70-4374-b6a7-00d4edc03ae5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715033488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4tAkfAI7C3BLA+cjtRULDa+t26iegxH3w/RcYzSWz8=;
-	b=KMZYMBF42BzUP1zS/OfDbRS16NS8PN4n4Ejkzvz3B5InLxteAeim8iUKXWTWxaoMMZZt0p
-	P4qWm68KTzOCXSHHdB/MZzDM+rYzesepvl4LnjLtwFp7tJrpw/TopeEYt/eFefxHSHPNsl
-	jEhoTE/yqa7QNPFv8nzeZihTkxTRjhg=
-Date: Mon, 6 May 2024 15:11:22 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CDC15B969;
+	Mon,  6 May 2024 22:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715033645; cv=fail; b=V1GOobY87wjtHt3wXgW6DsfABMRQ8m/kUX88wAipoKLFpDrR4IcR5GrceuQYqSMFV7boWI1Ep7XNtNUW9nZ/y1LfRNIh7NTdtsNH3k19LvfFgf/8k+EUkNd0D63nT3i4lpImCZcpv5SjOfAiQihwPbqAEMUmMkNTNFmg8S0BB+E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715033645; c=relaxed/simple;
+	bh=24u1RZwKKu4uhLDzMG/m4AO+7+NSfMmIlEATSmxYXqw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jx5aqO9qC3QphrQU3vkroBHNVQMHXt8teCROdpHOI0TKxQocEs6hfk0647fRopLfIJV2PKGk6d+eWUqsP+YVZ3kbUDdS5J/9Niq/4B4tcHcdXptLzZ2frTHborILXToAcyyHsXUlAoLqTUxm2u/jrOkF25bUZ/ZhFEg/REEdi0g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZegWJyJi; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715033643; x=1746569643;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=24u1RZwKKu4uhLDzMG/m4AO+7+NSfMmIlEATSmxYXqw=;
+  b=ZegWJyJiHjqSC/KykdlGao1XME2hZkse+TJ4ZRi3lNeLJ+YD2XYVS6W1
+   nP79isPf4wtSnaoztSKCIg1FHG5I+RPuFayGpt9HsLaIeplegg8SQlkyJ
+   qyehh4+cyIqDP11oXH8Oq4sghvYympq9TKFLddqh6d8rSBsabfCOLknY2
+   6OaREfNRP6SSTn/pcmNqs0CC12trMz2dAF15SKeG2eKDmWVSMzyM9bfyO
+   i6123fwcmBR+jPlac72tGOMY3K30zj5kQ8Ty5tP4vuy2wbRmUgmnvrzLL
+   0AzYGUCs2uA3f1LF0hlUJx6HBpaCLqbLuFF+/b4lbh9tpiQSUxkT69tsI
+   g==;
+X-CSE-ConnectionGUID: FJFxaou4SEOK9S27aVX3iA==
+X-CSE-MsgGUID: d1yn5pQdT8WmzDxLbq8JLg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="22206409"
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="22206409"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 15:14:02 -0700
+X-CSE-ConnectionGUID: 6NrYMozgQju2v4XKER70Lg==
+X-CSE-MsgGUID: vgUgjreUTwSoidYiHxVvTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="32809813"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 May 2024 15:14:02 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 6 May 2024 15:14:02 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 6 May 2024 15:14:01 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Mon, 6 May 2024 15:14:01 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 6 May 2024 15:14:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G+rKZWvZ2zS1L05LNKaVNxHHQwYztOzSiEGkDAxoYnIBxqrb4mrCAWwCji2s90gOTDeD+wYoqI9ZLfgeYQiRWVUzeJL0pFFqDECEAGYqn671zRTKBK5HkdqliSSth6uygqBOtEEK72yebFpptnvTdjLEh/woRNdtxCRLsFQEhQT2rBSUwk958eXmiIkIscspw1sFLJd8jKNOhP3tJw4GqLBvbYjRf67cZ/kNf9j5I7jh5x/krk2xo2UI5pfT+R7nRDKNkLuLKyY62sbAR1dBK7YExH0/EC+8owqdmqpCG/Au/53fkjlbqGb46eVxzSywfZjg3EfaQvnQxxv/TJuXlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h0L+ttkDT3+5cdnU8jhDMpSevxNSw1KEQ47eW7tqrPE=;
+ b=AZJoZArpDTEuGCy4ERzUbcvOP/2J4N5dnnLJUUXTuRtkYMY6N99KKtt4czZpXv+6c0cOoTdl63U1p5zHR4xVDBxa8X3QCod1dkFQOlzOF63inLf4hWQ/zh+qA4tNGigZUg8t1YpeDKDGuLE4rERyBkq+ywpSjCd12zwTtTW3K34LkkBQOtQruEb8w1EZl5/VqlJMWIdFlop9KoDW3bDa5PZAFe+SWq706WF3qKWhZRLix0ngGbS3rORNrqN0trjfq5JElxx/uHvozv+9SCykHtKlZwN+4gxhbrv+k9n57sja+5jge/2x8iIn4c8tfqV8Hh7WjD3ncXy0nzqV2mpR7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by DS0PR11MB7580.namprd11.prod.outlook.com (2603:10b6:8:148::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Mon, 6 May
+ 2024 22:13:54 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7544.041; Mon, 6 May 2024
+ 22:13:54 +0000
+Message-ID: <3e77e370-5b30-4417-93e3-7e2cb7ed22fb@intel.com>
+Date: Tue, 7 May 2024 10:13:45 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] x86/virt/tdx: Export global metadata read
+ infrastructure
+To: Dave Hansen <dave.hansen@intel.com>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>
+CC: <x86@kernel.org>, <kirill.shutemov@linux.intel.com>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <bp@alien8.de>,
+	<mingo@redhat.com>, <hpa@zytor.com>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <isaku.yamahata@intel.com>, <jgross@suse.com>
+References: <cover.1709288433.git.kai.huang@intel.com>
+ <ec9fc9f1d45348ddfc73362ddfb310cc5f129646.1709288433.git.kai.huang@intel.com>
+ <fd159b26-b631-43f2-8f89-23d8d719fe80@intel.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+In-Reply-To: <fd159b26-b631-43f2-8f89-23d8d719fe80@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0081.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::26) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3] selftests/bpf: Move test_dev_cgroup to
- prog_tests
-Content-Language: en-GB
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20240401123455.1377896-1-usama.anjum@collabora.com>
- <92e1cce6-5f26-4a49-86b6-81e1e80d1aaa@linux.dev>
- <cfecd6ea-8fa3-477f-bd32-4087aefee2af@collabora.com>
- <0ff5c7d0-d5c5-4b61-ba89-8e7f9f775935@linux.dev>
- <0973bc93-7a8d-451c-9944-d91a77d68755@collabora.com>
- <ff36e8fa-14f4-42a6-8210-cec24a7779a0@linux.dev>
- <b4d7ce70-3320-4333-9589-b5df187409fe@collabora.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <b4d7ce70-3320-4333-9589-b5df187409fe@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|DS0PR11MB7580:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c9d7440-a1d1-4d06-8fa7-08dc6e19d160
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K1l4L2xzUVhETjNydFlLTjVnWWZtMi9JdE13S29hdk90MFRaejFHREVCQUV2?=
+ =?utf-8?B?akVMc2Y4aDgvL0dvMy9ML21BR0pybStSWVhOMEQvajAwM1lSait2N2d0ME04?=
+ =?utf-8?B?T2FCOHZKR1pEQUJQQVdLYklUTkthbFVvRFdKQWRJZU5vcHlrUm5WNVh6OFVX?=
+ =?utf-8?B?ME9xclZSUkxvdWhkdUNpazFpaXN3Ri9YUXJrM3JOd1VYYTd2NTNBU3c0K1Fw?=
+ =?utf-8?B?OHRNK3JJeEdyeWdjSW5SbzM2ZjA0SGNDLy8yRHJEVzVobExoenpWdVp3MzV2?=
+ =?utf-8?B?VERHTSsrTktwT3VuaDJPOUU0cURRZ0VUazVRTmFpajNYTDBHeEg1QlNRUTVS?=
+ =?utf-8?B?My9yc3JwQ1dIUXZ3SzI3c2granFiQk5Ddjc3TkNvMFBrQU9OQ3hpbDZBMmcx?=
+ =?utf-8?B?NWZ4VkFRcUY5cUs2SE1QdzE4OFVMSndwbXhXL3hYTUpyVmU4blFXVnE1bG5E?=
+ =?utf-8?B?K29idzVKeEQzcEtuVjZsTlRJdUh0bHNjOTdUUkJFc3o1bTVyN1M4VzNnRkha?=
+ =?utf-8?B?dXJXRjhUdGFYd05pcis1ZGV3Y05YKzRsdTRaZ29FdGhZSDFVOHVkaFpta1Rs?=
+ =?utf-8?B?cDNqS1ZxRGhJWFprNkV3T1NXdUpiZFFwdlBIN0ErSzgxMkFsRk1qZ1VJTmhL?=
+ =?utf-8?B?TGwxYzBDM09RWW1kaSt1dDhRckw5MjhmMU80NEJtdzhVVE9EUk9WcXhsU1h4?=
+ =?utf-8?B?N0FlcWlmWWRsVGZ5UDZuTGZSSkpldUVnVXRMeG0wOUg5ZitWNGhET256cGtG?=
+ =?utf-8?B?TUlFRklnbGNSaDlIbmhrVUlLbHRoUVlSODkxdHJUNWdNcjJFM2RsSHIwcmZh?=
+ =?utf-8?B?bHE2bzF6SHU4MGFvbHhmR0tHWTVNNUlRSmNvRFVJdkpsaUc3azVINlJsNk5s?=
+ =?utf-8?B?czlrMm1vUi9GSU0yOUxFWFhQNTR3SzR6R09mbnNMakM4Sm5GanBtdmJQWkJI?=
+ =?utf-8?B?TTB2ZThuWGlKVzRqSGVja1N2YjQxNXNkWHVoUEt6b3loVlZPbkhBMGh4VlJ4?=
+ =?utf-8?B?R2lOL3dRN3dsRHl2TGl0QzFzUmt5SHFPd1ZoVEpGVWt2VVNFaVp5Wm9hUEVJ?=
+ =?utf-8?B?Y2pSUTBISkNxRzV1OUV0eFVteGEzV05ScGk5eGJsOWo0L24rTG1CRkMzMm9k?=
+ =?utf-8?B?NFgxQWJiMk5QQnJ0RXNQeU5HMnJkTDJ2aEtUV1NFWFZUNzRtMWVKcXYyUkNI?=
+ =?utf-8?B?cjdsUzJTQ0VlVkg2SUpZUE12OThMV0M5ciswZ3o0YXVJSCtpQWtiQU81K2VJ?=
+ =?utf-8?B?MkdDVGY3MFJrV1RiWWRYUEN2U3NhbzRqWTZUUVhoUlVuaXNnNVJ0WUJkVWlB?=
+ =?utf-8?B?SVhoWFYzdjdJZk5BV3N6NmkySERmMHE1NC9IeUZqNWgyNnp0SlEwbGNLbWs4?=
+ =?utf-8?B?T3JQeGRnN1o4S0llMXd2R2ZOTGJmTTBRRkRucEpHOUp5Q1lwVTA5WXdFM2gv?=
+ =?utf-8?B?SThmSEgzSDhnbktNblp3b0MrSC9FL3hUZXpwVUV3cHhSUHIzTXArN2VIN3hV?=
+ =?utf-8?B?blB5cEVhaDRLcDFiTkdreDJnOS8rRUJkWWZtUVl4VSswWFdyQnpUUWszeDlq?=
+ =?utf-8?B?dzU1NkNwcXVON2haS21vczFYVWZPUzI3bVRaeWRBemdseEFHK1FWMjBMMkhN?=
+ =?utf-8?B?OXdjeG5hdmMwZnBObEt1RTJEVTNTTU9SY1I2U0tNN2oxWGlQL0F6WElvNEll?=
+ =?utf-8?B?Y0JHM0x5TXBQekhBNURPejdYSG9jK05pZnZhdEtCdWk3VDczZEtJMWl3PT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QXV3K1JaOTBBL0ZYOVYwVnRVTmZKbjVqS0hsSFBPQ08vYmpFWGFUeHpFWlQ4?=
+ =?utf-8?B?Z2NaRGpzazMxK0RyWnJnbFJ6SytZMGcwME9QZkREcWwxNW55R3hpdWtRYXkw?=
+ =?utf-8?B?UGQ0MHQ5VEwwYzRuNUNBUktwMm10N05KYWZRNWpMaXRlb0E0YjFrRkl6cEU1?=
+ =?utf-8?B?S3prVEY5aXVqWXJiU0lIYStuUDRKVUEyNXpvMDNpL0VNdjcxYXZyb0tLYzBV?=
+ =?utf-8?B?dE5jaU5GelM3Q1lTRjllOUZyL1lRd3oySER3YmZEOTV6ZlptM3dvWkZtQkJE?=
+ =?utf-8?B?UmRXWHkxVVV1enI1Z1J0WXp1MEdabzZhdHNQTzRPMk4wc2VSbTdLWFpuRW9k?=
+ =?utf-8?B?cDlzMnlwRVc0aGw2S3MxTHVOVEt5WHRKVER0cmd1Q0E5djh3QXBCUHdwU2xV?=
+ =?utf-8?B?UDRUcksrN01LNkU4RnRUWTNJdGtQK1YrakgrZ3hCS1VwZGllbmVlcUxpMm5J?=
+ =?utf-8?B?YjZuaFQzNVJ0UVBER3lRa3VGd0lnWlZHRnFDVEdEZkJhd0FpR3R2Mnp3QXVh?=
+ =?utf-8?B?a1BlSzEvSE9PMnRsRHhaTFIrKzhHOFZyOWN5bjIrUUttTUFjODFGVytEd2h3?=
+ =?utf-8?B?WC95RUt6eHpEb0wwQXFYOFg1RDFWYm5LY2VNcWRlUU5sZUJiNGJQZ1hDZi8w?=
+ =?utf-8?B?RnROSmg3djFBNVdaQmN4Y0VDOWhzYWcvN2RMZUxxcDBTWmxHV0dmQy9KZCtI?=
+ =?utf-8?B?UEt0RTdmZC9DNUVPWk1PejNaL0s0bTZzdmxpamxaRDlBY3NSSlFiWjk0SzI5?=
+ =?utf-8?B?RitXSkJCNWsyVGxjRlBkTWY2RjBGUFowQ3hrZUl6ZFEzT0FTUm5oOWVITldw?=
+ =?utf-8?B?aHVoMUdNcm96Q2t4R2YxbENucDdoVlBZaUhxeDNpbS9UbW04ZzFycjFjZVlK?=
+ =?utf-8?B?NEl6MkxJUStwYWJpbUF1NkZFcVFsZGgxYW1zV00rTDZNR1RZMTNMOEoveG9P?=
+ =?utf-8?B?cG5WWUZLQmxQNGZRZm56eHMzQ0tMNVZSTWY1SHdEMnlWSFN4Qlgvb3hpbjht?=
+ =?utf-8?B?R0FMbzBsNlRYRnVHYUUzUk9MUkQ0ZjVrRnFjRENNbDAzVEpEanpYc1FTZ1FD?=
+ =?utf-8?B?UXg5VHA3S2dZNzV2RTNZY3l4RVQ3UEU1MGZ0SXR3YitCWjh0K0VvZFZlN1Nw?=
+ =?utf-8?B?ZTBON1BUMy9VM1FzTDRnbUF2WlZSalRNOGhWQi9ySy9ZWEV5M2lMSk5BRU9M?=
+ =?utf-8?B?TXEvWFFBb2x0ZU5tdG1uWWorOFVoYnBlemVRS09iWE9kUjFjcjlaaDkxMlhn?=
+ =?utf-8?B?NXJCMnVZT2lCd0JXZ3diakU5VTl1Wmo3cmo3eE51SWoyNkhObUpYODNoQVFJ?=
+ =?utf-8?B?NmlQMkdURkw2Tk9Sa3RyQmZ5eEE5Z3RKNWhRZ1Fvc0hISXB4OUMzZVBTQ1VH?=
+ =?utf-8?B?cUFiUUZGNDBVZ2xmSGFRbmVoSUhBakc0US9sUC91SGZvOTArRFFJZXhTWjIv?=
+ =?utf-8?B?clZIT1Iwa1ZlSDk5cGk5SWwzUDZCU3J6TFMvdlgyY0VEVTdjTFFKYWZKcE9n?=
+ =?utf-8?B?ZW8wbm1GT2o0SU1sMWMvQzh5T0pvM014Y09ZY1RtTUxpbmliRHVHU0h4QWw0?=
+ =?utf-8?B?TW1ZZHNzZzhMVkhDY2Z3NHRNM1QxS2wrcmpjaDVMMFFRandoYVJvcUNhc3l4?=
+ =?utf-8?B?SFpjdUtscWVLVzQvVDJ3WWVjK2d0bUZHYmszQWIxRDNON0RGMGdSdGRBV1hG?=
+ =?utf-8?B?Y043TnlpWGVLTUw0Qk10Qkp0ZzBock9pdXIyN0dhdUxrSytxZm9MVklyS05J?=
+ =?utf-8?B?QlRPVUJBYjk0TlQvQ09VWHdSTXZDcmxMSUUrbFNtVjdzVDFCRUpqTzNlZnJP?=
+ =?utf-8?B?ckplbVVJUk5PNXh3QWlMR1AxNUJjVkhRdEF5MFpTWlNzdmwyN2wzWHVPSTVa?=
+ =?utf-8?B?aDRad0E4dlNqeFgyeForRVRlaTdaa3hrL2tWNnBOdFViTFhheVFwZ3pXbnR2?=
+ =?utf-8?B?MmxEUWtYUU41VWtyQzNaM294VzRDOGRDc1FtSWpyN1ZKcGNhVHpUTDN6V0xT?=
+ =?utf-8?B?bXRya1U4WGpDMVRFQ3VQdFVnN21XNTNIWVNpSXl4V3NYaCtzby8vOWVxc3lm?=
+ =?utf-8?B?M1B6UzgyRG9MYkxxeU82UDBHa1RnSFRRMTFsSDFWSVBpVE4wem0xb2k2bXRG?=
+ =?utf-8?Q?dn7KiCSs5CL0XAVMX4+SqP6Ug?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c9d7440-a1d1-4d06-8fa7-08dc6e19d160
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 22:13:54.7876
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 98DaZGAPB/2twicskTElw0IGXqMoZqs3leyIK/EtaQxHFM0VLZwf+9jfGnF6YorIm5wBG6CK+ZCX7GW5EaAh6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7580
+X-OriginatorOrg: intel.com
 
 
-On 5/3/24 6:55 AM, Muhammad Usama Anjum wrote:
-> On 4/5/24 1:06 AM, Yonghong Song wrote:
->> On 4/3/24 5:03 AM, Muhammad Usama Anjum wrote:
->>> On 4/3/24 7:36 AM, Yonghong Song wrote:
->>>> On 4/2/24 8:16 AM, Muhammad Usama Anjum wrote:
->>>>> Yonghong Song,
->>>>>
->>>>> Thank you so much for replying. I was missing how to run pipeline
->>>>> manually.
->>>>> Thanks a ton.
->>>>>
->>>>> On 4/1/24 11:53 PM, Yonghong Song wrote:
->>>>>> On 4/1/24 5:34 AM, Muhammad Usama Anjum wrote:
->>>>>>> Move test_dev_cgroup.c to prog_tests/dev_cgroup.c to be able to run it
->>>>>>> with test_progs. Replace dev_cgroup.bpf.o with skel header file,
->>>>>>> dev_cgroup.skel.h and load program from it accourdingly.
->>>>>>>
->>>>>>>       ./test_progs -t dev_cgroup
->>>>>>>       mknod: /tmp/test_dev_cgroup_null: Operation not permitted
->>>>>>>       64+0 records in
->>>>>>>       64+0 records out
->>>>>>>       32768 bytes (33 kB, 32 KiB) copied, 0.000856684 s, 38.2 MB/s
->>>>>>>       dd: failed to open '/dev/full': Operation not permitted
->>>>>>>       dd: failed to open '/dev/random': Operation not permitted
->>>>>>>       #72     test_dev_cgroup:OK
->>>>>>>       Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
->>>>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>>>>>> ---
->>>>>>> Changes since v2:
->>>>>>> - Replace test_dev_cgroup with serial_test_dev_cgroup as there is
->>>>>>>       probability that the test is racing against another cgroup test
->>>>>>> - Minor changes to the commit message above
->>>>>>>
->>>>>>> I've tested the patch with vmtest.sh on bpf-next/for-next and linux
->>>>>>> next. It is passing on both. Not sure why it was failed on BPFCI.
->>>>>>> Test run with vmtest.h:
->>>>>>> sudo LDLIBS=-static PKG_CONFIG='pkg-config --static' ./vmtest.sh
->>>>>>> ./test_progs -t dev_cgroup
->>>>>>> ./test_progs -t dev_cgroup
->>>>>>> mknod: /tmp/test_dev_cgroup_null: Operation not permitted
->>>>>>> 64+0 records in
->>>>>>> 64+0 records out
->>>>>>> 32768 bytes (33 kB, 32 KiB) copied, 0.000403432 s, 81.2 MB/s
->>>>>>> dd: failed to open '/dev/full': Operation not permitted
->>>>>>> dd: failed to open '/dev/random': Operation not permitted
->>>>>>>      #69      dev_cgroup:OK
->>>>>>> Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
->>>>>> The CI failure:
->>>>>>
->>>>>>
->>>>>> Error: #72 dev_cgroup
->>>>>> serial_test_dev_cgroup:PASS:skel_open_and_load 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:cgroup_setup_and_join 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:bpf_attach 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:bpf_query 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:bpf_query 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:mknod 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
->>>>>> serial_test_dev_cgroup:FAIL:mknod unexpected mknod: actual 256 !=
->>>>>> expected 0
->>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:dd 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:dd 0 nsec
->>>>>> serial_test_dev_cgroup:PASS:dd 0 nsec
->>>>>>
->>>>>> (cgroup_helpers.c:353: errno: Device or resource busy) umount cgroup2
->>>>>>
->>>>>> The error code 256 means mknod execution has some issues. Maybe you
->>>>>> need to
->>>>>> find specific errno to find out what is going on. I think you can do ci
->>>>>> on-demanding test to debug.
->>>>> errno is 2 --> No such file or directory
->>>>>
->>>>> Locally I'm unable to reproduce it until I don't remove
->>>>> rm -f /tmp/test_dev_cgroup_zero such that the /tmp/test_dev_cgroup_zero
->>>>> node is present before test execution. The error code is 256 with errno 2.
->>>>> I'm debugging by placing system("ls /tmp 1>&2"); to find out which files
->>>>> are already present in /tmp. But ls's output doesn't appear on the CI
->>>>> logs.
->>>> errno 2 means ENOENT.
->>>>   From mknod man page (https://linux.die.net/man/2/mknod), it means
->>>>     A directory component in/pathname/  does not exist or is a dangling
->>>> symbolic link.
->>>>
->>>> It means /tmp does not exist or a dangling symbolic link.
->>>> It is indeed very strange. To make the test robust, maybe creating a temp
->>>> directory with mkdtemp and use it as the path? The temp directory
->>>> creation should be done before bpf prog attach.
->>> I've tried following but still no luck:
->>> * /tmp is already present. Then I thought maybe the desired file is already
->>> present. I've verified that there isn't file of same name is present inside
->>> /tmp.
->>> * I thought maybe mknod isn't present in the system. But mknod --help
->>> succeeds.
->>> * I switched from /tmp to current directory to create the mknod. But the
->>> result is same error.
->>> * I've tried to use the same kernel config as the BPF CI is using. I'm not
->>> able to reproduce it.
->>>
->>> Not sure which edge case or what's going on. The problem is appearing
->>> because of some limitation in the rootfs.
->> Maybe you could collect /tmp mount options to see whether anything is
->> suspicious? In my vm, I have
->>    tmpfs on /tmp type tmpfs (rw,nosuid,nodev,size=3501540k,nr_inodes=1048576)
->> and the test works fine.
->>
->>
-> My test system:
-> tmpfs /tmp tmpfs rw,relatime 0 0
->
-> On the CI, /tmp is present. But it isn't tmpfs. Following shows the logs
-> from /proc/mounts
->
-> On CI:
->    /dev/root / 9p
-> rw,relatime,cache=f,access=client,msize=512000,trans=virtio 0 0
->    devtmpfs /dev devtmpfs
-> rw,relatime,size=1998612k,nr_inodes=499653,mode=755 0 0
->    tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
->    proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
->    tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
->    tmpfs /run/netns tmpfs rw,nosuid,nodev,relatime 0 0
->    sys /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
->    debugfs /sys/kernel/debug debugfs rw,relatime 0 0
->    tracefs /sys/kernel/debug/tracing tracefs rw,relatime 0 0
->    cgroup2 /sys/fs/cgroup cgroup2 rw,nosuid,nodev,noexec,relatime 0 0
->    tmpfs /sys/fs/cgroup tmpfs rw,relatime 0 0
 
-somthing wrong here. /sys/fs/cgroup cannot be both cgroup2
-and tmpfs types.
+On 7/05/2024 3:43 am, Dave Hansen wrote:
+> On 3/1/24 03:20, Kai Huang wrote:
+>> KVM will need to read a bunch of non-TDMR related metadata to create and
+>> run TDX guests.  Export the metadata read infrastructure for KVM to use.
+> 
+> All of this hinges on how KVM ends up using this infrastructure.
+> 
+> I want to see the whole picture before _any_ of this gets applied.
+> These 5 patches only vaguely hint at that bigger picture.
+> 
+> I know folks want to draw some kind of line and say "x86" over here and
+> "kvm" over there.  But that inclination really doesn't help anyone get
+> that big picture view.
 
->    net_cls /sys/fs/cgroup/net_cls cgroup rw,relatime,net_cls 0 0
->    tmpfs /sys/fs/cgroup tmpfs rw,relatime 0 0
->    net_cls /sys/fs/cgroup/net_cls cgroup rw,relatime,net_cls 0 0
->    tmpfs /sys/fs/cgroup tmpfs rw,relatime 0 0
->    net_cls /sys/fs/cgroup/net_cls cgroup rw,relatime,net_cls 0 0
->    bpffs /sys/fs/bpf bpf rw,relatime 0 0
->    bpf /sys/fs/bpf bpf rw,relatime 0 0
->    tmpfs /mnt tmpfs rw,nosuid,nodev,relatime 0 0
->    vmtest-shared /mnt/vmtest 9p
-> rw,relatime,cache=f,access=client,msize=512000,trans=virtio 0 0
->    none /mnt cgroup2 rw,relatime 0 0
->
+Understood.  I'll work with Rick on this and get back to you guys.
+
+Thanks for the feedback!
 
