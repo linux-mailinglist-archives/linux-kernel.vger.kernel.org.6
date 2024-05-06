@@ -1,97 +1,82 @@
-Return-Path: <linux-kernel+bounces-170419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D825B8BD698
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:00:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22988BD699
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D43F1F22A5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:00:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1F30B219D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002C315B98E;
-	Mon,  6 May 2024 21:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E3015B966;
+	Mon,  6 May 2024 21:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHiq341e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pF/DClCp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32646EBB;
-	Mon,  6 May 2024 21:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146B8446AC;
+	Mon,  6 May 2024 21:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715029229; cv=none; b=Aa8xW6L2b7uL37DXbEIAYFOUlhRcrvPUWFvIQi+vTok78AN3Z+bIe/+DVCAeX0vrKFrkcGcARmW6buAfH+mAIyTWjqu96CCcrtK/zbxH7t0cLiw3tNT+FFlcML29K9n1AWQrQVqSdehughFPTmU57Q6cZeVOefuj+kGiCYsLb0w=
+	t=1715029429; cv=none; b=T1+6WpRXSraPUa1hCH+LFX4eqqDJymSiusWvQ802ZGUd/UiQG9y9Mq9Q58P1/Dk2YVxKuOOBtaHFJc/9M7lFvhWcnNyJLAuoafCYDgU89OboQxMYpWcIiISI3selBkKhIU+5vp1iB2DLC+hyG7kBYglsNTtYTRGiQYGFSXriiv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715029229; c=relaxed/simple;
-	bh=euep0cZkBW8JkBqz2qwER9CnPAwCYh/hflWCc3SyRv8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Hs9NsVWx/QRc4ma383s1/iPmUSYv9h9gSl59Fi8eEWR7XgPOgPmuy012qvp54R7JijNqMBJ4VkzU1CF8+LpmmNx+4p8y/yCyGEmZNWCFClgT0Q+5IiHCPwCQy0sRaPpt8gLYSpiJcwC0919jXTmmJ9OsbMYfWyDY9zqrlUbcRDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHiq341e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 89945C4AF65;
-	Mon,  6 May 2024 21:00:28 +0000 (UTC)
+	s=arc-20240116; t=1715029429; c=relaxed/simple;
+	bh=7rhOkNHOwCbYTHrQF9O/4r78By5ipU6JTmaE65MXYoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWjpGjlO2qocyZGrynGa9tnSzTA6Y6jjTsvH7ZmZ891rbB+YwEwmCmRPH6ZWZw/KCiztQVT02BdmWb/7BmxlT0LglRbEx8T/P2l7WDCHHi1HMQwEseLdhOLKcgBMB5y0uDobJjgaloqWjNNP4X90WAXeCJw06VmhiVlDo99vS8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pF/DClCp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213ECC116B1;
+	Mon,  6 May 2024 21:03:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715029228;
-	bh=euep0cZkBW8JkBqz2qwER9CnPAwCYh/hflWCc3SyRv8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XHiq341eR6eJjhLUMMgLXBcKLu6IuYQr9RrVVuJIHDZ5fM7yeJOWIVO633hoGPEqS
-	 cO+B6keGCRykadaZJkRUuA+kRn74Ym/PLH+7cU54lWyeVWDUG6HSyCRBhunq+c9lbr
-	 8+ijsHdOF6JCEZOXO/DoyugVMqhRkiP8JVvDLZlg3P8T01Wxnk1knC976Exh0+AM9l
-	 CmbKpN4rmtTcpwd5t3ZDyWO6g8cn0Rfbb5sFH12pwYefbwCxENN4YDR655Bzx7+2VT
-	 ezzseIDQyUirMbwWZ40Do+208Vun9P6lQTw6q40fbHyZkPKBJL8m1hdADLQua93+WO
-	 EG0V47hrFuAAA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7774EC43335;
-	Mon,  6 May 2024 21:00:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1715029428;
+	bh=7rhOkNHOwCbYTHrQF9O/4r78By5ipU6JTmaE65MXYoA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pF/DClCpBkSB3mzVy3MantgcwU+JxCl332PF2ZxIR63A0VHgLpGFEGnI9kJLHdz+M
+	 GGt/J5vQ8W/JO3gAaiaxaYI+DGPhFdKVUa+ooca02tfQVW1U7olWlrBqNg5VrIiN54
+	 5R3eC+Eo0SIWnvpE4PFzdz9NK8bK1OTB547Ox2dmYejJmwRuryY2CZ9D1V6D11DKyV
+	 bTxIgEWeOjfxFSb56aDeSY0uLHpQPHo1QkZuRrsMKJVfpDoJFnPMwXnxU+Kl46gDKw
+	 dGnba78coEwe4CPouSwH9HOpfgkHqVbOEfCNi2b4fpYx40xcAhcIAgxDY3Yyksw3D9
+	 JOIj048mWCDQw==
+Date: Mon, 6 May 2024 23:03:45 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v2 11/27] context_tracking, rcu: Rename
+ ct_dynticks_nmi_nesting_cpu() into ct_nmi_nesting_cpu()
+Message-ID: <ZjlFsUEEqjchDGE4@pavilion.home>
+References: <20240430091740.1826862-1-vschneid@redhat.com>
+ <20240430091740.1826862-12-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] selftests/bpf: fix pointer arithmetic in
- test_xdp_do_redirect
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171502922848.22261.11157218747353339667.git-patchwork-notify@kernel.org>
-Date: Mon, 06 May 2024 21:00:28 +0000
-References: <20240506145023.214248-1-mschmidt@redhat.com>
-In-Reply-To: <20240506145023.214248-1-mschmidt@redhat.com>
-To: Michal Schmidt <mschmidt@redhat.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@google.com,
- haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
- aleksander.lobakin@intel.com, toke@redhat.com, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+In-Reply-To: <20240430091740.1826862-12-vschneid@redhat.com>
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Mon,  6 May 2024 16:50:22 +0200 you wrote:
-> Cast operation has a higher precedence than addition. The code here
-> wants to zero the 2nd half of the 64-bit metadata, but due to a pointer
-> arithmetic mistake, it writes the zero at offset 16 instead.
+Le Tue, Apr 30, 2024 at 11:17:15AM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
+> meaning.
 > 
-> Just adding parentheses around "data + 4" would fix this, but I think
-> this will be slightly better readable with array syntax.
-> 
-> [...]
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 
-Here is the summary with links:
-  - [net] selftests/bpf: fix pointer arithmetic in test_xdp_do_redirect
-    https://git.kernel.org/bpf/bpf-next/c/e549b39a0ab8
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
