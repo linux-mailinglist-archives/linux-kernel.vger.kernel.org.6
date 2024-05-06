@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-169432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2D68BC892
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294908BC88D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AA38282312
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7DBA1F213FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3995140399;
-	Mon,  6 May 2024 07:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112E3140381;
+	Mon,  6 May 2024 07:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNI0+H02"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N4lm6PsX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A900381DF;
-	Mon,  6 May 2024 07:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F2942ABE;
+	Mon,  6 May 2024 07:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714981798; cv=none; b=sRmPgB7sbcCCiNWbvY91KwOk6ri9PByvrRYcFpjupaRWI0Ah3emR4T0oyPVgzCCQtm6JG851HQxYEYhcCySLK0HPIl5Ag8I2eWLAPx0TKK79X2EhO57ljsRbZ9PLzZ+vsPjblzOmRoS8pzb+pmh4nkoSxVMy7OP9M4/qnJg1nnQ=
+	t=1714981742; cv=none; b=MHjqz+1d8Bz3PwRmXoeSgguDxH9qFkr3aa8l5l61k1siufvHWsSe/+Vhl71CzhPvxO0+h9gDhXw/7BNYoComZQXVbQimWXlY7CG/WGwDSogPPiRZV8adN9xZ8rDmYvwSCPpFxqz/FuV+K6WObQilaMiPduZivIvu9suB30PT4oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714981798; c=relaxed/simple;
-	bh=AldvdJy6yYm37EF3i71sslpEwK1DSJ9EjAmYdBn40qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDZRsnKtmDhbJhVzt/4iWdiesJF4QAOrFaVObHn0y7I1kTXHiCSGfUiEpvUbNMj6HO0JD7fLXeTYDaiR679C31/a3yprryeta2R5SHIF2QFYtisWcH5A58SI+Ds+wW/FzJdEhICHrR7Z737vbJSov1qvwrsMq5OMebSI57H/0PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNI0+H02; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F01EC116B1;
-	Mon,  6 May 2024 07:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714981797;
-	bh=AldvdJy6yYm37EF3i71sslpEwK1DSJ9EjAmYdBn40qk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZNI0+H02XjdjlVmR6Cx3OzWOiBtjcRpk3xgkvyOqbhDCkhMr3vHP0oh+i33tTx/Ma
-	 FV8nNda9MLbM3QZGm5z9ZtjgOTO+yw7dj7YUi9TuhDLjepQpIVJPklKABB1S6On5LW
-	 oJ5tds7uhKrQJhDZ857sGfoNTlZutt2i/iY/3cvCUzxoZS7Gngrkw54hHdt4axYBSt
-	 TU2TYdNBHJnGFHkCJMQnHXAIQdn4l+TT7XZfl1B55vuihq0/UG7H42wGAwwErVRL4n
-	 geNSjz9lviHD590Q4TJUXY1fPROtIF2HIQpsm1nanLDDA/Sy+5piOdWJ1+hdj+tU/1
-	 APz0SNhKevnhw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1s3t6k-000000007nV-09n7;
-	Mon, 06 May 2024 09:49:58 +0200
-Date: Mon, 6 May 2024 09:49:58 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: qca: Fix error code in
- qca_read_fw_build_info()
-Message-ID: <ZjiLphwtH2RvUChu@hovoldconsulting.com>
-References: <515be96c-4c44-44d5-891f-fe57275e9f47@moroto.mountain>
+	s=arc-20240116; t=1714981742; c=relaxed/simple;
+	bh=OWCqVsjgfLNQN6XDNs/tB8tkUMXSZcy5HJhfHw0iAsw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fugM/i/SQw21osdaqXNheVa+Rz77CAe0zy0SqiiWVxaO7Kgj6YWCg3zp7srFiFwC4UUC8MIFm7KumpvpVjkmHNCu+Bmb5TfSsVMZTZPXgeH1MlycdFMmCVWJqEEZ5Heye74SxJYHoyszGfDuxa9h/kQ4SARJ4XMwTL+u7qmgYgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N4lm6PsX; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714981740; x=1746517740;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OWCqVsjgfLNQN6XDNs/tB8tkUMXSZcy5HJhfHw0iAsw=;
+  b=N4lm6PsX8IWO4hEnKTLJR3lemUDWJmeu8nhESozKEW2uT0wysM1yOJsS
+   c/LdO0Od11BMSZDJ4RwA/NlD261LYL55OBFQXSKj5hLw8u5BORNoY3rQI
+   hH1/lIyhvjdcOjZDhqjPw28vKtEZ6IEjXOypGn86ECwEYZqFOm4ypfEnm
+   2tl+822+lpK4CgkbBHLto3y6OEfRnaH2k1Cwqy+xz0VrhwMlU+5OARrx4
+   iQlH9pc4R7bepL3K+EBC2WxuRl1Qwa0nF3IGuRKOFCMjdszqIA2pGhsua
+   MmWRcZM1mKozH7U72SZmp1WXZj8MMPnap7GpnJpRkaH9TEy4N3X82kdet
+   w==;
+X-CSE-ConnectionGUID: 4cwa4OnARymaR/t89ZnNYQ==
+X-CSE-MsgGUID: k45d4y2OSUGxSaibQdWDjA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="14521183"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="14521183"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 00:49:00 -0700
+X-CSE-ConnectionGUID: IqlXt6B0ReGFum9OufbOdg==
+X-CSE-MsgGUID: TOlTN3aNTpag/I7/R9d2yw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="28194981"
+Received: from unknown (HELO litbin-desktop.sh.intel.com) ([10.239.156.93])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 00:48:58 -0700
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: pbonzini@redhat.com,
+	seanjc@google.com,
+	isaku.yamahata@intel.com,
+	xiaoyao.li@intel.com,
+	binbin.wu@linux.intel.com
+Subject: [PATCH] KVM: VMX: Remove unused declaration of vmx_request_immediate_exit()
+Date: Mon,  6 May 2024 15:50:25 +0800
+Message-Id: <20240506075025.2251131-1-binbin.wu@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <515be96c-4c44-44d5-891f-fe57275e9f47@moroto.mountain>
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 04, 2024 at 02:25:43PM +0300, Dan Carpenter wrote:
-> Return -ENOMEM on allocation failure.  Don't return success.
+After commit 0ec3d6d1f169 "KVM: x86: Fully defer to vendor code to decide
+how to force immediate exit", vmx_request_immediate_exit() was removed.
+Commit 5f18c642ff7e "KVM: VMX: Move out vmx_x86_ops to 'main.c' to dispatch
+VMX and TDX" added its declaration by accident.  Remove it.
 
-Thanks, Dan.
+Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+---
+ arch/x86/kvm/vmx/x86_ops.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Fortunately this error path is never taken due to the small allocation
-size, but if it were it would only lead to a debugfs attribute holding
-the fw build id not being created.
+diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
+index 502704596c83..dfab2c2941ad 100644
+--- a/arch/x86/kvm/vmx/x86_ops.h
++++ b/arch/x86/kvm/vmx/x86_ops.h
+@@ -111,7 +111,6 @@ u64 vmx_get_l2_tsc_offset(struct kvm_vcpu *vcpu);
+ u64 vmx_get_l2_tsc_multiplier(struct kvm_vcpu *vcpu);
+ void vmx_write_tsc_offset(struct kvm_vcpu *vcpu);
+ void vmx_write_tsc_multiplier(struct kvm_vcpu *vcpu);
+-void vmx_request_immediate_exit(struct kvm_vcpu *vcpu);
+ void vmx_sched_in(struct kvm_vcpu *vcpu, int cpu);
+ void vmx_update_cpu_dirty_logging(struct kvm_vcpu *vcpu);
+ #ifdef CONFIG_X86_64
 
-That said, it should still be fixed of course even this can wait for
-6.10-rc1.
+base-commit: d91a9cc16417b8247213a0144a1f0fd61dc855dd
+-- 
+2.25.1
 
-> Fixes: cfc2a7747108 ("Bluetooth: qca: fix info leak when fetching fw build id")
-
-This one should also have a matching:
-
-Cc: stable@vger.kernel.org	# 5.12
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-
-> @@ -136,8 +136,10 @@ static int qca_read_fw_build_info(struct hci_dev *hdev)
->  	}
->  
->  	build_label = kstrndup(&edl->data[1], build_lbl_len, GFP_KERNEL);
-> -	if (!build_label)
-> +	if (!build_label) {
-> +		err = -ENOMEM;
->  		goto out;
-> +	}
->  
->  	hci_set_fw_info(hdev, "%s", build_label);
-
-Johan
 
