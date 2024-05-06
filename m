@@ -1,180 +1,145 @@
-Return-Path: <linux-kernel+bounces-169426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5727F8BC880
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B7C8BC887
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CEFDB20D91
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:44:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52702B20D07
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE6913FD91;
-	Mon,  6 May 2024 07:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D07140E47;
+	Mon,  6 May 2024 07:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LxseSu9t";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RciozrXG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LxseSu9t";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RciozrXG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="i5pcXv27"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FC84F1EE
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488B213FD91
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714981444; cv=none; b=s/rt/b7kP8Eln0UWtipxhaxOwaPUFFLfx9I/txOcKHMqWzsrIf9E6F8D0bVJIvvj8gYPZdxLDfJFfS2CsTdDNzhHY/H8zPu5ffHE/6AEMphnPmC+ML2TnrHYxgj/OoGMFozVy6/K3f8xSKUPACDro5NmN/oG2e266mr8wScybQ4=
+	t=1714981514; cv=none; b=rrdbWELLIHGVR2XMXn6MEJ/Z+Nw47hzrc9DnjM2Djf/BFaclrMZCR5LZUf3sZwkLXx9pyYz+BtXFsdymkXPDfH948jqd3KQsjD/PthUUtB0m/Om5tap5yPrSHIa3qXZ1M5giArzFKYKUbYJsiqvc7lO2jS7c51/XpOYGP04/mrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714981444; c=relaxed/simple;
-	bh=h/+3mmcN4ggtpP++IT6mRKpHt8jDBGI5L76LmwjqGNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/PBwkA0CyC5kdbDR+CcIaSpHhs0IDro6y6Es/a1QnB6fxF0J6N7IeZMrxC2MoFHQ+56bTz6BlGN/EQdl+Pk+AlZ5PJOTFurI5763srPbksjOOTT7EWTo5nhW/obOk5nlXnbsxQdEpDWK7GGhe7mvQZcM6D6nwXUksCnl3j80IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LxseSu9t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RciozrXG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LxseSu9t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RciozrXG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1EE2D37FD0;
-	Mon,  6 May 2024 07:44:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714981441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QB7X6b8uZ129mfCOeXo2JK4nhvfmoN+Tgyx+uJLesB0=;
-	b=LxseSu9tNynavL8G6eU1ywrNTJ/WGNepkH2nPFBJViNaeQKr9lUzrpQmLARbxmG4kAroAJ
-	3vSgqRKPWquUBjIC04ZNZSIP7ZL7FV7TOVfMk0fqK3s5G11eSyXqAikx8VRaJ7cpSnsPhA
-	HkOjbefBaqvugvqIhF0sqK3X0gX8phk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714981441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QB7X6b8uZ129mfCOeXo2JK4nhvfmoN+Tgyx+uJLesB0=;
-	b=RciozrXGAx66sR2lNyVMX4NKFI+ZQAA82jTVhmhDUO8DzBfTAv0JEOcZEjSPeRRBSz/Wt+
-	MbcJsNJduqWj/mBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=LxseSu9t;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RciozrXG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714981441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QB7X6b8uZ129mfCOeXo2JK4nhvfmoN+Tgyx+uJLesB0=;
-	b=LxseSu9tNynavL8G6eU1ywrNTJ/WGNepkH2nPFBJViNaeQKr9lUzrpQmLARbxmG4kAroAJ
-	3vSgqRKPWquUBjIC04ZNZSIP7ZL7FV7TOVfMk0fqK3s5G11eSyXqAikx8VRaJ7cpSnsPhA
-	HkOjbefBaqvugvqIhF0sqK3X0gX8phk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714981441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QB7X6b8uZ129mfCOeXo2JK4nhvfmoN+Tgyx+uJLesB0=;
-	b=RciozrXGAx66sR2lNyVMX4NKFI+ZQAA82jTVhmhDUO8DzBfTAv0JEOcZEjSPeRRBSz/Wt+
-	MbcJsNJduqWj/mBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C1BDC13A25;
-	Mon,  6 May 2024 07:44:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MOklLkCKOGZ2XgAAD6G6ig
-	(envelope-from <jroedel@suse.de>); Mon, 06 May 2024 07:44:00 +0000
-Date: Mon, 6 May 2024 09:43:59 +0200
-From: =?iso-8859-1?Q?J=F6rg_R=F6del?= <jroedel@suse.de>
-To: Borislav Petkov <bp@alien8.de>
-Cc: =?iso-8859-1?Q?J=F6rg_R=F6del?= <joro@8bytes.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Michael Roth <michael.roth@amd.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	linux-coco@lists.linux.dev, Andy Lutomirski <luto@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	svsm-devel@coconut-svsm.dev
-Subject: Re: [svsm-devel] [PATCH v4 15/15] x86/sev: Allow non-VMPL0 execution
- when an SVSM is present
-Message-ID: <ZjiKP4Z6nBbvOEQB@suse.de>
-References: <cover.1713974291.git.thomas.lendacky@amd.com>
- <e377d148acac799f6905fc544fbb8bf2ed76e078.1713974291.git.thomas.lendacky@amd.com>
- <ZjTMcC7KTP9xRAqk@8bytes.org>
- <20240503160419.GAZjULA7HhinTfCWZ6@fat_crate.local>
+	s=arc-20240116; t=1714981514; c=relaxed/simple;
+	bh=wFO1Q3+eNIHJz3HRsu33RvMMo9hn2HylVuWXmz288kw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fVzOoYjlDLx9ffhGgJ+es781R7a4PCBKuyurDJe/sHjnVA3H00bdxQ4eUB2BqhNSeFOiihAmdHgkY+AyZCBaSKCqg/J7QYunBpR24ZLXa7847F8+ks7nl+gG0bWT/IIlTHMg5S/VH9+o4DwFbBSiQ6L2x3zbeoIpuIQ7znaKOXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=i5pcXv27; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4467i5kr095658;
+	Mon, 6 May 2024 02:44:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1714981445;
+	bh=wFO1Q3+eNIHJz3HRsu33RvMMo9hn2HylVuWXmz288kw=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=i5pcXv27umM2ROuLLndeYZGMKBYxaXQ9XEoEXcUEuIYqR4VsWF9JLiMqzb/s3EHdy
+	 MRJObDbMjPAIJYRyXE/8hB+qEqtxVr9O7d0c5X0mQAqt+7/I2F1xjPkmaHe7W+WVK/
+	 2b1TeWTJAopoL04/yPXOcr2nHQZpNI6peCSSgbqI=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4467i5LR118272
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 6 May 2024 02:44:05 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 6
+ May 2024 02:44:05 -0500
+Received: from DLEE100.ent.ti.com ([fe80::ad4d:c227:3f85:880d]) by
+ DLEE100.ent.ti.com ([fe80::ad4d:c227:3f85:880d%17]) with mapi id
+ 15.01.2507.023; Mon, 6 May 2024 02:44:05 -0500
+From: "Xu, Baojun" <baojun.xu@ti.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "tiwai@suse.de" <tiwai@suse.de>,
+        "robh+dt@kernel.org"
+	<robh+dt@kernel.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "pierre-louis.bossart@linux.intel.com"
+	<pierre-louis.bossart@linux.intel.com>,
+        "Lu, Kevin" <kevin-lu@ti.com>,
+        "Ding,
+ Shenghao" <shenghao-ding@ti.com>,
+        "Navada Kanyana, Mukund" <navada@ti.com>,
+        "13916275206@139.com" <13916275206@139.com>,
+        "P O, Vijeth" <v-po@ti.com>,
+        "Holalu Yogendra, Niranjan" <niranjan.hy@ti.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
+        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "soyer@irl.hu" <soyer@irl.hu>
+Subject: Re: [EXTERNAL] Re: [PATCH v3 1/3] ALSA: hda/tas2781: Modification for
+ add tas2781 driver for SPI
+Thread-Topic: [EXTERNAL] Re: [PATCH v3 1/3] ALSA: hda/tas2781: Modification
+ for add tas2781 driver for SPI
+Thread-Index: AQHakUValxtzw4HJGk6cPNX38MLKCLFuQDOAgApofQGAC33VgIAFxDWQ
+Date: Mon, 6 May 2024 07:44:05 +0000
+Message-ID: <d96bea0bacc842e0b30a100f43ff264f@ti.com>
+References: <20240418040240.2337-1-baojun.xu@ti.com>
+ <20240418040240.2337-2-baojun.xu@ti.com>
+ <ZiEKc4OTVlOt8llU@smile.fi.intel.com>
+ <0c7b29075dc347299602668660adb4b6@ti.com>,<ZjNpX6TvB4Vv1akq@smile.fi.intel.com>
+In-Reply-To: <ZjNpX6TvB4Vv1akq@smile.fi.intel.com>
+Accept-Language: en-GB, zh-CN, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240503160419.GAZjULA7HhinTfCWZ6@fat_crate.local>
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 1EE2D37FD0
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-On Fri, May 03, 2024 at 06:04:19PM +0200, Borislav Petkov wrote:
-> On Fri, May 03, 2024 at 01:37:20PM +0200, Jörg Rödel wrote:
-> > Nit: Can this be formated more like "SNP running at VMPL-%u"? That makes
-> > it easier to parse for me when looking into dmesg :)
-> 
-> Hmm, except that all documentation is without a "-"... The APM talks
-> about VMPL%d everywhere...
-
-No strict opinion, I just wanted to point out that there are more
-readable ways of printing the VMPL level than what is used in the APM.
-
-Regards,
-
--- 
-Jörg Rödel
-jroedel@suse.de
-
-SUSE Software Solutions Germany GmbH
-Frankenstraße 146
-90461 Nürnberg
-Germany
-https://www.suse.com/
-
-Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG Nürnberg)
+SGkgQW5keQ0KDQpUaGFua3MgZm9yIHlvdXIgY29tbWVudHMsIGFuc3dlciBpbiBsaW5lOg0KDQo+
+IEZyb206IEFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29t
+Pg0KPiBTZW50OiAwMiBNYXkgMjAyNCAxODoyMg0KPiBUbzogWHUsIEJhb2p1bg0KPiBDYzogdGl3
+YWlAc3VzZS5kZTsgcm9iaCtkdEBrZXJuZWwub3JnOyBsZ2lyZHdvb2RAZ21haWwuY29tOyBwZXJl
+eEBwZXJleC5jejsgcGllcnJlLWxvdWlzLmJvc3NhcnRAbGludXguaW50ZWwuY29tOyBMdSwgS2V2
+aW47IERpbmcsIFNoZW5naGFvOyBOYXZhZGEgS2FueWFuYSwgTXVrdW5kOyAxMzkxNjI3NTIwNkAx
+MzkuY29tOyBQIE8sIFZpamV0aDsgSG9sYWx1IFlvZ2VuZHJhLCBOaXJhbmphbjsgYWxzYS1kZXZl
+bEBhbHNhLXByb2plY3Qub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaWFtLnIu
+Z2lyZHdvb2RAaW50ZWwuY29tOyB5dW5nLWNodWFuLmxpYW9AbGludXguaW50ZWwuY29tOyBicm9v
+bmllQGtlcm5lbC5vcmc7IHNveWVyQGlybC5odQ0KPiBTdWJqZWN0OiBSZTogW0VYVEVSTkFMXSBS
+ZTogW1BBVENIIHYzIDEvM10gQUxTQTogaGRhL3RhczI3ODE6IE1vZGlmaWNhdGlvbiBmb3IgYWRk
+IHRhczI3ODEgZHJpdmVyIGZvciBTUEkNCj4gDQo+IE9uIFRodSwgQXByIDI1LCAyMDI0IGF0IDA3
+OuKAijU0OuKAijQxQU0gKzAwMDAsIFh1LCBCYW9qdW4gd3JvdGU6ID4gPiBGcm9tOiBBbmR5IFNo
+ZXZjaGVua28gPGFuZHJpeS7igIpzaGV2Y2hlbmtvQOKAimxpbnV4LuKAimludGVsLuKAimNvbT4g
+PiA+IFNlbnQ6IDE4IEFwcmlsIDIwMjQgMTk64oCKNTYgPiA+IE9uIFRodSwgQXByIDE4LCAyMDI0
+IGF0IDEyOiAwMjogMzdQTSArMDgwMCwgQmFvanVuIFh1IHdyb3RlOuKAig0KPiBaalFjbVFSWUZw
+ZnB0QmFubmVyU3RhcnQNCj4gVGhpcyBtZXNzYWdlIHdhcyBzZW50IGZyb20gb3V0c2lkZSBvZiBU
+ZXhhcyBJbnN0cnVtZW50cy4NCj4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVu
+dHMgdW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNvdXJjZSBvZiB0aGlzIGVtYWlsIGFuZCBrbm93
+IHRoZSBjb250ZW50IGlzIHNhZmUuIElmIHlvdSB3aXNoIHRvIHJlcG9ydCB0aGlzIG1lc3NhZ2Ug
+dG8gSVQgU2VjdXJpdHksIHBsZWFzZSBmb3J3YXJkIHRoZSBtZXNzYWdlIGFzIGFuIGF0dGFjaG1l
+bnQgdG8gcGhpc2hpbmdAbGlzdC50aS5jb20NCj4gDQo+IFpqUWNtUVJZRnBmcHRCYW5uZXJFbmQN
+Cj4gDQo+IE9uIFRodSwgQXByIDI1LCAyMDI0IGF0IDA3OjU0OjQxQU0gKzAwMDAsIFh1LCBCYW9q
+dW4gd3JvdGU6DQo+ID4gPiBGcm9tOiBBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtv
+QGxpbnV4LmludGVsLmNvbT4NCj4gPiA+IFNlbnQ6IDE4IEFwcmlsIDIwMjQgMTk6NTYNCj4gPiA+
+IE9uIFRodSwgQXByIDE4LCAyMDI0IGF0IDEyOuKAijAyOuKAijM3UE0gKzA4MDAsIEJhb2p1biBY
+dSB3cm90ZToNCj4gPiA+IE9uIFRodSwgQXByIDE4LCAyMDI0IGF0IDEyOjAyOjM3UE0gKzA4MDAs
+IEJhb2p1biBYdSB3cm90ZToNCj4gDQo+IC4uLg0KPiANCj4gPiA+ID4gIHNvdW5kL3BjaS9oZGEv
+S2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTUgKysrKysrKysrKysrKysrDQo+
+ID4gPiA+ICBzb3VuZC9wY2kvaGRhL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICB8
+ICAyICsrDQo+ID4gPg0KPiA+IElzIHRoaXMgY29ycmVjdD8gWW91IGFyZSBhZGRpbmcgYSBkZWFk
+ICJjb2RlIiwgaXNuJ3QgaXQ/DQo+ID4NCj4gPiBXaGF0J3MgbWVhbiAiZGVhZCBjb2RlIj8gQWZ0
+ZXIgYWRkIENPTkZJR19TTkRfSERBX1NDT0RFQ19UQVMyNzgxX1NQST1tDQo+ID4gaW4gbXkgY29u
+ZmlnIGZpbGUsIHRoZSB3aG9sZSBwYXRjaCBjb2RlIGhhcyB3b3JrZWQuDQo+IA0KPiBJcyB0aGF0
+IGZpbGUgYWxyZWFkeSBpbiB0aGUgcmVwb3NpdG9yeT8NCj4gSWYgbm90LCBJIGRvbid0IHNlZSBp
+dCBpbiB0aGlzIHBhdGNoIGVpdGhlciAtLT4gZGVhZCBjb2RlLg0KDQpXaGVuIEkgaW50ZWdyYXRl
+ZCBDT05GSUdfU05EX0hEQV9TQ09ERUNfVEFTMjc4MV9TUEkgYW5kIGNvbXBpbGVkIHRoZSB3aG9s
+ZSBrZXJuZWwsDQppdCB1c2VkIHRvIHBvcHVwIHRoZSBmb2xsb3dpbmcgbWVzc2FnZSBmb3IgVEFT
+Mjc4MSBTUEkgbW9kdWxlIGluIGZpcnN0IGNvbXBpbGU6DQogDQogQnVpbGQgVEFTMjc4MSBIRC1h
+dWRpbyBzaWRlIGNvZGVjIHN1cHBvcnQgZm9yIFNQSSBCdXMgKFNORF9IREFfU0NPREVDX1RBUzI3
+ODFfU1BJKSBbTi9tLz9dIChORVcpIA0KDQpOb3JtYWxseSwgc2VsZWN0ZWQgbS4gQW5kIFRBUzI3
+ODEgU1BJIG1vZHVsZSB3b3VsZCBiZSBjb21waWxlZC4NCg0KPiANCj4gLS0NCj4gV2l0aCBCZXN0
+IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0KPiANCj4gDQo=
 
