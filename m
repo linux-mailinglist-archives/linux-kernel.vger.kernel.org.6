@@ -1,53 +1,81 @@
-Return-Path: <linux-kernel+bounces-169489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD97A8BC977
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:22:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D109C8BCA2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F49284C8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8B91F224F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D111411EA;
-	Mon,  6 May 2024 08:21:59 +0000 (UTC)
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958E61422A4;
+	Mon,  6 May 2024 09:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cU4p2A9l"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E94140E46
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9469A1422A5
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714983718; cv=none; b=XP6DU5f8CsMKKJ146lCJ+y9Mlk4tXhPBR0HoqBehYZpfAnM3Cx1R72nZuY5QPyP3ZjiX+mPddynt3L6hIZ9JovCNacCxB5TI9GSMM713BuIT4fsC/aglBk1xFWl5pCvkIBIzqSxoUz4dHDDPfYPNYpVtDY1N+xYAej/FB+eAAA8=
+	t=1714986074; cv=none; b=jSgJhI5FrFLwoPpcsMAwUEjzj/uQR7HMtrjI76izunE7WmaDJGSpB9qq8E8FWcfyBUIh+aB/8ENbQyv+KHdOw0EOMRXgjeNrp247WzPwXttNxUxK/NB8Z4zpxZ2yNay8XxAlYENlTyxyI9eATwxQlt+GFyN044hZCUmFFd9Jbo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714983718; c=relaxed/simple;
-	bh=hhwKMXUzrQ0uPvH/7RhpW1I9RGs7lrXrlwA5/jOYygE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s3SzIRO0MxgOlLvTIKqWq1tsQl9YzSh4K4K9IQELLJjVQqSxGYBCY0R+y8zXmwrAILKoN3n9OnddVkwJqN8tIPkt+RB3lNQZJCPH2tvSjGGF0aEmBP7l3PnxfltttoULLAF8+zutgNsqiQGG+mwLf5kCxyHOzvXRpXKW6oAgGKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:e8fd:353d:bf09:e9f2])
-	by michel.telenet-ops.be with bizsmtp
-	id KkMm2C0051j6xkh06kMmeg; Mon, 06 May 2024 10:21:48 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1s3tak-009xSO-NL;
-	Mon, 06 May 2024 10:21:46 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1s3sQt-005qJJ-74;
-	Mon, 06 May 2024 09:06:43 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] m68k: Move ARCH_HAS_CPU_CACHE_ALIASING
-Date: Mon,  6 May 2024 09:06:41 +0200
-Message-Id: <4574ad6cc1117e4b5d29812c165bf7f6e5b60773.1714978406.git.geert@linux-m68k.org>
+	s=arc-20240116; t=1714986074; c=relaxed/simple;
+	bh=DIj3uOSTe54dSogyMn44tGSmCTlpJl//cqjBO+aBtyA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=SGFzruSyMohMc8rDtpPH8nGFfeoTaYtxclnmHqfpPFxkI1wMZwvWgGBp6MFNMfoCKG01mM0a7QJ/F6hd2qkMLhR3mmzfajHkrbRbF/CMQLw/Dn3wPk2QyXPjVI+fzC1K/CeSou3jiYduV3XPnuDEXXSrTsyPDmpsmCesdbQ3KWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cU4p2A9l; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240506090108epoutp0446e09aaeedc165cd6a8380b61cb4999f~M2r4YtUws1912219122epoutp045
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:01:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240506090108epoutp0446e09aaeedc165cd6a8380b61cb4999f~M2r4YtUws1912219122epoutp045
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1714986068;
+	bh=MkDRtuXUGYKnezppJCmDRci2myXg937PtzpJQb7sPuM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=cU4p2A9lArx1AiWsXshlfCU+sD5EIh7KhCqEtSDZDF41mpAriCL3UBm1Oq8bLN1Dz
+	 XyFqiPi/Q16f3opMG+JY/f6RB9W8/UG/Oda43B6bve9z5XZoZd4l6CYDcYLScvNK1n
+	 51GEEG8fUHGaNL+yk2Xw2zO8UESx9LsI+2uccC1U=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240506090107epcas5p236245498c4bbe36fa69ac3d862eed75f~M2r36MkD31172211722epcas5p2Z;
+	Mon,  6 May 2024 09:01:07 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4VXwPG3JnWz4x9Pv; Mon,  6 May
+	2024 09:01:06 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	73.4C.08600.15C98366; Mon,  6 May 2024 18:01:05 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240506075314epcas5p25333b80c8d6a3217d5352a5a7ed89278~M1wmydLbp0400404004epcas5p2d;
+	Mon,  6 May 2024 07:53:14 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240506075314epsmtrp15e121021c338f74f4005caf73bb3e6b1~M1wmxru-v1874718747epsmtrp1s;
+	Mon,  6 May 2024 07:53:14 +0000 (GMT)
+X-AuditID: b6c32a44-921fa70000002198-7d-66389c51c60f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7A.80.09238.A6C88366; Mon,  6 May 2024 16:53:14 +0900 (KST)
+Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240506075313epsmtip1be1b6f0884a91e44c09b7d3989f39c6b~M1wllq7kt3072130721epsmtip1Y;
+	Mon,  6 May 2024 07:53:13 +0000 (GMT)
+From: Chenliang Li <cliang01.li@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+	peiwei.li@samsung.com, joshi.k@samsung.com, kundan.kumar@samsung.com,
+	gost.dev@samsung.com, Chenliang Li <cliang01.li@samsung.com>
+Subject: [PATCH] io_uring/rsrc: Add support for multi-folio buffer
+ coalescing
+Date: Mon,  6 May 2024 15:53:02 +0800
+Message-Id: <20240506075303.25630-1-cliang01.li@samsung.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,32 +84,308 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmlm7gHIs0gyf/xC3mrNrGaLH6bj+b
+	xem/j1ksbh7YyWTxrvUci8XR/2/ZLH5132W02PrlK6vF5V1z2Cye7eW0ODvhA6sDt8fOWXfZ
+	PS6fLfXo27KK0ePzJrkAlqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE
+	3FRbJRefAF23zBygm5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BSYFesWJucWl
+	eel6eaklVoYGBkamQIUJ2RlPf3UxFzx2qPh4dS1rA+MOoy5GDg4JAROJDw/5uxi5OIQEdjNK
+	TD3yiRXC+cQo8WbVWijnG6PE861dbF2MnGAdC2btZoZI7GWUWH91HzuE84tRYua9drAqNgEd
+	id8rfrGA2CIC2hKvH09lASliFjjEKHG/fSIjyHJhAX+JZ/vB6lkEVCXWz9vDCmLzCthItG7Z
+	zgSxTV5i/8GzzBBxQYmTM5+AzWQGijdvnQ12hYTAS3aJaQdWQzW4SLTe6GCEsIUlXh3fwg5h
+	S0m87G9jh3i6WGLZOjmI3hZGiffv5kDVW0v8u7KHBaSGWUBTYv0ufYiwrMTUU+uYIPbySfT+
+	fgK1ildixzwYW1XiwsFtUKukJdZO2MoMYXtI/N12GewvIYFYif4/N1kmMMrPQvLOLCTvzELY
+	vICReRWjZGpBcW56arJpgWFeajk8YpPzczcxgpOmlssOxhvz/+kdYmTiYAQGLQezkgjv0Xbz
+	NCHelMTKqtSi/Pii0pzU4kOMpsAwnsgsJZqcD0zbeSXxhiaWBiZmZmYmlsZmhkrivK9b56YI
+	CaQnlqRmp6YWpBbB9DFxcEo1MKmEpbEWb5bzX1eeyH0/d8k0iWdtNz1e+wrrpFzldVu27Piv
+	a5qLXgYJCq3vOZVbcPHPwiXTUq3myVlMfaDQq/olniFlg5n5VV3HMM8yTrXFSju2SnlNFK1Z
+	s6n5tHRlINsfVfP1s0OCcyZ3Sl18/kLdZoNvr9jfaqErv8NjnvzUruK6trvli7zwMm3d5ANM
+	ef9z5pzJCQrK2R9ScWyv7M+/DUUS5/u0+n8KaajOvuam5jR3w1ebs5pJ5t7Pb/g2N9/anaXA
+	z+Mb2zJnyZRZxdEth45vjY8sM9u3JChGJkxN7VNZrtK+dfzZav+fOT/fAszANd+e7360ZZmM
+	7hyXF0/k595bU/1mu1Z4SvsKJZbijERDLeai4kQACxBxiSMEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSnG5Wj0WawZmjKhZzVm1jtFh9t5/N
+	4vTfxywWNw/sZLJ413qOxeLo/7dsFr+67zJabP3yldXi8q45bBbP9nJanJ3wgdWB22PnrLvs
+	HpfPlnr0bVnF6PF5k1wASxSXTUpqTmZZapG+XQJXxtNfXcwFjx0qPl5dy9rAuMOoi5GTQ0LA
+	RGLBrN3MXYxcHEICuxklXi9/zQyRkJboONTKDmELS6z895wdougHo8S6rzvAitgEdCR+r/jF
+	0sXIwSEioCvReFcBpIZZ4BSjxNs1O8CahQV8JRqX/WYEsVkEVCXWz9vDCmLzCthItG7ZzgSx
+	QF5i/8GzzBBxQYmTM5+wgNjMQPHmrbOZJzDyzUKSmoUktYCRaRWjZGpBcW56brJhgWFearle
+	cWJucWleul5yfu4mRnAAa2nsYLw3/5/eIUYmDsZDjBIczEoivEfbzdOEeFMSK6tSi/Lji0pz
+	UosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYOL99iQx20Lk2PlMrVCdtxO4OTf4
+	9H+RNJyi+dpwN9/UXxx/T6acWT853HuVzoWpwnEubQeMJpZnfU37cU7D+4LYtC5F44ZqkYCr
+	WysXRuqGfHcpWGR6TcbknembQkvnNbc8v71e5uURxrc58vOeloPyHy+o+OcZKe8zisrdEsnn
+	IfHzSGP88z1cKi9fGQjFzYzuW/X+1rnOwNfP2qwMk19wqG+x/nT0UJaSwtn0oOW3G0qWCDwp
+	4Qg3nHZ99dwdF7ftuv/h1yfe/4UWH388+v7lnGxlxYfCbad2aUW+7G7Ji+1ynVDZqiygVfze
+	IzLmR3LlzmUJ2zc1fOC68C+guWWyVPeLJaHbLG7tNDbcy6zEUpyRaKjFXFScCACxhWhHzwIA
+	AA==
+X-CMS-MailID: 20240506075314epcas5p25333b80c8d6a3217d5352a5a7ed89278
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240506075314epcas5p25333b80c8d6a3217d5352a5a7ed89278
+References: <CGME20240506075314epcas5p25333b80c8d6a3217d5352a5a7ed89278@epcas5p2.samsung.com>
 
-Move the recently added ARCH_HAS_CPU_CACHE_ALIASING to restore
-alphabetical sort order.
+Currently fixed buffers consisting of pages in one same folio(huge page)
+can be coalesced into a single bvec entry at registration.
+This patch expands it to support coalescing fixed buffers
+with multiple folios, by:
+1. Add a helper function and a helper struct to do the coalescing work
+at buffer registration;
+2. Add the bvec setup procedure of the coalsced path;
+3. store page_mask and page_shift into io_mapped_ubuf for
+later use in io_import_fixed.
 
-Fixes: 8690bbcf3b7010b3 ("Introduce cpu_dcache_is_aliasing() across all architectures")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
 ---
-To be queued in the m68k tree for v6.10.
+ io_uring/rsrc.c | 156 +++++++++++++++++++++++++++++++++++-------------
+ io_uring/rsrc.h |   9 +++
+ 2 files changed, 124 insertions(+), 41 deletions(-)
 
- arch/m68k/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index c68fbc59787ab59d..e0b4f6e9fe4ce1f4 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -3,8 +3,8 @@ config M68K
- 	bool
- 	default y
- 	select ARCH_32BIT_OFF_T
--	select ARCH_HAS_CPU_CACHE_ALIASING
- 	select ARCH_HAS_BINFMT_FLAT
-+	select ARCH_HAS_CPU_CACHE_ALIASING
- 	select ARCH_HAS_CPU_FINALIZE_INIT if MMU
- 	select ARCH_HAS_CURRENT_STACK_POINTER
- 	select ARCH_HAS_DMA_PREP_COHERENT if M68K_NONCOHERENT_DMA && !COLDFIRE
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 65417c9553b1..f9e11131c9a5 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -871,6 +871,80 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
+ 	return ret;
+ }
+ 
++/*
++ * For coalesce to work, a buffer must be one or multiple
++ * folios, all the folios except the first and last one
++ * should be of the same size.
++ */
++static bool io_sqe_buffer_try_coalesce(struct page **pages,
++				       unsigned int nr_pages,
++				       struct io_imu_folio_stats *stats)
++{
++	struct folio	*folio = NULL, *first_folio = NULL;
++	unsigned int	page_cnt;
++	int		i, j;
++
++	if (nr_pages <= 1)
++		return false;
++
++	first_folio = page_folio(pages[0]);
++	stats->full_folio_pcnt = folio_nr_pages(first_folio);
++	if (stats->full_folio_pcnt == 1)
++		return false;
++
++	stats->folio_shift = folio_shift(first_folio);
++
++	folio = first_folio;
++	page_cnt = 1;
++	stats->nr_folios = 1;
++	/*
++	 * Check:
++	 * 1. Pages must be contiguous;
++	 * 2. All folios should have the same page count
++	 *    except the first and last one
++	 */
++	for (i = 1; i < nr_pages; i++) {
++		if (page_folio(pages[i]) != folio ||
++		   pages[i] != pages[i-1] + 1) {
++			if (folio == first_folio)
++				stats->first_folio_pcnt = page_cnt;
++			else if (page_cnt != stats->full_folio_pcnt)
++				return false;
++			folio = page_folio(pages[i]);
++			page_cnt = 1;
++			stats->nr_folios++;
++			continue;
++		}
++		page_cnt++;
++	}
++	if (folio == first_folio)
++		stats->first_folio_pcnt = page_cnt;
++
++	if (stats->first_folio_pcnt > 1)
++		/*
++		 * The pages are bound to the folio, it doesn't
++		 * actually unpin them but drops all but one reference,
++		 * which is usually put down by io_buffer_unmap().
++		 * Note, needs a better helper.
++		 */
++		unpin_user_pages(&pages[1], stats->first_folio_pcnt - 1);
++	j = stats->first_folio_pcnt;
++	nr_pages -= stats->first_folio_pcnt;
++	for (i = 1; i < stats->nr_folios; i++) {
++		unsigned int nr_unpin;
++
++		nr_unpin = min_t(unsigned int, nr_pages - 1,
++				stats->full_folio_pcnt - 1);
++		if (nr_unpin <= 1)
++			continue;
++		unpin_user_pages(&pages[j+1], nr_unpin);
++		j += stats->full_folio_pcnt;
++		nr_pages -= stats->full_folio_pcnt;
++	}
++
++	return true;
++}
++
+ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 				  struct io_mapped_ubuf **pimu,
+ 				  struct page **last_hpage)
+@@ -879,8 +953,9 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 	struct page **pages = NULL;
+ 	unsigned long off;
+ 	size_t size;
+-	int ret, nr_pages, i;
+-	struct folio *folio = NULL;
++	int ret, nr_pages, nr_bvecs, i, j;
++	bool coalesced;
++	struct io_imu_folio_stats stats;
+ 
+ 	*pimu = (struct io_mapped_ubuf *)&dummy_ubuf;
+ 	if (!iov->iov_base)
+@@ -895,39 +970,26 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 		goto done;
+ 	}
+ 
+-	/* If it's a huge page, try to coalesce them into a single bvec entry */
+-	if (nr_pages > 1) {
+-		folio = page_folio(pages[0]);
+-		for (i = 1; i < nr_pages; i++) {
+-			/*
+-			 * Pages must be consecutive and on the same folio for
+-			 * this to work
+-			 */
+-			if (page_folio(pages[i]) != folio ||
+-			    pages[i] != pages[i - 1] + 1) {
+-				folio = NULL;
+-				break;
+-			}
+-		}
+-		if (folio) {
+-			/*
+-			 * The pages are bound to the folio, it doesn't
+-			 * actually unpin them but drops all but one reference,
+-			 * which is usually put down by io_buffer_unmap().
+-			 * Note, needs a better helper.
+-			 */
+-			unpin_user_pages(&pages[1], nr_pages - 1);
+-			nr_pages = 1;
+-		}
+-	}
+-
+-	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
++	/* If it's multiple huge pages, try to coalesce them into fewer bvec entries */
++	coalesced = io_sqe_buffer_try_coalesce(pages, nr_pages, &stats);
++	nr_bvecs = nr_pages;
++	if (coalesced)
++		nr_bvecs = stats.nr_folios;
++	imu = kvmalloc(struct_size(imu, bvec, nr_bvecs), GFP_KERNEL);
+ 	if (!imu)
+ 		goto done;
+ 
+ 	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
+ 	if (ret) {
+-		unpin_user_pages(pages, nr_pages);
++		if (coalesced) {
++			unpin_user_page(pages[0]);
++			j = stats.first_folio_pcnt;
++			for (i = 1; i < stats.nr_folios; i++) {
++				unpin_user_page(pages[j]);
++				j += stats.full_folio_pcnt;
++			}
++		} else
++			unpin_user_pages(pages, nr_pages);
+ 		goto done;
+ 	}
+ 
+@@ -936,12 +998,29 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
+ 	/* store original address for later verification */
+ 	imu->ubuf = (unsigned long) iov->iov_base;
+ 	imu->ubuf_end = imu->ubuf + iov->iov_len;
+-	imu->nr_bvecs = nr_pages;
++	imu->nr_bvecs = nr_bvecs;
++	imu->page_shift = PAGE_SHIFT;
++	imu->page_mask = PAGE_MASK;
++	if (coalesced) {
++		imu->page_shift = stats.folio_shift;
++		imu->page_mask = ~((1UL << stats.folio_shift) - 1);
++	}
+ 	*pimu = imu;
+ 	ret = 0;
+ 
+-	if (folio) {
+-		bvec_set_page(&imu->bvec[0], pages[0], size, off);
++	if (coalesced) {
++		size_t vec_len;
++
++		vec_len = min_t(size_t, size, PAGE_SIZE * stats.first_folio_pcnt - off);
++		bvec_set_page(&imu->bvec[0], pages[0], vec_len, off);
++		size -= vec_len;
++		j = stats.first_folio_pcnt;
++		for (i = 1; i < nr_bvecs; i++) {
++			vec_len = min_t(size_t, size, PAGE_SIZE * stats.full_folio_pcnt);
++			bvec_set_page(&imu->bvec[i], pages[j], vec_len, 0);
++			size -= vec_len;
++			j += stats.full_folio_pcnt;
++		}
+ 		goto done;
+ 	}
+ 	for (i = 0; i < nr_pages; i++) {
+@@ -1049,7 +1128,7 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 		 * we know that:
+ 		 *
+ 		 * 1) it's a BVEC iter, we set it up
+-		 * 2) all bvecs are PAGE_SIZE in size, except potentially the
++		 * 2) all bvecs are the same in size, except potentially the
+ 		 *    first and last bvec
+ 		 *
+ 		 * So just find our index, and adjust the iterator afterwards.
+@@ -1061,11 +1140,6 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 		const struct bio_vec *bvec = imu->bvec;
+ 
+ 		if (offset < bvec->bv_len) {
+-			/*
+-			 * Note, huge pages buffers consists of one large
+-			 * bvec entry and should always go this way. The other
+-			 * branch doesn't expect non PAGE_SIZE'd chunks.
+-			 */
+ 			iter->bvec = bvec;
+ 			iter->nr_segs = bvec->bv_len;
+ 			iter->count -= offset;
+@@ -1075,12 +1149,12 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 
+ 			/* skip first vec */
+ 			offset -= bvec->bv_len;
+-			seg_skip = 1 + (offset >> PAGE_SHIFT);
++			seg_skip = 1 + (offset >> imu->page_shift);
+ 
+ 			iter->bvec = bvec + seg_skip;
+ 			iter->nr_segs -= seg_skip;
+ 			iter->count -= bvec->bv_len + offset;
+-			iter->iov_offset = offset & ~PAGE_MASK;
++			iter->iov_offset = offset & ~(imu->page_mask);
+ 		}
+ 	}
+ 
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index c032ca3436ca..4c655e446150 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -47,9 +47,18 @@ struct io_mapped_ubuf {
+ 	u64		ubuf_end;
+ 	unsigned int	nr_bvecs;
+ 	unsigned long	acct_pages;
++	unsigned int	page_shift;
++	unsigned long	page_mask;
+ 	struct bio_vec	bvec[] __counted_by(nr_bvecs);
+ };
+ 
++struct io_imu_folio_stats {
++	unsigned int	first_folio_pcnt;
++	unsigned int	full_folio_pcnt;
++	unsigned int	nr_folios;
++	unsigned int	folio_shift;
++};
++
+ void io_rsrc_node_ref_zero(struct io_rsrc_node *node);
+ void io_rsrc_node_destroy(struct io_ring_ctx *ctx, struct io_rsrc_node *ref_node);
+ struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx);
 -- 
 2.34.1
 
