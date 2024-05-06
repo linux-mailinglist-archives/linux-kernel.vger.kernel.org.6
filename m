@@ -1,244 +1,288 @@
-Return-Path: <linux-kernel+bounces-169786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DBD8BCD9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:17:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620628BCDA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D525B1C22C41
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97871B24290
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187F3143C5A;
-	Mon,  6 May 2024 12:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B1E143C44;
+	Mon,  6 May 2024 12:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="iJT/bv3h"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2093.outbound.protection.outlook.com [40.92.19.93])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rnGgNwGX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806FA14262C;
-	Mon,  6 May 2024 12:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714997823; cv=fail; b=o/26dWcjTuod9Z/QvI/XRFQ8fd4kSmxmCleMHeDBcNyk3qq83bF6n03XoYheYxrZk88LRtgZ8HRGKyuakeQkXOtY66s/m6wk+jB5J/zETWhYkyvnxQkdL+dPjvO1Gvj3TkxvF+nNfyE0OYu5iL+WnmxMTgpzzioyY9Ld11fSWRQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714997823; c=relaxed/simple;
-	bh=Fklr0JklGU/pWAie21wiSaqolArnjV63su2LDgS1X3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Jop96HbeLfWaXyKKQWnF7Zc57iXpEzUt+JVJnXRbevnhaKd5SNpD77GjyjoFaeuX2gkuIK8g8d77Fd7LFWG6tLakc4OxRn4MaMj8hYlhKr8b15NB4PG0+7gzBRKXudXOOyqN6A0MdzCPG/cFm/+p6o0c81ViP8iu9Xh3ZwNOrDg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=iJT/bv3h; arc=fail smtp.client-ip=40.92.19.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c+wMyE6IzTfU/uy0nCisbCmIkKbF4V1zVspPcAvnzT87XI8dLag4GWTboSowhzodQjdrPjeQmwYmaW0FpDVsEviumk0K8MFgOMY2Vaq0ufHb4ww8JDGK1QVEdHu54bJ2+9upWCSbiNDmbZe30XS1u7W8jnAEpcIgX2LYkQcEIuJv2Zz2lxUQJP5v+9AuisOVMQd2twgWAr3yaeNS3VcV8O7DpsmxjAsh6ml3yFPB45XSfvuhTdirKqf2PaVTVqoQEaAnvF4QJExMctOaKXat0+h1IM4bjxG91phhFzbkas7ItIYBDQR/nMTkFVqB677BRl7GAtk83QI3Ffr3qzKwNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q5Vw7qDRO3DwIkhmABNHwWKRQWu1slVAGXoHqCpXiDQ=;
- b=jvFz3z4ee62AKiS0JohEoNcAwHS+cZ752zn9+Xr/MBkO7mnuPzJU4ViXPVVV+1gJkl4+J88sNLN+i/DFvtVd0aM3HC0ZeyKCKELaNv4QQM5OxKiJ2PuFXo3cpERJnyccSmkxy9t5xCdiBdeN8F6lKVjZba3SJUM8XHAlhywEHw6R4Vpmzz68VlQoqisR04EbnjyWl0nhaZs+Vpu5kfhk0qeVg+epjuGV1HS76zd3ztWziKFrXmvvrCxKHZzqupzdPae+cgRcddL424khdnYG0ypF9TQv/+yfbJJ2DE2llADABIWy7qSy/LuSVlGWWHZjIiuzn0ilAO/4LN01AxegHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q5Vw7qDRO3DwIkhmABNHwWKRQWu1slVAGXoHqCpXiDQ=;
- b=iJT/bv3h4WrDjzqbre8udTdF0cxFdx9W7f4FgJoo9pCOZpeuTc1yh7J1qyZlHuzHoP/Vak0YHfdZVCuRkSYzZsrDkdADI515cub9RqBo40/MQtZs3ZNM0TQ9ZBQK2Z0O6WRcq2i5Zck7yeRVIj1vZXBNVtoSPr+DF8gN3mjYwMSqiqXaHvWmoSPFifQP5kseHGsjIURhMQsYI91gswXeE+yUNQ316MCjcgz9AkMrta6T6SmeRjK0sPAHdGxfh/e7KFofWU72O5eWKM+yd+g/8V2eUAwqZ+MdHIzJ2t/5r5WmOvRcDhqw7HKBp6c+WnV9qCgmF0ArwSoufHXqDe0jzQ==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by CH3PR20MB7351.namprd20.prod.outlook.com (2603:10b6:610:1d9::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Mon, 6 May
- 2024 12:16:59 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::182f:841b:6e76:b819]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::182f:841b:6e76:b819%2]) with mapi id 15.20.7544.041; Mon, 6 May 2024
- 12:16:59 +0000
-Date: Mon, 6 May 2024 20:17:30 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>, 
-	Jingbao Qiu <qiujingbao.dlmu@gmail.com>, dlan@gentoo.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: phy: Add Sophgo CV1800 USB phy
-Message-ID:
- <IA1PR20MB4953FC99B680A3040D4CB611BB1C2@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <IA1PR20MB4953C1876484E149AA390DD5BB1D2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953612130BFC78A8E92F6C5BB1D2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <595f76bf-5e89-4027-87e5-ff316c699669@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <595f76bf-5e89-4027-87e5-ff316c699669@kernel.org>
-X-TMN: [pjn4YZIL4c90QZdlmFTr+H4VGHmnxlMjVVmTw37iEkE=]
-X-ClientProxiedBy: TYCP286CA0083.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b3::11) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <4bge7lyhkdhp72udsgjw5gefkzwrlovukqgzl4qdjsxohadh4k@nrc53w2z2f7r>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5636A1DFCE;
+	Mon,  6 May 2024 12:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714997981; cv=none; b=lck4lr5PbL7dU+OKCiwi5eT784IizLYyuf3+rPRgMaGnGqlKvALPp0o5f1g/6Z2rHF7fnvLwwlN8TlF/6aEaD9w6DtSiFkH23MQWYt5pKtUevT3mYwQbmvW+MOm5JUqvb6SnJdvd9x4esvfXW3qTrDBclRVyO0fEjrQvQ/hl0oE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714997981; c=relaxed/simple;
+	bh=wTaRvxFPv1omtGIPN6+/T/LEoj/oUT63Jgc+ilDYv3U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QwjCZpFSl2iJYuDDkJxl0UoWkpRLfc3NPPvjLCsiRfRGSPEEm5izsDPpjHfmEREdQg4QLqdVCrBXTUvUGsHeqF33+uVx+YA7isB/yLvXI30touzP/OUTJci5B5ot1/xy7KsTrsyJwVQkZ9t+JeC4Qc7GTK1oDQWMCzdoQLFp1ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rnGgNwGX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 446BXg9Q017685;
+	Mon, 6 May 2024 12:19:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=DYpMppRuVJ1axnymsR6lNW0+KnZxKdpVvXtleamR0x4=;
+ b=rnGgNwGXESXS2M1KkzPrhXp8PJULyIN+ZJiDKfKxLaY9vYNTlfrbHKiIujJMZq/Je+0Y
+ vqSYOMMGMUEJBuy1KEtXAE7Ju920JJ9Ob1wBAVnZcgK21Srv56L3GGJQ5hFhOkW8bYd9
+ qwE3jWp0DBawpZD3ggoN7CjQpOHriX6Um1h4+gD6Cm9IA8XC4tqmbcS4fglsY81rgqmW
+ Uyg6UYw06dauN2wT1sUyXmYxZ72mCiF3fhWF9VPz06F1T1sViJk9RIVuQHbut6Hzfjzy
+ khW1xg2n7UQ87tzRPH0Z/NWFhTem5KEFJSaUmXH/40/jevJVSVL8T8GOg/UBvx9HYoo8 qA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xxxebg44y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 12:19:24 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 446CJODt027403;
+	Mon, 6 May 2024 12:19:24 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xxxebg44v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 12:19:23 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 446BwJCt028571;
+	Mon, 6 May 2024 12:19:23 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xwyqyyy52-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 12:19:23 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 446CJHrr57016806
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 May 2024 12:19:19 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 90BF520049;
+	Mon,  6 May 2024 12:19:17 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C2E6520040;
+	Mon,  6 May 2024 12:19:14 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.43.103.211])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  6 May 2024 12:19:14 +0000 (GMT)
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org, segher@kernel.crashing.org,
+        christophe.leroy@csgroup.eu
+Cc: linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        akanksha@linux.ibm.com
+Subject: [PATCH V2 0/9] Add data type profiling support for powerpc
+Date: Mon,  6 May 2024 17:48:57 +0530
+Message-Id: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.35.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Il46pz2x4lOoaPqOZ2QO-RHM-x4Nq4_d
+X-Proofpoint-GUID: TUj_Ul4pMWxJcNeta1IQefeorb-SDD68
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CH3PR20MB7351:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c4c7545-3481-4a54-d9ac-08dc6dc66dd6
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|440099019|3412199016|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	7JOnrRGG/0fQtRlRiGpQJhk1kn6Ln7tcsA4oVm6tNfexodxezdVmt370TVydLS7ScabVC0Tf/xLJM5dlJ2KivnrzwdF3fTZLRBGCWK075ZDOndg5ROXnMJ/WFeWUoeHEVSnii0cSLh61tBK3hCWGSzHbejzbnb1GFSXBrkHCjaDSLfVVC8ihhGpkcsP4oNOe93d3M9yhGBzSzGxZEq9HAc5bTrCqZJB6AKYNlbrdkzq+rcb4VRb99q6cXuBYLYYewbfaEeswcbARjYp1p+Kh/f1YWaRMlV/eq6CTMH3dA/udOzAb5NzfVi/Kr0125FBmYunw14Rki0N8ePaG6plgsfb1convxCGhg103vNaRll+Nm6B7MdIjcbW2UvLz1dSr/LXwyMZ2BiMdrRsuAYaXFzBvvUbWg7lMMqhfGmTJ2tklhskezZCZlSxzyNfIiuy6M2WkoiX1EGxwflGTKBfx/683vjX0YFJPkWR2iueGPgkFyDcQOppDNdBXIF2lb6qmBdC9/YI8mRtkfgKvvCh+dCHwyJx/dg2WAqoasV2RJXhGjvbsTJiOiffk/MQ1GYbp7uES0+l7UV9AsynFv7BmG6tCGqXF3f/qJ9IggZCE6jR2OECOyYFGIkyAByXGg0OM
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FP5ll0T7JaPH+K2tNK45wKDLtPkbcil4uHS1pQrXzGHluvEynvK7O5/zWfhA?=
- =?us-ascii?Q?MnkjiV3NgUMvhLLhmAMSjbBHd3IjsZJ1x5HV6veVQb5cSbyXtEteFStMLzzG?=
- =?us-ascii?Q?2dWfDsVJXALPIv8U3F4s8fOouGBjHxNy9NG2dWhq3wQJEhAZy90ehJssMoM/?=
- =?us-ascii?Q?pC18Vu4vcgJTNIIiQ7ySt/9mcY8XTwHOmeYklRP3NOI7ULKeSmCN691SYgBE?=
- =?us-ascii?Q?x3/g5D7mGdLPF5seBYaaj+UhoEWcYKZeIujjdxJzFKq3RxOWUFMdTZ5FGIYc?=
- =?us-ascii?Q?j7HJDQXi0VacAiDvaP/91wn2KzxiBGylfLFHkyG1Aiw19xAXp/hiLgWvYiND?=
- =?us-ascii?Q?YEEt7+rdbu1O0rgqxBICRloD6f+Va2FSj+iU2DvROTag64CU2q0CDaYoygzO?=
- =?us-ascii?Q?a3+hpBaZzp/6mglLeQ9tw64zaK2IjYAk8MIifA3S3c3co09rJ5JgyWTTuZAx?=
- =?us-ascii?Q?F2qCx9k47Q7FsitRJCEI65EC5WYz7aaIOtNp8jLirNYj2DWMMdwnkXr9FWDA?=
- =?us-ascii?Q?Ez/z5/kZU4VlKv/4GQvUXx9bi23yv1KRDIwWI9gKHge6Ix5Vk62coKfVfc+P?=
- =?us-ascii?Q?YPOYMF4U/MKgXksq3Ipa3HK2cKONNaQqEfkXbiUxpRsd3tBw40nHzcHZRHGd?=
- =?us-ascii?Q?wbdVuEbxJJWmC4ig7M2sdZaIS+1R1LrKhm5x4+h3LEJZ4StO0RkBCpF2rAW8?=
- =?us-ascii?Q?2W0EZBTxneTus6DeCd7jAFUW3hD48H1c3DeI7pwy1kq5eXU4Xqcs1DXkfrtV?=
- =?us-ascii?Q?fdBVqLHI53EGgD/ND9N4id4Ct2uoli/sVIsPsyp0jwYe6q1ZN32ZjNPAw0vY?=
- =?us-ascii?Q?YRpVcVb7ftnyypy8nEtmHBwj60R9zaLz66qMTDZXGIKUMaOcFZGyHXqBB7Py?=
- =?us-ascii?Q?eO+7EXtkfg39Ks6mPJaxF4jmqwj9uupCtVfb6HJ6An3C2FBDb1wGxoR6ewPd?=
- =?us-ascii?Q?M20OqWqFzT83s6eOjy6UUGiDHTEtVYsmMWYCo9purlW6VBhUU+L0TsisoEPO?=
- =?us-ascii?Q?2OZmTq900wwCyPuwp4hHr25YlG8fOYrRpl8WIPHsbnxU3odAwhAPJvbtf5Ff?=
- =?us-ascii?Q?bmDnkK8+jcPSRIa7utSj3gkxWoiI5M6WpGSHzjJbDBbtD9miwyYHL/zQvEqu?=
- =?us-ascii?Q?354Lm4fXxuwS5xdZ+EXSoGTX82OsMAbhGB8Gv2Q3hf0m7Zg1O83Vd6lvW86X?=
- =?us-ascii?Q?+DMeszLlWMlv2ONT5G5sNv3cXbdJP8fcSt0gZkT7UI7FBiYli48tn7l2i9f1?=
- =?us-ascii?Q?9I0TBWm2s17M9Prb6XE7?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c4c7545-3481-4a54-d9ac-08dc6dc66dd6
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 12:16:59.6696
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR20MB7351
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-06_07,2024-05-06_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 lowpriorityscore=0
+ phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1011
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405060085
 
-On Mon, May 06, 2024 at 08:51:59AM GMT, Krzysztof Kozlowski wrote:
-> On 05/05/2024 03:52, Inochi Amaoto wrote:
-> > The USB phy of Sophgo CV18XX series SoC needs to sense a pin called
-> > "VBUS_DET" to get the right operation mode. If this pin is not
-> > connected, it only supports setting the mode manually.
-> > 
-> > Add USB phy bindings for Sophgo CV18XX/SG200X series SoC.
-> 
-> ...
-> 
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: phy
-> > +      - const: app
-> > +      - const: stb
-> > +      - const: lpm
-> > +
-> > +  vbus_det-gpios:
-> 
-> No underscores.
-> 
+The patchset from Namhyung added support for data type profiling
+in perf tool. This enabled support to associate PMU samples to data
+types they refer using DWARF debug information. With the upstream
+perf, currently it possible to run perf report or perf annotate to
+view the data type information on x86.
 
-Thanks.
+Initial patchset posted here had changes need to enable data type
+profiling support for powerpc.
 
-> > +    description: GPIO to the USB OTG VBUS detect pin. This should not be
-> > +      defined if vbus_det pin and switch pin are connected, which may
-> > +      break the VBUS detection.
-> 
-> Why is this property of the PHY? VBUS pin goes to the connector, doesn't
-> it? It looks like you combined two or three (!!!) bindings into one.
-> 
+https://lore.kernel.org/all/6e09dc28-4a2e-49d8-a2b5-ffb3396a9952@csgroup.eu/T/
 
-Yes, but I am not sure which is the best to write this bindings.
-The topology of USB likes this:
+Main change were:
+1. powerpc instruction nmemonic table to associate load/store
+instructions with move_ops which is use to identify if instruction
+is a memory access one.
+2. To get register number and access offset from the given
+instruction, code uses fields from "struct arch" -> objump.
+Added entry for powerpc here.
+3. A get_arch_regnum to return register number from the
+register name string.
 
-controller -- phy -- switch --> (host) port/hub
-                            --> (device) port
+But the apporach used in the initial patchset used parsing of
+disassembled code which the current perf tool implementation does.
 
-The vbus-detect connect to the device port, but it will change the mode for
-both phy and switch. And the switch is just a switching circuit.
-I am pretty confused on how to split this binding. I think it may like the 
-following:
+Example: lwz     r10,0(r9)
 
-phy {
-	switch {
-		/* This is the switch in the follows */
-		connector1 {
-			/* host port */
-		};
-		connector2 {
-			/* device port*/
-			/* the vbus pin is here */
-		};
-	};
-};
+This line "lwz r10,0(r9)" is parsed to extract instruction name,
+registers names and offset. Also to find whether there is a memory
+reference in the operands, "memory_ref_char" field of objdump is used.
+For x86, "(" is used as memory_ref_char to tackle instructions of the
+form "mov  (%rax), %rcx".
 
-Could you share some suggestion on this?
+In case of powerpc, not all instructions using "(" are the only memory
+instructions. Example, above instruction can also be of extended form (X
+form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
+and extract the source/target registers, this patchset adds support to use
+raw instruction. With raw instruction, macros are added to extract opcode
+and register fields.
 
-> > +    maxItems: 1
-> > +
-> > +  sophgo,switch-gpios:
-> > +    description: GPIO array for the phy to control connected switch. For
-> 
-> Switch? This is a binding of the phy, not switch...
-> 
+Example representation using --show-raw-insn in objdump gives result:
 
-You are right, I think this switch may be more like a pattern device.
+38 01 81 e8     ld      r4,312(r1)
 
-> > +      host mode, the driver will set these GPIOs to low one by one. For
-> 
-> Yeah, you mention driver which further confirms this is a property for
-> driver, not hardware.
-> 
-> Describe your hardware, not driver behavior.
+Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+this translates to instruction form: "ld RT,DS(RA)" and binary code
+as:
+_____________________________________
+| 58 |  RT  |  RA |      DS       | |
+-------------------------------------
+0    6     11    16              30 31
 
-OK, I will remove this.
+Patchset adds support to pick the opcode and reg fields from this
+raw/binary instruction code. This approach came in from review comment
+by Segher Boessenkool for the initial patchset.
 
-> 
-> 
-> > +      device mode, the driver will set these GPIOs to high in reverse
-> > +      order. For a reference design, see item description.
-> > +    minItems: 1
-> > +    items:
-> > +      - description: USB switch operation mode
-> > +      - description: USB switch host power control
-> > +
-> > +required:
-> > +  - compatible
-> > +  - "#phy-cells"
-> > +  - clocks
-> > +  - clock-names
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    phy@48 {
-> > +      compatible = "sophgo,cv1800-usb-phy";
-> > +      reg = <0x48 0x4>;
-> > +      #phy-cells = <0>;
-> > +      clocks = <&clk 92>, <&clk 93>,
-> > +               <&clk 94>, <&clk 95>;
-> > +      clock-names = "phy", "app", "stb", "lpm";
-> 
-> Make the example complete.
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+Apart from that, instruction tracking is enabled for powerpc and
+support function is added to find variables defined as registers
+Example, in powerpc, two registers are
+defined to represent variable:
+1. r13: represents local_paca
+register struct paca_struct *local_paca asm("r13");
+
+2. r1: represents stack_pointer
+register void *__stack_pointer asm("r1");
+
+These are handled in this patchset.
+
+- Patch 1 is to rearrange register state type structures to header file
+so that it can referred from other arch specific files
+- Patch 2 is to make instruction tracking as a callback to"struct arch"
+so that it can be implemented by other archs easily and defined in arch
+specific files
+- Patch 3 is to fix a small comment
+- Patch 4 adds support to capture and parse raw instruction in objdump
+by keeping existing approach intact.
+- Patch 5 update parameters for reg extract functions to use raw
+instruction on powerpc
+- Patch 6 and patch 7 handles instruction tracking for powerpc.
+- Patch 8 and Patch 8 handles support to find global register variables
+
+With the current patchset:
+
+ ./perf record -a -e mem-loads sleep 1
+ ./perf report -s type,typeoff --hierarchy --group --stdio
+ ./perf annotate --data-type --insn-stat
+
+perf annotate logs:
+
+Annotate Instruction stats
+total 562, ok 441 (78.5%), bad 121 (21.5%)
+
+  Name      :  Good   Bad
+-----------------------------------------------------------
+  ld        :   313    54
+  lwz       :    51    32
+  lbz       :    31     5
+  ldx       :     6    21
+  lhz       :    23     0
+  lwa       :     4     3
+  lwarx     :     5     0
+  lwzx      :     2     2
+  ldarx     :     3     0
+  lwzu      :     2     0
+  stdcx.    :     0     1
+  nop       :     0     1
+  ldu       :     1     0
+  lbzx      :     0     1
+  lwax      :     0     1
+
+perf report logs:
+
+# Samples: 1K of event 'mem-loads'
+# Event count (approx.): 937238
+#
+# Overhead  Data Type  Data Type Offset
+# ........  .........  ................
+#
+    48.81%  (unknown)  (unknown) +0 (no field)
+    12.85%  long unsigned int  long unsigned int +0 (current_stack_pointer)
+     4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+     4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
+     2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+     2.64%  struct paca_struct  struct paca_struct +2808 (canary)
+     2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+     1.41%  struct vm_fault  struct vm_fault +0 (vma)
+     1.29%  struct task_struct  struct task_struct +276 (flags)
+     1.03%  struct pt_regs  struct pt_regs +264 (user_regs.msr)
+     1.00%  struct menu_device  struct menu_device +4 (tick_wakeup)
+     0.90%  struct security_hook_list  struct security_hook_list +0 (list.next)
+     0.76%  struct irq_desc  struct irq_desc +304 (irq_data.chip)
+     0.76%  struct rq  struct rq +2856 (cpu)
+
+Thanks
+Athira Rajeev
+
+Changelog:
+From v1->v2:
+- Addressed suggestion from Christophe Leroy and Segher Boessenkool
+  to use the binary code (raw insn) to fetch opcode, register and
+  offset fields.
+- Added support for instruction tracking in powerpc
+- Find the register defined variables (r13 and r1 which points to
+  local_paca and current_stack_pointer in powerpc)
+
+Athira Rajeev (9):
+  tools/perf: Move the data structures related to register  type to
+    header file
+  tools/perf: Add "update_insn_state" callback function to handle arch
+    specific instruction tracking
+  tools/perf: Fix a comment about multi_regs in extract_reg_offset
+    function
+  tools/perf: Add support to capture and parse raw instruction in
+    objdump
+  tools/perf: Update parameters for reg extract functions to use raw
+    instruction on powerpc
+  tools/perf: Update instruction tracking for powerpc
+  tools/perf: Update instruction tracking with add instruction
+  tools/perf: Add support to find global register variables using
+    find_data_type_global_reg
+  tools/perf: Add support for global_die to capture name of variable in
+    case of register defined variable
+
+ tools/include/linux/string.h                  |   2 +
+ tools/lib/string.c                            |  13 +
+ .../perf/arch/powerpc/annotate/instructions.c |  84 +++
+ tools/perf/arch/powerpc/util/dwarf-regs.c     |  52 ++
+ tools/perf/arch/x86/annotate/instructions.c   | 383 +++++++++++++
+ tools/perf/util/annotate-data.c               | 519 +++---------------
+ tools/perf/util/annotate-data.h               |  78 +++
+ tools/perf/util/annotate.c                    |  32 +-
+ tools/perf/util/annotate.h                    |   1 +
+ tools/perf/util/disasm.c                      | 109 +++-
+ tools/perf/util/disasm.h                      |  17 +-
+ tools/perf/util/dwarf-aux.c                   |   1 +
+ tools/perf/util/dwarf-aux.h                   |   1 +
+ tools/perf/util/include/dwarf-regs.h          |  12 +
+ tools/perf/util/sort.c                        |   7 +-
+ 15 files changed, 854 insertions(+), 457 deletions(-)
+
+-- 
+2.43.0
+
 
