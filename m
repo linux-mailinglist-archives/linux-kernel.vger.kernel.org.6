@@ -1,122 +1,151 @@
-Return-Path: <linux-kernel+bounces-169247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4258BC5A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:00:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039798BC5AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA6E1F219B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337481C21237
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4277E3F9C6;
-	Mon,  6 May 2024 02:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA653E470;
+	Mon,  6 May 2024 02:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RmF0hsN1"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksRTZJ2Q"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3322B9B8;
-	Mon,  6 May 2024 02:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894772B9B8;
+	Mon,  6 May 2024 02:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714960814; cv=none; b=Nig1PFCopJo+zg8iB1Q3vBecTFXqfT6+nCT6NmXhL66EhccIlAopDgGXWUpMfiXDuvK4VJcDkk/0CJYKDoM+Abi6RQsZakvb0apilq2Bl8ns3MhAsI+sh7avWjdsi6Lpa0owgl8ZCTAcrYCgKBinxOC4OaSVAtfJe5lzOskfoZU=
+	t=1714961083; cv=none; b=qt5LTM9RkpZm2I7jehdSG5VSj3XxlrxiWM7JOKYJFY2CPJ0K/kcewogIalL8FE9jFMhRsJFv0zQLUjAb4bZmG8s3GYxiTPcl0/FMCSnsOCUWxpTThJ5K/3AT/IdMjCwv1y/copfpm5bpv1ilzTtc3qpHtTCz0JfdfLkNIOu8Zk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714960814; c=relaxed/simple;
-	bh=jhTzXXT+FPjZQ5pztBbwg3De5ewUC261fLbR/SBmjRE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LiwRMhVG4NRNPHv3jam7nHR01NYn7iYZJ35cF+++7/FKX5ggifwEuDvN6IcMSdm8n1FRxSBMhRo2z82u6g3IPefg0iQm+9T2M3yDOPBXVIWj4P6eJWooofKPS5Ae4v5ajPBcn4SMEIcW/v66cwE40h+XIKCAt+FBTDi2PMAEzGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RmF0hsN1; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1714960803; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=0y3awyTCfvmpXhlQf3h9Gu7rJ+aU16KQIKj7W928+ms=;
-	b=RmF0hsN1vs16GKmTTl3fJNXSaA3WLy7j+xtGEZjPFNpQSA0n0vH5afXgAXryLO8NN36tipM7S/2Bcmyf+qYNh+FoAeKuYGt0KVyFAie4OQHT6bOP7f/gpxhDdOuw13tc9/SFCu8zfQskN6DXQ8HerYrG3bTwBeFA0Cdr3/2knrU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W5pOKbi_1714960479;
-Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W5pOKbi_1714960479)
-          by smtp.aliyun-inc.com;
-          Mon, 06 May 2024 09:54:41 +0800
-From: Wen Gu <guwen@linux.alibaba.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net/smc: fix netdev refcnt leak in smc_ib_find_route()
-Date: Mon,  6 May 2024 09:54:39 +0800
-Message-Id: <20240506015439.108739-1-guwen@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1714961083; c=relaxed/simple;
+	bh=hz/ca+J7Z712p1cKM6pciDLp5eHxR4wl9tG8AiSMRQk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=sU3eLFdzA/i7ja3G++VHXE3M3k6HScbtJeFBwPjWpMphpnVho9g/MEKUM2WYk98OmwA/KEyxbRVkOUzVFyFjS07leEp5wUYHzjy2CKf52suZGW5Q1mD3BYpAcaVFE262qL0dN/FgisLpFzpOiGduMXdm79nF72+HO4LNEQWKfDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksRTZJ2Q; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f44e3fd382so916338b3a.1;
+        Sun, 05 May 2024 19:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714961082; x=1715565882; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=exY2+EBV7rKKf5A+MApdskgDLqNqkvJogkXu9c2BhNg=;
+        b=ksRTZJ2Q87Cpid2GnaB7yjEWLFRf2BAQRwLi/Jk6a3CRmtTJq4b5bJJOOClx0BaXwh
+         cBBrNB+RsEAkIUfDz2Ww67eAMX4Huj73gZUxXs3CwrfAdj4pFdEEDKS8EGoRGxQVg5Ag
+         WQT9O+xDb7MJR/jpwcDyPBp0z9/pAMExqXhtkZwjj28VZc/2ySvk8hr5H65UAPEIPIta
+         Kqsyl7PpnN7dkDrn4sKj9k1/IXzMm31mrq5+2nwBzUsdeJXDgtIIlmv+wvoAeKw++MPr
+         DDBBQw6H5Iz7cPRDUF6ipDy+FgDlry1e2yD33Mv1jDvWFVh86d613UQED9J29sV7wKzc
+         tQdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714961082; x=1715565882;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=exY2+EBV7rKKf5A+MApdskgDLqNqkvJogkXu9c2BhNg=;
+        b=RsFtUt+alcEtVJzvKF6Ft0OMAyJop6lwR/f/OCWOosdhkTkycSKOI+dgIOOb1E6evQ
+         fDVIOu8JOPPknpVj1CQtKmXclOy8ztpq1JlWx3n72D0yVhuwdPprtb6e7uH2yQfcO2EX
+         /Bzlk5KNtfcoWOfTu8Yz4LtDoHTVq5mfFskBap/U+ZnP1U1B0dCsVoeakIwAwS53XWOm
+         /K8EZz/kOn+pMg7RGUE21ALKgRCIT9w7XtrDaiTfDXSlLP7S+GsnB+s8iFNO7Sw2rsj2
+         Z02BncyX1CrQG0ivahVmnSUk4S7NCgJjb9ELEP41Guo5qtGyeLcOia/RcTcDceRyDlEu
+         tgtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdJYCEtDIRPKdnuSw84XNYbk5wPnUkaS5w06TibaynDzbvuD/BwyGtf7fejfUDbor3rLSlpyMz56etl4tNUpTXvWGb2VIQt9IBT6qPM3twO/YbL/zLga94qN9VK6uE01ojtTW+z+t8s+UdIA==
+X-Gm-Message-State: AOJu0Yxi84Gt00EL01tKG2qwPqV2U4/q62+BoK5P26SeX1plqKXysRAV
+	g8JBB8w90KjRJUvNZM6QVX9OyaP4tRFWlibC/NF3QEe87R+JuuxT
+X-Google-Smtp-Source: AGHT+IG89GNsVrSalrxzsYt26dJYJsXqqmBTBR9MdsqS3zsKZGgUj0rqCQmgoy74vTqU686x8gb4MQ==
+X-Received: by 2002:a05:6a00:464e:b0:6f3:f963:505f with SMTP id kp14-20020a056a00464e00b006f3f963505fmr10001211pfb.5.1714961081797;
+        Sun, 05 May 2024 19:04:41 -0700 (PDT)
+Received: from smtpclient.apple ([47.254.32.37])
+        by smtp.gmail.com with ESMTPSA id w17-20020a639351000000b0061cf79eab38sm5162651pgm.37.2024.05.05.19.04.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 May 2024 19:04:41 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.500.231\))
+Subject: Re: [PATCH] livepatch.h: Add comment to klp transition state
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <20240505210024.2veie34wkbwkqggl@treble>
+Date: Mon, 6 May 2024 10:04:26 +0800
+Cc: mbenes@suse.cz,
+ jikos@kernel.org,
+ pmladek@suse.com,
+ joe.lawrence@redhat.com,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F3E94528-EA85-4A15-8452-EA2DE20EEB88@gmail.com>
+References: <20240429072628.23841-1-zhangwarden@gmail.com>
+ <20240505210024.2veie34wkbwkqggl@treble>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+X-Mailer: Apple Mail (2.3731.500.231)
 
-A netdev refcnt leak issue was found when unregistering netdev after
-using SMC. It can be reproduced as follows.
 
-- run tests based on SMC.
-- unregister the net device.
 
-The following error message can be observed.
+> On May 6, 2024, at 05:00, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>=20
+> On Mon, Apr 29, 2024 at 03:26:28PM +0800, zhangwarden@gmail.com wrote:
+>> From: Wardenjohn <zhangwarden@gmail.com>
+>>=20
+>> livepatch.h use KLP_UNDEFINED\KLP_UNPATCHED\KLP_PATCHED for klp =
+transition state.
+>> When livepatch is ready but idle, using KLP_UNDEFINED seems very =
+confusing.
+>> In order not to introduce potential risks to kernel, just update =
+comment
+>> to these state.
+>> ---
+>> include/linux/livepatch.h | 6 +++---
+>> 1 file changed, 3 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+>> index 9b9b38e89563..b6a214f2f8e3 100644
+>> --- a/include/linux/livepatch.h
+>> +++ b/include/linux/livepatch.h
+>> @@ -18,9 +18,9 @@
+>> #if IS_ENABLED(CONFIG_LIVEPATCH)
+>>=20
+>> /* task patch states */
+>> -#define KLP_UNDEFINED -1
+>> -#define KLP_UNPATCHED  0
+>> -#define KLP_PATCHED  1
+>> +#define KLP_UNDEFINED -1 /* idle, no transition in progress */
+>> +#define KLP_UNPATCHED  0 /* transitioning to unpatched state */
+>> +#define KLP_PATCHED  1 /* transitioning to patched state */
+>=20
+> Instead of the comments, how about we just rename them to
+>=20
+>  KLP_TRANSITION_IDLE
+>  KLP_TRANSITION_UNPATCHED
+>  KLP_TRANSITION_PATCHED
+>=20
+> which shouldn't break userspace AFAIK.
+>=20
+> --=20
+> Josh
 
-'unregister_netdevice: waiting for ethx to become free. Usage count = x'
+Hi Josh!
 
-With CONFIG_NET_DEV_REFCNT_TRACKER set, more detailed error message can
-be provided by refcount tracker:
+Renaming them may be a better way as my previous patch. I would like to =
+know why renaming KLP_*** into=20
+KLP_TRANSITION_*** will not break userspace while=20
+Renaming KLP_UNDEWFINED to KLP_IDLE would break the userspace.
 
- unregister_netdevice: waiting for eth1 to become free. Usage count = 2
- ref_tracker: eth%d@ffff9cabc3bf8548 has 1/1 users at
-      ___neigh_create+0x8e/0x420
-      neigh_event_ns+0x52/0xc0
-      arp_process+0x7c0/0x860
-      __netif_receive_skb_list_core+0x258/0x2c0
-      __netif_receive_skb_list+0xea/0x150
-      netif_receive_skb_list_internal+0xf2/0x1b0
-      napi_complete_done+0x73/0x1b0
-      mlx5e_napi_poll+0x161/0x5e0 [mlx5_core]
-      __napi_poll+0x2c/0x1c0
-      net_rx_action+0x2a7/0x380
-      __do_softirq+0xcd/0x2a7
+Meanwhile, I will resubmit another patch renaming the macros as your =
+suggestion ASAP. Thank ~~ :)
 
-It is because in smc_ib_find_route(), neigh_lookup() takes a netdev
-refcnt but does not release. So fix it.
-
-Fixes: e5c4744cfb59 ("net/smc: add SMC-Rv2 connection establishment")
-Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
----
- net/smc/smc_ib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
-index 97704a9e84c7..b431bd8a5172 100644
---- a/net/smc/smc_ib.c
-+++ b/net/smc/smc_ib.c
-@@ -210,10 +210,11 @@ int smc_ib_find_route(struct net *net, __be32 saddr, __be32 daddr,
- 		goto out;
- 	if (rt->rt_uses_gateway && rt->rt_gw_family != AF_INET)
- 		goto out;
--	neigh = rt->dst.ops->neigh_lookup(&rt->dst, NULL, &fl4.daddr);
-+	neigh = dst_neigh_lookup(&rt->dst, &fl4.daddr);
- 	if (neigh) {
- 		memcpy(nexthop_mac, neigh->ha, ETH_ALEN);
- 		*uses_gateway = rt->rt_uses_gateway;
-+		neigh_release(neigh);
- 		return 0;
- 	}
- out:
--- 
-2.32.0.3.g01195cf9f
+--
+Wardenjohn
 
 
