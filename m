@@ -1,107 +1,115 @@
-Return-Path: <linux-kernel+bounces-170334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAFE8BD55C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:24:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724448BD55E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9871C21A25
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0384A281018
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8863F1591E4;
-	Mon,  6 May 2024 19:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0326815920A;
+	Mon,  6 May 2024 19:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xk4xQxs/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DDvXz6fr"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA773158DDA;
-	Mon,  6 May 2024 19:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4983158DDB
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715023443; cv=none; b=BiZ+R9hu+nx0lrZXkJqQI/JtM66DNYbtRsxqkgH2o6RBDeN905Rcmc3yJwbtp6mbNGBviLZGZYSmPAJuAG78JZQSalW23TsZRH2xTVjqTKGwseckolfAZOXcFbwDcr1weQpksok8D+pJdD9UGeSteg/qcnvrsTx4E4wYTTrZgjw=
+	t=1715023490; cv=none; b=Z+CxIa53x1YqChn4tD9+7LXhRGbqJ3rA8FqfzOgv7qJ6e+dGw0KLiwY4x0uOtcMSwOzvbg9w/Hf79caf1e4z/+ZHynPhglmZXPbkbZ6ugOFdGhR0/+uTK6CSEBtyvbhkwbvgxVwHHBncG5yPRua8wmJ4jc0T5dyhFRxRTOSf0/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715023443; c=relaxed/simple;
-	bh=eSARHEaXPlpYTPk6nnOZSW56af64LMpXvs2QgA5+byc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=i7Ipzi05sOMTEX4Oa59vB4W427s38zk3I4HtH/WT1F+wn231UEGl+4TomHC1WRrpSZEom80+X5/U7/S7bn6LKX5XpMLQFa2xmzio3qe3AJ92AyH9/Gt+TGcK1bslUdWBarFZDWFH2fIGfnGRH3lcLXLvxQUKo4U3z56w0j+ohCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xk4xQxs/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29756C116B1;
-	Mon,  6 May 2024 19:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715023443;
-	bh=eSARHEaXPlpYTPk6nnOZSW56af64LMpXvs2QgA5+byc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Xk4xQxs/H8E9uZItfebdEpXqi96lNvNDqSBJt4JEcayLkxMvfZ0icI1kB5oJ2mUGM
-	 Aq1lR3d7mYt1tuTv5oInj1rwDDHcrRh4iZ6pRX6s3+oid0P1zyg+83w6t+PBiYRJl8
-	 HHXW7RkMd94jqf3NAwPeJrRLq65fHb7HjMD0derQLvss2uFaXdqH2pL4z4/WW82ZRI
-	 aZQ7Vpuc7xCIIXPLR0jU/hqJD1aPk5230DBSxnEyUxRJk0Om5HnnfZTanuv0mJXs70
-	 /pjowm4jGPbNNTY0L08XZKev+tbv3y6ugwW7O9WcqlDtKn+KIMaG8G7lNq7knFVCaI
-	 EgvKpaK6kRRfQ==
-Date: Mon, 6 May 2024 14:24:01 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"David E . Box" <david.e.box@linux.intel.com>
-Subject: Re: [PATCH] PCI/ASPM: Fix a typo in ASPM restoring logic
-Message-ID: <20240506192401.GA1704739@bhelgaas>
+	s=arc-20240116; t=1715023490; c=relaxed/simple;
+	bh=zYQt3qI8XJ6OrpFv0IMRqdOFJF4KoM/Pb6Vxm24ZDw0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HJe9ObO5DFrOB6Wsi5TyTmp951wOb+45PE50O+VfKcG0nwAgUiIUf73FqUsdB+/o0mIqs2DWH76JvKNe2q0EGFbr/mUUQvfzv+BqUK2E4MC4M10JSbplCiVdPkjRYnNoDAvAcBbhKvqLKfMR9OG6WRrZOnHXrp3h5XGJMum4qBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DDvXz6fr; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-de45dba157cso1836151276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:24:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715023488; x=1715628288; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=62kWvReLX/MoSE8YfO5lP7Yd06Z/Ka4KHCr15yccf+k=;
+        b=DDvXz6fr/orRvcpyTP3J7rcKlD+yrt/zWzjwldVNeZhxQ42kEep7NxIphzhJxU/anx
+         fTA0VYUvMDRPaJ6v7pxan9IH4Rxi53Za04ZNvBx3PSCiHQIn+wqoAvFiplN4N75+5Il6
+         Z4JNe6pfBmA6NvPQ8OWgYVZBFfo0oUU9SunSM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715023488; x=1715628288;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=62kWvReLX/MoSE8YfO5lP7Yd06Z/Ka4KHCr15yccf+k=;
+        b=W4qjpZ7XgCObnuA7f6HuqOm1hT+HWQzSvzlzQ+KHWwJKWSIaA6u8W5ZG9dtb2LpMAB
+         UMWaj/7fY7TxV8O+VcnAI+xn0YhjhoDK14U5OSL//6gCXihaGEGDxTh1vsAIWyDfWSi1
+         AQYtJ3ANJTWLwDr0fls0ebk+PlVc4DjCmLf4F3EqsLrxpfi4dRK0C3qTc17K4KIhj00m
+         +3pa9s4KBv8DiHS+zQAVOQKXEXotjSWWexjVjMvJ+xZ1SRBWViCJ6CUBhskucAh2s9h7
+         JT8TUIgSzz8PK3G3vftA1KfBax7Me6Gp1FN+uoAZ2frbMEf1XgOwA9M7PHvhbuEscb2X
+         LYPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUT1BTDm1pwHfthRW3QiOxnLrOQ5NxJHPWouC8eHwo9rZDEM6cwgBoNfUfJSPCaaVEblDl+pJg5NQgKQ0K96ECf+jK2JDMNNXLX3Uz0
+X-Gm-Message-State: AOJu0Yw5E+DOqIY2AQNhIL8KWDNDL2MDvBlazXeq7/OXbacVAx0NgXz7
+	P7zxD4h2OL4YskNVrDRrp5bvF6hemjspStn6Limei/fDRXVO3Y7pwy0dcIXQIQ==
+X-Google-Smtp-Source: AGHT+IHcWb5E9ASAPUj9u23aIXpNd71I/CHj/yN0+WqkyFpwUUf+ilovhGe30lBMZ89taFLE6XUZVg==
+X-Received: by 2002:a25:80cd:0:b0:dcf:411f:e78 with SMTP id c13-20020a2580cd000000b00dcf411f0e78mr10894973ybm.25.1715023487747;
+        Mon, 06 May 2024 12:24:47 -0700 (PDT)
+Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
+        by smtp.gmail.com with ESMTPSA id ch9-20020a05622a40c900b00436e193f408sm5439870qtb.28.2024.05.06.12.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 12:24:47 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/2] media: bcm2835-unicam: Improve error handling
+ during probe
+Date: Mon, 06 May 2024 19:24:45 +0000
+Message-Id: <20240506-fix-broad-v2-0-e6a2a5c0d609@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506051602.1990743-1-kai.heng.feng@canonical.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH0uOWYC/22Myw7CIBBFf6WZtRheptZV/8N0ARTKLFrMoETT8
+ O9i1y7PvSdnh+wJfYZbtwP5ghnT1kCeOnDRbItnODcGyaXmWnEW8M0sJTMzPXBvhVFDf9HQ/Af
+ 5dh6t+9Q4Yn4m+hzpIn7rv0oRjDMXlL0KG4Y+hNFFSiu+1nOiBaZa6xcduODmpQAAAA==
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+X-Mailer: b4 0.12.4
 
-[+cc David]
+Improve the error handling of the irq errors. I am not sure why the
+retcode was replaced always with -EINVAL, so I have returned the errcode
+upwards.
 
-On Mon, May 06, 2024 at 01:16:02PM +0800, Kai-Heng Feng wrote:
-> There's a typo that makes parent device uses child LNKCTL value and vice
-> versa. This causes Micron NVMe to trigger a reboot upon system resume.
-> 
-> Correct the typo to fix the issue.
-> 
-> Fixes: 64dbb2d70744 ("PCI/ASPM: Disable L1 before configuring L1 Substates")
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2: Thanks Laurent
+- Squash 3/3 in 1/3
+- Link to v1: https://lore.kernel.org/r/20240430-fix-broad-v1-0-cf3b81bf97ff@chromium.org
 
-This is something David did correctly in his original posting
-(https://lore.kernel.org/all/20240128233212.1139663-4-david.e.box@linux.intel.com/)
-and I broke it while reorganizing things
-(https://lore.kernel.org/all/20240223213733.GA115410@bhelgaas/).
-Thanks for finding this!
+---
+Ricardo Ribalda (2):
+      media: bcm2835-unicam: Do not replace IRQ retcode during probe
+      media: bcm2835-unicam: Do not print error when irq not found
 
-Since 64dbb2d70744 was merged for v6.9-rc1, I queued this to for-linus
-for v6.9 with this subject:
+ drivers/media/platform/broadcom/bcm2835-unicam.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+---
+base-commit: 1c73d0b29d04bf4082e7beb6a508895e118ee30d
+change-id: 20240430-fix-broad-490eb1a39754
 
-  PCI/ASPM: Restore parent state to parent, child state to child
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
-since it's more than just an innocuous typo.
-
-> ---
->  drivers/pci/pcie/aspm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 2428d278e015..47761c7ef267 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -177,8 +177,8 @@ void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
->  	/* Restore L0s/L1 if they were enabled */
->  	if (FIELD_GET(PCI_EXP_LNKCTL_ASPMC, clnkctl) ||
->  	    FIELD_GET(PCI_EXP_LNKCTL_ASPMC, plnkctl)) {
-> -		pcie_capability_write_word(parent, PCI_EXP_LNKCTL, clnkctl);
-> -		pcie_capability_write_word(pdev, PCI_EXP_LNKCTL, plnkctl);
-> +		pcie_capability_write_word(parent, PCI_EXP_LNKCTL, plnkctl);
-> +		pcie_capability_write_word(pdev, PCI_EXP_LNKCTL, clnkctl);
->  	}
->  }
->  
-> -- 
-> 2.34.1
-> 
 
