@@ -1,102 +1,108 @@
-Return-Path: <linux-kernel+bounces-169351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EB78BC778
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:21:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB7F8BC77A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F9F1C212F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31FCA281457
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47784CB36;
-	Mon,  6 May 2024 06:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8598E4C62E;
+	Mon,  6 May 2024 06:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jValbT/v"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xkB7YHqq"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5331C19479;
-	Mon,  6 May 2024 06:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CE619479
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 06:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714976474; cv=none; b=eey1NkvC73V+6uMcpPtTQgv2nvpLQnbC1XqUgIxaPDcpFpX+Bfo7ZQg0Cfw+y1qyeFUQxQB/4N345IvFAa4PA5VeYxrOCZE8htTvsa3HIWVBk9DKqR12prFFUE705iq9uOKPcQBo5xnNAobW/f341y8g2AXWKj/7K29Ci5E2D4s=
+	t=1714976514; cv=none; b=MvR0KcRoOUxioh5G1vvm6LCr8guxp+87iwUnIX0YGZAm3NNZRzrCy08zZ907mBgAtMEalTHG1hLZmt6VbANOCusc/oEfb3uDqBMOA5Rjt0x2EcD7EbIAnd/uNNPC13gFKPn11CWefmQHOmPeh8iI5l57zxG7HpxlUSNXDHxcd2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714976474; c=relaxed/simple;
-	bh=rTrcZ2Ey+HSmZyosGuv5YTYKv3f5KiODZUyecdrygFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gNoRKZqoZbCgFIrb06vUkLXKIWR/dbZ7tn/Sd0TDJzVYKeVKTOqnuIjKGEFHlCrXkvtXjyDEkmq9IYCz/V3Bjav2EpnYVGxGwqIF7axV4u/eMK/pxFmipUj4HUL0Pp48LCsjNkj2d7HnxCHS3fM+eg3LlFw+4xZLzW7cBY285xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jValbT/v; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1714976469;
-	bh=+kVnrigFsk44ZRKuCiZYPez9VFH3nfM27ina23moXSI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jValbT/v/qQUx50Skmz0LAMiDa5RmTkeG2ixDJo4fPI+tHjwU3FkLioINh1fS5Y3m
-	 EFP6aP48Zb+voF86aoM8ZFssPgrxN+Lbx++hFfQ6dh6C7+3jrAsAGzJu8o+6IjY7mW
-	 8NXqZ0oy1pdek/cmEKlOEU1oTB2qdv7U46k33I55L6jEsi0ecfIuX7d4yhBy2/Ir+n
-	 mB8t2hRtUMHFpyDf63+QAlsqoHC4IfIUlGm6B+blaHRsI6plk/itgCUVuZgWvXSKTN
-	 FrNG5rB7sSPByGtHlF69B0FIAGt7f3fbw5lRHohp8gp3gjOxbjnsCiMzCVZjOREZAF
-	 lrRmpFDDyOOCA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VXrrh6BbVz4wc7;
-	Mon,  6 May 2024 16:21:08 +1000 (AEST)
-Date: Mon, 6 May 2024 16:21:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the tpmdd tree
-Message-ID: <20240506162105.42ce2ff7@canb.auug.org.au>
+	s=arc-20240116; t=1714976514; c=relaxed/simple;
+	bh=5tenC0j8T9uI7/6pvgOmP23FOqeIIoMHzohX2q3IKgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sov05YRmwctAbttk2uNRjrXLDCgWDLWCa5Ei5MPyLc0Rz/E0PPQagyabDvvM9rNu/v9MkuNRddPabEmfb+DUgqftIHtBPRvCZrZHkKcS5XdwTkzQQWGccixahm2e0buS1NNAraMPROpNObsLhQ3XIqhrIVrCMyemlHJoN8gYn2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xkB7YHqq; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-61be674f5d1so16927007b3.2
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 23:21:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714976512; x=1715581312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5tenC0j8T9uI7/6pvgOmP23FOqeIIoMHzohX2q3IKgg=;
+        b=xkB7YHqqxSrqDz9Xk/U6MYAWYUjEvmTe+RU7eXeIKDEl+u7qmctqQOPK9WWpqlgmy6
+         6lgGNue8lcSB0TTxrZVRemsZzBqzFMNGRE/1+FYWU+sI3xjG3JP5fjqdRFX7krcvguHF
+         HRmVzpBT4DESClR/ubjMj9PjsvV87f1l2B173h+RcJ1zCk74U5Dbh5TJr7sJYfz4vdXA
+         6HR/W3eccT7PCNffml++g7sQkx154Zd0nKLBVV2IQa/yNBWH2qxR4iW9drkRMLE4lOwn
+         8vk1WkgdDlmIoXp7ii7purSqgNSFUx2VWN5XAFhY0dDkQk/xaizB+xnwbDM/90ZEwTI6
+         Ur/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714976512; x=1715581312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5tenC0j8T9uI7/6pvgOmP23FOqeIIoMHzohX2q3IKgg=;
+        b=pbPtpzEMt7Bj1m3Erpw19cLNU4E3eX7A4wF9GOH/jFcoeeHduWBz52ed3gXA3cEkUv
+         /agnn0U2epe9gY/knvCNwjinkeSdARAI7RkyknY+DKy7iVia5bOiHM+FBWWasMSsJAeK
+         NQnZmHjyZYBnY99y3tZw5L7odIwoLYX384L9ATpBZglmQxOmk7cijjWOqqy9nKtOLCEW
+         lGk4ZY1dAF465f3bAvNXI23WujUVcgvV2zkltfPn+NCoeIzZz7I1lMTfbNQLAjWa6mj6
+         ZpjWoBjOFtoH64+i9etMJ5qSnDLiiJIx+2gNNwPUfeeO9fKZq+cXELI3/NGHdh0U2UAn
+         jdYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVO970+vh3voBerhX17iDBzkSK05Rmsk+0z/cnXhK8e/oKwVnievbnjRtK6S6vh2as2mXGRnIGTr6nMFA/ybREIQT+IJL3KUbZ7hANQ
+X-Gm-Message-State: AOJu0YzoCXPNDbo8tpuEGCOp3qDZs8UpG05t4IOsghy+43t7+VWUJU95
+	t3v7JRJNDbtw4xaWui0MBkNDejq8C90ehAEkJoFlCy+/JBphu+Kw8Ry1n7TE2rhJS/5aKWtgV8l
+	gFUUfhjB9zBnD9Sey/meHezLjenlWp5bof8E1Gw==
+X-Google-Smtp-Source: AGHT+IEZYgOJxpOS8RgvqSwa7T9Vce5FOiyRslGmfTswPvAflgTZwuTElXfafN0eRcsZ5PsUlWzd+xot5zeuqDcAm8Y=
+X-Received: by 2002:a0d:f944:0:b0:61a:ca09:dae3 with SMTP id
+ j65-20020a0df944000000b0061aca09dae3mr10983765ywf.26.1714976512254; Sun, 05
+ May 2024 23:21:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gH0NBt2wvGYz2DnA6VIlJD_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/gH0NBt2wvGYz2DnA6VIlJD_
-Content-Type: text/plain; charset=US-ASCII
+References: <20240426235857.3870424-1-dianders@chromium.org>
+ <20240426165839.v2.4.Ie94246c30fe95101e0e26dd5f96e976dbeb8f242@changeid>
+ <2af446d3-7834-4a6b-897b-b14c6bccff65@linaro.org> <CAD=FV=V=EvEGp4tGDd-UQ1R=XkAwDn04ftd8oWU=UE=3Gi7SLQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=V=EvEGp4tGDd-UQ1R=XkAwDn04ftd8oWU=UE=3Gi7SLQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 6 May 2024 08:21:41 +0200
+Message-ID: <CACRpkdYn+jpGWDcWDUL5yj-pG_oBMLpFO-QhX6Sa-XzJNmhZjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] drm/mipi-dsi: Introduce mipi_dsi_*_write_seq_multi()
+To: Doug Anderson <dianders@chromium.org>
+Cc: neil.armstrong@linaro.org, dri-devel@lists.freedesktop.org, 
+	lvzhaoxiong@huaqin.corp-partner.google.com, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Hsin-Yi Wang <hsinyi@google.com>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Joel Selvaraj <jo@jsfamily.in>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Cong Yang <yangcong5@huaqin.corp-partner.google.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Apr 29, 2024 at 4:26=E2=80=AFPM Doug Anderson <dianders@chromium.or=
+g> wrote:
 
-After merging the tpmdd tree, today's linux-next build (htmldocs)
-produced this warning:
+> So I guess I'd say that I ended up being pretty happy with the
+> "context" even if it does feel a little over engineered and I'd argue
+> to keep it that way. That being said, if you feel strongly about it
+> then we can perhaps get others to chime in to see which style they
+> prefer? Let me know what you think.
 
-Documentation/security/tpm/tpm-security.rst: WARNING: document isn't includ=
-ed in any toctree
+I'm in favor of this design.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Introduced by commit
-
-  ddfb3687c538 ("Documentation: add tpm-security.rst")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gH0NBt2wvGYz2DnA6VIlJD_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY4dtEACgkQAVBC80lX
-0GztuAf/TRakWDElGvYzVmhW8cAehUp+cqy0DTRNiKJoE/Bh0TitSA/qm2i7q1Iq
-QrFLfnYpMts2xQSo3tTCKV1qRsf8W03/ri2VztvAVcZENw+nnlfCdhwTzQYCsxNP
-MOX8x0LtI4QMd2i6ByZgrwSFSNRPmDJ7ebWPhmyFu1C0ZHxalyCaF8aamhvEHZTg
-04t2YOHKNxKpv41Ldu123epas9llPbLKsHRArnV6W2tm2/0lNLY5JxL9v9GjOm9O
-Q5ABjQbGqj5ZnwmH/wViz/9ucWbUkXysmNc8N04uW46dR3J0b5wo9+KLOyWgdTfG
-XJgzDZYljF6FyZI8UN4U5r3Klo9nLQ==
-=31e1
------END PGP SIGNATURE-----
-
---Sig_/gH0NBt2wvGYz2DnA6VIlJD_--
+Yours,
+Linus Walleij
 
