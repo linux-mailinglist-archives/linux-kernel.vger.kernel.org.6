@@ -1,206 +1,204 @@
-Return-Path: <linux-kernel+bounces-170470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7948BD799
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:32:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A758BD79C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45234B235BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:32:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF519283F2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204EC158DD3;
-	Mon,  6 May 2024 22:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DCC158DD3;
+	Mon,  6 May 2024 22:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIRSi6hs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fv1GChc/"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCAE4CB58;
-	Mon,  6 May 2024 22:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6478642A8A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 22:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715034713; cv=none; b=WFSkhBgJlBnrIC5j2pPs9PQfQh13yB49NQVZQYq1AS587J/n5PnBGg4cOuPsIVR7CWQgq/RQJzoGi8he2Pj2xuT23qptaXwGriRNcvz/SQlUqPTTs7L/clEUN05oYjMGeLwDVd63DgVq9tLMGgtOFjeyN0KAQcBJQqmctk9X3ZU=
+	t=1715034828; cv=none; b=RnQ+43JPGfrPOw/rMHVK4Afo8sBg78in1hAjBWGH6Pcp0e3np8WaCIwQxBp3pBsEfZE5dNmLwiwh2kewhbXclRQO0fspnbG4EZ/jVsyYpawZ5WfEHszAzpYvej4kmmtMu4RpNHNG1JqP1PDqSMJN2TX0KjE8HVq7xOmcMteg+TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715034713; c=relaxed/simple;
-	bh=MxL9KyUQPXgpKCWFrnBl9eSSaERBnN6J7itAyM6eMes=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JTKmu0TRNS8CVj0UcPhYBrpPTMGRM7GYDtc3GIzoqhN9dqu+ldTfOc2XsLD69f9ieRxp1Wmx8vmL9yuI4jJAmwZ8UGzCf6BcYaCPyTrPwLPDEnj2dxdhGIi7YlFxsmV7Wf5u8+acux0fNcMejGeZ6AMTTJzEJK6pqpSCwD9EOY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIRSi6hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3494BC116B1;
-	Mon,  6 May 2024 22:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715034711;
-	bh=MxL9KyUQPXgpKCWFrnBl9eSSaERBnN6J7itAyM6eMes=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eIRSi6hscHmlNqhd4Pn3Wy3brRAg9/VVqWitd16gHerwBPJKjkCOXqeYEKi5pxrMC
-	 rQPjLX22AHmvR9Qah7bPH9D/twK37kpQdEn71ksHdBo6DmBOlfhoyHmeF+rZm4Icje
-	 1lfwURYuPQDBcwP7UO5mhGof+rXQAGHPHZwSdEmU2PctUfIc1WWaxa6XGSsRmI1mx2
-	 EL0GVFkWi5lFuRPvtwUx8IbXKRVMrRn+yS6IJCMyzXQJiZpYIo+J2cowpMyJkk5Jmn
-	 buU6xGYoNyttwHUn4+8mda4H18FG3aWmAGk2mzpv/cGdTn4om8A2+zaqOPxGGwSl08
-	 b3tKUTYcrFc9A==
-Date: Mon, 6 May 2024 17:31:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Phil Elwell <phil@raspberrypi.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v9 0/4] PCI: brcmstb: Configure appropriate HW CLKREQ#
- mode
-Message-ID: <20240506223149.GA1708699@bhelgaas>
+	s=arc-20240116; t=1715034828; c=relaxed/simple;
+	bh=XbeaIHre143E4vysQmGrzt4tNC6G3/zMv2H2o4AQ/yc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZEA5rAoHllgyt94ooetnWjD4deicBFdUwuvz/Y4OfDp25YyuQ9BtTsmgvrEadbCdpYjsayX/QCWKHrvhSldIlxMh06v0hzEV7KDwpo+pf0mSX/yOXeD5LPiMGM9vu6RtStL+CiijYSxZ9Ye7Qs++wpwSdUrqjePPHBPU3n8J/R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fv1GChc/; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41dc9c83e57so26770015e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 15:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715034824; x=1715639624; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L93aTq+yntQGwFV5vIt1XMlXm8vhsrvaK9kqXIrRNHA=;
+        b=Fv1GChc/VhBKk7SHWj4sf1HvYNnhAikjgJGgjuwEZI0EzgmUAu73ID9imCMzrJRe6r
+         L8X+FHjLtlo1iKMVL5Cj81HHl0oZJMy0ZTQcLG2jRFnvRZ1WSroFWUtB3g/O6swRp1FL
+         HMF29RjYQSIOUAmxiPsLvqtwzjlRSGoSVWBfEW9Xqg2AaWkFilZ8YYag42Qzsjsff79h
+         gIO6i3oqXQQrQnnUL2r5utRudyY29AkYr0GbyBsyEqsMoXbuILWwaiOGEUJ/8IlP7llN
+         O8A4ZbHC0x36xnd6VcYZrz46F/MUE85ZgHzO1QUt4bUNaY7i/gMSoByFakQDVY9IoFDd
+         VYvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715034824; x=1715639624;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L93aTq+yntQGwFV5vIt1XMlXm8vhsrvaK9kqXIrRNHA=;
+        b=bxgmDCWh4HKWw/6qkGN3hDmPXtxGBvb0hOKDR9Y4Oryy9Ecaz2LgwKVoYxY0PXPwBb
+         OaU670EwS9wiFI0bb3nHkJsBA1S9g68a1P8z54waP91gJGZkMLxfIwgCXaeKAYBiAtqe
+         n625r8tiqVhb029Np2ayXiuM+PdJ4rLx8OjoqPwGiuaf63Qc68iSUqBpO17nFBi3982O
+         13OxHTEdpMHrU8MFG843lT57ecRLV/TevCcj/T5aab/FjqesleX8wQQdmNXs4vHaLuGm
+         Nn0vmYDhYzba6+X+te+AGKkUzlKHnHnEfZAxJvP3whDvTrUEiYc+4D0yQu6tvsMoUBgq
+         lJ+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoXjgtJyGCeAbEQuvU52g/CiAztS0ZHIs8VsISOk6jPmlolslGdZ6UQoKaEY79baku0jpNYVzi4dmbcJUf9P1GABfYYMmmUEIKkoXm
+X-Gm-Message-State: AOJu0YwM31mWldDD3zqsL3Ijyntlu0wybAPPQuJuDorpQ069/7zZRfvc
+	RVPVad6SSJJ2415PQhRAW/BTuOubZKbqikJx2HMRAw3s8mSK2hGZiOFDKIKk22E=
+X-Google-Smtp-Source: AGHT+IETCACzliOUjlrnticdSVUZDaX9BTfnVx0YXJZTNKGyAnSM76tyfOngJ61KyYRQjgCj5V3P+Q==
+X-Received: by 2002:a05:600c:4f14:b0:41b:8c5c:31b9 with SMTP id l20-20020a05600c4f1400b0041b8c5c31b9mr775530wmq.14.1715034823704;
+        Mon, 06 May 2024 15:33:43 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id be11-20020a05600c1e8b00b00418f7605249sm17264766wmb.24.2024.05.06.15.33.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 15:33:43 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Mon, 06 May 2024 23:33:39 +0100
+Subject: [PATCH] media: i2c: Fix imx42 exposure control
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+-6iNynMc7-zZ0No0Y30of+uPiz0mSL9brV3R=UGJNC6ytoxg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v1-1-4b3a9426bde8@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAMJaOWYC/x2NQQrCMBBFr1Jm7UBS0wS8iriIdVIHmlQyqQRK7
+ +7g7r+/eO8AocokcBsOqPRl4a0o2MsA8zuWhZBfyjCa0ZnJeHw6XLnsHQv1hnPMItjtVTBn2Vb
+ k0mipsalGNzaShpz7FAIm7phsIvImGO8saONTSe9///44zx+klMhNjwAAAA==
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ "Paul J. Murphy" <paul.j.murphy@intel.com>, 
+ Martina Krasteva <quic_mkrastev@quicinc.com>, 
+ Daniele Alessandrelli <daniele.alessandrelli@intel.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.13-dev-26615
 
-On Tue, Apr 30, 2024 at 05:02:45PM -0400, Jim Quinlan wrote:
-> On Wed, Apr 3, 2024 at 5:39 PM Jim Quinlan <james.quinlan@broadcom.com> wrote:
-> >
-> > v9 -- v8 was setting an internal bus timeout to accomodate large L1 exit
-> >       latencies.  After meeting the PCIe HW team it was revealed that the
-> >       HW default timeout value was set low for the purposes of HW debugging
-> >       convenience; for nominal operation it needs to be set to a higher
-> >       value independent of this submission's purpose.  This is now a
-> >       separate commit.
-> 
-> Bjorn,
-> 
-> Did you have some time to look at this?  Do you have any comments or questions?
+Currently we have the following algorithm to calculate what value should be
+written to the exposure control of imx412.
 
-Sorry, I didn't realize you were waiting on me.  I think Krzysztof W.
-will ultimately take care of these.
+lpfr = imx412->vblank + imx412->cur_mode->height;
+shutter = lpfr - exposure;
 
-I have some minor comments but overall I'm fine with this.
+The 'shutter' value is given to IMX412_REG_EXPOSURE_CIT however, the above
+algorithm will result in the value given to IMX412_REG_EXPOSURE_CIT
+decreasing as the requested exposure value from user-space goes up.
 
-> >    -- With v8, Bjorne asked what was preventing a device from exceeding the
-> >       time required for the above internal bus timeout.  The answer to this
-> >       is for us to set the endpoints' max latency {no-,}snoop value to
-> >       something below this internal timeout value.  If the endpoint
-> >       respects this value as it should, it will not send an LTR request
-> >       with a larger latency value and not put itself in a situation
-> >       that requires more latency than is possible for the platform.
-> >
-> >       Typically, ACPI or FW sets these max latency values.  In most of our
-> >       systems we do not have this happening so it is up to the RC driver to
-> >       set these values in the endpoint devices.  If the endpoints already
-> >       have non-zero values that are lower than what we are setting, we let
-> >       them be, as it is possible ACPI or FW set them and knows something
-> >       that we do not.
-> >
-> >    -- The "clkreq" commit has only been changed to remove the code that was
-> >       setting the timeout value, as this code is now its own commit.
-> >
-> > v8 -- Un-advertise L1SS capability when in "no-l1ss" mode (Bjorn)
-> >    -- Squashed last two commits of v7 (Bjorn)
-> >    -- Fix DT binding description text wrapping (Bjorn)
-> >    -- Fix incorrect Spec reference (Bjorn)
-> >          s/PCIe Spec/PCIe Express Mini CEM 2.1 specification/
-> >    -- Text substitutions (Bjorn)
-> >          s/WRT/With respect to/
-> >          s/Tclron/T_CLRon/
-> >
-> > v7 -- Manivannan Sadhasivam suggested (a) making the property look like a
-> >       network phy-mode and (b) keeping the code simple (not counting clkreq
-> >       signal appearances, un-advertising capabilites, etc).  This is
-> >       what I have done.  The property is now "brcm,clkreq-mode" and
-> >       the values may be one of "safe", "default", and "no-l1ss".  The
-> >       default setting is to employ the most capable power savings mode.
-> >
-> > v6 -- No code has been changed.
-> >    -- Changed commit subject and comment in "#PERST" commit (Bjorn, Cyril)
-> >    -- Changed sign-off and author email address for all commits.
-> >       This was due to a change in Broadcom's upstreaming policy.
-> >
-> > v5 -- Remove DT property "brcm,completion-timeout-us" from
-> >       "DT bindings" commit.  Although this error may be reported
-> >       as a completion timeout, its cause was traced to an
-> >       internal bus timeout which may occur even when there is
-> >       no PCIe access being processed.  We set a timeout of four
-> >       seconds only if we are operating in "L1SS CLKREQ#" mode.
-> >    -- Correct CEM 2.0 reference provided by HW engineer,
-> >       s/3.2.5.2.5/3.2.5.2.2/ (Bjorn)
-> >    -- Add newline to dev_info() string (Stefan)
-> >    -- Change variable rval to unsigned (Stefan)
-> >    -- s/implementaion/implementation/ (Bjorn)
-> >    -- s/superpowersave/powersupersave/ (Bjorn)
-> >    -- Slightly modify message on "PERST#" commit.
-> >    -- Rebase to torvalds master
-> >
-> > v4 -- New commit that asserts PERST# for 2711/RPi SOCs at PCIe RC
-> >       driver probe() time.  This is done in Raspian Linux and its
-> >       absence may be the cause of a failing test case.
-> >    -- New commit that removes stale comment.
-> >
-> > v3 -- Rewrote commit msgs and comments refering panics if L1SS
-> >       is enabled/disabled; the code snippet that unadvertises L1SS
-> >       eliminates the panic scenario. (Bjorn)
-> >    -- Add reference for "400ns of CLKREQ# assertion" blurb (Bjorn)
-> >    -- Put binding names in DT commit Subject (Bjorn)
-> >    -- Add a verb to a commit's subject line (Bjorn)
-> >    -- s/accomodat(\w+)/accommodat$1/g (Bjorn)
-> >    -- Rewrote commit msgs and comments refering panics if L1SS
-> >       is enabled/disabled; the code snippet that unadvertises L1SS
-> >       eliminates the panic scenario. (Bjorn)
-> >
-> > v2 -- Changed binding property 'brcm,completion-timeout-msec' to
-> >       'brcm,completion-timeout-us'.  (StefanW for standard suffix).
-> >    -- Warn when clamping timeout value, and include clamped
-> >       region in message. Also add min and max in YAML. (StefanW)
-> >    -- Qualify description of "brcm,completion-timeout-us" so that
-> >       it refers to PCIe transactions. (StefanW)
-> >    -- Remvove mention of Linux specifics in binding description. (StefanW)
-> >    -- s/clkreq#/CLKREQ#/g (Bjorn)
-> >    -- Refactor completion-timeout-us code to compare max and min to
-> >       value given by the property (as opposed to the computed value).
-> >
-> > v1 -- The current driver assumes the downstream devices can
-> >       provide CLKREQ# for ASPM.  These commits accomodate devices
-> >       w/ or w/o clkreq# and also handle L1SS-capable devices.
-> >
-> >    -- The Raspian Linux folks have already been using a PCIe RC
-> >       property "brcm,enable-l1ss".  These commits use the same
-> >       property, in a backward-compatible manner, and the implementaion
-> >       adds more detail and also automatically identifies devices w/o
-> >       a clkreq# signal, i.e. most devices plugged into an RPi CM4
-> >       IO board.
-> >
-> > Jim Quinlan (4):
-> >   dt-bindings: PCI: brcmstb: Add property "brcm,clkreq-mode"
-> >   PCI: brcmstb: Set reasonable value for internal bus timeout
-> >   PCI: brcmstb: Set downstream maximum {no-}snoop LTR values
-> >   PCI: brcmstb: Configure HW CLKREQ# mode appropriate for downstream
-> >     device
-> >
-> >  .../bindings/pci/brcm,stb-pcie.yaml           |  18 ++
-> >  drivers/pci/controller/pcie-brcmstb.c         | 161 +++++++++++++++++-
-> >  2 files changed, 170 insertions(+), 9 deletions(-)
-> >
-> >
-> > base-commit: 9f8413c4a66f2fb776d3dc3c9ed20bf435eb305e
-> > --
-> > 2.17.1
-> >
+e.g.
+[ 2255.713989] imx412 20-001a: Received exp 1608, analog gain 0
+[ 2255.714002] imx412 20-001a: Set exp 1608, analog gain 0, shutter 1938, lpfr 3546
+[ 2256.302770] imx412 20-001a: Received exp 2586, analog gain 100
+[ 2256.302800] imx412 20-001a: Set exp 2586, analog gain 100, shutter 960, lpfr 3546
+[ 2256.753755] imx412 20-001a: Received exp 3524, analog gain 110
+[ 2256.753772] imx412 20-001a: Set exp 3524, analog gain 110, shutter 22, lpfr 3546
 
+This behaviour results in the image having less exposure as the requested
+exposure value from user-space increases.
+
+Other sensor drivers such as ov5675, imx218, hid556 and others take the
+requested exposure value and directly.
+
+Take the example of the above cited sensor drivers and directly apply the
+requested exposure value from user-space. The 'lpfr' variable still
+functions as before but the 'shutter' variable can be dispensed with as a
+result.
+
+Once done a similar run of the test application requesting higher exposure
+looks like this, with 'exp' written directly to the sensor.
+
+[  133.207884] imx412 20-001a: Received exp 1608, analog gain 0
+[  133.207899] imx412 20-001a: Set exp 1608, analog gain 0, lpfr 3546
+[  133.905309] imx412 20-001a: Received exp 2844, analog gain 100
+[  133.905344] imx412 20-001a: Set exp 2844, analog gain 100, lpfr 3546
+[  134.241705] imx412 20-001a: Received exp 3524, analog gain 110
+[  134.241775] imx412 20-001a: Set exp 3524, analog gain 110, lpfr 3546
+
+The result is then setting the sensor exposure to lower values results in
+darker, less exposure images and vice versa with higher exposure values.
+
+Fixes: 9214e86c0cc1 ("media: i2c: Add imx412 camera sensor driver")
+Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # qrb5165-rb5/imx577
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Using libcamera/SoftISP on a Qualcomm RB5 with the imx577 sensor I found
+that unlike on other platforms such as the Lenovo x13s/ov5675 the image was
+constantly getting darker and darker.
+
+At first I assumed a bug in SoftISP but, looking into the code it appeared
+SoftISP was requesting higher and higher exposure values which resulted in
+the image getting progressively darker.
+
+To my mind the software contract between user-space and kernel should be
+increasing exposure requests always meant higher exposure but, to be
+certain I asked around on IRC.
+
+Those polled agreed in principle that the software contract was consistent
+across sensors.
+
+Looking at the range of imx sensors, it appears this particular error has
+been replicated a number of times but, I haven't so far really drilled into
+each sensor.
+
+As a first pass I'm submitting the fix for the sensor I have but, I expect
+if this fix is acceptable upstream it should be pushed to most of the imx
+sensors with what seems to be copy/paste code for the exposure.
+---
+ drivers/media/i2c/imx412.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/i2c/imx412.c b/drivers/media/i2c/imx412.c
+index 0efce329525e4..7d1f7af0a9dff 100644
+--- a/drivers/media/i2c/imx412.c
++++ b/drivers/media/i2c/imx412.c
+@@ -542,14 +542,13 @@ static int imx412_update_controls(struct imx412 *imx412,
+  */
+ static int imx412_update_exp_gain(struct imx412 *imx412, u32 exposure, u32 gain)
+ {
+-	u32 lpfr, shutter;
++	u32 lpfr;
+ 	int ret;
+ 
+ 	lpfr = imx412->vblank + imx412->cur_mode->height;
+-	shutter = lpfr - exposure;
+ 
+-	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, shutter %u, lpfr %u",
+-		exposure, gain, shutter, lpfr);
++	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, lpfr %u",
++		exposure, gain, lpfr);
+ 
+ 	ret = imx412_write_reg(imx412, IMX412_REG_HOLD, 1, 1);
+ 	if (ret)
+@@ -559,7 +558,7 @@ static int imx412_update_exp_gain(struct imx412 *imx412, u32 exposure, u32 gain)
+ 	if (ret)
+ 		goto error_release_group_hold;
+ 
+-	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, shutter);
++	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, exposure);
+ 	if (ret)
+ 		goto error_release_group_hold;
+ 
+
+---
+base-commit: ff3959189f1b97e99497183d76ab9b007bec4c88
+change-id: 20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-f1fee6070641
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
 
