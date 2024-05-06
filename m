@@ -1,161 +1,111 @@
-Return-Path: <linux-kernel+bounces-169776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB678BCD87
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D299E8BCD8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11AB1C22154
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE501C22178
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C9F143891;
-	Mon,  6 May 2024 12:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1176B143C49;
+	Mon,  6 May 2024 12:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSsFY31n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SexplnPz"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9F6143867;
-	Mon,  6 May 2024 12:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD55143895;
+	Mon,  6 May 2024 12:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714997534; cv=none; b=OjJOVTMbxuRxQGxZp3EPtDh8NnE/r9yv/oHFb1vWwAYfqfn0zP1YSTR0B2Y2GnWXv3KcB7jd4urFiDR6aKhyidvIzIL7Z3bjcSDY/10WWvtSHaPjZFLuqEDEx5kE2F2KADvS4nUnBw78CydAZIGJJ3rZUGiAgcX22j7c8jzPFDY=
+	t=1714997587; cv=none; b=BH/rFKxlgiwXkTCa14pfEedFwsvm/fIxJSCGEfPV7v3s/ioaqUbJ7IsVs0OcZmK65lzSEb7zOiufo/cPOEyyWytowjBvveXikza0lChhrCm+4CCoVhnDaSAHdPe+lakBPD+9kTdrnXo86/8i9vPUw+4IkPCaoGg28gafT0DmcAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714997534; c=relaxed/simple;
-	bh=pR0A0OFnPbzgIVFB96xhdR9NeOvLHx9NayqjbsRWiKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Pvz5z8hQFjHhdVWmiJXZERruu8kYq52miml8iAEpiEnJvqCOCjpmOpvLiR+aR7/3cFnhpXq4eEij1wnYiUczvT/6Ps6v/S0mP+bYpQVM0DgXxfvp+UEPLxLXKigfm39NprWk0EyKDNANyD2LKVdJpnGTHCvaiyQP0W5g+0yNUW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSsFY31n; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714997533; x=1746533533;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=pR0A0OFnPbzgIVFB96xhdR9NeOvLHx9NayqjbsRWiKQ=;
-  b=BSsFY31nW061A/YxhnnNcRN4C2+dsP8pCCeLCR5fPPANPghbn5FKpBP5
-   abtJiv/fbyQvBd5usSk8J2z4iUCtXx5C0gICTvQHJN3FICNCfectsTehL
-   dAh2OwH4Kk3g+hMCyeCtGp01z9cLHnoHq+4E7YkNo0oWyoWtXw8vtdRya
-   j31NeqjcipRAJ09bt026BTxa5+Wa5vE48sqHr/L04CmE3ZNMBGgz4T9vp
-   8EI1Qm/1A8ZaYc/827yGXz9Ivk2MtRSJFS7tsJ1lisULOHjnZeil0prc/
-   ByJ6p9RAYPj4heXxCqc6+2+bVYVzIRyymErryVpKb48jm7UnRG2hLa5yw
-   Q==;
-X-CSE-ConnectionGUID: g01XFkDIRFy7vdumNXeIhw==
-X-CSE-MsgGUID: q3evOQYwR6Sk7fJAFoNWjA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="21416122"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="21416122"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:12:12 -0700
-X-CSE-ConnectionGUID: dHT+7mFiTtWP9PmxJXUe3w==
-X-CSE-MsgGUID: 8jbSaK/PT7ORwp5u80o83Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="28241035"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:12:10 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] serial: 8250_pnp: Simplify "line" related code
-Date: Mon,  6 May 2024 15:12:02 +0300
-Message-Id: <20240506121202.11253-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1714997587; c=relaxed/simple;
+	bh=JG4F5Vliq1cxbKJA3HniZ3sx6UHw/Yf2C1Q65sEsqrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=noebAiBGYCFTTb7Lqw18RkxD7h3q71srMGz6IBwpebzGTMLubFHCYEWobhkThiMeqdqCFNw8H689W0fK4wqCjBWtpOFZM389Lr5EDnlf7u7WJ8Z+OxMoeHn/ik2kSdakgR4E9pIE439r95StSDt7DwO20BtQ8+SUf+g25t7yc8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SexplnPz; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7971340E01E8;
+	Mon,  6 May 2024 12:13:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id rJfRrwpOcMj5; Mon,  6 May 2024 12:12:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1714997579; bh=/of+dyTW6UaI+A6BFaoUs57S0GorDUxHRqObed0VRzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SexplnPzD845D+0w5+eP+0ESkaUvL6gUYWbrNRIpCCuz4OGDoKbSBa1Tu/U7Xbd+I
+	 mwlut2leWuEoIZU7PdPiKcwoRPab8QMn23dHrBAVLjwE8eA74TFlnAc7wBNiNB6HPn
+	 9oy2JEokTaIY0t11CKL0LVc/JcoKuz3grWqgS+wb6yuYUdhsZtuQ+rWYzhEWY4XhoA
+	 vRLFQByu9+kEWbrbVDJOlfMT4bIsw7cvJGH6S6MtrmuI/upRGNFFcjeUnbuLFD6Ret
+	 p6jBHz0AAt15YEKS+BRLe4wdGFnXXtC9Lmp4Bm9EGcZXWAnfgBWuIuPx56ftf4ZN4/
+	 EXcmUGX0krYdPVweESAWlAeU/nC2l0XHSMhqAg2hW2+Mjg8b6iGaT4GPbdADsglESU
+	 4gjakgghhzSTNU4JcIFOW5XtY3E/+oXc4cD/+YtjUsBJHOLKMxTKz9aAu26Kblqdk0
+	 UZwjxIAxh2nVBvqPuM1VLGGq//APBQc3oOj+Ulzni5YFNQ9pQ9AwJLvsnNMey7AL4b
+	 kwDmsMFt0eQS3y2fRS9LQvtpYlcEj/l22wa3qxIvysJy0Tu4HCUO5DI/YwbpZJScGo
+	 I1+DUWnLGNf2hXdU6etWiuJ1d8e3vOjO2/rlZ4LzmHFVqO5Zc4TpPkG5b493kkzehX
+	 gX6GyQCoALjr5JpNMGI1bXFQ=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2CE9540E0187;
+	Mon,  6 May 2024 12:12:43 +0000 (UTC)
+Date: Mon, 6 May 2024 14:12:37 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Michal Simek <michal.simek@amd.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sherry Sun <sherry.sun@nxp.com>,
+	Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH v5 01/20] EDAC/synopsys: Fix ECC status data and IRQ
+ disable race condition
+Message-ID: <20240506121237.GIZjjJNRhtixp7VVHl@fat_crate.local>
+References: <20240222181324.28242-1-fancer.lancer@gmail.com>
+ <20240222181324.28242-2-fancer.lancer@gmail.com>
+ <20240415183616.GDZh1zoFsBzvAEduRo@fat_crate.local>
+ <szcie4giwjykne4su6uu5wsmtsl3e3jd53rjfiwir6hm3ju7as@6eqh2xmj35ie>
+ <20240421100712.GAZiTlUOm1hrLQvaMi@fat_crate.local>
+ <whgp2xx4dv3szezz3bvmgutgazz6kvie3q7rgpr35zqzuzsygk@wppqzusteru4>
+ <20240506102029.GGZjiu7TKP9FVp-2Sb@fat_crate.local>
+ <vugkhnu5c7so7dk3z2cuhlbu66gv6skvicuseblrmkzyttnnlr@lqzqvysk6wbl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <vugkhnu5c7so7dk3z2cuhlbu66gv6skvicuseblrmkzyttnnlr@lqzqvysk6wbl>
 
-8250_pnp sets drvdata to line + 1 if the probe is successful. The users
-of drvdata are in remove, suspend and resume callbacks, none of which
-will be called if probe failed. The line acquired from drvdata can
-never be zero in those functions and the checks for that can be
-removed.
+On Mon, May 06, 2024 at 02:27:50PM +0300, Serge Semin wrote:
+> Always welcome. Glad we've settled this.)
 
-Eliminate also +/-1 step because all users of line subtract 1 from the
-value.
+Yap, it looks good so far.
 
-These might have been leftover from legacy PM callbacks that could
-be called without probe being successful.
+Lemme queue it into urgent and send it Linuswards soon-ish.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
+Thx.
 
-v2:
-- Rebased on top of tty-next
-- Added historical information Andy provided about legacy PM CBs
-  into commit message
-
- drivers/tty/serial/8250/8250_pnp.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_pnp.c b/drivers/tty/serial/8250/8250_pnp.c
-index 9188902fa5b3..7c06ae79d8e2 100644
---- a/drivers/tty/serial/8250/8250_pnp.c
-+++ b/drivers/tty/serial/8250/8250_pnp.c
-@@ -435,8 +435,9 @@ static int
- serial_pnp_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
- {
- 	struct uart_8250_port uart, *port;
--	int ret, line, flags = dev_id->driver_data;
-+	int ret, flags = dev_id->driver_data;
- 	unsigned char iotype;
-+	long line;
- 
- 	if (flags & UNKNOWN_DEV) {
- 		ret = serial_pnp_guess_board(dev);
-@@ -494,7 +495,7 @@ serial_pnp_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
- 	if (uart_console(&port->port))
- 		dev->capabilities |= PNP_CONSOLE;
- 
--	pnp_set_drvdata(dev, (void *)((long)line + 1));
-+	pnp_set_drvdata(dev, (void *)line);
- 	return 0;
- }
- 
-@@ -503,17 +504,14 @@ static void serial_pnp_remove(struct pnp_dev *dev)
- 	long line = (long)pnp_get_drvdata(dev);
- 
- 	dev->capabilities &= ~PNP_CONSOLE;
--	if (line)
--		serial8250_unregister_port(line - 1);
-+	serial8250_unregister_port(line);
- }
- 
- static int serial_pnp_suspend(struct device *dev)
- {
- 	long line = (long)dev_get_drvdata(dev);
- 
--	if (!line)
--		return -ENODEV;
--	serial8250_suspend_port(line - 1);
-+	serial8250_suspend_port(line);
- 	return 0;
- }
- 
-@@ -521,9 +519,7 @@ static int serial_pnp_resume(struct device *dev)
- {
- 	long line = (long)dev_get_drvdata(dev);
- 
--	if (!line)
--		return -ENODEV;
--	serial8250_resume_port(line - 1);
-+	serial8250_resume_port(line);
- 	return 0;
- }
- 
 -- 
-2.39.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
