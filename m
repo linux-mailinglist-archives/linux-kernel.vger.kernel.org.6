@@ -1,99 +1,167 @@
-Return-Path: <linux-kernel+bounces-170174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BDA8BD2D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:30:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633958BD2E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D644C1C2102A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94EEF1C21D4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DB83D984;
-	Mon,  6 May 2024 16:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q0T9dbxe"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495BC156880;
+	Mon,  6 May 2024 16:31:22 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3F341C77
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95E2156F34;
+	Mon,  6 May 2024 16:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715013039; cv=none; b=rKQSzucvbVVIHfjTy5DGcototQh6VRS5Cdz9vi0UeYRx5VyrlxWZaAc9ez+Wlw8aLe6pEJopZ4XRGNyiwDB1wNdsSqkf4mZhNQ3MLX57ZpO5duouLeZP0/lNkW1iPYgQFvankUgBHqTkOOadGaMrZJBFVI9ZywfvEe11aj/0CSA=
+	t=1715013081; cv=none; b=BISXfW7sg5B2S6V9jTIxHbzgiGviq2ISst+Rq3HEmNDY9ZM7wd8gvzSBvHPr2x3NhN3TFTNIYnxmV7SXw0CjnqHkRX8ELiI2PkGpJwWPPeNc4s3Ctff3NW6WkTDSCwOKA7eyfkZKPxcUx45aLm5H9Xz0rO9tRcDIaDe2fOrdsQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715013039; c=relaxed/simple;
-	bh=yjPZgSjII1f7LAiUGTCRYweQcTK4hGtwF8kzc8UNAkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tvusRNimpqK/4/p8YOdW3dSaMWACxO89gMlcU1wdiU7JkDxe2YZJ5LNfwgT0udDJIJbD1Madw3jXgXRsmdjTVCEC9zigtqtf+c1axbEckdlBzF3Aj0aF5uWHjr/6uUwBw7m13OdHe6jkvpkDdlWJvBgygdyMoqd2QVwPf8lVLlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q0T9dbxe; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1ed012c1afbso16113345ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 09:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715013037; x=1715617837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5nO/jBC7SnINVskvlvpi2Kyipwpsb5dE+lwh2d00uCo=;
-        b=Q0T9dbxe/YYU3cdQgjucnt4nvqyWqprRb8+yu8sSuQ+yhwadfB9Tr27TVfwgaBymSb
-         LPRVH39eZU6gq5gLwAB/oItqQg06zzPtdkb+Mm89NBTRZOcYX0nh81EHitYU0oSeH0ri
-         MfQKjtVyhVal8LglHWyurg8UC7hn2FUJCxe38=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715013037; x=1715617837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5nO/jBC7SnINVskvlvpi2Kyipwpsb5dE+lwh2d00uCo=;
-        b=jBe2oKcSc5UagvKeAAITeEMZYfxHNYsGP6cXaRm3Z4n6MyEQYIEsn4wHQ3k10tSf8S
-         LZO6LEMgU7rWVmtm3iDugV5i10yA2msP0vUgERuXeDpgIxVxpwqNvSPaaOfpPSTq8V+q
-         HHuOV6WQ956F52NSqqb+viskrp8Lu8Cx1Jc34lylhvqL7G1SRFfVZjcn+Oyc6E76C5/n
-         G4bIisOBMeyLY12oOref43C8vnILKENoUpmmywC2O065ZJ8ly58uDJVPStr2OuGUmtW/
-         UisOUKCj2ZUSScMvn4mqGCGefgZnczpdvobeAohHElPZIKzwNwHMdrVNHUL0OKFdSZ93
-         Cq0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXvIdn0IGTDLPOVTfy0GzMiKl+iobqdwqsqxm4t1cUfbr5gIhI6O2BCRBJ5+rsXMaT/3ftKTcZ0MrkH2MXzeBCDcBFRsfeSCo69c4jm
-X-Gm-Message-State: AOJu0YwWP09TXxKv5/EVEYq7yElCarbZJ+QS0/wkdxXG6A2XihPFf0wi
-	HGgCfecrTe4wEw1VDcJr6fk/Ob5Y08XdJNKCwfb3pxZTEi6vrPrXVYBGnDqwhA==
-X-Google-Smtp-Source: AGHT+IFcP+Jvqd/2a6pLKHSMXDBGF+KAP9XwchiHK23udF18xnHUuv2vvHD/KwYZxvsIqAr/6p7pIw==
-X-Received: by 2002:a17:903:1c3:b0:1e0:b60f:5de3 with SMTP id e3-20020a17090301c300b001e0b60f5de3mr244611plh.7.1715013037261;
-        Mon, 06 May 2024 09:30:37 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id a14-20020a170902ecce00b001e41e968a61sm8414660plh.223.2024.05.06.09.30.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 09:30:36 -0700 (PDT)
-Date: Mon, 6 May 2024 09:30:36 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	syzbot+41bbfdb8d41003d12c0f@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4 2/4] mm,page_owner: Fix refcount imbalance
-Message-ID: <202405060930.67CDA64@keescook>
-References: <20240404070702.2744-1-osalvador@suse.de>
- <20240404070702.2744-3-osalvador@suse.de>
- <202405060754.4405F8402F@keescook>
- <Zjj6KN0GhXbv3VYY@localhost.localdomain>
+	s=arc-20240116; t=1715013081; c=relaxed/simple;
+	bh=Er0V6WEj6xcmIloHj8PhBrFsH5cQFszCcAIUgKVv2lg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j534JZnNFdYMpB+o1jNt9vJiI7A3frUYg3KO2eT5zBtOENvg6P5mfnEZicrfaQ04tjvZdsNCnBdu99hvT3ftIcbiljQ2l8sDFp2zlakLhTOHjsxKV/1vvwt3uNli+LuBQIh3t3aixPD546MeyiL/zsXuBhBXjDI74ZiJ2ECF2fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY6166k6Xz9xHvY;
+	Tue,  7 May 2024 00:14:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 31CD5140444;
+	Tue,  7 May 2024 00:31:04 +0800 (CST)
+Received: from [10.48.135.242] (unknown [10.48.135.242])
+	by APP2 (Coremail) with SMTP id GxC2BwDHASa4BTlmcv6hBw--.23635S2;
+	Mon, 06 May 2024 17:31:03 +0100 (CET)
+Message-ID: <16381d02-cb70-4ae5-b24e-aa73afad9aed@huaweicloud.com>
+Date: Mon, 6 May 2024 18:30:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zjj6KN0GhXbv3VYY@localhost.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH memory-model 2/4] Documentation/litmus-tests: Demonstrate
+ unordered failing cmpxchg
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+ peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ akiyks@gmail.com, Frederic Weisbecker <frederic@kernel.org>,
+ Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>,
+ Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org
+References: <42a43181-a431-44bd-8aff-6b305f8111ba@paulmck-laptop>
+ <20240501232132.1785861-2-paulmck@kernel.org>
+ <c97f0529-5a8f-4a82-8e14-0078d4372bdc@huaweicloud.com>
+In-Reply-To: <c97f0529-5a8f-4a82-8e14-0078d4372bdc@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwDHASa4BTlmcv6hBw--.23635S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr13Cw4kXw4UKr47Cr1Dtrb_yoW8KryxpF
+	ZrKF1FyryDJ3y093y0v3Z8Xw1rZws3Ja15tw1fKrWjyan8GF1jvFy5trWF9ry2yrZak3Wj
+	qr1F93yxZryUAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Mon, May 06, 2024 at 05:41:28PM +0200, Oscar Salvador wrote:
-> Yes, but I wanted to get the handle so I can match it with the
-> backtrace.
 
-Ah! Yes, that makes sense. Thanks!
 
--- 
-Kees Cook
+Am 5/6/2024 um 12:05 PM schrieb Jonas Oberhauser:
+> 
+> 
+> Am 5/2/2024 um 1:21 AM schrieb Paul E. McKenney:
+>> This commit adds four litmus tests showing that a failing cmpxchg()
+>> operation is unordered unless followed by an smp_mb__after_atomic()
+>> operation.
+> 
+> So far, my understanding was that all RMW operations without suffix 
+> (xchg(), cmpxchg(), ...) will be interpreted as F[Mb];...;F[Mb].
+> 
+> I guess this shows again how important it is to model these full 
+> barriers explicitly inside the cat model, instead of relying on implicit 
+> conversions internal to herd.
+> 
+> I'd like to propose a patch to this effect.
+> 
+> What is the intended behavior of a failed cmpxchg()? Is it the same as a 
+> relaxed one?
+> 
+> My suggestion would be in the direction of marking read and write events 
+> of these operations as Mb, and then defining
+> 
+> (* full barrier events that appear in non-failing RMW *)
+> let RMW_MB = Mb & (dom(rmw) | range(rmw))
+> 
+> 
+> let mb =
+>      [M] ; fencerel(Mb) ; [M]
+>    | [M] ; (po \ rmw) ; [RMW_MB] ; po^? ; [M]
+>    | [M] ; po^? ; [RMW_MB] ; (po \ rmw) ; [M]
+>    | ...
+> 
+> The po \ rmw is because ordering is not provided internally of the 
+> rmw
+
+(removed the unnecessary si since LKMM is still non-mixed-accesses)
+
+
+This could also be written with a single rule:
+
+      | [M] ; (po \ rmw) & (po^?; [RMW_MB] ; po^?) ; [M]
+
+
+> I suspect that after we added [rmw] sequences it could 
+> perhaps be simplified [...]
+> 
+
+No, my suspicion is wrong - this would incorrectly let full-barrier RMWs
+act like strong fences when they appear in an rmw sequence.
+
+  if (z==1)  ||  x = 2;     ||  xchg(&y,2)  || if (y==2)
+    x = 1;   ||  y =_rel 1; ||              ||    z=1;
+
+
+right now, we allow x=2 overwriting x=1 (in case the last thread does 
+not propagate x=2 along with z=1) because on power, the xchg might be
+implemented with a sync that doesn't get executed until the very end
+of the program run.
+
+
+Instead of its negative form (everything other than inside the rmw),
+it could also be rewritten positively. Here's a somewhat short form:
+
+let mb =
+      [M] ; fencerel(Mb) ; [M]
+    (* everything across a full barrier RMW is ordered. This includes up 
+to one event inside the RMW. *)
+    | [M] ; po ; [RMW_MB] ; po ; [M]
+    (* full barrier RMW writes are ordered with everything behind the RMW *)
+    | [W & RMW_MB] ; po ; [M]
+    (* full barrier RMW reads are ordered with everything before the RMW *)
+    | [M] ; po ; [R & RMW_MB]
+    | ...
+
+
+
+Good luck,
+jonas
+
 
