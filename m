@@ -1,183 +1,133 @@
-Return-Path: <linux-kernel+bounces-170314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C0D8BD4FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:57:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C86A8BD492
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E805A283BE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7861C20C3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11127158DC5;
-	Mon,  6 May 2024 18:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F0B158A33;
+	Mon,  6 May 2024 18:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dGqovjk8"
-Received: from msa.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYu7ZL9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7E28494;
-	Mon,  6 May 2024 18:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46F0197;
+	Mon,  6 May 2024 18:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715021869; cv=none; b=o4QnpTNC+WlIxrEUC1lgwCUOUJs/Pk5AqpouOwC2golW1cJ8jLzelVDtIDAtec3tO29DFxdDPGdetiU+b/oLZKeEulQgfxTI+B47ken9V48wQSEexC8x9e1TtF2+R+Je7d7zABSrIB/TJChyM5vSaxySqqq8BaDUiw2YH09abro=
+	t=1715020173; cv=none; b=j6DNtBamxSw+QLkdpOfZnA0EBS7WhTT97XT8zdtjvX+t4QaMnRbtiK+VjGHt7z1Valsml8QmMQIejhJvZbzsBSSOfymvgmuyxhWX/i9H7frXUh0fEDcb1Om/PwisAcPfNGr8ujRZX2cDVUDpscLeVufMd8nI6YCPuwIRuHU9ugw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715021869; c=relaxed/simple;
-	bh=GAhjzktko9OJNax9dYX89eovXWodEDQfe816vqcI7KY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kZ0dZoNv1ACF1F53pDtIEFCXDZ1rtsdZ0ScWzLP4wj5FASNb2iS2P1PXwe7K6QDfqJmIn7RF6amYwopnbDCi6zVOBCLjH0UI/yqTWQyp3k/kflZ53Lb7j0l2JZbd7bm3RXE+aAoK/807MSKTcl54si4wATExYuiO6101y3KVWiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dGqovjk8; arc=none smtp.client-ip=193.252.22.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 4303s7MviME2z4303s0Gms; Mon, 06 May 2024 20:23:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715019829;
-	bh=vwITn4CstTzZtAQHEM9ECl1VAD7MHWLyJIGr0JqDJWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=dGqovjk8SpXn+6fzebG7jnal19Q9YCOe4fQ71SJ2pHcDylCc9zwstLn198z9fAnSc
-	 kGLiPW7zOmVLTimp1JWnQC1tfZZEMQzu33s73nO1THQfHx8dDoRKkG5+Cc9CChsFMb
-	 dVLXabdsyBl1aq89K9kkXBeV1W3COUGw9yuGrDNLG7l0zrKsY3+bUbrryxjpIw4kVC
-	 y/cB9NsqVfHOOBjbqphmRvNggJR0/CwzgC/rWrW169SeQvOL9DX7z9pc71BwJo3EFN
-	 klsXlnu3HhSfimK8QjXXheWEkyBwRsHCrKrdQ+sLzOZy9a+mEk4Ly5xI1kxctiuws9
-	 BfpUu8Q9rDsWg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 06 May 2024 20:23:49 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <b3509a36-1fbc-4311-853b-bb5e6d25f0ad@wanadoo.fr>
-Date: Mon, 6 May 2024 20:23:43 +0200
+	s=arc-20240116; t=1715020173; c=relaxed/simple;
+	bh=Jg7BOhMVd+5bqaLKq8JWxbODI0k/8tdTr8AXexb+oiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QOfqrUXXDg/vowNOKyVpz7MAH//C/gB06aP2RtHrcrZHe1w7rnOjENOAqeGR5lMSORUo1W+XNPBsMJ08RNAiBTu50U5zAzpxjVxBRSbZP7I6P5/FKZaw8d4yPdZtVhXh0i8WnCx3mQqtuyrzLaJcNl4e8el02P+cokFUB7ySZI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYu7ZL9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E36C116B1;
+	Mon,  6 May 2024 18:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715020173;
+	bh=Jg7BOhMVd+5bqaLKq8JWxbODI0k/8tdTr8AXexb+oiw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jYu7ZL9vGTyQrn0OwIuQzduS/GOT6CI0qudddB+4EZgwmkPGFp0A3jFcCdSyLGjdz
+	 VF0hA+B77oEktUP3ahcfLUq7Xmy2rW6EGajF99f7M+LXtGM1Hw/5mc9Q3jGN3Ah+Yh
+	 UCfG/JqB7h8v6JHXXqBnLFlS0YLzeyfC1dZS9RbtptdSU0o3m8ygmxqIFtE3bw8pQX
+	 G7+NZ5iQKSDf+AKdJqEV7RFJ0QcQOibl0rxQmD3B1/o2b+kRoGWObYUum8ATY9PJsn
+	 14yknCIXErJ0A3MUNyFogUJqMcDsg204cxqBbDYE1QWDx1FZIzlQOA4Nkk52GmTwJn
+	 zFD+Xvwyzbf1A==
+Date: Mon, 6 May 2024 11:29:31 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Christoph Hellwig
+ <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy
+ <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+ <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Magnus Karlsson
+ <magnus.karlsson@intel.com>, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+ bpf@vger.kernel.org, netdev@vger.kernel.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 7/7] xsk: use generic DMA sync shortcut
+ instead of a custom one
+Message-ID: <20240506112931.39614ff0@kernel.org>
+In-Reply-To: <20240506094855.12944-8-aleksander.lobakin@intel.com>
+References: <20240506094855.12944-1-aleksander.lobakin@intel.com>
+	<20240506094855.12944-8-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf/ring_buffer: Prefer struct_size over open coded
- arithmetic
-To: Kees Cook <keescook@chromium.org>, Erick Archer <erick.archer@outlook.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-References: <AS8PR02MB7237569E4FBE0B26F62FDFDB8B1D2@AS8PR02MB7237.eurprd02.prod.outlook.com>
- <51a49bae-bd91-428e-b476-f862711453a0@wanadoo.fr>
- <AS8PR02MB7237EF9D1962834BE4D2C5F88B1D2@AS8PR02MB7237.eurprd02.prod.outlook.com>
- <202405060856.53AFAE4F22@keescook>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <202405060856.53AFAE4F22@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Le 06/05/2024 à 18:23, Kees Cook a écrit :
-> On Sun, May 05, 2024 at 07:31:24PM +0200, Erick Archer wrote:
->> On Sun, May 05, 2024 at 05:24:55PM +0200, Christophe JAILLET wrote:
->>> Le 05/05/2024 à 16:15, Erick Archer a écrit :
->>>> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
->>>> index 4013408ce012..080537eff69f 100644
->>>> --- a/kernel/events/ring_buffer.c
->>>> +++ b/kernel/events/ring_buffer.c
->>>> @@ -822,9 +822,7 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
->>>>    	unsigned long size;
->>>
->>> Hi,
->>>
->>> Should size be size_t?
->>
->> I'm sorry, but I don't have enough knowledge to answer this question.
->> The "size" variable is used as a return value by struct_size and as
->> a parameter to the order_base_2() and kzalloc_node() functions.
-> 
-> For Linux, size_t and unsigned long are the same (currently).
-> Pedantically, yes, this should be size_t, but it's the same.
-> 
->> [...]
->>> 	all_buf = vmalloc_user((nr_pages + 1) * PAGE_SIZE);
->>> 	if (!all_buf)
->>> 		goto fail_all_buf;
->>>
->>> 	rb->user_page = all_buf;
->>> 	rb->data_pages[0] = all_buf + PAGE_SIZE;
->>> 	if (nr_pages) {					<--- here
->>> 		rb->nr_pages = 1;			<---
->>> 		rb->page_order = ilog2(nr_pages);
->>> 	}
->> [...]
->> I think that we don't need to deal with the "nr_pages = 0" case
->> since the flex array will always have a length of one.
->>
->> Kees, can you help us with this?
-> 
-> Agh, this code hurt my head for a while.
-> 
-> all_buf contains "nr_pages + 1" pages. all_buf gets attached to
-> rb->user_page, and then rb->data_pages[0] points to the second page in
-> all_buf... which means, I guess, that rb->data_pages does only have 1
-> entry.
-> 
-> However, the nr_pages == 0 case is weird. Currently, data_pages[0] will
-> still get set (which points ... off the end of all_buf). If we
-> unconditionally set rb->nr_pages to 1, we're changing the behavior. If
-> we _don't_ set rb->data_pages[0], we're changing the behavior, but I
-> think it's an invalid pointer anyway, so this is the safer change to
-> make. I suspect the right replacement is:
-> 
-> 
-> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-> index 4013408ce012..7d638ce76799 100644
-> --- a/kernel/events/ring_buffer.c
-> +++ b/kernel/events/ring_buffer.c
-> @@ -916,15 +916,11 @@ void rb_free(struct perf_buffer *rb)
->   struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
->   {
->   	struct perf_buffer *rb;
-> -	unsigned long size;
->   	void *all_buf;
->   	int node;
->   
-> -	size = sizeof(struct perf_buffer);
-> -	size += sizeof(void *);
-> -
->   	node = (cpu == -1) ? cpu : cpu_to_node(cpu);
-> -	rb = kzalloc_node(size, GFP_KERNEL, node);
-> +	rb = kzalloc_node(struct_size(rb, nr_pages, 1), GFP_KERNEL, node);
->   	if (!rb)
->   		goto fail;
->   
-> @@ -935,9 +931,9 @@ struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
->   		goto fail_all_buf;
->   
->   	rb->user_page = all_buf;
-> -	rb->data_pages[0] = all_buf + PAGE_SIZE;
->   	if (nr_pages) {
->   		rb->nr_pages = 1;
-> +		rb->data_pages[0] = all_buf + PAGE_SIZE;
->   		rb->page_order = ilog2(nr_pages);
->   	}
+On Mon,  6 May 2024 11:48:55 +0200 Alexander Lobakin wrote:
+> XSk infra's been using its own DMA sync shortcut to try avoiding
+> redundant function calls. Now that there is a generic one, remove
+> the custom implementation and rely on the generic helpers.
+> xsk_buff_dma_sync_for_cpu() doesn't need the second argument anymore,
+> remove it.
 
-This is also what make the most sense to me.
+I think this is crashing xsk tests:
 
-CJ
-
->   
-> 
-> 
-> Also, why does rb_alloc() take an "int" nr_pages? The only caller has an
-> unsigned long argument for nr_pages. Nothing checks for >INT_MAX that I
-> can find.
-> 
-
+  [   91.048963] BUG: kernel NULL pointer dereference, address: 0000000000000464
+  [   91.049412] #PF: supervisor read access in kernel mode
+  [   91.049739] #PF: error_code(0x0000) - not-present page
+  [   91.050057] PGD 0 P4D 0
+  [   91.050221] Oops: 0000 [#1] PREEMPT SMP NOPTI
+  [   91.050500] CPU: 1 PID: 114 Comm: new_name Tainted: G           OE      6.9.0-rc6-gad3c108348fd-dirty #372
+  [   91.051088] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+  [   91.051649] RIP: 0010:xp_alloc+0x76/0x240
+  [   91.051903] Code: 48 89 0a 48 89 00 48 89 40 08 41 c7 44 24 34 00 00 00 00 49 8b 44 24 18 48 05 00 01 00 00 49 89 04 24 49 89 44 24 10 48 8b 3b <f6> 87 64 04 00 00 20 0f 85 16 01 00 00 48 8b 44 24 08 65 48 33 04
+  [   91.053055] RSP: 0018:ffff99e7c00f0b00 EFLAGS: 00010286
+  [   91.053400] RAX: ffff99e7c0c9d100 RBX: ffff89a400901c00 RCX: 0000000000010000
+  [   91.053838] RDX: 0000000000000000 RSI: 0000000000000010 RDI: 0000000000000000
+  [   91.054277] RBP: ffff89a4026e30e0 R08: 0000000000000001 R09: 0000000000009000
+  [   91.054716] R10: 779660ad50f0d4e6 R11: 79b5ce88640fb4f7 R12: ffff89a40c31d870
+  [   91.055156] R13: 0000000000000020 R14: 0000000000000000 R15: ffff89a4068c6000
+  [   91.055596] FS:  00007f87685bef80(0000) GS:ffff89a43bd00000(0000) knlGS:0000000000000000
+  [   91.056090] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [   91.056458] CR2: 0000000000000464 CR3: 000000010229c001 CR4: 0000000000770ef0
+  [   91.056904] PKRU: 55555554
+  [   91.057079] Call Trace:
+  [   91.057237]  <IRQ>
+  [   91.057371]  ? __die_body+0x1f/0x70
+  [   91.057595]  ? page_fault_oops+0x15a/0x460
+  [   91.057852]  ? find_held_lock+0x2b/0x80
+  [   91.058093]  ? __skb_flow_dissect+0x30f/0x1f10
+  [   91.058374]  ? lock_release+0xbd/0x280
+  [   91.058610]  ? exc_page_fault+0x67/0x1e0
+  [   91.058859]  ? asm_exc_page_fault+0x26/0x30
+  [   91.059126]  ? xp_alloc+0x76/0x240
+  [   91.059341]  __xsk_rcv+0x1f0/0x360
+  [   91.059558]  ? __skb_get_hash+0x5b/0x1f0
+  [   91.059804]  ? __skb_get_hash+0x5b/0x1f0
+  [   91.060050]  __xsk_map_redirect+0x7c/0x2c0
+  [   91.060315]  ? rcu_read_lock_held_common+0x2e/0x50
+  [   91.060622]  xdp_do_redirect+0x28f/0x4b0
+  [   91.060871]  veth_xdp_rcv_skb+0x29e/0x930
+  [   91.061126]  veth_xdp_rcv+0x184/0x290
+  [   91.061358]  ? update_load_avg+0x8c/0x8c0
+  [   91.061609]  ? select_task_rq_fair+0x1ff/0x15a0
+  [   91.061894]  ? place_entity+0x19/0x100
+  [   91.062131]  veth_poll+0x6c/0x2f0
+  [   91.062343]  ? _raw_spin_unlock_irqrestore+0x27/0x50
+  [   91.062653]  ? try_to_wake_up+0x261/0x8d0
+  [   91.062905]  ? find_held_lock+0x2b/0x80
+  [   91.063147]  __napi_poll+0x27/0x200
+  [   91.063376]  net_rx_action+0x172/0x320
+  [   91.063617]  __do_softirq+0xb6/0x3a3
+  [   91.063843]  ? __dev_direct_xmit+0x167/0x1b0
+  [   91.064114]  do_softirq.part.0+0x3b/0x70
+  [   91.064373]  </IRQ>
+  [   91.064511]  <TASK>
+  [   91.064650]  __local_bh_enable_ip+0xbd/0xe0
+  [   91.064913]  __dev_direct_xmit+0x16c/0x1b0
+  [   91.065171]  xsk_generic_xmit+0x703/0xb10
+  [   91.065425]  xsk_sendmsg+0x21f/0x2f0
 
