@@ -1,126 +1,193 @@
-Return-Path: <linux-kernel+bounces-169816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870E08BCE00
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD728BCE04
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E5E1F25057
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34B41F25759
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B3833CC4;
-	Mon,  6 May 2024 12:33:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C59A33981;
+	Mon,  6 May 2024 12:34:05 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980C4748F;
-	Mon,  6 May 2024 12:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FE018C19;
+	Mon,  6 May 2024 12:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714998797; cv=none; b=GrP2ozyHrK5tt22LFqWEZk/5u7QJfgniweu8f8+ebO+ZoL50DDMuZPpXvSA2VJ3FichLBNMKKbLUU+3V3YVbWgwp+IzB3alk8RFc+mgYUyO9DiApWSQDycjZVKN7dg/qqxbtuc3NHv0rIgkWKYcgC31SmDZEELGQwNWGrwqypPQ=
+	t=1714998844; cv=none; b=PSRMYV+ZLfKrbcvD7KgmYPwK2O84xwqm8Kj0m2rKkM0qp3Li+Ae5A0mvC218QH+V3lcdW4R3mm3u6caJp5MVzhWXqgaHeGsHmSjvB92HdNBop29UTR3PIcrFzxJB4Z5BrxAo/s2uu159nUenwPthWBaNnOX8IzHmL01JZRVdXYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714998797; c=relaxed/simple;
-	bh=DEA1KM0ghvQd+HuV8xLB5tsfrrm9padoKe5B5fuFlsE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GR6KNQrJLoxZgefgdSmG4YcIsPXsa2v+8rsSGSoHTNnv8pPDPy/jndbPidrM5xMHVcGImZlXD5/Gp8qAsLBDw/MYOJdTPHxB4zkiEU9ZUeXjSVsighvHE6TkJK16iBveieoj157kHbpZLsO6zVQMennsQ/3hwlwHpUk1o+fBPxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY15q13XZz4f3l85;
-	Mon,  6 May 2024 20:33:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 642991A058D;
-	Mon,  6 May 2024 20:33:08 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDH6w4CzjhmXgPPMA--.59039S3;
-	Mon, 06 May 2024 20:33:08 +0800 (CST)
-Subject: Re: [RFC PATCH v4 27/34] ext4: implement zero_range iomap path
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
- hch@infradead.org, djwong@kernel.org, willy@infradead.org,
- zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, wangkefeng.wang@huawei.com
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
- <20240410142948.2817554-28-yi.zhang@huaweicloud.com>
- <ZjIN9nuV6SaNODfE@dread.disaster.area>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <f59c3015-7029-9cd0-f5f0-087dfc1f24d0@huaweicloud.com>
-Date: Mon, 6 May 2024 20:33:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1714998844; c=relaxed/simple;
+	bh=PgyTVlJCUcjAwmhhcUzIv+WBWnSQfv9IW0ppT4XeW48=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nnCDjpMMdZxW73RM4xMEpAz+oubStnHKkGGnmrXXqdoMBFyt1tKKw/9uS56DJRj6IBEMzBe7/H3V4vy1+uRJwkxqQuaT+ULPjT/oQAxJtBhMO8mPzZuvAotlbk4pNjkSq4QCE7QRZHtfsP5NuDBIOR5Nvtl7yoNADHMWshZGD98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VY13k4Gv5zNw6b;
+	Mon,  6 May 2024 20:31:14 +0800 (CST)
+Received: from dggpemm500005.china.huawei.com (unknown [7.185.36.74])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C073140134;
+	Mon,  6 May 2024 20:33:59 +0800 (CST)
+Received: from [10.69.30.204] (10.69.30.204) by dggpemm500005.china.huawei.com
+ (7.185.36.74) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 6 May
+ 2024 20:33:58 +0800
+Subject: Re: [PATCH net-next v2 09/15] mm: page_frag: reuse MSB of 'size'
+ field for pfmemalloc
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240415131941.51153-1-linyunsheng@huawei.com>
+ <20240415131941.51153-10-linyunsheng@huawei.com>
+ <37d012438d4850c3d7090e784e09088d02a2780c.camel@gmail.com>
+ <8b7361c2-6f45-72e8-5aca-92e8a41a7e5e@huawei.com>
+ <17066b6a4f941eea3ef567767450b311096da22b.camel@gmail.com>
+ <c45fdd75-44be-82a6-8e47-42bbc5ee4795@huawei.com>
+ <efd21f1d-8c67-b060-5ad2-0d500fac2ba6@huawei.com>
+ <CAKgT0UfQWEkaWM_mfk=FhCErTL_ZS3RL6x3iMzPdEP3FD+9zZQ@mail.gmail.com>
+ <ceb36a97-31b5-62df-a216-8598210bbba8@huawei.com>
+ <CAKgT0Ufm0=1cmyRLcrcu1_FAAeBokj3rpFAXJvVxgARXSStAuA@mail.gmail.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <a208cde1-41f2-c838-0bd1-a37d58f2179b@huawei.com>
+Date: Mon, 6 May 2024 20:33:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZjIN9nuV6SaNODfE@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAKgT0Ufm0=1cmyRLcrcu1_FAAeBokj3rpFAXJvVxgARXSStAuA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDH6w4CzjhmXgPPMA--.59039S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1ktFWkGF4ktw15AF45Awb_yoW8Grykpr
-	Z5KFy8Kr12gr97uFZ2gFZrXryFya13Gw48WrW3Jrn8Z343WryxKFyjgF1093W8X3y7A340
-	vF1UW34Igw15AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UZ18PUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500005.china.huawei.com (7.185.36.74)
 
-On 2024/5/1 17:40, Dave Chinner wrote:
-> On Wed, Apr 10, 2024 at 10:29:41PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
+On 2024/4/30 22:54, Alexander Duyck wrote:
+> On Tue, Apr 30, 2024 at 5:06 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
 >>
->> Add ext4_iomap_zero_range() for the zero_range iomap path, it zero out
->> the mapped blocks, all work have been done in iomap_zero_range(), so
->> call it directly.
+>> On 2024/4/29 22:49, Alexander Duyck wrote:
 >>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/ext4/inode.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
+>> ...
 >>
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 9d694c780007..5af3b8acf1b9 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -4144,6 +4144,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
->>  	return err;
->>  }
->>  
->> +static int ext4_iomap_zero_range(struct inode *inode,
->> +				 loff_t from, loff_t length)
->> +{
->> +	return iomap_zero_range(inode, from, length, NULL,
->> +				&ext4_iomap_buffered_read_ops);
->> +}
+>>>>>
+>>>>
+>>>> After considering a few different layouts for 'struct page_frag_cache',
+>>>> it seems the below is more optimized:
+>>>>
+>>>> struct page_frag_cache {
+>>>>         /* page address & pfmemalloc & order */
+>>>>         void *va;
+>>>
+>>> I see. So basically just pack the much smaller bitfields in here.
+>>>
+>>>>
+>>>> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
+>>>>         u16 pagecnt_bias;
+>>>>         u16 size;
+>>>> #else
+>>>>         u32 pagecnt_bias;
+>>>>         u32 size;
+>>>> #endif
+>>>> }
+>>>>
+>>>> The lower bits of 'va' is or'ed with the page order & pfmemalloc instead
+>>>> of offset or pagecnt_bias, so that we don't have to add more checking
+>>>> for handling the problem of not having enough space for offset or
+>>>> pagecnt_bias for PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE and 32 bits system.
+>>>> And page address & pfmemalloc & order is unchanged for the same page
+>>>> in the same 'page_frag_cache' instance, it makes sense to fit them
+>>>> together.
+>>>>
+>>>> Also, it seems it is better to replace 'offset' with 'size', which indicates
+>>>> the remaining size for the cache in a 'page_frag_cache' instance, and we
+>>>> might be able to do a single 'size >= fragsz' checking for the case of cache
+>>>> being enough, which should be the fast path if we ensure size is zoro when
+>>>> 'va' == NULL.
+>>>
+>>> I'm not sure the rename to size is called for as it is going to be
+>>> confusing. Maybe something like "remaining"?
+>>
+>> Yes, using 'size' for that is a bit confusing.
+>> Beside the above 'remaining', by googling, it seems we may have below
+>> options too:
+>> 'residual','unused', 'surplus'
+>>
+>>>
+>>>> Something like below:
+>>>>
+>>>> #define PAGE_FRAG_CACHE_ORDER_MASK      GENMASK(1, 0)
+>>>> #define PAGE_FRAG_CACHE_PFMEMALLOC_BIT  BIT(2)
+>>>
+>>> The only downside is that it is ossifying things so that we can only
+>>
+>> There is 12 bits that is always useful, we can always extend ORDER_MASK
+>> to more bits if lager order number is needed.
+>>
+>>> ever do order 3 as the maximum cache size. It might be better to do a
+>>> full 8 bytes as on x86 it would just mean accessing the low end of a
+>>> 16b register. Then you can have pfmemalloc at bit 8.
+>>
+>> I am not sure I understand the above as it seems we may have below option:
+>> 1. Use somthing like the above ORDER_MASK and PFMEMALLOC_BIT.
+>> 2. Use bitfield as something like below:
+>>
+>> unsigned long va:20;---or 52 for 64bit system
+>> unsigned long pfmemalloc:1
+>> unsigned long order:11;
+>>
+>> Or is there a better idea in your mind?
 > 
-> Zeroing is a buffered write operation, not a buffered read
-> operation. It runs though iomap_write_begin(), so needs all the
-> stale iomap detection stuff to be set up for correct operation.
+> All I was suggesting was to make the ORDER_MASK 8 bits. Doing that the
+> compiler can just store VA in a register such as RCX and instead of
+> having to bother with a mask it could then just use CL to access the
+> order. As far as the flag bits such as pfmemalloc the 4 bits starting
+> at 8 would make the most sense since it doesn't naturally align to
+> anything and would have to be masked anyway.
+
+Ok.
+
 > 
+> Using a bitfield like you suggest would be problematic as the compiler
+> would assume a shift is needed so you would have to add a shift to
+> your code to offset it for accessing VA.
+> 
+>>>
+>>>> struct page_frag_cache {
+>>>>         /* page address & pfmemalloc & order */
+>>>>         void *va;
+>>>>
+>>>
+>>> When you start combining things like this we normally would convert va
+>>> to an unsigned long.
+>>
+>> Ack.
 
-Yeah, right, thanks for point this out. Although we can guarantee
-that the zeroing is a partial block overwrite and no need to
-allocate new blocks on ext4, use ext4_iomap_buffered_read_ops is
-not appropriate, I'll use write ops instead.
+It seems it makes more sense to convert va to something like 'struct encoded_va'
+mirroring 'struct encoded_page' in below:
 
-Thanks,
-Yi.
+https://elixir.bootlin.com/linux/v6.7-rc8/source/include/linux/mm_types.h#L222
+
+>>
+>>>
+>>>> #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
+>>>>         u16 pagecnt_bias;
+>>>>         u16 size;
+>>>> #else
+>>>>         u32 pagecnt_bias;
+>>>>         u32 size;
+>>>> #endif
+>>>> };
+>>>>
+>>>>
 
 
