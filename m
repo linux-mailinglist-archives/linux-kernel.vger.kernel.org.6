@@ -1,94 +1,203 @@
-Return-Path: <linux-kernel+bounces-169923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7B98BCF5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:43:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701F28BCF4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B089C1F220A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE9D1C2287E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7EB78C6E;
-	Mon,  6 May 2024 13:43:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E31B78C64;
+	Mon,  6 May 2024 13:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bCio00bX"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B614642B;
-	Mon,  6 May 2024 13:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0832178C68
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715003020; cv=none; b=QhLTiQfbXxi8G0n4i050ysuE1pyfSnOVNv5QKIHaWra6Skpp646AGDVbYzL3YDE7Mf9Fa0VqHWVcNMnveZqZyr5dYsd8xxdZX6gIbMyt5ELTGzQ9LCeEWTspqq03WSxEd77oYTQYXTb0ftH8kVIECr7yoGWn+xZmW4n4QdqODNM=
+	t=1715002711; cv=none; b=rO8KunWZnFyBglTYxftxgArLYZBcBfqjTonm5MiQw5bB18ZRD6K9dI8n2QuzdRgSJUJnScTjO9iHuA9JSH+DtpzxZ00B6ErqH/Lv8J9Or2rsPBFdCuZ3IeKNkmbsgfUA//qRI5t/W4p921GZe4GEGi1ySgjeLdlIxOoC5amxKeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715003020; c=relaxed/simple;
-	bh=nhwIlnyEtPbRTE8qpKMfmZn3Vfdf2AIZnGekxbXX+ck=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S6x+pXYIpKRPDTlEcwZAoAVlquUTvOuakPujvz/4gBWHaCRDVuq6x3rTy3BaB//EKx5BKBv4cfq1Oks2H5JKkDZjShQrmSgZXi0Dl1YHPJ64YWpx5E5zq/CYRhX26bxsLXmDQMCBfuTQiWEJiIt1pF7vLcEhEJneYTyazS1iaPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VY2bG6CQGztT3t;
-	Mon,  6 May 2024 21:40:10 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id E5C5E180065;
-	Mon,  6 May 2024 21:43:34 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 21:43:34 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <hannes@cmpxchg.org>, <mhocko@kernel.org>, <roman.gushchin@linux.dev>,
-	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
-	<akpm@linux-foundation.org>
-CC: <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] mm: memcg: use meaningful error code for return value
-Date: Mon, 6 May 2024 13:36:43 +0000
-Message-ID: <20240506133643.1124102-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715002711; c=relaxed/simple;
+	bh=It9OpP6gC8bm5/vZVTQBOX1m6p9O8bYlAf/OdYb0psI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCPPiFhAGRTrcupghS0aWZkfK0ri6T9elPcZITXVPuvlHDxZaVpGwJw/8CTneQaHaRnWc7qSSBDoi0jymx2Zp5o+5O0Ax9xQvtYRDf4njdR35PPNND82/iVzijkEFI14AgronPEoiuXdNz+fFLCc5U79WLO+VSewQF7ksYCCU8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=bCio00bX; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-41beaaecf9bso79645e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 06:38:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1715002707; x=1715607507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=05pEfdeTjP/gT4q1VDqtZ2Mm8b7W7bMEgQ0JTj2r+x4=;
+        b=bCio00bXGx0rOEGQgsW+cyXPMAEaUjZkVmv9Z7YAHR6pj3cpRxYr/aru5n6RBrblc6
+         h1G6rCGNRQlyim87RXhMzcGeG5Ngc1NIMellFQdSoDyeKM5PWa+s8u5Fh1f6BqVclRl8
+         Wb9qkrOeAGjMnjxHIA9olZ0LbNav8fYqSWbR8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715002707; x=1715607507;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=05pEfdeTjP/gT4q1VDqtZ2Mm8b7W7bMEgQ0JTj2r+x4=;
+        b=CjYPQVZStuNehzqozQY7VpN3CBPWpXoTXKotZpz/875CQrs7jhpseKXhbWfV50rkaw
+         sK3XDQXfACUJLEd4pw2G3DSITkeXezRUXexyISy9bPbSRIA4HLmDHiEPnLri+8HYgler
+         mLsKuugsb0ZdWXoIeohnLbn1YfI46ZoYZOnpklXF0R7LiZV1gwm67+VK0M4lcr3hQr9o
+         HjpcIv1mwLkFUCHKqWbhKQswbE4RLLG46r6ugQGaKfJ3ab7eccMDNH2rlxA7z1ZsZTV1
+         /2IU75AjSMtCqkmzzVs0WuF8tY2KFU4VyMCX5R7bSJthbh8sBhyq65S7+HUQqFhn18wM
+         cXpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxCEq8qcKSyPxOAmYTq4fEJIBZewfOWeEuAYEc2iKx3ceT2E4+ogdX4mcO+r3kqxd/LaUCzvVrTuRodiMdos/9xZwGAQ8oVcrX3vox
+X-Gm-Message-State: AOJu0YzWBKnknj3pc3O/CnpljnxWOMlk9SBGXK5G2Kdw6pTTTvnsSZ4X
+	t0fBTxsXyyGQBPBfHnM4R+L+MKLvct0Tb+nb8yjNS6gY+dxEaAE52kA5aBORwdw=
+X-Google-Smtp-Source: AGHT+IH7ayM64/spWVTg0bt9PNCN0djXyEwU/JmnpSrNT6A7B8ioiDdqWIOL0raGgmZcVRIsEpla+w==
+X-Received: by 2002:a05:600c:46cf:b0:41a:bb50:92bb with SMTP id q15-20020a05600c46cf00b0041abb5092bbmr7391993wmo.0.1715002707370;
+        Mon, 06 May 2024 06:38:27 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id z5-20020a05600c0a0500b0041bd85cd3f2sm16051523wmp.19.2024.05.06.06.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 06:38:26 -0700 (PDT)
+Date: Mon, 6 May 2024 15:38:24 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Maxime Ripard <mripard@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+Message-ID: <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
+Mail-Followup-To: Maxime Ripard <mripard@redhat.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <20240506-dazzling-nippy-rhino-eabccd@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506-dazzling-nippy-rhino-eabccd@houat>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-alloc_mem_cgroup_per_node_info() returns 1 if failed, use -ENOMEM
-instead, which is more meaningful.
+On Mon, May 06, 2024 at 02:05:12PM +0200, Maxime Ripard wrote:
+> Hi,
+> 
+> On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
+> > Hi dma-buf maintainers, et.al.,
+> > 
+> > Various people have been working on making complex/MIPI cameras work OOTB
+> > with mainline Linux kernels and an opensource userspace stack.
+> > 
+> > The generic solution adds a software ISP (for Debayering and 3A) to
+> > libcamera. Libcamera's API guarantees that buffers handed to applications
+> > using it are dma-bufs so that these can be passed to e.g. a video encoder.
+> > 
+> > In order to meet this API guarantee the libcamera software ISP allocates
+> > dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
+> > the Fedora COPR repo for the PoC of this:
+> > https://hansdegoede.dreamwidth.org/28153.html
+> 
+> For the record, we're also considering using them for ARM KMS devices,
+> so it would be better if the solution wasn't only considering v4l2
+> devices.
+> 
+> > I have added a simple udev rule to give physically present users access
+> > to the dma_heap-s:
+> > 
+> > KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
+> > 
+> > (and on Rasperry Pi devices any users in the video group get access)
+> > 
+> > This was just a quick fix for the PoC. Now that we are ready to move out
+> > of the PoC phase and start actually integrating this into distributions
+> > the question becomes if this is an acceptable solution; or if we need some
+> > other way to deal with this ?
+> > 
+> > Specifically the question is if this will have any negative security
+> > implications? I can certainly see this being used to do some sort of
+> > denial of service attack on the system (1). This is especially true for
+> > the cma heap which generally speaking is a limited resource.
+> 
+> There's plenty of other ways to exhaust CMA, like allocating too much
+> KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
+> differently than those if it's part of our threat model.
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- mm/memcontrol.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+So generally for an arm soc where your display needs cma, your render node
+doesn't. And user applications only have access to the later, while only
+the compositor gets a kms fd through logind. At least in drm aside from
+vc4 there's really no render driver that just gives you access to cma and
+allows you to exhaust that, you need to be a compositor with drm master
+access to the display.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d11536ef59ef..657f68b536c4 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5659,7 +5659,7 @@ static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
- 
- 	pn = kzalloc_node(sizeof(*pn), GFP_KERNEL, node);
- 	if (!pn)
--		return 1;
-+		return -ENOMEM;
- 
- 	pn->lruvec_stats = kzalloc_node(sizeof(struct lruvec_stats), GFP_KERNEL,
- 					node);
-@@ -5679,7 +5679,7 @@ static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
- fail:
- 	kfree(pn->lruvec_stats);
- 	kfree(pn);
--	return 1;
-+	return -ENOMEM;
- }
- 
- static void free_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+Which means we're mostly protected against bad applications, and that's
+not a threat the "user physically sits in front of the machine accounts
+for", and which giving cma access to everyone would open up. And with
+flathub/snaps/... this is very much an issue.
+
+So you need more, either:
+
+- cgroups limits on dma-buf and dma-buf heaps. This has been bikeshedded
+  for years and is just not really moving.
+
+- An allocator service which checks whether you're allowed to allocate
+  these special buffers. Android does that through binder.
+
+Probably also some way to nuke applications that refuse to release buffers
+when they're no longer the right application. cgroups is a lot more
+convenient for that.
+-Sima
+
+> > But devices tagged for uaccess are only opened up to users who are 
+> > physcially present behind the machine and those can just hit
+> > the powerbutton, so I don't believe that any *on purpose* DOS is part of
+> > the thread model. 
+> 
+> How would that work for headless devices?
+> 
+> Maxime
+
+
+
 -- 
-2.34.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
