@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-169880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A9A8BCED8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:19:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29A38BCEDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0466B26F13
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:19:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606371F24191
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE337C6C6;
-	Mon,  6 May 2024 13:18:36 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E0B763F8;
+	Mon,  6 May 2024 13:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiuREqk6"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E256D757EA
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF8215A5;
+	Mon,  6 May 2024 13:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715001516; cv=none; b=oLRySz4/P2YRTg2NVHV+WCXq6rJVJWUq8ajD5/33J1T0AzTUm8cc3sNfk4oftmiK6qwVSNKT8ysPOv7qN2JG+xt1yIvBUqSu3EMkddLS+fu9PP/qfCaW7mD0KKx5O/XXFLWULJlI2NmZQ9HeBuya7I6xgNviIlQSp0JcACZoVrE=
+	t=1715001672; cv=none; b=RLRe0c3b8cH2ekt+va5WCb1DkR1ttKaaLFnp4u6e5MUM3jlHzZ2oYFPLRwB0LsxZQPkUxhvFh/bGxzJoN1j+c5VuwgzOojjQcde4uhtoMnAUHEx5CWFO8/cle46me+IqDqqqavjyJYrbSW3eVWlNNNw/jNksofMOnBK3d2wx3Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715001516; c=relaxed/simple;
-	bh=c0Vge8iTB4Lpbpsuu3+m+8p+N7McCY3fFZYh0TSFI1k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qlnIkOXUN3WIimzicDAaSq2DvtsD1F5hf2d6Mks5FB8fo03no9I8n2MBbVpfOMiVnoTqiHf3WgLNDSTqAu3uW2MLVVpSvO8HzX9UmaFlIani2QAJJuDqjIoE+z9OCy/PEsFF0Nx9NbAVYe3JTFGc0BPNbswlPJm9HzyVKmFljkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ddf08e17e4so153148439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 06:18:34 -0700 (PDT)
+	s=arc-20240116; t=1715001672; c=relaxed/simple;
+	bh=ynTZzxoxxo3keo82avsAabxo4oU1Mvhd/Rgmxy+qcWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X6wNp+mDG8jLTCpteUU66LzMPxbzU42dvIY63Ni5Cl9UOFjNAienMrEdrjEnANRGwXj7otc6F5L2jAT/C2ivryr6GKSk1LTmyEZ7UkAchzJujfh4H0PlMzSJ5uxll+siemFKTRzsFh88j/1AHTpSLvs5H5axdoVoVhZJ5qOWX4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TiuREqk6; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6a0f5afd0a2so2979236d6.1;
+        Mon, 06 May 2024 06:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715001669; x=1715606469; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ynTZzxoxxo3keo82avsAabxo4oU1Mvhd/Rgmxy+qcWk=;
+        b=TiuREqk6SlcbP7Mkc/GD3k/g1JYlsjNeDhCi2Q71kjKWIcnoHjYXq45Yh+ZvPX1Pq7
+         w3t6xoeQglJf78a4K2p9C1OFrlfKg/Gut2s2xt0tccypi7TCpx5CLNrukoQFA5Shaf8V
+         U/QTOkpyLh7y16Hul/ml1aYIk0K+ySYpE8PFyDQIHO61XXJwistaKPLkTFn3FxtNbfz1
+         HqtCwQddvmsxXqYD18EajDlEJBL6sFPPwmWL/zrdTmvgUN2X/kCXWzNmaxPg5+jWDobe
+         bzTKiF9q73urDPkIe8C45Ewp1GnHJveoCB4WRkdD7fUeYeXFAlc4rn6Yw87G7ouUJjQc
+         F+aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715001514; x=1715606314;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sDXohloZ5MfuZXfB1DDbljelq8gj5pZm9laaAT/1VtU=;
-        b=FEMY7VWX3cT3HoSlXLHWy6Dsj5pPgYdmtApUxgTWx/XbO+Y6ZVlHDSigBuGZCKRk/I
-         c/OhtTSmGqtncz0AxWpXaYkmhT2xaSTVmJbxtMCHQ06HIU6W5aRWqJadjtZVBtPKSAMJ
-         KC38XAoIyFLlnNHPkVJwmTynGzGPspA6btk0sd1eAapKjgHjuus/9knrFqijQXvgYF3i
-         qGkdb5oeNsfzMcsGMs4UZriJ5ezuhAUuCgIainNRo+n+er80r0hfmqb7vlX1DuHQfFQg
-         aQn49VGdAOZOBD5RCiPuid6Q4TZYRCeCqKcx5Pot5IQQgy13jomzePCVIBQQGJslBNEI
-         LlQw==
-X-Gm-Message-State: AOJu0Yy5Zve9V4dLaFKC4OldJpGCTSsuWy/qE8eCEE7odXaoH+gNHcJf
-	QVnVBzv5YNsgVqr0xnej3nerGPod7HHJFqh3yKjkLNemcvMSlyjlXa/Gu85v14NA/qQA5Dkktwk
-	/YMYxqMwb5ne/1ns5W9BxAeJ51PRaPtEPV6ossYfF73aQm76lX6IxVKc=
-X-Google-Smtp-Source: AGHT+IG8fqvQzKK0Ndvb55M8AEuR45mSb8N9eJk1/kfk+AJ8UD/zRmP3RQCdND34lbZorwZshYw4n9A2jtESUdb4TIuax8CXRf67
+        d=1e100.net; s=20230601; t=1715001669; x=1715606469;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ynTZzxoxxo3keo82avsAabxo4oU1Mvhd/Rgmxy+qcWk=;
+        b=kcPm45rxjROeRu0Rz/3kRNn6564GhWl1jitROP77w5zjeDdZdGktlw7ro5kytNPX/h
+         xA1foCebolWgqALheIN54MaJlLjj1hb7/rhe5XQVM831JJqZM8O/FnydaUC0UytAMXX7
+         f1d35ewZb1sx/So156UDOIugNpTr53LuxV03z6+FDslWNMJKV7actZzriYMFvQWhzBUM
+         IN3xpHEyvklFN+fiyazVENNCP9KzY8vbUVNd9PrusVod3sWo7r2pA0wvYF1AmoHDMcx9
+         Pq2eR0y1jKWeSmrnmIlLSQGnFHubDqTexZrG2wuwsodB4Evm8882nU05i5j64eigMQjG
+         cTWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLoUyMdjDQRSOxgvzoTY2ymilP3gQA5M6DGRMEY3bwvW7OLydwpvHug9FcWxwb1L5bNfxu5+m6+i0GMwoOFdlSpLFfvH/47K+0pkExPsrW/ucBkwy28axydM682exAzDf1CjNsda7IgwI=
+X-Gm-Message-State: AOJu0YwA3hyr6Y/2DRBzm8zvo7V+7uWAE+oJiWNw/bh5IhCAmeQgW7Zy
+	76vp9BVQBBohOEIGyqrb28jE5wBrTKbTziMLvocDZryzjR7dzGJp5tCAs0ENR1FbE2O1Ksc64ic
+	vwibvFQcF5lr7EnDI4ibDYHTtA5Zr7IKg
+X-Google-Smtp-Source: AGHT+IEwFc7U5/YcMmXDSCiD9wAEX+ogtSyTFxpVI7a3OLB8hYxciop5Lywg0hw32q0z24k1EaIDFAYHhMIPiw7pUjc=
+X-Received: by 2002:a05:6214:489:b0:6a0:b3ec:8ff2 with SMTP id
+ pt9-20020a056214048900b006a0b3ec8ff2mr12091412qvb.5.1715001669370; Mon, 06
+ May 2024 06:21:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8426:b0:488:6017:abb6 with SMTP id
- iq38-20020a056638842600b004886017abb6mr450659jab.2.1715001514173; Mon, 06 May
- 2024 06:18:34 -0700 (PDT)
-Date: Mon, 06 May 2024 06:18:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000ab1040617c8e8da@google.com>
-Subject: [syzbot] Monthly wireless report (May 2024)
-From: syzbot <syzbot+list0eee01f891cd031c3139@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240506114752.47204-1-charles.goodix@gmail.com> <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
+In-Reply-To: <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
+From: Richard Hughes <hughsient@gmail.com>
+Date: Mon, 6 May 2024 14:20:57 +0100
+Message-ID: <CAD2FfiFv+R=AfAEh-ExU03PzmJz6+kpWAV0b=vVwsUzpUzMSDg@mail.gmail.com>
+Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
+ and writing touch IC registers
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net, dmitry.torokhov@gmail.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	neil.armstrong@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello wireless maintainers/developers,
+On Mon, 6 May 2024 at 13:03, Hans de Goede <hdegoede@redhat.com> wrote:
+> Adding Richard Hughes, fwupd maintainer to the Cc. Richard, do you have
+> any input on the suggested method for firmware updating ?
 
-This is a 31-day syzbot report for the wireless subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/wireless
+I'm okay with either; it's obviously easier for fwupd to just squirt a
+file into a sysfs file to update the firmware, but some devices also
+need something a bit more nuanced -- e.g. putting the device into an
+update mode, setting the power domains, fallback recovery and stuff
+like that.
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 28 issues are still open and 124 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  8381    Yes   WARNING in ieee80211_link_info_change_notify (2)
-                   https://syzkaller.appspot.com/bug?extid=de87c09cc7b964ea2e23
-<2>  7730    Yes   WARNING in __ieee80211_beacon_get
-                   https://syzkaller.appspot.com/bug?extid=18c783c5cf6a781e3e2c
-<3>  4438    Yes   WARNING in __cfg80211_ibss_joined (2)
-                   https://syzkaller.appspot.com/bug?extid=7f064ba1704c2466e36d
-<4>  3478    Yes   WARNING in ieee80211_rx_list
-                   https://syzkaller.appspot.com/bug?extid=8830db5d3593b5546d2e
-<5>  879     Yes   WARNING in ar5523_submit_rx_cmd/usb_submit_urb
-                   https://syzkaller.appspot.com/bug?extid=6101b0c732dea13ea55b
-<6>  774     Yes   WARNING in ieee80211_start_next_roc
-                   https://syzkaller.appspot.com/bug?extid=c3a167b5615df4ccd7fb
-<7>  79      Yes   WARNING in ieee80211_free_ack_frame (2)
-                   https://syzkaller.appspot.com/bug?extid=ac648b0525be1feba506
-<8>  10      Yes   INFO: task hung in reg_check_chans_work (6)
-                   https://syzkaller.appspot.com/bug?extid=b87c222546179f4513a7
-<9>  7       Yes   WARNING in drv_remove_interface
-                   https://syzkaller.appspot.com/bug?extid=2e5c1e55b9e5c28a3da7
-<10> 5       Yes   UBSAN: array-index-out-of-bounds in htc_issue_send
-                   https://syzkaller.appspot.com/bug?extid=93cbd5fbb85814306ba1
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Richard
 
