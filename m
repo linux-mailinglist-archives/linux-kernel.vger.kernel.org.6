@@ -1,126 +1,224 @@
-Return-Path: <linux-kernel+bounces-169841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801FC8BCE75
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:51:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5848BCE79
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B901289BC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFCC61C20F06
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94234EB45;
-	Mon,  6 May 2024 12:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31250763F1;
+	Mon,  6 May 2024 12:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PEhX7xTC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fkSERiCu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Fr+6qhKF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4071DFED;
-	Mon,  6 May 2024 12:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2266CDB3
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999872; cv=none; b=AqMDRLYoXwuFUjtDt8RNyPR/Icbo0fWFxushZd9T+1KiFIsqw0mLY6Eth76FS13yK6J1yr8BmYRwIiIe4/ur2q4HeP3oH4Jpd7/iEzTuQQLJp64Xc0HKVVDJaFGBFSSY9UE4A/4yn3VjMMhQU7u7POu/hankosdgV1sqrP2X5N8=
+	t=1714999949; cv=none; b=hA8bEm3cO25hTKlzG/DFtqigEiK7Q36XhDI1E7OuyTB2Yw6Ecvx505e71vRnZGBdLC1TGBhS4Z4uRCqAxn6wp+4Vx8ciKhRGFmm4mb5fRUuT5cy+fWYfVaJcLVG+NTIZe3zKrInowJz1IEHpN24rZgjFfGu1pJ3YCQ1ZT/vDomQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999872; c=relaxed/simple;
-	bh=3Ao0x/m2mpxl4SFB3+8g1f7cnMl1hk4Nf58EF0zRgVM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nX9VnjLZPMvfrAn5IQJ1t3U7KxqEEed/+5S9Z0I2S6rxXJXRQyYIsArF8gJxsJEHb7LTutC4rVJnoxmvqNSlNG20e2/ixisuuvWp2n9ZA4dbR6bE716qoCB76m+o6PTq1fNf0elfYLfGEZVaGlVMuR4kqnxR+gw/Ms9Zw6QvrwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PEhX7xTC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fkSERiCu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 06 May 2024 12:51:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1714999868;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M1ZBY+BbMdsCz/HAj/ALR7pCIHzRHF2huH/d4Yke+r0=;
-	b=PEhX7xTCnbDcj4HNREaccKDiqbGu4CRhubokuZwBmyWLX+bof+1J4lifvnFMyfx438snHp
-	gmK+wkqzri5yMTZBrfJ+7UVC3PbD8wR/MvRqb+dqQrggSB8KqvN9H+iGVWfU5FOTxPvpql
-	1m+CRMZ0eQ4maUEEz/KynCT7U4EzgyAqfYJNcf7dRGMmrUhzKTFf1borAlPPchm67ozAeM
-	WnCpR2vIEV9sAEQXsr5Hc8UI0P7ZaRIXUrqcc3M9MpFrz565uvLz4hrxXtwhcS49wU8Igz
-	3ICbIJTjs9+HJQywWhe7ci4DUXFXgiL3pWxBqS51FCwALus/xLZXdjloJqii9A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1714999868;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M1ZBY+BbMdsCz/HAj/ALR7pCIHzRHF2huH/d4Yke+r0=;
-	b=fkSERiCuy1veK0BrWxmsMAZuH3y2M5J5SVM2CvyGzgxkSc5UDOQ1IUAeGALLXp/wFsqGXF
-	NnzSR8tyNPmSa4AQ==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/alternatives] x86/alternatives: Remove alternative_input_2()
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240506122848.20326-1-bp@kernel.org>
-References: <20240506122848.20326-1-bp@kernel.org>
+	s=arc-20240116; t=1714999949; c=relaxed/simple;
+	bh=DZEInjHtnQRKHvBQmeyUVlyIRGFYgUoqpAIzT4Ngs8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d5D2ncnZt12YbkRx7B66z9Ejo/zcXKIPJXLP5uOqTJ5S/HC/JhzjaZ502qVifEvXktWt7s8cpRNgc2odaupVmvic9vUicUOoL+zBfgVS/x2RhNx5Wk1cgqXG6h7UOckiRRWpB48FLcn6WpOZSH2yMg+xkEA/1V4nL/jOhk8twuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Fr+6qhKF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1714999942;
+	bh=i2LfP7MVsNN4JXvGzO+H7GyJG6eHSoHLCs4iVo4BBu0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Fr+6qhKFnbAyZeFSEUYWhqIrfInx/MnUIy3NZHwUCIGsr2FcI/Ojz/BA2/yfKUvvp
+	 8ceGZcf1XMq695drJnqKBFFvTvuNIp01iZc4i5iRe2pc1JtLmIPBeOIOtwdS4QiC8c
+	 tBOFXsYD5G58nMcGlUc/1dAxeXnKH9u+8tikQzrhMQOQCCuIo7lau6enVA20q8NVP/
+	 IIZw5uc2pic4M6BpNyuSjQDf2lERoJdfsGU1l6PMiRmOtThJNx5eAq/ylbfx2ESPhY
+	 1h6LhahrXq98sdHw5Z/UAWr8NhqZzIJkiSPs6MJwXx/aoXLZuqf/SNcvULGytIp0Yj
+	 mhGr2cb0tQDyQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VY1X54vXZz4wnv;
+	Mon,  6 May 2024 22:52:21 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: <linuxppc-dev@lists.ozlabs.org>
+Cc: <linux-kernel@vger.kernel.org>,
+	<christophe.leroy@csgroup.eu>
+Subject: [PATCH 0/7] Remove 40x
+Date: Mon,  6 May 2024 22:51:45 +1000
+Message-ID: <20240506125152.78174-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171499986751.10875.10656752309329992312.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/alternatives branch of tip:
+The 40x platforms & CPUs are old and have been unmaintained for years, and as
+far as we can tell have no users.
 
-Commit-ID:     8dc8b02d707ee4167fffaf3a97003bcdac282876
-Gitweb:        https://git.kernel.org/tip/8dc8b02d707ee4167fffaf3a97003bcdac282876
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Mon, 06 May 2024 14:28:48 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 06 May 2024 14:30:54 +02:00
+Note 44x and 476 are not affected.
 
-x86/alternatives: Remove alternative_input_2()
+Christophe first proposed removing 40x in 2020:
+  https://lore.kernel.org/linuxppc-dev/40899eb1b8f10da3706acd06c3d46d2418c8886e.1585635837.git.christophe.leroy@c-s.fr/
 
-It is unused.
+And on a few subsequent occasions.
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240506122848.20326-1-bp@kernel.org
----
- arch/x86/include/asm/alternative.h | 14 --------------
- 1 file changed, 14 deletions(-)
+The proposed removal was covered on Phronix:
+  https://www.phoronix.com/news/PowerPC-40x-400-Linux-Removal
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 67b68d0..c595358 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -286,20 +286,6 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, ft_flags)	\
- 		: : "i" (0), ## input)
- 
--/*
-- * This is similar to alternative_input. But it has two features and
-- * respective instructions.
-- *
-- * If CPU has feature2, newinstr2 is used.
-- * Otherwise, if CPU has feature1, newinstr1 is used.
-- * Otherwise, oldinstr is used.
-- */
--#define alternative_input_2(oldinstr, newinstr1, ft_flags1, newinstr2,	     \
--			   ft_flags2, input...)				     \
--	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1,     \
--		newinstr2, ft_flags2)					     \
--		: : "i" (0), ## input)
--
- /* Like alternative_input, but with a single output argument */
- #define alternative_io(oldinstr, newinstr, ft_flags, output, input...)	\
- 	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, ft_flags)	\
+OpenWRT dropped support in 2019.
+
+So unless anyone steps up to maintain it, remove 40x as unused. RIP.
+
+cheers
+
+
+More context: https://github.com/linuxppc/issues/issues/349
+
+Christophe Leroy (4):
+  powerpc/40x: Remove 40x platforms.
+  powerpc/boot: Remove all 40x platforms from boot
+  powerpc: Remove core support for 40x
+  powerpc/platforms: Move files from 4xx to 44x
+
+Michael Ellerman (3):
+  powerpc: Remove 40x from Kconfig and defconfig
+  powerpc/4xx: Remove CONFIG_BOOKE_OR_40x
+  powerpc: Replace CONFIG_4xx with CONFIG_44x
+
+ MAINTAINERS                                   |   1 -
+ arch/powerpc/Kconfig                          |  17 +-
+ arch/powerpc/Kconfig.debug                    |  13 -
+ arch/powerpc/Makefile                         |   5 -
+ arch/powerpc/boot/4xx.c                       | 266 -------
+ arch/powerpc/boot/4xx.h                       |   4 -
+ arch/powerpc/boot/Makefile                    |  11 -
+ arch/powerpc/boot/cuboot-acadia.c             | 171 -----
+ arch/powerpc/boot/cuboot-hotfoot.c            | 139 ----
+ arch/powerpc/boot/cuboot-kilauea.c            |  46 --
+ arch/powerpc/boot/dcr.h                       |  11 -
+ arch/powerpc/boot/dts/acadia.dts              | 224 ------
+ arch/powerpc/boot/dts/hotfoot.dts             | 296 -------
+ arch/powerpc/boot/dts/kilauea.dts             | 407 ----------
+ arch/powerpc/boot/dts/obs600.dts              | 314 --------
+ arch/powerpc/boot/ppcboot-hotfoot.h           | 119 ---
+ arch/powerpc/boot/ppcboot.h                   |   2 +-
+ arch/powerpc/configs/40x.config               |   2 -
+ arch/powerpc/configs/40x/acadia_defconfig     |  61 --
+ arch/powerpc/configs/40x/kilauea_defconfig    |  69 --
+ arch/powerpc/configs/40x/klondike_defconfig   |  43 --
+ arch/powerpc/configs/40x/makalu_defconfig     |  59 --
+ arch/powerpc/configs/40x/obs600_defconfig     |  69 --
+ arch/powerpc/configs/40x/walnut_defconfig     |  55 --
+ arch/powerpc/configs/ppc40x_defconfig         |  74 --
+ arch/powerpc/include/asm/cacheflush.h         |   2 +-
+ arch/powerpc/include/asm/cputable.h           |   7 -
+ arch/powerpc/include/asm/hw_irq.h             |   8 +-
+ arch/powerpc/include/asm/irq.h                |   2 +-
+ arch/powerpc/include/asm/kup.h                |   2 +-
+ arch/powerpc/include/asm/mmu.h                |   7 -
+ arch/powerpc/include/asm/nohash/32/mmu-40x.h  |  68 --
+ arch/powerpc/include/asm/nohash/32/pgtable.h  |   4 +-
+ arch/powerpc/include/asm/nohash/32/pte-40x.h  |  73 --
+ arch/powerpc/include/asm/nohash/mmu.h         |   5 +-
+ arch/powerpc/include/asm/ppc_asm.h            |   2 +-
+ arch/powerpc/include/asm/processor.h          |   2 +-
+ arch/powerpc/include/asm/ptrace.h             |   2 +-
+ arch/powerpc/include/asm/reg.h                |  27 +-
+ arch/powerpc/include/asm/reg_booke.h          | 113 +--
+ arch/powerpc/include/asm/time.h               |   7 +-
+ arch/powerpc/include/asm/udbg.h               |   1 -
+ arch/powerpc/kernel/Makefile                  |   1 -
+ arch/powerpc/kernel/asm-offsets.c             |   2 +-
+ arch/powerpc/kernel/cpu_specs.h               |   4 -
+ arch/powerpc/kernel/cpu_specs_40x.h           | 280 -------
+ arch/powerpc/kernel/entry_32.S                |  48 +-
+ arch/powerpc/kernel/epapr_hcalls.S            |   2 +-
+ arch/powerpc/kernel/head_32.h                 |  12 +-
+ arch/powerpc/kernel/head_40x.S                | 721 ------------------
+ arch/powerpc/kernel/head_booke.h              |   3 +-
+ arch/powerpc/kernel/irq.c                     |   2 +-
+ arch/powerpc/kernel/kgdb.c                    |   4 +-
+ arch/powerpc/kernel/misc_32.S                 |  40 -
+ arch/powerpc/kernel/process.c                 |   4 +-
+ arch/powerpc/kernel/setup.h                   |   2 +-
+ arch/powerpc/kernel/setup_32.c                |   2 +-
+ arch/powerpc/kernel/time.c                    |   2 +-
+ arch/powerpc/kernel/traps.c                   |   2 +-
+ arch/powerpc/kernel/udbg.c                    |   3 -
+ arch/powerpc/kernel/udbg_16550.c              |  23 -
+ arch/powerpc/mm/fault.c                       |   4 +-
+ arch/powerpc/mm/mmu_context.c                 |   2 +-
+ arch/powerpc/mm/mmu_decl.h                    |   8 +-
+ arch/powerpc/mm/nohash/40x.c                  | 161 ----
+ arch/powerpc/mm/nohash/Makefile               |   1 -
+ arch/powerpc/mm/nohash/kup.c                  |   2 -
+ arch/powerpc/mm/nohash/mmu_context.c          |   5 +-
+ arch/powerpc/mm/nohash/tlb_low.S              |  27 +-
+ arch/powerpc/mm/ptdump/Makefile               |   2 +-
+ arch/powerpc/platforms/40x/Kconfig            |  78 --
+ arch/powerpc/platforms/40x/Makefile           |   2 -
+ arch/powerpc/platforms/40x/ppc40x_simple.c    |  74 --
+ arch/powerpc/platforms/44x/Makefile           |   6 +-
+ arch/powerpc/platforms/{4xx => 44x}/cpm.c     |   0
+ arch/powerpc/platforms/{4xx => 44x}/gpio.c    |   0
+ .../powerpc/platforms/{4xx => 44x}/hsta_msi.c |   0
+ arch/powerpc/platforms/44x/machine_check.c    |  15 +
+ arch/powerpc/platforms/{4xx => 44x}/pci.c     | 100 ---
+ arch/powerpc/platforms/{4xx => 44x}/pci.h     |   0
+ arch/powerpc/platforms/{4xx => 44x}/soc.c     |   0
+ arch/powerpc/platforms/{4xx => 44x}/uic.c     |   0
+ arch/powerpc/platforms/4xx/Makefile           |   7 -
+ arch/powerpc/platforms/4xx/machine_check.c    |  23 -
+ arch/powerpc/platforms/Kconfig                |   1 -
+ arch/powerpc/platforms/Kconfig.cputype        |  30 +-
+ arch/powerpc/platforms/Makefile               |   2 -
+ arch/powerpc/sysdev/Kconfig                   |   4 +-
+ scripts/head-object-list.txt                  |   1 -
+ 89 files changed, 77 insertions(+), 4445 deletions(-)
+ delete mode 100644 arch/powerpc/boot/cuboot-acadia.c
+ delete mode 100644 arch/powerpc/boot/cuboot-hotfoot.c
+ delete mode 100644 arch/powerpc/boot/cuboot-kilauea.c
+ delete mode 100644 arch/powerpc/boot/dts/acadia.dts
+ delete mode 100644 arch/powerpc/boot/dts/hotfoot.dts
+ delete mode 100644 arch/powerpc/boot/dts/kilauea.dts
+ delete mode 100644 arch/powerpc/boot/dts/obs600.dts
+ delete mode 100644 arch/powerpc/boot/ppcboot-hotfoot.h
+ delete mode 100644 arch/powerpc/configs/40x.config
+ delete mode 100644 arch/powerpc/configs/40x/acadia_defconfig
+ delete mode 100644 arch/powerpc/configs/40x/kilauea_defconfig
+ delete mode 100644 arch/powerpc/configs/40x/klondike_defconfig
+ delete mode 100644 arch/powerpc/configs/40x/makalu_defconfig
+ delete mode 100644 arch/powerpc/configs/40x/obs600_defconfig
+ delete mode 100644 arch/powerpc/configs/40x/walnut_defconfig
+ delete mode 100644 arch/powerpc/configs/ppc40x_defconfig
+ delete mode 100644 arch/powerpc/include/asm/nohash/32/mmu-40x.h
+ delete mode 100644 arch/powerpc/include/asm/nohash/32/pte-40x.h
+ delete mode 100644 arch/powerpc/kernel/cpu_specs_40x.h
+ delete mode 100644 arch/powerpc/kernel/head_40x.S
+ delete mode 100644 arch/powerpc/mm/nohash/40x.c
+ delete mode 100644 arch/powerpc/platforms/40x/Kconfig
+ delete mode 100644 arch/powerpc/platforms/40x/Makefile
+ delete mode 100644 arch/powerpc/platforms/40x/ppc40x_simple.c
+ rename arch/powerpc/platforms/{4xx => 44x}/cpm.c (100%)
+ rename arch/powerpc/platforms/{4xx => 44x}/gpio.c (100%)
+ rename arch/powerpc/platforms/{4xx => 44x}/hsta_msi.c (100%)
+ rename arch/powerpc/platforms/{4xx => 44x}/pci.c (95%)
+ rename arch/powerpc/platforms/{4xx => 44x}/pci.h (100%)
+ rename arch/powerpc/platforms/{4xx => 44x}/soc.c (100%)
+ rename arch/powerpc/platforms/{4xx => 44x}/uic.c (100%)
+ delete mode 100644 arch/powerpc/platforms/4xx/Makefile
+ delete mode 100644 arch/powerpc/platforms/4xx/machine_check.c
+
+-- 
+2.45.0
+
 
