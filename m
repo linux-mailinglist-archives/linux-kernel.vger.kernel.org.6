@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-170432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C448BD6BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:15:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D968BD6BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B42081C20C3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C81B283774
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB4715B96C;
-	Mon,  6 May 2024 21:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DF615B96C;
+	Mon,  6 May 2024 21:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkEVFJMv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqKkkhkV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C767EBB;
-	Mon,  6 May 2024 21:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF67D158D66;
+	Mon,  6 May 2024 21:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715030094; cv=none; b=GQUaDrnQo+dcu+2EfWTYtWRCZZn6lYDWGYen//vwX4e1dZCEG01bHK6t9GVErG9CJ7kSc5HoIWrQNiwUN1Mn+6hmLwUIq+yu1QO1afgjIjwwWsThB4RzG2QcjEtyPb9ZodZLwUgBBjUt3FWwa66Yj+xO4ZP/YI1LAPBfNYNckXM=
+	t=1715030140; cv=none; b=IHzN6On82j0nqUThpUAcRDeM+u3Vny/BUgUnBJ33RY0qbL7vI2jzSPNogU2qKhRQ6HwbpbslsUmH61Jxxu5b1MXMBrm9sj/F89Jaicc5eqS0rRfPUxyYDtXR1VTaur+ja8itukX3pDu4yTTAPeJ8BrA+Lg/MSq2rUUtl6qe6LKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715030094; c=relaxed/simple;
-	bh=DL57WJ3pgMltw3b3vtF6CqcoODcClGWM1tPYWrB6ufs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JMIhny23eIJZ+fmqW9EtdXmhAzcpVtTIl8C/0iBRmmvOXl5KYVhexOMBiZcDAr0cAA5sSeeJKB3WEzA4lPoZdxke9I+sS8MWPr0Uq/WBeYPjKyHfWxjGQpeFKpPa40aMi8intwsT22iG8rw3u3kWceL6zLzagKHdA3jHUCejOFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkEVFJMv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A040C116B1;
-	Mon,  6 May 2024 21:14:52 +0000 (UTC)
+	s=arc-20240116; t=1715030140; c=relaxed/simple;
+	bh=BNEt0fBHSji1sSptkwjldcVnD1m8WbokH54t5xvjJJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fdbo+36Jfv68RYKdXQWgkFU9EtpTpeAKM5dr/27bBcgsPaHwDy/Ty1weRe0iH3VxEqnH2xDpPou/qWE46x1d7j+PkSzlo6g5V74TdSEy/I6Vi6l3BiNy1zlecttiSprwAajLwSbxHPqvTIAiJX7XT2ftylFldzSHFXhv6gfhX7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqKkkhkV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D032C116B1;
+	Mon,  6 May 2024 21:15:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715030093;
-	bh=DL57WJ3pgMltw3b3vtF6CqcoODcClGWM1tPYWrB6ufs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=fkEVFJMvvfBE4FLaDKgmhIZdFRqcm0MINC4dfL779WW6YQUA5CAwBEHcgjpv0nc5S
-	 qmrs4aA9QqlXwf1dpdrzNWbnMonzkWXqJkqk1cnTlviHTDHCdWLvWmPybEIc/HI3rK
-	 T7DTWsksngI1p1oJhoHm41PKL5UdsVsAh0e7aCewf2T1jxLx8hiPpS0k+YwsxcNVuY
-	 O4qPtvC6AkyCpkJlr4j3JntuOny9A7pooH2BPMEKZSRhXULK6g55Sd43+gkmOsg42w
-	 qypX39T0j2ePhKk6N8T1Tpqlf3pPdPf9kZtomuYYAYLhSAQcgKUkq769m5bfIsGREm
-	 g3fOVQi9ID8cQ==
-Date: Mon, 6 May 2024 23:14:50 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Sean O'Brien <seobrien@chromium.org>
-cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: Add quirk for Logitech Casa touchpad
-In-Reply-To: <20240429180804.1.Ie7e8d0ba595f9e39f71cbe4ab3468f79c00b4581@changeid>
-Message-ID: <nycvar.YFH.7.76.2405062314420.16865@cbobk.fhfr.pm>
-References: <20240429180804.1.Ie7e8d0ba595f9e39f71cbe4ab3468f79c00b4581@changeid>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1715030140;
+	bh=BNEt0fBHSji1sSptkwjldcVnD1m8WbokH54t5xvjJJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FqKkkhkVq0BxlhsNJ/a2Z2dc2C7JFP9T4n6PqpAfWWugRBtOBffKz6zc21pEozzUR
+	 lVy0LuC1DuGo+NoeTYaNsnLHSeCXV9denfhtal87Nym/azFZd4s3wQXq5VQuKbpSGX
+	 cOcA2OUBA8KjfKWSkCsQ0NVCgHKbq9cHoOOMNrYRtWm7MxPMOlkzewNIu+HvJnQdDH
+	 J3cZ9H/JqUuDmrQ/QnUDTPdA8VOIotQmipcb0Q6FXRAEkuJ0Y+R/7Pps1NjkqwFo7s
+	 tfHWmR1wrtrxCL0TnkSNSTKOoKJop/KJKK3Xpzzcck1jPSZy1u/3pc/z+6E3DJEIpl
+	 sYxIUbqjJW4pA==
+Date: Mon, 6 May 2024 23:15:37 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v2 13/27] context_tracking, rcu: Rename
+ rcu_dynticks_task*() into rcu_task*()
+Message-ID: <ZjlIeVR2zUuNhKSK@pavilion.home>
+References: <20240430091740.1826862-1-vschneid@redhat.com>
+ <20240430091740.1826862-14-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240430091740.1826862-14-vschneid@redhat.com>
 
-On Mon, 29 Apr 2024, Sean O'Brien wrote:
-
-> This device sometimes doesn't send touch release signals when moving
-> from >=4 fingers to <4 fingers. Using MT_QUIRK_NOT_SEEN_MEANS_UP instead
-> of MT_QUIRK_ALWAYS_VALID makes sure that no touches become stuck.
+Le Tue, Apr 30, 2024 at 11:17:17AM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
+> meaning.
 > 
-> MT_QUIRK_FORCE_MULTI_INPUT is not necessary for this device, but does no
-> harm.
-> 
-> Signed-off-by: Sean O'Brien <seobrien@chromium.org>
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 
-Applied, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
