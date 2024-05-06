@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-170158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952268BD2A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:24:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A290B8BD2AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C678A1C22144
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57CC11F23E40
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9730E15664B;
-	Mon,  6 May 2024 16:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FF5156661;
+	Mon,  6 May 2024 16:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mlkkBGn8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="8dl2nYqh"
+Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7524E156249;
-	Mon,  6 May 2024 16:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6315575A;
+	Mon,  6 May 2024 16:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715012626; cv=none; b=JP5n4v6Blkt5lreBxX/691LgKnW5mYgQFiJI+uiASVcKU0bCCyh/fWgf1xvzAaNShwrQv237T7mxQ9qcy2dUkijguBM0hW/BuXWEF2cEv93FDYy7h4N1sP0qBl2ee7xkiNso8MzIFRmg5Yupd3w12ddZEuFFImyyoUZKOpmhqUs=
+	t=1715012648; cv=none; b=bfs/PVotmstY/6gqjLACvKkpj67UjQBBHm1FHM5Sv1i/za97neBdR0rInwSqQ+N9rau60Cls0OMAuTi0EnreZ4Hq41+EP7peYNYpKcIzAkMBSpxkTB5uUqH8cRBTX5A9xJAEYBpvvnpqYt+7d6ilofPb8VyzSurbWDlpCqzuLKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715012626; c=relaxed/simple;
-	bh=+/79PzSKmQqts0bin6aPKBOwCMJ4laAlgqQpKYvQtKQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=d+AMrFNYQgK0+YR9kany/ntN0dQ1Nr/SE6oJnVH7JnANlUd1lJU2Be06wpLxNZ68KqDQP2heh8AF14rFKwg5CCsnufnLseaXO4QtN6+tT2XhQ2myyZr73xzUKogvsXHQ3Ov9Sw1FXu/KjrzXYF8tEe8doX2dBvzVU0HB3YpA5Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mlkkBGn8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 446FiroX019014;
-	Mon, 6 May 2024 16:23:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=1AY
-	FRPIEhsBskY65wXUubXZEOcFHW0IsSaJRIk/GcV4=; b=mlkkBGn839G76t0WXpA
-	298yIqugsLdNr0yoSbvXl4h3OnXObHbzSLCQ1Ly3aXh+OFwg3ihweEXYstEDGOi2
-	Bv5tDEVhAHnCv5DDcubJiFRfNnGFdracVBPC9BRW/1FFmgLPk2KxSb7JsL3+g3UD
-	fs9OZmNjA5dc6vPdzyAOYyexac7BZOGoqhXJbG5kBPm2Qx/2BXAf/0l3rX1qyr8G
-	Wb+nslSAGB1KhCzrEij8VXb6HaLwGoXrqP8JqCtUj/jKbgP0yOLTYBsVoXGXMjQ3
-	9Yvn+t/r7e4Ppycb6cuMRVSGPS7femMsHIS/oRnanzfAutV6ajYCCJB/hjRhho4g
-	1jA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xxw800swd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 16:23:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 446GNZ28029547
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 6 May 2024 16:23:35 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 6 May 2024
- 09:23:35 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 6 May 2024 09:23:35 -0700
-Subject: [PATCH] thermal/drivers/max77620: Fix max77620_thermal_read_temp()
- kernel-doc
+	s=arc-20240116; t=1715012648; c=relaxed/simple;
+	bh=eFOl7PcsP3agx3qzdhbJJDR4zXY2SAfO3NMK3tEzZdQ=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ILWERfYgvP0RpR4ZJOi+qohDJ6hk/Pww6ThJnorKqfGVTH5oPjkp2AokfWmzwWHSooLb9eoDvJSdWvQuy5kcQFZLc8f71nj+h8IvmfXQGCpvy6dLuO/VyWoa7DHL+OyVJCV0jk7kaWqYsSFDjMEhynOXb2MMyyzrqUlIxmU2zo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=8dl2nYqh; arc=none smtp.client-ip=161.97.139.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
+	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1s418E-005r2Z-0a;
+	Mon, 06 May 2024 18:24:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=utpz7iYXHktEzXWIgy4GD/ao0gKYmCpXe/gyJxy70Cg=; b=8dl2nYqhhIpZL8gCgRAbh94PuJ
+	ypYzLpxAKlKVb/qg4a+PGlxPZX22Fc/FqM884Q2+OSHNdUOWAzbGwvN9XzFNVJ7OfXkZySbcqiVMJ
+	TkeadAI83mGlg9kZYESsZ3j4Z2E7+J/IAr4/XtTnFHlQYPiV3wmVrYgu2LNZumgKWEOi8IkJFocBO
+	hSitiurFdmJgONlY8bJ2s75yMopwBlYd0rJ+Ee79nsVD24cVsEGSugjq3KJFpXw/8iDaNhQIBmAkQ
+	cJlL4su9uq9FyvpVoOW5gVlvVNX2OWwMV2aBfax4ATTusMiWvDF82yLJ2kpewQx7YRvoOfv6q3rCI
+	0w4mwh6Q==;
+Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1s418D-000fJY-1S;
+	Mon, 06 May 2024 18:24:02 +0200
+Received: from andi by aktux with local (Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1s418E-003pVA-1K;
+	Mon, 06 May 2024 18:24:02 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andreas@kemnade.info,
+	hdegoede@redhat.com,
+	andy.shevchenko@gmail.com,
+	u.kleine-koenig@pengutronix.de,
+	siebren.vroegindeweij@hotmail.com,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Input: Add ektf2232 support
+Date: Mon,  6 May 2024 18:23:47 +0200
+Message-Id: <20240506162350.912950-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240506-max77620_thermal_read_temp-kdoc-v1-1-679f0486d52c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAYEOWYC/x3NQQrDIBBA0auEWVdQawz0KqWESZxWaTRhNEUIu
- Xttl3/z/gGZOFCGW3cA0yfksKYW6tLB7DG9SATXGrTURvbSioh1GKyWY/HEEZeRCd1YKG7i7dZ
- ZWKWURGOs66/QlI3pGer/cH+0njCTmBjT7H/uEtJeG5oLMZznF5TSwWaQAAAA
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano
-	<daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3-54EL4_VJNFMq1lQGgXChJ85p40hkjz
-X-Proofpoint-ORIG-GUID: 3-54EL4_VJNFMq1lQGgXChJ85p40hkjz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-06_11,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- malwarescore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- phishscore=0 suspectscore=0 impostorscore=0 spamscore=0 mlxscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405060114
+Content-Transfer-Encoding: 8bit
 
-Fix the following kernel-doc issues reported by make W=1:
+Add support for the EKTF2232 to the ektf2127 driver which
+contains support for similar chips.
 
-drivers/thermal/max77620_thermal.c:48: warning: Function parameter or struct member 'tz' not described in 'max77620_thermal_read_temp'
-drivers/thermal/max77620_thermal.c:48: warning: Excess function parameter 'data' description in 'max77620_thermal_read_temp'
+Add the needed compatible to bindings and convert them.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/thermal/max77620_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- use dev_err_probe
+- use i2c_get_match_data
 
-diff --git a/drivers/thermal/max77620_thermal.c b/drivers/thermal/max77620_thermal.c
-index 85a12e98d6dc..f0cfe1a8fa94 100644
---- a/drivers/thermal/max77620_thermal.c
-+++ b/drivers/thermal/max77620_thermal.c
-@@ -32,7 +32,7 @@ struct max77620_therm_info {
- 
- /**
-  * max77620_thermal_read_temp: Read PMIC die temperatue.
-- * @data:	Device specific data.
-+ * @tz:		Device specific data.
-  * @temp:	Temperature in millidegrees Celsius
-  *
-  * The actual temperature of PMIC die is not available from PMIC.
+Changes in v2:
+- separate patch for adding compatible
+- use match data for selecting status shift
 
----
-base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
-change-id: 20240506-max77620_thermal_read_temp-kdoc-61110a446d53
+Andreas Kemnade (3):
+  dt-bindings: touchscreen: convert elan,ektf2127 to json-schema
+  dt-bindings: touchscreen: elan,ektf2127: Add EKTF2232
+  Input: ektf2127 - add ektf2232 support
+
+ .../bindings/input/touchscreen/ektf2127.txt   | 25 --------
+ .../input/touchscreen/elan,ektf2127.yaml      | 58 +++++++++++++++++++
+ drivers/input/touchscreen/ektf2127.c          | 36 ++++++++++--
+ 3 files changed, 88 insertions(+), 31 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/ektf2127.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/elan,ektf2127.yaml
+
+-- 
+2.39.2
 
 
