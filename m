@@ -1,86 +1,165 @@
-Return-Path: <linux-kernel+bounces-169838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077CB8BCE67
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15F78BCE6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6531F22DE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5845E2897AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4C86DCF5;
-	Mon,  6 May 2024 12:49:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5B644C66;
+	Mon,  6 May 2024 12:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7CaRqUK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AF94EB4C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED2835280;
+	Mon,  6 May 2024 12:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999745; cv=none; b=SVXvTSWj3JOaM2RycxxR7YViYF1md69oaeJkIBhQNCdSRaQoroH0icitwXc1HQAGFlz9wReDrZz/x3Mo09yTikMLcHziiYrSSgf/jzYNB9/3jqFjGeXlxlzyVEA/XaOtk1u0OPzpV1VlIUcZx1czt3Z41w71Q7TQxdnD/udLmig=
+	t=1714999822; cv=none; b=K1xZ4mP5EzOTqmwH3sK2GkHq+MhYMuMVQ7ViWmkqENODSYO2jxsBNUNkL45qt4zp/XW4YnL7re7NMrA5/g5ncRxJqj/bGZDTp+AVQJgxyCT/lrrtN5+D8HTM9Dhqk0H5d9c3+Bwu+/RyJ6u2YWvJkF5tgnqz1q8gKDe9xZHBlfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999745; c=relaxed/simple;
-	bh=VjB2u488WZHw90y1PLR4ye99A/PaYrwu0eueMeEUNeE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nP3NzPuuKO8vPj4bRLrMrljXgEXDc6c/g2LJTXlspcqGCPPbaUsW3YYjtKjxQ8INipcbeMRzAriC+4ypg5IUG8TVmfkad6ZndqZCq5rtQq7FEoGv5DN507lHyDO/rL6JscMgHf3IPE5ewGZIZ7FquXUnp1ahwRG7/nhpTp0L+Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c5ff9964fso12368425ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:49:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714999743; x=1715604543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+EhjnU0SNpEiQJuByA7SIjeuS8TgOhozIjm6fqpQVU=;
-        b=p9S1+EXraEaVEQHyZfqROjvDIlkpgG97GlEVu8lzP9uKVc6uNFbiNPEx6hT5Jk4lC5
-         dV4lbpNbp4LlFuklmOsvkv5d0zm0MUkfvQUzVwHEEdHGIgs6mmvi7SyoFaZoaaH31ITt
-         0ZLOszeyrwlWf96bZz4cuIEzmFtzPGLTNTXrvQp05VE4AnqfLKXwHv9G7ZGvXDPY6sDN
-         YPW5yy6mcloROnelFT6gSmbPvSYzHdGBOXfn+UW2nU1KktaOGpZyzEnoz+EhDWaEZ3jF
-         3Lc/zcLAUwl+yz0boNNTVTXkYr2f+Vz68KdlTea4HvUV17S5H+VYeXCXu0FwkN63Nzd0
-         80yA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9LLk39tSqeReLO4FunubxDR2OJa7mHxiEDqkFhV7U/m4oAM1khVK3ajv0wBYviJkodw+U5z6uEU7loMPCuQnjWIDqdTmO+nMEiVlX
-X-Gm-Message-State: AOJu0YyM7DmBKNuJZmsxD93TNSyxlDQVMkbrMI93q5+mlZamqTnT8QKn
-	9UCuRBlTkqU7VDP1fLS7yCM4mUvOEkXenOGyh5shynLwCOjFHNwYnaZOsgXnJYf69FRKCg9Wg1s
-	fzReG5BAvTYX+LPdmLqQtrIbzjvCA1woVIX+bFuwOhWriHAiGuVTO+1w=
-X-Google-Smtp-Source: AGHT+IHltGYYkCiN4Cume+iOfB70ZXjCZB4due3cfZJySDGbpEs19Pjqkx3h7BHcZlw6BtLOVJg/94mpI8hW4QlSzQon7mG19PkV
+	s=arc-20240116; t=1714999822; c=relaxed/simple;
+	bh=gH5EX8v31IKKWG02ARJDY+jbpfB5szxfgpICF1R0z5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LjvotH9ZGLoYgcvMtxw1tcxG2z/bcCaNU5iQIZTy27RgCyBw6LLAsSQoTOI6uzCUnLahxzFSKhlAEuerbtL6GAmmL2V78uItoTsdwVdNjKwE+BhA50xs9RRvQZGoN1QVFVRT+rPwKOSuUBjdeSw16ZHsi7ffgyG09hAHFXV2ihc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7CaRqUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A7AC116B1;
+	Mon,  6 May 2024 12:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714999822;
+	bh=gH5EX8v31IKKWG02ARJDY+jbpfB5szxfgpICF1R0z5Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q7CaRqUKBWaHOY4aLBhLpE6y/nk6SLYueNsm6kBkRo2p6qCYnMN7dCgv//NERYNuD
+	 uB530fyyCqHx4j/yrSiIyp1R+DLpxQxCULrhGPJExIfNDoxDqo9tgEOIdREq/Tu03W
+	 gc+Ha5mt3z6PYmM1gA3PIktMa6pPhv/2xi0WRY+fzZjO2QQxnyY3jY2oohkrBEuiil
+	 dX3SQrEo9u03XKyFbWeGP//DbbrQ+TxNC8fDvqcm1hTkjLnPPGzwTuo1ii2IygeUPm
+	 OjCkSvOV2HA/EqFe8CVUQVQYA5T+dWa2nxNEtsM2sSAs9uID7IK692D/L8BYvKuR2L
+	 s1bS/Ti0li9Bg==
+Date: Mon, 6 May 2024 13:50:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
+ petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+ linus.walleij@linaro.org, semen.protsenko@linaro.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 10/10] iio: pressure: bmp280: Add triggered buffer
+ support
+Message-ID: <20240506135010.5f7de250@jic23-huawei>
+In-Reply-To: <20240505235755.GC17986@vamoiridPC>
+References: <20240429190046.24252-1-vassilisamir@gmail.com>
+	<20240429190046.24252-11-vassilisamir@gmail.com>
+	<20240505203456.0c4c0c90@jic23-huawei>
+	<20240505235755.GC17986@vamoiridPC>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170f:b0:36c:88ca:4871 with SMTP id
- u15-20020a056e02170f00b0036c88ca4871mr461452ill.5.1714999743079; Mon, 06 May
- 2024 05:49:03 -0700 (PDT)
-Date: Mon, 06 May 2024 05:49:03 -0700
-In-Reply-To: <tencent_52A96D03A9A44E1779F766C6CB5378436805@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000079f8bd0617c87e7e@google.com>
-Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtReadFirst
-From: syzbot <syzbot+65fa06e29859e41a83f3@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Mon, 6 May 2024 01:57:55 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Sun, May 05, 2024 at 08:34:56PM +0100, Jonathan Cameron wrote:
+> > On Mon, 29 Apr 2024 21:00:46 +0200
+> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> >   
+> > > BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
+> > > temperature, pressure and humidity readings. This facilitates the
+> > > use of burst/bulk reads in order to acquire data faster. The
+> > > approach is different from the one used in oneshot captures.
+> > > 
+> > > BMP085 & BMP1xx devices use a completely different measurement
+> > > process that is well defined and is used in their buffer_handler().
+> > > 
+> > > Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
+> > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>  
+> > Hi Vasileois,
+> > 
+> > Just one question on this inline. (patches 8 and 9 look good to me)
+> > 
+> > For v6, only need to send the patches that I haven't already applied.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> > >  
+> > > +static irqreturn_t bmp180_buffer_handler(int irq, void *p)
+> > > +{
+> > > +	struct iio_poll_func *pf = p;
+> > > +	struct iio_dev *indio_dev = pf->indio_dev;
+> > > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > > +	int ret, chan_value;
+> > > +
+> > > +	guard(mutex)(&data->lock);
+> > > +
+> > > +	ret = bmp180_read_temp(data, &chan_value);
+> > > +	if (ret < 0)
+> > > +		return IRQ_HANDLED;
+> > > +
+> > > +	data->sensor_data[1] = chan_value;
+> > > +
+> > > +	ret = bmp180_read_press(data, &chan_value);  
+> > 
+> > So I 'think' that after all the refactoring you end up reading the temperature
+> > twice.  To avoid that you need to pull the read_temp() and read_press()
+> > function implementations here and only do the (currently duplicated) steps once.
+> > 
+> > You seem to have done this for the other case, but missed the bmp180?
+> > Maybe I'm missing some reason it doesn't work for this one!
+> >   
+> 
+> Hi Jonathan!
+> 
+> So, I didn't miss it. This is an old sensor and in order to get data out, the
+> procedure is much more constrained. As you can see in the datasheet [1] in page
+> 11 there is a well defined process on how to read the data out. It's not
+> possible to make a burst read here. Hence, the strange bmp180_measure() function
+> in order to wait for an EOC before reading the values. Indeed I am reading the
+> temperature 2 times which is not optimal but in order to read both of them I
+> would have to:
+> 
+> a) either get the temperature out of the bmp180_read_press() function
+> (which would ruin a bit consistency with the other bmpxxx_read_press() functions)
+> 
+> b) make a bmp180_get_sensor_data() which would look like bmp180_get_press() but
+> also gives temperature (which won't look that good).
+> 
+> That's why I didn't touch it. If you think it makes more sense to do it, I can
+> follow one of the 2 approaches, whichever you think would make more sense.
 
-Reported-and-tested-by: syzbot+65fa06e29859e41a83f3@syzkaller.appspotmail.com
+Ok. As you say, old sensor so fine to not optimize it. If anyone else cares
+they can do it ;)
 
-Tested on:
+Jonathan
 
-commit:         5eb4573e Merge tag 'soc-fixes-6.9-2' of git://git.kern..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=145680d4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d46aa9d7a44f40d
-dashboard link: https://syzkaller.appspot.com/bug?extid=65fa06e29859e41a83f3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c6d86c980000
+> 
+> Cheers,
+> Vasilis
+> 
+> [1]: https://cdn-shop.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
+> 
+> > > +	if (ret < 0)
+> > > +		return IRQ_HANDLED;
+> > > +
+> > > +	data->sensor_data[0] = chan_value;
+> > > +
+> > > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
+> > > +					   iio_get_time_ns(indio_dev));
+> > > +
+> > > +	iio_trigger_notify_done(indio_dev->trig);
+> > > +
+> > > +	return IRQ_HANDLED;
+> > > +}  
 
-Note: testing is done by a robot and is best-effort only.
 
