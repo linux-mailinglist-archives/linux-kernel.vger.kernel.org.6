@@ -1,183 +1,147 @@
-Return-Path: <linux-kernel+bounces-169674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC58A8BCC12
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:33:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7B28BCC19
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194F81C20F46
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:33:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27CE283BFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4397C142E89;
-	Mon,  6 May 2024 10:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8F14205F;
+	Mon,  6 May 2024 10:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVnlREIF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CxJ6SmLu"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85444142E6B
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC21B101C8
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714991603; cv=none; b=TJl+ZY2PG4zofVg0Cg/tTNiXwQhGhhLYTvUXhzaD1bunknKi0Oeu+ZwnE8lk36ANgMCld8lOA/q/eNLSDpK6xOCjCT7dE+DrB2+aJOGsuRW0yTNvMpzBV0LcD1t4pP9m6wtK1Cej2RsHRN/EeFLABMCGGyzvUQqDGqjV1zY+mcs=
+	t=1714991803; cv=none; b=SvCY54ColliWVTQBZ/o3fno5JpQX87gz9cRx+n/XQCPjp5hC5DBaTISGu8TH9xrmbtn+2UBXuUd8CZGfZJLpTeX3DP93NWQPUR0P8OXg3nVp77m3e3VaSQD0hQj2mm+aB5e+8uLN9htZtWVDwqzaBAO0o5RY35JNzuibzAIQd0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714991603; c=relaxed/simple;
-	bh=hbVH4a2LMnYUE7XaNzFKCA9lmmoLLYRfxfA+UzcjhHs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nUvkTlnPFgurIC+fK2iw44H/QkJzmdfiwgeZhYLdyhF+UqB4QkT2LHhqpIyD8Ltz2/CaBINCOsYBgs2892yRqJ5a8j0ujWe5kSXGVmezh21KlzlkGwmQBPggvPAdJTiVxVnTmq2/97F4wZfmn0j6xEM3xMDMUCU48kMj06Cw1p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVnlREIF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29B2C116B1;
-	Mon,  6 May 2024 10:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714991603;
-	bh=hbVH4a2LMnYUE7XaNzFKCA9lmmoLLYRfxfA+UzcjhHs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OVnlREIFEJYCkGh6gKiF0Pznv5yXHDeBviRdV7sMv9dlSEhNkG8O0yL3CURYxOSWO
-	 peo1a2H6IyVgnnKgMpxQNEhBcXjZcqMYqeGl5j4r3NAeaCEMG0r5ocMc8Cuexsdeqq
-	 PVJem+EOFVIo807lc+GXx3QwCxSBBjgWMKxRHuGk0e2QuufstNhqZZBI7c3F6gQP6C
-	 zjxYBhh9eYDwba76fqyulTnqdb0aGg1+LLM0MdScReoarkJfT0HTMbVr7RRvqLPc9b
-	 +fcqD5ElJJ+B+K5uI+S4bGyzHYbFSbdTByoGhnDFV183Vy/1bZNDM5Ht/8y+Liu7B+
-	 +SLSGo2B8F8ag==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-Subject: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for inline_data inode
-Date: Mon,  6 May 2024 18:33:13 +0800
-Message-Id: <20240506103313.773503-3-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240506103313.773503-1-chao@kernel.org>
-References: <20240506103313.773503-1-chao@kernel.org>
+	s=arc-20240116; t=1714991803; c=relaxed/simple;
+	bh=f5FuZwO+MKPKX+harEgFy8Dh9f/mr78JHk/hvTY/C80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+i1xa4rLp3PjJJpEjFJCY6+07XScJTXZXUzWp09HJxcJcM2kRzsNruEWxdwnOnMd1dZBU2cDmB2WkKJ82oS4EzuttEt8Qwepyrjz//6EEvZM+Jb/T53BW8qJIG824NEBM76Wog6eK3uBBKDP8rcQNi8YXaWTgw8Id9wao6Ngj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CxJ6SmLu; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=G+EKeG5lmQSIPvzwSIB/xbVPGJg7u7Z8HVLDlPsO+Kc=; b=CxJ6SmLubh1k7f7/C6+rUViNDw
+	mFKZ59aENl0agch5F/t6Zqj1nRInyqDvhbvaLGb+KVyESz2JapTBlJTokwRKbkZbMnkk0im5txIP9
+	Y/Xzk9Pbf+16jcnrIaGKM9JXa5nf60vBQz63N//PxYzRc0Vmz7aQPYHuUg9pazAFG+usNZenw4viw
+	LTxzbptWKlejjgdxHdIUMyBeNNBANn7XkQgt4rs7O/+vzHG9ru6NMt63xylisdXrI+3Zxi/5X7zbs
+	cuCgdx4ywM6XGOb01uqqTDVvk1VORK8NCyHMN/wIe35ZZXqQzX32l7PQZGFp3PqIL3ThIw385i3Vy
+	mQCqsFRw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s3vi1-00000001gGK-1oms;
+	Mon, 06 May 2024 10:36:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1C563300362; Mon,  6 May 2024 12:36:37 +0200 (CEST)
+Date: Mon, 6 May 2024 12:36:37 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+	Vernon Lovejoy <vlovejoy@redhat.com>
+Subject: Re: [PATCH v2] locking/qspinlock: Save previous node & owner CPU
+ into mcs_spinlock
+Message-ID: <20240506103637.GM40213@noisy.programming.kicks-ass.net>
+References: <20240504024106.654319-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240504024106.654319-1-longman@redhat.com>
 
-syzbot reports a f2fs bug as below:
+On Fri, May 03, 2024 at 10:41:06PM -0400, Waiman Long wrote:
 
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/inline.c:258!
-CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
-RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
-Call Trace:
- f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
- f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
- __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
- f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
- do_writepages+0x35b/0x870 mm/page-writeback.c:2612
- __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
- writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
- wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
- wb_do_writeback fs/fs-writeback.c:2264 [inline]
- wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
- process_one_work kernel/workqueue.c:3254 [inline]
- process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
- kthread+0x2f2/0x390 kernel/kthread.c:388
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Not much of a fan of this thing, but I suppose it won't hurt too much ...
 
-The root cause is: inline_data inode can be fuzzed, so that there may
-be valid blkaddr in its direct node, once f2fs triggers background GC
-to migrate the block, it will hit f2fs_bug_on() during dirty page
-writeback.
+> diff --git a/kernel/locking/mcs_spinlock.h b/kernel/locking/mcs_spinlock.h
+> index 85251d8771d9..cbe6f07dff2e 100644
+> --- a/kernel/locking/mcs_spinlock.h
+> +++ b/kernel/locking/mcs_spinlock.h
+> @@ -13,12 +13,19 @@
+>  #ifndef __LINUX_MCS_SPINLOCK_H
+>  #define __LINUX_MCS_SPINLOCK_H
+>  
+> +/*
+> + * Save an encoded version of the current MCS lock owner CPU to the
+> + * mcs_spinlock structure of the next lock owner.
+> + */
+> +#define MCS_LOCKED	(smp_processor_id() + 1)
+> +
+>  #include <asm/mcs_spinlock.h>
+>  
+>  struct mcs_spinlock {
+>  	struct mcs_spinlock *next;
+> -	int locked; /* 1 if lock acquired */
+> -	int count;  /* nesting count, see qspinlock.c */
+> +	int locked;	 /* non-zero if lock acquired */
+> +	short count;	 /* nesting count, see qspinlock.c */
+> +	short prev_node; /* encoded previous node value */
 
-Let's add sanity check on i_nid field for inline_data inode, meanwhile,
-forbid to migrate inline_data inode's data block to fix this issue.
+Strictly speaking, count shouldn't ever go much higher than 4, so I
+suppose a byte should be sufficient. That would then leave 24bit for the
+prev thing, but you'll get to use bitfields or some other horrible
+thing.
 
-Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h   |  2 +-
- fs/f2fs/gc.c     |  6 ++++++
- fs/f2fs/inline.c | 17 ++++++++++++++++-
- fs/f2fs/inode.c  |  2 +-
- 4 files changed, 24 insertions(+), 3 deletions(-)
+>  };
+>  
+>  #ifndef arch_mcs_spin_lock_contended
+> @@ -42,7 +49,7 @@ do {									\
+>   * unlocking.
+>   */
+>  #define arch_mcs_spin_unlock_contended(l)				\
+> -	smp_store_release((l), 1)
+> +	smp_store_release((l), MCS_LOCKED)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index fced2b7652f4..c876813b5532 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
-  * inline.c
-  */
- bool f2fs_may_inline_data(struct inode *inode);
--bool f2fs_sanity_check_inline_data(struct inode *inode);
-+bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
- bool f2fs_may_inline_dentry(struct inode *inode);
- void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
- void f2fs_truncate_inline_inode(struct inode *inode,
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e86c7f01539a..041957750478 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 				continue;
- 			}
- 
-+			if (f2fs_has_inline_data(inode)) {
-+				iput(inode);
-+				set_sbi_flag(sbi, SBI_NEED_FSCK);
-+				continue;
-+			}
-+
- 			err = f2fs_gc_pinned_control(inode, gc_type, segno);
- 			if (err == -EAGAIN) {
- 				iput(inode);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index ac00423f117b..067600fed3d4 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
- 	return !f2fs_post_read_required(inode);
- }
- 
--bool f2fs_sanity_check_inline_data(struct inode *inode)
-+static bool has_node_blocks(struct inode *inode, struct page *ipage)
-+{
-+	struct f2fs_inode *ri = F2FS_INODE(ipage);
-+	int i;
-+
-+	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
-+		if (ri->i_nid[i])
-+			return true;
-+	}
-+	return false;
-+}
-+
-+bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
- {
- 	if (!f2fs_has_inline_data(inode))
- 		return false;
- 
-+	if (has_node_blocks(inode, ipage))
-+		return false;
-+
- 	if (!support_inline_data(inode))
- 		return true;
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index c26effdce9aa..1423cd27a477 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 		}
- 	}
- 
--	if (f2fs_sanity_check_inline_data(inode)) {
-+	if (f2fs_sanity_check_inline_data(inode, node_page)) {
- 		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
- 			  __func__, inode->i_ino, inode->i_mode);
- 		return false;
--- 
-2.40.1
+This leaves ARM up a creek I suppose... Also, there's but a single
+MCS_LOCKED user.
 
+>  #endif
+>  
+>  /*
+> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+> index ebe6b8ec7cb3..df78d13efa3d 100644
+> --- a/kernel/locking/qspinlock.c
+> +++ b/kernel/locking/qspinlock.c
+> @@ -436,6 +436,7 @@ void __lockfunc queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>  
+>  	node->locked = 0;
+>  	node->next = NULL;
+> +	node->prev_node = 0;
+>  	pv_init_node(node);
+>  
+>  	/*
+> @@ -463,6 +464,13 @@ void __lockfunc queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>  	old = xchg_tail(lock, tail);
+>  	next = NULL;
+>  
+> +	/*
+> +	 * The prev_node value is saved for crash dump analysis purpose only,
+> +	 * it is not used within the qspinlock code. The encoded node value
+> +	 * may be truncated if there are 16k or more CPUs in the system.
+> +	 */
+> +	node->prev_node = old >> _Q_TAIL_IDX_OFFSET;
+> +
+>  	/*
+>  	 * if there was a previous node; link it and wait until reaching the
+>  	 * head of the waitqueue.
+> -- 
+> 2.39.3
+> 
 
