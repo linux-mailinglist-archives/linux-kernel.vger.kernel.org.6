@@ -1,344 +1,102 @@
-Return-Path: <linux-kernel+bounces-170300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0A28BD4B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:37:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21DFA8BD4AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7771C20313
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D054F2838E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A86159594;
-	Mon,  6 May 2024 18:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5080158A1C;
+	Mon,  6 May 2024 18:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ly9yZ3VF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qql9OWjK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B35158DC4;
-	Mon,  6 May 2024 18:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121861426F;
+	Mon,  6 May 2024 18:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715020588; cv=none; b=QovhV4FyhtzRq2e5G5sVGFAjAVwn3yvcLmFs/5uLpADbapudChK7UR5EYqg3Ao96lT7qTsO2F8UcdjKsyy0dQXTuPKEx4wTkvhFI08dDbxZb3Sbr9pHof0lCWPDLvtIaYDGAhCMeQG5p64CBDoInnf6q275FC4K1/MRq47IWLx0=
+	t=1715020573; cv=none; b=rC69j2AP9H6pBMtBSRflJfbPizAuGR+qMzHG0kypbyIFCioufX17WtbNrClioaXU+W7N/9d51+d9qZGT5NWawJm6RYpGE2xNBzOSzUnGyQIDY8yRH+LS4x4sRGgwMvdxDq5UotGt8G2HpJA5A5fJR7+9i58KZYr7IwmpC8B1sWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715020588; c=relaxed/simple;
-	bh=+ihVkDEpUcnmzb/O05pN4MdzfyRmDXtshitm8PzX3qw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kE+qHZKtt4ZhrB+eBMGs7PeHEDPH/rMjkaFaXd09iCXSMgdJT7HokRXw5p62fL//V6sogJU04s08PSA99ebj/2C32cnw4bec3FiLvzXo5L+iWBaxsDFsS9HB13FL5Yrcjc9v+wmtQ7absBm4ane+lymo4ARB3IzK6FbFm3Xzch0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ly9yZ3VF; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715020587; x=1746556587;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+ihVkDEpUcnmzb/O05pN4MdzfyRmDXtshitm8PzX3qw=;
-  b=ly9yZ3VF2hBxg241uO8E4r76K7/Voru+5P9NA5+X6vXNQ6d2JsdZwViQ
-   TMplP6zCM314TH/XHwUmyTt5Xhfk5t4T2rAHZy3pIS91SY5h0VRVhAyMO
-   70FWzSzafeyGVmeUSjYQt2m5leFtkuS8LH7NSVI9i2SLSTsE8tBOKSmx+
-   M8rcTk+KwCoghd5aA5Z7PCw8OCAXM6fGeGCySM1AeL/Bqd9wAS+P6SNsu
-   G5Jey11eiDvSNa0aUsPxSInDB4oaQZGJbKmnB1YEkqkS8xNun+yApyWrl
-   OqTkWGRT1UxoExynSUtGvzPCdeNcAGO3bU6YcHwoNL8Ym3SzyMOXH7Aul
-   A==;
-X-CSE-ConnectionGUID: tAH24pjiQDKLHFYkRqtUaQ==
-X-CSE-MsgGUID: C/U9IQm+TbO4Dwkt+nvYcw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21455756"
-X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
-   d="scan'208";a="21455756"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 11:36:10 -0700
-X-CSE-ConnectionGUID: 28MLq4amRrmBCBVBu2azjQ==
-X-CSE-MsgGUID: 7spJvhH4T9Sp5VixDIx9sA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
-   d="scan'208";a="28237815"
-Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 11:36:10 -0700
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: isaku.yamahata@intel.com,
-	pbonzini@redhat.com,
-	erdemaktas@google.com,
-	vkuznets@redhat.com,
-	seanjc@google.com,
-	vannapurve@google.com,
-	jmattson@google.com,
-	mlevitsk@redhat.com,
-	xiaoyao.li@intel.com,
-	chao.gao@intel.com,
-	rick.p.edgecombe@intel.com,
-	yuan.yao@intel.com
-Cc: reinette.chatre@intel.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V6 4/4] KVM: selftests: Add test for configure of x86 APIC bus frequency
-Date: Mon,  6 May 2024 11:35:58 -0700
-Message-Id: <a2f7013646a8a1e314744568b9baa439682cbf8a.1715017765.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1715017765.git.reinette.chatre@intel.com>
-References: <cover.1715017765.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1715020573; c=relaxed/simple;
+	bh=GZa/wPUGojJfxaJOHsD5KLlJ1l/5vASRHRzePy2aJGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K0ZdWFiGkf/+pR5/sVwSdZZmsEWTl+mok0+ugc/cYIPPhwmZWelusrFJMhIpUvrare5Jh3BWX+rGYCfFQlp39XzGAorPdszAdvTdJwaIHarZ406ZHlLMp5LwTpiPilWFs4jFloJ6cwunu+fFrAHnLDoosuloy9R7F97LAjqa+fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qql9OWjK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A407C116B1;
+	Mon,  6 May 2024 18:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715020572;
+	bh=GZa/wPUGojJfxaJOHsD5KLlJ1l/5vASRHRzePy2aJGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qql9OWjKemsavWDfOZqrDHDQLdALbwxGdM2GzYG2gTYplVys3DBcZPHhqK7/gGTRg
+	 Ua23ZtVxPN0GYbEvuYPfy4nRpPhWHmHUKfYPqvEtaFVjOnqK0bpn70b8zVX1ob51cN
+	 e4ohCGXI1IIy653OAhPj+DuA4kvc6tgDtvh8nZ5Xq43P1AUdDAHbqwmKUNKIjfwQAn
+	 Ee3yPcqkaGf0Z6eQMedAjDSXKne69hru8MwlXjqPtnrdwI1wF+MupYarbKU9Q6XYQo
+	 SKRH/3kdZ1Ay8L+siLZBqm9hYbfhovSO/XHqK5BETg4SJmbRHCmw0RWdy7b+Ntb6jE
+	 lSCGt2f+/6+UQ==
+Date: Mon, 6 May 2024 15:36:08 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Changbin Du <changbin.du@huawei.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/4] perf map: Add missing dso__put in map__new
+Message-ID: <ZjkjGL6krayHC_XX@x1>
+References: <20240506180104.485674-1-irogers@google.com>
+ <20240506180104.485674-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506180104.485674-2-irogers@google.com>
 
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-
-Test if the APIC bus clock frequency is the expected configured value.
-
-Set APIC timer's initial count to the maximum value and busy wait for 100
-msec (any value is okay) with TSC value. Read the APIC timer's "current
-count" to calculate the actual APIC bus clock frequency based on TSC
-frequency.
-
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-Co-developed-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
-Changes v6:
-- Use vm_create() wrapper instead of open coding it. (Zide)
-- Improve grammar of test description. (Zide)
-
-Changes v5:
-- Update to new name of capability KVM_CAP_X86_APIC_BUS_FREQUENCY ->
-  KVM_CAP_X86_APIC_BUS_CYCLES_NS. (Xiaoyao Li)
-
-Changes v4:
-- Rework changelog.
-- Add Sean's "Suggested-by" to acknowledge guidance received in
-  https://lore.kernel.org/all/ZU0BASXWcck85r90@google.com/
-- Add copyright.
-- Add test description to file header.
-- Consistent capitalization for acronyms.
-- Rebase to kvm-x86/next.
-- Update to v4 change of providing bus clock rate in nanoseconds.
-- Add a "TEST_REQUIRE()" for the new capability so that the test can
-  work on kernels that do not support the new capability.
-- Address checkpatch warnings and use tabs instead of spaces in header
-  file to match existing code.
-
-Changes v3:
-- Use 1.5GHz instead of 1GHz as frequency.
-
-Changes v2:
-- Newly added.
----
- tools/testing/selftests/kvm/Makefile          |   1 +
- .../selftests/kvm/include/x86_64/apic.h       |   7 +
- .../kvm/x86_64/apic_bus_clock_test.c          | 166 ++++++++++++++++++
- 3 files changed, 174 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
-
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 6de9994971c9..52039d7c8dd5 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -111,6 +111,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/vmx_invalid_nested_guest_state
- TEST_GEN_PROGS_x86_64 += x86_64/vmx_set_nested_state_test
- TEST_GEN_PROGS_x86_64 += x86_64/vmx_tsc_adjust_test
- TEST_GEN_PROGS_x86_64 += x86_64/vmx_nested_tsc_scaling_test
-+TEST_GEN_PROGS_x86_64 += x86_64/apic_bus_clock_test
- TEST_GEN_PROGS_x86_64 += x86_64/xapic_ipi_test
- TEST_GEN_PROGS_x86_64 += x86_64/xapic_state_test
- TEST_GEN_PROGS_x86_64 += x86_64/xcr0_cpuid_test
-diff --git a/tools/testing/selftests/kvm/include/x86_64/apic.h b/tools/testing/selftests/kvm/include/x86_64/apic.h
-index bed316fdecd5..b0d2fc62e172 100644
---- a/tools/testing/selftests/kvm/include/x86_64/apic.h
-+++ b/tools/testing/selftests/kvm/include/x86_64/apic.h
-@@ -60,6 +60,13 @@
- #define		APIC_VECTOR_MASK	0x000FF
- #define	APIC_ICR2	0x310
- #define		SET_APIC_DEST_FIELD(x)	((x) << 24)
-+#define APIC_LVT0	0x350
-+#define		APIC_LVT_TIMER_ONESHOT		(0 << 17)
-+#define		APIC_LVT_TIMER_PERIODIC		(1 << 17)
-+#define		APIC_LVT_TIMER_TSCDEADLINE	(2 << 17)
-+#define	APIC_TMICT	0x380
-+#define	APIC_TMCCT	0x390
-+#define	APIC_TDCR	0x3E0
+On Mon, May 06, 2024 at 11:01:01AM -0700, Ian Rogers wrote:
+> A dso__put is needed for the dsos__find when the map is created and a
+> buildid is sought.
  
- void apic_disable(void);
- void xapic_enable(void);
-diff --git a/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
-new file mode 100644
-index 000000000000..56eb686144c6
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Test configure of APIC bus frequency.
-+ *
-+ * Copyright (c) 2024 Intel Corporation
-+ *
-+ * To verify if the APIC bus frequency can be configured this, test starts
-+ * by setting the TSC frequency in KVM, and then:
-+ * For every APIC timer frequency supported:
-+ * * In the guest:
-+ * * * Start the APIC timer by programming the APIC TMICT (initial count
-+ *       register) to the largest value possible to guarantee that it will
-+ *       not expire during the test,
-+ * * * Wait for a known duration based on previously set TSC frequency,
-+ * * * Stop the timer and read the APIC TMCCT (current count) register to
-+ *       determine the count at that time (TMCCT is loaded from TMICT when
-+ *       TMICT is programmed and then starts counting down).
-+ * * In the host:
-+ * * * Determine if the APIC counts close to configured APIC bus frequency
-+ *     while taking into account how the APIC timer frequency was modified
-+ *     using the APIC TDCR (divide configuration register).
-+ */
-+#define _GNU_SOURCE /* for program_invocation_short_name */
-+
-+#include "apic.h"
-+#include "test_util.h"
-+
-+/*
-+ * Pick one convenient value, 1.5GHz. No special meaning and different from
-+ * the default value, 1GHz.
-+ */
-+#define TSC_HZ			(1500 * 1000 * 1000ULL)
-+
-+/* Wait for 100 msec, not too long, not too short value. */
-+#define LOOP_MSEC		100ULL
-+#define TSC_WAIT_DELTA		(TSC_HZ / 1000 * LOOP_MSEC)
-+
-+/*
-+ * Pick a typical value, 25MHz. Different enough from the default value, 1GHz.
-+ */
-+#define APIC_BUS_CLOCK_FREQ	(25 * 1000 * 1000ULL)
-+
-+static void guest_code(void)
-+{
-+	/*
-+	 * Possible TDCR values and its divide count. Used to modify APIC
-+	 * timer frequency.
-+	 */
-+	struct {
-+		u32 tdcr;
-+		u32 divide_count;
-+	} tdcrs[] = {
-+		{0x0, 2},
-+		{0x1, 4},
-+		{0x2, 8},
-+		{0x3, 16},
-+		{0x8, 32},
-+		{0x9, 64},
-+		{0xa, 128},
-+		{0xb, 1},
-+	};
-+
-+	u32 tmict, tmcct;
-+	u64 tsc0, tsc1;
-+	int i;
-+
-+	asm volatile("cli");
-+
-+	xapic_enable();
-+
-+	/*
-+	 * Setup one-shot timer.  The vector does not matter because the
-+	 * interrupt does not fire.
-+	 */
-+	xapic_write_reg(APIC_LVT0, APIC_LVT_TIMER_ONESHOT);
-+
-+	for (i = 0; i < ARRAY_SIZE(tdcrs); i++) {
-+		xapic_write_reg(APIC_TDCR, tdcrs[i].tdcr);
-+
-+		/* Set the largest value to not trigger the interrupt. */
-+		tmict = ~0;
-+		xapic_write_reg(APIC_TMICT, tmict);
-+
-+		/* Busy wait for LOOP_MSEC */
-+		tsc0 = rdtsc();
-+		tsc1 = tsc0;
-+		while (tsc1 - tsc0 < TSC_WAIT_DELTA)
-+			tsc1 = rdtsc();
-+
-+		/* Read APIC timer and TSC */
-+		tmcct = xapic_read_reg(APIC_TMCCT);
-+		tsc1 = rdtsc();
-+
-+		/* Stop timer */
-+		xapic_write_reg(APIC_TMICT, 0);
-+
-+		/* Report it. */
-+		GUEST_SYNC_ARGS(tdcrs[i].divide_count, tmict - tmcct,
-+				tsc1 - tsc0, 0, 0);
-+	}
-+
-+	GUEST_DONE();
-+}
-+
-+void test_apic_bus_clock(struct kvm_vcpu *vcpu)
-+{
-+	bool done = false;
-+	struct ucall uc;
-+
-+	while (!done) {
-+		vcpu_run(vcpu);
-+		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-+
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_DONE:
-+			done = true;
-+			break;
-+		case UCALL_ABORT:
-+			REPORT_GUEST_ASSERT(uc);
-+			break;
-+		case UCALL_SYNC: {
-+			u32 divide_counter = uc.args[1];
-+			u32 apic_cycles = uc.args[2];
-+			u64 tsc_cycles = uc.args[3];
-+			u64 freq;
-+
-+			TEST_ASSERT(tsc_cycles > 0,
-+				    "TSC cycles must not be zero.");
-+
-+			/* Allow 1% slack. */
-+			freq = apic_cycles * divide_counter * TSC_HZ / tsc_cycles;
-+			TEST_ASSERT(freq < APIC_BUS_CLOCK_FREQ * 101 / 100,
-+				    "APIC bus clock frequency is too large");
-+			TEST_ASSERT(freq > APIC_BUS_CLOCK_FREQ * 99 / 100,
-+				    "APIC bus clock frequency is too small");
-+			break;
-+		}
-+		default:
-+			TEST_FAIL("Unknown ucall %lu", uc.cmd);
-+			break;
-+		}
-+	}
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+
-+	TEST_REQUIRE(kvm_has_cap(KVM_CAP_X86_APIC_BUS_CYCLES_NS));
-+
-+	vm = vm_create(1);
-+	vm_ioctl(vm, KVM_SET_TSC_KHZ, (void *)(TSC_HZ / 1000));
-+	/*
-+	 * KVM_CAP_X86_APIC_BUS_CYCLES_NS expects APIC bus clock rate in
-+	 * nanoseconds and requires that no vCPU is created.
-+	 */
-+	vm_enable_cap(vm, KVM_CAP_X86_APIC_BUS_CYCLES_NS,
-+		      NSEC_PER_SEC / APIC_BUS_CLOCK_FREQ);
-+	vcpu = vm_vcpu_add(vm, 0, guest_code);
-+
-+	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
-+
-+	test_apic_bus_clock(vcpu);
-+	kvm_vm_free(vm);
-+}
--- 
-2.34.1
+> Fixes: f649ed80f3ca ("perf dsos: Tidy reference counting and locking")
 
+I just sent a reply asking you to do this, thanks a lot for adding the
+Fixes tag, processing this new series now.
+
+- Arnaldo
+
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/map.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+> index 117c4bb78b35..e1d14936a60d 100644
+> --- a/tools/perf/util/map.c
+> +++ b/tools/perf/util/map.c
+> @@ -200,6 +200,7 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
+>  				dso__set_build_id(dso, dso__bid(header_bid_dso));
+>  				dso__set_header_build_id(dso, 1);
+>  			}
+> +			dso__put(header_bid_dso);
+>  		}
+>  		dso__put(dso);
+>  	}
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+> 
 
