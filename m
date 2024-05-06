@@ -1,197 +1,161 @@
-Return-Path: <linux-kernel+bounces-170351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6A68BD588
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9399A8BD58B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017D71F2126D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F67F283CC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEA015ADB0;
-	Mon,  6 May 2024 19:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD515ADA1;
+	Mon,  6 May 2024 19:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SunZxGZo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="NF5FoZQV"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AED5FDA5
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506995FDA5
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024506; cv=none; b=giKfXnQNHqT8+TwvZbftZz7qKaFXrKxGcCAeG8u6jm7GR/yLvQHjiKHy9qWT2bgmp8kWr20IG1AYHEEHsH07DrpX7iy9OVwpUOt9JVSlgdYvp27rYfe8xmxmGhVP1vqeqplyzBA4bt74mtQz7S0J1CKH3RQISqkUzyhJ2pLpsDE=
+	t=1715024565; cv=none; b=IRkjqEIVuTScxDXwVYrzthGiNKbE6NKoeUOo/qw3pL8qUmsbYZiMj77+HkQoElRv0MdFooYhD9EYPKKfUAdUFiHC87GGj3c8bLtPG3ZluKsk9uOex9qkpxmYiABIGHf7TH+JJFQMW2IULUOa+Md5EOo515pl2yh92jl4QxspB7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024506; c=relaxed/simple;
-	bh=PrBhS5DyGnBu39z/bV+pMeXm6EsKEDKCW+dJYY8AEjI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=meQ6TxiTUZZWTeq8xS7DbyR32QB21QzdRLcGnn9SSPRqQzOED4wKgf4AZvu2dP2+AZ0otVvga55+4ThtUSevGfCDX+bofVKY389pWt1Qu6oMs4VJhSHuhYFGeg+A5qpifxHoOLGELvyLed8zz1r4YsUrEGH2bPAC43RT4v1bh9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SunZxGZo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715024504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DY+sYZC8mturY+dnlOrnmUuxCVCJqkhdnmld3ulR81I=;
-	b=SunZxGZotsJolMnWS30YjV394mjL70YkVHY4QY3hY9BDXU66A6z6Koj8kRa2zCrGlbRawF
-	g+ijPI/9rKv77+S/DAG9n42vUbVmGv9Gm/m2yWaBmPjkNR6HyaFYF1u8XyBWFXMPA48igy
-	+GxQKQIIsFkHY0vSE5x62QbqJDvAgoc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-7SQpAIxoOySURcpRTbp5NQ-1; Mon, 06 May 2024 15:41:41 -0400
-X-MC-Unique: 7SQpAIxoOySURcpRTbp5NQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34b0b409775so836129f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:41:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715024500; x=1715629300;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DY+sYZC8mturY+dnlOrnmUuxCVCJqkhdnmld3ulR81I=;
-        b=hOmhxQjPV64FW94DFKGejTl/7EREKalVcAk7lFEJPIYLN1t4EAwBdNDBIOjIMuZbJL
-         oNhA6HJLEAPBSqMbG6/Hi9wG0m0rnXq7YX37ojXQOyydMfoxYBZFCgr3bXn8o/nD3EBr
-         2WbLp5HR6eN72z991uJffk1thykqwxZeDvCuL4w9cWOycI74YbBo5xTUXo38+RwKezXa
-         /8kXjIndXeeogQIj+ON2qrsAsSDtza+V/X1TFnQrCdQbOb86kcFN2eLeeg75zrZQJg2g
-         cm/6LyhwegCrqN6TaWFtoXiI7cPD7qHK7KPHhmE1I789WZKRK0cxCPA1TKzWCe8D36vX
-         mHJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAYbmY0FCuv15OyLQDUgFfYLpyqD5rhdX7wNUQ9g5K/EGn5VbwGAzw7DFXXtIQnEm8yaSzmhRi7mpXFXbZyiatKdAA5FSrf7wIzwyv
-X-Gm-Message-State: AOJu0YwijvGLfU0h3gh2i0a0VM/58V79NvYIuyCeHc69kmShS+RPCC+I
-	4BWA74uiVS+qNgN9OwH5xKVcKN040C+HPGYkr4fC6l6m0OcXLvhz6uQ2IEQguRVjMawby/Ob4/4
-	5xpjw8+MPD4BLdrq+EbZdbUkPLHoVSlk7325hU0wd7tmUHlgSOhQPN2bb29Hn1A==
-X-Received: by 2002:a5d:4404:0:b0:34d:354:b9ba with SMTP id z4-20020a5d4404000000b0034d0354b9bamr7042491wrq.30.1715024500706;
-        Mon, 06 May 2024 12:41:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaokgN4DJrI/5hz3+xQUzTXmGqJHdlwJ5Sbtxf1d7FO21ctPZPxyFm8wyqqr/TggXdaqWO3w==
-X-Received: by 2002:a5d:4404:0:b0:34d:354:b9ba with SMTP id z4-20020a5d4404000000b0034d0354b9bamr7042472wrq.30.1715024500275;
-        Mon, 06 May 2024 12:41:40 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id f6-20020a5d58e6000000b0034dd063e8dasm11301564wrd.86.2024.05.06.12.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 12:41:39 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id D92311275C73; Mon, 06 May 2024 21:41:38 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Boqun Feng
- <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, Eric
- Dumazet <edumazet@google.com>, Frederic Weisbecker <frederic@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Waiman Long <longman@redhat.com>, Will
- Deacon <will@kernel.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, Andrii
- Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Hao
- Luo <haoluo@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song
- Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>, Yonghong Song
- <yonghong.song@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-In-Reply-To: <20240503182957.1042122-15-bigeasy@linutronix.de>
-References: <20240503182957.1042122-1-bigeasy@linutronix.de>
- <20240503182957.1042122-15-bigeasy@linutronix.de>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Mon, 06 May 2024 21:41:38 +0200
-Message-ID: <87y18mohhp.fsf@toke.dk>
+	s=arc-20240116; t=1715024565; c=relaxed/simple;
+	bh=tQoz9dS6MzicSe5+SQbJSgBGuPARlB9lb/KxszWyE/U=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=f+96BeeIBUgpKST1obUDlicB6wxcmBTquBtWL3m9xmDZ8G4Qm81MhtDLl0SSSRAYqwchO2UlWCHoiBKot6J2hIu14SS/JkAPgu3v+UpD4acOQGWqSxmVHIts0hqPTBTCB/pxbFEDxsrQqdflb2FNdr2v3gI1dZUBa9F2QG9EaPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=NF5FoZQV; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=y4WGMO9bryRqHzdvXqX8JHN1xbU3NgS8boIGtDt6Syk=;
+  b=NF5FoZQVHSBu6L3rCTziShyF9iRcUDtTfIWq+LXu/shPNICSD5DSS5yn
+   pTYwl7j9gea38muYWE0OsMjL9UjQUT4g+OsU/4yuY4hWSK9lQoeSCRW+y
+   cp9zMvgA+IUXB5jvVA7Wiv0rTvpYv2sRPoThdddqav5LEcU/+MTDj+AIj
+   0=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.07,259,1708383600"; 
+   d="scan'208";a="86505903"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 21:42:34 +0200
+Date: Mon, 6 May 2024 21:42:33 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To: Lukas Wunner <lukas@wunner.de>
+cc: Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr, 
+    linux-kernel@vger.kernel.org
+Subject: Re: coccinelle matching of identifiers
+In-Reply-To: <ZjkZBvuXlZAodPAU@wunner.de>
+Message-ID: <alpine.DEB.2.22.394.2405062136410.3284@hadrien>
+References: <ZjkZBvuXlZAodPAU@wunner.de>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
 
-> The XDP redirect process is two staged:
-> - bpf_prog_run_xdp() is invoked to run a eBPF program which inspects the
->   packet and makes decisions. While doing that, the per-CPU variable
->   bpf_redirect_info is used.
+
+On Mon, 6 May 2024, Lukas Wunner wrote:
+
+> Dear coccinelle maintainers,
 >
-> - Afterwards xdp_do_redirect() is invoked and accesses bpf_redirect_info
->   and it may also access other per-CPU variables like xskmap_flush_list.
+> Linux kernel commit 5c6ca9d93665 ("X.509: Introduce scope-based
+> x509_certificate allocation"), which is queued for v6.10 in this repo ...
 >
-> At the very end of the NAPI callback, xdp_do_flush() is invoked which
-> does not access bpf_redirect_info but will touch the individual per-CPU
-> lists.
+>     https://git.kernel.org/herbert/cryptodev-2.6/c/5c6ca9d93665
 >
-> The per-CPU variables are only used in the NAPI callback hence disabling
-> bottom halves is the only protection mechanism. Users from preemptible
-> context (like cpu_map_kthread_run()) explicitly disable bottom halves
-> for protections reasons.
-> Without locking in local_bh_disable() on PREEMPT_RT this data structure
-> requires explicit locking.
+> ... triggers scripts/coccinelle/null/eno.cocci:
 >
-> PREEMPT_RT has forced-threaded interrupts enabled and every
-> NAPI-callback runs in a thread. If each thread has its own data
-> structure then locking can be avoided.
+>     ./crypto/asymmetric_keys/x509_cert_parser.c:69:9-15: ERROR: allocation function on line 68 returns NULL not ERR_PTR on failure
+>     ./fs/gfs2/inode.c:1850:6-12: ERROR: allocation function on line 1842 returns NULL not ERR_PTR on failure
+>     ./fs/smb/client/cifsfs.c:1186:6-12: ERROR: allocation function on line 1173 returns NULL not ERR_PTR on failure
 >
-> Create a struct bpf_net_context which contains struct bpf_redirect_info.
-> Define the variable on stack, use bpf_net_ctx_set() to save a pointer to
-> it. Use the __free() annotation to automatically reset the pointer once
-> function returns.
-> The bpf_net_ctx_set() may nest. For instance a function can be used from
-> within NET_RX_SOFTIRQ/ net_rx_action which uses bpf_net_ctx_set() and
-> NET_TX_SOFTIRQ which does not. Therefore only the first invocations
-> updates the pointer.
-> Use bpf_net_ctx_get_ri() as a wrapper to retrieve the current struct
-> bpf_redirect_info.
+> The first of these three errors is newly introduced by the above-linked
+> commit, the other two already existed before.  All are false-positives.
 >
-> On PREEMPT_RT the pointer to bpf_net_context is saved task's
-> task_struct. On non-PREEMPT_RT builds the pointer saved in a per-CPU
-> variable (which is always NODE-local memory). Using always the
-> bpf_net_context approach has the advantage that there is almost zero
-> differences between PREEMPT_RT and non-PREEMPT_RT builds.
+> I would like to silence the newly-introduced false-positive and have
+> attempted to do so using the small patch below.
+>
+> However the result is that *only* the newly-introduced false-positive is
+> found and the other two are no longer found.  So the other way round than
+> what I'm aiming for.
+>
+> I find this bewildering.  What am I doing wrong?
+>
+> FWIW, coccinelle version is 1.1.1.
+>
+> The newly introduced false-positive is triggered by the statement:
+>
+>     assume(!IS_ERR(cert));
+>
+> Which is a macro that expands to:
+>
+>     do { if (!!IS_ERR(cert)) __builtin_unreachable(); } while(0);
+>
+> The macro gives the compiler a hint that variable "cert" is not an error
+> pointer, which prevents the compiler from adding an unnecessary check
+> for that condition.
+>
+> Thanks!
+>
+> Lukas
+>
+> -- >8 --
+>
+> diff --git a/scripts/coccinelle/null/eno.cocci b/scripts/coccinelle/null/eno.cocci
+> index 7107d6c8db9e..79112d51bee8 100644
+> --- a/scripts/coccinelle/null/eno.cocci
+> +++ b/scripts/coccinelle/null/eno.cocci
+> @@ -26,10 +26,12 @@ x = \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|kmem_cache
+>  @r depends on !patch exists@
+>  expression x,E;
+>  position p1,p2;
+> +identifier assume;
+>  @@
+>
+>  *x = \(kmalloc@p1\|kzalloc@p1\|kcalloc@p1\|kmem_cache_alloc@p1\|kmem_cache_zalloc@p1\|kmem_cache_alloc_node@p1\|kmalloc_node@p1\|kzalloc_node@p1\)(...)
+>  ... when != x = E
+> +    when != assume
+>  * IS_ERR@p2(x)
 
-Did you ever manage to get any performance data to see if this has an
-impact?
+The problem is that ... is searching along control-flow paths, and
+Coccinelle only considers control-flow at the statement level, not within
+expressions.
 
-[...]
+Maybe a reasonable solution would be just to consider that we really just
+want to protect against if tests?  So
 
-> +static inline struct bpf_net_context *bpf_net_ctx_get(void)
-> +{
-> +	struct bpf_net_context *bpf_net_ctx = this_cpu_read(bpf_net_context);
-> +
-> +	WARN_ON_ONCE(!bpf_net_ctx);
+*x = \(kmalloc@p1\|kzalloc@p1\|kcalloc@p1\|kmem_cache_alloc@p1\|kmem_cache_zalloc@p1\|kmem_cache_alloc_node@p1\|kmalloc_node@p1\|kzalloc_node@p1\)(...)
+.. when != x = E
+* if ( <+... IS_ERR@p2(x) ... +> )
+  S1 else S2
 
-If we have this WARN...
+where S1 and S2 are declared as statement metavariables.
 
-> +static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
-> +{
-> +	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
-> +
-> +	if (!bpf_net_ctx)
-> +		return NULL;
+Another option is:
 
-.. do we really need all the NULL checks?
+x = \(kmalloc@p1\|kzalloc@p1\|kcalloc@p1\|kmem_cache_alloc@p1\|kmem_cache_zalloc@p1\|kmem_cache_alloc_node@p1\|kmalloc_node@p1\|kzalloc_node@p1\)(...)
+.. when != x = E
+(
+assume(!IS_ERR(x));
+|
+* IS_ERR(x)
+)
 
-(not just here, but in the code below as well).
+In this case, only the IS_ERR is marked with a *, because if we also
+marked the initial assignment, that would get highlighted regardless of
+which branch of the disjunction was matched.
 
-I'm a little concerned that we are introducing a bunch of new branches
-in the XDP hot path. Which is also why I'm asking for benchmarks :)
-
-[...]
-
-> +	/* ri->map is assigned in __bpf_xdp_redirect_map() from within a eBPF
-> +	 * program/ during NAPI callback. It is used during
-> +	 * xdp_do_generic_redirect_map()/ __xdp_do_redirect_frame() from the
-> +	 * redirect callback afterwards. ri->map is cleared after usage.
-> +	 * The path has no explicit RCU read section but the local_bh_disable()
-> +	 * is also a RCU read section which makes the complete softirq callback
-> +	 * RCU protected. This in turn makes ri->map RCU protocted and it is
-
-s/protocted/protected/
-
-> +	 * sufficient to wait a grace period to ensure that no "ri->map == map"
-> +	 * exist.  dev_map_free() removes the map from the list and then
-
-s/exist/exists/
-
-
--Toke
+julia
 
 
