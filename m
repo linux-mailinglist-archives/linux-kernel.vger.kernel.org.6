@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-169400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA568BC82E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:16:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209FA8BC834
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E3D1F22686
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCF01F228E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E187D06E;
-	Mon,  6 May 2024 07:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C777E7D3F6;
+	Mon,  6 May 2024 07:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kPwn72Z4"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FC6ok4Sm"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD74E67A1A;
-	Mon,  6 May 2024 07:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AB759155;
+	Mon,  6 May 2024 07:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714979804; cv=none; b=WQEbQ84P4tQG2didv4L+p5fUQBjHS+mF8Pa3O0rTCsMOfiMj7LY6fUfF2Y1spMelGkR5tENgQ7+mtAgptm/hk3VxbKBZPyTLTCbpv5DAsBHLTUcK3MnAE53NrEr2TYzfqQ148dCdJm1zuICrAqy6EeDLWCRRW4Ryzoe+7QVbWU4=
+	t=1714979836; cv=none; b=RZPZGAAQyXzSIpkLI9/QqrgNv5anUCDFSRTJwPf8ir3eI6kj8e4rNCJg7HQ/LjNdLRoSJpaPSJwe5KlNrbenrXxba8DqgpW7Or1+KmerXPG7F4FC8fr4wGSN4ayVTZCB0oFiqn4zi6n1npL2ZxRFRQ7C56kwEAVfJCRmjJMAwV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714979804; c=relaxed/simple;
-	bh=Y8JxuvyKZOhfvd78F3vJoYA+MMwp35v1+bR6yUTz5RE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJjdzf1XoKF4FygUFtMprZB33Z5+mG0AnTIZMhj1Kp0n2mBjen9coImauhdxzj9JeHquEdSzEQM/yPqMV6cGa2zIvjRWNBQ6VF1Ts03GHnaDgzhECdO6MYhs4kaqlI/w6Cl8dG05+lP4y0QdigKWEafkGB45rwcDJQVPw9d5Eh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kPwn72Z4; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1714979798; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=tO9ElOjebai/reO966Q+Ev5PG36wii1GIcjirNSadD0=;
-	b=kPwn72Z4FMwyzs+bc5oPu2IUIiYJD1cqn0T1b/h4iB+2flP+tckPeozupMonXZba54OVnmKpT52OZkRmJGFaUrXCDApFts81lACNlbnpf26q2OVvVh6vIJaL/Dx5vSOL/XD1HUtOmgqNtYhUOsJNhmgjhpkiM3xaTzypLvPv7jA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W5ugHvr_1714979795;
-Received: from 30.221.130.10(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W5ugHvr_1714979795)
-          by smtp.aliyun-inc.com;
-          Mon, 06 May 2024 15:16:37 +0800
-Message-ID: <d8a084e1-eae5-495f-b4c0-078800e7e611@linux.alibaba.com>
-Date: Mon, 6 May 2024 15:16:34 +0800
+	s=arc-20240116; t=1714979836; c=relaxed/simple;
+	bh=K1WCsuV2vgVysMR5YZCWY9/J81gDLpA8JuqAbgG1slQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Em8SNToH1JIbWiCzLx6Q2Wwxc4HRcpSjZ8YaBVc+RufWv6xQIFHv75bY9+boYdaYleL8iUo4DMWZrZ59VnzZQ0MYfSMOKs9EnaDwN8FwSLiB+ZCKPqMH8NMsiddxitXfOajjknOzsjBIE8w3KPiVqxR/pQBPZ8FpRZZsyzmnPaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FC6ok4Sm; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f45020ac2cso1224540b3a.0;
+        Mon, 06 May 2024 00:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714979834; x=1715584634; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4CZTKvqkXHwfN9qILwrzk90HvdiwAcsWOFrQEfW+iRE=;
+        b=FC6ok4Sm59HZrkI+retbJ3dQQKoaemBXn7YnYqozhC50EAMhPM7xhbTwRzcp/qRNqe
+         owTvB6pLPcOLvbGcb7fYQPbmuvSNMwcJ7ak/97PVr+rG7gd6v7buEASSWBhqESyskkEL
+         9wYTybx7Jxxn6vZnOh9s8yrj+e+VmJK4EynabbzNjIHrJPTzoNE/IJ+GyDOpJOZ4TgBl
+         Oq0qoby54BpukduCYcNmQG4uB6/0zCyxx2P33iNlWgmmKDKbnEt1hbcLTM1WEnh26Lhw
+         I+CzB35PwE7B5L37URwd4351/BagAxoSz8nYVQEx1ckFbcfSkjyxINxXdfd9zMaA7H5G
+         QHsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714979834; x=1715584634;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4CZTKvqkXHwfN9qILwrzk90HvdiwAcsWOFrQEfW+iRE=;
+        b=tr4+wzH3hJ3DnMIc8pMTE6rSXAFmbaERHmGBnSl1arx+gESAV3bkebhM7+50+oJEBR
+         vJ/xYxe1tFraWlsVCRgV0nrnmhnE33dWQzg4/cyD8nefAhz0xaxfiw9XFGqosGcKrCWU
+         Ls+Edw0xQnr/7qDRbwOr+iye+aHxmRhLkhkOgMSqBp2nG39pWz7dzfCxiMzb02y7oDwq
+         R/08W2Zpjrz3xNb4sGg8q0M+BHBuvlY3MScKlisnWoey9fUmt+G1liSjFbHS+/tLGk6H
+         ESQ9fJ30SqafvNC5vTeTA+oWoH025K23m1YWQaYWuLfWFYKB4lcADGIAhyC7J/3wBEbs
+         3YAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLgLqCFHYL8/h9gZqQ0UJNaFEloB/hhR6gaXHT/ROYDZuWk3LCHLgK9wpHf/p4ixc7Yh+KyzfFNDBJbcNIdcYHVD2FpmSa3GkIy+A0GDgoQ0sPJfzztZSZze9w3kAfrK7rGYfQngpMaD/Ct4tC2au7s/KwHxT1djVuCvjL2UzW5zC+
+X-Gm-Message-State: AOJu0YzTGabEXQQ1DACSoVjtN4nvDAJM58hLdI5H5Etsk6iGd4EkBdb/
+	TLhThNppBXFL/yg9gu6IObCLD2SGRDq5uGDuyrDUsVkvqBBoPwK+RqbY1g==
+X-Google-Smtp-Source: AGHT+IFnkT6YBQQjfzErTQTUon6Klo1F+E+nze30gG9jbyJLQHC5uMXPftLCYlGLexdwp3QR8R3B3g==
+X-Received: by 2002:a05:6a20:564e:b0:1aa:5984:d3 with SMTP id is14-20020a056a20564e00b001aa598400d3mr8611476pzc.6.1714979833990;
+        Mon, 06 May 2024 00:17:13 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id u90-20020a17090a51e300b002af2bf7082fsm8178779pjh.39.2024.05.06.00.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 00:17:13 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: joe@perches.com
+Cc: akpm@linux-foundation.org,
+	apw@canonical.com,
+	broonie@kernel.org,
+	charlemagnelasse@gmail.com,
+	chenhuacai@loongson.cn,
+	chris@zankel.net,
+	corbet@lwn.net,
+	dwaipayanray1@gmail.com,
+	herbert@gondor.apana.org.au,
+	jcmvbkbc@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lukas.bulwahn@gmail.com,
+	mac.xxn@outlook.com,
+	quic_jjohnson@quicinc.com,
+	sfr@canb.auug.org.au,
+	v-songbaohua@oppo.com,
+	workflows@vger.kernel.org
+Subject: Re: [PATCH RESEND v6 2/2] scripts: checkpatch: check unused parameters for function-like macro
+Date: Mon,  6 May 2024 19:16:57 +1200
+Message-Id: <20240506071657.13434-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <5e26f82913801050afa4442dfb9a07249895ab98.camel@perches.com>
+References: <5e26f82913801050afa4442dfb9a07249895ab98.camel@perches.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net/smc: fix netdev refcnt leak in
- smc_ib_find_route()
-To: Ratheesh Kannoth <rkannoth@marvell.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240506015439.108739-1-guwen@linux.alibaba.com>
- <20240506055119.GA939370@maili.marvell.com>
-From: Wen Gu <guwen@linux.alibaba.com>
-In-Reply-To: <20240506055119.GA939370@maili.marvell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/5/6 13:51, Ratheesh Kannoth wrote:
-> On 2024-05-06 at 07:24:39, Wen Gu (guwen@linux.alibaba.com) wrote:
->> A netdev refcnt leak issue was found when unregistering netdev after
->> using SMC. It can be reproduced as follows.
->>
->> - run tests based on SMC.
->> - unregister the net device.
->>
->> The following error message can be observed.
->>
->> 'unregister_netdevice: waiting for ethx to become free. Usage count = x'
->>
->> With CONFIG_NET_DEV_REFCNT_TRACKER set, more detailed error message can
->> be provided by refcount tracker:
->>
->>   unregister_netdevice: waiting for eth1 to become free. Usage count = 2
->>   ref_tracker: eth%d@ffff9cabc3bf8548 has 1/1 users at
->>        ___neigh_create+0x8e/0x420
->>        neigh_event_ns+0x52/0xc0
->>        arp_process+0x7c0/0x860
->>        __netif_receive_skb_list_core+0x258/0x2c0
->>        __netif_receive_skb_list+0xea/0x150
->>        netif_receive_skb_list_internal+0xf2/0x1b0
->>        napi_complete_done+0x73/0x1b0
->>        mlx5e_napi_poll+0x161/0x5e0 [mlx5_core]
->>        __napi_poll+0x2c/0x1c0
->>        net_rx_action+0x2a7/0x380
->>        __do_softirq+0xcd/0x2a7
->>
->> It is because in smc_ib_find_route(), neigh_lookup() takes a netdev
->> refcnt but does not release. So fix it.
->>
->> Fixes: e5c4744cfb59 ("net/smc: add SMC-Rv2 connection establishment")
->> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
->> ---
->>   net/smc/smc_ib.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
->> index 97704a9e84c7..b431bd8a5172 100644
->> --- a/net/smc/smc_ib.c
->> +++ b/net/smc/smc_ib.c
->> @@ -210,10 +210,11 @@ int smc_ib_find_route(struct net *net, __be32 saddr, __be32 daddr,
->>   		goto out;
->>   	if (rt->rt_uses_gateway && rt->rt_gw_family != AF_INET)
-> need to release it here as well ?
+>> From: Xining Xu <mac.xxn@outlook.com>
+>> 
+>> If function-like macros do not utilize a parameter, it might result in a
+>> build warning.  In our coding style guidelines, we advocate for utilizing
+>> static inline functions to replace such macros.  This patch verifies
+>> compliance with the new rule.
+> []
+>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+>> @@ -6040,6 +6040,12 @@ sub process {
+>>  					CHK("MACRO_ARG_PRECEDENCE",
+>>  					    "Macro argument '$arg' may be better as '($arg)' to avoid precedence issues\n" . "$herectx");
+>>  				}
+>> +
+>> +# check if this is an unused argument
+>> +				if ($define_stmt !~ /\b$arg\b/) {
+>> +					WARN("MACRO_ARG_UNUSED",
+>> +						"Argument '$arg' is not used in function-like macro\n" . "$herectx");
+> 
+> trivia:  This should be aligned to the open parenthesis.
 > 
 
-Do you mean call ip_rt_put() to release rt?
+Hi Joe,
+I assume you mean the below?
 
-Yes, after investigating here, I agree that rt needs to be released as well. Thanks!
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 9895d7e38a9f..2b812210b412 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6044,7 +6044,7 @@ sub process {
+ # check if this is an unused argument
+ 				if ($define_stmt !~ /\b$arg\b/) {
+ 					WARN("MACRO_ARG_UNUSED",
+-						"Argument '$arg' is not used in function-like macro\n" . "$herectx");
++					     "Argument '$arg' is not used in function-like macro\n" . "$herectx");
+ 				}
+ 			}
+> Otherwise:
+> Acked-by: Joe Perches <joe@perches.com>
 
->>   		goto out;
->> -	neigh = rt->dst.ops->neigh_lookup(&rt->dst, NULL, &fl4.daddr);
->> +	neigh = dst_neigh_lookup(&rt->dst, &fl4.daddr);
->>   	if (neigh) {
->>   		memcpy(nexthop_mac, neigh->ha, ETH_ALEN);
->>   		*uses_gateway = rt->rt_uses_gateway;
->> +		neigh_release(neigh);
->>   		return 0;
->>   	}
->>   out:
->> --
->> 2.32.0.3.g01195cf9f
->>
+Thanks!
+
+-Barry
+
 
