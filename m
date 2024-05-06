@@ -1,163 +1,177 @@
-Return-Path: <linux-kernel+bounces-170081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7151A8BD1A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:38:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24B68BD1AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26941C2247F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:38:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CC8B22677
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF8415574E;
-	Mon,  6 May 2024 15:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4BE155398;
+	Mon,  6 May 2024 15:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7Zj3Awx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JAGBRmiL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BBTgObPk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JAGBRmiL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BBTgObPk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2042F2C;
-	Mon,  6 May 2024 15:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969A7580C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715009898; cv=none; b=SPetaiPK6PwBHoqn8ep47uUW7g/xTkAt6LSvf2jufmzdVPY7mA3TMWd21E9TcD2lIdqOC0W08uspzcwNgT9i1TvRnRqY7irvFX/3D2JUB64D1KxXDBFGMeN72M1BoOSjVXwPcpAzl0BJtPrTQXqQpBPatfPKRfX/RVRGSLVFg+I=
+	t=1715010097; cv=none; b=paMJnW2oZKquAc/IBjmdQeeYzdWckYkOXzQqJzPGcZcZJ6t45AC+ddGwm24NPg25w/lSswrmIfjoKTNH8B2U260/6u8+gSb5iCw5+GwQ6TIfY9CIbhTJuOaEFPhpXnHQ0ofhz/Ci3ZcbnRE5RvKNqrtFS88F75180IWp4wp85E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715009898; c=relaxed/simple;
-	bh=lq8TajzvkOy47+/9bqCVcmF6c929YJyj/nUUZTCovm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2VKKWb8a+qjHC+Z3guuGUXesotrBOQaKWrlfEsWTPIyNbBriMp9ywjvpu+oclWQ3TLvxmkHm2eYC14xmmllqVTkBv8JZsZyzbyxWlWEHPo71c1f0WAeCxprBxyNUi2nIJ9wYJbWLmpL5NWolOlC1cq54EePFI6tLywA5Z8X/hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7Zj3Awx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36911C4AF65;
-	Mon,  6 May 2024 15:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715009897;
-	bh=lq8TajzvkOy47+/9bqCVcmF6c929YJyj/nUUZTCovm4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n7Zj3AwxmJwLMch2uiuWHfIw/+RCg28CT2orj1uvNh5BdrjxqjNIzFWH6d8I42SZf
-	 6we56ge5QdhaRdhYlF8jnXomD8zp9h8BdHC2rAo2hrEOx5HpiLUX3vftCzp+Q1iRJ4
-	 01Fd7xzg+0ftVm5WygjFyLdgKUFm6YFX1eSZCRdqcypOCCwMRZDOXER1gUX86ZjO+E
-	 DunEI8syC+HcF04aT6GYGUIFG47KS0cAQkqF4nlo7UjglQGAg/rxD/7iwuGbjEG9Gn
-	 au+UhFluNtFayIwLkbf1eI+hdwwvmYUWan7HSZzqKGZI+83BU/bkbjgJAIligbdd7K
-	 Xe07H9RFYSnrA==
-Message-ID: <3903300d-9d5b-44b3-95fa-0579e5421071@kernel.org>
-Date: Mon, 6 May 2024 17:38:11 +0200
+	s=arc-20240116; t=1715010097; c=relaxed/simple;
+	bh=r2fKkKODx3bsbU/zHy3RqTsEzCgGVZbwURDHIJCljNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTYPd6F5uRp7Y0B4jpscZei1ej0YiO2cupmSaca7cPCCtygQs8LLlIgFKPDHQdXAlLa4OEfjMM0IPGmtlSjJDrwL/ZgRAPPq6nkt3VtO2LTRzr6/0po56OoAcbLWCqYCSiy1Na5zst0WC2sNOEIJp8vzww6mJdzKISa3KyDUM1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JAGBRmiL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BBTgObPk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JAGBRmiL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BBTgObPk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 48F4E38586;
+	Mon,  6 May 2024 15:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715010094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
+	b=JAGBRmiLG4Ca4zbRmnXhByMK7/RTX3PIOCv7Crrnf+fOxGM/Y/XcZz6/qezxRzrba+x6Kb
+	yKKifPnPCD7/RV12EIeAxX8loQV1xrUXaEKYovxTM+zZC7uwUM8CtH6LSB9aYG1iNU1AyB
+	cslYaA28Jz9l8On5J7Ywj4GRGduzbx8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715010094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
+	b=BBTgObPkplXvYQC17Ky833tZ4QY6nmelC79vlS1v1KUs6OGWM90yKLDGOBT7Dkmp+6X3IR
+	LlpwUPdmCBD5LLAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715010094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
+	b=JAGBRmiLG4Ca4zbRmnXhByMK7/RTX3PIOCv7Crrnf+fOxGM/Y/XcZz6/qezxRzrba+x6Kb
+	yKKifPnPCD7/RV12EIeAxX8loQV1xrUXaEKYovxTM+zZC7uwUM8CtH6LSB9aYG1iNU1AyB
+	cslYaA28Jz9l8On5J7Ywj4GRGduzbx8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715010094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
+	b=BBTgObPkplXvYQC17Ky833tZ4QY6nmelC79vlS1v1KUs6OGWM90yKLDGOBT7Dkmp+6X3IR
+	LlpwUPdmCBD5LLAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A65E113A25;
+	Mon,  6 May 2024 15:41:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SV/vJS36OGblCgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 06 May 2024 15:41:33 +0000
+Date: Mon, 6 May 2024 17:41:28 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	syzbot+41bbfdb8d41003d12c0f@syzkaller.appspotmail.com
+Subject: Re: [PATCH v4 2/4] mm,page_owner: Fix refcount imbalance
+Message-ID: <Zjj6KN0GhXbv3VYY@localhost.localdomain>
+References: <20240404070702.2744-1-osalvador@suse.de>
+ <20240404070702.2744-3-osalvador@suse.de>
+ <202405060754.4405F8402F@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: add I3C config in DTS
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
- joel@jms.id.au, openbmc@lists.ozlabs.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20240506113306.1283179-1-Delphine_CC_Chiu@wiwynn.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240506113306.1283179-1-Delphine_CC_Chiu@wiwynn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202405060754.4405F8402F@keescook>
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[41bbfdb8d41003d12c0f];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,kvack.org,suse.com,suse.cz,google.com,gmail.com,rivosinc.com,syzkaller.appspotmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-On 06/05/2024 13:33, Delphine CC Chiu wrote:
-> Set I3C config in yosemite4 DTS.
+On Mon, May 06, 2024 at 07:59:11AM -0700, Kees Cook wrote:
+> Does this also fix this?
+> https://lore.kernel.org/all/202405061514.23fedba1-oliver.sang@intel.com/
+
+Hi Kess,
+
+yes, it does.
+
 > 
-> Test plan:
-> Tested with aspeed I3C patches and I3C hub driver.
+> This is a report of the backtrace changing, but the warning was
+> pre-existing.
 > 
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-> ---
->  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
+> > [...]
+> > -static void dec_stack_record_count(depot_stack_handle_t handle)
+> > +static void dec_stack_record_count(depot_stack_handle_t handle,
+> > +				   int nr_base_pages)
+> >  {
+> >  	struct stack_record *stack_record = __stack_depot_get_stack_record(handle);
+> >  
+> > -	if (stack_record)
+> > -		refcount_dec(&stack_record->count);
+> > +	if (!stack_record)
+> > +		return;
+> > +
+> > +	if (refcount_sub_and_test(nr_base_pages, &stack_record->count))
+> > +		pr_warn("%s: refcount went to 0 for %u handle\n", __func__,
+> > +			handle);
 > 
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> index 64075cc41d92..6a30c424d745 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-> @@ -595,6 +595,92 @@ i2c-mux@72 {
->  	};
->  };
->  
-> +&i3c0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i3c1_default>;
-> +	i3c-pp-scl-hi-period-ns = <40>;
-> +	i3c-pp-scl-lo-period-ns = <40>;
-> +	i3c-od-scl-hi-period-ns = <380>;
-> +	i3c-od-scl-lo-period-ns = <620>;
-> +	sda-tx-hold-ns = <10>;
-> +
-> +	mctp-controller;
-> +	hub@0x70 {
+> This pr_warn() isn't needed: refcount will very loudly say the same
+> thing. :)
 
-That's not a valid unit address.
+Yes, but I wanted to get the handle so I can match it with the
+backtrace.
+
+Thanks
 
 
-> +		reg = <0x70 0x3c0 0x00700000>;
-> +		cp0-ldo-en = "enabled";
-> +		cp1-ldo-en = "enabled";
-> +		cp0-ldo-volt = "1.2V";
-> +		cp1-ldo-volt = "1.2V";
-> +		tp0145-ldo-en = "enabled";
-> +		tp2367-ldo-en = "enabled";
-> +		tp0145-ldo-volt = "1.2V";
-> +		tp2367-ldo-volt = "1.2V";
-> +		tp0145-pullup = "2k";
-> +		tp2367-pullup = "2k";
-
-Where are bindings for all this?
-
-
-
-Best regards,
-Krzysztof
-
+-- 
+Oscar Salvador
+SUSE Labs
 
