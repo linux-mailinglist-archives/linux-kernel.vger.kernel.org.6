@@ -1,65 +1,53 @@
-Return-Path: <linux-kernel+bounces-169671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CEB8BCC08
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:32:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4E28BCC0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685E51C2120A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8883828350D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5E62B9D6;
-	Mon,  6 May 2024 10:32:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925323FB01;
+	Mon,  6 May 2024 10:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PO3HNL/N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3AE29A9
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C8023D2
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714991553; cv=none; b=Wufj2jMLcOhKDYJPvc2y0LsqOpzNEobtLw11mMlOOk92r386kqxfgiVfXPOjKkaAqd7te3Eso3kVLYwUcHdicnXcXyRDtQGBctrh2D0vq2VIAYZWQA3hMF33LYNE/IK5FKvjwf4u37j7z6agGeIHQ0MSpwhbtlhF1qHntYLkEoc=
+	t=1714991599; cv=none; b=c4aQL+uhpoY929DmPflqbmEYK0jLHRQPQuG8ads0LCyk8tDExubwMvNRLUVvsbV21ScL3hs9/XlsBKSUbbJxwPNeDcP1xhX10wFlbKIVqzYbLGlTvktViW8sthXyYuEk3bPJfDTbFqLanZ8mfvlAoNWVfUQhV2qm14GYnTHGNkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714991553; c=relaxed/simple;
-	bh=Wym1846Bns5koUhuTopZyiuPiGa2cITbldLcrqUxUq8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q7EAVxuV9P/rVzY9OG9zOb+FR8bka4Xm1PHikbvAG/O5kY1YZkjt9AYZf5OmVTburiHTGW1XrTuNjTu3rmgkO2ELGrDVW4J9rBocn9+tMTZZscZFjS73W9VgDDHfDIlUunurwa1Nud47J4bFOQXrOfr9jrl/RJ8YGRcdZBg6rGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s3vdi-0004i4-5A; Mon, 06 May 2024 12:32:10 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s3vdf-00GFN1-TH; Mon, 06 May 2024 12:32:07 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s3vdf-005C9u-2j;
-	Mon, 06 May 2024 12:32:07 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Jiri Pirko <jiri@resnulli.us>,
-	Ivan Vecera <ivecera@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	kernel@pengutronix.de,
+	s=arc-20240116; t=1714991599; c=relaxed/simple;
+	bh=ArQZcPL9NskSWJ33AcpZ7fqpChWS94RCsV5KimDJTWY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iEay2yK6psPOqYk4Rb8/1pfWj7TsjQlLt5Y6ANw31PuOYyiYfsnfVIwUYJlV8/iGtfi9500uhhroCISSr8vieDWFpia+Vc2kGIzImcOw6YhEvvgvYI/SzjVNkPVlUfpS57/WLFMsJzPmCbjSNdaV/rmDq4mkFkX8xwH8LuV5ODg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PO3HNL/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA1BC116B1;
+	Mon,  6 May 2024 10:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714991599;
+	bh=ArQZcPL9NskSWJ33AcpZ7fqpChWS94RCsV5KimDJTWY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PO3HNL/NaetYrGgi4hGaAP0vK2LQfQyHtc5/VlCpgZx3gPrczk+9ZmblggC9/m3z3
+	 85Z76E4GjDW7N/t/6kY7dkRuAJ3BujwzquOE3LVHB3ZTgCNhqtIDxPjVfIlabMw2s9
+	 P1TC86GbAmremkhH1O2Vr3ed1AgbwQ+d7Y4Lm0OTFfgosuABRvprrwIN1MIU4SpKjl
+	 Htn29yMbng/+bMit+Ic0OEZ/gV43EjgcfojFEiiaBkHUBSaT7qt2qsjd/zZcw/hWiP
+	 GK8HfY+W8UNX9nazhsaKQ6INN3BtApxRKariBmzFuNCOpcvznZ4qLkEvQqW+a+W7GP
+	 mIEhU2Oxr68dA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v4 1/1] net: bridge: switchdev: Improve error message for port_obj_add/del functions
-Date: Mon,  6 May 2024 12:32:05 +0200
-Message-Id: <20240506103205.1238139-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/3] f2fs: fix to release node block count in error path of f2fs_new_node_page()
+Date: Mon,  6 May 2024 18:33:11 +0800
+Message-Id: <20240506103313.773503-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,177 +55,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Enhance the error reporting mechanism in the switchdev framework to
-provide more informative and user-friendly error messages.
+It missed to call dec_valid_node_count() to release node block count
+in error path, fix it.
 
-Following feedback from users struggling to understand the implications
-of error messages like "failed (err=-28) to add object (id=2)", this
-update aims to clarify what operation failed and how this might impact
-the system or network.
-
-With this change, error messages now include a description of the failed
-operation, the specific object involved, and a brief explanation of the
-potential impact on the system. This approach helps administrators and
-developers better understand the context and severity of errors,
-facilitating quicker and more effective troubleshooting.
-
-Example of the improved logging:
-
-[   70.516446] ksz-switch spi0.0 uplink: Failed to add Port Multicast
-               Database entry (object id=2) with error: -ENOSPC (-28).
-[   70.516446] Failure in updating the port's Multicast Database could
-               lead to multicast forwarding issues.
-[   70.516446] Current HW/SW setup lacks sufficient resources.
-
-This comprehensive update includes handling for a range of switchdev
-object IDs, ensuring that most operations within the switchdev framework
-benefit from clearer error reporting.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Fixes: 141170b759e0 ("f2fs: fix to avoid use f2fs_bug_on() in f2fs_new_node_page()")
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-changes v4:
-- reorder Reviewed-by tag
-- make a shorter patch title
-changes v3:
-- fix check patch warnings
-changes v2:
-- make all variables const
-- add Reviewed-by: Simon Horman <horms@kernel.org>
----
- net/switchdev/switchdev.c | 99 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 95 insertions(+), 4 deletions(-)
+ fs/f2fs/node.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/switchdev/switchdev.c b/net/switchdev/switchdev.c
-index c9189a970eec3..6488ead9e4645 100644
---- a/net/switchdev/switchdev.c
-+++ b/net/switchdev/switchdev.c
-@@ -244,6 +244,99 @@ static int switchdev_port_obj_notify(enum switchdev_notifier_type nt,
- 	return 0;
- }
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index b3de6d6cdb02..ae39971825bc 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1313,15 +1313,14 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
  
-+static void switchdev_obj_id_to_helpful_msg(struct net_device *dev,
-+					    enum switchdev_obj_id obj_id,
-+					    int err, bool add)
-+{
-+	const char *action = add ? "add" : "del";
-+	const char *reason = "";
-+	const char *problem;
-+	const char *obj_str;
+ #ifdef CONFIG_F2FS_CHECK_FS
+ 	err = f2fs_get_node_info(sbi, dn->nid, &new_ni, false);
+-	if (err) {
+-		dec_valid_node_count(sbi, dn->inode, !ofs);
+-		goto fail;
+-	}
++	if (err)
++		goto out_dec;
 +
-+	switch (obj_id) {
-+	case SWITCHDEV_OBJ_ID_UNDEFINED:
-+		obj_str = "Undefined object";
-+		problem = "Attempted operation is undefined, indicating a possible programming\n"
-+			  "error.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_PORT_VLAN:
-+		obj_str = "VLAN entry";
-+		problem = "Failure in VLAN settings on this port might disrupt network\n"
-+			  "segmentation or traffic isolation, affecting network partitioning.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_PORT_MDB:
-+		obj_str = "Port Multicast Database entry";
-+		problem = "Failure in updating the port's Multicast Database could lead to\n"
-+			  "multicast forwarding issues.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_HOST_MDB:
-+		obj_str = "Host Multicast Database entry";
-+		problem = "Failure in updating the host's Multicast Database may impact multicast\n"
-+			  "group memberships or traffic delivery, affecting multicast\n"
-+			  "communication.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_MRP:
-+		obj_str = "Media Redundancy Protocol configuration for port";
-+		problem = "Failure to set MRP ring ID on this port prevents communication with\n"
-+			  "the specified redundancy ring, resulting in an inability to engage\n"
-+			  "in MRP-based network operations.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_RING_TEST_MRP:
-+		obj_str = "MRP Test Frame Operations for port";
-+		problem = "Failure to generate/monitor MRP test frames may lead to inability to\n"
-+			  "assess the ring's operational integrity and fault response, hindering\n"
-+			  "proactive network management.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_RING_ROLE_MRP:
-+		obj_str = "MRP Ring Role Configuration";
-+		problem = "Improper MRP ring role configuration may create conflicts in the ring,\n"
-+			  "disrupting communication for all participants, or isolate the local\n"
-+			  "system from the ring, hindering its ability to communicate with other\n"
-+			  "participants.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_RING_STATE_MRP:
-+		obj_str = "MRP Ring State Configuration";
-+		problem = "Failure to correctly set the MRP ring state can result in network\n"
-+			  "loops or leave segments without communication. In a Closed state,\n"
-+			  "it maintains loop prevention by blocking one MRM port, while an Open\n"
-+			  "state activates in response to failures, changing port states to\n"
-+			  "preserve network connectivity.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_IN_TEST_MRP:
-+		obj_str = "MRP_InTest Frame Generation Configuration";
-+		problem = "Failure in managing MRP_InTest frame generation can misjudge the\n"
-+			  "interconnection ring's state, leading to incorrect blocking or\n"
-+			  "unblocking of the I/C port. This misconfiguration might result\n"
-+			  "in unintended network loops or isolate critical network segments,\n"
-+			  "compromising network integrity and reliability.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_IN_ROLE_MRP:
-+		obj_str = "Interconnection Ring Role Configuration";
-+		problem = "Failure in incorrect assignment of interconnection ring roles\n"
-+			  "(MIM/MIC) can impair the formation of the interconnection rings.\n";
-+		break;
-+	case SWITCHDEV_OBJ_ID_IN_STATE_MRP:
-+		obj_str = "Interconnection Ring State Configuration";
-+		problem = "Failure in updating the interconnection ring state can lead in\n"
-+			  "case of Open state to incorrect blocking or unblocking of the\n"
-+			  "I/C port, resulting in unintended network loops or isolation\n"
-+			  "of critical network\n";
-+		break;
-+	default:
-+		obj_str = "Unknown object";
-+		problem	= "Indicating a possible programming error.\n";
-+	}
-+
-+	switch (err) {
-+	case -ENOSPC:
-+		reason = "Current HW/SW setup lacks sufficient resources.\n";
-+		break;
-+	}
-+
-+	netdev_err(dev, "Failed to %s %s (object id=%d) with error: %pe (%d).\n%s%s\n",
-+		   action, obj_str, obj_id, ERR_PTR(err), err, problem, reason);
-+}
-+
- static void switchdev_port_obj_add_deferred(struct net_device *dev,
- 					    const void *data)
- {
-@@ -254,8 +347,7 @@ static void switchdev_port_obj_add_deferred(struct net_device *dev,
- 	err = switchdev_port_obj_notify(SWITCHDEV_PORT_OBJ_ADD,
- 					dev, obj, NULL);
- 	if (err && err != -EOPNOTSUPP)
--		netdev_err(dev, "failed (err=%d) to add object (id=%d)\n",
--			   err, obj->id);
-+		switchdev_obj_id_to_helpful_msg(dev, obj->id, err, true);
- 	if (obj->complete)
- 		obj->complete(dev, err, obj->complete_priv);
- }
-@@ -304,8 +396,7 @@ static void switchdev_port_obj_del_deferred(struct net_device *dev,
- 
- 	err = switchdev_port_obj_del_now(dev, obj);
- 	if (err && err != -EOPNOTSUPP)
--		netdev_err(dev, "failed (err=%d) to del object (id=%d)\n",
--			   err, obj->id);
-+		switchdev_obj_id_to_helpful_msg(dev, obj->id, err, false);
- 	if (obj->complete)
- 		obj->complete(dev, err, obj->complete_priv);
- }
+ 	if (unlikely(new_ni.blk_addr != NULL_ADDR)) {
+ 		err = -EFSCORRUPTED;
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 		f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
+-		goto fail;
++		goto out_dec;
+ 	}
+ #endif
+ 	new_ni.nid = dn->nid;
+@@ -1345,7 +1344,8 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+ 	if (ofs == 0)
+ 		inc_valid_inode_count(sbi);
+ 	return page;
+-
++out_dec:
++	dec_valid_node_count(sbi, dn->inode, !ofs);
+ fail:
+ 	clear_node_page_dirty(page);
+ 	f2fs_put_page(page, 1);
 -- 
-2.39.2
+2.40.1
 
 
