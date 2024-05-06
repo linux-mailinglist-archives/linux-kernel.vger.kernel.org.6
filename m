@@ -1,190 +1,338 @@
-Return-Path: <linux-kernel+bounces-169240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16C28BC58F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:47:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566338BC596
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3200E1F211CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831851C21330
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592743FB1D;
-	Mon,  6 May 2024 01:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320A63E476;
+	Mon,  6 May 2024 01:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcU7HWCg"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZQWdlG7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139893D55D;
-	Mon,  6 May 2024 01:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2751F1FC4;
+	Mon,  6 May 2024 01:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714960000; cv=none; b=CP+6miVKlip3gei5cZdQYp9I+HgfAccmeUQNIt4ew4ZjGS17hCcdfu9dvefFd+6XbzzTr+T4uYQyADa9VnyFMo1JmAPWDpxhGNCq4J0m7v5Pjh1AvwQZXGgck1ryKViOTv6j2w0LPU5Ec1fOLNAMc3Q6SIE1vviiCGPCkBCjS88=
+	t=1714960194; cv=none; b=lQqIkRYtD2dUzg1VOUkJN6Z7djkxMWl6EextpnxCuzW4NPHPwwKX6Aa9WR5j+6UyX3OQQ6laS5JP4RDKNtLFpakewpMiI/kNQvFHcw02tjShmrgQod7niRdY3jg28xyLQq7x1LdRAArbruDl7dvtc44CdD2j2EyjjbhwKJO2dCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714960000; c=relaxed/simple;
-	bh=lOubGtR80AaNFh/cJV+FIWAPhTfv5Muj74fW8EsJv/8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nj4MnbyyQGQMGrR1+5D5mMLLPrQOm6ebzii7uFOp7Rq2QCk4yRnbPMOmUTWXycTZh7vKkb8HoG6sEAgCioeJWZBL5HBFZCvXxuflRm64MpUHrg5UZaBf91sFuHYL4rcGrB+DatmFgqTkQvvYAI2CYp/5/dRp95IcpUdVFYH/Kv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcU7HWCg; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f44b390d5fso1446866b3a.3;
-        Sun, 05 May 2024 18:46:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714959998; x=1715564798; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SbtBOu7AIsmC5hqACAkZ2qUxEdKcn2SBtMp5/oLSpC4=;
-        b=ZcU7HWCg2qJMm9oAS3H++pytOXPmT0lGq7sYOpYfeOiLnt+lLGQAtFI9IWgQWIDQOB
-         WwnYPgqQLMJKv7Hx/JXRdYS5dGb/Igojb7yxcJHFrphZiIWHPU0J0vznsh+eBq1ttQNf
-         JE+iXFbLw5mQRqkq1Ekc1dlHlRnZurEf4Z4i784560nwX3vJaeL2JTtH4etPZ0LeDj7E
-         qUwP+JYpF/S7l275jtungr4PgmoYUfjhuW30eNdGzEsCmgL8ghsc0R4NyKhh9InH7R+s
-         mph9j0xCOgXsp53sDz0gCR5H0HPknJPerCdZefRokXDXFUDaff4FrHZOSVyBBsPbbWFo
-         tAmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714959998; x=1715564798;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SbtBOu7AIsmC5hqACAkZ2qUxEdKcn2SBtMp5/oLSpC4=;
-        b=Xp+WkZdmOtfdRlTfAZpgPB3N/r5ICoaSL5Kxj90bAh7PhTUXGsu6hiWBTjzBVjVPYB
-         4Szx3AURUkgojXWmW/5aPfbaZDp1h8wTZaUPrqZe6Qflb9ThGOR3EtDdOhjtYmEb6pfD
-         tWXZSHRh4RhqjG7cn6qNCVIKnP66m8eAw2sEPTL2yQ4mh2f8ZshVaBSGxRmavF3nhtce
-         +Jlh9F0r2S8t0Ks1lWcKv7akxHImR+MyhGEa3uj6YiR3hTwJEgZNYdYsn4NT64Q2mPCa
-         uRW+L9GdLCBCFPES8GwbuEnCjV4M3aZ2rBtfKkeKAsPErZznCI+gRUDsnSZ11WTMZGqF
-         Oj3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMFowOdoAiSgy3q9CePBRUbVR09KxruCyc7DFmUkvF3S1+M43WYDkFB/ytMiUR9YimnasvMckKFB11Aefkt0+kUQ+IqscSp2VIepAOlHwTYe466mFWKPAAM45TECqY1q750ZJhQV6defth7Z8P2Bk/O2h7PtS2LGLNuYLiiSo4SD+8
-X-Gm-Message-State: AOJu0Yy/WDex7hcuNFFBSRgdqeGVX+XMjPMOAzj2e8rkpamEOdYPEQIq
-	h/JlBZlFEdHNvb5DHnN9yEM45JXy3K356yxgWKbInblxTY9tSb9L
-X-Google-Smtp-Source: AGHT+IGfsukyiuaHRr94O7X2ihmZy4ttRqvBKuQdqA5ieu6ZRIIBAbfj30XugXmyYBynDBFGbRy/lg==
-X-Received: by 2002:a05:6a00:1704:b0:6f3:854c:dee0 with SMTP id h4-20020a056a00170400b006f3854cdee0mr12877549pfc.21.1714959998353;
-        Sun, 05 May 2024 18:46:38 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id fj30-20020a056a003a1e00b006eac4297ed3sm6608511pfb.20.2024.05.05.18.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 18:46:37 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	joe@perches.com,
-	linux-doc@vger.kernel.org
-Cc: apw@canonical.com,
-	broonie@kernel.org,
-	chenhuacai@loongson.cn,
-	chris@zankel.net,
-	corbet@lwn.net,
-	dwaipayanray1@gmail.com,
-	herbert@gondor.apana.org.au,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lukas.bulwahn@gmail.com,
-	mac.xxn@outlook.com,
-	sfr@canb.auug.org.au,
-	v-songbaohua@oppo.com,
-	workflows@vger.kernel.org,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Charlemagne Lasse <charlemagnelasse@gmail.com>
-Subject: [PATCH RESEND v6 2/2] scripts: checkpatch: check unused parameters for function-like macro
-Date: Mon,  6 May 2024 13:46:06 +1200
-Message-Id: <20240506014606.8638-3-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240506014606.8638-1-21cnbao@gmail.com>
-References: <20240506014606.8638-1-21cnbao@gmail.com>
+	s=arc-20240116; t=1714960194; c=relaxed/simple;
+	bh=gYQGZyOiQYHIZ1WrvLkBT/wTJ55iEU1mQbEjApORefk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n2xoqjS/+HJmAD0VoifZCe2c8NGynmHC1xFVWKmc+txNX5/i+fa+f/dLYwIMVf8Dnu8XtMOJWaH4Vl9+bmMfjNUsAdU4o0Jz2CPu0hWDIynaKReGHX6aEiNlrLYMtI6jlxZzeyXXwLV5O24u2774u4A/PmrvtJNL40YmIjFyJ3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZQWdlG7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8FACC4DDE1;
+	Mon,  6 May 2024 01:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714960193;
+	bh=gYQGZyOiQYHIZ1WrvLkBT/wTJ55iEU1mQbEjApORefk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tZQWdlG7XiPCj1bx4y466g4mE7uXFtYGuY2AjqDkLJ/EqedxPdNO6q6y0tEbxMINN
+	 RGzmD3S1fvbiyEaPy0nYYeV9IrGSlrb41o6v06iqa1p8nGdZgDsi2uWYm+jbgGTbDQ
+	 c6GBYVm18sU1QlM9/UrM6Q8rGoTMe7h7EW9KVbnZrArsR/wSZy+4fG39hnevp9t33n
+	 PNqOKVX18u/ZComuuWtedOCLGOssmEWEtvFiR0cFce7aEYT72HlTdQySejhgoJOMsO
+	 ODlR3M1aj/G1jBBAgJAj/VRVb2oVegKSvqfeZiDzTaLAs0h+O+zLWqkBRMT3JDeGCu
+	 OjSTpUvjtgAUg==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a387fbc9so301066066b.1;
+        Sun, 05 May 2024 18:49:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVqxQ01PYMzmZNFdiPbtF9UEX3qgB5VvfCFa9vmzhLw6m+sBW2ubWfi3rwKQUGb490m6Pn80NqkDK7Q5XgGNV6llEqAtcV5B349XH8Lr0jyDkJ4uv19pqZ93BWltJMhz7gO
+X-Gm-Message-State: AOJu0YwzeLeLl6FN4QXlq3XG0a5SC0AM56Ca0eLLew1ocUbIwMe7TOJ3
+	nJVbyGi1rNaXQkATN1AhFev7VjhYvuFE9rjissoLs+zXXwOCh0abqpfZsPmv2VrDuCmCFFDeIt4
+	N0TSIpyChO8jV9Sebl4SZq6aRfrw=
+X-Google-Smtp-Source: AGHT+IGTNGyPz70vBGDD1ALG+YqXxy7Bv7g2vDP7TCoJoDC6AlHMjWCYZzuLvBcS+7zqLq2kFrYmzjb2MaVGcFsVS6U=
+X-Received: by 2002:a17:907:60ce:b0:a59:9e55:7489 with SMTP id
+ hv14-20020a17090760ce00b00a599e557489mr4977187ejc.25.1714960192238; Sun, 05
+ May 2024 18:49:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240428100518.1642324-1-maobibo@loongson.cn> <20240428100518.1642324-5-maobibo@loongson.cn>
+In-Reply-To: <20240428100518.1642324-5-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 6 May 2024 09:49:42 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6kBO_RTTHoLfKdAtLO1Aqb0KmAJ6wn0wZrvbCkzMszDQ@mail.gmail.com>
+Message-ID: <CAAhV-H6kBO_RTTHoLfKdAtLO1Aqb0KmAJ6wn0wZrvbCkzMszDQ@mail.gmail.com>
+Subject: Re: [PATCH v8 4/6] LoongArch: KVM: Add vcpu search support from
+ physical cpuid
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xining Xu <mac.xxn@outlook.com>
+Hi, Bibo,
 
-If function-like macros do not utilize a parameter, it might result in a
-build warning.  In our coding style guidelines, we advocate for utilizing
-static inline functions to replace such macros.  This patch verifies
-compliance with the new rule.
+On Sun, Apr 28, 2024 at 6:05=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
+>
+> Physical cpuid is used for interrupt routing for irqchips such as
+> ipi/msi/extioi interrupt controller. And physical cpuid is stored
+> at CSR register LOONGARCH_CSR_CPUID, it can not be changed once vcpu
+> is created and physical cpuid of two vcpus cannot be the same.
+>
+> Different irqchips have different size declaration about physical cpuid,
+> max cpuid value for CSR LOONGARCH_CSR_CPUID on 3A5000 is 512, max cpuid
+> supported by IPI hardware is 1024, 256 for extioi irqchip, and 65536
+> for MSI irqchip.
+>
+> The smallest value from all interrupt controllers is selected now,
+> and the max cpuid size is defines as 256 by KVM which comes from
+> extioi irqchip.
+>
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> ---
+>  arch/loongarch/include/asm/kvm_host.h | 26 ++++++++
+>  arch/loongarch/include/asm/kvm_vcpu.h |  1 +
+>  arch/loongarch/kvm/vcpu.c             | 93 ++++++++++++++++++++++++++-
+>  arch/loongarch/kvm/vm.c               | 11 ++++
+>  4 files changed, 130 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/inclu=
+de/asm/kvm_host.h
+> index 2d62f7b0d377..3ba16ef1fe69 100644
+> --- a/arch/loongarch/include/asm/kvm_host.h
+> +++ b/arch/loongarch/include/asm/kvm_host.h
+> @@ -64,6 +64,30 @@ struct kvm_world_switch {
+>
+>  #define MAX_PGTABLE_LEVELS     4
+>
+> +/*
+> + * Physical cpu id is used for interrupt routing, there are different
+> + * definitions about physical cpuid on different hardwares.
+> + *  For LOONGARCH_CSR_CPUID register, max cpuid size if 512
+> + *  For IPI HW, max dest CPUID size 1024
+> + *  For extioi interrupt controller, max dest CPUID size is 256
+> + *  For MSI interrupt controller, max supported CPUID size is 65536
+> + *
+> + * Currently max CPUID is defined as 256 for KVM hypervisor, in future
+> + * it will be expanded to 4096, including 16 packages at most. And every
+> + * package supports at most 256 vcpus
+> + */
+> +#define KVM_MAX_PHYID          256
+> +
+> +struct kvm_phyid_info {
+> +       struct kvm_vcpu *vcpu;
+> +       bool            enabled;
+> +};
+> +
+> +struct kvm_phyid_map {
+> +       int max_phyid;
+> +       struct kvm_phyid_info phys_map[KVM_MAX_PHYID];
+> +};
+> +
+>  struct kvm_arch {
+>         /* Guest physical mm */
+>         kvm_pte_t *pgd;
+> @@ -71,6 +95,8 @@ struct kvm_arch {
+>         unsigned long invalid_ptes[MAX_PGTABLE_LEVELS];
+>         unsigned int  pte_shifts[MAX_PGTABLE_LEVELS];
+>         unsigned int  root_level;
+> +       spinlock_t    phyid_map_lock;
+> +       struct kvm_phyid_map  *phyid_map;
+>
+>         s64 time_offset;
+>         struct kvm_context __percpu *vmcs;
+> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/inclu=
+de/asm/kvm_vcpu.h
+> index 0cb4fdb8a9b5..9f53950959da 100644
+> --- a/arch/loongarch/include/asm/kvm_vcpu.h
+> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
+> @@ -81,6 +81,7 @@ void kvm_save_timer(struct kvm_vcpu *vcpu);
+>  void kvm_restore_timer(struct kvm_vcpu *vcpu);
+>
+>  int kvm_vcpu_ioctl_interrupt(struct kvm_vcpu *vcpu, struct kvm_interrupt=
+ *irq);
+> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid);
+>
+>  /*
+>   * Loongarch KVM guest interrupt handling
+> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+> index 3a8779065f73..b633fd28b8db 100644
+> --- a/arch/loongarch/kvm/vcpu.c
+> +++ b/arch/loongarch/kvm/vcpu.c
+> @@ -274,6 +274,95 @@ static int _kvm_getcsr(struct kvm_vcpu *vcpu, unsign=
+ed int id, u64 *val)
+>         return 0;
+>  }
+>
+> +static inline int kvm_set_cpuid(struct kvm_vcpu *vcpu, u64 val)
+> +{
+> +       int cpuid;
+> +       struct loongarch_csrs *csr =3D vcpu->arch.csr;
+> +       struct kvm_phyid_map  *map;
+> +
+> +       if (val >=3D KVM_MAX_PHYID)
+> +               return -EINVAL;
+> +
+> +       cpuid =3D kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
+> +       map =3D vcpu->kvm->arch.phyid_map;
+> +       spin_lock(&vcpu->kvm->arch.phyid_map_lock);
+> +       if (map->phys_map[cpuid].enabled) {
+> +               /*
+> +                * Cpuid is already set before
+> +                * Forbid changing different cpuid at runtime
+> +                */
+> +               if (cpuid !=3D val) {
+> +                       /*
+> +                        * Cpuid 0 is initial value for vcpu, maybe inval=
+id
+> +                        * unset value for vcpu
+> +                        */
+> +                       if (cpuid) {
+> +                               spin_unlock(&vcpu->kvm->arch.phyid_map_lo=
+ck);
+> +                               return -EINVAL;
+> +                       }
+> +               } else {
+> +                        /* Discard duplicated cpuid set */
+> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
+> +                       return 0;
+> +               }
+> +       }
+I have changed the logic and comments when I apply, you can double
+check whether it is correct.
 
-For a macro such as the one below,
+> +
+> +       if (map->phys_map[val].enabled) {
+> +               /*
+> +                * New cpuid is already set with other vcpu
+> +                * Forbid sharing the same cpuid between different vcpus
+> +                */
+> +               if (map->phys_map[val].vcpu !=3D vcpu) {
+> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
+> +                       return -EINVAL;
+> +               }
+> +
+> +               /* Discard duplicated cpuid set operation*/
+> +               spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
+> +               return 0;
+> +       }
+> +
+> +       kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, val);
+> +       map->phys_map[val].enabled      =3D true;
+> +       map->phys_map[val].vcpu         =3D vcpu;
+> +       if (map->max_phyid < val)
+> +               map->max_phyid =3D val;
+> +       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
+> +       return 0;
+> +}
+> +
+> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid)
+> +{
+> +       struct kvm_phyid_map  *map;
+> +
+> +       if (cpuid >=3D KVM_MAX_PHYID)
+> +               return NULL;
+> +
+> +       map =3D kvm->arch.phyid_map;
+> +       if (map->phys_map[cpuid].enabled)
+> +               return map->phys_map[cpuid].vcpu;
+> +
+> +       return NULL;
+> +}
+> +
+> +static inline void kvm_drop_cpuid(struct kvm_vcpu *vcpu)
+> +{
+> +       int cpuid;
+> +       struct loongarch_csrs *csr =3D vcpu->arch.csr;
+> +       struct kvm_phyid_map  *map;
+> +
+> +       map =3D vcpu->kvm->arch.phyid_map;
+> +       cpuid =3D kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
+> +       if (cpuid >=3D KVM_MAX_PHYID)
+> +               return;
+> +
+> +       if (map->phys_map[cpuid].enabled) {
+> +               map->phys_map[cpuid].vcpu =3D NULL;
+> +               map->phys_map[cpuid].enabled =3D false;
+> +               kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, 0);
+> +       }
+> +}
+While kvm_set_cpuid() is protected by a spinlock, do kvm_drop_cpuid()
+and kvm_get_vcpu_by_cpuid() also need it?
 
- #define test(a) do { } while (0)
+> +
+>  static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 val)
+>  {
+>         int ret =3D 0, gintc;
+> @@ -291,7 +380,8 @@ static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigne=
+d int id, u64 val)
+>                 kvm_set_sw_gcsr(csr, LOONGARCH_CSR_ESTAT, gintc);
+>
+>                 return ret;
+> -       }
+> +       } else if (id =3D=3D LOONGARCH_CSR_CPUID)
+> +               return kvm_set_cpuid(vcpu, val);
+>
+>         kvm_write_sw_gcsr(csr, id, val);
+>
+> @@ -943,6 +1033,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+>         hrtimer_cancel(&vcpu->arch.swtimer);
+>         kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
+>         kfree(vcpu->arch.csr);
+> +       kvm_drop_cpuid(vcpu);
+I think this line should be before the above kfree(), otherwise you
+get a "use after free".
 
-The test result is as follows.
+Huacai
 
- WARNING: Argument 'a' is not used in function-like macro
- #21: FILE: mm/init-mm.c:20:
- +#define test(a) do { } while (0)
-
- total: 0 errors, 1 warnings, 8 lines checked
-
-Signed-off-by: Xining Xu <mac.xxn@outlook.com>
-Tested-by: Barry Song <v-songbaohua@oppo.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Andy Whitcroft <apw@canonical.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Charlemagne Lasse <charlemagnelasse@gmail.com>
----
- Documentation/dev-tools/checkpatch.rst | 14 ++++++++++++++
- scripts/checkpatch.pl                  |  6 ++++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
-index 127968995847..a9fac978a525 100644
---- a/Documentation/dev-tools/checkpatch.rst
-+++ b/Documentation/dev-tools/checkpatch.rst
-@@ -906,6 +906,20 @@ Macros, Attributes and Symbols
- 
-     See: https://lore.kernel.org/lkml/1399671106.2912.21.camel@joe-AO725/
- 
-+  **MACRO_ARG_UNUSED**
-+    If function-like macros do not utilize a parameter, it might result
-+    in a build warning. We advocate for utilizing static inline functions
-+    to replace such macros.
-+    For example, for a macro such as the one below::
-+
-+      #define test(a) do { } while (0)
-+
-+    there would be a warning like below::
-+
-+      WARNING: Argument 'a' is not used in function-like macro.
-+
-+    See: https://www.kernel.org/doc/html/latest/process/coding-style.html#macros-enums-and-rtl
-+
-   **SINGLE_STATEMENT_DO_WHILE_MACRO**
-     For the multi-statement macros, it is necessary to use the do-while
-     loop to avoid unpredictable code paths. The do-while loop helps to
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 9c4c4a61bc83..9895d7e38a9f 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6040,6 +6040,12 @@ sub process {
- 					CHK("MACRO_ARG_PRECEDENCE",
- 					    "Macro argument '$arg' may be better as '($arg)' to avoid precedence issues\n" . "$herectx");
- 				}
-+
-+# check if this is an unused argument
-+				if ($define_stmt !~ /\b$arg\b/) {
-+					WARN("MACRO_ARG_UNUSED",
-+						"Argument '$arg' is not used in function-like macro\n" . "$herectx");
-+				}
- 			}
- 
- # check for macros with flow control, but without ## concatenation
--- 
-2.34.1
-
+>
+>         /*
+>          * If the vCPU is freed and reused as another vCPU, we don't want=
+ the
+> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
+> index 0a37f6fa8f2d..6006a28653ad 100644
+> --- a/arch/loongarch/kvm/vm.c
+> +++ b/arch/loongarch/kvm/vm.c
+> @@ -30,6 +30,14 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long ty=
+pe)
+>         if (!kvm->arch.pgd)
+>                 return -ENOMEM;
+>
+> +       kvm->arch.phyid_map =3D kvzalloc(sizeof(struct kvm_phyid_map),
+> +                               GFP_KERNEL_ACCOUNT);
+> +       if (!kvm->arch.phyid_map) {
+> +               free_page((unsigned long)kvm->arch.pgd);
+> +               kvm->arch.pgd =3D NULL;
+> +               return -ENOMEM;
+> +       }
+> +
+>         kvm_init_vmcs(kvm);
+>         kvm->arch.gpa_size =3D BIT(cpu_vabits - 1);
+>         kvm->arch.root_level =3D CONFIG_PGTABLE_LEVELS - 1;
+> @@ -44,6 +52,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long typ=
+e)
+>         for (i =3D 0; i <=3D kvm->arch.root_level; i++)
+>                 kvm->arch.pte_shifts[i] =3D PAGE_SHIFT + i * (PAGE_SHIFT =
+- 3);
+>
+> +       spin_lock_init(&kvm->arch.phyid_map_lock);
+>         return 0;
+>  }
+>
+> @@ -51,7 +60,9 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+>  {
+>         kvm_destroy_vcpus(kvm);
+>         free_page((unsigned long)kvm->arch.pgd);
+> +       kvfree(kvm->arch.phyid_map);
+>         kvm->arch.pgd =3D NULL;
+> +       kvm->arch.phyid_map =3D NULL;
+>  }
+>
+>  int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+> --
+> 2.39.3
+>
 
