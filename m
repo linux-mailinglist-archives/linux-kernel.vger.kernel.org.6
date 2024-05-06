@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-169857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365548BCEA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:58:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0938BCEA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A901C21D13
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:58:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CCFD1C21718
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167C7768E1;
-	Mon,  6 May 2024 12:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803606DCF5;
+	Mon,  6 May 2024 12:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O9YxQ8dC"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W644jclk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A036EB53;
-	Mon,  6 May 2024 12:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A510343687;
+	Mon,  6 May 2024 12:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715000318; cv=none; b=d7mBUL78qynu5sQQwBFreA9nFijxiFgiIlPd6o7QV30WrNvGtVxb2kkHM3pipuQtSm1v32LnjNZWYcg/R5LqpJtQ/oziytXhBhfZMcGlXsEwf5e0RW2SfXxWIQHa7599+uPzlGTx14ym4D0ZELFGZjkYZIRYRTwapoX6HypzXHE=
+	t=1715000368; cv=none; b=kZQ5bpu9/oT3fSx8CWgBcinpBpYDF1yH9Dwg8os29g7oMjnWmSTkBH52QyFgaDjArwoObaJBgF7UEI9BFvRepxYtkwycFt4O+F3oqlElAtTYePoTnim3m4K3c5CQZ1XEFvYRWGLd0OV8gVGTgiLsJ4PgzYTeJQ/e8Qi5rarhBnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715000318; c=relaxed/simple;
-	bh=tLmidEw0xvorttT3kpSnB/51l0/SZujW7+7sWnN3BTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cg+cLSmRjo+VFFxTeNdh4sl4ws6enBRkBpaZQ6wSYbCw+nhxmvfcSIE66mU1MHcC54V8QLxy7eB5icM5SXe6PR8FIWUwEMtZWTPZZt0Jx9QUKooHbqMMTtwd/tMLfvHfqpTOxP3VVQg55oan6cXYn/PEHnlD0AUFu3JzJQU8f78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O9YxQ8dC; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715000315;
-	bh=tLmidEw0xvorttT3kpSnB/51l0/SZujW7+7sWnN3BTE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O9YxQ8dCW1tqgLW5rA+0n2ArPG6QQFelD3GGiGn1iE3MvfASacacXhC4m6/6738Ti
-	 k/V/Ma+/rUbWei5h8Gs7kAAtv5k4CiXrV87IfdqqBH9pFD/I4e9fnTRgANZgxgA2Er
-	 YuKt83JuNXixC1NSoRiH2W/I3t3Q3F+oni1Sbj1Xj7L/PJD2WzQ5Vb65aCu5LqEH/R
-	 8QJmt3NtrgfLnLC1HR7QZuZWQSLB12fbi79eEanIy9j4bCVumzWB5ek4gl+mDAc7pJ
-	 NRa00YWGRzZUciGJQYW20VIAEebikMKu8YzZYlX4GMx7jHPMa+s0JxRr0qjzFI3a0L
-	 e9gMJgpPOcHXw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1715000368; c=relaxed/simple;
+	bh=u4YorYLo//Zdf2cB2fFMSFyysd7c8cFd6Z4cCfzLHho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rK3HoFTzbeOmHogrRyeExEKTPUxTRsFRPno6X8yLkykAypOZgtQ8exm3J3zEH+6X8qxzX2XE75AjshkLBPIm7a3KPj5aHl3n5mmvL6OuuATChgZ53M4481aOy/ury82+UMg+d078P8XnSRvNcBfH5R/ypjbW1+paEWgk0Kd5SDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W644jclk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1F59140E0187;
+	Mon,  6 May 2024 12:59:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6YJBEWDVV4ff; Mon,  6 May 2024 12:59:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715000359; bh=pylzvv8NGZK4ROfBoCs4iOsfuRAG+JTsfYFB/x19Qwg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W644jclk1AM0sw2RlXxg82b3Fp4SesPBn/1UUCBoTGfGypjIrFtVIJFgPBFoQbV/u
+	 XeyHQjWXmZ0MIsvEIPbtNOvf60SQ7IdgQluzugT5sBI4XwgYgp2xvduvOzp5vHP0wt
+	 SHPvSrhxeuRtlNG/GKNH055324JiwZOQpotO1qnNnoWyUXTOX52QI0DlfhyBZa6P6c
+	 cRq19SnK+BbZl/EhzjOt307iIlkpKoOwdACg5Ur2Kbrdx8VX1JjxIVz7c27s82aU79
+	 QBA1ffIiAnpYx6FLjHSZaEZo4KqRlM5X183LjF0sjwJF8vlwpJ4Jp+ERsdABs68Ega
+	 erD/khJZjsDeomY/FKp/f06De19HujqEZCOYD9rBzoCtXgs/kq+4DHcyonHNh0QIz4
+	 +9NhsXN8rzl7ThLujh6lG/hcXOQBtH+mO5Jugd5PDuW4d0iT03bQxhyIoP8aRiWatk
+	 u4jhNpWNqVh7YnoZPaAiRDMYC/dVtxd4Etc4zU8hS9o+6S/ChdNTN3jiSmJGwD5IXk
+	 jqBN+mNVWSqE5LqKOGZYXHf+rNB4ae5U9i5t0h1QjxgqrNYEbgg8YvA/7tlU0W6qhh
+	 oFSirzoOjJEqQxo7LKtbUT7OkxXoDJkW03hPCMRYe8lx4KD5JqQaimhMQ5O1tEqKT6
+	 7Np6+H8aG9cHwR38au0pG0tY=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8896437813E3;
-	Mon,  6 May 2024 12:58:33 +0000 (UTC)
-Message-ID: <01b2e468-e721-4bc5-9149-4e2292eafd42@collabora.com>
-Date: Mon, 6 May 2024 14:58:32 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D622240E0249;
+	Mon,  6 May 2024 12:58:53 +0000 (UTC)
+Date: Mon, 6 May 2024 14:58:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	seanjc@google.com, pbonzini@redhat.com, thomas.lendacky@amd.com,
+	hpa@zytor.com, rmk+kernel@armlinux.org.uk, peterz@infradead.org,
+	james.morse@arm.com, lukas.bulwahn@gmail.com, arjan@linux.intel.com,
+	j.granados@samsung.com, sibs@chinatelecom.cn, nik.borisov@suse.com,
+	michael.roth@amd.com, nikunj.dadhania@amd.com, babu.moger@amd.com,
+	x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	santosh.shukla@amd.com, ananth.narayan@amd.com,
+	sandipan.das@amd.com
+Subject: Re: [PATCH 1/3] x86/split_lock: Move Split and Bus lock code to a
+ dedicated file
+Message-ID: <20240506125847.GTZjjUB6D_cClwghMc@fat_crate.local>
+References: <20240429060643.211-1-ravi.bangoria@amd.com>
+ <20240429060643.211-2-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] drm/mediatek: Implement OF graphs support for
- display paths
-To: Michael Walle <mwalle@kernel.org>, chunkuang.hu@kernel.org
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
- ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- wenst@chromium.org, kernel@collabora.com
-References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
- <20240409120211.321153-4-angelogioacchino.delregno@collabora.com>
- <D12G1NPU2H06.3LBLR19XYUAA6@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <D12G1NPU2H06.3LBLR19XYUAA6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240429060643.211-2-ravi.bangoria@amd.com>
 
-Il 06/05/24 11:11, Michael Walle ha scritto:
-> Hi Angelo,
+On Mon, Apr 29, 2024 at 11:36:41AM +0530, Ravi Bangoria wrote:
+> Upcoming AMD uarch will support Bus Lock Detect, which functionally works
+> identical to Intel. Move split_lock and bus_lock specific code from
+> intel.c to a dedicated file so that it can be compiled and supported on
+> non-intel platforms.
 > 
-> On Tue Apr 9, 2024 at 2:02 PM CEST, AngeloGioacchino Del Regno wrote:
->> +static int mtk_drm_of_get_ddp_ep_cid(struct device_node *node,
->> +				     int output_port, enum mtk_drm_crtc_path crtc_path,
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> ---
+>  arch/x86/include/asm/cpu.h           |   4 +
+>  arch/x86/kernel/cpu/Makefile         |   1 +
+>  arch/x86/kernel/cpu/intel.c          | 407 ---------------------------
+>  arch/x86/kernel/cpu/split-bus-lock.c | 406 ++++++++++++++++++++++++++
+>  4 files changed, 411 insertions(+), 407 deletions(-)
+>  create mode 100644 arch/x86/kernel/cpu/split-bus-lock.c
 > 
-> Not sure what's your base branch is, but "enum mtk_drm_crtc_path"
-> was renamed to "enum mtk_crtc_path" in commit 9e149879038f5
-> ('drm/mediatek: Rename "mtk_drm_crtc" to "mtk_crtc"').
-> 
->> +/**
->> + * mtk_drm_of_ddp_path_build_one - Build a Display HW Pipeline for a CRTC Path
->> + * @dev:          The mediatek-drm device
->> + * @cpath:        CRTC Path relative to a VDO or MMSYS
->> + * @out_path:     Pointer to an array that will contain the new pipeline
->> + * @out_path_len: Number of entries in the pipeline array
->> + *
->> + * MediaTek SoCs can use different DDP hardware pipelines (or paths) depending
->> + * on the board-specific desired display configuration; this function walks
->> + * through all of the output endpoints starting from a VDO or MMSYS hardware
->> + * instance and builds the right pipeline as specified in device trees.
->> + *
->> + * Return:
->> + * * %0       - Display HW Pipeline successfully built and validated
->> + * * %-ENOENT - Display pipeline was not specified in device tree
->> + * * %-EINVAL - Display pipeline built but validation failed
->> + * * %-ENOMEM - Failure to allocate pipeline array to pass to the caller
->> + */
->> +static int mtk_drm_of_ddp_path_build_one(struct device *dev, enum mtk_drm_crtc_path cpath,
-> 
-> likewise
-> 
->> +					 const unsigned int **out_path,
->> +					 unsigned int *out_path_len)
-> 
-> -michael
+> diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
+> index aa30fd8cad7f..4b5c31dc8112 100644
+> --- a/arch/x86/include/asm/cpu.h
+> +++ b/arch/x86/include/asm/cpu.h
+> @@ -51,6 +51,10 @@ static inline u8 get_this_hybrid_cpu_type(void)
+>  	return 0;
+>  }
+>  #endif
+> +
+> +void split_lock_init(void);
+> +void bus_lock_init(void);
+> +
+>  #ifdef CONFIG_IA32_FEAT_CTL
+>  void init_ia32_feat_ctl(struct cpuinfo_x86 *c);
+>  #else
+> diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+> index eb4dbcdf41f1..86a10472ad1d 100644
+> --- a/arch/x86/kernel/cpu/Makefile
+> +++ b/arch/x86/kernel/cpu/Makefile
+> @@ -27,6 +27,7 @@ obj-y			+= aperfmperf.o
+>  obj-y			+= cpuid-deps.o
+>  obj-y			+= umwait.o
+>  obj-y 			+= capflags.o powerflags.o
+> +obj-y 			+= split-bus-lock.o
 
-Yeah, thanks for noticing that, I'll send a new version soon.
+Too fine-grained a name and those "-" should be "_".
 
-Cheers
+Perhaps bus_lock.c only...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
