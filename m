@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-169306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE2C8BC6A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538A98BC6A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744DE1F22018
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0D81F21F48
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0BE47F4A;
-	Mon,  6 May 2024 05:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9E247F45;
+	Mon,  6 May 2024 05:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdGW7tPw"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="H3qdPEr0"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6DF1EB36;
-	Mon,  6 May 2024 05:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A8A4654B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 05:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714972172; cv=none; b=F9QiuLmkviE7E/YNkVwzzQ1z5DqrX1rgFnh6Kl0KKmqc3kMh9MOwNJLtmDVqX2v8/Tj6tyCfpIOEzTf3hLmrCR0bxRojHhpS6cYv9wHCJN+6piAJARt3CthZJsUPZwnrZp/SlgX8uNEP0Jkj+pyj8etkW+9FhVhyK6cK/5JjyJg=
+	t=1714972195; cv=none; b=OuMmA+S1gqnqdRHjZDwyAr+sPtdwTuS6q5iGAV8Gp5lcZanNW4od4z2OVHzpm2XC5lQs3qZ++74ld+/T/+YC9Y5Ay0wyu0KP1ZBiHWMK45eMLd2lml2xu/BmA5uyUbP/BAVqsVeZFVfl/PrrPvAUViwU11qYlogUzA4i/mZpN20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714972172; c=relaxed/simple;
-	bh=kh3pjmcgspsFubSCvlFAC12TDbcdkdW7Az3JM3CWzdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WnZA2aPBdiGoTIDX77k4l+ZQhGnG9pS6JWlapj/hSAN35FvFC7I5Are0v9aGIHgtH93MYP5zXx8jNiMbQ6vJSpSFvJHJ7HhdpY/KOsofUbtsBR2OOQwIYEvzQTa6ov/YduLf03bulJp/NgOUqQdP9MXkiAT4UZgrdQEj2DAe1OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdGW7tPw; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f71e4970bso1677019e87.2;
-        Sun, 05 May 2024 22:09:30 -0700 (PDT)
+	s=arc-20240116; t=1714972195; c=relaxed/simple;
+	bh=6T7f2QduS96nnM7wx4ZuNCcwzMht+bTEOjYv39h4ZtY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PR4b3uxptHq08+tiYXPIxQk7ztwG9jo6h1MobSPjndxoUnnpVaYApcx14Rtj7ulJijlYvBOnU0kOXcHEIFEPVS2KzSHJ/6ldpPJgLJrLy3F0XRhZwiD4aEWZiM+zt/6GemOv4d9pnDwXdp3bsqtPR+oj/aJR5Yxm/5UPSMPvV9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=H3qdPEr0; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.2.60] (210-10-213-150.per.static-ipl.aapt.com.au [210.10.213.150])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5B3392009E;
+	Mon,  6 May 2024 13:09:37 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714972169; x=1715576969; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MWbsGZx/QEaTtUL6O25aBUxket2/6PHkfifn7NTPauM=;
-        b=IdGW7tPwet+7OydmoJHtuZxdw491ehg4aj7vHTNGZkU4JpaBIyBSL0oKbNeWjxiZAv
-         GJ1M541FJBnrPUhRG5nlIVEvlZIYG4IpZFdDd9AczeAvv1CgXINXPjxi1zW1M5fWJWz4
-         BPEiVQjhJCHdWfqdKSvCCXC1/ZM7K5Qb559NFMNxVGyAyyCUpXMsoor5n84aiu4qzAmA
-         fXDLbQmp2hEeslC2PlC1dV+oYFgEjrm3/DLe34tVhUAoW72FReiwYhP9/JBZZNNfFLZr
-         sZ6cKmUot405vFkTWUW/aMTEEHi6/CTdf6deIf2eTMZu4OgNFCrgMlQemykT2aTzFt0s
-         ta8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714972169; x=1715576969;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MWbsGZx/QEaTtUL6O25aBUxket2/6PHkfifn7NTPauM=;
-        b=xRJ0MWqaBt+AsywvBTWSOXq5GNWuRqEDc1PsbzSWY/9EIPAl+XRPycJ5mfU+ad7EgI
-         T0K8aREmTJrd/dB156VPerG/wVCNbu/5pP5ongrFr8LW4uATCGIJwBXDUbUWzAHE74Dv
-         mNTJlXbc77HR8CvjkSWgmVY9bcdgrZJt7G3RuVICpXf3jhKk45YocgOzpycftZXUHIjA
-         1/eKWVdqkUNCrPqpdRd4xtksVkCex8wxjFg5E34FR1PBBkKCOmxm/++rttVMmeo9LOaT
-         FjYJsuBriCgWM1OH16BBF4LeD8xiXXE7cS5w49WJ6EA2MEpFXYRGEuIuOpVEZ+OSkQo7
-         Pcug==
-X-Forwarded-Encrypted: i=1; AJvYcCUI7Aw5uqK28hVM/kCELlUKDSln34j7QBWiZzxUOudSIYJ/wcsQBmT/zRJJEXC2oiSqOLaFBhZkL8AjyOCNNmuiPgzHQT9x7aVWwNOf50uzIVaVEWnKAHbsJGcENswXRtH90FzQS9ha
-X-Gm-Message-State: AOJu0Yxuv929l/LGLaXx+xJK/G793UsM6xU1ysGxi7elMHQXJKw5b0BZ
-	dDaQvT5B9MGPfUu2k+ncUTiqbz90EPi6xMEpsrhCDcjjd0uf6byR/+0yDg==
-X-Google-Smtp-Source: AGHT+IG9+a1dovRs7qfJ42AfWatHf2uhvZXQ0L4XjfoeXjgYymezBrdcCPX2MgRUpHEcNnuF4JB+CA==
-X-Received: by 2002:a05:6512:3f01:b0:518:bd38:1ed3 with SMTP id y1-20020a0565123f0100b00518bd381ed3mr9224288lfa.53.1714972168404;
-        Sun, 05 May 2024 22:09:28 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id y22-20020a196416000000b0051723af85casm1503691lfb.238.2024.05.05.22.09.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 May 2024 22:09:27 -0700 (PDT)
-Message-ID: <11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
-Date: Mon, 6 May 2024 08:09:27 +0300
+	d=codeconstruct.com.au; s=2022a; t=1714972183;
+	bh=6T7f2QduS96nnM7wx4ZuNCcwzMht+bTEOjYv39h4ZtY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=H3qdPEr0OVLyCxs5buMC/BZLtXLl2w770b1tXXvIfFkt4azNnrBzwywkx8+5LeLh0
+	 +eopC3rlLdUDeZCkoovso/vdj97Vr85bya03hdAffcup+tP1vwdWt1X8607yyorDU7
+	 JUdOM4DLJFATFqnYtVWxXnyzxnzb7v/38zGa1fZlT+/hBXnZFZ3XXIfvjUBB+5/MOw
+	 BZd6oGlqze270a4B2j/x+SDc0P6c5GQEapWxhhuUyioIn+daQxZFrTzQEwLBS9lYNe
+	 XyXjx/Vm+oY3Wv1o0q5/NmofLaDr/FJDi3mrPSQ0napoSB/AJgYC8glqBhewZrX/eE
+	 GZKSeWRm00IcA==
+Message-ID: <645d4f645b1296d54573c4fe734768adab160035.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] i3c: dw: Disable IBI IRQ depends on hot-join and SIR
+ enabling
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Dylan Hung <dylan_hung@aspeedtech.com>, "alexandre.belloni@bootlin.com"
+ <alexandre.belloni@bootlin.com>, "joel@jms.id.au" <joel@jms.id.au>, 
+ "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+ "gustavoars@kernel.org" <gustavoars@kernel.org>,
+ "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+ "zenghuchen@google.com" <zenghuchen@google.com>,
+ "matt@codeconstruct.com.au" <matt@codeconstruct.com.au>, 
+ "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: BMC-SW <BMC-SW@aspeedtech.com>
+Date: Mon, 06 May 2024 13:09:35 +0800
+In-Reply-To: <TYZPR06MB65675E5D43EE265DD702E5689C182@TYZPR06MB6567.apcprd06.prod.outlook.com>
+References: <20240119054547.983693-1-dylan_hung@aspeedtech.com>
+	 <563ad5613e9c5f0671e1f49f2d9ba71d8735799b.camel@codeconstruct.com.au>
+	 <TYZPR06MB65675E5D43EE265DD702E5689C182@TYZPR06MB6567.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Fix the iio-gts-helpers available times table
- sorting
-Content-Language: en-US, en-GB
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chenyuan Yang <chenyuan0y@gmail.com>
-References: <cover.1714480171.git.mazziesaccount@gmail.com>
- <20240505185027.18809bfd@jic23-huawei>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240505185027.18809bfd@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 5/5/24 20:50, Jonathan Cameron wrote:
-> On Tue, 30 Apr 2024 15:44:26 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> Fix the available times table sorting in iio-gts-helpers
->>
->> This series contains a fix and test for the sorting of the available times in
->> IIO-gts helpers. Fix was originally developed and posted by Chenyuan Yang.
->>
->> Revision history:
->> 	v1 => v2:
->> 	  - Fix the sender for patch 1/2 (Sic!)
->> 	  - Fix Co-Developed-by tag (drop this from Chenyuan who
->> 	    is the original author)
->> 	  - Fix the From: tag as instructed in:
->> 	    https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-> 
-> Am I right in thinking this doesn't matter for existing drivers?
+Hi Dylan,
 
-I think this is right. Only couple of in-tree drivers are using these 
-helpers for now, and all of them sorted the tables already in driver.
+Thanks for the response! I have a couple of follow-up things though:
 
-> As such not high priority for back porting?
+> > My interpretation of this change is that we keep the "global" IBI irq e=
+nabled if
+> > hot-join-nack is set (ie, always, because we don't support hot join, an=
+d
+> > configure the hardware to nack all hot join requests).
+> >=20
+> I would like to clarify the control logic, incorporating the principle
+> of disabling the SIR interrupt signal:
+>=20
+> Case 1:
+> When `DEV_CTRL_HOT_JOIN_NACK` is set, indicating `hj_rejected` is
+> true, it signifies the controller's non-receptiveness to the hot-join
+> event. Consequently, we can safely disable the SIR interrupt signal if
+> none of the target devices request SIR (reg =3D=3D 0xffffffff).
+>=20
+> Case 2:
+> When `DEV_CTRL_HOT_JOIN_NACK` is unset, indicating `hj_rejected` is
+> false, this indicates the controller's readiness to engage with the
+> hot-join event. Therefore, it's imperative to keep the SIR interrupt
+> signal enabled, even if not all target devices request SIR. In this
+> case, `global` is false and `enable` is false.
 
-The bug is pretty nasty as it causes invalid memory accesses. Hence I'd 
-like to see this landing in the longterm kernels. It seems to me the GTS 
-helpers got merged in 6.4, so getting the fix backported to 6.6 might 
-make sense.
+Yep, I see what you're doing there, but it looks like the correct state
+would never be set if we're not enabling/disabling the IBIs separately;
+with this code, we would only ever enable the SIR for the HJ if we
+*also* happen to enable IBIs.
 
-> I'll assume that and queue it up for 6.11. If someone shouts I can pull the fix
-> forwards, but then we have the mess of chasing the testing in later.
+The initial state would be to have all SIRs masked.
 
-I am sorry Jonathan but I'm not quite sure what you mean by "pulling fix 
-forward", or what is the "mess of chasing the testing in later" :)
+> Billy recently submitted a change to implement the hot-join enabling/disa=
+bling. Therefore, it is timely to consider the hot-join functionality.
+> https://patchwork.kernel.org/project/linux-i3c/patch/20240429073624.25683=
+0-1-billy_tsai@aspeedtech.com/
 
-> Applied to the togreg branch of iio.git and pushed out as testing for 0-day
-> to poke at it.
+Yep, I saw that, excellent! It's next on my list to take a look at.
 
-Thanks! Appreciate your work as always!
+It's just a little unusual that we're enabling the HJ interrupt before
+actually having the HJ support though.
 
-Yours,
-	-- Matti
+Cheers,
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
 
-~~ When things go utterly wrong vim users can always type :help! ~~
-
+Jeremy
 
