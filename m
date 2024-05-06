@@ -1,88 +1,175 @@
-Return-Path: <linux-kernel+bounces-169224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B228BC529
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:11:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCE98BC568
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBD11F21B84
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:11:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25B35B21559
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD04383B2;
-	Mon,  6 May 2024 01:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38C33CF6A;
+	Mon,  6 May 2024 01:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="n/NWWsZU"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFi4+NjK"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3EE1A28D
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 01:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF032FB6;
+	Mon,  6 May 2024 01:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714957894; cv=none; b=ZUm5si2RynndLO4NNSZ1MbpeuVjTS3DUtBtSppAWuTZ3ANjrllOL0ceV2FHhNlXsD8Z3AsnKeDbQZO+0uMi2Bmgx7adYThzcIo+KyA2qLJzV9Wy+eRlu4FLwiR1TktaZZiF0y96uW6NcsaGTkKJwiLdYWKVI71014fXUCLB7Oy4=
+	t=1714958548; cv=none; b=I3S5/LGCh9F1lKm4Ma2qNCFNb4yhnbdirE8ui1Or4RSQGwdQAMgx7SI9ubTVERSkylhvIqn1Z9rRJIC0wCGaKEs/XReEXRJAEtyUGlVrrGkLy5/APG6t6PJzC6/+36Z7g+7PACChUn2hw25nU4G7McPZfEX5s4YD0+6800ZFS7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714957894; c=relaxed/simple;
-	bh=/p7YUUW938hkm/WjoZddvXrUZA9IxWHC00ipPG7x+yc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sbnbVUKm6NZ03FthaOpCPp2VbBhiR8Lortjxk1WO4J4tI87yaeLVV4sfi9hQ6KYtA6WaadKP93OVZ+z+xlJS4+vACz2NrObXLOmMR/566pI2VuN1nO0M54zUgah2NI2bWERmoDdudxRpN2jRygQtCQ5jWLIB9y8kuz9ZBNw4XZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=n/NWWsZU; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1714957883; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=nfeEy764PjJmm2hNAZ96dBiIs1iOgWMjNMaCbgQ4Iz4=;
-	b=n/NWWsZUcxqqx1Bv+Pcm+2YRg9gSz1c2fH/Th3KHDbc9OSJ71+BxHG6RnPEYkTUX3jb6D0gIBhd2FAZJvne7PfhRyPLp1KUDxD0ZO1dIu6OA7vaqtXgkcmIfNz8elDE6xrLJxVb1dgPa7hMMEsViVyBi2IguR6cEgzicbI0N6Jw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W5pR6Ly_1714957881;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0W5pR6Ly_1714957881)
-          by smtp.aliyun-inc.com;
-          Mon, 06 May 2024 09:11:22 +0800
-From: Yang Li <yang.lee@linux.alibaba.com>
-To: suzuki.poulose@arm.com,
-	alexander.shishkin@linux.intel.com,
-	mike.leach@linaro.org,
-	james.clark@arm.com
-Cc: coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1714958548; c=relaxed/simple;
+	bh=JJjxgGZxm6C2oeTjFvqBWbAWhXD8o2kgHv5Kc419p6A=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=POtKkh1YgeVe3sz+KA8nd594hYuTtGIeWOWmmBUSMn3ar4tq99jUaiYromxpSYnpwwzGPr06RwuJZn3NFy3Du07ZO8qydtEN26TQYcMCDEKyPxRCREbELBTDxEMI1dFfP6m+hzE33rwdyNDU75VcNmjRyAKPg9/JVqnalPsUONk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFi4+NjK; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso143974666b.2;
+        Sun, 05 May 2024 18:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714958545; x=1715563345; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PXql6pq6gP6PZPKKZA9sUcOpkbTs5kG7qkItMNhcUBg=;
+        b=SFi4+NjKGZ/6DopFdBTtNABksF9E1HjAxsYz8ZG25eqz3nJKl0S+l33ZzTCxGOWf4Q
+         5ACsLqGXSodYAW0qVu6/6alw8KTS2JhuXu6S0gM0ULy6A0CQBLZROGAWfTqEZF0hneBd
+         7wgHC4cDR3JUFQLWc2PDvgUa83C8FAyqD67f5MF4r/TKXy08WOwVwThsqAvjXHojNNhZ
+         rkaaGp6hh7H9yAvj2SfWkS94dhjhaajzA67ZSuBlqyZTlgeqGFNMWtwCOwFK5Fpr6UDE
+         4X3AnoQA455WY3kl2mWg8SCTpBizxLwiqpzNiXobfP6A0ibCglxB+5uoFhLT3TS+mvQv
+         RuQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714958545; x=1715563345;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PXql6pq6gP6PZPKKZA9sUcOpkbTs5kG7qkItMNhcUBg=;
+        b=NywN/J7089A1QHiB4gTA3cLjnWOjXNIAbc/vDb7EnxqniHWgdWV91dROy7nuQtEr3R
+         QRHYe2CgTuFBwG690kxMuibd2Hu/IPFHfPeJIKa1yiIhUYIHvJlGHMGRCy+oM0/17rWn
+         NO4sv8M3ofZpX7934L+EFNUXU5frr/LBb6N82OcAEV4jEeLisf5NNiVWUqKNG+laGqR3
+         Me4QaO4qFkR0KalxNHIOTS3YESytDaireeeX0y/cATkO4VSBBXgkEOgzzYjwWMP6wOHS
+         W/1mi7pGe+iFZedmrFZ/7pRfWenWVbuFbUzS72lYj6KXtj8n4jDmWGsr2gGpUroZiN55
+         zx8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWiONT8mpqiH6DMxrHrfD3cep1oq5Stt3phFICKfvnzuKjETS5Oc+FDzeKRGZx9Os9+5n/vXvC+ogWhdINX8A8c7K5Yu7JewQZLQwoy
+X-Gm-Message-State: AOJu0YxqaUPrSd3iJqk3liRm8DGyFQZE8etk3LAadK7xYonUOD0xfj7f
+	lZkjlWaojdDY3lniEjYBPF2EPzY3l1s6knLjzOLyM1dGgK5zaDk/
+X-Google-Smtp-Source: AGHT+IHX4Q1M1J2QS0feiS/vKJoi8VrwTs5GnXeLGv3vgyeFQks/RZrzr3b3YspBZ68H/t1pBhZMAQ==
+X-Received: by 2002:a17:907:728a:b0:a59:bbd6:bb3b with SMTP id dt10-20020a170907728a00b00a59bbd6bb3bmr2228018ejc.55.1714958545444;
+        Sun, 05 May 2024 18:22:25 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id l12-20020a1709066b8c00b00a59c0ecd559sm1427116ejr.112.2024.05.05.18.22.24
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 05 May 2024 18:22:24 -0700 (PDT)
+From: Wei Yang <richard.weiyang@gmail.com>
+To: arnd@arndb.de,
+	rppt@kernel.org
+Cc: linux-arch@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] coresight: tmc: Remove duplicated include in coresight-tmc-core.c
-Date: Mon,  6 May 2024 09:11:21 +0800
-Message-Id: <20240506011121.39179-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	linux-mm@kvack.org,
+	Wei Yang <richard.weiyang@gmail.com>
+Subject: [PATCH] mm/memblock: discard .text/.data if CONFIG_ARCH_KEEP_MEMBLOCK not set
+Date: Mon,  6 May 2024 01:21:04 +0000
+Message-Id: <20240506012104.10864-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The header files linux/acpi.h is included twice in coresight-tmc-core.c,
-so one inclusion of each can be removed.
+When CONFIG_ARCH_KEEP_MEMBLOCK not set, we expect to discard related
+code and data. But it doesn't until CONFIG_MEMORY_HOTPLUG not set
+neither.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=8937
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+This patch puts memblock's .text/.data into its own section, so that it
+only depends on CONFIG_ARCH_KEEP_MEMBLOCK to discard related code and
+data. After this, init size increase from 2420K to 2432K.
+
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
 ---
- drivers/hwtracing/coresight/coresight-tmc-core.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/asm-generic/vmlinux.lds.h | 14 +++++++++++++-
+ include/linux/memblock.h          |  8 ++++----
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-index 4f11a739ae4d..b54562f392f3 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-@@ -26,7 +26,6 @@
- #include <linux/coresight.h>
- #include <linux/amba/bus.h>
- #include <linux/platform_device.h>
--#include <linux/acpi.h>
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index f7749d0f2562..775c5eedb9e6 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -147,6 +147,14 @@
+ #define MEM_DISCARD(sec) *(.mem##sec)
+ #endif
  
- #include "coresight-priv.h"
- #include "coresight-tmc.h"
++#if defined(CONFIG_ARCH_KEEP_MEMBLOCK)
++#define MEMBLOCK_KEEP(sec)    *(.mb##sec)
++#define MEMBLOCK_DISCARD(sec)
++#else
++#define MEMBLOCK_KEEP(sec)
++#define MEMBLOCK_DISCARD(sec) *(.mb##sec)
++#endif
++
+ #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+ #define KEEP_PATCHABLE		KEEP(*(__patchable_function_entries))
+ #define PATCHABLE_DISCARDS
+@@ -356,6 +364,7 @@
+ 	*(.ref.data)							\
+ 	*(.data..shared_aligned) /* percpu related */			\
+ 	MEM_KEEP(init.data*)						\
++	MEMBLOCK_KEEP(init.data*)					\
+ 	*(.data.unlikely)						\
+ 	__start_once = .;						\
+ 	*(.data.once)							\
+@@ -573,6 +582,7 @@
+ 		*(.ref.text)						\
+ 		*(.text.asan.* .text.tsan.*)				\
+ 	MEM_KEEP(init.text*)						\
++	MEMBLOCK_KEEP(init.text*)					\
+ 
+ 
+ /* sched.text is aling to function alignment to secure we have same
+@@ -680,6 +690,7 @@
+ 	KEEP(*(SORT(___kentry+*)))					\
+ 	*(.init.data .init.data.*)					\
+ 	MEM_DISCARD(init.data*)						\
++	MEMBLOCK_DISCARD(init.data*)					\
+ 	KERNEL_CTORS()							\
+ 	MCOUNT_REC()							\
+ 	*(.init.rodata .init.rodata.*)					\
+@@ -706,7 +717,8 @@
+ #define INIT_TEXT							\
+ 	*(.init.text .init.text.*)					\
+ 	*(.text.startup)						\
+-	MEM_DISCARD(init.text*)
++	MEM_DISCARD(init.text*)						\
++	MEMBLOCK_DISCARD(init.text*)
+ 
+ #define EXIT_DATA							\
+ 	*(.exit.data .exit.data.*)					\
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index e2082240586d..3e1f1d42dde7 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -100,13 +100,13 @@ struct memblock {
+ 
+ extern struct memblock memblock;
+ 
++#define __init_memblock        __section(".mbinit.text") __cold notrace \
++						  __latent_entropy
++#define __initdata_memblock    __section(".mbinit.data")
++
+ #ifndef CONFIG_ARCH_KEEP_MEMBLOCK
+-#define __init_memblock __meminit
+-#define __initdata_memblock __meminitdata
+ void memblock_discard(void);
+ #else
+-#define __init_memblock
+-#define __initdata_memblock
+ static inline void memblock_discard(void) {}
+ #endif
+ 
 -- 
-2.20.1.7.g153144c
+2.34.1
 
 
