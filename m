@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-170388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64118BD624
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:25:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3B58BD627
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6203B282D1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8AE4282CE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5123F15B10E;
-	Mon,  6 May 2024 20:25:06 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF4515B10C;
+	Mon,  6 May 2024 20:25:57 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A5715697B
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F3115B0ED
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715027105; cv=none; b=l1oOjVtXZMVkqjCsqoU74DUxd4QrsEQ3q4Jk/GLpri8bV8NPGg47vl/cdMeVWDnVVYrzFYLuB+lPxpB/V7u1JsETKnQGoOf0ufR3FGw/PRdXz68lukgk3oi08H15rhSktd2XD/1jGrkHMimuVn+tK8IQJKrO6Ghs2NhQVggnw4I=
+	t=1715027157; cv=none; b=bNDqo1Z0zQrN5MDl3zNR+ZLhY69R4Y33hk+VazVdAHBgopwP6AMeLjXpIYWDld4ipZ6Oj8hUdZFiVzelPcK68dOtYrehaTjxt5IMCwWhRKqLnEQ5gT0j4ksn5CVEYzjSG8eGwM2ZwTCCn4y6uWR/IysIyz6VAQEnJ4IsUn03aY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715027105; c=relaxed/simple;
-	bh=OzxiMiUHBbbpYgDGpErM2Rdbdry7RtUB3JL+n/5EiFw=;
+	s=arc-20240116; t=1715027157; c=relaxed/simple;
+	bh=UMrrdZtYBqmbutalyxWOXF0ka0ZGZB96Gj13/saVpes=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1K34T5WHekD2osd1yz6ryOE8SbO/gKTO+r4wCHkTOtCOBxlVb0i1CM+7JxFIWpCoz/SURE/MAd6mLSxTEyBjLnwPhpi+JUpWs35VRfpQBJz1h60CSmCBPo7rTj8Mnrr56Z3NFmvS9uQeK2BHowjABxktCCA+rdk/XG1hBM5y3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJQh/5picdak7jTASletmAlksgC881zu9aQQohbzHJNdENzpmJb1dwkBs31d78/29WoG34Ar0HQqPdXlZ2tauXEGAlYC5C0ZoePUdKg0D59d4jo21k7CLE3TEexAfkvyH7lDY5iWZCb673iQa2s9rnqRPqh0YTEP/YJPm6QPj9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id b7117dea-0be6-11ef-b3cf-005056bd6ce9;
-	Mon, 06 May 2024 23:25:01 +0300 (EEST)
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id d5b513bd-0be6-11ef-abf4-005056bdd08f;
+	Mon, 06 May 2024 23:25:53 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 6 May 2024 23:25:01 +0300
+Date: Mon, 6 May 2024 23:25:52 +0300
 To: Alex Soo <yuklin.soo@starfivetech.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -50,11 +50,9 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [RFC PATCH v3 6/7] gpiolib: enable GPIO interrupt to wake up a
- system from sleep
-Message-ID: <Zjk8nU562g3YxsVm@surfacebook.localdomain>
+Subject: Re: [RFC PATCH v3 0/7] Add Pinctrl driver for Starfive JH8100 SoC
+Message-ID: <Zjk80NMmHdNTt-Wp@surfacebook.localdomain>
 References: <20240503111436.113089-1-yuklin.soo@starfivetech.com>
- <20240503111436.113089-7-yuklin.soo@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,112 +61,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240503111436.113089-7-yuklin.soo@starfivetech.com>
+In-Reply-To: <20240503111436.113089-1-yuklin.soo@starfivetech.com>
 
-Fri, May 03, 2024 at 07:14:35PM +0800, Alex Soo kirjoitti:
-> Add function gpiochip_wakeup_irq_setup() to configure and enable a
-> GPIO pin with interrupt wakeup capability according to user-defined
-> wakeup-gpios property in the device tree. Interrupt generated by
-> toggling the logic level (rising/falling edge) on the specified
-> GPIO pin can wake up a system from sleep mode.
+Fri, May 03, 2024 at 07:14:29PM +0800, Alex Soo kirjoitti:
+> Starfive JH8100 SoC consists of 4 pinctrl domains - sys_east,
+> sys_west, sys_gmac, and aon. This patch series adds pinctrl
+> drivers for these 4 pinctrl domains and this patch series is
+> depending on the JH8100 base patch series in [1] and [2].
+> The relevant dt-binding documentation for each pinctrl domain has
+> been updated accordingly.
 
-..
-
-> +static irqreturn_t gpio_wake_irq_handler(int irq, void *data)
-> +{
-> +	struct irq_data *irq_data = data;
-> +
-> +	if (!irq_data || irq != irq_data->irq)
-
-Hmm... When irq_data can be NULL?
-
-> +		return IRQ_NONE;
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-..
-
-> +static int gpiochip_wakeup_irq_setup(struct gpio_chip *gc)
-> +{
-> +	struct device *dev = gc->parent;
-> +	struct gpio_irq_chip *girq = &gc->irq;
-> +	struct gpio_desc *wakeup_gpiod;
-> +	struct irq_desc *wakeup_irqd;
-> +	struct irq_domain *irq_domain;
-> +	struct irq_data *irq_data;
-> +	unsigned int offset;
-> +	int wakeup_irq;
-> +	int ret;
-> +
-> +	if (!(device_property_read_bool(dev, "wakeup-source")))
-
-Too many parentheses.
-
-> +		return 0;
-> +
-> +	irq_domain = girq->domain;
-
-> +
-
-Unneeded blank line. Ditto for all similar cases.
-
-> +	if (!irq_domain) {
-> +		dev_err(dev, "Couldn't allocate IRQ domain\n");
-> +		return -ENXIO;
-
-		return dev_err_probe(...);
-
-Ditto for all similar cases.
-
-> +	}
-
-..
-
-> +	wakeup_gpiod = devm_gpiod_get_optional(dev, "wakeup", GPIOD_IN);
-> +
-> +	if (IS_ERR(wakeup_gpiod)) {
-> +		dev_err(dev, "invalid wakeup gpio: %lu\n", PTR_ERR(wakeup_gpiod));
-> +		return PTR_ERR(wakeup_gpiod);
-> +	}
-> +	if (!wakeup_gpiod) {
-> +		dev_dbg(dev, "property wakeup-gpios is not defined\n");
-> +		return 0;
-> +	}
-> +
-> +	offset = gpio_chip_hwgpio(wakeup_gpiod);
-> +	wakeup_irq = gpiod_to_irq(wakeup_gpiod);
-> +	if (wakeup_irq < 0) {
-> +		dev_err(dev, "failed to convert wakeup GPIO to IRQ\n");
-> +		return wakeup_irq;
-> +	}
-
-> +	irq_domain->ops->map(irq_domain, wakeup_irq, offset);
-> +	wakeup_irqd = irq_to_desc(wakeup_irq);
-> +	irq_data = irq_get_irq_data(wakeup_irq);
-
-What these lines are for?
-
-> +	girq->handler = handle_edge_irq;
-> +
-> +	if (!(wakeup_irqd->status_use_accessors & IRQ_NOREQUEST)) {
-> +		device_init_wakeup(dev, 1);
-> +		ret = devm_request_threaded_irq(dev, wakeup_irq, NULL,
-> +						gpio_wake_irq_handler,
-
-> +						IRQF_TRIGGER_FALLING |
-> +						IRQF_TRIGGER_RISING |
-
-What's wrong with the flags from DT?
-
-> +						IRQF_ONESHOT |
-> +						IRQF_SHARED,
-> +						"pm-wakeup-gpio", irq_data);
-> +		if (ret) {
-> +			dev_err(dev, "unable to request wakeup IRQ: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
+I commented one of pinctrl: prefixed patch, but it looks like the same comments
+are applicable to all of them.
 
 -- 
 With Best Regards,
