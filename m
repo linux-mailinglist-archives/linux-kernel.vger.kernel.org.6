@@ -1,245 +1,161 @@
-Return-Path: <linux-kernel+bounces-169280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E788BC63C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:35:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C418BC65E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 720D51C2168F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 926962816B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF04543ACD;
-	Mon,  6 May 2024 03:35:04 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C921943AD2;
+	Mon,  6 May 2024 04:02:50 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD1738DC8;
-	Mon,  6 May 2024 03:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31CD3E462;
+	Mon,  6 May 2024 04:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714966504; cv=none; b=ecwYcoEjvSVpf28g6zKFH+J9KhJLaCS9R3Ps7jE1XtWIRJmX3JCPHqNM+DjbZkfXUcuz50BeC91ad4mB9GDp/yTFLbUjYMJU2HGVdw7ht+Mxjb4LWZpB15scgmG9dPZg5rfG3rDH+chZuI0o6UHl4EWFwVdxc4+8GV1voMpL+9g=
+	t=1714968170; cv=none; b=CehsgO690zOLQlJ7rOSYN/9exAZqJj5bEZCtcv45z01Pyi/WqxIBp6rxRZHJS25bUPo8wJRG2SaIzAEGpFEx0IqgIGlAgR0kjdv6XeP/0tlG2jfPEgiFxJMw/WObJKw/UiMQov4qrBul41hBFLBVkyk/OBInIRWxfolsvbOT7DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714966504; c=relaxed/simple;
-	bh=bd/kel1UuMZLy0E/HQSnHCm4N7IeSChL7qKLK/qeVkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oI3rpuoYQ33iuTg0G005wXbAJds6UBc+CdFMh+1LtEBfTk+WAzKwzDcT+TvG9Lg7LIUseO2mezFcqNBuvYSKyYxs6GJB1gjGvKvtzO3HN8jO86lLNnF+0CpM1R+ZCHPIZt4DuQrpHDpOOHP6Kikorck18ypSWYOWxi/ScK7jNfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXn8m0KG2z4f3nTw;
-	Mon,  6 May 2024 11:34:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id C1E031A0179;
-	Mon,  6 May 2024 11:34:57 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAX5g7dTzhmNL6JLw--.30952S3;
-	Mon, 06 May 2024 11:34:57 +0800 (CST)
-Message-ID: <8b6d5c37-69ed-0554-069e-209ce2ead016@huaweicloud.com>
-Date: Mon, 6 May 2024 11:34:53 +0800
+	s=arc-20240116; t=1714968170; c=relaxed/simple;
+	bh=dOeapYGM7AZZOgO213YqMoqH8Pzv33ynGuTJ7A00DUo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=DmLIaB22SPaXHlUO9Q1G0Xyw+bx3IlWrghEZhc8ic5UfUxBkB/veV3IZEOONY4bd6awRLq108kEQtIyDdGCtUu/zlXly1JGOvioYVf+SnsFuja6z9OHP+ZN+oMaN63v8ziRTx/2AkhQjTO04L3rjxHwPz46MAUICxc4bUjywA5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C97271A08CA;
+	Mon,  6 May 2024 05:53:59 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3CD8D1A02E4;
+	Mon,  6 May 2024 05:53:59 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 4E127181D0F9;
+	Mon,  6 May 2024 11:53:57 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	shengjiu.wang@gmail.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: imx: imx8mp: Add delay after power up
+Date: Mon,  6 May 2024 11:35:02 +0800
+Message-Id: <1714966502-27784-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 09/12] cachefiles: defer exposing anon_fd until after
- copy_to_user() succeeds
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
-Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
- libaokun@huaweicloud.com, yangerkun <yangerkun@huawei.com>
-References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
- <20240424033916.2748488-10-libaokun@huaweicloud.com>
- <e0fc24d5-49c5-4a75-86f9-43adc763066f@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <e0fc24d5-49c5-4a75-86f9-43adc763066f@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAX5g7dTzhmNL6JLw--.30952S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ww4fXryxXFWUWry5Gw1Dtrb_yoW7Cr1fpF
-	ZIkFW3KFy8WFW8ur97AFZ8XFySy3y8AFnrW34Fga4rArnFgr1F9r10kr98uF1rAr97Grs3
-	tF4UC3s3Gr1jyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
-	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyU
-	JwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUF9a9DUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-On 2024/5/6 11:24, Jingbo Xu wrote:
->
-> On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> After installing the anonymous fd, we can now see it in userland and close
->> it. However, at this point we may not have gotten the reference count of
->> the cache, but we will put it during colse fd, so this may cause a cache
->> UAF.
-> Good catch!
->
->> To avoid this, we will make the anonymous fd accessible to the userland by
->> executing fd_install() after copy_to_user() has succeeded, and by this
->> point we must have already grabbed the reference count of the cache.
-> Why we must execute fd_install() after copy_to_user() has succeeded?
-> Why not grab a reference to the cache before fd_install()?
-Two things are actually done here:
-1) Grab a reference to the cache before fd_install()
-2) By kernel convention, fd is taken over by the user land after
-fd_install() is executed, and the kernel does not call close_fd() after
-this, so fd_install() is called after everything is ready.
+According to comments in drivers/pmdomain/imx/gpcv2.c:
 
-Thanks,
-Baokun
->
->> Suggested-by: Hou Tao <houtao1@huawei.com>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> ---
->>   fs/cachefiles/ondemand.c | 53 +++++++++++++++++++++++++---------------
->>   1 file changed, 33 insertions(+), 20 deletions(-)
->>
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index 0cf63bfedc9e..7c2d43104120 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -4,6 +4,11 @@
->>   #include <linux/uio.h>
->>   #include "internal.h"
->>   
->> +struct anon_file {
->> +	struct file *file;
->> +	int fd;
->> +};
->> +
->>   static inline void cachefiles_req_put(struct cachefiles_req *req)
->>   {
->>   	if (refcount_dec_and_test(&req->ref))
->> @@ -244,14 +249,14 @@ int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
->>   	return 0;
->>   }
->>   
->> -static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->> +static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
->> +				      struct anon_file *anon_file)
->>   {
->>   	struct cachefiles_object *object;
->>   	struct cachefiles_cache *cache;
->>   	struct cachefiles_open *load;
->> -	struct file *file;
->>   	u32 object_id;
->> -	int ret, fd;
->> +	int ret;
->>   
->>   	object = cachefiles_grab_object(req->object,
->>   			cachefiles_obj_get_ondemand_fd);
->> @@ -263,16 +268,16 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   	if (ret < 0)
->>   		goto err;
->>   
->> -	fd = get_unused_fd_flags(O_WRONLY);
->> -	if (fd < 0) {
->> -		ret = fd;
->> +	anon_file->fd = get_unused_fd_flags(O_WRONLY);
->> +	if (anon_file->fd < 0) {
->> +		ret = anon_file->fd;
->>   		goto err_free_id;
->>   	}
->>   
->> -	file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
->> -				  object, O_WRONLY);
->> -	if (IS_ERR(file)) {
->> -		ret = PTR_ERR(file);
->> +	anon_file->file = anon_inode_getfile("[cachefiles]",
->> +				&cachefiles_ondemand_fd_fops, object, O_WRONLY);
->> +	if (IS_ERR(anon_file->file)) {
->> +		ret = PTR_ERR(anon_file->file);
->>   		goto err_put_fd;
->>   	}
->>   
->> @@ -281,15 +286,14 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   		spin_unlock(&object->ondemand->lock);
->>   		ret = -EEXIST;
->>   		/* Avoid performing cachefiles_ondemand_fd_release(). */
->> -		file->private_data = NULL;
->> +		anon_file->file->private_data = NULL;
->>   		goto err_put_file;
->>   	}
->>   
->> -	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
->> -	fd_install(fd, file);
->> +	anon_file->file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
->>   
->>   	load = (void *)req->msg.data;
->> -	load->fd = fd;
->> +	load->fd = anon_file->fd;
->>   	object->ondemand->ondemand_id = object_id;
->>   	spin_unlock(&object->ondemand->lock);
->>   
->> @@ -298,9 +302,11 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   	return 0;
->>   
->>   err_put_file:
->> -	fput(file);
->> +	fput(anon_file->file);
->> +	anon_file->file = NULL;
->>   err_put_fd:
->> -	put_unused_fd(fd);
->> +	put_unused_fd(anon_file->fd);
->> +	anon_file->fd = ret;
->>   err_free_id:
->>   	xa_erase(&cache->ondemand_ids, object_id);
->>   err:
->> @@ -357,6 +363,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   	struct cachefiles_msg *msg;
->>   	size_t n;
->>   	int ret = 0;
->> +	struct anon_file anon_file;
->>   	XA_STATE(xas, &cache->reqs, cache->req_id_next);
->>   
->>   	xa_lock(&cache->reqs);
->> @@ -390,7 +397,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   	xa_unlock(&cache->reqs);
->>   
->>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
->> -		ret = cachefiles_ondemand_get_fd(req);
->> +		ret = cachefiles_ondemand_get_fd(req, &anon_file);
->>   		if (ret)
->>   			goto out;
->>   	}
->> @@ -398,10 +405,16 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   	msg->msg_id = xas.xa_index;
->>   	msg->object_id = req->object->ondemand->ondemand_id;
->>   
->> -	if (copy_to_user(_buffer, msg, n) != 0) {
->> +	if (copy_to_user(_buffer, msg, n) != 0)
->>   		ret = -EFAULT;
->> -		if (msg->opcode == CACHEFILES_OP_OPEN)
->> -			close_fd(((struct cachefiles_open *)msg->data)->fd);
->> +
->> +	if (msg->opcode == CACHEFILES_OP_OPEN) {
->> +		if (ret < 0) {
->> +			fput(anon_file.file);
->> +			put_unused_fd(anon_file.fd);
->> +			goto out;
->> +		}
->> +		fd_install(anon_file.fd, anon_file.file);
->>   	}
->>   out:
->>   	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
+	/* request the ADB400 to power up */
+	if (domain->bits.hskreq) {
+		regmap_update_bits(domain->regmap, domain->regs->hsk,
+				   domain->bits.hskreq, domain->bits.hskreq);
 
+		/*
+		 * ret = regmap_read_poll_timeout(domain->regmap, domain->regs->hsk, reg_val,
+		 *				  (reg_val & domain->bits.hskack), 0,
+		 *				  USEC_PER_MSEC);
+		 * Technically we need the commented code to wait handshake. But that needs
+		 * the BLK-CTL module BUS clk-en bit being set.
+		 *
+		 * There is a separate BLK-CTL module and we will have such a driver for it,
+		 * that driver will set the BUS clk-en bit and handshake will be triggered
+		 * automatically there. Just add a delay and suppose the handshake finish
+		 * after that.
+		 */
+	}
+
+The BLK-CTL module needs to add delay to wait for a handshake request finished
+before accessing registers, which is just after the enabling of the power domain.
+
+Otherwise there is error:
+
+[    2.181035] Kernel panic - not syncing: Asynchronous SError Interrupt
+[    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5-next-20240424-00003-g21cec88845c6 #171
+[    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
+[    2.181050] Workqueue: events_unbound deferred_probe_work_func
+[    2.181064] Call trace:
+[...]
+[    2.181142]  arm64_serror_panic+0x6c/0x78
+[    2.181149]  do_serror+0x3c/0x70
+[    2.181157]  el1h_64_error_handler+0x30/0x48
+[    2.181164]  el1h_64_error+0x64/0x68
+[    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
+[    2.181183]  __genpd_runtime_resume+0x30/0x80
+[    2.181195]  genpd_runtime_resume+0x110/0x244
+[    2.181205]  __rpm_callback+0x48/0x1d8
+[    2.181213]  rpm_callback+0x68/0x74
+[    2.181224]  rpm_resume+0x468/0x6c0
+[    2.181234]  __pm_runtime_resume+0x50/0x94
+[    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
+[    2.181258]  __driver_probe_device+0x48/0x12c
+[    2.181268]  driver_probe_device+0xd8/0x15c
+[    2.181278]  __device_attach_driver+0xb8/0x134
+[    2.181290]  bus_for_each_drv+0x84/0xe0
+[    2.181302]  __device_attach+0x9c/0x188
+[    2.181312]  device_initial_probe+0x14/0x20
+[    2.181323]  bus_probe_device+0xac/0xb0
+[    2.181334]  deferred_probe_work_func+0x88/0xc0
+[    2.181344]  process_one_work+0x150/0x290
+[    2.181357]  worker_thread+0x2f8/0x408
+[    2.181370]  kthread+0x110/0x114
+[    2.181381]  ret_from_fork+0x10/0x20
+[    2.181391] SMP: stopping secondary CPUs
+
+Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
+Reported-by: Francesco Dolcini <francesco@dolcini.it>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Revewied-by: Peng Fan <peng.fan@nxp.com>
+---
+changes in v2:
+- reduce size of panic log in commit message
+
+ drivers/clk/imx/clk-imx8mp-audiomix.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+index b381d6f784c8..ae2c0f254225 100644
+--- a/drivers/clk/imx/clk-imx8mp-audiomix.c
++++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/mod_devicetable.h>
+@@ -360,6 +361,12 @@ static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
+ 
+ static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+ {
++	/*
++	 * According to the drivers/pmdomain/imx/gpcv2.c
++	 * need to wait for handshake request to propagate
++	 */
++	udelay(5);
++
+ 	clk_imx8mp_audiomix_save_restore(dev, false);
+ 
+ 	return 0;
+-- 
+2.34.1
 
 
