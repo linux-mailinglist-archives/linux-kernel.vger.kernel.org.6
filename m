@@ -1,201 +1,310 @@
-Return-Path: <linux-kernel+bounces-170028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF918BD0D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:54:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6988BD0EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DED401C21982
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:54:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77A0B2385B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD99153BF9;
-	Mon,  6 May 2024 14:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD749154BE0;
+	Mon,  6 May 2024 14:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Chey0lxV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gTcdxjD7"
-Received: from wfout6-smtp.messagingengine.com (wfout6-smtp.messagingengine.com [64.147.123.149])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f3eRr83a"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BEE153584;
-	Mon,  6 May 2024 14:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC434381AA;
+	Mon,  6 May 2024 14:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715007253; cv=none; b=otoO0ZRWiMLXL2LeOLEk6Clt1wSCAulGj3HvW4iNVv87eMgrQ38NOpljoHVo7EreNaeVYW4sJHJdv9h7x3xcsDtrGvYbtvqTNjSQToBxZ7kyZwXeDosrvMPi5mOuGHWIKUwaL80+MoLm+MysmCinAwGGtxSlkOXf4+XVoevYSI8=
+	t=1715007596; cv=none; b=Vp15x/3jDnX+RzLnLt727EkZkRs4jbYUYm/HqeN7nWgvQ9fV9mTeukRpURjlblvJaxQaeCOeiFRDyi7HC3PsuHd0CsqLcLMklr2Gz8TvNnQ59HUGK4YzV5MVTnJRf5itEDSHL8Jj4dEg5dAxiWlPrGq3Z33bjPkZRBMKz9C0w5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715007253; c=relaxed/simple;
-	bh=fj8G+5iN6xrXO0EcE2PvtvwpqB1x6gZ3g9mxuGRrgUE=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=hopkoVQjUffRb6FbqFvcZHvebwBsH+HZLH0rVxqtVEN80Hdu9aQVJo10K997yZV1ADnR3plJeAv8HQUsMacnsaGNidie09zsFoqGa6gkZ6DMgjMxzYZZ8MM91TWkFIUzTKIC5D3PjJGviBwzsgW75bPBqpi/bE1wwxUHPs6D/G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Chey0lxV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gTcdxjD7; arc=none smtp.client-ip=64.147.123.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 4534C1C000E5;
-	Mon,  6 May 2024 10:54:10 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 06 May 2024 10:54:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1715007249; x=1715093649; bh=dPtnUk1mbp
-	BrzGLuCD41oZsYYZwy9oyATpzwrqgmybI=; b=Chey0lxVlxFMYXvkJ6KuLqEMXy
-	ueZIv5zskxo0TQKU4ZGN2w0cxAcr++AUayltaRx7FtBqde/2Wg0xzs/O8NVinCE6
-	7i7Oufv9pLGgmGSsXxgKiF3Yk6ppML5n5esN6IchpPgdZx+7oP/oHHv4+J49BicM
-	MHfSwSwdyKmkAwloOt5kvsOf0N8h3JGyL4HdIbJuAjey3uxZu4qrYt8X3W7sdm9i
-	MCl4BHqcLidnY7xSaL64Z3yoLPfvExHXuOfx23wDTGf6KtwEegiLn0xT/oPwmy+s
-	0iXh2WxNLCA5vQs/8rA+/2fwLWrwm0bDGwfOlQpA+c1uL/VZqzJBltEaA5TA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715007249; x=1715093649; bh=dPtnUk1mbpBrzGLuCD41oZsYYZwy
-	9oyATpzwrqgmybI=; b=gTcdxjD74zi1Fm/O4TOat5ZuozJOkB6VerWhwP3Zomoh
-	YF/8r9kiu5rfAHiHrBh8yinAYBqCX/WLakN2Yg4oAZj8TSYqm38DCSDED1wenj3Y
-	W0LyPc1bZ7X0oUhnhThRajUXH8hehFyZFh0/VXzCcw9xCaLxsE0xIB/JPJv3kk2h
-	4tVmbpSymQ2fP5hnZDrtfeIxkgnXKaV5kdEwru7ZQlikY9ptMmducvmLWVuD1y4B
-	Sz7HJ6sa9aCU1/TdhZdt++0MKTL+jLgCUwqG11N6nygmUPCf36jA8EW2AIm7erk2
-	eCVrdxWwZ5OIY7pnUrLroV0qEXxAQCsTEDPMcBYzeQ==
-X-ME-Sender: <xms:Ee84ZqegkxA7t4u7GN01BPkNT-j3FqO2yEWz04z3lxA4ivoUA_xrHQ>
-    <xme:Ee84ZkONG-VZxnjpJcgzEJQyJyV8fkb8eFC7OFUCjpsu2AOtFHznbm4DUWZoz8CZJ
-    rMmyduksIGeUGQADT4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddviedgkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepleehueefffevveejgfelveeiuedutdevtdfhtdevveelgfevuedtkeeiffei
-    geffnecuffhomhgrihhnpehgohhoghhlvghsohhurhgtvgdrtghomhenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdr
-    uggv
-X-ME-Proxy: <xmx:Ee84ZrivyZgishPHpkhy3Wtvx7Us6Et0bh-CQqQYNdAhaZZQoyLapA>
-    <xmx:Ee84Zn-NQhQ3NjDLGuxHqq1l38hlSgRxJ6YdtvTizeD3yUqAzlgyeg>
-    <xmx:Ee84ZmsdzjpeJWv7J44qMTiLM8EKiyap70Q5wdPgmT76hiWc3cc-vg>
-    <xmx:Ee84ZuFEu6HstedCy7D9UH3aIyis0_g7lDSyylQls0bZbLgTfbF3aw>
-    <xmx:Ee84ZkD2ozUkW8eELiQNWx0BOxW8OE2EB4knJwQasg89KOHhklB-NBWC>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1D772B6008F; Mon,  6 May 2024 10:54:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-437-gcad818a2a-fm-20240502.001-gcad818a2
+	s=arc-20240116; t=1715007596; c=relaxed/simple;
+	bh=H18mNLmvZtvZuBcMKiw8Us9+FxIZv5dUWJks16b1Jpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NM5c2mLRnKkyqmfIqsirY5e6YeycQWg4k/VsZ5H/J/SRrnicAVr7cgGu5vydCZIvwcDx9p/ejLNDHR6cFkFoGIrc2bn1qvsxoqse1UfYulnhsGRY1uz2v+3oFYEavonP5nzYjoXOsTWqlsatrXmTcaEx8qXwCKCQj3n+wr4tqdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f3eRr83a; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 446Ejogd016183;
+	Mon, 6 May 2024 14:59:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=ufcz7t0A1piBkd98O1lYvjfNAwGIZPGvOFFEF4WTtt4=;
+ b=f3eRr83aHzgGXnJNPYPYA1s88cDKGilTckPbheVeiZoL2vQkWu/+mc952fDSeJ9ebVED
+ KpXwZYF8NKOQxPkTNuP66PNI2apIv+GA/aneK68UK/WbVVI3grSI0vm51XKZ13AiPpvD
+ KhgKVeO36iXSwUa4Z21fNiZaxce5PheTkVBW+lT1fZ9RHvSrY7XEJppD934qHYBTxbtI
+ HWm3dSyimkmcIWBDAMWri4MzNB2+Yrll9NrWhqsXh7x9nGtjdFslip7UywMMPsRNZkxl
+ uAkSPEpEpr1QytRptzHo4lndpFAyCaIGq+SvMsdncI7CNPSOCHH4ccP262fD2q3OrOEv dA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xy18hg13d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 14:59:44 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 446EtefX000382;
+	Mon, 6 May 2024 14:59:43 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xy18hg119-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 14:59:43 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 446EYwI2030885;
+	Mon, 6 May 2024 14:56:19 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xwybtrqts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 14:56:19 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 446EuEft54460696
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 May 2024 14:56:16 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4286720043;
+	Mon,  6 May 2024 14:56:14 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD23D20040;
+	Mon,  6 May 2024 14:56:10 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com.com (unknown [9.43.105.31])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  6 May 2024 14:56:10 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen.n.rao@linux.ibm.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vaibhav Jain <vaibhav@linux.ibm.com>
+Subject: [PATCH v6] arch/powerpc/kvm: Add support for reading VPA counters for pseries guests
+Date: Mon,  6 May 2024 20:26:03 +0530
+Message-ID: <20240506145605.73794-1-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <47c63c4c-c657-4210-b476-c91c4f192483@app.fastmail.com>
-In-Reply-To: <ZjjXtEwWWZX43c6l@phenom.ffwll.local>
-References: <20240503192858.103640-1-florian.fainelli@broadcom.com>
- <8e1867fc-34da-457c-b95a-2d51ea97336a@app.fastmail.com>
- <05a5e893-12f7-49fd-9a9a-abd387571f9b@broadcom.com>
- <ZjjXtEwWWZX43c6l@phenom.ffwll.local>
-Date: Mon, 06 May 2024 16:53:47 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Daniel Vetter" <daniel@ffwll.ch>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, "Helge Deller" <deller@gmx.de>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Javier Martinez Canillas" <javierm@redhat.com>,
- "Sam Ravnborg" <sam@ravnborg.org>,
- "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
- "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] fbdev: Have CONFIG_FB_NOTIFY be tristate
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: I6-OMug5WjhJXyE88WJrPOqnlzUhHrLG
+X-Proofpoint-GUID: JQASrrDOMa-FNKqtEyYUyNjW6SXSAS3q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-06_09,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 lowpriorityscore=0
+ mlxlogscore=999 mlxscore=0 impostorscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2404010000 definitions=main-2405060102
 
-On Mon, May 6, 2024, at 15:14, Daniel Vetter wrote:
-> On Fri, May 03, 2024 at 01:22:10PM -0700, Florian Fainelli wrote:
->> On 5/3/24 12:45, Arnd Bergmann wrote:
->> > On Fri, May 3, 2024, at 21:28, Florian Fainelli wrote:
->> > > Android devices in recovery mode make use of a framebuffer device to
->> > > provide an user interface. In a GKI configuration that has CONFIG_FB=m,
->> > > but CONFIG_FB_NOTIFY=y, loading the fb.ko module will fail with:
->> > > 
->> > > fb: Unknown symbol fb_notifier_call_chain (err -2)
->> > > 
->> > > Have CONFIG_FB_NOTIFY be tristate, just like CONFIG_FB such that both
->> > > can be loaded as module with fb_notify.ko first, and fb.ko second.
->> > > 
->> > > Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
->> > 
->> > I see two problems here, so I don't think this is the right
->> > approach:
->> > 
->> >   1. I don't understand your description: Since fb_notifier_call_chain()
->> >      is an exported symbol, it should work for both FB_NOTIFY=y and
->> >      FB_NOTIFY=m, unless something in Android drops the exported
->> >      symbols for some reason.
->> 
->> The symbol is still exported in the Android tree. The issue is that the GKI
->> defconfig does not enable any CONFIG_FB options at all. This is left for SoC
->> vendors to do in their own "fragment" which would add CONFIG_FB=m. That
->> implies CONFIG_FB_NOTIFY=y which was not part of the original kernel image
->> we build/run against, and so we cannot resolve the symbol.
+PAPR hypervisor has introduced three new counters in the VPA area of
+LPAR CPUs for KVM L2 guest (see [1] for terminology) observability - 2
+for context switches from host to guest and vice versa, and 1 counter
+for getting the total time spent inside the KVM guest. Add a tracepoint
+that enables reading the counters for use by ftrace/perf. Note that this
+tracepoint is only available for nestedv2 API (i.e, KVM on PowerVM).
 
-I see.
+[1] Terminology:
+a. L1 refers to the VM (LPAR) booted on top of PAPR hypervisor
+b. L2 refers to the KVM guest booted on top of L1.
 
->> This could be resolved by having the GKI kernel have CONFIG_FB_NOTIFY=y but
->> this is a bit wasteful (not by much since the code is very slim anyway) and
->> it does require making changes specifically to the Android tree which could
->> be beneficial upstream, hence my attempt at going upstream first.
->
-> Making fbdev (the driver subsystem, not the uapi, we'll still happily
-> merge patches for that) more useful is really not the upstream direction :-)
+Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+---
+v5 -> v6:
+1. Use TRACE_EVENT_FN to enable/disable counters only once.
+2. Remove the agg. counters from vcpu->arch.
+3. Use PACA to maintain old counter values instead of zeroing on every
+entry.
+4. Simplify variable names
 
-I'm more worried about the idea of enabling an entire subsystem
-as a loadable module and expecting that to work with an existing
-kernel, specifically when the drm.ko and fb.ko interact with
-one another and are built with different .config files.
+v4 -> v5:
+1. Define helper functions for getting/setting the accumulation counter
+in L2's VPA
 
-This is the current Android GKI config:
-https://android.googlesource.com/kernel/common.git/+/refs/heads/android-mainline/arch/arm64/configs/gki_defconfig
-where I can see that CONFIG_DRM is built-in, but DRM_FBDEV_EMULATION
-CONFIG_VT, CONFIG_FRAMEBUFFER_CONSOLE, CONFIG_FB_DEVICE and
-CONFIG_FB_CORE are all disabled.
+v3 -> v4:
+1. After vcpu_run, check the VPA flag instead of checking for tracepoint
+being enabled for disabling the cs time accumulation.
 
-So the console won't work at all,I think this means that there
-is no way to get the console working, but building a fb.ko module
-allows using /dev/fb with simplefb.ko (or any other one) happens
-to almost work, but only by dumb luck rather than by design.
+v2 -> v3:
+1. Move the counter disabling and zeroing code to a different function.
+2. Move the get_lppaca() inside the tracepoint_enabled() branch.
+3. Add the aggregation logic to maintain total context switch time.
 
->> > $ git grep -w fb_register_client
->> > arch/arm/mach-pxa/am200epd.c:   fb_register_client(&am200_fb_notif);
->> > drivers/leds/trigger/ledtrig-backlight.c:       ret = fb_register_client(&n->notifier);
->> > drivers/video/backlight/backlight.c:    return fb_register_client(&bd->fb_notif);
->> > drivers/video/backlight/lcd.c:  return fb_register_client(&ld->fb_notif);
->> > 
->> > Somewhat related but not directly addressing your patch, I wonder
->> > if Android itself could migrate to using FB_CORE=m FB=n FB_NOTIFY=n
->> > instead and use simpledrm for the console in place of the legacy
->> > fbdev layer.
->> 
->> That is beyond my reach :)
->
-> This one is. And it doesn't need to be simpledrm, just a drm kms driver
-> with fbdev emulation. Heck even if you have an fbdev driver you should
-> control the corresponding backlight explicitly, and not rely on the fb
-> notifier to magical enable/disable some random backlights somewhere.
->
-> So please do not encourage using this in any modern code.
+v1 -> v2:
+1. Fix the build error due to invalid struct member reference.
 
-I suppose making CONFIG_FB_NOTIFIER optional for FB (on by
-default if any of the consumers of the notification are turned
-on) would not be a bad direction to go in general and also
-address Florian's link error, but that doesn't solve the
-more general concern about a third-party fb.ko module on a
-kernel that was explicitly built with FB disabled.
+ arch/powerpc/include/asm/lppaca.h | 11 +++++--
+ arch/powerpc/include/asm/paca.h   |  5 +++
+ arch/powerpc/kvm/book3s_hv.c      | 52 +++++++++++++++++++++++++++++++
+ arch/powerpc/kvm/trace_hv.h       | 27 ++++++++++++++++
+ 4 files changed, 92 insertions(+), 3 deletions(-)
 
-The GKI defconfig was initially done at a time where one could
-not have CONFIG_FBDEV_EMULATION and CONFIG_FB_DEVICE without
-pulling in the entire fbdev module, but now that is possible.
-Maybe that is something that Android could now include?
+diff --git a/arch/powerpc/include/asm/lppaca.h b/arch/powerpc/include/asm/lppaca.h
+index 61ec2447dabf..f40a646bee3c 100644
+--- a/arch/powerpc/include/asm/lppaca.h
++++ b/arch/powerpc/include/asm/lppaca.h
+@@ -62,7 +62,8 @@ struct lppaca {
+ 	u8	donate_dedicated_cpu;	/* Donate dedicated CPU cycles */
+ 	u8	fpregs_in_use;
+ 	u8	pmcregs_in_use;
+-	u8	reserved8[28];
++	u8	l2_counters_enable;  /* Enable usage of counters for KVM guest */
++	u8	reserved8[27];
+ 	__be64	wait_state_cycles;	/* Wait cycles for this proc */
+ 	u8	reserved9[28];
+ 	__be16	slb_count;		/* # of SLBs to maintain */
+@@ -92,9 +93,13 @@ struct lppaca {
+ 	/* cacheline 4-5 */
+ 
+ 	__be32	page_ins;		/* CMO Hint - # page ins by OS */
+-	u8	reserved12[148];
++	u8	reserved12[28];
++	volatile __be64 l1_to_l2_cs_tb;
++	volatile __be64 l2_to_l1_cs_tb;
++	volatile __be64 l2_runtime_tb;
++	u8 reserved13[96];
+ 	volatile __be64 dtl_idx;	/* Dispatch Trace Log head index */
+-	u8	reserved13[96];
++	u8	reserved14[96];
+ } ____cacheline_aligned;
+ 
+ #define lppaca_of(cpu)	(*paca_ptrs[cpu]->lppaca_ptr)
+diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
+index 1d58da946739..f20ac7a6efa4 100644
+--- a/arch/powerpc/include/asm/paca.h
++++ b/arch/powerpc/include/asm/paca.h
+@@ -278,6 +278,11 @@ struct paca_struct {
+ 	struct mce_info *mce_info;
+ 	u8 mce_pending_irq_work;
+ #endif /* CONFIG_PPC_BOOK3S_64 */
++#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
++	u64 l1_to_l2_cs;
++	u64 l2_to_l1_cs;
++	u64 l2_runtime_agg;
++#endif
+ } ____cacheline_aligned;
+ 
+ extern void copy_mm_to_paca(struct mm_struct *mm);
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index 8e86eb577eb8..ed69ad58bd02 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -4108,6 +4108,54 @@ static void vcpu_vpa_increment_dispatch(struct kvm_vcpu *vcpu)
+ 	}
+ }
+ 
++static inline int kvmhv_get_l2_counters_status(void)
++{
++	return get_lppaca()->l2_counters_enable;
++}
++
++static inline void kvmhv_set_l2_counters_status(int cpu, bool status)
++{
++	if (status)
++		lppaca_of(cpu).l2_counters_enable = 1;
++	else
++		lppaca_of(cpu).l2_counters_enable = 0;
++}
++
++int kmvhv_counters_tracepoint_regfunc(void)
++{
++	int cpu;
++
++	for_each_possible_cpu(cpu) {
++		kvmhv_set_l2_counters_status(cpu, true);
++	}
++	return 0;
++}
++
++void kmvhv_counters_tracepoint_unregfunc(void)
++{
++	int cpu;
++
++	for_each_possible_cpu(cpu) {
++		kvmhv_set_l2_counters_status(cpu, false);
++	}
++}
++
++static void do_trace_nested_cs_time(struct kvm_vcpu *vcpu)
++{
++	struct lppaca *lp = get_lppaca();
++	u64 l1_to_l2_ns, l2_to_l1_ns, l2_runtime_ns;
++
++	l1_to_l2_ns = tb_to_ns(be64_to_cpu(lp->l1_to_l2_cs_tb));
++	l2_to_l1_ns = tb_to_ns(be64_to_cpu(lp->l2_to_l1_cs_tb));
++	l2_runtime_ns = tb_to_ns(be64_to_cpu(lp->l2_runtime_tb));
++	trace_kvmppc_vcpu_stats(vcpu, l1_to_l2_ns - local_paca->l1_to_l2_cs,
++					l2_to_l1_ns - local_paca->l2_to_l1_cs,
++					l2_runtime_ns - local_paca->l2_runtime_agg);
++	local_paca->l1_to_l2_cs = l1_to_l2_ns;
++	local_paca->l2_to_l1_cs = l2_to_l1_ns;
++	local_paca->l2_runtime_agg = l2_runtime_ns;
++}
++
+ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_limit,
+ 				     unsigned long lpcr, u64 *tb)
+ {
+@@ -4156,6 +4204,10 @@ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_limit,
+ 
+ 	timer_rearm_host_dec(*tb);
+ 
++	/* Record context switch and guest_run_time data */
++	if (kvmhv_get_l2_counters_status())
++		do_trace_nested_cs_time(vcpu);
++
+ 	return trap;
+ }
+ 
+diff --git a/arch/powerpc/kvm/trace_hv.h b/arch/powerpc/kvm/trace_hv.h
+index 8d57c8428531..dc118ab88f23 100644
+--- a/arch/powerpc/kvm/trace_hv.h
++++ b/arch/powerpc/kvm/trace_hv.h
+@@ -238,6 +238,9 @@
+ 	{H_MULTI_THREADS_ACTIVE,	"H_MULTI_THREADS_ACTIVE"}, \
+ 	{H_OUTSTANDING_COP_OPS,		"H_OUTSTANDING_COP_OPS"}
+ 
++int kmvhv_counters_tracepoint_regfunc(void);
++void kmvhv_counters_tracepoint_unregfunc(void);
++
+ TRACE_EVENT(kvm_guest_enter,
+ 	TP_PROTO(struct kvm_vcpu *vcpu),
+ 	TP_ARGS(vcpu),
+@@ -512,6 +515,30 @@ TRACE_EVENT(kvmppc_run_vcpu_exit,
+ 			__entry->vcpu_id, __entry->exit, __entry->ret)
+ );
+ 
++TRACE_EVENT_FN(kvmppc_vcpu_stats,
++	TP_PROTO(struct kvm_vcpu *vcpu, u64 l1_to_l2_cs, u64 l2_to_l1_cs, u64 l2_runtime),
++
++	TP_ARGS(vcpu, l1_to_l2_cs, l2_to_l1_cs, l2_runtime),
++
++	TP_STRUCT__entry(
++		__field(int,		vcpu_id)
++		__field(u64,		l1_to_l2_cs)
++		__field(u64,		l2_to_l1_cs)
++		__field(u64,		l2_runtime)
++	),
++
++	TP_fast_assign(
++		__entry->vcpu_id  = vcpu->vcpu_id;
++		__entry->l1_to_l2_cs = l1_to_l2_cs;
++		__entry->l2_to_l1_cs = l2_to_l1_cs;
++		__entry->l2_runtime = l2_runtime;
++	),
++
++	TP_printk("VCPU %d: l1_to_l2_cs_time=%llu ns l2_to_l1_cs_time=%llu ns l2_runtime=%llu ns",
++		__entry->vcpu_id,  __entry->l1_to_l2_cs,
++		__entry->l2_to_l1_cs, __entry->l2_runtime),
++	kmvhv_counters_tracepoint_regfunc, kmvhv_counters_tracepoint_unregfunc
++);
+ #endif /* _TRACE_KVM_HV_H */
+ 
+ /* This part must be outside protection */
+-- 
+2.44.0
 
-Alternatively, I wonder if that recovery image could be changed
-to access the screen through the /dev/dri/ interfaces? I have
-no experience in using those without Xorg or Wayland, is that
-a sensible thing to do?
-
-      Arnd
 
