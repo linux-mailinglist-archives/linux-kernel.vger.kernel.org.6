@@ -1,193 +1,120 @@
-Return-Path: <linux-kernel+bounces-169559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE14B8BCA65
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:19:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F848BCA66
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93866283A01
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2404E1F230AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9843A1422D5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E069F1422DD;
 	Mon,  6 May 2024 09:19:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YDUdk1il";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4GMSV0KV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBAD1422AC
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C916F2AF1B;
+	Mon,  6 May 2024 09:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714987162; cv=none; b=R6UAUpNa5JUTVeIBxGpCOiQVK7CKsQETlzmWhGwF4X6kf8oxR4Uys08+iSq3VZL4eDBC/2QuRUjcsFOmjA+kPLVFWWmjKFA/LalwQ3URkKr4u4/3wP60Boqg21NuSVdXOmb0v3W2joWR/t32FmWwyB/ubwGRJCcg63Xwauuabjw=
+	t=1714987162; cv=none; b=U2LPYtoQonFydCKJZ0EB+9PvuS4+3tH+ZKnMn9DPkuProSmlGP57Vz+Bf1w43hZBQnJndJlu6nIs9Vid38mO0gnovfTKGOl//d316l4J0S9mYy3ptC4ECWZR/lgqv0dNMSzlzsgAiU8TWHe5ceXI/6dIoqjLHLTL7qfY0Xh3h6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1714987162; c=relaxed/simple;
-	bh=4GJJvVcB67txL6x23xZi79tGkqfJu9ZkapJcsQpj8mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lv2pqToh3PvG7zzMExuC++TdzTzd/Qgos4rry1UzZgSxqe4AJCQRmTCNPwLJXKTuBOMnmMlui5Bnep1ilxH80v5CXloJGW1oGD/i9D7GZqwU8hijEHLVel8MiG/p6dsrQvflTO1opwt6h2HUd3kleIHCxCDzwxWuocyvHNwGpmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1s3uUt-0007aJ-6R; Mon, 06 May 2024 11:18:59 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1s3uUq-00GEqn-Vo; Mon, 06 May 2024 11:18:57 +0200
-Received: from pengutronix.de (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 861EF2CB3C7;
-	Mon, 06 May 2024 09:18:56 +0000 (UTC)
-Date: Mon, 6 May 2024 11:18:55 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Gregor Herburger <gregor.herburger@ew.tq-group.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Thomas Kopp <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux@ew.tq-group.com
-Subject: Re: [PATCH v2 4/6] can: mcp251xfd: mcp251xfd_regmap_crc_write():
- workaround for errata 5
-Message-ID: <20240506-aromatic-dainty-orangutan-f8b57c-mkl@pengutronix.de>
-References: <20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com>
- <20240506-mcp251xfd-gpio-feature-v2-4-615b16fa8789@ew.tq-group.com>
+	bh=71M9w46I/cLFH+CARXBA7sjpLR5jgwQHTI1fMim/mXo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HLPgKUoX4HIBmOVE8m8gpD+3bAIKuHYQjtwMh749ueLq4VwHLLMsV/NL+rXVcuhMgqR4j1YM+4H7u8UvlDYv+JltKh65AP1nxG7V0zSILVOttGiXsBs7xGOnwxjI7lHHgsK69YVnoQOGMfzBlAk930wgfA0nO73bUV+pPmWDK2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YDUdk1il; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4GMSV0KV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 06 May 2024 09:19:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1714987158;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KSf9tPI5EEAB+E2PKDW1X9Yflu/p927vFuEals/I3WE=;
+	b=YDUdk1ilLuQcpeKu6DfkAcf3JzffnalQZWs2Zl3JlXr4BVbwtqLzXh0i51IQsp16ahHifM
+	3BIG2NJA6saxwBzC1aHM5t2CVduvh4I2KpXZFfpzkCp5YCA9/PXEFw7Hc+LZSc7aC3lbFT
+	YKA+4y0q41QGprNLryIS5JSWaaet3sDOHKmeYnovV0bRmcbHb3NNK9pHZS5F/fKvlME425
+	CrVnPKo91cKnwOpFOH67tl/Mq3UQkim/+lwiudrxIadGVx0sGJzZJWGez8+47Rhzd9nU/9
+	KilGieONmmvl4sKSmSOa97QpEdKVTESGuGUI/Ug/WGov+/t6TM89KocDTdPC4Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1714987158;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KSf9tPI5EEAB+E2PKDW1X9Yflu/p927vFuEals/I3WE=;
+	b=4GMSV0KVEdsaVapkL+64BDalHJbl6dK6irLQBM1EQTshOIwkW+/OFbAhy3LzDbxIPiD3z1
+	x70Xg/HHKaMCQFCA==
+From: "tip-bot2 for Dr. David Alan Gilbert" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/microcode] x86/microcode: Remove unused struct cpu_info_ctx
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240506004300.770564-1-linux@treblig.org>
+References: <20240506004300.770564-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ltjwktyxpf7yjkxq"
-Content-Disposition: inline
-In-Reply-To: <20240506-mcp251xfd-gpio-feature-v2-4-615b16fa8789@ew.tq-group.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Message-ID: <171498715845.10875.15059417568143881021.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/microcode branch of tip:
 
---ltjwktyxpf7yjkxq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:     57f6d0aed7b0a6829044c7f1cea57b1e3ddb9a47
+Gitweb:        https://git.kernel.org/tip/57f6d0aed7b0a6829044c7f1cea57b1e3ddb9a47
+Author:        Dr. David Alan Gilbert <linux@treblig.org>
+AuthorDate:    Mon, 06 May 2024 01:43:00 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 06 May 2024 11:00:57 +02:00
 
-On 06.05.2024 07:59:46, Gregor Herburger wrote:
-> According to Errata DS80000789E 5 writing IOCON register using one SPI
-> write command clears LAT0/LAT1.
->=20
-> Errata Fix/Work Around suggests to write registers with single byte write
-> instructions. However, it seems that every write to the second byte
-> causes the overwrite of LAT0/LAT1.
->=20
-> Never write byte 2 of IOCON register to avoid clearing of LAT0/LAT1.
->=20
-> Signed-off-by: Gregor Herburger <gregor.herburger@ew.tq-group.com>
-> ---
->  drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c | 29 ++++++++++++++++++=
-+++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c b/drivers/n=
-et/can/spi/mcp251xfd/mcp251xfd-regmap.c
-> index 65150e762007..43fcf7f50591 100644
-> --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c
-> +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c
-> @@ -229,14 +229,41 @@ mcp251xfd_regmap_crc_gather_write(void *context,
->  	return spi_sync_transfer(spi, xfer, ARRAY_SIZE(xfer));
->  }
-> =20
-> +static int mcp251xfd_regmap_crc_write_iocon(void *context, const void *d=
-ata)
-> +{
-> +	u16 reg =3D MCP251XFD_REG_IOCON;
+x86/microcode: Remove unused struct cpu_info_ctx
 
-const
+This looks unused since
 
-> +
-> +	/* Never write to bits 16..23 of IOCON register to avoid clearing of LA=
-T0/LAT1
-> +	 *
-> +	 * According to Errata DS80000789E 5 writing IOCON register using one
+  2071c0aeda22 ("x86/microcode: Simplify init path even more")
 
-Just for completeness add "mcp2518fd" in front of Errata.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20240506004300.770564-1-linux@treblig.org
+---
+ arch/x86/kernel/cpu/microcode/core.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> +	 * SPI write command clears LAT0/LAT1.
-> +	 *
-> +	 * Errata Fix/Work Around suggests to write registers with single byte
-> +	 * write instructions. However, it seems that the byte at 0xe06(IOCON[2=
-3:16])
-> +	 * is for read-only access and writing to it causes the clearing of LAT=
-0/LAT1.
-> +	 */
-> +
-> +	/* Write IOCON[15:0] */
-> +	mcp251xfd_regmap_crc_gather_write(context, &reg, 1, data, 2);
-> +	reg +=3D 3;
-> +	/* Write IOCON[31:24] */
-> +	mcp251xfd_regmap_crc_gather_write(context, &reg, 1, data + 3, 1);
-
-Please add error handling.
-
-> +
-> +	return 0;
-> +}
-> +
->  static int
->  mcp251xfd_regmap_crc_write(void *context,
->  			   const void *data, size_t count)
->  {
->  	const size_t data_offset =3D sizeof(__be16) +
->  		mcp251xfd_regmap_crc.pad_bits / BITS_PER_BYTE;
-> +	u16 reg =3D *(u16 *)data;
-> =20
-> -	return mcp251xfd_regmap_crc_gather_write(context,
-> +	if (reg =3D=3D MCP251XFD_REG_IOCON)
-> +		return mcp251xfd_regmap_crc_write_iocon(context, data + data_offset);
-
-Please also check that "count" is sizeof(__le32).
-
-> +	else
-> +		return mcp251xfd_regmap_crc_gather_write(context,
->  						 data, data_offset,
->  						 data + data_offset,
->  						 count - data_offset);
->=20
-
-Also add the workaround for the nocrc regmap.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ltjwktyxpf7yjkxq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmY4oHwACgkQKDiiPnot
-vG/7lQf9Gfl2kI2VZm5ZoPgK5CZ2Qq1vPDA1Z+z3fSaaONgwCW2gyer3aMONMZmP
-R/DMZNdouH6I3GvqCwSS+gxKTlZdciS4Kw3tIeS00EGeV7uquD6VHec5lXgDQ/hA
-CMZxZKu35QCqmos1uzPYkzJcleR5Kyq5zM9z9NP7Mykfa0UwmHoe8BqKZT50VrFx
-enu7bj5ABjai1ZJ7bFh0CebJNa2XZHD2VpUUZXQ8KllW+xgkm6HUNHPFGj3wLYbI
-1hBowLc2WoQkuZGO2WniYLNpg5UTOM4QnHCiznLwRWd8PwtsI7vKXOSHJxk94q42
-IOdRFpzeyJYyQ2x7c7CBK+z4rAnAkA==
-=4dqj
------END PGP SIGNATURE-----
-
---ltjwktyxpf7yjkxq--
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 232026a..b3658d1 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -60,11 +60,6 @@ module_param(force_minrev, bool, S_IRUSR | S_IWUSR);
+  */
+ struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
+ 
+-struct cpu_info_ctx {
+-	struct cpu_signature	*cpu_sig;
+-	int			err;
+-};
+-
+ /*
+  * Those patch levels cannot be updated to newer ones and thus should be final.
+  */
 
