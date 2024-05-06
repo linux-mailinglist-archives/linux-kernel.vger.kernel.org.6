@@ -1,112 +1,224 @@
-Return-Path: <linux-kernel+bounces-170466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1CA8BD78A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:09:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90AC8BD78C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5DC1C229B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:09:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16E31C22C68
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A02615CD64;
-	Mon,  6 May 2024 22:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB27F15CD52;
+	Mon,  6 May 2024 22:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UujdRw8N"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KMZYMBF4"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798D413D2BC;
-	Mon,  6 May 2024 22:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB6815CD49
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 22:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715033383; cv=none; b=DIstzl2o84hBH9u/PZVhsQyhdXGBTdkoAbhWfRuGkKL83ItJO6LsSpbUPu1men4iun//Yy0DqeoKNfaiWwkKhe0l0Jj0/21zKa87/KQtOljo9Wp9Hd2127zM3uHxYd4V5qVknvTE9GNVoY5RhBRE1gLVA4ptVTR/s+Tp7sk5bXU=
+	t=1715033492; cv=none; b=OXvUEaLwQjHKBhnUke8Udv3Vfk8tLwUNp0WHY4YOoN3oQeKN6fg86bqLQLNjNKLzB6bXnsrJqP0QJ1cuc4MShW3PRe8UDEPSt0lLX4sX0r1p/VLoGua029ey/5CA64J9L/0MSe+JyEY+fvA0BPeEQ03Nt2ZIC4+mIifrBPatUYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715033383; c=relaxed/simple;
-	bh=r9BFmWG8V1HVuQ4IJR5EcoibqvPzjOfGBGYBkHWhi+U=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=BgJAsLCuwC1cbUgQjEbnxXjkRhITexVZ+pJ+kPoFALQgdfkYf8NG3wRC/lT/+Kxc8sHY8IYvAByIZDJoqwmLqm9dZB3QixRloXP0kaTA8yeQc0pFIlpZpFFfBAbKdFc8TQ5ApLm3EXAnnW0SRlDA/iCotJj8ZCPEPcIceLhtOfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UujdRw8N; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 446M9XNn076862;
-	Mon, 6 May 2024 17:09:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715033374;
-	bh=10wWVMhpZZp5B3uqn2MuHEK3VuAoIokX6nqD6qsNfl8=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=UujdRw8NAd23gEHguZJfZrn540v/EhRp9VbQfMYSm2RQUXz3iMZj6RR7Va9SRklgq
-	 ESQ+7QtGfQLtPx8ICwP3mAqz+QdfEkDDWW8BK7urQnQdXOK6BIEym/5oX2Vhds5pJ2
-	 IblpC0RdGQu8ZTXIhpaZayo7m+Z9yHEJmSPgBy9Q=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 446M9Xch021857
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 6 May 2024 17:09:33 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 6
- May 2024 17:09:33 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 6 May 2024 17:09:33 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 446M9XUX120857;
-	Mon, 6 May 2024 17:09:33 -0500
-Message-ID: <8651bce3-d097-465d-b8a7-c12e9d8a77b1@ti.com>
-Date: Mon, 6 May 2024 17:09:33 -0500
+	s=arc-20240116; t=1715033492; c=relaxed/simple;
+	bh=/Kkn3iylTA0/DbNE6xbIHvO5QRrH6fjFBRnumk+mQzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LTJNQ2AcXaUZ2GjeTQAkhUZQA/NXdIDfgV2slV5Yml+YvBVLsJsFbNfi11y0AdwzI1yKiYS/9OiMob6Cfsz9KpjtSBIFLgT2g67+rT0ZI3TiI126U+1urIqEcaz9D9rnQ42WHCMMqMml0AzqU3wsvDGdAGmbEbiItdEkgMMVf5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KMZYMBF4; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f171eee4-fa70-4374-b6a7-00d4edc03ae5@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715033488;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4tAkfAI7C3BLA+cjtRULDa+t26iegxH3w/RcYzSWz8=;
+	b=KMZYMBF42BzUP1zS/OfDbRS16NS8PN4n4Ejkzvz3B5InLxteAeim8iUKXWTWxaoMMZZt0p
+	P4qWm68KTzOCXSHHdB/MZzDM+rYzesepvl4LnjLtwFp7tJrpw/TopeEYt/eFefxHSHPNsl
+	jEhoTE/yqa7QNPFv8nzeZihTkxTRjhg=
+Date: Mon, 6 May 2024 15:11:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: am335x: Add PRU system events for virtio
-From: Judith Mendez <jm@ti.com>
-To: <linux-omap@vger.kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>
-References: <20240501194157.2727136-1-jm@ti.com>
-Content-Language: en-US
-In-Reply-To: <20240501194157.2727136-1-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Subject: Re: [PATCH bpf-next v3] selftests/bpf: Move test_dev_cgroup to
+ prog_tests
+Content-Language: en-GB
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240401123455.1377896-1-usama.anjum@collabora.com>
+ <92e1cce6-5f26-4a49-86b6-81e1e80d1aaa@linux.dev>
+ <cfecd6ea-8fa3-477f-bd32-4087aefee2af@collabora.com>
+ <0ff5c7d0-d5c5-4b61-ba89-8e7f9f775935@linux.dev>
+ <0973bc93-7a8d-451c-9944-d91a77d68755@collabora.com>
+ <ff36e8fa-14f4-42a6-8210-cec24a7779a0@linux.dev>
+ <b4d7ce70-3320-4333-9589-b5df187409fe@collabora.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <b4d7ce70-3320-4333-9589-b5df187409fe@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi all,
 
-On 5/1/24 2:41 PM, Judith Mendez wrote:
-> From: Nick Saulnier <nsaulnier@ti.com>
-> 
-> A PRU system event "vring" has been added to each of the PRU nodes in
-> the PRU-ICSS remote processor subsystem to enable the virtio/rpmsg
-> communication between MPU and that PRU core. The additions are done
-> in the base am33xx-l4.dtsi, and so are inherited by all the AM335x
-> boards. Do note that PRUSS is available only on all AM3356+ SoCs.
-> 
-> The PRU system events is the preferred approach over using OMAP
-> mailboxes, as it eliminates an external peripheral access from
-> the PRU-side, and keeps the interrupt generation internal to the
-> PRUSS. The difference from MPU would be minimal in using one
-> versus the other.
-> 
-> Mailboxes can still be used if desired, but currently there is no
-> support on firmware-side for the SoC to use mailboxes. Either approach
-> would require that an appropriate firmware image is loaded/booted on
-> the PRU.
+On 5/3/24 6:55 AM, Muhammad Usama Anjum wrote:
+> On 4/5/24 1:06 AM, Yonghong Song wrote:
+>> On 4/3/24 5:03 AM, Muhammad Usama Anjum wrote:
+>>> On 4/3/24 7:36 AM, Yonghong Song wrote:
+>>>> On 4/2/24 8:16 AM, Muhammad Usama Anjum wrote:
+>>>>> Yonghong Song,
+>>>>>
+>>>>> Thank you so much for replying. I was missing how to run pipeline
+>>>>> manually.
+>>>>> Thanks a ton.
+>>>>>
+>>>>> On 4/1/24 11:53 PM, Yonghong Song wrote:
+>>>>>> On 4/1/24 5:34 AM, Muhammad Usama Anjum wrote:
+>>>>>>> Move test_dev_cgroup.c to prog_tests/dev_cgroup.c to be able to run it
+>>>>>>> with test_progs. Replace dev_cgroup.bpf.o with skel header file,
+>>>>>>> dev_cgroup.skel.h and load program from it accourdingly.
+>>>>>>>
+>>>>>>>       ./test_progs -t dev_cgroup
+>>>>>>>       mknod: /tmp/test_dev_cgroup_null: Operation not permitted
+>>>>>>>       64+0 records in
+>>>>>>>       64+0 records out
+>>>>>>>       32768 bytes (33 kB, 32 KiB) copied, 0.000856684 s, 38.2 MB/s
+>>>>>>>       dd: failed to open '/dev/full': Operation not permitted
+>>>>>>>       dd: failed to open '/dev/random': Operation not permitted
+>>>>>>>       #72     test_dev_cgroup:OK
+>>>>>>>       Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+>>>>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>>>>>> ---
+>>>>>>> Changes since v2:
+>>>>>>> - Replace test_dev_cgroup with serial_test_dev_cgroup as there is
+>>>>>>>       probability that the test is racing against another cgroup test
+>>>>>>> - Minor changes to the commit message above
+>>>>>>>
+>>>>>>> I've tested the patch with vmtest.sh on bpf-next/for-next and linux
+>>>>>>> next. It is passing on both. Not sure why it was failed on BPFCI.
+>>>>>>> Test run with vmtest.h:
+>>>>>>> sudo LDLIBS=-static PKG_CONFIG='pkg-config --static' ./vmtest.sh
+>>>>>>> ./test_progs -t dev_cgroup
+>>>>>>> ./test_progs -t dev_cgroup
+>>>>>>> mknod: /tmp/test_dev_cgroup_null: Operation not permitted
+>>>>>>> 64+0 records in
+>>>>>>> 64+0 records out
+>>>>>>> 32768 bytes (33 kB, 32 KiB) copied, 0.000403432 s, 81.2 MB/s
+>>>>>>> dd: failed to open '/dev/full': Operation not permitted
+>>>>>>> dd: failed to open '/dev/random': Operation not permitted
+>>>>>>>      #69      dev_cgroup:OK
+>>>>>>> Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+>>>>>> The CI failure:
+>>>>>>
+>>>>>>
+>>>>>> Error: #72 dev_cgroup
+>>>>>> serial_test_dev_cgroup:PASS:skel_open_and_load 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:cgroup_setup_and_join 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:bpf_attach 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:bpf_query 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:bpf_query 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:mknod 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
+>>>>>> serial_test_dev_cgroup:FAIL:mknod unexpected mknod: actual 256 !=
+>>>>>> expected 0
+>>>>>> serial_test_dev_cgroup:PASS:rm 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:dd 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:dd 0 nsec
+>>>>>> serial_test_dev_cgroup:PASS:dd 0 nsec
+>>>>>>
+>>>>>> (cgroup_helpers.c:353: errno: Device or resource busy) umount cgroup2
+>>>>>>
+>>>>>> The error code 256 means mknod execution has some issues. Maybe you
+>>>>>> need to
+>>>>>> find specific errno to find out what is going on. I think you can do ci
+>>>>>> on-demanding test to debug.
+>>>>> errno is 2 --> No such file or directory
+>>>>>
+>>>>> Locally I'm unable to reproduce it until I don't remove
+>>>>> rm -f /tmp/test_dev_cgroup_zero such that the /tmp/test_dev_cgroup_zero
+>>>>> node is present before test execution. The error code is 256 with errno 2.
+>>>>> I'm debugging by placing system("ls /tmp 1>&2"); to find out which files
+>>>>> are already present in /tmp. But ls's output doesn't appear on the CI
+>>>>> logs.
+>>>> errno 2 means ENOENT.
+>>>>   From mknod man page (https://linux.die.net/man/2/mknod), it means
+>>>>     A directory component in/pathname/  does not exist or is a dangling
+>>>> symbolic link.
+>>>>
+>>>> It means /tmp does not exist or a dangling symbolic link.
+>>>> It is indeed very strange. To make the test robust, maybe creating a temp
+>>>> directory with mkdtemp and use it as the path? The temp directory
+>>>> creation should be done before bpf prog attach.
+>>> I've tried following but still no luck:
+>>> * /tmp is already present. Then I thought maybe the desired file is already
+>>> present. I've verified that there isn't file of same name is present inside
+>>> /tmp.
+>>> * I thought maybe mknod isn't present in the system. But mknod --help
+>>> succeeds.
+>>> * I switched from /tmp to current directory to create the mknod. But the
+>>> result is same error.
+>>> * I've tried to use the same kernel config as the BPF CI is using. I'm not
+>>> able to reproduce it.
+>>>
+>>> Not sure which edge case or what's going on. The problem is appearing
+>>> because of some limitation in the rootfs.
+>> Maybe you could collect /tmp mount options to see whether anything is
+>> suspicious? In my vm, I have
+>>    tmpfs on /tmp type tmpfs (rw,nosuid,nodev,size=3501540k,nr_inodes=1048576)
+>> and the test works fine.
+>>
+>>
+> My test system:
+> tmpfs /tmp tmpfs rw,relatime 0 0
+>
+> On the CI, /tmp is present. But it isn't tmpfs. Following shows the logs
+> from /proc/mounts
+>
+> On CI:
+>    /dev/root / 9p
+> rw,relatime,cache=f,access=client,msize=512000,trans=virtio 0 0
+>    devtmpfs /dev devtmpfs
+> rw,relatime,size=1998612k,nr_inodes=499653,mode=755 0 0
+>    tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
+>    proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+>    tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
+>    tmpfs /run/netns tmpfs rw,nosuid,nodev,relatime 0 0
+>    sys /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+>    debugfs /sys/kernel/debug debugfs rw,relatime 0 0
+>    tracefs /sys/kernel/debug/tracing tracefs rw,relatime 0 0
+>    cgroup2 /sys/fs/cgroup cgroup2 rw,nosuid,nodev,noexec,relatime 0 0
+>    tmpfs /sys/fs/cgroup tmpfs rw,relatime 0 0
 
-Please ignore this patch,
+somthing wrong here. /sys/fs/cgroup cannot be both cgroup2
+and tmpfs types.
 
-Thanks,
-Judith
-
+>    net_cls /sys/fs/cgroup/net_cls cgroup rw,relatime,net_cls 0 0
+>    tmpfs /sys/fs/cgroup tmpfs rw,relatime 0 0
+>    net_cls /sys/fs/cgroup/net_cls cgroup rw,relatime,net_cls 0 0
+>    tmpfs /sys/fs/cgroup tmpfs rw,relatime 0 0
+>    net_cls /sys/fs/cgroup/net_cls cgroup rw,relatime,net_cls 0 0
+>    bpffs /sys/fs/bpf bpf rw,relatime 0 0
+>    bpf /sys/fs/bpf bpf rw,relatime 0 0
+>    tmpfs /mnt tmpfs rw,nosuid,nodev,relatime 0 0
+>    vmtest-shared /mnt/vmtest 9p
+> rw,relatime,cache=f,access=client,msize=512000,trans=virtio 0 0
+>    none /mnt cgroup2 rw,relatime 0 0
+>
 
