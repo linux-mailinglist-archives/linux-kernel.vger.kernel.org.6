@@ -1,284 +1,120 @@
-Return-Path: <linux-kernel+bounces-170325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15248BD52F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:10:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CCA8BD536
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 104A01C2169B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14EE1C21346
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E331591FC;
-	Mon,  6 May 2024 19:09:56 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7E01591F3;
+	Mon,  6 May 2024 19:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I2J6A22s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513B51591F4
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DC0158DD5;
+	Mon,  6 May 2024 19:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715022596; cv=none; b=DOu8XjqVCgHEU0IwkR+1h+0vXG694yI6zN5DzwXJWNBtvCiFSKSoL734SyMaMJRogNy+JfgXU9GRtNbFq0e7ODUTn2eR/jw8rbIvOEkwoZwZqIQ9QhaPTLdzl3qknk2TfixPTp1y6z7o6ykg27NZ9xKmGNM6Nl3moCTvsADJniA=
+	t=1715022643; cv=none; b=GWb8+Ioeg3JjO4ghzwdcYZ8tltOMWCGlwSChM7EIUr2ClaUkkQ1mYZqlp7ucvY1tE19IyeSWFCyUDCOqngBv0NJmlJsP5fpo+nuyqLprMJ6YO0W7x3HLAn0EjXifiIcdWurWtL9maTyEZdjS0yRtGhq9rUs7NFk91BU1TlDfNu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715022596; c=relaxed/simple;
-	bh=JIKf26avKHFUsAxYVf4PKmxyPhPHiGPrHENS53o1oT8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFTzSpJtDs+BB1Ug1qiaac6h3E9+Z5zQO4LkDRFr4SKwxzfD08r0GPM/9aydBvniGOMU2z9GRVoxEnrmx0V2SasZA09DJQZ2Ck4kYhnsC4LA54DHnuzZ+EaSu3Wf2KRge94OO+n/gf2hDb5zQllpzSSxubtZDx+tf+iVhr7YqJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id 36c02e2c-0bdc-11ef-a9de-005056bdf889;
-	Mon, 06 May 2024 22:09:51 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 6 May 2024 22:09:50 +0300
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya <quic_c_skakit@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
-Message-ID: <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
-References: <20240506150830.23709-1-johan+linaro@kernel.org>
- <20240506150830.23709-13-johan+linaro@kernel.org>
+	s=arc-20240116; t=1715022643; c=relaxed/simple;
+	bh=kPCSlFZ/lSBt4Pb75v7rCK1VScHWGpdu2/lhZVIUnFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FM8XiZZd7ItnUPIbOnWYnFNxMtFDadjjWQDkqeTRjArdFqk/rM3RaDdOZ6DjhIZk3PvIpwbJ/lXSA2EtKWeZ6b0/6jYJG6iM9ZiSjJjdyE/bhd0LraO+i5LlkPxH8qkYkK9FHlQL97HoNMUsbSOD32k/1CP4CBWWYL1J/wJu5Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I2J6A22s; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715022642; x=1746558642;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=kPCSlFZ/lSBt4Pb75v7rCK1VScHWGpdu2/lhZVIUnFM=;
+  b=I2J6A22sTpl+tEIaT3v4LI904FId8r9SqCLnDqzSyemho0BWhPsGsXkU
+   0VBo+2ka6wTW+nGDe53Z6UejuRBfQDq9NgLFTLidaLHIznIAEurRI5nv7
+   ThNDdsifslXeyVW/kyUqSpIB79umdbTmBt7r0Td0nTICcv/P4bYahxyeo
+   xtYAOOnzPu7wXcV3AnxqyLF2T9rG2W/AEKxekKNNhJrLcXC/iJn5K6HNo
+   ekmSkcE+/fZmq9P57uP9Z62AIIpBZ4thwpGbeXJBJZY2R8hC9PzfQQzuB
+   oJ0qTcnl3HfXUVvFvqnJ1cXi+Kutdas86fV2+XWfrQgYjpDZAUpDGV6jL
+   w==;
+X-CSE-ConnectionGUID: Q15XhlraSuSqpNUnMUgXcA==
+X-CSE-MsgGUID: P4KfYnaEQ52VF1fSbCU/jw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10633270"
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="10633270"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 12:10:41 -0700
+X-CSE-ConnectionGUID: cN8StRI6TXKdC5LTZBgCOA==
+X-CSE-MsgGUID: PMOoDdOgSv+aA3f33moy0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="28351970"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 12:10:41 -0700
+Date: Mon, 6 May 2024 12:10:39 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: isaku.yamahata@intel.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+	Paolo Bonzini <pbonzini@redhat.com>, erdemaktas@google.com,
+	Sean Christopherson <seanjc@google.com>,
+	Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
+	chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
+	Xiaoyao Li <xiaoyao.li@intel.com>,
+	Sean Christopherson <sean.j.christopherson@intel.com>,
+	Chao Gao <chao.gao@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v19 088/130] KVM: x86: Add a switch_db_regs flag to
+ handle TDX's auto-switched behavior
+Message-ID: <20240506191039.GE13783@ls.amr.corp.intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <ca5d0399cdbbaa6c7c6528ad85b3560cec0f0752.1708933498.git.isaku.yamahata@intel.com>
+ <fdf2d5fa-64dc-4429-8529-66106632a95b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240506150830.23709-13-johan+linaro@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fdf2d5fa-64dc-4429-8529-66106632a95b@linux.intel.com>
 
-Mon, May 06, 2024 at 05:08:29PM +0200, Johan Hovold kirjoitti:
-> From: Satya Priya <quic_c_skakit@quicinc.com>
+On Mon, May 06, 2024 at 11:30:52AM +0800,
+Binbin Wu <binbin.wu@linux.intel.com> wrote:
+
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 1b189e86a1f1..fb7597c22f31 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -11013,7 +11013,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+> >   	if (vcpu->arch.guest_fpu.xfd_err)
+> >   		wrmsrl(MSR_IA32_XFD_ERR, vcpu->arch.guest_fpu.xfd_err);
+> > -	if (unlikely(vcpu->arch.switch_db_regs)) {
+> > +	if (unlikely(vcpu->arch.switch_db_regs & ~KVM_DEBUGREG_AUTO_SWITCH)) {
 > 
-> Qualcomm Technologies, Inc. PM8008 is an I2C-controlled PMIC containing
-> seven LDO regulators. Add a PM8008 regulator driver to support PMIC
-> regulator management via the regulator framework.
+> As pointed by Paolo in
+> https://lore.kernel.org/lkml/ea136ac6-53cf-cdc5-a741-acfb437819b1@redhat.com/
+> KVM_DEBUGREG_BP_ENABLED could be set in vcpu->arch.switch_db_regs,  by
+> userspace
+> kvm_vcpu_ioctl_x86_set_debugregs()  --> kvm_update_dr7()
 > 
-> Note that this driver, originally submitted by Satya Priya [1], has been
-> reworked to match the new devicetree binding which no longer describes
-> each regulator as a separate device.
+> So it should be fixed as:
 > 
-> This avoids describing internal details like register offsets in the
-> devicetree and allows for extending the implementation with features
-> like over-current protection without having to update the binding.
-> 
-> Specifically note that the regulator interrupts are shared between all
-> regulators.
-> 
-> Note that the secondary regmap is looked up by name and that if the
-> driver ever needs to be generalised to support regulators provided by
-> the primary regmap (I2C address) such information could be added to a
-> driver lookup table matching on the parent compatible.
-> 
-> This also fixes the original implementation, which looked up regulators
-> by 'regulator-name' property rather than devicetree node name and which
-> prevented the regulators from being named to match board schematics.
+> -       if (unlikely(vcpu->arch.switch_db_regs)) {
+> +       if (unlikely(vcpu->arch.switch_db_regs &&
+> +                    !(vcpu->arch.switch_db_regs &
+> KVM_DEBUGREG_AUTO_SWITCH))) {
 
-> [1] https://lore.kernel.org/r/1655200111-18357-8-git-send-email-quic_c_skakit@quicinc.com
-
-Make it Link: tag?
-
-Link: URL [1]
-
-..
-
-> [ johan: rework probe to match new binding, amend commit message and
->          Kconfig entry]
-
-Wouldn't be better on one line?
-
-..
-
-+ array_size.h
-+ bits.h
-
-> +#include <linux/device.h>
-
-> +#include <linux/kernel.h>
-
-What is this header for?
-
-+ math.h
-
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/driver.h>
-
-+ asm/byteorder.h
-
-..
-
-> +static int pm8008_regulator_get_voltage(struct regulator_dev *rdev)
-> +{
-> +	struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
-> +	__le16 mV;
-> +	int uV;
-> +
-> +	regmap_bulk_read(pm8008_reg->regmap,
-> +			LDO_VSET_LB_REG(pm8008_reg->base), (void *)&mV, 2);
-
-Why casting?
-
-> +	uV = le16_to_cpu(mV) * 1000;
-> +	return (uV - pm8008_reg->rdesc.min_uV) / pm8008_reg->rdesc.uV_step;
-> +}
-> +
-> +static inline int pm8008_write_voltage(struct pm8008_regulator *pm8008_reg,
-> +							int mV)
-> +{
-> +	__le16 vset_raw;
-> +
-> +	vset_raw = cpu_to_le16(mV);
-
-Can be joined to a single line.
-
-> +	return regmap_bulk_write(pm8008_reg->regmap,
-> +			LDO_VSET_LB_REG(pm8008_reg->base),
-> +			(const void *)&vset_raw, sizeof(vset_raw));
-
-Why casting?
-
-> +}
-
-..
-
-> +static int pm8008_regulator_set_voltage(struct regulator_dev *rdev,
-> +					unsigned int selector)
-> +{
-> +	struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
-> +	int rc, mV;
-> +
-> +	rc = regulator_list_voltage_linear_range(rdev, selector);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	/* voltage control register is set with voltage in millivolts */
-> +	mV = DIV_ROUND_UP(rc, 1000);
-
-> +	rc = pm8008_write_voltage(pm8008_reg, mV);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	return 0;
-
-	return pm8008_write_voltage(pm8008_reg, mV);
-
-?
-
-> +}
-
-> +
-> +	regmap = dev_get_regmap(dev->parent, "secondary");
-> +	if (!regmap)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(reg_data); i++) {
-> +		pm8008_reg = devm_kzalloc(dev, sizeof(*pm8008_reg), GFP_KERNEL);
-> +		if (!pm8008_reg)
-> +			return -ENOMEM;
-> +
-> +		pm8008_reg->regmap = regmap;
-> +		pm8008_reg->base = reg_data[i].base;
-> +
-> +		/* get slew rate */
-> +		rc = regmap_bulk_read(pm8008_reg->regmap,
-> +				LDO_STEPPER_CTL_REG(pm8008_reg->base), &val, 1);
-> +		if (rc < 0) {
-> +			dev_err(dev, "failed to read step rate: %d\n", rc);
-> +			return rc;
-
-			return dev_err_probe(...);
-
-> +		}
-> +		val &= STEP_RATE_MASK;
-> +		pm8008_reg->step_rate = DEFAULT_VOLTAGE_STEPPER_RATE >> val;
-
-> +		rdesc = &pm8008_reg->rdesc;
-> +		rdesc->type = REGULATOR_VOLTAGE;
-> +		rdesc->ops = &pm8008_regulator_ops;
-> +		rdesc->name = reg_data[i].name;
-> +		rdesc->supply_name = reg_data[i].supply_name;
-> +		rdesc->of_match = reg_data[i].name;
-> +		rdesc->uV_step = VSET_STEP_UV;
-> +		rdesc->linear_ranges = reg_data[i].voltage_range;
-> +		rdesc->n_linear_ranges = 1;
-> +		BUILD_BUG_ON((ARRAY_SIZE(pldo_ranges) != 1) ||
-> +				(ARRAY_SIZE(nldo_ranges) != 1));
-> +
-> +		if (reg_data[i].voltage_range == nldo_ranges) {
-> +			rdesc->min_uV = NLDO_MIN_UV;
-> +			rdesc->n_voltages = ((NLDO_MAX_UV - NLDO_MIN_UV) / rdesc->uV_step) + 1;
-> +		} else {
-> +			rdesc->min_uV = PLDO_MIN_UV;
-> +			rdesc->n_voltages = ((PLDO_MAX_UV - PLDO_MIN_UV) / rdesc->uV_step) + 1;
-> +		}
-> +
-> +		rdesc->enable_reg = LDO_ENABLE_REG(pm8008_reg->base);
-> +		rdesc->enable_mask = ENABLE_BIT;
-> +		rdesc->min_dropout_uV = reg_data[i].min_dropout_uv;
-> +		rdesc->regulators_node = of_match_ptr("regulators");
-> +
-> +		reg_config.dev = dev->parent;
-> +		reg_config.driver_data = pm8008_reg;
-> +		reg_config.regmap = pm8008_reg->regmap;
-> +
-> +		rdev = devm_regulator_register(dev, rdesc, &reg_config);
-> +		if (IS_ERR(rdev)) {
-
-> +			rc = PTR_ERR(rdev);
-> +			dev_err(dev, "failed to register regulator %s: %d\n",
-> +					reg_data[i].name, rc);
-> +			return rc;
-
-			return dev_err_probe(...);
-
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-..
-
-> +static struct platform_driver pm8008_regulator_driver = {
-> +	.driver	= {
-> +		.name = "qcom-pm8008-regulator",
-> +	},
-> +	.probe = pm8008_regulator_probe,
-> +};
-
-> +
-
-Unneeded blank line.
-
-> +module_platform_driver(pm8008_regulator_driver);
-
-..
-
-> +MODULE_ALIAS("platform:qcom-pm8008-regulator");
-
-Use ID table instead.
-
+Yes, that's true. Thanks for catching this.
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Isaku Yamahata <isaku.yamahata@intel.com>
 
