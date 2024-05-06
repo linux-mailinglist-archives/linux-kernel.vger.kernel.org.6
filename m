@@ -1,147 +1,73 @@
-Return-Path: <linux-kernel+bounces-169706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF798BCC60
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5645F8BCC64
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61DC1B234D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E47931F23B80
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF93142E6D;
-	Mon,  6 May 2024 10:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VpYs5fbR"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A73142E62;
+	Mon,  6 May 2024 10:51:36 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D018C757EA;
-	Mon,  6 May 2024 10:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3D42BAE3;
+	Mon,  6 May 2024 10:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714992558; cv=none; b=XO+e+UjlVtdu+/4UTKZVDkPn/AoOtcTfPcV/nBM98iwnf/1gRVjVkCzJImD251PNKXL66hIJYmH3YF0HhPy7rO+0STQ/WSW7lNVAiwEGXaMmY7xJlGPA3DIdRvHPerSCaFVwPT1G1ngBYwml/PDcuxlUAahBSb026A4p8XjLMiE=
+	t=1714992696; cv=none; b=hX3KLA3i3BG6qv7wlEvmLJTY3Zj7LKA5e7JZNsgx9q3zxgTs+t69YpdWdyrIl9ItTaed8PAHnMdhBpd1LHeyjam5x/ps5eGstYh3RXM1CM5vOCzymryhMxBi9COplpkmDrfBPV/RbQMhqDejwdQyTJp4dCbqh+G26tr34z4TzW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714992558; c=relaxed/simple;
-	bh=U/kzEOQ26Mmpd4R1uZMPZjt4NRUfQiwR3IwxIqce6wU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uVcOadt2JAtwYmgqoIFcBsu9mHnGBqmCdSmxQUnZbwK8LLIqVcgJSWuiLzd9zsisKh26jZavfNx+RLXD38C6WHnW7ZfV1X1uTOarKnxXwgF3y/Owz+KF+G1CZGHHapqjZ5phFsFIqNUjx4+ITxl800bZ/QavSYrsTkqOKAOYqII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VpYs5fbR; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1714992554;
-	bh=U/kzEOQ26Mmpd4R1uZMPZjt4NRUfQiwR3IwxIqce6wU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VpYs5fbREURqcme7Xr78ZgTxa1uOFiGGJFgfpkypUbfRzsqB0NG60wqtWLz2zUVQv
-	 FtDHq//NVsI3cEYx/O9beRilY7tnxZsyeBTV1SVpi/bhyjkrKb1TrOSw+tRpsDKbOv
-	 QU2z9T1v2S95YZHCXr844IYYn/rd/C+RoKPu5He3beolspQH46vcNr5ZrFX8Rex1w7
-	 SAJQX5JvoYqWK65hZKHIa4VQRb8B+FhDbDIXVl45UtOBD/NZvpEhMXuPf9QnN7rZtw
-	 +FjM7b9ALWq0EAFcJecAn36Hxt584eUcad8d+0AFzDiejz1GUvonm78/dNL79WA/Ft
-	 WA2BwAZVJZMeQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8C7E8378020D;
-	Mon,  6 May 2024 10:49:13 +0000 (UTC)
-Message-ID: <522a4bbb-af1b-418b-b00c-95657222160b@collabora.com>
-Date: Mon, 6 May 2024 12:49:12 +0200
+	s=arc-20240116; t=1714992696; c=relaxed/simple;
+	bh=vyP1VQPJvGvnR56OM7Va9Lm/gtCLKfyQidwF0Wigk8k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NMbLqvkLiP5PuXRtnmzB/M0MQH6PmJAevNXUWzrlNNAi5Q4IVNnTk1by1Yb6ui+cUa8rnjOrGFgv/XoYUNUp5hC9Y/6PV1Msz2hgwQJ63YMmcKkdv+dU0ftYbyhnVHrrWKIz6Hvj95MGQvFfbXPMhG6BGMhxBTdjGcLdZ8/4/tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 6 May
+ 2024 18:51:20 +0800
+Received: from localhost.localdomain (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Mon, 6 May 2024 18:51:20 +0800
+From: Dylan Hung <dylan_hung@aspeedtech.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <jk@codeconstruct.com.au>,
+	<alexandre.belloni@bootlin.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-i3c@lists.infradead.org>
+CC: <BMC-SW@aspeedtech.com>
+Subject: [PATCH 0/2] [RFC] i3c: ast2600: Add MCTP-over-I3C support
+Date: Mon, 6 May 2024 18:51:18 +0800
+Message-ID: <20240506105120.3028083-1-dylan_hung@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/7] interconnect: mediatek: Add MediaTek MT8183/8195
- EMI Interconnect driver
-To: Georgi Djakov <djakov@kernel.org>
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
- keescook@chromium.org, gustavoars@kernel.org, henryc.chen@mediatek.com,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com,
- wenst@chromium.org, amergnat@baylibre.com
-References: <20240424095416.1105639-1-angelogioacchino.delregno@collabora.com>
- <20240424095416.1105639-8-angelogioacchino.delregno@collabora.com>
- <52335ded-43e7-4694-80bf-6ceee7d918d8@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <52335ded-43e7-4694-80bf-6ceee7d918d8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Il 03/05/24 13:53, Georgi Djakov ha scritto:
-> Hi Angelo,
-> 
-> On 24.04.24 12:54, AngeloGioacchino Del Regno wrote:
->> Add an interconnect driver for the External Memory Interface (EMI),
->> voting for bus bandwidth over the Dynamic Voltage and Frequency Scaling
->> Resource Collector (DVFSRC).
->>
->>               ICC provider         ICC Nodes
->>                                ----          ----
->>               ---------       |CPU |   |--- |VPU |
->>      -----   |         |-----  ----    |     ----
->>     |DRAM |--|DRAM     |       ----    |     ----
->>     |     |--|scheduler|----- |GPU |   |--- |DISP|
->>     |     |--|(EMI)    |       ----    |     ----
->>     |     |--|         |       -----   |     ----
->>      -----   |         |----- |MMSYS|--|--- |VDEC|
->>               ---------        -----   |     ----
->>                 /|\                    |     ----
->>                  |change DRAM freq     |--- |VENC|
->>               ----------               |     ----
->>              |  DVFSR   |              |
->>              |          |              |     ----
->>               ----------               |--- |IMG |
->>                                        |     ----
->>                                        |     ----
->>                                        |--- |CAM |
->>                                              ----
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> Thank you for working on this! It looks good to me.
-> Do we have a plan how to merge all this?
-> 
+Add Aspeed AST2600 I3C controllers and add minimal changes to validate
+the functionality for MCTP-over-I3C.
 
-Nothing (regulator, nor interconnect)  will ever get enabled by Kconfig unless
-the drivers/soc/mediatek patches are picked (or COMPILE_TEST!).... so I guess
-we can just pick per-subsystem and call it a day :-)
+Dylan Hung (2):
+  [RFC] ARM: dts: aspeed-g6: Add AST2600 I3Cs
+  [RFC] i3c: ast2600: Validate AST2600 I3C for MCTP-over-I3C
 
-As for the bindings, patch [3/7] *depends on* [1/7] and [2/7], but there is no
-reverse dependency (so 1-2 can be picked, no warnings).
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 137 +++++++
+ drivers/i3c/master/ast2600-i3c-master.c | 137 +++++++
+ drivers/i3c/master/dw-i3c-master.c      | 513 ++++++++++++++++++++----
+ drivers/i3c/master/dw-i3c-master.h      |  12 +
+ 4 files changed, 718 insertions(+), 81 deletions(-)
 
-Otherwise I can pick all bindings, or.... whatever is easier for you :-)
-
-Cheers,
-Angelo
-
-> Thanks,
-> Georgi
-> 
->> ---
->>   drivers/interconnect/Kconfig            |   1 +
->>   drivers/interconnect/Makefile           |   1 +
->>   drivers/interconnect/mediatek/Kconfig   |  29 ++
->>   drivers/interconnect/mediatek/Makefile  |   5 +
->>   drivers/interconnect/mediatek/icc-emi.c | 153 +++++++++++
->>   drivers/interconnect/mediatek/icc-emi.h |  40 +++
->>   drivers/interconnect/mediatek/mt8183.c  | 143 ++++++++++
->>   drivers/interconnect/mediatek/mt8195.c  | 339 ++++++++++++++++++++++++
->>   8 files changed, 711 insertions(+)
->>   create mode 100644 drivers/interconnect/mediatek/Kconfig
->>   create mode 100644 drivers/interconnect/mediatek/Makefile
->>   create mode 100644 drivers/interconnect/mediatek/icc-emi.c
->>   create mode 100644 drivers/interconnect/mediatek/icc-emi.h
->>   create mode 100644 drivers/interconnect/mediatek/mt8183.c
->>   create mode 100644 drivers/interconnect/mediatek/mt8195.c
-> 
-
+-- 
+2.25.1
 
 
