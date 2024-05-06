@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-169828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D7F8BCE31
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 870E08BCE00
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D863A1F223E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E5E1F25057
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37443FE2A;
-	Mon,  6 May 2024 12:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ei09gRNs"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B3833CC4;
+	Mon,  6 May 2024 12:33:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723F41DA22;
-	Mon,  6 May 2024 12:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980C4748F;
+	Mon,  6 May 2024 12:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999204; cv=none; b=MTlhxaXxZchbQ3uPzDNrmMze8TV/OdQe5v9/egD0k/yfMb/kF2xjiDhagGLUF55UzlY4bZHiBquZe/D8OU74DjmX2ZWkpAL8fufpT8200QbvPbLMs0KLx3wXwGZxZIM6NWfp4P52mb/1AJj/0w296213RArg0f0bjptMn+65ZI4=
+	t=1714998797; cv=none; b=GrP2ozyHrK5tt22LFqWEZk/5u7QJfgniweu8f8+ebO+ZoL50DDMuZPpXvSA2VJ3FichLBNMKKbLUU+3V3YVbWgwp+IzB3alk8RFc+mgYUyO9DiApWSQDycjZVKN7dg/qqxbtuc3NHv0rIgkWKYcgC31SmDZEELGQwNWGrwqypPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999204; c=relaxed/simple;
-	bh=I0aEhq4nU2NqcfNEZMplKejLv864kLLf/BLQOapouH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LtWsHb78gVwL4QvCznSte40LmO4oU+iHed08J2XQBqWOzrDLjHR+htaQRYmDMQYZJfio/DudAFLvP6PCh/0ZLsCmp7Ut+u7Zwoj7GJrPyPApIiT5bSGrSsgHaTCeCKv5Ob3zimFOT6kFSw3jdvbBsCS6bOtXRYtAFYTf1/oj0MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ei09gRNs; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e8so11243485e9.1;
-        Mon, 06 May 2024 05:40:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714999201; x=1715604001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxjJb/KzzXIFQHfzAUi7FnhbwHdNprYeBkYOQsJcPKk=;
-        b=ei09gRNspAdb2aqMI3I9Vj7edy3cn++1uV1LjRbzhzHNk2Autqa0iuz1Oed/stdicj
-         pBKCwURcFKjKYvcQ79G/pa+ZD603+7RRTY7WCouQ32FgvAB+krYoBovnbmHKqZSgKFcG
-         0JXwTQYwx5q7nK2Nh61yUDOvOFRTwHO2azzwHp4o/WWg05WByTyqMxwtQSa9vVOSN6gi
-         fGlM9LlMjkyW97fmtLg7oMFpdm0sSr2upJUMYqyPEBr63Hv0FVYrD07U+sbB1ww+8mft
-         3IccpIi0J2HEnPahGRJ8KdqgwF7wODikjdjKxqkpaXRRbW/hXlIOrS9Qp86DrkPRbWlT
-         XVzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714999201; x=1715604001;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rxjJb/KzzXIFQHfzAUi7FnhbwHdNprYeBkYOQsJcPKk=;
-        b=tX304PVVm0JKpPSHTt+bdVvPBRBuHyehdPwqkSKlz7sXTuqi5daV92EmARiGLka1Sy
-         wkQcYnG7dKIQ0WUtF+riTPRKrJPDt60CDiqZaj/TopWDa6o0r392enqy3IjN0geig0uV
-         J+SrSxmxhClX68LjNdzNp1sHzNR//4EZYkpZxcmVBZu7e2P9qaKIt7lYMOxCFnuWbpN8
-         KsKgJ2WT+PhbkelrXiNxMyZLz0yhzxeJohdagOoFvMFZP5M3U8uI8WoOcbCytUd0468E
-         XoITZTPwle7QHMCsSDpS0bLXAL3c6NEPw1Z46yvaEa1vKXHmKC/gQ+kS5xiuHWxxDg5R
-         d9og==
-X-Forwarded-Encrypted: i=1; AJvYcCUvsmOzSh6mv3E6/DkkzfqYUVEu2D/Bs9+k/mtLn025WnIXXGGToM4n+Ku52kdqpNK1vsH6hOF922WKLB4tS6urU2kQqs8eOICBJkzhQAblAfwQiOhOcKvapND5MqJXXZ/DJEH8
-X-Gm-Message-State: AOJu0Yzb1dxbOD4XdDHcE3wIRukcDwkYYkGCfViqt7kiAYLnwuder3oU
-	RWInOiUh6eGtVFgNgfjvl7ziYIUFPcoXGbJ+bAqaBjSEQVaAv6NO
-X-Google-Smtp-Source: AGHT+IFkCu+JtPeZm2GUtpMORrZzigCeL8aXT4N3/ncy5DZ8TaVMDuXbslHscLBHDWJBFqgIrb6ZgA==
-X-Received: by 2002:a05:600c:1c03:b0:41a:3868:d222 with SMTP id j3-20020a05600c1c0300b0041a3868d222mr7722487wms.0.1714999200464;
-        Mon, 06 May 2024 05:40:00 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id g17-20020adfa491000000b0034de87e81c7sm10714865wrb.23.2024.05.06.05.39.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 05:39:59 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [net-next PATCH] net: stmmac: dwmac-ipq806x: account for rgmii-txid/rxid/id phy-mode
-Date: Mon,  6 May 2024 14:32:46 +0200
-Message-ID: <20240506123248.17740-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1714998797; c=relaxed/simple;
+	bh=DEA1KM0ghvQd+HuV8xLB5tsfrrm9padoKe5B5fuFlsE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=GR6KNQrJLoxZgefgdSmG4YcIsPXsa2v+8rsSGSoHTNnv8pPDPy/jndbPidrM5xMHVcGImZlXD5/Gp8qAsLBDw/MYOJdTPHxB4zkiEU9ZUeXjSVsighvHE6TkJK16iBveieoj157kHbpZLsO6zVQMennsQ/3hwlwHpUk1o+fBPxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY15q13XZz4f3l85;
+	Mon,  6 May 2024 20:33:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 642991A058D;
+	Mon,  6 May 2024 20:33:08 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgDH6w4CzjhmXgPPMA--.59039S3;
+	Mon, 06 May 2024 20:33:08 +0800 (CST)
+Subject: Re: [RFC PATCH v4 27/34] ext4: implement zero_range iomap path
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+ hch@infradead.org, djwong@kernel.org, willy@infradead.org,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+ <20240410142948.2817554-28-yi.zhang@huaweicloud.com>
+ <ZjIN9nuV6SaNODfE@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <f59c3015-7029-9cd0-f5f0-087dfc1f24d0@huaweicloud.com>
+Date: Mon, 6 May 2024 20:33:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjIN9nuV6SaNODfE@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgDH6w4CzjhmXgPPMA--.59039S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1ktFWkGF4ktw15AF45Awb_yoW8Grykpr
+	Z5KFy8Kr12gr97uFZ2gFZrXryFya13Gw48WrW3Jrn8Z343WryxKFyjgF1093W8X3y7A340
+	vF1UW34Igw15AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Currently the ipq806x dwmac driver is almost always used attached to the
-CPU port of a switch and phy-mode was always set to "rgmii" or "sgmii".
+On 2024/5/1 17:40, Dave Chinner wrote:
+> On Wed, Apr 10, 2024 at 10:29:41PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Add ext4_iomap_zero_range() for the zero_range iomap path, it zero out
+>> the mapped blocks, all work have been done in iomap_zero_range(), so
+>> call it directly.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/inode.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 9d694c780007..5af3b8acf1b9 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -4144,6 +4144,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+>>  	return err;
+>>  }
+>>  
+>> +static int ext4_iomap_zero_range(struct inode *inode,
+>> +				 loff_t from, loff_t length)
+>> +{
+>> +	return iomap_zero_range(inode, from, length, NULL,
+>> +				&ext4_iomap_buffered_read_ops);
+>> +}
+> 
+> Zeroing is a buffered write operation, not a buffered read
+> operation. It runs though iomap_write_begin(), so needs all the
+> stale iomap detection stuff to be set up for correct operation.
+> 
 
-Some device came up with a special configuration where the PHY is
-directly attached to the GMAC port and in those case phy-mode needs to
-be set to "rgmii-id" to make the PHY correctly work and receive packets.
+Yeah, right, thanks for point this out. Although we can guarantee
+that the zeroing is a partial block overwrite and no need to
+allocate new blocks on ext4, use ext4_iomap_buffered_read_ops is
+not appropriate, I'll use write ops instead.
 
-Since the driver supports only "rgmii" and "sgmii" mode, when "rgmii-id"
-(or variants) mode is set, the mode is rejected and probe fails.
-
-Add support also for these phy-modes to correctly setup PHYs that requires
-delay applied to tx/rx.
-
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-index 281687d7083b..4ba15873d5b1 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-@@ -171,6 +171,9 @@ static int ipq806x_gmac_set_speed(struct ipq806x_gmac *gmac, unsigned int speed)
- 
- 	switch (gmac->phy_mode) {
- 	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
- 		div = get_clk_div_rgmii(gmac, speed);
- 		clk_bits = NSS_COMMON_CLK_GATE_RGMII_RX_EN(gmac->id) |
- 			   NSS_COMMON_CLK_GATE_RGMII_TX_EN(gmac->id);
-@@ -410,6 +413,9 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
- 	val |= NSS_COMMON_GMAC_CTL_CSYS_REQ;
- 	switch (gmac->phy_mode) {
- 	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
- 		val |= NSS_COMMON_GMAC_CTL_PHY_IFACE_SEL;
- 		break;
- 	case PHY_INTERFACE_MODE_SGMII:
-@@ -425,6 +431,9 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
- 	val &= ~(1 << NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id));
- 	switch (gmac->phy_mode) {
- 	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
- 		val |= NSS_COMMON_CLK_SRC_CTRL_RGMII(gmac->id) <<
- 			NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
- 		break;
-@@ -442,6 +451,9 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
- 	val |= NSS_COMMON_CLK_GATE_PTP_EN(gmac->id);
- 	switch (gmac->phy_mode) {
- 	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
- 		val |= NSS_COMMON_CLK_GATE_RGMII_RX_EN(gmac->id) |
- 			NSS_COMMON_CLK_GATE_RGMII_TX_EN(gmac->id);
- 		break;
--- 
-2.43.0
+Thanks,
+Yi.
 
 
