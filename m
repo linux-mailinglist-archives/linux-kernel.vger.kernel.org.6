@@ -1,93 +1,88 @@
-Return-Path: <linux-kernel+bounces-169946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3E38BCFB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A24D8BCFC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3FA1F22397
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:09:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF16D1F229AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A4B8286F;
-	Mon,  6 May 2024 14:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A3B13BC23;
+	Mon,  6 May 2024 14:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RYTxThHK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HVHPEnYV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ejiA94ww";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PQcJp/c8"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fk7zn5N3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE21882497;
-	Mon,  6 May 2024 14:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D617FBCF
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715004538; cv=none; b=e7Gnom4NuIUbhGyri+6E7f4SufwmnzMgdLp92mCc8qBM1wxJBPFgZ7UnZ7skz8xVhwSx7diYPn57AI5PClbjGgwIkxqGytYFTwnN1mh3abuxe3rdPbMFh+QI0qiLMUpT8X9tEjQIA5LsO1vESkxQqTZJlNbHLR/Fm9G99FXTGBE=
+	t=1715004701; cv=none; b=DwU5fp8O62MlCnHblC5ol2d5+GupNVESpQhw1kE5CiV0vzmwV5ZJ9O+4lkiiSxEucg6eX/3s/mEgPqyfzabZ64hUMg+BKONzw0qzvZMGUqjwfqXJSdGhBlFcaAriUPgal5pwWDishrDHRl9Jwakvk99YOKm8Bro1DbQNi45CdJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715004538; c=relaxed/simple;
-	bh=D4aRyvqT3grAqmfUGEFS/JdTe7ofhsNbvKny7R+kP+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JXMGYP4PJ+Qckavx7IVMrkIaY6dcJo+/7CXktZXiSuv0+hweFuHDMU06nOIy1rD3YSoGxARy4ZYCPbCIdtFaEeJ87QEFea988/umT5A0nSpgx/rh2cJ6xtlFilcNN47uxkQ2OVPLSNxjZXCb6pa35PxVj+BWT1FMXnudXXP2PBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RYTxThHK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HVHPEnYV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ejiA94ww; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PQcJp/c8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E70BC3845F;
-	Mon,  6 May 2024 14:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715004535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
-	b=RYTxThHKiL6dWcPvwvnTJc2p8MmqzheAMkfyWQ7SqpSZdpPGkR2aXVGY4blT1lemRiCbbg
-	VrHFKQBkrBBttzGTTs52mlrAuPx2CtvVTo7HBh97hASJQlWX4H94a1s+/Dk0L6UuowEW41
-	ueLPvKTtVUjaHKegclUE/dXpCnIIjng=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715004535;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
-	b=HVHPEnYVAImIWD8KDkPPmXo1hMKvBXZQUn66aPSO0wINMIOTPTDGCAvu2MlqASiTQoSr4I
-	NuZ66PRq3Hds+jAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ejiA94ww;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="PQcJp/c8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715004534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
-	b=ejiA94ww9Hn+V/0hDDBuMQm2uzeaYBgBG6JDn530fEiuHJ9bXWUP3MdSKKu/gF7o45TSRL
-	Lccx5+BjoTgQV6pqufoyBKBkLGdx7Tbop1kk6IO8JQmeamQcys8cuqigT8o3Y5fslZ27De
-	RA/XWWX9YJVmw3OIUAYDjslLgcpKspI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715004534;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
-	b=PQcJp/c81LySugEG7UqHJBeU9KWO34/drNKQoIXw3Sz32rorJjRMYr66q9R7dBkLE7O5rd
-	/auETibe1iByyBDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BB45013A25;
-	Mon,  6 May 2024 14:08:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mz5yLHbkOGY8aAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 06 May 2024 14:08:54 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ACPI: video: Add backlight=native quirk for Lenovo Slim 7 16ARH7
-Date: Mon,  6 May 2024 16:08:50 +0200
-Message-ID: <20240506140906.26034-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715004701; c=relaxed/simple;
+	bh=297vEo8nyC1s/ltFlb73Hmw1Xp0B0/3D3O9My7miovA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HtHlL+qIJUDIKvc4TjwGkMgtNz8E0bazBdllfmmt3ogTdLic2fBHT/mNnf2twCkkD+urYW+OS/TptN9Uvupq0yLVDLHawqS2utBBDtiS3y71IwjiZsnjy2UmzpxsJN38D7mwERaTNH67nHj7VNmb4EyNNcM6pi5wHyDM9YsXjJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fk7zn5N3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715004699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qK13xhGx+xh+kDbLKKe1iKuSXlAdZD7q6eOoabHwsw4=;
+	b=fk7zn5N3SU59PlCvpXom1WypG+mTxYJxZKjrl4fdQu/F3bpUv3t9k2dnJNWVXnk3hRfFdL
+	ZzTRhAv+SwyX68yuGR1wjWo3ktRhLBOE3JVzjs0BMbMws4cdewOMEO+oRiXUTfUr8080nK
+	2t6Pebi4vd6p80dt1siYoB9DZESCJZc=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-78-EjTpGxs1PNiQpHQhvu4Kfg-1; Mon, 06 May 2024 10:11:37 -0400
+X-MC-Unique: EjTpGxs1PNiQpHQhvu4Kfg-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1ec3e871624so22994645ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:11:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715004696; x=1715609496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qK13xhGx+xh+kDbLKKe1iKuSXlAdZD7q6eOoabHwsw4=;
+        b=BuCWCNMYKECxZmDfaIE68ADueVu1iUsPkzEABWiz53d6fkWV9D5ID4Hs1nQndK8TzI
+         gC4CsvfNaIAgKWp8dWy+1HkTMvsf9awL2Kb7TRFirdO6y5rIiTunEgeutvuZQAKANp70
+         1GB+Fr9Kdh/TzwkVHObbw0BihBdahtwl7IcnfCsoyERpn9x29lss0JiRxNSvJhvlkLL6
+         lKh0w86V8j3+4urBrclYVoFPsyhAU4JEiZ0772xMfIjNIpLqzeDzDOjNfJ9q+nkIb9JA
+         nnie1RUSmZtAAakJumYnHFuPJAFkjjaFaSctLKBlxHIA0EhZBlFtKhV2n2oAT1lVIGaY
+         1DlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWX7FTPP8hApgvnZXJ05RiC6cXyjVDOGseTBOpBTNo3wklLm/VUhshXpP83+Ev4sChaa1TcjvmNqJGX9ObfddepbJ0STz5SFFEMhPWR
+X-Gm-Message-State: AOJu0YyeMLhJavLg21BUMNPPnsF/VMzDuuLdWZEWrgqpBztDJJZeHUj6
+	MCVlIHxeAbF1Zp/p7Q8dvjtWOqOReyIZQ7OPCiLWT+hhsGbj8ad5OyAOZfynCDmx+23+mAhWCam
+	OrAIwz46OMBXhdw3+HAsg3tSxF9kHH1FfZblTrsHXeBD0fxHPG35gKLm6Xewxwg==
+X-Received: by 2002:a17:903:40c2:b0:1eb:3df4:c31d with SMTP id t2-20020a17090340c200b001eb3df4c31dmr11946811pld.42.1715004696166;
+        Mon, 06 May 2024 07:11:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH57Xka6hZHeOhrbJPj5cOqPBmd/uf5rYBBniQCsXw95IuMnWV2Gj4zSFUlXjb8VQo5dpsWjw==
+X-Received: by 2002:a17:903:40c2:b0:1eb:3df4:c31d with SMTP id t2-20020a17090340c200b001eb3df4c31dmr11946755pld.42.1715004695399;
+        Mon, 06 May 2024 07:11:35 -0700 (PDT)
+Received: from kernel-devel.local ([240d:1a:c0d:9f00:6883:65ff:fe1c:cf69])
+        by smtp.gmail.com with ESMTPSA id p2-20020a1709027ec200b001ed9fed6f61sm4398721plb.268.2024.05.06.07.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 07:11:35 -0700 (PDT)
+From: Shigeru Yoshida <syoshida@redhat.com>
+To: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shigeru Yoshida <syoshida@redhat.com>
+Subject: [PATCH net] ipv6: Fix potential uninit-value access in __ip6_make_skb()
+Date: Mon,  6 May 2024 23:11:29 +0900
+Message-ID: <20240506141129.2434319-1-syoshida@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,71 +90,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.03 / 50.00];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	BAYES_HAM(-0.02)[51.59%];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,suse.de:dkim,suse.de:email];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Score: -0.03
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: E70BC3845F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
 
-Lenovo Slim 7 16ARH7 is a machine with switchable graphics between AMD
-and Nvidia, and the backlight can't be adjusted properly unless
-acpi_backlight=native is passed.  Although nvidia-wmi-backlight is
-present and loaded, this doesn't work as expected at all.
+As it was done in commit fc1092f51567 ("ipv4: Fix uninit-value access in
+__ip_make_skb()") for IPv4, check FLOWI_FLAG_KNOWN_NH on fl6->flowi6_flags
+instead of testing HDRINCL on the socket to avoid a race condition which
+causes uninit-value access.
 
-For making it working as default, add the corresponding quirk entry
-with a DMI matching "LENOVO" "82UX".
-
-Link: https://bugzilla.suse.com/show_bug.cgi?id=1217750
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: ea30388baebc ("ipv6: Fix an uninit variable access bug in __ip6_make_skb()")
+Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
 ---
- drivers/acpi/video_detect.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/ipv6/ip6_output.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-index 9fdcc620c652..2cc3821b2b16 100644
---- a/drivers/acpi/video_detect.c
-+++ b/drivers/acpi/video_detect.c
-@@ -497,6 +497,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "82BK"),
- 		},
- 	},
-+	{
-+	 .callback = video_detect_force_native,
-+	 /* Lenovo Slim 7 16ARH7 */
-+	 .matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "82UX"),
-+		},
-+	},
- 	{
- 	 .callback = video_detect_force_native,
- 	 /* Lenovo ThinkPad X131e (3371 AMD version) */
+diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+index b9dd3a66e423..fa2937732665 100644
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1933,7 +1933,7 @@ struct sk_buff *__ip6_make_skb(struct sock *sk,
+ 		u8 icmp6_type;
+ 
+ 		if (sk->sk_socket->type == SOCK_RAW &&
+-		   !inet_test_bit(HDRINCL, sk))
++		   !(fl6->flowi6_flags & FLOWI_FLAG_KNOWN_NH))
+ 			icmp6_type = fl6->fl6_icmp_type;
+ 		else
+ 			icmp6_type = icmp6_hdr(skb)->icmp6_type;
 -- 
-2.43.0
+2.44.0
 
 
