@@ -1,101 +1,257 @@
-Return-Path: <linux-kernel+bounces-169328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C0C8BC71C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:45:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1153A8BC71D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61064B20D98
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:45:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13665B20DB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3ABF481A6;
-	Mon,  6 May 2024 05:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556E3481AC;
+	Mon,  6 May 2024 05:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e/QeLCjQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PjsZ2mgv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F20B41C62;
-	Mon,  6 May 2024 05:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8060941C62;
+	Mon,  6 May 2024 05:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714974327; cv=none; b=Fr/DecYhg4Q871GSUGeX8x1EhawcVlmHtfET40F3ZaLCW/xso/CP1ZjKeOq4aKRg+ThgVdRyxsRdztR6rCbm2MacBdrJXM44IX5I30fKwNhrx8cr2KdN9PZ9o40usYXH4SOnQH55IPUfQ+Zg+vUT3ltTMsu7bKhXv1HTiBzPZLs=
+	t=1714974386; cv=none; b=aBTVY5GNFkxOC2L3AyTEbfAlbrvVlPphkTsjUFP1suWsPKUxUBkpGaHkf1btNNR2nxcivCoXysIIX/thu4m8R8v+sv9pkucsV9ni+6LKplau67/UOu+A7FDmMAKRvw+RYhOm695Z7Dx2TPk8uMgx8EEJhr4DxwTfoips3wJTg7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714974327; c=relaxed/simple;
-	bh=CA37Acmi3+rrCWvPJGXdJ3Rmi+5Bh8XXymrrE5Apap0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EDsj227ILrATBQipbDY/aUL1sxd4sm5g4Yjq0bNQhQb22wYhNLDgCJKjQDa0HSeIiDOz9EfBTMtYS3aSKFSduMpjn5jm1Sgatu70eVZ8BHe0PpoiJyJd1E06XNNXqod/ACiqgw+mHu4SpYMQBuEBROZ5bMS/oMjBURQkmwwYNGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e/QeLCjQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1714974323;
-	bh=CA37Acmi3+rrCWvPJGXdJ3Rmi+5Bh8XXymrrE5Apap0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e/QeLCjQ25Bo+/plbgAoG9uEN46EpAOK7zpxQJE1/mGDv+wttjORuM1jbKUixddCI
-	 XT2HkvNNOXp44h2yAE8Z6aOW/Xyq46yNYO3nGtVUV2kPxHyb6fN1uwL0gvvm2D1oZh
-	 JftJWLfqdqGOxzHzb1iKelpMNn9oloTSZ+n9BbDSQ4U4mpsryggBNMFD3TxSLvIP3H
-	 4rdmj9E8h88r795/AZM8ojlRkUdj1+6TCzCY5S8cdpp7zthC+O4OE+hTC6/ZydfzdO
-	 UHHbh4OBKF+xz9e0uYkgh05+2v3zTxqcNfzohtH8TjpJ5xVhiWLBzRsHFsHPPASM3E
-	 pMuFNujm8wUiQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VXr3R37MZz4wcF;
-	Mon,  6 May 2024 15:45:23 +1000 (AEST)
-Date: Mon, 6 May 2024 15:45:22 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the slimbus tree
-Message-ID: <20240506154522.782195cf@canb.auug.org.au>
-In-Reply-To: <20240506152414.5796b14b@canb.auug.org.au>
-References: <20240506152414.5796b14b@canb.auug.org.au>
+	s=arc-20240116; t=1714974386; c=relaxed/simple;
+	bh=G3Rm/SfaVnbjnF8EMG0aajYrCGOKPnQ/MzeOPmajXhY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=eMfDAibSFqX54uo/HA6jEutmHkWn/xSyuQlBtuKGO86ac98NN26cgF7JB1H1pbdYO5pKJ6mXOJaqS5dwB1WrrBir5fLaBTNSz76C05WCvT1VhDG7cPOih8m+lhXIK31Q6HFfnfXqfWSIlKzPrrLcfDur0ZJ2W5tCjXcRCIXLunM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PjsZ2mgv; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714974385; x=1746510385;
+  h=message-id:date:mime-version:subject:from:to:references:
+   in-reply-to:content-transfer-encoding;
+  bh=G3Rm/SfaVnbjnF8EMG0aajYrCGOKPnQ/MzeOPmajXhY=;
+  b=PjsZ2mgvt8wFkqCipOg7XYannXMu77zgOS5H7inkfiZzmJpzbYzyQnSy
+   9++xsr8WXpGcRjYnrcE3hxefg46ur2McknqlU4nFqdbrDalg/PDaZWQ9d
+   IM0aTAbz6DMisbQnr4ak7hzxUsPwbQ48sQqQxAsgHqk0bEhlLmbhWrFV+
+   PkhAXvoQq0Ys1siac1Bd8bQm9Yu690M1yyNCZgrOhQXXHZCH3kmnHboSO
+   EOlgFeLSYegVmMTA/zeYXIIyzi/Kbz1Jh9P9EntkcNgPR04clbCrM6YYV
+   EwqIaUHdENexHNo21XX1d0FEZbqXZk2Cq0MVUY+bSUq8RTKoRwq2JVIRx
+   w==;
+X-CSE-ConnectionGUID: 8sHQMC7pRtaeoiRBZ24PXw==
+X-CSE-MsgGUID: SiU4AfwQS3aSByrc3gZLbg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10630667"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="10630667"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 22:46:24 -0700
+X-CSE-ConnectionGUID: At6Hs516TQyhbiAIAp/6iA==
+X-CSE-MsgGUID: 9x27xTYpSjK+n4KMzr7xJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="28566574"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.249.32.241])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 22:46:20 -0700
+Message-ID: <63c6162b-f336-46bf-9764-a5ae0327e1c8@intel.com>
+Date: Mon, 6 May 2024 08:46:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/lU9xcw7aqQ+X8tx/396vC/z";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf maps: Process kcore maps in order
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240505202805.583253-1-leo.yan@arm.com>
+ <d47346fc-51b4-4af5-a014-0bd6f3b7bae0@intel.com>
+Content-Language: en-US
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <d47346fc-51b4-4af5-a014-0bd6f3b7bae0@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/lU9xcw7aqQ+X8tx/396vC/z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 6/05/24 08:43, Adrian Hunter wrote:
+> On 5/05/24 23:28, Leo Yan wrote:
+>> On Arm64, after enabling the 'DEBUG=1' build option, the tool exits
+>> abnormally:
+>>
+>>   # ./perf report --itrace=Zi10ibT
+>>   # perf: util/maps.c:42: check_invariants: Assertion `map__end(prev) <= map__start(map) || map__start(prev) == map__start(map)' failed.
+>>     Aborted
+>>
+>> The details for causing this error are described in below.
+>>
+>> Firstly, machine__get_running_kernel_start() calculates the delta
+>> between the '_stext' symbol and the '_edata' symbol for the kernel map,
+>> alongside with eBPF maps:
+>>
+>>   DSO              | Start address      | End address
+>>   -----------------+--------------------+--------------------
+>>   kernel.kallsyms    0xffff800080000000   0xffff800082229200
+>>   bpf_prog           0xffff800082545aac   0xffff800082545c94
+>>   ...
+>>
+>> Then, the perf tool retrieves kcore maps:
+>>
+>>   Kcore maps       | Start address      | End address
+>>   -----------------+--------------------+--------------------
+>>   kcore_text         0xffff800080000000   0xffff8000822f0000
+>>   vmalloc            0xffff800080000000   0xfffffdffbf800000
+>>   ...
+>>
+>> Finally, the function dso__load_kcore() extends the kernel maps based on
+>> the retrieved kcore info. Since it uses the inverted order for
+>> processing the kcore maps, it extends maps for the vmalloc region prior
+>> to the 'kcore_text' map:
+>>
+>>   DSO              | Start address      | End address
+>>   -----------------+--------------------+--------------------
+>>   kernel.kallsyms    0xffff800080000000   0xffff800082229200
+>>   kernel.kallsyms    0xffff800082229200   0xffff800082545aac -> Extended for vmalloc region
+>>   bpf_prog           0xffff800082545aac   0xffff800082545c94
+>>   ...
+>>
+>>   DSO              | Start address      | End address
+>>   -----------------+--------------------+--------------------
+>>   kernel.kallsyms    0xffff800080000000   0xffff8000822f0000 -> Updated for kcore_text map
+>>   kernel.kallsyms    0xffff800082229200   0xffff800082545aac
+>>   bpf_prog           0xffff800082545aac   0xffff800082545c94
+>>   ...
+>>
+>> As result, the two maps [0xffff800080000000..0xffff8000822f0000) and
+>> [0xffff800082229200..0xffff800082545aac) are overlapping and triggers
+>> failure.
+>>
+>> The current code processes kcore maps in inverted order. To fix it, this
+>> patch adds kcore maps in the tail of list, afterwards these maps will be
+>> processed in the order. Therefore, the kernel text section can be
+>> processed prior to handling the vmalloc region, which avoids using the
+>> inaccurate kernel text size when extending maps with the vmalloc region.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>> ---
+>>  tools/perf/util/symbol.c | 19 ++++++++++++++++++-
+>>  1 file changed, 18 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+>> index 9ebdb8e13c0b..e15d70845488 100644
+>> --- a/tools/perf/util/symbol.c
+>> +++ b/tools/perf/util/symbol.c
+>> @@ -1266,7 +1266,24 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
+>>  	map__set_end(list_node->map, map__start(list_node->map) + len);
+>>  	map__set_pgoff(list_node->map, pgoff);
+>>  
+>> -	list_add(&list_node->node, &md->maps);
+>> +	/*
+>> +	 * Kcore maps are ordered with:
+>> +	 *   [_text.._end): Kernel text section
+>> +	 *   [VMALLOC_START..VMALLOC_END): vmalloc
+>> +	 *   ...
+>> +	 *
+>> +	 * On Arm64, the '_text' and 'VMALLOC_START' are the same values
+>> +	 * but VMALLOC_END (~124TiB) is much bigger then the text end
+>> +	 * address. So '_text' region is the subset of the vmalloc region.
+>> +	 *
+>> +	 * Afterwards, when dso__load_kcore() adjusts kernel maps, we must
+>> +	 * process the kernel text size prior to handling vmalloc region.
+>> +	 * This can avoid to using any inaccurate kernel text size when
+>> +	 * extending maps with vmalloc region. For this reason, here it
+>> +	 * always adds kcore maps to the tail of list to make sure the
+>> +	 * sequential handling is in order.
+>> +	 */
+>> +	list_add_tail(&list_node->node, &md->maps);
+> 
+> This seems reasonable, but I wonder if it might be robust
+> and future proof to also process the main map first
+> e.g. totally untested:
+> 
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 9ebdb8e13c0b..63bce45a5abb 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -1365,16 +1365,15 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>  	if (!replacement_map)
+>  		replacement_map = list_entry(md.maps.next, struct map_list_node, node)->map;
+>  
+> -	/* Add new maps */
+> +	/* Add replacement_map */
+>  	while (!list_empty(&md.maps)) {
 
-Hi all,
+That will need to be:
 
-On Mon, 6 May 2024 15:24:14 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> The following commits are also in Linus Torvalds' tree as different
+	struct map_list_node *new_node;
+..
+	list_for_each_entry(new_node, &md.maps, node) {
 
-I meant the char-misc.current and char-misc trees, of course.
 
---=20
-Cheers,
-Stephen Rothwell
+>  		struct map_list_node *new_node = list_entry(md.maps.next, struct map_list_node, node);
+>  		struct map *new_map = new_node->map;
+>  
+> -		list_del_init(&new_node->node);
+> -
+>  		if (RC_CHK_EQUAL(new_map, replacement_map)) {
+>  			struct map *map_ref;
+>  
+> +			list_del_init(&new_node->node);
+>  			map__set_start(map, map__start(new_map));
+>  			map__set_end(map, map__end(new_map));
+>  			map__set_pgoff(map, map__pgoff(new_map));
+> @@ -1385,20 +1384,29 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>  			err = maps__insert(kmaps, map_ref);
+>  			map__put(map_ref);
+>  			map__put(new_map);
+> +			free(new_node);
+>  			if (err)
+>  				goto out_err;
+> -		} else {
+> -			/*
+> -			 * Merge kcore map into existing maps,
+> -			 * and ensure that current maps (eBPF)
+> -			 * stay intact.
+> -			 */
+> -			if (maps__merge_in(kmaps, new_map)) {
+> -				err = -EINVAL;
+> -				goto out_err;
+> -			}
+>  		}
+> +	}
+> +
+> +	/* Add new maps */
+> +	while (!list_empty(&md.maps)) {
+> +		struct map_list_node *new_node = list_entry(md.maps.next, struct map_list_node, node);
+> +		struct map *new_map = new_node->map;
+> +
+> +		list_del_init(&new_node->node);
+> +
+> +		/*
+> +		 * Merge kcore map into existing maps,
+> +		 * and ensure that current maps (eBPF)
+> +		 * stay intact.
+> +		 */
+> +		if (maps__merge_in(kmaps, new_map))
+> +			err = -EINVAL;
+>  		free(new_node);
+> +		if (err)
+> +			goto out_err;
+>  	}
+>  
+>  	if (machine__is(machine, "x86_64")) {
+> 
+> 
 
---Sig_/lU9xcw7aqQ+X8tx/396vC/z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY4bnIACgkQAVBC80lX
-0Gx9rgf+KyIGS6ItzQXS1n5huIVtmr6Cx0U6Q3ueqfZw0oc2zKg916M7Bc7eGqD2
-uCV8poaCJw9ZXKU92eOQoJ9/rElDd5lyR7PekivgeFuxzPnzyRCzCp6IVY4L4ruR
-EYSi7yd6+10locxDElePwAx0G7ag+zRngCLnjnxLZvEh+9QyEFSmCkqIKOgui3Nc
-mK+IPCVeCT8qWSkE1hEz4RFicvluwYlbE3750Brh9gCLyt8SCPRawGtKfqzEti6Q
-Ja12T7HJDe7idy23ZmXWAf9ZtVnUAQ6WKHvhSi2MbJfbZuzUufX1ISXevikBVKIB
-E43fzZhfyzsbtPEyEB2Vww5o5OdCSg==
-=pth7
------END PGP SIGNATURE-----
-
---Sig_/lU9xcw7aqQ+X8tx/396vC/z--
 
