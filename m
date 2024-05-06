@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-169677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E50A8BCC1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EAC8BCC25
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC00280E65
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EAF7284B87
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2134A14291B;
-	Mon,  6 May 2024 10:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CC3762E0;
+	Mon,  6 May 2024 10:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yn+vNPDK"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVV0Bv5w"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7324204B;
-	Mon,  6 May 2024 10:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32756CDD5;
+	Mon,  6 May 2024 10:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714991935; cv=none; b=p5vE86fX8JmEAALRWNEWd2GFHm1UHckhutbWyOMZbM6ot8LZ6iAqMC+zTQKSxPxwLH3iJTTdJMr2iQJfD3b9dmuUFZ1NtFJ71JlDTId4dXq8csKz2+ppAeJdWGVXs5hIxfGbb3tXhxVZ5LwMTQk4XbGr9gL7Hez1L9xh10uXHVQ=
+	t=1714991985; cv=none; b=X95MlX9OZil6Nq/aacxEJLTAiUwgPscYhUk+YOJD7fPHVq9anAg75JWDeVgOsXeuaw1jJtk/96RQLO+XxsO/VWNIN2XFiK0Yz+XUpI50OxktRUYVdLwHviZwHIubyGhZuMmFvQ1o9T2PhY0c84HJ3NpBOC5bd/T2ghXYdvrPfd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714991935; c=relaxed/simple;
-	bh=02jhnwOiS0QtF/pgwOtieUVchda/o2cZ6028VWK7IZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwtp4ny8Q++yp8KANC2viWr1kzZCZi5mgTbaWVlZjGVziTLc/6QARCowRV6Pe3xVPpUK3MN0xsHHoNnFVadvuVQsZ54d9VSgff3bcJYIvsEAOdoHalF3pSlrQdJ5VlD+2Y3wL9GsNT5+ReSlnq3vUUeX5H+4KH9RZZPt4ZYLi6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yn+vNPDK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C1vNOBcYPu24/KsvOJhsEyUZ+lh1CQwNcPGM2ZQDJdw=; b=Yn+vNPDKwqkHpn+SytUx3aohk3
-	V6AUgZayL5XgR539k2baEwTGggGTOPdp7XT+WqO9+AEDX1JDCrG0pn74gbMc9iqehd4EPQ9D4Kit7
-	Dc2kMXAiJwX+l0hnxn8chx6jtI6Fje92rS8duHVP2WU10yUz/r18pQzxHQ1Q1PjFVzy3rCcc507my
-	E/nlwFj4fCuJ/KAzTZXyJ3uc03f0vB90CRXd+XTR7flyF/oFLFriMfAViQMBgz5lcZbH1/mk7BzQD
-	RrQdJBEdFl/oD9I1YpNJL7InZ3XZ1zfyP143rDERtb9j8IOq38fn4GM75uiSMvImnWWIltQPvSoye
-	ufnBqn/A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s3vk8-0000000AjiN-3zQ6;
-	Mon, 06 May 2024 10:38:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 991FA300362; Mon,  6 May 2024 12:38:48 +0200 (CEST)
-Date: Mon, 6 May 2024 12:38:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>,
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] fs: WARN when f_count resurrection is attempted
-Message-ID: <20240506103848.GN40213@noisy.programming.kicks-ass.net>
-References: <20240503201620.work.651-kees@kernel.org>
+	s=arc-20240116; t=1714991985; c=relaxed/simple;
+	bh=0ygOfuHcKTAjGrt3dK5IOAMjgF/u7Ilyp6ywR2Hz+hM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Am3PLxRtT89xrkepZ4/VELc0JkJYfvAokFz9WyKF1+hSFMIy71ODyCG4jOAuoJ0bdFlJM45b+tZ+LJsBwj5HTr35TOjzHXEftheEpCxmpkPppqrqMGZRqVpfdZoalAjltdLEZWTiqVZykC87VvdRtdqeC+6fr7SP9na7nleXumU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVV0Bv5w; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59a934ad50so356739566b.1;
+        Mon, 06 May 2024 03:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714991982; x=1715596782; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ygOfuHcKTAjGrt3dK5IOAMjgF/u7Ilyp6ywR2Hz+hM=;
+        b=FVV0Bv5weUFrqhkVZIOAl+BFSEC08/b9Co+puy+lfwvBHmofUvMjzxwJgT1PGIi1lw
+         K1oDT4OsgJqllp9gGOA1OWB50rvHV415VrXiTfmf41BCyltM+vzTPfdDZvNGAX2q0Szk
+         Aw/r5XtfCBPmCgzfy2HNhAuIBSGQmaDYMYSLtCv5AY860I8m3c57qWoTAyWN9z0jQ/Te
+         +l28THA+Ae/wk9g7yhj34+vw636AXH7CESyaMB277kAtzKs2j+/g2qPTwCiRpHtjU/PM
+         uTb969hD/FwjmJJDnC6fRK6EWCFfJIKeXpKPLz9dJIQh7CcERuOHQ9WD8towYETsC29T
+         ozQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714991982; x=1715596782;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0ygOfuHcKTAjGrt3dK5IOAMjgF/u7Ilyp6ywR2Hz+hM=;
+        b=f5YpMVdyMUqgifr7RNNZx8Qbc06CHbsHS3/U/yAmRxsl5VCZ/gGL+RFugHmOLwSVUi
+         RxO0IlSUDPI4WtNZkAa/ImjkO4nsEjNtK2SwQu75cYDJ5lUuqH4JemMqXLXE6Cr2Wedh
+         aXZ/nTZHnqNmVgXiB93LGQ3FIjzqU6vVr3hmxSy1cx914xBqpooG0y1W4HkLdLo3T8yp
+         dZj0IMkSiFNw+Tvz6OI2jQvh61JgFjC7luVxJRWcZZ6i5A4FjVGZ+4AodhO/ZM44zdf8
+         Iu4yBEtN11ZkY8YwiXgJtu9XZKLGYtm9Q5m7/uD8hqoyQy9c8ud++ia/Sgb/vTqT6dM4
+         RogA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3xpgbNrYgRTnm6TbKQBhY/jUFa9E6e210ymBhx/KVz+2jaBcpEi7Qt+U6dkIKu0I6jplmrF3zFI7HGHbJC8FAE/KZR0Xl90SeQHIiQKtm06wUlREHr73dK+TRf7YcB+wHrGd9klbfjQ==
+X-Gm-Message-State: AOJu0YxPxxS1iNyeNpsQ0QFrxjesKX3cSOEXuzYKvjizL/Pb3eNmRKRp
+	jqQM4I+49PKlDKHdjT52j4+HdyZsec6jzUYSn7vSCCUiRuFXiIPIHWNR0jvnbokm7UABuP3ijw0
+	JSAsAF4bA0ASOOk0FYkcE7OjYNvw=
+X-Google-Smtp-Source: AGHT+IFWlpSza0B90xtieFTysHeSSjmprj5O2vUNxjTFvDcsxa5MOgdmgv7mFPreTceocazq5GlEmH7DneLovikeDqo=
+X-Received: by 2002:a17:906:794c:b0:a59:cdf4:f938 with SMTP id
+ l12-20020a170906794c00b00a59cdf4f938mr2045728ejo.37.1714991982211; Mon, 06
+ May 2024 03:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503201620.work.651-kees@kernel.org>
+References: <20240505141420.627398-1-andy.shevchenko@gmail.com> <CACRpkdap=KXuyoCjWt_v53ArRPynDQndAjjHfvapLUM7VWbbdA@mail.gmail.com>
+In-Reply-To: <CACRpkdap=KXuyoCjWt_v53ArRPynDQndAjjHfvapLUM7VWbbdA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 6 May 2024 13:39:05 +0300
+Message-ID: <CAHp75Vdn+F=MMAyguOFup5xyOCEVZowOordiEG1FQ9Y22kLdDg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpiolib: Discourage to use formatting strings in
+ line names
+To: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 03, 2024 at 01:16:25PM -0700, Kees Cook wrote:
-> It should never happen that get_file() is called on a file with
-> f_count equal to zero. If this happens, a use-after-free condition
-> has happened[1], and we need to attempt a best-effort reporting of
-> the situation to help find the root cause more easily. Additionally,
-> this serves as a data corruption indicator that system owners using
-> warn_limit or panic_on_warn would like to have detected.
-> 
-> Link: https://lore.kernel.org/lkml/7c41cf3c-2a71-4dbb-8f34-0337890906fc@gmail.com/ [1]
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->  include/linux/fs.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 00fc429b0af0..fa9ea5390f33 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1038,7 +1038,8 @@ struct file_handle {
->  
->  static inline struct file *get_file(struct file *f)
->  {
-> -	atomic_long_inc(&f->f_count);
-> +	long prior = atomic_long_fetch_inc_relaxed(&f->f_count);
-> +	WARN_ONCE(!prior, "struct file::f_count incremented from zero; use-after-free condition present!\n");
+On Mon, May 6, 2024 at 10:19=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+org> wrote:
+> On Sun, May 5, 2024 at 4:14=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>
+> > Currently the documentation for line names allows to use %u inside
+> > the alternative name. This is broken in character device approach
+> > from day 1 and being in use solely in sysfs.
+> >
+> > Character device interface has a line number as a part of its address,
+> > so the users better rely on it. Hence remove the misleading documentati=
+on.
+> >
+> > On top of that, there are no in-kernel users (out of 6, if I'm correct)
+> > for such names and moreover if one exists it won't help in distinguishi=
+ng
+> > lines with the same naming as '%u' will also be in them and we will get
+> > a warning in gpiochip_set_desc_names() for such cases.
+> >
+> > Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-This reminds me, I should some day try and fix the horrible code-gen for
-WARN() :/ WARN_ON_*() and friends turn into a single trap instruction,
-but the WARN() and friends thing turns into a horrible piece of crap for
-the printk().
+Thank you!
+
+Meanwhile, Cc'ing to Kent as well.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
