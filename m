@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-169528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7EFD8BC9F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:49:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBD58BC9BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EABEF1C212CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA47283111
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477881422A8;
-	Mon,  6 May 2024 08:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B611419A0;
+	Mon,  6 May 2024 08:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Fn/8o3+D"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JsQlMstm"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23501419BC;
-	Mon,  6 May 2024 08:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7235A788;
+	Mon,  6 May 2024 08:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714985323; cv=none; b=hzlaaRus5Gav4/WtqETKAASfDATAhZp1aflrRLY8FmDowTEhX3Y5cQbys9g2oGNLF+4zukZ0aXw95PtB9JA2JI7DMPVbmRCknYkjRnNs575R8EMyI4q90ALw1kHMT2shagndqoLNxNqMHg3ZfAwH2Tlng9L/9rL+9oJXP9Pr5Sk=
+	t=1714984769; cv=none; b=cOn+BSSxBImUAwFhJhRRb/+p0PB4o2QFbEc7y04Qiodpi2GYaPdvyyKAA0IyQZRl8zYWUc3W8z+QY04sGUWT7nLRpiKMkZuOzlxJh+SfOx2OO4aIukq/9p3I9rsZPy/LrC993l+ziTPar/FPWlJikgEdgkrBvH9fEEzdSi0Hke8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714985323; c=relaxed/simple;
-	bh=C3Shq+hF7VDqs6og2Tt9ormcKaEnc47JGcJfVttheQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bppxwRzm2WNzH9ytbbHJ9pSeqgdNVQFq+05naiN0FnKqJLoOM8yQ+rwQF1v9DaLw8JPGjdG6WCn/uIxGKbiYHJ5J52CQMwJEuqBwZnv6slucsMSNXLxZQtHHGrZwB6vr9DDxtpdJVKsL171VCdBQzejLmphouzpP3J5cm33c1p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Fn/8o3+D; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 330DC120007;
-	Mon,  6 May 2024 11:48:36 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 330DC120007
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1714985316;
-	bh=8cwbIcjblu4wOeTL1PzC2Bk4VwPtVX0H4EOc1bQEhQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=Fn/8o3+DgyUBAwln6bXs8pBXOnWmpmMHVQkW4HdPk9Yk/dgk+89nq4cVuozhCXOn6
-	 xmNNWlLvL6easjk8KXBeg9K9hEe+eaplY0ua/bciaC6apHIBXlv3fQ8FfzwryXmkDl
-	 lPEg4zDdCMlZSyixVL/scrfIFtirjNdp2pZ16xgBaavd7dLN/NodsuWk+xEP2PmkY2
-	 CTX5+hLyA2WJw0onlXiUtpLQMmqPUluaPq08gIbEOGYKHgC+MVy/IWnNEOdVPInOEc
-	 YaH7Zzd4wNtieopExVRu2rFHL1MXw7ju4aPz5BEQhSiMfv6R8rBQImxBSARvTaowYw
-	 oFt4NsWg/Z7Hw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon,  6 May 2024 11:48:36 +0300 (MSK)
-Received: from [172.28.226.125] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 6 May 2024 11:48:35 +0300
-Message-ID: <c6af5c6d-0272-8c2b-00a3-29c20c3b7938@salutedevices.com>
-Date: Mon, 6 May 2024 11:37:53 +0300
+	s=arc-20240116; t=1714984769; c=relaxed/simple;
+	bh=pb1Rc+9NPLnwGIT7gD6BTBq7ZC0pDavC8Tc5xj3YZ3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3vV+XAmBOZhWWMbV+Mf1HIY2hFEA9lwK7rBPI7GbG0CgP5GHCEQpCPHJbfz3DPyo85ZWwSKQgO+vypm7vInF0Z1F+jmdl/zhCyE2RYn5WQT6ZUxd1/VcmHuiEFg+qPvwCciBcG+egKhPr2lchpwJHVZI2kg06AXuQ0l2HvaWJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JsQlMstm; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4468O8CS024779;
+	Mon, 6 May 2024 08:38:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=6rw9r746ueif5tDySgJaQPVSe6/wIjUvI1xxkCK72XI=;
+ b=JsQlMstmS+HEeLJ6Z+ZRqHTDHaZhs8vuN7DY6OXbvR/WOC/NG3K/74l4iRsg8Fus1jJR
+ HvR9msAi4/v2YR7HKPs32TRYmtW5ut82sQax5m4xvm2y9IAxyf/ExJlx0RlT/2i1lvbd
+ g6jGxTHzMc9FgXQJ2Q5dToULOsejsUmXaGO9dJv9hfoqMcej+uEIv+zgQjQ3h4i19sCI
+ h1om+y1MtJNhVQ50ftCg5hOL2O98JZzXKnvfAwpRkFxjT5zh1LQh3DHjbKVyclF9JjvM
+ n+HgOJWb5WX6kvTaJPIvJvp3T6vOkpyzStn6emPL8r2V6GMQnH47A6LiyOvUO9fOs6oH 1w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xxug6g1sx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 08:38:39 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4468cdoJ014374;
+	Mon, 6 May 2024 08:38:39 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xxug6g1sv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 08:38:39 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4467YEt4005549;
+	Mon, 6 May 2024 08:38:38 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xx5ygwhha-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 08:38:38 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4468cWqb33817258
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 May 2024 08:38:34 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8A85E20065;
+	Mon,  6 May 2024 08:38:32 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BDDE42004D;
+	Mon,  6 May 2024 08:38:31 +0000 (GMT)
+Received: from osiris (unknown [9.171.46.190])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  6 May 2024 08:38:31 +0000 (GMT)
+Date: Mon, 6 May 2024 10:38:30 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>, Thomas Huth <thuth@redhat.com>
+Subject: Re: [PATCH v2 00/10] s390: PG_arch_1+folio cleanups for uv+hugetlb
+Message-ID: <20240506083830.28332-B-hca@linux.ibm.com>
+References: <20240412142120.220087-1-david@redhat.com>
+ <f53a87ed-c3fe-4a60-8723-3eea25189553@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v5 2/2] mtd: rawnand: meson: support R/W mode for boot ROM
-Content-Language: en-US
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-CC: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
-	<vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Neil
- Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, <linux-mtd@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<oxffffaa@gmail.com>, <kernel@sberdevices.ru>
-References: <20240416085101.740458-1-avkrasnov@salutedevices.com>
- <20240416085101.740458-3-avkrasnov@salutedevices.com>
- <2e5b39a1-ffe6-1186-2ce7-51b61c5006d3@salutedevices.com>
- <20240506104753.25e5f8cd@xps-13>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-In-Reply-To: <20240506104753.25e5f8cd@xps-13>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185070 [May 06 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_arrow_text}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/06 05:16:00 #25106397
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f53a87ed-c3fe-4a60-8723-3eea25189553@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pTLHBXGc69PVC33eUA14E-gUyGICY0ip
+X-Proofpoint-GUID: YK__QwvpgYTeAcFYR5FbguaUC6-_DEUS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-06_04,2024-05-03_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=676 clxscore=1015 adultscore=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405060057
 
-
-
-On 06.05.2024 11:47, Miquel Raynal wrote:
-> Hi Arseniy,
+On Tue, Apr 30, 2024 at 08:49:31PM +0200, David Hildenbrand wrote:
+> On 12.04.24 16:21, David Hildenbrand wrote:
+> > This is v2 of [1] with changed subject:
+> >   "[PATCH v1 0/5] s390: page_mapcount(), page_has_private() and PG_arch_1"
+> > 
+> > Rebased on s390x/features which contains the page_mapcount() and
+> > page_has_private() cleanups, and some PG_arch_1 cleanups from Willy. To
+> > compensate, I added some more cleanups ;)
+> > 
+> > One "easy" fix upfront. Another issue I spotted is documented in [1].
+> > 
+> > Once this hits upstream, we can remove HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
+> > from core-mm and s390x, so only the folio variant will remain.
 > 
-> avkrasnov@salutedevices.com wrote on Thu, 2 May 2024 08:09:34 +0300:
-> 
->> Hello, sorry, pls ping, 2 weeks :)
-> 
-> I was on vacation, I am currently late by 30+ patches, yours is on the
-> list ;)
-> 
+> Ping.
 
-Hi! Ah , ok, no problem! Thanks! :)
-
-Thanks, Arseniy
-
-> Thanks,
-> Miquèl
+Claudio, Janosch, this series requires your review.
 
