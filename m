@@ -1,171 +1,109 @@
-Return-Path: <linux-kernel+bounces-169410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FCD28BC854
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:27:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DED8BC83D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20FE1C21395
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3192A281C3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B33E67A1A;
-	Mon,  6 May 2024 07:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E547D3F6;
+	Mon,  6 May 2024 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="b2LiA2BL"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ayoeRg8p"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24B7D3F6;
-	Mon,  6 May 2024 07:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97894D9E2
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714980427; cv=none; b=oDL8ZmzhGHUZi5vbFfpizJNvOXUrpOO/6uMuBSZ6B8dCuv8Lvca8WXM581isdHkYBT7i3rLHtpTcT6VfvJa2tysORnK7jCNhal4h5+MamJ7ArJNEsdDNVQ5dTphwtzUUpEF6YTBsHy8QMiEOmnocNnh6CTq0UhJ1kA0mVwbenvo=
+	t=1714979952; cv=none; b=lr51azGeASGxOLdxyADv1U1NTFmdXycqrrly/Urx9ktgQlpZLZ4fm8RePVICPVDdWuEb05qxxDq7I3hNwyAXSzFofKjPqLpC2YXOV0Qjn4Tn2QXv9Yz6EYlGBRkBP4z0CzNMkpOQfX16l6vCt47nLZ9HhtjUiQ7calGICj3H7Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714980427; c=relaxed/simple;
-	bh=d8SJOyUIc2J3LR7VIsmTy7D1ZJOEc6JKqIUdB2lDlmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xea43rT9lo5eReeVuQODtCIpnpm0ncCoU/vXRaeUDi2kFc+HrJ7d3mVj91snH9bIem3twsHaHTdM1uvbF8Rg2GIFwI+ejCziRnr4wc/ob1eekxOGERWYB1VnRrc0UlCuk9hUZy0DPpJU6gyaVjyLWrW43+audvHIX6R7nDIL8Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=b2LiA2BL; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1714979875; bh=d8SJOyUIc2J3LR7VIsmTy7D1ZJOEc6JKqIUdB2lDlmw=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=b2LiA2BLlOeyGiTncOSQrmOt/k18VLlKiFTeTx88nWuIztBQRWAHSZL5ssr6c45PB
-	 DLhCsdxtACJAkCwOqu5QYepbeJnwATGvmVNYMPxk/Ux8qMUd7zqmREMf4MyY/R3sI7
-	 fW1TZBotsxiRGoexNi2/z0n8MmtFCM1vpL3aEgZQ=
-Date: Mon, 6 May 2024 09:17:55 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
-	Chris Morgan <macromorgan@hotmail.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Jerry Han <hanxu5@huaqin.corp-partner.google.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Purism Kernel Team <kernel@puri.sm>, 
-	Robert Chiras <robert.chiras@nxp.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Stefan Mavrodiev <stefan@olimex.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [RFT PATCH v2 00/48] drm/panel: Remove most store/double-check
- of prepared/enabled state
-Message-ID: <c6mip7ueabtsmod4xn4zlpzlgwhpk5fdi7rnkklibkiwbrwepi@vddtiw2xlc5a>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	Linus Walleij <linus.walleij@linaro.org>, Douglas Anderson <dianders@chromium.org>, 
-	dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
-	Chris Morgan <macromorgan@hotmail.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Jerry Han <hanxu5@huaqin.corp-partner.google.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Purism Kernel Team <kernel@puri.sm>, 
-	Robert Chiras <robert.chiras@nxp.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Stefan Mavrodiev <stefan@olimex.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20240503213441.177109-1-dianders@chromium.org>
- <CACRpkdYbtfE9RLsDewV2UwnJknCp_sFEgc+cq=OF+Qd3tkTcwA@mail.gmail.com>
+	s=arc-20240116; t=1714979952; c=relaxed/simple;
+	bh=BcjeHuKCFNt3g0xtf3X7hwL26jrEaUX08KPgkWV/Fm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e11T7PHZhytsCCkcxHKHsyJPj9WOaFli6leW2hxKlggo3e8x9kmoF1wb+ouyPavvEZBM6nNF8RuSZGK1TjinV57c7Czy/s7JhyoaQDkGQPM8CwE9+l6Ju1lgHlQisL1oJL/gL7G90oD5/1wWB0FlBV66vusIv4XOrGRsgF5VzNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ayoeRg8p; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-de45dba157cso1113666276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 00:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714979949; x=1715584749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BcjeHuKCFNt3g0xtf3X7hwL26jrEaUX08KPgkWV/Fm0=;
+        b=ayoeRg8plY6k2zAO0hGLqfqQUHiFqYC3XSbQ5n6VYswp/HLe03594rVXUY38ANM1F9
+         XLdnIRilVQ8ketGFiwMW+s5U4NkVyD4WVZjf+TLSmNZAMCd5+Zv9X0X+AdpqhxIjhED9
+         ijtHQ57Ehck/6W36SvkagRR9tu5PPUw5oYgp0pss+Rasv9CxoQHaD+CskIBG/I2tN7TY
+         m7AH6p7DnKTvxGWY0dXBvkCDEBFdwnFszxfahUgCLLIHz6JNltfNz6c3jf0B3g2My8g7
+         rw6fbV+Sfos0PXu3OQSvl2RJ+5om/PrCcioTBQ3TttjYSK+wGUyC+m2OqVzEju4EiTCS
+         Qr+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714979949; x=1715584749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BcjeHuKCFNt3g0xtf3X7hwL26jrEaUX08KPgkWV/Fm0=;
+        b=etY9vNJNsBf5nDegiW9AHba3w08PJnWpel50o5K67KeM8HxJRQX7lx5yi8iEJTuFjt
+         P+B1py8HYvwA6+DiTosoKnGA5ASn6tfBV0Lqv8XmYtqp4RCjK/N0os5bXfxbFkit3SMs
+         YDzC8Sky0j5hWtYWbQt4zQjYAWED4gC7mrNINNhxWipQlrMw5iu8UsZ8n08AkftfTdu8
+         WPxkTKAedQhyJmEGp49YOtdJK5J3VcTHZ4aLs/SRmNjk+wXdOKXSCE8Apn9uGbVypRaO
+         Z5G9iqhW7b3Gts9hVrmPER8V8CnUQqQeqaqnHX4vwqMBudEXkBZYsWD0Lywd8D0rHXdD
+         Viaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUg3A+f/AqXffzYSU2DNKYA9xSS8qrCRiydlG8mZw/O0SPZrN8uYGBQhRUlO62zWHwDOVAIRGX+v5qGLND8MbZFgT8eyhvzn2dj2x8/
+X-Gm-Message-State: AOJu0YxN2nEqK9eibsGWdAYWjQhx3UmQ6zRTnmK42lDfeENaIiuK8MNF
+	YwXHuehGsgClXyK4JChWOoGXZ5gim1P/2L8P256ktjDhTX70CB3/RQrVTzxvMmflxhvsFZ7VsqF
+	ax/y9aEHRATrfl2tNxLmA/J18832XgcbOioV5Cw==
+X-Google-Smtp-Source: AGHT+IGoDixNoUaDnMBz7LuuCzUKda16Cqz3qmrnX+jMYQez9FjCtQ5nkqPx8YFJMFywsbQfbLrvit76T/JAbCJBsNA=
+X-Received: by 2002:a5b:e92:0:b0:de6:13a2:651a with SMTP id
+ z18-20020a5b0e92000000b00de613a2651amr3365815ybr.39.1714979948907; Mon, 06
+ May 2024 00:19:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdYbtfE9RLsDewV2UwnJknCp_sFEgc+cq=OF+Qd3tkTcwA@mail.gmail.com>
+References: <20240505141420.627398-1-andy.shevchenko@gmail.com>
+In-Reply-To: <20240505141420.627398-1-andy.shevchenko@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 6 May 2024 09:18:57 +0200
+Message-ID: <CACRpkdap=KXuyoCjWt_v53ArRPynDQndAjjHfvapLUM7VWbbdA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpiolib: Discourage to use formatting strings in
+ line names
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 06, 2024 at 08:52:39AM GMT, Linus Walleij wrote:
-> On Fri, May 3, 2024 at 11:36 PM Douglas Anderson <dianders@chromium.org> wrote:
-> 
-> > As talked about in commit d2aacaf07395 ("drm/panel: Check for already
-> > prepared/enabled in drm_panel"), we want to remove needless code from
-> > panel drivers that was storing and double-checking the
-> > prepared/enabled state. Even if someone was relying on the
-> > double-check before, that double-check is now in the core and not
-> > needed in individual drivers.
-> >
-> > This series attempts to do just that. While the original grep, AKA:
-> >   git grep 'if.*>prepared' -- drivers/gpu/drm/panel
-> >   git grep 'if.*>enabled' -- drivers/gpu/drm/panel
-> > ...still produces a few hits after my series, they are _mostly_ all
-> > gone. The ones that are left are less trivial to fix.
-> >
-> > One of the main reasons that many panels probably needed to store and
-> > double-check their prepared/enabled appears to have been to handle
-> > shutdown and/or remove. Panels drivers often wanted to force the power
-> > off for panels in these cases and this was a good reason for the
-> > double-check.
-> >
-> > In response to my V1 series [1] we had much discussion of what to
-> > do. The conclusion was that as long as DRM modeset drivers properly
-> > called drm_atomic_helper_shutdown() that we should be able to remove
-> > the explicit shutdown/remove handling in the panel drivers. Most of
-> > the patches to improve DRM modeset drivers [2] [3] [4] have now
-> > landed.
-> >
-> > In contrast to my V1 series, I broke the V2 series up a lot
-> > more. Since a few of the panel drivers in V1 already landed, we had
-> > fewer total drivers and so we could devote a patch to each panel.
-> > Also, since we were now relying on DRM modeset drivers I felt like we
-> > should split the patches for each panel into two: one that's
-> > definitely safe and one that could be reverted if we found a
-> > problematic DRM modeset driver that we couldn't fix.
-> >
-> > Sorry for the large number of patches. I've set things to mostly just
-> > CC people on the cover letter and the patches that are relevant to
-> > them. I've tried to CC people on the whole series that have shown
-> > interest in this TODO item.
-> >
-> > As patches in this series are reviewed and/or tested they could be
-> > landed. There's really no ordering requirement for the series unless
-> > patches touch the same driver.
-> >
-> > NOTE: this touches _a lot_ of drivers, is repetitive, and is not
-> > really possible to generate automatically. That means it's entirely
-> > possible that my eyes glazed over and I did something wrong. Please
-> > double-check me and don't assume that I got everything perfect, though
-> > I did my best. I have at least confirmed that "allmodconfig" for arm64
-> > doesn't fall on its face with this series. I haven't done a ton of
-> > other testing.
-> >
-> > [1] https://lore.kernel.org/r/20230804140605.RFC.4.I930069a32baab6faf46d6b234f89613b5cec0f14@changeid
-> > [2] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium.org
-> > [3] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
-> > [4] https://lore.kernel.org/r/20230921192749.1542462-1-dianders@chromium.org
-> 
-> This is the right thing to do, thanks for looking into this!
-> 
-> As for the behaviour of .remove() I doubt whether in many cases
-> the original driver authors have even tested this themselves.
-> I would say we should just apply the series as soon as it's non-RFC
-> after the next merge window and see what happens. I doubt it
-> will cause much trouble.
+On Sun, May 5, 2024 at 4:14=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 
-In the case of st7703 driver, yes tested, and proper shutdown of the panel is
-necessary, because lack of it can lead to otherwise inexplainable blinking of
-the entire screen, when the panel is quickly powered up and re-initialized again
-(eg. as happens when bootloader has display support). Blinking then only ever
-stops if the panel is left completely powered off for several minutes.
+> Currently the documentation for line names allows to use %u inside
+> the alternative name. This is broken in character device approach
+> from day 1 and being in use solely in sysfs.
+>
+> Character device interface has a line number as a part of its address,
+> so the users better rely on it. Hence remove the misleading documentation=
+.
+>
+> On top of that, there are no in-kernel users (out of 6, if I'm correct)
+> for such names and moreover if one exists it won't help in distinguishing
+> lines with the same naming as '%u' will also be in them and we will get
+> a warning in gpiochip_set_desc_names() for such cases.
+>
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-There's a note about this in the controller datasheet, that proper power off
-is needed to enable dicharge of the panel.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Kind regards,
-	o.
-
-> The series:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
 
