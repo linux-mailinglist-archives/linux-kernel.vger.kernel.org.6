@@ -1,122 +1,165 @@
-Return-Path: <linux-kernel+bounces-169948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCFE8BCFBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3E38BCFB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1FDD1F2243A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3FA1F22397
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E985261;
-	Mon,  6 May 2024 14:09:20 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E2D83A0D;
-	Mon,  6 May 2024 14:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A4B8286F;
+	Mon,  6 May 2024 14:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RYTxThHK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HVHPEnYV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ejiA94ww";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PQcJp/c8"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE21882497;
+	Mon,  6 May 2024 14:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715004559; cv=none; b=EtZF/SUO425KJdDyPYOtX+E6bU1Y5SG/YdEEnCdaidyvQh+GHxbDjpJ6Qaoo7wBoYBvgLiGXQV2iPSg1zk0R5TjWFlfwRoyvUdp29VHYtj8zm8+vp1DycJd/5FKO/JUqj2/20icNoI36uDA5x3fGbwVEcBVqCOpZylTmQaXnsIM=
+	t=1715004538; cv=none; b=e7Gnom4NuIUbhGyri+6E7f4SufwmnzMgdLp92mCc8qBM1wxJBPFgZ7UnZ7skz8xVhwSx7diYPn57AI5PClbjGgwIkxqGytYFTwnN1mh3abuxe3rdPbMFh+QI0qiLMUpT8X9tEjQIA5LsO1vESkxQqTZJlNbHLR/Fm9G99FXTGBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715004559; c=relaxed/simple;
-	bh=bxfEkwEOun2Hqg07t48P+nT/1ZVauFURq6ztCLXnH/A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 In-Reply-To:References; b=OEiRIYvZZ8cgxvIEMgxBKt+6MpUQ5T13o4KmqjklPOSnXNB6Lh4qz/mstI210hyN26+vy1w8H+WMVoJGKLiQSMGFRFmQ+WezC6P2Z2Cf8/gAZzxiGK4l5pOmzfePfZV/89yyJN+Fch2ftZnLYeXwYPwJJd1SUpwb7qEnBrfaR70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.237.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from ubuntu.localdomain (unknown [221.192.180.207])
-	by mail-app2 (Coremail) with SMTP id by_KCgCXtaRj5DhmI_s4AA--.15255S4;
-	Mon, 06 May 2024 22:08:44 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-hams@vger.kernel.org,
-	pabeni@redhat.com,
-	kuba@kernel.org,
-	edumazet@google.com,
-	davem@davemloft.net,
-	jreuter@yaina.de,
-	horms@kernel.org,
-	Markus.Elfring@web.de,
-	dan.carpenter@linaro.org,
-	lars@oddbit.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH net v3 2/2] ax25: Change kfree() in ax25_dev_free() to ax25_dev_put()
-Date: Mon,  6 May 2024 22:08:35 +0800
-Message-Id: <53925353450dea9a705d67ad225b589e8508042c.1715002910.git.duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1715002910.git.duoming@zju.edu.cn>
-References: <cover.1715002910.git.duoming@zju.edu.cn>
-In-Reply-To: <cover.1715002910.git.duoming@zju.edu.cn>
-References: <cover.1715002910.git.duoming@zju.edu.cn>
-X-CM-TRANSID:by_KCgCXtaRj5DhmI_s4AA--.15255S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF4xCFW5urWxtrWxKw1rWFg_yoW8JFyrpF
-	W3KF43ArWkJr1UJr4DWr1xWr1YyFWDG39rur15u3WfKw1DJ34DJryrtryUGryUJFWfAw4r
-	Cw1UWFyj9F18ZwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmK14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Xryl42xK82IYc2Ij64vIr41l4I8I
-	3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
-	WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
-	wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcI
-	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
-	6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJPDUUUU
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwINAWY3qokcfgAdsA
+	s=arc-20240116; t=1715004538; c=relaxed/simple;
+	bh=D4aRyvqT3grAqmfUGEFS/JdTe7ofhsNbvKny7R+kP+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JXMGYP4PJ+Qckavx7IVMrkIaY6dcJo+/7CXktZXiSuv0+hweFuHDMU06nOIy1rD3YSoGxARy4ZYCPbCIdtFaEeJ87QEFea988/umT5A0nSpgx/rh2cJ6xtlFilcNN47uxkQ2OVPLSNxjZXCb6pa35PxVj+BWT1FMXnudXXP2PBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RYTxThHK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HVHPEnYV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ejiA94ww; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PQcJp/c8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E70BC3845F;
+	Mon,  6 May 2024 14:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715004535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
+	b=RYTxThHKiL6dWcPvwvnTJc2p8MmqzheAMkfyWQ7SqpSZdpPGkR2aXVGY4blT1lemRiCbbg
+	VrHFKQBkrBBttzGTTs52mlrAuPx2CtvVTo7HBh97hASJQlWX4H94a1s+/Dk0L6UuowEW41
+	ueLPvKTtVUjaHKegclUE/dXpCnIIjng=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715004535;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
+	b=HVHPEnYVAImIWD8KDkPPmXo1hMKvBXZQUn66aPSO0wINMIOTPTDGCAvu2MlqASiTQoSr4I
+	NuZ66PRq3Hds+jAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ejiA94ww;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="PQcJp/c8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715004534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
+	b=ejiA94ww9Hn+V/0hDDBuMQm2uzeaYBgBG6JDn530fEiuHJ9bXWUP3MdSKKu/gF7o45TSRL
+	Lccx5+BjoTgQV6pqufoyBKBkLGdx7Tbop1kk6IO8JQmeamQcys8cuqigT8o3Y5fslZ27De
+	RA/XWWX9YJVmw3OIUAYDjslLgcpKspI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715004534;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=7JBvaGeM3j7DGR7X0tpm2vFdVObPH9J+7TPetXuL2sA=;
+	b=PQcJp/c81LySugEG7UqHJBeU9KWO34/drNKQoIXw3Sz32rorJjRMYr66q9R7dBkLE7O5rd
+	/auETibe1iByyBDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BB45013A25;
+	Mon,  6 May 2024 14:08:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mz5yLHbkOGY8aAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 06 May 2024 14:08:54 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ACPI: video: Add backlight=native quirk for Lenovo Slim 7 16ARH7
+Date: Mon,  6 May 2024 16:08:50 +0200
+Message-ID: <20240506140906.26034-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.03 / 50.00];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	BAYES_HAM(-0.02)[51.59%];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,suse.de:dkim,suse.de:email];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Score: -0.03
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: E70BC3845F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 
-The object "ax25_dev" is managed by reference counting. Thus it should
-not be directly released by a kfree() call in ax25_dev_free(). Replace
-it with a ax25_dev_put() call instead.
+Lenovo Slim 7 16ARH7 is a machine with switchable graphics between AMD
+and Nvidia, and the backlight can't be adjusted properly unless
+acpi_backlight=native is passed.  Although nvidia-wmi-backlight is
+present and loaded, this doesn't work as expected at all.
 
-Fixes: d01ffb9eee4a ("ax25: add refcount in ax25_dev to avoid UAF bugs")
-Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+For making it working as default, add the corresponding quirk entry
+with a DMI matching "LENOVO" "82UX".
+
+Link: https://bugzilla.suse.com/show_bug.cgi?id=1217750
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
-Changes in v3:
-  - Make commit messages more clearer.
+ drivers/acpi/video_detect.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- net/ax25/ax25_dev.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/net/ax25/ax25_dev.c b/net/ax25/ax25_dev.c
-index fbaaba0351e..8ee028e752f 100644
---- a/net/ax25/ax25_dev.c
-+++ b/net/ax25/ax25_dev.c
-@@ -188,16 +188,13 @@ struct net_device *ax25_fwd_dev(struct net_device *dev)
-  */
- void __exit ax25_dev_free(void)
- {
--	ax25_dev *s, *ax25_dev;
-+	ax25_dev *s, *n;
- 
- 	spin_lock_bh(&ax25_dev_lock);
--	ax25_dev = ax25_dev_list;
--	while (ax25_dev != NULL) {
--		s        = ax25_dev;
--		netdev_put(ax25_dev->dev, &ax25_dev->dev_tracker);
--		ax25_dev = ax25_dev->next;
--		kfree(s);
-+	list_for_each_entry_safe(s, n, &ax25_dev_list, list) {
-+		netdev_put(s->dev, &s->dev_tracker);
-+		list_del(&s->list);
-+		ax25_dev_put(s);
- 	}
--	ax25_dev_list = NULL;
- 	spin_unlock_bh(&ax25_dev_lock);
- }
+diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
+index 9fdcc620c652..2cc3821b2b16 100644
+--- a/drivers/acpi/video_detect.c
++++ b/drivers/acpi/video_detect.c
+@@ -497,6 +497,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "82BK"),
+ 		},
+ 	},
++	{
++	 .callback = video_detect_force_native,
++	 /* Lenovo Slim 7 16ARH7 */
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "82UX"),
++		},
++	},
+ 	{
+ 	 .callback = video_detect_force_native,
+ 	 /* Lenovo ThinkPad X131e (3371 AMD version) */
 -- 
-2.17.1
+2.43.0
 
 
