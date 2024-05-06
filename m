@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-169267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8821A8BC5EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:55:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846A78BC5F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3626E1F21913
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:55:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443B2281531
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216284086A;
-	Mon,  6 May 2024 02:55:18 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FDA43AA0;
+	Mon,  6 May 2024 02:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HROIF9fK"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCFC22075;
-	Mon,  6 May 2024 02:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426F543156;
+	Mon,  6 May 2024 02:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714964117; cv=none; b=YbHnIPey6MIaVsvclrc/ysfxW9Pk/WhCEHuFenHeaYN3HprzangpX9IGnKG8am+PoS3hdPhX5+Lc8DyjRZFt9bJQBecnu2w5O2KiLH5jbIScyoOyZ9dIHye5Sj8Cjzouu2JlpPtwEzHZUZSz63fdAyGxtg8FqS035hNVuC2KRYk=
+	t=1714964124; cv=none; b=Fm88Ha1jGb6Vcwgs59r7RsH/TZepZdECLFlui5ElPiAlu6IOe6cpiwihWu1EiKdqmLfE6gSOjx17FsRLpnpmdqP9KXruxAegR7eAanxobckUY1k8hQq/kDj26CdEIpqGMSSzWO1xB0AO9Fy+2GBzjV89GS/smCJYHUGw+cZ0lxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714964117; c=relaxed/simple;
-	bh=KO15BVN2XvLxj8SVCAQLarwOrfH3EAsRaTUl+Hinxmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WKq4ZzaeYJHiej/zioLHeUa8xLFpDyQ2EDG8nn3JCjxzmTSONcfMjmD4rnta9C9RQLi9atMELrWtuUYUbM7HCubP7g765wXdgfSiNkhFMb1xXvUVPXDfnPGHEk84s4r5bSdJqrkxVj7g89loH3o9TT3W1Ah4YFCEjFQfALldhnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VXmC65TdyzxNfp;
-	Mon,  6 May 2024 10:51:46 +0800 (CST)
-Received: from dggpemm500018.china.huawei.com (unknown [7.185.36.111])
-	by mail.maildlp.com (Postfix) with ESMTPS id 52CAF140428;
-	Mon,  6 May 2024 10:55:10 +0800 (CST)
-Received: from [10.174.178.96] (10.174.178.96) by
- dggpemm500018.china.huawei.com (7.185.36.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 10:55:09 +0800
-Message-ID: <df3d5556-30b1-42d9-aecc-1ad155f024bc@huawei.com>
+	s=arc-20240116; t=1714964124; c=relaxed/simple;
+	bh=r98WbCzUrGnt3BRZgXs7GZM08gFSR7Lrf/VwzO1OCxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SXq3ZnDAfvtP+hA/9/RpKUxQeCVPzzrwf3PPisyL2f/FN6o/7huyRONTNCb/KZO2mLSrcY145QuYRfltH/vMTf1pBpvN1+ZN0r7KckDJWIyBQ/PQrU1OxK3FMqKR8ENtsDb2YipKUL/RDpUL+87voN4CdXPBsv+d88gmgwjPSEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HROIF9fK; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714964112; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=CrGqcZcLJICyMvWF8rZt/qyUDBdQ3CBU+SFKDUkHkkY=;
+	b=HROIF9fKaNt1HOZeg3e8D45ud7PUEl8MehrMj1X7jb+ERj3OFzJ/ha3gUgprC4tM8fvw7QYRJdJ1Q/sv6z3EZpMPqOdkrPHeL6SPIx23assXkfrzh+fnCR05/mu77pWsLTiww1XUH2hBmPs45zC8w7KytM+HvelPkljrZZtftqs=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W5q-rOV_1714964110;
+Received: from 30.221.146.217(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W5q-rOV_1714964110)
+          by smtp.aliyun-inc.com;
+          Mon, 06 May 2024 10:55:11 +0800
+Message-ID: <1fef9ab5-ec33-4a14-beb3-ada41a8652b3@linux.alibaba.com>
 Date: Mon, 6 May 2024 10:55:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -47,75 +48,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq/cppc: fix perf_to_khz conversion exception
-To: Pierre Gondois <pierre.gondois@arm.com>
-CC: <linux-acpi@vger.kernel.org>, <rafael@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lenb@kernel.org>, <liwei391@huawei.com>,
-	<viresh.kumar@linaro.org>
-References: <20240430101227.2133288-1-liwei728@huawei.com>
- <0f8ccc3d-46ca-4632-9ecf-5da596ad5a1a@arm.com>
-From: "liwei (JK)" <liwei728@huawei.com>
-In-Reply-To: <0f8ccc3d-46ca-4632-9ecf-5da596ad5a1a@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500018.china.huawei.com (7.185.36.111)
+Subject: Re: [PATCH 07/12] cachefiles: add spin_lock for
+ cachefiles_ondemand_info
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-8-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240424033916.2748488-8-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Pierre,
 
-Thanks for your reminder.
 
-在 2024/5/3 15:42, Pierre Gondois 写道:
-> Hello Liwei,
+On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> Thanks for the fix. I think there might be a similar issue
-> in cppc_khz_to_perf(),
+> The following concurrency may cause a read request to fail to be completed
+> and result in a hung:
 > 
-> Regards,
-> Pierre
+>            t1             |             t2
+> ---------------------------------------------------------
+>                             cachefiles_ondemand_copen
+>                               req = xa_erase(&cache->reqs, id)
+> // Anon fd is maliciously closed.
+> cachefiles_ondemand_fd_release
+>   xa_lock(&cache->reqs)
+>   cachefiles_ondemand_set_object_close(object)
+>   xa_unlock(&cache->reqs)
+>                               cachefiles_ondemand_set_object_open
+>                               // No one will ever close it again.
+> cachefiles_ondemand_daemon_read
+>   cachefiles_ondemand_select_req
+>   // Get a read req but its fd is already closed.
+>   // The daemon can't issue a cread ioctl with an closed fd, then hung.
 > 
+> So add spin_lock for cachefiles_ondemand_info to protect ondemand_id and
+> state, thus we can avoid the above problem in cachefiles_ondemand_copen()
+> by using ondemand_id to determine if fd has been released.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-cppc_khz_to_perf() also has similar issue, I will modify the patch again.
+This indeed looks like a reasonable scenario where the kernel side
+should fix, as a non-malicious daemon could also run into this.
 
-Liwei
+How about reusing &cache->reqs spinlock rather than introducing a new
+spinlock, as &cache->reqs spinlock is already held when setting object
+to close state in cachefiles_ondemand_fd_release()?
 
-> On 4/30/24 12:12, liwei wrote:
->> When the nominal_freq recorded by the kernel is equal to lowest_freq and
->> the frequency reduction operation is triggered externally, there is a
->> conversion logic error in cppc_perf_to_khz(), causing the kernel to be
->> unable to feedback the true frequency.
->>
->> Fix this by adding the branch processing logic when nominal_freq is equal
->> to lowest_freq.
->>
->> Fixes: ec1c7ad47664 ("cpufreq: CPPC: Fix performance/frequency 
->> conversion")
->> Signed-off-by: liwei <liwei728@huawei.com>
->> ---
->>   drivers/acpi/cppc_acpi.c | 10 ++++++++--
->>   1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
->> index a40b6f3946ef..92aac6974e0e 100644
->> --- a/drivers/acpi/cppc_acpi.c
->> +++ b/drivers/acpi/cppc_acpi.c
->> @@ -1869,9 +1869,15 @@ unsigned int cppc_perf_to_khz(struct 
->> cppc_perf_caps *caps, unsigned int perf)
->>       u64 mul, div;
->>       if (caps->lowest_freq && caps->nominal_freq) {
->> -        mul = caps->nominal_freq - caps->lowest_freq;
->> +        /* Avoid the special case when nominal_freq is equal to 
->> lowest_freq */
->> +        if (caps->lowest_freq == caps->nominal_freq) {
->> +            mul = caps->nominal_freq;
->> +            div = caps->nominal_perf;
->> +        } else {
->> +            mul = caps->nominal_freq - caps->lowest_freq;
->> +            div = caps->nominal_perf - caps->lowest_perf;
->> +        }
->>           mul *= KHZ_PER_MHZ;
->> -        div = caps->nominal_perf - caps->lowest_perf;
->>           offset = caps->nominal_freq * KHZ_PER_MHZ -
->>                div64_u64(caps->nominal_perf * mul, div);
->>       } else {
+> ---
+>  fs/cachefiles/internal.h |  1 +
+>  fs/cachefiles/ondemand.c | 16 +++++++++++++++-
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+> index 7745b8abc3aa..45c8bed60538 100644
+> --- a/fs/cachefiles/internal.h
+> +++ b/fs/cachefiles/internal.h
+> @@ -55,6 +55,7 @@ struct cachefiles_ondemand_info {
+>  	int				ondemand_id;
+>  	enum cachefiles_object_state	state;
+>  	struct cachefiles_object	*object;
+> +	spinlock_t			lock;
+>  };
+>  
+>  /*
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index 898fab68332b..b5e6a851ef04 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -16,13 +16,16 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
+>  	struct cachefiles_object *object = file->private_data;
+>  	struct cachefiles_cache *cache = object->volume->cache;
+>  	struct cachefiles_ondemand_info *info = object->ondemand;
+> -	int object_id = info->ondemand_id;
+> +	int object_id;
+>  	struct cachefiles_req *req;
+>  	XA_STATE(xas, &cache->reqs, 0);
+>  
+>  	xa_lock(&cache->reqs);
+> +	spin_lock(&info->lock);
+> +	object_id = info->ondemand_id;
+>  	info->ondemand_id = CACHEFILES_ONDEMAND_ID_CLOSED;
+>  	cachefiles_ondemand_set_object_close(object);
+> +	spin_unlock(&info->lock);
+>  
+>  	/* Only flush CACHEFILES_REQ_NEW marked req to avoid race with daemon_read */
+>  	xas_for_each_marked(&xas, req, ULONG_MAX, CACHEFILES_REQ_NEW) {
+> @@ -127,6 +130,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  {
+>  	struct cachefiles_req *req;
+>  	struct fscache_cookie *cookie;
+> +	struct cachefiles_ondemand_info *info;
+>  	char *pid, *psize;
+>  	unsigned long id;
+>  	long size;
+> @@ -185,6 +189,14 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  		goto out;
+>  	}
+>  
+> +	info = req->object->ondemand;
+> +	spin_lock(&info->lock);
+
+> +	/* The anonymous fd was closed before copen ? */
+
+I would like describe more details in the comment, e.g. put the time
+sequence described in the commit message here.
+
+> +	if (info->ondemand_id == CACHEFILES_ONDEMAND_ID_CLOSED) {
+> +		spin_unlock(&info->lock);
+> +		req->error = -EBADFD;
+> +		goto out;
+> +	}
+>  	cookie = req->object->cookie;
+>  	cookie->object_size = size;
+>  	if (size)
+> @@ -194,6 +206,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	trace_cachefiles_ondemand_copen(req->object, id, size);
+>  
+>  	cachefiles_ondemand_set_object_open(req->object);
+> +	spin_unlock(&info->lock);
+>  	wake_up_all(&cache->daemon_pollwq);
+>  
+>  out:
+> @@ -596,6 +609,7 @@ int cachefiles_ondemand_init_obj_info(struct cachefiles_object *object,
+>  		return -ENOMEM;
+>  
+>  	object->ondemand->object = object;
+> +	spin_lock_init(&object->ondemand->lock);
+>  	INIT_WORK(&object->ondemand->ondemand_work, ondemand_object_worker);
+>  	return 0;
+>  }
+
+-- 
+Thanks,
+Jingbo
 
