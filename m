@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-169652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4031D8BCBD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:19:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9CDE8BCBC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626AE1C2100B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:19:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E861F2355B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324BB143889;
-	Mon,  6 May 2024 10:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD1B14265A;
+	Mon,  6 May 2024 10:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHFjbKxM"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="QHuHhiSi"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC7E14387F;
-	Mon,  6 May 2024 10:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7AB140366
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714990719; cv=none; b=paulGUQMmSVHkGrI5oFWWmn/AnY1i91oaGTH/Tq1Sa5zTkp6t/vgLTIvO7ynuqZnuRE4zRtA/i7XBl4NOXFJVA/CvP49F2aOKIIrW6GwqvPjNl2UXzaGHcnQMhMPJPIY3x5zh7vgDBFP1c4tXTTOz/fyjQKkFw/QA9Se2czPcrM=
+	t=1714990680; cv=none; b=u/3vQF04d2D4Wzw8J0uAcm4fSmbzIZzPl9hIAU1wxooXToh+c+gf6XhLms4rzwO7qdVAiREhfkj0ZTXHQszS2Ze8zunIhhPojjDIummG3P14bn5LjTwIaSx0dfs4zCGUbEYIZo1c7+HitxYRWCo8TbW8Tp0HfLmvQVZVoluA7lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714990719; c=relaxed/simple;
-	bh=hbWQ3Mur+/ECvEanbvX6901lMYP+yzm6OHJl+SocuvU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DBSUhcjPIb2beK0LaDhX5tR6lSSdF0RzWIxHEhbqh75aOfxc9mgBeu/iu3ZcSXD9uQwGUXbku3kuSXTkKN0IqSLTrYDAh1NV+qLt8YW9//rYsYEZ0DJ43Bqa9/2PyUU1wGY9asLWeF5C0ufu6yq2T7bhXHFc+iwTSlTI1/p7RGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHFjbKxM; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2b4a7671abaso1101449a91.0;
-        Mon, 06 May 2024 03:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714990717; x=1715595517; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=31KekFIOIpF99+poRc8QNtBNYMF8yQuGd++gmF2U7xs=;
-        b=jHFjbKxMaggi45CIZpdkMay8B8tVb3kc0DV/ZGWTK7L/BwtiS4Ks6Wp1+kNud6viaP
-         Xvgufqme6x0n1eW9/mAA8jJq/Q01PEQbPTKNPyQPz0ToffhjjeMAZtVjRQI5ZflrI4P7
-         8sTiZfttkc/3gGAPPnJIckuilD54Mjw953yY2EgkQI9QJXCORCJmkMwGu1RvY/nnosAk
-         iNclr/HGDykZYQMlba9QLi3xuvabOSWaaP5jzwmFDt94j1aap6apYP4EEveCSVdrH4pk
-         59oGWJNM7jHCHHPyxFP/sH24CEtqjC6UzS1Xsp239q03UUmFtlIYkq34lXes0KeXT+XN
-         /bNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714990717; x=1715595517;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=31KekFIOIpF99+poRc8QNtBNYMF8yQuGd++gmF2U7xs=;
-        b=IMDjC+H6HybqKdvmUhK7DHoj7EjOhMjRSImEOuhqMoC4ZrCsZrtPg6wMbCS+KUcp/H
-         IUUJdew8cDabvQu0snxZpe4WLE5rBZmKmCsWM6wbBex5oNFB9aqABwCcCM6pnbsfXC8Y
-         RuL5GAXdhssu+exM+k1IeDyeUXnNTVtoX9gu/G0FUzWF9YntPqiOsQIxKMIBaPVRkGUg
-         xz+GyDigZCS1CS3i79sWztaqNYd3LsadM2R8Hyx7YaKgAoYw8gkXtMozXvdsg1e+x25Q
-         uAdtogCYY8K8jnTejtdLDrZzTOc7zQ1jblncqSscx//3RfYx9toAE1a3vUTVLy/a0BGW
-         +OPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXrQenckIrXNezrrNEwwvrvVHxrJ06jRvd5tyrVLKSsEuS9/7UVpXiyGbKlOn/zLly1KNWLC3hsimOtdOcIWHrci7roEYtf8Jsz57NKDEEWMnWGBd4Bxl7zG9nbHIQaYtp
-X-Gm-Message-State: AOJu0Yw6OErzyzib/ALW+bWrbbVQWXAbkgBfQxOUSsqH/Z3qMaDN3Puu
-	rKbodtp8TT6XuYq3QzM2ku877mZLyMAbOkIPaI6iw0GDUWq8fa0m
-X-Google-Smtp-Source: AGHT+IHB3HRfjhiqL/tX1CDXXr1K19EOnmaHDdUrdFkmoVBi0L0LlA2/KoxLijSD5Hshni/CHzqqmQ==
-X-Received: by 2002:a17:90a:a906:b0:2b3:df47:d743 with SMTP id i6-20020a17090aa90600b002b3df47d743mr8017623pjq.9.1714990717546;
-        Mon, 06 May 2024 03:18:37 -0700 (PDT)
-Received: from localhost.localdomain ([43.132.141.9])
-        by smtp.gmail.com with ESMTPSA id co18-20020a17090afe9200b002af8f746f28sm9747820pjb.14.2024.05.06.03.18.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 03:18:37 -0700 (PDT)
-From: Yi Wang <up2wing@gmail.com>
-X-Google-Original-From: Yi Wang <foxywang@tencent.com>
-To: seanjc@google.com,
-	pbonzini@redhat.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wanpengli@tencent.com,
-	foxywang@tencent.com,
-	oliver.upton@linux.dev,
-	maz@kernel.org,
-	anup@brainfault.org,
-	atishp@atishpatra.org,
-	borntraeger@linux.ibm.com,
-	frankja@linux.ibm.com,
-	imbrenda@linux.ibm.com,
-	weijiang.yang@intel.com
-Cc: up2wing@gmail.com
-Subject: [v5 3/3] KVM: s390: don't setup dummy routing when KVM_CREATE_IRQCHIP
-Date: Mon,  6 May 2024 18:17:51 +0800
-Message-Id: <20240506101751.3145407-4-foxywang@tencent.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240506101751.3145407-1-foxywang@tencent.com>
-References: <20240506101751.3145407-1-foxywang@tencent.com>
+	s=arc-20240116; t=1714990680; c=relaxed/simple;
+	bh=FhKeXFv6MqdhsuG/vS9cuqQtrCTk4pnU1OTUUmRCoVo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dD3l4TLMzYQwKZ8NYLIx9tXYyuQnIbWRI0poC5hicc//VKRRjaKfWtNWCllpJm38oTt1/ffcTFWDGPa104pCxdjgboHOElFNZjyYGf7+GpXlTjR6YPH3ZOOQJgD5Klb1AMukmo+pHOxhQYEHhIn9Q+xHdkZXXDslPo7QXnj8RBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=QHuHhiSi; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1714990676;
+	bh=FhKeXFv6MqdhsuG/vS9cuqQtrCTk4pnU1OTUUmRCoVo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=QHuHhiSiQAOaJ/caWbAGQn0r5gQoY0P1zgnEL34yvwjAZlpnZZMsIJVpOMsXJx2Py
+	 fLx3I839+I6nFKK9VVh5W6tT1/FO/6phxcBu0PHNMYxToYW74sty8gExEL23D26QUJ
+	 yPQje3F54/5Axyc0LLt4MhxE3TN5HHh1493tPhLw=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id B712366BEE;
+	Mon,  6 May 2024 06:17:54 -0400 (EDT)
+Message-ID: <cbd6ed9d5be1d7112d69117a72e0cb0081f9b64b.camel@xry111.site>
+Subject: Re: [PATCH] LoongArch: Update the flush cache policy
+From: Xi Ruoyao <xry111@xry111.site>
+To: lijun <lijun01@kylinos.cn>, chenhuacai@kernel.org, kernel@xen0n.name, 
+	lvjianmin@loongson.cn, dongbiao@loongson.cn, zhangbaoqi@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Mon, 06 May 2024 18:17:51 +0800
+In-Reply-To: <cbb24599-8b40-cd27-6ce7-215476c0ddf4@kylinos.cn>
+References: <20240506092419.4109941-1-lijun01@kylinos.cn>
+	 <8a8135eb0f1dc724cfbb4402dc6daf08db5b0bc7.camel@xry111.site>
+	 <cbb24599-8b40-cd27-6ce7-215476c0ddf4@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Yi Wang <foxywang@tencent.com>
+On Mon, 2024-05-06 at 18:08 +0800, lijun wrote:
+> volatile prevents compiler optimization by allowing the compiler
+>=20
+> =C2=A0=C2=A0to reread the address value of addr every time
 
-As we have setup empty irq routing in kvm_create_vm(), there's
-no need to setup dummy routing when KVM_CREATE_IRQCHIP.
+But why is this ever needed?  What's wrong if the compiler optimizes it?
 
-Signed-off-by: Yi Wang <foxywang@tencent.com>
----
- arch/s390/kvm/kvm-s390.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+If the problem is the compiler may optimize it to cdesc->ways * 3 *
+cdesc->sets * cdesc->linesz, unknowing cdesc->ways etc may magically
+change, you should use READ_ONCE(cdesc->ways) etc.
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 5147b943a864..ba7fd39bcbf4 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -2998,14 +2998,7 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
- 		break;
- 	}
- 	case KVM_CREATE_IRQCHIP: {
--		struct kvm_irq_routing_entry routing;
--
--		r = -EINVAL;
--		if (kvm->arch.use_irqchip) {
--			/* Set up dummy routing. */
--			memset(&routing, 0, sizeof(routing));
--			r = kvm_set_irq_routing(kvm, &routing, 0, 0);
--		}
-+		r = 0;
- 		break;
- 	}
- 	case KVM_SET_DEVICE_ATTR: {
--- 
-2.39.3
+I.e. use READ_ONCE on the expression which may magically change, instead
+of hacking addr.  addr won't magically change.
 
+> =E5=9C=A8 2024/5/6 17:28, Xi Ruoyao =E5=86=99=E9=81=93:
+> > On Mon, 2024-05-06 at 17:24 +0800, Li Jun wrote:
+> > > fix when LoongArch s3 resume, Can't find image information
+> > >=20
+> > > Signed-off-by: Li Jun <lijun01@kylinos.cn>
+> > > Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
+> > > Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
+> > > Signed-off-by: Biao Dong <dongbiao@loongson.cn>
+> > > ---
+> > > =C2=A0=C2=A0arch/loongarch/mm/cache.c | 24 +++++++++++++++++++++++-
+> > > =C2=A0=C2=A01 file changed, 23 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/arch/loongarch/mm/cache.c b/arch/loongarch/mm/cache.c
+> > > index 6be04d36ca07..52872fa0e5d8 100644
+> > > --- a/arch/loongarch/mm/cache.c
+> > > +++ b/arch/loongarch/mm/cache.c
+> > > @@ -63,6 +63,28 @@ static void flush_cache_leaf(unsigned int leaf)
+> > > =C2=A0=C2=A0	} while (--nr_nodes > 0);
+> > > =C2=A0=C2=A0}
+> > > =C2=A0=20
+> > > +static void flush_cache_last_level(unsigned int leaf)
+> > > +{
+> > > +	u64 addr;
+> > > +	int i, j, nr_nodes, way_size;
+> > > +	struct cache_desc *cdesc =3D current_cpu_data.cache_leaves
+> > > +
+> > > leaf;
+> > > +
+> > > +	nr_nodes =3D loongson_sysconf.nr_nodes;
+> > > +
+> > > +	addr =3D CSR_DMW1_BASE;
+> > > +	iocsr_write32(0x1, 0x280);
+> > > +	way_size =3D cdesc->sets * cdesc->linesz;
+> > > +	do {
+> > > +		for (i =3D 0; i < (cdesc->ways * 3); i++) {
+> > > +			for (j =3D 0; j < (cdesc->sets); j++) {
+> > > +				*(volatile u32 *)addr;
+> > ??? what does this line do?
+> >=20
+>=20
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
