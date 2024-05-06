@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-169662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2408BCBEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:22:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD918BCBF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB452815E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AF6282ACB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E94140366;
-	Mon,  6 May 2024 10:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74333142914;
+	Mon,  6 May 2024 10:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gY0DU4cb"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="pFuFcelH"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342BE142E84;
-	Mon,  6 May 2024 10:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0361422A2;
+	Mon,  6 May 2024 10:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714990859; cv=none; b=OAXeUf2xHbUGk0p67sQHw2IJe/3iRQC8y6ZTFLiz+c8JcjckPc1DeTa+OI48VLh+exYY48m3s5AwpAKzhaYhql7ed0rPRjnc+0DvU2n4tIW63hFHISdPJvWdSu/Ivmm7u+N5LNC+yJ0N8OCcmwPOC0+9h+KhQoSofO4HJL/rTUY=
+	t=1714991067; cv=none; b=KTGXlPwaqDrhym1D8AnzCwfxVgRByP6ElARXuI6I5jJ3ZJnGI6GsQgaoRESYNYj1zpDfl8gtUfZfDmmml5FUCX5xyzXoPJ0/tsmXFxAucNF4N1uDwgEHPeUqadH0SOVz6hbW7u6RMRTlfK4WnJcGtoXoCOo/rlIKVch/zyJXUEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714990859; c=relaxed/simple;
-	bh=8Wao3gYt+CEW0SQpRQ9Ae4PaD9ogSMaZly8/ad2PMEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Esjbqf16EvaJwO2oWPkuhnRuBoXnkIaOxaC2Y5Vpe2eE8GyCExuQZSQzmFCbesyCOXj0EtWT1AunXN1eT0zirhSWtzSRaGlWxWcJ1lEAavmgWDufO4pfbjY5Drr2TRXfxhEFbPu9El5FAbHRUSanFXlbOxyhbOUHvfr1nPKJN0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gY0DU4cb; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BD8BC40E0244;
-	Mon,  6 May 2024 10:20:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id I9DzhHUcwK8X; Mon,  6 May 2024 10:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1714990851; bh=odPYvvukVUIG4z0+MLciC4/SrbCeCrd+21yQf+cBaO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gY0DU4cbRvFTSoxpiTlfTVOTkP+9+SH8Tyh9lzAouNZOYkQSFzbyYkYUSgMUtMXWX
-	 35RXTvCuYMsgpfsmoL+0mU8aVAmvqKJnmSsum74GMZ+Tlrr/Fvga824Rmyi26nrCOq
-	 bgkx6mjQG/v4L1MIMq9dLbzzzK49QWyqe0hR6+/wybPZ3RFwgVV018H3zDMUOk/vbZ
-	 Q4JEPzaWamPaHCyHNLdLAB2x/jlEoxjStM1AjxFiQnfC96fEewpPZAPM8eX4jx8LTM
-	 pCgUvulnBwbtIYimuz0Peye2I0IZmEyFaVlagJAkB7Eop2iBn8o0dazywd4KDnEv5b
-	 ABhFhmn2DcgqtdE2yU3bnuZkirsU7f50hStyIM8AsmOfxW+wbianqsd7gVm+3dyjZs
-	 9ZBt9d3QTKSkKYydwSFqbNW0BrJIJD7+PT1YvmwY8GZuEAP6s6nbiGtMBIbPdTW8ax
-	 b8sRVLsXsCrHIM1y0mFCklMD4BD5+lrRffNDZ9Xm87o3lg/yJWwnrRLODiRkvYfrUU
-	 ScCRTRrl1KBttUtgopsfi3Ut49sbdagHUVlHPCrNBJeHBuqFv/j8SiAS2Psx5Fn/kV
-	 6DFhsTL40tlVOLIhi8o7a7JnnIIw1U4S3MYHE8ir8mONhFPCBvzQJuFZ6UEQw7hBwP
-	 ZWH1rXtXq2oPPay4PF9wTrqo=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 29AE340E01E8;
-	Mon,  6 May 2024 10:20:35 +0000 (UTC)
-Date: Mon, 6 May 2024 12:20:29 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Michal Simek <michal.simek@amd.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
-	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sherry Sun <sherry.sun@nxp.com>,
-	Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH v5 01/20] EDAC/synopsys: Fix ECC status data and IRQ
- disable race condition
-Message-ID: <20240506102029.GGZjiu7TKP9FVp-2Sb@fat_crate.local>
-References: <20240222181324.28242-1-fancer.lancer@gmail.com>
- <20240222181324.28242-2-fancer.lancer@gmail.com>
- <20240415183616.GDZh1zoFsBzvAEduRo@fat_crate.local>
- <szcie4giwjykne4su6uu5wsmtsl3e3jd53rjfiwir6hm3ju7as@6eqh2xmj35ie>
- <20240421100712.GAZiTlUOm1hrLQvaMi@fat_crate.local>
- <whgp2xx4dv3szezz3bvmgutgazz6kvie3q7rgpr35zqzuzsygk@wppqzusteru4>
+	s=arc-20240116; t=1714991067; c=relaxed/simple;
+	bh=M2VUMtNp5P3o890SB2AKCq/Qvl+kHhU87lLXVyDZ834=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bl8a451893J27W4ymCZsrAU9fpWPfJwF2HFxd+7cRtkemkLYAaqLGUfrlG2Z6jiFCF3IQ/2LA11Kppt2V3XwmHynMstOy8loCT5BEjmgx/jei/YgNwkGGzUQtp1s/MEWt9LTnktV45i8XRNCWymKprobWeC2h+51weUdVSIqysI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=pFuFcelH; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=wmFwpK3N8h26Gty8Cr+tcAz2yNoNekoIKLqBXcgccJE=; b=pF
+	uFcelHy4P+rqcXZYlaes07Jkz/+XlIlCCaw1xTHIfrfDJaaWujw/cM8xSh5Hw6bWwx0OnAnJcr1ZT
+	qPEmkkfunL4hCNrW3HFsllLqArORax/Pd8Xq+9eHSQOZJ0zL3h/p06oUnPhZhuOYKy0SUZEGsZKiR
+	oFvfh2kQvEAf1NghfSHjhHwmhZOzPNp2elxLL96FKjvp7BR2T8FPygAV/l/OgiP8BTToSSao/a9bv
+	e5mwQvZ43NulUKKSyvuCVqO9o926GL4Tw+11/8HLXYSVZ0Dn+La5qqEoLUl5c2SVPoanfGaKH1tYv
+	ohzeqeURXEa3ECh1iZuU9mrijSPsKRBg==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1s3vVs-0007Xy-Tw; Mon, 06 May 2024 12:24:04 +0200
+Received: from [87.49.147.101] (helo=localhost)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1s3vVr-000Ofo-29;
+	Mon, 06 May 2024 12:24:04 +0200
+From: Esben Haabendal <esben@geanix.com>
+Subject: [PATCH v2 0/3] ARM: imx: only enable pinctrl as needed
+Date: Mon, 06 May 2024 12:23:52 +0200
+Message-Id: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <whgp2xx4dv3szezz3bvmgutgazz6kvie3q7rgpr35zqzuzsygk@wppqzusteru4>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALivOGYC/x2MQQqAIBAAvyJ7bkGsJPpKdDDdaqFMVCII/550H
+ JiZFxJFpgSjeCHSzYkvX0E1Auxu/EbIrjIoqTrZS418PhjY2xwPvEKuujlQt8a61i3D4CzUNER
+ a+fm301zKB2FwNF1mAAAA
+To: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, 
+ Jacky Bai <ping.bai@nxp.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Rasmus Villemoes <rasmus.villemoes@prevas.dk>, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.13.0
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27267/Mon May  6 10:24:34 2024)
 
-On Thu, Apr 25, 2024 at 03:52:38PM +0300, Serge Semin wrote:
-> Even if we get to add the spin-lock serializing the ECCCLR writes it
-> won't solve the problem since the IRQ-disabler critical section could
-> be executed a bit before the IRQ-handler critical section so the later
-> one will just re-enable the IRQs disabled by the former one.
-> 
-> Here is what is suggested in my patch to fix the problem:
-> 
->      IRQ-handler                        |    IRQ-disabler
->                                         |
-> zynqmp_get_error_info:                  |
->                                         | lock_irqsave
->                                         | ECCCLR = 0; // disable IRQs
->                                         | unlock_irqrestore
->  lock_irqsave;                          |
->  tmp = ECCCLR | clear_sts_bits;         |
->  ECCCLR = tmp;                          |
->  unlock_irqrestore;                     |
+As not all mach-imx platforms has support for run-time changes of pin
+configurations (such as LS1021A), a more selective approach to enabling
+pinctrl infrastructure makes sense, so that an e.g. an LS1021A only kernel
+could be built without pinctrl support.
 
-<--- I'm presuming here the IRQ-disabler will reenable interrupts at
-some point?
+This is a very late follow up v1 3 years ago [1]. The situation seems to be
+unchanged since then, and I have tried to incorporate the requested
+changes.
 
-Otherwise we have the same problem as before when interrupts remain off
-after the IRQ handler has run.
+[1] https://lore.kernel.org/linux-arm-kernel/be1c35eb997959b4939b304ef26664dfb9cd2275.1621941451.git.esben@geanix.com/
 
-Other than that, yes, I see it, we will need the locking.
+Changes since v1:
+- Changed all the pinctrl drivers to be user-configurable, allowing disable
+  even for systems with pinctrl.
+- Added fixup of overly generic dependency for i.MX RT pinctrl drivers.
+- Allow compile-testing of i.MX pinctrl drivers using CONFIG_COMPILE_TEST.
 
-Thanks for elaborating.
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+Esben Haabendal (3):
+      ARM: imx: Allow user to disable pinctrl
+      pinctrl: freescale: Use CONFIG_SOC_IMXRT to guard i.MX RT1xxx drivers
+      pinctrl: freescale: enable use with COMPILE_TEST
 
+ arch/arm/mach-imx/Kconfig         | 16 -------
+ drivers/pinctrl/freescale/Kconfig | 89 +++++++++++++++++++++++++++------------
+ 2 files changed, 63 insertions(+), 42 deletions(-)
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240506-imx-pinctrl-optional-63acd3db88dc
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Esben Haabendal <esben@geanix.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
