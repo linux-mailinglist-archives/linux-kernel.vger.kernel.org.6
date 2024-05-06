@@ -1,130 +1,92 @@
-Return-Path: <linux-kernel+bounces-169293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E6A8BC666
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:11:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B1E8BC669
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C50C1F21FDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9321F21B8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D85343ACD;
-	Mon,  6 May 2024 04:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0aJtJUV"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C747B44C67;
+	Mon,  6 May 2024 04:16:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AF33E462
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 04:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4241E4BF
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 04:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714968665; cv=none; b=mfof/giI71FKo4VctV0/+2mjYjsT5l+ujg6RzG9SZbwXuA2nSk2iaUcBl31SbwXCrCqyYwdX2UAiAA2t92pK1TYsBEv7CanlknC57EvlK8djoa0ZuTdiWF5BtYX9wwpwxWm1ZuqJL7mu0mjF0gFePI9wsZVlojNTk3hiciPFGx4=
+	t=1714968965; cv=none; b=DsomvlI+0t7R9PCG6YpQ4qp0rbWJJ/8tnPJglmPta3yzWnKtYDOjt6bJMs1QbmQ/9Yg6cfvnqhgfSyH2QK6FRB6Od1KZWWtKYARgostlHuZ8/GeNGD5DjYeM0uGfavcItic/d0zxza4C6jJBRmlu+idr6pJdghqMkMUMOuubKNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714968665; c=relaxed/simple;
-	bh=mdlDKnLF4q2AD4WMVa17WbpDpgJPxnEo3fzjs+83oJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BWRAuT05XDeVM9fkJF59DXOoPmScADdvGfVSm/YW4TVwX3KnWDr/ZM+MmLyfFbUW+bpZbqONKJiefVYNy+ITSh5sEMzQGpXvldSQZY6xGGnfrr7Gkqytlnavyda8bSfNPuyaXyIWRC+1u4G1vInb7X6d7jsnRem6vJSQEjEsWAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0aJtJUV; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f60817e34so1607039e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 21:11:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714968662; x=1715573462; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pOzlmKhadoILI75vbecom8goSQt+hbRUXma6brS+FpM=;
-        b=P0aJtJUVcBC9gtG1pF4ghTmThx//APh5vqzncghh7LPc8JkxogF0F9TiW1BTM5mCdf
-         egGzjqc2C0D64sOCipcb0gDiJcD0GWB/WwuHnNny/f2Lv6Arstf9FrWuDO3el9uCm2nL
-         ziO10z8JxvjW7OfXHjIM6yPavMnxCd15NVlG3Jx/2fmr+2ER+NGPgEmMZZtIRWAKCvlL
-         w0uIKf48hpCYH1/BqO/yMax4fr/ggbRtN93e9hwaDe5GaoaW1J5A41kk0i81hyQZdoUf
-         +eGQAmDd06UE/pF+fQX6UGzHOJ9jWtlAEeA7yhet2GK8vu6KP8pnEsHUnzAdskWrMhoX
-         OkFw==
+	s=arc-20240116; t=1714968965; c=relaxed/simple;
+	bh=e7d3eUevSjyBi1+UMir/tIUoeUJ0gThJDxFrmjgtjFM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cU6cG+BWo7cWI6ZsVE2jKwWFy02DquEnna6QT5vxCl6GimXLnqp8cFHPzkrlx2PH5kuQyJbC/S8/vHt0ERAbpdPHX96kPgW5/bxI9bkSPiKNX6sqlPBzSZXinTFTlUJjoV8j3y0HSrDKcTHUsTIHRe8stTN9o7pt/fbK6y71qhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dec58efbfaso197965439f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 21:16:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714968662; x=1715573462;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pOzlmKhadoILI75vbecom8goSQt+hbRUXma6brS+FpM=;
-        b=hKtLsugVgjv/9TFe3mQHC4cXKqOqKtXOOwD4y2ox+1qz5e9cOzDbxUElVJMGOFiMjk
-         Q3P3mRCBFrKL48s2C6oFhSzTZR9PEyUnqkOraRtaIhTV/sgAQ/Zk639gzKKOAkavuIsY
-         lfCVnO7IeOJpAe0z8+Ut8rKR7k/1KXB1i1HOZUoTaRF+O3u6gsef+RIJaTuvdxnLzKCz
-         lYUKidbr3X8e5d5zfVcQOdkBng/Tj3SM7HAaQzDyriltt6E+VBRZM7OpFvPnfOWt4COg
-         a+OC2gj/qnWSbIJKwMH7H0N7NzH2LgWKkHYwT1q+CVIBgGFYjroEZn3riD51sB5X3WI8
-         /fEA==
-X-Gm-Message-State: AOJu0YzrmLWEL8JDY4iCVTmgvBTpxqPfCKoEQb4LrVyqVWUJApjPx88V
-	KL2P+/cWtEn+x/Uf1xfpK14kRvm8WQX3CmTS0xYykZRijLxzyRP7BF4rIg==
-X-Google-Smtp-Source: AGHT+IEwPcI2ITyo71Xd4NOa/7T5Vkma/7FpgrgLLmRAEhzgYSHDVpE3hYa/Df8FnVDGOSsQcDrgJA==
-X-Received: by 2002:a05:6512:32c4:b0:51d:70d9:f6ce with SMTP id f4-20020a05651232c400b0051d70d9f6cemr8275496lfg.53.1714968661717;
-        Sun, 05 May 2024 21:11:01 -0700 (PDT)
-Received: from localhost.localdomain (host86-177-210-156.range86-177.btcentralplus.com. [86.177.210.156])
-        by smtp.gmail.com with ESMTPSA id p12-20020adfe60c000000b0034ccd06a6a3sm9621047wrm.18.2024.05.05.21.11.01
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 05 May 2024 21:11:01 -0700 (PDT)
-From: Levi Yun <ppbuk5246@gmail.com>
-To: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	tglx@linutronix.de,
-	Markus.Elfring@web.de
-Cc: linux-kernel@vger.kernel.org,
-	Levi Yun <ppbuk5246@gmail.com>
-Subject: [PATCH v3] time/timgr: Fix wrong reference when level 0 group allocation failed
-Date: Mon,  6 May 2024 05:10:59 +0100
-Message-ID: <20240506041059.86877-1-ppbuk5246@gmail.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240505085709.82688-1-ppbuk5246@gmail.com>
-References: <20240505085709.82688-1-ppbuk5246@gmail.com>
+        d=1e100.net; s=20230601; t=1714968963; x=1715573763;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6sYdOPnTbd11s8yXYICIhsmoL2HnQkl/tBOTzLZOD8=;
+        b=iYkqjpzTuwse1iFZFPlkunXLnNcgoMEak7WFcc4VBlPdFILVQUzDjwHIOc3mMDYFc9
+         kXuShr/1lmLzY2k0fTKXNWVGLHRhsI45NPa9pBo+tWAX4G+ID2KmExWh7/xAWnnurtr7
+         AFvmBX1KVcOSw4/8Ab4Rbq1FjbqAhb1uAH7qCg/dGdhrxL+aU50EPmPntLOrpPAeMl71
+         mkjDxjZSnWJGDQZC9KORTU6TzJQSQeBDLMI1keJjWGiuXOTlTqb0ZjYS4IAl9tGnY/w2
+         8ToxUguZ2f+4d5Mcd61g72zYcyMqHLptaTmk6b1CFCzLojTqQ39Q1Pb3c+Tilp1oGHM5
+         yFVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSS0fISvYQIW83sYzYj4a/+7u6dpHY/p5pmrPJNTrpi2PA+HFwMMi9DwEpD3d+2rWlQRN2S7ttZMLxwItiMjn/iFSnoiGpx69MU33l
+X-Gm-Message-State: AOJu0Ywn85j/QQkW4bEIJAw1DViNXncWTi/8KOJ5DnjavZqsmD/cikAy
+	99u6szdVwgLrUMYJZIOhe0KDRrljJ7XKFkbRvhtwccUDReqyF1rLCM6lmANGHZ9uSd6mmTtro19
+	rgO+4n1aHftLZeevr26o1+unW3J5iftGZ+1bQx6r6xDaURkp/y/SnaSk=
+X-Google-Smtp-Source: AGHT+IGBk4Y+VQkB5ysWua6toZHslQvpRpftX5qlHvumtyLVnI52zH0H+bBch9oaAmKS7e+ZtCr14q2TWHBub43ps5U79ZwBI6at
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:3e8e:b0:488:5ae4:735c with SMTP id
+ ch14-20020a0566383e8e00b004885ae4735cmr440652jab.2.1714968963314; Sun, 05 May
+ 2024 21:16:03 -0700 (PDT)
+Date: Sun, 05 May 2024 21:16:03 -0700
+In-Reply-To: <000000000000918c290617b914ba@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dc06ed0617c153e4@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in bch2_sb_clean_to_text
+From: syzbot <syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When tmigr_setup_groups() failed level 0 group allocation,
-wrong reference happens on local stack array while intializing timer hierarchy.
+syzbot has bisected this issue to:
 
-To prevent this, Check loop condition first before initializing timer hierarchy.
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
-Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
----
-v3:
-    - Fix typo.
+    bcachefs: Ignore unknown mount options
 
-v2:
-	- Modify commit message.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e58a70980000
+start commit:   7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17e58a70980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e58a70980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=c48865e11e7e893ec4ab
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1043897f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145c078b180000
 
- kernel/time/timer_migration.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reported-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
 
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index ccba875d2234..84413114db5c 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -1596,7 +1596,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
-
- 	} while (i < tmigr_hierarchy_levels);
-
--	do {
-+	while (i > 0) {
- 		group = stack[--i];
-
- 		if (err < 0) {
-@@ -1645,7 +1645,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
- 				tmigr_connect_child_parent(child, group);
- 			}
- 		}
--	} while (i > 0);
-+	}
-
- 	kfree(stack);
-
---
-2.41.0
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
