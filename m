@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-169732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45F68BCCC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:24:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288B88BCCCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638D01F21901
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576121C21803
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB42142E9D;
-	Mon,  6 May 2024 11:24:35 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E99142E69;
+	Mon,  6 May 2024 11:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pWL82/Xa"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913C314262C;
-	Mon,  6 May 2024 11:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B497142E85
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 11:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714994675; cv=none; b=YxBhyl2AtJiDyEuzRlUev1epEFBCGYRyK32Az8nQzNXObKZfCwegaxQeXd+r76VtTpkqGdIRY0vCGoXR+p+hgg3jYhhBNRyJdUDQma/kWV5VP/ElJ4fN6Hggr5iOdsEcv/HN5tPWpT+DcY121WWHzUgScVA8YB3tYFNxm/TjGKU=
+	t=1714994772; cv=none; b=tDD/SDLbC92PyfD7Ko6f5S9uyHDvOh24h1VaRe6tD2qt/l4tl0eDJeslUohAURFHktEWo2WfLBvp5fipjB5QNMje3ecNLWgCq9x1On6/RhqJrDm0B394TDzXSd4DBJK6bpZV/UBfNbecf+kFUlb5HrlA5IpdXvbXH4R20eRmmyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714994675; c=relaxed/simple;
-	bh=eh/Jl7ow3G5csXcfFyd1/lkvB9y3DrTGKYKArXTKXBM=;
+	s=arc-20240116; t=1714994772; c=relaxed/simple;
+	bh=nyIvye1mAmsLXOpkXDLUu8L+een5qozkaTlT/QXRRxY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n43T47lQX0WwAxRawPIzUazTwG0f6w/gPyBvO047oE2nKSQBTuQLI+m3p07Q9VTZgKHBYUKGh0BQr9wGOHrXObJ2JVWUoFXO291aAR3dBzLMu7VtcVqbaEnee6aaAkWG2G1VIRb79eRG3jt9jzykJS2sy4ABAmfo5UNgxXQ/aaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1s3wSD-000000005mU-15Wb;
-	Mon, 06 May 2024 11:24:21 +0000
-Date: Mon, 6 May 2024 12:24:17 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: arinc.unal@arinc9.com
-Cc: DENG Qingfang <dqfext@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Bartel Eerdekens <bartel.eerdekens@constell8.be>,
-	mithat.guner@xeront.com, erkin.bozoglu@xeront.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next v2] net: dsa: mt7530: detect PHY muxing when PHY
- is defined on switch MDIO bus
-Message-ID: <Zji94d4yfEBaHlzt@makrotopia.org>
-References: <20240430-b4-for-netnext-mt7530-use-switch-mdio-bus-for-phy-muxing-v2-1-9104d886d0db@arinc9.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbT7YirDfJ7sSWIQbPbcjj49quJ9MiR+OMpBQKHhl4yePFF1oJD1esxI0CyvwMMNACJ6AGrkwWxa5mbrTgFuhFaiX7ufppfdYbrDtMDXdElagt8XKOKiT1xBiDRbgRkXMViADVP2fEvutJGbFY9r91wLub9BAIQXLqiakoaCxPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pWL82/Xa; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41b79450f78so12049925e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 04:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714994768; x=1715599568; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyIvye1mAmsLXOpkXDLUu8L+een5qozkaTlT/QXRRxY=;
+        b=pWL82/XalcjwtDKG5w5yIONzOa2tZ6JvaCJlVjkmX2hb1euz0pqLRNlW+QvpKJiyZA
+         j+RhE7I1XdMNgPI0zcHmVPAlQSbc99Zg3W6PlMG8CihAcLeDDkm85eC5rMJ56nSp9ptO
+         s5lpG96TzqdOG7xx2tEdoVTOrof1JwqsjdCKL1hPATeDxdR5EKf2PvhMCY91TT+iPXEZ
+         VTg7S6j7S4zAmFLtQONRMs7v80TO9Pkp0vjbuYGKOD91NRSOYID8mF6WYzVICtFXy8yR
+         meF22vygBk6hPaZdcwN1naC/es1M8gjkv/jym7DOcaDWJ8RVCsqhhAwTPTMIDIK21/Yh
+         SSmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714994768; x=1715599568;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nyIvye1mAmsLXOpkXDLUu8L+een5qozkaTlT/QXRRxY=;
+        b=B7CxBrvyR92yaG4xKbuocvjLhcUoGKVAr6Ym2oPCaeC86Pukv82MEnCclEDXIujFXP
+         swfE/2eKEf1pCminjjSSA/Q72cEWgMJsrbfdY+x6a++vhEAdjcQxbWYVKzEsp2FTkpq3
+         xTayMpuO4caB9fAzbxJMzaR37X1tWTgzL32APhcPkPXePL94xhRuFcu6JsX/YxBvczby
+         HkivpWOS1Hxka0EsqtytYtC6MqraIwYAeL7IuFqLG604QdjOqakkGaxDy4v2elSkVGOy
+         ZsKgTjKNQlkWhkhlNGTImapXoq2T9bGRqp4oHDzFeC0Uz6wWiLwBbIoZvUk2EHJRiQ54
+         w5nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe1hY27PAkgGQ0bgeoPqa025KOEgMIZwQ17YpqGyVLVeOnCCorClpDGnFGWR6EshN1BROmVNVcqOB8IxasMh2pfm5LBxdwzYCNHpwr
+X-Gm-Message-State: AOJu0YwFmKF0xRzPoL5zrGq/tRaUzjyZxOO720VAy7hjIB+qKe3Wz9p5
+	bYSxaYUwXM1q5QS18QjlJ2tSRRFlNjPF8lLGrBmPsPVX+jnbsSzj/T/zKF2proY=
+X-Google-Smtp-Source: AGHT+IGCR414tDgIBuGRHSWPl4962sZegL04EWcxSJEuof3KPdT1YiHxQPEtdYB4aEFgGMKCWpBjrg==
+X-Received: by 2002:a05:600c:3150:b0:419:f241:633b with SMTP id h16-20020a05600c315000b00419f241633bmr9840596wmo.8.1714994768460;
+        Mon, 06 May 2024 04:26:08 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id n15-20020a7bc5cf000000b00418176845ddsm8033022wmk.0.2024.05.06.04.26.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 04:26:07 -0700 (PDT)
+Date: Mon, 6 May 2024 14:26:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] thermal/cpufreq: increment i in
+ cpufreq_get_requested_power()
+Message-ID: <be825436-c310-4565-b902-13b1be930647@moroto.mountain>
+References: <a7c1fe73-b40e-437c-8ccb-7b3baad04df7@moroto.mountain>
+ <67159a18-3923-4345-bff8-ade49cc769ba@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240430-b4-for-netnext-mt7530-use-switch-mdio-bus-for-phy-muxing-v2-1-9104d886d0db@arinc9.com>
+In-Reply-To: <67159a18-3923-4345-bff8-ade49cc769ba@arm.com>
 
-On Tue, Apr 30, 2024 at 08:01:33AM +0300, Arınç ÜNAL via B4 Relay wrote:
-> From: Arınç ÜNAL <arinc.unal@arinc9.com>
-> 
-> Currently, the MT7530 DSA subdriver configures the MT7530 switch to provide
-> direct access to switch PHYs, meaning, the switch PHYs listen on the MDIO
-> bus the switch listens on. The PHY muxing feature makes use of this.
-> 
-> This is problematic as the PHY may be attached before the switch is
-> initialised, in which case, the PHY will fail to be attached.
-> 
-> Since commit 91374ba537bd ("net: dsa: mt7530: support OF-based registration
-> of switch MDIO bus"), we can describe the switch PHYs on the MDIO bus of
-> the switch on the device tree. Extend the check to detect PHY muxing when
-> the PHY is defined on the MDIO bus of the switch on the device tree.
-> 
-> When the PHY is described this way, the switch will be initialised first,
-> then the switch MDIO bus will be registered. Only after these steps, the
-> PHY will be attached.
-> 
-> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+On Mon, May 06, 2024 at 10:41:52AM +0100, Lukasz Luba wrote:
+> Would you agree that I will keep you as 'Reported-by' and send a
+> separate patch to change that !SMP code completely in that
+> get_load() function and get rid of the 'cpu_idx' argument?
 
-Reviewed-by: Daniel Golle <daniel@makrotopia.org>
+Yes, please.
 
-> ---
-> Changes in v2:
-> - Address the terminology on the patch log.
-> - Link to v1: https://lore.kernel.org/r/20240429-b4-for-netnext-mt7530-use-switch-mdio-bus-for-phy-muxing-v1-1-1f775983e155@arinc9.com
-> ---
->  drivers/net/dsa/mt7530.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
-> index 2b9f904a98f0..6cf21c9d523b 100644
-> --- a/drivers/net/dsa/mt7530.c
-> +++ b/drivers/net/dsa/mt7530.c
-> @@ -2483,7 +2483,8 @@ mt7530_setup(struct dsa_switch *ds)
->  			if (!phy_node)
->  				continue;
->  
-> -			if (phy_node->parent == priv->dev->of_node->parent) {
-> +			if (phy_node->parent == priv->dev->of_node->parent ||
-> +			    phy_node->parent->parent == priv->dev->of_node) {
+regards,
+dan carpenter
 
-I had some concerns about missing check for phy_node->parent != NULL,
-but it's impossible in practise. If phy_node exists, it will have a parent
-node as well.
-
-To be super extra safe, maybe doing
-phy_node->parent && phy_node->parent->parent == priv->dev->of_node
-would be better.
-
->  				ret = of_get_phy_mode(mac_np, &interface);
->  				if (ret && ret != -ENODEV) {
->  					of_node_put(mac_np);
-> 
-> ---
-> base-commit: 5c4c0edca68a5841a8d53ccd49596fe199c8334c
-> change-id: 20240429-b4-for-netnext-mt7530-use-switch-mdio-bus-for-phy-muxing-586269371c55
-> 
-> Best regards,
-> -- 
-> Arınç ÜNAL <arinc.unal@arinc9.com>
-> 
-> 
-> 
 
