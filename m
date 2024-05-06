@@ -1,133 +1,158 @@
-Return-Path: <linux-kernel+bounces-169335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091578BC737
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8378BC73F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E0A1F21227
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8207280EF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BC44CB23;
-	Mon,  6 May 2024 05:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268AF4C61C;
+	Mon,  6 May 2024 06:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T/HnHDU2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="EHiCA22R";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Vtm39H5a"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE9347F4A;
-	Mon,  6 May 2024 05:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA05446CF;
+	Mon,  6 May 2024 06:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714975158; cv=none; b=GzpcsioOM6ecZoiMXHmE/Q7TS2gGmVXH7SwF4//ohWuhVTg2FOBvxhKi5UwCLejOZkjyMeDsryOVpICYwpM/00Yw6H+zstdoYDmppkkoqzCqfFXgVFjn6RZ2RIlX0XZ9I2HuQNTRlQB+cRTeDXQgtmoL6RiJwdbbLn0llhBrUW8=
+	t=1714975208; cv=none; b=YTYgDhDraTr8nT7WRPXGYzo/4C9DglLyK9Dq5ujrEvPgtNbhnLAeswQmjfQlJPMcF8x/dExZHxPeNWMTE3pL2b6tco5H/K+4nfoSXgbfIAeSFKeC8nePst2fo3UpwCttwYIsxn9mo+DuXmYkHKsgk7UK/uWhcGoOHyFm4Iac2vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714975158; c=relaxed/simple;
-	bh=koI1sNIqKLDuNDuh6AXSWnfEH8YF3otZZ16U0c6dsdU=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Z3lsrSPxxiSi4L1b2mZCOCkp8a3s6N31yU4QD85Tnrb6FOfIzHHI3f7CtMKMT/8CRnfisIxs/Be5dCIbHgNBhmTSvrlwv0OM6K3Z3tBfBw6jjof1UtD1o2HWQg3pMtdoCQ6TvfT/Yxe88st64R5eQOwKuTec7EubX9CLHBfP5Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T/HnHDU2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4464XxDo021324;
-	Mon, 6 May 2024 05:59:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id; s=qcppdkim1; bh=Tdi6iZl5Ie3N
-	jA5KUJfNGAiZlVUpcEl7xfcMC74VT04=; b=T/HnHDU2qFbdVzSnsFx/akia7LE/
-	xivYuAbGIJjRzrgBXPhKe2wHcc3+/AtGktMcxH92AnNMXddiu0OPwx8P5OoQzldH
-	3fDxO7hKglA1ggGwqb2llOCpESNVmcBVcSwf/8XZRTC7BnvCU0dCrCc5JQXY/XOv
-	v/cB6Br1cTakBtjn3x54cmwDWLpN2FDq0sczNfq9YeN++cH8z8Os2Ixw8+CFPyd+
-	yWewa2qmzKHqYOuVHhU0BDW/KokuI7H1t7r3WfznsWAi2Hh261k0HzIsXcS5OG4D
-	g8WGc1ltVdJUxO0NJcO4b7WDWiVanFvFQ6eUEeCX45qM3ITW2cwX9qnmBA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwd3yark7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 05:59:11 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 4465vY2L009891;
-	Mon, 6 May 2024 05:59:07 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 3xwe3k7u63-1;
-	Mon, 06 May 2024 05:59:07 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4465x729013432;
-	Mon, 6 May 2024 05:59:07 GMT
-Received: from hu-sgudaval-hyd.qualcomm.com (hu-dikshita-hyd.qualcomm.com [10.213.110.13])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 4465x6vc013430;
-	Mon, 06 May 2024 05:59:07 +0000
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 347544)
-	id 87322303D; Mon,  6 May 2024 11:29:05 +0530 (+0530)
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>, stable@vger.kernel.org
-Subject: [PATCH v3] media: venus: fix use after free in vdec_close
-Date: Mon,  6 May 2024 11:28:53 +0530
-Message-Id: <1714975133-1777-1-git-send-email-quic_dikshita@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TohBs7UZkK2NQCEaSzKufJMQTFHVDs56
-X-Proofpoint-GUID: TohBs7UZkK2NQCEaSzKufJMQTFHVDs56
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-06_02,2024-05-03_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0 clxscore=1011
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2405060035
+	s=arc-20240116; t=1714975208; c=relaxed/simple;
+	bh=KgXnKpGS7j1W3cutgX8wg9tLYZP638mj6jJLbZ5G8vc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CuEQdz22JXI2DJSx7KozMjFZb2yKWkMyH92eJpwBDaEFBNSe7St8dnYuDfv1AHA8Lzo/xqmfCyMAZnDOzMxvpCdM2sh8ayCOKcjeXf5G8m6EzgQKEyvJRVc8HhvsXS5/o19MtkrYpOoYTf/VO+3+eaDK1V4HgbulNVqZVGWKUP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=EHiCA22R; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Vtm39H5a reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1714975204; x=1746511204;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=l3MdTi3j5rgN9hablWq4x9eXzyjzcKzMbwO6NXO+aaM=;
+  b=EHiCA22RU9a6TXMdsKwwIqJVsGtLy/nqR+iOqStrG+o992P/BkEGyyX8
+   AlTIA662U27S3PHqo3hudlvYXGL9vxzuF0onKdWGuKAnhix9e3IqAIqh7
+   eSYoVgRWaOM9wfNhAzegjh6ziZk8aDNPk+h0lRI0VAQoLW3w3334LDqrQ
+   gLnVuKjw3uu562s0en0eY3DeQPsNjznLGaTpq/d4BGQg3X7eJ52T18jii
+   c19JNp6d5xxLFiQf0u1X8Z9u96/uyf+BxLTolXKP4d0HR5GMoYjpaWBCp
+   JgwN4cyZh/AfVX/H1zb718Cafm6IHfxN2KYE7It9QUN2lwf+AUaJ9DQLX
+   w==;
+X-CSE-ConnectionGUID: +uTMB1GFQXmbfrsmdPDoVA==
+X-CSE-MsgGUID: OMx7XGLVRQq/x9s8/5GUDQ==
+X-IronPort-AV: E=Sophos;i="6.07,257,1708383600"; 
+   d="scan'208";a="36751415"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 06 May 2024 07:59:55 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B3BD9173BE6;
+	Mon,  6 May 2024 07:59:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1714975190;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=l3MdTi3j5rgN9hablWq4x9eXzyjzcKzMbwO6NXO+aaM=;
+	b=Vtm39H5anoxbM1aUl+yWA8prXdExh6xoe229iwcpBplsba0xQz+fZERui+38S4ew+gBFiI
+	O25THqy0p+Oq8btgHkFC4cWbf1Ol3kb22FnSbF8EzRjDhhYOS2fSNH9DlJRLx+CGmGXFN2
+	uJVaQMQEdVoKF6u7itQctQSxaxWMuSObQPx00/2BbnWrEjBBXsP41qrwR/oYFjgxnOMmYB
+	xt9lOqQqVQYDudGuzR8wrwz0/+g6DxFyH3+4DmtU3gqg+uWcwLaDgmbUeRTx/w2e3y9Bj+
+	9NS7yyzxk/mQubr0Bjsb8xLntzq5N5OEAC4hKu65+5Q0Uo2/DUObcxAbZ+Y8jg==
+From: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+Subject: [PATCH v2 0/6] can: mcp251xfd: add gpio functionality
+Date: Mon, 06 May 2024 07:59:42 +0200
+Message-Id: <20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAM5xOGYC/4WNOw6DMBAFr4JcZ5FtAflUuUdEYZY1bAE2NhAix
+ N3jcIGUM9Kbt4tIgSmKR7aLQCtHdmMCfckE9mbsCLhNLLTUhSzUFQb0ulSbbaHz7MCSmZdAoO9
+ GNbYy2JSFSGMfyPJ2hl914p7j7MLn/FnVz/5NrgokNCixUraVeJNPeufzBF1wi8/RDaI+juMLO
+ Dhl3sIAAAA=
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Thomas Kopp <thomas.kopp@microchip.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux@ew.tq-group.com, gregor.herburger@ew.tq-group.com
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1714975188; l=2584;
+ i=gregor.herburger@ew.tq-group.com; s=20230829; h=from:subject:message-id;
+ bh=KgXnKpGS7j1W3cutgX8wg9tLYZP638mj6jJLbZ5G8vc=;
+ b=7MCvY1oUqEGxOEz551MKsVGPD++UONYKxvQw8sMdfJLoFDcUcnb9IVLWW5VJUx17pEC7RdbSr
+ W0gcK9K3JooCnPXfEtdH/OrQn++G+vXjgMaBpr51GxzxdHDDkPv2hCX
+X-Developer-Key: i=gregor.herburger@ew.tq-group.com; a=ed25519;
+ pk=+eRxwX7ikXwazcRjlOjj2/tbDmfVZdDLoW+xLZbQ4h4=
+X-Last-TLS-Session-Version: TLSv1.3
 
-There appears to be a possible use after free with vdec_close().
-The firmware will add buffer release work to the work queue through
-HFI callbacks as a normal part of decoding. Randomly closing the
-decoder device from userspace during normal decoding can incur
-a read after free for inst.
+Hi all,
 
-Fix it by cancelling the work in vdec_close.
+The mcp251xfd allows two pins to be configured as GPIOs. This series
+adds support for this feature.
 
-Cc: stable@vger.kernel.org
-Fixes: af2c3834c ("media: venus: adding core part and helper functions")
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+The GPIO functionality is controlled with the IOCON register which has
+an erratum. The second patch is to work around this erratum. I am not
+sure if the place for the check and workaround in
+mcp251xfd_regmap_crc_write is correct or if the check could be bypassed
+with a direct call to mcp251xfd_regmap_crc_gather_write. If you have a
+better suggestion where to add the check please let me know.
+
+Patch 1-3 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime_pm-v1-0-c26a93a66544@pengutronix.de/
+Patch 4 is the fix/workaround for the aforementioned erratum
+Patch 5 adds the gpio support
+Patch 6 updates dt-binding
+
 ---
-Changes since v2:
-- fixed email id
+Changes in v2:
+- picked Marcs patches from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime_pm-v1-0-c26a93a66544@pengutronix.de/
+- Drop regcache
+- Add pm_runtime in mcp251xfd_gpio_request/mcp251xfd_gpio_free
+- Implement mcp251xfd_gpio_get_multiple/mcp251xfd_gpio_set_multiple
+- Move check for rx_int/gpio conflict to mcp251xfd_gpio_request
+- Link to v1: https://lore.kernel.org/r/20240417-mcp251xfd-gpio-feature-v1-0-bc0c61fd0c80@ew.tq-group.com
 
-Changes since v1:
-- Added fixes and stable tags
+---
+Gregor Herburger (3):
+      can: mcp251xfd: mcp251xfd_regmap_crc_write(): workaround for errata 5
+      can: mcp251xfd: add gpio functionality
+      dt-bindings: can: mcp251xfd: add gpio-controller property
 
- drivers/media/platform/qcom/venus/vdec.c | 1 +
- 1 file changed, 1 insertion(+)
+Marc Kleine-Budde (3):
+      can: mcp251xfd: properly indent labels
+      can: mcp251xfd: move mcp251xfd_timestamp_start()/stop() into mcp251xfd_chip_start/stop()
+      can: mcp251xfd: move chip sleep mode into runtime pm
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 29130a9..56f8a25 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -1747,6 +1747,7 @@ static int vdec_close(struct file *file)
- 
- 	vdec_pm_get(inst);
- 
-+	cancel_work_sync(&inst->delayed_process_work);
- 	v4l2_m2m_ctx_release(inst->m2m_ctx);
- 	v4l2_m2m_release(inst->m2m_dev);
- 	vdec_ctrl_deinit(inst);
+ .../bindings/net/can/microchip,mcp251xfd.yaml      |   5 +
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c     | 310 +++++++++++++++++----
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-dump.c     |   2 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c   |  31 ++-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c      |   2 +-
+ .../net/can/spi/mcp251xfd/mcp251xfd-timestamp.c    |   7 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c       |   2 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd.h          |   7 +
+ 8 files changed, 303 insertions(+), 63 deletions(-)
+---
+base-commit: 1fdad13606e104ff103ca19d2d660830cb36d43e
+change-id: 20240417-mcp251xfd-gpio-feature-29a1bf6acb54
+
+Best regards,
 -- 
-2.7.4
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
 
 
