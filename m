@@ -1,137 +1,179 @@
-Return-Path: <linux-kernel+bounces-169978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CB98BD017
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED098BD012
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B443C1F22779
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43835288504
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE5613DDDB;
-	Mon,  6 May 2024 14:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E549A13D287;
+	Mon,  6 May 2024 14:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Byk190pG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCGhf7iC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E147513DDBC;
-	Mon,  6 May 2024 14:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207FC13CF8F;
+	Mon,  6 May 2024 14:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005314; cv=none; b=njgA/nOWsk7pESJSt3ByyKcO4S9DMNZ3SZ2dE5UELbFGmAcjsqWDa1TnoX7E2i3xAs/3WHFmv0PxJIUUmK4tHa5yH4SxLS9L4YSRvv4s4cpazrr9y59n5tgM/DWXQ/rSFpn2Hi427UgGduCoJoWXb1aPiOLz4uIjywQR7jkW9cQ=
+	t=1715005251; cv=none; b=j2M+joX0lSd3u5TYR7TaED90JEtEFwYEV5f+BgkPL6b45cKUYqBuIVqjFmYCzEPDSI/TSxwzfs34XpDDvS0TbqmRaW1DOY4noa5sCbkzs4q+QztTYA9z3G3l0XVd/KcPP6K1BN1oKcl0tqn1+swhGNdpl997mGjcSzoU77rGggY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005314; c=relaxed/simple;
-	bh=mnVWFiBfYUU2lpuKyQVuWsMjv4lrzOkciv18t8WSb+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rrcUAnO2TVn2RQQgN/GWA/UrxSbYCWAHiNfPg9sa0/DW6811jX5fYR3lO7N2l+PtnbFUt69zlkXLsCKc1yGcieFa9JIsRe2RLapMBCwS2gl50QfZ6eamkpE5Q2lg1anX4PhBwbsDXPpV1pO15WgPWYTolHkJ97F1vucA8oYe0co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Byk190pG; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715005313; x=1746541313;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mnVWFiBfYUU2lpuKyQVuWsMjv4lrzOkciv18t8WSb+Q=;
-  b=Byk190pGGn5QTg9UwNXztsgiSFqSMKonxbz/FZzvu4N81asfEQzbi6Tz
-   yt4qiuaY5q++vf9Yak7qgS4tTKU6N9/A0R+2cE0brhMuf/k7jgJwVIajF
-   vc8UQoaYc1UpRaWidPj6dQGDBjDzXBNqP89aqNQrfiuy1H1g7AD1q3mOu
-   xx/45C6/JjdyXrR16TMPBJJ/dOszNP7IrbIyaXYYxQVlauZMUJSzquJpl
-   I7ZwIdZHFEJC0e7ZzsoFxVBqXTkQhEM0/6gJKQMzUn+Gt9OnvhogzhciX
-   IkJ3tTAmRXJ0DjAz9PtXakUwwJTk2TQJXL/cAYEqCOo39ROvynKEYX4df
-   w==;
-X-CSE-ConnectionGUID: JN9eoUOcQ2OgI88y+3wXyA==
-X-CSE-MsgGUID: iL3D8yjoSKyVKmuootIvzw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10631810"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="10631810"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:21:51 -0700
-X-CSE-ConnectionGUID: v6vxQqJzQgqtr/xtC6HB+Q==
-X-CSE-MsgGUID: FLhmLFrsTPe4VWRVLgvWFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="32652260"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 06 May 2024 07:21:44 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 1AACF43E; Mon, 06 May 2024 17:21:43 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Yue Wang <yue.wang@Amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v4 2/5] PCI: aardvark: Remove unused of_gpio.h
-Date: Mon,  6 May 2024 17:20:38 +0300
-Message-ID: <20240506142142.4042810-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
-References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1715005251; c=relaxed/simple;
+	bh=v35O4MOv00OkD5Eak0/TAE7hgCKO/FarPLabAISIafg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z+tCc8Bkv1d5feRVJFfRvn7H/KVhz9KIK1l7Canu46q+bAyheD4TrrQujAQRq83FkTDN14H0G4aihqjMe2MMe0vzMEwSPif5ExfUnh8ejC4JqPO/CX30asNXVDPpVyrkBj1dufVvchaN8Fqt0RVefsK+i+hiQeGVPFPY5758+5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCGhf7iC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91D5C4AF66;
+	Mon,  6 May 2024 14:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715005250;
+	bh=v35O4MOv00OkD5Eak0/TAE7hgCKO/FarPLabAISIafg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CCGhf7iCvrvdO1ATf+Hxvn2NyWfeqH0aIGOcAknXZEOSrM8DVYC33/kmMwu3Bsrbb
+	 M41McHzwU9v75DbupsIzscvoHNrg8AZ31GjhSraOptdgRK1OjsQbqJ/5iDvgwqtQ6D
+	 m6SUsoS2S0tTJP/bFqMY2v+l4df54sD4OoGYJJ2EvK2OaUzL0Ufs0QcVGuQ7T5xXTJ
+	 JjJ/orAMCuHo1X1IgrzL3JmZRRqbvAqBMy53rXkWlPEe0oULCmuyvElgETpM+HTbqE
+	 CKQuStfTfjutV9VirdqFiIrE7X+F9JqviRCEmRlZ0wG7QU1HUAy9m7FeIAAQ/wvJS8
+	 3rexaZSozQ1nw==
+Date: Mon, 6 May 2024 15:20:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, David Lechner
+ <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v6 10/10] iio: adc: ad7380: add support for
+ resolution boost
+Message-ID: <20240506152022.58794348@jic23-huawei>
+In-Reply-To: <20240506144616.0b90664b@jic23-huawei>
+References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+	<20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
+	<a04d8015ea1606ce1eca86f7eaaa85a1c1b46d7a.camel@gmail.com>
+	<20240506144616.0b90664b@jic23-huawei>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-of_gpio.h is deprecated and subject to remove.
-The driver doesn't use it, simply remove the unused header.
+On Mon, 6 May 2024 14:46:16 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pci/controller/pci-aardvark.c | 1 -
- 1 file changed, 1 deletion(-)
+> On Mon, 06 May 2024 10:55:46 +0200
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>=20
+> > On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote: =20
+> > > ad738x chips are able to use an additional 2 bits of resolution when
+> > > using oversampling. The 14-bits chips can have up to 16 bits of
+> > > resolution and the 16-bits chips can have up to 18 bits of resolution.
+> > >=20
+> > > In order to dynamically allow to enable/disable the resolution boost
+> > > feature, we have to set iio realbits/storagebits to the maximum per c=
+hips.
+> > > This means that for iio, data will always be on the higher resolution
+> > > available, and to cope with that we adjust the iio scale and iio offs=
+et
+> > > depending on the resolution boost status.
+> > >=20
+> > > The available scales can be displayed using the regular _scale_availa=
+ble
+> > > attributes and can be set by writing the regular _scale attribute.
+> > > The available scales depend on the oversampling status.
+> > >=20
+> > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > >=20
+> > > ---
+> > >=20
+> > > In order to support the resolution boost (additional 2 bits of resolu=
+tion)
+> > > we need to set realbits/storagebits to the maximum value i.e :
+> > > =C2=A0 - realbits =3D 16 + 2 =3D 18, and storagebits =3D 32 for 16-bi=
+ts chips
+> > > =C2=A0 - realbits =3D 14 + 2 =3D 16, and storagebits =3D 16 for 14-bi=
+ts chips
+> > >=20
+> > > For 14-bits chips this does not have a major impact, but this
+> > > has the drawback of forcing 16-bits chip users to always use 32-bits
+> > > words in buffers even if they are not using oversampling and resoluti=
+on
+> > > boost. Is there a better way of implementing this? For example
+> > > implementing dynamic scan_type?
+> > >    =20
+> >=20
+> > Yeah, I don't think it's that bad in this case. But maybe dynamic scan =
+types is
+> > something we may need at some point yes (or IOW that I would like to se=
+e supported
+> > :)). We do some ADCs (eg: ad4630) where we use questionably use FW prop=
+erties to set
+> > a specific operating mode exactly because we have a different data layo=
+ut (scan
+> > elements) depending on the mode. =20
+>=20
+> Yeah. Fixed scan modes were somewhat of a bad design decision a long time=
+ back.
+> However, the big advantage is that it got people to think hard about whet=
+her it is
+> worth supporting low precision modes. For slow devices it very rarely is =
+and
+> forcing people to make a decision and the advantage we never supported
+> low precision on those parts.
+>=20
+> Having said that there are good reasons for dynamic resolution changing
+> (the main one being the storage case you have here) so I'd be happy to
+> see some patches adding it. It might be easier than I've always thought
+> to bolt on.
+>=20
+> This and inkernel event consumers have been the two significant features
+> where I keep expecting it to happen, but every time people decide they re=
+ally
+> don't care enough to make them work :(
+>=20
+> >   =20
+> > > Another issue is the location of the timestamps. I understood the need
+> > > for ts to be consistent between chips, but right now I do not have a
+> > > better solution.. I was thinking of maybe adding the timestamps at the
+> > > beginning? That would imply to change the iio_chan_spec struct and ma=
+ybe
+> > > add a iio_push_to_buffers_with_timestamp_first() wrapper function? Is
+> > > that an option? =20
+>=20
+> You have lost me on this one.  Why does the timestamp need to be in a con=
+sistent
+> location?  We have lots of drivers where it moves about between different
+> chips they support, or indeed what channels are currently turned on.
+Maybe I now understand this?
+The concern is the structure used for the iio_push_to_buffers_with_timestam=
+p()
+That doesn't need to be a structure and if you look at drivers where it isn=
+'t
+the most common reason is because the timestamp needs to be able to move ar=
+ound.
 
-diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-index 71ecd7ddcc8a..8b3e1a079cf3 100644
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -23,7 +23,6 @@
- #include <linux/platform_device.h>
- #include <linux/msi.h>
- #include <linux/of_address.h>
--#include <linux/of_gpio.h>
- #include <linux/of_pci.h>
- 
- #include "../pci.h"
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+So do something similar here.
+
+Jonathan
+
+>=20
+> I haven't actually looked at the latest code yet, so maybe it will become
+> obvious!
+>=20
+> Jonathan
+>=20
+>=20
+>=20
 
 
