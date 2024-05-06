@@ -1,147 +1,148 @@
-Return-Path: <linux-kernel+bounces-169675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7B28BCC19
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:36:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0328BCC1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27CE283BFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1651C21AFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8F14205F;
-	Mon,  6 May 2024 10:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1EE757EA;
+	Mon,  6 May 2024 10:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CxJ6SmLu"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5chX6W+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC21B101C8
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2C863B8;
+	Mon,  6 May 2024 10:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714991803; cv=none; b=SvCY54ColliWVTQBZ/o3fno5JpQX87gz9cRx+n/XQCPjp5hC5DBaTISGu8TH9xrmbtn+2UBXuUd8CZGfZJLpTeX3DP93NWQPUR0P8OXg3nVp77m3e3VaSQD0hQj2mm+aB5e+8uLN9htZtWVDwqzaBAO0o5RY35JNzuibzAIQd0I=
+	t=1714991926; cv=none; b=l6VGqmoAbiNK8lR1Y+DRBG0AnYt2DOj7t2hN25BgQNf+YulWT+NLK6aMkyu6KyW3KB2Z6JoFbrA7S0Ss9CZRHm+TgxzO2MeW/a8fDFavUmWhZ1nZdGopD+jxJjoC7nK10Lz7dRBX3FIwbWYIfQNpRa+NbrlOfp0AQ0a5MPiH/t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714991803; c=relaxed/simple;
-	bh=f5FuZwO+MKPKX+harEgFy8Dh9f/mr78JHk/hvTY/C80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+i1xa4rLp3PjJJpEjFJCY6+07XScJTXZXUzWp09HJxcJcM2kRzsNruEWxdwnOnMd1dZBU2cDmB2WkKJ82oS4EzuttEt8Qwepyrjz//6EEvZM+Jb/T53BW8qJIG824NEBM76Wog6eK3uBBKDP8rcQNi8YXaWTgw8Id9wao6Ngj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CxJ6SmLu; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=G+EKeG5lmQSIPvzwSIB/xbVPGJg7u7Z8HVLDlPsO+Kc=; b=CxJ6SmLubh1k7f7/C6+rUViNDw
-	mFKZ59aENl0agch5F/t6Zqj1nRInyqDvhbvaLGb+KVyESz2JapTBlJTokwRKbkZbMnkk0im5txIP9
-	Y/Xzk9Pbf+16jcnrIaGKM9JXa5nf60vBQz63N//PxYzRc0Vmz7aQPYHuUg9pazAFG+usNZenw4viw
-	LTxzbptWKlejjgdxHdIUMyBeNNBANn7XkQgt4rs7O/+vzHG9ru6NMt63xylisdXrI+3Zxi/5X7zbs
-	cuCgdx4ywM6XGOb01uqqTDVvk1VORK8NCyHMN/wIe35ZZXqQzX32l7PQZGFp3PqIL3ThIw385i3Vy
-	mQCqsFRw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s3vi1-00000001gGK-1oms;
-	Mon, 06 May 2024 10:36:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1C563300362; Mon,  6 May 2024 12:36:37 +0200 (CEST)
-Date: Mon, 6 May 2024 12:36:37 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-	Vernon Lovejoy <vlovejoy@redhat.com>
-Subject: Re: [PATCH v2] locking/qspinlock: Save previous node & owner CPU
- into mcs_spinlock
-Message-ID: <20240506103637.GM40213@noisy.programming.kicks-ass.net>
-References: <20240504024106.654319-1-longman@redhat.com>
+	s=arc-20240116; t=1714991926; c=relaxed/simple;
+	bh=+sMre+0s8XuSqhviOvxYhM1E9EHHXARPAYeKH8OPY78=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HqLlgiBjPiRi3KLd0iVjvFUS5/XnOt+gynd9bG4m+jXPidHcz1w22O2VKQ3iwr14EqGadcY0M6IAjzqDx6lMP8b2mOgEK/ifO4OVzgkUwyHUVtyWhm9MfAYIneDeyd6/BMorQOGRTqBVs2dyTJLv2nr3vnQoksHyCi2f4H0oMZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5chX6W+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4FEDC4DDE3;
+	Mon,  6 May 2024 10:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714991925;
+	bh=+sMre+0s8XuSqhviOvxYhM1E9EHHXARPAYeKH8OPY78=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p5chX6W+7I2fDJkE1QqM9wRxsSH/i/mgVUsH3W5V8yEUMBAthAeB0+rRqPoEY3JCr
+	 vpo80Tf8X8DlxxksbetRo+ksekpb00QRchH8UT8aa9L99POHSKNMbkzkx9BJXribmZ
+	 6qAU9u5zE9mhdIwL+BVu7hWwGzUQs8Xxl6rr41WErC51eyPSjn2Gvi3TZDdimZwxYP
+	 a7SrGaLFiuBJvmFMPQ8saRtckD+3jNPkdU1QasHUnXKomBZVFzTAKnOMa+59hjkVC3
+	 5AV9Mvyxy64NPjOzCu9cqaoc+ivkUdY4feLk15FDsZrT5aBJ9+QDooMekmIkYSNLzZ
+	 ozqdCoso0VJ9A==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52006fbae67so2316604e87.0;
+        Mon, 06 May 2024 03:38:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUv9sMl3MyDiEbQBABnkseJoXn3ogwBJ/1nu/QQ3jQoO/kbl06pMGkQPx1XsJa6TuYs8ilVRP44zApo4krW10iS+IUNznj/HWUHLHoFtObdrsiKPmpFAtJRrnV9vFX77xKWQd/xPkLCNcDnG0sEiU2rpULyeF8/Lz8tET4/uUZNE+xZiBp9e8Z3Uuvh6XiCKa89
+X-Gm-Message-State: AOJu0YxABy7MhtxHdxB25LqXWo9ytHNJiPRL4HES1I8DP4b9qz8WrfCl
+	GotV5QgL2ZwR8ZHpUYWmMns8hbz3TNHWMHghJCgshSGYvTTvJGcy1qKQTGEhuJkoJSJUhd3lKG5
+	T6512xHYUCBViPptcJ2Sx27FendM=
+X-Google-Smtp-Source: AGHT+IGrmdoDC9OU2KevduoZC6ArmZA6QOhPgQmvYxG1IrrYVOP27uC3VgBT/7g9DgqcivO0pnNgMPGrMBtlEAKwxG0=
+X-Received: by 2002:a05:6512:33c5:b0:51e:1bed:13a8 with SMTP id
+ d5-20020a05651233c500b0051e1bed13a8mr6619509lfg.29.1714991924016; Mon, 06 May
+ 2024 03:38:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240504024106.654319-1-longman@redhat.com>
+References: <20240409210254.660888920@goodmis.org> <20240409211351.075320273@goodmis.org>
+ <202404091521.B63E85D@keescook> <20240409191156.5f92a15c@gandalf.local.home>
+ <202404091638.2F98764A41@keescook> <Zhmgm86tzpanoweB@kernel.org>
+ <20240412181940.3e1d99f7@gandalf.local.home> <202404151017.FC002AA5@keescook> <ZjJYV7ak5ApgNTBx@kernel.org>
+In-Reply-To: <ZjJYV7ak5ApgNTBx@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 6 May 2024 12:38:32 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXG3jiLahONhPkKD0VSngDnMQoUCkDmoCsWEzOHDZmhTiA@mail.gmail.com>
+Message-ID: <CAMj1kXG3jiLahONhPkKD0VSngDnMQoUCkDmoCsWEzOHDZmhTiA@mail.gmail.com>
+Subject: Re: [POC][RFC][PATCH 1/2] mm/x86: Add wildcard * option as memmap=nn*align:name
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org, 
+	Guenter Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>, wklin@google.com, 
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Suleiman Souhlal <suleiman@google.com>, Linus Torvalds <torvalds@linuxfoundation.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 03, 2024 at 10:41:06PM -0400, Waiman Long wrote:
+On Wed, 1 May 2024 at 16:59, Mike Rapoport <rppt@kernel.org> wrote:
+>
+> On Mon, Apr 15, 2024 at 10:22:53AM -0700, Kees Cook wrote:
+> > On Fri, Apr 12, 2024 at 06:19:40PM -0400, Steven Rostedt wrote:
+> > > On Fri, 12 Apr 2024 23:59:07 +0300
+> > > Mike Rapoport <rppt@kernel.org> wrote:
+> > >
+> > > > On Tue, Apr 09, 2024 at 04:41:24PM -0700, Kees Cook wrote:
+> > > > > On Tue, Apr 09, 2024 at 07:11:56PM -0400, Steven Rostedt wrote:
+> > > > > > On Tue, 9 Apr 2024 15:23:07 -0700
+> > > > > > Kees Cook <keescook@chromium.org> wrote:
+> > > > > >
+> > > > > > > Do we need to involve e820 at all? I think it might be possible to just
+> > > > > > > have pstore call request_mem_region() very early? Or does KASLR make
+> > > > > > > that unstable?
+> > > > > >
+> > > > > > Yeah, would that give the same physical memory each boot, and can we
+> > > > > > guarantee that KASLR will not map the kernel over the previous location?
+> > > > >
+> > > > > Hm, no, for physical memory it needs to get excluded very early, which
+> > > > > means e820.
+> > > >
+> > > > Whatever memory is reserved in arch/x86/kernel/e820.c, that happens after
+> > > > kaslr, so to begin with, a new memmap parameter should be also added to
+> > > > parse_memmap in arch/x86/boot/compressed/kaslr.c to ensure the same
+> > > > physical address will be available after KASLR.
+> > >
+> > > But doesn't KASLR only affect virtual memory not physical memory?
+> >
+> > KASLR for x86 (and other archs, like arm64) do both physical and virtual
+> > base randomization.
+> >
+> > > This just makes sure the physical memory it finds will not be used by the
+> > > system. Then ramoops does the mapping via vmap() I believe, to get a
+> > > virtual address to access the physical address.
+> >
+> > I was assuming, since you were in the e820 code, that it was
+> > manipulating that before KASLR chose a location. But if not, yeah, Mike
+> > is right -- you need to make sure this is getting done before
+> > decompress_kernel().
+>
+> Right now kaslr can handle up to 4 memmap regions and parse_memmap() in
+> arch/x86/boot/compressed/kaslr.c should be updated for a new memmap type.
+>
+> But I think it's better to add a new kernel parameter as I suggested in
+> another email and teach mem_avoid_memmap() in kaslr.c to deal with it, as
+> well as with crashkernel=size@offset, btw.
+>
 
-Not much of a fan of this thing, but I suppose it won't hurt too much ...
+The logic in arch/x86/boot/compressed/kaslr.c is now only used by non-EFI boot.
 
-> diff --git a/kernel/locking/mcs_spinlock.h b/kernel/locking/mcs_spinlock.h
-> index 85251d8771d9..cbe6f07dff2e 100644
-> --- a/kernel/locking/mcs_spinlock.h
-> +++ b/kernel/locking/mcs_spinlock.h
-> @@ -13,12 +13,19 @@
->  #ifndef __LINUX_MCS_SPINLOCK_H
->  #define __LINUX_MCS_SPINLOCK_H
->  
-> +/*
-> + * Save an encoded version of the current MCS lock owner CPU to the
-> + * mcs_spinlock structure of the next lock owner.
-> + */
-> +#define MCS_LOCKED	(smp_processor_id() + 1)
-> +
->  #include <asm/mcs_spinlock.h>
->  
->  struct mcs_spinlock {
->  	struct mcs_spinlock *next;
-> -	int locked; /* 1 if lock acquired */
-> -	int count;  /* nesting count, see qspinlock.c */
-> +	int locked;	 /* non-zero if lock acquired */
-> +	short count;	 /* nesting count, see qspinlock.c */
-> +	short prev_node; /* encoded previous node value */
+In general, I am highly skeptical that hopes and prayers are enough to
+prevent the firmware from stepping on such a region, unless this is
+only a best effort thing, and failures are acceptable. For instance,
+booting an EFI system with/without an external display attached, or
+with a USB device inserted (without even using it during boot) will
+impact the memory map, to the extent that the E820 table derived from
+it may look different. (EFI tries to keep the runtime regions in the
+same place but the boot-time regions are allocated/freed on demand)
 
-Strictly speaking, count shouldn't ever go much higher than 4, so I
-suppose a byte should be sufficient. That would then leave 24bit for the
-prev thing, but you'll get to use bitfields or some other horrible
-thing.
-
->  };
->  
->  #ifndef arch_mcs_spin_lock_contended
-> @@ -42,7 +49,7 @@ do {									\
->   * unlocking.
->   */
->  #define arch_mcs_spin_unlock_contended(l)				\
-> -	smp_store_release((l), 1)
-> +	smp_store_release((l), MCS_LOCKED)
-
-This leaves ARM up a creek I suppose... Also, there's but a single
-MCS_LOCKED user.
-
->  #endif
->  
->  /*
-> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-> index ebe6b8ec7cb3..df78d13efa3d 100644
-> --- a/kernel/locking/qspinlock.c
-> +++ b/kernel/locking/qspinlock.c
-> @@ -436,6 +436,7 @@ void __lockfunc queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
->  
->  	node->locked = 0;
->  	node->next = NULL;
-> +	node->prev_node = 0;
->  	pv_init_node(node);
->  
->  	/*
-> @@ -463,6 +464,13 @@ void __lockfunc queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
->  	old = xchg_tail(lock, tail);
->  	next = NULL;
->  
-> +	/*
-> +	 * The prev_node value is saved for crash dump analysis purpose only,
-> +	 * it is not used within the qspinlock code. The encoded node value
-> +	 * may be truncated if there are 16k or more CPUs in the system.
-> +	 */
-> +	node->prev_node = old >> _Q_TAIL_IDX_OFFSET;
-> +
->  	/*
->  	 * if there was a previous node; link it and wait until reaching the
->  	 * head of the waitqueue.
-> -- 
-> 2.39.3
-> 
+So I would strongly urge to address this properly, and work with
+firmware folks to define some kind of protocol for this.
 
