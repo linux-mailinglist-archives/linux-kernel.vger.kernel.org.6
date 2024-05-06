@@ -1,409 +1,303 @@
-Return-Path: <linux-kernel+bounces-170417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C24C8BD68F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:54:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9CE8BD68C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF8B1C2116F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4638B282426
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A649015CD53;
-	Mon,  6 May 2024 20:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CCE15B968;
+	Mon,  6 May 2024 20:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="RZ+RptK2"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U1upf4x4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F52215B990
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B84015ADBA
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715028823; cv=none; b=OwZU9yagVa8+wCbsT6agGg7HQatdufX2zWYJO30wEasFs+CNY/FRr9d66lIfKsZYY+5rwqaRRVz+JCczxCCbtZBax3MVgKBahICBdGb5yf30S2OcDVln1Zkg5Wnot0dceqnULZkNq4juscRApV47mTzAQY2FrBhMK7uKvXnKdjE=
+	t=1715028815; cv=none; b=pK+loZYW7kM2QWX7yNDy1ebfGgs2eRLcWHfk6gIdeFy52+kQPA4vbWvjHhawDXNrkJ+RoE8gVQ9NshfsR4h70B0q71OC4Ev1+5XnMEtdVpMYbjHQFP6EYEBNZZxicwTy1bluLp7tWL7x02Tum/2BjnqesfmcZiC1JCWywuo6Wt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715028823; c=relaxed/simple;
-	bh=6WzZW5A7prKkyPBstB4o6EWZ+BYYXcPcTb+GVvBRWeE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CNnA/BNMUd8m6ZOvxfhaq/eXrngqU62+loJ9brtlZBfWYhQnmmso1plma1Ejoq6RdG6hZ7QMWz/iQnDMTGnJNGonON10amiUEUqwbmeyaU/ITmmpdDDX4K7BlxkmXM/64aNaURwvkmTE6BbRiDaPyIeVIuXqoSk/773wfvBtHok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=RZ+RptK2; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5d81b08d6f2so1946206a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 13:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715028820; x=1715633620; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=37IsvG5uzo6zvAWDaiRFgFSIj/fPT6QL1vAqI4tA0ac=;
-        b=RZ+RptK2kREWvugd6Z9DNedVSNSn8DSFXRonTpnfxFzM1ocgepV6OeC9utG+3DPop6
-         Ta4OzrlYxQpUpZPDE+MebmYlFYtfookNYgx71tkkJdO6zspvefEUQpoZm6VTKDPsFNbZ
-         f3Mt+Op4yZ/s8tk07T35xRFhr9t4S43iPWfiU=
+	s=arc-20240116; t=1715028815; c=relaxed/simple;
+	bh=SOrr1nenzAriLe0GnDo7AsSNuockUJ6/CCRk2fh8qKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UPKWEBdmg6LwzVPdRyaCmHQVWCNmhkY7mfBiIjamv+QBxVsl9pisuWRT7cpOqFxK0CXlR85UXF2ZHP9hmUCzQEBvt3cZZCa01ByP09vzKKECiCJtOgozjGFcDqmN5tpJRnsUMYeaE6PdeeIxCEfqt2jfmAkR5dKRsHQOWajMqOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U1upf4x4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715028813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g6sZw134VQmMlIGhxEPVPz2EDdHDR3NFPzKEHXmWo0Q=;
+	b=U1upf4x4Rcoz5AgVTMbApO7WDMYcs/qJUN7thQ7L4ftOoXhvbC8Fb5k543zaUaNyGrMgI3
+	GzXDrgVniDPq8T+uyRdb0d7k4/nqPSFh9Mss6vz7yhrshHkuDGHtbMCBqqxFoVjnQxzXij
+	d5AetmQrHhrAXwT2Mvpsxv1SRXJEENE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-ggJMnFKuPMWuAPGBLNimGA-1; Mon, 06 May 2024 16:53:31 -0400
+X-MC-Unique: ggJMnFKuPMWuAPGBLNimGA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-418f18458a0so13345145e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 13:53:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715028820; x=1715633620;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=37IsvG5uzo6zvAWDaiRFgFSIj/fPT6QL1vAqI4tA0ac=;
-        b=AOs6agNEsmzVZGns7R7zWLoYkPNFWyxfqvuIT19oAQ/8lDhRf7CppFsyNqpOUBgfqu
-         77epbFBgvOSipZNyRbJrxWL6CNFfDJibMmEq3PAcNTy75dg52xhwTkVZUQRx5K6H0YYw
-         PPy5WvnQmVdIBGEmboOjkBgIz5oUcIg2ozuQj2AHn4wsFyZnsyfBDKM+7wChAgVqzYys
-         E+I5ud58qoFMSfpiuAPf2NbWjheMXDmhh1awJOQVU+sUkt3uj7UrbJuCmSMjHi8pv9uN
-         anrV9QjxFpzhur5lBfYVNTQ3M7VWPt13EXdrJ3TfyZPO0WFtGwZ1EAH/pQoLAmHl3ADx
-         qypQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU77FwQkIv9HOYLJl9q0TItskFDNhxe3rbhN2Z8nswB8zb3/L5MyEvAhETO3nehqkjDy/64OxbMDmtw7tSei3RdQzcNph4zVsC0y5FQ
-X-Gm-Message-State: AOJu0YxMYT52Eynf7OO0rUcJSwo7RyZELrg9BLbHujPDVogQuaHOqufx
-	M8TiZjjLH2J51rL18bP+7yBehlu10SG9SQwLRcIbzxlqUwrRTDGFlWZhc2T3dJo=
-X-Google-Smtp-Source: AGHT+IGNDFzugS9+uMkoMuHk8mtOzpWvoY+LxKHtcCsVky71WRajvQzFJedmT2ImZOmmyCHKHKjqyA==
-X-Received: by 2002:a05:6a20:3d90:b0:1a3:ae75:d6f5 with SMTP id s16-20020a056a203d9000b001a3ae75d6f5mr13991866pzi.20.1715028819526;
-        Mon, 06 May 2024 13:53:39 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id p40-20020a056a0026e800b006f44d0df062sm6289521pfw.125.2024.05.06.13.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 13:53:38 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: nalramli@fastly.com,
-	Joe Damato <jdamato@fastly.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>
-Subject: [PATCH net-next v2] selftest: epoll_busy_poll: epoll busy poll tests
-Date: Mon,  6 May 2024 20:53:22 +0000
-Message-Id: <20240506205326.70502-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1715028811; x=1715633611;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g6sZw134VQmMlIGhxEPVPz2EDdHDR3NFPzKEHXmWo0Q=;
+        b=GThn8xsym62XGKqFY3nkIECBJRk9DEfAcc08vB+izcQ6KMqxBM6Not6gmoTQnyXXLY
+         yEURg383UAKE06g1DJtz7S5p46CbShvWDxv9XwS+enFtfrOcGNc3T+3IPUd7KDWJy6Qv
+         HLmttv6qOe71zmJiF3/0ZLHsuEQilzZpSA5ATv9+ZiBIvain9d0xGHUZtmnZShKr0AcS
+         72OMIPu2pGg6oEQFyqQOz1jvY1W3DkrL3cZS5W5SdfXfCbVZ5wyZVy2Yy4Ee1ZMUeCh4
+         BznG/J/WaX/Tk253rg2ojwCiOs5e/Lj5e4PHRjeRvCHVZXum2Ii3kFD8TiCmqnjmeh5U
+         pi8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVpi7m71p9Fuvog9uGlH+lKB96UYtlpcDKS4qmgwlW4W4b8WaZP1ElfCZSUTxd8r3g9r/e4r3E2rmx3JYKHcnmo2gGbsOL75aIotQcC
+X-Gm-Message-State: AOJu0YwH6/XpNI7baK8NmQtH9ZExsgf9qsgDx1NAEWZbPIPFD0Pb9t+s
+	xOWZerHmwD2bhpGKb1gXqeCL/9eyY1lTtHHwZh+yA3mlhlw3dC9ldzqKGDTaFbA81f0aZRNRJFH
+	NnCVYL0hSyFioqzeZaoLO72yVB+do5hwvmr3/mHdkIXEVHJf0GvkWhDgJE3QlCF6ZGVi4xA==
+X-Received: by 2002:a05:600c:3148:b0:41a:bdaf:8c78 with SMTP id h8-20020a05600c314800b0041abdaf8c78mr9056659wmo.8.1715028810716;
+        Mon, 06 May 2024 13:53:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGXS3u7yyH8Hq9lb4xFCdpYTJwX09+v3bSW3RHVxTIgKkmel4AMK8PA0pm7h/wljalLA2NHQ==
+X-Received: by 2002:a05:600c:3148:b0:41a:bdaf:8c78 with SMTP id h8-20020a05600c314800b0041abdaf8c78mr9056640wmo.8.1715028810231;
+        Mon, 06 May 2024 13:53:30 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c74b:bf00:182c:d606:87cf:6fea? (p200300cbc74bbf00182cd60687cf6fea.dip0.t-ipconnect.de. [2003:cb:c74b:bf00:182c:d606:87cf:6fea])
+        by smtp.gmail.com with ESMTPSA id l27-20020a05600c1d1b00b0041c5151dc1csm20990620wms.29.2024.05.06.13.53.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 13:53:29 -0700 (PDT)
+Message-ID: <e491e094-0194-4ea0-9d0e-50538f121d6c@redhat.com>
+Date: Mon, 6 May 2024 22:53:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: do not update memcg stats for
+ NR_{FILE/SHMEM}_PMDMAPPED
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+References: <20240506192924.271999-1-yosryahmed@google.com>
+ <d99b6375-cbae-41f1-9221-f1dd25aab150@redhat.com>
+ <Zjk7AJGUsjR7TOBr@google.com>
+ <42b09dc5-cfb1-4bd7-b5e3-8b631498d08f@redhat.com>
+ <CAJD7tkYvSAWRL1fPZP8dAWtS2ZAenp9nngvwtANAzZsUSjnoJg@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAJD7tkYvSAWRL1fPZP8dAWtS2ZAenp9nngvwtANAzZsUSjnoJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add a simple test for the epoll busy poll ioctls, using the kernel
-selftest harness.
+On 06.05.24 22:41, Yosry Ahmed wrote:
+> On Mon, May 6, 2024 at 1:31 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 06.05.24 22:18, Yosry Ahmed wrote:
+>>> On Mon, May 06, 2024 at 09:50:10PM +0200, David Hildenbrand wrote:
+>>>> On 06.05.24 21:29, Yosry Ahmed wrote:
+>>>>> Previously, all NR_VM_EVENT_ITEMS stats were maintained per-memcg,
+>>>>> although some of those fields are not exposed anywhere. Commit
+>>>>> 14e0f6c957e39 ("memcg: reduce memory for the lruvec and memcg stats")
+>>>>> changed this such that we only maintain the stats we actually expose
+>>>>> per-memcg via a translation table.
+>>>>>
+>>>>> Additionally, commit 514462bbe927b ("memcg: warn for unexpected events
+>>>>> and stats") added a warning if a per-memcg stat update is attempted for
+>>>>> a stat that is not in the translation table. The warning started firing
+>>>>> for the NR_{FILE/SHMEM}_PMDMAPPED stat updates in the rmap code. These
+>>>>> stats are not maintained per-memcg, and hence are not in the translation
+>>>>> table.
+>>>>>
+>>>>> Do not use __lruvec_stat_mod_folio() when updating NR_FILE_PMDMAPPED and
+>>>>> NR_SHMEM_PMDMAPPED. Use __mod_node_page_state() instead, which updates
+>>>>> the global per-node stats only.
+>>>>>
+>>>>> Reported-by: syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+>>>>> Closes: https://lore.kernel.org/lkml/0000000000001b9d500617c8b23c@google.com
+>>>>> Fixes: 514462bbe927 ("memcg: warn for unexpected events and stats")
+>>>>> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>>>> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+>>>>> ---
+>>>>>     mm/rmap.c | 15 +++++++++------
+>>>>>     1 file changed, 9 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>>>> index 12be4241474ab..ed7f820369864 100644
+>>>>> --- a/mm/rmap.c
+>>>>> +++ b/mm/rmap.c
+>>>>> @@ -1435,13 +1435,14 @@ static __always_inline void __folio_add_file_rmap(struct folio *folio,
+>>>>>              struct page *page, int nr_pages, struct vm_area_struct *vma,
+>>>>>              enum rmap_level level)
+>>>>>     {
+>>>>> +   pg_data_t *pgdat = folio_pgdat(folio);
+>>>>>      int nr, nr_pmdmapped = 0;
+>>>>>      VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
+>>>>>      nr = __folio_add_rmap(folio, page, nr_pages, level, &nr_pmdmapped);
+>>>>>      if (nr_pmdmapped)
+>>>>> -           __lruvec_stat_mod_folio(folio, folio_test_swapbacked(folio) ?
+>>>>> +           __mod_node_page_state(pgdat, folio_test_swapbacked(folio) ?
+>>>>>                      NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED, nr_pmdmapped);
+>>>>>      if (nr)
+>>>>>              __lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr);
+>>>>> @@ -1493,6 +1494,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>>>>>              enum rmap_level level)
+>>>>>     {
+>>>>>      atomic_t *mapped = &folio->_nr_pages_mapped;
+>>>>> +   pg_data_t *pgdat = folio_pgdat(folio);
+>>>>>      int last, nr = 0, nr_pmdmapped = 0;
+>>>>>      bool partially_mapped = false;
+>>>>>      enum node_stat_item idx;
+>>>>> @@ -1540,13 +1542,14 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>>>>>      }
+>>>>>      if (nr_pmdmapped) {
+>>>>> +           /* NR_{FILE/SHMEM}_PMDMAPPED are not maintained per-memcg */
+>>>>>              if (folio_test_anon(folio))
+>>>>> -                   idx = NR_ANON_THPS;
+>>>>> -           else if (folio_test_swapbacked(folio))
+>>>>> -                   idx = NR_SHMEM_PMDMAPPED;
+>>>>> +                   __lruvec_stat_mod_folio(folio, NR_ANON_THPS, -nr_pmdmapped);
+>>>>>              else
+>>>>> -                   idx = NR_FILE_PMDMAPPED;
+>>>>> -           __lruvec_stat_mod_folio(folio, idx, -nr_pmdmapped);
+>>>>> +                   __mod_node_page_state(pgdat,
+>>>>
+>>>> folio_pgdat(folio) should fit here easily. :)
+>>>>
+>>>> But I would actually suggest something like the following in mm/rmap.c
+>>>
+>>> I am not a big fan of this. Not because I don't like the abstraction,
+>>> but because I think it doesn't go all the way. It abstracts a very
+>>> certain case: updating nr_pmdmapped for file folios.
+>>>
+>>
+>> Right. It only removes some of the ugliness ;)
+> 
+> I think if we do this we just add one unnecessary layer of indirection
+> to one case. If anything people will wonder why we have a helper only
+> for this case. Just my 2c :)
+> 
+>>
+>>> I think if we opt for abstracting the stats updates in mm/rmap.c, we
+>>> should go all the way with something like the following (probably split
+>>> as two patches: refactoring then bug fix). WDYT about the below?
+>>>
+>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>> index 12be4241474ab..70d6f6309da01 100644
+>>> --- a/mm/rmap.c
+>>> +++ b/mm/rmap.c
+>>> @@ -1269,6 +1269,28 @@ static void __page_check_anon_rmap(struct folio *folio, struct page *page,
+>>>                       page);
+>>>    }
+>>>
+>>> +static void __foio_mod_stat(struct folio *folio, int nr, int nr_pmdmapped)
+>>> +{
+>>> +     int idx;
+>>> +
+>>> +     if (nr) {
+>>> +             idx = folio_test_anon(folio) ? NR_ANON_MAPPED : NR_FILE_MAPPED;
+>>> +             __lruvec_stat_mod_folio(folio, idx, nr);
+>>> +     }
+>>> +     if (nr_pmdmapped) {
+>>> +             if (folio_test_anon(folio)) {
+>>> +                     idx = NR_ANON_THPS;
+>>> +                     __lruvec_stat_mod_folio(folio, idx, nr_pmdmapped);
+>>> +             } else {
+>>> +                     /* NR_*_PMDMAPPED are not maintained per-memcg */
+>>> +                     idx = folio_test_swapbacked(folio) ?
+>>> +                             NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED;
+>>> +                     __mod_node_page_state(folio_pgdat(folio), idx,
+>>> +                                           nr_pmdmapped);
+>>> +             }
+>>> +     }
+>>> +}
+>>> +
+>>
+>> I didn't suggest that, because in the _anon and _file functions we'll
+>> end up introducing unnecessary folio_test_anon() checks that the
+>> compiler cannot optimize out.
+> 
+> I convinced myself that the folio_test_anon() will be #free because
+> the struct folio should be already in the cache at this point, of
+> course I may be delusional :)
 
-This test ensures that the ioctls have the expected return codes and
-that the kernel properly gets and sets epoll busy poll parameters.
+Well, nothing is free :) But yes, likely it won't matter much.
 
-The test can be expanded in the future to do real busy polling (provided
-another machine to act as the client is available).
+> 
+> We can pass in an @anon boolean parameter, but it becomes an ugliness
+> tradeoff at this point :)
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- tools/testing/selftests/net/.gitignore        |   1 +
- tools/testing/selftests/net/Makefile          |   2 +-
- tools/testing/selftests/net/epoll_busy_poll.c | 271 ++++++++++++++++++
- 3 files changed, 273 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/net/epoll_busy_poll.c
+Agreed.
 
-diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
-index d996a0ab0765..777cfd027076 100644
---- a/tools/testing/selftests/net/.gitignore
-+++ b/tools/testing/selftests/net/.gitignore
-@@ -5,6 +5,7 @@ bind_wildcard
- csum
- cmsg_sender
- diag_uid
-+epoll_busy_poll
- fin_ack_lat
- gro
- hwtstamp_config
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 5befca249452..b0b893009867 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -67,7 +67,7 @@ TEST_GEN_FILES += ipsec
- TEST_GEN_FILES += ioam6_parser
- TEST_GEN_FILES += gro
- TEST_GEN_PROGS = reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
--TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict tls tun tap
-+TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict tls tun tap epoll_busy_poll
- TEST_GEN_FILES += toeplitz
- TEST_GEN_FILES += cmsg_sender
- TEST_GEN_FILES += stress_reuseport_listen
-diff --git a/tools/testing/selftests/net/epoll_busy_poll.c b/tools/testing/selftests/net/epoll_busy_poll.c
-new file mode 100644
-index 000000000000..166fabc6cc7e
---- /dev/null
-+++ b/tools/testing/selftests/net/epoll_busy_poll.c
-@@ -0,0 +1,271 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+/* Basic per-epoll context busy poll test.
-+ *
-+ * Only tests the ioctls, but should be expanded to test two connected hosts in
-+ * the future
-+ */
-+
-+#define _GNU_SOURCE
-+
-+#include <error.h>
-+#include <errno.h>
-+#include <inttypes.h>
-+#include <limits.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <sys/epoll.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+
-+#include "../kselftest_harness.h"
-+
-+/* if the headers haven't been updated, we need to define some things */
-+#if !defined(EPOLL_IOC_TYPE)
-+struct epoll_params {
-+	uint32_t busy_poll_usecs;
-+	uint16_t busy_poll_budget;
-+	uint8_t prefer_busy_poll;
-+
-+	/* pad the struct to a multiple of 64bits */
-+	uint8_t __pad;
-+};
-+
-+#define EPOLL_IOC_TYPE 0x8A
-+#define EPIOCSPARAMS _IOW(EPOLL_IOC_TYPE, 0x01, struct epoll_params)
-+#define EPIOCGPARAMS _IOR(EPOLL_IOC_TYPE, 0x02, struct epoll_params)
-+#endif
-+
-+FIXTURE(invalid_fd)
-+{
-+	int invalid_fd;
-+	struct epoll_params params;
-+};
-+
-+FIXTURE_SETUP(invalid_fd)
-+{
-+	int ret;
-+
-+	ret = socket(AF_UNIX, SOCK_DGRAM, 0);
-+	EXPECT_NE(-1, ret)
-+		TH_LOG("error creating unix socket");
-+
-+	self->invalid_fd = ret;
-+}
-+
-+FIXTURE_TEARDOWN(invalid_fd)
-+{
-+	int ret;
-+
-+	ret = close(self->invalid_fd);
-+	EXPECT_EQ(0, ret);
-+}
-+
-+TEST_F(invalid_fd, test_invalid_fd)
-+{
-+	int ret;
-+
-+	ret = ioctl(self->invalid_fd, EPIOCGPARAMS, &self->params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCGPARAMS on invalid epoll FD should error");
-+
-+	EXPECT_EQ(ENOTTY, errno)
-+		TH_LOG("EPIOCGPARAMS on invalid epoll FD should set errno to ENOTTY");
-+
-+	memset(&self->params, 0, sizeof(struct epoll_params));
-+
-+	ret = ioctl(self->invalid_fd, EPIOCSPARAMS, &self->params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCSPARAMS on invalid epoll FD should error");
-+
-+	EXPECT_EQ(ENOTTY, errno)
-+		TH_LOG("EPIOCSPARAMS on invalid epoll FD should set errno to ENOTTY");
-+}
-+
-+FIXTURE(epoll_busy_poll)
-+{
-+	int fd;
-+	struct epoll_params params;
-+	struct epoll_params *invalid_params;
-+};
-+
-+FIXTURE_SETUP(epoll_busy_poll)
-+{
-+	int ret;
-+
-+	ret = epoll_create1(0);
-+	EXPECT_NE(-1, ret)
-+		TH_LOG("epoll_create1 failed?");
-+
-+	self->fd = ret;
-+}
-+
-+FIXTURE_TEARDOWN(epoll_busy_poll)
-+{
-+	int ret;
-+
-+	ret = close(self->fd);
-+	EXPECT_EQ(0, ret);
-+}
-+
-+TEST_F(epoll_busy_poll, test_get_params)
-+{
-+	/* begin by getting the epoll params from the kernel
-+	 *
-+	 * the default should be default and all fields should be zero'd by the
-+	 * kernel, so set params fields to garbage to test this.
-+	 */
-+	int ret = 0;
-+
-+	self->params.busy_poll_usecs = 0xff;
-+	self->params.busy_poll_budget = 0xff;
-+	self->params.prefer_busy_poll = 1;
-+	self->params.__pad = 0xf;
-+
-+	ret = ioctl(self->fd, EPIOCGPARAMS, &self->params);
-+	EXPECT_EQ(0, ret)
-+		TH_LOG("ioctl EPIOCGPARAMS should succeed");
-+
-+	EXPECT_EQ(0, self->params.busy_poll_usecs)
-+		TH_LOG("EPIOCGPARAMS busy_poll_usecs should have been 0");
-+
-+	EXPECT_EQ(0, self->params.busy_poll_budget)
-+		TH_LOG("EPIOCGPARAMS busy_poll_budget should have been 0");
-+
-+	EXPECT_EQ(0, self->params.prefer_busy_poll)
-+		TH_LOG("EPIOCGPARAMS prefer_busy_poll should have been 0");
-+
-+	EXPECT_EQ(0, self->params.__pad)
-+		TH_LOG("EPIOCGPARAMS __pad should have been 0");
-+
-+	self->invalid_params = (struct epoll_params *)0xdeadbeef;
-+	ret = ioctl(self->fd, EPIOCGPARAMS, self->invalid_params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCGPARAMS should error with invalid params");
-+
-+	EXPECT_EQ(EFAULT, errno)
-+		TH_LOG("EPIOCGPARAMS with invalid params should set errno to EFAULT");
-+}
-+
-+TEST_F(epoll_busy_poll, test_set_invalid)
-+{
-+	int ret;
-+
-+	memset(&self->params, 0, sizeof(struct epoll_params));
-+
-+	self->params.__pad = 1;
-+
-+	ret = ioctl(self->fd, EPIOCSPARAMS, &self->params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCSPARAMS non-zero __pad should error");
-+
-+	EXPECT_EQ(EINVAL, errno)
-+		TH_LOG("EPIOCSPARAMS non-zero __pad errno should be EINVAL");
-+
-+	self->params.__pad = 0;
-+	self->params.busy_poll_usecs = (unsigned int)INT_MAX + 1;
-+
-+	ret = ioctl(self->fd, EPIOCSPARAMS, &self->params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCSPARAMS should error busy_poll_usecs > S32_MAX");
-+
-+	EXPECT_EQ(EINVAL, errno)
-+		TH_LOG("EPIOCSPARAMS busy_poll_usecs > S32_MAX errno should be EINVAL");
-+
-+	self->params.__pad = 0;
-+	self->params.busy_poll_usecs = 32;
-+	self->params.prefer_busy_poll = 2;
-+
-+	ret = ioctl(self->fd, EPIOCSPARAMS, &self->params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCSPARAMS should error prefer_busy_poll > 1");
-+
-+	EXPECT_EQ(EINVAL, errno)
-+		TH_LOG("EPIOCSPARAMS prefer_busy_poll > 1 errno should be EINVAL");
-+
-+	self->params.__pad = 0;
-+	self->params.busy_poll_usecs = 32;
-+	self->params.prefer_busy_poll = 1;
-+
-+	/* set budget well above kernel's NAPI_POLL_WEIGHT of 64 */
-+	self->params.busy_poll_budget = 65535;
-+
-+	ret = ioctl(self->fd, EPIOCSPARAMS, &self->params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCSPARAMS should error busy_poll_budget > NAPI_POLL_WEIGHT");
-+
-+	EXPECT_EQ(EPERM, errno)
-+		TH_LOG("EPIOCSPARAMS errno should be EPERM busy_poll_budget > NAPI_POLL_WEIGHT");
-+
-+	self->invalid_params = (struct epoll_params *)0xdeadbeef;
-+	ret = ioctl(self->fd, EPIOCSPARAMS, self->invalid_params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("EPIOCSPARAMS should error when epoll_params is invalid");
-+
-+	EXPECT_EQ(EFAULT, errno)
-+		TH_LOG("EPIOCSPARAMS should set errno to EFAULT when epoll_params is invalid");
-+}
-+
-+TEST_F(epoll_busy_poll, test_set_and_get_valid)
-+{
-+	int ret;
-+
-+	memset(&self->params, 0, sizeof(struct epoll_params));
-+
-+	self->params.busy_poll_usecs = 25;
-+	self->params.busy_poll_budget = 16;
-+	self->params.prefer_busy_poll = 1;
-+
-+	ret = ioctl(self->fd, EPIOCSPARAMS, &self->params);
-+
-+	EXPECT_EQ(0, ret)
-+		TH_LOG("EPIOCSPARAMS with valid params should not error");
-+
-+	/* check that the kernel returns the same values back */
-+
-+	memset(&self->params, 0, sizeof(struct epoll_params));
-+
-+	ret = ioctl(self->fd, EPIOCGPARAMS, &self->params);
-+
-+	EXPECT_EQ(0, ret)
-+		TH_LOG("EPIOCGPARAMS should not error");
-+
-+	EXPECT_EQ(25, self->params.busy_poll_usecs)
-+		TH_LOG("params.busy_poll_usecs incorrect");
-+
-+	EXPECT_EQ(16, self->params.busy_poll_budget)
-+		TH_LOG("params.busy_poll_budget incorrect");
-+
-+	EXPECT_EQ(1, self->params.prefer_busy_poll)
-+		TH_LOG("params.prefer_busy_poll incorrect");
-+
-+	EXPECT_EQ(0, self->params.__pad)
-+		TH_LOG("params.__pad was not 0");
-+}
-+
-+TEST_F(epoll_busy_poll, test_invalid_ioctl)
-+{
-+	int invalid_ioctl = EPIOCGPARAMS + 10;
-+	int ret;
-+
-+	ret = ioctl(self->fd, invalid_ioctl, &self->params);
-+
-+	EXPECT_EQ(-1, ret)
-+		TH_LOG("invalid ioctl should return error");
-+
-+	EXPECT_EQ(EINVAL, errno)
-+		TH_LOG("invalid ioctl should set errno to EINVAL");
-+}
-+
-+TEST_HARNESS_MAIN
+> 
+> Anyway, I don't feel strongly either way. I am fine with keeping the
+> patch as-is, the diff I proposed above, or the diff I proposed with an
+> @anon parameter of folio_test_anon(). The only option I don't really
+> like is adding a helper just for the file pmdmapped case.
+
+Let's go with your cleanup here (could do as separate cleanup on top of 
+v2, whatever you prefer).
+
 -- 
-2.25.1
+Cheers,
+
+David / dhildenb
 
 
