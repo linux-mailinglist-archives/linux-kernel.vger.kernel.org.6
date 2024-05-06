@@ -1,178 +1,161 @@
-Return-Path: <linux-kernel+bounces-170026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5538BD0C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:51:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACF18BD0CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331361F22A67
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:51:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566BC28DFF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C87A153812;
-	Mon,  6 May 2024 14:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202EB153BD3;
+	Mon,  6 May 2024 14:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iA/8VuBf"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M/Hp8vbq"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE7A13BAC7
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87078153811;
+	Mon,  6 May 2024 14:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715007105; cv=none; b=PNpcrWc2wG6NayJIXiJY2IfWPXEjpFxEY12wJjM7NPGLZAJwPsok+AmO3ZXeXF8kINvioaOlTgbYUhYCcu5H68FjcRC4u0tF7cVlGpobgfEZ+duUMr9ERY3E9tFdxwAvprmw5fyRSuUdcTQus8gCd6S1q0iM9xdaoZvZRi9BOCY=
+	t=1715007222; cv=none; b=T0yCrM6FBzEHSSWcpkjUEkzarn6LE19updVpyi43LMNqa30K1BhJxx1KXaGloun1bxMXeDOv1iCFo6ZP2SAxAzUZP4HXLJMo9xsGAIJf6E13fPJ6iGNywfdJpEizWOPFwsOGK5vZmRzTH8bHtazW8Jc2TdsP83xLMXoa/jIGcrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715007105; c=relaxed/simple;
-	bh=zNRbPoGDo3HrrdK55EDrje2YLapHPeVNDdjBeQjXIl0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N+3wgMPVhWRVHOLunBm67o2oym28cFdUzgBBGrhzDMUZoNLUkyLoxataN/10LZFiUR5IYhlNOTIqkzaZqoR3uuo3Ba6oJIx4nIRdNFKy+IcP3GG8hQkmrJ+jM3OP6fc4D5OijTfddtHPQZLJBeQfVqj+Rr3O1/LqMbeWLezq7Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iA/8VuBf; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c5b749c4-5277-46f9-8218-a56e63dc9028@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715007101;
+	s=arc-20240116; t=1715007222; c=relaxed/simple;
+	bh=VqwS8HLlclFcMgXtUlE14xVFAIrbzqdqBf23L1eAVIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i5Inl53CgF1pRZefyrwCBy1vF6KQeDahp/X1VoJd+1nMEHJvGnWnTd7mrJOPQh0ysP85zRZz7xISrlFlHhBp+n6gnCQNyFrgzvXkNloq31MOav2MYJ07IVKn39gXQRPxZ3nwRcUC6zgSebFYqnVGIRUQIBnWarO9w4nsP7LkyR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M/Hp8vbq; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5DBBC1C0002;
+	Mon,  6 May 2024 14:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715007217;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U8GrcUQlowClA2iRoj1euDYQxhz+hiklndiBkUyOg9A=;
-	b=iA/8VuBfhygfV8H8eY9CJJjdeBDene9JYvUSfuRX7OJInUCUrR7JH14EgIlJrnWvraa54T
-	LsEqO6jhYWi06ZEidIiKOS8RrrlhWhYDXWgjp216mHK7zDvJWs0XlZJC/2t6CzKTNQ5fjP
-	c33ldu3yKYw7Nh7C8WIJ6hMMAbU1jtU=
-Date: Mon, 6 May 2024 10:51:38 -0400
+	bh=gE9sVWIpmtf/xp/E4mNpiGxkkhDUpOJ02B6qf1T2ziA=;
+	b=M/Hp8vbqXojVBUVgaulLG7GU9Zp9DgtpWSDP/uaekzkwyNUlQy9jkJ514QtsEfoakG0kV7
+	q2d0y1nqeakzPBFA36us8tYmwiNeUg6r/fF2MKxJvbYWfMLpYaOGvP7YuFPhM9i7nrbQVu
+	k9MmzF0x6Lb9E4uVGAmpDET20+OIXCybVpGj9KIf9Z+k4vbD5mMbNsXq7kU8TcnOHWrpz/
+	IdhuB8WQArTNpJj6rIp9FPNnr5FApG0o3CKbbOCMVYeSAv1Kjcjm2HwWPxeyR9/i2Ww5cZ
+	zQwNcaMR1kznVbY6HfwRkiB2Vgl0HYQetxX4IaY8VIYX6gKlbfStH17HNEMaeA==
+Date: Mon, 6 May 2024 16:53:36 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ yen-mei.goh@keysight.com, jeremie.dautheribes@bootlin.com
+Subject: Re: [PATCH v2] spi: omap2-mcspi: Ensure that CS is correctly
+ asserted when switching from MULTI mode to SINGLE mode
+Message-ID: <20240506165336.6ab8213e@xps-13>
+In-Reply-To: <20240506-fix-omap2-mcspi-v2-1-d9c77ba8b9c7@bootlin.com>
+References: <20240506-fix-omap2-mcspi-v2-1-d9c77ba8b9c7@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] phy: zynqmp: Add debugfs support
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org,
- Kishon Vijay Abraham I <kishon@kernel.org>
-References: <20240422185803.3575319-1-sean.anderson@linux.dev>
- <20240422185803.3575319-4-sean.anderson@linux.dev> <ZjYjAjPlM5ClOGa4@matsya>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <ZjYjAjPlM5ClOGa4@matsya>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On 5/4/24 07:58, Vinod Koul wrote:
-> On 22-04-24, 14:58, Sean Anderson wrote:
->> Add support for printing some basic status information to debugfs. This
->> is helpful when debugging phy consumers to make sure they are configuring
->> the phy appropriately.
->> 
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->> 
->>  drivers/phy/xilinx/phy-zynqmp.c | 54 +++++++++++++++++++++++++++++++++
->>  1 file changed, 54 insertions(+)
->> 
->> diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-zynqmp.c
->> index 08c88dcd7799..e2e86943e9f3 100644
->> --- a/drivers/phy/xilinx/phy-zynqmp.c
->> +++ b/drivers/phy/xilinx/phy-zynqmp.c
->> @@ -13,6 +13,7 @@
->>   */
->>  
->>  #include <linux/clk.h>
->> +#include <linux/debugfs.h>
->>  #include <linux/delay.h>
->>  #include <linux/io.h>
->>  #include <linux/kernel.h>
->> @@ -122,6 +123,15 @@
->>  #define ICM_PROTOCOL_DP			0x4
->>  #define ICM_PROTOCOL_SGMII		0x5
->>  
->> +static const char *const xpsgtr_icm_str[] = {
->> +	[ICM_PROTOCOL_PD] = "powered down",
->> +	[ICM_PROTOCOL_PCIE] = "PCIe",
->> +	[ICM_PROTOCOL_SATA] = "SATA",
->> +	[ICM_PROTOCOL_USB] = "USB",
->> +	[ICM_PROTOCOL_DP] = "DisplayPort",
->> +	[ICM_PROTOCOL_SGMII] = "SGMII",
->> +};
->> +
->>  /* Test Mode common reset control  parameters */
->>  #define TM_CMN_RST			0x10018
->>  #define TM_CMN_RST_EN			0x1
->> @@ -768,6 +778,48 @@ static struct phy *xpsgtr_xlate(struct device *dev,
->>  	return ERR_PTR(-EINVAL);
->>  }
->>  
->> +/*
->> + * DebugFS
->> + */
->> +
->> +static int xpsgtr_status_read(struct seq_file *seq, void *data)
->> +{
->> +	struct xpsgtr_phy *gtr_phy = seq->private;
->> +	struct clk *clk;
->> +	u32 pll_status;
->> +
->> +	mutex_lock(&gtr_phy->phy->mutex);
->> +	pll_status = xpsgtr_read_phy(gtr_phy, L0_PLL_STATUS_READ_1);
->> +	clk = gtr_phy->dev->clk[gtr_phy->refclk];
->> +
->> +	seq_printf(seq, "Lane:            %u\n", gtr_phy->lane);
->> +	seq_printf(seq, "Protocol:        %s\n",
->> +		   xpsgtr_icm_str[gtr_phy->protocol]);
->> +	seq_printf(seq, "Instance:        %u\n", gtr_phy->instance);
->> +	seq_printf(seq, "Reference clock: %u (%pC)\n", gtr_phy->refclk, clk);
->> +	seq_printf(seq, "Reference rate:  %lu\n", clk_get_rate(clk));
->> +	seq_printf(seq, "PLL locked:      %s\n",
->> +		   pll_status & PLL_STATUS_LOCKED ? "yes" : "no");
->> +
->> +	mutex_unlock(&gtr_phy->phy->mutex);
->> +	return 0;
->> +}
->> +
->> +static int xpsgtr_status_open(struct inode *inode, struct file *f)
->> +{
->> +	struct xpsgtr_phy *gtr_phy = inode->i_private;
->> +
->> +	return single_open(f, xpsgtr_status_read, gtr_phy);
->> +}
->> +
->> +static const struct file_operations xpsgtr_status_ops = {
->> +	.owner = THIS_MODULE,
->> +	.open = xpsgtr_status_open,
->> +	.release = single_release,
->> +	.read = seq_read,
->> +	.llseek = seq_lseek
->> +};
-> 
-> There are debugfs simple helpers which should help you avoid all this
-> open coding and just have the read call
+Hi Louis,
 
-I assume you mean debugfs_create_devm_seqfile.
+Minor nits below.
 
->> +
->>  /*
->>   * Power Management
->>   */
->> @@ -917,6 +969,8 @@ static int xpsgtr_probe(struct platform_device *pdev)
->>  
->>  		gtr_phy->phy = phy;
->>  		phy_set_drvdata(phy, gtr_phy);
->> +		debugfs_create_file("status", 0444, phy->debugfs, gtr_phy,
->> +				    &xpsgtr_status_ops);
-> 
-> generic status does not make sense, how about device-name-status
+louis.chauvet@bootlin.com wrote on Mon, 06 May 2024 16:27:59 +0200:
 
-This file lives in the phy's debugfs directory already. The full path is
+> The OMAP2 support features a "multi" mode, where the controller
 
-/sys/kernel/debug/phy/phy-fd400000.phy.0/status
+s/The //
 
-so there is no need to add the phy name yet again.
+> automatically sets the Chip Select (CS) when necessary. This mode allows
+> for shorter delays between CS selection and word content, but the CS is
+> always deasserted at the end.
+>=20
+> The default transfer_one_message function expects the last transfer of a
+> message to keep the CS enabled. However, when two consecutive messages
+> use "multi" mode followed by "single" mode, the chipselect is not enabled
 
---Sean
+Above you wrote Chip Select and CS, maybe you want to reuse one of them
+to be more consistent?
+
+> during the second message. This discrepancy causes the driver to time
+> out.
+>=20
+> To address this issue, the CS is now reasserted for each new message that
+
+				needs to be
+
+> follows a "multi"-mode message. This change ensures proper CS handling
+> and prevents driver timeouts.
+>=20
+> Fixes: d153ff4056cb ("spi: omap2-mcspi: Add support for MULTI-mode")
+>=20
+
+No new line needed here, but more importantly, I see no valid Git object
+with this hash, can you double check?
+
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+> Changes in v2:
+> - Fix build error, I used the old API (master instead of controller)
+> - Link to v1: https://lore.kernel.org/r/20240409-fix-omap2-mcspi-v1-1-f2b=
+881ae196d@bootlin.com
+> ---
+>  drivers/spi/spi-omap2-mcspi.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+> index 7e3083b83534..dd514a7504ec 100644
+> --- a/drivers/spi/spi-omap2-mcspi.c
+> +++ b/drivers/spi/spi-omap2-mcspi.c
+> @@ -1264,6 +1264,15 @@ static int omap2_mcspi_prepare_message(struct spi_=
+controller *ctlr,
+>  	struct spi_transfer	*tr;
+>  	u8 bits_per_word;
+> =20
+> +	/*
+> +	 * When the last transfer used multi-mode, the CS is not keep down by t=
+he controller.
+
+	   If the						 kept
+
+> +	 * The default transfer_one_message expect that the last transfer of a =
+message keep the CS
+
+					    expects			               keeps
+
+> +	 * active.
+> +	 * Ensure that the next call to spi_set_cs will work as expected if sin=
+gle-mode is used.
+> +	 */
+> +	if (mcspi->use_multi_mode)
+> +		ctlr->last_cs[0] =3D -1;
+
+Maybe you should use SPI_INVALID_CS?
+
+> +
+>  	/*
+>  	 * The conditions are strict, it is mandatory to check each transfer of=
+ the list to see if
+>  	 * multi-mode is applicable.
+>=20
+> ---
+> base-commit: dfca7eb7615116b696ecdc85417c9e2df0b546dc
+> change-id: 20240408-fix-omap2-mcspi-a6b41142ad9a
+>=20
+> Best regards,
+
+
+Thanks,
+Miqu=C3=A8l
 
