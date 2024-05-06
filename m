@@ -1,139 +1,80 @@
-Return-Path: <linux-kernel+bounces-170436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441B38BD6C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:17:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F16B8BD6C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755C71C20F99
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:17:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031F92835B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBACE15B96C;
-	Mon,  6 May 2024 21:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A443815B978;
+	Mon,  6 May 2024 21:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHyXoysM"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/akP4EQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660A6EBB;
-	Mon,  6 May 2024 21:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5291EBB;
+	Mon,  6 May 2024 21:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715030269; cv=none; b=tnFAEuHvILORU2BtyDpDQd+bFX5vaQqUHgzRKTU7TN/jZRU/AjHG1uDtw1Tcac35WJd5pczzYt7oZWn+9rtycXEJeqgt3IDJLB+lsQ8GQcn5+HtymF2+OdFznCL1rLVsMTAczNBpeT/1hm4hexOjJ3I0Ij9MthPdP39ofKXtP3w=
+	t=1715030257; cv=none; b=m6dEsEoW7uCirDS69MwHcT39MEfJRDGQun8xURqPi8QTMDW0GrYyPQ02DaDxytmoMEZtGHNWmDdsctFfgxbrrwN4NUmcWXL0lxnozN6Qzyn8xj/Uggr5TGQYnCFBXmFd+M2diKyHsHr7GXp+r4TRs086xk+z/sFs/xzO3AtJFa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715030269; c=relaxed/simple;
-	bh=e8VgMeSCZ/OulgKMvTpaka2RvvG3NXalkKCqK6iBpZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uSxfEFIMmK7lkn8MWnCAqUHJa3khr6UHxq/2QmHXR7LtbZpZoeS1X3Owp8XQ6BEEpU4BBLKWyKBQMKoo+v4oTogXM7KT/quEWOsiVQJyJH7C1Ud/aEbBp2XFMVbxlGnS7c9TnSz3uUniohHBWYqOqmvqGnnAFyCt4yt0VOtuAgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHyXoysM; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e1fa824504so35161431fa.0;
-        Mon, 06 May 2024 14:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715030265; x=1715635065; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3qTQN/g2qZ283tv4UTy5xindxNuRSAyapuUJnKhnb3Y=;
-        b=IHyXoysMbRNpgRArLQUjO6SVES4uF0NzeaZqYQL9Rjit6LWtqcatr/p3OM6Hv74HYv
-         DOhS5dhrg5Gg9epkp1HOgH5qeZ2DXKNMIs49LRaYBttfmp8THyAsTAvDEyxUFocf8waY
-         V9vuPNrhJmNnReMsHTwj1dEKudVqlTnVn7fkxppOkCDeXTDr7FAbkfcGxm37/HYink0J
-         rua+TTeRGlgicwEbzHs4YjSqcF7Ai9duw9Q0x/HdHXxlEBRRM+HuXcuXgVcuox45KcYY
-         s5Dw0/8OoSUIvRf8GA/KxIxXj4KE6QRgqVOizr4AXcHDNe2CSIxmwqcRXunMCcYdNp9H
-         cfkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715030265; x=1715635065;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3qTQN/g2qZ283tv4UTy5xindxNuRSAyapuUJnKhnb3Y=;
-        b=OKcnIsltaXW1PHvxcd8tDejL6tgXojdZh6vv9gkilL+kK+q01RowPl/BE2sh5qWyYy
-         vukcFJVQMtb1N1RE2fBnXrm7BRzhyiLKmGPPoBO32xkjRRchdIcatxCp/v7IBE162jky
-         g6nmw5rRhtJFlnjslAobffXbIzDNp6FYoCYrRfuLPVM+nRbM9kZzIUa5dxtgpc3oAqH+
-         /P6sipCY17gZBS1WjYBjhI8BZgfh70udCypqbfwB+cmBREAZi6My9wwsYadvUNY8zkRc
-         oSHkfED5tW767LSD6I934XK/pZgzuNpHr9lVzBxFRmiKhdP8o1clyLd1ACUlaGoRQyqj
-         jolQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVheQJAnj7VHB+hEwqzUWA9uZH5YfJBm4yluyHy7fmzSpZnbszSLPHvdCc4b1qnb++mC3yprRrHaZdd5M9LsuuW4beHkgD3B06/Tn7x4AQNdFESgUavRqjyno/T4hxBiqcDmhqEQIfYi0U=
-X-Gm-Message-State: AOJu0Yw2LFkMxngZaJ/6UPjvakousZQ2v7PDk/1tO/3SgFln6soH8Y4g
-	4NLCqwtGgjC4Ri5JbmOS9IaiS8uzzFHCIPhe0Y0pZhRyktYEbeGfgQ270sCW5LjeUs55NSyufEs
-	w/o/pnOfhYnK5hWVQqm/H6KkrfaNNjLQC
-X-Google-Smtp-Source: AGHT+IHyv+lzt1LK2LFK/ZLOsWT7wOGj2Kdf+c3xpAX3dL1/auTk2ttKMEncm4x/ZiJ7dAWS31RcCI8iJphL6ktCS1s=
-X-Received: by 2002:a2e:9059:0:b0:2e3:3eaa:ac92 with SMTP id
- n25-20020a2e9059000000b002e33eaaac92mr2731275ljg.53.1715030265230; Mon, 06
- May 2024 14:17:45 -0700 (PDT)
+	s=arc-20240116; t=1715030257; c=relaxed/simple;
+	bh=nlOerx+btwY1Mcb9sXIbyx5LtlxA941Z71rRE+dX5Gw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CyrXNLzMsEZpsEijGs9XQr9iglbkTKKUhSxa02WIsylyMUyOtB0odAaZsbkn7FiaJkJoZ49o0PzPxnBeeljjuUYZeKpqNOdEEQ+qIJck/d6gMLUBUMm18Ps+CVp8+X3s8GrtAcIZWkgAcKMNqlTklCBQIGAw+wXVC3MoKVWO8Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/akP4EQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 624BFC116B1;
+	Mon,  6 May 2024 21:17:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715030256;
+	bh=nlOerx+btwY1Mcb9sXIbyx5LtlxA941Z71rRE+dX5Gw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=p/akP4EQkKHC7hTUa2UZHHgsx0a1pcNfIwxi7g0Rx09aMzpWJhw+z4dAVXU/L7Yei
+	 ASoEzAfAYxU+V6NTtitdy16P0Oy8wlhAEV3NLMcR4U5uer0OBexBYeWDTUmkldpcZF
+	 R6YMB/RLFrcqzAGcgWz+RxNjFW2w15ZvOIE1LQ9k7JFCVdKu9DHx2LJHBtYtBDiiwz
+	 VFwB3OusQJdFBM2lav4DFXu241a9wl9p7gjNJvifOzVG5sSh6peBJBP1c1Jx50+Ypm
+	 DAcyqyuZu8zoXLEwRrruXa5/HqFdMB7bsnwgWmaFUeVUnbqAM6hIB8zn7bucWhKZqD
+	 bkIreGQbs2AMQ==
+Date: Mon, 6 May 2024 23:17:34 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Thomas Kuehne <thomas.kuehne@gmx.li>
+cc: bentiss@kernel.org, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: hid-debug: more informative output for EV_KEY
+In-Reply-To: <Zhp5QlMGazcW+RV5@black>
+Message-ID: <nycvar.YFH.7.76.2405062317260.16865@cbobk.fhfr.pm>
+References: <Zhp5QlMGazcW+RV5@black>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240430080019.4242-1-konishi.ryusuke@gmail.com>
- <20240430080019.4242-2-konishi.ryusuke@gmail.com> <650ed9f6-fa50-4a3b-939d-633f9e389137@acm.org>
- <CAKFNMomCzNMU0tjLkEchr=GQwSVW1zr1GAq7vUToeOvX-M3eVg@mail.gmail.com>
- <CAKFNMo=rkHF6urydfDbcvTbGzUEHmsTudVMm517pTE32vzqiwA@mail.gmail.com>
- <32e6621b-cbd9-42be-8626-49c12c25f139@acm.org> <CAKFNMokSLHrB8jyGuNH-HBqcrAmJ5-SFwu-sTgt30X2j+=KykA@mail.gmail.com>
- <5a1ebb30-d6b8-4f1f-9324-4d7b12e1be21@acm.org>
-In-Reply-To: <5a1ebb30-d6b8-4f1f-9324-4d7b12e1be21@acm.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Tue, 7 May 2024 06:17:28 +0900
-Message-ID: <CAKFNMokwnkku4tHcaAJPmFaBONZqoTMOLtKh_A7kcjzoxj3QZw@mail.gmail.com>
-Subject: Re: [PATCH -mm 1/2] nilfs2: use integer type instead of enum req_op
- for event tracing header
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-nilfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, May 7, 2024 at 2:26=E2=80=AFAM Bart Van Assche wrote:
->
-> On 5/5/24 12:04 PM, Ryusuke Konishi wrote:
-> > I also tried typecasting on the declaration header side of event
-> > tracing, but so far, the sparse warnings don't go away except for the
-> > patch I first proposed.
->
-> How about this patch?
->
-> diff --git a/include/trace/events/nilfs2.h b/include/trace/events/nilfs2.=
-h
-> index 8efc6236f57c..b1a364a33a62 100644
-> --- a/include/trace/events/nilfs2.h
-> +++ b/include/trace/events/nilfs2.h
-> @@ -200,7 +200,11 @@ TRACE_EVENT(nilfs2_mdt_submit_block,
->                     __field(struct inode *, inode)
->                     __field(unsigned long, ino)
->                     __field(unsigned long, blkoff)
-> -                   __field(enum req_op, mode)
-> +                   /*
-> +                    * Use field_struct to avoid is_signed_type() on the =
-bitwise
-> +                    * type enum req_op.
-> +                    */
-> +                   __field_struct(enum req_op, mode)
->             ),
->
->             TP_fast_assign(
->
-> Thanks,
->
-> Bart.
+On Sat, 13 Apr 2024, Thomas Kuehne wrote:
 
-Great!  This patch removed the sparse warnings.
+> Currently hid-debug's hid_resolv_event prints questions marks for
+> all entries without explicit mapping information. This makes
+> debugging unnecessarily complicated as multiple different
+> keys may simply result in the same uninformative output.
+> 
+> Some common event codes are deliberately not defined in
+> input-event-codes.h. For example the 16th gamepad key.
+> 
+> Instead, print the hexadecimal codes for all events without symbolic
+> names.
 
-It passed multiple build methods and did not break either tracing or
-nilfs2 functionality in operational testing.
+Applied, thanks.
 
-I never thought of using __field_struct for enum type, but looking at
-the definition it looks like it can be used to just avoid
-is_signed_type() without any side effects.   So, this patch looks
-better than mine.
+-- 
+Jiri Kosina
+SUSE Labs
 
-If you don't mind, could you complete this change as a patch by adding
-a commit message and related tags?
-
-Thanks,
-Ryusuke Konishi
 
