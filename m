@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-169853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0976A8BCE88
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:54:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C71C8BCE8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AB731C2382D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:54:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C05287E26
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF965768EE;
-	Mon,  6 May 2024 12:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8995574BF8;
+	Mon,  6 May 2024 12:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1YJjOyR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BF3fbcQo"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2373C1DFED;
-	Mon,  6 May 2024 12:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131966BB29;
+	Mon,  6 May 2024 12:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715000048; cv=none; b=E99Z5NfnCXFd6J6FTRg6W8S0zpzQVXKuroXxIc05/VJ+RrLUo80Y0Rn46wXEtCDXHqtE3uOlrMT5oUTOT2DaILt5PDZ6RMB99/jylXLwCWrYNTJSx1sZ+FH3TgDqksAlhrN46IoL8G8M2g9B6Wpi+v1PGziVxvM4TqTuy00owF0=
+	t=1715000057; cv=none; b=l8QTkWOXFc1UVn4og53tVbAI/RTOhRfTa/9iaJ/6ix4vO08GWdXzHammSoM2ciMz2JnvQxu8wP2raBpPhfxkS+Oijrk7AW33MAikcA4lB/NUHOx34+jVR/MZH7m9Cpm0UoG4WY+Ajxz6Ql9jgDMWTB+QUMENvi/8pv84AuaJatU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715000048; c=relaxed/simple;
-	bh=KUwwyNyJwPPdMeGqoeTUqqEDzql3cEq+MUynSJgDF6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f+Ky/R8Ev2gxFE5AIY/qabYKphvJsLmSh6FmYkvCZtvu/ZpQKC9OwN6mBSafYUGeZCjY46PU+6vQbi5HIfT5i/evMYE9/u6cq8B6q/v2lZP4mYKFaqHPLLYeXBUr/OEpHtikusqJB1yYBEvXmICyJIYP+MNpy2VFjrFUo24XU60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1YJjOyR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C523C116B1;
-	Mon,  6 May 2024 12:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715000047;
-	bh=KUwwyNyJwPPdMeGqoeTUqqEDzql3cEq+MUynSJgDF6s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W1YJjOyRny1ZzwTH0HfI8uXikOQ9ax3ni+hVAM+atWu2yCpmAVVH/coidEJZo9qFu
-	 dYZrvsg39skRnjVYB9gyKb5W+w7odcw8WVAoL4IAQhzn11D055spDMDXjZxZbORyvQ
-	 Hr15TjvOvoU/CBHa/WUtUApJXDkSdo+/iDBIkgSswVNc3ftn4rGOfwxsn65i13+tp3
-	 PsT4faH3IUHGxKVbGLKx8UhzABzvi+oc7JKSis4c0x2vyXPng/5KEWpfRLCAGjaSqv
-	 +PggfKnIM3PT8vFRKGfLm/z7W+vmwSbuzjrtFjh4E1pCD/LrEJWmVHc/JcZeMRaG8S
-	 mbK/dy14+s9zg==
-Date: Mon, 6 May 2024 13:53:56 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: Re: [PATCH v2 0/2] Fix the iio-gts-helpers available times table
- sorting
-Message-ID: <20240506135356.7babe20f@jic23-huawei>
-In-Reply-To: <11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
-References: <cover.1714480171.git.mazziesaccount@gmail.com>
-	<20240505185027.18809bfd@jic23-huawei>
-	<11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715000057; c=relaxed/simple;
+	bh=E29O+zMWl54OXMlXahFL9wvPKNx96W/D2EieMI10Y/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KHQVro7JaSP8wBlLi44b4jv1ii6pSlsmSD3hlqeIV284RQvu/Y7OS99H6d5Wpn6GaxvFz64RshGTJtTFl4gsGCSbAxWGFKkslUE3feqABrMZlI0bPowuOUnvJUtPsStqmQXEiAd9s4U0bkfI48wttIzTeQLPE2ot1/nuHsc8UAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BF3fbcQo; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f29e80800so2020175e87.2;
+        Mon, 06 May 2024 05:54:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715000054; x=1715604854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IYJUMLyOfuPVkBGsjqvkIOkmksaH29NkjD+X1QlY6WE=;
+        b=BF3fbcQoIMk3XTJYeL5bDMvtsnGmu+My9/JmRckN6IjsfWsaN37APcJrKTeXzGDLHf
+         eG7kUdnLzpeS2+AhUrcATHPW9YB7m2vChQItecg3TzhaBvJVlCHlWgy0cL8GrII4/835
+         zEXLOkqXIk2dr/pYVj03aGUHWXiu2DwrbRvO0wJkiBafst4FPt0hXrTcMoVZ4z2fEKrQ
+         ngxc63zvUOrQ0YTRg0Js9a6BaBoXP8j4T0a/CP9rc8kSEaNd5hDIOp3HMYQVWfO7iMqQ
+         GZGZBKsRo0oeuyY3w+Tv3B0kdIZZe2eiJIoPQubCVQTxVCA2LvF4gdvkv3L79IEl04ke
+         5BUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715000054; x=1715604854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IYJUMLyOfuPVkBGsjqvkIOkmksaH29NkjD+X1QlY6WE=;
+        b=O88JYHySBcZuCSkEEkUOQw6VZqBj6AZRTfg0T+3vScNGh8Y8tV3PXoZxtXE4ppBWf2
+         +J1HgvDqTLkPfNnPSlnzYuRyARilllQuJERxyuiwYWiizDgK2AatR3ozE+WJI35zLI/Q
+         Yx14Y26AHpBv+x7dCvGwivPkcbTsPtuL6YUad7FyMCZrIpmht89XqsLHWTWKygvQlrWf
+         P6B1FghXG7dDshfxaB++meFt9o8eXUINtNLOjmeILBcY1o1lDChCqbkqsNgu6kAQJ3yk
+         HZle4e93rI6C/BguVLOgBicqaW8NlGnLAKjGQks47AYhngoHQDMowrDBv9UZIs0QlKEN
+         TmQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYvUUb334/0gme1cf6H1iO9qWVXppxT8MQEtvla43ZTCCQz0wK2cJBBbrNePiY46p0lTDvJsKjISz0aJ/WGGK9rXJxWMJVf6IT9pmdG/SsXUykSLLa2ZTyd2jWn9TlcPCVmxYNfIAqkw==
+X-Gm-Message-State: AOJu0YwLVxa/Acr3unn+vvvf/vUnpWdOgw1Zgo8AbgIyjuG2c2B5Fzn1
+	ZbMSrxBDSMZFsZMO/uTdm7JNry0/nLhev/JkQTuxhjHv2kSeALi7rSWqb59Sr69d36i01yKFgwu
+	PJHrzmWIXsvXRTJR1p7JZNmQCouI=
+X-Google-Smtp-Source: AGHT+IEuu9HAQAASDPOvUv+eo4vaDmGpspytyOqJN4kLuzL+gyh+71AymJnLzYz3lQHVXAn61CiMQkJLULyWq0AKhf4=
+X-Received: by 2002:a19:f51a:0:b0:51e:eeb1:f24b with SMTP id
+ j26-20020a19f51a000000b0051eeeb1f24bmr5882309lfb.34.1715000053829; Mon, 06
+ May 2024 05:54:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
+ <20240506-rk-dts-additions-v4-2-271023ddfd40@gmail.com> <2543817.5xW6y1K4kI@bagend>
+In-Reply-To: <2543817.5xW6y1K4kI@bagend>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Mon, 6 May 2024 16:54:02 +0400
+Message-ID: <CABjd4Yw-JA5=SfcgtVNYZN37hFbqf14Ut1yHTSz1YZiZ3NQ-pw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] arm64: dts: rockchip: enable thermal management on
+ all RK3588 boards
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Dragan Simic <dsimic@manjaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 6 May 2024 08:09:27 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+Hello Diederik,
 
-> On 5/5/24 20:50, Jonathan Cameron wrote:
-> > On Tue, 30 Apr 2024 15:44:26 +0300
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> Fix the available times table sorting in iio-gts-helpers
-> >>
-> >> This series contains a fix and test for the sorting of the available times in
-> >> IIO-gts helpers. Fix was originally developed and posted by Chenyuan Yang.
-> >>
-> >> Revision history:
-> >> 	v1 => v2:
-> >> 	  - Fix the sender for patch 1/2 (Sic!)
-> >> 	  - Fix Co-Developed-by tag (drop this from Chenyuan who
-> >> 	    is the original author)
-> >> 	  - Fix the From: tag as instructed in:
-> >> 	    https://www.kernel.org/doc/html/latest/process/submitting-patches.html  
-> > 
-> > Am I right in thinking this doesn't matter for existing drivers?  
-> 
-> I think this is right. Only couple of in-tree drivers are using these 
-> helpers for now, and all of them sorted the tables already in driver.
-> 
-> > As such not high priority for back porting?  
-> 
-> The bug is pretty nasty as it causes invalid memory accesses. Hence I'd 
-> like to see this landing in the longterm kernels. It seems to me the GTS 
-> helpers got merged in 6.4, so getting the fix backported to 6.6 might 
-> make sense.
-> 
-> > I'll assume that and queue it up for 6.11. If someone shouts I can pull the fix
-> > forwards, but then we have the mess of chasing the testing in later.  
-> 
-> I am sorry Jonathan but I'm not quite sure what you mean by "pulling fix 
-> forward", or what is the "mess of chasing the testing in later" :)
+On Mon, May 6, 2024 at 4:29=E2=80=AFPM Diederik de Haas <didi.debian@cknow.=
+org> wrote:
+>
+> Hi,
+>
+> On Monday, 6 May 2024 11:36:33 CEST Alexey Charkov wrote:
+> > This enables the on-chip thermal monitoring sensor (TSADC) on all
+> > RK3588(s) boards that don't have it enabled yet. It provides temperatur=
+e
+> > monitoring for the SoC and emergency thermal shutdowns, and is thus
+> > important to have in place before CPU DVFS is enabled, as high CPU
+> > operating performance points can overheat the chip quickly in the
+> > absence of thermal management.
+> >
+> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4 ++++
+> >  8 files changed, 32 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
+> > b8e15b76a8a6..21e96c212dd8 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > @@ -742,6 +742,10 @@ regulator-state-mem {
+> >       };
+> >  };
+> >
+> > +&tsadc {
+> > +     status =3D "okay";
+> > +};
+> > +
+> >  &uart2 {
+> >       pinctrl-0 =3D <&uart2m0_xfer>;
+> >       status =3D "okay";
+>
+> I built a kernel with v3 of your patch set and someone tested it on a ROC=
+K 5B
+> 'for me' and it had the following line in dmesg:
+>
+> rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
+>
+> I'm guessing that turned up due to enabling tsadc, but (also) in v4 I did=
+n't
+> see a change wrt "rockchip,grf".
+> Should that be done? (asking; I don't know)
 
-Hmm. That was an odd choice of words :)  I just meant that I could send
-the fix in the first set of fixes after 6.10-rc1 rather than waiting for 6.11.
+I'm getting the same. Neither the mainline TSADC driver [1], nor the
+downstream one [2] seems to use the grf pointer on RK3588 at all. It
+still works in spite of that warning, although I can't see how (or if)
+it configures the reset mechanism without those GRF registers.
 
-For now I'll leave it queued for 6.11 on the basis there are a lot of ways
-a driver writer can cause similar out of bounds accesses and they should
-notice it not working during testing.  So it 'should' not be a problem to
-not rush this in.
+Best regards,
+Alexey
 
-J
-> 
-> > Applied to the togreg branch of iio.git and pushed out as testing for 0-day
-> > to poke at it.  
-> 
-> Thanks! Appreciate your work as always!
-> 
-> Yours,
-> 	-- Matti
-> 
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/thermal/rockchip_thermal.c#n818
+[2] https://github.com/radxa/kernel/blob/stable-5.10-rock5/drivers/thermal/=
+rockchip_thermal.c#L961
 
