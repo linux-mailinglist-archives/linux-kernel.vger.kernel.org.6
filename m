@@ -1,97 +1,129 @@
-Return-Path: <linux-kernel+bounces-169735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E408BCCD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:28:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888288BCCD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F761C20974
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387071F218A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA86143736;
-	Mon,  6 May 2024 11:28:22 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB305142E9F;
+	Mon,  6 May 2024 11:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AHD0pizr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LmDhZqq7"
+Received: from wfhigh6-smtp.messagingengine.com (wfhigh6-smtp.messagingengine.com [64.147.123.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5FE142E8F;
-	Mon,  6 May 2024 11:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DADC4EB2B;
+	Mon,  6 May 2024 11:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714994902; cv=none; b=qHHSaxYrKogrAvbMJ8ghYu9Q5M+m4BpgeeaHHw81zWsVqlUPG3lO3KAD/mwbv+7PpOfxjChw2DJNF1/DHYfACnLAvnz8o1mVo9XoXxPq/+b4XM3NQ4d1vhrRuJk3sxRp3dilvjpRTyrXWB+mtbgKSyCGAgqRlhHhyvlcTNzh4U8=
+	t=1714995009; cv=none; b=FSv5opTY7AAHwI8LnvBa4pC5PsIensYWc68qjlx0RdMPbVzL4GwOUfA681FEuB7pyAyxG0naBPfpG4onQVfRgfrcIqDDQN5KcxlK9FnwGI8pNd6Uavq1RND5FvEg0aqW3J/e1JM/jEneenkVL9hDBvsUZAVeo1k3MlwS80fhvNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714994902; c=relaxed/simple;
-	bh=8VT02Cplsv5SbgjU47mcWoqY++8UyIgndGhQEg+ULN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jh4j6UnFI22HTlCM1I4spSfsg3fGDY3ws65h3fkGvQrpIOfL7Ug1hcdbGaTCIAYUX9eNpqHWH43hkQnk5Otv00fwTrTbfhj6LwGNFCtzcokMIDIJMpx9vC5QMuE/0qcUMKfetq+NHN6QMDFu6Jd/0Y5xi6ZJ5UB1C3/JdgLSXfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXzfz1nxJz4f3l8N;
-	Mon,  6 May 2024 19:28:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 7C6C11A06D6;
-	Mon,  6 May 2024 19:28:16 +0800 (CST)
-Received: from [10.67.108.244] (unknown [10.67.108.244])
-	by APP2 (Coremail) with SMTP id Syh0CgAnmAvNvjhm9aLKMA--.42285S3;
-	Mon, 06 May 2024 19:28:14 +0800 (CST)
-Message-ID: <c85cf47c-c972-4c11-a103-8811fe0b4680@huaweicloud.com>
-Date: Mon, 6 May 2024 19:28:13 +0800
+	s=arc-20240116; t=1714995009; c=relaxed/simple;
+	bh=qvCGSoQawQTxwKwTMIcTAx8d5xEdDNJuiCoB8WMClEI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=HUN0uM7xbuEznalkK+X2EX9ePElcCOQBZC4pS2vJ5C9TruYM0Dozlbc/afo/CllnKYOviaLqBJF16wES7NV/gRdBZALFdlW62wcLOMJx9xDWsU+HoNYYV7An2Ij0I3navReXx89LQt6kvm/KwSMS0WpeXFHgzav5ODBUcO7odTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AHD0pizr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LmDhZqq7; arc=none smtp.client-ip=64.147.123.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id EACC01800139;
+	Mon,  6 May 2024 07:30:05 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 06 May 2024 07:30:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1714995005; x=1715081405; bh=s6x+9FStSk
+	mw7vHjv+iXvtpuGZLNrdWUBFo+scPQRuU=; b=AHD0pizrJgQdHxOS42Q/D4QKdi
+	cukMgjIREaL18jW6eVNU3mtIyiMNJFV0dWbbZwqjz7A9JAI6Q8SRmHDpp3/EHYrN
+	zzfedo+5gcPFmtepD7mWH6dJyBAkImSl28b0R2S529P4QD3gPNoPQXE0GkfJLbni
+	bcHbtznhHXH751bObyWlZVllJcOdc6r6kv2juDiQUxR9GNM7quOoL8HTNYvtEb2x
+	m0CfmibODx9F0D6N3VJ99qwikzWIkgHbRVWsvr2bp+M5Iv5H+bSfZxsDwjIBn++s
+	whqy2Szt7gPoUwTa38Qfw8Sro9kx7f/cMhlq3aMZq3xr0zO+YPIEH+p9N8lQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1714995005; x=1715081405; bh=s6x+9FStSkmw7vHjv+iXvtpuGZLN
+	rdWUBFo+scPQRuU=; b=LmDhZqq7geQ9VNHRILOo3gI5RJvQJGxeL8VVaM5An/rh
+	LtwkpztUwJ392kBYoAaNVWLTYaQw19J3sFYEdSme5Y5YDv7mNGNZl0q0imMTFBPO
+	UIyVnzKx4ksC1fbPKw+JqdVOZCLt9AJMt5/zBbbdHXRQp4vIIuReZwVorC0nBcs1
+	xrGuE8vBurc1hvWVxvDF8idaZsmBU4O7tHVPuQRK8FMmc8+U27/0rT+AL4uBo7y5
+	f+WEhDi0jKB/yneA6LWkgYFCCxwA4lhayxK5aAIn0cxco2alT5yIyTp89h5AqEyG
+	IletbRxaeMKUFqDzOZk3YEjXPJcxoV/sc7VO24xamg==
+X-ME-Sender: <xms:PL84ZhG2CJ47LRvE8Z0f0oI7RS-IFtnFCC95EF-yqkNb8rHH5Q2zkQ>
+    <xme:PL84ZmXn6vpMMB6daj34dsfRhVIzZRgz1AOoC2Lfni8UmPbiZqACo4ooefkh-X-zv
+    gTM3KdvLsDFQqTN5o0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddviedggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:PL84ZjKcZcBSYJOyDf-lKjpDwcJR5r_7cWSnzd2f_K9vhXgUq4LTnQ>
+    <xmx:PL84ZnHZk9R4VkiVpThqxonxMYAhPtAuT361zbNj-r0vIUunaIoccQ>
+    <xmx:PL84ZnXfvgYh9t5xO0bUHgrm4-NMynO8_nj9bNnUGmHbvb-e9uvL1Q>
+    <xmx:PL84ZiPfylLJxKa4OeZsppFpdbsmqGHP_KpbYLTOvv1C-8k2ahMeZg>
+    <xmx:Pb84ZkWBosuE-iq_ccMnFYDgkDpdoTT83l6NuSACPF_77-HLv-M_O3El>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A5F9DB6008F; Mon,  6 May 2024 07:30:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-437-gcad818a2a-fm-20240502.001-gcad818a2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 0/2] Fix small negative period being ignored
-Content-Language: en-US
-To: peterz@infradead.org
-Cc: mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org,
- irogers@google.com, adrian.hunter@intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240417115446.2908769-1-luogengkun@huaweicloud.com>
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-In-Reply-To: <20240417115446.2908769-1-luogengkun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAnmAvNvjhm9aLKMA--.42285S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYj7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJ
-	UUUUU==
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+Message-Id: <8accb26e-c7a8-43aa-90d5-d83d5a1575de@app.fastmail.com>
+In-Reply-To: <20240506-imx-pinctrl-optional-v2-2-bdff75085156@geanix.com>
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-2-bdff75085156@geanix.com>
+Date: Mon, 06 May 2024 13:29:43 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Esben Haabendal" <esben@geanix.com>,
+ "Russell King" <linux@armlinux.org.uk>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Fabio Estevam" <festevam@gmail.com>, "Dong Aisheng" <aisheng.dong@nxp.com>,
+ "Jacky Bai" <ping.bai@nxp.com>, "Linus Walleij" <linus.walleij@linaro.org>
+Cc: "Rasmus Villemoes" <rasmus.villemoes@prevas.dk>,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] pinctrl: freescale: Use CONFIG_SOC_IMXRT to guard i.MX
+ RT1xxx drivers
+Content-Type: text/plain
 
-Ping.
+On Mon, May 6, 2024, at 12:23, Esben Haabendal wrote:
+> 
+>  config PINCTRL_IMXRT1050
+>  	bool "IMXRT1050 pinctrl driver"
+> -	depends on ARCH_MXC
+> +	depends on SOC_IMXRT
+> +	default SOC_IMXRT
+>  	select PINCTRL_IMX
+>  	help
+>  	  Say Y here to enable the imxrt1050 pinctrl driver
 
-The previous link is : 
-https://lore.kernel.org/all/20240116083915.2859302-1-luogengkun2@huawei.com/
+Maybe make this
 
-On 2024/4/17 19:54, Luo Gengkun wrote:
-> v1 -> v2:
-> 1. Add reviewed by for perf/core: Fix small negative period being ignored
-> 2. Add perf/core: Fix incorrected time diff in tick adjust period
->
-> Luo Gengkun (2):
->    perf/core: Fix small negative period being ignored
->    perf/core: Fix incorrected time diff in tick adjust period
->
->   include/linux/perf_event.h |  1 +
->   kernel/events/core.c       | 21 +++++++++++++++++----
->   2 files changed, 18 insertions(+), 4 deletions(-)
->
+       depends on SOC_IMXRT || COMPILE_TEST
 
+I see that all the i.MX pinctrl drivers are currently missing
+this, but a lot of other platforms have the ||COMPILE_TEST 
+bit so it gets included in x86 allmodconfig tests that
+often gets run before sending or merging changes.
+
+    Arnd
 
