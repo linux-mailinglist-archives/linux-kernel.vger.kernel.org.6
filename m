@@ -1,76 +1,94 @@
-Return-Path: <linux-kernel+bounces-170363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C938BD5B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:46:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D08BD5BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025CF1F21156
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:46:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D899B21DE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BCB15749D;
-	Mon,  6 May 2024 19:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A259E15B55C;
+	Mon,  6 May 2024 19:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tfEyuOZN";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tfEyuOZN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qCfnqLjI"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6682158873;
-	Mon,  6 May 2024 19:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6A615B120;
+	Mon,  6 May 2024 19:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024687; cv=none; b=DYKUEhNv1D05kt5+qDwYAq6g5ccqznCSm8OEKK/69afZJS2s2PeyZ4xJqgGURlaKb94C6+XEEIWg8+ENnfRURQjlnXkXTVFz5aqCGyAF6htNqsGKVLGskkdSjJXuWoJA6TaoRQ7iGKfRYweiTgOgq4YlydgA2j7g0IHDfxdxz1k=
+	t=1715024710; cv=none; b=molphzsnhYqJwhYc7FglYBm6q7w+Gi2S3YUZc8geNgCougMLjnwrk/Wte4RDIC6kVqDEAj4/VJ9d/9XA+sXIOxTJSC0gIkdHhI2JjZ7i5KZwsmSCLH3vqNZUYjM5mVLOaJrINzY+R3Clb4Rd1HVZ+RWFlqYJ8TTMLJUsQFpq970=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024687; c=relaxed/simple;
-	bh=EVmC+rmzDtM9pKjBXpq4pyX1W8rcfyGKY83muBzllg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rjDljR628XDtkc3DKLXzmftq+sef7VHo/Bi6J0z0e2XuoZB21CRbCPbkI4OCCLVMQVQckPUX6FIvWCuXo6g1sMoP0ZVjE1t6xgRuylHtywpTu09cEzWFaC4Cw3+MTRuXxkCqkBc7wRoKidRujG/BLUGrvIiA4a55mzr0keGgvFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tfEyuOZN; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tfEyuOZN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E19EC2267A;
-	Mon,  6 May 2024 19:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715024683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=17FC+eGvffbugsO1K4XwJPTQVMXeDcHrp3IBonOSLXc=;
-	b=tfEyuOZNwwLOwkcnsDhsTTbiehj/H0hvoMPWn+xQA+KtnKG54C67mtYsbvAKmPlvNE56aW
-	7gYYmrFG6ooa7siI99kUG0IzGJUDssQyQVWyq0C/p0q9RchGMGfhWkMj6cL7NxGcOLxfj7
-	JLf6O5KOxgFUsoTf+ShxFljSmS7WPBw=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715024683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=17FC+eGvffbugsO1K4XwJPTQVMXeDcHrp3IBonOSLXc=;
-	b=tfEyuOZNwwLOwkcnsDhsTTbiehj/H0hvoMPWn+xQA+KtnKG54C67mtYsbvAKmPlvNE56aW
-	7gYYmrFG6ooa7siI99kUG0IzGJUDssQyQVWyq0C/p0q9RchGMGfhWkMj6cL7NxGcOLxfj7
-	JLf6O5KOxgFUsoTf+ShxFljSmS7WPBw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DAF2513A25;
-	Mon,  6 May 2024 19:44:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Nx1rNSszOWYaVwAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Mon, 06 May 2024 19:44:43 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.9-rc8
-Date: Mon,  6 May 2024 21:44:39 +0200
-Message-ID: <cover.1715024051.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1715024710; c=relaxed/simple;
+	bh=DahALltv0KmFqfhfOUZlpShX7gIUfmZ1n7F4k5Tdv7I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V+fv1lkF1yKX4RZYXg026BNhVEOtvUXeB3rNN12zVa4f3mrhijHUBNytsbzraJJns/DjJmxvM3ovXCEhNVmjYA6ZLXPsUAZi/Iq6vQghum7F+fHrnoE+nXrIBK1KDGhI73jJBKm0wn0La+ghc/Cx9dkPS9ZUpB+fN0XerMYUloU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qCfnqLjI; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 446JgeKs005517;
+	Mon, 6 May 2024 19:45:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=7wJXPFd+prjmPydgt6FRx2BxCiMdiW2rEgeYnMYTAzM=;
+ b=qCfnqLjI9s5WX3lQ0avK+d24jvGwSEkSAUEAkITfR/NDenathW4rVCjlUez3h4uoJw3t
+ e1+ohIqxHIrYfNLtWGb3nGPMAmt0YEUCrewah+O2fG/Mwq4Om9CFG/TVCZB/b6HKV28v
+ BUktsGNyFzQs3++vVv93rGLHjiWxBbl8+BJ7pHkR603r0OjqjrnDpVQ348M+SDAP06t8
+ 1Yz5bbBFiuPkd2EToelc1Lt7YLnptAZ5+h4lhBEhDmAj5on8jXWoCs4hcGPLNK/NoUaw
+ licNYhmYdFE8LBZnhm6grfYXwrAK3KbqHP71WGxcpLjkByI4AvNPQg6BQLjdLlNRTIVX 0w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xy5kmr04b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 19:45:02 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 446Jj2MO009139;
+	Mon, 6 May 2024 19:45:02 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xy5kmr048-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 19:45:02 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 446HjgZv005538;
+	Mon, 6 May 2024 19:45:00 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xx5yh0g86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 19:45:00 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 446Jitkt55116200
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 May 2024 19:44:57 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0A9B320043;
+	Mon,  6 May 2024 19:44:55 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C048F2004B;
+	Mon,  6 May 2024 19:44:54 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  6 May 2024 19:44:54 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Huth <thuth@redhat.com>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        Thorsten Winkler <twinkler@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, netdev@vger.kernel.org,
+        llvm@lists.linux.dev, patches@lists.linux.dev,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: [PATCH 0/6] s390: Unify IUCV device allocation
+Date: Mon,  6 May 2024 21:44:48 +0200
+Message-Id: <20240506194454.1160315-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,64 +96,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Z3CFz-wgjO_CqVvpgCSXb86pj_KiX890
+X-Proofpoint-GUID: 5FzAB4xZRxGYcsjQDnLCQZpPXB8_V3U2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-06_14,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 mlxlogscore=655 priorityscore=1501 malwarescore=0
+ suspectscore=0 adultscore=0 mlxscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405060142
 
-Hi,
+Unify IUCV device allocation as suggested by Arnd Bergmann in order
+to get rid of code duplication in various device drivers.
 
-please pull two more fixes, both have some visible effects on user
-space.
+This also removes various warnings caused by
+-Wcast-function-type-strict as reported by Nathan Lynch.
 
-- add check if quotas are enabled when passing qgroup inheritance info,
-  this affects snapper that could fail to create a snapshot
+Unless there are objections I think this whole series should go via
+the s390 tree.
 
-- do check for leaf/node flag WRITTEN earlier so that nodes are
-  completely validated before access, this used to be done by integrity
-  checker but it's been removed and left an unhandled case
+Heiko Carstens (6):
+  s390/iucv: Provide iucv_alloc_device() / iucv_release_device()
+  s390/vmlogrdr: Make use of iucv_alloc_device()
+  s390/netiucv: Make use of iucv_alloc_device()
+  s390/smsgiucv_app: Make use of iucv_alloc_device()
+  tty: hvc-iucv: Make use of iucv_alloc_device()
+  s390/iucv: Unexport iucv_root
 
-----------------------------------------------------------------
-The following changes since commit 63a6ce5a1a6261e4c70bad2b55c4e0de8da4762e:
+ drivers/s390/char/vmlogrdr.c    | 20 +++--------------
+ drivers/s390/net/netiucv.c      | 20 ++++-------------
+ drivers/s390/net/smsgiucv_app.c | 21 +++++-------------
+ drivers/tty/hvc/hvc_iucv.c      | 15 ++-----------
+ include/net/iucv/iucv.h         |  7 +++++-
+ net/iucv/iucv.c                 | 38 +++++++++++++++++++++++++++++++--
+ 6 files changed, 56 insertions(+), 65 deletions(-)
 
-  btrfs: set correct ram_bytes when splitting ordered extent (2024-04-30 12:03:44 +0200)
+-- 
+2.40.1
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.9-rc7-tag
-
-for you to fetch changes up to e03418abde871314e1a3a550f4c8afb7b89cb273:
-
-  btrfs: make sure that WRITTEN is set on all metadata blocks (2024-05-02 22:11:13 +0200)
-
-----------------------------------------------------------------
-Josef Bacik (1):
-      btrfs: make sure that WRITTEN is set on all metadata blocks
-
-Qu Wenruo (1):
-      btrfs: qgroup: do not check qgroup inherit if qgroup is disabled
-
- fs/btrfs/qgroup.c       |  2 ++
- fs/btrfs/tree-checker.c | 30 +++++++++++++++---------------
- fs/btrfs/tree-checker.h |  1 +
- 3 files changed, 18 insertions(+), 15 deletions(-)
 
