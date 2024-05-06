@@ -1,165 +1,292 @@
-Return-Path: <linux-kernel+bounces-170294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D268BD4AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FE88BD4AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A13028367E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E9A2837FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C40158A1C;
-	Mon,  6 May 2024 18:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6FC158D92;
+	Mon,  6 May 2024 18:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PJoocT5+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OBASCX9S"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851EA3D984
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4801426F;
+	Mon,  6 May 2024 18:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715020547; cv=none; b=bk+pDuopHzgOG6lYDOXSWUcF8BCyEemTfZFf8p4VDN00yO2j+57vwGX/ZqAXpEbNyWN6GVEBfA/e2AcTwVBs+8jM9lGyLbQ8uSwUwXuqd9kPrMDmwTzwG/ewQEUCMmnrqGkx0Xu0XO0eKi2P73VS/QYq3b9iC2ZT3FgeDV1CM4A=
+	t=1715020585; cv=none; b=R8uA5jNzPZxb7U2Msbc6kOLuncVcU4QxYYR3MNK1KDHVYuuSkb+rbMk439KbJ3lOOx0WsZJ+EFgECSntZH1CWIiMntj2fPvCPvaIMWmaSoD7YN8qI85Jytvn6AUIaowd3gpEUIMkQUYWmGak2HX/F7W4Hsk4BNg3VBjaGGg1ztU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715020547; c=relaxed/simple;
-	bh=w1Ok1PZtcA0Wz3v3m7VLI1e7DxHoMqFMBoqnyqSlDIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ICe4IGcE6JxNhPDstpMddPZ5QAZng4inRbDBXzlczzaHG60yPCZM7tGyJHPJdteUmqrZsYDeDsks+GWmflSvO5QDaUlBfIo6gP2zZZ5wq8qKrOchp73r1pUqdBWzLP5wnOYh1naoXJyaAf5Ghr4TYeqJMxqVrf2IkbfkSyigOGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PJoocT5+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715020544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y+39y8W7bsu1hCnW4m16/3q+glmJjCJshByFNqIk6Vk=;
-	b=PJoocT5+JYoDIEKXImmIGTXQ9O71Gaak51lPtR01qM5kDhZD49USNK46XhS5jAEI9d5AfW
-	72+H+jtLudizT62y/H6GpjHul3mZJpxmIzMe/kuScwbHC1z8J9QOLlKjs7lQfWZxEtAsow
-	GxiEsr0kb+2GPNlcp/W8+tmGuMy8+xE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-344-EnzGrt_kMHOzm0mvM5ov1A-1; Mon, 06 May 2024 14:35:42 -0400
-X-MC-Unique: EnzGrt_kMHOzm0mvM5ov1A-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-41dc9f97c7eso23154125e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:35:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715020541; x=1715625341;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Y+39y8W7bsu1hCnW4m16/3q+glmJjCJshByFNqIk6Vk=;
-        b=V4mXKSTGUlhOzNZp8tUMSPxvaY1WYNFHaXNMI2n2pzsiBH5Pg0o+f0SChHDoJPlfd/
-         aSOSFdLWetYchfoOFCzgX0JMb2fYDUlvZBL+uoRVDSDsR0dO9dKnmZtk0Ygh6Yqa6w4w
-         fyhx1HyRSFXAFxSbhjYa1U/OHhKo6NngsOjGYkrHXZgw+9YoIneSocibmV4FUsLxZ40A
-         C+QsYjG0RmT878D5n2EGhKBnX3C89ujxcU9LAX84PhfQCdDRmmZv/WQ9XfiOBDbbc0eO
-         +ozksTHnGYBCElbwdFZWrS4zgLoaufZo1R2WhCV7JBkenm3sXCaqC3vBVNvkNFySn6Jx
-         ryWA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+iIKH5k9x0F2GjBpc4mXQ/WMQVHyJhjHdeiY37KnWn27EsY1/5WmkU9wszSZXcSQZDkOS5k3c1cdsHSivw6lil5PCp6KMEFct+qf2
-X-Gm-Message-State: AOJu0Yw6pTyyZvKG07Ph1vhRS7tWXQrPb/is7Oj66++CmrDUUITaMoKT
-	bKazuHsw2Ewhx4U4HELgamMJGMv8/dnkBRWT6DGyJWdCH1JtsQ1W0rCOv453PctsMEBPhhKH4Qi
-	HRdRSLCRoufJ/cOg71Hbd9SyMBQ5DQpnA3K8zm0Z7GYpJFjGmLCeYRvdUen3QNw==
-X-Received: by 2002:a05:600c:5128:b0:418:3ea8:46c0 with SMTP id 5b1f17b1804b1-41f2da2d4bcmr4054795e9.13.1715020541364;
-        Mon, 06 May 2024 11:35:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2E7Ba0oxJpZZi2hopWvMu8kafXg3cs2sCZQKS4ImBu+OW4F3n5S7V9fMwBMfDy8QCe49/QA==
-X-Received: by 2002:a05:600c:5128:b0:418:3ea8:46c0 with SMTP id 5b1f17b1804b1-41f2da2d4bcmr4054605e9.13.1715020540974;
-        Mon, 06 May 2024 11:35:40 -0700 (PDT)
-Received: from [192.168.3.108] (p5b0c6c2e.dip0.t-ipconnect.de. [91.12.108.46])
-        by smtp.gmail.com with ESMTPSA id k5-20020a05600c1c8500b0041bab13cd74sm16901414wms.17.2024.05.06.11.35.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 11:35:40 -0700 (PDT)
-Message-ID: <d546b804-bb71-45c7-89c4-776f98a48e77@redhat.com>
-Date: Mon, 6 May 2024 20:35:39 +0200
+	s=arc-20240116; t=1715020585; c=relaxed/simple;
+	bh=L1SXm94N5wjDFcZ358c6QAbTXrq+vQTXy3sj83oDZeI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VlXgJr27A4XOfKV8UqyGoc9VRkrDMrfyxwDDjOf+niJ84HgerhN2aHoRJeNSU/g6gLTuUTVxjW2IuniWoL7arNmCDMF8TjvMPsMObyqTbLA+zFkhRPl3n/6rJ7pvqaabiO9Eus2Feg49isJiEBRAHSgwo5vGqf8/MQyu9YlJ220=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OBASCX9S; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715020584; x=1746556584;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L1SXm94N5wjDFcZ358c6QAbTXrq+vQTXy3sj83oDZeI=;
+  b=OBASCX9SRabjp0tYawJZiPGW6eQI/TSVP8xgpGpOEVeLKeT8tjXBFtqG
+   3YNglkPlTta1MN1b95chPfExhhhEiPt+u87m1hmsfJ5E/rZNjeVN+slLO
+   Wr+e4ntNTV6lk7kgHVOC332/1gghMQuXTQb771KzkTG0vedHw8ZYl69Ne
+   UPbFIqdxB9R3W/UgLH9vRmOwY4SSRaV4kn9tKf4F2ppWL9UNBfN5cR55E
+   2/4ke5OJOeAWy/0VzM0IrESowdA/M/YFMdhWZ66FPNsy/+M79g7XZUkRL
+   8+5DYNTc9t+06qMha8/TJoNPoXR+CR3TpW9ooBJb0xG0qVDx96qQumgVH
+   w==;
+X-CSE-ConnectionGUID: A+8ze3S8QxGsAQCHNPeADw==
+X-CSE-MsgGUID: gogMNHccSjOQE/ZTSoo9Dw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21455738"
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="21455738"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 11:36:09 -0700
+X-CSE-ConnectionGUID: HK9kQ+H9RzCcbbt9NWX+hg==
+X-CSE-MsgGUID: RWvYv0BGQyqcRhQwSsoFpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="28237802"
+Received: from rchatre-ws.ostc.intel.com ([10.54.69.144])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 11:36:09 -0700
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: isaku.yamahata@intel.com,
+	pbonzini@redhat.com,
+	erdemaktas@google.com,
+	vkuznets@redhat.com,
+	seanjc@google.com,
+	vannapurve@google.com,
+	jmattson@google.com,
+	mlevitsk@redhat.com,
+	xiaoyao.li@intel.com,
+	chao.gao@intel.com,
+	rick.p.edgecombe@intel.com,
+	yuan.yao@intel.com
+Cc: reinette.chatre@intel.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V6 0/4] KVM: x86: Make bus clock frequency for vAPIC timer configurable
+Date: Mon,  6 May 2024 11:35:54 -0700
+Message-Id: <cover.1715017765.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: do not update memcg stats for
- NR_{FILE/SHMEM}_PMDMAPPED
-To: Yosry Ahmed <yosryahmed@google.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
-References: <20240506170024.202111-1-yosryahmed@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240506170024.202111-1-yosryahmed@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 06.05.24 19:00, Yosry Ahmed wrote:
-> Do not use __lruvec_stat_mod_folio() when updating NR_FILE_PMDMAPPED and
-> NR_SHMEM_PMDMAPPED as these stats are not maintained per-memcg. Use
-> __mod_node_page_state() instead, which updates the global per-node stats
-> only.
+Changes from v5:
+- v5: https://lore.kernel.org/lkml/cover.1714081725.git.reinette.chatre@intel.com/
+- Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
+- Added Xiaoyao Li and Yuan Yao's Reviewed-by tags.
+- Use the KVM selftest vm_create() wrapper instead of open coding it. (Zide)
+- Improve grammar of selftest description. (Zide)
 
-What's the effect of this? IIUC, it's been that way forever, no?
+Changes from v4:
+- v4: https://lore.kernel.org/lkml/cover.1711035400.git.reinette.chatre@intel.com/
+- Rename capability from KVM_CAP_X86_APIC_BUS_FREQUENCY to
+  KVM_CAP_X86_APIC_BUS_CYCLES_NS. (Xiaoyao Li).
+- Include "Testing" section in cover letter.
+- Add Rick's Reviewed-by tags.
+- Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
 
-Fixes: ?
+Changes from v3:
+- v3: https://lore.kernel.org/all/cover.1702974319.git.isaku.yamahata@intel.com/
+- Reworked all changelogs.
+- Regarding code changes: patches #1 and #2 are unchanged, patch #3 was
+  reworked according to Sean's guidance, and patch #4 (the test)
+  needed changes after rebase to kvm-x86/next and the implementation
+  (patch #3) changes.
+- Added Reviewed-by tags to patches #1, #2, and #4, but removed
+  Maxim's Reviewed-by tag from patch #3 because it changed so much.
+- Added a "Suggested-by" to patch #4 to reflect that it represents
+  Sean's guidance.
+- Reworked cover to match customs (in subject line) and reflect feedback
+  to patches: capability renamed to KVM_CAP_X86_APIC_BUS_FREQUENCY, clarify
+  distinction between "core crystal clock" and "bus clock", and update
+  pro/con list.
+- Please refer to individual patches for detailed changes.
 
-Do we want to CC stable?
+Changes from v2:
+- v2: https://lore.kernel.org/lkml/cover.1699936040.git.isaku.yamahata@intel.com/
+- Removed APIC_BUS_FREQUENCY and apic_bus_frequency of struct kvm-arch.
+- Update the commit messages.
+- Added reviewed-by (Maxim Levitsky)
+- Use 1.5GHz instead of 1GHz as frequency for the test case.
+
+Changes from v1:
+- v1: https://lore.kernel.org/all/cover.1699383993.git.isaku.yamahata@intel.com/
+- Added a test case
+- Fix a build error for i386 platform
+- Add check if vcpu isn't created.
+- Add check if lapic chip is in-kernel emulation.
+- Updated api.rst
+
+Summary
+-------
+Add KVM_CAP_X86_APIC_BUS_CYCLES_NS capability to configure the APIC
+bus clock frequency for APIC timer emulation.
+Allow KVM_ENABLE_CAPABILITY(KVM_CAP_X86_APIC_BUS_CYCLES_NS) to set the
+frequency in nanoseconds. When using this capability, the user space
+VMM should configure CPUID leaf 0x15 to advertise the frequency.
+
+Description
+-----------
+Vishal reported [1] that the TDX guest kernel expects a 25MHz APIC bus
+frequency but ends up getting interrupts at a significantly higher rate.
+
+The TDX architecture hard-codes the core crystal clock frequency to
+25MHz and mandates exposing it via CPUID leaf 0x15. The TDX architecture
+does not allow the VMM to override the value.
+
+In addition, per Intel SDM:
+    "The APIC timer frequency will be the processor’s bus clock or core
+     crystal clock frequency (when TSC/core crystal clock ratio is
+     enumerated in CPUID leaf 0x15) divided by the value specified in
+     the divide configuration register."
+
+The resulting 25MHz APIC bus frequency conflicts with the KVM hardcoded
+APIC bus frequency of 1GHz.
+
+The KVM doesn't enumerate CPUID leaf 0x15 to the guest unless the user
+space VMM sets it using KVM_SET_CPUID. If the CPUID leaf 0x15 is
+enumerated, the guest kernel uses it as the APIC bus frequency. If not,
+the guest kernel measures the frequency based on other known timers like
+the ACPI timer or the legacy PIT. As reported in [1] the TDX guest kernel
+expects a 25MHz timer frequency but gets timer interrupt more frequently
+due to the 1GHz frequency used by KVM.
+
+To ensure that the guest doesn't have a conflicting view of the APIC bus
+frequency, allow the userspace to tell KVM to use the same frequency that
+TDX mandates instead of the default 1Ghz.
+
+There are several options to address this:
+1. Make the KVM able to configure APIC bus frequency (this series).
+   Pro: It resembles the existing hardware.  The recent Intel CPUs
+        adopts 25MHz.
+   Con: Require the VMM to emulate the APIC timer at 25MHz.
+2. Make the TDX architecture enumerate CPUID leaf 0x15 to configurable
+   frequency or not enumerate it.
+   Pro: Any APIC bus frequency is allowed.
+   Con: Deviates from TDX architecture.
+3. Make the TDX guest kernel use 1GHz when it's running on KVM.
+   Con: The kernel ignores CPUID leaf 0x15.
+4. Change CPUID leaf 0x15 under TDX to report the crystal clock frequency
+   as 1 GHz.
+   Pro: This has been the virtual APIC frequency for KVM guests for 13
+        years.
+   Pro: This requires changing only one hard-coded constant in TDX.
+   Con: It doesn't work with other VMMs as TDX isn't specific to KVM.
+   Con: Core crystal clock frequency is also used to calculate TSC frequency.
+   Con: If it is configured to value different from hardware, it will
+        break the correctness of INTEL-PT Mini Time Count (MTC) packets
+        in TDs.
+
+Testing
+-------
+Tested on non-TDX host using included kselftest. Host running kernel
+with this series applied to "next" branch of
+https://github.com/kvm-x86/linux.git
+
+Tested on TDX host and TD using a modified version
+of x86/apic.c:test_apic_timer_one_shot() available from
+https://github.com/intel/kvm-unit-tests-tdx/blob/tdx/x86/apic.c.
+Host running TDX KVM development patches and QEMU with corresponding TDX
+changes.
+The test needed to be modified to (a) stop any lingering timers before the
+test starts, and (b) use CPUID 0x15 in TDX to accurately determine the TSC
+and APIC frequencies instead of making 1GHz assumption and use similar
+check as the kselftest test introduced in this series (while increasing
+the amount with which the frequency is allowed to deviate by 1%).
+
+The core changes made to x86/apic.c:test_apic_timer_one_shot() for this
+testing are shown below for reference. Work is in progress to upstream
+these modifications.
+
+@@ -477,11 +478,29 @@ static void lvtt_handler(isr_regs_t *regs)
+ 
+ static void test_apic_timer_one_shot(void)
+ {
+-	uint64_t tsc1, tsc2;
+ 	static const uint32_t interval = 0x10000;
++	uint64_t measured_apic_freq, tsc2, tsc1;
++	uint32_t tsc_freq = 0, apic_freq = 0;
++	struct cpuid cpuid_tsc = {};
+ 
+ #define APIC_LVT_TIMER_VECTOR    (0xee)
+ 
++	/*
++	 * CPUID 0x15 is not available in VMX, can use it to obtain
++	 * TSC and APIC frequency for accurate testing
++	 */
++	if (is_tdx_guest()) {
++		cpuid_tsc = raw_cpuid(0x15, 0);
++		tsc_freq = cpuid_tsc.c * cpuid_tsc.b / cpuid_tsc.a;
++		apic_freq = cpuid_tsc.c;
++	}
++	/*
++	   stop already fired local timer
++	   the test case can be negative failure if the timer fired
++	   after installed lvtt_handler but *before*
++	   write to TIMICT again.
++	 */
++	apic_write(APIC_TMICT, 0);
+ 	handle_irq(APIC_LVT_TIMER_VECTOR, lvtt_handler);
+ 
+ 	/* One shot mode */
+@@ -503,8 +522,16 @@ static void test_apic_timer_one_shot(void)
+ 	 * cases, the following should satisfy on all modern
+ 	 * processors.
+ 	 */
+-	report((lvtt_counter == 1) && (tsc2 - tsc1 >= interval),
+-	       "APIC LVT timer one shot");
++	if (is_tdx_guest()) {
++		measured_apic_freq = interval * (tsc_freq / (tsc2 - tsc1));
++		report((lvtt_counter == 1) &&
++		       (measured_apic_freq < apic_freq * 102 / 100) &&
++		       (measured_apic_freq > apic_freq * 98 / 100),
++		       "APIC LVT timer one shot");
++	} else {
++		report((lvtt_counter == 1) && (tsc2 - tsc1 >= interval),
++		"APIC LVT timer one shot");
++	}
+ }
+
+[1] https://lore.kernel.org/lkml/20231006011255.4163884-1-vannapurve@google.com/
 
 
+Isaku Yamahata (4):
+  KVM: x86: hyper-v: Calculate APIC bus frequency for Hyper-V
+  KVM: x86: Make nsec per APIC bus cycle a VM variable
+  KVM: x86: Add a capability to configure bus frequency for APIC timer
+  KVM: selftests: Add test for configure of x86 APIC bus frequency
+
+ Documentation/virt/kvm/api.rst                |  17 ++
+ arch/x86/include/asm/kvm_host.h               |   1 +
+ arch/x86/kvm/hyperv.c                         |   3 +-
+ arch/x86/kvm/lapic.c                          |   6 +-
+ arch/x86/kvm/lapic.h                          |   3 +-
+ arch/x86/kvm/x86.c                            |  28 +++
+ include/uapi/linux/kvm.h                      |   1 +
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/include/x86_64/apic.h       |   7 +
+ .../kvm/x86_64/apic_bus_clock_test.c          | 166 ++++++++++++++++++
+ 10 files changed, 228 insertions(+), 5 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/apic_bus_clock_test.c
+
+
+base-commit: d91a9cc16417b8247213a0144a1f0fd61dc855dd
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
