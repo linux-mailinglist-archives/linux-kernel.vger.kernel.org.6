@@ -1,223 +1,90 @@
-Return-Path: <linux-kernel+bounces-170167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0469F8BD2C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1AA8BD2CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE225281025
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:28:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ECA51F24302
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA58815665E;
-	Mon,  6 May 2024 16:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHyeXEIo"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA795156864;
+	Mon,  6 May 2024 16:29:04 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF6A156232;
-	Mon,  6 May 2024 16:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F49A156C5F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715012923; cv=none; b=iCdAbel5nrFi2pEUv5G9XvkWGoUDUKN+l9pqYLwU6evqPdoX+fEmr4SbTHnA+98g4rDB23zrooS+3Q2f9ootY7DqNJfKbAT3BdDT+gYQLZkDJ0gmaH26OBC7Qo8DPypMRHVqWn5CfwEyKIFuaaLiAHl5fnK7WkOo362kPKHwJHw=
+	t=1715012944; cv=none; b=IUGAs7M4MoDypOdm4KP0O7V5ZFk0f92iKSBo05dbr2V2yFbWGxqJ8odGLGU5YgLfK5KxTr+sbhRoYfvobfCcA9cXTmYJCcqMf2TgVIRQrU0H5BSCIrEwzbgas9r5DkT5xe3UEZv6yyP8ee0/ZYfLFDnH3YL3fvn1YiYyOr7E4h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715012923; c=relaxed/simple;
-	bh=TJCBlxaobgWm4Mks9yKhXKVxEnIJdD93CLSSW+aAmb0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UOwVPQUrIL8VImhN3H6a9oZWjYDMU27XjSdgT6IDQWmxd3mSbAs55pchWZG6yKjCzxSJghnQBhhAIOYytIETAqEjXBV7KaIwftjsMMuiPY+TgNfCqFBV51ss94kGuAQrM7mLqjCXisjyk02XDGP4Ah9h30RicUtMtwOU9PdyQT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHyeXEIo; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-620e30d8f37so1865636a12.2;
-        Mon, 06 May 2024 09:28:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715012920; x=1715617720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bUsiOFVNID+o8HqMi9Kuv7+m9t5vDqjyXqD9PUDfssk=;
-        b=KHyeXEIoXxPPFuYMszFN6qajNbf0JIbpi1tUdzRJ6vTqaBYv1rwhGpD5eodpgSDfrg
-         3zjhgAAOYsDpOBYxcHXnmR1mjtyce2P74rtL5lbGMxUgTW8zSf78xLYY2k0qFodaS0wO
-         0iwVLXWinJvV/Oe9mOArZqjCfS6ZyyMSdX6Sp3QRoU8Xfy8IsFD0PXYdzvPpYWq7iJst
-         qj3X6ocPhtVxcC/XZNpCjVaPyEfoPxkVArPgWDjBtgxmroCk2b6FRrECbP4gQJbk0P+w
-         EX3j8YStpMaiVSxNVjl7fUm3Ufz8JdiKEWLNJ7qxXS8LP3f7B/8GmfEclzuHWdZmSHh8
-         T8Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715012920; x=1715617720;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bUsiOFVNID+o8HqMi9Kuv7+m9t5vDqjyXqD9PUDfssk=;
-        b=faingMi3vEk99hXIN3WrIr23rn0ZsdUt2TcSexrv/29/rpwRoUKYQbAqzWAy20KhEd
-         mKKH7K6i/H1ufkvXr8o3PA3eW7/CGJiS/i0aN9/St/9apz73g4q1vBG2IIP6YHURp68e
-         FWWsQnmMQb7680BmTViMyf24rvJhexvbBf25GJvYJ+OcYVHa98RJUWKyaq8mlEzV6ZKy
-         GJFHP8E0H9cPNom3WAsCT7SgnY4JttI8n1kMPA0JACZkx7gZsdk93vb0JKmwJGX7cLdy
-         0UquGI9LYpof2Gf1B9y6jz2fDgRFAo7vz/80JmM3hU7bkXwVjaU7rNbIn68RPrZ+uPWf
-         +VKg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9f9Oz6GOYNeQ2i4NyfjTCoXXBNil6IveYcq57GLsY+pqnNNFW/8K+S77XgQGrmLmS9LUlByAFJBYA/CFjRuoIfBxcD/OVy86c95/z5BCcTjktKtPcEfO6QA/QY+ZeSUt8hcuf+cGN
-X-Gm-Message-State: AOJu0YznqHCknJGBYiNP9tYrK/Uj0OOs7J/4rUJoiAkxoGo0nQ6Skk0x
-	L3RPL5Fw1vU3zJfLZIv1orJDLKDZV178ZGZAMlZuwZIKSY8M5SSQD5zIdw==
-X-Google-Smtp-Source: AGHT+IFWUdGJe6CVVMqYm5eoRSsyvmyjjlGFy0yhl9e0BJRH4jeeYgYbcLzwWMdrXIZwu8fG8qdpgA==
-X-Received: by 2002:a17:90a:2f62:b0:2b1:4e21:2c5c with SMTP id s89-20020a17090a2f6200b002b14e212c5cmr9192052pjd.49.1715012919897;
-        Mon, 06 May 2024 09:28:39 -0700 (PDT)
-Received: from dev.. ([2402:e280:214c:86:88b5:d592:a102:f8f1])
-        by smtp.gmail.com with ESMTPSA id w3-20020a17090a528300b002b4329ec537sm6721427pjh.53.2024.05.06.09.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 09:28:39 -0700 (PDT)
-From: R Sundar <prosunofficial@gmail.com>
-To: heikki.krogerus@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	dmitry.baryshkov@linaro.org,
-	neil.armstrong@linaro.org,
-	christophe.jaillet@wanadoo.fr,
-	u.kleine-koenig@pengutronix.de
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	R Sundar <prosunofficial@gmail.com>
-Subject: [PATCH v6 linux-next] usb: typec: nb7vpq904m: Remove unneeded indentation
-Date: Mon,  6 May 2024 21:58:29 +0530
-Message-Id: <20240506162829.5223-1-prosunofficial@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715012944; c=relaxed/simple;
+	bh=G+z0/hQtCD+wvrY4kxXcRA5auY8F5tKt+wPRD7j0mRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oBVJrRhm+dJE0CTkDZlX3UZm01Cm5g4uj6vsLmJTb4JPY1E9l+vvkul1qGyrtUT9rafdH8PQBD2DseYAmpDAfn9g724jLGg5WTUFFWmP2lmRzaDXpa/AhBx7pDC4e0GBhEBcwwQhx8Oo9Rv+BEiczqipZb+TNrg7XAV4zX+fhG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b5d.versanet.de ([83.135.91.93] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1s41Cp-0007mZ-6s; Mon, 06 May 2024 18:28:47 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>,
+ Douglas Anderson <dianders@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Chris Morgan <macromorgan@hotmail.com>,
+ Yuran Pereira <yuran.pereira@hotmail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Douglas Anderson <dianders@chromium.org>, Chris Zhong <zyw@rock-chips.com>,
+ Lin Huang <hl@rock-chips.com>, Brian Norris <briannorris@chromium.org>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Sam Ravnborg <sam@ravnborg.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [RFT PATCH v2 08/48] drm/panel: innolux-p079zca: Stop tracking
+ prepared/enabled
+Date: Mon, 06 May 2024 18:28:46 +0200
+Message-ID: <6928663.G0QQBjFxQf@diego>
+In-Reply-To:
+ <20240503143327.RFT.v2.8.I99c73621fe3fba067a5e7ee6a1f6293c23371e1e@changeid>
+References:
+ <20240503213441.177109-1-dianders@chromium.org>
+ <20240503143327.RFT.v2.8.I99c73621fe3fba067a5e7ee6a1f6293c23371e1e@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-In function nb7vpq904m_parse_data_lanes_mapping(), the "if (ep)"
-condition is basically the entire function. Making the code a bit more
-readable by inverting the condition so that the function returns
-immediately if there is no "ep".
+Am Freitag, 3. Mai 2024, 23:32:49 CEST schrieb Douglas Anderson:
+> As talked about in commit d2aacaf07395 ("drm/panel: Check for already
+> prepared/enabled in drm_panel"), we want to remove needless code from
+> panel drivers that was storing and double-checking the
+> prepared/enabled state. Even if someone was relying on the
+> double-check before, that double-check is now in the core and not
+> needed in individual drivers.
+>=20
+> Cc: Chris Zhong <zyw@rock-chips.com>
+> Cc: Lin Huang <hl@rock-chips.com>
+> Cc: Brian Norris <briannorris@chromium.org>
+> Cc: "Heiko St=FCbner" <heiko@sntech.de>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: R Sundar <prosunofficial@gmail.com>
----
+the underlying setup (rockchip-drm with dw-dsi) as well as the
+change itself is similar to the ltk050h3146w variant, so I don't
+see how this should behave differently ;-)
 
-Fixed indentation in common path according to comments received on other patch
-as below:
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-[ Nit, this function should be rewritten to not work like this, the
-"common" path should not be indented, but only the exception (i.e. bail
-if ep is not allocated properly.) ]
-https://lore.kernel.org/all/2024041103-doornail-professor-7c1e@gregkh/
-
-Goal is to get rid of of_node_put,but sending this patch first to do one
-thing at a time.
-
-Changes since v1 - fixed the typo error for spell from identation to
-indentation
-
-Changes since v2 - Shifted the indentation to one level left for the
-switch cases as per coding style.
-
-Changes since v3 - Added descriptive subject for the patch and checked
-from and sign-off having same name.
-
-Changes since v4 - Fixed name in signed-off-by as in documents.
-
-Changes since v5 - Modified the subject and commit message as suggested.
-
-Patches link:
-------------
-v1  - https://lore.kernel.org/all/20240420145522.15018-1-prosunofficial@gmail.com/
-v2  - https://lore.kernel.org/linux-usb/20240420164927.15290-1-prosunofficial@gmail.com/
-v3  - https://lore.kernel.org/all/20240421011647.3027-1-prosunofficial@gmail.com/
-v4  - https://lore.kernel.org/all/20240424150718.5006-1-prosunofficial@gmail.com/
-v5  - https://lore.kernel.org/all/20240426164705.2717-1-prosunofficial@gmail.com/
-
- drivers/usb/typec/mux/nb7vpq904m.c | 68 +++++++++++++++---------------
- 1 file changed, 35 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/usb/typec/mux/nb7vpq904m.c b/drivers/usb/typec/mux/nb7vpq904m.c
-index b17826713753..ed93194b16cf 100644
---- a/drivers/usb/typec/mux/nb7vpq904m.c
-+++ b/drivers/usb/typec/mux/nb7vpq904m.c
-@@ -321,46 +321,48 @@ static int nb7vpq904m_parse_data_lanes_mapping(struct nb7vpq904m *nb7)
- 
- 	ep = of_graph_get_endpoint_by_regs(nb7->client->dev.of_node, 1, 0);
- 
--	if (ep) {
--		ret = of_property_count_u32_elems(ep, "data-lanes");
--		if (ret == -EINVAL)
--			/* Property isn't here, consider default mapping */
--			goto out_done;
--		if (ret < 0)
--			goto out_error;
--
--		if (ret != DATA_LANES_COUNT) {
--			dev_err(&nb7->client->dev, "expected 4 data lanes\n");
--			ret = -EINVAL;
--			goto out_error;
--		}
-+	if (!ep)
-+		return 0;
- 
--		ret = of_property_read_u32_array(ep, "data-lanes", data_lanes, DATA_LANES_COUNT);
--		if (ret)
--			goto out_error;
- 
--		for (i = 0; i < ARRAY_SIZE(supported_data_lane_mapping); i++) {
--			for (j = 0; j < DATA_LANES_COUNT; j++) {
--				if (data_lanes[j] != supported_data_lane_mapping[i][j])
--					break;
--			}
-+	ret = of_property_count_u32_elems(ep, "data-lanes");
-+	if (ret == -EINVAL)
-+		/* Property isn't here, consider default mapping */
-+		goto out_done;
-+	if (ret < 0)
-+		goto out_error;
-+
-+	if (ret != DATA_LANES_COUNT) {
-+		dev_err(&nb7->client->dev, "expected 4 data lanes\n");
-+		ret = -EINVAL;
-+		goto out_error;
-+	}
- 
--			if (j == DATA_LANES_COUNT)
-+	ret = of_property_read_u32_array(ep, "data-lanes", data_lanes, DATA_LANES_COUNT);
-+	if (ret)
-+		goto out_error;
-+
-+	for (i = 0; i < ARRAY_SIZE(supported_data_lane_mapping); i++) {
-+		for (j = 0; j < DATA_LANES_COUNT; j++) {
-+			if (data_lanes[j] != supported_data_lane_mapping[i][j])
- 				break;
- 		}
- 
--		switch (i) {
--		case NORMAL_LANE_MAPPING:
--			break;
--		case INVERT_LANE_MAPPING:
--			nb7->swap_data_lanes = true;
--			dev_info(&nb7->client->dev, "using inverted data lanes mapping\n");
-+		if (j == DATA_LANES_COUNT)
- 			break;
--		default:
--			dev_err(&nb7->client->dev, "invalid data lanes mapping\n");
--			ret = -EINVAL;
--			goto out_error;
--		}
-+	}
-+
-+	switch (i) {
-+	case NORMAL_LANE_MAPPING:
-+		break;
-+	case INVERT_LANE_MAPPING:
-+		nb7->swap_data_lanes = true;
-+		dev_info(&nb7->client->dev, "using inverted data lanes mapping\n");
-+		break;
-+	default:
-+		dev_err(&nb7->client->dev, "invalid data lanes mapping\n");
-+		ret = -EINVAL;
-+		goto out_error;
- 	}
- 
- out_done:
--- 
-2.34.1
 
 
