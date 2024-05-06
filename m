@@ -1,160 +1,109 @@
-Return-Path: <linux-kernel+bounces-170060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434F18BD158
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:14:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D638BD15D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76AACB2541B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:14:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D56B255C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFC1155A47;
-	Mon,  6 May 2024 15:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4014A156253;
+	Mon,  6 May 2024 15:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eWGGKiES"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HiHEFrOu"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030B3155359
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA3D155359;
+	Mon,  6 May 2024 15:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715008279; cv=none; b=Qjuhas4u+aQ7N+zpVkvMNfcRdiq+/W8+Zz8EzH1LxgPtBGHXk0GhR5grNTNiWOVAsMJ0nWu0HTusww1wMuKiIdcEoTuiUUH0TIQKDa6gmp1V38Si4Cu/z/IO1HU4FHyI/TrLzClpGLepW1NQd/9jDBX56Pllo/BsaNAkG7ElDwU=
+	t=1715008332; cv=none; b=I2qW41PaDzvAR9YTaonMOOKNGCFGhfa5imZZpe4ktGFkGRtGhfB2ik0o0UMZQhcu99OaYteseQpSZ6RTJDdlnZA0zmfzMiSeYng6NyJM9P8UOweRzFRnrA1VNsy/NbY78E9BANiWiDj8gD+Qkm3ZlpDCYGi4wC9up4UbxpuPGxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715008279; c=relaxed/simple;
-	bh=H8vt6scH7BoMUK/SlOWE4m46KlKCzDhGUHOMEm3175I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UMLorKYseks0r9LDs3ZyYmvsYM717PeYAFgblh5gbzNCwQ6QT7/EcxI7lA84Hg3zheyvuMp5FbJ/15acI4cGoXox7X8y52IadrMT2Kgpx9ffr8oZq4Uc6rg8Zo0bgmDSIWeNhcA6d9SoMkO3Kdj1RnW8WAkDdVqKQHkKSp5F+rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=eWGGKiES; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c96c1e27a3so609257b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1715008275; x=1715613075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MBh6+cizIio2X4bEih+MrNlX8KtZG6Oq+pv2Gn+dV+M=;
-        b=eWGGKiESrk19T+Ves+3x1o2gjEC9rEOaaeLe2D7bPP+/gicUlm58z8I7XF8MmyHoSf
-         7fVRw4S7IQ6xiL7R1riB6+gfm56SQjawGZAoEinkNDRrIruh2aHanxMXgZZ//CJhTxd6
-         hTV45sOCFQlHPOkkN4fkkWh8fx3K3pwGVScZbnHrLzIKrB1Wf1o+j/a1OFYjYjp+JY7X
-         f5lQ11b/QBGqTX1I0STzEgXLYMvGlobA4rrYpCRMF4X92P1wJBv6r4ZhLKP6kGCHSjoP
-         Ou0gHoBczXXrWNi5nXT8nlDG54r7PaCmz9fkpGkKy1bm7/h3dnJkCqm6X+0a3Yaw/oJO
-         TdXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715008275; x=1715613075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MBh6+cizIio2X4bEih+MrNlX8KtZG6Oq+pv2Gn+dV+M=;
-        b=gkikije9aA47E3/ViFRpXPUY0nwQIN5my9X9WAWnExjrsQ9hLzTd8d+KiMmyUrjGfb
-         Cx9xD2wXVckUWrr/bK/f2OBiE+T+wRwpfjUf3UlTNqIY1HBEl011y0Csfwudbmmc9fok
-         FeQtcXP8AB7KW5Rtm5uUM7B/Y+D9JUMigyww9r7+/HtvTCuo/TZmg9eB7N4xwYDBPAcz
-         YdQvgQFOgpH1gYaUCx088oKnpAa8YxfRh0onkoMvpRsA5UEKXMvE0U/ydCMUypulTHO9
-         S5nBf/usbORO9zRTWGHHs+Cw3OW05bg7QlRNYx3kOEAU2Krz/E8h6+7uXSbCdJbEGfwv
-         ko1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUhTA+lBR7/bPRDmmRQnZ8U0pPC3QTSodrCi0/dtWq0uMSadsYfN3VEZqACvIuJmonOAFk2kWrxc5ykiXY9J+dwCuZSEKLNaRbNIYTx
-X-Gm-Message-State: AOJu0YwxZ7RGbkHaMXqfxgbjM5lSorEo2m4LyXJnyPSbpZ+scms2iNoX
-	CwhcHHDvMvuqGXvVcTVkTdLea4UOw0bnIeKSl6GhXGoxjLQ5zOftC80MneNmR1k=
-X-Google-Smtp-Source: AGHT+IEVepJmR8F9MxalDoDb4b2ghxl9gZ1j9Wv3ingZbviU6bGlG8g1H0c1OFxGShUhmkGpG4Qskg==
-X-Received: by 2002:a05:6808:b24:b0:3c9:6fad:25cd with SMTP id t4-20020a0568080b2400b003c96fad25cdmr2492419oij.22.1715008274880;
-        Mon, 06 May 2024 08:11:14 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id k12-20020a54440c000000b003c7443c0efasm1450390oiw.1.2024.05.06.08.11.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 08:11:14 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1s3zzk-002y7a-R6;
-	Mon, 06 May 2024 12:11:12 -0300
-Date: Mon, 6 May 2024 12:11:12 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Chengchang Tang <tangchengchang@huawei.com>
-Cc: Junxian Huang <huangjunxian6@hisilicon.com>, leon@kernel.org,
-	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-next] RDMA/hns: Support flexible WQE buffer page size
-Message-ID: <20240506151112.GE901876@ziepe.ca>
-References: <20240430092845.4058786-1-huangjunxian6@hisilicon.com>
- <20240430134113.GU231144@ziepe.ca>
- <fac4927b-16ed-d801-fb47-182f2aca355c@huawei.com>
+	s=arc-20240116; t=1715008332; c=relaxed/simple;
+	bh=6e1q5SzxhmAt8bpTfbd7aZEK9sXTlPjzcbJlbx0Ai7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZtGdHM1av4Py71rYqMRWub+wdE3BvqhOFSw9q4OrMj8+6L/IEgy8eyJG71vDCEmgABOy6SR+xwKPpaNuIL0bpI4cEpl3SuaKRbiZdEKXE0fgCyNI2dKFdmaUIhOJo6/yHMTt/7+FpBZX+bZ9IwPPKYZ10vv/SXXkzhKSqcq9Mzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HiHEFrOu; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715008294; x=1715613094; i=markus.elfring@web.de;
+	bh=6e1q5SzxhmAt8bpTfbd7aZEK9sXTlPjzcbJlbx0Ai7A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HiHEFrOub7F+MIrA3Zj8Ntt+oJDAnR+dTaRqRwUPNpxLGCLrBizgl3kcBX/SpzLZ
+	 BAYHu5MCB5bGBvhWXaHYffMjgUr0o5DQ/ViUhe6S7iSke29JPCHGK+C2xanKDVEcU
+	 fSkXgRlz5X2hkJz9xAaxZosgaUzo9WfkV7dBPl+xO2YfWihAuzJwp5RclXjb9ZabI
+	 7CaicpEmVyKOxLECttQPBSCv5DX7uhFsXiSVbtMH0dIyuPWw4STFGBMa0lvI3dUZy
+	 EnwXqIHoT4DFMdiJNgAdy7u+ICAtWxf5FQHWXSt8qggYG/jOxDjx1F9KZhc5SdpWf
+	 wNA9Gf89gak5j5k2lQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbLM-1sUm1s1VPW-00ijig; Mon, 06
+ May 2024 17:11:34 +0200
+Message-ID: <7582e197-122c-4682-b9e2-53bfc386d870@web.de>
+Date: Mon, 6 May 2024 17:11:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fac4927b-16ed-d801-fb47-182f2aca355c@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 1/2] ax25: Fix reference count leak issues of
+ ax25_dev and net_device
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ =?UTF-8?Q?J=C3=B6rg_Reuter?= <jreuter@yaina.de>,
+ Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Lars Kellogg-Stedman <lars@oddbit.com>, Simon Horman <horms@kernel.org>
+References: <cover.1715002910.git.duoming@zju.edu.cn>
+ <8338a74098bc1aafbca14d4612a10d6930fcef1b.1715002910.git.duoming@zju.edu.cn>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <8338a74098bc1aafbca14d4612a10d6930fcef1b.1715002910.git.duoming@zju.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:RONyq3fALCbJADN/0hRJ9hnA+UEEvs4z1ucA3GyJCmX8Q4rDgTa
+ 6wj6ykFbxKOL5vSvLYE4XP0123sYErDGuWLbvES+gCymF4t2thrkeQAhDi5ARN7HyqnP1Fw
+ l433K7dS9GeQQaRK1uz6k06q5elOAqGh+5JjuCrjZM+LDauN3uE3TC2rvQyEr/yVpwwElvW
+ eAfOiAet6R/jYSiNA7mUA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7y0mQykGYLA=;p9lu1MtTvq61ZoI2zU7ntxmR31A
+ BOwLVU6vjClWt23iGroruQIO/KBwzUylCl4EWal+Pbht/Peh00tmUnp7H+vf51jrlsaHdB5KQ
+ zq3SuPkUuryho61EVxKTbUbbdJnQtvpOD9P2wszErdhVfPtV01llhr+gRlbObWkq4fjzaWQ2W
+ d4apuw3PReVFPWAsB/EKbd3a4GQWuOOF3j2FWsycHNpQr6Y/sFhKEicUosYo74VIelFvtrZmc
+ R3mEUBBk6jgkosx7VjajUr6c0LWzxCG7tizApfNA2wE3doXqARhGEkxlTKpNfsIYULNSQ68gD
+ WJeE1lAAUtItHNKnHMlc8NWP5Fmjxm7lqkl6FjneIvnrf/ig+izSSS1bqkkozNTC3NnbnqSq1
+ 0415Oy0+MY8rasHgQmWrhgkDFbyuo5mJrBvIyfrywz3grg+ofbRmkxnroD2+S01SquoEjIswY
+ BcTvzaPeFXYgJKcidPedAsmRvY3fTjPwaqo7DlGw/3xQc5BPK35uSUig4IUtoJQI4ET5+1U9C
+ ZZ7kiiupMQwcJJNiRd2eoQIpTDNsxX6SUVCrtwtrqpNvdg/5dDE01a2DIkUDFnHRBJXt9m+o1
+ mdIWJG5IeyxYMFz9RDaxypTQ7LqTVL5K8kmXQIsZRzYPywtgT644NEceG72OO/WnhAASX/2o1
+ 1UMNbMLdOCOZDc2ysz8syMG1nrkRb8xcCP0bV+Dpzje22MAroXxFQef/6EtCOBL+ydoQ5psQu
+ rfp3zAJjCZiBioAgYOu2REHmBEU4Q9M0rpuLb+iYRvilR2FeRXx03JHffIWBNNFXY1nqoTwdN
+ J4UEseE1nNXwXAset/IyBLLSq7W52+WB93OMIoZJUq/D4=
 
-On Mon, May 06, 2024 at 02:47:01PM +0800, Chengchang Tang wrote:
-> 
-> 
-> On 2024/4/30 21:41, Jason Gunthorpe wrote:
-> > On Tue, Apr 30, 2024 at 05:28:45PM +0800, Junxian Huang wrote:
-> >> From: Chengchang Tang <tangchengchang@huawei.com>
-> >>
-> >> Currently, driver fixedly allocates 4K pages for userspace WQE buffer
-> >> and results in HW reading WQE with a granularity of 4K even in a 64K
-> >> system. HW has to switch pages every 4K, leading to a loss of performance.
-> > 
-> >> In order to improve performance, add support for userspace to allocate
-> >> flexible WQE buffer page size between 4K to system PAGESIZE.
-> >> @@ -90,7 +90,8 @@ struct hns_roce_ib_create_qp {
-> >>  	__u8    log_sq_bb_count;
-> >>  	__u8    log_sq_stride;
-> >>  	__u8    sq_no_prefetch;
-> >> -	__u8    reserved[5];
-> >> +	__u8    pageshift;
-> >> +	__u8    reserved[4];
-> > 
-> > It doesn't make any sense to pass in a pageshift from userspace.
-> > 
-> > Kernel should detect whatever underlying physical contiguity userspace
-> > has been able to create and configure the hardware optimally. The umem
-> > already has all the tools to do this trivially.
-> > 
-> > Why would you need to specify anything?
-> > 
-> 
-> For hns roce, QPs requires three wqe buffers, namely SQ wqe buffer, RQ wqe
-> buffer and EXT_SGE buffer.  Due to HW constraints, they need to be configured
-> with the same page size. The memory of these three buffers is allocated by
-> the user-mode driver now. The user-mode driver will calculate the size of
-> each region and align them to the page size. Finally, the driver will merge
-> the memories of these three regions together, apply for a memory with
-> continuous virtual addresses, and send the address to the kernel-mode driver
-> (during this process, the user-mode driver and the kernel-mode driver only
-> exchange addresses, but not the the sizes of these three areas or other
-> information).
+> The ax25_addr_ax25dev() exists a reference count leak issue of the
+> object "ax25_dev" and the ax25_dev_device_down() exists reference
+> count leak issues of the objects "ax25_dev" and "net_device".
 
-So you get a umem and the driver is slicing it up. What is the
-problem? The kernel has the umem and the kernel knows the uniform page
-size of that umem.
+I find that such a wording for the introduction of adjustments needs
+further improvements.
 
+How do you think about to offer changes for the affected two function
+implementations as separate update steps?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc7#n81
 
-> Since the three regions share one umem, through umem's tools, such as
-> ib_umem_find_best_pgsz(), they will eventually calculate the best page size
-> of the entire umem, not each region. 
-
-That is what you want, you said? Each region has to have the same page
-size. So the global page size of the umem is the correct one?
-
-> For this reason, coupled with the fact
-> that currently only the address is passed when the kernel mode driver interacts
-> with the user mode driver, and no other information is passed, it makes it more
-> difficult to calculate the page size used by the user mode driver from the
-> kernel mode driver. 
-
-Even if it is difficult, this has to be done like this. You can't pass
-a page size in from userspace, there is no good way for userspace to
-do this correctly in all cases.
-
-It sounds like you have it right, just get the page size from the
-shared umem.
-
-Jason
+Regards,
+Markus
 
