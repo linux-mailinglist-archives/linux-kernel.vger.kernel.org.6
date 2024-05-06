@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-169644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4376A8BCBAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:09:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1C48BCBB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 421A2B21868
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A8E1F2361E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED2F142E66;
-	Mon,  6 May 2024 10:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CD2142642;
+	Mon,  6 May 2024 10:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fxhWNI7x"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="POa9s/Iy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002C1428EA
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454EF4205F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714990174; cv=none; b=f6D+B/kAxXx7j+7xMbEi9qGr3fU95T7k2fUSfsSaX7IYWRie3ePDlfl7vTNiaOqjY5uZtIdFug0WOXSbP+KlAPGpgbWbbOSrjnE4OHt0avZuFmILYvswcRhgm9aPGdQVlFE4QEFzrpy+k31Yq2GRQaPT/DodAa6+9aQgmc02UjQ=
+	t=1714990221; cv=none; b=kYE61dgo/0FV/eLqkFrR9R+/g5hupgu3CO/x03cJyjnWDiY06IqKyDzsCL2AVOADa8GJGtsWBlm30nufHm2wb8A3RFno6ERcHBQvSHNBIzmtk6MoG4wihy91mGUL3UzOByVD9K9kN7X447Oc7v/6lOBwS8ZKJ4l8QWuXXIqwQKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714990174; c=relaxed/simple;
-	bh=c0xjj+ANGz4MxBBiLBwLKEfespYcrDozzderIyQtxCE=;
+	s=arc-20240116; t=1714990221; c=relaxed/simple;
+	bh=UabQAUK3En/3LuQtSYQlzotWfnD5PxaHVAmlM/KgexY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tA5K6lcIk0jgfNDjhSWpYiGQX/t1L8kchUfs3d3SHO7nikOSQWq6Xn/IawSQqfLKkTz8vmjHAT5m+1NwTxvgADTzOti43ZOld+2kwFQ1edPuh3kZ+3uZbgXd3YoqNzhXTGGXvY3TzmFCKUOSDqmUpr+NT7ws5FQdduMmxxSuCTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fxhWNI7x; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8261040E0244;
-	Mon,  6 May 2024 10:09:27 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id y3q0j_RtuwX7; Mon,  6 May 2024 10:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1714990164; bh=yDr1d+Rpi28/rr/NTeMKaEESBQG5/hCp8YbpHq/FNGo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZh2+7Ednr/lf+1yjPHiwtZ/Zoml5j7zraBrzatWCfnybVUT2GxHe8M7y9jW27ggp0OBVoyRuypeQ1P8LfCCsF22YQmgV7u6ljRQZNguEOffGLQ18ngvN9s6IHoxIosaweb7+lqB68zvjPHZmAPyuXnNMckP6HTIQ7Z93/h1H8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=POa9s/Iy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A86AC116B1;
+	Mon,  6 May 2024 10:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714990220;
+	bh=UabQAUK3En/3LuQtSYQlzotWfnD5PxaHVAmlM/KgexY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fxhWNI7xGUuq0TG29EfWKa5XsWgrwrDf2hRgnywI43wzMluTYjWUhLK5ZxvxRioSg
-	 n7H3ltxQAeorYssA1r1X2pSBy+frVvUUNI1WbivXZTbsHSotS/Coyw1yQBJzPzQ81K
-	 PIceAxUp03s4B31aKNKOS1h4sZWFk4O/rr4CXtFetht3Uz1FzNlSaFgOvAY66S7sIf
-	 glW3SIh/ArL5JI0cksjKl10wv/tO8Ex5uk5ALqRXdSXxymFykLCo2+cWcY6qkomyDg
-	 aSxI/jHkB+R31dXBir8T4sZfAupVHAMk5P6hcZiiDsJurW00ReYO6aFWx0LIdHFGHf
-	 pOtp86zOzXxbrn1VUeglMRPAw3zwufJi7nxNmozsO87CzLcgsz7OpugYjUYcWu3HgV
-	 acKjH5VcCci/ltJLmIe20OIY3Z4HmHRcW8QbLuDIcYNqvSbbn6U+/z3SCc7yzRecqf
-	 UslWq7pgPFWzqVfYbkjxuBqVIkCcOAZZz2ZqB6/1G19g3o/copT54byFAmjy4rr3QX
-	 DhVNKV2AjqMoEkWelMJxSuf3o6sLo6BTcCZjDkar05YAcGYgldbdvjirC3NbDrRHU0
-	 olZtmUhC/f89T1ARPEPyCPf8b29nnqeZ/Kya3rAuUkcX2kVPmajVL72haNoSGRVZel
-	 xemUn1/hlC8sVdWKVXj2xYC4=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E38A340E01A1;
-	Mon,  6 May 2024 10:09:09 +0000 (UTC)
-Date: Mon, 6 May 2024 12:09:05 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v4 05/15] x86/sev: Use kernel provided SVSM Calling Areas
-Message-ID: <20240506100905.GFZjisQTQwbkv2eKsh@fat_crate.local>
-References: <cover.1713974291.git.thomas.lendacky@amd.com>
- <07266b47e749267ef9a9ccbc9e8e9df78ed54857.1713974291.git.thomas.lendacky@amd.com>
- <20240503103407.GSZjS9n-XMMKi5ZOek@fat_crate.local>
+	b=POa9s/IyH2KONdMog2F87clkt9RkLiiCEbUFSlSahXaf9QNTa+Hkb3NbnY6BpWXR2
+	 4TtYfDmCpBm6qw8u1tWr6ae/r+ygOO9g43wmf/e3txPtg3X5xtt1c2P5sL6uD6/Ivg
+	 HoLt91aG6hn64wU3Vm5c/eKtrwdhylPC+jQoYeiUPu9lUeNCN4965w70yg4jDCbrm+
+	 yD9BAKypIRpRKvIKzyMVJgF1Bd5xNitokhPRsgHEgzcErKx/yLDgx8BNqmCro2Z0m2
+	 jooiRUOkbq//YgQiYv0lZ/r23KlLgjNM5CMJzH07Dy8UNQFZ3ZgTv0rKM7zdZKmwpl
+	 WWxK0YwHUYOpQ==
+Date: Mon, 6 May 2024 12:10:18 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Levi Yun <ppbuk5246@gmail.com>
+Cc: anna-maria@linutronix.de, tglx@linutronix.de, Markus.Elfring@web.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] time/timgr: Fix wrong reference when level 0 group
+ allocation failed
+Message-ID: <ZjisiuqiR9p76YcJ@localhost.localdomain>
+References: <20240505085709.82688-1-ppbuk5246@gmail.com>
+ <20240506041059.86877-1-ppbuk5246@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240503103407.GSZjS9n-XMMKi5ZOek@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240506041059.86877-1-ppbuk5246@gmail.com>
 
-Ok,
+Le Mon, May 06, 2024 at 05:10:59AM +0100, Levi Yun a écrit :
+> When tmigr_setup_groups() failed level 0 group allocation,
+> wrong reference happens on local stack array while intializing timer hierarchy.
+> 
+> To prevent this, Check loop condition first before initializing timer hierarchy.
+> 
+> Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
+> Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
+> ---
+> v3:
+>     - Fix typo.
+> 
+> v2:
+> 	- Modify commit message.
+> 
+>  kernel/time/timer_migration.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+> index ccba875d2234..84413114db5c 100644
+> --- a/kernel/time/timer_migration.c
+> +++ b/kernel/time/timer_migration.c
+> @@ -1596,7 +1596,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
+> 
+>  	} while (i < tmigr_hierarchy_levels);
+> 
+> -	do {
+> +	while (i > 0) {
+>  		group = stack[--i];
+> 
+>  		if (err < 0) {
+> @@ -1645,7 +1645,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
+>  				tmigr_connect_child_parent(child, group);
+>  			}
+>  		}
+> -	} while (i > 0);
+> +	}
 
-I think this is very readable and clear what's going on:
+Looks good to me. But let's wait for Anna-Maria's second look. The group setup
+is not my favourite area...
 
-static __always_inline void issue_svsm_call(struct svsm_call *call, u8 *pending)
-{
-        register unsigned long rax asm("rax") = call->rax;
-        register unsigned long rcx asm("rcx") = call->rcx;
-        register unsigned long rdx asm("rdx") = call->rdx;
-        register unsigned long r8  asm("r8")  = call->r8;
-        register unsigned long r9  asm("r9")  = call->r9;
+Thanks.
 
-        call->caa->call_pending = 1;
-
-        asm volatile("rep; vmmcall\n\t"
-                     : "+r" (rax), "+r" (rcx), "+r" (rdx), "+r" (r8), "+r" (r9));
-
-        xchg(pending, 1);
-
-        call->rax_out = rax;
-        call->rcx_out = rcx;
-        call->rdx_out = rdx;
-        call->r8_out = r8;
-        call->r9_out = r9;
-}
-
-and the asm looks ok but the devil's in the detail.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+>  	kfree(stack);
+> 
+> --
+> 2.41.0
 
