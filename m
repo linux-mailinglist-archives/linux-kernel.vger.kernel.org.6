@@ -1,202 +1,175 @@
-Return-Path: <linux-kernel+bounces-169550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B0D8BCA3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:07:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D208BCA44
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB401F21E68
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D801283600
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F951422C7;
-	Mon,  6 May 2024 09:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA831422C4;
+	Mon,  6 May 2024 09:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwpagwlI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UlWFbY2i"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16C847F6A;
-	Mon,  6 May 2024 09:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB9F1422A5;
+	Mon,  6 May 2024 09:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714986414; cv=none; b=KvyUAbZjOhw7jYHne/tiBhysdxORXjD9zLTnJhXDFN/kHQwG/KWtTfTRNZfxBTzXVxGeYw6KqRdskdarWDOJiND50W5X5IXZ2vV0bumXiAnfmcYwGPps4nMcOKx9vivKCVUND8waUyr1S5hL17S6h1jUGbzGExx3zIouJcYU3DI=
+	t=1714986491; cv=none; b=bcuwoYwDYQPsZTJeNdQ5qAtVCvzVIEOgaT5AXO1R4Tr/EuxQDNBzpoqg6pDX6wt2PR5tPLv+dPFBXbMUtbP1i6TtZL6hQEZB+92M6QwszuiHUT0irCeIw/lSNvaWhXNVeRAEoCkEiaYRwaD9IvxFQIsjC/ZFE+kVtYa3bX88SPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714986414; c=relaxed/simple;
-	bh=cFwir4zc/nudwwhXcuiOwVfdum1PITTVnDd2nBJu8Qc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kKRcZy3MvYiNVd/FaZr4oD+jDf0vfe0i5o+SUhtt3JhnAEgr561n44rTIb/NAfLsCPqbU6R5/+bI1svU7hbi5fDRLNIZVC2N/trPH4gt0Z9paeZ1s8a0Ix+6BR34VL2LhkGy9VQAgnESvHRcPd+ZbCVVUGL0fyDhbIHxeRKjabc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwpagwlI; arc=none smtp.client-ip=198.175.65.14
+	s=arc-20240116; t=1714986491; c=relaxed/simple;
+	bh=DJFAb48flUOaIKrGIcEOoLa7PZxItSUWyxVPt3RrdEQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Xl72jl6Pd80BxPrqR7PInJAdxHLiv7jpMl6jXNykzFnanOqCDhGetX7SsSb9c7UwsNs69M5PqDUOzovGwgj0Fx8RcHOjMMjM1+tOq7pABrEYpGYYfePCPa+Xk3eUbYbjbFLWIB9idtwpBkOX13fC6kjhZk1wlUj6SIqz8BkUFmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UlWFbY2i; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714986412; x=1746522412;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=cFwir4zc/nudwwhXcuiOwVfdum1PITTVnDd2nBJu8Qc=;
-  b=FwpagwlIU1gYJMRynCb4vfFpMIzltg+VfPVyhmCZQP8b6/fVt/AvNw3n
-   /cSbtZ+DeLIzkCdvyGbLqGh4kHBRbJn2L+fRQFDLx0asf8mQ/pcHF3z7R
-   7ebfVGwPJk0fQGiLaUoOBX9I6dAsoF4+ZW4N0y52KJhKbH7A2U5V9zqcT
-   H+FIQnS98/6iJhmRB2CePFJE/5T8DdLzFDlNmPYZMyj7KK6rOfqKCn0ww
-   SaH33uKFoqwTLYfKEjEq8kS2lx6aqj0rSUtLsHLjT5vIeGDzsjh7W4179
-   zk0ELYXDxLmkQzeejvNBwd850uOb74qUxOkpYX0pKXnRyxVaOMKx8tktE
-   g==;
-X-CSE-ConnectionGUID: mIkvKmHySgaOWHkIlw1Mcg==
-X-CSE-MsgGUID: tomlvGdkSPq305fyJ2gocg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="14537049"
+  t=1714986489; x=1746522489;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=DJFAb48flUOaIKrGIcEOoLa7PZxItSUWyxVPt3RrdEQ=;
+  b=UlWFbY2i8Ajr0krrBNPGq9h+LIUgAj7hZPA1TAfRwvRrZUStA4OSNZPZ
+   mfP8Sq2CQLzpua184cIGrlGQcx+xABjYekhSDPgivCt8ZpVJu2lbg3Bui
+   QSl6EN88wbdtjJyHB3S+v4IzHrR1lH6Ljfq0vEHRAELRyT2w12sJ9vK6E
+   AlmxTdG3Ph82IsTBz7nfQoI8cI4y9AIKyPo5g+p8JCHlbuH+/wJEgma45
+   eeAuFTYEcCNskaimUUD/oa0IfB18qSxJgcWncdBVB7oVbSFsYMJSEGKzJ
+   UtKujpM4SF2XJGcoSDYVrQeFp05rJOkMnDRHl5n+1tQyMAKyMC5tZpNpE
+   A==;
+X-CSE-ConnectionGUID: hB4d89iyTYKdCrCx6zTKNA==
+X-CSE-MsgGUID: PJtQ6c3fR2etSMXuSut5gA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="14508060"
 X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="14537049"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:06:51 -0700
-X-CSE-ConnectionGUID: mJuLiGEIQAO84nD63Rj0+g==
-X-CSE-MsgGUID: flJcUyFrSjOZAUPRd6GL3Q==
+   d="scan'208";a="14508060"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:08:08 -0700
+X-CSE-ConnectionGUID: k8ITO01gQfSkX3H3SFK3XQ==
+X-CSE-MsgGUID: r2to3QFHTWug0UPqDwrTMg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="28208688"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.230])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:06:44 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>, Easwar Hariharan
- <eahariha@linux.microsoft.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Zhenyu
- Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.wang.linux@gmail.com>, "open
- list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS"
- <intel-gfx@lists.freedesktop.org>, "open list:INTEL DRM DISPLAY FOR XE AND
- I915 DRIVERS" <intel-xe@lists.freedesktop.org>, "open list:DRM DRIVERS"
- <dri-devel@lists.freedesktop.org>, open list
- <linux-kernel@vger.kernel.org>, "open list:INTEL GVT-g DRIVERS (Intel GPU
- Virtualization)" <intel-gvt-dev@lists.freedesktop.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, "open list:RADEON and AMDGPU DRM
- DRIVERS" <amd-gfx@lists.freedesktop.org>, "open list:DRM DRIVER FOR NVIDIA
- GEFORCE/QUADRO GPUS" <nouveau@lists.freedesktop.org>, "open list:I2C
- SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>, "open list:BTTV
- VIDEO4LINUX DRIVER" <linux-media@vger.kernel.org>, "open list:FRAMEBUFFER
- LAYER" <linux-fbdev@vger.kernel.org>, Zhi Wang <zhiwang@kernel.org>
-Subject: Re: [PATCH v2 03/12] drm/i915: Make I2C terminology more inclusive
-In-Reply-To: <ZjVTqNGjaAjuLdLi@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240503181333.2336999-1-eahariha@linux.microsoft.com>
- <20240503181333.2336999-4-eahariha@linux.microsoft.com>
- <ZjU8NB-71xWI2X73@intel.com>
- <4f1e429c-794b-457c-ab1d-85eb97dc81c3@linux.microsoft.com>
- <ZjVTqNGjaAjuLdLi@intel.com>
-Date: Mon, 06 May 2024 12:06:41 +0300
-Message-ID: <87seyvnwbi.fsf@intel.com>
+   d="scan'208";a="59297461"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:08:04 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 6 May 2024 12:07:57 +0300 (EEST)
+To: John Hubbard <jhubbard@nvidia.com>
+cc: Reinette Chatre <reinette.chatre@intel.com>, 
+    =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+    Nick Desaulniers <ndesaulniers@google.com>, 
+    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+    Fenghua Yu <fenghua.yu@intel.com>, Valentin Obst <kernel@valentinobst.de>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    llvm@lists.linux.dev
+Subject: Re: [PATCH] selftests/resctrl: fix clang build warnings related to
+ abs(), labs() calls
+In-Reply-To: <b88e73ea-d3f6-42d0-b9e0-f97665546178@nvidia.com>
+Message-ID: <d46b81df-e018-a9bd-1550-31c825c487cf@linux.intel.com>
+References: <20240503023209.80787-1-jhubbard@nvidia.com> <793bd068-c3b4-6330-41a4-bea597b1d820@linux.intel.com> <f908ba74-86c0-409c-854d-9da5f3917b05@nvidia.com> <26f3effc-6ea1-4670-a301-76df3a710fa9@intel.com>
+ <b88e73ea-d3f6-42d0-b9e0-f97665546178@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/mixed; BOUNDARY="8323328-626839963-1714985487=:1111"
+Content-ID: <1eef3c65-1a10-d09b-efb0-b3996dc9e99e@linux.intel.com>
 
-On Fri, 03 May 2024, Rodrigo Vivi <rodrigo.vivi@intel.com> wrote:
-> On Fri, May 03, 2024 at 02:04:15PM -0700, Easwar Hariharan wrote:
->> On 5/3/2024 12:34 PM, Rodrigo Vivi wrote:
->> > On Fri, May 03, 2024 at 06:13:24PM +0000, Easwar Hariharan wrote:
->> >> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
->> >> with more appropriate terms. Inspired by and following on to Wolfram's
->> >> series to fix drivers/i2c/[1], fix the terminology for users of
->> >> I2C_ALGOBIT bitbanging interface, now that the approved verbiage exists
->> >> in the specification.
->> >>
->> >> Compile tested, no functionality changes intended
->> >>
->> >> [1]: https://lore.kernel.org/all/20240322132619.6389-1-wsa+renesas@sang-engineering.com/
->> >>
->> >> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
->> >> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
->> > 
->> > It looks like the ack is not needed since we are merging this through
->> > drm-intel-next. But I'm planing to merge this only after seeing the
->> > main drivers/i2c accepting the new terminology. So we don't have a
->> > risk of that getting push back and new names there and we having
->> > to rename it once again.
->> 
->> Just to be explicit, did you want me to remove the Acked-by in v3, or will you when you pull
->> the patch into drm-intel-next?
->> 
->> > 
->> > (more below)
->> > 
->> >> Acked-by: Zhi Wang <zhiwang@kernel.org>
->> >> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->> > 
->> > Cc: Jani Nikula <jani.nikula@intel.com>
->> > 
->> > Jani, what bits were you concerned that were not necessarily i2c?
->> > I believe although not necessarily/directly i2c, I believe they
->> > are related and could benefit from the massive single shot renable.
->> > or do you have any better split to suggest here?
->> > 
->> > (more below)
->> > 
->> >> ---
->> >>  drivers/gpu/drm/i915/display/dvo_ch7017.c     | 14 ++++-----
->> >>  drivers/gpu/drm/i915/display/dvo_ch7xxx.c     | 18 +++++------
->> >>  drivers/gpu/drm/i915/display/dvo_ivch.c       | 16 +++++-----
->> >>  drivers/gpu/drm/i915/display/dvo_ns2501.c     | 18 +++++------
->> >>  drivers/gpu/drm/i915/display/dvo_sil164.c     | 18 +++++------
->> >>  drivers/gpu/drm/i915/display/dvo_tfp410.c     | 18 +++++------
->> >>  drivers/gpu/drm/i915/display/intel_bios.c     | 22 +++++++-------
->> >>  drivers/gpu/drm/i915/display/intel_ddi.c      |  2 +-
->> >>  .../gpu/drm/i915/display/intel_display_core.h |  2 +-
->> >>  drivers/gpu/drm/i915/display/intel_dsi.h      |  2 +-
->> >>  drivers/gpu/drm/i915/display/intel_dsi_vbt.c  | 20 ++++++-------
->> >>  drivers/gpu/drm/i915/display/intel_dvo.c      | 14 ++++-----
->> >>  drivers/gpu/drm/i915/display/intel_dvo_dev.h  |  2 +-
->> >>  drivers/gpu/drm/i915/display/intel_gmbus.c    |  4 +--
->> >>  drivers/gpu/drm/i915/display/intel_sdvo.c     | 30 +++++++++----------
->> >>  drivers/gpu/drm/i915/display/intel_vbt_defs.h |  4 +--
->> >>  drivers/gpu/drm/i915/gvt/edid.c               | 28 ++++++++---------
->> >>  drivers/gpu/drm/i915/gvt/edid.h               |  4 +--
->> >>  drivers/gpu/drm/i915/gvt/opregion.c           |  2 +-
->> >>  19 files changed, 119 insertions(+), 119 deletions(-)
->> >>
->> 
->> <snip>
->> 
->> >> diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
->> >> index c17462b4c2ac..64db211148a8 100644
->> >> --- a/drivers/gpu/drm/i915/display/intel_ddi.c
->> >> +++ b/drivers/gpu/drm/i915/display/intel_ddi.c
->> >> @@ -4332,7 +4332,7 @@ static int intel_ddi_compute_config_late(struct intel_encoder *encoder,
->> >>  									connector->tile_group->id);
->> >>  
->> >>  	/*
->> >> -	 * EDP Transcoders cannot be ensalved
->> >> +	 * EDP Transcoders cannot be slaves
->> > 
->> >                                      ^ here
->> > perhaps you meant 'targeted' ?
->> > 
->> >>  	 * make them a master always when present
->> 
->> <snip>
->> 
->> This is not actually I2C related as far as I could tell when I was making the change, so this was more of a typo fix.
->> 
->> If we want to improve this, a quick check with the eDP v1.5a spec suggests using primary/secondary instead,
->> though in a global fashion rather than specifically for eDP transcoders. There is also source/sink terminology
->> in the spec related to DP encoders.
->> 
->> Which would be a more acceptable change here?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-626839963-1714985487=:1111
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <910e6218-dd94-5978-7fc6-1c35ae67c9cd@linux.intel.com>
+
+On Fri, 3 May 2024, John Hubbard wrote:
+
+> On 5/3/24 11:37 AM, Reinette Chatre wrote:
+> > On 5/3/2024 9:52 AM, John Hubbard wrote:
+> > > On 5/3/24 1:00 AM, Ilpo J=E4rvinen wrote:
+> > > > On Thu, 2 May 2024, John Hubbard wrote:
+> > > ...
+> > > > > diff --git a/tools/testing/selftests/resctrl/mbm_test.c
+> > > > > b/tools/testing/selftests/resctrl/mbm_test.c
+> > > > > index d67ffa3ec63a..c873793d016d 100644
+> > > > > --- a/tools/testing/selftests/resctrl/mbm_test.c
+> > > > > +++ b/tools/testing/selftests/resctrl/mbm_test.c
+> > > > > @@ -33,7 +33,7 @@ show_bw_info(unsigned long *bw_imc, unsigned lo=
+ng
+> > > > > *bw_resc, size_t span)
+> > > > >  =A0 =A0=A0=A0=A0=A0 avg_bw_imc =3D sum_bw_imc / 4;
+> > > > >  =A0=A0=A0=A0=A0 avg_bw_resc =3D sum_bw_resc / 4;
+> > > > > -=A0=A0=A0 avg_diff =3D (float)labs(avg_bw_resc - avg_bw_imc) / a=
+vg_bw_imc;
+> > > > > +=A0=A0=A0 avg_diff =3D (float)(avg_bw_resc - avg_bw_imc) / avg_b=
+w_imc;
+> > > > >  =A0=A0=A0=A0=A0 avg_diff_per =3D (int)(avg_diff * 100);
+> > > > >  =A0 =A0=A0=A0=A0=A0 ret =3D avg_diff_per > MAX_DIFF_PERCENT;
+> > > >=20
+> > > > But how are these two cases same after your change when you ended u=
+p
+> > > > removing taking the absolute value entirely?
+> > >=20
+> > > All of the arguments are unsigned integers, so all arithmetic results
+> > > are interpreted as unsigned, so taking the absolute value of that is
+> > > always a no-op.
+
+(I see there's a better patch posted already but since there are a few=20
+incorrect claims in this discussion, I'll do for the record type of=20
+reply.)
+
+This discussion now went to a tangent about the warning. My main point is=
+=20
+that logic is not correct after removing labs().
+
+I also disagree with the claim that using labs() on unsigned value is=20
+no-op because labs() takes long so unsigned is just forced into signed=20
+when calling which is why the warning triggers but it's very misleading=20
+warning (see below).
+
+> > It does not seem as though clang can see when values have been casted.
+> > I tried to do so explicitly with a:
+> >   =09avg_diff =3D labs((long)avg_bw_resc - avg_bw_imc) / (float)avg_bw_=
+imc;
 >
-> hmmm probably better to split the patches and align with the spec naming where it applies.
-> and with i2c name where it applies.
+> The subtraction result will get promoted to an unsigned long, before bein=
+g
+> passed into labs(3).
+>
+> > But that still triggers:
+> > warning: taking the absolute value of unsigned type 'unsigned long' has=
+ no
+> > effect [-Wabsolute-value]
+>=20
+> As expected, yes.
 
-Yeah this one is completely unrelated to i2c and aux, and what the eDP
-spec says is irrelevant here. This should follow Intel hw specs.
+That error message isn't factually correct:
 
-BR,
-Jani.
+        unsigned long a =3D LONG_MAX;
+        long b;
 
+        a +=3D 2;
+        b =3D (long)a;
+        printf("%llu %lli %lli\n", a, b, labs(a));
 
+Prints (at least when built with gcc):
 
--- 
-Jani Nikula, Intel
+9223372036854775809 -9223372036854775807 9223372036854775807
+
+labs(LONG_MAX + 1) won't work though since it's not positively presentable=
+=20
+with long and the value is left untouched.
+
+--=20
+ i.
+--8323328-626839963-1714985487=:1111--
 
