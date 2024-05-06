@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-170462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9A08BD736
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:57:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A542C8BD782
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90621C2340E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:57:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D3E1F25590
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFDE15CD40;
-	Mon,  6 May 2024 21:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4E615CD49;
+	Mon,  6 May 2024 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4XXLwm5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Na6oz4cx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C0715B992;
-	Mon,  6 May 2024 21:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC9A15B0FC;
+	Mon,  6 May 2024 22:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715032560; cv=none; b=uH6efIo8R9brgW0gLNRFxdIUm9czX2Qk0cXtw/l5XrH7MeIgrLk+S/FWMBvoKvOsL7hvU23ZFFDQzi/Z/z7dP/UQ6cEP4ddX5i2bF9VC9aaN+0Qyp7aiHBp/Kr6wTQggrfEgDXA1J8nfNjugrPQHJqXqlt1k+9tqPGkv/tErTXA=
+	t=1715032823; cv=none; b=AipHy1vio+ISW/3qXYDu+Rye7MkUT21hDU/rR3GYFak9ERAfOh1sziOSKM4oy0yOzEEzaUmXhc9JpdkaBOS5L/KTQxA17khcQMW60eg0Vs3s/ZsgwEwPoKm8hUfRYAdjIO0eTK+OI8ZPuvxZpJNuJDfuDwSoSA0d1LZe+qjFENQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715032560; c=relaxed/simple;
-	bh=HaNjQp5cZxsrczAxh1tzgz1zTPZkppf3rqAP+7OG2z4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=iM/r4RUbiJieZFHFtOTs/Bqwhn8I99bKDvsP/5np/N6OqTR1NNEeEIQiy0dyShF+kSrvcDurhSwlqTAvPbzwvyJg2jtpd5p8VhdekLv6tk+zuNypOwMD4mRI0HyiA8PyyAQ2iK4rOqKXZh6h0HWulCBsnK7Rpc+sT7ea/vJXaEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4XXLwm5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA5DC116B1;
-	Mon,  6 May 2024 21:55:59 +0000 (UTC)
+	s=arc-20240116; t=1715032823; c=relaxed/simple;
+	bh=DGEjDoGjnlISUZT7qTrHLboAC4L73+JN3s87SW3BNn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTALdb1MqONeTx20xSfRjReyEdP6P7eO31+W3hbgGedIQc/junV9XIdZ+1S/QF7xqd2ms6oeH7/BrF2WiaICDaceCgWEN/kT7ngXK0vGE7eaVu/FBCnlSQmAhMtQlF0wgmQ6MTOkyMuZsst/WAR3caHx9TE7TgZD66HntLwNRW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Na6oz4cx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6C3AC116B1;
+	Mon,  6 May 2024 22:00:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715032560;
-	bh=HaNjQp5cZxsrczAxh1tzgz1zTPZkppf3rqAP+7OG2z4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=k4XXLwm5P5AqtWVqi2cu+UnhSETq0+Vnh65Qo9avqN7Htxycj/6dhcHQfRbEqth5c
-	 gITd5kXRWA539v7XR+db6Z9Kj41QK7RC+NNe5CCigjLuoCifZOjwAgOnFnLd7U97vH
-	 CQ7BiAx3CmICdAme3WhCBvCyUgxdpjaEFqsCR+08Yp92fIfeOCweUbRb04F6a63UVO
-	 sx1G5tItXzt/4ZZchPBx93PbJRaLYQiCaMjGw+JR9K1SgZJ6gwupVe8cc9qQzaj98E
-	 gCb+d2IBY4V32ca+ARaUNNXkqbybM/193IbpNmC2ibjodAOa6L0myVK9RLyuBxtqgc
-	 KqWZRVMALTzSw==
-Date: Mon, 6 May 2024 23:55:57 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-cc: Chen Ni <nichen@iscas.ac.cn>, bentiss@kernel.org, even.xu@intel.com, 
-    lixu.zhang@intel.com, kai.heng.feng@canonical.com, hongyan.song@intel.com, 
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: intel-ish-hid: ipc: Add check for
- pci_alloc_irq_vectors
-In-Reply-To: <5523c4770ce2de9e804a3020e0bd5c60fb401fc2.camel@linux.intel.com>
-Message-ID: <nycvar.YFH.7.76.2405062355450.16865@cbobk.fhfr.pm>
-References: <20240429085422.2434036-1-nichen@iscas.ac.cn> <95fadbf4772d575bff777ddb738cb6c25b85b779.camel@linux.intel.com> <nycvar.YFH.7.76.2405062311100.16865@cbobk.fhfr.pm> <5523c4770ce2de9e804a3020e0bd5c60fb401fc2.camel@linux.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1715032823;
+	bh=DGEjDoGjnlISUZT7qTrHLboAC4L73+JN3s87SW3BNn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Na6oz4cx/U5ziqjLCkf+PAPo68yTD9dUjn40ucK+CFFkMDq2blWKVkPbCWviYnHd7
+	 9LdDdK1BqD1FHocusI8EfiRsx1DqSDfd6a1rr52l+tE6Cq/C6dKLwrNFJpf3NT3r2n
+	 l/xbOQbR+f8UapkmXCM2Taf+06JqtVjKPCyFkhAECer6MwGHusgieTM1AODQqe3Swj
+	 708OisB3H6CbJEk+mn0ZLK3ckV93Wowtf5rDtoTbwV8JSy8G8XOuPtn5wTQZmfq3Gm
+	 TSQLelcmeK4Li+7UuTe1NU5vRnm4YO2zEp7j3m1xteDNyOJevCga5tj2pYwcuL1AGm
+	 7d/C+Q2Y+zUXg==
+Date: Tue, 7 May 2024 00:00:20 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v2 14/27] context_tracking, rcu: Rename
+ rcu_dynticks_curr_cpu_in_eqs() into rcu_watching_curr_cpu()
+Message-ID: <ZjlS9Jktyy7LNwuP@pavilion.home>
+References: <20240430091740.1826862-1-vschneid@redhat.com>
+ <20240430091740.1826862-15-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240430091740.1826862-15-vschneid@redhat.com>
 
-On Mon, 6 May 2024, srinivas pandruvada wrote:
-
-> > my understanding is that with the changelog rewroding this patch has
-> > your 
-> > Ack?
-> Yes, just to make it more clear. With that.
+Le Tue, Apr 30, 2024 at 11:17:18AM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, reflect that change in the related helpers.
 > 
-> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Note that "watching" is the opposite of "in EQS", so the negation is lifted
+> out of the helper and into the callsites.
+> 
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 
-Thanks, now applied.
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
