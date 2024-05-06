@@ -1,165 +1,87 @@
-Return-Path: <linux-kernel+bounces-169840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15F78BCE6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:50:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEA48BCE76
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5845E2897AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:50:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29BBD289E94
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5B644C66;
-	Mon,  6 May 2024 12:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7CaRqUK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A3C4D58E;
+	Mon,  6 May 2024 12:51:51 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED2835280;
-	Mon,  6 May 2024 12:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682E81DFED
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999822; cv=none; b=K1xZ4mP5EzOTqmwH3sK2GkHq+MhYMuMVQ7ViWmkqENODSYO2jxsBNUNkL45qt4zp/XW4YnL7re7NMrA5/g5ncRxJqj/bGZDTp+AVQJgxyCT/lrrtN5+D8HTM9Dhqk0H5d9c3+Bwu+/RyJ6u2YWvJkF5tgnqz1q8gKDe9xZHBlfI=
+	t=1714999911; cv=none; b=MXPyJX66LaWyC30JYMguOIcPyjlAXVqcTrtyrwa0ycRCaT1JMjVIP1088FRFMHhqPRNFKeuhWLVc8Oo30yGm3TzJnTQykzj94dtR5paInkH+f0yx0sSuDWQqATqlH7pKt5vHqB1/ulZ1dyP9AGUprsLsEfKQN3Y287UaNqrEdSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999822; c=relaxed/simple;
-	bh=gH5EX8v31IKKWG02ARJDY+jbpfB5szxfgpICF1R0z5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LjvotH9ZGLoYgcvMtxw1tcxG2z/bcCaNU5iQIZTy27RgCyBw6LLAsSQoTOI6uzCUnLahxzFSKhlAEuerbtL6GAmmL2V78uItoTsdwVdNjKwE+BhA50xs9RRvQZGoN1QVFVRT+rPwKOSuUBjdeSw16ZHsi7ffgyG09hAHFXV2ihc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7CaRqUK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A7AC116B1;
-	Mon,  6 May 2024 12:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714999822;
-	bh=gH5EX8v31IKKWG02ARJDY+jbpfB5szxfgpICF1R0z5Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q7CaRqUKBWaHOY4aLBhLpE6y/nk6SLYueNsm6kBkRo2p6qCYnMN7dCgv//NERYNuD
-	 uB530fyyCqHx4j/yrSiIyp1R+DLpxQxCULrhGPJExIfNDoxDqo9tgEOIdREq/Tu03W
-	 gc+Ha5mt3z6PYmM1gA3PIktMa6pPhv/2xi0WRY+fzZjO2QQxnyY3jY2oohkrBEuiil
-	 dX3SQrEo9u03XKyFbWeGP//DbbrQ+TxNC8fDvqcm1hTkjLnPPGzwTuo1ii2IygeUPm
-	 OjCkSvOV2HA/EqFe8CVUQVQYA5T+dWa2nxNEtsM2sSAs9uID7IK692D/L8BYvKuR2L
-	 s1bS/Ti0li9Bg==
-Date: Mon, 6 May 2024 13:50:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 10/10] iio: pressure: bmp280: Add triggered buffer
- support
-Message-ID: <20240506135010.5f7de250@jic23-huawei>
-In-Reply-To: <20240505235755.GC17986@vamoiridPC>
-References: <20240429190046.24252-1-vassilisamir@gmail.com>
-	<20240429190046.24252-11-vassilisamir@gmail.com>
-	<20240505203456.0c4c0c90@jic23-huawei>
-	<20240505235755.GC17986@vamoiridPC>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1714999911; c=relaxed/simple;
+	bh=1KXzSoo3QAex6UeVIC3bVa80QNaS8yOCfTa9OgS4nok=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GDqyBa52nnIj/TkhzLObnWfdw8xg6xv70z7sk9ZnJsuQ9MjIYN3CWQ4C0Hp1BJ1rYirihOywgDCi5SggrRiA6qsArzu74nkNqZ8/vwP0Dn0M4wqSzr9YoC1Ycg7kZeEtEvRClEQxwNgqyzHEyvYb5vfQSos55ttfoJRiQ7WGfnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VY1Rc3kq8z1RBpv
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:48:28 +0800 (CST)
+Received: from kwepemi500008.china.huawei.com (unknown [7.221.188.139])
+	by mail.maildlp.com (Postfix) with ESMTPS id C85DD1800C9
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:51:45 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
+ (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 6 May
+ 2024 20:51:45 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] genirq: Simplify the check for __irq_get_desc_lock()
+Date: Mon, 6 May 2024 20:50:57 +0800
+Message-ID: <20240506125057.307586-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
 
-On Mon, 6 May 2024 01:57:55 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+If it set "_IRQ_DESC_PERCPU" in "check" but the desc is not percpu, or if
+the desc is percpu but it not set "_IRQ_DESC_PERCPU" in "check", it both
+return NULL, so simplify the check in __irq_get_desc_lock() with "!=".
 
-> On Sun, May 05, 2024 at 08:34:56PM +0100, Jonathan Cameron wrote:
-> > On Mon, 29 Apr 2024 21:00:46 +0200
-> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> >   
-> > > BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
-> > > temperature, pressure and humidity readings. This facilitates the
-> > > use of burst/bulk reads in order to acquire data faster. The
-> > > approach is different from the one used in oneshot captures.
-> > > 
-> > > BMP085 & BMP1xx devices use a completely different measurement
-> > > process that is well defined and is used in their buffer_handler().
-> > > 
-> > > Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
-> > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>  
-> > Hi Vasileois,
-> > 
-> > Just one question on this inline. (patches 8 and 9 look good to me)
-> > 
-> > For v6, only need to send the patches that I haven't already applied.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> >   
-> > >  
-> > > +static irqreturn_t bmp180_buffer_handler(int irq, void *p)
-> > > +{
-> > > +	struct iio_poll_func *pf = p;
-> > > +	struct iio_dev *indio_dev = pf->indio_dev;
-> > > +	struct bmp280_data *data = iio_priv(indio_dev);
-> > > +	int ret, chan_value;
-> > > +
-> > > +	guard(mutex)(&data->lock);
-> > > +
-> > > +	ret = bmp180_read_temp(data, &chan_value);
-> > > +	if (ret < 0)
-> > > +		return IRQ_HANDLED;
-> > > +
-> > > +	data->sensor_data[1] = chan_value;
-> > > +
-> > > +	ret = bmp180_read_press(data, &chan_value);  
-> > 
-> > So I 'think' that after all the refactoring you end up reading the temperature
-> > twice.  To avoid that you need to pull the read_temp() and read_press()
-> > function implementations here and only do the (currently duplicated) steps once.
-> > 
-> > You seem to have done this for the other case, but missed the bmp180?
-> > Maybe I'm missing some reason it doesn't work for this one!
-> >   
-> 
-> Hi Jonathan!
-> 
-> So, I didn't miss it. This is an old sensor and in order to get data out, the
-> procedure is much more constrained. As you can see in the datasheet [1] in page
-> 11 there is a well defined process on how to read the data out. It's not
-> possible to make a burst read here. Hence, the strange bmp180_measure() function
-> in order to wait for an EOC before reading the values. Indeed I am reading the
-> temperature 2 times which is not optimal but in order to read both of them I
-> would have to:
-> 
-> a) either get the temperature out of the bmp180_read_press() function
-> (which would ruin a bit consistency with the other bmpxxx_read_press() functions)
-> 
-> b) make a bmp180_get_sensor_data() which would look like bmp180_get_press() but
-> also gives temperature (which won't look that good).
-> 
-> That's why I didn't touch it. If you think it makes more sense to do it, I can
-> follow one of the 2 approaches, whichever you think would make more sense.
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ kernel/irq/irqdesc.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Ok. As you say, old sensor so fine to not optimize it. If anyone else cares
-they can do it ;)
-
-Jonathan
-
-> 
-> Cheers,
-> Vasilis
-> 
-> [1]: https://cdn-shop.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
-> 
-> > > +	if (ret < 0)
-> > > +		return IRQ_HANDLED;
-> > > +
-> > > +	data->sensor_data[0] = chan_value;
-> > > +
-> > > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> > > +					   iio_get_time_ns(indio_dev));
-> > > +
-> > > +	iio_trigger_notify_done(indio_dev->trig);
-> > > +
-> > > +	return IRQ_HANDLED;
-> > > +}  
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 88ac3652fcf2..6c52deb134b9 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -882,11 +882,7 @@ __irq_get_desc_lock(unsigned int irq, unsigned long *flags, bool bus,
+ 
+ 	if (desc) {
+ 		if (check & _IRQ_DESC_CHECK) {
+-			if ((check & _IRQ_DESC_PERCPU) &&
+-			    !irq_settings_is_per_cpu_devid(desc))
+-				return NULL;
+-
+-			if (!(check & _IRQ_DESC_PERCPU) &&
++			if (!!(check & _IRQ_DESC_PERCPU) !=
+ 			    irq_settings_is_per_cpu_devid(desc))
+ 				return NULL;
+ 		}
+-- 
+2.34.1
 
 
