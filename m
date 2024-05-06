@@ -1,163 +1,163 @@
-Return-Path: <linux-kernel+bounces-170023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1798BD0B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:50:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96D58BD0BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9EE1C2198F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5B8E28D84B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CCB155337;
-	Mon,  6 May 2024 14:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C452B153812;
+	Mon,  6 May 2024 14:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CNa4ulzo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="IsOaV9WQ"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95BC1534FD
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF4013BAC7;
+	Mon,  6 May 2024 14:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006989; cv=none; b=sNVDuty/m8UJ4w4/LUMVozpOqHdK8oqwp4bDJO86Y4vSWyV215yZnATnB+FUNOT5Pth3qHFaeH79uOpyJWk1Qi1NY1fu97pJzalbtCUX2DFx48a2rnvEVUsKAOm4BDKQ+3fXbJigd3KurKUyD8VEuXGrOoH/lx+HI+R6ZX8lczY=
+	t=1715007062; cv=none; b=d8mapL4F0EliFh0adbWwwPTlaI7Z1fWrfKnKPF2cW4mPohHVH32iOYZVBzYTSkkhRJtokOiGTdrm8+caDjaIOeW4dmD1yHHuWL4i1S1gkhK4rmqn7Rh2HD8fRRKGHgyLeBg7fOoORErpgrbZzXH/19v+PSGdZg7c/QT/qnHMEhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006989; c=relaxed/simple;
-	bh=wFEAgz9DoEMtNEfhF2whHUgl+SQ1hbYNvw0LVwBJMHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV1C27Qt/QA6zp9pRJKh70wIoS2hvgua4WaQvlFyh2dkzPg/Isqp4U4rTcnNQega5m4LnkS/n3lBwK1QIlLdvrNkPVySpdItfxLI+Fv2TWC+gJWMhrtctGPxL4vjjG5mJriPrrnNxuBqmW9qNTlcBq8UeZAmx06QaFi55jQDFUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CNa4ulzo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715006986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ouwyK0typuZ1ow/pNC/Gp96v2+HGSiLFxZMM2D2vdpo=;
-	b=CNa4ulzob4zGYAef+WUviR82ooP2GI3SAAlGLeumVxP8iVsgZo0PnH6qclcQytIG3d2iVL
-	Kk0JBwo7OuBOCxO+8x7dY7WN9FO8Q5ltmz6p0VazMMo9YkbOLp+tUQU3vnFYocoS5SxxZR
-	FBkaZ8j1P8y+4EU0/iLRvzwE1Cjhx98=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-15-3lWoAvybMMqljhzfNhjkuw-1; Mon, 06 May 2024 10:49:45 -0400
-X-MC-Unique: 3lWoAvybMMqljhzfNhjkuw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-417fb8195d7so8225175e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:49:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715006984; x=1715611784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ouwyK0typuZ1ow/pNC/Gp96v2+HGSiLFxZMM2D2vdpo=;
-        b=XK/Gf6xiwIIaz/8AFoLSZ/PdL7m2BnP0DgKPrAN5ya2LGIeQr6psLc31eGocRE8CpZ
-         Lu26qZszogdZAiLe9Av32AwPXogLdDlPuzGKTzT3bm3/rgBUhGNh58z9Q9L/sk3qrsLF
-         nJqz3Y8zWrvbRkgChF6BKHIOwklAfOTvtVGOVzRwS0q422z8vPq2CMOaYUonuCknmfEb
-         kaQsudDmS7WgEHdzZdG6RpgC7RPeyt0edyiz+c5ano1nF4X808QND81GaKhbbzBrccrJ
-         pQDqu0Ycf5XV8mR134gwdKYbaXviSSFt9H+G7n08BEM+UVGbxgat3lX8NVSFyo1Wrxpk
-         dI3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXXboSufeh9SfNyNpc7afFKxnwrqUk5nIQejRdpo+gFoG7xh2V9qcT9AwK9uWkzBN0D48S72/yugAgDagcDFGhCZOKWymUG/RJNVdNG
-X-Gm-Message-State: AOJu0YxpWefn+bMWuY9lbo/hlVVtiJAhzt+KLij2riygy/8qOD6oVjWU
-	UAhOGkogsEpL6ZGGDxCaWBZM8LIJCv7ED4wO9nQZAxvbevt0rRvaYYRWyUDwOYQcU+KPD31zhHJ
-	axC++6u2/uf45Hvhf0kBe+Ax1/9Mz9LoyI4ysn1y8d0CbTXV+rJxnEYzqPattZA==
-X-Received: by 2002:a05:600c:4743:b0:41b:ca55:2e2c with SMTP id w3-20020a05600c474300b0041bca552e2cmr8502330wmo.17.1715006983670;
-        Mon, 06 May 2024 07:49:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMEmpLMRChpFtoTgMDV3aoqDMFyufxEAAMjuwb6gH8jVd4UbrgetEx8t9mH1iRsKhjutk0Nw==
-X-Received: by 2002:a05:600c:4743:b0:41b:ca55:2e2c with SMTP id w3-20020a05600c474300b0041bca552e2cmr8502298wmo.17.1715006983060;
-        Mon, 06 May 2024 07:49:43 -0700 (PDT)
-Received: from localhost (net-93-151-202-124.cust.dsl.teletu.it. [93.151.202.124])
-        by smtp.gmail.com with ESMTPSA id cw1-20020a056000090100b0034dec80428asm10817755wrb.67.2024.05.06.07.49.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 07:49:42 -0700 (PDT)
-Date: Mon, 6 May 2024 16:49:40 +0200
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-To: syzbot <syzbot+f534bd500d914e34b59e@syzkaller.appspotmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
-	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com,
-	hawk@kernel.org, john.fastabend@gmail.com, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, lorenzo@kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com, toke@redhat.com
-Subject: Re: [syzbot] [bpf?] [net?] WARNING in __xdp_reg_mem_model
-Message-ID: <ZjjuBCk33QtxLrAm@lore-desk>
-References: <0000000000004cc3030616474b1e@google.com>
- <000000000000ae301f0617a4a52c@google.com>
+	s=arc-20240116; t=1715007062; c=relaxed/simple;
+	bh=eSfAG7eRcrkhY+Qr5HX1zI27MCV8+YfsRo1rrRm29Ls=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nuVcX+SPkxBg9rDXsEkjLqpzRR9UbCJ0SO522727EdRN2qUxgRuFOwIoMYIXSChFyyoUIxkfu1e9eD+2zosn7AgioVPlX7Jebl0kHy5e1BCP31yZ2ndFhq6jlTxOmpa/AE3XuAXXuhLCxsT9Np8q/1U8IwN4OeAgeUyoPVX6BHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=IsOaV9WQ; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 446Bbcmp010927;
+	Mon, 6 May 2024 16:50:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	from:to:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=selector1; bh=lFFdRBl
+	/abKwjIsFck+7iM64lIxYS3/Znv6CkxEJjqA=; b=IsOaV9WQBb4PNmAamgQO6Pm
+	UsI6cuhN67SNpPbgtJ4Wq+PeizHv3jG5aBChR2vvDjinzQr8Lj4ydQMlrk0hjqO3
+	gr0mmxIvCNJrZdQOIBjjnqbZfCVghd6dbBGXYYVvxJAnSjiW7QOASZauCCe0oOWG
+	IC9gyJCDKsAmiL9NqDXCICrP75gQ1T7yP+lHzspiJKIJGTpU2C0IVMziTU3WsD6x
+	cFgC2cAyxFrKrPhQnGRBJ1wPz6kRxTiIoFir1EelJLG+InMfUgaLWsVE33UkcWrT
+	G6KUt6u+EmO/1ZUfl18EOpBqjRS+0Wh3EukYygOxDB/n95QUK3++tLdrQXCLiNQ=
+	=
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwcbx7j8r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 16:50:27 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A641D4002D;
+	Mon,  6 May 2024 16:50:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D753D2248BB;
+	Mon,  6 May 2024 16:49:47 +0200 (CEST)
+Received: from localhost (10.48.87.177) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 6 May
+ 2024 16:49:47 +0200
+From: Yannick Fertre <yannick.fertre@foss.st.com>
+To: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ARM: dts: stm32: add goodix touchscreen on stm32mp135f-dk
+Date: Mon, 6 May 2024 16:49:45 +0200
+Message-ID: <20240506144945.293966-1-yannick.fertre@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vAieqiNxGUQydHCv"
-Content-Disposition: inline
-In-Reply-To: <000000000000ae301f0617a4a52c@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-06_09,2024-05-06_02,2023-05-22_02
 
+Touchscreen reset needs to be configured
+via the pinctrl not the driver (a pull-down resistor
+has been soldered onto the reset line which forces
+the touchscreen to reset state).
+Interrupt line must have a pull-down resistor
+in order to freeze the i2c address at 0x5D.
 
---vAieqiNxGUQydHCv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
+---
+ arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi | 22 +++++++++++++++++++++
+ arch/arm/boot/dts/st/stm32mp135f-dk.dts     | 14 +++++++++++++
+ 2 files changed, 36 insertions(+)
 
-> syzbot has bisected this issue to:
->=20
-> commit 2b0cfa6e49566c8fa6759734cf821aa6e8271a9e
-> Author: Lorenzo Bianconi <lorenzo@kernel.org>
-> Date:   Mon Feb 12 09:50:54 2024 +0000
->=20
->     net: add generic percpu page_pool allocator
->=20
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D151860d498=
-0000
-> start commit:   f99c5f563c17 Merge tag 'nf-24-03-21' of git://git.kernel.=
-o..
-> git tree:       net
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D171860d498=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D131860d4980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6fb1be60a193d=
-440
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Df534bd500d914e3=
-4b59e
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17ac600b180=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1144b797180000
->=20
-> Reported-by: syzbot+f534bd500d914e34b59e@syzkaller.appspotmail.com
-> Fixes: 2b0cfa6e4956 ("net: add generic percpu page_pool allocator")
->=20
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
->=20
-
-Looking at the code, the root cause of the issue is the WARN(1) in
-__xdp_reg_mem_model routine. __mem_id_init_hash_table() can fail just if rht
-allocation fails. Do we really need this WARN(1)? It has been introduced in=
- the
-commit below:
-
-commit 8d5d88527587516bd58ff0f3810f07c38e65e2be
-Author: Jesper Dangaard Brouer <brouer@redhat.com>
-Date:   Tue Apr 17 16:46:12 2018 +0200
-
-    xdp: rhashtable with allocator ID to pointer mapping
-
-Regards,
-Lorenzo
-
---vAieqiNxGUQydHCv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZjjuBAAKCRA6cBh0uS2t
-rHE8AP9aiQe9PRxjbu8EA3OAzA4evmD4DeMhokGWsZjanPp69QD/Qr+N4crIXk/4
-h4vZ5Fo/cpxn4NjaaMLCYwTl/2NQ5Qw=
-=QBb4
------END PGP SIGNATURE-----
-
---vAieqiNxGUQydHCv--
+diff --git a/arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi b/arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi
+index 32c5d8a1e06a..21861cae21d9 100644
+--- a/arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi
++++ b/arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi
+@@ -13,6 +13,28 @@ pins {
+ 		};
+ 	};
+ 
++	goodix_pins_a: goodix-0 {
++		/*
++		 * touchscreen reset needs to be configured
++		 * via the pinctrl not the driver (a pull-down resistor
++		 * has been soldered onto the reset line which forces
++		 * the touchscreen to reset state).
++		 */
++		pins1 {
++			pinmux = <STM32_PINMUX('H', 2, GPIO)>;
++			output-high;
++			bias-pull-up;
++		};
++		/*
++		 * Interrupt line must have a pull-down resistor
++		 * in order to freeze the i2c address at 0x5D
++		 */
++		pins2 {
++			pinmux = <STM32_PINMUX('F', 5, GPIO)>;
++			bias-pull-down;
++		};
++	};
++
+ 	i2c1_pins_a: i2c1-0 {
+ 		pins {
+ 			pinmux = <STM32_PINMUX('D', 12, AF5)>, /* I2C1_SCL */
+diff --git a/arch/arm/boot/dts/st/stm32mp135f-dk.dts b/arch/arm/boot/dts/st/stm32mp135f-dk.dts
+index 567e53ad285f..5e8ee2d4648a 100644
+--- a/arch/arm/boot/dts/st/stm32mp135f-dk.dts
++++ b/arch/arm/boot/dts/st/stm32mp135f-dk.dts
+@@ -201,6 +201,20 @@ &i2c5 {
+ 	/* spare dmas for other usage */
+ 	/delete-property/dmas;
+ 	/delete-property/dma-names;
++
++	goodix: goodix-ts@5d {
++		compatible = "goodix,gt911";
++		reg = <0x5d>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&goodix_pins_a>;
++		interrupt-parent = <&gpiof>;
++		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
++		AVDD28-supply = <&scmi_v3v3_sw>;
++		VDDIO-supply = <&scmi_v3v3_sw>;
++		touchscreen-size-x = <480>;
++		touchscreen-size-y = <272>;
++		status = "okay" ;
++	};
+ };
+ 
+ &iwdg2 {
+-- 
+2.34.1
 
 
