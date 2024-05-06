@@ -1,136 +1,197 @@
-Return-Path: <linux-kernel+bounces-170347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D36C8BD57F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C0D8BD580
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E43E1C2267F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D081C22659
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF13E15ADA5;
-	Mon,  6 May 2024 19:36:56 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6C515AD90;
-	Mon,  6 May 2024 19:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFA215ADA6;
+	Mon,  6 May 2024 19:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SN9A9aSZ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBDD5FDA5;
+	Mon,  6 May 2024 19:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024216; cv=none; b=dscn3fa2bZQgkvdoybfc8ma+khgFQ6gPJLQjW3dgAckZjvxxKs6zntmnTyxDC7XPHLjFLNW9qBxVYgc2kw+q1zSEbwKIUidzdA0MpB+yWnCYEqhgEsk9oHKQIZlrT01Yq3zki2mDmPQb1ITFmZTvtbT9YIrqTq0QCvqJ0DnVg5k=
+	t=1715024228; cv=none; b=Oz/uuj0xjBmJGEW5DGSv2vCp6xasllK07nm+VRy3BDdI25mBhoSqfiuk5b99QoR1dbibi4ULqnvNFqwP+eum+VRL+3Fejn0nzAdKObZrO+KRUOU5wdrzkdtdIDwKHSCu8cjRfJpgPgaui1L6BWPsrycoarBQdaL1RxS25lgSxNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024216; c=relaxed/simple;
-	bh=bnSLbu/SWkzlHsUFsJAiqLw1w0E49t2wGliMqDiSqks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNzxoO4PZbPRVBTReVqqffSMrOIS6e4GILCV9XnQiJjx7LjUWf1w3Q2r+9l8nWsC9BRzZ0UkFGmQdR2FE2y+WdmGat7r7QqHa7HosEXot95EK0Ge2720jAXs4RNOtS7IeGACIqGC+g3bB6Z8YCJPwrgLZRunH8+pdLreYx3zatI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 90D73300115D8;
-	Mon,  6 May 2024 21:36:44 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 66F7C4A88D5; Mon,  6 May 2024 21:36:44 +0200 (CEST)
-Date: Mon, 6 May 2024 21:36:44 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2 2/2] PCI: pciehp: Abort hot-plug if
- pci_hp_add_bridge() fails
-Message-ID: <ZjkxTGaAc48jPzqC@wunner.de>
-References: <cover.1714838173.git.namcao@linutronix.de>
- <f3db713f4a737756782be6e94fcea3eda352e39f.1714838173.git.namcao@linutronix.de>
- <Zjcc6Suf5HmmZVM9@wunner.de>
- <20240505071451.df3l6mdK@linutronix.de>
- <20240506083701.NZNifFGn@linutronix.de>
+	s=arc-20240116; t=1715024228; c=relaxed/simple;
+	bh=nuf1f/LIwto4hj0YbCTdRsSN0gd75WgtZzepSxjtU6o=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=CSinMlm0dedhI9/kZxjac8ydLmVVIrWzuYY+l7sVYSk+B8XBRyuwBLP3Dh6BGPMiuAQOxBM4vjBNAuHBkX+TDmw6uoG8mTt0d3EKzogzWQLcFd0w/+hkgb57b9tSVuWKEG4BQJ7XET/9oIXwbco5ZzEWF0eLjOSMgW4ZTb9BKog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SN9A9aSZ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from apais-vm1.0synte4vioeebbvidf5q0vz2ua.xx.internal.cloudapp.net (unknown [52.183.86.224])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 22F92207E7E3;
+	Mon,  6 May 2024 12:37:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 22F92207E7E3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715024226;
+	bh=NSsFZUKvbcPALUhxizKrUYUWMdVfFHil/vZ8XEa5VXM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SN9A9aSZBeugCNzM9TEJsrc6Ukg/iTdKsFylD+xiyzzUHKf4jlR7P4D/lFIGY1+Lp
+	 X33vtsOoNaANjT8rBDmFtRgVyEDDXxRlrFjH/tEJJhIm6v5An+27L8knjVYLWHIu1A
+	 Tc65J0H6kl5b2rOLlO9UbI6PCa5HAqwvUUhp2I1Q=
+From: Allen Pais <apais@linux.microsoft.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	ebiederm@xmission.com,
+	keescook@chromium.org,
+	mcgrof@kernel.org,
+	j.granados@samsung.com,
+	allen.lkml@gmail.com
+Subject: [PATCH v4] fs/coredump: Enable dynamic configuration of max file note size
+Date: Mon,  6 May 2024 19:37:00 +0000
+Message-Id: <20240506193700.7884-1-apais@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506083701.NZNifFGn@linutronix.de>
 
-On Mon, May 06, 2024 at 10:37:01AM +0200, Nam Cao wrote:
-> I just discovered a new crash scenario with shpchp:
-> 
-> First, hot-add a bridge:
-> (qemu) device_add pci-bridge,id=br2,bus=br1,chassis_nr=1,addr=1
-> 
-> But with the current patch, the hot-plug is still successful, just that the
-> bridge is not properly configured:
-> $ lspci -t
-> -[0000:00]-+-00.0
->            +-01.0
->            +-02.0
->            +-03.0-[01-02]----00.0-[02]----01.0--  <-- new hot-added bridge
->            +-1f.0
->            +-1f.2
->            \-1f.3
-> 
-> But! Now I leave the hot-added bridge as is, and hot-add an ethernet card:
-> (qemu) device_add e1000,bus=br1,id=eth0,addr=2
-> 
-> this command crashes the kernel (full crash log below).
-> 
-> The problem is because during hot-plugging of this ethernet card,
-> pci_bus_add_devices() is invoked and the previously hot-plugged bridge hasn't
-> been marked as "added" yet, so the driver attempts to add this bridge
-> again, leading to the crash.
-> 
-> Now for pciehp, this scenario cannot happen, because there is only a single
-> slot, so we cannot hot-plug another device. But still, this makes me think
-> perhaps we shouldn't leave the hot-plugged bridge in a improperly-configured
-> state as this patch is doing. I cannot think of a scenario that would crash pciehp
-> similarly to shpchp. But that's just me, maybe there is a rare scenario
-> that can crash pciehp, but I just haven't seen yet.
-> 
-> My point is: better safe than sorry. I propose going back to the original
-> solution: calling pci_stop_and_remove_bus_device() and return a negative
-> error, and get rid of this improperly configured bridge. It is useless
-> anyways without a subordinate bus number.
-> 
-> What do you think?
+Introduce the capability to dynamically configure the maximum file
+note size for ELF core dumps via sysctl.
 
-When the kernel runs out of BAR address space for devices downstream of
-a bridge, it doesn't de-enumerate the bridge.  The devices are just
-unusable.
+Why is this being done?
+We have observed that during a crash when there are more than 65k mmaps
+in memory, the existing fixed limit on the size of the ELF notes section
+becomes a bottleneck. The notes section quickly reaches its capacity,
+leading to incomplete memory segment information in the resulting coredump.
+This truncation compromises the utility of the coredumps, as crucial
+information about the memory state at the time of the crash might be
+omitted.
 
-So my first intuition is that running out of bus numbers shouldn't result
-in de-enumeration either.
+This enhancement removes the previous static limit of 4MB, allowing
+system administrators to adjust the size based on system-specific
+requirements or constraints.
 
-Remind me, how exactly does the NULL pointer deref occur?  I think it's
-because no struct pci_bus was allocated for the subordinate bus of the
-hot-plugged bridge, right?  Because AFAICS that would happen in
+Eg:
+$ sysctl -a | grep core_file_note_size_min
+kernel.core_file_note_size_max = 4194304
 
-pci_hp_add_bridge()
-  pci_can_bridge_extend()
-    pci_add_new_bus()
-      pci_alloc_child_bus()
+$ sysctl -n kernel.core_file_note_size_min
+4194304
 
-but we never get that far because pci_hp_add_bridge() bails out with -1.
-So the subordinate pointer remains a NULL pointer.
+$echo 519304 > /proc/sys/kernel/core_file_note_size_min
 
-Perhaps we should allocate an empty struct pci_bus instead.
-Or check for a NULL subordinate pointer instead of crashing.
+$sysctl -n kernel.core_file_note_size_min
+519304
 
-I can't really say off the top of my head which solution is appropriate
-here, it requires going through the code paths and identifying the
-complexity associated with each solution.
+Attempting to write beyond the ceiling value of 16MB
+$echo 17194304 > /proc/sys/kernel/core_file_note_size_min
+bash: echo: write error: Invalid argument
 
-Thanks,
+Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
+Signed-off-by: Allen Pais <apais@linux.microsoft.com>
 
-Lukas
+---
+Changes in v4:
+   - Rename core_file_note_size_max to core_file_note_size_min [kees]
+   - Rename core_file_note_size_max to MAX_FILE_NOTE_SIZE to
+     CORE_FILE_NOTE_SIZE_DEFAULT and MAX_ALLOWED_NOTE_SIZE to
+     CORE_FILE_NOTE_SIZE_MAX [Kees]
+   - change core_file_note_size_allowed to static and const [Kees]
+Changes in v3:
+   - Fix commit message to reflect the correct sysctl knob [Kees]
+   - Add a ceiling for maximum pssible note size(16M) [Allen]
+   - Add a pr_warn_once() [Kees]
+Changes in v2:
+   - Move new sysctl to fs/coredump.c [Luis & Kees]
+   - rename max_file_note_size to core_file_note_size_max [kees]
+   - Capture "why this is being done?" int he commit message [Luis & Kees]
+---
+ fs/binfmt_elf.c          |  7 +++++--
+ fs/coredump.c            | 15 +++++++++++++++
+ include/linux/coredump.h |  1 +
+ 3 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 5397b552fbeb..4dc7eb265a97 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
+ 	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
+ }
+ 
+-#define MAX_FILE_NOTE_SIZE (4*1024*1024)
+ /*
+  * Format of NT_FILE note:
+  *
+@@ -1592,8 +1591,12 @@ static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm
+ 
+ 	names_ofs = (2 + 3 * count) * sizeof(data[0]);
+  alloc:
+-	if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
++	/* paranoia check */
++	if (size >= core_file_note_size_min) {
++		pr_warn_once("coredump Note size too large: %u (does kernel.core_file_note_size_min sysctl need adjustment?\n",
++			      size);
+ 		return -EINVAL;
++	}
+ 	size = round_up(size, PAGE_SIZE);
+ 	/*
+ 	 * "size" can be 0 here legitimately.
+diff --git a/fs/coredump.c b/fs/coredump.c
+index be6403b4b14b..20807c3c5477 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -56,10 +56,16 @@
+ static bool dump_vma_snapshot(struct coredump_params *cprm);
+ static void free_vma_snapshot(struct coredump_params *cprm);
+ 
++#define CORE_FILE_NOTE_SIZE_DEFAULT (4*1024*1024)
++/* Define a reasonable max cap */
++#define CORE_FILE_NOTE_SIZE_MAX (16*1024*1024)
++
+ static int core_uses_pid;
+ static unsigned int core_pipe_limit;
+ static char core_pattern[CORENAME_MAX_SIZE] = "core";
+ static int core_name_size = CORENAME_MAX_SIZE;
++static const unsigned int core_file_note_size_max = CORE_FILE_NOTE_SIZE_MAX;
++unsigned int core_file_note_size_min = CORE_FILE_NOTE_SIZE_DEFAULT;
+ 
+ struct core_name {
+ 	char *corename;
+@@ -1020,6 +1026,15 @@ static struct ctl_table coredump_sysctls[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
++	{
++		.procname       = "core_file_note_size_min",
++		.data           = &core_file_note_size_min,
++		.maxlen         = sizeof(unsigned int),
++		.mode           = 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= &core_file_note_size_min,
++		.extra2		= (unsigned int *) &core_file_note_size_max,
++	},
+ };
+ 
+ static int __init init_fs_coredump_sysctls(void)
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index d3eba4360150..f6be9fd2aea7 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -46,6 +46,7 @@ static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
+ #endif
+ 
+ #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
++extern unsigned int core_file_note_size_min;
+ extern void validate_coredump_safety(void);
+ #else
+ static inline void validate_coredump_safety(void) {}
+-- 
+2.17.1
+
 
