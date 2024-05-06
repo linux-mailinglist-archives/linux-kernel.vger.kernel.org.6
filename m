@@ -1,437 +1,155 @@
-Return-Path: <linux-kernel+bounces-169386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC208BC7EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:00:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BD88BC7EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC75F1F221C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E501C2127D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F885FEE5;
-	Mon,  6 May 2024 07:00:24 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C192E481B1;
-	Mon,  6 May 2024 07:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4037D06E;
+	Mon,  6 May 2024 07:01:25 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375586BFD4
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714978824; cv=none; b=mVw1QVE0A6zcagtIRrERmN0+/Srogwo6lbQbZMPAW7jo7Ft7lDFiKE99BIRzcRjctawdGFeW5Eh6YNaHZFMsAxIjO0XsRlfL/3OX4zEvO/N0TK6fGxxHSkq3ZW9fCUgjP4Wn0euVeKdXSY7Pf9JscLtYUXW4lQL+Q98B90vjWLQ=
+	t=1714978885; cv=none; b=Wg9qMm+tKX/q2pxs68cekfwYG+Pavq8AHKK/2+HUB3rDH4a3MG/OmnN8CYQHEH3pNg5CFKyGecHZ6apJ+NOWujEJbIuxl2h9TdaS2YmN+5SVcXlzAZC1Z9ZDM7HA0BE0CWm0UiokqeTYzZYT1tvKrYWqJKh+ZkLr9JvoDCJrQeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714978824; c=relaxed/simple;
-	bh=SKkINvtdnlBPVB4ssi93AP7cTZaOCLzhv/01RlcuBzE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=iPoXmyl9Lyw+s4EeRgpd7iIOpQuFi/frV/jFrndZhv1LHWPvEoTop4F29uEUkyiEy6DAWePEKEeuwhT0i2BdE+IBmV6/RylVjc3f5HgOTNpVGWPl8Z9ysxrU92jwMsYu4PTZCWSa+UqrS88AnPUNPHfJF6m3tkvgaLv0UZ7smQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8Bx3+sBgDhmxP4HAA--.22676S3;
-	Mon, 06 May 2024 15:00:17 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Axjlf9fzhmJDwSAA--.31898S3;
-	Mon, 06 May 2024 15:00:15 +0800 (CST)
-Subject: Re: [PATCH v8 6/6] LoongArch: Add pv ipi support on guest kernel side
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org
-References: <20240428100518.1642324-1-maobibo@loongson.cn>
- <20240428100518.1642324-7-maobibo@loongson.cn>
- <CAAhV-H7Z=XWGBtWzv2dkiHqeezTS7URYWHVMPpm5yRu=bQVWmQ@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <fa76a04d-e321-ff34-3d94-f528d28c5793@loongson.cn>
-Date: Mon, 6 May 2024 15:00:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1714978885; c=relaxed/simple;
+	bh=ntzAHBTHzihJJQh9KHFkRcaYe+IrR8iTKx1NUJZU+vg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r20HGwd1L6jZSZfmnGU5FftE1Wc1w11fe44ELJlT238ABNsRLuX8NOq6WheFjo/MHwNccWkgx07XMhgjR5B3xZ8FSdP6cG5qLoxSftspF+37I/TKb8u6Cj+hHTrcd0DjKCsnTivzeY3YHYBjPRhwQ3HGWLuguOZdqjAWBr04GXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7ded69927d4so188839639f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 00:01:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714978881; x=1715583681;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AFz1C31RLDJmCy8Fb6XtQ1c7k3ShK/LORjLoyX/PdIk=;
+        b=ZYj/3U0KGBYHUai2278ogdP1S1sM8dkB0TkIf21Ab5qd0yisJgmMb0L/rPQnUlRj53
+         8E+NTxfxzzg8jzy/FBpBFeQKUshVM06Ano+u1TnY7Wjm49S+RTrX68mbMQwH5yc8wf+8
+         iZdDSd4wZIMsZYEvGfHkTOGUIXyvDPeOj/g9Bv9DYHRcnD6zvaEcBEgUMsChQ6LfdHdw
+         KXajtQrxd7vbPs6e8I0KGVHLAqQAtRchOoWOOo+mevWjGWBuJeCsjZ4InPTZAaZvYrVS
+         LEK8VUOGpmR1clC5V3JHQ1wEEAP1jGBV2xmJ9LT2gdmVpq/kVtjocsBx5Ao0FD2zxDNY
+         1IBg==
+X-Forwarded-Encrypted: i=1; AJvYcCX24BRX9XHqDr9/Wte3c2aFYwWOSfOKUx+nrlo+Sh/nnxuIYhiFeBsgtQ0imFy21O9nndXnLMITcc7jy4Ac06SX6rEp6NI5iBAdnnk2
+X-Gm-Message-State: AOJu0YzNUy3xpukioWXJB31C9ANI1J+6bllGA7WbBHpXqWILCYXFP0AP
+	ind3YQrp4vvH7uQpTSu2vFCLbo5Yj6405njfsw1vrligbMyWH/ayOsvqVjlnvOz/YDNaYshR2St
+	BSnaWCJG7W4FOz8QoZZLAV1QLIxI6UWA8FwGL/bSrKIL0+fKKWDbVHTU=
+X-Google-Smtp-Source: AGHT+IHKqxYeGCfwGIgj7RVtDkSGtYVqdFivlbpW0T0Xj5gOlkmarF4q+dVIJe46/cOGgqcPfw5dW3B0MDHpNycaTO/Tprqx7Toy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H7Z=XWGBtWzv2dkiHqeezTS7URYWHVMPpm5yRu=bQVWmQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Axjlf9fzhmJDwSAA--.31898S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3ZF1rAFW8uFW3Kw15Cr48GrX_yoWkur1xpF
-	yDAF4kWF48GryxA3s8t395WFn8tr97Gr1293W7tFyrAFnFvr1rXr1kKryDuFy8Aan7G3W0
-	vFyrGrsF9a1YyagCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4SoGDU
-	UUU
+X-Received: by 2002:a05:6e02:1a22:b0:36c:2ed4:8d4c with SMTP id
+ g2-20020a056e021a2200b0036c2ed48d4cmr657280ile.4.1714978881390; Mon, 06 May
+ 2024 00:01:21 -0700 (PDT)
+Date: Mon, 06 May 2024 00:01:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000005d7e10617c3a3f5@google.com>
+Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfs_free_fork
+From: syzbot <syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    b9158815de52 Merge tag 'char-misc-6.9-rc7' of git://git.ke..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15154bff180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbf567496022057b
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e6fb1f89ce5e13cd02d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1262fb38980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1530bdc4980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7886d49e8de8/disk-b9158815.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7909f40ff65c/vmlinux-b9158815.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7641fb86043d/bzImage-b9158815.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/aeab32d02708/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
+BUG: KMSAN: uninit-value in hfs_free_fork+0x6b4/0xa50 fs/hfs/extent.c:320
+ __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
+ hfs_free_fork+0x6b4/0xa50 fs/hfs/extent.c:320
+ hfs_cat_delete+0x501/0xb90 fs/hfs/catalog.c:247
+ hfs_remove+0x16a/0x2f0 fs/hfs/dir.c:262
+ vfs_unlink+0x676/0xa30 fs/namei.c:4335
+ do_unlinkat+0x823/0xe10 fs/namei.c:4399
+ __do_sys_unlink fs/namei.c:4447 [inline]
+ __se_sys_unlink fs/namei.c:4445 [inline]
+ __x64_sys_unlink+0x78/0xb0 fs/namei.c:4445
+ x64_sys_call+0x31c7/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:88
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3804 [inline]
+ slab_alloc_node mm/slub.c:3845 [inline]
+ __do_kmalloc_node mm/slub.c:3965 [inline]
+ __kmalloc+0x6e4/0x1000 mm/slub.c:3979
+ kmalloc include/linux/slab.h:632 [inline]
+ hfs_find_init+0x91/0x250 fs/hfs/bfind.c:21
+ hfs_free_fork+0x3bb/0xa50 fs/hfs/extent.c:316
+ hfs_cat_delete+0x501/0xb90 fs/hfs/catalog.c:247
+ hfs_remove+0x16a/0x2f0 fs/hfs/dir.c:262
+ vfs_unlink+0x676/0xa30 fs/namei.c:4335
+ do_unlinkat+0x823/0xe10 fs/namei.c:4399
+ __do_sys_unlink fs/namei.c:4447 [inline]
+ __se_sys_unlink fs/namei.c:4445 [inline]
+ __x64_sys_unlink+0x78/0xb0 fs/namei.c:4445
+ x64_sys_call+0x31c7/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:88
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 PID: 5043 Comm: syz-executor323 Not tainted 6.9.0-rc6-syzkaller-00290-gb9158815de52 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+=====================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 2024/5/6 上午9:53, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> On Sun, Apr 28, 2024 at 6:05 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> PARAVIRT option and pv ipi is added on guest kernel side, function
->> pv_ipi_init() is to add ipi sending and ipi receiving hooks. This function
->> firstly checks whether system runs on VM mode. If kernel runs on VM mode,
->> it will call function kvm_para_available() to detect current hypervirsor
->> type. Now only KVM type detection is supported, the paravirt function can
->> work only if current hypervisor type is KVM, since there is only KVM
->> supported on LoongArch now.
->>
->> PV IPI uses virtual IPI sender and virtual IPI receiver function. With
->> virutal IPI sender, ipi message is stored in DDR memory rather than
->> emulated HW. IPI multicast is supported, and 128 vcpus can received IPIs
->> at the same time like X86 KVM method. Hypercall method is used for IPI
->> sending.
->>
->> With virtual IPI receiver, HW SW0 is used rather than real IPI HW. Since
->> VCPU has separate HW SW0 like HW timer, there is no trap in IPI interrupt
->> acknowledge. And IPI message is stored in DDR, no trap in get IPI message.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   arch/loongarch/Kconfig                        |   9 ++
->>   arch/loongarch/include/asm/hardirq.h          |   1 +
->>   arch/loongarch/include/asm/paravirt.h         |  27 ++++
->>   .../include/asm/paravirt_api_clock.h          |   1 +
->>   arch/loongarch/kernel/Makefile                |   1 +
->>   arch/loongarch/kernel/irq.c                   |   2 +-
->>   arch/loongarch/kernel/paravirt.c              | 151 ++++++++++++++++++
->>   arch/loongarch/kernel/smp.c                   |   4 +-
->>   8 files changed, 194 insertions(+), 2 deletions(-)
->>   create mode 100644 arch/loongarch/include/asm/paravirt.h
->>   create mode 100644 arch/loongarch/include/asm/paravirt_api_clock.h
->>   create mode 100644 arch/loongarch/kernel/paravirt.c
->>
->> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
->> index 54ad04dacdee..0a1540a8853e 100644
->> --- a/arch/loongarch/Kconfig
->> +++ b/arch/loongarch/Kconfig
->> @@ -583,6 +583,15 @@ config CPU_HAS_PREFETCH
->>          bool
->>          default y
->>
->> +config PARAVIRT
->> +       bool "Enable paravirtualization code"
->> +       depends on AS_HAS_LVZ_EXTENSION
->> +       help
->> +          This changes the kernel so it can modify itself when it is run
->> +         under a hypervisor, potentially improving performance significantly
->> +         over full virtualization.  However, when run without a hypervisor
->> +         the kernel is theoretically slower and slightly larger.
->> +
->>   config ARCH_SUPPORTS_KEXEC
->>          def_bool y
->>
->> diff --git a/arch/loongarch/include/asm/hardirq.h b/arch/loongarch/include/asm/hardirq.h
->> index 9f0038e19c7f..b26d596a73aa 100644
->> --- a/arch/loongarch/include/asm/hardirq.h
->> +++ b/arch/loongarch/include/asm/hardirq.h
->> @@ -21,6 +21,7 @@ enum ipi_msg_type {
->>   typedef struct {
->>          unsigned int ipi_irqs[NR_IPI];
->>          unsigned int __softirq_pending;
->> +       atomic_t message ____cacheline_aligned_in_smp;
->>   } ____cacheline_aligned irq_cpustat_t;
->>
->>   DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
->> diff --git a/arch/loongarch/include/asm/paravirt.h b/arch/loongarch/include/asm/paravirt.h
->> new file mode 100644
->> index 000000000000..58f7b7b89f2c
->> --- /dev/null
->> +++ b/arch/loongarch/include/asm/paravirt.h
->> @@ -0,0 +1,27 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef _ASM_LOONGARCH_PARAVIRT_H
->> +#define _ASM_LOONGARCH_PARAVIRT_H
->> +
->> +#ifdef CONFIG_PARAVIRT
->> +#include <linux/static_call_types.h>
->> +struct static_key;
->> +extern struct static_key paravirt_steal_enabled;
->> +extern struct static_key paravirt_steal_rq_enabled;
->> +
->> +u64 dummy_steal_clock(int cpu);
->> +DECLARE_STATIC_CALL(pv_steal_clock, dummy_steal_clock);
->> +
->> +static inline u64 paravirt_steal_clock(int cpu)
->> +{
->> +       return static_call(pv_steal_clock)(cpu);
->> +}
->> +
->> +int pv_ipi_init(void);
->> +#else
->> +static inline int pv_ipi_init(void)
->> +{
->> +       return 0;
->> +}
->> +
->> +#endif // CONFIG_PARAVIRT
->> +#endif
->> diff --git a/arch/loongarch/include/asm/paravirt_api_clock.h b/arch/loongarch/include/asm/paravirt_api_clock.h
->> new file mode 100644
->> index 000000000000..65ac7cee0dad
->> --- /dev/null
->> +++ b/arch/loongarch/include/asm/paravirt_api_clock.h
->> @@ -0,0 +1 @@
->> +#include <asm/paravirt.h>
->> diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Makefile
->> index 3a7620b66bc6..c9bfeda89e40 100644
->> --- a/arch/loongarch/kernel/Makefile
->> +++ b/arch/loongarch/kernel/Makefile
->> @@ -51,6 +51,7 @@ obj-$(CONFIG_MODULES)         += module.o module-sections.o
->>   obj-$(CONFIG_STACKTRACE)       += stacktrace.o
->>
->>   obj-$(CONFIG_PROC_FS)          += proc.o
->> +obj-$(CONFIG_PARAVIRT)         += paravirt.o
->>
->>   obj-$(CONFIG_SMP)              += smp.o
->>
->> diff --git a/arch/loongarch/kernel/irq.c b/arch/loongarch/kernel/irq.c
->> index ce36897d1e5a..4863e6c1b739 100644
->> --- a/arch/loongarch/kernel/irq.c
->> +++ b/arch/loongarch/kernel/irq.c
->> @@ -113,5 +113,5 @@ void __init init_IRQ(void)
->>                          per_cpu(irq_stack, i), per_cpu(irq_stack, i) + IRQ_STACK_SIZE);
->>          }
->>
->> -       set_csr_ecfg(ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 | ECFGF_IPI | ECFGF_PMC);
->> +       set_csr_ecfg(ECFGF_SIP0 | ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 | ECFGF_IPI | ECFGF_PMC);
->>   }
->> diff --git a/arch/loongarch/kernel/paravirt.c b/arch/loongarch/kernel/paravirt.c
->> new file mode 100644
->> index 000000000000..9044ed62045c
->> --- /dev/null
->> +++ b/arch/loongarch/kernel/paravirt.c
->> @@ -0,0 +1,151 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +#include <linux/export.h>
->> +#include <linux/types.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/jump_label.h>
->> +#include <linux/kvm_para.h>
->> +#include <asm/paravirt.h>
->> +#include <linux/static_call.h>
->> +
->> +struct static_key paravirt_steal_enabled;
->> +struct static_key paravirt_steal_rq_enabled;
->> +
->> +static u64 native_steal_clock(int cpu)
->> +{
->> +       return 0;
->> +}
->> +
->> +DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
->> +
->> +#ifdef CONFIG_SMP
->> +static void pv_send_ipi_single(int cpu, unsigned int action)
->> +{
->> +       unsigned int min, old;
->> +       irq_cpustat_t *info = &per_cpu(irq_stat, cpu);
->> +
->> +       old = atomic_fetch_or(BIT(action), &info->message);
->> +       if (old)
->> +               return;
->> +
->> +       min = cpu_logical_map(cpu);
->> +       kvm_hypercall3(KVM_HCALL_FUNC_PV_IPI, 1, 0, min);
->> +}
->> +
->> +#define KVM_IPI_CLUSTER_SIZE           (2 * BITS_PER_LONG)
->> +static void pv_send_ipi_mask(const struct cpumask *mask, unsigned int action)
->> +{
->> +       unsigned int cpu, i, min = 0, max = 0, old;
->> +       __uint128_t bitmap = 0;
->> +       irq_cpustat_t *info;
->> +
->> +       if (cpumask_empty(mask))
->> +               return;
->> +
->> +       action = BIT(action);
->> +       for_each_cpu(i, mask) {
->> +               info = &per_cpu(irq_stat, i);
->> +               old = atomic_fetch_or(action, &info->message);
->> +               if (old)
->> +                       continue;
->> +
->> +               cpu = cpu_logical_map(i);
->> +               if (!bitmap) {
->> +                       min = max = cpu;
->> +               } else if (cpu > min && cpu < min + KVM_IPI_CLUSTER_SIZE) {
->> +                       max = cpu > max ? cpu : max;
->> +               } else if (cpu < min && (max - cpu) < KVM_IPI_CLUSTER_SIZE) {
->> +                       bitmap <<= min - cpu;
->> +                       min = cpu;
->> +               } else {
->> +                       /*
->> +                        * Physical cpuid is sorted in ascending order ascend
->> +                        * for the next mask calculation, send IPI here
->> +                        * directly and skip the remainding cpus
->> +                        */
->> +                       kvm_hypercall3(KVM_HCALL_FUNC_PV_IPI,
->> +                               (unsigned long)bitmap,
->> +                               (unsigned long)(bitmap >> BITS_PER_LONG), min);
->> +                       min = max = cpu;
->> +                       bitmap = 0;
->> +               }
-> I have changed the logic and comments when I apply, you can double
-> check whether it is correct.
-There is modification like this:
-                 if (!bitmap) {
-                         min = max = cpu;
-                 } else if (cpu < min && cpu > (max - 
-KVM_IPI_CLUSTER_SIZE)) {
-                 	...
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-By test there will be problem if value of max is smaller than 
-KVM_IPI_CLUSTER_SIZE, since type of cpu/max is "unsigned int".
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-How about define the variable as int? the patch is like this:
---- a/arch/loongarch/kernel/paravirt.c
-+++ b/arch/loongarch/kernel/paravirt.c
-@@ -35,7 +35,7 @@ static void pv_send_ipi_single(int cpu, unsigned int 
-action)
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-  static void pv_send_ipi_mask(const struct cpumask *mask, unsigned int 
-action)
-  {
--       unsigned int cpu, i, min = 0, max = 0, old;
-+       int cpu, i, min = 0, max = 0, old;
-         __uint128_t bitmap = 0;
-         irq_cpustat_t *info;
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
->> +               __set_bit(cpu - min, (unsigned long *)&bitmap);
->> +       }
->> +
->> +       if (bitmap)
->> +               kvm_hypercall3(KVM_HCALL_FUNC_PV_IPI, (unsigned long)bitmap,
->> +                               (unsigned long)(bitmap >> BITS_PER_LONG), min);
->> +}
->> +
->> +static irqreturn_t loongson_do_swi(int irq, void *dev)
->> +{
->> +       irq_cpustat_t *info;
->> +       long action;
->> +
->> +       /* Clear swi interrupt */
->> +       clear_csr_estat(1 << INT_SWI0);
->> +       info = this_cpu_ptr(&irq_stat);
->> +       action = atomic_xchg(&info->message, 0);
->> +       if (action & SMP_CALL_FUNCTION) {
->> +               generic_smp_call_function_interrupt();
->> +               info->ipi_irqs[IPI_CALL_FUNCTION]++;
->> +       }
->> +
->> +       if (action & SMP_RESCHEDULE) {
->> +               scheduler_ipi();
->> +               info->ipi_irqs[IPI_RESCHEDULE]++;
->> +       }
->> +
->> +       return IRQ_HANDLED;
->> +}
->> +
->> +static void pv_init_ipi(void)
->> +{
->> +       int r, swi0;
->> +
->> +       swi0 = get_percpu_irq(INT_SWI0);
->> +       if (swi0 < 0)
->> +               panic("SWI0 IRQ mapping failed\n");
->> +       irq_set_percpu_devid(swi0);
->> +       r = request_percpu_irq(swi0, loongson_do_swi, "SWI0", &irq_stat);
->> +       if (r < 0)
->> +               panic("SWI0 IRQ request failed\n");
->> +}
->> +#endif
->> +
->> +static bool kvm_para_available(void)
->> +{
->> +       static int hypervisor_type;
->> +       int config;
->> +
->> +       if (!hypervisor_type) {
->> +               config = read_cpucfg(CPUCFG_KVM_SIG);
->> +               if (!memcmp(&config, KVM_SIGNATURE, 4))
->> +                       hypervisor_type = HYPERVISOR_KVM;
->> +       }
->> +
->> +       return hypervisor_type == HYPERVISOR_KVM;
->> +}
->> +
->> +int __init pv_ipi_init(void)
->> +{
->> +       int feature;
->> +
->> +       if (!cpu_has_hypervisor)
->> +               return 0;
->> +       if (!kvm_para_available())
->> +               return 0;
->> +
->> +       /*
->> +        * check whether KVM hypervisor supports pv_ipi or not
->> +        */
->> +       feature = read_cpucfg(CPUCFG_KVM_FEATURE);
->> +#ifdef CONFIG_SMP
->> +       if (feature & KVM_FEATURE_PV_IPI) {
->> +               smp_ops.init_ipi                = pv_init_ipi;
->> +               smp_ops.send_ipi_single         = pv_send_ipi_single;
->> +               smp_ops.send_ipi_mask           = pv_send_ipi_mask;
->> +       }
->> +#endif
->> +
->> +       return 1;
->> +}
->> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
->> index 1fce775be4f6..9eff7aa4c552 100644
->> --- a/arch/loongarch/kernel/smp.c
->> +++ b/arch/loongarch/kernel/smp.c
->> @@ -29,6 +29,7 @@
->>   #include <asm/loongson.h>
->>   #include <asm/mmu_context.h>
->>   #include <asm/numa.h>
->> +#include <asm/paravirt.h>
->>   #include <asm/processor.h>
->>   #include <asm/setup.h>
->>   #include <asm/time.h>
->> @@ -309,6 +310,7 @@ void __init loongson_smp_setup(void)
->>          cpu_data[0].core = cpu_logical_map(0) % loongson_sysconf.cores_per_package;
->>          cpu_data[0].package = cpu_logical_map(0) / loongson_sysconf.cores_per_package;
->>
->> +       pv_ipi_init();
->>          iocsr_write32(0xffffffff, LOONGARCH_IOCSR_IPI_EN);
->>          pr_info("Detected %i available CPU(s)\n", loongson_sysconf.nr_cpus);
->>   }
->> @@ -352,7 +354,7 @@ void loongson_boot_secondary(int cpu, struct task_struct *idle)
->>   void loongson_init_secondary(void)
->>   {
->>          unsigned int cpu = smp_processor_id();
->> -       unsigned int imask = ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 |
->> +       unsigned int imask = ECFGF_SIP0 | ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 |
->>                               ECFGF_IPI | ECFGF_PMC | ECFGF_TIMER;
->>
->>          change_csr_ecfg(ECFG0_IM, imask);
->> --
->> 2.39.3
->>
-
+If you want to undo deduplication, reply with:
+#syz undup
 
