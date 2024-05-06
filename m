@@ -1,64 +1,86 @@
-Return-Path: <linux-kernel+bounces-169279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8988BC638
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:31:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4948BC647
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 310FFB207F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:31:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BD53B21338
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A83843AB2;
-	Mon,  6 May 2024 03:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C7544376;
+	Mon,  6 May 2024 03:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mSiVSy0A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="FzA3AYl0";
+	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="3WmBurrx"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CEE3B18D;
-	Mon,  6 May 2024 03:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714966260; cv=none; b=gerG+rUQZKPUROikEOAYMDmMf6eYz0A0BOU6XJWiimZD+Wa7clpywzy7Fl6LavKVNgjS5nUhZMJOVQSDC2jtwZGt/o3VTwP7CedqLQZ9raE7zg4qj4MDjWOSlEnDa9baQG41oXH+YUsoSqPGvPuLAcn/e2NcPkigMfukUFhxxBo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714966260; c=relaxed/simple;
-	bh=m1jDuqZjVQJd5mp35z+dJbfBfD7b+J3HvypbQqd6YiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X62SevfG2TQYg0cKPhlyjmCdlffrzu40eCRQSbt6Dkz82ZxSCJAbbFrwbhl7A+4V4yKTNysNdzqnOKeBA0DE2t2Ms1IVSrCIcikyx81zqmcqvE1/+N33etPGj5S9WtL7iVhS49iTQzJWOvO3FQl6dFLu2FLkujb6jEBStLhdl0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mSiVSy0A; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714966259; x=1746502259;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=m1jDuqZjVQJd5mp35z+dJbfBfD7b+J3HvypbQqd6YiQ=;
-  b=mSiVSy0AcrZjc0PScf+o5JoGVCpnnQf/HNP7R2ImPJnQsomqGEMfXMph
-   Q8auig0wk90Ox4PRlVHXj06aaWnsY8oUufv3DOZR/D+0P1x1PltauPwwI
-   bApPvvshME0f7E+8e4XNsOxbwxYaOYd5FM4qvZWxuvE346D7pJyRtIaEb
-   i4FDTda9IVHHtdpFzdcVQkjUxzHro394XU/bZ1gTOJBobm56GA2udrZy4
-   poH5dI6aJu+uDyOiEmdCF05YqLpdKzh2dKcoOePuQQDusuYAQIzR6xFdV
-   SwYYczct7RQC3KLUIR7EJnHHYDpIBR5Z8seoF6yVdTQie+gAsapXFsA53
-   A==;
-X-CSE-ConnectionGUID: 04cegmPATPmsy/mYtnmoHA==
-X-CSE-MsgGUID: XwfNP4OwTR24xE1Y6P91BA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="22102955"
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="22102955"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 20:30:58 -0700
-X-CSE-ConnectionGUID: +BBlXY+7RX+F09dTG1qV3Q==
-X-CSE-MsgGUID: QMXkq63ASNuLEaYk+AU5MA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="32537492"
-Received: from unknown (HELO [10.238.0.220]) ([10.238.0.220])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 20:30:54 -0700
-Message-ID: <fdf2d5fa-64dc-4429-8529-66106632a95b@linux.intel.com>
-Date: Mon, 6 May 2024 11:30:52 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA07A1C3D;
+	Mon,  6 May 2024 03:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714967190; cv=pass; b=tt9/qp5xdB7IT7RxQAmq5Uqv2snaUKCEoMWK6P1kSO1K1Wz+EbcPWYBih2+qhNAiEPDKDlvQARcwLdWoVMtaciRukGvGBuYaDuD9mwTZUOjCDqUYiFDjQvgYVagBqeVDd849/hHSWGvFSG1zh2AKJGQxKGD7vjOgOet6oiKUCmY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714967190; c=relaxed/simple;
+	bh=j+apBh2N438frLoKBOmn0eDGI6AF8wQuiePC67TO9Wk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=XGGBsZnnI2oMiFwDnZtA/Rh5YJk55r8fQcFX92O6jTeYEDNpshMogmKRuaEzvEA2tQUO/u6Ae0OUbXb3cyrVVmRyoB8UGl4jpFjV+fNAxA/DTApYBG3FDHbrpU2RVry4+VxXwaCXJgiimmoHAiOTORBLbhoFNK/B1E5Pd/4sQbo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=FzA3AYl0; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=3WmBurrx; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
+ARC-Seal: i=1; a=rsa-sha256; t=1714966457; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=SZ6SdaMPpAM42cY+/3EtR5+ZJxq6Sof6T9mixOOpSzW3+fe42D1Kc9eZrtV0vq3/dt
+    qpm6SgAyRD7aRXsrgF6nZOqzCeXKzzBcCd39MW0r2tukOSThOVW6DccgXgh8pD3MVzI9
+    Fr7iNSM918EK77rrc2yIMIjF00tTH3S3ABU6uQ81pEDomV+FqTtsj6slbxs7VKA/lrS0
+    EikZ/6d3e6qiZB3o4OiE72oSZaVBPQBy+ItdY8mu8admWPNNc03XF/vxqpnQN2VSlfSR
+    azsLS0VjG6ooa/uEMrQ8UfN8MGtcW7IE36uRADOpaKAWukA+bp93oo8ICgaVLwbZ+HJk
+    zIRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1714966457;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:Cc:References:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=Pk97Vo5EVDzQM5Rmi3qC8BLRNsL+4ytAOz0I3pFS7bk=;
+    b=oSfv/vaGvwaT/VPb+iqAzQM5MYg7OMHDX7FCbKcGVbxHU2iBpMJTV5QtjsbPC794Y+
+    l4GCeus3uzleSSvoYaTHI/Tyr6q2ee6/p5X1kYaIH0mz85lbO60xz4B6XjMz4kCP8OTZ
+    uQGi+xod2QHFx7WY9BuBCcUbl9aIk9EgNmsedkB1OX3Ok9A27hSxdYPxGKerUMh5X8Y+
+    6D7uHQq27LQ3WCqyF7iTlppG+dw3Z7VPgQy+41Yb9kOpYXKxvvdOtjSBe8ciKEKSJ5k2
+    ii4Yvzn8N/BwQcpxl+1neYSZJaz2w7ttcwLoHObNvLNW+agu3O4hh/MUVh9wMJ/Yl0zH
+    swyA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1714966457;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:From:Cc:References:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=Pk97Vo5EVDzQM5Rmi3qC8BLRNsL+4ytAOz0I3pFS7bk=;
+    b=FzA3AYl0XVONCQedQtVe+dtn9ckLJBWbSgL8J34G6xGxcevKECdqO9CewV986BYA5w
+    F76aYf4vePt4wzEEwq7PF218CfM395kKbvsAn53X7AiMhG/GO5xMwG1poL1IXPc/eT75
+    iRcd9K3lpixZCzOujfOV/j7EOKm8HwhsONUws/VkKK+ry/ssRkCiHU2DszbBuPK0ScFj
+    UX+Re96/bsh0ULB9lXiRVD6ztZ/IMQuq35+GutKUMykfBit5FXSnJ0JfPR74yI6Ypvq9
+    /+bjWnkqlZTJbDaA3LtVfyy0azFP8OIilLYaSprDYUiyy/UQuBm9zaDdbzXcm2Xlq2Dk
+    jh9g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1714966457;
+    s=strato-dkim-0003; d=hartkopp.net;
+    h=In-Reply-To:From:Cc:References:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=Pk97Vo5EVDzQM5Rmi3qC8BLRNsL+4ytAOz0I3pFS7bk=;
+    b=3WmBurrxUrytiSzU9s2BbYVT8wlnmNQleMMq0mOJJCjUMCQMjY9r/qU3j2XpCxj7PY
+    Y8/0gtQQu6hMFf8HmFBQ==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3TMaFqTF1ViO8sG"
+Received: from [192.168.20.87]
+    by smtp.strato.de (RZmta 50.5.0 DYNA|AUTH)
+    with ESMTPSA id Ke140e0463YGeR6
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 6 May 2024 05:34:16 +0200 (CEST)
+Message-ID: <504913b1-8da4-403e-9ccc-d3eb41595806@hartkopp.net>
+Date: Mon, 6 May 2024 05:34:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,131 +88,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 088/130] KVM: x86: Add a switch_db_regs flag to handle
- TDX's auto-switched behavior
-To: isaku.yamahata@intel.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
- erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
- Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
- chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
- Xiaoyao Li <xiaoyao.li@intel.com>,
- Sean Christopherson <sean.j.christopherson@intel.com>,
- Chao Gao <chao.gao@intel.com>, Reinette Chatre <reinette.chatre@intel.com>
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <ca5d0399cdbbaa6c7c6528ad85b3560cec0f0752.1708933498.git.isaku.yamahata@intel.com>
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <ca5d0399cdbbaa6c7c6528ad85b3560cec0f0752.1708933498.git.isaku.yamahata@intel.com>
+Subject: Re: [syzbot] [can?] KMSAN: kernel-infoleak in raw_recvmsg
+To: o.rempel@pengutronix.de
+References: <0000000000007e4a2e0616fdde23@google.com>
+Content-Language: en-US
+Cc: syzbot <syzbot+5681e40d297b30f5b513@syzkaller.appspotmail.com>,
+ davem@davemloft.net, edumazet@google.com, kernel@pengutronix.de,
+ kuba@kernel.org, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mkl@pengutronix.de, netdev@vger.kernel.org, pabeni@redhat.com,
+ robin@protonic.nl, syzkaller-bugs@googlegroups.com
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+In-Reply-To: <0000000000007e4a2e0616fdde23@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hello Oleksij,
 
+can this probably be caused by a missing initialization of unused data 
+in j1939_sk_alloc_skb()?
 
-On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
->
-> Add a flag, KVM_DEBUGREG_AUTO_SWITCHED_GUEST, to skip saving/restoring DRs
-> irrespective of any other flags.  TDX-SEAM unconditionally saves and
-> restores guest DRs and reset to architectural INIT state on TD exit.
-> So, KVM needs to save host DRs before TD enter without restoring guest DRs
-> and restore host DRs after TD exit.
->
-> Opportunistically convert the KVM_DEBUGREG_* definitions to use BIT().
->
-> Reported-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Best regards,
+Oliver
+
+On 26.04.24 13:04, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    71b1543c83d6 Merge tag '6.9-rc5-ksmbd-fixes' of git://git...
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1784bdd7180000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=776c05250f36d55c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5681e40d297b30f5b513
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b440d3180000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b00907180000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/14813ccfbcb3/disk-71b1543c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e7b88b42cf07/vmlinux-71b1543c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3a64a5abfbba/bzImage-71b1543c.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5681e40d297b30f5b513@syzkaller.appspotmail.com
+> 
+> =====================================================
+> BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+> BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
+> BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:29 [inline]
+> BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
+> BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:271 [inline]
+> BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x366/0x2520 lib/iov_iter.c:185
+>   instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+>   copy_to_user_iter lib/iov_iter.c:24 [inline]
+>   iterate_ubuf include/linux/iov_iter.h:29 [inline]
+>   iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
+>   iterate_and_advance include/linux/iov_iter.h:271 [inline]
+>   _copy_to_iter+0x366/0x2520 lib/iov_iter.c:185
+>   copy_to_iter include/linux/uio.h:196 [inline]
+>   memcpy_to_msg include/linux/skbuff.h:4113 [inline]
+>   raw_recvmsg+0x2b8/0x9e0 net/can/raw.c:1008
+>   sock_recvmsg_nosec net/socket.c:1046 [inline]
+>   sock_recvmsg+0x2c4/0x340 net/socket.c:1068
+>   ____sys_recvmsg+0x18a/0x620 net/socket.c:2803
+>   ___sys_recvmsg+0x223/0x840 net/socket.c:2845
+>   do_recvmmsg+0x4fc/0xfd0 net/socket.c:2939
+>   __sys_recvmmsg net/socket.c:3018 [inline]
+>   __do_sys_recvmmsg net/socket.c:3041 [inline]
+>   __se_sys_recvmmsg net/socket.c:3034 [inline]
+>   __x64_sys_recvmmsg+0x397/0x490 net/socket.c:3034
+>   x64_sys_call+0xf6c/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:300
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Uninit was created at:
+>   slab_post_alloc_hook mm/slub.c:3804 [inline]
+>   slab_alloc_node mm/slub.c:3845 [inline]
+>   kmem_cache_alloc_node+0x613/0xc50 mm/slub.c:3888
+>   kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:577
+>   __alloc_skb+0x35b/0x7a0 net/core/skbuff.c:668
+>   alloc_skb include/linux/skbuff.h:1313 [inline]
+>   alloc_skb_with_frags+0xc8/0xbf0 net/core/skbuff.c:6504
+>   sock_alloc_send_pskb+0xa81/0xbf0 net/core/sock.c:2795
+>   sock_alloc_send_skb include/net/sock.h:1842 [inline]
+>   j1939_sk_alloc_skb net/can/j1939/socket.c:878 [inline]
+>   j1939_sk_send_loop net/can/j1939/socket.c:1142 [inline]
+>   j1939_sk_sendmsg+0xc0a/0x2730 net/can/j1939/socket.c:1277
+>   sock_sendmsg_nosec net/socket.c:730 [inline]
+>   __sock_sendmsg+0x30f/0x380 net/socket.c:745
+>   ____sys_sendmsg+0x877/0xb60 net/socket.c:2584
+>   ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2638
+>   __sys_sendmsg net/socket.c:2667 [inline]
+>   __do_sys_sendmsg net/socket.c:2676 [inline]
+>   __se_sys_sendmsg net/socket.c:2674 [inline]
+>   __x64_sys_sendmsg+0x307/0x4a0 net/socket.c:2674
+>   x64_sys_call+0xc4b/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:47
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Bytes 12-15 of 16 are uninitialized
+> Memory access of size 16 starts at ffff888120969690
+> Data copied to user address 00000000200017c0
+> 
+> CPU: 1 PID: 5050 Comm: syz-executor198 Not tainted 6.9.0-rc5-syzkaller-00031-g71b1543c83d6 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> =====================================================
+> 
+> 
 > ---
->   arch/x86/include/asm/kvm_host.h | 10 ++++++++--
->   arch/x86/kvm/vmx/tdx.c          |  1 +
->   arch/x86/kvm/x86.c              | 11 ++++++++---
->   3 files changed, 17 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 3ab85c3d86ee..a9df898c6fbd 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -610,8 +610,14 @@ struct kvm_pmu {
->   struct kvm_pmu_ops;
->   
->   enum {
-> -	KVM_DEBUGREG_BP_ENABLED = 1,
-> -	KVM_DEBUGREG_WONT_EXIT = 2,
-> +	KVM_DEBUGREG_BP_ENABLED		= BIT(0),
-> +	KVM_DEBUGREG_WONT_EXIT		= BIT(1),
-> +	/*
-> +	 * Guest debug registers (DR0-3 and DR6) are saved/restored by hardware
-> +	 * on exit from or enter to guest. KVM needn't switch them. Because DR7
-> +	 * is cleared on exit from guest, DR7 need to be saved/restored.
-> +	 */
-> +	KVM_DEBUGREG_AUTO_SWITCH	= BIT(2),
->   };
->   
->   struct kvm_mtrr_range {
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 7aa9188f384d..ab7403a19c5d 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -586,6 +586,7 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->   
->   	vcpu->arch.efer = EFER_SCE | EFER_LME | EFER_LMA | EFER_NX;
->   
-> +	vcpu->arch.switch_db_regs = KVM_DEBUGREG_AUTO_SWITCH;
->   	vcpu->arch.cr0_guest_owned_bits = -1ul;
->   	vcpu->arch.cr4_guest_owned_bits = -1ul;
->   
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 1b189e86a1f1..fb7597c22f31 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -11013,7 +11013,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->   	if (vcpu->arch.guest_fpu.xfd_err)
->   		wrmsrl(MSR_IA32_XFD_ERR, vcpu->arch.guest_fpu.xfd_err);
->   
-> -	if (unlikely(vcpu->arch.switch_db_regs)) {
-> +	if (unlikely(vcpu->arch.switch_db_regs & ~KVM_DEBUGREG_AUTO_SWITCH)) {
-
-As pointed by Paolo in 
-https://lore.kernel.org/lkml/ea136ac6-53cf-cdc5-a741-acfb437819b1@redhat.com/
-KVM_DEBUGREG_BP_ENABLED could be set in vcpu->arch.switch_db_regs,  by 
-userspace
-kvm_vcpu_ioctl_x86_set_debugregs()  --> kvm_update_dr7()
-
-So it should be fixed as:
-
--       if (unlikely(vcpu->arch.switch_db_regs)) {
-+       if (unlikely(vcpu->arch.switch_db_regs &&
-+                    !(vcpu->arch.switch_db_regs & 
-KVM_DEBUGREG_AUTO_SWITCH))) {
-
-
->   		set_debugreg(0, 7);
->   		set_debugreg(vcpu->arch.eff_db[0], 0);
->   		set_debugreg(vcpu->arch.eff_db[1], 1);
-> @@ -11059,6 +11059,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->   	 */
->   	if (unlikely(vcpu->arch.switch_db_regs & KVM_DEBUGREG_WONT_EXIT)) {
->   		WARN_ON(vcpu->guest_debug & KVM_GUESTDBG_USE_HW_BP);
-> +		WARN_ON(vcpu->arch.switch_db_regs & KVM_DEBUGREG_AUTO_SWITCH);
->   		static_call(kvm_x86_sync_dirty_debug_regs)(vcpu);
->   		kvm_update_dr0123(vcpu);
->   		kvm_update_dr7(vcpu);
-> @@ -11071,8 +11072,12 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->   	 * care about the messed up debug address registers. But if
->   	 * we have some of them active, restore the old state.
->   	 */
-> -	if (hw_breakpoint_active())
-> -		hw_breakpoint_restore();
-> +	if (hw_breakpoint_active()) {
-> +		if (!(vcpu->arch.switch_db_regs & KVM_DEBUGREG_AUTO_SWITCH))
-> +			hw_breakpoint_restore();
-> +		else
-> +			set_debugreg(__this_cpu_read(cpu_dr7), 7);
-> +	}
->   
->   	vcpu->arch.last_vmentry_cpu = vcpu->cpu;
->   	vcpu->arch.last_guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
-
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
