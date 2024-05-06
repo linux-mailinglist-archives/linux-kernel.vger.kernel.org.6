@@ -1,148 +1,261 @@
-Return-Path: <linux-kernel+bounces-169364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97AF8BC7A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:31:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FBE8BC7A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A928D1F2213C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482891C21169
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735C248CCD;
-	Mon,  6 May 2024 06:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIYwTZ0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69FB1DA3A;
-	Mon,  6 May 2024 06:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BD34EB2B;
+	Mon,  6 May 2024 06:32:17 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3ED210FF;
+	Mon,  6 May 2024 06:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714977081; cv=none; b=NcynJ8d1aQt2kCCQqy25gpfOVKfqeZceJhY3FhmqXSWs9plPJFOVMMVPTTxKTEsx+V36okYOdQM58ilz8crW8CeF0e9/l4+Rtzfh1cFk9rHYCnCaIqbUQS8GAI9XKCN0HnClWue6ac3vemJXZgMge+EYDi3Ksab3xU6QdJKQ7C0=
+	t=1714977136; cv=none; b=qFcIBkT1dhqTouOx+n5VBHbsUku+5JYA0qhNhEFY6HRZ2CFOP8KqqGzDumNz9aCtDU2bsmVfkr5I4DgNS3lvF6CuBvJvJl74AbVjqdOTH9o4ksT7Nfq83dBt1gIpJj+IT3FLC7V9MDgDgY7e1VyEP7nITP0Ux1capAJygFd0ih0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714977081; c=relaxed/simple;
-	bh=98CZgcPITCcuTQw9PaLYngGhKk7ByyJnqdpGUvkpohE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ci5Lz9y4px6nHcLY8PrRwosJwLTh5kmRgxiOcQH662MN7vlN8jTdc8a7AXhxPSxVqddyD9UV5W2QIlUItuH0I8i64N+fm+oYCeqRHlhC/Ilbjge7bbBXvDGiXRxrweMa/NJlbxAnKUnS2Rt7NfDUad1UgfYbJVEO+mvuQt7DG3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIYwTZ0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5920DC116B1;
-	Mon,  6 May 2024 06:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714977081;
-	bh=98CZgcPITCcuTQw9PaLYngGhKk7ByyJnqdpGUvkpohE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NIYwTZ0sMNmZQ0/caCTXDnTJKAKp4j4sHY3xv2SPqTpajy8TiwWGP6Fe3NKzufutV
-	 lyjsHcLtypy7M59/QbgtwOK3b0UCk/H7vB1THe2uWHXOq8/xhiVCDZGNYG+t8jjc84
-	 U0FQsvZED10xvAPGtBowYrVXFvV0NDfKO7PjqoLsG4gw/5QE8u0adNSCz5O1ZBXr/w
-	 CaU/uflFtlj4ovUvKprPk82H9RSZnx/6a6sY6F1kgutFrb/xqmP/ZLtor2tY+NkEkn
-	 9ijwfDfp7Y5ZIubHN4wUQfltJRU9uWhJuBMvAgnOe1sylvrrJ19cWqwMSx0UzIyGp0
-	 8Ba75TQA1GCqQ==
-Message-ID: <d1007753-bdcf-4db9-bb01-b36e742cee4b@kernel.org>
-Date: Mon, 6 May 2024 08:31:14 +0200
+	s=arc-20240116; t=1714977136; c=relaxed/simple;
+	bh=ps3bfPlOGnscXXGNpZRI1HTSPZ1kzyMnphRxw5lw+jI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=a7lehsra//Q6oEioXYV88N8XlfsKUCKe3OFzMjzBTnETXaPK4Iv0WAyUWDDFMrM910eHK421bqSJ5wuQvddMBuWby0gipFX/5n6ny3vaKID3xXSOafqEdkr69CMIIGenu373X9Cxjb7MujY5s356Bk+AesvrmfqnOddbEYA/Qww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.173])
+	by gateway (Coremail) with SMTP id _____8CxxOpoeThm7vsHAA--.10329S3;
+	Mon, 06 May 2024 14:32:08 +0800 (CST)
+Received: from [10.20.42.173] (unknown [10.20.42.173])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Cxyt1ieThmqzUSAA--.36589S3;
+	Mon, 06 May 2024 14:32:04 +0800 (CST)
+Subject: Re: [PATCH v8 0/6] LoongArch: Add pv ipi support on LoongArch VM
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, kvm@vger.kernel.org
+References: <20240428100518.1642324-1-maobibo@loongson.cn>
+ <CAAhV-H6c2Wym4w5WchP=K1fHv8uVFDp59CATYKcH3mGYDxnKmA@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <0640effb-5c65-5f52-a58f-4a12104b189b@loongson.cn>
+Date: Mon, 6 May 2024 14:32:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] ARM: dts: samsung: exynos4212-tab3: Fix headset mic,
- add jack detection
-To: Artur Weber <aweber.kernel@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20240503-midas-wm1811-gpio-jack-v1-0-e8cddbd67cbf@gmail.com>
- <20240503-midas-wm1811-gpio-jack-v1-3-e8cddbd67cbf@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <CAAhV-H6c2Wym4w5WchP=K1fHv8uVFDp59CATYKcH3mGYDxnKmA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240503-midas-wm1811-gpio-jack-v1-3-e8cddbd67cbf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8Cxyt1ieThmqzUSAA--.36589S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxtF47Ar17WFWkKr4fKFWUKFX_yoWxtFWUpF
+	W5AFn5Crs5Gr1fCwnFv3sxWr1DJw4xGr1aq3WayrW0krsFqFy7Zr48trZ5ua48Jws5JFW0
+	qFyrGw1Y93WUAagCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
+	6r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUU
+	UU=
 
-On 03/05/2024 20:55, Artur Weber wrote:
-> Add the necessary properties to the samsung,midas-audio node to allow
-> for headset jack detection, set up the mic bias regulator GPIO and fix
-> some other small issues with the sound setup.
+
+
+On 2024/5/6 上午9:45, Huacai Chen wrote:
+> Hi, Bibo,
 > 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> I have done an off-list discussion with some KVM experts, and they
+> think user-space have its right to know PV features, so cpucfg
+> solution is acceptable.
+> 
+> And I applied this series with some modifications at
+> https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/log/?h=loongarch-kvm
+> You can test it now. But it seems the upstream qemu cannot enable PV IPI now.
+VM with 128/256 vcpus boots with this series in loongarch-kvm branch. 
+And pv ipi works by information "cat /proc/interrupts". There need small 
+modification with qemu like this, and we
+will submit the patch to qemu after it is merged.
 
-..
+diff --git a/hw/loongarch/virt.c b/hw/loongarch/virt.c
+index 441d764843..9f7556cd93 100644
+--- a/hw/loongarch/virt.c
++++ b/hw/loongarch/virt.c
+@@ -15,6 +15,8 @@
+  #include "sysemu/runstate.h"
+  #include "sysemu/reset.h"
+  #include "sysemu/rtc.h"
++#include "sysemu/tcg.h"
++#include "sysemu/kvm.h"
+  #include "hw/loongarch/virt.h"
+  #include "exec/address-spaces.h"
+  #include "hw/irq.h"
+@@ -786,12 +788,18 @@ static void loongarch_qemu_write(void *opaque, 
+hwaddr addr,
 
-> +
->  &bus_acp {
->  	devfreq = <&bus_dmc>;
->  	status = "okay";
-> @@ -505,12 +521,11 @@ &i2c_4 {
->  	wm1811: audio-codec@1a {
->  		compatible = "wlf,wm1811";
->  		reg = <0x1a>;
-> -		clocks = <&pmu_system_controller 0>;
-> -		clock-names = "MCLK1";
-> +		clocks = <&pmu_system_controller 0>,
-> +			 <&s5m8767_osc S2MPS11_CLK_BT>;
-> +		clock-names = "MCLK1", "MCLK2";
->  		interrupt-controller;
->  		#interrupt-cells = <2>;
-> -		interrupt-parent = <&gpx3>;
-> -		interrupts = <6 IRQ_TYPE_LEVEL_HIGH>;
+  static uint64_t loongarch_qemu_read(void *opaque, hwaddr addr, 
+unsigned size)
+  {
++    uint64_t ret = 0;
++
+      switch (addr) {
+      case VERSION_REG:
+          return 0x11ULL;
+      case FEATURE_REG:
+-        return 1ULL << IOCSRF_MSI | 1ULL << IOCSRF_EXTIOI |
++        ret =1ULL << IOCSRF_MSI | 1ULL << IOCSRF_EXTIOI |
+                 1ULL << IOCSRF_CSRIPI;
++        if (kvm_enabled()) {
++            ret |= 1ULL << IOCSRF_VM;
++        }
++       return ret;
+      case VENDOR_REG:
+          return 0x6e6f73676e6f6f4cULL; /* "Loongson" */
+      case CPUNAME_REG:
 
-Does not look related at all to the patch.
 
-
-Best regards,
-Krzysztof
+Regards
+Bibo Mao
+> 
+> I will reply to other patches about my modifications.
+> 
+> Huacai
+> 
+> On Sun, Apr 28, 2024 at 6:05 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> On physical machine, ipi HW uses IOCSR registers, however there is trap
+>> into hypervisor when vcpu accesses IOCSR registers if system is in VM
+>> mode. SWI is a interrupt mechanism like SGI on ARM, software can send
+>> interrupt to CPU, only that on LoongArch SWI can only be sent to local CPU
+>> now. So SWI can not used for IPI on real HW system, however it can be used
+>> on VM when combined with hypercall method. IPI can be sent with hypercall
+>> method and SWI interrupt is injected to vcpu, vcpu can treat SWI
+>> interrupt as IPI.
+>>
+>> With PV IPI supported, there is one trap with IPI sending, however with IPI
+>> receiving there is no trap. with IOCSR HW ipi method, there will be one
+>> trap with IPI sending and two trap with ipi receiving.
+>>
+>> Also IPI multicast support is added for VM, the idea comes from x86 PV ipi.
+>> IPI can be sent to 128 vcpus in one time. With IPI multicast support, trap
+>> will be reduced greatly.
+>>
+>> Here is the microbenchmarck data with "perf bench futex wake" testcase on
+>> 3C5000 single-way machine, there are 16 cpus on 3C5000 single-way machine,
+>> VM has 16 vcpus also. The benchmark data is ms time unit to wakeup 16
+>> threads, the performance is better if data is smaller.
+>>
+>> physical machine                     0.0176 ms
+>> VM original                          0.1140 ms
+>> VM with pv ipi patch                 0.0481 ms
+>>
+>> It passes to boot with 128/256 vcpus, and passes to run runltp command
+>> with package ltp-20230516.
+>>
+>> ---
+>> v7 --- v8:
+>>   1. Remove kernel PLV mode checking with cpucfg emulation for hypervisor
+>> feature inquiry.
+>>   2. Remove document about loongarch hypercall ABI per request of huacai,
+>> will add English/Chinese doc at the same time in later.
+>>
+>> v6 --- v7:
+>>    1. Refine LoongArch virt document by review comments.
+>>    2. Add function kvm_read_reg()/kvm_write_reg() in hypercall emulation,
+>> and later it can be used for other trap emulations.
+>>
+>> v5 --- v6:
+>>    1. Add privilege checking when emulating cpucfg at index 0x4000000 --
+>> 0x400000FF, return 0 if not executed at kernel mode.
+>>    2. Add document about LoongArch pv ipi with new creatly directory
+>> Documentation/virt/kvm/loongarch/
+>>    3. Fix pv ipi handling in kvm backend function kvm_pv_send_ipi(),
+>> where min should plus BITS_PER_LONG with second bitmap, otherwise
+>> VM with more than 64 vpus fails to boot.
+>>    4. Adjust patch order and code refine with review comments.
+>>
+>> v4 --- v5:
+>>    1. Refresh function/macro name from review comments.
+>>
+>> v3 --- v4:
+>>    1. Modfiy pv ipi hook function name call_func_ipi() and
+>> call_func_single_ipi() with send_ipi_mask()/send_ipi_single(), since pv
+>> ipi is used for both remote function call and reschedule notification.
+>>    2. Refresh changelog.
+>>
+>> v2 --- v3:
+>>    1. Add 128 vcpu ipi multicast support like x86
+>>    2. Change cpucfg base address from 0x10000000 to 0x40000000, in order
+>> to avoid confliction with future hw usage
+>>    3. Adjust patch order in this patchset, move patch
+>> Refine-ipi-ops-on-LoongArch-platform to the first one.
+>>
+>> v1 --- v2:
+>>    1. Add hw cpuid map support since ipi routing uses hw cpuid
+>>    2. Refine changelog description
+>>    3. Add hypercall statistic support for vcpu
+>>    4. Set percpu pv ipi message buffer aligned with cacheline
+>>    5. Refine pv ipi send logic, do not send ipi message with if there is
+>> pending ipi message.
+>> ---
+>> Bibo Mao (6):
+>>    LoongArch/smp: Refine some ipi functions on LoongArch platform
+>>    LoongArch: KVM: Add hypercall instruction emulation support
+>>    LoongArch: KVM: Add cpucfg area for kvm hypervisor
+>>    LoongArch: KVM: Add vcpu search support from physical cpuid
+>>    LoongArch: KVM: Add pv ipi support on kvm side
+>>    LoongArch: Add pv ipi support on guest kernel side
+>>
+>>   arch/loongarch/Kconfig                        |   9 +
+>>   arch/loongarch/include/asm/Kbuild             |   1 -
+>>   arch/loongarch/include/asm/hardirq.h          |   5 +
+>>   arch/loongarch/include/asm/inst.h             |   1 +
+>>   arch/loongarch/include/asm/irq.h              |  10 +-
+>>   arch/loongarch/include/asm/kvm_host.h         |  27 +++
+>>   arch/loongarch/include/asm/kvm_para.h         | 155 ++++++++++++++++++
+>>   arch/loongarch/include/asm/kvm_vcpu.h         |  11 ++
+>>   arch/loongarch/include/asm/loongarch.h        |  11 ++
+>>   arch/loongarch/include/asm/paravirt.h         |  27 +++
+>>   .../include/asm/paravirt_api_clock.h          |   1 +
+>>   arch/loongarch/include/asm/smp.h              |  31 ++--
+>>   arch/loongarch/include/uapi/asm/Kbuild        |   2 -
+>>   arch/loongarch/kernel/Makefile                |   1 +
+>>   arch/loongarch/kernel/irq.c                   |  24 +--
+>>   arch/loongarch/kernel/paravirt.c              | 151 +++++++++++++++++
+>>   arch/loongarch/kernel/perf_event.c            |  14 +-
+>>   arch/loongarch/kernel/smp.c                   |  62 ++++---
+>>   arch/loongarch/kernel/time.c                  |  12 +-
+>>   arch/loongarch/kvm/exit.c                     | 132 +++++++++++++--
+>>   arch/loongarch/kvm/vcpu.c                     |  94 ++++++++++-
+>>   arch/loongarch/kvm/vm.c                       |  11 ++
+>>   22 files changed, 690 insertions(+), 102 deletions(-)
+>>   create mode 100644 arch/loongarch/include/asm/kvm_para.h
+>>   create mode 100644 arch/loongarch/include/asm/paravirt.h
+>>   create mode 100644 arch/loongarch/include/asm/paravirt_api_clock.h
+>>   delete mode 100644 arch/loongarch/include/uapi/asm/Kbuild
+>>   create mode 100644 arch/loongarch/kernel/paravirt.c
+>>
+>>
+>> base-commit: 5eb4573ea63d0c83bf58fb7c243fc2c2b6966c02
+>> --
+>> 2.39.3
+>>
+>>
 
 
