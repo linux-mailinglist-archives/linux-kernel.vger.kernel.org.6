@@ -1,139 +1,102 @@
-Return-Path: <linux-kernel+bounces-169421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CA48BC86C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692BE8BC870
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD1C1F20FDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:34:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2402B2819BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E45140388;
-	Mon,  6 May 2024 07:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377AC13774B;
+	Mon,  6 May 2024 07:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOQe5kMT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="P93j5mis"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE1D127E3B;
-	Mon,  6 May 2024 07:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F2C127E3B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714980839; cv=none; b=nrN45KreTq99WaIWRgaad4Pfuq6utEM0STu5LZiWIa8oMIencsFqyM0rRqaY00CV6XI/PvpT4zhzQ44psq58I5yKLkwDO6+EvWe3r1Qcc9WEzYZ/34vMIBLGkauFd/36bfHHbUYxJjFbF99T5PkjKVRveCdgocnGzvLfLsZHC1c=
+	t=1714980943; cv=none; b=eUBMSDHS8LsiXBxTu5BEcSWw/CmoYPxQIv+aLV0w7egQWqDERULD9Bje6Nah5K/cnHcEws8weBQMI551fGFZc5TrzvhFvhawz5GKvx0oyExayrPwq4FOEqACK7gnJMMHdRUw/g/BJLVzKOopLkure04g87W/Zp7kH14ci5PEhKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714980839; c=relaxed/simple;
-	bh=6XLNTdDOjYZV+7BSZ8kYvHCZIOmfDSjbk8qhhZ/HN98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tDKt+BtRhAI004FqlSStLGoZEBtvjt9ENFDROytLkZU1gHO5r9eHDcebIhoDVQobLlK5v29xYEtShdxO5etZGOqmKMBKhbnVDMaUIzay7cOVG5W/+Q9vw7h0ZMql0UQ70NVDSmjldQwqC1NJzopEczregH/Yjc2+0ry/IEgIwVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOQe5kMT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6B6C116B1;
-	Mon,  6 May 2024 07:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714980838;
-	bh=6XLNTdDOjYZV+7BSZ8kYvHCZIOmfDSjbk8qhhZ/HN98=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oOQe5kMTblXJZ1LDCM4efVpiMDYgCPv9n4nmCcDqnsOCcoINVq/I8EYAU70iCFESU
-	 6iRbzA2fucAjcO4Y5v6Yh2RRUPXk/8yO4g4fkYljfz3F/4/LbZ2pbgkZSifQOrwzVC
-	 DtWG0CFNb6tksiEkIm5+/UYWKdX8v8U13M4r2QBkjzaofiVVlpJkpwxj07SOAqkZRE
-	 6xOGO2bCXFxCEsIwMXyiqQ0RV3T57ab8R9Osjqn4vmqKNNNvWHqitQ9FcBwi1sXgWj
-	 20UeGVq3oC1PLysvApckZumwIPjFquUgyomPXJQEKXIbKkqjh91BLyr40SOK5hmuTw
-	 9DPLK1r/TcoYA==
-Message-ID: <94e7366f-e791-4abf-b20d-4c7a1eed3b48@kernel.org>
-Date: Mon, 6 May 2024 09:33:52 +0200
+	s=arc-20240116; t=1714980943; c=relaxed/simple;
+	bh=n5+hynqpfyw2VkPWlAy7ChrItQVLYJ1f8V2xfUMm5QY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GHZ9a6fj+fKLSqhwwIQlXijx93pjvSf8uCMj4PpDO/XXrByA0IX0AZXJDOTiZvr768cnqo6IDJtPns8O5CrjXQJZrnAWX/Y6TtSWhf9FFrQ/vsoTQBiRhbM3TO8WldG3Dzo5jRT9oFujjy3/AspDOHBu8Sjm3dckvMhXUeCms6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=P93j5mis; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E680E836;
+	Mon,  6 May 2024 09:35:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1714980938;
+	bh=n5+hynqpfyw2VkPWlAy7ChrItQVLYJ1f8V2xfUMm5QY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P93j5missxNkHoWP51IhSnZa8MCPh3t/vBhIXL35U4+LIY1WxMC85iW/7gPR5ag+q
+	 Ei6nFmCIqZu+Z18Sz8zHujvK6+mJlOSjVJ26XDeFa14VDvEGXjX+HsL0F699WeViiD
+	 j4NGIH+aSGJDDyQcwg1vYoqYqGLAe6Bh7h6hBJIM=
+Date: Mon, 6 May 2024 10:35:31 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Sean Anderson <sean.anderson@linux.dev>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] drm: zynqmp_dp: Lockup in zynqmp_dp_bridge_detect when
+ device is unbound
+Message-ID: <20240506073531.GA10260@pendragon.ideasonboard.com>
+References: <4d8f4c9b-2efb-4774-9a37-2f257f79b2c9@linux.dev>
+ <20240504122118.GB24548@pendragon.ideasonboard.com>
+ <20240506-charcoal-griffin-of-tact-174dde@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] media: venus: fix use after free in vdec_close
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Stanimir Varbanov <stanimir.varbanov@linaro.org>,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <1714975133-1777-1-git-send-email-quic_dikshita@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1714975133-1777-1-git-send-email-quic_dikshita@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240506-charcoal-griffin-of-tact-174dde@houat>
 
-On 06/05/2024 07:58, Dikshita Agarwal wrote:
-> There appears to be a possible use after free with vdec_close().
-> The firmware will add buffer release work to the work queue through
-> HFI callbacks as a normal part of decoding. Randomly closing the
-> decoder device from userspace during normal decoding can incur
-> a read after free for inst.
+On Mon, May 06, 2024 at 09:29:36AM +0200, Maxime Ripard wrote:
+> Hi Laurent, Sean,
 > 
-> Fix it by cancelling the work in vdec_close.
+> On Sat, May 04, 2024 at 03:21:18PM GMT, Laurent Pinchart wrote:
+> > On Fri, May 03, 2024 at 05:54:32PM -0400, Sean Anderson wrote:
+> > > I have discovered a bug in the displayport driver on drm-misc-next. To
+> > > trigger it, run
+> > > 
+> > > echo fd4a0000.display > /sys/bus/platform/drivers/zynqmp-dpsub/unbind
+> > > 
+> > > The system will become unresponsive and (after a bit) splat with a hard
+> > > LOCKUP. One core will be unresponsive at the first zynqmp_dp_read in
+> > > zynqmp_dp_bridge_detect.
+> > > 
+> > > I believe the issue is due the registers being unmapped and the block
+> > > put into reset in zynqmp_dp_remove instead of zynqmp_dpsub_release.
+> > 
+> > That is on purpose. Drivers are not allowed to access the device at all
+> > after .remove() returns.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: af2c3834c ("media: venus: adding core part and helper functions")
+> It's not "on purpose" no. Drivers indeed are not allowed to access the
+> device after remove, but the kernel shouldn't crash. This is exactly
+> why we have drm_dev_enter / drm_dev_exit.
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
+I didn't mean the crash was on purpose :-) It's the registers being
+unmapped that is, as nothing should touch those registers after
+remove() returns.
 
-This is written in your instruction - go/upstream - so be sure you
-always follow it fully.
+-- 
+Regards,
 
-
-Best regards,
-Krzysztof
-
+Laurent Pinchart
 
