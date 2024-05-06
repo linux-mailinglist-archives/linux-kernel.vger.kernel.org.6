@@ -1,111 +1,169 @@
-Return-Path: <linux-kernel+bounces-169820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C868BCE09
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:35:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2118BCE10
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDB3283996
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:35:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B82D41C2364D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72062555B;
-	Mon,  6 May 2024 12:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC9744C66;
+	Mon,  6 May 2024 12:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="or1DmKL6"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FvBv2a8y"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC9E6D1BB
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5218C19
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714998918; cv=none; b=uwzOgVIcBcmUxW9Vu+o3UEn75ddpYlZCNjLtg/uYNGqfmkFEy4ZcScEdJPCrqofFWHCGTyY2eXt0KcEuZctfTZYdOx7WBAhBF8hgom8LlGFCkNQlmH4Y0IJMDYUbZVQBjq87iKa0WNs6uiF02jbxp9+7q+iqAvm65CoJQnWGaNw=
+	t=1714999036; cv=none; b=YtRdl9/74Q4Q3A1o8oW5GUljArXPGFCAXBEO8Ma/+bnV0vGa+AJQRKr5QS6ncrajYb8T2eiet96cffFcULznE9X3t+szoDZ9mQQTNulzaNvzr/qcqjk/Eklk/VD7LHHYgZEFR2+3h8GhDA76u49w2w+kOPcQWH4w1R5pKIls4Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714998918; c=relaxed/simple;
-	bh=8sG8GaqzHZ/COubbDYtb5CUXzzhirAvpp+sqNHF2hRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VAJcc9+muxlp/6UU48jzeXFNTM79BrBpDmuQPbfD6lh31TJWzWL6MVTXuS7NpAxdmiZVtGsBj5fNgoaK0TBQrn9G6T65ckKOXfkCRMeFzkrE9cvH9ScNL0qQ9wg7SwU+nobPJRU5IUA1K0LVSV6WihSEHpawnT8S6YDPYFIpxIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=or1DmKL6; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41e79ec20a6so68755e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:35:16 -0700 (PDT)
+	s=arc-20240116; t=1714999036; c=relaxed/simple;
+	bh=W0ii3TeUy067aqvyqv+adtlSG49/aqc2GUx5qBI/NZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oM2oGAm/QRZyy3lY3dKp/F3Yve0eZMtmXewDaGGDchwrvpBIlByOCWFKib7SXFDR2SXoRGKCjZZgGOFTmzvVBBIcxduQAUbBy/IZ5b5eIlv2dfadXr/c4hvjL8+aRe01+4t8IdGh1qGIuKOHzFGltq/GpLoEVQJyvtfOGdfKyNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=FvBv2a8y; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41bd8bdd065so2594565e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:37:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1714998915; x=1715603715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8sG8GaqzHZ/COubbDYtb5CUXzzhirAvpp+sqNHF2hRM=;
-        b=or1DmKL6o/3Gx9kFqjyWTIKmwkTyxiiVn8orfLNcWxgIipCJPO/BNfgX5SlTz9Yd/E
-         oXmBUNkIGI7qkU28+3LkgRIzpraidwl34B/NKgkZDCiQIecleBBYfyUFnzSfI+v1cwV+
-         PQJ+JIvrvenuyiXctt8pjnYRczgast8deEXsvL/q7sc83lzUIwSndqZutbqR35ddHk6L
-         BnRSagrnMwIvcOB+mUTqHxWHHZB3Oi0qrohfzyOnoR+XPJumhd5o6wphFVrcmXCV8Rg1
-         RKIOWAu9kCozdt6ZFQw64djufitiay3V4RA9bSNsOwnb98sIehPvGzgxF9dZc3M5IR8S
-         +ytw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714998915; x=1715603715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=ffwll.ch; s=google; t=1714999033; x=1715603833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8sG8GaqzHZ/COubbDYtb5CUXzzhirAvpp+sqNHF2hRM=;
-        b=rbCzgd/ymXRJKfRE9cmNvdEZVYYEvLs8XjYILAp5RcXdCaJXLFqbSbkmcEMy8gDPM+
-         duKLY/odxbsclAXOpNOojh9np2rinoqvEzydH6q4KWUy6/F9g+QVr5z5nNSIX3e4UawZ
-         TDGq/IMcy65cESD1OiIM82JcTR9na17hhJYrrYkMWcIxSKlE+RHTARt0fhvvzg4hCeIM
-         ygxEfRzrzzbThob9fjHwz7KZk8b/AxzJGfXDdxuPwdOPqRTZ7Bn7jgoQlIbzjfWM81h0
-         Vpxvf4odrFhgh66HeRP/eB6u/FfPlIOvVEkqBFoIn+wA0Fb5HGG0WKwlvV1KA+j1t9Ip
-         KFTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ/kaTpN9rw8TdbNqZ5BQclnuqOBiXp36YcQ3hvwxvBnyT8Pm5U662ixQTa2qMCtnkOuKLvk5VHittIrul2Nw+k5cSuYuCDr5bnlAy
-X-Gm-Message-State: AOJu0YwA+6xrLqc+vDnolCF/6D5zy/WtvqzxDsvzTYfD2kur5k+scxvP
-	bXCqQAYj72Rosc1OlfiE5V2YZtMH17AiZFy/1s/u5fmd6HOtlX/5KAljtq8ITYoDwTnx4XbAGQE
-	r9uu6At6CLOr+xFLY/J9WLSTDKCt2dbEvtf1y
-X-Google-Smtp-Source: AGHT+IEMMKgFbR+u34icqY5ffdKZJzjIMfq9mD7FSYxMp+5pcTIM3U8+IyeJqA4TUGmmCn1rlruSoSxFhDftbXYhjEI=
-X-Received: by 2002:a05:600c:4f51:b0:418:5aaa:7db1 with SMTP id
- 5b1f17b1804b1-41e6274d8camr3512355e9.1.1714998914744; Mon, 06 May 2024
- 05:35:14 -0700 (PDT)
+        bh=NmNWteJIHVG/FsNg6lLCmILTCJBN+MkrWHLSaZrPJk4=;
+        b=FvBv2a8y7KaPOzeWXOlRwnY4lH1/WLZlQfEApXgvbpTUi6F1uRXzYtzHLxd34xbg1u
+         lzQ4L8SrSgf8fTvp0TUjJwrwNvxd5DfSFpaHbPJ0Vust7ey2Py3OgetloVHthlUVf9qR
+         z3R54uLMsCTneHkdevvCARM3z2xfNRrIIF8DQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714999033; x=1715603833;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NmNWteJIHVG/FsNg6lLCmILTCJBN+MkrWHLSaZrPJk4=;
+        b=QxmIr3tOW8IeHwIbhXZIQgRQK3SF4aWYLp1LFjqSZfMSKl75afydQGcCAG/qY8orLL
+         8TydOMU3qXT8y8DtZ1pfCzI6EvjXpldsMsg+ffykYNPpXaVxKA6dfJgiC+zkEt0PsPaq
+         VO7HxNuXb3Gudh1FpkD+mm3a4Ew7D0hzaGLXMNL//jkIRPjlb3Fomo0gnHMF2pVZwezn
+         5WHQ9S8H2r5KZcVk3yvOoRpZtaiDPZNxNg94tGsAVPU/AbCAQYJC82CnClZfRGAwYX18
+         RUleaJwm+PgZrboSvbhgBH8+VT/DbVJESneYlppFNmQyr1lkbxlT3aY0G/Jsn+JHlRy6
+         vdcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHmqenAlaxYDbp9+Na+S9hPKgb/okAGJR1/6i0xQDPnOJ+KnzUjebiHz3wPxpaPyFyBgSRaWg94xl+xfBNyBlPRG6rPekHw1hfn4pt
+X-Gm-Message-State: AOJu0YzaZ5Nz18IShRnvKfvMcDoQ70DGbOpAOsj4FPPnNI8puU/+ScLE
+	NxhDeKGMCp0lkhYg87ZSIzZ3uQ25NweRVnV/HjUqIN0srG2xYfR7QHhjrT4jgsg=
+X-Google-Smtp-Source: AGHT+IF4oVKBpTMWMqUQ/dzQ+O/7RQpt5fMGVwZ3eSkPNG4BC5o71WjeNR+MccKjqHnTIbg2KzBZFg==
+X-Received: by 2002:a05:600c:1d25:b0:418:ef65:4b11 with SMTP id l37-20020a05600c1d2500b00418ef654b11mr7944219wms.2.1714999033407;
+        Mon, 06 May 2024 05:37:13 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id je16-20020a05600c1f9000b0041c7ac6b0ffsm19767802wmb.37.2024.05.06.05.37.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 05:37:13 -0700 (PDT)
+Date: Mon, 6 May 2024 14:37:10 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	axboe@kernel.dk, brauner@kernel.org, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <ZjjO9kaRjT48Uyuc@phenom.ffwll.local>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, axboe@kernel.dk,
+	brauner@kernel.org, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240503214531.GB2118490@ZenIV>
+ <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
+ <202405031529.2CD1BFED37@keescook>
+ <20240503230318.GF2118490@ZenIV>
+ <202405031616.793DF7EEE@keescook>
+ <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506120400.712629-1-horatiu.vultur@microchip.com>
-In-Reply-To: <20240506120400.712629-1-horatiu.vultur@microchip.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 6 May 2024 14:35:01 +0200
-Message-ID: <CANn89i+SJiOLLy8azt8NqckUkTLqTS3Wu=16vfTrqCFYLKxTPw@mail.gmail.com>
-Subject: Re: [PATCH net] net: tcp: Update the type of scaling_ratio
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, soheil@google.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On Mon, May 6, 2024 at 2:04=E2=80=AFPM Horatiu Vultur
-<horatiu.vultur@microchip.com> wrote:
->
-> It was noticed the following issue that sometimes the scaling_ratio was
-> getting a value of 0, meaning that window space was having a value of 0,
-> so then the tcp connection was stopping.
-> The reason why the scaling_ratio was getting a value of 0 is because
-> when it was calculated, it was truncated from a u64 to a u8. So for
-> example if it scaling_ratio was supposed to be 256 it was getting a
-> value of 0.
-> The fix consists in chaning the type of scaling_ratio from u8 to u16.
->
-> Fixes: dfa2f0483360 ("tcp: get rid of sysctl_tcp_adv_win_scale")
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> ---
+On Fri, May 03, 2024 at 04:41:19PM -0700, Linus Torvalds wrote:
+> On Fri, 3 May 2024 at 16:23, Kees Cook <keescook@chromium.org> wrote:
+> >
+> > static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
+> > {
+> >         return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
+> > }
+> >
+> > If we end up adding epi_fget(), we'll have 2 cases of using
+> > "atomic_long_inc_not_zero" for f_count. Do we need some kind of blessed
+> > helper to live in file.h or something, with appropriate comments?
+> 
+> I wonder if we could try to abstract this out a bit more.
+> 
+> These games with non-ref-counted file structures *feel* a bit like the
+> games we play with non-ref-counted (aka "stashed") 'struct dentry'
+> that got fairly recently cleaned up with path_from_stashed() when both
+> nsfs and pidfs started doing the same thing.
+> 
+> I'm not loving the TTM use of this thing, but at least the locking and
+> logic feels a lot more straightforward (ie the
+> atomic_long_inc_not_zero() here is clealy under the 'prime->mutex'
+> lock
 
-This is a wrong patch. We need to fix the root cause instead.
+The one the vmgfx isn't really needed (I think at least), because all
+other drivers that use gem or ttm use the dma_buf export cache in
+drm/drm_prime.c, which is protected by a bog standard mutex.
 
-By definition, skb->len / skb->truesize must be < 1
+vmwgfx is unfortunately special in a lot of ways due to somewhat parallel
+dev history. So there might be an uapi reason why the weak reference is
+required. I suspect because vmwgfx is reinventing a lot of its own wheels
+it can't play the same tricks as gem_prime.c, which hooks into a few core
+drm cleanup/release functions.
 
-If not, a driver is lying to us and this is quite bad.
+tldr; drm really has no architectural need for a get_file_unless_doomed,
+and I certainly don't want to spread it it further than the vmwgfx
+historical special case that was added in 2013.
+-Sima
 
-Please take a look at the following patch for a real fix.
+> IOW, the tty use looks correct to me, and it has fairly simple locking
+> and is just catching the the race between 'fput()' decrementing the
+> refcount and and 'file->f_op->release()' doing the actual release.
+> 
+> You are right that it's similar to the epoll thing in that sense, it
+> just looks a _lot_ more straightforward to me (and, unlike epoll,
+> doesn't look actively buggy right now).
+> 
+> Could we abstract out this kind of "stashed file pointer" so that we'd
+> have a *common* form for this? Not just the inc_not_zero part, but the
+> locking rule too?
+> 
+>               Linus
 
-4ce62d5b2f7aecd4900e7d6115588ad7f9acccca net: usb: ax88179_178a: stop
-lying about skb->truesize
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
