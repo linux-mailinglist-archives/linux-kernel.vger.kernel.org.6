@@ -1,135 +1,117 @@
-Return-Path: <linux-kernel+bounces-169629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488048BCB5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:58:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364D58BCB60
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038B3281401
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:58:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB58B1F21651
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7500214262C;
-	Mon,  6 May 2024 09:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19911422DD;
+	Mon,  6 May 2024 09:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Xw5Wosq4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fGcTaVQQ"
-Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NzyrS+61"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B94205F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658365CDD0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989479; cv=none; b=PnpGRxBeIemCbkQtobj0Q5hA6Z31VlD7Lnhx66Fugv1StRFO/pSarzT4nvbJxUQKIjAon6dJ5iXJ/Nvjji4vThEPtvoMPdh65OdtRMXMGZfAn2Q6cXfR0SRwAQehHFUMFQ0pfJ0/CwmKD3qhKqnJGYC2JxUwyVY7Y912uqej57w=
+	t=1714989542; cv=none; b=c1J1caY9J3ME1xx5Jnb64G9ZK4g0ev+e2A2/mJuOpbjef0HZAY1ZdVjOdX7sX11U4gIF2HGRqB0x2am5XGNwJFc6epNPkfAfPJ3cSFvtZYhSnzuz/G5GQUh62mA9ZLfTOe9FnCghHGHnJ8jeE1ICKeNKusTfc0I5mf0fuojGivI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989479; c=relaxed/simple;
-	bh=RGG/95bqgbV0UxC4j43Z4dKYTNz41JiHRc7ZYvy2ASI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=OvuYYP4Qyt/L4HnludL4ST08v+iQiVWkbNsIK2vOO7yUANz84iqoGNPpD/Wbmh4O6b5M5dFsw1FdnHSX47hAjSG0769LjR98Y1QJEMUIsE8S0KFVec9DR+F0BBUryM4YEYrzbZbDbd1yRjU2rkPaf3JQaH1hWvRmNstwOusMIbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Xw5Wosq4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fGcTaVQQ; arc=none smtp.client-ip=64.147.123.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id D7F4518000BA;
-	Mon,  6 May 2024 05:57:55 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 06 May 2024 05:57:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1714989475; x=1715075875; bh=Kxaapcokfg
-	FuUbfz89vv5wfELr6zFPpz8003UyV3aWM=; b=Xw5Wosq4086aDVg44LtHOuNw7J
-	OHfat0R3Sr/CbDkAfawLrS8DG8B9Yo4bUuNpLKJWbandjeKnf5qK+WVwakNGQG80
-	xOwPZ5osFtuigL+vBOIUq/oIUguOnxVZ2Ui19ZapSi0nwqtoVgCuPiPaIA35vVWC
-	t23YHcHLs0pOlx4oEUtsEvhLxe7ULoXrnW+/JZdr+bc2sZevHYOTMFVDZ1PYrn4q
-	rBM53Gs3H0J5MznsyvJaFEE02pqH/NGjpu8Hv8wPMWQ61X5YUcKlnYyNIcpPAWNo
-	LrbbauYZq1+N7BtWZX6ZD1uxNd68WI2nd64/EJyguYmwvzgk97VcbUQASkGw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1714989475; x=1715075875; bh=KxaapcokfgFuUbfz89vv5wfELr6z
-	FPpz8003UyV3aWM=; b=fGcTaVQQmov4GGZQDUAqm4iz6RAss5GQ4St9nIfSWgR8
-	4StYSqvY70EN8HG5Q/q1nPOdujdmDrkOW6HI0eDSbabksJeTPl6mkmxgEYZ4+ca0
-	cR0hnNyWy/CIzRAhrMGGNFMyt//JPxiwclPldo4lmN4eo6BBvlqniSTQhjNMyQcM
-	t+KSP6KhLO99ebtX+Pytb3ObPzY22s1Y3hIkyoB0UAe/hMWlj6eEQ9pm8FjRuS5y
-	to0jW/QnOqQaKcEM1Qd7mqeoP37N2A5/rw6EtAAjazlTv1VZ3EjxqlHog3uvNkoo
-	sl/bWs45Hl9jeAOoqHkJkAK+eED/Lyd7mCQiAlfvlA==
-X-ME-Sender: <xms:o6k4Zk0gDpOfc7Ll56NXnaZYdszyZoUZxcgssgYFLfzgPLL6KdBkJw>
-    <xme:o6k4ZvEK-yIqAC0Wf8TpQspVaDqT_LxItpnV4NmIQ83NKGe2ZTdzehcKbMV6TtApg
-    HvC_5IPhn58UYBlsN4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddviedgvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:o6k4Zs6GRHw4CzsSCECn0Sj3LlLLGv8z-WReekFKBa6LXwKaoUrVug>
-    <xmx:o6k4Zt3lFamNNVRm6L9n81UH8gMniuaRAUCkzlZMGEswrur9BJ2mMw>
-    <xmx:o6k4ZnEx13Q4GZE-qJFlhhW0c6tKQLKSuDfc8ZT2dE1OYfDIYmWLBQ>
-    <xmx:o6k4Zm8vHimKK5LlHKs1aB2mgdg4JNLp8wi2EBoCMRb3s3sg9kwAPg>
-    <xmx:o6k4ZsSbksjCS7gQqNjJtl8G6kGNZppUXUtCiUoxCjfGtvysXz7dI4ZN>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 19799B6008D; Mon,  6 May 2024 05:57:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-437-gcad818a2a-fm-20240502.001-gcad818a2
+	s=arc-20240116; t=1714989542; c=relaxed/simple;
+	bh=ktiWEvaWOogKlVw7cKu3IKBJf+uwA018lnvwmaVFeRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uUvj+i8jzmcOkY7vx+3nfN/vRvvvBzTcqxTzUmZJWoqPnmPjQH7R0/OqC8QeJ8HgZEieNyNxA/w6qExQ00TvxOeWoIh0xViQ+aNUc6PkU71lypGyiUpDvuYCsWPzGJKTh+0SE3cvzfr0KPAy0HOXwYJoXj4XTqlQBA4XX+makAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NzyrS+61; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41ecffed96cso6312455e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 02:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714989539; x=1715594339; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SIdEzQj4hbIBx0W72x+eRWZdMeEcP6yVymjAkhZ8EkA=;
+        b=NzyrS+61TbChCezL9+nQzLqRbac4ZOQ3bCOW+P2z/6WEqJoY8ekteA6+3txy4V3wnE
+         WlF1dLAsUUY0kF5CJ9YJMHBVIUqnQsuDVVbI8Md7TLmN7UySJsQHpxtd+5MuDdzalQTO
+         +EeOo6IZBurviTehwEtx39vqsIC2Ar4WoUtjrh+vrwe+u+KOXwC9QEaqZc52adUfcezr
+         F9N26CnnUdjJ8ADE9mdcWmaDpvRP2pSbmCzQBwAWEmjbK2GDgytC5FLtOE779SD5uGs9
+         8oHDg6WT/M9wBrEz3O0LWpRrHq2LQOMuGt/Dc8MAE5zIH14jswtGMK3VvNi07f59Qo8p
+         HYbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714989539; x=1715594339;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SIdEzQj4hbIBx0W72x+eRWZdMeEcP6yVymjAkhZ8EkA=;
+        b=hAwJPGpE+dc4ylEtYyjAkkSjPC0s6Ok/P5gLEe7NlVqgNHM5eLNEu3GZk8hR8o2XF9
+         48mEBg19K3Gi5gZoC/AZ4Kdq0sSrE+/lMRd7VzlFHm0ZH1tS8zmonLASkXBHVcHnjSFR
+         W36GEcZXQ28imqdhgzjjConcuf4NNxCSI59qK4lnZIjc6pKyvKmLG+Txs/K9D4ZHXh4P
+         spPo7Surfi7cBnxEUr00F62CjF8uLk54kqvyZYyergkuvyK2DuoSto1sxRJyVY8YQ3l9
+         PFYEuOadrHtI+DpezN3AQSdkK5hcBSQTUIekGQGmliMrrsqsMtJQb0saH3c91EzGVH2/
+         eFcA==
+X-Gm-Message-State: AOJu0Yz5VOTNsW76wDHKXl0mLSuXxfveiVE9VnqBXgU3B+/utkbFLs0H
+	JIgeEbqB1CiOsf1KNcqXK+2Qu6ocUZ1U4PDJqqXNKlwMiBTdT/Uior997NQMxLs=
+X-Google-Smtp-Source: AGHT+IEHezJh5zrqJL7UYUAZl7Y+8tV+sdORRjRHOcb8S3r1UMI/BSI7cZaE4ybcNmJKBzI3ySWahA==
+X-Received: by 2002:a05:600c:46ca:b0:41c:11fe:4de3 with SMTP id q10-20020a05600c46ca00b0041c11fe4de3mr7616582wmo.24.1714989538780;
+        Mon, 06 May 2024 02:58:58 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id q31-20020a05600c331f00b0041e92a08739sm4835360wmp.1.2024.05.06.02.58.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 02:58:58 -0700 (PDT)
+Message-ID: <42e1341a-e06d-446c-8992-986263d527db@linaro.org>
+Date: Mon, 6 May 2024 10:58:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d87d0018-3109-444d-aa8d-e141be5b04a5@app.fastmail.com>
-In-Reply-To: <ZjiXLm9ZnJwMHiBP@smile.fi.intel.com>
-References: <ZjUzt3Rysyk-oGdQ@smile.fi.intel.com>
- <cb22252d-1ea9-4094-9f7a-b94c2142d1f2@app.fastmail.com>
- <ZjiXLm9ZnJwMHiBP@smile.fi.intel.com>
-Date: Mon, 06 May 2024 11:57:34 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "David Howells" <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: compiler_types.h in UAPI?
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: duplicate patches in the slimbus tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240506152414.5796b14b@canb.auug.org.au>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240506152414.5796b14b@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 6, 2024, at 10:39, Andy Shevchenko wrote:
-> On Fri, May 03, 2024 at 09:34:13PM +0200, Arnd Bergmann wrote:
->> On Fri, May 3, 2024, at 20:57, Andy Shevchenko wrote:
->
->> > Today I have stumbled over use of __force and other compiler_types.h related
->> > things in UAPI headers. Can anybody explain to me how do they suppose to work
->> > outside of the kernel? Or did I miss something obvious? Or it was a mistake
->> > during UAPI split to move swab.h and byteorder/ (most of the users of those)
->> > to UAPI in the first place?
->> 
->> These get stripped out by scripts/headers_install.sh during
->> the 'make headers_install' stage:
->> 
->> sed -E -e '
->>         s/([[:space:](])(__user|__force|__iomem)[[:space:]]/\1/g
->>         s/__attribute_const__([[:space:]]|$)/\1/g
->>         s@^#include <linux/compiler(|_types).h>@@
->>         s/(^|[^a-zA-Z0-9])__packed([^a-zA-Z0-9_]|$)/\1__attribute__((packed))\2/g
->>         s/(^|[[:space:](])(inline|asm|volatile)([[:space:](]|$)/\1__\2__\3/g
->>         s@#(ifndef|define|endif[[:space:]]*/[*])[[:space:]]*_UAPI@#\1 @
->> ' $INFILE > $TMPFILE || exit 1
->
-> Thanks, Arnd, TIL!
->
-> But do we discourage using these in UAPI in general? I mean do we have
-> this somewhere being documented?
+Hi Stephen,
+These branches are now fixed. Thanks for reporting.
 
-I don't think they are discouraged in uapi headers, since the
-annotations tend to be required for clean kernel builds with
-sparse.
+thanks,
+Srini
 
-I could not find any documentation about it though, so it might
-be good to mention them in Documentation/dev-tools/sparse.rst.
-
-      Arnd
+On 06/05/2024 06:24, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commits are also in Linus Torvalds' tree as different
+> commits (but the same patches):
+> 
+>    b12bd525ca6e ("slimbus: qcom-ngd-ctrl: Add timeout for wait operation")
+>    772be93c1c24 ("slimbus: qcom-ctrl: fix module autoloading")
+>    f6c637ffe528 ("slimbus: Convert to platform remove callback returning void")
+>    5e8e32f81813 ("slimbus: qcom-ngd-ctrl: Reduce auto suspend delay")
+> 
+> These are commits
+> 
+>    98241a774db4 ("slimbus: qcom-ngd-ctrl: Add timeout for wait operation")
+> 
+> in the char-misc.current tree and
+> 
+>    35230d31056d ("slimbus: qcom-ctrl: fix module autoloading")
+>    880b33b0580c ("slimbus: Convert to platform remove callback returning void")
+>    4286dbcecc3f ("slimbus: qcom-ngd-ctrl: Reduce auto suspend delay")
+> 
+> in the char-misc tree.
+> 
 
