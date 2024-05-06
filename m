@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-169574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23948BCAB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:34:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45558BCAE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A72DEB20D0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ACAB1F22017
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B15142621;
-	Mon,  6 May 2024 09:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E21614263A;
+	Mon,  6 May 2024 09:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="ruSrxaBq"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="AzVWkB05"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A031422D6;
-	Mon,  6 May 2024 09:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7C8142634
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714988042; cv=none; b=kIhgZhOUsp+TcayRJcRfYlIP3crJa/p6VhrKwGC4pQBC5GTEF8I9vTuzw+qaqjuz2JvEXM4ikiKSPZqf+wAHNYCQPQsKnyrCJ9MH7mR04lXnII3JiMqLWxAlzk5Kw6bhR4zUJiYVdv0ebxXg55B1rkZZQxLFSA0LiK+f/tYfpSQ=
+	t=1714988286; cv=none; b=eLB+o60VSCWtDpL99MkSDbNW0DNIwbAh2xHhmpfGbKDAUlVbcWU4ptPJ3teXAUaz6TkYlygVboW/RnonL15nyHORVdN6AI3Pmp9/DQUodrHxGrrL6HJQ8AEe2u01J7+Ct+Qoq7SVuxZMfpV8kmujC4YrJ2HYfb7A31UUZAZRrVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714988042; c=relaxed/simple;
-	bh=9C8JvI+7wm2JcAyLDZ0Qc6A4yORKfHgNwrpHXYrv3Zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfAid23z/eaUPaTGUQ2ZNQvW7Vn6Y/ZipeOTCrA/C0bVuNubYfI0UGUS32ybUNlEP9oUU6WbXKweTE9wGrFP3iWnohmn/T8XSiY4Bh0G05kuYLzN+oczo2mjl3QJrZ0JCoKp3WkyEZ1vvFSP1n+djpOPDngG03mKdVFjvjbreic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=ruSrxaBq; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B84891487F31;
-	Mon,  6 May 2024 11:27:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1714987639; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=bm2YH55vsuB8a5BzC3OKohaHswSl7MN/90c4mNewII0=;
-	b=ruSrxaBqNLhN8GftpFruP6UxqioezevNCSRs4OcBtZZLcncZKq3bZIknK37Me3heM3sFyF
-	Gdk492Cde0mq9+yFrSe6QtivFsvEBqqCxX24vpDUKdETMzq7xeT40F5szbYrK3K7UB/5/J
-	V5XzUV+6uUeAQSRRilhy9RSJM+nNTEhtUKcrZsm2ra3sEYu2KFJruMxKJ2tPMs1qBX1Km/
-	+Tf20Ia6kOlAx8Sne3PWYSY3Ada7acKlzflpg1tSVpo6c4seKpWLIS3xG7aseHHTdN8LYA
-	9XGRToM4PA4cJKax2UiXIfpRGn2TgxsHNJk4NrQUygRZd3tL65JRgrc6bXUG+A==
-Date: Mon, 6 May 2024 11:27:07 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Joseph Strauss <jstrauss@mailbox.org>
-Cc: Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] Add multicolor support to BlinkM LED driver
-Message-ID: <20240506-unfazed-uplifted-3b2abebfc454@thorsis.com>
-Mail-Followup-To: Joseph Strauss <jstrauss@mailbox.org>,
-	Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20240428162309.32111-1-jstrauss@mailbox.org>
- <20240503085724.GL1227636@google.com>
- <20240503232636.kbygwgo6h2c5evqc@libretux>
+	s=arc-20240116; t=1714988286; c=relaxed/simple;
+	bh=wHyesn2c+4uPrRMN/hoEGLlstvq75J089aFyHbM6WtI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZQw7/2k3Of/zr3wHZ990wnX5kouNK+Idki9P7St6T5KJQuhm8iLgjrAJGJGV6mA8h30hslNBtOjMsKd3Tq7O4ZdI7wwIAYzzXv5xHu1jmM8VeQUdyXda5sofuU8XLqg/fS+uUyDpJgONbB7VC7xAna9ODrN9E8Qmcz8pRUHn944=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=AzVWkB05; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1714987741;
+	bh=wHyesn2c+4uPrRMN/hoEGLlstvq75J089aFyHbM6WtI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=AzVWkB055SnLz5VppuwlXKdiusNLAQRaDUsZlW0hN9qA+J/nll4r5UkP8vlD14Z04
+	 MwMz7ERbPa5/gsP09ELdQK0Zl4tI0Rz33njl7MQILs2KEGUR+rLvV/VrUWE5fqSucR
+	 9sPzMjSV+1kYfDM8Cr5H6QXEUbco778n0GLzbQvg=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384))
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id D7CAB66BDF;
+	Mon,  6 May 2024 05:28:59 -0400 (EDT)
+Message-ID: <8a8135eb0f1dc724cfbb4402dc6daf08db5b0bc7.camel@xry111.site>
+Subject: Re: [PATCH] LoongArch: Update the flush cache policy
+From: Xi Ruoyao <xry111@xry111.site>
+To: Li Jun <lijun01@kylinos.cn>, chenhuacai@kernel.org, kernel@xen0n.name, 
+	lvjianmin@loongson.cn, dongbiao@loongson.cn, zhangbaoqi@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Mon, 06 May 2024 17:28:58 +0800
+In-Reply-To: <20240506092419.4109941-1-lijun01@kylinos.cn>
+References: <20240506092419.4109941-1-lijun01@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240503232636.kbygwgo6h2c5evqc@libretux>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Joseph,
+On Mon, 2024-05-06 at 17:24 +0800, Li Jun wrote:
+> fix when LoongArch s3 resume, Can't find image information
+>=20
+> Signed-off-by: Li Jun <lijun01@kylinos.cn>
+> Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
+> Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
+> Signed-off-by: Biao Dong <dongbiao@loongson.cn>
+> ---
+> =C2=A0arch/loongarch/mm/cache.c | 24 +++++++++++++++++++++++-
+> =C2=A01 file changed, 23 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/loongarch/mm/cache.c b/arch/loongarch/mm/cache.c
+> index 6be04d36ca07..52872fa0e5d8 100644
+> --- a/arch/loongarch/mm/cache.c
+> +++ b/arch/loongarch/mm/cache.c
+> @@ -63,6 +63,28 @@ static void flush_cache_leaf(unsigned int leaf)
+> =C2=A0	} while (--nr_nodes > 0);
+> =C2=A0}
+> =C2=A0
+> +static void flush_cache_last_level(unsigned int leaf)
+> +{
+> +	u64 addr;
+> +	int i, j, nr_nodes, way_size;
+> +	struct cache_desc *cdesc =3D current_cpu_data.cache_leaves +
+> leaf;
+> +
+> +	nr_nodes =3D loongson_sysconf.nr_nodes;
+> +
+> +	addr =3D CSR_DMW1_BASE;
+> +	iocsr_write32(0x1, 0x280);
+> +	way_size =3D cdesc->sets * cdesc->linesz;
+> +	do {
+> +		for (i =3D 0; i < (cdesc->ways * 3); i++) {
+> +			for (j =3D 0; j < (cdesc->sets); j++) {
+> +				*(volatile u32 *)addr;
 
-Am Fri, May 03, 2024 at 06:26:36PM -0500 schrieb Joseph Strauss:
-> On 24/05/03 09:57AM, Lee Jones wrote:
-> > On Sun, 28 Apr 2024, Joseph Strauss wrote:
-> > 
-> > > Add multicolor support to the BlinkM driver, making it easier to control
-> > > from userspace. The BlinkM LED is a programmable RGB LED. The driver
-> > > currently supports only the regular LED sysfs class, resulting in the
-> > > creation of three distinct classes, one for red, green, and blue. The
-> > > user then has to input three values into the three seperate brightness
-> > > files within those classes. The multicolor LED framework makes the
-> > > device easier to control with the multi_intensity file: the user can
-> > > input three values at once to form a color, while still controlling the
-> > > lightness with the brightness file.
-> > > 
-> > > The main struct blinkm_led has changed slightly. The struct led_classdev
-> > > for the regular sysfs classes remain. The blinkm_probe function checks
-> > > CONFIG_LEDS_BLINKM_MULTICOLOR to decide whether to load the seperate
-> > > sysfs classes or the single multicolor one, but never both. The
-> > > blinkm_set_mc_brightness() function had to be added to calculate the
-> > > three color components and then set the fields of the blinkm_data
-> > > structure accordingly.
-> > > 
-> > > Signed-off-by: Joseph Strauss <jstrauss@mailbox.org>
-> > > ---
-> > > Changes in v2:
-> > > - Replaced instances of the constant 3 with NUM_LEDS, where applicable
-> > > - Fixed formatting errors
-> > > - Replaced loop inside of blinkm_set_mc_brightness() with equivalent
-> > >   statements
-> > > - Changed id of multicolor class from 4 to 3
-> > > - Replaced call to devm_kmalloc_array() with devm_kcalloc()
-> > > Changes in v3:
-> > > - Add CONFIG_LEDS_BLINKM_MULTICOLOR to check whether to use multicolor
-> > >   funcitonality
-> > > - Extend well-known-leds.txt to include standard names for RGB and indicator
-> > >   LEDS
-> > > - Change name of Blinkm sysfs class according to well-known-leds.txt
-> > > - Simplify struct blinkm_led and struct blinkm_data
-> > > - Remove magic numbers
-> > > - Fix formatting errors
-> > > - Remove unrelated changes
-> > > Changes in v4:
-> > > - Fix indentation
-> > > - Add default case to switch statement
-> > > Changes in v5:
-> > > - Fix warnings related to snprintf on s390 architecture, reported by
-> > >   0-DAY CI Kernel Test Service
-> > > Changes in v6:
-> > > - Refactored struct blinkm_led to use a union
-> > > - Refactored blinkm_probe()
-> > > - Clarified documentation
-> > > 
-> > >  Documentation/leds/leds-blinkm.rst     |  31 +++-
-> > >  Documentation/leds/well-known-leds.txt |   8 +
-> > >  drivers/leds/Kconfig                   |   8 +
-> > >  drivers/leds/leds-blinkm.c             | 223 +++++++++++++++++--------
-> > >  4 files changed, 198 insertions(+), 72 deletions(-)
-> > 
-> > Just tried to apply this, but checkpatch.pl has some complaints.
-> > 
-> > Please fix them and resubmit, thanks.
-> > 
-> > -- 
-> > Lee Jones [李琼斯]
-> I fixed the errors and warnings that resulted from my patch, but am
-> I correct in assuming I am not responsible for fixing the warnings
-> from other parts of the file? It would make the patch messier is my
-> concern.
+??? what does this line do?
 
-I would say so.  Output somehow depends on what you call checkpatch
-with.  Passing the actual patch (after `git format-patch …`) you
-should only get warnings for parts you touched.  Passing the whole
-file with -f of course you also get warnings for other parts.
-
-Greets
-Alex
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
