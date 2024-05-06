@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-169463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE928BC902
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:03:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152D28BC905
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499F4282071
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413971C2146E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDD0145339;
-	Mon,  6 May 2024 07:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F261411FE;
+	Mon,  6 May 2024 08:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cc2PEqMg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B4MGLNUu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6A014532C;
-	Mon,  6 May 2024 07:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7FE1411D5;
+	Mon,  6 May 2024 08:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714982390; cv=none; b=t64ncfZCDDWnaT/zRYQxn//1efFQfaHROpNgr1OBeQ1BEc5uoekIDBnulypZpdm6j6x/eUuS5aFXuxeb87Kk/Dyx4l4srBPydV9LJfq5veIWglW57ZLhnDeiptGWzkhh8XyzsPwia4n6h43DSOJphalYLSqoWyCL0nWM+y0C+qY=
+	t=1714982470; cv=none; b=fElVB14ZrzxRO5JvSwr8s2j7bTZRm2iK/hcx4gatsCIOTowO88wV9ej179nkqJwHDzhFzTrgOFqm9m36eGT9Fcecxbw1z7PUfOrk4Plsy5ORduVsNla6aoM0yIzvKqY/m/TGmieqEHUvXuxlw6e/+JmXCSJL7TZ/FTpR01cawyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714982390; c=relaxed/simple;
-	bh=kXDv39J5t7+acyzhkvD/8KkU35rQ6ddgsltaOx/5nD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzxoWMoQJzaIBUC7R7Z7vzIT+3witxWtjVdMYM7lZ8ZtEt+ur9J/3K834C8sJFNzRf3wgXfXDdEr5r4ckZdyb+L014pJiVhSz5sRNFFrpTKVv4SYygTY5u0MZP2Qoaghq1lFlkvIWxMwMeB3mZpISp4S2kk9Ep8CLJOb/DBqhiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cc2PEqMg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633A4C116B1;
-	Mon,  6 May 2024 07:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714982389;
-	bh=kXDv39J5t7+acyzhkvD/8KkU35rQ6ddgsltaOx/5nD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cc2PEqMgbdM9UjJMlXDzTrgq5i2alAxqGMK3tmB0AzkrkGRM1wGDkVcKTYqKgaDDu
-	 AjUM3T0lEL+Pa2M8sCJnKJ9g61Sj7+BIaeMydEea1CVjZF4J4uBqC1AvaBGWUEG/8u
-	 wsjXUs1UwexHcGMQuigbb5LfrnekMtA7pjvOCVqfID/ew3m98UD/Q4gyiNPQN+zC+l
-	 rrA3D0A36BeKUlYpMj3DUJJ+iRhmRuDnHLpvnY09HflG0TW7f/uCsrAQ3vX45W28lB
-	 jHLyx94A51D6IsFrKMwEiC5vvO0LFM5KpukPbkkP4e3UJjvgfor5eBGRZMSgce0oPy
-	 rcgySN8F6YU5w==
-Date: Mon, 6 May 2024 09:59:46 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Sebastian Wick <sebastian.wick@redhat.com>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v12 27/28] drm/rockchip: inno_hdmi: Switch to HDMI
- connector
-Message-ID: <20240506-eccentric-wren-of-peace-819aad@houat>
-References: <20240423-kms-hdmi-connector-state-v12-0-3338e4c0b189@kernel.org>
- <20240423-kms-hdmi-connector-state-v12-27-3338e4c0b189@kernel.org>
- <68eba0ec-bf9c-4d76-a362-5304a4cb61d5@rock-chips.com>
+	s=arc-20240116; t=1714982470; c=relaxed/simple;
+	bh=tJlhUqY9HNh4A9j9IQsCn5qCsKSbKibMtM86koTCU5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C1msYwg3WoG71fBUs0Pq+Eq71/e05vO2OBeqzK/frHFDrz5eSC7Bmj5/uExaOacVqx6dR+eIjmi814RhXZnKqfnnyglzhJ3UfQFiF/lxuphqAMpFW4NRWKCK6Slgu9kQkSvJq4sJn3Zf0yeTdPcFyLgqrm9FoVp8UhRLC74Yc1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B4MGLNUu; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714982467; x=1746518467;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tJlhUqY9HNh4A9j9IQsCn5qCsKSbKibMtM86koTCU5w=;
+  b=B4MGLNUubw01yAdCWX8PjRxu6PSAMIpB1j8rGMGtYzhyUcN8IOEBRg60
+   u3MBxefc38g+EI+11ewXp2ekEApkQ/6keK/v/Pkx1pGIZR20kyI95jXDK
+   PIYhwidRKpw6ZP8y1pY9UgRcbH7bseXKhd3FEVHMbZ6Ydlgf5vBYsxrJp
+   8pVOjks0U9ZspUkD5C9Ql9kl2LKaoSDU6b++0khOsxxqwKkf/hA6TgrZn
+   7ReBEzsqxyzLQpSsRGxbT31LV33hkx805fXqHZZ6vgPruumLW0hTqRafX
+   ACwjGtdsvopF2ihrqKVHTXdco/EnNd50imUn80cIurXumayHxaihuMNuu
+   A==;
+X-CSE-ConnectionGUID: t18nPXGmROGWwbU6ygTa4A==
+X-CSE-MsgGUID: DQR6IWfcQUSx2Ot9iY/KZQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="21271278"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="21271278"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 01:01:07 -0700
+X-CSE-ConnectionGUID: YawVlKF3S8WjTefksynJ1Q==
+X-CSE-MsgGUID: uN2dD36QSBi93A6GsgvVpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="32756703"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.92]) ([10.124.225.92])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 01:01:04 -0700
+Message-ID: <82bf53e7-7969-48b6-b954-0eea303c8b39@linux.intel.com>
+Date: Mon, 6 May 2024 16:01:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="v4sajugv7aqwu3jz"
-Content-Disposition: inline
-In-Reply-To: <68eba0ec-bf9c-4d76-a362-5304a4cb61d5@rock-chips.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] vPMU code refines
+To: Mingwei Zhang <mizhang@google.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+ Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang
+ <zhenyuw@linux.intel.com>, Like Xu <like.xu.linux@gmail.com>,
+ Jinrong Liang <cloudliang@tencent.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240430005239.13527-1-dapeng1.mi@linux.intel.com>
+ <CAL715WK9+aXa53DXM3TP2POwAtA2o40wpojfum+SezdxoOsj1A@mail.gmail.com>
+ <22b52180-27a2-4df8-a949-401f73440641@linux.intel.com>
+ <CAL715W+JTyba76u5BdqHi2u7iBObbBp8cEr42oqm6HWthb_4pg@mail.gmail.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <CAL715W+JTyba76u5BdqHi2u7iBObbBp8cEr42oqm6HWthb_4pg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---v4sajugv7aqwu3jz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 5/6/2024 1:35 PM, Mingwei Zhang wrote:
+> On Sun, May 5, 2024 at 6:37 PM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
+>>
+>> On 5/1/2024 2:15 AM, Mingwei Zhang wrote:
+>>> On Mon, Apr 29, 2024 at 5:45 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
+>>>> This small patchset refines the ambiguous naming in kvm_pmu structure
+>>>> and use macros instead of magic numbers to manipulate FIXED_CTR_CTRL MSR
+>>>> to increase readability.
+>>>>
+>>>> No logic change is introduced in this patchset.
+>>>>
+>>>> Dapeng Mi (2):
+>>>>   KVM: x86/pmu: Change ambiguous _mask suffix to _rsvd in kvm_pmu
+>>> So, it looks like the 1st patch is also in the upcoming RFCv2 for
+>>> mediated passthrough vPMU. I will remove that from my list then.
+>> Mingwei, we'd better keep this patch in RFCv2 until the this patchset is
+>> merged, then we don't rebase it again when this patch is merged. Thanks.
+>>
+> yeah. too late. I don't want to have a duplicate patch in LKML. On the
+> other hand, you could have waited a little bit before sending this
+> one. Next time, coordinate with us before sending.
 
-Hi Andy,
+This patch has nothing to do with the mediated vPMU patchset in theory and
+can be merged earlier than the mediated vPMU patcheset which may need a
+long time to review and discuss. I hope this patch can be merged ASAP and
+so readers won't be mislead by the ambiguous suffix.
 
-Thanks a lot for giving it a try
 
-All the issues you raised in your review are fixed.
-
-On Sat, Apr 27, 2024 at 06:44:54PM GMT, Andy Yan wrote:
-> And after this whole series applied on linux 6.9-rc4, the display on rk3036 kylin is lost, I get
-> the following error:
-> [  178.999421] rockchip-drm display-subsystem: [drm:drm_atomic_check_only] checking 87b7fbde
-> [  178.999471] rockchip-drm display-subsystem: [drm:drm_atomic_helper_check_modeset] [CRTC:35:crtc-0] mode changed
-> [  178.999498] rockchip-drm display-subsystem: [drm:drm_atomic_helper_check_modeset] [CRTC:35:crtc-0] enable changed
-> [  178.999521] rockchip-drm display-subsystem: [drm:drm_atomic_helper_check_modeset] [CRTC:35:crtc-0] active changed
-> [  178.999547] rockchip-drm display-subsystem: [drm:drm_atomic_helper_check_modeset] Updating routing for [CONNECTOR:37:HDMI-A-1]
-> [  178.999575] rockchip-drm display-subsystem: [drm:drm_atomic_helper_check_modeset] [CONNECTOR:37:HDMI-A-1] using [ENCODER:36:TMDS-36] on [CRTC:35:crtc-0]
-> [  178.999604] rockchip-drm display-subsystem: [drm:drm_atomic_helper_connector_hdmi_check] Trying with a 8 bpc output
-> [  178.999636] rockchip-drm display-subsystem: [drm:drm_atomic_helper_connector_hdmi_check] Trying RGB output format
-> [  178.999730] rockchip-drm display-subsystem: [drm:drm_atomic_helper_connector_hdmi_check] RGB Format, checking the constraints.
-> [  178.999757] rockchip-drm display-subsystem: [drm:drm_atomic_helper_connector_hdmi_check] RGB output format not supported with 8 bpc
-> [  178.999783] rockchip-drm display-subsystem: [drm:drm_atomic_helper_connector_hdmi_check] Failed. No Format Supported for that bpc count.
-> [  178.999810] rockchip-drm display-subsystem: [drm:drm_atomic_helper_check_modeset] [CONNECTOR:37:HDMI-A-1] driver check failed
-> [  178.999836] rockchip-drm display-subsystem: [drm:drm_atomic_check_only] atomic driver check for 87b7fbde failed: -22
-> [  178.999868] rockchip-drm display-subsystem: [drm:drm_atomic_state_default_clear] Clearing atomic state 87b7fbde
-> [  178.999898] [drm:drm_mode_object_put] OBJ ID: 37 (4)
-> [  178.999922] [drm:drm_mode_object_put] OBJ ID: 37 (3)
-> [  178.999944] [drm:drm_mode_object_put] OBJ ID: 40 (1)
-> [  178.999971] [drm:drm_mode_object_put] OBJ ID: 39 (2)
-
-Which kind of display are you testing with? The only reason it could do
-so is if the display claim it doesn't support RGB in its EDID which is
-contradicting the HDMI spec. Are you using an Analog display by any
-chance? or the built-in EDIDs through the drm.edid_firmware mechanism?
-
-Maxime
-
---v4sajugv7aqwu3jz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZjiN8gAKCRAnX84Zoj2+
-dj7PAXsF7+5aPmDPt0ja154YvieqqvYikRBh9/V5pDrDw3cYprK2R83EgS3cBHli
-wJnpqsYBf0ew1rxNKgDWA+diKWge0oHO2I7Ul+ScFLDcuz23NHCYlB74/qNhIWaY
-8yng08R+LA==
-=WFGm
------END PGP SIGNATURE-----
-
---v4sajugv7aqwu3jz--
+>
+> Thanks.
+> -Mingwei
+>>> Thanks. Regards
+>>> -Mingwei
+>>>
+>>>>   KVM: x86/pmu: Manipulate FIXED_CTR_CTRL MSR with macros
+>>>>
+>>>>  arch/x86/include/asm/kvm_host.h | 10 ++++-----
+>>>>  arch/x86/kvm/pmu.c              | 26 ++++++++++++------------
+>>>>  arch/x86/kvm/pmu.h              |  8 +++++---
+>>>>  arch/x86/kvm/svm/pmu.c          |  4 ++--
+>>>>  arch/x86/kvm/vmx/pmu_intel.c    | 36 +++++++++++++++++++--------------
+>>>>  5 files changed, 46 insertions(+), 38 deletions(-)
+>>>>
+>>>>
+>>>> base-commit: 7b076c6a308ec5bce9fc96e2935443ed228b9148
+>>>> --
+>>>> 2.40.1
+>>>>
 
