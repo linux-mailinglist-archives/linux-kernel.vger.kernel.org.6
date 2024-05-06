@@ -1,124 +1,318 @@
-Return-Path: <linux-kernel+bounces-169355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F648BC784
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DDE8BC786
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442361C20FC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:24:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 031121C212E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD3F4D9EC;
-	Mon,  6 May 2024 06:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455124E1C3;
+	Mon,  6 May 2024 06:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dotD2BlV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="XXiSYuiI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="pT+Lj619"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADCB19479;
-	Mon,  6 May 2024 06:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CC7482D8;
+	Mon,  6 May 2024 06:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714976640; cv=none; b=lSjtrIS8MdhKEeJRp296qv3CmBmYX3xNNYk7ngls1zyE2smSYn7bn87GMobW9DE+wi52JwA/DiKi0q0mUioFyvwqfsZW4pdI3Tni1a7Dm4GDumY1l8yFSULzbaYp2PyYM4ecsfdXoYU+WOIZ5nBFLElX1xWhBgsJmhR+g92WlP8=
+	t=1714976689; cv=none; b=q4LCr+4OQFMkWjyeUvUPlsqtH7OvawfORgsdo977XjJG2DHdTSe4bpDzhaIfRrbnH1pn8hvg7i8TroAXuX4ONLXWVfLvhcI03yhTWpOzOczrw6ECGKoILJ05aGMbt2JmQgfrljL1fKK4LrJG9sJr8+snyQAzGQXhOIlrEnfoGVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714976640; c=relaxed/simple;
-	bh=p4igZQLeFwGDAUOMUpmKtPTUN3wWPG7RQrSfgLmxk8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlhDL4XFz9TfVDQCbDzaQa1L3Em2tRKxbQCbFeZj/UPaITQfIzo3AWbrMCS9YWFmtI1v1xuUy9nBltKowIetRuaZ2UNuMtchZ7WI9Guf7GIwgGmvIat/eThnyIJ+gqFGwat4WKivCPO+LBokIGvBZCflepomk7KCbnQsYV5o1NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dotD2BlV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC3ADC116B1;
-	Mon,  6 May 2024 06:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714976640;
-	bh=p4igZQLeFwGDAUOMUpmKtPTUN3wWPG7RQrSfgLmxk8U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dotD2BlV4BdYlqlgMd9bYraEZZwTGLAACBbg0eg0Eqeca3oL4rWPK6r6/jj7LgHvR
-	 GCq13a9pKKFy46d0/wReqz3BxIdTvbvI6ZDo9cw6qcJyg3GYiKLZGZAumuNiI7zeBB
-	 KcJ3thDDClDfS2C/Zr7Rp1E76Ku9ma1YI5g5VMiHDxdAtUUmD3m5Qseug/Kpt/Fk2h
-	 eAkvtRMv9ngyUJUWj5Di1buORKgAO60vjXK3XqhUbVZ62MBKz1YswI7kGMhU8na9Fy
-	 5lLeOiZRuOzPSdrf2j/DJHrQiWFj1ry2vAR3d+JV/7EO4INym797uSAkLdjB5gowlX
-	 8sQ80wUlJFpPA==
-Message-ID: <05365b5a-0398-4382-9646-a1586468ed10@kernel.org>
-Date: Mon, 6 May 2024 08:23:52 +0200
+	s=arc-20240116; t=1714976689; c=relaxed/simple;
+	bh=99wCcr5j1fMdVVJWEMEin5eoQXJctZVFHMgoOllds4s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fVC/O2UNRbjQGf6W71VQ6PC203QsDucAJbDBkYCB+lIBNKqzAbhr9jL9v7aTSsh2JN7Zkwp/m9j4xFRqBA5i8YAQkDPLXALlebcDn4aY37+GwgOLbn9D2V45DxJlfyNuJCWz+e5J8kO0xSPV/EdMLne5+roOmF2pkPY7PJqZfOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=XXiSYuiI; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=pT+Lj619 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1714976687; x=1746512687;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=hFvec8RHwfbecZbWl4y8XMXl+nHWiScbi0lqX4wyrMM=;
+  b=XXiSYuiIE7/SCodW8VbDMmfVr688kJlUXpcCJblhyum8+++uEmHX7LfW
+   XVl/j0AKE36ZuvYXwme8b3hw0/dQl9USO0jtbrWATLsrUdUNdDPazg4du
+   AnLXFWx6nYbrshL6jHDeU9dOscJ3LyMMVgDIxXm/L6WwUQOwaM1ggfeNL
+   Qs83dwcxgYqbHGdoehU8qhF86N/AIjBDz9ZYIGBmX0rWMLv8s7hgg921h
+   1OXr72teVfvcZeRPvvij20zQRgaNr5D/v4fu5XUCH1JQCkdE+k+At1NP/
+   TLs7Njh75QtUPGbk/AQM1IJErOn+1H5jPWIWOGS0wRRDT6K9NclPY9IYj
+   w==;
+X-CSE-ConnectionGUID: 9R+EfGmvSimO7V5a3kHoIg==
+X-CSE-MsgGUID: Z3EJZBuvSAGriXB8UUeo7Q==
+X-IronPort-AV: E=Sophos;i="6.07,257,1708383600"; 
+   d="scan'208";a="36752066"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 06 May 2024 08:24:44 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EB58C175A79;
+	Mon,  6 May 2024 08:24:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1714976680;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=hFvec8RHwfbecZbWl4y8XMXl+nHWiScbi0lqX4wyrMM=;
+	b=pT+Lj619DbJxEf3KWN+wvEMXsIFcqjM8dpZ03iyOJLnjkMklaN8JkUAT1yUOi05UDKTdF3
+	Hl821sWiPs4nHIuxI51JYGPBTQZIQisnpVabszSYVoe9p8bgUVF/rNfXn7XBVu8ldKxOmB
+	uxVklz3OiOoJ5MjaSBgsWpsxjkuLs3W4Yrp0XSldayWnDD8Ujpt1N/qYBK46WLIdIPuhts
+	9GkljyG8YWzQaa8h4PZmrxTjuLHWmdp87Op0A1TURWhpvja6LDB2KHndY2EUzEtRgm/OBt
+	cACxjGEBkWr8dTjTiYxEPOYHxCVF1GPddCeMU3DSPGWt978FjNr5r1W5Wl9dkg==
+From: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+Date: Mon, 06 May 2024 08:24:33 +0200
+Subject: [PATCH v3] net: phy: marvell-88q2xxx: add support for Rev B1 and
+ B2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: imx8mp: Add #reset-cells property
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
- peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, marex@denx.de, imx@lists.linux.dev,
- shengjiu.wang@gmail.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1714967359-27905-1-git-send-email-shengjiu.wang@nxp.com>
- <1714967359-27905-2-git-send-email-shengjiu.wang@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1714967359-27905-2-git-send-email-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240506-mv88q222x-revb1-b2-init-v3-1-6fa407c2e0bc@ew.tq-group.com>
+X-B4-Tracking: v=1; b=H4sIAKB3OGYC/4XNQQ6CMBAF0KuQrh1Ch0KrK+9hXEBpoQsotFgxh
+ LtbWJkY42aSP/nzZiVeOaM8uSQrcSoYb+wQQ35KiOyqoVVgmpgJZsgyluXQByEmRFwg1msKNYI
+ ZzAznc0kblDoOTuL16JQ2yyHf7jF3xs/WvY5Hge7b/2agQIGJWhQFK5nM+VU903mC1tnHmErbk
+ 10O+KFR/lvDqHGlGdWCc8TqW9u27Q21+lylEgEAAA==
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Stefan Eichenberger <eichest@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux@ew.tq-group.com, gregor.herburger@ew.tq-group.com
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1714976678; l=7229;
+ i=gregor.herburger@ew.tq-group.com; s=20230829; h=from:subject:message-id;
+ bh=99wCcr5j1fMdVVJWEMEin5eoQXJctZVFHMgoOllds4s=;
+ b=WvTS3sGdHgk9/rMe/NRzHncKL8Us5tiH9hCKtvpoXyv4IEM9kJsUffAi0ne3vfh5btfWxJc6n
+ Tj2BvJMQh9wCapUz/WbgKxhY0s+1CAyyEUHJKhr2+C6RQAPoYfN7SQg
+X-Developer-Key: i=gregor.herburger@ew.tq-group.com; a=ed25519;
+ pk=+eRxwX7ikXwazcRjlOjj2/tbDmfVZdDLoW+xLZbQ4h4=
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 06/05/2024 05:49, Shengjiu Wang wrote:
-> Make audiomix block control a reset provider for
-> Enhanced Audio Return Channel (eARC).
+Different revisions of the Marvell 88q2xxx phy needs different init
+sequences.
 
-Why? Commit msg should explain that. Why suddenly this became reset
-coontroller? Does it represent hardware?
+Add init sequence for Rev B1 and Rev B2. Rev B2 init sequence skips one
+register write.
 
+Tested-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+Signed-off-by: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+---
+Hi,
 
+as discussed when adding support for Marvell 88Q2220 Revision B0 [1],
+newer revisions need different init sequences. So add support for Rev B1
+and B2 with this patch.
+
+[1] https://lore.kernel.org/netdev/20240216205302.GC3873@debian/
+
+Best regards
+Gregor
+---
+Changes in v3:
+- change hex values to lower case
+- Collect Tested-by
+- Link to v2: https://lore.kernel.org/r/20240417-mv88q222x-revb1-b2-init-v2-1-7ef41f87722a@ew.tq-group.com
+
+Changes in v2:
+- Add helper function to write phy mmd sequences
+- Link to v1: https://lore.kernel.org/r/20240403-mv88q222x-revb1-b2-init-v1-1-48b855464c37@ew.tq-group.com
+---
+ drivers/net/phy/marvell-88q2xxx.c | 119 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 103 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/phy/marvell-88q2xxx.c b/drivers/net/phy/marvell-88q2xxx.c
+index 6b4bd9883304..c812f16eaa3a 100644
+--- a/drivers/net/phy/marvell-88q2xxx.c
++++ b/drivers/net/phy/marvell-88q2xxx.c
+@@ -12,6 +12,8 @@
+ #include <linux/hwmon.h>
+ 
+ #define PHY_ID_88Q2220_REVB0	(MARVELL_PHY_ID_88Q2220 | 0x1)
++#define PHY_ID_88Q2220_REVB1	(MARVELL_PHY_ID_88Q2220 | 0x2)
++#define PHY_ID_88Q2220_REVB2	(MARVELL_PHY_ID_88Q2220 | 0x3)
+ 
+ #define MDIO_MMD_AN_MV_STAT			32769
+ #define MDIO_MMD_AN_MV_STAT_ANEG		0x0100
+@@ -129,6 +131,49 @@ static const struct mmd_val mv88q222x_revb0_init_seq1[] = {
+ 	{ MDIO_MMD_PCS, 0xfe05, 0x755c },
+ };
+ 
++static const struct mmd_val mv88q222x_revb1_init_seq0[] = {
++	{ MDIO_MMD_PCS, 0xffe4, 0x0007 },
++	{ MDIO_MMD_AN, MDIO_AN_T1_CTRL, 0x0 },
++	{ MDIO_MMD_PCS, 0xffe3, 0x7000 },
++	{ MDIO_MMD_PMAPMD, MDIO_CTRL1, 0x0840 },
++};
++
++static const struct mmd_val mv88q222x_revb2_init_seq0[] = {
++	{ MDIO_MMD_PCS, 0xffe4, 0x0007 },
++	{ MDIO_MMD_AN, MDIO_AN_T1_CTRL, 0x0 },
++	{ MDIO_MMD_PMAPMD, MDIO_CTRL1, 0x0840 },
++};
++
++static const struct mmd_val mv88q222x_revb1_revb2_init_seq1[] = {
++	{ MDIO_MMD_PCS, 0xfe07, 0x125a },
++	{ MDIO_MMD_PCS, 0xfe09, 0x1288 },
++	{ MDIO_MMD_PCS, 0xfe08, 0x2588 },
++	{ MDIO_MMD_PCS, 0xfe72, 0x042c },
++	{ MDIO_MMD_PCS, 0xffe4, 0x0071 },
++	{ MDIO_MMD_PCS, 0xffe4, 0x0001 },
++	{ MDIO_MMD_PCS, 0xfe1b, 0x0048 },
++	{ MDIO_MMD_PMAPMD, 0x0000, 0x0000 },
++	{ MDIO_MMD_PCS, 0x0000, 0x0000 },
++	{ MDIO_MMD_PCS, 0xffdb, 0xfc10 },
++	{ MDIO_MMD_PCS, 0xfe1b, 0x58 },
++	{ MDIO_MMD_PCS, 0xfcad, 0x030c },
++	{ MDIO_MMD_PCS, 0x8032, 0x6001 },
++	{ MDIO_MMD_PCS, 0xfdff, 0x05a5 },
++	{ MDIO_MMD_PCS, 0xfdec, 0xdbaf },
++	{ MDIO_MMD_PCS, 0xfcab, 0x1054 },
++	{ MDIO_MMD_PCS, 0xfcac, 0x1483 },
++	{ MDIO_MMD_PCS, 0x8033, 0xc801 },
++	{ MDIO_MMD_AN, 0x8032, 0x2020 },
++	{ MDIO_MMD_AN, 0x8031, 0xa28 },
++	{ MDIO_MMD_AN, 0x8031, 0xc28 },
++	{ MDIO_MMD_PCS, 0xfbba, 0x0cb2 },
++	{ MDIO_MMD_PCS, 0xfbbb, 0x0c4a },
++	{ MDIO_MMD_PCS, 0xfe5f, 0xe8 },
++	{ MDIO_MMD_PCS, 0xfe05, 0x755c },
++	{ MDIO_MMD_PCS, 0xfa20, 0x002a },
++	{ MDIO_MMD_PCS, 0xfe11, 0x1105 },
++};
++
+ static int mv88q2xxx_soft_reset(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -687,31 +732,72 @@ static int mv88q222x_soft_reset(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
+-static int mv88q222x_revb0_config_init(struct phy_device *phydev)
++static int mv88q222x_write_mmd_vals(struct phy_device *phydev,
++				    const struct mmd_val *vals, size_t len)
+ {
+-	int ret, i;
++	int ret;
+ 
+-	for (i = 0; i < ARRAY_SIZE(mv88q222x_revb0_init_seq0); i++) {
+-		ret = phy_write_mmd(phydev, mv88q222x_revb0_init_seq0[i].devad,
+-				    mv88q222x_revb0_init_seq0[i].regnum,
+-				    mv88q222x_revb0_init_seq0[i].val);
++	for (; len; vals++, len--) {
++		ret = phy_write_mmd(phydev, vals->devad, vals->regnum,
++				    vals->val);
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+ 
++	return 0;
++}
++
++static int mv88q222x_revb0_config_init(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = mv88q222x_write_mmd_vals(phydev, mv88q222x_revb0_init_seq0,
++				       ARRAY_SIZE(mv88q222x_revb0_init_seq0));
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(5000, 10000);
+ 
+-	for (i = 0; i < ARRAY_SIZE(mv88q222x_revb0_init_seq1); i++) {
+-		ret = phy_write_mmd(phydev, mv88q222x_revb0_init_seq1[i].devad,
+-				    mv88q222x_revb0_init_seq1[i].regnum,
+-				    mv88q222x_revb0_init_seq1[i].val);
+-		if (ret < 0)
+-			return ret;
+-	}
++	ret = mv88q222x_write_mmd_vals(phydev, mv88q222x_revb0_init_seq1,
++				       ARRAY_SIZE(mv88q222x_revb0_init_seq1));
++	if (ret < 0)
++		return ret;
+ 
+ 	return mv88q2xxx_config_init(phydev);
+ }
+ 
++static int mv88q222x_revb1_revb2_config_init(struct phy_device *phydev)
++{
++	bool is_rev_b1 = phydev->c45_ids.device_ids[MDIO_MMD_PMAPMD] == PHY_ID_88Q2220_REVB1;
++	int ret;
++
++	if (is_rev_b1)
++		ret = mv88q222x_write_mmd_vals(phydev, mv88q222x_revb1_init_seq0,
++					       ARRAY_SIZE(mv88q222x_revb1_init_seq0));
++	else
++		ret = mv88q222x_write_mmd_vals(phydev, mv88q222x_revb2_init_seq0,
++					       ARRAY_SIZE(mv88q222x_revb2_init_seq0));
++	if (ret < 0)
++		return ret;
++
++	usleep_range(3000, 5000);
++
++	ret = mv88q222x_write_mmd_vals(phydev, mv88q222x_revb1_revb2_init_seq1,
++				       ARRAY_SIZE(mv88q222x_revb1_revb2_init_seq1));
++	if (ret < 0)
++		return ret;
++
++	return mv88q2xxx_config_init(phydev);
++}
++
++static int mv88q222x_config_init(struct phy_device *phydev)
++{
++	if (phydev->c45_ids.device_ids[MDIO_MMD_PMAPMD] == PHY_ID_88Q2220_REVB0)
++		return mv88q222x_revb0_config_init(phydev);
++	else
++		return mv88q222x_revb1_revb2_config_init(phydev);
++}
++
+ static int mv88q222x_cable_test_start(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -810,14 +896,15 @@ static struct phy_driver mv88q2xxx_driver[] = {
+ 		.get_sqi_max		= mv88q2xxx_get_sqi_max,
+ 	},
+ 	{
+-		PHY_ID_MATCH_EXACT(PHY_ID_88Q2220_REVB0),
++		.phy_id			= MARVELL_PHY_ID_88Q2220,
++		.phy_id_mask		= MARVELL_PHY_ID_MASK,
+ 		.name			= "mv88q2220",
+ 		.flags			= PHY_POLL_CABLE_TEST,
+ 		.probe			= mv88q2xxx_probe,
+ 		.get_features		= mv88q2xxx_get_features,
+ 		.config_aneg		= mv88q2xxx_config_aneg,
+ 		.aneg_done		= genphy_c45_aneg_done,
+-		.config_init		= mv88q222x_revb0_config_init,
++		.config_init		= mv88q222x_config_init,
+ 		.read_status		= mv88q2xxx_read_status,
+ 		.soft_reset		= mv88q222x_soft_reset,
+ 		.config_intr		= mv88q2xxx_config_intr,
+@@ -836,7 +923,7 @@ module_phy_driver(mv88q2xxx_driver);
+ 
+ static struct mdio_device_id __maybe_unused mv88q2xxx_tbl[] = {
+ 	{ MARVELL_PHY_ID_88Q2110, MARVELL_PHY_ID_MASK },
+-	{ PHY_ID_MATCH_EXACT(PHY_ID_88Q2220_REVB0), },
++	{ MARVELL_PHY_ID_88Q2220, MARVELL_PHY_ID_MASK },
+ 	{ /*sentinel*/ }
+ };
+ MODULE_DEVICE_TABLE(mdio, mv88q2xxx_tbl);
+
+---
+base-commit: 1fdad13606e104ff103ca19d2d660830cb36d43e
+change-id: 20240403-mv88q222x-revb1-b2-init-9961d2cf1d27
 
 Best regards,
-Krzysztof
+-- 
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
 
 
