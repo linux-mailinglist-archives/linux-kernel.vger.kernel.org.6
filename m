@@ -1,122 +1,81 @@
-Return-Path: <linux-kernel+bounces-170035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207A98BD0EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:59:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357778BD0F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7151F2191A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669CD1C22E2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420D3153583;
-	Mon,  6 May 2024 14:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966591552E2;
+	Mon,  6 May 2024 14:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVm40A1S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="PYyaAqGW"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC8B1552F5;
-	Mon,  6 May 2024 14:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681BE1534E5
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715007569; cv=none; b=J5CpIMd7cA5CpR7lYJwwp26FvGHWC7A37yzTfJ/AJstWRRDYvBrre1WZ8oJdBah47CjBAcg/XR1uHh6sAoF2QH+x2uPSgaoZJA+ntt4+ovSGLb2QXQmQtBi3xR996m24aD/3REern2BGT2Y/HNr9OcClK6bUPK7ZNQ69IhYBuZQ=
+	t=1715007597; cv=none; b=ZH1gipUFKYybR/KGQYRVl8Fj7TtBp/ZONytWXKg6LiLQyPvKML9R9l4xksFcFx82ujVT3gMAGla6MLa0R7rl6JLB4yYvpvEDLDPEQtg00Y9v9NLbRc7yaVmawyk+FvJcsdpzF7lBSoonKNX/Fjybycqi8aV3bRxUb/vRc/9dlZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715007569; c=relaxed/simple;
-	bh=SI/rG95pg8rmcHY12z/tvpJ70tvdw/Xpd9q9m12ZR4s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=F5ywQatYCdnDA0291uUciOPFrmpsbDP6aRCQsMxODX9p6b5vGeGqvjoLyylLtYvYsV4fxF8DPzOOjZwO1F43djbGqHDhhxAl5pDzk2blLZN2upfiVM4xsJAXWN9wJ/zFO6a9cpaQP+y7M2ZWej98EMcFjj7wXI3PZkoKiJqdppY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVm40A1S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8707BC4DDE2;
-	Mon,  6 May 2024 14:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715007569;
-	bh=SI/rG95pg8rmcHY12z/tvpJ70tvdw/Xpd9q9m12ZR4s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=fVm40A1SscZOR1EGBMn6HXdcgIydMp7twNhiH+38DF4G4t3lQOfgKHsx9AC9f4U37
-	 N2v1jVuHZIlQv54xBlmeur4IHy/QIuqJYH45VfpiPJOx9eQ1eE9WD7Ah1cjFHp4e4A
-	 zNMbbKbw9Q7vpQg8cVi1C6boBrMLX9vnC9PSbyxaKvqiQnm2EEmKvltFyVD45v7Nyr
-	 o1o03EUYC3WlhBhraVGfK7x2fDTUpvkkZMU17cdFuN14pf29uPHAzvxva2hKPAiGiQ
-	 dbjD/1bbBWHYZTluXcOnwXamUHsF6Y/wwpFnu5nSlgQa8HiWhRVzQ7QSpLas69HbGw
-	 DIofkWsFnWa7Q==
-From: Mark Brown <broonie@kernel.org>
-To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Daniel Mack <daniel@zonque.org>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>, 
- Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-In-Reply-To: <20240417110334.2671228-1-andriy.shevchenko@linux.intel.com>
-References: <20240417110334.2671228-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3 0/9] spi: pxa2xx: Drop linux/spi/pxa2xx_spi.h
-Message-Id: <171500756707.1968436.11360972536558468970.b4-ty@kernel.org>
-Date: Mon, 06 May 2024 23:59:27 +0900
+	s=arc-20240116; t=1715007597; c=relaxed/simple;
+	bh=IsQXgenx0IgHXQ1N7Z+RO59XFLQpA/LLVcDV38w5d5A=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HFGMO+NPffIx4FaCty54sJgRWL6L7wOAcYRErQ67JoQ4znBjybU0INmdYVobO5zSe/2KQuqsrcRNVO+En9bmUZPI1sipRxQn9d1C47wxJS8inEpqYhNrOitm5VGPv8SyhZ57/ixawsJ7L8CMMD2suHRnvL7tu3T3H9ffselsMQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=PYyaAqGW; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1715007594;
+	bh=IsQXgenx0IgHXQ1N7Z+RO59XFLQpA/LLVcDV38w5d5A=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=PYyaAqGW4FPn3IdcdghzNZ+/3ltYIlYx0a2NtZ5jDHFyzEt+WTzwTfBFrl7gEEErh
+	 1Z73mhVB0Eu6GPqAs3eG0S7587lW+oeRq3smaC36sEP2dcx9rKe5xIjaCH8hZrqo7m
+	 XymVYrVi9GeDvb8Q8TKf2uIzx0OM6p+dexVqVZQE=
+Received: from [IPv6:240e:358:116c:3f00:dc73:854d:832e:6] (unknown [IPv6:240e:358:116c:3f00:dc73:854d:832e:6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384))
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 12D90670FD
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:59:53 -0400 (EDT)
+Message-ID: <c9838ca5991fd21a28b19436ed63956ef422134e.camel@xry111.site>
+Subject: Re: Broken mainline kernel tarball download link on kernel.org
+From: Xi Ruoyao <xry111@xry111.site>
+To: linux-kernel@vger.kernel.org
+Date: Mon, 06 May 2024 22:59:49 +0800
+In-Reply-To: <ff46715a28b6810b1582bed386c79cf6f090e21c.camel@xry111.site>
+References: <ff46715a28b6810b1582bed386c79cf6f090e21c.camel@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
 
-On Wed, 17 Apr 2024 13:54:27 +0300, Andy Shevchenko wrote:
-> As Arnd suggested we may drop linux/spi/pxa2xx_spi.h as most of
-> its content is being used solely internally to SPI subsystem
-> (PXA2xx drivers). Hence this refactoring series with the additional
-> win of getting rid of legacy documentation.
-> 
-> Note, that we have the only user of a single plain integer field
-> in the entire kernel for that. Switching to software nodes does not
-> diminish any of type checking as we only pass an integer.
-> 
-> [...]
+On Mon, 2024-05-06 at 17:34 +0800, Xi Ruoyao wrote:
+> Hi,
+>=20
+> Now on the homepage of kernel.org, the hyperlink for the tarball of the
+> mainline kernel links to:
+>=20
+> https://git.kernel.org/torvalds/t/linux-6.9-rc7.tar.gz
+>=20
+> But this link results a page saying "Unsupported snapshot format: linux-
+> 6.9-rc7.tar.gz".
 
-Applied to
+It looks like a temporary issue and now the link works.  Sorry for the
+noise.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/9] spi: pxa2xx: Allow number of chip select pins to be read from property
-      commit: 2c547549ac69380bb03b495c5ef3dbc03c9c7a48
-[2/9] spi: pxa2xx: Provide num-cs for Sharp PDAs via device properties
-      commit: 11346db50616698b04da44a62d4fac17d9227a62
-[3/9] spi: pxa2xx: Move contents of linux/spi/pxa2xx_spi.h to a local one
-      commit: 2a45166938f145294b73445b0af997b3100f02b4
-[4/9] spi: pxa2xx: Remove outdated documentation
-      commit: 2d069c11e8229e9f380af0c3bffe4b95cd2cf9ec
-[5/9] spi: pxa2xx: Don't use "proxy" headers
-      commit: 4091770969bffba9dcb071b81d4010331d4dbee7
-[6/9] spi: pxa2xx: Drop struct pxa2xx_spi_chip
-      commit: 513525e99898a722b365ceda6c5a2e4c83adda89
-[7/9] spi: pxa2xx: Remove DMA parameters from struct chip_data
-      commit: 5c5de36d04cd848587f21c0c872682476d5df8e5
-[8/9] spi: pxa2xx: Remove timeout field from struct chip_data
-      commit: 35bf074b1d4b252d04540acc7256e4ebee5b2dd5
-[9/9] spi: pxa2xx: Don't provide struct chip_data for others
-      commit: b5ec3986da5d928e4fd9ed24b5d367c4b420f1d4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
