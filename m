@@ -1,123 +1,255 @@
-Return-Path: <linux-kernel+bounces-169944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9558BCFA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:05:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999998BCFAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21961F22A57
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1BD289332
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FDC8175E;
-	Mon,  6 May 2024 14:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147C381ACA;
+	Mon,  6 May 2024 14:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LbxT8B8U"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f//CutHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E8915A5
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340A515A5;
+	Mon,  6 May 2024 14:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715004320; cv=none; b=mOaZTmIhu5vmbkQK/FH4tXgTr2hSeEg8yJWJVZ5YarCyd2btCqRARRZiqdMtKXhi1uPpBJCs/2/Brd0m/tgLszB5kF05n1xdA6ZRQOOmU71EGO7OHffT/ekgSPkXuoEeaUiFo1Glk5bcy+GlRTmWIwh7uCHx356tUgCjPRHVmWI=
+	t=1715004372; cv=none; b=Yz0jxRrZqDMRiuapRRQ9r1lkxGpoGtSNX01m1Qg1z6SDeOHvmZ+IU0B0uyNDHqxXTeAFzgpLd7wChotArEj5LwWqNaeI5qL/7hapsNft6Oq7UxQAJCz69FFbflvZbWNedAYqE5bUju2aBD0oLmpXsTHsXP5zC/YQZVMl9BQuhLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715004320; c=relaxed/simple;
-	bh=BL1JeslB0DJYvxXfedhZTOKHbd0NWpnyK2Oyv4oIb+4=;
+	s=arc-20240116; t=1715004372; c=relaxed/simple;
+	bh=cZZmZVxWa908an4uMtHbVpLQV8WR9PbqQyordvaexD4=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lHa7pY/kxDWEoIOG/i2qLkDzQvkZbg7GsMgXqCxlZ2n++sw7GBGs3wtZZ7+Fq1q2g3PEJldBHOssrDu8tAR11bGp/tMDDyqZSahPq1MrW/Q58vPdn+4JZxxXbOAUSaeJFjtYaNPk5cxRUgkYTWVcC63Fqna/zQum7J1K6w8FD9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LbxT8B8U; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4419E1C000A;
-	Mon,  6 May 2024 14:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715004310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jqe5Un0HeW18+qURGomHX4p3gETxbxF+O84t4VWCEXI=;
-	b=LbxT8B8UGgimlG77fyOla4trAVaDHKpcAWVJDzLiM5voFwxfV9jLCO4FVI4ICH3DN1LhCc
-	j7FbB///Y+11B9mXj8CCgsnvSfWK5pAFTqZ7dQIqoAAc1PGxYDZYx2mQ6YgrBNqQwMKLWe
-	mY5OD1MTX7wgxbQGXUwChFZSIlyXYqr2oWeN0WyDm4W/WcVis6okqtXoJozt+WCMeb9ypC
-	k14L0S06hZpzoK43SefFwUxdd5IcwAgjY+Cu1nObqAX0CcQXw4WRZ1bYZryh3+0rkYpsTY
-	P4NJPvkWsuY+C3MaHNMgWDM1aLtoo/ARvS3RX/1YA/5bHG6pED73mfQpS4SblQ==
-Date: Mon, 6 May 2024 16:05:08 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, linux-mtd@lists.infradead.org,
+	 MIME-Version:Content-Type; b=DFsBCqdDLDXVqv5PUP4lFzm8MfAzmnED6bAObSRI7BPugJgimWxBE0Zgl5hToD/pnSArL/vDhiiknHP684snkVaKoruJoL7g2vLYlVOaL/WHXmqcEVMqOvBEzb+5BtgdY297Mz9RbvNHfmbPrYerQmyy1+UMMjfRQFs1p1/q0Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f//CutHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1B06C116B1;
+	Mon,  6 May 2024 14:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715004371;
+	bh=cZZmZVxWa908an4uMtHbVpLQV8WR9PbqQyordvaexD4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f//CutHQaYJsnJznM3/58nHl0guQPZ/BTuELJ+JQt1zui4ZGKeFhABWVDnqbdtPY5
+	 WXOFgbvVu1hIj39YpX4wzuvZaN7BF/EfkSj+TE8BTHtrE1F/+u9ZzPqk24sqXOUlMW
+	 cUsT8oBJEn0GQfkleL7Qf1lB8dXViM/IGzmZ32l130rw8OHti+WWVv/M2pVDkxfZHm
+	 0Th5KrI2LLSsRuktS7ruTgn86T4P2X4sq0PNcEChYqgmWSKSVtd//KW4DGIPR1mG/b
+	 pXa7gYlUR6/Cuu0jO4FvaQAqkLR2i7nYncMbxxlSpV4fHFzl2LqKq2UnV27e2EIFfq
+	 CJSH1q1yB4e9A==
+Date: Mon, 6 May 2024 15:05:57 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, kernel test robot <lkp@intel.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mtd: nand: mxc_nand: support software ECC
-Message-ID: <20240506160508.6c60d50f@xps-13>
-In-Reply-To: <20240417-mtd-nand-mxc-nand-exec-op-v1-3-d12564fe54e9@pengutronix.de>
-References: <20240417-mtd-nand-mxc-nand-exec-op-v1-0-d12564fe54e9@pengutronix.de>
-	<20240417-mtd-nand-mxc-nand-exec-op-v1-3-d12564fe54e9@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH RFC v6 08/10] iio: adc: ad7380: add oversampling support
+Message-ID: <20240506150557.1149c394@jic23-huawei>
+In-Reply-To: <20240501-adding-new-ad738x-driver-v6-8-3c0741154728@baylibre.com>
+References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+	<20240501-adding-new-ad738x-driver-v6-8-3c0741154728@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Sascha,
+On Wed, 01 May 2024 16:55:41 +0200
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-s.hauer@pengutronix.de wrote on Wed, 17 Apr 2024 09:13:30 +0200:
+> ad7380x(-4) parts are able to do oversampling to increase accuracy.
+> They support 2 average modes: normal average and rolling overage.
+> This commits focus on enabling normal average oversampling, which is the
+> default one.
 
-> To support software ECC we still need the driver provided read_oob,
-> read_page_raw and write_page_raw ops, so set them unconditionally
-> no matter which engine_type we use. The OOB layout on the other hand
-> represents the layout the i.MX ECC hardware uses, so set this only
-> when NAND_ECC_ENGINE_TYPE_ON_HOST is in use.
->=20
-> With these changes the driver can be used with software BCH ECC which
-> is useful for NAND chips that require a stronger ECC than the i.MX
-> hardware supports.
->=20
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+The other case got me curious.  If you do want to support the rolling average
+in future, it could probably be handled as a low pass filter control rather
+than a form of oversampling.  Anyhow, not relevant here!
+
+> 
+> Normal averaging involves taking a number of samples, adding them together,
+> and dividing the result by the number of samples taken.
+> This result is then output from the device. The sample data is cleared when
+> the process completes. Because we need more samples to output a value,
+> the data output rate decrease with the oversampling ratio.
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+Hi Julien.
+
+A few additional comments inline.
+
+Jonathan
+
 > ---
->  drivers/mtd/nand/raw/mxc_nand.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_n=
-and.c
-> index fc70c65dea268..f44c130dca18d 100644
-> --- a/drivers/mtd/nand/raw/mxc_nand.c
-> +++ b/drivers/mtd/nand/raw/mxc_nand.c
-> @@ -1394,15 +1394,16 @@ static int mxcnd_attach_chip(struct nand_chip *ch=
-ip)
->  	chip->ecc.bytes =3D host->devtype_data->eccbytes;
->  	host->eccsize =3D host->devtype_data->eccsize;
->  	chip->ecc.size =3D 512;
-> -	mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
+>  drivers/iio/adc/ad7380.c | 115 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 114 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> index 020959759170..1e3869f5e48c 100644
+> --- a/drivers/iio/adc/ad7380.c
+> +++ b/drivers/iio/adc/ad7380.c
+> @@ -88,7 +88,10 @@ struct ad7380_chip_info {
+>  	.type = IIO_VOLTAGE,					\
+>  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |		\
+>  		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),	\
+> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
+> +	.info_mask_shared_by_type_available =			\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
+>  	.indexed = 1,						\
+>  	.differential = (diff),					\
+>  	.channel = (diff) ? (2 * (index)) : (index),		\
+> @@ -156,6 +159,16 @@ static const struct ad7380_timing_specs ad7380_4_timing = {
+>  	.t_csh_ns = 20,
+>  };
+>  
+> +/*
+> + * Available oversampling ratios. The indices correspond
+> + * with the bit value expected by the chip.
+> + * The available ratios depend on the averaging mode,
+> + * only normal averaging is supported for now
+> + */
+> +static const int ad7380_normal_average_oversampling_ratios[] = {
+> +	1, 2, 4, 8, 16, 32,
+> +};
 > +
-> +	chip->ecc.read_oob =3D mxc_nand_read_oob;
-> +	chip->ecc.read_page_raw =3D mxc_nand_read_page_raw;
-> +	chip->ecc.write_page_raw =3D mxc_nand_write_page_raw;
-> =20
->  	switch (chip->ecc.engine_type) {
->  	case NAND_ECC_ENGINE_TYPE_ON_HOST:
-> +		mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
->  		chip->ecc.read_page =3D mxc_nand_read_page;
-> -		chip->ecc.read_page_raw =3D mxc_nand_read_page_raw;
-> -		chip->ecc.read_oob =3D mxc_nand_read_oob;
->  		chip->ecc.write_page =3D mxc_nand_write_page_ecc;
-> -		chip->ecc.write_page_raw =3D mxc_nand_write_page_raw;
->  		chip->ecc.write_oob =3D mxc_nand_write_oob;
->  		break;
+>  static const struct ad7380_chip_info ad7380_chip_info = {
+>  	.name = "ad7380",
+>  	.channels = ad7380_channels,
+> @@ -231,6 +244,7 @@ static const struct ad7380_chip_info ad7384_4_chip_info = {
+>  struct ad7380_state {
+>  	const struct ad7380_chip_info *chip_info;
+>  	struct spi_device *spi;
+> +	unsigned int oversampling_ratio;
+>  	struct regmap *regmap;
+>  	unsigned int vref_mv;
+>  	unsigned int vcm_mv[MAX_NUM_CHANNELS];
+> @@ -386,6 +400,12 @@ static int ad7380_read_direct(struct ad7380_state *st,
+>  	};
+>  	int ret;
+>  
+> +	/*
+> +	 * In normal average oversampling we need to wait for multiple conversions to be done
+Wrap comment at 80 chars.  Generally I prefer we keep to old limit of 80 unless
+there is a readability advantage.  I don't see such an advantage in this case.
 
-You also need to disable the ECC engine by default (and then you're
-free to use the raw page helpers).
 
-I thought patch 4 was needed for this patch to work, do you confirm?
-Otherwise with the little change requested I might also merge this one.
+> +	 */
+> +	if (st->oversampling_ratio > 1)
+> +		xfers[0].delay.value = T_CONVERT_NS + 500 * st->oversampling_ratio;
+> +
 
-Thanks, Miqu=C3=A8l
+> +
+> +/**
+> + * check_osr - Check the oversampling ratio
+> + * @available_ratio: available ratios's array
+> + * @size: size of the available_ratio array
+> + * ratio: ratio to check
+> + *
+> + * Check if ratio is present in @available_ratio. Check for exact match.
+> + * @available_ratio is an array of the available ratios (depending on the oversampling mode).
+> + * The indices must correspond with the bit value expected by the chip.
+> + */
+> +static inline int check_osr(const int *available_ratio, int size, int ratio)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < size; i++) {
+> +		if (ratio == available_ratio[i])
+> +			return i;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int ad7380_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan, int val,
+> +			    int val2, long mask)
+> +{
+> +	struct ad7380_state *st = iio_priv(indio_dev);
+> +	int ret, osr;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> +		osr = check_osr(ad7380_normal_average_oversampling_ratios,
+
+Nuno already pointed out function name should be prefixed.
+
+> +				ARRAY_SIZE(ad7380_normal_average_oversampling_ratios),
+> +				val);
+
+If this is just checking, why does it return osr?  Feels like name needs
+to be ad7380_osr_to_regval() or something like that.
+
+> +
+> +		if (osr < 0)
+> +			return osr;
+> +
+> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +			ret = regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG1,
+> +						 AD7380_CONFIG1_OSR,
+> +						 FIELD_PREP(AD7380_CONFIG1_OSR, osr));
+> +
+> +			if (ret)
+> +				return ret;
+> +
+> +			st->oversampling_ratio = val;
+> +
+> +			/*
+> +			 * Perform a soft reset.
+> +			 * This will flush the oversampling block and FIFO but will
+> +			 * maintain the content of the configurable registers.
+> +			 */
+> +			ret = regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG2,
+> +						 AD7380_CONFIG2_RESET,
+> +						 FIELD_PREP(AD7380_CONFIG2_RESET,
+> +							    AD7380_CONFIG2_RESET_SOFT));
+> +		}
+> +		return 0;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -435,6 +540,8 @@ static int ad7380_read_raw(struct iio_dev *indio_dev,
+>  
+>  static const struct iio_info ad7380_info = {
+>  	.read_raw = &ad7380_read_raw,
+> +	.read_avail = &ad7380_read_avail,
+> +	.write_raw = &ad7380_write_raw,
+>  	.debugfs_reg_access = &ad7380_debugfs_reg_access,
+>  };
+>  
+> @@ -458,6 +565,12 @@ static int ad7380_init(struct ad7380_state *st, struct regulator *vref)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	/* Disable oversampling by default.
+IIO comment syntax is
+	/*
+	 * Disable oversampling by default.
+
+Also, curiously short lines that could definitely be wrapped nearer 80 chars!
+
+> +	 * This is the default value after reset,
+> +	 * so just initialize internal data
+> +	 */
+> +	st->oversampling_ratio = 1;
+> +
+>  	/* SPI 1-wire mode */
+>  	return regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG2,
+>  				  AD7380_CONFIG2_SDO,
+> 
+
 
