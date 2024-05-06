@@ -1,133 +1,164 @@
-Return-Path: <linux-kernel+bounces-170286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C86A8BD492
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956F78BD494
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7861C20C3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C78B284105
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F0B158A33;
-	Mon,  6 May 2024 18:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51980158A2B;
+	Mon,  6 May 2024 18:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYu7ZL9v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b="Nl8auVoG"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46F0197;
-	Mon,  6 May 2024 18:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0900A158A13
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715020173; cv=none; b=j6DNtBamxSw+QLkdpOfZnA0EBS7WhTT97XT8zdtjvX+t4QaMnRbtiK+VjGHt7z1Valsml8QmMQIejhJvZbzsBSSOfymvgmuyxhWX/i9H7frXUh0fEDcb1Om/PwisAcPfNGr8ujRZX2cDVUDpscLeVufMd8nI6YCPuwIRuHU9ugw=
+	t=1715020186; cv=none; b=ajoQMYo9QCwqAmXaQhIO7sEXS5AJV8E6LjAKHAKkvCUUsFSFHMJoT79kMAcCODjrv2xaB0BsX8OU7qBXfxNmAELLllFuNaeckRDYl2S0peBryMnsrKp9YGbfB6bMJacDKIYrK5w2vp2qibMKWYgpM6WGlNOHLi46VorwGuo3MNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715020173; c=relaxed/simple;
-	bh=Jg7BOhMVd+5bqaLKq8JWxbODI0k/8tdTr8AXexb+oiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QOfqrUXXDg/vowNOKyVpz7MAH//C/gB06aP2RtHrcrZHe1w7rnOjENOAqeGR5lMSORUo1W+XNPBsMJ08RNAiBTu50U5zAzpxjVxBRSbZP7I6P5/FKZaw8d4yPdZtVhXh0i8WnCx3mQqtuyrzLaJcNl4e8el02P+cokFUB7ySZI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYu7ZL9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E36C116B1;
-	Mon,  6 May 2024 18:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715020173;
-	bh=Jg7BOhMVd+5bqaLKq8JWxbODI0k/8tdTr8AXexb+oiw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jYu7ZL9vGTyQrn0OwIuQzduS/GOT6CI0qudddB+4EZgwmkPGFp0A3jFcCdSyLGjdz
-	 VF0hA+B77oEktUP3ahcfLUq7Xmy2rW6EGajF99f7M+LXtGM1Hw/5mc9Q3jGN3Ah+Yh
-	 UCfG/JqB7h8v6JHXXqBnLFlS0YLzeyfC1dZS9RbtptdSU0o3m8ygmxqIFtE3bw8pQX
-	 G7+NZ5iQKSDf+AKdJqEV7RFJ0QcQOibl0rxQmD3B1/o2b+kRoGWObYUum8ATY9PJsn
-	 14yknCIXErJ0A3MUNyFogUJqMcDsg204cxqBbDYE1QWDx1FZIzlQOA4Nkk52GmTwJn
-	 zFD+Xvwyzbf1A==
-Date: Mon, 6 May 2024 11:29:31 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Christoph Hellwig
- <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy
- <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
- <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Magnus Karlsson
- <magnus.karlsson@intel.com>, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
- bpf@vger.kernel.org, netdev@vger.kernel.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 7/7] xsk: use generic DMA sync shortcut
- instead of a custom one
-Message-ID: <20240506112931.39614ff0@kernel.org>
-In-Reply-To: <20240506094855.12944-8-aleksander.lobakin@intel.com>
-References: <20240506094855.12944-1-aleksander.lobakin@intel.com>
-	<20240506094855.12944-8-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1715020186; c=relaxed/simple;
+	bh=VMEFfkoDH6PXpbghcbBsUEOgJ+i0OqrWW52443/7WsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dzmSc4EMTRnTQbslRM2P+fONjT+C0ruiUyt/im1VnyJf3WbKDQTaNR74bydT6G71QeP6teywf0rMppivpH8FC9mUCgQORp8bm9ASvuDzBt1VlGC817IFLF0ZdwlSJHUBNhfMR8DDP82nM7btEazffPxg+zpGkpKk2M0Etldq5us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b=Nl8auVoG; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcd7c526cc0so2687817276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:29:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=howett-net.20230601.gappssmtp.com; s=20230601; t=1715020184; x=1715624984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VMEFfkoDH6PXpbghcbBsUEOgJ+i0OqrWW52443/7WsQ=;
+        b=Nl8auVoGMAQHP2EI+G47Pdfl/mQFKwFuz+/BTb3KL4yeepOlH1H6cf7gihdqMdnZX8
+         FmqrmQohkVwoMTEK11AcNLq2LjNz6XBVvAgN3KrveaMtj/i7T0fU8CQgA2N0WUmaFoSF
+         q1zu0zctiqmegFwdx05Gy9eWIlJw8rrrvod1NL5mfe3H2HmveqbI2WFmapNkMfk4fbhW
+         Fwq6oGcy5hpDrHY+xN51NdOezopgmCe2C1JvH+x3YCoaQkmHUmuro+g+I0MJgR9kknTp
+         QwYhMgJgNBW6kQOoL8iq/jpUCNQsntQvWjYgHVGA8t0/I+Fl3dwu4NwOvau7TWxcG4MW
+         j4+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715020184; x=1715624984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VMEFfkoDH6PXpbghcbBsUEOgJ+i0OqrWW52443/7WsQ=;
+        b=LZh+C2vl4+Ni1XEZ+PkzEbv6BkQpYBSLm3P4nnpcdgXYyQb2xtox/6ZhRxWRWKFBth
+         JjHCQyjMTSGOiV6fIrl5dXumiuVCo4PYPWjQeIGrrU6VUrjmR0pJdbk4IqvO1w93hl4J
+         f4L5MgcVz1dezOfpDWyEG6BQAXg4QxPYGb8Nb23lcQKpzEjOJ8nO0JKOx5Syiu21N3Vf
+         vkqwdybUfqFaUkEVowMpzgjEcQxJFB/Ee9xZeVTt4P2DxpQN13/7EeCcI/HNpvyl0EfX
+         nInhNOVAXk8a18kNplXfuYR04vgFIyGspywPJ/hy1+KsnyBYZn7gCmmlTfgdWXQpZ9BS
+         ECPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbEpPX6EkI1/9PTPs8rZ9o/QPZ8IddJV1oz65AG4b1YvV4D9pas2qf1FlkKizkEjYTg5uFVqreZzqEGO13QwBbZTTy7zOY1ciSPMP5
+X-Gm-Message-State: AOJu0YybU4yl5W0SKm/3X7ImJvOANS++jT3eCYxEneS/96t2PBS/XvM+
+	FBBLWwo2ipjuFYyE/zeAjgSLH94t0xo8jN6RXyj8cSiGkLbcFdrXgvhw8lhBoFtew8X7KlDmsK7
+	AZOj8nD0FC+gJEufEr20ikXq4XF/kJLm1eIs3
+X-Google-Smtp-Source: AGHT+IFKtH599jT66vcGOe7xK//4shoSPvp5zpfxCAxNQU5SNOKmbSq03MX2tZ7QAwB6m0gKalMMLW5mPjBsqOv89j4=
+X-Received: by 2002:a25:aea2:0:b0:de5:5693:4e96 with SMTP id
+ b34-20020a25aea2000000b00de556934e96mr11302424ybj.27.1715020183937; Mon, 06
+ May 2024 11:29:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net>
+ <613369f9-42c5-4a59-b83f-45bd1773ffe4@t-8ch.de> <a7ae8fc0-5e53-487a-86c6-f49dc6623688@amd.com>
+ <e716716e-87fe-46f5-8ea9-5f649f1da11b@t-8ch.de>
+In-Reply-To: <e716716e-87fe-46f5-8ea9-5f649f1da11b@t-8ch.de>
+From: Dustin Howett <dustin@howett.net>
+Date: Mon, 6 May 2024 13:29:32 -0500
+Message-ID: <CA+BfgNJzazn55wUMzjX=thqZGYz0LYU4cnO1Pn8U80B5FrSvxQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] platform/chrome: cros_ec_framework_laptop: new driver
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: "Limonciello, Mario" <mario.limonciello@amd.com>, Lee Jones <lee@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-kernel@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon,  6 May 2024 11:48:55 +0200 Alexander Lobakin wrote:
-> XSk infra's been using its own DMA sync shortcut to try avoiding
-> redundant function calls. Now that there is a generic one, remove
-> the custom implementation and rely on the generic helpers.
-> xsk_buff_dma_sync_for_cpu() doesn't need the second argument anymore,
-> remove it.
+On Mon, May 6, 2024 at 12:43=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> On 2024-05-06 08:09:07+0000, Limonciello, Mario wrote:
+> >
+> >
+> > On 5/6/2024 1:09 AM, Thomas Wei=C3=9Fschuh wrote:
+> > > On 2024-05-05 22:56:33+0000, Thomas Wei=C3=9Fschuh wrote:
+> > > > Framework Laptops are using embedded controller firmware based on t=
+he
+> > > > ChromeOS EC project.
+> > > > In addition to the standard upstream commands some vendor-specific
+> > > > commands are implemented.
+> > > >
+> > > > Add a driver that implements battery charge thresholds using these
+> > > > custom commands.
+> > >
+> > > It turns out that standard ChromesOS EC defines EC_CMD_CHARGE_CONTROL=
+.
+> > > The kernel headers however only define v1 of the protocol, which is v=
+ery
+> > > limited.
+> > >
+> > > But in the upstream firmware repo there is a v3 which is much better.
+> > >
+> > > The Framework laptop only implements v2 which is also fine.
+> > > Given that v3 was only introduced late last year, it seems better to
+> > > stick to v2 anyways for now.
+> > >
+> > > So please disregard Patch 2, I'll see on how to use this via a normal
+> > > cros_ec driver.
+> > >
+> > > There are some other Framework-only features that will use Patch 1,
+> > > so feedback for that would still be good.
+> >
+> > What other kinds of features do you have in mind?
+>
 
-I think this is crashing xsk tests:
+Definitely privacy switch reporting belongs in a driver like this.
 
-  [   91.048963] BUG: kernel NULL pointer dereference, address: 0000000000000464
-  [   91.049412] #PF: supervisor read access in kernel mode
-  [   91.049739] #PF: error_code(0x0000) - not-present page
-  [   91.050057] PGD 0 P4D 0
-  [   91.050221] Oops: 0000 [#1] PREEMPT SMP NOPTI
-  [   91.050500] CPU: 1 PID: 114 Comm: new_name Tainted: G           OE      6.9.0-rc6-gad3c108348fd-dirty #372
-  [   91.051088] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-  [   91.051649] RIP: 0010:xp_alloc+0x76/0x240
-  [   91.051903] Code: 48 89 0a 48 89 00 48 89 40 08 41 c7 44 24 34 00 00 00 00 49 8b 44 24 18 48 05 00 01 00 00 49 89 04 24 49 89 44 24 10 48 8b 3b <f6> 87 64 04 00 00 20 0f 85 16 01 00 00 48 8b 44 24 08 65 48 33 04
-  [   91.053055] RSP: 0018:ffff99e7c00f0b00 EFLAGS: 00010286
-  [   91.053400] RAX: ffff99e7c0c9d100 RBX: ffff89a400901c00 RCX: 0000000000010000
-  [   91.053838] RDX: 0000000000000000 RSI: 0000000000000010 RDI: 0000000000000000
-  [   91.054277] RBP: ffff89a4026e30e0 R08: 0000000000000001 R09: 0000000000009000
-  [   91.054716] R10: 779660ad50f0d4e6 R11: 79b5ce88640fb4f7 R12: ffff89a40c31d870
-  [   91.055156] R13: 0000000000000020 R14: 0000000000000000 R15: ffff89a4068c6000
-  [   91.055596] FS:  00007f87685bef80(0000) GS:ffff89a43bd00000(0000) knlGS:0000000000000000
-  [   91.056090] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [   91.056458] CR2: 0000000000000464 CR3: 000000010229c001 CR4: 0000000000770ef0
-  [   91.056904] PKRU: 55555554
-  [   91.057079] Call Trace:
-  [   91.057237]  <IRQ>
-  [   91.057371]  ? __die_body+0x1f/0x70
-  [   91.057595]  ? page_fault_oops+0x15a/0x460
-  [   91.057852]  ? find_held_lock+0x2b/0x80
-  [   91.058093]  ? __skb_flow_dissect+0x30f/0x1f10
-  [   91.058374]  ? lock_release+0xbd/0x280
-  [   91.058610]  ? exc_page_fault+0x67/0x1e0
-  [   91.058859]  ? asm_exc_page_fault+0x26/0x30
-  [   91.059126]  ? xp_alloc+0x76/0x240
-  [   91.059341]  __xsk_rcv+0x1f0/0x360
-  [   91.059558]  ? __skb_get_hash+0x5b/0x1f0
-  [   91.059804]  ? __skb_get_hash+0x5b/0x1f0
-  [   91.060050]  __xsk_map_redirect+0x7c/0x2c0
-  [   91.060315]  ? rcu_read_lock_held_common+0x2e/0x50
-  [   91.060622]  xdp_do_redirect+0x28f/0x4b0
-  [   91.060871]  veth_xdp_rcv_skb+0x29e/0x930
-  [   91.061126]  veth_xdp_rcv+0x184/0x290
-  [   91.061358]  ? update_load_avg+0x8c/0x8c0
-  [   91.061609]  ? select_task_rq_fair+0x1ff/0x15a0
-  [   91.061894]  ? place_entity+0x19/0x100
-  [   91.062131]  veth_poll+0x6c/0x2f0
-  [   91.062343]  ? _raw_spin_unlock_irqrestore+0x27/0x50
-  [   91.062653]  ? try_to_wake_up+0x261/0x8d0
-  [   91.062905]  ? find_held_lock+0x2b/0x80
-  [   91.063147]  __napi_poll+0x27/0x200
-  [   91.063376]  net_rx_action+0x172/0x320
-  [   91.063617]  __do_softirq+0xb6/0x3a3
-  [   91.063843]  ? __dev_direct_xmit+0x167/0x1b0
-  [   91.064114]  do_softirq.part.0+0x3b/0x70
-  [   91.064373]  </IRQ>
-  [   91.064511]  <TASK>
-  [   91.064650]  __local_bh_enable_ip+0xbd/0xe0
-  [   91.064913]  __dev_direct_xmit+0x16c/0x1b0
-  [   91.065171]  xsk_generic_xmit+0x703/0xb10
-  [   91.065425]  xsk_sendmsg+0x21f/0x2f0
+Overall, I'm not sure about making it a subjugate driver under the
+cros_ec_mfd virtual "bus"... even though a lot of the features take a
+dependency on cros_ec.
+Doing so centralizes the work in the platform-chrome tree and may
+serve as a guidepost for any future laptop OEMs that derive their
+embedded controller firmware from ChromeOS's.
+If the owners of this tree sign off on that, that's awesome! I'd be
+concerned about making it all their responsibility.
+
+I may be a bit biased, as I have been working on a driver of my own[1]
+for this purpose. It currently supports battery charge limiting[3],
+reporting fan speed via hwmon, the keyboard backlight[2], and has an
+open pull request that exposes the status of the privacy switches.
+
+It is destined--once I find the time to clean it up--for
+drivers\platforms\x86 instead of ...\chrome.
+
+This may be a good place for us to combine our efforts!
+d
+
+[1] https://github.com/DHowett/framework-laptop-kmod
+[2] I found that the Azalea did not report its keyboard backlight
+values through the standard cros ec KBLIGHT interface like hx20/30
+did, so the driver as it stands implements a fallback that uses the
+raw PWM state. I'm sure that you'd've noticed this if it was still
+true... so I am always happy to drop an unnecessary workaround. :)
+[3] Which I believe still requires a special host command and is not
+integrated into the charge manager, at least as of Azalea/Lotus and
+_definitely_ not as of hx20/30!
+
+> [...]
+>
+> > [..]
+>
+> Thomas
 
