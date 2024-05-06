@@ -1,189 +1,122 @@
-Return-Path: <linux-kernel+bounces-169246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9715D8BC5A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:54:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4258BC5A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83AC1C213CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:54:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA6E1F219B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF09381AA;
-	Mon,  6 May 2024 01:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4277E3F9C6;
+	Mon,  6 May 2024 02:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnMXzKI3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RmF0hsN1"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6233CF6A;
-	Mon,  6 May 2024 01:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3322B9B8;
+	Mon,  6 May 2024 02:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714960450; cv=none; b=ihZUoKm97rknt6KohqgaBw90ZCv+2kG+DnOgzyE5c1fpIBWLgot8xaIgGfdIPYmtPhRHyiUua6BV8Y2KggZend1Xs2NQIxWeUUjB0JPANva3lzkictCsVeY/zudBz/HqrfIGItJ+wzEQLEkELp91jVKsgncYyd3by342wQFOwAw=
+	t=1714960814; cv=none; b=Nig1PFCopJo+zg8iB1Q3vBecTFXqfT6+nCT6NmXhL66EhccIlAopDgGXWUpMfiXDuvK4VJcDkk/0CJYKDoM+Abi6RQsZakvb0apilq2Bl8ns3MhAsI+sh7avWjdsi6Lpa0owgl8ZCTAcrYCgKBinxOC4OaSVAtfJe5lzOskfoZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714960450; c=relaxed/simple;
-	bh=wqvbSfqASjdhRGU64oFAqCxbJFGguD68ptR8QuLtpCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=McrNAdBb01KgDKmJOZjIW3c/6XMxypzd7k0CSysFvVUozvfDmRNAATyLrEMCGGOriRiITdVDqwcbdgY8ikECl7d4qPSPf8Cils5kjvzMp+ce1sXwltop5bnIUqlUiFAcdAr1hXUSiA2tRXF7Ztbe7hNMWA8a/0M4W/+UAj4pJRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnMXzKI3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814F9C4AF18;
-	Mon,  6 May 2024 01:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714960450;
-	bh=wqvbSfqASjdhRGU64oFAqCxbJFGguD68ptR8QuLtpCk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gnMXzKI3/znktUJO5b9hEOYOimxzH7iXvIV/nub/dKy7rd51TaYiBkqBioMlAPTXW
-	 JcZ1hO0+7CsLQnUlJG/ROm2Wokvgb/B/MOzBCPqR3FqEwSsXyNqFWR/ExSx/yiv3wx
-	 2U6p5YKezEaRYo58VNsUGDKH1j69ftdHh5qQKlu6enVAL5lJtzDvo9z6wY5SvQFdml
-	 5Cd2oe4uw0FoPHk9jY8tcSJfSRxARtUDAV3XcvGh3zAod0jcPuO9sWLulkIumTlRbY
-	 cTGD+Q2op3CHIOZ1i95sIXDK/hIfSuJKYph77PfPxcr57SZ1x7+5BO95za+IWEOuiY
-	 nPkat7Ww+0KeA==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59a64db066so308368766b.3;
-        Sun, 05 May 2024 18:54:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWhjaDg6wyrBV3AX+xkXlEJ1hdakwx1pL2qewJWwxIfYoCRofWzbbEfCqjvlj/gQiET3vIzGAhVEDVLMFh3c4wFmdvVZLRulaO+ZtGXeeSTeTevKH+WYZh2SEhmwE+Mb93a
-X-Gm-Message-State: AOJu0YzYKS7HigHFZylTInQD/Va4Nl97uYPIjX+ZCt8f0vxSI/hHRUyr
-	dp+icUJsYIamLk/yb9JU4RfAvNnaJ1LdMw2flDGjnAhw/y5xZArleOseFTuxF3QiRXmr1gX5czx
-	00RXxdPkQXkbcGPz8qM9oWlMz0xM=
-X-Google-Smtp-Source: AGHT+IFyne0PGmrxsuBA29OKXPc0/1FcyKrT3Pe5n8Q8atPGd7E+2GHxN5AUFeKJKIrZx26inDqLyRR9IUNJVlS0fis=
-X-Received: by 2002:a17:906:1951:b0:a59:aa0d:60 with SMTP id
- b17-20020a170906195100b00a59aa0d0060mr2991394eje.6.1714960449129; Sun, 05 May
- 2024 18:54:09 -0700 (PDT)
+	s=arc-20240116; t=1714960814; c=relaxed/simple;
+	bh=jhTzXXT+FPjZQ5pztBbwg3De5ewUC261fLbR/SBmjRE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LiwRMhVG4NRNPHv3jam7nHR01NYn7iYZJ35cF+++7/FKX5ggifwEuDvN6IcMSdm8n1FRxSBMhRo2z82u6g3IPefg0iQm+9T2M3yDOPBXVIWj4P6eJWooofKPS5Ae4v5ajPBcn4SMEIcW/v66cwE40h+XIKCAt+FBTDi2PMAEzGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RmF0hsN1; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714960803; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=0y3awyTCfvmpXhlQf3h9Gu7rJ+aU16KQIKj7W928+ms=;
+	b=RmF0hsN1vs16GKmTTl3fJNXSaA3WLy7j+xtGEZjPFNpQSA0n0vH5afXgAXryLO8NN36tipM7S/2Bcmyf+qYNh+FoAeKuYGt0KVyFAie4OQHT6bOP7f/gpxhDdOuw13tc9/SFCu8zfQskN6DXQ8HerYrG3bTwBeFA0Cdr3/2knrU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W5pOKbi_1714960479;
+Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W5pOKbi_1714960479)
+          by smtp.aliyun-inc.com;
+          Mon, 06 May 2024 09:54:41 +0800
+From: Wen Gu <guwen@linux.alibaba.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net/smc: fix netdev refcnt leak in smc_ib_find_route()
+Date: Mon,  6 May 2024 09:54:39 +0800
+Message-Id: <20240506015439.108739-1-guwen@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240428100518.1642324-1-maobibo@loongson.cn> <20240428100518.1642324-3-maobibo@loongson.cn>
-In-Reply-To: <20240428100518.1642324-3-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 6 May 2024 09:54:00 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5xVP0+aUyq2+_XHW0=25zxuG53o=+vUV4MfKn=4tiwxA@mail.gmail.com>
-Message-ID: <CAAhV-H5xVP0+aUyq2+_XHW0=25zxuG53o=+vUV4MfKn=4tiwxA@mail.gmail.com>
-Subject: Re: [PATCH v8 2/6] LoongArch: KVM: Add hypercall instruction
- emulation support
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi, Bibo,
+A netdev refcnt leak issue was found when unregistering netdev after
+using SMC. It can be reproduced as follows.
 
-On Sun, Apr 28, 2024 at 6:05=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> On LoongArch system, there is hypercall instruction special for
-> virtualization. When system executes this instruction on host side,
-> there is illegal instruction exception reported, however it will
-> trap into host when it is executed in VM mode.
->
-> When hypercall is emulated, A0 register is set with value
-> KVM_HCALL_INVALID_CODE, rather than inject EXCCODE_INE invalid
-> instruction exception. So VM can continue to executing the next code.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/include/asm/Kbuild      |  1 -
->  arch/loongarch/include/asm/kvm_para.h  | 26 ++++++++++++++++++++++++++
->  arch/loongarch/include/uapi/asm/Kbuild |  2 --
->  arch/loongarch/kvm/exit.c              | 10 ++++++++++
->  4 files changed, 36 insertions(+), 3 deletions(-)
->  create mode 100644 arch/loongarch/include/asm/kvm_para.h
->  delete mode 100644 arch/loongarch/include/uapi/asm/Kbuild
->
-> diff --git a/arch/loongarch/include/asm/Kbuild b/arch/loongarch/include/a=
-sm/Kbuild
-> index 2dbec7853ae8..c862672ed953 100644
-> --- a/arch/loongarch/include/asm/Kbuild
-> +++ b/arch/loongarch/include/asm/Kbuild
-> @@ -26,4 +26,3 @@ generic-y +=3D poll.h
->  generic-y +=3D param.h
->  generic-y +=3D posix_types.h
->  generic-y +=3D resource.h
-> -generic-y +=3D kvm_para.h
-> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/inclu=
-de/asm/kvm_para.h
-> new file mode 100644
-> index 000000000000..d48f993ae206
-> --- /dev/null
-> +++ b/arch/loongarch/include/asm/kvm_para.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_LOONGARCH_KVM_PARA_H
-> +#define _ASM_LOONGARCH_KVM_PARA_H
-> +
-> +/*
-> + * LoongArch hypercall return code
-> + */
-> +#define KVM_HCALL_STATUS_SUCCESS       0
-> +#define KVM_HCALL_INVALID_CODE         -1UL
-> +#define KVM_HCALL_INVALID_PARAMETER    -2UL
-> +
-> +static inline unsigned int kvm_arch_para_features(void)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline unsigned int kvm_arch_para_hints(void)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline bool kvm_check_and_clear_guest_paused(void)
-> +{
-> +       return false;
-> +}
-> +#endif /* _ASM_LOONGARCH_KVM_PARA_H */
-> diff --git a/arch/loongarch/include/uapi/asm/Kbuild b/arch/loongarch/incl=
-ude/uapi/asm/Kbuild
-> deleted file mode 100644
-> index 4aa680ca2e5f..000000000000
-> --- a/arch/loongarch/include/uapi/asm/Kbuild
-> +++ /dev/null
-> @@ -1,2 +0,0 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> -generic-y +=3D kvm_para.h
-This file shouldn't be removed.
+- run tests based on SMC.
+- unregister the net device.
 
-Huacai
+The following error message can be observed.
 
-> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-> index ed1d89d53e2e..923bbca9bd22 100644
-> --- a/arch/loongarch/kvm/exit.c
-> +++ b/arch/loongarch/kvm/exit.c
-> @@ -685,6 +685,15 @@ static int kvm_handle_lasx_disabled(struct kvm_vcpu =
-*vcpu)
->         return RESUME_GUEST;
->  }
->
-> +static int kvm_handle_hypercall(struct kvm_vcpu *vcpu)
-> +{
-> +       update_pc(&vcpu->arch);
-> +
-> +       /* Treat it as noop intruction, only set return value */
-> +       vcpu->arch.gprs[LOONGARCH_GPR_A0] =3D KVM_HCALL_INVALID_CODE;
-> +       return RESUME_GUEST;
-> +}
-> +
->  /*
->   * LoongArch KVM callback handling for unimplemented guest exiting
->   */
-> @@ -716,6 +725,7 @@ static exit_handle_fn kvm_fault_tables[EXCCODE_INT_ST=
-ART] =3D {
->         [EXCCODE_LSXDIS]                =3D kvm_handle_lsx_disabled,
->         [EXCCODE_LASXDIS]               =3D kvm_handle_lasx_disabled,
->         [EXCCODE_GSPR]                  =3D kvm_handle_gspr,
-> +       [EXCCODE_HVC]                   =3D kvm_handle_hypercall,
->  };
->
->  int kvm_handle_fault(struct kvm_vcpu *vcpu, int fault)
-> --
-> 2.39.3
->
->
+'unregister_netdevice: waiting for ethx to become free. Usage count = x'
+
+With CONFIG_NET_DEV_REFCNT_TRACKER set, more detailed error message can
+be provided by refcount tracker:
+
+ unregister_netdevice: waiting for eth1 to become free. Usage count = 2
+ ref_tracker: eth%d@ffff9cabc3bf8548 has 1/1 users at
+      ___neigh_create+0x8e/0x420
+      neigh_event_ns+0x52/0xc0
+      arp_process+0x7c0/0x860
+      __netif_receive_skb_list_core+0x258/0x2c0
+      __netif_receive_skb_list+0xea/0x150
+      netif_receive_skb_list_internal+0xf2/0x1b0
+      napi_complete_done+0x73/0x1b0
+      mlx5e_napi_poll+0x161/0x5e0 [mlx5_core]
+      __napi_poll+0x2c/0x1c0
+      net_rx_action+0x2a7/0x380
+      __do_softirq+0xcd/0x2a7
+
+It is because in smc_ib_find_route(), neigh_lookup() takes a netdev
+refcnt but does not release. So fix it.
+
+Fixes: e5c4744cfb59 ("net/smc: add SMC-Rv2 connection establishment")
+Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+---
+ net/smc/smc_ib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
+index 97704a9e84c7..b431bd8a5172 100644
+--- a/net/smc/smc_ib.c
++++ b/net/smc/smc_ib.c
+@@ -210,10 +210,11 @@ int smc_ib_find_route(struct net *net, __be32 saddr, __be32 daddr,
+ 		goto out;
+ 	if (rt->rt_uses_gateway && rt->rt_gw_family != AF_INET)
+ 		goto out;
+-	neigh = rt->dst.ops->neigh_lookup(&rt->dst, NULL, &fl4.daddr);
++	neigh = dst_neigh_lookup(&rt->dst, &fl4.daddr);
+ 	if (neigh) {
+ 		memcpy(nexthop_mac, neigh->ha, ETH_ALEN);
+ 		*uses_gateway = rt->rt_uses_gateway;
++		neigh_release(neigh);
+ 		return 0;
+ 	}
+ out:
+-- 
+2.32.0.3.g01195cf9f
+
 
