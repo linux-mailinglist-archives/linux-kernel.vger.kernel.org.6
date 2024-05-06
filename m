@@ -1,161 +1,146 @@
-Return-Path: <linux-kernel+bounces-170352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9399A8BD58B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:42:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53A38BD591
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F67F283CC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:42:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99038B218AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD515ADA1;
-	Mon,  6 May 2024 19:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9751615ADA4;
+	Mon,  6 May 2024 19:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="NF5FoZQV"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8/zrvH2"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506995FDA5
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAEA15749D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024565; cv=none; b=IRkjqEIVuTScxDXwVYrzthGiNKbE6NKoeUOo/qw3pL8qUmsbYZiMj77+HkQoElRv0MdFooYhD9EYPKKfUAdUFiHC87GGj3c8bLtPG3ZluKsk9uOex9qkpxmYiABIGHf7TH+JJFQMW2IULUOa+Md5EOo515pl2yh92jl4QxspB7M=
+	t=1715024616; cv=none; b=V78PikNhkexhdYlxAQUMDibTApAu+UvPzBGQdwezO7DRPD/2hyZBSc+CU7T8JIKXauRHbn4+NWqsqktgpdbMAmrZQ9b0KDFCwubZYxXdy0EIYcWRYNRTrEk4iMuHJneN1UpI7VkUPi78ToFFqiOZYsHe+dCDn23eyxlTkEjwUQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024565; c=relaxed/simple;
-	bh=tQoz9dS6MzicSe5+SQbJSgBGuPARlB9lb/KxszWyE/U=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=f+96BeeIBUgpKST1obUDlicB6wxcmBTquBtWL3m9xmDZ8G4Qm81MhtDLl0SSSRAYqwchO2UlWCHoiBKot6J2hIu14SS/JkAPgu3v+UpD4acOQGWqSxmVHIts0hqPTBTCB/pxbFEDxsrQqdflb2FNdr2v3gI1dZUBa9F2QG9EaPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=NF5FoZQV; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1715024616; c=relaxed/simple;
+	bh=DKq1/S1mvND3bjPrxatyn7VET9OItUwcH7q3NBufJKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JdSTn8DXbX5hdjuFNovsX/h4Z8sH2nohJV92tygJ96i/QSRMpKnDLYfbaSda7j+Qn87+ek1C88hqOocDjsR9P0nuU/iTNRqr8kimiCOTNh7VgpPpB7tBmLTsyQGQvXkG3lonID9xd2I9vz17Vuuct+4ruX8Vzyy2iWKW9k78gCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8/zrvH2; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b3c711dfd3so1832458a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=y4WGMO9bryRqHzdvXqX8JHN1xbU3NgS8boIGtDt6Syk=;
-  b=NF5FoZQVHSBu6L3rCTziShyF9iRcUDtTfIWq+LXu/shPNICSD5DSS5yn
-   pTYwl7j9gea38muYWE0OsMjL9UjQUT4g+OsU/4yuY4hWSK9lQoeSCRW+y
-   cp9zMvgA+IUXB5jvVA7Wiv0rTvpYv2sRPoThdddqav5LEcU/+MTDj+AIj
-   0=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.07,259,1708383600"; 
-   d="scan'208";a="86505903"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 21:42:34 +0200
-Date: Mon, 6 May 2024 21:42:33 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Lukas Wunner <lukas@wunner.de>
-cc: Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr, 
-    linux-kernel@vger.kernel.org
-Subject: Re: coccinelle matching of identifiers
-In-Reply-To: <ZjkZBvuXlZAodPAU@wunner.de>
-Message-ID: <alpine.DEB.2.22.394.2405062136410.3284@hadrien>
-References: <ZjkZBvuXlZAodPAU@wunner.de>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        d=linaro.org; s=google; t=1715024615; x=1715629415; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HfyTe+aA68nIYMVD5N9eoPdgr6eemqU/CSX3fB6JqgI=;
+        b=s8/zrvH2PP02FyIYUm630fpQIr9AuuQb5IXm7WAjLE48zxIUHC8KQKZDK/z+rN8op3
+         DQno0AK92LsNAU8WkmlbkI1KH2/p6mPP1bCod2kBvvXKgIgpj00vfdJufhZcytPaiSoe
+         PWRsmrVdRDCacYvREfGSiKaQBTXDdG6/bctIdvVMxksvSZLwRG1z+kfcRlJmbhpRzLpH
+         lSk6M3ILILmcYacZSojev5M7qUqmatQ9+PKpFP7PAA9mUAxDWunBFiGN9k0p1SaBxKsc
+         MgjQ+/AZBIdapT+Olj+l/E9sIPKY/e4nJAtxq1fxs4WZpt9Kh+0Sf3fx5mw/9mhMZ2ut
+         tnpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715024615; x=1715629415;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HfyTe+aA68nIYMVD5N9eoPdgr6eemqU/CSX3fB6JqgI=;
+        b=v+zCC8HnFpbGU+FTb9jIOwR3JmGnaIgETV0n0WsT4Wvcv1GLV5WwWJ4qdWWxRNxqDn
+         YoUGJq4XgzAqtPKw5tJ3IRKOlCGhjzAXkwVg+x+wNYFKu5K/vwuhnyefzMEnxXgE4D87
+         XVPI7SirSW6zUuwlf1hfPKbX/J5mfXCbAl/O4H0j1IMFBaR9kzTIyV/5gjR3lKi4bTKv
+         OLc9wlu2dWxY9m0Uo8QdNBdEJbGUNCKGUloARK24muAv1bn5VDYk4IU08Fu+4n/tH5ce
+         ays4GrcZUI5ym+S1JCTKRrx2Z0KZBPUtAJaL6FTI/CbSgRmCfASVQqP24V5N4/xvvCuC
+         zYQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX41WFcpEVzD9TCZwWwfXouf1QTvRvKPr0hxBD+xMJrIFL39hO7sfG2Vc/gyf0DmvmGsiPCuce8w7u2p4J09eJrypnsmcvnTgvVn8o1
+X-Gm-Message-State: AOJu0Yy65ujdvSmLJIsy316rdJ+j0l+GrsooI2l2k+h3/KorCDsEblm0
+	C9tRy9y5b/VDDk/6HhuB5W/hCGf4fIBPjTtD3ChpjxOgdla2hhJibDzOVzLS8Cg=
+X-Google-Smtp-Source: AGHT+IGkB7X6GUEdfi+4pYo7W9/+lkuI+IkhEHYzDeewt/ILJR/tYZgRUhk8GJOD/BNtvf2Lt54RFg==
+X-Received: by 2002:a17:90a:68ce:b0:2a5:badb:30ea with SMTP id q14-20020a17090a68ce00b002a5badb30eamr9053231pjj.36.1715024614703;
+        Mon, 06 May 2024 12:43:34 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:d0a8:32b:6e71:43af])
+        by smtp.gmail.com with ESMTPSA id st12-20020a17090b1fcc00b002a5d62a7e75sm10393094pjb.52.2024.05.06.12.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 12:43:34 -0700 (PDT)
+Date: Mon, 6 May 2024 13:43:29 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
+	hnagalla@ti.com, devarsht@ti.com, nm@ti.com, s-anna@ti.com,
+	u-kumar1@ti.com
+Subject: Re: [PATCH] remoteproc: k3-r5: Jump to error handling labels in
+ start/stop errors
+Message-ID: <Zjky4V7dAcaDKjL3@p14s>
+References: <20240506141849.1735679-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506141849.1735679-1-b-padhi@ti.com>
 
+On Mon, May 06, 2024 at 07:48:49PM +0530, Beleswar Padhi wrote:
+> In case of errors during core start operation from sysfs, the driver
+> directly returns with the -EPERM error code. Fix this to ensure that
+> mailbox channels are freed on error before returning by jumping to the
+> 'put_mbox' error handling label. Similarly, jump to the 'out' error
+> handling label to return with required -EPERM error code during the
+> core stop operation from sysfs.
+> 
+> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs")
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+> As stated in the bug-report[0], Smatch complains that:
+> drivers/remoteproc/ti_k3_r5_remoteproc.c:583 k3_r5_rproc_start() warn: missing unwind goto?
+> drivers/remoteproc/ti_k3_r5_remoteproc.c:651 k3_r5_rproc_stop() warn: missing unwind goto?
+> 
+> This patch addresses the warnings by jumping to appropriate error
+> labels in case an error occurs during start/stop operation from sysfs.
+> 
+> [0]-https://lore.kernel.org/all/acc4f7a0-3bb5-4842-95a5-fb3c3fc8554b@moroto.mountain/
+> 
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 1799b4f6d11e..50e486bcfa10 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -580,7 +580,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>  		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+>  			dev_err(dev, "%s: can not start core 1 before core 0\n",
+>  				__func__);
+> -			return -EPERM;
+> +			ret = -EPERM;
+> +			goto put_mbox;
+>  		}
+>  
+>  		ret = k3_r5_core_run(core);
+> @@ -648,7 +649,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>  		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+>  			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+>  				__func__);
+> -			return -EPERM;
+> +			ret = -EPERM;
+> +			goto out;
+>  		}
 
+Applied
 
-On Mon, 6 May 2024, Lukas Wunner wrote:
+Thanks,
+Mathieu
 
-> Dear coccinelle maintainers,
->
-> Linux kernel commit 5c6ca9d93665 ("X.509: Introduce scope-based
-> x509_certificate allocation"), which is queued for v6.10 in this repo ...
->
->     https://git.kernel.org/herbert/cryptodev-2.6/c/5c6ca9d93665
->
-> ... triggers scripts/coccinelle/null/eno.cocci:
->
->     ./crypto/asymmetric_keys/x509_cert_parser.c:69:9-15: ERROR: allocation function on line 68 returns NULL not ERR_PTR on failure
->     ./fs/gfs2/inode.c:1850:6-12: ERROR: allocation function on line 1842 returns NULL not ERR_PTR on failure
->     ./fs/smb/client/cifsfs.c:1186:6-12: ERROR: allocation function on line 1173 returns NULL not ERR_PTR on failure
->
-> The first of these three errors is newly introduced by the above-linked
-> commit, the other two already existed before.  All are false-positives.
->
-> I would like to silence the newly-introduced false-positive and have
-> attempted to do so using the small patch below.
->
-> However the result is that *only* the newly-introduced false-positive is
-> found and the other two are no longer found.  So the other way round than
-> what I'm aiming for.
->
-> I find this bewildering.  What am I doing wrong?
->
-> FWIW, coccinelle version is 1.1.1.
->
-> The newly introduced false-positive is triggered by the statement:
->
->     assume(!IS_ERR(cert));
->
-> Which is a macro that expands to:
->
->     do { if (!!IS_ERR(cert)) __builtin_unreachable(); } while(0);
->
-> The macro gives the compiler a hint that variable "cert" is not an error
-> pointer, which prevents the compiler from adding an unnecessary check
-> for that condition.
->
-> Thanks!
->
-> Lukas
->
-> -- >8 --
->
-> diff --git a/scripts/coccinelle/null/eno.cocci b/scripts/coccinelle/null/eno.cocci
-> index 7107d6c8db9e..79112d51bee8 100644
-> --- a/scripts/coccinelle/null/eno.cocci
-> +++ b/scripts/coccinelle/null/eno.cocci
-> @@ -26,10 +26,12 @@ x = \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|kmem_cache
->  @r depends on !patch exists@
->  expression x,E;
->  position p1,p2;
-> +identifier assume;
->  @@
->
->  *x = \(kmalloc@p1\|kzalloc@p1\|kcalloc@p1\|kmem_cache_alloc@p1\|kmem_cache_zalloc@p1\|kmem_cache_alloc_node@p1\|kmalloc_node@p1\|kzalloc_node@p1\)(...)
->  ... when != x = E
-> +    when != assume
->  * IS_ERR@p2(x)
-
-The problem is that ... is searching along control-flow paths, and
-Coccinelle only considers control-flow at the statement level, not within
-expressions.
-
-Maybe a reasonable solution would be just to consider that we really just
-want to protect against if tests?  So
-
-*x = \(kmalloc@p1\|kzalloc@p1\|kcalloc@p1\|kmem_cache_alloc@p1\|kmem_cache_zalloc@p1\|kmem_cache_alloc_node@p1\|kmalloc_node@p1\|kzalloc_node@p1\)(...)
-.. when != x = E
-* if ( <+... IS_ERR@p2(x) ... +> )
-  S1 else S2
-
-where S1 and S2 are declared as statement metavariables.
-
-Another option is:
-
-x = \(kmalloc@p1\|kzalloc@p1\|kcalloc@p1\|kmem_cache_alloc@p1\|kmem_cache_zalloc@p1\|kmem_cache_alloc_node@p1\|kmalloc_node@p1\|kzalloc_node@p1\)(...)
-.. when != x = E
-(
-assume(!IS_ERR(x));
-|
-* IS_ERR(x)
-)
-
-In this case, only the IS_ERR is marked with a *, because if we also
-marked the initial assignment, that would get highlighted regardless of
-which branch of the disjunction was matched.
-
-julia
-
+>  
+>  		ret = k3_r5_core_halt(core);
+> -- 
+> 2.34.1
+> 
 
