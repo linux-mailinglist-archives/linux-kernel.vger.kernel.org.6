@@ -1,170 +1,217 @@
-Return-Path: <linux-kernel+bounces-169427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF088BC886
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:45:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2630C8BC88C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419D8280F21
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBA53280FDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60D614037F;
-	Mon,  6 May 2024 07:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCCC13FD9E;
+	Mon,  6 May 2024 07:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZEVw2SwU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FhvHSAqv";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n6GhvFeT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LoDu9hAr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x9dpnCT/"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A5F5A0E1;
-	Mon,  6 May 2024 07:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878D942ABE
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714981512; cv=none; b=L9c7r+0rrU7b4kA09e9X1iAOz3GcoojQIrV9c9s7wjaLlekwYeXahyt3zMCNbkQGiAGPqXI6fGeM2y8RWukI/jBFPrWRS2Hb9Hcxf/4Xl0CVKgW775QfXAzvm+3beqICYpF6pJzxTR9dj5e8KaNhPlgHzrmpc1RHsXQoO/zj6o4=
+	t=1714981695; cv=none; b=ZxTtmtEltjVxaBqn6QXsoXKI4w2zv2MOZBii4KSQyyopLbrjAflfXdu5AVdTP3vb2SiNoqVUVJjtRINdUdRW8Dk6UIt3B+EkEe9DKYFy3DZIhs/YObvpSE8BKkvegXREybp2B9suElvuZ3rv2uR/84SiRIq3pWeW2cuZI4q/nqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714981512; c=relaxed/simple;
-	bh=hbk+KfVwD07Qx/5jw2FufoF+HQqBivDwwUKf9HHF5Gw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AjEfcdYq/U5KP1aeC49YBS6shU6cteGBMG22hjFTdOF0GyGQjUakD5cB1WhCwNtRjh9EDS6b66F1lLe0W18dii256VBifHjCIDVdm7I3eImqPpWOvHjLY/hDwWicHRcUynRODewX9YfM+HSP714w8IyU8Reh3GbAnQAtQcaFAUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZEVw2SwU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FhvHSAqv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n6GhvFeT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LoDu9hAr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F08E65F971;
-	Mon,  6 May 2024 07:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714981508; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A8NhZ5Z++Xyx8ycFFvX5+HcsU9P3SaLsiqRdiI3IPaY=;
-	b=ZEVw2SwUfMrUiAbA/C0PQARZG1+2mEULj+ogwY00PnSzxv8n3XbAD7p0oSjJUPJV49vhyi
-	l0lyD9/hOPCdZh25TOQptixkW4LRaihlRMibf5vrwHVxRI9esvH3/FPnWcAFJMr3Es+i6h
-	jkU/RXCSCip4wYP25HCeoiwQ+UzJVW0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714981508;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A8NhZ5Z++Xyx8ycFFvX5+HcsU9P3SaLsiqRdiI3IPaY=;
-	b=FhvHSAqvlBOCf3pBYOM7ewfRIkQlM7/bNdA7ET5J+UxJTnlzFjXbLJoXddGk9c3GYYHObI
-	RTwTEQDm+LZoU0AA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714981506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A8NhZ5Z++Xyx8ycFFvX5+HcsU9P3SaLsiqRdiI3IPaY=;
-	b=n6GhvFeTvZLhw6DOAciUhZSNHWlXUcrX3TrM2yXiURUPGhAW3bAzpxjtd8sXtwV3nDp17m
-	PyoNmrZ1P8BFpltJPSM9hdgdtb8Y0q8m96MtFAmhHZjwfz4q8U41DYSpJAFic4Sd47t4Ll
-	3Yz1DGNIiVmunhuHJECcxWwP1pmy6Vs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714981506;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A8NhZ5Z++Xyx8ycFFvX5+HcsU9P3SaLsiqRdiI3IPaY=;
-	b=LoDu9hAr2qw6VHTydgDo63ELGjlIT/gkRfiuhXF548fhNfeaGM266uSegnnVSmVVmknqyD
-	omoJT6E4CjZK0fBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D00113A25;
-	Mon,  6 May 2024 07:45:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yCkdJYKKOGbnXgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 06 May 2024 07:45:06 +0000
-Date: Mon, 06 May 2024 09:45:21 +0200
-Message-ID: <87zft3gz8u.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	linux-sound@vger.kernel.org,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kselftest@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2] selftests/alsa: missing a return value in unused dump_config_tree()
-In-Reply-To: <a80cb2a2-735d-4539-a758-a536296975cd@perex.cz>
-References: <20240505210824.55392-1-jhubbard@nvidia.com>
-	<875xvrif0c.wl-tiwai@suse.de>
-	<a80cb2a2-735d-4539-a758-a536296975cd@perex.cz>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1714981695; c=relaxed/simple;
+	bh=apURgdu9US9Q6NqpFuYJVO0syEU3Ulxfqt+JjajzVls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=giX+sEk1JER6HbRQ4TNywfb7ijI7RpYRQff5Pjx50ijoWSCYY6akHFC8GoRGFp/XnfOl6zYKZWaK04u6qa9E9Dx+aL89/y/fsfaGgt9n+TJGO0aDkyrXdWroyNInA7bBES8JYig6qXWbpAXsCy1ix7a82ZbInaeFbkd2xtqIfN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x9dpnCT/; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6f02e1fef90so845081a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 00:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714981692; x=1715586492; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1P6DJY4fN1oYQ+fD1hdKIRR5ynxkJi89nJoIba5ERBM=;
+        b=x9dpnCT/Gf7+ANG8Ty7XnNR/w9Tf4zPoZM0fIFuhJaq4JdcApUFfAzlPdIrLp0mFeW
+         Jo+LtR/esO8W6l9QSI3ZjTOsaj3st5KSEVhdapPsmNjMzxkY1++bWAK7Tx3SVvM3uUcZ
+         liNXYw/BwywOyoanIsicV9lC8FpLSqNvd1bGUOPXRf8HC7Bm98rz17dd3iZ87cGU1aj9
+         Wevvmi2tUGCcUURzWHKjrmsA/lOgM9fwEJMp+1dgld2Vjq8YfIEDjz9tImC4YylVYjtc
+         pYAriUocQbnB0r7U1tC6qcBh//zTWSgh6UTQoZBAVWDw9V7L48ZekItwVEx0P7NOq87A
+         xVPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714981692; x=1715586492;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1P6DJY4fN1oYQ+fD1hdKIRR5ynxkJi89nJoIba5ERBM=;
+        b=a88R+pFKTNAofFyDnU/VDLtAdyd9i1THt+qnHAEYomaInwKLeCMS63zjKsjMUTxw43
+         Ey7WME2VU6tiIm+CMsz96wju8ABWrWPcEO3TTq+bPvt6IZ9g5XQboVgltmtSIuOLrXz1
+         7DId+jRfj4DpDlInqueXDqUWsnf0rwBqH3MLzLxD7wf8oLwP/TXlWvvDLE9QpkS6v9HN
+         +dyIGXjVWcvuLLflUkm9FRJ8opfI514S1uyQO6HZZU86aX5GVyo+hHaobqVk2maRHPlA
+         VlncPeEfOVQDSHom+IAvRZzQea2WdPv//PB6yCDuXPqlLQKa5fs+MUgGKARyGhJYZFo+
+         pb9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXxCBlH9d8hO/kyqoPNbJU2YVd3evpwYjVlJ+cP1jVutBHjzJF9qhYYkIpXoHHZ02ZHnfqSxFOx3dwcWp7z+jTaTjiURHyQIZQEfN6H
+X-Gm-Message-State: AOJu0YyioZS/GQBoCPSA/xN5XcPDZolLp7QTYwClCw8SYroAcCKsbiU8
+	zFP2mmUZLOTU8BUbOeg59dUyHxnypSKgn6OnfTjZ+xhUnuJ0r5Q/XQ+65i+XMjIo4Tzzft9Fpte
+	kmH5QUEInBxaJNYck3WPYNy5467H+vAAavAX/DQ==
+X-Google-Smtp-Source: AGHT+IFRjrDF2z1YHBQ36qKpgseIsHm+fGagHI2wj3a0Y3r/oMNEUJ+ZfENTe8UOBiA8G/22/t3PRwFoWT5+QH7FZWc=
+X-Received: by 2002:a05:6830:3149:b0:6ee:5560:4031 with SMTP id
+ c9-20020a056830314900b006ee55604031mr12325242ots.38.1714981692603; Mon, 06
+ May 2024 00:48:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,nvidia.com,kernel.org,suse.com,gmail.com,vger.kernel.org,valentinobst.de,lists.linux.dev];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <20240502085636.4049-1-gavin.liu@mediatek.com>
+In-Reply-To: <20240502085636.4049-1-gavin.liu@mediatek.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Mon, 6 May 2024 09:48:01 +0200
+Message-ID: <CAHUa44GGzMQjrkFm4JRQ463wqOpZfzoo91TchK=PdH1Rt565pQ@mail.gmail.com>
+Subject: Re: [PATCH v2] optee: add timeout value to optee_notif_wait() to
+ support timeout
+To: "gavin.liu" <gavin.liu@mediatek.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 06 May 2024 09:27:38 +0200,
-Jaroslav Kysela wrote:
-> 
-> On 06. 05. 24 9:19, Takashi Iwai wrote:
-> > On Sun, 05 May 2024 23:08:24 +0200,
-> > John Hubbard wrote:
-> >> 
-> >> dump_config_tree() is declared to return an int, but the compiler cannot
-> >> prove that it always returns any value at all. This leads to a clang
-> >> warning, when building via:
-> >> 
-> >>      make LLVM=1 -C tools/testing/selftests
-> >> 
-> >> Furthermore, Mark Brown noticed that dump_config_tree() isn't even used
-> >> anymore, so just delete the entire function.
-> >> 
-> >> Cc: Mark Brown <broonie@kernel.org>
-> >> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> > 
-> > Thanks, applied now.
-> 
-> This function is nice for debugging. I'd prefer to keep it with the fix.
+On Thu, May 2, 2024 at 10:56=E2=80=AFAM gavin.liu <gavin.liu@mediatek.com> =
+wrote:
+>
+> From: Gavin Liu <gavin.liu@mediatek.com>
+>
+> Add timeout value to support self waking when timeout to avoid waiting
+> indefinitely.
+>
+> Signed-off-by: Gavin Liu <gavin.liu@mediatek.com>
+> ---
+> Change in v2:
+> Change commit message.
+> Add description for value[0].c in optee_rpc_cmd.h.
+> ---
+> ---
+>  drivers/tee/optee/notif.c         |  9 +++++++--
+>  drivers/tee/optee/optee_private.h |  2 +-
+>  drivers/tee/optee/optee_rpc_cmd.h |  1 +
+>  drivers/tee/optee/rpc.c           | 10 ++++++++--
+>  4 files changed, 17 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/tee/optee/notif.c b/drivers/tee/optee/notif.c
+> index 05212842b0a5..d5e5c0645609 100644
+> --- a/drivers/tee/optee/notif.c
+> +++ b/drivers/tee/optee/notif.c
+> @@ -29,7 +29,7 @@ static bool have_key(struct optee *optee, u_int key)
+>         return false;
+>  }
+>
+> -int optee_notif_wait(struct optee *optee, u_int key)
+> +int optee_notif_wait(struct optee *optee, u_int key, u32 timeout)
+>  {
+>         unsigned long flags;
+>         struct notif_entry *entry;
+> @@ -70,7 +70,12 @@ int optee_notif_wait(struct optee *optee, u_int key)
+>          * Unlock temporarily and wait for completion.
+>          */
+>         spin_unlock_irqrestore(&optee->notif.lock, flags);
+> -       wait_for_completion(&entry->c);
+> +       if (timeout !=3D 0) {
+> +               if (!wait_for_completion_timeout(&entry->c, timeout))
+> +                       rc =3D -ETIMEDOUT;
+> +       } else {
+> +               wait_for_completion(&entry->c);
+> +       }
+>         spin_lock_irqsave(&optee->notif.lock, flags);
+>
+>         list_del(&entry->link);
+> diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_=
+private.h
+> index 7a5243c78b55..da990c4016ec 100644
+> --- a/drivers/tee/optee/optee_private.h
+> +++ b/drivers/tee/optee/optee_private.h
+> @@ -252,7 +252,7 @@ struct optee_call_ctx {
+>
+>  int optee_notif_init(struct optee *optee, u_int max_key);
+>  void optee_notif_uninit(struct optee *optee);
+> -int optee_notif_wait(struct optee *optee, u_int key);
+> +int optee_notif_wait(struct optee *optee, u_int key, u32 timeout);
+>  int optee_notif_send(struct optee *optee, u_int key);
+>
+>  u32 optee_supp_thrd_req(struct tee_context *ctx, u32 func, size_t num_pa=
+rams,
+> diff --git a/drivers/tee/optee/optee_rpc_cmd.h b/drivers/tee/optee/optee_=
+rpc_cmd.h
+> index f3f06e0994a7..99342aa66263 100644
+> --- a/drivers/tee/optee/optee_rpc_cmd.h
+> +++ b/drivers/tee/optee/optee_rpc_cmd.h
+> @@ -41,6 +41,7 @@
+>   * Waiting on notification
+>   * [in]    value[0].a      OPTEE_RPC_NOTIFICATION_WAIT
+>   * [in]    value[0].b      notification value
+> + * [in]    value[0].c      timeout in millisecond or 0 if no timeout
 
-I'm find in either way; just submit a fix patch, then.
+milliseconds
 
+>   *
+>   * Sending a synchronous notification
+>   * [in]    value[0].a      OPTEE_RPC_NOTIFICATION_SEND
+> diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+> index e69bc6380683..14e6246aaf05 100644
+> --- a/drivers/tee/optee/rpc.c
+> +++ b/drivers/tee/optee/rpc.c
+> @@ -130,6 +130,8 @@ static void handle_rpc_func_cmd_i2c_transfer(struct t=
+ee_context *ctx,
+>  static void handle_rpc_func_cmd_wq(struct optee *optee,
+>                                    struct optee_msg_arg *arg)
+>  {
+> +       int rc =3D 0;
+> +
+>         if (arg->num_params !=3D 1)
+>                 goto bad;
+>
+> @@ -139,7 +141,8 @@ static void handle_rpc_func_cmd_wq(struct optee *opte=
+e,
+>
+>         switch (arg->params[0].u.value.a) {
+>         case OPTEE_RPC_NOTIFICATION_WAIT:
+> -               if (optee_notif_wait(optee, arg->params[0].u.value.b))
+> +               rc =3D optee_notif_wait(optee, arg->params[0].u.value.b, =
+arg->params[0].u.value.c);
+> +               if (rc)
+>                         goto bad;
+>                 break;
+>         case OPTEE_RPC_NOTIFICATION_SEND:
+> @@ -153,7 +156,10 @@ static void handle_rpc_func_cmd_wq(struct optee *opt=
+ee,
+>         arg->ret =3D TEEC_SUCCESS;
+>         return;
+>  bad:
+> -       arg->ret =3D TEEC_ERROR_BAD_PARAMETERS;
+> +       if (rc =3D=3D -ETIMEDOUT)
+> +               arg->ret =3D TEEC_ERROR_BUSY;
 
-thanks,
+TEEC_ERROR_BUSY is confusing. How about TEE_ERROR_TIMEOUT? We normally
+only use TEEC_XXX error codes, but GP doesn't define a
+TEEC_ERROR_TIMEOUT so it's better to use the GP-defined
+TEE_ERROR_TIMEOUT.
 
-Takashi
+Cheers,
+Jens
+
+> +       else
+> +               arg->ret =3D TEEC_ERROR_BAD_PARAMETERS;
+>  }
+>
+>  static void handle_rpc_func_cmd_wait(struct optee_msg_arg *arg)
+> --
+> 2.18.0
+>
 
