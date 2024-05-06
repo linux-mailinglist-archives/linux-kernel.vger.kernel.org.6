@@ -1,119 +1,128 @@
-Return-Path: <linux-kernel+bounces-170009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278638BD088
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:43:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB028BD08D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC62E2814DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05815281348
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F3B153519;
-	Mon,  6 May 2024 14:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3556C153569;
+	Mon,  6 May 2024 14:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="XJ36DjW9"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mjTrL+M/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aBdofRxm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0843F1534F9;
-	Mon,  6 May 2024 14:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD88C1534E5;
+	Mon,  6 May 2024 14:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006607; cv=none; b=AzhHf36VILARjSN50VWQMxZiQXJ77B4XSK0tGMXGu6/QKxzqCS0rmvlm6NYtHF+5MR7BjCLkcotqyIBbipZku2NC721LF4J+9Qu5QHiE4jHfW9c3Fbx23py7By6YGxM1ABrcppaZscFhWDhuf0IeCJf0xv1TEAYh4U9hC5YRo2s=
+	t=1715006644; cv=none; b=B13DlyEluEz3h8JU0rPCmscsLzHqmjYdeqPAenvnFUwrgdcU+G36FnUW2OW/EoPWmr19xcZLalc/SheHz+81aE4VcpKoh22FJhq4DUPswsPE1DcgaAZvT37zCEH8k5ELOXEdPuoySiMjgEsPCL6AycJsEzbdHnHvrC/eB1eD21M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006607; c=relaxed/simple;
-	bh=1PHydZMCG6eb+35vdAr+laWpupGyGqL/HZ0CYrrHWig=;
+	s=arc-20240116; t=1715006644; c=relaxed/simple;
+	bh=OuM/H3qINfOzCQkL3sukKEitkVGJMlavmaV4oYhb4Ik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7fmsSeH5hMz/3dJL1Fi++U61lts240aTYDOEsMCC+ftRapixE9waZ4WiERXHHT8y98rnL4Wmgaf5n0KYhMzeeWvAqO0K0jqCEixuooWV5fmzh2NOSSeHWzqI/GqtbABPGzDO/jW9mIeOA5CS8NZd1AVR/sPzEYLkjlGkaG8cN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=XJ36DjW9; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=oIh2GEZu/cERMqozSXMHDf8vR7BHYa8ZZujCki8gVbk=; b=XJ36DjW9q95criDy
-	PfvX7l5rO3BlxBL/UnezZUjXQoMvl0iUjBorXo7yyJn+2PxjgoU+SU/LrV6HhJJQ0iGzNdUjMfNkn
-	FXO0KvFZsw3uVhZ0VmXb0cq5ReGzpugUeMv/wWiaPSfo/DIlyxkf9uQNnxsTePMF0bSUb0SnexneR
-	jNHxQzrokoh36UZBsbGd25bPCw7MpxU+oxswApvZ+JKE4HfCcP+I1VBAtj/6vxCT/lOzJle0C8YSO
-	OyOiYg/zcELM5C8lnX8U5w2ySdtqvcluY2doDzCeVnkhz32OKTYoRSInSxmCmGrBdui3xT6ZalwiD
-	gsyLaJrrBEMMd92Kcg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s3zYm-004wdj-16;
-	Mon, 06 May 2024 14:43:20 +0000
-Date: Mon, 6 May 2024 14:43:20 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: bhelgaas@google.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86: ce4100: Remove unused struct 'sim_reg_op'
-Message-ID: <ZjjsiO33y08dJLPX@gallifrey>
-References: <20240506004647.770666-1-linux@treblig.org>
- <948a3829-96da-2708-60f8-f25546683436@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=efr74gPUVb++xzvVsaHh7UeM+GijtSxPlyeGCInei5ZnxtXetoQJP6oLglHR+JP0Tj81oqxbHM8IJYw15aEpsxP6TMXJo/87vNDrC4PVE19Ac5dAiJ7xSFTKT9MVmseWzIJBxEt6qfrz2iTQWE9f2aP5+C697h2Ik2HMgi3gizY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mjTrL+M/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aBdofRxm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 6 May 2024 16:43:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715006640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E+17KTu0vecr45/CU20r0ymLx4clM9yLKI0xnA9xyBk=;
+	b=mjTrL+M/wnHLmGDQbZ1LTzkD8cdNhzejF0byOGvZ/i4eRbIoSYjirIa2LPwRruBZrfDl4q
+	ntO59K2bs8ns0OAGlXFx/p5nex+0/UMF837kBom8+FwPIUBebc5eorG64CuYYBzvgsaFpj
+	bfjqJqxtVIVkliVhzHvACRSRRIVtp0qn/USE6uVnrVcxpdRUMKoOQAotBB3lNFqg7DKEJX
+	M6t9tCAsEbP3Ia/9ttCtYikK36v9lckkVatk1BfIEtkIbmOngYtgaUAyAL0RnQa67ZjuZs
+	piTqecxDmgGtmj+jRkvNkSIH76hOQbgs7l2aw0SVC05+l2nn4s8UXKWy270fcw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715006640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E+17KTu0vecr45/CU20r0ymLx4clM9yLKI0xnA9xyBk=;
+	b=aBdofRxm1GkXMlZ8sMIK1OQLxffD8rYQylS1m5koFr7U/90pC91vExaa4zQAlzcFQLryqr
+	vpqcwtg/sOvXIWAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2 net-next 00/15] locking: Introduce nested-BH locking.
+Message-ID: <20240506144358.Dqd57lTp@linutronix.de>
+References: <20240503182957.1042122-1-bigeasy@linutronix.de>
+ <0d2eca9e80ae644583248a9e4a4bdee94999a8f8.camel@redhat.com>
+ <20240506093828.OLP2KzcG@linutronix.de>
+ <7d46b465dd986bdf07330a7ed8d466674dec4859.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <948a3829-96da-2708-60f8-f25546683436@linux.intel.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-17-amd64 (x86_64)
-X-Uptime: 14:42:20 up 124 days, 17:32,  1 user,  load average: 0.06, 0.03,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <7d46b465dd986bdf07330a7ed8d466674dec4859.camel@redhat.com>
 
-* Ilpo Järvinen (ilpo.jarvinen@linux.intel.com) wrote:
-> On Mon, 6 May 2024, linux@treblig.org wrote:
+On 2024-05-06 16:12:00 [+0200], Paolo Abeni wrote:
 > 
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > This doesn't look like it was ever used.
-> 
-> Don't start with "This" but spell what you're talking about out so it 
-> can be read and understood without shortlog in Subject (or looking into 
-> the code change).
+> I think sometimes the stack could call local_bh_enable() after a while
+> WRT the paired spin lock release, to enforce some serialization - alike
+> what inet_twsk_purge() is doing - but I can't point to any specific
+> line on top of my head.
 
-I'm of course happy to rework that if it helps you, although
-I thought the subject line was sufficient.
+I *think* the inet_twsk_purge() is special because the timer is pinned
+and that bh_disable call ensures that the timer does not fire.
 
-Dave
+> A possible side-effect you should/could observe in the final tree is
+> more pressure on the process scheduler, as something alike:
+> 
+> local_bh_disable()
+> 
+> <spinlock lock unlock>
+> 
+> <again spinlock lock unlock>
+> 
+> local_bh_enable()
+> 
+> could results in more invocation of the scheduler, right? 
 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >  arch/x86/pci/ce4100.c | 6 ------
-> >  1 file changed, 6 deletions(-)
-> > 
-> > diff --git a/arch/x86/pci/ce4100.c b/arch/x86/pci/ce4100.c
-> > index 87313701f069e..f5dbd25651e0f 100644
-> > --- a/arch/x86/pci/ce4100.c
-> > +++ b/arch/x86/pci/ce4100.c
-> > @@ -35,12 +35,6 @@ struct sim_dev_reg {
-> >  	struct sim_reg sim_reg;
-> >  };
-> >  
-> > -struct sim_reg_op {
-> > -	void (*init)(struct sim_dev_reg *reg);
-> > -	void (*read)(struct sim_dev_reg *reg, u32 value);
-> > -	void (*write)(struct sim_dev_reg *reg, u32 value);
-> > -};
-> > -
-> >  #define MB (1024 * 1024)
-> >  #define KB (1024)
-> >  #define SIZE_TO_MASK(size) (~(size - 1))
-> > 
+Yes, to some degree.
+On PREEMPT_RT "spinlock lock" does not disable preemption so the section
+remains preemptible. A task with elevated priority (SCHED_RR/FIFO/DL)
+remains on the CPU unless preempted by task with higher priority.
+Regardless of the locks.
+
+A SCHED_OTHER task can be preempted by another SCHED_OTHER task even
+with an acquired spinlock_t. This can be bad performance wise if this
+other SCHED_OTHER task preempts the lock owner and blocks on the same
+lock. To cope with this we had something called PREEMPT_LAZY (now
+PREEMPT_AUTO) in the RT-queue to avoid preemption within SCHED_OTHER
+tasks as long as a spinlock_t (or other lock that spins on !RT) is
+acquired.
+By removing the lock from local_bh_disable() we lose that "please don't
+preempt me" feature from your scenario above across the BH disabled
+section for SCHED_OTHER tasks. Nothing changes for tasks with elevated
+priority.
+
+> Cheers,
 > 
-> -- 
->  i.
-> 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> Paolo
+
+Sebastian
 
