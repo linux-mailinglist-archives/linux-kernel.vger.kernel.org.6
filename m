@@ -1,184 +1,144 @@
-Return-Path: <linux-kernel+bounces-169638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B6F8BCB96
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:05:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8388BCBA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C38028438E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:05:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F422848E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59F41428E6;
-	Mon,  6 May 2024 10:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zt7VphGZ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9E6142907;
+	Mon,  6 May 2024 10:06:11 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BDB4205F;
-	Mon,  6 May 2024 10:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A16140366;
+	Mon,  6 May 2024 10:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989927; cv=none; b=CuDlAJGIWJ1nYIj9OfbUbA5TIYesrpo6AtCqIZHUTMOrZoewcYX/sqAD4Z4bFlOy+wZ6dJ4ANSj+7FR95o3oFS8XezR5QrAPzyHUMTo1uhUWFL6ma9gbNALe7R/yH7E1bWYVbLxriPRX80w8sBeTZqq7xjQQ+oxYYVlppzos5Jk=
+	t=1714989971; cv=none; b=oSc2SL65hgtGAgJywtl/0ZwYyQRPFJHQag/+O089fchNx0b1pZ/gDuIe7CwGWAuL86bTscziK4g1QrazzkK8yQKMgti5SKWIrCwQx7d7ukJZLOqnE0jZF/9DzaJWPCmO+JSUDx/GF7mbQrE2KEu/zbosXz8u2PjalTlWorgD0Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989927; c=relaxed/simple;
-	bh=PMC3ofutk9JYD37ah6GDWluGJeD9/vKLh7tqGvV6Wko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKloFXxTPohlxEc+75kiLDGB+EdDV84rmv4hd1oftwtvVrEJ7d/oLX0YWQ/gMwVr+vRjLI8PMuII+x+ITjlAh1M0g+OkhwhhD9URLhag2yxYhLZZaj4n/EMgcq3Wn1Dt/vda8MId8v4J0gTkuM2aDQbid5poTSyLFy0MYc5MFOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zt7VphGZ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gujvUI0jJiy6Uc9SM3tuP8isJLFkBNShH34rayX/gjo=; b=Zt7VphGZw/XbV3in9sMkbdqs6i
-	DwJx/nLZJJZCbciPUllM2ReQnRuJd1CtECfrw1HqokhXeznibZE0ZCacmim4zEzhaJ18FnWX+mRCQ
-	+0NaOR8bpvR1InY533f+A7kHhx42/RvF5D5tDqIzQapK6sm7TK4d5qAZcmnnwt5q+4EN45F4zJTtn
-	VslpYSI5iUN/GUdaUig2QP+B2/lDr4D5dqtag/FHzN1tu4yl0U1ENY3kOFqVjmPx0pRsIanlBMZiZ
-	PtMvVhveUCGLc/GOkRsNhADWH6soXkJ1IOpIoR8C5C+1ACx8PA3il82I+dWRHun3x8K+u7lwIYYm0
-	+i1jChLQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s3vDZ-00000001fVA-1ytr;
-	Mon, 06 May 2024 10:05:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1A972300362; Mon,  6 May 2024 12:05:09 +0200 (CEST)
-Date: Mon, 6 May 2024 12:05:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched: Consolidate cpufreq updates
-Message-ID: <20240506100509.GL40213@noisy.programming.kicks-ass.net>
-References: <20240505233103.168766-1-qyousef@layalina.io>
+	s=arc-20240116; t=1714989971; c=relaxed/simple;
+	bh=3bKywxWdwXQJn9t7WE5tCeMMFA6vA0dUvFi3njX5doo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yx99Cws+Mn02v9a28WeNX/Uw9MyZfPlp4znWlE7U9Q+QQb6cFhLf8Yu7G+Pw0x03Kh5rTtPs3sAlHkepPF8y1NA2ejgYbVwU1OagdFpU/gJspPA/3P91YfYKyTu+RPOOQwzWP0wFCObGhIViGNyejBLhfDOXCcW7XSSEwPw1wFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXxMR3twyz9xGXN;
+	Mon,  6 May 2024 17:44:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 6DCB91404D9;
+	Mon,  6 May 2024 18:05:58 +0800 (CST)
+Received: from [10.81.216.243] (unknown [10.81.216.243])
+	by APP1 (Coremail) with SMTP id LxC2BwCHexR2qzhmIrWjBw--.20188S2;
+	Mon, 06 May 2024 11:05:57 +0100 (CET)
+Message-ID: <c97f0529-5a8f-4a82-8e14-0078d4372bdc@huaweicloud.com>
+Date: Mon, 6 May 2024 12:05:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240505233103.168766-1-qyousef@layalina.io>
-
-On Mon, May 06, 2024 at 12:31:03AM +0100, Qais Yousef wrote:
-
-> +static inline void update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> +{
-> +#ifdef CONFIG_CPU_FREQ
-> +	unsigned int flags = 0;
-> +
-> +#ifdef CONFIG_SMP
-> +	if (unlikely(current->sched_class == &stop_sched_class))
-> +		return;
-> +#endif
-
-why do we care about the stop class? It shouldn't, in general, consume a
-lot of cycles.
-
-> +
-> +	if (unlikely(current->sched_class == &idle_sched_class))
-> +		return;
-
-And why do we care about idle? Specifically this test doesn't capture
-force-idle threads. Notably see is_idle_task().
-
-> +
-> +	if (unlikely(task_has_idle_policy(current)))
-> +		return;
-> +
-> +	if (likely(fair_policy(current->policy))) {
-> +
-> +		if (unlikely(current->in_iowait)) {
-> +			flags |= SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE;
-> +			goto force_update;
-> +		}
-> +
-> +#ifdef CONFIG_SMP
-> +		/*
-> +		 * Allow cpufreq updates once for every update_load_avg() decay.
-> +		 */
-> +		if (unlikely(rq->cfs.decayed)) {
-> +			rq->cfs.decayed = false;
-> +			goto force_update;
-> +		}
-> +#endif
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * RT and DL should always send a freq update. But we can do some
-> +	 * simple checks to avoid it when we know it's not necessary.
-> +	 */
-> +	if (rt_task(current) && rt_task(prev)) {
-
-IIRC dl tasks also match rt_task, so your else clause might not work the
-way you've intended.
-
-> +#ifdef CONFIG_UCLAMP_TASK
-> +		unsigned long curr_uclamp_min = uclamp_eff_value(current, UCLAMP_MIN);
-> +		unsigned long prev_uclamp_min = uclamp_eff_value(prev, UCLAMP_MIN);
-> +
-> +		if (curr_uclamp_min == prev_uclamp_min)
-> +#endif
-> +			return;
-> +	} else if (dl_task(current) && current->dl.flags & SCHED_FLAG_SUGOV) {
-
-Notably DL tasks also match rt_task(), so I don't think this clause
-exactly does as you expect. Also, isn't the flags check sufficient on
-it's own?
-
-> +		/* Ignore sugov kthreads, they're responding to our requests */
-> +		return;
-> +	}
-> +
-> +	flags |= SCHED_CPUFREQ_FORCE_UPDATE;
-> +
-> +force_update:
-> +	cpufreq_update_util(rq, flags);
-> +#endif
-> +}
-
-But over-all the thing seems very messy, mixing sched_class, policy and
-prio based selection methods.
-
-Can't this be cleaned up somewhat?
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH memory-model 2/4] Documentation/litmus-tests: Demonstrate
+ unordered failing cmpxchg
+To: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+ peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ akiyks@gmail.com, Frederic Weisbecker <frederic@kernel.org>,
+ Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>,
+ Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org
+References: <42a43181-a431-44bd-8aff-6b305f8111ba@paulmck-laptop>
+ <20240501232132.1785861-2-paulmck@kernel.org>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <20240501232132.1785861-2-paulmck@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwCHexR2qzhmIrWjBw--.20188S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr45urWDKw47Ary5Kw1Dtrb_yoW8Gw17pF
+	WUKF43Kry7J39Ykwn5Za43X348uayftan5Gry3GrWqv3Z8CFyjvFyrtFWSgFy3Jrsaka1j
+	vr1a934xZrWUAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
 
-Notably, if you structure it something like so:
 
-	if (fair_policy(current)) {
-		...
-		return;
-	}
+Am 5/2/2024 um 1:21 AM schrieb Paul E. McKenney:
+> This commit adds four litmus tests showing that a failing cmpxchg()
+> operation is unordered unless followed by an smp_mb__after_atomic()
+> operation.
 
-	if (rt_policy(current)) {
-		if (dl_task(current) && current->dl.flags & SCHED_FLAG_SUGOV)
-			return;
-		if (rt_policy(prev) && uclamps_match(current, prev))
-			return;
-		...
-		return;
-	}
+So far, my understanding was that all RMW operations without suffix 
+(xchg(), cmpxchg(), ...) will be interpreted as F[Mb];...;F[Mb].
 
-	/* everybody else gets nothing */
-	return;
+I guess this shows again how important it is to model these full 
+barriers explicitly inside the cat model, instead of relying on implicit 
+conversions internal to herd.
 
-You get a lot less branches in the common paths, no?
+I'd like to propose a patch to this effect.
 
+What is the intended behavior of a failed cmpxchg()? Is it the same as a 
+relaxed one?
+
+My suggestion would be in the direction of marking read and write events 
+of these operations as Mb, and then defining
+
+(* full barrier events that appear in non-failing RMW *)
+let RMW_MB = Mb & (dom(rmw) | range(rmw))
+
+
+let mb =
+     [M] ; fencerel(Mb) ; [M]
+   | [M] ; (po \ si ; rmw) ; [RMW_MB] ; po^? ; [M]
+   | [M] ; po^? ; [RMW_MB] ; (po \ rmw ; si) ; [M]
+   | ...
+
+The po \ si;rmw is because ordering is not provided internally of the 
+rmw, although I suspect that after we added release sequences it could 
+perhaps be simplified to
+
+
+let mb =
+     [M] ; fencerel(Mb) ; [M]
+   | [M] ; po ; [RMW_MB] ; po^? ; [M]
+   | [M] ; po^? ; [RMW_MB] ; po ; [M]
+   | ...
+
+or
+
+let mb =
+     [M] ; fencerel(Mb) ; [M]
+   | [M] ; po & (po^? ; [RMW_MB] ; po^?) ; [M]
+   | ...
+
+(the po & is necessary to avoid trivial hb cycles of an RMW event 
+happening before itself)
+
+
+Any interest?
+
+Have fun,
+jonas
 
 
 
