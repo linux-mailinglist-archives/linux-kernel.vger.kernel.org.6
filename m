@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-169963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BB18BCFEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:19:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2008BCFE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A938B1F23609
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943C21F22667
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF99F13D609;
-	Mon,  6 May 2024 14:18:30 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F1A13D50B;
+	Mon,  6 May 2024 14:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eny5UMju"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBCD13D2B0;
-	Mon,  6 May 2024 14:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63F413D29A;
+	Mon,  6 May 2024 14:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005110; cv=none; b=bCft3hkSDRT5fz7POkvgS7ipWjsN+o8NthNkJZd+L2RQW/6cTZ29+oIO+dRx0JvcS3ImVIaQLjTFPu3bZ4oUgh0KbPXZFxMERCm+8CfpUhNkwlsS1xJnKUwB1xoJ8Zo12XGdKiETh3W5XN5/5QQghe47oGkcPuJPrfrV89vb4Vw=
+	t=1715005089; cv=none; b=BXAyZ+SFeEyiqRpHUKRgdL6lLxTo3HjVJGPd/3VptZRORT6c0rvAPvPIsp+1eki4v9Uj/Kno5pElxvKnSCol7QYdFLU7uYF0nKpLiITtNJJV13y1hB3+mnjcp5g6o0ix5oC4YQzrlNd2E/rRfDaZAXl6b5tvIv1TVeAnm9O+3+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005110; c=relaxed/simple;
-	bh=QQwEt7VSIvBikGCac88Bofue0zCMu1gHYn2Q/Kx54s0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eLH5xxeF7xvBmfeD0ZODrH8QT/oN/j02OV5IfyZcMdBlte7jKJgAtD0v2iLfgPowv61EcU3JiN3ElJyQG9Cq6F9+m7MG/abHunoLd2Jh5foRsR2RrbahFH4zB487Z/5YvcYfIp/vCLCxMkfSnks7TCCmbJIChVYN1btxbf5EuYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VY3RF3Qhkz4f3kG9;
-	Mon,  6 May 2024 22:18:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id A7EEC1A0568;
-	Mon,  6 May 2024 22:18:25 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP1 (Coremail) with SMTP id cCh0CgAH2RGu5jhmGgSzLw--.22965S8;
-	Mon, 06 May 2024 22:18:25 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: tytso@mit.edu,
-	jack@suse.com
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] jbd2: use bh_in instead of jh2bh(jh_in) to simplify code
-Date: Mon,  6 May 2024 22:17:58 +0800
-Message-Id: <20240506141801.1165315-7-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
-References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1715005089; c=relaxed/simple;
+	bh=QuPPpZCjbh9KHqVSDM8dTOKWSpW1SL8LzLyaE7eo07g=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=FeZPLXp+Q37OxBEutKLKHlzgdONKqso0iyr+exhmeG5NqIGHnQp3fuPvkhDwcB40FqJDh3g92279GqnYsjBzC/hPxrYJnoIMjbsviPVGe2QL2OMaI5p0si9M0AA+i2ZbQHeyhXOxkK/Qrxn6eRkM/eONrzqfwnZhz1zan1+U0JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eny5UMju; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715005088; x=1746541088;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=QuPPpZCjbh9KHqVSDM8dTOKWSpW1SL8LzLyaE7eo07g=;
+  b=eny5UMjupkN8TKmwZjzDWLUp4BIWOlYhJCFs+/MQikWg+1pfQTgHMjiG
+   vmVGIRy4H8AzuwQ8960Sgfs5gu8zPsyrP5bIjyb8M2VOeK2P8QZ4IovCm
+   7OueY2GrJ3XkySAzsjEJEMu/bIp2nD5DyWwXvUksmpc7jehbg7Gv6erk1
+   Hot0tl4yw4hm5GQg8S8mJUEsWLhsIpEYNTazQkk8xWBsgvhHrTiD2t1kO
+   wuQqEqI2r3+WwRFvrC9YpcfDdBW4+aYnVv0Moqyhqh9KHwj5+6VCdzoYN
+   FUc+d+G3PZrSVGpvu0RmaEqdIEiT6a2/W/87NqFAqTowafkdcuVjqvt9n
+   g==;
+X-CSE-ConnectionGUID: 5xDGAX0BS1q1oj4vGEwL1w==
+X-CSE-MsgGUID: uIdOGG3SQZyGFqRg5mvkRg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="28277591"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="28277591"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:18:07 -0700
+X-CSE-ConnectionGUID: z9ZDgbHbTQubAn77ZjhLaw==
+X-CSE-MsgGUID: QkMpvQWNQ1WnnIcE4Oi1Qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="32766651"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:18:05 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 6 May 2024 17:17:58 +0300 (EEST)
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+cc: bhelgaas@google.com, dave.hansen@linux.intel.com, x86@kernel.org, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: ce4100: Remove unused struct 'sim_reg_op'
+In-Reply-To: <20240506004647.770666-1-linux@treblig.org>
+Message-ID: <948a3829-96da-2708-60f8-f25546683436@linux.intel.com>
+References: <20240506004647.770666-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAH2RGu5jhmGgSzLw--.22965S8
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr1DuF1xCw4fGF1kCrW5GFg_yoWfCrc_Za
-	ykAw1kZwsIyF4DJw4rCw4xXr1jgw1rAr1ku3Z7tFyDCFnIvrn3Z3ZIkrn2yrnrua1xtrW5
-	X3ZruF4FyFy7JjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
-	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
-	Av7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY
-	6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7IU13l1DUUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=US-ASCII
 
-We save jh2bh(jh_in) to bh_in, so use bh_in directly instead of
-jh2bh(jh_in) to simplify the code.
+On Mon, 6 May 2024, linux@treblig.org wrote:
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- fs/jbd2/journal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> This doesn't look like it was ever used.
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 87f558bd2e8a..01e33b643e4d 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -363,8 +363,8 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
- 		new_folio = virt_to_folio(jh_in->b_frozen_data);
- 		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
- 	} else {
--		new_folio = jh2bh(jh_in)->b_folio;
--		new_offset = offset_in_folio(new_folio, jh2bh(jh_in)->b_data);
-+		new_folio = bh_in->b_folio;
-+		new_offset = offset_in_folio(new_folio, bh_in->b_data);
- 	}
- 
- 	mapped_data = kmap_local_folio(new_folio, new_offset);
+Don't start with "This" but spell what you're talking about out so it 
+can be read and understood without shortlog in Subject (or looking into 
+the code change).
+
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  arch/x86/pci/ce4100.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/arch/x86/pci/ce4100.c b/arch/x86/pci/ce4100.c
+> index 87313701f069e..f5dbd25651e0f 100644
+> --- a/arch/x86/pci/ce4100.c
+> +++ b/arch/x86/pci/ce4100.c
+> @@ -35,12 +35,6 @@ struct sim_dev_reg {
+>  	struct sim_reg sim_reg;
+>  };
+>  
+> -struct sim_reg_op {
+> -	void (*init)(struct sim_dev_reg *reg);
+> -	void (*read)(struct sim_dev_reg *reg, u32 value);
+> -	void (*write)(struct sim_dev_reg *reg, u32 value);
+> -};
+> -
+>  #define MB (1024 * 1024)
+>  #define KB (1024)
+>  #define SIZE_TO_MASK(size) (~(size - 1))
+> 
+
 -- 
-2.30.0
+ i.
 
 
