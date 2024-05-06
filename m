@@ -1,145 +1,163 @@
-Return-Path: <linux-kernel+bounces-169507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478FA8BC9A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DA98BC9A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADDD1F22643
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 573921F22548
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD741422C9;
-	Mon,  6 May 2024 08:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68819142621;
+	Mon,  6 May 2024 08:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E+Aqj4p4"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kI3S8JnZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B01541C64
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78781419A0;
+	Mon,  6 May 2024 08:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714984650; cv=none; b=T39WbVgSukKCkp8sL9snqfWjx1njMQlmJSZMhKi+ptn2Eoq2Oe4soAgw2O//RTFFL0oFINkce8f6OO2+Fx1tGj6+iC5uYxza2zPHY/LmMFikejF//YBLch/x86xWtVoBm/oJqZ7BomSi8TB7/Uvx+ZT85CVdy+w10SkAdLCyfLA=
+	t=1714984656; cv=none; b=W1RC5Y0FCAh6WNcHOYyxndDurAgw6m1LZNcD0Msb1QCtaK/lTZNdnziXXjrNYdfbBrgQxnr7e9q+Uy+Y6zkjFoBC8QUw/VX9/uW4SYpYY7hneKKNqfMxErJA6Rb7tHgCfb7lg2hZFG1P8mudDdq513YlUk2DQbxyPzwJt8Vvm2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714984650; c=relaxed/simple;
-	bh=WlmeKD9rl2Rp427dzQgV7vKcZv06lyOSKT16KjABjKs=;
+	s=arc-20240116; t=1714984656; c=relaxed/simple;
+	bh=wR7EtXhi0Bboa1M9frBGq1z8wCZ0rEmjQBLC5qtConE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=go2cWMHrYUrWijPGE+MGZ1AN3ojCiP/tyPtolKZQ7KFhrpLAd0Tevo+w5Ebnkbid5s8aLzDiUIMA1YC2pEPDj4hBnfBDSj9+J7pBZIS6w7zADG+VrCy8WH63dB9TdslFu/ctdSSQll0eP9u25CCxnFMdC4RHqep3wbyZCFhu67c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E+Aqj4p4; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34de61b7ca4so1167486f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 01:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1714984647; x=1715589447; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=afhrWXwI4RV8usxYlSerLXIupt6toB52OABQqb4bdK0=;
-        b=E+Aqj4p4AcDCyHV4G7YXLKjEIaRQjxy8vzpRlJVhcgW4vqY0qvRzC1xRmvEywWbRyR
-         nuW8/uGwx9v1u6cQzyepPyH1vPO2+YDwJCtb/zT0i6w+VM7ZKARKgJru2DN50mwJmTiE
-         mP94DFbSUS/1afzpi2mcLqk0ZAAnkSdYJ2xE/hcX9JbCfeG7nvpCiZy4mgWTo7U+GrYl
-         c8/BPCfmcTX7ZV6Q2TpJqXAIydAWzOAGLQCzuke1lIcByxdmyJtevnDgFzXq22UW7KwS
-         4t397WKHbivCoufC1Ux3/fTNEf30zCrANFC8WDEfaV9C2TJh111Y6xJQK0cMWKh5/6s+
-         crGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714984647; x=1715589447;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=afhrWXwI4RV8usxYlSerLXIupt6toB52OABQqb4bdK0=;
-        b=gnNHfCoHf1d0B1PFzV/mZ2N1WvQMobqmWZTrFUXCY8pSuOc3CAbrfVQboOuvhWKyAl
-         tmnLwBz1H/X42+HmiOpQDo5+ZWFBTjiybO5gf0MdFii5/J8nh4yb5H55sGQOHb5NRdj8
-         nXvHPZg/eTmmCDwrjzETPf40rOuPL7iS3xVIp7oPF6bPhD4GawoMyMBK0Vf4ps7CNnN9
-         I/F9Bp3w3ZYEV3LajrBctgeNg1tmcfr0A+nbsMTpqByo33wI45KlLPxCVKFEamh8O9Uf
-         eETFIoSsfuhpgf5F9hEf9G7F0TfFVQUdPTkqQctlQZqZGh8U6FHQnbRCA+pxJMBNyGwv
-         oDLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/EO4P9lUoI0g/yuMpwlwn1QWdo69Z9LkVUuTvXp57aJy4RY6aNugK/lToVpIcRx1l8HtoYTD1PzohLpUqmC289qEn6eZnP4NfIqZj
-X-Gm-Message-State: AOJu0YyWnTgY5XN8kJsUnl47DBM65BYVxkZ6uHA5Il2NhLDgA1wKnPQy
-	0QClXmgenebAqnBrgq+ld29TtQDPNk7DkS92CfqvmyRj9eStnfGQ9t6+ClQhbj0=
-X-Google-Smtp-Source: AGHT+IGV8NrR7pgOjUZQNfQV/VQkt+YMsq9MKLFk0tHMnITV6dwBQ9RSo42mHsdUqLmW9e2Fm0P4hg==
-X-Received: by 2002:adf:f3c9:0:b0:34f:4c0:83a4 with SMTP id g9-20020adff3c9000000b0034f04c083a4mr3257323wrp.40.1714984646741;
-        Mon, 06 May 2024 01:37:26 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id n10-20020a5d67ca000000b0034dcc70929dsm10082148wrw.83.2024.05.06.01.37.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 01:37:26 -0700 (PDT)
-Date: Mon, 6 May 2024 10:37:24 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: zhang warden <zhangwarden@gmail.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, mbenes@suse.cz, jikos@kernel.org,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch.h: Add comment to klp transition state
-Message-ID: <ZjiWxNLI3yS9nFI1@pathway.suse.cz>
-References: <20240429072628.23841-1-zhangwarden@gmail.com>
- <20240505210024.2veie34wkbwkqggl@treble>
- <F3E94528-EA85-4A15-8452-EA2DE20EEB88@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJwppu00RSfKLbB/bgrl3iiuAcLYswa/7odB5syPKjdfF42C9Jxaqq7xJKeMI1+CBcR3o2fi75f5lLTkAtgMZNH5VF7e9+LYg18mTBzg8rJapc/m9hin+DqDAYZYweCAotlEE7zMUJd87w1x/6znyla3Uq2d6epZCOiSPQBdaFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kI3S8JnZ; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714984655; x=1746520655;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wR7EtXhi0Bboa1M9frBGq1z8wCZ0rEmjQBLC5qtConE=;
+  b=kI3S8JnZqL0wPUOLYu8Yy2e+mMtl3MIBAsl/kFrL0KwKkdLQxnXlCgKr
+   V2pGY/iL1CLWN7wPNvbJuQ9y5uuS2Dg7b6n0zdn1ul0VkE2eaegHPDVHW
+   I1Wj88gVhHLWUJ8czwuy0G5BYBJK7my59XVg2fuw1KgSWfa0J4BLjxamX
+   TrMwHWz24kILCxfIctr9x5HEx1SVO4GPTgVIceF2bP7KTAlwCWP0mJVOh
+   TpvwlEf1b2aiPe/qKhc1pbkc6XKGbCFDy4Ub6lrRjPMKgRTbGh6rTm6Fl
+   ZKCQMvK+IXIvTk5pC3dSrx7LiU1ygHlFYMbKVZOGvyJ9lZsft325qyNBD
+   w==;
+X-CSE-ConnectionGUID: ndYnzye3TsurRZ+Wl+3TQg==
+X-CSE-MsgGUID: QH/LEyJkTv6nmlwQFa2TDA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="13665164"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="13665164"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 01:37:34 -0700
+X-CSE-ConnectionGUID: caXQkTNsR+ilWcZ6yPxNtg==
+X-CSE-MsgGUID: stXDMFGwQWKBRYRo23VYrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="28049190"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 01:37:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s3tqj-00000004bxR-2veA;
+	Mon, 06 May 2024 11:37:29 +0300
+Date: Mon, 6 May 2024 11:37:29 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Parker Newman <pnewman@connecttech.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v1 11/13] serial: 8250_exar: Use BIT() in exar_ee_read()
+Message-ID: <ZjiWyYlfd7NdevFq@smile.fi.intel.com>
+References: <20240502144626.2716994-1-andriy.shevchenko@linux.intel.com>
+ <20240502144626.2716994-12-andriy.shevchenko@linux.intel.com>
+ <702a9145-5bc1-c765-a1fa-278702741637@linux.intel.com>
+ <ZjPLQeTEKvt7B3mj@smile.fi.intel.com>
+ <20240503102632.112a34bd@SWDEV2.connecttech.local>
+ <ZjUEURneUmZ4nmbC@smile.fi.intel.com>
+ <20240503145633.1ad55378@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <F3E94528-EA85-4A15-8452-EA2DE20EEB88@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240503145633.1ad55378@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon 2024-05-06 10:04:26, zhang warden wrote:
+On Fri, May 03, 2024 at 02:56:33PM -0400, Parker Newman wrote:
+> On Fri, 3 May 2024 18:35:45 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, May 03, 2024 at 10:26:32AM -0400, Parker Newman wrote:
+> > > On Thu, 2 May 2024 20:20:01 +0300
+> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:  
+> > > > On Thu, May 02, 2024 at 07:08:21PM +0300, Ilpo Järvinen wrote:  
+> > > > > On Thu, 2 May 2024, Andy Shevchenko wrote:    
+
+..
+
+> > > > > >  	// Send address to read from
+> > > > > > -	for (i = 1 << (UART_EXAR_REGB_EE_ADDR_SIZE - 1); i; i >>= 1)
+> > > > > > -		exar_ee_write_bit(priv, (ee_addr & i));
+> > > > > > +	for (i = UART_EXAR_REGB_EE_ADDR_SIZE - 1; i >= 0; i--)
+> > > > > > +		exar_ee_write_bit(priv, ee_addr & BIT(i));
+> > > > > >  
+> > > > > >  	// Read data 1 bit at a time
+> > > > > >  	for (i = 0; i <= UART_EXAR_REGB_EE_DATA_SIZE; i++) {
+> > > > > > -		data <<= 1;
+> > > > > > -		data |= exar_ee_read_bit(priv);
+> > > > > > +		if (exar_ee_read_bit(priv))
+> > > > > > +			data |= BIT(i);    
+> > > > > 
+> > > > > Does this end up reversing the order of bits? In the original, data was left
+> > > > > shifted which moved the existing bits and added the lsb but the replacement
+> > > > > adds highest bit on each iteration?    
+> > > > 
+> > > > Oh, seems a good catch!
+> > > > 
+> > > > I was also wondering, but missed this somehow. Seems the EEPROM is in BE mode,
+> > > > so two loops has to be aligned.
+> > > >   
+> > > 
+> > > I just tested this and Ilpo is correct, the read loop portion is backwards as 
+> > > expected. This is the corrected loop:
+> > > 
+> > >     // Read data 1 bit at a time
+> > >     for (i = UART_EXAR_REGB_EE_DATA_SIZE; i >= 0; i--) {
+> > >         if (exar_ee_read_bit(priv))
+> > >             data |= BIT(i);
+> > >     }
+> > > 
+> > > I know this looks wrong because its looping from 16->0 rather than the 
+> > > more intuitive 15->0 for a 16bit value. This is actually correct however 
+> > > because according to the AT93C46D datasheet there is always dummy 0 bit
+> > > before the actual 16 bits of data.
+> > > 
+> > > I hope that helps,  
+> > 
+> > Yes, it helps and means that we need that comment to be added to the code. Is
+> > it the same applicable to the write part above (for address)? Because AFAIU
+> > mine is one bit longer than yours. Maybe in the original code is a bug? Have
+> > you tried to read high addresses?
 > 
+> The address portion is 6 bits, nothing extra, so what you have is correct.
 > 
-> > On May 6, 2024, at 05:00, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> > 
-> > On Mon, Apr 29, 2024 at 03:26:28PM +0800, zhangwarden@gmail.com wrote:
-> >> From: Wardenjohn <zhangwarden@gmail.com>
-> >> 
-> >> livepatch.h use KLP_UNDEFINED\KLP_UNPATCHED\KLP_PATCHED for klp transition state.
-> >> When livepatch is ready but idle, using KLP_UNDEFINED seems very confusing.
-> >> In order not to introduce potential risks to kernel, just update comment
-> >> to these state.
-> >> ---
-> >> include/linux/livepatch.h | 6 +++---
-> >> 1 file changed, 3 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-> >> index 9b9b38e89563..b6a214f2f8e3 100644
-> >> --- a/include/linux/livepatch.h
-> >> +++ b/include/linux/livepatch.h
-> >> @@ -18,9 +18,9 @@
-> >> #if IS_ENABLED(CONFIG_LIVEPATCH)
-> >> 
-> >> /* task patch states */
-> >> -#define KLP_UNDEFINED -1
-> >> -#define KLP_UNPATCHED  0
-> >> -#define KLP_PATCHED  1
-> >> +#define KLP_UNDEFINED -1 /* idle, no transition in progress */
-> >> +#define KLP_UNPATCHED  0 /* transitioning to unpatched state */
-> >> +#define KLP_PATCHED  1 /* transitioning to patched state */
-> > 
-> > Instead of the comments, how about we just rename them to
-> > 
-> >  KLP_TRANSITION_IDLE
-> >  KLP_TRANSITION_UNPATCHED
-> >  KLP_TRANSITION_PATCHED
-> > 
-> > which shouldn't break userspace AFAIK.
+> The original code was legacy, I cleaned it up but didn't change those loops. 
+> 
+> Your method works out the the same number of bits as the legacy method
+> which sets bit 5 and has to shift right 6 times to get i = 0 which ends the loop.
 
-Great idea! It is better then nothing.
+Okay, thank your for confirming the correctness of a new code!
 
-> Renaming them may be a better way as my previous patch. I would like to know why renaming KLP_*** into 
-> KLP_TRANSITION_*** will not break userspace while 
-> Renaming KLP_UNDEWFINED to KLP_IDLE would break the userspace.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-As I already wrote in [1], both "task->patch_state == KLP_UNDEFINED"
-and "KLP_IDLE" are misleading. They are not talking
-about the state of the patch but about the state of the transition.
 
-We could not rename the variables because it would break userspace.
-But we could rename the state names at least.
-
-[1] https://lore.kernel.org/r/Zg7EpZol5jB_gHH9@alley
-
-Best Regards,
-Petr
 
