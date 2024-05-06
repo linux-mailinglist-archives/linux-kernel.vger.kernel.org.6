@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-169966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD428BCFFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:21:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA638BCFFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BA79288852
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:20:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6D21B2794A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E7013E051;
-	Mon,  6 May 2024 14:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634AD13D26E;
+	Mon,  6 May 2024 14:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qZNk2uVI"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tboUKVnZ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC8F81211;
-	Mon,  6 May 2024 14:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E106513CF8D;
+	Mon,  6 May 2024 14:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005110; cv=none; b=cj5nSucAr5PYkEPjO6py4POy8sWqP1ZX3x7JgtzIQwrh66DdPF2+/3oU0qzRP2vcW2njFatmxMalPnEqjJKA1RWgfhTmOZV1CgDPIcF3O0S3mXWL0Rs5Viw7apQQcNAuLdUK6RqE4KVxXn7dsd1tiEOntsXJaju/eqzoX4WSP5c=
+	t=1715005152; cv=none; b=isqseuPQNSim1IKKMqps82MaqU+yNA4nIYsBFPukR2eN2sIF0U3vKVkrNoL39nGATx6to5Kgry1NPGlJ0Qft8BxFQxnqAGtRFomTTS64paH7n4nIPPKEPfy62mWlgG9wOX+Gw39SdYqLsgttMJXAf6P+qa2aICeqQbNnfjuZAxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005110; c=relaxed/simple;
-	bh=Vi05QVSG3iatwDAILN86QUEWJ3fE0RrPn+kvsUCWGws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eCE+H5cWpb/BS1KCngd5EcN28pLLT4azO39bmMf4AMmcJpHhKSQAsryHv5OsLPeXzP/D1MAhibTtS9Fs8OJVPGkujh9ClK0HN+8jAINCwifE3bwXKBQhWIkaQZa8oGDlPIptHtkOIQ0nrqIkycadlQWa/dj9957xzOIykv+pDhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qZNk2uVI; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715005106;
-	bh=Vi05QVSG3iatwDAILN86QUEWJ3fE0RrPn+kvsUCWGws=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qZNk2uVI+pZGR3kmAAkImZwSLKE9T+TahIUXH14Y7DA0Pnhl54iALE4oXsJK4KjMq
-	 l3djJ5Ie/y8OAuQJelPxMxPTHk/toXDpEj+cBGquJK5jnoHgZg5RTsXXrsN8/rXtmA
-	 0FTxMdNRP/UOBcTJ2JRvdnjmqjOIM9FXNe35X/pyLiOiQi3u98e+N5EiyRLdbb4qzo
-	 lvVgqpKVoTWeQ39JSe9EJUrwwbL7iP3bIzwK3o2nZNR+xPMAXap5I7bNRijl+zO/e+
-	 ICB9MvXQkAU51lwau8PqYmHqQMG+Le3wdbXBgrYcFS14L6RxnoinEbMJ2PeTQb+zs0
-	 zNGjrTFn187Kw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4BD99378020D;
-	Mon,  6 May 2024 14:18:25 +0000 (UTC)
-Message-ID: <2e3e49ff-8ace-498b-b2d0-54500e6f1e70@collabora.com>
-Date: Mon, 6 May 2024 16:18:24 +0200
+	s=arc-20240116; t=1715005152; c=relaxed/simple;
+	bh=FAKNQBGUKKFusDeatYhafNln5MX8xfJagk0O96bWMBA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VRcSW9h1vsrGlwjFNgE7oA2d5zMw1aut/2ReJCT0KB7EOvU/eucv+8SvFcPQyOe2rUu9igBU3OcUqDCEAyVE0eVRCEORPFsOpDW0HCyz9ACJC62OV2MUmmbjAY0XCC3zwSjJ/WFW+dWfI4Bwn/m/7lI9ps0U+t5sWB91hwlhsNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tboUKVnZ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 446EIr87017415;
+	Mon, 6 May 2024 09:18:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715005133;
+	bh=vGrj2I00iop+9WWPNabe2FeZlqglag8xAYaGInOumy0=;
+	h=From:To:CC:Subject:Date;
+	b=tboUKVnZRbaMKXkeRZ5lXnavmhrCdvLMiwi1/0w3mWhA0UAGGSRnrrBmu/9xNsJdn
+	 fsfPYZm0PxYXf8EqlXXvqJrrAdLHoXZRQqtaP2nt/vAJq3RMH9XWZf3P45nxZEPf9C
+	 dEQabbYjFVPSn7DILnG1TmLEj/qkE5QHZiVZh9wM=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 446EIrw3041746
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 6 May 2024 09:18:53 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 6
+ May 2024 09:18:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 6 May 2024 09:18:53 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 446EInOp083672;
+	Mon, 6 May 2024 09:18:50 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>
+CC: <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dan.carpenter@linaro.org>,
+        <hnagalla@ti.com>, <devarsht@ti.com>, <nm@ti.com>, <s-anna@ti.com>,
+        <u-kumar1@ti.com>
+Subject: [PATCH] remoteproc: k3-r5: Jump to error handling labels in start/stop errors
+Date: Mon, 6 May 2024 19:48:49 +0530
+Message-ID: <20240506141849.1735679-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] drm/mediatek: Add support for OF graphs
-To: Michael Walle <mwalle@kernel.org>,
- Alexandre Mergnat <amergnat@baylibre.com>, chunkuang.hu@kernel.org
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
- ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- wenst@chromium.org, kernel@collabora.com
-References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
- <1fc23530-89ba-4e36-9e9a-a1289f56a9bc@baylibre.com>
- <608fdbde-ad06-45ec-9771-18aa9f002f2d@collabora.com>
- <D12H4GDJJEUF.1Y91H9RMUIX20@kernel.org>
- <50be68dc-b86a-4334-9f83-43c6fda2c271@collabora.com>
- <1b8fa907-b48f-4ebe-bc17-3de1d7c0d062@collabora.com>
- <D12LA0QKEFRQ.68TZEVQZ7FJB@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <D12LA0QKEFRQ.68TZEVQZ7FJB@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Il 06/05/24 15:17, Michael Walle ha scritto:
-> Hi Angelo,
-> 
-> On Mon May 6, 2024 at 1:22 PM CEST, AngeloGioacchino Del Regno wrote:
->>> The problem with this is that you need DDP_COMPONENT_DRM_OVL_ADAPTOR... which is
->>> a software thing and not HW, so that can't be described in devicetree.
->>>
->>> The only thing this series won't deal with is exactly that.
->>
->> Sorry, no, I got confused.
->>
->> The series *does* already deal with that, as the pipeline is built before the check
->> for OVL_ADAPTOR components, so that will get probed.
-> 
-> Are you sure? Because who is actually adding the OVL_ADAPTOR to the
-> path? It looks like your patch will walk the graph and add all the
-> components according to their compatible string. And since the
-> OVL_ADAPTOR is virtual and doesn't have a node..
-> 
+In case of errors during core start operation from sysfs, the driver
+directly returns with the -EPERM error code. Fix this to ensure that
+mailbox channels are freed on error before returning by jumping to the
+'put_mbox' error handling label. Similarly, jump to the 'out' error
+handling label to return with required -EPERM error code during the
+core stop operation from sysfs.
 
-I shouldn't look at code while having a flu.
+Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs")
 
-	if (mtk_drm_find_mmsys_comp(private, DDP_COMPONENT_DRM_OVL_ADAPTOR)) {
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+As stated in the bug-report[0], Smatch complains that:
+drivers/remoteproc/ti_k3_r5_remoteproc.c:583 k3_r5_rproc_start() warn: missing unwind goto?
+drivers/remoteproc/ti_k3_r5_remoteproc.c:651 k3_r5_rproc_stop() warn: missing unwind goto?
 
-..but yes nothing adds the mmsys_comp for OVL_ADAPTOR.
+This patch addresses the warnings by jumping to appropriate error
+labels in case an error occurs during start/stop operation from sysfs.
 
-Needs to be addressed, will do that asap.
+[0]-https://lore.kernel.org/all/acc4f7a0-3bb5-4842-95a5-fb3c3fc8554b@moroto.mountain/
+
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 1799b4f6d11e..50e486bcfa10 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -580,7 +580,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+ 			dev_err(dev, "%s: can not start core 1 before core 0\n",
+ 				__func__);
+-			return -EPERM;
++			ret = -EPERM;
++			goto put_mbox;
+ 		}
+ 
+ 		ret = k3_r5_core_run(core);
+@@ -648,7 +649,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ 		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+ 			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+ 				__func__);
+-			return -EPERM;
++			ret = -EPERM;
++			goto out;
+ 		}
+ 
+ 		ret = k3_r5_core_halt(core);
+-- 
+2.34.1
+
 
