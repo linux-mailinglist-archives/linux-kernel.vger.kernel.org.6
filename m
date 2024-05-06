@@ -1,117 +1,78 @@
-Return-Path: <linux-kernel+bounces-170241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BAC88BD3FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:44:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD198BD401
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0026B1F23351
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184892858FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5CF157E94;
-	Mon,  6 May 2024 17:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5024F157A47;
+	Mon,  6 May 2024 17:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CF041HXr"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+3wChS0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC93A15749A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 17:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AAA15749B;
+	Mon,  6 May 2024 17:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715017442; cv=none; b=BhkRmo0ej/hVCWrWkK4vKIxTyZqKgZCAfKlBeZl5pVijpaC9iLlxQLzPe2FANtzIFPTSsud4wVcBbCWDz2QvVFGWSD3iSX939N4XjtdlSETEBTbvw5TPxERr050SmsvXOYC5e9KWm7/wOxctx/X5Sp5oH3f6cqN9EJE1fg7tBDE=
+	t=1715017500; cv=none; b=Qbqd1O5X66okXX5/9I1IqvWDUe92dSlWRX20U5r9/Y3/IqSu4IhRUS6fDzT+bhjeeo4HYPlyr8dZGK4mPO5EWqTKeq1UdKHhOdW8oTra+g5/Ihc+KHAOVeuvamTvWFBKDxH5kSRvxbgL/K9lueUsL/Q9/zzt5Q6XYVVpHn4QWjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715017442; c=relaxed/simple;
-	bh=NrQdyQAmxtGDrr/un2msxGNjav0moWDiCcc8IHL04QU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RnszKlrS+XsQOBdfaw7Pi3YfOboTm7K1z7zas0t4hrd/Uujg4UDjHibDaBFQ3EYGcQ5giZurT+ljqnq/0pSyxGJ1hSnSeOFpGO4x6jN8RZk/VtvdfWt633czKDFZCd1ePiORnGYObKqjAAeu2kUQao8NKJrh1cjkcqq7hx+X4gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CF041HXr; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-23dd4dca5dbso1022171fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 10:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1715017440; x=1715622240; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NrQdyQAmxtGDrr/un2msxGNjav0moWDiCcc8IHL04QU=;
-        b=CF041HXrrPXGfxUu58vlQv3lFaMywi9n3PsXrTeF+uLEUQ4A8OADFpBy8jULsKeekL
-         bAP4dt56m7ZusIOCRcsF1mJ0Brp/3NtOwdjz3e5RcmxhjsxIz49TZl+Z+KZl8rf0K0lA
-         1Ds0UK6gAEvaahfVG5VuV1lCtcqwpXDHGbkn4uYOeTjnnCc+axEtKmpAt9I3KMckgBRJ
-         Zpcj8CL48A3+OuSSiIylxaBt48i1tUg67TkNmuLAgRMTQdTcUJWmG7WLnEnl6f/nnze3
-         LjZUxbgOQFT8L54FqQ0f6d3Nl6a6z7YecC1JfqxtCi+f44ThBXyR+kr6SwHo9os6JXkh
-         KlDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715017440; x=1715622240;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NrQdyQAmxtGDrr/un2msxGNjav0moWDiCcc8IHL04QU=;
-        b=WuY4d/+F3tikZSkn8fx0/G1Fb+mDUl+oWi6DabwFALKrXfQT9bARSth8kNLd87qviJ
-         XRah62Mxs4gTRVzqX4SbOwSN5jvZ6Uf2nhCK9057080J/cL/VM+yTS3QgzVrewBHmajs
-         7ZCmOhMgghl/6q4FlK+8maj/+BTa9qMxGgWazilgdYWm2EC+tomlKW3EHDrZgPTJKosl
-         I7dxbvZdouWV9hOqvuY3hytUBmHHtL7BiqAKypezsZgql+3FqFHJRS438baoTLpg7Z/c
-         UW7Sj+CNYf8Ig6i+QSGzhOkMdpAV9uE1ul6JGiP+YdPkkAFtc3tNpKuYiCxVwOEKnnw4
-         U2lA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzVo7sQkNzPKAdVtKIf3oa1xkPed88e0lDAwlzkNFHD4dkXWjrJuKhFfCbOQR6OKgpTbvthk1AXOSKXN4YJu3jGgjr/DEekNOl9msE
-X-Gm-Message-State: AOJu0YzMpdYv15K+S25tjW5wtZcChMLYuTzM1S/uyuwT91vD6DiipyBK
-	IC7u6EAh1VpsERQ1LV88aw+xmMD/t91wl3sTpYvPkfHrdfKz9GwZxJ63ww34Bn0=
-X-Google-Smtp-Source: AGHT+IFfws1Gcb6acoXVWBj5aeFUz+NzC1+evoEYOr7ky0Ifa7neFHPAAV511Z8X/ku679UyYkztmg==
-X-Received: by 2002:a05:6871:3a10:b0:23c:49e2:bac2 with SMTP id 586e51a60fabf-24019c343admr143784fac.18.1715017439642;
-        Mon, 06 May 2024 10:43:59 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id co13-20020a05683065cd00b006ee2fc97885sm2030608otb.72.2024.05.06.10.43.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 10:43:58 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1s42NZ-003UHM-8o;
-	Mon, 06 May 2024 14:43:57 -0300
-Date: Mon, 6 May 2024 14:43:57 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-Cc: Alexey Kardashevskiy <aik@amd.com>, mpe@ellerman.id.au,
-	tpearson@raptorengineering.com, alex.williamson@redhat.com,
-	linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
-	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
-	naveen.n.rao@linux.ibm.com, gbatra@linux.vnet.ibm.com,
-	brking@linux.vnet.ibm.com, aik@ozlabs.ru, ruscur@russell.cc,
-	robh@kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au,
-	kvm@vger.kernel.org, msuchanek@suse.de, oohall@gmail.com,
-	mahesh@linux.ibm.com, jroedel@suse.de, vaibhav@linux.ibm.com,
-	svaidy@linux.ibm.com
-Subject: Re: [RFC PATCH v2 0/6] powerpc: pSeries: vfio: iommu: Re-enable
- support for SPAPR TCE VFIO
-Message-ID: <20240506174357.GF901876@ziepe.ca>
-References: <171450753489.10851.3056035705169121613.stgit@linux.ibm.com>
- <20240501140942.GA1723318@ziepe.ca>
- <703f15b0-d895-4518-9886-0827a6c4e769@amd.com>
- <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
+	s=arc-20240116; t=1715017500; c=relaxed/simple;
+	bh=D4w+D4H9B5FgKfUeBJnwbBIIjf7Fdp1Gec6yJvtU8so=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=k279QFqwW5NWmVaoun/I8ZG4Qy/dlbQDqzXMaSpmJZmzHDVRPRRU+qCx/s5mKF6hWZG88M5aUbvILvQpBW0x0fzmDYaKa3IQx8VlT0Hx7fiq+sYaKsNwfq/a7Rz2rgikf+YBZMFUO0sP20Ih6K8mqXk7S7UUhPy1MdaXjnv3f4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+3wChS0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5713EC116B1;
+	Mon,  6 May 2024 17:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715017500;
+	bh=D4w+D4H9B5FgKfUeBJnwbBIIjf7Fdp1Gec6yJvtU8so=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=E+3wChS0uSo7N/UUsFkR8gUuxg0q3CqJ3pTCIcaQcWwm5i5fYYBr+mKR7Ez66Cf8V
+	 dTR3sXg3mWqDBVCe+HPom5swakWaexOIaSFozu5wv3cQiQ3c8SwVMYWCLHFskM6Ffp
+	 Ew+Vy5NmbL9KCeuLpc4pyDHyQdeOge7FwxWw+HSVEv4N9dATdZnsUUbu/P2mBMMDCP
+	 5uxXQcsYd2JwMHpz96RPhltum90YrJaucKMTShWyoWxNN/DIfK7HQMnVO8cccFqm4p
+	 FzZXJGJDbzd2v8BaxYf0MYpnWtf13S2pzOK9I+DPCMTLfq+eQ/gaaOC0rFJe6YDogg
+	 NvDebQ6lQhUtw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4B65DC43334;
+	Mon,  6 May 2024 17:45:00 +0000 (UTC)
+Subject: Re: [GIT PULL] slab fixes for 6.9-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <eea90337-bea4-444b-8f92-576ee242a497@suse.cz>
+References: <eea90337-bea4-444b-8f92-576ee242a497@suse.cz>
+X-PR-Tracked-List-Id: <patches.lists.linux.dev>
+X-PR-Tracked-Message-Id: <eea90337-bea4-444b-8f92-576ee242a497@suse.cz>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.9-rc7-fixes
+X-PR-Tracked-Commit-Id: cd7eb8f83fcf258f71e293f7fc52a70be8ed0128
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ee5b455b0adae9ecafb38b174c648c48f2a3c1a5
+Message-Id: <171501750029.5526.8089414495054360166.pr-tracker-bot@kernel.org>
+Date: Mon, 06 May 2024 17:45:00 +0000
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, patches@lists.linux.dev, Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
 
-On Sat, May 04, 2024 at 12:33:53AM +0530, Shivaprasad G Bhat wrote:
-> We have legacy workloads using VFIO in userspace/kvm guests running
-> on downstream distro kernels. We want these workloads to be able to
-> continue running on our arch.
+The pull request you sent on Mon, 6 May 2024 12:03:11 +0200:
 
-It has been broken since 2018, I don't find this reasoning entirely
-reasonable :\
+> git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.9-rc7-fixes
 
-> I firmly believe the refactoring in this patch series is a step in
-> that direction.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ee5b455b0adae9ecafb38b174c648c48f2a3c1a5
 
-But fine, as long as we are going to fix it. PPC really needs this to
-be resolved to keep working.
+Thank you!
 
-Jason
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
