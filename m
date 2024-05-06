@@ -1,105 +1,150 @@
-Return-Path: <linux-kernel+bounces-170340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2B68BD567
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:26:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290368BD56A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34E8F284E97
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8077284FAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6D2159569;
-	Mon,  6 May 2024 19:26:09 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DAA159595;
+	Mon,  6 May 2024 19:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Qln/Agtl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2E015920A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2341159206;
+	Mon,  6 May 2024 19:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715023568; cv=none; b=tYUpkUnrpNuPgC2EPvoAgWtRFr/NYy/26Lo1QtrPYRCSl8b91XPn3BSSQZzjM4E9j7KhrdnUmkWCAjYHzE9HXKJ1lF5gd6m52JaD8psyoFcej9YSsAay9p2+NNxGqY74F1NyERdRyxX5FEWaTm//MjnO9Y3PU6mO72oTdP+nksg=
+	t=1715023573; cv=none; b=VBRS0qk9A0jWio1QsdcdAF5z/Dh+RSB5JQt5jLz/aWZ6yR/L4ky4jmBATiXqVSQQd3IhY6TejWML38sd/bjieek9PuKrZSBHzWqbIvULLNpHJWgOLBBepHsdz9bHlL+ScsM8RAys0DiTYHmJf/1mokXwFtaBclia8TUZiZrzKno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715023568; c=relaxed/simple;
-	bh=5NvJh0n1w6lBWPnK2SnxtXvu5LZHpQLhtLGSSaX2Mk4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XaYIIlghKCHJTs0UFC3hCI4zIfp3MskNgSV7poTjgwxpFrGobZNfdEp3GpiA2JqjVJqRjob6WbCwMg1sjauFBHk7xCPDFXWTS2p1MQBVvx0nuqwjopV4DKf5DLzgewMjvfaqfR1A3Q2pBkZuf9W1tM2SpR6NTdtNtfiy6JvuAMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 7b050ce9-0bde-11ef-abf4-005056bdd08f;
-	Mon, 06 May 2024 22:26:05 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 6 May 2024 22:26:04 +0300
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org,
-	Krishna Potthuri <sai.krishna.potthuri@amd.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] pinctrl: zynqmp: Support muxing individual pins
-Message-ID: <ZjkuzKEt2aiHIwg_@surfacebook.localdomain>
-References: <20240503162217.1999467-1-sean.anderson@linux.dev>
- <20240503162217.1999467-3-sean.anderson@linux.dev>
+	s=arc-20240116; t=1715023573; c=relaxed/simple;
+	bh=PUAyAttn0BKIfeZD4/qDnrmM92r9QENORaSiXUsLREY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuRVLuTKFqS+o2iWiwFHZNF9EDMFUzOzVaNwWZu/DRjZewxhVxL8c3E2J8PwZlGZZH/pFDAbwHe+FY0N24q8iwZot1yNJFR2fTFSmyXKhJN0EhLAXUZjO0GJxcg5ImyjqtMpr+9kSYCqrgN6YHTzB0T2K9qxwS2J/GUh5/qvMG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Qln/Agtl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=LA25mCBNrIfnRuq2EfMXoCZDT7uYIaOWZsOvrNhBoRQ=; b=Ql
+	n/AgtlaC1Cbc3LJq3x162IdcFC5YgfoKFBFlOWkUK7zlxvX1xMejO1sdAf1sbQf8nNIZplLcTiSLr
+	4A8AuCIMrA+w0MdAjUbOmP8gvvHAJsZE+6SlQif6s/Ju2Jw8aFDjTAKF1xJHywg+YTLQkZPQGBT+O
+	qZFZwQ602pDbX6o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s43yR-00EnAX-VK; Mon, 06 May 2024 21:26:07 +0200
+Date: Mon, 6 May 2024 21:26:07 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	hkallweit1@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] net: phy: bcm54811: Add LRE registers definitions
+Message-ID: <b3c6fe44-f251-441a-bb0a-8617aac5c1f2@lunn.ch>
+References: <20240506144015.2409715-1-kamilh@axis.com>
+ <20240506144015.2409715-3-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240503162217.1999467-3-sean.anderson@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240506144015.2409715-3-kamilh@axis.com>
 
-Fri, May 03, 2024 at 12:22:17PM -0400, Sean Anderson kirjoitti:
-> While muxing groups of pins at once can be convenient for large
-> interfaces, it can also be rigid. This is because the group is set to
-> all pins which support a particular function, even though not all pins
-> may be used. For example, the sdhci0 function may be used with a 8-bit
-> eMMC, 4-bit SD card, or even a 1-bit SD card. In these cases, the extra
-> pins may be repurposed for other uses, but this is not currently
-> allowed.
+On Mon, May 06, 2024 at 04:40:14PM +0200, Kamil Horák - 2N wrote:
+> Add the definitions of LRE registers for Broadcom BCM5481x PHY
+> ---
+>  include/linux/brcmphy.h | 91 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 90 insertions(+), 1 deletion(-)
 > 
-> Add a new group for each pin which can be muxed. These groups are part
-> of each function the pin can be muxed to. We treat group selectors
-> beyond the number of groups as "pin" groups. To set this up, we
-> initialize groups before functions, and then create a bitmap of used
-> pins for each function. These used pins are appended to the function's
-> list of groups.
+> diff --git a/include/linux/brcmphy.h b/include/linux/brcmphy.h
+> index 1394ba302367..9c0b78c1b6fb 100644
+> --- a/include/linux/brcmphy.h
+> +++ b/include/linux/brcmphy.h
+> @@ -270,16 +270,105 @@
+>  #define BCM5482_SSD_SGMII_SLAVE		0x15	/* SGMII Slave Register */
+>  #define BCM5482_SSD_SGMII_SLAVE_EN	0x0002	/* Slave mode enable */
+>  #define BCM5482_SSD_SGMII_SLAVE_AD	0x0001	/* Slave auto-detection */
+> +#define BCM5482_SSD_SGMII_SLAVE_AD	0x0001	/* Slave auto-detection */
+> +
+> +/* BroadR-Reach LRE Registers. */
+> +#define MII_BCM54XX_LRECR		0x00	/* LRE Control Register                    */
+> +#define MII_BCM54XX_LRESR		0x01	/* LRE Status Register                     */
+> +#define MII_BCM54XX_LREPHYSID1		0x02	/* LRE PHYS ID 1                           */
+> +#define MII_BCM54XX_LREPHYSID2		0x03	/* LRE PHYS ID 2                           */
+> +#define MII_BCM54XX_LREANAA		0x04	/* LDS Auto-Negotiation Advertised Ability */
+> +#define MII_BCM54XX_LREANAC		0x05	/* LDS Auto-Negotiation Advertised Control */
+> +#define MII_BCM54XX_LREANPT		0x06	/* LDS Ability Next Page Transmit          */
+> +#define MII_BCM54XX_LRELPA		0x07	/* LDS Link Partner Ability                */
+> +#define MII_BCM54XX_LRELPNPM		0x08	/* LDS Link Partner Next Page Message      */
+> +#define MII_BCM54XX_LRELPNPC		0x09	/* LDS Link Partner Next Page Control      */
+> +#define MII_BCM54XX_LRELDSE		0x0a	/* LDS Expansion Register                  */
+> +#define MII_BCM54XX_LREES		0x0f	/* LRE Extended Status                     */
 
-..
+Please look at these side by side to standard C22 registers. Which are
+different? Is LRECR actually different to BMCR that it needs it own
+define? Is LRESR different enought to BMSR that it needs its own
+define? Does the ID registers use a different format?
 
-> +			for (pin = 0; pin < groups[resp[i]].npins; pin++)
-> +				set_bit(groups[resp[i]].pins[pin], used_pins);
+> +/* LRE control register. */
+> +#define LRECR_RESET			0x8000	/* Reset to default state      */
+> +#define LRECR_LOOPBACK			0x4000	/* Internal Loopback           */
+> +#define LRECR_LDSRES			0x2000	/* Restart LDS Process         */
+> +#define LRECR_LDSEN			0x1000	/* LDS Enable                  */
+> +#define LRECR_PDOWN			0x0800	/* Enable low power state      */
+> +#define LRECR_ISOLATE			0x0400	/* Isolate data paths from MII */
+> +#define LRECR_SPEED100			0x0200	/* Select 100 Mbps             */
+> +#define LRECR_SPEED10			0x0000	/* Select 10 Mbps              */
+> +#define LRECR_4PAIRS			0x0020	/* Select 4 Pairs              */
+> +#define LRECR_2PAIRS			0x0010	/* Select 2 Pairs              */
+> +#define LRECR_1PAIR			0x0000	/* Select 1 Pair               */
+> +#define LRECR_MASTER			0x0008	/* Force Master when LDS disabled */
+> +#define LRECR_SLAVE			0x0000	/* Force Slave when LDS disabled  */
 
-Why atomic bit operation?
+Reverse the order of these, and then compare them to:
 
-..
+/* Basic mode control register. */
+#define BMCR_SPEED1000          0x0040  /* MSB of Speed (1000)         */
+#define BMCR_CTST               0x0080  /* Collision test              */
+#define BMCR_FULLDPLX           0x0100  /* Full duplex                 */
+#define BMCR_ANRESTART          0x0200  /* Auto negotiation restart    */
+#define BMCR_ISOLATE            0x0400  /* Isolate data paths from MII */
+#define BMCR_PDOWN              0x0800  /* Enable low power state      */
+#define BMCR_ANENABLE           0x1000  /* Enable auto negotiation     */
+#define BMCR_SPEED100           0x2000  /* Select 100Mbps              */
+#define BMCR_LOOPBACK           0x4000  /* TXD loopback bits           */
+#define BMCR_RESET              0x8000  /* Reset to default state      */
 
-> +	fgroups = devm_kcalloc(dev, func->ngroups + npins, sizeof(*fgroups),
-
-size_add() from overflow.h.
-
-> +			       GFP_KERNEL);
-> +	if (!fgroups)
-> +		return -ENOMEM;
-
-..
-
-> +	for (i = 0; i < func->ngroups; i++) {
-> +		fgroups[i] = devm_kasprintf(dev, GFP_KERNEL, "%s_%d_grp",
-> +					    func->name, i);
-> +		if (!fgroups[i])
-> +			return -ENOMEM;
-> +	}
-
-Hmm... Can this benefit from devm_kasprintf_strarray()?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Drop any which are the same, and just add defined for those which are
+different.
 
 
+> +
+> +/* LRE status register. */
+> +#define LRESR_ERCAP			0x0001	/* Ext-reg capability          */
+> +#define LRESR_JCD			0x0002	/* Jabber detected             */
+> +#define LRESR_LSTATUS			0x0004	/* Link status                 */
+> +#define LRESR_LDSABILITY		0x0008	/* Can do LDS                  */
+
+What does LDS mean? In BMSR this bit is about auto-neg. How does LDS
+differ from auto-neg?
+
+Ideally, where the functionality is the same, please use the existing
+definitions. It makes it easier for somebody who knows C22 to look at
+the code and understand it. And it makes it easier to spot where the
+differences actually are.
+
+	Andrew
 
