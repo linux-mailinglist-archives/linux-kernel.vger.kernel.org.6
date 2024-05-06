@@ -1,194 +1,161 @@
-Return-Path: <linux-kernel+bounces-169935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F268BCF93
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448F68BCF96
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81C0CB23A31
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00517287E2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C0E8120A;
-	Mon,  6 May 2024 14:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iPal3w38"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96058175E;
+	Mon,  6 May 2024 14:02:27 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D807E7C6D5
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB25811F7;
+	Mon,  6 May 2024 14:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715004109; cv=none; b=BGUzM2dszPQcUlkrpnY2xkaJd/d7MKhEk2Q0z40o/xzwxwz7fEDUm8E/vuEf2qiIhULJeSUJ2+s9jURdCvsjDpLdkIXnjmNCyJzlIXL4A7zVvayvI8UKgqmzkz6dWVX7WcuMhwK+xuD7h0mPvD3/NVFLO5dv4FsXMXBhc6kJwRI=
+	t=1715004147; cv=none; b=JeOSdDIM6flGsGZNLiL8s3ADaeAH+3gbSFeqlLqzdo0JTpsrTGVCKOIcEaPgZFt1crlJgy6TtLAgEMLX5D72iUAY+3umTP+nqIM1xtfk6XnPIlC4IUEqhx6p07HI3iqk1U54zkbP7qFrZ+nj3dIu5q+wh9xU/KZMhlKgG+ewuew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715004109; c=relaxed/simple;
-	bh=QdBWMUSn7gZXmXCHj2RcAdJODiJKBW/D4uMUKrPsQ9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lk8xgvMvRZhnKVbpiqE5Uhq0oAHVYR644fy1I6weAAp7Glwyye+wKH2sD+W0tgVt+drFekFOslH4LJprs5yt7Wn3ZV2zpm8C1VG8lU6NA4WlX5Abw0c4230ORKsvNJlJW78foYS8ZTPHSG4OMxhLFQxxmjs9XKAQL2JV67nXP7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iPal3w38; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715004106;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oa4YbBmlzkI63abCw2z4fEd9n5o3yLiXeNXHymLCUuE=;
-	b=iPal3w38+4DU6qX+Ax8iDGoxGS1THKcmg2kBY0r+x/tg2cQ5JrX/9tIF3thwJkzOdk//pG
-	Xlg9fgfatbX4s6oc1I0SpPFFQ+ce8tbj4cLeXYeF/6NgCLG4257QCI9VGquvM9MwmN2ztv
-	1Vi4KBdoJNn+fh5Sr6iN1QDUwF6oruc=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-KbedAPxNOdSoUoqaBG7FWw-1; Mon, 06 May 2024 10:01:45 -0400
-X-MC-Unique: KbedAPxNOdSoUoqaBG7FWw-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-571bdbca3c8so363688a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:01:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715004104; x=1715608904;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oa4YbBmlzkI63abCw2z4fEd9n5o3yLiXeNXHymLCUuE=;
-        b=JIcr2eZNi8X3pCNCFUvEC61tVwzGCuwIQWaKNZa0JSiQM7P0RI4t9Ca46qvLnVUH6d
-         vs6ExvKcytQmprLBlVpkLI34ISbuW1+sWMJNpI79SAcuvhezXu5PyT9cuY9QrIecLyS9
-         JKXAB4oJcChBMbjeBK5wQEUdPiBxuY3ezv1YXD5EK1S0FhrFLWaw6l0PWUtVEr5scYVx
-         zCpQfGx9Q1axIOXPHUu8e4MrRhpEaiKAR5zxsMdVZRyNx5v6r6OkIsF79fyS9R8g3T0T
-         bgPyxfRZlCinglFCFDDFfpP9bw/kY8JaTnq0KvcBDKVq7yNwrDGdkjLC2lC5HroqF3ML
-         EKgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXv0TPgJs8AIxV7Mi3ZcqeSfhUvsZ/yD9/BjcbQCsj68YGI+uycNmLZTDIQek18OYtwrJPaVdpWc//AFGBSj4HVric7MZF61ybppTAO
-X-Gm-Message-State: AOJu0YxDipw5r2hiHy+b92J/d1TB9VvBxilhsurxso6EFUTlC5N2/tLV
-	gC2+wHiN6r2kXDvSMzC1RoK6rJ+wjv1s/GVK5B/XrWK2CF5pyzV3aM54QJxFhGUidNuS2MhukeO
-	cCWLwAvOUxguAdLOMXbRcQHBT1cD30UbVcAkitpVKoVJmsJBYD4Mi07U5GYiS1w==
-X-Received: by 2002:a50:9513:0:b0:570:5b70:3407 with SMTP id u19-20020a509513000000b005705b703407mr8444055eda.10.1715004104189;
-        Mon, 06 May 2024 07:01:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqtTHezMetmGx7QkF/7UHxNmAFJAxewY94xyi4UnLpcMz8eE3WVuF2BLvBhkQkOqr8E1iw4Q==
-X-Received: by 2002:a50:9513:0:b0:570:5b70:3407 with SMTP id u19-20020a509513000000b005705b703407mr8444031eda.10.1715004103794;
-        Mon, 06 May 2024 07:01:43 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id z5-20020aa7c645000000b00572b0a44e42sm5224207edr.26.2024.05.06.07.01.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 07:01:43 -0700 (PDT)
-Message-ID: <cbe5a743-d8be-4b0e-99c4-e804fbadc099@redhat.com>
-Date: Mon, 6 May 2024 16:01:42 +0200
+	s=arc-20240116; t=1715004147; c=relaxed/simple;
+	bh=a/rC19e2I9iHG3TMQmCrv2WuR6H592ekcahsLjx1u+I=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PPY8rWEN+ZwCu3LKT4Ajbsf3yAgJmBDMXqd0mqtit3fZMTSj5p8e2hDGt/iC9VX00vUcZ8EPHbPJE8LEJdulwLSPoXAc9tw2YLfBSfhipVfupz9iKYw0TQot5dbvvNCZbiCd3Iq9ZHH/KRkQQbEvMy1yF86PXK4/DUObVKtZSCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY34g13G2z4f3lfy;
+	Mon,  6 May 2024 22:02:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id E08041A0179;
+	Mon,  6 May 2024 22:02:20 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgDnCg7q4jhmTvnUMA--.48428S3;
+	Mon, 06 May 2024 22:02:20 +0800 (CST)
+Subject: Re: [RFC PATCH v4 33/34] ext4: don't mark IOMAP_F_DIRTY for buffer
+ write
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+ hch@infradead.org, djwong@kernel.org, willy@infradead.org,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+ <20240410150313.2820364-5-yi.zhang@huaweicloud.com>
+ <ZjILCPNZRHeazSqV@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <349d0d44-2ffc-6177-cf00-db7a3f48b60d@huaweicloud.com>
+Date: Mon, 6 May 2024 22:02:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-To: Maxime Ripard <mripard@redhat.com>, Sumit Semwal
- <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Lennart Poettering <mzxreary@0pointer.de>,
- Robert Mader <robert.mader@collabora.com>,
- Sebastien Bacher <sebastien.bacher@canonical.com>,
- Linux Media Mailing List <linux-media@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- linaro-mm-sig@lists.linaro.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Milan Zamazal <mzamazal@redhat.com>,
- Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <20240506-dazzling-nippy-rhino-eabccd@houat>
- <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
+In-Reply-To: <ZjILCPNZRHeazSqV@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgDnCg7q4jhmTvnUMA--.48428S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxur1DAF1DKw4rZr1kAF47Jwb_yoW5ArWDpr
+	Z7Ka1rX3WkXry7ur4IqF47ZrZ7tayUKr4DGrW8tw12y398Gw1xtF1FgFyrAF98Gr1fWw42
+	q3Wjqr97Ww17AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUFDGOUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Sima,
-
-On 5/6/24 3:38 PM, Daniel Vetter wrote:
-> On Mon, May 06, 2024 at 02:05:12PM +0200, Maxime Ripard wrote:
->> Hi,
+On 2024/5/1 17:27, Dave Chinner wrote:
+> On Wed, Apr 10, 2024 at 11:03:12PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
 >>
->> On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
->>> Hi dma-buf maintainers, et.al.,
->>>
->>> Various people have been working on making complex/MIPI cameras work OOTB
->>> with mainline Linux kernels and an opensource userspace stack.
->>>
->>> The generic solution adds a software ISP (for Debayering and 3A) to
->>> libcamera. Libcamera's API guarantees that buffers handed to applications
->>> using it are dma-bufs so that these can be passed to e.g. a video encoder.
->>>
->>> In order to meet this API guarantee the libcamera software ISP allocates
->>> dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
->>> the Fedora COPR repo for the PoC of this:
->>> https://hansdegoede.dreamwidth.org/28153.html
+>> The data sync dirty check in ext4_inode_datasync_dirty() is expansive
+>> since jbd2_transaction_committed() holds journal->j_state lock when
+>> journal is enabled, it costs a lot in high-concurrency iomap buffered
+>> read/write paths, but we never check IOMAP_F_DIRTY in these cases, so
+>> let's check it only in swap file, dax and direct IO cases. Tested by
+>> Unixbench on 100GB ramdisk:
 >>
->> For the record, we're also considering using them for ARM KMS devices,
->> so it would be better if the solution wasn't only considering v4l2
->> devices.
+>> ./Run -c 128 -i 10 fstime fsbuffer fsdisk
 >>
->>> I have added a simple udev rule to give physically present users access
->>> to the dma_heap-s:
->>>
->>> KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
->>>
->>> (and on Rasperry Pi devices any users in the video group get access)
->>>
->>> This was just a quick fix for the PoC. Now that we are ready to move out
->>> of the PoC phase and start actually integrating this into distributions
->>> the question becomes if this is an acceptable solution; or if we need some
->>> other way to deal with this ?
->>>
->>> Specifically the question is if this will have any negative security
->>> implications? I can certainly see this being used to do some sort of
->>> denial of service attack on the system (1). This is especially true for
->>> the cma heap which generally speaking is a limited resource.
+>>   == without this patch ==
+>>   128 CPUs in system; running 128 parallel copies of tests
 >>
->> There's plenty of other ways to exhaust CMA, like allocating too much
->> KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
->> differently than those if it's part of our threat model.
+>>   File Copy 1024 bufsize 2000 maxblocks       6332521.0 KBps
+>>   File Copy 256 bufsize 500 maxblocks         1639726.0 KBps
+>>   File Copy 4096 bufsize 8000 maxblocks      24018572.0 KBps
+>>
+>>   == with this patch ==
+>>   128 CPUs in system; running 128 parallel copies of tests
+>>
+>>   File Copy 1024 bufsize 2000 maxblocks      49229257.0 KBps
+>>   File Copy 256 bufsize 500 maxblocks        24057510.0 KBps
+>>   File Copy 4096 bufsize 8000 maxblocks      75704437.0 KBps
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/inode.c | 10 +++++++---
+>>  1 file changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 1cb219d347af..269503749ef5 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -3281,9 +3281,13 @@ static void ext4_set_iomap(struct inode *inode, struct iomap *iomap,
+>>  	 * there is no other metadata changes being made or are pending.
+>>  	 */
+>>  	iomap->flags = 0;
+>> -	if (ext4_inode_datasync_dirty(inode) ||
+>> -	    offset + length > i_size_read(inode))
+>> -		iomap->flags |= IOMAP_F_DIRTY;
+>> +	if ((flags & (IOMAP_DAX | IOMAP_REPORT)) ||
+>> +	    ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) ==
+>> +	     (IOMAP_WRITE | IOMAP_DIRECT))) {
+>> +		if (offset + length > i_size_read(inode) ||
+>> +		    ext4_inode_datasync_dirty(inode))
+>> +			iomap->flags |= IOMAP_F_DIRTY;
+>> +	}
 > 
-> So generally for an arm soc where your display needs cma, your render node
-> doesn't. And user applications only have access to the later, while only
-> the compositor gets a kms fd through logind. At least in drm aside from
-> vc4 there's really no render driver that just gives you access to cma and
-> allows you to exhaust that, you need to be a compositor with drm master
-> access to the display.
+> NACK. This just adds a nasty landmine that anyone working on the
+> iomap infrastructure can step on. i.e. any time we add a new check
+> for IOMAP_F_DIRTY in the generic infrastructure, ext4 is going to
+> break because it won't set the IOMAP_F_DIRTY flag correctly.
 > 
-> Which means we're mostly protected against bad applications, and that's
-> not a threat the "user physically sits in front of the machine accounts
-> for", and which giving cma access to everyone would open up. And with
-> flathub/snaps/... this is very much an issue.
+> If checking an inode is dirty is expensive on ext4, then make it
+> less expensive and everyone will benefit.
+> 
+> /me goes and looks at jbd2_transaction_committed()
+> 
+> Oh, it it's just a sequence number comparison, and it needs a lock
+> because it has to dereference the running/committed transactions
+> structures to get the current sequence numbers. Why not just store
+> the commiting/running transaction tids in the journal_t, and then
+> you can sample them without needing any locking and the whole
+> ext4_inode_datasync_dirty() scalability problem goes away...
+> 
 
-I agree that bad applications are an issue, but not for the flathub / snaps
-case. Flatpacks / snaps run sandboxed and don't have access to a full /dev
-so those should not be able to open /dev/dma_heap/* independent of
-the ACLs on /dev/dma_heap/*. The plan is for cameras using the
-libcamera software ISP to always be accessed through pipewire and
-the camera portal, so in this case pipewere is taking the place of
-the compositor in your kms vs render node example.
+Indeed, it could be useful, and it seems could also simplify many
+other jbd2 processes.
 
-So this reduces the problem to bad apps packaged by regular distributions
-and if any of those misbehave the distros should fix that.
-
-So I think that for the denial of service side allowing physical
-present users (but not sandboxed apps running as those users) to
-access /dev/dma_heap/* should be ok.
-
-My bigger worry is if dma_heap (u)dma-bufs can be abused in other
-ways then causing a denial of service.
-
-I guess that the answer there is that causing other security issues
-should not be possible ?
-
-Regards,
-
-Hans
+Thanks,
+Yi.
 
 
