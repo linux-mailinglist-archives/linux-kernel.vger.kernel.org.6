@@ -1,102 +1,135 @@
-Return-Path: <linux-kernel+bounces-170295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DFA8BD4AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:36:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5628BD4B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D054F2838E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:36:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04E91C214E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5080158A1C;
-	Mon,  6 May 2024 18:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58298158845;
+	Mon,  6 May 2024 18:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qql9OWjK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AFeijI+J"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121861426F;
-	Mon,  6 May 2024 18:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2E73D984
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715020573; cv=none; b=rC69j2AP9H6pBMtBSRflJfbPizAuGR+qMzHG0kypbyIFCioufX17WtbNrClioaXU+W7N/9d51+d9qZGT5NWawJm6RYpGE2xNBzOSzUnGyQIDY8yRH+LS4x4sRGgwMvdxDq5UotGt8G2HpJA5A5fJR7+9i58KZYr7IwmpC8B1sWE=
+	t=1715020716; cv=none; b=Y+Nxkei8JA8UW1JJzpslfBVKGAHxfWdcdVeNC6Dmy4v/OoQgPXqgY1Z/hDyKFfguEz80OQhZwaZXUY3OyDazG9W6D1j9akC6ZiLSFLgEfUlrh/9EVsPxFmZK2uFuPdwxr4ZVZQHvqi8ad+p2OmO+/wB/IU/jv7dFyjU5JwdN4QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715020573; c=relaxed/simple;
-	bh=GZa/wPUGojJfxaJOHsD5KLlJ1l/5vASRHRzePy2aJGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K0ZdWFiGkf/+pR5/sVwSdZZmsEWTl+mok0+ugc/cYIPPhwmZWelusrFJMhIpUvrare5Jh3BWX+rGYCfFQlp39XzGAorPdszAdvTdJwaIHarZ406ZHlLMp5LwTpiPilWFs4jFloJ6cwunu+fFrAHnLDoosuloy9R7F97LAjqa+fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qql9OWjK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A407C116B1;
-	Mon,  6 May 2024 18:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715020572;
-	bh=GZa/wPUGojJfxaJOHsD5KLlJ1l/5vASRHRzePy2aJGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qql9OWjKemsavWDfOZqrDHDQLdALbwxGdM2GzYG2gTYplVys3DBcZPHhqK7/gGTRg
-	 Ua23ZtVxPN0GYbEvuYPfy4nRpPhWHmHUKfYPqvEtaFVjOnqK0bpn70b8zVX1ob51cN
-	 e4ohCGXI1IIy653OAhPj+DuA4kvc6tgDtvh8nZ5Xq43P1AUdDAHbqwmKUNKIjfwQAn
-	 Ee3yPcqkaGf0Z6eQMedAjDSXKne69hru8MwlXjqPtnrdwI1wF+MupYarbKU9Q6XYQo
-	 SKRH/3kdZ1Ay8L+siLZBqm9hYbfhovSO/XHqK5BETg4SJmbRHCmw0RWdy7b+Ntb6jE
-	 lSCGt2f+/6+UQ==
-Date: Mon, 6 May 2024 15:36:08 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] perf map: Add missing dso__put in map__new
-Message-ID: <ZjkjGL6krayHC_XX@x1>
-References: <20240506180104.485674-1-irogers@google.com>
- <20240506180104.485674-2-irogers@google.com>
+	s=arc-20240116; t=1715020716; c=relaxed/simple;
+	bh=41XkVcsAUi7RHQrRbNaV4xF05Bw3iVhPE+6NRtdz0aM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=OcGAg2EA7nOYP+E9bpog8WOw/3sSYvrBOGFPU+2DcY0VZ1f9J0UsR7+wZFoa/OS+A8df1WVw21eCHk/3Gj5p5pyXyR/9siYkjx9Zdvr+OCcSo5XniJVj9GYOOideCkmMvavLHBWBhjY7bm2BeqJQ34cQl2pEDFIcIH87TK5VCGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AFeijI+J; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-43ca9047bd2so33417831cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715020713; x=1715625513; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wc9Ykp5KZiv59MVDuw6AEA9atSsYjCqiDTLg4L03H+E=;
+        b=AFeijI+JH/NRyBDf9aGv1OsuTo8jnqh4ieaDeFBisnDZ8vIGkUmlGL/0cWF06kqY9x
+         wfWF1adQHsYw9m98+rT6+dO6O9nPeykhDXqLb+9ZinuFqT+0A6AmCo+xNQiSk3T+AOFT
+         BLVr7/4zCQqTAW4bMxrqD7FzIt37bpCViaPew=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715020713; x=1715625513;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wc9Ykp5KZiv59MVDuw6AEA9atSsYjCqiDTLg4L03H+E=;
+        b=Ozw1aF1He/kL4b4EiMKZCil9rvxTVpstRZInv0blVZRORSVjtEi43qm3uaEOtRAxQI
+         wh8pOlYBUKzcDZBCCnpodzBEOSTLtH7W9+8PjpEMHy6dNwe7hkJ8j33Dq+79gVlaOD/4
+         llNcknIpQ61dVhg6jeoFkC4MBBy2s2xtBXLysoCbuheQJ0rDNf/K08O0Gw5049q8wiDR
+         lXkEtIrFJqhm8Bo3t9ymoz7cG1HQLPvB3Vz8EDRuWLBD1oFvZ/my17NlZjCBoihBKfzI
+         ofQ+ZjwoKbD6D6ErQaX8LuqyBezhA77kBbGE7gogTt+gcsd+7gUnziaOAXolOoMFHAWB
+         bm/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVrWdqH1IRwBL8ZUyGivuHXam1b1VxI+S3W92bUXIRA6qSFh5i3k3ePSx5D/1qhokOsyaEC3yADMMdckRFn3JJTeZOAL1ee5fWzt52m
+X-Gm-Message-State: AOJu0YwPxD8O6G7sQOn2mPwF74g8BVoTD182z2Xyv5Ocs950b/lOIuaD
+	e6pZVrVzxfFfcvsPlEywahOp+eUki0N09fuMa6uhF7eafXxsnO6fMiBxintQBzjiFif9YXc7wHQ
+	=
+X-Google-Smtp-Source: AGHT+IHvynVvkktEJNOZRfJZC3n5l5rzbZN0sa+aDeo8aXBhK/9wCGwD7M5aeubC4L9taT/L9Z5ucQ==
+X-Received: by 2002:ac8:5a8d:0:b0:43a:4b07:57ec with SMTP id d75a77b69052e-43d8f32b26fmr8886951cf.9.1715020713332;
+        Mon, 06 May 2024 11:38:33 -0700 (PDT)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
+        by smtp.gmail.com with ESMTPSA id ex8-20020a05622a518800b0043a51b452a3sm5410928qtb.20.2024.05.06.11.38.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 11:38:32 -0700 (PDT)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7928ec5308cso210388185a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:38:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWj8+NRfU/f+OXzZ12c8XLvtDgzE2tm9U+tDzeiEhbOHWTBHPFSmFg6m/nhHrBY4TMykEL1lFwVAPk9u4rvtaPL0+lhydqMGuZy6d98
+X-Received: by 2002:ad4:588a:0:b0:6a0:f0eb:1679 with SMTP id
+ 6a1803df08f44-6a146005801mr7792556d6.8.1715020711735; Mon, 06 May 2024
+ 11:38:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506180104.485674-2-irogers@google.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 6 May 2024 20:38:15 +0200
+X-Gmail-Original-Message-ID: <CANiDSCs8i5Eid-FhDkgxTghFu8Sk831SojZwAohJ-CbKRch5KQ@mail.gmail.com>
+Message-ID: <CANiDSCs8i5Eid-FhDkgxTghFu8Sk831SojZwAohJ-CbKRch5KQ@mail.gmail.com>
+Subject: Conditional guards
+To: Peter Zijlstra <peterz@infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 06, 2024 at 11:01:01AM -0700, Ian Rogers wrote:
-> A dso__put is needed for the dsos__find when the map is created and a
-> buildid is sought.
- 
-> Fixes: f649ed80f3ca ("perf dsos: Tidy reference counting and locking")
+Hi Peter
 
-I just sent a reply asking you to do this, thanks a lot for adding the
-Fixes tag, processing this new series now.
+Probably a stupid question.... but I'd rather ask the expert directly :)
 
-- Arnaldo
+I am trying to fix some of the cocci warnings with guard() and there
+is a  use case that I do not know how to do. I have something like:
 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/map.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-> index 117c4bb78b35..e1d14936a60d 100644
-> --- a/tools/perf/util/map.c
-> +++ b/tools/perf/util/map.c
-> @@ -200,6 +200,7 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
->  				dso__set_build_id(dso, dso__bid(header_bid_dso));
->  				dso__set_header_build_id(dso, 1);
->  			}
-> +			dso__put(header_bid_dso);
->  		}
->  		dso__put(dso);
->  	}
-> -- 
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
-> 
+void use_hardware(priv) {
+  if (priv->model =3D=3D 42)
+      mutex_lock(&priv->lock):
+
+  // DO things here
+
+  if (priv->model =3D=3D  42)
+      mutex_unlock(&priv->lock):
+}
+
+if I replace:
+  if (priv->model =3D=3D 42)
+      mutex_lock(&priv->lock):
+with
+if (priv->model =3D=3D 42)
+     guard(mutex)(&priv->lock)
+
+gcc screams at me:
+drivers/media/dvb-core/dvb_frontend.c: In function =E2=80=98dvb_frontend_op=
+en=E2=80=99:
+/include/linux/cleanup.h:119:9: error: expected expression before
+=E2=80=98class_mutex_t=E2=80=99
+  119 |         class_##_name##_t var
+__cleanup(class_##_name##_destructor) =3D   \
+      |         ^~~~~~
+/include/linux/cleanup.h:164:9: note: in expansion of macro =E2=80=98CLASS=
+=E2=80=99
+  164 |         CLASS(_name, __UNIQUE_ID(guard))
+      |         ^~~~~
+drivers/media/dvb-core/dvb_frontend.c:2776:17: note: in expansion of
+macro =E2=80=98guard=E2=80=99
+ 2776 |                 guard(mutex)(&apadter->mfe_lock);
+
+
+Is there a way to support something like this?
+
+Regards!
+
+--=20
+Ricardo Ribalda
 
