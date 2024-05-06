@@ -1,150 +1,174 @@
-Return-Path: <linux-kernel+bounces-170074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BE58BD187
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:31:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA3F8BD192
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D1D283D5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:31:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0C45B2307D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E491A155356;
-	Mon,  6 May 2024 15:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8100615538A;
+	Mon,  6 May 2024 15:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TgLLYqHC"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qcVFe/CT"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD51415531A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54492F2C;
+	Mon,  6 May 2024 15:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715009456; cv=none; b=f87ZfWLTfkHpoFnmLnu/Kg/vVrhTxSR7FWU0xGHc9uKBFw1n65hDaEm2YMKt2Bi7qrKKXJJxquPNA1NNlZQw4yA4gfbDU9YVyLJDuQr+BeQ6NkqNNOY3YZ9opYEbnAPKTTdPfd2z//ndsSyADe0QFjonkDcEOIGgevPO2rAKX8E=
+	t=1715009724; cv=none; b=Li2FwmUKrMoSxwTjUhCigxKy4WfZApWm87HYl8h6paYDFfuUWLjv1eWPktybPmkoJZm3X3w917KVJC8xLXLFwQe0HBxaq6G11lNbR0sXQ7SCVsf5pRKaKsym5Iq5OQyit4ZM5BLFGzp5ZPWyU7zhk+OO7/Cb3PMRA/ZmBOEldqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715009456; c=relaxed/simple;
-	bh=0pDxkiEJ2LoRsQ/lAD4W6k/YMqHAvm09MqAFgXeqYUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GE5GzM3NhWScjjkX22NFQ17aMNJtf/j2q1H5X4XyKY5h28/xbjlO10uwjWOUbcjBPLf7f+UT87dd9JzoNbgYf0WdA89nSTAi7iJPFYNCOu326mqOMYZwyCDGwhhYzcoIw+maCrARbbsv1qLY38r54j+ptCDPJ6pbuLVrxKGywgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TgLLYqHC; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-51fdc9af005so3201897e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:30:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715009453; x=1715614253; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GJL1u5m+pLYItM9KAL3mbxkUQV/1xhwiHQhmsyGUc6M=;
-        b=TgLLYqHC6a/dncS7wLYhezZbFdAg6FzAQyqMZpVgiwwYVWcBoudBYIj1Uw9eUZULyU
-         mEMxiw7xF+eqQpXSEC0ZQoCzoQtIFX4ehCjQ17loRUJPt9qmSQ4B6j0kXzPDWKOsiYRd
-         glxpxoE4O2ayGoyQhpQzaFe1OtTFIW0ymStcrlKkX/IrOWLhtl0kbGuzxxirMQN0p1SL
-         kDP3TEDeU0UXrBIBZt0Kq3Dn05vLvDwkCvtRnBILD5lBEQ0UxLiM49x4JJnbybkoju/r
-         GaKVF/Kw4JKiFAVEbCBoHOpiZAP+xy/aJ9SYNOVLm2MThFViqBEvZ5EcSSi2jxDO9r9P
-         l8rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715009453; x=1715614253;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJL1u5m+pLYItM9KAL3mbxkUQV/1xhwiHQhmsyGUc6M=;
-        b=ZK36C5GgGsI+Pv6hcsMC3rLqHITNrMz6cRUInI0aFJdBaWY0fzOfJPnxbpS2+lx6j+
-         f7LJ+VT0txO6uAC4XjaABFmRUR2+THtbeU+HajkRCujAa34oPEa14Ohe7Z75c7KADjgX
-         Y7ScwjlLa5ckpbtvbcjmhjbz0m8maUYMIz9KDcWIeb57xx6VDOloOtalDCg2pUoWRw3v
-         zrcQIGDGgL3rTkblmIbzAIrZr+DGk+d9a8subKSpMtct5EvwGT4OZb9GFXypwDj0eWTz
-         1iE6wIad41133L3UhjPAgvqgKh4opBu36XOZ0fOuycStEayOXb+gmMelTpJYniTavIrn
-         px0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVd8ozTrdwzW1O4LvsGOVh2TlGu41NVyTUa8OJk9fzkf74G92vJEBv8DNYR9TuS0QgU2l18x80rprpEyPRZepsvzN2045lZy26UcysX
-X-Gm-Message-State: AOJu0YwhmXVvXc6Fl0zXi1CdgpZXmgG6hU26hwlfZ7CQ6ZN4vdP27KA+
-	LWppNnopA1eE7TZ/A4+87+F/v3QC7TH3f+dFz87p20vsx+6cpqRz8DogdymmPM8=
-X-Google-Smtp-Source: AGHT+IGZrFfkURzSpITozP9PNnEpr8PqVBnyzlEfp3WA4jCqJgV2Hu14WP0OjYC2D1z2gJ3vI63+ZA==
-X-Received: by 2002:ac2:54b9:0:b0:51f:3a04:ba9b with SMTP id w25-20020ac254b9000000b0051f3a04ba9bmr8461033lfk.22.1715009452471;
-        Mon, 06 May 2024 08:30:52 -0700 (PDT)
-Received: from [192.168.1.20] (net-37-182-167-227.cust.vodafonedsl.it. [37.182.167.227])
-        by smtp.gmail.com with ESMTPSA id ww1-20020a170907084100b00a59cb8c93f3sm1632649ejb.58.2024.05.06.08.30.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 08:30:51 -0700 (PDT)
-Message-ID: <2398ca58-eafc-46df-92c1-c03cd920fd06@gmail.com>
-Date: Mon, 6 May 2024 17:30:49 +0200
+	s=arc-20240116; t=1715009724; c=relaxed/simple;
+	bh=lYo//rrrDUiDk8JLNxviUfme0TBZCo3Xp6SdmDV+nC8=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZKG/8wK0ziVQdIDJLZK4P/3K63QzXZRyZujNeEFoGSlNv58leshL05RybckVEOR+ErhAGfANhwFJrkX7qGwtYu3NBQG499PT2xWFeYOaIvCy9QOckdLy0IZrV3M+g07wQo71reUZ9p0STim0ROt08TJDsPsRMzavEsZLNNQtMVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qcVFe/CT; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 446FIFGx023044;
+	Mon, 6 May 2024 15:35:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=wxmOj2iq91mLUwhozzjDt0aJ2qD+YW23qpVgADmcC5k=;
+ b=qcVFe/CTxIKn/fDSWnfiZTORZY4fqWEzsFfoaht0HlqZzqyxPCxrHhybhhgKNfhC8g6L
+ 26bQkUIJQDgyUiQU9yTyR2ARyB9LHPOhv+Axfyx+/rXbfrk8CTT23UvGTO8oa6hq6upa
+ dBlTyUWHCgChxxZEGuw0a/sVPVVd5ULvmfXq8Qipke/Co19IV4xa/J9jlUWBwRTSkoKv
+ ymprVxm/qnD1L36kD1TRK49B/onrOKjZw5i2ygN7vBmys06thlxOyHP6Q0YMQ8vc+zWd
+ RbIXxb7SOID7fnszmhMd4y4zU878JgevgpOjsOiA5CV3BglMkQ8Er2oN7bBq5zS92ru5 sA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xy1qp81jc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 15:35:03 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 446FZ2m6017285;
+	Mon, 6 May 2024 15:35:03 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xy1qp81j8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 15:35:02 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 446ELmPR013959;
+	Mon, 6 May 2024 15:35:02 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xx222r8c3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 15:35:01 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 446FYwO346596390
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 May 2024 15:35:00 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 436E52004B;
+	Mon,  6 May 2024 15:34:58 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 63FE720040;
+	Mon,  6 May 2024 15:34:57 +0000 (GMT)
+Received: from [9.179.19.152] (unknown [9.179.19.152])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  6 May 2024 15:34:57 +0000 (GMT)
+Message-ID: <9cc947ea-4d3d-4d60-8986-cd7c527b3508@linux.ibm.com>
+Date: Mon, 6 May 2024 17:34:57 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/6] Assume sysfs event names are always the same case
+To: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
+        Jing Zhang <renyu.zj@linux.alibaba.com>,
+        James Clark <james.clark@arm.com>,
+        Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+References: <20240502213507.2339733-1-irogers@google.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <20240502213507.2339733-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: VZqydJjZudOV_NROmu_vOh_5aqULOJpO
+X-Proofpoint-GUID: Ks5p9td3XSzu6y-EReEOVWPffqVps1p6
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2 v3] drivers: use __free attribute instead of
- of_node_put()
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: sudeep.holla@arm.com, javier.carrasco.cruz@gmail.com,
- julia.lawall@inria.fr, linux-kernel@vger.kernel.org, rafael@kernel.org,
- skhan@linuxfoundation.org, conor@kernel.org
-References: <20240424125401.oxvt5n64d7a57ge3@bogus>
- <20240501094313.407820-1-vincenzo.mezzela@gmail.com>
- <20240501094313.407820-3-vincenzo.mezzela@gmail.com>
- <2024050102-reshuffle-licking-f84e@gregkh>
- <673df61a-e0f5-450b-8fb4-746bc950e3d1@gmail.com>
- <2024050148-dutiful-unsubtle-dbb1@gregkh>
-Content-Language: en-US
-From: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
-In-Reply-To: <2024050148-dutiful-unsubtle-dbb1@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-06_09,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 adultscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405060108
 
+On 5/2/24 23:35, Ian Rogers wrote:
+> By assuming sysfs events are either upper or lower case, the case
+> insensitive event parsing can probe for the existence of files rather
+> then loading all events in a directory. When the event is a json event
+> like inst_retired.any on Intel, this reduces the number of openat
+> calls on a Tigerlake laptop from 325 down to 255.
+> 
+> v1 sent as an RFC:
+>     https://lore.kernel.org/lkml/20240413040812.4042051-1-irogers@google.com/
+> 
+> v2: addresses review feedback from Kan Liang, by updating
+>     documentation and adding tests.
+> 
+> v3: incorporate feedback from Thomas Richter <tmricht@linux.ibm.com>
+>     that s390 event names are all upper case. Do a lower case probe
+>     then an upper case probe, make documentation and tests also agree.
+> 
+> v4: add checks to write (kernel test robot) and fix a typo.
+> 
+> v5: Add reviewed-by: Kan Liang and fix potential uninitialized use.
+> 
+> Ian Rogers (6):
+>   perf test pmu-events: Make it clearer that pmu-events tests json
+>     events
+>   perf Document: Sysfs event names must be lower or upper case
+>   perf test pmu: Refactor format test and exposed test APIs
+>   perf test pmu: Add an eagerly loaded event test
+>   perf test pmu: Test all sysfs PMU event names are the same case
+>   perf pmu: Assume sysfs events are always the same case
+> 
+>  .../sysfs-bus-event_source-devices-events     |   6 +
+>  tools/perf/tests/pmu-events.c                 |   2 +-
+>  tools/perf/tests/pmu.c                        | 467 ++++++++++++------
+>  tools/perf/util/parse-events.c                |   2 +-
+>  tools/perf/util/parse-events.h                |   2 +-
+>  tools/perf/util/pmu.c                         | 111 +++--
+>  tools/perf/util/pmu.h                         |   4 +-
+>  tools/perf/util/pmus.c                        |  16 +-
+>  tools/perf/util/pmus.h                        |   2 +
+>  9 files changed, 415 insertions(+), 197 deletions(-)
+> 
 
-On 01/05/24 15:06, Greg KH wrote:
-> On Wed, May 01, 2024 at 02:33:39PM +0200, Vincenzo Mezzela wrote:
->> On 01/05/24 12:48, Greg KH wrote:
->>> On Wed, May 01, 2024 at 11:43:13AM +0200, Vincenzo Mezzela wrote:
->>>> Introduce the __free attribute for scope-based resource management.
->>>> Resources allocated with __free are automatically released at the end of
->>>> the scope. This enhancement aims to mitigate memory management issues
->>>> associated with forgetting to release resources by utilizing __free
->>>> instead of of_node_put().
->>>>
->>>> The declaration of the device_node used within the do-while loops is
->>>> moved directly within the loop so that the resource is automatically
->>>> freed at the end of each iteration.
->>>>
->>>> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
->>>> Signed-off-by: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
->>>> ---
->>>>    drivers/base/arch_topology.c | 51 +++++++++++++++---------------------
->>>>    1 file changed, 21 insertions(+), 30 deletions(-)
->>> How was all of this tested?
->>>
->>> thanks,
->>>
->>> greg k-h
->> Hi,
->>
->> I just cross-compiled it for RISC-V to enable the config
->> GENERIC_ARCH_TOPOLOGY
->> and include arch_topology.c as well.
-> Cross-compile is nice, how about running it?
->
->> Do you have any suggestion to trigger the affected code and perform some
->> testing?
-> That is up to you to determine if you wish to modify it :)
->
-> thanks,
->
-> greg k-h
-Hi,
+I run the perf test suite on s390 and it looks good!
 
-I've successfully run it on QEMU. There are no differences in the dmesg 
-after applying the patches.
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-Furthermore, I've tracked the execution of the parse_dt_topology() which 
-is calling all the functions that I've modified with the patches and I 
-checked that of_node_put was correctly called at the end of each scope.
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
 
-Is there anything else that can be done to further testing this changes?
+Geschäftsführung: David Faller
 
-Thanks,
-
-Vincenzo
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
 
