@@ -1,169 +1,151 @@
-Return-Path: <linux-kernel+bounces-169821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2118BCE10
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:37:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5798BCE14
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B82D41C2364D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC676286662
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC9744C66;
-	Mon,  6 May 2024 12:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FvBv2a8y"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2302A35280;
+	Mon,  6 May 2024 12:38:23 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5218C19
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAAF1DA22
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999036; cv=none; b=YtRdl9/74Q4Q3A1o8oW5GUljArXPGFCAXBEO8Ma/+bnV0vGa+AJQRKr5QS6ncrajYb8T2eiet96cffFcULznE9X3t+szoDZ9mQQTNulzaNvzr/qcqjk/Eklk/VD7LHHYgZEFR2+3h8GhDA76u49w2w+kOPcQWH4w1R5pKIls4Kk=
+	t=1714999102; cv=none; b=KBVtf4MGYtg5PQtFqypFJ5EBmG8rVPzr6dDXKtfOTPdq06O8gy2eBuiacVZ4nKv4oAfEdlWiVpTWKe2QG6/LVQi2vRvxC7crbuloW9f+8cLqUsqHUbxYl39v7Ofg3yEy8LIDw5d3vfk0PC/XJPaIzuA8eCD9SRN8BAepUUT9UR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999036; c=relaxed/simple;
-	bh=W0ii3TeUy067aqvyqv+adtlSG49/aqc2GUx5qBI/NZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oM2oGAm/QRZyy3lY3dKp/F3Yve0eZMtmXewDaGGDchwrvpBIlByOCWFKib7SXFDR2SXoRGKCjZZgGOFTmzvVBBIcxduQAUbBy/IZ5b5eIlv2dfadXr/c4hvjL8+aRe01+4t8IdGh1qGIuKOHzFGltq/GpLoEVQJyvtfOGdfKyNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=FvBv2a8y; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41bd8bdd065so2594565e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:37:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1714999033; x=1715603833; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NmNWteJIHVG/FsNg6lLCmILTCJBN+MkrWHLSaZrPJk4=;
-        b=FvBv2a8y7KaPOzeWXOlRwnY4lH1/WLZlQfEApXgvbpTUi6F1uRXzYtzHLxd34xbg1u
-         lzQ4L8SrSgf8fTvp0TUjJwrwNvxd5DfSFpaHbPJ0Vust7ey2Py3OgetloVHthlUVf9qR
-         z3R54uLMsCTneHkdevvCARM3z2xfNRrIIF8DQ=
+	s=arc-20240116; t=1714999102; c=relaxed/simple;
+	bh=PRXUBkliFGTGfr1tfr+DfmQxur1Pm/bGLIvgJ7Ir7+g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=urgOVFjqIjIfBAvlqFFrcmR8HahjQGrSH1fo6pVQ1RjM/P5myeCJP/K2ON9HMhHJIw/nJxzfsJo3vbgfgaETfVaW7BN+GMeG+0a3UVqK5yf0P74yW9VzjRQrhKE+I0Lf5OGfSzX7Qo3QBBPPQAA6IxLfoSvXFnqpPy2l8tNLTo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e17b6ec827so2864639f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:38:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714999033; x=1715603833;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1714999100; x=1715603900;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmNWteJIHVG/FsNg6lLCmILTCJBN+MkrWHLSaZrPJk4=;
-        b=QxmIr3tOW8IeHwIbhXZIQgRQK3SF4aWYLp1LFjqSZfMSKl75afydQGcCAG/qY8orLL
-         8TydOMU3qXT8y8DtZ1pfCzI6EvjXpldsMsg+ffykYNPpXaVxKA6dfJgiC+zkEt0PsPaq
-         VO7HxNuXb3Gudh1FpkD+mm3a4Ew7D0hzaGLXMNL//jkIRPjlb3Fomo0gnHMF2pVZwezn
-         5WHQ9S8H2r5KZcVk3yvOoRpZtaiDPZNxNg94tGsAVPU/AbCAQYJC82CnClZfRGAwYX18
-         RUleaJwm+PgZrboSvbhgBH8+VT/DbVJESneYlppFNmQyr1lkbxlT3aY0G/Jsn+JHlRy6
-         vdcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHmqenAlaxYDbp9+Na+S9hPKgb/okAGJR1/6i0xQDPnOJ+KnzUjebiHz3wPxpaPyFyBgSRaWg94xl+xfBNyBlPRG6rPekHw1hfn4pt
-X-Gm-Message-State: AOJu0YzaZ5Nz18IShRnvKfvMcDoQ70DGbOpAOsj4FPPnNI8puU/+ScLE
-	NxhDeKGMCp0lkhYg87ZSIzZ3uQ25NweRVnV/HjUqIN0srG2xYfR7QHhjrT4jgsg=
-X-Google-Smtp-Source: AGHT+IF4oVKBpTMWMqUQ/dzQ+O/7RQpt5fMGVwZ3eSkPNG4BC5o71WjeNR+MccKjqHnTIbg2KzBZFg==
-X-Received: by 2002:a05:600c:1d25:b0:418:ef65:4b11 with SMTP id l37-20020a05600c1d2500b00418ef654b11mr7944219wms.2.1714999033407;
-        Mon, 06 May 2024 05:37:13 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id je16-20020a05600c1f9000b0041c7ac6b0ffsm19767802wmb.37.2024.05.06.05.37.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 05:37:13 -0700 (PDT)
-Date: Mon, 6 May 2024 14:37:10 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	axboe@kernel.dk, brauner@kernel.org, christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
-	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
-	sumit.semwal@linaro.org,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <ZjjO9kaRjT48Uyuc@phenom.ffwll.local>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Kees Cook <keescook@chromium.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, axboe@kernel.dk,
-	brauner@kernel.org, christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
-	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
-	sumit.semwal@linaro.org,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240503214531.GB2118490@ZenIV>
- <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
- <202405031529.2CD1BFED37@keescook>
- <20240503230318.GF2118490@ZenIV>
- <202405031616.793DF7EEE@keescook>
- <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
+        bh=Abg+C12vuc3bVok6svAeKzuLYYKsi9nik57pnOtqBbY=;
+        b=KHkULAgG2ncCeZhpLw/ZE9HBekePkEmSVb0ILEnZYmYhuQcSt2GnsQ0HVFgo5Q1wfv
+         INzDCyMeLL0kJV26vZknbz/TSPof6Jv8aZF34PLeP0MqVE5nNeU8oUGr3+/6wc+SeCNi
+         qakyV0rSuVSdqSw4exW/qvTUMM3JnOz9Gu7UqCNyJGiVesnXNc3Lp+43G3BwDqrtMMuQ
+         d7WBBLbDnqffZO8mPPy/g6AIBpiGltiaZbtbLDG2kuRfv9xAvGMn39XQBziY8JMGZVuB
+         eG/mUO1wSbxGJWu2VN4QHVvim0G4vSPjZod9+icaZCxCZozH6mjuFJJbhIHBJTv5xVdV
+         6I2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbVtXTLLHhLEK03NGvfy8KbETWn3Mx+HA54wRM2kPzzJk3E5Fx2URsEgJcbcRgA2Zy1Y2SG8LWJ6DbM0S6o3vGq3m3pZFU3zovMgjl
+X-Gm-Message-State: AOJu0Ywtknvxg3VP0ZBIKY7miBVGcjgSf9WZvNQxOrgvn87pvLZccxDT
+	hzfO87sdSYDCfrhfzabxRkdNizwiFWEVMCn/Nz2ZReUXiHbVSh9+UsTfLn5swCndY1XxRFYqWWK
+	7THQm9oFFE07E3OcCmCCpyU//vQd/oi3kosJnczdlvCqMADMUfcMb3Lc=
+X-Google-Smtp-Source: AGHT+IHwU5f2yNHyWU2SkxS5iF84+HzbZt6CXFgp5MAZWVUYbr3F/z6SINyGOROcs1QGUmbzpDmofV6JFC90c5mYUHvjPM2bNt+B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+X-Received: by 2002:a92:c50a:0:b0:36c:6080:753d with SMTP id
+ r10-20020a92c50a000000b0036c6080753dmr209113ilg.1.1714999100425; Mon, 06 May
+ 2024 05:38:20 -0700 (PDT)
+Date: Mon, 06 May 2024 05:38:20 -0700
+In-Reply-To: <000000000000ae4aa90614a58d7b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002bde520617c85875@google.com>
+Subject: Re: [syzbot] [input?] WARNING in cm109_input_open/usb_submit_urb (3)
+From: syzbot <syzbot+ac0f9c4cc1e034160492@syzkaller.appspotmail.com>
+To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 03, 2024 at 04:41:19PM -0700, Linus Torvalds wrote:
-> On Fri, 3 May 2024 at 16:23, Kees Cook <keescook@chromium.org> wrote:
-> >
-> > static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
-> > {
-> >         return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
-> > }
-> >
-> > If we end up adding epi_fget(), we'll have 2 cases of using
-> > "atomic_long_inc_not_zero" for f_count. Do we need some kind of blessed
-> > helper to live in file.h or something, with appropriate comments?
-> 
-> I wonder if we could try to abstract this out a bit more.
-> 
-> These games with non-ref-counted file structures *feel* a bit like the
-> games we play with non-ref-counted (aka "stashed") 'struct dentry'
-> that got fairly recently cleaned up with path_from_stashed() when both
-> nsfs and pidfs started doing the same thing.
-> 
-> I'm not loving the TTM use of this thing, but at least the locking and
-> logic feels a lot more straightforward (ie the
-> atomic_long_inc_not_zero() here is clealy under the 'prime->mutex'
-> lock
+syzbot has found a reproducer for the following issue on:
 
-The one the vmgfx isn't really needed (I think at least), because all
-other drivers that use gem or ttm use the dma_buf export cache in
-drm/drm_prime.c, which is protected by a bog standard mutex.
+HEAD commit:    dd5a440a31fa Linux 6.9-rc7
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1792e8a7180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+dashboard link: https://syzkaller.appspot.com/bug?extid=ac0f9c4cc1e034160492
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b7d354980000
 
-vmwgfx is unfortunately special in a lot of ways due to somewhat parallel
-dev history. So there might be an uapi reason why the weak reference is
-required. I suspect because vmwgfx is reinventing a lot of its own wheels
-it can't play the same tricks as gem_prime.c, which hooks into a few core
-drm cleanup/release functions.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/58e2a4900479/disk-dd5a440a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/246a109c32d6/vmlinux-dd5a440a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d2719f7eb672/bzImage-dd5a440a.xz
 
-tldr; drm really has no architectural need for a get_file_unless_doomed,
-and I certainly don't want to spread it it further than the vmwgfx
-historical special case that was added in 2013.
--Sima
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ac0f9c4cc1e034160492@syzkaller.appspotmail.com
 
-> IOW, the tty use looks correct to me, and it has fairly simple locking
-> and is just catching the the race between 'fput()' decrementing the
-> refcount and and 'file->f_op->release()' doing the actual release.
-> 
-> You are right that it's similar to the epoll thing in that sense, it
-> just looks a _lot_ more straightforward to me (and, unlike epoll,
-> doesn't look actively buggy right now).
-> 
-> Could we abstract out this kind of "stashed file pointer" so that we'd
-> have a *common* form for this? Not just the inc_not_zero part, but the
-> locking rule too?
-> 
->               Linus
+------------[ cut here ]------------
+URB ffff8880293d7f00 submitted while active
+WARNING: CPU: 0 PID: 1141 at drivers/usb/core/urb.c:379 usb_submit_urb+0x1039/0x18c0 drivers/usb/core/urb.c:379
+Modules linked in:
+CPU: 0 PID: 1141 Comm: kworker/0:2 Not tainted 6.9.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:usb_submit_urb+0x1039/0x18c0 drivers/usb/core/urb.c:379
+Code: 00 eb 66 e8 59 f2 7c fa e9 79 f0 ff ff e8 4f f2 7c fa c6 05 8f 7e 7a 08 01 90 48 c7 c7 a0 74 6c 8c 4c 89 ee e8 58 64 3f fa 90 <0f> 0b 90 90 e9 40 f0 ff ff e8 29 f2 7c fa eb 12 e8 22 f2 7c fa 41
+RSP: 0018:ffffc90004926b48 EFLAGS: 00010246
+RAX: 12b779fa952e9100 RBX: 0000000000000cc0 RCX: ffff8880229e8000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff8880293d7f08 R08: ffffffff81587d32 R09: 1ffffffff25e6abf
+R10: dffffc0000000000 R11: fffffbfff25e6ac0 R12: 1ffff11005d6920a
+R13: ffff8880293d7f00 R14: dffffc0000000000 R15: ffff88802eb49010
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055555b1af938 CR3: 000000007c014000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ cm109_input_open+0x1f9/0x470 drivers/input/misc/cm109.c:572
+ input_open_device+0x193/0x2e0 drivers/input/input.c:654
+ kbd_connect+0xe9/0x130 drivers/tty/vt/keyboard.c:1593
+ input_attach_handler drivers/input/input.c:1064 [inline]
+ input_register_device+0xcfc/0x1090 drivers/input/input.c:2396
+ cm109_usb_probe+0x10cd/0x1600 drivers/input/misc/cm109.c:806
+ usb_probe_interface+0x647/0xbb0 drivers/usb/core/driver.c:399
+ really_probe+0x2ba/0xad0 drivers/base/dd.c:656
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:828
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
+ bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:457
+ __device_attach+0x333/0x520 drivers/base/dd.c:1028
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:532
+ device_add+0x8ff/0xca0 drivers/base/core.c:3720
+ usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+ usb_probe_device+0x1ba/0x380 drivers/usb/core/driver.c:294
+ really_probe+0x2ba/0xad0 drivers/base/dd.c:656
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:828
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
+ bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:457
+ __device_attach+0x333/0x520 drivers/base/dd.c:1028
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:532
+ device_add+0x8ff/0xca0 drivers/base/core.c:3720
+ usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2652
+ hub_port_connect drivers/usb/core/hub.c:5522 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5662 [inline]
+ port_event drivers/usb/core/hub.c:5822 [inline]
+ hub_event+0x2d6a/0x5150 drivers/usb/core/hub.c:5904
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3348
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3429
+ kthread+0x2f2/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
