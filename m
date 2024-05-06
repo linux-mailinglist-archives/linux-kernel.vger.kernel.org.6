@@ -1,326 +1,231 @@
-Return-Path: <linux-kernel+bounces-169486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9046F8BC96C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5F48BC96E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73B5EB216CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D2A1C216C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B8F1411E9;
-	Mon,  6 May 2024 08:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3FC1411CE;
+	Mon,  6 May 2024 08:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtKJu5uP"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mjdeGwll"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B841D53C;
-	Mon,  6 May 2024 08:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10509140E5F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714983620; cv=none; b=V22piPqpIWYACkyE1PMYsDBFWVJmjpUSUa1oahJ8405Ve+Z2D0IxtP5EsRPeHYSREqPUrYB82rzvs93dq8XMBBS7t/MNOpD7fTdncEVSShW+zUYEJ77xuF54fzZdljeFA+0Nf97bT/pnXpqo05xHuSY6lbO3/T4ZAWYyA1oikwc=
+	t=1714983637; cv=none; b=DmJ/UjvQgi0VQ8zU0IfH2dTdSa7WK56tERErl2bjq/8J5kFbK7Rw3aukrds7PbWWn6Mp1CjmtYxk8Kx4li413n+BKQSD2Mett94Y2CTgBDF0imVE8TvlA4YT3navunKFybDBu39XOoG2wNqfipN21gOWxTGw7RrWEGZ3vUqgyp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714983620; c=relaxed/simple;
-	bh=oI6KZL8xMEnOI0JUSajfcOjR5/0VaRJGSrYiP8gyYr4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GrE1MQBvbJRcZhzAIk/b8Gc96ImjI58z/6TLl2pVXr2c33g7WKbfHj0Cpb5fJKrCuEZJwSu7e+ReRxoDn+2zmfKx7ce7pRNj41+wre4+Gp6Us5rfuRxJOp46igs9LD1PYxPgxl5/E+TBG/lQRNE8+tzgDTlGH+H2BoZMRiZ1RMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtKJu5uP; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1714983637; c=relaxed/simple;
+	bh=R8danFEIme5x1ge9C9d3IvaJY3UpKztziVSnmYT39dk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+bcFVioHLd9LNmhHARob6a/1wkUFjzuZOlMaJEzvtfEPzwJOX5Z4qrkxG39wkSiXe8yY/62KdhJR+FAsImMbPeMrTKDPsYPuAjyr8atIYmTtrbz/ILYUyW8SIpPZkNaCE4+0wkXdvKyde3dkZT1X0gjVoerq31uFB/QvEI/Wiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mjdeGwll; arc=none smtp.client-ip=209.85.221.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a599c55055dso366999866b.0;
-        Mon, 06 May 2024 01:20:18 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4affeacaff9so481673e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 01:20:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714983617; x=1715588417; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bNHd0an/gaXMy+olLRoP7YkYSvwCWy00m2F9nn+euPM=;
-        b=VtKJu5uPtaGcgYdMXmu6iRSlOe+CT8Vp+p5bAuk9iqr8OQXX0zHzJnoG+dqYW4pT9i
-         6F4PgV4yG9Y61NOcax11WFtqM8RMetkqn88wsUXOJZEqdDyhBXghwl/1AKnvKb1ONxPs
-         LLGr7dvvBQ2RePzVlsalO9mmpTyYKnBJF5/j225P4L0FvwdZglzGvzhpoEdzZDzyJIzu
-         H9HkPJKoJ9L1/4jODtAWeuLrWWKwPSCLsn6Jlzo0ThAxnOR1/pgGVbNbAntu0CWRsUTR
-         VWlrJh2dEaNNpDfJZlOVtQvC7US9BH0OMRCyiqmVFlZkL1FhIJmeqjR++EgkLShI0Xva
-         4zhg==
+        d=gmail.com; s=20230601; t=1714983635; x=1715588435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nUZgBQtBX5ARqva0g5FbDYV/cJoa1D6v0dTRxQmOsoQ=;
+        b=mjdeGwllKUam6m08DUi7zR2+D4pNJzDch2r2QZc3913/BAWhG3PQlrSg7Nap346Iog
+         nCaoLymabR+I1Ey3IHUX97Wj9MBjB+d8w321R6t0nr+6iOvshWFT3aBCyPikzc9909EF
+         RH32K5ytJEBoBDg7lKrHo9JBOF4aLSCu7Roj80nM3RYgTwB7YuY5MyrlJpWmwaTR+tsF
+         nMlHFTVSX2NsVWhCpGziwShmCDc67THxr2qcQdH56FGobz0hlYRjPNlRS9N1IzqalfI7
+         SNk9+zVd5GcyZNbgnLHaRytEOuZ5n7InOXqp3gUx1D35PKjF73f1uUw70y4JINJGLsnp
+         nZLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714983617; x=1715588417;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bNHd0an/gaXMy+olLRoP7YkYSvwCWy00m2F9nn+euPM=;
-        b=BSnbYn9G8YATd82B+yrXp6gsk073IVu/nSkNyQWiE+G6Gko1DxFoIZEFkJ6kdFjnU5
-         e4yZ152AIEr5IMzUR20w7jeAT/srzfyxKTHi1I1LN0+M4AZR6JzXTU7TB8KIObbTO818
-         F9q8OpK+XDYsI5Qv8K+4gNTrnXulXLTE3J9fieAfP7f8yYtx07+pEDlgpmlktONZtWda
-         tzyxMmZkFP4JU75GhwJs1Xk72xT7ktTYRhFncXQFiA6bYdvPW0lrDtUUxMgR+QrAzmrr
-         k2pt9Aep3N1gGMoqsJq4u1RXyFMmNmtBWTRN26zuSoGmTRp9BvC4XDalYCBJ20vv5MJj
-         cXyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOYEUXBRIlFFYrqU8UGAeNLV1i52R+2MCkJOVAeCdph8RvEjvD+ZxYjR7s4zo4xmHMGHYht/jWfOxg3zXivlS8DFzdNKbXmfFz6TMd3JwvTf3ObBMvkEbWcBM4egxv/StJIGyeLGwSfZOlXtTC8NhVcgUjLIuBCTYSPoNlYJOX+FWJVg==
-X-Gm-Message-State: AOJu0YwLexIYTIj8FbQJyhTYYtIkwNq61SSqr9hvf89HMKLYc6JdU650
-	8akT3qybEoHHUPU6m5ISFr5zDEhQLQuYm8qcoDlKOULGSDHcrkfV
-X-Google-Smtp-Source: AGHT+IFj0E/KOpeYb7bSNt/7kwgAaso8l+rPl642Z/i+jT0OGVg0kBhQNBho96YZRTBKAiPgTx5Axw==
-X-Received: by 2002:a17:906:a159:b0:a52:3f01:e11d with SMTP id bu25-20020a170906a15900b00a523f01e11dmr5393048ejb.34.1714983616604;
-        Mon, 06 May 2024 01:20:16 -0700 (PDT)
-Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
-        by smtp.gmail.com with ESMTPSA id y17-20020a17090668d100b00a59bacd35ddsm1998352ejr.98.2024.05.06.01.20.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 01:20:16 -0700 (PDT)
-Message-ID: <1be8a603c1db69278181089e3653b6312bcc99da.camel@gmail.com>
-Subject: Re: [PATCH RFC v6 08/10] iio: adc: ad7380: add oversampling support
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, David Lechner
- <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 06 May 2024 10:20:15 +0200
-In-Reply-To: <20240501-adding-new-ad738x-driver-v6-8-3c0741154728@baylibre.com>
-References: 
-	<20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
-	 <20240501-adding-new-ad738x-driver-v6-8-3c0741154728@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+        d=1e100.net; s=20230601; t=1714983635; x=1715588435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nUZgBQtBX5ARqva0g5FbDYV/cJoa1D6v0dTRxQmOsoQ=;
+        b=CZ8142ACSd+ezu2HYHHvKe30hcdhX18U7Txfxw8iY3pf7OZ9+rPOJG3TQNS4Y6mg6z
+         mLflkOaEBpirsjkohZkJP6Ikhl0r9yM4oxRxZjQLP+bNEgz6dVTm1H1Aqcf7rqdXiCP6
+         yqbUJYcUPjC1m3BXCkXRNiDJ2+U2/XAsKb99AfYYAqjkFn5KcGC09zxdCVZcSyqdU3iL
+         DNafsSSREL1dGUQmx3GLjGTd0theBR7QMZtghOqJycHX1qyYsavQiAanlPTVQHuy0rTT
+         /fzhXZwnfy2uos+rnl8PCf9oje+eS/XaTL1q/cadPWPNf8YwTnsivGZ0mC+HccRRgS8p
+         pe5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXOQ5d3u/c2xkt6yKLjwmKOWbjAjCGZ+AtIFseWGqnJMLhk6BMOA8WUhnHU/Lco/MHqcOA4qPSD8MbJzZaMA05kfh/OyyE/fdiZ6kcz
+X-Gm-Message-State: AOJu0Yz4QyNJIJf8616cbvb7EPKCvdXtMX5H+4TLzu5DcyuJ/7BzOKL4
+	pcDu9H83xOlNkVmrpsDPliuYoDs1X2p3KDso62Q3iw2uW7UU3+KX0WTGOCUKb8wcIXqcsfxi3//
+	I0smg0jUKojGTDq8lRK3kJW1SGD0=
+X-Google-Smtp-Source: AGHT+IFPxFkhjBkhh9PvsldyACZ9XMzB9HXDMHrxqgbMKOEOCqvI6vpAeNzkhiZCllYzo4CBv5K+cxLJ/nFBII7swzw=
+X-Received: by 2002:a05:6122:a0f:b0:4da:704f:7fc6 with SMTP id
+ 15-20020a0561220a0f00b004da704f7fc6mr7520629vkn.15.1714983634818; Mon, 06 May
+ 2024 01:20:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240503005023.174597-1-21cnbao@gmail.com> <20240503005023.174597-4-21cnbao@gmail.com>
+ <7548e30c-d56a-4a57-ab87-86c9c8e523b1@arm.com> <CAGsJ_4wx60GoB1erTQ7v3GTXLb_140bOJ_+z=kqY39eOd3P23g@mail.gmail.com>
+ <0d20d8af-e480-4eb8-8606-1e486b13fd7e@redhat.com>
+In-Reply-To: <0d20d8af-e480-4eb8-8606-1e486b13fd7e@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 6 May 2024 20:20:23 +1200
+Message-ID: <CAGsJ_4wP75tFWDcKJZfw7Pk9AdigVCv0niGUeTY6RTZwk1UnjQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] mm: introduce pte_move_swp_offset() helper which
+ can move offset bidirectionally
+To: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
+	hannes@cmpxchg.org, hughd@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
+	willy@infradead.org, xiang@kernel.org, ying.huang@intel.com, 
+	yosryahmed@google.com, yuzhao@google.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Julien,
+On Mon, May 6, 2024 at 8:06=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 04.05.24 01:40, Barry Song wrote:
+> > On Fri, May 3, 2024 at 5:41=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.c=
+om> wrote:
+> >>
+> >> On 03/05/2024 01:50, Barry Song wrote:
+> >>> From: Barry Song <v-songbaohua@oppo.com>
+> >>>
+> >>> There could arise a necessity to obtain the first pte_t from a swap
+> >>> pte_t located in the middle. For instance, this may occur within the
+> >>> context of do_swap_page(), where a page fault can potentially occur i=
+n
+> >>> any PTE of a large folio. To address this, the following patch introd=
+uces
+> >>> pte_move_swp_offset(), a function capable of bidirectional movement b=
+y
+> >>> a specified delta argument. Consequently, pte_increment_swp_offset()
+> >>
+> >> You mean pte_next_swp_offset()?
+> >
+> > yes.
+> >
+> >>
+> >>> will directly invoke it with delta =3D 1.
+> >>>
+> >>> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
+> >>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> >>> ---
+> >>>   mm/internal.h | 25 +++++++++++++++++++++----
+> >>>   1 file changed, 21 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/mm/internal.h b/mm/internal.h
+> >>> index c5552d35d995..cfe4aed66a5c 100644
+> >>> --- a/mm/internal.h
+> >>> +++ b/mm/internal.h
+> >>> @@ -211,18 +211,21 @@ static inline int folio_pte_batch(struct folio =
+*folio, unsigned long addr,
+> >>>   }
+> >>>
+> >>>   /**
+> >>> - * pte_next_swp_offset - Increment the swap entry offset field of a =
+swap pte.
+> >>> + * pte_move_swp_offset - Move the swap entry offset field of a swap =
+pte
+> >>> + *    forward or backward by delta
+> >>>    * @pte: The initial pte state; is_swap_pte(pte) must be true and
+> >>>    *    non_swap_entry() must be false.
+> >>> + * @delta: The direction and the offset we are moving; forward if de=
+lta
+> >>> + *    is positive; backward if delta is negative
+> >>>    *
+> >>> - * Increments the swap offset, while maintaining all other fields, i=
+ncluding
+> >>> + * Moves the swap offset, while maintaining all other fields, includ=
+ing
+> >>>    * swap type, and any swp pte bits. The resulting pte is returned.
+> >>>    */
+> >>> -static inline pte_t pte_next_swp_offset(pte_t pte)
+> >>> +static inline pte_t pte_move_swp_offset(pte_t pte, long delta)
+> >>
+> >> We have equivalent functions for pfn:
+> >>
+> >>    pte_next_pfn()
+> >>    pte_advance_pfn()
+> >>
+> >> Although the latter takes an unsigned long and only moves forward curr=
+ently. I
+> >> wonder if it makes sense to have their naming and semantics match? i.e=
+ change
+> >> pte_advance_pfn() to pte_move_pfn() and let it move backwards too.
+> >>
+> >> I guess we don't have a need for that and it adds more churn.
+> >
+> > we might have a need in the below case.
+> > A forks B, then A and B share large folios. B unmap/exit, then large
+> > folios of process
+> > A become single-mapped.
+> > Right now, while writing A's folios, we are CoWing A's large folios
+> > into many small
+> > folios. I believe we can reuse the entire large folios instead of doing=
+ nr_pages
+> > CoW and page faults.
+> > In this case, we might want to get the first PTE from vmf->pte.
+>
+> Once we have COW reuse for large folios in place (I think you know that
+> I am working on that), it might make sense to "COW-reuse around",
 
-On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote:
-> ad7380x(-4) parts are able to do oversampling to increase accuracy.
-> They support 2 average modes: normal average and rolling overage.
-> This commits focus on enabling normal average oversampling, which is the
-> default one.
->=20
-> Normal averaging involves taking a number of samples, adding them togethe=
-r,
-> and dividing the result by the number of samples taken.
-> This result is then output from the device. The sample data is cleared wh=
-en
-> the process completes. Because we need more samples to output a value,
-> the data output rate decrease with the oversampling ratio.
->=20
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
-> =C2=A0drivers/iio/adc/ad7380.c | 115 ++++++++++++++++++++++++++++++++++++=
-++++++++++-
-> =C2=A01 file changed, 114 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-> index 020959759170..1e3869f5e48c 100644
-> --- a/drivers/iio/adc/ad7380.c
-> +++ b/drivers/iio/adc/ad7380.c
-> @@ -88,7 +88,10 @@ struct ad7380_chip_info {
-> =C2=A0	.type =3D IIO_VOLTAGE,					\
-> =C2=A0	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |		\
-> =C2=A0		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),	\
-> -	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE),	\
-> +	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE) |	\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
-> +	.info_mask_shared_by_type_available =3D			\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
-> =C2=A0	.indexed =3D 1,						\
-> =C2=A0	.differential =3D (diff),					\
-> =C2=A0	.channel =3D (diff) ? (2 * (index)) : (index),		\
-> @@ -156,6 +159,16 @@ static const struct ad7380_timing_specs ad7380_4_tim=
-ing =3D {
-> =C2=A0	.t_csh_ns =3D 20,
-> =C2=A0};
-> =C2=A0
-> +/*
-> + * Available oversampling ratios. The indices correspond
-> + * with the bit value expected by the chip.
-> + * The available ratios depend on the averaging mode,
-> + * only normal averaging is supported for now
-> + */
-> +static const int ad7380_normal_average_oversampling_ratios[] =3D {
-> +	1, 2, 4, 8, 16, 32,
-> +};
-> +
-> =C2=A0static const struct ad7380_chip_info ad7380_chip_info =3D {
-> =C2=A0	.name =3D "ad7380",
-> =C2=A0	.channels =3D ad7380_channels,
-> @@ -231,6 +244,7 @@ static const struct ad7380_chip_info ad7384_4_chip_in=
-fo =3D {
-> =C2=A0struct ad7380_state {
-> =C2=A0	const struct ad7380_chip_info *chip_info;
-> =C2=A0	struct spi_device *spi;
-> +	unsigned int oversampling_ratio;
+TBH, I don't know if you are working on that. please Cc me next time :-)
 
-nit: move this to the other 'unsigned int' fields...
+> meaning we look if some neighboring PTEs map the same large folio and
+> map them writable as well. But if it's really worth it, increasing page
+> fault latency, is to be decided separately.
 
-> =C2=A0	struct regmap *regmap;
-> =C2=A0	unsigned int vref_mv;
-> =C2=A0	unsigned int vcm_mv[MAX_NUM_CHANNELS];
-> @@ -386,6 +400,12 @@ static int ad7380_read_direct(struct ad7380_state *s=
-t,
-> =C2=A0	};
-> =C2=A0	int ret;
-> =C2=A0
-> +	/*
-> +	 * In normal average oversampling we need to wait for multiple conversi=
-ons
-> to be done
-> +	 */
-> +	if (st->oversampling_ratio > 1)
-> +		xfers[0].delay.value =3D T_CONVERT_NS + 500 * st-
-> >oversampling_ratio;
-> +
-> =C2=A0	ret =3D spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
-> =C2=A0	if (ret < 0)
-> =C2=A0		return ret;
-> @@ -428,6 +448,91 @@ static int ad7380_read_raw(struct iio_dev *indio_dev=
-,
-> =C2=A0			/ st->vref_mv;
-> =C2=A0
-> =C2=A0		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-> +		*val =3D st->oversampling_ratio;
-> +
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad7380_read_avail(struct iio_dev *indio_dev,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 const int **vals, int *type, int *length,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 long mask)
-> +{
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-> +		*vals =3D ad7380_normal_average_oversampling_ratios;
-> +		*length =3D ARRAY_SIZE(ad7380_normal_average_oversampling_ratios);
-> +		*type =3D IIO_VAL_INT;
-> +
-> +		return IIO_AVAIL_LIST;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +/**
-> + * check_osr - Check the oversampling ratio
-> + * @available_ratio: available ratios's array
-> + * @size: size of the available_ratio array
-> + * ratio: ratio to check
-> + *
-> + * Check if ratio is present in @available_ratio. Check for exact match.
-> + * @available_ratio is an array of the available ratios (depending on th=
+On the other hand, we eliminate latency for the remaining nr_pages - 1 PTEs=
+.
+Perhaps we can discover a more cost-effective method to signify that a larg=
 e
-> oversampling mode).
-> + * The indices must correspond with the bit value expected by the chip.
-> + */
-> +static inline int check_osr(const int *available_ratio, int size, int ra=
-tio)
+folio is probably singly mapped? and only call "multi-PTEs" reuse while tha=
+t
+condition is true in PF and avoid increasing latency always?
 
-Please name the function ad7380_check_osr(). Also, drop the inline... The c=
-ompiler
-should be smart enough to take of that for us.
+>
+>
+> >
+> > Another case, might be
+> > A forks B, and we write either A or B, we might CoW an entire large
+> > folios instead
+> > CoWing nr_pages small folios.
+> >
+> > case 1 seems more useful, I might have a go after some days. then we mi=
+ght
+> > see pte_move_pfn().
+> pte_move_pfn() does sound odd to me. It might not be required to
+> implement the optimization described above. (it's easier to simply read
+> another PTE, check if it maps the same large folio, and to batch from the=
+re)
+>
 
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < size; i++) {
-> +		if (ratio =3D=3D available_ratio[i])
-> +			return i;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ad7380_write_raw(struct iio_dev *indio_dev,
-> +			=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan, int val,
-> +			=C2=A0=C2=A0=C2=A0 int val2, long mask)
-> +{
-> +	struct ad7380_state *st =3D iio_priv(indio_dev);
-> +	int ret, osr;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-> +		osr =3D check_osr(ad7380_normal_average_oversampling_ratios,
-> +				ARRAY_SIZE(ad7380_normal_average_oversampling_rati
-> os),
-> +				val);
-> +
-> +		if (osr < 0)
-> +			return osr;
-> +
-> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> +			ret =3D regmap_update_bits(st->regmap,
-> AD7380_REG_ADDR_CONFIG1,
-> +						 AD7380_CONFIG1_OSR,
-> +						 FIELD_PREP(AD7380_CONFIG1_OSR,
-> osr));
-> +
-> +			if (ret)
-> +				return ret;
-> +
-> +			st->oversampling_ratio =3D val;
-> +
-> +			/*
-> +			 * Perform a soft reset.
-> +			 * This will flush the oversampling block and FIFO but
-> will
-> +			 * maintain the content of the configurable registers.
-> +			 */
-> +			ret =3D regmap_update_bits(st->regmap,
-> AD7380_REG_ADDR_CONFIG2,
-> +						 AD7380_CONFIG2_RESET,
-> +						 FIELD_PREP(AD7380_CONFIG2_RESET,
-> +							=C2=A0=C2=A0=C2=A0
-> AD7380_CONFIG2_RESET_SOFT));
-> +		}
-> +		return 0;
+It appears that your proposal suggests potential reusability as follows: if=
+ we
+have a large folio containing 16 PTEs, you might consider reusing only 4 by
+examining PTEs "around" but not necessarily all 16 PTEs. please correct me
+if my understanding is wrong.
 
-return ret;
+Initially, my idea was to obtain the first PTE using pte_move_pfn() and the=
+n
+utilize folio_pte_batch() with the first PTE as arguments to ensure consist=
+ency
+in nr_pages, thus enabling complete reuse of the whole folio.
 
-Or you may be asked to directly return in regmap_update_bits() and use unre=
-achable()
-here.
+> --
+> Cheers,
+>
+> David / dhildenb
 
-> =C2=A0	default:
-> =C2=A0		return -EINVAL;
-> =C2=A0	}
-> @@ -435,6 +540,8 @@ static int ad7380_read_raw(struct iio_dev *indio_dev,
-> =C2=A0
-> =C2=A0static const struct iio_info ad7380_info =3D {
-> =C2=A0	.read_raw =3D &ad7380_read_raw,
-> +	.read_avail =3D &ad7380_read_avail,
-> +	.write_raw =3D &ad7380_write_raw,
-> =C2=A0	.debugfs_reg_access =3D &ad7380_debugfs_reg_access,
-> =C2=A0};
-> =C2=A0
-> @@ -458,6 +565,12 @@ static int ad7380_init(struct ad7380_state *st, stru=
-ct
-> regulator *vref)
-> =C2=A0	if (ret < 0)
-> =C2=A0		return ret;
-> =C2=A0
-> +	/* Disable oversampling by default.
-> +	 * This is the default value after reset,
-> +	 * so just initialize internal data
-> +	 */
-
-Your comment block is not in accordance with coding style. checkpatch shoul=
-d complain
-about this.
-
-> +	st->oversampling_ratio =3D 1;
-> +
-> =C2=A0	/* SPI 1-wire mode */
-> =C2=A0	return regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG2,
-> =C2=A0				=C2=A0 AD7380_CONFIG2_SDO,
->=20
-
+Thanks
+Barry
 
