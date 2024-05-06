@@ -1,375 +1,86 @@
-Return-Path: <linux-kernel+bounces-169839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5BA8BCE6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:50:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077CB8BCE67
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F3828890C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6531F22DE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D68779B9D;
-	Mon,  6 May 2024 12:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GAvw+jrf"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4C86DCF5;
+	Mon,  6 May 2024 12:49:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0265FB9A;
-	Mon,  6 May 2024 12:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AF94EB4C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999746; cv=none; b=DUGKa3oFwtMXskbhnBOhPU0328TitOWCwoH+/6pFmgDPgMtmxH29r/pAMzWxSR/syyZEHbtpBTPB77lEa8he6tMhGESXoa3Sq+MJXIwcNMECloTJEf/nHjFosYmdN4D2QPmkexK+ykwRUf0CPOddb8q+/ROuRt/is4X8NkjzSR8=
+	t=1714999745; cv=none; b=SVXvTSWj3JOaM2RycxxR7YViYF1md69oaeJkIBhQNCdSRaQoroH0icitwXc1HQAGFlz9wReDrZz/x3Mo09yTikMLcHziiYrSSgf/jzYNB9/3jqFjGeXlxlzyVEA/XaOtk1u0OPzpV1VlIUcZx1czt3Z41w71Q7TQxdnD/udLmig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999746; c=relaxed/simple;
-	bh=2oBQSzZfrsPoLPKYfY3SQczWXSAvlBqiIyWSsQhNYMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BPA2jD5aqNawe1pcAUlQns8KloFpVLmp8wlwkcFU8CS+qQg65v6Y2gsxnMU/AVERTnhzjQXCEIhr/XzExH26a7PaC46mUpG2s58CqoYcfZReBeXE4dSbqJ7rWlvow1skVggEk38xKtT1fcdDJQbU8SNUaXedxX/1oPzVohsCdFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GAvw+jrf; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1714999742;
-	bh=2oBQSzZfrsPoLPKYfY3SQczWXSAvlBqiIyWSsQhNYMc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GAvw+jrfA1VJtA7Ai+fzIVi9HUWeJ3Z1JKjLH62eln6cImgj2JVD0poirjmtckcfy
-	 BLNMjen6TmHUi2uRuIm8v72yI9YLt/pdFaCjQi9IBfWEPtkBKIwKCKjmEoMqk3NnZ7
-	 gEsA5Sn3yrqI2eQsBJbi4o/KMufjj3ni+ry+2i3R7waEJDRPeJDE/41TkKfrPCKm8s
-	 hHl1Y9Xu/dec0W3rdNiKFQT6x/+R8XaHPafxu70dV/+PumWVFXNhFGyBgX4r68dU5n
-	 WzKYxaIMzmkIERr1jZAQiOASmL36BX7NPrTDCg8VZ5DRuyhXWP3yxIJqxCv/IDy6Xt
-	 aqDw3DltBgzWg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D3A2B3782060;
-	Mon,  6 May 2024 12:49:00 +0000 (UTC)
-Message-ID: <a4099612-a4ae-4211-9674-c7053d2a995a@collabora.com>
-Date: Mon, 6 May 2024 14:48:59 +0200
+	s=arc-20240116; t=1714999745; c=relaxed/simple;
+	bh=VjB2u488WZHw90y1PLR4ye99A/PaYrwu0eueMeEUNeE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nP3NzPuuKO8vPj4bRLrMrljXgEXDc6c/g2LJTXlspcqGCPPbaUsW3YYjtKjxQ8INipcbeMRzAriC+4ypg5IUG8TVmfkad6ZndqZCq5rtQq7FEoGv5DN507lHyDO/rL6JscMgHf3IPE5ewGZIZ7FquXUnp1ahwRG7/nhpTp0L+Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c5ff9964fso12368425ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:49:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714999743; x=1715604543;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s+EhjnU0SNpEiQJuByA7SIjeuS8TgOhozIjm6fqpQVU=;
+        b=p9S1+EXraEaVEQHyZfqROjvDIlkpgG97GlEVu8lzP9uKVc6uNFbiNPEx6hT5Jk4lC5
+         dV4lbpNbp4LlFuklmOsvkv5d0zm0MUkfvQUzVwHEEdHGIgs6mmvi7SyoFaZoaaH31ITt
+         0ZLOszeyrwlWf96bZz4cuIEzmFtzPGLTNTXrvQp05VE4AnqfLKXwHv9G7ZGvXDPY6sDN
+         YPW5yy6mcloROnelFT6gSmbPvSYzHdGBOXfn+UW2nU1KktaOGpZyzEnoz+EhDWaEZ3jF
+         3Lc/zcLAUwl+yz0boNNTVTXkYr2f+Vz68KdlTea4HvUV17S5H+VYeXCXu0FwkN63Nzd0
+         80yA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9LLk39tSqeReLO4FunubxDR2OJa7mHxiEDqkFhV7U/m4oAM1khVK3ajv0wBYviJkodw+U5z6uEU7loMPCuQnjWIDqdTmO+nMEiVlX
+X-Gm-Message-State: AOJu0YyM7DmBKNuJZmsxD93TNSyxlDQVMkbrMI93q5+mlZamqTnT8QKn
+	9UCuRBlTkqU7VDP1fLS7yCM4mUvOEkXenOGyh5shynLwCOjFHNwYnaZOsgXnJYf69FRKCg9Wg1s
+	fzReG5BAvTYX+LPdmLqQtrIbzjvCA1woVIX+bFuwOhWriHAiGuVTO+1w=
+X-Google-Smtp-Source: AGHT+IHltGYYkCiN4Cume+iOfB70ZXjCZB4due3cfZJySDGbpEs19Pjqkx3h7BHcZlw6BtLOVJg/94mpI8hW4QlSzQon7mG19PkV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 5/5] arm64: dts: mediatek: Add mt7986 based Bananapi R3
- Mini
-To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
- Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Tianling Shen <cnsztl@gmail.com>
-References: <20240505164549.65644-1-linux@fw-web.de>
- <20240505164549.65644-6-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240505164549.65644-6-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:170f:b0:36c:88ca:4871 with SMTP id
+ u15-20020a056e02170f00b0036c88ca4871mr461452ill.5.1714999743079; Mon, 06 May
+ 2024 05:49:03 -0700 (PDT)
+Date: Mon, 06 May 2024 05:49:03 -0700
+In-Reply-To: <tencent_52A96D03A9A44E1779F766C6CB5378436805@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000079f8bd0617c87e7e@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtReadFirst
+From: syzbot <syzbot+65fa06e29859e41a83f3@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Il 05/05/24 18:45, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Add device Tree for Bananapi R3 Mini SBC.
-> 
-> Co-developed-by: Eric Woudstra <ericwouds@gmail.com>
-> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-> Co-developed-by: Tianling Shen <cnsztl@gmail.com>
-> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->   arch/arm64/boot/dts/mediatek/Makefile         |   1 +
->   .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 486 ++++++++++++++++++
->   2 files changed, 487 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index 37b4ca3a87c9..1763b001ab06 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7981b-xiaomi-ax3000t.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-acelink-ew-7886cax.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-mini.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-> new file mode 100644
-> index 000000000000..c764b4dc4752
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-> @@ -0,0 +1,486 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2021 MediaTek Inc.
-> + * Authors: Frank Wunderlich <frank-w@public-files.de>
-> + *          Eric Woudstra <ericwouds@gmail.com>
-> + *          Tianling Shen <cnsztl@immortalwrt.org>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/pinctrl/mt65xx.h>
-> +
-> +#include "mt7986a.dtsi"
-> +
-> +/ {
-> +	model = "Bananapi BPI-R3 Mini";
-> +	chassis-type = "embedded";
-> +	compatible = "bananapi,bpi-r3mini", "mediatek,mt7986a";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +		ethernet0 = &gmac0;
-> +		ethernet1 = &gmac1;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	dcin: regulator-12vd {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "12vd";
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
-> +	fan: pwm-fan {
-> +		compatible = "pwm-fan";
-> +		#cooling-cells = <2>;
-> +		/* cooling level (0, 1, 2) - pwm inverted */
-> +		cooling-levels = <255 96 0>;
+Hello,
 
-Did you try to actually invert the PWM?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Look for PWM_POLARITY_INVERTED ;-)
+Reported-and-tested-by: syzbot+65fa06e29859e41a83f3@syzkaller.appspotmail.com
 
-> +		pwms = <&pwm 0 10000>;
-> +		status = "okay";
-> +	};
-> +
-> +	reg_1p8v: regulator-1p8v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "1.8vd";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		vin-supply = <&dcin>;
-> +	};
-> +
-> +	reg_3p3v: regulator-3p3v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "3.3vd";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		vin-supply = <&dcin>;
-> +	};
-> +
-> +	usb_vbus: regulator-usb-vbus {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb_vbus";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		gpios = <&pio 20 GPIO_ACTIVE_LOW>;
-> +		regulator-boot-on;
-> +	};
-> +
-> +	en8811_a: regulator-phy1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "phy1";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&pio 16 GPIO_ACTIVE_LOW>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	en8811_b: regulator-phy2 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "phy2";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&pio 17 GPIO_ACTIVE_LOW>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		green_led: led-0 {
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_POWER;
-> +			gpios = <&pio 19 GPIO_ACTIVE_HIGH>;
-> +			default-state = "on";
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		reset-key {
-> +			label = "reset";
-> +			linux,code = <KEY_RESTART>;
-> +			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-> +
-> +};
-> +
-> +&cpu_thermal {
-> +	cooling-maps {
-> +		map0 {
-> +			/* active: set fan to cooling level 2 */
-> +			cooling-device = <&fan 2 2>;
-> +			trip = <&cpu_trip_active_high>;
-> +		};
-> +
-> +		map1 {
-> +			/* active: set fan to cooling level 1 */
-> +			cooling-device = <&fan 1 1>;
-> +			trip = <&cpu_trip_active_med>;
-> +		};
-> +
-> +		map2 {
-> +			/* active: set fan to cooling level 0 */
-> +			cooling-device = <&fan 0 0>;
-> +			trip = <&cpu_trip_active_low>;
-> +		};
-> +	};
-> +};
-> +
-> +&crypto {
-> +	status = "okay";
-> +};
-> +
-> +&eth {
-> +	status = "okay";
-> +
-> +	gmac0: mac@0 {
-> +		compatible = "mediatek,eth-mac";
-> +		reg = <0>;
-> +		phy-mode = "2500base-x";
-> +		phy-handle = <&phy14>;
-> +	};
-> +
-> +	gmac1: mac@1 {
-> +		compatible = "mediatek,eth-mac";
-> +		reg = <1>;
-> +		phy-mode = "2500base-x";
-> +		phy-handle = <&phy15>;
-> +	};
-> +
-> +	mdio: mdio-bus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +	};
-> +};
-> +
-> +&mmc0 {
-> +	pinctrl-names = "default", "state_uhs";
-> +	pinctrl-0 = <&mmc0_pins_default>;
-> +	pinctrl-1 = <&mmc0_pins_uhs>;
-> +	vmmc-supply = <&reg_3p3v>;
-> +	vqmmc-supply = <&reg_1p8v>;
-> +};
-> +
-> +
-> +&i2c0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c_pins>;
-> +	status = "okay";
-> +
-> +	/* MAC Address EEPROM */
-> +	eeprom@50 {
-> +		compatible = "atmel,24c02";
-> +		reg = <0x50>;
-> +
-> +		address-width = <8>;
-> +		pagesize = <8>;
-> +		size = <256>;
-> +	};
-> +};
-> +
-> +&mdio {
+Tested on:
 
-You can just move all this stuff to where you declare the mdio-bus....
+commit:         5eb4573e Merge tag 'soc-fixes-6.9-2' of git://git.kern..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=145680d4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3d46aa9d7a44f40d
+dashboard link: https://syzkaller.appspot.com/bug?extid=65fa06e29859e41a83f3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c6d86c980000
 
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	phy14: ethernet-phy@14 {
-
-I say that this is `phy0: ethernet-phy@14` - because this is the first PHY on this
-board.
-
-> +		reg = <14>;
-
-Uhm.. doesn't this require the ethernet-phy-id03a2.a411 compatible?
-
-> +		interrupts-extended = <&pio 48 IRQ_TYPE_EDGE_FALLING>;
-> +		reset-gpios = <&pio 49 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <10000>;
-> +		reset-deassert-us = <20000>;
-> +		phy-mode = "2500base-x";
-> +		full-duplex;
-> +		pause;
-> +		airoha,pnswap-rx;
-> +
-> +		leds {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			led@0 { /* en8811_a_gpio5 */
-> +				reg = <0>;
-> +				color = <LED_COLOR_ID_YELLOW>;
-> +				function = LED_FUNCTION_LAN;
-> +				function-enumerator = <1>;
-
-Why aren't you simply using a label?
-
-> +				default-state = "keep";
-> +				linux,default-trigger = "netdev";
-> +			};
-> +			led@1 { /* en8811_a_gpio4 */
-> +				reg = <1>;
-> +				color = <LED_COLOR_ID_GREEN>;
-> +				function = LED_FUNCTION_LAN;
-> +				function-enumerator = <2>;
-> +				default-state = "keep";
-> +				linux,default-trigger = "netdev";
-> +			};
-> +		};
-> +	};
-> +
-> +	phy15: ethernet-phy@15 {
-> +		reg = <15>;
-
-Same here.
-
-Cheers,
-Angelo
-
+Note: testing is done by a robot and is best-effort only.
 
