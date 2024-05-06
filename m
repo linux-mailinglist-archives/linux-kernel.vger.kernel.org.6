@@ -1,248 +1,418 @@
-Return-Path: <linux-kernel+bounces-169579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31798BCAC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:36:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A5D8BCB0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9091B221C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FA321C216E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477A014291D;
-	Mon,  6 May 2024 09:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B454E1428E0;
+	Mon,  6 May 2024 09:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="FuqWHxzh"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lllKlgxf"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7CA142627
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26F41422DD;
+	Mon,  6 May 2024 09:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714988167; cv=none; b=UXksVoE7f3NiYsFQFfV23/nBiDdbuXiHgnZY5BdQQdI3f0Rcaur3Aa5pfz9qmlNzg2ICfMe2wq+hpooWMwtac77Q/qBMBbF3SGn6uXAcgzGFHVadAFsqqiiloemBm8Pwuk/nj3O4VaC39uPwv/viDYy6qNgrrYJjSwqpWh4hohQ=
+	t=1714988860; cv=none; b=qavmFaSsY9F/1DZv9DqMTnHa/wlDFvkcARgtCM2urJtCHpHgYgflGwlmEBU7G6bW3tAa0pm3eMFdRl/epQ9q4fdfSG8LhOjg9HwB9ZvydODCqbfRQSlNOP+x9aqgltXbpUaCsnWouN7u+9H5ajh4FweIFQbADI1/1IKHI4pDysM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714988167; c=relaxed/simple;
-	bh=Mu2C59ma0wmmlwlJbUPb0oxrlPtfrOJgkHqbGqwGNXg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U8HVnB/tqUC1EWF360EzLB2lB6xCaCE4hgNRAQtCsvPafg5VmsqOCisCLEx4g0NopXSZeMht1c6O7ayubap2XjNRcRAaig9jXSMsFtYwPY717LZtruv1zsQGSehYB5SP2oLOn4BJ2SPxP/HPW1uZcAHLr2jOU0a/dpgCFjIFDq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=FuqWHxzh reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+	s=arc-20240116; t=1714988860; c=relaxed/simple;
+	bh=9sh7rHa1zaoLPu9N17bHQ5wa5CD6b1ETBOSTvR5soa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QLcXN3+vqBrTsU5x8+m/QEpOgjQS0NZKWQ6Q6HT6fh0us/XjosZnmvD+U4IDAAMaQTw+SE8AaWcSQiBSsgBQmIFA010Yhu22DfrHGnADJQH5EWwXSMM891MZYehN6ImOd++CWgy2Ag3cD/nCHyNTmg6nZVX+/lwoDmIOgxWPGps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lllKlgxf; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51f0b6b682fso1738034e87.1;
+        Mon, 06 May 2024 02:47:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FJ0E44CU85BZKUVcO6AUH0IYXzryWFFYUpoZJjpMvu0=;
-  b=FuqWHxzhPUxWiozdvOsPm3qY1w7JSUV1wTpwRXvroNUY21Rgi5c2qZvg
-   xzfv208KB/vi+A7skV9YcOyF3ah1EufbTHi75J/uo/EBUiQh6yeZpNwji
-   SiLif7t4G0JAM0JZFriYltBO9ze2HxoxYwIyMHw6IGCNxWVUF0KbXaWZ1
-   vKcgrQqKhjpnogDWj0Xr4/2VhAQeDAw9yWZhEO+lvVrZBfifMTwLGKvNk
-   GOoieAyBwZRHkErpY4akwQVOpgq8ZEuR481Jz+zRmMYmmx2Bw/ujMilf5
-   arO7dYARqf+i67d5UOHxuIXmfQeFELgqvSopf5RHPeKhMiWxkn9pvYWCM
-   A==;
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 06 May 2024 17:36:00 +0800
-Received: from CSBMAIL1.internal.ite.com.tw (CSBMAIL1.internal.ite.com.tw [192.168.65.58])
-	by mse.ite.com.tw with ESMTP id 4469Ztbw076496;
-	Mon, 6 May 2024 17:35:55 +0800 (GMT-8)
-	(envelope-from kuro.chung@ite.com.tw)
-Received: from ite-XPS-13-9360.internal.ite.com.tw (192.168.72.42) by
- CSBMAIL1.internal.ite.com.tw (192.168.65.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 6 May 2024 17:35:55 +0800
-From: kuro <kuro.chung@ite.com.tw>
-To:
-CC: Allen Chen <allen.chen@ite.com.tw>, Pin-yen Lin <treapking@chromium.org>,
-        Kuro Chung <kuro.chung@ite.com.tw>,
-        Kenneth Haung <kenneth.hung@ite.com.tw>,
-        Kuro Chung <kuro.chung@ite.corp-partner.google.com>,
-        Andrzej Hajda
-	<andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert
- Foss <rfoss@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVERS"
-	<dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 1/1] drm/bridge: it6505: fix hibernate to resume no display issue
-Date: Mon, 6 May 2024 17:46:44 +0800
-Message-ID: <20240506094644.887842-2-kuro.chung@ite.com.tw>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240506094644.887842-1-kuro.chung@ite.com.tw>
-References: <20240506094644.887842-1-kuro.chung@ite.com.tw>
+        d=gmail.com; s=20230601; t=1714988857; x=1715593657; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p0zbUy76iL9lY1l5voQgJ3c+Z/VI10ocBZ49GywIStw=;
+        b=lllKlgxft046t4XhNhBwIihy/8hHc1CA8mY2qRPQGoq0yVTJz8Kr6/MEMW2XQOZWiQ
+         JoM2PIZQOn2u+o+HNxa3LvM+pre4tAYbHh+e52BDGbUxiNC7OvSkwebM2KYVr5PGUtWV
+         gFp86RyaifgPlp5S9ONo9iRvBnWxJd7L/n3zpnPf9mzSq0QX/uyYKQv0AjAY3SjAQoNl
+         5dki+tYw0q9Fd6Lq20PhOUoJ3Yp3WjXqJlYprU6OswYjHq2Kljm6zXrtkItRmm0NGPsj
+         BEdz/xum4lCix8kkutv+w7OaA+vujikWj7jjCR6y5g7WppkBc7rxHumc96KmNYMXduY9
+         jG8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714988857; x=1715593657;
+        h=content-transfer-encoding:in-reply-to:from:references:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p0zbUy76iL9lY1l5voQgJ3c+Z/VI10ocBZ49GywIStw=;
+        b=drYByLStK3cLR927ZYFPReQiY9vQ5dE2nRxYhYg8o8m7Xp1mwvNmnsVrnqx9RTxqbv
+         6LiiQNHzT2dY4sZTL3Zu32tqhk1NIuQ9Jz5PUMDgbbrOqBNbOgqlDoSRtWjS3zmCX1lF
+         kMs8+B/LnpklJHPLnVwslZlAzNVB+1bYqUzw+tZYLy+VCEByI0vqcCLZ/PFHlOMfCkXX
+         +k5zB/VF3X7Y1hze54UxsRwOp+TzWbXjo5snOffrk66YZFtzwPJ4aR1GE13m9CsdmeGD
+         /XZdPQXyR9eB4ZGFWrO31AB4ti6Oq5HAGbKTANwC3IoqUSSqNGB1MZFWh2lMoNek+bAj
+         8BRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRtLvmVh3lUyESX0vRMz6+F1fiiWRO7QfqFkklU0NobxR1PEmfhSqII7+S4ud9KLBa2w7lz5clHSbYSGNR8Vd7O1JpXRpHpvY2vKXJ4yPR7dHmNpbuPf7+f26HGu8+1+SSbb8p3ommOkcK9XSo+IHR/VYDOCmEVZdqeieQXW6pM8ks587g
+X-Gm-Message-State: AOJu0YwdExLGbGp9JnOSKQ1a01xqudmrjc+A1nut9k4a0l/xpW3kjGaN
+	oyQyzKxXy+qzKy+4Wog/OT36MByqFFFgFWssx4V2QSfFRZxYVTox
+X-Google-Smtp-Source: AGHT+IGGPqr5mpUnVBkw1z3Y6OVjkMi5bwSVrfA6ryMEn2dsPJ2bkdjlrqELin/s+pltnnCF4UHCOQ==
+X-Received: by 2002:a05:6512:10cc:b0:51a:d9a3:dbf5 with SMTP id k12-20020a05651210cc00b0051ad9a3dbf5mr11420390lfg.47.1714988856386;
+        Mon, 06 May 2024 02:47:36 -0700 (PDT)
+Received: from debian ([146.70.204.204])
+        by smtp.gmail.com with ESMTPSA id n12-20020a05600c3b8c00b0041bf87e702asm15535867wms.10.2024.05.06.02.47.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 02:47:36 -0700 (PDT)
+Message-ID: <1ed21e6d-7cbc-43e3-8933-fc40562b70b2@gmail.com>
+Date: Mon, 6 May 2024 11:47:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CSBMAIL1.internal.ite.com.tw (192.168.65.58) To
- CSBMAIL1.internal.ite.com.tw (192.168.65.58)
-X-TM-SNTS-SMTP:
-	963F680051FC04DF6066CDD00CFEFD683CA1B3047FCA81CCC576D59CF02F33492002:8
-X-MAIL:mse.ite.com.tw 4469Ztbw076496
+Subject: [PATCH net-next v8 2/3] net: gro: move L3 flush checks to
+ tcp_gro_receive and udp_gro_receive_segment
+To: davem@davemloft.net, edumazet@google.com,
+ willemdebruijn.kernel@gmail.com, kuba@kernel.org, pabeni@redhat.com,
+ dsahern@kernel.org, alobakin@pm.me, shuah@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240506093550.128210-1-richardbgobert@gmail.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <20240506093550.128210-1-richardbgobert@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Kuro <kuro.chung@ite.com.tw>
+{inet,ipv6}_gro_receive functions perform flush checks (ttl, flags,
+iph->id, ...) against all packets in a loop. These flush checks are used in
+all merging UDP and TCP flows.
 
-ITE added a FIFO reset bit for input video. When system power resume,
-the TTL input of it6505 may get some noise before video signal stable
-and the hardware function reset is required.
-But the input FIFO reset will also trigger error interrupts of output module rising.
-Thus, it6505 have to wait a period can clear those expected error interrupts
-caused by manual hardware reset in one interrupt handler calling to avoid interrupt looping.
+These checks need to be done only once and only against the found p skb,
+since they only affect flush and not same_flow.
 
-Signed-off-by: Kuro Chung <kuro.chung@ite.corp-partner.google.com>
+This patch leverages correct network header offsets from the cb for both
+outer and inner network headers - allowing these checks to be done only
+once, in tcp_gro_receive and udp_gro_receive_segment. As a result,
+NAPI_GRO_CB(p)->flush is not used at all. In addition, flush_id checks are
+more declarative and contained in inet_gro_flush, thus removing the need
+for flush_id in napi_gro_cb.
 
+This results in less parsing code for non-loop flush tests for TCP and UDP
+flows.
+
+To make sure results are not within noise range - I've made netfilter drop
+all TCP packets, and measured CPU performance in GRO (in this case GRO is
+responsible for about 50% of the CPU utilization).
+
+perf top while replaying 64 parallel IP/TCP streams merging in GRO:
+(gro_network_flush is compiled inline to tcp_gro_receive)
+net-next:
+        6.94% [kernel] [k] inet_gro_receive
+        3.02% [kernel] [k] tcp_gro_receive
+
+patch applied:
+        4.27% [kernel] [k] tcp_gro_receive
+        4.22% [kernel] [k] inet_gro_receive
+
+perf top while replaying 64 parallel IP/IP/TCP streams merging in GRO (same
+results for any encapsulation, in this case inet_gro_receive is top
+offender in net-next)
+net-next:
+        10.09% [kernel] [k] inet_gro_receive
+        2.08% [kernel] [k] tcp_gro_receive
+
+patch applied:
+        6.97% [kernel] [k] inet_gro_receive
+        3.68% [kernel] [k] tcp_gro_receive
+
+Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
 ---
- drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
- 1 file changed, 49 insertions(+), 24 deletions(-)
+ include/net/gro.h      | 66 ++++++++++++++++++++++++++++++++++++++----
+ net/core/gro.c         |  3 --
+ net/ipv4/af_inet.c     | 41 +-------------------------
+ net/ipv4/tcp_offload.c | 15 ++--------
+ net/ipv4/udp_offload.c | 10 ++-----
+ net/ipv6/ip6_offload.c | 11 -------
+ 6 files changed, 65 insertions(+), 81 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index b53da9bb65a16..64e2706e3d0c3 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -1317,9 +1317,15 @@ static void it6505_video_reset(struct it6505 *it6505)
- 	it6505_link_reset_step_train(it6505);
- 	it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID_MUTE);
- 	it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x00);
--	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-+
-+	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FIFO_RESET);
-+	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00);
-+
- 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_501_FIFO);
- 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
-+
-+	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
-+	usleep_range(1000, 2000);
- 	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
- }
+diff --git a/include/net/gro.h b/include/net/gro.h
+index 1faff23b66e8..0565dd716ab7 100644
+--- a/include/net/gro.h
++++ b/include/net/gro.h
+@@ -36,15 +36,15 @@ struct napi_gro_cb {
+ 	/* This is non-zero if the packet cannot be merged with the new skb. */
+ 	u16	flush;
  
-@@ -2249,12 +2255,11 @@ static void it6505_link_training_work(struct work_struct *work)
- 	if (ret) {
- 		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
- 		it6505_link_train_ok(it6505);
--		return;
- 	} else {
- 		it6505->auto_train_retry--;
-+		it6505_dump(it6505);
- 	}
- 
--	it6505_dump(it6505);
- }
- 
- static void it6505_plugged_status_to_codec(struct it6505 *it6505)
-@@ -2475,31 +2480,53 @@ static void it6505_irq_link_train_fail(struct it6505 *it6505)
- 	schedule_work(&it6505->link_works);
- }
- 
--static void it6505_irq_video_fifo_error(struct it6505 *it6505)
-+static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
- {
--	struct device *dev = &it6505->client->dev;
+-	/* Save the IP ID here and check when we get to the transport layer */
+-	u16	flush_id;
 -
--	DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
--	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
--	flush_work(&it6505->link_works);
--	it6505_stop_hdcp(it6505);
--	it6505_video_reset(it6505);
-+	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
+ 	/* Number of segments aggregated. */
+ 	u16	count;
+ 
+ 	/* Used in ipv6_gro_receive() and foo-over-udp and esp-in-udp */
+ 	u16	proto;
+ 
++	/* used to support CHECKSUM_COMPLETE for tunneling protocols */
++	__wsum	csum;
++
+ /* Used in napi_gro_cb::free */
+ #define NAPI_GRO_FREE             1
+ #define NAPI_GRO_FREE_STOLEN_HEAD 2
+@@ -85,9 +85,6 @@ struct napi_gro_cb {
+ 		u8	is_flist:1;
+ 	);
+ 
+-	/* used to support CHECKSUM_COMPLETE for tunneling protocols */
+-	__wsum	csum;
+-
+ 	/* L3 offsets */
+ 	union {
+ 		struct {
+@@ -442,6 +439,63 @@ static inline __wsum ip6_gro_compute_pseudo(const struct sk_buff *skb,
+ 					    skb_gro_len(skb), proto, 0));
  }
  
--static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
-+static void it6505_irq_video_handler(struct it6505 *it6505, const int *int_status)
- {
- 	struct device *dev = &it6505->client->dev;
-+	int reg_0d, reg_int03;
- 
--	DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
--	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
--	flush_work(&it6505->link_works);
--	it6505_stop_hdcp(it6505);
--	it6505_video_reset(it6505);
--}
-+	/*
-+	 * When video SCDT change with video not stable,
-+	 * Or video FIFO error, need video reset
++static inline int inet_gro_flush(const struct iphdr *iph, const struct iphdr *iph2,
++				 struct sk_buff *p, bool outer)
++{
++	const u32 id = ntohl(*(__be32 *)&iph->id);
++	const u32 id2 = ntohl(*(__be32 *)&iph2->id);
++	const u16 flush_id = (id >> 16) - (id2 >> 16);
++	const u16 count = NAPI_GRO_CB(p)->count;
++	const u32 df = id & IP_DF;
++	u32 is_atomic;
++	int flush;
++
++	/* All fields must match except length and checksum. */
++	flush = (iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF));
++
++	if (outer && df)
++		return flush;
++
++	/* When we receive our second frame we can make a decision on if we
++	 * continue this flow as an atomic flow with a fixed ID or if we use
++	 * an incrementing ID.
 +	 */
- 
--static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
--{
--	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
-+	if ((!it6505_get_video_status(it6505) &&
-+		(it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))) ||
-+		(it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW, (unsigned int *) int_status)) ||
-+		(it6505_test_bit(BIT_INT_VID_FIFO_ERROR, (unsigned int *) int_status))) {
++	NAPI_GRO_CB(p)->is_atomic |= (count == 1 && df && flush_id == 0);
++	is_atomic = (df && NAPI_GRO_CB(p)->is_atomic) - 1;
 +
-+		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
-+		flush_work(&it6505->link_works);
-+		it6505_stop_hdcp(it6505);
-+		it6505_video_reset(it6505);
++	return flush | (flush_id ^ (count & is_atomic));
++}
 +
-+		usleep_range(10000, 11000);
++static inline int ipv6_gro_flush(const struct ipv6hdr *iph, const struct ipv6hdr *iph2)
++{
++	/* <Version:4><Traffic_Class:8><Flow_Label:20> */
++	__be32 first_word = *(__be32 *)iph ^ *(__be32 *)iph2;
 +
-+		/*
-+		 * Clear FIFO error IRQ to prevent fifo error -> reset loop
-+		 * HW will trigger SCDT change IRQ again when video stable
-+		 */
++	/* Flush if Traffic Class fields are different. */
++	return !!((first_word & htonl(0x0FF00000)) |
++		(__force __be32)(iph->hop_limit ^ iph2->hop_limit));
++}
 +
-+		reg_int03 = it6505_read(it6505, INT_STATUS_03);
-+		reg_0d = it6505_read(it6505, REG_SYSTEM_STS);
++static inline int gro_network_flush(const void *th, const void *th2, struct sk_buff *p, int off)
++{
++	const bool encap_mark = NAPI_GRO_CB(p)->encap_mark;
++	int flush = 0;
++	int i;
 +
-+		reg_int03 &= (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LATCH_FIFO_OVERFLOW));
-+		it6505_write(it6505, INT_STATUS_03, reg_int03);
++	for (i = 0; i <= encap_mark; i++) {
++		const u16 diff = off - NAPI_GRO_CB(p)->network_offsets[i];
++		const void *nh = th - diff;
++		const void *nh2 = th2 - diff;
 +
-+		DRM_DEV_DEBUG_DRIVER(dev, "reg08 = 0x%02x", reg_int03);
-+		DRM_DEV_DEBUG_DRIVER(dev, "reg0D = 0x%02x", reg_0d);
-+
-+		return;
++		if (((struct iphdr *)nh)->version == 6)
++			flush |= ipv6_gro_flush(nh, nh2);
++		else
++			flush |= inet_gro_flush(nh, nh2, p, i != encap_mark);
 +	}
 +
++	return flush;
++}
 +
-+	if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_status))
-+		it6505_irq_scdt(it6505);
- }
+ int skb_gro_receive(struct sk_buff *p, struct sk_buff *skb);
  
- static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
-@@ -2512,15 +2539,12 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
- 	} irq_vec[] = {
- 		{ BIT_INT_HPD, it6505_irq_hpd },
- 		{ BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
--		{ BIT_INT_SCDT, it6505_irq_scdt },
- 		{ BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
- 		{ BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
- 		{ BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
- 		{ BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
- 		{ BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error },
- 		{ BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail },
--		{ BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error },
--		{ BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_overflow },
- 	};
- 	int int_status[3], i;
+ /* Pass the currently batched GRO_NORMAL SKBs up to the stack. */
+diff --git a/net/core/gro.c b/net/core/gro.c
+index 99a45a5211c9..3e9422c23bc9 100644
+--- a/net/core/gro.c
++++ b/net/core/gro.c
+@@ -331,8 +331,6 @@ static void gro_list_prepare(const struct list_head *head,
+ 	list_for_each_entry(p, head, list) {
+ 		unsigned long diffs;
  
-@@ -2550,6 +2574,7 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
- 			if (it6505_test_bit(irq_vec[i].bit, (unsigned int *)int_status))
- 				irq_vec[i].handler(it6505);
+-		NAPI_GRO_CB(p)->flush = 0;
+-
+ 		if (hash != skb_get_hash_raw(p)) {
+ 			NAPI_GRO_CB(p)->same_flow = 0;
+ 			continue;
+@@ -472,7 +470,6 @@ static enum gro_result dev_gro_receive(struct napi_struct *napi, struct sk_buff
+ 					sizeof(u32))); /* Avoid slow unaligned acc */
+ 	*(u32 *)&NAPI_GRO_CB(skb)->zeroed = 0;
+ 	NAPI_GRO_CB(skb)->flush = skb_has_frag_list(skb);
+-	NAPI_GRO_CB(skb)->is_atomic = 1;
+ 	NAPI_GRO_CB(skb)->count = 1;
+ 	if (unlikely(skb_is_gso(skb))) {
+ 		NAPI_GRO_CB(skb)->count = skb_shinfo(skb)->gso_segs;
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index 428196e1541f..44564d009e95 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -1482,7 +1482,6 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 	struct sk_buff *p;
+ 	unsigned int hlen;
+ 	unsigned int off;
+-	unsigned int id;
+ 	int flush = 1;
+ 	int proto;
+ 
+@@ -1508,13 +1507,10 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 		goto out;
+ 
+ 	NAPI_GRO_CB(skb)->proto = proto;
+-	id = ntohl(*(__be32 *)&iph->id);
+-	flush = (u16)((ntohl(*(__be32 *)iph) ^ skb_gro_len(skb)) | (id & ~IP_DF));
+-	id >>= 16;
++	flush = (u16)((ntohl(*(__be32 *)iph) ^ skb_gro_len(skb)) | (ntohl(*(__be32 *)&iph->id) & ~IP_DF));
+ 
+ 	list_for_each_entry(p, head, list) {
+ 		struct iphdr *iph2;
+-		u16 flush_id;
+ 
+ 		if (!NAPI_GRO_CB(p)->same_flow)
+ 			continue;
+@@ -1531,43 +1527,8 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 			NAPI_GRO_CB(p)->same_flow = 0;
+ 			continue;
  		}
-+		it6505_irq_video_handler(it6505, (unsigned int *) int_status);
+-
+-		/* All fields must match except length and checksum. */
+-		NAPI_GRO_CB(p)->flush |=
+-			(iph->ttl ^ iph2->ttl) |
+-			(iph->tos ^ iph2->tos) |
+-			((iph->frag_off ^ iph2->frag_off) & htons(IP_DF));
+-
+-		NAPI_GRO_CB(p)->flush |= flush;
+-
+-		/* We need to store of the IP ID check to be included later
+-		 * when we can verify that this packet does in fact belong
+-		 * to a given flow.
+-		 */
+-		flush_id = (u16)(id - ntohs(iph2->id));
+-
+-		/* This bit of code makes it much easier for us to identify
+-		 * the cases where we are doing atomic vs non-atomic IP ID
+-		 * checks.  Specifically an atomic check can return IP ID
+-		 * values 0 - 0xFFFF, while a non-atomic check can only
+-		 * return 0 or 0xFFFF.
+-		 */
+-		if (!NAPI_GRO_CB(p)->is_atomic ||
+-		    !(iph->frag_off & htons(IP_DF))) {
+-			flush_id ^= NAPI_GRO_CB(p)->count;
+-			flush_id = flush_id ? 0xFFFF : 0;
+-		}
+-
+-		/* If the previous IP ID value was based on an atomic
+-		 * datagram we can overwrite the value and ignore it.
+-		 */
+-		if (NAPI_GRO_CB(skb)->is_atomic)
+-			NAPI_GRO_CB(p)->flush_id = flush_id;
+-		else
+-			NAPI_GRO_CB(p)->flush_id |= flush_id;
  	}
  
- 	pm_runtime_put_sync(dev);
+-	NAPI_GRO_CB(skb)->is_atomic = !!(iph->frag_off & htons(IP_DF));
+ 	NAPI_GRO_CB(skb)->flush |= flush;
+ 	NAPI_GRO_CB(skb)->inner_network_offset = off;
+ 
+diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
+index b70ae50e658d..625b4800b3ed 100644
+--- a/net/ipv4/tcp_offload.c
++++ b/net/ipv4/tcp_offload.c
+@@ -232,9 +232,7 @@ struct sk_buff *tcp_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 	goto out_check_final;
+ 
+ found:
+-	/* Include the IP ID check below from the inner most IP hdr */
+-	flush = NAPI_GRO_CB(p)->flush;
+-	flush |= (__force int)(flags & TCP_FLAG_CWR);
++	flush = (__force int)(flags & TCP_FLAG_CWR);
+ 	flush |= (__force int)((flags ^ tcp_flag_word(th2)) &
+ 		  ~(TCP_FLAG_CWR | TCP_FLAG_FIN | TCP_FLAG_PSH));
+ 	flush |= (__force int)(th->ack_seq ^ th2->ack_seq);
+@@ -242,16 +240,7 @@ struct sk_buff *tcp_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 		flush |= *(u32 *)((u8 *)th + i) ^
+ 			 *(u32 *)((u8 *)th2 + i);
+ 
+-	/* When we receive our second frame we can made a decision on if we
+-	 * continue this flow as an atomic flow with a fixed ID or if we use
+-	 * an incrementing ID.
+-	 */
+-	if (NAPI_GRO_CB(p)->flush_id != 1 ||
+-	    NAPI_GRO_CB(p)->count != 1 ||
+-	    !NAPI_GRO_CB(p)->is_atomic)
+-		flush |= NAPI_GRO_CB(p)->flush_id;
+-	else
+-		NAPI_GRO_CB(p)->is_atomic = false;
++	flush |= gro_network_flush(th, th2, p, off);
+ 
+ 	mss = skb_shinfo(p)->gso_size;
+ 
+diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
+index 8721fe5beca2..5d9696eaab8a 100644
+--- a/net/ipv4/udp_offload.c
++++ b/net/ipv4/udp_offload.c
+@@ -466,6 +466,7 @@ static struct sk_buff *udp_gro_receive_segment(struct list_head *head,
+ 					       struct sk_buff *skb)
+ {
+ 	struct udphdr *uh = udp_gro_udphdr(skb);
++	int off = skb_gro_offset(skb);
+ 	struct sk_buff *pp = NULL;
+ 	struct udphdr *uh2;
+ 	struct sk_buff *p;
+@@ -505,14 +506,7 @@ static struct sk_buff *udp_gro_receive_segment(struct list_head *head,
+ 			return p;
+ 		}
+ 
+-		flush = NAPI_GRO_CB(p)->flush;
+-
+-		if (NAPI_GRO_CB(p)->flush_id != 1 ||
+-		    NAPI_GRO_CB(p)->count != 1 ||
+-		    !NAPI_GRO_CB(p)->is_atomic)
+-			flush |= NAPI_GRO_CB(p)->flush_id;
+-		else
+-			NAPI_GRO_CB(p)->is_atomic = false;
++		flush = gro_network_flush(uh, uh2, p, off);
+ 
+ 		/* Terminate the flow on len mismatch or if it grow "too much".
+ 		 * Under small packet flood GRO count could elsewhere grow a lot
+diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
+index 5d6b875a4638..72991a02cb30 100644
+--- a/net/ipv6/ip6_offload.c
++++ b/net/ipv6/ip6_offload.c
+@@ -290,19 +290,8 @@ INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
+ 				   nlen - sizeof(struct ipv6hdr)))
+ 				goto not_same_flow;
+ 		}
+-		/* flush if Traffic Class fields are different */
+-		NAPI_GRO_CB(p)->flush |= !!((first_word & htonl(0x0FF00000)) |
+-			(__force __be32)(iph->hop_limit ^ iph2->hop_limit));
+-		NAPI_GRO_CB(p)->flush |= flush;
+-
+-		/* If the previous IP ID value was based on an atomic
+-		 * datagram we can overwrite the value and ignore it.
+-		 */
+-		if (NAPI_GRO_CB(skb)->is_atomic)
+-			NAPI_GRO_CB(p)->flush_id = 0;
+ 	}
+ 
+-	NAPI_GRO_CB(skb)->is_atomic = true;
+ 	NAPI_GRO_CB(skb)->flush |= flush;
+ 
+ 	skb_gro_postpull_rcsum(skb, iph, nlen);
 -- 
-2.25.1
-
+2.36.1
 
