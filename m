@@ -1,188 +1,160 @@
-Return-Path: <linux-kernel+bounces-170059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B5D8BD155
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:14:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434F18BD158
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1AA1C217B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:14:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76AACB2541B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C231155729;
-	Mon,  6 May 2024 15:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFC1155A47;
+	Mon,  6 May 2024 15:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="eLRcbtUG"
-Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eWGGKiES"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0D3155359;
-	Mon,  6 May 2024 15:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030B3155359
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715008259; cv=none; b=Z6IwnMvg7OUF575r+Hp+2LUs5bG1aMemuLPxmegt6GkuCeJoLHdNQKLePT0NlbsNc1JLd58N6JmztNOruCFUh6aDFx2JIAtSqfkFWh/E8ic1yUi/6gvXuHX0i7LbHfrlPuT97lvLSwuf4fL9cKxihLYWroCDv4Eew+lAyXUwijQ=
+	t=1715008279; cv=none; b=Qjuhas4u+aQ7N+zpVkvMNfcRdiq+/W8+Zz8EzH1LxgPtBGHXk0GhR5grNTNiWOVAsMJ0nWu0HTusww1wMuKiIdcEoTuiUUH0TIQKDa6gmp1V38Si4Cu/z/IO1HU4FHyI/TrLzClpGLepW1NQd/9jDBX56Pllo/BsaNAkG7ElDwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715008259; c=relaxed/simple;
-	bh=4GiSVYh4x9KeVson8ItHpsAVoJh6K8EW/0O1qGhT8po=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=EcHnbkXg3UgIu0XGQp5BLdMG3rJU/eJnDTwoZo7OGBp+Ea1nvvS7O/ZcYfvGlJS+kJM7u8s5FYF9sPWhwoWSMI9lTPlQMf/iO84iuiNtkp+88lLzDP4xOJJRC4Cv+VhSFKZ9yMymCcm7RTugHH8cf/ULl18ckgzR8eU+E5SyI5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=eLRcbtUG; arc=none smtp.client-ip=193.238.174.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ssi.bg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
-Received: from mg.ssi.bg (localhost [127.0.0.1])
-	by mg.ssi.bg (Proxmox) with ESMTP id 1220B1869B;
-	Mon,  6 May 2024 18:10:55 +0300 (EEST)
-Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
-	by mg.ssi.bg (Proxmox) with ESMTPS;
-	Mon,  6 May 2024 18:10:54 +0300 (EEST)
-Received: from ja.ssi.bg (unknown [213.16.62.126])
-	by ink.ssi.bg (Postfix) with ESMTPSA id 099F490029B;
-	Mon,  6 May 2024 18:10:51 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ssi.bg; s=ink;
-	t=1715008251; bh=4GiSVYh4x9KeVson8ItHpsAVoJh6K8EW/0O1qGhT8po=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=eLRcbtUGw+C9SzrTpUki2HLLsg7JesmNEWMS+LNaKBvnB6rj+l+5W+r5i4swu9jY5
-	 KwT3ynSfREruGdm5XX2yytJQEzIPs7PDIJNCsXlAum0PNzhZoi5KFSqUK+cYIc9mg7
-	 CJATREbYYBgsyH9ufx1I603qjfmhxRo5Wce8Xm+E=
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by ja.ssi.bg (8.17.1/8.17.1) with ESMTP id 446FAm9P093351;
-	Mon, 6 May 2024 18:10:48 +0300
-Date: Mon, 6 May 2024 18:10:48 +0300 (EEST)
-From: Julian Anastasov <ja@ssi.bg>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-cc: horms@verge.net.au, netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>
-Subject: Re: [PATCH v4 2/2] ipvs: allow some sysctls in non-init user
- namespaces
-In-Reply-To: <20240506141444.145946-2-aleksandr.mikhalitsyn@canonical.com>
-Message-ID: <bc5e74db-75ca-328e-a2d6-00d3ed69cf45@ssi.bg>
-References: <20240506141444.145946-1-aleksandr.mikhalitsyn@canonical.com> <20240506141444.145946-2-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1715008279; c=relaxed/simple;
+	bh=H8vt6scH7BoMUK/SlOWE4m46KlKCzDhGUHOMEm3175I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMLorKYseks0r9LDs3ZyYmvsYM717PeYAFgblh5gbzNCwQ6QT7/EcxI7lA84Hg3zheyvuMp5FbJ/15acI4cGoXox7X8y52IadrMT2Kgpx9ffr8oZq4Uc6rg8Zo0bgmDSIWeNhcA6d9SoMkO3Kdj1RnW8WAkDdVqKQHkKSp5F+rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=eWGGKiES; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c96c1e27a3so609257b6e.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1715008275; x=1715613075; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBh6+cizIio2X4bEih+MrNlX8KtZG6Oq+pv2Gn+dV+M=;
+        b=eWGGKiESrk19T+Ves+3x1o2gjEC9rEOaaeLe2D7bPP+/gicUlm58z8I7XF8MmyHoSf
+         7fVRw4S7IQ6xiL7R1riB6+gfm56SQjawGZAoEinkNDRrIruh2aHanxMXgZZ//CJhTxd6
+         hTV45sOCFQlHPOkkN4fkkWh8fx3K3pwGVScZbnHrLzIKrB1Wf1o+j/a1OFYjYjp+JY7X
+         f5lQ11b/QBGqTX1I0STzEgXLYMvGlobA4rrYpCRMF4X92P1wJBv6r4ZhLKP6kGCHSjoP
+         Ou0gHoBczXXrWNi5nXT8nlDG54r7PaCmz9fkpGkKy1bm7/h3dnJkCqm6X+0a3Yaw/oJO
+         TdXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715008275; x=1715613075;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MBh6+cizIio2X4bEih+MrNlX8KtZG6Oq+pv2Gn+dV+M=;
+        b=gkikije9aA47E3/ViFRpXPUY0nwQIN5my9X9WAWnExjrsQ9hLzTd8d+KiMmyUrjGfb
+         Cx9xD2wXVckUWrr/bK/f2OBiE+T+wRwpfjUf3UlTNqIY1HBEl011y0Csfwudbmmc9fok
+         FeQtcXP8AB7KW5Rtm5uUM7B/Y+D9JUMigyww9r7+/HtvTCuo/TZmg9eB7N4xwYDBPAcz
+         YdQvgQFOgpH1gYaUCx088oKnpAa8YxfRh0onkoMvpRsA5UEKXMvE0U/ydCMUypulTHO9
+         S5nBf/usbORO9zRTWGHHs+Cw3OW05bg7QlRNYx3kOEAU2Krz/E8h6+7uXSbCdJbEGfwv
+         ko1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUhTA+lBR7/bPRDmmRQnZ8U0pPC3QTSodrCi0/dtWq0uMSadsYfN3VEZqACvIuJmonOAFk2kWrxc5ykiXY9J+dwCuZSEKLNaRbNIYTx
+X-Gm-Message-State: AOJu0YwxZ7RGbkHaMXqfxgbjM5lSorEo2m4LyXJnyPSbpZ+scms2iNoX
+	CwhcHHDvMvuqGXvVcTVkTdLea4UOw0bnIeKSl6GhXGoxjLQ5zOftC80MneNmR1k=
+X-Google-Smtp-Source: AGHT+IEVepJmR8F9MxalDoDb4b2ghxl9gZ1j9Wv3ingZbviU6bGlG8g1H0c1OFxGShUhmkGpG4Qskg==
+X-Received: by 2002:a05:6808:b24:b0:3c9:6fad:25cd with SMTP id t4-20020a0568080b2400b003c96fad25cdmr2492419oij.22.1715008274880;
+        Mon, 06 May 2024 08:11:14 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id k12-20020a54440c000000b003c7443c0efasm1450390oiw.1.2024.05.06.08.11.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 08:11:14 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1s3zzk-002y7a-R6;
+	Mon, 06 May 2024 12:11:12 -0300
+Date: Mon, 6 May 2024 12:11:12 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Chengchang Tang <tangchengchang@huawei.com>
+Cc: Junxian Huang <huangjunxian6@hisilicon.com>, leon@kernel.org,
+	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-next] RDMA/hns: Support flexible WQE buffer page size
+Message-ID: <20240506151112.GE901876@ziepe.ca>
+References: <20240430092845.4058786-1-huangjunxian6@hisilicon.com>
+ <20240430134113.GU231144@ziepe.ca>
+ <fac4927b-16ed-d801-fb47-182f2aca355c@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fac4927b-16ed-d801-fb47-182f2aca355c@huawei.com>
 
-
-	Hello,
-
-On Mon, 6 May 2024, Alexander Mikhalitsyn wrote:
-
-> Let's make all IPVS sysctls writtable even when
-> network namespace is owned by non-initial user namespace.
+On Mon, May 06, 2024 at 02:47:01PM +0800, Chengchang Tang wrote:
 > 
-> Let's make a few sysctls to be read-only for non-privileged users:
-> - sync_qlen_max
-> - sync_sock_size
-> - run_estimation
-> - est_cpulist
-> - est_nice
 > 
-> I'm trying to be conservative with this to prevent
-> introducing any security issues in there. Maybe,
-> we can allow more sysctls to be writable, but let's
-> do this on-demand and when we see real use-case.
+> On 2024/4/30 21:41, Jason Gunthorpe wrote:
+> > On Tue, Apr 30, 2024 at 05:28:45PM +0800, Junxian Huang wrote:
+> >> From: Chengchang Tang <tangchengchang@huawei.com>
+> >>
+> >> Currently, driver fixedly allocates 4K pages for userspace WQE buffer
+> >> and results in HW reading WQE with a granularity of 4K even in a 64K
+> >> system. HW has to switch pages every 4K, leading to a loss of performance.
+> > 
+> >> In order to improve performance, add support for userspace to allocate
+> >> flexible WQE buffer page size between 4K to system PAGESIZE.
+> >> @@ -90,7 +90,8 @@ struct hns_roce_ib_create_qp {
+> >>  	__u8    log_sq_bb_count;
+> >>  	__u8    log_sq_stride;
+> >>  	__u8    sq_no_prefetch;
+> >> -	__u8    reserved[5];
+> >> +	__u8    pageshift;
+> >> +	__u8    reserved[4];
+> > 
+> > It doesn't make any sense to pass in a pageshift from userspace.
+> > 
+> > Kernel should detect whatever underlying physical contiguity userspace
+> > has been able to create and configure the hardware optimally. The umem
+> > already has all the tools to do this trivially.
+> > 
+> > Why would you need to specify anything?
+> > 
 > 
-> This patch is motivated by user request in the LXC
-> project [1]. Having this can help with running some
-> Kubernetes [2] or Docker Swarm [3] workloads inside the system
-> containers.
-> 
-> Link: https://github.com/lxc/lxc/issues/4278 [1]
-> Link: https://github.com/kubernetes/kubernetes/blob/b722d017a34b300a2284b890448e5a605f21d01e/pkg/proxy/ipvs/proxier.go#L103 [2]
-> Link: https://github.com/moby/libnetwork/blob/3797618f9a38372e8107d8c06f6ae199e1133ae8/osl/namespace_linux.go#L682 [3]
-> 
-> Cc: Julian Anastasov <ja@ssi.bg>
-> Cc: Simon Horman <horms@verge.net.au>
-> Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-> Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
-> Cc: Florian Westphal <fw@strlen.de>
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> For hns roce, QPs requires three wqe buffers, namely SQ wqe buffer, RQ wqe
+> buffer and EXT_SGE buffer.  Due to HW constraints, they need to be configured
+> with the same page size. The memory of these three buffers is allocated by
+> the user-mode driver now. The user-mode driver will calculate the size of
+> each region and align them to the page size. Finally, the driver will merge
+> the memories of these three regions together, apply for a memory with
+> continuous virtual addresses, and send the address to the kernel-mode driver
+> (during this process, the user-mode driver and the kernel-mode driver only
+> exchange addresses, but not the the sizes of these three areas or other
+> information).
 
-	Looks good to me for net-next, thanks!
+So you get a umem and the driver is slicing it up. What is the
+problem? The kernel has the umem and the kernel knows the uniform page
+size of that umem.
 
-Acked-by: Julian Anastasov <ja@ssi.bg>
 
-> ---
->  net/netfilter/ipvs/ip_vs_ctl.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-> index e122fa367b81..b6d0dcf3a5c3 100644
-> --- a/net/netfilter/ipvs/ip_vs_ctl.c
-> +++ b/net/netfilter/ipvs/ip_vs_ctl.c
-> @@ -4269,6 +4269,7 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
->  	struct ctl_table *tbl;
->  	int idx, ret;
->  	size_t ctl_table_size = ARRAY_SIZE(vs_vars);
-> +	bool unpriv = net->user_ns != &init_user_ns;
->  
->  	atomic_set(&ipvs->dropentry, 0);
->  	spin_lock_init(&ipvs->dropentry_lock);
-> @@ -4283,10 +4284,6 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
->  		tbl = kmemdup(vs_vars, sizeof(vs_vars), GFP_KERNEL);
->  		if (tbl == NULL)
->  			return -ENOMEM;
-> -
-> -		/* Don't export sysctls to unprivileged users */
-> -		if (net->user_ns != &init_user_ns)
-> -			ctl_table_size = 0;
->  	} else
->  		tbl = vs_vars;
->  	/* Initialize sysctl defaults */
-> @@ -4312,10 +4309,17 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
->  	ipvs->sysctl_sync_ports = 1;
->  	tbl[idx++].data = &ipvs->sysctl_sync_ports;
->  	tbl[idx++].data = &ipvs->sysctl_sync_persist_mode;
-> +
->  	ipvs->sysctl_sync_qlen_max = nr_free_buffer_pages() / 32;
-> +	if (unpriv)
-> +		tbl[idx].mode = 0444;
->  	tbl[idx++].data = &ipvs->sysctl_sync_qlen_max;
-> +
->  	ipvs->sysctl_sync_sock_size = 0;
-> +	if (unpriv)
-> +		tbl[idx].mode = 0444;
->  	tbl[idx++].data = &ipvs->sysctl_sync_sock_size;
-> +
->  	tbl[idx++].data = &ipvs->sysctl_cache_bypass;
->  	tbl[idx++].data = &ipvs->sysctl_expire_nodest_conn;
->  	tbl[idx++].data = &ipvs->sysctl_sloppy_tcp;
-> @@ -4338,15 +4342,22 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
->  	tbl[idx++].data = &ipvs->sysctl_conn_reuse_mode;
->  	tbl[idx++].data = &ipvs->sysctl_schedule_icmp;
->  	tbl[idx++].data = &ipvs->sysctl_ignore_tunneled;
-> +
->  	ipvs->sysctl_run_estimation = 1;
-> +	if (unpriv)
-> +		tbl[idx].mode = 0444;
->  	tbl[idx].extra2 = ipvs;
->  	tbl[idx++].data = &ipvs->sysctl_run_estimation;
->  
->  	ipvs->est_cpulist_valid = 0;
-> +	if (unpriv)
-> +		tbl[idx].mode = 0444;
->  	tbl[idx].extra2 = ipvs;
->  	tbl[idx++].data = &ipvs->sysctl_est_cpulist;
->  
->  	ipvs->sysctl_est_nice = IPVS_EST_NICE;
-> +	if (unpriv)
-> +		tbl[idx].mode = 0444;
->  	tbl[idx].extra2 = ipvs;
->  	tbl[idx++].data = &ipvs->sysctl_est_nice;
->  
-> -- 
-> 2.34.1
+> Since the three regions share one umem, through umem's tools, such as
+> ib_umem_find_best_pgsz(), they will eventually calculate the best page size
+> of the entire umem, not each region. 
 
-Regards
+That is what you want, you said? Each region has to have the same page
+size. So the global page size of the umem is the correct one?
 
---
-Julian Anastasov <ja@ssi.bg>
+> For this reason, coupled with the fact
+> that currently only the address is passed when the kernel mode driver interacts
+> with the user mode driver, and no other information is passed, it makes it more
+> difficult to calculate the page size used by the user mode driver from the
+> kernel mode driver. 
 
+Even if it is difficult, this has to be done like this. You can't pass
+a page size in from userspace, there is no good way for userspace to
+do this correctly in all cases.
+
+It sounds like you have it right, just get the page size from the
+shared umem.
+
+Jason
 
