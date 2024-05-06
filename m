@@ -1,165 +1,132 @@
-Return-Path: <linux-kernel+bounces-169360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442F98BC792
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724F48BC797
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688BD1C20434
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA9E281081
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0974EB36;
-	Mon,  6 May 2024 06:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A830E4CB58;
+	Mon,  6 May 2024 06:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZpWFdlrQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gj4XwNQE"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F8148CCD;
-	Mon,  6 May 2024 06:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D014CB4B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 06:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714976946; cv=none; b=Snmcc9iigauXaa12OQUop+dvY5tp2xMe+X2fS5L50nQ/IYiH6Li48ePcg9nc3SFVvW3QAZcRqAAYpADd/RcoMHHCwkzALs2uxeJ3Ad5Oh7VO1X0BQb1oNgFQu1uJOHpo1hSXaWXVe/ldKrpQ6f68GfibPKeWNWBQNnpOs4HRlSw=
+	t=1714976994; cv=none; b=N+/UCsMCCN1XP/ux66N8c0tSuHrQl6x7emplprsNqyI6eryWyEjfKol1jrxK6A930P4pfbx1KaU/IW/kO5Rvtv9SUVNFqtwC24kCiTG/lqgY3esSD5eZDjveYltaiqe5iQaa4eRcXF+m9bOoDaAtVTBrV5O55OIL2HSCzu9isak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714976946; c=relaxed/simple;
-	bh=Wp8V1xbEsuIb8axNQCbpMXR4ddHlcSxKFTYvwFrK4jY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ovb53TEcWAKGbjgbiGwWwFLj3g36IEqC7vQz0uunTH1WQVBVwcwRBNZdZbGTyiuLVR/wt3MMDGtzDD87BgSvJ9sQu5C9hl8Tbtl7mQ3IDpm1B1Ja/iKWl0gCmPrPrnjLWpCDXmDHwdQcNyNuVMMrt6hclR4o0smXv618HTAm1eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZpWFdlrQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4705CC116B1;
-	Mon,  6 May 2024 06:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714976946;
-	bh=Wp8V1xbEsuIb8axNQCbpMXR4ddHlcSxKFTYvwFrK4jY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZpWFdlrQ3sfPb0TgPY+L2ht9cjLQDbaPrZ0snx2q4iQgsjHkkxuNbdGXuBAMXiSpR
-	 AlZ3Wsj3W7eTjQErU5BUddROrvn7GfMpcPxRmLNwCNqnQfdkBeCfQJ/xGvxVZnTzX2
-	 P5f5N7CuXzLnaSKJqLgognRdlUqQQjSyOUo/W2A+b7eNs0kiH3fMAghBucwgp/aGiN
-	 LCH/0YFS8mzDaMo3lTs8HUL9hUWoO4uIOiVjmbFesH1ZhwVAsSrS7ANprVyt+A+nDj
-	 nQOvfwKMLkOVUXmrGxfzlGg/FdTjM5d3O+cwRIQqpa7KkLXvV46uex5rV+8r16pL9o
-	 /zv7X10ycP8rg==
-Message-ID: <2efe0393-11ce-448d-81a9-eb2383bc1e4b@kernel.org>
-Date: Mon, 6 May 2024 08:28:59 +0200
+	s=arc-20240116; t=1714976994; c=relaxed/simple;
+	bh=w0Dlte53WJRCIvtxzCyGs12oGYGUL4gGyOsmoReVfEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HAG+9OStVQeoHtF8dID2Kdb50GVybTE/f43pp1sJsvHEkOS+Ajkup1q7pMc6wLa/eBtK7Tsek/4qBTRUwjbn9DtH3aoCeb2IPJywcPs/c9ZEXxENZtyXQDLGZUpriNQeOJx7zyGWFQ+zyir3yoOqkV7+udv7375cXo2shvoYXKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gj4XwNQE; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-d9b9adaf291so1398772276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 23:29:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714976992; x=1715581792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dxr7JrisHMydcKRiJtSDqGEYBkrpK+VSNsF4Ji3kjUo=;
+        b=Gj4XwNQE+QYONCCwTUHsfCVmvRlRc8wCHf/IVUkPeYEe47zhnQMfBNUQ7+0uua9D2d
+         3ZqF67V5ChvmMV6EbG1lUZ5ICRAUXmAi+W3e//GOrie8OljUtqTX8PI480mPxtcjzkLE
+         qeI2UKjFwkJBu88pVrq8x7KHYN04EW7GYOFADFlO2nz+ktqyCe1Duq1ll2zkWmDiIMvh
+         g7+FJYSuGV8orw0Vzufea++AGgGDi3bDyUa96HwSxzEuX5xC39/3rSKy8JylIon/SYh3
+         VZjH/ytGgjPIX5N7XHW6Ol7qYymH/XGVGNmVaH+D1fHXoAvtGPeSZBeR5e+p2pE1fPaj
+         F4Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714976992; x=1715581792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dxr7JrisHMydcKRiJtSDqGEYBkrpK+VSNsF4Ji3kjUo=;
+        b=gdU1MNAKgSVfdi/qJTib/eZhXdfYMxTSPRyZMTyN/vlsZAfg4Y69QfIf1/hPefxTTX
+         DLaPQawPd6khWu7VZTjZPHyynOqXwbbeQyhn+vsuZLzBRX9EbgBmj4bMI8Euh7F27Y0L
+         UcIwQSSSSOLdZWHBW86/xryEQt2+WZ7J5mLufza9rxTkJQzRb0wMJmIYHQ1rxKeJG6kr
+         xC7cJ5ThOLsOglxQ+crnNZdKDEvOxU1JfE/7G3dTA9WqocLz9kzNFAiCEPYUlpizvDGR
+         TMUpLAp2XEd8ZL/YLc/zGnazxs0grf4/qsqV7emTkgeKqpWHCenb8AkPkLwFB/d46CYG
+         pXNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQCEm82Vv+3+BY8CL5c7/z5kO66CMqC0o3Z/r7yacPawiI6MuzQR2qry6yGdyJlVsOMBYxwQSHWMuZwkywcwk8D7VPNZ12jejunCKI
+X-Gm-Message-State: AOJu0Yxfl9Ug3fumgpNhaY0GATw4Sh9bQb/juPgfo+JUFbXv+wfqK29u
+	qW1G+TJvo6NJBDEy4fmAWZZFD+THhz0myeQhiDRIFqrM4OcpPIoobbOWYmsrO4NuURNGDab4TiE
+	NHV/29V06OybINNxBLwwTO6uHPAapAhgTs69ukQ==
+X-Google-Smtp-Source: AGHT+IEW+Hz8JBmVo7SC235dDlRuUcsYwIn39CM402hXKIdN+c6eBtHohjS4CULU0pQZO6QvmBfh/4rgh2WLtQ/eV1U=
+X-Received: by 2002:a25:2fc2:0:b0:de4:673f:da17 with SMTP id
+ v185-20020a252fc2000000b00de4673fda17mr8576741ybv.22.1714976991283; Sun, 05
+ May 2024 23:29:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: samsung,midas-audio: Add
- GPIO-based headset jack detection
-To: Artur Weber <aweber.kernel@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20240503-midas-wm1811-gpio-jack-v1-0-e8cddbd67cbf@gmail.com>
- <20240503-midas-wm1811-gpio-jack-v1-1-e8cddbd67cbf@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240503-midas-wm1811-gpio-jack-v1-1-e8cddbd67cbf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240423134611.31979-1-johan+linaro@kernel.org>
+ <20240423134611.31979-4-johan+linaro@kernel.org> <CACRpkdYXfZwBdLSTTPbruD9qynOPuQBOZjCwA_6eE+1MUBCkgA@mail.gmail.com>
+ <ZjSksM07OlgpE3yO@hovoldconsulting.com>
+In-Reply-To: <ZjSksM07OlgpE3yO@hovoldconsulting.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 6 May 2024 08:29:40 +0200
+Message-ID: <CACRpkdYZWixc1E3=Y2j0etuDS7vNY3QcqK2Qiac_KPorr7s0Ug@mail.gmail.com>
+Subject: Re: [PATCH 3/6] dt-bindings: HID: i2c-hid: elan: add
+ 'no-reset-on-power-off' property
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Douglas Anderson <dianders@chromium.org>, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/05/2024 20:55, Artur Weber wrote:
-> Some Samsung devices that share the midas-audio driver use a GPIO-based
-> approach to headset jack detection, as opposed to using the built-in
-> jack detection provided by the wm8994 driver.
-> 
-> Add DT configuration values that allow for describing these setups.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
->  .../bindings/sound/samsung,midas-audio.yaml        | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> index 6ec80f529d84..9f521131f2b3 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> @@ -61,6 +61,36 @@ properties:
->      maxItems: 1
->      description: GPIO pin for line out selection
->  
-> +  headset-detect-gpios:
-> +    maxItems: 1
-> +    description: GPIO for detection of headset insertion
-> +
-> +  headset-key-gpios:
-> +    maxItems: 1
-> +    description: GPIO for detection of headset key press
-> +
-> +  io-channels:
-> +    maxItems: 1
-> +    description: IO channel to read micbias voltage for headset detection
-> +
-> +  io-channel-names:
-> +    const: headset-detect
-> +
-> +  headset-4pole-threshold-microvolt:
+On Fri, May 3, 2024 at 10:47=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
+te:
 
-You need vendor prefix for this and next property.
+> > If the above holds true, the driver can then just check for the open dr=
+ain flag
+> > in the reset-gpios phandle, and if that is set, conclude that it should=
+ not
+> > actively drive the line low in the poweroff state.
+>
+> That is an alternative I considered but rejected as just knowing that
+> the gpio is open-drain is not necessarily sufficient, for example, if
+> the reset line is pulled to always-on rail while power to the device can
+> be cut.
+>
+> Perhaps no one would ever construct hardware like that, but it does not
+> seem like the hardware property I'm trying to encode necessarily follows
+> from having an open-drain reset line.
+>
+> And then the OS should probably not make assumptions like that either,
+> especially since getting it wrong can potentially lead to damaged
+> hardware.
 
-> +    minItems: 2
-> +    maxItems: 2
-> +    description: |
+OK it's a fair point.
 
-Do not need '|' unless you need to preserve formatting.
+I was worried about over-specification of behaviour, as that always
+leads to contradictions.
 
++  no-reset-on-power-off:
++    type: boolean
++    description:
++      Reset line is wired so that it can be left deasserted when the power
++      supply is off.
 
+To be nitpicky: *should* be left deasserted rather than *can* be left
+deasserted, right? If the behaviour is desirable but not strictly
+required.
 
-Best regards,
-Krzysztof
-
+Yours,
+Linus Walleij
 
