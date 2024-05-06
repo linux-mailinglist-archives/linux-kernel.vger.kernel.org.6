@@ -1,134 +1,129 @@
-Return-Path: <linux-kernel+bounces-169406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425918BC847
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:25:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CDD8BC84C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DE4CB2124B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:25:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2061C212CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EBC13FD93;
-	Mon,  6 May 2024 07:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3DD128369;
+	Mon,  6 May 2024 07:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nZznPeyz"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="JZcmtWYM"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B6274437
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691B43FB89
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714980312; cv=none; b=fecHT3ZXRuR6jvZmBmzR8UECB9lw4S1XDe0pnh92Wd8iaIr9r1nyVl9mGKNpvuD+y+75FGDTu1Ndm9se5WyqyQNrUna0tIFa76nDkOhIz6hLBlOkG07OBPz2Qm5YGvdZqeD9x0FGTFpMRowBUPxFBhctWZeh2S3okU5MUtpLKek=
+	t=1714980371; cv=none; b=Vdrb1GndQFshLJeQfMo6gjTii1W/zeBZ2AQ0gwrbExv2rBKG2B9q040EUBc/EqUCNxNLhZ6NoyATOL+CUibAHj6hHQHALgC2N/XEHzcC/BLrL+Jt0nM8V/bjFatEDATm9jIlt1rqKXisw7FZxJevH4t0768vyc6AOoTrqZKrbDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714980312; c=relaxed/simple;
-	bh=OVDIWxUDRvlUhkLXJmVPIg7Ss7MCI8rmRJKjNBcIAYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n2k/PEmHNZF7+NE5h2oU0KI9cQb87Hk18efP+KOIP87NyXMF/UTHZLUTwhjQidmGz3ScP3RhyFP/9U8wxY+vs1D3pR0oMOPxQCNAV54tALuCm45uFWPBqVuVUmvAaw0NRq+bNoClZIQJACaYKhllRLiAtcKhju064MX4kJx5wPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nZznPeyz; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1615fe92-d4ff-4ef2-9bd0-199aa9e3a426@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1714980307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VNICsQwAZLEIq4FagMWJtT9l3ne94Q3HOggFLnvinbw=;
-	b=nZznPeyzXvBnkwuymZAd7H5uP6FsRpvl2JfkIEHhVLGTRXN2z1loonY6p/619WY28zpwEl
-	Bogs2+q+8zcc500vR6DNiQHdd+mPtphq8OjqAyhbN7IEoPG5hcFcOxw9uMk2A927K9UGj9
-	Kf4xW9Sd1i3DF1NmDYSRbBRBNofkxMI=
-Date: Mon, 6 May 2024 09:25:01 +0200
+	s=arc-20240116; t=1714980371; c=relaxed/simple;
+	bh=kNlC3ytR6jF8KFvH38aTFlOjsB+JSnIeAJcLtaQm2ys=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MrvoGyJI0WYmxCv1IocZcaN0u4rZdYmzOwvM/MwjzoO6axdMHw6aLKCDI4GfrOasHB9cOxjtCr42QAasFEoF5ikF5D/kZIUUVDZV/LpAEwyycFqjkBGC4tXdS6qsZQFGBf+AKIk3wdnSgGs+27esxHXgRWcmRF867d8TDr1KxPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=JZcmtWYM; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59ce1e8609so91606366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 00:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1714980368; x=1715585168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1s5Au78z3qxhcC37ngaPrO+T+4+oXjIpiq9d6KPXx0=;
+        b=JZcmtWYMhxerUKFf/7ApcRu3vXhJKqcQa7uk0DV87jGwaBeGzwmRqXiwidA81n/Ejp
+         JVZGaxdaLMTV4/7HfyjUp29d5uGb+YuLz+QAVA8fGFGhNgobGEfwKSgUqGGaYgBCCIOe
+         dR1B99uAuJnfj4oc4fMOnBh7yGKz6dBwH2jGpOs/XZtLCqlNGYQovN+lFh83ocdjYXdK
+         zted1/nTrAXFmhI5qPNxRnbKTFB73MeBmB2F8RJfIEdzWd6lnNHUt2K4TvfrOSZHhity
+         pHtY1avVk63Et7ZyLI6szLTjtvLwgc7YGIPIgjGgLcz+6CJ+1pzD4Fa7Xn7dUFNyARAP
+         N1iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714980368; x=1715585168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C1s5Au78z3qxhcC37ngaPrO+T+4+oXjIpiq9d6KPXx0=;
+        b=CTn/xcKv5vJZte53uDSZMKThZPxhw5QxUQVARXyNQ6VReyY4o+YJNXtzPLGaqPcyRB
+         mvr+lfm7IsQlTtFDl69mdg/z6lp1JAJs3weBYueIaTG5SFXbOeDzUD+2Mqgt6pI3cQEw
+         8n3pHE+7RY5ufXJYXnvpY7hmByLFAX8sHhg9K9NJx6C41y7G1DpsdehoHydRIePkfcEv
+         CymLxLt5oldpH4yoR4JoSHlUCwOq6Z+zOrLY7hitqgEk+JhVUttGhsHNOxKZAZ8CE1Ij
+         WwimmNv9isbCTyF+xWvxPLaOpYlhljvPhZ8Xn3CtvVbZgh0SeSIxrH7Gy5ULwY2fzsFb
+         OnMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmhFY0TCu2DEEF6kHSpw3jYoV1aQBHRe7T3+E0zhdHRH5YbX1VLFA+cBEt75sr6Gdj4e12MPeGWdMg/+R7cLxkUd/HCZFG94I5SRwy
+X-Gm-Message-State: AOJu0Yw+qXLfotvDx9s+VeE/tWyAT8TqAKS4+odW5lKI6U7pUu+6HbGG
+	1+2099Nr8DEoLug5CCUlsFN2xyxVAou5cFNoYOqjF9B7bBhWrwuSLg+2CCrxfeI=
+X-Google-Smtp-Source: AGHT+IFrbGs1O2fanbF809F8RXY6VU0WzF/1lz4jI9rBNxf2GDcabB3G12LmCd5CDLAyuh2x3yW7tA==
+X-Received: by 2002:a17:907:1c28:b0:a59:bb24:a61 with SMTP id nc40-20020a1709071c2800b00a59bb240a61mr4310500ejc.30.1714980367753;
+        Mon, 06 May 2024 00:26:07 -0700 (PDT)
+Received: from jrc-a.. (213-47-229-24.cable.dynamic.surfer.at. [213.47.229.24])
+        by smtp.gmail.com with ESMTPSA id oy17-20020a170907105100b00a599a5dec53sm3552611ejb.125.2024.05.06.00.26.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 00:26:07 -0700 (PDT)
+From: Joel Colledge <joel.colledge@linbit.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Benjamin Marzinski <bmarzins@redhat.com>,
+	dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] dm-delay: fix hung task issue
+Date: Mon,  6 May 2024 09:25:22 +0200
+Message-Id: <20240506072523.399767-1-joel.colledge@linbit.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC RESEND 16/16] nvme-pci: use blk_rq_dma_map() for NVMe SGL
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- Chaitanya Kulkarni <kch@nvidia.com>, Jonathan Corbet <corbet@lwn.net>,
- Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
- Sagi Grimberg <sagi@grimberg.me>, Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org, kvm@vger.kernel.org, linux-mm@kvack.org,
- Bart Van Assche <bvanassche@acm.org>,
- Damien Le Moal <damien.lemoal@opensource.wdc.com>,
- Amir Goldstein <amir73il@gmail.com>,
- "josef@toxicpanda.com" <josef@toxicpanda.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- Dan Williams <dan.j.williams@intel.com>, "jack@suse.com" <jack@suse.com>
-References: <cover.1709635535.git.leon@kernel.org>
- <016fc02cbfa9be3c156a6f74df38def1e09c08f1.1709635535.git.leon@kernel.org>
- <c9f9e29e-c2e1-4f99-b359-db0babd41dec@linux.dev>
- <20240505132314.GC68202@unreal>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240505132314.GC68202@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On 05.05.24 15:23, Leon Romanovsky wrote:
-> On Fri, May 03, 2024 at 04:41:21PM +0200, Zhu Yanjun wrote:
->> On 05.03.24 12:18, Leon Romanovsky wrote:
->>> From: Chaitanya Kulkarni <kch@nvidia.com>
-> <...>
->
->>> This is an RFC to demonstrate the newly added DMA APIs can be used to
->>> map/unmap bvecs without the use of sg list, hence I've modified the pci
->>> code to only handle SGLs for now. Once we have some agreement on the
->>> structure of new DMA API I'll add support for PRPs along with all the
->>> optimization that I've removed from the code for this RFC for NVMe SGLs
->>> and PRPs.
->>>
-> <...>
->
->>> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
->>> index e6267a6aa380..140939228409 100644
->>> --- a/drivers/nvme/host/pci.c
->>> +++ b/drivers/nvme/host/pci.c
->>> @@ -236,7 +236,9 @@ struct nvme_iod {
->>>    	unsigned int dma_len;	/* length of single DMA segment mapping */
->>>    	dma_addr_t first_dma;
->>>    	dma_addr_t meta_dma;
->>> -	struct sg_table sgt;
->>> +	struct dma_iova_attrs iova;
->>> +	dma_addr_t dma_link_address[128];
->> Why the length of this array is 128? Can we increase this length of the
->> array?
-> It is combination of two things:
->   * Good enough value for this nvme RFC to pass simple test, which Chaitanya did.
->   * Output of various NVME_CTRL_* defines
+The tests for DRBD encountered an issue with dm-delay when testing with
+a 6.8 series kernel. Specifically on Ubuntu 24.04 "Noble". Here is a
+minimal reproducer:
 
-Thanks a lot. I enlarged this number to 512. It seems that it can work. 
-Hope this will increase the performance.
+virter vm run --name dm-delay-test --id 10 --wait-ssh ubuntu-noble
+virter vm ssh dm-delay-test
+# truncate -s 100M /file
+# loop_dev=$(losetup -f --show /file)
+# echo "0 $(blockdev --getsz $loop_dev) delay $loop_dev 0 0" | dmsetup create delay-volume
 
-Best Regards,
+After a few minutes, the following is printed to the kernel log:
 
-Zhu Yanjun
+[  246.919123] INFO: task dm-delay-flush-:1256 blocked for more than 122 seconds.
+[  246.922543]       Not tainted 6.8.0-31-generic #31-Ubuntu
+[  246.923753] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  246.924932] task:dm-delay-flush- state:D stack:0     pid:1256  tgid:1256  ppid:2      flags:0x00004000
+[  246.924940] Call Trace:
+[  246.924950]  <TASK>
+[  246.924980]  __schedule+0x27c/0x6b0
+[  246.925002]  ? __pfx_flush_worker_fn+0x10/0x10 [dm_delay]
+[  246.925011]  schedule+0x33/0x110
+[  246.925016]  schedule_preempt_disabled+0x15/0x30
+[  246.925035]  kthread+0xb1/0x120
+..
 
->
-> Thanks
+This bug appears to have been introduced in Linux v6.7.
+
+The following patch fixes the issue.
+
+Thanks Christian and Benjamin for the comments on v1!
+
+Changes from v1:
+- Use kthread_run() instead of wake_up_process()
+
+Joel Colledge (1):
+  dm-delay: fix hung task introduced by kthread mode
+
+ drivers/md/dm-delay.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 -- 
-Best Regards,
-Yanjun.Zhu
+2.34.1
 
 
