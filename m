@@ -1,100 +1,88 @@
-Return-Path: <linux-kernel+bounces-169223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BBC8BC50C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:06:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B228BC529
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 568971C208F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBD11F21B84
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C85F40867;
-	Mon,  6 May 2024 01:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD04383B2;
+	Mon,  6 May 2024 01:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOuIEG9P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="n/NWWsZU"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A0944C71;
-	Mon,  6 May 2024 01:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3EE1A28D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 01:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714957498; cv=none; b=EffizgillMiw7xyJ/o5p0a3XA5C0jAgpywzpSQrJiGi2CxJdhet0XoEAbByWwdADP4lMNB2IcBR5t38IrME1ZN7rwjCVfU34uTob3nNJ+YaMYu8fhpPrJfnahZePiIunoqToH1uEiVRYKNoWYaIIiJVgjzvbnI/CzsBoiQ+uoZE=
+	t=1714957894; cv=none; b=ZUm5si2RynndLO4NNSZ1MbpeuVjTS3DUtBtSppAWuTZ3ANjrllOL0ceV2FHhNlXsD8Z3AsnKeDbQZO+0uMi2Bmgx7adYThzcIo+KyA2qLJzV9Wy+eRlu4FLwiR1TktaZZiF0y96uW6NcsaGTkKJwiLdYWKVI71014fXUCLB7Oy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714957498; c=relaxed/simple;
-	bh=du05CgH4+rHW9mjQn5ukWXtDyAdmeX0fZqLFqHbiWXw=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fb8+vmTzbdj5qY/yZXq+PAFdHs9PD7AyOjIZSXAWhb1tD8iKWuLvpJYT4++X/QN0NVuwp0XYGR++JZN/gF/j3nYZYCy5S/LCKVptXtnKuWYEINc7djYCJ1k+J5M4lLMSw5OdCF5htz9ig45jTuukQGTbTlPM8AU3BLt0CAVKLPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOuIEG9P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA94C116B1;
-	Mon,  6 May 2024 01:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714957498;
-	bh=du05CgH4+rHW9mjQn5ukWXtDyAdmeX0fZqLFqHbiWXw=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=cOuIEG9PAU5z6gwoEtQzbM8lqiTfmITzTsuCfnwACod/yWE5HX4cCP65e4YLgjUrg
-	 sSmpnFLhRMT9L3bZqwVG9YS87QhN29pM0u5rb6dPTVVq4sWRG8KPe70dz8EyeBZ3pv
-	 zHC6dB46D4oRc9ez0abp/6kWxbAtkuQ//QOj1kbuXCEf4fWG91ES5RISC63v/BrZee
-	 Qmt6WYV/l0LJxCDpt2zYdhnDP2AnebwFLjlUH7cLaXTFb3NljtVyszadRopPPlm/dC
-	 60slLrFA8dLVTvfj1odBFTgYBA8JLfQyzpPw7FplO298hR1luvDtv1TCn5gz3T7FPX
-	 +k2lC6S96DBVQ==
-From: Mark Brown <broonie@kernel.org>
-To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240503170827.2920457-1-andriy.shevchenko@linux.intel.com>
-References: <20240503170827.2920457-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] spi: bitbang: Add missing MODULE_DESCRIPTION()
-Message-Id: <171495749742.1941246.10791450013064725852.b4-ty@kernel.org>
-Date: Mon, 06 May 2024 10:04:57 +0900
+	s=arc-20240116; t=1714957894; c=relaxed/simple;
+	bh=/p7YUUW938hkm/WjoZddvXrUZA9IxWHC00ipPG7x+yc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sbnbVUKm6NZ03FthaOpCPp2VbBhiR8Lortjxk1WO4J4tI87yaeLVV4sfi9hQ6KYtA6WaadKP93OVZ+z+xlJS4+vACz2NrObXLOmMR/566pI2VuN1nO0M54zUgah2NI2bWERmoDdudxRpN2jRygQtCQ5jWLIB9y8kuz9ZBNw4XZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=n/NWWsZU; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714957883; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=nfeEy764PjJmm2hNAZ96dBiIs1iOgWMjNMaCbgQ4Iz4=;
+	b=n/NWWsZUcxqqx1Bv+Pcm+2YRg9gSz1c2fH/Th3KHDbc9OSJ71+BxHG6RnPEYkTUX3jb6D0gIBhd2FAZJvne7PfhRyPLp1KUDxD0ZO1dIu6OA7vaqtXgkcmIfNz8elDE6xrLJxVb1dgPa7hMMEsViVyBi2IguR6cEgzicbI0N6Jw=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W5pR6Ly_1714957881;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0W5pR6Ly_1714957881)
+          by smtp.aliyun-inc.com;
+          Mon, 06 May 2024 09:11:22 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: suzuki.poulose@arm.com,
+	alexander.shishkin@linux.intel.com,
+	mike.leach@linaro.org,
+	james.clark@arm.com
+Cc: coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] coresight: tmc: Remove duplicated include in coresight-tmc-core.c
+Date: Mon,  6 May 2024 09:11:21 +0800
+Message-Id: <20240506011121.39179-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+Content-Transfer-Encoding: 8bit
 
-On Fri, 03 May 2024 20:07:47 +0300, Andy Shevchenko wrote:
-> The modpost script is not happy
-> 
->   WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-bitbang.o
-> 
-> because there is a missing module description.
-> 
-> Add it to the module.
-> 
-> [...]
+The header files linux/acpi.h is included twice in coresight-tmc-core.c,
+so one inclusion of each can be removed.
 
-Applied to
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=8937
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/hwtracing/coresight/coresight-tmc-core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: bitbang: Add missing MODULE_DESCRIPTION()
-      commit: 8ee46db14169fe1b028078767fda904d2fcbc04e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+index 4f11a739ae4d..b54562f392f3 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-core.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+@@ -26,7 +26,6 @@
+ #include <linux/coresight.h>
+ #include <linux/amba/bus.h>
+ #include <linux/platform_device.h>
+-#include <linux/acpi.h>
+ 
+ #include "coresight-priv.h"
+ #include "coresight-tmc.h"
+-- 
+2.20.1.7.g153144c
 
 
