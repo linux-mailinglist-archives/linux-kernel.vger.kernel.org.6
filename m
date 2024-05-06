@@ -1,144 +1,109 @@
-Return-Path: <linux-kernel+bounces-169251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFAB8BC5B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:18:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B952E8BC5B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9A1281C89
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6581C21049
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3C63FB83;
-	Mon,  6 May 2024 02:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kywDGneH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5453FBBF;
+	Mon,  6 May 2024 02:21:29 +0000 (UTC)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A616FB2;
-	Mon,  6 May 2024 02:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984626FB2;
+	Mon,  6 May 2024 02:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714961886; cv=none; b=LY2jekOZ5yKgL2MwGaK23wCp5uVg3CgSwBXAIj0mrHLdWcUZLWeQFz/YIbnonqZVeeOYPMcP4Zq5Zk5FrDDLS0Exn7BqDtKpTmXYgQ49Wa8O56GfT2dIDRGJlrSv2rwLZSzU8VIF/JKJVb0imRa6iYOx+rZxKIHlvFSwGpvd484=
+	t=1714962089; cv=none; b=NEqNTFawcOgz2y6P86dW0+cUz+FTQp6bBGDmhuvJds6NARsYQnufC42MhFv4e6F1DCeJ7dkLEP7nrQb7cCiEBeUPxriEvueJNw4J2M25HQlJTIahYj67bCKDgW+byMtfpqHYAS43pxmvLVv/QpEWXS+T5j2pwHmVgLEnb+Wfcds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714961886; c=relaxed/simple;
-	bh=nE+x1INBsPIPydzJG46KPYgWt7zuZ3SYxltjN2xCESo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EunqPf1iPfXRqaWwvKJgDDRIBXSXw2j5CGpt3zraXfketTMHB+NYvmLYTAmbfHK0N+Q3ir5+sM3BtM8QXPQEW0lLoruAn7OSM8nlCr4IGUFRvIARnodxxRTQ0mbYSyNY/Gs/OgHEMQVgB6kGNMpNFDCN18mBKonNgZIVDTQ2Xng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kywDGneH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1714961881;
-	bh=soFSD916NRLT6/m2clSFEXil9meuREHqNYpgRHAYDh4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kywDGneH6DxElX/YlYI2lslELIDY3H1jOiGgsRvvLkFfKNGGgy6fVDZA7paVXffDQ
-	 68pSP7Onlq64BJ57ZjgKKWbIjeC+xvFjsJBFYHf6g7USYssLvMBtDpDDKbplkoJ7Bv
-	 hHwwpEqE8Sux3K3PGelvJjrIs0K5+BH7nBzUu4SgDinGEgqFNP4kCjorFiThqs9Nrd
-	 E+MIXDnMiGnnnhBAkyLIMfynX/kDW6+xnhhgpsGnLf4FiRxMMlCPc0+n0Uufg1QRJh
-	 DnFy1yaH7x2/Htg1847HpB5kU/dlQCFF+Bak7toYjAqpPrQpYlsY2F5hM6SKaKKniH
-	 s9VZ3LRYmtxzg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VXlS77221z4x0x;
-	Mon,  6 May 2024 12:17:59 +1000 (AEST)
-Date: Mon, 6 May 2024 12:17:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lucas De Marchi <lucas.demarchi@intel.com>, Oded Gabbay
- <ogabbay@kernel.org>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>,
- Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>, DRM XE List
- <intel-xe@lists.freedesktop.org>, Balasubramani Vivekanandan
- <balasubramani.vivekanandan@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Matthew Auld <matthew.auld@intel.com>, Nirmoy
- Das <nirmoy.das@intel.com>, Radhakrishna Sripada
- <radhakrishna.sripada@intel.com>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-intel tree
-Message-ID: <20240506121759.5b6c6a7c@canb.auug.org.au>
+	s=arc-20240116; t=1714962089; c=relaxed/simple;
+	bh=7bLnFvZ1umO1ZxHq9Z11J3dP1NrG5baf3UV++oXVLyU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dkT/js6cmpXzkYOOqjfIEoMHQ/OrxYsriXMSQQNYR/Y7kbyjv/LZZs1ppXSouXIJt7wlu69bqzL7Cxy7Z4A2E1DuwJzZo8Oj66WYw5eviNrAe0dWGoQc2a0gPft/eUuFLo7IqV2IYaG4OFnhXocgMPJDxJymk/nY/arWEqqDXQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6a0ff97a9c7so30398726d6.0;
+        Sun, 05 May 2024 19:21:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714962086; x=1715566886;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k/zLrkjUXSszkJnwHyoONG4BMNMkGjqzvlLRzb2NIU8=;
+        b=AskSDxsePwu70KnbSaJHdimJDRL3+qsywxXEUiQ0a8zGrlQoZ0CX2KxHmswqodp+wI
+         b/JNMK5GLdV2Dd4CxksPZn0/JBlk4Ahfkoxw/lEFeSBvCGjH+8qbyEP4wh02xpPMVyeU
+         luK0iFrq95CiABhmhf/+usxcMLtSz/E+BjhUC69oP6x6vmaEmW6z6bs3wOu3xcdfO7p7
+         h2rWHQeJwEULZFq+oJlT0qJwmysmOeBfOGlJygdyEVHHnrIOB0GlRJOoXiv6bpL/EGHn
+         43H6c3W7blXZDoeuUPHdxzqbbW2dT5dDBgjhSnJW3KJ8gqOlSTOGsV4KxEAQk/ZFz+i5
+         K8xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVAoHzSucteFzqIguzbZ2TKLJnW0OukFvbvKI2ZPQvNHI5MZYJEZfizoSnFnf2ld1VHHj4VOeMAstU7W0gjr4vrt1PMnZxSByniy5+9RmJLH6XWKPkiARMyZdzwCRnRsTWqyb7YwqhTqj7Iohn
+X-Gm-Message-State: AOJu0YyNj07MBhRqIBQUqV+0t0WZJ95bJsTzqPRf5XsHvh5i9uz2vdZk
+	Prbyk5bqNct0w8ffxCAss+DRg3BMN3fQ8lq66KUQPGx3zE5osyGe
+X-Google-Smtp-Source: AGHT+IGoEjqeSYnnD8JHHUJq6a5kin5Wmy3lmygGM0FONM/ra+U1Wc7nMxUyy3HsBJ/dNtCtwN9YPQ==
+X-Received: by 2002:a05:6214:5651:b0:6a0:f637:667 with SMTP id mh17-20020a056214565100b006a0f6370667mr20651975qvb.12.1714962086422;
+        Sun, 05 May 2024 19:21:26 -0700 (PDT)
+Received: from tofu.cs.purdue.edu ([128.210.0.165])
+        by smtp.gmail.com with ESMTPSA id q18-20020a0ce9d2000000b006a07e3701a2sm3329550qvo.143.2024.05.05.19.21.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 May 2024 19:21:26 -0700 (PDT)
+From: Sungwoo Kim <iam@sung-woo.kim>
+To: 
+Cc: daveti@purdue.edu,
+	benquike@gmail.com,
+	Sungwoo Kim <iam@sung-woo.kim>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: HCI: fix divide error in __get_blocks()
+Date: Sun,  5 May 2024 22:20:36 -0400
+Message-Id: <20240506022035.663102-1-iam@sung-woo.kim>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7Wi8_X7WNQwmePZdKHLY9jd";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/7Wi8_X7WNQwmePZdKHLY9jd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+hdev->block_len could be 0. Fix this by adding a check.
 
-Hi all,
+divide error: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 PID: 9622 Comm: kworker/u5:4 Tainted: G        W          6.9.0-rc6-00001-g38e1170f515d-dirty #32
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: hci11 hci_tx_work
+RIP: 0010:__get_blocks net/bluetooth/hci_core.c:3618 [inline]
+RIP: 0010:hci_sched_acl_blk net/bluetooth/hci_core.c:3766 [inline]
+RIP: 0010:hci_sched_acl net/bluetooth/hci_core.c:3806 [inline]
+RIP: 0010:hci_tx_work+0x73e/0x1d10 net/bluetooth/hci_core.c:3901
 
-Today's linux-next merge of the drm-xe tree got a conflict in:
+Fixes: b71d385a18cd ("Bluetooth: Recalculate sched HCI blk/pkt flow ctrl")
+Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
+---
+ net/bluetooth/hci_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  drivers/gpu/drm/xe/xe_device.h
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 0efd59760..20b1cd7f3 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -3762,7 +3762,7 @@ static void hci_sched_acl_blk(struct hci_dev *hdev)
+ 
+ 	__check_timeout(hdev, cnt, type);
+ 
+-	while (hdev->block_cnt > 0 &&
++	while (hdev->block_len > 0 && hdev->block_cnt > 0 &&
+ 	       (chan = hci_chan_sent(hdev, type, &quote))) {
+ 		u32 priority = (skb_peek(&chan->data_q))->priority;
+ 		while (quote > 0 && (skb = skb_peek(&chan->data_q))) {
+-- 
+2.34.1
 
-between commit:
-
-  c01c6066e6fa ("drm/xe/device: implement transient flush")
-
-from the drm-intel tree and commits:
-
-  fb74b205cdd2 ("drm/xe: Introduce a simple wedged state")
-  8ed9aaae39f3 ("drm/xe: Force wedged state and block GT reset upon any GPU=
- hang")
-  6b8ef44cc0a9 ("drm/xe: Introduce the wedged_mode debugfs")
-
-from the drm-xe tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/xe/xe_device.h
-index 7524a71c0d84,82317580f4bf..000000000000
---- a/drivers/gpu/drm/xe/xe_device.h
-+++ b/drivers/gpu/drm/xe/xe_device.h
-@@@ -167,6 -167,11 +167,13 @@@ void xe_device_snapshot_print(struct xe
-  u64 xe_device_canonicalize_addr(struct xe_device *xe, u64 address);
-  u64 xe_device_uncanonicalize_addr(struct xe_device *xe, u64 address);
- =20
- +void xe_device_td_flush(struct xe_device *xe);
- +
-+ static inline bool xe_device_wedged(struct xe_device *xe)
-+ {
-+ 	return atomic_read(&xe->wedged.flag);
-+ }
-+=20
-+ void xe_device_declare_wedged(struct xe_device *xe);
-+=20
-  #endif
-
---Sig_/7Wi8_X7WNQwmePZdKHLY9jd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY4PdcACgkQAVBC80lX
-0Gw7Gwf+MQ1FKfb1l4Fje3jDfpRrK+62r1mwZXibfC3BqZQ6M4oFZ+ME7KEeKcn8
-bh4F87u44sK00j/pdLqHB8V4JnZlIfEBRVGSCd9cMLLfjXLi/fd1Yu9RlL5izbWf
-d2U9Is+FKq5AoZwAMatw2LTdb0EgH6xQ01nNJnMvDCu9g8BztuAcuuZimEbNRzgt
-5DX1LkSQdbgfylYR1TWr3o3kD76jsmyOa/Znctsty2ejdNzQLFAxO/+YZp6ZP6xC
-1qIQft83W3bq+SzZJ5UT9ckohvBxvr8cvpCs/PiqZOlnHzq61c7KcphP5l1OCOID
-78urM3wwUWGJI/gVfNpXlw1lc2zbkA==
-=rp0r
------END PGP SIGNATURE-----
-
---Sig_/7Wi8_X7WNQwmePZdKHLY9jd--
 
