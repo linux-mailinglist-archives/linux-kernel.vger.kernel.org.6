@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-169672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4E28BCC0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:33:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6458BCC0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8883828350D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:33:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1421C2130C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925323FB01;
-	Mon,  6 May 2024 10:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF451369AD;
+	Mon,  6 May 2024 10:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PO3HNL/N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YsUNro59"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C8023D2
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFA7757F8
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714991599; cv=none; b=c4aQL+uhpoY929DmPflqbmEYK0jLHRQPQuG8ads0LCyk8tDExubwMvNRLUVvsbV21ScL3hs9/XlsBKSUbbJxwPNeDcP1xhX10wFlbKIVqzYbLGlTvktViW8sthXyYuEk3bPJfDTbFqLanZ8mfvlAoNWVfUQhV2qm14GYnTHGNkU=
+	t=1714991601; cv=none; b=mtQA8hlV40Go0TIizMO5zBHn4OuazMxp0AYZaxvXbUXJJOmLqvfwwYA/9f0AuwtwSh1LRLvUcqEJF0XUOHZjAyS5wja5lOaSXASz/oeAUpZcigOjzT3TqacEOhiGg1y9G8qkW/M2R+ALghCqijF+BoTVOwjBMXyJ816+za2zhFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714991599; c=relaxed/simple;
-	bh=ArQZcPL9NskSWJ33AcpZ7fqpChWS94RCsV5KimDJTWY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iEay2yK6psPOqYk4Rb8/1pfWj7TsjQlLt5Y6ANw31PuOYyiYfsnfVIwUYJlV8/iGtfi9500uhhroCISSr8vieDWFpia+Vc2kGIzImcOw6YhEvvgvYI/SzjVNkPVlUfpS57/WLFMsJzPmCbjSNdaV/rmDq4mkFkX8xwH8LuV5ODg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PO3HNL/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA1BC116B1;
-	Mon,  6 May 2024 10:33:17 +0000 (UTC)
+	s=arc-20240116; t=1714991601; c=relaxed/simple;
+	bh=8d1H5ohN2OC867yx9Kz7v2nSEmt59J3n2trihH6jcFQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ncRR4JaqeEFfvJy0UPKO1k725j7OYInE2sicUkrb92g1xGFqYJuFit95BVLhn+XFOxSi8PMx2jyh/KECWcJ5fbo5zdkKmZQV1h6Ts6V9XnTgZXxT0CkDOThedayI3bh0AVwm5Sv9F0MASPc6I8i7gUmLXo8H/nfZcYuaDrJl7LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YsUNro59; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1719C4AF18;
+	Mon,  6 May 2024 10:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714991599;
-	bh=ArQZcPL9NskSWJ33AcpZ7fqpChWS94RCsV5KimDJTWY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PO3HNL/NaetYrGgi4hGaAP0vK2LQfQyHtc5/VlCpgZx3gPrczk+9ZmblggC9/m3z3
-	 85Z76E4GjDW7N/t/6kY7dkRuAJ3BujwzquOE3LVHB3ZTgCNhqtIDxPjVfIlabMw2s9
-	 P1TC86GbAmremkhH1O2Vr3ed1AgbwQ+d7Y4Lm0OTFfgosuABRvprrwIN1MIU4SpKjl
-	 Htn29yMbng/+bMit+Ic0OEZ/gV43EjgcfojFEiiaBkHUBSaT7qt2qsjd/zZcw/hWiP
-	 GK8HfY+W8UNX9nazhsaKQ6INN3BtApxRKariBmzFuNCOpcvznZ4qLkEvQqW+a+W7GP
-	 mIEhU2Oxr68dA==
+	s=k20201202; t=1714991601;
+	bh=8d1H5ohN2OC867yx9Kz7v2nSEmt59J3n2trihH6jcFQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YsUNro59jXc0yxJ2XMnh1j9/+xx9X43rLu3WZgQ+WYy1DLyp0VXzPVAyd5JINd7OS
+	 mvA2tpZ98mnK26t8zizcnuhFu1QgMA9zoCbmiF6wNmNxlICzZhknuj6R7Pa+uI/EC5
+	 j5UShNpxwcq7gFizl1h1OSlAw1gYAF4FhnGQ2a3YG0ps0INegJv9hwiBKjhnUnY9QG
+	 yZlHbyIMcPno4wbhtwShSaksSCOrWPHW/F/CURfu9m5IdvH7MVDceI0baf+6oZTJKy
+	 pfqHJagIy1wclYghDINnZLBp/A7E+hRG095sFYt9xnJXO79st8DLBHnk2aBwl7yK2B
+	 Jjre/ozJIZDgA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
 	Chao Yu <chao@kernel.org>
-Subject: [PATCH 1/3] f2fs: fix to release node block count in error path of f2fs_new_node_page()
-Date: Mon,  6 May 2024 18:33:11 +0800
-Message-Id: <20240506103313.773503-1-chao@kernel.org>
+Subject: [PATCH 2/3] f2fs: fix to add missing iput() in gc_data_segment()
+Date: Mon,  6 May 2024 18:33:12 +0800
+Message-Id: <20240506103313.773503-2-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240506103313.773503-1-chao@kernel.org>
+References: <20240506103313.773503-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,49 +59,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It missed to call dec_valid_node_count() to release node block count
-in error path, fix it.
+During gc_data_segment(), if inode state is abnormal, it missed to call
+iput(), fix it.
 
-Fixes: 141170b759e0 ("f2fs: fix to avoid use f2fs_bug_on() in f2fs_new_node_page()")
+Fixes: 132e3209789c ("f2fs: remove false alarm on iget failure during GC")
+Fixes: 9056d6489f5a ("f2fs: fix to do sanity check on inode type during garbage collection")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/node.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/gc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b3de6d6cdb02..ae39971825bc 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1313,15 +1313,14 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 8852814dab7f..e86c7f01539a 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1554,10 +1554,15 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			int err;
  
- #ifdef CONFIG_F2FS_CHECK_FS
- 	err = f2fs_get_node_info(sbi, dn->nid, &new_ni, false);
--	if (err) {
--		dec_valid_node_count(sbi, dn->inode, !ofs);
--		goto fail;
--	}
-+	if (err)
-+		goto out_dec;
+ 			inode = f2fs_iget(sb, dni.ino);
+-			if (IS_ERR(inode) || is_bad_inode(inode) ||
+-					special_file(inode->i_mode))
++			if (IS_ERR(inode))
+ 				continue;
+ 
++			if (is_bad_inode(inode) ||
++					special_file(inode->i_mode)) {
++				iput(inode);
++				continue;
++			}
 +
- 	if (unlikely(new_ni.blk_addr != NULL_ADDR)) {
- 		err = -EFSCORRUPTED;
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
--		goto fail;
-+		goto out_dec;
- 	}
- #endif
- 	new_ni.nid = dn->nid;
-@@ -1345,7 +1344,8 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
- 	if (ofs == 0)
- 		inc_valid_inode_count(sbi);
- 	return page;
--
-+out_dec:
-+	dec_valid_node_count(sbi, dn->inode, !ofs);
- fail:
- 	clear_node_page_dirty(page);
- 	f2fs_put_page(page, 1);
+ 			err = f2fs_gc_pinned_control(inode, gc_type, segno);
+ 			if (err == -EAGAIN) {
+ 				iput(inode);
 -- 
 2.40.1
 
