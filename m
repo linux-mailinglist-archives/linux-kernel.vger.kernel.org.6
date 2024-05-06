@@ -1,118 +1,157 @@
-Return-Path: <linux-kernel+bounces-169815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901C58BCDFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D7F8BCE31
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF21286FE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D863A1F223E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7832744B;
-	Mon,  6 May 2024 12:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37443FE2A;
+	Mon,  6 May 2024 12:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UsbqeFpy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ei09gRNs"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE4A79E4;
-	Mon,  6 May 2024 12:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723F41DA22;
+	Mon,  6 May 2024 12:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714998624; cv=none; b=a1T09alsP3JazXI6RHbNz2a1aqfD69y4mWq/n41Ud7KEauDX+fIucgAeOeiHa07yngW2p+l7xm/4pM6XqlwA7EdxwVX9WZs21dz3UUpPMjfev8Wkeb/UM9TwCbHI+X29IQ5tQyEPAVzbO4W5cQcp+3c8Opd3P4tixbdl+3PgCVs=
+	t=1714999204; cv=none; b=MTlhxaXxZchbQ3uPzDNrmMze8TV/OdQe5v9/egD0k/yfMb/kF2xjiDhagGLUF55UzlY4bZHiBquZe/D8OU74DjmX2ZWkpAL8fufpT8200QbvPbLMs0KLx3wXwGZxZIM6NWfp4P52mb/1AJj/0w296213RArg0f0bjptMn+65ZI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714998624; c=relaxed/simple;
-	bh=c/w6oDfxGpNulUHSEeO1wtt/g7mJwXCklSr6D+lrmzE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=N5B6/6J7QkeAIBPlD9CUZBtQiu45f4zzKP+hix+3zIrIn7kiXc4O652uNzm/ijDmwBttIUE1M+MNlWZKGeHOl2AA6VDmHFltWQE/xdz6IFfEXg/ADV1aUOVcjWr97XvR40WyYmeHGhgmCJRSkUPjBBoUkZVaYXE7ufRCsusclqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UsbqeFpy; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714998623; x=1746534623;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=c/w6oDfxGpNulUHSEeO1wtt/g7mJwXCklSr6D+lrmzE=;
-  b=UsbqeFpyIcVNmZpfQxfaeQLQztG3AuEziPMSAgqr8+mGLLUXK1pd9QGC
-   dg3vUGSHF25MQC5a8B6YqW+nQ3HE/3B73AXlCFX/d35WoxQvdvOXC9/rk
-   hQ6FjsvUEjZ3VbcYWfSEiU5NFIIoMDDniSkqjEO+pO0B1WtjFafujMssj
-   39yPkyySF1FLzElNKxZXhqMvKn/CqXKvXXqFwIEwFhBGydfheIwK9+CUI
-   iE7AcBsdp8Cp08GX3RURbWX9RazBIYrfhs4kvPiWCSivV29NrHSwh4vGC
-   lJOwh324wefWbc3GPqZKtXp45j07LTLYYIeOOicwwV13BPvnRqC89GX1y
-   g==;
-X-CSE-ConnectionGUID: UcCkrZ3hS9aiLiTLwKA/rA==
-X-CSE-MsgGUID: a9IjOYdsSmGSI1afB+rAfg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10900766"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="10900766"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:30:22 -0700
-X-CSE-ConnectionGUID: yq1AatXqQCW7RV9dETfBMQ==
-X-CSE-MsgGUID: E3JmPibJQDKTJVhIwIqw5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="65601028"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:30:17 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 6 May 2024 15:30:11 +0300 (EEST)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-    Rob Herring <robh@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Igor Mammedov <imammedo@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Andy Shevchenko <andriy.shevchenko@intel.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 2/7] resource: Rename find_resource() to
- find_empty_resource_slot()
-In-Reply-To: <20240503204910.GA1602543@bhelgaas>
-Message-ID: <1dbfc6c4-eeb1-92c1-3371-1b0afa5683ad@linux.intel.com>
-References: <20240503204910.GA1602543@bhelgaas>
+	s=arc-20240116; t=1714999204; c=relaxed/simple;
+	bh=I0aEhq4nU2NqcfNEZMplKejLv864kLLf/BLQOapouH4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LtWsHb78gVwL4QvCznSte40LmO4oU+iHed08J2XQBqWOzrDLjHR+htaQRYmDMQYZJfio/DudAFLvP6PCh/0ZLsCmp7Ut+u7Zwoj7GJrPyPApIiT5bSGrSsgHaTCeCKv5Ob3zimFOT6kFSw3jdvbBsCS6bOtXRYtAFYTf1/oj0MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ei09gRNs; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e8so11243485e9.1;
+        Mon, 06 May 2024 05:40:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714999201; x=1715604001; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rxjJb/KzzXIFQHfzAUi7FnhbwHdNprYeBkYOQsJcPKk=;
+        b=ei09gRNspAdb2aqMI3I9Vj7edy3cn++1uV1LjRbzhzHNk2Autqa0iuz1Oed/stdicj
+         pBKCwURcFKjKYvcQ79G/pa+ZD603+7RRTY7WCouQ32FgvAB+krYoBovnbmHKqZSgKFcG
+         0JXwTQYwx5q7nK2Nh61yUDOvOFRTwHO2azzwHp4o/WWg05WByTyqMxwtQSa9vVOSN6gi
+         fGlM9LlMjkyW97fmtLg7oMFpdm0sSr2upJUMYqyPEBr63Hv0FVYrD07U+sbB1ww+8mft
+         3IccpIi0J2HEnPahGRJ8KdqgwF7wODikjdjKxqkpaXRRbW/hXlIOrS9Qp86DrkPRbWlT
+         XVzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714999201; x=1715604001;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rxjJb/KzzXIFQHfzAUi7FnhbwHdNprYeBkYOQsJcPKk=;
+        b=tX304PVVm0JKpPSHTt+bdVvPBRBuHyehdPwqkSKlz7sXTuqi5daV92EmARiGLka1Sy
+         wkQcYnG7dKIQ0WUtF+riTPRKrJPDt60CDiqZaj/TopWDa6o0r392enqy3IjN0geig0uV
+         J+SrSxmxhClX68LjNdzNp1sHzNR//4EZYkpZxcmVBZu7e2P9qaKIt7lYMOxCFnuWbpN8
+         KsKgJ2WT+PhbkelrXiNxMyZLz0yhzxeJohdagOoFvMFZP5M3U8uI8WoOcbCytUd0468E
+         XoITZTPwle7QHMCsSDpS0bLXAL3c6NEPw1Z46yvaEa1vKXHmKC/gQ+kS5xiuHWxxDg5R
+         d9og==
+X-Forwarded-Encrypted: i=1; AJvYcCUvsmOzSh6mv3E6/DkkzfqYUVEu2D/Bs9+k/mtLn025WnIXXGGToM4n+Ku52kdqpNK1vsH6hOF922WKLB4tS6urU2kQqs8eOICBJkzhQAblAfwQiOhOcKvapND5MqJXXZ/DJEH8
+X-Gm-Message-State: AOJu0Yzb1dxbOD4XdDHcE3wIRukcDwkYYkGCfViqt7kiAYLnwuder3oU
+	RWInOiUh6eGtVFgNgfjvl7ziYIUFPcoXGbJ+bAqaBjSEQVaAv6NO
+X-Google-Smtp-Source: AGHT+IFkCu+JtPeZm2GUtpMORrZzigCeL8aXT4N3/ncy5DZ8TaVMDuXbslHscLBHDWJBFqgIrb6ZgA==
+X-Received: by 2002:a05:600c:1c03:b0:41a:3868:d222 with SMTP id j3-20020a05600c1c0300b0041a3868d222mr7722487wms.0.1714999200464;
+        Mon, 06 May 2024 05:40:00 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id g17-20020adfa491000000b0034de87e81c7sm10714865wrb.23.2024.05.06.05.39.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 05:39:59 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [net-next PATCH] net: stmmac: dwmac-ipq806x: account for rgmii-txid/rxid/id phy-mode
+Date: Mon,  6 May 2024 14:32:46 +0200
+Message-ID: <20240506123248.17740-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-665360433-1714998611=:1111"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Currently the ipq806x dwmac driver is almost always used attached to the
+CPU port of a switch and phy-mode was always set to "rgmii" or "sgmii".
 
---8323328-665360433-1714998611=:1111
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Some device came up with a special configuration where the PHY is
+directly attached to the GMAC port and in those case phy-mode needs to
+be set to "rgmii-id" to make the PHY correctly work and receive packets.
 
-On Fri, 3 May 2024, Bjorn Helgaas wrote:
+Since the driver supports only "rgmii" and "sgmii" mode, when "rgmii-id"
+(or variants) mode is set, the mode is rejected and probe fails.
 
-> On Thu, Dec 28, 2023 at 06:57:02PM +0200, Ilpo J=C3=A4rvinen wrote:
-> > Rename find_resource() to find_empty_resource_slot() to better describe
-> > what the functions does. This is a preparation for exposing it beyond
-> > resource.c which is needed by PCI core. Also rename the __ variant to
-> > match the names.
->=20
-> I wonder if "find_resource_space()" or "find_available_resource()"
-> would be better than "_slot"?
->=20
-> "Slot" *is* already used a few times in kernel/resource.c, but in most
-> cases I think it refers to a "resource", and find_resource() basically
-> returns a filled-in struct resource.
->=20
-> And of course "slot" suggests something entirely different in the PCI
-> context.
+Add support also for these phy-modes to correctly setup PHYs that requires
+delay applied to tx/rx.
 
-I picked up it from the existing usage but I've no strong opinion on=20
-this so I'll just rework the series to not add more "slot" wording into=20
-there.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---=20
- i.
---8323328-665360433-1714998611=:1111--
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+index 281687d7083b..4ba15873d5b1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+@@ -171,6 +171,9 @@ static int ipq806x_gmac_set_speed(struct ipq806x_gmac *gmac, unsigned int speed)
+ 
+ 	switch (gmac->phy_mode) {
+ 	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		div = get_clk_div_rgmii(gmac, speed);
+ 		clk_bits = NSS_COMMON_CLK_GATE_RGMII_RX_EN(gmac->id) |
+ 			   NSS_COMMON_CLK_GATE_RGMII_TX_EN(gmac->id);
+@@ -410,6 +413,9 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
+ 	val |= NSS_COMMON_GMAC_CTL_CSYS_REQ;
+ 	switch (gmac->phy_mode) {
+ 	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		val |= NSS_COMMON_GMAC_CTL_PHY_IFACE_SEL;
+ 		break;
+ 	case PHY_INTERFACE_MODE_SGMII:
+@@ -425,6 +431,9 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
+ 	val &= ~(1 << NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id));
+ 	switch (gmac->phy_mode) {
+ 	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		val |= NSS_COMMON_CLK_SRC_CTRL_RGMII(gmac->id) <<
+ 			NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
+ 		break;
+@@ -442,6 +451,9 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
+ 	val |= NSS_COMMON_CLK_GATE_PTP_EN(gmac->id);
+ 	switch (gmac->phy_mode) {
+ 	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		val |= NSS_COMMON_CLK_GATE_RGMII_RX_EN(gmac->id) |
+ 			NSS_COMMON_CLK_GATE_RGMII_TX_EN(gmac->id);
+ 		break;
+-- 
+2.43.0
+
 
