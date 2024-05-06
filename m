@@ -1,135 +1,390 @@
-Return-Path: <linux-kernel+bounces-170301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5628BD4B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8708BD4BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04E91C214E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD680284B75
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58298158845;
-	Mon,  6 May 2024 18:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF35215887C;
+	Mon,  6 May 2024 18:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AFeijI+J"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Sx+AnLkV"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2E73D984
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62411E4A6
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715020716; cv=none; b=Y+Nxkei8JA8UW1JJzpslfBVKGAHxfWdcdVeNC6Dmy4v/OoQgPXqgY1Z/hDyKFfguEz80OQhZwaZXUY3OyDazG9W6D1j9akC6ZiLSFLgEfUlrh/9EVsPxFmZK2uFuPdwxr4ZVZQHvqi8ad+p2OmO+/wB/IU/jv7dFyjU5JwdN4QI=
+	t=1715020786; cv=none; b=ilkkOA0G7J/X8GTFRyYi0N+aRnld9f7I0jiyntqnyCpSIdBI/0Ags3Mr2EIB1AJa1D/PDbJB4NEPJM88/NJDAnct4LA57ZyHlyWElO+nRpXm6w4Tw+2x4TddfRHgapDfS5kdYeipVXjX8ZeseiKuK5pGgRpf0OQXbFIe5AYuqZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715020716; c=relaxed/simple;
-	bh=41XkVcsAUi7RHQrRbNaV4xF05Bw3iVhPE+6NRtdz0aM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=OcGAg2EA7nOYP+E9bpog8WOw/3sSYvrBOGFPU+2DcY0VZ1f9J0UsR7+wZFoa/OS+A8df1WVw21eCHk/3Gj5p5pyXyR/9siYkjx9Zdvr+OCcSo5XniJVj9GYOOideCkmMvavLHBWBhjY7bm2BeqJQ34cQl2pEDFIcIH87TK5VCGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AFeijI+J; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-43ca9047bd2so33417831cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:38:34 -0700 (PDT)
+	s=arc-20240116; t=1715020786; c=relaxed/simple;
+	bh=4c2sM0nn/8tfRvfF/d/y0vqQdLVyw9aZlT7VUer/fE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g3k1Ytpzk5+CWmvNhcV1y68ymn/gGkXxRp23Msx1QZEhAFf5EyJYoZwyMYmmeRiIgrAYnZeje3uDLj317Rz9obV124okkUC7njG46/kF8KKctAJHr5QmQmjP60H745gZ8BoWrI4KGViZmVgAKqT/XIA0Gl9Az9eb3iKQcebUNds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Sx+AnLkV; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-22e6b61d652so1209815fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:39:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715020713; x=1715625513; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=broadcom.com; s=google; t=1715020784; x=1715625584; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wc9Ykp5KZiv59MVDuw6AEA9atSsYjCqiDTLg4L03H+E=;
-        b=AFeijI+JH/NRyBDf9aGv1OsuTo8jnqh4ieaDeFBisnDZ8vIGkUmlGL/0cWF06kqY9x
-         wfWF1adQHsYw9m98+rT6+dO6O9nPeykhDXqLb+9ZinuFqT+0A6AmCo+xNQiSk3T+AOFT
-         BLVr7/4zCQqTAW4bMxrqD7FzIt37bpCViaPew=
+        bh=yEZkGqkMA0LeJ3aEmZ4W3ZPNmD5acg2hWj4TVvcMMIw=;
+        b=Sx+AnLkVZffrUSyKVAd921up0ScF96lJbinwmGOreORMiTa9n9/S09lI7oUtRPV9ca
+         KwrKq8MGTnlFezL8VMUv51ZibSpt3nxu+Zf38yuJOthLpjiIjwROMlYzLIuYMxhHGU6N
+         B++Xg3cksKkA6WcD+/Q9R9f4xx3UHisgi7Uec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715020713; x=1715625513;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1715020784; x=1715625584;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wc9Ykp5KZiv59MVDuw6AEA9atSsYjCqiDTLg4L03H+E=;
-        b=Ozw1aF1He/kL4b4EiMKZCil9rvxTVpstRZInv0blVZRORSVjtEi43qm3uaEOtRAxQI
-         wh8pOlYBUKzcDZBCCnpodzBEOSTLtH7W9+8PjpEMHy6dNwe7hkJ8j33Dq+79gVlaOD/4
-         llNcknIpQ61dVhg6jeoFkC4MBBy2s2xtBXLysoCbuheQJ0rDNf/K08O0Gw5049q8wiDR
-         lXkEtIrFJqhm8Bo3t9ymoz7cG1HQLPvB3Vz8EDRuWLBD1oFvZ/my17NlZjCBoihBKfzI
-         ofQ+ZjwoKbD6D6ErQaX8LuqyBezhA77kBbGE7gogTt+gcsd+7gUnziaOAXolOoMFHAWB
-         bm/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVrWdqH1IRwBL8ZUyGivuHXam1b1VxI+S3W92bUXIRA6qSFh5i3k3ePSx5D/1qhokOsyaEC3yADMMdckRFn3JJTeZOAL1ee5fWzt52m
-X-Gm-Message-State: AOJu0YwPxD8O6G7sQOn2mPwF74g8BVoTD182z2Xyv5Ocs950b/lOIuaD
-	e6pZVrVzxfFfcvsPlEywahOp+eUki0N09fuMa6uhF7eafXxsnO6fMiBxintQBzjiFif9YXc7wHQ
-	=
-X-Google-Smtp-Source: AGHT+IHvynVvkktEJNOZRfJZC3n5l5rzbZN0sa+aDeo8aXBhK/9wCGwD7M5aeubC4L9taT/L9Z5ucQ==
-X-Received: by 2002:ac8:5a8d:0:b0:43a:4b07:57ec with SMTP id d75a77b69052e-43d8f32b26fmr8886951cf.9.1715020713332;
-        Mon, 06 May 2024 11:38:33 -0700 (PDT)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
-        by smtp.gmail.com with ESMTPSA id ex8-20020a05622a518800b0043a51b452a3sm5410928qtb.20.2024.05.06.11.38.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 11:38:32 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7928ec5308cso210388185a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:38:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWj8+NRfU/f+OXzZ12c8XLvtDgzE2tm9U+tDzeiEhbOHWTBHPFSmFg6m/nhHrBY4TMykEL1lFwVAPk9u4rvtaPL0+lhydqMGuZy6d98
-X-Received: by 2002:ad4:588a:0:b0:6a0:f0eb:1679 with SMTP id
- 6a1803df08f44-6a146005801mr7792556d6.8.1715020711735; Mon, 06 May 2024
- 11:38:31 -0700 (PDT)
+        bh=yEZkGqkMA0LeJ3aEmZ4W3ZPNmD5acg2hWj4TVvcMMIw=;
+        b=JRBm2dYDBoXsRu6DeYmEaGbyxSeq8GvtsTrtEHJavwY59i1eB0aurJlt0LHaBRYRmm
+         WppqF/gz4I7ODaYHRTQnrtbA0oxetObsAECz1JV3Rosm5BQfQm8zq9mRvkixoYEzzhyV
+         AVE0wXcgv5B2ntGb3KYl9UPoutTcIo6WSzI2AqDrTkyYQcwHSEMpOblNSYDXwJ4gaK3V
+         o7RTU7w0LDMikugcMxVzr76Xah8mndHjOOc720VWDRMeGbh84rOy0ksSyFd6v5XQmaYT
+         I7PREyV1BL3YBTkWJcUVDwy23Obe/zs7EMB4Z6OdKLSNzaPskreB9tuyS1AdysgJTtxv
+         NdKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfPkbDQlYYe3DfpQ8+v6IVsJ0bMv29bSKE/DYAESS0yCBLlKGFnOpaOymf9IXkxlXS+3gynKKJf6GgAruK5Df9JcwX8y/PZpV+4Rxx
+X-Gm-Message-State: AOJu0YzbDcNvgqfAfBn/nQ/XKOucETKf7PiEPE+Zc5NnSxaPX/mO6UuJ
+	p0URfe6zCPbeEzuDyiThE0744Elw5N/OlQmRG5eqb4gpSeqROSz37JFN1ZIX1+x9+9KN8yev935
+	m4DbO4uB/1MyFElk8rauGcM021JAFyd895gzb
+X-Google-Smtp-Source: AGHT+IH7dQIN4oFHv8bwAD0nUZjVI8HVAnHl9wAm/rFIRxxyF2+VinqaF+o2Za4Ki7WyYkTz+FHwW3lfyOwFpoolRFY=
+X-Received: by 2002:a05:6870:b023:b0:233:b5dd:471c with SMTP id
+ y35-20020a056870b02300b00233b5dd471cmr11426298oae.51.1715020783659; Mon, 06
+ May 2024 11:39:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 6 May 2024 20:38:15 +0200
-X-Gmail-Original-Message-ID: <CANiDSCs8i5Eid-FhDkgxTghFu8Sk831SojZwAohJ-CbKRch5KQ@mail.gmail.com>
-Message-ID: <CANiDSCs8i5Eid-FhDkgxTghFu8Sk831SojZwAohJ-CbKRch5KQ@mail.gmail.com>
-Subject: Conditional guards
-To: Peter Zijlstra <peterz@infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20240423200234.21480-1-kamal.dasu@broadcom.com>
+ <CAPDyKFqLqbRx3gWCqT4G6mUVeMDWyA_f8T2_iYt07r_Ffqaaow@mail.gmail.com>
+ <3f69d64e-7c41-48de-a7a0-42ab99cd7e7d@intel.com> <CAKekbev6YG+yVnX-n9tsQSwujj5mD-vpJXrd+xwcF-K=z45q+w@mail.gmail.com>
+ <CAPDyKFoE4+sQ3D-9SKtFcksQQ88GyYd_P88dVOj9SYyVFqLxig@mail.gmail.com> <a55e1bdc-7c6a-4720-b941-0ddfd764b87e@arm.com>
+In-Reply-To: <a55e1bdc-7c6a-4720-b941-0ddfd764b87e@arm.com>
+From: Kamal Dasu <kamal.dasu@broadcom.com>
+Date: Mon, 6 May 2024 14:39:06 -0400
+Message-ID: <CAKekbes-X-nnksQLjrGaZJOXZ7dCYos0_2cd1GukBc2KWh0KJg@mail.gmail.com>
+Subject: Re: [PATCH v1] mmc: core: check R1_STATUS for erase/trim/discard
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, ludovic.barre@st.com, 
+	f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000009fef8b0617cd6485"
+
+--0000000000009fef8b0617cd6485
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Peter
+I was testing with different.
 
-Probably a stupid question.... but I'd rather ask the expert directly :)
+On Fri, May 3, 2024 at 9:55=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 03/05/2024 14:09, Ulf Hansson wrote:
+> > On Fri, 26 Apr 2024 at 17:11, Kamal Dasu <kamal.dasu@broadcom.com> wrot=
+e:
+> >>
+> >> On Fri, Apr 26, 2024 at 2:17=E2=80=AFAM Adrian Hunter <adrian.hunter@i=
+ntel.com> wrote:
+> >>>
+> >>> On 25/04/24 19:18, Ulf Hansson wrote:
+> >>>> + Wolfram, Adrian (to see if they have some input)
+> >>>>
+> >>>> On Tue, 23 Apr 2024 at 22:02, Kamal Dasu <kamal.dasu@broadcom.com> w=
+rote:
+> >>>>>
+> >>>>> When erase/trim/discard completion was converted to mmc_poll_for_bu=
+sy(),
+> >>>>> optional ->card_busy() host ops support was added. sdhci card->busy=
+()
+> >>>>> could return busy for long periods to cause mmc_do_erase() to block=
+ during
+> >>>>> discard operation as shown below during mkfs.f2fs :
+> >>>>>
+> >>>>> Info: [/dev/mmcblk1p9] Discarding device
+> >>>>> [   39.597258] sysrq: Show Blocked State
+> >>>>> [   39.601183] task:mkfs.f2fs       state:D stack:0     pid:1561  t=
+gid:1561  ppid:1542   flags:0x0000000d
+> >>>>> [   39.610609] Call trace:
+> >>>>> [   39.613098]  __switch_to+0xd8/0xf4
+> >>>>> [   39.616582]  __schedule+0x440/0x4f4
+> >>>>> [   39.620137]  schedule+0x2c/0x48
+> >>>>> [   39.623341]  schedule_hrtimeout_range_clock+0xe0/0x114
+> >>>>> [   39.628562]  schedule_hrtimeout_range+0x10/0x18
+> >>>>> [   39.633169]  usleep_range_state+0x5c/0x90
+> >>>>> [   39.637253]  __mmc_poll_for_busy+0xec/0x128
+> >>>>> [   39.641514]  mmc_poll_for_busy+0x48/0x70
+> >>>>> [   39.645511]  mmc_do_erase+0x1ec/0x210
+> >>>>> [   39.649237]  mmc_erase+0x1b4/0x1d4
+> >>>>> [   39.652701]  mmc_blk_mq_issue_rq+0x35c/0x6ac
+> >>>>> [   39.657037]  mmc_mq_queue_rq+0x18c/0x214
+> >>>>> [   39.661022]  blk_mq_dispatch_rq_list+0x3a8/0x528
+> >>>>> [   39.665722]  __blk_mq_sched_dispatch_requests+0x3a0/0x4ac
+> >>>>> [   39.671198]  blk_mq_sched_dispatch_requests+0x28/0x5c
+> >>>>> [   39.676322]  blk_mq_run_hw_queue+0x11c/0x12c
+> >>>>> [   39.680668]  blk_mq_flush_plug_list+0x200/0x33c
+> >>>>> [   39.685278]  blk_add_rq_to_plug+0x68/0xd8
+> >>>>> [   39.689365]  blk_mq_submit_bio+0x3a4/0x458
+> >>>>> [   39.693539]  __submit_bio+0x1c/0x80
+> >>>>> [   39.697096]  submit_bio_noacct_nocheck+0x94/0x174
+> >>>>> [   39.701875]  submit_bio_noacct+0x1b0/0x22c
+> >>>>> [   39.706042]  submit_bio+0xac/0xe8
+> >>>>> [   39.709424]  blk_next_bio+0x4c/0x5c
+> >>>>> [   39.712973]  blkdev_issue_secure_erase+0x118/0x170
+> >>>>> [   39.717835]  blkdev_common_ioctl+0x374/0x728
+> >>>>> [   39.722175]  blkdev_ioctl+0x8c/0x2b0
+> >>>>> [   39.725816]  vfs_ioctl+0x24/0x40
+> >>>>> [   39.729117]  __arm64_sys_ioctl+0x5c/0x8c
+> >>>>> [   39.733114]  invoke_syscall+0x68/0xec
+> >>>>> [   39.736839]  el0_svc_common.constprop.0+0x70/0xd8
+> >>>>> [   39.741609]  do_el0_svc+0x18/0x20
+> >>>>> [   39.744981]  el0_svc+0x68/0x94
+> >>>>> [   39.748107]  el0t_64_sync_handler+0x88/0x124
+> >>>>> [   39.752455]  el0t_64_sync+0x168/0x16c
+> >>>>
+> >>>> Thanks for the detailed log!
+> >>>>
+> >>>>>
+> >>>>> Fix skips the card->busy() and uses MMC_SEND_STATUS and R1_STATUS
+> >>>>> check for MMC_ERASE_BUSY busy_cmd case in the mmc_busy_cb() functio=
+n.
+> >>>>>
+> >>>>> Fixes: 0d84c3e6a5b2 ("mmc: core: Convert to mmc_poll_for_busy() for=
+ erase/trim/discard")
+> >>>>> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+> >>>>> ---
+> >>>>>  drivers/mmc/core/mmc_ops.c | 3 ++-
+> >>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.=
+c
+> >>>>> index 3b3adbddf664..603fbd78c342 100644
+> >>>>> --- a/drivers/mmc/core/mmc_ops.c
+> >>>>> +++ b/drivers/mmc/core/mmc_ops.c
+> >>>>> @@ -464,7 +464,8 @@ static int mmc_busy_cb(void *cb_data, bool *bus=
+y)
+> >>>>>         u32 status =3D 0;
+> >>>>>         int err;
+> >>>>>
+> >>>>> -       if (data->busy_cmd !=3D MMC_BUSY_IO && host->ops->card_busy=
+) {
+> >>>>> +       if (data->busy_cmd !=3D MMC_BUSY_IO &&
+> >>>>> +           data->busy_cmd !=3D MMC_BUSY_ERASE && host->ops->card_b=
+usy) {
+> >>>>>                 *busy =3D host->ops->card_busy(host);
+> >>>>>                 return 0;
+> >>>>>         }
+> >>>>
+> >>>> So it seems like the ->card_busy() callback is broken in for your mm=
+c
+> >>>> host-driver and platform. Can you perhaps provide the information
+> >>>> about what HW/driver you are using?
+> >>>>
+> >>
+> >> Using the sdhci-brcmstb driver on a Broadcom Settop based SoC.
+> >>
+> >>>> The point with using the ->card_busy() callback, is to avoid sending
+> >>>> the CMD13. Ideally it should be cheaper/faster and in most cases it
+> >>>> translates to a read of a register. For larger erases, we would
+> >>>> probably end up sending the CMD13 periodically every 32-64 ms, which
+> >>>> shouldn't be a problem. However, for smaller erases and discards, we
+> >>>> may want the benefit the ->card_busy() callback provides us.
+> >>>>
+> >>
+> >> I have tested two scenarios. One is like the mkfs.f2fs app that calls =
+:
+> >> ioctl(fd, BLKSECDISCARD, &range);
+> >>
+> >> This has the following CMD and completion sequence:
+> >> {CMD35->CMD36->CMD38} and poll for  DAT0  signal via card->busy .
+> >> CMD38 has a response of R1b. The DAT0 (Busy line) will be driven by th=
+e device.
+> >> Busy (DAT0  =3D 0) is asserted by a device for  erasing blocks. Stays
+> >> busy in brcmstb sdhci controller.
+> >
+> > How big is the "range"?
+> >
 
-I am trying to fix some of the cocci warnings with guard() and there
-is a  use case that I do not know how to do. I have something like:
+The task just blocks here. I have attached the stack.
 
-void use_hardware(priv) {
-  if (priv->model =3D=3D 42)
-      mutex_lock(&priv->lock):
+> > Just so I get this right, it stays busy and we are waiting for the
+> > timeout to fire? And ideally you think we should not be busy for that
+> > long, right?
+> >
+The timeout does not fire.
 
-  // DO things here
+> >>
+> >> With the additional change followed by CMD13 (response of R1), which
+> >> returns the device status, the
+> >> DAT0 will be pulled-up and next time we read the BUSY status it will
+> >> indicate it is not busy.
+> >
+> > So you are referring to read the BUSY status with you ->card_busy()
+> > callback? Or did you actually verify that this is true from an
+> > electrical point of view, by monitoring the DAT0 signal?
+> >
+> > If the latter, perhaps it's the card that is failing and simply
+> > requires CMD13 to be used to poll for busy. What card is this?
+> >
+> > Have you tried different cards with the same platform/driver?
+> >
+Yes, I have tried Micron and Sandisk 8GB cards with the same platform
+with the same results.
 
-  if (priv->model =3D=3D  42)
-      mutex_unlock(&priv->lock):
-}
+> >>
+> >> Also I tried the mmc util and that does not show the same issue with
+> >> exactly the same ranges, however in that case there are some
+> >> differences in the way the CMD sequence is sent for the entire discard
+> >> operation.
+> >> # mmc erase discard 0x000087a4 0x002effff /dev/mmcblk1
+> >> /* send erase cmd with multi-cmd */
+> >> ret =3D ioctl(dev_fd, MMC_IOC_MULTI_CMD, multi_cmd);
+> >>
+> >> CMD35->CMD13->CMD36->CMD13->CMD38->CMD13
+> >> I do not see any hang in all the erase options discard, legacy, trim, =
+trim2,
+> >> secure-trim used here with mmc util .
+> >
+> > So CMD13 seems to do the trick for you. Although, I think we need to
+> > figure out if this a special "broken" card or if the problem is with
+> > the ->card_busy() implementation for your platform.
+> >
+> >>
+> >> Also looking at JEDEC Standard No. 84-B51 Page 276, 277
+> >> "Once the erase groups are selected the host will send an ERASE
+> >> (CMD38) command. It is recom-
+> >> mended that the host terminates the sequence with a SEND_STATUS
+> >> (CMD13) to poll any additional
+> >> status information the Device may have (e.g., WP_ERASE_SKIP, etc.)."
+> >
+> > Isn't that exactly what is being done? After the card has stopped
+> > signaling busy, we send a CMD13 in mmc_busy_cb() to read the
+> > additional status information.
+>
+Yes, that is what the fix does. However in the original if
+->card->busy() is being used we do not send the CMD13.
 
-if I replace:
-  if (priv->model =3D=3D 42)
-      mutex_lock(&priv->lock):
-with
-if (priv->model =3D=3D 42)
-     guard(mutex)(&priv->lock)
+> Agreed with your interpretation FWIW.
+>
+> >
+> > I don't get it, why should the card stop signal busy, just because we
+> > send a CMD13. If so, the card should probably be considered broken.
+> > For broken cards, we can try to use a card-quirk instead - to enforce
+> > CMD13 polling.
+>
+Yes  would be one of the solutions that can be considered. Would open
+to any suggestion on what card-quirk to use.
 
-gcc screams at me:
-drivers/media/dvb-core/dvb_frontend.c: In function =E2=80=98dvb_frontend_op=
-en=E2=80=99:
-/include/linux/cleanup.h:119:9: error: expected expression before
-=E2=80=98class_mutex_t=E2=80=99
-  119 |         class_##_name##_t var
-__cleanup(class_##_name##_destructor) =3D   \
-      |         ^~~~~~
-/include/linux/cleanup.h:164:9: note: in expansion of macro =E2=80=98CLASS=
-=E2=80=99
-  164 |         CLASS(_name, __UNIQUE_ID(guard))
-      |         ^~~~~
-drivers/media/dvb-core/dvb_frontend.c:2776:17: note: in expansion of
-macro =E2=80=98guard=E2=80=99
- 2776 |                 guard(mutex)(&apadter->mfe_lock);
+> I'll mention it here, I've seen some broken IP out there where the card's
+> FSM (including busy-signalling) was dependent on the host providing the
+> CLK, can't remember which one it was, though.
+> Anyway for Kamal, it might be interesting to know if your host controller
+> autostops the CLK (which it is allowed to) during the busy-signalling and
+> if not stopping it also works around the problem.
+>
+The host controller is not stopping the clock. Also stopping the clock
+does not work around the problem. host is expecting the device FSM
+pull up the busy line.
 
+At this point I can either do this when  adding host:
++       /* we dont use busy signal */
++       host->mmc_host_ops.card_busy =3D NULL;
 
-Is there a way to support something like this?
+Or introduce a card-quirk for this situation.
 
-Regards!
+Kamal
 
---=20
-Ricardo Ribalda
+--0000000000009fef8b0617cd6485
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+DxuNuBlySpn/GYqPcDcRZd8EENWqnZrjtjHMk0j7ZfrPGXq8sQkbG3OX+DOwSaefPRq1pLGWBZaZ
+YuUo5O7CNHo7h7Hc9GgjiW+6X9BjKAzSaDy8jwIDAQABo4IB2DCCAdQwDgYDVR0PAQH/BAQDAgWg
+MIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUFBzABhjVo
+dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMDBNBgNV
+HSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2ln
+bi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRwOi8vY3Js
+Lmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAiBgNVHREEGzAZ
+gRdrYW1hbC5kYXN1QGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAW
+gBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUcRYSWvAVyA3hgTrQ2c4AFquBsG0wDQYJ
+KoZIhvcNAQELBQADggEBAIKB2IOweF2sIYGBZTDm+Hwmhga+sjekM167Sk/KwxxvQFwZYP6i0SnR
+7aR59vbfVQVaAiZH/a+35EYxP/sXaIM4+E3bFykBuXwcGEnYyEn6MceiOCkjkWQq1Co2JyOdNvkP
+nAxyPoWlsJtr+N/MF1EYKGpYMdPM7S2T/gujjO9N56BCGu9yJElszWcXHmBl5IsaQqMS36vhsV0b
+NxffjNkeAdgfN/SS9S9Rj4WXD7pF1M0Xq8gPLCLyXrx1i2KkYOYJsj0PWlC6VRg6E1xXkYDte0VL
+fAAG4QsETU27E1HBNQyp5zF1PoPCPvq3EnWQnbLgYk+Jz2iwIUwiqwr/bDgxggJtMIICaQIBATBr
+MFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9i
+YWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgw89WX2Pp7ue922QVkwDQYJYIZI
+AWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIMJ4o86d39d2G+RvuqiXyjFI9dAj8AQSPaJ7P5a6
+K4Z0MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDUwNjE4Mzk0
+NFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQB
+AjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkq
+hkiG9w0BAQEFAASCAQArh0hJtUPSoYQ4PRIqNj68kwqsx60/Or9LNUchn54gC8YcLrp3SAZGcF1K
+jzUTba1PPalqsnCGATQ7AZT8u625zRrL0EE7naQkq0KpdcHGYgThMPAESYm0Sh/+vHeuBMovBKdG
+/y0ZqrMkmOZj8bDVJufnM/u8brJAdlWNunIpZfg1lNjIjFeWhKWk44hjEN/91izb6hRkmNYGNdM3
+GyZy+qoIG1bRM1pXfTMikDZqSMgD99b9WcwzxEtAppYaTLg3W5ltoW86zXPfDKvcW7ifUfMogPIY
+t9fDKL1IQTSwhjUHppz1Xl3waT7vvpup670Nrd0TUlBzLlw58+7gBezZ
+--0000000000009fef8b0617cd6485--
 
