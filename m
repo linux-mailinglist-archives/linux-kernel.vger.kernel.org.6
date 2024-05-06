@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-170246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828A68BD40E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:48:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A8B8BD418
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE332816C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 029A41C21B6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DC01581F6;
-	Mon,  6 May 2024 17:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC47158200;
+	Mon,  6 May 2024 17:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gXbYAIfe"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPmPREm0"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6C51D52C;
-	Mon,  6 May 2024 17:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D391D52C;
+	Mon,  6 May 2024 17:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715017699; cv=none; b=Aa9PbjIUgkoIwD0t1B9VzW26HeXGvbJdVtfYRmnsj2rl2UYAdfAo5MPolsJotpJeYy4msfq9csm9i7lp156STeWttmXxZ7po/pR6m2jpJ8FBW9/GGK/UDVbvn3YoEjbJV8J8KDbJMq9UbpC0h0wD3gHNazo/qKUhC2JmtQgaLhA=
+	t=1715017815; cv=none; b=XdCfMVZR9kZIymKfELz3+1OL3wdSsW17NpNpVll9RgLBfyciy0zq4a7AWTxGYFGQvB348xBtCtB6vk5QdoPDlwNvOg18YvjFU4EdotDgJE8m6f5Pj01TOPWDSCal38fJIYbAIaJOf2UoqeJKw0MZWCdLd0Hf8Paf3R5+obNazEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715017699; c=relaxed/simple;
-	bh=MvU5sKTnLEckHFjZCqkxY/lmg1E8y33V8+9lLbUc2Ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCvTkI44hmEpE7ER9fw/FDJLw5GXLjLWIWxysk1AdhzKfp/XRaTX6gEQSJ2MiqFduiPWoI7YWFZavFW+PL8ElnPvobDOGSmqCpOcGnxRcW9R2HSZSEMmFwDEt6Zewz75yp0fqQxAr4l3xUYRNWHBXPx4ZE/6PLJ6oj0Ad4uFu8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gXbYAIfe; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715017695;
-	bh=MvU5sKTnLEckHFjZCqkxY/lmg1E8y33V8+9lLbUc2Ro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gXbYAIfeiNBAdErnj8FDrF6BRufNDLS5Sy2vaGpljGRCAJ2kRHckgsEAcrqJcZEfl
-	 bt6LFheWca1yJbPM5sMNaqlAKpFN7xuoBeQZGGd+m/QDRj53JMV85P9WazbjSxkds+
-	 YbB5YliGBGgW8lRpfM36XlLtPLMqFmmmbJg0aaFo=
-Date: Mon, 6 May 2024 19:48:14 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: "Limonciello, Mario" <mario.limonciello@amd.com>
-Cc: Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-kernel@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, "Dustin L. Howett" <dustin@howett.net>, 
-	Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/2] platform/chrome: cros_ec_framework_laptop: introduce
- driver
-Message-ID: <7dab7267-a5f2-4b03-bb45-92b836e42c28@t-8ch.de>
-References: <20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net>
- <20240505-cros_ec-framework-v1-1-402662d6276b@weissschuh.net>
- <84c58078-93a4-406a-8abb-9054854e54a0@amd.com>
+	s=arc-20240116; t=1715017815; c=relaxed/simple;
+	bh=gXKML0ANf/VHTXTDJLQs6FDzugzEI1UK1X68Cny0xps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rmo1uULnvkYUGhCBu+hwJaOUIRV3cWY5OLkOcElTB5AaYOd05eva1eCa0Ezvr+zlLniYp+Atodr1O4MxGqAtsJQSMuuho0l7iTQzI4GVr/lgGXTDzsV8DQ+velr3Rs8CoEdGMoCLozoCaxQ4xkf2JO8aMZoAX3cjx82Pzv8IlTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPmPREm0; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5e152c757a5so1283160a12.2;
+        Mon, 06 May 2024 10:50:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715017813; x=1715622613; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gXKML0ANf/VHTXTDJLQs6FDzugzEI1UK1X68Cny0xps=;
+        b=HPmPREm0ul+P81ACw5vB0aD6E5kVB60XDvVT+yATzBQz1mmY9QTA2j3W8pVXMM/7VE
+         VG/QX3IqGitW5oecVekPgsBgriHM8TlQcBMYgFHa6z8EZS/vWzBQSLC3ebBeGKaOzcDO
+         mnDRR/007n1b5/XouF8XGsF7IiSksLKahpr0L/z0weP+cPu7gZ71exyHSQcYuFJbVqbC
+         D1BY/Jbs0qFX2VglNS425KRqBl8LBdKz/ikODj6/JmTlIIXLPmv3Hl3UTIimYU3o6A1G
+         Xq6+BiIsSozAIYuMpe7i7vZBOIflhABLcKyZGlzls/zK1zYitC0FgoF6AuIzZHk3qLUU
+         I/Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715017813; x=1715622613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gXKML0ANf/VHTXTDJLQs6FDzugzEI1UK1X68Cny0xps=;
+        b=D6sUo26XES8KpWa9Z6tl3x53x/vHyBU2cf6TFRbUf/9GrFXvM3VUmSdb3GEQoI+m/e
+         giWp2Nzq6bid/EF5LJWJGPEAdJd89FxunkmArP4y5z11fFhmcGQXgl+7II5m0yh/uWIB
+         bKa8NPJc8zwFvdDVpu5eN1I7AaXToJEK5EvHqHjybB6mKhtcvQahrJsqWa0AkSI8i5SO
+         FgEIpvOgsp5YC7BG1iGhix6OUIF7wlwHzThCyt0vrdmbFwHH6InAEOB2GgGdq1VhnV5U
+         Ymp4xlw9kyYYTr59l7D9LcbccN8oilX7VTSJQ6SkjD5g/a8wTcFhZcBCMvE3/Davo4pT
+         5etA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYDdkYuoRYltD53b+SJmwgztuyckbv2WfvE1cYjRZD+ptwvuxUF0j5E9+qpygR4zaKmGU4S42GqBFd74D9xQV0BGiW13z+G8ZIjaw9Frcfu8rjyBscJiBIbxnY6zCAIC/6cpjozGj/OHNb8OqK
+X-Gm-Message-State: AOJu0Yyq5WK/ZRe57C6AGwUJeLBl2osgTg9JFmu6rp5uTyB6C1e292fM
+	dK5TqWF5TrYAefQ5iGOorKUdimqEY9i2ATrmc+3LQ3CsHew4yHXG24/0p2fY8om5uCkSs966VBd
+	IbhC2Z3cKDKbHuZj+NtX5tcxSxx4=
+X-Google-Smtp-Source: AGHT+IG4MTEscwBrGFBYlUwy88bX21aQBDdIpQcUbWnGYDzwoP+HaAt0v+w/QBurXrLdxocWMEF3Zi+9LXgDXgvwbyQ=
+X-Received: by 2002:a17:90a:9f92:b0:2a5:3aec:fdef with SMTP id
+ o18-20020a17090a9f9200b002a53aecfdefmr8095728pjp.47.1715017813346; Mon, 06
+ May 2024 10:50:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <84c58078-93a4-406a-8abb-9054854e54a0@amd.com>
+References: <AS8PR02MB7237CD9ECBF7907AD8B1CC938B1C2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+In-Reply-To: <AS8PR02MB7237CD9ECBF7907AD8B1CC938B1C2@AS8PR02MB7237.eurprd02.prod.outlook.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 6 May 2024 19:48:49 +0200
+Message-ID: <CANiq72nJj4PmvVdkUHEcC-2HvYZSGctWMqj43mnTJrt0k0QKaA@mail.gmail.com>
+Subject: Re: [PATCH] uapi: stddef.h: Provide UAPI macros for __counted_by_{le, be}
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Kees Cook <keescook@chromium.org>, Alexey Dobriyan <adobriyan@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Dmitry Antipov <dmantipov@yandex.ru>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-05-06 08:10:58+0000, Limonciello, Mario wrote:
-> 
-> 
-> On 5/5/2024 3:56 PM, Thomas Weißschuh wrote:
-> > Framework Laptops are using embedded controller firmware based on the
-> > ChromeOS EC project.
-> > In addition to the standard upstream commands, some vendor-specific
-> > ones are implemented.
-> > 
-> > Add a driver for those custom EC commands.
-> > 
-> > At first, provide an empty driver that only takes care of scaffolding and
-> > device binding.
-> > Further patches will add functionality to the driver.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >   MAINTAINERS                                        |  5 ++
-> >   drivers/mfd/cros_ec_dev.c                          | 13 ++++++
-> >   drivers/platform/chrome/Kconfig                    | 11 +++++
-> >   drivers/platform/chrome/Makefile                   |  1 +
-> >   drivers/platform/chrome/cros_ec_framework_laptop.c | 53 ++++++++++++++++++++++
-> >   5 files changed, 83 insertions(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index c23fda1aa1f0..60699c289757 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -4988,6 +4988,11 @@ S:	Maintained
-> >   F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
-> >   F:	sound/soc/codecs/cros_ec_codec.*
-> > +CHROMEOS EC FRAMEWORK LAPTOP EXTENSIONS
-> > +M:	Thomas Weißschuh <linux@weissschuh.net>
-> > +S:	Maintained
-> > +F:	drivers/platform/chrome/cros_ec_framework_laptop.c
-> > +
-> >   CHROMEOS EC SUBDRIVERS
-> >   M:	Benson Leung <bleung@chromium.org>
-> >   R:	Guenter Roeck <groeck@chromium.org>
-> > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > index a52d59cc2b1e..0a36e77e5039 100644
-> > --- a/drivers/mfd/cros_ec_dev.c
-> > +++ b/drivers/mfd/cros_ec_dev.c
-> > @@ -145,6 +145,10 @@ static const struct mfd_cell cros_ec_vbc_cells[] = {
-> >   	{ .name = "cros-ec-vbc", }
-> >   };
-> > +static const struct mfd_cell cros_ec_framework_cells[] = {
-> > +	{ .name = "cros-ec-framework", }
-> > +};
-> > +
-> >   static void cros_ec_class_release(struct device *dev)
-> >   {
-> >   	kfree(to_cros_ec_dev(dev));
-> > @@ -299,6 +303,15 @@ static int ec_device_probe(struct platform_device *pdev)
-> >   				 retval);
-> >   	}
-> > +	 /* The EC on Framework laptops implements some nonstandard features */
-> 
-> I don't think there is a spec really for cros_ec is there?  I think it will
-> depend upon what features you're talking about if this is the right way to
-> go.
+On Mon, May 6, 2024 at 7:42=E2=80=AFPM Erick Archer <erick.archer@outlook.c=
+om> wrote:
+>
+> Provide UAPI macros for UAPI structs that will gain annotations for
+> __counted_by_{le, be} attributes.
+>
+> Signed-off-by: Erick Archer <erick.archer@outlook.com>
 
-I equate "standard" with "mainline".
+I guess this is a mirror of the kernel one at
+https://lore.kernel.org/lkml/20240327142241.1745989-1-aleksander.lobakin@in=
+tel.com/,
+but it would be nice to add some context, e.g. Link: tag, to this, and
+possibly a comment or two.
 
-> The reason I say this is that maybe some of the same kinds of features will
-> make sense for chromebooks that use cros_ec in the future and thus they
-> should be "generic" cros_ec mfd cells to probe for in some way.
+Thanks!
 
-The commands identifiers are just numbers.
-So if multiple vendors use the same numbers there could be collisions.
-By loading the subdriver only for the correct vendors devices we avoid those.
-
-If other vendors or mainline CrOS EC implements the same commands we can
-revisit this and move the functionality to a generic mfd cell.
-
-But after the discussions on the cover letter, let's first see if a
-vendor-specific driver is needed at all.
-
-Thomas
+Cheers,
+Miguel
 
