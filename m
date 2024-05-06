@@ -1,92 +1,312 @@
-Return-Path: <linux-kernel+bounces-170013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709758BD092
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE34E8BD08E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AAE4B24D32
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 803B6282B6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A938415380D;
-	Mon,  6 May 2024 14:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F92153579;
+	Mon,  6 May 2024 14:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayj2sEsi"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7VuGzo/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B21153597;
-	Mon,  6 May 2024 14:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604EC1534FC;
+	Mon,  6 May 2024 14:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006677; cv=none; b=kejRmT3fS5r9pOb6WGRyxSGRNXrRVOcKMxnVqvWGCKkmyOaxFf9P84m3it8eYd8l1BmSwNcBzyhzejoUA9A0j0sy7QIHP4MnvZbrFXwekuoiJZ7Re0WMsEiLMYc8YmZ4W5MrafLC9RXxVUXw2BnaguvRbdPp0H9zBKXOMkSwrZM=
+	t=1715006658; cv=none; b=QqSBc4Nxbw399d6W4WfKNqzLSGr3M/xLIgIQ6BDIhp/IdbN/NCB3em/7xFeHBVMGOj5w6hO0lYz60qfWmd/JWkY17aOKs/Vc6Tsr4w03a1bGckp0qoXDhavXBDW4WhWGFLF7OVRqkT7lBqFE4Mv0u/nBot8NbrusVUsbnovIj+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006677; c=relaxed/simple;
-	bh=Ke0QY5ldJbt49WMIefdFQkbFTEJLVnNZPXqfdqOaC0M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NMW8KV0OusCGkUfTvPRzVFbRREMSncjCjXWdnGbWi55Jyn03H/fJpnbBsTyt49Li5QBMhlL3DcPIuBeT4RGWC+5+kOJ/cHsT6A6h98pln+piEfb3lSPEqY613MTowh0L2Ab3xiFEYHg4CXZone8qYd/ry8hTfkTYLyCDJ5qrUpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayj2sEsi; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f74fa2a82so2236426e87.0;
-        Mon, 06 May 2024 07:44:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715006674; x=1715611474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ke0QY5ldJbt49WMIefdFQkbFTEJLVnNZPXqfdqOaC0M=;
-        b=ayj2sEsiNH/OPyraMffBYF2HjbRAZwahYf5UEsbLu6uhgBShwpSWRFOCThXWMSLpL0
-         JtPCmN25LvikpY3dH8+VMxDyKm2iRD9i9H3Ug7gv7XzP5LVv1uO2RLeSVAjGXseaWk6T
-         vDM8muAKTH5c1H48E7MBoxpIf8Hd4FlAWrrq6mJOtgPXhjEcGraW7bD8VMHAl9ZoORyf
-         Qdd3ogDhLvWA2Iy8Yz8803dxOBFIKNENMNLTWwgQ2P3MhvCI7pVBJJzT0uZkftHFqFd4
-         jYI5jGq2tFfHPKusgtzWCkN/x4h/DhC7M7QKImzWMHLJiTn+baHW2CR8xNknIGFFVtfn
-         mwKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715006674; x=1715611474;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ke0QY5ldJbt49WMIefdFQkbFTEJLVnNZPXqfdqOaC0M=;
-        b=cu3g/Pshnn5AZ9UNDFV5HPCceukwvt19kcxACjPtcAxTVipsn4Otze1ftO/4TsmIUN
-         +DXWhqSrTf7Wq+JsX2CLWBzhO0YgXBZnZbJbPzPWVpn/O+E6vUhyH3ToCBE64Ch1ylta
-         gj+U6gq1LzzQ1ReJYByE7DgWmpPfBWsyH+3rXpOdKJbNC7qkl/CC9nskwMNvtGIbXKb3
-         EGksgTQE08Z7jAovRVYXMd44NBBbc8WvH69Pn/I587HA7YEXtcnzm0aiB6ivJZUor/Fp
-         xOJh/VGvO7Q7Hn9/yggCZe+JrJQLQ2hhl1Xs3AwHiJmUuw/Ray6NztE5KB80tLRxhy1O
-         YKMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7LYw2FYAUGsnYrawSBWna/iy1m16c1L7r2FRbMqUEmZdF6zIgJYUrO8ZIRpJnmL2UnItBqK6CadnfAmGCy+B84cddsSbvtLsg8hUV
-X-Gm-Message-State: AOJu0YyPc/2xw+oh+DORXYyKYAuOsR0NHrv4Cl/lw9diYn2wZWHq0Gvs
-	ColvI4/vfP6M5eGvq7ISXguo3N6x9detT5EGJf12fLxR+vOc+kCOkxn6rQ==
-X-Google-Smtp-Source: AGHT+IHoZFGoykpwAn6Raq+JnNxw5zE3k33rpC3SUZ1+yXPSc/upKVuWVJmDpMD2DRt28mM/k06uqw==
-X-Received: by 2002:a19:914d:0:b0:51d:5ffd:efe4 with SMTP id y13-20020a19914d000000b0051d5ffdefe4mr8372728lfj.1.1715006673256;
-        Mon, 06 May 2024 07:44:33 -0700 (PDT)
-Received: from lpm-pc.appeartv.lan (195-159-183-44.customer.powertech.no. [195.159.183.44])
-        by smtp.gmail.com with ESMTPSA id i5-20020ac25b45000000b005190569dd4asm1681788lfp.298.2024.05.06.07.44.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 07:44:32 -0700 (PDT)
-From: Lars Petter Mostad <larspm@gmail.com>
-X-Google-Original-From: Lars Petter Mostad <lars.petter.mostad@appear.net>
-To: linux@roeck-us.net
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] hwmon: (emc1403) Various improvements
-Date: Mon,  6 May 2024 16:44:12 +0200
-Message-ID: <20240506144412.139300-1-lars.petter.mostad@appear.net>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240503154324.517246-1-linux@roeck-us.net>
-References: <20240503154324.517246-1-linux@roeck-us.net>
+	s=arc-20240116; t=1715006658; c=relaxed/simple;
+	bh=A2c3A5/WXG3mtNfwLsgIRSeWrBlKt+rdHKlZtOo3tXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgpTPjI2iyJ6X28I0VG2oPyCCLPLtG48lHT1voRu+tq4CRjk+0FzTkz3gZMrdlSpp+1/GGH2b+MCrAPL9nlObP15ljlcXAwxFH/zQSsZwbm+trZK7ZvM6rTAXDisi9tApHfMq1mqGAWFA9pHir4jrlBYID2jqTU5WzwnzZLiLyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7VuGzo/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 005C0C116B1;
+	Mon,  6 May 2024 14:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715006657;
+	bh=A2c3A5/WXG3mtNfwLsgIRSeWrBlKt+rdHKlZtOo3tXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z7VuGzo/kg3TXvOHe25aNMbRxl1I9oWRQatk4Ax7ppKWM47oQn2nBVideN29oZ7N7
+	 A4vlGqf7ynLeWZmywHc+XhHpPDMOZGQ9HIBDJDV0snp2w+7ReSg0puHdaisfnlS10c
+	 N4CadJ5UlavGR0GqlY6dHpofSMMAnH+QIdI07eSVgDZlIjHD7QwurOLf7SFUz4Y+ZL
+	 O6W03jrgYk0cRJNTKFUwwMO6KLJQXMZh5AVwdx0GFAJ+Ggdifhk68iEkSRxaY8+nax
+	 5gfE8TCr4aq5eaWIHWPmx75uRkT2OFV3Qcq+Nghgv5nvTR4ebVZPNnnJw8Ck0FUPxW
+	 aI/rTSnRvckKQ==
+Date: Mon, 6 May 2024 11:44:13 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	nabijaczleweli@nabijaczleweli.xyz, Leo Yan <leo.yan@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Changbin Du <changbin.du@huawei.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Dima Kogan <dima@secretsauce.net>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Paran Lee <p4ranlee@gmail.com>, Li Dong <lidong@vivo.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Chengen Du <chengen.du@canonical.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 6/7] perf dso: Reference counting related fixes
+Message-ID: <Zjjsvah8TU_Yubdn@x1>
+References: <20240504213803.218974-1-irogers@google.com>
+ <20240504213803.218974-7-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240504213803.218974-7-irogers@google.com>
 
-I have tested these patches on EMC1438. This has also worked well for me.
+On Sat, May 04, 2024 at 02:38:02PM -0700, Ian Rogers wrote:
+> Ensure gets and puts are better aligned fixing reference couting
+> checking problems.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/machine.c    |  4 +--
+>  tools/perf/util/map.c        |  1 +
+>  tools/perf/util/symbol-elf.c | 51 ++++++++++++++++++------------------
+>  3 files changed, 28 insertions(+), 28 deletions(-)
+> 
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 0b8fb14f5ff6..4a4541a2e887 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -683,7 +683,7 @@ static int machine__process_ksymbol_register(struct machine *machine,
+>  					     struct perf_sample *sample __maybe_unused)
+>  {
+>  	struct symbol *sym;
+> -	struct dso *dso;
+> +	struct dso *dso = NULL;
+>  	struct map *map = maps__find(machine__kernel_maps(machine), event->ksymbol.addr);
+>  	int err = 0;
+>  
+> @@ -696,7 +696,6 @@ static int machine__process_ksymbol_register(struct machine *machine,
+>  		}
+>  		dso__set_kernel(dso, DSO_SPACE__KERNEL);
+>  		map = map__new2(0, dso);
+> -		dso__put(dso);
+>  		if (!map) {
+>  			err = -ENOMEM;
+>  			goto out;
+> @@ -735,6 +734,7 @@ static int machine__process_ksymbol_register(struct machine *machine,
+>  	dso__insert_symbol(dso, sym);
+>  out:
+>  	map__put(map);
+> +	dso__put(dso);
+>  	return err;
+>  }
 
-Regards,
-Lars Petter
+This seems to match the patch description, good, just aligning the puts
+  
+> diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+> index 117c4bb78b35..e1d14936a60d 100644
+> --- a/tools/perf/util/map.c
+> +++ b/tools/perf/util/map.c
+> @@ -200,6 +200,7 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
+>  				dso__set_build_id(dso, dso__bid(header_bid_dso));
+>  				dso__set_header_build_id(dso, 1);
+>  			}
+> +			dso__put(header_bid_dso);
+>  		}
+>  		dso__put(dso);
+>  	}
+
+But this is a missing one, so not aligning, but fixing a separate issue,
+i.e. a missing put? Should go on a different patch, probably with a
+Fixes.
+
+> diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+> index 3be5e8d1e278..e398abfd13a0 100644
+> --- a/tools/perf/util/symbol-elf.c
+> +++ b/tools/perf/util/symbol-elf.c
+> @@ -1419,7 +1419,7 @@ void __weak arch__sym_update(struct symbol *s __maybe_unused,
+>  static int dso__process_kernel_symbol(struct dso *dso, struct map *map,
+>  				      GElf_Sym *sym, GElf_Shdr *shdr,
+>  				      struct maps *kmaps, struct kmap *kmap,
+> -				      struct dso **curr_dsop, struct map **curr_mapp,
+> +				      struct dso **curr_dsop,
+
+This one removes an argument, so look like a separate patch as well,
+needs a description of why removing the argument is the right thing to
+do here.
+
+>  				      const char *section_name,
+>  				      bool adjust_kernel_syms, bool kmodule, bool *remap_kernel,
+>  				      u64 max_text_sh_offset)
+> @@ -1470,8 +1470,8 @@ static int dso__process_kernel_symbol(struct dso *dso, struct map *map,
+>  			map__set_pgoff(map, shdr->sh_offset);
+>  		}
+>  
+> -		*curr_mapp = map;
+> -		*curr_dsop = dso;
+> +		dso__put(*curr_dsop);
+> +		*curr_dsop = dso__get(dso);
+>  		return 0;
+>  	}
+>  
+> @@ -1484,8 +1484,8 @@ static int dso__process_kernel_symbol(struct dso *dso, struct map *map,
+>  	 */
+>  	if (kmodule && adjust_kernel_syms && is_exe_text(shdr->sh_flags) &&
+>  	    shdr->sh_offset <= max_text_sh_offset) {
+> -		*curr_mapp = map;
+> -		*curr_dsop = dso;
+> +		dso__put(*curr_dsop);
+> +		*curr_dsop = dso__get(dso);
+>  		return 0;
+>  	}
+>  
+> @@ -1507,10 +1507,10 @@ static int dso__process_kernel_symbol(struct dso *dso, struct map *map,
+>  		dso__set_binary_type(curr_dso, dso__binary_type(dso));
+>  		dso__set_adjust_symbols(curr_dso, dso__adjust_symbols(dso));
+>  		curr_map = map__new2(start, curr_dso);
+> -		dso__put(curr_dso);
+> -		if (curr_map == NULL)
+> +		if (curr_map == NULL) {
+> +			dso__put(curr_dso);
+>  			return -1;
+> -
+> +		}
+>  		if (dso__kernel(curr_dso))
+>  			map__kmap(curr_map)->kmaps = kmaps;
+>  
+> @@ -1524,21 +1524,15 @@ static int dso__process_kernel_symbol(struct dso *dso, struct map *map,
+>  		dso__set_symtab_type(curr_dso, dso__symtab_type(dso));
+>  		if (maps__insert(kmaps, curr_map))
+>  			return -1;
+> -		/*
+> -		 * Add it before we drop the reference to curr_map, i.e. while
+> -		 * we still are sure to have a reference to this DSO via
+> -		 * *curr_map->dso.
+> -		 */
+>  		dsos__add(&maps__machine(kmaps)->dsos, curr_dso);
+> -		/* kmaps already got it */
+> -		map__put(curr_map);
+>  		dso__set_loaded(curr_dso);
+> -		*curr_mapp = curr_map;
+> +		dso__put(*curr_dsop);
+>  		*curr_dsop = curr_dso;
+>  	} else {
+> -		*curr_dsop = map__dso(curr_map);
+> -		map__put(curr_map);
+> +		dso__put(*curr_dsop);
+> +		*curr_dsop = dso__get(map__dso(curr_map));
+>  	}
+> +	map__put(curr_map);
+>  
+>  	return 0;
+>  }
+> @@ -1549,11 +1543,9 @@ dso__load_sym_internal(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+>  {
+>  	struct kmap *kmap = dso__kernel(dso) ? map__kmap(map) : NULL;
+>  	struct maps *kmaps = kmap ? map__kmaps(map) : NULL;
+> -	struct map *curr_map = map;
+> -	struct dso *curr_dso = dso;
+> +	struct dso *curr_dso = NULL;
+>  	Elf_Data *symstrs, *secstrs, *secstrs_run, *secstrs_sym;
+>  	uint32_t nr_syms;
+> -	int err = -1;
+>  	uint32_t idx;
+>  	GElf_Ehdr ehdr;
+>  	GElf_Shdr shdr;
+> @@ -1656,6 +1648,7 @@ dso__load_sym_internal(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+>  	if (kmodule && adjust_kernel_syms)
+>  		max_text_sh_offset = max_text_section(runtime_ss->elf, &runtime_ss->ehdr);
+>  
+> +	curr_dso = dso__get(dso);
+>  	elf_symtab__for_each_symbol(syms, nr_syms, idx, sym) {
+>  		struct symbol *f;
+>  		const char *elf_name = elf_sym__name(&sym, symstrs);
+> @@ -1744,9 +1737,13 @@ dso__load_sym_internal(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+>  			--sym.st_value;
+>  
+>  		if (dso__kernel(dso)) {
+> -			if (dso__process_kernel_symbol(dso, map, &sym, &shdr, kmaps, kmap, &curr_dso, &curr_map,
+> -						       section_name, adjust_kernel_syms, kmodule,
+> -						       &remap_kernel, max_text_sh_offset))
+> +			if (dso__process_kernel_symbol(dso, map, &sym, &shdr,
+> +						       kmaps, kmap, &curr_dso,
+> +						       section_name,
+> +						       adjust_kernel_syms,
+> +						       kmodule,
+> +						       &remap_kernel,
+> +						       max_text_sh_offset))
+
+Can you please avoid reflowing to reduce the cost of reviewing? If this
+was just:
+
+-			if (dso__process_kernel_symbol(dso, map, &sym, &shdr, kmaps, kmap, &curr_dso, &curr_map,
+ 						       section_name, adjust_kernel_syms, kmodule,
+ 						       &remap_kernel, max_text_sh_offset))
++			if (dso__process_kernel_symbol(dso, map, &sym, &shdr, kmaps, kmap, &curr_dso,
+ 						       section_name, adjust_kernel_syms, kmodule,
+ 						       &remap_kernel, max_text_sh_offset))
+
+The actual change would be quickly spotted as just the line where it
+takes place gets changed.
+
+I applied all the patches in this series but this one, please split it
+as described.
+
+The tests I run after each patch before this one passed, thanks for
+addressing the issues I reported,
+
+I'm pushing what I have to tmp.perf-tools-next,
+
+- Arnaldo
+
+>  				goto out_elf_end;
+>  		} else if ((used_opd && runtime_ss->adjust_symbols) ||
+>  			   (!used_opd && syms_ss->adjust_symbols)) {
+> @@ -1795,6 +1792,7 @@ dso__load_sym_internal(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+>  		__symbols__insert(dso__symbols(curr_dso), f, dso__kernel(dso));
+>  		nr++;
+>  	}
+> +	dso__put(curr_dso);
+>  
+>  	/*
+>  	 * For misannotated, zeroed, ASM function sizes.
+> @@ -1810,9 +1808,10 @@ dso__load_sym_internal(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+>  			maps__fixup_end(kmaps);
+>  		}
+>  	}
+> -	err = nr;
+> +	return nr;
+>  out_elf_end:
+> -	return err;
+> +	dso__put(curr_dso);
+> +	return -1;
+>  }
+>  
+>  int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+> 
 
