@@ -1,355 +1,182 @@
-Return-Path: <linux-kernel+bounces-169258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D044A8BC5C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:29:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77598BC5C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878FE281B0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC471C21568
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3AC42052;
-	Mon,  6 May 2024 02:29:38 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81033D966;
-	Mon,  6 May 2024 02:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F81EEB2;
+	Mon,  6 May 2024 02:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="lELcQNU+"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DBF620
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 02:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714962577; cv=none; b=O3zcWYymZewlgsq/IljNdaWkO07KB5Zydgpwx2xuXxzPLnJEinpU7Ms1VkAQO6xipkF3olfaKwfiaR+2FQx7ZWbKHmRZKTpR05bv//TPzeMxSJB3HOcp7A15ctaQo4Ejb7TJA+KEgn/0Rq6Ovf7EZwOfmPidv80cFcbPOqFzv1E=
+	t=1714962681; cv=none; b=msM75oBeBS18omADXysF603bUoGZQsOeMFntp/N6qD//t4FGozV04v8aBkRrrx3duvs22DkWVCxiJd6Tjl8I4URp4YQzPfaORfXAHb+kFq5njYfXfFvDxZd1UbXSTm8N5fUvU1scPVYyOfOLRfrwdAQrFIPKVryzzkTldV33zrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714962577; c=relaxed/simple;
-	bh=rALx5ZyemA/N+xr1uWu683eQJXtbQp/MRRKTw79+hRM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=a+BocNlAlqHbIc0RmGg8dQDxvVVLG2tWo8WGDO56Ou+isO4jmVBvkJImjlh/HoylttTpVoEtJSDXKO0e4DWRgITtzxoQpKKo3Ll8S3Q78UUAF1YscDL/bGCDsIC2iAO2jAJ09INteAmDMgpp3YjUjLAuQhTa/jBHOrVcm3FVupw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8CxR+mFQDhmKt4HAA--.10036S3;
-	Mon, 06 May 2024 10:29:25 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxBleAQDhmQvERAA--.19855S3;
-	Mon, 06 May 2024 10:29:22 +0800 (CST)
-Subject: Re: [PATCH v8 4/6] LoongArch: KVM: Add vcpu search support from
- physical cpuid
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org
-References: <20240428100518.1642324-1-maobibo@loongson.cn>
- <20240428100518.1642324-5-maobibo@loongson.cn>
- <CAAhV-H6kBO_RTTHoLfKdAtLO1Aqb0KmAJ6wn0wZrvbCkzMszDQ@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <8395bb25-b01b-7751-cdca-8979ad3d0a87@loongson.cn>
-Date: Mon, 6 May 2024 10:29:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1714962681; c=relaxed/simple;
+	bh=xVXmvvzTnGal8jbxo55EfGDnqkmkOH8cG3hSPj3GJUA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=j6tJhN2YNmgCUjEVNf5fSN4dws8WzgBhO4QsePz1VR4iHV8HLBwNuH9JRQbLQCVDRr7W51ZvGLpaqOXt6nIPp1gqO8HzKxgz8qyYWkERlg9aSEhx8U/dysXPWjkDk7E5CXtfClTTxkpyIeqvQSUaWkToFxrbEXcLT/HbpUx6c0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=lELcQNU+ reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=gFfcR42if+TwEsWiFyKRKhe7Gmi8XUxpXuioeI/orK0=; b=l
+	ELcQNU+GoME2SLoVaxVFGPSBEURQutmIVD1E8FjUJEwJfPjxIqxg5mrkCmVfexrf
+	4sM/29kFeYLbojg2F4K48nR9v4dwf7lpGoP3cR0dw4rSUGHVE3dBSfyczd681iJI
+	3a6wIje5+Suxx3XyTQZ7TRIcUcBOSy1UvGNLQTGCRM=
+Received: from gaoshanliukou$163.com ( [60.27.227.220] ) by
+ ajax-webmail-wmsvr-40-121 (Coremail) ; Mon, 6 May 2024 10:30:18 +0800 (CST)
+Date: Mon, 6 May 2024 10:30:18 +0800 (CST)
+From: "yang.zhang" <gaoshanliukou@163.com>
+To: "Alexandre Ghiti" <alexghiti@rivosinc.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	akpm@linux-foundation.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, alex@ghiti.fr, 
+	"yang.zhang" <yang.zhang@hexintek.com>
+Subject: Re:Re: [PATCH V1] riscv: mm: Support > 1GB kernel image size when
+ creating early page table
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <CAHVXubg0u9tj4w=gUkPiZWfAKNo_frRErQHS2TqzOR8yeUdBjA@mail.gmail.com>
+References: <20240430092211.26269-1-gaoshanliukou@163.com>
+ <CAHVXubg0u9tj4w=gUkPiZWfAKNo_frRErQHS2TqzOR8yeUdBjA@mail.gmail.com>
+X-NTES-SC: AL_Qu2aBvWdvU4q7iGeYukXnEYQh+k3XcK4u/0u2YFVP5E0kiT0xAIAYWZTPGDnzsWDEAGlqQGyVQJj1slHcKVbTpBZptreQ2YZXyoMKBP7Rh6V
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H6kBO_RTTHoLfKdAtLO1Aqb0KmAJ6wn0wZrvbCkzMszDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8AxBleAQDhmQvERAA--.19855S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3WrWrKry8KFWrCF4rGFyxtFc_yoWfAF4DpF
-	WqkanxWr4rJr12kw1jqw1q9r9IvrWvgw1a9asrKay5ArnFvr95ZrZYkrWUuF98Jw1rWFs2
-	vF1UA3W3uFZYyacCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
-	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
+Message-ID: <3607db2f.41ff.18f4bbcd740.Coremail.gaoshanliukou@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wDX31m6QDhmEbQnAA--.18863W
+X-CM-SenderInfo: pjdr2x5dqox3xnrxqiywtou0bp/1tbiJxnW8mXAlp9hTwACsa
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Huacai,
-
-Many thanks for reviewing pv ipi patchset.
-And I reply inline.
-
-On 2024/5/6 上午9:49, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> On Sun, Apr 28, 2024 at 6:05 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> Physical cpuid is used for interrupt routing for irqchips such as
->> ipi/msi/extioi interrupt controller. And physical cpuid is stored
->> at CSR register LOONGARCH_CSR_CPUID, it can not be changed once vcpu
->> is created and physical cpuid of two vcpus cannot be the same.
->>
->> Different irqchips have different size declaration about physical cpuid,
->> max cpuid value for CSR LOONGARCH_CSR_CPUID on 3A5000 is 512, max cpuid
->> supported by IPI hardware is 1024, 256 for extioi irqchip, and 65536
->> for MSI irqchip.
->>
->> The smallest value from all interrupt controllers is selected now,
->> and the max cpuid size is defines as 256 by KVM which comes from
->> extioi irqchip.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   arch/loongarch/include/asm/kvm_host.h | 26 ++++++++
->>   arch/loongarch/include/asm/kvm_vcpu.h |  1 +
->>   arch/loongarch/kvm/vcpu.c             | 93 ++++++++++++++++++++++++++-
->>   arch/loongarch/kvm/vm.c               | 11 ++++
->>   4 files changed, 130 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
->> index 2d62f7b0d377..3ba16ef1fe69 100644
->> --- a/arch/loongarch/include/asm/kvm_host.h
->> +++ b/arch/loongarch/include/asm/kvm_host.h
->> @@ -64,6 +64,30 @@ struct kvm_world_switch {
->>
->>   #define MAX_PGTABLE_LEVELS     4
->>
->> +/*
->> + * Physical cpu id is used for interrupt routing, there are different
->> + * definitions about physical cpuid on different hardwares.
->> + *  For LOONGARCH_CSR_CPUID register, max cpuid size if 512
->> + *  For IPI HW, max dest CPUID size 1024
->> + *  For extioi interrupt controller, max dest CPUID size is 256
->> + *  For MSI interrupt controller, max supported CPUID size is 65536
->> + *
->> + * Currently max CPUID is defined as 256 for KVM hypervisor, in future
->> + * it will be expanded to 4096, including 16 packages at most. And every
->> + * package supports at most 256 vcpus
->> + */
->> +#define KVM_MAX_PHYID          256
->> +
->> +struct kvm_phyid_info {
->> +       struct kvm_vcpu *vcpu;
->> +       bool            enabled;
->> +};
->> +
->> +struct kvm_phyid_map {
->> +       int max_phyid;
->> +       struct kvm_phyid_info phys_map[KVM_MAX_PHYID];
->> +};
->> +
->>   struct kvm_arch {
->>          /* Guest physical mm */
->>          kvm_pte_t *pgd;
->> @@ -71,6 +95,8 @@ struct kvm_arch {
->>          unsigned long invalid_ptes[MAX_PGTABLE_LEVELS];
->>          unsigned int  pte_shifts[MAX_PGTABLE_LEVELS];
->>          unsigned int  root_level;
->> +       spinlock_t    phyid_map_lock;
->> +       struct kvm_phyid_map  *phyid_map;
->>
->>          s64 time_offset;
->>          struct kvm_context __percpu *vmcs;
->> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
->> index 0cb4fdb8a9b5..9f53950959da 100644
->> --- a/arch/loongarch/include/asm/kvm_vcpu.h
->> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
->> @@ -81,6 +81,7 @@ void kvm_save_timer(struct kvm_vcpu *vcpu);
->>   void kvm_restore_timer(struct kvm_vcpu *vcpu);
->>
->>   int kvm_vcpu_ioctl_interrupt(struct kvm_vcpu *vcpu, struct kvm_interrupt *irq);
->> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid);
->>
->>   /*
->>    * Loongarch KVM guest interrupt handling
->> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->> index 3a8779065f73..b633fd28b8db 100644
->> --- a/arch/loongarch/kvm/vcpu.c
->> +++ b/arch/loongarch/kvm/vcpu.c
->> @@ -274,6 +274,95 @@ static int _kvm_getcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 *val)
->>          return 0;
->>   }
->>
->> +static inline int kvm_set_cpuid(struct kvm_vcpu *vcpu, u64 val)
->> +{
->> +       int cpuid;
->> +       struct loongarch_csrs *csr = vcpu->arch.csr;
->> +       struct kvm_phyid_map  *map;
->> +
->> +       if (val >= KVM_MAX_PHYID)
->> +               return -EINVAL;
->> +
->> +       cpuid = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
->> +       map = vcpu->kvm->arch.phyid_map;
->> +       spin_lock(&vcpu->kvm->arch.phyid_map_lock);
->> +       if (map->phys_map[cpuid].enabled) {
->> +               /*
->> +                * Cpuid is already set before
->> +                * Forbid changing different cpuid at runtime
->> +                */
->> +               if (cpuid != val) {
->> +                       /*
->> +                        * Cpuid 0 is initial value for vcpu, maybe invalid
->> +                        * unset value for vcpu
->> +                        */
->> +                       if (cpuid) {
->> +                               spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->> +                               return -EINVAL;
->> +                       }
->> +               } else {
->> +                        /* Discard duplicated cpuid set */
->> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->> +                       return 0;
->> +               }
->> +       }
-> I have changed the logic and comments when I apply, you can double
-> check whether it is correct.
-Will do.
-
-> 
->> +
->> +       if (map->phys_map[val].enabled) {
->> +               /*
->> +                * New cpuid is already set with other vcpu
->> +                * Forbid sharing the same cpuid between different vcpus
->> +                */
->> +               if (map->phys_map[val].vcpu != vcpu) {
->> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->> +                       return -EINVAL;
->> +               }
->> +
->> +               /* Discard duplicated cpuid set operation*/
->> +               spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->> +               return 0;
->> +       }
->> +
->> +       kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, val);
->> +       map->phys_map[val].enabled      = true;
->> +       map->phys_map[val].vcpu         = vcpu;
->> +       if (map->max_phyid < val)
->> +               map->max_phyid = val;
->> +       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
->> +       return 0;
->> +}
->> +
->> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid)
->> +{
->> +       struct kvm_phyid_map  *map;
->> +
->> +       if (cpuid >= KVM_MAX_PHYID)
->> +               return NULL;
->> +
->> +       map = kvm->arch.phyid_map;
->> +       if (map->phys_map[cpuid].enabled)
->> +               return map->phys_map[cpuid].vcpu;
->> +
->> +       return NULL;
->> +}
->> +
->> +static inline void kvm_drop_cpuid(struct kvm_vcpu *vcpu)
->> +{
->> +       int cpuid;
->> +       struct loongarch_csrs *csr = vcpu->arch.csr;
->> +       struct kvm_phyid_map  *map;
->> +
->> +       map = vcpu->kvm->arch.phyid_map;
->> +       cpuid = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
->> +       if (cpuid >= KVM_MAX_PHYID)
->> +               return;
->> +
->> +       if (map->phys_map[cpuid].enabled) {
->> +               map->phys_map[cpuid].vcpu = NULL;
->> +               map->phys_map[cpuid].enabled = false;
->> +               kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, 0);
->> +       }
->> +}
-> While kvm_set_cpuid() is protected by a spinlock, do kvm_drop_cpuid()
-> and kvm_get_vcpu_by_cpuid() also need it?
-When VM is power-on, vcpu thread can run at the same time, so there is
-spinlock for kvm_set_cpuid(). And kvm_drop_cpuid() is called when vcpu 
-is destroyed, such VM destroy or vcpu hot removed.
-
-I think that it is impossible to send IPI to hot removed cpu, guest 
-kernel should assure this.
-
-Need double check whether it is possible that cpu hot-add can be in 
-parallel with hot-removed. We can investigate and add this after 
-LoongArch cpu hotplug is supported.
-
-> 
->> +
->>   static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 val)
->>   {
->>          int ret = 0, gintc;
->> @@ -291,7 +380,8 @@ static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 val)
->>                  kvm_set_sw_gcsr(csr, LOONGARCH_CSR_ESTAT, gintc);
->>
->>                  return ret;
->> -       }
->> +       } else if (id == LOONGARCH_CSR_CPUID)
->> +               return kvm_set_cpuid(vcpu, val);
->>
->>          kvm_write_sw_gcsr(csr, id, val);
->>
->> @@ -943,6 +1033,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
->>          hrtimer_cancel(&vcpu->arch.swtimer);
->>          kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
->>          kfree(vcpu->arch.csr);
->> +       kvm_drop_cpuid(vcpu);
-> I think this line should be before the above kfree(), otherwise you
-> get a "use after free".
-yes, that is a problem. kvm_drop_cpuid() should be put before kfree.
-
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
->>
->>          /*
->>           * If the vCPU is freed and reused as another vCPU, we don't want the
->> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
->> index 0a37f6fa8f2d..6006a28653ad 100644
->> --- a/arch/loongarch/kvm/vm.c
->> +++ b/arch/loongarch/kvm/vm.c
->> @@ -30,6 +30,14 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->>          if (!kvm->arch.pgd)
->>                  return -ENOMEM;
->>
->> +       kvm->arch.phyid_map = kvzalloc(sizeof(struct kvm_phyid_map),
->> +                               GFP_KERNEL_ACCOUNT);
->> +       if (!kvm->arch.phyid_map) {
->> +               free_page((unsigned long)kvm->arch.pgd);
->> +               kvm->arch.pgd = NULL;
->> +               return -ENOMEM;
->> +       }
->> +
->>          kvm_init_vmcs(kvm);
->>          kvm->arch.gpa_size = BIT(cpu_vabits - 1);
->>          kvm->arch.root_level = CONFIG_PGTABLE_LEVELS - 1;
->> @@ -44,6 +52,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->>          for (i = 0; i <= kvm->arch.root_level; i++)
->>                  kvm->arch.pte_shifts[i] = PAGE_SHIFT + i * (PAGE_SHIFT - 3);
->>
->> +       spin_lock_init(&kvm->arch.phyid_map_lock);
->>          return 0;
->>   }
->>
->> @@ -51,7 +60,9 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
->>   {
->>          kvm_destroy_vcpus(kvm);
->>          free_page((unsigned long)kvm->arch.pgd);
->> +       kvfree(kvm->arch.phyid_map);
->>          kvm->arch.pgd = NULL;
->> +       kvm->arch.phyid_map = NULL;
->>   }
->>
->>   int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->> --
->> 2.39.3
->>
-
+CgpBdCAyMDI0LTA0LTMwIDIwOjA4OjE4LCAiQWxleGFuZHJlIEdoaXRpIiA8YWxleGdoaXRpQHJp
+dm9zaW5jLmNvbT4gd3JvdGU6Cj5IaSBZYW5nLAo+Cj5PbiBUdWUsIEFwciAzMCwgMjAyNCBhdCAx
+MToyNOKAr0FNIHlhbmcuemhhbmcgPGdhb3NoYW5saXVrb3VAMTYzLmNvbT4gd3JvdGU6Cj4+Cj4+
+IEZyb206ICJ5YW5nLnpoYW5nIiA8eWFuZy56aGFuZ0BoZXhpbnRlay5jb20+Cj4+Cj4+IEJ5IGRl
+ZmF1bHQsIHdoZW4gY3JlYXRpbmcgZWFybHkgcGFnZSB0YWJsZSwgb25seSBvbmUgUE1EIHBhZ2Ug
+dGFibGUsIGJ1dAo+PiBpZiBrZXJuZWwgaW1hZ2Ugc2l6ZSBleGNlZWRzIDFHQiwgaXQgbmVlZCB0
+d28gUE1EIHBhZ2UgdGFibGUsIG90aGVyd2lzZSwKPj4gaXQgd291bGQgQlVHX09OIGluIGNyZWF0
+ZV9rZXJuZWxfcGFnZV90YWJsZS4KPj4KPj4gSW4gYWRkaXRpb24sIGlmIHRyYXAgZWFybGllciwg
+dHJhcCB2ZWN0b3IgZG9lc24ndCB5ZXQgc2V0IHByb3Blcmx5LCBjdXJyZW50Cj4+IHZhbHVlIG1h
+eWJlIHNldCBieSBwcmV2aW91cyBmaXJtd2lyZSwgdHlwaWNhbGx5IGl0J3MgdGhlIF9zdGFydCBv
+ZiBrZXJuZWwsCj4+IGl0J3MgY29uZnVzZWQgYW5kIGRpZmZpY3VsdCB0byBkZWJ1Zywgc28gc2V0
+IGl0IGVhcmxpZXIuCj4KPlRvdGFsbHkgYWdyZWUgd2l0aCB0aGF0LCBJJ20gdXNlZCB0byBkZWJ1
+Z2dpbmcgdGhpcyBwYXJ0IG9mIHRoZSBjb2RlCj5hbmQgSSBrbm93IHN0dmVjIHBvaW50cyB0byBf
+X3N0YXJ0IGFuZCBub3QgaGFuZGxlX2V4Y2VwdGlvbiBhdCB0aGlzCj5wb2ludC4uLkJ1dCB0aGF0
+IGRlc2VydmVzIGEgZml4IGluZGVlZCwgaXQncyBjb25mdXNpbmcuIEkgZG9uJ3Qgc2VlCj50aGlz
+IGZpeCBpbiB0aGUgcGF0Y2ggYmVsb3cgdGhvdWdoPwpTb3JyeSwgaSBtaXNzZWQgaXQuCkkgc2Vu
+ZCBwYXRjaCB2MiBmb3IgdGhpcy4KPj4gLS0tCj4+IEknbSBub3Qgc3VyZSB3aGV0aGVyIGh1Z2Vz
+aXplIGtlcm5lbCBpcyByZWFzb25hYmxlLCBpZiBub3QsIGlnbm9yZSB0aGlzIHBhdGNoLgo+Cj5V
+bmxlc3MgeW91IGhhdmUgYSBnb29kIHVzZSBjYXNlIGZvciB0aGlzLCBJIGRvbid0IHRoaW5rIHRo
+YXQncwo+bmVjZXNzYXJ5LCB3ZSBuZXZlciBlbmNvdW50ZXJlZCBzdWNoIHNpdHVhdGlvbnMgc28g
+SSdkIHJhdGhlciBub3QKPmNvbXBsaWNhdGUgdGhpcyBjb2RlIGV2ZW4gbW9yZS4KSSBqdXN0IHNl
+ZSB0aGUga2VybmVsIHNwYWNlIGlzIHJlc2VydmVkIDJHQih3aGljaCBpcyAweGZmZmZmZmZmODAw
+MDAwMDAgLTB4ZmZmZmZmZmZmZmZmZmZmZiApLgpOb3JtYWxseSwga2VybmVsIGltYWdlIHNpemUg
+aXMganVzdCBzb21lIE1Ccywgc28gdGhpcyBwYXRjaCBtYXliZSB1bm5lY2Vzc2FyeS4KSnVzdCBp
+Z25vcmUuCkkgYWRkIHRoZSBwYXRjaCBmb3Igc2V0IHRyYXAgdmVjdG9yIGVhcmxpZXIgZm9yIGhl
+bHBpbmcgZGVidWcuClRoYW5rcy4KCj5UaGFua3MsCj4KPkFsZXgKPgo+PiBUaGlzIGlzc3VlIGNh
+biBiZSByZXByb2R1Y2VkIHNpbXBpbHkgYnkgY2hhbmdpbmcgJ19lbmQnIGluIHZtbGludXgubGRz
+LlMKPj4gc3VjaCBhcyBfZW5kID0gLiArIDB4NDAwMDAwMDDvvJsKPj4KPj4gU2lnbmVkLW9mZi1i
+eTogeWFuZy56aGFuZyA8eWFuZy56aGFuZ0BoZXhpbnRlay5jb20+Cj4+IC0tLQo+PiAgYXJjaC9y
+aXNjdi9tbS9pbml0LmMgfCA0MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDM1IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0p
+Cj4+Cj4+IGRpZmYgLS1naXQgYS9hcmNoL3Jpc2N2L21tL2luaXQuYyBiL2FyY2gvcmlzY3YvbW0v
+aW5pdC5jCj4+IGluZGV4IGZlOGUxNTkzOTRkOC4uMDk0YjM5ZjkyMGQzIDEwMDY0NAo+PiAtLS0g
+YS9hcmNoL3Jpc2N2L21tL2luaXQuYwo+PiArKysgYi9hcmNoL3Jpc2N2L21tL2luaXQuYwo+PiBA
+QCAtMzg2LDExICszODYsMTMgQEAgc3RhdGljIHZvaWQgX19pbml0IGNyZWF0ZV9wdGVfbWFwcGlu
+ZyhwdGVfdCAqcHRlcCwKPj4gIHN0YXRpYyBwbWRfdCB0cmFtcG9saW5lX3BtZFtQVFJTX1BFUl9Q
+TURdIF9fcGFnZV9hbGlnbmVkX2JzczsKPj4gIHN0YXRpYyBwbWRfdCBmaXhtYXBfcG1kW1BUUlNf
+UEVSX1BNRF0gX19wYWdlX2FsaWduZWRfYnNzOwo+PiAgc3RhdGljIHBtZF90IGVhcmx5X3BtZFtQ
+VFJTX1BFUl9QTURdIF9faW5pdGRhdGEgX19hbGlnbmVkKFBBR0VfU0laRSk7Cj4+ICtzdGF0aWMg
+cG1kX3QgZWFybHlfcG1kMltQVFJTX1BFUl9QTURdIF9faW5pdGRhdGEgX19hbGlnbmVkKFBBR0Vf
+U0laRSk7Cj4+Cj4+ICAjaWZkZWYgQ09ORklHX1hJUF9LRVJORUwKPj4gICNkZWZpbmUgdHJhbXBv
+bGluZV9wbWQgKChwbWRfdCAqKVhJUF9GSVhVUCh0cmFtcG9saW5lX3BtZCkpCj4+ICAjZGVmaW5l
+IGZpeG1hcF9wbWQgICAgICgocG1kX3QgKilYSVBfRklYVVAoZml4bWFwX3BtZCkpCj4+ICAjZGVm
+aW5lIGVhcmx5X3BtZCAgICAgICgocG1kX3QgKilYSVBfRklYVVAoZWFybHlfcG1kKSkKPj4gKyNk
+ZWZpbmUgZWFybHlfcG1kMiAgICAgICgocG1kX3QgKilYSVBfRklYVVAoZWFybHlfcG1kMikpCj4+
+ICAjZW5kaWYgLyogQ09ORklHX1hJUF9LRVJORUwgKi8KPj4KPj4gIHN0YXRpYyBwNGRfdCB0cmFt
+cG9saW5lX3A0ZFtQVFJTX1BFUl9QNERdIF9fcGFnZV9hbGlnbmVkX2JzczsKPj4gQEAgLTQzMiw5
+ICs0MzQsMTQgQEAgc3RhdGljIHBtZF90ICpfX2luaXQgZ2V0X3BtZF92aXJ0X2xhdGUocGh5c19h
+ZGRyX3QgcGEpCj4+Cj4+ICBzdGF0aWMgcGh5c19hZGRyX3QgX19pbml0IGFsbG9jX3BtZF9lYXJs
+eSh1aW50cHRyX3QgdmEpCj4+ICB7Cj4+IC0gICAgICAgQlVHX09OKCh2YSAtIGtlcm5lbF9tYXAu
+dmlydF9hZGRyKSA+PiBQVURfU0hJRlQpOwo+PiArICAgICAgIHVpbnRwdHJfdCBlbmRfcHVkX2lk
+eCA9IHB1ZF9pbmRleChrZXJuZWxfbWFwLnZpcnRfYWRkciArIGtlcm5lbF9tYXAuc2l6ZSAtIDEp
+Owo+PiArICAgICAgIHVpbnRwdHJfdCBjdXJyZW50X3B1ZF9pZHggPSBwdWRfaW5kZXgodmEpOwo+
+Pgo+PiAtICAgICAgIHJldHVybiAodWludHB0cl90KWVhcmx5X3BtZDsKPj4gKyAgICAgICBCVUdf
+T04oY3VycmVudF9wdWRfaWR4ID4gZW5kX3B1ZF9pZHgpOwo+PiArICAgICAgIGlmIChjdXJyZW50
+X3B1ZF9pZHggPT0gZW5kX3B1ZF9pZHgpCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gKHVpbnRw
+dHJfdCllYXJseV9wbWQyOwo+PiArICAgICAgIGVsc2UKPj4gKyAgICAgICAgICAgICAgIHJldHVy
+biAodWludHB0cl90KWVhcmx5X3BtZDsKPj4gIH0KPj4KPj4gIHN0YXRpYyBwaHlzX2FkZHJfdCBf
+X2luaXQgYWxsb2NfcG1kX2ZpeG1hcCh1aW50cHRyX3QgdmEpCj4+IEBAIC03NjksNiArNzc2LDE4
+IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzZXRfbW1hcF9ybmRfYml0c19tYXgodm9pZCkKPj4gICAg
+ICAgICBtbWFwX3JuZF9iaXRzX21heCA9IE1NQVBfVkFfQklUUyAtIFBBR0VfU0hJRlQgLSAzOwo+
+PiAgfQo+Pgo+PiArc3RhdGljIHBtZF90ICpfX2luaXQgc2VsZWN0X3BtZF9lYXJseSh1aW50cHRy
+X3QgcGEpCj4+ICt7Cj4+ICsgICAgICAgdWludHB0cl90IGVuZF9wdWRfaWR4ID0gcHVkX2luZGV4
+KGtlcm5lbF9tYXAucGh5c19hZGRyICsga2VybmVsX21hcC5zaXplIC0gMSk7Cj4+ICsgICAgICAg
+dWludHB0cl90IGN1cnJlbnRfcHVkX2lkeCA9IHB1ZF9pbmRleChwYSk7Cj4+ICsKPj4gKyAgICAg
+ICBCVUdfT04oY3VycmVudF9wdWRfaWR4ID4gZW5kX3B1ZF9pZHgpOwo+PiArICAgICAgIGlmIChj
+dXJyZW50X3B1ZF9pZHggPT0gZW5kX3B1ZF9pZHgpCj4+ICsgICAgICAgICAgICAgICByZXR1cm4g
+ZWFybHlfcG1kMjsKPj4gKyAgICAgICBlbHNlCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gZWFy
+bHlfcG1kOwo+PiArfQo+PiArCj4+ICAvKgo+PiAgICogVGhlcmUgaXMgYSBzaW1wbGUgd2F5IHRv
+IGRldGVybWluZSBpZiA0LWxldmVsIGlzIHN1cHBvcnRlZCBieSB0aGUKPj4gICAqIHVuZGVybHlp
+bmcgaGFyZHdhcmU6IGVzdGFibGlzaCAxOjEgbWFwcGluZyBpbiA0LWxldmVsIHBhZ2UgdGFibGUg
+bW9kZQo+PiBAQCAtNzgwLDYgKzc5OSw3IEBAIHN0YXRpYyBfX2luaXQgdm9pZCBzZXRfc2F0cF9t
+b2RlKHVpbnRwdHJfdCBkdGJfcGEpCj4+ICAgICAgICAgdTY0IGlkZW50aXR5X3NhdHAsIGh3X3Nh
+dHA7Cj4+ICAgICAgICAgdWludHB0cl90IHNldF9zYXRwX21vZGVfcG1kID0gKCh1bnNpZ25lZCBs
+b25nKXNldF9zYXRwX21vZGUpICYgUE1EX01BU0s7Cj4+ICAgICAgICAgdTY0IHNhdHBfbW9kZV9j
+bWRsaW5lID0gX19waV9zZXRfc2F0cF9tb2RlX2Zyb21fY21kbGluZShkdGJfcGEpOwo+PiArICAg
+ICAgIHBtZF90ICp0YXJnZXRfcG1kLCAqdGFyZ2V0X3BtZDI7Cj4+Cj4+ICAgICAgICAgaWYgKHNh
+dHBfbW9kZV9jbWRsaW5lID09IFNBVFBfTU9ERV81Nykgewo+PiAgICAgICAgICAgICAgICAgZGlz
+YWJsZV9wZ3RhYmxlX2w1KCk7Cj4+IEBAIC03ODksMTcgKzgwOSwyNCBAQCBzdGF0aWMgX19pbml0
+IHZvaWQgc2V0X3NhdHBfbW9kZSh1aW50cHRyX3QgZHRiX3BhKQo+PiAgICAgICAgICAgICAgICAg
+cmV0dXJuOwo+PiAgICAgICAgIH0KPj4KPj4gKyAgICAgICB0YXJnZXRfcG1kID0gc2VsZWN0X3Bt
+ZF9lYXJseShzZXRfc2F0cF9tb2RlX3BtZCk7Cj4+ICsgICAgICAgdGFyZ2V0X3BtZDIgPSBzZWxl
+Y3RfcG1kX2Vhcmx5KHNldF9zYXRwX21vZGVfcG1kICsgUE1EX1NJWkUpOwo+PiAgICAgICAgIGNy
+ZWF0ZV9wNGRfbWFwcGluZyhlYXJseV9wNGQsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIHNl
+dF9zYXRwX21vZGVfcG1kLCAodWludHB0cl90KWVhcmx5X3B1ZCwKPj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgUDREX1NJWkUsIFBBR0VfVEFCTEUpOwo+PiAgICAgICAgIGNyZWF0ZV9wdWRfbWFw
+cGluZyhlYXJseV9wdWQsCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgIHNldF9zYXRwX21v
+ZGVfcG1kLCAodWludHB0cl90KWVhcmx5X3BtZCwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgc2V0X3NhdHBfbW9kZV9wbWQsICh1aW50cHRyX3QpdGFyZ2V0X3BtZCwKPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgUFVEX1NJWkUsIFBBR0VfVEFCTEUpOwo+PiArICAgICAgIC8qIEhh
+bmRsZSB0aGUgY2FzZSB3aGVyZSBzZXRfc2F0cF9tb2RlIHN0cmFkZGxlcyAyIFBVRHMgKi8KPj4g
+KyAgICAgICBpZiAodGFyZ2V0X3BtZDIgIT0gdGFyZ2V0X3BtZCkKPj4gKyAgICAgICAgICAgICAg
+IGNyZWF0ZV9wdWRfbWFwcGluZyhlYXJseV9wdWQsCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHNldF9zYXRwX21vZGVfcG1kICsgUE1EX1NJWkUsICh1aW50cHRyX3QpdGFyZ2V0X3BtZDIs
+Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFBVRF9TSVpFLCBQQUdFX1RBQkxFKTsKPj4g
+ICAgICAgICAvKiBIYW5kbGUgdGhlIGNhc2Ugd2hlcmUgc2V0X3NhdHBfbW9kZSBzdHJhZGRsZXMg
+MiBQTURzICovCj4+IC0gICAgICAgY3JlYXRlX3BtZF9tYXBwaW5nKGVhcmx5X3BtZCwKPj4gKyAg
+ICAgICBjcmVhdGVfcG1kX21hcHBpbmcodGFyZ2V0X3BtZCwKPj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgc2V0X3NhdHBfbW9kZV9wbWQsIHNldF9zYXRwX21vZGVfcG1kLAo+PiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBQTURfU0laRSwgUEFHRV9LRVJORUxfRVhFQyk7Cj4+IC0gICAg
+ICAgY3JlYXRlX3BtZF9tYXBwaW5nKGVhcmx5X3BtZCwKPj4gKyAgICAgICBjcmVhdGVfcG1kX21h
+cHBpbmcodGFyZ2V0X3BtZDIsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNldF9zYXRw
+X21vZGVfcG1kICsgUE1EX1NJWkUsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNldF9z
+YXRwX21vZGVfcG1kICsgUE1EX1NJWkUsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFBN
+RF9TSVpFLCBQQUdFX0tFUk5FTF9FWEVDKTsKPj4gQEAgLTgyOSw3ICs4NTYsOSBAQCBzdGF0aWMg
+X19pbml0IHZvaWQgc2V0X3NhdHBfbW9kZSh1aW50cHRyX3QgZHRiX3BhKQo+PiAgICAgICAgIG1l
+bXNldChlYXJseV9wZ19kaXIsIDAsIFBBR0VfU0laRSk7Cj4+ICAgICAgICAgbWVtc2V0KGVhcmx5
+X3A0ZCwgMCwgUEFHRV9TSVpFKTsKPj4gICAgICAgICBtZW1zZXQoZWFybHlfcHVkLCAwLCBQQUdF
+X1NJWkUpOwo+PiAtICAgICAgIG1lbXNldChlYXJseV9wbWQsIDAsIFBBR0VfU0laRSk7Cj4+ICsg
+ICAgICAgbWVtc2V0KHRhcmdldF9wbWQsIDAsIFBBR0VfU0laRSk7Cj4+ICsgICAgICAgaWYgKHRh
+cmdldF9wbWQyICE9IHRhcmdldF9wbWQpCj4+ICsgICAgICAgICAgICAgICBtZW1zZXQodGFyZ2V0
+X3BtZDIsIDAsIFBBR0VfU0laRSk7Cj4+ICB9Cj4+ICAjZW5kaWYKPj4KPj4gLS0KPj4gMi4yNS4x
+Cj4+Cg==
 
