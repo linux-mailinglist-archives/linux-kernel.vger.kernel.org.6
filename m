@@ -1,139 +1,231 @@
-Return-Path: <linux-kernel+bounces-169553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8692B8BCA48
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:10:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20358BC9A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A59B01C210C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:10:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047DAB21884
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D3A1422C3;
-	Mon,  6 May 2024 09:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A2D13774B;
+	Mon,  6 May 2024 08:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CvfJr6CD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="odVp1UH1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1c3Rod3x"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA061422B4
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F89107A6;
+	Mon,  6 May 2024 08:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714986608; cv=none; b=GHDBFhlY/cl2WUDNw0K3aGljNRqoyKt2GJJsDaLLqGnef9+ccZO8Xk7ohiPM0cXMHctmdG+SewTZOnS90MNuUbwHJKGRG7takO+XN486/KaZpq1CF/ucLvby7AjKtgHn3P1Q+puLIlNmTzuU/e/ZAJScJ1vd8Zd2uYFg7l9DzII=
+	t=1714984637; cv=none; b=V65r2QqBRNN4+A6nBOBZgAFV61JdgtH2DuAd1coD+36Lty8V3EF5I6rxB29Zo7+NepU4j3Y9x1/GoOhxvCpTkVhFOnloYubN3dfBDHk1bEpJ4mqd8nm4D1xpr3tCOjyr4JY7HT2b6thHS+bO0LJRNBC/shzwQyuwQZ/bw6TcqAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714986608; c=relaxed/simple;
-	bh=LfkWaDaKna8Q2wIP4LNcK3tRP9+y668zcU2f3tOs9G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ctDoPKB7k26eGu1yed3RVsdwaWQTNRI9j7PSEhJAd52dPnJZ+HS81MT4YSmBvdb0QCvfgg0b6CnhsuU7cGeJxry1gYjZaQtS2F+2TGG/RQVfIi3LGWPlgXsNF8zX6jnYzH5oWo7T0uAGU36dNTx1vUPhAmfoGrmOtxMCAl84uGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CvfJr6CD; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714986607; x=1746522607;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LfkWaDaKna8Q2wIP4LNcK3tRP9+y668zcU2f3tOs9G8=;
-  b=CvfJr6CDp2ms5RqmKPaaktlfVnNgKHqR9vIUyZzVRB4H8wzQEacmcEK1
-   q3lW1/JVw068OaQDTlLsl3vSW/sITYh6H3UuV270YugZE0HBciQlHxTri
-   X3dCNuNOB8Y0HudeZYtWodm6O3RBeJYKPbcZ99guCJxRhCiaWFpzCKWex
-   nqdXqYdCdkbBB6sdIf1N76n29t+ivi0NEzgFtQmyMGqbCrI3NEZiBsNs7
-   QQh77sAgFJWOEiANsRNGpnYQQuZncHyu85LeNnab1HgIpEtEfypzPJKyw
-   hIrISmq+/xKMzwpBCKJBk/BCFDwtqtENF8UQcVPaT9xR2XJ8fds8u4g1Q
-   g==;
-X-CSE-ConnectionGUID: pgJb8JuLSseNi97uQ2JhCw==
-X-CSE-MsgGUID: YeZMcmObRaGSeh/npHNvaA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="22132746"
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="22132746"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:10:07 -0700
-X-CSE-ConnectionGUID: 7Td+01oBQGmes6jPjTXwBA==
-X-CSE-MsgGUID: WTqFPQCHS8aXafbVhEV6/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="32775451"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 06 May 2024 02:10:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2BA532A44; Mon, 06 May 2024 11:35:33 +0300 (EEST)
-Date: Mon, 6 May 2024 11:35:33 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [GIT PULL] auxdisplay for 6.10-1
-Message-ID: <ZjiWVdJPyFiN0oYe@black.fi.intel.com>
+	s=arc-20240116; t=1714984637; c=relaxed/simple;
+	bh=hxmlYudd0T814h0F19WwBcuLSjbQeMFtaKxVtn2P2Cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxL8gS28m0tUk2/C49DlLZK3F5kupYqIRHG1MKBi/V25I/bRPek1PW3Vip0mGx8oodfsxcOS3pF2TgqH4OefTY46NT3avflMxT+LwCneIOQ/Dg5mudeBuepo/Nel3ayXv8k0NQq7TO7q/qnADMaqGa4fVoM+MP9W28qYpi4WfwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=odVp1UH1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1c3Rod3x; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 6 May 2024 10:37:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1714984628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JllM/6f2i64vYeYOp06WCUKnYAzhnpgw3MJvupu+GV8=;
+	b=odVp1UH1iOi4MfIQbOW2isS+JxKgZPzr8plYa96tUloGxQGiCrmJrDLzvrdCYcFtLCAFAA
+	96tf8OQbGRbmoylikqDhJMqCmx0xqdKTdLuk9uUPMZu0X6CJqmL51K3J3nBM/q8VAdCuQi
+	c6rrNH3YlrAMaZs1cB0IX7YYMAukZ6VXkBqjw+Eyj5+Ik9x8F0EBWdpaKriNUMcKAQ6WO2
+	TstVp/nymUvD8S+9QijVUawUWeqA8+EVJNczfMlQlon8qgFRkMmpyRHl9pJDcy4G3GituK
+	RD8DutN1oXTb01sXrar1Q40oSK7AoxH4mKz3B1q/+DnLTYTbEDVrtnsTNBBHJA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1714984628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JllM/6f2i64vYeYOp06WCUKnYAzhnpgw3MJvupu+GV8=;
+	b=1c3Rod3xL8W3ZZnfK3oPE/X6pc0xSDWv2SMKcR0OSJBkq0lKtVmMw+ajz5f45GRkBZv7j3
+	4iDQgMlnHRpGMkBw==
+From: Nam Cao <namcao@linutronix.de>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 2/2] PCI: pciehp: Abort hot-plug if
+ pci_hp_add_bridge() fails
+Message-ID: <20240506083701.NZNifFGn@linutronix.de>
+References: <cover.1714838173.git.namcao@linutronix.de>
+ <f3db713f4a737756782be6e94fcea3eda352e39f.1714838173.git.namcao@linutronix.de>
+ <Zjcc6Suf5HmmZVM9@wunner.de>
+ <20240505071451.df3l6mdK@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240505071451.df3l6mdK@linutronix.de>
 
-Hi Linus,
+On Sun, May 05, 2024 at 09:15:00AM +0200, Nam Cao wrote:
+> On Sun, May 05, 2024 at 07:45:13AM +0200, Lukas Wunner wrote:
+> > Have you gone through the testing steps you spoke of earlier
+> > (replacing the hot-added bridge with an Ethernet card) and do
+> > they work correctly with this patch?
+> 
+> Yes.
 
-Tiny update (as was expected) to auxdisplay subsystem. It was a few weeks
-in the Linux Next without reported problems. Please, pull for v6.10-rc1.
+I just discovered a new crash scenario with shpchp:
 
-Thanks,
+First, hot-add a bridge:
+(qemu) device_add pci-bridge,id=br2,bus=br1,chassis_nr=1,addr=1
 
-With Best Regards,
-Andy Shevchenko
+But with the current patch, the hot-plug is still successful, just that the
+bridge is not properly configured:
+$ lspci -t
+-[0000:00]-+-00.0
+           +-01.0
+           +-02.0
+           +-03.0-[01-02]----00.0-[02]----01.0--  <-- new hot-added bridge
+           +-1f.0
+           +-1f.2
+           \-1f.3
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+But! Now I leave the hot-added bridge as is, and hot-add an ethernet card:
+(qemu) device_add e1000,bus=br1,id=eth0,addr=2
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+this command crashes the kernel (full crash log below).
 
-are available in the Git repository at:
+The problem is because during hot-plugging of this ethernet card,
+pci_bus_add_devices() is invoked and the previously hot-plugged bridge hasn't
+been marked as "added" yet, so the driver attempts to add this bridge
+again, leading to the crash.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git tags/auxdisplay-v6.10-1
+Now for pciehp, this scenario cannot happen, because there is only a single
+slot, so we cannot hot-plug another device. But still, this makes me think
+perhaps we shouldn't leave the hot-plugged bridge in a improperly-configured
+state as this patch is doing. I cannot think of a scenario that would crash pciehp
+similarly to shpchp. But that's just me, maybe there is a rare scenario
+that can crash pciehp, but I just haven't seen yet.
 
-for you to fetch changes up to 93ee235f55d3e1c881e766a320cedcad0b9aca42:
+My point is: better safe than sorry. I propose going back to the original
+solution: calling pci_stop_and_remove_bus_device() and return a negative
+error, and get rid of this improperly configured bridge. It is useless
+anyways without a subordinate bus number.
 
-  auxdisplay: charlcd: Don't rebuild when CONFIG_PANEL_BOOT_MESSAGE=y (2024-04-11 13:34:29 +0300)
+What do you think?
 
-----------------------------------------------------------------
-auxdisplay for v6.10-1
+Best regards,
+Nam
 
-* A couple of non-critical build fixes to Character LCD library
-* Miscellaneous fixes here and there
-
-The following is an automated git shortlog grouped by driver:
-
-charlcd:
- -  Don't rebuild when CONFIG_PANEL_BOOT_MESSAGE=y
- -  Add missing MODULE_DESCRIPTION()
-
-linedisp:
- -  Group display drivers together
-
-seg-led-gpio:
- -  Convert to platform remove callback returning void
-
-----------------------------------------------------------------
-Andy Shevchenko (3):
-      auxdisplay: linedisp: Group display drivers together
-      auxdisplay: charlcd: Add missing MODULE_DESCRIPTION()
-      auxdisplay: charlcd: Don't rebuild when CONFIG_PANEL_BOOT_MESSAGE=y
-
-Uwe Kleine-König (1):
-      auxdisplay: seg-led-gpio: Convert to platform remove callback returning void
-
- drivers/auxdisplay/Kconfig        | 346 ++++++++++++++++++++------------------
- drivers/auxdisplay/Makefile       |  10 +-
- drivers/auxdisplay/charlcd.c      |   3 +
- drivers/auxdisplay/seg-led-gpio.c |   6 +-
- 4 files changed, 189 insertions(+), 176 deletions(-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+(qemu) device_add e1000,bus=br1,id=eth0,addr=2
+[  140.536933] shpchp 0000:01:00.0: Latch close on Slot(2)
+[  140.538466] shpchp 0000:01:00.0: Button pressed on Slot(2)
+[  140.539992] shpchp 0000:01:00.0: Card present on Slot(2)
+[  140.541600] shpchp 0000:01:00.0: PCI slot #2 - powering on due to button press
+[  146.604107] pci 0000:02:02.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[  146.606679] pci 0000:02:02.0: BAR 0 [mem 0x00000000-0x0001ffff]
+[  146.608438] pci 0000:02:02.0: BAR 1 [io  0x0000-0x003f]
+[  146.610340] pci 0000:02:02.0: ROM [mem 0x00000000-0x0003ffff pref]
+[  146.612326] pci 0000:02:02.0: vgaarb: pci_notify
+[  146.613730] pci 0000:02:02.0: ROM [mem 0xfe600000-0xfe63ffff pref]: assigned
+[  146.615705] pci 0000:02:02.0: BAR 0 [mem 0xfe640000-0xfe65ffff]: assigned
+[  146.617685] pci 0000:02:01.0: BAR 0 [mem 0xfe660000-0xfe6600ff 64bit]: assigned
+[  146.621397] pci 0000:02:02.0: BAR 1 [io  0xc000-0xc03f]: assigned
+[  146.623184] shpchp 0000:01:00.0: PCI bridge to [bus 02]
+[  146.624704] shpchp 0000:01:00.0:   bridge window [io  0xc000-0xcfff]
+[  146.628853] shpchp 0000:01:00.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+[  146.632415] shpchp 0000:01:00.0:   bridge window [mem 0xfe000000-0xfe1fffff 64bit pref]
+[  146.637717] pcieport 0000:02:01.0: vgaarb: pci_notify
+[  146.639172] pcieport 0000:02:01.0: runtime IRQ mapping not provided by arch
+[  146.641635] pcieport 0000:02:01.0: vgaarb: pci_notify
+[  146.643093] shpchp 0000:02:01.0: vgaarb: pci_notify
+[  146.644501] shpchp 0000:02:01.0: runtime IRQ mapping not provided by arch
+[  146.647967] shpchp 0000:02:01.0: HPC vendor_id 1b36 device_id 1 ss_vid 0 ss_did 0
+[  146.650106] shpchp 0000:02:01.0: enabling device (0000 -> 0002)
+[  146.653840] ACPI: \_SB_.GSIE: Enabled at IRQ 20
+[  146.656699] shpchp 0000:02:01.0: enabling bus mastering
+[  146.659567] BUG: kernel NULL pointer dereference, address: 00000000000000da
+[  146.661532] #PF: supervisor write access in kernel mode
+[  146.663006] #PF: error_code(0x0002) - not-present page
+[  146.664453] PGD 0 P4D 0 
+[  146.665208] Oops: 0002 [#1] PREEMPT SMP NOPTI
+[  146.666447] CPU: 1 PID: 35 Comm: kworker/1:1 Not tainted 6.9.0-rc1-00003-g5ef667cf77c0 #59
+[  146.668743] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[  146.671314] Workqueue: shpchp-2 shpchp_pushbutton_thread
+[  146.672817] RIP: 0010:shpc_init+0x3fb/0x9d0
+[  146.674282] Code: 8b 48 08 40 80 ff 02 0f 84 15 04 00 00 f7 c2 00 00 00 1f 0f 84 44 02 00 00 b8 04 00 00 00 b9 04 00 0f
+[  146.679118] RSP: 0018:ffffc90000133ab0 EFLAGS: 00010246
+[  146.680245] RAX: 0000000000000000 RBX: ffff8880056fd600 RCX: 0000000000000000
+[  146.681782] RDX: 00000000000000ff RSI: 0000000000000000 RDI: ffffffff83059101
+[  146.683307] RBP: ffffc90000133af8 R08: ffff88800364f500 R09: 0000000000000000
+[  146.684831] R10: 0000000000000000 R11: ffff88800470b840 R12: ffff888006af7000
+[  146.686361] R13: 0000000000000000 R14: 000000007f000d0f R15: 000000000000001f
+[  146.687882] FS:  0000000000000000(0000) GS:ffff88807dd00000(0000) knlGS:0000000000000000
+[  146.689597] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  146.690821] CR2: 00000000000000da CR3: 000000000432a000 CR4: 00000000000006f0
+[  146.692331] Call Trace:
+[  146.692869]  <TASK>
+[  146.693351]  ? show_regs+0x63/0x70
+[  146.694097]  ? __die+0x23/0x70
+[  146.694771]  ? page_fault_oops+0x17a/0x470
+[  146.695659]  ? search_module_extables+0x18/0x60
+[  146.696644]  ? shpc_init+0x3fb/0x9d0
+[  146.697435]  ? kernelmode_fixup_or_oops+0x9b/0x120
+[  146.698474]  ? __bad_area_nosemaphore+0x16e/0x240
+[  146.699495]  ? bad_area_nosemaphore+0x11/0x20
+[  146.700442]  ? do_user_addr_fault+0x2a8/0x610
+[  146.701405]  ? exc_page_fault+0x6d/0x160
+[  146.702263]  ? asm_exc_page_fault+0x2b/0x30
+[  146.703171]  ? shpc_init+0x3fb/0x9d0
+[  146.704213]  shpc_probe+0x92/0x390
+[  146.704880]  local_pci_probe+0x46/0xa0
+[  146.705626]  pci_device_probe+0xb0/0x190
+[  146.706386]  really_probe+0xc7/0x390
+[  146.707080]  ? __pfx___device_attach_driver+0x10/0x10
+[  146.708044]  __driver_probe_device+0x78/0x150
+[  146.708880]  driver_probe_device+0x1f/0x90
+[  146.709679]  __device_attach_driver+0x93/0x120
+[  146.710538]  bus_for_each_drv+0x96/0xf0
+[  146.711277]  __device_attach+0xb1/0x1c0
+[  146.712018]  device_attach+0xf/0x20
+[  146.712695]  pci_bus_add_device+0x58/0x90
+[  146.713480]  pci_bus_add_devices+0x30/0x70
+[  146.714292]  shpchp_configure_device+0xd8/0x150
+[  146.715200]  board_added+0x115/0x420
+[  146.715898]  shpchp_enable_slot+0x114/0x3b0
+[  146.716711]  shpchp_pushbutton_thread+0x77/0xa0
+[  146.717605]  process_one_work+0x153/0x390
+[  146.718387]  worker_thread+0x2c9/0x400
+[  146.719111]  ? __pfx_worker_thread+0x10/0x10
+[  146.719945]  kthread+0xd7/0x100
+[  146.720566]  ? __pfx_kthread+0x10/0x10
+[  146.721306]  ret_from_fork+0x3c/0x60
+[  146.722006]  ? __pfx_kthread+0x10/0x10
+[  146.722734]  ret_from_fork_asm+0x1a/0x30
+[  146.723498]  </TASK>
+[  146.723931] Modules linked in:
+[  146.724529] CR2: 00000000000000da
+[  146.725182] ---[ end trace 0000000000000000 ]---
+[  146.726065] RIP: 0010:shpc_init+0x3fb/0x9d0
+[  146.726862] Code: 8b 48 08 40 80 ff 02 0f 84 15 04 00 00 f7 c2 00 00 00 1f 0f 84 44 02 00 00 b8 04 00 00 00 b9 04 00 0f
+[  146.730372] RSP: 0018:ffffc90000133ab0 EFLAGS: 00010246
+[  146.731363] RAX: 0000000000000000 RBX: ffff8880056fd600 RCX: 0000000000000000
+[  146.732714] RDX: 00000000000000ff RSI: 0000000000000000 RDI: ffffffff83059101
+[  146.734072] RBP: ffffc90000133af8 R08: ffff88800364f500 R09: 0000000000000000
+[  146.735429] R10: 0000000000000000 R11: ffff88800470b840 R12: ffff888006af7000
+[  146.736779] R13: 0000000000000000 R14: 000000007f000d0f R15: 000000000000001f
+[  146.738143] FS:  0000000000000000(0000) GS:ffff88807dd00000(0000) knlGS:0000000000000000
+[  146.739673] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  146.740764] CR2: 00000000000000da CR3: 000000000432a000 CR4: 00000000000006f0
+[  146.742116] note: kworker/1:1[35] exited with irqs disabled
+[  146.743232] kworker/1:1 (35) used greatest stack depth: 12352 bytes left
 
