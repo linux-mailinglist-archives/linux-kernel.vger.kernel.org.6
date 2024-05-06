@@ -1,237 +1,123 @@
-Return-Path: <linux-kernel+bounces-170303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FDB8BD4BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:42:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF28B8BD4C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E35D1F2161B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC861C2260C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4619E158D99;
-	Mon,  6 May 2024 18:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3211215821F;
+	Mon,  6 May 2024 18:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7i+8GA+"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVxgVWuz"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD6B1E4A6;
-	Mon,  6 May 2024 18:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012F44AECA;
+	Mon,  6 May 2024 18:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715020918; cv=none; b=A0Qp+5ImvF5vFEFHvAT9F1d4XGYsqc2r9OtZdlxzIXf+mZTFg52wM4QMdfFkwRWKuYZMJRkkw0KiGNu37/VWzEhWjGTupqNef/WuuXQASJKHe012Pmg46SWBLnaxUpWFgkVx3SfVpiIaZ6NE3G4OH80BKL887ojbdkhB677xUjI=
+	t=1715021035; cv=none; b=KpeVduOhVEV/ERlZBsV5zQ6PO9T6Ag03h4KwWb9NqmfFVBx8F1AQqnxHG2i3FiBiolJ+WmaBL6d1n0ylf+aadWlZwMzrFzzx3DMPMSq9IQChghGE8AtY6RWf101P5HxZTOlqOzUvq/ZBAPGa4H0Gp9Iaux/JY5piEqMYqxmvuxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715020918; c=relaxed/simple;
-	bh=tCKuk3qiNlN7CQiFoVHXwNs6NO9F2MdMtkXvWzlMPFo=;
+	s=arc-20240116; t=1715021035; c=relaxed/simple;
+	bh=SjAYMMCURaX0+dhX9RQn0cnTZU/j27gh7PWnFEk+ab8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G44iMEJtPjd+Ug+3LFN/0s+7Yk/s9XuOtxqKYhjyHK7qme1ycPo8ib0RFpRUYui5nhmAnaOuFwSfvCJIsnFsbqYkRVuyPBtCaufcYg3LGFkYwNyL2RgP6PfXEmClobzol9vG/Jl9tafVHFs8bMYNyhL89ing7UoUZ5yGe6cfkrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7i+8GA+; arc=none smtp.client-ip=209.85.216.47
+	 To:Cc:Content-Type; b=EsEl+eJqKrKuXqwxdiJfSloDL65MwMojEFS4fvxTD0+f4BXisobvow4OJbxLYblogkAbkb6ssQeP3YNcwVaMchxallH4igPkNBLbSyNbVPC+bqzXcfdBuixEau7OdhA1ihRC30Ng0qr1mM6DeXbHRoqzjxgOrQN2tn6EHk8ZcYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVxgVWuz; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b27c532e50so1563537a91.2;
-        Mon, 06 May 2024 11:41:56 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2dd6a7ae2dcso38851941fa.1;
+        Mon, 06 May 2024 11:43:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715020916; x=1715625716; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715021032; x=1715625832; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bDT08fGLSf2RPyvvgFwElfxPpKeZ2KDPZFIEHKmSIzs=;
-        b=V7i+8GA+JJSItd0504xSx/TGhtTKXuh1YY39xfiv6iJ9rswcbdDMiXMBM9+ulXwXKW
-         OPnOcwEAp5s02mOwsOUWjxSWYIMLKz7r5SUBHettq0z+OKWh/FpMRJAZQWPwd6NRBc0R
-         wWjvrCTHidoP1CgSy3J/bfGTGmK1M/WWaBfJf2aGrvxWf/1j5oTLnHN/a1aZpNrLwqrV
-         vNFSfD0l17ok4tdCc+ZBQKpPHd0QcH3ITNUn5ZCsVuabklKT5DCkAuNg3LmgjrlK7/cW
-         VvxbV4x1pK2wfvGl12K0o6MalotVXUMxqgEr76rBsxLsqC/whh4B8o9KjlpcqlATZEre
-         akyg==
+        bh=Qr+qysEHfAqmXZOmn1POXugpU0YxreOhrSJFEU0THm0=;
+        b=VVxgVWuzr0xuZ1mnTJT+MW4K+ffituK/7USNlKGmz24lZs619yPM1Htz7PWQbg1C72
+         BWaRRTXPQAnLVcqi7XqTUx6frOmelrvgQpKHN2jT5nLy2/fQ8gnaIpHYr0uD7tMPVgs3
+         WhjZDuT5DK5YMNm3Kx462AU6iGE+Q4Kn44JgghxT8B5JUcCS1bvMKxGuZVw3IAZ4BJj1
+         Nfzz7Zc/u9IPji8sJ8NdEmzgcGfjQJCDp83SgTdVzNS7LpWMMYlDoe6tRuC9jCsRQr+s
+         4wS0n3YrutBzc4ipzBZdXggjkjXjzaOHYykG+oRran1nRIFAnRAf/NCx9S+zT7u/qyn7
+         tS2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715020916; x=1715625716;
+        d=1e100.net; s=20230601; t=1715021032; x=1715625832;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bDT08fGLSf2RPyvvgFwElfxPpKeZ2KDPZFIEHKmSIzs=;
-        b=Vz3za6mbK2Q8A1wSdo07dfrfxN/F+PtbIAQ+Cw9MAS7yVFvWs0EvDEIdoUkhA89JO8
-         feMOV+GYXRNjQkiq9Lpxw6FEPtUDkPqhtLE4sXCqo3OLumzm9GRaHWYtSMgs6azbxhyN
-         PsbX6e0Bhq8d6DoQ5p07l0pHGr/3Cd3ow7K/PRtdhXatS3tplYxxjzJC/uatFoVuQNfj
-         JDF6wyQEMsAJEKaHtliApXUQyiHnPXC8YUUN5JpH859+ccvSMJe6z/pSxRSjRezE+TNk
-         MxmwppeSeD6HZB0GeuFXBbMiY0Cmhgy8QIq3Zv5pXQY0ag1m3WPujov5TuehDKjktaxb
-         zDdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfeskKqJvkkOqqPxnBb2+qvgWFWlkZf3vtIsjJvlSaodMLDXO3g8dyjJcQ9x86AuPkRkcZ/eqwHeWlp8vyRkpjmUqiYLyP04wn4cvjCLlpEO+kuh4ctUPt/NkHeu8muES3SBMn09BmdxFF15rsaCGoVpZw/cMuQYd+R+KNthl0AVFUXJE4nr/m/S6ycOAxwElwmOo8jUKOccnhvf7ev3WB5N4=
-X-Gm-Message-State: AOJu0Yyyr1GPX7fZTseVW6xr6+D4mp+2jZHjYXka9+ZFBj+ucJzrnpye
-	fQq9aXijvrewB03oFVhYKLeEC1YMRmzjB7GefctL2MdyNUFrDE76iFREi7QwRSxRzCLOjG/yZnC
-	rHo3brbQk+oL1mTyV8P8pnV1KzPc=
-X-Google-Smtp-Source: AGHT+IEq8YJ8t3nZxov6z/S/yodKgD4MkoqlfVjkFRMcrQLNqghPuv506Yqi8eDx0lXPNLzjdJtrkfZWZUjCuGvHfnI=
-X-Received: by 2002:a17:90b:1058:b0:2b1:e314:a5e6 with SMTP id
- gq24-20020a17090b105800b002b1e314a5e6mr10307940pjb.7.1715020915838; Mon, 06
- May 2024 11:41:55 -0700 (PDT)
+        bh=Qr+qysEHfAqmXZOmn1POXugpU0YxreOhrSJFEU0THm0=;
+        b=e4FT7QrTjcWOuJnfoQAb7s0ywIGVyehUrLgD5HjxYDy1I1hwT6zcKNqzjj1iDsan/q
+         UDP//AqhzAWhBmi7i6zPXq/icOkf0e6fisrZUJ45KXGjFeZ1hUKRty9xO0gmIDipOA7w
+         CumJGPHXA1NCS258Wm2qh+u56ODuk8CbBiJS7Ui/gZi2YLJ7mkUcNmL5cTIqB90yQQ/J
+         ekGvJrrcMBl9Y+Azb3caIjU1XP4RhhUNI+1uUj4hparlZ1FPWfTOyQDsYCNeMsSjKbUj
+         mf69DIXASNJV0OJKtWilUW2S2y5zb2tBPWWR0zRDIuu2PBVDxFlzJJfrKB3Kh0p/NaMT
+         B7Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/2XXecI3j7ctUoUcdnOfnCtLppr5v1YLJgTF/Iff7hDjnVdtLIlLZ2wykZ862027HF7HXwfgV5cCqOQNddq/gjN6taff/5GwCgJxRz8lJH8I8mCwmt3lQktLGcNk++psaEDqYFTRD2vSslDmV929RSUObJ3l5fzwQoGsUchLgUJj19fNo
+X-Gm-Message-State: AOJu0YweCyBKvLgwmUm7I+bG88wOLzDsrJIo0mJBVbmzbJX6jjSGfZww
+	PX4Yy/ncXiRvAu4X3vJcdMT66bxwqQQmmnIJl2NZ5tYr64wrYfQtuyJSnFN0/rOXLU7Bqieun8t
+	g7tPh/tRVGOujjCYRWcXe3CBBMOA=
+X-Google-Smtp-Source: AGHT+IERi95t/Ei+7vR8pRyVjdKl796Yjlt/ZbtXfmRINRyR5DRRP1jEVzskgsDTX/AZhs2s0g0dDOGemWlVlWsZX2A=
+X-Received: by 2002:a2e:7d18:0:b0:2e2:5078:3277 with SMTP id
+ y24-20020a2e7d18000000b002e250783277mr8213909ljc.48.1715021031853; Mon, 06
+ May 2024 11:43:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-3-andrii@kernel.org>
- <2024050439-janitor-scoff-be04@gregkh> <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
- <ZjjiFnNRbwsMJ3Gj@x1>
-In-Reply-To: <ZjjiFnNRbwsMJ3Gj@x1>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 6 May 2024 11:41:43 -0700
-Message-ID: <CAEf4BzZJPY0tfLtvFA4BpQr71wO7iz-1-q16cENOAbuT1EX_og@mail.gmail.com>
-Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for /proc/<pid>/maps
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, =?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>
+References: <20240505214754.891700-1-andreas@kemnade.info> <20240505214754.891700-4-andreas@kemnade.info>
+ <CAHp75Vdnwrxw96prr9hyLdZ2u6t1uNcj6pyxCp52UoVOpatTpg@mail.gmail.com> <20240506182111.3c6673a0@aktux>
+In-Reply-To: <20240506182111.3c6673a0@aktux>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 6 May 2024 21:43:14 +0300
+Message-ID: <CAHp75VchLWQgmdxKPSbwH-m43zFHT9ADk4aH7-jvD5-MaVOtEw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] Input: ektf2127 - add ektf2232 support
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, u.kleine-koenig@pengutronix.de, hdegoede@redhat.com, 
+	siebren.vroegindeweij@hotmail.com, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 6, 2024 at 6:58=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
->
-> On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
-> > On Sat, May 4, 2024 at 8:28=E2=80=AFAM Greg KH <gregkh@linuxfoundation.=
-org> wrote:
-> > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote:
-> > > > Note also, that fetching VMA name (e.g., backing file path, or spec=
-ial
-> > > > hard-coded or user-provided names) is optional just like build ID. =
-If
-> > > > user sets vma_name_size to zero, kernel code won't attempt to retri=
-eve
-> > > > it, saving resources.
->
-> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
->
-> > > Where is the userspace code that uses this new api you have created?
->
-> > So I added a faithful comparison of existing /proc/<pid>/maps vs new
-> > ioctl() API to solve a common problem (as described above) in patch
-> > #5. The plan is to put it in mentioned blazesym library at the very
-> > least.
-> >
-> > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
-> > linux-perf-user), as they need to do stack symbolization as well.
->
-> At some point, when BPF iterators became a thing we thought about, IIRC
-> Jiri did some experimentation, but I lost track, of using BPF to
-> synthesize PERF_RECORD_MMAP2 records for pre-existing maps, the layout
-> as in uapi/linux/perf_event.h:
->
->         /*
->          * The MMAP2 records are an augmented version of MMAP, they add
->          * maj, min, ino numbers to be used to uniquely identify each map=
-ping
->          *
->          * struct {
->          *      struct perf_event_header        header;
->          *
->          *      u32                             pid, tid;
->          *      u64                             addr;
->          *      u64                             len;
->          *      u64                             pgoff;
->          *      union {
->          *              struct {
->          *                      u32             maj;
->          *                      u32             min;
->          *                      u64             ino;
->          *                      u64             ino_generation;
->          *              };
->          *              struct {
->          *                      u8              build_id_size;
->          *                      u8              __reserved_1;
->          *                      u16             __reserved_2;
->          *                      u8              build_id[20];
->          *              };
->          *      };
->          *      u32                             prot, flags;
->          *      char                            filename[];
->          *      struct sample_id                sample_id;
->          * };
->          */
->         PERF_RECORD_MMAP2                       =3D 10,
->
->  *   PERF_RECORD_MISC_MMAP_BUILD_ID      - PERF_RECORD_MMAP2 event
->
-> As perf.data files can be used for many purposes we want them all, so we
+On Mon, May 6, 2024 at 7:21=E2=80=AFPM Andreas Kemnade <andreas@kemnade.inf=
+o> wrote:
+> On Mon, 6 May 2024 15:05:52 +0300
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > From: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > To: Andreas Kemnade <andreas@kemnade.info>
+> > Date: Mon, 6 May 2024 15:05:52 +0300
+> > On Mon, May 6, 2024 at 12:48=E2=80=AFAM Andreas Kemnade <andreas@kemnad=
+e.info> wrote:
 
-ok, so because you want them all and you don't know which VMAs will be
-useful or not, it's a different problem. BPF iterators will be faster
-purely due to avoiding binary -> text -> binary conversion path, but
-other than that you'll still retrieve all VMAs.
+..
 
-You can still do the same full VMA iteration with this new API, of
-course, but advantages are probably smaller as you'll be retrieving a
-full set of VMAs regardless (though it would be interesting to compare
-anyways).
+> > I'm wondering if you are using --histogram diff algo when preparing the=
+ patches.
+>
+> No, I am not using that, it seems to not make that chunk nicer.
+> Yes, we want
+>
+> +       int status_shift;
+>  };
+> +
+> +struct ektf2127_i2c_chip_data {
+> +       int status_shift;
+> +};
+>
+> But that is not shorter or simpler, just more readable.
 
-> setup a meta data perf file descriptor to go on receiving the new mmaps
-> while we read /proc/<pid>/maps, to reduce the chance of missing maps, do
-> it in parallel, etc:
->
-> =E2=AC=A2[acme@toolbox perf-tools-next]$ perf record -h 'event synthesis'
->
->  Usage: perf record [<options>] [<command>]
->     or: perf record [<options>] -- <command> [<options>]
->
->         --num-thread-synthesize <n>
->                           number of threads to run for event synthesis
->         --synth <no|all|task|mmap|cgroup>
->                           Fine-tune event synthesis: default=3Dall
->
-> =E2=AC=A2[acme@toolbox perf-tools-next]$
->
-> For this specific initial synthesis of everything the plan, as mentioned
-> about Jiri's experiments, was to use a BPF iterator to just feed the
-> perf ring buffer with those events, that way userspace would just
-> receive the usual records it gets when a new mmap is put in place, the
-> BPF iterator would just feed the preexisting mmaps, as instructed via
-> the perf_event_attr for the perf_event_open syscall.
->
-> For people not wanting BPF, i.e. disabling it altogether in perf or
-> disabling just BPF skels, then we would fallback to the current method,
-> or to the one being discussed here when it becomes available.
->
-> One thing to have in mind is for this iterator not to generate duplicate
-> records for non-pre-existing mmaps, i.e. we would need some generation
-> number that would be bumped when asking for such pre-existing maps
-> PERF_RECORD_MMAP2 dumps.
+And that's exactly what histogram is about. I suggest making it
+default for the Linux kernel project (or globally in your
+~/.gitconfig).
 
-Looking briefly at struct vm_area_struct, it doesn't seems like the
-kernel maintains any sort of generation (at least not at
-vm_area_struct level), so this would be nice to have, I'm sure, but
-isn't really related to adding this API. Once the kernel does have
-this "VMA generation" counter, it can be trivially added to this
-binary interface (which can't be said about /proc/<pid>/maps,
-unfortunately).
 
->
-> > It will be up to other similar projects to adopt this, but we'll
-> > definitely get this into blazesym as it is actually a problem for the
->
-> At some point looking at plugging blazesym somehow with perf may be
-> something to consider, indeed.
-
-In the above I meant direct use of this new API in perf code itself,
-but yes, blazesym is a generic library for symbolization that handles
-ELF/DWARF/GSYM (and I believe more formats), so it indeed might make
-sense to use it.
-
->
-> - Arnaldo
->
-> > abovementioned Oculus use case. We already had to make a tradeoff (see
-> > [2], this wasn't done just because we could, but it was requested by
-> > Oculus customers) to cache the contents of /proc/<pid>/maps and run
-> > the risk of missing some shared libraries that can be loaded later. It
-> > would be great to not have to do this tradeoff, which this new API
-> > would enable.
-> >
-> >   [2] https://github.com/libbpf/blazesym/commit/6b521314126b3ae6f2add43=
-e93234b59fed48ccf
-> >
-
-[...]
+--=20
+With Best Regards,
+Andy Shevchenko
 
