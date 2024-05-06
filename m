@@ -1,201 +1,166 @@
-Return-Path: <linux-kernel+bounces-169728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0092F8BCCB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:17:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275418BCCBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A7E3B2273A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:17:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2611BB2217F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A2F142E8A;
-	Mon,  6 May 2024 11:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69877142E8F;
+	Mon,  6 May 2024 11:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="XaIFhgPg"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2107.outbound.protection.outlook.com [40.107.21.107])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4War9FW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC80142649
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 11:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714994257; cv=fail; b=JZWDCeetnSHHDI7TjXfYxUP1tcvEexTcfi6aYiCmDZHdHY0XVXiw+ZWns+eEvFqoKYWxK1RKCMtKsh0Mde7wzPvzSrTR4oIFbhhP9dcMWkJmdnaigkFGw2GqYaYBjLGTQLJq86SnlSB6MD/m3KxaoiQ3NWW8Xpdt/nlBPdPRIjM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714994257; c=relaxed/simple;
-	bh=LXsFve6jPY3La1xuY3UHA0k4pIuoreYycqZeAqZxzok=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OkG/2Vo/4MY+rd05X+d4CyleJpxlK3An6OKsplXyMWpG0nLWMsMkK3zGZu3LgMTRFK8kpwCg/fK70vMPcvaBR9H2gX8qbKLO2MNzk+zfcIrf5UN1gV5s9ALkjcw4oI7hZGul86Lar9/4EWODtiN9j4FM7l/1KjE4Qk+FeZNnGTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=XaIFhgPg; arc=fail smtp.client-ip=40.107.21.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZuIaog+IJ8eOBY0Bm0e0nLcQ9L7iyp+JU5ZWuuE12ol8LyouD3a6MBU481JU3O/lxZjMlkurJcpWoJDHcSdkSFkbCzkfOJ41ZoNsyyavlwhr1r63xW/v/3XZB2wV/XLHmL3r2JzAeKRRkpneM0hhovL1W+YoILXyPliCFDMHOazy/01LCVyDp77qwKzcsfHgZuet6KNaBvGyrSpsB/o9JvI0XC1WDmFqp9TnP6yeVo9SBLnId+ATuffbBABJv4wK9eWzLE72+uSsq7zJemTnMmslauaT2LDCHOBOAvOK0gd22oKDrTmHC2noFo0E0OLIwMTpGrsiKySw912Q1cA0Rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nOXisUfPfUyiicK6RVTw5uO/xuqBB15MSmwUBl14XV0=;
- b=Q1Yz6u6C5RpBQcR5DiJlX1ZrB2AcPa3XUuc8Qvk/4oFp7MWdgW6MtY8Zr622LDleYYwWhvhUn8JnY1siMbsUh9g71RroKsdJW6HIM7v/fnsYePrGtMR05LvN7zbhw7xDQfdYchw0+uzbwgotOAAuYLer8X8cCQ4CUpzTX9r/ghjmhHTlPiUUA5pVmbKQxVXhSqvAq/nz+72cdQV/zb2zZAeXbhRgT8qbX0tIdw+WBAehUgOiyL0j/9B3fG6HirSchEJSvy659E20hzskZxi4kn6CiSJtSBHhEhMKvaauK2WGgjqMgi0BvAQ6iWb/0KXKxIpnRod5XHcG5mhRwjuwYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nOXisUfPfUyiicK6RVTw5uO/xuqBB15MSmwUBl14XV0=;
- b=XaIFhgPgdVoe3d9qFXS8bsXyDM3ME2cirxq3QwpkOzHPSy3LhB2MQ7y+UXDbCLBEJV7dcEVVSUn9uWhJbrZ6p5kcNcp8kHIzBtyrFBPVpU6if81IB3Ft3znVn4/MjTensD3ASa/Mhq1GB6wnWTzL8ZN4LRNNrt+3hhgOO1h390s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from DB7PR04MB4842.eurprd04.prod.outlook.com (2603:10a6:10:1b::13)
- by PAXPR04MB8406.eurprd04.prod.outlook.com (2603:10a6:102:1c4::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Mon, 6 May
- 2024 11:17:30 +0000
-Received: from DB7PR04MB4842.eurprd04.prod.outlook.com
- ([fe80::ac08:df46:97bd:4ae6]) by DB7PR04MB4842.eurprd04.prod.outlook.com
- ([fe80::ac08:df46:97bd:4ae6%6]) with mapi id 15.20.7544.041; Mon, 6 May 2024
- 11:17:30 +0000
-Message-ID: <44fb831a-1e81-40ee-b525-79e0f157b817@cherry.de>
-Date: Mon, 6 May 2024 13:17:24 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH v2 14/48] drm/panel: ltk050h3146w: Stop tracking
- prepared
-To: Douglas Anderson <dianders@chromium.org>,
- dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Chris Morgan <macromorgan@hotmail.com>,
- Yuran Pereira <yuran.pereira@hotmail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Sam Ravnborg <sam@ravnborg.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-kernel@vger.kernel.org
-References: <20240503213441.177109-1-dianders@chromium.org>
- <20240503143327.RFT.v2.14.I264417152e65b4a2e374666010666fa1c2d973fc@changeid>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240503143327.RFT.v2.14.I264417152e65b4a2e374666010666fa1c2d973fc@changeid>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: WA0P291CA0006.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1::18) To DB7PR04MB4842.eurprd04.prod.outlook.com
- (2603:10a6:10:1b::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC8514262C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 11:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714994507; cv=none; b=o8AwV/z7FeZwVuVx7hiL9B/fnYXEFOGFmfyRAXbUIPFEnt56SaRebX7cTTvBlSQ17nsN6onbeIhKvzg49EdYSD2l+YRbGcfmAB2tmbBr5RzHI3OZ+vMBnETbWczpEHoW2j7CdiVrd2UsrJx4mtLylovMXphDVUdQMPsJnuxCumQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714994507; c=relaxed/simple;
+	bh=zrGpFO2KzYviJ12Uk4Knk0nbSHFeCLommmFFiBekSWk=;
+	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sKAJ18zzpjzepTlunvCmpzPjhZXDnzbUItJslhpfVN3sYdaEUDLEc52PgFzZ/KUp5QswHuDRzOBTb1d74bMO+bA1KtEl2/Mt+9BlRr0TlXAb2+mo14yyaATgeD3uTQpTkJth8yNVl7C3fWasBW2OfNJaxnYuIS8OTviFvo+m13A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4War9FW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714994505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lfElTg3P9yi4mhZjKlr5avBuN2og+ERzX6xGJyg7hQg=;
+	b=i4War9FW54mBIDAle4hO45El4RmhB8PT20ToNVHIwgTgE1qj0DSAV/XFgy+/jkvCig0Lpg
+	56A63dRLlly3Sxh4CR7aVwCfideGg/6cQQ+WmirwF5kS8HorvYnN9zHoDJ9+IDFevJkuWh
+	JQByVpWGCzLQqtxrTGTIunDj2gyzodU=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-p-r7mwKJON6y6nGCtHmUdg-1; Mon, 06 May 2024 07:21:43 -0400
+X-MC-Unique: p-r7mwKJON6y6nGCtHmUdg-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6ee089eedb7so2327557b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 04:21:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714994503; x=1715599303;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lfElTg3P9yi4mhZjKlr5avBuN2og+ERzX6xGJyg7hQg=;
+        b=gfjyKaezmzqR4wSrTRiTLUwhvblwRV/v5eT/erHDlu6tM0Yz24zf4UzBcen5KQpIxi
+         x2cx73A8fHqDV5lb6Lixn3UQNqheVXwZnZNV5JgJTbGXqyLnq2s+h+XydAaK2ZqjcTPQ
+         rflgoDMgD3cQZzBg2ecRYtd6KQoc8F5mBe5+2dxgfIC0msuzcIHcCXlWC2UjBrQG0P4N
+         AWiDrULJI5vuDzHiZUy2JWGR1XnZcWsMRI4aWGxEraNLuZu/O1xKvxqokF90J1XuGEX7
+         BQGfConPcHhCyRYs2rzde/Sw5xaz16mTjewWvmjeIMInIWljeKBqTV81qIMBtWiUeSso
+         d9VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl9pphQERIYqNLNpbkAvVIiHYd5xGfcV1qhvf2l8vP/elAHt/odO7KbyhpfltwrKAGoihbgvYAO9GzQYjgPP9KIjBhe3QX0JDX6KWk
+X-Gm-Message-State: AOJu0Yyw2dbXhDn7JvC3BLAboHhlNomuQYROQtt0FPcRXacVkfXqg3b5
+	0I9kgF5R5u441mZjx0tYVE6g6c3Aw7bVYpSjM7tE+rEYDv8kPXokPjxa3mYZtEmVJg2o7ngn3G1
+	+4MPnMVgILLIB85M7NPQ3RFhQv26ks4yzLlC6q2dpnvOez1c08MbdP88a4qcHu7M3G0rtCgnQIN
+	2cSzAJrQO+XRqu6j2Q9BewkT8lXIPxFTMv2jvP
+X-Received: by 2002:a05:6a20:da8b:b0:1a7:2ceb:e874 with SMTP id iy11-20020a056a20da8b00b001a72cebe874mr12710502pzb.37.1714994502769;
+        Mon, 06 May 2024 04:21:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhyhi7dIVf2+C7OigQZMKNCF9fVW9NM5SSt+qz9BQl1HVEbaT1IXprTHrmUqzyshtiWvHl0EwlK+4i/EV8NvU=
+X-Received: by 2002:a05:6a20:da8b:b0:1a7:2ceb:e874 with SMTP id
+ iy11-20020a056a20da8b00b001a72cebe874mr12710445pzb.37.1714994502125; Mon, 06
+ May 2024 04:21:42 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 6 May 2024 13:21:41 +0200
+From: Sergio Lopez Pascual <slp@redhat.com>
+In-Reply-To: <CAOgh=Fykg3Xb8Y59R_tJ7_jXe-ozXRMQjU+qVy5DdmFn3pkcPw@mail.gmail.com>
+References: <20240411-tso-v1-0-754f11abfbff@marcan.st> <20240411132853.GA26481@willie-the-truck>
+ <28ab55b3-e699-4487-b332-f1f20a6b22a1@marcan.st> <20240419165809.GA4020@willie-the-truck>
+ <CAOgh=Fykg3Xb8Y59R_tJ7_jXe-ozXRMQjU+qVy5DdmFn3pkcPw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB7PR04MB4842:EE_|PAXPR04MB8406:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76071dee-1cef-4445-a7f3-08dc6dbe1c83
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005|7416005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K0FOeTlBUkJmell1ZFhqZ3FEVUR1bGNFOEYraFVpbjBiVDhvRXpOUGVpbHNS?=
- =?utf-8?B?cDZ0enpBbFdkT1hPelJqZXFkQmxvb3I1RVBPRlpHamhKN2xmb0hUb08yNU1Z?=
- =?utf-8?B?eFFzbUVnLy93c2k2TFVuQWJjWXRXejF1aUNXUmFmWnNBM3YxNTBvbUFiSy9l?=
- =?utf-8?B?c0F0RWJBeGpOTEZtRi9WRlBpbDNXajRvR0t0TU4zQno0dTdrbzhhazU1VkFm?=
- =?utf-8?B?akZBMGJQQlY1TFREYkFnWklFNGY1MUExd3g2bWpFaG1Pczdqa0lTRTRmNkhN?=
- =?utf-8?B?Zi9Jb0RiSjlyckI3WXgvenVXTk9MZmhla1lQOHJWYWtaQ2NNYUhpM3ZwQWFG?=
- =?utf-8?B?c2NRRnZ5eGdhMUdwNkxaY29QZDFSK1U1YUkrdkl2MkZ1M25IL1hDWjdpOEZ4?=
- =?utf-8?B?Y3FiRzRMZzdOcWQwNHlneGJ6MWJZT2FXSmNDZTBXZFhTWllhVGJMTlp5U1N1?=
- =?utf-8?B?YjZnQzArYWk0YVU0NWwrUmI2SkZ0eUxKeFJBc1JrTXRaeFZIYWdxU0M1UnRi?=
- =?utf-8?B?dFk0NjZBeXFVaG5HTW8wMEgwZDJSRCtOQm9mcmhvMEVhSFR3WlpodmJLczJG?=
- =?utf-8?B?aXlWM2JYVEh4MDVzVGpKVHpXT05rUUUxOWRSa2dNQWt3ajd0TUUwUjg1R1ls?=
- =?utf-8?B?aEVydG1IOHFLTkpzbkhJZUYveFhvWmZKK1Q1cVhjTTN5emJxUUtzeUJ2Ry9Q?=
- =?utf-8?B?aG1sRTBzdVZ6bStQdGhwZ2V1WVZKQXVEQ0tscEMvVXR6WHFpZFg1V2VPV1F3?=
- =?utf-8?B?Z1FGTEpoRlhOaTd1R3QxK2czZ0NLeVFWbmRzbkNJcEZKMEdzOGg2b0J6cFBi?=
- =?utf-8?B?Qkd2SmlQUXF3aGlrdUJaNHJaNmszdTlsMVhZKzRZK1VmWlZXUE1ieGJiYk9Y?=
- =?utf-8?B?bHpXZmM2UHNZdnVpZjZyLzNjUGNGcEJGTyt3b3dzTCtFb0dQRk5ZYWY5ckRK?=
- =?utf-8?B?dGRVb2xsV3lpdDB1VjR4c29zcFlmRmpRckJ2NHg4a3BDYVF5aThiSlFiZFFx?=
- =?utf-8?B?WGEyUHhPQks3cGJ3dCtkOFd6c0JvQ1R2emZLWlNSdkRmeVdCTlg2dFkxRGdI?=
- =?utf-8?B?UVNOYmRvNWM2SGFLQ0RRb0Q1Zkt3Z1BpOExrY0YyOWxoeVFUaWFvRmluTTd1?=
- =?utf-8?B?dXhFUy9xK0ViVmRLK1VXbHhZVnFiZTQzc3NJc3B0ZDg1TW1neVFCN2NMVjFa?=
- =?utf-8?B?cktRdkRqQy9vNnpyWVpLc05sNFFMYWdUalFDbDdVeWpMdWZIa3JxVXI2THgx?=
- =?utf-8?B?ZDkvUlFVMmZNVG1DT3IvTHp6WnhNWkl4RUl4ejB3bUhsZTV3VXd4U2hPSlIv?=
- =?utf-8?B?Y3VhaXV5NDBiT1dwUC9tQ0VhS0IwYjMvbVdzSjdxNm1WOVU1anZkMUY5aEkv?=
- =?utf-8?B?MTgzLzU3eFF4bUdicFkwdm1SWkljbUxKWUlBNCtrWCtaSzVYV0pHaU1OMUI2?=
- =?utf-8?B?N2wrOFBBQko5Q0ZiSG9pUDkzRFRJNkJSL05JMmhDVmRyUnBHYnVQSGwxaTFR?=
- =?utf-8?B?Z2VMNXV0WTV2TVNGSno3ZXZjaVVRVGljbEZ1VHdYV05YODU0cytwbS9EU29l?=
- =?utf-8?B?REFWSnEyaFlyaDBSek1iSnM1Mmp1U1A1cUFKM2srd0M5V1RHcXBPTGlEVHJw?=
- =?utf-8?B?VmxEOHFDMVFZVXVXMW9HNkNzQlZqQzNaejZxazhMUjhTMVQ3Y1FNNUIrZTRW?=
- =?utf-8?B?eWl5SGxSclJla2lLbDZRUWlyWDRrcDBZV2hPRWlqWk5FcjdHeS94cTZBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR04MB4842.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cGZLMFRldVV1K2dESEpxcjE4SVdScmFzRHVZVjR1UVlyN3BodEdnUEZUQm9J?=
- =?utf-8?B?NjcxR1UvWUhabENpUlJ5bUlKNzNVRVpURE9ndnFnYWFYaVFtTGRsMXZBREgr?=
- =?utf-8?B?Rm5Kc1A4eXBkaFBTWmkwbnpWZzJOZk1rcmVuVlJnUlpNZ01uQkZZaFNJcnVG?=
- =?utf-8?B?WFBHdDI0azdnblRrK1RFYXd4M3FuSnhJdTNIVlA3SFJ0K01udTA5V0U3SW1Y?=
- =?utf-8?B?RUs2cjA1Zytva3JuNFV1L1dDeTVmUS9sMFkzZEhmbmhaeVlvbzdVL2ppUmJQ?=
- =?utf-8?B?WE14VlZuaEVJa2Q0YzlCODQwa2J2cmJtVisxYmQyZVVqb3BFWXBLSlQ4TXo0?=
- =?utf-8?B?UlJZVGk1VzZZb3FpL3lva1hDUmFqR213clJqRndUT0VRbUM0ZjJ4VW1Ga2hv?=
- =?utf-8?B?SW90b2NZMXNNTis4bndqRnlhOTBaVDY1b28xSkVyZ0JicnJCbU1IWVMxZjQr?=
- =?utf-8?B?ZEpiZU5WbmRPQUd2OXd3VGVIejVvQm9rcitHQnMvRTI2dlRSUGsxU014RG80?=
- =?utf-8?B?VUNVY1daMVkvd3N3T0QzUCtjV1YvbjBPL2E0dzhoTmxEZE1ENGVHdzIrRDJT?=
- =?utf-8?B?dzl1VjBGK0JYYXpOc3hUVG0zOWk5UlZEYzhxdXZYUWFFVkF1NUtDWlFVejZX?=
- =?utf-8?B?bFlRWDY3Zy9NVlVOSWNNbHRMWXcxdVd5WGdhQ1cvT1RIUEFnV2FCdjFWSGtj?=
- =?utf-8?B?QjBVOWpoaHVuenFuVGw5bTFyMmhqeW1BU0oyd1VPMG5KNGlaaEc0eXlFWmY3?=
- =?utf-8?B?bjhwNXFiM3FnMFdmd2o3QjMvbi9hb3lDTEhscVlmYStiQjllTWNGcjVZcjJ1?=
- =?utf-8?B?dngvQ0hoa0EwMU5zViswV3U2OVh4YzhpdDdBVU1vWmlOYlRhdjk4dEkwNE5r?=
- =?utf-8?B?TVQ5bmVCU0RQWWk4dWJxOVc3ZHV6MkZ2cHBIaEw0Z0FIRTZUeXNLWkxXQ1JJ?=
- =?utf-8?B?VitvSEh5ZFhFMlhRd3ArN2VmRGdHRTV2UEJXYUxqMEZQY1ZCVlFTdnU3UjI5?=
- =?utf-8?B?amdUMm52REVRbTdmQmZIOFo1TERRLzNDeUg0WCtxVURxSHYyRzZTbkRMNnpO?=
- =?utf-8?B?ZVpYdWltYVRlbTVsQnBrRTdaQi9vRnB2SFBleE5IRENCdm44R2RCanFwSXEz?=
- =?utf-8?B?amNZRHVVZDUxekwyZnpGcGZXUThxalAzTmh1ei9SNFRsd1ErS1JhM0szN1ZG?=
- =?utf-8?B?SnpyNVp0QXFIOVFDZWk3UjB1Z1pYTTVTS3o4Vmt5OXg0eGxJK1B4M1lKLzQ3?=
- =?utf-8?B?U3FTd0NQQVdmRmJFS0lnN2pYTy9UaU92U095SWlRVDd1SXJpQ2VQZGdRWGp6?=
- =?utf-8?B?VUUwQkZhd09lRU1Yek4wM2tISUU4dlY5UXY5UFd0Ykd0UnRNOUFEdUlwTUFF?=
- =?utf-8?B?VFQ3MXQwcXgvWEw0cmtIN3N0TDZVdkNGSVd1MlFlWlFDV05uRCt1SWtCTGV3?=
- =?utf-8?B?Tng4bnFiMGl6OWtwc0w3WjBzUmtzVUw5Vm9BZ0haYnIrNDFjajZ6UU16V3da?=
- =?utf-8?B?WTBGZFFTMnBNSElkdnRnYUFxbzQwM2hyaG02NTNwRktwQXFicDh4NG52TERF?=
- =?utf-8?B?RlVSKzBJbWxjN2NBSURnZXZFWkYvdjh2bnYvVEVPMENpQnFSTjZ2ZDlxTW04?=
- =?utf-8?B?dHVYVzA0azRsdmwrTm9DU1hlTHVkNzRNbGVjcFIzRzA2bGgvanQ3b1I4S0pt?=
- =?utf-8?B?ZTE4b3pBZVZrL1pKNjEvb2gvdktTcHhlT2xMYWNuYVRDUlRDOEdWK0xWQkNS?=
- =?utf-8?B?NXNnd1hrQkVyMjVVbFRaSkYxZStiOVMrOHc1SVBzZThjbUNBaG42NGVjZmFs?=
- =?utf-8?B?MjlqYzlHdkt0SVd5RDZscVNQZzY0ODc4SmFBZGt4SGRmTWJ0amZ1NkIrZlRo?=
- =?utf-8?B?Z0dJa1NvT21YZlg4K0hLL2pLWFkzVThpUUorZ1NWbW1qbkhRN1dxd1R1VnVk?=
- =?utf-8?B?M09VUzJjRzkxbFJoZXdQWFEzcmFGUlFCRFlJek9IQzRZZUxlNHcvZ0crWWly?=
- =?utf-8?B?bWROV1luQmd5bEJEREhYOHB2ZlAveWorLzk4Vm9saklERjRORFh1eGVMcVEr?=
- =?utf-8?B?Tjl4K2pqTVFYMmY1RHhFR0xiY3dWcDBrbkhPV2Q1NmQ5NFlGTHFWVWxIMFFD?=
- =?utf-8?B?WFFDS1BPOSs2d000dzEyMmVQSW1nSXVZZUt2R2tJU2xoQTVJSDVMempqOWNG?=
- =?utf-8?B?MVE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76071dee-1cef-4445-a7f3-08dc6dbe1c83
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR04MB4842.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 11:17:30.5711
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: smbG56FLjnoRRn2fJcP8k0snERuqnsbzbfJ6SuaobXIw3KqZOPnfKLk1CJVK7416rpjl7pPtgeOoaklEOkNgGWxaYmEBquZVd0VdZm/y75Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8406
+Date: Mon, 6 May 2024 13:21:40 +0200
+Message-ID: <CAAiTLFW8DWH-ejNgcXgr2tQxxF4pp7BNUFGyUq99BfrYx1kScQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] arm64: Support the TSO memory model
+To: Eric Curtin <ecurtin@redhat.com>, Will Deacon <will@kernel.org>
+Cc: Hector Martin <marcan@marcan.st>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Zayd Qumsieh <zayd_qumsieh@apple.com>, Justin Lu <ih_justin@apple.com>, 
+	Ryan Houdek <Houdek.Ryan@fex-emu.org>, Mark Brown <broonie@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Miguel Luis <miguel.luis@oracle.com>, Joey Gouly <joey.gouly@arm.com>, 
+	Christoph Paasch <cpaasch@apple.com>, Kees Cook <keescook@chromium.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Baoquan He <bhe@redhat.com>, 
+	Joel Granados <j.granados@samsung.com>, Dawei Li <dawei.li@shingroup.cn>, 
+	Andrew Morton <akpm@linux-foundation.org>, Florent Revest <revest@chromium.org>, 
+	David Hildenbrand <david@redhat.com>, Stefan Roesch <shr@devkernel.io>, Andy Chiu <andy.chiu@sifive.com>, 
+	Josh Triplett <josh@joshtriplett.org>, Oleg Nesterov <oleg@redhat.com>, Helge Deller <deller@gmx.de>, 
+	Zev Weiss <zev@bewilderbeest.net>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Asahi Linux <asahi@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Douglas,
+Eric Curtin <ecurtin@redhat.com> writes:
 
-On 5/3/24 11:32 PM, Douglas Anderson wrote:
-> [You don't often get email from dianders@chromium.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> As talked about in commit d2aacaf07395 ("drm/panel: Check for already
-> prepared/enabled in drm_panel"), we want to remove needless code from
-> panel drivers that was storing and double-checking the
-> prepared/enabled state. Even if someone was relying on the
-> double-check before, that double-check is now in the core and not
-> needed in individual drivers.
-> 
-> Cc: "Heiko Stübner" <heiko@sntech.de>
-> Cc: Quentin Schulz <quentin.schulz@theobroma-systems.com>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> On Fri, 19 Apr 2024 at 18:08, Will Deacon <will@kernel.org> wrote:
+>>
+>> On Thu, Apr 11, 2024 at 11:19:13PM +0900, Hector Martin wrote:
+>> > On 2024/04/11 22:28, Will Deacon wrote:
+>> > >   * Some binaries in a distribution exhibit instability which goes away
+>> > >     in TSO mode, so a taskset-like program is used to run them with TSO
+>> > >     enabled.
+>> >
+>> > Since the flag is cleared on execve, this third one isn't generally
+>> > possible as far as I know.
+>>
+>> Ah ok, I'd missed that. Thanks.
+>>
+>> > > In all these cases, we end up with native arm64 applications that will
+>> > > either fail to load or will crash in subtle ways on CPUs without the TSO
+>> > > feature. Assuming that the application cannot be fixed, a better
+>> > > approach would be to recompile using stronger instructions (e.g.
+>> > > LDAR/STLR) so that at least the resulting binary is portable. Now, it's
+>> > > true that some existing CPUs are TSO by design (this is a perfectly
+>> > > valid implementation of the arm64 memory model), but I think there's a
+>> > > big difference between quietly providing more ordering guarantees than
+>> > > software may be relying on and providing a mechanism to discover,
+>> > > request and ultimately rely upon the stronger behaviour.
+>> >
+>> > The problem is "just" using stronger instructions is much more
+>> > expensive, as emulators have demonstrated. If TSO didn't serve a
+>> > practical purpose I wouldn't be submitting this, but it does. This is
+>> > basically non-negotiable for x86 emulation; if this is rejected
+>> > upstream, it will forever live as a downstream patch used by the entire
+>> > gaming-on-Mac-Linux ecosystem (and this is an ecosystem we are very
+>> > explicitly targeting, given our efforts with microVMs for 4K page size
+>> > support and the upcoming Vulkan drivers).
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+In addition to the use case Hector exposed here, there's another,
+potentially larger one, which is running x86_64 containers on aarch64
+systems, using a combination of both Virtualization and emulation.
 
-Thanks!
-Quentin
+In this scenario, both not being able to use TSO for emulation
+and having to enable it all the time for the whole VM have a very large
+impact on performance (~25% on some workloads).
+
+I understand the concern about the risk of userspace fragmentation, but
+I was wondering if we could minimize it to an acceptable level by
+narrowing down the context. For instance, since both use cases we're
+bringing to the table imply the use of Virtualization, we should be able
+to restrict PR_SET_MEM_MODEL to only be accepted when running on EL1
+(and not in nVHE nor pKVM), returning EINVAL otherwise. This would
+heavily discourage users from relying on this feature for native
+applications that can run on arbitrary contexts, hence drastically
+reducing the fragmentation risk.
+
+We would still need a way to ensure the trap gets to the VMM and for
+the VMM to operate on the impdef ACTLR_EL12, but that should be dealt on
+a different series.
+
+Thanks,
+Sergio.
+
 
