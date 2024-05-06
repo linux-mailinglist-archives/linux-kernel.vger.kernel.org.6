@@ -1,197 +1,123 @@
-Return-Path: <linux-kernel+bounces-170348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C0D8BD580
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:37:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A078BD583
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D081C22659
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:37:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39987B239C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFA215ADA6;
-	Mon,  6 May 2024 19:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B326C15ADA0;
+	Mon,  6 May 2024 19:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SN9A9aSZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBDD5FDA5;
-	Mon,  6 May 2024 19:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SYLA9OZK"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D02F15359F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024228; cv=none; b=Oz/uuj0xjBmJGEW5DGSv2vCp6xasllK07nm+VRy3BDdI25mBhoSqfiuk5b99QoR1dbibi4ULqnvNFqwP+eum+VRL+3Fejn0nzAdKObZrO+KRUOU5wdrzkdtdIDwKHSCu8cjRfJpgPgaui1L6BWPsrycoarBQdaL1RxS25lgSxNY=
+	t=1715024297; cv=none; b=cahlz7WXNqMRyvWKR02UjLBUGCUfec1KiKGC1U08FLgjCqxO7ak+9LZ8c+YBCw2cImLgyfnPOzNmo93CfT5snGaJLQpGPpMYh1ObhqOdIQ8kxNiMtIcLZeHJvwy1JM6M4JCiqGAlIb3XnSDv0SfHFH+GQ9lN9xng7eE1xah8M0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024228; c=relaxed/simple;
-	bh=nuf1f/LIwto4hj0YbCTdRsSN0gd75WgtZzepSxjtU6o=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=CSinMlm0dedhI9/kZxjac8ydLmVVIrWzuYY+l7sVYSk+B8XBRyuwBLP3Dh6BGPMiuAQOxBM4vjBNAuHBkX+TDmw6uoG8mTt0d3EKzogzWQLcFd0w/+hkgb57b9tSVuWKEG4BQJ7XET/9oIXwbco5ZzEWF0eLjOSMgW4ZTb9BKog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SN9A9aSZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from apais-vm1.0synte4vioeebbvidf5q0vz2ua.xx.internal.cloudapp.net (unknown [52.183.86.224])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 22F92207E7E3;
-	Mon,  6 May 2024 12:37:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 22F92207E7E3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1715024226;
-	bh=NSsFZUKvbcPALUhxizKrUYUWMdVfFHil/vZ8XEa5VXM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SN9A9aSZBeugCNzM9TEJsrc6Ukg/iTdKsFylD+xiyzzUHKf4jlR7P4D/lFIGY1+Lp
-	 X33vtsOoNaANjT8rBDmFtRgVyEDDXxRlrFjH/tEJJhIm6v5An+27L8knjVYLWHIu1A
-	 Tc65J0H6kl5b2rOLlO9UbI6PCa5HAqwvUUhp2I1Q=
-From: Allen Pais <apais@linux.microsoft.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	ebiederm@xmission.com,
-	keescook@chromium.org,
-	mcgrof@kernel.org,
-	j.granados@samsung.com,
-	allen.lkml@gmail.com
-Subject: [PATCH v4] fs/coredump: Enable dynamic configuration of max file note size
-Date: Mon,  6 May 2024 19:37:00 +0000
-Message-Id: <20240506193700.7884-1-apais@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1715024297; c=relaxed/simple;
+	bh=vUavT4o501zk8ssY/thL9GHiZs8bj2Rn7eBDjxgU55M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UWmCSJTFfZtF83tJniPkhwMLt72zO2Jayb9t2S7uCRr2g8X0lLSRrCUBNAgf10+sf4WAUt+4S7EC6krpbu4daPQ3Igc4b3QJkMU+xCbu6bi+1gZuG0by+xeZqqd2h5BhUf191txye1Ky7gTktUHYPnJcxCWGzqegVRH4QUvijtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SYLA9OZK; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <628abfa4-7e7a-4be1-ab4c-f01b7a90e4af@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715024293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EitrPKgOgNSA4s7vKg5u/VXB+zVHCVjfbxVpdIai8XY=;
+	b=SYLA9OZKxnyK6WLDXQ4SRKnG8RXEN50I5KEiK9PmyE4kjWsJQEKXtzNYqK+1f6nj5ticCY
+	AlOXowlOYX29b8viadhHJkBLGSGsPLGksxEwjhVdNQ9FCdusGsxmv2wVcJjEyH8XsJVZ24
+	/5RQY948Y7L8p6A9TvL14nrgOnCiKHc=
+Date: Mon, 6 May 2024 15:38:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH 2/2] pinctrl: zynqmp: Support muxing individual pins
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org,
+ Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240503162217.1999467-1-sean.anderson@linux.dev>
+ <20240503162217.1999467-3-sean.anderson@linux.dev>
+ <ZjkuzKEt2aiHIwg_@surfacebook.localdomain>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <ZjkuzKEt2aiHIwg_@surfacebook.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Introduce the capability to dynamically configure the maximum file
-note size for ELF core dumps via sysctl.
+On 5/6/24 15:26, Andy Shevchenko wrote:
+> Fri, May 03, 2024 at 12:22:17PM -0400, Sean Anderson kirjoitti:
+>> While muxing groups of pins at once can be convenient for large
+>> interfaces, it can also be rigid. This is because the group is set to
+>> all pins which support a particular function, even though not all pins
+>> may be used. For example, the sdhci0 function may be used with a 8-bit
+>> eMMC, 4-bit SD card, or even a 1-bit SD card. In these cases, the extra
+>> pins may be repurposed for other uses, but this is not currently
+>> allowed.
+>> 
+>> Add a new group for each pin which can be muxed. These groups are part
+>> of each function the pin can be muxed to. We treat group selectors
+>> beyond the number of groups as "pin" groups. To set this up, we
+>> initialize groups before functions, and then create a bitmap of used
+>> pins for each function. These used pins are appended to the function's
+>> list of groups.
+> 
+> ...
+> 
+>> +			for (pin = 0; pin < groups[resp[i]].npins; pin++)
+>> +				set_bit(groups[resp[i]].pins[pin], used_pins);
+> 
+> Why atomic bit operation?
 
-Why is this being done?
-We have observed that during a crash when there are more than 65k mmaps
-in memory, the existing fixed limit on the size of the ELF notes section
-becomes a bottleneck. The notes section quickly reaches its capacity,
-leading to incomplete memory segment information in the resulting coredump.
-This truncation compromises the utility of the coredumps, as crucial
-information about the memory state at the time of the crash might be
-omitted.
+The name was easier to remember. I can make it non-atomic.
 
-This enhancement removes the previous static limit of 4MB, allowing
-system administrators to adjust the size based on system-specific
-requirements or constraints.
+> ...
+> 
+>> +	fgroups = devm_kcalloc(dev, func->ngroups + npins, sizeof(*fgroups),
+> 
+> size_add() from overflow.h.
 
-Eg:
-$ sysctl -a | grep core_file_note_size_min
-kernel.core_file_note_size_max = 4194304
+OK
 
-$ sysctl -n kernel.core_file_note_size_min
-4194304
+>> +			       GFP_KERNEL);
+>> +	if (!fgroups)
+>> +		return -ENOMEM;
+> 
+> ...
+> 
+>> +	for (i = 0; i < func->ngroups; i++) {
+>> +		fgroups[i] = devm_kasprintf(dev, GFP_KERNEL, "%s_%d_grp",
+>> +					    func->name, i);
+>> +		if (!fgroups[i])
+>> +			return -ENOMEM;
+>> +	}
+> 
+> Hmm... Can this benefit from devm_kasprintf_strarray()?
+> 
 
-$echo 519304 > /proc/sys/kernel/core_file_note_size_min
+I don't think so, since the prefix is different for each group.
 
-$sysctl -n kernel.core_file_note_size_min
-519304
+Thanks for the suggestions.
 
-Attempting to write beyond the ceiling value of 16MB
-$echo 17194304 > /proc/sys/kernel/core_file_note_size_min
-bash: echo: write error: Invalid argument
-
-Signed-off-by: Vijay Nag <nagvijay@microsoft.com>
-Signed-off-by: Allen Pais <apais@linux.microsoft.com>
-
----
-Changes in v4:
-   - Rename core_file_note_size_max to core_file_note_size_min [kees]
-   - Rename core_file_note_size_max to MAX_FILE_NOTE_SIZE to
-     CORE_FILE_NOTE_SIZE_DEFAULT and MAX_ALLOWED_NOTE_SIZE to
-     CORE_FILE_NOTE_SIZE_MAX [Kees]
-   - change core_file_note_size_allowed to static and const [Kees]
-Changes in v3:
-   - Fix commit message to reflect the correct sysctl knob [Kees]
-   - Add a ceiling for maximum pssible note size(16M) [Allen]
-   - Add a pr_warn_once() [Kees]
-Changes in v2:
-   - Move new sysctl to fs/coredump.c [Luis & Kees]
-   - rename max_file_note_size to core_file_note_size_max [kees]
-   - Capture "why this is being done?" int he commit message [Luis & Kees]
----
- fs/binfmt_elf.c          |  7 +++++--
- fs/coredump.c            | 15 +++++++++++++++
- include/linux/coredump.h |  1 +
- 3 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 5397b552fbeb..4dc7eb265a97 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1564,7 +1564,6 @@ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
- 	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
- }
- 
--#define MAX_FILE_NOTE_SIZE (4*1024*1024)
- /*
-  * Format of NT_FILE note:
-  *
-@@ -1592,8 +1591,12 @@ static int fill_files_note(struct memelfnote *note, struct coredump_params *cprm
- 
- 	names_ofs = (2 + 3 * count) * sizeof(data[0]);
-  alloc:
--	if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
-+	/* paranoia check */
-+	if (size >= core_file_note_size_min) {
-+		pr_warn_once("coredump Note size too large: %u (does kernel.core_file_note_size_min sysctl need adjustment?\n",
-+			      size);
- 		return -EINVAL;
-+	}
- 	size = round_up(size, PAGE_SIZE);
- 	/*
- 	 * "size" can be 0 here legitimately.
-diff --git a/fs/coredump.c b/fs/coredump.c
-index be6403b4b14b..20807c3c5477 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -56,10 +56,16 @@
- static bool dump_vma_snapshot(struct coredump_params *cprm);
- static void free_vma_snapshot(struct coredump_params *cprm);
- 
-+#define CORE_FILE_NOTE_SIZE_DEFAULT (4*1024*1024)
-+/* Define a reasonable max cap */
-+#define CORE_FILE_NOTE_SIZE_MAX (16*1024*1024)
-+
- static int core_uses_pid;
- static unsigned int core_pipe_limit;
- static char core_pattern[CORENAME_MAX_SIZE] = "core";
- static int core_name_size = CORENAME_MAX_SIZE;
-+static const unsigned int core_file_note_size_max = CORE_FILE_NOTE_SIZE_MAX;
-+unsigned int core_file_note_size_min = CORE_FILE_NOTE_SIZE_DEFAULT;
- 
- struct core_name {
- 	char *corename;
-@@ -1020,6 +1026,15 @@ static struct ctl_table coredump_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
-+	{
-+		.procname       = "core_file_note_size_min",
-+		.data           = &core_file_note_size_min,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler	= proc_douintvec_minmax,
-+		.extra1		= &core_file_note_size_min,
-+		.extra2		= (unsigned int *) &core_file_note_size_max,
-+	},
- };
- 
- static int __init init_fs_coredump_sysctls(void)
-diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index d3eba4360150..f6be9fd2aea7 100644
---- a/include/linux/coredump.h
-+++ b/include/linux/coredump.h
-@@ -46,6 +46,7 @@ static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
- #endif
- 
- #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
-+extern unsigned int core_file_note_size_min;
- extern void validate_coredump_safety(void);
- #else
- static inline void validate_coredump_safety(void) {}
--- 
-2.17.1
-
+--Sean
 
