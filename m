@@ -1,204 +1,94 @@
-Return-Path: <linux-kernel+bounces-170471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A758BD79C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:33:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FC68BD7A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF519283F2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:33:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C247B24181
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DCC158DD3;
-	Mon,  6 May 2024 22:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF67E15B0ED;
+	Mon,  6 May 2024 22:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fv1GChc/"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OAcqGzvI"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6478642A8A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 22:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57882232A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 22:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715034828; cv=none; b=RnQ+43JPGfrPOw/rMHVK4Afo8sBg78in1hAjBWGH6Pcp0e3np8WaCIwQxBp3pBsEfZE5dNmLwiwh2kewhbXclRQO0fspnbG4EZ/jVsyYpawZ5WfEHszAzpYvej4kmmtMu4RpNHNG1JqP1PDqSMJN2TX0KjE8HVq7xOmcMteg+TM=
+	t=1715034939; cv=none; b=SIgmus8YWeGrBz8NNtIVtK4Ylx/SzTW1E8We1AaM2QSdb6mdmKSMF8CbRwHj+rVKzIizdawKk1B1mcwGvYfIoRyzantlVAWrHWppYyyjcrl18lsejfQXa7jLuCZo6PcrI8ha4pnysgw02UlGTzuvcV0LkI1e6EwbrQ3AUerW+7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715034828; c=relaxed/simple;
-	bh=XbeaIHre143E4vysQmGrzt4tNC6G3/zMv2H2o4AQ/yc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZEA5rAoHllgyt94ooetnWjD4deicBFdUwuvz/Y4OfDp25YyuQ9BtTsmgvrEadbCdpYjsayX/QCWKHrvhSldIlxMh06v0hzEV7KDwpo+pf0mSX/yOXeD5LPiMGM9vu6RtStL+CiijYSxZ9Ye7Qs++wpwSdUrqjePPHBPU3n8J/R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fv1GChc/; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1715034939; c=relaxed/simple;
+	bh=GcXmkrj997eYvclW9glnQT5AfA2rYiSN+YqNKGTnRRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=baefYT4QzQQwBSrFKJjMV3E3D/ca+q+HPimDqMrdm9JD1u+/M0p7JHSlP9fwqzpFTvap/1SaEQdEp0Vbi7hMgEkkdQjXUxds+/pL6H4vkU0by5UsAB0vjaH40rFalhs27cGt8K5s48yDa+UM70kgij3bYYlJkqOW2jJBqO9o50Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OAcqGzvI; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41dc9c83e57so26770015e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 15:33:45 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41b9dff6be8so16522145e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 15:35:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715034824; x=1715639624; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L93aTq+yntQGwFV5vIt1XMlXm8vhsrvaK9kqXIrRNHA=;
-        b=Fv1GChc/VhBKk7SHWj4sf1HvYNnhAikjgJGgjuwEZI0EzgmUAu73ID9imCMzrJRe6r
-         L8X+FHjLtlo1iKMVL5Cj81HHl0oZJMy0ZTQcLG2jRFnvRZ1WSroFWUtB3g/O6swRp1FL
-         HMF29RjYQSIOUAmxiPsLvqtwzjlRSGoSVWBfEW9Xqg2AaWkFilZ8YYag42Qzsjsff79h
-         gIO6i3oqXQQrQnnUL2r5utRudyY29AkYr0GbyBsyEqsMoXbuILWwaiOGEUJ/8IlP7llN
-         O8A4ZbHC0x36xnd6VcYZrz46F/MUE85ZgHzO1QUt4bUNaY7i/gMSoByFakQDVY9IoFDd
-         VYvA==
+        d=linaro.org; s=google; t=1715034936; x=1715639736; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GcXmkrj997eYvclW9glnQT5AfA2rYiSN+YqNKGTnRRk=;
+        b=OAcqGzvInkx9RkgXyAS+f+n7pk+m4QXHWrM+10SzeiVjdUFLAEaUMvNJk85PKFES8a
+         azTE0In4k4JnInGvHRxCdn1sEguJ6lPv/Bt5CsMCOw8MBdir/uEdvl/3tMY38eqfI4ET
+         3NmaSgoEGP2tZoWLtqMySUkmlwioUaAEsiJl0M2PsKuBgwyyG0fniE/X4kCyf5REpoHS
+         h8GpDELoPYuM4ABIGbq7sCeS3rcsRNRp1NDk67Mbi0u08IfFKx3t+XoFrezGuP0WjZ/W
+         /ZYYObUAqxiNd8yykQEnosQedBrkUoOelHWXHuDq3iIEGvzI5nkDmFETnN76UY8yT4gd
+         h9Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715034824; x=1715639624;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L93aTq+yntQGwFV5vIt1XMlXm8vhsrvaK9kqXIrRNHA=;
-        b=bxgmDCWh4HKWw/6qkGN3hDmPXtxGBvb0hOKDR9Y4Oryy9Ecaz2LgwKVoYxY0PXPwBb
-         OaU670EwS9wiFI0bb3nHkJsBA1S9g68a1P8z54waP91gJGZkMLxfIwgCXaeKAYBiAtqe
-         n625r8tiqVhb029Np2ayXiuM+PdJ4rLx8OjoqPwGiuaf63Qc68iSUqBpO17nFBi3982O
-         13OxHTEdpMHrU8MFG843lT57ecRLV/TevCcj/T5aab/FjqesleX8wQQdmNXs4vHaLuGm
-         Nn0vmYDhYzba6+X+te+AGKkUzlKHnHnEfZAxJvP3whDvTrUEiYc+4D0yQu6tvsMoUBgq
-         lJ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUoXjgtJyGCeAbEQuvU52g/CiAztS0ZHIs8VsISOk6jPmlolslGdZ6UQoKaEY79baku0jpNYVzi4dmbcJUf9P1GABfYYMmmUEIKkoXm
-X-Gm-Message-State: AOJu0YwM31mWldDD3zqsL3Ijyntlu0wybAPPQuJuDorpQ069/7zZRfvc
-	RVPVad6SSJJ2415PQhRAW/BTuOubZKbqikJx2HMRAw3s8mSK2hGZiOFDKIKk22E=
-X-Google-Smtp-Source: AGHT+IETCACzliOUjlrnticdSVUZDaX9BTfnVx0YXJZTNKGyAnSM76tyfOngJ61KyYRQjgCj5V3P+Q==
-X-Received: by 2002:a05:600c:4f14:b0:41b:8c5c:31b9 with SMTP id l20-20020a05600c4f1400b0041b8c5c31b9mr775530wmq.14.1715034823704;
-        Mon, 06 May 2024 15:33:43 -0700 (PDT)
-Received: from [127.0.0.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id be11-20020a05600c1e8b00b00418f7605249sm17264766wmb.24.2024.05.06.15.33.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 15:33:43 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Mon, 06 May 2024 23:33:39 +0100
-Subject: [PATCH] media: i2c: Fix imx42 exposure control
+        d=1e100.net; s=20230601; t=1715034936; x=1715639736;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GcXmkrj997eYvclW9glnQT5AfA2rYiSN+YqNKGTnRRk=;
+        b=Hwcts3yaXjGdwU7z4xZlidMjtW0w5FVhZJYhMm+Iv8YcZnd5Q7ygmkLm0uxGGVoiXo
+         4qQ34ylyfi4WcWYmZ0rCQLym2woZY1w6/sHH9pEsL1w4axQtzCEeEgKLADSQJZvdKPDK
+         18oKxhloktuoIc2te1MX/yQeW8F0gvB2aweYaBKkmSf57GWrDOdNICDXYkUxc4lR+Vch
+         2MYwM88tIG5ITLHZEBRkLWIyfe+DWvYIehRWfkyiw76W4tF1a8clvga3MunAsSw0Hr3f
+         N6exM19Q4nnFazcNz/yo4nx7jwFHGlfIOd18NnXey3vL7yDqq3Fqp6GitFNUQQaoLrR0
+         Ejmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNT9334ugY4g7Nhhb4qQOq4WmqJUsZElqECugtBJa3k0BXhCDtOWOIX0rA//U1Wh0eMy97zxB76CUdGgahAnlnJ/+Dzpmo4LxJYwjh
+X-Gm-Message-State: AOJu0YwrxSQiCIuSH+X5Raj3no/2guvtJjfDI/BUKZS2es3ZZXMfX3SO
+	XsSso1wzX4tVoGJ97o5UqoodxY48GPqlA8oNPsxMZhQN55XIrOTRqElpfKGg7X4=
+X-Google-Smtp-Source: AGHT+IE/a1ImSf9U4M4zZQE3dRok4NlO5aL66sezJ7SrYTYF9oCpKh90NfQdwnmtIv6ceyUnGbg9zA==
+X-Received: by 2002:a05:600c:3512:b0:41a:c92:d323 with SMTP id h18-20020a05600c351200b0041a0c92d323mr8415179wmq.10.1715034936053;
+        Mon, 06 May 2024 15:35:36 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id z11-20020a05600c0a0b00b0041c097e20f9sm21055228wmp.25.2024.05.06.15.35.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 15:35:35 -0700 (PDT)
+Message-ID: <6058be87-f168-44e5-84f6-df884486e138@linaro.org>
+Date: Mon, 6 May 2024 23:35:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v1-1-4b3a9426bde8@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAMJaOWYC/x2NQQrCMBBFr1Jm7UBS0wS8iriIdVIHmlQyqQRK7
- +7g7r+/eO8AocokcBsOqPRl4a0o2MsA8zuWhZBfyjCa0ZnJeHw6XLnsHQv1hnPMItjtVTBn2Vb
- k0mipsalGNzaShpz7FAIm7phsIvImGO8saONTSe9///44zx+klMhNjwAAAA==
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- "Paul J. Murphy" <paul.j.murphy@intel.com>, 
- Martina Krasteva <quic_mkrastev@quicinc.com>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: i2c: Fix imx42 exposure control
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ "Paul J. Murphy" <paul.j.murphy@intel.com>,
+ Martina Krasteva <quic_mkrastev@quicinc.com>,
  Daniele Alessandrelli <daniele.alessandrelli@intel.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.13-dev-26615
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v1-1-4b3a9426bde8@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v1-1-4b3a9426bde8@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently we have the following algorithm to calculate what value should be
-written to the exposure control of imx412.
-
-lpfr = imx412->vblank + imx412->cur_mode->height;
-shutter = lpfr - exposure;
-
-The 'shutter' value is given to IMX412_REG_EXPOSURE_CIT however, the above
-algorithm will result in the value given to IMX412_REG_EXPOSURE_CIT
-decreasing as the requested exposure value from user-space goes up.
-
-e.g.
-[ 2255.713989] imx412 20-001a: Received exp 1608, analog gain 0
-[ 2255.714002] imx412 20-001a: Set exp 1608, analog gain 0, shutter 1938, lpfr 3546
-[ 2256.302770] imx412 20-001a: Received exp 2586, analog gain 100
-[ 2256.302800] imx412 20-001a: Set exp 2586, analog gain 100, shutter 960, lpfr 3546
-[ 2256.753755] imx412 20-001a: Received exp 3524, analog gain 110
-[ 2256.753772] imx412 20-001a: Set exp 3524, analog gain 110, shutter 22, lpfr 3546
-
-This behaviour results in the image having less exposure as the requested
-exposure value from user-space increases.
-
-Other sensor drivers such as ov5675, imx218, hid556 and others take the
-requested exposure value and directly.
-
-Take the example of the above cited sensor drivers and directly apply the
-requested exposure value from user-space. The 'lpfr' variable still
-functions as before but the 'shutter' variable can be dispensed with as a
-result.
-
-Once done a similar run of the test application requesting higher exposure
-looks like this, with 'exp' written directly to the sensor.
-
-[  133.207884] imx412 20-001a: Received exp 1608, analog gain 0
-[  133.207899] imx412 20-001a: Set exp 1608, analog gain 0, lpfr 3546
-[  133.905309] imx412 20-001a: Received exp 2844, analog gain 100
-[  133.905344] imx412 20-001a: Set exp 2844, analog gain 100, lpfr 3546
-[  134.241705] imx412 20-001a: Received exp 3524, analog gain 110
-[  134.241775] imx412 20-001a: Set exp 3524, analog gain 110, lpfr 3546
-
-The result is then setting the sensor exposure to lower values results in
-darker, less exposure images and vice versa with higher exposure values.
-
-Fixes: 9214e86c0cc1 ("media: i2c: Add imx412 camera sensor driver")
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # qrb5165-rb5/imx577
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
-Using libcamera/SoftISP on a Qualcomm RB5 with the imx577 sensor I found
-that unlike on other platforms such as the Lenovo x13s/ov5675 the image was
-constantly getting darker and darker.
-
-At first I assumed a bug in SoftISP but, looking into the code it appeared
-SoftISP was requesting higher and higher exposure values which resulted in
-the image getting progressively darker.
-
-To my mind the software contract between user-space and kernel should be
-increasing exposure requests always meant higher exposure but, to be
-certain I asked around on IRC.
-
-Those polled agreed in principle that the software contract was consistent
-across sensors.
-
-Looking at the range of imx sensors, it appears this particular error has
-been replicated a number of times but, I haven't so far really drilled into
-each sensor.
-
-As a first pass I'm submitting the fix for the sensor I have but, I expect
-if this fix is acceptable upstream it should be pushed to most of the imx
-sensors with what seems to be copy/paste code for the exposure.
----
- drivers/media/i2c/imx412.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/i2c/imx412.c b/drivers/media/i2c/imx412.c
-index 0efce329525e4..7d1f7af0a9dff 100644
---- a/drivers/media/i2c/imx412.c
-+++ b/drivers/media/i2c/imx412.c
-@@ -542,14 +542,13 @@ static int imx412_update_controls(struct imx412 *imx412,
-  */
- static int imx412_update_exp_gain(struct imx412 *imx412, u32 exposure, u32 gain)
- {
--	u32 lpfr, shutter;
-+	u32 lpfr;
- 	int ret;
- 
- 	lpfr = imx412->vblank + imx412->cur_mode->height;
--	shutter = lpfr - exposure;
- 
--	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, shutter %u, lpfr %u",
--		exposure, gain, shutter, lpfr);
-+	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, lpfr %u",
-+		exposure, gain, lpfr);
- 
- 	ret = imx412_write_reg(imx412, IMX412_REG_HOLD, 1, 1);
- 	if (ret)
-@@ -559,7 +558,7 @@ static int imx412_update_exp_gain(struct imx412 *imx412, u32 exposure, u32 gain)
- 	if (ret)
- 		goto error_release_group_hold;
- 
--	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, shutter);
-+	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, exposure);
- 	if (ret)
- 		goto error_release_group_hold;
- 
-
----
-base-commit: ff3959189f1b97e99497183d76ab9b007bec4c88
-change-id: 20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-f1fee6070641
-
-Best regards,
--- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
+bah - imx412 !
 
