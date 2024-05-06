@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-170008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805068BD086
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:42:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278638BD088
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2337B23AFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC62E2814DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B957B153824;
-	Mon,  6 May 2024 14:42:10 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F3B153519;
+	Mon,  6 May 2024 14:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="XJ36DjW9"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF9D1534FC;
-	Mon,  6 May 2024 14:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0843F1534F9;
+	Mon,  6 May 2024 14:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006530; cv=none; b=h7liOcoCC0xgevAU1HID1d144WkmaYvXZFoD62LrfyhuR9GgVdLBlyYAEMGJv20/ald5NJOSv7o+qdNumIELvSyDZ84Aqk6HS5fa0rjJJShb1zDBNkeMKQRo3On1nau+Pk33cSbu6+AQJgNycdDoG2i9fOsegkbbDjhl7jnQ8rE=
+	t=1715006607; cv=none; b=AzhHf36VILARjSN50VWQMxZiQXJ77B4XSK0tGMXGu6/QKxzqCS0rmvlm6NYtHF+5MR7BjCLkcotqyIBbipZku2NC721LF4J+9Qu5QHiE4jHfW9c3Fbx23py7By6YGxM1ABrcppaZscFhWDhuf0IeCJf0xv1TEAYh4U9hC5YRo2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006530; c=relaxed/simple;
-	bh=mpA6pGIU8VJt7O65eli8d//jyThHUXVd66pNKG1SZn8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=T3f2ZTZaykMe1vKoZgUlWEAyxoKdxAoZ7mlDKF1lYqjCQrXowGDhSq8d/u66ks4/P2UYidSsPRhNTsOU2UufqUg9V0/Ln5/me0rvdlHDFOEwOBQT7Ut8CO3wYqNN/80k6ednVu5Wa3n1fcoYvvZ6rx9KLn9fPR6LmSLvCa/zGqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY3yV2GLDz4f3lD4;
-	Mon,  6 May 2024 22:41:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 11A181A058D;
-	Mon,  6 May 2024 22:42:04 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgC32w467Dhmz6nXMA--.56195S3;
-	Mon, 06 May 2024 22:42:03 +0800 (CST)
-Subject: Re: [PATCH 1/9] jbd2: avoid memleak in
- jbd2_journal_write_metadata_buffer
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
- <20240506141801.1165315-2-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <448062a9-43f8-c7ad-0b4d-ddf892713d9e@huaweicloud.com>
-Date: Mon, 6 May 2024 22:42:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715006607; c=relaxed/simple;
+	bh=1PHydZMCG6eb+35vdAr+laWpupGyGqL/HZ0CYrrHWig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7fmsSeH5hMz/3dJL1Fi++U61lts240aTYDOEsMCC+ftRapixE9waZ4WiERXHHT8y98rnL4Wmgaf5n0KYhMzeeWvAqO0K0jqCEixuooWV5fmzh2NOSSeHWzqI/GqtbABPGzDO/jW9mIeOA5CS8NZd1AVR/sPzEYLkjlGkaG8cN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=XJ36DjW9; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=oIh2GEZu/cERMqozSXMHDf8vR7BHYa8ZZujCki8gVbk=; b=XJ36DjW9q95criDy
+	PfvX7l5rO3BlxBL/UnezZUjXQoMvl0iUjBorXo7yyJn+2PxjgoU+SU/LrV6HhJJQ0iGzNdUjMfNkn
+	FXO0KvFZsw3uVhZ0VmXb0cq5ReGzpugUeMv/wWiaPSfo/DIlyxkf9uQNnxsTePMF0bSUb0SnexneR
+	jNHxQzrokoh36UZBsbGd25bPCw7MpxU+oxswApvZ+JKE4HfCcP+I1VBAtj/6vxCT/lOzJle0C8YSO
+	OyOiYg/zcELM5C8lnX8U5w2ySdtqvcluY2doDzCeVnkhz32OKTYoRSInSxmCmGrBdui3xT6ZalwiD
+	gsyLaJrrBEMMd92Kcg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1s3zYm-004wdj-16;
+	Mon, 06 May 2024 14:43:20 +0000
+Date: Mon, 6 May 2024 14:43:20 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: bhelgaas@google.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: ce4100: Remove unused struct 'sim_reg_op'
+Message-ID: <ZjjsiO33y08dJLPX@gallifrey>
+References: <20240506004647.770666-1-linux@treblig.org>
+ <948a3829-96da-2708-60f8-f25546683436@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240506141801.1165315-2-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgC32w467Dhmz6nXMA--.56195S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrKw43Zr18JrWrJFy7ZF1UJrb_yoW3tFg_WF
-	Z7Zrn7X398XFs7Aa1rCa47urn8Krs5Cr1kCa40gw17Gr15t3yrXFnrJw1DtF9ruan2gr4U
-	Cas29F48Kr9xJjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb7kYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUzsqWUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <948a3829-96da-2708-60f8-f25546683436@linux.intel.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-17-amd64 (x86_64)
+X-Uptime: 14:42:20 up 124 days, 17:32,  1 user,  load average: 0.06, 0.03,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 2024/5/6 22:17, Kemeng Shi wrote:
-> The new_bh is from alloc_buffer_head, we should call free_buffer_head to
-> free it in error case.
-
-Oh, yeah, this is a separate bh, so it should be freed explicitly, it
-looks good to me.
-
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
+* Ilpo Järvinen (ilpo.jarvinen@linux.intel.com) wrote:
+> On Mon, 6 May 2024, linux@treblig.org wrote:
 > 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  fs/jbd2/journal.c | 1 +
->  1 file changed, 1 insertion(+)
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > This doesn't look like it was ever used.
 > 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index b6c114c11b97..207b24e12ce9 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -399,6 +399,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  		tmp = jbd2_alloc(bh_in->b_size, GFP_NOFS);
->  		if (!tmp) {
->  			brelse(new_bh);
-> +			free_buffer_head(new_bh);
->  			return -ENOMEM;
->  		}
->  		spin_lock(&jh_in->b_state_lock);
-> 
+> Don't start with "This" but spell what you're talking about out so it 
+> can be read and understood without shortlog in Subject (or looking into 
+> the code change).
 
+I'm of course happy to rework that if it helps you, although
+I thought the subject line was sufficient.
+
+Dave
+
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  arch/x86/pci/ce4100.c | 6 ------
+> >  1 file changed, 6 deletions(-)
+> > 
+> > diff --git a/arch/x86/pci/ce4100.c b/arch/x86/pci/ce4100.c
+> > index 87313701f069e..f5dbd25651e0f 100644
+> > --- a/arch/x86/pci/ce4100.c
+> > +++ b/arch/x86/pci/ce4100.c
+> > @@ -35,12 +35,6 @@ struct sim_dev_reg {
+> >  	struct sim_reg sim_reg;
+> >  };
+> >  
+> > -struct sim_reg_op {
+> > -	void (*init)(struct sim_dev_reg *reg);
+> > -	void (*read)(struct sim_dev_reg *reg, u32 value);
+> > -	void (*write)(struct sim_dev_reg *reg, u32 value);
+> > -};
+> > -
+> >  #define MB (1024 * 1024)
+> >  #define KB (1024)
+> >  #define SIZE_TO_MASK(size) (~(size - 1))
+> > 
+> 
+> -- 
+>  i.
+> 
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
