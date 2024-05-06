@@ -1,144 +1,185 @@
-Return-Path: <linux-kernel+bounces-170233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58CD8BD3DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:34:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878B98BD3F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 543A01F223A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:34:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5E8B21FA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B29157494;
-	Mon,  6 May 2024 17:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0C7157E94;
+	Mon,  6 May 2024 17:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JKBUXY8o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R6ejFAjF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000341C77
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 17:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556211F19A;
+	Mon,  6 May 2024 17:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715016839; cv=none; b=B6z2Zd/iWpws7O13cYW/XSjZgdz5anyyWRNEs/kgirgre/Xfk+MJ3NgkvILE6tXRyVfib7rVLQUTrl+OJaI5xVVhAGkUt/V4QBviFOXbLGPGwqQajMxgz1G59XmDQZYF0vz4JHcAwJOus4F1riuaSSgwPbmvBnrfh12bt6MIjfE=
+	t=1715017225; cv=none; b=WYi4XShQomCbFoDFCPi9mW+WWCpSqJM9wXYH1eouFPC94CSYCEsv9YssoWPaeIYg+yBAhH0DASCLF+1m9WUJ8DK3n4bqZm2kH4TAoHuGU1Eo5jZJ4DZKXSUAC1yzOCvQKhuvRrEoBuoulQnu0qWE5AkOiI27bR+OqhScOWu1UqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715016839; c=relaxed/simple;
-	bh=HWPYB78h9OxvGxxz+M/MgrBuGBHcB5iAMPXg/jZFXhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y7rtSRDUhO53J4CsC/Bt359pmC+iIJfzWA5XNRbclhOxudosC3X95iwatY5OVmeMvFuP7uJ+znU2VgTx6mLBayuxAmofBe/DOqCbjX+azCoXrR9H2gsNNRl1KE/59dc251nG52FUTJE2/zcKDlVH+lctYnMmci+ezz/+zWrOR4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JKBUXY8o; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715016838; x=1746552838;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HWPYB78h9OxvGxxz+M/MgrBuGBHcB5iAMPXg/jZFXhc=;
-  b=JKBUXY8o7ScAKhfgo+zhJAXI13M/TlZ56w6xDcrHnASGoj2YXrUkNiT3
-   CfnMhfDN3fj7Zo4916zMx9OXvbxA5wzgwMRWBoSleY97j06JmZn8uuONp
-   zrdXoz7CT0EYNHsAYM9X8oYw9lAC7jQe3uAbKZUY6s9K1h+WL8wUYZ9As
-   Wi60I0lPpsF2sQxHRmZcLZglWgO6tKF5Uudn0ad1Pw6MnIAjy4nXGM7ep
-   lfMokP6Oi86tTei8ie5uCvSLk3SFAw95vUXjPVjywgd8jIRc+UzhUB9YI
-   mlJF17/F2on/Q50rwkmN6RqibWl3CfxXkavx02X2SnvjUsafYlwqw/FJI
-   A==;
-X-CSE-ConnectionGUID: Q41o53nsSo2AhyyLT1Yf9A==
-X-CSE-MsgGUID: 8tewF2rHSVijbbORYUoUiQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21933060"
-X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
-   d="scan'208";a="21933060"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 10:33:58 -0700
-X-CSE-ConnectionGUID: 4piSjYOET7GjgOk7hwS6wQ==
-X-CSE-MsgGUID: tFfgysrKTdCAbrpVFMpSCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
-   d="scan'208";a="28625668"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 10:33:58 -0700
-Date: Mon, 6 May 2024 10:38:41 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Imran Khan <imran.f.khan@oracle.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org,
- linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH] x86/irq: use lapic_vector_set_in_irr to check for
- pending vectors in fixup_irqs.
-Message-ID: <20240506103841.4d838866@jacob-builder>
-In-Reply-To: <20240506111634.121460-1-imran.f.khan@oracle.com>
-References: <20240506111634.121460-1-imran.f.khan@oracle.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715017225; c=relaxed/simple;
+	bh=Vcqjn1Z6RaAYOBPjcfqXMWtAhNGgVNzcQSJ1Gw0LXQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LLU2hkBcSXO96MukpQTFpmT+VB3qsAXP8oSs/LS8gTtzEUQrPkgkpHfFZLr37dwe7BMxDFi2FSZ9QrYdEMIDHxJqFvErfAcPpmYIA5yshj8laO9kgpD7EYbdSlHybW2JhEct1dQgUvsM1dT+kw41hfJmZg0kOiDOIDQkYUnA/Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R6ejFAjF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 446DZokY027352;
+	Mon, 6 May 2024 17:40:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=7ATTd3ufsSDw7z+yQ+2rQFtgY+zu84cWtUZHkSX5Z+Q=; b=R6
+	ejFAjFJL9kxU7O90/lC3zCFOsIjR8Khe8zdKm3aC1vbEkMqywMsYiCH8uGdJkx8W
+	/C9fCgVcPdy78nb/849WYTwmqeK0Jd/mS0H2sjDinyw6V/s5KyOJwp7ScZwGFSpk
+	KNXULRRxT+wY9z6dkLnlntC2N7JJ7UlU+aELSS1jbZz5RN+uV6Gtd+gJE1ZKAv1a
+	meBVNwP8AJWBkNIpGFoU0wNJ+l7/LRkP+SfWa3kuOgJ9PBxlJVBZduFuQm800kMJ
+	FxuUY25FG+pBaJxnPPsFHnGvTGDXsx0427kI/MkyMxIGpO3de68tvTeQRk6PeUC4
+	yy/TDlqFcYA5/lAm4QKA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xxvv71166-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 May 2024 17:40:19 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 446HeIZP004597
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 6 May 2024 17:40:18 GMT
+Received: from [10.110.70.44] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 6 May 2024
+ 10:40:14 -0700
+Message-ID: <2649871c-ad10-4642-acc0-a15b03b4f1dd@quicinc.com>
+Date: Mon, 6 May 2024 10:40:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] soc: qcom: llcc: Add regmap for Broadcast_AND
+ region
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Johan Hovold <johan+linaro@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240329-llcc-broadcast-and-v4-0-107c76fd8ceb@quicinc.com>
+ <20240329-llcc-broadcast-and-v4-2-107c76fd8ceb@quicinc.com>
+ <d6b0f9d2-a489-4c0e-9c77-0e3eab49d3cb@linaro.org>
+ <13ccc36a-c3cc-469a-ae0b-71fd0d24bf63@quicinc.com>
+ <3365d84a-1b1d-4b1d-8be5-6d8d1039e6b9@linaro.org>
+From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+In-Reply-To: <3365d84a-1b1d-4b1d-8be5-6d8d1039e6b9@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FGPey0LpD4LQr9f6nzx_HGpJdM7ptKPm
+X-Proofpoint-ORIG-GUID: FGPey0LpD4LQr9f6nzx_HGpJdM7ptKPm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-06_12,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1011 suspectscore=0
+ spamscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
+ definitions=main-2405060126
 
-Hi Imran,
-
-On Mon,  6 May 2024 21:16:34 +1000, Imran Khan <imran.f.khan@oracle.com>
-wrote:
-
-> No functional change, just using readily available helper which
-> uses the same logic, that has been used here.
+On 4/10/2024 11:24 AM, Konrad Dybcio wrote:
 > 
-> Signed-off-by: Imran Khan <imran.f.khan@oracle.com>
-> ---
->  arch/x86/kernel/irq.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-> index 35fde0107901d..71432e42275c4 100644
-> --- a/arch/x86/kernel/irq.c
-> +++ b/arch/x86/kernel/irq.c
-> @@ -339,7 +339,7 @@
-> DEFINE_IDTENTRY_SYSVEC_SIMPLE(sysvec_kvm_posted_intr_nested_ipi) /* A cpu
-> has been removed from cpu_online_mask.  Reset irq affinities. */ void
-> fixup_irqs(void) {
-> -	unsigned int irr, vector;
-> +	unsigned int vector;
->  	struct irq_desc *desc;
->  	struct irq_data *data;
->  	struct irq_chip *chip;
-> @@ -366,8 +366,7 @@ void fixup_irqs(void)
->  		if (IS_ERR_OR_NULL(__this_cpu_read(vector_irq[vector])))
->  			continue;
->  
-> -		irr = apic_read(APIC_IRR + (vector / 32 * 0x10));
-> -		if (irr  & (1 << (vector % 32))) {
-> +		if (lapic_vector_set_in_irr(vector)) {
->  			desc = __this_cpu_read(vector_irq[vector]);
->  
->  			raw_spin_lock(&desc->lock);
-I have a similar refactoring as part of the posted MSI series, but I
-totally missed the existing helper lapic_vector_set_in_irr().
+> On 4/2/24 21:34, Unnathi Chalicheemala wrote:
+>> On 3/30/2024 4:46 AM, Krzysztof Kozlowski wrote:
+>>> On 29/03/2024 22:53, Unnathi Chalicheemala wrote:
+>>>> Define new regmap structure for Broadcast_AND region and initialize
+>>>> this regmap when HW block version is greater than 4.1, otherwise
+>>>> initialize as a NULL pointer for backwards compatibility.
+>>>>
+>>>
+>>>> +    struct regmap *regmap;
+>>>>       u32 act_ctrl_reg;
+>>>>       u32 act_clear_reg;
+>>>>       u32 status_reg;
+>>>> @@ -849,7 +850,8 @@ static int llcc_update_act_ctrl(u32 sid,
+>>>>           return ret;
+>>>>         if (drv_data->version >= LLCC_VERSION_4_1_0_0) {
+>>>> -        ret = regmap_read_poll_timeout(drv_data->bcast_regmap, status_reg,
+>>>> +        regmap = drv_data->bcast_and_regmap ?: drv_data->bcast_regmap;
+>>>> +        ret = regmap_read_poll_timeout(regmap, status_reg,
+>>>>                         slice_status, (slice_status & ACT_COMPLETE),
+>>>>                         0, LLCC_STATUS_READ_DELAY);
+>>>>           if (ret)
+>>>> @@ -1284,6 +1286,16 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>>>>         drv_data->version = version;
+>>>>   +    /* Applicable only when drv_data->version >= 4.1 */
+>>>> +    drv_data->bcast_and_regmap = qcom_llcc_init_mmio(pdev, i + 1, "llcc_broadcast_and_base");
+>>>> +    if (IS_ERR(drv_data->bcast_and_regmap)) {
+>>>
+>>> I am pretty sure this breaks all users. Can you please explain how do
+>>> you maintain ABI and that IS_ERR() is applied only for version >= 4.1?
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>> IS_ERR() check is done for all versions.
+>> If new register isn't defined in DT(for version < 4.1) it simply sets bcast_and_regmap to NULL.
+>> Otherwise, for version >= 4.1, it goes to err(in the case bcast_and_regmap isn't set properly).
+> 
+> b4 shazam <this series>
+> 
+> booting on 8250, I get:
+> 
+> [    2.794850] qcom-llcc 9200000.system-cache-controller: invalid resource (null)
+> 
+> which comes from lib/devres.c : __devm_ioremap_resource()
+> 
+> Now, this is gonna get you an angry Johan(+CC) response when he sees this land in
+> the next release. Perhaps, this warning could either be removed from libdevres,
+> or some sort of an _optional variant that doesn't print it could be introduced.
+> 
+> Konrad
 
-https://lore.kernel.org/lkml/171448372145.10875.6906928487300074547.tip-bot2@tip-bot2/
+Apologies for extremely late reply Konrad. Let me try to recap quickly.
+The part you pointed out initializes a new regmap LLCC Boradcast AND region
+which is available only SM8450 onward. This patch set is updating respective DTs
+and driver code.
 
-Let me send out a fix patch against tip tree.
+Regarding the resource error on booting, I had added this check in previous version
+of patch set (https://lore.kernel.org/all/1ca4d384-9df4-4c00-a4c9-0c5ff491616e@linaro.org/)
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -505,13 +505,7 @@ static inline bool lapic_vector_set_in_irr(unsigned int vector)
+@@ -1282,6 +1287,17 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+ 
+ 	drv_data->version = version;
+ 
++	if (drv_data->version >= LLCC_VERSION_4_1_0_0) {
++		drv_data->bcast_and_regmap = qcom_llcc_init_mmio(pdev, i + 1, "llcc_broadcast_and_base");
++		if (IS_ERR(drv_data->bcast_and_regmap)) {
++			ret = PTR_ERR(drv_data->bcast_and_regmap);
++			if (ret == -EINVAL)
++				drv_data->bcast_and_regmap = NULL;
++			else
++				goto err;
++		}
++	}
++
 
- static inline bool is_vector_pending(unsigned int vector)
- {
--       unsigned int irr;
--
--       irr = apic_read(APIC_IRR + (vector / 32 * 0x10));
--       if (irr  & (1 << (vector % 32)))
--               return true;
--
--       return pi_pending_this_cpu(vector);
-+       return lapic_vector_set_in_irr(vector) || pi_pending_this_cpu(vector);
- }
-
-Thanks,
-
-Jacob
+This check will make sure we call devm_ioremap_resource() only when LLCC Boradcast AND region
+is defined in the devicetree and error is not shown in log.
 
