@@ -1,119 +1,107 @@
-Return-Path: <linux-kernel+bounces-170181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAB28BD2F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:40:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DBB8BD2F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868701C2113E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:40:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25D51C21045
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6547A156962;
-	Mon,  6 May 2024 16:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF61B156962;
+	Mon,  6 May 2024 16:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mQkUyM9Y"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Wk400gV"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617A325569
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E624C25569
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715013598; cv=none; b=f8wYVt5dSBmNl8GUyU3hKvqAQkudk7YQYTAMidKnn7/r5p2mqSoBzlnfXU+dlz3hg9R/k5BYMdIXBxQqm3t5AYy8RCunGxfoh2VoiuhlqT40zThOQubuHlnwiKCGSPZgNsKP8kIF7KqLmEjXZS99jxd+iwtBAr+GxwMjEMKDfcY=
+	t=1715013608; cv=none; b=Sg4tycrdtv8FCPim738Pr95AiEU7rVD9qADkhHH0Wi35SZX+OOcm0cktRpGsY5ompQIWqccwDMBCVZzJLnHk/nW4exNYFfRzA4h84IwwpyV4meFrHRxn1AhCOrAR8Zv/05OjAeAT64ktrgy0r9H+2TotRk0CxT/pWpr5m/SyZ28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715013598; c=relaxed/simple;
-	bh=Avjc5JEKY4BtFG45Sfhy5z4Vhuv0aBII8xkoLLTxJP4=;
+	s=arc-20240116; t=1715013608; c=relaxed/simple;
+	bh=mbCxyUl0xXnMrCeHULBRH3fDeDz5G+xM5ZK97knxOjE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d9fg+WQerk5xJVM7ts0IpGWLMnZuGSfHTGBVig/4aoJjwTRCEVzXD7SaZMY7+RjJ9kG0EhRVFP6LshAgnRQKKenZNBs2lrFr6p34ZQCry4u75fIzh0nq+vtKkhSEKJ5cbPNyjyV+JmBod39109kx5mkeJ/V9WjJKRceupKow3+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mQkUyM9Y; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5cdbc4334edso986492a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 09:39:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=ofJI7MDpHcavZUNavnVhYkrvQPVz+sk4jL70ElE4YWWGoPQQKz3bMi7qcn/aoigGxUB5fqbINl6efwZ4054V0o7x2FEEzb4BhC+mGghVcpYA+lSEZU2V7eP+ODlTl2WM4pg+4JFh557PDV+ZTjrJx12LHqlyMlvNRhh+eeYxR4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Wk400gV; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dcc71031680so2202491276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 09:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715013597; x=1715618397; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715013606; x=1715618406; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Avjc5JEKY4BtFG45Sfhy5z4Vhuv0aBII8xkoLLTxJP4=;
-        b=mQkUyM9Y8YVs/1b7/hXYxUMLS/jFJT4X0X7XwYbObB29PpkoZgr54EX6H5wfHS8Nbd
-         R6zc4siBPpOlmFSUm8U8g3vEZFfp6n14sExTG+4IUD80nh/40o0Us3Hcl4fHKlbVRWEB
-         FRsaxeu2GB8EL8yAiUUqjyrBOBeWCqgeG6ZlQ=
+        bh=mbCxyUl0xXnMrCeHULBRH3fDeDz5G+xM5ZK97knxOjE=;
+        b=2Wk400gVLHv1uH1+oNzd/L5K9GJxlua1f9bGeziUL8iTcDdvMIN8B7NC4cZBTop1rZ
+         zYVRKOkpTGR84qdRXgUUcaCcdXsq4tNYgRRFSsdzKQ9uw9CKzjviGTRm1gZ1OgqwGOkr
+         QY1+CC4eg27bDDREgl0mNUrbHE043/4uncFUDvoY52QoCCdOw2y1B49tsxckkb6+aCpo
+         Al6/UD3G7/8UdYQITwgr6jyhLSp3+MQA/GVInrF3zeO2hKMtulP+1dcbGj1CCtF0rYCM
+         3vlp/lgAaTeAM6maK9LNY+JENU/UxjSIGa4rxCQ4pammKgYe2mIlvWMj3PYTAMzRlkzp
+         /gkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715013597; x=1715618397;
+        d=1e100.net; s=20230601; t=1715013606; x=1715618406;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Avjc5JEKY4BtFG45Sfhy5z4Vhuv0aBII8xkoLLTxJP4=;
-        b=XO1Bi2nyfP/p9TA+V5o/NS+JbPq7Oe5bjRoSYD17PF1OxB5nlLd3tRoRfrCMjUr/Ot
-         7ujeGbR5+rq2WIqVemw/ZJwNEmSL9uOXqIeIhwDpQ6qs9Bxc0zqMx8qMlTxNk9ZLWaJL
-         yXgM70FLQP1Gw/x7EXFOxbKV7PbYjDHb+8FPOjc1RTFM13sDj7VL8X8TagyEp3iUz9Jc
-         yyDMZp0rsDqkp/pWT8aGDyn+e1oOzWkRCqalo6YUSDWXzHmyOrzy7RgQ4wAInh/D4FoL
-         +VLw1idb2Sqv4fZ4oUL8BY1h5gyDcysappxy9lzejNpzzI5v0ydabogCdIe2pHVoyuwV
-         bidQ==
-X-Gm-Message-State: AOJu0YxGLuBkB6I//9Vxwgl/ohKEDz5FQk4dZYrfnCslF8pLSrBSnPoD
-	ia7+DQa1uTJRT89yfFq0CxQ5zq9xq25Cmrh6gJ6zCOz2MSsaf+Is5ssZtEkVnpdJNw/B5sj6961
-	FkIEYJtaQk96ToxGJUBAua09Fe2V59wvIMywW
-X-Google-Smtp-Source: AGHT+IFtiZzUbdyJ7EHE9NaQYgST4cKZ8ciaJgk+hpp60dVzju5sNO9t8ZOCNbclU/AMAZqCL+aHIjcP+r96qaWsJVo=
-X-Received: by 2002:a05:6a20:d49a:b0:1af:88ab:e86a with SMTP id
- im26-20020a056a20d49a00b001af88abe86amr8476635pzb.40.1715013596588; Mon, 06
- May 2024 09:39:56 -0700 (PDT)
+        bh=mbCxyUl0xXnMrCeHULBRH3fDeDz5G+xM5ZK97knxOjE=;
+        b=GA4acYPxTl1rDJq1ASOIrFZXz+l6GRay49M7KLFkF54o92BKlLre0CZf1P3dwmm37P
+         MEF/Ij50lVgYbVhgRJYxiGXuJZg0/uZ+Qf3aXAkCCXOjuJ9Qyt02MzgPAdVuTfPVjG8M
+         au6meHjcStruhyYKqIRlF0gIoLjA8FywkNXtJbbCko88nOzT5Am8mup7/g+miRVBy7VQ
+         sz2DLrakO167Ar66FQiI5sUn01gOdWgmxF6m8RnJVN7j1pBnwVC5TkTgHmQOs2QwT5+1
+         fO93uFtO0jUvBoXWcCT9cFRewwjdklD3H0GfaQnPFt69b1vLJW3fRUsPJ/C98Da6Vh0a
+         M50Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXq5IAzYNoqjog3aX+4tPZbjL/Pn4C8gsBPDKzKlKhcbuxS7tAHKwpBS7wZ40TpIibHVxW4fCQiAWUlxhOWpH1RI+JnOEEnsNRBKnhr
+X-Gm-Message-State: AOJu0YzZsEdccnFlfRksJfitXUtg59r43RE8bScL/wYXEJLOcBcpJ/t9
+	GcXYUMqcvbLIgN4N40o7XYTme244RuF8gbJp+RmG/MdXJ2X4P4IplhQcZ/mUT2BfHxT3bMuvClN
+	qCxIYTwVZVg6agvND4DVBGtMwvDvSMV69b5Ey
+X-Google-Smtp-Source: AGHT+IFBxsahP+oE3FuwfOQp/ah0jhdGLJrVrWFUoON5+ivb9iKV65nJPRyw2KFaPamsQmlgz3oHokti0ORvDc2XNIE=
+X-Received: by 2002:a05:6902:2085:b0:de5:9c4b:dd5c with SMTP id
+ di5-20020a056902208500b00de59c4bdd5cmr12126324ybb.23.1715013605681; Mon, 06
+ May 2024 09:40:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240430212838.1.I77b0636d5df17c275042fd66cfa028de8ad43532@changeid>
- <83e218f9-29f5-4f35-bd0c-b298e3bb9e8c@linux.intel.com>
-In-Reply-To: <83e218f9-29f5-4f35-bd0c-b298e3bb9e8c@linux.intel.com>
-From: Allen Ballway <ballway@chromium.org>
-Date: Mon, 6 May 2024 09:39:45 -0700
-Message-ID: <CAEs41JC-vJaMHj6fzmNO=-bu5oURRA-u565sN2=yzBeVtKb=4g@mail.gmail.com>
-Subject: Re: [PATCH] ALSA: hda: intel-dsp-config: Fix Azulle Access 4 quirk detection
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Brady Norander <bradynorander@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
-	=?UTF-8?B?QW1hZGV1c3ogU8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>, 
-	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org, 
-	Mark Hasemeyer <markhas@chromium.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Cezary Rojewski <cezary.rojewski@intel.com>
+References: <20240503183713.1557480-1-tjmercier@google.com>
+ <20240506052955.GA4923@lst.de> <CABdmKX1XNTtoPTvfsJRobim8pHdDjPsKx=qVovVZDh5GEbKCfQ@mail.gmail.com>
+ <20240506160244.GA16248@lst.de> <CABdmKX1n98+bw+1kewz=wdqq2Nbpaxao_Lx-Gq8oKGNUEP4ytQ@mail.gmail.com>
+ <20240506161906.GA17237@lst.de>
+In-Reply-To: <20240506161906.GA17237@lst.de>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Mon, 6 May 2024 09:39:53 -0700
+Message-ID: <CABdmKX3s_HnxciDA3XGM8Qj0kLY8OWENg+ifexrON4VYVbuLsA@mail.gmail.com>
+Subject: Re: [PATCH] dma-direct: Set SG_DMA_SWIOTLB flag for dma-direct
+To: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	isaacmanjarres@google.com, Catalin Marinas <catalin.marinas@arm.com>, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 30, 2024 at 2:46=E2=80=AFPM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
+On Mon, May 6, 2024 at 9:19=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrote=
+:
 >
+> On Mon, May 06, 2024 at 09:10:40AM -0700, T.J. Mercier wrote:
+> > I want to reject mapping a dma_buf for a device if any of the pages
+> > that back the buffer require SWIOTLB. AFAICT there's no way to know
+> > whether SWIOTLB is used until after calling dma_map_sg, so afterwards
+> > I'm trying to check.
 >
->
-> On 4/30/24 16:28, Allen Ballway wrote:
-> > This device has an audio card which is quirked for force SOF use but th=
-e
-> > device does not support SOF so the card is not usable and audio can't
-> > play through the HDMI output.
-> >
-> > Add another quirk detection that matches the Azulle Access 4 in the DMI
-> > info.
->
-> Please try the patch "ALSA: hda: intel-dsp-config: harden I2C/I2S codec
-> detection" shared last week.
->
-> https://lore.kernel.org/linux-sound/20240426152818.38443-1-pierre-louis.b=
-ossart@linux.intel.com/
->
-> I really don't want to maintain a long list of ES8336 false detections
-> due to broken ACPI tables.
->
-> Thanks!
+> You should not check, you simply must handle it by doing the proper
+> DMA API based ownership management.
 
-Unfortunately the above patch didn't fix the issue, nor did I see any
-of the change logs in dmesg.
-Are there other alternative solutions or information I could gather to
-make a more general solution?
-
-Thanks,
-Allen
+That doesn't really work for uncached buffers. Since the SWIOTLB
+bounces are in the sync functions, and avoiding CMO is the point of
+uncached buffers, it doesn't make sense to try to map uncached buffers
+that would require SWIOTLB. So unless we can get the DMA API to fail
+the map in this case (look for DMA_ATTR_SKIP_CPU_SYNC + SWIOTLB?) I'm
+not sure how else this should be done.
 
