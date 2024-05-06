@@ -1,154 +1,273 @@
-Return-Path: <linux-kernel+bounces-169616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D7D8BCB3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:53:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AFD8BCB40
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178E71F25552
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:53:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3207B225E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3566D142907;
-	Mon,  6 May 2024 09:51:31 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BD014386A;
+	Mon,  6 May 2024 09:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijUDRax0"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32848142627
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A940142913;
+	Mon,  6 May 2024 09:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989090; cv=none; b=GH8F7dKt+rgAfGO0uck80mka6tQ3IRroZFt1T2VYXze/7GFnbjnCobe3ArfU0gaHABjdYC1MX9bfOUbtJe1Vn1W9bQTmweUb0sINI0JUjp0KfkKg9TRw0UtXdcnzTW2AOGphDfS7UqLu82jIAG/1J5/giBkN5NW8OFuCpdB4JQ0=
+	t=1714989117; cv=none; b=ZHjfN5Ndy/rjkqtSf8buvtVOU6PRKvPKsbQkCfvAMKU0EMyuW5/GRJC8VNcQEYvWObAlBGthxsaFt5cMwA4GA/A/BlKGPRlvtMBXDXNcgUNLVKZV9f+KdP1qhSeiAmubmhQXMtm9INZOsnm5CVFBYoMu/iiegj1fFNjUShfMxU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989090; c=relaxed/simple;
-	bh=4FSlf26e9rNb8eqHzOX4Rt01U4R+DNZA1vwdPYWm2AU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KbKMyvS8wKc8XL7j3Rl2ObDFnPckVdW1xZ0c2FknagSXIw1H7uWljED9c2v49LyUOu0HXvfcHE1aQf0cqzRY5HrHBgoMKDfAiVjCAO0Mb7InRVSwOeKtAPJ5E7Vvm2byU5IppqP1RnD4lD+YCpGHkecaLlAomO4jl22nEjoW+yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7de9cd658acso224507239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 02:51:28 -0700 (PDT)
+	s=arc-20240116; t=1714989117; c=relaxed/simple;
+	bh=EqjP3m7uykjcyB/f6y24MqoFP7cN3H5kazDuBfsQ4+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FsjICVXjftubt90oK9zDKGaz3mcX44/wg5sMughDxA7C62N/d/ilPN5MMrMUtovoOXtIc+Z9vassFHJcWBc2+BgmIpNhNhzltyt2UN3fecTN32N22andLRoF1u4m06MBtSh+Z4aXEeChTibw/+TOZ5Ja1AIg75SJvcHoPw2t2mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijUDRax0; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41a72f3a20dso11332645e9.0;
+        Mon, 06 May 2024 02:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714989114; x=1715593914; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a5lawwvvxgc/VZKdPAnqoKgJL757qCfC9o6ubXHOj+0=;
+        b=ijUDRax03nlc88DUHUbEJ25DBq5xuHGgWRDHe7v0LUaM94oZp0EDGe/FI4kTOT3HwI
+         UvHmcs86FCRZFzzSGOsoe39dPTN+Hpcxorn3ZkS2XcgGsbIVMOiCm2Sq3mxcQk5q4n4/
+         xUJvLbBLmQQPZ/UZt2hKH68mb/j2QbLqxMb7iYnddcu3fC0cPrj0UndwjxcWbpbG05F/
+         PEq8l+Os3PVPXL2wN8EVwI7dDdbhgtX5CS2rwoU5iC30rd44fm6xgaqc+IGGaHKx0lIt
+         CqYBY0xWq9zSTmCNFA3l3iTLznMzYeLB4ag9Y/31AU7M3dTq/jRF1q8mA+UzaKmA5lTQ
+         0fgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714989088; x=1715593888;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IvNvu4p143zMW785CGQE8LLYZty5gyzNTmzL35Go5us=;
-        b=Xl0DsxX0BayaCxLejMeoiB40I5mOI4fnSYkcTnqx7D4GPeKbpechsUjvSF1V2oXyEx
-         SSkowZV+kriXGW2vHEnOD8NkeolfdUppopKKG4rdsz8lJJZLcwb6ara/8akOAXiQ4RC/
-         vpyef8CbQRc5iJtm4UUG81wnkhRcB5a5QXEsBx3IdtdND3OXk/FBvTVLSCqX9afkAgFI
-         cwYLk5oGY5Oeq2AScX8O9EurxBy2bzRJyLkvanxxH7kKeTSkz5sEQfusykZ2mUlH9Wtn
-         aGT1gT6YXg7TxB4nJhk8MBRiAmv0HzwOuo40Xn3wzh/1Lfg1OiiSONoTWEpAVTYZ5dF2
-         UbAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIrX1Tbq6LCLtG4d+yipDoc2SYajKmp8lUrgG2w434MFc57LzbGpewJxbqHO6tbAULe4oobOxC0iOqHLGC7Q8bWgFv/R7tqMsv+7KK
-X-Gm-Message-State: AOJu0YyhtReg5VQq+SzmRSH184vN6xqY+UJKzdl7e7DeNRqpsCRa5ifo
-	Le6KEC5JkoCzGGQHU3vt4j5zRuIvzfUrD+4yXaRLMJC8pl2Pn20rrkGWlVt9aAfEmrpk4f6/0cU
-	h/IO2pexJZIpRFXnJvPak/Wx3nw0x7wWrCl2DF8Q4RFwBdGJJ4rYrLHA=
-X-Google-Smtp-Source: AGHT+IH3EJUA974MZrHES6Xiz/d5o8oYRGc2Sau85rwgef0z6FVDradIPyKyLr+SDZ4q5YXRcB9424nY+xPc6Y9WDjE5kmHt/PTt
+        d=1e100.net; s=20230601; t=1714989114; x=1715593914;
+        h=content-transfer-encoding:in-reply-to:from:references:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=a5lawwvvxgc/VZKdPAnqoKgJL757qCfC9o6ubXHOj+0=;
+        b=COefp4l25A/D326NpjnGLaZXOK5zAyG6IK2uEiF1w31FMlYJgl+WAkcxzVTY4t1FJW
+         j/7seZZeXQmJKfSUpsVhtIZ+/0WfpX6kBGn5arp4T9XF6Syc/US0RgQTiD7sK8Kd8GgZ
+         2/9wEucuU0mwq729DjoBESIGBUsYYeXek5AltuNJ6agZCwjAR2KcJNOp1w0tSSd06A0m
+         LruZwmYygG+cKlfjHjq0utnqVYyoXQSfSR2TGPIyuZ1knONGsy8lWprmeFWZ/2kv1OOe
+         PnzKvsw7S9zx4CAobz7FuymxNpjRUkEt2R7RVr4ISAZF2jrshbMvfSwWQyMQvWN3Qcm1
+         gepA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCf8vk6slTi7VtdBGxgpvOtj/ySBV+rbAtK2KTWRO2oMuIhQStBDgjo9u9HDVq0zhWAy6l2E6yJLd4CJn54/SeLHgnwuZpdskoQ2/EmryYiGbnJUnruntxej93oW9LSjfRSU8bahYRGWgBzBOeeapYhkXCl0vRGyrehH06ch56T938RiUC
+X-Gm-Message-State: AOJu0Yzy33tePxytQODTEWi3/EbRjgv6/bs0+nTA3Gpq8DfgLI0AW5Vx
+	xuBfdoRgPna0B9vXiN0Ao5z1J8qGFFGIaQRBwlRrf9UF/3xG24yuK0IRPQ==
+X-Google-Smtp-Source: AGHT+IGAWuWiREqnEeRfMAFvOrd7cLm1v0RY/XfOQ7VR4+16ai775AJ7UrcrKVlhpl9/apO723+vOQ==
+X-Received: by 2002:a05:600c:138a:b0:41c:13f6:206d with SMTP id u10-20020a05600c138a00b0041c13f6206dmr7399586wmf.25.1714989114331;
+        Mon, 06 May 2024 02:51:54 -0700 (PDT)
+Received: from debian ([146.70.204.204])
+        by smtp.gmail.com with ESMTPSA id v6-20020a5d6106000000b0034d743eb8dfsm10258649wrt.29.2024.05.06.02.51.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 02:51:54 -0700 (PDT)
+Message-ID: <761374d3-1c76-4dc2-a4cc-7bd693deb453@gmail.com>
+Date: Mon, 6 May 2024 11:51:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2197:b0:36b:fbab:9f1a with SMTP id
- j23-20020a056e02219700b0036bfbab9f1amr391216ila.1.1714989088368; Mon, 06 May
- 2024 02:51:28 -0700 (PDT)
-Date: Mon, 06 May 2024 02:51:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000067ff3c0617c603c2@google.com>
-Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in read_one_super
-From: syzbot <syzbot+a8b0fb419355c91dda7f@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH net-next v8 3/3] selftests/net: add flush id selftests
+To: davem@davemloft.net, edumazet@google.com,
+ willemdebruijn.kernel@gmail.com, kuba@kernel.org, pabeni@redhat.com,
+ dsahern@kernel.org, alobakin@pm.me, shuah@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240506093550.128210-1-richardbgobert@gmail.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <20240506093550.128210-1-richardbgobert@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Added flush id selftests to test different cases where DF flag is set or
+unset and id value changes in the following packets. All cases where the
+packets should coalesce or should not coalesce are tested.
 
-syzbot found the following issue on:
-
-HEAD commit:    78186bd77b47 Merge branch 'for-next/mm-ryan-staging' into ..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=177bab54980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5ee4da92608aba71
-dashboard link: https://syzkaller.appspot.com/bug?extid=a8b0fb419355c91dda7f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154d0d1f180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12119450980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6645ec7d501b/disk-78186bd7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0d272001bc0f/vmlinux-78186bd7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/95e2c70cba6e/Image-78186bd7.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6679d36fb016/mount_1.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a8b0fb419355c91dda7f@syzkaller.appspotmail.com
-
-loop3: detected capacity change from 0 to 32799
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/super-io.c:652:18
-shift exponent 32 is too large for 32-bit type 'int'
-CPU: 1 PID: 7180 Comm: syz-executor245 Not tainted 6.9.0-rc6-syzkaller-g78186bd77b47 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
- dump_stack+0x1c/0x28 lib/dump_stack.c:123
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x2f4/0x36c lib/ubsan.c:468
- read_one_super+0xab8/0x2614 fs/bcachefs/super-io.c:652
- __bch2_read_super+0x714/0x10a8 fs/bcachefs/super-io.c:750
- bch2_read_super+0x38/0x4c fs/bcachefs/super-io.c:842
- bch2_fs_open+0x1e0/0xb64 fs/bcachefs/super.c:2049
- bch2_mount+0x558/0xe10 fs/bcachefs/fs.c:1903
- legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
- vfs_get_tree+0x90/0x288 fs/super.c:1779
- do_new_mount+0x278/0x900 fs/namespace.c:3352
- path_mount+0x590/0xe04 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
----[ end trace ]---
-bcachefs (/dev/loop3): error reading default superblock: Invalid superblock: too big (got 4696 bytes, layout max 2199023255552)
-bcachefs (/dev/loop3): error reading superblock: Not a bcachefs superblock (got magic 00000000-0000-0000-0000-000000000000)Not a bcachefs superblock (got magic 00000000-0000-0000-0000-000000000000)
-
-
+Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ tools/testing/selftests/net/gro.c | 147 ++++++++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
+index 353e1e867fbb..5dc7b539ccbf 100644
+--- a/tools/testing/selftests/net/gro.c
++++ b/tools/testing/selftests/net/gro.c
+@@ -617,6 +617,123 @@ static void add_ipv6_exthdr(void *buf, void *optpkt, __u8 exthdr_type, char *ext
+ 	iph->payload_len = htons(ntohs(iph->payload_len) + MIN_EXTHDR_SIZE);
+ }
+ 
++static void fix_ip4_checksum(struct iphdr *iph)
++{
++	iph->check = 0;
++	iph->check = checksum_fold(iph, sizeof(struct iphdr), 0);
++}
++
++static void send_flush_id_case(int fd, struct sockaddr_ll *daddr, int tcase)
++{
++	static char buf1[MAX_HDR_LEN + PAYLOAD_LEN];
++	static char buf2[MAX_HDR_LEN + PAYLOAD_LEN];
++	static char buf3[MAX_HDR_LEN + PAYLOAD_LEN];
++	bool send_three = false;
++	struct iphdr *iph1;
++	struct iphdr *iph2;
++	struct iphdr *iph3;
++
++	iph1 = (struct iphdr *)(buf1 + ETH_HLEN);
++	iph2 = (struct iphdr *)(buf2 + ETH_HLEN);
++	iph3 = (struct iphdr *)(buf3 + ETH_HLEN);
++
++	create_packet(buf1, 0, 0, PAYLOAD_LEN, 0);
++	create_packet(buf2, PAYLOAD_LEN, 0, PAYLOAD_LEN, 0);
++	create_packet(buf3, PAYLOAD_LEN * 2, 0, PAYLOAD_LEN, 0);
++
++	switch (tcase) {
++	case 0: /* DF=1, Incrementing - should coalesce */
++		iph1->frag_off |= htons(IP_DF);
++		iph1->id = htons(8);
++		fix_ip4_checksum(iph1);
++
++		iph2->frag_off |= htons(IP_DF);
++		iph2->id = htons(9);
++		fix_ip4_checksum(iph2);
++		break;
++
++	case 1: /* DF=1, Fixed - should coalesce */
++		iph1->frag_off |= htons(IP_DF);
++		iph1->id = htons(8);
++		fix_ip4_checksum(iph1);
++
++		iph2->frag_off |= htons(IP_DF);
++		iph2->id = htons(8);
++		fix_ip4_checksum(iph2);
++		break;
++
++	case 2: /* DF=0, Incrementing - should coalesce */
++		iph1->frag_off &= ~htons(IP_DF);
++		iph1->id = htons(8);
++		fix_ip4_checksum(iph1);
++
++		iph2->frag_off &= ~htons(IP_DF);
++		iph2->id = htons(9);
++		fix_ip4_checksum(iph2);
++		break;
++
++	case 3: /* DF=0, Fixed - should not coalesce */
++		iph1->frag_off &= ~htons(IP_DF);
++		iph1->id = htons(8);
++		fix_ip4_checksum(iph1);
++
++		iph2->frag_off &= ~htons(IP_DF);
++		iph2->id = htons(8);
++		fix_ip4_checksum(iph2);
++		break;
++
++	case 4: /* DF=1, two packets incrementing, and one fixed - should
++		 * coalesce only the first two packets
++		 */
++		iph1->frag_off |= htons(IP_DF);
++		iph1->id = htons(8);
++		fix_ip4_checksum(iph1);
++
++		iph2->frag_off |= htons(IP_DF);
++		iph2->id = htons(9);
++		fix_ip4_checksum(iph2);
++
++		iph3->frag_off |= htons(IP_DF);
++		iph3->id = htons(9);
++		fix_ip4_checksum(iph3);
++		send_three = true;
++		break;
++
++	case 5: /* DF=1, two packets fixed, and one incrementing - should
++		 * coalesce only the first two packets
++		 */
++		iph1->frag_off |= htons(IP_DF);
++		iph1->id = htons(8);
++		fix_ip4_checksum(iph1);
++
++		iph2->frag_off |= htons(IP_DF);
++		iph2->id = htons(8);
++		fix_ip4_checksum(iph2);
++
++		iph3->frag_off |= htons(IP_DF);
++		iph3->id = htons(9);
++		fix_ip4_checksum(iph3);
++		send_three = true;
++		break;
++	}
++
++	write_packet(fd, buf1, total_hdr_len + PAYLOAD_LEN, daddr);
++	write_packet(fd, buf2, total_hdr_len + PAYLOAD_LEN, daddr);
++
++	if (send_three)
++		write_packet(fd, buf3, total_hdr_len + PAYLOAD_LEN, daddr);
++}
++
++static void test_flush_id(int fd, struct sockaddr_ll *daddr, char *fin_pkt)
++{
++	for (int i = 0; i < 6; i++) {
++		sleep(1);
++		send_flush_id_case(fd, daddr, i);
++		sleep(1);
++		write_packet(fd, fin_pkt, total_hdr_len, daddr);
++	}
++}
++
+ static void send_ipv6_exthdr(int fd, struct sockaddr_ll *daddr, char *ext_data1, char *ext_data2)
+ {
+ 	static char buf[MAX_HDR_LEN + PAYLOAD_LEN];
+@@ -935,6 +1052,8 @@ static void gro_sender(void)
+ 			send_fragment4(txfd, &daddr);
+ 			sleep(1);
+ 			write_packet(txfd, fin_pkt, total_hdr_len, &daddr);
++
++			test_flush_id(txfd, &daddr, fin_pkt);
+ 		} else if (proto == PF_INET6) {
+ 			sleep(1);
+ 			send_fragment6(txfd, &daddr);
+@@ -1061,6 +1180,34 @@ static void gro_receiver(void)
+ 
+ 			printf("fragmented ip4 doesn't coalesce: ");
+ 			check_recv_pkts(rxfd, correct_payload, 2);
++
++			/* is_atomic checks */
++			printf("DF=1, Incrementing - should coalesce: ");
++			correct_payload[0] = PAYLOAD_LEN * 2;
++			check_recv_pkts(rxfd, correct_payload, 1);
++
++			printf("DF=1, Fixed - should coalesce: ");
++			correct_payload[0] = PAYLOAD_LEN * 2;
++			check_recv_pkts(rxfd, correct_payload, 1);
++
++			printf("DF=0, Incrementing - should coalesce: ");
++			correct_payload[0] = PAYLOAD_LEN * 2;
++			check_recv_pkts(rxfd, correct_payload, 1);
++
++			printf("DF=0, Fixed - should not coalesce: ");
++			correct_payload[0] = PAYLOAD_LEN;
++			correct_payload[1] = PAYLOAD_LEN;
++			check_recv_pkts(rxfd, correct_payload, 2);
++
++			printf("DF=1, 2 Incrementing and one fixed - should coalesce only first 2 packets: ");
++			correct_payload[0] = PAYLOAD_LEN * 2;
++			correct_payload[1] = PAYLOAD_LEN;
++			check_recv_pkts(rxfd, correct_payload, 2);
++
++			printf("DF=1, 2 Fixed and one incrementing - should coalesce only first 2 packets: ");
++			correct_payload[0] = PAYLOAD_LEN * 2;
++			correct_payload[1] = PAYLOAD_LEN;
++			check_recv_pkts(rxfd, correct_payload, 2);
+ 		} else if (proto == PF_INET6) {
+ 			/* GRO doesn't check for ipv6 hop limit when flushing.
+ 			 * Hence no corresponding test to the ipv4 case.
+-- 
+2.36.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
