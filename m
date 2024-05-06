@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-170101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6748BD1DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:54:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9458BD1E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8216E1C2238A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:54:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19AB028573C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C72E155742;
-	Mon,  6 May 2024 15:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7837915574C;
+	Mon,  6 May 2024 15:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DBFmFcWp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O0hoCuYC"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C55142E8A;
-	Mon,  6 May 2024 15:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4914315572E
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715010865; cv=none; b=r33voeuJL0+mLF9qWrI/+dctKlCBFPnuPPMKta5S4fnrmb/Aj8DYTLIKcgy+9NK9XDewvriXP0JXtwWjZ4HdgrD3mgJ4zPEF3Wk5pKDEJ1KC4kDcuqR1BXVIdbe7E4CbUvAaYLiYcIPBXA5eDMyDE1KRRf9MMlTjbaT6c3mS7PI=
+	t=1715010903; cv=none; b=EbpoilF4m/mXi0Z26hL9c25EaisrIaeSkWRt2h/dTGCTAXIdltMLz3CVrShJrxSh1GwdGbzQVK2KGzL1Uj2QESZOpHvrxHsPWo/2Dj2radLD0Om5pnyMjklVT0YBe+RoI6Hn5zn9WoGT5/zjOJ+tKgXWoGdLfR4aYxIStJgS5KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715010865; c=relaxed/simple;
-	bh=iMkABcd0DBv9az9njPuwUR8B35ghWS0eM5Q6/tVyFFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PexXVVpcELLsjQwoi4g1iEtrl9OCqPXnswySAhLpC0MGhFjb+CTEzKVRSX20PrHqfp9m4CbBDyGfobRbfGx2acK3barms8bgHXvfbB28c5QC0Zz3xM1RXQ+Ae26npKn1g/fbOPiL+ie2WF005OVaJ0RSV22ZwQw8mRnQNlZormo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DBFmFcWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F11CC116B1;
-	Mon,  6 May 2024 15:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715010863;
-	bh=iMkABcd0DBv9az9njPuwUR8B35ghWS0eM5Q6/tVyFFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DBFmFcWpT3kV6HurFA95Zrh/LmeCRaqezdk3DoQYk/aLBYZ+L3gAyVz5NqXKvX+vz
-	 7n0xFXEaXrsRXdlIxcvN7QlT/Rla8dyzXrn9ucwfdQIRHoSODel+ZPgCC+QgVO9S18
-	 u5S40ECc1sn/JIPIwMPf8xJ4lMfowrIXHrC2cjyQORtERne/Xj7l9oeLxatwQ4pnnt
-	 ylO0EvoObjnuc7w0IztkvR2/EzTH9PZg8DcwaavNKs90YF6kmt7RdqyeyQ2UQpPcK+
-	 a9dMh6pI5M4JKRHN6snHWHHI+yI0MiSigOYqAh81tGpDTDiX/dDi5NNlju23f5n6GB
-	 rknbZDEf4aUVA==
-Date: Mon, 6 May 2024 16:54:17 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Alisa-Dariana Roman <alisadariana@gmail.com>,
-	michael.hennerich@analog.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alexandru.tachici@analog.com, lars@metafoo.de, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	lgirdwood@gmail.com, broonie@kernel.org, andy@kernel.org,
-	nuno.sa@analog.com, marcelo.schmitt@analog.com,
-	bigunclemax@gmail.com, dlechner@baylibre.com, okan.sahin@analog.com,
-	fr0st61te@gmail.com, alisa.roman@analog.com,
-	marcus.folkesson@gmail.com, schnelle@linux.ibm.com,
-	liambeguin@gmail.com
-Subject: Re: [PATCH v7 5/6] dt-bindings: iio: adc: ad7192: Add AD7194 support
-Message-ID: <20240506-evaluate-darkroom-b0f8a7bf4598@spud>
-References: <20240430162946.589423-1-alisa.roman@analog.com>
- <20240430162946.589423-6-alisa.roman@analog.com>
- <20240430-winnings-wrongness-32328ccfe3b5@spud>
- <20240505204602.5d4cbfa0@jic23-huawei>
+	s=arc-20240116; t=1715010903; c=relaxed/simple;
+	bh=jP99ie8/JjeXfuXOZy5e1iJKvfjTb7kt+yA1100I5K0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZL4OhuyWU59RZMUnnH6SxfglgWOb6vLwOu+oDk284FSP0hv9N6u2774/qKKThl6AvKIhB5IrT1tOoHuvDh/fSu85mUfH4+P+Q2GjPKZt/ZotvbwcjQoeC6BPvxdXNVLPxHiX4msDK4JXOyAU4r1LImhV/WAgPS3vOcP2NW+8ibY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O0hoCuYC; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-43d2277d7e1so6633131cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715010900; x=1715615700; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jP99ie8/JjeXfuXOZy5e1iJKvfjTb7kt+yA1100I5K0=;
+        b=O0hoCuYCkAYnvh0yB8JLQDuKogX8asGZVUPxmH+dzCBDcbHwwmaHcqrtyTUVALFA/b
+         hdC74GQY3NbkE33qzhhyBpwiQLJVfDaeGrA4MMH/QEBT/PUhc0FaKa0BrPLJfTL4qeP0
+         YZZ1qnJK770Ur2wZfbD7Sj56KUjM9oMjScwG8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715010900; x=1715615700;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jP99ie8/JjeXfuXOZy5e1iJKvfjTb7kt+yA1100I5K0=;
+        b=qjp2Pgc2MFb1dtOV/842JTp2zYEcVKH4WPeieJtO2Bnx+4V/FteuvkM/U8YIGXeZSH
+         VxnCM8/dRxYShwlp9MD2r2FEcxqsfvm8JZLzCMMAqszl0MGzJ1OSOLbrvqQ1Ikasp2xd
+         PfY/vh4nSmqEISoG5MkO72R6qF91uPeyTkfZJYSWKRslM37KjQPrFHl/J7YphjIXAV9o
+         2JrWwPibSjwot6+PdOBx5nEFRs1nDA2ghLPuUd+XzsitM4li78mAURKKeYR+I39KAfq4
+         ZsI0debHhfOMiP6o5AsgoD45ACZWZ8QshEYDLTG9cp/LU+3F6FsZEYgZ0dJpFn7/RHSj
+         JiIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbdSTSVn3bRdMWUHaSUpaLk4i+XMfUishOfHBS0VAWcSKUO4ibmEmKMuo6oNXx+zxQQ5rn27ODJAVWU25Mh7t5a151i4HZUf2kk3wa
+X-Gm-Message-State: AOJu0Yz9c7ZtSfn30bsMeJB28dwyVC67LxdSeZPCLVcq7hshVbnvlmFD
+	YSQh+4V34LUoPBm+yxuDaCiVKKBWzwHcQgMfZBnu25JqOAaeeWGGFlcrvGPO2p2R3tDVu9cQ8kU
+	=
+X-Google-Smtp-Source: AGHT+IE5UX5dksJlknADGQ615NuWszlSkilQuDhe+j45mOt3qOkfkYvghUuaei5Cxu6A4DfI1WXJAA==
+X-Received: by 2002:a05:622a:1ba0:b0:43a:c243:86ad with SMTP id bp32-20020a05622a1ba000b0043ac24386admr12277984qtb.0.1715010900134;
+        Mon, 06 May 2024 08:55:00 -0700 (PDT)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
+        by smtp.gmail.com with ESMTPSA id eq18-20020a05622a5e1200b0043abd262cc9sm3022902qtb.83.2024.05.06.08.54.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 08:54:59 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-439b1c72676so687241cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:54:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVn3J7RyIo6012W4zqNMjSlP1IETlZAfBKY7Mnh4arJoX65xt/Rz4vXz3u1/ajRd07zxqxFXZKzF27iiBn5fMy41gpqjH1yrYr2TSb0
+X-Received: by 2002:a05:622a:514:b0:437:c89e:245b with SMTP id
+ d75a77b69052e-43d087971dfmr4116421cf.15.1715010898305; Mon, 06 May 2024
+ 08:54:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3Aufn4Dkbz1VH4dr"
-Content-Disposition: inline
-In-Reply-To: <20240505204602.5d4cbfa0@jic23-huawei>
-
-
---3Aufn4Dkbz1VH4dr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240422060811.670693-1-xuxinxiong@huaqin.corp-partner.google.com>
+ <CAD=FV=WRLLuOkCJeM6RdAb6xLN-cPH+hfWbOv9-LujB-WMGEFw@mail.gmail.com>
+ <CAGoogDB-mj8_xu04w3V2ZxOBTWoXcPKrVR1NRt6BFcpjHX3-7Q@mail.gmail.com>
+ <CAD=FV=WwsR9e-ZXJRY11FvdUZ66YPy9vqmY_=sGDw5Wqk1eV3w@mail.gmail.com> <CAGoogDBCzfKwkAA-VAs3_Cdw_4oFO94mt7yjy47Sp2RAtqtPxA@mail.gmail.com>
+In-Reply-To: <CAGoogDBCzfKwkAA-VAs3_Cdw_4oFO94mt7yjy47Sp2RAtqtPxA@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 6 May 2024 08:54:41 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WYiD-BUpksBnZrkWvORepZqtaAvm5645X-_oJPea0s0w@mail.gmail.com>
+Message-ID: <CAD=FV=WYiD-BUpksBnZrkWvORepZqtaAvm5645X-_oJPea0s0w@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel-edp: Add panel CSOT MNB601LS1-1
+To: Xuxin Xiong <xuxinxiong@huaqin.corp-partner.google.com>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
+	hsinyi@google.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 05, 2024 at 08:46:02PM +0100, Jonathan Cameron wrote:
-> On Tue, 30 Apr 2024 18:21:01 +0100
-> Conor Dooley <conor@kernel.org> wrote:
->=20
-> > On Tue, Apr 30, 2024 at 07:29:45PM +0300, Alisa-Dariana Roman wrote:
-> > > +      diff-channels:
-> > > +        description:
-> > > +          Both inputs can be connected to pins AIN1 to AIN16 by choo=
-sing the
-> > > +          appropriate value from 1 to 16.
-> > > +        items:
-> > > +          minimum: 1
-> > > +          maximum: 16
-> > > +
-> > > +      single-channel:
-> > > +        description:
-> > > +          Positive input can be connected to pins AIN1 to AIN16 by c=
-hoosing the
-> > > +          appropriate value from 1 to 16. Negative input is connecte=
-d to AINCOM.
-> > > +        items:
-> > > +          minimum: 1
-> > > +          maximum: 16 =20
-> >=20
-> > Up to 16 differential channels and 16 single-ended channels, but only 16
-> > pins? Would the number of differential channels not max out at 8?
->=20
-> May not really be limited to 16 differential. Many chips use general purp=
-ose
-> muxes on both sides so you can do all combinations. In practice that's no=
-rmally
-> pointless.
->=20
-> A more useful case is to do all but one channel as positive inputs and th=
-e remaining
-> channel as the negative for those 15 differential channels.
+Hi,
 
-Yah, 15 is what I had in my head as the highest reasonable number given
-the information given about the AIN# pins.
+On Tue, Apr 23, 2024 at 6:55=E2=80=AFPM Xuxin Xiong
+<xuxinxiong@huaqin.corp-partner.google.com> wrote:
+>
+> Hi Doug, thank you!
+> We had reported this info to the CSOT to correct the vendor id.
+> If they confirm to fix this with the same product ID, we will submit a
+> patch to fix this.
 
-> This is effectively the same as doing pseudo differential channels, but
-> on more flexible hardware.  This is in contrast to a device that only sup=
-ports
-> pseudo differential where there is a special pin for the negative
-> (this device has that as well as full muxes on the other 16 lines).
->=20
-> Having said all that.  The ad7194 datasheet says 8 differential channels..
-> I have no idea why though... Maybe something to do with the mux switching?
-> Or maybe assumption is that if you want to do pseudo differential you'll =
-use
-> the pseudo differential mode rather than wasting hardware?
+FYI, "top posting" like this is generally frowned upon on kernel
+mailing lists. One such reference about this is [1]. Some folks are
+very passionate about this topic, so please keep it in mind to avoid
+upsetting people in the community.
 
-I didn't look at the datasheet tbf, I was just asking given the
-description didn't make sense to me and looking for an explanation from
-the author.
+In any case: did you get any response from CSOT about the improper EDID?
 
---3Aufn4Dkbz1VH4dr
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] https://subspace.kernel.org/etiquette.html
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjj9KQAKCRB4tDGHoIJi
-0tgjAP0UT0hwLpfAghyxJPc+yxfShQLZbRCoHngwKOZZsGSlDwEAj4SyQghwbeUF
-1Y3RvIXr04WBMoljrmHNA3+f2Vm99QI=
-=f95D
------END PGP SIGNATURE-----
-
---3Aufn4Dkbz1VH4dr--
+-Doug
 
