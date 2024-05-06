@@ -1,114 +1,370 @@
-Return-Path: <linux-kernel+bounces-170274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C198BD455
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F608BD456
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9250B240CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FA31F272FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF91158D69;
-	Mon,  6 May 2024 18:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D25015884B;
+	Mon,  6 May 2024 18:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fLYxhcll"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uyhd5XiA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB34C158842;
-	Mon,  6 May 2024 18:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264751586CD
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715018601; cv=none; b=KIxGE1D5tQI5UWmzCuwrb7Mcet5uicJp5Jxg33aPZyUwpfbmVFQmRwvDcvx6xMWpFdZljeJgKFAjMLWhBD1x1+15pLuEBU7Fgy3ANCX1iaiXY8a13lfepawPdkd7G1V3VYdQwmdJaiSAfSYB883SpYYtvjVqhJFRqnyX8KpqeZI=
+	t=1715018646; cv=none; b=tpAM42hGUIB3Qjy46du7bh1L3hGjKqmAffnEKBtT2MxYt6i/O2bU1p5wQdfXgSMqB0LUAtB2GaNJR86cor5hm1a5yeyItTr9OpguuR3JKXXqW23AFJoJa/l67nBSyHRQqzHMd1PqZWHezJ9ADD7lYEhB13yNXtAbUa4dRB1Hxaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715018601; c=relaxed/simple;
-	bh=izYV5SnkwV0c12Eig2SIdtAJCjR1JfpIAddbJoY1rEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fJKWl1e2GWs3XyEKLoaUFiuMyFmB6Pla3Fa9+q3PLoLZAApjEnmu+p7z74OqycUiNGk96Q9AJ42DUTPeX1jO4cfsIACvttXazGpCbh46MeVtMS8AnKqjRknOr1fSp1xCgr8E7fZjfET6RmQBSY2Mp9iI7pcAYMrK23dTGb1m5Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fLYxhcll; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1DEED114D;
-	Mon,  6 May 2024 20:03:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715018596;
-	bh=izYV5SnkwV0c12Eig2SIdtAJCjR1JfpIAddbJoY1rEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fLYxhcllt+tsU6Hbx1ND6r1mkY4esOdUEFQ8SUHAlIqXmeIxbbwqcd1hlBkR5FmwN
-	 06QKLdkTCJn6BwtG77HUICWSRVrDveEEpdaslQ8ne/mYgilpkv7x8isjJ1yvBrC7Ou
-	 k44bCttXioMUSO9+lSrVDHMhvoxBNfy22Y+AUQB0=
-Date: Mon, 6 May 2024 21:03:09 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 3/3] media: bcm2835-unicam: Do not replace IRQ retcode
- during probe
-Message-ID: <20240506180309.GG29108@pendragon.ideasonboard.com>
-References: <20240430-fix-broad-v1-0-cf3b81bf97ff@chromium.org>
- <20240430-fix-broad-v1-3-cf3b81bf97ff@chromium.org>
+	s=arc-20240116; t=1715018646; c=relaxed/simple;
+	bh=cc0dgGUZ/hvp7voZKbxcv7WPIlbtst12WAtyfGKBIzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+D2X8/M+FXOOZIv1F/MGgyTHbsel3GcP7Fc/Jyt9RAagFgSDcs47JJNRrN7YJJRkCaZpAUjT0kgcb14RKMgrkqSqO9zVv9X/QUoBiiysAFEXZH3yBYwj7Aw8BYtVxlWSzZ2LX9km0SGeUYJ1l4lovF0UsAcShWyZww25AlX3jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uyhd5XiA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715018643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j1t65TpAxApNWvGUATTUAN4i+2enA4mnbGpByW0FY6g=;
+	b=Uyhd5XiA/pzHSazldBBAUtIYMAbpDNrI/cZykN0wakhAfjqsNn3xuSTpNRRfmsjGzcMnlE
+	NMqLXa2XmHWcPGngdh9uJgjRHQSEQD0Ad8F0948n4YRJ/GIkPAc4VqU/QQk26Tvq03lSA6
+	8KSQc1YVGs1oIGIczpq1i2lJfus0qmQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-493-BbtS0UsSPoOQu8bUEI9Fjw-1; Mon, 06 May 2024 14:03:59 -0400
+X-MC-Unique: BbtS0UsSPoOQu8bUEI9Fjw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CEED1800CA2;
+	Mon,  6 May 2024 18:03:58 +0000 (UTC)
+Received: from [10.22.17.85] (unknown [10.22.17.85])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 24C2A40D1E3;
+	Mon,  6 May 2024 18:03:56 +0000 (UTC)
+Message-ID: <e402d623-1875-47a2-9db3-8299a54502ef@redhat.com>
+Date: Mon, 6 May 2024 14:03:55 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240430-fix-broad-v1-3-cf3b81bf97ff@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/proc: Print user_cpus_ptr for task status
+To: Xuewen Yan <xuewen.yan94@gmail.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, akpm@linux-foundation.org,
+ oleg@redhat.com, dylanbhatch@google.com, rick.p.edgecombe@intel.com,
+ ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240429084633.9800-1-xuewen.yan@unisoc.com>
+ <20240429121000.GA40213@noisy.programming.kicks-ass.net>
+ <CAB8ipk831xtAW2+sm-evm-oOsFspL=xSp6hFYYq1uKmWA+porQ@mail.gmail.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <CAB8ipk831xtAW2+sm-evm-oOsFspL=xSp6hFYYq1uKmWA+porQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-Hi Ricardo,
+On 5/6/24 04:04, Xuewen Yan wrote:
+> Hi Peter
+>
+> On Mon, Apr 29, 2024 at 8:10 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>> On Mon, Apr 29, 2024 at 04:46:33PM +0800, Xuewen Yan wrote:
+>>> The commit 851a723e45d1c("sched: Always clear user_cpus_ptr in do_set_cpus_allowed()")
+>>> would clear the user_cpus_ptr when call the do_set_cpus_allowed.
+>>>
+>>> In order to determine whether the user_cpus_ptr is taking effect,
+>>> it is better to print the task's user_cpus_ptr.
+>> This is an ABI change and would mandate we forever more have this
+>> distinction. I don't think your changes justifies things sufficiently
+>> for this.
+> I added this mainly because online/offline cpu will produce different
+> results for the !top-cpuset task.
+>
+> For example:
+>
+> If the task was running, then offline task's cpus, would lead to clear
+> its user-mask.
+>
+> unisoc:/ # while true; do sleep 600; done&
+> [1] 6786
+> unisoc:/ # echo 6786 > /dev/cpuset/top-app/tasks
+> unisoc:/ # cat /dev/cpuset/top-app/cpus
+> 0-7
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   ff
+> Cpus_allowed_list:      0-7
+> Cpus_user_allowed:        (null)
+> Cpus_user_allowed_list:   (null)
+>
+> unisoc:/ # taskset -p c0 6786
+> pid 6786's current affinity mask: ff
+> pid 6786's new affinity mask: c0
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   c0
+> Cpus_allowed_list:      6-7
+> Cpus_user_allowed:      c0
+> Cpus_user_allowed_list: 6-7
+>
+> After offline the cpu6 and cpu7, the user-mask would be cleared:
+>
+> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   40
+> Cpus_allowed_list:      6
+> Cpus_user_allowed:      c0
+> Cpus_user_allowed_list: 6-7
+> ums9621_1h10:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
+> ums9621_1h10:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   3f
+> Cpus_allowed_list:      0-5
+> Cpus_user_allowed:        (null)
+> Cpus_user_allowed_list:   (null)
+>
+> When online the cpu6/7, the user-mask can not bring back:
+>
+> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu6/online
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   7f
+> Cpus_allowed_list:      0-6
+> Cpus_user_allowed:        (null)
+> Cpus_user_allowed_list:   (null)
+> unisoc:/ # echo 1 > /sys/devices/system/cpu/cpu7/online
+> unisoc:/ # cat /proc/6786/status | grep Cpus
+> Cpus_allowed:   ff
+> Cpus_allowed_list:      0-7
+> Cpus_user_allowed:        (null)
+> Cpus_user_allowed_list:   (null)
+>
+> However, if we offline the cpu when the task is sleeping, at this
+> time, because would not call the fallback_cpu(), its user-mask will
+> not be cleared.
+>
+> unisoc:/ # while true; do sleep 600; done&
+> [1] 5990
+> unisoc:/ # echo 5990 > /dev/cpuset/top-app/tasks
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   ff
+> Cpus_allowed_list:      0-7
+> Cpus_user_allowed:        (null)
+> Cpus_user_allowed_list:   (null)
+>
+> unisoc:/ # taskset -p c0 5990
+> pid 5990's current affinity mask: ff
+> pid 5990's new affinity mask: c0
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   c0
+> Cpus_allowed_list:      6-7
+> Cpus_user_allowed:      c0
+> Cpus_user_allowed_list: 6-7
+>
+> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu6/online
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   80
+> Cpus_allowed_list:      7
+> Cpus_user_allowed:      c0
+> Cpus_user_allowed_list: 6-7
+> unisoc:/ # echo 0 > /sys/devices/system/cpu/cpu7/online
+> unisoc:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   3f
+> Cpus_allowed_list:      0-5
+> Cpus_user_allowed:      c0
+> Cpus_user_allowed_list: 6-7
+>
+>
+> After 10 minutes, it was waked up, it can also keep its user-mask:
+> ums9621_1h10:/ # cat /proc/5990/status | grep Cpus
+> Cpus_allowed:   3f
+> Cpus_allowed_list:      0-5
+> Cpus_user_allowed:      c0
+> Cpus_user_allowed_list: 6-7
+>
+> In order to solve the above problem, I modified the following patch.
+> At this time, for !top-cpuset, regardless of whether the task is in
+> the running state when offline cpu, its cpu-mask can be maintained.
+> However, this patch may not be perfect yet, so I send the "Print
+> user_cpus_ptr for task status" patch first to debug more conveniently.
+>
+> --->
+>
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 68cfa656b9b1..00879b6de8d4 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1870,7 +1870,7 @@ extern void dl_bw_free(int cpu, u64 dl_bw);
+>   #ifdef CONFIG_SMP
+>
+>   /* do_set_cpus_allowed() - consider using set_cpus_allowed_ptr() instead */
+> -extern void do_set_cpus_allowed(struct task_struct *p, const struct
+> cpumask *new_mask);
+> +extern void do_set_cpus_allowed(struct task_struct *p, const struct
+> cpumask *new_mask, bool keep_user);
+>
+>   /**
+>    * set_cpus_allowed_ptr - set CPU affinity mask of a task
+> @@ -1886,7 +1886,7 @@ extern int dl_task_check_affinity(struct
+> task_struct *p, const struct cpumask *m
+>   extern void force_compatible_cpus_allowed_ptr(struct task_struct *p);
+>   extern void relax_compatible_cpus_allowed_ptr(struct task_struct *p);
+>   #else
+> -static inline void do_set_cpus_allowed(struct task_struct *p, const
+> struct cpumask *new_mask)
+> +static inline void do_set_cpus_allowed(struct task_struct *p, const
+> struct cpumask *new_mask, bool keep_user)
+>   {
+>   }
+>   static inline int set_cpus_allowed_ptr(struct task_struct *p, const
+> struct cpumask *new_mask)
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 7ee9994aee40..0c448f8a3829 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -4005,9 +4005,14 @@ bool cpuset_cpus_allowed_fallback(struct
+> task_struct *tsk)
+>
+>          rcu_read_lock();
+>          cs_mask = task_cs(tsk)->cpus_allowed;
+> -       if (is_in_v2_mode() && cpumask_subset(cs_mask, possible_mask)) {
+> -               do_set_cpus_allowed(tsk, cs_mask);
+> -               changed = true;
+> +       if (cpumask_subset(cs_mask, possible_mask)) {
+> +               if (is_in_v2_mode()) {
+> +                       do_set_cpus_allowed(tsk, cs_mask, false);
+> +                       changed = true;
+> +               } else if (task_cs(tsk) != &top_cpuset) {
+> +                       do_set_cpus_allowed(tsk, cs_mask, true);
+> +                       changed = true;
+> +               }
+>          }
+>          rcu_read_unlock();
+>
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index 7a7aa5f93c0c..7ede27630088 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -527,7 +527,7 @@ static void __kthread_bind_mask(struct task_struct
+> *p, const struct cpumask *mas
+>
+>          /* It's safe because the task is inactive. */
+>          raw_spin_lock_irqsave(&p->pi_lock, flags);
+> -       do_set_cpus_allowed(p, mask);
+> +       do_set_cpus_allowed(p, mask, false);
+>          p->flags |= PF_NO_SETAFFINITY;
+>          raw_spin_unlock_irqrestore(&p->pi_lock, flags);
+>   }
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 33cfd522fc7c..623f89e65e6c 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2855,18 +2855,21 @@ __do_set_cpus_allowed(struct task_struct *p,
+> struct affinity_context *ctx)
+>    * Used for kthread_bind() and select_fallback_rq(), in both cases the user
+>    * affinity (if any) should be destroyed too.
+>    */
+> -void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
+> +void do_set_cpus_allowed(struct task_struct *p, const struct cpumask
+> *new_mask, bool keep_user)
+>   {
+>          struct affinity_context ac = {
+>                  .new_mask  = new_mask,
+>                  .user_mask = NULL,
+> -               .flags     = SCA_USER,  /* clear the user requested mask */
+> +               .flags     = 0, /* clear the user requested mask */
+>          };
+>          union cpumask_rcuhead {
+>                  cpumask_t cpumask;
+>                  struct rcu_head rcu;
+>          };
+>
+> +       if (!keep_user)
+> +               ac.flags = SCA_USER;
+> +
+>          __do_set_cpus_allowed(p, &ac);
+>
+>          /*
+> @@ -2874,7 +2877,8 @@ void do_set_cpus_allowed(struct task_struct *p,
+> const struct cpumask *new_mask)
+>           * to use kfree() here (when PREEMPT_RT=y), therefore punt to using
+>           * kfree_rcu().
+>           */
+> -       kfree_rcu((union cpumask_rcuhead *)ac.user_mask, rcu);
+> +       if (!keep_user)
+> +               kfree_rcu((union cpumask_rcuhead *)ac.user_mask, rcu);
+>   }
+>
+>   static cpumask_t *alloc_user_cpus_ptr(int node)
+> @@ -3664,7 +3668,7 @@ int select_fallback_rq(int cpu, struct task_struct *p)
+>                           *
+>                           * More yuck to audit.
+>                           */
+> -                       do_set_cpus_allowed(p, task_cpu_possible_mask(p));
+> +                       do_set_cpus_allowed(p,
+> task_cpu_possible_mask(p), false);
+>                          state = fail;
+>                          break;
+>                  case fail:
+>
+These changes essentially reverts commit 851a723e45d1c("sched: Always 
+clear user_cpus_ptr in do_set_cpus_allowed()") except the additional 
+caller in the cpuset code.
 
-Thank you for the patch.
+How about the following less invasive change?
 
-On Tue, Apr 30, 2024 at 07:51:28AM +0000, Ricardo Ribalda wrote:
-> Use the error code generated by platform_get_irq() and
-> devm_request_irq() as the error code of probe().
-> 
-> It will give a more accurate reason of why it failed.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/platform/broadcom/bcm2835-unicam.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> index b2b23d24da19..0b2729bf4a36 100644
-> --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> @@ -2660,17 +2660,13 @@ static int unicam_probe(struct platform_device *pdev)
->  	}
->  
->  	ret = platform_get_irq(pdev, 0);
-> -	if (ret < 0) {
-> -		if (ret != -EPROBE_DEFER)
-> -			ret = -EINVAL;
-> +	if (ret < 0)
->  		goto err_unicam_put;
-> -	}
+  diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 7019a40457a6..646837eab70c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2796,21 +2796,24 @@ __do_set_cpus_allowed(struct task_struct *p, 
+struct affinity_context *ctx)
+  }
 
-I think you can squash the whole patch with 1/3.
+  /*
+- * Used for kthread_bind() and select_fallback_rq(), in both cases the user
+- * affinity (if any) should be destroyed too.
++ * Used for kthread_bind() and select_fallback_rq(). Destroy user affinity
++ * if no intersection with the new mask.
+   */
+  void do_set_cpus_allowed(struct task_struct *p, const struct cpumask 
+*new_mask)
+  {
+         struct affinity_context ac = {
+                 .new_mask  = new_mask,
+                 .user_mask = NULL,
+-               .flags     = SCA_USER,  /* clear the user requested mask */
++               .flags     = 0,
+         };
+         union cpumask_rcuhead {
+                 cpumask_t cpumask;
+                 struct rcu_head rcu;
+         };
 
->  
->  	ret = devm_request_irq(&pdev->dev, ret, unicam_isr, 0,
->  			       "unicam_capture0", unicam);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Unable to request interrupt\n");
-> -		ret = -EINVAL;
->  		goto err_unicam_put;
->  	}
->  
++       if (current->user_cpus_ptr && 
+!cpumask_intersects(current->user_cpus_ptr, new_mask))
++               ac.flags = SCA_USER;    /* clear the user requested mask */
++
+         __do_set_cpus_allowed(p, &ac);
 
--- 
+         /*
+
+No compilation test done. Note that there is a null check inside 
+kfree_rcu() with no need for additional check.
+
 Regards,
+Longman
 
-Laurent Pinchart
+
 
