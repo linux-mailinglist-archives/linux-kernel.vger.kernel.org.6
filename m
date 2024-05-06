@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-170402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2B78BD65A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:40:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F087C8BD65D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD56BB218C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:40:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54E01F22940
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF7815B98D;
-	Mon,  6 May 2024 20:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E9115D5AB;
+	Mon,  6 May 2024 20:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOI6ctcL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYlx/Ohz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED3015B56E;
-	Mon,  6 May 2024 20:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FA515CD6B;
+	Mon,  6 May 2024 20:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715028027; cv=none; b=EtOENF0tGUR3OC8D83Rc3QDlNmdSghJqlW3jMtqeD9A6BUP1PVHQFJh4cH3gIBdFW9+8JccitBVEZyynXnPQlOIZthF36eHz+6tYLYLrFJaBtOrhzGq/SKywPVq7Hyp8AitM74SKU8CXn5Vw2T9+bTY/1HuDzSpRbk2wTadKnis=
+	t=1715028030; cv=none; b=NBlKAZrvG/41syyQprQmWF7Pn4B+5N/lF15Jn+iVy5XFxonyjUfLfgAJbaLSC/S4OPOcL6F/7EtO9kQSIFFwfJ3PCeq8LDGkfSafJUPyI7Abf3hyfFj5QigRQf27nHYTkZsyYZ+HpmpVcOolmrp1J8FeDv4S7zHQu6a2dVO/LRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715028027; c=relaxed/simple;
-	bh=gp0Hiz0fY4V+2j9w+5I7W4FxOvOzlKPG4eD+czuDYLI=;
+	s=arc-20240116; t=1715028030; c=relaxed/simple;
+	bh=W8JyiNuyGZ1ybRJ7NFoFHEw6kBYOtJo8wyxLY7egqCo=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Pkf8Sco/sgKXuQqbBFY0P6ryL6IKSvrc0WfBwejNiiETkkcb6BPYkNcbx2qUYsmNk1Dl/PNuWj1xpxs3Drp93W5emfD3Pf2lOlLDMa0SW95//Wwbi3BZIGes59Iz/RNd/UydxKNkIh+lLrU1keM13TReSrjgqcAQ710y+HyK4LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOI6ctcL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B8C5C116B1;
-	Mon,  6 May 2024 20:40:27 +0000 (UTC)
+	 Message-Id:Subject; b=jt874yNKzYVi96Ic71bTwoaXq40XdD+OsWGBJqMGEhp54UJfg2OyzthVNsvyXprISif0SZJBnt93TrjBJfEmOWkqhrGfmVPy2D/O16WJRxNB1PtGpRg6BeOpY5juDd/F0PVhs5YgrAocZCZHXe493l9XzaqPypGZJB7xOwxmJoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYlx/Ohz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 320EFC3277B;
+	Mon,  6 May 2024 20:40:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715028027;
-	bh=gp0Hiz0fY4V+2j9w+5I7W4FxOvOzlKPG4eD+czuDYLI=;
+	s=k20201202; t=1715028029;
+	bh=W8JyiNuyGZ1ybRJ7NFoFHEw6kBYOtJo8wyxLY7egqCo=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=oOI6ctcL+acwEojD8kAo5S6uwfr6y9MY8/6M1Yy9hP/VbjR3b6w/oo3ezOyID5h3d
-	 dTOg4LZRshKJ1WlLvnD3pWknyeH8JRv0vpBzQsbIeGmdHWrT2sB/Vv/P2g2ArIyCKL
-	 neVt5rxD+ApxK5lg2MYRbgn7+gGNHB52MsDcSpLJkuwYjfvHAnrR0zMjYgz63fT9hs
-	 OHiVDP/Jr/yMjTLGmeAr0MNuNQkjdKXoBoS9oBlW8JHZwA1315kywLzADP80SUIWIp
-	 cRHN9qQJZ7cahrpryaNeZPognEcuQN7YHlxuFjkRrTtSWkDzkV/tHHjPFZLxj8QggL
-	 KXdVY87dg3Zjw==
-Date: Mon, 06 May 2024 15:40:25 -0500
+	b=EYlx/Ohz1LjUbmhzjGNEQ5sRbyH5aqCD1S0QtP44gkn0/P9SXLR2AxFTke0JWlI7m
+	 p3qH3dZQ9pg/ScHDWSfZSkFM1S//fgw8EF8GyiX+YAZRZQHBk+nUw2fGZJtisZncPd
+	 Di0rPOqMqWv9HG7ewBP7SrC2v+A37ppHeNveZEU6hAaaxaZqNCuel1L1in+GkGN7Uh
+	 XhlDPVa2FrDGwkUcz6F9WMONkx/wEvc57gQTfbxmXeNpm7vitY1Pjhxx2JLooxaobs
+	 GJA0gGzPwclTy1I2qveq6U5M8oZFEXjV9BXu7RkwOplVq3b4JpUM554v9XQg0A7xz/
+	 He6ZOW75cC5DA==
+Date: Mon, 06 May 2024 15:40:27 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,52 +50,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
- Tianling Shen <cnsztl@immortalwrt.org>, 
- linux-arm-kernel@lists.infradead.org, 
- Matthias Brugger <matthias.bgg@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
- linux-clk@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
- linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
- linux-mediatek@lists.infradead.org, linux-leds@vger.kernel.org, 
- "David S. Miller" <davem@davemloft.net>, Lee Jones <lee@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Frank Wunderlich <frank-w@public-files.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
- Eric Woudstra <ericwouds@gmail.com>
-In-Reply-To: <20240505164549.65644-1-linux@fw-web.de>
-References: <20240505164549.65644-1-linux@fw-web.de>
-Message-Id: <171502764339.89536.5670988761224031139.robh@kernel.org>
-Subject: Re: [RFC v1 0/5] Add Bananapi R3 Mini
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20240505202522.2999503-1-jonas@kwiboo.se>
+References: <20240505202522.2999503-1-jonas@kwiboo.se>
+Message-Id: <171502764382.89564.9287218118633077994.robh@kernel.org>
+Subject: Re: [PATCH 0/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
 
 
-On Sun, 05 May 2024 18:45:44 +0200, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
+On Sun, 05 May 2024 20:25:15 +0000, Jonas Karlman wrote:
+> This series adds initial support for the Xunlong Orange Pi 3B board.
 > 
-> Add mt7986 based BananaPi R3 Mini SBC and fix some related binding errors.
+> The Xunlong Orange Pi 3B is a single-board computer based on the
+> Rockchip RK3566 SoC.
 > 
-> Frank Wunderlich (5):
->   dt-bindings: leds: add led trigger netdev
->   dt-bindings: clock: mediatek: add address-cells and size-cells to
->     ethsys
->   dt-bindings: net: mediatek,net: add reset-cells
->   dt-bindings: arm64: dts: mediatek: add BananaPi R3 Mini
->   arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
+> Schematic for Orange Pi 3B can be downloaded from:
+> http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-3B.html
 > 
->  .../devicetree/bindings/arm/mediatek.yaml     |   1 +
->  .../bindings/clock/mediatek,ethsys.yaml       |   6 +
->  .../devicetree/bindings/leds/common.yaml      |   2 +
->  .../devicetree/bindings/net/mediatek,net.yaml |   3 +
->  arch/arm64/boot/dts/mediatek/Makefile         |   1 +
->  .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 486 ++++++++++++++++++
->  6 files changed, 499 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> Jonas Karlman (2):
+>   dt-bindings: arm: rockchip: Add Xunlong Orange Pi 3B
+>   arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+> 
+>  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+>  .../boot/dts/rockchip/rk3566-orangepi-3b.dts  | 694 ++++++++++++++++++
+>  2 files changed, 699 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b.dts
 > 
 > --
-> 2.34.1
+> 2.43.2
 > 
 > 
 > 
@@ -115,12 +100,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y mediatek/mt7986a-bananapi-bpi-r3-mini.dtb' for 20240505164549.65644-1-linux@fw-web.de:
+New warnings running 'make CHECK_DTBS=y rockchip/rk3566-orangepi-3b.dtb' for 20240505202522.2999503-1-jonas@kwiboo.se:
 
-arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupts: [[0, 116, 4], [0, 117, 4], [0, 118, 4], [0, 119, 4]] is too short
-	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
-arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupt-names: ['ring0', 'ring1', 'ring2', 'ring3'] is too short
-	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
+arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks', 'codec' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
 
 
 
