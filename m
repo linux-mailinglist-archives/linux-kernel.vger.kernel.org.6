@@ -1,204 +1,202 @@
-Return-Path: <linux-kernel+bounces-169956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69728BCFD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:15:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99A98BCFDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524561F21D0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60FB51F2254C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B9213D2AC;
-	Mon,  6 May 2024 14:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E8B13CF8F;
+	Mon,  6 May 2024 14:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MLWZfOOi"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vdr3fCqq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CE013D2A2
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C4781211;
+	Mon,  6 May 2024 14:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715004912; cv=none; b=GXQe6gMUbBQuCIulSa7O8wCN4bhwKpBGPHwrRrlH3Gyw6gMV63puh6855swWLSvZAn0NlI6VnW3vHSabwxCF6DjQJ0T8Q89/tCQ8cP/EBWitUZlxvvS/w4H0b3Eceo7VJM3n43Jc5n2Fjc/TFgjCUu5Uxj2E/VjEgdIJaMN9aas=
+	t=1715005057; cv=none; b=EFoq0w6AmUmrvssClcmnXOyYheJikeXsv834NJtg2R07U4xiEppiAYc02OV1v0pmyaKZeme0MuQESkxzFsvqWGHCF0kB7LXCHHYtp2BkMI/jugb1QpCcIkFikSsul0EJkOBwN8WLz5fGCn7UaaGswwxYP2Lpd+2c9DN9JnQV8I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715004912; c=relaxed/simple;
-	bh=+Z/Lsq8TfQLRqsZxO6NPI1XpawG5p6DBMinswkhWeM8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pYvuazXZ6TMobhM1miW2EWVk1892nfSsToQkhj/tAFpbZaXX7OGAazPz1d80Fim6RX1TIuFrjQtuk6GiPi4eRXoJy5G6bpm5roxQ9ZcgVcuees2l2EUU5DQpVL+eLXFQDumqIXSeLuvvRywtAOdOF9S/3CwepJAlM40r4qT+4go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MLWZfOOi; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 618513FE60
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715004901;
-	bh=OqRb1xOZql2PU0k7U3099kOtm3MQu6nOgdSdRzcue2o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version;
-	b=MLWZfOOiQYPENUWwC3ACGLY+LOxdvU/6Yst3hqzWfYNwiLILQs8N96bJ0wYoMNk86
-	 S0DpmdGozUexf7ikJDHxFnswpD27IGS8cyhARMYjDflWn7xQ4x661fX7aiso1GL1cR
-	 4FD8pBe+iqQF9efJC0ljAJ5NRfZVPXEr4eispZ2/lkiIJqt7yo48qXuU8YUSDl5nFG
-	 RbACPifA3T0ulpASxoml+EZsRwwQURJYyoejZ9CM/Y/Ts7cJQ5RVCbn1Uk5cEeziHr
-	 Z/hbrbVrX9Ie6VuADFCWxV6KVgzavlZ81WFbMW/dwwwQu+rcXMNJUAkjVqic0P5PMg
-	 EAdNuCGbwJ5mQ==
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-56e645a8762so1437532a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:15:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715004897; x=1715609697;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OqRb1xOZql2PU0k7U3099kOtm3MQu6nOgdSdRzcue2o=;
-        b=J3w+EDF2Q9X8ZBQgYYMjFI/G1jY4YlqGmbnPHKdA0PTTn7nMu5ZVM3WpS2qvYaj3zY
-         tftfpvB07iDs2ZD7EUhRGewafFHwwUnw5h8zQsZOdJYdaSuYegVr5HnS0/ET4+4NyFKq
-         aVKEWSybcbKUNvDsXAJaKOXEYFjsadmaVHM6Lr9PyaqTUQ0JuRrN8f2kRA5t66rSWSRV
-         Vn+nm7ep7Xt7XWB7eicE2WTCDEiY3s6rnxs2nPdjxCxyNGPymW9uksaBK1f4gCqFMlZQ
-         Qba6wH8m2ke0d1hwP0JO0mM1rWEMyBC22M971FmsU4tYeoKuJ/X75OojBh9GDvC8S4nb
-         VkkA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7MKpCu4wDzxbaZ1T1/oBArTYkTopHhBGwIZVykv2GiTaLDWBv5F/H1dEEK89nT7lEF4XyoS6TKjNEq4jRNMpWYjNBInXVmEtDhoog
-X-Gm-Message-State: AOJu0YyJ2InQFvG+z8d655xgWdrkL7wEhHmVKAy//AAT0cNhMCkF14+d
-	hBty6uBbl3tbcgBKqSp6GEbiwCrrJSha1eKBJUMEK2hme5pPDRwnfWd7AzvqY6Gba46bzBiYFDZ
-	uw6xITTtFFFaM0OhMfUgJlvxAojlvAHECi8kiTIYSVA7S7V58W1/cBv5zburbTDfArUucZ9U/vL
-	2j3g==
-X-Received: by 2002:a17:906:6a1b:b0:a59:ba18:2fb9 with SMTP id qw27-20020a1709066a1b00b00a59ba182fb9mr3733803ejc.12.1715004897349;
-        Mon, 06 May 2024 07:14:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHa1Vw6hfo0afKISW9+EzWZA3flJUxebMlVAlpg8F9CpQGamqKcFf6weBYpMVMzl1sqbbZYOA==
-X-Received: by 2002:a17:906:6a1b:b0:a59:ba18:2fb9 with SMTP id qw27-20020a1709066a1b00b00a59ba182fb9mr3733786ejc.12.1715004897093;
-        Mon, 06 May 2024 07:14:57 -0700 (PDT)
-Received: from amikhalitsyn.lan ([2001:470:6d:781:4703:a034:4f89:f1de])
-        by smtp.gmail.com with ESMTPSA id xh9-20020a170906da8900b00a597ff2fc0dsm4663754ejb.69.2024.05.06.07.14.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 07:14:56 -0700 (PDT)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: horms@verge.net.au
-Cc: netdev@vger.kernel.org,
-	lvs-devel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Julian Anastasov <ja@ssi.bg>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>
-Subject: [PATCH v4 2/2] ipvs: allow some sysctls in non-init user namespaces
-Date: Mon,  6 May 2024 16:14:44 +0200
-Message-Id: <20240506141444.145946-2-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240506141444.145946-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20240506141444.145946-1-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1715005057; c=relaxed/simple;
+	bh=UT5jdW+jA0vq5ow16r7/+j8BrvIMxmLSzYl2OnPgLWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bIUjqIN4qByhFrbSotp4fyFgd9fjaxzBLNarRYyLjPBLmb+vQiqNQJvjPsu5cxBeYJhRcUj4tMZsYi6P+dIhpaCv3CoQ4tlIWhOgCLn51hETkPMK2+Wqo+SDuezw5iRUfSqbphMdqnOHFt7EJU1+pN4cd7SMv4NhHT1YEaGDpQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vdr3fCqq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555B6C116B1;
+	Mon,  6 May 2024 14:17:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715005057;
+	bh=UT5jdW+jA0vq5ow16r7/+j8BrvIMxmLSzYl2OnPgLWI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Vdr3fCqqIm0XrYDO7Hi/mGrr+H0sSZjGFu0Xr/Zfk7TzaFjKZUII1SY4yVsrnavOr
+	 sW06NjOvE0QWOZYkHs9dg8IxKqVUESLNLT73j3KrLYjfNOwzxnqoGADXDIjB6laeNR
+	 bRoaSSgF9RftStvkxRpFhtJcwckfi5uvlM4fu5j0pBQKwf55DNi9l35sMPs4vEG4Sz
+	 6/tl91ZVCYeQEZmC8CfH6gUjqWGJb4ndjuO6ZvlU6MPO6ICb9gkGOnN6SCRnrPXf+a
+	 SrDBT1OkHCeZiv6rYLvUcwDMYeZfErBWdHa2d1zLTPvo0ZNfJp/IeF9EZ5YDKyBpe5
+	 tqH5i6LCYFD+g==
+Date: Mon, 6 May 2024 15:17:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, kernel test robot <lkp@intel.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v6 09/10] iio: adc: ad7380: add support for rolling
+ average oversampling mode
+Message-ID: <20240506151725.10cf025e@jic23-huawei>
+In-Reply-To: <20240501-adding-new-ad738x-driver-v6-9-3c0741154728@baylibre.com>
+References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+	<20240501-adding-new-ad738x-driver-v6-9-3c0741154728@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Let's make all IPVS sysctls writtable even when
-network namespace is owned by non-initial user namespace.
+On Wed, 01 May 2024 16:55:42 +0200
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-Let's make a few sysctls to be read-only for non-privileged users:
-- sync_qlen_max
-- sync_sock_size
-- run_estimation
-- est_cpulist
-- est_nice
+> Adds support for rolling average oversampling mode.
+> 
+> Rolling oversampling mode uses a first in, first out (FIFO) buffer of
+> the most recent samples in the averaging calculation, allowing the ADC
+> throughput rate and output data rate to stay the same, since we only need
+> to take only one sample for each new conversion.
+> 
+> The FIFO length is 8, thus the available oversampling ratios are 1, 2, 4, 8
+> in this mode (vs 1,  2, 4, 8, 16, 32 for the normal average)
 
-I'm trying to be conservative with this to prevent
-introducing any security issues in there. Maybe,
-we can allow more sysctls to be writable, but let's
-do this on-demand and when we see real use-case.
+Ah. I should have read on!
 
-This patch is motivated by user request in the LXC
-project [1]. Having this can help with running some
-Kubernetes [2] or Docker Swarm [3] workloads inside the system
-containers.
+> 
+> In order to be able to change the averaging mode, this commit also adds
+> the new "oversampling_mode" and "oversampling_mode_available" custom
+> attributes along with the according documentation file in
+> Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380 since no standard
+> attributes correspond to this use case.
 
-Link: https://github.com/lxc/lxc/issues/4278 [1]
-Link: https://github.com/kubernetes/kubernetes/blob/b722d017a34b300a2284b890448e5a605f21d01e/pkg/proxy/ipvs/proxier.go#L103 [2]
-Link: https://github.com/moby/libnetwork/blob/3797618f9a38372e8107d8c06f6ae199e1133ae8/osl/namespace_linux.go#L682 [3]
+This comes to the comment I stuck in the previous patch.
 
-Cc: Julian Anastasov <ja@ssi.bg>
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
-Cc: Florian Westphal <fw@strlen.de>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- net/netfilter/ipvs/ip_vs_ctl.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+To most people this is not a form of oversampling because the data rate
+remains unchanged. It's a cheap low pass filter (boxcar) Google pointed me at:
+https://dsp.stackexchange.com/questions/9966/what-is-the-cut-off-frequency-of-a-moving-average-filter
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index e122fa367b81..b6d0dcf3a5c3 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -4269,6 +4269,7 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
- 	struct ctl_table *tbl;
- 	int idx, ret;
- 	size_t ctl_table_size = ARRAY_SIZE(vs_vars);
-+	bool unpriv = net->user_ns != &init_user_ns;
- 
- 	atomic_set(&ipvs->dropentry, 0);
- 	spin_lock_init(&ipvs->dropentry_lock);
-@@ -4283,10 +4284,6 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
- 		tbl = kmemdup(vs_vars, sizeof(vs_vars), GFP_KERNEL);
- 		if (tbl == NULL)
- 			return -ENOMEM;
--
--		/* Don't export sysctls to unprivileged users */
--		if (net->user_ns != &init_user_ns)
--			ctl_table_size = 0;
- 	} else
- 		tbl = vs_vars;
- 	/* Initialize sysctl defaults */
-@@ -4312,10 +4309,17 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
- 	ipvs->sysctl_sync_ports = 1;
- 	tbl[idx++].data = &ipvs->sysctl_sync_ports;
- 	tbl[idx++].data = &ipvs->sysctl_sync_persist_mode;
-+
- 	ipvs->sysctl_sync_qlen_max = nr_free_buffer_pages() / 32;
-+	if (unpriv)
-+		tbl[idx].mode = 0444;
- 	tbl[idx++].data = &ipvs->sysctl_sync_qlen_max;
-+
- 	ipvs->sysctl_sync_sock_size = 0;
-+	if (unpriv)
-+		tbl[idx].mode = 0444;
- 	tbl[idx++].data = &ipvs->sysctl_sync_sock_size;
-+
- 	tbl[idx++].data = &ipvs->sysctl_cache_bypass;
- 	tbl[idx++].data = &ipvs->sysctl_expire_nodest_conn;
- 	tbl[idx++].data = &ipvs->sysctl_sloppy_tcp;
-@@ -4338,15 +4342,22 @@ static int __net_init ip_vs_control_net_init_sysctl(struct netns_ipvs *ipvs)
- 	tbl[idx++].data = &ipvs->sysctl_conn_reuse_mode;
- 	tbl[idx++].data = &ipvs->sysctl_schedule_icmp;
- 	tbl[idx++].data = &ipvs->sysctl_ignore_tunneled;
-+
- 	ipvs->sysctl_run_estimation = 1;
-+	if (unpriv)
-+		tbl[idx].mode = 0444;
- 	tbl[idx].extra2 = ipvs;
- 	tbl[idx++].data = &ipvs->sysctl_run_estimation;
- 
- 	ipvs->est_cpulist_valid = 0;
-+	if (unpriv)
-+		tbl[idx].mode = 0444;
- 	tbl[idx].extra2 = ipvs;
- 	tbl[idx++].data = &ipvs->sysctl_est_cpulist;
- 
- 	ipvs->sysctl_est_nice = IPVS_EST_NICE;
-+	if (unpriv)
-+		tbl[idx].mode = 0444;
- 	tbl[idx].extra2 = ipvs;
- 	tbl[idx++].data = &ipvs->sysctl_est_nice;
- 
--- 
-2.34.1
+in_voltage_low_pass_3db_frequency would be the most appropriate standard
+ABI for this if we do treat it as a low pass filter control.
 
+I'm not necessarily saying we don't want new ABI for this, but I would
+like to consider the pros and cons of just using the 3db frequency.
+
+So would that work for this part or am I missing something?
+
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380 |  38 ++++++
+>  MAINTAINERS                                        |   1 +
+>  drivers/iio/adc/ad7380.c                           | 143 +++++++++++++++++++--
+>  3 files changed, 174 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380
+> new file mode 100644
+> index 000000000000..0a560ef3e32a
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380
+> @@ -0,0 +1,38 @@
+> +What: /sys/bus/iio/devices/iio:deviceX/oversampling_mode
+> +KernelVersion: 6.9
+> +Contact: Michael Hennerich <michael.hennerich@analog.com>
+> +Description:
+> +    Writing this attribute sets the oversampling average mode.
+> +    Reading it, shows the configured mode.
+> +    Available modes can be displayed using the oversampling_mode_available
+> +    attribute.
+> +    When writing this attribute to change the oversampling mode, this will
+> +    have the following side effects:
+Where possible, write ABI docs with the assumption we will generalize
+them in future. Annoyingly the documentation system doesn't allow for
+multiple descriptions. As such, additional information like this doesn't
+belong in the ABI docs.
+
+> +
+> +      - soft reset the ADC to flush the oversampling block and FIFO
+I think this was already picked up on in another review, but my inclination is
+make this something you can't change with the buffer enabled. The results
+will be rather unpredictable anyway and it will simplify the handling a little
+to just block that corner with a claim (or failure to claim) direct mode
+when setting this.
+
+> +
+> +      - the available oversampling ratios depend on the oversampling mode
+> +        configured so to avoid misconfiguration, changing the mode will disable
+> +        the oversampling by setting the ratio to 1.
+
+Better to get a close as possible.  If they've configured it to something we can't
+do then it's user error. If they have picked a value that is still possible then
+allowing that is a nice usability improvement.
+
+> +
+> +      - the list of available ratios (displayed by reading the
+> +        oversampling_ratio_available attribute) will be updated when changing
+> +        the oversampling mode.
+
+In general an ABI element is allowed to modify any other (because this sort of
+chaining is common.)  As such I don't think this needs to be in the ABI docs
+but would be a useful detail to add to a chip specific main document elsewhere.
+
+> +
+> +What: /sys/bus/iio/devices/iio:deviceX/oversampling_mode_available
+> +KernelVersion: 6.9
+> +Contact: Michael Hennerich <michael.hennerich@analog.com>
+> +Description:
+> +    Display the available oversampling average modes. The two available modes
+> +    are "normal" and "rolling" where "normal" average mode is the default one.
+> +
+> +      - normal averaging involves taking a number of samples, adding them
+> +        together, and dividing the result by the number of samples taken.
+> +        This result is then output from the device. The sample data is cleared
+> +        when the process completes. Because we need more samples to output a
+> +        value, the data output rate decrease with the oversampling ratio.
+> +
+> +      - rolling oversampling mode uses a first in, first out (FIFO) buffer of
+> +        the most recent samples in the averaging calculation, allowing the ADC
+> +        throughput rate and output data rate to stay the same, since we only need
+> +        to take only one sample for each new conversion.
+
+If we keep this, I wonder if "moving" or "rolling" is the more common term for this.
+
+
+> +
+> +static IIO_DEVICE_ATTR_RW(oversampling_mode, 0);
+> +static IIO_DEVICE_ATTR_RO(oversampling_mode_available, 0);
+> +
+> +static struct attribute *ad7380_attributes[] = {
+> +	&iio_dev_attr_oversampling_mode.dev_attr.attr,
+> +	&iio_dev_attr_oversampling_mode_available.dev_attr.attr,
+> +	NULL
+> +};
+> +
+> +static const struct attribute_group ad7380_attribute_group = {
+> +	.attrs = ad7380_attributes,
+> +};
+
+Bring the sysfs includes in here rather than in the original driver patch.
+
+Thanks,
+
+Jonathan
 
