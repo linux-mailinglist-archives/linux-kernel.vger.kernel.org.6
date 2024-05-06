@@ -1,182 +1,165 @@
-Return-Path: <linux-kernel+bounces-169260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B77598BC5C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 357F68BC5C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC471C21568
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6093A1C21580
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F81EEB2;
-	Mon,  6 May 2024 02:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD33358A7;
+	Mon,  6 May 2024 02:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="lELcQNU+"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DBF620
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 02:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kVN0+SDY"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2580181;
+	Mon,  6 May 2024 02:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714962681; cv=none; b=msM75oBeBS18omADXysF603bUoGZQsOeMFntp/N6qD//t4FGozV04v8aBkRrrx3duvs22DkWVCxiJd6Tjl8I4URp4YQzPfaORfXAHb+kFq5njYfXfFvDxZd1UbXSTm8N5fUvU1scPVYyOfOLRfrwdAQrFIPKVryzzkTldV33zrI=
+	t=1714962678; cv=none; b=IbCg7YmD4vh3Xf2hqM3HNsF6QlYPdU7G5IdO4A4idxKBpfQ3e/FVr6RXgH2HLUjkVg1pwFSB+5oSeA2xhKymQg0skx2kAVjg3ElVrJzhtUhG7mnh1NWiQV+31DeVrPD48dJQjQnWmdDjPhAxcd7IzjvQaDbDVaI2fXA2rz+bAoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714962681; c=relaxed/simple;
-	bh=xVXmvvzTnGal8jbxo55EfGDnqkmkOH8cG3hSPj3GJUA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=j6tJhN2YNmgCUjEVNf5fSN4dws8WzgBhO4QsePz1VR4iHV8HLBwNuH9JRQbLQCVDRr7W51ZvGLpaqOXt6nIPp1gqO8HzKxgz8qyYWkERlg9aSEhx8U/dysXPWjkDk7E5CXtfClTTxkpyIeqvQSUaWkToFxrbEXcLT/HbpUx6c0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=lELcQNU+ reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=gFfcR42if+TwEsWiFyKRKhe7Gmi8XUxpXuioeI/orK0=; b=l
-	ELcQNU+GoME2SLoVaxVFGPSBEURQutmIVD1E8FjUJEwJfPjxIqxg5mrkCmVfexrf
-	4sM/29kFeYLbojg2F4K48nR9v4dwf7lpGoP3cR0dw4rSUGHVE3dBSfyczd681iJI
-	3a6wIje5+Suxx3XyTQZ7TRIcUcBOSy1UvGNLQTGCRM=
-Received: from gaoshanliukou$163.com ( [60.27.227.220] ) by
- ajax-webmail-wmsvr-40-121 (Coremail) ; Mon, 6 May 2024 10:30:18 +0800 (CST)
-Date: Mon, 6 May 2024 10:30:18 +0800 (CST)
-From: "yang.zhang" <gaoshanliukou@163.com>
-To: "Alexandre Ghiti" <alexghiti@rivosinc.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	akpm@linux-foundation.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, alex@ghiti.fr, 
-	"yang.zhang" <yang.zhang@hexintek.com>
-Subject: Re:Re: [PATCH V1] riscv: mm: Support > 1GB kernel image size when
- creating early page table
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <CAHVXubg0u9tj4w=gUkPiZWfAKNo_frRErQHS2TqzOR8yeUdBjA@mail.gmail.com>
-References: <20240430092211.26269-1-gaoshanliukou@163.com>
- <CAHVXubg0u9tj4w=gUkPiZWfAKNo_frRErQHS2TqzOR8yeUdBjA@mail.gmail.com>
-X-NTES-SC: AL_Qu2aBvWdvU4q7iGeYukXnEYQh+k3XcK4u/0u2YFVP5E0kiT0xAIAYWZTPGDnzsWDEAGlqQGyVQJj1slHcKVbTpBZptreQ2YZXyoMKBP7Rh6V
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1714962678; c=relaxed/simple;
+	bh=2pFWK0MLTTo2t+NIWJC3RactBtGq7GIQL3dy2XWRsr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=izPxN8uoj0tiNT02vX3H7KlTxhGD0iD7niSdGDn4zjZDoRalRjP0yo3ZDgiwrbf5tVVNMf2IxTiG9B1u1ZrkYWgyw+7RoAlIPQcokxlnqAR0pX6CyRH2gazL/YZUwBIavF9C/EWToOztbnCuyTDnNHMlfC2/wIFC6mTTLzrQzJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kVN0+SDY; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714962667; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ob0YO4yjvcUQvEjXT5JdBhT5d+S7+Y7wcj+uRXLaRgQ=;
+	b=kVN0+SDYsDehP9TM9vSpzb6LdDo62Q7wKQJKieBS1tk04ViH6xf/HYdt8kwe8H1NuP1oFxRIk39xkcLIADiuI2FMvscB2GliayG39x3aedaX51tcxWKJkEOusT43GKSb+2xdLerbrsqhSzB23SyUfX9EMuLtR4sTUT0mdazM3ck=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R681e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W5pq6Lp_1714962665;
+Received: from 30.221.146.217(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W5pq6Lp_1714962665)
+          by smtp.aliyun-inc.com;
+          Mon, 06 May 2024 10:31:06 +0800
+Message-ID: <75566e68-bb5f-4458-8140-a59f263cc98a@linux.alibaba.com>
+Date: Mon, 6 May 2024 10:31:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3607db2f.41ff.18f4bbcd740.Coremail.gaoshanliukou@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wDX31m6QDhmEbQnAA--.18863W
-X-CM-SenderInfo: pjdr2x5dqox3xnrxqiywtou0bp/1tbiJxnW8mXAlp9hTwACsa
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/12] cachefiles: add consistency check for copen/cread
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-7-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240424033916.2748488-7-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-CgpBdCAyMDI0LTA0LTMwIDIwOjA4OjE4LCAiQWxleGFuZHJlIEdoaXRpIiA8YWxleGdoaXRpQHJp
-dm9zaW5jLmNvbT4gd3JvdGU6Cj5IaSBZYW5nLAo+Cj5PbiBUdWUsIEFwciAzMCwgMjAyNCBhdCAx
-MToyNOKAr0FNIHlhbmcuemhhbmcgPGdhb3NoYW5saXVrb3VAMTYzLmNvbT4gd3JvdGU6Cj4+Cj4+
-IEZyb206ICJ5YW5nLnpoYW5nIiA8eWFuZy56aGFuZ0BoZXhpbnRlay5jb20+Cj4+Cj4+IEJ5IGRl
-ZmF1bHQsIHdoZW4gY3JlYXRpbmcgZWFybHkgcGFnZSB0YWJsZSwgb25seSBvbmUgUE1EIHBhZ2Ug
-dGFibGUsIGJ1dAo+PiBpZiBrZXJuZWwgaW1hZ2Ugc2l6ZSBleGNlZWRzIDFHQiwgaXQgbmVlZCB0
-d28gUE1EIHBhZ2UgdGFibGUsIG90aGVyd2lzZSwKPj4gaXQgd291bGQgQlVHX09OIGluIGNyZWF0
-ZV9rZXJuZWxfcGFnZV90YWJsZS4KPj4KPj4gSW4gYWRkaXRpb24sIGlmIHRyYXAgZWFybGllciwg
-dHJhcCB2ZWN0b3IgZG9lc24ndCB5ZXQgc2V0IHByb3Blcmx5LCBjdXJyZW50Cj4+IHZhbHVlIG1h
-eWJlIHNldCBieSBwcmV2aW91cyBmaXJtd2lyZSwgdHlwaWNhbGx5IGl0J3MgdGhlIF9zdGFydCBv
-ZiBrZXJuZWwsCj4+IGl0J3MgY29uZnVzZWQgYW5kIGRpZmZpY3VsdCB0byBkZWJ1Zywgc28gc2V0
-IGl0IGVhcmxpZXIuCj4KPlRvdGFsbHkgYWdyZWUgd2l0aCB0aGF0LCBJJ20gdXNlZCB0byBkZWJ1
-Z2dpbmcgdGhpcyBwYXJ0IG9mIHRoZSBjb2RlCj5hbmQgSSBrbm93IHN0dmVjIHBvaW50cyB0byBf
-X3N0YXJ0IGFuZCBub3QgaGFuZGxlX2V4Y2VwdGlvbiBhdCB0aGlzCj5wb2ludC4uLkJ1dCB0aGF0
-IGRlc2VydmVzIGEgZml4IGluZGVlZCwgaXQncyBjb25mdXNpbmcuIEkgZG9uJ3Qgc2VlCj50aGlz
-IGZpeCBpbiB0aGUgcGF0Y2ggYmVsb3cgdGhvdWdoPwpTb3JyeSwgaSBtaXNzZWQgaXQuCkkgc2Vu
-ZCBwYXRjaCB2MiBmb3IgdGhpcy4KPj4gLS0tCj4+IEknbSBub3Qgc3VyZSB3aGV0aGVyIGh1Z2Vz
-aXplIGtlcm5lbCBpcyByZWFzb25hYmxlLCBpZiBub3QsIGlnbm9yZSB0aGlzIHBhdGNoLgo+Cj5V
-bmxlc3MgeW91IGhhdmUgYSBnb29kIHVzZSBjYXNlIGZvciB0aGlzLCBJIGRvbid0IHRoaW5rIHRo
-YXQncwo+bmVjZXNzYXJ5LCB3ZSBuZXZlciBlbmNvdW50ZXJlZCBzdWNoIHNpdHVhdGlvbnMgc28g
-SSdkIHJhdGhlciBub3QKPmNvbXBsaWNhdGUgdGhpcyBjb2RlIGV2ZW4gbW9yZS4KSSBqdXN0IHNl
-ZSB0aGUga2VybmVsIHNwYWNlIGlzIHJlc2VydmVkIDJHQih3aGljaCBpcyAweGZmZmZmZmZmODAw
-MDAwMDAgLTB4ZmZmZmZmZmZmZmZmZmZmZiApLgpOb3JtYWxseSwga2VybmVsIGltYWdlIHNpemUg
-aXMganVzdCBzb21lIE1Ccywgc28gdGhpcyBwYXRjaCBtYXliZSB1bm5lY2Vzc2FyeS4KSnVzdCBp
-Z25vcmUuCkkgYWRkIHRoZSBwYXRjaCBmb3Igc2V0IHRyYXAgdmVjdG9yIGVhcmxpZXIgZm9yIGhl
-bHBpbmcgZGVidWcuClRoYW5rcy4KCj5UaGFua3MsCj4KPkFsZXgKPgo+PiBUaGlzIGlzc3VlIGNh
-biBiZSByZXByb2R1Y2VkIHNpbXBpbHkgYnkgY2hhbmdpbmcgJ19lbmQnIGluIHZtbGludXgubGRz
-LlMKPj4gc3VjaCBhcyBfZW5kID0gLiArIDB4NDAwMDAwMDDvvJsKPj4KPj4gU2lnbmVkLW9mZi1i
-eTogeWFuZy56aGFuZyA8eWFuZy56aGFuZ0BoZXhpbnRlay5jb20+Cj4+IC0tLQo+PiAgYXJjaC9y
-aXNjdi9tbS9pbml0LmMgfCA0MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
-LS0tLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDM1IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0p
-Cj4+Cj4+IGRpZmYgLS1naXQgYS9hcmNoL3Jpc2N2L21tL2luaXQuYyBiL2FyY2gvcmlzY3YvbW0v
-aW5pdC5jCj4+IGluZGV4IGZlOGUxNTkzOTRkOC4uMDk0YjM5ZjkyMGQzIDEwMDY0NAo+PiAtLS0g
-YS9hcmNoL3Jpc2N2L21tL2luaXQuYwo+PiArKysgYi9hcmNoL3Jpc2N2L21tL2luaXQuYwo+PiBA
-QCAtMzg2LDExICszODYsMTMgQEAgc3RhdGljIHZvaWQgX19pbml0IGNyZWF0ZV9wdGVfbWFwcGlu
-ZyhwdGVfdCAqcHRlcCwKPj4gIHN0YXRpYyBwbWRfdCB0cmFtcG9saW5lX3BtZFtQVFJTX1BFUl9Q
-TURdIF9fcGFnZV9hbGlnbmVkX2JzczsKPj4gIHN0YXRpYyBwbWRfdCBmaXhtYXBfcG1kW1BUUlNf
-UEVSX1BNRF0gX19wYWdlX2FsaWduZWRfYnNzOwo+PiAgc3RhdGljIHBtZF90IGVhcmx5X3BtZFtQ
-VFJTX1BFUl9QTURdIF9faW5pdGRhdGEgX19hbGlnbmVkKFBBR0VfU0laRSk7Cj4+ICtzdGF0aWMg
-cG1kX3QgZWFybHlfcG1kMltQVFJTX1BFUl9QTURdIF9faW5pdGRhdGEgX19hbGlnbmVkKFBBR0Vf
-U0laRSk7Cj4+Cj4+ICAjaWZkZWYgQ09ORklHX1hJUF9LRVJORUwKPj4gICNkZWZpbmUgdHJhbXBv
-bGluZV9wbWQgKChwbWRfdCAqKVhJUF9GSVhVUCh0cmFtcG9saW5lX3BtZCkpCj4+ICAjZGVmaW5l
-IGZpeG1hcF9wbWQgICAgICgocG1kX3QgKilYSVBfRklYVVAoZml4bWFwX3BtZCkpCj4+ICAjZGVm
-aW5lIGVhcmx5X3BtZCAgICAgICgocG1kX3QgKilYSVBfRklYVVAoZWFybHlfcG1kKSkKPj4gKyNk
-ZWZpbmUgZWFybHlfcG1kMiAgICAgICgocG1kX3QgKilYSVBfRklYVVAoZWFybHlfcG1kMikpCj4+
-ICAjZW5kaWYgLyogQ09ORklHX1hJUF9LRVJORUwgKi8KPj4KPj4gIHN0YXRpYyBwNGRfdCB0cmFt
-cG9saW5lX3A0ZFtQVFJTX1BFUl9QNERdIF9fcGFnZV9hbGlnbmVkX2JzczsKPj4gQEAgLTQzMiw5
-ICs0MzQsMTQgQEAgc3RhdGljIHBtZF90ICpfX2luaXQgZ2V0X3BtZF92aXJ0X2xhdGUocGh5c19h
-ZGRyX3QgcGEpCj4+Cj4+ICBzdGF0aWMgcGh5c19hZGRyX3QgX19pbml0IGFsbG9jX3BtZF9lYXJs
-eSh1aW50cHRyX3QgdmEpCj4+ICB7Cj4+IC0gICAgICAgQlVHX09OKCh2YSAtIGtlcm5lbF9tYXAu
-dmlydF9hZGRyKSA+PiBQVURfU0hJRlQpOwo+PiArICAgICAgIHVpbnRwdHJfdCBlbmRfcHVkX2lk
-eCA9IHB1ZF9pbmRleChrZXJuZWxfbWFwLnZpcnRfYWRkciArIGtlcm5lbF9tYXAuc2l6ZSAtIDEp
-Owo+PiArICAgICAgIHVpbnRwdHJfdCBjdXJyZW50X3B1ZF9pZHggPSBwdWRfaW5kZXgodmEpOwo+
-Pgo+PiAtICAgICAgIHJldHVybiAodWludHB0cl90KWVhcmx5X3BtZDsKPj4gKyAgICAgICBCVUdf
-T04oY3VycmVudF9wdWRfaWR4ID4gZW5kX3B1ZF9pZHgpOwo+PiArICAgICAgIGlmIChjdXJyZW50
-X3B1ZF9pZHggPT0gZW5kX3B1ZF9pZHgpCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gKHVpbnRw
-dHJfdCllYXJseV9wbWQyOwo+PiArICAgICAgIGVsc2UKPj4gKyAgICAgICAgICAgICAgIHJldHVy
-biAodWludHB0cl90KWVhcmx5X3BtZDsKPj4gIH0KPj4KPj4gIHN0YXRpYyBwaHlzX2FkZHJfdCBf
-X2luaXQgYWxsb2NfcG1kX2ZpeG1hcCh1aW50cHRyX3QgdmEpCj4+IEBAIC03NjksNiArNzc2LDE4
-IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzZXRfbW1hcF9ybmRfYml0c19tYXgodm9pZCkKPj4gICAg
-ICAgICBtbWFwX3JuZF9iaXRzX21heCA9IE1NQVBfVkFfQklUUyAtIFBBR0VfU0hJRlQgLSAzOwo+
-PiAgfQo+Pgo+PiArc3RhdGljIHBtZF90ICpfX2luaXQgc2VsZWN0X3BtZF9lYXJseSh1aW50cHRy
-X3QgcGEpCj4+ICt7Cj4+ICsgICAgICAgdWludHB0cl90IGVuZF9wdWRfaWR4ID0gcHVkX2luZGV4
-KGtlcm5lbF9tYXAucGh5c19hZGRyICsga2VybmVsX21hcC5zaXplIC0gMSk7Cj4+ICsgICAgICAg
-dWludHB0cl90IGN1cnJlbnRfcHVkX2lkeCA9IHB1ZF9pbmRleChwYSk7Cj4+ICsKPj4gKyAgICAg
-ICBCVUdfT04oY3VycmVudF9wdWRfaWR4ID4gZW5kX3B1ZF9pZHgpOwo+PiArICAgICAgIGlmIChj
-dXJyZW50X3B1ZF9pZHggPT0gZW5kX3B1ZF9pZHgpCj4+ICsgICAgICAgICAgICAgICByZXR1cm4g
-ZWFybHlfcG1kMjsKPj4gKyAgICAgICBlbHNlCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gZWFy
-bHlfcG1kOwo+PiArfQo+PiArCj4+ICAvKgo+PiAgICogVGhlcmUgaXMgYSBzaW1wbGUgd2F5IHRv
-IGRldGVybWluZSBpZiA0LWxldmVsIGlzIHN1cHBvcnRlZCBieSB0aGUKPj4gICAqIHVuZGVybHlp
-bmcgaGFyZHdhcmU6IGVzdGFibGlzaCAxOjEgbWFwcGluZyBpbiA0LWxldmVsIHBhZ2UgdGFibGUg
-bW9kZQo+PiBAQCAtNzgwLDYgKzc5OSw3IEBAIHN0YXRpYyBfX2luaXQgdm9pZCBzZXRfc2F0cF9t
-b2RlKHVpbnRwdHJfdCBkdGJfcGEpCj4+ICAgICAgICAgdTY0IGlkZW50aXR5X3NhdHAsIGh3X3Nh
-dHA7Cj4+ICAgICAgICAgdWludHB0cl90IHNldF9zYXRwX21vZGVfcG1kID0gKCh1bnNpZ25lZCBs
-b25nKXNldF9zYXRwX21vZGUpICYgUE1EX01BU0s7Cj4+ICAgICAgICAgdTY0IHNhdHBfbW9kZV9j
-bWRsaW5lID0gX19waV9zZXRfc2F0cF9tb2RlX2Zyb21fY21kbGluZShkdGJfcGEpOwo+PiArICAg
-ICAgIHBtZF90ICp0YXJnZXRfcG1kLCAqdGFyZ2V0X3BtZDI7Cj4+Cj4+ICAgICAgICAgaWYgKHNh
-dHBfbW9kZV9jbWRsaW5lID09IFNBVFBfTU9ERV81Nykgewo+PiAgICAgICAgICAgICAgICAgZGlz
-YWJsZV9wZ3RhYmxlX2w1KCk7Cj4+IEBAIC03ODksMTcgKzgwOSwyNCBAQCBzdGF0aWMgX19pbml0
-IHZvaWQgc2V0X3NhdHBfbW9kZSh1aW50cHRyX3QgZHRiX3BhKQo+PiAgICAgICAgICAgICAgICAg
-cmV0dXJuOwo+PiAgICAgICAgIH0KPj4KPj4gKyAgICAgICB0YXJnZXRfcG1kID0gc2VsZWN0X3Bt
-ZF9lYXJseShzZXRfc2F0cF9tb2RlX3BtZCk7Cj4+ICsgICAgICAgdGFyZ2V0X3BtZDIgPSBzZWxl
-Y3RfcG1kX2Vhcmx5KHNldF9zYXRwX21vZGVfcG1kICsgUE1EX1NJWkUpOwo+PiAgICAgICAgIGNy
-ZWF0ZV9wNGRfbWFwcGluZyhlYXJseV9wNGQsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIHNl
-dF9zYXRwX21vZGVfcG1kLCAodWludHB0cl90KWVhcmx5X3B1ZCwKPj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgUDREX1NJWkUsIFBBR0VfVEFCTEUpOwo+PiAgICAgICAgIGNyZWF0ZV9wdWRfbWFw
-cGluZyhlYXJseV9wdWQsCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgIHNldF9zYXRwX21v
-ZGVfcG1kLCAodWludHB0cl90KWVhcmx5X3BtZCwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAg
-ICAgc2V0X3NhdHBfbW9kZV9wbWQsICh1aW50cHRyX3QpdGFyZ2V0X3BtZCwKPj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgUFVEX1NJWkUsIFBBR0VfVEFCTEUpOwo+PiArICAgICAgIC8qIEhh
-bmRsZSB0aGUgY2FzZSB3aGVyZSBzZXRfc2F0cF9tb2RlIHN0cmFkZGxlcyAyIFBVRHMgKi8KPj4g
-KyAgICAgICBpZiAodGFyZ2V0X3BtZDIgIT0gdGFyZ2V0X3BtZCkKPj4gKyAgICAgICAgICAgICAg
-IGNyZWF0ZV9wdWRfbWFwcGluZyhlYXJseV9wdWQsCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHNldF9zYXRwX21vZGVfcG1kICsgUE1EX1NJWkUsICh1aW50cHRyX3QpdGFyZ2V0X3BtZDIs
-Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFBVRF9TSVpFLCBQQUdFX1RBQkxFKTsKPj4g
-ICAgICAgICAvKiBIYW5kbGUgdGhlIGNhc2Ugd2hlcmUgc2V0X3NhdHBfbW9kZSBzdHJhZGRsZXMg
-MiBQTURzICovCj4+IC0gICAgICAgY3JlYXRlX3BtZF9tYXBwaW5nKGVhcmx5X3BtZCwKPj4gKyAg
-ICAgICBjcmVhdGVfcG1kX21hcHBpbmcodGFyZ2V0X3BtZCwKPj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgc2V0X3NhdHBfbW9kZV9wbWQsIHNldF9zYXRwX21vZGVfcG1kLAo+PiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBQTURfU0laRSwgUEFHRV9LRVJORUxfRVhFQyk7Cj4+IC0gICAg
-ICAgY3JlYXRlX3BtZF9tYXBwaW5nKGVhcmx5X3BtZCwKPj4gKyAgICAgICBjcmVhdGVfcG1kX21h
-cHBpbmcodGFyZ2V0X3BtZDIsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNldF9zYXRw
-X21vZGVfcG1kICsgUE1EX1NJWkUsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNldF9z
-YXRwX21vZGVfcG1kICsgUE1EX1NJWkUsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFBN
-RF9TSVpFLCBQQUdFX0tFUk5FTF9FWEVDKTsKPj4gQEAgLTgyOSw3ICs4NTYsOSBAQCBzdGF0aWMg
-X19pbml0IHZvaWQgc2V0X3NhdHBfbW9kZSh1aW50cHRyX3QgZHRiX3BhKQo+PiAgICAgICAgIG1l
-bXNldChlYXJseV9wZ19kaXIsIDAsIFBBR0VfU0laRSk7Cj4+ICAgICAgICAgbWVtc2V0KGVhcmx5
-X3A0ZCwgMCwgUEFHRV9TSVpFKTsKPj4gICAgICAgICBtZW1zZXQoZWFybHlfcHVkLCAwLCBQQUdF
-X1NJWkUpOwo+PiAtICAgICAgIG1lbXNldChlYXJseV9wbWQsIDAsIFBBR0VfU0laRSk7Cj4+ICsg
-ICAgICAgbWVtc2V0KHRhcmdldF9wbWQsIDAsIFBBR0VfU0laRSk7Cj4+ICsgICAgICAgaWYgKHRh
-cmdldF9wbWQyICE9IHRhcmdldF9wbWQpCj4+ICsgICAgICAgICAgICAgICBtZW1zZXQodGFyZ2V0
-X3BtZDIsIDAsIFBBR0VfU0laRSk7Cj4+ICB9Cj4+ICAjZW5kaWYKPj4KPj4gLS0KPj4gMi4yNS4x
-Cj4+Cg==
+Hi Baokun,
+
+Thanks for improving on this!
+
+On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> This prevents malicious processes from completing random copen/cread
+> requests and crashing the system. Added checks are listed below:
+> 
+>   * Generic, copen can only complete open requests, and cread can only
+>     complete read requests.
+>   * For copen, ondemand_id must not be 0, because this indicates that the
+>     request has not been read by the daemon.
+>   * For cread, the object corresponding to fd and req should be the same.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  fs/cachefiles/ondemand.c | 27 ++++++++++++++++++++-------
+>  1 file changed, 20 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index bb94ef6a6f61..898fab68332b 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -82,12 +82,12 @@ static loff_t cachefiles_ondemand_fd_llseek(struct file *filp, loff_t pos,
+>  }
+>  
+>  static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+> -					 unsigned long arg)
+> +					 unsigned long id)
+>  {
+>  	struct cachefiles_object *object = filp->private_data;
+>  	struct cachefiles_cache *cache = object->volume->cache;
+>  	struct cachefiles_req *req;
+> -	unsigned long id;
+> +	XA_STATE(xas, &cache->reqs, id);
+>  
+>  	if (ioctl != CACHEFILES_IOC_READ_COMPLETE)
+>  		return -EINVAL;
+> @@ -95,10 +95,15 @@ static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+>  	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>  		return -EOPNOTSUPP;
+>  
+> -	id = arg;
+> -	req = xa_erase(&cache->reqs, id);
+> -	if (!req)
+> +	xa_lock(&cache->reqs);
+> +	req = xas_load(&xas);
+> +	if (!req || req->msg.opcode != CACHEFILES_OP_READ ||
+> +	    req->object != object) {
+> +		xa_unlock(&cache->reqs);
+>  		return -EINVAL;
+> +	}
+> +	xas_store(&xas, NULL);
+> +	xa_unlock(&cache->reqs);
+>  
+>  	trace_cachefiles_ondemand_cread(object, id);
+>  	complete(&req->done);
+> @@ -126,6 +131,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	unsigned long id;
+>  	long size;
+>  	int ret;
+> +	XA_STATE(xas, &cache->reqs, 0);
+>  
+>  	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>  		return -EOPNOTSUPP;
+> @@ -149,9 +155,16 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	if (ret)
+>  		return ret;
+>  
+> -	req = xa_erase(&cache->reqs, id);
+> -	if (!req)
+> +	xa_lock(&cache->reqs);
+> +	xas.xa_index = id;
+> +	req = xas_load(&xas);
+> +	if (!req || req->msg.opcode != CACHEFILES_OP_OPEN ||
+> +	    !req->object->ondemand->ondemand_id) {
+> +		xa_unlock(&cache->reqs);
+>  		return -EINVAL;
+> +	}
+> +	xas_store(&xas, NULL);
+> +	xa_unlock(&cache->reqs);
+>  
+>  	/* fail OPEN request if copen format is invalid */
+>  	ret = kstrtol(psize, 0, &size);
+
+The code looks good to me, but I still have some questions.
+
+First, what's the worst consequence if the daemon misbehaves like
+completing random copen/cread requests? I mean, does that affect other
+processes on the system besides the direct users of the ondemand mode,
+e.g. will the misbehavior cause system crash?
+
+Besides, it seems that the above security improvement is only "best
+effort".  It can not completely prevent a malicious misbehaved daemon
+from completing random copen/cread requests, right?
+
+-- 
+Thanks,
+Jingbo
 
