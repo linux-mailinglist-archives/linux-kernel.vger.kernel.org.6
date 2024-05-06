@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-169225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF7D8BC566
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:21:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7238C8BC56A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5880B20C5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:21:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1633B21586
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59D53D966;
-	Mon,  6 May 2024 01:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ukxOGBLF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D907E3D552;
+	Mon,  6 May 2024 01:25:10 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016D638F91;
-	Mon,  6 May 2024 01:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979106FB2;
+	Mon,  6 May 2024 01:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714958503; cv=none; b=iGP4/hvDTyo+zQpHJvExhPvr76hAIDphBEa9vFS4QkP0EW0KeuGTxY7IEivEDBYKOnPlCfh/kLtsNVnTkIwNtmj+hYb5fRIc79F+s9Q+o8Od4DlYC6z3lw14GMuF9JShLZ7QXn2T0WE2jEzmaD7jV3aGHMZC66a0yiLcw85/UZo=
+	t=1714958710; cv=none; b=b/4CXmHpMXYNxnLsZpq/gF3PZRxhlBpu4LSzSSP7Uik3YFJ9neFfyhP7rP5ebI2wEjec9F/awMB7s/31+iENLZ/fnzCaGi7qoOIt0o/T+Ac+7OyYGb1aiky7ppbo4KPOkH3jQTDItZbRosdahGK0hk/VSHnJ2hBCYM11QCDVdmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714958503; c=relaxed/simple;
-	bh=tcmaZci8s2SbyJUHrYITwrkr8FP51PKjAGTRDAgHu6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvhFsqMvCPULP4XxxbZ0a6Xl7HNBi/D0lhtIyt7sE2wKmc2IiVmGgoWYzxNBvWDyt8dAQWAMLxqGFg83cJTyWsWn4T/+fZ0R7ItQ2gazDPbSkoGD+LnntcUOC0St9QkDFjMoivQXjQ3sRDabp6cDbqp+cn2JCx9buhT0aIhz1xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ukxOGBLF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=khJBnJGPC0Bwe9eiBGBBnF2OTwHW4sDwaW9VH58A8V4=; b=uk
-	xOGBLFCjVDrlt4Eq3SZGfQKp7QAvvCm7RSkCQGBkoae0DqlHW7TvrA7l657UiB6uAU7DAztJuehRq
-	nuT8gRybHcwjqkaKjitmt/1YKdShzcqGV4CDRybC3HY8yYHmSkgyR97oFCk07MPdO63ke0zBCzNeC
-	nzdPOZLdvcSzOKg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s3n2b-00EixG-8J; Mon, 06 May 2024 03:21:17 +0200
-Date: Mon, 6 May 2024 03:21:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban.Veerasooran@microchip.com
-Cc: ramon.nordin.rodriguez@ferroamp.se, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, saeedm@nvidia.com, anthony.l.nguyen@intel.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	corbet@lwn.net, linux-doc@vger.kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, Horatiu.Vultur@microchip.com,
-	ruanjinjie@huawei.com, Steen.Hegelund@microchip.com,
-	vladimir.oltean@nxp.com, UNGLinuxDriver@microchip.com,
-	Thorsten.Kummermehr@microchip.com, Pier.Beruto@onsemi.com,
-	Selvamani.Rajagopal@onsemi.com, Nicolas.Ferre@microchip.com,
-	benjamin.bigler@bernformulastudent.ch
-Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
- interrupts unmasking
-Message-ID: <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
-References: <20240418125648.372526-1-Parthiban.Veerasooran@microchip.com>
- <20240418125648.372526-6-Parthiban.Veerasooran@microchip.com>
- <Zi1Xbz7ARLm3HkqW@builder>
- <77d7d190-0847-4dc9-8fc5-4e33308ce7c8@lunn.ch>
- <Zi4czGX8jlqSdNrr@builder>
- <874654d4-3c52-4b0e-944a-dc5822f54a5d@lunn.ch>
- <ZjKJ93uPjSgoMOM7@builder>
- <b7c7aad7-3e93-4c57-82e9-cb3f9e7adf64@microchip.com>
- <ZjNorUP-sEyMCTG0@builder>
- <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
+	s=arc-20240116; t=1714958710; c=relaxed/simple;
+	bh=yHHt4XFiBmrUD2THHdNuaVbruXG2YIA3ZcGwA7X9bwE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PmGQCJ2OBXMFg+eZKFjEikeqZmJqg6OWEp57W19Et61sx0M4t4PUz4zaOj9rLV/0fKp08rIp1gK8wQ3f0TIi4qoInVEze4H3P2coyyQzVKhRs5TrWrYBDxjFRf7LveorcFDZDZ5y5uLCQNLL1qkWTkFMIdjRqwUA76YtdCJ9dCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXkGy3mZyz4f3kpX;
+	Mon,  6 May 2024 09:24:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id BEC1E1A104F;
+	Mon,  6 May 2024 09:25:03 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP1 (Coremail) with SMTP id cCh0CgDn_AVuMThmCHKBLw--.3757S2;
+	Mon, 06 May 2024 09:25:03 +0800 (CST)
+Subject: Re: [PATCH v2 0/4] Fix and cleanups to page-writeback
+To: Tejun Heo <tj@kernel.org>
+Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
+ hcochran@kernelspring.com, axboe@kernel.dk, mszeredi@redhat.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240425131724.36778-1-shikemeng@huaweicloud.com>
+ <ZjJq2uvuXZoZ5aj3@slm.duckdns.org>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <55edec09-b54f-d02a-22ac-7ce90cb1e766@huaweicloud.com>
+Date: Mon, 6 May 2024 09:25:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
+In-Reply-To: <ZjJq2uvuXZoZ5aj3@slm.duckdns.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgDn_AVuMThmCHKBLw--.3757S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Wr4xXF4kCr4xZFy8AFWxtFb_yoWfArb_W3
+	yjkayqkFyDJrW2ganFgrs8WF1xCr48J34DJ34rXr1kt34fAF4DXan0kw1rZr1fJayxJr9x
+	GFWqgw43Gwn7ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
+	xUrR6zUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
+Hi Tejun,
 
-> [  285.482275] LAN865X Rev.B0 Internal Phy spi0.0:00: attached PHY 
-> driver (mii_bus:phy_addr=spi0.0:00, irq=POLL)
-> [  285.534760] lan865x spi0.0 eth1: Link is Up - 10Mbps/Half - flow 
-> control off
-> [  341.466221] eth1: Receive buffer overflow error
-> [  345.730222] eth1: Receive buffer overflow error
-> [  345.891126] eth1: Receive buffer overflow error
-> [  346.074220] eth1: Receive buffer overflow error
+on 5/2/2024 12:16 AM, Tejun Heo wrote:
+> On Thu, Apr 25, 2024 at 09:17:20PM +0800, Kemeng Shi wrote:
+>> v1->v2:
+>> -rebase on up-to-date tree.
+>> -add test result in "mm: correct calculation of wb's bg_thresh in cgroup
+>> domain"
+>> -drop "mm: remove redundant check in wb_min_max_ratio"
+>> -collect RVB from Matthew to "mm: remove stale comment __folio_mark_dirty"
+>>
+>> This series contains some random cleanups and a fix to correct
+>> calculation of wb's bg_thresh in cgroup domain. More details can
+>> be found respective patches. Thanks!
+> 
+> Isn't this series already in -mm? Why is this being reposted? What tree is
+> this based on? Please provide more context to help reviewing the patches.
+> 
+Sorry for late reply as I was on vacation these days. This series is based
+on mm-unstable and was applied into -mm mm-unstable branch after this v2
+series was posted.
+Thanks
+> Thanks.
+> 
 
-Generally we only log real errors. Is a receive buffer overflow a real
-error? I would say not. But it would be good to count it.
-
-There was also the open question, what exactly does a receive buffer
-overflow mean?
-
-The spec says:
-
-  9.2.8.11 RXBOE
-
-  Receive Buffer Overflow Error. When set, this bit indicates that the
-  receive buffer (from the network) has overflowed and receive frame
-  data was lost.
-
-Which is a bit ambiguous. I would hope it means the receiver has
-dropped the packet. It will not be passed to the host. But other than
-maybe count it, i don't think there is anything to do. But Ramón was
-suggesting you actually drop the frame currently be transferred over
-the SPI bus?
-
-	Andrew
 
