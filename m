@@ -1,203 +1,181 @@
-Return-Path: <linux-kernel+bounces-169921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701F28BCF4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:42:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E998BCF51
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE9D1C2287E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0BBC286EE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E31B78C64;
-	Mon,  6 May 2024 13:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A581F78C97;
+	Mon,  6 May 2024 13:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bCio00bX"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OItFKT4M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0832178C68
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9E278C80;
+	Mon,  6 May 2024 13:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715002711; cv=none; b=rO8KunWZnFyBglTYxftxgArLYZBcBfqjTonm5MiQw5bB18ZRD6K9dI8n2QuzdRgSJUJnScTjO9iHuA9JSH+DtpzxZ00B6ErqH/Lv8J9Or2rsPBFdCuZ3IeKNkmbsgfUA//qRI5t/W4p921GZe4GEGi1ySgjeLdlIxOoC5amxKeI=
+	t=1715002786; cv=none; b=QdrghM+khqU54jcWUgzac5NTD7l/g7RGzdZQwWpj9d9BYr7Wgz+zUO7/mArvchwL91h/O1w2PGPsJov++1FAHS0TgVSy9XamgB2JVgBzr4ABS8vU9ZnNIMXUWXU4XvsmbBjCnSirjEDYeLvzccN5vysG90QXYJrJzx19m56wnNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715002711; c=relaxed/simple;
-	bh=It9OpP6gC8bm5/vZVTQBOX1m6p9O8bYlAf/OdYb0psI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCPPiFhAGRTrcupghS0aWZkfK0ri6T9elPcZITXVPuvlHDxZaVpGwJw/8CTneQaHaRnWc7qSSBDoi0jymx2Zp5o+5O0Ax9xQvtYRDf4njdR35PPNND82/iVzijkEFI14AgronPEoiuXdNz+fFLCc5U79WLO+VSewQF7ksYCCU8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=bCio00bX; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-41beaaecf9bso79645e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 06:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1715002707; x=1715607507; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=05pEfdeTjP/gT4q1VDqtZ2Mm8b7W7bMEgQ0JTj2r+x4=;
-        b=bCio00bXGx0rOEGQgsW+cyXPMAEaUjZkVmv9Z7YAHR6pj3cpRxYr/aru5n6RBrblc6
-         h1G6rCGNRQlyim87RXhMzcGeG5Ngc1NIMellFQdSoDyeKM5PWa+s8u5Fh1f6BqVclRl8
-         Wb9qkrOeAGjMnjxHIA9olZ0LbNav8fYqSWbR8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715002707; x=1715607507;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=05pEfdeTjP/gT4q1VDqtZ2Mm8b7W7bMEgQ0JTj2r+x4=;
-        b=CjYPQVZStuNehzqozQY7VpN3CBPWpXoTXKotZpz/875CQrs7jhpseKXhbWfV50rkaw
-         sK3XDQXfACUJLEd4pw2G3DSITkeXezRUXexyISy9bPbSRIA4HLmDHiEPnLri+8HYgler
-         mLsKuugsb0ZdWXoIeohnLbn1YfI46ZoYZOnpklXF0R7LiZV1gwm67+VK0M4lcr3hQr9o
-         HjpcIv1mwLkFUCHKqWbhKQswbE4RLLG46r6ugQGaKfJ3ab7eccMDNH2rlxA7z1ZsZTV1
-         /2IU75AjSMtCqkmzzVs0WuF8tY2KFU4VyMCX5R7bSJthbh8sBhyq65S7+HUQqFhn18wM
-         cXpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxCEq8qcKSyPxOAmYTq4fEJIBZewfOWeEuAYEc2iKx3ceT2E4+ogdX4mcO+r3kqxd/LaUCzvVrTuRodiMdos/9xZwGAQ8oVcrX3vox
-X-Gm-Message-State: AOJu0YzWBKnknj3pc3O/CnpljnxWOMlk9SBGXK5G2Kdw6pTTTvnsSZ4X
-	t0fBTxsXyyGQBPBfHnM4R+L+MKLvct0Tb+nb8yjNS6gY+dxEaAE52kA5aBORwdw=
-X-Google-Smtp-Source: AGHT+IH7ayM64/spWVTg0bt9PNCN0djXyEwU/JmnpSrNT6A7B8ioiDdqWIOL0raGgmZcVRIsEpla+w==
-X-Received: by 2002:a05:600c:46cf:b0:41a:bb50:92bb with SMTP id q15-20020a05600c46cf00b0041abb5092bbmr7391993wmo.0.1715002707370;
-        Mon, 06 May 2024 06:38:27 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id z5-20020a05600c0a0500b0041bd85cd3f2sm16051523wmp.19.2024.05.06.06.38.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 06:38:26 -0700 (PDT)
-Date: Mon, 6 May 2024 15:38:24 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Maxime Ripard <mripard@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
-Mail-Followup-To: Maxime Ripard <mripard@redhat.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <20240506-dazzling-nippy-rhino-eabccd@houat>
+	s=arc-20240116; t=1715002786; c=relaxed/simple;
+	bh=yPwj1hr3OMYbSTKe403YdJHAPaBBvoH2vaXPmlmDwEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nj811b2iqkzTEpDplAUsi26C6ARnKtmoW98mP9mD4omcCRRxsUToW29Jo1dmNflSK0/XVmNA5w4IkabC2v0tJWPiC5yiONVlzNQmbI6tPueU/5n+Wbfe2H9zsTnDGevhLZy/OtCg6kjwXk6Dq3h92wxd1BstemX2MeimtuJT7t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OItFKT4M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA4FFC116B1;
+	Mon,  6 May 2024 13:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715002785;
+	bh=yPwj1hr3OMYbSTKe403YdJHAPaBBvoH2vaXPmlmDwEk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OItFKT4MZeD7ozMMo7ULjY1RUtVSY35cqcSuVv12qSnzFLFapp+1SxOGW6cBroani
+	 zUKKtBw4+mkM9z3sSr15jn957GYcaxn49Vr/4xnkr3a4U6EI+JCiARx3EN2TReSBLd
+	 4tLApt4zaLZ+1DJWU+VY+14Jzf4/KD1Ym/V7KyNYwM0fodtvhn6uKNalU+bpdLptOL
+	 8qt57ujmeFQrWpXvvjJDMyr6aDsjWGG5IgjZMdZALGT3j4OHtJPpGNNqq/jDzNW3/Q
+	 RsZ3kFKMkxCSiQgASbp224jiKYaUrtaUl1UddtENCG/xJ/O2TX8xsxGFqcAw6aBElO
+	 5xzAj6RV6AHWg==
+Date: Mon, 6 May 2024 14:39:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: michael.hennerich@analog.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alexandru.tachici@analog.com, lars@metafoo.de, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, andy@kernel.org,
+ nuno.sa@analog.com, marcelo.schmitt@analog.com, bigunclemax@gmail.com,
+ dlechner@baylibre.com, okan.sahin@analog.com, fr0st61te@gmail.com,
+ alisa.roman@analog.com, marcus.folkesson@gmail.com, schnelle@linux.ibm.com,
+ liambeguin@gmail.com
+Subject: Re: [PATCH v7 6/6] iio: adc: ad7192: Add AD7194 support
+Message-ID: <20240506143928.40a7c908@jic23-huawei>
+In-Reply-To: <20240430162946.589423-7-alisa.roman@analog.com>
+References: <20240430162946.589423-1-alisa.roman@analog.com>
+	<20240430162946.589423-7-alisa.roman@analog.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506-dazzling-nippy-rhino-eabccd@houat>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 06, 2024 at 02:05:12PM +0200, Maxime Ripard wrote:
-> Hi,
+On Tue, 30 Apr 2024 19:29:46 +0300
+Alisa-Dariana Roman <alisadariana@gmail.com> wrote:
+
+> Unlike the other AD719Xs, AD7194 has configurable channels. The user can
+> dynamically configure them in the devicetree.
 > 
-> On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
-> > Hi dma-buf maintainers, et.al.,
-> > 
-> > Various people have been working on making complex/MIPI cameras work OOTB
-> > with mainline Linux kernels and an opensource userspace stack.
-> > 
-> > The generic solution adds a software ISP (for Debayering and 3A) to
-> > libcamera. Libcamera's API guarantees that buffers handed to applications
-> > using it are dma-bufs so that these can be passed to e.g. a video encoder.
-> > 
-> > In order to meet this API guarantee the libcamera software ISP allocates
-> > dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
-> > the Fedora COPR repo for the PoC of this:
-> > https://hansdegoede.dreamwidth.org/28153.html
+> Also modify config AD7192 description for better scaling.
 > 
-> For the record, we're also considering using them for ARM KMS devices,
-> so it would be better if the solution wasn't only considering v4l2
-> devices.
-> 
-> > I have added a simple udev rule to give physically present users access
-> > to the dma_heap-s:
-> > 
-> > KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
-> > 
-> > (and on Rasperry Pi devices any users in the video group get access)
-> > 
-> > This was just a quick fix for the PoC. Now that we are ready to move out
-> > of the PoC phase and start actually integrating this into distributions
-> > the question becomes if this is an acceptable solution; or if we need some
-> > other way to deal with this ?
-> > 
-> > Specifically the question is if this will have any negative security
-> > implications? I can certainly see this being used to do some sort of
-> > denial of service attack on the system (1). This is especially true for
-> > the cma heap which generally speaking is a limited resource.
-> 
-> There's plenty of other ways to exhaust CMA, like allocating too much
-> KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
-> differently than those if it's part of our threat model.
+> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
 
-So generally for an arm soc where your display needs cma, your render node
-doesn't. And user applications only have access to the later, while only
-the compositor gets a kms fd through logind. At least in drm aside from
-vc4 there's really no render driver that just gives you access to cma and
-allows you to exhaust that, you need to be a compositor with drm master
-access to the display.
+Hi Alisa-Dariana,
 
-Which means we're mostly protected against bad applications, and that's
-not a threat the "user physically sits in front of the machine accounts
-for", and which giving cma access to everyone would open up. And with
-flathub/snaps/... this is very much an issue.
+I only had one minor thing to add to the other reviews,
 
-So you need more, either:
+Thanks,
 
-- cgroups limits on dma-buf and dma-buf heaps. This has been bikeshedded
-  for years and is just not really moving.
+Jonathan
 
-- An allocator service which checks whether you're allowed to allocate
-  these special buffers. Android does that through binder.
+>  	  To compile this driver as a module, choose M here: the
+> diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
+> index 3e797ff48086..0f6ecf953559 100644
+> --- a/drivers/iio/adc/ad7192.c
+> +++ b/drivers/iio/adc/ad7192.c
+..
 
-Probably also some way to nuke applications that refuse to release buffers
-when they're no longer the right application. cgroups is a lot more
-convenient for that.
--Sima
+> +static int ad7194_parse_channels(struct iio_dev *indio_dev)
+> +{
+> +	struct device *dev = indio_dev->dev.parent;
+> +	struct iio_chan_spec *ad7194_channels;
+> +	struct fwnode_handle *child;
+> +	struct iio_chan_spec ad7194_chan = AD7193_CHANNEL(0, 0, 0);
 
-> > But devices tagged for uaccess are only opened up to users who are 
-> > physcially present behind the machine and those can just hit
-> > the powerbutton, so I don't believe that any *on purpose* DOS is part of
-> > the thread model. 
-> 
-> How would that work for headless devices?
-> 
-> Maxime
+I think you are only using these as templates that get copied?
+If so declare them const.
 
+> +	struct iio_chan_spec ad7194_chan_diff = AD7193_DIFF_CHANNEL(0, 0, 0, 0);
+> +	struct iio_chan_spec ad7194_chan_temp = AD719x_TEMP_CHANNEL(0, 0);
+> +	struct iio_chan_spec ad7194_chan_timestamp = IIO_CHAN_SOFT_TIMESTAMP(0);
+> +	unsigned int num_channels, index = 0;
+> +	u32 ain[2];
+> +	int ret;
+> +
+> +	num_channels = device_get_child_node_count(dev);
+> +	if (num_channels > AD7194_CH_MAX_NR)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Too many channels: %u\n", num_channels);
+> +
+> +	num_channels += AD7194_CH_BASE_NR;
+> +
+> +	ad7194_channels = devm_kcalloc(dev, num_channels,
+> +				       sizeof(*ad7194_channels), GFP_KERNEL);
+> +	if (!ad7194_channels)
+> +		return -ENOMEM;
+> +
+> +	indio_dev->channels = ad7194_channels;
+> +	indio_dev->num_channels = num_channels;
+> +
+> +	device_for_each_child_node(dev, child) {
 
+Andy pointed out the need for scoped here to avoid leaking the fwnode in error paths.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> +		ret = fwnode_property_read_u32_array(child, "diff-channels",
+> +						     ain, ARRAY_SIZE(ain));
+> +		if (ret == 0) {
+> +			ret = ad7194_validate_ain_channel(dev, ain[0]);
+> +			if (ret)
+> +				return ret;
+> +
+> +			ret = ad7194_validate_ain_channel(dev, ain[1]);
+> +			if (ret)
+> +				return ret;
+> +
+> +			*ad7194_channels = ad7194_chan_diff;
+> +			ad7194_channels->scan_index = index++;
+> +			ad7194_channels->channel = ain[0];
+> +			ad7194_channels->channel2 = ain[1];
+> +			ad7194_channels->address = AD7194_CH(ain[0], ain[1]);
+> +		} else {
+> +			ret = fwnode_property_read_u32(child, "single-channel",
+> +						       &ain[0]);
+> +			if (ret) {
+> +				fwnode_handle_put(child);
+
+With scoped variant above you can drop this one case of (currently correct)
+release of the fwnode.
+
+> +				return ret;
+> +			}
+> +
+> +			ret = ad7194_validate_ain_channel(dev, ain[0]);
+> +			if (ret)
+> +				return ret;
+> +
+> +			*ad7194_channels = ad7194_chan;
+> +			ad7194_channels->scan_index = index++;
+> +			ad7194_channels->channel = ain[0];
+> +			ad7194_channels->address = AD7194_CH(ain[0], 0);
+> +		}
+> +		ad7194_channels++;
+> +	}
+> +
+> +	*ad7194_channels = ad7194_chan_temp;
+> +	ad7194_channels->scan_index = index++;
+> +	ad7194_channels->address = AD7194_CH_TEMP;
+> +	ad7194_channels++;
+> +
+> +	*ad7194_channels = ad7194_chan_timestamp;
+> +	ad7194_channels->scan_index = index;
+> +
+> +	return 0;
+> +}
 
