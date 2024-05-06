@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-169970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABC08BCFF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:20:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD428BCFFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0A9C1F22E12
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BA79288852
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A013E042;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E7013E051;
 	Mon,  6 May 2024 14:18:33 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qZNk2uVI"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6122F13D26C;
-	Mon,  6 May 2024 14:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC8F81211;
+	Mon,  6 May 2024 14:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005112; cv=none; b=nXI1xcThT0qXDUUkxsTdAcD1VnZ7bSNTDn6IYJQcee1dfxC6t29JRwsD8KONogWPmy9rU59SYf3/uOaBmDPR8hI3L2LhnRL9K1Q3fAIO7WWoWs85GRczJwpqjtZx1aIIzc8WxdKIouLsA2o9uS9uMCdIOYroEX9Erpz5/05oM7E=
+	t=1715005110; cv=none; b=cj5nSucAr5PYkEPjO6py4POy8sWqP1ZX3x7JgtzIQwrh66DdPF2+/3oU0qzRP2vcW2njFatmxMalPnEqjJKA1RWgfhTmOZV1CgDPIcF3O0S3mXWL0Rs5Viw7apQQcNAuLdUK6RqE4KVxXn7dsd1tiEOntsXJaju/eqzoX4WSP5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005112; c=relaxed/simple;
-	bh=KnJk3iOzFunQxyBK2UXo4GLh7TEovAfGE0XFde3Xs0s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ELNNYju9uVqdM29aCYiHJA4E5Mes52OQV7gkaxnKTntERMd9vz3V2hddLdvRJGOeKXqxMV9yt70Ut4p6qaGn0MvUgaFvMfZgb8Mpb17y0TxdO47cDZjtE6/zH+z4pCoSlEywP6ZksROrMdlH9u2dZ2ixTiArkqOX9BKA6MIdCUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY3RD58qYz4f3nbH;
-	Mon,  6 May 2024 22:18:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 7A00C1A0568;
-	Mon,  6 May 2024 22:18:26 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP1 (Coremail) with SMTP id cCh0CgAH2RGu5jhmGgSzLw--.22965S11;
-	Mon, 06 May 2024 22:18:26 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: tytso@mit.edu,
-	jack@suse.com
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] jbd2: remove unnecessary "should_sleep" in kjournald2
-Date: Mon,  6 May 2024 22:18:01 +0800
-Message-Id: <20240506141801.1165315-10-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
-References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1715005110; c=relaxed/simple;
+	bh=Vi05QVSG3iatwDAILN86QUEWJ3fE0RrPn+kvsUCWGws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eCE+H5cWpb/BS1KCngd5EcN28pLLT4azO39bmMf4AMmcJpHhKSQAsryHv5OsLPeXzP/D1MAhibTtS9Fs8OJVPGkujh9ClK0HN+8jAINCwifE3bwXKBQhWIkaQZa8oGDlPIptHtkOIQ0nrqIkycadlQWa/dj9957xzOIykv+pDhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qZNk2uVI; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715005106;
+	bh=Vi05QVSG3iatwDAILN86QUEWJ3fE0RrPn+kvsUCWGws=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qZNk2uVI+pZGR3kmAAkImZwSLKE9T+TahIUXH14Y7DA0Pnhl54iALE4oXsJK4KjMq
+	 l3djJ5Ie/y8OAuQJelPxMxPTHk/toXDpEj+cBGquJK5jnoHgZg5RTsXXrsN8/rXtmA
+	 0FTxMdNRP/UOBcTJ2JRvdnjmqjOIM9FXNe35X/pyLiOiQi3u98e+N5EiyRLdbb4qzo
+	 lvVgqpKVoTWeQ39JSe9EJUrwwbL7iP3bIzwK3o2nZNR+xPMAXap5I7bNRijl+zO/e+
+	 ICB9MvXQkAU51lwau8PqYmHqQMG+Le3wdbXBgrYcFS14L6RxnoinEbMJ2PeTQb+zs0
+	 zNGjrTFn187Kw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4BD99378020D;
+	Mon,  6 May 2024 14:18:25 +0000 (UTC)
+Message-ID: <2e3e49ff-8ace-498b-b2d0-54500e6f1e70@collabora.com>
+Date: Mon, 6 May 2024 16:18:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAH2RGu5jhmGgSzLw--.22965S11
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFy3Jr1xtw4fGw1Utw45GFg_yoWDJrX_XF
-	WSyFnrZrZxWrnxGrWSkw4Dur1F9rs7ZF1DZan2yayjkr1Ut3ZFy3WDXFZrAwn8WanYqrW3
-	ua12g3W8Kr9FqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
-	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
-	Av7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY
-	6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7IU13l1DUUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] drm/mediatek: Add support for OF graphs
+To: Michael Walle <mwalle@kernel.org>,
+ Alexandre Mergnat <amergnat@baylibre.com>, chunkuang.hu@kernel.org
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
+ ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ wenst@chromium.org, kernel@collabora.com
+References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
+ <1fc23530-89ba-4e36-9e9a-a1289f56a9bc@baylibre.com>
+ <608fdbde-ad06-45ec-9771-18aa9f002f2d@collabora.com>
+ <D12H4GDJJEUF.1Y91H9RMUIX20@kernel.org>
+ <50be68dc-b86a-4334-9f83-43c6fda2c271@collabora.com>
+ <1b8fa907-b48f-4ebe-bc17-3de1d7c0d062@collabora.com>
+ <D12LA0QKEFRQ.68TZEVQZ7FJB@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <D12LA0QKEFRQ.68TZEVQZ7FJB@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-We only need to sleep if no running transaction is expired. Simply remove
-unnecessary "should_sleep".
+Il 06/05/24 15:17, Michael Walle ha scritto:
+> Hi Angelo,
+> 
+> On Mon May 6, 2024 at 1:22 PM CEST, AngeloGioacchino Del Regno wrote:
+>>> The problem with this is that you need DDP_COMPONENT_DRM_OVL_ADAPTOR... which is
+>>> a software thing and not HW, so that can't be described in devicetree.
+>>>
+>>> The only thing this series won't deal with is exactly that.
+>>
+>> Sorry, no, I got confused.
+>>
+>> The series *does* already deal with that, as the pipeline is built before the check
+>> for OVL_ADAPTOR components, so that will get probed.
+> 
+> Are you sure? Because who is actually adding the OVL_ADAPTOR to the
+> path? It looks like your patch will walk the graph and add all the
+> components according to their compatible string. And since the
+> OVL_ADAPTOR is virtual and doesn't have a node..
+> 
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- fs/jbd2/journal.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+I shouldn't look at code while having a flu.
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index ce9004f40ffb..65c6cfce9d92 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -220,15 +220,12 @@ static int kjournald2(void *arg)
- 		 * so we don't sleep
- 		 */
- 		DEFINE_WAIT(wait);
--		int should_sleep = 1;
- 
- 		prepare_to_wait(&journal->j_wait_commit, &wait,
- 				TASK_INTERRUPTIBLE);
- 		transaction = journal->j_running_transaction;
--		if (transaction && time_after_eq(jiffies,
--						transaction->t_expires))
--			should_sleep = 0;
--		if (should_sleep) {
-+		if (transaction == NULL ||
-+		    time_before(jiffies, transaction->t_expires)) {
- 			write_unlock(&journal->j_state_lock);
- 			schedule();
- 			write_lock(&journal->j_state_lock);
--- 
-2.30.0
+	if (mtk_drm_find_mmsys_comp(private, DDP_COMPONENT_DRM_OVL_ADAPTOR)) {
 
+..but yes nothing adds the mmsys_comp for OVL_ADAPTOR.
+
+Needs to be addressed, will do that asap.
 
