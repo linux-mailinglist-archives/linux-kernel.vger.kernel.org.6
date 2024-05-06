@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-170111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554538BD1F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5755C8BD1FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7AD1F21D1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFC01F24515
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E10615573B;
-	Mon,  6 May 2024 15:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A5F155757;
+	Mon,  6 May 2024 15:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q5Y1FjE7"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pohQlC9Q"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8618D155737
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717B28002A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715011125; cv=none; b=UD8AJl+FfsKdBGOx/5iZbhjL5ZKcR6Npo8Wl6qw49CHmoNXkdg5F6irU9S0gfPgMW12l6iRH4LoN8leL7p9qtWb2gfU4pI4/sf7URIKulTT9rewZjEHDSA8dEyzjwYaSJbkb9MX7Cqe7zqVlVJpd9AxTh5l6H+8ZQSa1QjD1T7U=
+	t=1715011188; cv=none; b=cwKyAGbYNPnZYRuIRj/EXScZ8CqBlQEv2sV3iwAIuVuPRVjO38D3sA+mwXc/ehnpxdGd4uafo+z2762XsiBYdf+wcuXYNx2sna0om+3Ge6I8rxBCeDi/X+JlJdIKFVo5eFL4l+4+ypvmXC+ZH2fhdmHiFy4X4GEqJnf2lccxABk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715011125; c=relaxed/simple;
-	bh=e+ZSe+ZA9xaJO5eEBFHbnwpPwoeLA8xT48mtZrmDIak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2I92MrnKtYzhM7s2QhBO3uuqaCL6MQT1vZe2FKvbdv7td6BJsxV4b4VSr5yZlVfEyUcDMqZ21Yzgdd5e9dP+UAat9W7IPqRndmTjLBMJTRMaD19cAHbnBxEUMw1xb+LSNf/OiSoeuuR1gPsH3ba6OdE7vfYHIZsUmEHPUWOZEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q5Y1FjE7; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34d99ec52e1so1307282f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:58:43 -0700 (PDT)
+	s=arc-20240116; t=1715011188; c=relaxed/simple;
+	bh=NWQalUwgvKZ+gYMS5Cl6dnoDKl2lnNy/Vx8YXjT1Dmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RHyuV8HdAhZDiZfR7Skga7xe76at6J9Vk4f2zC9rh9XMdTeX8NokyH0EPMx5eCBWjX8FmmCmpP7I9/0DW2TbswmIIwG5GsRdnpHsJsLCo4UiHeiEZzCg+fGUaItX6EXzTOFP1k756JXHzpL+GJmnZEJNvtGGLPXkdVjB8vz/Pbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pohQlC9Q; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-23db0b5dd28so1485857fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:59:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715011122; x=1715615922; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b77bW1UHopiAiUiwt+teFfDgmUSq65L4Labg5fS22oM=;
-        b=Q5Y1FjE7a/VuhZbsHhx2X9OhIrC6dc7qblhpdUdax5eI2SdbEO6kx/YJoRiKhEyy9h
-         W73ef+3G6tWk7Mw66NJ3TdC9Y/MMV6FBDqzVlAiBS63YURu1d4NotgBUPNezW3VY6e2e
-         b6LnubxGKzi+SdiIiTDsSrmgMaXPRsMs+VN6pHK0KaOycWJ5TnZFLVpfZPujHkja/zqN
-         FE+glFGwhUZigi/W9DmCMg+3CH15qrMOyxcqsbcS/DXFgK16B0x6dkBkWyfU2VSU13Zk
-         0LKmZHnuPlvHxGC9wZQTFD7VS+VszAONoOUbceXIokgaYu8E1A3Kii0C/am8BddqEDTO
-         EeLA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715011185; x=1715615985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tvzML3HN54hxCFzVP+Buz9BOHRIZhVNBrB1oFonWPC4=;
+        b=pohQlC9QRudRBpde5r+UHFe/Wn2Crys/drK1x0Mw5cADBvMnKs6hPu21paIsUEaKlR
+         SWGc9ZHbqD3rBQiJxTHam3Ya2r3tcLKwi6/cWuqjasmj/ZrdyBIG3uXwcN7ip/82eTxd
+         fCM9UTtIhISjxsMG2oj2s95rwg8vx+cDXiMimAOv9PNzDzvQKNjP/qW2M1SKCNnTZhlo
+         RDlIv4vCmVHT7NX0UhzHxShuiSN8MxZp0oqjp62WIp242Dl82GOFUlsPtBNPHy+H271s
+         ocSLMFI1o1Wr5TtkmoLvGIhId6GcyhIYZfWyMN1nZJtvCsfp716+6FeJhvHeUM+VmETo
+         SJYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715011122; x=1715615922;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b77bW1UHopiAiUiwt+teFfDgmUSq65L4Labg5fS22oM=;
-        b=r/MPsOWLYrbtaNcJMywSZftkCswN5p+XpImi1eKGiEXAPaYt+ukTzXJlUrgXMoXavz
-         zS9YxsZkABYGMjYzgFUePEtHHbI0pEd+GO5+XrPBDZ92Z0PrTD3TfLhzkrpZDR4NURuw
-         hp/I3nOjaFp75WJebKP6GOsfQITC8eUuLPcJyLzGI6znEtDQXdukbv4WBHO5hB7Brcge
-         iudDwyCYmo5cyKi5Sd2vffo7bJac9IZ/owi+x0fKDpft7c8YIBdmMZ0VuJqb+mYS7mxr
-         anlFs3jR1HV6vGKS/abKhZkyA+eVqd9f4DaLkysWBoc9gHo6akSNy7Zh8U30n5Mb0Lp7
-         lu2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWx4kAzqf0qcijFmDPZMucCAjyqWLzEAWKxwLDlbs7C1bfRrhhHtJ4Oplg/wTnLNmXC/ZuXEDAfONDEXhXLjv2ve0G8GmVpR9jroXcD
-X-Gm-Message-State: AOJu0YzNlHziy4/gAOGnqm7gTuCM6sOVq4c8IuUiT1OK+L7uL0mtbBEA
-	Wg5JI7bxm7zbrGlsSd6StlPXKjZm9RdPirHatrVKWOWmx/VA9pNy3PRJl+KR/Jw=
-X-Google-Smtp-Source: AGHT+IFSFaunKOZ8WI6/uX/7mp9FL9IL1kmUTfFZ/AIhGtSFSDgsttFAOhXLCCCeUTyT3rqTdOQ2lw==
-X-Received: by 2002:adf:f0cd:0:b0:34d:7cdf:7fb3 with SMTP id x13-20020adff0cd000000b0034d7cdf7fb3mr7405652wro.62.1715011121850;
-        Mon, 06 May 2024 08:58:41 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id u17-20020a05600c19d100b0041bb11ff5a7sm20325100wmq.8.2024.05.06.08.58.40
+        d=1e100.net; s=20230601; t=1715011185; x=1715615985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tvzML3HN54hxCFzVP+Buz9BOHRIZhVNBrB1oFonWPC4=;
+        b=mnV7/XgfLfBIkJYhLKof+P+xSzjkON1tgTKNzbaDrlgLJiPHfEUtx6Q9MAb2TiSNkr
+         rFg6OHuznDZgSEZ+dW5EvguC39axDB5DpMPN1ZVF6YeOPLeyob5/wAVGdj7wO/EirF/W
+         I8+/IUZC1QzRgiWPRDHo///O7ztQdRrfx7WTbs6oiR1JxU0m9xAX39Lu8OBKjdt+Si98
+         yeWEyTQJIxl0ddhchm/BCLlJxx3XtR3ASd3nyYxUlyIdI60PRWr+6WZkVwXwSvRVdebh
+         v+dtZ7ckrQfA6LLngBY13HKd2Q++chw6eTt+oi+H4HTzYGVmvYF/hKtj7SAT2X1hvlyO
+         IClQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUe2Mlmcy50Whj7+ssmnq/je8typUpYZN9WUacOOFwSqSPHGXIir75tNbXXCcTHp6VFXvq6B1Y30dzRcB1hW+gSveu3Q15oNKpn5xtc
+X-Gm-Message-State: AOJu0Yw2B+iZqUJuOaZeoxOZr+h7t1domywjBwfj/C3P0KKSwnMy347y
+	P8wMwub3zG2Ph2KeHIXVWBlMPUoWjKficarmEj85lXEpQaSSH3DKreOp/F8vK20=
+X-Google-Smtp-Source: AGHT+IHRHaLdY4f1Kvd8SPz1wJzBCQY+/OSJXQdknXR6UC9RXSlBsqZsZGQL72WyxXjhocrMn62CdA==
+X-Received: by 2002:a05:6870:6393:b0:239:701f:fc32 with SMTP id t19-20020a056870639300b00239701ffc32mr13019235oap.9.1715011185410;
+        Mon, 06 May 2024 08:59:45 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id e17-20020a056870451100b0023c82e5be0fsm1955226oao.7.2024.05.06.08.59.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 08:58:41 -0700 (PDT)
-Date: Mon, 6 May 2024 17:58:39 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: yoann.congal@smile.fr
-Cc: linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	x86@kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Borislav Petkov <bp@alien8.de>, Darren Hart <dvhart@infradead.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Subject: Re: [PATCH RESEND v6 0/3] printk: CONFIG_BASE_SMALL fix for
- LOG_CPU_MAX_BUF_SHIFT and removal of CONFIG_BASE_FULL
-Message-ID: <Zjj-L-FuVyMmRPth@pathway.suse.cz>
-References: <20240505080343.1471198-1-yoann.congal@smile.fr>
+        Mon, 06 May 2024 08:59:44 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH 0/2] regulator: devm_regulator_get_enable_read_voltage fixes
+Date: Mon,  6 May 2024 10:59:14 -0500
+Message-ID: <20240506-regulator-devm_regulator_get_enable_read_voltage-fixes-v1-0-356cdd152067@baylibre.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240505080343.1471198-1-yoann.congal@smile.fr>
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
 
-On Sun 2024-05-05 10:03:40, yoann.congal@smile.fr wrote:
-> From: Yoann Congal <yoann.congal@smile.fr>
-> 
-> This series focuses on CONFIG_BASE_SMALL.
-> The first patch fixes LOG_CPU_MAX_BUF_SHIFT when CONFIG_BASE_SMALL is
-> used.
-> The second patch globally changes the type of CONFIG_BASE_SMALL and
-> adapts usages.
-> The third patch removes the now redundant BASE_FULL, puts BASE_SMALL
-> in its place in the config menus and updates usages in defconfigs.
+I was going to send a v3 of [1] with these changes, but v2 was partially
+applied so here they are as additional patches.
 
-The patchset has been committed into printk/linux.git,
-branch for-6.10-base-small.
+[1] https://lore.kernel.org/all/20240429-regulator-get-enable-get-votlage-v2-0-b1f11ab766c1@baylibre.com/
 
-Best Regards,
-Petr
+---
+David Lechner (2):
+      regulator: devres: fix devm_regulator_get_enable_read_voltage() return
+      hwmon: (adc128d818) simplify final return in probe
+
+ drivers/hwmon/adc128d818.c | 4 +---
+ drivers/regulator/devres.c | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+---
+base-commit: 4f6454d1bf73255e49c02d0a7b3bb85146863098
+change-id: 20240506-regulator-devm_regulator_get_enable_read_voltage-fixes-b1f2277763fd
 
