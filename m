@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-170391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3DB8BD62F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:26:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358718BD63A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71523B21999
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664561C211E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A900115B102;
-	Mon,  6 May 2024 20:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5C515B10E;
+	Mon,  6 May 2024 20:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5jBP/Oa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="G4Zd6+tj"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AA915B136;
-	Mon,  6 May 2024 20:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05895156C6E
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715027192; cv=none; b=BHZdvE+u68Q0kg3lDRNVi1R1m4VEZo52C1kZc3TPBTOANs9KE4fpgt7ACe7QmKeE7S/xA05JfZXc71K7jOL/kozdmfVHloy3U+WbVfXt0QKx4E2PIzjTMnCSD6XOQXFlRkgOg/hUllrF+KslwF7LUkEj2Skr47cB/1C/3YOVNnk=
+	t=1715027341; cv=none; b=LD7QNNkERoDTJatcamvbBS4Px1XMZXwkZ+xbUREuY0UHNIXpgN34uPjdf+TJO/F9QY2WL/D8UymJAOuZZ8Eg8925X02w4z23WWxvioZp0AKDqbo2PFhbZ9LxC4HMkdvEX42dnqfc/HEuhxC62kKJNg3i3G12iTJE31AcxV8VgwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715027192; c=relaxed/simple;
-	bh=5FaFsrCBU94mRwsXyuX1NTdoCg00sIuyi7QCDGgdxuY=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=jkVBICuf2k8o5qFX2i2bW7MRnpw6pTwWnaeRu2Tg6PSqpxnt7J9WyQE25rvTyXU8KURJ2gnweJUCOdfulN00sP3yNle9A0leWkBkW4i7A+7j1n9hUpPbNFtNjamQY5OJMcByBJlZ1rHF79cDYJ3+p0BZ1GmiZhV5tjQuuM9PVsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5jBP/Oa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340EDC116B1;
-	Mon,  6 May 2024 20:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715027191;
-	bh=5FaFsrCBU94mRwsXyuX1NTdoCg00sIuyi7QCDGgdxuY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=X5jBP/Oalm1vimfJv8a8bJ2lC/hwUzE8jRbYArIZW6zWV9/WC17q8O1vfeaq9+Scr
-	 DzpOL6XPw6jdh4AxeaDG2/YR49NdXmnvBdNiecxOMt+s0T9A1srdlQdUyeQYuiEbfB
-	 3I4cl5KJLwovDDPBjeZ8QXn8/gWssyIv/2WxMocJo++YBkAf760x5PegRrdkbU4hvl
-	 S1O00hdRTekYjk/1ChmyTEg0mJ52bYBdMxJt8Q2rSOaU2LGmCKKmyf6MtRtkThhSny
-	 fAkJ/nlTXUmBmT+iSh5WSn60lzRDXUhe2/8AFu6YaVd60EGrqdln2SsIoiiAWCYHLZ
-	 yW+pAp1qVdwFA==
-Date: Mon, 06 May 2024 15:26:29 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1715027341; c=relaxed/simple;
+	bh=mtP1zPVwwrnnzGFw61ZIo91oUo/vvEn1hAGzwekDkNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eVyFOOo0ZH+fPmmyf8nEfo4Jkmy04T853E/fPguXLMunqVkvzQHIL34UK8I2AizFXY0UczFGSwE0RKjy65hPOQZ6NhNt92wrGuH3HrrQ9uUkOx9TRD6tvfKlsbRX3pThDRmVYa80xYn0HkevR8UzpCsCRvW8ZykrPqNWrxwp5Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=G4Zd6+tj; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2db13ca0363so36990231fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 13:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715027338; x=1715632138; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9rEvKV3/n/eLv6nHs7D99ycPG96v9YjV73FZYOIF6xQ=;
+        b=G4Zd6+tjvbOZB2K+N2y5X28Ee/65O5L5h/CAk0wJxqzMn/3jMsnVQ6lz0gQLUCRmDz
+         sVLSmlponCaAT6OrANf+n+EuUwpoYyWDIFJjBgzg6ftmYZXR0J1ijnFwYM9JKD7UZ7jT
+         lWGakJ2YbTOZDZdjwKLkVqXuYxlHHfefCBk9Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715027338; x=1715632138;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9rEvKV3/n/eLv6nHs7D99ycPG96v9YjV73FZYOIF6xQ=;
+        b=Op5FSjvQnwWxtacsU6sGnFXZU6V+boCOqTFYN9oW5AdMKJKuFTzERNlfaQu9GKpCqi
+         DoE+4IkA+irdVn/lloEbQG6TbM5xxAEWcuK70bheKxADWH8glCz29ab0xU2Jx9NEBbwR
+         QXpnvnaLiEcBqw5xB/8uiTBXmLn+jFUQO733SyOYGQKuiajEDzKQLW5SRWiFv8/UHlnz
+         dCuI1hU1y8MPMS/V5ptj5ahaXeAAkzhCvY+oDRSXwg8W6Hx3eLSbe69PNZ8qLCEujWhY
+         o4hszGqxt23OuWJEJRw5z1xjNVOq8dXa92aeQzx3cYZmx4FeRaZi3QL+ZSD+KAtnJARK
+         bO4w==
+X-Forwarded-Encrypted: i=1; AJvYcCX7+T99LNnVqkVaAp3xDcdwH4rprOg2y9Z+bp05ize/+SvHrFzfVYs9uFpppqCB45rMe6KbOeC0zGm64CKlJ4msdK2FN0xUw7sqzizf
+X-Gm-Message-State: AOJu0YwJP9BWkJhI5mCRIwF6ToMKB7DKQhmkD4Ll8oC+VuHC8VMgLAeY
+	bNOP2wd8prGOERFk3kSsMS9bBYywgfh/f7R26iX7bqosiHw3XoCDZ+ajyn89HNBcE55eksbSNiX
+	xlmvBlw==
+X-Google-Smtp-Source: AGHT+IG6Es4jf0/5XcNE5zvJ/kHwfj6hCASvXWLTebdQmXCh0PZ87DWy0mwIojKlawbpoV/31RMIcQ==
+X-Received: by 2002:a2e:994c:0:b0:2df:6df7:c363 with SMTP id r12-20020a2e994c000000b002df6df7c363mr8790037ljj.14.1715027337860;
+        Mon, 06 May 2024 13:28:57 -0700 (PDT)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
+        by smtp.gmail.com with ESMTPSA id s17-20020a170906455100b00a599ac81707sm4211801ejq.123.2024.05.06.13.28.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 13:28:57 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34db9a38755so2200656f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 13:28:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/4sUVgKwVHXd0/Z/dXPBx7XQRXh8HR9GYOty89IUIDDwxp8MwrQ2vGqorqHHLk4j8Jm1H6XQH7efykjitKn3V1SiAvURUPGi7eCkm
+X-Received: by 2002:a5d:4576:0:b0:34d:b634:9033 with SMTP id
+ a22-20020a5d4576000000b0034db6349033mr9191049wrc.51.1715027336528; Mon, 06
+ May 2024 13:28:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org, 
- linux-rockchip@lists.infradead.org, 
- Heiko Stuebner <heiko.stuebner@cherry.de>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, vkoul@kernel.org, quentin.schulz@cherry.de, 
- linux-arm-kernel@lists.infradead.org, kishon@kernel.org
-In-Reply-To: <20240506124836.3621528-2-heiko@sntech.de>
-References: <20240506124836.3621528-1-heiko@sntech.de>
- <20240506124836.3621528-2-heiko@sntech.de>
-Message-Id: <171502718485.3739.8024239966625128556.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Add Rockchip MIPI CSI/DSI PHY
- schema
+References: <20240502081641.457aa25f@gandalf.local.home> <20240504043957.417aa98c@rorschach.local.home>
+ <20240506-cuddly-elated-agouti-be981d@houat>
+In-Reply-To: <20240506-cuddly-elated-agouti-be981d@houat>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 6 May 2024 13:28:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiS70D1sbhsvNfR0e5YjfG2NV0cVKWz9vp=_F_wkw3j9Q@mail.gmail.com>
+Message-ID: <CAHk-=wiS70D1sbhsvNfR0e5YjfG2NV0cVKWz9vp=_F_wkw3j9Q@mail.gmail.com>
+Subject: Re: [BUG][v6.9-rc6] Deadlock with: Revert "drm/qxl: simplify qxl_fence_wait"
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alex Constantino <dreaming.about.electric.sheep@gmail.com>, 
+	Timo Lindfors <timo.lindfors@iki.fi>, Dave Airlie <airlied@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 6 May 2024 at 05:46, Maxime Ripard <mripard@kernel.org> wrote:
+>
+> It looks like qxl is not well maintained. Please send the revert, we'll
+> merge it.
 
-On Mon, 06 May 2024 14:48:35 +0200, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> Add dt-binding schema for the MIPI CSI/DSI PHY found on
-> Rockchip RK3588 SoCs.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> ---
->  .../phy/rockchip,rk3588-mipi-dcphy.yaml       | 76 +++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
-> 
+I'll just do the revert and we don't have to do the round-trip
+overhead (since we're already in rc7 and I hope to just do final next
+weekend).
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/phy/phy-rockchip-mipidc.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.example.dtb: phy@feda0000: reg: [[0, 4275699712], [0, 65536]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/phy-rockchip-mipidc.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240506124836.3621528-2-heiko@sntech.de
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+              Linus
 
