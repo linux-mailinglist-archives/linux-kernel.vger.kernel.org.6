@@ -1,127 +1,163 @@
-Return-Path: <linux-kernel+bounces-170021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EE18BD0AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:49:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1798BD0B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 083EDB26961
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9EE1C2198F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3731153810;
-	Mon,  6 May 2024 14:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CCB155337;
+	Mon,  6 May 2024 14:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="h+nh5+x9";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="h+nh5+x9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CNa4ulzo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED4C44C81;
-	Mon,  6 May 2024 14:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95BC1534FD
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006982; cv=none; b=jIFAdCSXdOSEZgFmfgypeG6cnEfM8GSuYHug8+i30YVo4HEXOFc5yJzprG59KRC+5bKpQe30g3IIQ0NTujIgCEe40xFMycJh3P8RK2QZ2b6VYbk168Op0dHjSfKI4Z/BEX4fNlzzAu0vIInBn4h4Tzezn4xlUHMfbj4VxX3LG9E=
+	t=1715006989; cv=none; b=sNVDuty/m8UJ4w4/LUMVozpOqHdK8oqwp4bDJO86Y4vSWyV215yZnATnB+FUNOT5Pth3qHFaeH79uOpyJWk1Qi1NY1fu97pJzalbtCUX2DFx48a2rnvEVUsKAOm4BDKQ+3fXbJigd3KurKUyD8VEuXGrOoH/lx+HI+R6ZX8lczY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006982; c=relaxed/simple;
-	bh=YaT9TitsE4+neqbGRaiWJj3h0o7SRpwaRAiRg6Sesg4=;
+	s=arc-20240116; t=1715006989; c=relaxed/simple;
+	bh=wFEAgz9DoEMtNEfhF2whHUgl+SQ1hbYNvw0LVwBJMHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZdhCksdo2xov0gS5wVLdhLdX2bancXIGQoHju4FcYqyMxU1JDvNxKAb2erRG/Mtc/3DRJk4+S9yNPsJprlVG3bVaxD9+TPPLHlvn14W8C+T00Fah/P3BVMrw+hzKJTdFrx6G/9Y6J5Gas4UGmmEsG80RgBhTIccgSp9i+XEwNSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=h+nh5+x9; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=h+nh5+x9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8AF245FEBF;
-	Mon,  6 May 2024 14:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715006978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PV1C27Qt/QA6zp9pRJKh70wIoS2hvgua4WaQvlFyh2dkzPg/Isqp4U4rTcnNQega5m4LnkS/n3lBwK1QIlLdvrNkPVySpdItfxLI+Fv2TWC+gJWMhrtctGPxL4vjjG5mJriPrrnNxuBqmW9qNTlcBq8UeZAmx06QaFi55jQDFUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CNa4ulzo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715006986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8SjI8VAl0W+J1vcR3bFCMW1ShLhq8ix+ki0A3tbAkyc=;
-	b=h+nh5+x9CTVXkLIHwAMBIkfOqiSzV8va338K+8d2goT4GNJXbBH/PXF7/vYGaYV3yRAeDl
-	daQ6gOABZeqq9pqH50K4zoX57RIJkoEJgIBLfMooRc8osmDOjRK7k0qWCpLXbFzJlWa8+M
-	50oJXSS6z2v3NnSbosVXVRtBbeI0oMo=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715006978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8SjI8VAl0W+J1vcR3bFCMW1ShLhq8ix+ki0A3tbAkyc=;
-	b=h+nh5+x9CTVXkLIHwAMBIkfOqiSzV8va338K+8d2goT4GNJXbBH/PXF7/vYGaYV3yRAeDl
-	daQ6gOABZeqq9pqH50K4zoX57RIJkoEJgIBLfMooRc8osmDOjRK7k0qWCpLXbFzJlWa8+M
-	50oJXSS6z2v3NnSbosVXVRtBbeI0oMo=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5973413A32;
-	Mon,  6 May 2024 14:49:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fMt6EwLuOGYldwAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Mon, 06 May 2024 14:49:38 +0000
-Date: Mon, 6 May 2024 16:49:33 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, hannes@cmpxchg.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm: memcg: use meaningful error code for return
- value
-Message-ID: <Zjjt_Tv4ZxCCcpcG@tiehlicka>
-References: <20240506133643.1124102-1-xiujianfeng@huawei.com>
- <Zjjg60ZW-d7r-DS9@casper.infradead.org>
+	bh=ouwyK0typuZ1ow/pNC/Gp96v2+HGSiLFxZMM2D2vdpo=;
+	b=CNa4ulzob4zGYAef+WUviR82ooP2GI3SAAlGLeumVxP8iVsgZo0PnH6qclcQytIG3d2iVL
+	Kk0JBwo7OuBOCxO+8x7dY7WN9FO8Q5ltmz6p0VazMMo9YkbOLp+tUQU3vnFYocoS5SxxZR
+	FBkaZ8j1P8y+4EU0/iLRvzwE1Cjhx98=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-15-3lWoAvybMMqljhzfNhjkuw-1; Mon, 06 May 2024 10:49:45 -0400
+X-MC-Unique: 3lWoAvybMMqljhzfNhjkuw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-417fb8195d7so8225175e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:49:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715006984; x=1715611784;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ouwyK0typuZ1ow/pNC/Gp96v2+HGSiLFxZMM2D2vdpo=;
+        b=XK/Gf6xiwIIaz/8AFoLSZ/PdL7m2BnP0DgKPrAN5ya2LGIeQr6psLc31eGocRE8CpZ
+         Lu26qZszogdZAiLe9Av32AwPXogLdDlPuzGKTzT3bm3/rgBUhGNh58z9Q9L/sk3qrsLF
+         nJqz3Y8zWrvbRkgChF6BKHIOwklAfOTvtVGOVzRwS0q422z8vPq2CMOaYUonuCknmfEb
+         kaQsudDmS7WgEHdzZdG6RpgC7RPeyt0edyiz+c5ano1nF4X808QND81GaKhbbzBrccrJ
+         pQDqu0Ycf5XV8mR134gwdKYbaXviSSFt9H+G7n08BEM+UVGbxgat3lX8NVSFyo1Wrxpk
+         dI3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXXboSufeh9SfNyNpc7afFKxnwrqUk5nIQejRdpo+gFoG7xh2V9qcT9AwK9uWkzBN0D48S72/yugAgDagcDFGhCZOKWymUG/RJNVdNG
+X-Gm-Message-State: AOJu0YxpWefn+bMWuY9lbo/hlVVtiJAhzt+KLij2riygy/8qOD6oVjWU
+	UAhOGkogsEpL6ZGGDxCaWBZM8LIJCv7ED4wO9nQZAxvbevt0rRvaYYRWyUDwOYQcU+KPD31zhHJ
+	axC++6u2/uf45Hvhf0kBe+Ax1/9Mz9LoyI4ysn1y8d0CbTXV+rJxnEYzqPattZA==
+X-Received: by 2002:a05:600c:4743:b0:41b:ca55:2e2c with SMTP id w3-20020a05600c474300b0041bca552e2cmr8502330wmo.17.1715006983670;
+        Mon, 06 May 2024 07:49:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMEmpLMRChpFtoTgMDV3aoqDMFyufxEAAMjuwb6gH8jVd4UbrgetEx8t9mH1iRsKhjutk0Nw==
+X-Received: by 2002:a05:600c:4743:b0:41b:ca55:2e2c with SMTP id w3-20020a05600c474300b0041bca552e2cmr8502298wmo.17.1715006983060;
+        Mon, 06 May 2024 07:49:43 -0700 (PDT)
+Received: from localhost (net-93-151-202-124.cust.dsl.teletu.it. [93.151.202.124])
+        by smtp.gmail.com with ESMTPSA id cw1-20020a056000090100b0034dec80428asm10817755wrb.67.2024.05.06.07.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 07:49:42 -0700 (PDT)
+Date: Mon, 6 May 2024 16:49:40 +0200
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+To: syzbot <syzbot+f534bd500d914e34b59e@syzkaller.appspotmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com,
+	hawk@kernel.org, john.fastabend@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, lorenzo@kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com, toke@redhat.com
+Subject: Re: [syzbot] [bpf?] [net?] WARNING in __xdp_reg_mem_model
+Message-ID: <ZjjuBCk33QtxLrAm@lore-desk>
+References: <0000000000004cc3030616474b1e@google.com>
+ <000000000000ae301f0617a4a52c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vAieqiNxGUQydHCv"
+Content-Disposition: inline
+In-Reply-To: <000000000000ae301f0617a4a52c@google.com>
+
+
+--vAieqiNxGUQydHCv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zjjg60ZW-d7r-DS9@casper.infradead.org>
-X-Spam-Flag: NO
-X-Spam-Score: -3.79
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.79 / 50.00];
-	BAYES_HAM(-2.99)[99.96%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 06-05-24 14:53:47, Matthew Wilcox wrote:
-> On Mon, May 06, 2024 at 01:36:43PM +0000, Xiu Jianfeng wrote:
-> > alloc_mem_cgroup_per_node_info() returns 1 if failed, use -ENOMEM
-> > instead, which is more meaningful.
-> 
-> This should probably be changed to return true/false instead of
-> an int.
+> syzbot has bisected this issue to:
+>=20
+> commit 2b0cfa6e49566c8fa6759734cf821aa6e8271a9e
+> Author: Lorenzo Bianconi <lorenzo@kernel.org>
+> Date:   Mon Feb 12 09:50:54 2024 +0000
+>=20
+>     net: add generic percpu page_pool allocator
+>=20
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D151860d498=
+0000
+> start commit:   f99c5f563c17 Merge tag 'nf-24-03-21' of git://git.kernel.=
+o..
+> git tree:       net
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D171860d498=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D131860d4980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6fb1be60a193d=
+440
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Df534bd500d914e3=
+4b59e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17ac600b180=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1144b797180000
+>=20
+> Reported-by: syzbot+f534bd500d914e34b59e@syzkaller.appspotmail.com
+> Fixes: 2b0cfa6e4956 ("net: add generic percpu page_pool allocator")
+>=20
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>=20
 
-Agreed. Or change the only caller to consume the error. Changing to bool
-seems like the easiest way.
+Looking at the code, the root cause of the issue is the WARN(1) in
+__xdp_reg_mem_model routine. __mem_id_init_hash_table() can fail just if rht
+allocation fails. Do we really need this WARN(1)? It has been introduced in=
+ the
+commit below:
 
--- 
-Michal Hocko
-SUSE Labs
+commit 8d5d88527587516bd58ff0f3810f07c38e65e2be
+Author: Jesper Dangaard Brouer <brouer@redhat.com>
+Date:   Tue Apr 17 16:46:12 2018 +0200
+
+    xdp: rhashtable with allocator ID to pointer mapping
+
+Regards,
+Lorenzo
+
+--vAieqiNxGUQydHCv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZjjuBAAKCRA6cBh0uS2t
+rHE8AP9aiQe9PRxjbu8EA3OAzA4evmD4DeMhokGWsZjanPp69QD/Qr+N4crIXk/4
+h4vZ5Fo/cpxn4NjaaMLCYwTl/2NQ5Qw=
+=QBb4
+-----END PGP SIGNATURE-----
+
+--vAieqiNxGUQydHCv--
+
 
