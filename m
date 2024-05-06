@@ -1,120 +1,95 @@
-Return-Path: <linux-kernel+bounces-169235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F5F8BC581
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:37:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBED68BC584
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E6851C210C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:37:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01D66B218E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389593D387;
-	Mon,  6 May 2024 01:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LWE7oxLa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0993D55D;
+	Mon,  6 May 2024 01:38:35 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B7D1EEE0;
-	Mon,  6 May 2024 01:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AF62FB6;
+	Mon,  6 May 2024 01:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714959461; cv=none; b=cTPsvfukzkdJng1ybRtYKxQs1cIfVk9AULQceDAfot0sIyNkzN5Ysc669pUFHjx8dsZg/2XiaZEg7tVChxzmiPmj7JY+uLoX0VHXjjRx5kq4Oyu5KBWHm3yxlr+jA0+21PmFw5/gLCsuXxLWFRXT2FT74hXSHPl2NLeZhf5Z8gI=
+	t=1714959514; cv=none; b=pV1bksU5DSXuksZv1LjKlFj3Wqv9L4foeJXzxK+m/1Ttey7Eb67oUGRNGwYy7a7Y5f7T5BCMIRQGDfZMZmwjFHfB/z+QoGvrNdzzG4jxOkXLYq34FbL/ptcm73X5lM1cMfW6x2DaLP9fq4Iws3nt9+L1naGpgBsTBx3hAyjZOts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714959461; c=relaxed/simple;
-	bh=HYftu84wTZG3fnG7ffHRltjHsRm3okCLENExzyGTMKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oPLbGQQnTWATi1zG9emze1npPlTKoKy8JdVFbhETuBJnOGW6f9NCpnw9Pw19+VIN//5mOxx4+hZQifVydLFfWdZgg9y9WQth8BeZVldF9jyUISh6U785LnSnAqZ6x8bmq1+14fhWHb7ulf6K6rOpI4lgu7NX3VGuB2XI6TFoo94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LWE7oxLa; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714959460; x=1746495460;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HYftu84wTZG3fnG7ffHRltjHsRm3okCLENExzyGTMKg=;
-  b=LWE7oxLaj8sNZQPrsOGPry7Dxjmo0Q9z8QtyFUNKdq/eLxYDn8DIYtUm
-   57TIAM5lCIjjaPeZcOWn8HPorAUwyu37Tb6bEqghDUnuEBIBjLAysJDO/
-   p1CTCWMO/nIuNmTKwU1L3UaiK8pQKZtxeIVdXWRzQGfUDUfsIlDns5+qR
-   ctpuwQEs2K0oOX0S+q+l8ZMq040HSkfFTLzHxDlkC7LIdRLAj+r/dmMJn
-   qtLNotrjI6tEPIDgbKF8blTMQ/PuU5vvrvqsTxpsPuNt6Dj+z3lgqIkf8
-   FOrmoRofmKDvkPOfuciKVtx1Y00g52b74wxY7tDQ0NHi296DnpebJ4ZZP
-   g==;
-X-CSE-ConnectionGUID: Z6Mx9lEPRj+qPjpYtcqPuw==
-X-CSE-MsgGUID: /cksoM0fSE6CUWpf+J715w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10566693"
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="10566693"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 18:37:39 -0700
-X-CSE-ConnectionGUID: PsLwOka8Qs6r1guoZeGl7Q==
-X-CSE-MsgGUID: yR4ljC2kTa6ektocMmrouA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="32806438"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.92]) ([10.124.225.92])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 18:37:34 -0700
-Message-ID: <22b52180-27a2-4df8-a949-401f73440641@linux.intel.com>
-Date: Mon, 6 May 2024 09:37:27 +0800
+	s=arc-20240116; t=1714959514; c=relaxed/simple;
+	bh=oOh2DNq/ALKOxEFuNcYkdDLDowhusytPK/KkdWzJoKI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=qDh64SWHeZiWJfq+aQEKG3hIkws1PV898YyBkesG281et+kSi3pf5eTmp+ZWEJK5+wABAKOmwB++cj9HU3qM5MfeijbK/o3cgXzqlEbPkSb9FbwyiyiiwBS0Irn7him4Z4OONxc/pwkA0gKeMmEzf3815WbAnOXDK6oBBiodTXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXkZQ40CGz4f3khk;
+	Mon,  6 May 2024 09:38:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id A83DB1A058D;
+	Mon,  6 May 2024 09:38:30 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP1 (Coremail) with SMTP id cCh0CgDX8QqWNDhmj06CLw--.5810S2;
+	Mon, 06 May 2024 09:38:30 +0800 (CST)
+Subject: Re: [PATCH 06/10] writeback: Factor out code of freerun to remove
+ repeated code
+To: Tejun Heo <tj@kernel.org>
+Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240429034738.138609-1-shikemeng@huaweicloud.com>
+ <20240429034738.138609-7-shikemeng@huaweicloud.com>
+ <ZjJ4pjm9073R-LH0@slm.duckdns.org>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <9e18efb9-881e-d8ee-4acf-5e05f4c223ea@huaweicloud.com>
+Date: Mon, 6 May 2024 09:38:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] vPMU code refines
-To: Mingwei Zhang <mizhang@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
- Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang
- <zhenyuw@linux.intel.com>, Like Xu <like.xu.linux@gmail.com>,
- Jinrong Liang <cloudliang@tencent.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240430005239.13527-1-dapeng1.mi@linux.intel.com>
- <CAL715WK9+aXa53DXM3TP2POwAtA2o40wpojfum+SezdxoOsj1A@mail.gmail.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <CAL715WK9+aXa53DXM3TP2POwAtA2o40wpojfum+SezdxoOsj1A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjJ4pjm9073R-LH0@slm.duckdns.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgDX8QqWNDhmj06CLw--.5810S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUU5R7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vI
+	Y487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UX4SrUUU
+	UU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
 
-On 5/1/2024 2:15 AM, Mingwei Zhang wrote:
-> On Mon, Apr 29, 2024 at 5:45 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
->> This small patchset refines the ambiguous naming in kvm_pmu structure
->> and use macros instead of magic numbers to manipulate FIXED_CTR_CTRL MSR
->> to increase readability.
->>
->> No logic change is introduced in this patchset.
->>
->> Dapeng Mi (2):
->>   KVM: x86/pmu: Change ambiguous _mask suffix to _rsvd in kvm_pmu
-> So, it looks like the 1st patch is also in the upcoming RFCv2 for
-> mediated passthrough vPMU. I will remove that from my list then.
 
-Mingwei, we'd better keep this patch in RFCv2 until the this patchset is
-merged, then we don't rebase it again when this patch is merged. Thanks.
+on 5/2/2024 1:15 AM, Tejun Heo wrote:
+>> +/*
+>> + * Throttle it only when the background writeback cannot
+>> + * catch-up. This avoids (excessively) small writeouts
+>> + * when the wb limits are ramping up in case of !strictlimit.
+>> + *
+>> + * In strictlimit case make decision based on the wb counters
+>> + * and limits. Small writeouts when the wb limits are ramping
+>> + * up are the price we consciously pay for strictlimit-ing.
+>> + */
+> Can you please reflow the above to 80col or at least seventy something?
+Sure, will do it in next version. Thanks.
 
-
-> Thanks. Regards
-> -Mingwei
->
->>   KVM: x86/pmu: Manipulate FIXED_CTR_CTRL MSR with macros
->>
->>  arch/x86/include/asm/kvm_host.h | 10 ++++-----
->>  arch/x86/kvm/pmu.c              | 26 ++++++++++++------------
->>  arch/x86/kvm/pmu.h              |  8 +++++---
->>  arch/x86/kvm/svm/pmu.c          |  4 ++--
->>  arch/x86/kvm/vmx/pmu_intel.c    | 36 +++++++++++++++++++--------------
->>  5 files changed, 46 insertions(+), 38 deletions(-)
->>
->>
->> base-commit: 7b076c6a308ec5bce9fc96e2935443ed228b9148
->> --
->> 2.40.1
->>
 
