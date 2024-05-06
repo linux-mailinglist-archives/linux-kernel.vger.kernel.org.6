@@ -1,163 +1,225 @@
-Return-Path: <linux-kernel+bounces-169277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621B48BC632
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:24:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74148BC634
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B951C20FA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:24:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8B31C20E23
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E519543156;
-	Mon,  6 May 2024 03:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E214C43AC1;
+	Mon,  6 May 2024 03:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WXJq8JDl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cMQ+O6bK"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7591541C62
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 03:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A1241C62;
+	Mon,  6 May 2024 03:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714965883; cv=none; b=R6P9xJkuDtMcMYncI2mHjmnOJibOE91O1pe1GhvElLjMOSkNqPdQPOklbolS9lR8Dmo4wHj/E6vfWAL338KJQfgQ87WHY15oocI0q53CQXHzZpWuza3FJ8/x+HRsNgvPc05byXhREK//0+ibKKd0E5L2POFvZCixegK7JKdLP4g=
+	t=1714965902; cv=none; b=BTIa7nghJLWHxHXGQAMNLLzBjRqWQ5M58/VMHHpMDPStxeTEhy9X+dwSfB/HsSLskwVi3HBG3COFjadifSiuLCTCLFP20xXM4sov4Y6pm9koDuBciqSkHsSoXqReRnfpo5UbQhWXi8vBCKrtETPOVhddNsm3wcK9ZENw+Kkn4OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714965883; c=relaxed/simple;
-	bh=bBHRYR+zXOeAjZ6EPCrBlhNWwq4VARwBFLo2xTUGLZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NlanfcaY7ycE/DTdPLDgRKKn/1ZQXEwtJjE8hKcZcUUyHJwBWKFLsmoD9uyI4BWRorjMLilYbktu2QaGSsdW43HAF1ftRJdQBArzE+6LBodRkVwyIS3yR0Cfp+lSVC8NW4ix+8efW9JH1FjsectT9b66stmFMJYO26SbSfA7v+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WXJq8JDl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714965880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BXECy0j7At+OptqnyBfrJG9H7LKgIkADB2rySsLldvo=;
-	b=WXJq8JDlWzX2RreasT/YGBM98hdl/Ps6Nslp+qsHicoB3wDUpJVbd28NgUA3uM2svU9kWM
-	1bF5ZbqLs7sMebBejVEygyQYgHl/StRkfX0QWPz0Vz4ndVVRF/XohxGAqpAuFGakyU3aHD
-	wlbKwPhLpS6D+aU4vQdMHqkdfAz/pUs=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-99-aYAIwLLaPAGfzRGgbYdt0g-1; Sun, 05 May 2024 23:24:38 -0400
-X-MC-Unique: aYAIwLLaPAGfzRGgbYdt0g-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2acf6bce4cfso1151811a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 20:24:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714965878; x=1715570678;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BXECy0j7At+OptqnyBfrJG9H7LKgIkADB2rySsLldvo=;
-        b=QiwXGJ9uuYQ85AyqJZF9VlzLNP+mrOyciR2g/gaMw3Snj4n3FsBJ/6saaX51/JvjPF
-         HXMRL2/PIoZWHYfijZ8+APeOMGGOf2KP2voUiFpZLtqG10cQYK7N/Nrlqoe1JmBj//Mo
-         K4a286fUZ6NXGRflJ6/sSPFZqN22AnC+FguOdYVT54PebTE62xIIj10eFpBxWEDgL5sf
-         154TCavjCmD+tN8O2tf59uTtXaB3vFTEsaV2t+EFylHBAxKUSd8MBWImVzpsROfKuMJ1
-         ZjgG9HobSlabFMBgg8TKUdLESdChE+04/rZy93KvF2OmemxvE6ECVp7EO6nukE3zfc+x
-         ylBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQzipAX6T+/cKuUZ9xTjoHqctydTnxoAAKrH7dIOXPLu2+HZNRdV0T4qoRYMbgmX5nW84kxUj3SwcNvX1OaORW7iC097ME04l79+sp
-X-Gm-Message-State: AOJu0YxPeMjy5EW1jZZJG6IpXrt5Jvl1YuX6esAYXlFagg9rLsxuqEoJ
-	HpzxNfU7wRxRmiw6JUyLjE2k5JadD/iZSYVrBhq8+SMfVik0BPZZm6qfHuxUwbg/Hjgrmae/8rw
-	Plk50QP+xEwAVx83Vc1pr2w6QXL4GUgPoOH4sOrx1sg2Nyh2yWf/Ah9FOGdUF42lbqJ6WnUyFfO
-	WhhFCyzDBwE8VBwWZtFE1ACNSdkSv26IxcsNa4
-X-Received: by 2002:a17:90b:19cc:b0:2b2:da7:2c83 with SMTP id nm12-20020a17090b19cc00b002b20da72c83mr12511965pjb.4.1714965877777;
-        Sun, 05 May 2024 20:24:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHsgR09huJq7794Kr7Va7gw9HzoZRK/fRVHd00z788cM7NjAkL3DywsEKb+A/xOZDmoDbwkRNX9xodgt7fyblY=
-X-Received: by 2002:a17:90b:19cc:b0:2b2:da7:2c83 with SMTP id
- nm12-20020a17090b19cc00b002b20da72c83mr12511949pjb.4.1714965877400; Sun, 05
- May 2024 20:24:37 -0700 (PDT)
+	s=arc-20240116; t=1714965902; c=relaxed/simple;
+	bh=P1kq2c1CRRDOHcjDbU8AaDeUbjddlldj1FWo0XXY45Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=draNAHb4XSpcFMiWvFLUo2RoD38dPDNh/Ap202g/z5BBstWJa/AKvmNCAR3t+PZbMP1mMpK0j5+YSvKfaCkPTbNR+tIPqtRJ7PnkUg6tc8CkGi7NSsfb8sSIuyG5XK73XUnOXXglGcsRTGHOj51Y3JhxDKFoifWjOlclgXokn4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cMQ+O6bK; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1714965896; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=RbpIXs9H/Hma1wu6wHG4qOKSeBDxPsWHGvGGKe6YJWs=;
+	b=cMQ+O6bKAiCEGTJQCetdPtBuRNQr8HGta48Ek7eUEkWDKKRSEMYTlsw7CyITT/61VES8Suf5CVvbDEJ3d6H7XiGY3OaCZA23fNNRvqyqogi2tu0MUmjq8Tp2zvHVcIXgVKSBTmek5gKsCAg1UmkR8BEBnqo30am3zkLXWNUdnvc=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0W5rS6Bn_1714965893;
+Received: from 30.221.146.217(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W5rS6Bn_1714965893)
+          by smtp.aliyun-inc.com;
+          Mon, 06 May 2024 11:24:55 +0800
+Message-ID: <e0fc24d5-49c5-4a75-86f9-43adc763066f@linux.alibaba.com>
+Date: Mon, 6 May 2024 11:24:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZjFH7Xb5gyTtOpWd@localhost.localdomain> <20240430121730-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240430121730-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 6 May 2024 11:24:25 +0800
-Message-ID: <CACGkMEsFMXdswxgguH1P_TkY9wnKgE8RbhUdw_Pd+niSp2UjSg@mail.gmail.com>
-Subject: Re: [PATCH] virtio_net: Warn if insufficient queue length for transmitting
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Darius Rad <darius@bluespec.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/12] cachefiles: defer exposing anon_fd until after
+ copy_to_user() succeeds
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>,
+ Hou Tao <houtao1@huawei.com>
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-10-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240424033916.2748488-10-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 1, 2024 at 4:07=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com> =
-wrote:
->
-> On Tue, Apr 30, 2024 at 03:35:09PM -0400, Darius Rad wrote:
-> > The transmit queue is stopped when the number of free queue entries is =
-less
-> > than 2+MAX_SKB_FRAGS, in start_xmit().  If the queue length (QUEUE_NUM_=
-MAX)
-> > is less than then this, transmission will immediately trigger a netdev
-> > watchdog timeout.  Report this condition earlier and more directly.
-> >
-> > Signed-off-by: Darius Rad <darius@bluespec.com>
-> > ---
-> >  drivers/net/virtio_net.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index 115c3c5414f2..72ee8473b61c 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -4917,6 +4917,9 @@ static int virtnet_probe(struct virtio_device *vd=
-ev)
-> >                       set_bit(guest_offloads[i], &vi->guest_offloads);
-> >       vi->guest_offloads_capable =3D vi->guest_offloads;
-> >
-> > +     if (virtqueue_get_vring_size(vi->sq->vq) < 2 + MAX_SKB_FRAGS)
-> > +             netdev_warn_once(dev, "not enough queue entries, expect x=
-mit timeout\n");
-> > +
->
-> How about actually fixing it though? E.g. by linearizing...
 
-Actually, the linearing is only needed for the case when the indirect
-descriptor is not supported.
 
->
-> It also bothers me that there's practically
-> /proc/sys/net/core/max_skb_frags
-> and if that's low then things could actually work.
+On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> After installing the anonymous fd, we can now see it in userland and close
+> it. However, at this point we may not have gotten the reference count of
+> the cache, but we will put it during colse fd, so this may cause a cache
+> UAF.
 
-Probably not as it won't exceed MAX_SKB_FRAGS.
+Good catch!
 
->
-> Finally, while originally it was just 17 typically, now it's
-> configurable. So it's possible that you change the config to make big
-> tcp
+> 
+> To avoid this, we will make the anonymous fd accessible to the userland by
+> executing fd_install() after copy_to_user() has succeeded, and by this
+> point we must have already grabbed the reference count of the cache.
 
-Note that virtio-net doesn't fully support big TCP.
+Why we must execute fd_install() after copy_to_user() has succeeded?
+Why not grab a reference to the cache before fd_install()?
 
-> work better and device stops working while it worked fine
-> previously.
+> 
+> Suggested-by: Hou Tao <houtao1@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>  fs/cachefiles/ondemand.c | 53 +++++++++++++++++++++++++---------------
+>  1 file changed, 33 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index 0cf63bfedc9e..7c2d43104120 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -4,6 +4,11 @@
+>  #include <linux/uio.h>
+>  #include "internal.h"
+>  
+> +struct anon_file {
+> +	struct file *file;
+> +	int fd;
+> +};
+> +
+>  static inline void cachefiles_req_put(struct cachefiles_req *req)
+>  {
+>  	if (refcount_dec_and_test(&req->ref))
+> @@ -244,14 +249,14 @@ int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
+>  	return 0;
+>  }
+>  
+> -static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+> +static int cachefiles_ondemand_get_fd(struct cachefiles_req *req,
+> +				      struct anon_file *anon_file)
+>  {
+>  	struct cachefiles_object *object;
+>  	struct cachefiles_cache *cache;
+>  	struct cachefiles_open *load;
+> -	struct file *file;
+>  	u32 object_id;
+> -	int ret, fd;
+> +	int ret;
+>  
+>  	object = cachefiles_grab_object(req->object,
+>  			cachefiles_obj_get_ondemand_fd);
+> @@ -263,16 +268,16 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>  	if (ret < 0)
+>  		goto err;
+>  
+> -	fd = get_unused_fd_flags(O_WRONLY);
+> -	if (fd < 0) {
+> -		ret = fd;
+> +	anon_file->fd = get_unused_fd_flags(O_WRONLY);
+> +	if (anon_file->fd < 0) {
+> +		ret = anon_file->fd;
+>  		goto err_free_id;
+>  	}
+>  
+> -	file = anon_inode_getfile("[cachefiles]", &cachefiles_ondemand_fd_fops,
+> -				  object, O_WRONLY);
+> -	if (IS_ERR(file)) {
+> -		ret = PTR_ERR(file);
+> +	anon_file->file = anon_inode_getfile("[cachefiles]",
+> +				&cachefiles_ondemand_fd_fops, object, O_WRONLY);
+> +	if (IS_ERR(anon_file->file)) {
+> +		ret = PTR_ERR(anon_file->file);
+>  		goto err_put_fd;
+>  	}
+>  
+> @@ -281,15 +286,14 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>  		spin_unlock(&object->ondemand->lock);
+>  		ret = -EEXIST;
+>  		/* Avoid performing cachefiles_ondemand_fd_release(). */
+> -		file->private_data = NULL;
+> +		anon_file->file->private_data = NULL;
+>  		goto err_put_file;
+>  	}
+>  
+> -	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+> -	fd_install(fd, file);
+> +	anon_file->file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+>  
+>  	load = (void *)req->msg.data;
+> -	load->fd = fd;
+> +	load->fd = anon_file->fd;
+>  	object->ondemand->ondemand_id = object_id;
+>  	spin_unlock(&object->ondemand->lock);
+>  
+> @@ -298,9 +302,11 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>  	return 0;
+>  
+>  err_put_file:
+> -	fput(file);
+> +	fput(anon_file->file);
+> +	anon_file->file = NULL;
+>  err_put_fd:
+> -	put_unused_fd(fd);
+> +	put_unused_fd(anon_file->fd);
+> +	anon_file->fd = ret;
+>  err_free_id:
+>  	xa_erase(&cache->ondemand_ids, object_id);
+>  err:
+> @@ -357,6 +363,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>  	struct cachefiles_msg *msg;
+>  	size_t n;
+>  	int ret = 0;
+> +	struct anon_file anon_file;
+>  	XA_STATE(xas, &cache->reqs, cache->req_id_next);
+>  
+>  	xa_lock(&cache->reqs);
+> @@ -390,7 +397,7 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>  	xa_unlock(&cache->reqs);
+>  
+>  	if (msg->opcode == CACHEFILES_OP_OPEN) {
+> -		ret = cachefiles_ondemand_get_fd(req);
+> +		ret = cachefiles_ondemand_get_fd(req, &anon_file);
+>  		if (ret)
+>  			goto out;
+>  	}
+> @@ -398,10 +405,16 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>  	msg->msg_id = xas.xa_index;
+>  	msg->object_id = req->object->ondemand->ondemand_id;
+>  
+> -	if (copy_to_user(_buffer, msg, n) != 0) {
+> +	if (copy_to_user(_buffer, msg, n) != 0)
+>  		ret = -EFAULT;
+> -		if (msg->opcode == CACHEFILES_OP_OPEN)
+> -			close_fd(((struct cachefiles_open *)msg->data)->fd);
+> +
+> +	if (msg->opcode == CACHEFILES_OP_OPEN) {
+> +		if (ret < 0) {
+> +			fput(anon_file.file);
+> +			put_unused_fd(anon_file.fd);
+> +			goto out;
+> +		}
+> +		fd_install(anon_file.fd, anon_file.file);
+>  	}
+>  out:
+>  	cachefiles_put_object(req->object, cachefiles_obj_put_read_req);
 
-For this patch, I guess not as we had:
-
-        if (sq->vq->num_free < 2+MAX_SKB_FRAGS)
-
-in the tx path. So it won't even work before this patch.
-
-Thanks
-
->
->
-> >       pr_debug("virtnet: registered device %s with %d RX and TX vq's\n"=
-,
-> >                dev->name, max_queue_pairs);
-> >
-> > --
-> > 2.39.2
->
-
+-- 
+Thanks,
+Jingbo
 
