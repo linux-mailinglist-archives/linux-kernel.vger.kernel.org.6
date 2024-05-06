@@ -1,71 +1,118 @@
-Return-Path: <linux-kernel+bounces-169282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC618BC648
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:47:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0889B8BC64A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7307C1C21706
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:46:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332E91C214F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CC343AB2;
-	Mon,  6 May 2024 03:46:49 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2134.outbound.protection.partner.outlook.cn [139.219.17.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D70446A9;
+	Mon,  6 May 2024 03:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="caauH1w/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206364594E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 03:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFE443156;
+	Mon,  6 May 2024 03:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714967209; cv=fail; b=ZdnOxX+6I25OJk9Ea5xLa0h7jhZfl6JSUcl3FqIUk7RrbkQxX/b2odkZ5InQBpuzTmSLqgyw7JRTBjCF1UXRkCFZhVSaZtB3XcXzhYvTTu0I3TCsFOpMp3SCwqzZicFL/ifl5XiNSmTK9CGuwoN9MKB+/zfVH1JBxwgagk1qYL4=
+	t=1714967229; cv=fail; b=MmY9JBCeOGGbiA66LiO94z9Uly91pAVAXSEJcbjb8OOUziJZey2wdiOdz0N2nhX5SwuBEzpabENb+7CZPClO8TNsvfvnFTpgG/LhmkZFtC01jcKCjgRf91gyEHJqxJ2sFqBgPYWjlHVH3o9U9MsKFFlnkyN7Q5cb9ET8Dp/H6BQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714967209; c=relaxed/simple;
-	bh=ujm4y3QKcY3L9Cf4hHa/U5fukmMQV74WdYfPnzWkjIg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rEiUeraZgAUB0dAfmNBIFM+hjjG8I2Xac+ZGBgI47zEHjPY3qk1iM4TSOhpifN8wNXvMcnEjO6jx9noExvK6ok7FZ9MMPHOU6tKXuHDnOsnxFCxBZXz/+9OnvPUL+OQfghKtvStwVvjMo4/e5y5P93qaqO6BVoAyk1GvkGxeJF4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+	s=arc-20240116; t=1714967229; c=relaxed/simple;
+	bh=k7rdyq53AgRfXqczBly9YJYfcEfesowOv2PegI4K2Ig=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=N8UjVTAN50CdxgdLOrsMm8389BBvXu30xRM6MRkf9+pB4xPGoeZSMNGH3QnPTlzeW2ijQ/2InY+zBj3WcAkWGeRuuhYs/yPIxHCKK7ehh9igHCQ5LQhGUFamiPmuG/V9ni7da9uukVDvrE3Gfse+tsN+G4VdKi5fLFAi/u5/M/E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=caauH1w/; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714967227; x=1746503227;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=k7rdyq53AgRfXqczBly9YJYfcEfesowOv2PegI4K2Ig=;
+  b=caauH1w/ugivE0TnD0DmR98K93arUcBBuo+5up1AlahnaP5l9VcVJDSa
+   VsJKR2BOeZ505ZX7OGw0YsI+4nqROCbEOKtH3wZ6OGiw9C8WlfQdmGY01
+   3e5i01KTsokiEKrF6o8WqnJcYuNLEX4CoJiE9jWxRVKVB9LwDYew/I1nI
+   58h4hMdPI5o2ZHJWdYpE3B70JG0qLdRkboH75soFRSmpqO43lm45dHIbX
+   je3gmHQ1H09eFDz31LgGUaJmHvvWf03qNIb69uTBj1lscohu0jmnWyEz1
+   453HK1S0ogzxanH9YE6tlO5VyWgkzIq1vqqZcdz+E8JuQWVXYyfNSIIFc
+   A==;
+X-CSE-ConnectionGUID: c13TCiZTSHKeY9YtIPefFA==
+X-CSE-MsgGUID: EfUyAk5vTlm3mBAB2gEiTA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10851819"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="10851819"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 20:47:07 -0700
+X-CSE-ConnectionGUID: Fq8B/WTBQeyK0nOOndUnxg==
+X-CSE-MsgGUID: Ldu5QireRUqz41BlkYJevg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="28144701"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 May 2024 20:47:07 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sun, 5 May 2024 20:47:05 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Sun, 5 May 2024 20:47:05 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Sun, 5 May 2024 20:47:05 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dIMltynZ8RjYggWvxf3aJ2ZWfAjlqa8KRdr0nqsoMJ73+AqNPA1HKP+4W0lEO7pUZpjrsWhVU5rKDSE1DPOEhjI7WWduB3GgvDm1HYMzpMM5pqcP+JX+Sr9uENWTTj5Znvh7/BhGySSXw26oB+oyiieq1bFzFQm4AIRuRY9lEpz1MdCVi/6WTnwxnkKukv8tJgOelCqNX9awb+8xK7zkyB4PQrFFxy1UjmBsbaz3OTOtZ2c3UPT6EiznlOBJDsyX679odkK8iUSGXrlFl8MFemXtOMHd0c32gkQGkURQ0zhyncdSBdonfVFPNs+lMkeZ3bUgtJj1CglTi2z7x1YqBg==
+ b=WivuW5TFMYUvYRpfMgELBuxbi9JoqntAe/PvTQOQuMJoaMOAYmzLSi9m3wINhbW+RDU0b7liBhrsr11LLzZ6l6rQsKr4nZdW9IouCIQnu2gSJ7L062pLD/zLyudAt+kJdfnmXQqdMv4VRV97nOKWg9aIRw7IjZHxWbZJlGrC8wWDMzXN6U7suZriSLo0MrfvqMQrlsryNHqRv18+nRxkZDZaEGzmuvkFHjtuv6ccsu6yxivrDd0bIZzc4WcP1xfJlWA3JpMVEx1HKYHZI+K2Fra3jp04fzRXYQaffhnw4+if+BdgJ/vTMfu3joyXirvNlyfdzch0cfbfIT8X+8j5tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JRkMAT594ErfcQTEKOQpEEQ0QpyuxVO1GSg6pauvPME=;
- b=fkTr+ZQ/g+CvXdOAowiYHx1kMTF9lOBKEy2dmVXQJ2bRDfWVlxSFb4wPrdLQefUslQkXUp4gX3ttEbUUrf1Yh8UplAy2719J9PQNHtFTVUeDZ4qotIujiKmMmkLF4HojPXDhNYyWWMzyZY5AeHnVZVnIjFyYPovcwLPiMaW9pKjDf6f1QHB+rwIuSCtIWcs2Poc6xfVn9TmRRcZMhxr/bnCkUxj5WL7emZAPBSJrweyqducq6NxHnR9/pMS8uHMWV1LqpE3UX6HvN5yzrOh6zm2c+Zb50xSa7WhlwOf5c2Gdfo1KchkZ53LRlSyO1ynj+OarWbXdowSmIsvW9XmD4A==
+ bh=Ed+FYOYFeofXaRJosSG2QktFuGG5WdLEaTmO5CR5gKQ=;
+ b=Mj4JNp/FPVHibhvajVuREK33dd/xtKSLogkh+3RbrpXcm7U4HiMxi06JXkZ57lglm0JbZ1nXdtg+VXBj/mSpe9s5OSWkLpTM6LNlzXA35sogYVCit4/Nel2++9kW+/op+2JlqasI3qFy7jYyDIuiOZX4yEraH8DCa1NXNMBqmX79oNdjMb9/NP8mX8kuhcK0YLqcXaeLmQUiVvvipNZ7BXdGtObNtwBMmJF/CTzWmicnW1Cdd3n2pxqEykS07NuE/5s++EQ7cGdfOHlMV/PF1ePgy6NXCp5w0bM8evb86GEoynNhjP0NR6s5XxtbvXBzpSJGdVu4pCCIP8K3vzFzAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1227.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Mon, 6 May
- 2024 03:46:35 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::5de:15b9:3114:4f45]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::5de:15b9:3114:4f45%5]) with mapi id 15.20.7472.044; Mon, 6 May 2024
- 03:46:35 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Hal Feng <hal.feng@starfivetech.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] riscv: defconfig: Enable StarFive JH7110 drivers
-Date: Mon,  6 May 2024 11:46:27 +0800
-Message-ID: <20240506034627.66765-1-hal.feng@starfivetech.com>
-X-Mailer: git-send-email 2.43.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZQ0PR01CA0001.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:5::14) To ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by LV3PR11MB8481.namprd11.prod.outlook.com (2603:10b6:408:1b7::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Mon, 6 May
+ 2024 03:47:02 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%4]) with mapi id 15.20.7544.041; Mon, 6 May 2024
+ 03:47:02 +0000
+Date: Sun, 5 May 2024 20:46:59 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Jonathan
+ Cameron" <Jonathan.Cameron@huawei.com>, Navneet Singh
+	<navneet.singh@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	"Davidlohr Bueso" <dave@stgolabs.net>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 05/26] cxl/core: Simplify cxl_dpa_set_mode()
+Message-ID: <663852b3806f1_258421294be@iweiny-mobl.notmuch>
+References: <20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com>
+ <20240324-dcd-type2-upstream-v1-5-b7b00d623625@intel.com>
+ <ZhSPHvoTHl28GXt1@aschofie-mobl2>
+ <6635366717079_e1f582941d@iweiny-mobl.notmuch>
+ <6635b5e0e3954_1aefb294bf@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <6635b5e0e3954_1aefb294bf@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+X-ClientProxiedBy: SJ0PR05CA0192.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::17) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,173 +120,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1227:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55c8bca7-c205-43fc-03dc-08dc6d7f206c
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|LV3PR11MB8481:EE_
+X-MS-Office365-Filtering-Correlation-Id: e10b184f-0711-41ba-c0aa-08dc6d7f3099
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	d8wGKPSmhwgsngRSnG6R2QrdpPvxWQysqa2L/kTVcOxVCSvWNETtNrPnv2pc1GNraH8G4YCuozcUkKfxSg4s4k5gBACWlYgy2xYisETuJJWY2VWWoaqEit3YN2P65kAw5MmpPESovbwPkalpDSOwDncLvNozJHqasHwKTYHmgAK17XwIQnINCmP+j31dicbxpN9JY+ypOXkV7M5+vZ4sBsaRkS7jvo+qco57r3vhN6e47XNPr7Jnz01hVHO8ayF0WMxq/2oQfmH+AqqPmUBmUEoVjrIOKOkIxg6DhV0rvI4CZm70O1ZIg63u82hO9DdymQVaKJZp8CbqNG0XgiQSisfkh+np3Fhe9nx2BXP+xLugqOBpIgB5ImOboWMqDwSxEslyWwGMBPZbHcG9e4LSra4E5eqx/LGSx4esux813grXYwiRlr1CIrAdOxMSJv/LYj/CoIolWqTNlErupNU+2dTLpT0a6kzfSg8rH1lxK0B9GD+NAmhCgkrJkYFoz8gpDWdCtB1BGn5swa7cfHFDzOJYKC1lfg796F+9x7yqgvLoH1ykVdzzDZCVMFeDqYyyEsuXP4JsWD7Qrx3eEokwlPvVKigN3St7fLlhUHdrTl2Bw/eMx9BZEFU8Jt+v0UZZ
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(366007)(41320700004)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dO9SJ70tkGU7iMopaPco17UI3kbO8xF2j3Z1a+k/7lRjU8QPkYUuTQ4Vl1tF?=
+ =?us-ascii?Q?NXTwmi5QibYm42vpqk8bJQzKlrERiT5+U1k1kSQf0OrngVgjE4huwK4RjKgd?=
+ =?us-ascii?Q?Oo32dWDDdNG0JU5ttAynNxtADOQWgKZtWCV4F5ygMdV7Mm/UF6J1rEJo8OCx?=
+ =?us-ascii?Q?QRISHirMLyTrGGSz9Glqr/hBZfwI9bSVRhvFFrqu/efPrIxS87j2Nrx22Z67?=
+ =?us-ascii?Q?ONdKzmqmRznqkepkR22OGFBQ1I0Y2uO2ntNhCRLQe9PKPpk6udMCw9iuQhNP?=
+ =?us-ascii?Q?gCuy69nwA1Hy/3lRiku5YCoTyCpc8vczaee3KjNQQTMFA9juilCQg/ZsfsIX?=
+ =?us-ascii?Q?AujMNdAv+XgsvCQ5t6atzyOA/Ydm83d/5hA9cmQDo7ophBfAdDqPWEwZrN5o?=
+ =?us-ascii?Q?+gygFpqgs0SnR9Egw4SsVlhorKezzRtlH11olva0E4CRipjY0SZJhebdPPvO?=
+ =?us-ascii?Q?GCDnqRHXz8ALI2AgELB1m5tik7Yt2pQfjQErfig8hZwKtlFbcWcn0DU5npMK?=
+ =?us-ascii?Q?xz2yjtNd7duoL62mnQgRMwbX21E48cfuKNoHBzDU88gJDVDvRj6fQtb81MtM?=
+ =?us-ascii?Q?YWry2PLbMvbQAx3V95sPZDIyOHELLzTyVitiWBIVj+GaeQzyrFMGSo/Pr9O+?=
+ =?us-ascii?Q?mKX2n8f1EXprJ1b1844OMz111tccNUJXV5p3yRVuRql+3i9psqU3XKoAU7XQ?=
+ =?us-ascii?Q?62PrBSgG0wxkq/VkVUoADDf/chvthaZitlaX8+W/+EcsbI5AJKXx/oeiog0b?=
+ =?us-ascii?Q?UkUJjJp+fZPivBEmSWx91wC0ry1/Q4FGUoPpyRnjmqc1iIfBCo94xgrQN7Bs?=
+ =?us-ascii?Q?LTeITq+mV71ArLfxsSKF4AMESc/lfOkBAmMnNbAY/Xh35inXYU26ZllZwJf4?=
+ =?us-ascii?Q?oRHEFoW6wCFz76Uv50v+TPjOKZD4ZBKDiDFbAlZxRNIROeTQhFOYpuFu8fck?=
+ =?us-ascii?Q?qD9zoAhZRvjCVwcuRZ1IhVkH6NWLXaEl5q9psaWI1CrdNtyvJvnBWc/m85qC?=
+ =?us-ascii?Q?7kaVZgkPuDPqPZPerkNp7nrTM/iTMgrAnxKMutvxmcy+xY5nw9lJRk0AT8MF?=
+ =?us-ascii?Q?nTz1xiKuFKd2839BfOhsk1Am7G+VzjVfaMXHBC46mI9pKEVbURiz3tctzatA?=
+ =?us-ascii?Q?PTaiTUZSH+CX5Mo6X0e2bOCWbh6PpmC6L2Hmn9XHBneHYf4ly8isdkvNRg1F?=
+ =?us-ascii?Q?k8Sz6jEy9BnPgXJyC1ZQg1scVfUGC+GT5UZYGUjtIa4hK7ymk3fu/Kj7/rY+?=
+ =?us-ascii?Q?fSMw00hYKErWasBlq5SsizrffCoRTw2W+b/0PgYPgw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lcRA+UKMxrr/lG+2qBXmtlVK77yX4bM2fr0T/Z7ckMeReeku7OgI2GTvGx+d?=
- =?us-ascii?Q?g51lyyz/ZEXJ6UJ/MLTZqCgg4hyMFTttF2vusY6NiZAxeXuLRXjcOzmsobom?=
- =?us-ascii?Q?Ii7TMuvNk9epGHV2OUvHea0wDzEivOR6OLtGiVofcpOJwpDcO91XiEpmaL6T?=
- =?us-ascii?Q?PJxmJt1xFnFJbLErFNJqqDr1BXZD9OefNLbRgZPYq2pkFtqHyAa2KlRB8rK1?=
- =?us-ascii?Q?CnJUyl8MFQj40XJO5myghdMYnvjiuJ7cAYMSMH+t2wo6q3z0LdxBEy170gko?=
- =?us-ascii?Q?Nig0qV4/DZJvjepo8FEQCMR6MeEzLuzoLpz6Nbt33YaqydKkbNZuk+UXkd3Q?=
- =?us-ascii?Q?wHQR6BKKZEfNDXytvZrIWuPBkXh5V8TaQVv2q6jX7KBAZ7v/0U6SbehcVFad?=
- =?us-ascii?Q?/QpnhT2JOh08UM8WA0dJ4mWLYvCYk8g7/vIo06Q2/yqC891pCm8g9Nqx/NEt?=
- =?us-ascii?Q?XnVXP/JlLMw8SCAqEuAHT3PxAhNISIZgdyhH1LPh9cNsFpRP/TF0aFK0/DtA?=
- =?us-ascii?Q?5IojWgnFVw0lqi7uejuXEpv90KZuDvEsQ06+m4hZ7x3U12Bpu+k9RAInUaIK?=
- =?us-ascii?Q?sdC9CqbkO4oL2tsPQt1wGr5SuXKfiI60Cw1RhkuJWUrrhnc2wnJ/50hiq5z9?=
- =?us-ascii?Q?65qJEXz2bMytmmKamqa9sheUKi7WWONwpzhDaHxRl6R/XGcDHfSENrEF59Kf?=
- =?us-ascii?Q?4al4DlGLcTIGn7tjlnnDxN3jFGgivsBSBHeWnVteI4LhKbJL5bRKx5t3jhxD?=
- =?us-ascii?Q?g1mu5ov+C77qLGkiHNdfHwpVodjDUZj1tqyv+H4pnAlrZz+RbBjIu6EjpD9G?=
- =?us-ascii?Q?MAF9mNNkhFZE3tqIAQB5XcTnDNGAlRBmDR70bH8yva/plA4qTnofe+BZ1+kH?=
- =?us-ascii?Q?K1zz2dnE5DGFnnjhGaTUS4MMi7Q6dsCt8nYk8FCy+vKRD0P+7e6uiDbN0uLA?=
- =?us-ascii?Q?9QmvUaO3MnU3iP2PvcRQxmadDpuSUhV+W3x1w2oh+WYukAsqi1Xr1VwjaUKQ?=
- =?us-ascii?Q?BhNjv63DZzTvFlemeCkcn/gWS4cpnjAkG5Z+FBkGatBSrwM2n7Sy6Ii6azrA?=
- =?us-ascii?Q?m9WZhSYyHTrbU05zJLWpCaUeBzpf/xYNHEiNw2D5X47onKp6yZtGFhaK/6LC?=
- =?us-ascii?Q?dgtJSaoWVbW8Br1JscSP5LpoPNtJep+LxmaaHW4WBmAqMKTLYPWwPFBIuIti?=
- =?us-ascii?Q?QhOzSq4mi8yRCCTtZtmTM5E0fPXLFCGNaESKkMnUulu440cha1bewJjtIpF7?=
- =?us-ascii?Q?H4LBiWqEhCWbsRC5jO6t34gHjYfc/PzeoJkIoNUkeLaKDSc9DYuWSrYseOwT?=
- =?us-ascii?Q?72hjR7lSDTjTQ8bBDBKJRfahuFtNA9vwTJCkntVseEMnlnV5djeqLH0NSgFF?=
- =?us-ascii?Q?iPjBk6Hr1Pj9TWCSaxvkgsmgiTeuutCiRevuab2x/gkH8xHY5CAYffwUT3Uk?=
- =?us-ascii?Q?yyBWQ23E/gfrlNbMmHw6nS0oyhijt1x+/eLeSp3LshlCJDCjfW52aCJOR+2Z?=
- =?us-ascii?Q?GQSmRasjMXBVS8s6xnU/k9hSOGn2/YJy9mItxXM7TzbSfEtmUNMLmAmwedfb?=
- =?us-ascii?Q?8YS7+fq4q7OT/hE7XdCgjaK7oHpQiompn8jaswtRnLXEzZXyVlHzzBp6GIa1?=
- =?us-ascii?Q?6w=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55c8bca7-c205-43fc-03dc-08dc6d7f206c
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0yA689V/YDqENvTcziRg05HCoI1o7EQsJOam4f0gBMedfeeCrTrZ2t4WEy8W?=
+ =?us-ascii?Q?rFJoR/ArJgLoGOIi8U2+bCnLx43vucQj+gb5cc4ENeLBy0qn1w3mZ9352o2n?=
+ =?us-ascii?Q?6HUnhSVSQ3JR51fg2vm9z3NADsc7qsjVBIUSVs7FggH31OJslFWG4KMnGj4V?=
+ =?us-ascii?Q?qLjGhvrOR5cmfcAWCrY56c8jCgaZgZPgipBIfa4ZzZZv364aU0dJYGwTEpx3?=
+ =?us-ascii?Q?aBSvqSJdJ4rGnOtHUIpW0pCo7GCwOU5LREYjL5FHUMkwwFthgjvccn1ZNO+k?=
+ =?us-ascii?Q?ap2GCcJnYR5SjOFQm+jJW7HCPacvWFk6zN1/36ND2SFhQhlerdLXCgYUkeqv?=
+ =?us-ascii?Q?Vqw01y7pvXXQscauSjVrcEq12aERtE19HB6KiAX/w6CJ2WnwCDwRnMz0z6y6?=
+ =?us-ascii?Q?jloqxEbR96cPalZoWsDbViUw5AtAuKJe5wlO7uPNG51aGt95I4isHcxuXxW1?=
+ =?us-ascii?Q?/3ZY/cime5GdPwCvfknlejT3CGWPCyBbCAsIrnYMd8YuMOXCkirkas+3O/0z?=
+ =?us-ascii?Q?xiiXZXhhwU78NFzl6zQrO3EhMyQZAJcEdpQ37ksLrONG5T3uXROY4+Wsdy8y?=
+ =?us-ascii?Q?adZiX8D8M4swQpt5spkF0dymULaNpVEOAxZTRoU0tXXLd29O89FsDms00vhU?=
+ =?us-ascii?Q?XNEZNyoL4+g+GnjxXBIAPJ+pgrKcQWF0A50d2+bqSuye2w7jL0vOI/dHk1mV?=
+ =?us-ascii?Q?2e56OjCtDfI4b49D7hgRHGQmJdxfBn3PU6iJf48QMsIPg7ql8Xg7TfxtojiS?=
+ =?us-ascii?Q?+Z12r+Eq23hh7of+t5PXYz8yxs8Ing7dA5gI9OgDNBCsdNqvK9LJfKRqFkon?=
+ =?us-ascii?Q?5bhXqE4xm/6yAcF5xp3zpnIeKgfT9EhXLFfxZLghxHsiq0/idMxNm1pQx6px?=
+ =?us-ascii?Q?S2hCSgIk4tCSbp1dZM55fZgiwY2bedBKoqMS3IXR113hPHo/JDIVbnjuFs61?=
+ =?us-ascii?Q?5gfQlf6IEbtpYmjD2v/I2z9Nm2vxIDbhXEQkWi0JV6MaqYo4iBklNwzrjRYf?=
+ =?us-ascii?Q?LO+6oTFyHOLR4qPEye3E+svMJefEKdNvMcxtvOaXZ+n7LJX74W6jSj1QhrK1?=
+ =?us-ascii?Q?myLs2ke2UmUF0vkeTeKwdoVO7kccWF5N9gA7t/9lODzjsSXRhSsJ5cl6V89t?=
+ =?us-ascii?Q?H+ykALazYSOl9gGxfgN9WjYoPXA3d88a0lmqK7JkZmJ6sd+2qvfFHk4wLxT1?=
+ =?us-ascii?Q?G7O+SdPIrMHmc9nz6oG8bIGIfVKFukRqNMmztL4lNwrxDi1Dv+Vprjn34UFZ?=
+ =?us-ascii?Q?NUwpHEOibZqoJge2V9KMhlfZYd4KYPwkGfXzTktvEQihcspvCqY7oaigvjTE?=
+ =?us-ascii?Q?iPVcSZs3xrXa2SXRjUnCXS5QTVB3358m8p3XEQAUVgXLUNohITgbsbb/hPUy?=
+ =?us-ascii?Q?LVil7JoEIh1S6yiVOMHTiJQfAWVq37X6/HDC9s2cMcXw1LJ1GMJIXF61JR0H?=
+ =?us-ascii?Q?ehIX4ARv1m8crJN6M99Wely0VSu6EJ7IMcEtNfGm7oTLWpw7NXExNb4Vp/SC?=
+ =?us-ascii?Q?YPSxMKeUDy4SCHkUou9ZcOi5YDEOpB985lA9bBegR5dq/ZQNQJGkWwp5iFBc?=
+ =?us-ascii?Q?7GNhyWbkzRgWZRPE0SxXBxJHASyXosivjlLY0bbc?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e10b184f-0711-41ba-c0aa-08dc6d7f3099
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 03:46:35.3380
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 03:47:02.5620
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ivIz7awbNyxDv+GELJ9OV1bdq66U41GR/nNrCLZ3yU3x41KAkVz7kBEj0JLIEpd/xcUKFVb2ccG04VLe4bDyGWPAEwyyQmfgEDFQDJ808Iw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1227
+X-MS-Exchange-CrossTenant-UserPrincipalName: q5K/AAFsNWDFKYhTeQkWVCBGzGgG1lzPlG4gEy0FLwT1BWSHzBo73OgnZFCDH8g5dznLbTuNFFIqcx+SbMVVKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8481
+X-OriginatorOrg: intel.com
 
-Add support for StarFive JH7110 SoC and VisionFive 2 board.
-- Cache
-- Temperature sensor
-- PMIC (AXP15060)
-- Restart GPIO
-- RNG
-- I2C
-- SPI
-- Quad SPI
-- USB & USB 2.0 PHY & PCIe 2.0/USB 3.0 PHY
-- Audio (I2S / TDM / PWM-DAC)
-- MIPI-CSI2 RX & D-PHY RX
+Dan Williams wrote:
+> Ira Weiny wrote:
+> > Alison Schofield wrote:
+> > > On Sun, Mar 24, 2024 at 04:18:08PM -0700, Ira Weiny wrote:
+> > > > cxl_dpa_set_mode() checks the mode for validity two times, once outside
+> > > > of the DPA RW semaphore and again within.
+> > > 
+> > > Not true.
+> > 
+> > Sorry for not being clear.  It does check the mode 2x but not for
+> > validity.  I'll clarify.
+> > 
+> > > It only checks mode once before the lock. It checks for
+> > > capacity after the lock. If it didn't check mode before the lock,
+> > > then unsupported modes would fall through.
+> > 
+> > But we can check the mode 1 time and either check the size or fail.
+> > 
+> > > 
+> > > > The function is not in a critical path.
+> > > 
+> > > Implying what here?  OK to check twice (even though it wasn't)
+> > > or OK to expand scope of locking.
+> > 
+> > Implying that checking the mode outside the lock is not required.
+> > 
+> > > 
+> > > > Prior to Dynamic Capacity the extra check was not much
+> > > > of an issue.  The addition of DC modes increases the complexity of
+> > > > the check.
+> > > > 
+> > > > Simplify the mode check before adding the more complex DC modes.
+> > > > 
+> > > 
+> > > The addition of the DC mode check doesn't seem complex.
+> > 
+> > It is if you have to check it 2 times.
+> > 
+> > > 
+> > > Pardon my picking at the words, but if you'd like to refactor the
+> > > function, just say so. The final result is a bit more readable, but
+> > > also adding the DC mode checks without refactoring would read fine
+> > > also.
+> > 
+> > When I added the DC mode to this function without this refactoring it was
+> > quite a bit more code and ugly IMO.  So this cleanup helped.  If I were
+> > not adding the DC code there would be much less reason to change this
+> > function.
+> 
+> Where did the "quite a bit more code" come from? A change that moves
+> unnecessary code under a lock and is larger than just incrementally
+> extending the status quo does not feel like a cleanup.
 
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
----
+I'll drop the patch.
 
-As more drivers of StarFive JH7110 VisionFive 2 board are upstream,
-add support for them in riscv defconfig.
+Ira
 
-Changes since v1:
-- Drop CONFIG_STAGING=y, CONFIG_STAGING_MEDIA=y,
-  CONFIG_V4L_PLATFORM_DRIVERS=y, CONFIG_VIDEO_STARFIVE_CAMSS=m.
-- Change CONFIG_SENSORS_SFCTEMP as a module.
-- Drop CONFIG_CLK_STARFIVE_JH7110_*=y, because they are not critical to boot.
-- Update the commit message.
+> 
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index 7d97790b893d..0dc886bc22c6 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -411,11 +411,12 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
+>         struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+>         struct cxl_dev_state *cxlds = cxlmd->cxlds;
+>         struct device *dev = &cxled->cxld.dev;
+> -       int rc;
+> +       int rc, dcd;
+>  
+>         switch (mode) {
+>         case CXL_DECODER_RAM:
+>         case CXL_DECODER_PMEM:
+> +       case CXL_DECODER_DC0 ... CXL_DECODER_DC7:
+>                 break;
+>         default:
+>                 dev_dbg(dev, "unsupported mode: %d\n", mode);
+> @@ -442,6 +443,11 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
+>                 rc = -ENXIO;
+>                 goto out;
+>         }
+> +       dcd = dc_mode_to_region_index(mode);
+> +       if (resource_size(&cxlds->dc_res[dcd]) == 0) {
+> +               dev_dbg(dev, "no available dynamic capacity\n");
+> +               goto out;
+> +       }
+>  
+>         cxled->mode = mode;
+>         rc = 0;
 
-History:
-v1: https://lore.kernel.org/all/20240403060902.42834-1-hal.feng@starfivetech.com/
-
----
- arch/riscv/configs/defconfig | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index fc0ec2ee13bc..2c8e80b57edd 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -111,6 +111,7 @@ CONFIG_PCIE_XILINX=y
- CONFIG_PCIE_FU740=y
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_SIFIVE_CCACHE=y
- CONFIG_MTD=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_CFI=y
-@@ -154,24 +155,35 @@ CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
- CONFIG_VIRTIO_CONSOLE=y
- CONFIG_HW_RANDOM=y
- CONFIG_HW_RANDOM_VIRTIO=y
-+CONFIG_HW_RANDOM_JH7110=m
-+CONFIG_I2C=y
- CONFIG_I2C_CHARDEV=m
-+CONFIG_I2C_DESIGNWARE_PLATFORM=y
- CONFIG_I2C_MV64XXX=m
- CONFIG_I2C_RIIC=y
- CONFIG_SPI=y
-+CONFIG_SPI_CADENCE_QUADSPI=m
-+CONFIG_SPI_PL022=m
- CONFIG_SPI_RSPI=m
- CONFIG_SPI_SIFIVE=y
- CONFIG_SPI_SUN6I=y
- # CONFIG_PTP_1588_CLOCK is not set
- CONFIG_GPIO_SIFIVE=y
-+CONFIG_POWER_RESET_GPIO_RESTART=y
-+CONFIG_SENSORS_SFCTEMP=m
- CONFIG_CPU_THERMAL=y
- CONFIG_DEVFREQ_THERMAL=y
- CONFIG_RZG2L_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_SUNXI_WATCHDOG=y
- CONFIG_RENESAS_RZG2LWDT=y
-+CONFIG_MFD_AXP20X_I2C=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
-+CONFIG_REGULATOR_AXP20X=y
- CONFIG_REGULATOR_GPIO=y
-+CONFIG_MEDIA_SUPPORT=m
-+CONFIG_VIDEO_CADENCE_CSI2RX=m
- CONFIG_DRM=m
- CONFIG_DRM_RADEON=m
- CONFIG_DRM_NOUVEAU=m
-@@ -183,6 +195,10 @@ CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_RZ=m
-+CONFIG_SND_DESIGNWARE_I2S=m
-+CONFIG_SND_SOC_STARFIVE=m
-+CONFIG_SND_SOC_JH7110_PWMDAC=m
-+CONFIG_SND_SOC_JH7110_TDM=m
- CONFIG_SND_SOC_WM8978=m
- CONFIG_SND_SIMPLE_CARD=m
- CONFIG_USB=y
-@@ -196,6 +212,11 @@ CONFIG_USB_OHCI_HCD_PLATFORM=y
- CONFIG_USB_RENESAS_USBHS=m
- CONFIG_USB_STORAGE=y
- CONFIG_USB_UAS=y
-+CONFIG_USB_CDNS_SUPPORT=m
-+CONFIG_USB_CDNS3=m
-+CONFIG_USB_CDNS3_GADGET=y
-+CONFIG_USB_CDNS3_HOST=y
-+CONFIG_USB_CDNS3_STARFIVE=m
- CONFIG_USB_MUSB_HDRC=m
- CONFIG_USB_MUSB_SUNXI=m
- CONFIG_NOP_USB_XCEIV=m
-@@ -244,6 +265,9 @@ CONFIG_RZG2L_ADC=m
- CONFIG_RESET_RZG2L_USBPHY_CTRL=y
- CONFIG_PHY_SUN4I_USB=m
- CONFIG_PHY_RCAR_GEN3_USB2=y
-+CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
-+CONFIG_PHY_STARFIVE_JH7110_PCIE=m
-+CONFIG_PHY_STARFIVE_JH7110_USB=m
- CONFIG_LIBNVDIMM=y
- CONFIG_NVMEM_SUNXI_SID=y
- CONFIG_EXT4_FS=y
-
-base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
--- 
-2.43.2
 
 
