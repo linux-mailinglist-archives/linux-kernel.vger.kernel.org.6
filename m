@@ -1,323 +1,192 @@
-Return-Path: <linux-kernel+bounces-169539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D2D8BCA19
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 491388BCA1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E94481C202F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 430F81C21A52
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789091422A3;
-	Mon,  6 May 2024 08:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhMVi4D/"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B851420D1;
+	Mon,  6 May 2024 08:57:24 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6451D547;
-	Mon,  6 May 2024 08:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9680E14198A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714985751; cv=none; b=lakcDxM8EKk6xnLlIabUO7x8FkcNt0/pdSi/aEECOw1tRA/WNBse1IwLVlBKHOoULcANXKaGyldyUeRtqVNDrlcNZuTDV9yxduWi5fvMVogC5fqE73nBWrLY1OjTU+/97q8NMOK3Bfy4Z2tQEo0/Xq0WK4qLDYSQG3YvMtWPUbc=
+	t=1714985844; cv=none; b=NIfg/JxF07TeUadm7w5TLVNVomQJIbyZ3si+JvbkR4NKIO8nTeBx4PQ4rQEuI2TWeAUeu3iQ6KnRG4Knh5PqTIZ7Kqq0PdNDkH5RQGPT7RNyvZ17ZhbNXA+n0fzg+2W+VLSvpZBt9c4An7tyhVGX3GwXOOrz9jWSqhskdZwxR74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714985751; c=relaxed/simple;
-	bh=5BwyfntIK3lpoAl+NsPCM7E7RseaI28ODsfEelkHXFA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EcWrdgfJOQ7xazinpOL/EXMFdBMswl9OHqGx2mjKHZ46O8Ed78R7PvEcurirhg2U2Hj9r8L3P3KwT80TocMhk4l4UuHGJobzUOr2eidPWmTPCwvFDpt8giXX9EEjh4d/c/THi87h/SmH+RAZQNQUTeIYyLSLAhgW+NVtIJW+FWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhMVi4D/; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59cf8140d0so117029066b.3;
-        Mon, 06 May 2024 01:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714985748; x=1715590548; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wXrD55m3s5MvBqCwfZ7rBXZbb2rlAbVmpwur6DlLdaQ=;
-        b=QhMVi4D/nobb+LG+FH1BdfQIXgAnoeausarOUNB+wee3KnptmxOPXpQT7nnh45OWH7
-         RUyCi+ewbvTw0OyTfR5XKGese/ZdLNBri/QlfBOqJMuBETaNGcwmq3feJ6SXarFydkGF
-         X+ziqKa9HzXq9KrYNof+iQW+spEQF4Sh9di6jhDajivoFO5xuCG8p5DozbScats7olQ5
-         EMJ+fXmcxH0I8V7b9kSXFGjhvuF0lJQt33/+lqIHPi27AZYqoVc5VP1avWkujqy4O1Ty
-         58yXRh+Squ+H4dF6ha8Unap/3CCNecoInXElfZQhuLMXDVekMfe6zKJY2/RJVmlvQArs
-         xAxQ==
+	s=arc-20240116; t=1714985844; c=relaxed/simple;
+	bh=wDYhJyu2DVxLmHrRXJESXTddnatnN2akvy8zf2u9AME=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qKS1H3LmPJEi0LoMKoEr5wTmGuGNn4GegijhBP5ow1//rD6E0FbN4BBzeyumb2U9LjMhHusw5AROKDGYc+IlEgy8TVG55Glw5rJKN1c9RZ9lpfbkzJtHgry/QKTqlCY4uY9N7hDwFDbrKne0k97/YClENKfw6sVoRsQFVzj/OgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7de9c6b7a36so229849039f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 01:57:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714985748; x=1715590548;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=1e100.net; s=20230601; t=1714985842; x=1715590642;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wXrD55m3s5MvBqCwfZ7rBXZbb2rlAbVmpwur6DlLdaQ=;
-        b=Wtz0YFzgQVRvU1dv/V2YdJkjVV2PNjMbQC/bYh6Jduo0U+cfwt5DpvdZrfZU3imF/T
-         EJZxjFToopPH7LVL+9gbdm8YIJM9IfYNMcIpoBDnNr0cgudvc+rN8UqqUHwf6r/ISel5
-         UQLSD0v3sQ7v5Fg9VO5Kp8k3LHl67bRVWJHBLSL71zIOaggr59vuuQ7uZMU4xYAzoQ14
-         uI4IOkzt0IUot0qiZzMfyyRt0eBwBk0hgHjC286i+QDhhjzNdZWEQO3lIVpC72hD0CO7
-         UymFFgMtcM9eqkuDy1d2/w0bpJtccS0Y8et5tn7YHmqgfN8Kk8fUIYzaRcac/6aLGxA5
-         NpGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUgP+RO2LY9b4brgBqSq/mVpXDIswHDdtxinRw/M2vugyMFXepkPBiy6BSXoytmATxLbQE71TdQOOQB3fPCM1EBWkExZ5wa33dHO4t0A2HB/TQ6rZ5vkLKs10uTuxMkeClgOhehmjz39O37MIocRSYaftvGOoOPXlUv5FH8OjwuIhrDA==
-X-Gm-Message-State: AOJu0YxIh/Dt4PGiHFGOhF6+oIAssEeLwVKtL1FTbB77OmDl5xXFkW2S
-	Zq49SSQCv5JN5BE+/1MQe4GNZLzbx8BlTLc0bptOEhXKk7gjpX+W
-X-Google-Smtp-Source: AGHT+IGcDCJFukxPe0iK9yuKiPeGVmJODZlRFBrKR1PwrDsZnyhRYNWFk22A1mJ3lxZ4YJzLDBci6g==
-X-Received: by 2002:a17:906:6a1a:b0:a59:ce90:27ea with SMTP id qw26-20020a1709066a1a00b00a59ce9027eamr1460119ejc.24.1714985747846;
-        Mon, 06 May 2024 01:55:47 -0700 (PDT)
-Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
-        by smtp.gmail.com with ESMTPSA id n18-20020a170906841200b00a59a8a5dd15sm2756828ejx.206.2024.05.06.01.55.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 01:55:47 -0700 (PDT)
-Message-ID: <a04d8015ea1606ce1eca86f7eaaa85a1c1b46d7a.camel@gmail.com>
-Subject: Re: [PATCH RFC v6 10/10] iio: adc: ad7380: add support for
- resolution boost
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, David Lechner
- <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 06 May 2024 10:55:46 +0200
-In-Reply-To: <20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
-References: 
-	<20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
-	 <20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+        bh=NJ7LBMixCFeboKki0Y34uj/Ll/YaXkE0DJ03Yg0CbbE=;
+        b=S3AXtkDAke9GFEp906vb8wJ3guBKDrdBLl0rRoAkGpJzcSKMYgwHykR/DP2kSWrPhB
+         WcY+Va6bQZGKylNLwJlQoF5ZJnBBCVaPBTI+p8xnOrbA0mQD9YLSgNbsSCC2zmPvnZ23
+         qoWPTLDe0tv2124OF3rz7hh15iAvnF9CpruQDr1QPzLD1Ymj+r11YaqQ6q3ZG1/M4LZt
+         pdU9luN+GiJoM13KX0L6s6ujYqCAxQ2XLIitgn+UIRXiP4T6+cnq2Y744JYsx8tXMrsk
+         AHjoSKXQE0Zl9Ze21AZF9NtvT0nfFSq3kDIB2Enek5jK4QAQL3nP433qC4haDYUyxMpD
+         h9lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7r1FmClzXllkRpyEA0brKSL+yiyBWEkAtwpvEK4/+QtqVmUM2TMsdYQu/zee/c6IAeRuebEV+Z7BjwwzPrQSK9iARcWjyPrsaJiS0
+X-Gm-Message-State: AOJu0YxbDftyb9ooDgbs00OvexTSa/MXBCOhAUkrO+zmJflu3rbtcaMn
+	731F3Da5OXOmtFJiZ/IYVnRDOKl3kymckmF5zKazoz6Jy2DqjUI98S06U35uGXBKO6iXuKsdFVJ
+	JiGTheNkreZa6D+Dro36OsAChP3EfVaPMhFBzYUQtLEHZHiqVO9+P7oo=
+X-Google-Smtp-Source: AGHT+IH6ZlXJA8vUkAqi9Klt4GLOcdOiirWu9okTaM2zeEOMPNxXDVi+Uzwpht4Vvnov4FLPec2iw5S04KzF3fCrk4FF5EqcJxxH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:219c:b0:36c:d2b:d7d with SMTP id
+ j28-20020a056e02219c00b0036c0d2b0d7dmr473381ila.2.1714985841848; Mon, 06 May
+ 2024 01:57:21 -0700 (PDT)
+Date: Mon, 06 May 2024 01:57:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e6078a0617c5419c@google.com>
+Subject: [syzbot] [lsm?] general protection fault in smack_inode_permission
+From: syzbot <syzbot+4ac565a7081cc43bb185@syzkaller.appspotmail.com>
+To: casey@schaufler-ca.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote:
-> ad738x chips are able to use an additional 2 bits of resolution when
-> using oversampling. The 14-bits chips can have up to 16 bits of
-> resolution and the 16-bits chips can have up to 18 bits of resolution.
->=20
-> In order to dynamically allow to enable/disable the resolution boost
-> feature, we have to set iio realbits/storagebits to the maximum per chips=
-.
-> This means that for iio, data will always be on the higher resolution
-> available, and to cope with that we adjust the iio scale and iio offset
-> depending on the resolution boost status.
->=20
-> The available scales can be displayed using the regular _scale_available
-> attributes and can be set by writing the regular _scale attribute.
-> The available scales depend on the oversampling status.
->=20
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
->=20
-> ---
->=20
-> In order to support the resolution boost (additional 2 bits of resolution=
-)
-> we need to set realbits/storagebits to the maximum value i.e :
-> =C2=A0 - realbits =3D 16 + 2 =3D 18, and storagebits =3D 32 for 16-bits c=
-hips
-> =C2=A0 - realbits =3D 14 + 2 =3D 16, and storagebits =3D 16 for 14-bits c=
-hips
->=20
-> For 14-bits chips this does not have a major impact, but this
-> has the drawback of forcing 16-bits chip users to always use 32-bits
-> words in buffers even if they are not using oversampling and resolution
-> boost. Is there a better way of implementing this? For example
-> implementing dynamic scan_type?
->=20
+Hello,
 
-Yeah, I don't think it's that bad in this case. But maybe dynamic scan type=
-s is
-something we may need at some point yes (or IOW that I would like to see su=
-pported
-:)). We do some ADCs (eg: ad4630) where we use questionably use FW properti=
-es to set
-a specific operating mode exactly because we have a different data layout (=
-scan
-elements) depending on the mode.
-=20
-> Another issue is the location of the timestamps. I understood the need
-> for ts to be consistent between chips, but right now I do not have a
-> better solution.. I was thinking of maybe adding the timestamps at the
-> beginning? That would imply to change the iio_chan_spec struct and maybe
-> add a iio_push_to_buffers_with_timestamp_first() wrapper function? Is
-> that an option?
->=20
-> Any suggestion would be very much appreciated.
-> ---
-> =C2=A0drivers/iio/adc/ad7380.c | 226 ++++++++++++++++++++++++++++++++++++=
-++++-------
-> =C2=A01 file changed, 194 insertions(+), 32 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-> index 7b021bb9cf87..e240098708e9 100644
-> --- a/drivers/iio/adc/ad7380.c
-> +++ b/drivers/iio/adc/ad7380.c
-> @@ -20,6 +20,7 @@
-> =C2=A0#include <linux/err.h>
-> =C2=A0#include <linux/kernel.h>
-> =C2=A0#include <linux/module.h>
-> +#include <linux/units.h>
-> =C2=A0#include <linux/regmap.h>
-> =C2=A0#include <linux/regulator/consumer.h>
-> =C2=A0#include <linux/slab.h>
-> @@ -58,6 +59,8 @@
-> =C2=A0#define AD7380_CONFIG1_CRC_R		BIT(4)
-> =C2=A0#define AD7380_CONFIG1_ALERTEN		BIT(3)
-> =C2=A0#define AD7380_CONFIG1_RES		BIT(2)
-> +#define RESOLUTION_BOOST_DISABLE	0
-> +#define RESOLUTION_BOOST_ENABLE		1
+syzbot found the following issue on:
 
-No ad7390 prefix?
+HEAD commit:    7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e98250980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=4ac565a7081cc43bb185
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> =C2=A0#define AD7380_CONFIG1_REFSEL		BIT(1)
-> =C2=A0#define AD7380_CONFIG1_PMODE		BIT(0)
-> =C2=A0
-> @@ -86,6 +89,14 @@ struct ad7380_chip_info {
-> =C2=A0	const struct ad7380_timing_specs *timing_specs;
-> =C2=A0};
-> =C2=A0
-> +/*
-> + * realbits/storagebits cannot be dynamically changed, so in order to
-> + * support the resolution boost (additional 2=C2=A0 bits of resolution)
-> + * we need to set realbits/storagebits to the maximum value i.e :
-> + *=C2=A0=C2=A0 - realbits =3D 16 + 2 =3D 18, and storagebits =3D 32 for =
-16-bits chips
-> + *=C2=A0=C2=A0 - realbits =3D 14 + 2 =3D 16, and storagebits =3D 16 for =
-14-bits chips
-> + * We need to adjust the scale depending on resolution boost status
-> + */
-> =C2=A0#define AD7380_CHANNEL(index, bits, diff) {			\
-> =C2=A0	.type =3D IIO_VOLTAGE,					\
-> =C2=A0	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |		\
-> @@ -93,6 +104,7 @@ struct ad7380_chip_info {
-> =C2=A0	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE) |	\
-> =C2=A0		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
-> =C2=A0	.info_mask_shared_by_type_available =3D			\
-> +		BIT(IIO_CHAN_INFO_SCALE) |			\
-> =C2=A0		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
-> =C2=A0	.indexed =3D 1,						\
-> =C2=A0	.differential =3D (diff),					\
-> @@ -101,8 +113,8 @@ struct ad7380_chip_info {
-> =C2=A0	.scan_index =3D (index),					\
-> =C2=A0	.scan_type =3D {						\
-> =C2=A0		.sign =3D 's',					\
-> -		.realbits =3D (bits),				\
-> -		.storagebits =3D 16,				\
-> +		.realbits =3D (bits) + 2,				\
-> +		.storagebits =3D ((bits) + 2 > 16) ? 32 : 16,	\
-> =C2=A0		.endianness =3D IIO_CPU,				\
-> =C2=A0	},							\
-> =C2=A0}
-> @@ -259,6 +271,8 @@ struct ad7380_state {
-> =C2=A0	struct spi_device *spi;
-> =C2=A0	unsigned int oversampling_mode;
-> =C2=A0	unsigned int oversampling_ratio;
-> +	unsigned int scales[2][2];
-> +	bool resolution_boost_enable;
-> =C2=A0	struct regmap *regmap;
-> =C2=A0	unsigned int vref_mv;
-> =C2=A0	unsigned int vcm_mv[MAX_NUM_CHANNELS];
-> @@ -270,7 +284,10 @@ struct ad7380_state {
-> =C2=A0	 * As MAX_NUM_CHANNELS is 4 the layout of the structure is the sam=
-e for
-> all parts
-> =C2=A0	 */
-> =C2=A0	struct {
-> -		u16 raw[MAX_NUM_CHANNELS];
-> +		union {
-> +			u16 u16[MAX_NUM_CHANNELS];
-> +			u32 u32[MAX_NUM_CHANNELS];
-> +		} raw;
-> =C2=A0
-> =C2=A0		s64 ts __aligned(8);
-> =C2=A0	} scan_data __aligned(IIO_DMA_MINALIGN);
-> @@ -359,23 +376,67 @@ static int ad7380_debugfs_reg_access(struct iio_dev
-> *indio_dev, u32 reg,
-> =C2=A0	unreachable();
-> =C2=A0}
-> =C2=A0
-> +static int ad7380_prepare_spi_xfer(struct ad7380_state *st, struct spi_t=
-ransfer
-> *xfer)
-> +{
-> +	int bits_per_word;
-> +
-> +	memset(xfer, 0, sizeof(*xfer));
-> +
-> +	xfer->rx_buf =3D &st->scan_data.raw;
-> +
-> +	if (st->resolution_boost_enable =3D=3D RESOLUTION_BOOST_ENABLE)
-> +		bits_per_word =3D st->chip_info->channels[0].scan_type.realbits;
-> +	else
-> +		bits_per_word =3D st->chip_info->channels[0].scan_type.realbits - 2;
-> +
-> +	xfer->bits_per_word =3D bits_per_word;
-> +
-> +	xfer->len =3D (st->chip_info->num_channels - 1) *
-> BITS_TO_BYTES(bits_per_word);
-> +
-> +	return bits_per_word;
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I think this may very well be something we can do once during buffer enable=
-ment... I
-would expect that enabling/disabling resolution boost during buffering not =
-to be a
-great idea.
-=20
-> +}
-> +
-> =C2=A0static irqreturn_t ad7380_trigger_handler(int irq, void *p)
-> =C2=A0{
-> =C2=A0	struct iio_poll_func *pf =3D p;
-> =C2=A0	struct iio_dev *indio_dev =3D pf->indio_dev;
-> =C2=A0	struct ad7380_state *st =3D iio_priv(indio_dev);
-> -	struct spi_transfer xfer =3D {
-> -		.bits_per_word =3D st->chip_info->channels[0].scan_type.realbits,
-> -		.len =3D (st->chip_info->num_channels - 1) *
-> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BITS_TO_BYTES(st->chip_info->chan=
-nels-
-> >scan_type.storagebits),
-> -		.rx_buf =3D st->scan_data.raw,
-> -	};
-> -	int ret;
-> +	struct spi_transfer xfer;
-> +	int bits_per_word, realbits, i, ret;
-> +
-> +	realbits =3D st->chip_info->channels[0].scan_type.realbits;
-> +	bits_per_word =3D ad7380_prepare_spi_xfer(st, &xfer);
-> =C2=A0
-> =C2=A0	ret =3D spi_sync_transfer(st->spi, &xfer, 1);
-> =C2=A0	if (ret)
-> =C2=A0		goto out;
-> =C2=A0
-> +	/*
-> +	 * If bits_per_word =3D=3D realbits (resolution boost enabled), we don'=
-t
-> +	 * need to manipulate the raw data, otherwise we may need to fix things
-> +	 * up a bit to fit the scan_type specs
-> +	 */
-> +	if (bits_per_word < realbits) {
-> +		if (realbits > 16 && bits_per_word <=3D 16) {
-> +			/*
-> +			 * Here realbits > 16 so storagebits is 32 and
-> bits_per_word is <=3D 16
-> +			 * so we need to sign extend u16 to u32 using reverse
-> order to
-> +			 * avoid writing over union data
-> +			 */
-> +			for (i =3D st->chip_info->num_channels - 2; i >=3D 0; i--)
-> +				st->scan_data.raw.u32[i] =3D sign_extend32(st-
-> >scan_data.raw.u16[i],
-> +								=09
-> bits_per_word - 1);
-> +		} else if (bits_per_word < 16) {
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/03bd77f8af70/disk-7367539a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eb03a61f9582/vmlinux-7367539a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e4c5c654b571/bzImage-7367539a.xz
 
-Can't we have bits_per_word =3D 16 in case realbits <=3D 16?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4ac565a7081cc43bb185@syzkaller.appspotmail.com
 
-- Nuno S=C3=A1
+ERROR: (device loop0): jfs_readdir: JFS:Dtree error: ino = 2, bn=0, index = 6
+ERROR: (device loop0): jfs_readdir: JFS:Dtree error: ino = 2, bn=0, index = 7
+general protection fault, probably for non-canonical address 0xdffffc01839e4cf3: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: probably user-memory-access in range [0x0000000c1cf26798-0x0000000c1cf2679f]
+CPU: 0 PID: 12996 Comm: syz-executor.0 Not tainted 6.9.0-rc6-syzkaller-00234-g7367539ad4b0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:smk_of_inode security/smack/smack.h:373 [inline]
+RIP: 0010:smack_inode_permission+0x2bf/0x380 security/smack/smack_lsm.c:1234
+Code: 49 83 c7 38 4c 89 f8 48 c1 e8 03 80 3c 18 00 74 08 4c 89 ff e8 52 3c 97 fd 4c 63 35 d3 94 73 09 4d 03 37 4c 89 f0 48 c1 e8 03 <80> 3c 18 00 74 08 4c 89 f7 e8 33 3c 97 fd 49 8b 3e 8b 74 24 14 4c
+RSP: 0018:ffffc90004ca7900 EFLAGS: 00010206
+RAX: 00000001839e4cf3 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90004ca7948
+RBP: ffffc90004ca7a18 R08: ffffc90004ca7987 R09: 0000000000000000
+R10: ffffc90004ca7968 R11: fffff52000994f31 R12: 1ffff92000994f24
+R13: ffffc90004ca7940 R14: 0000000c1cf26798 R15: ffff88804b800468
+FS:  000055555808c480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3112c000 CR3: 0000000011652000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ security_inode_permission+0xa5/0x100 security/security.c:2216
+ may_lookup fs/namei.c:1726 [inline]
+ link_path_walk+0x2ef/0xea0 fs/namei.c:2273
+ path_lookupat+0xa9/0x450 fs/namei.c:2484
+ filename_lookup+0x256/0x610 fs/namei.c:2514
+ user_path_at_empty+0x42/0x60 fs/namei.c:2921
+ user_path_at include/linux/namei.h:57 [inline]
+ ksys_umount fs/namespace.c:1916 [inline]
+ __do_sys_umount fs/namespace.c:1924 [inline]
+ __se_sys_umount fs/namespace.c:1922 [inline]
+ __x64_sys_umount+0xf4/0x170 fs/namespace.c:1922
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f95e027efd7
+Code: b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffed42b0998 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: ffffffffffffffda RBX: 00007f95e02c83b9 RCX: 00007f95e027efd7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffed42b0a50
+RBP: 00007ffed42b0a50 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffed42b1b40
+R13: 00007f95e02c83b9 R14: 00000000000ade1b R15: 0000000000000019
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:smk_of_inode security/smack/smack.h:373 [inline]
+RIP: 0010:smack_inode_permission+0x2bf/0x380 security/smack/smack_lsm.c:1234
+Code: 49 83 c7 38 4c 89 f8 48 c1 e8 03 80 3c 18 00 74 08 4c 89 ff e8 52 3c 97 fd 4c 63 35 d3 94 73 09 4d 03 37 4c 89 f0 48 c1 e8 03 <80> 3c 18 00 74 08 4c 89 f7 e8 33 3c 97 fd 49 8b 3e 8b 74 24 14 4c
+RSP: 0018:ffffc90004ca7900 EFLAGS: 00010206
+RAX: 00000001839e4cf3 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90004ca7948
+RBP: ffffc90004ca7a18 R08: ffffc90004ca7987 R09: 0000000000000000
+R10: ffffc90004ca7968 R11: fffff52000994f31 R12: 1ffff92000994f24
+R13: ffffc90004ca7940 R14: 0000000c1cf26798 R15: ffff88804b800468
+FS:  000055555808c480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c000b9177c CR3: 0000000011652000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	49 83 c7 38          	add    $0x38,%r15
+   4:	4c 89 f8             	mov    %r15,%rax
+   7:	48 c1 e8 03          	shr    $0x3,%rax
+   b:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1)
+   f:	74 08                	je     0x19
+  11:	4c 89 ff             	mov    %r15,%rdi
+  14:	e8 52 3c 97 fd       	call   0xfd973c6b
+  19:	4c 63 35 d3 94 73 09 	movslq 0x97394d3(%rip),%r14        # 0x97394f3
+  20:	4d 03 37             	add    (%r15),%r14
+  23:	4c 89 f0             	mov    %r14,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	4c 89 f7             	mov    %r14,%rdi
+  33:	e8 33 3c 97 fd       	call   0xfd973c6b
+  38:	49 8b 3e             	mov    (%r14),%rdi
+  3b:	8b 74 24 14          	mov    0x14(%rsp),%esi
+  3f:	4c                   	rex.WR
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
