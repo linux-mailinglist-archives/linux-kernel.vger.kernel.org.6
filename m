@@ -1,362 +1,339 @@
-Return-Path: <linux-kernel+bounces-169502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04408BC994
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:32:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B43C8BC998
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0C3282C77
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:32:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97BF5282ACE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B996E13774B;
-	Mon,  6 May 2024 08:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8792B757F0;
+	Mon,  6 May 2024 08:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PZ/kb9w1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cGFkHlCf"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FDF249E5;
-	Mon,  6 May 2024 08:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714984318; cv=fail; b=VaLxsuXjxGyRRKCELqprzDaUcOWonXSq5ubk9uQvEZAYTnzcPu18Nasl5+KHJ2JuXwb+JhQ0/f8/Mgl79Ut5UgRm7Mz5FDDGJwIZWBDM0Tgf0DxutPJErQnsaBYw+vrxtaroKAUdkCYD8rDFxEucCQ4TZwWhCCNX+EKU30G2VYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714984318; c=relaxed/simple;
-	bh=exYIG+2IQfHTgmSDE/bkABtc1AOBHLBmKOquAkrhRPQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CElRnVGtCDlXFnAJYh77JQZuEI2YmE8/zG3SOnzCu/RmeSPYu75/PewJK9A4quqaLqil5Rl/KbsiV/SVY2vWa8wZdafyrbpDmDq+B4WjKDST/5okm4GlZfrr4THVnElW4hFMSb0Dc4dVXptRRQW7TA9I/yuHQzWhG3F5TdHY+jk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PZ/kb9w1; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714984317; x=1746520317;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=exYIG+2IQfHTgmSDE/bkABtc1AOBHLBmKOquAkrhRPQ=;
-  b=PZ/kb9w1CcAeirDRDp0mlL38cc6wIqYZPkJzW7nh3wIZ9OHt0tueJs6P
-   RX/uulLBv9NtXypdXtHZNH1U/ctBk+3I2EWcUJWzUFBFMYYscT3milCwa
-   Y5PxymtN8GM9UuLSI09U+00UR3xmWkfcaOyxKkNu3Ospvi3i3afffXM0X
-   u4h3B8Imm9gCUGvhv/SBM52i4lZiZPu/FbY4ZRmQVgx4YHyLoc66bHjgl
-   tdodZu5WaEkkC7uNn7eDTduM8ooJw7yI9CWY8PL26fGyfM9UI02vZaPZF
-   M38bpHc8WePT2ExBn0d33PncfTgpkdbsTopyq36UFg5hOTKp5cXcalqAm
-   w==;
-X-CSE-ConnectionGUID: yMhQNmrmToOeMVigiPgC0w==
-X-CSE-MsgGUID: i0YVj7MGSyePZ9ghXjeZJg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10937698"
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="10937698"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 01:31:56 -0700
-X-CSE-ConnectionGUID: 5Qfa11qpQMCtb/E4EBxguA==
-X-CSE-MsgGUID: WpLFCVDWR+6bDXC3c3ob4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="28098543"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 May 2024 01:31:55 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 6 May 2024 01:31:55 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Mon, 6 May 2024 01:31:55 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.41) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 01:31:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V5KbHdVqzmJXwEsSEvDlQmnkrKFfQJTNkN7hSsiDm2Gj18doRWhOwIvEv+rujz92+WsuTrWoJKNv2TzxZHBaDTIMuCMcLBTN9LVyg7brs0ndAEf7e67r7eHfuiknVFMNmbk9gSM+JtKtZYKtOYXf5GTCSIboztg1xmntLLwd+tjIhuELZxg5/Mazr230stH7gR2ULkMgwqM5ODZiH5v5kTSkdc1GlLdOR6xFnw25LxVs48NPl8+FvawQdIwMgx9ABE/XGkrpugJOwPlot6f7AB58hSSFOG2ska6zExGaoR5h6+40vijfAOBLcBIT/9FRjzQO0p1xY5yB5TfpLnkmYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xCM+V69hGq3mmCZXi38TFCAQXPtRegf1SvC8SgtzgHM=;
- b=bXC2ole6DgISudJha5dOVyEKn7EiILNYRlM41Ozh43xo+aS8dx4HD+L1Uw9+Mj+mQB8S9Ofgb0jzv7NRtekSfe68QZjGjarXFhgrlfvPDUMtXlGQ7wpmNtqze6I8e0At1+h4fPCB0T+GL+wurYeDBRYItVF5/PU0r8cRJz1hLZWGM5FlRUNJwLER5U1wYgVwgeOrE7IqTEnQTIRommZcLJMpWzIr6xumccHN13lHl8EG4KltyRfo82THS0LlS+VCl8y20Wm7mR1PIgBlkeE4YDf1Bvm8uNZUWf+bF2vJnF+M4VfM1EPHI4OvNPJH4pvOlvHRbiW+AHfRqbwBwgMtVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH0PR11MB4965.namprd11.prod.outlook.com (2603:10b6:510:34::7)
- by DS0PR11MB7880.namprd11.prod.outlook.com (2603:10b6:8:f3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Mon, 6 May
- 2024 08:31:52 +0000
-Received: from PH0PR11MB4965.namprd11.prod.outlook.com
- ([fe80::36c3:f638:9d28:2cd4]) by PH0PR11MB4965.namprd11.prod.outlook.com
- ([fe80::36c3:f638:9d28:2cd4%6]) with mapi id 15.20.7544.029; Mon, 6 May 2024
- 08:31:52 +0000
-Message-ID: <4e034aaf-7a64-4427-b29d-da040ec7b9f0@intel.com>
-Date: Mon, 6 May 2024 16:31:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 17/27] KVM: x86: Report KVM supported CET MSRs as
- to-be-saved
-To: Sean Christopherson <seanjc@google.com>
-CC: <pbonzini@redhat.com>, <dave.hansen@intel.com>, <x86@kernel.org>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<peterz@infradead.org>, <chao.gao@intel.com>, <rick.p.edgecombe@intel.com>,
-	<mlevitsk@redhat.com>, <john.allen@amd.com>
-References: <20240219074733.122080-1-weijiang.yang@intel.com>
- <20240219074733.122080-18-weijiang.yang@intel.com>
- <ZjLE7giCsEI4Sftp@google.com>
-Content-Language: en-US
-From: "Yang, Weijiang" <weijiang.yang@intel.com>
-In-Reply-To: <ZjLE7giCsEI4Sftp@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0007.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::11) To PH0PR11MB4965.namprd11.prod.outlook.com
- (2603:10b6:510:34::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B354F107A6;
+	Mon,  6 May 2024 08:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714984408; cv=none; b=NNa1DGdulwtK6w+8Q17yBVEMrywABS1B8gYx1L9HmTlatMpRWrrRW5id0jelLRoKjpozdPJQD5xjbM6Bt2PQfU6K7MfdNX7kaLJQyYb2gaLX2K1alrROz57jYsg02HTTnBJtjr/7ssFVC9dhdOBggWj8GzomKDjL9J2T2EAckUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714984408; c=relaxed/simple;
+	bh=5+heWQn0NY04iO2WHoDCAsLzKUiOwreLVsDsjjsVU4M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JVRuUAMf1QjyAuZwaCTee/vrxJ97drvZpoT1bh88kRGpvkLOPGlAmTQYG387DYSAAG+m3eLrIVJ312EjzYkZGr7MMn4nLTOr0WQOnohYdTfytg2nBtD2qotcenEtBZrWrShfRRsVSdXfeI6yrjBVqv5G9lMpaz4f2l54i80znXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cGFkHlCf; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34e0d8b737eso2279806f8f.1;
+        Mon, 06 May 2024 01:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714984405; x=1715589205; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8BH2FLNjc9RL/5k2roaJc/YdP9FTDUVcmIm+bJl28hc=;
+        b=cGFkHlCfRDjR57Na6geTf+lyyd2Av0AE2xR1jtaWMOipZRnI9Trg3hmXF4Ln35SKyI
+         LGyf+oDTfaM4ENPit3YzBTEMRlyJoTD3x/DQA4Q/WS1sirQd7BrBp69WNUuKaQKD7b6I
+         06ft5D0QjqXcBjapF0gWHeu0JiYJ+kyLYOPgtfkGXvrQdirjFP2SbSIVQZ6jYT+zSJYW
+         o4UPQAuqOkm7UYkk2hGja1aUyIPfZJHQKPJyaW7HmizEYftZwfEuHmzyTfcRgOKFlH4e
+         MWSM+sD0SDVqeFWIodtxHl1/2QEZpTgK3nM7eCBlGNcsH0dGHDaES5ICuhkunFPGLSeN
+         EuLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714984405; x=1715589205;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8BH2FLNjc9RL/5k2roaJc/YdP9FTDUVcmIm+bJl28hc=;
+        b=hLTq3KqXd5ZhlGQ9giV2buApd8ZRrk91EqS8JgGnfn9OhH2mh9Rqm8jImwcwQET3Ir
+         0E70ynml19lXv7isLUdIIA5tz2PEyS3EXqLlOocL13ET/66faBr/RtLZ2pxLEac/4t7d
+         VNkUPMEzJIOu5WIseKLJbVXQ/j3cH7bdGJ590MiFB6TpygIeycB4X35JbcaGbyXuAu6v
+         VJaJLI8PONabQdKvEAOn48ZRHgQ9pdevJ6yLrMkQVpPG8HEJQ2vAA212M2EzRnDWXwTh
+         CCOonDEncTkV5xx7/UOLvnIEH6ufQm5UdVsr31Xl71EfTc+EoEcCU3FuMrDQk9S5aSqs
+         xvXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSm367HCdPtcMz7t++b0g7Z1n4A0aFoEKq8Tz5Agk91TE9WGjsvdqXLAtlZv7g3sfX2zSBdOscY8GxOvg3HyIoc1/RxVSkgJDsto56L+UkZYKMAdzcvACcOZgc/iTtZE4JI003G4hVoFyMkczkmKR2s4tedQ0s/PEqYJLbl9DwUECpJQ==
+X-Gm-Message-State: AOJu0YxVx2wDyIrZMN2zFJS63GoN0JF8QtorsKy3i3n0onq8oYWHiFPi
+	a02NvvukGa6b+JyJbiCkCnILQ2KH7ePo1oNTU6lhDJ75b7/1khIR
+X-Google-Smtp-Source: AGHT+IF7ZyL1tW67ZTb0llfcXYb9IJtqzTWjKrbOB2tBjnQ2BGbqnOvM4pBWmYf7ujM4mIdPIlPKDQ==
+X-Received: by 2002:a5d:47a7:0:b0:34e:8f88:e1f8 with SMTP id 7-20020a5d47a7000000b0034e8f88e1f8mr7935075wrb.30.1714984404618;
+        Mon, 06 May 2024 01:33:24 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id n17-20020a05600c4f9100b0041668162b45sm18876968wmq.26.2024.05.06.01.33.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 01:33:24 -0700 (PDT)
+Message-ID: <9cfbe67f24cf4e0f69ee7f3769d85469e0738ee2.camel@gmail.com>
+Subject: Re: [PATCH RFC v6 09/10] iio: adc: ad7380: add support for rolling
+ average oversampling mode
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, David Lechner
+ <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 06 May 2024 10:33:23 +0200
+In-Reply-To: <20240501-adding-new-ad738x-driver-v6-9-3c0741154728@baylibre.com>
+References: 
+	<20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+	 <20240501-adding-new-ad738x-driver-v6-9-3c0741154728@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR11MB4965:EE_|DS0PR11MB7880:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1c3f418-65fe-4588-ba21-08dc6da6fae7
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UURPU0h3SEkzMkk2bjhOSHpLZVNJT0hJcWdxZ3UvRkh3bUdkUFppTVdnYTcr?=
- =?utf-8?B?V0NrU0RBV3gvVnR5cjg4aXJsVXpWclZ3WFpLbWtIRkxJZ0RoMFZSUHR6aUJ1?=
- =?utf-8?B?WHFkUGY3S2ZaVG5FVENpb2xQMHNLTWNmYlJtODBVNk53MXNpeFROOTdQbGt0?=
- =?utf-8?B?c3ZycWR4OS9SNkgzd2ZGYUVWSHZFS3ZwOGgvUFZpaHhqR2VXejF5QTZpUUw0?=
- =?utf-8?B?U0xhd1Uwd1pzTTVYcFl5TVFTMnNFSStNd0szWkRsMUdzUkVteVJrQzdhM1VF?=
- =?utf-8?B?cnJ3NzlILzlrUGtCV2lJaGd0SVJWY2p0V3FndXhvQlYyY2JyN2grRDZYSENI?=
- =?utf-8?B?TjB4T3lJWWF3TWwycGtaQ21UakhpQ25tMmhScnRzVjZ4WGc0dXdUVkZ6U2hO?=
- =?utf-8?B?bTkrNGFsUmoxVjV4blBYRUtyRTE5U1NZdENCR1RuWjRNd0w4dlZMaWl5bkkw?=
- =?utf-8?B?WVJzNlZDZjA0WDZRME1kbUc3YXBBSTd1RFQxNFhENElDZTllSGFRU2VqcmZW?=
- =?utf-8?B?bUVyZFcvNEh4ZUxMVEltQldYUHh6cyt4NVhBNG5XakxRMEtxc1ZMbGNhQU9O?=
- =?utf-8?B?NVV3L0lVRlBrUjJhL0dHVEJ1RG1qcUNDTTd4MVEyOUR0dUNldjVOclBxM3gw?=
- =?utf-8?B?VGhSR2U1NjJzYzdoSWp1ZXJBQm5oS1FMdHVCa0lMYkw2Tzg5U1BqNDc2S2hv?=
- =?utf-8?B?UldvR3ZiR1BZK3hqeloyaFh0SGkva0srM1VQdHFNNU9tOUpDQUFLenovZlZD?=
- =?utf-8?B?T0krSDlVMWpTUVYyUXA2VnJLQUs2VldKYU80QnlrZkx1Vndkc0diNjJKeXpG?=
- =?utf-8?B?TUx1ZXIveHhad045UDE5T25obDBRc21LTFU1aWhsbTJCbk40TWdXell1Skhn?=
- =?utf-8?B?dWgxS2RTY3NOMGpuQWF0SHViU0d4T2p0RlpETmdFcmdqRExtL2tUZ0syYW96?=
- =?utf-8?B?SmZGaitldWlPK1B0Y0c3SzhPdW9RVEcyc2RQWG5Ob2Z2V1lpZ1E5VUNBN2lN?=
- =?utf-8?B?aTNrWmNlY2RmMzBjanNWRyt2WFZPQmhKNVJhNHlBeFBUTkxadWtnVFF3c3lZ?=
- =?utf-8?B?eW9xRHNiTWpRZ0hqckZVajVLcFJncDNHQjJNa1RESTdXbGt4WUFSZzJBRERG?=
- =?utf-8?B?SWdyNU9qOHhpVWkyNVRmWGhwbE12SmlXVVk3THFnbkp3a0N0aXM1b2Z2ZHdy?=
- =?utf-8?B?Q2ZTZHZoUSs3alZ4OUhEQ2tEK0pNRW5rYW11LzNVdDIrMmRobFZHalBiWktr?=
- =?utf-8?B?TkJiKzRTOS96WXV1WVJKMFdnWm1UVUt1WmVxakpEZ0pSd05JTGtOTU5iMVBT?=
- =?utf-8?B?VE5DUGh5M1g0UmJJbTlubXJubG9QY0VNdGQ2dkNzSzdIejBPOXZsdUdNbU1G?=
- =?utf-8?B?QWp2a2Rkc1FRb2k2ZTRmV3NTWTVNTWRQaTE1ZXZzcVVOdnQ4Nmw0ZElQV0VR?=
- =?utf-8?B?anREN2ZpemJCRSs0VGZMc0Y0SU9RMXovTk94VytzbE1IK2djaFBHeGNZbDk2?=
- =?utf-8?B?enNXZzFvZ1MvUHl0ejJsTzVIUGsyVWh6RnVQR0xuNkVJMmNiRWJESFNJbU1l?=
- =?utf-8?B?UU90VHBrajJHUDRLRjREMWJWZEttL2pxUVMvWnl1YUpjdTM5ZU1DbGhkNmZm?=
- =?utf-8?Q?XWJL9c70hrcX4J1kla1alTvJAVQd4jfYOEpKrfmkQ4XY=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB4965.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VzdMUXp6QnhONkp0RGJtTmlDd1l6TjlkUmZqRklLQ0NsWTd6eWJDekUyM1Jq?=
- =?utf-8?B?UTRQYjh6cS9KeVRaMG5Xb1lab2FQTjFxVkxNaC9YY3EycHFQS1Q3R2lBSEl0?=
- =?utf-8?B?dkNJSnA1SlVyUE0xYTBzUXBXMlBBR0x2akpVL3dPMEZKc1FOUWxUeTVJMyty?=
- =?utf-8?B?WnZ6TFo3RW1xM1RZVnYzakFsQS95N0huZzRqaGVsaEdnY1RvQW1UWGtiODlI?=
- =?utf-8?B?SlBRM1RDN25mYkZOc1dscnFjWEVOcXRrZVg1TnYvL2J0bFpEa1pHc2RmclZ5?=
- =?utf-8?B?VTFjQmU5bEgxeUlNRGErUTJnZHpiTFpDa1pxNUVoazBEa2l4dHY2MU5id1ln?=
- =?utf-8?B?MUx6ZjRMVzlOUUdXWnI0YlZDUzFNV0ZGTTJoYkUyWHpEVURIVUh1d25lelVr?=
- =?utf-8?B?U0lMSVJqeDBFWlROU3I4VDJhZnpHUFU2WWZiaEVkWVZ2YkNmMWpmcCtxUTBI?=
- =?utf-8?B?aVdXYVkydExWOThVdTJXbGZQanZ1Um42Vm93cG1jUGxNNzlwQVJOVXRWQVQw?=
- =?utf-8?B?NTJuWSs5VUh3U0tienlzMzB2KzZsMVY1ZU04SFU2bituc1ZvdzJJdFJjakVl?=
- =?utf-8?B?c3NPTnhnNHRMMjM2dHFTQVVsdzlocEJFYWh4dUljQkNPQnJtZEdhVFRvTzk4?=
- =?utf-8?B?RGVLWm4yclJpUnRUV2hJS01HNU5HcWIwb1ZLMGhaZTcrRllkalNnbXpTNi9J?=
- =?utf-8?B?YjdNemgyajhnWHpKZHprQ2g5VCtLc1BYZUJnQXZKZUhQcHpyc2IwelVPckR6?=
- =?utf-8?B?T3lJbWFDZ09NUG55TGR3b24vbHFiODBMSzFqWWZkMUlJRW51enlKWmJxajNB?=
- =?utf-8?B?UHRld1JxY1d3NDRuTlMwUXNTRDlLd1NpSnA1cVY3NDZWMGJiYVRzMS9iendl?=
- =?utf-8?B?UGVITGZLdnpLMUN3UU12cWJVRG1ybWx5enB3NlZXY3FaZG1nT3U1QVkvc29F?=
- =?utf-8?B?R2NCUHIrUXdKdkdaTDZBcHRCUWk2REpXYmVHRUFDR0pwREEyRFF3VXNKRERK?=
- =?utf-8?B?WEd3RDY2R1B2eUswVVpSUnVneitxdmMycWMrUzQybzZDeUZqaHExbVdiZjZx?=
- =?utf-8?B?UzB5eFdVWHdTRGJ3NTVwVEM0WVUybXpjS0pDaE1zaXhEdmM0aVdPUEpiUWFh?=
- =?utf-8?B?QzJ2b2ZOWFFGbFVwSzJ0TmtMVllEMURmQW4wbEVFMHl0bXc0eS9zdXd4NWJi?=
- =?utf-8?B?L3FxRmk3MXpWUVkva2pwM0pzV0JTM3RrTVFLUEJwQjd0WjV2QXFnRnBKVWhL?=
- =?utf-8?B?aXZ1REZCNUJtV2s1T2F1Snd5Ni9LVUxSZDV4dHIxT08zWDNCU2hlMks5dWFS?=
- =?utf-8?B?OU8xNll4RkxzTHhIVmV5Smc3Y0c5bUZQd0xjYTZtTk9tTStxbG9FUEpmSTQw?=
- =?utf-8?B?NGkyc051NzgvM3U5T0JsYmtORG9BOU84akpDeWFaeURpSnlHWkRpc05aNTZT?=
- =?utf-8?B?MllYcHNkWE5WMVo2Wm9hcDg5bFpvaDEzL2RtQ2RxRi9tM21sRDV5UG5tdG5Y?=
- =?utf-8?B?QnA1UUxBUDZadXp3Q05wdjZOYlBDbEovQW5LdkdiQVZLQno2ZkdqZnE4OTcw?=
- =?utf-8?B?UENMTU0yODRhbFZwS3c2RzM0aDNCY1ZuMHVNYS9NNWQwT0J2Z2h6TTREVVNp?=
- =?utf-8?B?ZUlpTUV0d2tob0FOS2xOdk4rcUE0UDYyc2pQNlZFeFlmZ05wWXEyOTZQZ2hu?=
- =?utf-8?B?bmlrSGU2VzMzVmdFMUYzTzRacDdobi9ObzMyWWZhS2piaVk3aWJMWmNpSURS?=
- =?utf-8?B?dHZ3Nmc0cUVkRUFsS1JGVWY4UENrY2VVM0M3SVlZSGZhcFYwSnhiSThnZGZW?=
- =?utf-8?B?S2tUWTlCWFFwanozZXJkRCtLcGhIa0hFbVpiQy94c0FZMFZRcHB0WkVtd25h?=
- =?utf-8?B?Y1NSangzWG1GYXh4Sk45cThPTEF2d0lxT091a2cvdER4T01PNU16aDcwKzlt?=
- =?utf-8?B?TjRIWEhwdlg3STREVXVnSytQVWVRbWgySzdiZ29QUjR2TjMxT2FodGUrcjM1?=
- =?utf-8?B?cW9YSGl1aFVpNGZobjhRRGpzVlo0cDdhV0xDcGw3UHBBQVdudDdEa1dpMHhy?=
- =?utf-8?B?RitRbGQzemJnYmhjTk1lN1pLQ2lFMyt6eEQycy96aVBNNStFZTVzSHNnM0R3?=
- =?utf-8?B?RWRXQkVxaGsyU0hyWWxzb1JTZW4xZWVOeTdCQVZZdWNNS0ZKRGRadVpDTGF6?=
- =?utf-8?B?YkE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1c3f418-65fe-4588-ba21-08dc6da6fae7
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB4965.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 08:31:52.5333
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZDQRQFuM09kEXoc70lo9ybF8CAktRoUlWIcghe6CGvlbwKf6bD6FZ3w4b1K+o91YbLdURuwrUpUOIoLDuH0tuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7880
-X-OriginatorOrg: intel.com
 
-On 5/2/2024 6:40 AM, Sean Christopherson wrote:
-> On Sun, Feb 18, 2024, Yang Weijiang wrote:
->> Add CET MSRs to the list of MSRs reported to userspace if the feature,
->> i.e. IBT or SHSTK, associated with the MSRs is supported by KVM.
->>
->> SSP can only be read via RDSSP. Writing even requires destructive and
->> potentially faulting operations such as SAVEPREVSSP/RSTORSSP or
->> SETSSBSY/CLRSSBSY. Let the host use a pseudo-MSR that is just a wrapper
->> for the GUEST_SSP field of the VMCS.
->>
->> Suggested-by: Chao Gao <chao.gao@intel.com>
->> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
->> ---
->>   arch/x86/include/uapi/asm/kvm_para.h |  1 +
->>   arch/x86/kvm/vmx/vmx.c               |  2 ++
->>   arch/x86/kvm/x86.c                   | 18 ++++++++++++++++++
->>   3 files changed, 21 insertions(+)
->>
->> diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
->> index 605899594ebb..9d08c0bec477 100644
->> --- a/arch/x86/include/uapi/asm/kvm_para.h
->> +++ b/arch/x86/include/uapi/asm/kvm_para.h
->> @@ -58,6 +58,7 @@
->>   #define MSR_KVM_ASYNC_PF_INT	0x4b564d06
->>   #define MSR_KVM_ASYNC_PF_ACK	0x4b564d07
->>   #define MSR_KVM_MIGRATION_CONTROL	0x4b564d08
->> +#define MSR_KVM_SSP	0x4b564d09
-> We never resolved the conservation from v6[*], but I still agree with Maxim's
-> view that defining a synthetic MSR, which "steals" an MSR from KVM's MSR address
-> space, is a bad idea.
->
-> And I still also think that KVM_SET_ONE_REG is the best way forward.  Completely
-> untested, but I think this is all that is needed to wire up KVM_{G,S}ET_ONE_REG
-> to support MSRs, and carve out room for 250+ other register types, plus room for
-> more future stuff as needed.
-
-Got your point now.
-
->
-> We'll still need a KVM-defined MSR for SSP, but it can be KVM internal, not uAPI,
-> e.g. the "index" exposed to userspace can simply be '0' for a register type of
-> KVM_X86_REG_SYNTHETIC_MSR, and then the translated internal index can be any
-> value that doesn't conflict.
-
-Let me try to understand it, for your reference code below, id.type is to separate normal
-MSR (HW defined) namespace and synthetic MSR namespace, right? For the latter, IIUC
-KVM still needs to expose the index within the synthetic namespace so that userspace can
-read/write the intended MSRs, of course not expose the synthetic MSR index via existing
-uAPI,  But you said the "index" exposed to userspace can simply  be '0' in this case, then
-how to distinguish the synthetic MSRs in userspace and KVM? And how userspace can be
-aware of the synthetic MSR index allocation in KVM?
-
-Per your comments in [*],  if we can use bits 39:32 to identify MSR classes/types, then under
-each class/type or namespace, still need define the relevant index for each synthetic MSR.
-
-[*]: https://lore.kernel.org/all/ZUQ3tcuAxYQ5bWwC@google.com/
-
->
-> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-> index ef11aa4cab42..ca2a47a85fa1 100644
-> --- a/arch/x86/include/uapi/asm/kvm.h
-> +++ b/arch/x86/include/uapi/asm/kvm.h
-> @@ -410,6 +410,16 @@ struct kvm_xcrs {
->          __u64 padding[16];
->   };
->   
-> +#define KVM_X86_REG_MSR                        (1 << 2)
-> +#define KVM_X86_REG_SYNTHETIC_MSR      (1 << 3)
+On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote:
+> Adds support for rolling average oversampling mode.
+>=20
+> Rolling oversampling mode uses a first in, first out (FIFO) buffer of
+> the most recent samples in the averaging calculation, allowing the ADC
+> throughput rate and output data rate to stay the same, since we only need
+> to take only one sample for each new conversion.
+>=20
+> The FIFO length is 8, thus the available oversampling ratios are 1, 2, 4,=
+ 8
+> in this mode (vs 1,=C2=A0 2, 4, 8, 16, 32 for the normal average)
+>=20
+> In order to be able to change the averaging mode, this commit also adds
+> the new "oversampling_mode" and "oversampling_mode_available" custom
+> attributes along with the according documentation file in
+> Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380 since no standard
+> attributes correspond to this use case.
+>=20
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+> =C2=A0Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380 |=C2=A0 38 +++++=
++
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/iio/adc/ad7380.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 143 +++++++++++++++++++--
+> =C2=A03 files changed, 174 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380
+> b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380
+> new file mode 100644
+> index 000000000000..0a560ef3e32a
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380
+> @@ -0,0 +1,38 @@
+> +What: /sys/bus/iio/devices/iio:deviceX/oversampling_mode
+> +KernelVersion: 6.9
+> +Contact: Michael Hennerich <michael.hennerich@analog.com>
+> +Description:
+> +=C2=A0=C2=A0=C2=A0 Writing this attribute sets the oversampling average =
+mode.
+> +=C2=A0=C2=A0=C2=A0 Reading it, shows the configured mode.
+> +=C2=A0=C2=A0=C2=A0 Available modes can be displayed using the oversampli=
+ng_mode_available
+> +=C2=A0=C2=A0=C2=A0 attribute.
+> +=C2=A0=C2=A0=C2=A0 When writing this attribute to change the oversamplin=
+g mode, this will
+> +=C2=A0=C2=A0=C2=A0 have the following side effects:
 > +
-> +struct kvm_x86_reg_id {
-> +       __u32 index;
-> +       __u8 type;
-> +       __u8 rsvd;
-> +       __u16 rsvd16;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - soft reset the ADC to flush the oversam=
+pling block and FIFO
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - the available oversampling ratios depen=
+d on the oversampling mode
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 configured so to avoid miscon=
+figuration, changing the mode will disable
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the oversampling by setting t=
+he ratio to 1.
+
+Hmm, can we somehow re-enable it again with a proper configuration (after t=
+he mode
+change)?
+
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - the list of available ratios (displayed=
+ by reading the
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 oversampling_ratio_available =
+attribute) will be updated when changing
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the oversampling mode.
+> +
+> +What: /sys/bus/iio/devices/iio:deviceX/oversampling_mode_available
+> +KernelVersion: 6.9
+> +Contact: Michael Hennerich <michael.hennerich@analog.com>
+> +Description:
+> +=C2=A0=C2=A0=C2=A0 Display the available oversampling average modes. The=
+ two available modes
+> +=C2=A0=C2=A0=C2=A0 are "normal" and "rolling" where "normal" average mod=
+e is the default one.
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - normal averaging involves taking a numb=
+er of samples, adding them
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 together, and dividing the re=
+sult by the number of samples taken.
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This result is then output fr=
+om the device. The sample data is cleared
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 when the process completes. B=
+ecause we need more samples to output a
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value, the data output rate d=
+ecrease with the oversampling ratio.
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - rolling oversampling mode uses a first =
+in, first out (FIFO) buffer of
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the most recent samples in th=
+e averaging calculation, allowing the ADC
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 throughput rate and output da=
+ta rate to stay the same, since we only need
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to take only one sample for e=
+ach new conversion.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 87724a9e9f9f..ca1e115f2aff 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -434,6 +434,7 @@ R:	David Lechner <dlechner@baylibre.com>
+> =C2=A0S:	Supported
+> =C2=A0W:=09
+> https://wiki.analog.com/resources/tools-software/linux-drivers/iio-adc/ad=
+738x
+> =C2=A0W:	https://ez.analog.com/linux-software-drivers
+> +F:	Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380
+> =C2=A0F:	Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> =C2=A0F:	drivers/iio/adc/ad7380.c
+> =C2=A0
+> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> index 1e3869f5e48c..7b021bb9cf87 100644
+> --- a/drivers/iio/adc/ad7380.c
+> +++ b/drivers/iio/adc/ad7380.c
+> @@ -51,6 +51,8 @@
+> =C2=A0#define AD7380_REG_ADDR_ALERT_HIGH_TH	0x5
+> =C2=A0
+> =C2=A0#define AD7380_CONFIG1_OS_MODE		BIT(9)
+> +#define OS_MODE_NORMAL_AVERAGE		0
+> +#define OS_MODE_ROLLING_AVERAGE		1
+
+no AD7380 prefix?
+
+> =C2=A0#define AD7380_CONFIG1_OSR		GENMASK(8, 6)
+> =C2=A0#define AD7380_CONFIG1_CRC_W		BIT(5)
+> =C2=A0#define AD7380_CONFIG1_CRC_R		BIT(4)
+> @@ -159,16 +161,27 @@ static const struct ad7380_timing_specs ad7380_4_ti=
+ming =3D {
+> =C2=A0	.t_csh_ns =3D 20,
+> =C2=A0};
+> =C2=A0
+
+..
+
+>=20
+> +static ssize_t oversampling_mode_store(struct device *dev,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t len)
+> +{
+> +	struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
+> +	struct ad7380_state *st =3D iio_priv(indio_dev);
+> +	int os_mode, ret;
+> +
+> +	ret =3D sysfs_match_string(ad7380_oversampling_average_modes, buf);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	os_mode =3D ret;
+> +
+> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +		ret =3D regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG1,
+> +					 AD7380_CONFIG1_OS_MODE,
+> +					 FIELD_PREP(AD7380_CONFIG1_OS_MODE,
+> os_mode));
+> +
+> +		if (ret)
+> +			return=C2=A0 ret;
+> +
+> +		st->oversampling_mode =3D os_mode;
+> +
+> +		/*
+> +		 * Oversampling ratio depends on oversampling mode, to avoid
+> +		 * misconfiguration when changing oversampling mode,
+> +		 * disable oversampling by setting OSR to 0.
+> +		 */
+
+Given the comment, I would expect you to disable osr before changing the mo=
+de.
+
+> +		ret =3D regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG1,
+> +					 AD7380_CONFIG1_OSR,
+> FIELD_PREP(AD7380_CONFIG1_OSR, 0));
+> +
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->oversampling_ratio =3D 1;
+> +
+
+1?
+
+Also, it would be nice if we could re-enabled osr. So the flow would maybe =
+be:
+
+1) disable osr;
+2) change mode;
+3) do whatever we need so configuration makes sense for new mode?
+4) re-enable osr;
+5) soft-reset;
+
+Also not sure if 4) and 5) are in the correct order.
+
+> +		/*
+> +		 * Perform a soft reset.
+> +		 * This will flush the oversampling block and FIFO but will
+> +		 * maintain the content of the configurable registers.
+> +		 */
+> +		ret =3D regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG2,
+> +					 AD7380_CONFIG2_RESET,
+> +					 FIELD_PREP(AD7380_CONFIG2_RESET,
+> +						=C2=A0=C2=A0=C2=A0 AD7380_CONFIG2_RESET_SOFT));
+> +	}
+> +	return ret ?: len;
+> +}
+> +
+> +static ssize_t oversampling_mode_available_show(struct device *dev,
+> +						struct device_attribute *attr,
+> char *buf)
+> +{
+> +	int i;
+> +	size_t len =3D 0;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(ad7380_oversampling_average_modes); i++)
+> +		len +=3D sysfs_emit_at(buf, len, "%s ",
+> ad7380_oversampling_average_modes[i]);
+> +
+> +	buf[len - 1] =3D '\n';
+> +
+> +	return len;
+> +}
+> +
+> +static IIO_DEVICE_ATTR_RW(oversampling_mode, 0);
+> +static IIO_DEVICE_ATTR_RO(oversampling_mode_available, 0);
+> +
+> +static struct attribute *ad7380_attributes[] =3D {
+> +	&iio_dev_attr_oversampling_mode.dev_attr.attr,
+> +	&iio_dev_attr_oversampling_mode_available.dev_attr.attr,
+> +	NULL
 > +};
 > +
->   #define KVM_SYNC_X86_REGS      (1UL << 0)
->   #define KVM_SYNC_X86_SREGS     (1UL << 1)
->   #define KVM_SYNC_X86_EVENTS    (1UL << 2)
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 47d9f03b7778..53f2b43b4651 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2244,6 +2244,30 @@ static int do_set_msr(struct kvm_vcpu *vcpu, unsigned index, u64 *data)
->          return kvm_set_msr_ignored_check(vcpu, index, *data, true);
->   }
->   
-> +static int kvm_get_one_msr(struct kvm_vcpu *vcpu, u32 msr, u64 __user *value)
-> +{
-> +       u64 val;
-> +
-> +       r = do_get_msr(vcpu, reg.index, &val);
-> +       if (r)
-> +               return r;
-> +
-> +       if (put_user(val, value);
-> +               return -EFAULT;
-> +
-> +       return 0;
-> +}
-> +
-> +static int kvm_set_one_msr(struct kvm_vcpu *vcpu, u32 msr, u64 __user *value)
-> +{
-> +       u64 val;
-> +
-> +       if (get_user(val, value);
-> +               return -EFAULT;
-> +
-> +       return do_set_msr(vcpu, reg.index, &val);
-> +}
-> +
->   #ifdef CONFIG_X86_64
->   struct pvclock_clock {
->          int vclock_mode;
-> @@ -5976,6 +6000,39 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
->                  srcu_read_unlock(&vcpu->kvm->srcu, idx);
->                  break;
->          }
-> +       case KVM_GET_ONE_REG:
-> +       case KVM_SET_ONE_REG: {
-> +               struct kvm_x86_reg_id id;
-> +               struct kvm_one_reg reg;
-> +               u64 __user *value;
-> +
-> +               r = -EFAULT;
-> +               if (copy_from_user(&reg, argp, sizeof(reg)))
-> +                       break;
-> +
-> +               r = -EINVAL;
-> +               id = (struct kvm_x86_reg)reg->id;
-> +               if (id.rsvd || id.rsvd16)
-> +                       break;
-> +
-> +               if (id.type != KVM_X86_REG_MSR &&
-> +                   id.type != KVM_X86_REG_SYNTHETIC_MSR)
-> +                       break;
-> +
-> +               if (id.type == KVM_X86_REG_SYNTHETIC_MSR) {
-> +                       id.type = KVM_X86_REG_MSR;
-> +                       r = kvm_translate_synthetic_msr(&id.index);
-> +                       if (r)
-> +                               break;
-> +               }
-> +
-> +               value = u64_to_user_ptr(reg.addr);
-> +               if (ioctl == KVM_GET_ONE_REG)
-> +                       r = kvm_get_one_msr(vcpu, id.index, value);
-> +               else
-> +                       r = kvm_set_one_msr(vcpu, id.index, value);
-> +               break;
-> +       }
->          case KVM_TPR_ACCESS_REPORTING: {
->                  struct kvm_tpr_access_ctl tac;
->   
->
 
+Maybe use IIO_ENUM... It allows the core to do some of the stuff you're doi=
+ng for
+you.
+
+
+- Nuno S=C3=A1
 
