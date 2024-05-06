@@ -1,168 +1,118 @@
-Return-Path: <linux-kernel+bounces-170084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787268BD1B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D060F8BD1B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAF12851D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853B11F23235
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720371553A7;
-	Mon,  6 May 2024 15:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB9A15538A;
+	Mon,  6 May 2024 15:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NC+BDK1+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SMx6EZos";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NC+BDK1+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SMx6EZos"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diLewifh"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F85154C0A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B65E155380;
+	Mon,  6 May 2024 15:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715010266; cv=none; b=oLTiej/C6CPsdRu0Hm5JD6meze4nC1MaBu3ZuolohBYHbg6tcU/vT7VdKshOsej9ZNSGIugAKOFKJ6u1Rl2HkRg6GYOSKtr9iBwswI9bwEdNrFLyuULr1LUIebpxOl1coGuiP8bFT+MC2Lz07rRjkXTqdzD6x0sCWL4cn6U0dWQ=
+	t=1715010330; cv=none; b=HXho3ZZ6EBfMDZpkPqFIi/D1BtD+hM8dGVOF9v8J2F3t+9Z2ILYrqO8lfbMg2D++9U5qFXJzfFo5oWjbX6oofTHNd2TsASI5XP8w3e1nr0r6AUxkbTvnLh3xTrPOu11dXgzpvqQdIrr0uXsy9YfP5nNW5goPJw9V9IW1YHITm9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715010266; c=relaxed/simple;
-	bh=mHb+yST+jxhpSTwZSJ4VfVHKAc54GQqwhqikWwwV9zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6xWS9X+zIb5RLDaBLsUmhIGh7ZJY62MKl9A/5gWFuvMfxXqjlLx4Ta7JXOSV/AxPhG/L34LdszzO4mMvzE64inc9gg+MDds8MFTMmLUsCami1RGN3OWJ3/Ya6hQhOVqUByo3sKzLTYkbus92doDzzTVeJkXSiEcyoCemLwFGT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NC+BDK1+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SMx6EZos; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NC+BDK1+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SMx6EZos; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A27CC38590;
-	Mon,  6 May 2024 15:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715010263; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+v0bQfDYhEJjeC4GC6jz30GjJBlSHabfty94pUQWzEY=;
-	b=NC+BDK1+6RrBo1yHw/gCfyZEn4jaBDF/gsTlPiI69rkqV9DK87j/fFhHYMC8oFrqT9390o
-	cDjjFrNJP5vKXpry6bK8OFuVduBlqQuGodPP21k8Pf/3uRhsLBgjYFiI0Xy32PTlb1fXCO
-	I1v/GnB9A/O/pan79qwBBDgqIpRhwKI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715010263;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+v0bQfDYhEJjeC4GC6jz30GjJBlSHabfty94pUQWzEY=;
-	b=SMx6EZoskkKlW4wIPfUPcQA+CYqiq7cp6KtuD5YwK447tbmNQw/30m6h84EQnKssShptRF
-	B9M5SDUOl8h6FwCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NC+BDK1+;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SMx6EZos
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715010263; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+v0bQfDYhEJjeC4GC6jz30GjJBlSHabfty94pUQWzEY=;
-	b=NC+BDK1+6RrBo1yHw/gCfyZEn4jaBDF/gsTlPiI69rkqV9DK87j/fFhHYMC8oFrqT9390o
-	cDjjFrNJP5vKXpry6bK8OFuVduBlqQuGodPP21k8Pf/3uRhsLBgjYFiI0Xy32PTlb1fXCO
-	I1v/GnB9A/O/pan79qwBBDgqIpRhwKI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715010263;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+v0bQfDYhEJjeC4GC6jz30GjJBlSHabfty94pUQWzEY=;
-	b=SMx6EZoskkKlW4wIPfUPcQA+CYqiq7cp6KtuD5YwK447tbmNQw/30m6h84EQnKssShptRF
-	B9M5SDUOl8h6FwCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0C5BA13A25;
-	Mon,  6 May 2024 15:44:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +6dQANf6OGbOCwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 06 May 2024 15:44:23 +0000
-Date: Mon, 6 May 2024 17:44:17 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Kees Cook <keescook@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	syzbot+41bbfdb8d41003d12c0f@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4 2/4] mm,page_owner: Fix refcount imbalance
-Message-ID: <Zjj60VQWR-Nm6SfU@localhost.localdomain>
-References: <20240404070702.2744-1-osalvador@suse.de>
- <20240404070702.2744-3-osalvador@suse.de>
- <202405060754.4405F8402F@keescook>
- <Zjj6KN0GhXbv3VYY@localhost.localdomain>
+	s=arc-20240116; t=1715010330; c=relaxed/simple;
+	bh=HPGmG1g0spRhjEW8ciDZ98jGlZGqzMjL73XubFM+0eo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MY+4CDflX3YyrB7tUhW4vZ+hXkcF0jTbNvQ46nF6tVOhbU2Y17lqdgUptBnU0aNIvuVBp79q1Vrh5RLLJziqX+t4GWg6cmGLIn1yl+Qgyi4SkzWb2tPziSSzGZRUuE54cJ62j3YEwQODgp7yvGaR9voqDHjGTLv5QxL3oUj9sSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diLewifh; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e8so12810215e9.1;
+        Mon, 06 May 2024 08:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715010327; x=1715615127; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rjI/Xv3XiaQOPqjj6v/x4n5zCExnJZ+JWbWl24FY9n0=;
+        b=diLewifhmxQGBGKI36HMtSAwu+CC5StdXks0Fks4BBU4VC3Yq4PMDIERr3DVy8snbi
+         321fBgQcMQuV5BaCdN0m+Qmp11VK5o0rDijLVXO/35hy2YnZAsXSD9PF0cqRY9IwZ+62
+         Ys4r59RrSOfVlBT3cwai3TGFnG4M7V89sjZX1QiS6owNEAe5y85429tUNKG+SQUj5gz9
+         GXPHJt8NThVKx04hXgo+eTZPIQtvo1+J+qj+Ykc7GmsGz100X+tXLgUw4pP5S/oy1tJw
+         KVqGZpYK5Nw06HdjH4eY4B5s/yS8m4/m2cbyaIuWMuVzTNdihNuCOy6AeJjBUfnc/1XE
+         W9hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715010327; x=1715615127;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rjI/Xv3XiaQOPqjj6v/x4n5zCExnJZ+JWbWl24FY9n0=;
+        b=H05q9dfCPTwAM2qpKk3RjFb28hISVjk3cRd8ePyOH8+HAk6gROsnL60lEw11AcBiI3
+         BYqkB0rC0F8gOZ5z87jmP2gOsAL5UbTTctEwhCr11NRG2E4DHKFNRS7wlqXaKQ/4v+ZN
+         5/ucQ2fNvczNUblstlpiN6z5V2nFcckyLhCRa5v+Fuv8DuBr/e0X6PQgll5kUfNHZzQD
+         ysi/vVWdZblFMcNTjCGaQAoQOO4i8A0+MaxheLtQuvv8sK/uilTWQydKszpy2rfRrxCV
+         ldBu39Kz3iRpe+zfyDvvu6Q6GlczBW0l2Zb3PH4TN+eSN61pOVr0rwaY9wEsAV+KUEdF
+         LesA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNpPgUm590QbB4e1kcE2v1M2f5t4k5oG5k3pblLRfsU4zUTtbAK5H2RHwn00iRPM52yZUdNjyWkpEk55nsoBofZCj3xebIiL7AHr6296tctM33p1VVV6O4Ae/6ZpX9K86B+TzfOmZY
+X-Gm-Message-State: AOJu0YxNYVhTropGQr07nYVFVdDak7dW5PsLWaaLUa+R80M7nq6knyb8
+	GuWPXTZvtSpCe8JBHhpCa2lW8peuJsxTtFk0tHdP+0b218z1kfKB
+X-Google-Smtp-Source: AGHT+IECONYbtaCBzXAkPTz+LRCH/C/3z1JRYbIrJspc52OTuux8byJWAsNbW0K7sWtwu2YrBUcQvw==
+X-Received: by 2002:a05:600c:1caa:b0:41a:7065:430a with SMTP id k42-20020a05600c1caa00b0041a7065430amr6226192wms.41.1715010325957;
+        Mon, 06 May 2024 08:45:25 -0700 (PDT)
+Received: from mfe-desktop.Sonatest.net (ipagstaticip-d73c7528-4de5-0861-800b-03d8b15e3869.sdsl.bell.ca. [174.94.156.236])
+        by smtp.googlemail.com with ESMTPSA id fc16-20020a05600c525000b00418d68df226sm20241486wmb.0.2024.05.06.08.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 08:45:25 -0700 (PDT)
+From: marc.ferland@gmail.com
+X-Google-Original-From: marc.ferland@sonatest.com
+To: michal.simek@amd.com
+Cc: andi.shyti@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marc Ferland <marc.ferland@sonatest.com>
+Subject: [PATCH] i2c: xiic: print error code when xiic_start_xfer fails
+Date: Mon,  6 May 2024 11:45:20 -0400
+Message-Id: <20240506154520.3886867-1-marc.ferland@sonatest.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zjj6KN0GhXbv3VYY@localhost.localdomain>
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A27CC38590
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,kvack.org,suse.com,suse.cz,google.com,gmail.com,rivosinc.com,syzkaller.appspotmail.com];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[41bbfdb8d41003d12c0f];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 06, 2024 at 05:41:28PM +0200, Oscar Salvador wrote:
-> On Mon, May 06, 2024 at 07:59:11AM -0700, Kees Cook wrote:
-> > This pr_warn() isn't needed: refcount will very loudly say the same
-> > thing. :)
-> 
-> Yes, but I wanted to get the handle so I can match it with the
-> backtrace.
+From: Marc Ferland <marc.ferland@sonatest.com>
 
-Although on a second though, I could just switch it to pr_info(),
-otherwise the warnings from both refcount and page_owner might get
-tangled.
+xiic_start_xfer can fail for different reasons:
 
-I will check and send a patch later.
+- EBUSY: bus is busy or i2c messages still in tx_msg or rx_msg
+- ETIMEDOUT: timed-out trying to clear the RX fifo
+- EINVAL: wrong clock settings
+
+Printing the error code helps identifying the root cause.
+
+Signed-off-by: Marc Ferland <marc.ferland@sonatest.com>
+---
+ drivers/i2c/busses/i2c-xiic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index 71391b590ada..73729f0180a1 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -1165,7 +1165,7 @@ static int xiic_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
  
-
+ 	err = xiic_start_xfer(i2c, msgs, num);
+ 	if (err < 0) {
+-		dev_err(adap->dev.parent, "Error xiic_start_xfer\n");
++		dev_err(adap->dev.parent, "Error xiic_start_xfer: %d\n", err);
+ 		goto out;
+ 	}
+ 
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
