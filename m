@@ -1,133 +1,186 @@
-Return-Path: <linux-kernel+bounces-169417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327EA8BC862
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:31:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617E58BC865
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B60281B4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:31:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83E1C1C213DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C2B127E3B;
-	Mon,  6 May 2024 07:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="2B6DcBFp"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB6C13774B;
+	Mon,  6 May 2024 07:31:35 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2115.outbound.protection.partner.outlook.cn [139.219.146.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106171EB36;
-	Mon,  6 May 2024 07:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714980677; cv=none; b=iJBF7OGtWRh6RLMbO1r31ThMky2/PI5xVDIH4GdZWucQxj9LS3i8BUYpnpRBf8dNIMii67U6YjzT3orsA7Jz5xeDWfdPF8CqeJVdghNWa4ErtlyHPbzm1xisxl7pImU0qlIIKjB6fSl9LVROMQkcO5f7iit0IltUgtq4GEOhxLc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714980677; c=relaxed/simple;
-	bh=ofzGDVGOoQJDPdxOBgHuOfXoVAx2dH5KFSKIrOhXV3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a7LSDAEb5fjkCYIJQ1+gfH7ed8sPuAfpOWCm4zd6YnhQ5uwg4BOYgPiy8UyaQ/S3kZ4YVqAaajCCbThqNeLxEJ3/W8zLwX0+s4lw/HucvXfvXuSd4Z9Ski+1GKGhUGPujxwiGE+jEC86z8chJvCVcXB0QesCW73r0XFc8l4BkWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=2B6DcBFp; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 49DD143F5;
-	Mon,  6 May 2024 09:31:12 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 49DD143F5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1714980672; bh=sEkJVf1n6hGmby1EAwc5nvnpVwn3MtsVGBjj8LhHGWQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=2B6DcBFpytfhY0EhihieOv0SGvcAte+M2PZZxsSgM0QbdfEESQak2+lEtzpHYtsRn
-	 fiOkhfww1T0FFfZrhz0JDF+Kvwn5w13g8sWooMxrD7FnzFfGnTB7rocuQwpBXizCB0
-	 fRm1zv9RIqkOrAH7uy8vPVoseNMuAjhITw7WeLp0=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Mon,  6 May 2024 09:31:05 +0200 (CEST)
-Message-ID: <05819798-2ac2-4aed-9f4f-0494c4c24159@perex.cz>
-Date: Mon, 6 May 2024 09:31:03 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAC41EB36;
+	Mon,  6 May 2024 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.115
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714980693; cv=fail; b=MY3mJi0uQFW0Zt2yxClPKC1hWJih5/miejr+QzQK76M9b+0uPW+PqMYuXgVED80pIS0bSy87eQI7V40VN31LzqKnqa9hdmfGXUcbDJPqW3sOIf9URR3d0SB5D8hpSD0rYZpaRtk9SiilbyndUhgaEWAk6GncGw383Hd5DaDnG6s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714980693; c=relaxed/simple;
+	bh=tVWSRkZ+/yX9uiL+U18w17yddrKj2z7livTR8RpBS/Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mFC6X5KygOV35FIDWT+qDx96Sq97rCFqeOIhtKETWjik9OL/p8smAvs0IrM/urXKZt+UtJlIMZdPEmRhmuZNX1TrUT0i339hhx0Rer9+bo95RDBeEXFz54ZkagLVwiZ2RDCIN25kT3yOhatiLyMOTF0bwZ4moqKsD4LeyiWLpC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y3MoqxTs3co+bRwIAzoK4u6KWoXT6FmALQvX1bE8nSLH6m9lCmcaxF4VEHgXYGbxBkXt+c4de2HClHHlzgSohaHrNto0yA4L2mRt/l9yHBqRLSkudMzs2oRpqc/xmcr1YeU4fzLeEYcJz3XRCzZxuU299wgT+p7+H4Os3FsQWuqseuP20w6a5NgT6RfmdCFWU4digllTdPlH/8/hrLKOuAYa1jC9+NVO7uvsDIEutnxKt6N3Oy9fcIJln7TAbxc1bTDWZ4fRLH/xSomePy2hacxSFgUbQfvjigbTzpg/dMZXEO95DuQIIYIv5afQXF52w+tGHcD294x/4Muj+VUNAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tVWSRkZ+/yX9uiL+U18w17yddrKj2z7livTR8RpBS/Q=;
+ b=AtWe+Gc+jfhyTuuV9XWgq9fg0oe9bwiFMBjPcxS5rQ2RYGRl0r0AqHZVfbpOjkDXrArcB+/pPn8XCHIKkeGvDVB0Vuwmg134ZixAi+K0bXBii56OOgzA3YqSHjE5D5aD6aUj50qaogZl00H9GlLb48MvbqnVClx+CK/aArQFYGW5QX6LJVICQO4SU2ge8UvoH/iSvwqYLXKVlxyhSMjsn0YswBxSzIILVUuh/1uvp+dbxkgLG3Nnw6ucG4pnQZuKn7VfUOx4m+SdtJYIalSmYuv2DJYHqeeQnwkSYo77kF5boxDQfHnvK+rLhDV/uy+H+RY9g+5wkquTHPcxvd7YsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:f::12) by ZQZPR01MB0994.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:8::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.29; Mon, 6 May
+ 2024 07:31:19 +0000
+Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ ([fe80::7020:a48c:b2bd:fe36]) by
+ ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn ([fe80::7020:a48c:b2bd:fe36%4])
+ with mapi id 15.20.7472.027; Mon, 6 May 2024 07:31:19 +0000
+From: Leyfoon Tan <leyfoon.tan@starfivetech.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Yuklin Soo
+	<yuklin.soo@starfivetech.com>
+CC: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Hal Feng
+	<hal.feng@starfivetech.com>, Emil Renner Berthing <kernel@esmil.dk>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Drew
+ Fustini <drew@beagleboard.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Subject: RE: [RFC PATCH v3 0/7] Add Pinctrl driver for Starfive JH8100 SoC
+Thread-Topic: [RFC PATCH v3 0/7] Add Pinctrl driver for Starfive JH8100 SoC
+Thread-Index: AQHanUsb4QsJhnfcq0uFD901Ke0na7GJxHuAgAAN7NA=
+Date: Mon, 6 May 2024 07:31:19 +0000
+Message-ID:
+ <ZQZPR01MB0979DEF368CB86BB16B538E78A1CA@ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn>
+References: <20240503111436.113089-1-yuklin.soo@starfivetech.com>
+ <CACRpkdbxzbNedWTpA5i-45AqPc4fA+GeBGkrjrD_OgkxMZRwXw@mail.gmail.com>
+In-Reply-To:
+ <CACRpkdbxzbNedWTpA5i-45AqPc4fA+GeBGkrjrD_OgkxMZRwXw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQZPR01MB0979:EE_|ZQZPR01MB0994:EE_
+x-ms-office365-filtering-correlation-id: 9bebe566-7681-40c4-1177-08dc6d9e85b6
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ r7cIXptijQZBsQB2AblDmovr8wAHPsVwJ7DpBtMu3QVp/+/o00Ypx00C1/pEtBePIi9x0CFYRzUfLlqn8APk2IrgD+EEEC2ipAGFtnEcRIUiuBHVt6dhCZivMtH4JB7CmA8F67VMTAELBzzuJJi3Gz5cWlx24TVy1yYdSmgfhJBrS9l+7UvsrZhN6YtciFLHQmadY4b31KrmwlzpkN6AqL2Jl5UN1McSDJtUMT9NJO2W8qfmuf09nxYgH5sIaFvzJJV/vpYs2VXLo3I0Q+dOyHP1C/0z153oAdV3wandshrmPAFJnXMOmzVv56ceeTFaKhF/Uew1zqRy9nx6MQXqcIFBDoYGi0ublfhlkJHhpxsb9awGsWv7KR0c4TLN/5V8dcLnahYanPdsQ5haShUO5PTIcfkm0eDYTVnIaAELLs69ywc3gGRun/snRdW874SlZ8k6IDd7EpdMj3+xD3c+2L7/W+QyLy9fFaT4aCJRdtHyh4t8UQ/rTEuL7BGqDWmQszk9D79jfDNHGCx8RBF8joKk2GMBpykH51sGNrJRQA1LzHbZOtB/RLZFKbtEiUI8IjxtBhJGmVV2/XVxYuONdGhEk132DsQouwIr+r9S3XXCMBzh4HKAg9kwpezj8a5y
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(41320700004)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?QXNtMnQrTUx5SVZiNkEvN3lXVExHTmM1OVN1amZwa2YwSFJ0VU1WYmxyeXQv?=
+ =?utf-8?B?RFVFVmRITk4vbEpVL3M0RzFMQ0pCM2E3Wk1HLzFMQ0F0UGE2YTZ0RUpoNkRU?=
+ =?utf-8?B?YUR6K2daV0xOQUdDVUt5cEFVY0NBOThJaUNTNkdpQ05RZVJmdXA1SWZWRGtL?=
+ =?utf-8?B?S3I0cWY4ZTVpbmluY2pTNnQvL3pEcUwrWWlwRThhdzUvWm9CSWxIWnZzWWFx?=
+ =?utf-8?B?NXV4V0ozTE54K0EyOWQvZFFHM0hQV2kwZXZFVkJCTWJveHdFRGUxdmsyd0dK?=
+ =?utf-8?B?NG1BemlRY1BDT095RFJTVnRZblN1UU9ndmR2L25qWVFud25OekhjZ2RmMDdN?=
+ =?utf-8?B?M3NlYkkydFk2cmphUVFPQ2lxSlpFUU1zWThSMEh5SERZNHRNUWZuREp1TmlI?=
+ =?utf-8?B?TGZwVVNLS3AwcGZDWW4vZnRWV3R2MUZrQ0Y0Z2NJbGo0elBXWVVocHpJYzVh?=
+ =?utf-8?B?bzRqbDNvczNJZnBLWS9NNmtWaTF4RUxjMm1tN25OZ2hzSGVqWTZRenpTTWlz?=
+ =?utf-8?B?YVZsWTdNTkFCQ0ZvMDNadHBtZjJ0VmgyRGJjckJjYmVnTDUyL2h4eXBodE1J?=
+ =?utf-8?B?TjZoUWhnUVdGaXg3b1MvWitudEZra3NsdzhBS1IxNTFHeWs5MDNJamsvK2Er?=
+ =?utf-8?B?YldnVTdQVGlHVFVROVArT1ZSeWVIZElNaDA2RUpuOER3QnpmVC9lbWFKd0pX?=
+ =?utf-8?B?ZzdxSU1Ra2xZVWx5eHFma3ZjQjFZWEdTZjNxWFJNY2JCMEdHUCtOSkFqR3ds?=
+ =?utf-8?B?NlRzVjJuaElBdFJqRnFvM3U0UHErSWVCdEx0Y05RTlIxbmp0alFTZHluYldn?=
+ =?utf-8?B?QmVCNmdPWlFITFJveFo1THJlOHZSRlByMXBFSzU5MU1rYnBiTTVzbERSWnBm?=
+ =?utf-8?B?L1h6WWNtQStIK3N2RjUwWkRlNGo0a2Y0Q0ptenIyMmFCMW02cUtseDF3R2tD?=
+ =?utf-8?B?QWZRK0FNV1p4d1ZjUE8vQ0UzSHk5TGpvWitBTXh0YVlpTjRDUk5sQ2VCUnI2?=
+ =?utf-8?B?Tk12STFJbEQxWldSdzRkUTFXQlJ1ZzJqbDdTenYxSGhKc0RHRFI0RXp3L2dm?=
+ =?utf-8?B?Y0JiY041UFQxbkhWS1d1Q0ZlUEwvbjZ1U2o2ZUkzN2hSRW9RSXVVb2E2M3F3?=
+ =?utf-8?B?MTVVak5nd3BhM1ZBUXI3UmdlU3RpT1hvdFRma0VXWFpPcXNMK1krMDVWbjQ2?=
+ =?utf-8?B?NXVBRkdNU1p3aTJ1YUUvS0FVRDU2Y2pNeC9JMWFlZ1R1akpXSTlxdFVmbFVT?=
+ =?utf-8?B?YmwvSldPQVJtMkdOSHVBL3A3RGNkbHFQM0FMMTdSTWUvbURJNktOY0p1Q0I5?=
+ =?utf-8?B?N1g1SmE4RGl0Wlg4Q1pwdFU1ZS9VYU54MnRObkx2RENKcVBFWC9uWVBSSmdk?=
+ =?utf-8?B?T2VLdEZ4cFc3amRraFlsc0tkTGZPWDdBL2RaclNOQlpvRTRpRE1wWVV6b0Ri?=
+ =?utf-8?B?YVJOcXFqTmRNdThldjBDMGd4WXNyUGlvQVdVaGxCbEtnWGJsS3laQm9NMzNo?=
+ =?utf-8?B?L2N5bVdOY2VpNWlLQ2ozV1NLQzJMZThEL0ZyS1lEZFJGQnNwYjdpQmQ1Nis1?=
+ =?utf-8?B?bmhmbmltU0RWSHNXQ2xoL0NtNWlobXU1cm9zTjcvK01aOVVlN3VmZUV1bkNC?=
+ =?utf-8?B?QWQ0OUlQK0VvYzd3ZFdqcWVwb2VQWVNsQ1BEcWExS2wrZmlFU2trOHpEakpx?=
+ =?utf-8?B?UExxU2VjenZSR2ZKQVV2WXhvUi9aa08zK2l4V3FBcVE2bHYzTHR0MTZvSzR3?=
+ =?utf-8?B?OHZoYVdHMFJRTUJSaWZoRG1DLys3QzR4TEJXYjcrcE0xa1JhT0w2SGN0QXdw?=
+ =?utf-8?B?Z0RlUGo2eWozK0xCMzFHSjd2Rit2TWRERmlodDVaQWw5V2hMeDMzeUZRdm82?=
+ =?utf-8?B?ZEZwcjdyQWJWejhZMGw5bzFhYjYrWGZKNkgxZ2pjOGM3S0w0emkrNlVmbEhM?=
+ =?utf-8?B?ei9LLzg3eGpUSW9ENjVRS1hNc3QrS3ZIV1hXM2NRUE45SHFJdy9RNkVENi9B?=
+ =?utf-8?B?MVNOVEZTWDJDdjVaNW4rdXZTZXFqUVdYMlhJanMzb1pVUlRwZnRiN09Hd01P?=
+ =?utf-8?B?UFRhSm9kVzdUTFAza1NwVW9rSndRL1cxZzE4SkxmaS9oYXZ6RzVoL1IyUHVV?=
+ =?utf-8?B?VUoxSTBuenB5dDRMaWRUaHNYNUJmWmo5L0kzQ0d6d3I2ellLZkhkRGZ0alYr?=
+ =?utf-8?B?SUE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/1] ALSA: hda/realtek: Fix internal speakers for
- Legion Y9000X 2022 IAH7
-Content-Language: en-US
-To: ArcticLampyrid <ArcticLampyrid@outlook.com>, tiwai@suse.de
-Cc: sbinding@opensource.cirrus.com, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- rf@opensource.cirrus.com
-References: <TYCP286MB2535F8C34EB5E3D826B74C17C41C2@TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM>
-From: Jaroslav Kysela <perex@perex.cz>
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <TYCP286MB2535F8C34EB5E3D826B74C17C41C2@TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9bebe566-7681-40c4-1177-08dc6d9e85b6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2024 07:31:19.4737
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: puegK1czu6kfRl7T4wsSqSQl+nuTCm/BYRasEivUMa9MJzZA+Wy8FbtKcdZ7WDnGH271DiGQ0z5d2hrFy35AEtE1WS8h6ETKdxuQb16P5BI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQZPR01MB0994
 
-On 06. 05. 24 9:27, ArcticLampyrid wrote:
-> This fixes the sound not working from internal speakers on
-> Lenovo Legion Y9000X 2022 IAH7 models.
-> 
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218744
-> 
-> This patch depends on [PATCH v1 1/2] ALSA: hda: cs35l41: Ignore errors when configuring IRQs (by Stefan Binding)
-> See also <https://lore.kernel.org/lkml/20240429154853.9393-2-sbinding@opensource.cirrus.com/>
-
-We don't accept commits from anonymous sources. Please, follow 
-Documentation/process/submitting-patches.rst .
-
-					Jaroslav
-
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMgV2FsbGVpaiA8
+bGludXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiBTZW50OiBNb25kYXksIE1heSA2LCAyMDI0IDI6
+MzUgUE0NCj4gVG86IFl1a2xpbiBTb28gPHl1a2xpbi5zb29Ac3RhcmZpdmV0ZWNoLmNvbT4NCj4g
+Q2M6IEJhcnRvc3ogR29sYXN6ZXdza2kgPGJhcnRvc3ouZ29sYXN6ZXdza2lAbGluYXJvLm9yZz47
+IEhhbCBGZW5nDQo+IDxoYWwuZmVuZ0BzdGFyZml2ZXRlY2guY29tPjsgTGV5Zm9vbiBUYW4gPGxl
+eWZvb24udGFuQHN0YXJmaXZldGVjaC5jb20+Ow0KPiBKaWFubG9uZyBIdWFuZyA8amlhbmxvbmcu
+aHVhbmdAc3RhcmZpdmV0ZWNoLmNvbT47IEVtaWwgUmVubmVyIEJlcnRoaW5nDQo+IDxrZXJuZWxA
+ZXNtaWwuZGs+OyBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPjsgS3J6eXN6dG9mIEtvemxv
+d3NraQ0KPiA8a3J6eXN6dG9mLmtvemxvd3NraStkdEBsaW5hcm8ub3JnPjsgQ29ub3IgRG9vbGV5
+IDxjb25vcitkdEBrZXJuZWwub3JnPjsNCj4gRHJldyBGdXN0aW5pIDxkcmV3QGJlYWdsZWJvYXJk
+Lm9yZz47IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiByaXNjdkBs
+aXN0cy5pbmZyYWRlYWQub3JnOyBQYXVsIFdhbG1zbGV5IDxwYXVsLndhbG1zbGV5QHNpZml2ZS5j
+b20+OyBQYWxtZXINCj4gRGFiYmVsdCA8cGFsbWVyQGRhYmJlbHQuY29tPjsgQWxiZXJ0IE91IDxh
+b3VAZWVjcy5iZXJrZWxleS5lZHU+DQo+IFN1YmplY3Q6IFJlOiBbUkZDIFBBVENIIHYzIDAvN10g
+QWRkIFBpbmN0cmwgZHJpdmVyIGZvciBTdGFyZml2ZSBKSDgxMDAgU29DDQo+IA0KPiBPbiBGcmks
+IE1heSAzLCAyMDI0IGF0IDE6MTTigK9QTSBBbGV4IFNvbyA8eXVrbGluLnNvb0BzdGFyZml2ZXRl
+Y2guY29tPg0KPiB3cm90ZToNCj4gDQo+ID4gU3RhcmZpdmUgSkg4MTAwIFNvQyBjb25zaXN0cyBv
+ZiA0IHBpbmN0cmwgZG9tYWlucyAtIHN5c19lYXN0LA0KPiA+IHN5c193ZXN0LCBzeXNfZ21hYywg
+YW5kIGFvbi4gVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBwaW5jdHJsIGRyaXZlcnMNCj4gPiBmb3Ig
+dGhlc2UgNCBwaW5jdHJsIGRvbWFpbnMgYW5kIHRoaXMgcGF0Y2ggc2VyaWVzIGlzIGRlcGVuZGlu
+ZyBvbiB0aGUNCj4gPiBKSDgxMDAgYmFzZSBwYXRjaCBzZXJpZXMgaW4gWzFdIGFuZCBbMl0uDQo+
+ID4gVGhlIHJlbGV2YW50IGR0LWJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3IgZWFjaCBwaW5jdHJs
+IGRvbWFpbiBoYXMgYmVlbg0KPiA+IHVwZGF0ZWQgYWNjb3JkaW5nbHkuDQo+ID4NCj4gPiBbMV0N
+Cj4gPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMjMxMjAxMTIxNDEwLjk1Mjk4LTEt
+amVlaGVuZy5zaWFAc3RhcmZpDQo+ID4gdmV0ZWNoLmNvbS8gWzJdDQo+ID4gaHR0cHM6Ly9sb3Jl
+Lmtlcm5lbC5vcmcvbGttbC8yMDIzMTIwNjExNTAwMC4yOTU4MjUtMS0NCj4gamVlaGVuZy5zaWFA
+c3RhcmYNCj4gPiBpdmV0ZWNoLmNvbS8NCj4gDQo+IHYzIGlzIHN0YXJ0aW5nIHRvIGxvb2sgdmVy
+eSBuaWNlLCB3aHkgaXMgdGhpcyBwYXRjaCBzZXQgc3RpbGwgaW4gIlJGQyI/DQo+IA0KPiBJIHdv
+dWxkIGxpa2Ugc29tZSBwcm9wZXIgcmV2aWV3IGZyb20gdGhlIFN0YXJGaXZlIG1haW50YWluZXJz
+IGF0IHRoaXMgcG9pbnQgc28NCj4gd2UgY2FuIGdldCBpdCBmaW5pc2hlZC4NCj4gDQo+IFlvdXJz
+LA0KPiBMaW51cyBXYWxsZWlqDQoNCkhpIExpbnVzDQoNClRoYW5rcyBmb3IgcmV2aWV3aW5nIHRo
+ZSBwYXRjaGVzLg0KDQpUaGVyZSBpcyBhIGRpc2N1c3Npb24gaW4gYW5vdGhlciB0aHJlYWQgYWJv
+dXQgdGhlIEpIODEwMCBTb0MgYmVpbmcgdmFsaWRhdGVkIG9uIEZQR0EvRW11bGF0aW9uIG9ubHkg
+bm93LiAgVGhlIHN1Z2dlc3Rpb24gaXMgdG8gc2VuZCB0aGUgcGF0Y2hlcyBhcyAiUkZDIiBiZWZv
+cmUgdGhlIHJlYWwgc2lsaWNvbiBhdmFpbGFiaWxpdHkuDQoNCmh0dHBzOi8vcGF0Y2hldy5vcmcv
+bGludXgvMjAyMzEyMDExMjE0MTAuOTUyOTgtMS1qZWVoZW5nLnNpYUBzdGFyZml2ZXRlY2guY29t
+LzIwMjMxMjAxMTIxNDEwLjk1Mjk4LTMtamVlaGVuZy5zaWFAc3RhcmZpdmV0ZWNoLmNvbS8NCg0K
+UmVnYXJkcw0KTGV5IEZvb24NCg==
 
