@@ -1,110 +1,138 @@
-Return-Path: <linux-kernel+bounces-169395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2188BC81E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C28B8BC820
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBFC41C212BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:07:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB531C212CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72987127E3B;
-	Mon,  6 May 2024 07:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j6S2vSVa"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F7C67A1A;
+	Mon,  6 May 2024 07:08:14 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C92481B1;
-	Mon,  6 May 2024 07:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8445524AE;
+	Mon,  6 May 2024 07:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714979233; cv=none; b=IOoUWJoZINYDGvp18N/jKzq6cpt4/sbUsoaKVeINlhO3GUotQkwEYC3KaRdywoF8SwaNheP7rcywDVs8pK91r6FvW7iTToP44HvspW75toebdObU219BY6ArW13rmNtzlcEQR5+2E2qmfSb0WpcuzkLdjS71S48lR2x1LnU5ISQ=
+	t=1714979293; cv=none; b=pOsBlBi7weTbrDCsygxittUmUELOZvBmKelWKtrM+V3YBjuekhONFDERE+Ex00XQfFnzwgMVqxjMQwzXt5TQyeifjwVDQRZaJcNK2UvrDu96cTFKfe20nlHVrhR7ZYDk35c/K750elBf5uC7kCmvEU4BHnEuNAwiOUcZXqhwMq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714979233; c=relaxed/simple;
-	bh=/ygl80MN8pFCAtka2vGNeRmQZQPFH5Tx21QOyhP/sdw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YTBrWNaU/b5DMWIjxKQ0Ne2fWH4AE5S9TlKWny2+qCeLqVv729IITLtH5H4apwKEF5AQomuy0XTK/bPlCEw1rsNlul9z6K1cqEAWvj1Wf+f1F60Rld7IKSjIgwsk6W873nNp8Y084bGZ1k5f1V4p2cjZUEEu+0Fgk/Kxl/YkpMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j6S2vSVa; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5B373C0009;
-	Mon,  6 May 2024 07:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1714979223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mF3okb/zlCrXIKizMgfKu76xu/b0djUY7d04ZIvQ2SI=;
-	b=j6S2vSVa12Y36dfV8tSiSbHT3HtfhSkv0miIpTvodL/pMj702HSJQ9y/L1BrzHr+qwLXn6
-	v2ZyKVzBxVY7xGQtCTXTbWlD8rGppHUFKNmkECKa+Yf1VYBvrBLYTLoG7xuPT0nlDSFKTn
-	tQ7+PrQmjCcsQsxCuGd/N0KUPOwZG5vSd8hklW22nf0kovdubmuVt/SGy/3rbafk+S4FOJ
-	tzr3557EK3oB4tVti3Y4jis6NgO+W+RNz4aJ954fCkd/SayzGMqihFKlpTH/owBuA4AaJk
-	mFHMNUcOPz0toEn0zeYQqJcoHweorazXNAudn8zQUYj+d9aebS6A5a/Z6hztRg==
-Date: Mon, 6 May 2024 09:07:41 +0200 (CEST)
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-cc: Romain Gantois <romain.gantois@bootlin.com>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-    Conor Dooley <conor+dt@kernel.org>, 
-    Geert Uytterhoeven <geert+renesas@glider.be>, 
-    Magnus Damm <magnus.damm@gmail.com>, 
-    Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-    Jose Abreu <joabreu@synopsys.com>, 
-    Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-    Russell King <linux@armlinux.org.uk>, 
-    =?ISO-8859-15?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>, 
-    Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
-    devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-renesas-soc@vger.kernel.org, 
-    linux-stm32@st-md-mailman.stormreply.com, 
-    linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v5 2/7] net: stmmac: Add dedicated XPCS cleanup
- method
-In-Reply-To: <4wdcmcb2yxneynxtppestl6cp25z5xge3hfv7o47bxwpafn4cg@mtvc3ls2cxij>
-Message-ID: <ec3e6c1b-1a5e-f7c9-4782-bc8f01a67f5f@bootlin.com>
-References: <20240430-rzn1-gmac1-v5-0-62f65a84f418@bootlin.com> <20240430-rzn1-gmac1-v5-2-62f65a84f418@bootlin.com> <4wdcmcb2yxneynxtppestl6cp25z5xge3hfv7o47bxwpafn4cg@mtvc3ls2cxij>
+	s=arc-20240116; t=1714979293; c=relaxed/simple;
+	bh=ouXFlxXz/N0EJSDtJ4JAA9CLLRGoAnsAgPcAw4wQRk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sXgAZNTVdEQaKMQXqTGSyiuuIZYxg+K4dN4F2re1em7QAkjWH0jVqU+akx4EgGj2ztkWj02S6VK3CZDud5/fo94LJ02Qtmgr4G899lbwGsbTYt439k8fzOKQ7b3sdR2Cgvqy1kuLHMCO2+rm4KBUQqszWRmrG0SyHD+QsNeexUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.4] (ip5f5af40c.dynamic.kabel-deutschland.de [95.90.244.12])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 839C561E5FE01;
+	Mon,  6 May 2024 09:07:45 +0200 (CEST)
+Message-ID: <920294a9-b073-4ec5-93e9-e8135b407f9a@molgen.mpg.de>
+Date: Mon, 6 May 2024 09:07:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-GND-Sasl: romain.gantois@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] i2c: i801: Add lis3lv02d for Dell Precision M6800
+To: Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>,
+ =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Patrick_H=C3=B6hn?= <hoehnp@gmx.de>
+References: <20240312193132.26518-1-hoehnp@gmx.de>
+ <20240312194938.mxmip456xnjdlrbo@pali>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240312194938.mxmip456xnjdlrbo@pali>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Serge,
+Dear Linux folks,
 
-On Fri, 3 May 2024, Serge Semin wrote:
 
+Am 12.03.24 um 20:49 schrieb Pali Rohár:
+> On Tuesday 12 March 2024 20:31:31 Patrick Höhn wrote:
+>> On the Dell Precision M6800/OXD1M5, BIOS A26 06/13/2029, Linux prints the
+>> warning below.
+>>
+>>      i801_smbus 0000:00:1f.4: Accelerometer lis3lv02d is present on SMBus but its address is unknown, skipping registration
+>>
+>> Following the same suggestions by Wolfram Sang as for the Dell Precision
+>> 3540 [1], the accelerometer can be successfully found on I2C bus 0 at
+>> address 0x29.
 > 
-> > +void stmmac_pcs_clean(struct stmmac_priv *priv)
+> Just to note for other users in future. I2C does not have to be assigned
+> with number 0. This number is chosen by the kernel at runtime as the
+> first unused number. So in case you have VGA adapter (or GPU) for which
+> is i2c driver available and loaded + probed before i801_smbus is loaded
+> and probed then kernel would report accelerometer at different bus
+> number. On the other hand, accelerometer address on I2C bus normally
+> should not change (configurable device can change it but we should hope
+> that it does not happen).
 > 
-> Ideally it would have been great to have the entire driver fixed to
-> accept the stmmac_priv pointer as the functions argument. But this
-> would be too tiresome. Anyway seeing the PCS-setup protagonist method
-> has the net_device pointer passed I would implement the same prototype
-> for the antagonist even though it would require an additional local
-> variable. That will make the MDIO and PCS local interface-functions
-> looking alike and as if unified. That is the reason of why I made
-> stmmac_xpcs_clean() accepting the net_device pointer. 
+> The correct number of bus can be found by the i2cdetect command too:
 > 
-> Alternatively both stmmac_pcs_setup() and stmmac_pcs_clean() could be
-> converted to just accepting a pointer to the stmmac_priv instance.
+>    # i2cdetect -l | grep I801
+> 
+> For me it prints:
+> 
+>    i2c-0   unknown         SMBus I801 adapter at f040              N/A
+> 
+>>
+>>      $ echo lis3lv02d 0x29 | sudo tee /sys/bus/i2c/devices/i2c-0/new_device
+>>      lis3lv02d 0x29
+>>      $ dmesg | tail -5
+>>      [1185.385204] lis3lv02d_i2c 0-0029: supply Vdd not found, using dummy regulator
+>>      [1185.385235] lis3lv02d_i2c 0-0029: supply Vdd_IO not found, using dummy regulator
+>>      [1185.399689] lis3lv02d: 8 bits 3DC sensor found
+>>      [1185.449391] input: ST LIS3LV02DL Accelerometer as /devices/platform/lis3lv02d/input/input371
+>>      [1185.449577] i2c i2c-0: new_device: Instantiated device lis3lv02d at 0x29
+>>
+>> So, the device has that accelerometer. Add the I2C address to the
+>> mapping list, and test it successfully on the device.
+>>
+>> [1]: https://lore.kernel.org/linux-i2c/97708c11-ac85-fb62-2c8e-d37739ca826f@molgen.mpg.de/
+>> Signed-off-by: Patrick Höhn <hoehnp@gmx.de>
+> 
+> Otherwise looks good,
+> 
+> Acked-by: Pali Rohár <pali@kernel.org>
 
-I think that adapting stmmac_pcs_clean() to take a net_device struct would be 
-more appropriate since it's the simpler of the two methods. I'll implement this 
-in the next version.
+Is there anything else to do from Patrick’s side before adding the patch 
+to the git archive?
 
-Thanks,
 
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kind regards,
+
+Paul
+
+
+>> ---
+>>   drivers/i2c/busses/i2c-i801.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+>> index 2c36b36d7d51..c1fee2c61da1 100644
+>> --- a/drivers/i2c/busses/i2c-i801.c
+>> +++ b/drivers/i2c/busses/i2c-i801.c
+>> @@ -1231,6 +1231,7 @@ static const struct {
+>>   	 */
+>>   	{ "Latitude 5480",      0x29 },
+>>   	{ "Precision 3540",     0x29 },
+>> +	{ "Precision M6800",    0x29 },
+>>   	{ "Vostro V131",        0x1d },
+>>   	{ "Vostro 5568",        0x29 },
+>>   	{ "XPS 15 7590",        0x29 },
+>> --
+>> 2.43.2
 
