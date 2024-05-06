@@ -1,197 +1,161 @@
-Return-Path: <linux-kernel+bounces-169264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3A88BC5D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:41:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A538BC5EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57861F221E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:41:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 468BCB20C8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE5D4085D;
-	Mon,  6 May 2024 02:41:15 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178D7181;
-	Mon,  6 May 2024 02:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4579741741;
+	Mon,  6 May 2024 02:45:34 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC7122075;
+	Mon,  6 May 2024 02:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714963275; cv=none; b=UneGyPDbk2Zcsw7QLTQOKafwKQtcZHCeGJ7yPd2h0B95RPmV9ak3quyqvwvBCluyr5kKa8/Wrj1sLOIAv3TPjgb3XzCd4cfe8AgjxI6hghGvSagyARXNeXbIbOwuGe7uTmdkxw6gKzwYlBJI4IdF6iwDRehEYcupZI41Z95dJb8=
+	t=1714963533; cv=none; b=iX1OTyeDWJGwYHGRXXC/ajpYQVG2UTzzwUetcx/TrnjDYn9u/13bo8N4bWtflYj4yfqYZOjBOJhT0bci/UkKS46PpOTKlwD4XpLlR+T0vrpJHjvb9cMoHI0mIagv319R3FVvZ7KvtN9OTZxPtq0U/PVMJNLflPKne5lqWhzAJGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714963275; c=relaxed/simple;
-	bh=FrQ3Q4c+zpCTWdWoQPf9Jye9fRyoe4zWRs8w0j8CC9Y=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lDgi/wxx5DhRX4oZ8xKzfnkfG+NxFRgSdrW3XE5uIYExn1743XIg/PCRPzfArxeIrQmidg/24lcQlgq6jXban5IvLOWVFRslaxT0RH+OVjOKef6uawMg1FIziTEVpAP8pUo746JUlSqlfun9zpwds5O5fVDAw+t7CAwsHQ/jJhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8Bx3+tEQzhmmN8HAA--.22454S3;
-	Mon, 06 May 2024 10:41:08 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxU1ZAQzhms_MRAA--.19845S3;
-	Mon, 06 May 2024 10:41:06 +0800 (CST)
-Subject: Re: [PATCH v8 2/6] LoongArch: KVM: Add hypercall instruction
- emulation support
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org
-References: <20240428100518.1642324-1-maobibo@loongson.cn>
- <20240428100518.1642324-3-maobibo@loongson.cn>
- <CAAhV-H5xVP0+aUyq2+_XHW0=25zxuG53o=+vUV4MfKn=4tiwxA@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <dab88e08-5d56-3a65-df35-47842111a8dc@loongson.cn>
-Date: Mon, 6 May 2024 10:41:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1714963533; c=relaxed/simple;
+	bh=oOeHH2W9Cd+yFl/mMg3CVMUPul4l8dHXAZfySlsb4QU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=P0SmX4/AkYsjDvSPvog/CyuFLiwnG04NZZqBOoU0gkHW5IlWFog2CFaFK71NHIfsT9n9qneN1WJBGVET49GljAlxKoGwu5lDwEqC32nyXApLEba7Boq8rplOMoJhVCaDxpDe8wN5X5vFT0xmvzs/G/0UrjzkjgjYpbYoU1q/lCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4462jCiiD1819573, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 4462jCiiD1819573
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 May 2024 10:45:12 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 6 May 2024 10:45:12 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 6 May 2024 10:45:11 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Mon, 6 May 2024 10:45:11 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Simon Horman <horms@kernel.org>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v17 02/13] rtase: Implement the .ndo_open function
+Thread-Topic: [PATCH net-next v17 02/13] rtase: Implement the .ndo_open
+ function
+Thread-Index: AQHanHHZpNHx0voP+0CDD26jysJVP7GEr5aAgATU6AA=
+Date: Mon, 6 May 2024 02:45:11 +0000
+Message-ID: <745b2ee9e81f4904920e0e4fe6e4df89@realtek.com>
+References: <20240502091847.65181-1-justinlai0215@realtek.com>
+ <20240502091847.65181-3-justinlai0215@realtek.com>
+ <20240503085257.GM2821784@kernel.org>
+In-Reply-To: <20240503085257.GM2821784@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5xVP0+aUyq2+_XHW0=25zxuG53o=+vUV4MfKn=4tiwxA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxU1ZAQzhms_MRAA--.19845S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxGF17Cw18XrWrCF13AFyruFX_yoWrXFW3pF
-	ykCrn5Ga18KryxCF13t3Z0grnxArs5Kr129Fy7K34jyFsFqr18tr4kKrZ8uFy5Gw4rZF1S
-	qFyFqw13uF4UtacCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4AhLUUUUU
+X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
+X-KSE-AntiSpam-Interceptor-Info: fallback
+X-KSE-Antivirus-Interceptor-Info: fallback
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
+>=20
+>=20
+> On Thu, May 02, 2024 at 05:18:36PM +0800, Justin Lai wrote:
+> > Implement the .ndo_open function to set default hardware settings and
+> > initialize the descriptor ring and interrupts. Among them, when
+> > requesting irq, because the first group of interrupts needs to process
+> > more events, the overall structure will be different from other groups
+> > of interrupts, so it needs to be processed separately.
+> >
+> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+>=20
+> Hi Justin,
+>=20
+> some minor feedback from my side.
+>=20
+> > ---
+> >  .../net/ethernet/realtek/rtase/rtase_main.c   | 419 ++++++++++++++++++
+> >  1 file changed, 419 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > index 5ddb5f7abfe9..b286aac1eedc 100644
+> > --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > @@ -130,6 +130,293 @@ static u32 rtase_r32(const struct rtase_private *=
+tp,
+> u16 reg)
+> >       return readl(tp->mmio_addr + reg);  }
+> >
+> > +static void rtase_set_rxbufsize(struct rtase_private *tp) {
+> > +     tp->rx_buf_sz =3D RTASE_RX_BUF_SIZE; }
+>=20
+> I'm a big fan of helpers, but maybe it's better to just open-code this on=
+e as it is
+> trivial and seems to only be used once.
 
+OK, I understand what you mean, I will modify it.
+>=20
+> > +
+> > +     rtase_set_rxbufsize(tp);
+> > +
+> > +     ret =3D rtase_alloc_desc(tp);
+> > +     if (ret)
+> > +             goto err_free_all_allocated_mem;
+> > +
+> > +     ret =3D rtase_init_ring(dev);
+> > +     if (ret)
+> > +             goto err_free_all_allocated_mem;
+> > +
+> > +     rtase_hw_config(dev);
+> > +
+> > +     if (tp->sw_flag & RTASE_SWF_MSIX_ENABLED) {
+> > +             ret =3D request_irq(ivec->irq, rtase_interrupt, 0,
+> > +                               dev->name, ivec);
+> > +             if (ret)
+> > +                     goto err_free_all_allocated_irq;
+>=20
+> This goto jumps to code that relies on i to set the bounds on a loop.
+> However, i is not initialised here. Perhaps it should be set to 1?
+>=20
+> Flagged by Smatch, and clang-18 W=3D1 builds.
 
-On 2024/5/6 上午9:54, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> On Sun, Apr 28, 2024 at 6:05 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> On LoongArch system, there is hypercall instruction special for
->> virtualization. When system executes this instruction on host side,
->> there is illegal instruction exception reported, however it will
->> trap into host when it is executed in VM mode.
->>
->> When hypercall is emulated, A0 register is set with value
->> KVM_HCALL_INVALID_CODE, rather than inject EXCCODE_INE invalid
->> instruction exception. So VM can continue to executing the next code.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   arch/loongarch/include/asm/Kbuild      |  1 -
->>   arch/loongarch/include/asm/kvm_para.h  | 26 ++++++++++++++++++++++++++
->>   arch/loongarch/include/uapi/asm/Kbuild |  2 --
->>   arch/loongarch/kvm/exit.c              | 10 ++++++++++
->>   4 files changed, 36 insertions(+), 3 deletions(-)
->>   create mode 100644 arch/loongarch/include/asm/kvm_para.h
->>   delete mode 100644 arch/loongarch/include/uapi/asm/Kbuild
->>
->> diff --git a/arch/loongarch/include/asm/Kbuild b/arch/loongarch/include/asm/Kbuild
->> index 2dbec7853ae8..c862672ed953 100644
->> --- a/arch/loongarch/include/asm/Kbuild
->> +++ b/arch/loongarch/include/asm/Kbuild
->> @@ -26,4 +26,3 @@ generic-y += poll.h
->>   generic-y += param.h
->>   generic-y += posix_types.h
->>   generic-y += resource.h
->> -generic-y += kvm_para.h
->> diff --git a/arch/loongarch/include/asm/kvm_para.h b/arch/loongarch/include/asm/kvm_para.h
->> new file mode 100644
->> index 000000000000..d48f993ae206
->> --- /dev/null
->> +++ b/arch/loongarch/include/asm/kvm_para.h
->> @@ -0,0 +1,26 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef _ASM_LOONGARCH_KVM_PARA_H
->> +#define _ASM_LOONGARCH_KVM_PARA_H
->> +
->> +/*
->> + * LoongArch hypercall return code
->> + */
->> +#define KVM_HCALL_STATUS_SUCCESS       0
->> +#define KVM_HCALL_INVALID_CODE         -1UL
->> +#define KVM_HCALL_INVALID_PARAMETER    -2UL
->> +
->> +static inline unsigned int kvm_arch_para_features(void)
->> +{
->> +       return 0;
->> +}
->> +
->> +static inline unsigned int kvm_arch_para_hints(void)
->> +{
->> +       return 0;
->> +}
->> +
->> +static inline bool kvm_check_and_clear_guest_paused(void)
->> +{
->> +       return false;
->> +}
->> +#endif /* _ASM_LOONGARCH_KVM_PARA_H */
->> diff --git a/arch/loongarch/include/uapi/asm/Kbuild b/arch/loongarch/include/uapi/asm/Kbuild
->> deleted file mode 100644
->> index 4aa680ca2e5f..000000000000
->> --- a/arch/loongarch/include/uapi/asm/Kbuild
->> +++ /dev/null
->> @@ -1,2 +0,0 @@
->> -# SPDX-License-Identifier: GPL-2.0
->> -generic-y += kvm_para.h
-> This file shouldn't be removed.
-yes, uapi kvm_param.h is needed for Loongarch, and there will be problem 
-if it is removed. And it should kept unchanged.
-
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
->> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
->> index ed1d89d53e2e..923bbca9bd22 100644
->> --- a/arch/loongarch/kvm/exit.c
->> +++ b/arch/loongarch/kvm/exit.c
->> @@ -685,6 +685,15 @@ static int kvm_handle_lasx_disabled(struct kvm_vcpu *vcpu)
->>          return RESUME_GUEST;
->>   }
->>
->> +static int kvm_handle_hypercall(struct kvm_vcpu *vcpu)
->> +{
->> +       update_pc(&vcpu->arch);
->> +
->> +       /* Treat it as noop intruction, only set return value */
->> +       vcpu->arch.gprs[LOONGARCH_GPR_A0] = KVM_HCALL_INVALID_CODE;
->> +       return RESUME_GUEST;
->> +}
->> +
->>   /*
->>    * LoongArch KVM callback handling for unimplemented guest exiting
->>    */
->> @@ -716,6 +725,7 @@ static exit_handle_fn kvm_fault_tables[EXCCODE_INT_START] = {
->>          [EXCCODE_LSXDIS]                = kvm_handle_lsx_disabled,
->>          [EXCCODE_LASXDIS]               = kvm_handle_lasx_disabled,
->>          [EXCCODE_GSPR]                  = kvm_handle_gspr,
->> +       [EXCCODE_HVC]                   = kvm_handle_hypercall,
->>   };
->>
->>   int kvm_handle_fault(struct kvm_vcpu *vcpu, int fault)
->> --
->> 2.39.3
->>
->>
-
+Thank you for telling me the problem here, I will modify it.
+>=20
+> > +
+> > +             /* request other interrupts to handle multiqueue */
+> > +             for (i =3D 1; i < tp->int_nums; i++) {
+> > +                     ivec =3D &tp->int_vector[i];
+> > +                     snprintf(ivec->name, sizeof(ivec->name),
+> > + "%s_int%i", tp->dev->name, i);
+>=20
+> nit: This line could trivially be split into two lines,
+>      each less than 80 columns wide.
+>=20
+I will check if there are other similar issues and make corrections.
 
