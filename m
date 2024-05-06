@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-169643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C443A8BCBA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:08:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4376A8BCBAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9CC1F22DC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 421A2B21868
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D7B14265F;
-	Mon,  6 May 2024 10:08:21 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED2F142E66;
+	Mon,  6 May 2024 10:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fxhWNI7x"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB8B140366
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002C1428EA
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714990101; cv=none; b=OvcTVJ8lisTeQ/iOgQynNppt/W1dciiQ6tpLBdgBcyF4EAo2uxdSXWYWHU9TuZKQ4HxWZiZ9fO0WmDnb1lwx4Uz9JON/6VbElHz+2suaF7JpEjgmCj2zD9u+0YqlOt4gOIyq6zXukemXthkzewzTH74mOYFdPpKuUcun/Xus4hc=
+	t=1714990174; cv=none; b=f6D+B/kAxXx7j+7xMbEi9qGr3fU95T7k2fUSfsSaX7IYWRie3ePDlfl7vTNiaOqjY5uZtIdFug0WOXSbP+KlAPGpgbWbbOSrjnE4OHt0avZuFmILYvswcRhgm9aPGdQVlFE4QEFzrpy+k31Yq2GRQaPT/DodAa6+9aQgmc02UjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714990101; c=relaxed/simple;
-	bh=5tt9UHxkjMRw9ZpmjC2bLDh0xKGB94yXOmNXH9DS2Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oXkjcyX/NdEpxjdBk395TQnU3Wy0Gg7ESVwnvPHJYuKSIpkgY69QrmkLY7+hnEZdC59ONdToqlg4BpAuKi3Y76cknmfT9FIyEpKcfpDAy4bT7i52fvgM506m6crQipM+t5i+nsBxdHTNeENYrFhMdrsYlz5w6V2yeuUqEBsWZC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8b6baaea0b9011ef9305a59a3cc225df-20240506
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.37,REQID:a472e662-3e4d-42be-9da1-17e8815f3882,IP:15,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:1
-X-CID-INFO: VERSION:1.1.37,REQID:a472e662-3e4d-42be-9da1-17e8815f3882,IP:15,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:1
-X-CID-META: VersionHash:6f543d0,CLOUDID:e470eda73e5737a57e1e885eb669231e,BulkI
-	D:240506172954AHTO5EQK,BulkQuantity:1,Recheck:0,SF:66|38|24|17|19|43|74|64
-	|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BE
-	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 8b6baaea0b9011ef9305a59a3cc225df-20240506
-X-User: lijun01@kylinos.cn
-Received: from [172.30.60.202] [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <lijun01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1779528453; Mon, 06 May 2024 18:08:11 +0800
-Message-ID: <cbb24599-8b40-cd27-6ce7-215476c0ddf4@kylinos.cn>
-Date: Mon, 6 May 2024 18:08:10 +0800
+	s=arc-20240116; t=1714990174; c=relaxed/simple;
+	bh=c0xjj+ANGz4MxBBiLBwLKEfespYcrDozzderIyQtxCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tA5K6lcIk0jgfNDjhSWpYiGQX/t1L8kchUfs3d3SHO7nikOSQWq6Xn/IawSQqfLKkTz8vmjHAT5m+1NwTxvgADTzOti43ZOld+2kwFQ1edPuh3kZ+3uZbgXd3YoqNzhXTGGXvY3TzmFCKUOSDqmUpr+NT7ws5FQdduMmxxSuCTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fxhWNI7x; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8261040E0244;
+	Mon,  6 May 2024 10:09:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id y3q0j_RtuwX7; Mon,  6 May 2024 10:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1714990164; bh=yDr1d+Rpi28/rr/NTeMKaEESBQG5/hCp8YbpHq/FNGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fxhWNI7xGUuq0TG29EfWKa5XsWgrwrDf2hRgnywI43wzMluTYjWUhLK5ZxvxRioSg
+	 n7H3ltxQAeorYssA1r1X2pSBy+frVvUUNI1WbivXZTbsHSotS/Coyw1yQBJzPzQ81K
+	 PIceAxUp03s4B31aKNKOS1h4sZWFk4O/rr4CXtFetht3Uz1FzNlSaFgOvAY66S7sIf
+	 glW3SIh/ArL5JI0cksjKl10wv/tO8Ex5uk5ALqRXdSXxymFykLCo2+cWcY6qkomyDg
+	 aSxI/jHkB+R31dXBir8T4sZfAupVHAMk5P6hcZiiDsJurW00ReYO6aFWx0LIdHFGHf
+	 pOtp86zOzXxbrn1VUeglMRPAw3zwufJi7nxNmozsO87CzLcgsz7OpugYjUYcWu3HgV
+	 acKjH5VcCci/ltJLmIe20OIY3Z4HmHRcW8QbLuDIcYNqvSbbn6U+/z3SCc7yzRecqf
+	 UslWq7pgPFWzqVfYbkjxuBqVIkCcOAZZz2ZqB6/1G19g3o/copT54byFAmjy4rr3QX
+	 DhVNKV2AjqMoEkWelMJxSuf3o6sLo6BTcCZjDkar05YAcGYgldbdvjirC3NbDrRHU0
+	 olZtmUhC/f89T1ARPEPyCPf8b29nnqeZ/Kya3rAuUkcX2kVPmajVL72haNoSGRVZel
+	 xemUn1/hlC8sVdWKVXj2xYC4=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E38A340E01A1;
+	Mon,  6 May 2024 10:09:09 +0000 (UTC)
+Date: Mon, 6 May 2024 12:09:05 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v4 05/15] x86/sev: Use kernel provided SVSM Calling Areas
+Message-ID: <20240506100905.GFZjisQTQwbkv2eKsh@fat_crate.local>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <07266b47e749267ef9a9ccbc9e8e9df78ed54857.1713974291.git.thomas.lendacky@amd.com>
+ <20240503103407.GSZjS9n-XMMKi5ZOek@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] LoongArch: Update the flush cache policy
-To: Xi Ruoyao <xry111@xry111.site>, chenhuacai@kernel.org, kernel@xen0n.name,
- lvjianmin@loongson.cn, dongbiao@loongson.cn, zhangbaoqi@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240506092419.4109941-1-lijun01@kylinos.cn>
- <8a8135eb0f1dc724cfbb4402dc6daf08db5b0bc7.camel@xry111.site>
-Content-Language: en-US
-From: lijun <lijun01@kylinos.cn>
-In-Reply-To: <8a8135eb0f1dc724cfbb4402dc6daf08db5b0bc7.camel@xry111.site>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240503103407.GSZjS9n-XMMKi5ZOek@fat_crate.local>
 
-volatile prevents compiler optimization by allowing the compiler
+Ok,
 
-  to reread the address value of addr every time
+I think this is very readable and clear what's going on:
 
-在 2024/5/6 17:28, Xi Ruoyao 写道:
-> On Mon, 2024-05-06 at 17:24 +0800, Li Jun wrote:
->> fix when LoongArch s3 resume, Can't find image information
->>
->> Signed-off-by: Li Jun <lijun01@kylinos.cn>
->> Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
->> Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
->> Signed-off-by: Biao Dong <dongbiao@loongson.cn>
->> ---
->>   arch/loongarch/mm/cache.c | 24 +++++++++++++++++++++++-
->>   1 file changed, 23 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/loongarch/mm/cache.c b/arch/loongarch/mm/cache.c
->> index 6be04d36ca07..52872fa0e5d8 100644
->> --- a/arch/loongarch/mm/cache.c
->> +++ b/arch/loongarch/mm/cache.c
->> @@ -63,6 +63,28 @@ static void flush_cache_leaf(unsigned int leaf)
->>   	} while (--nr_nodes > 0);
->>   }
->>   
->> +static void flush_cache_last_level(unsigned int leaf)
->> +{
->> +	u64 addr;
->> +	int i, j, nr_nodes, way_size;
->> +	struct cache_desc *cdesc = current_cpu_data.cache_leaves +
->> leaf;
->> +
->> +	nr_nodes = loongson_sysconf.nr_nodes;
->> +
->> +	addr = CSR_DMW1_BASE;
->> +	iocsr_write32(0x1, 0x280);
->> +	way_size = cdesc->sets * cdesc->linesz;
->> +	do {
->> +		for (i = 0; i < (cdesc->ways * 3); i++) {
->> +			for (j = 0; j < (cdesc->sets); j++) {
->> +				*(volatile u32 *)addr;
-> ??? what does this line do?
->
+static __always_inline void issue_svsm_call(struct svsm_call *call, u8 *pending)
+{
+        register unsigned long rax asm("rax") = call->rax;
+        register unsigned long rcx asm("rcx") = call->rcx;
+        register unsigned long rdx asm("rdx") = call->rdx;
+        register unsigned long r8  asm("r8")  = call->r8;
+        register unsigned long r9  asm("r9")  = call->r9;
+
+        call->caa->call_pending = 1;
+
+        asm volatile("rep; vmmcall\n\t"
+                     : "+r" (rax), "+r" (rcx), "+r" (rdx), "+r" (r8), "+r" (r9));
+
+        xchg(pending, 1);
+
+        call->rax_out = rax;
+        call->rcx_out = rcx;
+        call->rdx_out = rdx;
+        call->r8_out = r8;
+        call->r9_out = r9;
+}
+
+and the asm looks ok but the devil's in the detail.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
