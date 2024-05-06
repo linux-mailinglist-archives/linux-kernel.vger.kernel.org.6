@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-169893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7099D8BCF14
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B968BCF12
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260A31F22F87
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11DB21C2280B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF2379B9C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE6F78C90;
 	Mon,  6 May 2024 13:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BSUoJIEv"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Dxtc3Iua"
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DE478C75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3750978C83
 	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715002503; cv=none; b=tz7hkXJjO1yD7n2GinJ+I7p+7SC8PGynNfwbJxiBmoQYi6swI541lqRAPsxvvMoyCHPQZ3M9Iu841LlYGgEqu81uOXY18kfBVL3wcuPpAnbDrKbPpwBxxWs+sWoT7LOFdzfHVEvCh7Ji1uoHCds/hzTBW4KLOWH1vduMrL9XEzs=
+	t=1715002502; cv=none; b=HBggob7bzLsSoOjD2QCaHB8Y/JxRWzc6BE409f1d7OnI5SQbwvA/r+UfIYL706OOHDlNr7UYjwAys+pgO0QP9Ep3kfstKdln2QopfgrtaSIYaejP7TOumfIBUaD9WnPu71iAJ+at0A9bqBHwU1nKBgTJu21VeVvdgsOm/AFhIgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715002503; c=relaxed/simple;
-	bh=6iZyu6h2471MLh5Wb1cORQD9zmmQ2O6P79Od0ztmw3c=;
+	s=arc-20240116; t=1715002502; c=relaxed/simple;
+	bh=QH50Imua83pGsyl2QgedDICwvqnyemDunG+FR3ORpjw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OoRe5sVn6eFsJUTSea+KzkkBV5AE+45GACMsMXpB2jvO+ZTkK9jtyYPiW8oGWTuflzYy1Ar4nT8ocDtcEGSy6s5T4fSUHG7FFZvGmVHmYinl2vsWQbNooufBPkeb3n5q4LVoWzyN50kIeNELGeK8mG2g2borEkX69X5FiPE2zk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BSUoJIEv; arc=none smtp.client-ip=185.132.182.106
+	 MIME-Version:Content-Type; b=mrslqC/x9wFxxPzRY61wAytPWH+rPI4KoEvuWpp5ISX0+ppXosVAERa+G/LTfehjwSk60I5I8a9lsC+pyisF/7FJt/Xzm29x6FxxYMDclzrfAeNPux9dbSRDKpqA3qiBfCEgXITxMsG8ic08G5rEZxAjuOgEkEurSjpmFxMf6Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Dxtc3Iua; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 446DYJbw021791;
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 446BJ1F0003880;
 	Mon, 6 May 2024 15:34:49 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
 	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=POWZoUc0X8Boorq4SPNqj49r2vjDIbLIFmBbp8SfjUo=; b=BS
-	UoJIEv78xSTkl+k4XfurkjtkimJOSKKwn/5FxGIf8z7BMfIbeYQwsqFJaqWNbT9E
-	IOYwtBTXi1bt9UaAZqOZ9WObg8U9xdoibJFP5aZTzdOzCpoFt71z9zBysVCdQU5X
-	pU+5wtGUWYGNk/r5CjKEt7NyiFQYRGEeVhFLi3NBcazYVijDdvB4sWpvg1MLpZBA
-	+zUKOd+Iiw+BOykzXnmnnexzBKOrSM3j2gfESR+dCEApwLa3ihdcYZZvRTbrDuJp
-	g8dl2fX/mNqyo/M6Hpb9otuAq6bZLntzlEHaHxf6UC0tYekWwrDjm2aBC8AonhXp
-	Ed72alOVSYsF+9ElnRZw==
+	selector1; bh=e0iJNwbkjqx7aPApDiTXKG/i88K6O8VACabscAgkWYE=; b=Dx
+	tc3Iuak1QrRVHerDv/Rx1mXzRRji1UXd5mJTR59p71PONsNDULWW7xoNwOiyQF+V
+	Kdk4LehMHol81uUf3u/PxHIRGlWxvbZx17Ly0IUnWjDBZUAmQICPxEUTVn6dTOP4
+	/Ru1jBNGpSfobk4dWt0ozgVCZJoKZFprYmBCYKoeMzYzqi9U8MgNoZG82w75rjmk
+	mQrQcet8y5A+QsiWJy/FHqv6dXqEAg6f+SAMMe5TjwbEPN6ADA9eMsWgY6aGkLs0
+	mIRWpmtghcVZuao2UD0VdZ/z8yTYA9kaCfe5kQV8hRtN3xFFiKXlg/U8IrLLlGOn
+	zJqMnF1rQwwwxISrLvdw==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwaeg7kqa-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwcbx785t-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Mon, 06 May 2024 15:34:49 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 54C7040046;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D8A8540048;
 	Mon,  6 May 2024 15:34:45 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6F60C2207A5;
-	Mon,  6 May 2024 15:34:13 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0F1852207A7;
+	Mon,  6 May 2024 15:34:14 +0200 (CEST)
 Received: from localhost (10.48.87.171) by SHFDAG1NODE1.st.com (10.75.129.69)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 6 May
@@ -68,9 +68,9 @@ CC: Antonio Borneo <antonio.borneo@foss.st.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 7/8] ARM: stm32: allow build irq-stm32mp-exti driver as module
-Date: Mon, 6 May 2024 15:32:55 +0200
-Message-ID: <20240506133256.948712-8-antonio.borneo@foss.st.com>
+Subject: [PATCH 8/8] arm64: Kconfig: allow build irq-stm32mp-exti driver as module
+Date: Mon, 6 May 2024 15:32:56 +0200
+Message-ID: <20240506133256.948712-9-antonio.borneo@foss.st.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240506133256.948712-1-antonio.borneo@foss.st.com>
 References: <20240506133256.948712-1-antonio.borneo@foss.st.com>
@@ -93,21 +93,21 @@ module or built-in.
 
 Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 ---
- arch/arm/mach-stm32/Kconfig | 1 -
+ arch/arm64/Kconfig.platforms | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 41bfcf31f8a76..8c8d5fc1217f6 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -11,7 +11,6 @@ menuconfig ARCH_STM32
- 	select CLKSRC_STM32
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index da85e0d49686f..24335565bad56 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -302,7 +302,6 @@ config ARCH_STM32
+ 	select GPIOLIB
  	select PINCTRL
- 	select RESET_CONTROLLER
--	select STM32MP_EXTI if ARCH_MULTI_V7
- 	select STM32_EXTI if ARM_SINGLE_ARMV7M
- 	help
- 	  Support for STMicroelectronics STM32 processors.
+ 	select PINCTRL_STM32MP257
+-	select STM32MP_EXTI
+ 	select ARM_SMC_MBOX
+ 	select ARM_SCMI_PROTOCOL
+ 	select COMMON_CLK_SCMI
 -- 
 2.34.1
 
