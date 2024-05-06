@@ -1,484 +1,170 @@
-Return-Path: <linux-kernel+bounces-169208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1698BC4CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:05:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE208BC4DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1825D1C209E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278771F21C62
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F836A47;
-	Mon,  6 May 2024 00:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA0C8F77;
+	Mon,  6 May 2024 00:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHZQxzPC"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="YJtQ3EPk"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3253A181;
-	Mon,  6 May 2024 00:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2914B1C3D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 00:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714953898; cv=none; b=G5QoGb79SHPaYWc9ePqARcaZ1V5g0M2iEKUUXrK3vOED7BgXt2bn+S+uJg6Jsq0tichHEWQJ2TjUtebIBjbdoQzRgML0hD0BQkQkTBzasy5I+nHRhYSUsGuvhEoRMfWcFnBboe/bySNEnArHqRuWPkrUnm6jXFvz19DKJdRF55g=
+	t=1714955363; cv=none; b=tvla7nbyKva059jdDfBlK2poE4By6tRTIReyuh0rtE3oRtXZp6oytMoNWnvFkpPWYESzT1OF/k1A0s4ymFi+cYX7GXxug6aMCUufv+Vnm5CXr9F1bkAD45v2gzG1M4diqn6a2a5C0m6RPjXggTCZd3sSA5Q9+sAfaBlDChJ/s4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714953898; c=relaxed/simple;
-	bh=fMQGI+0VWafu7jmW8fCe7yZLVFpbWobr9a/y9JQVs5Y=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UeN76eeYP2clpVq/phCH0g+EBqQBgJx5PsgT58vxJhskMSZvGgsDvpIicnz4zoHHsvfeesnJX3Yx4GmO5jnfAGNBsbJ+cyGPNv/WgcZczNSdpNe1MAe5b0zAkObIH5gb5cYT9nIqhTj5KZsn9DFceWNeYMAKevPcv0dpb8m7gJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHZQxzPC; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59cdf7cd78so79966766b.0;
-        Sun, 05 May 2024 17:04:55 -0700 (PDT)
+	s=arc-20240116; t=1714955363; c=relaxed/simple;
+	bh=7p83fI6SjhbSz9whdN8AjeYm5Iaq6UXmW/wjThWyv6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AAWjX8293zTbaAmEyft0kizg66fM9t2PYfgBojhot8AeYJu5rnPMVdXiJ25kOIMOc9lnV/Y2Kj9J+A/w4kUc/db6GW5oO+X0b+hzEU/LUbFku2KuhsqLo1Ht6YWtz1pUXhNFPzU7I8EfvZMqTByqdzeIUDu/7LYKQhq6vY/hofI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=YJtQ3EPk; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-5f80aa2d4a3so893857a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 17:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714953894; x=1715558694; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pktbhRd3bzgtNej0hoCzbOCaB77GzfsVgnJrQ4Ck8pU=;
-        b=LHZQxzPCHwqNDZGtRljAJl1zaXP28qXiH2VORkKkh6YuYIMu0mPU5rqNj0uasIaLsn
-         WyBWuLBmyFnZvNIgw/8YADDqbyLrZd2CyObPbRbQXagJkJUpuWkVdRuNlCHdjLS42Gi8
-         HNAABVmKlQRbPqXnCivbqx2ChSS6W87ug7eRBuSAQEiaDZ3za7zkz7QrIyUSx63HMylG
-         AixI6R1B20ND9v8w/iZXLjWsM+X4M9RHnHTwmSa5KoghzYcZH7raPoqmyT7hrDhGwqYA
-         D6OY+9j679AzbD49dqYlGn95qVoaf3vUGw2YRc/JwzuyiovtnAIE8oKY/6R/CuK362LB
-         6eaQ==
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1714955361; x=1715560161; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sTixdwfAlIVssw/yTwe1uZ1trqj6K9Ho7zGTIsCsG3k=;
+        b=YJtQ3EPk7IxrNvgo8weclRLgIUIWkSOI2Uep1o1M/rk9e0dB+mVfcDL2Ra/RKgbRaV
+         4yD0nNAz17zHnC1JbqzasjATt3Y4kUqFfBfl4uDx/zyyAwmCgdWBqfnXG64JOZ3VVasD
+         TpWrwpoJPMZ1aCGn4xBszZrjTzvv5gHLPW4FLW7M2xKyeRN3dmeqwv7P7Qzj6PulULEp
+         iKKq9LW6PdJR11ebmc1NoRMdfQ6vYQYYHA7xQiZMqlhAGok5r3mf8gMd5KZKadxtoFqx
+         EMNG1nXwcBwffehAbXoAJ9b4BN0JZNUl2iEcpz1iMRyOz+EEFNblqZD7QukB/0M0HXcx
+         nJhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714953894; x=1715558694;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1714955361; x=1715560161;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pktbhRd3bzgtNej0hoCzbOCaB77GzfsVgnJrQ4Ck8pU=;
-        b=NF9Gtrd42yQXsIyWEQgvesXw/S8Qih2KJh3AWP+UR3VRyouWQ77C0R6o5jP1rYUQEz
-         yNkfKeaGR/zd2+Yvho5giTe9/OQ4d+4zTq7tVT8aQ1+pc/Ne2GxYp/jH+zNxCkJcXSHQ
-         8q0zBMNLLDnOHycrqp+ql9VqdGIWr3/CwGCjx7aAFyooWnugs5+fefPjq5k5P3b+MZCe
-         rXkFp2PSzP4gsCxQgxf0hIes7/eRgMr+8d6OrXukWSiq6jwgNFz/AuzGBqGr814HuK+9
-         Om5Q4CgBllq1/qTUpwMlqwm8w4A6+90LbmmTspf9j86qOAuRo7pFF5BKcre7azcbWryM
-         UUKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWgdr8923aSMNkW+8ugrxFr0ZsyS8w7QyZ3IEjmTm7lKvP9zW1GCBqBAVg/f/6NR/0133KV8UF1MVuhdMzqplhzWMTuzBL+wm5BOZ/Zlk2UEihNWY2jm2ShBVDo1wBtCqo0JlNicSD
-X-Gm-Message-State: AOJu0YysEH1Zi8BoKfyjYd0Wt5PNRyLadb9k61sJ1z6V0pM4HvDZ12io
-	QNv8oObpz3blfCQKNm4/nmQ/fPJbSwu1NNd22KSCfNbywqmKoGIK
-X-Google-Smtp-Source: AGHT+IGNVXJtRV+OOpbW8X4jim49tKqyBzMT4neJuAAWTVVynypjG4/S+PKw6BZWdJQyFFpfXZ0NBQ==
-X-Received: by 2002:a17:907:9493:b0:a59:bae0:b12a with SMTP id dm19-20020a170907949300b00a59bae0b12amr2237295ejc.63.1714953894285;
-        Sun, 05 May 2024 17:04:54 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:7a5f:ec16:256e:4660])
-        by smtp.gmail.com with ESMTPSA id ao18-20020a170907359200b00a59bda080ffsm1503700ejc.194.2024.05.05.17.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 17:04:53 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Mon, 6 May 2024 02:04:52 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
-	mazziesaccount@gmail.com, ak@it-klinger.de,
-	petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
-	linus.walleij@linaro.org, semen.protsenko@linaro.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/10] iio: pressure: bmp280: Improve indentation and
- line wrapping
-Message-ID: <20240506000452.GD17986@vamoiridPC>
-References: <20240429190046.24252-1-vassilisamir@gmail.com>
- <20240429190046.24252-2-vassilisamir@gmail.com>
- <20240505195155.0c682ec2@jic23-huawei>
+        bh=sTixdwfAlIVssw/yTwe1uZ1trqj6K9Ho7zGTIsCsG3k=;
+        b=AX7KNWYQIaBuqDH1rMQJXXY3rcieLW96wbqK6co1XyIrvmkpghU1yuRILn022bpgAd
+         GuUjWqI4eeYaQH6nzbGW39qLyszCJoo75Te4VV0z4KnAs/jMRoelPqPe7IyYsfP2GMQ3
+         EHkxBSBLORvTmlr85GU7gEyvQHquTgSCFyBIbojdp6mVkkLnd8pFJGzeARvCstvpiq0n
+         Y3x9TXDO1kQPW3lmlSsPA+piMyDQ/nUDiZZtS1Lng32aEf6dDs7J7g9wA2TaP7KrHSNV
+         ptfbA4VYzxd7WAh6zGf0gJpez0/4Hn86b0u4lcniqIFQChlmo8lPR1KDS2VuAH0w6lWR
+         OIvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOk358tW6DgHk/uWP3/TyqSrd+Zt8jOGF+IBN08jNM+YYMcnIRaXspLwAkLndNb8UEoa0iqOUQqnUAMUVQqraqjTfIvCYIWWuLfxkW
+X-Gm-Message-State: AOJu0Yztnbbe/Ma8UIim/zo2GrkaYwTJJGSF5B+eQ5m13YvUe+lEX27K
+	fTheY0j5EkBP3fyKk/Vqas4zCxziLABme9CtR6Dg4KY9LRwpBB5XxhcV5cPm+eg=
+X-Google-Smtp-Source: AGHT+IFapiyynwMzWBFC3qoHSlJe6Vp0gcSIQLTrnjL4T2m4HyoHAt77UaMOEYoyby7VMZX56YX6rQ==
+X-Received: by 2002:a17:90a:d30a:b0:2aa:c2ba:3758 with SMTP id p10-20020a17090ad30a00b002aac2ba3758mr8212757pju.42.1714955361360;
+        Sun, 05 May 2024 17:29:21 -0700 (PDT)
+Received: from [192.168.1.15] (174-21-160-85.tukw.qwest.net. [174.21.160.85])
+        by smtp.gmail.com with ESMTPSA id h4-20020a17090a710400b002b1314ba8c0sm8708252pjk.57.2024.05.05.17.29.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 17:29:20 -0700 (PDT)
+Message-ID: <306cf793-6f96-4a22-aca0-53c0ccefc0a1@davidwei.uk>
+Date: Sun, 5 May 2024 17:29:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240505195155.0c682ec2@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next v8 07/14] page_pool: devmem support
+Content-Language: en-GB
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Amritha Nambiar <amritha.nambiar@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+ Kaiyuan Zhang <kaiyuanz@google.com>, Christian Brauner <brauner@kernel.org>,
+ Simon Horman <horms@kernel.org>, David Howells <dhowells@redhat.com>,
+ Florian Westphal <fw@strlen.de>, Yunsheng Lin <linyunsheng@huawei.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
+ Arseniy Krasnov <avkrasnov@salutedevices.com>,
+ Aleksander Lobakin <aleksander.lobakin@intel.com>,
+ Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Richard Gobert <richardbgobert@gmail.com>,
+ Sridhar Samudrala <sridhar.samudrala@intel.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Johannes Berg <johannes.berg@intel.com>, Abel Wu <wuyun.abel@bytedance.com>,
+ Breno Leitao <leitao@debian.org>, Pavel Begunkov <asml.silence@gmail.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
+References: <20240403002053.2376017-1-almasrymina@google.com>
+ <20240403002053.2376017-8-almasrymina@google.com>
+ <8357256a-f0e9-4640-8fec-23341fc607db@davidwei.uk>
+ <ZjH1hO8qJgOqNKub@infradead.org>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <ZjH1hO8qJgOqNKub@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, May 05, 2024 at 07:51:55PM +0100, Jonathan Cameron wrote:
-> On Mon, 29 Apr 2024 21:00:37 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+On 2024-05-01 00:55, Christoph Hellwig wrote:
+> On Fri, Apr 26, 2024 at 05:17:52PM -0700, David Wei wrote:
+>> On 2024-04-02 5:20 pm, Mina Almasry wrote:
+>>> @@ -69,20 +106,26 @@ net_iov_binding(const struct net_iov *niov)
+>>>   */
+>>>  typedef unsigned long __bitwise netmem_ref;
+>>>  
+>>> +static inline bool netmem_is_net_iov(const netmem_ref netmem)
+>>> +{
+>>> +#if defined(CONFIG_PAGE_POOL) && defined(CONFIG_DMA_SHARED_BUFFER)
+>>
+>> I am guessing you added this to try and speed up the fast path? It's
+>> overly restrictive for us since we do not need dmabuf necessarily. I
+>> spent a bit too much time wondering why things aren't working only to
+>> find this :(
 > 
-> > Fix indentations that are not following the standards, remove
-> > extra white lines and add missing white lines.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> 
-> Possibly some reviewers will feel one or two of these are a little over zealous,
-> but this does both improve things and bring consistency to this code.
-> 
-> I'll pick up some of these cleanups now (maybe the whole set but who knows)
-> to reduce what is left if we end up with a v6.
-> 
-> Applied this one to the togreg branch of iio.git and pushed out as testing
-> for 0-day to see if we missed anything,
-> 
-> Thanks,
-> 
-> Jonathan
-> 
+> So what else do you need?  I was assured last round that nothing but
+> dmabuf and potentially the huge page case (that really just is the page
+> provider) would get added.
 
-Hi Jonathan,
+I'm using userspace memory so having this gated behind
+CONFIG_DMA_SHARED_BUFFER doesn't make sense for us.
 
-I noticed that, another commit for this driver has been accepted here [1],
-which will affect some patches of this series that I am adding. It's not
-difficult at all to apply changes to my patches with respect to this new
-addition. Should I move on with a v6 without taking into consideration
-this change, and if everything is finally approved, I can send
-later a v7 with only the changes needed for this new commit?
-
-Cheers,
-Vasilis
-
-[1] https://lore.kernel.org/linux-iio/043f2be49df3c11152aaf32fc5467ed43fd59faa.camel@gmail.com/T/#t
-
-> > ---
-> >  drivers/iio/pressure/bmp280-core.c | 108 ++++++++++++++++-------------
-> >  drivers/iio/pressure/bmp280-spi.c  |   4 +-
-> >  2 files changed, 61 insertions(+), 51 deletions(-)
-> > 
-> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> > index 09f53d987c7d..1a3241a41768 100644
-> > --- a/drivers/iio/pressure/bmp280-core.c
-> > +++ b/drivers/iio/pressure/bmp280-core.c
-> > @@ -52,7 +52,6 @@
-> >   */
-> >  enum { AC1, AC2, AC3, AC4, AC5, AC6, B1, B2, MB, MC, MD };
-> >  
-> > -
-> >  enum bmp380_odr {
-> >  	BMP380_ODR_200HZ,
-> >  	BMP380_ODR_100HZ,
-> > @@ -181,18 +180,19 @@ static int bmp280_read_calib(struct bmp280_data *data)
-> >  	struct bmp280_calib *calib = &data->calib.bmp280;
-> >  	int ret;
-> >  
-> > -
-> >  	/* Read temperature and pressure calibration values. */
-> >  	ret = regmap_bulk_read(data->regmap, BMP280_REG_COMP_TEMP_START,
-> > -			       data->bmp280_cal_buf, sizeof(data->bmp280_cal_buf));
-> > +			       data->bmp280_cal_buf,
-> > +			       sizeof(data->bmp280_cal_buf));
-> >  	if (ret < 0) {
-> >  		dev_err(data->dev,
-> > -			"failed to read temperature and pressure calibration parameters\n");
-> > +			"failed to read calibration parameters\n");
-> >  		return ret;
-> >  	}
-> >  
-> > -	/* Toss the temperature and pressure calibration data into the entropy pool */
-> > -	add_device_randomness(data->bmp280_cal_buf, sizeof(data->bmp280_cal_buf));
-> > +	/* Toss calibration data into the entropy pool */
-> > +	add_device_randomness(data->bmp280_cal_buf,
-> > +			      sizeof(data->bmp280_cal_buf));
-> >  
-> >  	/* Parse temperature calibration values. */
-> >  	calib->T1 = le16_to_cpu(data->bmp280_cal_buf[T1]);
-> > @@ -223,7 +223,7 @@ static int bme280_read_calib(struct bmp280_data *data)
-> >  	/* Load shared calibration params with bmp280 first */
-> >  	ret = bmp280_read_calib(data);
-> >  	if  (ret < 0) {
-> > -		dev_err(dev, "failed to read common bmp280 calibration parameters\n");
-> > +		dev_err(dev, "failed to read calibration parameters\n");
-> >  		return ret;
-> >  	}
-> >  
-> > @@ -283,6 +283,7 @@ static int bme280_read_calib(struct bmp280_data *data)
-> >  
-> >  	return 0;
-> >  }
-> > +
-> >  /*
-> >   * Returns humidity in percent, resolution is 0.01 percent. Output value of
-> >   * "47445" represents 47445/1024 = 46.333 %RH.
-> > @@ -305,7 +306,7 @@ static u32 bmp280_compensate_humidity(struct bmp280_data *data,
-> >  	var = clamp_val(var, 0, 419430400);
-> >  
-> >  	return var >> 12;
-> > -};
-> > +}
-> >  
-> >  /*
-> >   * Returns temperature in DegC, resolution is 0.01 DegC.  Output value of
-> > @@ -538,7 +539,7 @@ static int bmp280_read_raw(struct iio_dev *indio_dev,
-> >  }
-> >  
-> >  static int bmp280_write_oversampling_ratio_humid(struct bmp280_data *data,
-> > -					       int val)
-> > +						 int val)
-> >  {
-> >  	const int *avail = data->chip_info->oversampling_humid_avail;
-> >  	const int n = data->chip_info->num_oversampling_humid_avail;
-> > @@ -563,7 +564,7 @@ static int bmp280_write_oversampling_ratio_humid(struct bmp280_data *data,
-> >  }
-> >  
-> >  static int bmp280_write_oversampling_ratio_temp(struct bmp280_data *data,
-> > -					       int val)
-> > +						int val)
-> >  {
-> >  	const int *avail = data->chip_info->oversampling_temp_avail;
-> >  	const int n = data->chip_info->num_oversampling_temp_avail;
-> > @@ -588,7 +589,7 @@ static int bmp280_write_oversampling_ratio_temp(struct bmp280_data *data,
-> >  }
-> >  
-> >  static int bmp280_write_oversampling_ratio_press(struct bmp280_data *data,
-> > -					       int val)
-> > +						 int val)
-> >  {
-> >  	const int *avail = data->chip_info->oversampling_press_avail;
-> >  	const int n = data->chip_info->num_oversampling_press_avail;
-> > @@ -772,13 +773,12 @@ static int bmp280_chip_config(struct bmp280_data *data)
-> >  	int ret;
-> >  
-> >  	ret = regmap_write_bits(data->regmap, BMP280_REG_CTRL_MEAS,
-> > -				 BMP280_OSRS_TEMP_MASK |
-> > -				 BMP280_OSRS_PRESS_MASK |
-> > -				 BMP280_MODE_MASK,
-> > -				 osrs | BMP280_MODE_NORMAL);
-> > +				BMP280_OSRS_TEMP_MASK |
-> > +				BMP280_OSRS_PRESS_MASK |
-> > +				BMP280_MODE_MASK,
-> > +				osrs | BMP280_MODE_NORMAL);
-> >  	if (ret < 0) {
-> > -		dev_err(data->dev,
-> > -			"failed to write ctrl_meas register\n");
-> > +		dev_err(data->dev, "failed to write ctrl_meas register\n");
-> >  		return ret;
-> >  	}
-> >  
-> > @@ -786,8 +786,7 @@ static int bmp280_chip_config(struct bmp280_data *data)
-> >  				 BMP280_FILTER_MASK,
-> >  				 BMP280_FILTER_4X);
-> >  	if (ret < 0) {
-> > -		dev_err(data->dev,
-> > -			"failed to write config register\n");
-> > +		dev_err(data->dev, "failed to write config register\n");
-> >  		return ret;
-> >  	}
-> >  
-> > @@ -926,8 +925,8 @@ static int bmp380_cmd(struct bmp280_data *data, u8 cmd)
-> >  }
-> >  
-> >  /*
-> > - * Returns temperature in Celsius degrees, resolution is 0.01º C. Output value of
-> > - * "5123" equals 51.2º C. t_fine carries fine temperature as global value.
-> > + * Returns temperature in Celsius degrees, resolution is 0.01º C. Output value
-> > + * of "5123" equals 51.2º C. t_fine carries fine temperature as global value.
-> >   *
-> >   * Taken from datasheet, Section Appendix 9, "Compensation formula" and repo
-> >   * https://github.com/BoschSensortec/BMP3-Sensor-API.
-> > @@ -1069,7 +1068,8 @@ static int bmp380_read_calib(struct bmp280_data *data)
-> >  
-> >  	/* Read temperature and pressure calibration data */
-> >  	ret = regmap_bulk_read(data->regmap, BMP380_REG_CALIB_TEMP_START,
-> > -			       data->bmp380_cal_buf, sizeof(data->bmp380_cal_buf));
-> > +			       data->bmp380_cal_buf,
-> > +			       sizeof(data->bmp380_cal_buf));
-> >  	if (ret) {
-> >  		dev_err(data->dev,
-> >  			"failed to read temperature calibration parameters\n");
-> > @@ -1077,7 +1077,8 @@ static int bmp380_read_calib(struct bmp280_data *data)
-> >  	}
-> >  
-> >  	/* Toss the temperature calibration data into the entropy pool */
-> > -	add_device_randomness(data->bmp380_cal_buf, sizeof(data->bmp380_cal_buf));
-> > +	add_device_randomness(data->bmp380_cal_buf,
-> > +			      sizeof(data->bmp380_cal_buf));
-> >  
-> >  	/* Parse calibration values */
-> >  	calib->T1 = get_unaligned_le16(&data->bmp380_cal_buf[BMP380_T1]);
-> > @@ -1159,7 +1160,8 @@ static int bmp380_chip_config(struct bmp280_data *data)
-> >  
-> >  	/* Configure output data rate */
-> >  	ret = regmap_update_bits_check(data->regmap, BMP380_REG_ODR,
-> > -				       BMP380_ODRS_MASK, data->sampling_freq, &aux);
-> > +				       BMP380_ODRS_MASK, data->sampling_freq,
-> > +				       &aux);
-> >  	if (ret) {
-> >  		dev_err(data->dev, "failed to write ODR selection register\n");
-> >  		return ret;
-> > @@ -1178,12 +1180,13 @@ static int bmp380_chip_config(struct bmp280_data *data)
-> >  
-> >  	if (change) {
-> >  		/*
-> > -		 * The configurations errors are detected on the fly during a measurement
-> > -		 * cycle. If the sampling frequency is too low, it's faster to reset
-> > -		 * the measurement loop than wait until the next measurement is due.
-> > +		 * The configurations errors are detected on the fly during a
-> > +		 * measurement cycle. If the sampling frequency is too low, it's
-> > +		 * faster to reset the measurement loop than wait until the next
-> > +		 * measurement is due.
-> >  		 *
-> > -		 * Resets sensor measurement loop toggling between sleep and normal
-> > -		 * operating modes.
-> > +		 * Resets sensor measurement loop toggling between sleep and
-> > +		 * normal operating modes.
-> >  		 */
-> >  		ret = regmap_write_bits(data->regmap, BMP380_REG_POWER_CONTROL,
-> >  					BMP380_MODE_MASK,
-> > @@ -1201,22 +1204,21 @@ static int bmp380_chip_config(struct bmp280_data *data)
-> >  			return ret;
-> >  		}
-> >  		/*
-> > -		 * Waits for measurement before checking configuration error flag.
-> > -		 * Selected longest measure time indicated in section 3.9.1
-> > -		 * in the datasheet.
-> > +		 * Waits for measurement before checking configuration error
-> > +		 * flag. Selected longest measure time indicated in
-> > +		 * section 3.9.1 in the datasheet.
-> >  		 */
-> >  		msleep(80);
-> >  
-> >  		/* Check config error flag */
-> >  		ret = regmap_read(data->regmap, BMP380_REG_ERROR, &tmp);
-> >  		if (ret) {
-> > -			dev_err(data->dev,
-> > -				"failed to read error register\n");
-> > +			dev_err(data->dev, "failed to read error register\n");
-> >  			return ret;
-> >  		}
-> >  		if (tmp & BMP380_ERR_CONF_MASK) {
-> >  			dev_warn(data->dev,
-> > -				"sensor flagged configuration as incompatible\n");
-> > +				 "sensor flagged configuration as incompatible\n");
-> >  			return -EINVAL;
-> >  		}
-> >  	}
-> > @@ -1317,9 +1319,11 @@ static int bmp580_nvm_operation(struct bmp280_data *data, bool is_write)
-> >  	}
-> >  
-> >  	/* Start NVM operation sequence */
-> > -	ret = regmap_write(data->regmap, BMP580_REG_CMD, BMP580_CMD_NVM_OP_SEQ_0);
-> > +	ret = regmap_write(data->regmap, BMP580_REG_CMD,
-> > +			   BMP580_CMD_NVM_OP_SEQ_0);
-> >  	if (ret) {
-> > -		dev_err(data->dev, "failed to send nvm operation's first sequence\n");
-> > +		dev_err(data->dev,
-> > +			"failed to send nvm operation's first sequence\n");
-> >  		return ret;
-> >  	}
-> >  	if (is_write) {
-> > @@ -1327,7 +1331,8 @@ static int bmp580_nvm_operation(struct bmp280_data *data, bool is_write)
-> >  		ret = regmap_write(data->regmap, BMP580_REG_CMD,
-> >  				   BMP580_CMD_NVM_WRITE_SEQ_1);
-> >  		if (ret) {
-> > -			dev_err(data->dev, "failed to send nvm write sequence\n");
-> > +			dev_err(data->dev,
-> > +				"failed to send nvm write sequence\n");
-> >  			return ret;
-> >  		}
-> >  		/* Datasheet says on 4.8.1.2 it takes approximately 10ms */
-> > @@ -1338,7 +1343,8 @@ static int bmp580_nvm_operation(struct bmp280_data *data, bool is_write)
-> >  		ret = regmap_write(data->regmap, BMP580_REG_CMD,
-> >  				   BMP580_CMD_NVM_READ_SEQ_1);
-> >  		if (ret) {
-> > -			dev_err(data->dev, "failed to send nvm read sequence\n");
-> > +			dev_err(data->dev,
-> > +				"failed to send nvm read sequence\n");
-> >  			return ret;
-> >  		}
-> >  		/* Datasheet says on 4.8.1.1 it takes approximately 200us */
-> > @@ -1501,8 +1507,8 @@ static int bmp580_nvmem_read(void *priv, unsigned int offset, void *val,
-> >  		if (ret)
-> >  			goto exit;
-> >  
-> > -		ret = regmap_bulk_read(data->regmap, BMP580_REG_NVM_DATA_LSB, &data->le16,
-> > -				       sizeof(data->le16));
-> > +		ret = regmap_bulk_read(data->regmap, BMP580_REG_NVM_DATA_LSB,
-> > +				       &data->le16, sizeof(data->le16));
-> >  		if (ret) {
-> >  			dev_err(data->dev, "error reading nvm data regs\n");
-> >  			goto exit;
-> > @@ -1546,7 +1552,8 @@ static int bmp580_nvmem_write(void *priv, unsigned int offset, void *val,
-> >  	while (bytes >= sizeof(*buf)) {
-> >  		addr = bmp580_nvmem_addrs[offset / sizeof(*buf)];
-> >  
-> > -		ret = regmap_write(data->regmap, BMP580_REG_NVM_ADDR, BMP580_NVM_PROG_EN |
-> > +		ret = regmap_write(data->regmap, BMP580_REG_NVM_ADDR,
-> > +				   BMP580_NVM_PROG_EN |
-> >  				   FIELD_PREP(BMP580_NVM_ROW_ADDR_MASK, addr));
-> >  		if (ret) {
-> >  			dev_err(data->dev, "error writing nvm address\n");
-> > @@ -1554,8 +1561,8 @@ static int bmp580_nvmem_write(void *priv, unsigned int offset, void *val,
-> >  		}
-> >  		data->le16 = cpu_to_le16(*buf++);
-> >  
-> > -		ret = regmap_bulk_write(data->regmap, BMP580_REG_NVM_DATA_LSB, &data->le16,
-> > -					sizeof(data->le16));
-> > +		ret = regmap_bulk_write(data->regmap, BMP580_REG_NVM_DATA_LSB,
-> > +					&data->le16, sizeof(data->le16));
-> >  		if (ret) {
-> >  			dev_err(data->dev, "error writing LSB NVM data regs\n");
-> >  			goto exit;
-> > @@ -1662,7 +1669,8 @@ static int bmp580_chip_config(struct bmp280_data *data)
-> >  		  BMP580_OSR_PRESS_EN;
-> >  
-> >  	ret = regmap_update_bits_check(data->regmap, BMP580_REG_OSR_CONFIG,
-> > -				       BMP580_OSR_TEMP_MASK | BMP580_OSR_PRESS_MASK |
-> > +				       BMP580_OSR_TEMP_MASK |
-> > +				       BMP580_OSR_PRESS_MASK |
-> >  				       BMP580_OSR_PRESS_EN,
-> >  				       reg_val, &aux);
-> >  	if (ret) {
-> > @@ -1713,7 +1721,8 @@ static int bmp580_chip_config(struct bmp280_data *data)
-> >  		 */
-> >  		ret = regmap_read(data->regmap, BMP580_REG_EFF_OSR, &tmp);
-> >  		if (ret) {
-> > -			dev_err(data->dev, "error reading effective OSR register\n");
-> > +			dev_err(data->dev,
-> > +				"error reading effective OSR register\n");
-> >  			return ret;
-> >  		}
-> >  		if (!(tmp & BMP580_EFF_OSR_VALID_ODR)) {
-> > @@ -1848,7 +1857,8 @@ static int bmp180_read_calib(struct bmp280_data *data)
-> >  	}
-> >  
-> >  	/* Toss the calibration data into the entropy pool */
-> > -	add_device_randomness(data->bmp180_cal_buf, sizeof(data->bmp180_cal_buf));
-> > +	add_device_randomness(data->bmp180_cal_buf,
-> > +			      sizeof(data->bmp180_cal_buf));
-> >  
-> >  	calib->AC1 = be16_to_cpu(data->bmp180_cal_buf[AC1]);
-> >  	calib->AC2 = be16_to_cpu(data->bmp180_cal_buf[AC2]);
-> > @@ -1963,8 +1973,7 @@ static u32 bmp180_compensate_press(struct bmp280_data *data, s32 adc_press)
-> >  	return p + ((x1 + x2 + 3791) >> 4);
-> >  }
-> >  
-> > -static int bmp180_read_press(struct bmp280_data *data,
-> > -			     int *val, int *val2)
-> > +static int bmp180_read_press(struct bmp280_data *data, int *val, int *val2)
-> >  {
-> >  	u32 comp_press;
-> >  	s32 adc_press;
-> > @@ -2241,6 +2250,7 @@ static int bmp280_runtime_resume(struct device *dev)
-> >  	ret = regulator_bulk_enable(BMP280_NUM_SUPPLIES, data->supplies);
-> >  	if (ret)
-> >  		return ret;
-> > +
-> >  	usleep_range(data->start_up_time, data->start_up_time + 100);
-> >  	return data->chip_info->chip_config(data);
-> >  }
-> > diff --git a/drivers/iio/pressure/bmp280-spi.c b/drivers/iio/pressure/bmp280-spi.c
-> > index 4e19ea0b4d39..62b4e58104cf 100644
-> > --- a/drivers/iio/pressure/bmp280-spi.c
-> > +++ b/drivers/iio/pressure/bmp280-spi.c
-> > @@ -13,7 +13,7 @@
-> >  #include "bmp280.h"
-> >  
-> >  static int bmp280_regmap_spi_write(void *context, const void *data,
-> > -                                   size_t count)
-> > +				   size_t count)
-> >  {
-> >  	struct spi_device *spi = to_spi_device(context);
-> >  	u8 buf[2];
-> > @@ -29,7 +29,7 @@ static int bmp280_regmap_spi_write(void *context, const void *data,
-> >  }
-> >  
-> >  static int bmp280_regmap_spi_read(void *context, const void *reg,
-> > -                                  size_t reg_size, void *val, size_t val_size)
-> > +				  size_t reg_size, void *val, size_t val_size)
-> >  {
-> >  	struct spi_device *spi = to_spi_device(context);
-> >  
-> > 
-> > base-commit: b0a2c79c6f3590b74742cbbc76687014d47972d8
 > 
+>>
+> ---end quoted text---
 
