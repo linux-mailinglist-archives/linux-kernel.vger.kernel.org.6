@@ -1,234 +1,164 @@
-Return-Path: <linux-kernel+bounces-170018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAB88BD09F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:46:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFF98BD0A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531391C227F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:46:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7DCE28C027
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65DC153BDB;
-	Mon,  6 May 2024 14:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E52153BDE;
+	Mon,  6 May 2024 14:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EADyn62c"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugeRHaDQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A9915351C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CB9153560;
+	Mon,  6 May 2024 14:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006788; cv=none; b=n/X8UEagSR3jmkOtCh5X5dn1N/DbMnm94T2QymcdJ56/JA/YLrANR4EGRjtB6fGopnaANGJKnv9zJW9Fc/8ut7Az+ApGTXSHsxULgbmeaIIaf6biaQngpK+kybmndGIwMgAJGt3i48PZ1X4U3W1G9NqvHPshq7wkuFucXlgTIb4=
+	t=1715006822; cv=none; b=AdN3JtQrb2+u3jez4V8FrP6FQlitnsyl83w+cW7Kf4DatEqz5WiOESjE72xQiVClsWZ+xMjICFmOprava1t00OdptOT1/AdSU/p1WRGOCGekP5Uvn7fHGKPnv7bIMEhqpvmyM/U9B07PaSWUFWD1kWrVt22sAjCWajIw5eyef04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006788; c=relaxed/simple;
-	bh=C5ndl1lC8CL0XtsuR5ib2Bk7fPRJ97FYkLf8X6C5eVQ=;
+	s=arc-20240116; t=1715006822; c=relaxed/simple;
+	bh=TkHZP7XlXFcz7qCoE1negTmOxafh0ALA2JDVAJb16QA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4NcvvCZGLGXUG8l7lIqsPv+LvoCOdByVo2NjwFTFc1EiQKYZo90VggR+BQYOMEeepDnglWRz9bAe2a4f+EUjWKqEftLkAV+nEp9P9ibtPp8kQtoPyh0WC826iK3FBkIqLYD+rziiKAGB7iGki7vNq/6pbz9m5LV5QUaHJHrudo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EADyn62c; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41bab13ca80so14605275e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715006785; x=1715611585; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m7OBu1r2Z+saah5jk3wO64dx/25d9VmAszp5iej3gKE=;
-        b=EADyn62cXJtGpv3wr3RN2pPVaV6H6454d7gv3wZ6YZ6+cZ5KND2mD6OXcd/K9139LY
-         1NDZzKXl1uEASe2+pqd3pptYB7lgNAq0/rYrbfrRTwwiFxabZmicIZnuogOI45vJiXbT
-         Lk0cjoQatCpd4Zyu32z9nZgymKANHz/6IWu+DdDPkBC9WpD0KHObAy0QXhCkzd1OUgpw
-         j0XF0auDyRIaeBoZ61d7d6zpHoC2jN2RZXGbFe2QjACUB4euicOHH3MxVPqt1KVdBjHy
-         5jteD2W/jjDAvbonhmH8oAaLqMmn4ABUMIrD61yThgCABHFPGJqaUNDQO1C/Ae40+hdD
-         5/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715006785; x=1715611585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m7OBu1r2Z+saah5jk3wO64dx/25d9VmAszp5iej3gKE=;
-        b=G89ABxvI2tjs5qqyRv2ziEI4w5v+2g++16bq6OVNiq3/ib0fDYg4nfMfbqPt+V2avL
-         t+7lHU+euQ2Oy9SWnXfS7DYoluhhQBebJqTD80kIOAYXTLYjtqxpVXfQQQxjDzqjywyi
-         LKWc10YHf8fVfM/ToyUCL/15C1O3gaDAqJGNh417DdqDawnB8d7yRYxlW3Y2VoffAQPL
-         EPBDsQPnubTN/pYudL3tmFGf+W7lIHd98t8mpIq7p95Z+I4KYtQpBkpznZXIm4W/7pr1
-         d8plZY0vtFs9iDN439/0SukrVZsorYGQNOVSTP/GhzUdkJHE06lH/ScfZKADFG2Q+t1B
-         QGvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJbqDSh2ElaW1V58JA9wOegPthDjVY4vxfwL//EPeekYdhmXw2Fh4Vft6qvEUljSUnvC0e97oWaoBY+NMQMGb6iGg+gkknjuvQPNK6
-X-Gm-Message-State: AOJu0Yw0RTpqK5CQ/2JmvnT7bGv1Q3lYclAE7JOXgYW3WXSrBfPBYdgw
-	RxGeugSPvq+DfoS57QsQVaRfOxxjdOhuyJz8ramKb0EVDNFDgVhTA2hle3FTYOFMeWEz/cyszFG
-	g
-X-Google-Smtp-Source: AGHT+IHg1boR+fa1p1v2qPPcugyDsbkJgWtZXVkIxTd+sDyVX6MGR9zuE7B/BOKJ/0F83GNAkxSMUA==
-X-Received: by 2002:a05:600c:35c7:b0:416:3f85:d49 with SMTP id r7-20020a05600c35c700b004163f850d49mr8630415wmq.18.1715006785041;
-        Mon, 06 May 2024 07:46:25 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id p3-20020a5d59a3000000b0034def22f93csm10934601wrr.69.2024.05.06.07.46.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 07:46:24 -0700 (PDT)
-Date: Mon, 6 May 2024 17:46:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Duoming Zhou <duoming@zju.edu.cn>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hams@vger.kernel.org, pabeni@redhat.com, kuba@kernel.org,
-	edumazet@google.com, davem@davemloft.net, jreuter@yaina.de,
-	horms@kernel.org, Markus.Elfring@web.de, lars@oddbit.com
-Subject: Re: [PATCH net v3 1/2] ax25: Fix reference count leak issues of
- ax25_dev and net_device
-Message-ID: <818218ce-4055-4c7b-b4f4-aa7e0d2db4b5@moroto.mountain>
-References: <cover.1715002910.git.duoming@zju.edu.cn>
- <8338a74098bc1aafbca14d4612a10d6930fcef1b.1715002910.git.duoming@zju.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ni+SdlcvltWDGXUkaUJbajkNxhFvdEVxtZA0FLaw3C6qav8lMVqQaXwM6JKP0BFD9gg6wGLs3v3puTib+bhvXHwHNar5/QxRbvIk8JrUDr0AjV/AAf2mrwva5+0L0DcGRgBfhsFFFh06JlEGQh/QLrzCA9wDL1EIx2wn0g9nNdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugeRHaDQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25F5C116B1;
+	Mon,  6 May 2024 14:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715006822;
+	bh=TkHZP7XlXFcz7qCoE1negTmOxafh0ALA2JDVAJb16QA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ugeRHaDQCUFiLV5e4d8/x3N0vsSrmrK5A01rmHCu51w94by8Xy8aZWz7jObaQTgvD
+	 8UrKKGVuBXjzb8mj5E0rkyY0Xg4XaNXw4RGGbS9f5jMn+6BcYy73eAfb319OPbG2d1
+	 95WBugJ4GbpV0kdvqGsLTaBM47fYtSzOf3YyFJaKvSr0Vqx6H0d4SVv1yjkMSX/Uuo
+	 0RZmvQ1uFmtOrGVtlXSIdipKTneUDjSQdD3Hr7CNoMSkOKTxiW8A9QkeN+FDuAXUUc
+	 IXtadcOYdfzD8Cdo6oyT9DbI9yz+3gNjpTf7nG4+7XvWypQMm8f9tc7dTAglwHDYC3
+	 iWq7zC5dcCWYA==
+Date: Mon, 6 May 2024 16:46:54 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com, 
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+Message-ID: <20240506-zweisamkeit-zinsniveau-615a2e6d7c67@brauner>
+References: <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+ <CAHk-=whrSSNYVzTHNFDNGag_xcKuv=RaQUX8+n29kkic39DRuQ@mail.gmail.com>
+ <20240505194603.GH2118490@ZenIV>
+ <CAHk-=wipanX2KYbWvO5=5Zv9O3r8kA-tqBid0g3mLTCt_wt8OA@mail.gmail.com>
+ <20240505203052.GJ2118490@ZenIV>
+ <CAHk-=whFg8-WyMbVUGW5c0baurGzqmRtzFLoU-gxtRXq2nVZ+w@mail.gmail.com>
+ <ZjjRWybmAmClMMI9@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8338a74098bc1aafbca14d4612a10d6930fcef1b.1715002910.git.duoming@zju.edu.cn>
+In-Reply-To: <ZjjRWybmAmClMMI9@phenom.ffwll.local>
 
-On Mon, May 06, 2024 at 10:08:34PM +0800, Duoming Zhou wrote:
-> The ax25_addr_ax25dev() exists a reference count leak issue of the
-> object "ax25_dev" and the ax25_dev_device_down() exists reference
-> count leak issues of the objects "ax25_dev" and "net_device".
+On Mon, May 06, 2024 at 02:47:23PM +0200, Daniel Vetter wrote:
+> On Sun, May 05, 2024 at 01:53:48PM -0700, Linus Torvalds wrote:
+> > On Sun, 5 May 2024 at 13:30, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > 0.      special-cased ->f_count rule for ->poll() is a wart and it's
+> > > better to get rid of it.
+> > >
+> > > 1.      fs/eventpoll.c is a steaming pile of shit and I'd be glad to see
+> > > git rm taken to it.  Short of that, by all means, let's grab reference
+> > > in there around the call of vfs_poll() (see (0)).
+> > 
+> > Agreed on 0/1.
+> > 
+> > > 2.      having ->poll() instances grab extra references to file passed
+> > > to them is not something that should be encouraged; there's a plenty
+> > > of potential problems, and "caller has it pinned, so we are fine with
+> > > grabbing extra refs" is nowhere near enough to eliminate those.
+> > 
+> > So it's not clear why you hate it so much, since those extra
+> > references are totally normal in all the other VFS paths.
+> > 
+> > I mean, they are perhaps not the *common* case, but we have a lot of
+> > random get_file() calls sprinkled around in various places when you
+> > end up passing a file descriptor off to some asynchronous operation
+> > thing.
+> > 
+> > Yeah, I think most of them tend to be special operations (eg the tty
+> > TIOCCONS ioctl to redirect the console), but it's not like vfs_ioctl()
+> > is *that* different from vfs_poll. Different operation, not somehow
+> > "one is more special than the other".
+> > 
+> > cachefiles and backing-file does it for regular IO, and drop it at IO
+> > completion - not that different from what dma-buf does. It's in
+> > ->read_iter() rather than ->poll(), but again: different operations,
+> > but not "one of them is somehow fundamentally different".
+> > 
+> > > 3.      dma-buf uses of get_file() are probably safe (epoll shite aside),
+> > > but they do look fishy.  That has nothing to do with epoll.
+> > 
+> > Now, what dma-buf basically seems to do is to avoid ref-counting its
+> > own fundamental data structure, and replaces that by refcounting the
+> > 'struct file' that *points* to it instead.
+> > 
+> > And it is a bit odd, but it actually makes some amount of sense,
+> > because then what it passes around is that file pointer (and it allows
+> > passing it around from user space *as* that file).
+> > 
+> > And honestly, if you look at why it then needs to add its refcount to
+> > it all, it actually makes sense.  dma-bufs have this notion of
+> > "fences" that are basically completion points for the asynchronous
+> > DMA. Doing a "poll()" operation will add a note to the fence to get
+> > that wakeup when it's done.
+> > 
+> > And yes, logically it takes a ref to the "struct dma_buf", but because
+> > of how the lifetime of the dma_buf is associated with the lifetime of
+> > the 'struct file', that then turns into taking a ref on the file.
+> > 
+> > Unusual? Yes. But not illogical. Not obviously broken. Tying the
+> > lifetime of the dma_buf to the lifetime of a file that is passed along
+> > makes _sense_ for that use.
+> > 
+> > I'm sure dma-bufs could add another level of refcounting on the
+> > 'struct dma_buf' itself, and not make it be 1:1 with the file, but
+> > it's not clear to me what the advantage would really be, or why it
+> > would be wrong to re-use a refcount that is already there.
 > 
-> Memory leak issue in ax25_addr_ax25dev():
+> So there is generally another refcount, because dma_buf is just the
+> cross-driver interface to some kind of real underlying buffer object from
+> the various graphics related subsystems we have.
 > 
-> The reference count of the object "ax25_dev" can be increased multiple
-> times in ax25_addr_ax25dev(). This will cause a memory leak so far.
+> And since it's a pure file based api thing that ceases to serve any
+> function once the fd/file is gone we tied all the dma_buf refcounting to
+> the refcount struct file already maintains. But the underlying buffer
+> object can easily outlive the dma_buf, and over the lifetime of an
+> underlying buffer object you might actually end up creating different
+> dma_buf api wrappers for it (but at least in drm we guarantee there's at
+> most one, hence why vmwgfx does the atomic_inc_unless_zero trick, which I
+> don't particularly like and isn't really needed).
 > 
-> Memory leak issues in ax25_dev_device_down():
-> 
-> The reference count of ax25_dev is set to 1 in ax25_dev_device_up() and
-> then increase the reference count when ax25_dev is added to ax25_dev_list.
-> As a result, the reference count of ax25_dev is 2. But when the device is
-> shutting down. The ax25_dev_device_down() drops the reference count once
-> or twice depending on if we goto unlock_put or not, which will cause
-> memory leak.
-> 
-> There is also a reference count leak issue of the object "net_device",
-> when the ax25 device is shutting down. The ax25_dev_device_down() drops
-> the reference count of net_device one or zero times depending on if we
-> goto unlock_put or not, which will cause memory leak.
-> 
-> In order to solve the above issues, use kernel circular doubly linked
-> list to implementate ax25_dev_list. As for ax25_addr_ax25dev() issue,
-> it is impossible for one pointer to be on a list twice. So add a break
-> in ax25_addr_ax25dev(). As for ax25_dev_device_down() issues, increase
-> the reference count of ax25_dev once in ax25_dev_device_up() and decrease
-> the reference count of ax25_dev and net_device after ax25_dev is removed
-> from the ax25_dev_list.
-> 
-> Fixes: d01ffb9eee4a ("ax25: add refcount in ax25_dev to avoid UAF bugs")
-> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
-> ---
-> Changes in v3:
->   - Use kernel list to implementate ax25_dev_list.
->   - Solve reference count leak issues in ax25_dev_device_down().
-> 
->  include/net/ax25.h  |  4 ++--
->  net/ax25/ax25_dev.c | 36 ++++++++++++------------------------
->  2 files changed, 14 insertions(+), 26 deletions(-)
-> 
-> diff --git a/include/net/ax25.h b/include/net/ax25.h
-> index 0d939e5aee4..92c6aa4f9a6 100644
-> --- a/include/net/ax25.h
-> +++ b/include/net/ax25.h
-> @@ -216,7 +216,7 @@ typedef struct {
->  struct ctl_table;
->  
->  typedef struct ax25_dev {
-> -	struct ax25_dev		*next;
-> +	struct list_head	list;
->  
->  	struct net_device	*dev;
->  	netdevice_tracker	dev_tracker;
-> @@ -330,7 +330,7 @@ int ax25_addr_size(const ax25_digi *);
->  void ax25_digi_invert(const ax25_digi *, ax25_digi *);
->  
->  /* ax25_dev.c */
-> -extern ax25_dev *ax25_dev_list;
-> +static struct list_head ax25_dev_list;
->  extern spinlock_t ax25_dev_lock;
->  
->  #if IS_ENABLED(CONFIG_AX25)
-> diff --git a/net/ax25/ax25_dev.c b/net/ax25/ax25_dev.c
-> index 282ec581c07..fbaaba0351e 100644
-> --- a/net/ax25/ax25_dev.c
-> +++ b/net/ax25/ax25_dev.c
-> @@ -22,11 +22,11 @@
->  #include <net/sock.h>
->  #include <linux/uaccess.h>
->  #include <linux/fcntl.h>
-> +#include <linux/list.h>
->  #include <linux/mm.h>
->  #include <linux/interrupt.h>
->  #include <linux/init.h>
->  
-> -ax25_dev *ax25_dev_list;
->  DEFINE_SPINLOCK(ax25_dev_lock);
->  
->  ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
-> @@ -34,11 +34,13 @@ ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
->  	ax25_dev *ax25_dev, *res = NULL;
->  
->  	spin_lock_bh(&ax25_dev_lock);
-> -	for (ax25_dev = ax25_dev_list; ax25_dev != NULL; ax25_dev = ax25_dev->next)
-> +	list_for_each_entry(ax25_dev, &ax25_dev_list, list) {
->  		if (ax25cmp(addr, (const ax25_address *)ax25_dev->dev->dev_addr) == 0) {
->  			res = ax25_dev;
->  			ax25_dev_hold(ax25_dev);
-> +			break;
->  		}
-> +	}
->  	spin_unlock_bh(&ax25_dev_lock);
->  
->  	return res;
-> @@ -52,6 +54,7 @@ void ax25_dev_device_up(struct net_device *dev)
->  {
->  	ax25_dev *ax25_dev;
->  
-> +	INIT_LIST_HEAD(&ax25_dev_list);
+> But we could add another refcount, it just means we have 3 of those then
+> when only really 2 are needed.
 
-You can't do this, it will empty the list for each new thing added.
-What I wrote is the way to do it.
-
-	/* Initialized the list for the first entry */
-	if (!ax25_dev_list.next)
-		INIT_LIST_HEAD(&ax25_dev_list);
-
-Just delete the FIXME.  I had thought there is maybe a more beautiful
-way to do it but actually it's fine.
-
->  	ax25_dev = kzalloc(sizeof(*ax25_dev), GFP_KERNEL);
->  	if (!ax25_dev) {
->  		printk(KERN_ERR "AX.25: ax25_dev_device_up - out of memory\n");
-> @@ -59,7 +62,6 @@ void ax25_dev_device_up(struct net_device *dev)
->  	}
->  
->  	refcount_set(&ax25_dev->refcount, 1);
-> -	dev->ax25_ptr     = ax25_dev;
->  	ax25_dev->dev     = dev;
->  	netdev_hold(dev, &ax25_dev->dev_tracker, GFP_KERNEL);
->  	ax25_dev->forward = NULL;
-> @@ -85,10 +87,9 @@ void ax25_dev_device_up(struct net_device *dev)
->  #endif
->  
->  	spin_lock_bh(&ax25_dev_lock);
-> -	ax25_dev->next = ax25_dev_list;
-> -	ax25_dev_list  = ax25_dev;
-> +	list_add(&ax25_dev->list, &ax25_dev_list);
->  	spin_unlock_bh(&ax25_dev_lock);
-> -	ax25_dev_hold(ax25_dev);
-> +	dev->ax25_ptr     = ax25_dev;
-
-Please do this while holding the spinlock, otherwise we're not
-guaranteed to find find a match in ax25_dev_device_down().  It could
-race.
-
-regards,
-dan carpenter
-
+Fwiw, the TTM thing described upthread and in the other thread really
+tries hard to work around the dma_buf == file lifetime choice by hooking
+into the dma-buf specific release function so it can access the dmabuf
+and then the file. All that seems like a pretty error prone thing to me.
+So a separate refcount for dma_buf wouldn't be the worst as that would
+allow that TTM thing to benefit and remove that nasty hacking into your
+generic dma_buf ops. But maybe I'm the only one who sees it that way and
+I'm certainly not familiar enough with dma-buf.
 
