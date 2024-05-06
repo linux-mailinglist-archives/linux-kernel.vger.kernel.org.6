@@ -1,249 +1,202 @@
-Return-Path: <linux-kernel+bounces-169549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0A48BCA33
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B0D8BCA3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC501F22C3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB401F21E68
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E861422B4;
-	Mon,  6 May 2024 09:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F951422C7;
+	Mon,  6 May 2024 09:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cEus1HWB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwpagwlI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521391420DA
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16C847F6A;
+	Mon,  6 May 2024 09:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714986287; cv=none; b=Ct0G+AylDPip3ZR12uSy37Pol/OTHlUXZyTsLA5Dn8zT883ecxrSjqiGkfzMhSVwA18IGM5RpGR9IKTRddoh0rys/l8dRu2sRd8lDMHxow5GeY6K1YYPEfnoD2LovjBvXu5MK9MKfvNGPlfTsiFWH8h9chVMlb9iofbutxROenA=
+	t=1714986414; cv=none; b=KvyUAbZjOhw7jYHne/tiBhysdxORXjD9zLTnJhXDFN/kHQwG/KWtTfTRNZfxBTzXVxGeYw6KqRdskdarWDOJiND50W5X5IXZ2vV0bumXiAnfmcYwGPps4nMcOKx9vivKCVUND8waUyr1S5hL17S6h1jUGbzGExx3zIouJcYU3DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714986287; c=relaxed/simple;
-	bh=P6jKRP8WdSAvZ8RrcvBEhhc2F5D0qVrJOPA9QiOcuWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dypO5KIyoAc9sm+7PMd7eZvmp4YVLGr4Bv2GFdkkbShb/NOJ2nlbOxRxRIflB+WzpoPG2PzDk2Q6GpFitGEs97/gIwtngJNc2uHBB6xrNanlABvXS/+AaNoF8VP/20GNYu0dWwcePYYi0DuEjgWdX+ZzEkEuP1BXUi1C3CG76og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cEus1HWB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714986284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TNxJ90r7OIOz6OKvqUrw671Q/oNs3xYKmR6x/WOwqn0=;
-	b=cEus1HWB6/tuJmVDOAY8UF8eaNOtKEtLzYr0KelLIUDC4qZ4/l3k2zgVv1p11KAIOdUVh2
-	N+TogMmUAJAzDy3T7ykX+antCTLZvhpAg764z4XSzV+YZkRS82UM26Cut06OzKrpGvIOtT
-	sZLhKQYgOTQh4qOHfYhhKpC4wNbp8Ws=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-79-BxO6evcoOXu78PQaKNwjjA-1; Mon, 06 May 2024 05:04:42 -0400
-X-MC-Unique: BxO6evcoOXu78PQaKNwjjA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4183d08093bso5752845e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 02:04:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714986281; x=1715591081;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TNxJ90r7OIOz6OKvqUrw671Q/oNs3xYKmR6x/WOwqn0=;
-        b=RT4h16ZHgLjS6YRqpyBOAMhacveG6G+rM4LQvwb/7rYJH0JL/pnZy+VakrVTdWe0vN
-         2v0b/SFbo8j+JaaEASbr7l7tsbWsnd1NrhyzggqgmS2Ql8klUPsmf4zaxjQhZGj7iW0n
-         y2czK1IbH4YjXHUZS+x0yOKBQxO38L0A9DM4i6IDJMUi5vACL2XEDZEFSt4IfpA2mUZU
-         YPmPfTopGWUWmXqPY9i6Bs2QchmJG6c+10mJDwcBPZRPEDV5GnA254+xQE+FW7j4CYEp
-         JVCAXuKMmhNXYP62/uTqRL9tRWrdrjmoooNNFC5UywqTNfA2QksTb6qfzBgCxaWSPKhf
-         eoSw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8yUqZOcup48wQPZheKvs59+PTQ4LqSnPom3moQB+Pn91EltpmttHidefEyxbb6lYdAlfWild3/5Kh09+xkSkMPVaKxCNcgT8VUEZ6
-X-Gm-Message-State: AOJu0YwRdLIN4CngHmyM3EnKjAlbTHESfjEAI5+6p6rsrtUKWNQzl21M
-	97pUJ0MT2UUwZ3x681+FxV0x/RaLTtDYLVIyArrGvuulNbw/Wrkp24+fGRlUWypa003gACa7Rip
-	0gyEmctQb12fVM0fy16c6qEXQTV2DwS7T9NKcl1Uozu0kwCKIAWwPiNLCtkgwVg==
-X-Received: by 2002:a05:600c:4691:b0:41a:141c:e15a with SMTP id p17-20020a05600c469100b0041a141ce15amr7565520wmo.16.1714986281580;
-        Mon, 06 May 2024 02:04:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOLIGr3ODLDhvC3tmKKtdQELzrPVmv7NZt12FE6eNlKj4YgDVIsNmX1yfGqnXQexcDMsAfOQ==
-X-Received: by 2002:a05:600c:4691:b0:41a:141c:e15a with SMTP id p17-20020a05600c469100b0041a141ce15amr7565473wmo.16.1714986280679;
-        Mon, 06 May 2024 02:04:40 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c74b:bf00:182c:d606:87cf:6fea? (p200300cbc74bbf00182cd60687cf6fea.dip0.t-ipconnect.de. [2003:cb:c74b:bf00:182c:d606:87cf:6fea])
-        by smtp.gmail.com with ESMTPSA id n44-20020a05600c502c00b004146e58cc35sm19248292wmr.46.2024.05.06.02.04.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 02:04:40 -0700 (PDT)
-Message-ID: <af1a4b81-22f3-4955-8c44-95bede13a7bb@redhat.com>
-Date: Mon, 6 May 2024 11:04:39 +0200
+	s=arc-20240116; t=1714986414; c=relaxed/simple;
+	bh=cFwir4zc/nudwwhXcuiOwVfdum1PITTVnDd2nBJu8Qc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kKRcZy3MvYiNVd/FaZr4oD+jDf0vfe0i5o+SUhtt3JhnAEgr561n44rTIb/NAfLsCPqbU6R5/+bI1svU7hbi5fDRLNIZVC2N/trPH4gt0Z9paeZ1s8a0Ix+6BR34VL2LhkGy9VQAgnESvHRcPd+ZbCVVUGL0fyDhbIHxeRKjabc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwpagwlI; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714986412; x=1746522412;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=cFwir4zc/nudwwhXcuiOwVfdum1PITTVnDd2nBJu8Qc=;
+  b=FwpagwlIU1gYJMRynCb4vfFpMIzltg+VfPVyhmCZQP8b6/fVt/AvNw3n
+   /cSbtZ+DeLIzkCdvyGbLqGh4kHBRbJn2L+fRQFDLx0asf8mQ/pcHF3z7R
+   7ebfVGwPJk0fQGiLaUoOBX9I6dAsoF4+ZW4N0y52KJhKbH7A2U5V9zqcT
+   H+FIQnS98/6iJhmRB2CePFJE/5T8DdLzFDlNmPYZMyj7KK6rOfqKCn0ww
+   SaH33uKFoqwTLYfKEjEq8kS2lx6aqj0rSUtLsHLjT5vIeGDzsjh7W4179
+   zk0ELYXDxLmkQzeejvNBwd850uOb74qUxOkpYX0pKXnRyxVaOMKx8tktE
+   g==;
+X-CSE-ConnectionGUID: mIkvKmHySgaOWHkIlw1Mcg==
+X-CSE-MsgGUID: tomlvGdkSPq305fyJ2gocg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="14537049"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="14537049"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:06:51 -0700
+X-CSE-ConnectionGUID: mJuLiGEIQAO84nD63Rj0+g==
+X-CSE-MsgGUID: flJcUyFrSjOZAUPRd6GL3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="28208688"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.230])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:06:44 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>, Easwar Hariharan
+ <eahariha@linux.microsoft.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, Zhenyu
+ Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.wang.linux@gmail.com>, "open
+ list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS"
+ <intel-gfx@lists.freedesktop.org>, "open list:INTEL DRM DISPLAY FOR XE AND
+ I915 DRIVERS" <intel-xe@lists.freedesktop.org>, "open list:DRM DRIVERS"
+ <dri-devel@lists.freedesktop.org>, open list
+ <linux-kernel@vger.kernel.org>, "open list:INTEL GVT-g DRIVERS (Intel GPU
+ Virtualization)" <intel-gvt-dev@lists.freedesktop.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, "open list:RADEON and AMDGPU DRM
+ DRIVERS" <amd-gfx@lists.freedesktop.org>, "open list:DRM DRIVER FOR NVIDIA
+ GEFORCE/QUADRO GPUS" <nouveau@lists.freedesktop.org>, "open list:I2C
+ SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>, "open list:BTTV
+ VIDEO4LINUX DRIVER" <linux-media@vger.kernel.org>, "open list:FRAMEBUFFER
+ LAYER" <linux-fbdev@vger.kernel.org>, Zhi Wang <zhiwang@kernel.org>
+Subject: Re: [PATCH v2 03/12] drm/i915: Make I2C terminology more inclusive
+In-Reply-To: <ZjVTqNGjaAjuLdLi@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240503181333.2336999-1-eahariha@linux.microsoft.com>
+ <20240503181333.2336999-4-eahariha@linux.microsoft.com>
+ <ZjU8NB-71xWI2X73@intel.com>
+ <4f1e429c-794b-457c-ab1d-85eb97dc81c3@linux.microsoft.com>
+ <ZjVTqNGjaAjuLdLi@intel.com>
+Date: Mon, 06 May 2024 12:06:41 +0300
+Message-ID: <87seyvnwbi.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] [io-uring?] WARNING in hpage_collapse_scan_pmd (2)
-To: syzbot <syzbot+5ea2845f44caa77f5543@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, axboe@kernel.dk, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- syzkaller-bugs@googlegroups.com, Peter Xu <peterx@redhat.com>
-References: <0000000000006923bb06178ce04a@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <0000000000006923bb06178ce04a@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 03.05.24 15:41, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e67572cd2204 Linux 6.9-rc6
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1067d2f8980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5ea2845f44caa77f5543
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10874a40980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/d3c4905a7f32/disk-e67572cd.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/9e4d1fc8f9c1/vmlinux-e67572cd.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4616b77edaee/bzImage-e67572cd.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5ea2845f44caa77f5543@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 5288 at arch/x86/include/asm/pgtable.h:403 pte_uffd_wp arch/x86/include/asm/pgtable.h:403 [inline]
-> WARNING: CPU: 1 PID: 5288 at arch/x86/include/asm/pgtable.h:403 hpage_collapse_scan_pmd+0xd32/0x14c0 mm/khugepaged.c:1316
+On Fri, 03 May 2024, Rodrigo Vivi <rodrigo.vivi@intel.com> wrote:
+> On Fri, May 03, 2024 at 02:04:15PM -0700, Easwar Hariharan wrote:
+>> On 5/3/2024 12:34 PM, Rodrigo Vivi wrote:
+>> > On Fri, May 03, 2024 at 06:13:24PM +0000, Easwar Hariharan wrote:
+>> >> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
+>> >> with more appropriate terms. Inspired by and following on to Wolfram's
+>> >> series to fix drivers/i2c/[1], fix the terminology for users of
+>> >> I2C_ALGOBIT bitbanging interface, now that the approved verbiage exists
+>> >> in the specification.
+>> >>
+>> >> Compile tested, no functionality changes intended
+>> >>
+>> >> [1]: https://lore.kernel.org/all/20240322132619.6389-1-wsa+renesas@sang-engineering.com/
+>> >>
+>> >> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>> >> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>> > 
+>> > It looks like the ack is not needed since we are merging this through
+>> > drm-intel-next. But I'm planing to merge this only after seeing the
+>> > main drivers/i2c accepting the new terminology. So we don't have a
+>> > risk of that getting push back and new names there and we having
+>> > to rename it once again.
+>> 
+>> Just to be explicit, did you want me to remove the Acked-by in v3, or will you when you pull
+>> the patch into drm-intel-next?
+>> 
+>> > 
+>> > (more below)
+>> > 
+>> >> Acked-by: Zhi Wang <zhiwang@kernel.org>
+>> >> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+>> > 
+>> > Cc: Jani Nikula <jani.nikula@intel.com>
+>> > 
+>> > Jani, what bits were you concerned that were not necessarily i2c?
+>> > I believe although not necessarily/directly i2c, I believe they
+>> > are related and could benefit from the massive single shot renable.
+>> > or do you have any better split to suggest here?
+>> > 
+>> > (more below)
+>> > 
+>> >> ---
+>> >>  drivers/gpu/drm/i915/display/dvo_ch7017.c     | 14 ++++-----
+>> >>  drivers/gpu/drm/i915/display/dvo_ch7xxx.c     | 18 +++++------
+>> >>  drivers/gpu/drm/i915/display/dvo_ivch.c       | 16 +++++-----
+>> >>  drivers/gpu/drm/i915/display/dvo_ns2501.c     | 18 +++++------
+>> >>  drivers/gpu/drm/i915/display/dvo_sil164.c     | 18 +++++------
+>> >>  drivers/gpu/drm/i915/display/dvo_tfp410.c     | 18 +++++------
+>> >>  drivers/gpu/drm/i915/display/intel_bios.c     | 22 +++++++-------
+>> >>  drivers/gpu/drm/i915/display/intel_ddi.c      |  2 +-
+>> >>  .../gpu/drm/i915/display/intel_display_core.h |  2 +-
+>> >>  drivers/gpu/drm/i915/display/intel_dsi.h      |  2 +-
+>> >>  drivers/gpu/drm/i915/display/intel_dsi_vbt.c  | 20 ++++++-------
+>> >>  drivers/gpu/drm/i915/display/intel_dvo.c      | 14 ++++-----
+>> >>  drivers/gpu/drm/i915/display/intel_dvo_dev.h  |  2 +-
+>> >>  drivers/gpu/drm/i915/display/intel_gmbus.c    |  4 +--
+>> >>  drivers/gpu/drm/i915/display/intel_sdvo.c     | 30 +++++++++----------
+>> >>  drivers/gpu/drm/i915/display/intel_vbt_defs.h |  4 +--
+>> >>  drivers/gpu/drm/i915/gvt/edid.c               | 28 ++++++++---------
+>> >>  drivers/gpu/drm/i915/gvt/edid.h               |  4 +--
+>> >>  drivers/gpu/drm/i915/gvt/opregion.c           |  2 +-
+>> >>  19 files changed, 119 insertions(+), 119 deletions(-)
+>> >>
+>> 
+>> <snip>
+>> 
+>> >> diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
+>> >> index c17462b4c2ac..64db211148a8 100644
+>> >> --- a/drivers/gpu/drm/i915/display/intel_ddi.c
+>> >> +++ b/drivers/gpu/drm/i915/display/intel_ddi.c
+>> >> @@ -4332,7 +4332,7 @@ static int intel_ddi_compute_config_late(struct intel_encoder *encoder,
+>> >>  									connector->tile_group->id);
+>> >>  
+>> >>  	/*
+>> >> -	 * EDP Transcoders cannot be ensalved
+>> >> +	 * EDP Transcoders cannot be slaves
+>> > 
+>> >                                      ^ here
+>> > perhaps you meant 'targeted' ?
+>> > 
+>> >>  	 * make them a master always when present
+>> 
+>> <snip>
+>> 
+>> This is not actually I2C related as far as I could tell when I was making the change, so this was more of a typo fix.
+>> 
+>> If we want to improve this, a quick check with the eDP v1.5a spec suggests using primary/secondary instead,
+>> though in a global fashion rather than specifically for eDP transcoders. There is also source/sink terminology
+>> in the spec related to DP encoders.
+>> 
+>> Which would be a more acceptable change here?
+>
+> hmmm probably better to split the patches and align with the spec naming where it applies.
+> and with i2c name where it applies.
 
-That's the
+Yeah this one is completely unrelated to i2c and aux, and what the eDP
+spec says is irrelevant here. This should follow Intel hw specs.
 
-WARN_ON_ONCE(wp && pte_write(pte));
-
-check during pte_uffd_wp() in hpage_collapse_scan_pmd().
-
-Maybe fixed by
-
-commit fffa0c5024e8c90dced69b7fcde1d738384a1069
-Author: Peter Xu <peterx@redhat.com>
-Date:   Mon Apr 22 09:33:11 2024 -0400
-
-     mm/userfaultfd: reset ptes when close() for wr-protected ones
+BR,
+Jani.
 
 
-That resides in mm-hotfixes-unstable
-
-(in which case we might want to tag it as stable)
-
-
-> Modules linked in:
-> CPU: 1 PID: 5288 Comm: syz-executor.4 Not tainted 6.9.0-rc6-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-> RIP: 0010:pte_uffd_wp arch/x86/include/asm/pgtable.h:403 [inline]
-> RIP: 0010:hpage_collapse_scan_pmd+0xd32/0x14c0 mm/khugepaged.c:1316
-> Code: 90 90 e9 4b f6 ff ff 4c 8b 64 24 48 e8 f7 ee 9e ff 31 ff 4c 89 ee e8 fd e9 9e ff 4d 85 ed 0f 84 b5 01 00 00 e8 df ee 9e ff 90 <0f> 0b 90 41 be 09 00 00 00 0f b6 6c 24 47 48 8b 5c 24 10 e9 fb fa
-> RSP: 0018:ffffc90003abf9b0 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff88807a402000 RCX: ffffffff81eed643
-> RDX: ffff888021ddbc00 RSI: ffffffff81eed651 RDI: 0000000000000007
-> RBP: 000000006897fc67 R08: 0000000000000007 R09: 0000000000000000
-> R10: 0000000000000002 R11: 0000000000000002 R12: 0000000020800000
-> R13: 0000000000000002 R14: 0000000000000400 R15: ffff88801e4dcc00
-> FS:  00007fd661dde6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f7e57ed9ba1 CR3: 0000000025328000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   madvise_collapse+0x738/0xb10 mm/khugepaged.c:2761
->   madvise_vma_behavior+0x202/0x1b20 mm/madvise.c:1074
->   madvise_walk_vmas+0x1cf/0x2c0 mm/madvise.c:1248
->   do_madvise+0x309/0x640 mm/madvise.c:1428
->   __do_sys_madvise mm/madvise.c:1441 [inline]
->   __se_sys_madvise mm/madvise.c:1439 [inline]
->   __x64_sys_madvise+0xa9/0x110 mm/madvise.c:1439
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fd66227dea9
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fd661dde0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000001c
-> RAX: ffffffffffffffda RBX: 00007fd6623ac050 RCX: 00007fd66227dea9
-> RDX: 0000000000000019 RSI: 00000000dfc3efff RDI: 00000000203c1000
-> RBP: 00007fd6622ca4a4 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000006e R14: 00007fd6623ac050 R15: 00007ffd98c8dfa8
->   </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-hotfixes-unstable
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Jani Nikula, Intel
 
