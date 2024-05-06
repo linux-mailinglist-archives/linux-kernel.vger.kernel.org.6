@@ -1,209 +1,134 @@
-Return-Path: <linux-kernel+bounces-169635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5418BCB8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:03:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAAB8BCB8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 457FC1F2362E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:03:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14E69B203CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAE414265A;
-	Mon,  6 May 2024 10:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A99E142E78;
+	Mon,  6 May 2024 10:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UI4SHagx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vvIOmLGg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UI4SHagx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vvIOmLGg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N2x0QhcV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED49142645
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7901428FA;
+	Mon,  6 May 2024 10:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989795; cv=none; b=fufU5Pfhqj8JNnYX9ynSN90LKemih5Y8wHCXqlbVaOg+/i4jCMpVMtMwIhWXUGZm+oaziwxNF1UrRVnKaW9tsBtxZ416fYY2+J+c1zrKuf0I4pj4Q3l6Cm8kZ4veigChJSuZkDihbfSgmNOMBh1u+uL2XX2fctlMwdYIhx5hr1c=
+	t=1714989799; cv=none; b=O34wNEbmou2Ind9A/ObZZzDGP0jOxuiaPFnF1du3HHIdAOyma1nVXoIyGM9noXvsgW0/7juDsZaktBWE2sj9r4bq3fvpN6hLU3raTHmz4JsuCdDWLo6AxqTqJNjp6xmG6ooJqHYRLzdlIijAUS2hmkPFX7GzJpYvLwuru876CNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989795; c=relaxed/simple;
-	bh=Q8WDiy4WeyNUR4KjRkMKEQUvrLAqM1L9pZydd8Qv/fc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=uXXA7Yzb00r2Fut5ml2h9d3O75rZEQzY3sKUNN2s/FJeOZ573gmOhfhdf8rABJFyH/CcbGsJOlitWIVJk6oZXwD1ZSws22anLqqDfcqtr3pV9nnvhKLwGRH6keAbKVKvY0wgHC+wEYzpRoJqn22EXm70ZWxoZHr46de/LShSH8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UI4SHagx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vvIOmLGg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UI4SHagx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vvIOmLGg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CFB905FB2C;
-	Mon,  6 May 2024 10:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714989791; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=nYRDb9zH7bHITvb9uyN/pvc1QxS0OGpyeazjPmBPPYo=;
-	b=UI4SHagxWbbdiD/Y/w1pjkR3DPtXMrt2pqw79Eu2J8BkN4uLMaPCr+5uaQf/Y1SHflSzRM
-	g9l8Jns1iZ8gO8DWdB6BY/xVDS8BMesHj+X6l2G2mFh1SAp/cPbpYjqZtjutBODEUjjly+
-	MPt6W2CTWe4wqfYD8DRGBilVX2Zfsww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714989791;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=nYRDb9zH7bHITvb9uyN/pvc1QxS0OGpyeazjPmBPPYo=;
-	b=vvIOmLGg49nx6hMQboCwTG2d/FGM1GSstWBE8Zsk2ahjPdoQo0m0DQ+Hqw12WILJBvJD5w
-	/IA3vcuUEg0/qxAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1714989791; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=nYRDb9zH7bHITvb9uyN/pvc1QxS0OGpyeazjPmBPPYo=;
-	b=UI4SHagxWbbdiD/Y/w1pjkR3DPtXMrt2pqw79Eu2J8BkN4uLMaPCr+5uaQf/Y1SHflSzRM
-	g9l8Jns1iZ8gO8DWdB6BY/xVDS8BMesHj+X6l2G2mFh1SAp/cPbpYjqZtjutBODEUjjly+
-	MPt6W2CTWe4wqfYD8DRGBilVX2Zfsww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1714989791;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=nYRDb9zH7bHITvb9uyN/pvc1QxS0OGpyeazjPmBPPYo=;
-	b=vvIOmLGg49nx6hMQboCwTG2d/FGM1GSstWBE8Zsk2ahjPdoQo0m0DQ+Hqw12WILJBvJD5w
-	/IA3vcuUEg0/qxAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4C8913A25;
-	Mon,  6 May 2024 10:03:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DbfQK9+qOGYJEQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 06 May 2024 10:03:11 +0000
-Message-ID: <eea90337-bea4-444b-8f92-576ee242a497@suse.cz>
-Date: Mon, 6 May 2024 12:03:11 +0200
+	s=arc-20240116; t=1714989799; c=relaxed/simple;
+	bh=jGKjKdTTHtYCR0VQEA2vDa3/c/WRFub9vNT+bb6fzqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvkkvSYuA9ylNRX0u2crRghWUjB4sP6bzYx5/jeTaOlQznRhZEUmhfB9QaDM76tUbllhAnOBAFbDDhy7ITqHUGhNWRjPxPzldBkTzE81Y9OMBArMsgfWTE++9/2vzk/mhUwhP0yJPofXWxxFEsfyKlmGzDrJZga8ldcTTl5lM2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N2x0QhcV; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714989798; x=1746525798;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jGKjKdTTHtYCR0VQEA2vDa3/c/WRFub9vNT+bb6fzqE=;
+  b=N2x0QhcVWMSM8ND0XynuDKOk7e9RgCzVgDyJP1WbZVtBUcKa97QT3HGu
+   HPgw98/UUr2CKHTIzKXzZQC+3czbE+pMUN3inLmPL8BjoZYmheJluLltr
+   tDlxMdapu8V1D+Tn4M9+85K5w2cFQ2g5Q0rNuIZjbBE0ovzFbXpnJfMTQ
+   PZjn4WBc1BhExM18vHRSGcLT+bQxqBw7LqwKdEaU2uhfu0hAIJ9TojdI5
+   qCU6IqbMT1e2pDEoOq7up/okMJl56Uo7cA3/UT0klrUH+qNbs79TSyr8S
+   JUgHqGAErOJ3P7ZgynZ9WPHQw0+iDogdqagydf+ibIAnTKJPBLBqagTNe
+   w==;
+X-CSE-ConnectionGUID: FczGfuXHQT62GkY8NX0jLg==
+X-CSE-MsgGUID: xCYhXlB0SH63AdIv9kFy2w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="10889400"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="10889400"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 03:03:17 -0700
+X-CSE-ConnectionGUID: 8rNnEJpyTnGz/nqtNuckxw==
+X-CSE-MsgGUID: GkldQzuiSQiWf7hst6jZ4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="28217728"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmviesa006.fm.intel.com with SMTP; 06 May 2024 03:03:13 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 06 May 2024 13:03:12 +0300
+Date: Mon, 6 May 2024 13:03:12 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Jameson Thies <jthies@google.com>
+Cc: linux-usb@vger.kernel.org, pmalani@chromium.org, bleung@google.com,
+	abhishekpandit@chromium.org, andersson@kernel.org,
+	dmitry.baryshkov@linaro.org, fabrice.gasnier@foss.st.com,
+	gregkh@linuxfoundation.org, hdegoede@redhat.com,
+	neil.armstrong@linaro.org, rajaram.regupathy@intel.com,
+	saranya.gopal@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] usb: typec: ucsi: Fix null pointer dereference in
+ trace
+Message-ID: <Zjiq4PrL2ju8FOUz@kuha.fi.intel.com>
+References: <20240503003920.1482447-1-jthies@google.com>
+ <20240503003920.1482447-2-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab fixes for 6.9-rc7
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Joonsoo Kim
- <iamjoonsoo.kim@lge.com>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, patches@lists.linux.dev,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Chengming Zhou <chengming.zhou@linux.dev>
-Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.78
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.78 / 50.00];
-	BAYES_HAM(-2.99)[99.97%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,lge.com,linux.com,kernel.org,linux-foundation.org,kvack.org,vger.kernel.org,lists.linux.dev,linux.dev,gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503003920.1482447-2-jthies@google.com>
 
-Hi Linus,
+On Fri, May 03, 2024 at 12:39:17AM +0000, Jameson Thies wrote:
+> From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> 
+> ucsi_register_altmode checks IS_ERR on returned pointer and treats
+> NULL as valid. When CONFIG_TYPEC_DP_ALTMODE is not enabled
+> ucsi_register_displayport returns NULL which causese a NULL pointer
+> dereference in trace. Rather than return NULL, call
+> typec_port_register_altmode to register DisplayPort alternate mode
+> as a non-controllable mode when CONFIG_TYPEC_DP_ALTMODE is not enabled.
+> 
+> Reviewed-by: Jameson Thies <jthies@google.com>
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 
-please pull the latest slab hot-fixes from:
+You delivered the patch, so you should have used SoB instead of
+Reviewed-by tag:
+https://docs.kernel.org/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.9-rc7-fixes
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Thanks,
-Vlastimil
+> ---
+> Changes in V3:
+> - Returns typec_port_register_altmode call from
+> ucsi_register_displayport when CONFIG_TYPEC_DP_ALTMODE is not enabled.
+> 
+> Changes in V2:
+> - Checks for error response from ucsi_register_displayport when
+> registering DisplayPort alternate mode.
+> 
+>  drivers/usb/typec/ucsi/ucsi.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+> index c4d103db9d0f8..f66224a270bc6 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.h
+> +++ b/drivers/usb/typec/ucsi/ucsi.h
+> @@ -496,7 +496,7 @@ ucsi_register_displayport(struct ucsi_connector *con,
+>  			  bool override, int offset,
+>  			  struct typec_altmode_desc *desc)
+>  {
+> -	return NULL;
+> +	return typec_port_register_altmode(con->port, desc);
+>  }
+>  
+>  static inline void
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
 
-======================================
-
-- Fix for cleanup infrastructure (Dan Carpenter)
-
-  This makes the __free(kfree) cleanup hooks not crash on error pointers.
-
-- SLUB fix for freepointer checking (Nicolas Bouchinet)
-
-  This fixes a recently introduced bug that manifests when init_on_free,
-  CONFIG_SLAB_FREELIST_HARDENED and consistency checks (slub_debug=F) are
-  all enabled, and results in false-positive freepointer corrupt reports
-  for caches that store freepointer outside of the object area.
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      mm/slab: make __free(kfree) accept error pointers
-
-Nicolas Bouchinet (1):
-      mm/slub: avoid zeroing outside-object freepointer for single free
-
- include/linux/slab.h |  4 ++--
- mm/slub.c            | 52 +++++++++++++++++++++++++++++-----------------------
- 2 files changed, 31 insertions(+), 25 deletions(-)
-
+-- 
+heikki
 
