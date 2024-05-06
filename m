@@ -1,224 +1,143 @@
-Return-Path: <linux-kernel+bounces-170403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCA38BD65B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602E58BD654
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99D50B2189D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EFB283164
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68D015CD40;
-	Mon,  6 May 2024 20:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAABF15B563;
+	Mon,  6 May 2024 20:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UN2x9JeH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W9JuPY1B";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UN2x9JeH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W9JuPY1B"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWzg0ttT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F8D15B549;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C0F15B54C;
 	Mon,  6 May 2024 20:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715028028; cv=none; b=YgT10e697C9x6KHDooQIEobSZt2g9nHxT5VRFrAziklNNpzycuWJ7D8kd/gkCwIpZ5sarmwRfH5EpkX6N/SCSHAI7YDinqosYoTygrnEV5PQOqfLAcs2XkQYWpe1rc/MDMcXii4TsnhY9YeL7BeyrOMbpiSjeltU+w/5jLTxo80=
+	t=1715028026; cv=none; b=rPwHaFTK2G6wldXDx0s3ubPnuS31HyxDGWx1c2e/c2IH1kFeSw6ZJXSmDdfzAvJ3z+10dv+6IiPhNzOn7qovOfH9QEqKuNpw4W2QaqxHqTBLFyb0/UEQUGIbfHA5a6gyTrmheXOEMcZcgRH3AEkDqcxQ7DHxVYqRRCCyJG11VvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715028028; c=relaxed/simple;
-	bh=bRrCAjz06oRrHO3hwsFHYzBBQ0U89GRMr5rX6rOxpqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZ/DzkiqriZofYghp/VIm6g3rtkvkgnrVt9ndi+HlW4LUC06c0GWr9SIt0xykGhOOSVoBmprwjKr5Sswf0ADUgFeVvq499P0fvX2RGeygNcCfU4Lu7OdgMBacYwzqZvmxFbLyQK8LNwcOyYbtRVa9PjttxtlLHiy9s9iiaJWLaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UN2x9JeH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W9JuPY1B; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UN2x9JeH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W9JuPY1B; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0668221901;
-	Mon,  6 May 2024 20:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715028024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4xZPg8EegazAFh05UDpFoYCCWIO3q0gdW8OkIjEIjWs=;
-	b=UN2x9JeHQu+msfuPtXlQDHwMPlE4Z0fA2u6utIs0yiKJcSw4+ePgOXHnWTWUz7W8hwGkxr
-	vdNoFVUZ3Q3gQvU6DNftgwo/mq8I7pn2uuimVaIplrtVaDNE+WVu2bClF8C01AksHHxmKH
-	NFHxZ1AdEgARMqUE83yLC6gsun0nBGI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715028024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4xZPg8EegazAFh05UDpFoYCCWIO3q0gdW8OkIjEIjWs=;
-	b=W9JuPY1BS9V6wwG3Y2jogIyPRn68vPaJIs29b8f7p9eN+bn99JbMYjf+AkwfmhOxi+tfi7
-	HWZtIDmEFEqOybDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UN2x9JeH;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=W9JuPY1B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715028024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4xZPg8EegazAFh05UDpFoYCCWIO3q0gdW8OkIjEIjWs=;
-	b=UN2x9JeHQu+msfuPtXlQDHwMPlE4Z0fA2u6utIs0yiKJcSw4+ePgOXHnWTWUz7W8hwGkxr
-	vdNoFVUZ3Q3gQvU6DNftgwo/mq8I7pn2uuimVaIplrtVaDNE+WVu2bClF8C01AksHHxmKH
-	NFHxZ1AdEgARMqUE83yLC6gsun0nBGI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715028024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4xZPg8EegazAFh05UDpFoYCCWIO3q0gdW8OkIjEIjWs=;
-	b=W9JuPY1BS9V6wwG3Y2jogIyPRn68vPaJIs29b8f7p9eN+bn99JbMYjf+AkwfmhOxi+tfi7
-	HWZtIDmEFEqOybDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E82241386E;
-	Mon,  6 May 2024 20:40:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 33qpODdAOWYOZwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 06 May 2024 20:40:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 362CCA1306; Mon,  6 May 2024 22:40:23 +0200 (CEST)
-Date: Mon, 6 May 2024 22:40:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 2/2] ext4: propagate errors from ext4_sb_bread() in
- ext4_xattr_block_cache_find()
-Message-ID: <20240506204023.l74kejvjlinufuei@quack3>
-References: <20240504075526.2254349-1-libaokun@huaweicloud.com>
- <20240504075526.2254349-3-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1715028026; c=relaxed/simple;
+	bh=rWTABs0XgoNxHIEU6FB1ENUmGMXZUHEd53NHS+u7P5Q=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=d1Q4+1DllLFk7JaO+qaJxLQdk1DjCb56Ox5wwWXJcU9RNOZuz/GnMZ9y0iQKX/CelBHqQmVPLoU2/92KuGSptBNcnsl8E4koI7Kl5QGv70eHjWk6vO/5wQIMM1186Zg6670u30YkRZSBvJ0DgS1lnBOCXF0Vwzr6N3ZCwDFKO5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWzg0ttT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36FFAC116B1;
+	Mon,  6 May 2024 20:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715028025;
+	bh=rWTABs0XgoNxHIEU6FB1ENUmGMXZUHEd53NHS+u7P5Q=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=PWzg0ttTovsQ2y7AKUfHCgx+faR7cSQGZ8Ndb6LhmM9gAyN/QaZXowrzYg3SbCfEJ
+	 +jfw2cMI8ChtE1WTcBM/F7/jr6yc2Ats8gzQATR/qcpEl2TCwK21EBcUahjfhKDyNc
+	 Dzw7eqCpaCBeeHle5FMhr3hB05S8iqJP6MU1f2Ra5p6/lGmLCd41oO/CcGe+wddJpW
+	 zzbmqnA72DohDCAlN/XrVSpI0E8Rzc4dcADdzlc0yV/DpkqApCS8jpDpuprnaHv7tw
+	 CBjkfeeuHnmG0ytcQ80Lu81BaUzgNFdNLteakKczzE8ELgnAePLZeTfmQslXJWv5u2
+	 5kpzcNwAjOxxQ==
+Date: Mon, 06 May 2024 15:40:23 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240504075526.2254349-3-libaokun@huaweicloud.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 0668221901
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,huawei.com:email,huaweicloud.com:email]
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: kernel@pengutronix.de, s.hauer@pengutronix.de, shawnguo@kernel.org, 
+ leoyang.li@nxp.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, festevam@gmail.com, 
+ linux-arm-kernel@lists.infradead.org, marex@denx.de, imx@lists.linux.dev, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240504215344.861327-1-andreas@kemnade.info>
+References: <20240504215344.861327-1-andreas@kemnade.info>
+Message-Id: <171502764288.89501.11764429607857982890.robh@kernel.org>
+Subject: Re: [PATCH 0/2] ARM: dts: mix: Add Kobo Clara HD rev B
 
-On Sat 04-05-24 15:55:26, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+
+On Sat, 04 May 2024 23:53:42 +0200, Andreas Kemnade wrote:
+> Apparently there exists another revision of the Kobo Clara HD
+> which has just different regulator setup. So add support for it.
 > 
-> In ext4_xattr_block_cache_find(), when ext4_sb_bread() returns an error,
-> we will either continue to find the next ea block or return NULL to try to
-> insert a new ea block. But whether ext4_sb_bread() returns -EIO or -ENOMEM,
-> the next operation is most likely to fail with the same error. So propagate
-> the error returned by ext4_sb_bread() to make ext4_xattr_block_set() fail
-> to reduce pointless operations.
+> For details: https://gitlab.com/postmarketOS/pmaports/-/issues/2356
 > 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/xattr.c | 25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
+> Andreas Kemnade (2):
+>   dt-bindings: arm: fsl: Add Kobo Clara HD rev B
+>   ARM: dts: imx: Add Kobo Clara HD rev b
 > 
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 9fdd13422073..11742e1f16d7 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -2059,8 +2059,13 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
->  
->  inserted:
->  	if (!IS_LAST_ENTRY(s->first)) {
-> -		new_bh = ext4_xattr_block_cache_find(inode, header(s->base),
-> -						     &ce);
-> +		new_bh = ext4_xattr_block_cache_find(inode, header(s->base), &ce);
-> +		if (IS_ERR(new_bh)) {
-> +			error = PTR_ERR(new_bh);
-> +			new_bh = NULL;
-> +			goto cleanup;
-> +		}
-> +
->  		if (new_bh) {
->  			/* We found an identical block in the cache. */
->  			if (new_bh == bs->bh)
-> @@ -3090,8 +3095,8 @@ ext4_xattr_cmp(struct ext4_xattr_header *header1,
->   *
->   * Find an identical extended attribute block.
->   *
-> - * Returns a pointer to the block found, or NULL if such a block was
-> - * not found or an error occurred.
-> + * Returns a pointer to the block found, or NULL if such a block was not
-> + * found, or an error pointer if an error occurred while reading ea block.
->   */
->  static struct buffer_head *
->  ext4_xattr_block_cache_find(struct inode *inode,
-> @@ -3113,13 +3118,11 @@ ext4_xattr_block_cache_find(struct inode *inode,
->  
->  		bh = ext4_sb_bread(inode->i_sb, ce->e_value, REQ_PRIO);
->  		if (IS_ERR(bh)) {
-> -			if (PTR_ERR(bh) == -ENOMEM) {
-> -				mb_cache_entry_put(ea_block_cache, ce);
-> -				return NULL;
-> -			}
-> -			bh = NULL;
-> -			EXT4_ERROR_INODE(inode, "block %lu read error",
-> -					 (unsigned long)ce->e_value);
-> +			if (PTR_ERR(bh) != -ENOMEM)
-> +				EXT4_ERROR_INODE(inode, "block %lu read error",
-> +						 (unsigned long)ce->e_value);
-> +			mb_cache_entry_put(ea_block_cache, ce);
-> +			return bh;
->  		} else if (ext4_xattr_cmp(header, BHDR(bh)) == 0) {
->  			*pce = ce;
->  			return bh;
-> -- 
+>  .../devicetree/bindings/arm/fsl.yaml          |  6 ++
+>  arch/arm/boot/dts/nxp/imx/Makefile            |  1 +
+>  .../dts/nxp/imx/imx6sll-kobo-clarahd-b.dts    | 79 +++++++++++++++++++
+>  3 files changed, 86 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dts
+> 
+> --
 > 2.39.2
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y nxp/imx/imx6sll-kobo-clarahd-b.dtb' for 20240504215344.861327-1-andreas@kemnade.info:
+
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: /soc/bus@2000000/spba-bus@2000000/spdif@2004000: failed to match any schema with compatible: ['fsl,imx6sl-spdif', 'fsl,imx35-spdif']
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: serial@2034000: dma-name: b'rx\x00tx\x00' is not of type 'object', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: timer@2098000: compatible: 
+'oneOf' conditional failed, one must be fixed:
+	['fsl,imx6sl-gpt'] is too short
+	'fsl,imx1-gpt' was expected
+	'fsl,imx21-gpt' was expected
+	'fsl,imx27-gpt' was expected
+	'fsl,imx31-gpt' was expected
+	'fsl,imx6sl-gpt' is not one of ['fsl,imx25-gpt', 'fsl,imx50-gpt', 'fsl,imx51-gpt', 'fsl,imx53-gpt', 'fsl,imx6q-gpt']
+	'fsl,imx6dl-gpt' was expected
+	'fsl,imx6sl-gpt' is not one of ['fsl,imx6ul-gpt', 'fsl,imx7d-gpt']
+	from schema $id: http://devicetree.org/schemas/timer/fsl,imxgpt.yaml#
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: anatop@20c8000: '#address-cells', '#size-cells', 'regulator-3p0@20c8120', 'temperature-sensor' do not match any of the regexes: 'pinctrl-[0-9]+', 'regulator-((1p1)|(2p5)|(3p0)|(vddcore)|(vddpu)|(vddsoc))$'
+	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-anatop.yaml#
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: regulator-3p0@20c8120: Unevaluated properties are not allowed ('reg' was unexpected)
+	from schema $id: http://devicetree.org/schemas/regulator/anatop-regulator.yaml#
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: temperature-sensor: '#thermal-sensor-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/thermal/imx-thermal.yaml#
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: /soc/bus@2000000/interrupt-controller@20dc000: failed to match any schema with compatible: ['fsl,imx6sll-gpc', 'fsl,imx6q-gpc']
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: /soc/bus@2000000/pinctrl@20e0000: failed to match any schema with compatible: ['fsl,imx6sll-iomuxc']
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: /soc/bus@2000000/csi@20e8000: failed to match any schema with compatible: ['fsl,imx6sll-csi', 'fsl,imx6s-csi']
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: /soc/bus@2000000/csi@20e8000: failed to match any schema with compatible: ['fsl,imx6sll-csi', 'fsl,imx6s-csi']
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: lcd-controller@20f8000: compatible: 
+'oneOf' conditional failed, one must be fixed:
+	['fsl,imx6sll-lcdif', 'fsl,imx28-lcdif'] is too long
+	'fsl,imx6sll-lcdif' is not one of ['fsl,imx23-lcdif', 'fsl,imx28-lcdif', 'fsl,imx6sx-lcdif', 'fsl,imx8mp-lcdif', 'fsl,imx93-lcdif']
+	'fsl,imx6sx-lcdif' was expected
+	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: lcd-controller@20f8000: clocks: [[2, 129], [2, 123], [2, 0]] is too long
+	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
+arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clarahd-b.dtb: lcd-controller@20f8000: clock-names: ['pix', 'axi', 'disp_axi'] is too long
+	from schema $id: http://devicetree.org/schemas/display/fsl,lcdif.yaml#
+
+
+
+
+
 
