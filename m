@@ -1,200 +1,113 @@
-Return-Path: <linux-kernel+bounces-169474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4C98BC937
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E375F8BC938
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83E9DB219D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:12:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38DDAB20AFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF0C1419B3;
-	Mon,  6 May 2024 08:12:25 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6041C140E4F;
+	Mon,  6 May 2024 08:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ieS//Zr5"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91D527456;
-	Mon,  6 May 2024 08:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313E98BF3
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714983144; cv=none; b=upHohtMrbElgrX+AlnjOHsG/ec0+bofm3AKlBTqwmlHuFIxX6jfpumQKwDjbYgot+eiAQfiUqhYHtgH7AyJ7fUnpE78Fu07Jn6LjoblgyPIaBaJr5+3YuDiNedqucOV+yqc2BqhLsuz7hPWgZovUMbcfdA67k8UjoJCCRsif190=
+	t=1714983175; cv=none; b=gX2cYbSewDCCQpKC9NFQ3w1taS5tLER/SwdpNJxIIwyZrrGn/k+5vufBJf9hR8EiIU6FOLiDxW8Xe9Aa7JwbDlz5zCYKczhP53+Z1m3pzLcOWbDIYlzK0yMFD99Mem+Mb278xCCD//JC6O+SOpIzsk9PwCB6JHP8fkzUca4mjW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714983144; c=relaxed/simple;
-	bh=To8RptUdU73iK5XazrwQRMQNVjQZRhyRQc3i9VrudV8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mft+E2Q67Gs+FMcjWTf4WKbkKEbINqfTjkHgOwulImAAUvtUmYK/PavJmMPQQxFY3N+2o5CFYDUgG1riLU86YderoWdMoBJUlOcn5avyUTuVhaVDVXwVnp0yntuqfUl8zrmWxyA88PKZbDJVRSXZJ/O98SMRqXvDwXVmJL7BUQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1s3tSB-000000004rl-38Ff;
-	Mon, 06 May 2024 08:12:07 +0000
-Date: Mon, 6 May 2024 09:11:59 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net 2/2] net: ethernet: mediatek: use QDMA instead of
- ADMAv2 on MT7981 and MT7986
-Message-ID: <ZjiQzwWysZmDv2Hs@makrotopia.org>
-References: <5f5d8880a9ec6339688828d6f33bc95e99c16d81.1714696206.git.daniel@makrotopia.org>
- <7815c0e3300563ec1d5a15d2080931461c5b2a9a.1714696206.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1714983175; c=relaxed/simple;
+	bh=tlifZld/ZHFHDP1x96eddbXPDbjSerp7vz4ooq3f81Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HeTE+avI3Rz94JMlvLooxVV6VybiyXY6PFTaVZRilCQYBKl84qD/hyjHu+ZgY8tsH+ncwOuvy43FkEBTunh6N7XjBidIqEIuWR5FqSUv+Nos+lCP4KSicnJpFWjmYsO/SbcOkVZMkvih+qLwjjczuZncur2nsGRbcSS4g/H5FqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ieS//Zr5; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2736040E0249;
+	Mon,  6 May 2024 08:12:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KCmLlzc50hcT; Mon,  6 May 2024 08:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1714983169; bh=Fn+uWTiXlU6mRzHVG81vOdF0e7pbYvi3kVePuR9cVmo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ieS//Zr5/nS/TScQYOATgoiakxb0kMbDAYEfanMgbOqiRUBWMwNSOpwLwH0VVBllN
+	 1rxkWWM51Y1Fb2SErdhl0GWdPgYRpMZ+MNwv00hKi5aWLvxOvq6D49TxBvRyx/iEN4
+	 xZZA+TumXNs4mKa0bJmPu+OyM7J6SWm+nQiqF1ljYQI7XASHsGsyGx95nMTL7D5WwM
+	 qBy6csN56ZTg/W64fx50jdGR0Wzz5QUaivhXBCK6j1pm5MJRGCUEaPHr5kyDiGErhG
+	 sy4qJ5QhO5HfI7zlT77j3GmDf9PbWroho0tQm5/kWh3ghaw8yKNBgGLDFyhnJieHjN
+	 eNVKTW7hwwiWRYjvvRQivs9vDbp4i9ArU83glESsPGmHXOOhZv7gcyAfJUz6JnPvII
+	 jZ45GZvRplXc6Cw32U+ZRxM1lG9kKyUVUyK2IyxA+7N2MRt6Rez11WN6oUOV0R2cE6
+	 cJnEwKqWSUEWQbr/U82cRpCP8/4Ga7ZjiYyqS43ghGUhfgq8RPBitL5qpsKNZUqBP1
+	 5aFJXVV/sZISnuZ0uuyAwSCsJAiY/8F3IIl+CeKffpZ4+SgzdTt7wsz1ks6njGhfkc
+	 HJr8NIkwl1+eZcTDYQAWctN3VUCeK1avKFLlp5cthL9+qUWtMuJ4T+UQXIHEBcuTq0
+	 uwQeqcppAt2f6YdYlmfjAyxs=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D8E5740E0187;
+	Mon,  6 May 2024 08:12:40 +0000 (UTC)
+Date: Mon, 6 May 2024 10:12:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>
+Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
+ WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
+Message-ID: <20240506081235.GCZjiQ8-MC7wL7Ue8z@fat_crate.local>
+References: <202404302233.f27f91b2-oliver.sang@intel.com>
+ <20240430172313.GCZjEpAfUECkEZ9S5L@fat_crate.local>
+ <ZjE7DkTBSbPlBN8k@google.com>
+ <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
+ <ZjFLpkgI3Zl4dsXs@google.com>
+ <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
+ <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
+ <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
+ <20240506073903.GAZjiJF7BQyjYJQLYx@fat_crate.local>
+ <20240506080156.GBZjiOdHjn-NdmbnTw@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7815c0e3300563ec1d5a15d2080931461c5b2a9a.1714696206.git.daniel@makrotopia.org>
+In-Reply-To: <20240506080156.GBZjiOdHjn-NdmbnTw@fat_crate.local>
 
-On Fri, May 03, 2024 at 01:32:42AM +0100, Daniel Golle wrote:
-> ADMA is plagued by RX hangs which can't easily detected and happen upon
-> receival of a corrupted package.
-> Use QDMA just like on netsys v1 which is also still present and usable, and
-> doesn't suffer from that problem.
+Oliver,
 
-The commit description is slightly misleading I have just been told by
-MediaTek off-list. So please do not apply this patch, I will send v2
-shortly.
+does the warning go away when you run *only* the second patch?
 
-The internal naming of the DMA implementations in MediaTek calls the DMA
-at registers 0x6100 "ADMAv2" while what is found at 0x4100 is called
-"ADMAv1". I will adapt the commit description of both patches
-accordingly to avoid confusion.
+I.e., this one:
 
-> 
-> Fixes: 197c9e9b17b11 ("net: ethernet: mtk_eth_soc: introduce support for mt7986 chipset")
-> Co-developed-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
->  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 46 ++++++++++-----------
->  1 file changed, 23 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> index 3eefb735ce19..d7d73295f0dc 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> @@ -110,16 +110,16 @@ static const struct mtk_reg_map mt7986_reg_map = {
->  	.tx_irq_mask		= 0x461c,
->  	.tx_irq_status		= 0x4618,
->  	.pdma = {
-> -		.rx_ptr		= 0x6100,
-> -		.rx_cnt_cfg	= 0x6104,
-> -		.pcrx_ptr	= 0x6108,
-> -		.glo_cfg	= 0x6204,
-> -		.rst_idx	= 0x6208,
-> -		.delay_irq	= 0x620c,
-> -		.irq_status	= 0x6220,
-> -		.irq_mask	= 0x6228,
-> -		.adma_rx_dbg0	= 0x6238,
-> -		.int_grp	= 0x6250,
-> +		.rx_ptr		= 0x4100,
-> +		.rx_cnt_cfg	= 0x4104,
-> +		.pcrx_ptr	= 0x4108,
-> +		.glo_cfg	= 0x4204,
-> +		.rst_idx	= 0x4208,
-> +		.delay_irq	= 0x420c,
-> +		.irq_status	= 0x4220,
-> +		.irq_mask	= 0x4228,
-> +		.adma_rx_dbg0	= 0x4238,
-> +		.int_grp	= 0x4250,
->  	},
->  	.qdma = {
->  		.qtx_cfg	= 0x4400,
-> @@ -1107,7 +1107,7 @@ static bool mtk_rx_get_desc(struct mtk_eth *eth, struct mtk_rx_dma_v2 *rxd,
->  	rxd->rxd1 = READ_ONCE(dma_rxd->rxd1);
->  	rxd->rxd3 = READ_ONCE(dma_rxd->rxd3);
->  	rxd->rxd4 = READ_ONCE(dma_rxd->rxd4);
-> -	if (mtk_is_netsys_v2_or_greater(eth)) {
-> +	if (mtk_is_netsys_v3_or_greater(eth)) {
->  		rxd->rxd5 = READ_ONCE(dma_rxd->rxd5);
->  		rxd->rxd6 = READ_ONCE(dma_rxd->rxd6);
->  	}
-> @@ -2028,7 +2028,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
->  			break;
->  
->  		/* find out which mac the packet come from. values start at 1 */
-> -		if (mtk_is_netsys_v2_or_greater(eth)) {
-> +		if (mtk_is_netsys_v3_or_greater(eth)) {
->  			u32 val = RX_DMA_GET_SPORT_V2(trxd.rxd5);
->  
->  			switch (val) {
-> @@ -2140,7 +2140,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
->  		skb->dev = netdev;
->  		bytes += skb->len;
->  
-> -		if (mtk_is_netsys_v2_or_greater(eth)) {
-> +		if (mtk_is_netsys_v3_or_greater(eth)) {
->  			reason = FIELD_GET(MTK_RXD5_PPE_CPU_REASON, trxd.rxd5);
->  			hash = trxd.rxd5 & MTK_RXD5_FOE_ENTRY;
->  			if (hash != MTK_RXD5_FOE_ENTRY)
-> @@ -2690,7 +2690,7 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
->  
->  		rxd->rxd3 = 0;
->  		rxd->rxd4 = 0;
-> -		if (mtk_is_netsys_v2_or_greater(eth)) {
-> +		if (mtk_is_netsys_v3_or_greater(eth)) {
->  			rxd->rxd5 = 0;
->  			rxd->rxd6 = 0;
->  			rxd->rxd7 = 0;
-> @@ -3893,7 +3893,7 @@ static int mtk_hw_init(struct mtk_eth *eth, bool reset)
->  	else
->  		mtk_hw_reset(eth);
->  
-> -	if (mtk_is_netsys_v2_or_greater(eth)) {
-> +	if (mtk_is_netsys_v3_or_greater(eth)) {
->  		/* Set FE to PDMAv2 if necessary */
->  		val = mtk_r32(eth, MTK_FE_GLO_MISC);
->  		mtk_w32(eth,  val | BIT(4), MTK_FE_GLO_MISC);
-> @@ -5169,11 +5169,11 @@ static const struct mtk_soc_data mt7981_data = {
->  		.dma_len_offset = 8,
->  	},
->  	.rx = {
-> -		.desc_size = sizeof(struct mtk_rx_dma_v2),
-> -		.irq_done_mask = MTK_RX_DONE_INT_V2,
-> +		.desc_size = sizeof(struct mtk_rx_dma),
-> +		.irq_done_mask = MTK_RX_DONE_INT,
->  		.dma_l4_valid = RX_DMA_L4_VALID_V2,
-> -		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
-> -		.dma_len_offset = 8,
-> +		.dma_max_len = MTK_TX_DMA_BUF_LEN,
-> +		.dma_len_offset = 16,
->  	},
->  };
->  
-> @@ -5195,11 +5195,11 @@ static const struct mtk_soc_data mt7986_data = {
->  		.dma_len_offset = 8,
->  	},
->  	.rx = {
-> -		.desc_size = sizeof(struct mtk_rx_dma_v2),
-> -		.irq_done_mask = MTK_RX_DONE_INT_V2,
-> +		.desc_size = sizeof(struct mtk_rx_dma),
-> +		.irq_done_mask = MTK_RX_DONE_INT,
->  		.dma_l4_valid = RX_DMA_L4_VALID_V2,
-> -		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
-> -		.dma_len_offset = 8,
-> +		.dma_max_len = MTK_TX_DMA_BUF_LEN,
-> +		.dma_len_offset = 16,
->  	},
->  };
->  
-> -- 
-> 2.45.0
-> 
+https://lore.kernel.org/r/20240504125040.GCZjYvIAK9_DzKuHXh@fat_crate.local
+
+?
+
+I think in this case, it'll make sure that the misconfigured system is
+"reconfigured" properly wrt VMX etc...
+
+Can you pls send dmesg and /proc/cpuinfo from that run?
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
