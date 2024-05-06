@@ -1,148 +1,293 @@
-Return-Path: <linux-kernel+bounces-169597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942BE8BCAFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:43:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3758C8BCB02
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE831C21C1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:43:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F1E51C21B49
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7AD14263A;
-	Mon,  6 May 2024 09:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="zQMm5MKP"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B29142636;
+	Mon,  6 May 2024 09:43:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9EA1422A2;
-	Mon,  6 May 2024 09:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715D11422D9
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714988587; cv=none; b=IgY5rZPypv1RGP4NTXZ0HySyBsUnDUlgt7uqt5b6SgfATjUIYVT1fsLJC5wWdd8fO3Q/oCov+xBuPZtmASWcKae9y2NkCT7soOGBKr9iWtTE+w3gre9n5SPzXu+3jMuUs9m+/hlm3qd304cB4Y0lpRzfIZlvyu4wgWn8r4Mx5MY=
+	t=1714988603; cv=none; b=pzeqrFnNsWWNZ/qp5X2UfNYMOgerJR5M9hbJ/D/hIfq9sjm1gXeajYr3SAOIVrUofUwd7siNfm10ShbblyQie5vXODuUGMaNdNl+xYCORxOsm8B12PACmfC20ws90/zY/rTANrviBqSikFhqwywItYG2y9U1HlAuabI/JYEI0H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714988587; c=relaxed/simple;
-	bh=l1J0J7nvc0QZutrcwgA9PPAtMK9fRY5i5IKb/lBpfJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=STuqauCV0snFy1D65l4gl6mAkOHocrog0pkb0+WqeUgMLMQE5964IcgyW7VtoaHV8Gh/VL7ELjOhGeTUun5blYAR3Sb+woc7N91vtJEhQSlFVWu9ulG3s+bptZoHarjQVrt1more6+DtzKovoPBQ0Tuedw8o+gbK8DBTpU+CRLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=zQMm5MKP; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 4C23D43F5;
-	Mon,  6 May 2024 11:42:59 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 4C23D43F5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1714988579; bh=2FE4ronFinKhOZ5TjkfZYzbWiDI4ObfJLbSkCeF4Nz8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=zQMm5MKPlkhTcl0a+2n3k97Lu8F70UV3KgeEuv19gu5AhHmmiEO2UbH9QK4MfhpUd
-	 2lAxGNYqMLjXL7mDJLnqzHoQlR1W9hvEvVNQrV1J32RR9Wdgrbs4Fec/9qB+vzE46n
-	 NVd+QuCsStLd+O4P5+mmH9fDDjQTDjTamfsR055w=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Mon,  6 May 2024 11:42:39 +0200 (CEST)
-Message-ID: <ce5f4c0f-25ff-4b20-a3f3-2a11ccb8b5f4@perex.cz>
-Date: Mon, 6 May 2024 11:42:39 +0200
+	s=arc-20240116; t=1714988603; c=relaxed/simple;
+	bh=myTU4/Q6NGtbmF0r92u+3CCOIh0NaCf/KXPLPkrYEbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jm363GNfEAVlbOuVIp8Fgc34AtwnBQQdE46Eh3LxpwDUdJi+YTVrLUh7p1uz9fiSwYwJccPiX3ZXGC+oeqrTWIZiQKUyHbwt0M7laDrsfliSj7t/dATEklsPoQfrYfY2KSgpAkcYsMH6fGOj4eOTDX5ElKG4CutBMzo/YjWfF78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s3usD-0003qB-BH; Mon, 06 May 2024 11:43:05 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s3usC-00GEwf-DY; Mon, 06 May 2024 11:43:04 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 026EB2CB411;
+	Mon, 06 May 2024 09:43:04 +0000 (UTC)
+Date: Mon, 6 May 2024 11:43:03 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Thomas Kopp <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux@ew.tq-group.com
+Subject: Re: [PATCH v2 5/6] can: mcp251xfd: add gpio functionality
+Message-ID: <20240506-pygmy-wolf-of-advance-afb194-mkl@pengutronix.de>
+References: <20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com>
+ <20240506-mcp251xfd-gpio-feature-v2-5-615b16fa8789@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
-Content-Language: en-US
-To: Shengjiu Wang <shengjiu.wang@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, hverkuil@xs4all.nl,
- sakari.ailus@iki.fi, tfiga@chromium.org, m.szyprowski@samsung.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
- lgirdwood@gmail.com, tiwai@suse.com, alsa-devel@alsa-project.org,
- linuxppc-dev@lists.ozlabs.org
-References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
- <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310>
- <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
- <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
- <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
- <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
- <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
-From: Jaroslav Kysela <perex@perex.cz>
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2x6ow623o46vxnne"
+Content-Disposition: inline
+In-Reply-To: <20240506-mcp251xfd-gpio-feature-v2-5-615b16fa8789@ew.tq-group.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 06. 05. 24 10:49, Shengjiu Wang wrote:
 
-> Even now I still think V4L2 is the best option, but it looks like there
-> are a lot of rejects.  If develop a new ALSA-mem2mem, it is also
-> a duplication of code (bigger duplication that just add audio support
-> in V4L2 I think).
+--2x6ow623o46vxnne
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Maybe not. Could you try to evaluate a pure dma-buf (drivers/dma-buf) solution 
-and add only enumeration and operation trigger mechanism to the ALSA API? It 
-seems that dma-buf has enough sufficient code to transfer data from and to the 
-kernel space for the further processing. I think that one buffer can be as 
-source and the second for the processed data.
+On 06.05.2024 07:59:47, Gregor Herburger wrote:
+> The mcp251xfd devices allow two pins to be configured as gpio. Add this
+> functionality to driver.
+>=20
+> Signed-off-by: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+> ---
+>  drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c | 173 +++++++++++++++++++=
+++++++
+>  drivers/net/can/spi/mcp251xfd/mcp251xfd.h      |   6 +
+>  2 files changed, 179 insertions(+)
+>=20
+> diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c b/drivers/net=
+/can/spi/mcp251xfd/mcp251xfd-core.c
+> index 4739ad80ef2a..de301f3a2f4e 100644
+> --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/bitfield.h>
+>  #include <linux/clk.h>
+>  #include <linux/device.h>
+> +#include <linux/gpio/driver.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+>  #include <linux/pm_runtime.h>
+> @@ -1768,6 +1769,172 @@ static int mcp251xfd_register_check_rx_int(struct=
+ mcp251xfd_priv *priv)
+>  	return 0;
+>  }
+> =20
+> +#ifdef CONFIG_GPIOLIB
+> +static const char * const mcp251xfd_gpio_names[] =3D {"GPIO0", "GPIO1"};
 
-We can eventually add new ioctls to the ALSA's control API (/dev/snd/control*) 
-for this purpose (DSP processing).
+please add spaces after { and before }.
 
-					Jaroslav
+> +
+> +static int mcp251xfd_gpio_request(struct gpio_chip *chip, unsigned int o=
+ffset)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 pin_mask =3D MCP251XFD_REG_IOCON_PM0 << offset;
 
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+Can you add MCP251XFD_REG_IOCON_PM(), MCP251XFD_REG_IOCON_TRIS(),
+MCP251XFD_REG_IOCON_LAT(), MCP251XFD_REG_IOCON_GPIO() macros?
 
+> +	int ret;
+> +
+> +	if (priv->rx_int && offset =3D=3D 1) {
+> +		netdev_err(priv->ndev, "Can't use GPIO 1 with RX-INT!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret =3D pm_runtime_resume_and_get(priv->ndev->dev.parent);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_update_bits(priv->map_reg, MCP251XFD_REG_IOCON,
+> +				  pin_mask, pin_mask);
+> +}
+> +
+> +static void mcp251xfd_gpio_free(struct gpio_chip *chip, unsigned int off=
+set)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +
+> +	pm_runtime_put(priv->ndev->dev.parent);
+> +}
+> +
+> +static int mcp251xfd_gpio_get_direction(struct gpio_chip *chip,
+> +					unsigned int offset)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 mask =3D MCP251XFD_REG_IOCON_TRIS0 << offset;
+> +	u32 val;
+> +
+> +	regmap_read(priv->map_reg, MCP251XFD_REG_IOCON, &val);
+
+Please print an error if regmap_read() throws an error.
+
+> +
+> +	if (mask & val)
+> +		return GPIO_LINE_DIRECTION_IN;
+> +
+> +	return GPIO_LINE_DIRECTION_OUT;
+> +}
+> +
+> +static int mcp251xfd_gpio_get(struct gpio_chip *chip, unsigned int offse=
+t)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 mask =3D MCP251XFD_REG_IOCON_GPIO0 << offset;
+> +	u32 val;
+> +
+> +	regmap_read(priv->map_reg, MCP251XFD_REG_IOCON, &val);
+
+same here
+
+> +
+> +	return !!(mask & val);
+> +}
+> +
+> +static int mcp251xfd_gpio_get_multiple(struct gpio_chip *chip, unsigned =
+long *mask,
+> +				       unsigned long *bit)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret =3D regmap_read(priv->map_reg, MCP251XFD_REG_IOCON, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*bit =3D FIELD_GET(MCP251XFD_REG_IOCON_GPIO_MASK, val) & *mask;
+> +
+> +	return 0;
+> +}
+> +
+> +static int mcp251xfd_gpio_direction_output(struct gpio_chip *chip,
+> +					   unsigned int offset, int value)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 dir_mask =3D MCP251XFD_REG_IOCON_TRIS0 << offset;
+> +	u32 val_mask =3D MCP251XFD_REG_IOCON_LAT0 << offset;
+> +	u32 val;
+> +
+> +	if (value)
+> +		val =3D val_mask;
+> +	else
+> +		val =3D 0;
+> +
+> +	return regmap_update_bits(priv->map_reg, MCP251XFD_REG_IOCON,
+> +				  dir_mask | val_mask, val);
+> +}
+> +
+> +static int mcp251xfd_gpio_direction_input(struct gpio_chip *chip,
+> +					  unsigned int offset)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 dir_mask =3D MCP251XFD_REG_IOCON_TRIS0 << offset;
+> +
+> +	return regmap_update_bits(priv->map_reg, MCP251XFD_REG_IOCON,
+> +				  dir_mask, dir_mask);
+> +}
+> +
+> +static void mcp251xfd_gpio_set(struct gpio_chip *chip, unsigned int offs=
+et,
+> +			       int value)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 val_mask =3D MCP251XFD_REG_IOCON_LAT0 << offset;
+> +	u32 val;
+> +	int ret;
+> +
+> +	if (value)
+> +		val =3D val_mask;
+> +	else
+> +		val =3D 0;
+> +
+> +	ret =3D regmap_update_bits(priv->map_reg, MCP251XFD_REG_IOCON,
+> +				 val_mask, val);
+> +	if (ret)
+> +		dev_warn(&priv->spi->dev,
+> +			 "Failed to set GPIO %u: %d\n", offset, ret);
+
+dev_error()
+
+> +}
+> +
+> +static void mcp251xfd_gpio_set_multiple(struct gpio_chip *chip, unsigned=
+ long *mask,
+> +					unsigned long *bits)
+> +{
+> +	struct mcp251xfd_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 val;
+> +	int ret;
+> +
+> +	val =3D FIELD_PREP(MCP251XFD_REG_IOCON_LAT_MASK, *bits);
+> +
+> +	ret =3D regmap_update_bits(priv->map_reg, MCP251XFD_REG_IOCON,
+> +				 MCP251XFD_REG_IOCON_LAT_MASK, val);
+> +	if (ret)
+> +		dev_warn(&priv->spi->dev, "Failed to set GPIOs %d\n", ret);
+
+dev_error()
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--2x6ow623o46vxnne
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmY4piQACgkQKDiiPnot
+vG+GyAf9EysdM/a8rlYZsemizlyNfZsVdm55Lvk/z1KBOe1AnQy1PSsj3nOlgbc+
+aDLCX6Pk2aHeV/IdFI6WjVvyZnu9RLH7K/FfPu9WMgXb4d9tjb8eKvi4AZBgOoIL
+FQvjYkGiURFEyNsyAg1LNrzE+vM6Hlbt0LRnBAHVQcTSeiPVj/a5F72mZH14/IfE
+GHa8zxi9QMVuzTcdikJdMC4TrQMPM7LdrU4nDoEg96LbVMowmd2BpNViiD74UNtG
+blBWbm7+IJysQABmL47o4JK0xdjseb6hACx8BtxNPKA3YNGvxHSmXw0nFCre7+2d
+keEWG+PcOCG50FLfcYn0GrMQjqam4A==
+=OZUz
+-----END PGP SIGNATURE-----
+
+--2x6ow623o46vxnne--
 
