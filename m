@@ -1,112 +1,93 @@
-Return-Path: <linux-kernel+bounces-169344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1A68BC75B
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 471688BC75D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0088B1C21131
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7635B1C20C9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5704AEF7;
-	Mon,  6 May 2024 06:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Nq7NwWfy"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D358481B1;
-	Mon,  6 May 2024 06:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930054CB36;
+	Mon,  6 May 2024 06:10:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ACC48CCD;
+	Mon,  6 May 2024 06:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714975805; cv=none; b=dpRn0fw/mnFcnu3M1J8Z8TYrpLGV2V/TYJbeAawlLo5mUmTpI4TUS9CzoBSt9GabPlrGE/E3z1nR9W5KhocatOzoHmTRseTGpLM0NK9qT/jMmPmZJ4hnsl5yekgjjhK9qkObJyBUywut8oBomL/sMzJ3VR4DI6k80la29ck80GY=
+	t=1714975825; cv=none; b=tJ+cG2z+POUUIgOoFjeEH88Bi1enDAZ6cB3SQtm8/TS7rmVZ7J9496v3Fo4lyLEpr1Qi7BdZCOydLt07k+brrGdDkWLLD+odwONsYPnXILwFfsM4mKWutp14+o7eYH0gJKwk7pAqMfOj/wqLgUTdDLwQ3KjSzyejXI0sk4dVhl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714975805; c=relaxed/simple;
-	bh=sTMZwmVGPyNKhVYaypjAEtdGkY8Q2/gSqqldEhiPQqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahVSeLmz/Jwcdhyx2M/DA2q6pdDvU0YgJGvujK+/WgsCH9mCn4FN/1V3CXv2JanZoCQbYqZhhDxxMSjGFLnqLOGCvKbnAhmFWwi22nGgn9j1xkbe3eDXnk7DAc6aF9Nj2GZKZh+Cf8PeJvbccWt9zcnIRWmSfaDPNdGOluGiJdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Nq7NwWfy; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1714975798;
-	bh=sTMZwmVGPyNKhVYaypjAEtdGkY8Q2/gSqqldEhiPQqk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nq7NwWfyIHEM9rx4m3EW9x7iHW5HxdwFIn3MhCb1fe4y1YRqXbJfAfMZwfHMGWH8i
-	 o43//nU43fPNTKQicGKJkjceFsXt6in8V9spgOouL5ttXQJU0/4B0B1bOYzga/KFDE
-	 7Iurd9ZEwDVR1y70bCHQj/5yfM/X5WBu6Vk7OKK0=
-Date: Mon, 6 May 2024 08:09:56 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	Mario Limonciello <mario.limonciello@amd.com>, "Dustin L. Howett" <dustin@howett.net>, 
-	Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 0/2] platform/chrome: cros_ec_framework_laptop: new driver
-Message-ID: <613369f9-42c5-4a59-b83f-45bd1773ffe4@t-8ch.de>
-References: <20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net>
+	s=arc-20240116; t=1714975825; c=relaxed/simple;
+	bh=d9WvYebWfy7ti2lzrEEL3q0vMZgI9PwJYjd0o/nAgD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=K9x0bUb7vjQOStgwW/OVhLogUOakMgswQirTyPg5CwYSOPvka9+uxzonai5MoUL+gWUEkN1L7eGrxnCBCtNAafbAPdrH/s3GPGyrrFGvrtObppjw4KN74wI6akzhNgJPqBgWb9er6HQiyA0lPar4Z1Xh3MUBvIjh4rHffvfy+9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BC8C1007;
+	Sun,  5 May 2024 23:10:47 -0700 (PDT)
+Received: from [10.163.35.238] (unknown [10.163.35.238])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B5173F762;
+	Sun,  5 May 2024 23:10:17 -0700 (PDT)
+Message-ID: <cbcd29ab-2f8f-443e-96e4-0f2d134964db@arm.com>
+Date: Mon, 6 May 2024 11:40:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] arm64/arch_timer: include <linux/percpu.h>
+To: Puranjay Mohan <puranjay@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sumit Garg <sumit.garg@linaro.org>, Stephen Boyd <swboyd@chromium.org>,
+ Douglas Anderson <dianders@chromium.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20240502123449.2690-1-puranjay@kernel.org>
+ <7008cd0c-5b65-4289-9015-434cbe3d7e21@arm.com> <mb61p4jbf8c29.fsf@kernel.org>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <mb61p4jbf8c29.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-05-05 22:56:33+0000, Thomas Weißschuh wrote:
-> Framework Laptops are using embedded controller firmware based on the
-> ChromeOS EC project.
-> In addition to the standard upstream commands some vendor-specific
-> commands are implemented.
+
+
+On 5/3/24 15:14, Puranjay Mohan wrote:
+> Anshuman Khandual <anshuman.khandual@arm.com> writes:
 > 
-> Add a driver that implements battery charge thresholds using these
-> custom commands.
-
-It turns out that standard ChromesOS EC defines EC_CMD_CHARGE_CONTROL.
-The kernel headers however only define v1 of the protocol, which is very
-limited.
-
-But in the upstream firmware repo there is a v3 which is much better.
-
-The Framework laptop only implements v2 which is also fine.
-Given that v3 was only introduced late last year, it seems better to
-stick to v2 anyways for now.
-
-So please disregard Patch 2, I'll see on how to use this via a normal
-cros_ec driver.
-
-There are some other Framework-only features that will use Patch 1,
-so feedback for that would still be good.
-
-> Patch 1 adds the general scaffolding and device binding.
-> Patch 2 implements the battery charge thresholds.
+>> On 5/2/24 18:04, Puranjay Mohan wrote:
+>>> arch_timer.h includes linux/smp.h to use DEFINE_PER_CPU() and it works
+>>> because smp.h includes percpu.h. The next commit will remove percpu.h
+>>> from smp.h and it will break this usage.
+>>>
+>>> Explicitly include percpu.h and remove smp.h
+>>
+>> But this particular change does not seem to be necessary for changing
+>> raw_smp_processor_id() as current_thread_info()->cpu being done in the
+>> later patch ? You might still leave header <asm/percpu.h> inclusion in
+>> arch/arm64/include/asm/smp.h while dropping the per cpu cpu_number ?
 > 
-> This series is based on
-> https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+> commit 57c82954e77f ("arm64: make cpu number a percpu variable")
+> created this percpu variable and included <asm/percpu.h> in <asm/smp.h>
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
-> Thomas Weißschuh (2):
->       platform/chrome: cros_ec_framework_laptop: introduce driver
->       platform/chrome: cros_ec_framework_laptop: implement battery charge thresholds
+> Now we are removing the percpu variable cpu_number from smp.h, so there
+> is no need to keep percpu.h in smp.h
+
+Fair enough.
+
 > 
->  MAINTAINERS                                        |   5 +
->  drivers/mfd/cros_ec_dev.c                          |  13 ++
->  drivers/platform/chrome/Kconfig                    |  11 ++
->  drivers/platform/chrome/Makefile                   |   1 +
->  drivers/platform/chrome/cros_ec_framework_laptop.c | 173 +++++++++++++++++++++
->  5 files changed, 203 insertions(+)
-> ---
-> base-commit: 2fbe479c0024e1c6b992184a799055e19932aa48
-> change-id: 20240505-cros_ec-framework-10e627c46a0a
-> 
-> Best regards,
-> -- 
-> Thomas Weißschuh <linux@weissschuh.net>
-> 
+> I feel users of DECLARE_PER_CPU_[...], etc. should include percpu.h and
+> not smp.h as it makes reading the code more easier and can thwart build
+> issues in the future, when headers are changed. 
+Right, makes sense, hope there is no more such cases using smp.h to pull
+in DECLARE_PER_CPU_[...]. A quick build on defconfig is successful after
+this patch.
 
