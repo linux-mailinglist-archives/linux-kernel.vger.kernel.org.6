@@ -1,120 +1,326 @@
-Return-Path: <linux-kernel+bounces-169511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE52B8BC9BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:39:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9046F8BC96C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F3728325C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:39:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73B5EB216CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D243E1419A1;
-	Mon,  6 May 2024 08:39:50 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B8F1411E9;
+	Mon,  6 May 2024 08:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtKJu5uP"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232001411CE
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B841D53C;
+	Mon,  6 May 2024 08:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714984790; cv=none; b=jMsLXE03/9Ri8JA538DgXHAgp3XJZzHIKU6M8ID2vA85C4mCJz1VRZ+99RX2Th5Shl9ISmq+iWBuy7QOXg5pph8PjrySQH3y2d0UU1rY6T0nqEzYWF2c/ZpO6KUVF94qPjZJypuvQbg9b48SWnOZttlFt/I2sRFoGQS1Nm2dnNc=
+	t=1714983620; cv=none; b=V22piPqpIWYACkyE1PMYsDBFWVJmjpUSUa1oahJ8405Ve+Z2D0IxtP5EsRPeHYSREqPUrYB82rzvs93dq8XMBBS7t/MNOpD7fTdncEVSShW+zUYEJ77xuF54fzZdljeFA+0Nf97bT/pnXpqo05xHuSY6lbO3/T4ZAWYyA1oikwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714984790; c=relaxed/simple;
-	bh=dFWNbRzySIjYQnEWTP9mapKbZO69zQWs5KfXcdrl56U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fPPBRhYjTZlpHoQey9wQPraNaa7EwsARVhe8MQXM926dp2JXmTlnB8K/87jf6LDIXilAvcj/X8+0vYDxpvck3q671AFrkfXCDLM1Iqah3N+zmjk9BsMDbsyCWK2LEzQIAjiaoRvc6fSagMRTCVUb0EfP8WiiD95Ojq0jKmBtgDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXv1n3MMJz9xGWg
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:59:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 4B2D9140797
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:20:38 +0800 (CST)
-Received: from [10.81.214.173] (unknown [10.81.214.173])
-	by APP1 (Coremail) with SMTP id LxC2BwCnURrAkjhmm36iBw--.33418S2;
-	Mon, 06 May 2024 09:20:37 +0100 (CET)
-Message-ID: <0c07a0dc-542a-48da-a286-280d9c02b353@huaweicloud.com>
-Date: Mon, 6 May 2024 10:20:10 +0200
+	s=arc-20240116; t=1714983620; c=relaxed/simple;
+	bh=oI6KZL8xMEnOI0JUSajfcOjR5/0VaRJGSrYiP8gyYr4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GrE1MQBvbJRcZhzAIk/b8Gc96ImjI58z/6TLl2pVXr2c33g7WKbfHj0Cpb5fJKrCuEZJwSu7e+ReRxoDn+2zmfKx7ce7pRNj41+wre4+Gp6Us5rfuRxJOp46igs9LD1PYxPgxl5/E+TBG/lQRNE8+tzgDTlGH+H2BoZMRiZ1RMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtKJu5uP; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a599c55055dso366999866b.0;
+        Mon, 06 May 2024 01:20:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714983617; x=1715588417; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bNHd0an/gaXMy+olLRoP7YkYSvwCWy00m2F9nn+euPM=;
+        b=VtKJu5uPtaGcgYdMXmu6iRSlOe+CT8Vp+p5bAuk9iqr8OQXX0zHzJnoG+dqYW4pT9i
+         6F4PgV4yG9Y61NOcax11WFtqM8RMetkqn88wsUXOJZEqdDyhBXghwl/1AKnvKb1ONxPs
+         LLGr7dvvBQ2RePzVlsalO9mmpTyYKnBJF5/j225P4L0FvwdZglzGvzhpoEdzZDzyJIzu
+         H9HkPJKoJ9L1/4jODtAWeuLrWWKwPSCLsn6Jlzo0ThAxnOR1/pgGVbNbAntu0CWRsUTR
+         VWlrJh2dEaNNpDfJZlOVtQvC7US9BH0OMRCyiqmVFlZkL1FhIJmeqjR++EgkLShI0Xva
+         4zhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714983617; x=1715588417;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bNHd0an/gaXMy+olLRoP7YkYSvwCWy00m2F9nn+euPM=;
+        b=BSnbYn9G8YATd82B+yrXp6gsk073IVu/nSkNyQWiE+G6Gko1DxFoIZEFkJ6kdFjnU5
+         e4yZ152AIEr5IMzUR20w7jeAT/srzfyxKTHi1I1LN0+M4AZR6JzXTU7TB8KIObbTO818
+         F9q8OpK+XDYsI5Qv8K+4gNTrnXulXLTE3J9fieAfP7f8yYtx07+pEDlgpmlktONZtWda
+         tzyxMmZkFP4JU75GhwJs1Xk72xT7ktTYRhFncXQFiA6bYdvPW0lrDtUUxMgR+QrAzmrr
+         k2pt9Aep3N1gGMoqsJq4u1RXyFMmNmtBWTRN26zuSoGmTRp9BvC4XDalYCBJ20vv5MJj
+         cXyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOYEUXBRIlFFYrqU8UGAeNLV1i52R+2MCkJOVAeCdph8RvEjvD+ZxYjR7s4zo4xmHMGHYht/jWfOxg3zXivlS8DFzdNKbXmfFz6TMd3JwvTf3ObBMvkEbWcBM4egxv/StJIGyeLGwSfZOlXtTC8NhVcgUjLIuBCTYSPoNlYJOX+FWJVg==
+X-Gm-Message-State: AOJu0YwLexIYTIj8FbQJyhTYYtIkwNq61SSqr9hvf89HMKLYc6JdU650
+	8akT3qybEoHHUPU6m5ISFr5zDEhQLQuYm8qcoDlKOULGSDHcrkfV
+X-Google-Smtp-Source: AGHT+IFj0E/KOpeYb7bSNt/7kwgAaso8l+rPl642Z/i+jT0OGVg0kBhQNBho96YZRTBKAiPgTx5Axw==
+X-Received: by 2002:a17:906:a159:b0:a52:3f01:e11d with SMTP id bu25-20020a170906a15900b00a523f01e11dmr5393048ejb.34.1714983616604;
+        Mon, 06 May 2024 01:20:16 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id y17-20020a17090668d100b00a59bacd35ddsm1998352ejr.98.2024.05.06.01.20.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 01:20:16 -0700 (PDT)
+Message-ID: <1be8a603c1db69278181089e3653b6312bcc99da.camel@gmail.com>
+Subject: Re: [PATCH RFC v6 08/10] iio: adc: ad7380: add oversampling support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, David Lechner
+ <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 06 May 2024 10:20:15 +0200
+In-Reply-To: <20240501-adding-new-ad738x-driver-v6-8-3c0741154728@baylibre.com>
+References: 
+	<20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+	 <20240501-adding-new-ad738x-driver-v6-8-3c0741154728@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] arm64: Support the TSO memory model
-To: Marc Zyngier <maz@kernel.org>, Zayd Qumsieh <zayd_qumsieh@apple.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Justin Lu <ih_justin@apple.com>,
- Ryan Houdek <Houdek.Ryan@fex-emu.org>, Mark Brown <broonie@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Miguel Luis <miguel.luis@oracle.com>,
- Joey Gouly <joey.gouly@arm.com>, Christoph Paasch <cpaasch@apple.com>,
- Kees Cook <keescook@chromium.org>, Sami Tolvanen <samitolvanen@google.com>,
- Baoquan He <bhe@redhat.com>, Joel Granados <j.granados@samsung.com>,
- Dawei Li <dawei.li@shingroup.cn>, Andrew Morton <akpm@linux-foundation.org>,
- Florent Revest <revest@chromium.org>, David Hildenbrand <david@redhat.com>,
- Stefan Roesch <shr@devkernel.io>, Andy Chiu <andy.chiu@sifive.com>,
- Josh Triplett <josh@joshtriplett.org>, Oleg Nesterov <oleg@redhat.com>,
- Helge Deller <deller@gmx.de>, Zev Weiss <zev@bewilderbeest.net>,
- Ondrej Mosnacek <omosnace@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Asahi Linux <asahi@lists.linux.dev>
-References: <87zftoqn7u.wl-maz@kernel.org>
- <20240502001035.41083-1-zayd_qumsieh@apple.com>
- <867cgcqrb9.wl-maz@kernel.org>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <867cgcqrb9.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwCnURrAkjhmm36iBw--.33418S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFWxWr13tF47ur17WFW3Wrg_yoWDJFg_uF
-	ykAw47Jws8CF93Z3yayw1DAr47ta1jqasxXr95Xw1Iy34IvF4xGryDJ3s3ZF13JrWkuF17
-	GrW5ZFna9w43GjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
+Hi Julien,
 
+On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote:
+> ad7380x(-4) parts are able to do oversampling to increase accuracy.
+> They support 2 average modes: normal average and rolling overage.
+> This commits focus on enabling normal average oversampling, which is the
+> default one.
+>=20
+> Normal averaging involves taking a number of samples, adding them togethe=
+r,
+> and dividing the result by the number of samples taken.
+> This result is then output from the device. The sample data is cleared wh=
+en
+> the process completes. Because we need more samples to output a value,
+> the data output rate decrease with the oversampling ratio.
+>=20
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+> =C2=A0drivers/iio/adc/ad7380.c | 115 ++++++++++++++++++++++++++++++++++++=
+++++++++++-
+> =C2=A01 file changed, 114 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> index 020959759170..1e3869f5e48c 100644
+> --- a/drivers/iio/adc/ad7380.c
+> +++ b/drivers/iio/adc/ad7380.c
+> @@ -88,7 +88,10 @@ struct ad7380_chip_info {
+> =C2=A0	.type =3D IIO_VOLTAGE,					\
+> =C2=A0	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |		\
+> =C2=A0		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),	\
+> -	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE),	\
+> +	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE) |	\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
+> +	.info_mask_shared_by_type_available =3D			\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),		\
+> =C2=A0	.indexed =3D 1,						\
+> =C2=A0	.differential =3D (diff),					\
+> =C2=A0	.channel =3D (diff) ? (2 * (index)) : (index),		\
+> @@ -156,6 +159,16 @@ static const struct ad7380_timing_specs ad7380_4_tim=
+ing =3D {
+> =C2=A0	.t_csh_ns =3D 20,
+> =C2=A0};
+> =C2=A0
+> +/*
+> + * Available oversampling ratios. The indices correspond
+> + * with the bit value expected by the chip.
+> + * The available ratios depend on the averaging mode,
+> + * only normal averaging is supported for now
+> + */
+> +static const int ad7380_normal_average_oversampling_ratios[] =3D {
+> +	1, 2, 4, 8, 16, 32,
+> +};
+> +
+> =C2=A0static const struct ad7380_chip_info ad7380_chip_info =3D {
+> =C2=A0	.name =3D "ad7380",
+> =C2=A0	.channels =3D ad7380_channels,
+> @@ -231,6 +244,7 @@ static const struct ad7380_chip_info ad7384_4_chip_in=
+fo =3D {
+> =C2=A0struct ad7380_state {
+> =C2=A0	const struct ad7380_chip_info *chip_info;
+> =C2=A0	struct spi_device *spi;
+> +	unsigned int oversampling_ratio;
 
-Am 5/2/2024 um 3:25 PM schrieb Marc Zyngier:
-> although
-> someone would need to start thinking of how this particular TSO
-> implementation composes with the relaxed memory ordering used outside
-> of the VM and show that they actually lead to correct results for
-> something such as virtio, for example
+nit: move this to the other 'unsigned int' fields...
 
-I used to think about this problem space. Composing some kinds of memory
-models (e.g., Arm and TSO) is easy, others is hard.
+> =C2=A0	struct regmap *regmap;
+> =C2=A0	unsigned int vref_mv;
+> =C2=A0	unsigned int vcm_mv[MAX_NUM_CHANNELS];
+> @@ -386,6 +400,12 @@ static int ad7380_read_direct(struct ad7380_state *s=
+t,
+> =C2=A0	};
+> =C2=A0	int ret;
+> =C2=A0
+> +	/*
+> +	 * In normal average oversampling we need to wait for multiple conversi=
+ons
+> to be done
+> +	 */
+> +	if (st->oversampling_ratio > 1)
+> +		xfers[0].delay.value =3D T_CONVERT_NS + 500 * st-
+> >oversampling_ratio;
+> +
+> =C2=A0	ret =3D spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
+> =C2=A0	if (ret < 0)
+> =C2=A0		return ret;
+> @@ -428,6 +448,91 @@ static int ad7380_read_raw(struct iio_dev *indio_dev=
+,
+> =C2=A0			/ st->vref_mv;
+> =C2=A0
+> =C2=A0		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> +		*val =3D st->oversampling_ratio;
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int ad7380_read_avail(struct iio_dev *indio_dev,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 const int **vals, int *type, int *length,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 long mask)
+> +{
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> +		*vals =3D ad7380_normal_average_oversampling_ratios;
+> +		*length =3D ARRAY_SIZE(ad7380_normal_average_oversampling_ratios);
+> +		*type =3D IIO_VAL_INT;
+> +
+> +		return IIO_AVAIL_LIST;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +/**
+> + * check_osr - Check the oversampling ratio
+> + * @available_ratio: available ratios's array
+> + * @size: size of the available_ratio array
+> + * ratio: ratio to check
+> + *
+> + * Check if ratio is present in @available_ratio. Check for exact match.
+> + * @available_ratio is an array of the available ratios (depending on th=
+e
+> oversampling mode).
+> + * The indices must correspond with the bit value expected by the chip.
+> + */
+> +static inline int check_osr(const int *available_ratio, int size, int ra=
+tio)
 
-I don't know much about virtio, so this may show my naivety, but what
-complications could arise from virtio?
+Please name the function ad7380_check_osr(). Also, drop the inline... The c=
+ompiler
+should be smart enough to take of that for us.
 
-Does the "visible behavior" of virtio change depending on the memory
-model of the machine it is running on?
+> +{
+> +	int i;
+> +
+> +	for (i =3D 0; i < size; i++) {
+> +		if (ratio =3D=3D available_ratio[i])
+> +			return i;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int ad7380_write_raw(struct iio_dev *indio_dev,
+> +			=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan, int val,
+> +			=C2=A0=C2=A0=C2=A0 int val2, long mask)
+> +{
+> +	struct ad7380_state *st =3D iio_priv(indio_dev);
+> +	int ret, osr;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> +		osr =3D check_osr(ad7380_normal_average_oversampling_ratios,
+> +				ARRAY_SIZE(ad7380_normal_average_oversampling_rati
+> os),
+> +				val);
+> +
+> +		if (osr < 0)
+> +			return osr;
+> +
+> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +			ret =3D regmap_update_bits(st->regmap,
+> AD7380_REG_ADDR_CONFIG1,
+> +						 AD7380_CONFIG1_OSR,
+> +						 FIELD_PREP(AD7380_CONFIG1_OSR,
+> osr));
+> +
+> +			if (ret)
+> +				return ret;
+> +
+> +			st->oversampling_ratio =3D val;
+> +
+> +			/*
+> +			 * Perform a soft reset.
+> +			 * This will flush the oversampling block and FIFO but
+> will
+> +			 * maintain the content of the configurable registers.
+> +			 */
+> +			ret =3D regmap_update_bits(st->regmap,
+> AD7380_REG_ADDR_CONFIG2,
+> +						 AD7380_CONFIG2_RESET,
+> +						 FIELD_PREP(AD7380_CONFIG2_RESET,
+> +							=C2=A0=C2=A0=C2=A0
+> AD7380_CONFIG2_RESET_SOFT));
+> +		}
+> +		return 0;
 
-At least internally inside virtio it should not cause any problems, since
-you are effectively adding some barriers inside some of the virtio threads.
-(those that are running in the VM).
+return ret;
 
-But if the VM relies on virtio behaving in a "TSO manner" but its behavior
-is more relaxed on e.g. Arm, then that could cause issues.
+Or you may be asked to directly return in regmap_update_bits() and use unre=
+achable()
+here.
 
-have fun, jonas
+> =C2=A0	default:
+> =C2=A0		return -EINVAL;
+> =C2=A0	}
+> @@ -435,6 +540,8 @@ static int ad7380_read_raw(struct iio_dev *indio_dev,
+> =C2=A0
+> =C2=A0static const struct iio_info ad7380_info =3D {
+> =C2=A0	.read_raw =3D &ad7380_read_raw,
+> +	.read_avail =3D &ad7380_read_avail,
+> +	.write_raw =3D &ad7380_write_raw,
+> =C2=A0	.debugfs_reg_access =3D &ad7380_debugfs_reg_access,
+> =C2=A0};
+> =C2=A0
+> @@ -458,6 +565,12 @@ static int ad7380_init(struct ad7380_state *st, stru=
+ct
+> regulator *vref)
+> =C2=A0	if (ret < 0)
+> =C2=A0		return ret;
+> =C2=A0
+> +	/* Disable oversampling by default.
+> +	 * This is the default value after reset,
+> +	 * so just initialize internal data
+> +	 */
+
+Your comment block is not in accordance with coding style. checkpatch shoul=
+d complain
+about this.
+
+> +	st->oversampling_ratio =3D 1;
+> +
+> =C2=A0	/* SPI 1-wire mode */
+> =C2=A0	return regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG2,
+> =C2=A0				=C2=A0 AD7380_CONFIG2_SDO,
+>=20
 
 
