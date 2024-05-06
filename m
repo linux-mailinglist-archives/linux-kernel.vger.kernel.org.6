@@ -1,99 +1,123 @@
-Return-Path: <linux-kernel+bounces-169852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F868BCE85
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0976A8BCE88
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402541C23629
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:54:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AB731C2382D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A78E75818;
-	Mon,  6 May 2024 12:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF965768EE;
+	Mon,  6 May 2024 12:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Jf4OPnNW"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1YJjOyR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778C11DFED;
-	Mon,  6 May 2024 12:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2373C1DFED;
+	Mon,  6 May 2024 12:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715000037; cv=none; b=EKF64fSjGABhHfLZYSM8AxtgSCZNfvmpRvrFhopuaH0haOG6Rt5ZRdvY0M1dHZQIMOP/9eyJ3i+fv6lH1YOUFBBckAucAP/P4xqPGZvAUnHJ1I20h4yIIsmkH1qQXrn369IcpiE6BbST3Q7uF7SsNA2gbIi7Xk310U5I+gylN4g=
+	t=1715000048; cv=none; b=E99Z5NfnCXFd6J6FTRg6W8S0zpzQVXKuroXxIc05/VJ+RrLUo80Y0Rn46wXEtCDXHqtE3uOlrMT5oUTOT2DaILt5PDZ6RMB99/jylXLwCWrYNTJSx1sZ+FH3TgDqksAlhrN46IoL8G8M2g9B6Wpi+v1PGziVxvM4TqTuy00owF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715000037; c=relaxed/simple;
-	bh=h6+1hH9XhB0KBa+l0UP+x9Z2CVunxoz4CdhoOgwxd9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eqKJY78efZvW2+EdbiBxy9hb2G5r1hOnXuE0Mm5P4hcfuPPDIguZjJGEUOl5dBvBneus2voBrXEjn8T8gkXE8UTdkYpIEm0xPgXcShTrNiyok88PrIXg6dmGFJq8/1vuKjYWObjLri9ZgBQtkILGIoGKU/kCeZv5WX+yowXbFvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Jf4OPnNW; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=L2wtA2YuCrZO8hkF8jTn5doWGyXyq5qsyaLqIFOiMDE=;
-	t=1715000035; x=1715432035; b=Jf4OPnNWpX72o12uPG0V4EK5KjohoYTNftxAJwT5eXzoGZh
-	1kHaKK2hzrUnj5g3d2rjJZRvX3pXVrBlqDsXc3Y2gv7KjUpLyxFNWwKLOd5EP2KY6b1ZVKq7rGRJD
-	3a2+ga1OCDs1peCwE2JX4EO/JjehOy7h4JNJat50i/XXtNIkjGeyPWC3FJhRyBebmsZsQv/IXo41O
-	VMaexExfYe22o3i0Q6nnvlQQP0iS2Xl17eYz+u9T1h95WB+C2OihHK82VbZEPDNIqEc3HucPDVz40
-	ishO4tes+WVGZLMj7wLnftABWCXze/0phK3KuNBfqmfmEocPgNqI5CIPJM1Az5Lw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1s3xqr-0007SB-42; Mon, 06 May 2024 14:53:53 +0200
-Message-ID: <38de0776-3adf-4223-b8e0-cedb5a5ebf4d@leemhuis.info>
-Date: Mon, 6 May 2024 14:53:52 +0200
+	s=arc-20240116; t=1715000048; c=relaxed/simple;
+	bh=KUwwyNyJwPPdMeGqoeTUqqEDzql3cEq+MUynSJgDF6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f+Ky/R8Ev2gxFE5AIY/qabYKphvJsLmSh6FmYkvCZtvu/ZpQKC9OwN6mBSafYUGeZCjY46PU+6vQbi5HIfT5i/evMYE9/u6cq8B6q/v2lZP4mYKFaqHPLLYeXBUr/OEpHtikusqJB1yYBEvXmICyJIYP+MNpy2VFjrFUo24XU60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1YJjOyR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C523C116B1;
+	Mon,  6 May 2024 12:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715000047;
+	bh=KUwwyNyJwPPdMeGqoeTUqqEDzql3cEq+MUynSJgDF6s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=W1YJjOyRny1ZzwTH0HfI8uXikOQ9ax3ni+hVAM+atWu2yCpmAVVH/coidEJZo9qFu
+	 dYZrvsg39skRnjVYB9gyKb5W+w7odcw8WVAoL4IAQhzn11D055spDMDXjZxZbORyvQ
+	 Hr15TjvOvoU/CBHa/WUtUApJXDkSdo+/iDBIkgSswVNc3ftn4rGOfwxsn65i13+tp3
+	 PsT4faH3IUHGxKVbGLKx8UhzABzvi+oc7JKSis4c0x2vyXPng/5KEWpfRLCAGjaSqv
+	 +PggfKnIM3PT8vFRKGfLm/z7W+vmwSbuzjrtFjh4E1pCD/LrEJWmVHc/JcZeMRaG8S
+	 mbK/dy14+s9zg==
+Date: Mon, 6 May 2024 13:53:56 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: Re: [PATCH v2 0/2] Fix the iio-gts-helpers available times table
+ sorting
+Message-ID: <20240506135356.7babe20f@jic23-huawei>
+In-Reply-To: <11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
+References: <cover.1714480171.git.mazziesaccount@gmail.com>
+	<20240505185027.18809bfd@jic23-huawei>
+	<11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Thunderbolt Host Reset Change Causes eGPU
- Disconnection from 6.8.7=>6.8.8
-To: Gia <giacomo.gio@gmail.com>
-Cc: linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- "stable@vger.kernel.org" <stable@vger.kernel.org>, kernel@micha.zone,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <CAHe5sWavQcUTg2zTYaryRsMywSBgBgETG=R1jRexg4qDqwCfdw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715000035;3ab4d83a;
-X-HE-SMSGID: 1s3xqr-0007SB-42
 
-[CCing Mario, who asked for the two suspected commits to be backported]
+On Mon, 6 May 2024 08:09:27 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-On 06.05.24 14:24, Gia wrote:
-> Hello, from 6.8.7=>6.8.8 I run into a similar problem with my Caldigit
-> TS3 Plus Thunderbolt 3 dock.
+> On 5/5/24 20:50, Jonathan Cameron wrote:
+> > On Tue, 30 Apr 2024 15:44:26 +0300
+> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> >   
+> >> Fix the available times table sorting in iio-gts-helpers
+> >>
+> >> This series contains a fix and test for the sorting of the available times in
+> >> IIO-gts helpers. Fix was originally developed and posted by Chenyuan Yang.
+> >>
+> >> Revision history:
+> >> 	v1 => v2:
+> >> 	  - Fix the sender for patch 1/2 (Sic!)
+> >> 	  - Fix Co-Developed-by tag (drop this from Chenyuan who
+> >> 	    is the original author)
+> >> 	  - Fix the From: tag as instructed in:
+> >> 	    https://www.kernel.org/doc/html/latest/process/submitting-patches.html  
+> > 
+> > Am I right in thinking this doesn't matter for existing drivers?  
 > 
-> After the update I see this message on boot "xHCI host controller not
-> responding, assume dead" and the dock is not working anymore. Kernel
-> 6.8.7 works great.
+> I think this is right. Only couple of in-tree drivers are using these 
+> helpers for now, and all of them sorted the tables already in driver.
+> 
+> > As such not high priority for back porting?  
+> 
+> The bug is pretty nasty as it causes invalid memory accesses. Hence I'd 
+> like to see this landing in the longterm kernels. It seems to me the GTS 
+> helpers got merged in 6.4, so getting the fix backported to 6.6 might 
+> make sense.
+> 
+> > I'll assume that and queue it up for 6.11. If someone shouts I can pull the fix
+> > forwards, but then we have the mess of chasing the testing in later.  
+> 
+> I am sorry Jonathan but I'm not quite sure what you mean by "pulling fix 
+> forward", or what is the "mess of chasing the testing in later" :)
 
-Thx for the report. Could you make the kernel log (journalctl -k/dmesg)
-accessible somewhere?
+Hmm. That was an odd choice of words :)  I just meant that I could send
+the fix in the first set of fixes after 6.10-rc1 rather than waiting for 6.11.
 
-And have you looked into the other stuff that Mario suggested in the
-other thread? See the following mail and the reply to it for details:
+For now I'll leave it queued for 6.11 on the basis there are a lot of ways
+a driver writer can cause similar out of bounds accesses and they should
+notice it not working during testing.  So it 'should' not be a problem to
+not rush this in.
 
-https://lore.kernel.org/all/1eb96465-0a81-4187-b8e7-607d85617d5f@gmail.com/T/#u
+J
+> 
+> > Applied to the togreg branch of iio.git and pushed out as testing for 0-day
+> > to poke at it.  
+> 
+> Thanks! Appreciate your work as always!
+> 
+> Yours,
+> 	-- Matti
+> 
 
-Ciao, Thorsten
-
-P.S.: To be sure the issue doesn't fall through the cracks unnoticed,
-I'm adding it to regzbot, the Linux kernel regression tracking bot:
-
-#regzbot ^introduced v6.8.7..v6.8.8
-#regzbot title thunderbolt: TB3 dock problems, xHCI host controller not
-responding, assume dead
 
