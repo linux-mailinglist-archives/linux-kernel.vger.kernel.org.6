@@ -1,274 +1,242 @@
-Return-Path: <linux-kernel+bounces-170397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B218BD644
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488298BD649
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BDB282FC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:31:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9DB1F22BED
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9481A15B136;
-	Mon,  6 May 2024 20:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B157B15B55A;
+	Mon,  6 May 2024 20:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eMELAxaz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7Lo4B0F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9935F15250A
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92F32BAE5;
+	Mon,  6 May 2024 20:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715027505; cv=none; b=iOzg4D/wFK9ykFsXxat8oKbGPDzBUC5og3/evWqxKgAGC5frN8ZHSS8b6WPmdumWb7zjXCGXZoDEY8N/drsiZGjtPdm54MY0UvGvQLvMl1CZtOF+SK1CvnaHw2YpQVM4nEmeepRl4+aVqOOx76wYjKQ+BRRUCVi0lfuqFLvu7cA=
+	t=1715027709; cv=none; b=AJNRT1ViOevta6dHtr175NdSncdytL6zRlGKd3U8wkaPShfw225AXQQOJZaTaG0tGUCvb1cVAfhLWbSvdLJzKgSum5+Pld4lsWROG25U+V0plqZwLpXGMlLsz7+vAAPHAflWSnTnHZYDv0mPqy9JatirSPSJxykYF7oXeIbbV1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715027505; c=relaxed/simple;
-	bh=8J9HCTMFlsb3siLQBsDJafo+aPcJo4k9kbndliCU/5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bV4+jruDMt3F7KfMHgzKSpxPLSIsXFaWUbD3Q+Rd4sNSdztPVeqWWXD6CSnPX1ZJ7vkyu4snp+uF5+n/9Al9RhZPdj7lM8kKcQnQPpbdB75o25w+rKUG93ZUTFAh6rq8cfZKLZSxRDXs4C5Rmkct9oyBqbugrRqyF0Hf2SLwF7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eMELAxaz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715027501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ufdh+EVuNbhhg/Fs9LCV9pYz2tN7lfjT8/BykYZkopE=;
-	b=eMELAxazqj/nN+EFK4vv8h0A/AstxCtGv1HCewAt7qhdTlHtIzcCsbGaIfhRca3uk4iR20
-	tX7kasL6QSsj5+k7tb2rYoepfAtw3HlNY4800j91JIZ/kxR1EdxMhnXUWSRtFtAI2YSu2n
-	1cT2l3W2dWRyVXKaYZRLwrnxhbeSrIo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-5hFldUTWPOe3vXJryv-MUA-1; Mon, 06 May 2024 16:31:40 -0400
-X-MC-Unique: 5hFldUTWPOe3vXJryv-MUA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-41dc9f97c7eso23516945e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 13:31:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715027499; x=1715632299;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ufdh+EVuNbhhg/Fs9LCV9pYz2tN7lfjT8/BykYZkopE=;
-        b=deqoDFrZbTJ7jaPkW5Mr1zowCkRhflcy0s4JNOqMln45AGbcSaZWkgUCc7QBaNkZ2x
-         bdHzbHKrQcP3jr03ETtTs3CEWcM2JbkMXNhlMnVl9Iz0m628KUaT4XX83qg0KHFV0iV6
-         8+LdfxSWtM2/FezvuEWzacv/B1g+hdr3LnNAzkwBTemIoluhZ2lBVoN5B33bDgGqCU2F
-         1OQi8ecO7VH4NRJa9o3zM0gA1xl8m3JiZQxWStfUkdgpmnChGzK0pzsUoQguPfxmON71
-         y8qxC7QwrWGBDys9ycKEkkuADzqpc+Ts5BH+p5FGaR1PytzvB+DgOK/eOJUrrwnvaG4U
-         IDVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXromaZyMd2DN/wS3/FYyOe00WQFXRZLyaUz97BLcxsg2gZa9NL47RN52JNIRqhzrUlDJ55fdqUDGeOqKGM3lgUC4cJLiHVTH7FvtrY
-X-Gm-Message-State: AOJu0Yy5bpnTYsBQSIuUtRMKLWtNIKMFztvsSmTL00ieyc8FgU7jQjJe
-	Qo3eNfUR3SACt6t/0aWrC76YG2iDXrzS70u1BEAhbxlAJiZfSF83wM5mz0CPvaZCw4up4rR3tyR
-	N5xH8LgJztRhXo/zzfwWEwNlJbkUkJLd54GkRya9NyXnAHSDJ/X8PysjlUZjPcA==
-X-Received: by 2002:a05:600c:458f:b0:418:2ab6:7123 with SMTP id r15-20020a05600c458f00b004182ab67123mr640866wmo.10.1715027498757;
-        Mon, 06 May 2024 13:31:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgIhgjTXfy7cH+2Xg/BsJQfExLF3SgXQuDXaGqKfDiCw4z80uW+oCT8B9ZGn9i82fViDezTw==
-X-Received: by 2002:a05:600c:458f:b0:418:2ab6:7123 with SMTP id r15-20020a05600c458f00b004182ab67123mr640827wmo.10.1715027498275;
-        Mon, 06 May 2024 13:31:38 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c74b:bf00:182c:d606:87cf:6fea? (p200300cbc74bbf00182cd60687cf6fea.dip0.t-ipconnect.de. [2003:cb:c74b:bf00:182c:d606:87cf:6fea])
-        by smtp.gmail.com with ESMTPSA id v23-20020a5d5917000000b00346ceb9e060sm11412293wrd.103.2024.05.06.13.31.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 13:31:37 -0700 (PDT)
-Message-ID: <42b09dc5-cfb1-4bd7-b5e3-8b631498d08f@redhat.com>
-Date: Mon, 6 May 2024 22:31:36 +0200
+	s=arc-20240116; t=1715027709; c=relaxed/simple;
+	bh=2J6q6pee6c+RhPyheJbTp0seb82usaTe/jFdcBygloQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhplaxM9XQDoMLKvo52awb1Ek94hsuiJXy9rstWQeisEnMX2OqezAXhIQy3exsfhZ7oiHMo+qAHu/9pZ9maUK4Q2g1zMNLxr0ODClkCjXp71yFnAgxkUHFKqpF1dLlvPHdmgQYGJhBfRHJ89eFFCER88cNrzkhwYPCXBCZiL/sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7Lo4B0F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BF0C116B1;
+	Mon,  6 May 2024 20:35:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715027709;
+	bh=2J6q6pee6c+RhPyheJbTp0seb82usaTe/jFdcBygloQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p7Lo4B0FSYjHcCM/Bsy/vgbwfnsYFN1u8xq6hhk1tF2raIeVRu7efrKPanTu5Yn1h
+	 NjYWiHho9RWdhZTBnQOG0SzTY39KDPg4/pP4ZqLZHde0Yyuc57THzyFOghopzYiHFw
+	 YrP8o9I3qyMKwCoLCbBdV4IpLTBIIaqLvf9C5CXzfQICcpBjWPG1/Vj0wbzfHnYpZd
+	 BAPA99lYtXDJGphEKGjdpGFOuCOmJkwTcTy1KaeDYermM33/4dFCg7eyUgXap8D/DE
+	 xJN6P0+FTiracyjBpkwN/6lWdk6nwb8ld2iO8wYsfPybc6wPjqGlBWMbd2tGLk0skj
+	 0OV6KwMUfMV8w==
+Date: Mon, 6 May 2024 17:35:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-mm@kvack.org,
+	Daniel =?iso-8859-1?Q?M=FCller?= <deso@posteo.net>,
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for
+ /proc/<pid>/maps
+Message-ID: <Zjk--KLSjdg2kpic@x1>
+References: <20240504003006.3303334-1-andrii@kernel.org>
+ <20240504003006.3303334-3-andrii@kernel.org>
+ <2024050439-janitor-scoff-be04@gregkh>
+ <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
+ <ZjjiFnNRbwsMJ3Gj@x1>
+ <CAEf4BzZJPY0tfLtvFA4BpQr71wO7iz-1-q16cENOAbuT1EX_og@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: do not update memcg stats for
- NR_{FILE/SHMEM}_PMDMAPPED
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
-References: <20240506192924.271999-1-yosryahmed@google.com>
- <d99b6375-cbae-41f1-9221-f1dd25aab150@redhat.com>
- <Zjk7AJGUsjR7TOBr@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zjk7AJGUsjR7TOBr@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZJPY0tfLtvFA4BpQr71wO7iz-1-q16cENOAbuT1EX_og@mail.gmail.com>
 
-On 06.05.24 22:18, Yosry Ahmed wrote:
-> On Mon, May 06, 2024 at 09:50:10PM +0200, David Hildenbrand wrote:
->> On 06.05.24 21:29, Yosry Ahmed wrote:
->>> Previously, all NR_VM_EVENT_ITEMS stats were maintained per-memcg,
->>> although some of those fields are not exposed anywhere. Commit
->>> 14e0f6c957e39 ("memcg: reduce memory for the lruvec and memcg stats")
->>> changed this such that we only maintain the stats we actually expose
->>> per-memcg via a translation table.
->>>
->>> Additionally, commit 514462bbe927b ("memcg: warn for unexpected events
->>> and stats") added a warning if a per-memcg stat update is attempted for
->>> a stat that is not in the translation table. The warning started firing
->>> for the NR_{FILE/SHMEM}_PMDMAPPED stat updates in the rmap code. These
->>> stats are not maintained per-memcg, and hence are not in the translation
->>> table.
->>>
->>> Do not use __lruvec_stat_mod_folio() when updating NR_FILE_PMDMAPPED and
->>> NR_SHMEM_PMDMAPPED. Use __mod_node_page_state() instead, which updates
->>> the global per-node stats only.
->>>
->>> Reported-by: syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
->>> Closes: https://lore.kernel.org/lkml/0000000000001b9d500617c8b23c@google.com
->>> Fixes: 514462bbe927 ("memcg: warn for unexpected events and stats")
->>> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
->>> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
->>> ---
->>>    mm/rmap.c | 15 +++++++++------
->>>    1 file changed, 9 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/mm/rmap.c b/mm/rmap.c
->>> index 12be4241474ab..ed7f820369864 100644
->>> --- a/mm/rmap.c
->>> +++ b/mm/rmap.c
->>> @@ -1435,13 +1435,14 @@ static __always_inline void __folio_add_file_rmap(struct folio *folio,
->>>    		struct page *page, int nr_pages, struct vm_area_struct *vma,
->>>    		enum rmap_level level)
->>>    {
->>> +	pg_data_t *pgdat = folio_pgdat(folio);
->>>    	int nr, nr_pmdmapped = 0;
->>>    	VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
->>>    	nr = __folio_add_rmap(folio, page, nr_pages, level, &nr_pmdmapped);
->>>    	if (nr_pmdmapped)
->>> -		__lruvec_stat_mod_folio(folio, folio_test_swapbacked(folio) ?
->>> +		__mod_node_page_state(pgdat, folio_test_swapbacked(folio) ?
->>>    			NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED, nr_pmdmapped);
->>>    	if (nr)
->>>    		__lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr);
->>> @@ -1493,6 +1494,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
->>>    		enum rmap_level level)
->>>    {
->>>    	atomic_t *mapped = &folio->_nr_pages_mapped;
->>> +	pg_data_t *pgdat = folio_pgdat(folio);
->>>    	int last, nr = 0, nr_pmdmapped = 0;
->>>    	bool partially_mapped = false;
->>>    	enum node_stat_item idx;
->>> @@ -1540,13 +1542,14 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
->>>    	}
->>>    	if (nr_pmdmapped) {
->>> +		/* NR_{FILE/SHMEM}_PMDMAPPED are not maintained per-memcg */
->>>    		if (folio_test_anon(folio))
->>> -			idx = NR_ANON_THPS;
->>> -		else if (folio_test_swapbacked(folio))
->>> -			idx = NR_SHMEM_PMDMAPPED;
->>> +			__lruvec_stat_mod_folio(folio, NR_ANON_THPS, -nr_pmdmapped);
->>>    		else
->>> -			idx = NR_FILE_PMDMAPPED;
->>> -		__lruvec_stat_mod_folio(folio, idx, -nr_pmdmapped);
->>> +			__mod_node_page_state(pgdat,
->>
->> folio_pgdat(folio) should fit here easily. :)
->>
->> But I would actually suggest something like the following in mm/rmap.c
+On Mon, May 06, 2024 at 11:41:43AM -0700, Andrii Nakryiko wrote:
+> On Mon, May 6, 2024 at 6:58 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> >
+> > On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
+> > > On Sat, May 4, 2024 at 8:28 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote:
+> > > > > Note also, that fetching VMA name (e.g., backing file path, or special
+> > > > > hard-coded or user-provided names) is optional just like build ID. If
+> > > > > user sets vma_name_size to zero, kernel code won't attempt to retrieve
+> > > > > it, saving resources.
+> >
+> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> >
+> > > > Where is the userspace code that uses this new api you have created?
+> >
+> > > So I added a faithful comparison of existing /proc/<pid>/maps vs new
+> > > ioctl() API to solve a common problem (as described above) in patch
+> > > #5. The plan is to put it in mentioned blazesym library at the very
+> > > least.
+> > >
+> > > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
+> > > linux-perf-user), as they need to do stack symbolization as well.
+> >
+> > At some point, when BPF iterators became a thing we thought about, IIRC
+> > Jiri did some experimentation, but I lost track, of using BPF to
+> > synthesize PERF_RECORD_MMAP2 records for pre-existing maps, the layout
+> > as in uapi/linux/perf_event.h:
+> >
+> >         /*
+> >          * The MMAP2 records are an augmented version of MMAP, they add
+> >          * maj, min, ino numbers to be used to uniquely identify each mapping
+> >          *
+> >          * struct {
+> >          *      struct perf_event_header        header;
+> >          *
+> >          *      u32                             pid, tid;
+> >          *      u64                             addr;
+> >          *      u64                             len;
+> >          *      u64                             pgoff;
+> >          *      union {
+> >          *              struct {
+> >          *                      u32             maj;
+> >          *                      u32             min;
+> >          *                      u64             ino;
+> >          *                      u64             ino_generation;
+> >          *              };
+> >          *              struct {
+> >          *                      u8              build_id_size;
+> >          *                      u8              __reserved_1;
+> >          *                      u16             __reserved_2;
+> >          *                      u8              build_id[20];
+> >          *              };
+> >          *      };
+> >          *      u32                             prot, flags;
+> >          *      char                            filename[];
+> >          *      struct sample_id                sample_id;
+> >          * };
+> >          */
+> >         PERF_RECORD_MMAP2                       = 10,
+> >
+> >  *   PERF_RECORD_MISC_MMAP_BUILD_ID      - PERF_RECORD_MMAP2 event
+> >
+> > As perf.data files can be used for many purposes we want them all, so we
 > 
-> I am not a big fan of this. Not because I don't like the abstraction,
-> but because I think it doesn't go all the way. It abstracts a very
-> certain case: updating nr_pmdmapped for file folios.
+> ok, so because you want them all and you don't know which VMAs will be
+> useful or not, it's a different problem. BPF iterators will be faster
+> purely due to avoiding binary -> text -> binary conversion path, but
+> other than that you'll still retrieve all VMAs.
+
+But not using tons of syscalls to parse text data from /proc.
+ 
+> You can still do the same full VMA iteration with this new API, of
+> course, but advantages are probably smaller as you'll be retrieving a
+> full set of VMAs regardless (though it would be interesting to compare
+> anyways).
+
+sure, I can't see how it would be faster, but yeah, interesting to see
+what is the difference.
+ 
+> > setup a meta data perf file descriptor to go on receiving the new mmaps
+> > while we read /proc/<pid>/maps, to reduce the chance of missing maps, do
+> > it in parallel, etc:
+> >
+> > ⬢[acme@toolbox perf-tools-next]$ perf record -h 'event synthesis'
+> >
+> >  Usage: perf record [<options>] [<command>]
+> >     or: perf record [<options>] -- <command> [<options>]
+> >
+> >         --num-thread-synthesize <n>
+> >                           number of threads to run for event synthesis
+> >         --synth <no|all|task|mmap|cgroup>
+> >                           Fine-tune event synthesis: default=all
+> >
+> > ⬢[acme@toolbox perf-tools-next]$
+> >
+> > For this specific initial synthesis of everything the plan, as mentioned
+> > about Jiri's experiments, was to use a BPF iterator to just feed the
+> > perf ring buffer with those events, that way userspace would just
+> > receive the usual records it gets when a new mmap is put in place, the
+> > BPF iterator would just feed the preexisting mmaps, as instructed via
+> > the perf_event_attr for the perf_event_open syscall.
+> >
+> > For people not wanting BPF, i.e. disabling it altogether in perf or
+> > disabling just BPF skels, then we would fallback to the current method,
+> > or to the one being discussed here when it becomes available.
+> >
+> > One thing to have in mind is for this iterator not to generate duplicate
+> > records for non-pre-existing mmaps, i.e. we would need some generation
+> > number that would be bumped when asking for such pre-existing maps
+> > PERF_RECORD_MMAP2 dumps.
 > 
+> Looking briefly at struct vm_area_struct, it doesn't seems like the
+> kernel maintains any sort of generation (at least not at
+> vm_area_struct level), so this would be nice to have, I'm sure, but
 
-Right. It only removes some of the ugliness ;)
+Yeah, this would be something specific to the "retrieve me the list of
+VMAs" bulky thing, i.e. the kernel perf code (or the BPF that would
+generate the PERF_RECORD_MMAP2 records by using a BPF vma iterator)
+would bump the generation number and store it to the VMA in
+perf_event_mmap() so that the iterator doesn't consider it, as it is a
+new mmap that is being just sent to whoever is listening, and the perf
+tool that put in place the BPF program to iterate is listening.
 
-> I think if we opt for abstracting the stats updates in mm/rmap.c, we
-> should go all the way with something like the following (probably split
-> as two patches: refactoring then bug fix). WDYT about the below?
+> isn't really related to adding this API. Once the kernel does have
+
+Well, perf wants to enumerate pre-existing mmaps _and_ after that
+finishes to know about new mmaps, so we need to know a way to avoid
+having the BPF program enumerating pre-existing maps sending
+PERF_RECORD_MMAP2 for maps perf already knows about via a regular
+PERF_RECORD_MMAP2 sent when a new mmap is put in place.
+
+So there is an overlap where perf (or any other tool wanting to
+enumerate all pre-existing maps and new ones) can receive info for the
+same map from the enumerator and from the existing mechanism generating
+PERF_RECORD_MMAP2 records.
+
+- Arnaldo
+
+> this "VMA generation" counter, it can be trivially added to this
+> binary interface (which can't be said about /proc/<pid>/maps,
+> unfortunately).
 > 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 12be4241474ab..70d6f6309da01 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1269,6 +1269,28 @@ static void __page_check_anon_rmap(struct folio *folio, struct page *page,
->   		       page);
->   }
->   
-> +static void __foio_mod_stat(struct folio *folio, int nr, int nr_pmdmapped)
-> +{
-> +	int idx;
-> +
-> +	if (nr) {
-> +		idx = folio_test_anon(folio) ? NR_ANON_MAPPED : NR_FILE_MAPPED;
-> +		__lruvec_stat_mod_folio(folio, idx, nr);
-> +	}
-> +	if (nr_pmdmapped) {
-> +		if (folio_test_anon(folio)) {
-> +			idx = NR_ANON_THPS;
-> +			__lruvec_stat_mod_folio(folio, idx, nr_pmdmapped);
-> +		} else {
-> +			/* NR_*_PMDMAPPED are not maintained per-memcg */
-> +			idx = folio_test_swapbacked(folio) ?
-> +				NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED;
-> +			__mod_node_page_state(folio_pgdat(folio), idx,
-> +					      nr_pmdmapped);
-> +		}
-> +	}
-> +}
-> +
-
-I didn't suggest that, because in the _anon and _file functions we'll 
-end up introducing unnecessary folio_test_anon() checks that the 
-compiler cannot optimize out.
-
-But at least in the removal path it's a clear win.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> >
+> > > It will be up to other similar projects to adopt this, but we'll
+> > > definitely get this into blazesym as it is actually a problem for the
+> >
+> > At some point looking at plugging blazesym somehow with perf may be
+> > something to consider, indeed.
+> 
+> In the above I meant direct use of this new API in perf code itself,
+> but yes, blazesym is a generic library for symbolization that handles
+> ELF/DWARF/GSYM (and I believe more formats), so it indeed might make
+> sense to use it.
+> 
+> >
+> > - Arnaldo
+> >
+> > > abovementioned Oculus use case. We already had to make a tradeoff (see
+> > > [2], this wasn't done just because we could, but it was requested by
+> > > Oculus customers) to cache the contents of /proc/<pid>/maps and run
+> > > the risk of missing some shared libraries that can be loaded later. It
+> > > would be great to not have to do this tradeoff, which this new API
+> > > would enable.
+> > >
+> > >   [2] https://github.com/libbpf/blazesym/commit/6b521314126b3ae6f2add43e93234b59fed48ccf
+> > >
+> 
+> [...]
 
