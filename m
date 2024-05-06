@@ -1,179 +1,161 @@
-Return-Path: <linux-kernel+bounces-169775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08078BCD83
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:11:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB678BCD87
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D9F1F23446
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11AB1C22154
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F0F14389B;
-	Mon,  6 May 2024 12:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C9F143891;
+	Mon,  6 May 2024 12:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hizm2dS6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSsFY31n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F31143867
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9F6143867;
+	Mon,  6 May 2024 12:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714997474; cv=none; b=sPXpcQS+XigUEZyTMydELBRrxO2L89C5Z8wn56SVWbj0o2EVC/lA/LP1r0aDTwYn/rVpsio6YZq1DzO/+3J6FXXPalZZurv9jhdFzORdEW4Bk1tRdFwoSqLhaG6abLy6B0depiFLHXdm+cCsE5UGxn8Q8ny6abAWiBG6wzXQJ0k=
+	t=1714997534; cv=none; b=OjJOVTMbxuRxQGxZp3EPtDh8NnE/r9yv/oHFb1vWwAYfqfn0zP1YSTR0B2Y2GnWXv3KcB7jd4urFiDR6aKhyidvIzIL7Z3bjcSDY/10WWvtSHaPjZFLuqEDEx5kE2F2KADvS4nUnBw78CydAZIGJJ3rZUGiAgcX22j7c8jzPFDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714997474; c=relaxed/simple;
-	bh=hMaHou4gqCFuSSxSjTamh579wUtltQG2UlKG9gC+8FY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ns0kM8mo6HK1/9PCwvPz6Z0qo5L6YOA1f3oUWGbTmBJTjW6uhVAdv9LBwTW/hFhbjeZwzZ17fgbCpezut8kQuEPA2lC23lJaUOEDQXjf2fq8RLi0bhVuyNvheCfgLbqz+Qp8Tl3Z68K4vohUqGLSWqFbUCcRts1m/oXMVriwukA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hizm2dS6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714997472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WSfOAhrFUm53Kqin9+YfTRe0LHiAcFIiQAaaSKoiif8=;
-	b=Hizm2dS6hKYoDQlDBdSDPIkBi55wp9uhmGe6AQne2GMVjCGxKJBhvMQK2fX7xC5lV3u8Ke
-	EA3mGfJ+T0RH8AucaHl3Git8okk8+08KVqTn1dSQG0ZreayZmYmnKJPQn+3fCvMCw5OBsd
-	hr7QuR0kJPOu+Cp6J4fE1n4W6CmDpxg=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-tqALBAtuO6G7e6nvnMwDuw-1; Mon, 06 May 2024 08:11:10 -0400
-X-MC-Unique: tqALBAtuO6G7e6nvnMwDuw-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2e262d63c70so20004081fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:11:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714997469; x=1715602269;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSfOAhrFUm53Kqin9+YfTRe0LHiAcFIiQAaaSKoiif8=;
-        b=jfm5lbAZSPe5iWgaukYq15jXjbFlp7HfSER35YiXp5OLyP700SF8RXmyeNhM2vLG6Q
-         EbDJCLMS9dAAKBSg4yZJvPtoYO4noonCAzcWCKsIXrZ5Du6BSm/8+cK8XYmQN0bk9sG4
-         E8LQywavcbJ18G5hFcfBJMSZwJ4nzk/cKXJLW4AnQSnX+piapet+LPQvdxvYbHxGlvFX
-         GdtywjUbv3a7yHqYMQIsMblVm+I4JWGEfYMv40GP3wsErauHudERiLzidiQoMdp4h23e
-         c+F00J33LHRIwQF0lDYjNCYC2mxTkEg/EEru4PzeFvbAFkTOsCAZ4B/XenyMYAiqyh6t
-         RcLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvBJGB9HreHs7YYxXnzxIMlUwq4qYuGMrg3MOhy0TxNjk3B/rSBtN2hSZDVjECpnY7ln+kUXz7kWxKBVvqTEmEK2O2yIkHmfcpEWUD
-X-Gm-Message-State: AOJu0YzOsabCns/o25v4hLHC0jGaE7c0+BvUJnSR03b+gnWwfpA3Jdoe
-	5ihImXSKyPPutr20HA08rP3xO1W/1osLXSHMFwfgdwSi3Bt2mu1MT2Wgf0y+zJ8d/mL+LA3UKdv
-	jLqRjGgvRoc5i8WkuHOX6A74tPzmBnJmEzx38j8ZJNg8e1f1s4O6WnXtSrXwiEQ==
-X-Received: by 2002:a05:6512:3f21:b0:51f:5d1a:b320 with SMTP id y33-20020a0565123f2100b0051f5d1ab320mr8765208lfa.68.1714997469262;
-        Mon, 06 May 2024 05:11:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEp4bcHitMTSdTCl9aCNeXV3I621ghOgDSk6RE5J+9JJSbX/V6SpGWsuuHMuUKGZd320jEJ5A==
-X-Received: by 2002:a05:6512:3f21:b0:51f:5d1a:b320 with SMTP id y33-20020a0565123f2100b0051f5d1ab320mr8765187lfa.68.1714997468807;
-        Mon, 06 May 2024 05:11:08 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id l12-20020a1709066b8c00b00a59c0ecd559sm2003340ejr.112.2024.05.06.05.11.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 05:11:08 -0700 (PDT)
-Message-ID: <d0821bab-be2e-4476-82e8-8b363a951e50@redhat.com>
-Date: Mon, 6 May 2024 14:11:07 +0200
+	s=arc-20240116; t=1714997534; c=relaxed/simple;
+	bh=pR0A0OFnPbzgIVFB96xhdR9NeOvLHx9NayqjbsRWiKQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Pvz5z8hQFjHhdVWmiJXZERruu8kYq52miml8iAEpiEnJvqCOCjpmOpvLiR+aR7/3cFnhpXq4eEij1wnYiUczvT/6Ps6v/S0mP+bYpQVM0DgXxfvp+UEPLxLXKigfm39NprWk0EyKDNANyD2LKVdJpnGTHCvaiyQP0W5g+0yNUW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSsFY31n; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714997533; x=1746533533;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pR0A0OFnPbzgIVFB96xhdR9NeOvLHx9NayqjbsRWiKQ=;
+  b=BSsFY31nW061A/YxhnnNcRN4C2+dsP8pCCeLCR5fPPANPghbn5FKpBP5
+   abtJiv/fbyQvBd5usSk8J2z4iUCtXx5C0gICTvQHJN3FICNCfectsTehL
+   dAh2OwH4Kk3g+hMCyeCtGp01z9cLHnoHq+4E7YkNo0oWyoWtXw8vtdRya
+   j31NeqjcipRAJ09bt026BTxa5+Wa5vE48sqHr/L04CmE3ZNMBGgz4T9vp
+   8EI1Qm/1A8ZaYc/827yGXz9Ivk2MtRSJFS7tsJ1lisULOHjnZeil0prc/
+   ByJ6p9RAYPj4heXxCqc6+2+bVYVzIRyymErryVpKb48jm7UnRG2hLa5yw
+   Q==;
+X-CSE-ConnectionGUID: g01XFkDIRFy7vdumNXeIhw==
+X-CSE-MsgGUID: q3evOQYwR6Sk7fJAFoNWjA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="21416122"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="21416122"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:12:12 -0700
+X-CSE-ConnectionGUID: dHT+7mFiTtWP9PmxJXUe3w==
+X-CSE-MsgGUID: 8jbSaK/PT7ORwp5u80o83Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="28241035"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 05:12:10 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] serial: 8250_pnp: Simplify "line" related code
+Date: Mon,  6 May 2024 15:12:02 +0300
+Message-Id: <20240506121202.11253-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-To: Maxime Ripard <mripard@redhat.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Lennart Poettering <mzxreary@0pointer.de>,
- Robert Mader <robert.mader@collabora.com>,
- Sebastien Bacher <sebastien.bacher@canonical.com>,
- Linux Media Mailing List <linux-media@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- linaro-mm-sig@lists.linaro.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Milan Zamazal <mzamazal@redhat.com>,
- Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <20240506-dazzling-nippy-rhino-eabccd@houat>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240506-dazzling-nippy-rhino-eabccd@houat>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Maxime,
+8250_pnp sets drvdata to line + 1 if the probe is successful. The users
+of drvdata are in remove, suspend and resume callbacks, none of which
+will be called if probe failed. The line acquired from drvdata can
+never be zero in those functions and the checks for that can be
+removed.
 
-On 5/6/24 2:05 PM, Maxime Ripard wrote:
-> Hi,
-> 
-> On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
->> Hi dma-buf maintainers, et.al.,
->>
->> Various people have been working on making complex/MIPI cameras work OOTB
->> with mainline Linux kernels and an opensource userspace stack.
->>
->> The generic solution adds a software ISP (for Debayering and 3A) to
->> libcamera. Libcamera's API guarantees that buffers handed to applications
->> using it are dma-bufs so that these can be passed to e.g. a video encoder.
->>
->> In order to meet this API guarantee the libcamera software ISP allocates
->> dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
->> the Fedora COPR repo for the PoC of this:
->> https://hansdegoede.dreamwidth.org/28153.html
-> 
-> For the record, we're also considering using them for ARM KMS devices,
-> so it would be better if the solution wasn't only considering v4l2
-> devices.
-> 
->> I have added a simple udev rule to give physically present users access
->> to the dma_heap-s:
->>
->> KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
->>
->> (and on Rasperry Pi devices any users in the video group get access)
->>
->> This was just a quick fix for the PoC. Now that we are ready to move out
->> of the PoC phase and start actually integrating this into distributions
->> the question becomes if this is an acceptable solution; or if we need some
->> other way to deal with this ?
->>
->> Specifically the question is if this will have any negative security
->> implications? I can certainly see this being used to do some sort of
->> denial of service attack on the system (1). This is especially true for
->> the cma heap which generally speaking is a limited resource.
-> 
-> There's plenty of other ways to exhaust CMA, like allocating too much
-> KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
-> differently than those if it's part of our threat model.
+Eliminate also +/-1 step because all users of line subtract 1 from the
+value.
 
-Ack.
+These might have been leftover from legacy PM callbacks that could
+be called without probe being successful.
 
->> But devices tagged for uaccess are only opened up to users who are 
->> physcially present behind the machine and those can just hit
->> the powerbutton, so I don't believe that any *on purpose* DOS is part of
->> the thread model. 
-> 
-> How would that work for headless devices?
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
 
-The uaccess tag solution does not work for headless devices, but it
-also should not hurt any headless scenarios.
+v2:
+- Rebased on top of tty-next
+- Added historical information Andy provided about legacy PM CBs
+  into commit message
 
-Headless devices could use something like the video group solution
-(dma_heap group?) which Raspberry Pi is using and them make sure that
-any services which need access run as a user in that group.
+ drivers/tty/serial/8250/8250_pnp.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-This can co-exist with uaccess tags since those use ACLs not classic Unix
-permissions.
-
-Regards,
-
-Hans
-
+diff --git a/drivers/tty/serial/8250/8250_pnp.c b/drivers/tty/serial/8250/8250_pnp.c
+index 9188902fa5b3..7c06ae79d8e2 100644
+--- a/drivers/tty/serial/8250/8250_pnp.c
++++ b/drivers/tty/serial/8250/8250_pnp.c
+@@ -435,8 +435,9 @@ static int
+ serial_pnp_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
+ {
+ 	struct uart_8250_port uart, *port;
+-	int ret, line, flags = dev_id->driver_data;
++	int ret, flags = dev_id->driver_data;
+ 	unsigned char iotype;
++	long line;
+ 
+ 	if (flags & UNKNOWN_DEV) {
+ 		ret = serial_pnp_guess_board(dev);
+@@ -494,7 +495,7 @@ serial_pnp_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
+ 	if (uart_console(&port->port))
+ 		dev->capabilities |= PNP_CONSOLE;
+ 
+-	pnp_set_drvdata(dev, (void *)((long)line + 1));
++	pnp_set_drvdata(dev, (void *)line);
+ 	return 0;
+ }
+ 
+@@ -503,17 +504,14 @@ static void serial_pnp_remove(struct pnp_dev *dev)
+ 	long line = (long)pnp_get_drvdata(dev);
+ 
+ 	dev->capabilities &= ~PNP_CONSOLE;
+-	if (line)
+-		serial8250_unregister_port(line - 1);
++	serial8250_unregister_port(line);
+ }
+ 
+ static int serial_pnp_suspend(struct device *dev)
+ {
+ 	long line = (long)dev_get_drvdata(dev);
+ 
+-	if (!line)
+-		return -ENODEV;
+-	serial8250_suspend_port(line - 1);
++	serial8250_suspend_port(line);
+ 	return 0;
+ }
+ 
+@@ -521,9 +519,7 @@ static int serial_pnp_resume(struct device *dev)
+ {
+ 	long line = (long)dev_get_drvdata(dev);
+ 
+-	if (!line)
+-		return -ENODEV;
+-	serial8250_resume_port(line - 1);
++	serial8250_resume_port(line);
+ 	return 0;
+ }
+ 
+-- 
+2.39.2
 
 
