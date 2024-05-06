@@ -1,166 +1,179 @@
-Return-Path: <linux-kernel+bounces-169729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275418BCCBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:21:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0FA8BCCC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2611BB2217F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD6B1F2354E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69877142E8F;
-	Mon,  6 May 2024 11:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4War9FW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30222142E9E;
+	Mon,  6 May 2024 11:22:01 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC8514262C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 11:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B477514262C;
+	Mon,  6 May 2024 11:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714994507; cv=none; b=o8AwV/z7FeZwVuVx7hiL9B/fnYXEFOGFmfyRAXbUIPFEnt56SaRebX7cTTvBlSQ17nsN6onbeIhKvzg49EdYSD2l+YRbGcfmAB2tmbBr5RzHI3OZ+vMBnETbWczpEHoW2j7CdiVrd2UsrJx4mtLylovMXphDVUdQMPsJnuxCumQ=
+	t=1714994520; cv=none; b=An8FmfSTMzt1F5krzRo52X/o2pLuE6a8hg1fTnqQQAT5kIB+cfevDKmVPGJAHO2VW13baFPRxsL+lkmo+SlANP6G1zDoTuJShAgsH4TGpqfSeMhd05fZ5d4kBhjOILhz0JcganL6W0hymy5Vh2BHyJjnX6ijqm+v4YqtXgvWfjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714994507; c=relaxed/simple;
-	bh=zrGpFO2KzYviJ12Uk4Knk0nbSHFeCLommmFFiBekSWk=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sKAJ18zzpjzepTlunvCmpzPjhZXDnzbUItJslhpfVN3sYdaEUDLEc52PgFzZ/KUp5QswHuDRzOBTb1d74bMO+bA1KtEl2/Mt+9BlRr0TlXAb2+mo14yyaATgeD3uTQpTkJth8yNVl7C3fWasBW2OfNJaxnYuIS8OTviFvo+m13A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4War9FW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714994505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lfElTg3P9yi4mhZjKlr5avBuN2og+ERzX6xGJyg7hQg=;
-	b=i4War9FW54mBIDAle4hO45El4RmhB8PT20ToNVHIwgTgE1qj0DSAV/XFgy+/jkvCig0Lpg
-	56A63dRLlly3Sxh4CR7aVwCfideGg/6cQQ+WmirwF5kS8HorvYnN9zHoDJ9+IDFevJkuWh
-	JQByVpWGCzLQqtxrTGTIunDj2gyzodU=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-p-r7mwKJON6y6nGCtHmUdg-1; Mon, 06 May 2024 07:21:43 -0400
-X-MC-Unique: p-r7mwKJON6y6nGCtHmUdg-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6ee089eedb7so2327557b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 04:21:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714994503; x=1715599303;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lfElTg3P9yi4mhZjKlr5avBuN2og+ERzX6xGJyg7hQg=;
-        b=gfjyKaezmzqR4wSrTRiTLUwhvblwRV/v5eT/erHDlu6tM0Yz24zf4UzBcen5KQpIxi
-         x2cx73A8fHqDV5lb6Lixn3UQNqheVXwZnZNV5JgJTbGXqyLnq2s+h+XydAaK2ZqjcTPQ
-         rflgoDMgD3cQZzBg2ecRYtd6KQoc8F5mBe5+2dxgfIC0msuzcIHcCXlWC2UjBrQG0P4N
-         AWiDrULJI5vuDzHiZUy2JWGR1XnZcWsMRI4aWGxEraNLuZu/O1xKvxqokF90J1XuGEX7
-         BQGfConPcHhCyRYs2rzde/Sw5xaz16mTjewWvmjeIMInIWljeKBqTV81qIMBtWiUeSso
-         d9VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl9pphQERIYqNLNpbkAvVIiHYd5xGfcV1qhvf2l8vP/elAHt/odO7KbyhpfltwrKAGoihbgvYAO9GzQYjgPP9KIjBhe3QX0JDX6KWk
-X-Gm-Message-State: AOJu0Yyw2dbXhDn7JvC3BLAboHhlNomuQYROQtt0FPcRXacVkfXqg3b5
-	0I9kgF5R5u441mZjx0tYVE6g6c3Aw7bVYpSjM7tE+rEYDv8kPXokPjxa3mYZtEmVJg2o7ngn3G1
-	+4MPnMVgILLIB85M7NPQ3RFhQv26ks4yzLlC6q2dpnvOez1c08MbdP88a4qcHu7M3G0rtCgnQIN
-	2cSzAJrQO+XRqu6j2Q9BewkT8lXIPxFTMv2jvP
-X-Received: by 2002:a05:6a20:da8b:b0:1a7:2ceb:e874 with SMTP id iy11-20020a056a20da8b00b001a72cebe874mr12710502pzb.37.1714994502769;
-        Mon, 06 May 2024 04:21:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhyhi7dIVf2+C7OigQZMKNCF9fVW9NM5SSt+qz9BQl1HVEbaT1IXprTHrmUqzyshtiWvHl0EwlK+4i/EV8NvU=
-X-Received: by 2002:a05:6a20:da8b:b0:1a7:2ceb:e874 with SMTP id
- iy11-20020a056a20da8b00b001a72cebe874mr12710445pzb.37.1714994502125; Mon, 06
- May 2024 04:21:42 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 6 May 2024 13:21:41 +0200
-From: Sergio Lopez Pascual <slp@redhat.com>
-In-Reply-To: <CAOgh=Fykg3Xb8Y59R_tJ7_jXe-ozXRMQjU+qVy5DdmFn3pkcPw@mail.gmail.com>
-References: <20240411-tso-v1-0-754f11abfbff@marcan.st> <20240411132853.GA26481@willie-the-truck>
- <28ab55b3-e699-4487-b332-f1f20a6b22a1@marcan.st> <20240419165809.GA4020@willie-the-truck>
- <CAOgh=Fykg3Xb8Y59R_tJ7_jXe-ozXRMQjU+qVy5DdmFn3pkcPw@mail.gmail.com>
+	s=arc-20240116; t=1714994520; c=relaxed/simple;
+	bh=DzA1qNG1rre/xnKZN/arluttKfjtjS8U924sZWRNitU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RYdG0+qsDM2PnA2uY6ySSvg2hSOgyhKKxN6QhEnWSkZUhqqdSk2Ez0zB68B817FPwGPGJ57iJQvum3multbFzarwLbKXJ5m82NVCRDNTtDMudskMFguJWOJi0FMBkozNQbEOO10jao8VPUKWFtE4PTUTeI5cRIFICPFcI8CbgW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXzWY1kNdz4f3jR7;
+	Mon,  6 May 2024 19:21:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 69BA61A017D;
+	Mon,  6 May 2024 19:21:53 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgDnCw9PvThmHTPKMA--.36325S3;
+	Mon, 06 May 2024 19:21:53 +0800 (CST)
+Subject: Re: [RFC PATCH v4 24/34] ext4: implement buffered write iomap path
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+ hch@infradead.org, djwong@kernel.org, willy@infradead.org,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+ <20240410142948.2817554-25-yi.zhang@huaweicloud.com>
+ <ZjH5Ia+dWGss5Duv@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <4adbf8aa-e417-1997-c83d-90e7623f2916@huaweicloud.com>
+Date: Mon, 6 May 2024 19:21:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 6 May 2024 13:21:40 +0200
-Message-ID: <CAAiTLFW8DWH-ejNgcXgr2tQxxF4pp7BNUFGyUq99BfrYx1kScQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] arm64: Support the TSO memory model
-To: Eric Curtin <ecurtin@redhat.com>, Will Deacon <will@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Zayd Qumsieh <zayd_qumsieh@apple.com>, Justin Lu <ih_justin@apple.com>, 
-	Ryan Houdek <Houdek.Ryan@fex-emu.org>, Mark Brown <broonie@kernel.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Miguel Luis <miguel.luis@oracle.com>, Joey Gouly <joey.gouly@arm.com>, 
-	Christoph Paasch <cpaasch@apple.com>, Kees Cook <keescook@chromium.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Baoquan He <bhe@redhat.com>, 
-	Joel Granados <j.granados@samsung.com>, Dawei Li <dawei.li@shingroup.cn>, 
-	Andrew Morton <akpm@linux-foundation.org>, Florent Revest <revest@chromium.org>, 
-	David Hildenbrand <david@redhat.com>, Stefan Roesch <shr@devkernel.io>, Andy Chiu <andy.chiu@sifive.com>, 
-	Josh Triplett <josh@joshtriplett.org>, Oleg Nesterov <oleg@redhat.com>, Helge Deller <deller@gmx.de>, 
-	Zev Weiss <zev@bewilderbeest.net>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Asahi Linux <asahi@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ZjH5Ia+dWGss5Duv@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgDnCw9PvThmHTPKMA--.36325S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxurW5Gw1UXw48GrW3tF1kKrg_yoW5Kry8pF
+	ZxKF45GF4aqrya9F4fXr48XF1Ska18Jr4UJrWag345ur90yr10gF40gF1Yv3W5Ar4xAF1x
+	ZF4YkF18Gw42yrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Eric Curtin <ecurtin@redhat.com> writes:
-
-> On Fri, 19 Apr 2024 at 18:08, Will Deacon <will@kernel.org> wrote:
+On 2024/5/1 16:11, Dave Chinner wrote:
+> On Wed, Apr 10, 2024 at 10:29:38PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
 >>
->> On Thu, Apr 11, 2024 at 11:19:13PM +0900, Hector Martin wrote:
->> > On 2024/04/11 22:28, Will Deacon wrote:
->> > >   * Some binaries in a distribution exhibit instability which goes away
->> > >     in TSO mode, so a taskset-like program is used to run them with TSO
->> > >     enabled.
->> >
->> > Since the flag is cleared on execve, this third one isn't generally
->> > possible as far as I know.
+>> Implement buffered write iomap path, use ext4_da_map_blocks() to map
+>> delalloc extents and add ext4_iomap_get_blocks() to allocate blocks if
+>> delalloc is disabled or free space is about to run out.
 >>
->> Ah ok, I'd missed that. Thanks.
+>> Note that we always allocate unwritten extents for new blocks in the
+>> iomap write path, this means that the allocation type is no longer
+>> controlled by the dioread_nolock mount option. After that, we could
+>> postpone the i_disksize updating to the writeback path, and drop journal
+>> handle in the buffered dealloc write path completely.
 >>
->> > > In all these cases, we end up with native arm64 applications that will
->> > > either fail to load or will crash in subtle ways on CPUs without the TSO
->> > > feature. Assuming that the application cannot be fixed, a better
->> > > approach would be to recompile using stronger instructions (e.g.
->> > > LDAR/STLR) so that at least the resulting binary is portable. Now, it's
->> > > true that some existing CPUs are TSO by design (this is a perfectly
->> > > valid implementation of the arm64 memory model), but I think there's a
->> > > big difference between quietly providing more ordering guarantees than
->> > > software may be relying on and providing a mechanism to discover,
->> > > request and ultimately rely upon the stronger behaviour.
->> >
->> > The problem is "just" using stronger instructions is much more
->> > expensive, as emulators have demonstrated. If TSO didn't serve a
->> > practical purpose I wouldn't be submitting this, but it does. This is
->> > basically non-negotiable for x86 emulation; if this is rejected
->> > upstream, it will forever live as a downstream patch used by the entire
->> > gaming-on-Mac-Linux ecosystem (and this is an ecosystem we are very
->> > explicitly targeting, given our efforts with microVMs for 4K page size
->> > support and the upcoming Vulkan drivers).
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/ext4.h  |   3 +
+>>  fs/ext4/file.c  |  19 +++++-
+>>  fs/ext4/inode.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++--
+>>  3 files changed, 183 insertions(+), 7 deletions(-)
+>>
+[...]
+>> +#define IOMAP_F_EXT4_DELALLOC		IOMAP_F_PRIVATE
+>> +
+>> +static int __ext4_iomap_buffered_io_begin(struct inode *inode, loff_t offset,
+>>  				loff_t length, unsigned int iomap_flags,
+>> -				struct iomap *iomap, struct iomap *srcmap)
+>> +				struct iomap *iomap, struct iomap *srcmap,
+>> +				bool delalloc)
+>>  {
+>> -	int ret;
+>> +	int ret, retries = 0;
+>>  	struct ext4_map_blocks map;
+>>  	u8 blkbits = inode->i_blkbits;
+>>  
+>> @@ -3537,20 +3580,133 @@ static int ext4_iomap_buffered_io_begin(struct inode *inode, loff_t offset,
+>>  		return -EINVAL;
+>>  	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
+>>  		return -ERANGE;
+>> -
+>> +retry:
+>>  	/* Calculate the first and last logical blocks respectively. */
+>>  	map.m_lblk = offset >> blkbits;
+>>  	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
+>>  			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
+>> +	if (iomap_flags & IOMAP_WRITE) {
+>> +		if (delalloc)
+>> +			ret = ext4_da_map_blocks(inode, &map);
+>> +		else
+>> +			ret = ext4_iomap_get_blocks(inode, &map);
+>>  
+>> -	ret = ext4_map_blocks(NULL, inode, &map, 0);
+>> +		if (ret == -ENOSPC &&
+>> +		    ext4_should_retry_alloc(inode->i_sb, &retries))
+>> +			goto retry;
+>> +	} else {
+>> +		ret = ext4_map_blocks(NULL, inode, &map, 0);
+>> +	}
+>>  	if (ret < 0)
+>>  		return ret;
+>>  
+>>  	ext4_set_iomap(inode, iomap, &map, offset, length, iomap_flags);
+>> +	if (delalloc)
+>> +		iomap->flags |= IOMAP_F_EXT4_DELALLOC;
+>> +
+>> +	return 0;
+>> +}
+> 
+> Why are you implementing both read and write mapping paths in
+> the one function? The whole point of having separate ops vectors for
+> read and write is that it allows a clean separation of the read and
+> write mapping operations. i.e. there is no need to use "if (write)
+> else {do read}" code constructs at all.
+> 
+> You can even have a different delalloc mapping function so you don't
+> need "if (delalloc) else {do nonda}" branches everiywhere...
+> 
 
-In addition to the use case Hector exposed here, there's another,
-potentially larger one, which is running x86_64 containers on aarch64
-systems, using a combination of both Virtualization and emulation.
+Because current ->iomap_begin() for ext4 buffered IO path
+(i.e. __ext4_iomap_buffered_io_begin()) is simple, almost only the map
+blocks handlers are different for read, da write and no da write paths,
+the rest of the function parameter check and inode status check are
+the same, and I noticed that the ->iomap_begin() for direct IO path
+(i.e. ext4_iomap_begin()) also implemented in one function. So I'd
+like to save some code now, and it looks like implement them in one
+function doesn't make this function too complicated, I guess we could
+split them if things change in the future.
 
-In this scenario, both not being able to use TSO for emulation
-and having to enable it all the time for the whole VM have a very large
-impact on performance (~25% on some workloads).
-
-I understand the concern about the risk of userspace fragmentation, but
-I was wondering if we could minimize it to an acceptable level by
-narrowing down the context. For instance, since both use cases we're
-bringing to the table imply the use of Virtualization, we should be able
-to restrict PR_SET_MEM_MODEL to only be accepted when running on EL1
-(and not in nVHE nor pKVM), returning EINVAL otherwise. This would
-heavily discourage users from relying on this feature for native
-applications that can run on arbitrary contexts, hence drastically
-reducing the fragmentation risk.
-
-We would still need a way to ensure the trap gets to the VMM and for
-the VMM to operate on the impdef ACTLR_EL12, but that should be dealt on
-a different series.
+But think about it again, split them now could make things more clear,
+it's also fine to me.
 
 Thanks,
-Sergio.
+Yi.
 
 
