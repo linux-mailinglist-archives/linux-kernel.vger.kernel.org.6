@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-169987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C098BD03A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3FF8BD03D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1EE41F26172
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F66D1C24474
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB8F13D255;
-	Mon,  6 May 2024 14:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECAF13D27A;
+	Mon,  6 May 2024 14:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HTQxxFHB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jk8aJL4C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED3F13D289;
-	Mon,  6 May 2024 14:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD47811E7;
+	Mon,  6 May 2024 14:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005557; cv=none; b=q3oIWrE2srGYB9gD1lap4S2u3eydfzjuwaWoO+f5tMiKeaTw80hYcKXbQzBA6u94NbOOmRjW8SnpeuPlgXk/c662akceoQR1L/s1LDknc1SK4DNqNHaLWQGAw0QWwv5Uy/+cMwJEV7aWEzoHSliM10tychy9IPoKmgMqYRnc0Oc=
+	t=1715005607; cv=none; b=Tzb32A48LPVEsxyU+F5ct0OF/TIWP1pugpnGhP9Or/Q5GJo7w+N5iq7lqhr7VJM/BXu+OntSuyiGk0m65MqRegD9CcHf0JeiLVqWWSkc1FCNjDCfULlWPzQNGNJd83S4QniXwTfplUeN+mUtR+7ITDyd8zI6/uNjQofVc79gq/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005557; c=relaxed/simple;
-	bh=EnQPE3FwCk5Ns+k1JljGSjyT4ERWWDmlzGdgIeUIZJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VgH6PtMUIxK2X5GCl99J1ZQ1rai33M823y7ZI2v7/D5PvqRDtbBCrj5TS8XCxELJv2DVfAC+qRZvVqVNJWvYY9Z1r/hURCG/dmaLH0Kq2Z4GD7lnFI1sls4Yjyn0n/f/v7sTlIG75ApSVvJVv/HO/tKKyw5DoRz0eMXgWGUk3aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HTQxxFHB; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715005556; x=1746541556;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EnQPE3FwCk5Ns+k1JljGSjyT4ERWWDmlzGdgIeUIZJg=;
-  b=HTQxxFHB7i062trcxj0lIbBlxlrYs2WhBsrDs5XG53C2F1yUGLlG7lI0
-   oXjjRsS2FypCybNCabKleh4+p47b8fUlurmyyHC32Nbr7N6etbXCEzt2I
-   sVjTpW1hQB5unDpmwwY1SEm6biQeR0nrk6G1b2fGb8gkksAvB3JF3pWm7
-   IsTwj5BY44bJThVi++4ETmfDNR9GsWRfDArt+6+LNTZ2PKfqFpShDIC+M
-   Wcaln9FIpIoEwTK27FuzaBXrqWg5lPsXcdHs+feF4zJWMtTL4qOUpF0Nj
-   1DjoFSzTmZnQEF/MNmrWWlmQCiWOdALw+BzM3leVIm2qx9ImSb4iFJQ3p
-   g==;
-X-CSE-ConnectionGUID: bPDmbS/GSYWOtIrL/jcE7A==
-X-CSE-MsgGUID: Tt60eOY+RHGwKIFCEAnslg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="14534828"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="14534828"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:25:56 -0700
-X-CSE-ConnectionGUID: CiJSTNs9R3Oi9MI8OGmVJA==
-X-CSE-MsgGUID: 19i6sOY5RcK6PGp2uu2OEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="28182208"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:25:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s3zHq-00000004iso-3Ur8;
-	Mon, 06 May 2024 17:25:50 +0300
-Date: Mon, 6 May 2024 17:25:50 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-sound@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	baojun.xu@ti.com
-Subject: Re: [PATCH v1 1/1] ALSA: Correct the kernel object suffix of target
-Message-ID: <Zjjobmw7UIv9LXim@smile.fi.intel.com>
-References: <20240506085219.3403731-1-andriy.shevchenko@linux.intel.com>
- <878r0ngh9u.wl-tiwai@suse.de>
+	s=arc-20240116; t=1715005607; c=relaxed/simple;
+	bh=WGXmiojuwyUlrWCas3x3xw7zG7o9mcYX/J2i6endN0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TtiNGnwr6d8r1UAnXonH7Ig/N6vsmZAvBgVN/tQ+PQMfDGn2mgx1bBoDPQk/3myiqCmO6T8mQlYBbvj/PmJ+mQJdi7KUs/+ljMnkSZ+KRXdtAWNacw8FVjD1GlifqKq2Me/V69J+x9MUvjn7Cg8q1lT7IY4FfIVk0cMHCy8/x9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jk8aJL4C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C40EC116B1;
+	Mon,  6 May 2024 14:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715005606;
+	bh=WGXmiojuwyUlrWCas3x3xw7zG7o9mcYX/J2i6endN0c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jk8aJL4CP9zQEc/W5zos2YVKbvsteqzrxxPLN3rT/hGU+8kZObwcNizisNpKFp5Yd
+	 6iqyKsKElOq1UMpEzXUtxd7wTCdncV9OA231f+kC6sbAbiMARqnw8hAAhcvv4A77p9
+	 8QWSgu5TvhlOQUaHeU8samxnMInU/GGFVHH4wM1TQuFcS9i58Sa2un77NO5i/Wk1Ga
+	 RIuFBtRkzTl4VkbjhGPavkjz+Fgb0/Y67pjsS0olU6Sg9MPgGC+hmP72S2bJFM5BSC
+	 wI4qfv758H/hNlxOFKztEnCQpHHTW4VE1LK9zZWvM+kHAaNHC+0daL1BoYKlXBuUwe
+	 TMfVcvl8UKKEw==
+Date: Mon, 6 May 2024 07:26:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Erhard Furtner <erhard_f@mailbox.org>
+Cc: netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: WARNING: CPU: 1 PID: 1 at net/core/netpoll.c:370
+ netpoll_send_skb+0x1fc/0x20c at boot when netconsole is enabled (kernel
+ v6.9-rc5, v6.8.7, sungem, PowerMac G4 DP)
+Message-ID: <20240506072645.448bc49f@kernel.org>
+In-Reply-To: <20240505232713.46c03b30@yea>
+References: <20240428125306.2c3080ef@legion>
+	<20240429183630.399859e2@kernel.org>
+	<20240505232713.46c03b30@yea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878r0ngh9u.wl-tiwai@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 06, 2024 at 04:13:33PM +0200, Takashi Iwai wrote:
-> On Mon, 06 May 2024 10:52:19 +0200,
-> Andy Shevchenko wrote:
+On Sun, 5 May 2024 23:27:13 +0200 Erhard Furtner wrote:
+> > On Sun, 28 Apr 2024 12:53:06 +0200 Erhard Furtner wrote:  
+> > > With netconsole enabled I get this "WARNING: CPU: 1 PID: 1 at
+> > > net/core/netpoll.c:370 netpoll_send_skb+0x1fc/0x20c" and "WARNING:
+> > > CPU: 1 PID: 1 at kernel/locking/irqflag-debug.c:10
+> > > warn_bogus_irq_restore+0x30/0x44" at boot on my PowerMac G4 DP.
+> > > Happens more often than not (6-7 out of 10 times booting):    
 > > 
-> > The correct suffix is 'y' for the kernel code and
-> > 'objs' for the user space. Update documentation.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Could you try with LOCKDEP enabled?
+> > I wonder if irqs_disabled() behaves differently than we expect.  
 > 
-> Applied now.  I added a suffix to the subject to indicate it's a
-> documentation fix, too.
+> Ok, after a few tries I got a "BUG: spinlock wrong CPU on CPU#0, swapper/0/1" LOCKDEP hit. But this does not happen every time when I get the netpoll_send WARNING:
 
-Thank you!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Oh, can you try deleting the gem_poll_controller() function?
+Unhook it from ndo_poll_controller and remove it completely.
 
