@@ -1,183 +1,156 @@
-Return-Path: <linux-kernel+bounces-170261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E85DB8BD440
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D86D8BD445
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5B5283E3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32E651F2120A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7AF15885D;
-	Mon,  6 May 2024 18:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7E0158A31;
+	Mon,  6 May 2024 18:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YE0vQ+R6"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7MAKZ6s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C2C197;
-	Mon,  6 May 2024 18:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0112D1586F6;
+	Mon,  6 May 2024 18:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715018428; cv=none; b=LhHSIvYP+3a67Od1C391/Do7JFjwtDIUC3GZJzgcv0PYpZV7pYkt+Y7EswQTBWTXogqepgO9J+PnVCEIall/MjcmEF5ZeF4sMduvvYKFD34mKmkNCwCz7E0rkpBY8u+Xcxl6t0xq/pDz/FBl6VMoMBBD8yCbySIToQ9z0sI8kYo=
+	t=1715018444; cv=none; b=RAfsnX/BqoaRLThAyeaCtYCl74cohYihrNhquC5LEe8ZnfmrYWzc3wA0knHpFUdHzPsbtafHAq6uAbmLbHTv0DZUfikdGlU0ZxwICW2Uc6e1TlhS4fbGjcfWj8nx26tRqpOL7Kef5rWm8cHZlHLf5iwzmCvVtzsFRfmkjfzteeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715018428; c=relaxed/simple;
-	bh=no6tilYKngaoTOqfGFWOgA/5oNjItKCJRl53C/eguWs=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=SflK/qCXpvhQZtf6wTN2tDm0BXbCyCV5AfbIN+seXLEKuDZepjOasmYlJejUjkAWZQ3AK8YQ/J7bzDHdr9BJRiAU8UW7XUofQJwUsklbN8EQNIpk+hcp4iY4LiWD5Wjtn0qnvrX733B9ti59IrvNxLyvPfs9PEadHmTIIn73XIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YE0vQ+R6; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-69b5de48126so6386056d6.3;
-        Mon, 06 May 2024 11:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715018426; x=1715623226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ewxWon8y3EC8f5KNKIlRB63vgk6021CZpyEJEMa3QaQ=;
-        b=YE0vQ+R6b8+ln631z0TtxZkL1Hc1RORoY4+kXk8FURwK21zPa25F8JvJ8zqnt53rtK
-         gw3EvkB5iLLQiGvYeJTaSArvTf3sv3Rjt2aeti674KU0iyDw6IglO/nDFouh6e1Kow6h
-         c+qQwBR8VY13D86XMOFeH8i7lIM7VHLAJZgP/uyZXY6gO1v+pZsIpr3Q9HYUpESJr0Wm
-         rZYLikTE77RD1uyHASYnGmUDEd7mLSNjSD05bzyaB17eEXr3AXqLDBDxgWuJRzUE7+eq
-         QE9RXAqPB0GO322+dT8WSmtofjBxuJdUSHPWzmfFl7bU9bqsMpmBsUorPfzEYX6iIzmd
-         PBbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715018426; x=1715623226;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ewxWon8y3EC8f5KNKIlRB63vgk6021CZpyEJEMa3QaQ=;
-        b=WWiIWcSgiSmpwjm+EggzLxwtn3qXwQPYu6aqUPHmas1N19MOHcjPqbEzX1X2wxwUsE
-         iXg/9PwamYRkj65GYurSGpMeO2n1OT4ckeuDMAett6LegDJ8zztPtbFOQ40bSYQ30AuI
-         vQzXMnv96eWenNhU4lr+PxsPSd/xQ5g5LGmnsBy122cFMJdG6XmreIWjsTFMIjjMOOnZ
-         Qo/IhV6BKo02Zj7yv+aJrAK8x2qSa/RHB7O6mOmcgHIlC2REJtT/rbhMRKloTO1KxTWz
-         jp/VMfvH47mFOcxTn/DdLFJYBCmVTXl9hzxZv4A7ktBqpen3rVuiYOcKizmb6D3tLOLI
-         n+vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfD0366mWmWkicBUoCOMr1l+74+NHMSSfYuBMfZwD1xbiSP1VQMoxMatVuObq/DFtyInwpjMfhc12zn3fPUg3LtGciHgxsSemtdBcEubsOfWTJc0EmTVPquKmRXRzzY9UWJxSKUUkGn2KbkWHFXLP7JT3YpVCIV+vzO6l38tfzB3Sw1+en
-X-Gm-Message-State: AOJu0YxiXNso2uEDwj1kbZuHgnDup8G0nozOxzcNOQGKzh1JV+i9BlBA
-	mvI1f08b/VP3rhdqpAzOmG4f9r0gnDl6tk/VUwUGM2z7EkN5d/d2cneAZQ==
-X-Google-Smtp-Source: AGHT+IHwxi+MsesdxS51NMGdi8E37iQPGrsyCgG+iNUpxejrVgz1gYPJSIt1PiQCGOpKWPnlFwfCJg==
-X-Received: by 2002:a05:6214:19e8:b0:69b:17b2:df34 with SMTP id q8-20020a05621419e800b0069b17b2df34mr13732146qvc.63.1715018424782;
-        Mon, 06 May 2024 11:00:24 -0700 (PDT)
-Received: from localhost (164.146.150.34.bc.googleusercontent.com. [34.150.146.164])
-        by smtp.gmail.com with ESMTPSA id qb17-20020ad44711000000b006a0e585dc77sm3903456qvb.70.2024.05.06.11.00.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 11:00:24 -0700 (PDT)
-Date: Mon, 06 May 2024 14:00:24 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: John Hubbard <jhubbard@nvidia.com>, 
- Shuah Khan <shuah@kernel.org>, 
- richardbgobert@gmail.com
-Cc: "David S . Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Steffen Klassert <steffen.klassert@secunet.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Matthieu Baerts <matttbe@kernel.org>, 
- Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, 
- Pravin B Shelar <pshelar@ovn.org>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
- zhujun2 <zhujun2@cmss.chinamobile.com>, 
- Petr Machata <petrm@nvidia.com>, 
- Ido Schimmel <idosch@nvidia.com>, 
- Hangbin Liu <liuhangbin@gmail.com>, 
- Nikolay Aleksandrov <razor@blackwall.org>, 
- Benjamin Poirier <bpoirier@nvidia.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Dmitry Safonov <0x7f454c46@gmail.com>, 
- netdev@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- linux-actions@lists.infradead.org, 
- mptcp@lists.linux.dev, 
- dev@openvswitch.org, 
- Valentin Obst <kernel@valentinobst.de>, 
- linux-kselftest@vger.kernel.org, 
- LKML <linux-kernel@vger.kernel.org>, 
- llvm@lists.linux.dev, 
- John Hubbard <jhubbard@nvidia.com>
-Message-ID: <66391ab83771c_516de294d7@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240505222639.70317-2-jhubbard@nvidia.com>
-References: <20240505222639.70317-1-jhubbard@nvidia.com>
- <20240505222639.70317-2-jhubbard@nvidia.com>
-Subject: Re: [PATCH 2/2] selftests/net: fix uninitialized variables
+	s=arc-20240116; t=1715018444; c=relaxed/simple;
+	bh=E4hbksdLHR9sHb2ZSc5jxVRHZXCWdBpad5C427cdk04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTAlm9nMe9GE+0sfJXTZ8MjJ/feOuogjE2f3KpvVmqCyd0ybYAjFHgVRA9d1mtbb+a3MExpD4A4K9vPS0bLAiZqIwqeQGoEpaTSdePBYKoOMJ7PPMRniWhorEiPUxzktAEo8GWbVYVqE/mCG9jtOon2D6cQ1pZa7OgmxQ8eEeZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7MAKZ6s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42AD2C4AF65;
+	Mon,  6 May 2024 18:00:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715018443;
+	bh=E4hbksdLHR9sHb2ZSc5jxVRHZXCWdBpad5C427cdk04=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=H7MAKZ6sSZCaWpWOiPH6SFvlmEfZPnKvzhqE9Lo89A9/yP3lbXAB5x5ohwrCAjTtf
+	 q3AholZWwc5yrCvc9qvQlk9KuaDzY/Yux6LeMsd7jHHgGtq5HOlN3luNSk/UwS0sdv
+	 EPmsQUTY2u5wwmgq/SusblpzIVFO4zcAq0raksZAqUgkCsE1C+Un8/WoYpsBHB2Lr2
+	 cL8cxNhv6CInqxZf3RBnkGd0C0wh1tnZoic8cIgPvHmQsY5rOJB3MjISc+3vmjb3fM
+	 04Q4xf3PPKDL+ZRGS+M+kp0WvIuoBAYvRNmGpZ8vEEm21yep98uJ54LOwVFIcLjKBr
+	 EcOYtlPqWUfMw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D5335CE0C56; Mon,  6 May 2024 11:00:42 -0700 (PDT)
+Date: Mon, 6 May 2024 11:00:42 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu,
+	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH memory-model 2/4] Documentation/litmus-tests: Demonstrate
+ unordered failing cmpxchg
+Message-ID: <2a695f63-6c9a-4837-ac03-f0a5c63daaaf@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <42a43181-a431-44bd-8aff-6b305f8111ba@paulmck-laptop>
+ <20240501232132.1785861-2-paulmck@kernel.org>
+ <c97f0529-5a8f-4a82-8e14-0078d4372bdc@huaweicloud.com>
+ <16381d02-cb70-4ae5-b24e-aa73afad9aed@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16381d02-cb70-4ae5-b24e-aa73afad9aed@huaweicloud.com>
 
-John Hubbard wrote:
-> When building with clang, via:
-> 
->     make LLVM=1 -C tools/testing/selftest
-> 
-> ...clang warns about three variables that are not initialized in all
-> cases:
-> 
-> 1) The opt_ipproto_off variable is used uninitialized if "testname" is
-> not "ip". This seems like an actual bug.
-> 
-> 2) The addr_len is used uninitialized, but only in the assert case,
->    which bails out, so this is harmless.
-> 
-> 3) The family variable in add_listener() is only used uninitialized in
->    the error case (neither IPv4 nor IPv6 is specified), so it's also
->    harmless.
-> 
-> Fix by initializing each variable.
-> 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  tools/testing/selftests/net/gro.c                 | 3 ++-
->  tools/testing/selftests/net/ip_local_port_range.c | 2 +-
->  tools/testing/selftests/net/mptcp/pm_nl_ctl.c     | 2 +-
->  3 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
-> index 353e1e867fbb..0eb61edaad83 100644
-> --- a/tools/testing/selftests/net/gro.c
-> +++ b/tools/testing/selftests/net/gro.c
-> @@ -110,7 +110,8 @@ static void setup_sock_filter(int fd)
->  	const int dport_off = tcp_offset + offsetof(struct tcphdr, dest);
->  	const int ethproto_off = offsetof(struct ethhdr, h_proto);
->  	int optlen = 0;
-> -	int ipproto_off, opt_ipproto_off;
-> +	int ipproto_off;
-> +	int opt_ipproto_off = 0;
+On Mon, May 06, 2024 at 06:30:45PM +0200, Jonas Oberhauser wrote:
+> Am 5/6/2024 um 12:05 PM schrieb Jonas Oberhauser:
+> > Am 5/2/2024 um 1:21 AM schrieb Paul E. McKenney:
+> > > This commit adds four litmus tests showing that a failing cmpxchg()
+> > > operation is unordered unless followed by an smp_mb__after_atomic()
+> > > operation.
+> > 
+> > So far, my understanding was that all RMW operations without suffix
+> > (xchg(), cmpxchg(), ...) will be interpreted as F[Mb];...;F[Mb].
+> > 
+> > I guess this shows again how important it is to model these full
+> > barriers explicitly inside the cat model, instead of relying on implicit
+> > conversions internal to herd.
+> > 
+> > I'd like to propose a patch to this effect.
+> > 
+> > What is the intended behavior of a failed cmpxchg()? Is it the same as a
+> > relaxed one?
 
-This is only intended to be used in the case where the IP proto is not TCP:
+Yes, and unless I am too confused, LKMM currently does implement this.
+Please let me know if I am missing something.
 
-                        BPF_STMT(BPF_LD  + BPF_B   + BPF_ABS, ipproto_off),
-+                       BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, IPPROTO_TCP, 2, 0),
-+                       BPF_STMT(BPF_LD  + BPF_B   + BPF_ABS, opt_ipproto_off),
-                        BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, IPPROTO_TCP, 0, 5),
+> > My suggestion would be in the direction of marking read and write events
+> > of these operations as Mb, and then defining
+> > 
+> > (* full barrier events that appear in non-failing RMW *)
+> > let RMW_MB = Mb & (dom(rmw) | range(rmw))
+> > 
+> > 
+> > let mb =
+> >      [M] ; fencerel(Mb) ; [M]
+> >    | [M] ; (po \ rmw) ; [RMW_MB] ; po^? ; [M]
+> >    | [M] ; po^? ; [RMW_MB] ; (po \ rmw) ; [M]
+> >    | ...
+> > 
+> > The po \ rmw is because ordering is not provided internally of the rmw
+> 
+> (removed the unnecessary si since LKMM is still non-mixed-accesses)
 
-In that case the test tries again at a different offset that accounts
-for optional IPv6 extension headers.
+Addition of mixed-access support would be quite welcome!
 
-This is indeed buggy, in that it might accidentally accept packets
-that should be dropped.
+> This could also be written with a single rule:
+> 
+>      | [M] ; (po \ rmw) & (po^?; [RMW_MB] ; po^?) ; [M]
+> 
+> > I suspect that after we added [rmw] sequences it could perhaps be
+> > simplified [...]
+> 
+> No, my suspicion is wrong - this would incorrectly let full-barrier RMWs
+> act like strong fences when they appear in an rmw sequence.
+> 
+>  if (z==1)  ||  x = 2;     ||  xchg(&y,2)  || if (y==2)
+>    x = 1;   ||  y =_rel 1; ||              ||    z=1;
+> 
+> 
+> right now, we allow x=2 overwriting x=1 (in case the last thread does not
+> propagate x=2 along with z=1) because on power, the xchg might be
+> implemented with a sync that doesn't get executed until the very end
+> of the program run.
+> 
+> 
+> Instead of its negative form (everything other than inside the rmw),
+> it could also be rewritten positively. Here's a somewhat short form:
+> 
+> let mb =
+>      [M] ; fencerel(Mb) ; [M]
+>    (* everything across a full barrier RMW is ordered. This includes up to
+> one event inside the RMW. *)
+>    | [M] ; po ; [RMW_MB] ; po ; [M]
+>    (* full barrier RMW writes are ordered with everything behind the RMW *)
+>    | [W & RMW_MB] ; po ; [M]
+>    (* full barrier RMW reads are ordered with everything before the RMW *)
+>    | [M] ; po ; [R & RMW_MB]
+>    | ...
 
-Initializing to 0 compares against against the first byte of the
-Ethernet header. Which is an external argument to the test. So
-safest is to initialize opt_ipproto_off to ipproto_off and just
-repeat the previous check. Perhaps:
+Does this produce the results expected by the litmus tests in the Linux
+kernel source tree and also those at https://github.com/paulmckrcu/litmus?
 
-@@ -118,6 +118,7 @@ static void setup_sock_filter(int fd)
-        else
-                next_off = offsetof(struct ipv6hdr, nexthdr);
-        ipproto_off = ETH_HLEN + next_off;
-+       opt_ipproto_off = ipproto_off;  /* overridden later if may have exthdrs */
+							Thanx, Paul
 
