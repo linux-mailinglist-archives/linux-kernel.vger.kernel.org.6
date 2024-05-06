@@ -1,88 +1,100 @@
-Return-Path: <linux-kernel+bounces-169877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEB98BCED1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:18:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A9A8BCED8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F8D1C23AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:18:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0466B26F13
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAC078C6C;
-	Mon,  6 May 2024 13:18:35 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE337C6C6;
+	Mon,  6 May 2024 13:18:36 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5CE763F9
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E256D757EA
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715001515; cv=none; b=HV+X+DMkDUzAdVeWR06lg6Ru4d65s9qYFhCuQKflMQVCIeamGwN1jFCN2H571LhkqGTRZimJfljpJM/E+ZKy2xjGjSAemYv7PWLCxRGKpsBgBjjg60ktXcMr5rrtYPzRuZrRRXMutKBuqZ2Ty8yl6d7OMvzRVmMK0EuxFSoU7zY=
+	t=1715001516; cv=none; b=oLRySz4/P2YRTg2NVHV+WCXq6rJVJWUq8ajD5/33J1T0AzTUm8cc3sNfk4oftmiK6qwVSNKT8ysPOv7qN2JG+xt1yIvBUqSu3EMkddLS+fu9PP/qfCaW7mD0KKx5O/XXFLWULJlI2NmZQ9HeBuya7I6xgNviIlQSp0JcACZoVrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715001515; c=relaxed/simple;
-	bh=xMKAHgLWffPEg/68jPEYeY/o4qLcUtR75HNtHwrSP5s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U59h+S9HhBwZYRVCT3Xn9E8QkoLMSaLnTJ3wkEUDARegQNo+ckMvML+2uB3IMmTyRrdxBfC/ZmJGLBrlZu5LqFM1aSrUtxGH2VYsVtT47knVkPTYMNBUh6wUyNLUHi5p4+1D17YLoR+P4OeWi6it33AS3ySUAbBMo0WjGbmWddY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+	s=arc-20240116; t=1715001516; c=relaxed/simple;
+	bh=c0Vge8iTB4Lpbpsuu3+m+8p+N7McCY3fFZYh0TSFI1k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qlnIkOXUN3WIimzicDAaSq2DvtsD1F5hf2d6Mks5FB8fo03no9I8n2MBbVpfOMiVnoTqiHf3WgLNDSTqAu3uW2MLVVpSvO8HzX9UmaFlIani2QAJJuDqjIoE+z9OCy/PEsFF0Nx9NbAVYe3JTFGc0BPNbswlPJm9HzyVKmFljkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ddf08e17e4so153146639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 06:18:33 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ddf08e17e4so153148439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 06:18:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715001513; x=1715606313;
+        d=1e100.net; s=20230601; t=1715001514; x=1715606314;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9TxmHB0vl67W1+zyEJ27WmnVys+63ysAGw/jZhHVYa4=;
-        b=e/MoteuZhU1I2ovQfsFuAnQQ2Om+Gm9C8lf4YFIvHC9krbvAVnmzcmi8cYcgUQm6nC
-         kqDNPHSG0Xc/s1Q0iFZc9GStB8rqXR9R3dpipNLNqzvLWk0rUZUVLIpxqetDwesCuUDe
-         DOMCgzP31ks6hJH/paWz0Sy4yM52GO0z0d/vRJRCJNChWGtc+2fHAcn/tXUT3AnkagxH
-         AyUiS87Xu+kYFLqGV4GvHqkXr37I5A2qcgfAlgNhy8tODW92yDcnWW7TYOIQnKaBvvLL
-         k8bNvOEs10saaMjEgbDU374StR+LlcWAZb4wXDKjPt8848tel1WfWjXj2mLMDbvlx/lS
-         a3Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsUdnMyiV6/NtNyM0XMlwVQm7fR0PqvxdtN2TWFId+6I9gR/usfWCw4DbL9FTZITz6xoXS63NCeel2HEh5dKA9WbfqeiM3F8yTvc9E
-X-Gm-Message-State: AOJu0Yzx0LFbytw/LUjG8HY5wA7olWWrhqWicKAd7x7A/KitKeafxA0j
-	ogmkK4YOIG5d6dMkkfO1jLh92JfkS0nis0roKKzd0MybBhzds+SX754F7mO8Do/dwsWnHtURlII
-	cvtabvbANOcxIanj65ULnMVTKD6aQYlcyAetcNM7PL4tzIw6SmlHjLEc=
-X-Google-Smtp-Source: AGHT+IHGkWCaHpJLl9dzq0QN3kR9qdOorczrF9G3kwxMgooiBGozHiWJRAmpHqOhax011rNPJQiAoVBofoiRpuhW7X96ozD4h239
+        bh=sDXohloZ5MfuZXfB1DDbljelq8gj5pZm9laaAT/1VtU=;
+        b=FEMY7VWX3cT3HoSlXLHWy6Dsj5pPgYdmtApUxgTWx/XbO+Y6ZVlHDSigBuGZCKRk/I
+         c/OhtTSmGqtncz0AxWpXaYkmhT2xaSTVmJbxtMCHQ06HIU6W5aRWqJadjtZVBtPKSAMJ
+         KC38XAoIyFLlnNHPkVJwmTynGzGPspA6btk0sd1eAapKjgHjuus/9knrFqijQXvgYF3i
+         qGkdb5oeNsfzMcsGMs4UZriJ5ezuhAUuCgIainNRo+n+er80r0hfmqb7vlX1DuHQfFQg
+         aQn49VGdAOZOBD5RCiPuid6Q4TZYRCeCqKcx5Pot5IQQgy13jomzePCVIBQQGJslBNEI
+         LlQw==
+X-Gm-Message-State: AOJu0Yy5Zve9V4dLaFKC4OldJpGCTSsuWy/qE8eCEE7odXaoH+gNHcJf
+	QVnVBzv5YNsgVqr0xnej3nerGPod7HHJFqh3yKjkLNemcvMSlyjlXa/Gu85v14NA/qQA5Dkktwk
+	/YMYxqMwb5ne/1ns5W9BxAeJ51PRaPtEPV6ossYfF73aQm76lX6IxVKc=
+X-Google-Smtp-Source: AGHT+IG8fqvQzKK0Ndvb55M8AEuR45mSb8N9eJk1/kfk+AJ8UD/zRmP3RQCdND34lbZorwZshYw4n9A2jtESUdb4TIuax8CXRf67
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8516:b0:488:8715:313 with SMTP id
- is22-20020a056638851600b0048887150313mr249593jab.0.1715001513193; Mon, 06 May
- 2024 06:18:33 -0700 (PDT)
-Date: Mon, 06 May 2024 06:18:33 -0700
+X-Received: by 2002:a05:6638:8426:b0:488:6017:abb6 with SMTP id
+ iq38-20020a056638842600b004886017abb6mr450659jab.2.1715001514173; Mon, 06 May
+ 2024 06:18:34 -0700 (PDT)
+Date: Mon, 06 May 2024 06:18:34 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fbc4600617c8e744@google.com>
-Subject: [syzbot] Monthly nilfs report (May 2024)
-From: syzbot <syzbot+listf1bffba7342098843795@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000000ab1040617c8e8da@google.com>
+Subject: [syzbot] Monthly wireless report (May 2024)
+From: syzbot <syzbot+list0eee01f891cd031c3139@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello nilfs maintainers/developers,
+Hello wireless maintainers/developers,
 
-This is a 31-day syzbot report for the nilfs subsystem.
+This is a 31-day syzbot report for the wireless subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nilfs
+https://syzkaller.appspot.com/upstream/s/wireless
 
-During the period, 3 new issues were detected and 1 were fixed.
-In total, 7 issues are still open and 42 have been fixed so far.
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 28 issues are still open and 124 have been fixed so far.
 
 Some of the still happening issues:
 
-Ref Crashes Repro Title
-<1> 127     Yes   KMSAN: uninit-value in nilfs_add_checksums_on_logs (2)
-                  https://syzkaller.appspot.com/bug?extid=47a017c46edb25eff048
-<2> 3       No    INFO: task hung in nilfs_segctor_thread (2)
-                  https://syzkaller.appspot.com/bug?extid=c8166c541d3971bf6c87
-<3> 1       No    possible deadlock in nilfs_dirty_inode (3)
-                  https://syzkaller.appspot.com/bug?extid=ca73f5a22aec76875d85
+Ref  Crashes Repro Title
+<1>  8381    Yes   WARNING in ieee80211_link_info_change_notify (2)
+                   https://syzkaller.appspot.com/bug?extid=de87c09cc7b964ea2e23
+<2>  7730    Yes   WARNING in __ieee80211_beacon_get
+                   https://syzkaller.appspot.com/bug?extid=18c783c5cf6a781e3e2c
+<3>  4438    Yes   WARNING in __cfg80211_ibss_joined (2)
+                   https://syzkaller.appspot.com/bug?extid=7f064ba1704c2466e36d
+<4>  3478    Yes   WARNING in ieee80211_rx_list
+                   https://syzkaller.appspot.com/bug?extid=8830db5d3593b5546d2e
+<5>  879     Yes   WARNING in ar5523_submit_rx_cmd/usb_submit_urb
+                   https://syzkaller.appspot.com/bug?extid=6101b0c732dea13ea55b
+<6>  774     Yes   WARNING in ieee80211_start_next_roc
+                   https://syzkaller.appspot.com/bug?extid=c3a167b5615df4ccd7fb
+<7>  79      Yes   WARNING in ieee80211_free_ack_frame (2)
+                   https://syzkaller.appspot.com/bug?extid=ac648b0525be1feba506
+<8>  10      Yes   INFO: task hung in reg_check_chans_work (6)
+                   https://syzkaller.appspot.com/bug?extid=b87c222546179f4513a7
+<9>  7       Yes   WARNING in drv_remove_interface
+                   https://syzkaller.appspot.com/bug?extid=2e5c1e55b9e5c28a3da7
+<10> 5       Yes   UBSAN: array-index-out-of-bounds in htc_issue_send
+                   https://syzkaller.appspot.com/bug?extid=93cbd5fbb85814306ba1
 
 ---
 This report is generated by a bot. It may contain errors.
