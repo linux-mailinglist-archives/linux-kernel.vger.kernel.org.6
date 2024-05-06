@@ -1,476 +1,203 @@
-Return-Path: <linux-kernel+bounces-169391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BE38BC7FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:04:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D3A8BC80A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF6562811B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:04:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91BEFB21565
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A1A12D1EC;
-	Mon,  6 May 2024 07:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846096D1A3;
+	Mon,  6 May 2024 07:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpqChsXe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=zenithal.me header.i=@zenithal.me header.b="lnmMKbv8"
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2106.outbound.protection.outlook.com [40.107.113.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFB94F20E;
-	Mon,  6 May 2024 07:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714979055; cv=none; b=fAfoWap/q+neOwq0kD/e8XDQMCth3+iSvGnFckilOe7lmG6XLCQogtoLHOr/8Rwm+gxvAfwaKiCwOfhjt7vChegsaClQ0SgLvKo2FA4bI9phXJ1ae7h80E8b6xtmpPzxHmw95bTDKEFZH2YhIjbT+g2NXy4OOpHbfYEPsRMgem8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714979055; c=relaxed/simple;
-	bh=or/5BdbPBMnxvZKxawEjMlSiwx/k/InkAl0En5LtRa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=utUQBXKIlrvWIMhJt6qpi5OnOc+hkEjRI06vLhGR+s1bW2g6SOAiFzgiW8hIw3AhG+UvMuR95FcsZsLKpi0UwoKdw47KSNE/3FABu4gWQJppr7HU+8h2axZo/fGnIaWDaz+sQ+y7z4ZeAAXs+vdNNdTdbGEo397xkSh6taYiL+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpqChsXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E6AC4AF65;
-	Mon,  6 May 2024 07:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714979054;
-	bh=or/5BdbPBMnxvZKxawEjMlSiwx/k/InkAl0En5LtRa0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RpqChsXezl57eWacUldP/6i1Z/ww5fEu880VoelPKaSyq+S+7g6Tk5rqQPWorkFUv
-	 CJFq92qj/vZdfa27Cc6snpdvJXQnLSio6mFjCIO0DDAyUg2gc7JkoaZBoSfunI0x7c
-	 lwM7NwJQ0mYFfYeF4L29OZMc4YKQ3FDQi6Ow5JjhjMcF2casJmGora+xba/snN1lLL
-	 Ls4gEF2SnKchYMwVJdNee3JPVE735JpY9ILP78fCiJwVsMh9fOfpcfBxsw9TOanxyl
-	 VKpkxrGGmF4jlQoYnQvsJ5iwE0RqOoFMBBYgYVN2ccdepby3nM3xwlN/9mWAFHRpoy
-	 gZJoVy474ZQHg==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59b81d087aso256954566b.3;
-        Mon, 06 May 2024 00:04:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWLFdlr9wEF1Yz1t6APOg0E2B6FYGT5Tkw9kXHYLJlyOVTSW90bWLLrlM74LZGTIiLehWHscVwvGmKM0tPrKkgkKXR00Mo9vuFoDsQ0G8fa6vGPJrJ0ZuB1h2p1sdPmkO5l
-X-Gm-Message-State: AOJu0YyviS66YtWTKE9DirnnKdnJugmI1w6PhNfKyJplrfVGsSrtbLBp
-	5UZQv0Dk1KJyep50xXRLh9f46WTQBvShb5fJherLsDzQEiIB5dF2+O/O5VFywUD1gQogjjBmtWU
-	bBjWkFbG/8USdafJv8F1AE4W48lc=
-X-Google-Smtp-Source: AGHT+IHySgSNYR7SRt2or0ozjZ1e+0ewXCicKymuxCCS0hiagDUUnGz2dSv+f3vSRtx4jYJI0+Ct016oHJhVkH2BZ2A=
-X-Received: by 2002:a17:906:2dcb:b0:a59:cc9b:d6f8 with SMTP id
- h11-20020a1709062dcb00b00a59cc9bd6f8mr1845020eji.39.1714979052921; Mon, 06
- May 2024 00:04:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2584F88E;
+	Mon,  6 May 2024 07:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714979104; cv=fail; b=vEsBGHsJOSzPdURNZLUBQpBph6t7jnzDmgTJbHpHDZbpOdRqxI9Q3CciHlh5n5X+fI3eMiz8ZV/Jq0drOhEZ7hmuxrojUrUFAS2v4tYE+G3yaSCfDiJ0+Maau61qNg+XqdHuKYO+q77pl14AtqAKZ3nVfsAoxW8hY2Vmd3NKPO4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714979104; c=relaxed/simple;
+	bh=I4zAkelONKTZFJbD0kqBLz7jQ03ITf4zm+6d9XtWh0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XZtzJgp6Pik88qjgrJVKUiO5eW1MqFL7g7VJnmn5noc2CY2veMlxJcPrLmVrhaCa7dm4h8dIq24YPagIP215UzTmcFKud6t53UIF5W5HXY/vEckRf6uPf2cLAe+ilBQ3lW0R0M5uRUGYl1CFHATt9+YP9N5xhPeqJ6Y2OHUnMVU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zenithal.me; spf=pass smtp.mailfrom=zenithal.me; dkim=pass (1024-bit key) header.d=zenithal.me header.i=@zenithal.me header.b=lnmMKbv8; arc=fail smtp.client-ip=40.107.113.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zenithal.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zenithal.me
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KH8BlZ5vZO7UCrSewncTyP2aWxftx5/RpUf+g0KLehY85St9gKGxFNJEDGpzFAmGRD1YQH6tDbVdnpyI87TgQdGnTeB2ntUp24aXG14Krg8pp1s8XAM2hXzy2j+EVEVTyV2ZF+rpExGtnf3dCq9Xi/0Y9Mx8hOYXPHYyJPL5pG+ZyfctjlhB++ZCMhfx5X2gAxVC13GW0WXB+0QxESpdzlzDYgxaFWCadsUZ39IV8KOIioDe4iyikl5Fo3ByEAa4NkGHIP3Q7OKnFcXRmXFApcJOYzaereaClOGBowfqhktuXKPB9crH5txa+NaLFzOmfGxXGi7s6xy4VC+ITWOtqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rptHCJl1CsdyXQ5rkYCAsjubbNkxDv4QoKnhAg6tVA8=;
+ b=HilcTQQW/bq/W5MfrKB9o70k74BvuaD1+Ju2evPs9Z/2IEWxTmCcuuwiT6GVFQ7GrckP8SMwGhyRlBl4G2tTH9rM+7lALr9MXZj53zK5bberoNQRS47d9JOm25ing9sGuvN6PonFKnF2tXI6lxK8HqtW6vVPvCHJzQ58DNgTsCGJB77j8ODOLcF5ktQgQyPSzlMkEIzpY3ZwjNMnT+iWeYl0FN+pacJ1xjgY60QvDU1aVSo2RloEG47I6jS+auO/54x++voGHqZkbV8uB5+cdWAnwWUqtpMvyGCLJvLagahv0hkh2zxGvIdemW/gW+Wth5U+Dm/XDyS7pe6KlqXu+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=zenithal.me; dmarc=pass action=none header.from=zenithal.me;
+ dkim=pass header.d=zenithal.me; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zenithal.me;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rptHCJl1CsdyXQ5rkYCAsjubbNkxDv4QoKnhAg6tVA8=;
+ b=lnmMKbv8uEl4JZ8JabdDx8dU38kB10FZ7C1hq6RW0eGxWNhpan8i4J4Teuhzc0lNvloQRBuzSos4rZ3/OmWDRy0aDZH7KEpouE6fIvhv/QlH0lp7+yeS3gPXjXd3mJvvFbch7dYiL22TVLSPDjpHeUPKzMqoGFs+QjVAROymR3o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=zenithal.me;
+Received: from TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:c0::6) by
+ OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1f1::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.41; Mon, 6 May 2024 07:05:00 +0000
+Received: from TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::746a:424a:348:bab6]) by TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::746a:424a:348:bab6%5]) with mapi id 15.20.7544.041; Mon, 6 May 2024
+ 07:04:59 +0000
+Date: Mon, 6 May 2024 15:04:56 +0800
+From: Hongren Zheng <i@zenithal.me>
+To: Simon Holesch <simon@holesch.de>
+Cc: Valentina Manea <valentina.manea.m@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shuah Khan <skhan@linuxfoundation.org>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] usbip: Don't submit special requests twice
+Message-ID: <ZjiBGLVN6GteWvti@Sun>
+References: <20231217194624.102385-1-simon@holesch.de>
+ <ZjemYB6CpAx4Kx5f@Sun>
+ <D11WJK47MBWS.3795S2OL21M7R@holesch.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D11WJK47MBWS.3795S2OL21M7R@holesch.de>
+X-Operating-System: Linux Sun 6.6.28 
+X-Mailer: Mutt 2.2.13 (2024-03-09)
+X-ClientProxiedBy: SI2PR04CA0018.apcprd04.prod.outlook.com
+ (2603:1096:4:197::9) To TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:c0::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240428100518.1642324-1-maobibo@loongson.cn> <20240428100518.1642324-7-maobibo@loongson.cn>
- <CAAhV-H7Z=XWGBtWzv2dkiHqeezTS7URYWHVMPpm5yRu=bQVWmQ@mail.gmail.com> <fa76a04d-e321-ff34-3d94-f528d28c5793@loongson.cn>
-In-Reply-To: <fa76a04d-e321-ff34-3d94-f528d28c5793@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 6 May 2024 15:04:03 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4XSnHBNCitcxPxF7LitCdVHhnVR9DDwaUgEuwbGkqBGA@mail.gmail.com>
-Message-ID: <CAAhV-H4XSnHBNCitcxPxF7LitCdVHhnVR9DDwaUgEuwbGkqBGA@mail.gmail.com>
-Subject: Re: [PATCH v8 6/6] LoongArch: Add pv ipi support on guest kernel side
-To: maobibo <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCP286MB1393:EE_|OS3P286MB2490:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53f140aa-a24b-479d-03e7-08dc6d9ad7fe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|41320700004|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?r72vITVI9M30R73g8S6q20ffP8noZQb+kPQ1epIFmlIpejzbDdl6nyCQtZCJ?=
+ =?us-ascii?Q?krzom/oz9ASeMHQhU6gaHcIDsqAaRN9sA5X4fEjqnIV5XuyYvbPeMDrRZFKf?=
+ =?us-ascii?Q?tsjFfq4CKZnqfl/KBIeQXJZemA0GUI/3mpvJt0fit1g2lW/6EOrlV4jhmEhV?=
+ =?us-ascii?Q?NScXtpFmarkrxZ9nCtLMsVzMqkWKPyohyGGdRqAWMehqc7qw5PYKndJg7UKQ?=
+ =?us-ascii?Q?t0gVl8XbEe/hQ8aumZDvsIBrxsnld7Z1xOW05BVq2rAS42G00gf/H+qL7heJ?=
+ =?us-ascii?Q?W3deMzRghn4y9LGjcJe/Pe4Nx47KBi5hb9lkr42LDyNKzUSezPFcRJHoRiTH?=
+ =?us-ascii?Q?25iOswEz68bhKkJe1ou8c+0Bv6dfc7UZ/DALag+HTaDZFTul/cQ+dm4Ib67B?=
+ =?us-ascii?Q?FUI/rwDh/3pZfMaKdsKIGDgI4TaGMTeEzRK1BEPNDrMHhOYrq/lJzShDLals?=
+ =?us-ascii?Q?K7yA80qQxAAtw8/tyTThfE+jSkpuzW27dmR186L4lRpuQwWkY+CMVDPiWVNF?=
+ =?us-ascii?Q?pSh5lnkZ7zJuJsfzDxw9PlctbNc/rZ4/MoGeBe4qyZ68fWRvmbdWPRDYd4a0?=
+ =?us-ascii?Q?CwFhPCBJShriGW0nDZqYqfeB+BkhrGoB1PUWQtIEgKf9EEJX4/rPTwzwmEcV?=
+ =?us-ascii?Q?xdi3mj0ebwv0xPsYk8hWqFj/pl6MwXZuT53mwb+aEIuixwwrsb3hg2cUoP7r?=
+ =?us-ascii?Q?pOwSyS1EBTF2DqWzVnhD3xhi0ZtCow3xxej1dqwYxtt/SLgsa8vAuMxhqVHc?=
+ =?us-ascii?Q?c0/ErIBN+isxBQyI7B+tSUbBXev+SBv9DPCliUkEQT5rNf3qr6yu/Ac9XuX4?=
+ =?us-ascii?Q?X2FVhpMneuISkeCvfteCVHH0JWoK5r5CpUF7fwMKz6kAvJM6VNwuLJ5FzQCu?=
+ =?us-ascii?Q?EkJiU3FwfZM7GfLeScWT1MffiztcLJGhpt1zZiasYL5cWGXAG7HZtpuHuwGa?=
+ =?us-ascii?Q?xupanq1U0pbZ9tPA7pHKVAo08yVq6k+89uJXgGtix35FNij2LCl0pzlT7RTM?=
+ =?us-ascii?Q?ht6bXQKwU/fDKYBhv+Uma0pqkppmv9bGTeRRdKo3xa6WdNSimLD8aalra1JU?=
+ =?us-ascii?Q?VzlGJtP565mpBRcvMg3eXVgnU9Q8IairLs+mQAUhKLaB8I5Q+q7e2ldV7vSb?=
+ =?us-ascii?Q?YJ0/Q9xKCPMCMcP9bm7vA3dHx/kRaCS1WWjO/oRTHqoLaflUq82ghbVg1Oyk?=
+ =?us-ascii?Q?XEPGXOufyZhGWCfiB/D3bL4FWc5gOxDZ++P8s7BEvnsACwrh6OI2hl0zm/ZY?=
+ =?us-ascii?Q?/DfdNQJpFQH75iHKZUHUhlaytSh52P0j2JMa3p3wXw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(41320700004)(1800799015)(366007)(376005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uBx8gjcKR1B80gn54uBhxnqCyUX7azlFpBlpZ4O1J83mDTRivn7L+ig+r4su?=
+ =?us-ascii?Q?cif9C/zIzH/hCoEVz40gzzIq2LI1vEn58HnVSGkcWWgQ3y8UbH8OzP5jY2aR?=
+ =?us-ascii?Q?+9FuXmC06GjLmyjvJqNPFMvIx8DRuGVcj2cB8u94l2WDKb33VKxpBPp5ML6d?=
+ =?us-ascii?Q?WkRMvi219Jiqd2tIc5lgNfA4OSiYQdlwKAHStOYwQwRmCP7zoIWdPahkCBp9?=
+ =?us-ascii?Q?tO+LTV5v9GXcHsadvcj/G62Q5XBTKPKyxm+pbkyf6GbZBmTfst5ZSPYHV7dp?=
+ =?us-ascii?Q?V6PvF9EKYeB6GBG8F01qGyhulV2D98iVVLWz79BxTkl8QnG3fuJqjxeivFbN?=
+ =?us-ascii?Q?TPWT//WvgLbat6K2lEqaOt1pYyZk0zYRfFpg7gF294MzNI/wfK/+UdEf2N5n?=
+ =?us-ascii?Q?h0yM1npDdbFtPTvEleLULRv9FGN+PPvUMJN34y+Qg5FtEf54lXqRdWfbkgc6?=
+ =?us-ascii?Q?2GkVYwh+BvXW2vjTwICQLaDKBhHduVSiDdTy9fp13x3xPYOJTMvXZqG2Dw6g?=
+ =?us-ascii?Q?9HyHMrG2jw8SLiGMN94BDmchyASblnrh1JMSKDX7wMRdn7peesZeGoUnB0re?=
+ =?us-ascii?Q?4toUIgo81ku+y1iQ71gTLXTf7vP5yWqeE+d1rwN+VedKyn5FG6B4x66wR9OL?=
+ =?us-ascii?Q?YPShUauTkjhYwVDzByWyJXQNamy1VV59+rct8LyAqoL19m4mSzH65dFTXFxC?=
+ =?us-ascii?Q?rUoohkfQX5T9W8xf141GN9CDdDfeHfXykSFtTlG/L1njT1OUWmCTM6jjtnQW?=
+ =?us-ascii?Q?QeqDpvqaGnnIDR5GT2x/xp/wxy/g3YZx17v+arXigCYPpteSEzDK28kzf5ta?=
+ =?us-ascii?Q?50/svN2tvDhkwe8bKQ5EifzAXqeoVYhrjpQISaGAeHJ/lybkEbv1sTa6sYAo?=
+ =?us-ascii?Q?9rAkfG7nTc0nQhRmuMsl39pGFJWGzPEqFosDxU7xKpx8pmzb3Dy474DxVJhd?=
+ =?us-ascii?Q?377Hog1xRKoBMNhv3JWk5h21+cd2ZxidgghlgOVzphNf/oTqJ97P3WVXwLk3?=
+ =?us-ascii?Q?9ckF3LdoXoIAPhH03nfYWmnoHotXpZ4nh7SxrDQtry5FS8Jzj2HyQS0UIG0R?=
+ =?us-ascii?Q?lqDVCxE5lARRzZXbKA2phc05oMqW0DrpuWB0FcJJNzncyJcUj10BrGO19JdR?=
+ =?us-ascii?Q?B7cpmMgMrMbwmsDNn6kh2PoA3A4HpqzSMlKUP9IJquVLhc8I4aC76wsEaQfM?=
+ =?us-ascii?Q?QFPLlesRC3mwvsKYYv57lzGqKrIOeMn+6RI9YSjVr5rzUO2u8OLu8K5yQSuI?=
+ =?us-ascii?Q?z3P07OM0jNIwVfTSs+qFbzKXRDd/IcLOq5n4+vEvOJU+jnZOVglVnrBb8ePu?=
+ =?us-ascii?Q?LWSGaJvIRpqbjjkp9+byx3B2bE7ofZ4YhgKksK4vmNaJN+dFZ3W5MZC9ilDX?=
+ =?us-ascii?Q?TnVVrRTKRvhaSDP9SiuwyXD9u4b6n1/kfAhiGBCqpdKZHdM0u2daGHi6TCwz?=
+ =?us-ascii?Q?FxqbZCSlvuQrri4xjPVQeG+lq/4e6B5RfvdZMyG7a/5ZR7FNiNB4bQQ+iKVi?=
+ =?us-ascii?Q?1hNzWxsoXede3tYTqM1bNa3rTPWRK3PHyJrVHebEaDYSTkhqK4UZ91xsQqbH?=
+ =?us-ascii?Q?vNmFRt7EfNBLrOauW1QftfSHEkCoo0xnQSShQANs?=
+X-OriginatorOrg: zenithal.me
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53f140aa-a24b-479d-03e7-08dc6d9ad7fe
+X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB1393.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 07:04:59.7824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 436d481c-43b1-4418-8d7f-84c1e4887cf0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Vl46fD6d791bNrPLzUHln5nmKdjTgYa/fAh1By2Jl7OO/g6AtRsYKzsTXknqZ+6D
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB2490
 
-On Mon, May 6, 2024 at 3:00=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote:
->
->
->
-> On 2024/5/6 =E4=B8=8A=E5=8D=889:53, Huacai Chen wrote:
-> > Hi, Bibo,
+On Sun, May 05, 2024 at 07:54:36PM +0200, Simon Holesch wrote:
+> On Sun May 5, 2024 at 5:31 PM CEST, Hongren Zheng wrote:
+> > On Sun, Dec 17, 2023 at 08:30:40PM +0100, Simon Holesch wrote:
+> > > Skip submitting URBs, when identical requests were already sent in
+> > > tweak_special_requests(). Instead call the completion handler directly
+> > > to return the result of the URB.
 > >
-> > On Sun, Apr 28, 2024 at 6:05=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> =
-wrote:
-> >>
-> >> PARAVIRT option and pv ipi is added on guest kernel side, function
-> >> pv_ipi_init() is to add ipi sending and ipi receiving hooks. This func=
-tion
-> >> firstly checks whether system runs on VM mode. If kernel runs on VM mo=
-de,
-> >> it will call function kvm_para_available() to detect current hypervirs=
-or
-> >> type. Now only KVM type detection is supported, the paravirt function =
-can
-> >> work only if current hypervisor type is KVM, since there is only KVM
-> >> supported on LoongArch now.
-> >>
-> >> PV IPI uses virtual IPI sender and virtual IPI receiver function. With
-> >> virutal IPI sender, ipi message is stored in DDR memory rather than
-> >> emulated HW. IPI multicast is supported, and 128 vcpus can received IP=
-Is
-> >> at the same time like X86 KVM method. Hypercall method is used for IPI
-> >> sending.
-> >>
-> >> With virtual IPI receiver, HW SW0 is used rather than real IPI HW. Sin=
-ce
-> >> VCPU has separate HW SW0 like HW timer, there is no trap in IPI interr=
-upt
-> >> acknowledge. And IPI message is stored in DDR, no trap in get IPI mess=
-age.
-> >>
-> >> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >> ---
-> >>   arch/loongarch/Kconfig                        |   9 ++
-> >>   arch/loongarch/include/asm/hardirq.h          |   1 +
-> >>   arch/loongarch/include/asm/paravirt.h         |  27 ++++
-> >>   .../include/asm/paravirt_api_clock.h          |   1 +
-> >>   arch/loongarch/kernel/Makefile                |   1 +
-> >>   arch/loongarch/kernel/irq.c                   |   2 +-
-> >>   arch/loongarch/kernel/paravirt.c              | 151 ++++++++++++++++=
-++
-> >>   arch/loongarch/kernel/smp.c                   |   4 +-
-> >>   8 files changed, 194 insertions(+), 2 deletions(-)
-> >>   create mode 100644 arch/loongarch/include/asm/paravirt.h
-> >>   create mode 100644 arch/loongarch/include/asm/paravirt_api_clock.h
-> >>   create mode 100644 arch/loongarch/kernel/paravirt.c
-> >>
-> >> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> >> index 54ad04dacdee..0a1540a8853e 100644
-> >> --- a/arch/loongarch/Kconfig
-> >> +++ b/arch/loongarch/Kconfig
-> >> @@ -583,6 +583,15 @@ config CPU_HAS_PREFETCH
-> >>          bool
-> >>          default y
-> >>
-> >> +config PARAVIRT
-> >> +       bool "Enable paravirtualization code"
-> >> +       depends on AS_HAS_LVZ_EXTENSION
-> >> +       help
-> >> +          This changes the kernel so it can modify itself when it is =
-run
-> >> +         under a hypervisor, potentially improving performance signif=
-icantly
-> >> +         over full virtualization.  However, when run without a hyper=
-visor
-> >> +         the kernel is theoretically slower and slightly larger.
-> >> +
-> >>   config ARCH_SUPPORTS_KEXEC
-> >>          def_bool y
-> >>
-> >> diff --git a/arch/loongarch/include/asm/hardirq.h b/arch/loongarch/inc=
-lude/asm/hardirq.h
-> >> index 9f0038e19c7f..b26d596a73aa 100644
-> >> --- a/arch/loongarch/include/asm/hardirq.h
-> >> +++ b/arch/loongarch/include/asm/hardirq.h
-> >> @@ -21,6 +21,7 @@ enum ipi_msg_type {
-> >>   typedef struct {
-> >>          unsigned int ipi_irqs[NR_IPI];
-> >>          unsigned int __softirq_pending;
-> >> +       atomic_t message ____cacheline_aligned_in_smp;
-> >>   } ____cacheline_aligned irq_cpustat_t;
-> >>
-> >>   DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
-> >> diff --git a/arch/loongarch/include/asm/paravirt.h b/arch/loongarch/in=
-clude/asm/paravirt.h
-> >> new file mode 100644
-> >> index 000000000000..58f7b7b89f2c
-> >> --- /dev/null
-> >> +++ b/arch/loongarch/include/asm/paravirt.h
-> >> @@ -0,0 +1,27 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> +#ifndef _ASM_LOONGARCH_PARAVIRT_H
-> >> +#define _ASM_LOONGARCH_PARAVIRT_H
-> >> +
-> >> +#ifdef CONFIG_PARAVIRT
-> >> +#include <linux/static_call_types.h>
-> >> +struct static_key;
-> >> +extern struct static_key paravirt_steal_enabled;
-> >> +extern struct static_key paravirt_steal_rq_enabled;
-> >> +
-> >> +u64 dummy_steal_clock(int cpu);
-> >> +DECLARE_STATIC_CALL(pv_steal_clock, dummy_steal_clock);
-> >> +
-> >> +static inline u64 paravirt_steal_clock(int cpu)
-> >> +{
-> >> +       return static_call(pv_steal_clock)(cpu);
-> >> +}
-> >> +
-> >> +int pv_ipi_init(void);
-> >> +#else
-> >> +static inline int pv_ipi_init(void)
-> >> +{
-> >> +       return 0;
-> >> +}
-> >> +
-> >> +#endif // CONFIG_PARAVIRT
-> >> +#endif
-> >> diff --git a/arch/loongarch/include/asm/paravirt_api_clock.h b/arch/lo=
-ongarch/include/asm/paravirt_api_clock.h
-> >> new file mode 100644
-> >> index 000000000000..65ac7cee0dad
-> >> --- /dev/null
-> >> +++ b/arch/loongarch/include/asm/paravirt_api_clock.h
-> >> @@ -0,0 +1 @@
-> >> +#include <asm/paravirt.h>
-> >> diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Ma=
-kefile
-> >> index 3a7620b66bc6..c9bfeda89e40 100644
-> >> --- a/arch/loongarch/kernel/Makefile
-> >> +++ b/arch/loongarch/kernel/Makefile
-> >> @@ -51,6 +51,7 @@ obj-$(CONFIG_MODULES)         +=3D module.o module-s=
-ections.o
-> >>   obj-$(CONFIG_STACKTRACE)       +=3D stacktrace.o
-> >>
-> >>   obj-$(CONFIG_PROC_FS)          +=3D proc.o
-> >> +obj-$(CONFIG_PARAVIRT)         +=3D paravirt.o
-> >>
-> >>   obj-$(CONFIG_SMP)              +=3D smp.o
-> >>
-> >> diff --git a/arch/loongarch/kernel/irq.c b/arch/loongarch/kernel/irq.c
-> >> index ce36897d1e5a..4863e6c1b739 100644
-> >> --- a/arch/loongarch/kernel/irq.c
-> >> +++ b/arch/loongarch/kernel/irq.c
-> >> @@ -113,5 +113,5 @@ void __init init_IRQ(void)
-> >>                          per_cpu(irq_stack, i), per_cpu(irq_stack, i) =
-+ IRQ_STACK_SIZE);
-> >>          }
-> >>
-> >> -       set_csr_ecfg(ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 | ECFGF_IPI | E=
-CFGF_PMC);
-> >> +       set_csr_ecfg(ECFGF_SIP0 | ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 | =
-ECFGF_IPI | ECFGF_PMC);
-> >>   }
-> >> diff --git a/arch/loongarch/kernel/paravirt.c b/arch/loongarch/kernel/=
-paravirt.c
-> >> new file mode 100644
-> >> index 000000000000..9044ed62045c
-> >> --- /dev/null
-> >> +++ b/arch/loongarch/kernel/paravirt.c
-> >> @@ -0,0 +1,151 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +#include <linux/export.h>
-> >> +#include <linux/types.h>
-> >> +#include <linux/interrupt.h>
-> >> +#include <linux/jump_label.h>
-> >> +#include <linux/kvm_para.h>
-> >> +#include <asm/paravirt.h>
-> >> +#include <linux/static_call.h>
-> >> +
-> >> +struct static_key paravirt_steal_enabled;
-> >> +struct static_key paravirt_steal_rq_enabled;
-> >> +
-> >> +static u64 native_steal_clock(int cpu)
-> >> +{
-> >> +       return 0;
-> >> +}
-> >> +
-> >> +DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
-> >> +
-> >> +#ifdef CONFIG_SMP
-> >> +static void pv_send_ipi_single(int cpu, unsigned int action)
-> >> +{
-> >> +       unsigned int min, old;
-> >> +       irq_cpustat_t *info =3D &per_cpu(irq_stat, cpu);
-> >> +
-> >> +       old =3D atomic_fetch_or(BIT(action), &info->message);
-> >> +       if (old)
-> >> +               return;
-> >> +
-> >> +       min =3D cpu_logical_map(cpu);
-> >> +       kvm_hypercall3(KVM_HCALL_FUNC_PV_IPI, 1, 0, min);
-> >> +}
-> >> +
-> >> +#define KVM_IPI_CLUSTER_SIZE           (2 * BITS_PER_LONG)
-> >> +static void pv_send_ipi_mask(const struct cpumask *mask, unsigned int=
- action)
-> >> +{
-> >> +       unsigned int cpu, i, min =3D 0, max =3D 0, old;
-> >> +       __uint128_t bitmap =3D 0;
-> >> +       irq_cpustat_t *info;
-> >> +
-> >> +       if (cpumask_empty(mask))
-> >> +               return;
-> >> +
-> >> +       action =3D BIT(action);
-> >> +       for_each_cpu(i, mask) {
-> >> +               info =3D &per_cpu(irq_stat, i);
-> >> +               old =3D atomic_fetch_or(action, &info->message);
-> >> +               if (old)
-> >> +                       continue;
-> >> +
-> >> +               cpu =3D cpu_logical_map(i);
-> >> +               if (!bitmap) {
-> >> +                       min =3D max =3D cpu;
-> >> +               } else if (cpu > min && cpu < min + KVM_IPI_CLUSTER_SI=
-ZE) {
-> >> +                       max =3D cpu > max ? cpu : max;
-> >> +               } else if (cpu < min && (max - cpu) < KVM_IPI_CLUSTER_=
-SIZE) {
-> >> +                       bitmap <<=3D min - cpu;
-> >> +                       min =3D cpu;
-> >> +               } else {
-> >> +                       /*
-> >> +                        * Physical cpuid is sorted in ascending order=
- ascend
-> >> +                        * for the next mask calculation, send IPI her=
-e
-> >> +                        * directly and skip the remainding cpus
-> >> +                        */
-> >> +                       kvm_hypercall3(KVM_HCALL_FUNC_PV_IPI,
-> >> +                               (unsigned long)bitmap,
-> >> +                               (unsigned long)(bitmap >> BITS_PER_LON=
-G), min);
-> >> +                       min =3D max =3D cpu;
-> >> +                       bitmap =3D 0;
-> >> +               }
-> > I have changed the logic and comments when I apply, you can double
-> > check whether it is correct.
-> There is modification like this:
->                  if (!bitmap) {
->                          min =3D max =3D cpu;
->                  } else if (cpu < min && cpu > (max -
-> KVM_IPI_CLUSTER_SIZE)) {
->                         ...
->
-> By test there will be problem if value of max is smaller than
-> KVM_IPI_CLUSTER_SIZE, since type of cpu/max is "unsigned int".
->
-> How about define the variable as int? the patch is like this:
-> --- a/arch/loongarch/kernel/paravirt.c
-> +++ b/arch/loongarch/kernel/paravirt.c
-> @@ -35,7 +35,7 @@ static void pv_send_ipi_single(int cpu, unsigned int
-> action)
->
->   static void pv_send_ipi_mask(const struct cpumask *mask, unsigned int
-> action)
->   {
-> -       unsigned int cpu, i, min =3D 0, max =3D 0, old;
-> +       int cpu, i, min =3D 0, max =3D 0, old;
->          __uint128_t bitmap =3D 0;
->          irq_cpustat_t *info;
-Make sense, I will update this line.
+> > Reproduced the behavior and this patch fixed the bahavior
+> 
+> Thank you for testing.
+> 
+> > > @@ -468,6 +477,7 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
+> > >  	int support_sg = 1;
+> > >  	int np = 0;
+> > >  	int ret, i;
+> > > +	int is_tweaked;
+> > >  
+> > >  	if (pipe == -1)
+> > >  		return;
+> > > @@ -580,8 +590,7 @@ static void stub_recv_cmd_submit(struct stub_device *sdev,
+> > >  		priv->urbs[i]->pipe = pipe;
+> > >  		priv->urbs[i]->complete = stub_complete;
+> > >  
+> > > -		/* no need to submit an intercepted request, but harmless? */
+> > > -		tweak_special_requests(priv->urbs[i]);
+> > > +		is_tweaked = tweak_special_requests(priv->urbs[i]);
+> >
+> > One question though, if there are mutiple urbs and one of them is
+> > SET CONFIGURATION, then all of them would not be submitted,
+> > as is_tweaked is a *global* flag instead of a per-urb flag.
+> >
+> > Now it is assumed that when the urb is SET CONFIGURATION then
+> > num_urbs is 1. I assume it just happens to be the case and I do
+> > not know if it holds for all scenario.
+> 
+> To be honest, I didn't fully understand the num_urbs > 1 case. I assumed
+> this is for drivers not supporting SG and a long URB is just broken up
+> into multiple ones.
 
-Huacai
+I misunderstood that code path. It is indeed multiple URBs for
+one PDU when the host controller for the physical device does not support SG.
+And one global is_tweaked flag is enough. I think adding a comment here
+would make it easier to understand.
 
->
->
-> Regards
-> Bibo Mao
-> >
-> > Huacai
-> >
-> >> +               __set_bit(cpu - min, (unsigned long *)&bitmap);
-> >> +       }
-> >> +
-> >> +       if (bitmap)
-> >> +               kvm_hypercall3(KVM_HCALL_FUNC_PV_IPI, (unsigned long)b=
-itmap,
-> >> +                               (unsigned long)(bitmap >> BITS_PER_LON=
-G), min);
-> >> +}
-> >> +
-> >> +static irqreturn_t loongson_do_swi(int irq, void *dev)
-> >> +{
-> >> +       irq_cpustat_t *info;
-> >> +       long action;
-> >> +
-> >> +       /* Clear swi interrupt */
-> >> +       clear_csr_estat(1 << INT_SWI0);
-> >> +       info =3D this_cpu_ptr(&irq_stat);
-> >> +       action =3D atomic_xchg(&info->message, 0);
-> >> +       if (action & SMP_CALL_FUNCTION) {
-> >> +               generic_smp_call_function_interrupt();
-> >> +               info->ipi_irqs[IPI_CALL_FUNCTION]++;
-> >> +       }
-> >> +
-> >> +       if (action & SMP_RESCHEDULE) {
-> >> +               scheduler_ipi();
-> >> +               info->ipi_irqs[IPI_RESCHEDULE]++;
-> >> +       }
-> >> +
-> >> +       return IRQ_HANDLED;
-> >> +}
-> >> +
-> >> +static void pv_init_ipi(void)
-> >> +{
-> >> +       int r, swi0;
-> >> +
-> >> +       swi0 =3D get_percpu_irq(INT_SWI0);
-> >> +       if (swi0 < 0)
-> >> +               panic("SWI0 IRQ mapping failed\n");
-> >> +       irq_set_percpu_devid(swi0);
-> >> +       r =3D request_percpu_irq(swi0, loongson_do_swi, "SWI0", &irq_s=
-tat);
-> >> +       if (r < 0)
-> >> +               panic("SWI0 IRQ request failed\n");
-> >> +}
-> >> +#endif
-> >> +
-> >> +static bool kvm_para_available(void)
-> >> +{
-> >> +       static int hypervisor_type;
-> >> +       int config;
-> >> +
-> >> +       if (!hypervisor_type) {
-> >> +               config =3D read_cpucfg(CPUCFG_KVM_SIG);
-> >> +               if (!memcmp(&config, KVM_SIGNATURE, 4))
-> >> +                       hypervisor_type =3D HYPERVISOR_KVM;
-> >> +       }
-> >> +
-> >> +       return hypervisor_type =3D=3D HYPERVISOR_KVM;
-> >> +}
-> >> +
-> >> +int __init pv_ipi_init(void)
-> >> +{
-> >> +       int feature;
-> >> +
-> >> +       if (!cpu_has_hypervisor)
-> >> +               return 0;
-> >> +       if (!kvm_para_available())
-> >> +               return 0;
-> >> +
-> >> +       /*
-> >> +        * check whether KVM hypervisor supports pv_ipi or not
-> >> +        */
-> >> +       feature =3D read_cpucfg(CPUCFG_KVM_FEATURE);
-> >> +#ifdef CONFIG_SMP
-> >> +       if (feature & KVM_FEATURE_PV_IPI) {
-> >> +               smp_ops.init_ipi                =3D pv_init_ipi;
-> >> +               smp_ops.send_ipi_single         =3D pv_send_ipi_single=
-;
-> >> +               smp_ops.send_ipi_mask           =3D pv_send_ipi_mask;
-> >> +       }
-> >> +#endif
-> >> +
-> >> +       return 1;
-> >> +}
-> >> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
-> >> index 1fce775be4f6..9eff7aa4c552 100644
-> >> --- a/arch/loongarch/kernel/smp.c
-> >> +++ b/arch/loongarch/kernel/smp.c
-> >> @@ -29,6 +29,7 @@
-> >>   #include <asm/loongson.h>
-> >>   #include <asm/mmu_context.h>
-> >>   #include <asm/numa.h>
-> >> +#include <asm/paravirt.h>
-> >>   #include <asm/processor.h>
-> >>   #include <asm/setup.h>
-> >>   #include <asm/time.h>
-> >> @@ -309,6 +310,7 @@ void __init loongson_smp_setup(void)
-> >>          cpu_data[0].core =3D cpu_logical_map(0) % loongson_sysconf.co=
-res_per_package;
-> >>          cpu_data[0].package =3D cpu_logical_map(0) / loongson_sysconf=
-cores_per_package;
-> >>
-> >> +       pv_ipi_init();
-> >>          iocsr_write32(0xffffffff, LOONGARCH_IOCSR_IPI_EN);
-> >>          pr_info("Detected %i available CPU(s)\n", loongson_sysconf.nr=
-_cpus);
-> >>   }
-> >> @@ -352,7 +354,7 @@ void loongson_boot_secondary(int cpu, struct task_=
-struct *idle)
-> >>   void loongson_init_secondary(void)
-> >>   {
-> >>          unsigned int cpu =3D smp_processor_id();
-> >> -       unsigned int imask =3D ECFGF_IP0 | ECFGF_IP1 | ECFGF_IP2 |
-> >> +       unsigned int imask =3D ECFGF_SIP0 | ECFGF_IP0 | ECFGF_IP1 | EC=
-FGF_IP2 |
-> >>                               ECFGF_IPI | ECFGF_PMC | ECFGF_TIMER;
-> >>
-> >>          change_csr_ecfg(ECFG0_IM, imask);
-> >> --
-> >> 2.39.3
-> >>
->
->
+Reviewed-By: Hongren Zheng <i@zenithal.me>
+Tested-By: Hongren Zheng <i@zenithal.me>
 
