@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-170506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215F68BD831
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:30:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7808BD835
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 723F6B22187
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FA611C21BD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D1415CD7C;
-	Mon,  6 May 2024 23:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6A115D5CE;
+	Mon,  6 May 2024 23:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vejhz29H"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="TJjHeCmh"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAB715B0ED
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 23:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064158488;
+	Mon,  6 May 2024 23:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715038244; cv=none; b=ZcRxbnwnFoBJcia7iM6PapMb3EG2x6v9IY4ETaQkkFBYg+S2NGePJpTJVi+3OWhkt+H4yG5CbVZiB3Un8ITsgi56IyZ6g2Vs34qSlZVESEsXOdd44hxVLwkpZFZJ0iYxun5zVpAJUM/y1IQH8bZUty6eblTCwx3W4KXO730RdDM=
+	t=1715038402; cv=none; b=ASmo9WhXeEUz7KV8jJnv0yW4sPaXAwIqM/1euQE0lXplWc+rcGE8CPqO75w1/ynmj+euxIjgeCKkyvFVWSBaZU0Soh3kaa9cga9il4z259vLG/YFLFR/qlmW887rRiqcGRUYNjIXwuc2IfdGDFdujgrtXbzsFMAQz/Uop7WJTq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715038244; c=relaxed/simple;
-	bh=dC5gmNPxNSH+aIEWUfqlcoUV3/RSi8n3oR46/xve6dA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qi62R9jNJERojl/JXLKWCJ1li7mqltu1r98mQ3W8vRKp2NUGaeH4HpjSsmbvNRTdKlN8ggtsPYGB4elE8jNfnhoUMUT9gGYdCvdjbG4eFG3qeQgGBsl8czlqIyzFc34sh0fdXJQ5Q5yWOWrUZ8lkSXo2LGUz3NPxQoJHKGD/m7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vejhz29H; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5724736770cso2362a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 16:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715038241; x=1715643041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rday+enGpH1mUN4w1iIrCf7IG9Q6aF8QR6lBBrCyZ7g=;
-        b=vejhz29HQj+gKtb2WBiToZaEiReMxu6rMyWsEaQNyrYelzJtXm6QXARFGs+gCMc9uI
-         1bR8A8t7uZb8FSTLnOipGuyAZmNvSCl2NFiAbn4XxXfy1Imvhd7IVqvIN+bib+3w1lg5
-         IPQd+9F7JFynHtvPiJBcLsZxTmMac1vH7Gm2e1xTsVooNKySrtOU+K8dzpYmwKqHaa82
-         0CNs5dMpqqcaWO5Xlv5V0TwvxIYN32LFWPStMApOSn/fJ5Nxj1XPwaooQvf/nQ/JLTvf
-         H+wXXm5iOf+UNGNkM2f30GeWTBQxcMGMYv7L7JHrGMtb3P7m+yGK18wfaU1L5bTxH32p
-         r+ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715038241; x=1715643041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rday+enGpH1mUN4w1iIrCf7IG9Q6aF8QR6lBBrCyZ7g=;
-        b=iaBZys04c2ZZIBzzKnvpZNnP2sibiSgG6yMjcBkSTLlZiiKbTjGf7O1tsWOlGp0ldH
-         dH87vMuywC483nAetBYn75PKp0rDsD8WOkzLk8eIbSIjFarF7wzz1oDH/7KhmJpu5Xdq
-         7A7ZAocphUu/2pDXCfWKkURlHiAWJbrDNmMPg0nhInWQQ7UGY1wUlZD4UDTYV0kR5vec
-         A2N4GgBE3dgfqVaUSRi4TrD+kCIejCkPsF9cG8SZ4276zs+DYSQLq0Jdw2e7eq2YX7YQ
-         zqJ7x36Ekwca1AH0mHSEwL5qV3OHZ4owNmu5YK1C2EAR95BRM4eagiHPduGmyH1snhnQ
-         rtYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLniFypJWYOgDsUXaT2wbl+0dfGbbngPZUaxth7Tw4gL11f7jKkfXeAmCTxC+daueiJ+BIc6abHsXXYTqmo9WXmLEBKld/6YkqyLEr
-X-Gm-Message-State: AOJu0YwcaKsRnNRT32F13i7YASbw64J/n1Rf+h92gjLNRXRwyj0a6olz
-	RIPJinOkI5wakozAiP2HnO2670EQAvJrI1EYQ2tzsWJTvh977zErX9oRJ1+n2CO+qyPqxzrxlw7
-	Z6GMcTXBQB+k4TT78IMHkOMq7jElvkpjxy54q
-X-Google-Smtp-Source: AGHT+IFPtbSaAcsaOKbHp6npYdFSTUzqld8pO8i1uwvZe0pXCtMxJsE/ukQM7Zz7NLIcHgg7/XYVun1u85SF7+71r+g=
-X-Received: by 2002:aa7:d389:0:b0:572:554b:ec4f with SMTP id
- 4fb4d7f45d1cf-5731316c507mr37653a12.3.1715038240800; Mon, 06 May 2024
- 16:30:40 -0700 (PDT)
+	s=arc-20240116; t=1715038402; c=relaxed/simple;
+	bh=df3PknBoU5anix9cujjsIkNJ2/JsZBYJnYG+M0uQU10=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E2ivfgrwxmVCiKk6rwg2fIVbW3/0uBVP0LU5HArevyKOpo8QjdUmSaYQ887cxcezJjw/dlqeKMl+2jEJQnNUBBwvej3l5HD7IWiZHzTjKLKn8ACrYlezY9EsIU7+9fKK+fG5zxeDKg0pigTcCDg6UHqb2ucwf0GkK9z4WZE0wiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=TJjHeCmh; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=6ada3f4kBJibYxGlzsjUF3a6VdyBLasYcCQk38XKLBA=; b=TJjHeCmhQ1vBSEj9
+	WEyzHBWrHra+PiU+pLJBIeQsdzYG1FKpGdD4FBJq0p3mLfPaRUicbogZ8SUh0KuSqk4T+W6Af1JGp
+	2CfTXwZ9/mvFDr+eKiMK8FHOroEUUpVIXRgBqqrIxUr4ZBtfXxy0WNYsUzjZXzccXnjd2t+qNQB4B
+	n14IhP9dg+qeZ4Vtzn1Lyj1fF/eG+N/YPyhHRh1TESsi6njSwUQD+Y4u3numWgtvf9U1pNJJuxwAS
+	A3sxelX7MZSqP0Tcjg7snEywqGJtVR/Dis8tHuAZ01C2gVMDRAsdZpKFtObAeq/EvmpD3oq802D1L
+	4TzCsdofv+Evqhy97g==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s47pV-0051VW-2t;
+	Mon, 06 May 2024 23:33:09 +0000
+From: linux@treblig.org
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] ftrace: Remove unused global 'ftrace_direct_func_count'
+Date: Tue,  7 May 2024 00:33:05 +0100
+Message-ID: <20240506233305.215735-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240416152831.3199999-1-usama.anjum@collabora.com> <202404161027.63F4D4FDEB@keescook>
-In-Reply-To: <202404161027.63F4D4FDEB@keescook>
-From: Fangrui Song <maskray@google.com>
-Date: Mon, 6 May 2024 16:30:27 -0700
-Message-ID: <CAFP8O3Jjkh0U94CbS=epXELMtCBpYt4fGejX3spH4=GdF7zVSw@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests: exec: make binaries position independent
-To: Kees Cook <keescook@chromium.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Eric Biederman <ebiederm@xmission.com>, Shuah Khan <shuah@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yang Yingliang <yangyingliang@huawei.com>, 
-	kernel@collabora.com, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 16, 2024 at 10:28=E2=80=AFAM Kees Cook <keescook@chromium.org> =
-wrote:
->
-> On Tue, Apr 16, 2024 at 08:28:29PM +0500, Muhammad Usama Anjum wrote:
-> > The -static overrides the -pie and binaries aren't position independent
-> > anymore. Use -static-pie instead which would produce a static and
-> > position independent binary. This has been caught by clang's warnings:
-> >
-> >   clang: warning: argument unused during compilation: '-pie'
-> >   [-Wunused-command-line-argument]
-> >
-> > Tested with both gcc and clang after this change.
-> >
-> > Fixes: 4d1cd3b2c5c1 ("tools/testing/selftests/exec: fix link error")
-> > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->
-> Thanks for this!
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> --
-> Kees Cook
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-GCC versions before 8.1 do not support -static-pie,
-while https://www.kernel.org/doc/html/next/process/changes.html says
-the minimal version is GCC 5.1.
-Is this a problem?
+Commit 8788ca164eb4b ("ftrace: Remove the legacy _ftrace_direct API")
+stopped setting the 'ftrace_direct_func_count' variable, but left
+it around.  Clean it up.
 
-If not, and CFLAGS is guaranteed to include -fpie/-fpic/-fPIE/-fPIC
-(PIC), using -static-pie looks good to me.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ include/linux/ftrace.h |  2 --
+ kernel/trace/fgraph.c  | 11 -----------
+ kernel/trace/ftrace.c  |  1 -
+ 3 files changed, 14 deletions(-)
 
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index b01cca36147ff..e3a83ebd1b333 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -413,7 +413,6 @@ struct ftrace_func_entry {
+ };
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+-extern int ftrace_direct_func_count;
+ unsigned long ftrace_find_rec_direct(unsigned long ip);
+ int register_ftrace_direct(struct ftrace_ops *ops, unsigned long addr);
+ int unregister_ftrace_direct(struct ftrace_ops *ops, unsigned long addr,
+@@ -425,7 +424,6 @@ void ftrace_stub_direct_tramp(void);
+ 
+ #else
+ struct ftrace_ops;
+-# define ftrace_direct_func_count 0
+ static inline unsigned long ftrace_find_rec_direct(unsigned long ip)
+ {
+ 	return 0;
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index c83c005e654e3..a130b2d898f7c 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -125,17 +125,6 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+ {
+ 	struct ftrace_graph_ent trace;
+ 
+-#ifndef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+-	/*
+-	 * Skip graph tracing if the return location is served by direct trampoline,
+-	 * since call sequence and return addresses are unpredictable anyway.
+-	 * Ex: BPF trampoline may call original function and may skip frame
+-	 * depending on type of BPF programs attached.
+-	 */
+-	if (ftrace_direct_func_count &&
+-	    ftrace_find_rec_direct(ret - MCOUNT_INSN_SIZE))
+-		return -EBUSY;
+-#endif
+ 	trace.func = func;
+ 	trace.depth = ++current->curr_ret_depth;
+ 
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index b18b4ece3d7c9..adf34167c3418 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -2538,7 +2538,6 @@ ftrace_find_unique_ops(struct dyn_ftrace *rec)
+ /* Protected by rcu_tasks for reading, and direct_mutex for writing */
+ static struct ftrace_hash __rcu *direct_functions = EMPTY_HASH;
+ static DEFINE_MUTEX(direct_mutex);
+-int ftrace_direct_func_count;
+ 
+ /*
+  * Search the direct_functions hash to see if the given instruction pointer
+-- 
+2.45.0
 
---=20
-=E5=AE=8B=E6=96=B9=E7=9D=BF
 
