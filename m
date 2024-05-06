@@ -1,137 +1,249 @@
-Return-Path: <linux-kernel+bounces-170371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663EE8BD5D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1E68BD5DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 971F31C21969
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404E1281A15
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66B815B0F5;
-	Mon,  6 May 2024 19:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBA415ADB5;
+	Mon,  6 May 2024 19:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XFFz6ATW"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pb15iywg"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B597215749D
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACDE155A25
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024849; cv=none; b=RvDVoh+gYgqBGpbpY5qQgYn13cY6688WyjtSKNGrvG9GoYEBz/zxPcSG8bzDvLfN+FCctZT9AcwwIGqM6KHsiQVICSeS8kmiSmHGIOFh6uMPdYGuu4TFnPChpuXDxYPh8eGGPaOax4Hm6PycXDqa8go6faq3StaAx1hfUzuRWNQ=
+	t=1715025018; cv=none; b=clnJy/lgGmy/YrgBzrAE/PEtrAPwgEARs8b35BTRHCsKRKDYLxNrjUaX+V/BUo35vqPS+k7On7fySffQ8/agbzQajJFeSTaRjJhPksGT3bQSdnAkIAfshU5TinjIH6AxZnXMSYiyhS7KM3MwCg6a+Lepz2JflHZnj7LMis/CAlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024849; c=relaxed/simple;
-	bh=GByCENBgWchn0akpqZGoD+13cIMCyJdu/t7ZRXWHSVM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HLzV26jqEllbVYoNa4C/5sjPEwX8A0zsbTwuyzZTKIoavpyc4m+8waLxO9s6KN82t1YmI7DavtNKPKM7jNoFEx+7EH+fCHYpOHOIPxrvO+aDTLH6fu2+j7OeDIVpJZ9cx9bknJxykeoYu2oC4tGw4ReE3SfXUbdTxLyIXlKeFXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XFFz6ATW; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1715025018; c=relaxed/simple;
+	bh=UC6Ki0pIiVbiy3okjMnHafK7vvm5E/aH/pr4q15tdlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a74AxQ8TP0uLs5NlIWwa30WNvp+riYNJ6PXkapUjp0LOfEu1vH8MFzPKx4AoKsVy+jrHYyddV7ubyupZWyGN+q8MUYcLbCda+QqzOASRfKsu7PySxlLucHtxCiiKaUO/NJgGdKvJIj2kaNIj7NqoYP6TzPXG5mTjKSDny9YxAqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pb15iywg; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715024845;
+	s=mimecast20190719; t=1715025015;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B+LfvZaM0cDhMeJS6ywBd3hBXEDd/TNc5rZ9ADTiBeU=;
-	b=XFFz6ATWAYxWIPX6dQOicv1BgwQn+0Nr5heyzjg+MHj7lcis5yn5DkHbq3DftmlKtKp2DF
-	BEZOVpGwIboeY6L1uFsjjS2BXlcgx1a8bpdjuAjq+YqHmLCw9ydbelytX4GvoMQBjsZFbf
-	PxN2OsaWtIoeDidlQ4nwV5+6z8fjxGE=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=43neyGYicA9em02DzDluHTB7rZaBqEtPcJZfV5lNzv4=;
+	b=Pb15iywgaiFDh8Ev5bCbacxL/Z4PHLJYeatmDo3IHwhVQTVLbwstZYmyfxHnUwGf/aTpgW
+	NT2C/ApGV5vhOoGggHKrc2hjPrOGzHiIAKu+7z4PUiP3sggx9cyorCAFPAdXJ0QCJ5gbOI
+	jwrnhQdBPKqNu8p9g7caLNmaA9OEn4U=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-529-gzdT-zMXMXO_3JpE-CuyOw-1; Mon, 06 May 2024 15:47:24 -0400
-X-MC-Unique: gzdT-zMXMXO_3JpE-CuyOw-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a59ad486084so115418766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:47:24 -0700 (PDT)
+ us-mta-655-QoNQ5uTfMHWFHp2HYC5Q7g-1; Mon, 06 May 2024 15:50:14 -0400
+X-MC-Unique: QoNQ5uTfMHWFHp2HYC5Q7g-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-41d9e2b4743so12946095e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:50:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715024843; x=1715629643;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B+LfvZaM0cDhMeJS6ywBd3hBXEDd/TNc5rZ9ADTiBeU=;
-        b=oXrrYZI0+M4s6K2oA5j/NmdUJJKp1PdIHSr4i0fov/0T6bmNU+T8n3HaXCGi6cprXn
-         cK9mu1EBmt+1+LyxM0S33KNDTFn4yU5bzoxMYoS2O+fWb0fSWAtMQ4kLxZxXAksc4UJD
-         bExlPJuvttoutbASzG9YAwuDJxyHP4nk/5li5T67f2kwXnDjoe/zZIfKvQQ9p5YzlUge
-         BHeYO+Uj09LCwhSrUaEaYwevlW9tjLFnRKWgkjWczROsSjWk3OqtAo8o9ujUf2f0T7lU
-         u1pMiznz+5UVUuSCm7b3mM2kpZlpIXJSID9bT04slAEt99H+VDEleAG6M+v1x54C3xZe
-         XLtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJVFB39aMMiJq0+MvJg4Ho1bOP76hWrico2cY87UrV2JavKkiZVEFUl1Nl+1/aeQFvP7x11cn/4wsi9tNr8qpOTYkjlD7Cx200Y/NB
-X-Gm-Message-State: AOJu0YxHkvG/oudGFY8BiFhdOk7HaHeu6mkEMP6BCYhc7XQvnF2vUstu
-	LGRFl3Y5SD2BXdZYdIgwEYEKgQiiVNmJwZ+onh3/XAfsneR+5EIqes4s87L6hoc+l24WHhhBXw4
-	mtzW/0clxukzSdEbfD5JVx07SMe6YO1Rddk5I4Hd9qB/guewdiLFPaHqL4sAf1g==
-X-Received: by 2002:a17:906:b52:b0:a59:a857:85d9 with SMTP id v18-20020a1709060b5200b00a59a85785d9mr4643934ejg.69.1715024843408;
-        Mon, 06 May 2024 12:47:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRBhj9be7jQBaaYDelz+oS21CM2eqozyILXEzEZ8HkdFgKx5zuiy6DpoR7jF+SLKlNWeLj5A==
-X-Received: by 2002:a17:906:b52:b0:a59:a857:85d9 with SMTP id v18-20020a1709060b5200b00a59a85785d9mr4643904ejg.69.1715024842927;
-        Mon, 06 May 2024 12:47:22 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id mf1-20020a170906cb8100b00a55778c1af7sm5641019ejb.11.2024.05.06.12.47.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 12:47:22 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id D9DAC1275C78; Mon, 06 May 2024 21:47:21 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Michal Schmidt <mschmidt@redhat.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S.
- Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper
- Dangaard Brouer <hawk@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko
- <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Alexander Lobakin
- <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] selftests/bpf: fix pointer arithmetic in
- test_xdp_do_redirect
-In-Reply-To: <20240506145023.214248-1-mschmidt@redhat.com>
-References: <20240506145023.214248-1-mschmidt@redhat.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Mon, 06 May 2024 21:47:21 +0200
-Message-ID: <87v83qoh86.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1715025013; x=1715629813;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=43neyGYicA9em02DzDluHTB7rZaBqEtPcJZfV5lNzv4=;
+        b=QEMp7TlnpCOtCUtSbE+Ky3kR7G4xcKZb5mHyuKGfKx0ix/Gvz1b11AYQqNdn1Qo3+y
+         U7QnrXON4u+j4wiARXAtJL7icRMqZnh+r3EYOVovs39YxRKLAbrZOJPSRixqNL56n1U1
+         9VvXLbSFgv875bNwNc9ghMW0Lnk5eYqaAGdBjoxGkm0XEga2Bx8Kd3OqvaYrKcTUgY0/
+         1Nvc3pEQJo+Qii4/oczxQ/lageqW/eN1oeg+Dg2yCQtf7zZhsJqqpcRYoSry0BX59W/r
+         Pw0u6qzn3wsxeJ9eANcURGzGdgMNW4aonwXvlM/2alp1WclpEBO/1KMkBv6KxJHlFz6X
+         7CFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUx49JS05SvihF7J8gdiJdvtkEvbBALDV/1E8QoEe7VUJbmm9Hek/DQEnMGNCWL3eqWDrEznb8VeDrIGD+YnfzcJlMQ+X+OZ7BEbUV8
+X-Gm-Message-State: AOJu0YwjVrf7mbHuQzKHVRl3ecvbqkySVnTAmlsLBvqBnzpv/JjCRmhl
+	SvwEwB2hoqmLKFEOp2CpmhsdZ9OXigO+Xx0/Zu5iRyxM5bx2NkUahx58+4p9rjYdyQC8lk1ecky
+	GoVy+Bo0sP+p97bs02oP2WO7ctcfQhfrHo3hhYIChc7NZe3J0U6mnmMwtowwB0Q==
+X-Received: by 2002:a05:600c:1e0b:b0:41a:f936:5326 with SMTP id ay11-20020a05600c1e0b00b0041af9365326mr9691247wmb.15.1715025013220;
+        Mon, 06 May 2024 12:50:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENNtNGUdZTGJY68HgN3RKZQR6LLY8lKJI77l/pO1a3Q0O4OYmrLWSXO0gjFG9wVxBPfKqt1w==
+X-Received: by 2002:a05:600c:1e0b:b0:41a:f936:5326 with SMTP id ay11-20020a05600c1e0b00b0041af9365326mr9691228wmb.15.1715025012753;
+        Mon, 06 May 2024 12:50:12 -0700 (PDT)
+Received: from [192.168.3.108] (p5b0c6c2e.dip0.t-ipconnect.de. [91.12.108.46])
+        by smtp.gmail.com with ESMTPSA id gb30-20020a056000459e00b0034e0346317dsm11349632wrb.13.2024.05.06.12.50.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 12:50:12 -0700 (PDT)
+Message-ID: <d99b6375-cbae-41f1-9221-f1dd25aab150@redhat.com>
+Date: Mon, 6 May 2024 21:50:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: do not update memcg stats for
+ NR_{FILE/SHMEM}_PMDMAPPED
+To: Yosry Ahmed <yosryahmed@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+References: <20240506192924.271999-1-yosryahmed@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240506192924.271999-1-yosryahmed@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Michal Schmidt <mschmidt@redhat.com> writes:
+On 06.05.24 21:29, Yosry Ahmed wrote:
+> Previously, all NR_VM_EVENT_ITEMS stats were maintained per-memcg,
+> although some of those fields are not exposed anywhere. Commit
+> 14e0f6c957e39 ("memcg: reduce memory for the lruvec and memcg stats")
+> changed this such that we only maintain the stats we actually expose
+> per-memcg via a translation table.
+> 
+> Additionally, commit 514462bbe927b ("memcg: warn for unexpected events
+> and stats") added a warning if a per-memcg stat update is attempted for
+> a stat that is not in the translation table. The warning started firing
+> for the NR_{FILE/SHMEM}_PMDMAPPED stat updates in the rmap code. These
+> stats are not maintained per-memcg, and hence are not in the translation
+> table.
+> 
+> Do not use __lruvec_stat_mod_folio() when updating NR_FILE_PMDMAPPED and
+> NR_SHMEM_PMDMAPPED. Use __mod_node_page_state() instead, which updates
+> the global per-node stats only.
+> 
+> Reported-by: syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/lkml/0000000000001b9d500617c8b23c@google.com
+> Fixes: 514462bbe927 ("memcg: warn for unexpected events and stats")
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+> ---
+>   mm/rmap.c | 15 +++++++++------
+>   1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 12be4241474ab..ed7f820369864 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1435,13 +1435,14 @@ static __always_inline void __folio_add_file_rmap(struct folio *folio,
+>   		struct page *page, int nr_pages, struct vm_area_struct *vma,
+>   		enum rmap_level level)
+>   {
+> +	pg_data_t *pgdat = folio_pgdat(folio);
+>   	int nr, nr_pmdmapped = 0;
+>   
+>   	VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
+>   
+>   	nr = __folio_add_rmap(folio, page, nr_pages, level, &nr_pmdmapped);
+>   	if (nr_pmdmapped)
+> -		__lruvec_stat_mod_folio(folio, folio_test_swapbacked(folio) ?
+> +		__mod_node_page_state(pgdat, folio_test_swapbacked(folio) ?
+>   			NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED, nr_pmdmapped);
+>   	if (nr)
+>   		__lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr);
+> @@ -1493,6 +1494,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>   		enum rmap_level level)
+>   {
+>   	atomic_t *mapped = &folio->_nr_pages_mapped;
+> +	pg_data_t *pgdat = folio_pgdat(folio);
+>   	int last, nr = 0, nr_pmdmapped = 0;
+>   	bool partially_mapped = false;
+>   	enum node_stat_item idx;
+> @@ -1540,13 +1542,14 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>   	}
+>   
+>   	if (nr_pmdmapped) {
+> +		/* NR_{FILE/SHMEM}_PMDMAPPED are not maintained per-memcg */
+>   		if (folio_test_anon(folio))
+> -			idx = NR_ANON_THPS;
+> -		else if (folio_test_swapbacked(folio))
+> -			idx = NR_SHMEM_PMDMAPPED;
+> +			__lruvec_stat_mod_folio(folio, NR_ANON_THPS, -nr_pmdmapped);
+>   		else
+> -			idx = NR_FILE_PMDMAPPED;
+> -		__lruvec_stat_mod_folio(folio, idx, -nr_pmdmapped);
+> +			__mod_node_page_state(pgdat,
 
-> Cast operation has a higher precedence than addition. The code here
-> wants to zero the 2nd half of the 64-bit metadata, but due to a pointer
-> arithmetic mistake, it writes the zero at offset 16 instead.
->
-> Just adding parentheses around "data + 4" would fix this, but I think
-> this will be slightly better readable with array syntax.
->
-> I was unable to test this with tools/testing/selftests/bpf/vmtest.sh,
-> because my glibc is newer than glibc in the provided VM image.
-> So I just checked the difference in the compiled code.
-> objdump -S tools/testing/selftests/bpf/xdp_do_redirect.test.o:
->   -	*((__u32 *)data) =3D 0x42; /* metadata test value */
->   +	((__u32 *)data)[0] =3D 0x42; /* metadata test value */
->         be7:	48 8d 85 30 fc ff ff 	lea    -0x3d0(%rbp),%rax
->         bee:	c7 00 42 00 00 00    	movl   $0x42,(%rax)
->   -	*((__u32 *)data + 4) =3D 0;
->   +	((__u32 *)data)[1] =3D 0;
->         bf4:	48 8d 85 30 fc ff ff 	lea    -0x3d0(%rbp),%rax
->   -     bfb:	48 83 c0 10          	add    $0x10,%rax
->   +     bfb:	48 83 c0 04          	add    $0x4,%rax
->         bff:	c7 00 00 00 00 00    	movl   $0x0,(%rax)
->
-> Fixes: 5640b6d89434 ("selftests/bpf: fix "metadata marker" getting overwr=
-itten by the netstack")
-> Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
+folio_pgdat(folio) should fit here easily. :)
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+But I would actually suggest something like the following in mm/rmap.c
+
+static void __folio_mod_node_file_state(folio, int nr_pages)
+{
+	enum node_stat_item idx = NR_FILE_PMDMAPPED;
+
+	if (folio_test_swapbacked(folio))
+		idx = NR_SHMEM_PMDMAPPED;
+
+	__mod_node_page_state(folio_pgdat(folio), idx, nr_pages);
+}
+
+And then simply calling here
+
+__folio_mod_node_file_state(folio, -nr_pmdmapped);
+
+And likewise in __folio_add_file_rmap()
+
+
+.. will be cleaner.
+
+In any case
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
