@@ -1,127 +1,89 @@
-Return-Path: <linux-kernel+bounces-170252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E158BD420
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB8E8BD426
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3047C281DBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497B628577E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F5D1586C3;
-	Mon,  6 May 2024 17:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B481586D2;
+	Mon,  6 May 2024 17:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UzMle71a"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLJbixAP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2618157E7A;
-	Mon,  6 May 2024 17:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D00D157499;
+	Mon,  6 May 2024 17:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715017853; cv=none; b=fmR8z2Jub+W4/nOf4TpBa7VlnEBqFFsFKu2oVHnScQRZZo+ArvOKskV8U97WAwP6AwnqeZ2YX0AFk5qM8nWoe3GUsA+eMWuPVfQJmwlLjVNs160dqbUTenOseEe0yvNFCOGbYVR6VhJANC3v1dlO7+2iRwiwEATwD5SPOKwaokI=
+	t=1715017932; cv=none; b=ceHVhuRO0g81fOmLrF+5AGi8RZsBiNKuTfoEpsh46ky4897DWIiBC8TkkiULltjFPX3lkooHttufMYse3ZUClIOV4jUsTwfTrd6UYF9mqmkdcB0YneBlunZEOz+30tAroTGUhuMJmdy5eoKMyoJTTLBTMVt5XddCpm2bpJa0MTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715017853; c=relaxed/simple;
-	bh=v6pEqBJ5mDe9Geb1lnQ6KB6h8NCGbjd9XTgNlYMumZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c6Dd3/35lLOoKNfBixFpR99tE+fM2opdPrp34LuZTuz43rjoFftjoEkTEmcU8FGB2DCD8Ydx7SGjpLq4gQxNwC08JjhQEfvO83ZtCS9Ur6rztmeiknogaoZrCVPiQ/bxnBsCbD1rJ1pWzkUoXW4fV8QSMxEL0WrDZHxjSHRxdyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=UzMle71a; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id B460DC0000F1;
-	Mon,  6 May 2024 10:50:44 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com B460DC0000F1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1715017844;
-	bh=v6pEqBJ5mDe9Geb1lnQ6KB6h8NCGbjd9XTgNlYMumZA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UzMle71aRbs+gStauk6DVeYL6Te6an9ndMV4wnUqU8LlLEvtK38go+/N0lkkhR5KN
-	 kC6DC0iTQaAV3o8R15wfrO0CxMgwW7FWgkK3zrJtbt/XWrQ9N3CzccQvboq4Evo/IH
-	 Rv9141/2/8nZBOFfHbjgCFcgTLlj9Ct3UVKTDWTE=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id B530718041CAC4;
-	Mon,  6 May 2024 10:50:42 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: netdev@vger.kernel.org
-Cc: kuba@kernel.org,
-	jgg@nvidia.com,
-	leonro@nvidia.com,
-	horms@kernel.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tal Gilboa <talgi@nvidia.com>,
-	linux-kernel@vger.kernel.org (open list:LIBRARY CODE)
-Subject: [PATCH net-next v2] lib: Allow for the DIM library to be modular
-Date: Mon,  6 May 2024 10:50:40 -0700
-Message-Id: <20240506175040.410446-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715017932; c=relaxed/simple;
+	bh=nRh8dpWji7uY8eJ4RGAFfGFlIL6vXEenXmag2d8In6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EauefInqws9Zm8TmtvcK9Co6086ooAvN1w2OAll4rp550Ziu6eeRqUNTT+37MI0Xje+agUoDR2nOWGCp4KcMt7dqJXe/7sKFGmgvTcc45NseUI+TU0uu4peHdCezaaOKz52mJSaCwBubnEKQiF4P4MomR4bQ+G4wWNTSWcLwjUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLJbixAP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA6D8C4AF65;
+	Mon,  6 May 2024 17:52:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715017931;
+	bh=nRh8dpWji7uY8eJ4RGAFfGFlIL6vXEenXmag2d8In6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pLJbixAPS7iJw4/Bu7BSb6XEUCh17iRnmwsmuaAkEzweUezDHmrF1x3Jtrmku21dO
+	 v+p8pNWM+QE7jXMUdWsbVR2YGosz1I0Xkd9m1tGVE5S7GcNJ3MjWgAqme0fPnjq/pt
+	 0vZvXAhxda6uReLJ8sR7duR6FCAWEBwTJADc23WLPSBCiA24Jb7iIZFuVnu2RGC356
+	 FenII2FLayRBEomafXN6Vrq/ilwhjfdVAOJuTUd/f2Zewy8LN2Pxjon2RxGZf8x3T3
+	 WQjAkEOdXyxkyhypg1nhpAESGr4QGRQHsWkxnOae0UxjmTjL2XPJAAEJ9HTSBgbY7i
+	 WIYxVm/yUNq9w==
+Date: Mon, 6 May 2024 10:52:09 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] lib/test_bitops: Add benchmark test for fns()
+Message-ID: <20240506175209.GA1425562@thelio-3990X>
+References: <20240502092443.6845-2-visitorckw@gmail.com>
+ <202405030808.UsoMKFNP-lkp@intel.com>
+ <ZjQ/JOpcdgWZXo0y@visitorckw-System-Product-Name>
+ <20240503041701.GA3660305@thelio-3990X>
+ <ZjSSylciH+qJeEEG@visitorckw-System-Product-Name>
+ <ZjSUk4vgsQ63wfcn@visitorckw-System-Product-Name>
+ <20240503155401.GA3960118@thelio-3990X>
+ <ZjVdbavKgDo8a0CZ@yury-ThinkPad>
+ <20240503222338.GA1908482@thelio-3990X>
+ <CANiq72mJPPp=H6qb7sG1K1hxR3uiHA9+WEVAZkvymSt_dW3CbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72mJPPp=H6qb7sG1K1hxR3uiHA9+WEVAZkvymSt_dW3CbA@mail.gmail.com>
 
-Allow the Dynamic Interrupt Moderation (DIM) library to be built as a
-module. This is particularly useful in an Android GKI (Google Kernel
-Image) configuration where everything is built as a module, including
-Ethernet controller drivers. Having to build DIMLIB into the kernel
-image with potentially no user is wasteful.
+On Sun, May 05, 2024 at 12:42:50PM +0200, Miguel Ojeda wrote:
+> On Sat, May 4, 2024 at 12:23 AM Nathan Chancellor <nathan@kernel.org> wrote:
+> > One gotcha that might be worth mentioning is that this combination only
+> > works on functions and non-local variables (i.e., static or global).
+> 
+> Yeah, since the `unused` one only applies to that, right?
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
-Changes in v2:
+No, unused can be used with local variables, used cannot.
 
-- Added MODULE_DESCRIPTION()
+https://godbolt.org/z/1hroMGzb1
 
- lib/Kconfig      | 2 +-
- lib/dim/Makefile | 4 ++--
- lib/dim/dim.c    | 3 +++
- 3 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/lib/Kconfig b/lib/Kconfig
-index 4557bb8a5256..d33a268bc256 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -628,7 +628,7 @@ config SIGNATURE
- 	  Implementation is done using GnuPG MPI library
- 
- config DIMLIB
--	bool
-+	tristate
- 	help
- 	  Dynamic Interrupt Moderation library.
- 	  Implements an algorithm for dynamically changing CQ moderation values
-diff --git a/lib/dim/Makefile b/lib/dim/Makefile
-index 1d6858a108cb..c4cc4026c451 100644
---- a/lib/dim/Makefile
-+++ b/lib/dim/Makefile
-@@ -2,6 +2,6 @@
- # DIM Dynamic Interrupt Moderation library
- #
- 
--obj-$(CONFIG_DIMLIB) += dim.o
-+obj-$(CONFIG_DIMLIB) += dimlib.o
- 
--dim-y := dim.o net_dim.o rdma_dim.o
-+dimlib-objs := dim.o net_dim.o rdma_dim.o
-diff --git a/lib/dim/dim.c b/lib/dim/dim.c
-index e89aaf07bde5..83b65ac74d73 100644
---- a/lib/dim/dim.c
-+++ b/lib/dim/dim.c
-@@ -82,3 +82,6 @@ bool dim_calc_stats(struct dim_sample *start, struct dim_sample *end,
- 	return true;
- }
- EXPORT_SYMBOL(dim_calc_stats);
-+
-+MODULE_DESCRIPTION("Dynamic Interrupt Moderation (DIM) library");
-+MODULE_LICENSE("Dual BSD/GPL");
--- 
-2.34.1
-
+Cheers,
+Nathatn
 
