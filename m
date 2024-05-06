@@ -1,109 +1,200 @@
-Return-Path: <linux-kernel+bounces-169252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B952E8BC5B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:21:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC35E8BC5CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6581C21049
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:21:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F19F2822D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5453FBBF;
-	Mon,  6 May 2024 02:21:29 +0000 (UTC)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E8C358A7;
+	Mon,  6 May 2024 02:39:29 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984626FB2;
-	Mon,  6 May 2024 02:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978DC181;
+	Mon,  6 May 2024 02:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714962089; cv=none; b=NEqNTFawcOgz2y6P86dW0+cUz+FTQp6bBGDmhuvJds6NARsYQnufC42MhFv4e6F1DCeJ7dkLEP7nrQb7cCiEBeUPxriEvueJNw4J2M25HQlJTIahYj67bCKDgW+byMtfpqHYAS43pxmvLVv/QpEWXS+T5j2pwHmVgLEnb+Wfcds=
+	t=1714963168; cv=none; b=Z+C5vjfLa3AsBstpJFYYmqRJ3ZacOD+nmlq6A7l0ODufhrBicMLiEAzSr+1jcIxVDuOwJtN7csd62YWJsi4QGX4nOrW5kO9UCqjFU52L8xIFVT2fF9G/HOPZhu4RVF22QmbSdfU8czcHYCf24bQj8A3NqrXaFs5E2VrtZK743E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714962089; c=relaxed/simple;
-	bh=7bLnFvZ1umO1ZxHq9Z11J3dP1NrG5baf3UV++oXVLyU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dkT/js6cmpXzkYOOqjfIEoMHQ/OrxYsriXMSQQNYR/Y7kbyjv/LZZs1ppXSouXIJt7wlu69bqzL7Cxy7Z4A2E1DuwJzZo8Oj66WYw5eviNrAe0dWGoQc2a0gPft/eUuFLo7IqV2IYaG4OFnhXocgMPJDxJymk/nY/arWEqqDXQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6a0ff97a9c7so30398726d6.0;
-        Sun, 05 May 2024 19:21:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714962086; x=1715566886;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k/zLrkjUXSszkJnwHyoONG4BMNMkGjqzvlLRzb2NIU8=;
-        b=AskSDxsePwu70KnbSaJHdimJDRL3+qsywxXEUiQ0a8zGrlQoZ0CX2KxHmswqodp+wI
-         b/JNMK5GLdV2Dd4CxksPZn0/JBlk4Ahfkoxw/lEFeSBvCGjH+8qbyEP4wh02xpPMVyeU
-         luK0iFrq95CiABhmhf/+usxcMLtSz/E+BjhUC69oP6x6vmaEmW6z6bs3wOu3xcdfO7p7
-         h2rWHQeJwEULZFq+oJlT0qJwmysmOeBfOGlJygdyEVHHnrIOB0GlRJOoXiv6bpL/EGHn
-         43H6c3W7blXZDoeuUPHdxzqbbW2dT5dDBgjhSnJW3KJ8gqOlSTOGsV4KxEAQk/ZFz+i5
-         K8xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVAoHzSucteFzqIguzbZ2TKLJnW0OukFvbvKI2ZPQvNHI5MZYJEZfizoSnFnf2ld1VHHj4VOeMAstU7W0gjr4vrt1PMnZxSByniy5+9RmJLH6XWKPkiARMyZdzwCRnRsTWqyb7YwqhTqj7Iohn
-X-Gm-Message-State: AOJu0YyNj07MBhRqIBQUqV+0t0WZJ95bJsTzqPRf5XsHvh5i9uz2vdZk
-	Prbyk5bqNct0w8ffxCAss+DRg3BMN3fQ8lq66KUQPGx3zE5osyGe
-X-Google-Smtp-Source: AGHT+IGoEjqeSYnnD8JHHUJq6a5kin5Wmy3lmygGM0FONM/ra+U1Wc7nMxUyy3HsBJ/dNtCtwN9YPQ==
-X-Received: by 2002:a05:6214:5651:b0:6a0:f637:667 with SMTP id mh17-20020a056214565100b006a0f6370667mr20651975qvb.12.1714962086422;
-        Sun, 05 May 2024 19:21:26 -0700 (PDT)
-Received: from tofu.cs.purdue.edu ([128.210.0.165])
-        by smtp.gmail.com with ESMTPSA id q18-20020a0ce9d2000000b006a07e3701a2sm3329550qvo.143.2024.05.05.19.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 May 2024 19:21:26 -0700 (PDT)
-From: Sungwoo Kim <iam@sung-woo.kim>
-To: 
-Cc: daveti@purdue.edu,
-	benquike@gmail.com,
-	Sungwoo Kim <iam@sung-woo.kim>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: HCI: fix divide error in __get_blocks()
-Date: Sun,  5 May 2024 22:20:36 -0400
-Message-Id: <20240506022035.663102-1-iam@sung-woo.kim>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1714963168; c=relaxed/simple;
+	bh=yUj4FVG11bJferK/7H08PTUjooXrvrHykqiMmLpF/3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CX2ltAIweM8QLA9yoRWb9CRIelGsYwgjh5PrsUOUkz6RGAMoSKYI8osVjxPtovnUK2+vvnrxQC2YTYPZFgknJZe0hm1pvcEHf76vz8RVASrgXTXnQ5z2uAxA0blF7VKgsgtf0vIBHR8FnSXzth5sYNWoAnBTvwImFmHV7pJYqjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VXlWL6T2sz1HBjZ;
+	Mon,  6 May 2024 10:20:46 +0800 (CST)
+Received: from dggpemm500018.china.huawei.com (unknown [7.185.36.111])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0DDFE1402D0;
+	Mon,  6 May 2024 10:22:01 +0800 (CST)
+Received: from [10.174.178.96] (10.174.178.96) by
+ dggpemm500018.china.huawei.com (7.185.36.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 6 May 2024 10:22:00 +0800
+Message-ID: <5c7426ab-71ef-4279-8235-69f5646af8f9@huawei.com>
+Date: Mon, 6 May 2024 10:21:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
+ cppc_cpufreq_cpu_init()
+To: Pierre Gondois <pierre.gondois@arm.com>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Ionela Voinescu <ionela.voinescu@arm.com>, Beata
+ Michalska <beata.michalska@arm.com>, Vanshidhar Konda
+	<vanshikonda@os.amperecomputing.com>
+CC: <rafael@kernel.org>, <al.stone@linaro.org>, <ashwin.chaugule@linaro.org>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liwei391@huawei.com>, <liaoyu15@huawei.com>
+References: <20240428092852.1588188-1-liwei728@huawei.com>
+ <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+ <06e3fd1a-a4c0-4be5-840c-e5ba276fe253@arm.com>
+From: "liwei (JK)" <liwei728@huawei.com>
+In-Reply-To: <06e3fd1a-a4c0-4be5-840c-e5ba276fe253@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500018.china.huawei.com (7.185.36.111)
 
-hdev->block_len could be 0. Fix this by adding a check.
 
-divide error: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 PID: 9622 Comm: kworker/u5:4 Tainted: G        W          6.9.0-rc6-00001-g38e1170f515d-dirty #32
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: hci11 hci_tx_work
-RIP: 0010:__get_blocks net/bluetooth/hci_core.c:3618 [inline]
-RIP: 0010:hci_sched_acl_blk net/bluetooth/hci_core.c:3766 [inline]
-RIP: 0010:hci_sched_acl net/bluetooth/hci_core.c:3806 [inline]
-RIP: 0010:hci_tx_work+0x73e/0x1d10 net/bluetooth/hci_core.c:3901
 
-Fixes: b71d385a18cd ("Bluetooth: Recalculate sched HCI blk/pkt flow ctrl")
-Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
----
- net/bluetooth/hci_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+在 2024/5/3 22:19, Pierre Gondois 写道:
+> Hello Liwei,
+> The change itself seems ok, but I'm not sure I understand what the
+> issue is exactly.
+> 
+> On 4/29/24 12:49, Viresh Kumar wrote:
+>> CC'ing few folks who are working with the driver.
+>>
+>> On 28-04-24, 17:28, liwei wrote:
+>>> When turning on turbo, if frequency configuration takes effect slowly,
+>>> the updated policy->cur may be equal to the frequency configured in
+>>> governor->limits(), performance governor will not adjust the frequency,
+>>> configured frequency will remain at turbo-freq.
+>>>
+>>> Simplified call stack looks as follows:
+>>> cpufreq_register_driver(&cppc_cpufreq_driver)
+>>>     ...
+>>>     cppc_cpufreq_cpu_init()
+>>>         cppc_get_perf_caps()
+>>>         policy->max = cppc_perf_to_khz(caps, caps->nominal_perf)
+>>>             cppc_set_perf(highest_perf) // set highest_perf
+>>>             policy->cur = cpufreq_driver->get() // if cur == policy->max
+> 
+> During the driver initialization, we have:
+> cppc_cpufreq_cpu_init()
+> \-policy->max = cppc_perf_to_khz(caps, caps->nominal_perf)
+> \-policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
+> \-cpu_data->perf_ctrls.desired_perf = caps->highest_perf;
+> \-cppc_set_perf(cpu, &cpu_data->perf_ctrls); // set freq to highest_perf
+> so here:
+> policy->max = nominal_freq
+> policy->cur = highest_freq
+> 
+> 
+> And then for the cpufreq framework:
+> cpufreq_online()
+> // IIUC there is some delay here, so policy->cur = nominal_freq ?
+> // i.e. the freq. was requested to change to the highest_freq,
+> // but the change is not effective yet ?
+> \-policy->cur = cpufreq_driver->get(policy->cpu);
+> \-cpufreq_init_policy()
+>    \-cpufreq_set_policy()
+>      \-cpufreq_start_governor()
+>        \-cpufreq_verify_current_freq()
+>          \-new_freq = cpufreq_driver->get(policy->cpu); // new_freq = 
+> nominal_freq ?
+>          \-if (policy->cur != new_freq)
+>          \-  cpufreq_out_of_sync()
+>            \- policy->cur = new_freq;
+>      \-cpufreq_start_governor()
+>        \-cpufreq_gov_performance_limits()
+>          \-__cpufreq_driver_target(target_freq=policy->max) // with 
+> policy->max = nominal_freq ?
+>            \-if (target_freq == policy->cur)
+>            \-  // do nothing
+> 
+> I am not sure I understand when you are turning the turbo on with:
+> # echo 1 > /sys/devices/system/cpu/cpufreq/boost
+> 
+> Or do you mean that turbo is available but not turned on ?
+> 
 
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index 0efd59760..20b1cd7f3 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -3762,7 +3762,7 @@ static void hci_sched_acl_blk(struct hci_dev *hdev)
- 
- 	__check_timeout(hdev, cnt, type);
- 
--	while (hdev->block_cnt > 0 &&
-+	while (hdev->block_len > 0 && hdev->block_cnt > 0 &&
- 	       (chan = hci_chan_sent(hdev, type, &quote))) {
- 		u32 priority = (skb_peek(&chan->data_q))->priority;
- 		while (quote > 0 && (skb = skb_peek(&chan->data_q))) {
--- 
-2.34.1
+Sorry, my description is not clear enough. The scenario described above 
+is during the kernel initialization process, turbo is available but 
+boost is not turned on.
 
+I found this problem is to read 
+/sys/devices/system/cpu/cpufreq/policyX/cpuinfo_cur_freq directly after 
+OS startup, and found that some frequencies are in turbo state and 
+/sys/devices/system/cpu/cpufreq/boost has not been modified, its value 
+is still 0.
+
+LiWei
+> 
+> Regards,
+> Pierre
+> 
+>>>     cpufreq_init_policy()
+>>>         ...
+>>>         cpufreq_start_governor() // governor: performance
+>>>             new_freq = cpufreq_driver->get() // if new_freq == 
+>>> policy->max
+>>>             if (policy->cur != new_freq)
+>>>             cpufreq_out_of_sync(policy, new_freq)
+>>>                 ...
+>>>                 policy->cur = new_freq
+>>>             ...
+>>>             policy->governor->limits()
+>>>                 __cpufreq_driver_target(policy->max)
+>>>                     if (policy->cur==target)
+>>>                     // generate error, keep set highest_perf
+>>>                         ret
+>>>                     cppc_set_perf(target)
+>>>
+>>> Fix this by changing highest_perf to nominal_perf in 
+>>> cppc_cpufreq_cpu_init().
+>>>
+>>> Fixes: 5477fb3bd1e8 ("ACPI / CPPC: Add a CPUFreq driver for use with 
+>>> CPPC")
+>>> Signed-off-by: liwei <liwei728@huawei.com>
+>>> ---
+>>>   drivers/cpufreq/cppc_cpufreq.c | 8 ++++----
+>>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c 
+>>> b/drivers/cpufreq/cppc_cpufreq.c
+>>> index 64420d9cfd1e..db04a82b8a97 100644
+>>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>>> @@ -669,14 +669,14 @@ static int cppc_cpufreq_cpu_init(struct 
+>>> cpufreq_policy *policy)
+>>>       if (caps->highest_perf > caps->nominal_perf)
+>>>           boost_supported = true;
+>>> -    /* Set policy->cur to max now. The governors will adjust later. */
+>>> -    policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
+>>> -    cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
+>>> +    /* Set policy->cur to norm now. */
+>>> +    policy->cur = cppc_perf_to_khz(caps, caps->nominal_perf);
+>>> +    cpu_data->perf_ctrls.desired_perf =  caps->nominal_perf;
+>>>       ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+>>>       if (ret) {
+>>>           pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+>>> -             caps->highest_perf, cpu, ret);
+>>> +             caps->nominal_perf, cpu, ret);
+>>>           goto out;
+>>>       }
+>>> -- 
+>>> 2.25.1
+>>
 
