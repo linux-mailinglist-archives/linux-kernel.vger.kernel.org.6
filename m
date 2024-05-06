@@ -1,111 +1,191 @@
-Return-Path: <linux-kernel+bounces-170193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1CC8BD333
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCB38BD33D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06151C2121D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01BD1F264E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7372156F43;
-	Mon,  6 May 2024 16:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4E156F57;
+	Mon,  6 May 2024 16:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rmjeh1/c"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v1tjfmHv"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A47B4D58E;
-	Mon,  6 May 2024 16:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973C3156C62
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715014403; cv=none; b=Pglf4oYIJ1RJlFSAHIDLA3iXn0yp2Tp6wAmtxKndMRR86FnMxTu7kHFGlunrQ6k8kCINsBrHFY5Yr7y0RT0cnf67elWbZYegIfLCK1s0Ducr908/glOkEW1TMFWFqNCHFqXI80C+RNsTsfBzkEgxYSZYseBrYQ8UrSwcr4z+FUQ=
+	t=1715014490; cv=none; b=Zw9o5bQi5vJBaMI20XMxw2BF1CtQUdcs8uetLnVtvtjjqAoJ7DEvhkxAJWfOCKJwtm4M/zdLbHCUokn9lsE/Vaki9LVMmVBl+VXL5eb3O11/3dqxYq54RNbsH4c6oZb44bqvGk9OZDf7cbJysCm4HSEJ9/ik2m6YdtWd+a6pNVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715014403; c=relaxed/simple;
-	bh=l4IbFJnd58nxG6y1i71mGfGe/M73MbcutH7+7EWhR/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=peB75UC3QiGFJqJyypcHL/5wOaVdAMZnk0u364UEuCBAZYF2iIfhQCDR9t9oavQJ8en1im/iJc1BEq4gq6b7swCaL82b49Gt2J+Xv/PnLrwha03F6V4qdOKDWfN17UXqbl0nWdhf3Ikw3Th33zJ6P8pXOcYtN8yc/jwlVoQ58Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rmjeh1/c; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f99f9e0faso2436255e87.2;
-        Mon, 06 May 2024 09:53:21 -0700 (PDT)
+	s=arc-20240116; t=1715014490; c=relaxed/simple;
+	bh=YV70YhhV1rRenJW+J47TAVixYhKt6tnlxLJU4RuhfdI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UQ8LJvonee8KpOdEMjY23DpImEj9BlOOr8PGc8kmRr9931guFytFyAi6v4ZTMdejpKljxRz3dD2xYKoNZ8d82JVm2Au8ML5qPkvRaEoYUtB7Pqck3iaEDbk31AXX9CCRZPvJtELRPc8XWS9+7NjfDLiz8YXvyfLNxnPei3fdyCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v1tjfmHv; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61bea0c36bbso47103957b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 09:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715014399; x=1715619199; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=070NvSbDEFlAvOM4epazgaOFQ758tENyqtrJCWEDvJg=;
-        b=Rmjeh1/cxWdCE38OO8QpLzPNS/CcdVsfIE7r6uYAkk8AE8kpoBaufrri0+EM+aXBU3
-         fnsOMIRj4JNjnDsup98P+ia5GBHMKi4+3hkvlTq1t2c8Jh9LBI7j9cWQfce1QFWeKZAd
-         55COoL/wBqXpTfdq+V7TnCSu+kvFfe0RtTau/uzWke9SZbf+AF0PLqBWP1WIpaQJA69l
-         a50YPPRahU6Ri0KOcFUWKW20sLJi79mtUkNDWgrW0XnARcB3jua8B+Z3JZDlBo+DZ41H
-         LQKpHLhtLy2dB/IhAaq9uz/fXYz1Hj1uM/3rDGbD5N3BNe7m4RCAbSd9zgneZFLEpxFz
-         PQ+g==
+        d=google.com; s=20230601; t=1715014487; x=1715619287; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1q7kv4eiqfBXu87xL8Ycp/RG/MD0+b+6v2pcsNs/bQo=;
+        b=v1tjfmHvIsUQXfNyYqvvFilz6D2hnpzzefTNm2j3ev3EM5Mow4Z3s7TqXLhgZX9cS9
+         WIBA4W3kwSq3Zu52eQL9Y8Hm3Jjmyd1WvV3qBzxF8kndNC7/csD5lj4I8spfuBtajQEy
+         2HFkN6CNagVRihIWhZKWAFL3kEFAm49Om4/wwV1PP/oI6+pN31x1GU5XVk+FpCopHiRL
+         lTbTsca9VNnax0xVJz9lG4YhA/nvaFZ1FUgBbb58u0x7FIUoaNk3j37nIINri4C9e6e6
+         fo8LfA/2hORCFbkAACK7LunRNds2evk4vwVQ5qGN4tjBgpb+ndQ91BEiNVd+kW+4DTFN
+         aVfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715014399; x=1715619199;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=070NvSbDEFlAvOM4epazgaOFQ758tENyqtrJCWEDvJg=;
-        b=tustXkwy+UcYggCGzwor4SFZMvcdPpcsX6NEYYfeyGPgPr6Jmq2dypAlkXsb8LhOGW
-         SGqOZ5kaMFYmx0uXTtg/er9UYQy7RgegYOknDe7vP3iShinnI2WY9ybxWlAovi4NZAgZ
-         aTE3iAhM35bNCyYt4KGgGEyDjtYTRh0S/V15xsRmAjW+QdWYwfnE0LQ8LR7S3ZKWQrS6
-         OgqnpCvkENFHVNR2NCFSfyARhqPSn0Rq9t+xjxOohgChbCgMcMhMbB+0IPj6RCOCOzG3
-         eALSBW2JCmjpO6JljL3eJ1wFciHnDcEq2a8c3vDiQFcL2brRNwnRaw7kfu6lOONOeMLq
-         OsEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqYeAPwGuEK/VolUb8G9AERwxRBhc8p4I0WZFhL3mp/fifR8T/5aFBAKf1jYx4JQi5w4mriMXkzrpqh+3HtXcEiTdDfiJdIo+hr41lxFRs9VFMVbojU2VN0UU94N7Leh0LnP3Ew8Ib/A==
-X-Gm-Message-State: AOJu0Yw182ZMWzvCpF5eRaHK8arYfMlkbWpY5g2A0vFkDsj4vz/uZV75
-	7irqlC2Y62K7QeRl3eogjlAr6RUjdBOnYTikqo+9X2asfpYSuaI=
-X-Google-Smtp-Source: AGHT+IGgbbPKOdDhy9Ja6YkFrIxuGZYyNAbhnfkB/b6pklaRezusNozUWGa3fmJz1Uv5LeIOL/Hxmg==
-X-Received: by 2002:a05:6512:3f21:b0:518:9b42:b846 with SMTP id y33-20020a0565123f2100b005189b42b846mr9190340lfa.21.1715014399108;
-        Mon, 06 May 2024 09:53:19 -0700 (PDT)
-Received: from octinomon.home (182.179.147.147.dyn.plus.net. [147.147.179.182])
-        by smtp.gmail.com with ESMTPSA id l3-20020a05600c4f0300b0041b43d2d745sm16702403wmq.7.2024.05.06.09.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 09:53:18 -0700 (PDT)
-Date: Mon, 6 May 2024 17:53:16 +0100
-From: Jules Irenge <jbi.octave@gmail.com>
-To: svens@linux.ibm.com
-Cc: borntraeger@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, agordeev@linux.ibm.com,
-	gor@linux.ibm.com, freude@linux.ibm.com
-Subject: [PATCH]  s390/pkey: use kvfree_sensitive() to fix Coccinelle warning
-Message-ID: <ZjkK_EfK9L5qMksX@octinomon.home>
+        d=1e100.net; s=20230601; t=1715014487; x=1715619287;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1q7kv4eiqfBXu87xL8Ycp/RG/MD0+b+6v2pcsNs/bQo=;
+        b=peuOfNLH+Acz5Ge+03PZV0j2eVYAnixAotLbNqS2eUU7KMF6LCF1czg6vkif7YitPa
+         nnAtXWmRfN1Za1J/8TdDb4rqx5YHdzKBuncZ6MPK7jvzWwnBwWqbgPxMQLcgXehAV0u1
+         xFBKxlO1kRzUmEyazGZXtY4DagK/QeRFh6fNo2lOORYQ8FTXUo2T3eos9Xtbb8gsxCJi
+         TgcVSNDWcoyL5aVXq6hxiemjBtw693sxsGtkkAAj38gxf6JUp8G6s8r7pncJ5Qj/K1Ce
+         rurnmOhIH1EUo4QKzzxz4FRhSDq7mFwax8fWTybJy65P2hjIKlKfWjfOPIGy82KKtda/
+         ENAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7yDMUh1cB9Z+tQy8rkLrY+dO/ueS9MdzjWoCH4omOy+UoKrNCQpyTxRuTrzsDCesQx+6Cc8W3ThLO6gCITvXN+WBF+jAIZA4SEuKA
+X-Gm-Message-State: AOJu0YzeOHHQk20S7dVf5x6EEfZDay8TtXdwIGzc7N/HrbCLen2gDAm9
+	+Lm7Z5EJh4cefLk5PD6tst54cjfOBrXBtdy/cVYw2XW7iQsBtxXUIIT/nBChf9pc99+oSqUwhoY
+	PcA==
+X-Google-Smtp-Source: AGHT+IHEw5neWA5Inlvhuc0btC99JrsPKumcht6Uc3OZryuwncKT9jonar0LZzd46QHHnpCHfXUGDD2kDm4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:52ca:0:b0:61b:e8a2:6f4b with SMTP id
+ g193-20020a8152ca000000b0061be8a26f4bmr2879705ywb.1.1715014487705; Mon, 06
+ May 2024 09:54:47 -0700 (PDT)
+Date: Mon, 6 May 2024 09:54:46 -0700
+In-Reply-To: <e39f609f-314b-43c7-b297-5c01e90c023a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20240219074733.122080-1-weijiang.yang@intel.com>
+ <20240219074733.122080-25-weijiang.yang@intel.com> <ZjLNEPwXwPFJ5HJ3@google.com>
+ <e39f609f-314b-43c7-b297-5c01e90c023a@intel.com>
+Message-ID: <ZjkLVj01V4bM8z5c@google.com>
+Subject: Re: [PATCH v10 24/27] KVM: x86: Enable CET virtualization for VMX and
+ advertise to userspace
+From: Sean Christopherson <seanjc@google.com>
+To: Weijiang Yang <weijiang.yang@intel.com>
+Cc: pbonzini@redhat.com, dave.hansen@intel.com, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
+	chao.gao@intel.com, rick.p.edgecombe@intel.com, mlevitsk@redhat.com, 
+	john.allen@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-Replace memzero_expliocit() and kfree() with kfree_sentive() to fix
-warning reported by Coccinelle
+On Mon, May 06, 2024, Weijiang Yang wrote:
+> On 5/2/2024 7:15 AM, Sean Christopherson wrote:
+> > On Sun, Feb 18, 2024, Yang Weijiang wrote:
+> > > @@ -696,6 +697,20 @@ void kvm_set_cpu_caps(void)
+> > >   		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
+> > >   	if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
+> > >   		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL_SSBD);
+> > > +	/*
+> > > +	 * Don't use boot_cpu_has() to check availability of IBT because the
+> > > +	 * feature bit is cleared in boot_cpu_data when ibt=off is applied
+> > > +	 * in host cmdline.
+> > I'm not convinced this is a good reason to diverge from the host kernel.  E.g.
+> > PCID and many other features honor the host setup, I don't see what makes IBT
+> > special.
+> 
+> This is mostly based on our user experience and the hypothesis for cloud
+> computing: When we evolve host kernels, we constantly encounter issues when
+> kernel IBT is on, so we have to disable kernel IBT by adding ibt=off. But we
+> need to test the CET features in VM, if we just simply refer to host boot
+> cpuid data, then IBT cannot be enabled in VM which makes CET features
+> incomplete in guest.
+> 
+> I guess in cloud computing, it could run into similar dilemma. In this case,
+> the tenant cannot benefit the feature just because of host SW problem.
 
-WARNING opportunity for kfree_sensitive/kvfree_sensitive
+Hmm, but such issues should be found before deploying a kernel to production.
 
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
- drivers/s390/crypto/pkey_api.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The one scenario that comes to mind where I can see someone wanting to disable
+IBT would be running a out-of-tree and/or third party module.
 
-diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
-index dccf664a3d95..76e98275f6ab 100644
---- a/drivers/s390/crypto/pkey_api.c
-+++ b/drivers/s390/crypto/pkey_api.c
-@@ -1503,8 +1503,7 @@ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
- 		rc = pkey_keyblob2pkey(kkey, ktp.keylen, ktp.protkey.protkey,
- 				       &ktp.protkey.len, &ktp.protkey.type);
- 		pr_debug("%s pkey_keyblob2pkey()=%d\n", __func__, rc);
--		memzero_explicit(kkey, ktp.keylen);
--		kfree(kkey);
-+		kvfree_sensitive(kkey, ktp.keylen);
- 		if (rc)
- 			break;
- 		if (copy_to_user(utp, &ktp, sizeof(ktp)))
--- 
-2.43.2
+> I know currently KVM except LA57 always honors host feature configurations,
+> but in CET case, there could be divergence wrt honoring host configuration as
+> long as there's no quirk for the feature.
+> 
+> But I think the issue is still open for discussion...
 
+I'm not totally opposed to the idea.
+
+Somewhat off-topic, the existing LA57 code upon which the IBT check is based is
+flawed, as it doesn't account for the max supported CPUID leaf.  On Intel CPUs,
+that could result in a false positive due CPUID (stupidly) returning the value
+of the last implemented CPUID leaf, no zeros.  In practice, it doesn't cause
+problems because CPUID.0x7 has been supported since forever, but it's still a
+bug.
+
+Hmm, actually, __kvm_cpu_cap_mask() has the exact same bug.  And that's much less
+theoretical, e.g. kvm_cpu_cap_init_kvm_defined() in particular is likely to cause
+problems at some point.
+
+And I really don't like that KVM open codes calls to cpuid_<reg>() for these
+"raw" features.  One option would be to and helpers to change this:
+
+	if (cpuid_edx(7) & F(IBT))
+		kvm_cpu_cap_set(X86_FEATURE_IBT);
+
+to this:
+
+	if (raw_cpuid_has(X86_FEATURE_IBT))
+		kvm_cpu_cap_set(X86_FEATURE_IBT);
+
+but I think we can do better, and harden the CPUID code in the process.  If we
+do kvm_cpu_cap_set() _before_ kvm_cpu_cap_mask(), then incorporating the raw host
+CPUID will happen automagically, as __kvm_cpu_cap_mask() will clear bits that
+aren't in host CPUID.
+
+The most obvious approach would be to simply call kvm_cpu_cap_set() before
+kvm_cpu_cap_mask(), but that's more than a bit confusing, and would open the door
+for potential bugs due to calling kvm_cpu_cap_set() after kvm_cpu_cap_mask().
+And detecting such bugs would be difficult, because there are features that KVM
+fully emulates, i.e. _must_ be stuffed after kvm_cpu_cap_mask().
+
+Instead of calling kvm_cpu_cap_set() directly, we can take advantage of the fact
+that the F() maskes are fed into kvm_cpu_cap_mask(), i.e. are naturally processed
+before the corresponding kvm_cpu_cap_mask().
+
+If we add an array to track which capabilities have been initialized, then F()
+can WARN on improper usage.  That would allow detecting bad "raw" usage, *and*
+would detect (some) scenarios where a F() is fed into the wrong leaf, e.g. if
+we added F(LA57) to CPUID_7_EDX instead of CPUID_7_ECX.
+
+#define F(name)								\
+({									\
+	u32 __leaf = __feature_leaf(X86_FEATURE_##name);		\
+									\
+	BUILD_BUG_ON(__leaf >= ARRAY_SIZE(kvm_cpu_cap_initialized));	\
+	WARN_ON_ONCE(kvm_cpu_cap_initialized[__leaf]);			\
+									\
+	feature_bit(name);						\
+})
+
+/*
+ * Raw Feature - For features that KVM supports based purely on raw host CPUID,
+ * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
+ * Simply force set the feature in KVM's capabilities, raw CPUID support will
+ * be factored in by kvm_cpu_cap_mask().
+ */
+#define RAW_F(name)						\
+({								\
+	kvm_cpu_cap_set(X86_FEATURE_##name);			\
+	F(name);						\
+})
+
+Assuming testing doesn't poke a hole in my idea, I'll post a small series.
 
