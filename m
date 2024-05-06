@@ -1,87 +1,126 @@
-Return-Path: <linux-kernel+bounces-169842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEA48BCE76
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 801FC8BCE75
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29BBD289E94
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B901289BC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A3C4D58E;
-	Mon,  6 May 2024 12:51:51 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94234EB45;
+	Mon,  6 May 2024 12:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PEhX7xTC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fkSERiCu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682E81DFED
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4071DFED;
+	Mon,  6 May 2024 12:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714999911; cv=none; b=MXPyJX66LaWyC30JYMguOIcPyjlAXVqcTrtyrwa0ycRCaT1JMjVIP1088FRFMHhqPRNFKeuhWLVc8Oo30yGm3TzJnTQykzj94dtR5paInkH+f0yx0sSuDWQqATqlH7pKt5vHqB1/ulZ1dyP9AGUprsLsEfKQN3Y287UaNqrEdSI=
+	t=1714999872; cv=none; b=AqMDRLYoXwuFUjtDt8RNyPR/Icbo0fWFxushZd9T+1KiFIsqw0mLY6Eth76FS13yK6J1yr8BmYRwIiIe4/ur2q4HeP3oH4Jpd7/iEzTuQQLJp64Xc0HKVVDJaFGBFSSY9UE4A/4yn3VjMMhQU7u7POu/hankosdgV1sqrP2X5N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714999911; c=relaxed/simple;
-	bh=1KXzSoo3QAex6UeVIC3bVa80QNaS8yOCfTa9OgS4nok=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GDqyBa52nnIj/TkhzLObnWfdw8xg6xv70z7sk9ZnJsuQ9MjIYN3CWQ4C0Hp1BJ1rYirihOywgDCi5SggrRiA6qsArzu74nkNqZ8/vwP0Dn0M4wqSzr9YoC1Ycg7kZeEtEvRClEQxwNgqyzHEyvYb5vfQSos55ttfoJRiQ7WGfnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VY1Rc3kq8z1RBpv
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:48:28 +0800 (CST)
-Received: from kwepemi500008.china.huawei.com (unknown [7.221.188.139])
-	by mail.maildlp.com (Postfix) with ESMTPS id C85DD1800C9
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:51:45 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
- (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 6 May
- 2024 20:51:45 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] genirq: Simplify the check for __irq_get_desc_lock()
-Date: Mon, 6 May 2024 20:50:57 +0800
-Message-ID: <20240506125057.307586-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1714999872; c=relaxed/simple;
+	bh=3Ao0x/m2mpxl4SFB3+8g1f7cnMl1hk4Nf58EF0zRgVM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=nX9VnjLZPMvfrAn5IQJ1t3U7KxqEEed/+5S9Z0I2S6rxXJXRQyYIsArF8gJxsJEHb7LTutC4rVJnoxmvqNSlNG20e2/ixisuuvWp2n9ZA4dbR6bE716qoCB76m+o6PTq1fNf0elfYLfGEZVaGlVMuR4kqnxR+gw/Ms9Zw6QvrwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PEhX7xTC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fkSERiCu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 06 May 2024 12:51:07 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1714999868;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M1ZBY+BbMdsCz/HAj/ALR7pCIHzRHF2huH/d4Yke+r0=;
+	b=PEhX7xTCnbDcj4HNREaccKDiqbGu4CRhubokuZwBmyWLX+bof+1J4lifvnFMyfx438snHp
+	gmK+wkqzri5yMTZBrfJ+7UVC3PbD8wR/MvRqb+dqQrggSB8KqvN9H+iGVWfU5FOTxPvpql
+	1m+CRMZ0eQ4maUEEz/KynCT7U4EzgyAqfYJNcf7dRGMmrUhzKTFf1borAlPPchm67ozAeM
+	WnCpR2vIEV9sAEQXsr5Hc8UI0P7ZaRIXUrqcc3M9MpFrz565uvLz4hrxXtwhcS49wU8Igz
+	3ICbIJTjs9+HJQywWhe7ci4DUXFXgiL3pWxBqS51FCwALus/xLZXdjloJqii9A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1714999868;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M1ZBY+BbMdsCz/HAj/ALR7pCIHzRHF2huH/d4Yke+r0=;
+	b=fkSERiCuy1veK0BrWxmsMAZuH3y2M5J5SVM2CvyGzgxkSc5UDOQ1IUAeGALLXp/wFsqGXF
+	NnzSR8tyNPmSa4AQ==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/alternatives] x86/alternatives: Remove alternative_input_2()
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240506122848.20326-1-bp@kernel.org>
+References: <20240506122848.20326-1-bp@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi500008.china.huawei.com (7.221.188.139)
+Message-ID: <171499986751.10875.10656752309329992312.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-If it set "_IRQ_DESC_PERCPU" in "check" but the desc is not percpu, or if
-the desc is percpu but it not set "_IRQ_DESC_PERCPU" in "check", it both
-return NULL, so simplify the check in __irq_get_desc_lock() with "!=".
+The following commit has been merged into the x86/alternatives branch of tip:
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Commit-ID:     8dc8b02d707ee4167fffaf3a97003bcdac282876
+Gitweb:        https://git.kernel.org/tip/8dc8b02d707ee4167fffaf3a97003bcdac282876
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Mon, 06 May 2024 14:28:48 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 06 May 2024 14:30:54 +02:00
+
+x86/alternatives: Remove alternative_input_2()
+
+It is unused.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20240506122848.20326-1-bp@kernel.org
 ---
- kernel/irq/irqdesc.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/x86/include/asm/alternative.h | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 88ac3652fcf2..6c52deb134b9 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -882,11 +882,7 @@ __irq_get_desc_lock(unsigned int irq, unsigned long *flags, bool bus,
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 67b68d0..c595358 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -286,20 +286,6 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, ft_flags)	\
+ 		: : "i" (0), ## input)
  
- 	if (desc) {
- 		if (check & _IRQ_DESC_CHECK) {
--			if ((check & _IRQ_DESC_PERCPU) &&
--			    !irq_settings_is_per_cpu_devid(desc))
--				return NULL;
+-/*
+- * This is similar to alternative_input. But it has two features and
+- * respective instructions.
+- *
+- * If CPU has feature2, newinstr2 is used.
+- * Otherwise, if CPU has feature1, newinstr1 is used.
+- * Otherwise, oldinstr is used.
+- */
+-#define alternative_input_2(oldinstr, newinstr1, ft_flags1, newinstr2,	     \
+-			   ft_flags2, input...)				     \
+-	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1,     \
+-		newinstr2, ft_flags2)					     \
+-		: : "i" (0), ## input)
 -
--			if (!(check & _IRQ_DESC_PERCPU) &&
-+			if (!!(check & _IRQ_DESC_PERCPU) !=
- 			    irq_settings_is_per_cpu_devid(desc))
- 				return NULL;
- 		}
--- 
-2.34.1
-
+ /* Like alternative_input, but with a single output argument */
+ #define alternative_io(oldinstr, newinstr, ft_flags, output, input...)	\
+ 	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, ft_flags)	\
 
