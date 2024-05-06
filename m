@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-170043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4128BD110
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:09:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF758BD150
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCBD51C2131D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:09:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27A61C236F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAC3154C17;
-	Mon,  6 May 2024 15:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B8E15538A;
+	Mon,  6 May 2024 15:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="D7cr83Ck"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="EMgTAb78"
+Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A089815359F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8B0158A2E;
+	Mon,  6 May 2024 15:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715008166; cv=none; b=eM0IbLt9zm8MhGBrV9e0rj8w2eUpXhqn8HvQnJflVK3GCe7mTxQeZsz1IH15i5rq6185D5NmaeGiZyUbmtFsg0hmvCFeq71+LQUvj4MKISufJ+YwHZ1phadt+UDy/ZxUg8T6UjtAbpJB8awJmssfxf3LkGw8sVCQ5+Hw9Q/sczI=
+	t=1715008225; cv=none; b=rgS7iJcbC+rdvIWBY9P5XQ+hdFijNbSNX/JaBtMsZK351fEJey57KZUWPAclbatThpNv2TMiFP7+PmHU/a7+ZBEwLsyxx0g3//cerVjA7RjU+9yQPKPUnstXPQHKYWBXtwJ5QcIdzBnwQO6v47IGrdw/4c6XQ2Pou5+LIN3CZro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715008166; c=relaxed/simple;
-	bh=ChkvKKXLsQfoTAngZYFoQe3YF0MVY7h2bQeifwJOfXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FluCF4zjl2O6rl3jvhuuwuTqsOPPdTw0OoCUEjypx604IEXS81SuzeCjSafAIbdMCXTM7qo/FA5HwEY7M8BF5uFCQRt3Ob5CB9G/80kNfGIMCTFXdQ6l2A3N9kgvymgpM5ZH8Fv2PHc4N8w4ICYcQw4WI9G9xsTdV3UXvY8tXQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=D7cr83Ck; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ec92e355bfso19677165ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715008164; x=1715612964; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eqhhV/e5mzK+6hrJY0o8mJ/dhifJ48pvMgC6Mb03m1s=;
-        b=D7cr83CkvLjIWUYEJCkNYrBeNWOSZbxfu1cTC6X0JdHucDTa2sQbimKLYKe6WyEr+w
-         RCWIaJB8/7yifgTAPioVa1+hZn5zdAwHARBTBP6S+3Ok5CZ9WH18RzUU7QNQR8a3iu0l
-         hb0XJGSdyFGR3Q80JmQWX680NnG4iiZqA3T8ptOjaeFtDIq8WIJ424+rakNmWEZe4mpS
-         t7w/ANcwVyxNEVEDxJP5W2Hu7dm8knNvVdchTC6ikP9vCPDDAblddaXLLFMmbjq4gsZd
-         vGdzGvVHHr26EeUA8YVNZYTE+cTHTD2BXAVH+W6nu44cuyOoN43BOfCalXGb0jSA9Ixx
-         g2CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715008164; x=1715612964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eqhhV/e5mzK+6hrJY0o8mJ/dhifJ48pvMgC6Mb03m1s=;
-        b=Js3YArz3PuqYiBeRhEK3TxOLa+FdoCnoED4ZhDlIhJXzJ390lFB5ZGpadwEhxFht8R
-         Py2CkXfdRjc8qId7DQcL8BSLBKLqby926OsKTW0Bot8cOdxDtyPmB7B0GvXJStMCHq/C
-         XCt0cR5lw6MziZP6XigA6OgMqq/Xw/6qDSKIeiGAqOYS0EKoIH6C6v7ABcSecgZDnywH
-         ljijAPDjC/lEFizd9XRODUPhV87IQIycze2yy1I8tUdZrVsvDOLRuR8s34SCVzyInVgv
-         QOSCCT0KQWTbzqGvfWlbuRo1rKAj/tvlew0LLx16bGZdMAFkiPp3VlFu4TDKibVfjVoo
-         XQVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0cO7Knb5ZOqjHWaCSRWFOtDkJ/sM7mAlnGzU79eIcChQ1ne7U2eGGo0KLjxKHk9dji1tRChVD6gkrLVEocdhRlX/b99KvkVfh3LiR
-X-Gm-Message-State: AOJu0YzFMUU8XHQtEOKCFo4C0/7IMoN+9lQE/2Ko4ZpensK/Qduuy74a
-	yoCVZgBIb3Axt8tEts1ISDRgBdswNniqud3QtJ+ssMJ2Are+oJ04/Kabqroqs2P/nWkYQLFYhc4
-	kjOx7w+bKzPFD5ORuBAz7gt3ShxkoF0Ss8/YSHA==
-X-Google-Smtp-Source: AGHT+IFuMxUNzP457b7U27MNOYdMQrjSKz9fzKAVldClapC+zcuPtIK7aQhL5DhJm6xmhclACvVqpG+BxSbRUjZltq8=
-X-Received: by 2002:a17:902:6847:b0:1eb:51fb:de09 with SMTP id
- f7-20020a170902684700b001eb51fbde09mr9967887pln.14.1715008163823; Mon, 06 May
- 2024 08:09:23 -0700 (PDT)
+	s=arc-20240116; t=1715008225; c=relaxed/simple;
+	bh=o3NLpDCX56xR1aoEOXwK+SJTzlGjlHNBo9hf9W3BY3g=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nLLvHASsxbmgtds0QRlaFLCoINImfjPNls9uLkemXkC9/fCE/eooPrtc77Js0CRYmNzBoywPVxZu3Xz97QEmK0EfdK8YdIiOLaTVFytCDlX7+Dioq4rzLE1x3jOPWw9QbSfMpRGy3EB8GxY5JLE3PgtZWGJ3+xfHmLCTw4mSPuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=EMgTAb78; arc=none smtp.client-ip=193.238.174.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mg.ssi.bg (localhost [127.0.0.1])
+	by mg.ssi.bg (Proxmox) with ESMTP id 1AF1218691;
+	Mon,  6 May 2024 18:10:12 +0300 (EEST)
+Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
+	by mg.ssi.bg (Proxmox) with ESMTPS;
+	Mon,  6 May 2024 18:10:11 +0300 (EEST)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by ink.ssi.bg (Postfix) with ESMTPSA id C343C90029B;
+	Mon,  6 May 2024 18:10:07 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ssi.bg; s=ink;
+	t=1715008208; bh=o3NLpDCX56xR1aoEOXwK+SJTzlGjlHNBo9hf9W3BY3g=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References;
+	b=EMgTAb78a/hMj2iIUDd4+im1E+d5ZN5X8lI0GMoAohzK6B79qaH5WBmR+U3B05IIc
+	 vLXrsfCJ21hvQZcHLvmGsle1b7rZcYdxflDvdQDj6b512KvS4+2U8ANbXsX+J4/CTu
+	 BqYuXdWz8F3/YdOA+EjqMZdlZQWzhzSVMSXwwCkk=
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.17.1/8.17.1) with ESMTP id 446F9xB1093238;
+	Mon, 6 May 2024 18:10:00 +0300
+Date: Mon, 6 May 2024 18:09:59 +0300 (EEST)
+From: Julian Anastasov <ja@ssi.bg>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+cc: horms@verge.net.au, netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>
+Subject: Re: [PATCH v4 1/2] ipvs: add READ_ONCE barrier for
+ ipvs->sysctl_amemthresh
+In-Reply-To: <20240506141444.145946-1-aleksandr.mikhalitsyn@canonical.com>
+Message-ID: <04e3e7bb-7f9f-816d-492f-1f17565719d8@ssi.bg>
+References: <20240506141444.145946-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
- <20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com> <a04d8015ea1606ce1eca86f7eaaa85a1c1b46d7a.camel@gmail.com>
-In-Reply-To: <a04d8015ea1606ce1eca86f7eaaa85a1c1b46d7a.camel@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 6 May 2024 10:09:11 -0500
-Message-ID: <CAMknhBEnJXCRGEUE+7VTfve6aPWZiandvE5xX4FPo17pqhmEeQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v6 10/10] iio: adc: ad7380: add support for resolution boost
-To: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>
-Cc: Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, May 6, 2024 at 3:55=E2=80=AFAM Nuno S=C3=A1 <noname.nuno@gmail.com>=
- wrote:
->
-> On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote:
 
-..
+	Hello,
 
-> > +     /*
-> > +      * If bits_per_word =3D=3D realbits (resolution boost enabled), w=
-e don't
-> > +      * need to manipulate the raw data, otherwise we may need to fix =
-things
-> > +      * up a bit to fit the scan_type specs
-> > +      */
-> > +     if (bits_per_word < realbits) {
-> > +             if (realbits > 16 && bits_per_word <=3D 16) {
-> > +                     /*
-> > +                      * Here realbits > 16 so storagebits is 32 and
-> > bits_per_word is <=3D 16
-> > +                      * so we need to sign extend u16 to u32 using rev=
-erse
-> > order to
-> > +                      * avoid writing over union data
-> > +                      */
-> > +                     for (i =3D st->chip_info->num_channels - 2; i >=
-=3D 0; i--)
-> > +                             st->scan_data.raw.u32[i] =3D sign_extend3=
-2(st-
-> > >scan_data.raw.u16[i],
-> > +
-> > bits_per_word - 1);
-> > +             } else if (bits_per_word < 16) {
->
-> Can't we have bits_per_word =3D 16 in case realbits <=3D 16?
->
-This case is handled by the outermost if, so can't have that here. (In
-that case, no manipulation is required so the whole big if statement
-is skipped). realbits will never be < bits_per_word.
+On Mon, 6 May 2024, Alexander Mikhalitsyn wrote:
+
+> Cc: Julian Anastasov <ja@ssi.bg>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+> Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
+> Cc: Florian Westphal <fw@strlen.de>
+> Suggested-by: Julian Anastasov <ja@ssi.bg>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+
+	Looks good to me for net-next, thanks!
+
+Acked-by: Julian Anastasov <ja@ssi.bg>
+
+> ---
+>  net/netfilter/ipvs/ip_vs_ctl.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+> index 50b5dbe40eb8..e122fa367b81 100644
+> --- a/net/netfilter/ipvs/ip_vs_ctl.c
+> +++ b/net/netfilter/ipvs/ip_vs_ctl.c
+> @@ -94,6 +94,7 @@ static void update_defense_level(struct netns_ipvs *ipvs)
+>  {
+>  	struct sysinfo i;
+>  	int availmem;
+> +	int amemthresh;
+>  	int nomem;
+>  	int to_change = -1;
+>  
+> @@ -105,7 +106,8 @@ static void update_defense_level(struct netns_ipvs *ipvs)
+>  	/* si_swapinfo(&i); */
+>  	/* availmem = availmem - (i.totalswap - i.freeswap); */
+>  
+> -	nomem = (availmem < ipvs->sysctl_amemthresh);
+> +	amemthresh = max(READ_ONCE(ipvs->sysctl_amemthresh), 0);
+> +	nomem = (availmem < amemthresh);
+>  
+>  	local_bh_disable();
+>  
+> @@ -145,9 +147,8 @@ static void update_defense_level(struct netns_ipvs *ipvs)
+>  		break;
+>  	case 1:
+>  		if (nomem) {
+> -			ipvs->drop_rate = ipvs->drop_counter
+> -				= ipvs->sysctl_amemthresh /
+> -				(ipvs->sysctl_amemthresh-availmem);
+> +			ipvs->drop_counter = amemthresh / (amemthresh - availmem);
+> +			ipvs->drop_rate = ipvs->drop_counter;
+>  			ipvs->sysctl_drop_packet = 2;
+>  		} else {
+>  			ipvs->drop_rate = 0;
+> @@ -155,9 +156,8 @@ static void update_defense_level(struct netns_ipvs *ipvs)
+>  		break;
+>  	case 2:
+>  		if (nomem) {
+> -			ipvs->drop_rate = ipvs->drop_counter
+> -				= ipvs->sysctl_amemthresh /
+> -				(ipvs->sysctl_amemthresh-availmem);
+> +			ipvs->drop_counter = amemthresh / (amemthresh - availmem);
+> +			ipvs->drop_rate = ipvs->drop_counter;
+>  		} else {
+>  			ipvs->drop_rate = 0;
+>  			ipvs->sysctl_drop_packet = 1;
+> -- 
+> 2.34.1
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
+
 
