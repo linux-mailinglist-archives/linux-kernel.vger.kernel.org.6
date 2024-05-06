@@ -1,126 +1,179 @@
-Return-Path: <linux-kernel+bounces-169774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53668BCD7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B08078BCD83
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89C671F231FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D9F1F23446
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FFF143C48;
-	Mon,  6 May 2024 12:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F0F14389B;
+	Mon,  6 May 2024 12:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jD16USvp"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hizm2dS6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE67E14388C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F31143867
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714997439; cv=none; b=E7pGxZjmoBRZTXrWAymnpJrCNJValOTSvyGeUHjUDhK0F2MCarr8jN23/N7A12etLjmiOxThcGgOtp2XREzadzEzeXCIQKg+BlxdVBh3+9I6baf6B7ahFdttZjIwHah/0eR01yAj910fUk6tjmLmyWrjgxhJFKjvTGs5nGT1FKo=
+	t=1714997474; cv=none; b=sPXpcQS+XigUEZyTMydELBRrxO2L89C5Z8wn56SVWbj0o2EVC/lA/LP1r0aDTwYn/rVpsio6YZq1DzO/+3J6FXXPalZZurv9jhdFzORdEW4Bk1tRdFwoSqLhaG6abLy6B0depiFLHXdm+cCsE5UGxn8Q8ny6abAWiBG6wzXQJ0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714997439; c=relaxed/simple;
-	bh=NpCD5T+l+gGXtsoL7GDErBmJ6/RrNy8hQRbP7mriCTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l/TmEEpLpedZTupjzGKCCEi3roQalrbqJnjsVHLbOpFoxfZS43TvJum9gweMl51fPa108CsOL32mSr5d5fdVqpT1+JPaDesyg6/v7feqKiYStAZQK3Mcd7U1wC7JeEMFtkVzjJXO/yXm9PySNTbNoAq6vTw7RjR5GJBm63HKuDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jD16USvp; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-de603e3072dso2029404276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714997436; x=1715602236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=83bq6sZnjWOAj2QjLu2jyQop5vm1yVH5pagOdWkdqQE=;
-        b=jD16USvphZ+hFQuuK2fEDANCQqnDoaaVEQVpWzQj5VW66fA8hloBAr3cfWcwpvzZb3
-         onMm0sVD6YQZ29cnRrkoO9vx2Q+dS5xv3OSmO/Hk8GS9b7PjxI/DPAT5Z3WpUEGo4Sz9
-         JE74lVwr8MNbSRbl3W8+0avV85YquyQmXJgybHbPxfPJo0/JmJwOC5xpkYQat7RvDG4p
-         38m9N3pHZF4eFkAnlUf8hKPrKNcV3E+8GC2SVYl9ySF3b6dHh1d/Ue7oGc3sVqgV+88o
-         ADmyRzamrJ1rw3oPTJqi8m8vc/Fg8nkwx03RYEWn0v9BdU14p/v7IOYXFo95xnFTdh8R
-         sLfA==
+	s=arc-20240116; t=1714997474; c=relaxed/simple;
+	bh=hMaHou4gqCFuSSxSjTamh579wUtltQG2UlKG9gC+8FY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ns0kM8mo6HK1/9PCwvPz6Z0qo5L6YOA1f3oUWGbTmBJTjW6uhVAdv9LBwTW/hFhbjeZwzZ17fgbCpezut8kQuEPA2lC23lJaUOEDQXjf2fq8RLi0bhVuyNvheCfgLbqz+Qp8Tl3Z68K4vohUqGLSWqFbUCcRts1m/oXMVriwukA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hizm2dS6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714997472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WSfOAhrFUm53Kqin9+YfTRe0LHiAcFIiQAaaSKoiif8=;
+	b=Hizm2dS6hKYoDQlDBdSDPIkBi55wp9uhmGe6AQne2GMVjCGxKJBhvMQK2fX7xC5lV3u8Ke
+	EA3mGfJ+T0RH8AucaHl3Git8okk8+08KVqTn1dSQG0ZreayZmYmnKJPQn+3fCvMCw5OBsd
+	hr7QuR0kJPOu+Cp6J4fE1n4W6CmDpxg=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-tqALBAtuO6G7e6nvnMwDuw-1; Mon, 06 May 2024 08:11:10 -0400
+X-MC-Unique: tqALBAtuO6G7e6nvnMwDuw-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2e262d63c70so20004081fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:11:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714997436; x=1715602236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=83bq6sZnjWOAj2QjLu2jyQop5vm1yVH5pagOdWkdqQE=;
-        b=D0q2O8AQBRR1wmtRN3DKycln+0QGTRYh4p9sYSPgzrakRsBQxgZClyt0WxWP6haCy/
-         yYf08/wJu6yY2Z/Uoqus0uksINrgiWjy0rQeF15o+wirzar59XGgaDbcmAVyqB8LQ2KZ
-         9bHB69F1TzVam2bmi+kwlrIO5Jy0ukhgpaBNauOO+3s8PAY41cSyz20CCvRhfiRgYACk
-         P5N3gPlleu+qZ5KrAFC67+Yqjy0lJeU0j8snLk6hC1fk26aRZivwvZCzzdhiE4Ngdu0R
-         Cm82DXqJ1Fxe0tFeHnLe0NHyZK8gPAOB6t2rPcmr7vgDY5fgEr3hYu8xDLIkuzwLdDAE
-         JfAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHR4RSdQelGNnZjoy9mOgfQxU1dbul9WQaRvz/aComTovjctHjGlgGIJxrfwrZGp+48PLWUYCLEXhy5cgJrb/UueYIxclniQu2+GG4
-X-Gm-Message-State: AOJu0Yz/hnXej3Z/v/F6vAyDM2BANpwsrw363OEp/wi/cl4C6/svCKV3
-	Go9NqIk3dC/d8k965GY/l547ytwx9bOY98sL75//chBCKcbd8ZDQNXjXzvSaJLaS6SiwIdMBfCG
-	87Bvb/xHYsmCAzrJH9ec6ty35HfGrVj2fEXZ2Pg==
-X-Google-Smtp-Source: AGHT+IER78l+XvV7AsX+dBbOeQ79q3sQzITzxy15JTynwXfGIedBRzHp3Bby/Y/eLvaqRahVeAP4r46dQsP2qbPRE+I=
-X-Received: by 2002:a05:6902:2011:b0:dcf:2cfe:c82e with SMTP id
- dh17-20020a056902201100b00dcf2cfec82emr11080008ybb.55.1714997435752; Mon, 06
- May 2024 05:10:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714997469; x=1715602269;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSfOAhrFUm53Kqin9+YfTRe0LHiAcFIiQAaaSKoiif8=;
+        b=jfm5lbAZSPe5iWgaukYq15jXjbFlp7HfSER35YiXp5OLyP700SF8RXmyeNhM2vLG6Q
+         EbDJCLMS9dAAKBSg4yZJvPtoYO4noonCAzcWCKsIXrZ5Du6BSm/8+cK8XYmQN0bk9sG4
+         E8LQywavcbJ18G5hFcfBJMSZwJ4nzk/cKXJLW4AnQSnX+piapet+LPQvdxvYbHxGlvFX
+         GdtywjUbv3a7yHqYMQIsMblVm+I4JWGEfYMv40GP3wsErauHudERiLzidiQoMdp4h23e
+         c+F00J33LHRIwQF0lDYjNCYC2mxTkEg/EEru4PzeFvbAFkTOsCAZ4B/XenyMYAiqyh6t
+         RcLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvBJGB9HreHs7YYxXnzxIMlUwq4qYuGMrg3MOhy0TxNjk3B/rSBtN2hSZDVjECpnY7ln+kUXz7kWxKBVvqTEmEK2O2yIkHmfcpEWUD
+X-Gm-Message-State: AOJu0YzOsabCns/o25v4hLHC0jGaE7c0+BvUJnSR03b+gnWwfpA3Jdoe
+	5ihImXSKyPPutr20HA08rP3xO1W/1osLXSHMFwfgdwSi3Bt2mu1MT2Wgf0y+zJ8d/mL+LA3UKdv
+	jLqRjGgvRoc5i8WkuHOX6A74tPzmBnJmEzx38j8ZJNg8e1f1s4O6WnXtSrXwiEQ==
+X-Received: by 2002:a05:6512:3f21:b0:51f:5d1a:b320 with SMTP id y33-20020a0565123f2100b0051f5d1ab320mr8765208lfa.68.1714997469262;
+        Mon, 06 May 2024 05:11:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEp4bcHitMTSdTCl9aCNeXV3I621ghOgDSk6RE5J+9JJSbX/V6SpGWsuuHMuUKGZd320jEJ5A==
+X-Received: by 2002:a05:6512:3f21:b0:51f:5d1a:b320 with SMTP id y33-20020a0565123f2100b0051f5d1ab320mr8765187lfa.68.1714997468807;
+        Mon, 06 May 2024 05:11:08 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id l12-20020a1709066b8c00b00a59c0ecd559sm2003340ejr.112.2024.05.06.05.11.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 05:11:08 -0700 (PDT)
+Message-ID: <d0821bab-be2e-4476-82e8-8b363a951e50@redhat.com>
+Date: Mon, 6 May 2024 14:11:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240429102510.2665280-1-andriy.shevchenko@linux.intel.com> <20240429102510.2665280-5-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240429102510.2665280-5-andriy.shevchenko@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 6 May 2024 14:10:24 +0200
-Message-ID: <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] PCI: imx6: Convert to agnostic GPIO API
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Frank Li <Frank.Li@nxp.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-amlogic@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Yue Wang <yue.wang@amlogic.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang <wangbinghui@hisilicon.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+To: Maxime Ripard <mripard@redhat.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Lennart Poettering <mzxreary@0pointer.de>,
+ Robert Mader <robert.mader@collabora.com>,
+ Sebastien Bacher <sebastien.bacher@canonical.com>,
+ Linux Media Mailing List <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ linaro-mm-sig@lists.linaro.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Milan Zamazal <mzamazal@redhat.com>,
+ Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <20240506-dazzling-nippy-rhino-eabccd@houat>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240506-dazzling-nippy-rhino-eabccd@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 29, 2024 at 12:25=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Hi Maxime,
 
-> The of_gpio.h is going to be removed. In preparation of that convert
-> the driver to the agnostic API.
->
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 5/6/24 2:05 PM, Maxime Ripard wrote:
+> Hi,
+> 
+> On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
+>> Hi dma-buf maintainers, et.al.,
+>>
+>> Various people have been working on making complex/MIPI cameras work OOTB
+>> with mainline Linux kernels and an opensource userspace stack.
+>>
+>> The generic solution adds a software ISP (for Debayering and 3A) to
+>> libcamera. Libcamera's API guarantees that buffers handed to applications
+>> using it are dma-bufs so that these can be passed to e.g. a video encoder.
+>>
+>> In order to meet this API guarantee the libcamera software ISP allocates
+>> dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
+>> the Fedora COPR repo for the PoC of this:
+>> https://hansdegoede.dreamwidth.org/28153.html
+> 
+> For the record, we're also considering using them for ARM KMS devices,
+> so it would be better if the solution wasn't only considering v4l2
+> devices.
+> 
+>> I have added a simple udev rule to give physically present users access
+>> to the dma_heap-s:
+>>
+>> KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
+>>
+>> (and on Rasperry Pi devices any users in the video group get access)
+>>
+>> This was just a quick fix for the PoC. Now that we are ready to move out
+>> of the PoC phase and start actually integrating this into distributions
+>> the question becomes if this is an acceptable solution; or if we need some
+>> other way to deal with this ?
+>>
+>> Specifically the question is if this will have any negative security
+>> implications? I can certainly see this being used to do some sort of
+>> denial of service attack on the system (1). This is especially true for
+>> the cma heap which generally speaking is a limited resource.
+> 
+> There's plenty of other ways to exhaust CMA, like allocating too much
+> KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
+> differently than those if it's part of our threat model.
 
-I think there is a bug here, the code is respecting the OF property
-"reset-gpio-active-high"
-but the code in drivers/gpio/gpiolib-of.h actually has a quirk for
-this so you can just
-delete all the active high handling and rely on 1 =3D asserted and 0 =3D
-deasserted when
-using GPIO descriptors.
+Ack.
 
-Just delete this thing:
-imx6_pcie->gpio_active_high =3D of_property_read_bool(node,
-                                           "reset-gpio-active-high");
+>> But devices tagged for uaccess are only opened up to users who are 
+>> physcially present behind the machine and those can just hit
+>> the powerbutton, so I don't believe that any *on purpose* DOS is part of
+>> the thread model. 
+> 
+> How would that work for headless devices?
 
-Yours,
-Linus Walleij
+The uaccess tag solution does not work for headless devices, but it
+also should not hurt any headless scenarios.
+
+Headless devices could use something like the video group solution
+(dma_heap group?) which Raspberry Pi is using and them make sure that
+any services which need access run as a user in that group.
+
+This can co-exist with uaccess tags since those use ACLs not classic Unix
+permissions.
+
+Regards,
+
+Hans
+
+
 
