@@ -1,167 +1,254 @@
-Return-Path: <linux-kernel+bounces-170304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215568BD4C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BE88BD4DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84DD91F21EE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609151F21DB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EC5158DA7;
-	Mon,  6 May 2024 18:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFDA158D6B;
+	Mon,  6 May 2024 18:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QWamJBOm"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YPM15xWb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7AC15821F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1D815886B
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715021015; cv=none; b=njLse14ILqmHv/6JMxFrQ8dTlVaxmcjOrLG2+7TwlvRFmwuwV0OKCRriAdXQefV1v1rQ0IxHSjlWBDwL/y3eMRaLSOWORsfu2OaCBiHJYcCPhn+DNTxkdIZjQz4uEz5fS6+LzzxwExE54cLj8vpttHi9I/VlUTdBYkEI5mjMy94=
+	t=1715021334; cv=none; b=km1XBsT5yoqHkyaCitXORnIOOxC+Px9AroFtuvyapcGE1OAt/kkn0CLxRtTjnxKH//DjipD9whDcB2mwANU4W0sjTH+MajQXw+SXDsPm9f3Y8O5HJc59nxNhNAvd+88XYWMECgvG4Qjj3Ldti1piZrBoUqfHD7JojOkYVRAlehw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715021015; c=relaxed/simple;
-	bh=sPMDL23QS9Xd7hIJCfVoH9uVk6HP1D83LxcnL9CKbhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fnsDujq8skNArWaZ8ioVprh0y1mPC2/Q8GqObnypLXwEemBcG+Uu4PqVe2wfJICqcwbU32Zbwyn/uZnw0ep+4TWLQaDCoo4OEQRlsXWRTDKoZIPz/wee/OkEJW4in/4bTAH375wDyJGIvhwudu+S6dTDHx8dZQbZCitIWFIujS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QWamJBOm; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ee5f3123d8so28285ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715021013; x=1715625813; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aMqIHyLa/gmjK+J+Bo0q9JLXeRdO7aoxpGEVpFxtErc=;
-        b=QWamJBOm4/1TXFGAlwW2Wp7gFQIn4jOLbK8k/7TXtI6Kh/BdcgxPiBgf8NOsA42nAm
-         uQiK29razQgTolKJ83t8GlWw/aWYiHnrKObkVwYk/yQjbnK9rBslQDGQhtZFLayX178G
-         4OCpW+B+8JqGXHydmgVyA6NPi28sh+1m1G9q+TfOHJV7UFKThKdOApqV0YDJLTcH7F41
-         bGN1X61cVCHyuYRiUdpYJyQrDOqp2+I3OCslH0/TnK0I0o7rIvQqLyY8PQ5IfFI4/+GX
-         Do8PA1fFt4N5F6O/ozmCq7GZH3m1h5jv0Q5oEwTXYtr90EefNSITLAu0NHBOKZTcQgm6
-         Kz3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715021013; x=1715625813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aMqIHyLa/gmjK+J+Bo0q9JLXeRdO7aoxpGEVpFxtErc=;
-        b=ReHZMURZ4l4m78KVXq3zKuLGt1R/UxcYc/KLQKDqmuyrBnSFaIo8Flw0wkTvUdtUuA
-         xs4dSTDEn+cNxc5rq13rE9B0/vw6YIlD8oK89Elgdf61VN2ZDnYoBt++5SjV7vfDB1iE
-         YoM60Mc/SshZN9x891u+pRhUReNhCEWOfCYzHSv0zC7wVG6AMY1RP+QXHy3ORITgxpSR
-         LdXgMMEnRmxRMWZw5ulBKS7qhXN09aMx/sPxyQodjwBsX8fSCJcONUwM5zNQ8K+OCLDz
-         vF5uDFASip4gQHZOoE0c8ak5PMEReU3nXuIO67Zs435f01wCut92qZ+cRCZ8RrijmNzq
-         kAmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSj+YzBdFjTSg8FxG+p+Pzt251qmqzlL9YHzZR19OOoTsC7t7q7uYX0llLTZ7qef+LiTx7Ns8l5JXxqikZViU7OJe7nT+4YBJdEG2o
-X-Gm-Message-State: AOJu0Yz+yYWJQ6NmtN5OOAdMcOauczsOutrtGoUPTQiwI3rd7Ni+iUsl
-	U784meVisqvwWteUuilMo1P8BeNRsKwkU/+PaHC4RX62hEv0xT5JooE+DCv/rrImVdbbXyx//w8
-	+yl5E4+CAo5JOVjP7IGGwauD8zAMKqeWR7wbq
-X-Google-Smtp-Source: AGHT+IFulYHpYLHM1ZuESjR5oSmKrCpxfE2wIN5s61bSGDGu2zfJeu8lvWzNU0Er8XFXuAkgqi4DEDvGGFyMpu+7Ino=
-X-Received: by 2002:a17:903:2003:b0:1e2:573:eecd with SMTP id
- d9443c01a7336-1ee6a6a8e32mr195735ad.3.1715021012487; Mon, 06 May 2024
- 11:43:32 -0700 (PDT)
+	s=arc-20240116; t=1715021334; c=relaxed/simple;
+	bh=DdMY60eWYf7nFd2XjhGOmHWtIFWpG2Vu5/5hhugXBZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MQ9oKyNtFdSIgJqUYH612+nQK03KDEPTID+v0d52vTEyZcOKQ1cRUmqlH0iNutaVPSXiZhgsihfhcFvgERkoM6btoyeoBVCWzW+XuqDYGE188aVddkHmWkSS+Bo5NhoIL7x/WGV8jE5CRA458gsrrBg8AMktOFf+N9WDSdRU0cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YPM15xWb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715021326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aPOamX9LHTG5t3ZSBhvmzpDMv+bOSB81pKuh6fPgknw=;
+	b=YPM15xWbogDpgXPfE+nJG2wWiSLPr1T6vOalmLBIvuNWTrjEzXv23ggcrZc1YaezJec1ZX
+	y2tFxTdsUvEhEgzTntizr2o3oAMOVF3LkFeFUYpq59Bkrs09xIawtAISaDylnpbAU/u+OR
+	owum3zy1Z6HML3BA29mlYMmHFXwr8Dc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-JxgjRRKQNJC9G07zoB7YFg-1; Mon, 06 May 2024 14:48:43 -0400
+X-MC-Unique: JxgjRRKQNJC9G07zoB7YFg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 077BB8032FA;
+	Mon,  6 May 2024 18:48:43 +0000 (UTC)
+Received: from tpad.localdomain (unknown [10.96.133.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 0F3D42024513;
+	Mon,  6 May 2024 18:48:42 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+	id 0AFB1400DCBB9; Mon,  6 May 2024 15:47:21 -0300 (-03)
+Date: Mon, 6 May 2024 15:47:21 -0300
+From: Marcelo Tosatti <mtosatti@redhat.com>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+Message-ID: <ZjkludR5wh0mKZ2H@tpad>
+References: <ZhAN28BcMsfl4gm-@google.com>
+ <a7398da4-a72c-4933-bb8b-5bc8965d96d0@paulmck-laptop>
+ <ZhQmaEXPCqmx1rTW@google.com>
+ <Zh2EQVj5bC0z5R90@tpad>
+ <Zh2cPJ-5xh72ojzu@google.com>
+ <Zh5w6rAWL+08a5lj@tpad>
+ <Zh6GC0NRonCpzpV4@google.com>
+ <Zh/1U8MtPWQ/yN2T@tpad>
+ <ZiAFSlZwxyKzOTRL@google.com>
+ <ZjVMpj7zcSf-JYd_@LeoBras>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
- <2024050404-rectify-romp-4fdb@gregkh> <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
- <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com> <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
-In-Reply-To: <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 6 May 2024 11:43:21 -0700
-Message-ID: <CAP-5=fXv59EmyM7FNnwAp0JjAZjtYhCj3b3FTH7KsHL=k8C6oQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
- /proc/<pid>/maps APIs
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjVMpj7zcSf-JYd_@LeoBras>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On Mon, May 6, 2024 at 11:32=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Sat, May 4, 2024 at 10:09=E2=80=AFPM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > On Sat, May 4, 2024 at 2:57=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > On Sat, May 4, 2024 at 8:29=E2=80=AFAM Greg KH <gregkh@linuxfoundatio=
-n.org> wrote:
-> > > >
-> > > > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
-> > > > > Implement a simple tool/benchmark for comparing address "resoluti=
-on"
-> > > > > logic based on textual /proc/<pid>/maps interface and new binary
-> > > > > ioctl-based PROCFS_PROCMAP_QUERY command.
-> > > >
-> > > > Of course an artificial benchmark of "read a whole file" vs. "a tin=
-y
-> > > > ioctl" is going to be different, but step back and show how this is
-> > > > going to be used in the real world overall.  Pounding on this file =
-is
-> > > > not a normal operation, right?
-> > > >
-> > >
-> > > It's not artificial at all. It's *exactly* what, say, blazesym librar=
-y
-> > > is doing (see [0], it's Rust and part of the overall library API, I
-> > > think C code in this patch is way easier to follow for someone not
-> > > familiar with implementation of blazesym, but both implementations ar=
-e
-> > > doing exactly the same sequence of steps). You can do it even less
-> > > efficiently by parsing the whole file, building an in-memory lookup
-> > > table, then looking up addresses one by one. But that's even slower
-> > > and more memory-hungry. So I didn't even bother implementing that, it
-> > > would put /proc/<pid>/maps at even more disadvantage.
-> > >
-> > > Other applications that deal with stack traces (including perf) would
-> > > be doing one of those two approaches, depending on circumstances and
-> > > level of sophistication of code (and sensitivity to performance).
-> >
-> > The code in perf doing this is here:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/tools/perf/util/synthetic-events.c#n440
-> > The code is using the api/io.h code:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/tools/lib/api/io.h
-> > Using perf to profile perf it was observed time was spent allocating
-> > buffers and locale related activities when using stdio, so io is a
-> > lighter weight alternative, albeit with more verbose code than fscanf.
-> > You could add this as an alternate /proc/<pid>/maps reader, we have a
-> > similar benchmark in `perf bench internals synthesize`.
-> >
->
-> If I add a new implementation using this ioctl() into
-> perf_event__synthesize_mmap_events(), will it be tested from this
-> `perf bench internals synthesize`? I'm not too familiar with perf code
-> organization, sorry if it's a stupid question. If not, where exactly
-> is the code that would be triggered from benchmark?
+On Fri, May 03, 2024 at 05:44:22PM -0300, Leonardo Bras wrote:
+> On Wed, Apr 17, 2024 at 10:22:18AM -0700, Sean Christopherson wrote:
+> > On Wed, Apr 17, 2024, Marcelo Tosatti wrote:
+> > > On Tue, Apr 16, 2024 at 07:07:32AM -0700, Sean Christopherson wrote:
+> > > > On Tue, Apr 16, 2024, Marcelo Tosatti wrote:
+> > > > > > Why not have
+> > > > > > KVM provide a "this task is in KVM_RUN" flag, and then let the existing timeout
+> > > > > > handle the (hopefully rare) case where KVM doesn't "immediately" re-enter the guest?
+> > > > > 
+> > > > > Do you mean something like:
+> > > > > 
+> > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > > index d9642dd06c25..0ca5a6a45025 100644
+> > > > > --- a/kernel/rcu/tree.c
+> > > > > +++ b/kernel/rcu/tree.c
+> > > > > @@ -3938,7 +3938,7 @@ static int rcu_pending(int user)
+> > > > >                 return 1;
+> > > > >  
+> > > > >         /* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
+> > > > > -       if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
+> > > > > +       if ((user || rcu_is_cpu_rrupt_from_idle() || this_cpu->in_kvm_run) && rcu_nohz_full_cpu())
+> > > > >                 return 0;
+> > > > 
+> > > > Yes.  This, https://lore.kernel.org/all/ZhAN28BcMsfl4gm-@google.com, plus logic
+> > > > in kvm_sched_{in,out}().
+> > > 
+> > > Question: where is vcpu->wants_to_run set? (or, where is the full series
+> > > again?).
+> > 
+> > Precisely around the call to kvm_arch_vcpu_ioctl_run().  I am planning on applying
+> > the patch that introduces the code for 6.10[*], I just haven't yet for a variety
+> > of reasons.
+> > 
+> > [*] https://lore.kernel.org/all/20240307163541.92138-1-dmatlack@google.com
+> > 
+> > > So for guest HLT emulation, there is a window between
+> > > 
+> > > kvm_vcpu_block -> fire_sched_out_preempt_notifiers -> vcpu_put 
+> > > and the idle's task call to ct_cpuidle_enter, where 
+> > > 
+> > > ct_dynticks_nesting() != 0 and vcpu_put has already executed.
+> > > 
+> > > Even for idle=poll, the race exists.
+> > 
+> > Is waking rcuc actually problematic?
+> 
+> Yeah, it may introduce a lot (30us) of latency in some cases, causing a 
+> missed deadline.
+> 
+> When dealing with RT tasks, missing a deadline can be really bad, so we 
+> need to make sure it will happen as rarely as possible.
+> 
+> >  I agree it's not ideal, but it's a smallish
+> > window, i.e. is unlikely to happen frequently, and if rcuc is awakened, it will
+> > effectively steal cycles from the idle thread, not the vCPU thread.
+> 
+> It would be fine, but sometimes the idle thread will run very briefly, and 
+> stealing microseconds from it will still steal enough time from the vcpu 
+> thread to become a problem.
+> 
+> >  If the vCPU
+> > gets a wake event before rcuc completes, then the vCPU could experience jitter,
+> > but that could also happen if the CPU ends up in a deep C-state.
+> 
+> IIUC, if the scenario calls for a very short HLT, which is kind of usual, 
+> then the CPU will not get into deep C-state. 
+> For the scenarios longer HLT happens, then it would be fine.
 
-Yes it would be triggered :-)
+And it might be that the chosen idle state has low latency.
 
-Thanks,
-Ian
+There is interest from customer in using realtime and saving energy as
+well.
 
-> > Thanks,
-> > Ian
-> >
-> > >   [0] https://github.com/libbpf/blazesym/blob/ee9b48a80c0b4499118a1e8=
-e5d901cddb2b33ab1/src/normalize/user.rs#L193
-> > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> > >
+For example:
+
+https://doc.dpdk.org/guides/sample_app_ug/l3_forward_power_man.html
+
+> > And that race exists in general, i.e. any IRQ that arrives just as the idle task
+> > is being scheduled in will unnecessarily wakeup rcuc.
+> 
+> That's a race could be solved with the timeout (snapshot) solution, if we 
+> don't zero last_guest_exit on kvm_sched_out(), right?
+
+Yes.
+
+> > > > >         /* Is the RCU core waiting for a quiescent state from this CPU? */
+> > > > > 
+> > > > > The problem is:
+> > > > > 
+> > > > > 1) You should only set that flag, in the VM-entry path, after the point
+> > > > > where no use of RCU is made: close to guest_state_enter_irqoff call.
+> > > > 
+> > > > Why?  As established above, KVM essentially has 1 second to enter the guest after
+> > > > setting in_guest_run_loop (or whatever we call it).  In the vast majority of cases,
+> > > > the time before KVM enters the guest can probably be measured in microseconds.
+> > > 
+> > > OK.
+> > > 
+> > > > Snapshotting the exit time has the exact same problem of depending on KVM to
+> > > > re-enter the guest soon-ish, so I don't understand why this would be considered
+> > > > a problem with a flag to note the CPU is in KVM's run loop, but not with a
+> > > > snapshot to say the CPU recently exited a KVM guest.
+> > > 
+> > > See the race above.
+> > 
+> > Ya, but if kvm_last_guest_exit is zeroed in kvm_sched_out(), then the snapshot
+> > approach ends up with the same race.  And not zeroing kvm_last_guest_exit is
+> > arguably much more problematic as encountering a false positive doesn't require
+> > hitting a small window.
+> 
+> For the false positive (only on nohz_full) the maximum delay for the  
+> rcu_core() to be run would be 1s, and that would be in case we don't schedule out for 
+> some userspace task or idle thread, in which case we have a quiescent state 
+> without the need of rcu_core().
+> 
+> Now, for not being an userspace nor idle thread, it would need to be one or 
+> more kernel threads, which I suppose aren't usually many, nor usually 
+> take that long for completing, if we consider to be running on an isolated (nohz_full) cpu. 
+> 
+> So, for the kvm_sched_out() case, I don't actually think we are  
+> statistically introducing that much of a delay in the RCU mechanism.
+> 
+> (I may be missing some point, though)
+> 
+> Thanks!
+> Leo
+> 
+> > 
+> > > > > 2) While handling a VM-exit, a host timer interrupt can occur before that,
+> > > > > or after the point where "this_cpu->in_kvm_run" is set to false.
+> > > > >
+> > > > > And a host timer interrupt calls rcu_sched_clock_irq which is going to
+> > > > > wake up rcuc.
+> > > > 
+> > > > If in_kvm_run is false when the IRQ is handled, then either KVM exited to userspace
+> > > > or the vCPU was scheduled out.  In the former case, rcuc won't be woken up if the
+> > > > CPU is in userspace.  And in the latter case, waking up rcuc is absolutely the
+> > > > correct thing to do as VM-Enter is not imminent.
+> > > > 
+> > > > For exits to userspace, there would be a small window where an IRQ could arrive
+> > > > between KVM putting the vCPU and the CPU actually returning to userspace, but
+> > > > unless that's problematic in practice, I think it's a reasonable tradeoff.
+> > > 
+> > > OK, your proposal looks alright except these races.
+> > > 
+> > > We don't want those races to occur in production (and they likely will).
+> > > 
+> > > Is there any way to fix the races? Perhaps cmpxchg?
+> > 
+> > I don't think an atomic switch from the vCPU task to the idle task is feasible,
+> > e.g. KVM would somehow have to know that the idle task is going to run next.
+> > This seems like something that needs a generic solution, e.g. to prevent waking
+> > rcuc if the idle task is in the process of being scheduled in.
+> > 
+> 
+> 
+
 
