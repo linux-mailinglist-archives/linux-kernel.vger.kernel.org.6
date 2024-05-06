@@ -1,180 +1,118 @@
-Return-Path: <linux-kernel+bounces-170014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B25A8BD095
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:45:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6F18BD097
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD351F21D36
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:45:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86030287CEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C842E1534FD;
-	Mon,  6 May 2024 14:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD317153583;
+	Mon,  6 May 2024 14:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vA3nbQRs"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cN6LDqTR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BD7153BF2
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782EF153512;
+	Mon,  6 May 2024 14:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006681; cv=none; b=qZOR9cwtyxE+Z+nJt3WXPzA+3VyVZ8E6LgfbkBC8MmgVunFIQMi4bLV6EB9MEW6UEFvi6J3dogLqUCsp14JRoqsaej43FMOkWdxO06j3xAOYsLPDccngGC/LS6gULHXrLRFartzXS/msaJhfbrpjT2SklpsBKeWw4bb/5Dp/En4=
+	t=1715006723; cv=none; b=bbYL+5FIa8PYNtlLDBp/RIlIA0JHDbti4wFkdTV6QtpYXbWFlz0OhyhXa5qOyzTgmNWjPZVWUyX1uVLjDu1v/p2d70Nb6tS3cyzexQf/8sC1kmxuhExzazE2/OWz+h8LOd7tWIRx1SCIDwg2EjNQrZBY8xW2kpkhViUAX6qmKEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006681; c=relaxed/simple;
-	bh=gcmU5KHDsIgDieHwyShq1qbTDOmmXgqU5v7T+celYzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WzrVBpbBkwylMEjMbwcyUoV6/u6xIR9UTCGZ3TcrY92Ct+SmnDD5FfpfJR0HQOXm5IMhYSgdAKo3xJ3Hn9dw8o5nEYDd3KanwM9JMQsj9NnyyadoKxyjDxuUJ5WsMOeVejfLGrsFUEUZReRY7c62gguanCmvVGyFyAGLcOFclQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vA3nbQRs; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e060d49f87so15598341fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:44:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715006677; x=1715611477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JcJFzkfee7mBqZtFVJndFmi3NW8+eQHyeH5MZMzFDxI=;
-        b=vA3nbQRsL7ul/HhZjlTMujvouLngKlIbzmiRj4GkQAhhQLeSu7j84+V1XjRQjKqW66
-         Twd7Em3bAsarV0bStk9vkrSpEX5CK+AEtRqtZXBC95kc2ANgDVgOL1tQ99DG303LHXe1
-         op9tOqk82bh3Aol7qAzdZVihEJHiOxIVMqC1u9y+IY7oEo+fvssLn1zYuRPOj/Fv0dAH
-         4QgN6Sv7Eyps0AhUmkmyBuJI89NYmU9x3hlA8jsHb635G24brpSIKkp1mjqsOh5C/tg3
-         URXEzZP3+v3JOLhY033M+KGA5HSNNLlKF0OOlLhZfs7R1ndKq+7xlKFs4Re6FFAyyeYI
-         Qo0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715006677; x=1715611477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JcJFzkfee7mBqZtFVJndFmi3NW8+eQHyeH5MZMzFDxI=;
-        b=Kv7lk1MsLcfClnqHLQEM76a6KGbiAAGOvfy/fzeqIIbDvPfP5AqgYN73eXtU7GElfh
-         mGONU9kSntWm75i/yU/cGGPJSLaqbc72N4Ncfr8aIkJROUmYF9f5DK8ltpXIfiENy13B
-         VteLN4wkjJTQmyEIEEu+91SKMf0K21gZtX8qQepVv593VKQ79OZVaeL9CcSHI5AhaSia
-         IzHBT80jid/q1cMyE5jXKAHec+U4RqlJtmLQsz9jl4F8Lwf9ZICxpPoFqZBkbsNXTGjj
-         Ph8fDETbnLRLLZf/ePBOuNh0JLH7pFVzsLss1FL5ABP7xDyW4WdjuaWNLf6MXxRdvxV9
-         YOeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7p+s8S9/3dzD5y59FsnNIafaNVQd5scA9lzpnsjsyPK36KveHxieYblPkBiOv4oYyfBULAagCLYQqA8EVltp8jysyosl03Xfo16ta
-X-Gm-Message-State: AOJu0YxV7RRjESYrl6jSR69Sl7MGKAGtha9+rNigJjyKIKBHgqt3/Tma
-	Bf7OkZ3vXDk1Oc6+ON7F9IceJIWicKvEoqvJBqS3QGy+wTBQzww976v/NCDILyJCx80f72wTeq2
-	eSAiXbos2RhTU6glUMqW7Rb7htdSEWYRvNvRyXw==
-X-Google-Smtp-Source: AGHT+IE6otZjp+HMHatTlAGvUbU2zdhnxAGZpInuyTDX2RS/6+kqsjoHYSazeUt5BLVh+8RqN+znD2lXAFAwZSwfhe8=
-X-Received: by 2002:a2e:7312:0:b0:2e1:d95b:3735 with SMTP id
- o18-20020a2e7312000000b002e1d95b3735mr3227506ljc.11.1715006676759; Mon, 06
- May 2024 07:44:36 -0700 (PDT)
+	s=arc-20240116; t=1715006723; c=relaxed/simple;
+	bh=qqPt7Wt7gYvZOnYBUvmkMGDflLZVCnnovZFb11ykGlc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mTRy1lwNnQAC+WV7IudMbjQ2Kbwq8Q6CiwTVCcfVxMBzriPoWpA1peFf2QFFUvoocsfYzfaHl0XLrL7l97W2AleXFcgO54/biQMGu6vZWSbLRpx3qxt1zwAlQz85iZunklpgYmPrTXq/TcnPGkwNel7NR5xRmYud4PutR/igulM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cN6LDqTR; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715006721; x=1746542721;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=qqPt7Wt7gYvZOnYBUvmkMGDflLZVCnnovZFb11ykGlc=;
+  b=cN6LDqTRjfASwhXbl7ZCmTVUGqdgFuVo2xfUTyouF2G4nP12DjFaAZF4
+   UZJN0o+Ey9appAXzMTdc+PHM5stBXHXFdT1nBws/eWUHd7llbXcdse0zf
+   /2aV2HwLMmOtCg+cr3rJKhgEOSgT8gw/7RoTOawvsytqd8N2/S+6ILW3B
+   8ODVIk6vS5QsJmHUqfVCjDJyAayDQMF1XDO3LwjdY7bz8SDLUR/Dhz+df
+   GSQD7Z+ZkFgV4ee3n5y+dGGaEnCwlDfvrSj580cFauYRP+YLSqpdQGCx6
+   VGMfILYpxaeFQL+qELy7LlymBdDW4B2XfWlWqXeXtp00m2QYXYjwNLZa0
+   g==;
+X-CSE-ConnectionGUID: le1S7EXtSVqElWiC0g7MrQ==
+X-CSE-MsgGUID: DuGJc6QfQpmiolRUmg6xxg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="33260549"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="33260549"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:45:03 -0700
+X-CSE-ConnectionGUID: jPYMcEo7SUur/4ZIDivb+w==
+X-CSE-MsgGUID: G5TNy78UT2K8v2ENday/Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="28579550"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:45:02 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 6 May 2024 17:44:57 +0300 (EEST)
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI/ASPM: Fix a typo in ASPM restoring logic
+In-Reply-To: <20240506051602.1990743-1-kai.heng.feng@canonical.com>
+Message-ID: <c74f0256-1453-3b91-d5a7-d797a0c2da90@linux.intel.com>
+References: <20240506051602.1990743-1-kai.heng.feng@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
- <20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
- <a04d8015ea1606ce1eca86f7eaaa85a1c1b46d7a.camel@gmail.com> <20240506144616.0b90664b@jic23-huawei>
-In-Reply-To: <20240506144616.0b90664b@jic23-huawei>
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 6 May 2024 09:44:25 -0500
-Message-ID: <CAMknhBHOXaff__QyU-wFSNNENvs23vDX5n_ddH-Dw3s6-sQ9sg@mail.gmail.com>
-Subject: Re: [PATCH RFC v6 10/10] iio: adc: ad7380: add support for resolution boost
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>, 
-	Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-470952821-1715006697=:1111"
 
-FYI, Julien is AFK for a bit so I'll try to respond to the non-trivial comm=
-ents.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Mon, May 6, 2024 at 8:46=E2=80=AFAM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Mon, 06 May 2024 10:55:46 +0200
-> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
->
-> > On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote:
-> > > ad738x chips are able to use an additional 2 bits of resolution when
-> > > using oversampling. The 14-bits chips can have up to 16 bits of
-> > > resolution and the 16-bits chips can have up to 18 bits of resolution=
-.
-> > >
-> > > In order to dynamically allow to enable/disable the resolution boost
-> > > feature, we have to set iio realbits/storagebits to the maximum per c=
-hips.
-> > > This means that for iio, data will always be on the higher resolution
-> > > available, and to cope with that we adjust the iio scale and iio offs=
-et
-> > > depending on the resolution boost status.
-> > >
-> > > The available scales can be displayed using the regular _scale_availa=
-ble
-> > > attributes and can be set by writing the regular _scale attribute.
-> > > The available scales depend on the oversampling status.
-> > >
-> > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > >
-> > > ---
-> > >
-> > > In order to support the resolution boost (additional 2 bits of resolu=
-tion)
-> > > we need to set realbits/storagebits to the maximum value i.e :
-> > >   - realbits =3D 16 + 2 =3D 18, and storagebits =3D 32 for 16-bits ch=
-ips
-> > >   - realbits =3D 14 + 2 =3D 16, and storagebits =3D 16 for 14-bits ch=
-ips
-> > >
-> > > For 14-bits chips this does not have a major impact, but this
-> > > has the drawback of forcing 16-bits chip users to always use 32-bits
-> > > words in buffers even if they are not using oversampling and resoluti=
-on
-> > > boost. Is there a better way of implementing this? For example
-> > > implementing dynamic scan_type?
-> > >
-> >
-> > Yeah, I don't think it's that bad in this case. But maybe dynamic scan =
-types is
-> > something we may need at some point yes (or IOW that I would like to se=
-e supported
-> > :)). We do some ADCs (eg: ad4630) where we use questionably use FW prop=
-erties to set
-> > a specific operating mode exactly because we have a different data layo=
-ut (scan
-> > elements) depending on the mode.
->
-> Yeah. Fixed scan modes were somewhat of a bad design decision a long time=
- back.
-> However, the big advantage is that it got people to think hard about whet=
-her it is
-> worth supporting low precision modes. For slow devices it very rarely is =
-and
-> forcing people to make a decision and the advantage we never supported
-> low precision on those parts.
->
-> Having said that there are good reasons for dynamic resolution changing
-> (the main one being the storage case you have here) so I'd be happy to
-> see some patches adding it. It might be easier than I've always thought
-> to bolt on.
->
-> This and inkernel event consumers have been the two significant features
-> where I keep expecting it to happen, but every time people decide they re=
-ally
-> don't care enough to make them work :(
->
+--8323328-470952821-1715006697=:1111
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Supposing we knew someone willing and able :-) ...
+On Mon, 6 May 2024, Kai-Heng Feng wrote:
 
-Do you have any specific requirements for how dynamic resolution
-changing should work? Any particular sticky points we should watch out
-for?
+> There's a typo that makes parent device uses child LNKCTL value and vice
+> versa. This causes Micron NVMe to trigger a reboot upon system resume.
+>=20
+> Correct the typo to fix the issue.
+>=20
+> Fixes: 64dbb2d70744 ("PCI/ASPM: Disable L1 before configuring L1 Substate=
+s")
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/pci/pcie/aspm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 2428d278e015..47761c7ef267 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -177,8 +177,8 @@ void pci_restore_aspm_l1ss_state(struct pci_dev *pdev=
+)
+>  =09/* Restore L0s/L1 if they were enabled */
+>  =09if (FIELD_GET(PCI_EXP_LNKCTL_ASPMC, clnkctl) ||
+>  =09    FIELD_GET(PCI_EXP_LNKCTL_ASPMC, plnkctl)) {
+> -=09=09pcie_capability_write_word(parent, PCI_EXP_LNKCTL, clnkctl);
+> -=09=09pcie_capability_write_word(pdev, PCI_EXP_LNKCTL, plnkctl);
+> +=09=09pcie_capability_write_word(parent, PCI_EXP_LNKCTL, plnkctl);
+> +=09=09pcie_capability_write_word(pdev, PCI_EXP_LNKCTL, clnkctl);
 
-I'm assuming this would just affect the bufferY/*_type attributes,
-i.e. if you write a channel scale attribute to change the resolution,
-then the scan_type info may change and the bufferY/*_type would need
-to be read again.
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-470952821-1715006697=:1111--
 
