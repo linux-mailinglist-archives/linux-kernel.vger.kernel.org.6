@@ -1,91 +1,65 @@
-Return-Path: <linux-kernel+bounces-170502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA158BD826
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:20:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8254A8BD828
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCE41C21CAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:20:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A63B41C2207F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A60915DBAE;
-	Mon,  6 May 2024 23:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF25E15D5A1;
+	Mon,  6 May 2024 23:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="3FD5U7Cb"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAMIomvT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC1F132C1C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 23:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA774155756;
+	Mon,  6 May 2024 23:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715037590; cv=none; b=Sx9fWP2Q8JaIQwE7VjWVY6r7SiM2yHvmeynIe0Qk9s7erAywwf37juidjyJiP8FMcdai5Bi6UAbEAExLksOnKPSmW4lXD32u9bUzsciVDIsMsqQiJNyETvf23jzdVh3o+PC6ITlR1N9aZQPYsxZTcVw4aOKisSnJGwQVthWEGGI=
+	t=1715037633; cv=none; b=B+W8n2A5bm4Rmw7ZyGPixclIw85XT2enKFZ5ntyaLl4t2vsov5BSkg2HMg+tN+sJqpFFLO9/LeCjlWfFWNFCCckpTOUUprQawWELSophU46xzl1EERmwjm0bu4RkzTbHIu3qtpEz1RSMjwShL1WxF7oUkLqZRvaHohmlvDr8/zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715037590; c=relaxed/simple;
-	bh=UlWB0PiVSaH0032zuWaMnJnFtUn4gBJA/x7Nb2BvVA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsBqgKXDndatdiBZOKyJN1iuqtDPqwROl12LAAMAxXrWVoKjaZVpeR+NgeikVaHqHxSuMTMkT6jOdClMbXtvgDGicqBqZELqIAjMbtEGAEccVROuaHmjMfBfxdGSSX8h4LECHQDJ4fTO0lO4A95MzMZWKLVF9MVd0imuDcyk6KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=3FD5U7Cb; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ed41eb3382so18888385ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 16:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1715037588; x=1715642388; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JfmNU7T7Zux55fuk0/ynp0mrkZlbfnBJFtPeSgTSd88=;
-        b=3FD5U7CbJLQePT0BVWtbdUWUvNlloshl2hpcD7m8GUCOz/x3Ie0qubI88eKXWyi3tN
-         xVKrt4PGH8AFFza0HFc0Etym+7KyuREUD42JdQ+0HeuQKqG79jQ0q5U7j7GNxIn/6qpf
-         Ty2OSULrRXd1/gk6aFzdSOy7o6TRyRpXOpVvMyoIv5L2Kdm0CpQKsObv8e8VbQ4B2AEo
-         MRB/ME6Xw0bz+bZ5DFTAMoQlJ6MG6Ccn+LHLQE4S1/bklb8OXhmq+HOe4bsc0TtNbmQp
-         /DqOPMHMDaL5xZurWAlriSsnOGG1FDncVpcJWErtU+Af7jLuq9604TxCW/7smTBG9rnh
-         oGPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715037588; x=1715642388;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JfmNU7T7Zux55fuk0/ynp0mrkZlbfnBJFtPeSgTSd88=;
-        b=fVaY9USdjx7IRmmP5IZHfizEovrYv1KV6B95r8k80JTdZkc7kcfHhK0GZyVpbP/uVy
-         Znx8UVdNNOkgLGF9YPnqNxevatrlMcTpjG8hIyCVPQCYxJhZduRS89ByT7g9Ch2khjB8
-         f4pQBws5RlcyHKlw4/EsizojeIMNwgDcpYbals4vlSb0flCSo6727RO1NrsvNpiUffyZ
-         HiI9/UH06BFatsKPJ903z7jPyyQlaWfkcGAUwaeV6FfutazqLj2FLpSccGDV8Fk9U0Am
-         CH2G0B2cRRYo6CSvHhns7e7NFEvM7LaQfvHaPxnZoU0sCZr5dwvUnFmwtLGoUtqJfm0d
-         Id5w==
-X-Forwarded-Encrypted: i=1; AJvYcCW40Ok03Cgg3Ps0Yp6TBsBbki08Tfk/SOIpU2gm7/6PUqaC+Q6WbsSHzRBW4EGc6la/KVXh+6T1gUATShLnVMtzM8Ldc2PeNRQ5CSQJ
-X-Gm-Message-State: AOJu0YwzBlHIvRk3+5dCeNS6pO47bj4ey7AYsA4W0C5Q8JuFyxywq6N+
-	kL2T63RZHV91EHAS1jWaVh6ug+8lN6Cpyx8/HH3OguMk8tu8wLdTRD6OUAVs5QW66pqNsguap4K
-	G
-X-Google-Smtp-Source: AGHT+IGTdCbkJ6dCeXIlEqW0jHcIBzUUTSQchp3eoxUw0itjwcXxpPE+rnXs+G996BJVeTg/0lgcEQ==
-X-Received: by 2002:a17:902:ecc7:b0:1eb:dae:bdab with SMTP id a7-20020a170902ecc700b001eb0daebdabmr16603631plh.46.1715037587536;
-        Mon, 06 May 2024 16:19:47 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id i12-20020a17090332cc00b001ecd2c44ae0sm8800306plr.4.2024.05.06.16.19.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 16:19:47 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1s47cW-0064gO-0e;
-	Tue, 07 May 2024 09:19:44 +1000
-Date: Tue, 7 May 2024 09:19:44 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	hch@infradead.org, djwong@kernel.org, willy@infradead.org,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, wangkefeng.wang@huawei.com
-Subject: Re: [RFC PATCH v4 24/34] ext4: implement buffered write iomap path
-Message-ID: <ZjllkHuyOedA/Tzg@dread.disaster.area>
-References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
- <20240410142948.2817554-25-yi.zhang@huaweicloud.com>
- <ZjH5Ia+dWGss5Duv@dread.disaster.area>
- <ZjH+QFVXLlcDkSdh@dread.disaster.area>
- <96bbdb25-b420-67b1-d4c4-b838a5c70f9f@huaweicloud.com>
+	s=arc-20240116; t=1715037633; c=relaxed/simple;
+	bh=mGeX55CzoNaQy2PcjaqTPvV937ILIAHgC31KgXutSvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UDiHWAv6SU/1B2XzuFHL5ek1joRVwmjSrOJh7K40aA0vMtkzzjHLOUbkcWVxaSki4RwBA8aTgaNjBPv+Pr2W4GYSkD3K6YyfwarrmsZbBWYSTt2Fn/2iIWvkOfJJdXP4DfkY4s+Khd4BsMzTPbOr0326MmWddtBRFszfmdLGLf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAMIomvT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1CEAC116B1;
+	Mon,  6 May 2024 23:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715037633;
+	bh=mGeX55CzoNaQy2PcjaqTPvV937ILIAHgC31KgXutSvk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=GAMIomvTmIkZRfJqwzloh1LX74EYz/yUn/GvaIWjZE4tMRoSo2ei0kIHuWPgKruCI
+	 JGfKoxUKW8RhoLwfdfQ6aD4ZKGx9i1n2HQViXoerk6uRIM+8GSERXmLMHSB95VsaIF
+	 W4idb0a5Z2Ygf9AYNnuX8JFPq2Td1qod8V9yoirPbDlRf9KE8/3eebmH2WEoEn0nMs
+	 SlUSVNFvHvsPa8/NV91BEnQ21AvX1FRLBU+iafbRIZItBdkCyGAJ4CjXYL7NExfG/Q
+	 EPT+YjYxG2/RISNHxgqr/WOVhmSC+17g6shU5oz2+psG6E8uM6aRGrtH2dXiuyhXSe
+	 gv/kq7nLzbgyA==
+Date: Mon, 6 May 2024 18:20:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Phil Elwell <phil@raspberrypi.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 4/4] PCI: brcmstb: Configure HW CLKREQ# mode
+ appropriate for downstream device
+Message-ID: <20240506232031.GA1714174@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,153 +68,223 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <96bbdb25-b420-67b1-d4c4-b838a5c70f9f@huaweicloud.com>
+In-Reply-To: <20240403213902.26391-5-james.quinlan@broadcom.com>
 
-On Mon, May 06, 2024 at 07:44:44PM +0800, Zhang Yi wrote:
-> On 2024/5/1 16:33, Dave Chinner wrote:
-> > On Wed, May 01, 2024 at 06:11:13PM +1000, Dave Chinner wrote:
-> >> On Wed, Apr 10, 2024 at 10:29:38PM +0800, Zhang Yi wrote:
-> >>> From: Zhang Yi <yi.zhang@huawei.com>
-> >>>
-> >>> Implement buffered write iomap path, use ext4_da_map_blocks() to map
-> >>> delalloc extents and add ext4_iomap_get_blocks() to allocate blocks if
-> >>> delalloc is disabled or free space is about to run out.
-> >>>
-> >>> Note that we always allocate unwritten extents for new blocks in the
-> >>> iomap write path, this means that the allocation type is no longer
-> >>> controlled by the dioread_nolock mount option. After that, we could
-> >>> postpone the i_disksize updating to the writeback path, and drop journal
-> >>> handle in the buffered dealloc write path completely.
-> > .....
-> >>> +/*
-> >>> + * Drop the staled delayed allocation range from the write failure,
-> >>> + * including both start and end blocks. If not, we could leave a range
-> >>> + * of delayed extents covered by a clean folio, it could lead to
-> >>> + * inaccurate space reservation.
-> >>> + */
-> >>> +static int ext4_iomap_punch_delalloc(struct inode *inode, loff_t offset,
-> >>> +				     loff_t length)
-> >>> +{
-> >>> +	ext4_es_remove_extent(inode, offset >> inode->i_blkbits,
-> >>> +			DIV_ROUND_UP_ULL(length, EXT4_BLOCK_SIZE(inode->i_sb)));
-> >>>  	return 0;
-> >>>  }
-> >>>  
-> >>> +static int ext4_iomap_buffered_write_end(struct inode *inode, loff_t offset,
-> >>> +					 loff_t length, ssize_t written,
-> >>> +					 unsigned int flags,
-> >>> +					 struct iomap *iomap)
-> >>> +{
-> >>> +	handle_t *handle;
-> >>> +	loff_t end;
-> >>> +	int ret = 0, ret2;
-> >>> +
-> >>> +	/* delalloc */
-> >>> +	if (iomap->flags & IOMAP_F_EXT4_DELALLOC) {
-> >>> +		ret = iomap_file_buffered_write_punch_delalloc(inode, iomap,
-> >>> +			offset, length, written, ext4_iomap_punch_delalloc);
-> >>> +		if (ret)
-> >>> +			ext4_warning(inode->i_sb,
-> >>> +			     "Failed to clean up delalloc for inode %lu, %d",
-> >>> +			     inode->i_ino, ret);
-> >>> +		return ret;
-> >>> +	}
-> >>
-> >> Why are you creating a delalloc extent for the write operation and
-> >> then immediately deleting it from the extent tree once the write
-> >> operation is done?
-> > 
-> > Ignore this, I mixed up the ext4_iomap_punch_delalloc() code
-> > directly above with iomap_file_buffered_write_punch_delalloc().
-> > 
-> > In hindsight, iomap_file_buffered_write_punch_delalloc() is poorly
-> > named, as it is handling a short write situation which requires
-> > newly allocated delalloc blocks to be punched.
-> > iomap_file_buffered_write_finish() would probably be a better name
-> > for it....
-> > 
-> >> Also, why do you need IOMAP_F_EXT4_DELALLOC? Isn't a delalloc iomap
-> >> set up with iomap->type = IOMAP_DELALLOC? Why can't that be used?
-> > 
-> > But this still stands - the first thing
-> > iomap_file_buffered_write_punch_delalloc() is:
-> > 
-> > 	if (iomap->type != IOMAP_DELALLOC)
-> >                 return 0;
-> > 
+On Wed, Apr 03, 2024 at 05:39:01PM -0400, Jim Quinlan wrote:
+> The Broadcom STB/CM PCIe HW core, which is also used in RPi SOCs, must be
+> deliberately set by the PCIe RC HW into one of three mutually exclusive
+> modes:
 > 
-> Thanks for the suggestion, the delalloc and non-delalloc write paths
-> share the same ->iomap_end() now (i.e. ext4_iomap_buffered_write_end()),
-> I use the IOMAP_F_EXT4_DELALLOC to identify the write path.
+> "safe" -- No CLKREQ# expected or required, refclk is always provided.  This
+>     mode should work for all devices but is not be capable of any refclk
+>     power savings.
 
-Again, you don't need that. iomap tracks newly allocated
-IOMAP_DELALLOC extents via the IOMAP_F_NEW flag that should be
-getting set in the ->iomap_begin() call when it creates a new
-delalloc extent.
+s/refclk is always provided/the Root Port always supplies Refclk/
 
-Please look at the second check in
-iomap_file_buffered_write_punch_delalloc():
+At least, I assume that's what this means?  The Root Port always
+supplies Refclk regardless of whether a downstream device deasserts
+CLKREQ#?
 
-	if (iomap->type != IOMAP_DELALLOC)
-                return 0;
+The patch doesn't do anything to prevent aspm.c from setting
+PCI_EXP_LNKCTL_CLKREQ_EN, so it looks like Linux may still set the
+"Enable Clock Power Management" bit in downstream devices, but the
+Root Port just ignores the CLKREQ# signal, right?
 
-        /* If we didn't reserve the blocks, we're not allowed to punch them. */
-        if (!(iomap->flags & IOMAP_F_NEW))
-                return 0;
+s/is not be/is not/
 
-> For
-> non-delalloc path, If we have allocated more blocks and copied less, we
-> should truncate extra blocks that newly allocated by ->iomap_begin().
+> "no-l1ss" -- CLKREQ# is expected to be driven by the downstream device for
+>     CPM and ASPM L0s and L1.  Provides Clock Power Management, L0s, and L1,
+>     but cannot provide L1 substate (L1SS) power savings. If the downstream
+>     device connected to the RC is L1SS capable AND the OS enables L1SS, all
+>     PCIe traffic may abruptly halt, potentially hanging the system.
 
-Why? If they were allocated as unwritten, then you can just leave
-them there as unwritten extents, same as XFS. Keep in mind that if
-we get a short write, it is extremely likely the application is
-going to rewrite the remaining data immediately, so if we allocated
-blocks they are likely to still be needed, anyway....
+s/CPM/Clock Power Management (CPM)/ and then you can use "CPM" for the
+*second* reference here.
 
-> If we use IOMAP_DELALLOC, we can't tell if the blocks are
-> pre-existing or newly allocated, we can't truncate the
-> pre-existing blocks, so I have to introduce IOMAP_F_EXT4_DELALLOC.
-> But if we split the delalloc and non-delalloc handler, we could
-> drop IOMAP_F_EXT4_DELALLOC.
+It *looks* like we should never see this PCIe hang because with this
+setting you don't advertise L1SS in the Root Port, so the OS should
+never enable L1SS, at least for that link.  Right?
 
-As per above: IOMAP_F_NEW tells us -exactly- this.
+If we never enable L1SS in the case where it could cause a hang, why
+mention the possibility here?
 
-IOMAP_F_NEW should be set on any newly allocated block - delalloc or
-real - because that's the flag that tells the iomap infrastructure
-whether zero-around is needed for partial block writes. If ext4 is
-not setting this flag on delalloc regions allocated by
-->iomap_begin(), then that's a serious bug.
+I assume that if the downstream device is a Switch, L1SS is unsafe for
+the Root Port to Switch link, but it could still be used for the link
+between the Switch and whatever is below it?
 
-> I also checked xfs, IIUC, xfs doesn't free the extra blocks beyond EOF
-> in xfs_buffered_write_iomap_end() for non-delalloc case since they will
-> be freed by xfs_free_eofblocks in some other inactive paths, like
-> xfs_release()/xfs_inactive()/..., is that right?
+> "default" -- Bidirectional CLKREQ# between the RC and downstream device.
+>     Provides ASPM L0s, L1, and L1SS, but not compliant to provide Clock
+>     Power Management; specifically, may not be able to meet the T_CLRon max
+>     timing of 400ns as specified in "Dynamic Clock Control", section
+>     3.2.5.2.2 of the PCIe Express Mini CEM 2.1 specification.  This
+>     situation is atypical and should happen only with older devices.
 
-XFS doesn't care about real blocks beyond EOF existing -
-xfs_free_eofblocks() is an optimistic operation that does not
-guarantee that it will remove blocks beyond EOF. Similarly, we don't
-care about real blocks within EOF because we alway allocate data
-extents as unwritten, so we don't have any stale data exposure
-issues to worry about on short writes leaving allocated blocks
-behind.
+IIUC this T_CLRon timing issue is with the STB/CM *Root Port*, but the
+last sentence refers to "older devices," which sounds like it means
+"older devices that might be plugged into the Root Port."  That would
+suggest the issue is with those devices, not iwth the STB/CM Root
+Port.
 
-OTOH, delalloc extents without dirty page cache pages over them
-cannot be allowed to exist. Without dirty pages, there is no trigger
-to convert those to real extents (i.e. nothing to write back). Hence
-the only sane thing that can be done with them on a write error or
-short write is remove them in the context where they were created.
+Or maybe this is meant to refer to older STB/CM Root Ports?
 
-This is the only reason that the
-iomap_file_buffered_write_punch_delalloc() exists - it abstracts
-this nasty corner case away from filesystems that support delalloc
-so they don't have to worry about getting this right. That's whole
-point of having delalloc aware infrastructure - individual
-filesysetms don't need to handle all these weird corner cases
-themselves because the infrastructure takes care of them...
+> Previously, this driver always set the mode to "no-l1ss", as almost all
+> STB/CM boards operate in this mode.  But now there is interest in
+> activating L1SS power savings from STB/CM customers, which requires
+> "default" mode.  In addition, a bug was filed for RPi4 CM platform because
+> most devices did not work in "no-l1ss" mode (see link below).
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I'm having a hard time reconciling "almost all STB/CM boards operate
+in 'no-l1ss' mode" with "most devices did not work in 'no-l1ss' mode."
+They sound contradictory.
+
+> Note that the mode is specified by the DT property "brcm,clkreq-mode".  If
+> this property is omitted, then "default" mode is chosen.
+
+As a user, how do I determine which setting to use?
+
+Trial and error?  If so, how do I identify the errors?
+
+Obviously "default" is the best, so I assume I would try that first.
+If something is flaky (whatever that means), I would fall back to
+"no-l1ss", which gets me Clock PM, L0s, and L1, right?  In what
+situation does "no-l1ss" fail, and how do I tell that it fails?
+
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=217276
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 79 ++++++++++++++++++++++++---
+>  1 file changed, 70 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 3d08b92d5bb8..3dc8511e6f58 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -48,6 +48,9 @@
+>  #define PCIE_RC_CFG_PRIV1_LINK_CAPABILITY			0x04dc
+>  #define  PCIE_RC_CFG_PRIV1_LINK_CAPABILITY_ASPM_SUPPORT_MASK	0xc00
+>  
+> +#define PCIE_RC_CFG_PRIV1_ROOT_CAP			0x4f8
+> +#define  PCIE_RC_CFG_PRIV1_ROOT_CAP_L1SS_MODE_MASK	0xf8
+> +
+>  #define PCIE_RC_DL_MDIO_ADDR				0x1100
+>  #define PCIE_RC_DL_MDIO_WR_DATA				0x1104
+>  #define PCIE_RC_DL_MDIO_RD_DATA				0x1108
+> @@ -121,9 +124,12 @@
+>  
+>  #define PCIE_MISC_HARD_PCIE_HARD_DEBUG					0x4204
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK	0x2
+> +#define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK		0x200000
+>  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x08000000
+>  #define  PCIE_BMIPS_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x00800000
+> -
+> +#define  PCIE_CLKREQ_MASK \
+> +	  (PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK | \
+> +	   PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK)
+>  
+>  #define PCIE_INTR2_CPU_BASE		0x4300
+>  #define PCIE_MSI_INTR2_BASE		0x4500
+> @@ -1100,13 +1106,73 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> +static void brcm_config_clkreq(struct brcm_pcie *pcie)
+> +{
+> +	static const char err_msg[] = "invalid 'brcm,clkreq-mode' DT string\n";
+> +	const char *mode = "default";
+> +	u32 clkreq_cntl;
+> +	int ret, tmp;
+> +
+> +	ret = of_property_read_string(pcie->np, "brcm,clkreq-mode", &mode);
+> +	if (ret && ret != -EINVAL) {
+> +		dev_err(pcie->dev, err_msg);
+> +		mode = "safe";
+> +	}
+> +
+> +	/* Start out assuming safe mode (both mode bits cleared) */
+> +	clkreq_cntl = readl(pcie->base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +	clkreq_cntl &= ~PCIE_CLKREQ_MASK;
+> +
+> +	if (strcmp(mode, "no-l1ss") == 0) {
+> +		/*
+> +		 * "no-l1ss" -- Provides Clock Power Management, L0s, and
+> +		 * L1, but cannot provide L1 substate (L1SS) power
+> +		 * savings. If the downstream device connected to the RC is
+> +		 * L1SS capable AND the OS enables L1SS, all PCIe traffic
+> +		 * may abruptly halt, potentially hanging the system.
+> +		 */
+> +		clkreq_cntl |= PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK;
+> +		/*
+> +		 * We want to un-advertise L1 substates because if the OS
+> +		 * tries to configure the controller into using L1 substate
+> +		 * power savings it may fail or hang when the RC HW is in
+> +		 * "no-l1ss" mode.
+> +		 */
+> +		tmp = readl(pcie->base + PCIE_RC_CFG_PRIV1_ROOT_CAP);
+> +		u32p_replace_bits(&tmp, 2, PCIE_RC_CFG_PRIV1_ROOT_CAP_L1SS_MODE_MASK);
+> +		writel(tmp, pcie->base + PCIE_RC_CFG_PRIV1_ROOT_CAP);
+> +
+> +	} else if (strcmp(mode, "default") == 0) {
+> +		/*
+> +		 * "default" -- Provides L0s, L1, and L1SS, but not
+> +		 * compliant to provide Clock Power Management;
+> +		 * specifically, may not be able to meet the Tclron max
+> +		 * timing of 400ns as specified in "Dynamic Clock Control",
+> +		 * section 3.2.5.2.2 of the PCIe spec.  This situation is
+> +		 * atypical and should happen only with older devices.
+> +		 */
+> +		clkreq_cntl |= PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK;
+> +
+> +	} else {
+> +		/*
+> +		 * "safe" -- No power savings; refclk is driven by RC
+> +		 * unconditionally.
+> +		 */
+> +		if (strcmp(mode, "safe") != 0)
+> +			dev_err(pcie->dev, err_msg);
+> +		mode = "safe";
+> +	}
+> +	writel(clkreq_cntl, pcie->base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> +
+> +	dev_info(pcie->dev, "clkreq-mode set to %s\n", mode);
+> +}
+> +
+>  static int brcm_pcie_start_link(struct brcm_pcie *pcie)
+>  {
+>  	struct device *dev = pcie->dev;
+>  	void __iomem *base = pcie->base;
+>  	u16 nlw, cls, lnksta;
+>  	bool ssc_good = false;
+> -	u32 tmp;
+>  	int ret, i;
+>  
+>  	/* Unassert the fundamental reset */
+> @@ -1138,6 +1204,8 @@ static int brcm_pcie_start_link(struct brcm_pcie *pcie)
+>  	 */
+>  	brcm_extend_internal_bus_timeout(pcie, BRCM_LTR_MAX_NS + 1000);
+>  
+> +	brcm_config_clkreq(pcie);
+> +
+>  	if (pcie->gen)
+>  		brcm_pcie_set_gen(pcie, pcie->gen);
+>  
+> @@ -1156,13 +1224,6 @@ static int brcm_pcie_start_link(struct brcm_pcie *pcie)
+>  		 pci_speed_string(pcie_link_speed[cls]), nlw,
+>  		 ssc_good ? "(SSC)" : "(!SSC)");
+>  
+> -	/*
+> -	 * Refclk from RC should be gated with CLKREQ# input when ASPM L0s,L1
+> -	 * is enabled => setting the CLKREQ_DEBUG_ENABLE field to 1.
+> -	 */
+> -	tmp = readl(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+> -	tmp |= PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK;
+> -	writel(tmp, base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.17.1
+> 
+
+
 
