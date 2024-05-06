@@ -1,148 +1,121 @@
-Return-Path: <linux-kernel+bounces-170110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2DB8BD1F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:58:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554538BD1F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B26C1C21C69
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7AD1F21D1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4D6155A25;
-	Mon,  6 May 2024 15:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E10615573B;
+	Mon,  6 May 2024 15:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="esCn/+us"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q5Y1FjE7"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE9C6CDD0
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8618D155737
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715011100; cv=none; b=TZapyUP5niKO/9v8QonoZq1yws6GwJkDaN0VyDIrLX2sQTew3U8wj9dZprbaHfNyPfI935GVq8T6JvD8QU5QB60tf/7ahNNVNGSOLbVi45aBMhDPwCKUWmdQULf5PecjsOLLRfs/KlAWe75CTlJJlgTa1adYRYytTBX5wNIYjjI=
+	t=1715011125; cv=none; b=UD8AJl+FfsKdBGOx/5iZbhjL5ZKcR6Npo8Wl6qw49CHmoNXkdg5F6irU9S0gfPgMW12l6iRH4LoN8leL7p9qtWb2gfU4pI4/sf7URIKulTT9rewZjEHDSA8dEyzjwYaSJbkb9MX7Cqe7zqVlVJpd9AxTh5l6H+8ZQSa1QjD1T7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715011100; c=relaxed/simple;
-	bh=Aw9f+LLZ5sHan1vBUy1bKxeUrbEGvBPDzxWoW45wqxk=;
+	s=arc-20240116; t=1715011125; c=relaxed/simple;
+	bh=e+ZSe+ZA9xaJO5eEBFHbnwpPwoeLA8xT48mtZrmDIak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6vm9cRDN953ZaLnOEO8YntFzFnqRlzIvYGFy6WGn5naWfSMsFs2belDDcbutLgRZnqfWnUeGSHxkos8LyaIvoz9lQLIkZ7muThgi1VhIAFEpYhCPj+nm3XC11fTbJ1cqk6v3w7fZ+D7cI+OMc+5U9Cii+zn7XcgPgE0w9AEDJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=esCn/+us; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8102240E02A6;
-	Mon,  6 May 2024 15:58:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id EkHFRr0eYoCh; Mon,  6 May 2024 15:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715011093; bh=of4cpwaJyl5GvP5v0b10za3Tbh1fMIcPtE6G83zdPUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=esCn/+usfD3pSS7PV/FP3vii3yCV4JzpeZ+Lumvyp7iF8Dxkt+55n5LK8fhqrxJZj
-	 6L7SUimhHzItS20BotXBPkr/MEIpzObRCpQte4cCNrOYwX/gUYwpQgnyP6cWdGePsl
-	 hb9AHeZ7zTYQmr8l/0ts/JhSu+9PG7eBv7tJhSBxQN8nS/CD2u/gtCnof7srE2Mbct
-	 sQuVgUisKCct123WQfLHWxWYVs1ZRuMwzLJKKSvbw4ZTGyyjwwO8+3tEwJwhwa+3O8
-	 QSZ6rdYHPrWm6EtQ6GhAuVotXe+H139/xi5NfJR1qaxnn/roABERbLdFmX0rPm5KvP
-	 5DMB4UMwhWvXmp66Ekqe0aGE31ekcMUTH0g2A2tlaBScDb/mPHulHes36lRVM/3ncw
-	 jgWM52gOfhI55cMctE3Q2IJyBxtR5t0mMbn7//QHRoJdV28mkuTZP8kUsH1B9061XK
-	 fe2jZZrYgcIFImPsNxa/SK4XuQl1KEguqNQjFuGHTKh2o8AohoNXa/C1jyxxLdyFeO
-	 ilXpai8RCw8+YvS/2SMVvaeOtSaq6eg8+ml21qzUzRA8PZyVRHOLv9Mjz3T/PBjOQ2
-	 fh/bhD0ArjkkDzJWMy6lFeN+gZi28do9AfG8BqL9xOxQz/dt6udE+19PtDf2DDdBCq
-	 Wt+srd66VAf0RAyu4EEfBHQ0=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4E5DD40E0187;
-	Mon,  6 May 2024 15:58:05 +0000 (UTC)
-Date: Mon, 6 May 2024 17:57:59 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>
-Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
- WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
-Message-ID: <20240506155759.GOZjj-B_Qrz4DCXwmb@fat_crate.local>
-References: <202404302233.f27f91b2-oliver.sang@intel.com>
- <20240430172313.GCZjEpAfUECkEZ9S5L@fat_crate.local>
- <ZjE7DkTBSbPlBN8k@google.com>
- <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
- <ZjFLpkgI3Zl4dsXs@google.com>
- <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
- <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
- <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
- <Zjj3Lrv2NNHLEzzk@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m2I92MrnKtYzhM7s2QhBO3uuqaCL6MQT1vZe2FKvbdv7td6BJsxV4b4VSr5yZlVfEyUcDMqZ21Yzgdd5e9dP+UAat9W7IPqRndmTjLBMJTRMaD19cAHbnBxEUMw1xb+LSNf/OiSoeuuR1gPsH3ba6OdE7vfYHIZsUmEHPUWOZEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q5Y1FjE7; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34d99ec52e1so1307282f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715011122; x=1715615922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b77bW1UHopiAiUiwt+teFfDgmUSq65L4Labg5fS22oM=;
+        b=Q5Y1FjE7a/VuhZbsHhx2X9OhIrC6dc7qblhpdUdax5eI2SdbEO6kx/YJoRiKhEyy9h
+         W73ef+3G6tWk7Mw66NJ3TdC9Y/MMV6FBDqzVlAiBS63YURu1d4NotgBUPNezW3VY6e2e
+         b6LnubxGKzi+SdiIiTDsSrmgMaXPRsMs+VN6pHK0KaOycWJ5TnZFLVpfZPujHkja/zqN
+         FE+glFGwhUZigi/W9DmCMg+3CH15qrMOyxcqsbcS/DXFgK16B0x6dkBkWyfU2VSU13Zk
+         0LKmZHnuPlvHxGC9wZQTFD7VS+VszAONoOUbceXIokgaYu8E1A3Kii0C/am8BddqEDTO
+         EeLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715011122; x=1715615922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b77bW1UHopiAiUiwt+teFfDgmUSq65L4Labg5fS22oM=;
+        b=r/MPsOWLYrbtaNcJMywSZftkCswN5p+XpImi1eKGiEXAPaYt+ukTzXJlUrgXMoXavz
+         zS9YxsZkABYGMjYzgFUePEtHHbI0pEd+GO5+XrPBDZ92Z0PrTD3TfLhzkrpZDR4NURuw
+         hp/I3nOjaFp75WJebKP6GOsfQITC8eUuLPcJyLzGI6znEtDQXdukbv4WBHO5hB7Brcge
+         iudDwyCYmo5cyKi5Sd2vffo7bJac9IZ/owi+x0fKDpft7c8YIBdmMZ0VuJqb+mYS7mxr
+         anlFs3jR1HV6vGKS/abKhZkyA+eVqd9f4DaLkysWBoc9gHo6akSNy7Zh8U30n5Mb0Lp7
+         lu2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWx4kAzqf0qcijFmDPZMucCAjyqWLzEAWKxwLDlbs7C1bfRrhhHtJ4Oplg/wTnLNmXC/ZuXEDAfONDEXhXLjv2ve0G8GmVpR9jroXcD
+X-Gm-Message-State: AOJu0YzNlHziy4/gAOGnqm7gTuCM6sOVq4c8IuUiT1OK+L7uL0mtbBEA
+	Wg5JI7bxm7zbrGlsSd6StlPXKjZm9RdPirHatrVKWOWmx/VA9pNy3PRJl+KR/Jw=
+X-Google-Smtp-Source: AGHT+IFSFaunKOZ8WI6/uX/7mp9FL9IL1kmUTfFZ/AIhGtSFSDgsttFAOhXLCCCeUTyT3rqTdOQ2lw==
+X-Received: by 2002:adf:f0cd:0:b0:34d:7cdf:7fb3 with SMTP id x13-20020adff0cd000000b0034d7cdf7fb3mr7405652wro.62.1715011121850;
+        Mon, 06 May 2024 08:58:41 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id u17-20020a05600c19d100b0041bb11ff5a7sm20325100wmq.8.2024.05.06.08.58.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 08:58:41 -0700 (PDT)
+Date: Mon, 6 May 2024 17:58:39 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: yoann.congal@smile.fr
+Cc: linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	x86@kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Borislav Petkov <bp@alien8.de>, Darren Hart <dvhart@infradead.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Subject: Re: [PATCH RESEND v6 0/3] printk: CONFIG_BASE_SMALL fix for
+ LOG_CPU_MAX_BUF_SHIFT and removal of CONFIG_BASE_FULL
+Message-ID: <Zjj-L-FuVyMmRPth@pathway.suse.cz>
+References: <20240505080343.1471198-1-yoann.congal@smile.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zjj3Lrv2NNHLEzzk@google.com>
+In-Reply-To: <20240505080343.1471198-1-yoann.congal@smile.fr>
 
-On Mon, May 06, 2024 at 08:28:46AM -0700, Sean Christopherson wrote:
-> The only way the WARN could have fired without this series is if VMX is enabled
-> in BIOS on the boot CPU, but disabled by BIOS on one more secondary CPUs.  And
-> _that_ is a bogus setup that (a) the kernel absolutely should WARN about, and
-> (b) _still_ occurs with one or both patches applied.
+On Sun 2024-05-05 10:03:40, yoann.congal@smile.fr wrote:
+> From: Yoann Congal <yoann.congal@smile.fr>
+> 
+> This series focuses on CONFIG_BASE_SMALL.
+> The first patch fixes LOG_CPU_MAX_BUF_SHIFT when CONFIG_BASE_SMALL is
+> used.
+> The second patch globally changes the type of CONFIG_BASE_SMALL and
+> adapts usages.
+> The third patch removes the now redundant BASE_FULL, puts BASE_SMALL
+> in its place in the config menus and updates usages in defconfigs.
 
-Right, that's my suspicion too.
+The patchset has been committed into printk/linux.git,
+branch for-6.10-base-small.
 
-> So I don't see how this series could possibly have fixed the issue Oliver
-> encountered, nor do I see any value in moving init_ia32_feat_ctl() into
-> early_init_intel().
-
-Hm, right. I should've done this from the very beginning:
-
-Oliver, can you please run the below debugging patch *without* any other
-patches ontop of latest Linus master?
-
-Also pls send /proc/cpuinfo and dmesg.
-
-Thx.
-
----
-diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index 1640ae76548f..74d2f0a351aa 100644
---- a/arch/x86/kernel/cpu/feat_ctl.c
-+++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -117,8 +117,14 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
- 	bool tboot = tboot_enabled();
- 	bool enable_vmx;
- 	u64 msr;
-+	int ret;
- 
--	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
-+	ret = rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr);
-+
-+	pr_info("%s: CPU%d: FEAT_CTL: 0x%llx, tboot: %d\n",
-+		__func__, c->cpu_index, msr, tboot);
-+
-+	if (ret) {
- 		clear_cpu_cap(c, X86_FEATURE_VMX);
- 		clear_cpu_cap(c, X86_FEATURE_SGX);
- 		return;
-@@ -165,6 +171,9 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
- 			msr |= FEAT_CTL_SGX_LC_ENABLED;
- 	}
- 
-+	pr_info("%s: CPU%d: Write FEAT_CTL: 0x%llx\n",
-+		__func__, c->cpu_index, msr);
-+
- 	wrmsrl(MSR_IA32_FEAT_CTL, msr);
- 
- update_caps:
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Best Regards,
+Petr
 
