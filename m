@@ -1,146 +1,126 @@
-Return-Path: <linux-kernel+bounces-170354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53A38BD591
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:43:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3958BD596
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99038B218AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5742812BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9751615ADA4;
-	Mon,  6 May 2024 19:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27B715ADB5;
+	Mon,  6 May 2024 19:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8/zrvH2"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCzE4tmW"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAEA15749D
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B9615749D;
+	Mon,  6 May 2024 19:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715024616; cv=none; b=V78PikNhkexhdYlxAQUMDibTApAu+UvPzBGQdwezO7DRPD/2hyZBSc+CU7T8JIKXauRHbn4+NWqsqktgpdbMAmrZQ9b0KDFCwubZYxXdy0EIYcWRYNRTrEk4iMuHJneN1UpI7VkUPi78ToFFqiOZYsHe+dCDn23eyxlTkEjwUQQ=
+	t=1715024641; cv=none; b=atMrV7bgqns+IcqjeIyMaa7IImTRKE/LRQAdTFXTTDV2TiOsKrCoC5BAAl+5rSRp93sv6lyqgOJ/F9Z5enFFCMk6MC/ZzmGqWib7g/Xyly0cqw3jaZsC6tneIS9vC9i/y+sFkgp2vQksfef4/aT0oJhthJ5mvjXNLnZ/K+e/O5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715024616; c=relaxed/simple;
-	bh=DKq1/S1mvND3bjPrxatyn7VET9OItUwcH7q3NBufJKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JdSTn8DXbX5hdjuFNovsX/h4Z8sH2nohJV92tygJ96i/QSRMpKnDLYfbaSda7j+Qn87+ek1C88hqOocDjsR9P0nuU/iTNRqr8kimiCOTNh7VgpPpB7tBmLTsyQGQvXkG3lonID9xd2I9vz17Vuuct+4ruX8Vzyy2iWKW9k78gCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8/zrvH2; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b3c711dfd3so1832458a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:43:35 -0700 (PDT)
+	s=arc-20240116; t=1715024641; c=relaxed/simple;
+	bh=2I3ypQET8Udotp792qx7UWQr9MVhlBbMPpS0T9SwA9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j8wFN6q+WRThO9GQknoY2d4lmSjkHlWOt2TzMaqKm9W3d3AJhWm38Ob8zMxOtpiQnZR7+VVi/lMRy8rp8eegTSJNuFNQalQyz3r8hf3BrTuzFCcnOwrghN92kE6onXNQOUZGA6Etl5W00TQ8+TQsydhnWRH8shHhevh8uyMWfn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCzE4tmW; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59cf8140d0so310416666b.3;
+        Mon, 06 May 2024 12:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715024615; x=1715629415; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HfyTe+aA68nIYMVD5N9eoPdgr6eemqU/CSX3fB6JqgI=;
-        b=s8/zrvH2PP02FyIYUm630fpQIr9AuuQb5IXm7WAjLE48zxIUHC8KQKZDK/z+rN8op3
-         DQno0AK92LsNAU8WkmlbkI1KH2/p6mPP1bCod2kBvvXKgIgpj00vfdJufhZcytPaiSoe
-         PWRsmrVdRDCacYvREfGSiKaQBTXDdG6/bctIdvVMxksvSZLwRG1z+kfcRlJmbhpRzLpH
-         lSk6M3ILILmcYacZSojev5M7qUqmatQ9+PKpFP7PAA9mUAxDWunBFiGN9k0p1SaBxKsc
-         MgjQ+/AZBIdapT+Olj+l/E9sIPKY/e4nJAtxq1fxs4WZpt9Kh+0Sf3fx5mw/9mhMZ2ut
-         tnpg==
+        d=gmail.com; s=20230601; t=1715024638; x=1715629438; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4nG5Ru4AQ6B28lW7pREyT/j4oSGmxSZ0QdDsskHOqY=;
+        b=CCzE4tmWhGCm8wUKZTn8RCkvfpj3NJB2Gh+KpbdcxrrZDMeOhokLesSixCuHmGFK6C
+         aPVFyHkJyocKRZM20AfpakMGcGLNfZDfs3OpK0900TUk9FvL54yiJheH5zJNARQbXY80
+         0aWztXYBCICfKCSAsq6/MQ8Wa3XSRgGStVsY7OdE1r/yZpCRuX72c/OFBORQXWNnJwZp
+         skJpeZPrrwn/oC17B/WSouptYxlyJmkFYEBw1hv1qFEm9yGCnxO0+rB3y+508RTyjICn
+         fDafmWewIo9koi8i+QI+Kv4tsJ5B/gtrPYM8au1ATqmG4zipFKFaHolIPjCdZdOzwnVt
+         9p9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715024615; x=1715629415;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HfyTe+aA68nIYMVD5N9eoPdgr6eemqU/CSX3fB6JqgI=;
-        b=v+zCC8HnFpbGU+FTb9jIOwR3JmGnaIgETV0n0WsT4Wvcv1GLV5WwWJ4qdWWxRNxqDn
-         YoUGJq4XgzAqtPKw5tJ3IRKOlCGhjzAXkwVg+x+wNYFKu5K/vwuhnyefzMEnxXgE4D87
-         XVPI7SirSW6zUuwlf1hfPKbX/J5mfXCbAl/O4H0j1IMFBaR9kzTIyV/5gjR3lKi4bTKv
-         OLc9wlu2dWxY9m0Uo8QdNBdEJbGUNCKGUloARK24muAv1bn5VDYk4IU08Fu+4n/tH5ce
-         ays4GrcZUI5ym+S1JCTKRrx2Z0KZBPUtAJaL6FTI/CbSgRmCfASVQqP24V5N4/xvvCuC
-         zYQw==
-X-Forwarded-Encrypted: i=1; AJvYcCX41WFcpEVzD9TCZwWwfXouf1QTvRvKPr0hxBD+xMJrIFL39hO7sfG2Vc/gyf0DmvmGsiPCuce8w7u2p4J09eJrypnsmcvnTgvVn8o1
-X-Gm-Message-State: AOJu0Yy65ujdvSmLJIsy316rdJ+j0l+GrsooI2l2k+h3/KorCDsEblm0
-	C9tRy9y5b/VDDk/6HhuB5W/hCGf4fIBPjTtD3ChpjxOgdla2hhJibDzOVzLS8Cg=
-X-Google-Smtp-Source: AGHT+IGkB7X6GUEdfi+4pYo7W9/+lkuI+IkhEHYzDeewt/ILJR/tYZgRUhk8GJOD/BNtvf2Lt54RFg==
-X-Received: by 2002:a17:90a:68ce:b0:2a5:badb:30ea with SMTP id q14-20020a17090a68ce00b002a5badb30eamr9053231pjj.36.1715024614703;
-        Mon, 06 May 2024 12:43:34 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:d0a8:32b:6e71:43af])
-        by smtp.gmail.com with ESMTPSA id st12-20020a17090b1fcc00b002a5d62a7e75sm10393094pjb.52.2024.05.06.12.43.33
+        d=1e100.net; s=20230601; t=1715024638; x=1715629438;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V4nG5Ru4AQ6B28lW7pREyT/j4oSGmxSZ0QdDsskHOqY=;
+        b=noMPbEarIzmbJqvWxjN4m1zFq3vp0ochbUnY1CChKGC0r+u6tLRieDEVAdUGMO9WhO
+         oKiLek8nQZKTWI46KvZ+Fv3slSBHJUiajK/EZt47dOQhZuQ4SSNromdkqZKr4Kel19ru
+         XnC13S25FX+dR7Ra7flzVK6CD/KLslZIquXUp2afmfagK0Nntf4poFGXvSmU3/aBxTM3
+         Bx0wXX84OleFirpsJaDp7fSeiqn13vgDE8vmsmodnWjLx7hUCbwcvGFB7ImM9wBmKYP2
+         fsjXdsB0ljRnYTAAswb90nshREfwdk1D0Snl0XTC7P2sK3fKJq4a2+gvlG4nt0aXVLTG
+         5aBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBibyVxj9o4vy9hs/JlYgzf6P8wJJ1fpgyCCQf08UIA0S06/J7EMLd/UsnVJw6obMKkVsqR1uvl9Kv84u7SGkgmhPfWc2DsZWQ3dF8eBpTN/geP8C7Ml6Fy5ZOd/ISsK+K/Yr3PaydhA33w23AgQx1D3Dqg62fj5YpnB0R6CI7s8e0RQ==
+X-Gm-Message-State: AOJu0Yzb4AEdG6mgXDRr1fRBKz1+VVJ8wxb6RPfKD7+IFEA87JoH9/wB
+	8xwklkXl1vvKzzHrwSN+67sWboWlqcdnogREfqQUFqutttI8jP8=
+X-Google-Smtp-Source: AGHT+IG5wO/BC2YkyOc0seTpxcAbP5RUVkEbXlDffmS6YgXfw+RgMayivTNE82/BCMH/QU9lmivYAQ==
+X-Received: by 2002:a17:907:94ca:b0:a59:cb29:3fb2 with SMTP id dn10-20020a17090794ca00b00a59cb293fb2mr3186521ejc.57.1715024637718;
+        Mon, 06 May 2024 12:43:57 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:1c62:e77:6753:5729])
+        by smtp.gmail.com with ESMTPSA id f13-20020a1709067f8d00b00a59d146f034sm1367321ejr.132.2024.05.06.12.43.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 12:43:34 -0700 (PDT)
-Date: Mon, 6 May 2024 13:43:29 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
-	hnagalla@ti.com, devarsht@ti.com, nm@ti.com, s-anna@ti.com,
-	u-kumar1@ti.com
-Subject: Re: [PATCH] remoteproc: k3-r5: Jump to error handling labels in
- start/stop errors
-Message-ID: <Zjky4V7dAcaDKjL3@p14s>
-References: <20240506141849.1735679-1-b-padhi@ti.com>
+        Mon, 06 May 2024 12:43:57 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH 0/7] Add DSI support for RK3128
+Date: Mon,  6 May 2024 21:43:35 +0200
+Message-ID: <20240506194343.282119-1-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506141849.1735679-1-b-padhi@ti.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 06, 2024 at 07:48:49PM +0530, Beleswar Padhi wrote:
-> In case of errors during core start operation from sysfs, the driver
-> directly returns with the -EPERM error code. Fix this to ensure that
-> mailbox channels are freed on error before returning by jumping to the
-> 'put_mbox' error handling label. Similarly, jump to the 'out' error
-> handling label to return with required -EPERM error code during the
-> core stop operation from sysfs.
-> 
-> Fixes: 3c8a9066d584 ("remoteproc: k3-r5: Do not allow core1 to power up before core0 via sysfs")
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> As stated in the bug-report[0], Smatch complains that:
-> drivers/remoteproc/ti_k3_r5_remoteproc.c:583 k3_r5_rproc_start() warn: missing unwind goto?
-> drivers/remoteproc/ti_k3_r5_remoteproc.c:651 k3_r5_rproc_stop() warn: missing unwind goto?
-> 
-> This patch addresses the warnings by jumping to appropriate error
-> labels in case an error occurs during start/stop operation from sysfs.
-> 
-> [0]-https://lore.kernel.org/all/acc4f7a0-3bb5-4842-95a5-fb3c3fc8554b@moroto.mountain/
-> 
->  drivers/remoteproc/ti_k3_r5_remoteproc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 1799b4f6d11e..50e486bcfa10 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -580,7 +580,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
->  			dev_err(dev, "%s: can not start core 1 before core 0\n",
->  				__func__);
-> -			return -EPERM;
-> +			ret = -EPERM;
-> +			goto put_mbox;
->  		}
->  
->  		ret = k3_r5_core_run(core);
-> @@ -648,7 +649,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->  		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
->  			dev_err(dev, "%s: can not stop core 0 before core 1\n",
->  				__func__);
-> -			return -EPERM;
-> +			ret = -EPERM;
-> +			goto out;
->  		}
+This series aims to add support for the DesignWare MIPI DSI controller and
+the Innoslicon DPHY found in RK3128 SoCs. The code additions are rather
+tiny: It only need some code in the Rockchip dw-mipi-dsi glue layer for
+this SoC and some changes in the clock driver. Support for the DPHY has
+already been added when the driver was initially submitted. I tested it
+with a 800x1280 DSI panel where all 4 lanes that are supported are used.
 
-Applied
+Alex Bee (7):
+  dt-bindings: display: rockchip,dw-mipi-dsi: Document RK3128 DSI
+  dt-bindings: clock: rk3128: Add PCLK_MIPIPHY
+  clk: rockchip: rk3128: Export PCLK_MIPIPHY
+  clk: rockchip: rk3128: Add hclk_vio_h2p to critical clocks
+  drm/rockchip: dsi: Add support for RK3128
+  ARM: dts: rockchip: Add DPHY for RK3128
+  ARM: dts: rockchip: Add DSI for RK3128
 
-Thanks,
-Mathieu
+ .../rockchip/rockchip,dw-mipi-dsi.yaml        |  2 +
+ arch/arm/boot/dts/rockchip/rk3128.dtsi        | 49 +++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3128.c             |  3 +-
+ .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 20 ++++++++
+ include/dt-bindings/clock/rk3128-cru.h        |  1 +
+ 5 files changed, 74 insertions(+), 1 deletion(-)
 
->  
->  		ret = k3_r5_core_halt(core);
-> -- 
-> 2.34.1
-> 
+-- 
+2.43.2
+
 
