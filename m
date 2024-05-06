@@ -1,186 +1,186 @@
-Return-Path: <linux-kernel+bounces-170042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9818BD10C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:07:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3048BD148
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8051F21FA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43372287AE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E630315445D;
-	Mon,  6 May 2024 15:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D784157492;
+	Mon,  6 May 2024 15:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFFFMoVQ"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzXeuxhZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E7F15359F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC4815534E;
+	Mon,  6 May 2024 15:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715008063; cv=none; b=YT9a3aIOHTZhD10bUHNgJo9WYc5QRKlVryJ+5j9WAZAFmua8tTNjirbmMYyth7ndtlMgtb60ofXIdKye73CDkTGXDWY4zKAG3AdjZjCSfZ+d+qifp8cvQJMvyHws8qoa12Wbmif5XWbhm9BhAzs/6auN7nrRymTaRxjaHP01NJE=
+	t=1715008215; cv=none; b=uZZ5r0nq77C7oNF0+ATPbxx/EaGkcFU3hfLM0hxvg+aeZypUhAe94UCT3Nclr+ozvWCA3tdpLsx7EzcpU+0G/MVNrLDl1Vujb0yP7jrszbJpXfIYzzeizN+jPV4GaAq7Eal75xeTZogQQgJIOhgX0FPedlvEWMVglxtYjwUE4SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715008063; c=relaxed/simple;
-	bh=yqB1rDVuz8T2QPiRcNKDl9cE10YW/62Ppf6xQrl0dE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=njyDEITGogE/rJ1s6xcTGLOIN/xlgp7CMmP1670grZWvkUs3DN19qqXrqx2mthY4gLV348PRMfiD/X8/QWuPwY0abwJxnzqecdoxrC57TeUwfatEzXyvFa5W2wI7+9DNZy68dcCm/Hc6Bw1aGg5OilPvZ6JgnaBplvkwY9QBGeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFFFMoVQ; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-61be599ab77so645200a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:07:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715008061; x=1715612861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=neQGyNV+29mTtk8Q8Cqua5MUdaby9aEM9B8FtgLuJf8=;
-        b=gFFFMoVQTikQ/CdZ4+SOS4cHeepWq3qgokXaadQ9oPKeGswiap64Ndr/K7EibDpend
-         HQiavUztKuO01rhZ6rve3EsaQ8iRtB3UH81fBsDXnoHvadfXHkwkdp0HoDyeigl9zcPP
-         EB2T1q6HBLcmP1G8YFBVDSloBUyA3jtQslHPRBdZoDT04lJKBWue4s6551uErhXLVOJL
-         OHy5FpSqVpwO6A4N83kS2JyAolkw2613QkMdeAviwVEOvKSI7YpQaynF1prAfYmlWVnL
-         2gAci8H3Fzux6Zv7BtwQUccMn9EiIr9ulU7OxsurnPc37DT3WR0o9ntozEf8n7671KhJ
-         n+zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715008061; x=1715612861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=neQGyNV+29mTtk8Q8Cqua5MUdaby9aEM9B8FtgLuJf8=;
-        b=tVrKUrzCDbtlBrzmltujC9t7VpQn2bNfgXDKtEAqGK4LqrP9gUIAh9NvsxOFdbpsI5
-         s5uB0/HUkSKP+T1Qg+wTh6bBhFFDjRQuXbrtBnxvFpiWKDHiozuNL2fBd6Q7eDWDN/Z4
-         4WG1sczjX1i+0k1CrzDcTIJhFShwOLr4jpgVi3xGHEYmJaTwTkvag+7VqdRY8hb6m4T4
-         pNtw+EJ/4Ivzq5AFFbdNWjbbvTTd7d2sv5j5iLGZMZH5wDOcDqcLJ92A9DvEyeioRIHt
-         exhrKX+mZdqbcjtn9MymOQvWXdnJ5O/UREfV7fDR/eYpRCoNkliemUMPFwBlBvM3PPju
-         nXGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpNQB1sB0rMae/GMlAkhdZWfQnOXBj6FRNgMfpko1tAfZsSciylk28lDyVMJc3iSAdhbnYShmOSQihZSYfOI5Uw/w55LymLE1OPCwU
-X-Gm-Message-State: AOJu0YwaC4snLd13J6WPlanD08IMNL2m6Ho9tga9D/4gEfIIwlp+WEhh
-	kP0rED35HWVpXbRpNCjvU6pQD6o24by3VoGZ/uswlOWmV+A8xDb8ZKlJ+EtFfHQnB8oOAyPYAbG
-	5p6MYf0Zx/UP5lZugBAzRysDMPsokWJl2
-X-Google-Smtp-Source: AGHT+IGcvtTriyl/vepdivHRpRJovjDp8Qk11rQQEHS4UyhwdiwsUFxePf3tymHKBuNBmQkAym4sctAcIphE9xIRtWE=
-X-Received: by 2002:a17:90b:11d4:b0:2b2:7c53:2601 with SMTP id
- gv20-20020a17090b11d400b002b27c532601mr8035017pjb.37.1715008061006; Mon, 06
- May 2024 08:07:41 -0700 (PDT)
+	s=arc-20240116; t=1715008215; c=relaxed/simple;
+	bh=4TqHne13Oc3HtRcJPwWDiVQUalvMRuzinffu+3SjKs4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pjNExhjix9cy8mRF1eIrerRCOTeaHKFCChxAV5KxPk4zkUtSSYlwk4wxoYDzqvQRtPkBGA4FS3FS8L15UjaC63vJFvFg8eHY4NAQGdj9Q+l3ACMcVH5qYkULrZZq/z4RIHSm8YzyqBx30YgOyq5WpZT4i5hqSgZN/I/wru9ihcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzXeuxhZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64CDC4DDE1;
+	Mon,  6 May 2024 15:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715008214;
+	bh=4TqHne13Oc3HtRcJPwWDiVQUalvMRuzinffu+3SjKs4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CzXeuxhZHXN0vrxfduiSayDvEdw+1lSD5icC0IQAEkfk8uM3EurAca1hcgAjFAtvc
+	 QT0qoVALHmky1vPIm/Udm3OafipWcyo2aZ7xfmWgCcB2AhlgDz+M/A1BrrrixHU5b+
+	 yNwj6MXvs2ms3QsdIKxBpiNP9ZzH9g7HsspZhwxREijMns6bEZgzO+HXOUH88Em92X
+	 r82+mvFWb10QpXKbBOVXSxqmu9Dl+RBOLbFA70HwfhclAff755ktcqZjkKrPEMTwbe
+	 FvMx/XPrJpEr0oKNW2sspawE5s3xhcezbTk+SX57uhE89ZW8uLfOOkxB/6W05q1Urw
+	 E6Js2lfwqs83Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1s3zyp-000000006C7-0LIZ;
+	Mon, 06 May 2024 17:10:15 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 00/13] arm64: dts: qcom: sc8280xp-x13s: enable pm8008 camera pmic
+Date: Mon,  6 May 2024 17:08:17 +0200
+Message-ID: <20240506150830.23709-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1237381714935562@dmcmxrwo3x2o7y3i.sas.yp-c.yandex.net> <20240505224508.GAZjgL9PO9Y5QaAO2t@fat_crate.local>
-In-Reply-To: <20240505224508.GAZjgL9PO9Y5QaAO2t@fat_crate.local>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 6 May 2024 11:07:29 -0400
-Message-ID: <CADnq5_NNATnV+mTEn6Mshro3gqpH5ffjQ=EWdH8QVZgEBYB-ew@mail.gmail.com>
-Subject: Re: Error in amd driver?
-To: Borislav Petkov <bp@alien8.de>
-Cc: Tranton Baddy <t.baddy@yandex.ru>, amd-gfx@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 6, 2024 at 6:00=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrote=
-:
->
-> + amd-gfx@lists.freedesktop.org
->
-> On Sun, May 05, 2024 at 09:59:22PM +0300, Tranton Baddy wrote:
-> > I have this in my dmesg since version 6.8.6, not sure when it appeared.=
- Is amdgpu driver has bug?
+The Qualcomm PM8008 PMIC is a so called QPNP PMIC with seven LDO
+regulators, a temperature alarm block and two GPIO pins (which are also
+used for interrupt signalling and reset).
 
-Should be fixed in:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3Dd3a9331a6591e9df64791e076f6591f440af51c3
+Unlike previous QPNP PMICs it uses an I2C rather than SPMI interface,
+which has implications for how interrupts are handled.
 
-Alex
+A previous attempt by Qualcomm to upstream support for PM8008 stalled
+two years ago at version 15 after a lot of back and forth discussion on
+how best to describe this device in the devicetree. [1] 
 
-> > [   64.253144] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [   64.253162] BUG: KFENCE: use-after-free read in amdgpu_bo_move+0x51f=
-/0x7a0
-> >
-> > [   64.253183] Use-after-free read at 0x00000000671c48dd (in kfence-#11=
-1):
-> > [   64.253192]  amdgpu_bo_move+0x51f/0x7a0
-> > [   64.253202]  ttm_bo_handle_move_mem+0xcf/0x180
-> > [   64.253211]  ttm_mem_evict_first+0x1c5/0x500
-> > [   64.253218]  ttm_resource_manager_evict_all+0xa3/0x1e0
-> > [   64.253228]  amdgpu_device_prepare+0x66/0x110
-> > [   64.253237]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
-> > [   64.253248]  pci_pm_runtime_suspend+0x74/0x200
-> > [   64.253259]  vga_switcheroo_runtime_suspend+0x21/0xb0
-> > [   64.253268]  __rpm_callback+0x5f/0x190
-> > [   64.253277]  rpm_callback+0x7f/0x90
-> > [   64.253283]  rpm_suspend+0x120/0x6a0
-> > [   64.253290]  pm_runtime_work+0x9c/0xa0
-> > [   64.253297]  process_one_work+0x164/0x330
-> > [   64.253310]  worker_thread+0x302/0x430
-> > [   64.253320]  kthread+0xe4/0x110
-> > [   64.253329]  ret_from_fork+0x4c/0x60
-> > [   64.253341]  ret_from_fork_asm+0x1b/0x30
-> >
-> > [   64.253353] kfence-#111: 0x00000000d018cf03-0x0000000034e821d1, size=
-=3D96, cache=3Dkmalloc-96
-> >
-> > [   64.253363] allocated by task 152 on cpu 3 at 64.248952s:
-> > [   64.253418]  kmalloc_trace+0x283/0x340
-> > [   64.253427]  amdgpu_vram_mgr_new+0x8f/0x3f0
-> > [   64.253435]  ttm_resource_alloc+0x39/0x90
-> > [   64.253444]  ttm_bo_mem_space+0xa4/0x260
-> > [   64.253450]  ttm_mem_evict_first+0x18a/0x500
-> > [   64.253456]  ttm_resource_manager_evict_all+0xa3/0x1e0
-> > [   64.253465]  amdgpu_device_prepare+0x66/0x110
-> > [   64.253472]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
-> > [   64.253481]  pci_pm_runtime_suspend+0x74/0x200
-> > [   64.253489]  vga_switcheroo_runtime_suspend+0x21/0xb0
-> > [   64.253496]  __rpm_callback+0x5f/0x190
-> > [   64.253503]  rpm_callback+0x7f/0x90
-> > [   64.253509]  rpm_suspend+0x120/0x6a0
-> > [   64.253516]  pm_runtime_work+0x9c/0xa0
-> > [   64.253523]  process_one_work+0x164/0x330
-> > [   64.253532]  worker_thread+0x302/0x430
-> > [   64.253542]  kthread+0xe4/0x110
-> > [   64.253550]  ret_from_fork+0x4c/0x60
-> > [   64.253559]  ret_from_fork_asm+0x1b/0x30
-> >
-> > [   64.253570] freed by task 152 on cpu 3 at 64.253117s:
-> > [   64.253582]  ttm_resource_free+0x67/0x90
-> > [   64.253591]  ttm_bo_move_accel_cleanup+0x247/0x2e0
-> > [   64.253598]  amdgpu_bo_move+0x1bd/0x7a0
-> > [   64.253605]  ttm_bo_handle_move_mem+0xcf/0x180
-> > [   64.253612]  ttm_mem_evict_first+0x1c5/0x500
-> > [   64.253618]  ttm_resource_manager_evict_all+0xa3/0x1e0
-> > [   64.253626]  amdgpu_device_prepare+0x66/0x110
-> > [   64.253634]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
-> > [   64.253642]  pci_pm_runtime_suspend+0x74/0x200
-> > [   64.253650]  vga_switcheroo_runtime_suspend+0x21/0xb0
-> > [   64.253658]  __rpm_callback+0x5f/0x190
-> > [   64.253664]  rpm_callback+0x7f/0x90
-> > [   64.253671]  rpm_suspend+0x120/0x6a0
-> > [   64.253677]  pm_runtime_work+0x9c/0xa0
-> > [   64.253684]  process_one_work+0x164/0x330
-> > [   64.253693]  worker_thread+0x302/0x430
-> > [   64.253703]  kthread+0xe4/0x110
-> > [   64.253711]  ret_from_fork+0x4c/0x60
-> > [   64.253723]  ret_from_fork_asm+0x1b/0x30
-> >
-> > [   64.253735] CPU: 3 PID: 152 Comm: kworker/3:2 Tainted: P           O=
-E      6.8.9 #3 e7323d0d25f89e853881fc823e59523bdcc577c6
-> > [   64.253756] Hardware name: Hewlett-Packard HP Pavilion Notebook /80B=
-9, BIOS F.54 05/27/2019
-> > [   64.253761] Workqueue: pm pm_runtime_work
-> > [   64.253771] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
+After reviewing the backstory on this and surveying the current SPMI
+PMIC bindings and implementation, I opted for a new approach that does
+not describe internal details like register offsets and interrupts in
+the devicetree.
+
+The original decision to include registers offsets and internal
+interrupts for SPMI PMICs has led to a number of PMIC dtsi being created
+to avoid copying lots of boiler plate declarations. This in turn causes
+trouble when the PMIC USID address is configurable as the address is
+included in every interrupt specifier.
+
+The current SPMI bindings still do not describe the devices fully and
+additional data is therefore already provided by drivers (e.g.
+additional register blocks, supplies, additional interrupt specifiers).
+
+The fact that PMICs which use two USIDs (addresses) are modelled as two
+separate devices causes trouble, for example, when there are
+dependencies between subfunctions. [2]
+
+Subfunctions also do not necessarily map neatly onto the 256-register
+block partitioning of the SPMI register space, something which has lead
+to unresolved inconsistencies in how functions like PWM are described.
+[3]
+
+In short, it's a bit of a mess.
+
+With the new style of bindings, by contrast, only essential information
+that actually differs between machines would be included in the
+devicetree. The bindings would also be mostly decoupled from the
+implementation, which has started to leak out into the binding (e.g. how
+the QPNP interrupts are handled). This also allows for extending the
+implementation without having to update the binding, which is especially
+important as Qualcomm does not publish any documentation (e.g. to later
+enable regulator over-current protection).
+
+Some PMICs support both I2C and SPMI interfaces (e.g. PM8010) and we
+want to be able to reuse the same bindings regardless of the interface.
+
+As a proof concept I have written a new pmc8280 driver for one of the
+SPMI PMICs in the Lenovo ThinkPad X13s that uses the new style of
+bindings and I've been using that one to control backlight and
+peripheral regulators for a while now. Specifically, the gpio and
+temperature-alarm blocks can be used with some minor updates to the
+current drivers.
+
+That work still needs a bit of polish before posting, but my working PoC
+means that I'm confident enough that the new model will work and that we
+can go ahead and merge regulator support for the PM8008.
+
+This series is specifically needed for the camera sensors in the X13s,
+for which camera subsystem (camss) support has now been merged for 6.10.
+
+The first seven patches are preparatory and can possibly be merged
+separately from the rest of the series. The next two patches drops the
+broken GPIO support for PM8008 which had already been upstreamed. The
+last four patches rework the binding and MFD driver, add support for the
+regulators and enable the camera PMIC on the X13s.
+
+Johan
+
+[1] https://lore.kernel.org/all/1655200111-18357-1-git-send-email-quic_c_skakit@quicinc.com
+[2] https://lore.kernel.org/lkml/20231003152927.15000-3-johan+linaro@kernel.org
+[3] https://lore.kernel.org/r/20220828132648.3624126-3-bryan.odonoghue@linaro.org
+
+
+Johan Hovold (12):
+  dt-bindings: mfd: pm8008: add reset gpio
+  mfd: pm8008: fix regmap irq chip initialisation
+  mfd: pm8008: deassert reset on probe
+  mfd: pm8008: mark regmap structures as const
+  mfd: pm8008: use lower case hex notation
+  mfd: pm8008: rename irq chip
+  mfd: pm8008: drop unused driver data
+  dt-bindings: pinctrl: qcom,pmic-gpio: drop pm8008
+  pinctrl: qcom: spmi-gpio: drop broken pm8008 support
+  dt-bindings: mfd: pm8008: rework binding
+  mfd: pm8008: rework driver
+  arm64: dts: qcom: sc8280xp-x13s: enable pm8008 camera pmic
+
+Satya Priya (1):
+  regulator: add pm8008 pmic regulator driver
+
+ .../devicetree/bindings/mfd/qcom,pm8008.yaml  | 158 ++++++++-----
+ .../bindings/pinctrl/qcom,pmic-gpio.yaml      |   3 -
+ .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 123 ++++++++++
+ drivers/mfd/Kconfig                           |   1 +
+ drivers/mfd/qcom-pm8008.c                     | 163 ++++++++-----
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      |   1 -
+ drivers/regulator/Kconfig                     |   7 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/qcom-pm8008-regulator.c     | 215 ++++++++++++++++++
+ include/dt-bindings/mfd/qcom-pm8008.h         |  19 --
+ 10 files changed, 554 insertions(+), 137 deletions(-)
+ create mode 100644 drivers/regulator/qcom-pm8008-regulator.c
+ delete mode 100644 include/dt-bindings/mfd/qcom-pm8008.h
+
+-- 
+2.43.2
+
 
