@@ -1,290 +1,288 @@
-Return-Path: <linux-kernel+bounces-170503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8254A8BD828
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:20:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192A38BD829
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A63B41C2207F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C8721C22057
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF25E15D5A1;
-	Mon,  6 May 2024 23:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6B415CD7A;
+	Mon,  6 May 2024 23:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAMIomvT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jjnfbbSr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA774155756;
-	Mon,  6 May 2024 23:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B238015533A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 23:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715037633; cv=none; b=B+W8n2A5bm4Rmw7ZyGPixclIw85XT2enKFZ5ntyaLl4t2vsov5BSkg2HMg+tN+sJqpFFLO9/LeCjlWfFWNFCCckpTOUUprQawWELSophU46xzl1EERmwjm0bu4RkzTbHIu3qtpEz1RSMjwShL1WxF7oUkLqZRvaHohmlvDr8/zw=
+	t=1715037730; cv=none; b=HL66I6YoxChw/U7CRrw5cARB7cGmIzjuo+fKtgKODVHVhoYgSd4ifN2ieN2A/HinTBaMLUSXyS/HWKoDZF5fakHYs45CdGlTtCGz5QRMaz9VC15kOH3PT8T8U4Im8bdlzrd46rOMLFFCy1eXr6l+4IinryOGjJ12WQFMnVIDaCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715037633; c=relaxed/simple;
-	bh=mGeX55CzoNaQy2PcjaqTPvV937ILIAHgC31KgXutSvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=UDiHWAv6SU/1B2XzuFHL5ek1joRVwmjSrOJh7K40aA0vMtkzzjHLOUbkcWVxaSki4RwBA8aTgaNjBPv+Pr2W4GYSkD3K6YyfwarrmsZbBWYSTt2Fn/2iIWvkOfJJdXP4DfkY4s+Khd4BsMzTPbOr0326MmWddtBRFszfmdLGLf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAMIomvT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1CEAC116B1;
-	Mon,  6 May 2024 23:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715037633;
-	bh=mGeX55CzoNaQy2PcjaqTPvV937ILIAHgC31KgXutSvk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GAMIomvTmIkZRfJqwzloh1LX74EYz/yUn/GvaIWjZE4tMRoSo2ei0kIHuWPgKruCI
-	 JGfKoxUKW8RhoLwfdfQ6aD4ZKGx9i1n2HQViXoerk6uRIM+8GSERXmLMHSB95VsaIF
-	 W4idb0a5Z2Ygf9AYNnuX8JFPq2Td1qod8V9yoirPbDlRf9KE8/3eebmH2WEoEn0nMs
-	 SlUSVNFvHvsPa8/NV91BEnQ21AvX1FRLBU+iafbRIZItBdkCyGAJ4CjXYL7NExfG/Q
-	 EPT+YjYxG2/RISNHxgqr/WOVhmSC+17g6shU5oz2+psG6E8uM6aRGrtH2dXiuyhXSe
-	 gv/kq7nLzbgyA==
-Date: Mon, 6 May 2024 18:20:31 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Phil Elwell <phil@raspberrypi.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 4/4] PCI: brcmstb: Configure HW CLKREQ# mode
- appropriate for downstream device
-Message-ID: <20240506232031.GA1714174@bhelgaas>
+	s=arc-20240116; t=1715037730; c=relaxed/simple;
+	bh=pDD/TtQRepG4eWnKw+4J2KQKnRea82g6EAoYMCzX8p0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=RS8gba2AOVx9a4TZte/qr6mfZEXR8xosXfmbxT8ZJnLhsHrcsBPlfKeMtq1qP2GSG2EN+6KLmBSaO1AQ2EVhFMa7ZB87z0i6rGeFuFh4i0MlAInR6Kq9x2xlh1QfIumfpOhG5HRMOuxnaziQiE3r0LPWFrTiRFFasGiB0QnB2f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jjnfbbSr; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715037729; x=1746573729;
+  h=date:from:to:cc:subject:message-id;
+  bh=pDD/TtQRepG4eWnKw+4J2KQKnRea82g6EAoYMCzX8p0=;
+  b=jjnfbbSrvPloWrslw7H56kVoH2NErYQdvOMWtkzQPiKWq8iIKWmW7wGs
+   A6fJ9E1X2JkbMx6m2hiYEBj1se1uoitwWBUhp4LgQX7g2rWeIXBDgJn4j
+   KMayKHWKuucexH0KfuzTDf8+tSCFsr4nAVR8BmGgeoURdS8pj5167+fJm
+   +JAswbT6JaS9manKuWoSF17d23zj0xJRZjWZcQ2B4zMi6R6ptWDVbEtV/
+   wlytSFh1ntiBZhgTqg8Cbb44xL+CAymc3efx7AXiIl2gKq0xuSzAMD4wQ
+   KSaRUlYIUkvYdaHnvfL45AgJfZEduQETBb0pt2DzOWG3hdU1M/gm8c+FJ
+   Q==;
+X-CSE-ConnectionGUID: 3ctj1sNERwywKVQirIG59g==
+X-CSE-MsgGUID: K1Xy4QV1TxKvr73tgAMJew==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="22211235"
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="22211235"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 16:22:08 -0700
+X-CSE-ConnectionGUID: nHzj1dgvSWidgVa7WU7/+w==
+X-CSE-MsgGUID: YvsFYk2uSlGwdx0SA9sWjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,259,1708416000"; 
+   d="scan'208";a="28395680"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 06 May 2024 16:22:07 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s47em-00017V-27;
+	Mon, 06 May 2024 23:22:04 +0000
+Date: Tue, 07 May 2024 07:21:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:WIP.fixes] BUILD SUCCESS
+ ae618d03ddbaac84f6f6a37922c5434715f65de5
+Message-ID: <202405070726.8cOxd9Wf-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403213902.26391-5-james.quinlan@broadcom.com>
 
-On Wed, Apr 03, 2024 at 05:39:01PM -0400, Jim Quinlan wrote:
-> The Broadcom STB/CM PCIe HW core, which is also used in RPi SOCs, must be
-> deliberately set by the PCIe RC HW into one of three mutually exclusive
-> modes:
-> 
-> "safe" -- No CLKREQ# expected or required, refclk is always provided.  This
->     mode should work for all devices but is not be capable of any refclk
->     power savings.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.fixes
+branch HEAD: ae618d03ddbaac84f6f6a37922c5434715f65de5  Revert "kbuild: deb-pkg: build binary-arch in parallel"
 
-s/refclk is always provided/the Root Port always supplies Refclk/
+elapsed time: 772m
 
-At least, I assume that's what this means?  The Root Port always
-supplies Refclk regardless of whether a downstream device deasserts
-CLKREQ#?
+configs tested: 196
+configs skipped: 3
 
-The patch doesn't do anything to prevent aspm.c from setting
-PCI_EXP_LNKCTL_CLKREQ_EN, so it looks like Linux may still set the
-"Enable Clock Power Management" bit in downstream devices, but the
-Root Port just ignores the CLKREQ# signal, right?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-s/is not be/is not/
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20240507   gcc  
+arc                   randconfig-002-20240507   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                              allyesconfig   gcc  
+arm                                 defconfig   clang
+arm                   randconfig-001-20240507   gcc  
+arm                   randconfig-002-20240507   clang
+arm                   randconfig-003-20240507   gcc  
+arm                   randconfig-004-20240507   clang
+arm                           spitz_defconfig   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240507   clang
+arm64                 randconfig-002-20240507   clang
+arm64                 randconfig-003-20240507   clang
+arm64                 randconfig-004-20240507   clang
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+csky                  randconfig-001-20240507   gcc  
+csky                  randconfig-002-20240507   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+hexagon               randconfig-001-20240507   clang
+hexagon               randconfig-002-20240507   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240506   gcc  
+i386         buildonly-randconfig-001-20240507   clang
+i386         buildonly-randconfig-002-20240506   clang
+i386         buildonly-randconfig-002-20240507   clang
+i386         buildonly-randconfig-003-20240506   gcc  
+i386         buildonly-randconfig-003-20240507   clang
+i386         buildonly-randconfig-004-20240506   gcc  
+i386         buildonly-randconfig-005-20240506   gcc  
+i386         buildonly-randconfig-006-20240506   clang
+i386         buildonly-randconfig-006-20240507   clang
+i386                                defconfig   clang
+i386                  randconfig-001-20240506   gcc  
+i386                  randconfig-001-20240507   clang
+i386                  randconfig-002-20240506   clang
+i386                  randconfig-003-20240506   gcc  
+i386                  randconfig-003-20240507   clang
+i386                  randconfig-004-20240507   clang
+i386                  randconfig-005-20240507   clang
+i386                  randconfig-006-20240507   clang
+i386                  randconfig-012-20240507   clang
+i386                  randconfig-013-20240507   clang
+i386                  randconfig-016-20240507   clang
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                        allyesconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch             randconfig-001-20240507   gcc  
+loongarch             randconfig-002-20240507   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                           virt_defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                      malta_kvm_defconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                 randconfig-001-20240507   gcc  
+nios2                 randconfig-002-20240507   gcc  
+openrisc                         alldefconfig   gcc  
+openrisc                         allmodconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                randconfig-001-20240507   gcc  
+parisc                randconfig-002-20240507   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+powerpc                    amigaone_defconfig   gcc  
+powerpc                 mpc8313_rdb_defconfig   gcc  
+powerpc                    mvme5100_defconfig   gcc  
+powerpc               randconfig-001-20240507   gcc  
+powerpc               randconfig-002-20240507   clang
+powerpc               randconfig-003-20240507   clang
+powerpc                     tqm8560_defconfig   gcc  
+powerpc64             randconfig-001-20240507   gcc  
+powerpc64             randconfig-002-20240507   gcc  
+powerpc64             randconfig-003-20240507   clang
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+riscv                 randconfig-001-20240507   clang
+riscv                 randconfig-002-20240507   gcc  
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+s390                  randconfig-001-20240507   gcc  
+s390                  randconfig-002-20240507   clang
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                    randconfig-001-20240507   gcc  
+sh                    randconfig-002-20240507   gcc  
+sh                           se7705_defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                       sparc64_defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+sparc64               randconfig-001-20240507   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                    randconfig-002-20240507   clang
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240506   gcc  
+x86_64       buildonly-randconfig-001-20240507   clang
+x86_64       buildonly-randconfig-002-20240506   gcc  
+x86_64       buildonly-randconfig-002-20240507   clang
+x86_64       buildonly-randconfig-003-20240506   gcc  
+x86_64       buildonly-randconfig-003-20240507   clang
+x86_64       buildonly-randconfig-004-20240506   clang
+x86_64       buildonly-randconfig-004-20240507   clang
+x86_64       buildonly-randconfig-005-20240506   clang
+x86_64       buildonly-randconfig-005-20240507   clang
+x86_64       buildonly-randconfig-006-20240506   gcc  
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20240506   clang
+x86_64                randconfig-002-20240506   clang
+x86_64                randconfig-002-20240507   clang
+x86_64                randconfig-003-20240506   clang
+x86_64                randconfig-003-20240507   clang
+x86_64                randconfig-004-20240506   clang
+x86_64                randconfig-005-20240506   clang
+x86_64                randconfig-006-20240506   clang
+x86_64                randconfig-011-20240506   gcc  
+x86_64                randconfig-012-20240506   gcc  
+x86_64                randconfig-012-20240507   clang
+x86_64                randconfig-013-20240506   gcc  
+x86_64                randconfig-013-20240507   clang
+x86_64                randconfig-014-20240506   gcc  
+x86_64                randconfig-014-20240507   clang
+x86_64                randconfig-015-20240506   gcc  
+x86_64                randconfig-015-20240507   clang
+x86_64                randconfig-016-20240506   gcc  
+x86_64                randconfig-016-20240507   clang
+x86_64                randconfig-071-20240506   gcc  
+x86_64                randconfig-072-20240506   clang
+x86_64                randconfig-073-20240506   gcc  
+x86_64                randconfig-073-20240507   clang
+x86_64                randconfig-074-20240506   clang
+x86_64                randconfig-074-20240507   clang
+x86_64                randconfig-075-20240506   gcc  
+x86_64                randconfig-075-20240507   clang
+x86_64                randconfig-076-20240506   clang
+x86_64                randconfig-076-20240507   clang
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa                            allnoconfig   gcc  
+xtensa                           allyesconfig   gcc  
+xtensa                  audio_kc705_defconfig   gcc  
+xtensa                  nommu_kc705_defconfig   gcc  
 
-> "no-l1ss" -- CLKREQ# is expected to be driven by the downstream device for
->     CPM and ASPM L0s and L1.  Provides Clock Power Management, L0s, and L1,
->     but cannot provide L1 substate (L1SS) power savings. If the downstream
->     device connected to the RC is L1SS capable AND the OS enables L1SS, all
->     PCIe traffic may abruptly halt, potentially hanging the system.
-
-s/CPM/Clock Power Management (CPM)/ and then you can use "CPM" for the
-*second* reference here.
-
-It *looks* like we should never see this PCIe hang because with this
-setting you don't advertise L1SS in the Root Port, so the OS should
-never enable L1SS, at least for that link.  Right?
-
-If we never enable L1SS in the case where it could cause a hang, why
-mention the possibility here?
-
-I assume that if the downstream device is a Switch, L1SS is unsafe for
-the Root Port to Switch link, but it could still be used for the link
-between the Switch and whatever is below it?
-
-> "default" -- Bidirectional CLKREQ# between the RC and downstream device.
->     Provides ASPM L0s, L1, and L1SS, but not compliant to provide Clock
->     Power Management; specifically, may not be able to meet the T_CLRon max
->     timing of 400ns as specified in "Dynamic Clock Control", section
->     3.2.5.2.2 of the PCIe Express Mini CEM 2.1 specification.  This
->     situation is atypical and should happen only with older devices.
-
-IIUC this T_CLRon timing issue is with the STB/CM *Root Port*, but the
-last sentence refers to "older devices," which sounds like it means
-"older devices that might be plugged into the Root Port."  That would
-suggest the issue is with those devices, not iwth the STB/CM Root
-Port.
-
-Or maybe this is meant to refer to older STB/CM Root Ports?
-
-> Previously, this driver always set the mode to "no-l1ss", as almost all
-> STB/CM boards operate in this mode.  But now there is interest in
-> activating L1SS power savings from STB/CM customers, which requires
-> "default" mode.  In addition, a bug was filed for RPi4 CM platform because
-> most devices did not work in "no-l1ss" mode (see link below).
-
-I'm having a hard time reconciling "almost all STB/CM boards operate
-in 'no-l1ss' mode" with "most devices did not work in 'no-l1ss' mode."
-They sound contradictory.
-
-> Note that the mode is specified by the DT property "brcm,clkreq-mode".  If
-> this property is omitted, then "default" mode is chosen.
-
-As a user, how do I determine which setting to use?
-
-Trial and error?  If so, how do I identify the errors?
-
-Obviously "default" is the best, so I assume I would try that first.
-If something is flaky (whatever that means), I would fall back to
-"no-l1ss", which gets me Clock PM, L0s, and L1, right?  In what
-situation does "no-l1ss" fail, and how do I tell that it fails?
-
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=217276
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 79 ++++++++++++++++++++++++---
->  1 file changed, 70 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 3d08b92d5bb8..3dc8511e6f58 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -48,6 +48,9 @@
->  #define PCIE_RC_CFG_PRIV1_LINK_CAPABILITY			0x04dc
->  #define  PCIE_RC_CFG_PRIV1_LINK_CAPABILITY_ASPM_SUPPORT_MASK	0xc00
->  
-> +#define PCIE_RC_CFG_PRIV1_ROOT_CAP			0x4f8
-> +#define  PCIE_RC_CFG_PRIV1_ROOT_CAP_L1SS_MODE_MASK	0xf8
-> +
->  #define PCIE_RC_DL_MDIO_ADDR				0x1100
->  #define PCIE_RC_DL_MDIO_WR_DATA				0x1104
->  #define PCIE_RC_DL_MDIO_RD_DATA				0x1108
-> @@ -121,9 +124,12 @@
->  
->  #define PCIE_MISC_HARD_PCIE_HARD_DEBUG					0x4204
->  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK	0x2
-> +#define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK		0x200000
->  #define  PCIE_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x08000000
->  #define  PCIE_BMIPS_MISC_HARD_PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x00800000
-> -
-> +#define  PCIE_CLKREQ_MASK \
-> +	  (PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK | \
-> +	   PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK)
->  
->  #define PCIE_INTR2_CPU_BASE		0x4300
->  #define PCIE_MSI_INTR2_BASE		0x4500
-> @@ -1100,13 +1106,73 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
->  	return 0;
->  }
->  
-> +static void brcm_config_clkreq(struct brcm_pcie *pcie)
-> +{
-> +	static const char err_msg[] = "invalid 'brcm,clkreq-mode' DT string\n";
-> +	const char *mode = "default";
-> +	u32 clkreq_cntl;
-> +	int ret, tmp;
-> +
-> +	ret = of_property_read_string(pcie->np, "brcm,clkreq-mode", &mode);
-> +	if (ret && ret != -EINVAL) {
-> +		dev_err(pcie->dev, err_msg);
-> +		mode = "safe";
-> +	}
-> +
-> +	/* Start out assuming safe mode (both mode bits cleared) */
-> +	clkreq_cntl = readl(pcie->base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
-> +	clkreq_cntl &= ~PCIE_CLKREQ_MASK;
-> +
-> +	if (strcmp(mode, "no-l1ss") == 0) {
-> +		/*
-> +		 * "no-l1ss" -- Provides Clock Power Management, L0s, and
-> +		 * L1, but cannot provide L1 substate (L1SS) power
-> +		 * savings. If the downstream device connected to the RC is
-> +		 * L1SS capable AND the OS enables L1SS, all PCIe traffic
-> +		 * may abruptly halt, potentially hanging the system.
-> +		 */
-> +		clkreq_cntl |= PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK;
-> +		/*
-> +		 * We want to un-advertise L1 substates because if the OS
-> +		 * tries to configure the controller into using L1 substate
-> +		 * power savings it may fail or hang when the RC HW is in
-> +		 * "no-l1ss" mode.
-> +		 */
-> +		tmp = readl(pcie->base + PCIE_RC_CFG_PRIV1_ROOT_CAP);
-> +		u32p_replace_bits(&tmp, 2, PCIE_RC_CFG_PRIV1_ROOT_CAP_L1SS_MODE_MASK);
-> +		writel(tmp, pcie->base + PCIE_RC_CFG_PRIV1_ROOT_CAP);
-> +
-> +	} else if (strcmp(mode, "default") == 0) {
-> +		/*
-> +		 * "default" -- Provides L0s, L1, and L1SS, but not
-> +		 * compliant to provide Clock Power Management;
-> +		 * specifically, may not be able to meet the Tclron max
-> +		 * timing of 400ns as specified in "Dynamic Clock Control",
-> +		 * section 3.2.5.2.2 of the PCIe spec.  This situation is
-> +		 * atypical and should happen only with older devices.
-> +		 */
-> +		clkreq_cntl |= PCIE_MISC_HARD_PCIE_HARD_DEBUG_L1SS_ENABLE_MASK;
-> +
-> +	} else {
-> +		/*
-> +		 * "safe" -- No power savings; refclk is driven by RC
-> +		 * unconditionally.
-> +		 */
-> +		if (strcmp(mode, "safe") != 0)
-> +			dev_err(pcie->dev, err_msg);
-> +		mode = "safe";
-> +	}
-> +	writel(clkreq_cntl, pcie->base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
-> +
-> +	dev_info(pcie->dev, "clkreq-mode set to %s\n", mode);
-> +}
-> +
->  static int brcm_pcie_start_link(struct brcm_pcie *pcie)
->  {
->  	struct device *dev = pcie->dev;
->  	void __iomem *base = pcie->base;
->  	u16 nlw, cls, lnksta;
->  	bool ssc_good = false;
-> -	u32 tmp;
->  	int ret, i;
->  
->  	/* Unassert the fundamental reset */
-> @@ -1138,6 +1204,8 @@ static int brcm_pcie_start_link(struct brcm_pcie *pcie)
->  	 */
->  	brcm_extend_internal_bus_timeout(pcie, BRCM_LTR_MAX_NS + 1000);
->  
-> +	brcm_config_clkreq(pcie);
-> +
->  	if (pcie->gen)
->  		brcm_pcie_set_gen(pcie, pcie->gen);
->  
-> @@ -1156,13 +1224,6 @@ static int brcm_pcie_start_link(struct brcm_pcie *pcie)
->  		 pci_speed_string(pcie_link_speed[cls]), nlw,
->  		 ssc_good ? "(SSC)" : "(!SSC)");
->  
-> -	/*
-> -	 * Refclk from RC should be gated with CLKREQ# input when ASPM L0s,L1
-> -	 * is enabled => setting the CLKREQ_DEBUG_ENABLE field to 1.
-> -	 */
-> -	tmp = readl(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
-> -	tmp |= PCIE_MISC_HARD_PCIE_HARD_DEBUG_CLKREQ_DEBUG_ENABLE_MASK;
-> -	writel(tmp, base + PCIE_MISC_HARD_PCIE_HARD_DEBUG);
->  
->  	return 0;
->  }
-> -- 
-> 2.17.1
-> 
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
