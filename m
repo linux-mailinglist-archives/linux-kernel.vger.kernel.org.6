@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-170273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA37D8BD453
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:03:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C198BD455
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4BF32841F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:03:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9250B240CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F31158D84;
-	Mon,  6 May 2024 18:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF91158D69;
+	Mon,  6 May 2024 18:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhkBB7in"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fLYxhcll"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360D3158845;
-	Mon,  6 May 2024 18:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB34C158842;
+	Mon,  6 May 2024 18:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715018565; cv=none; b=fKLX/ATH5C/Oy5MWIEPgkUhoWVl1zNnZVuT1Zmco7msotpW83lnPWiFWBK9OLvw2f0fCkmaQaKT1E4BuPuO0wO4t8peOEYzdEaS0GX3f7is/jDb9t+cUtRb5kqXmyAT4nx4R/t08KX20GtJ+0ho+oiQqBMVT9X6OBIu6rajTAnE=
+	t=1715018601; cv=none; b=KIxGE1D5tQI5UWmzCuwrb7Mcet5uicJp5Jxg33aPZyUwpfbmVFQmRwvDcvx6xMWpFdZljeJgKFAjMLWhBD1x1+15pLuEBU7Fgy3ANCX1iaiXY8a13lfepawPdkd7G1V3VYdQwmdJaiSAfSYB883SpYYtvjVqhJFRqnyX8KpqeZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715018565; c=relaxed/simple;
-	bh=fqRLeDpMpLEhNJVbHZLCTU75BBCRbuwZMSWodHnJdO0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pF81mP2+1f+JiDsj8mDCK0F9viXkqVKL+4WPN7cfw75zynXLEonWEK/Hdon+hDqiiV6UhbDvfvBjsV0eHyN8UvuTenLJn0soUcJ+tYlqgJFEpC4lAsXuuU1gNy/jyIfGcZOe4+FORXpJq4PUUuPrxhTzmpDsJ2VJ7h19LgSpFqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhkBB7in; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40D56C116B1;
-	Mon,  6 May 2024 18:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715018564;
-	bh=fqRLeDpMpLEhNJVbHZLCTU75BBCRbuwZMSWodHnJdO0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qhkBB7in8mS9W1tIqHCEPWz5aZqW5cfimQodAJooz4TEaNkJOLCX7+MGkuP34BBCq
-	 v9aFDXNjhEBjTusv8n/LIGzL+Ar/JOJInwutge/ypD6XICQWSsgLOl3Z1Db9K4HdCV
-	 Bkmij/ktc1VwJL6egTUmTNt3vH6nd5GfYKNvWj73mMnIN+dHgdwStaytOWY6HVsTGH
-	 YD/cEcOhmatDTuifUAQZA2QD8IJ3JnIi/g5TbtR6hdEu7KBZ53rYmAytXyUaM1ZO3C
-	 Jo4+gsoS3k/m9xpP3sgdJLX3cYV+TLKA13sx16j+/ww9WmF84zDPYhFRAkOMcqK5N6
-	 ZDWNbgu58Nmsg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alex Rusuf <yorha.op@gmail.com>,
-	SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] mm/damon/core: Fix return value from damos_wmark_metric_value
-Date: Mon,  6 May 2024 11:02:38 -0700
-Message-Id: <20240506180238.53842-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715018601; c=relaxed/simple;
+	bh=izYV5SnkwV0c12Eig2SIdtAJCjR1JfpIAddbJoY1rEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJKWl1e2GWs3XyEKLoaUFiuMyFmB6Pla3Fa9+q3PLoLZAApjEnmu+p7z74OqycUiNGk96Q9AJ42DUTPeX1jO4cfsIACvttXazGpCbh46MeVtMS8AnKqjRknOr1fSp1xCgr8E7fZjfET6RmQBSY2Mp9iI7pcAYMrK23dTGb1m5Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fLYxhcll; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1DEED114D;
+	Mon,  6 May 2024 20:03:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715018596;
+	bh=izYV5SnkwV0c12Eig2SIdtAJCjR1JfpIAddbJoY1rEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fLYxhcllt+tsU6Hbx1ND6r1mkY4esOdUEFQ8SUHAlIqXmeIxbbwqcd1hlBkR5FmwN
+	 06QKLdkTCJn6BwtG77HUICWSRVrDveEEpdaslQ8ne/mYgilpkv7x8isjJ1yvBrC7Ou
+	 k44bCttXioMUSO9+lSrVDHMhvoxBNfy22Y+AUQB0=
+Date: Mon, 6 May 2024 21:03:09 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 3/3] media: bcm2835-unicam: Do not replace IRQ retcode
+ during probe
+Message-ID: <20240506180309.GG29108@pendragon.ideasonboard.com>
+References: <20240430-fix-broad-v1-0-cf3b81bf97ff@chromium.org>
+ <20240430-fix-broad-v1-3-cf3b81bf97ff@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240430-fix-broad-v1-3-cf3b81bf97ff@chromium.org>
 
-From: Alex Rusuf <yorha.op@gmail.com>
+Hi Ricardo,
 
-damos_wmark_metric_value's return value is 'unsigned long', so
-returning -EINVAL as 'unsigned long' may turn out to be
-very different from the expected one (using 2's complement) and
-treat as usual matric's value. So, fix that, checking if
-returned value is not 0.
+Thank you for the patch.
 
-Fixes: ee801b7dd782 ("mm/damon/schemes: activate schemes based on a watermarks mechanism")
-Signed-off-by: Alex Rusuf <yorha.op@gmail.com>
-Reviewed-by: SeongJae Park <sj@kernel.org>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
+On Tue, Apr 30, 2024 at 07:51:28AM +0000, Ricardo Ribalda wrote:
+> Use the error code generated by platform_get_irq() and
+> devm_request_irq() as the error code of probe().
+> 
+> It will give a more accurate reason of why it failed.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/platform/broadcom/bcm2835-unicam.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> index b2b23d24da19..0b2729bf4a36 100644
+> --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
+> +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> @@ -2660,17 +2660,13 @@ static int unicam_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	ret = platform_get_irq(pdev, 0);
+> -	if (ret < 0) {
+> -		if (ret != -EPROBE_DEFER)
+> -			ret = -EINVAL;
+> +	if (ret < 0)
+>  		goto err_unicam_put;
+> -	}
 
-Changes from v3
-(https://lore.kernel.org/20240428191439.194027-1-yorha.op@gmail.com)
-- Add Reviewed-by: SeongJae Park <sj@kernel.org>
-- Send to Andrew and linux-mm@ for being merged in mm tree
+I think you can squash the whole patch with 1/3.
 
- mm/damon/core.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+>  
+>  	ret = devm_request_irq(&pdev->dev, ret, unicam_isr, 0,
+>  			       "unicam_capture0", unicam);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Unable to request interrupt\n");
+> -		ret = -EINVAL;
+>  		goto err_unicam_put;
+>  	}
+>  
 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 939ecfcd4641..6392f1cc97a3 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -1481,12 +1481,14 @@ static bool kdamond_need_stop(struct damon_ctx *ctx)
- 	return true;
- }
- 
--static unsigned long damos_wmark_metric_value(enum damos_wmark_metric metric)
-+static int damos_get_wmark_metric_value(enum damos_wmark_metric metric,
-+					unsigned long *metric_value)
- {
- 	switch (metric) {
- 	case DAMOS_WMARK_FREE_MEM_RATE:
--		return global_zone_page_state(NR_FREE_PAGES) * 1000 /
-+		*metric_value = global_zone_page_state(NR_FREE_PAGES) * 1000 /
- 		       totalram_pages();
-+		return 0;
- 	default:
- 		break;
- 	}
-@@ -1501,10 +1503,9 @@ static unsigned long damos_wmark_wait_us(struct damos *scheme)
- {
- 	unsigned long metric;
- 
--	if (scheme->wmarks.metric == DAMOS_WMARK_NONE)
-+	if (damos_get_wmark_metric_value(scheme->wmarks.metric, &metric))
- 		return 0;
- 
--	metric = damos_wmark_metric_value(scheme->wmarks.metric);
- 	/* higher than high watermark or lower than low watermark */
- 	if (metric > scheme->wmarks.high || scheme->wmarks.low > metric) {
- 		if (scheme->wmarks.activated)
 -- 
-2.39.2
+Regards,
 
+Laurent Pinchart
 
