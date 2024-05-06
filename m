@@ -1,102 +1,180 @@
-Return-Path: <linux-kernel+bounces-170012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48308BD090
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:44:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B25A8BD095
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20674B24CF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD351F21D36
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62381534EF;
-	Mon,  6 May 2024 14:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C842E1534FD;
+	Mon,  6 May 2024 14:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2gQ737D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vA3nbQRs"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE12153512;
-	Mon,  6 May 2024 14:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BD7153BF2
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006669; cv=none; b=o6UsoqFOsgf7QHkMe3sfGLs887SxskvXrKqJ0/KqLlGdCrHK+E+xYgfZQZsBtWDuSc5yX1+wpWk9w4LwsI9Yh+yk7RlYIryTyz01YhuIgGy3tZTFXDGw5krFqubYk229MWfFUkmYzulSvTtqXzoXSHxqGrqetF32Ym0OMqToeX8=
+	t=1715006681; cv=none; b=qZOR9cwtyxE+Z+nJt3WXPzA+3VyVZ8E6LgfbkBC8MmgVunFIQMi4bLV6EB9MEW6UEFvi6J3dogLqUCsp14JRoqsaej43FMOkWdxO06j3xAOYsLPDccngGC/LS6gULHXrLRFartzXS/msaJhfbrpjT2SklpsBKeWw4bb/5Dp/En4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006669; c=relaxed/simple;
-	bh=uq6oZxeBr7WCufTCHeNPAoz1p+qOGlvaP1M3ucdx7Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WnMQfY4zpy2R81vYT9hL0awhE5bq2VPMXLmWZibQD7rvkNEkTuskLnVw9X/EhpyFBD/yeSfAukT5CdIvO4D+9CLTjXzLQYic3dXwPUIpJBfedi4tz2N6qCpHp+W1utp61dO3i6+P/QqTdCEfAaNj0KzUyHE6ppQ2QU97dxvNmLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2gQ737D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F52C116B1;
-	Mon,  6 May 2024 14:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715006668;
-	bh=uq6oZxeBr7WCufTCHeNPAoz1p+qOGlvaP1M3ucdx7Qs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K2gQ737D9gG4vUqBYrskOUvA1/bDrCFQRMFYyq2EzdrAtAes5SS1C4TG7BvgZr74L
-	 oalrop/fxRAnzVjQQyg27IzRO7bqt6jvjdVKbgB/sL8GTRS4VUMmWmEd4IlFFd6HyR
-	 UhO6sS5QiKRru1qShuj1fjd7yxCEE8qEwMVKozwoKorON93quWPjxfgNLjUcgVkST7
-	 nvQL7cQi1aMnMjHQzLd2i0wAmuU0wgdiess/XRgexR8voWEpWh2gyiV9yozyNCvdiz
-	 TMCSRP2gekL/1LunQHsdLAfkrmDBvOPKEgArR9aelW8s7UFGe1nIEjMnNAerMjEoNa
-	 Qs+rabREHT6Yg==
-Date: Mon, 6 May 2024 23:44:25 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, John Hubbard <jhubbard@nvidia.com>,
-	Shuah Khan <shuah@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-sound@vger.kernel.org,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kselftest@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] selftests/alsa: missing a return value in unused
- dump_config_tree()
-Message-ID: <ZjjsybLA3VyY0r_N@finisterre.sirena.org.uk>
-References: <20240505210824.55392-1-jhubbard@nvidia.com>
- <875xvrif0c.wl-tiwai@suse.de>
- <a80cb2a2-735d-4539-a758-a536296975cd@perex.cz>
- <87zft3gz8u.wl-tiwai@suse.de>
+	s=arc-20240116; t=1715006681; c=relaxed/simple;
+	bh=gcmU5KHDsIgDieHwyShq1qbTDOmmXgqU5v7T+celYzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WzrVBpbBkwylMEjMbwcyUoV6/u6xIR9UTCGZ3TcrY92Ct+SmnDD5FfpfJR0HQOXm5IMhYSgdAKo3xJ3Hn9dw8o5nEYDd3KanwM9JMQsj9NnyyadoKxyjDxuUJ5WsMOeVejfLGrsFUEUZReRY7c62gguanCmvVGyFyAGLcOFclQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vA3nbQRs; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e060d49f87so15598341fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 07:44:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715006677; x=1715611477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JcJFzkfee7mBqZtFVJndFmi3NW8+eQHyeH5MZMzFDxI=;
+        b=vA3nbQRsL7ul/HhZjlTMujvouLngKlIbzmiRj4GkQAhhQLeSu7j84+V1XjRQjKqW66
+         Twd7Em3bAsarV0bStk9vkrSpEX5CK+AEtRqtZXBC95kc2ANgDVgOL1tQ99DG303LHXe1
+         op9tOqk82bh3Aol7qAzdZVihEJHiOxIVMqC1u9y+IY7oEo+fvssLn1zYuRPOj/Fv0dAH
+         4QgN6Sv7Eyps0AhUmkmyBuJI89NYmU9x3hlA8jsHb635G24brpSIKkp1mjqsOh5C/tg3
+         URXEzZP3+v3JOLhY033M+KGA5HSNNLlKF0OOlLhZfs7R1ndKq+7xlKFs4Re6FFAyyeYI
+         Qo0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715006677; x=1715611477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JcJFzkfee7mBqZtFVJndFmi3NW8+eQHyeH5MZMzFDxI=;
+        b=Kv7lk1MsLcfClnqHLQEM76a6KGbiAAGOvfy/fzeqIIbDvPfP5AqgYN73eXtU7GElfh
+         mGONU9kSntWm75i/yU/cGGPJSLaqbc72N4Ncfr8aIkJROUmYF9f5DK8ltpXIfiENy13B
+         VteLN4wkjJTQmyEIEEu+91SKMf0K21gZtX8qQepVv593VKQ79OZVaeL9CcSHI5AhaSia
+         IzHBT80jid/q1cMyE5jXKAHec+U4RqlJtmLQsz9jl4F8Lwf9ZICxpPoFqZBkbsNXTGjj
+         Ph8fDETbnLRLLZf/ePBOuNh0JLH7pFVzsLss1FL5ABP7xDyW4WdjuaWNLf6MXxRdvxV9
+         YOeg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7p+s8S9/3dzD5y59FsnNIafaNVQd5scA9lzpnsjsyPK36KveHxieYblPkBiOv4oYyfBULAagCLYQqA8EVltp8jysyosl03Xfo16ta
+X-Gm-Message-State: AOJu0YxV7RRjESYrl6jSR69Sl7MGKAGtha9+rNigJjyKIKBHgqt3/Tma
+	Bf7OkZ3vXDk1Oc6+ON7F9IceJIWicKvEoqvJBqS3QGy+wTBQzww976v/NCDILyJCx80f72wTeq2
+	eSAiXbos2RhTU6glUMqW7Rb7htdSEWYRvNvRyXw==
+X-Google-Smtp-Source: AGHT+IE6otZjp+HMHatTlAGvUbU2zdhnxAGZpInuyTDX2RS/6+kqsjoHYSazeUt5BLVh+8RqN+znD2lXAFAwZSwfhe8=
+X-Received: by 2002:a2e:7312:0:b0:2e1:d95b:3735 with SMTP id
+ o18-20020a2e7312000000b002e1d95b3735mr3227506ljc.11.1715006676759; Mon, 06
+ May 2024 07:44:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WzfPT8Mcv1MPlK5X"
-Content-Disposition: inline
-In-Reply-To: <87zft3gz8u.wl-tiwai@suse.de>
-X-Cookie: lisp, v.:
+References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+ <20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
+ <a04d8015ea1606ce1eca86f7eaaa85a1c1b46d7a.camel@gmail.com> <20240506144616.0b90664b@jic23-huawei>
+In-Reply-To: <20240506144616.0b90664b@jic23-huawei>
+From: David Lechner <dlechner@baylibre.com>
+Date: Mon, 6 May 2024 09:44:25 -0500
+Message-ID: <CAMknhBHOXaff__QyU-wFSNNENvs23vDX5n_ddH-Dw3s6-sQ9sg@mail.gmail.com>
+Subject: Re: [PATCH RFC v6 10/10] iio: adc: ad7380: add support for resolution boost
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>, 
+	Julien Stephan <jstephan@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+FYI, Julien is AFK for a bit so I'll try to respond to the non-trivial comm=
+ents.
 
---WzfPT8Mcv1MPlK5X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, May 6, 2024 at 8:46=E2=80=AFAM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Mon, 06 May 2024 10:55:46 +0200
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>
+> > On Wed, 2024-05-01 at 16:55 +0200, Julien Stephan wrote:
+> > > ad738x chips are able to use an additional 2 bits of resolution when
+> > > using oversampling. The 14-bits chips can have up to 16 bits of
+> > > resolution and the 16-bits chips can have up to 18 bits of resolution=
+.
+> > >
+> > > In order to dynamically allow to enable/disable the resolution boost
+> > > feature, we have to set iio realbits/storagebits to the maximum per c=
+hips.
+> > > This means that for iio, data will always be on the higher resolution
+> > > available, and to cope with that we adjust the iio scale and iio offs=
+et
+> > > depending on the resolution boost status.
+> > >
+> > > The available scales can be displayed using the regular _scale_availa=
+ble
+> > > attributes and can be set by writing the regular _scale attribute.
+> > > The available scales depend on the oversampling status.
+> > >
+> > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > >
+> > > ---
+> > >
+> > > In order to support the resolution boost (additional 2 bits of resolu=
+tion)
+> > > we need to set realbits/storagebits to the maximum value i.e :
+> > >   - realbits =3D 16 + 2 =3D 18, and storagebits =3D 32 for 16-bits ch=
+ips
+> > >   - realbits =3D 14 + 2 =3D 16, and storagebits =3D 16 for 14-bits ch=
+ips
+> > >
+> > > For 14-bits chips this does not have a major impact, but this
+> > > has the drawback of forcing 16-bits chip users to always use 32-bits
+> > > words in buffers even if they are not using oversampling and resoluti=
+on
+> > > boost. Is there a better way of implementing this? For example
+> > > implementing dynamic scan_type?
+> > >
+> >
+> > Yeah, I don't think it's that bad in this case. But maybe dynamic scan =
+types is
+> > something we may need at some point yes (or IOW that I would like to se=
+e supported
+> > :)). We do some ADCs (eg: ad4630) where we use questionably use FW prop=
+erties to set
+> > a specific operating mode exactly because we have a different data layo=
+ut (scan
+> > elements) depending on the mode.
+>
+> Yeah. Fixed scan modes were somewhat of a bad design decision a long time=
+ back.
+> However, the big advantage is that it got people to think hard about whet=
+her it is
+> worth supporting low precision modes. For slow devices it very rarely is =
+and
+> forcing people to make a decision and the advantage we never supported
+> low precision on those parts.
+>
+> Having said that there are good reasons for dynamic resolution changing
+> (the main one being the storage case you have here) so I'd be happy to
+> see some patches adding it. It might be easier than I've always thought
+> to bolt on.
+>
+> This and inkernel event consumers have been the two significant features
+> where I keep expecting it to happen, but every time people decide they re=
+ally
+> don't care enough to make them work :(
+>
 
-On Mon, May 06, 2024 at 09:45:21AM +0200, Takashi Iwai wrote:
-> Jaroslav Kysela wrote:
+Supposing we knew someone willing and able :-) ...
 
-> > This function is nice for debugging. I'd prefer to keep it with the fix.
+Do you have any specific requirements for how dynamic resolution
+changing should work? Any particular sticky points we should watch out
+for?
 
-> I'm find in either way; just submit a fix patch, then.
-
-The fix was already submitted as v1, I noticed that the function was
-unused in review.
-
---WzfPT8Mcv1MPlK5X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY47MYACgkQJNaLcl1U
-h9C8bAf+LC3W5csuXsXkW345oPaJXG/mlVRt0y6r3fozBgx8Cq5DdPfTJaUQiYRW
-iZ2f4WDQs5odkSrZ63+uzCuEYl4Go47zHwHiqygtP5Yrk5Yq45VJ2T7lq05mQO8e
-GMaGefQf1Lg3xNK1+bl996iAQxbipI+Z0cWnyylNKujLsCI9Z04AQzCVGdk85qfO
-MxtEj1XlncY8uvocr9zl//g0D2LZ0+FBdoFAf8QFa1xQOXTIcHkCGZpLRmQ0TeFQ
-juk/8jfnhQUYGjw0ihnojiAlSmHfYG0Sq7EnJBMu2Ap3hcJ+uUk356gaHDhz8OfT
-FiaklaOKMNV9+a47NG7ma+lvHF5wHg==
-=P5PN
------END PGP SIGNATURE-----
-
---WzfPT8Mcv1MPlK5X--
+I'm assuming this would just affect the bufferY/*_type attributes,
+i.e. if you write a channel scale attribute to change the resolution,
+then the scan_type info may change and the bufferY/*_type would need
+to be read again.
 
