@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-169325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089EC8BC716
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:42:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977568BC719
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6FDB2812CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:42:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3B70B20DBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAC7482E2;
-	Mon,  6 May 2024 05:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CA447F6B;
+	Mon,  6 May 2024 05:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Wya50mj1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="q2F43vc/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB6B18E3F;
-	Mon,  6 May 2024 05:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD8E3C489;
+	Mon,  6 May 2024 05:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714974135; cv=none; b=OaGTxm2vH0G6ZNZFat7te4m7Bu/54/Cuykaz46vUmF22AQlduzTowXwp8L6OE8Q4I4W+H4JO5+smb6ov+v4RJ6oG+gZvAiL0950uYb3sYOePUXrh+pJDCB3ENk2MF1q6T4H2UdyjV4LxcXqjITRg0oJPAlPkWKE2jXPtTAcHdmU=
+	t=1714974155; cv=none; b=TtD/JTvQZ2t/uv0aw5giP7sGbc/ZjvnDgB5xqMHXbovfXNt0p+1lmOv7oWulXTYE9FSlHBizzsmLr68fMSqkasq9blpLPvj/9w1fm0NaaCVAOUFvEY1ZNVlWyliYBWo97GnCZZzLGaDncRLhFJ35yIZCG88vNGugTFxDc+1Pvi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714974135; c=relaxed/simple;
-	bh=I2gC6db5W94sY/Nje6LL1nITZWWBOZMxi+knIFHED6s=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=UvMQmlhLKvdHGlBBg8TCa14jezH48ag0BQBrqfdT38e4IVMzP1F/zo5Z2CdK2KQ1vbcVPb5yGJQsxXv/2au1TkORoVZ0tjQwgSBFIpNAHPQP8r/cHZ5H5xxKkATkJPm5UeffTjpBpTTjM8XLRmYJ6Gu/yvwXzEyUDPDSPUW9VSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Wya50mj1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4465A4Lf017862;
-	Mon, 6 May 2024 05:42:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	from:to:cc:subject:date:message-id; s=qcppdkim1; bh=RGbz+d0cSA3C
-	BWhPN/b2OFxYrWV8839GXBNsImCm8Pc=; b=Wya50mj1KnX6ccahnifyzXdisUuL
-	+xP92gPC6WOf/FjIhHCwI3+u+RfDKLlGgdMGr1bb/WX1erW4CXuGr8+dWcvuIUBc
-	lqfBT/68/Qd11HcRt2K26JBR09U5diBtS/IsMU2NJVIj+vqyY+535vx1JWabhLYb
-	SztttNjUrm3vlnvtQuaYNAjqi7g56burw9rJuBs1foVcZlwM2LV5Onp6+TwDlwgg
-	oGJgHhMgqdu7+HKVsw+J1LgU8do/N5RNm9BkQPyBPJZ6o2MeJyH4G4cChW6ey24g
-	HHf/KMTzk1D76hOYI8VGe972PN+3QxX5WeMoEnPrFbmdAp9NrZO//WXIrA==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwe6rtn64-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 05:42:09 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 4465g5sP025075;
-	Mon, 6 May 2024 05:42:05 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 3xwe3kdgcb-1;
-	Mon, 06 May 2024 05:42:05 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4465g5Pe025062;
-	Mon, 6 May 2024 05:42:05 GMT
-Received: from hu-sgudaval-hyd.qualcomm.com (hu-dikshita-hyd.qualcomm.com [10.213.110.13])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 4465g5M6025061;
-	Mon, 06 May 2024 05:42:05 +0000
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 347544)
-	id E7B843040; Mon,  6 May 2024 11:12:03 +0530 (+0530)
-From: "Agarwal, Dikshita" <dikshita@qti.qualcomm.com>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>, stable@vger.kernel.org
-Subject: [PATCH v2] media: venus: fix use after free in vdec_close
-Date: Mon,  6 May 2024 11:11:50 +0530
-Message-Id: <1714974110-19175-1-git-send-email-dikshita@qti.qualcomm.com>
-X-Mailer: git-send-email 2.7.4
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Q_PPJDu1W2ORzfZaGO6JQq3JHjkm95gE
-X-Proofpoint-GUID: Q_PPJDu1W2ORzfZaGO6JQq3JHjkm95gE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-06_02,2024-05-03_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- clxscore=1011 mlxscore=0 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 spamscore=0 mlxlogscore=999 malwarescore=0
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2404010003 definitions=main-2405060033
+	s=arc-20240116; t=1714974155; c=relaxed/simple;
+	bh=FVxHa7DCbuAkEtRoVU3UZ9udcjFiVRaoFwKhQHst2EY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=K0raQG6VCbytJbGv3wuN/9SFgOvTaKdHdiZkWStABPhWL27aXjGviTfTP/eyYdF5t7zCdAr05p08kHKOrjta8EqxB6n81LKffyhvf8d1d8G85tKh7riUiQGCHhyjSzKOz5M6eNtBO9WpZd1gFEV6z2S9CAkSNpQGfSdP6s0PWIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=q2F43vc/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1714974148;
+	bh=TVGl1B/xb+oewirMuaud5XuiZSj3wsv5P0RHNSWXHd4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=q2F43vc/3CfTzHrfGlNuOrJ9h+QrV2Kf0rW+CDhONcIGn2J00CaTz9VzoR3vpV+P7
+	 HAu5aL5mlzPR5OvEjV0cDdYRGHenm+ca0XG21Lml5sySVZbzmhZk3IdJOnUcMM56qa
+	 eZ1k5YGAHG7bW5vaHigX8QXsUd0foDEmeXzftxkzB1E9sE8MwhaI6Y2PxxuxkYYXqk
+	 vw1sLAT0EXP1AaLJgJrIFrFmX7Hgh/3NfwkR0ueYayF48FnICjQG3z+jy7+BqHn2XC
+	 xasLOoXAjPIgCPBr0uX9A04sUqjdUnXn0Q/DEaEPbYAVXKuK+j6CD8naPoFOjGafx9
+	 2BYrQa34z2CDQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VXr033Rzyz4wcR;
+	Mon,  6 May 2024 15:42:27 +1000 (AEST)
+Date: Mon, 6 May 2024 15:42:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Greg KH
+ <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the nvmem tree
+Message-ID: <20240506154226.5442be65@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/6X_mtD5XWTMLuOP7lk1HOVX";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+--Sig_/6X_mtD5XWTMLuOP7lk1HOVX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There appears to be a possible use after free with vdec_close().
-The firmware will add buffer release work to the work queue through
-HFI callbacks as a normal part of decoding. Randomly closing the
-decoder device from userspace during normal decoding can incur
-a read after free for inst.
+Hi all,
 
-Fix it by cancelling the work in vdec_close.
+The following commits are also in the char-misc tree as different
+commits (but the same patches):
 
-Cc: stable@vger.kernel.org
-Fixes: af2c3834c ("media: venus: adding core part and helper functions")
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
-Changes since v1:
-- Added fixes and stable tags
+  9e29a1dba59b ("nvmem: meson-mx-efuse: Remove nvmem_device from efuse stru=
+ct")
+  2ce7240c076f ("dt-bindings: nvmem: Add compatible for SC8280XP")
+  af868167a709 ("dt-bindings: nvmem: qcom,spmi-sdam: update maintainer")
+  e5630036dab1 ("dt-bindings: nvmem: Add compatible for sm8450, sm8550 and =
+sm8650")
+  04075398ec4f ("nvmem: lpc18xx_eeprom: Convert to platform remove callback=
+ returning void")
+  ea8f9ec2bbb7 ("nvmem: core: switch to use device_add_groups()")
+  fbd0d725d4fa ("nvmem: sprd: fix module autoloading")
+  fc7d05b8e427 ("nvmem: sc27xx: fix module autoloading")
+  3575d48e5d2f ("nvmem: layouts: sl28vpd: drop driver owner initialization")
+  995b22c48ed0 ("nvmem: layouts: onie-tlv: drop driver owner initialization=
+")
+  e428f11ae8fb ("nvmem: layouts: store owner from modules with nvmem_layout=
+_driver_register()")
 
- drivers/media/platform/qcom/venus/vdec.c | 1 +
- 1 file changed, 1 insertion(+)
+These are commits
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 29130a9..56f8a25 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -1747,6 +1747,7 @@ static int vdec_close(struct file *file)
- 
- 	vdec_pm_get(inst);
- 
-+	cancel_work_sync(&inst->delayed_process_work);
- 	v4l2_m2m_ctx_release(inst->m2m_ctx);
- 	v4l2_m2m_release(inst->m2m_dev);
- 	vdec_ctrl_deinit(inst);
--- 
-2.7.4
+  2a1ad6b75292 ("nvmem: meson-mx-efuse: Remove nvmem_device from efuse stru=
+ct")
+  a5888ae5b3c3 ("dt-bindings: nvmem: Add compatible for SC8280XP")
+  dc5d4043510b ("dt-bindings: nvmem: qcom,spmi-sdam: update maintainer")
+  e2c7d6e02382 ("dt-bindings: nvmem: Add compatible for sm8450, sm8550 and =
+sm8650")
+  693d2f629962 ("nvmem: lpc18xx_eeprom: Convert to platform remove callback=
+ returning void")
+  8d8fc146dd7a ("nvmem: core: switch to use device_add_groups()")
+  154c1ec943e3 ("nvmem: sprd: fix module autoloading")
+  dc3d88ade857 ("nvmem: sc27xx: fix module autoloading")
+  23fd602f2195 ("nvmem: layouts: sl28vpd: drop driver owner initialization")
+  21833338eccb ("nvmem: layouts: onie-tlv: drop driver owner initialization=
+")
+  6d0ca4a2a7e2 ("nvmem: layouts: store owner from modules with nvmem_layout=
+_driver_register()")
 
+in the char-misc tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6X_mtD5XWTMLuOP7lk1HOVX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY4bcIACgkQAVBC80lX
+0GzQiQf/W9Wu7XyIY93fksQTn2crzZLV6Witm9M1FqqlzGu8bjccMUovDAVwhVYR
+VLf3bRR4CDDVCCX0Px6AU4DOypVtrhWkk+bnugpHKABzOU9eMw1KXiRJMfPJ92hb
+wsUKtXVLFz2OzsZwnRTVWzMf6jeiPwy6lvKh/k6k6E+kdVZOvCGS+xYfcmzsIfzT
+SNSDNS6qWN7mcXE0aMDAk3CVeM+fFbHZCiVtgboxq/AWanH4E6wEVVyWJRVChLP/
+dtgkkB+FAGbMdpChF0J8JXk2hTxpy9ZmK4ZDVukTVIk+2WMJ0osHWByIySZshSU0
+zPn9x1GtnPJuxN7JVFQIEMYkR6J71Q==
+=nIO2
+-----END PGP SIGNATURE-----
+
+--Sig_/6X_mtD5XWTMLuOP7lk1HOVX--
 
