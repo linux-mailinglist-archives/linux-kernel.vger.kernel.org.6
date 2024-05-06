@@ -1,112 +1,117 @@
-Return-Path: <linux-kernel+bounces-170240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895D68BD3FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BAC88BD3FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7131F23385
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:43:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0026B1F23351
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D93157E62;
-	Mon,  6 May 2024 17:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5CF157E94;
+	Mon,  6 May 2024 17:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="H2AsBzTH"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CF041HXr"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FDC1F19A;
-	Mon,  6 May 2024 17:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC93A15749A
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 17:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715017414; cv=none; b=ShjB850D+kS5TH96hQ/mFG/3dY7i/eKbR7uYRKLkpIq0b9FFzK8XKCMHymmS6zmxa22b9MPD1vhNkPSho500octTomuEMroGMEfQcRpeqaOIKTU2RkD2fFFwmsQSWKtINAbac8u3foDBMjPSI7m2Nvbe/qdew+Jf7i50hvcwOYQ=
+	t=1715017442; cv=none; b=BhkRmo0ej/hVCWrWkK4vKIxTyZqKgZCAfKlBeZl5pVijpaC9iLlxQLzPe2FANtzIFPTSsud4wVcBbCWDz2QvVFGWSD3iSX939N4XjtdlSETEBTbvw5TPxERr050SmsvXOYC5e9KWm7/wOxctx/X5Sp5oH3f6cqN9EJE1fg7tBDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715017414; c=relaxed/simple;
-	bh=i3HUuCZX9m/2gBCCOy4OI5YZMvQOTnUrERxRlGeDnbM=;
+	s=arc-20240116; t=1715017442; c=relaxed/simple;
+	bh=NrQdyQAmxtGDrr/un2msxGNjav0moWDiCcc8IHL04QU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ow3mZj70BPeZb+6UsvhZ6nZ9AlCGuHKrv+CRGHN9y3s3TfAEYugUftb4jFskFk8IDHACSAuV0Vmko3TMu85r3rIlV+r7H3HpMbtQzrb4XuV2evNBhwFqBWlLyw0RmHMdry/DEVVKOCvaaCAVXOE0Z6V4qyZ2s9vrZdA3IR0mrho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=H2AsBzTH; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715017410;
-	bh=i3HUuCZX9m/2gBCCOy4OI5YZMvQOTnUrERxRlGeDnbM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H2AsBzTHkaZcXzgt/JDQfmrsQAjTfV7J5THSVYd4VDTan9vQQlPM/Vf/aCVQHyQCz
-	 V6blYP+LSUQ3pHyp/rOhQVHCYz/5bdFQPr3XjSIkj4s5UBT3XyCk+CQKvoFce9okmQ
-	 xwqQTIzmKXuS5CQfHEOLLL9v2w5Z74eprETEX2rg=
-Date: Mon, 6 May 2024 19:43:30 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: "Limonciello, Mario" <mario.limonciello@amd.com>
-Cc: Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-kernel@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, "Dustin L. Howett" <dustin@howett.net>, 
-	Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 0/2] platform/chrome: cros_ec_framework_laptop: new driver
-Message-ID: <e716716e-87fe-46f5-8ea9-5f649f1da11b@t-8ch.de>
-References: <20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net>
- <613369f9-42c5-4a59-b83f-45bd1773ffe4@t-8ch.de>
- <a7ae8fc0-5e53-487a-86c6-f49dc6623688@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnszKlrS+XsQOBdfaw7Pi3YfOboTm7K1z7zas0t4hrd/Uujg4UDjHibDaBFQ3EYGcQ5giZurT+ljqnq/0pSyxGJ1hSnSeOFpGO4x6jN8RZk/VtvdfWt633czKDFZCd1ePiORnGYObKqjAAeu2kUQao8NKJrh1cjkcqq7hx+X4gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CF041HXr; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-23dd4dca5dbso1022171fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 10:44:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1715017440; x=1715622240; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NrQdyQAmxtGDrr/un2msxGNjav0moWDiCcc8IHL04QU=;
+        b=CF041HXrrPXGfxUu58vlQv3lFaMywi9n3PsXrTeF+uLEUQ4A8OADFpBy8jULsKeekL
+         bAP4dt56m7ZusIOCRcsF1mJ0Brp/3NtOwdjz3e5RcmxhjsxIz49TZl+Z+KZl8rf0K0lA
+         1Ds0UK6gAEvaahfVG5VuV1lCtcqwpXDHGbkn4uYOeTjnnCc+axEtKmpAt9I3KMckgBRJ
+         Zpcj8CL48A3+OuSSiIylxaBt48i1tUg67TkNmuLAgRMTQdTcUJWmG7WLnEnl6f/nnze3
+         LjZUxbgOQFT8L54FqQ0f6d3Nl6a6z7YecC1JfqxtCi+f44ThBXyR+kr6SwHo9os6JXkh
+         KlDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715017440; x=1715622240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NrQdyQAmxtGDrr/un2msxGNjav0moWDiCcc8IHL04QU=;
+        b=WuY4d/+F3tikZSkn8fx0/G1Fb+mDUl+oWi6DabwFALKrXfQT9bARSth8kNLd87qviJ
+         XRah62Mxs4gTRVzqX4SbOwSN5jvZ6Uf2nhCK9057080J/cL/VM+yTS3QgzVrewBHmajs
+         7ZCmOhMgghl/6q4FlK+8maj/+BTa9qMxGgWazilgdYWm2EC+tomlKW3EHDrZgPTJKosl
+         I7dxbvZdouWV9hOqvuY3hytUBmHHtL7BiqAKypezsZgql+3FqFHJRS438baoTLpg7Z/c
+         UW7Sj+CNYf8Ig6i+QSGzhOkMdpAV9uE1ul6JGiP+YdPkkAFtc3tNpKuYiCxVwOEKnnw4
+         U2lA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzVo7sQkNzPKAdVtKIf3oa1xkPed88e0lDAwlzkNFHD4dkXWjrJuKhFfCbOQR6OKgpTbvthk1AXOSKXN4YJu3jGgjr/DEekNOl9msE
+X-Gm-Message-State: AOJu0YzMpdYv15K+S25tjW5wtZcChMLYuTzM1S/uyuwT91vD6DiipyBK
+	IC7u6EAh1VpsERQ1LV88aw+xmMD/t91wl3sTpYvPkfHrdfKz9GwZxJ63ww34Bn0=
+X-Google-Smtp-Source: AGHT+IFfws1Gcb6acoXVWBj5aeFUz+NzC1+evoEYOr7ky0Ifa7neFHPAAV511Z8X/ku679UyYkztmg==
+X-Received: by 2002:a05:6871:3a10:b0:23c:49e2:bac2 with SMTP id 586e51a60fabf-24019c343admr143784fac.18.1715017439642;
+        Mon, 06 May 2024 10:43:59 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id co13-20020a05683065cd00b006ee2fc97885sm2030608otb.72.2024.05.06.10.43.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 10:43:58 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1s42NZ-003UHM-8o;
+	Mon, 06 May 2024 14:43:57 -0300
+Date: Mon, 6 May 2024 14:43:57 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+Cc: Alexey Kardashevskiy <aik@amd.com>, mpe@ellerman.id.au,
+	tpearson@raptorengineering.com, alex.williamson@redhat.com,
+	linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
+	naveen.n.rao@linux.ibm.com, gbatra@linux.vnet.ibm.com,
+	brking@linux.vnet.ibm.com, aik@ozlabs.ru, ruscur@russell.cc,
+	robh@kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au,
+	kvm@vger.kernel.org, msuchanek@suse.de, oohall@gmail.com,
+	mahesh@linux.ibm.com, jroedel@suse.de, vaibhav@linux.ibm.com,
+	svaidy@linux.ibm.com
+Subject: Re: [RFC PATCH v2 0/6] powerpc: pSeries: vfio: iommu: Re-enable
+ support for SPAPR TCE VFIO
+Message-ID: <20240506174357.GF901876@ziepe.ca>
+References: <171450753489.10851.3056035705169121613.stgit@linux.ibm.com>
+ <20240501140942.GA1723318@ziepe.ca>
+ <703f15b0-d895-4518-9886-0827a6c4e769@amd.com>
+ <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7ae8fc0-5e53-487a-86c6-f49dc6623688@amd.com>
+In-Reply-To: <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
 
-On 2024-05-06 08:09:07+0000, Limonciello, Mario wrote:
-> 
-> 
-> On 5/6/2024 1:09 AM, Thomas Weißschuh wrote:
-> > On 2024-05-05 22:56:33+0000, Thomas Weißschuh wrote:
-> > > Framework Laptops are using embedded controller firmware based on the
-> > > ChromeOS EC project.
-> > > In addition to the standard upstream commands some vendor-specific
-> > > commands are implemented.
-> > > 
-> > > Add a driver that implements battery charge thresholds using these
-> > > custom commands.
-> > 
-> > It turns out that standard ChromesOS EC defines EC_CMD_CHARGE_CONTROL.
-> > The kernel headers however only define v1 of the protocol, which is very
-> > limited.
-> > 
-> > But in the upstream firmware repo there is a v3 which is much better.
-> > 
-> > The Framework laptop only implements v2 which is also fine.
-> > Given that v3 was only introduced late last year, it seems better to
-> > stick to v2 anyways for now.
-> > 
-> > So please disregard Patch 2, I'll see on how to use this via a normal
-> > cros_ec driver.
-> > 
-> > There are some other Framework-only features that will use Patch 1,
-> > so feedback for that would still be good.
-> 
-> What other kinds of features do you have in mind?
+On Sat, May 04, 2024 at 12:33:53AM +0530, Shivaprasad G Bhat wrote:
+> We have legacy workloads using VFIO in userspace/kvm guests running
+> on downstream distro kernels. We want these workloads to be able to
+> continue running on our arch.
 
-There are at least fan and privacy switch reporting in which im interested.
-But fan reporting also has a standard command which I'll try to use first.
+It has been broken since 2018, I don't find this reasoning entirely
+reasonable :\
 
-And then there are many others I'm personally not interested in:
-Fingerprint LED configuration, Intrusion Detection, "Standalone mode",
-some diagnostics, etc.
+> I firmly believe the refactoring in this patch series is a step in
+> that direction.
 
-Especially as they can also be handled from userspace.
+But fine, as long as we are going to fix it. PPC really needs this to
+be resolved to keep working.
 
-> Considering your above finding I think it's better to put patch 1 into the
-> series of "other framework only features" that will use it so it's clearer
-> if it's the best way or not.
-
-Agreed, that is what I tried to express.
-
-> [..]
-
-Thomas
+Jason
 
