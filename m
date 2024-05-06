@@ -1,211 +1,163 @@
-Return-Path: <linux-kernel+bounces-169276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78678BC62F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:23:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621B48BC632
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062081C20DC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B951C20FA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EF243AB2;
-	Mon,  6 May 2024 03:23:47 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E519543156;
+	Mon,  6 May 2024 03:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WXJq8JDl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725E03F9EC;
-	Mon,  6 May 2024 03:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7591541C62
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 03:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714965827; cv=none; b=ftV6qqWU9Lj3dQxhRwin90hIt9Gkywi06QU29lllI4L7HDt8bLgGO68dYZERSs5LMO9XP4Wg27d8gH+xYU2GeZjzM3eZIugB1Fh2DJjkJbznh5xq5LypUbI1eIABoOnp/chl2W6voVHWo8hj/yNlZ8q2E+e72otkT+M5JMR4Bd8=
+	t=1714965883; cv=none; b=R6P9xJkuDtMcMYncI2mHjmnOJibOE91O1pe1GhvElLjMOSkNqPdQPOklbolS9lR8Dmo4wHj/E6vfWAL338KJQfgQ87WHY15oocI0q53CQXHzZpWuza3FJ8/x+HRsNgvPc05byXhREK//0+ibKKd0E5L2POFvZCixegK7JKdLP4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714965827; c=relaxed/simple;
-	bh=UZMWj0o8HJjobUzCMwhoUcqFCcq5NUQ2GcZ27PWTaOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rR0qFOrFyVj7jFj1od0/sAt7Xjs500BTVeuCNKG5XW5fHmxo2akBvbFhNP2Q2WCQ0sND7QCrgJSxW2M3WFbqyXaheLzlVZKthFwexKKEfGYCHh0D6LoYMQUx3U55UjA0lw/834DGTLLTzsbAzO6ZsNqHVzL2OS5uowBeHBtDZG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VXmvm339yz4f3jXv;
-	Mon,  6 May 2024 11:23:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 946CB1A016E;
-	Mon,  6 May 2024 11:23:40 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBE4TThmwQSJLw--.25496S3;
-	Mon, 06 May 2024 11:23:40 +0800 (CST)
-Message-ID: <18cc6974-b47d-f9fd-2576-366382d0e8d0@huaweicloud.com>
-Date: Mon, 6 May 2024 11:23:36 +0800
+	s=arc-20240116; t=1714965883; c=relaxed/simple;
+	bh=bBHRYR+zXOeAjZ6EPCrBlhNWwq4VARwBFLo2xTUGLZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NlanfcaY7ycE/DTdPLDgRKKn/1ZQXEwtJjE8hKcZcUUyHJwBWKFLsmoD9uyI4BWRorjMLilYbktu2QaGSsdW43HAF1ftRJdQBArzE+6LBodRkVwyIS3yR0Cfp+lSVC8NW4ix+8efW9JH1FjsectT9b66stmFMJYO26SbSfA7v+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WXJq8JDl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714965880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BXECy0j7At+OptqnyBfrJG9H7LKgIkADB2rySsLldvo=;
+	b=WXJq8JDlWzX2RreasT/YGBM98hdl/Ps6Nslp+qsHicoB3wDUpJVbd28NgUA3uM2svU9kWM
+	1bF5ZbqLs7sMebBejVEygyQYgHl/StRkfX0QWPz0Vz4ndVVRF/XohxGAqpAuFGakyU3aHD
+	wlbKwPhLpS6D+aU4vQdMHqkdfAz/pUs=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-99-aYAIwLLaPAGfzRGgbYdt0g-1; Sun, 05 May 2024 23:24:38 -0400
+X-MC-Unique: aYAIwLLaPAGfzRGgbYdt0g-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2acf6bce4cfso1151811a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 05 May 2024 20:24:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714965878; x=1715570678;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BXECy0j7At+OptqnyBfrJG9H7LKgIkADB2rySsLldvo=;
+        b=QiwXGJ9uuYQ85AyqJZF9VlzLNP+mrOyciR2g/gaMw3Snj4n3FsBJ/6saaX51/JvjPF
+         HXMRL2/PIoZWHYfijZ8+APeOMGGOf2KP2voUiFpZLtqG10cQYK7N/Nrlqoe1JmBj//Mo
+         K4a286fUZ6NXGRflJ6/sSPFZqN22AnC+FguOdYVT54PebTE62xIIj10eFpBxWEDgL5sf
+         154TCavjCmD+tN8O2tf59uTtXaB3vFTEsaV2t+EFylHBAxKUSd8MBWImVzpsROfKuMJ1
+         ZjgG9HobSlabFMBgg8TKUdLESdChE+04/rZy93KvF2OmemxvE6ECVp7EO6nukE3zfc+x
+         ylBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQzipAX6T+/cKuUZ9xTjoHqctydTnxoAAKrH7dIOXPLu2+HZNRdV0T4qoRYMbgmX5nW84kxUj3SwcNvX1OaORW7iC097ME04l79+sp
+X-Gm-Message-State: AOJu0YxPeMjy5EW1jZZJG6IpXrt5Jvl1YuX6esAYXlFagg9rLsxuqEoJ
+	HpzxNfU7wRxRmiw6JUyLjE2k5JadD/iZSYVrBhq8+SMfVik0BPZZm6qfHuxUwbg/Hjgrmae/8rw
+	Plk50QP+xEwAVx83Vc1pr2w6QXL4GUgPoOH4sOrx1sg2Nyh2yWf/Ah9FOGdUF42lbqJ6WnUyFfO
+	WhhFCyzDBwE8VBwWZtFE1ACNSdkSv26IxcsNa4
+X-Received: by 2002:a17:90b:19cc:b0:2b2:da7:2c83 with SMTP id nm12-20020a17090b19cc00b002b20da72c83mr12511965pjb.4.1714965877777;
+        Sun, 05 May 2024 20:24:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHsgR09huJq7794Kr7Va7gw9HzoZRK/fRVHd00z788cM7NjAkL3DywsEKb+A/xOZDmoDbwkRNX9xodgt7fyblY=
+X-Received: by 2002:a17:90b:19cc:b0:2b2:da7:2c83 with SMTP id
+ nm12-20020a17090b19cc00b002b20da72c83mr12511949pjb.4.1714965877400; Sun, 05
+ May 2024 20:24:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 07/12] cachefiles: add spin_lock for
- cachefiles_ondemand_info
-Content-Language: en-US
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
-Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, libaokun@huaweicloud.com,
- yangerkun <yangerkun@huawei.com>
-References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
- <20240424033916.2748488-8-libaokun@huaweicloud.com>
- <1fef9ab5-ec33-4a14-beb3-ada41a8652b3@linux.alibaba.com>
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <1fef9ab5-ec33-4a14-beb3-ada41a8652b3@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgBXKBE4TThmwQSJLw--.25496S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr18uw17tw47Xr43Jw4ktFb_yoW7JF13pF
-	WayFy3KryxWF1xur97Aan8WrWFy34jvFnrWr1aga4rA3s09ryrZr17tryrZF98AryfKrs7
-	tw48Casrtryqy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
-	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+References: <ZjFH7Xb5gyTtOpWd@localhost.localdomain> <20240430121730-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240430121730-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 6 May 2024 11:24:25 +0800
+Message-ID: <CACGkMEsFMXdswxgguH1P_TkY9wnKgE8RbhUdw_Pd+niSp2UjSg@mail.gmail.com>
+Subject: Re: [PATCH] virtio_net: Warn if insufficient queue length for transmitting
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Darius Rad <darius@bluespec.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/6 10:55, Jingbo Xu wrote:
+On Wed, May 1, 2024 at 4:07=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com> =
+wrote:
 >
-> On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> The following concurrency may cause a read request to fail to be completed
->> and result in a hung:
->>
->>             t1             |             t2
->> ---------------------------------------------------------
->>                              cachefiles_ondemand_copen
->>                                req = xa_erase(&cache->reqs, id)
->> // Anon fd is maliciously closed.
->> cachefiles_ondemand_fd_release
->>    xa_lock(&cache->reqs)
->>    cachefiles_ondemand_set_object_close(object)
->>    xa_unlock(&cache->reqs)
->>                                cachefiles_ondemand_set_object_open
->>                                // No one will ever close it again.
->> cachefiles_ondemand_daemon_read
->>    cachefiles_ondemand_select_req
->>    // Get a read req but its fd is already closed.
->>    // The daemon can't issue a cread ioctl with an closed fd, then hung.
->>
->> So add spin_lock for cachefiles_ondemand_info to protect ondemand_id and
->> state, thus we can avoid the above problem in cachefiles_ondemand_copen()
->> by using ondemand_id to determine if fd has been released.
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> This indeed looks like a reasonable scenario where the kernel side
-> should fix, as a non-malicious daemon could also run into this.
+> On Tue, Apr 30, 2024 at 03:35:09PM -0400, Darius Rad wrote:
+> > The transmit queue is stopped when the number of free queue entries is =
+less
+> > than 2+MAX_SKB_FRAGS, in start_xmit().  If the queue length (QUEUE_NUM_=
+MAX)
+> > is less than then this, transmission will immediately trigger a netdev
+> > watchdog timeout.  Report this condition earlier and more directly.
+> >
+> > Signed-off-by: Darius Rad <darius@bluespec.com>
+> > ---
+> >  drivers/net/virtio_net.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index 115c3c5414f2..72ee8473b61c 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -4917,6 +4917,9 @@ static int virtnet_probe(struct virtio_device *vd=
+ev)
+> >                       set_bit(guest_offloads[i], &vi->guest_offloads);
+> >       vi->guest_offloads_capable =3D vi->guest_offloads;
+> >
+> > +     if (virtqueue_get_vring_size(vi->sq->vq) < 2 + MAX_SKB_FRAGS)
+> > +             netdev_warn_once(dev, "not enough queue entries, expect x=
+mit timeout\n");
+> > +
 >
-> How about reusing &cache->reqs spinlock rather than introducing a new
-> spinlock, as &cache->reqs spinlock is already held when setting object
-> to close state in cachefiles_ondemand_fd_release()?
-We've considered reusing &cache->reqs spinlock before, but their
-uses don't exactly overlap, and there are patches coming that will
-use the new spin_lock,. In addition, this reduces competition for
-&cache->reqs spinlock.
->> ---
->>   fs/cachefiles/internal.h |  1 +
->>   fs/cachefiles/ondemand.c | 16 +++++++++++++++-
->>   2 files changed, 16 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
->> index 7745b8abc3aa..45c8bed60538 100644
->> --- a/fs/cachefiles/internal.h
->> +++ b/fs/cachefiles/internal.h
->> @@ -55,6 +55,7 @@ struct cachefiles_ondemand_info {
->>   	int				ondemand_id;
->>   	enum cachefiles_object_state	state;
->>   	struct cachefiles_object	*object;
->> +	spinlock_t			lock;
->>   };
->>   
->>   /*
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index 898fab68332b..b5e6a851ef04 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -16,13 +16,16 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
->>   	struct cachefiles_object *object = file->private_data;
->>   	struct cachefiles_cache *cache = object->volume->cache;
->>   	struct cachefiles_ondemand_info *info = object->ondemand;
->> -	int object_id = info->ondemand_id;
->> +	int object_id;
->>   	struct cachefiles_req *req;
->>   	XA_STATE(xas, &cache->reqs, 0);
->>   
->>   	xa_lock(&cache->reqs);
->> +	spin_lock(&info->lock);
->> +	object_id = info->ondemand_id;
->>   	info->ondemand_id = CACHEFILES_ONDEMAND_ID_CLOSED;
->>   	cachefiles_ondemand_set_object_close(object);
->> +	spin_unlock(&info->lock);
->>   
->>   	/* Only flush CACHEFILES_REQ_NEW marked req to avoid race with daemon_read */
->>   	xas_for_each_marked(&xas, req, ULONG_MAX, CACHEFILES_REQ_NEW) {
->> @@ -127,6 +130,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
->>   {
->>   	struct cachefiles_req *req;
->>   	struct fscache_cookie *cookie;
->> +	struct cachefiles_ondemand_info *info;
->>   	char *pid, *psize;
->>   	unsigned long id;
->>   	long size;
->> @@ -185,6 +189,14 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
->>   		goto out;
->>   	}
->>   
->> +	info = req->object->ondemand;
->> +	spin_lock(&info->lock);
->> +	/* The anonymous fd was closed before copen ? */
-> I would like describe more details in the comment, e.g. put the time
-> sequence described in the commit message here.
-OK, thanks for your suggestion, I will describe it in more detail
-in the next revision.
+> How about actually fixing it though? E.g. by linearizing...
 
-Thanks,
-Baokun
->
->> +	if (info->ondemand_id == CACHEFILES_ONDEMAND_ID_CLOSED) {
->> +		spin_unlock(&info->lock);
->> +		req->error = -EBADFD;
->> +		goto out;
->> +	}
->>   	cookie = req->object->cookie;
->>   	cookie->object_size = size;
->>   	if (size)
->> @@ -194,6 +206,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
->>   	trace_cachefiles_ondemand_copen(req->object, id, size);
->>   
->>   	cachefiles_ondemand_set_object_open(req->object);
->> +	spin_unlock(&info->lock);
->>   	wake_up_all(&cache->daemon_pollwq);
->>   
->>   out:
->> @@ -596,6 +609,7 @@ int cachefiles_ondemand_init_obj_info(struct cachefiles_object *object,
->>   		return -ENOMEM;
->>   
->>   	object->ondemand->object = object;
->> +	spin_lock_init(&object->ondemand->lock);
->>   	INIT_WORK(&object->ondemand->ondemand_work, ondemand_object_worker);
->>   	return 0;
->>   }
+Actually, the linearing is only needed for the case when the indirect
+descriptor is not supported.
 
+>
+> It also bothers me that there's practically
+> /proc/sys/net/core/max_skb_frags
+> and if that's low then things could actually work.
+
+Probably not as it won't exceed MAX_SKB_FRAGS.
+
+>
+> Finally, while originally it was just 17 typically, now it's
+> configurable. So it's possible that you change the config to make big
+> tcp
+
+Note that virtio-net doesn't fully support big TCP.
+
+> work better and device stops working while it worked fine
+> previously.
+
+For this patch, I guess not as we had:
+
+        if (sq->vq->num_free < 2+MAX_SKB_FRAGS)
+
+in the tx path. So it won't even work before this patch.
+
+Thanks
+
+>
+>
+> >       pr_debug("virtnet: registered device %s with %d RX and TX vq's\n"=
+,
+> >                dev->name, max_queue_pairs);
+> >
+> > --
+> > 2.39.2
+>
 
 
