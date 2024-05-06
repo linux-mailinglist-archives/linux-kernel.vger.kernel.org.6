@@ -1,418 +1,116 @@
-Return-Path: <linux-kernel+bounces-169611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263928BCB33
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:52:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9128E8BCB39
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B982819BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B501C2175E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6056E145347;
-	Mon,  6 May 2024 09:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CBE142E9D;
+	Mon,  6 May 2024 09:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nj9dIWex"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k5HVFWZ6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z6qKC8gg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C05144D18;
-	Mon,  6 May 2024 09:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6FB1422D9
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714988990; cv=none; b=Lr4AJP3QVHZUvmx+FNbDFQCZjWAhxEn3VSNsOzgiLLM9KMX5PbPGbEombVBxVo9DbT+Uii5LzDxcwqIg01/Dxoy2IPYkU5Q4y69QuOMtEa9+HB5x+hrt/EDBXyNdeGwaEinw9wT457cqB3YUEDT/YLthvL+GHfLEiBPAtUqO71k=
+	t=1714989011; cv=none; b=uAIN2XMDUp9qkisJjfXAoghKhOOCs9yycxBmLbq4MA+R16kEzFCi0ZR7onPhWXGCQb4diEhBq77e+cDCX/euNA3NKjc7/0gD26DiCKwv3LrmmZTMQtbigfhbz+aL7nJRiHpipOdEQDoQ0he2grfE/yDYuy7t/isZDLHyErp2C+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714988990; c=relaxed/simple;
-	bh=AfrSKi8c0Ro/mYC7hepPMVGRgaWaNvzbFUbpZzEtzaI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KX1aPcB52PKBQ1TErfpNIUjhFmCvp+4UHlWgSTvg0Mwfm1b3g3dSFHVwj7hCoCEDAV/oJXdRolPnJfX8iNWbk8SdQedSOxL2qy4Q2dozZUlDjDIDRr3k49pHFKBklI9z/UpBRHlJ2t+xsXR8EUfFKJgNTq6nFGg7dzC8PNOxHdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nj9dIWex; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B20A3C4DDE5;
-	Mon,  6 May 2024 09:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714988989;
-	bh=AfrSKi8c0Ro/mYC7hepPMVGRgaWaNvzbFUbpZzEtzaI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=nj9dIWexGdTdg56jI+7yX0ERil2bWHeOZlDdQWZuV0AthnQjlHGP84sbnAWgKZXiP
-	 fD6xXlvJI3+QI1Fk4w05JMZ4jA+SwP74j+QiK4Ac0Mv6tZlUf9NVshlge3P5S48Otg
-	 4n/EWOpWi+/fv7lOXslQpNNuHklT/+wucG9OUTEKgl7mbX6KTpAnRzqiqwEdK+ilKF
-	 2YClpZMGdk1ShGgE83+6LkowMCxGjKTqJxR/8ymAuoCd+7tw9uiyGqjH9Irtj2Gvy6
-	 mHgUvGRexW6WGjqWieqjleKOlrgDYEl1avXqXfolReAlF2vHVYk/rZFGF8yRfaGd+A
-	 Z/pXTd09JJ5ow==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AD1C10F16;
-	Mon,  6 May 2024 09:49:49 +0000 (UTC)
-From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 06 May 2024 12:49:51 +0300
-Subject: [PATCH RESEND v2 4/4] soc: Add SoC driver for Cirrus ep93xx
+	s=arc-20240116; t=1714989011; c=relaxed/simple;
+	bh=9+fA6x3W5sW7wIh5ABpMKfVB98eis5V3TMZpuCukAWs=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRbctGXi3PRaSLaGe1TCyEwGRSQ/NHaggkzJ9f+oT3YRr2fq5BaUbmYp44RUp27X9QUFt4FZglWomVnc1OlvG47OOUw0vtwnYuj6ZNnAdW4WPbVD/k3vcjVeUJ3rqjUxXsF9inscbxBOo4afpVuJ+Nha7vmhXnn6HvAg+PehMgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k5HVFWZ6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z6qKC8gg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 6 May 2024 11:50:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1714989008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYEcwncX0Z4LxyKRBooyxqYcoYW7DqL7oWZ6VIl81vU=;
+	b=k5HVFWZ6mPRNpjqQ6zkWkw3UHkUjZNoDHgMwI9JLZwOQKa2HR5nSfCnbT8gzEOpuLrxBYz
+	+LkPIL6BQXdJ+Krf4n06xjIdPdBRFSIEfv4G7gBHt8RiQj6I51jtMDBU8Q7xknJlntoyUV
+	sgc84NEO4p0RUsZvkI8tf3jtOEajQuiqlMnKduBnE03sWtc62vAKNLJzAPzIa3SykrHLBw
+	nSPIw5oNlxMuf32VhwJV5rEexOGWmKGF1ZyTOijjtpVgkFSsq/gy34NBnLvLjpYE0pRioG
+	C1T44/2eFqRZYT9ynIe+TikVQSI3dagHvKpZfuakwCyyVUQjOra6yn2zMgqXVA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1714989008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYEcwncX0Z4LxyKRBooyxqYcoYW7DqL7oWZ6VIl81vU=;
+	b=Z6qKC8gg4n8IC30BHxRgOlFqYg1qBj91w46K8OklO0vyYzwOQPTnkdT4YvrckefUn9+1ur
+	VM/ivxmukLGL2iAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, kolyshkin@gmail.com,
+	fuyuanli@didiglobal.com, akpm@linux-foundation.org,
+	kent.overstreet@linux.dev, frederic@kernel.org, oleg@redhat.com,
+	hca@linux.ibm.com, paulmck@kernel.org, tj@kernel.org,
+	kuba@kernel.org, CruzZhao@linux.alibaba.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched: Introduce task_struct::latency_sensi_flag.
+Message-ID: <20240506095006.W6mrPsML@linutronix.de>
+References: <20240505030615.GA5131@didi-ThinkCentre-M920t-N000>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240408-ep93xx-clk-v2-4-adcd68c13753@maquefel.me>
-References: <20240408-ep93xx-clk-v2-0-adcd68c13753@maquefel.me>
-In-Reply-To: <20240408-ep93xx-clk-v2-0-adcd68c13753@maquefel.me>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Nikita Shubin <nikita.shubin@maquefel.me>, 
- Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714988988; l=10093;
- i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=vUfW9ABHjOjJ7t7ElDmTEYZlrPl2gIk3xRvTm9p+tiQ=;
- b=zYbGIgCHhNfI+gUcuCBk3KTwEzwX8vIsh93cWasXJsJrKTFvP2DxkyyCgSOoe8GAwGsGuxisexmA
- wH9fpSOSBYu9tSb3XzXqZjDpiIzSGyYWvxOj/pfo4SDncWqPesPW
-X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
- with auth_id=65
-X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Reply-To: nikita.shubin@maquefel.me
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240505030615.GA5131@didi-ThinkCentre-M920t-N000>
 
-From: Nikita Shubin <nikita.shubin@maquefel.me>
+On 2024-05-05 11:06:15 [+0800], fuyuanli wrote:
+> In the path local_bh_enable()->__local_bh_enable_ip(), the softirq
+> handlers will be executed in the context of current task. But for some
+> tasks sensitive to running latency, we expect that they will not spend
+> extra time executing softirq. So latency_sensi_flag is introduced in
+> task_struct, when it is set to 1, task only wakes up softirq daemon in
+> __local_bh_enable_ip().
+> 
+> A test has been made in two hosts named A and B. In A, several clients
+> sent udp packets to a single server in B concurrently as fast as
+> possible. In B, the IRQs of these flows were bound to CPU 0 by flow
+> director, so there was always a triggered net_rx softirq on CPU 0. Then
+> a test program was started in B, which was also bound to CPU 0, and
+> keeped calling sendto() in a loop. Sampling with perf, results showed
+> that about 25% of running time of test program was spent executing
+> local_bh_enable() contained in syscall sendto(), but after setting
+> latency_sensi_flag to 1, this proportion had been reduced to 0.5%.
 
-Add an SoC driver for the ep93xx. Currently there is only one thing
-not fitting into any other framework, and that is the swlock setting.
+Is this PREEMPT_RT related or not?
+RT wise I worked hard to get rid of ksoftirqd usage because you use lose
+context, priority and everything once this happens. Plus an innocent
+thread can be forced to do the work instead.
+Non-RT wise your performance can go rapidly down the hill if the wrong
+task/ user is outsourcing the work to ksoftirqd.
 
-Used for clock settings, pinctrl and restart.
+And this is what you are doing: You are outsourcing work to a different
+context and have 25% improvement here and 25% work somewhere else which
+you don't measure. Not to mention that _another_ context could do this
+softirq work if it happens to end up in the section before ksoftirqd had
+a chance to run.
 
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/soc/Kconfig             |   1 +
- drivers/soc/Makefile            |   1 +
- drivers/soc/cirrus/Kconfig      |  17 +++
- drivers/soc/cirrus/Makefile     |   2 +
- drivers/soc/cirrus/soc-ep93xx.c | 252 ++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 273 insertions(+)
+So, this does not sound good. If you want to have a low-latency task
+which can send packets and not do the needed softirq part I would
+suggest to have another thread where this is outsourced and the thread
+does the work.
 
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index 5d924e946507..6a8daeb8c4b9 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -7,6 +7,7 @@ source "drivers/soc/aspeed/Kconfig"
- source "drivers/soc/atmel/Kconfig"
- source "drivers/soc/bcm/Kconfig"
- source "drivers/soc/canaan/Kconfig"
-+source "drivers/soc/cirrus/Kconfig"
- source "drivers/soc/fsl/Kconfig"
- source "drivers/soc/fujitsu/Kconfig"
- source "drivers/soc/hisilicon/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index ba8f5b5460e1..5f88bd3aefe3 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -8,6 +8,7 @@ obj-y				+= aspeed/
- obj-$(CONFIG_ARCH_AT91)		+= atmel/
- obj-y				+= bcm/
- obj-$(CONFIG_SOC_CANAAN)	+= canaan/
-+obj-$(CONFIG_EP93XX_SOC)        += cirrus/
- obj-$(CONFIG_ARCH_DOVE)		+= dove/
- obj-$(CONFIG_MACH_DOVE)		+= dove/
- obj-y				+= fsl/
-diff --git a/drivers/soc/cirrus/Kconfig b/drivers/soc/cirrus/Kconfig
-new file mode 100644
-index 000000000000..f2fd0e16a196
---- /dev/null
-+++ b/drivers/soc/cirrus/Kconfig
-@@ -0,0 +1,17 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+if ARCH_EP93XX
-+
-+config EP93XX_SOC
-+	bool "Cirrus EP93xx chips SoC"
-+	select SOC_BUS
-+	select AUXILIARY_BUS
-+	default y if !EP93XX_SOC_COMMON
-+	help
-+	  Enable support SoC for Cirrus EP93xx chips.
-+
-+	  Cirrus EP93xx chips have several swlocked registers,
-+	  this driver provides locked access for reset, pinctrl
-+	  and clk devices implemented as auxiliary devices.
-+
-+endif
-diff --git a/drivers/soc/cirrus/Makefile b/drivers/soc/cirrus/Makefile
-new file mode 100644
-index 000000000000..9e6608b67f76
---- /dev/null
-+++ b/drivers/soc/cirrus/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-y	+= soc-ep93xx.o
-diff --git a/drivers/soc/cirrus/soc-ep93xx.c b/drivers/soc/cirrus/soc-ep93xx.c
-new file mode 100644
-index 000000000000..3e79b3b13aef
---- /dev/null
-+++ b/drivers/soc/cirrus/soc-ep93xx.c
-@@ -0,0 +1,252 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * SoC driver for Cirrus EP93xx chips.
-+ * Copyright (C) 2022 Nikita Shubin <nikita.shubin@maquefel.me>
-+ *
-+ * Based on a rewrite of arch/arm/mach-ep93xx/core.c
-+ * Copyright (C) 2006 Lennert Buytenhek <buytenh@wantstofly.org>
-+ * Copyright (C) 2007 Herbert Valerio Riedel <hvr@gnu.org>
-+ *
-+ * Thanks go to Michael Burian and Ray Lehtiniemi for their key
-+ * role in the ep93xx Linux community.
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/cleanup.h>
-+#include <linux/init.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/of_fdt.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/sys_soc.h>
-+
-+#include <linux/soc/cirrus/ep93xx.h>
-+
-+#define EP93XX_SYSCON_DEVCFG		0x80
-+
-+#define EP93XX_SWLOCK_MAGICK		0xaa
-+#define EP93XX_SYSCON_SWLOCK		0xc0
-+#define EP93XX_SYSCON_SYSCFG		0x9c
-+#define EP93XX_SYSCON_SYSCFG_REV_MASK	GENMASK(31, 28)
-+#define EP93XX_SYSCON_SYSCFG_REV_SHIFT	28
-+
-+struct ep93xx_map_info {
-+	spinlock_t lock;
-+	void __iomem *base;
-+	struct regmap *map;
-+};
-+
-+/*
-+ * EP93xx System Controller software locked register write
-+ *
-+ * Logic safeguards are included to condition the control signals for
-+ * power connection to the matrix to prevent part damage. In addition, a
-+ * software lock register is included that must be written with 0xAA
-+ * before each register write to change the values of the four switch
-+ * matrix control registers.
-+ */
-+static void ep93xx_regmap_write(struct regmap *map, spinlock_t *lock,
-+				 unsigned int reg, unsigned int val)
-+{
-+	guard(spinlock_irqsave)(lock);
-+
-+	regmap_write(map, EP93XX_SYSCON_SWLOCK, EP93XX_SWLOCK_MAGICK);
-+	regmap_write(map, reg, val);
-+}
-+
-+static void ep93xx_regmap_update_bits(struct regmap *map, spinlock_t *lock,
-+				      unsigned int reg, unsigned int mask,
-+				      unsigned int val)
-+{
-+	guard(spinlock_irqsave)(lock);
-+
-+	regmap_write(map, EP93XX_SYSCON_SWLOCK, EP93XX_SWLOCK_MAGICK);
-+	/* force write is required to clear swlock if no changes are made */
-+	regmap_update_bits_base(map, reg, mask, val, NULL, false, true);
-+}
-+
-+static void ep93xx_unregister_adev(void *_adev)
-+{
-+	struct auxiliary_device *adev = _adev;
-+
-+	auxiliary_device_delete(adev);
-+	auxiliary_device_uninit(adev);
-+}
-+
-+static void ep93xx_adev_release(struct device *dev)
-+{
-+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-+	struct ep93xx_regmap_adev *rdev = to_ep93xx_regmap_adev(adev);
-+
-+	kfree(rdev);
-+}
-+
-+static struct auxiliary_device __init *ep93xx_adev_alloc(struct device *parent,
-+							 const char *name,
-+							 struct ep93xx_map_info *info)
-+{
-+	struct ep93xx_regmap_adev *rdev __free(kfree) = NULL;
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
-+	if (!rdev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rdev->map = info->map;
-+	rdev->base = info->base;
-+	rdev->lock = &info->lock;
-+	rdev->write = ep93xx_regmap_write;
-+	rdev->update_bits = ep93xx_regmap_update_bits;
-+
-+	adev = &rdev->adev;
-+	adev->name = name;
-+	adev->dev.parent = parent;
-+	adev->dev.release = ep93xx_adev_release;
-+
-+	ret = auxiliary_device_init(adev);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &no_free_ptr(rdev)->adev;
-+}
-+
-+static int __init ep93xx_controller_register(struct device *parent, const char *name,
-+					     struct ep93xx_map_info *info)
-+{
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	adev = ep93xx_adev_alloc(parent, name, info);
-+	if (IS_ERR(adev))
-+		return PTR_ERR(adev);
-+
-+	ret = auxiliary_device_add(adev);
-+	if (ret) {
-+		auxiliary_device_uninit(adev);
-+		return ret;
-+	}
-+
-+	return devm_add_action_or_reset(parent, ep93xx_unregister_adev, adev);
-+}
-+
-+static unsigned int __init ep93xx_soc_revision(struct regmap *map)
-+{
-+	unsigned int val;
-+
-+	regmap_read(map, EP93XX_SYSCON_SYSCFG, &val);
-+	val &= EP93XX_SYSCON_SYSCFG_REV_MASK;
-+	val >>= EP93XX_SYSCON_SYSCFG_REV_SHIFT;
-+	return val;
-+}
-+
-+static const char __init *ep93xx_get_soc_rev(unsigned int rev)
-+{
-+	switch (rev) {
-+	case EP93XX_CHIP_REV_D0:
-+		return "D0";
-+	case EP93XX_CHIP_REV_D1:
-+		return "D1";
-+	case EP93XX_CHIP_REV_E0:
-+		return "E0";
-+	case EP93XX_CHIP_REV_E1:
-+		return "E1";
-+	case EP93XX_CHIP_REV_E2:
-+		return "E2";
-+	default:
-+		return "unknown";
-+	}
-+}
-+
-+static const char *pinctrl_names[] __initconst = {
-+	"pinctrl-ep9301",	/* EP93XX_9301_SOC */
-+	"pinctrl-ep9307",	/* EP93XX_9307_SOC */
-+	"pinctrl-ep9312",	/* EP93XX_9312_SOC */
-+};
-+
-+static int __init ep93xx_syscon_probe(struct platform_device *pdev)
-+{
-+	enum ep93xx_soc_model model;
-+	struct ep93xx_map_info *map_info;
-+	struct soc_device_attribute *attrs;
-+	struct soc_device *soc_dev;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *map;
-+	void __iomem *base;
-+	unsigned int rev;
-+	int ret;
-+
-+	model = (enum ep93xx_soc_model)(uintptr_t)device_get_match_data(dev);
-+
-+	map = device_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	attrs = devm_kzalloc(dev, sizeof(*attrs), GFP_KERNEL);
-+	if (!attrs)
-+		return -ENOMEM;
-+
-+	rev = ep93xx_soc_revision(map);
-+
-+	attrs->machine = of_flat_dt_get_machine_name();
-+	attrs->family = "Cirrus Logic EP93xx";
-+	attrs->revision = ep93xx_get_soc_rev(rev);
-+
-+	soc_dev = soc_device_register(attrs);
-+	if (IS_ERR(soc_dev))
-+		return PTR_ERR(soc_dev);
-+
-+	map_info = devm_kzalloc(dev, sizeof(*map_info), GFP_KERNEL);
-+	if (!map_info)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&map_info->lock);
-+	map_info->map = map;
-+	map_info->base = base;
-+
-+	ret = ep93xx_controller_register(dev, pinctrl_names[model], map_info);
-+	if (ret)
-+		dev_err(dev, "registering pinctrl controller failed\n");
-+
-+	/*
-+	 * EP93xx SSP clock rate was doubled in version E2. For more information
-+	 * see section 6 "2x SSP (Synchronous Serial Port) Clock – Revision E2 only":
-+	 *     http://www.cirrus.com/en/pubs/appNote/AN273REV4.pdf
-+	 */
-+	if (rev == EP93XX_CHIP_REV_E2)
-+		ret = ep93xx_controller_register(dev, "clk-ep93xx.e2", map_info);
-+	else
-+		ret = ep93xx_controller_register(dev, "clk-ep93xx", map_info);
-+	if (ret)
-+		dev_err(dev, "registering clock controller failed\n");
-+
-+	ret = ep93xx_controller_register(dev, "reset-ep93xx", map_info);
-+	if (ret)
-+		dev_err(dev, "registering reset controller failed\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ep9301_syscon_of_device_ids[] = {
-+	{ .compatible	= "cirrus,ep9301-syscon", .data = (void *)EP93XX_9301_SOC },
-+	{ .compatible	= "cirrus,ep9302-syscon", .data = (void *)EP93XX_9301_SOC },
-+	{ .compatible	= "cirrus,ep9307-syscon", .data = (void *)EP93XX_9307_SOC },
-+	{ .compatible	= "cirrus,ep9312-syscon", .data = (void *)EP93XX_9312_SOC },
-+	{ .compatible	= "cirrus,ep9315-syscon", .data = (void *)EP93XX_9312_SOC },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver ep9301_syscon_driver = {
-+	.driver = {
-+		.name = "ep9301-syscon",
-+		.of_match_table = ep9301_syscon_of_device_ids,
-+	},
-+};
-+builtin_platform_driver_probe(ep9301_syscon_driver, ep93xx_syscon_probe);
+> Signed-off-by: fuyuanli <fuyuanli@didiglobal.com>
 
--- 
-2.41.0
-
-
+Sebastian
 
