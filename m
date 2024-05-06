@@ -1,346 +1,682 @@
-Return-Path: <linux-kernel+bounces-170412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C425C8BD67F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7AC68BD614
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C721C20E2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:49:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58191C219DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D1615B961;
-	Mon,  6 May 2024 20:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VbAbkC7j"
-Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AA115B109;
+	Mon,  6 May 2024 20:16:05 +0000 (UTC)
+Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D9656B76;
-	Mon,  6 May 2024 20:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D161515AAB1
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715028547; cv=none; b=VwxxlO7wAN9tyYmn4RY6eq3WG/rdNGFNfviCInqhexhyWtpAHW3ZYsz0BJzOn+pUnPvG2eBHclu584rEr4stAp8LRJvyDEtNBO+dAKYzpYzV1Gi4xzu/U9hI+4hax1G9Ww3yqgW3qBXTnOWkvH98d+vmVbtGyN1RbBFeA+gJNSE=
+	t=1715026564; cv=none; b=k8tenMM0gx1kTbSZPuQ5uenw64qJiMsDk1Kc0uw+LXK5kiIH5yPy2ISWC3rVpIP85HIFXu51f3p1oNaE51xIt1YMJL7+C56rzd6nHBV1F/mr1fJpA45keBeweg8HmcIuEuFfZZPNrpMVsXnIvEe/fUzyyKj80Asey+tI8TSs8SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715028547; c=relaxed/simple;
-	bh=AzcBAaZO3ROn+bWQ95qFg7Azdq32by4KnJ3p6zsfpqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RRyIS7Q2XebxI93bf2pIkILF6z4T+2px53Z+qm33vpFAvdjWZVcK+8TWrmDme1GAw7v8+tp0xzeUSz6VD1mvxgiOb0I5XqlSxQED2F5BJAzP6x3G/u1mJWudHtYGPH/o+GhggeARTheuB4D5zJyKFSXmn5zx9w2jf9ucaQlNf9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VbAbkC7j; arc=none smtp.client-ip=193.252.23.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 44j7sdneSxwPD44j7shlDL; Mon, 06 May 2024 22:14:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715026464;
-	bh=hbiv2nWG7B/SdO90N/VuiBE7SFRkK+pLReH7u0DOFuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=VbAbkC7jTVCU+/sUUPJtfTcz4kTgLbqPHFBne1DUnjpsWZTfj9ytgbU1pKWJ0hYVN
-	 IkRJEuoV0Cnkxit3EAGY4332wmEiNRoGTuoc2MBf+APBymbIX6u9OQ2LFcOgYLLCNN
-	 7fVDKbfNflnAQe+cVXQrciJC1C0pIZljQjigC0kbqfUhhHQpl8k4oz2qOL+Ek02Hgw
-	 zUPyjC842zhYNFalDOmp9kIm4KBebJlRDARq4C9VNOsKI38tBZQZlhkWFeHTSJzMKY
-	 M1YzIpg7aDmuB9awx0i6echjbYa96F0eDLi53SGfVlz+xMhnww+RDFI8xrNaxFSYDx
-	 f+aWpmima+FcQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 06 May 2024 22:14:24 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <c435e879-33c2-4cee-a2b1-56e82a0e9281@wanadoo.fr>
-Date: Mon, 6 May 2024 22:14:20 +0200
+	s=arc-20240116; t=1715026564; c=relaxed/simple;
+	bh=7e7enVBOTBWT2FAM18zxpera1NSmBKeUCsEGflGgEmQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2JqzmeoROnhxxahMmzxQMyu7Puj9cMLA/zn1xFTVS8ctoSeogEX75HOLY6dIuv2cUbE2e1PVYw+Bfn8j6lEz3Er9K2HGi249TaVU/VzTxyq0/GDLbK/0icJKsZJRg3zxrYEbdyo3L1CL1KKuCeMnMUM2GepWDUS0BWJngcZ8xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id 7317e310-0be5-11ef-a9de-005056bdf889;
+	Mon, 06 May 2024 23:15:59 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 6 May 2024 23:15:57 +0300
+To: Alex Soo <yuklin.soo@starfivetech.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Ley Foon Tan <leyfoon.tan@starfivetech.com>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Drew Fustini <drew@beagleboard.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: [RFC PATCH v3 2/7] pinctrl: starfive: jh8100: add main driver
+ and sys_east domain sub-driver
+Message-ID: <Zjk6fVwE_uUt3_G9@surfacebook.localdomain>
+References: <20240503111436.113089-1-yuklin.soo@starfivetech.com>
+ <20240503111436.113089-3-yuklin.soo@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] net: phy: bcm-phy-lib: Implement BroadR-Reach link
- modes
-To: =?UTF-8?Q?Kamil_Hor=C3=A1k_-_2N?= <kamilh@axis.com>,
- florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
- andrew@lunn.ch, hkallweit1@gmail.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240506144015.2409715-1-kamilh@axis.com>
- <20240506144015.2409715-4-kamilh@axis.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240506144015.2409715-4-kamilh@axis.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503111436.113089-3-yuklin.soo@starfivetech.com>
 
-Le 06/05/2024 à 16:40, Kamil Horák - 2N a écrit :
-> Implement single-pair BroadR-Reach modes on bcm5481x PHY by Broadcom.
-> Create set of functions alternative to IEEE 802.3 to handle configuration
-> of these modes on compatible Broadcom PHYs.
+Fri, May 03, 2024 at 07:14:31PM +0800, Alex Soo kirjoitti:
+> Add Starfive JH8100 SoC pinctrl main driver to provide the
+> common APIs that are used by the sub-drivers of pinctrl
+> domains:
+> - sys_east,
+> - sys_west,
+> - sys_gmac,
+> - aon (always-on)
 > 
-> Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
-> ---
->   drivers/net/phy/bcm-phy-lib.c | 122 ++++++++++++
->   drivers/net/phy/bcm-phy-lib.h |   4 +
->   drivers/net/phy/broadcom.c    | 338 ++++++++++++++++++++++++++++++++--
->   3 files changed, 449 insertions(+), 15 deletions(-)
-
-Hi,
-
-a few nitpicks below, should it help.
+> to implement the following tasks:
+> 
+> - applies pin multiplexing, function selection, and pin
+>   configuration for devices during system initialization
+>   or change of pinctrl state due to power management.
+> - read or set pin configuration from user space.
+> 
+> Also, add the sys_east domain sub-driver since it requires
+> at least one domain sub-driver to run the probe function in
+> the main driver to enable the basic pinctrl functionalities
+> on the system.
 
 ..
 
-> +int bcm_config_aneg(struct phy_device *phydev, bool changed)
-> +{
-> +	int err;
-> +
-> +	if (genphy_config_eee_advert(phydev))
-> +		changed = true;
-> +
-> +	err = bcm_setup_master_slave(phydev);
-> +	if (err < 0)
-> +		return err;
-> +	else if (err)
-> +		changed = true;
-> +
-> +	if (phydev->autoneg != AUTONEG_ENABLE)
-> +		return bcm_setup_forced(phydev);
-> +
-> +	err = bcm_config_advert(phydev);
-> +	if (err < 0) /* error */
+> +config PINCTRL_STARFIVE_JH8100
+> +	bool
+> +	select GENERIC_PINCONF
+> +	select GENERIC_PINCTRL_GROUPS
+> +	select GENERIC_PINMUX_FUNCTIONS
+> +	select GPIOLIB
+> +	select GPIOLIB_IRQCHIP
 
-Nitpick: the comment could be removed, IMHO (otherwise maybe it should 
-be added a few lines above too)
+> +	select OF_GPIO
 
-> +		return err;
-> +	else if (err)
-> +		changed = true;
-> +
-> +	return genphy_check_and_restart_aneg(phydev, changed);
-> +}
-> +EXPORT_SYMBOL_GPL(bcm_config_aneg);
-> +
-> +/**
-> + * bcm_config_advert - sanitize and advertise auto-negotiation parameters
-> + * @phydev: target phy_device struct
+Why?
+
+..
+
+> +/*
+> + * Pinctrl / GPIO driver for StarFive JH8100 SoC sys east controller
 > + *
-> + * Description: Writes MII_BCM54XX_LREANAA with the appropriate values,
-> + *   after sanitizing the values to make sure we only advertise
-> + *   what is supported.  Returns < 0 on error, 0 if the PHY's advertisement
-> + *   hasn't changed, and > 0 if it has changed.
+> + * Copyright (C) 2023-2024 StarFive Technology Co., Ltd.
+> + * Author: Alex Soo <yuklin.soo@starfivetech.com>
+
+> + *
+
+Unneeded blank line.
+
 > + */
-> +int bcm_config_advert(struct phy_device *phydev)
-> +{
-> +	int err;
-> +	u32 adv;
-> +
-> +	/* Only allow advertising what this PHY supports */
-> +	linkmode_and(phydev->advertising, phydev->advertising,
-> +		     phydev->supported);
-> +
-> +	adv = bcm_linkmode_adv_to_mii_adv_t(phydev->advertising);
-> +
-> +	/* Setup BroadR-Reach mode advertisement */
-> +	err = phy_modify_changed(phydev, MII_BCM54XX_LREANAA,
-> +				 LRE_ADVERTISE_ALL | LREANAA_PAUSE |
-> +				 LREANAA_PAUSE_ASYM, adv);
-> +
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return err > 0 ? 1 : 0;
-
-Nitpick: Could be: return err;
-(at this point it can be only 0 or 1 anyway)
-
-> +}
-> +EXPORT_SYMBOL_GPL(bcm_config_advert);
 
 ..
 
-> @@ -576,18 +604,16 @@ static int bcm54811_config_init(struct phy_device *phydev)
->   			return err;
->   	}
->   
-> -	return err;
-> +	/* Configure BroadR-Reach function. */
-> +	return  bcm5481x_set_brrmode(phydev, ETHTOOL_PHY_BRR_MODE_OFF);
+> +#include <linux/gpio/driver.h>
+> +#include <linux/module.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
 
-Nitpick: 2 spaces before "bcm5481x_set_brrmode"
-
->   }
->   
-> -static int bcm5481_config_aneg(struct phy_device *phydev)
-> +static int bcm5481x_config_delay_swap(struct phy_device *phydev)
->   {
->   	struct device_node *np = phydev->mdio.dev.of_node;
-> -	int ret;
-> -
-> -	/* Aneg firstly. */
-> -	ret = genphy_config_aneg(phydev);
-> +	int ret = 0;
-
-I think that ret can be left un-initialized and use return 0; at the end 
-of the function.
-
->   
-> -	/* Then we can set up the delay. */
-> +	/* Set up the delay. */
->   	bcm54xx_config_clock_delay(phydev);
->   
->   	if (of_property_read_bool(np, "enet-phy-lane-swap")) {
-> @@ -601,6 +627,56 @@ static int bcm5481_config_aneg(struct phy_device *phydev)
->   	return ret;
->   }
+This lacks some of inclusions.
+E.g., array_size.h, mod_devicetable.h, io.h.
 
 ..
 
-> +static int bcm54811_config_aneg(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +	u8 brr_mode;
-> +
-> +	/* Aneg firstly. */
-> +	ret = bcm5481x_get_brrmode(phydev, &brr_mode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (brr_mode == ETHTOOL_PHY_BRR_MODE_ON) {
-> +		/* BCM54811 is only capable of autonegotiation in IEEE mode */
-> +		if (phydev->autoneg)
-> +			return -EOPNOTSUPP;
-> +
-> +		ret = bcm_config_aneg(phydev, false);
-> +
+> +#ifdef CONFIG_PM_SLEEP
 
-Nitpick: unneeded new line
+SHouldn't be in a new code. Use proper PM macros.
 
-> +	} else {
-> +		ret = genphy_config_aneg(phydev);
-> +	}
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Then we can set up the delay and swap. */
-> +	return bcm5481x_config_delay_swap(phydev);
-> +}
-> +
->   struct bcm54616s_phy_priv {
->   	bool mode_1000bx_en;
->   };
-> @@ -1062,6 +1138,234 @@ static void bcm54xx_link_change_notify(struct phy_device *phydev)
->   	bcm_phy_write_exp(phydev, MII_BCM54XX_EXP_EXP08, ret);
->   }
->   
-> +static int bcm54811_read_abilities(struct phy_device *phydev)
+> +static int jh8100_sys_e_pinctrl_suspend(struct device *dev)
 > +{
-> +	int val, err;
+> +	struct jh8100_pinctrl *sfp;
 > +	int i;
-> +	static const int modes_array[] = {ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-> +					  ETHTOOL_LINK_MODE_1BR10_BIT,
-> +					  ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
-> +					  ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-> +					  ETHTOOL_LINK_MODE_1000baseT_Half_BIT,
-> +					  ETHTOOL_LINK_MODE_100baseT_Full_BIT,
-> +					  ETHTOOL_LINK_MODE_100baseT_Half_BIT,
-> +					  ETHTOOL_LINK_MODE_10baseT_Full_BIT,
-> +					  ETHTOOL_LINK_MODE_10baseT_Half_BIT};
 > +
+> +	sfp = dev_get_drvdata(dev);
 
-Nitpick: unneeded new line. Or maybe brr_mode could be defined above 
-this struct?
+> +	if (!sfp)
+> +		return -EINVAL;
 
-Should there be an extra space after { and before }?
-(see br_bits below)
+When this check can be true?
 
-> +	u8 brr_mode;
+> +	for (i = 0; i < sfp->info->nregs; i++)
+> +		sfp->jh8100_sys_east_regs[i] = readl_relaxed(sfp->base + (i * 4));
 > +
-> +	for (i = 0; i < ARRAY_SIZE(modes_array); i++)
-> +		linkmode_clear_bit(modes_array[i], phydev->supported);
+> +	return pinctrl_force_sleep(sfp->pctl);
+> +}
 > +
-> +	err = bcm5481x_get_brrmode(phydev, &brr_mode);
-> +
+> +static int jh8100_sys_e_pinctrl_resume(struct device *dev)
+> +{
+> +	struct jh8100_pinctrl *sfp;
+> +	int i;
 
-Nitpick: unneeded new line
+> +	sfp = dev_get_drvdata(dev);
+> +	if (!sfp)
+> +		return -EINVAL;
 
-> +	if (err)
-> +		return err;
+Ditto.
+
+> +	for (i = 0; i < sfp->info->nregs; i++)
+> +		writel_relaxed(sfp->jh8100_sys_east_regs[i], sfp->base + (i * 4));
+
+Too many parentheses.
+
+> +	return pinctrl_force_default(sfp->pctl);
+> +}
+> +#endif
+
+..
+
+> +static SIMPLE_DEV_PM_OPS(jh8100_sys_e_pinctrl_dev_pm_ops,
+> +			 jh8100_sys_e_pinctrl_suspend,
+> +			 jh8100_sys_e_pinctrl_resume);
+
+Don't use obsoleted macros, use new ones.
+
+..
+
+> +#ifdef CONFIG_PM_SLEEP
+> +		.pm = &jh8100_sys_e_pinctrl_dev_pm_ops,
+> +#endif
+
+Ditto, no ugly ifdeffery.
+
+> +		.of_match_table = jh8100_sys_e_pinctrl_of_match,
+> +	},
+> +};
+
+..
+
+> +/*
+> + * Pinctrl / GPIO driver for StarFive JH8100 SoC
+> + *
+> + * Copyright (C) 2023-2024 StarFive Technology Co., Ltd.
+> + * Author: Alex Soo <yuklin.soo@starfivetech.com>
+
+> + *
+
+Unneeded blank line.
+
+> + */
+
+..
+
++ array_size.h
+
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+
++ container_of.h
+
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_wakeirq.h>
+> +#include <linux/reset.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/string.h>
+
++ types.h
+
+..
+
+> +static unsigned int jh8100_pinmux_din(u32 v)
+> +{
+> +	return (v & GENMASK(31, 24)) >> 24;
+> +}
 > +
-> +	if (brr_mode == ETHTOOL_PHY_BRR_MODE_ON) {
-> +		linkmode_set_bit_array(phy_basic_ports_array,
-> +				       ARRAY_SIZE(phy_basic_ports_array),
-> +				       phydev->supported);
+> +static u32 jh8100_pinmux_dout(u32 v)
+> +{
+> +	return (v & GENMASK(23, 16)) >> 16;
+> +}
 > +
-> +		val = phy_read(phydev, MII_BCM54XX_LRESR);
-> +		if (val < 0)
-> +			return val;
+> +static u32 jh8100_pinmux_doen(u32 v)
+> +{
+> +	return (v & GENMASK(15, 10)) >> 10;
+> +}
 > +
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-> +				 phydev->supported, 1);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-> +				 phydev->supported,
-> +				 val & LRESR_100_1PAIR);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_1BR10_BIT,
-> +				 phydev->supported,
-> +				 val & LRESR_10_1PAIR);
-> +	} else {
-> +		return genphy_read_abilities(phydev);
+> +static u32 jh8100_pinmux_function(u32 v)
+> +{
+> +	return (v & GENMASK(9, 8)) >> 8;
+> +}
+> +
+> +static unsigned int jh8100_pinmux_pin(u32 v)
+> +{
+> +	return v & GENMASK(7, 0);
+> +}
+
+These all are reinventions of bitfield.h.
+
+..
+
+> +static void jh8100_pin_dbg_show(struct pinctrl_dev *pctldev,
+> +				struct seq_file *s, unsigned int pin)
+> +{
+> +	struct jh8100_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
+> +	const struct jh8100_pinctrl_domain_info *info = sfp->info;
+> +
+> +	seq_printf(s, "%s", dev_name(pctldev->dev));
+
+> +	if (pin < sfp->gc.ngpio) {
+
+When this is not true?
+
+If that case even possible, invert the conditional to reduce the indentation
+level.
+
+> +		unsigned int offset = 4 * (pin / 4);
+> +		unsigned int shift  = 8 * (pin % 4);
+> +		u32 dout = readl_relaxed(sfp->base + info->dout_reg_base + offset);
+> +		u32 doen = readl_relaxed(sfp->base + info->doen_reg_base + offset);
+> +		u32 gpi = readl_relaxed(sfp->base + info->gpi_reg_base + offset);
+> +
+> +		dout = (dout >> shift) & info->dout_mask;
+> +		doen = (doen >> shift) & info->doen_mask;
+> +		gpi = ((gpi >> shift) - 2) & info->gpi_mask;
+> +
+> +		seq_printf(s, " dout=%u doen=%u din=%u", dout, doen, gpi);
 > +	}
-> +
-> +	return err;
+> +}
 
-Nitpick: return 0; ?
+..
+
+> +	pgnames = devm_kcalloc(dev, ngroups, sizeof(*pgnames), GFP_KERNEL);
+> +	if (!pgnames)
+> +		return -ENOMEM;
+> +
+> +	map = kcalloc(nmaps, sizeof(*map), GFP_KERNEL);
+> +	if (!map)
+> +		return -ENOMEM;
+
+Why one is managed and another is not? Shouldn't be both either managed or not?
+
+..
+
+> +	mutex_lock(&sfp->mutex);
+
+Don't you want to use cleanup.h from day 1?
+
+..
+
+> +	for_each_child_of_node(np, child) {
+
+Why not using _scoped() variant?
+
+..
+
+> +		int npins = of_property_count_u32_elems(child, "pinmux");
+
+Why signed?
+Please, decouple definition and assignment.
+
+> +		int *pins;
+> +		u32 *pinmux;
+> +		int i;
+> +
+> +		if (npins < 1) {
+> +			dev_err(dev,
+> +				"invalid pinctrl group %pOFn.%pOFn: pinmux not set\n",
+> +				np, child);
+> +			ret = -EINVAL;
+
+Can npins be negative? In such case why shadowing an error code?
+
+> +			goto put_child;
+> +		}
+
+..
+
+> +		ret = pinctrl_generic_add_group(pctldev, grpname,
+> +						pins, npins, pinmux);
+
+One line?
+
+..
+
+> +	for (i = 0; i < group->grp.npins; i++) {
+> +		u32 v = pinmux[i];
+> +
+> +		jh8100_set_one_pin_mux(sfp,
+> +				       jh8100_pinmux_pin(v),
+> +				       jh8100_pinmux_din(v),
+> +				       jh8100_pinmux_dout(v),
+> +				       jh8100_pinmux_doen(v),
+> +				       jh8100_pinmux_function(v));
+> +		}
+
+Indentation?
+
+..
+
+> +static u32 jh8100_padcfg_ds_to_mA(u32 padcfg)
+> +{
+> +	return jh8100_drive_strength_mA[(padcfg >> 1) & 3U];
+
+GENMASK() ?
+
+> +}
+> +
+> +static u32 jh8100_padcfg_ds_to_uA(u32 padcfg)
+> +{
+> +	return jh8100_drive_strength_mA[(padcfg >> 1) & 3U] * 1000;
+
+Ditto.
 
 > +}
 
 ..
 
-> +/* Read LDS Link Partner Ability in BroadR-Reach mode */
-> +static int bcm_read_lpa(struct phy_device *phydev)
+> +static u32 jh8100_padcfg_ds_from_mA(u32 v)
 > +{
-> +	int i, lrelpa;
-> +
-> +	if (phydev->autoneg != AUTONEG_ENABLE) {
-> +		if (!phydev->autoneg_complete) {
-> +			/* aneg not yet done, reset all relevant bits */
-> +			static int br_bits[] = { ETHTOOL_LINK_MODE_Autoneg_BIT,
+> +	int i;
 
-Nitpick: add const? (but maybe the line would get too long)
+Why signed?
 
-> +						 ETHTOOL_LINK_MODE_Pause_BIT,
-> +						 ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-> +						 ETHTOOL_LINK_MODE_1BR10_BIT,
-> +						 ETHTOOL_LINK_MODE_100baseT1_Full_BIT };
-> +			for (i = 0; i < ARRAY_SIZE(br_bits); i++)
-> +				linkmode_clear_bit(br_bits[i], phydev->lp_advertising);
-> +
-> +			return 0;
-> +		}
-> +
-> +		/* Long-Distance-Signalling Link Partner Ability */
-
-Typo? Signaling?
-
-> +		lrelpa = phy_read(phydev, MII_BCM54XX_LRELPA);
-> +		if (lrelpa < 0)
-> +			return lrelpa;
-> +
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_PAUSE_ASYM);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_PAUSE);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_100_1PAIR);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_1BR10_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_10_1PAIR);
-> +	} else {
-> +		linkmode_zero(phydev->lp_advertising);
+> +	for (i = 0; i < ARRAY_SIZE(jh8100_drive_strength_mA); i++) {
+> +		if (v <= jh8100_drive_strength_mA[i])
+> +			break;
 > +	}
+> +	return i << 1;
+> +}
+
+..
+
+> +static int jh8100_gpio_get_direction(struct gpio_chip *gc,
+> +				     unsigned int gpio)
+
+One line?
+
+> +{
+> +	struct jh8100_pinctrl *sfp = container_of(gc,
+> +			struct jh8100_pinctrl, gc);
+> +	const struct jh8100_pinctrl_domain_info *info = sfp->info;
+> +	unsigned int offset = 4 * (gpio / 4);
+> +	unsigned int shift  = 8 * (gpio % 4);
+> +	u32 doen = readl_relaxed(sfp->base + info->doen_reg_base + offset);
+
+> +	doen = (doen >> shift) & info->doen_mask;
+> +
+> +	return doen == 0 ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
+
+	if ((doen >> shift) & info->doen_mask)
+		return GPIO_LINE_DIRECTION_IN;
+
+	return GPIO_LINE_DIRECTION_OUT;
+
+> +}
+
+..
+
+> +static int jh8100_gpio_direction_input(struct gpio_chip *gc,
+> +				       unsigned int gpio)
+> +{
+> +	struct jh8100_pinctrl *sfp = container_of(gc,
+> +			struct jh8100_pinctrl, gc);
+
+Broken indentation, just put on one line.
+
+> +	/* enable input and schmitt trigger */
+> +	jh8100_padcfg_rmw(sfp, gpio,
+> +			  JH8100_PADCFG_IE | JH8100_PADCFG_SMT,
+> +			  JH8100_PADCFG_IE | JH8100_PADCFG_SMT);
+> +
+> +	jh8100_set_one_pin_mux(sfp, gpio, 255, 0, 1, 0);
 > +
 > +	return 0;
 > +}
 
 ..
 
-CJ
+> +static int jh8100_gpio_direction_output(struct gpio_chip *gc,
+> +					unsigned int gpio, int value)
+> +{
+> +	struct jh8100_pinctrl *sfp = container_of(gc,
+> +			struct jh8100_pinctrl, gc);
+
+> +	jh8100_set_one_pin_mux(sfp, gpio,
+> +			       255, value ? 1 : 0,
+> +			       0, 0);
+
+Use room on the previous lines.
+
+
+> +	/* disable input, schmitt trigger and bias */
+> +	jh8100_padcfg_rmw(sfp, gpio,
+> +			  JH8100_PADCFG_IE | JH8100_PADCFG_SMT,
+> +			  0);
+> +	return 0;
+> +}
+
+..
+
+> +{
+> +	struct jh8100_pinctrl *sfp = container_of(gc,
+> +			struct jh8100_pinctrl, gc);
+
+One line. You may create a helper to_jh8100_pinctrl() and use everywhere,
+
+> +	const struct jh8100_pinctrl_domain_info *info = sfp->info;
+> +	void __iomem *reg = sfp->base + info->gpioin_reg_base
+> +			+ 4 * (gpio / 32);
+
+Split definition and assignment. It will increase readability.
+
+> +	return !!(readl_relaxed(reg) & BIT(gpio % 32));
+> +}
+
+..
+
+> +static void jh8100_gpio_set(struct gpio_chip *gc,
+> +			    unsigned int gpio, int value)
+> +{
+> +	struct jh8100_pinctrl *sfp = container_of(gc,
+> +			struct jh8100_pinctrl, gc);
+> +	const struct jh8100_pinctrl_domain_info *info = sfp->info;
+> +	unsigned int offset = 4 * (gpio / 4);
+> +	unsigned int shift  = 8 * (gpio % 4);
+> +	void __iomem *reg_dout = sfp->base + info->dout_reg_base + offset;
+> +	u32 dout = (value ? 1 : 0) << shift;
+
+	u32 dout = value ? BIT(shift) : 0;
+
+> +	u32 mask = info->dout_mask << shift;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&sfp->lock, flags);
+> +	dout |= readl_relaxed(reg_dout) & ~mask;
+> +	writel_relaxed(dout, reg_dout);
+> +	raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+
+..
+
+> +static void jh8100_irq_mask(struct irq_data *d)
+> +{
+> +	struct jh8100_pinctrl *sfp = jh8100_from_irq_data(d);
+> +	const struct jh8100_gpio_irq_reg *irq_reg = sfp->info->irq_reg;
+> +	irq_hw_number_t gpio = irqd_to_hwirq(d);
+> +	void __iomem *ie = sfp->base + irq_reg->ie_reg_base
+> +		+ 4 * (gpio / 32);
+> +	u32 mask = BIT(gpio % 32);
+> +	unsigned long flags;
+> +	u32 value;
+> +
+> +	raw_spin_lock_irqsave(&sfp->lock, flags);
+> +	value = readl_relaxed(ie) & ~mask;
+> +	writel_relaxed(value, ie);
+> +	raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +
+> +	gpiochip_disable_irq(&sfp->gc, d->hwirq);
+
+You have gpio, why not use it here?
+
+> +}
+
+..
+
+> +static void jh8100_irq_unmask(struct irq_data *d)
+> +{
+> +	struct jh8100_pinctrl *sfp = jh8100_from_irq_data(d);
+> +	const struct jh8100_gpio_irq_reg *irq_reg = sfp->info->irq_reg;
+> +	irq_hw_number_t gpio = irqd_to_hwirq(d);
+> +	void __iomem *ie = sfp->base + irq_reg->ie_reg_base
+> +		+ 4 * (gpio / 32);
+> +	u32 mask = BIT(gpio % 32);
+> +	unsigned long flags;
+> +	u32 value;
+> +
+> +	gpiochip_enable_irq(&sfp->gc, d->hwirq);
+
+Ditto.
+
+> +	raw_spin_lock_irqsave(&sfp->lock, flags);
+> +	value = readl_relaxed(ie) | mask;
+> +	writel_relaxed(value, ie);
+> +	raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> +}
+
+..
+
+> +static int jh8100_irq_set_wake(struct irq_data *d, unsigned int enable)
+> +{
+> +	struct jh8100_pinctrl *sfp = jh8100_from_irq_data(d);
+> +	int ret = 0;
+> +
+> +	if (enable)
+> +		ret = enable_irq_wake(sfp->wakeup_irq);
+> +	else
+> +		ret = disable_irq_wake(sfp->wakeup_irq);
+> +	if (ret)
+> +		dev_err(sfp->dev, "failed to %s wake-up interrupt\n",
+> +			enable ? "enable" : "disable");
+
+str_enable_disable() (will require string_choices.h).
+
+> +	return ret;
+> +}
+
+..
+
+> +static void jh8100_irq_print_chip(struct irq_data *d, struct seq_file *p)
+> +{
+> +	struct jh8100_pinctrl *sfp = jh8100_from_irq_data(d);
+> +
+> +	seq_printf(p, sfp->gc.label);
+
+This is bad. Use seq_puts() or proper formatting string.
+
+> +}
+
+..
+
+> +	writel_relaxed(~0U, sfp->base + sfp->info->irq_reg->ic_reg_base);
+
+GENMASK() ?
+
+..
+
+> +		writel_relaxed(~0U, sfp->base + sfp->info->irq_reg->ic1_reg_base);
+
+Ditto.
+
+..
+
+> +	info = of_device_get_match_data(&pdev->dev);
+> +	if (!info)
+> +		return -ENODEV;
+
+Use device_get_match_data() from property.h.
+
+..
+
+> +	clk = devm_clk_get_optional(dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk), "could not get clock\n");
+
+Why not _enabled() variant?
+
+..
+
+> +	/*
+> +	 * we don't want to assert reset and risk undoing pin muxing for the
+
+We
+
+> +	 * early boot serial console, but let's make sure the reset line is
+> +	 * deasserted in case someone runs a really minimal bootloader.
+> +	 */
+
+..
+
+> +	ret = devm_pinctrl_register_and_init(dev,
+> +					     jh8100_pinctrl_desc,
+> +					     sfp, &sfp->pctl);
+
+Can occupy less lines.
+
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "could not register pinctrl driver\n");
+
+..
+
+> +	if (sfp->gc.ngpio > 0) {
+
+Is it really can be not true?
+
+> +		ret = devm_gpiochip_add_data(dev, &sfp->gc, sfp);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "could not register gpiochip\n");
+> +
+> +		dev_info(dev, "StarFive JH8100 GPIO chip registered %d GPIOs\n", sfp->gc.ngpio);
+> +	}
+
+..
+
+> +/*
+> + * Pinctrl / GPIO driver for StarFive JH8100 SoC
+> + *
+> + * Copyright (C) 2023-2024 StarFive Technology Co., Ltd.
+> + * Author: Alex Soo <yuklin.soo@starfivetech.com>
+
+> + *
+
+Unneeded blank line.
+
+> + */
+> +
+> +#ifndef __PINCTRL_STARFIVE_JH8100_H__
+> +#define __PINCTRL_STARFIVE_JH8100_H__
+
+A lot of inclusions are missed, like
+
+types.h
+
+> +#include "../core.h"
+
+
+Some of the forward declarations are missed, like
+
+struct device;
+
+> +#endif /* __PINCTRL_STARFIVE_JH8100_H__ */
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
