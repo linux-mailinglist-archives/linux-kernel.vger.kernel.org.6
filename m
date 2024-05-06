@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-169584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1506F8BCAD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:38:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E898BCAD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F751F22303
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B88C1F21482
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4391B142E9A;
-	Mon,  6 May 2024 09:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EF614386D;
+	Mon,  6 May 2024 09:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FU10+24E"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKQvp8pw"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA281142E7D;
-	Mon,  6 May 2024 09:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35C4143744;
+	Mon,  6 May 2024 09:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714988239; cv=none; b=lj0qo6wFeJBjH1eHVKq7EYqAmGpXy09ka0Lqj8TQyhfdHq58tGuJ3GaVCu5yfvcge732P/bipyypAtD39AFu+QtG6iTu/9inuSV8xNH5AQEPf2GEFI1ccAB1Wt3LgFaMSmMq7UjYvzMwwXFFPm6q+1pr1qfotE0Hq1Mj8ZoQaU4=
+	t=1714988243; cv=none; b=BsRgnLD/gu29+7Yd7DzuwEppt0qfbRdja+FPcDVUVqpIWsuLMis8bDlJrnPHRkGbzlZivIVQ0GSF/C3H6m6CSFW1zQ5EEaUXM2NVAujgYiSMy1yK+sKkkLOBH+fTJR9wkwPDOPaL8HpdinWCQAzq9jG0seaGrCDZ8ozqKfsibYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714988239; c=relaxed/simple;
-	bh=lraF8Hbej6o/vzD2ibMl+sD1o6QIvu8qx6CUPylhTS0=;
+	s=arc-20240116; t=1714988243; c=relaxed/simple;
+	bh=QMB2BQUFw504Si0nPhgwd4U1cGB1jsKPa2V0a7oyVXA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i6f3sbBWLW5S7hUUaDrRw2wr5eIOh56JCOb5k+f3PDoRnGLFl2YtpdjcqgD4s+M+cWERUhGHtPR8Bfk/kjWMS5PPcgfbwqn9uwO7f/aaXgRRoHfL1F7xysXGCLnRxzbrzWIW7RAUMHHF6RSAV4OFjAOzijqMgTKPVGkRY08fbbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FU10+24E; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:To:Cc; b=XVzNMg75bzb1excL95nXeJoqzgbZqUPTLrRRwWU0TbGd0rlcUSobumK8V9INEGsq7THMVtVrS4X10l25di78B0gufVHlx5J2fnBlxErZoWnZk5TYseo1GkQNi2eI0kKsbZ8gotuVmJ1hokRYCvZ7dXoraJCTgU3aCmSZRikUL9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKQvp8pw; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso220845866b.2;
-        Mon, 06 May 2024 02:37:17 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a599a298990so422221766b.2;
+        Mon, 06 May 2024 02:37:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714988236; x=1715593036; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714988240; x=1715593040; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6QUAJdxvdjJF0g4Iedvv3W5jbeIoEk4V3HwGZq9hD1M=;
-        b=FU10+24EdRQaUWlbJrRxETS9FwTXW/ZuQxm8hcex2dF8C0rfUek3W1x8I+2PdAYK1j
-         9cNVg2+4McxkHTG1EXbLnYUwCxiFll4PqFNtSCUqABgj5Iij8C51sPacJVdN/8EhtZV/
-         TvKAX51txIUAA2u9CC8InN472si4LNWKVivl546JUxYTSz5I1K4filyoJ98PuWEVTc/0
-         mLBtUENtkvL01TU7419ZVU4Zf8ryijLG3byYJl0fJd61I7wBpYSyRa+GBTnuxpKuhZ7M
-         r0IgP/2XpnhdwIpYFLRZ5zGAJNSabEMF4I7brjqHLTesCJowk/DZyPVbq0Ett1kiqpPf
-         JevQ==
+        bh=DPJZwHx34N3Ow7z49nFpdVnJJVNFy+nT0MarnQ8cM+A=;
+        b=DKQvp8pwAbFihVaXDFtwLkdHtNxOfJ6iLt3RPZUgUNzhBWp92CAN29BSjGrXAgFW+f
+         g6GzWGIakP/Kfmwy3zrCsPnGR3fcnOe8tqgtcBMb21pxE+3BM8ePO/SJ+3QHaCKoKo79
+         DMVKJr220hOnsch9mNz9g4m6wcPjDyXEbDIEKKC0NaDDFS8LElwQ0fNueZwmJb/v4Djq
+         laIC6qk1Crf4xcYJ0SVhjxzk08BjwuH61p3AuEVTf3TXU2IcdKW4YRTC0SWvsuZmuiQ2
+         CqczN8XWrJ53xwj0FjxmPJP7KEbR4UOHjaW5scRNdxcNfN+0/fr9VNgxlO99QiDOIrEz
+         SVbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714988236; x=1715593036;
+        d=1e100.net; s=20230601; t=1714988240; x=1715593040;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6QUAJdxvdjJF0g4Iedvv3W5jbeIoEk4V3HwGZq9hD1M=;
-        b=AUXFMs36abF/OKRLG4xxGVto0PmRZ7g8pqImm0KCi1hBP+tSFqrYcwZlHYqolJCE1m
-         seVKn8t9/yhxX1JZTcuacM5OJWv9OljvGpZkzdZQ8hkSsmNh+k5l0PYvF0Z89n0DblLt
-         GCTxNwXIDHTRB+EOaeNrwh3p97izp3mLqB3CkBj/TsaAcB/OXO1FzH2SwtjjjOMyt54L
-         NsoewkgccJqGreF36wm15zrHlO+Gn88s1E1GSTDEak66enyGbln5Dylhu/27x74gDLDa
-         mRsmZbazodT4ByiJH1zJDAk51s8pcE244ZwnVRakyUFMGq6xBrUEexsEZte16j2xeJiK
-         ckRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn+g496C6APZsfndVnQOX/kIhSkB3H75JJoXNHUrf1XDaYqBMD1SfnneWUfe97cDXx3MOe89XiDv0lYx6JNN2Z5pmUWxOryUHXJXRiGxTzmOuXeRnY2dwTU2P6/xN1GES1ncZS8dKczw==
-X-Gm-Message-State: AOJu0YyYmTOi/emDZB9WPnSnmf7Fr7Y0Qify6bAFLjs5/nMlaGiu1gze
-	OPB6t/xfCdZ+Oz/5AMEp7TyTYUhxuG80b7GyMhiYN/1ndiGahZ9M
-X-Google-Smtp-Source: AGHT+IEpoDThqBrXD8AVnT5RjXcFvvech0tAE2sx6cAOPOuHnZuctTfwzvyaGhf+wUdbkeccEPLO0w==
-X-Received: by 2002:a50:a699:0:b0:572:42ac:9b19 with SMTP id e25-20020a50a699000000b0057242ac9b19mr6652365edc.0.1714988236054;
-        Mon, 06 May 2024 02:37:16 -0700 (PDT)
+        bh=DPJZwHx34N3Ow7z49nFpdVnJJVNFy+nT0MarnQ8cM+A=;
+        b=l7XblEr6Q616ZzmG5OmxA7KuS2wL2ycPqM8UjrS+D/pXQ3pBxcReapfM3Md7dYjq3F
+         llurOKy4NxZKajXoLQlKbGzr9slYs7f5QeqUSi8ad2/3S6NDDOxR4XtoGafj2dMSHFAU
+         +noS2y44m3WN6qvFC33eQZedpqFlJx40QOHGw+mBfL9SWygy+ljB37Aq/qH1gt59bxqC
+         5gkT4TF9JEOLLQkfCAopwnurAW9nx+4ShNFuKmMW7p+pRKgI74hSBe7KisJFfBjIP8Jl
+         unqwev81c+xSa4VeNgv6xYINPQjaKPEejOfs7ZGhOAPq8RHD+3gA1N/iX09UuBOBqYBv
+         td2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVFsSHqaDJEQmMMNblw/gtyx5gjGtRAt2siTN0SEyHnKcbHW/dmnRKnjaya79YsUKgGQo8gAGWI6C5cSqu52uorVxS44s5gyoQeDq+lPHnaOCa0qSnC72nR6la2t8A2m1Se0ypOCcxYIA==
+X-Gm-Message-State: AOJu0Yyxtd56p5LF/AJ3rcrau4yeuFLouo4FszejMJok13T8XUjwkz2O
+	q84DQVyQJ7fd0o7K2S0Lw0LqFGD97fqJglwqSxohWmLvri+WNcMv
+X-Google-Smtp-Source: AGHT+IFaEDRcX/eXmw7esyfzzdC59VSTAyURsII4QqC2jC9dS3tj96yWHX5rUfe+NF44OcXPw3e8+w==
+X-Received: by 2002:a50:bb42:0:b0:570:3b4:53ff with SMTP id y60-20020a50bb42000000b0057003b453ffmr6300213ede.6.1714988239866;
+        Mon, 06 May 2024 02:37:19 -0700 (PDT)
 Received: from [172.30.32.119] ([2001:8f8:183b:f2c::d35])
-        by smtp.gmail.com with ESMTPSA id f6-20020a056402160600b005722ce89ae2sm4983647edv.38.2024.05.06.02.37.12
+        by smtp.gmail.com with ESMTPSA id f6-20020a056402160600b005722ce89ae2sm4983647edv.38.2024.05.06.02.37.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 02:37:15 -0700 (PDT)
+        Mon, 06 May 2024 02:37:19 -0700 (PDT)
 From: Alexey Charkov <alchark@gmail.com>
-Date: Mon, 06 May 2024 13:36:33 +0400
-Subject: [PATCH v4 2/6] arm64: dts: rockchip: enable thermal management on
- all RK3588 boards
+Date: Mon, 06 May 2024 13:36:34 +0400
+Subject: [PATCH v4 3/6] arm64: dts: rockchip: add passive GPU cooling on
+ RK3588
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240506-rk-dts-additions-v4-2-271023ddfd40@gmail.com>
+Message-Id: <20240506-rk-dts-additions-v4-3-271023ddfd40@gmail.com>
 References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
 In-Reply-To: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
 To: Rob Herring <robh+dt@kernel.org>, 
@@ -91,150 +91,57 @@ Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
  linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Alexey Charkov <alchark@gmail.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714988224; l=4390;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1714988224; l=1255;
  i=alchark@gmail.com; s=20240125; h=from:subject:message-id;
- bh=lraF8Hbej6o/vzD2ibMl+sD1o6QIvu8qx6CUPylhTS0=;
- b=L+SmgqiZUWX1QlD1lAl8Fvx6rg3te0i8Dfivs/4C85qKwq5x8IqH2l/yBUMfv+hG0SscnqBb5
- /rqtiXXtC+xCIsVzjy5l4iHbWTkC4rlKbTBgxQjs9K1pcoxUz13N3BS
+ bh=QMB2BQUFw504Si0nPhgwd4U1cGB1jsKPa2V0a7oyVXA=;
+ b=kOJ0Ccq6KM+zlPF5AmBsuM09NjiaXHs7BkcQ43+BtvNRKJFT8LEz+ydboCdWRkGjp1pcFJNgq
+ YfaX5AKGTxsAeKGf08Q0SYC6Lt+B7TVrNrDrlkoUuC7CKxfBqCVafZX
 X-Developer-Key: i=alchark@gmail.com; a=ed25519;
  pk=xRO8VeD3J5jhwe0za0aHt2LDumQr8cm0Ls7Jz3YGimk=
 
-This enables the on-chip thermal monitoring sensor (TSADC) on all
-RK3588(s) boards that don't have it enabled yet. It provides temperature
-monitoring for the SoC and emergency thermal shutdowns, and is thus
-important to have in place before CPU DVFS is enabled, as high CPU
-operating performance points can overheat the chip quickly in the
-absence of thermal management.
+As the GPU support on RK3588 has been merged upstream, along with OPP
+values, add a corresponding cooling map for passive cooling using the GPU.
 
 Signed-off-by: Alexey Charkov <alchark@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts          | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts              | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts              | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi           | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts              | 4 ++++
- 8 files changed, 32 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-index 98c622b27647..c667704ba985 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts
-@@ -673,6 +673,10 @@ regulator-state-mem {
- 	};
- };
- 
-+&tsadc {
-+	status = "okay";
-+};
-+
- &u2phy0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi
-index 709d348cf06b..03fd193be253 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-common.dtsi
-@@ -466,3 +466,7 @@ regulator-state-mem {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+index ef06c1f742e8..57c2d998ae75 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+@@ -2487,17 +2487,29 @@ center_crit: center-crit {
  		};
- 	};
- };
-+
-+&tsadc {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-index 7be2190244ba..7c3696a3ad3a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-@@ -1131,6 +1131,10 @@ &sata0 {
- 	status = "okay";
- };
  
-+&tsadc {
-+	status = "okay";
-+};
-+
- &u2phy0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts b/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-index 009566d881f3..230e630820b4 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts
-@@ -376,6 +376,10 @@ &sdmmc {
- 	status = "okay";
- };
+ 		gpu_thermal: gpu-thermal {
+-			polling-delay-passive = <0>;
++			polling-delay-passive = <100>;
+ 			polling-delay = <0>;
+ 			thermal-sensors = <&tsadc 5>;
  
-+&tsadc {
-+	status = "okay";
-+};
-+
- &u2phy2 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index b8e15b76a8a6..21e96c212dd8 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -742,6 +742,10 @@ regulator-state-mem {
- 	};
- };
+ 			trips {
++				gpu_alert: gpu-alert {
++					temperature = <85000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
+ 				gpu_crit: gpu-crit {
+ 					temperature = <115000>;
+ 					hysteresis = <0>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&gpu_alert>;
++					cooling-device =
++						<&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
  
-+&tsadc {
-+	status = "okay";
-+};
-+
- &uart2 {
- 	pinctrl-0 = <&uart2m0_xfer>;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts b/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts
-index 9090c5c99f2a..d0021524e7f9 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dts
-@@ -648,6 +648,10 @@ regulator-state-mem {
- 	};
- };
- 
-+&tsadc {
-+	status = "okay";
-+};
-+
- &u2phy2 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-index 6b9206ce4a03..77bcf0f6b028 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-@@ -601,6 +601,10 @@ regulator-state-mem {
- 	};
- };
- 
-+&tsadc {
-+	status = "okay";
-+};
-+
- &uart2 {
- 	pinctrl-0 = <&uart2m0_xfer>;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-index 8e2a07612d17..c671a61d3aef 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts
-@@ -697,6 +697,10 @@ regulator-state-mem {
- 	};
- };
- 
-+&tsadc {
-+	status = "okay";
-+};
-+
- &u2phy0 {
- 	status = "okay";
- };
+ 		npu_thermal: npu-thermal {
 
 -- 
 2.45.0
