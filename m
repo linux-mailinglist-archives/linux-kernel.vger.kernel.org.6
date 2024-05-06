@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-170337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C301F8BD561
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020F48BD564
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38E81C2191A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:25:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C7C1F22D73
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1E715958C;
-	Mon,  6 May 2024 19:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CC715956B;
+	Mon,  6 May 2024 19:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KQaDgD0R"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T9cbPrAc"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAA31591FB
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E6515921C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715023491; cv=none; b=NJItf1ilIf32s2ENno88sO5Nb4dZhqJGRJECUYwrFuOZauLJAy9eP+xHwUwJ2fnqXRbwf+iSiCpnRJ5SxW6s9GeR15myFaRdi3iXKN+sDo9o1UgLKQOP4WWTiFRonZiiXDPNRNFHKSA95320MI9qvWVI7lTeg0Pa4z9aMf0B4VU=
+	t=1715023525; cv=none; b=G1GU9HpMxwlZNBAxUyT3W1iiyfSDiLEBnfFolQOU7TjQCvfNTcmcuCI9i/YlRgBhoszweg6kv+2PNJpPz1hZVAD3uXPcRqj8lXFndwzYcN9faZME7Afvswj9EdlSnOxrrWR9i3v92YAkRxM5IBe05QdWCSfGH/9rgEwKSfrnPyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715023491; c=relaxed/simple;
-	bh=2UHWC2bxvJRpPIbR8NMDLC+df/QxdRgc5rfe62kBZfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MoqPQZ0XRyFqyMO1W5ekNufy8cm1SR1tCNDK8Id3AvSD+7420XLrTmn/nfBDZl1eSVwGQXaYIesXVGDjihkNjwDWZEldxY0BGefToljUnr3EuVWbzjlYl9cuyOT7Uahiz7Lvx/p7qVRKfHm/uX2TFVXe4/e/bTEW8w6Rq0y1yDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KQaDgD0R; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3c97a4857a8so68505b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715023490; x=1715628290; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=raDFNcDQUrEtJLVjBh+B3qIrZSUwTfQ8a/Tp6m6/klY=;
-        b=KQaDgD0RMrnKCLWYW/tQ40vUmqBXHTxVUikTQ2THRo4LQdbsAVTFw6q4b3VRAm+/h0
-         e33fBydjIJC8WLu++VdlUv7PvQFWgi86cUsAQT13hz719D6n8pro4vMGrYLkviy90M4C
-         ZHLb9ZqrhE/S863I9aymXEytFU0sKm/j7td8U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715023490; x=1715628290;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=raDFNcDQUrEtJLVjBh+B3qIrZSUwTfQ8a/Tp6m6/klY=;
-        b=mAo87By+830yzIqRW18ZCxRCYqNa+zP1VoWyNfFtXRc4O2+5SJHQT5SyW7Jmldnz7G
-         3H5QN1KukzuciR9kcpEmsrxpVAD17kmRhdo0jAFKvbPUqRSFJoYtA8WiFkiYbFbJ8Yme
-         bzhICdTDoUpvkNanOm0b306nQ+hoEbAZQ06CdSdt/3b0qVjLEStt4cxcOhEn5JAt/Xfz
-         9REnzgKLE4XLui+92uhV4NlfrYYX2VFFXMeiWyS94lr4ik/yuimXrD8folj40qjA5mtK
-         7hmmbEig4ypxN1twVv/EPAzpH0R1T/bRp47YSPfr5Krh7mABu3aHUJ9yR6SbqMyN84Vu
-         KUjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3V4CYI8dBtFG2bdo288AHuG8//If+xje9ur29ZxknFxVRwv39La7fBQX0vh3T9z3+W+jIijJ/VzbAI7ZbJeyv8TPUBVDLbYKli2BY
-X-Gm-Message-State: AOJu0YxLHt0Q0bhphHz7doSMU08C3yabwL+BWBGI8q1R8EE2OJsAhAyu
-	AnnGDrxJSDCCGTd6fTR3Hx5x9uR8Ne7iAl/E+vUwr507kkhsIJcoYBNRBaTdcw==
-X-Google-Smtp-Source: AGHT+IFkAi80BKvF8PjygfQV1vvybXcizCZQWAbOTCI4v5z2AeP2XUkBEmlpXEhtlrpvoxrfTZ4Amg==
-X-Received: by 2002:a05:6808:258:b0:3c9:6acd:c626 with SMTP id m24-20020a056808025800b003c96acdc626mr4930719oie.46.1715023489673;
-        Mon, 06 May 2024 12:24:49 -0700 (PDT)
-Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
-        by smtp.gmail.com with ESMTPSA id ch9-20020a05622a40c900b00436e193f408sm5439870qtb.28.2024.05.06.12.24.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 12:24:48 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 06 May 2024 19:24:47 +0000
-Subject: [PATCH v2 2/2] media: bcm2835-unicam: Do not print error when irq
- not found
+	s=arc-20240116; t=1715023525; c=relaxed/simple;
+	bh=262GQmeTYIr1CgyTlhpiy51LdD2LjO0oEukrAEOG+OY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IkS5kPlG42sl2RdmgjEWoJLx38nGLDh7lzKt/K5acpliKGz3CutSC48OuKlCudRvS/MI9e6QjL3Q1IAj6JN65FcQ4FR8wQ919LD6M4qKShhUcr39SyYZiQGZ9fgrSM+nWUWqfUgEStnmfvd5093NrdykZSKOvBNr78jU/VHVqMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T9cbPrAc; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 6 May 2024 12:25:15 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715023521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gxbtAlVeF1/sUOU5uEW9t+ZyL4fh7ysXOylZq3pXva4=;
+	b=T9cbPrAcYBtaXsosnsqLQXaQuAZ+LPyXYpdVTa780mNBy7ZSsC/zltH2S8h0boDI8LfmXy
+	sYcDHXn7NMzZ/dlEFAT3/vWtFvdyybg5Lm7dAwyNVsC+0AncWVvtNaY/QUEVU4t9kiA8TM
+	QIlxXVrydo0sNa2WAvWZF0Z6pIfVM0M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm: do not update memcg stats for
+ NR_{FILE/SHMEM}_PMDMAPPED
+Message-ID: <xhytcu3lz2qm7qt2cfkp26z5h57k2ehpd7zw4jugywituldykh@spysi6qb2e3z>
+References: <20240506170024.202111-1-yosryahmed@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240506-fix-broad-v2-2-e6a2a5c0d609@chromium.org>
-References: <20240506-fix-broad-v2-0-e6a2a5c0d609@chromium.org>
-In-Reply-To: <20240506-fix-broad-v2-0-e6a2a5c0d609@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506170024.202111-1-yosryahmed@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-platform_get_irq() already prints an error for us.
+On Mon, May 06, 2024 at 05:00:24PM +0000, Yosry Ahmed wrote:
+> Do not use __lruvec_stat_mod_folio() when updating NR_FILE_PMDMAPPED and
+> NR_SHMEM_PMDMAPPED as these stats are not maintained per-memcg. Use
+> __mod_node_page_state() instead, which updates the global per-node stats
+> only.
+> 
+> Reported-by: syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/lkml/0000000000001b9d500617c8b23c@google.com
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-Fix this cocci warning:
-drivers/media/platform/broadcom/bcm2835-unicam.c:2664:2-9: line 2664 is redundant because platform_get_irq() already prints an error
+I think we can put Fixes either for 443c077dc2ec ("memcg: cleanup
+__mod_memcg_lruvec_state") or ad86c0f0e089 ("memcg: warn for unexpected
+events and stats").
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/broadcom/bcm2835-unicam.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> ---
+>  mm/rmap.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 12be4241474ab..c2cfb750d2535 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1435,13 +1435,14 @@ static __always_inline void __folio_add_file_rmap(struct folio *folio,
+>  		struct page *page, int nr_pages, struct vm_area_struct *vma,
+>  		enum rmap_level level)
+>  {
+> +	pg_data_t *pgdat = folio_pgdat(folio);
+>  	int nr, nr_pmdmapped = 0;
+>  
+>  	VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
+>  
+>  	nr = __folio_add_rmap(folio, page, nr_pages, level, &nr_pmdmapped);
+>  	if (nr_pmdmapped)
+> -		__lruvec_stat_mod_folio(folio, folio_test_swapbacked(folio) ?
+> +		__mod_node_page_state(pgdat, folio_test_swapbacked(folio) ?
+>  			NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED, nr_pmdmapped);
+>  	if (nr)
+>  		__lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr);
+> @@ -1493,6 +1494,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>  		enum rmap_level level)
+>  {
+>  	atomic_t *mapped = &folio->_nr_pages_mapped;
+> +	pg_data_t *pgdat = folio_pgdat(folio);
+>  	int last, nr = 0, nr_pmdmapped = 0;
+>  	bool partially_mapped = false;
+>  	enum node_stat_item idx;
+> @@ -1540,13 +1542,14 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>  	}
+>  
+>  	if (nr_pmdmapped) {
+> +		/* NR_{FILE/SHMEM}_PMDMAPPED are not maintained per-memcg */
+>  		if (folio_test_anon(folio))
+> -			idx = NR_ANON_THPS;
+> -		else if (folio_test_swapbacked(folio))
+> -			idx = NR_SHMEM_PMDMAPPED;
+> +			__lruvec_stat_mod_folio(folio, NR_ANON_THPS, -nr_pmdmapped);
+>  		else
+> -			idx = NR_FILE_PMDMAPPED;
+> -		__lruvec_stat_mod_folio(folio, idx, -nr_pmdmapped);
+> +			__mod_node_page_state(pgdat,
+> +					folio_test_swapbacked(folio) ?
+> +					NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED,
+> +					nr_pmdmapped);
 
-diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-index 60c0fe956c58..0b2729bf4a36 100644
---- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-+++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-@@ -2660,10 +2660,8 @@ static int unicam_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "No IRQ resource\n");
-+	if (ret < 0)
- 		goto err_unicam_put;
--	}
- 
- 	ret = devm_request_irq(&pdev->dev, ret, unicam_isr, 0,
- 			       "unicam_capture0", unicam);
+After the above fixed, you can add:
 
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
 
