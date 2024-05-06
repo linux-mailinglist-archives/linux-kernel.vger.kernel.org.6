@@ -1,49 +1,56 @@
-Return-Path: <linux-kernel+bounces-170210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1510F8BD383
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:00:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11D98BD388
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454001C21AF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D4FA28344F
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B19F15747C;
-	Mon,  6 May 2024 17:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75092156F54;
+	Mon,  6 May 2024 17:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqDK3McT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sw0rwZS8"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C48D156F28;
-	Mon,  6 May 2024 17:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23FD156F4C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 17:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715014828; cv=none; b=WIoB1R6JfFW46xkMAzHxnWp40MamcY6IVMVbHfx28R4TSWD3YAXRt4tO/GOSSKp/yYTa4pfSo1gnM4sx2Wdq21nxrwP72t4y7SCVaz0w5sLmuYttOKFynGtYo7hOqmtyRNEGcvjbWRiiUAzDuogO5/O6MsHedo25E6GM+pnfFeI=
+	t=1715014879; cv=none; b=EtZSiXRt/seJGChv1V4JZBuHkIWd/CsYp6Qd32mylSxg7U9hTYKDnaEsRFmsUybw1frNIHghrJoKvTorSNgCAH/yji/bGQ/m3XhGDb9gBkdRfmJskIFd3gf7vdLUL0MnNGc7ne7aCbLR5hs+pmP/WSFGlCxSFyl9OAUblIGpvKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715014828; c=relaxed/simple;
-	bh=vHsd79PfUgA+GN+RxuaEzU8r6S6xHi+0vSNnyqST6lY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DV8HKJUjLMw/ctVLJR+EsNrqP3e+2QDewFgoprghFBAdOCH9z3QFLf5H1b+UnwiaLX9+yOJPHmktCop+zukN99Rsra37ErNdi0UzAwx7Y+Z/R21CrskwWKQCB7aSNqMgWNJNTBLzTbH1V+7uAkY+Zgot1DMaqMjiAZc443Qwdxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqDK3McT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2DED7C4AF63;
-	Mon,  6 May 2024 17:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715014828;
-	bh=vHsd79PfUgA+GN+RxuaEzU8r6S6xHi+0vSNnyqST6lY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FqDK3McTEmy2OxsBFq+TTyRx++hYJR2WekDzaa51hu47/lHm4wVm6QODtzKIGknaL
-	 +HH8WT/RHmIk0MigC5chldc7cUQ+LW77Tm+oHUHeN7KJ11Wrt9Yoz6UTomG3CGtnVI
-	 9WoUrTW7AMEdE1Rs3mnnMVdhj5EaynmY9Ukzivj2mqUSIcE0+GG83Qfickr+XYsptZ
-	 cvWbchE57Y5x023TrJjz3t2DgFVw8AL6AwUjrCbmtviQvWSZhcN1iL9k39kxRNNwLm
-	 3hytvy5von0qTeZqembbZOCVWCkgd3ejk8UdfDAdvpLLlTyCF7NUXilfYC8xb8uqhd
-	 Aa+FggLzRI1tg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1910CC43337;
-	Mon,  6 May 2024 17:00:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715014879; c=relaxed/simple;
+	bh=875Pw760E+0v/PI5WhiXOO+miRdeGTK1PCQ9Pwrq2PU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=muaYFKJLmKXw7bC1piCDZuY0fmaYdUV6xWezSXkNJmZryBQm+crLWtvAhyypZ5dzrKpjsNCvTB+yQcEB7Jiknl0NVxoxHp68ZPYiDRWniwdRsjvahsw1TYlOiux50elOqVlmhOGPyUbCAKWw7zf6PAtYpoK1WKjW8PMDbcT8Ogo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sw0rwZS8; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715014875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=B4HAr5WNqIN+2BMtIDkk4eWOethRMvYJIjKQInTq8Q4=;
+	b=sw0rwZS8FPh4DawpviRrrEv/R8LHR54VYj1duj396TVqGjaaBniJOh35oj5fpVVRsAVd0v
+	X0e4VVZYKNY/RAlXSdigQ4j9Emeso90X+8l5j2XWwktBnnA0sie9LXgQx+x5NHPY1XSmdC
+	VtfZHtg8rZWlCiks5qvqjdPW7ituZFI=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-phy@lists.infradead.org
+Cc: Vinod Koul <vkoul@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH v2 0/4] phy: zynqmp: Fixes and debugfs support
+Date: Mon,  6 May 2024 13:01:06 -0400
+Message-Id: <20240506170110.2874724-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,40 +58,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: qca: Fix error code in qca_read_fw_build_info()
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <171501482809.13196.7620199307769330029.git-patchwork-notify@kernel.org>
-Date: Mon, 06 May 2024 17:00:28 +0000
-References: <515be96c-4c44-44d5-891f-fe57275e9f47@moroto.mountain>
-In-Reply-To: <515be96c-4c44-44d5-891f-fe57275e9f47@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: johan+linaro@kernel.org, marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+This has a few fixes and cleanups cleaning up the driver. Additionally,
+the last patch adds useful debugfs info.
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+Changes in v2:
+- Enable reference clock correctly
+- Expand the icm_matrix comment
+- Move the logic for waiting on PLL lock to xpsgtr_wait_pll_lock
+- Use debugfs_create_devm_seqfile
 
-On Sat, 4 May 2024 14:25:43 +0300 you wrote:
-> Return -ENOMEM on allocation failure.  Don't return success.
-> 
-> Fixes: cfc2a7747108 ("Bluetooth: qca: fix info leak when fetching fw build id")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/bluetooth/btqca.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Sean Anderson (4):
+  phy: zynqmp: Enable reference clock correctly
+  phy: zynqmp: Store instance instead of type
+  phy: zynqmp: Only wait for PLL lock "primary" instances
+  phy: zynqmp: Add debugfs support
 
-Here is the summary with links:
-  - Bluetooth: qca: Fix error code in qca_read_fw_build_info()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/0ae8d9b9ea1e
+ drivers/phy/xilinx/phy-zynqmp.c | 197 ++++++++++++++++----------------
+ 1 file changed, 100 insertions(+), 97 deletions(-)
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.35.1.1320.gc452695387.dirty
 
 
