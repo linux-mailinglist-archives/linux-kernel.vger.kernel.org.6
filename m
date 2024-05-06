@@ -1,104 +1,170 @@
-Return-Path: <linux-kernel+bounces-170496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C8C8BD810
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:11:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428D88BD80D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3D11F219FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:11:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57FB5B21B9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5144F15CD7A;
-	Mon,  6 May 2024 23:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EC915CD53;
+	Mon,  6 May 2024 23:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dmMcYWU8"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="yg9IoGuR"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7F28488
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 23:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898D0140E38
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 23:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715037057; cv=none; b=fQiTWfuw9GfX7LpfI12u4ySJdJPTksiHR5KHiCV3cyNxsRoWikwLTZc2+RzDx9hIg9rEt2ZZ6YIuSt2K7RZJPd9qHDTWx919lIF35mbQ7MPhGS2Y6WVHtF3kHoc7OfwVR1PkQEHDrJ0NnzNwMQPAzokY7KKAtuyj4aCTewK/YEc=
+	t=1715037036; cv=none; b=mgbPUWQ5GHANrftJBascQDFjLxHFQ3BcR9AJKDfBL3CHIP8qI2THY26ymlm5w26n0HjE6FAH2wEU9vJGwm947bc4UNie6Uz4PzYjwEvKfBT1lozEE73AD8nN7ymWrRG1UeqQpPLl3uMGIKVrMP6OLq5TYcLME+zJj/xCslJmxdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715037057; c=relaxed/simple;
-	bh=FCWmkGKtCYFY82UHw0ipUvRiJnRCs/R5WWby7amO1H0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KonaM6OpMuumXCIamyRLGcIovwwFmMUH/XjXh8ouyjf/8nGCrvRSVb3PjskDjXX0tRdjRiIcl6+U1Tn+KkAqCjaSSThZYzF3CUGE8XZURaa+fDy3DAi0UgPE3QiOzqStSQy9Pq7dHDzksWg9AbXkW5gOBp8/Yp3uZq/XQF4gqOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dmMcYWU8; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1715037036; c=relaxed/simple;
+	bh=kIqH8s12Peez1Ha63AcrGBGXb3oMgek8ZOqH+OM6aL4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=du9I7+yQdVvY+pQrwB90aUU8agR/3IIU4NzR1cOf0d8tgAbwFJJ0hNzWjHHg5DTiTNO6GSZv/pqMqgnQuH544Mb7MZgnNVOUm3jQKml08OJZ6IAznmdiOdQOt6eod1iQRB+3bBcQ5NmHhnDdxgTPKsVhKzmWvAn4D12uMeRjsto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yg9IoGuR; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso8304a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 16:10:55 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61be25000a4so53264127b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 16:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715037054; x=1715641854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=To7fxBOaNRZwDFrn2W07ozUB1mmlkd6/wYo0eU+RqtA=;
-        b=dmMcYWU8qp3CHI3X4SLQNBnbXQg83gvQwgl+1AwyLqyanHLav25FCMG6UPCgH1an8Z
-         Ye46XUbnT7DShnv3bcfaAxyRIau58uA68YgSfYF2IxLfrdZRss8gwuYqBX2xfvH+C7r6
-         6nbmycAdxLhUf8d7BALfPi+bt8m5WQsGV4Ap/5d3dKuQMqe76UBjDp8NIe9eOqTfzP5X
-         6wlgU93yWp65pt5+8nlrm478+TyY7TPH0NuDaNQ/mpifQHkBDfxEley7INR2pkkU2rhF
-         Uf7sa0GEADpLfJD2QvvPl9FxeJ5H2h8NLtTInO2CmGjumTavrHn8mKRP+gTdJIxDLwpb
-         lyFg==
+        d=google.com; s=20230601; t=1715037033; x=1715641833; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aVTeK+PPpIcCC4K8Et9DWqwzsgriwrNP2n+cF7VfKKg=;
+        b=yg9IoGuR7ulGDpnnCk8waLUOHeu2OuxtZ9p2JWVDDRtDSCn0L/xASTdUNSrUlqsogx
+         IaBh0a0YzqNc72wB+UzYmXGIPawjqRsXV5wDAS9wXzioql1EpZTP6nKK7rmha+xUxvuN
+         Yp4GPU/ElF3Igg8j5muXOuSf5ERYE/IJTXA4aYK3f88TOBhBQc9e9Ge8s1CQJbZak19p
+         OpBKmU+gjdFVlWUBTRgpktffQe4VokKxC728E48/d0wm2uQoaWb1vyIoBn7JNbg4Eq1x
+         H8/AxLYmR+HKej1ArY4TJi3tk7MMj5aHarfYuBof+epsb5owJ8xSfqJFxUgawg0W3Zr6
+         keag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715037054; x=1715641854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=To7fxBOaNRZwDFrn2W07ozUB1mmlkd6/wYo0eU+RqtA=;
-        b=Epv4/PvTz2P/m8RkYGiNvcau/3EciWC0Z1JTcdNiUZ8fZHGsEBOJZ8HL8K6KVb7RQF
-         jCWfZIrnm8D9n+VjXsFysU/OYvkhdHjdePkS5eFmHraRy1TWVg6/tTqxP79cPTqtIpzy
-         ORvL+z1kE7Id2yyRqtQaBfUgDb/O09vd7xM87SMDewq1eVhaK5buWHXco0q3f8ToX0QA
-         YeL6j9BKkbMUK44HnixXX7BCwrwXTRVd30yizt99gbiA0jwnhxMdiQW6aVsNOBHf7ma+
-         Ucc3wRqvvNp3TG3xevAX6NXNDxVU3jaSEr4HbbjIZ+N5wWngpuPMnZyAMZr3+UudrdJC
-         VIVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhVmDmSQ2KMHpxBYxdriJHvr9fH2iAn9sONTzonyp1oibTuEjEq++sueQZksn2Qa50+VWNWH2rO8Xec3ZBJX8dSnp4xA56bB9IKHHk
-X-Gm-Message-State: AOJu0Yy/29xYyxRcPnVKPvge/UF/Eq8C1B1WU2M2L3FCU81tDzQX1IDS
-	RD6XmzPFByeH2CqySuxGKMu2c8JYo5TU9a+AESsSkM1eH5hD5e2zpGEvLoQm6ZXglEl8lHbcY6q
-	zOTowP3ul4Qc/Jx7o+QVyu3+04pp2gDtDcVHM
-X-Google-Smtp-Source: AGHT+IHGZfGOFMLPDtfPud/GsrF7tdooNnrZe5MoO9klCGmWbiy/B/k6yjkc3wPHejQWyh/ZbyKrPPcGutS3l9Xw+Rg=
-X-Received: by 2002:a05:6402:4304:b0:572:7c06:9c0 with SMTP id
- 4fb4d7f45d1cf-57311c1506amr107766a12.0.1715037053475; Mon, 06 May 2024
- 16:10:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715037033; x=1715641833;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aVTeK+PPpIcCC4K8Et9DWqwzsgriwrNP2n+cF7VfKKg=;
+        b=ojpg1PCX0dJneSvVuG+qSWKFc/CY9vPM4MjuqiQ+kFAL4kcyKELSkWIdZg59vJuQPc
+         CYE/7ibN5ib/1alGVtVDroThHfZ8bXW2W/wlEsvRTI4lYXmhgZOeT2EST3znow6KECdm
+         jtmcF8WIkC9+tJ3y+sqA2KP/SY/yAmKgl2H/I1+IEQuk/BEVwIGIy2CfupHvTkPi7YM8
+         MxOKdqSLOCmzDFQPGGTJlIpPEeY5UsvIj2qrXrxJ+UbOA677Gxff09ig8G/ZNHpO4qyO
+         6fFgzOVf6F1pm6Rws9c5COHrnXYjlXp4G2oCBLrg0FqHn458vuI6LUIuRHCd3N1qh+BF
+         w2BA==
+X-Forwarded-Encrypted: i=1; AJvYcCWp6u0WuBNG6hw5U0Oki0Dkm5enuf6HUUYwsUDakcS8f9QN1T4R83ZUyMq/l+IiUCSnsgjFxCiAc3S+kIzXIaIK9VOwheaWfah4eNVp
+X-Gm-Message-State: AOJu0Yzj5wPantCmedaoQec/HdAY1xn/Fw81RnuHOwA5+9Gr3U0qzlcL
+	sz0f1AX8hTMC5Qvn2X2VaAUQ2B4ROS3JNlFLuQxb3tCJQ4vwqC8qKACxOUUJN7Cs0c1XbHO1ySV
+	h3SPdkUzVNIWM8yfE6EHWeQ==
+X-Google-Smtp-Source: AGHT+IF2zNFukyT8p7wq1ymqZP1R4dIIyH63RYvZYt/QfzEa+yiPKhJv9Eyui+kITd06lvb+8b/KRTq5N7Or7Lpv/Q==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6902:100d:b0:ddd:7581:1380 with
+ SMTP id w13-20020a056902100d00b00ddd75811380mr3803979ybt.11.1715037033677;
+ Mon, 06 May 2024 16:10:33 -0700 (PDT)
+Date: Mon, 06 May 2024 23:10:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240501180622.1676340-1-edliaw@google.com> <osgrbhnqlyh5yw4y4x6wjggx56dogsgje5yy3mkpu75ubs3zwg@5tliydzky37k>
- <b55272cb757743548c789aa8c0efa448@AcuMS.aculab.com> <CAFhGd8rAW4Mkctq5VkcfVjw_yr=jVdXaWbYXP-vmeVpw7q4ruQ@mail.gmail.com>
- <CAG4es9WYrN_tOV1Uxi_ytO2qDRRZW5_uN=2p3iCg=P0r3mM3Og@mail.gmail.com> <7332ff979f3440bd8362d37d4d1f34b8@AcuMS.aculab.com>
-In-Reply-To: <7332ff979f3440bd8362d37d4d1f34b8@AcuMS.aculab.com>
-From: Edward Liaw <edliaw@google.com>
-Date: Mon, 6 May 2024 16:10:27 -0700
-Message-ID: <CAG4es9Vn2F34UEmyG3upO-frtCZ00DVN8vgK4mRfX2548FKxVw@mail.gmail.com>
-Subject: Re: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for elf_hash
-To: David Laight <David.Laight@aculab.com>
-Cc: Justin Stitt <justinstitt@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Andy Lutomirski <luto@mit.edu>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"kernel-team@android.com" <kernel-team@android.com>, "llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGZjOWYC/x2MQQqAIBAAvxJ7bsHEMvpKdEjbraXI0Igg+nvSc
+ WBmHkgUhRJ0xQORLkkS9gxVWYBfxn0mlCkzaKWNqlWDzmB20G3BryjBnxvalniyRjOzgRwekVj uf9oP7/sBTbwINmQAAAA=
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715037032; l=3971;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=kIqH8s12Peez1Ha63AcrGBGXb3oMgek8ZOqH+OM6aL4=; b=yOCnlsYhbcBawdXupFaQ+B7J0DpIGRdob00ZKEgq5/yFaPGqXUV8fr82P6p55Yn32rPhvTGBD
+ dSzQZPLXZtpB8xJ4v7A79F1yhUSY5lDRaAKQ8GG+6chUR4dcwiL8UMA
+X-Mailer: b4 0.12.3
+Message-ID: <20240506-b4-sio-block-ioctl-v1-1-da535cc020dc@google.com>
+Subject: [PATCH] block/ioctl: use overflow helper for blkpg_partition fields
+From: Justin Stitt <justinstitt@google.com>
+To: Jens Axboe <axboe@kernel.dk>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, May 6, 2024 at 12:32=E2=80=AFPM David Laight <David.Laight@aculab.c=
-om> wrote:
->
->
-> That makes a lot more sense.
+Running syzkaller with the newly reintroduced signed integer overflow
+sanitizer shows this report:
 
-I sent v4 https://lore.kernel.org/all/20240506181951.1804451-1-edliaw@googl=
-e.com/.
-I updated the commit log to reflect the change but I'm not sure if I
-did it right for the mailing list.  Should I have added --in-reply-to
-this thread?
+[   62.982337] ------------[ cut here ]------------
+[   62.985692] cgroup: Invalid name
+[   62.986211] UBSAN: signed-integer-overflow in ../block/ioctl.c:36:46
+[   62.989370] 9pnet_fd: p9_fd_create_tcp (7343): problem connecting socket to 127.0.0.1
+[   62.992992] 9223372036854775807 + 4095 cannot be represented in type 'long long'
+[   62.997827] 9pnet_fd: p9_fd_create_tcp (7345): problem connecting socket to 127.0.0.1
+[   62.999369] random: crng reseeded on system resumption
+[   63.000634] GUP no longer grows the stack in syz-executor.2 (7353): 20002000-20003000 (20001000)
+[   63.000668] CPU: 0 PID: 7353 Comm: syz-executor.2 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+[   63.000677] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   63.000682] Call Trace:
+[   63.000686]  <TASK>
+[   63.000731]  dump_stack_lvl+0x93/0xd0
+[   63.000919]  __get_user_pages+0x903/0xd30
+[   63.001030]  __gup_longterm_locked+0x153e/0x1ba0
+[   63.001041]  ? _raw_read_unlock_irqrestore+0x17/0x50
+[   63.001072]  ? try_get_folio+0x29c/0x2d0
+[   63.001083]  internal_get_user_pages_fast+0x1119/0x1530
+[   63.001109]  iov_iter_extract_pages+0x23b/0x580
+[   63.001206]  bio_iov_iter_get_pages+0x4de/0x1220
+[   63.001235]  iomap_dio_bio_iter+0x9b6/0x1410
+[   63.001297]  __iomap_dio_rw+0xab4/0x1810
+[   63.001316]  iomap_dio_rw+0x45/0xa0
+[   63.001328]  ext4_file_write_iter+0xdde/0x1390
+[   63.001372]  vfs_write+0x599/0xbd0
+[   63.001394]  ksys_write+0xc8/0x190
+[   63.001403]  do_syscall_64+0xd4/0x1b0
+[   63.001421]  ? arch_exit_to_user_mode_prepare+0x3a/0x60
+[   63.001479]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+[   63.001535] RIP: 0033:0x7f7fd3ebf539
+[   63.001551] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+[   63.001562] RSP: 002b:00007f7fd32570c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   63.001584] RAX: ffffffffffffffda RBX: 00007f7fd3ff3f80 RCX: 00007f7fd3ebf539
+[   63.001590] RDX: 4db6d1e4f7e43360 RSI: 0000000020000000 RDI: 0000000000000004
+[   63.001595] RBP: 00007f7fd3f1e496 R08: 0000000000000000 R09: 0000000000000000
+[   63.001599] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+[   63.001604] R13: 0000000000000006 R14: 00007f7fd3ff3f80 R15: 00007ffd415ad2b8
+..
+[   63.018142] ---[ end trace ]---
 
-Edward
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang; It being re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
+
+Let's use check_add_overflow to check for overflow between p.start and
+p.length, as this method won't trigger a UBSAN splat.
+
+[1]: https://github.com/llvm/llvm-project/pull/82432
+
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+ block/ioctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/block/ioctl.c b/block/ioctl.c
+index f505f9c341eb..a66213c88ebb 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -33,7 +33,8 @@ static int blkpg_do_ioctl(struct block_device *bdev,
+ 	if (op == BLKPG_DEL_PARTITION)
+ 		return bdev_del_partition(disk, p.pno);
+ 
+-	if (p.start < 0 || p.length <= 0 || p.start + p.length < 0)
++	if (p.start < 0 || p.length <= 0 ||
++	    check_add_overflow(p.start, p.length, &p.start))
+ 		return -EINVAL;
+ 	/* Check that the partition is aligned to the block size */
+ 	if (!IS_ALIGNED(p.start | p.length, bdev_logical_block_size(bdev)))
+
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240506-b4-sio-block-ioctl-78efd742fff4
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
