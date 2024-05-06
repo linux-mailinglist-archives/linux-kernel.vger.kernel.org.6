@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-170305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF28B8BD4C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215568BD4C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC861C2260C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84DD91F21EE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3211215821F;
-	Mon,  6 May 2024 18:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EC5158DA7;
+	Mon,  6 May 2024 18:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVxgVWuz"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QWamJBOm"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012F44AECA;
-	Mon,  6 May 2024 18:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7AC15821F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 18:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715021035; cv=none; b=KpeVduOhVEV/ERlZBsV5zQ6PO9T6Ag03h4KwWb9NqmfFVBx8F1AQqnxHG2i3FiBiolJ+WmaBL6d1n0ylf+aadWlZwMzrFzzx3DMPMSq9IQChghGE8AtY6RWf101P5HxZTOlqOzUvq/ZBAPGa4H0Gp9Iaux/JY5piEqMYqxmvuxo=
+	t=1715021015; cv=none; b=njLse14ILqmHv/6JMxFrQ8dTlVaxmcjOrLG2+7TwlvRFmwuwV0OKCRriAdXQefV1v1rQ0IxHSjlWBDwL/y3eMRaLSOWORsfu2OaCBiHJYcCPhn+DNTxkdIZjQz4uEz5fS6+LzzxwExE54cLj8vpttHi9I/VlUTdBYkEI5mjMy94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715021035; c=relaxed/simple;
-	bh=SjAYMMCURaX0+dhX9RQn0cnTZU/j27gh7PWnFEk+ab8=;
+	s=arc-20240116; t=1715021015; c=relaxed/simple;
+	bh=sPMDL23QS9Xd7hIJCfVoH9uVk6HP1D83LxcnL9CKbhw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EsEl+eJqKrKuXqwxdiJfSloDL65MwMojEFS4fvxTD0+f4BXisobvow4OJbxLYblogkAbkb6ssQeP3YNcwVaMchxallH4igPkNBLbSyNbVPC+bqzXcfdBuixEau7OdhA1ihRC30Ng0qr1mM6DeXbHRoqzjxgOrQN2tn6EHk8ZcYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVxgVWuz; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2dd6a7ae2dcso38851941fa.1;
-        Mon, 06 May 2024 11:43:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=fnsDujq8skNArWaZ8ioVprh0y1mPC2/Q8GqObnypLXwEemBcG+Uu4PqVe2wfJICqcwbU32Zbwyn/uZnw0ep+4TWLQaDCoo4OEQRlsXWRTDKoZIPz/wee/OkEJW4in/4bTAH375wDyJGIvhwudu+S6dTDHx8dZQbZCitIWFIujS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QWamJBOm; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ee5f3123d8so28285ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 11:43:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715021032; x=1715625832; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715021013; x=1715625813; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qr+qysEHfAqmXZOmn1POXugpU0YxreOhrSJFEU0THm0=;
-        b=VVxgVWuzr0xuZ1mnTJT+MW4K+ffituK/7USNlKGmz24lZs619yPM1Htz7PWQbg1C72
-         BWaRRTXPQAnLVcqi7XqTUx6frOmelrvgQpKHN2jT5nLy2/fQ8gnaIpHYr0uD7tMPVgs3
-         WhjZDuT5DK5YMNm3Kx462AU6iGE+Q4Kn44JgghxT8B5JUcCS1bvMKxGuZVw3IAZ4BJj1
-         Nfzz7Zc/u9IPji8sJ8NdEmzgcGfjQJCDp83SgTdVzNS7LpWMMYlDoe6tRuC9jCsRQr+s
-         4wS0n3YrutBzc4ipzBZdXggjkjXjzaOHYykG+oRran1nRIFAnRAf/NCx9S+zT7u/qyn7
-         tS2w==
+        bh=aMqIHyLa/gmjK+J+Bo0q9JLXeRdO7aoxpGEVpFxtErc=;
+        b=QWamJBOm4/1TXFGAlwW2Wp7gFQIn4jOLbK8k/7TXtI6Kh/BdcgxPiBgf8NOsA42nAm
+         uQiK29razQgTolKJ83t8GlWw/aWYiHnrKObkVwYk/yQjbnK9rBslQDGQhtZFLayX178G
+         4OCpW+B+8JqGXHydmgVyA6NPi28sh+1m1G9q+TfOHJV7UFKThKdOApqV0YDJLTcH7F41
+         bGN1X61cVCHyuYRiUdpYJyQrDOqp2+I3OCslH0/TnK0I0o7rIvQqLyY8PQ5IfFI4/+GX
+         Do8PA1fFt4N5F6O/ozmCq7GZH3m1h5jv0Q5oEwTXYtr90EefNSITLAu0NHBOKZTcQgm6
+         Kz3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715021032; x=1715625832;
+        d=1e100.net; s=20230601; t=1715021013; x=1715625813;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qr+qysEHfAqmXZOmn1POXugpU0YxreOhrSJFEU0THm0=;
-        b=e4FT7QrTjcWOuJnfoQAb7s0ywIGVyehUrLgD5HjxYDy1I1hwT6zcKNqzjj1iDsan/q
-         UDP//AqhzAWhBmi7i6zPXq/icOkf0e6fisrZUJ45KXGjFeZ1hUKRty9xO0gmIDipOA7w
-         CumJGPHXA1NCS258Wm2qh+u56ODuk8CbBiJS7Ui/gZi2YLJ7mkUcNmL5cTIqB90yQQ/J
-         ekGvJrrcMBl9Y+Azb3caIjU1XP4RhhUNI+1uUj4hparlZ1FPWfTOyQDsYCNeMsSjKbUj
-         mf69DIXASNJV0OJKtWilUW2S2y5zb2tBPWWR0zRDIuu2PBVDxFlzJJfrKB3Kh0p/NaMT
-         B7Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/2XXecI3j7ctUoUcdnOfnCtLppr5v1YLJgTF/Iff7hDjnVdtLIlLZ2wykZ862027HF7HXwfgV5cCqOQNddq/gjN6taff/5GwCgJxRz8lJH8I8mCwmt3lQktLGcNk++psaEDqYFTRD2vSslDmV929RSUObJ3l5fzwQoGsUchLgUJj19fNo
-X-Gm-Message-State: AOJu0YweCyBKvLgwmUm7I+bG88wOLzDsrJIo0mJBVbmzbJX6jjSGfZww
-	PX4Yy/ncXiRvAu4X3vJcdMT66bxwqQQmmnIJl2NZ5tYr64wrYfQtuyJSnFN0/rOXLU7Bqieun8t
-	g7tPh/tRVGOujjCYRWcXe3CBBMOA=
-X-Google-Smtp-Source: AGHT+IERi95t/Ei+7vR8pRyVjdKl796Yjlt/ZbtXfmRINRyR5DRRP1jEVzskgsDTX/AZhs2s0g0dDOGemWlVlWsZX2A=
-X-Received: by 2002:a2e:7d18:0:b0:2e2:5078:3277 with SMTP id
- y24-20020a2e7d18000000b002e250783277mr8213909ljc.48.1715021031853; Mon, 06
- May 2024 11:43:51 -0700 (PDT)
+        bh=aMqIHyLa/gmjK+J+Bo0q9JLXeRdO7aoxpGEVpFxtErc=;
+        b=ReHZMURZ4l4m78KVXq3zKuLGt1R/UxcYc/KLQKDqmuyrBnSFaIo8Flw0wkTvUdtUuA
+         xs4dSTDEn+cNxc5rq13rE9B0/vw6YIlD8oK89Elgdf61VN2ZDnYoBt++5SjV7vfDB1iE
+         YoM60Mc/SshZN9x891u+pRhUReNhCEWOfCYzHSv0zC7wVG6AMY1RP+QXHy3ORITgxpSR
+         LdXgMMEnRmxRMWZw5ulBKS7qhXN09aMx/sPxyQodjwBsX8fSCJcONUwM5zNQ8K+OCLDz
+         vF5uDFASip4gQHZOoE0c8ak5PMEReU3nXuIO67Zs435f01wCut92qZ+cRCZ8RrijmNzq
+         kAmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSj+YzBdFjTSg8FxG+p+Pzt251qmqzlL9YHzZR19OOoTsC7t7q7uYX0llLTZ7qef+LiTx7Ns8l5JXxqikZViU7OJe7nT+4YBJdEG2o
+X-Gm-Message-State: AOJu0Yz+yYWJQ6NmtN5OOAdMcOauczsOutrtGoUPTQiwI3rd7Ni+iUsl
+	U784meVisqvwWteUuilMo1P8BeNRsKwkU/+PaHC4RX62hEv0xT5JooE+DCv/rrImVdbbXyx//w8
+	+yl5E4+CAo5JOVjP7IGGwauD8zAMKqeWR7wbq
+X-Google-Smtp-Source: AGHT+IFulYHpYLHM1ZuESjR5oSmKrCpxfE2wIN5s61bSGDGu2zfJeu8lvWzNU0Er8XFXuAkgqi4DEDvGGFyMpu+7Ino=
+X-Received: by 2002:a17:903:2003:b0:1e2:573:eecd with SMTP id
+ d9443c01a7336-1ee6a6a8e32mr195735ad.3.1715021012487; Mon, 06 May 2024
+ 11:43:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240505214754.891700-1-andreas@kemnade.info> <20240505214754.891700-4-andreas@kemnade.info>
- <CAHp75Vdnwrxw96prr9hyLdZ2u6t1uNcj6pyxCp52UoVOpatTpg@mail.gmail.com> <20240506182111.3c6673a0@aktux>
-In-Reply-To: <20240506182111.3c6673a0@aktux>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 6 May 2024 21:43:14 +0300
-Message-ID: <CAHp75VchLWQgmdxKPSbwH-m43zFHT9ADk4aH7-jvD5-MaVOtEw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] Input: ektf2127 - add ektf2232 support
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, u.kleine-koenig@pengutronix.de, hdegoede@redhat.com, 
-	siebren.vroegindeweij@hotmail.com, linux-input@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
+ <2024050404-rectify-romp-4fdb@gregkh> <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
+ <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com> <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
+In-Reply-To: <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 6 May 2024 11:43:21 -0700
+Message-ID: <CAP-5=fXv59EmyM7FNnwAp0JjAZjtYhCj3b3FTH7KsHL=k8C6oQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
+ /proc/<pid>/maps APIs
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 6, 2024 at 7:21=E2=80=AFPM Andreas Kemnade <andreas@kemnade.inf=
-o> wrote:
-> On Mon, 6 May 2024 15:05:52 +0300
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > From: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > To: Andreas Kemnade <andreas@kemnade.info>
-> > Date: Mon, 6 May 2024 15:05:52 +0300
-> > On Mon, May 6, 2024 at 12:48=E2=80=AFAM Andreas Kemnade <andreas@kemnad=
-e.info> wrote:
-
-..
-
-> > I'm wondering if you are using --histogram diff algo when preparing the=
- patches.
+On Mon, May 6, 2024 at 11:32=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> No, I am not using that, it seems to not make that chunk nicer.
-> Yes, we want
+> On Sat, May 4, 2024 at 10:09=E2=80=AFPM Ian Rogers <irogers@google.com> w=
+rote:
+> >
+> > On Sat, May 4, 2024 at 2:57=E2=80=AFPM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Sat, May 4, 2024 at 8:29=E2=80=AFAM Greg KH <gregkh@linuxfoundatio=
+n.org> wrote:
+> > > >
+> > > > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
+> > > > > Implement a simple tool/benchmark for comparing address "resoluti=
+on"
+> > > > > logic based on textual /proc/<pid>/maps interface and new binary
+> > > > > ioctl-based PROCFS_PROCMAP_QUERY command.
+> > > >
+> > > > Of course an artificial benchmark of "read a whole file" vs. "a tin=
+y
+> > > > ioctl" is going to be different, but step back and show how this is
+> > > > going to be used in the real world overall.  Pounding on this file =
+is
+> > > > not a normal operation, right?
+> > > >
+> > >
+> > > It's not artificial at all. It's *exactly* what, say, blazesym librar=
+y
+> > > is doing (see [0], it's Rust and part of the overall library API, I
+> > > think C code in this patch is way easier to follow for someone not
+> > > familiar with implementation of blazesym, but both implementations ar=
+e
+> > > doing exactly the same sequence of steps). You can do it even less
+> > > efficiently by parsing the whole file, building an in-memory lookup
+> > > table, then looking up addresses one by one. But that's even slower
+> > > and more memory-hungry. So I didn't even bother implementing that, it
+> > > would put /proc/<pid>/maps at even more disadvantage.
+> > >
+> > > Other applications that deal with stack traces (including perf) would
+> > > be doing one of those two approaches, depending on circumstances and
+> > > level of sophistication of code (and sensitivity to performance).
+> >
+> > The code in perf doing this is here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/tools/perf/util/synthetic-events.c#n440
+> > The code is using the api/io.h code:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/tools/lib/api/io.h
+> > Using perf to profile perf it was observed time was spent allocating
+> > buffers and locale related activities when using stdio, so io is a
+> > lighter weight alternative, albeit with more verbose code than fscanf.
+> > You could add this as an alternate /proc/<pid>/maps reader, we have a
+> > similar benchmark in `perf bench internals synthesize`.
+> >
 >
-> +       int status_shift;
->  };
-> +
-> +struct ektf2127_i2c_chip_data {
-> +       int status_shift;
-> +};
->
-> But that is not shorter or simpler, just more readable.
+> If I add a new implementation using this ioctl() into
+> perf_event__synthesize_mmap_events(), will it be tested from this
+> `perf bench internals synthesize`? I'm not too familiar with perf code
+> organization, sorry if it's a stupid question. If not, where exactly
+> is the code that would be triggered from benchmark?
 
-And that's exactly what histogram is about. I suggest making it
-default for the Linux kernel project (or globally in your
-~/.gitconfig).
+Yes it would be triggered :-)
 
+Thanks,
+Ian
 
---=20
-With Best Regards,
-Andy Shevchenko
+> > Thanks,
+> > Ian
+> >
+> > >   [0] https://github.com/libbpf/blazesym/blob/ee9b48a80c0b4499118a1e8=
+e5d901cddb2b33ab1/src/normalize/user.rs#L193
+> > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > >
 
