@@ -1,124 +1,96 @@
-Return-Path: <linux-kernel+bounces-170394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936EC8BD63D
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:29:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0884F8BD640
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB5F6B22A9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2721C21670
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D95E15B120;
-	Mon,  6 May 2024 20:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B5A15B547;
+	Mon,  6 May 2024 20:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="WtNzAqqq"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EvKNLO/J"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A271D156C6E;
-	Mon,  6 May 2024 20:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31458158D64
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 20:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715027367; cv=none; b=lxHrBLqi4h2P5EbwQ8ai2raFT55jePDvweTGm0XngS2jCcczlnQaWhgwhlIR70fQutUmY9xjVMxlmCxtVJvow+wEOANOBHpgOZMv7fAjfRA8xyYFB8Eb/ycUTUXLGgLNIsjbSTF3RvsDdcPQTaW64Dh/fCb9Cr2UMXD7xm2bjZA=
+	t=1715027435; cv=none; b=BFYw6NCM+0PjD4WAR/CcoNqKpFb+lBrQ9Pqzz7OQnprV4K8a46T2IwiU0Ph0RESpaymMHqZH9AYd5h67ClAhK5fYU1o50VIzBFmiWqYFc6SCTeV7MKweHkGnWl8R93bARzF+9PLaXOPL2p+eh6EjNn3ffzjJTI50N4VuteNBi+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715027367; c=relaxed/simple;
-	bh=3rbdAlqqENUwmR+io8pbVt6gM09Tl1lcecSkcWkx2hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uIbCAWrKi81tSJDEWu/moKZ7wn6FOsZF56fhw0wsmZj4WRgU0mDO5tvCY5k95obRUcA7NIgzCjWl1R3UaiK07VSBZu4qvI2sQM7Er5Ts29mh8PC+cQ+Lj7hSs5vRdIfzbLQNuS1HS/280TT0uz5O7s1vfn3UC5i66QJmSR+NP4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=WtNzAqqq; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1s44xc-005rj3-0J;
-	Mon, 06 May 2024 22:29:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EaZQSwVaLQHyh6ZFOpYXBHwPWumE2yzYKX72jIZHUEs=; b=WtNzAqqqMqocI2uasC4mZFzXuE
-	cMkzbOei+SwbulkgG7IWfBh0XH6ByUW7gsPI50qnjRCMn5Nn3R6/ULIWlMXR01qoS2Lpr1zeb5IZ8
-	/7N/ZZcrgJtFM+86s8+pFuL5+L3Vp6cdU565qY3u/jpGOZV/aHkBjN857u6nIR4wc/P8N/96nly9d
-	hTCdQ4CffeybHfMxKPns7l7F34r3CUdlUBS8o3Q+DEJS6tVMlEGU+bXSQmPyNr+r3eRqdNWBfnv0m
-	BXiZH3LqlPi4vs9j/x3/LoayTwPHktho0aCRzg3/zRPqvhkC/v9XobXUhUvuJS9ONw+xUAWT1KqWM
-	lUnkQs7w==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1s44xZ-000ffm-0c;
-	Mon, 06 May 2024 22:29:18 +0200
-Date: Mon, 6 May 2024 22:29:16 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, u.kleine-koenig@pengutronix.de, hdegoede@redhat.com,
- siebren.vroegindeweij@hotmail.com, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] Input: ektf2127 - add ektf2232 support
-Message-ID: <20240506222916.055443d8@aktux>
-In-Reply-To: <CAHp75VchLWQgmdxKPSbwH-m43zFHT9ADk4aH7-jvD5-MaVOtEw@mail.gmail.com>
-References: <20240505214754.891700-1-andreas@kemnade.info>
-	<20240505214754.891700-4-andreas@kemnade.info>
-	<CAHp75Vdnwrxw96prr9hyLdZ2u6t1uNcj6pyxCp52UoVOpatTpg@mail.gmail.com>
-	<20240506182111.3c6673a0@aktux>
-	<CAHp75VchLWQgmdxKPSbwH-m43zFHT9ADk4aH7-jvD5-MaVOtEw@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715027435; c=relaxed/simple;
+	bh=R8tARm9RJFf1E2kRwZTfvLXE7k9nH6dKIKq82rh/Zr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5A0JKew0NG87C19F3Vr4qbCgEeACJUXxB1giAWD4nMJ9Xp+3ia8kw6vHhy3eI7lNSVL5t5czTaZC79QYbbfmq093AkkDTkQ6LKFU/JmhtVt/U+YLIi68NNfgv44oP7y67nsDJk7ZwneU0eHvNj/z5XM9dXxp3xeBQlCRbL7Tag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EvKNLO/J; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 6 May 2024 13:30:23 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715027429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zWTgDMw010qjBzY9SNStiBF2+BhONuUA6RIHZNLF4YI=;
+	b=EvKNLO/JPjUI8g84XqS/c8Vr2c1jLOLboa5hR1FxWZnWTzoheYGGabDAkAgEWeVqHqnV7P
+	Pr3PFGD+9YllGtNWxf0gWmfMRHjMGMb46W/O4HK2XpYp80gRGQL6WsDP1RpeyUeNM1GawN
+	tCLtZY8O+UblZWbaC7vM8sYHrRGlJss=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] mm: do not update memcg stats for
+ NR_{FILE/SHMEM}_PMDMAPPED
+Message-ID: <Zjk931_5xRyf2Rle@P9FQF9L96D>
+References: <20240506192924.271999-1-yosryahmed@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506192924.271999-1-yosryahmed@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 6 May 2024 21:43:14 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Mon, May 06, 2024 at 07:29:24PM +0000, Yosry Ahmed wrote:
+> Previously, all NR_VM_EVENT_ITEMS stats were maintained per-memcg,
+> although some of those fields are not exposed anywhere. Commit
+> 14e0f6c957e39 ("memcg: reduce memory for the lruvec and memcg stats")
+> changed this such that we only maintain the stats we actually expose
+> per-memcg via a translation table.
+> 
+> Additionally, commit 514462bbe927b ("memcg: warn for unexpected events
+> and stats") added a warning if a per-memcg stat update is attempted for
+> a stat that is not in the translation table. The warning started firing
+> for the NR_{FILE/SHMEM}_PMDMAPPED stat updates in the rmap code. These
+> stats are not maintained per-memcg, and hence are not in the translation
+> table.
+> 
+> Do not use __lruvec_stat_mod_folio() when updating NR_FILE_PMDMAPPED and
+> NR_SHMEM_PMDMAPPED. Use __mod_node_page_state() instead, which updates
+> the global per-node stats only.
+> 
+> Reported-by: syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/lkml/0000000000001b9d500617c8b23c@google.com
+> Fixes: 514462bbe927 ("memcg: warn for unexpected events and stats")
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-> On Mon, May 6, 2024 at 7:21=E2=80=AFPM Andreas Kemnade <andreas@kemnade.i=
-nfo> wrote:
-> > On Mon, 6 May 2024 15:05:52 +0300
-> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote: =20
-> > > From: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > > To: Andreas Kemnade <andreas@kemnade.info>
-> > > Date: Mon, 6 May 2024 15:05:52 +0300
-> > > On Mon, May 6, 2024 at 12:48=E2=80=AFAM Andreas Kemnade <andreas@kemn=
-ade.info> wrote: =20
->=20
-> ...
->=20
-> > > I'm wondering if you are using --histogram diff algo when preparing t=
-he patches. =20
-> >
-> > No, I am not using that, it seems to not make that chunk nicer.
-> > Yes, we want
-> >
-> > +       int status_shift;
-> >  };
-> > +
-> > +struct ektf2127_i2c_chip_data {
-> > +       int status_shift;
-> > +};
-> >
-> > But that is not shorter or simpler, just more readable. =20
->=20
-> And that's exactly what histogram is about. I suggest making it
-> default for the Linux kernel project (or globally in your
-> ~/.gitconfig).
->=20
->=20
-again, it does not do anything helpful in this case, I tried to run
-git format-patch --histogram with
-no improvements. But it might help in other places.
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-Regards,
-Andreas
-
+Thanks!
 
