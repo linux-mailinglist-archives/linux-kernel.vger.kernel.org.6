@@ -1,244 +1,135 @@
-Return-Path: <linux-kernel+bounces-169628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE1A8BCB54
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:56:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488048BCB5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE0C1C20DD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038B3281401
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2E145342;
-	Mon,  6 May 2024 09:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7500214262C;
+	Mon,  6 May 2024 09:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yhsmoglW"
-Received: from mail-lf1-f73.google.com (mail-lf1-f73.google.com [209.85.167.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Xw5Wosq4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fGcTaVQQ"
+Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D03145340
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B94205F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 09:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989256; cv=none; b=KY3oSFW7IM+ZxDxWlgJj7K1QYIlWYkBB5BDRJ1Jy4nWfH+pqOkI56D80QOEIYftx7WG7f95f8Uh5i2p0qmhzagEAN3yVfZzgt6gvhIiQbjZOVGKCLvMedWt1e/eJ6hfIOF13qUkFcshNikutn8CZdd1pVZrIBaOIJHUCdskm/JQ=
+	t=1714989479; cv=none; b=PnpGRxBeIemCbkQtobj0Q5hA6Z31VlD7Lnhx66Fugv1StRFO/pSarzT4nvbJxUQKIjAon6dJ5iXJ/Nvjji4vThEPtvoMPdh65OdtRMXMGZfAn2Q6cXfR0SRwAQehHFUMFQ0pfJ0/CwmKD3qhKqnJGYC2JxUwyVY7Y912uqej57w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989256; c=relaxed/simple;
-	bh=W+uP1Xzo0QGwIGIjvgjEQaM3hRC9GEBc2dTf6jeCEAQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GlE/HUwJSnogdMwnjy120//PdIonSyVF431EUTWh2aSn0ifddES/6oY9NBic4wqaFuyParkrCx477bN6lYTDZD2JWwRPbj6bKqjALLWxjiYgxR77U1E+ODnArn5dA5C55Z5720T2ms0/zPaihB+owZDGaRP7ZEzcVChmoWQwhH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yhsmoglW; arc=none smtp.client-ip=209.85.167.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-lf1-f73.google.com with SMTP id 2adb3069b0e04-52025c91485so1089468e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 02:54:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1714989253; x=1715594053; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EFhgl6guD2GoA3y7AQJ34n3OZOg5tBWu3g1w/ea5Ugc=;
-        b=yhsmoglWa9q17WtS+AYhoBJlnhnMi4QliF5yuowiSK1UqDs2Pf9dyJscjelGG339vd
-         8XKuGroW56oLYystTSgqAN4hDunYHNO/fFwlDzjbQT2dPHuaZkuhNZS7fJwlucTdq7t3
-         TW2r19KMOonE9DSE+3W3vviJHD24BlUhq0scMDpLK5G2sku8+XfZASOpPrRT+T4zR6MW
-         6iCSQ5gUdUO9B7K8adWrUtv/ka+DOA5Wwq+IkDovl/66WbW7wpo4ele/eRbTo8xLZPdD
-         zeqHy+OxhqLAJFPWIpQKEJT5HroO/o9Axs5uFXOTmULwRPXvu47pUR2GHKGoPr9x2UIV
-         AcxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714989253; x=1715594053;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EFhgl6guD2GoA3y7AQJ34n3OZOg5tBWu3g1w/ea5Ugc=;
-        b=BtMluvJERK9dCjYfsF3+phZZwI/H4kzev3O9FWWXQChRZ3tmPwJNyLuNxvF0c+mcEI
-         q/4tQT5wUpq861py6wx39qWfKcQCaHzN+Djdqe+5UquJwSJ2JcGi0MdPmuAdhaP6pnZB
-         OMPdapFNvqQ1tjRoR3iM5F2/VtAdC4uXnsle1kIQ76KrzYhhHOG3P6PlU4wkr5yBRwk4
-         wmXIfnlZgigZ7lT/eC669NNRBpGDboycXsAhxYJu0DL9wuDoSuCINCZBuLakzfFXnZT9
-         bGs2OlzzDrvT7hr4/zW2WBqCZBNaVjMN8fsjMySDmeF8SuNhmXcoYv0CjgU/zihfsE9b
-         KUNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNd9ycyLXgbFoBZO6lWfWGN9GkJC3wEWRQqZGZ3W6utIKlyj6EZH3m1PyiCvyFCRRX+/75YIpVQslv9XWALjga/WH4b6Vr81Wc9XdF
-X-Gm-Message-State: AOJu0YzC27wuk9x8T60spUccdiarDZtDf8PGORkzfrP4h4A8dOHB/XrO
-	UFR1CIUiX+aBxKe9838oauzfF5UoIJO7HoiMp5YaFrsP7JMRAcrJ1/cZtHyhnbuLtpcmRO64gjP
-	Qh5A3W4efKxOJBA==
-X-Google-Smtp-Source: AGHT+IFxQtIkICEgPtZHYPEZWh098J61GE/MO3Oo4IR5rCHuzox04WC7mgPH8Mbq6LEd/92R9vCy0D7WDptcaes=
-X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a05:6512:481d:b0:51e:2f65:6343 with SMTP
- id eo29-20020a056512481d00b0051e2f656343mr9707lfb.1.1714989252940; Mon, 06
- May 2024 02:54:12 -0700 (PDT)
-Date: Mon, 06 May 2024 09:53:30 +0000
-In-Reply-To: <20240506-linked-list-v2-0-7b910840c91f@google.com>
+	s=arc-20240116; t=1714989479; c=relaxed/simple;
+	bh=RGG/95bqgbV0UxC4j43Z4dKYTNz41JiHRc7ZYvy2ASI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=OvuYYP4Qyt/L4HnludL4ST08v+iQiVWkbNsIK2vOO7yUANz84iqoGNPpD/Wbmh4O6b5M5dFsw1FdnHSX47hAjSG0769LjR98Y1QJEMUIsE8S0KFVec9DR+F0BBUryM4YEYrzbZbDbd1yRjU2rkPaf3JQaH1hWvRmNstwOusMIbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Xw5Wosq4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fGcTaVQQ; arc=none smtp.client-ip=64.147.123.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id D7F4518000BA;
+	Mon,  6 May 2024 05:57:55 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 06 May 2024 05:57:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1714989475; x=1715075875; bh=Kxaapcokfg
+	FuUbfz89vv5wfELr6zFPpz8003UyV3aWM=; b=Xw5Wosq4086aDVg44LtHOuNw7J
+	OHfat0R3Sr/CbDkAfawLrS8DG8B9Yo4bUuNpLKJWbandjeKnf5qK+WVwakNGQG80
+	xOwPZ5osFtuigL+vBOIUq/oIUguOnxVZ2Ui19ZapSi0nwqtoVgCuPiPaIA35vVWC
+	t23YHcHLs0pOlx4oEUtsEvhLxe7ULoXrnW+/JZdr+bc2sZevHYOTMFVDZ1PYrn4q
+	rBM53Gs3H0J5MznsyvJaFEE02pqH/NGjpu8Hv8wPMWQ61X5YUcKlnYyNIcpPAWNo
+	LrbbauYZq1+N7BtWZX6ZD1uxNd68WI2nd64/EJyguYmwvzgk97VcbUQASkGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1714989475; x=1715075875; bh=KxaapcokfgFuUbfz89vv5wfELr6z
+	FPpz8003UyV3aWM=; b=fGcTaVQQmov4GGZQDUAqm4iz6RAss5GQ4St9nIfSWgR8
+	4StYSqvY70EN8HG5Q/q1nPOdujdmDrkOW6HI0eDSbabksJeTPl6mkmxgEYZ4+ca0
+	cR0hnNyWy/CIzRAhrMGGNFMyt//JPxiwclPldo4lmN4eo6BBvlqniSTQhjNMyQcM
+	t+KSP6KhLO99ebtX+Pytb3ObPzY22s1Y3hIkyoB0UAe/hMWlj6eEQ9pm8FjRuS5y
+	to0jW/QnOqQaKcEM1Qd7mqeoP37N2A5/rw6EtAAjazlTv1VZ3EjxqlHog3uvNkoo
+	sl/bWs45Hl9jeAOoqHkJkAK+eED/Lyd7mCQiAlfvlA==
+X-ME-Sender: <xms:o6k4Zk0gDpOfc7Ll56NXnaZYdszyZoUZxcgssgYFLfzgPLL6KdBkJw>
+    <xme:o6k4ZvEK-yIqAC0Wf8TpQspVaDqT_LxItpnV4NmIQ83NKGe2ZTdzehcKbMV6TtApg
+    HvC_5IPhn58UYBlsN4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddviedgvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:o6k4Zs6GRHw4CzsSCECn0Sj3LlLLGv8z-WReekFKBa6LXwKaoUrVug>
+    <xmx:o6k4Zt3lFamNNVRm6L9n81UH8gMniuaRAUCkzlZMGEswrur9BJ2mMw>
+    <xmx:o6k4ZnEx13Q4GZE-qJFlhhW0c6tKQLKSuDfc8ZT2dE1OYfDIYmWLBQ>
+    <xmx:o6k4Zm8vHimKK5LlHKs1aB2mgdg4JNLp8wi2EBoCMRb3s3sg9kwAPg>
+    <xmx:o6k4ZsSbksjCS7gQqNjJtl8G6kGNZppUXUtCiUoxCjfGtvysXz7dI4ZN>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 19799B6008D; Mon,  6 May 2024 05:57:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-437-gcad818a2a-fm-20240502.001-gcad818a2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240506-linked-list-v2-0-7b910840c91f@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5298; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=W+uP1Xzo0QGwIGIjvgjEQaM3hRC9GEBc2dTf6jeCEAQ=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmOKinNQFA7Dt4Jiu7iDKcG5Nh1AAMez0H+o1lT
- 97GWD9bPgOJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZjiopwAKCRAEWL7uWMY5
- Rrs/D/9LmjqabenKG3DQxazA8r5i8/Q6QDUsEsQreqaefgXZmOy82aw0Mm5kjM0qKE7KEozdvna
- 7TmcuMq3p7FkN27/RBZFFVZhlAC28DbrowKAOhKltU5U+DHdsWhWBQu7iMf5EBY7/tO+99JsVIh
- dHXbWnP0m+clnh2dVFsjxHfGvsg1HsUtiNl/8e6LOYO8cSdvN68aiLbvlpRXshA2VOruETq5DKD
- 4mo6P3f7VXTXn2GKuMLS/4ccQ2B+JtB1Ek9lNH1T13y19hlfiXY2sA0/AQnmywQst9Wq3T30w6z
- hJ2PTrvq6fSxstTjSERdKZzltPylLb6dlbdSrAxg32fS0PKehnHEO9ijSvTtC1Gvo6VLGWGlgd1
- ZeEmK5O2zGXOOxRghCs2qMLCUIDutdHiptG4vuI90sqOby2y+jmtwn8Tm3odmb5OdGvFg0WfyAS
- 6Vo8EjW5uuqyN+hvf7bsfDgegDScTjyN27WimpBVqCLfDnnGLpYAddj9/CzNukVoNSHXRMeaJvP
- ZhHz9QsIPzyfY3QYczA6XEIDFRilurvWB1iMzzJoLmiuKNo7mlcbzU5/dIA0MfI9HCNL0NuTJe8
- dGUwcFxeYAFPmC1FRfug9M3a6pjVRmvnv+cdXXhBm0dSdTGDNPY+MOCIl3PMwm6tQ84wJufaViU YhF9Jz3YQI8y6Pw==
-X-Mailer: b4 0.13-dev-26615
-Message-ID: <20240506-linked-list-v2-9-7b910840c91f@google.com>
-Subject: [PATCH v2 9/9] rust: list: add ListArcField
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, 
-	Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Message-Id: <d87d0018-3109-444d-aa8d-e141be5b04a5@app.fastmail.com>
+In-Reply-To: <ZjiXLm9ZnJwMHiBP@smile.fi.intel.com>
+References: <ZjUzt3Rysyk-oGdQ@smile.fi.intel.com>
+ <cb22252d-1ea9-4094-9f7a-b94c2142d1f2@app.fastmail.com>
+ <ZjiXLm9ZnJwMHiBP@smile.fi.intel.com>
+Date: Mon, 06 May 2024 11:57:34 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: "David Howells" <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: compiler_types.h in UAPI?
+Content-Type: text/plain
 
-One way to explain what `ListArc` does is that it controls exclusive
-access to the prev/next pointer field in a refcounted object. The
-feature of having a special reference to a refcounted object with
-exclusive access to specific fields is useful for other things, so
-provide a general utility for that.
+On Mon, May 6, 2024, at 10:39, Andy Shevchenko wrote:
+> On Fri, May 03, 2024 at 09:34:13PM +0200, Arnd Bergmann wrote:
+>> On Fri, May 3, 2024, at 20:57, Andy Shevchenko wrote:
+>
+>> > Today I have stumbled over use of __force and other compiler_types.h related
+>> > things in UAPI headers. Can anybody explain to me how do they suppose to work
+>> > outside of the kernel? Or did I miss something obvious? Or it was a mistake
+>> > during UAPI split to move swab.h and byteorder/ (most of the users of those)
+>> > to UAPI in the first place?
+>> 
+>> These get stripped out by scripts/headers_install.sh during
+>> the 'make headers_install' stage:
+>> 
+>> sed -E -e '
+>>         s/([[:space:](])(__user|__force|__iomem)[[:space:]]/\1/g
+>>         s/__attribute_const__([[:space:]]|$)/\1/g
+>>         s@^#include <linux/compiler(|_types).h>@@
+>>         s/(^|[^a-zA-Z0-9])__packed([^a-zA-Z0-9_]|$)/\1__attribute__((packed))\2/g
+>>         s/(^|[[:space:](])(inline|asm|volatile)([[:space:](]|$)/\1__\2__\3/g
+>>         s@#(ifndef|define|endif[[:space:]]*/[*])[[:space:]]*_UAPI@#\1 @
+>> ' $INFILE > $TMPFILE || exit 1
+>
+> Thanks, Arnd, TIL!
+>
+> But do we discourage using these in UAPI in general? I mean do we have
+> this somewhere being documented?
 
-This is used by Rust Binder to keep track of which processes have a
-reference to a given node. This involves an object for each process/node
-pair, that is referenced by both the process and the node. For some
-fields in this object, only the process's reference needs to access
-them (and it needs mutable access), so Binder uses a ListArc to give the
-process's reference exclusive access.
+I don't think they are discouraged in uapi headers, since the
+annotations tend to be required for clean kernel builds with
+sparse.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/list.rs           |  3 ++
- rust/kernel/list/arc_field.rs | 96 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 99 insertions(+)
+I could not find any documentation about it though, so it might
+be good to mention them in Documentation/dev-tools/sparse.rst.
 
-diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-index 3e687401c6d3..d88a4c0f5c31 100644
---- a/rust/kernel/list.rs
-+++ b/rust/kernel/list.rs
-@@ -23,6 +23,9 @@
-     impl_list_arc_safe, AtomicListArcTracker, ListArc, ListArcSafe, TryNewListArc,
- };
- 
-+mod arc_field;
-+pub use self::arc_field::{define_list_arc_field_getter, ListArcField};
-+
- /// A linked list.
- ///
- /// All elements in this linked list will be [`ListArc`] references to the value. Since a value can
-diff --git a/rust/kernel/list/arc_field.rs b/rust/kernel/list/arc_field.rs
-new file mode 100644
-index 000000000000..2330f673427a
---- /dev/null
-+++ b/rust/kernel/list/arc_field.rs
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2024 Google LLC.
-+
-+//! A field that is exclusively owned by a [`ListArc`].
-+//!
-+//! This can be used to have reference counted struct where one of the reference counted pointers
-+//! has exclusive access to a field of the struct.
-+//!
-+//! [`ListArc`]: crate::list::ListArc
-+
-+use core::cell::UnsafeCell;
-+
-+/// A field owned by a specific [`ListArc`].
-+///
-+/// [`ListArc`]: crate::list::ListArc
-+pub struct ListArcField<T, const ID: u64 = 0> {
-+    value: UnsafeCell<T>,
-+}
-+
-+// SAFETY: If the inner type is thread-safe, then it's also okay for `ListArc` to be thread-safe.
-+unsafe impl<T: Send + Sync, const ID: u64> Send for ListArcField<T, ID> {}
-+// SAFETY: If the inner type is thread-safe, then it's also okay for `ListArc` to be thread-safe.
-+unsafe impl<T: Send + Sync, const ID: u64> Sync for ListArcField<T, ID> {}
-+
-+impl<T, const ID: u64> ListArcField<T, ID> {
-+    /// Creates a new `ListArcField`.
-+    pub fn new(value: T) -> Self {
-+        Self {
-+            value: UnsafeCell::new(value),
-+        }
-+    }
-+
-+    /// Access the value when we have exclusive access to the `ListArcField`.
-+    ///
-+    /// This allows access to the field using an `UniqueArc` instead of a `ListArc`.
-+    pub fn get_mut(&mut self) -> &mut T {
-+        self.value.get_mut()
-+    }
-+
-+    /// Unsafely assert that you have shared access to the `ListArc` for this field.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must have shared access to the `ListArc<ID>` containing the struct with this
-+    /// field for the duration of the returned reference.
-+    pub unsafe fn assert_ref(&self) -> &T {
-+        // SAFETY: The caller has shared access to the `ListArc`, so they also have shared access
-+        // to this field.
-+        unsafe { &*self.value.get() }
-+    }
-+
-+    /// Unsafely assert that you have mutable access to the `ListArc` for this field.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must have mutable access to the `ListArc<ID>` containing the struct with this
-+    /// field for the duration of the returned reference.
-+    #[allow(clippy::mut_from_ref)]
-+    pub unsafe fn assert_mut(&self) -> &mut T {
-+        // SAFETY: The caller has exclusive access to the `ListArc`, so they also have exclusive
-+        // access to this field.
-+        unsafe { &mut *self.value.get() }
-+    }
-+}
-+
-+/// Defines getters for a [`ListArcField`].
-+#[macro_export]
-+macro_rules! define_list_arc_field_getter {
-+    ($pub:vis fn $name:ident(&self $(<$id:tt>)?) -> &$typ:ty { $field:ident }
-+     $($rest:tt)*
-+    ) => {
-+        $pub fn $name<'a>(self: &'a $crate::list::ListArc<Self $(, $id)?>) -> &'a $typ {
-+            let field = &(&**self).$field;
-+            // SAFETY: We have a shared reference to the `ListArc`.
-+            unsafe { $crate::list::ListArcField::<$typ $(, $id)?>::assert_ref(field) }
-+        }
-+
-+        $crate::list::define_list_arc_field_getter!($($rest)*);
-+    };
-+
-+    ($pub:vis fn $name:ident(&mut self $(<$id:tt>)?) -> &mut $typ:ty { $field:ident }
-+     $($rest:tt)*
-+    ) => {
-+        $pub fn $name<'a>(self: &'a mut $crate::list::ListArc<Self $(, $id)?>) -> &'a mut $typ {
-+            let field = &(&**self).$field;
-+            // SAFETY: We have a mutable reference to the `ListArc`.
-+            unsafe { $crate::list::ListArcField::<$typ $(, $id)?>::assert_mut(field) }
-+        }
-+
-+        $crate::list::define_list_arc_field_getter!($($rest)*);
-+    };
-+
-+    () => {};
-+}
-+pub use define_list_arc_field_getter;
-
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
-
+      Arnd
 
