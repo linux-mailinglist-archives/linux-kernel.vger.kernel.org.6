@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-169633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE29A8BCB87
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:02:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA248BCB8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938721F2250F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD27281237
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD664142652;
-	Mon,  6 May 2024 10:02:21 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0016C1428EA;
+	Mon,  6 May 2024 10:03:07 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8194D4205F;
-	Mon,  6 May 2024 10:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4441114264C
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989741; cv=none; b=N/Wgl1YXy/J46K3ufDvTANajMjJjeNMRq69DGOCSp+KJAc1LZ2tdsrG1DP4uRuh0DxYmf2+5qOGw7wvnuyGc7aBPf8cUjuLxYzp+Xz+k8AC1/CJUS6qnu4t1YS6fJrpEG7fmuHfPghJKEZ9NCFGq+QX6Mr6gZKQG4NkPPtE3KRA=
+	t=1714989787; cv=none; b=d1qG+BU1DUPuKwvzqpiMXamRTputXOPyJ/X+b5PCTlNvTAs+hLHKmkJg/2MO09HZIn8eWIe0I03p3Xpb9XXD2sj0/Dzr6oQVBlWXQTPu4tyrV7l4z+OCjS/4cMDs0DnN7SwaOkfL4iJm0v8nq0p3H7zWHv29yFiaDuyUngZxGVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989741; c=relaxed/simple;
-	bh=tcun4FHi8g+Dt8Q+5L+loMgKaWMENI5jp4Gw+JI3jMc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=ls98F+Q08x2COT8MfdiNBc9GJ5ZgPEuFFwc1r9lgOZNvqJhZ/eYCMxh6zAHbraXF+0udvVhBBZEv9WV4pUHXyCziz80OXIrXw9VEPJci7msq5grUzsLZdeQZYtuZFbj1HuXYlt+gcdzxLbEKZSxFZAO/krXAi2McXE23/oZYjQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:6430:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 9D9976F4;
-	Mon,  6 May 2024 12:02:16 +0200 (CEST)
+	s=arc-20240116; t=1714989787; c=relaxed/simple;
+	bh=Z4EcRz/G6UHRpsJjAcYqWpUOiBu9/8gVcBoHx1+EaB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iS+wfiasrrHaSNVXAGSm6uLDgMlCEjP+Nqn5wiqrYmPCq4D6kLZ2gFpnzhmDlhyXT2eyqG77xYOmtBMI5c/mb72kdIV/Ij564i+vwzVoHB5WM6GLUnZsZ0xrJPzD4/Z2rwVAkag3hhmPZ/3AHYPgutwkkay67KfxI4E8hho+tfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s3vBG-0007qw-Vy; Mon, 06 May 2024 12:02:47 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s3vBF-00GEz0-Eb; Mon, 06 May 2024 12:02:45 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 051D92CB44D;
+	Mon, 06 May 2024 10:02:45 +0000 (UTC)
+Date: Mon, 6 May 2024 12:02:44 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Thomas Kopp <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux@ew.tq-group.com
+Subject: Re: [PATCH v2 0/6] can: mcp251xfd: add gpio functionality
+Message-ID: <20240506-imperial-taupe-deer-9132a5-mkl@pengutronix.de>
+References: <20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sse27ts3gacsw3dx"
+Content-Disposition: inline
+In-Reply-To: <20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--sse27ts3gacsw3dx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 06 May 2024 12:02:16 +0200
-Message-Id: <D12H4GDJJEUF.1Y91H9RMUIX20@kernel.org>
-To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Alexandre Mergnat" <amergnat@baylibre.com>, <chunkuang.hu@kernel.org>
-Subject: Re: [PATCH v2 0/3] drm/mediatek: Add support for OF graphs
-Cc: <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
- <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <matthias.bgg@gmail.com>,
- <shawn.sung@mediatek.com>, <yu-chang.lee@mediatek.com>,
- <ck.hu@mediatek.com>, <jitao.shi@mediatek.com>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
- <kernel@collabora.com>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com> <1fc23530-89ba-4e36-9e9a-a1289f56a9bc@baylibre.com> <608fdbde-ad06-45ec-9771-18aa9f002f2d@collabora.com>
-In-Reply-To: <608fdbde-ad06-45ec-9771-18aa9f002f2d@collabora.com>
 
-Hi Angelo,
+On 06.05.2024 07:59:42, Gregor Herburger wrote:
+> Hi all,
+>=20
+> The mcp251xfd allows two pins to be configured as GPIOs. This series
+> adds support for this feature.
+>=20
+> The GPIO functionality is controlled with the IOCON register which has
+> an erratum. The second patch is to work around this erratum. I am not
+                  ^^^^^^
+> sure if the place for the check and workaround in
+> mcp251xfd_regmap_crc_write is correct or if the check could be bypassed
+> with a direct call to mcp251xfd_regmap_crc_gather_write. If you have a
+> better suggestion where to add the check please let me know.
 
-On Tue Apr 30, 2024 at 1:33 PM CEST, AngeloGioacchino Del Regno wrote:
-> >> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
-> >> NIO-12L with both hardcoded paths, OF graph support and partially
-> >> hardcoded paths (meaning main display through OF graph and external
-> >> display hardcoded, because of OVL_ADAPTOR).
-> >=20
-> > Is that make sense for you to add the DTS changes of these boards into =
-this serie ?
-> > I asked because, IMHO, that could help to understand the serie.
-> >=20
->
-> Yes and no... but I imagine that you're asking this because you're trying=
- to
-> prepare something with a different SoC+board(s) combination :-)
->
-> In that case, I'm preventively sorry because what follows here is not 100=
-%
-> perfectly tidy yet as I didn't mean to send the devicetree commits upstre=
-am
-> before this series got picked....
->
-> ... but there you go - I'm sure that you won't mind and that the example =
-will
-> be more than good enough for you.
+Yes, better move the workaround to mcp251xfd_regmap_crc_gather_write().
+I don't remember under which circumstances regmap uses the
+gather_write() or the write() function.
 
-I've tested this series with the DSI0 output and it works. Nice! No
-need for my DSI0 patch for the MT8395 anymore.
+> Patch 1-3 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runti=
+me_pm-v1-0-c26a93a66544@pengutronix.de/
 
-But I can't get it to work with the DisplayPort output, that is the
-dp_intf1/dp_tx interface. I don' know how the pipeline have to look
-like. The functional spec seems to be ambiguous on this. The text
-seem to refer to the second vdosys but there is also a diagram where
-you can use the first vdosys and dsc0. If you have any pointers for
-me, I'm all ears :)
+Nitpick: Please add your S-o-b to these patches.
 
--michael
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--sse27ts3gacsw3dx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmY4qsEACgkQKDiiPnot
+vG8TYAf9HmPQqBGVCnYkMCu3rzFuWptfpRq+2Ef2dNd1CszgbeuOuEN+Z97BRRHy
+KZjA/1Y1Y5185xwvzHH3TFSBB7H1huYN2zekcIEYVGNMExwYBpEPhWzdjWc2IH6w
+xdfwz21foHD50PsRk72FGmijpXN46RXBEIuV6KVbyvVVufNXxcNEz6yYcpIjgT+G
+TgVmmglnNtZmzYNfUgu9gKVAdbskQkUaziTlIO/QQwXveBTOWisq/83asXFMO9Sb
+u68PbNU6Z+/YKUv+OGz73a2cVV7NUcICpZPRHabgqFKmGzGFavFzb+8xXU42jPMN
+zgpwVIDPo8o2euA/22RHCkb2vudCDA==
+=+dVm
+-----END PGP SIGNATURE-----
+
+--sse27ts3gacsw3dx--
 
