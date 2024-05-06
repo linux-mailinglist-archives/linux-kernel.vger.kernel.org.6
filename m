@@ -1,328 +1,142 @@
-Return-Path: <linux-kernel+bounces-169984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C388BD033
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:25:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557688BD013
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0DC1F25F75
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:25:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCFC2885E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBF613D2A1;
-	Mon,  6 May 2024 14:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762A213DDAE;
+	Mon,  6 May 2024 14:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SyZco2a0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="F4Y+fW3Q"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76A413D29D;
-	Mon,  6 May 2024 14:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B8413CF8F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005332; cv=none; b=f95Wk+J1mBR6Enp2zCxs3OVVkmkn29FWoOYEaUrYVpsrLzRGLgLcFS6OHWKEyFh/ApErvX/teix6RCb2FA4fvR3spV964cZuO1AJFn3pBSQLz/L3Erd5Ww3qfUV8EQf+S9jSE5QIa+MIE7syOmiVRH/xJGIePvUB5tZIDFeVJGk=
+	t=1715005310; cv=none; b=YxhhFLGYSp5IS36a09PdprHQJ8tokVZx9gidcs8rR0o4rKxyhbNgMZwItpHe4GHl8imZN/20lOQRkHRK8P1bN3F5JBCXzJTD07cfD9ypzdq/THYRL0SL8EHD6LX9yI7THoKH4tr0ZpM86YxHu6LJNcUUKkEPHzzZycufQj8KY7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005332; c=relaxed/simple;
-	bh=Zfipl6FRTfKyTzY0Cyv5249Uhwjc0MFiQSe+NaO7iiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c82zd5IMCRklE6cVjaQ9bB3M1iZk93SLJACrORzbCcXHsBgU4QPzBZ9gjHhF2I4EWNaS9Xs4Xj28uwPxdiwbd/kMX5cXg60NHjjEAbNJOYaUylbmxNfqpjrjU0Pqzrf1Q5SkERuLNsLN5XZrABBWVC80Tv+qpZaR/0XrNFjLr/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SyZco2a0; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715005331; x=1746541331;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Zfipl6FRTfKyTzY0Cyv5249Uhwjc0MFiQSe+NaO7iiI=;
-  b=SyZco2a0e8h6DwbmWllN7dyNloQkclGUi7SDDqoSUoxO1Xe+qG2u1f2Q
-   Y2sXyLSd8oPVlnWJ1XfqunHxiFOpTNKOEZhEXtvbzGeGlLg0igwg+6sGN
-   ey4ARuqAJWubT8SFZjTLt+26OC2eLaOiACGklclMkLG0OSPtBWojRkf/s
-   8+NTvbSWWUduqBlXkZdhT6g+DcHmctQPFs7f0AH8Exgil5O8GCXC950rB
-   Gf8MBjZ1uKfvNAsHvXKL4Kr32q6L+ArwFpih+KOztSRWx+7pnvTnmnqS8
-   AGUytU3oa59pkWmEde/26TgjuMkEKX4/tkwjQrOOE7uhOqtQiBhzIJqgK
-   g==;
-X-CSE-ConnectionGUID: cC0ZZ7VNStO/sbPX67G1sA==
-X-CSE-MsgGUID: rido4XDpR6yWCZDoQ0ByWw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="22155601"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="22155601"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:22:01 -0700
-X-CSE-ConnectionGUID: W7ga+nScT0mXar9tI4jBqg==
-X-CSE-MsgGUID: waswy0tmReqTs/9s5pGM6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="32988759"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 06 May 2024 07:21:53 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3EDE35A2; Mon, 06 May 2024 17:21:43 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Yue Wang <yue.wang@Amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v4 5/5] PCI: kirin: Convert to agnostic GPIO API
-Date: Mon,  6 May 2024 17:20:41 +0300
-Message-ID: <20240506142142.4042810-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
-References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1715005310; c=relaxed/simple;
+	bh=ZRr6fPqYoTH0sclRmuJEZqEKQMy0r1Bck1MinrSVNpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kIMOGa+I0FMZtO/OkkpnbtJ6cZQJfFe7Gv1O7DFXgt7n3E83cIi1QJ2ij1fnaLUR9gB/mGQ92cateyv63omV3a5EPEIZV8TR9NtsoBnTV5Wh1FuAoqlsX5RdRpl6tZqGISj/MCfmXQPUS7bbPgVfggQejvRGow2MSBc29iwSSxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=F4Y+fW3Q; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BEB5C40E024D;
+	Mon,  6 May 2024 14:21:46 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id UryTxnO-LRmz; Mon,  6 May 2024 14:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715005303; bh=b+K6cieeRgzZWM9C6IkS52nAd027DkJxG87ZipG8Sho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F4Y+fW3QTaJ9FV2dDcBUpEOnzrKcNwfhgwOdIB3xCvhdM4huoa4p2KYMwSN2wNmwD
+	 PurLG1CyOa67XmIA7Pxjr2Sq43TnxBriydtwUVv225ZGWLr8aRIerdFKLvNAEki9Ev
+	 QXnergGYbpM8+T3qhaX9/x58MrcWwD71J6vQsKEnlV8KncUGgWfSc0z0LVq8pAhSPA
+	 jhRvlK1uhx3ePYkx9TN9Pnrto+jT1IMuDnXrJB5nW+PpFqOIWkIya0hHmvBcQghQxV
+	 Qpcy4sW0eigQF2LhqQTtyg+uUpaA4mgngA8rRUjITTzYMxjhNPyMZTnIW07xurGum0
+	 EFPpsRZXQJUtWe0+C/HGe/nc6XB0yAZPrv1Vs0Sxr+v1BKJWnv/5mnfPlMEOl9DXQZ
+	 WNWXaDv0Ykm6m+6/KKSSXAT4xuzr7YY8i3V3fOOhqtSIvR8d2wWumKRJLjDrYNUk2H
+	 wsEOEPFJWyHmHsADUmFJY/mHG2hpgpMdKtvSSnaDSQw/dzm+hSfRo6uzIZiqwrD1Y/
+	 1hYGDOpptHLNwXDiEYJSWcNV980028nBBUkVgrWNlt8tJcqln08J8EaS98VWRSAywf
+	 lyf/szhCvZVMfnyBCbRiPEu/QgL4G3rSTsUsaKzxv/5Ezg78hEYQ1docvNMEYS9P6J
+	 FpbHijWXXqLmCFJnbwN3lyRY=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5342240E0187;
+	Mon,  6 May 2024 14:21:21 +0000 (UTC)
+Date: Mon, 6 May 2024 16:21:20 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: adrian.hunter@intel.com, ashish.kalra@amd.com, bhe@redhat.com,
+	dave.hansen@linux.intel.com, elena.reshetova@intel.com,
+	jun.nakajima@intel.com, kai.huang@intel.com,
+	kexec@lists.infradead.org, linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ltao@redhat.com, mingo@redhat.com,
+	nik.borisov@suse.com, peterz@infradead.org, rafael@kernel.org,
+	rick.p.edgecombe@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com,
+	tglx@linutronix.de, thomas.lendacky@amd.com, x86@kernel.org
+Subject: Re: [PATCHv10.1 09/18] x86/mm: Adding callbacks to prepare encrypted
+ memory for kexec
+Message-ID: <20240506142120.GKZjjnYGMcZkuTLlzG@fat_crate.local>
+References: <20240427164747.GCZi0sM6HBCBYtgWqF@fat_crate.local>
+ <20240427170634.2397725-1-kirill.shutemov@linux.intel.com>
+ <20240502134506.GDZjOY4guvlKH9-73J@fat_crate.local>
+ <ch244dd4k5nu5rcryuwqp4pztl4dduhciqunin5drr7a3yls2h@siisliaoc2f6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ch244dd4k5nu5rcryuwqp4pztl4dduhciqunin5drr7a3yls2h@siisliaoc2f6>
 
-The of_gpio.h is going to be removed. In preparation of that convert
-the driver to the agnostic API.
+On Mon, May 06, 2024 at 04:22:02PM +0300, Kirill A. Shutemov wrote:
+> I do. See comment just above enc_kexec_stop_conversion() call.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pci/controller/dwc/pcie-kirin.c | 105 ++++++++----------------
- 1 file changed, 35 insertions(+), 70 deletions(-)
+If you mean this:
 
-diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-index d5523f302102..d1f54f188e71 100644
---- a/drivers/pci/controller/dwc/pcie-kirin.c
-+++ b/drivers/pci/controller/dwc/pcie-kirin.c
-@@ -12,12 +12,10 @@
- #include <linux/compiler.h>
- #include <linux/delay.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/of_pci.h>
- #include <linux/phy/phy.h>
- #include <linux/pci.h>
-@@ -78,16 +76,16 @@ struct kirin_pcie {
- 	void		*phy_priv;	/* only for PCIE_KIRIN_INTERNAL_PHY */
- 
- 	/* DWC PERST# */
--	int		gpio_id_dwc_perst;
-+	struct gpio_desc *id_dwc_perst_gpio;
- 
- 	/* Per-slot PERST# */
- 	int		num_slots;
--	int		gpio_id_reset[MAX_PCI_SLOTS];
-+	struct gpio_desc *id_reset_gpio[MAX_PCI_SLOTS];
- 	const char	*reset_names[MAX_PCI_SLOTS];
- 
- 	/* Per-slot clkreq */
- 	int		n_gpio_clkreq;
--	int		gpio_id_clkreq[MAX_PCI_SLOTS];
-+	struct gpio_desc *id_clkreq_gpio[MAX_PCI_SLOTS];
- 	const char	*clkreq_names[MAX_PCI_SLOTS];
- };
- 
-@@ -381,15 +379,20 @@ static int kirin_pcie_get_gpio_enable(struct kirin_pcie *pcie,
- 	pcie->n_gpio_clkreq = ret;
- 
- 	for (i = 0; i < pcie->n_gpio_clkreq; i++) {
--		pcie->gpio_id_clkreq[i] = of_get_named_gpio(dev->of_node,
--						    "hisilicon,clken-gpios", i);
--		if (pcie->gpio_id_clkreq[i] < 0)
--			return pcie->gpio_id_clkreq[i];
-+		pcie->id_clkreq_gpio[i] = devm_gpiod_get_index(dev,
-+							"hisilicon,clken", i,
-+							GPIOD_OUT_LOW);
-+		if (IS_ERR(pcie->id_clkreq_gpio[i]))
-+			return dev_err_probe(dev, PTR_ERR(pcie->id_clkreq_gpio[i]),
-+					     "unable to get a valid clken gpio\n");
- 
- 		pcie->clkreq_names[i] = devm_kasprintf(dev, GFP_KERNEL,
- 						       "pcie_clkreq_%d", i);
- 		if (!pcie->clkreq_names[i])
- 			return -ENOMEM;
-+
-+		gpiod_set_consumer_name(pcie->id_clkreq_gpio[i],
-+					pcie->clkreq_names[i]);
- 	}
- 
- 	return 0;
-@@ -407,10 +410,16 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
- 		for_each_available_child_of_node(parent, child) {
- 			i = pcie->num_slots;
- 
--			pcie->gpio_id_reset[i] = of_get_named_gpio(child,
--							"reset-gpios", 0);
--			if (pcie->gpio_id_reset[i] < 0)
--				continue;
-+			pcie->id_reset_gpio[i] = devm_fwnode_gpiod_get_index(dev,
-+							 of_fwnode_handle(child),
-+							 "reset", 0, GPIOD_OUT_LOW,
-+							 NULL);
-+			if (IS_ERR(pcie->id_reset_gpio[i])) {
-+				if (PTR_ERR(pcie->id_reset_gpio[i]) == -ENOENT)
-+					continue;
-+				return dev_err_probe(dev, PTR_ERR(pcie->id_reset_gpio[i]),
-+						     "unable to get a valid reset gpio\n");
-+			}
- 
- 			pcie->num_slots++;
- 			if (pcie->num_slots > MAX_PCI_SLOTS) {
-@@ -434,6 +443,9 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
- 				ret = -ENOMEM;
- 				goto put_node;
- 			}
-+
-+			gpiod_set_consumer_name(pcie->id_reset_gpio[i],
-+						pcie->reset_names[i]);
- 		}
- 	}
- 
-@@ -463,14 +475,11 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
- 		return PTR_ERR(kirin_pcie->apb);
- 
- 	/* pcie internal PERST# gpio */
--	kirin_pcie->gpio_id_dwc_perst = of_get_named_gpio(dev->of_node,
--							  "reset-gpios", 0);
--	if (kirin_pcie->gpio_id_dwc_perst == -EPROBE_DEFER) {
--		return -EPROBE_DEFER;
--	} else if (!gpio_is_valid(kirin_pcie->gpio_id_dwc_perst)) {
--		dev_err(dev, "unable to get a valid gpio pin\n");
--		return -ENODEV;
--	}
-+	kirin_pcie->id_dwc_perst_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(kirin_pcie->id_dwc_perst_gpio))
-+		return dev_err_probe(dev, PTR_ERR(kirin_pcie->id_dwc_perst_gpio),
-+				     "unable to get a valid gpio pin\n");
-+	gpiod_set_consumer_name(kirin_pcie->id_dwc_perst_gpio, "pcie_perst_bridge");
- 
- 	ret = kirin_pcie_get_gpio_enable(kirin_pcie, pdev);
- 	if (ret)
-@@ -553,7 +562,7 @@ static int kirin_pcie_add_bus(struct pci_bus *bus)
- 
- 	/* Send PERST# to each slot */
- 	for (i = 0; i < kirin_pcie->num_slots; i++) {
--		ret = gpio_direction_output(kirin_pcie->gpio_id_reset[i], 1);
-+		ret = gpiod_direction_output_raw(kirin_pcie->id_reset_gpio[i], 1);
- 		if (ret) {
- 			dev_err(pci->dev, "PERST# %s error: %d\n",
- 				kirin_pcie->reset_names[i], ret);
-@@ -623,44 +632,6 @@ static int kirin_pcie_host_init(struct dw_pcie_rp *pp)
- 	return 0;
- }
- 
--static int kirin_pcie_gpio_request(struct kirin_pcie *kirin_pcie,
--				   struct device *dev)
--{
--	int ret, i;
--
--	for (i = 0; i < kirin_pcie->num_slots; i++) {
--		if (!gpio_is_valid(kirin_pcie->gpio_id_reset[i])) {
--			dev_err(dev, "unable to get a valid %s gpio\n",
--				kirin_pcie->reset_names[i]);
--			return -ENODEV;
--		}
--
--		ret = devm_gpio_request(dev, kirin_pcie->gpio_id_reset[i],
--					kirin_pcie->reset_names[i]);
--		if (ret)
--			return ret;
--	}
--
--	for (i = 0; i < kirin_pcie->n_gpio_clkreq; i++) {
--		if (!gpio_is_valid(kirin_pcie->gpio_id_clkreq[i])) {
--			dev_err(dev, "unable to get a valid %s gpio\n",
--				kirin_pcie->clkreq_names[i]);
--			return -ENODEV;
--		}
--
--		ret = devm_gpio_request(dev, kirin_pcie->gpio_id_clkreq[i],
--					kirin_pcie->clkreq_names[i]);
--		if (ret)
--			return ret;
--
--		ret = gpio_direction_output(kirin_pcie->gpio_id_clkreq[i], 0);
--		if (ret)
--			return ret;
--	}
--
--	return 0;
--}
--
- static const struct dw_pcie_ops kirin_dw_pcie_ops = {
- 	.read_dbi = kirin_pcie_read_dbi,
- 	.write_dbi = kirin_pcie_write_dbi,
-@@ -680,7 +651,7 @@ static int kirin_pcie_power_off(struct kirin_pcie *kirin_pcie)
- 		return hi3660_pcie_phy_power_off(kirin_pcie);
- 
- 	for (i = 0; i < kirin_pcie->n_gpio_clkreq; i++)
--		gpio_direction_output(kirin_pcie->gpio_id_clkreq[i], 1);
-+		gpiod_direction_output_raw(kirin_pcie->id_clkreq_gpio[i], 1);
- 
- 	phy_power_off(kirin_pcie->phy);
- 	phy_exit(kirin_pcie->phy);
-@@ -707,10 +678,6 @@ static int kirin_pcie_power_on(struct platform_device *pdev,
- 		if (IS_ERR(kirin_pcie->phy))
- 			return PTR_ERR(kirin_pcie->phy);
- 
--		ret = kirin_pcie_gpio_request(kirin_pcie, dev);
--		if (ret)
--			return ret;
--
- 		ret = phy_init(kirin_pcie->phy);
- 		if (ret)
- 			goto err;
-@@ -723,11 +690,9 @@ static int kirin_pcie_power_on(struct platform_device *pdev,
- 	/* perst assert Endpoint */
- 	usleep_range(REF_2_PERST_MIN, REF_2_PERST_MAX);
- 
--	if (!gpio_request(kirin_pcie->gpio_id_dwc_perst, "pcie_perst_bridge")) {
--		ret = gpio_direction_output(kirin_pcie->gpio_id_dwc_perst, 1);
--		if (ret)
--			goto err;
--	}
-+	ret = gpiod_direction_output_raw(kirin_pcie->id_dwc_perst_gpio, 1);
-+	if (ret)
-+		goto err;
- 
- 	usleep_range(PERST_2_ACCESS_MIN, PERST_2_ACCESS_MAX);
- 
+        /*
+         * Call enc_kexec_stop_conversion() while all CPUs are still active and
+         * interrupts are enabled. This will allow all in-flight memory
+         * conversions to finish cleanly.
+         */
+        if (kexec_in_progress)
+                x86_platform.guest.enc_kexec_stop_conversion(false);
+
+then no, this is not enough.
+
+I mean this:
+
+/**
+ * struct x86_guest - Functions used by misc guest incarnations like SEV, TDX, etc.
+ *
+ * @enc_status_change_prepare   Notify HV before the encryption status of a range is changed
+ * @enc_status_change_finish    Notify HV after the encryption status of a range is changed
+ * @enc_tlb_flush_required      Returns true if a TLB flush is needed before changing page encryption status
+ * @enc_cache_flush_required    Returns true if a cache flush is needed before changing page encryption status
+ * @enc_kexec_begin		Begin the two-step process of stopping
+ * 				page conversion... <insert reason why it
+ * 				needs to happen this way, blabla>
+ * @enc_kexec_finish		...
+ */
+struct x86_guest {
+        int (*enc_status_change_prepare)(unsigned long vaddr, int npages, bool enc);
+        int (*enc_status_change_finish)(unsigned long vaddr, int npages, bool enc);
+        bool (*enc_tlb_flush_required)(bool enc);
+        bool (*enc_cache_flush_required)(void);
+        void (*enc_kexec_begin)(bool crash);
+        void (*enc_kexec_finish)(void);
+
+And calling them a _begin and _finish makes a lot more sense to me:
+_begin starts the kexec process for encrypted guests and _finish
+finishes it.
+
+Just from the names you now know what needs to happen and in which
+order.
+
+Thx.
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
