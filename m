@@ -1,227 +1,116 @@
-Return-Path: <linux-kernel+bounces-169536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582BC8BCA10
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:51:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A138BCA4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA041F21097
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 08:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C801F22C19
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F0B1422D8;
-	Mon,  6 May 2024 08:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F259A1422D8;
+	Mon,  6 May 2024 09:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R4kz+hbk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QwO+VGBT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255BF1420DB
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 08:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B056684FB3;
+	Mon,  6 May 2024 09:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714985496; cv=none; b=rIPNjsVEWmZVwRrghGUzn7ylddxRKXIaG6JhLqG0VRHPgxJRZ3M5GsJoVVwct+9gpFxD5nSbvRtjvnrW8vmc2BkCZjIFeR6sLMNIYhiRFDCjfxJqk8R8QMngs1cq5lF7BtiXJG7KZwk9RZxgJ+z06IZ8277Ihy5mka1z+OsDWCI=
+	t=1714986609; cv=none; b=RH0Py7NQWgLX4hpfAsZap3wfx4iTsYMcTFDk+DGbJuA0ry2b4pft+Mt+ajLDJHoST2P/2o2R17P/MsGIpb4ub0UJsO34Bk2qv/ZHDnBd6470GC7pJ4+SSv8ORxvieL1kVY2+kUQOVApH2ORd1V53D2YOazJcJxTMrHbTRIHFpi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714985496; c=relaxed/simple;
-	bh=zXD4uG0d7VL7thhhnSj6RgZn3W6NzV5zkQXwTee/F/Y=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=B1KdvONsiSbjS2O9+VLfB0MsQSuI+HuKlBNDNyQqO0PxJnlJVJCGpnhFyqFpEPkko0jnjjJ/7FhsuRIY4ZX19u/QBPrYLaMg9twxSLOfUpVf3DYt1YPxcs3a7x0eg+wzZQty/Utptf2n2VvnPU6r5c5hQ5LD3CTFR0FcZuDL/pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R4kz+hbk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714985493;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cjwsQqESFSzvvYF2Hsd+siFVp0pIuoP5b/kpWCm10Bw=;
-	b=R4kz+hbkNpEeFpwZs+lSnT17B3JX0ZNdwhJaRZvX5QGvzxCOfKxmRnuJO3XOE5Nb4AQkPf
-	8OKQ3OPRFr4mpH63FyHowMo813HvJIca2tfkgnjkKgSKw2RbTv7i0uECgNgkLdeVlcjk32
-	GxFpwiH17cKBZNdcrHqV3jhmJQh5uLs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-196-eViCJPYXM6K_A1rrpjJTuA-1; Mon, 06 May 2024 04:51:30 -0400
-X-MC-Unique: eViCJPYXM6K_A1rrpjJTuA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F08A38943A3;
-	Mon,  6 May 2024 08:51:29 +0000 (UTC)
-Received: from ws.net.home (unknown [10.45.224.191])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F002200A390;
-	Mon,  6 May 2024 08:51:29 +0000 (UTC)
-Date: Mon, 6 May 2024 10:51:27 +0200
-From: Karel Zak <kzak@redhat.com>
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	util-linux@vger.kernel.org
-Subject: [ANNOUNCE] util-linux stable v2.40.1
-Message-ID: <20240506085127.ywva7jnimovnnrlm@ws.net.home>
+	s=arc-20240116; t=1714986609; c=relaxed/simple;
+	bh=YA+PqKXQufJxmyHAOnZoOHyB5sVLggaHsdUl1m+YNxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=irCr3REV7txiQRaSAFIV5BUoqL7C60GjV7a6DA8Ox1YX771cAr2RzyAMiQJzdjmp6WmmWqC7PpZUteKIWHezcxAhGK2bCWhNJz/6CwS04Fg/Uwappi+ZVjFBRnmNJn1xzJMy8xWF70zd3KqlVVmBc3cr12QZYCOocpw6dJgOCPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QwO+VGBT; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714986608; x=1746522608;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YA+PqKXQufJxmyHAOnZoOHyB5sVLggaHsdUl1m+YNxo=;
+  b=QwO+VGBTYBnxVEDIYxt0km+sRwFQ4qDT6aVFQaN6jRcJ4JdUh9WOmZid
+   I0utXLQ4/0JzM6hktwvlnUfdXyiO9B4C8HWxQERt9F4iwBkuZ6bXoUAVk
+   K38S6lAPlC+LTTm/RKsrR4YVNfwW2yZM7QRvXfcrQim/m2EFpEeycODt+
+   6YZLTrohydi+WI6vokFQuMRuqcg79R12jGO5BKiKF9tpmY0EX50AEUh++
+   IY96HopqppLG+qylvAA3lJsXxfdBzyF4KZEe2x6N+rtH2ZCN2ygrYkNRx
+   W0+NjficKH5iveSc7KA1peAoXhbCzIEsHuCBm0ThqPqZwSVYHt52feAEL
+   Q==;
+X-CSE-ConnectionGUID: xPwMsaksQeWiyrf4kPKCjQ==
+X-CSE-MsgGUID: mq84FVOeRP2diTVqIIIYBA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="21278018"
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="21278018"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 02:10:08 -0700
+X-CSE-ConnectionGUID: uHSgHqskT1KwoDnfI7kSLw==
+X-CSE-MsgGUID: FB1/rAPdS8SFAXEgAhMfcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
+   d="scan'208";a="58986313"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 06 May 2024 02:10:06 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0E5319BA; Mon, 06 May 2024 11:52:20 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	baojun.xu@ti.com,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] ALSA: Correct the kernel object suffix of target
+Date: Mon,  6 May 2024 11:52:19 +0300
+Message-ID: <20240506085219.3403731-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
+The correct suffix is 'y' for the kernel code and
+'objs' for the user space. Update documentation.
 
-The util-linux maintenance release v2.40.1 is now available at: 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ Documentation/sound/kernel-api/writing-an-alsa-driver.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  http://www.kernel.org/pub/linux/utils/util-linux/v2.40/
+diff --git a/Documentation/sound/kernel-api/writing-an-alsa-driver.rst b/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
+index 2d2998faff62..801b0bb57e97 100644
+--- a/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
++++ b/Documentation/sound/kernel-api/writing-an-alsa-driver.rst
+@@ -3976,7 +3976,7 @@ Driver with A Single Source File
  
-Feedback and bug reports, as always, are welcomed.
-
-  Karel
-
-
-util-linux v2.40.1 Release Notes
-================================
-
-Changes between v2.40 and v2.40.1
----------------------------------
-
-README.licensing/flock:
-   - Add MIT license mention  [Richard Purdie]
-agetty:
-   - Don't override TERM passed by the user  [Daan De Meyer]
-   - fix resource leak  [Karel Zak]
-   - make reload code more robust  [Karel Zak]
-all_syscalls:
-   - don't hardcode AWK invocation  [Thomas Weißschuh]
-   - don't warn during cleanup  [Thomas Weißschuh]
-   - fail if any step fails  [Thomas Weißschuh]
-   - use sed to extract defines from headers  [Thomas Weißschuh]
-autotools:
-   - distribute pam_lastlog2/meson.build  [Thomas Weißschuh]
-bcachefs:
-   - Remove BCACHEFS_SB_MAX_SIZE & check  [Tony Asleson]
-build-sys:
-   - release++ (v2.40.1-rc1)  [Karel Zak]
-cal:
-   - use unsigned int to follow union with unsigned int  [Karel Zak]
-docs:
-   - add COPYING.MIT  [Karel Zak]
-   - fix GPL name typo  [Karel Zak]
-   - update AUTHORS file  [Karel Zak]
-   - update v2.40.1-ReleaseNotes  [Karel Zak]
-findmnt:
-   - always zero-terminate SOURCES data  [Thomas Weißschuh]
-   - revise the code for -I and -D option  [Masatake YAMATO]
-fsck.minix:
-   - fix possible overrun  [Karel Zak]
-getopt:
-   - remove free-before-exit  [Karel Zak]
-hwclock:
-   - free temporary variable before return  [Karel Zak]
-   - initialize parser variables  [Karel Zak]
-lastlog2:
-   - begin descriptions of options with a lowercase letter  [Benno Schulenberg]
-lib/pager:
-libblkid:
-   - Fix segfault when blkid.conf doesn't exist  [Karel Zak]
-   - topology/ioctl  correctly handle kernel types  [Thomas Weißschuh]
-   - topology/ioctl  simplify ioctl handling  [Thomas Weißschuh]
-libfdisk:
-   - add initializer to geometry  [Karel Zak]
-libmount:
-   - Fix access check for utab in context  [Karel Zak]
-   - fix comment typo for mnt_fs_get_comment()  [Tianjia Zhang]
-   - fix possible memory leak  [Karel Zak]
-   - fix umount --read-only  [Karel Zak]
-libsmartcols:
-   - fix column reduction  [Karel Zak]
-   - reset wrap after calculation  [Karel Zak]
-libuuid:
-   - (man) fix function declarations  [CismonX]
-losetup:
-   - losetup.8 Clarify --direct-io  [Colin Walters]
-lsblk:
-   - simplify SOURCES code  [Karel Zak]
-lsclocks:
-   - fix FD leak  [Karel Zak]
-lsfd:
-   - (man) fix license name  [Jakub Wilk]
-   - add LSFD_DEBUG env var for debugging  [Masatake YAMATO]
-lslocks:
-   - don't abort gathering per-process information even if opening a /proc/[0-9]* fails  [Masatake YAMATO]
-   - remove a unused local variable  [Masatake YAMATO]
-lsns:
-   - fix netns use  [Karel Zak]
-   - report with warnx if a namespace related ioctl fails with ENOSYS  [Masatake YAMATO]
-   - tolerate lsns_ioctl(fd, NS_GET_{PARENT,USERNS}) failing with ENOSYS  [Masatake YAMATO]
-meson:
-   - Add build-blkdiscard option  [Jordan Williams]
-   - Add build-blkpr option  [Jordan Williams]
-   - Add build-blkzone option  [Jordan Williams]
-   - Add build-blockdev option  [Jordan Williams]
-   - Add build-chcpu option  [Jordan Williams]
-   - Add build-dmesg option  [Jordan Williams]
-   - Add build-enosys option  [Jordan Williams]
-   - Add build-fadvise option  [Jordan Williams]
-   - Add build-fsfreeze option  [Jordan Williams]
-   - Add build-ipcmk option  [Jordan Williams]
-   - Add build-ldattach option  [Jordan Williams]
-   - Add build-lsclocks option  [Jordan Williams]
-   - Add build-lsfd option and make rt dependency optional  [Jordan Williams]
-   - Add build-rtcwake option  [Jordan Williams]
-   - Add build-script option  [Jordan Williams]
-   - Add build-scriptlive option  [Jordan Williams]
-   - Add build-setarch option  [Jordan Williams]
-   - Add have_pty variable to check if pty is available  [Jordan Williams]
-   - Add missing check for build-ipcrm option  [Jordan Williams]
-   - Define _DARWIN_C_SOURCE on macOS as is done in Autotools  [Jordan Williams]
-   - Don't define HAVE_ENVIRON_DECL when environ is unavailable  [Jordan Williams]
-   - Fix build by default and install behavior for build-pipesz option  [Jordan Williams]
-   - Fix false positive detection of mempcpy on macOS  [Jordan Williams]
-   - Only build libmount when required  [Jordan Williams]
-   - Only pick up the rt library once  [Jordan Williams]
-   - Only require the crypt library when necessary  [Jordan Williams]
-   - Only use the --version-script linker flag where it is supported  [Jordan Williams]
-   - Remove libblkid dependency on libmount  [Jordan Williams]
-   - Remove lingering mq_libs variable  [Jordan Williams]
-   - Require pty for the su and runuser executables  [Jordan Williams]
-   - Require the seminfo type for ipcmk, ipcrm, and ipcs  [Jordan Williams]
-   - Use has_type instead of sizeof to detect cpu_set_t type  [Jordan Williams]
-   - Use libblkid as a dependency  [Jordan Williams]
-   - Use libmount as a dependency  [Jordan Williams]
-   - respect c_args/CFLAGS when generating syscalls  [Karel Zak]
-pam_lastlog2:
-   - link against liblastlog  [Thomas Weißschuh]
-po:
-   - merge changes  [Karel Zak]
-   - update cs.po (from translationproject.org)  [Petr Písař]
-   - update fr.po (from translationproject.org)  [Frédéric Marchal]
-   - update hr.po (from translationproject.org)  [Božidar Putanec]
-   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
-   - update ko.po (from translationproject.org)  [Seong-ho Cho]
-   - update pl.po (from translationproject.org)  [Jakub Bogusz]
-   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
-   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
-po-man:
-   - merge changes  [Karel Zak]
-   - update de.po (from translationproject.org)  [Mario Blättermann]
-   - update ko.po (from translationproject.org)  [Seong-ho Cho]
-   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
-strutils.h:
-   - Include strings.h header for strncasecmp function  [Jordan Williams]
-tests:
-   - (lsfd  mkfds-multiplexing) skip if /proc/$pid/syscall is broken  [Masatake YAMATO]
-   - (lsns  ioctl_ns) add more debug print  [Masatake YAMATO]
-   - (lsns  ioctl_ns) record stdout/stderr for debugging the case  [Masatake YAMATO]
-   - (test_mkfds  sockdiag) verify the recieved message to detect whether the socket is usable or not  [Masatake YAMATO]
-textual:
-   - fix some typos and inconsistencies in usage and error messages  [Benno Schulenberg]
-wall:
-   - check sysconf() returnvalue  [Karel Zak]
-   - fix possible memory leak  [Karel Zak]
-   - make sure unsigned variable not underflow  [Karel Zak]
-xalloc.h:
-   - Include stdio.h header for vasprintf function  [Jordan Williams]
+    Suppose you have a file xyz.c. Add the following two lines::
+ 
+-     snd-xyz-objs := xyz.o
++     snd-xyz-y := xyz.o
+      obj-$(CONFIG_SND_XYZ) += snd-xyz.o
+ 
+ 2. Create the Kconfig entry
+@@ -4019,7 +4019,7 @@ located in the new subdirectory, sound/pci/xyz.
+ 
+ 2. Under the directory ``sound/pci/xyz``, create a Makefile::
+ 
+-         snd-xyz-objs := xyz.o abc.o def.o
++         snd-xyz-y := xyz.o abc.o def.o
+          obj-$(CONFIG_SND_XYZ) += snd-xyz.o
+ 
+ 3. Create the Kconfig entry
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
