@@ -1,177 +1,140 @@
-Return-Path: <linux-kernel+bounces-170082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24B68BD1AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:41:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8688BD1B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CC8B22677
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61848B21F49
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4BE155398;
-	Mon,  6 May 2024 15:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079F1155726;
+	Mon,  6 May 2024 15:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JAGBRmiL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BBTgObPk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JAGBRmiL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BBTgObPk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VW62MGB5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969A7580C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22152F2C;
+	Mon,  6 May 2024 15:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715010097; cv=none; b=paMJnW2oZKquAc/IBjmdQeeYzdWckYkOXzQqJzPGcZcZJ6t45AC+ddGwm24NPg25w/lSswrmIfjoKTNH8B2U260/6u8+gSb5iCw5+GwQ6TIfY9CIbhTJuOaEFPhpXnHQ0ofhz/Ci3ZcbnRE5RvKNqrtFS88F75180IWp4wp85E0=
+	t=1715010236; cv=none; b=YSNIBJudjD4VsC35nQOraXs0TluBpKCVycUyR8LGSpBRib4V2DiCbPD//agAgmcc40Ja9wumZ5xUPhrkT6nzaZG1YjSOwR1UzkIvwUkL3zRryf5sk2yUG+rpJhomfa3Lu0N/h1dSqR0M/8QH1+7HUa1Pt7Psh47Jp1BCPE5yalA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715010097; c=relaxed/simple;
-	bh=r2fKkKODx3bsbU/zHy3RqTsEzCgGVZbwURDHIJCljNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTYPd6F5uRp7Y0B4jpscZei1ej0YiO2cupmSaca7cPCCtygQs8LLlIgFKPDHQdXAlLa4OEfjMM0IPGmtlSjJDrwL/ZgRAPPq6nkt3VtO2LTRzr6/0po56OoAcbLWCqYCSiy1Na5zst0WC2sNOEIJp8vzww6mJdzKISa3KyDUM1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JAGBRmiL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BBTgObPk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JAGBRmiL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BBTgObPk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 48F4E38586;
-	Mon,  6 May 2024 15:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715010094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
-	b=JAGBRmiLG4Ca4zbRmnXhByMK7/RTX3PIOCv7Crrnf+fOxGM/Y/XcZz6/qezxRzrba+x6Kb
-	yKKifPnPCD7/RV12EIeAxX8loQV1xrUXaEKYovxTM+zZC7uwUM8CtH6LSB9aYG1iNU1AyB
-	cslYaA28Jz9l8On5J7Ywj4GRGduzbx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715010094;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
-	b=BBTgObPkplXvYQC17Ky833tZ4QY6nmelC79vlS1v1KUs6OGWM90yKLDGOBT7Dkmp+6X3IR
-	LlpwUPdmCBD5LLAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715010094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
-	b=JAGBRmiLG4Ca4zbRmnXhByMK7/RTX3PIOCv7Crrnf+fOxGM/Y/XcZz6/qezxRzrba+x6Kb
-	yKKifPnPCD7/RV12EIeAxX8loQV1xrUXaEKYovxTM+zZC7uwUM8CtH6LSB9aYG1iNU1AyB
-	cslYaA28Jz9l8On5J7Ywj4GRGduzbx8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715010094;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EX3lbGjtZr1MYyBbIkYm5Ykpw+gVZN3D98AWH25Rb0s=;
-	b=BBTgObPkplXvYQC17Ky833tZ4QY6nmelC79vlS1v1KUs6OGWM90yKLDGOBT7Dkmp+6X3IR
-	LlpwUPdmCBD5LLAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A65E113A25;
-	Mon,  6 May 2024 15:41:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SV/vJS36OGblCgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 06 May 2024 15:41:33 +0000
-Date: Mon, 6 May 2024 17:41:28 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Kees Cook <keescook@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	syzbot+41bbfdb8d41003d12c0f@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4 2/4] mm,page_owner: Fix refcount imbalance
-Message-ID: <Zjj6KN0GhXbv3VYY@localhost.localdomain>
-References: <20240404070702.2744-1-osalvador@suse.de>
- <20240404070702.2744-3-osalvador@suse.de>
- <202405060754.4405F8402F@keescook>
+	s=arc-20240116; t=1715010236; c=relaxed/simple;
+	bh=NeJDMlxXZXWQDJGZqDS3Eg31LsTMX+69AQMP0/zSH+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GMESzUSEOz2zlMmdrfbtnb74R3y1IZNcaOHKt0rGtm4A/3iqRW/hJ0u6epXMpmbd64BPUb3KfhMNa9ZwmWXREcPHjDh8sjnnsUCkE78JUTliZTVU4/GIZrSH85B1dERwqjzb3YTiJh4N8+Smclk63MPTk1zQdXkIn7GfksEPNBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VW62MGB5; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715010235; x=1746546235;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NeJDMlxXZXWQDJGZqDS3Eg31LsTMX+69AQMP0/zSH+o=;
+  b=VW62MGB5gCXW/gg1N/g4afQbZKjTsZ1Natp0wZgoxk/X0vQuGgqo/F3H
+   cRSQir6zDaVB/Frejegku8kG4NKCtkC0MBXVu/bM1h3DRW+Xk1TRWrwBF
+   vw8KZtj01+kbEU/HmC907xOC9ZCri81Fa4HNXArxtwPDitJlHS5cZBouU
+   Ga0CpjzPd+6hNfDNUUm8m2YozT/j4BE+VFqY0gLhDo5HrVeoSvOQgEx3S
+   hE1IGcsWJupJ7QrZBryH6ijJazF9nqYPLrnBN0YUy4miZtqs5N8JFXJLK
+   293j0NYfeLC1LySCLbbRh1TMac7DxKWDJCJQX7sB/M9et0EmiSVrwvvbn
+   Q==;
+X-CSE-ConnectionGUID: DkU71/2rTwmiBdw1zZOtTA==
+X-CSE-MsgGUID: uZrSkxxXQOCgb4NNtP6aRw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10687470"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="10687470"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 08:43:54 -0700
+X-CSE-ConnectionGUID: 0r+wEzXcQ6SLzp3ZjcAoFw==
+X-CSE-MsgGUID: mt45KkknTvqyPUlcfNZVtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="32794761"
+Received: from delangov-mobl1.amr.corp.intel.com (HELO [10.209.2.6]) ([10.209.2.6])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 08:43:53 -0700
+Message-ID: <fd159b26-b631-43f2-8f89-23d8d719fe80@intel.com>
+Date: Mon, 6 May 2024 08:43:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202405060754.4405F8402F@keescook>
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[41bbfdb8d41003d12c0f];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,kvack.org,suse.com,suse.cz,google.com,gmail.com,rivosinc.com,syzkaller.appspotmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] x86/virt/tdx: Export global metadata read
+ infrastructure
+To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: x86@kernel.org, kirill.shutemov@linux.intel.com, peterz@infradead.org,
+ tglx@linutronix.de, bp@alien8.de, mingo@redhat.com, hpa@zytor.com,
+ seanjc@google.com, pbonzini@redhat.com, isaku.yamahata@intel.com,
+ jgross@suse.com
+References: <cover.1709288433.git.kai.huang@intel.com>
+ <ec9fc9f1d45348ddfc73362ddfb310cc5f129646.1709288433.git.kai.huang@intel.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <ec9fc9f1d45348ddfc73362ddfb310cc5f129646.1709288433.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 06, 2024 at 07:59:11AM -0700, Kees Cook wrote:
-> Does this also fix this?
-> https://lore.kernel.org/all/202405061514.23fedba1-oliver.sang@intel.com/
+On 3/1/24 03:20, Kai Huang wrote:
+> KVM will need to read a bunch of non-TDMR related metadata to create and
+> run TDX guests.  Export the metadata read infrastructure for KVM to use.
 
-Hi Kess,
+All of this hinges on how KVM ends up using this infrastructure.
 
-yes, it does.
+I want to see the whole picture before _any_ of this gets applied.
+These 5 patches only vaguely hint at that bigger picture.
 
-> 
-> This is a report of the backtrace changing, but the warning was
-> pre-existing.
-> 
-> > [...]
-> > -static void dec_stack_record_count(depot_stack_handle_t handle)
-> > +static void dec_stack_record_count(depot_stack_handle_t handle,
-> > +				   int nr_base_pages)
-> >  {
-> >  	struct stack_record *stack_record = __stack_depot_get_stack_record(handle);
-> >  
-> > -	if (stack_record)
-> > -		refcount_dec(&stack_record->count);
-> > +	if (!stack_record)
-> > +		return;
-> > +
-> > +	if (refcount_sub_and_test(nr_base_pages, &stack_record->count))
-> > +		pr_warn("%s: refcount went to 0 for %u handle\n", __func__,
-> > +			handle);
-> 
-> This pr_warn() isn't needed: refcount will very loudly say the same
-> thing. :)
-
-Yes, but I wanted to get the handle so I can match it with the
-backtrace.
-
-Thanks
-
-
--- 
-Oscar Salvador
-SUSE Labs
+I know folks want to draw some kind of line and say "x86" over here and
+"kvm" over there.  But that inclination really doesn't help anyone get
+that big picture view.
 
