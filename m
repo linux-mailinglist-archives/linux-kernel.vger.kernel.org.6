@@ -1,222 +1,80 @@
-Return-Path: <linux-kernel+bounces-169993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1E98BD055
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F968BD057
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EBBB287BE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E28D287F5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D8B137915;
-	Mon,  6 May 2024 14:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE1513C69F;
+	Mon,  6 May 2024 14:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgSUMliR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA9D13D8BE;
-	Mon,  6 May 2024 14:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EXx4/WGx"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E082B1DA22
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 14:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005802; cv=none; b=Btp/O0Eowlnz7ZlzDIfp58C3aXUv5Kg3+q2R6bF8NAc6eFSWORmIOnqhBP5nv7Ff32vpbQV/TrISWhfbD4JQkUMr97dyUaCPhluBoXR8cXj68V3DdPTxYFs5N5DVsWUiFhT5AXQwnWv5cUeWo/CQ0S2yHWzb+ZzHiBsSmkj7who=
+	t=1715005855; cv=none; b=n30OJYg9eZU5IE2W8a8DFl1uYAzBwI9woEySyfIQq3y17EmKxbE7DIG+Zml3Ga1Exx7MlQUGiJ0r7N7Nszn7aIDAo0MwROgJRsDxuqEOXU5pGT+2Wb9lgS10gp5GGpWQivn3mhuJ5eNAGVql0hJ47BYUIfjpP0a9GxQKR7OId1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005802; c=relaxed/simple;
-	bh=xLyyQsgBKxOS7ju/Z1jQLkPWqUuski82jXjG4sGoz8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A6bYYqT74IESSui24NrkTIGh5iCj/6PGQgPSsHt3+8FAef+oMP2UHm1B85NeP1HOhoRFDnOYEF9R/9Q7SqW61vzjAFV/yxgkouYe0VVdn9UBNQoaoaZVAxZQnIlZsrDgKf2ff84Eic4WqaQQcMffIhDuJKPb+jzMMlp8cZMKwgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgSUMliR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43365C4AF63;
-	Mon,  6 May 2024 14:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715005801;
-	bh=xLyyQsgBKxOS7ju/Z1jQLkPWqUuski82jXjG4sGoz8w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qgSUMliRi/qdlo42bY09VW5dKPEjBw9ldcpgEjzTwevJIj1dfq6O6e1EAFPa+pDrY
-	 FLzUrvwfX3bfROez3MCZBCDoVObk4hzZIIa9HsNMrT8oXLPr5YCmUnox0M87In/P+b
-	 0+dM+vPrwLdcsagU0+j71jO9yQJZ4H2xbmX6lv1AmuhtV38wZOWXuqT7+hPdajtaIq
-	 mLxkoxt2Eh58K6D0Hu7Krf8og2mK7jf7Ur1i7s+Kp2YjlQ98he9GVbRNvWamAubOYp
-	 IH9feVvYL0ZJQ320d01epzTNyiK6mDfO15IWg9oCKsv8Aom2/KqkYxez9K7/WDVxzz
-	 o9mvjAjlEMazg==
-Date: Mon, 6 May 2024 15:29:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, kernel test robot <lkp@intel.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v6 10/10] iio: adc: ad7380: add support for
- resolution boost
-Message-ID: <20240506152946.74f1438c@jic23-huawei>
-In-Reply-To: <20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
-References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
-	<20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715005855; c=relaxed/simple;
+	bh=74avidpj6lHrcnz5DWt9tVaHKTbGh3voPFwrs+2HjNg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=i5i4OCv4KCYwcP7Rpx/AOHissvpJFAe5YWl+jwa2KxaktCeTUZ4v+ZN9UftJgUJHXBXgd8uUWx4YzTOb1/cD9uFThb8xzUVooZ39ng/xpkz3nWovM6AZeMz/B5TyGCk0qUOX9WyHhQv02nUTMtucAj9mHqlWhjbK+cVMxug7zt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EXx4/WGx; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=74avi
+	dpj6lHrcnz5DWt9tVaHKTbGh3voPFwrs+2HjNg=; b=EXx4/WGxoek2QHnlkBoTc
+	jRTT0OXc0BvIlIVVgO4dT8CHDkcMpwiNeUaEzYExIs9yWALPn7/aDuzvWZ9Y6hRX
+	HDS/r3IY8rE8LFipmebk2F6XSCDnHIVRI1EC0jT7tkmEtYmi8SpI+gNRCAxHLuHh
+	Q9yvqf/kUyr/KaAeMjbyu4=
+Received: from localhost.localdomain (unknown [111.35.187.227])
+	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wDXL_Fr6ThmQiFiBA--.17029S4;
+	Mon, 06 May 2024 22:30:09 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: 00107082@163.com
+Cc: airlied@gmail.com,
+	airlied@redhat.com,
+	daniel@ffwll.ch,
+	dreaming.about.electric.sheep@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	kraxel@redhat.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	regressions@lists.linux.dev,
+	spice-devel@lists.freedesktop.org,
+	tzimmermann@suse.de,
+	virtualization@lists.linux.dev
+Subject: Re: [Regression] 6.9.0: WARNING: workqueue: WQ_MEM_RECLAIM ttm:ttm_bo_delayed_delete [ttm] is flushing !WQ_MEM_RECLAIM events:qxl_gc_work [qxl]
+Date: Mon,  6 May 2024 22:30:03 +0800
+Message-Id: <20240506143003.4855-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240430061337.764633-1-00107082@163.com>
+References: <20240430061337.764633-1-00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXL_Fr6ThmQiFiBA--.17029S4
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjfUngAwUUUUU
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBEBPWqmVODy8hSgAAsf
 
-On Wed, 01 May 2024 16:55:43 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
+The kernel warning still shows up in 6.9.0-rc7.
 
-> ad738x chips are able to use an additional 2 bits of resolution when
-> using oversampling. The 14-bits chips can have up to 16 bits of
-> resolution and the 16-bits chips can have up to 18 bits of resolution.
-> 
-> In order to dynamically allow to enable/disable the resolution boost
-> feature, we have to set iio realbits/storagebits to the maximum per chips.
-> This means that for iio, data will always be on the higher resolution
-> available, and to cope with that we adjust the iio scale and iio offset
-> depending on the resolution boost status.
-> 
-> The available scales can be displayed using the regular _scale_available
-> attributes and can be set by writing the regular _scale attribute.
-> The available scales depend on the oversampling status.
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> 
-> ---
-> 
-> In order to support the resolution boost (additional 2 bits of resolution)
-> we need to set realbits/storagebits to the maximum value i.e :
->   - realbits = 16 + 2 = 18, and storagebits = 32 for 16-bits chips
->   - realbits = 14 + 2 = 16, and storagebits = 16 for 14-bits chips
-> 
-> For 14-bits chips this does not have a major impact, but this
-> has the drawback of forcing 16-bits chip users to always use 32-bits
-> words in buffers even if they are not using oversampling and resolution
-> boost. Is there a better way of implementing this? For example
-> implementing dynamic scan_type?
-> 
-> Another issue is the location of the timestamps. I understood the need
-> for ts to be consistent between chips, but right now I do not have a
-> better solution.. I was thinking of maybe adding the timestamps at the
-> beginning? That would imply to change the iio_chan_spec struct and maybe
-> add a iio_push_to_buffers_with_timestamp_first() wrapper function? Is
-> that an option?
+(I think 4 high load processes on a 2-Core VM could easily trigger the kernel warning.)
 
-Questions discussed in another branch of the thread.
-
-Jonathan
-
-> 
-> Any suggestion would be very much appreciated.
-> ---
->  drivers/iio/adc/ad7380.c | 226 ++++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 194 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-> index 7b021bb9cf87..e240098708e9 100644
-> --- a/drivers/iio/adc/ad7380.c
-> +++ b/drivers/iio/adc/ad7380.c
-> @@ -20,6 +20,7 @@
->  #include <linux/err.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/units.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
-> @@ -58,6 +59,8 @@
->  #define AD7380_CONFIG1_CRC_R		BIT(4)
->  #define AD7380_CONFIG1_ALERTEN		BIT(3)
->  #define AD7380_CONFIG1_RES		BIT(2)
-> +#define RESOLUTION_BOOST_DISABLE	0
-> +#define RESOLUTION_BOOST_ENABLE		1
-If the field is defined, the values should be obvious.
-Also you used this as a boolean where simply passing in true
-or false would be less confusing.
-
->  #define AD7380_CONFIG1_REFSEL		BIT(1)
->  #define AD7380_CONFIG1_PMODE		BIT(0)
->  
-> @@ -86,6 +89,14 @@ struct ad7380_chip_info {
->  	const struct ad7380_timing_specs *timing_specs;
->  };
-
-> @@ -259,6 +271,8 @@ struct ad7380_state {
->  	struct spi_device *spi;
->  	unsigned int oversampling_mode;
->  	unsigned int oversampling_ratio;
-> +	unsigned int scales[2][2];
-> +	bool resolution_boost_enable;
->  	struct regmap *regmap;
->  	unsigned int vref_mv;
->  	unsigned int vcm_mv[MAX_NUM_CHANNELS];
-> @@ -270,7 +284,10 @@ struct ad7380_state {
->  	 * As MAX_NUM_CHANNELS is 4 the layout of the structure is the same for all parts
->  	 */
->  	struct {
-> -		u16 raw[MAX_NUM_CHANNELS];
-> +		union {
-> +			u16 u16[MAX_NUM_CHANNELS];
-> +			u32 u32[MAX_NUM_CHANNELS];
-> +		} raw;
->  
->  		s64 ts __aligned(8);
-
-As per earlier comments, roll this timestamp into the union as well
-because it will move around.
-
->  	} scan_data __aligned(IIO_DMA_MINALIGN);
-> @@ -359,23 +376,67 @@ static int ad7380_debugfs_reg_access(struct iio_dev *indio_dev, u32 reg,
->  	unreachable();
->  }
-
->  
-> +static int ad7380_set_resolution_boost(struct iio_dev *indio_dev, bool enable)
-You pass 1 or 0 in here rather than true or false which would make more sense.
-> +{
-> +	struct ad7380_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (st->resolution_boost_enable == enable)
-> +		return 0;
-> +
-> +	ret = regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG1,
-> +				 AD7380_CONFIG1_RES,
-> +				 FIELD_PREP(AD7380_CONFIG1_RES, enable));
-Mapping true / false to 1 / 0 whilst correct doesn't give particularly readable
-code. So useful to just have an
-	enable ? 1 : 0 
-in there to make the mapping more obvious.
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->resolution_boost_enable = enable;
-
-Trivial: blank line here.
-
-> +	return 0;
-> +}
->
->  static int ad7380_init(struct ad7380_state *st, struct regulator *vref)
->  {
->  	int ret;
-> @@ -691,12 +849,16 @@ static int ad7380_init(struct ad7380_state *st, struct regulator *vref)
->  	if (ret < 0)
->  		return ret;
->  
-> -	/* Disable oversampling by default.
-> -	 * This is the default value after reset,
-> +	/* Disable oversampling and resolution boost by default.
-
-Follow through from earlier.  Wrong comment syntax + wrap lines nearer 80 chars.
-
-> +	 * This are the default values after reset,
->  	 * so just initialize internal data
->  	 */
+Thanks
+David
 
 
