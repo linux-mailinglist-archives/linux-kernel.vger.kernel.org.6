@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-169631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312DE8BCB80
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:00:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4428BCB82
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCB751F21191
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1967280DDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1718614265A;
-	Mon,  6 May 2024 10:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyMkWz4W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BD34205F;
-	Mon,  6 May 2024 10:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F02142651;
+	Mon,  6 May 2024 10:00:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87531422DD;
+	Mon,  6 May 2024 10:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714989628; cv=none; b=loCYO4dVZ28eNFjm+b+8nYTfqc4zGaXSC5Rqoo2cwl9zs3/1G0DvnA8/S62zOPf3uKWVJ7ZpZ+/sikzQ1CAmT7PdDZT65hnvQr2N35yedGKhXVI2O7rOaOpIRTbwEYUQ0DJAAvX994W3nA/2Y22StYf5DwHIoJA6AS5QTsrr5tY=
+	t=1714989658; cv=none; b=Re8YYeotRZcuad3gjB56/4TxZsUnIbspFzbOUMuZSyJOjgybxJDIocwL44g2HeuDKh2/XbZxNmV9nk4hcWoXJEC/xhYhXUPWF1+RcSZZ3/R+KSbOEyYkRe5Zxqr+bSEY4gnbLb/CNfhc8dmtP/S6yteA4vC8OQ2NWBSNvEx9CGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714989628; c=relaxed/simple;
-	bh=iNOxCJ7MlPjjXSp7oO333xc1yVh065WGFf1NQCW9o3M=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=O7l2uCTNCKa5xtp8D0PNDC0EKyIw22rSYcc/BgScJcA5/5LnAvpr46SB6ThOxCounY8QoHKooIW1A+zEQUuLyZ0HNWA/jqWY6XgDW19DE8eovtODVQB+Y14Kyf9R5aTHhrO+/aeiU2fxD1sfXbFlGaCSkMhzSE5B9BLcnIWahF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyMkWz4W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CC75FC4AF63;
-	Mon,  6 May 2024 10:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714989627;
-	bh=iNOxCJ7MlPjjXSp7oO333xc1yVh065WGFf1NQCW9o3M=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=PyMkWz4WXmXvp5PrhQLHbYKWboa0pfShBktgKofA0c3ckP/KU7lEuds8BpauF5P4P
-	 u0TFhXFlgM4SnA93pcymNpcJhst/PvP6vZrb/yL2cQt9K9P9r7gNd6fkyS8xX7T6IW
-	 PGp2P1pdygrDqDO29o4ESI8xdv0BePKxMvJxNHSJYowf6cDi36r8uVas1hr/mJU4uv
-	 33d85ifleSil0ghP5f7+8sXZtZlnORJ+aAXFvz0qfMV/jofKGPI8m332kTTnJIFAg3
-	 qt4gAc7eNLxympIO2UK52j2UC9vny/FiGj/+Dzmz8V126lL1I7RrK5aIS4Ot0uNco5
-	 0Mpb63Nudd0MQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BB085C43333;
-	Mon,  6 May 2024 10:00:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1714989658; c=relaxed/simple;
+	bh=P5tko6/lyTWQ/u9uOI9iYPSwPgP63qpNA47f1bWVdG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ghdxZgBG8WIiHx9PdVzKduf25vv+d9nqrvEUCJ1LQVHQXURBE9anSPFMrFG1trnh2liv+BEZy4Jf5XZB3l48GhtMU1K3nKTxXZ1MxxYAHPXrPFiSVC1vHmdPdvUA0VbBCtg5cb9sRh88F2bbxrZuWRmhejb3XylV6vxLPMglBWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 086AE106F;
+	Mon,  6 May 2024 03:01:22 -0700 (PDT)
+Received: from [10.163.35.238] (unknown [10.163.35.238])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D8243F793;
+	Mon,  6 May 2024 03:00:53 -0700 (PDT)
+Message-ID: <5f9e5d19-8a38-4e98-8cbb-e5501c76f740@arm.com>
+Date: Mon, 6 May 2024 15:30:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v1] net: microchip: lan743x: Reduce PTP timeout on HW
- failure
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171498962776.22093.11518903909371107429.git-patchwork-notify@kernel.org>
-Date: Mon, 06 May 2024 10:00:27 +0000
-References: <20240502050300.38689-1-rengarajan.s@microchip.com>
-In-Reply-To: <20240502050300.38689-1-rengarajan.s@microchip.com>
-To: Rengarajan S <rengarajan.s@microchip.com>
-Cc: bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/memblock: discard .text/.data if
+ CONFIG_ARCH_KEEP_MEMBLOCK not set
+Content-Language: en-US
+To: Wei Yang <richard.weiyang@gmail.com>, arnd@arndb.de, rppt@kernel.org
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240506012104.10864-1-richard.weiyang@gmail.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240506012104.10864-1-richard.weiyang@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+On 5/6/24 06:51, Wei Yang wrote:
+> When CONFIG_ARCH_KEEP_MEMBLOCK not set, we expect to discard related
+> code and data. But it doesn't until CONFIG_MEMORY_HOTPLUG not set
+> neither.
 
-On Thu, 2 May 2024 10:33:00 +0530 you wrote:
-> The PTP_CMD_CTL is a self clearing register which controls the PTP clock
-> values. In the current implementation driver waits for a duration of 20
-> sec in case of HW failure to clear the PTP_CMD_CTL register bit. This
-> timeout of 20 sec is very long to recognize a HW failure, as it is
-> typically cleared in one clock(<16ns). Hence reducing the timeout to 1 sec
-> would be sufficient to conclude if there is any HW failure observed. The
-> usleep_range will sleep somewhere between 1 msec to 20 msec for each
-> iteration. By setting the PTP_CMD_CTL_TIMEOUT_CNT to 50 the max timeout
-> is extended to 1 sec.
+When CONFIG_ARCH_KEEP_MEMBLOCK is not set memblock information both for
+normal and reserved memory get freed up but should the memblock related
+code and data also be freed up as well ? Then I would also believe such
+memory saving will be very minimal given CONFIG_ARCH_KEEP_MEMBLOCK code
+is too limited scoped in the tree.
+
+Also could you please explain how it is related to CONFIG_MEMORY_HOTPLUG
+config being set or not.
+
 > 
-> [...]
+> This patch puts memblock's .text/.data into its own section, so that it
+> only depends on CONFIG_ARCH_KEEP_MEMBLOCK to discard related code and
+> data. After this, init size increase from 2420K to 2432K.
 
-Here is the summary with links:
-  - [net-next,v1] net: microchip: lan743x: Reduce PTP timeout on HW failure
-    https://git.kernel.org/netdev/net-next/c/b1de3c0df7ab
+Is not this memory size saving some what insignificant to warrant a code
+change ? Also is this problem applicable only to CONFIG_ARCH_KEEP_MEMBLOCK
+config. Could you also provide details on how did you measure these numbers ?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> 
+> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+> ---
+>  include/asm-generic/vmlinux.lds.h | 14 +++++++++++++-
+>  include/linux/memblock.h          |  8 ++++----
+>  2 files changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index f7749d0f2562..775c5eedb9e6 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -147,6 +147,14 @@
+>  #define MEM_DISCARD(sec) *(.mem##sec)
+>  #endif
+>  
+> +#if defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+> +#define MEMBLOCK_KEEP(sec)    *(.mb##sec)
+> +#define MEMBLOCK_DISCARD(sec)
+> +#else
+> +#define MEMBLOCK_KEEP(sec)
+> +#define MEMBLOCK_DISCARD(sec) *(.mb##sec)
+> +#endif
+> +
+>  #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+>  #define KEEP_PATCHABLE		KEEP(*(__patchable_function_entries))
+>  #define PATCHABLE_DISCARDS
+> @@ -356,6 +364,7 @@
+>  	*(.ref.data)							\
+>  	*(.data..shared_aligned) /* percpu related */			\
+>  	MEM_KEEP(init.data*)						\
+> +	MEMBLOCK_KEEP(init.data*)					\
+>  	*(.data.unlikely)						\
+>  	__start_once = .;						\
+>  	*(.data.once)							\
+> @@ -573,6 +582,7 @@
+>  		*(.ref.text)						\
+>  		*(.text.asan.* .text.tsan.*)				\
+>  	MEM_KEEP(init.text*)						\
+> +	MEMBLOCK_KEEP(init.text*)					\
+>  
+>  
+>  /* sched.text is aling to function alignment to secure we have same
+> @@ -680,6 +690,7 @@
+>  	KEEP(*(SORT(___kentry+*)))					\
+>  	*(.init.data .init.data.*)					\
+>  	MEM_DISCARD(init.data*)						\
+> +	MEMBLOCK_DISCARD(init.data*)					\
+>  	KERNEL_CTORS()							\
+>  	MCOUNT_REC()							\
+>  	*(.init.rodata .init.rodata.*)					\
+> @@ -706,7 +717,8 @@
+>  #define INIT_TEXT							\
+>  	*(.init.text .init.text.*)					\
+>  	*(.text.startup)						\
+> -	MEM_DISCARD(init.text*)
+> +	MEM_DISCARD(init.text*)						\
+> +	MEMBLOCK_DISCARD(init.text*)
+>  
+>  #define EXIT_DATA							\
+>  	*(.exit.data .exit.data.*)					\
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index e2082240586d..3e1f1d42dde7 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -100,13 +100,13 @@ struct memblock {
+>  
+>  extern struct memblock memblock;
+>  
+> +#define __init_memblock        __section(".mbinit.text") __cold notrace \
+> +						  __latent_entropy
+> +#define __initdata_memblock    __section(".mbinit.data")
+> +
+>  #ifndef CONFIG_ARCH_KEEP_MEMBLOCK
+> -#define __init_memblock __meminit
+> -#define __initdata_memblock __meminitdata
+>  void memblock_discard(void);
+>  #else
+> -#define __init_memblock
+> -#define __initdata_memblock
+>  static inline void memblock_discard(void) {}
+>  #endif
+>  
 
