@@ -1,85 +1,134 @@
-Return-Path: <linux-kernel+bounces-170327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39D88BD541
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8191A8BD545
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD411C2115F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:14:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 942751C21024
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DA91591E5;
-	Mon,  6 May 2024 19:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5891591F5;
+	Mon,  6 May 2024 19:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R4mtImxl"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p22adx8V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4960741C73;
-	Mon,  6 May 2024 19:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BB641C73;
+	Mon,  6 May 2024 19:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715022851; cv=none; b=u+qO7Ahco3NWcF58dLOZzycNykPMMhTg1D9PKLcRQJiUJIcnlS7UtQReM2udyj5V3HNDsPAOWDjO5zSpfwZRCdU+UwegtOyDCLKbJuKVDXTDcXInB6Zo2haTvOaF9E9xHDPrA6YLwwJsil6E5vFd9BM/NISkYj2OGGLKSJTplB0=
+	t=1715022995; cv=none; b=N3fb+B/+Km4TpQ5vOLKGDFfFPIhfEMRup0yVuFT6smVb4tak8AGtIaoMuJ9cIgiYDFF289WogBjbdy8zP78kNBW/ZrNO4PMEv6eA4+3frCWzsv4iOq1Ux+NIwEzLrURkCg7CDDI7m29WZqqcGQmTGZ3wOpv22cpOPFooFai//k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715022851; c=relaxed/simple;
-	bh=0Soa7mK2FI4eg37nhVqhYOgXnmVB2GfFZz1xbfp9hBk=;
+	s=arc-20240116; t=1715022995; c=relaxed/simple;
+	bh=dM4RYK1HPhpiphlZExp0kEMnb2WuO6EBZsOrpdKmkeI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ul+qcGpIlLCQGbVNvaOF33+4IXFO5/vVUUtmgXgtsn2dcrXgmMFnhXZR0epEOvz1vwA8BVcQqkx7bCAnDb7dtK4BwI5VlTzhQPQfCAOGGulV/gfGb86riHC9RO5HB6hf5ME6EBIDxkVeRliSFKllcjePYVoVjwFIAAFzD1xkKg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R4mtImxl; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=NQkm4zrvTG8w92cPIcnyxF5xsMLdgcY8QlK+K/AlrL0=; b=R4
-	mtImxlVp8dPABDHZLz4OZDKW0hN9tJXZ892K4PYfQLTxEiQLGVDcKsnMnIGLepc7E4VcExPe1ATFV
-	fTASwwOG+S1yyIIr6siKlRbfURSVbeib+b8E7+UfEq+3v+n7deJtenszOktrj7XuAi/H2Eh1YsoLv
-	Gsjcm717JuaXchs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s43mj-00En79-8J; Mon, 06 May 2024 21:14:01 +0200
-Date: Mon, 6 May 2024 21:14:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	hkallweit1@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] net: phy: bcm54811: New link mode for BroadR-Reach
-Message-ID: <25798e60-d1cc-40ce-b081-80afdb182dd6@lunn.ch>
-References: <20240506144015.2409715-1-kamilh@axis.com>
- <20240506144015.2409715-2-kamilh@axis.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RBQ1z4dbznicDsR9AErtgKPqM/FFcQzqIwvmgXk8oeKdrGv7OqinjwUVloUiaCy+/wmDtMr6+zUIh13Xg2nwTpNz3yHSC+5jyO7m94m0lxMcgrKuo+Mo23+qb0dnUZzGA2Lyz7hnfYxVJfDrSCywPy2d16n3vPNOJVtinSB3Cpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p22adx8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D687C116B1;
+	Mon,  6 May 2024 19:16:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715022994;
+	bh=dM4RYK1HPhpiphlZExp0kEMnb2WuO6EBZsOrpdKmkeI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p22adx8VFW7ioiNw8e/ZClDpQeoamqBgo/VwXvYdTwee3MTcDB2ZePDbNbjAvc4T5
+	 NuGCLi+wL0GgrhzfHq6N9p0AFieqH32JaMVefOMxHrSdra4NOfhuWldsP15wD7WedX
+	 OoxyBdvnnMSyWkIrxg6rk0nv4igi/dCiaZeaQ+bQOQck7dkfETOlMAxrws+8WIhOOd
+	 nLYtWcMphLkM4rwdvbXR+Hmw03/ilUto8JVBQvKOp80RI7niKEEcz0NnYK2Z273oMa
+	 6dcJGaWJf31fdI2kMmlRNFbgcogQyWoXU+k2xg8smolJCa7JAMdHFNTCHIBc3s26we
+	 lN3Uzt6mOpauw==
+Date: Mon, 6 May 2024 16:16:03 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-mm@kvack.org,
+	Daniel =?iso-8859-1?Q?M=FCller?= <deso@posteo.net>,
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for
+ /proc/<pid>/maps
+Message-ID: <Zjksc3yqvkocS18M@x1>
+References: <20240504003006.3303334-1-andrii@kernel.org>
+ <20240504003006.3303334-3-andrii@kernel.org>
+ <2024050439-janitor-scoff-be04@gregkh>
+ <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
+ <ZjjiFnNRbwsMJ3Gj@x1>
+ <CAM9d7cgvCB8CBFGhMB_-4tCm6+jzoPBNg4CR7AEyMNo8pF9QKg@mail.gmail.com>
+ <ZjknNJSFcKaxGDS4@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240506144015.2409715-2-kamilh@axis.com>
+In-Reply-To: <ZjknNJSFcKaxGDS4@x1>
 
-On Mon, May 06, 2024 at 04:40:13PM +0200, Kamil Hor�k - 2N wrote:
-> Introduce new link modes necessary for the BroadR-Reach mode on
-> bcm5481x PHY by Broadcom and new PHY tunable to choose between
-> normal (IEEE) ethernet and BroadR-Reach modes of the PHY.
+On Mon, May 06, 2024 at 03:53:40PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Mon, May 06, 2024 at 11:05:17AM -0700, Namhyung Kim wrote:
+> > On Mon, May 6, 2024 at 6:58 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
+> > > > On Sat, May 4, 2024 at 8:28 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote:
+> > > > > > Note also, that fetching VMA name (e.g., backing file path, or special
+> > > > > > hard-coded or user-provided names) is optional just like build ID. If
+> > > > > > user sets vma_name_size to zero, kernel code won't attempt to retrieve
+> > > > > > it, saving resources.
+> 
+> > > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> 
+> > > > > Where is the userspace code that uses this new api you have created?
+> 
+> > > > So I added a faithful comparison of existing /proc/<pid>/maps vs new
+> > > > ioctl() API to solve a common problem (as described above) in patch
+> > > > #5. The plan is to put it in mentioned blazesym library at the very
+> > > > least.
+> > > >
+> > > > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
+> > > > linux-perf-user), as they need to do stack symbolization as well.
+>  
+> > I think the general use case in perf is different.  This ioctl API is great
+> > for live tracing of a single (or a small number of) process(es).  And
+> > yes, perf tools have those tracing use cases too.  But I think the
+> > major use case of perf tools is system-wide profiling.
+>  
+> > For system-wide profiling, you need to process samples of many
+> > different processes at a high frequency.  Now perf record doesn't
+> > process them and just save it for offline processing (well, it does
+> > at the end to find out build-ID but it can be omitted).
+> 
+> Since:
+> 
+>   Author: Jiri Olsa <jolsa@kernel.org>
+>   Date:   Mon Dec 14 11:54:49 2020 +0100
+>   1ca6e80254141d26 ("perf tools: Store build id when available in PERF_RECORD_MMAP2 metadata events")
+> 
+> We don't need to to process the events to find the build ids. I haven't
+> checked if we still do it to find out which DSOs had hits, but we
+> shouldn't need to do it for build-ids (unless they were not in memory
+> when the kernel tried to stash them in the PERF_RECORD_MMAP2, which I
+> haven't checked but IIRC is a possibility if that ELF part isn't in
+> memory at the time we want to copy it).
 
-I would of split this into two patches. The reason being, we need the
-new link mode. But do we need the tunable? Why don't i just use the
-link mode to select it?
+> If we're still traversing it like that I guess we can have a knob and
+> make it the default to not do that and instead create the perf.data
+> build ID header table with all the build-ids we got from
+> PERF_RECORD_MMAP2, a (slightly) bigger perf.data file but no event
+> processing at the end of a 'perf record' session.
 
-ethtool -s eth42 advertise 1BR10
+But then we don't process the PERF_RECORD_MMAP2 in 'perf record', it
+just goes on directly to the perf.data file :-\
 
-Once you have split this up, you can explain the link mode patch in a
-bit more detail. That because the name does not fit 802.3, the normal
-macros cannot be used, so everything needs to be hand crafted.
+Humm, perhaps the sideband thread...
 
-    Andrew
-
----
-pw-bot: cr
+- Arnaldo
 
