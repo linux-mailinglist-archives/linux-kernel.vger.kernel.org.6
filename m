@@ -1,136 +1,186 @@
-Return-Path: <linux-kernel+bounces-170041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FE68BD102
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:05:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9818BD10C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6DC1F22142
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8051F21FA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11ECA154433;
-	Mon,  6 May 2024 15:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E630315445D;
+	Mon,  6 May 2024 15:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U2DfIxbf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFFFMoVQ"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85D815359F
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E7F15359F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715007939; cv=none; b=ULfojMqdt6T76hsGUJt7lNQZ3lHtOsgRpXGfL9vzd7AkREAQm0inoi+3upo7hoifLxsizcf5s4i3k9S+Xfzouj0VWF90kBJwPZfUTrRMDJiGqZbjqwXr02r977W1d9nDsOBbKuu4HKmDDN3am1TIUUrLGcFS2ZGkXLbPZgtoyM4=
+	t=1715008063; cv=none; b=YT9a3aIOHTZhD10bUHNgJo9WYc5QRKlVryJ+5j9WAZAFmua8tTNjirbmMYyth7ndtlMgtb60ofXIdKye73CDkTGXDWY4zKAG3AdjZjCSfZ+d+qifp8cvQJMvyHws8qoa12Wbmif5XWbhm9BhAzs/6auN7nrRymTaRxjaHP01NJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715007939; c=relaxed/simple;
-	bh=pwUPJqSGaVxRG3VA0JRT0gFWsqDaBMCCyALOjtCGlJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ikPbaGOJquAPIEqCair4O7k/R5WmFfS52M/wDexZAn5uk/2Di6+6QcjXj35oVGYeuc6akd0WlG0D3oV5+LN/i8wBiyKi8G/68T/DoTGPkDpYJhG4z+8NxpAUCIES2M/ABOWZRq5OJjmJtMCskPuJsjdtnV/6eKq1f3z02l31WPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U2DfIxbf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715007936;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y43xCC2ORJwXxDBQyZMiQf+AzAg+xaw7pKNsy092Gws=;
-	b=U2DfIxbfmHTjKQJyevOF+4mDvBZVXQ0+AeuY+mvlcVEZLpAB8+NJ8UtjrrFQhZcSkJzXk1
-	3x6YENWmm3SWVbnPxaFnspJdiszcOBJT+zmkoaYjLgClFIxNeOptc3Dcg4CozsWfw0Tp0+
-	PxKs7+ELcOKPgNzZQnTuUKLasjfAajo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368-EralcbDbMqOGvUgRqeAwxA-1; Mon, 06 May 2024 11:05:32 -0400
-X-MC-Unique: EralcbDbMqOGvUgRqeAwxA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9392388CE81;
-	Mon,  6 May 2024 15:05:32 +0000 (UTC)
-Received: from [10.22.17.85] (unknown [10.22.17.85])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 4293F1C060D0;
-	Mon,  6 May 2024 15:05:32 +0000 (UTC)
-Message-ID: <7628453e-c418-49bb-be0a-50bc4248b7b9@redhat.com>
-Date: Mon, 6 May 2024 11:05:32 -0400
+	s=arc-20240116; t=1715008063; c=relaxed/simple;
+	bh=yqB1rDVuz8T2QPiRcNKDl9cE10YW/62Ppf6xQrl0dE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=njyDEITGogE/rJ1s6xcTGLOIN/xlgp7CMmP1670grZWvkUs3DN19qqXrqx2mthY4gLV348PRMfiD/X8/QWuPwY0abwJxnzqecdoxrC57TeUwfatEzXyvFa5W2wI7+9DNZy68dcCm/Hc6Bw1aGg5OilPvZ6JgnaBplvkwY9QBGeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFFFMoVQ; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-61be599ab77so645200a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715008061; x=1715612861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=neQGyNV+29mTtk8Q8Cqua5MUdaby9aEM9B8FtgLuJf8=;
+        b=gFFFMoVQTikQ/CdZ4+SOS4cHeepWq3qgokXaadQ9oPKeGswiap64Ndr/K7EibDpend
+         HQiavUztKuO01rhZ6rve3EsaQ8iRtB3UH81fBsDXnoHvadfXHkwkdp0HoDyeigl9zcPP
+         EB2T1q6HBLcmP1G8YFBVDSloBUyA3jtQslHPRBdZoDT04lJKBWue4s6551uErhXLVOJL
+         OHy5FpSqVpwO6A4N83kS2JyAolkw2613QkMdeAviwVEOvKSI7YpQaynF1prAfYmlWVnL
+         2gAci8H3Fzux6Zv7BtwQUccMn9EiIr9ulU7OxsurnPc37DT3WR0o9ntozEf8n7671KhJ
+         n+zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715008061; x=1715612861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=neQGyNV+29mTtk8Q8Cqua5MUdaby9aEM9B8FtgLuJf8=;
+        b=tVrKUrzCDbtlBrzmltujC9t7VpQn2bNfgXDKtEAqGK4LqrP9gUIAh9NvsxOFdbpsI5
+         s5uB0/HUkSKP+T1Qg+wTh6bBhFFDjRQuXbrtBnxvFpiWKDHiozuNL2fBd6Q7eDWDN/Z4
+         4WG1sczjX1i+0k1CrzDcTIJhFShwOLr4jpgVi3xGHEYmJaTwTkvag+7VqdRY8hb6m4T4
+         pNtw+EJ/4Ivzq5AFFbdNWjbbvTTd7d2sv5j5iLGZMZH5wDOcDqcLJ92A9DvEyeioRIHt
+         exhrKX+mZdqbcjtn9MymOQvWXdnJ5O/UREfV7fDR/eYpRCoNkliemUMPFwBlBvM3PPju
+         nXGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpNQB1sB0rMae/GMlAkhdZWfQnOXBj6FRNgMfpko1tAfZsSciylk28lDyVMJc3iSAdhbnYShmOSQihZSYfOI5Uw/w55LymLE1OPCwU
+X-Gm-Message-State: AOJu0YwaC4snLd13J6WPlanD08IMNL2m6Ho9tga9D/4gEfIIwlp+WEhh
+	kP0rED35HWVpXbRpNCjvU6pQD6o24by3VoGZ/uswlOWmV+A8xDb8ZKlJ+EtFfHQnB8oOAyPYAbG
+	5p6MYf0Zx/UP5lZugBAzRysDMPsokWJl2
+X-Google-Smtp-Source: AGHT+IGcvtTriyl/vepdivHRpRJovjDp8Qk11rQQEHS4UyhwdiwsUFxePf3tymHKBuNBmQkAym4sctAcIphE9xIRtWE=
+X-Received: by 2002:a17:90b:11d4:b0:2b2:7c53:2601 with SMTP id
+ gv20-20020a17090b11d400b002b27c532601mr8035017pjb.37.1715008061006; Mon, 06
+ May 2024 08:07:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] locking/qspinlock: Save previous node & owner CPU into
- mcs_spinlock
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
- Vernon Lovejoy <vlovejoy@redhat.com>
-References: <20240504024106.654319-1-longman@redhat.com>
- <20240506103637.GM40213@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240506103637.GM40213@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+References: <1237381714935562@dmcmxrwo3x2o7y3i.sas.yp-c.yandex.net> <20240505224508.GAZjgL9PO9Y5QaAO2t@fat_crate.local>
+In-Reply-To: <20240505224508.GAZjgL9PO9Y5QaAO2t@fat_crate.local>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 6 May 2024 11:07:29 -0400
+Message-ID: <CADnq5_NNATnV+mTEn6Mshro3gqpH5ffjQ=EWdH8QVZgEBYB-ew@mail.gmail.com>
+Subject: Re: Error in amd driver?
+To: Borislav Petkov <bp@alien8.de>
+Cc: Tranton Baddy <t.baddy@yandex.ru>, amd-gfx@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/6/24 06:36, Peter Zijlstra wrote:
-> On Fri, May 03, 2024 at 10:41:06PM -0400, Waiman Long wrote:
+On Mon, May 6, 2024 at 6:00=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrote=
+:
 >
-> Not much of a fan of this thing, but I suppose it won't hurt too much ...
-I purposely doesn't touch the fast path and add code only to slow path 
-to make sure there shouldn't be any noticeable performance impact.
->> diff --git a/kernel/locking/mcs_spinlock.h b/kernel/locking/mcs_spinlock.h
->> index 85251d8771d9..cbe6f07dff2e 100644
->> --- a/kernel/locking/mcs_spinlock.h
->> +++ b/kernel/locking/mcs_spinlock.h
->> @@ -13,12 +13,19 @@
->>   #ifndef __LINUX_MCS_SPINLOCK_H
->>   #define __LINUX_MCS_SPINLOCK_H
->>   
->> +/*
->> + * Save an encoded version of the current MCS lock owner CPU to the
->> + * mcs_spinlock structure of the next lock owner.
->> + */
->> +#define MCS_LOCKED	(smp_processor_id() + 1)
->> +
->>   #include <asm/mcs_spinlock.h>
->>   
->>   struct mcs_spinlock {
->>   	struct mcs_spinlock *next;
->> -	int locked; /* 1 if lock acquired */
->> -	int count;  /* nesting count, see qspinlock.c */
->> +	int locked;	 /* non-zero if lock acquired */
->> +	short count;	 /* nesting count, see qspinlock.c */
->> +	short prev_node; /* encoded previous node value */
-> Strictly speaking, count shouldn't ever go much higher than 4, so I
-> suppose a byte should be sufficient. That would then leave 24bit for the
-> prev thing, but you'll get to use bitfields or some other horrible
-> thing.
-Using bit field will be more expensive. So I am deferring that until the 
-time it becomes necessary.
->>   };
->>   
->>   #ifndef arch_mcs_spin_lock_contended
->> @@ -42,7 +49,7 @@ do {									\
->>    * unlocking.
->>    */
->>   #define arch_mcs_spin_unlock_contended(l)				\
->> -	smp_store_release((l), 1)
->> +	smp_store_release((l), MCS_LOCKED)
-> This leaves ARM up a creek I suppose... Also, there's but a single
-> MCS_LOCKED user.
+> + amd-gfx@lists.freedesktop.org
+>
+> On Sun, May 05, 2024 at 09:59:22PM +0300, Tranton Baddy wrote:
+> > I have this in my dmesg since version 6.8.6, not sure when it appeared.=
+ Is amdgpu driver has bug?
 
-I am aware that ARM has its ownarch_mcs_spin_unlock_contended() macro 
-defined. That is why I define the MCS_LOCKED macro before including 
-asm/mcs_spinlock.h. I am planning to send an arm patch to change 1 to 
-MCS_LOCKED if this patch is merged to close the gap. None other arches 
-have arch_mcs_spin_unlock_contended() macro defined.
+Should be fixed in:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
+id=3Dd3a9331a6591e9df64791e076f6591f440af51c3
 
-Cheers, Longman
+Alex
 
+> > [   64.253144] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [   64.253162] BUG: KFENCE: use-after-free read in amdgpu_bo_move+0x51f=
+/0x7a0
+> >
+> > [   64.253183] Use-after-free read at 0x00000000671c48dd (in kfence-#11=
+1):
+> > [   64.253192]  amdgpu_bo_move+0x51f/0x7a0
+> > [   64.253202]  ttm_bo_handle_move_mem+0xcf/0x180
+> > [   64.253211]  ttm_mem_evict_first+0x1c5/0x500
+> > [   64.253218]  ttm_resource_manager_evict_all+0xa3/0x1e0
+> > [   64.253228]  amdgpu_device_prepare+0x66/0x110
+> > [   64.253237]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
+> > [   64.253248]  pci_pm_runtime_suspend+0x74/0x200
+> > [   64.253259]  vga_switcheroo_runtime_suspend+0x21/0xb0
+> > [   64.253268]  __rpm_callback+0x5f/0x190
+> > [   64.253277]  rpm_callback+0x7f/0x90
+> > [   64.253283]  rpm_suspend+0x120/0x6a0
+> > [   64.253290]  pm_runtime_work+0x9c/0xa0
+> > [   64.253297]  process_one_work+0x164/0x330
+> > [   64.253310]  worker_thread+0x302/0x430
+> > [   64.253320]  kthread+0xe4/0x110
+> > [   64.253329]  ret_from_fork+0x4c/0x60
+> > [   64.253341]  ret_from_fork_asm+0x1b/0x30
+> >
+> > [   64.253353] kfence-#111: 0x00000000d018cf03-0x0000000034e821d1, size=
+=3D96, cache=3Dkmalloc-96
+> >
+> > [   64.253363] allocated by task 152 on cpu 3 at 64.248952s:
+> > [   64.253418]  kmalloc_trace+0x283/0x340
+> > [   64.253427]  amdgpu_vram_mgr_new+0x8f/0x3f0
+> > [   64.253435]  ttm_resource_alloc+0x39/0x90
+> > [   64.253444]  ttm_bo_mem_space+0xa4/0x260
+> > [   64.253450]  ttm_mem_evict_first+0x18a/0x500
+> > [   64.253456]  ttm_resource_manager_evict_all+0xa3/0x1e0
+> > [   64.253465]  amdgpu_device_prepare+0x66/0x110
+> > [   64.253472]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
+> > [   64.253481]  pci_pm_runtime_suspend+0x74/0x200
+> > [   64.253489]  vga_switcheroo_runtime_suspend+0x21/0xb0
+> > [   64.253496]  __rpm_callback+0x5f/0x190
+> > [   64.253503]  rpm_callback+0x7f/0x90
+> > [   64.253509]  rpm_suspend+0x120/0x6a0
+> > [   64.253516]  pm_runtime_work+0x9c/0xa0
+> > [   64.253523]  process_one_work+0x164/0x330
+> > [   64.253532]  worker_thread+0x302/0x430
+> > [   64.253542]  kthread+0xe4/0x110
+> > [   64.253550]  ret_from_fork+0x4c/0x60
+> > [   64.253559]  ret_from_fork_asm+0x1b/0x30
+> >
+> > [   64.253570] freed by task 152 on cpu 3 at 64.253117s:
+> > [   64.253582]  ttm_resource_free+0x67/0x90
+> > [   64.253591]  ttm_bo_move_accel_cleanup+0x247/0x2e0
+> > [   64.253598]  amdgpu_bo_move+0x1bd/0x7a0
+> > [   64.253605]  ttm_bo_handle_move_mem+0xcf/0x180
+> > [   64.253612]  ttm_mem_evict_first+0x1c5/0x500
+> > [   64.253618]  ttm_resource_manager_evict_all+0xa3/0x1e0
+> > [   64.253626]  amdgpu_device_prepare+0x66/0x110
+> > [   64.253634]  amdgpu_pmops_runtime_suspend+0xbe/0x1c0
+> > [   64.253642]  pci_pm_runtime_suspend+0x74/0x200
+> > [   64.253650]  vga_switcheroo_runtime_suspend+0x21/0xb0
+> > [   64.253658]  __rpm_callback+0x5f/0x190
+> > [   64.253664]  rpm_callback+0x7f/0x90
+> > [   64.253671]  rpm_suspend+0x120/0x6a0
+> > [   64.253677]  pm_runtime_work+0x9c/0xa0
+> > [   64.253684]  process_one_work+0x164/0x330
+> > [   64.253693]  worker_thread+0x302/0x430
+> > [   64.253703]  kthread+0xe4/0x110
+> > [   64.253711]  ret_from_fork+0x4c/0x60
+> > [   64.253723]  ret_from_fork_asm+0x1b/0x30
+> >
+> > [   64.253735] CPU: 3 PID: 152 Comm: kworker/3:2 Tainted: P           O=
+E      6.8.9 #3 e7323d0d25f89e853881fc823e59523bdcc577c6
+> > [   64.253756] Hardware name: Hewlett-Packard HP Pavilion Notebook /80B=
+9, BIOS F.54 05/27/2019
+> > [   64.253761] Workqueue: pm pm_runtime_work
+> > [   64.253771] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
