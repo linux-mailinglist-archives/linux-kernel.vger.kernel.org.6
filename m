@@ -1,159 +1,98 @@
-Return-Path: <linux-kernel+bounces-169215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4258BC4F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4E48BC4F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0DE01C20CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A819282EAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AE7EAD7;
-	Mon,  6 May 2024 00:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZbK+0rvl"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227383B785;
+	Mon,  6 May 2024 01:03:23 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B72FA934;
-	Mon,  6 May 2024 00:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97686FBF
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 01:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714956607; cv=none; b=AxpmvOfGye/93q7rYhASirAJIm9MoslTOhBvFelkV+ptknqkihzvQMIsKex5zCgFaqSisZR0AnRHMPbcvH9RNdgOnmuhQ1BlTLlHYWDbIu6R7/et9R10HT7n0761G7DnzB//yevLm4zi4FJf7m3BjsAiXA2Y3O66HK9+sFwazeQ=
+	t=1714957402; cv=none; b=NtFpSQVKZjVrG9kKfmDkzgLlrvHIBewvdxGWJ2bBVih19juqgAdFUp4MVoqDcDa/y++xvoveTsPmgzeFf9D2KV3dZsB+2jiNdrWNSpJ18ph9eBSwFco9QRRw9ypk5NP6uQd6NREM2CKplAdsu/sOh1rcnk5XgKvBW3uDGDrIDTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714956607; c=relaxed/simple;
-	bh=cf2tQqD41Hu9RzJJtpJUZIi3a2s5vF3zLVthHM+q9CE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Buo5Nf5PQIRESWcnvu8GTELCzHkSF/OdKzqGKefVPlKDXRE5D5u5g3NlOoMqba1lJ4raiiRHFL2gvYjL0euWol2yJwy+4e5Ypfe0HRHgJDQZlW5TialtCu+VkQKZ6aQQ2t4H+1ww0loHlOj6m0WbiZU7gwgQ9MmQyudvaxH6Smk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZbK+0rvl; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1714956596;
-	bh=etl82jPVyTcsS6RnY70Ato5SmYE3YF0V01uEIdi6z1U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZbK+0rvlmbc9mEOI9W6kq8xtN7rJPiGY6E88p+jVq8AQsUtB54fyA+ikGKVF130ss
-	 nyynfN6A6tjXcNAFmxKB4tr3gVvzp+DIwxvJJp87OMNDHZe+aFq7NayY18zbcGPge4
-	 PJDLvurnj1jj7Oi+t1Vcs+ydHmes4bQVaJ1cjki3d55eRUDX88UKBBC3ddFs3zpNm0
-	 pmfvCCf+RH7Ql8rRVP4iomCIVgF0GBW9zvLjYlGnlgJLoeekJ8wcUiwqWyXt6pQ4KD
-	 ivaduwOGD/vxQcwGaTHPQxCTJ/AA6gtSv849GuXka9xnSjBMOwptV+gn26wLrgHhxa
-	 P+MPMMjJ5FYuA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VXjVV2BCTz4x1c;
-	Mon,  6 May 2024 10:49:54 +1000 (AEST)
-Date: Mon, 6 May 2024 10:49:53 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kent Overstreet
- <kent.overstreet@linux.dev>, Suren Baghdasaryan <surenb@google.com>, Bingbu
- Cao <bingbu.cao@intel.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Sakari
- Ailus <sakari.ailus@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the v4l-dvb-next tree
-Message-ID: <20240506104953.49666125@canb.auug.org.au>
+	s=arc-20240116; t=1714957402; c=relaxed/simple;
+	bh=SOd6zG3YGzocMe2eSnAlOoMrqEZAvtmT0QgFko6u+Ls=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=SJlfH5HIrQJMNmnraC4TJJJO8hF2tk4zYoxWirLC7Neia2pPFc+1pFwIy10Iza52psAqRtoMskcCOzfIXwGhp1fAptHoxIos5hb6cmCVyV9N/SPds9YScBXCadPTkCeG6bxYTizpUQetzQDYGovm1EZxJ19a75odVJH0voZKh9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VXjk84x94z1RBbc;
+	Mon,  6 May 2024 09:00:00 +0800 (CST)
+Received: from dggpemm500002.china.huawei.com (unknown [7.185.36.229])
+	by mail.maildlp.com (Postfix) with ESMTPS id 54A1118005C;
+	Mon,  6 May 2024 09:03:17 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemm500002.china.huawei.com (7.185.36.229) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 6 May 2024 09:03:16 +0800
+Subject: Re: [PATCH] clocksource/drivers/arm_arch_timer: Mark
+ hisi_161010101_oem_info const
+To: Stephen Boyd <swboyd@chromium.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+CC: <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, dann frazier
+	<dann.frazier@canonical.com>, Hanjun Guo <hanjun.guo@linaro.org>, Marc
+ Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+References: <20240502233447.420888-1-swboyd@chromium.org>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <ead7324b-3cc1-15da-d80f-ef5ea1bec218@huawei.com>
+Date: Mon, 6 May 2024 09:03:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8l=o+PxiuHPBAm+I_LmRKTL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20240502233447.420888-1-swboyd@chromium.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500002.china.huawei.com (7.185.36.229)
 
---Sig_/8l=o+PxiuHPBAm+I_LmRKTL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024/5/3 7:34, Stephen Boyd wrote:
+> This isn't modified at runtime. Mark it const so it can move to
+> read-only data.
+> 
+> Cc: dann frazier <dann.frazier@canonical.com>
+> Cc: Hanjun Guo <hanjun.guo@linaro.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>   drivers/clocksource/arm_arch_timer.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+> index 8d4a52056684..5bb43cc1a8df 100644
+> --- a/drivers/clocksource/arm_arch_timer.c
+> +++ b/drivers/clocksource/arm_arch_timer.c
+> @@ -331,7 +331,7 @@ static u64 notrace hisi_161010101_read_cntvct_el0(void)
+>   	return __hisi_161010101_read_reg(cntvct_el0);
+>   }
+>   
+> -static struct ate_acpi_oem_info hisi_161010101_oem_info[] = {
+> +static const struct ate_acpi_oem_info hisi_161010101_oem_info[] = {
+>   	/*
+>   	 * Note that trailing spaces are required to properly match
+>   	 * the OEM table information.
 
-Hi all,
+Looks good to me,
 
-After merging the v4l-dvb-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/media/pci/intel/ipu6/ipu6-mmu.c: In function 'ipu6_mmu_alloc':
-drivers/media/pci/intel/ipu6/ipu6-mmu.c:541:28: error: implicit declaration=
- of function 'vzalloc'; did you mean 'kzalloc'? [-Werror=3Dimplicit-functio=
-n-declaration]
-  541 |         mmu_info->l2_pts =3D vzalloc(ISP_L2PT_PTES * sizeof(*mmu_in=
-fo->l2_pts));
-      |                            ^~~~~~~
-      |                            kzalloc
-drivers/media/pci/intel/ipu6/ipu6-mmu.c:541:26: error: assignment to 'u32 *=
-*' {aka 'unsigned int **'} from 'int' makes pointer from integer without a =
-cast [-Werror=3Dint-conversion]
-  541 |         mmu_info->l2_pts =3D vzalloc(ISP_L2PT_PTES * sizeof(*mmu_in=
-fo->l2_pts));
-      |                          ^
-drivers/media/pci/intel/ipu6/ipu6-mmu.c:560:9: error: implicit declaration =
-of function 'vfree'; did you mean 'kvfree'? [-Werror=3Dimplicit-function-de=
-claration]
-  560 |         vfree(mmu_info->l2_pts);
-      |         ^~~~~
-      |         kvfree
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  9163d83573e4 ("media: intel/ipu6: add IPU6 DMA mapping API and MMU table")
-
-not including <linux/vmalloc.h>.  It may have been exposed by commit
-
-  690da22dbfa8 ("asm-generic/io.h: kill vmalloc.h dependency")
-
-from the mm-unstable branch of the mm tree, so I have applied the
-following patch for today (and this or somthing like it should be applied
-to the v4l-dvb-next tree).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 6 May 2024 10:39:47 +1000
-Subject: [PATCH] media: intel/ipu6: explicitly include vmalloc.h
-
-since this file uses vzalloc etc ...
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/media/pci/intel/ipu6/ipu6-mmu.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/pci/intel/ipu6/ipu6-mmu.c b/drivers/media/pci/in=
-tel/ipu6/ipu6-mmu.c
-index 98a4bf9ca267..c3a20507d6db 100644
---- a/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-@@ -22,6 +22,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-+#include <linux/vmalloc.h>
-=20
- #include "ipu6.h"
- #include "ipu6-dma.h"
---=20
-2.43.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8l=o+PxiuHPBAm+I_LmRKTL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY4KTEACgkQAVBC80lX
-0GzwBggAnPmY6Fg77y/96dgFVIE4gxHljgYyllLcfBYb1hH/snPcub0qVt8PvjV1
-isbomFdbnhqZ9GgAlsuc7+XaM9iQYlrfV34BSn8uJWgnmHll3qEWxpt1nUYnIdPG
-9x2QtnsyQC2uyrzIl39KtWEDsKgW6Bg2+kV5v/p3DcgmRJ5NU8A2HoiKkrw0lws1
-LTJw8LixQ1AVY96S2onTtu+ipGDop1nCtYhJcbAlDm6fWqM+ElvycF7opgfVo3cv
-RRPH0aLPF2hIH37jGHGre97CVcgVlUNfHBxAUSVSUi/cjEZ8gdk/FF1eQco+1qx7
-Mp82nMT3qugXUcnrmoW4IwJ0V+cPnQ==
-=pL02
------END PGP SIGNATURE-----
-
---Sig_/8l=o+PxiuHPBAm+I_LmRKTL--
+Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
 
