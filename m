@@ -1,161 +1,121 @@
-Return-Path: <linux-kernel+bounces-169265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A538BC5EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:45:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8821A8BC5EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 468BCB20C8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:45:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3626E1F21913
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4579741741;
-	Mon,  6 May 2024 02:45:34 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216284086A;
+	Mon,  6 May 2024 02:55:18 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC7122075;
-	Mon,  6 May 2024 02:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCFC22075;
+	Mon,  6 May 2024 02:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714963533; cv=none; b=iX1OTyeDWJGwYHGRXXC/ajpYQVG2UTzzwUetcx/TrnjDYn9u/13bo8N4bWtflYj4yfqYZOjBOJhT0bci/UkKS46PpOTKlwD4XpLlR+T0vrpJHjvb9cMoHI0mIagv319R3FVvZ7KvtN9OTZxPtq0U/PVMJNLflPKne5lqWhzAJGE=
+	t=1714964117; cv=none; b=YbHnIPey6MIaVsvclrc/ysfxW9Pk/WhCEHuFenHeaYN3HprzangpX9IGnKG8am+PoS3hdPhX5+Lc8DyjRZFt9bJQBecnu2w5O2KiLH5jbIScyoOyZ9dIHye5Sj8Cjzouu2JlpPtwEzHZUZSz63fdAyGxtg8FqS035hNVuC2KRYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714963533; c=relaxed/simple;
-	bh=oOeHH2W9Cd+yFl/mMg3CVMUPul4l8dHXAZfySlsb4QU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=P0SmX4/AkYsjDvSPvog/CyuFLiwnG04NZZqBOoU0gkHW5IlWFog2CFaFK71NHIfsT9n9qneN1WJBGVET49GljAlxKoGwu5lDwEqC32nyXApLEba7Boq8rplOMoJhVCaDxpDe8wN5X5vFT0xmvzs/G/0UrjzkjgjYpbYoU1q/lCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4462jCiiD1819573, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 4462jCiiD1819573
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 6 May 2024 10:45:12 +0800
-Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+	s=arc-20240116; t=1714964117; c=relaxed/simple;
+	bh=KO15BVN2XvLxj8SVCAQLarwOrfH3EAsRaTUl+Hinxmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WKq4ZzaeYJHiej/zioLHeUa8xLFpDyQ2EDG8nn3JCjxzmTSONcfMjmD4rnta9C9RQLi9atMELrWtuUYUbM7HCubP7g765wXdgfSiNkhFMb1xXvUVPXDfnPGHEk84s4r5bSdJqrkxVj7g89loH3o9TT3W1Ah4YFCEjFQfALldhnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VXmC65TdyzxNfp;
+	Mon,  6 May 2024 10:51:46 +0800 (CST)
+Received: from dggpemm500018.china.huawei.com (unknown [7.185.36.111])
+	by mail.maildlp.com (Postfix) with ESMTPS id 52CAF140428;
+	Mon,  6 May 2024 10:55:10 +0800 (CST)
+Received: from [10.174.178.96] (10.174.178.96) by
+ dggpemm500018.china.huawei.com (7.185.36.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 10:45:12 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 10:45:11 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Mon, 6 May 2024 10:45:11 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Simon Horman <horms@kernel.org>
-CC: "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
-Subject: RE: [PATCH net-next v17 02/13] rtase: Implement the .ndo_open function
-Thread-Topic: [PATCH net-next v17 02/13] rtase: Implement the .ndo_open
- function
-Thread-Index: AQHanHHZpNHx0voP+0CDD26jysJVP7GEr5aAgATU6AA=
-Date: Mon, 6 May 2024 02:45:11 +0000
-Message-ID: <745b2ee9e81f4904920e0e4fe6e4df89@realtek.com>
-References: <20240502091847.65181-1-justinlai0215@realtek.com>
- <20240502091847.65181-3-justinlai0215@realtek.com>
- <20240503085257.GM2821784@kernel.org>
-In-Reply-To: <20240503085257.GM2821784@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 15.1.2507.35; Mon, 6 May 2024 10:55:09 +0800
+Message-ID: <df3d5556-30b1-42d9-aecc-1ad155f024bc@huawei.com>
+Date: Mon, 6 May 2024 10:55:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpufreq/cppc: fix perf_to_khz conversion exception
+To: Pierre Gondois <pierre.gondois@arm.com>
+CC: <linux-acpi@vger.kernel.org>, <rafael@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lenb@kernel.org>, <liwei391@huawei.com>,
+	<viresh.kumar@linaro.org>
+References: <20240430101227.2133288-1-liwei728@huawei.com>
+ <0f8ccc3d-46ca-4632-9ecf-5da596ad5a1a@arm.com>
+From: "liwei (JK)" <liwei728@huawei.com>
+In-Reply-To: <0f8ccc3d-46ca-4632-9ecf-5da596ad5a1a@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500018.china.huawei.com (7.185.36.111)
 
->=20
->=20
-> On Thu, May 02, 2024 at 05:18:36PM +0800, Justin Lai wrote:
-> > Implement the .ndo_open function to set default hardware settings and
-> > initialize the descriptor ring and interrupts. Among them, when
-> > requesting irq, because the first group of interrupts needs to process
-> > more events, the overall structure will be different from other groups
-> > of interrupts, so it needs to be processed separately.
-> >
-> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
->=20
-> Hi Justin,
->=20
-> some minor feedback from my side.
->=20
-> > ---
-> >  .../net/ethernet/realtek/rtase/rtase_main.c   | 419 ++++++++++++++++++
-> >  1 file changed, 419 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > index 5ddb5f7abfe9..b286aac1eedc 100644
-> > --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > @@ -130,6 +130,293 @@ static u32 rtase_r32(const struct rtase_private *=
-tp,
-> u16 reg)
-> >       return readl(tp->mmio_addr + reg);  }
-> >
-> > +static void rtase_set_rxbufsize(struct rtase_private *tp) {
-> > +     tp->rx_buf_sz =3D RTASE_RX_BUF_SIZE; }
->=20
-> I'm a big fan of helpers, but maybe it's better to just open-code this on=
-e as it is
-> trivial and seems to only be used once.
+Hello Pierre,
 
-OK, I understand what you mean, I will modify it.
->=20
-> > +
-> > +     rtase_set_rxbufsize(tp);
-> > +
-> > +     ret =3D rtase_alloc_desc(tp);
-> > +     if (ret)
-> > +             goto err_free_all_allocated_mem;
-> > +
-> > +     ret =3D rtase_init_ring(dev);
-> > +     if (ret)
-> > +             goto err_free_all_allocated_mem;
-> > +
-> > +     rtase_hw_config(dev);
-> > +
-> > +     if (tp->sw_flag & RTASE_SWF_MSIX_ENABLED) {
-> > +             ret =3D request_irq(ivec->irq, rtase_interrupt, 0,
-> > +                               dev->name, ivec);
-> > +             if (ret)
-> > +                     goto err_free_all_allocated_irq;
->=20
-> This goto jumps to code that relies on i to set the bounds on a loop.
-> However, i is not initialised here. Perhaps it should be set to 1?
->=20
-> Flagged by Smatch, and clang-18 W=3D1 builds.
+Thanks for your reminder.
 
-Thank you for telling me the problem here, I will modify it.
->=20
-> > +
-> > +             /* request other interrupts to handle multiqueue */
-> > +             for (i =3D 1; i < tp->int_nums; i++) {
-> > +                     ivec =3D &tp->int_vector[i];
-> > +                     snprintf(ivec->name, sizeof(ivec->name),
-> > + "%s_int%i", tp->dev->name, i);
->=20
-> nit: This line could trivially be split into two lines,
->      each less than 80 columns wide.
->=20
-I will check if there are other similar issues and make corrections.
+在 2024/5/3 15:42, Pierre Gondois 写道:
+> Hello Liwei,
+> 
+> Thanks for the fix. I think there might be a similar issue
+> in cppc_khz_to_perf(),
+> 
+> Regards,
+> Pierre
+> 
+
+cppc_khz_to_perf() also has similar issue, I will modify the patch again.
+
+Liwei
+
+> On 4/30/24 12:12, liwei wrote:
+>> When the nominal_freq recorded by the kernel is equal to lowest_freq and
+>> the frequency reduction operation is triggered externally, there is a
+>> conversion logic error in cppc_perf_to_khz(), causing the kernel to be
+>> unable to feedback the true frequency.
+>>
+>> Fix this by adding the branch processing logic when nominal_freq is equal
+>> to lowest_freq.
+>>
+>> Fixes: ec1c7ad47664 ("cpufreq: CPPC: Fix performance/frequency 
+>> conversion")
+>> Signed-off-by: liwei <liwei728@huawei.com>
+>> ---
+>>   drivers/acpi/cppc_acpi.c | 10 ++++++++--
+>>   1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>> index a40b6f3946ef..92aac6974e0e 100644
+>> --- a/drivers/acpi/cppc_acpi.c
+>> +++ b/drivers/acpi/cppc_acpi.c
+>> @@ -1869,9 +1869,15 @@ unsigned int cppc_perf_to_khz(struct 
+>> cppc_perf_caps *caps, unsigned int perf)
+>>       u64 mul, div;
+>>       if (caps->lowest_freq && caps->nominal_freq) {
+>> -        mul = caps->nominal_freq - caps->lowest_freq;
+>> +        /* Avoid the special case when nominal_freq is equal to 
+>> lowest_freq */
+>> +        if (caps->lowest_freq == caps->nominal_freq) {
+>> +            mul = caps->nominal_freq;
+>> +            div = caps->nominal_perf;
+>> +        } else {
+>> +            mul = caps->nominal_freq - caps->lowest_freq;
+>> +            div = caps->nominal_perf - caps->lowest_perf;
+>> +        }
+>>           mul *= KHZ_PER_MHZ;
+>> -        div = caps->nominal_perf - caps->lowest_perf;
+>>           offset = caps->nominal_freq * KHZ_PER_MHZ -
+>>                div64_u64(caps->nominal_perf * mul, div);
+>>       } else {
 
