@@ -1,141 +1,273 @@
-Return-Path: <linux-kernel+bounces-169929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0D58BCF79
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:49:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971408BCF7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2A0DB25E6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:49:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A26DFB223E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4317880026;
-	Mon,  6 May 2024 13:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F9380032;
+	Mon,  6 May 2024 13:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1QhkbCi"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oo8780Sl"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F338E7FBBA;
-	Mon,  6 May 2024 13:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB587FBC3;
+	Mon,  6 May 2024 13:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715003379; cv=none; b=E2RytTaEarcHL+KxYE3RkZTU6JVAnIFD0AeCNItG1zSrUdnSk2plgXaLsMFer6/iHTX3gy//5FBXkgwYDthx0PhoRH41zNY6l2igJJuwOu7rUP3ZJvfW8srzNAi2Ly9oIcE9c7dyTSl1oDWiG7NCTMe+6hvSmt4CB24KG4uAdOY=
+	t=1715003616; cv=none; b=ncQ8lENaX7MF1ScYi20KmQa//gfXf880Q+2VtEFZp3I9Z0p7/slesIKse2Z0ZiXveXotVzqyWmaf/SECc1tJvR2KjV5CoH/dOJuPJo5FbYa+Q9JNssLLj2hwz7yTELuWH1y+zK+ACPMEnLikhFCd9dAFmiPPMo6qBDj6hQAYibY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715003379; c=relaxed/simple;
-	bh=VeYTlSC5e0onakW3rKrio1y3PTvEXFB4w3FqeXv54R0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFouI721ubmmpedz01E0x1SjdMw/dRl864KO6FSUk+y6HgjNU+3wKYORoQauJitgCdKmq00b+PrtLSGAZ70Vu6VpuwbtnwLOjgw5yrXkFNWd599ZK5okR/N+MY7qPSflIIwBSrhNydDozeMuGD1HqVQi4eENqEsE5PGYK0lQSMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1QhkbCi; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1eb24e3a2d9so18820455ad.1;
-        Mon, 06 May 2024 06:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715003377; x=1715608177; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q0tf2qu9Q8Di2qMp5UR/PKhNSbAhcOms4Eni4j4Wu/o=;
-        b=R1QhkbCi0fc3Xjz8OP1ckLFlW/5xarey+CHz41prrImsxYQOuKcX8dlbM0RMhXJEaV
-         pdrn8O1+ue732K/HAWqd0z00pjxwSUOVKG0OzZgJgaFCLRXI+G5ybPU3I5LN/MpeEkut
-         W+qXokBrVHrmTHCSKmFUbZka8nFkduyL8xHg0+9S4+1W6PQKJJpMDmy/q/GZqjbbddY0
-         8S7ba1c8QAyTu0V5+dA76PR3UxzitwkgublPHgAPrW2i8Q1S6JAGXJWZ6rUyBDj5AHbq
-         PoYQFsnzsUSIZF3ChnGdPsEGgsQvQIt6+lG8Yv01aZprJiqaL9gSWRDPoVBtMejytM8G
-         zAzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715003377; x=1715608177;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q0tf2qu9Q8Di2qMp5UR/PKhNSbAhcOms4Eni4j4Wu/o=;
-        b=j5Fi98VmcdOqWd+9qqYcN9TFILuzADoy+J7KlURD21bTl/8wh/g7qSIykN4Ongq5YW
-         mtVirn+PT3fel2y4Bm0JPg60td9bC+Z/PGZyLmri7gYDecDjjcKiOVGqqbhVHu9hKtln
-         hjkFg+qk8/78+z428eZTQVxWxDHCfaUN8uuzqe4oSVupCl8fn2ibsYCDkHGBsIswjhIV
-         +CMHQ8f31Gg/hlsXuGo6o8dfaeR5lB5c44leHu1w7g6wOffdVFb+UHzuRZiqN/UsN7rc
-         H6oCYnDjNsxEHcFlMgsgoExnGLdiHzD+r4GiIidO6mNF70UJTdd51I6t72C4/+oNLLA+
-         BWtg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7JcixGPi31J9JQ9v1A96KCn4SFx5j0fPXwfXALX8fmd5Akj3pER8+i7HJq+17AJzCJQeVKz0EK06/UIDbM8K8Nvn8cEks8n1Q0c2nkR1EIywdBRR03eQm+m/ASoR5cG3TjblYlAnlpSKstwR10Uy/o616SqfrsTPhu/G5gPuV7pFqQak=
-X-Gm-Message-State: AOJu0Yw1LgbxfUsZCA6LOtMB8mWuiok85Worr75N1IfT/G4dLPFESNfa
-	BOoYb1STKhTVC2jIUnVICIsCQqUki5eyNai8y2UQvi/9fwqU5/kd
-X-Google-Smtp-Source: AGHT+IFsSZGL2it7t9nrfAcHqKBBtNdyFp8UV64K//be7jHkwT4m1n655IsAPNPg10zU+pm1Y4qQLQ==
-X-Received: by 2002:a17:902:e947:b0:1e2:8841:8d67 with SMTP id b7-20020a170902e94700b001e288418d67mr14383470pll.32.1715003376608;
-        Mon, 06 May 2024 06:49:36 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w13-20020a170902d3cd00b001ec460b50casm8290294plb.307.2024.05.06.06.49.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 06:49:35 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 6 May 2024 06:49:34 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Naresh Solanki <naresh.solanki@9elements.com>
-Cc: Rob Herring <robh@kernel.org>, krzysztof.kozlowski+dt@linaro.org,
-	u.kleine-koenig@pengutronix.de, Jean Delvare <jdelvare@suse.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 2/4] hwmon: (max6639) : Utilise pwm subsystem
-Message-ID: <6d424919-70cc-43dc-a5a0-eab24f42f9e8@roeck-us.net>
-References: <20240416171720.2875916-1-naresh.solanki@9elements.com>
- <20240416171720.2875916-2-naresh.solanki@9elements.com>
- <ecddd7f3-fc25-4021-9758-b00893ac9622@roeck-us.net>
- <CABqG17hebvkpvxwGVfp0nT_YMrvgdkEqU2_XjijCpdtgU6C+1A@mail.gmail.com>
- <1294114a-4509-4c8a-a0a2-39f6e5f83227@roeck-us.net>
- <CABqG17hamhz9+bZ44FNkoSU5MxHLB13OZWGgzhr6xdDjdb=2xg@mail.gmail.com>
+	s=arc-20240116; t=1715003616; c=relaxed/simple;
+	bh=ZBw308vScpWpI6OOmAtYussqcW3H4nJ0DvHxVE73cic=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bsP11WrkoKYxTSZuklYd+dCNvlubj8jO1JjItW9n/hrEStWcale1nCarOzkUJPz9JSu8MQIBBhtINw8XfaUVBVLJN6CU+dBsX7fRdKfQe4YZ4HbdE14Ocx6GLuwhbWzE99/Xx/XgxiWlOqxKtsoGhbYXIWTmsBKXsXVh/qSXXX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oo8780Sl; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CFD9C60002;
+	Mon,  6 May 2024 13:53:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715003606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rl4J4sIVm+WsZbjOlT+E1mrylIFIWJ8bHbGao9o7iXw=;
+	b=oo8780SlEJkCVOPPXFOPXAqPxufjs+dTIjDui17WFF/ls4iGGmMYvS8ZmJlz0Ph+EhTCmV
+	9Dmitav+5z38uU64tHCsETTex1QgZnE2ipeEHFHy1cpMaMnQuqDDt//UKA6dS8B01odvtH
+	shs2EgcW1RgDT71l3ESfZnostdVzXOtWK/uSZ1GOEt5wjWudIuWCy8Xe2wUIeZbWzz5q4x
+	RTt5L43U1Bxoobv7ifVBN1iSOXKbgXAYMlLFjNWqhRrrZYKYrs8dHNukALuVTWi0/hwKHN
+	QCg9mcVvrd8QYy8kGZkskUKV7wSveAf/nw85zKkyHHkZYrhf56GUTdDGxUzFJA==
+Date: Mon, 6 May 2024 15:53:22 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+ <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <oxffffaa@gmail.com>, <kernel@sberdevices.ru>
+Subject: Re: [PATCH v5 2/2] mtd: rawnand: meson: support R/W mode for boot
+ ROM
+Message-ID: <20240506155322.002346d0@xps-13>
+In-Reply-To: <20240416085101.740458-3-avkrasnov@salutedevices.com>
+References: <20240416085101.740458-1-avkrasnov@salutedevices.com>
+	<20240416085101.740458-3-avkrasnov@salutedevices.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABqG17hamhz9+bZ44FNkoSU5MxHLB13OZWGgzhr6xdDjdb=2xg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, May 06, 2024 at 03:35:40PM +0530, Naresh Solanki wrote:
-> +Rob Herring
-> 
-> Hi Guenter,
-> 
-> 
-> On Mon, 22 Apr 2024 at 18:07, Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > On 4/22/24 03:39, Naresh Solanki wrote:
-> > > Hi Guenter,
-> > >
-> > > On Wed, 17 Apr 2024 at 02:52, Guenter Roeck <linux@roeck-us.net> wrote:
-> > >>
-> > >> On Tue, Apr 16, 2024 at 10:47:15PM +0530, Naresh Solanki wrote:
-> > >>> Utilise pwm subsystem for fan pwm handling
-> > >>>
-> > >>> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
-> > >>
-> > >> That adds a lot of complexity to the driver. I am missing the benefits.
-> > >> You are supposed to explain why you are making changes, not just that
-> > >> you are making them.
-> > >>
-> > >> Why are you making those changes ?
-> > > Sure.
-> > > This is to align with fan-common.yml wherein chip pwm is exposed.
-> > > I'll update commit message
-> > >
-> >
-> > Adding lots of complexity to a driver just to have it match a yaml file ?
-> > I'll want to see a use case. Explain why you need the pwm exposed.
-> > "because the yaml file demands it" is not a use case.
-> The idea behind this was that this approach provides flexibility with
-> hardware routing i.e., PWM0 might be connected to Fan1 & vise
-> versa instead of assuming 1:1 mapping.
-> 
+Hi Arseniy,
 
-The chip does not support such a configuration. Any hardware implementing
-this would make automatic fan control using the chip's capabilities
-impossible. Also, userspace fan control does not rely on the pwm subsystem.
+avkrasnov@salutedevices.com wrote on Tue, 16 Apr 2024 11:51:01 +0300:
 
-This would make sense if someone was to use the chip as generic pwm
-controller, which would be very unlikely. A "might be" is not sufficient
-to warrant such an invasive and (in terms of code size) expensive change.
+> Boot ROM code on Meson requires that some pages on NAND must be written
+> in special mode: "short" ECC mode where each block is 384 bytes and
+> scrambling mode is on. Such pages located with the specified interval
+> within specified offset. Both interval and offset are located in the
+> device tree and used by driver if 'nand-is-boot-medium' is set for
+> NAND chip.
+>=20
+> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+> ---
+>  drivers/mtd/nand/raw/meson_nand.c | 88 +++++++++++++++++++++----------
+>  1 file changed, 59 insertions(+), 29 deletions(-)
+>=20
+> diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/mes=
+on_nand.c
+> index 00ce0e5bb970..9ee11243b257 100644
+> --- a/drivers/mtd/nand/raw/meson_nand.c
+> +++ b/drivers/mtd/nand/raw/meson_nand.c
+> @@ -35,6 +35,7 @@
+>  #define NFC_CMD_RB		BIT(20)
+>  #define NFC_CMD_SCRAMBLER_ENABLE	BIT(19)
+>  #define NFC_CMD_SCRAMBLER_DISABLE	0
+> +#define NFC_CMD_SHORTMODE_ENABLE	1
+>  #define NFC_CMD_SHORTMODE_DISABLE	0
+>  #define NFC_CMD_RB_INT		BIT(14)
+>  #define NFC_CMD_RB_INT_NO_PIN	((0xb << 10) | BIT(18) | BIT(16))
+> @@ -78,6 +79,8 @@
+>  #define DMA_DIR(dir)		((dir) ? NFC_CMD_N2M : NFC_CMD_M2N)
+>  #define DMA_ADDR_ALIGN		8
+> =20
+> +#define NFC_SHORT_MODE_ECC_SZ	384
+> +
+>  #define ECC_CHECK_RETURN_FF	(-1)
+> =20
+>  #define NAND_CE0		(0xe << 10)
+> @@ -125,6 +128,8 @@ struct meson_nfc_nand_chip {
+>  	u32 twb;
+>  	u32 tadl;
+>  	u32 tbers_max;
+> +	u32 boot_pages;
+> +	u32 boot_page_step;
+> =20
+>  	u32 bch_mode;
+>  	u8 *data_buf;
+> @@ -298,28 +303,49 @@ static void meson_nfc_cmd_seed(struct meson_nfc *nf=
+c, u32 seed)
+>  	       nfc->reg_base + NFC_REG_CMD);
+>  }
+> =20
+> -static void meson_nfc_cmd_access(struct nand_chip *nand, int raw, bool d=
+ir,
+> -				 int scrambler)
+> +static int meson_nfc_page_is_boot(struct nand_chip *nand, int page)
+
+meson_nfc_is_boot_page() is easier to read
+
+> +{
+> +	const struct meson_nfc_nand_chip *meson_chip =3D to_meson_nand(nand);
+> +
+> +	return (nand->options & NAND_IS_BOOT_MEDIUM) &&
+> +	       !(page % meson_chip->boot_page_step) &&
+
+I would dedicate all the space below ->boot_pages to the bootrom, no?
+Using space in between sounds silly.
+
+> +	       (page < meson_chip->boot_pages);
+> +}
+> +
+> +static void meson_nfc_cmd_access(struct nand_chip *nand, bool raw, bool =
+dir, int page)
+>  {
+> +	const struct meson_nfc_nand_chip *meson_chip =3D to_meson_nand(nand);
+>  	struct mtd_info *mtd =3D nand_to_mtd(nand);
+>  	struct meson_nfc *nfc =3D nand_get_controller_data(mtd_to_nand(mtd));
+> -	struct meson_nfc_nand_chip *meson_chip =3D to_meson_nand(nand);
+> -	u32 bch =3D meson_chip->bch_mode, cmd;
+>  	int len =3D mtd->writesize, pagesize, pages;
+> +	int scrambler;
+> +	u32 cmd;
+> =20
+> -	pagesize =3D nand->ecc.size;
+> +	if (nand->options & NAND_NEED_SCRAMBLING)
+> +		scrambler =3D NFC_CMD_SCRAMBLER_ENABLE;
+> +	else
+> +		scrambler =3D NFC_CMD_SCRAMBLER_DISABLE;
+
+That is a separate feature?
+
+> =20
+>  	if (raw) {
+>  		len =3D mtd->writesize + mtd->oobsize;
+>  		cmd =3D len | scrambler | DMA_DIR(dir);
+> -		writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> -		return;
+> -	}
+> +	} else if (meson_nfc_page_is_boot(nand, page)) {
+> +		pagesize =3D NFC_SHORT_MODE_ECC_SZ >> 3;
+> +		pages =3D mtd->writesize / 512;
+> +
+> +		scrambler =3D NFC_CMD_SCRAMBLER_ENABLE;
+> +		cmd =3D CMDRWGEN(DMA_DIR(dir), scrambler, NFC_ECC_BCH8_1K,
+> +			       NFC_CMD_SHORTMODE_ENABLE, pagesize, pages);
+> +	} else {
+> +		pagesize =3D nand->ecc.size >> 3;
+> +		pages =3D len / nand->ecc.size;
+> =20
+> -	pages =3D len / nand->ecc.size;
+> +		cmd =3D CMDRWGEN(DMA_DIR(dir), scrambler, meson_chip->bch_mode,
+> +			       NFC_CMD_SHORTMODE_DISABLE, pagesize, pages);
+> +	}
+> =20
+> -	cmd =3D CMDRWGEN(DMA_DIR(dir), scrambler, bch,
+> -		       NFC_CMD_SHORTMODE_DISABLE, pagesize, pages);
+> +	if (scrambler =3D=3D NFC_CMD_SCRAMBLER_ENABLE)
+> +		meson_nfc_cmd_seed(nfc, page);
+> =20
+>  	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+>  }
+> @@ -743,15 +769,7 @@ static int meson_nfc_write_page_sub(struct nand_chip=
+ *nand,
+>  	if (ret)
+>  		return ret;
+> =20
+> -	if (nand->options & NAND_NEED_SCRAMBLING) {
+> -		meson_nfc_cmd_seed(nfc, page);
+> -		meson_nfc_cmd_access(nand, raw, DIRWRITE,
+> -				     NFC_CMD_SCRAMBLER_ENABLE);
+> -	} else {
+> -		meson_nfc_cmd_access(nand, raw, DIRWRITE,
+> -				     NFC_CMD_SCRAMBLER_DISABLE);
+> -	}
+> -
+
+Ok I get it, the feature already exist but is handled differently.
+Please split this patch:
+- improve scrambler handling to facilitate boot page support
+- add boot pages support
+
+> +	meson_nfc_cmd_access(nand, raw, DIRWRITE, page);
+>  	cmd =3D nfc->param.chip_select | NFC_CMD_CLE | NAND_CMD_PAGEPROG;
+>  	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+>  	meson_nfc_queue_rb(nand, PSEC_TO_MSEC(sdr->tPROG_max), false);
+> @@ -829,15 +847,7 @@ static int meson_nfc_read_page_sub(struct nand_chip =
+*nand,
+>  	if (ret)
+>  		return ret;
+> =20
+> -	if (nand->options & NAND_NEED_SCRAMBLING) {
+> -		meson_nfc_cmd_seed(nfc, page);
+> -		meson_nfc_cmd_access(nand, raw, DIRREAD,
+> -				     NFC_CMD_SCRAMBLER_ENABLE);
+> -	} else {
+> -		meson_nfc_cmd_access(nand, raw, DIRREAD,
+> -				     NFC_CMD_SCRAMBLER_DISABLE);
+> -	}
+> -
+> +	meson_nfc_cmd_access(nand, raw, DIRREAD, page);
+>  	ret =3D meson_nfc_wait_dma_finish(nfc);
+>  	meson_nfc_check_ecc_pages_valid(nfc, nand, raw);
+> =20
+> @@ -1436,6 +1446,26 @@ meson_nfc_nand_chip_init(struct device *dev,
+>  	if (ret)
+>  		return ret;
+> =20
+> +	if (nand->options & NAND_IS_BOOT_MEDIUM) {
+> +		ret =3D of_property_read_u32(np, "amlogic,boot-pages",
+> +					   &meson_chip->boot_pages);
+> +		if (ret) {
+> +			dev_err(dev, "could not retrieve 'amlogic,boot-pages' property: %d",
+> +				ret);
+> +			nand_cleanup(nand);
+> +			return ret;
+> +		}
+> +
+> +		ret =3D of_property_read_u32(np, "amlogic,boot-page-step",
+> +					   &meson_chip->boot_page_step);
+> +		if (ret) {
+> +			dev_err(dev, "could not retrieve 'amlogic,boot-page-step' property: %=
+d",
+> +				ret);
+> +			nand_cleanup(nand);
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	ret =3D mtd_device_register(mtd, NULL, 0);
+>  	if (ret) {
+>  		dev_err(dev, "failed to register MTD device: %d\n", ret);
+
 
 Thanks,
-Guenter
+Miqu=C3=A8l
 
