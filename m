@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-170105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56998BD1EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:56:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2DB8BD1F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E68A11C21ED6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:56:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B26C1C21C69
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF9215573B;
-	Mon,  6 May 2024 15:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4D6155A25;
+	Mon,  6 May 2024 15:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ww++e+vg"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="esCn/+us"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB6F4D58E
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE9C6CDD0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715010959; cv=none; b=fq46YAwI7dDUuKfuFNIhJHLVE523jFKc0hEOVbom19ASsJt63yw7+nPiBZCmNFKts0vLccUx5415k4J6ucA+kTLGtC3ZK+lPiOiEDu9+B7l8gpyuEGqpcQ71AjNgFqN9kuZ+k9/dCzlrxOCZUwDKfD/q7WRb2dk/1FcbbQN8aJs=
+	t=1715011100; cv=none; b=TZapyUP5niKO/9v8QonoZq1yws6GwJkDaN0VyDIrLX2sQTew3U8wj9dZprbaHfNyPfI935GVq8T6JvD8QU5QB60tf/7ahNNVNGSOLbVi45aBMhDPwCKUWmdQULf5PecjsOLLRfs/KlAWe75CTlJJlgTa1adYRYytTBX5wNIYjjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715010959; c=relaxed/simple;
-	bh=GGxtgdueDnkD++VTZpy2fAe4IiDXfria7dwMnH/Xvds=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yfjh3GiIpCpA0HL6GYGMgQ9k6iKlQWq9AE5QzzjkEOsHdAzBdCVK2aObyxtlGdarOLXeXgtd/REVUiL05L4/87POkkmNNNiEAzyqzZa5wcayHf/OypEujefwhqAXYuA3HFKHUFe1v5frt7pLGBm6cFtJ+APGqSwiEsAVNS/cApE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ww++e+vg; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so1469149b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 08:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715010956; x=1715615756; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sDRDF8JT98zd81UBJ0k3A5WdQ6sY0FvfJJ+osF1311Q=;
-        b=Ww++e+vgZtK0UbvZ/1H3oWkf38o/l1kFFdaIqygCJqAJPMf3Qyc4X1iN2/k6txm7LA
-         noSjnSYCZV0/q1iu0RNmAirqy7FNc8Rg1579jNGsOTOoqyp2AFOoinznOwxx3mhf9mpY
-         DMQFVYuqfZDE2s4Ltp3weiWnKejbrypespMf0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715010956; x=1715615756;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sDRDF8JT98zd81UBJ0k3A5WdQ6sY0FvfJJ+osF1311Q=;
-        b=MtaHYn+xQhLNLy5vJzpg+PySW5XE77waAjoNaSLmI34wp0PusOWFN9cuahxisuOa0b
-         8ATEkoCZSbKJH1JfYX7bk0qMHM2VbrL5bB/elX+jqttXS4LcFGh+2pd142Rc2EGDdEKg
-         tZruYD0isYrzPURdjAV1lmLLKchY8tOL6f4QwfL8n2RkSoKdHoGXwxvqqqMEl9iOxbjo
-         5U0BktDxTeabYjvYJ5I3iZZ+y4QB6u8bL0gyibWwe28E2U1CvSLvIiz3/OK1FPfxlTDY
-         3oo3QwEfVTWLlFoYHT0IS76CbZIjjXA9Ry/qgWBF+86y9RxyCnSVyV6jW/A4OYquPu8w
-         JHFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvk0SOavg6wVBPhapah3I02A14XjKgQChwssXLe99KXAowtp2rKX0R4YaQP3OswUWltXtGe3QPw2ZPTurXyKGCOu72pohbFNjqa61d
-X-Gm-Message-State: AOJu0Yxv7w5pVSMeFc+il5yNaqcc7zd49HHc7BXJZ3CPkYj9Zuhj1spG
-	3peWm8ov3+Y5XdCNlAhmOLtEJS0Xx9FwTB5GWyBI9U4n/XFSUw7LQst3MF02Xw==
-X-Google-Smtp-Source: AGHT+IF8seK1eV0WOFQ9oIJEm6z+Hw9NQTFIySMgMWTXXYqt4+1a9w/894yC/hdv+9bzowoZqhikHg==
-X-Received: by 2002:a05:6a21:2787:b0:1af:baf9:fef6 with SMTP id rn7-20020a056a21278700b001afbaf9fef6mr875194pzb.16.1715010956221;
-        Mon, 06 May 2024 08:55:56 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id s8-20020a056a0008c800b006f46e3b1d03sm3052566pfu.88.2024.05.06.08.55.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 08:55:55 -0700 (PDT)
-From: Kees Cook <keescook@chromium.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] objtool: Report section name in elf_init_reloc_text_sym() warning
-Date: Mon,  6 May 2024 08:55:54 -0700
-Message-Id: <20240506155537.it.760-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715011100; c=relaxed/simple;
+	bh=Aw9f+LLZ5sHan1vBUy1bKxeUrbEGvBPDzxWoW45wqxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e6vm9cRDN953ZaLnOEO8YntFzFnqRlzIvYGFy6WGn5naWfSMsFs2belDDcbutLgRZnqfWnUeGSHxkos8LyaIvoz9lQLIkZ7muThgi1VhIAFEpYhCPj+nm3XC11fTbJ1cqk6v3w7fZ+D7cI+OMc+5U9Cii+zn7XcgPgE0w9AEDJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=esCn/+us; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8102240E02A6;
+	Mon,  6 May 2024 15:58:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id EkHFRr0eYoCh; Mon,  6 May 2024 15:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715011093; bh=of4cpwaJyl5GvP5v0b10za3Tbh1fMIcPtE6G83zdPUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=esCn/+usfD3pSS7PV/FP3vii3yCV4JzpeZ+Lumvyp7iF8Dxkt+55n5LK8fhqrxJZj
+	 6L7SUimhHzItS20BotXBPkr/MEIpzObRCpQte4cCNrOYwX/gUYwpQgnyP6cWdGePsl
+	 hb9AHeZ7zTYQmr8l/0ts/JhSu+9PG7eBv7tJhSBxQN8nS/CD2u/gtCnof7srE2Mbct
+	 sQuVgUisKCct123WQfLHWxWYVs1ZRuMwzLJKKSvbw4ZTGyyjwwO8+3tEwJwhwa+3O8
+	 QSZ6rdYHPrWm6EtQ6GhAuVotXe+H139/xi5NfJR1qaxnn/roABERbLdFmX0rPm5KvP
+	 5DMB4UMwhWvXmp66Ekqe0aGE31ekcMUTH0g2A2tlaBScDb/mPHulHes36lRVM/3ncw
+	 jgWM52gOfhI55cMctE3Q2IJyBxtR5t0mMbn7//QHRoJdV28mkuTZP8kUsH1B9061XK
+	 fe2jZZrYgcIFImPsNxa/SK4XuQl1KEguqNQjFuGHTKh2o8AohoNXa/C1jyxxLdyFeO
+	 ilXpai8RCw8+YvS/2SMVvaeOtSaq6eg8+ml21qzUzRA8PZyVRHOLv9Mjz3T/PBjOQ2
+	 fh/bhD0ArjkkDzJWMy6lFeN+gZi28do9AfG8BqL9xOxQz/dt6udE+19PtDf2DDdBCq
+	 Wt+srd66VAf0RAyu4EEfBHQ0=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4E5DD40E0187;
+	Mon,  6 May 2024 15:58:05 +0000 (UTC)
+Date: Mon, 6 May 2024 17:57:59 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>
+Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
+ WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
+Message-ID: <20240506155759.GOZjj-B_Qrz4DCXwmb@fat_crate.local>
+References: <202404302233.f27f91b2-oliver.sang@intel.com>
+ <20240430172313.GCZjEpAfUECkEZ9S5L@fat_crate.local>
+ <ZjE7DkTBSbPlBN8k@google.com>
+ <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
+ <ZjFLpkgI3Zl4dsXs@google.com>
+ <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
+ <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
+ <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
+ <Zjj3Lrv2NNHLEzzk@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1385; i=keescook@chromium.org;
- h=from:subject:message-id; bh=GGxtgdueDnkD++VTZpy2fAe4IiDXfria7dwMnH/Xvds=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmOP2Kj5waKn0Rom7MjuZCKgUTYCB/8plgHDYgu
- 39RuxQNIGKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZjj9igAKCRCJcvTf3G3A
- JsdsD/9XOz3kYzfScqtBwJzrTbArfUb/4ag/iIi+uY/twr+UWJYIZJ6X0E57SAbZqdtFx3lvAmu
- 7eDimxhxNAx47XzNTrjG9eospdV5PUPkKpl76Y6MyU1zLpxqmDiQf1u33AXex2std12cG4Zy4zI
- YHjEOxeWXboPe88GFCOCu35n/dBnseQEPefB7w5IZk8BRi8XEU+QmR+pVdJIcOwTy5XbLgj5JeP
- QYTDlhn5RVcrvux2Ik7EwEWQrIauFadGZRVolS6uvRG+9cmQhVe5PIFK3tmIGKQi7UwJLzyXaGt
- hnbh0ueDHEs0rCnNVPtgAYkGvWGKhc8VDYm/C+Xz7NLXNERqpHjAHOf9QBTh9RZqPWmM6DYfjh1
- ghap7NR9buzGq0wvb5UcdxjnpFKvVVGLv9YMHJUqzXQfdovnpB8tq7qMY0Z/s5aB1P8O73Uol6g
- LuVVOSSFImtTHK+BMw/fZtHa/r+fhaKSkaHvw9GwyIdfTnQw73AP/k5fuz+NWE0YfYrv1VBbT4o
- f1A+kpfdCVYbE9YMtDncBjvl0nJrHPlUao/c18QiX0pParCsbiGrDPzGNx2JblXQ+N2munjBigt
- BvBz/Xd3CWo2DIOKQWss01le5WPbogV3HqcHX6mLC/1qSK+kYbI6b2iaUqyCybTiJiwyLXn4QVF
- ASAbC8i zzoA1F0w==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zjj3Lrv2NNHLEzzk@google.com>
 
-While tracking down issues with LKDTM's .rodata "function", I found
-the warning from elf_init_reloc_text_sym() to be unhelpful because it
-wasn't clear which calling path it was coming from. Report the sec->name
-and rephrase the warning a bit. Additionally check for NULL sym->name,
-which may happen.
+On Mon, May 06, 2024 at 08:28:46AM -0700, Sean Christopherson wrote:
+> The only way the WARN could have fired without this series is if VMX is enabled
+> in BIOS on the boot CPU, but disabled by BIOS on one more secondary CPUs.  And
+> _that_ is a bogus setup that (a) the kernel absolutely should WARN about, and
+> (b) _still_ occurs with one or both patches applied.
 
-Before:
+Right, that's my suspicion too.
 
-vmlinux.o: warning: objtool: bad call to elf_init_reloc_text_sym() for data symbol .rodata
+> So I don't see how this series could possibly have fixed the issue Oliver
+> encountered, nor do I see any value in moving init_ia32_feat_ctl() into
+> early_init_intel().
 
-After:
+Hm, right. I should've done this from the very beginning:
 
-vmlinux.o: warning: objtool: .cfi_sites: unexpected reference to non-executable symbol '.rodata'
+Oliver, can you please run the below debugging patch *without* any other
+patches ontop of latest Linus master?
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Also pls send /proc/cpuinfo and dmesg.
+
+Thx.
+
 ---
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
- v1: https://lore.kernel.org/lkml/20240430235106.work.680-kees@kernel.org/
----
- tools/objtool/elf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 3d27983dc908..b38cedd4fd55 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -891,8 +891,8 @@ struct reloc *elf_init_reloc_text_sym(struct elf *elf, struct section *sec,
- 	int addend = insn_off;
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 1640ae76548f..74d2f0a351aa 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -117,8 +117,14 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 	bool tboot = tboot_enabled();
+ 	bool enable_vmx;
+ 	u64 msr;
++	int ret;
  
- 	if (!(insn_sec->sh.sh_flags & SHF_EXECINSTR)) {
--		WARN("bad call to %s() for data symbol %s",
--		     __func__, sym->name);
-+		WARN("%s: unexpected reference to non-executable symbol '%s'",
-+		     sec->name, sym->name ?: "<unknown>");
- 		return NULL;
+-	if (rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr)) {
++	ret = rdmsrl_safe(MSR_IA32_FEAT_CTL, &msr);
++
++	pr_info("%s: CPU%d: FEAT_CTL: 0x%llx, tboot: %d\n",
++		__func__, c->cpu_index, msr, tboot);
++
++	if (ret) {
+ 		clear_cpu_cap(c, X86_FEATURE_VMX);
+ 		clear_cpu_cap(c, X86_FEATURE_SGX);
+ 		return;
+@@ -165,6 +171,9 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 			msr |= FEAT_CTL_SGX_LC_ENABLED;
  	}
  
--- 
-2.34.1
++	pr_info("%s: CPU%d: Write FEAT_CTL: 0x%llx\n",
++		__func__, c->cpu_index, msr);
++
+ 	wrmsrl(MSR_IA32_FEAT_CTL, msr);
+ 
+ update_caps:
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
