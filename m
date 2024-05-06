@@ -1,87 +1,122 @@
-Return-Path: <linux-kernel+bounces-169229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA05C8BC570
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:29:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650638BC578
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DFA281F10
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:29:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA55AB21464
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95673D967;
-	Mon,  6 May 2024 01:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="q8bLEqz8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8973D962;
+	Mon,  6 May 2024 01:32:49 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EFF6FB2;
-	Mon,  6 May 2024 01:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0557D2FB6;
+	Mon,  6 May 2024 01:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714958934; cv=none; b=mxjd73iBkweHzutcx5v4ND/nM0kdP8EsIHp0KUDQl3h2Q1sjh3zUxSoHVr82rqXKCi8u6Wmc2Fu1sjQGLjaJ7tyN3Z5yBAxHeTQdG1x62DHk6rKc0u915kFZCcdd1dRQBoo+9TDBqQ2RELjyCnyePtGP0/jyEuyz3yPWoPsTwzc=
+	t=1714959168; cv=none; b=Yx2tXpAt8LyZKpRLza1YKodoMwUk9aBR6iUpjadV8IpjCXh0XFhT3rv1GFOcyhIRp3jPUtJwZQsvnsutHsBU0KNodjczliqNWjqb9g/4D+QsC896tR1RoNE3kRVmD/W3TPooBpJQpMeiIbM5ZzlcFlLaB5NqPG9TdZGAhnXvEdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714958934; c=relaxed/simple;
-	bh=MBmDyn3o3vnEjJuULueAN14Iyp0I7VYXDlzhpDUe35E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTZRFLO1AGUYPh032ltXf8vILAbWro6coGW0eefuFJni7Bhb8fJoF9ccAk7NZHawrXJiC0mwpF87UWxd834+Vf0J42HH9wK6dkoAJxbRYZ+3Mqcg2VtY1J4zK2jpF8cmaAdyBQ3t9g5R/PsWd5O2VDZj8k/unybFA432YKXtNro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=q8bLEqz8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=4lEoVVeC36+PEGRwrbvZuuCU2i1qxfqOELKXfHvEA7Q=; b=q8bLEqz8Y4KHwIrCW5ESEnbrap
-	KvUJ50SPYgs8SgFdowHd+2GdUjabMFSSpzaUPgSqCNgIa1ytH7pqgu8tJ+sQhZRIvPiwtNox4Wtp1
-	KmFCMHsA7eX7nQgaR6qAvnthu5lxaD35nEDNdm/FXMBsAe2oMNh5HX7ePYlpwlslHazA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s3n9d-00Eiyk-Dt; Mon, 06 May 2024 03:28:33 +0200
-Date: Mon, 6 May 2024 03:28:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, lxu@maxlinear.com, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next] net: phy: add wol config options in phy device
-Message-ID: <4a565d54-f468-4e32-8a2c-102c1203f72c@lunn.ch>
-References: <20240430050635.46319-1-Raju.Lakkaraju@microchip.com>
- <7fe419b2-fc73-4584-ae12-e9e313d229c3@lunn.ch>
- <ZjSwXghk/lsT6Ndo@HYD-DK-UNGSW21.microchip.com>
+	s=arc-20240116; t=1714959168; c=relaxed/simple;
+	bh=92joqj7g1Iv2mcTw28wf2tJKoXH6csvg7Rci/E/IKr8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ICU8JI1FiJm6u5eb7hmQmD7tQw3SPFrghHqEc/KSqOCSrMdxRiQ1l6wjawl71HXvrHwoIF2i9vCsC9jSt37ZjxwAt5AZ0DcypqUKCE/+cepgPZCS/Rzb/Z0zxppJrIQ3FEd2oIKwVYMrbnFzT8I2rN4Cvd5XVVz3UxXfeNK3Vic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXkRh3VHxz4f3jLJ;
+	Mon,  6 May 2024 09:32:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3B5D41A0179;
+	Mon,  6 May 2024 09:32:42 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP4 (Coremail) with SMTP id gCh0CgB3fG45MzhmoWpmMA--.42545S2;
+	Mon, 06 May 2024 09:32:42 +0800 (CST)
+Subject: Re: [PATCH 02/10] writeback: add general function domain_dirty_avail
+ to calculate dirty and avail of domain
+To: Tejun Heo <tj@kernel.org>
+Cc: willy@infradead.org, akpm@linux-foundation.org, jack@suse.cz,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240429034738.138609-1-shikemeng@huaweicloud.com>
+ <20240429034738.138609-3-shikemeng@huaweicloud.com>
+ <ZjJysTZO6IOpe4BT@slm.duckdns.org>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <d69093d9-0786-b16f-1ed9-7cc5e37791d9@huaweicloud.com>
+Date: Mon, 6 May 2024 09:32:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjSwXghk/lsT6Ndo@HYD-DK-UNGSW21.microchip.com>
+In-Reply-To: <ZjJysTZO6IOpe4BT@slm.duckdns.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgB3fG45MzhmoWpmMA--.42545S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr4xXw13JFyUXrWUXF43ZFb_yoW8JF4kpF
+	4UtanI9FWkta9rXr1fWr48W3yav3yfWFW5t34vk3sFvr4xuF4DGr93u34rCw1S9r4kJwna
+	kFsrXw4FvF48CFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-> One quick question.
-> some of the options (ex. WAKE_PHY, WAKE_MAGIC etc) support on PHY and other
-> options (ex. WAKE_UCAST, WAKE_MAGICSECURE etc) on MAC of Ethernet device.
+
+
+on 5/2/2024 12:49 AM, Tejun Heo wrote:
+> Hello,
 > 
-> Suppose, user configure the combination (i.e. wol gu) option,
-> Is PHY flag should hold combination option or only PHY supported option ?
+> On Mon, Apr 29, 2024 at 11:47:30AM +0800, Kemeng Shi wrote:
+>> +/*
+>> + * Dirty background will ignore pages being written as we're trying to
+>> + * decide whether to put more under writeback.
+>> + */
+>> +static void domain_dirty_avail(struct dirty_throttle_control *dtc, bool bg)
+> 
+> I wonder whether it'd be better if the bool arg is flipped to something like
+> `bool include_writeback` so that it's clear what the difference is between
+Sure, I rename 'bool bg' to 'bool include_writeback'.
+> the two. Also, do global_domain_dirty_avail() and wb_domain_dirty_avail()
+> have to be separate functions? They seem trivial enough to include into the
+> body of domain_dirty_avail(). Are they used directly elsewhere?
+I will fold global_domain_dirty_avail() and wb_domain_dirty_avail() and
+just use domain_dirty_avail.
+> 
+>> +{
+>> +	struct dirty_throttle_control *gdtc = mdtc_gdtc(dtc);
+>> +
+>> +	if (gdtc)
+> 
+> I know this test is used elsewhere but it isn't the most intuitive. Would it
+> make sense to add dtc_is_global() (or dtc_is_gdtc()) helper instead?
+Will add helper dtc_is_global().
 
-I don't think it actually matters. The user is going to end up
-invoking the PHY set wol. The PHY will setup what it can. On resume
-you are going to call the PHYs set wol function again. It should do
-the same as it did the first time. So if the PHY ignored WAKE_UCAST
-and WAKE_MAGICSECURE the first time, it should also ignore them the
-second time.
+Thanks.
+Kemeng
+> 
+>> +		wb_domain_dirty_avail(dtc, bg);
+>> +	else
+>> +		global_domain_dirty_avail(dtc, bg);
+>> +}
+> 
+> Thanks.
+> 
 
-> Ok. I will change.
-> May be in phy_init_hw( ) function is better place to re-config the WOL
-
-You should first answer Russell question. It could be a totally
-different scheme might come of of the discussion with Russell.
-
-	  Andrew
 
