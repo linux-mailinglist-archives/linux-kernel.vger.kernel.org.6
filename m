@@ -1,129 +1,140 @@
-Return-Path: <linux-kernel+bounces-170098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A968BD1D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:51:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24318BD1CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 489B5B22038
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA04284BB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2695156640;
-	Mon,  6 May 2024 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A12515572E;
+	Mon,  6 May 2024 15:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nj1uiXIR"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DMxsEuxP"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3F7155A27;
-	Mon,  6 May 2024 15:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B208F1552F4
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 15:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715010678; cv=none; b=Hp2WzzDHJy6wUUDpJTRm89GHusYD67Y/xw2c79ZCw09sb5xJIf0/xvSEhZr41rZtuaTUFbfe37Fxy5NpTdo8+5cwxbclZYsCRMj0ux1j/5UMVuQss25vSJ+xvL3JZPpARKQrTU1XrfIPqbQ/doPdRFCQh77gcrtjejVXvttFs5g=
+	t=1715010673; cv=none; b=KCJY6FgB16A47TI43shR73Sokib3Uj0peGzW5u2gPOIEa/nOb7NSR4MZxDZSiynxO6To0/NTljZyN2CkqVlQaTZuUwSc+nBw8iW2f0UtiTLhlubbeU1B4DTUkR4SphctVecjzqv/JBU2Xfqj5U80LynRiwJPUDm4EEvWwR1zSig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715010678; c=relaxed/simple;
-	bh=RevPtx03YmQ4ojv4DAFVID03tKsCKqI8IgeaIHhY58I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jmh9BNPdk9qM7nY2+BiKMlFdU3GuRcdHROn8QpnncreRkPP5L1av5SHAxDJJT3iT1Gh4T64/LjRln9tMdA6U7JFpifHxcooAt8Cw/ngVXLbPMXZ8S8XNKGAJEdSVOOX9vamE+GdIfAq7wj63Y6qLqvVjsulJrKr0mBusr4Zma9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nj1uiXIR; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a5200afe39eso535258666b.1;
-        Mon, 06 May 2024 08:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715010675; x=1715615475; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8I21WtsUZcdgpZuf38No+IlnE5W2vGDappaz3+ciLm0=;
-        b=nj1uiXIRUcv5sWAWSLW8aNZPHAiCqrER8XS6wuyPc8XmKpD37bn5Psg7PYFYk/fEBt
-         RY0dhS2exZ4Hbtwovpdprd3dwE3CwVpcYOf1IBOmPH8TEuDw5LPIzk+EK9rnAUjoa1ME
-         uo99xOZl9JfPJugF1fK/NYPZOJwDLZRKM8Q+gPS+Q5w5R3l5sNgSz+d8621cKKVkepmX
-         4mk+o5jC4C9G9kUsC8Y7fNjLYu9oKOB67Oyh95ZAglW4WcP8tyPYYGVDS9T/FkTp/X3F
-         NR+lRKj6OwAnXT54Xy7d9RGgAREbUUije2qYi4In5tcqioPy/iNoGWGX3b3qW/U2xFTA
-         5ykQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715010675; x=1715615475;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8I21WtsUZcdgpZuf38No+IlnE5W2vGDappaz3+ciLm0=;
-        b=ua+hMwJxKTvl+CwZVOcPruBRoNPzwcdkiH2zqzxg5kwKlYik7hZyb1ApnL+xW0WPWe
-         HU7NzcF+nTxZRBEhQfL6lrTxD3fF/Q7/pB8kKX6JFXxCTLRbeDWGjNxD7IGnVj+fFMJA
-         fzlRC1JRM2J4RX/utpDjk99rwiXJo4Sd8nrQaonLKap/h0uIutOqhYnCfl2NJlyGufgd
-         lytmHKBbSRVJ5XptBIdSTuJE8f1vgtyRw5cdL1rKg/9Ha5ab90pqQI+4IY3sQOjqFo9y
-         UC4wGtjJDsJmkVhS28vUrmyshTAc+VI3QPG1YdubPW5nlAHnTzscwNMlplTZr5op4QdJ
-         DvaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDPO3FmCL+r4QOPCjxS2dRJMBbRvNDWVKC5ZqS4L3Po96/HBUcwRxBwtc67DMYSMPL/OT94okVMrUqKgr2aCCPDz70XKL8IhwL7HNg
-X-Gm-Message-State: AOJu0YxpPaxeoeKPV5wgirzjYp/U/fhim57DRoJJlQStUJGn1fmxwBsG
-	in1ylxBlKRyVRSxiYB57j828w5Mif3AT4NkvqXL3PZSUw8qBSVOAAQr0
-X-Google-Smtp-Source: AGHT+IGUXcRYajK3MdV54mEIKa/3JOK3wciOaMvhxvgKosMw2KgO/7txS4O4aJlUGlkK5fzdsMOW2Q==
-X-Received: by 2002:a17:907:7e97:b0:a59:b1cf:fea0 with SMTP id qb23-20020a1709077e9700b00a59b1cffea0mr6357081ejc.19.1715010674674;
-        Mon, 06 May 2024 08:51:14 -0700 (PDT)
-Received: from U4.lan ([2a02:810b:f40:4600:1c62:e77:6753:5729])
-        by smtp.gmail.com with ESMTPSA id y24-20020a170906071800b00a59cec38bf3sm1356230ejb.52.2024.05.06.08.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 08:51:14 -0700 (PDT)
-From: Alex Bee <knaerzche@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 2/2] ARM: dts: rockchip: Add spdif node for RK3128
-Date: Mon,  6 May 2024 17:51:03 +0200
-Message-ID: <20240506155103.206592-3-knaerzche@gmail.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240506155103.206592-1-knaerzche@gmail.com>
-References: <20240506155103.206592-1-knaerzche@gmail.com>
+	s=arc-20240116; t=1715010673; c=relaxed/simple;
+	bh=GMFcXlvdHlwN61woQJwvISQwU5cuAkI+j96JuCieE8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sTFIvAvYqlNkv/fRCdLwQEJE84jvZ5AE3vYjJVhz5jCUBQt200YM/dl66S3q1NBsh6PwePqqShkTfT+XOJefprLYlCMoMr2KwGMLC2mYHE/trTn8wwe+wQahZK5CXXOlnNh9dw838epj7GfccVYJb2wI3M+TvzhQGhD6LDPPQSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DMxsEuxP; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 67238240004;
+	Mon,  6 May 2024 15:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715010668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d+wTVg9eOKsGtIWDYqk4CtYV7Tl016exC8KiZRLJoqE=;
+	b=DMxsEuxPJV+g6UtG+YRF085ccKcoCV9LqOJQaiQdVRIkEPTFaqNFe0kyDd4bPCdSSFtchG
+	vNb0dC8m1UQ1A5AzO7NZoLVL4hQFIo66foSZkBiHS4oDip3EiSgcoDpifv5bhaXO5PWjQd
+	3/fwWeOSR6/uksRPEgXMgyThettoGd8FsbcZR/2vouiGB55LwfJPmsQCROa7pxbeNTEnPq
+	L0jxv2kdIQSiZ+20vIb9pxjyI4wf2eiharJlf3lJjWD9DB4qcTGtc5uEL2zOokUwGorKKX
+	baE/tGQwBL1xKdnrRXyIbuPajYd/1y8ZdLkx56k6FoP/0qmvuIeS/+xPpT/ycg==
+Date: Mon, 6 May 2024 17:51:06 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] mtd: nand: mxc_nand: support software ECC
+Message-ID: <20240506175106.2ab7c844@xps-13>
+In-Reply-To: <20240506160508.6c60d50f@xps-13>
+References: <20240417-mtd-nand-mxc-nand-exec-op-v1-0-d12564fe54e9@pengutronix.de>
+	<20240417-mtd-nand-mxc-nand-exec-op-v1-3-d12564fe54e9@pengutronix.de>
+	<20240506160508.6c60d50f@xps-13>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-The SoC has a S/PDIF TX controller which is fully compatible with older
-generation Rockchip SoCs.
+Hi Miquel,
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
----
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+miquel.raynal@bootlin.com wrote on Mon, 6 May 2024 16:05:08 +0200:
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-index d0d1d7c2ab2f..bf6e05503141 100644
---- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-@@ -372,6 +372,20 @@ i2s_8ch: i2s@10200000 {
- 		status = "disabled";
- 	};
- 
-+	spdif: spdif@10204000 {
-+		compatible = "rockchip,rk3128-spdif", "rockchip,rk3066-spdif";
-+		reg = <0x10204000 0x1000>;
-+		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_SPDIF>, <&cru HCLK_SPDIF>;
-+		clock-names = "mclk", "hclk";
-+		dmas = <&pdma 13>;
-+		dma-names = "tx";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&spdif_tx>;
-+		#sound-dai-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	sdmmc: mmc@10214000 {
- 		compatible = "rockchip,rk3128-dw-mshc", "rockchip,rk3288-dw-mshc";
- 		reg = <0x10214000 0x4000>;
--- 
-2.43.2
+> Hi Sascha,
+>=20
+> s.hauer@pengutronix.de wrote on Wed, 17 Apr 2024 09:13:30 +0200:
+>=20
+> > To support software ECC we still need the driver provided read_oob,
+> > read_page_raw and write_page_raw ops, so set them unconditionally
+> > no matter which engine_type we use. The OOB layout on the other hand
+> > represents the layout the i.MX ECC hardware uses, so set this only
+> > when NAND_ECC_ENGINE_TYPE_ON_HOST is in use.
+> >=20
+> > With these changes the driver can be used with software BCH ECC which
+> > is useful for NAND chips that require a stronger ECC than the i.MX
+> > hardware supports.
+> >=20
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > ---
+> >  drivers/mtd/nand/raw/mxc_nand.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc=
+_nand.c
+> > index fc70c65dea268..f44c130dca18d 100644
+> > --- a/drivers/mtd/nand/raw/mxc_nand.c
+> > +++ b/drivers/mtd/nand/raw/mxc_nand.c
+> > @@ -1394,15 +1394,16 @@ static int mxcnd_attach_chip(struct nand_chip *=
+chip)
+> >  	chip->ecc.bytes =3D host->devtype_data->eccbytes;
+> >  	host->eccsize =3D host->devtype_data->eccsize;
+> >  	chip->ecc.size =3D 512;
+> > -	mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
+> > +
+> > +	chip->ecc.read_oob =3D mxc_nand_read_oob;
+> > +	chip->ecc.read_page_raw =3D mxc_nand_read_page_raw;
+> > +	chip->ecc.write_page_raw =3D mxc_nand_write_page_raw;
+
+A second thought on this. Maybe you should consider keeping these for
+on-host operations only.
+
+The read/write_page_raw operations are supposed to detangle the data
+organization to show a proper [all data][all oob] organization to the
+user. But of course if the data is stored differently when using
+software ECC, you'll expect the implementation to be different (and the
+core provides such helpers, even though in your case they use RNDOUT
+which is not yet supported).
+
+> > =20
+> >  	switch (chip->ecc.engine_type) {
+> >  	case NAND_ECC_ENGINE_TYPE_ON_HOST:
+> > +		mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
+> >  		chip->ecc.read_page =3D mxc_nand_read_page;
+> > -		chip->ecc.read_page_raw =3D mxc_nand_read_page_raw;
+> > -		chip->ecc.read_oob =3D mxc_nand_read_oob;
+> >  		chip->ecc.write_page =3D mxc_nand_write_page_ecc;
+> > -		chip->ecc.write_page_raw =3D mxc_nand_write_page_raw;
+> >  		chip->ecc.write_oob =3D mxc_nand_write_oob;
+> >  		break; =20
+>=20
+> You also need to disable the ECC engine by default (and then you're
+> free to use the raw page helpers).
+>=20
+> I thought patch 4 was needed for this patch to work, do you confirm?
+> Otherwise with the little change requested I might also merge this one.
+>=20
+> Thanks, Miqu=C3=A8l
 
 
