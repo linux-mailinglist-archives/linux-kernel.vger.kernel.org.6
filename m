@@ -1,141 +1,172 @@
-Return-Path: <linux-kernel+bounces-169995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85AE18BD064
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:35:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4EB48BD066
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4289C28966C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A751C22111
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED45152515;
-	Mon,  6 May 2024 14:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD29D152DF1;
+	Mon,  6 May 2024 14:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMQJ5wAC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3PDVwHX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1DF3613D;
-	Mon,  6 May 2024 14:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54183613D;
+	Mon,  6 May 2024 14:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715006140; cv=none; b=QCOyUuvz3Sh9iwGNpcIXSRhZBaVjB6JkwHDgeWYXWLJLrsU906MVvdLBH/jnBKyEpqSVKhwbNpyOmjd4zfHwfOStvAOdvXOTiJJ5Bgt8l5PR8xJdLwpYu5irUvkcs/s2P4muqUDOn8jc9XTLd1TVtFPSsLhCsPPjbVQABen1J9o=
+	t=1715006145; cv=none; b=TYQ9fNDNXWtzfy42S3Oe6Gja/WL31C6Uum839eYwuHJmPvPlj4O7jAPQa2e5GMv0FinXKtI7lN3kIgs3YFkPbwmp0YhaOzU63J75Kfc4mLcyrGZ6+XlUnooMKHdk9bUe3Acvp63Rt70RsIyaUT9zxcAj1efnHR80j/nXb4nFM4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715006140; c=relaxed/simple;
-	bh=Holytb9LI9/E5M3PKa+GSC5j9DzW8jErOK36mBSw64s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X34eYmSmUxNvQApBQK/Fqi8tPtCQaC2VtOa7IzWtlcFoszLOSa/SOq8qhDmFBLBtwUxgqJxPYCgOuKbgmtU5oeA659y4gtr7PsbifzvUKd1w/n7w7NNK9Z+ZNj1PGx+znG+D+A0q8pfmGZG87f+ZuDz2kA36AUj+Xp9LK6Lg8Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMQJ5wAC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444E4C4AF63;
-	Mon,  6 May 2024 14:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715006139;
-	bh=Holytb9LI9/E5M3PKa+GSC5j9DzW8jErOK36mBSw64s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bMQJ5wACI3bbtA1T/pInSGitQPQIFJU1egDf/vV7R5rtCMbqW+OsEdO02dROIjB0J
-	 UiK5E/3bbvYReFq7MhwWDKdUjcQGA/iIr3VVXVyaAJs7tqAlMpPZJS6xK8GD1Y6+2e
-	 ZRZFxz2LJtuTUGUhJtdyb5XaEJfUQyWBv5dz9IIhjifkrtAHphhdJ2htgoMbWKy5hj
-	 YZRgHrLSi0Nm8KTSniRG3V66b7zvhrU5hy1AMeUHi8d9Cg1t3vvMJPuEBHqEWm3/fI
-	 nzf5jPDRBo4QShdBMuTdgK97S37GL3+iLtXIjpo5/dfl2yNITojKsxKbVz1y7tlH7T
-	 uHlugMzmPRr2g==
-Date: Mon, 6 May 2024 15:35:28 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: marc.ferland@gmail.com
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Ferland
- <marc.ferland@sonatest.com>, Nuno Sa <nuno.sa@analog.com>
-Subject: Re: [PATCH v2] iio: dac: ad5592r: fix temperature channel scaling
- value
-Message-ID: <20240506153528.148d9b18@jic23-huawei>
-In-Reply-To: <20240501150554.1871390-1-marc.ferland@sonatest.com>
-References: <20240501150554.1871390-1-marc.ferland@sonatest.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715006145; c=relaxed/simple;
+	bh=e7HTaiEOkmkyJLnFpjteHG7h39udIJBpDlEILJ0M2T0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=c01CfVzxXdforLp8x6Ry38OH11KqyDlinfGhXMi/9qtGiwpScyMavWxnaAKUsnbPYz8Wx717LLcbLa1PCtYj+HotoaZD2Sf0wv/61OtlpNl0s0gbj26ZtzGywnTuV6XGZX7/r3LjJuzgLxIfmFAHh0RiMOPHzaQU7nV+HyRIZoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3PDVwHX; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715006144; x=1746542144;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=e7HTaiEOkmkyJLnFpjteHG7h39udIJBpDlEILJ0M2T0=;
+  b=F3PDVwHXQHBh2uUprIcf6AvgWs5P4y9pq3zwq+r7d1YmItzMZSjK0VJ9
+   yJfm2uekJxDxjSLWavP+BEWCiHeYc1ic/E6D3fwB6KPSyjteX15w1SYRY
+   1NW34aoz1DNfVAGWOaXD1vpA6iSZnGxcHPCNiqITea2zQoWKFMU+kSNtQ
+   UBxRZDlF+hJ5KOriLt0L228f0rU/glMxGnO1+yt3KzIBO3WzWOqfn9Bva
+   o49xGa+YbOa7rQURes7IQRTSP8Ap70WxEj8A7JlN9NS9bsz5S1/2tYOAv
+   RhDOCGZ5IXZ0Qb4VK2bZE5odzq7j14b0oCOSUFNY+8QZh/ujK/9KYsJs0
+   g==;
+X-CSE-ConnectionGUID: XnpfjLGvSrSqhF3TFI6fZA==
+X-CSE-MsgGUID: TUT9evfoTISSYy2T1kQoow==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="14535896"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="14535896"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:35:43 -0700
+X-CSE-ConnectionGUID: A40k2weoTG65ZydoWdBO0w==
+X-CSE-MsgGUID: l0S3Bw+/R/2Wl8ZHpd+pBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="28184155"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:35:40 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 6 May 2024 17:35:34 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Lukas Wunner <lukas@wunner.de>, 
+    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 1/2] PCI: Add TLP Prefix reading into
+ pcie_read_tlp_log()
+In-Reply-To: <20240503225305.GA1609388@bhelgaas>
+Message-ID: <816d5e04-1af7-884c-1ec2-ad70c18068a7@linux.intel.com>
+References: <20240503225305.GA1609388@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; BOUNDARY="8323328-1733933349-1715004351=:1111"
+Content-ID: <c4cc418c-1dd3-ce34-6759-6c90ef46b8f8@linux.intel.com>
 
-On Wed,  1 May 2024 11:05:54 -0400
-marc.ferland@gmail.com wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> From: Marc Ferland <marc.ferland@sonatest.com>
-> 
-> The scale value for the temperature channel is (assuming Vref=2.5 and
-> the datasheet):
-> 
->     376.7897513
-> 
-> When calculating both val and val2 for the temperature scale we
-> use (3767897513/25) and multiply it by Vref (here I assume 2500mV) to
-> obtain:
-> 
->   2500 * (3767897513/25) ==> 376789751300
-> 
-> Finally we divide with remainder by 10^9 to get:
-> 
->     val = 376
->     val2 = 789751300
-> 
-> However, we return IIO_VAL_INT_PLUS_MICRO (should have been NANO) as
-> the scale type. So when converting the raw temperature value to the
-> 'processed' temperature value we will get (assuming raw=810,
-> offset=-753):
-> 
->     processed = (raw + offset) * scale_val
->               = (810 + -753) * 376
-> 	      = 21432
-> 
->     processed += div((raw + offset) * scale_val2, 10^6)
->               += div((810 + -753) * 789751300, 10^6)
-> 	      += 45015
->     ==> 66447
->     ==> 66.4 Celcius  
-> 
-> instead of the expected 21.5 Celsius.
-> 
-> Fix this issue by changing IIO_VAL_INT_PLUS_MICRO to
-> IIO_VAL_INT_PLUS_NANO.
-> 
-> Signed-off-by: Marc Ferland <marc.ferland@sonatest.com>
-+CC Nuno.
+--8323328-1733933349-1715004351=:1111
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <a6b0eafc-f653-302c-44ae-97c6bf23ef83@linux.intel.com>
 
-Seems obviously correct to me so I'll apply it to the fixes-togreg
-branch of iio.git.  I've been wrong before though so ideally would like
-one of the ADI team to sanity check this.
+On Fri, 3 May 2024, Bjorn Helgaas wrote:
 
-I'll add the fixes tag as well and mark it for stable. This goes all the
-way back.
+> On Fri, Apr 12, 2024 at 04:36:34PM +0300, Ilpo J=E4rvinen wrote:
+> > pcie_read_tlp_log() handles only 4 TLP Header Log DWORDs but TLP Prefix
+> > Log (PCIe r6.1 secs 7.8.4.12 & 7.9.14.13) may also be present.
+> >=20
+> > Generalize pcie_read_tlp_log() and struct pcie_tlp_log to handle also
+> > TLP Prefix Log. The layout of relevant registers in AER and DPC
+> > Capability is not identical because the offsets of TLP Header Log and
+> > TLP Prefix Log vary so the callers must pass the offsets to
+> > pcie_read_tlp_log().
+>=20
+> I think the layouts of the Header Log and the TLP Prefix Log *are*
+> identical, but they are at different offsets in the AER Capability vs
+> the DPC Capability.  Lukas and I have both stumbled over this.
 
-Fixes: 56ca9db862bf ("iio: dac: Add support for the AD5592R/AD5593R ADCs/DACs")
+I'll try to reword it once again.
 
+The way it's spec'ed, there actually also a small difference in sizes too=
+=20
+(PCIe r6 7.9.14.13 says DPC one can be < 4 DWs whereas AER on is always 4=
+=20
+DWs regardless of the number of supported E-E Prefixes) so I'll just=20
+rewrite it so it doesn't focus just on the offset.
 
-> ---
-> Change in v2:
->  - Improve commit message as suggested by Jonathan.
-> 
->  drivers/iio/dac/ad5592r-base.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
-> index 076bc9ecfb49..4763402dbcd6 100644
-> --- a/drivers/iio/dac/ad5592r-base.c
-> +++ b/drivers/iio/dac/ad5592r-base.c
-> @@ -415,7 +415,7 @@ static int ad5592r_read_raw(struct iio_dev *iio_dev,
->  			s64 tmp = *val * (3767897513LL / 25LL);
->  			*val = div_s64_rem(tmp, 1000000000LL, val2);
->  
-> -			return IIO_VAL_INT_PLUS_MICRO;
-> +			return IIO_VAL_INT_PLUS_NANO;
->  		}
->  
->  		mutex_lock(&st->lock);
-> 
-> base-commit: 98369dccd2f8e16bf4c6621053af7aa4821dcf8e
+> Similar and more comments at:
+> https://lore.kernel.org/r/20240322193011.GA701027@bhelgaas
 
+I'm really sorry, I missed those comments and only focused on that ixgbe=20
+part.
+
+> > Convert eetlp_prefix_path into integer called eetlp_prefix_max and
+> > make is available also when CONFIG_PCI_PASID is not configured to
+> > be able to determine the number of E-E Prefixes.
+>=20
+> s/make is/make it/
+>=20
+> I think this could be a separate patch.
+
+Sure, I can make it own patch.
+
+> > --- a/include/linux/aer.h
+> > +++ b/include/linux/aer.h
+> > @@ -20,6 +20,7 @@ struct pci_dev;
+> > =20
+> >  struct pcie_tlp_log {
+> >  =09u32 dw[4];
+> > +=09u32 prefix[4];
+> >  };
+> > =20
+> >  struct aer_capability_regs {
+> > @@ -37,7 +38,9 @@ struct aer_capability_regs {
+> >  =09u16 uncor_err_source;
+> >  };
+> > =20
+> > -int pcie_read_tlp_log(struct pci_dev *dev, int where, struct pcie_tlp_=
+log *log);
+> > +int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
+> > +=09=09      unsigned int tlp_len, struct pcie_tlp_log *log);
+> > +unsigned int aer_tlp_log_len(struct pci_dev *dev);
+>=20
+> I think it was a mistake to expose pcie_read_tlp_log() outside
+> drivers/pci, and I don't think we should expose aer_tlp_log_len()
+> either.
+
+Ah, my intention was to remove the exposure but I only ended up removing=20
+the actual EXPORT and didn't realize I should have also moved the=20
+prototype into another header.
+
+I'll add also a patch to remove pcie_read_tlp_log() EXPORT too but I'm=20
+wondering now whether I should also move these function(s) into=20
+pcie/aer.c (or somewhere else that is only build if AER is enabled) since=
+=20
+there won't be callers ourside of AER/DPC?
+
+> We might be stuck with exposing struct pcie_tlp_log since it looks
+> like ras_event.h uses it.
+
+Yes.
+
+--=20
+ i.
+--8323328-1733933349-1715004351=:1111--
 
