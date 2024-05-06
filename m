@@ -1,94 +1,79 @@
-Return-Path: <linux-kernel+bounces-169763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B168C8BCD4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:02:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560478BCD50
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37221C22695
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E291F22E99
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2D9143893;
-	Mon,  6 May 2024 12:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1077414387A;
+	Mon,  6 May 2024 12:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="d8njteUy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JvLmPWp5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="d8njteUy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JvLmPWp5"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bnp6wsx8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57712142E8F;
-	Mon,  6 May 2024 12:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A421DFCE
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714996944; cv=none; b=TXZ2jsPgkCUclO+GLx9Tz/YregYjjgOhKo8mepnuzYAp5mbERcHVtV0oD0Gf4M/zRGsdiJxGXVbUPoYPK3INcCM7ssIVpdL5xUgGKU81/sWrRsZsaOkaAlVWcAmR0c1vj8geElEezLrw3K/FfiF/Ysn+k1ZnGVSYWvsFFo0jXHs=
+	t=1714997000; cv=none; b=tYx7JldLACy+YHZaTM5+f8I+BAxTu1I1TBIb6VQuUdWzXh6ThLBVVO1Qrhjqi/38tnAIN3MCuAfNkWTNimKTsRdFhUCwRPCTiQKIrqNWxhrUZoUTpjHqp13Q7khzOdMC0JipmSUX0cr8hsnEPyXST9ruz/ic7D3tzn34fm7FG+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714996944; c=relaxed/simple;
-	bh=SIoEa4aRnSFEuOwOjN7KY5Vugmu6+AFZFlmItQxyjSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Snw+A32Yo6VIq68Q3jKzP6eX99OB/Ohn71aNOuAhr5jN32UDhEmsZkQ/oKcUR975XkGyQO9pGS5he/XPEPPiH/7TlU388oj3MIBTHJMAFMYrfKwhjdqDWWbSK+3O4fJ3tWdeldeEalJ5FFrGO20B4Ej/p37c0N08QR/afmMeUTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d8njteUy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JvLmPWp5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d8njteUy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JvLmPWp5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 99DA93828A;
-	Mon,  6 May 2024 12:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714996941; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1714997000; c=relaxed/simple;
+	bh=j5Ry1fKKWDacYI6b6d9sK8zJumu5xC8p8e/9UVRHuGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PTxW1rjg0Ub68WCGocVSFizbS6pqKlaJrtQ2nUZIRTwwvyYpbW7iLVN2lA1BjRemL3+9EYawRe0Ie9RUtvDzNFGodXYyFLs7LcVFvcHWARgb/Zn750N6NmeXnVyH0A8E4UR5XqnZttI14GFV9uUMeimmVepcpusiikG66sZ5Nbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bnp6wsx8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714996997;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zsgxXCio+OwLPEzdmTJFkDDGrsy5BNCKTyYGrGUUX3U=;
-	b=d8njteUyuE+L6wdGwwkGkcRe3rvUUxIdO7Jxsv00Oo8QbO1PLKfc3Tid/2H7WnsQXTmO80
-	gkPx3hzf8o7MhlhUnPEdsgVMz2Xei3Hz3zYwBcoS6iX1ILvMXrunmlS6Fhwi+zIQ0D0pW2
-	TuIktwlp+w48f+8QDWOI1LXDPKTPet0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714996941;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zsgxXCio+OwLPEzdmTJFkDDGrsy5BNCKTyYGrGUUX3U=;
-	b=JvLmPWp5hIJWuyrL/zT/apcECxdfCse63+CuuLXVOAb7SPN2bTTfbjKEwYO7Qi82nJ08bF
-	rfSYDn0+9gu6tADA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1714996941; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zsgxXCio+OwLPEzdmTJFkDDGrsy5BNCKTyYGrGUUX3U=;
-	b=d8njteUyuE+L6wdGwwkGkcRe3rvUUxIdO7Jxsv00Oo8QbO1PLKfc3Tid/2H7WnsQXTmO80
-	gkPx3hzf8o7MhlhUnPEdsgVMz2Xei3Hz3zYwBcoS6iX1ILvMXrunmlS6Fhwi+zIQ0D0pW2
-	TuIktwlp+w48f+8QDWOI1LXDPKTPet0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1714996941;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zsgxXCio+OwLPEzdmTJFkDDGrsy5BNCKTyYGrGUUX3U=;
-	b=JvLmPWp5hIJWuyrL/zT/apcECxdfCse63+CuuLXVOAb7SPN2bTTfbjKEwYO7Qi82nJ08bF
-	rfSYDn0+9gu6tADA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48DB913A25;
-	Mon,  6 May 2024 12:02:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id idzIDs3GOGakOwAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 06 May 2024 12:02:21 +0000
-Message-ID: <ea1129b5-4b27-434c-bc1b-1a06b5f867b9@suse.de>
-Date: Mon, 6 May 2024 14:02:20 +0200
+	bh=yzZba38xk2bDpCg1kS6Eq/hb8hs4ygmli1/QCKUzpOY=;
+	b=Bnp6wsx81COqiD2EY4GuhmdlYcdUZpTKvbSkC6lwrrP0g5n3a0mn8gmQRQyePdyhQYJEgQ
+	QEf7qs/bZyLnhDk8n7+HN44wEd+qnMg9H+kgfiW24dvp6s5kQfMVr3RP95SyEv6TzrBxtz
+	Q69M1Y7ivIxTfa/BiUhScdShKodScEI=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-aCQQbOzxMeO7X2PIFLmOTA-1; Mon, 06 May 2024 08:03:16 -0400
+X-MC-Unique: aCQQbOzxMeO7X2PIFLmOTA-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a59bfd32b8fso86999066b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:03:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714996995; x=1715601795;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yzZba38xk2bDpCg1kS6Eq/hb8hs4ygmli1/QCKUzpOY=;
+        b=MrHnJmiAbJecUN7RNVFQYyzW7tl/9Yw9B/4jL6WGc8ON3vyWh8RkjGqTqeqgWEuugR
+         dsR7SB8yggFoz4FE4zZFbmr+1aP6Ot7T6GNXOPu0zVyW5La/EP25BKoawPKVrz37aPbx
+         4PA0QZCY0KRrNgQUzEZGFOm4t1lUHP6Nbt0Fhod/id0Q/1K1JrlcXmFlcJLvP6YTIyAj
+         X1A4NbOLJdlLBngxYDxzFcj+vHX7gdid0p7P810vbQ0e7AdttvXE7WuckVPZFfPLab9E
+         wD3hs7Dw04bZdGZGXXwE1LN+cyzqrNN0n7P1j2hzLmEI/iuanX3jOgxSjXOJ3hjHktQE
+         uQNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWx6I3aSrfqkHttVVEGFEcblsJZgpSLnbB+2qtclJlDtv2joEs0zIx2tITgi09M5uOS7ef+IoVVqelaW8aXI6X7hLNidMJNUzjFqRur
+X-Gm-Message-State: AOJu0YzgMabltkhiySjfN9s6VOv+7z0TsRCyitCXRjgC5ZR4mlb5iQuN
+	wz5Uj2qRT30XMDdLOkjJzG1gTlSbvxGMZlqmmQjvvLeQF3gZ0jVyDO3jxSFcGfeSPSwGyJUGAND
+	/uHARs/b4fzlhiI0vgz79KstiMxxQ72rXatMO2Yq9zMF6HPbOo6MNQlTY3ieXZw==
+X-Received: by 2002:a17:906:794c:b0:a59:cdf4:f938 with SMTP id l12-20020a170906794c00b00a59cdf4f938mr2195213ejo.37.1714996994945;
+        Mon, 06 May 2024 05:03:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGucec+tIFmcjzIqbQWr5trspdhZZYai22RB6fKxuM7q1j9s8AS+oB8vTyh3NGz7MzNECHafQ==
+X-Received: by 2002:a17:906:794c:b0:a59:cdf4:f938 with SMTP id l12-20020a170906794c00b00a59cdf4f938mr2195192ejo.37.1714996994481;
+        Mon, 06 May 2024 05:03:14 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id hg12-20020a1709072ccc00b00a59b6eed3c4sm2277762ejc.45.2024.05.06.05.03.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 05:03:14 -0700 (PDT)
+Message-ID: <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
+Date: Mon, 6 May 2024 14:03:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,164 +81,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Massive slowdown in kernels as of 6.x
-To: Holger Kiehl <Holger.Kiehl@dwd.de>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-raid <linux-raid@vger.kernel.org>, linux-block@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, linux-ext4@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>
-References: <1ebabc15-51a8-59f3-c813-4e65e897a373@diagnostix.dwd.de>
+Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
+ and writing touch IC registers
+To: Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net,
+ dmitry.torokhov@gmail.com, Richard Hughes <hughsient@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ neil.armstrong@linaro.org
+References: <20240506114752.47204-1-charles.goodix@gmail.com>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <1ebabc15-51a8-59f3-c813-4e65e897a373@diagnostix.dwd.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240506114752.47204-1-charles.goodix@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dwd.de:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-On 5/6/24 13:31, Holger Kiehl wrote:
-> Hello,
-> 
-> on a 4 socket file server distributing ~90 million files with
-> ~130TiB of data daily, I see a massive slowdown of IO operation
-> after some time (sometimes in less then a day). This slowdown
-> only started as of Kernel 6.x and does not happen with 5.15.x.
-> Have so far tried, 6.0.9, 6.1.27 and 6.6.30 kernel and they all
-> have this same slowdown effect after some time. If the load is
-> taken away from the server and it is nearly idle, it still has
-> this slowdown effect and only recovers after some hours by itself.
-> During this slowdown and idle time I had a look at an rsync
-> process with strace that was uploading some small files to the
-> server and could see the slowdown here was in the rename() system
-> call, all other system calls (read(), write(), newfstatat(),
-> openat(), fchmod(), etc) where not effected:
-> 
->     rename(".27095571.iXVMMT", "27095571")  = 0 <18.305817>
->     rename(".272629ef.22gv2x", "272629ef")  = 0 <18.325222>
->     rename(".275fbacf.UBj6J5", "275fbacf")  = 0 <18.317571>
->     rename(".277ab7da.K5y144", "277ab7da")  = 0 <18.312568>
->     rename(".27873039.ZQ4Lum", "27873039")  = 0 <18.310120>
->     rename(".27ebf01f.t1FKeU", "27ebf01f")  = 0 <18.376816>
->     rename(".27f97e6a.kJqqfL", "27f97e6a")  = 0 <18.290618>
->     rename(".28078cd9.rV7JdN", "28078cd9")  = 0 <18.315415>
->     rename(".28105bb4.gljiDk", "28105bb4")  = 0 <18.325392>
->     rename(".282209b1.Cy3Wt2", "282209b1")  = 0 <30.188303>
->     rename(".28888272.aUCxRj", "28888272")  = 0 <18.263236>
->     rename(".288d8408.XjfGbH", "288d8408")  = 0 <18.312444>
->     rename(".2897f455.hm3FG6", "2897f455")  = 0 <18.281729>
->     rename(".28d7d7e8.pzMMF6", "28d7d7e8")  = 0 <18.281402>
->     rename(".28d9a820.KQuaM0", "28d9a820")  = 0 <32.620562>
->     rename(".294ae845.8Y6vYR", "294ae845")  = 0 <18.289532>
->     rename(".294fee3f.eccu2p", "294fee3f")  = 0 <18.260564>
->     rename(".29581b50.zPTjTh", "29581b50")  = 0 <18.314536>
->     rename(".2975d45f.l5FUYX", "2975d45f")  = 0 <18.293864>
->     rename(".29b3770a.tlNMvb", "29b3770a")  = 0 <0.000062>
->     rename(".29c5e6ee.EexCwZ", "29c5e6ee")  = 0 <18.268144>
->     rename(".29d23183.sLqxpd", "29d23183")  = 0 <18.344478>
->     rename(".29d4f65.oyjRWj", "29d4f65")    = 0 <18.553610>
->     rename(".29dcfab1.Y47Z1B", "29dcfab1")  = 0 <18.339336>
->     rename(".29f26c7c.KNZXEe", "29f26c7c")  = 0 <18.372242>
->     rename(".2a09907b.SXIgev", "2a09907b")  = 0 <18.317119>
->     rename(".2a0c499c.8DiCsM", "2a0c499c")  = 0 <18.380393>
->     rename(".2a64b7e8.FPnsB3", "2a64b7e8")  = 0 <18.372004>
->     rename(".2a6765c9.t7Z0hj", "2a6765c9")  = 0 <18.296044>
->     rename(".2a83d78f.UJVoMu", "2a83d78f")  = 0 <18.380678>
->     rename(".2a94e724.AorYof", "2a94e724")  = 0 <18.360716>
->     rename(".2a9ea651.EWpBHM", "2a9ea651")  = 0 <18.327733>
->     rename(".2a9f1679.xDYq9Q", "2a9f1679")  = 0 <18.312850>
->     rename(".2ab0a134.2GWgmr", "2ab0a134")  = 0 <18.326181>
->     rename(".2aebf110.pGkILq", "2aebf110")  = 0 <0.000188>
->     rename(".2af10031.7Sl5g6", "2af10031")  = 0 <18.342683>
->     rename(".2b095066.MCauJX", "2b095066")  = 0 <18.375003>
->     rename(".2b217bfd.HauJjr", "2b217bfd")  = 0 <18.427703>
->     rename(".2b336a06.w5NN0p", "2b336a06")  = 0 <18.378774>
->     rename(".2b40b422.i2v0E6", "2b40b422")  = 0 <14.727797>
->     rename(".2b568d13.9zmRRX", "2b568d13")  = 0 <0.000056>
->     rename(".2b5ccc66.AFd86P", "2b5ccc66")  = 0 <0.000063>
->     rename(".2b7d0a43.qWyxge", "2b7d0a43")  = 0 <0.000046>
->     rename(".2b7f968a.QAqOCb", "2b7f968a")  = 0 <0.000041>
->     rename(".2ba6dddf.ynNTvi", "2ba6dddf")  = 0 <0.000039>
->     rename(".2bce23ab.tliDkg", "2bce23ab")  = 0 <0.000040>
->     rename(".2c19e144.CvHPV5", "2c19e144")  = 0 <0.000060>
->     rename(".2c7c0651.8x1kQy", "2c7c0651")  = 0 <0.000057>
->     rename(".2ca1a6b7.QwujH4", "2ca1a6b7")  = 0 <0.000396>
->     rename(".2cc71683.7n9EYA", "2cc71683")  = 0 <0.000045>
->     rename(".2cebde90.ZiGcTa", "2cebde90")  = 0 <0.000042>
->     rename(".2d057cb4.5PGOIP", "2d057cb4")  = 0 <0.000042>
->     rename(".2d29b4a7.A8hfwg", "2d29b4a7")  = 0 <0.000043>
-> 
-> So during the slow phase it took mostly ~18 seconds and as the phase
-> ends, the renames are very fast again.
-> 
-> Tried to change the priority of the process with renice and
-> also enabled some different IO schedulers for the block device,
-> but this had no effect.
-> 
-> Could not find anything in the logs or dmesg when this happens.
-> 
-> Any idea what could be the cause of this slowdown?
-> 
-> What else can I do to better locate in which part of the kernel
-> the IO is stuck?
-> 
-> The system has 1.5TiB memory and the filesystem is ext4 on a MD
-> raid10 with 10 nvme drives (Intel P4610):
-> 
->     cat /proc/mdstat
->     Personalities : [raid10]
->     md0 : active raid10 nvme1n1[2] nvme4n1[4] nvme5n1[5] nvme3n1[3] nvme9n1[9] nvme8n1[8] nvme7n1[7] nvme6n1[6] nvme2n1[1] nvme0n1[0]
->           7813406720 blocks super 1.2 512K chunks 2 near-copies [10/10] [UUUUUUUUUU]
->           bitmap: 28/59 pages [112KB], 65536KB chunk
-> 
-> Mounted as follows:
-> 
->     /dev/md0 on /u2 type ext4 (rw,nodev,noatime,commit=600,stripe=640)
-> 
-> The following cron entry is used to trim the device:
-> 
->     25 */2 * * * root /usr/sbin/fstrim -v /u2 >> /tmp/u2.trim 2>&1
-> 
-> A check of the raid was also performed with no issues:
-> 
->     [Sun May  5 13:52:01 2024] md: data-check of RAID array md0
->     [Sun May  5 14:54:25 2024] md: md0: data-check done.
->     cat /sys/block/md0/md/mismatch_cnt
->     0
-> 
-> CPU's are four Intel Xeon Platinum 8268 and server is a Dell Poweredge R940.
-> 
-> Additional information of the kernel config and other information I have
-> uploaded to https://download.dwd.de/pub/afd/test/kernel_problem
-> 
-There had been some discard regressions in the MD code, which I thought 
-Coly had fixed in the meantime.
+Hi,
 
-To rule that out please disable the 'cron' job and see if the slowdown 
-persists.
+On 5/6/24 1:47 PM, Charles Wang wrote:
+> Export a sysfs interface that would allow reading and writing touchscreen
+> IC registers. With this interface many things can be done in usersapce
+> such as firmware updates. An example tool that utilizes this interface
+> for performing firmware updates can be found at [1].
 
-Cheers,
+I'm not sure if I'm a fan of adding an interface to export raw register
+access for fwupdate.
 
-Hannes
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/input/touchscreen/goodix_fwupload.c
+
+Contains update support for older goodix touchscreens and it is not
+that big. I think it might be better to just have an in kernel fwupdate
+driver for this and have a sysfs file to which to write the new firmware.
+
+Adding Richard Hughes, fwupd maintainer to the Cc. Richard, do you have
+any input on the suggested method for firmware updating ?
+
+If raw register access is seen as a good solution, then I think this
+should use regmap + some generic helpers (to be written) to export
+regmap r/w access to userspace.
+
+> [1] https://github.com/goodix/fwupdate_for_berlin_linux
+
+Hmm, that tool seems to have some licensing issues there is an Apache License v2.0
+LICENSE file, but the header of fwupdate.c claims it is confidential ...
+
+Regards,
+
+Hans
+
+
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  drivers/input/touchscreen/goodix_berlin.h     |  2 +
+>  .../input/touchscreen/goodix_berlin_core.c    | 52 +++++++++++++++++++
+>  drivers/input/touchscreen/goodix_berlin_i2c.c |  6 +++
+>  drivers/input/touchscreen/goodix_berlin_spi.c |  6 +++
+>  4 files changed, 66 insertions(+)
+> 
+> diff --git a/drivers/input/touchscreen/goodix_berlin.h b/drivers/input/touchscreen/goodix_berlin.h
+> index 1fd77eb69..1741f2d15 100644
+> --- a/drivers/input/touchscreen/goodix_berlin.h
+> +++ b/drivers/input/touchscreen/goodix_berlin.h
+> @@ -19,6 +19,8 @@ struct regmap;
+>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>  			struct regmap *regmap);
+>  
+> +void goodix_berlin_remove(struct device *dev);
+> +
+>  extern const struct dev_pm_ops goodix_berlin_pm_ops;
+>  
+>  #endif
+> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
+> index e7b41a926..e02160841 100644
+> --- a/drivers/input/touchscreen/goodix_berlin_core.c
+> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
+> @@ -672,6 +672,44 @@ static void goodix_berlin_power_off_act(void *data)
+>  	goodix_berlin_power_off(cd);
+>  }
+>  
+> +static ssize_t goodix_berlin_registers_read(struct file *filp, struct kobject *kobj,
+> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
+> +{
+> +	struct goodix_berlin_core *cd;
+> +	struct device *dev;
+> +	int error;
+> +
+> +	dev = kobj_to_dev(kobj);
+> +	cd = dev_get_drvdata(dev);
+> +
+> +	error = regmap_raw_read(cd->regmap, (unsigned int)off,
+> +				buf, count);
+> +
+> +	return error ? error : count;
+> +}
+> +
+> +static ssize_t goodix_berlin_registers_write(struct file *filp, struct kobject *kobj,
+> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
+> +{
+> +	struct goodix_berlin_core *cd;
+> +	struct device *dev;
+> +	int error;
+> +
+> +	dev = kobj_to_dev(kobj);
+> +	cd = dev_get_drvdata(dev);
+> +
+> +	error = regmap_raw_write(cd->regmap, (unsigned int)off,
+> +				 buf, count);
+> +
+> +	return error ? error : count;
+> +}
+> +
+> +static struct bin_attribute goodix_berlin_registers_attr = {
+> +	.attr = {.name = "registers", .mode = 0600},
+> +	.read = goodix_berlin_registers_read,
+> +	.write = goodix_berlin_registers_write,
+> +};
+> +
+>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>  			struct regmap *regmap)
+>  {
+> @@ -743,6 +781,14 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>  
+>  	dev_set_drvdata(dev, cd);
+>  
+> +	error = sysfs_create_bin_file(&cd->dev->kobj,
+> +				      &goodix_berlin_registers_attr);
+> +
+> +	if (error) {
+> +		dev_err(dev, "unable to create sysfs file, err=%d\n", error);
+> +		return error;
+> +	}
+> +
+>  	dev_dbg(dev, "Goodix Berlin %s Touchscreen Controller",
+>  		cd->fw_version.patch_pid);
+>  
+> @@ -750,6 +796,12 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>  }
+>  EXPORT_SYMBOL_GPL(goodix_berlin_probe);
+>  
+> +void goodix_berlin_remove(struct device *dev)
+> +{
+> +	sysfs_remove_bin_file(&dev->kobj, &goodix_berlin_registers_attr);
+> +}
+> +EXPORT_SYMBOL_GPL(goodix_berlin_remove);
+> +
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("Goodix Berlin Core Touchscreen driver");
+>  MODULE_AUTHOR("Neil Armstrong <neil.armstrong@linaro.org>");
+> diff --git a/drivers/input/touchscreen/goodix_berlin_i2c.c b/drivers/input/touchscreen/goodix_berlin_i2c.c
+> index 6ed9aa808..35ef21cc8 100644
+> --- a/drivers/input/touchscreen/goodix_berlin_i2c.c
+> +++ b/drivers/input/touchscreen/goodix_berlin_i2c.c
+> @@ -46,6 +46,11 @@ static int goodix_berlin_i2c_probe(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> +static void goodix_berlin_i2c_remove(struct i2c_client *client)
+> +{
+> +	goodix_berlin_remove(&client->dev);
+> +}
+> +
+>  static const struct i2c_device_id goodix_berlin_i2c_id[] = {
+>  	{ "gt9916", 0 },
+>  	{ }
+> @@ -66,6 +71,7 @@ static struct i2c_driver goodix_berlin_i2c_driver = {
+>  		.pm = pm_sleep_ptr(&goodix_berlin_pm_ops),
+>  	},
+>  	.probe = goodix_berlin_i2c_probe,
+> +	.remove = goodix_berlin_i2c_remove,
+>  	.id_table = goodix_berlin_i2c_id,
+>  };
+>  module_i2c_driver(goodix_berlin_i2c_driver);
+> diff --git a/drivers/input/touchscreen/goodix_berlin_spi.c b/drivers/input/touchscreen/goodix_berlin_spi.c
+> index 4cc557da0..8ffbe1289 100644
+> --- a/drivers/input/touchscreen/goodix_berlin_spi.c
+> +++ b/drivers/input/touchscreen/goodix_berlin_spi.c
+> @@ -150,6 +150,11 @@ static int goodix_berlin_spi_probe(struct spi_device *spi)
+>  	return 0;
+>  }
+>  
+> +static void goodix_berlin_spi_remove(struct spi_device *spi)
+> +{
+> +	goodix_berlin_remove(&spi->dev);
+> +}
+> +
+>  static const struct spi_device_id goodix_berlin_spi_ids[] = {
+>  	{ "gt9916" },
+>  	{ },
+> @@ -169,6 +174,7 @@ static struct spi_driver goodix_berlin_spi_driver = {
+>  		.pm = pm_sleep_ptr(&goodix_berlin_pm_ops),
+>  	},
+>  	.probe = goodix_berlin_spi_probe,
+> +	.remove = goodix_berlin_spi_remove,
+>  	.id_table = goodix_berlin_spi_ids,
+>  };
+>  module_spi_driver(goodix_berlin_spi_driver);
 
 
