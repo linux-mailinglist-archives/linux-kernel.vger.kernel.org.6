@@ -1,218 +1,121 @@
-Return-Path: <linux-kernel+bounces-170444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7918BD6E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68C68BD6E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 23:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF9901C215C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405201F21B64
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8B015B98E;
-	Mon,  6 May 2024 21:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D71D15B97E;
+	Mon,  6 May 2024 21:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/yMHmv2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iljeouOH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CDA15B96C;
-	Mon,  6 May 2024 21:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4569B446AC
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 21:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715031035; cv=none; b=l0nZECmhiT4dH5y1Q/0KLlJAods6qYJ65SQ436JL/uCQ0CbAiDqJGs+Ja/sXPCo7kv/4SMQEcm3jBXx5EbOBzssiJz91XjovzybduScSJ2bj0T4ccuHPSiDHI/NJ8hlWv3W7jI9MhqBgEWXouRqcS9nLW+0mWmWDkyU0X1tQaUA=
+	t=1715031116; cv=none; b=k1e2vMDtVKbwtqahVlmZwJAWOyKe8bK45ifpRYbRBEu5ySDC26DmWYQRrYVnHjtcl5WYaLvg3cgLxcjwZgb7m80rN8MqpVXOURM2EliKDVoq35ttfJJznJ55SAQy773isn7uX2gG1Yr6xx4SuwqCsx/cwz7LQpshK2TLuRh3yys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715031035; c=relaxed/simple;
-	bh=KjDM3t+mXPHZ1np8qdQus9+e0DhietiiqDnxUT3Z2PY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LQv9CKIhYxnAnF9YSmkktjLShL+KV5RJjalrnNnePwoLBKYo8+1PebWkJaNrtXR5WoDqZm82ib1CHAN+et/CqyId1JLj8hzFwn8xLRtKSMVTJLvM1umo/m3U2UjbgtXrdgD1VUOmk5o4H7HQQ5DLWGeVUUpVDHU0xmSjRu5YxY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/yMHmv2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35708C116B1;
-	Mon,  6 May 2024 21:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715031034;
-	bh=KjDM3t+mXPHZ1np8qdQus9+e0DhietiiqDnxUT3Z2PY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=h/yMHmv2v/ApNmXpzI4Y21meX5roolHvl3e3SCcjlRj9dWR5IsNMxkJN0NLOdUWk0
-	 K4kZuz6MbEP+oplWCheFiFjfEHenHGDJsi4AhiNeQ+SxtoO6pFE4muCN9Ok5HYmy0s
-	 RbQ/HN8wXtixiFbHDuJlYAqW/foGFdpBxqB9whNSAKJvigD446r8Fy9axobPPTTikh
-	 EfciLZo6WVLsz5kZyGo8eTZm6SQnvOnTl0QYtW3CKwNEVbLR09xE+JwWGAe+bFhrod
-	 psefR+GifNihINecQzegKglSAhVSZigw3g8F2ghJs2q+4F00naXwI/lfJSGDDHNSUy
-	 aWGPXyAbJRaPg==
-Date: Mon, 6 May 2024 23:30:32 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: David Yang <mmyangfl@gmail.com>
-cc: linux-input@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
-    linux-kernel@vger.kernel.org, Milan Plzik <milan.plzik@gmail.com>
-Subject: Re: [PATCH] HID: kye: Change Device Usage from Puck to Mouse
-In-Reply-To: <20240502042335.15611-1-mmyangfl@gmail.com>
-Message-ID: <nycvar.YFH.7.76.2405062329320.16865@cbobk.fhfr.pm>
-References: <20240502042335.15611-1-mmyangfl@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1715031116; c=relaxed/simple;
+	bh=HVLHvpEyG2mfyd18sLfQXaFprFxs1P/zGv7gmW5JvUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EE/CGEM95S4SXFXoLZ3QfqM059vVElPMoYnJ9iw6ONLr2Mm0tPUOTgA0M/h0Zm89+bqFLQmLaIE+/wsIutlbDb4oB18iIYLQU4yniib7Sjt6eJfK/2kx/7youGhx61r4xWBm3Fkql1ddcFdUCivCV9qkVTpqmDw2GoQ7NlQUWv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iljeouOH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41b21ed19f5so16726575e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 14:31:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715031113; x=1715635913; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0C9sj5lYnX5Se84emc2aH7p5IP0yHRhAhDOYWxq1wAA=;
+        b=iljeouOHU5sQFbR8tH7BH42qIQM5sNpF3usbyaI0bGvqegvnv5OwvVTVCZDZX4ZPzI
+         knovvTsJVJZAMyJm6bZLcDbjEOuZU0v5/Hr7aS7ZAzjgcinjYQsbhG8txQ+HQvcgHega
+         JNwP8ZwBYZAHn+/yEjVFDHZXlM6tqV3V789ps4iSGPgIRUMAMDd6SGsICNkmhMh6/5gA
+         KRYCzsZIdal+U2ucAeShXPFXN1KjKUdGdMwTN03r4ocXgUGz+klzA4GzvnCb1S7IVdvm
+         LTeawtCvnC/y/PJEOX4gvzeZJirfZm4fLSY6RXTdVZ4rEK89pnNzHW8u3Oo+BwBuCOf9
+         kJ9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715031113; x=1715635913;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0C9sj5lYnX5Se84emc2aH7p5IP0yHRhAhDOYWxq1wAA=;
+        b=vTUyI/UXJPKsfY/aiNetddQk1jjR443bPmdwQk8vCWmmYNAyHJEzLxqGSU+DwOHXN2
+         b/hhkZ0xAl2R1botBIf8slp83qj2ANUykxyIUtPZ9OThghf+TQTanYNltl/CAPMTZKMW
+         LPYNMaau+fP6Qkf26w9+p6TkXDtKDEt/fhWzF7Ds4loAA2Od1/pK15i8FMsW55S1nrDb
+         PygHb+uTxVJVtLXsbp3qPhXXrM7EF0fJ5T/ugSk0kD0Ug0t32x4068zpqsvsncq0Byhe
+         qvXLKn7sCDt5+5U7VXhY3vJLMfuMIRPFcGChnH80QeXxqBPq1iU5B4/T3zKPOTaRQi1V
+         SFPQ==
+X-Gm-Message-State: AOJu0YyY6fWl3Lh3pyQHxfRRIEVlY+UfiBqvezT4uXEcFS0Al/bQ7yNg
+	PVEy62cMLmj+CrYE8BiryRvRpdRjRjjzhhn35bR8u9pcRIyh75o8vuIa+w==
+X-Google-Smtp-Source: AGHT+IGzWNPXPcpEK4cmfXu1iZvGx4skz8H0ac7fOZbovk+7Eo/Od8Qbw6HYoiEk5NhssaENQpg46Q==
+X-Received: by 2002:a05:600c:1c03:b0:416:605b:5868 with SMTP id j3-20020a05600c1c0300b00416605b5868mr8692902wms.35.1715031113310;
+        Mon, 06 May 2024 14:31:53 -0700 (PDT)
+Received: from localhost.localdomain (host86-177-210-156.range86-177.btcentralplus.com. [86.177.210.156])
+        by smtp.gmail.com with ESMTPSA id iv16-20020a05600c549000b0041bff91ea43sm17270669wmb.37.2024.05.06.14.31.52
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 06 May 2024 14:31:52 -0700 (PDT)
+From: Levi Yun <ppbuk5246@gmail.com>
+To: anna-maria@linutronix.de,
+	frederic@kernel.org,
+	mingo@kernel.org,
+	tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	Levi Yun <ppbuk5246@gmail.com>
+Subject: [PATCH] time/tick-sched: enable idle load balancing when nohz_full cpu becomes idle.
+Date: Mon,  6 May 2024 22:31:50 +0100
+Message-ID: <20240506213150.13608-1-ppbuk5246@gmail.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2 May 2024, David Yang wrote:
+When nohz_full CPU stops tick in tick_nohz_irq_exit(),
+It wouldn't be chosen to perform idle load balancing bacause it doesn't
+call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
+becomes idle.
 
-> Change device type because
-> a. it is exactly a mouse, with left/right buttons and scroll wheel;
-> b. it does not have visible marks or crosshairs, thus does not provide
-> higher accuracy than stylus.
+tick_nohz_idle_stop_tick() is only called in idle state and
+nohz_balance_enter_idle() tracks the CPU is part of nohz.idle_cpus_mask
+with rq->nohz_tick_stopped.
 
-Let's CC Milan, who originally added all this in feb6faf1e5d46 ("HID: kye: 
-Fix report descriptor for Genius PenSketch M912") ... Milan, any concerns 
-about the below?
+So, nohz_balance_enter_idle() could be called safely without !was_stooped
+check.
 
-Thanks.
+Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
+---
+ kernel/time/tick-sched.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
-> ---
->  drivers/hid/hid-kye.c | 75 +++++++++++++++++++++++++------------------
->  1 file changed, 44 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-kye.c b/drivers/hid/hid-kye.c
-> index eb9bf2829937..70ceb9437332 100644
-> --- a/drivers/hid/hid-kye.c
-> +++ b/drivers/hid/hid-kye.c
-> @@ -209,7 +209,7 @@ static const __u8 pensketch_t609a_control_rdesc[] = {
->  	0xC0               /*  End Collection            */
->  };
->  
-> -/* Fix indexes in kye_tablet_fixup if you change this */
-> +/* Fix indexes in kye_tablet_fixup() if you change this */
->  static const __u8 kye_tablet_rdesc[] = {
->  	0x06, 0x00, 0xFF,             /*  Usage Page (FF00h),             */
->  	0x09, 0x01,                   /*  Usage (01h),                    */
-> @@ -262,12 +262,16 @@ static const __u8 kye_tablet_rdesc[] = {
->  	0x27, 0xFF, 0x07, 0x00, 0x00, /*      Logical Maximum (2047),     */
->  	0x81, 0x02,                   /*      Input (Variable),           */
->  	0xC0,                         /*    End Collection,               */
-> -	0xC0,                         /*  End Collection,                 */
-> -	0x05, 0x0D,                   /*  Usage Page (Digitizer),         */
-> -	0x09, 0x21,                   /*  Usage (Puck),                   */
-> +	0xC0                          /*  End Collection,                 */
-> +};
-> +
-> +/* Fix indexes in kye_tablet_fixup() if you change this */
-> +static const __u8 kye_tablet_mouse_rdesc[] = {
-> +	0x05, 0x01,                   /*  Usage Page (Desktop),           */
-> +	0x09, 0x02,                   /*  Usage (Mouse),                  */
->  	0xA1, 0x01,                   /*  Collection (Application),       */
->  	0x85, 0x11,                   /*    Report ID (17),               */
-> -	0x09, 0x21,                   /*    Usage (Puck),                 */
-> +	0x09, 0x01,                   /*    Usage (Pointer),              */
->  	0xA0,                         /*    Collection (Physical),        */
->  	0x05, 0x09,                   /*      Usage Page (Button),        */
->  	0x19, 0x01,                   /*      Usage Minimum (01h),        */
-> @@ -280,7 +284,7 @@ static const __u8 kye_tablet_rdesc[] = {
->  	0x95, 0x04,                   /*      Report Count (4),           */
->  	0x81, 0x01,                   /*      Input (Constant),           */
->  	0x05, 0x0D,                   /*      Usage Page (Digitizer),     */
-> -	0x09, 0x32,                   /*      Usage (In Range),           */
-> +	0x09, 0x37,                   /*      Usage (Data Valid),         */
->  	0x95, 0x01,                   /*      Report Count (1),           */
->  	0x81, 0x02,                   /*      Input (Variable),           */
->  	0x05, 0x01,                   /*      Usage Page (Desktop),       */
-> @@ -317,7 +321,7 @@ static const struct kye_tablet_info {
->  	__s32 y_physical_maximum;
->  	__s8 unit_exponent;
->  	__s8 unit;
-> -	bool has_punk;
-> +	bool has_mouse;
->  	unsigned int control_rsize;
->  	const __u8 *control_rdesc;
->  } kye_tablets_info[] = {
-> @@ -402,7 +406,7 @@ static __u8 *kye_consumer_control_fixup(struct hid_device *hdev, __u8 *rdesc,
->  static __u8 *kye_tablet_fixup(struct hid_device *hdev, __u8 *rdesc, unsigned int *rsize)
->  {
->  	const struct kye_tablet_info *info;
-> -	unsigned int newsize;
-> +	__u8 *newdesc = rdesc;
->  
->  	if (*rsize < sizeof(kye_tablet_rdesc)) {
->  		hid_warn(hdev,
-> @@ -420,36 +424,45 @@ static __u8 *kye_tablet_fixup(struct hid_device *hdev, __u8 *rdesc, unsigned int
->  		return rdesc;
->  	}
->  
-> -	newsize = info->has_punk ? sizeof(kye_tablet_rdesc) : 112;
-> -	memcpy(rdesc, kye_tablet_rdesc, newsize);
-> -
-> -	put_unaligned_le32(info->x_logical_maximum, rdesc + 66);
-> -	put_unaligned_le32(info->x_physical_maximum, rdesc + 72);
-> -	rdesc[77] = info->unit;
-> -	rdesc[79] = info->unit_exponent;
-> -	put_unaligned_le32(info->y_logical_maximum, rdesc + 87);
-> -	put_unaligned_le32(info->y_physical_maximum, rdesc + 92);
-> -	put_unaligned_le32(info->pressure_logical_maximum, rdesc + 104);
-> -
-> -	if (info->has_punk) {
-> -		put_unaligned_le32(info->x_logical_maximum, rdesc + 156);
-> -		put_unaligned_le32(info->x_physical_maximum, rdesc + 162);
-> -		rdesc[167] = info->unit;
-> -		rdesc[169] = info->unit_exponent;
-> -		put_unaligned_le32(info->y_logical_maximum, rdesc + 177);
-> -		put_unaligned_le32(info->y_physical_maximum, rdesc + 182);
-> +	memcpy(newdesc, kye_tablet_rdesc, sizeof(kye_tablet_rdesc));
-> +
-> +	put_unaligned_le32(info->x_logical_maximum, newdesc + 66);
-> +	put_unaligned_le32(info->x_physical_maximum, newdesc + 72);
-> +	newdesc[77] = info->unit;
-> +	newdesc[79] = info->unit_exponent;
-> +	put_unaligned_le32(info->y_logical_maximum, newdesc + 87);
-> +	put_unaligned_le32(info->y_physical_maximum, newdesc + 92);
-> +	put_unaligned_le32(info->pressure_logical_maximum, newdesc + 104);
-> +
-> +	newdesc += sizeof(kye_tablet_rdesc);
-> +
-> +	if (info->has_mouse) {
-> +		if (newdesc + sizeof(kye_tablet_mouse_rdesc) > rdesc + *rsize)
-> +			hid_err(hdev, "control desc unexpectedly large\n");
-> +		else {
-> +			memcpy(newdesc, kye_tablet_mouse_rdesc, sizeof(kye_tablet_mouse_rdesc));
-> +
-> +			put_unaligned_le32(info->x_logical_maximum, newdesc + 44);
-> +			put_unaligned_le32(info->x_physical_maximum, newdesc + 50);
-> +			newdesc[55] = info->unit;
-> +			newdesc[57] = info->unit_exponent;
-> +			put_unaligned_le32(info->y_logical_maximum, newdesc + 65);
-> +			put_unaligned_le32(info->y_physical_maximum, newdesc + 70);
-> +
-> +			newdesc += sizeof(kye_tablet_mouse_rdesc);
-> +		}
->  	}
->  
->  	if (info->control_rsize) {
-> -		if (newsize + info->control_rsize > *rsize)
-> -			hid_err(hdev, "control rdesc unexpectedly large");
-> +		if (newdesc + info->control_rsize > rdesc + *rsize)
-> +			hid_err(hdev, "control desc unexpectedly large\n");
->  		else {
-> -			memcpy(rdesc + newsize, info->control_rdesc, info->control_rsize);
-> -			newsize += info->control_rsize;
-> +			memcpy(newdesc, info->control_rdesc, info->control_rsize);
-> +			newdesc += info->control_rsize;
->  		}
->  	}
->  
-> -	*rsize = newsize;
-> +	*rsize = newdesc - rdesc;
->  	return rdesc;
->  }
->  
-> -- 
-> 2.43.0
-> 
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 71a792cd8936..31a4cd89782f 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
+ 		ts->idle_sleeps++;
+ 		ts->idle_expires = expires;
 
--- 
-Jiri Kosina
-SUSE Labs
-
+-		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
+-			ts->idle_jiffies = ts->last_jiffies;
++		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
++			if (!was_stopped)
++				ts->idle_jiffies = ts->last_jiffies;
++
+ 			nohz_balance_enter_idle(cpu);
+ 		}
+ 	} else {
+--
+2.41.0
 
