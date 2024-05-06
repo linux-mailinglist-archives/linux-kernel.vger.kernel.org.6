@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-169424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CB48BC878
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:39:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DECB8BC87C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5879E1C2088E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:39:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89E58B20C92
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EC3127E3B;
-	Mon,  6 May 2024 07:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD80913FD93;
+	Mon,  6 May 2024 07:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QEOvWDyO"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpmPWi9h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A2E1EB36
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 07:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139BD1EB36;
+	Mon,  6 May 2024 07:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714981168; cv=none; b=NaRzWVF6ovhsK6QuQDHbvUQPzAXZjEH/ZaeoNCQuwkCW9F3rfBXezhZYNTZwOAN/0VPietySd5y29CLtDQk5ku64IK5M2OctY5hEGNtKIxAhmxku+Bb/Zm3LxtCxPq5Vauf6w2B1To/jfMdPQdEOO/qyA5nhWRYLG1BfR5tSnHA=
+	t=1714981269; cv=none; b=Z770BAeOuxSHyaLQWVYdlkqijVEl0zZNuBjF7GhNokBf0xl9wNs/xsei3DUZ7t1fKLKu5QSCOIXOYFADeIHrcCwoMonqOJFzlTYp8UTS7iB4Fj+83zIMGJgUD/bbwbpJ/k/waz8zsDLo0Zaxyte7t42VxL2gm1FmKX2CFwxF1ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714981168; c=relaxed/simple;
-	bh=xyxnmqWWSYlgj6H8EbU54BPfhvA1yRIWCx+gjGOZiJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cLqxzr8wrtaOtWiVIZtZUHn9DdPWrgTKDISLFd3uQAJ5wXv9aKDiw9y6vuwLvbCS3Gy4ufec+rAffQh8mCcwXebLfklGYv/OIkJlzHi2WuJbFHjleByf04DH6QXEBufe67nlatnPgWIyW7wJztH74yptrWIbAMyZak8dJnvCuqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QEOvWDyO; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F1F1340E01A1;
-	Mon,  6 May 2024 07:39:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id pMqRuncUN6u7; Mon,  6 May 2024 07:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1714981158; bh=njZ0/dlsf3FYOxYPVXuxza8YFGw4Nsa8EdWHjWc6X0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QEOvWDyOezcm7lK+A5QpHp1aRlW/0+ad04iJQQPjwjdVEW8HXghemVlQyQ5GcPUis
-	 nVbgmQNKBeNHvfYXMjO9RmAweU2EkZ6xAra89ybhJ/lH8+a6dfteH4D1QKp9sJcUkg
-	 S/zYEqFJ5a7dRJf4Mp6YF+w2N3H91XLA88uhKD82YvFlNYe6a1o0paYJhZ8xbPvjI+
-	 gWbT4PNwyNVWhukjdh9D/jZvLdNnQ//kTahiEAbixT+XjBOp0bCIhCnxdus6i+M4QH
-	 rqD4eXh1XZyVPvgwfNl6F1xGEg+R1HaOapZ/nCtS6rLxsNFG8d1/tNhDzEw9ijGJ2r
-	 OIK1LUPD56InScrkD/WEYi2rodQVi1d1malMA6ERj15sp80C/KM+pI+hmfbUPi1QmZ
-	 Y/y/vClyw35b64a9UGcJSkUAcbhoyDzf/w8bCtuoqwPuqIS3UzrvzkXQJUpMUMkCzb
-	 EqrXiZKOeZrBYMIahntZdZVo63OWLMzHqclqqmRlSS1CEw43EfK/N4NzQh+ZClFhN9
-	 AqYmYjuG9zAcuo7596ZijyGMbFACArMEZw1QHuYC2064S8h+bmQNfcptYCg0VMkYBr
-	 yTviHgI0yKiXCOpNmKP/PlFB9uiHOVHnogu4M/cyFZr1M8r1kJgqz6OHlzXBVtq8RJ
-	 rXJ0lwGSlQzkeuc42bvJAqqk=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8449540E0249;
-	Mon,  6 May 2024 07:39:10 +0000 (UTC)
-Date: Mon, 6 May 2024 09:39:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>
-Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
- WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
-Message-ID: <20240506073903.GAZjiJF7BQyjYJQLYx@fat_crate.local>
-References: <202404302233.f27f91b2-oliver.sang@intel.com>
- <20240430172313.GCZjEpAfUECkEZ9S5L@fat_crate.local>
- <ZjE7DkTBSbPlBN8k@google.com>
- <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
- <ZjFLpkgI3Zl4dsXs@google.com>
- <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
- <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
- <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
+	s=arc-20240116; t=1714981269; c=relaxed/simple;
+	bh=cWCbxtV4WQnMqjKuIDGdVWPDNCxi3aEgGfVd4lI1HiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cayKBwlAbNBsLty02PWXrmKeuYDGcdvch8VXqYINqRi/P5xNWbIWrwuxfU5Pm0Ev9MJ7OfmsBJwTcvWDU36O11s/W22mFzCLq+AhUsn8r9cR+UutiF9ARy/q+OkgE8XrTdyRqygDV+TjRTdD8FmoJIfsNHBj679tiqfpHEfks1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpmPWi9h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF03C116B1;
+	Mon,  6 May 2024 07:41:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714981268;
+	bh=cWCbxtV4WQnMqjKuIDGdVWPDNCxi3aEgGfVd4lI1HiE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mpmPWi9h2/xvLJLTFYWpd2YFomuFLQSn3VmzaifmWHnZCLtAwqm9vG8gv/f9fdVAo
+	 5eI8dDb89b5Q5sNW5dDK6hka1M2bcwOY9VjpOX/fSd5PBn0rV/1o4RK2tQD78uJOnO
+	 oEn7rgrIU3ZxEa6yA4Ez53hRPfCLPNhOvLVGayfho+Pgtg6qPMRrMRYqhP8Dsn9okO
+	 6V5I+eu1gp3fa0KX8xovlZT5OUSc2kMmZlUrols3uw5uQwAlabCNSNWu+qvxQCTwHh
+	 DJ2IMwCfl1u1N2+FBEkAU7yT4YgFGM9eJlOjwM8RxCDU5ozJ3ZPwfLaiHBz7RPo0RD
+	 4XwsjSNeq6ikQ==
+Message-ID: <f4e2a294-e4e2-4a03-a183-ee96cf97e5cf@kernel.org>
+Date: Mon, 6 May 2024 09:40:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] [PATCH v2 net-next] mptcp: fix typos in comments
+Content-Language: en-GB
+To: Shi-Sheng Yang <fourcolor4c@gmail.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, Simon Horman <horms@kernel.org>
+Cc: geliang@kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-kernel@vger.kernel.org, martineau@kernel.org, edumazet@google.com
+References: <20240502154740.249839-1-fourcolor4c@gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20240502154740.249839-1-fourcolor4c@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 06, 2024 at 03:09:27PM +0800, Oliver Sang wrote:
-> we confirmed after applying them upon ee8962082a, the WARNING which was reported
-> in our original report cannot be reproduced any longer.
+Hi Shi-Sheng,
+
+On 02/05/2024 17:47, Shi-Sheng Yang wrote:
+> This patch fixes the spelling mistakes in comments.
+> The changes were generated using codespell and reviewed manually.
 > 
-> Tested-by: kernel test robot <oliver.sang@intel.com>
+> eariler -> earlier
+> greceful -> graceful
 
-Thanks a lot for testing - much appreciated.
+Thank you for the fix, it looks good to me:
 
-Lemme queue them.
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
+@Simon: many thanks for the previous review!
+
+@Netdev maintainers: I think it is best to apply this patch -- and
+similar ones -- directly in the Netdev tree, no need to have it first in
+the MPTCP tree.
+
+Cheers,
+Matt
 -- 
-Regards/Gruss,
-    Boris.
+Sponsored by the NGI0 Core fund.
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
