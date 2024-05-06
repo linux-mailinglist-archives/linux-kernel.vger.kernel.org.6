@@ -1,178 +1,102 @@
-Return-Path: <linux-kernel+bounces-169315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F818BC6BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:21:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7E78BC6B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFDE22816D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06264281834
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 05:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0514F4EB2B;
-	Mon,  6 May 2024 05:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C5D47F69;
+	Mon,  6 May 2024 05:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqHS/vGn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YKVxeu/T"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A90482C3;
-	Mon,  6 May 2024 05:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DA44642B;
+	Mon,  6 May 2024 05:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714972876; cv=none; b=LHYY/yHn1EMpmKUUIsS7loS/vm8njq5ITML7Ui6hFnSNn+UjcRwyEIZEpzqv55ER+/dYHAn2uG0M61994bE2CBIYdXT4M/bfNvgk920T6guMnabKMsKLuV9Dvj9UWJSce/hluubqEVY7J8T3p2lVPhznsYnIfIdl1LC12GxxWbo=
+	t=1714972863; cv=none; b=Go850hS5v38M3HoBcV9pgOUaNe3W8mrtArexklVSiEjrB3gaxO4Ilnso30KC88+2Ut3LtNbvyMYbABSLbcnY5qfG7Yt0pO6w3d5KFIV3NpP1fwsU8JTT+ri4qcD/tXt4Ao2bgYZx/w3Hdw0DiciQZNIzdaTPfaVTjreh3rDTeZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714972876; c=relaxed/simple;
-	bh=IKlIvjuBn/H754DI9jvJWcFPcdV3jR8qdRnrj4+WI+E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gTNkp4lLt5ir7vVD9cX50esZmzprHcolyE25WBUBhthMgi4Yur3iBO0i4DXRuGC5r0xGmvjcjPFUkAWTrisd5914DK8fQp+95pZ0hZEZ9Foe9s10TIZaltM27fs7pxQVSTDxrIgIM+gW36mQ8iJAeQh4GXgN18mjrs2mW6C3aug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqHS/vGn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A56C116B1;
-	Mon,  6 May 2024 05:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714972875;
-	bh=IKlIvjuBn/H754DI9jvJWcFPcdV3jR8qdRnrj4+WI+E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tqHS/vGnvtQgm5ottAK403iYyDc6/kLmsTqJatmTnLywHGL2J4Yx3BQFHn8kIh5py
-	 nAooPFJ/9D/gp80HpsyAE7VLHtgoEXN2oFlLX5jPGy9UcaNhHy63gOMOzCBNTTjYzY
-	 zTp1VSdM3dp9bb6a1cRiUxYBB01w14LtjpGUitKZvmBd////F+XFWc+2WhNuCayL1f
-	 5DKi+xN1JCPwBItgzdC22IH1kLTrDRX9bueAA25gRiT5J7ruCdhav0YQqrZ4kFm33e
-	 GoiquvMi/ejmmVn8rmJXrvcabBTLqBrTOjH9PoG8HDm8g2HgzSTiZfZk5HaOctZgEA
-	 vnVuNTv7yqmXw==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f72a29f13so1793397e87.3;
-        Sun, 05 May 2024 22:21:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUN5bEpBmEgr3VFQifDqAad5vcxr7JTmsV4nAOzCMOqLiX1hFq62oU34QTfvd32oBL7oElXIcSyMpIwBMX8bQ5cwujIJfjSalv+8gB1cWhJBS3K0zcNCt1MFYZVzDLfe6spJcM3VP8Brrt8P/nHONeTGKHIPrtN+wuF1WDPPeTm57lQfepwgjI=
-X-Gm-Message-State: AOJu0YzaY9FmWx1A2wyhiu7Pe6CI8Rekok3SQkU3tXm1E9qvibdT+EcT
-	yNbbo6DHwUd+C2TMjx45w0KemVURI6FfKMU8vfOdtUJmj6wU4hEsh6fGO4O0aMOZgpQkeoQ24dX
-	G8VpSsnur6at4brRsKVIhwXnV2wg=
-X-Google-Smtp-Source: AGHT+IHQJhS1znz8gVwOUrqUtv4OQz0bCGrfCQ1loRBZocjB8uJP1gVAFiA08qYh/ghUaXKQtWYvCUkCZIIXeKTn4Jg=
-X-Received: by 2002:ac2:4189:0:b0:51d:aaf7:a92e with SMTP id
- z9-20020ac24189000000b0051daaf7a92emr6626911lfh.47.1714972874359; Sun, 05 May
- 2024 22:21:14 -0700 (PDT)
+	s=arc-20240116; t=1714972863; c=relaxed/simple;
+	bh=hn1ClySGSuHw+ugjTHAaJkB5rGFfnFPxjXfC33Z/5ZE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G6PcjlcWEk1iXjozcCBECgrtzF1rCm8fKmlj1FwBCLnErVof+7N353UK1DiewekbwYpXSnbps9pFhdJu47oSgR+GZ7ukElIKDew9lDkGic+41O4qFDKYRWMu4AlcIvSB5jsBXQHJ9wkHlUznNkvgWabkSuuoSwOMIWynDNeClFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YKVxeu/T; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4465Kn7Q124255;
+	Mon, 6 May 2024 00:20:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1714972849;
+	bh=+npqNy0VbSMQXBHJ9TKRa0hUjJedPcbo7uWsi+wVW9k=;
+	h=From:To:CC:Subject:Date;
+	b=YKVxeu/T4+YOTPkx+PUKV2qoN1TbFEELingAeR9Nz7c0VgUCH1fv1AXaE6MwFBvjh
+	 AgS1asyawoaWryMLEqu45Lvct5RC4ZYBscdHSfz0PdPB2AySV/0FEH09jSUH8mTjXM
+	 kwfzq0vlJiWdPf5rD1Z/UA1msl1VfeH8+enhMc5o=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4465Kn1h009623
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 6 May 2024 00:20:49 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 6
+ May 2024 00:20:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 6 May 2024 00:20:49 -0500
+Received: from uda0500640.dal.design.ti.com (uda0500640.dhcp.ti.com [172.24.227.88])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4465Kj0f069015;
+	Mon, 6 May 2024 00:20:45 -0500
+From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
+        <r-gunasekaran@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/2] Add USB 3.0 support for J784S4
+Date: Mon, 6 May 2024 10:50:42 +0530
+Message-ID: <20240506052044.8228-1-r-gunasekaran@ti.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503091823.3616962-9-senozhatsky@chromium.org>
- <202405041440.UTBQZAaf-lkp@intel.com> <20240504071416.GH14947@google.com>
- <20240504161004.f5a0aab5e5aa1033d4696c20@linux-foundation.org>
- <20240505043957.GA8623@google.com> <20240505051305.GB8623@google.com>
- <20240505064832.GC8623@google.com> <20240506032207.GD8623@google.com>
-In-Reply-To: <20240506032207.GD8623@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 6 May 2024 14:20:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARUBuR3gDtX6GfB7Zv6dydt1+qzBB_XT58wOg3WeCTVvA@mail.gmail.com>
-Message-ID: <CAK7LNARUBuR3gDtX6GfB7Zv6dydt1+qzBB_XT58wOg3WeCTVvA@mail.gmail.com>
-Subject: Re: [PATCH 08/14] zram: check that backends array has at least one backend
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kbuild@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>, Minchan Kim <minchan@kernel.org>, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, 
-	Linux Memory Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, May 6, 2024 at 12:22=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (24/05/05 15:48), Sergey Senozhatsky wrote:
-> > On (24/05/05 14:13), Sergey Senozhatsky wrote:
-> > > On (24/05/05 13:39), Sergey Senozhatsky wrote:
-> > > [..]
-> > > > > I guess just pick one if none were selected.
-> > >
-> > > How do I pick one if none were selected? Does Kconfig support
-> > > something like that?
-> >
-> > This triggers Kconfig error:
-> >
-> > config ZRAM_EMPTY_BACKENDS_FIXUP
-> >        bool
-> >        depends on ZRAM && !ZRAM_BACKEND_LZO && !ZRAM_BACKEND_LZ4 && \
-> >                !ZRAM_BACKEND_LZ4HC && !ZRAM_BACKEND_ZSTD && \
-> >                !ZRAM_BACKEND_DEFLATE
-> >        select ZRAM_BACKEND_LZO
-> >
-> >
-> > drivers/block/zram/Kconfig:17:error: recursive dependency detected!
-> > drivers/block/zram/Kconfig:17:  symbol ZRAM_BACKEND_LZO is selected by =
-ZRAM_EMPTY_BACKENDS_FIXUP
-> > drivers/block/zram/Kconfig:52:  symbol ZRAM_EMPTY_BACKENDS_FIXUP depend=
-s on ZRAM_BACKEND_LZO
-> >
-> >
-> > I'm a little surprised by this - EMPTY_BACKENDS_FIXUP does not depend
-> > on ZRAM_BACKEND_LZO, it depends on NOT ZRAM_BACKEND_LZO.
-> >
-> > Let me Cc linux-kbuild. Kbuild folks, how do I workaround this?
->
-> Is this how one does it?
->
-> config ZRAM_BACKEND_LZO
->        bool "lzo and lzo-rle compression support"
->        depends on ZRAM
->        default y if !ZRAM_BACKEND_LZ4 && !ZRAM_BACKEND_LZ4HC && \
->                !ZRAM_BACKEND_ZSTD && !ZRAM_BACKEND_DEFLATE
->        default n
->        select LZO_COMPRESS
->        select LZO_DECOMPRESS
->
->
-> User still can select N and then we'll have empty backends, but
-> at least default is Y if none of the algorithms were selected.
-> Is it good enough?
+J784S4 has one USB sub system.
+This series adds and enables support for USB 3.0 for
+J784S4 EVM.
+
+Change log:
+
+Changes since v1:
+-----------------
+* Fixed dtbs_check warning in [2/2]
+* Rebased to tip of -next
+
+v1: https://lore.kernel.org/all/20240502053615.29514-1-r-gunasekaran@ti.com/
+
+Matt Ranostay (2):
+  arm64: dts: ti: k3-j784s4-main: Add support for USB
+  arm64: dts: ti: k3-j784s4-evm: Enable USB3 support
+
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts   | 41 ++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 39 ++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
 
 
-I interpret this sentence into:
+base-commit: 9221b2819b8a4196eecf5476d66201be60fbcf29
+-- 
+2.17.1
 
-"randconfig will eventually disable all ZRAM_BACKEND_*,
-causing the build error again.
-Is it good enough, Arnd?"
-
-
-
-Some possible solutions:
-
-
-
-config ZRAM_BACKEND_FORCE_LZO
-        def_bool !ZRAM_BACKEND_LZ4 && !ZRAM_BACKEND_LZ4HC && \
-                 !ZRAM_BACKEND_ZSTD && !ZRAM_BACKEND_DEFLATE
-        depends on ZRAM
-        select ZRAM_BACKEND_LZO
-
-config ZRAM_BACKEND_LZO
-        bool "lzo and lzo-rle compression support"
-        depends on ZRAM
-        select LZO_COMPRESS
-        select LZO_DECOMPRESS
-
-
-OR
-
-
-config ZRAM_BACKEND_FORCE_LZO
-        def_bool !ZRAM_BACKEND_LZ4 && !ZRAM_BACKEND_LZ4HC && \
-                 !ZRAM_BACKEND_ZSTD && !ZRAM_BACKEND_DEFLATE
-
-config ZRAM_BACKEND_LZO
-        bool "lzo and lzo-rle compression support" if !ZRAM_BACKEND_FORCE_L=
-ZO
-        depends on ZRAM
-        default ZRAM_BACKEND_FORCE_LZO
-        select LZO_COMPRESS
-        select LZO_DECOMPRESS
-
-
-
-
-BTW, "default n" you are adding are redundant.
-
---=20
-Best Regards
-Masahiro Yamada
 
