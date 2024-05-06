@@ -1,109 +1,205 @@
-Return-Path: <linux-kernel+bounces-170163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57E98BD2B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:25:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 753048BD2BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8132A28701E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83EF7B24AF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6FA156C66;
-	Mon,  6 May 2024 16:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qViKs9Wd"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D315625A;
+	Mon,  6 May 2024 16:25:41 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D890156232
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843C31552F7;
+	Mon,  6 May 2024 16:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715012663; cv=none; b=ray/YV5zox5bA1DIEF6aYEI+sLtZrPUFGsb9Uoxc0uPVEWEGoYTjgUzarpcxQZ81ooYEQ/TnsObS4oYK8J9n0bBZNWEBSLQ9U89OohS+0RcGNEtrLjSYM2eYzy8zJ9oAWTooT+aGuFNGlgnhbdwMJdJrSvUSRwsqeP32GtiRJ74=
+	t=1715012740; cv=none; b=FHwQe+HXFUtWHcoV1I2z9es3xCEez4tGXLRECom8ci0Ml2jzYMkH/z+xQALdIjIS+Tx6fwryTLJz+Q/PURri/Y2wGBMRx9tKYrdU+idvYJqRu9Zk8zZqlrgrQH+rIRFTzhcPAH1xfciu3Le/HQkdcni9l2Q8SrXF29QqVfEWKrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715012663; c=relaxed/simple;
-	bh=1umspOg6P+YBt+kF0yVj2x9Zp4XiH8wmBDIrxcQqV7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MkR+DlV43UxTH7W14mon43IS0Jl3UivMYPkRvv41bQO1yJnQtTlUM5PTjbY9Di4yb45iaoSv0naAXGExxOwbWiPmH79XvqrhzIx9qGHYGyDqefJV/vIaDqK8vtVb8YS+ahfR/Nf4++n0SON2l9PY6qvSDifImtGWA4jVAFsZSsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qViKs9Wd; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso11863a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 09:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715012660; x=1715617460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v0dZxDAccYcCY4EmOhr7flN+YOjsFHzjNLPRNOnfYa0=;
-        b=qViKs9Wd+c7g78kKgq8EMMvh7MvtZ4OmxCKyh2SRwzBLBVTlF/7O8ruQn+x3Wqtm12
-         I59mrENk1veQ95lmFFoPEFTTRmkiCuB22DTFWAdcijIf5wXsM2+5RttZpXsesjqeNyZh
-         q5kU8j5gIAqH21CbwNrsvOUbq1u0h92GlzZiDMv3RfQrLMOyCfcbWxjAPaT/ahhZMvPj
-         AWAnWfqBtT1r0HhzQzDhFTcAU/abk0Gg+49X5PsXRnyh7OrZTpL1s5E+LoiB6FBKWBtG
-         C3WJec2At8RrKn8/OFZoDabKf12tyb/YjOKblzFgRhL3FM6lLsSTP+D2XsJpNWniJP4n
-         JXwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715012660; x=1715617460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v0dZxDAccYcCY4EmOhr7flN+YOjsFHzjNLPRNOnfYa0=;
-        b=jVqniPVVi93zBUIPY5K/RzC7DqKJnDDjpWgxi3pAFj04anBGUz0HgCJiFL/sxUwMWt
-         MdQj2i7I6m7+XgHhApg2c99XTYNaYadLaspmlm0myoSj860Big6/qmw9vCOj8F96LuoO
-         HGmnD8y+wyuWZJw9NHrMiKmxATDdGQEn+YVQj8fP8ydrEsyv9LZ14ViwyPWQlcECEx9v
-         XoA0Tvn4zGkEanvn/+Zpxip3IEQ3IBIqPmACjaLlZ97WAk/6T1FSRv+6QLCUek+wyoXs
-         MCqOIDeEkAEd29nvMUmbQmsJ82qrLT5Y6VXX6g0f2cPz+bPStBB+43QASbENJ+leDS8N
-         TK2A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3p6uZx8x8Wse67+C3Qgv+w8y/OJrkbLIZ4S4UltPJjldm2s+B5IYB+pPmmgyoJvOkJEc9Dl2BCOMKMJPCO4LgvTGb7HOw1R1g2mhQ
-X-Gm-Message-State: AOJu0YyinnP7R2fdr5O+6DNnVIrFIXB7y+2STsaoR5IMR+vlkZq3dWyN
-	WUjdDlKoSOPP8P4Ih6paxCN3Hefc7TplvE4TvzPPy0Vkhe1PWGXdTEadV17DpYvRELeit7ydpzr
-	Svvd1GO3mGbW6lQcc3DpJBqVxUugYwnm8EOpr
-X-Google-Smtp-Source: AGHT+IFfKJPpR85/urooKgDXyAvRKv1p8Ab+gb4qgrqhtuI42OCDChtqOgl7yd9hwmAY+uLAF+ntmjZvvrebUqjOnAQ=
-X-Received: by 2002:aa7:d44f:0:b0:572:e6fb:ab07 with SMTP id
- 4fb4d7f45d1cf-572e6fbac14mr225538a12.7.1715012653454; Mon, 06 May 2024
- 09:24:13 -0700 (PDT)
+	s=arc-20240116; t=1715012740; c=relaxed/simple;
+	bh=HwXXvnTSAjBtb3nUUNbI1pXc+fvdXm2U1A1Utn5FKys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ww55/WEy6B4BsqFFAcgIwUFBLg2DeH+NWedLdVu6ffbVaa1J5ZQtB7QwUm6T9DOgntUVciNAx8AMa2p5WJfNYFvFtkurr5KAgJkcqT5te43ijXiVXKoLqTZr5y19qwFLEcY1vmZjWjyvglxKGKyco8T589GKdvccL/O8/6DOhJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 6 May
+ 2024 19:25:43 +0300
+Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
+ (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 6 May 2024
+ 19:25:25 +0300
+Message-ID: <3f1de1c6-e7bb-4132-a4cb-b80252d3f8b3@fintech.ru>
+Date: Mon, 6 May 2024 09:25:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240429060643.211-1-ravi.bangoria@amd.com> <20240429060643.211-3-ravi.bangoria@amd.com>
-In-Reply-To: <20240429060643.211-3-ravi.bangoria@amd.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 6 May 2024 09:24:00 -0700
-Message-ID: <CALMp9eQzbNVJpuxp1orNswnyfKy=aFSPYFRnd3H7fbi0+NfDvw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] x86/bus_lock: Add support for AMD
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, seanjc@google.com, pbonzini@redhat.com, 
-	thomas.lendacky@amd.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk, 
-	peterz@infradead.org, james.morse@arm.com, lukas.bulwahn@gmail.com, 
-	arjan@linux.intel.com, j.granados@samsung.com, sibs@chinatelecom.cn, 
-	nik.borisov@suse.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
-	babu.moger@amd.com, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, santosh.shukla@amd.com, ananth.narayan@amd.com, 
-	sandipan.das@amd.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: usb: siano: fix endpoint checks in
+ smsusb_init_device()
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Dongliang Mu <dzm91@hust.edu.cn>,
+	Andrew Morton <akpm@linux-foundation.org>, Alan Stern
+	<stern@rowland.harvard.edu>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<syzbot+12002a39b8c60510f8fb@syzkaller.appspotmail.com>
+References: <20240409143634.33230-1-n.zhandarovich@fintech.ru>
+ <20240503165833.4781fb4a@sal.lan>
+ <4069e01b-09d1-49e6-b053-3f6b99dd9405@fintech.ru>
+ <20240503222054.45ed636f@sal.lan>
+Content-Language: en-US
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+In-Reply-To: <20240503222054.45ed636f@sal.lan>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Sun, Apr 28, 2024 at 11:08=E2=80=AFPM Ravi Bangoria <ravi.bangoria@amd.c=
-om> wrote:
->
-> Upcoming AMD uarch will support Bus Lock Detect (called Bus Lock Trap
-> in AMD docs). Add support for the same in Linux. Bus Lock Detect is
-> enumerated with cpuid CPUID Fn0000_0007_ECX_x0 bit [24 / BUSLOCKTRAP].
-> It can be enabled through MSR_IA32_DEBUGCTLMSR. When enabled, hardware
-> clears DR6[11] and raises a #DB exception on occurrence of Bus Lock if
-> CPL > 0. More detail about the feature can be found in AMD APM[1].
->
-> [1]: AMD64 Architecture Programmer's Manual Pub. 40332, Rev. 4.07 - June
->      2023, Vol 2, 13.1.3.6 Bus Lock Trap
->      https://bugzilla.kernel.org/attachment.cgi?id=3D304653
+Hi Mauro,
 
-Is there any chance of getting something similar to Intel's "VMM
-bus-lock detection," which causes a trap-style VM-exit on a bus lock
-event?
+On 5/3/24 14:20, Mauro Carvalho Chehab wrote:
+> Em Fri, 3 May 2024 09:14:37 -0700
+> Nikita Zhandarovich <n.zhandarovich@fintech.ru> escreveu:
+> 
+>> Hi
+>>
+>> On 5/3/24 08:58, Mauro Carvalho Chehab wrote:
+>>> Em Tue, 9 Apr 2024 07:36:34 -0700
+>>> Nikita Zhandarovich <n.zhandarovich@fintech.ru> escreveu:
+>>>   
+>>>> Syzkaller reported a warning [1] in smsusb_submit_urb() which occurs
+>>>> if an attempt is made to send a bulk URB using the wrong endpoint
+>>>> type. The current approach to perform endpoint checking does not
+>>>> explicitly check if an endpoint in question has its type set to bulk.
+>>>>
+>>>> Fix this issue by using functions usb_endpoint_is_bulk_XXX() to
+>>>> enable testing for correct ep types.
+>>>>
+>>>> This patch has not been tested on real hardware.
+>>>>
+>>>> [1] Syzkaller report:
+>>>> usb 1-1: string descriptor 0 read error: -71
+>>>> smsusb:smsusb_probe: board id=2, interface number 0
+>>>> smsusb:siano_media_device_register: media controller created
+>>>> ------------[ cut here ]------------
+>>>> usb 1-1: BOGUS urb xfer, pipe 3 != type 1
+>>>> WARNING: CPU: 0 PID: 3147 at drivers/usb/core/urb.c:494 usb_submit_urb+0xacd/0x1550 drivers/usb/core/urb.c:493
+>>>> ...
+>>>> Call Trace:
+>>>>  smsusb_start_streaming+0x16/0x1d0 drivers/media/usb/siano/smsusb.c:195
+>>>>  smsusb_init_device+0xd85/0x12d0 drivers/media/usb/siano/smsusb.c:475
+>>>>  smsusb_probe+0x496/0xa90 drivers/media/usb/siano/smsusb.c:566
+>>>>  usb_probe_interface+0x633/0xb40 drivers/usb/core/driver.c:396
+>>>>  really_probe+0x3cb/0x1020 drivers/base/dd.c:580
+>>>>  driver_probe_device+0x178/0x350 drivers/base/dd.c:763
+>>>> ...
+>>>>  hub_event+0x48d/0xd90 drivers/usb/core/hub.c:5644
+>>>>  process_one_work+0x833/0x10c0 kernel/workqueue.c:2276
+>>>>  worker_thread+0xac1/0x1300 kernel/workqueue.c:2422
+>>>>  kthread+0x39a/0x3c0 kernel/kthread.c:313
+>>>>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+>>>>
+>>>> Reported-and-tested-by: syzbot+12002a39b8c60510f8fb@syzkaller.appspotmail.com
+>>>> Fixes: 31e0456de5be ("media: usb: siano: Fix general protection fault in smsusb")
+>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+>>>> ---
+>>>>  drivers/media/usb/siano/smsusb.c | 4 ++--
+>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/media/usb/siano/smsusb.c b/drivers/media/usb/siano/smsusb.c
+>>>> index 723510520d09..daaac121c670 100644
+>>>> --- a/drivers/media/usb/siano/smsusb.c
+>>>> +++ b/drivers/media/usb/siano/smsusb.c
+>>>> @@ -405,10 +405,10 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+>>>>  		struct usb_endpoint_descriptor *desc =
+>>>>  				&intf->cur_altsetting->endpoint[i].desc;
+>>>>  
+>>>> -		if (desc->bEndpointAddress & USB_DIR_IN) {
+>>>> +		if (usb_endpoint_is_bulk_in(desc)) {
+>>>>  			dev->in_ep = desc->bEndpointAddress;
+>>>>  			align = usb_endpoint_maxp(desc) - sizeof(struct sms_msg_hdr);
+>>>> -		} else {
+>>>> +		} else if (usb_endpoint_is_bulk_out(desc)) {  
+>>>
+>>> Did you test it on what devices? I'm not sure if all siano devices
+>>> are bulk. Why did you decide to use usb_endpoint_is_bulk_(in|out)
+>>> instead of usb_endpoint_dir_(in|out)?  
+>>
+>> I did not have the hardware required to test it properly, I'm afraid.
+>> I made sure to point that out in the patch description.
+>>
+>> As for siano devices possibly having different endpoints type apart from
+>> bulk, I was relying on the rest of the driver code to determine just
+>> that (which is maybe somewhat flawed in this case). 
+> 
+> Most digital TV devices also have ISOC endpoints. I'm not sure about
+> Siano.
+> 
+>> Since
+>> smsusb_submit_urb() (and some other functions like usb_rcvbulkpipe())
+>> works exclusively with bulk types, I did not feel the need to even
+>> expect int types, for instance.
+> 
+> The problem is not with int endpoints. Most media devices have isoc
+> endpoints. There are even cases that different device models supported
+> by the same driver have some bulk and some isoc endpoints. See em28xx 
+> driver for instance: most devices are isoc only; some have both isoc
+> and bulk; a few have just bulk.
+> 
+> In the specific case of siano, it supports 3 generations of devices
+> (sms1000, sms11xx, sms22xx), each with several submodels. 
+> Those 3 generations have different specs, and sms1000 even have one
+> "boot" USB ID, and one "warm" USB ID, each one with different endpoints.
+> 
+> That's basically why I'm afraid of a patch like this could cause
+> regressions if not properly tested, as it is changing the logic
+> from just detecting the direction to also validate if the endpoint
+> is not isoc.
+> 
+> Regards,
+> Mauro
+
+After doing a tiny bit of research I've had a couple more questions as
+regards to dealing with ISOC endpoints in siano devices. I am still not
+exactly versed in the subject, so forgive my ignorance.
+
+Firstly, judging from the current state of siano driver I think that
+sms1xxx devices do not actually deal with ISOC or some other "special"
+endpoints apart from bulk ones. em28xx and at least a couple of other
+drivers that may expect ISOC eps, check for their presence and prepare
+URBs differently, checking for pipe types and filling URBs with
+usb_rcvisocpipe() and usb_fill_int_urb() accordingly.
+
+Since siano essentially uses only bulk functions, it either treats isoc
+and bulk (and maybe other types) eps as bulk only - which seems wrong to
+me and implies problems with devices as a result of this; or siano
+driver doesn't actually require isoc-specific actions (or for other
+types). I want to point out that I myself tend to agree with latter
+option, once again judging by the way driver currently works with eps.
+
+Which brings me to another question - if you could share an example of a
+spec or datasheet for one of the smsxxxx devices that explicitly
+confirms presence of other ep types, that would be much appreciated. For
+some reason, I failed to find something meaningful on my own.
+
+Also, I could use some direction on how to properly test my change on
+real hardware. I am looking towards something along the lines of
+https://linuxtv.org/wiki/index.php/Smart_Plus as a test subject. If
+there are some examples/approaches you think are appropriate for this,
+I'll gladly adopt them.
+
+Thank you for your patience :)
+
+Regards,
+Nikita
+
 
