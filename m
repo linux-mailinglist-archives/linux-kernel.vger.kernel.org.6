@@ -1,243 +1,152 @@
-Return-Path: <linux-kernel+bounces-169755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AECD8BCD24
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:48:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80298BCD29
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50432282CF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0565F1C21349
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC6D143745;
-	Mon,  6 May 2024 11:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB12143870;
+	Mon,  6 May 2024 11:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrWzEpQt"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CTqMJ2j2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F90B14262C;
-	Mon,  6 May 2024 11:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B595142E8F
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 11:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714996090; cv=none; b=rlYSOKIyxXX59PwNiYprBj97GawEnsfKM7E5zg8XCxY578ZurWVArrMRbPqZX25pMQAcrlk0ENDq5gzbzANVQZNdn0+SZ/xK9AtaXYvNAO0IbJ/xwLAhb+axbNrhSFOq6aiNGaYOQMDMgCm+wqc6+63IQ3xDCzdFtIuTgAIoJ+o=
+	t=1714996164; cv=none; b=PeQeEqqyh7Kjo8vDbapjHWT8Psexv3rZxdI9+wXzddUMytzO6Al1MmmsQlb7NT3/shAMfw5zqBs9biVgl0jJpwl0SNRnCLMs6mBBxzAmSA6BZTwF+NY+ShCGzitbPGMWrAlDt4VfrcUDcqaiwLWLyAUuRfyD9r9ZMQRwOcroaiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714996090; c=relaxed/simple;
-	bh=dHUDLNO/bYSGT88FUt383tTwFHou2Is7zXUiBaBmYZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u7NW4TP+Lxb54muAHri4+Eq5Sk0GB96rnk5RWwPjNDSDxkuATwNlXbWsiZCF/3+2ieQl41MPuyNUHHyGCkPbNPlHFlhze2eHPjANpz8ZlPKm+cYQGN/YtoDSwXzKq0C3zKmBXyDX8I739Ge3XKeFpqvEhxntdJk9QHT6r47kJfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrWzEpQt; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ecc23e6c9dso8841895ad.2;
-        Mon, 06 May 2024 04:48:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714996089; x=1715600889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ULKSrlLF8CoXgv8cd5QtkaVd/T2IyLOBhgECVTg6BYQ=;
-        b=YrWzEpQtOh+CL0NMboQceOfVfTZCs7M0JTby4kfJvXZt8CzHOWQq07hEV5c7iSsBCn
-         +Ik2rGjRqWKz7MsXXMu4Thb306g+oHkkF402eoKnBrlYNPnnJsOh6sx+YzF9IguBuIG+
-         VbRO6WFYjEUUkjKTPW/Af7Rz9b65jtqr/6uK2N64XeoPtDHOKI1wOO9CloRK04+ND38v
-         4A3JVi3YwezcROONkiH5nf7oWz+34yQbRAUk4z7696r2qk323Da0KBTgnzMsEHnx5B9d
-         TbI73OeY4BgTppFwfwRlZpTDRa+VasKo4YpruQ+J0Yqxmbsaxv2rAGOjfx3GzR5Frs68
-         UE0g==
+	s=arc-20240116; t=1714996164; c=relaxed/simple;
+	bh=dMc0/sjIPX+UuUh0qQzR0/ivpU5f1U0fp43I0bJLaik=;
+	h=Message-ID:Date:MIME-Version:Cc:From:Subject:To:Content-Type; b=QRyxHXKJz29BOMk9wI7CpCUu9GJeQ5RygoNfZLAzKcrtFc5m0h38HUbA/Y19pgdES3HxzZf40+zw5OyfWOlSEXRnBYLMfosSr1pJ4dfZH0LujdGoYUKC8D+jpVDV3v2e/nwGVqo4TG/ZWT1swBYzG9baTBnuPBPm7Paa84KnQCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CTqMJ2j2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714996161;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UVOjuGHnijX2tGdsGbh2K5EBK8PBebK05w8A7S2lTKk=;
+	b=CTqMJ2j2DuU9SFrWE5mFAdc4PBEE2PYiyXsEWhslroNhl05SICZwlW19V9C9hcQcJedC1+
+	k5KzYqZ6wW7CdjwbldWReqE+Jm4rQ7Vnu/2Xf9SHTiPU+vfqi/ChMsbB/j4tXxS2MHbktg
+	+dGIxuY0I1LNfov0K+37XJw9FYVKgRU=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-6h8sbDrSOcuZPfc-AIFEZg-1; Mon, 06 May 2024 07:49:20 -0400
+X-MC-Unique: 6h8sbDrSOcuZPfc-AIFEZg-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a592c35ac06so192186066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 04:49:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714996089; x=1715600889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ULKSrlLF8CoXgv8cd5QtkaVd/T2IyLOBhgECVTg6BYQ=;
-        b=TSDZrh2e2EnHtpI1pUL3AOyIk7GEhD4U9vfbk26HpOZxyx0R9pmwjSvkb3HHTQDvb8
-         xGXkNZG7+mgcACWBhlk532WX79QhJX+Dz8Ftx2UIXYH+ndZ2ihKnQeyS7eXlDRwuTE/J
-         qJioviI455hftOz1BcDlv3N/thhcwHbsfbX0uJ9keB1va2kBihHJPVaXdvKfoK/XMZrs
-         FcOJCzUsrKXD41GgCyX6JRr6KjYzwnBFp9r72TsQz6vFWpNegFBM6g7DlGb586auY2Pb
-         GjOGFW3XjiTdYkwZsd9wZb9UUZ8bucf771VnJEWaXaLGBS0otMpDstGOp1Y7qBVy2R5R
-         +EfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYjBh3V54QLA6NEiLMH1wxgNHUTqMQue78JFVBbREQbWRWSApkGlm+R/Aj/8e0oiKNUVWnAqI3HUeyEO2xXyuNInnU05vrRaJokUJE
-X-Gm-Message-State: AOJu0YyG6ErEuPiXAMeepxn2Ss+sUCBamh9JNNVtwDXVK74VVAIDO7OX
-	8WdXw3wn7+x/8ilvY60rC8CXswGAcEQk8QD8WGgXPEZc7oTCwgw0
-X-Google-Smtp-Source: AGHT+IFjPvXBILiyYfw9gqME2YadttKH18Uss1PusNBk+PXqGwSyLa73BHGDIWbqBG6iixQPcL/Qaw==
-X-Received: by 2002:a17:902:e808:b0:1de:fbc3:8e4a with SMTP id u8-20020a170902e80800b001defbc38e4amr11827809plg.52.1714996088490;
-        Mon, 06 May 2024 04:48:08 -0700 (PDT)
-Received: from mb-board.. ([120.237.109.178])
-        by smtp.gmail.com with ESMTPSA id j1-20020a17090276c100b001e49428f327sm8073242plt.176.2024.05.06.04.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 04:48:08 -0700 (PDT)
-From: Charles Wang <charles.goodix@gmail.com>
-To: hadess@hadess.net,
-	hdegoede@redhat.com,
-	dmitry.torokhov@gmail.com
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	neil.armstrong@linaro.org,
-	charles.goodix@gmail.com
-Subject: [PATCH] Input: goodix-berlin - Add sysfs interface for reading and writing touch IC registers
-Date: Mon,  6 May 2024 19:47:52 +0800
-Message-ID: <20240506114752.47204-1-charles.goodix@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1714996159; x=1715600959;
+        h=content-transfer-encoding:to:subject:from:cc:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UVOjuGHnijX2tGdsGbh2K5EBK8PBebK05w8A7S2lTKk=;
+        b=vv5WYGXuLR4DdBoVgUcL8RIZ25kcX2LFdEhgP0n+E/3Obhq1foBlkVj/KxxoDo1ROM
+         +DDYaaQkL9VqCdvISCkcNifX2TVNdUo3qMmfqNTloiw+JcbXsQDHPpUrNIAvq4mD3ni3
+         /Lx1TD3Rjm9f9Fb1/ot6rgCkJs3JiRkVle4COqYUaU/mLMxYRPjqCeyexxyZhKqVUepD
+         xLS9wdpOlWgEWNnvuygCSOSG7ld8+sVsCpzFQHnAvNpEUK5AuxtrYHzL/saRNvT9+qQv
+         9WnihTr1ii4tTnhpa1JFAlP+eyjbFYNjL98vIucjkImDNcTMLkaXvNiSvgozUhZdmMgP
+         YC9g==
+X-Forwarded-Encrypted: i=1; AJvYcCURZzSME/GJ5JS62MiXhq79Dyd+0a5zKlPG0wRFqClw/lgdAC9hRBx41OUQw9cVBf9CXHGmtmYLyqu7daBOAggXkVxpGdAPO1hiqxGx
+X-Gm-Message-State: AOJu0YzzsMg4IgmxeIu1AJTIJu4O44hcVRWdu2lMOjQoMvYbpflyjher
+	E8i+cQ1oMKw+XbBLN2JiLZ+9OHp+ZVURy4WHOoZbVt6qSkcr+W+32LvCIx7+tHW91EyjRAKWgo7
+	STtfkwDTfjrnF4ysBJhgQfr5+kBkzRXM3RHBnXXLKI0YY4LkEPRdUMUVRgS6b9A==
+X-Received: by 2002:a17:906:f59d:b0:a59:aa7a:3b16 with SMTP id cm29-20020a170906f59d00b00a59aa7a3b16mr5438599ejd.4.1714996159627;
+        Mon, 06 May 2024 04:49:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/BF449P6oYtXTLNlNFAmroU8YxK+dtUwmZhtwQBPNCYWIPRiuWpV7/MJdB0SdzgHMSrhNTw==
+X-Received: by 2002:a17:906:f59d:b0:a59:aa7a:3b16 with SMTP id cm29-20020a170906f59d00b00a59aa7a3b16mr5438572ejd.4.1714996159209;
+        Mon, 06 May 2024 04:49:19 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id ze15-20020a170906ef8f00b00a59ae3efb03sm2667510ejb.3.2024.05.06.04.49.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 04:49:18 -0700 (PDT)
+Message-ID: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+Date: Mon, 6 May 2024 13:49:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+Cc: Lennart Poettering <mzxreary@0pointer.de>,
+ Robert Mader <robert.mader@collabora.com>,
+ Sebastien Bacher <sebastien.bacher@canonical.com>,
+ Linux Media Mailing List <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ linaro-mm-sig@lists.linaro.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Milan Zamazal <mzamazal@redhat.com>, Maxime Ripard <mripard@redhat.com>,
+ Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+To: Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Export a sysfs interface that would allow reading and writing touchscreen
-IC registers. With this interface many things can be done in usersapce
-such as firmware updates. An example tool that utilizes this interface
-for performing firmware updates can be found at [1].
+Hi dma-buf maintainers, et.al.,
 
-[1] https://github.com/goodix/fwupdate_for_berlin_linux
+Various people have been working on making complex/MIPI cameras work OOTB
+with mainline Linux kernels and an opensource userspace stack.
 
-Signed-off-by: Charles Wang <charles.goodix@gmail.com>
----
- drivers/input/touchscreen/goodix_berlin.h     |  2 +
- .../input/touchscreen/goodix_berlin_core.c    | 52 +++++++++++++++++++
- drivers/input/touchscreen/goodix_berlin_i2c.c |  6 +++
- drivers/input/touchscreen/goodix_berlin_spi.c |  6 +++
- 4 files changed, 66 insertions(+)
+The generic solution adds a software ISP (for Debayering and 3A) to
+libcamera. Libcamera's API guarantees that buffers handed to applications
+using it are dma-bufs so that these can be passed to e.g. a video encoder.
 
-diff --git a/drivers/input/touchscreen/goodix_berlin.h b/drivers/input/touchscreen/goodix_berlin.h
-index 1fd77eb69..1741f2d15 100644
---- a/drivers/input/touchscreen/goodix_berlin.h
-+++ b/drivers/input/touchscreen/goodix_berlin.h
-@@ -19,6 +19,8 @@ struct regmap;
- int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
- 			struct regmap *regmap);
- 
-+void goodix_berlin_remove(struct device *dev);
-+
- extern const struct dev_pm_ops goodix_berlin_pm_ops;
- 
- #endif
-diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
-index e7b41a926..e02160841 100644
---- a/drivers/input/touchscreen/goodix_berlin_core.c
-+++ b/drivers/input/touchscreen/goodix_berlin_core.c
-@@ -672,6 +672,44 @@ static void goodix_berlin_power_off_act(void *data)
- 	goodix_berlin_power_off(cd);
- }
- 
-+static ssize_t goodix_berlin_registers_read(struct file *filp, struct kobject *kobj,
-+	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
-+{
-+	struct goodix_berlin_core *cd;
-+	struct device *dev;
-+	int error;
-+
-+	dev = kobj_to_dev(kobj);
-+	cd = dev_get_drvdata(dev);
-+
-+	error = regmap_raw_read(cd->regmap, (unsigned int)off,
-+				buf, count);
-+
-+	return error ? error : count;
-+}
-+
-+static ssize_t goodix_berlin_registers_write(struct file *filp, struct kobject *kobj,
-+	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
-+{
-+	struct goodix_berlin_core *cd;
-+	struct device *dev;
-+	int error;
-+
-+	dev = kobj_to_dev(kobj);
-+	cd = dev_get_drvdata(dev);
-+
-+	error = regmap_raw_write(cd->regmap, (unsigned int)off,
-+				 buf, count);
-+
-+	return error ? error : count;
-+}
-+
-+static struct bin_attribute goodix_berlin_registers_attr = {
-+	.attr = {.name = "registers", .mode = 0600},
-+	.read = goodix_berlin_registers_read,
-+	.write = goodix_berlin_registers_write,
-+};
-+
- int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
- 			struct regmap *regmap)
- {
-@@ -743,6 +781,14 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
- 
- 	dev_set_drvdata(dev, cd);
- 
-+	error = sysfs_create_bin_file(&cd->dev->kobj,
-+				      &goodix_berlin_registers_attr);
-+
-+	if (error) {
-+		dev_err(dev, "unable to create sysfs file, err=%d\n", error);
-+		return error;
-+	}
-+
- 	dev_dbg(dev, "Goodix Berlin %s Touchscreen Controller",
- 		cd->fw_version.patch_pid);
- 
-@@ -750,6 +796,12 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
- }
- EXPORT_SYMBOL_GPL(goodix_berlin_probe);
- 
-+void goodix_berlin_remove(struct device *dev)
-+{
-+	sysfs_remove_bin_file(&dev->kobj, &goodix_berlin_registers_attr);
-+}
-+EXPORT_SYMBOL_GPL(goodix_berlin_remove);
-+
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Goodix Berlin Core Touchscreen driver");
- MODULE_AUTHOR("Neil Armstrong <neil.armstrong@linaro.org>");
-diff --git a/drivers/input/touchscreen/goodix_berlin_i2c.c b/drivers/input/touchscreen/goodix_berlin_i2c.c
-index 6ed9aa808..35ef21cc8 100644
---- a/drivers/input/touchscreen/goodix_berlin_i2c.c
-+++ b/drivers/input/touchscreen/goodix_berlin_i2c.c
-@@ -46,6 +46,11 @@ static int goodix_berlin_i2c_probe(struct i2c_client *client)
- 	return 0;
- }
- 
-+static void goodix_berlin_i2c_remove(struct i2c_client *client)
-+{
-+	goodix_berlin_remove(&client->dev);
-+}
-+
- static const struct i2c_device_id goodix_berlin_i2c_id[] = {
- 	{ "gt9916", 0 },
- 	{ }
-@@ -66,6 +71,7 @@ static struct i2c_driver goodix_berlin_i2c_driver = {
- 		.pm = pm_sleep_ptr(&goodix_berlin_pm_ops),
- 	},
- 	.probe = goodix_berlin_i2c_probe,
-+	.remove = goodix_berlin_i2c_remove,
- 	.id_table = goodix_berlin_i2c_id,
- };
- module_i2c_driver(goodix_berlin_i2c_driver);
-diff --git a/drivers/input/touchscreen/goodix_berlin_spi.c b/drivers/input/touchscreen/goodix_berlin_spi.c
-index 4cc557da0..8ffbe1289 100644
---- a/drivers/input/touchscreen/goodix_berlin_spi.c
-+++ b/drivers/input/touchscreen/goodix_berlin_spi.c
-@@ -150,6 +150,11 @@ static int goodix_berlin_spi_probe(struct spi_device *spi)
- 	return 0;
- }
- 
-+static void goodix_berlin_spi_remove(struct spi_device *spi)
-+{
-+	goodix_berlin_remove(&spi->dev);
-+}
-+
- static const struct spi_device_id goodix_berlin_spi_ids[] = {
- 	{ "gt9916" },
- 	{ },
-@@ -169,6 +174,7 @@ static struct spi_driver goodix_berlin_spi_driver = {
- 		.pm = pm_sleep_ptr(&goodix_berlin_pm_ops),
- 	},
- 	.probe = goodix_berlin_spi_probe,
-+	.remove = goodix_berlin_spi_remove,
- 	.id_table = goodix_berlin_spi_ids,
- };
- module_spi_driver(goodix_berlin_spi_driver);
--- 
-2.43.0
+In order to meet this API guarantee the libcamera software ISP allocates
+dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
+the Fedora COPR repo for the PoC of this:
+https://hansdegoede.dreamwidth.org/28153.html
+
+I have added a simple udev rule to give physically present users access
+to the dma_heap-s:
+
+KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
+
+(and on Rasperry Pi devices any users in the video group get access)
+
+This was just a quick fix for the PoC. Now that we are ready to move out
+of the PoC phase and start actually integrating this into distributions
+the question becomes if this is an acceptable solution; or if we need some
+other way to deal with this ?
+
+Specifically the question is if this will have any negative security
+implications? I can certainly see this being used to do some sort of
+denial of service attack on the system (1). This is especially true for
+the cma heap which generally speaking is a limited resource.
+
+But devices tagged for uaccess are only opened up to users who are 
+physcially present behind the machine and those can just hit
+the powerbutton, so I don't believe that any *on purpose* DOS is part of
+the thread model. Any accidental DOS would be a userspace stack bug.
+
+Do you foresee any other negative security implications from allowing
+physically present non root users to create (u)dma-bufs ?
+
+Regards,
+
+Hans
+
+
+1) There are some limits in drivers/dma-buf/udmabuf.c and distributions
+could narrow these.
+
 
 
