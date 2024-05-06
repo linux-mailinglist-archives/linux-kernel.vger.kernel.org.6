@@ -1,175 +1,105 @@
-Return-Path: <linux-kernel+bounces-169304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F238BC69C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:52:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5128BC6A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F422816D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271311C212E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E42D4653A;
-	Mon,  6 May 2024 04:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0624654B;
+	Mon,  6 May 2024 04:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4GFRZ6GJ"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Bspn16xq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336F843AD5;
-	Mon,  6 May 2024 04:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634FD38384;
+	Mon,  6 May 2024 04:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714971136; cv=none; b=e5T1Vp7rHPNwuWR5TEXT/REK9mvgctXbyTuDu+Cjw0EvSOFd70zFT3FV3ZGFLusz/aGpGEO2f2IxZIcBqmRIzStDn6EJebmzsm/Rh2/l5s/iC1zG8fSEJ4JmJn14TPpEexEw0i3dVOpM7lnO4V9RJFUmugmT6SXqpzuLTsCsIz4=
+	t=1714971563; cv=none; b=TEmDaiNEBd9ipEqIq1VbgXmNqFHcqy4gl6q972zK6lBPdFRTqAu0Cfp1rmisZPUinxLEain18CydlPistx4i0CoU68xxEc9uA84pspNM5C9Kp2mequXscyC6/lcPmZCu21IgyfQJN3MtVwx79TKnKKwCUfKqmMqbV5jMPJoTcvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714971136; c=relaxed/simple;
-	bh=Qo9oR0uLK9UQeYxvmrg6jiYCbiXcdox6/UsyUwzx4Jg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R/7048s5oRzFNCkklRAiDCBLIy9XBmwuv8qlE15WqrR+oGv2D7llXeTeyvnVdMlYh46iBHWOI3D3x5o7aLB09YV6p4pLHBxot8vTJf4SQ2rnIgw6B440nI/PLxBoSlhABakONw2nBaohXimiZYEwLBvvLkET+Oc7t1O5rJo81XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4GFRZ6GJ; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1714971126;
-	bh=Qo9oR0uLK9UQeYxvmrg6jiYCbiXcdox6/UsyUwzx4Jg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=4GFRZ6GJbXZXVRYJVVH0MQtuv064RaK1pBFCLNS0YNGKmss4nNKuOys7zZhqXOZJ+
-	 N+bnX8SvajDXtTAIdq3R0AGw7lNVfbmTO6TtU18BOClPzhnj1WKHqNUYGPtKGQ14ZK
-	 W76ns2WhDZOBGtty8YhduKSc5VAdieTYIRDWeW0yrPic/5NASZgkGgSbjzrnjtTgsu
-	 C1sX3b2U8lF6a/XHOWJL/O+MObhjevRvbAMOzIuhUCYzGGbvzTxZ/LWZIClfPRx91m
-	 FgLQQ0dDBntz7cawQfgxeq9eb9/tse1WRe45i+FpAfKn9FQQTb/8sR4rUSMawEEVtf
-	 4XwXH48ln9FGw==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1714971563; c=relaxed/simple;
+	bh=RcpxP+2S9tmXMbb9cuHFhr4b55LylGn+1X4IWjxX4NQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jdkED4Ad0fzDIlphuYyYlX5kssyxgIlMbBa3yqvVZkp0UPPCzfHdayLxwGZFMAw785VCSnxmMNiu26pql3GpjjzmvKzvuep1mCheKVyb5dnm8GNr8qupaL4tOZYiDoUeVriTGpZ0EgFBtlpqqhH9m10q9mvhpkTs8+V6eaL0iVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Bspn16xq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1714971556;
+	bh=Pf9uq5awbUnoqcr1iIh+XFUNBtgpK+pxUOtReZflPEM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Bspn16xqDCR0oz1MwbA1Ujzxq3om+PG4JWf6uEk+a3u3UHCbrQgcJtC+0yFE8v85x
+	 DT+UXLSPSesyhPKCrbDjAvSiU382XFBXYHoEy+jEW4h11ZmEgmwEOL1aGBjM5Bg2Xv
+	 Dpx+4UG2pnRlDn343pnvHfRLNFg2lMAgcqVwWPWl2bmDOziH4QHQ7Y/wX/OnG9rExu
+	 OpvgJ1O+rMqZWOvOZnOXobddCXK7s2IsBLjjG/mTKG3qCLfGiiXUuGI9K5f4Svgboi
+	 bD8aQzU9qSu2ccpJOYgsVbBmdKianlLGtTpmEQcBmXzG+9ojbcG8K0xoQjPYKoMRQy
+	 CDoQ6m107nZtQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 687B6378205A;
-	Mon,  6 May 2024 04:52:04 +0000 (UTC)
-Message-ID: <4d565066-5e4a-48fb-a0dc-17c4380ccd65@collabora.com>
-Date: Mon, 6 May 2024 09:52:13 +0500
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VXq2D3zhVz4wck;
+	Mon,  6 May 2024 14:59:16 +1000 (AEST)
+Date: Mon, 6 May 2024 14:59:13 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the tpmdd tree
+Message-ID: <20240506145913.4e88f270@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Shuah Khan <shuah@kernel.org>,
- Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>
-Subject: Re: [PATCH] selftests/capabilities: fix warn_unused_result build
- warnings
-To: Amer Al Shanawany <amer.shanawany@gmail.com>
-References: <20240504170916.131580-1-amer.shanawany@gmail.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240504170916.131580-1-amer.shanawany@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/txT4sTQ.6ONqcqgRA8Kahtq";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Thanks for the patch!
+--Sig_/txT4sTQ.6ONqcqgRA8Kahtq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 5/4/24 10:09 PM, Amer Al Shanawany wrote:
-> Fix the following warnings by adding return check and error handling.
-> 
-> test_execve.c: In function ‘do_tests’:
-> test_execve.c:100:17: warning: ignoring return value of
->  ‘capng_get_caps_process’
->  declared with attribute ‘warn_unused_result’ [-Wunused-result]
->   100 |                 capng_get_caps_process();
->       |                 ^~~~~~~~~~~~~~~~~~~~~~~~
-> validate_cap.c: In function ‘main’:
-> validate_cap.c:47:9: warning: ignoring return value of
->  ‘capng_get_caps_process’
-> declared with attribute ‘warn_unused_result’ [-Wunused-result]
->    47 |         capng_get_caps_process();
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
+Hi all,
 
-LGTM
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+The following commit is also in the mm-hotfixes tree as a different commit
+(but the same patch):
 
-> ---
->  tools/testing/selftests/capabilities/test_execve.c  | 12 +++++++++---
->  tools/testing/selftests/capabilities/validate_cap.c |  7 ++++++-
->  2 files changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/capabilities/test_execve.c b/tools/testing/selftests/capabilities/test_execve.c
-> index 7cde07a5df78..47bad7ddc5bc 100644
-> --- a/tools/testing/selftests/capabilities/test_execve.c
-> +++ b/tools/testing/selftests/capabilities/test_execve.c
-> @@ -82,7 +82,7 @@ static bool create_and_enter_ns(uid_t inner_uid)
->  {
->  	uid_t outer_uid;
->  	gid_t outer_gid;
-> -	int i;
-> +	int i, ret;
->  	bool have_outer_privilege;
->  
->  	outer_uid = getuid();
-> @@ -97,7 +97,10 @@ static bool create_and_enter_ns(uid_t inner_uid)
->  			ksft_exit_fail_msg("setresuid - %s\n", strerror(errno));
->  
->  		// Re-enable effective caps
-> -		capng_get_caps_process();
-> +		ret = capng_get_caps_process();
-> +		if (ret == -1)
-> +			ksft_exit_fail_msg("capng_get_caps_process failed\n");
-> +
->  		for (i = 0; i < CAP_LAST_CAP; i++)
->  			if (capng_have_capability(CAPNG_PERMITTED, i))
->  				capng_update(CAPNG_ADD, CAPNG_EFFECTIVE, i);
-> @@ -207,6 +210,7 @@ static void exec_validate_cap(bool eff, bool perm, bool inh, bool ambient)
->  
->  static int do_tests(int uid, const char *our_path)
->  {
-> +	int ret;
->  	bool have_outer_privilege = create_and_enter_ns(uid);
->  
->  	int ourpath_fd = open(our_path, O_RDONLY | O_DIRECTORY);
-> @@ -250,7 +254,9 @@ static int do_tests(int uid, const char *our_path)
->  			ksft_exit_fail_msg("chmod - %s\n", strerror(errno));
->  	}
->  
-> -	capng_get_caps_process();
-> +	ret = capng_get_caps_process();
-> +	if (ret == -1)
-> +		ksft_exit_fail_msg("capng_get_caps_process failed\n");
->  
->  	/* Make sure that i starts out clear */
->  	capng_update(CAPNG_DROP, CAPNG_INHERITABLE, CAP_NET_BIND_SERVICE);
-> diff --git a/tools/testing/selftests/capabilities/validate_cap.c b/tools/testing/selftests/capabilities/validate_cap.c
-> index 60b4e7b716a7..65f2a1c89239 100644
-> --- a/tools/testing/selftests/capabilities/validate_cap.c
-> +++ b/tools/testing/selftests/capabilities/validate_cap.c
-> @@ -28,6 +28,7 @@ static bool bool_arg(char **argv, int i)
->  int main(int argc, char **argv)
->  {
->  	const char *atsec = "";
-> +	int ret;
->  
->  	/*
->  	 * Be careful just in case a setgid or setcapped copy of this
-> @@ -44,7 +45,11 @@ int main(int argc, char **argv)
->  		atsec = " (AT_SECURE is not set)";
->  #endif
->  
-> -	capng_get_caps_process();
-> +	ret = capng_get_caps_process();
-> +	if (ret == -1) {
-> +		ksft_print_msg("capng_get_caps_process failed\n");
-> +		return 1;
-> +	}
->  
->  	if (capng_have_capability(CAPNG_EFFECTIVE, CAP_NET_BIND_SERVICE) != bool_arg(argv, 1)) {
->  		ksft_print_msg("Wrong effective state%s\n", atsec);
+  71dd2201bdef ("MAINTAINERS: Update URL's for KEYS/KEYRINGS_INTEGRITY and =
+TPM DEVICE DRIVER")
 
--- 
-BR,
-Muhammad Usama Anjum
+This is commit
+
+  ecb42b703f3d ("MAINTAINERS: update URL's for KEYS/KEYRINGS_INTEGRITY and =
+TPM DEVICE DRIVER")
+
+in the mm-hotifxes-unstable branch of the mm-hotfixes tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/txT4sTQ.6ONqcqgRA8Kahtq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY4Y6EACgkQAVBC80lX
+0GyirQf8Dzktcg9ygIaoNbEHG6hPHraV7hyDipwwXyGxofKu1AGHLMBEiHQeAaNj
+s3463qHUkACr7K5ZpZd9jOsOpYIO0hsX9+ohMHT13PEGK5jmuKVVlwrjlabEahAX
+DktJVdl/v23Imo0nBZ5CuwTyYbcxmjtHnhTrRdpsYNSRcniWSIKiHxSnAm2qdvL7
+wunWXTcKBm4kCYotRDJdKagoIpZ3GinDk3NHQtLX7sCVLbgh+KKbBiozgosQCydC
+VR7jA959e4Nr43Wz+TeJmUhG9qpz4hmo//aU1FMG0cvO3TnG6xKJvFxEx6EpY/65
+bgoDLuxm85OCHluN4X1y+dOOLpgKHg==
+=cbgp
+-----END PGP SIGNATURE-----
+
+--Sig_/txT4sTQ.6ONqcqgRA8Kahtq--
 
