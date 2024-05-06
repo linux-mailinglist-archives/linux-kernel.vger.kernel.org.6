@@ -1,143 +1,186 @@
-Return-Path: <linux-kernel+bounces-170245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D8B8BD40A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:46:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087D88BD411
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F091F23159
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:46:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B6601C20E81
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 17:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AAC15820E;
-	Mon,  6 May 2024 17:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2533B157480;
+	Mon,  6 May 2024 17:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="H+Au6r4F"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gBVUZBF/"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2071.outbound.protection.outlook.com [40.107.102.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF602156962;
-	Mon,  6 May 2024 17:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715017585; cv=none; b=KuLtLGu+wD3/tg2frBWuUwB0pS4MHFGV1oKoclmIBjbnx8zytQAyBW9xv0+6cq4TAE5J2aTID6Ikb7/MxJYI2BtXDCh4qqblu3MDUx48/aWda3DQnqnHg04CDOgA0y+ztVq9cpfop/UHPLc7PgvkMOla90Q6kPJrGLlTGKAF7AY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715017585; c=relaxed/simple;
-	bh=vqnYuRDE7YAdIfHB4y1v8PCKhpIU6Ck4Nohhh0+FmK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tpmTVM1JBBPxFiGEnppm8trlczDr+Sv+rczRjZZ0n2Id4X+a0agWSll8zFN2B4FgEq18R3kAsnsr8eynG4e/LcG5xRrtSQYzPfzv+ew2GAcIN6pp4DfKfcGbec93ZXqTKAgZb3KhaBFjFYG8PaWHWDJ2eXf7+V0QCE8LVT4UsCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=H+Au6r4F; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=xw3p/mu9rqf4LynApLZg3ICv4KBQ9pI/cT8ZAvWfrvU=; b=H+Au6r4F4x1Z85+DNGjlJceQt6
-	VaCVEcT4DEiGQbGVDh4OFym0kKFZBd86s6uXoJpPJTol6iKXqn0LG0HyJx8lIh8EDuo+2i5hrqN2O
-	vk8Qm3pQwBYOe4xDEpVSHAJ94SfEJi+QIlADWRgaZl2lxVH8SKQJpWHxqdqPKPehOFIM8Su38HTbz
-	tZmG9bvQ+46+S74+Tc+2yjeIEhU2KGEf6hYY0sJQDTqbdzLZTPufeLvN5VPgkNTHPOYPIkOVO0+81
-	syykN+b+56a1Khj1sPfDj2zaRMDolfZReWyrBPwwCMLHxuCZrQqarp8odXqr9D7+gq22C7zDhtgFs
-	CDqB8Lqc9X0g5Di3lkjVsfjGTFg7PxYd9cX9RXsShaBKDeLBvJeTRzcKI1+KkmZWflxdWQiL7szBw
-	xvayOxyIs7UU8VHV51kSkC6VEOl3cP9Ch3jcC1obaPYpZYp8zP/YEf1lCPpQ6pc093IgCA0JBFcfa
-	tXQCy/UeOaoa1sQS6m4mY1a7;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1s42Pk-00A49V-1t;
-	Mon, 06 May 2024 17:46:12 +0000
-Message-ID: <501ead34-d79f-442e-9b9a-ecd694b3015c@samba.org>
-Date: Mon, 6 May 2024 19:46:08 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC071D52C;
+	Mon,  6 May 2024 17:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715017708; cv=fail; b=DmO/D4M5KtdKLS4nhMa3Zgtjj/siNCOclVX2l3QNChkuPYAV+jQfXjIhCQcivTNajWAxJ0pyZDWGUlOgqHDrGfrNVAXkZ1xRWvWy71ZtSqkp9aYs5nuai3JDbz97KhWKSr+D/7WgMe85AJsOOFZ80Tkj1/aHxdMZK46l0ngUno0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715017708; c=relaxed/simple;
+	bh=EwrFLBiSPrM67Vpa0lwvtZItbsUBhkdhUiA93kge5Vw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uW1+XXGYLhJmnLn0Lj0pLtfc6gIbZa3ogmqYS/eW54SfGUQMWViN/ceqTJil4jOcwvg7Ebp95Vj5DMcG9xZsUABHwyTfy1Md6cgYWhVr26tDBlmfWcG4IDjm6fg+OKDnvu81do1guzhXaATq2uMvn5I7/QtmJV+TllROKoHnAbA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gBVUZBF/; arc=fail smtp.client-ip=40.107.102.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Oty8nFBWSXjB61yC+kjfhX7Akuoqsx9JTU1WZOzgKiP/QT4UODBQqLxKIohjNulaN23IyRqUk6nrlFXUL6VGDOzKHlhWcYLXrWK4VGjv5xt2HLnoBOMMR2dibHIDFhftkP3bpw/sws8ypaqWcxiQvwaXamCKZsig5FPZwokA0mMeT0DaotihZODjOVTF4AvvSU8Q1KdSCJKqEX8PYzJUYLzaAiJMwaubraU7BfBdZcueF99wL5Sp2ACEr3wM8CA+dpw2FnKPqAUcQFHCGNTn1ZjptIIxK7vhsUStdNt0sVk9PEvjxYRhpRTr6vFnR/rHrwqYCZOvEKq5cPYEXEubtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SNyfNyA5527mBK7SvNWKRnJ7pcMjXK7LACLlKH3nYZo=;
+ b=S8O+tj5snkB5c8+XyHiifmLuTsPoxBbt6iNPjAWBc/k4Fs3IKrPhYZbp22pWmgTcwD+PgBmZz195mw1eRAaCyRjISgJa7/xjnlgqyDXRkBrhAo7KNeSoYaMNtOBcdjlo+7a2VVCig72R7RUbKaF67Og1vwbu7rgR5YE1v+9m8PcCUHXZG/W7x830K2YV8yl7Al92TxNFK/8Shf76KSWGgJ8F+esJw6HoZU87mgAUa8eY/rW/kjo+qwsG3qnrARjRJjDVHdKdthXmKXKrur0teXtJtQn/r5Lxj6f9SHcM1R41T4PcAfcwiK6Ax+AMQhMPXIxDgBqUAaAEDZCf0Db8Vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SNyfNyA5527mBK7SvNWKRnJ7pcMjXK7LACLlKH3nYZo=;
+ b=gBVUZBF/jhSB64JNYqWgZqLeHzGQOA2y+Y2Edb4gdhwJOVDnIDSWwRvLDkr0wWFZHfzvi8qGPSGYO+jNYauGEgJN8BSVSNvFOMjt6QiZ/jtk/AFXNnzqQEtUCn2LuXkoLbzh4ga3Ah2g5bi6CwGEuu+Ichw3HIOjQbV+1qAaHOs=
+Received: from BN9PR03CA0187.namprd03.prod.outlook.com (2603:10b6:408:f9::12)
+ by DM3PR12MB9392.namprd12.prod.outlook.com (2603:10b6:0:44::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.41; Mon, 6 May 2024 17:48:18 +0000
+Received: from BN1PEPF0000468C.namprd05.prod.outlook.com
+ (2603:10b6:408:f9:cafe::79) by BN9PR03CA0187.outlook.office365.com
+ (2603:10b6:408:f9::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.39 via Frontend
+ Transport; Mon, 6 May 2024 17:48:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF0000468C.mail.protection.outlook.com (10.167.243.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Mon, 6 May 2024 17:48:18 +0000
+Received: from jallen-jump-host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 6 May
+ 2024 12:48:17 -0500
+From: John Allen <john.allen@amd.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>, <bp@alien8.de>,
+	<yazen.ghannam@amd.com>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-edac@vger.kernel.org>, John Allen <john.allen@amd.com>
+Subject: [PATCH v2 0/2] PRM handler direct call interface
+Date: Mon, 6 May 2024 17:47:19 +0000
+Message-ID: <20240506174721.72018-1-john.allen@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: get_file() unsafe under epoll (was Re: [syzbot] [fs?] [io-uring?]
- general protection fault in __ep_remove)
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>,
- Bui Quang Minh <minhquangbui99@gmail.com>,
- Christian Brauner <brauner@kernel.org>,
- syzbot <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, Laura Abbott <laura@labbott.name>
-References: <0000000000002d631f0615918f1e@google.com>
- <7c41cf3c-2a71-4dbb-8f34-0337890906fc@gmail.com>
- <202405031110.6F47982593@keescook>
- <64b51cc5-9f5b-4160-83f2-6d62175418a2@kernel.dk>
- <202405031207.9D62DA4973@keescook>
- <d6285f19-01aa-49c8-8fef-4b5842136215@kernel.dk>
- <202405031237.B6B8379@keescook> <202405031325.B8979870B@keescook>
- <20240503211109.GX2118490@ZenIV>
- <CAHk-=wj0de-P2Q=Gz2uyrWBHagT25arLbN0Lyg=U6fT7psKnQA@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <CAHk-=wj0de-P2Q=Gz2uyrWBHagT25arLbN0Lyg=U6fT7psKnQA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000468C:EE_|DM3PR12MB9392:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e0a319f-0f62-4608-2f2e-08dc6df4b67c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|1800799015|376005|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OTVBSGROSEQxZlpTWGRqaU0yd2UwSmdzMGx6K2ttVUk4dWo0MFlGcXVTOXVN?=
+ =?utf-8?B?UHpXbW1PTW9wdUVFcVh3T3dxay9TYysxOGZUOWxLalJVSXppem5XWmtDSy9s?=
+ =?utf-8?B?OGR2clV1L2ZDTEJNYjN3RjlRMExkZjJtOUlEMzN0ZURLbTRVVVZuQ1JqSDNl?=
+ =?utf-8?B?bzhLRXhDVG5xWHp1UlVxMmZ0NFNra2ZXQlZTSVo0QWpGdXY2eXRUM0dsMG1y?=
+ =?utf-8?B?RWtKSEF3MWtqbVc0M3oycGJVS0dOWk9GNWs2b05qOTZCa3BpcTBoQTlsaDlt?=
+ =?utf-8?B?Qmw3Z1JDSDN1VFRMZVprME5SU1pBU1dJU1AzMXRDZnYwYzkwSk5JbzhJZmI3?=
+ =?utf-8?B?ZTlrbnhEckVuVTFDaGtka0JDYTJHa2dmSWtHNXI3VjIvU0lNbE5PQ1VUNUJv?=
+ =?utf-8?B?QVlOclNPcU5iNCs2MWxjZ1UraWl5V1FBSlR5LzhieU5mL0dFZWZ0eWxGbFRo?=
+ =?utf-8?B?RExzZ0MvS1JNd2Vtb0FIbldnU2x1a0NJd1ZXWEpibkcxcVU1VkRNcnEzMG5U?=
+ =?utf-8?B?S2o4N1FKZEdkdzRMMkIzc0h6eEI0MUc2UmFEYlFaa0gwV2k4eVJrckd1Y3Vq?=
+ =?utf-8?B?OUszMjV6YnQ5SFZaZ0tlVFhvcWQ3dWtpUGo3RHdHQkc2dDBlR3Z1WWF2b3ZT?=
+ =?utf-8?B?TFl3eENGYWVrQmJ1QnlCdjU2SWc5dFVYT0pHdDRMT1RPdjBhZ0d2MVVjUlZn?=
+ =?utf-8?B?czc5YjA0S3hLa2FWYm40bTE0elNPY25nVFlNQTdzY3duVmRVMDlnRVVkNVRq?=
+ =?utf-8?B?WTlESTJoQ3JGUUZQZnBuU3Y4RWl2aS9DYzVkOGZ6ZzJaYW8rQmtZc1FRQW90?=
+ =?utf-8?B?SUdXRzUyZG85QXJ6UFJ2NzJXc0JaMFJWMW1YU3ZjeUNmUkcxSGZyYWhId1VG?=
+ =?utf-8?B?L0lCQWxZR3crMFJ6bWhTSzBOMEdWSE9Fb1ZQYVdIQ0R3ZjEyL3phemtRS1pS?=
+ =?utf-8?B?ZDJCZ0R1SU1NK0ZGYTVqZ2ZaREhVb25ZUUY4cEM2Yi9MSHZCbU5JMTJVeUpK?=
+ =?utf-8?B?TTFrVDI5M0tlRDJua0lWWGdYcTNTY3lFb1M3RVBPYUZvY3UrWVdVTm1odnpF?=
+ =?utf-8?B?aVFVWVZIeG1ESUJQMjFFRTgwOWZQc0RwTTBSU25UaHRZUXZOZDJIRDhycldk?=
+ =?utf-8?B?TEIrYVFtSWpRMG45V2YxWFhUTUFVWkFnVjVqVzZ0cmhrWi9CR1BRSVZOM2Rl?=
+ =?utf-8?B?U0xkZERVdk4zMkpRUTBWcGpwQnJ6b3pRT1EyWW9lNWxzc3BYWVZ0VG5Mamp4?=
+ =?utf-8?B?amMvQ3dqd2FBMjBuZzlwMWhZR2FxbTRFd3NXQ2tTVzBvY2t1eUZKY0lTcmFF?=
+ =?utf-8?B?bEc2Tkk5cEZYUWFNeDFXQTc5WmNhSGI3U0RaNDhSNGpyMjY2OFFzLzJFZ2Np?=
+ =?utf-8?B?VGlYZ3hxK3JmSy9NQ1hwVzJPQlp4RkZvczZwamFIZEdtRkN4c1VEN3dZSUdN?=
+ =?utf-8?B?VGhHQ2l3cjBrYnhubWo0V0p2MjhlRzlqZUd4M2RUUVFWeUdYK3FZcXdEanFl?=
+ =?utf-8?B?SlA4ajJ0WU9nOTE1c3pWT2VPZWhRWnJrNFVUNERSS1VqcUxhNFAzWTZWSllY?=
+ =?utf-8?B?Y0dsZGVNdmxUd0ZpUjVPRk5aOGM1WEtkUS9WWGN1ZHhQZUt4cyt4VzVJNnVk?=
+ =?utf-8?B?LzF4enB1ZnkxY1JuVXBPaHk5eGR2cjNnUWx2VUMzWmp5cFdPdEtaZ3dPaWFL?=
+ =?utf-8?B?VnFVVTNHdkRHYlVteTNuTGdSL2l2NHRuTXA5bm9kclh2MzRmR3FmY2lvQ2ty?=
+ =?utf-8?Q?hb6XWHqIEtuuv78JuQq6Azry/ci1nKxj0EVJfVQ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(376005)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 17:48:18.0182
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e0a319f-0f62-4608-2f2e-08dc6df4b67c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF0000468C.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9392
 
-Am 03.05.24 um 23:24 schrieb Linus Torvalds:
-> On Fri, 3 May 2024 at 14:11, Al Viro <viro@zeniv.linux.org.uk> wrote:
->>
->> What we need is
->>          * promise that ep_item_poll() won't happen after eventpoll_release_file().
->> AFAICS, we do have that.
->>          * ->poll() not playing silly buggers.
-> 
-> No. That is not enough at all.
-> 
-> Because even with perfectly normal "->poll()", and even with the
-> ep_item_poll() happening *before* eventpoll_release_file(), you have
-> this trivial race:
-> 
->    ep_item_poll()
->       ->poll()
-> 
-> and *between* those two operations, another CPU does "close()", and
-> that causes eventpoll_release_file() to be called, and now f_count
-> goes down to zero while ->poll() is running.
-> 
-> So you do need to increment the file count around the ->poll() call, I feel.
-> 
-> Or, alternatively, you'd need to serialize with
-> eventpoll_release_file(), but that would need to be some sleeping lock
-> held over the ->poll() call.
-> 
->> As it is, dma_buf ->poll() is very suspicious regardless of that
->> mess - it can grab reference to file for unspecified interval.
-> 
-> I think that's actually much preferable to what epoll does, which is
-> to keep using files without having reference counts to them (and then
-> relying on magically not racing with eventpoll_release_file().
+Platform Runtime Mechanism (PRM) introduces a means for the AML
+interpreter and OS drivers to invoke runtime handlers from platform
+firmware in order to remove the need for certain classes of SMIs.
+Further details can be seen in the PRM specification[1].
 
-I think it's a very important detail that epoll does not take
-real references. Otherwise an application level 'close()' on a socket
-would not trigger a tcp disconnect, when an fd is still registered with
-epoll.
+Future AMD platforms will implement a PRM module in firmware that will
+include handlers for performing various types of address translation.
+The address translation PRM module is documented in chapter 22 of the
+publicly available "AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
+ACPI v6.5 Porting Guide"[2].
 
-I noticed that some parts of Samba currently rely on this when I tried
-to convert tevent from epoll to IORING_OP_POLL_ADD (which takes a longer term reference)
+While the kernel currently has support for calling PRM handlers from the
+AML interpreter, it does not support calling PRM handlers directly from
+OS drivers. This series implements the direct call interface and uses it
+for translating normalized addresses to system physical addresses.
 
-And I guess there will be other applications also relying on the current epoll
-behavior. That a closed fs automatically removes itself from epoll.
+Thanks,
+John
 
-A short term reference just around ->poll() might be fine,
-but please no reference via EPOLL_CTL_ADD.
+[1]:
+https://uefi.org/sites/default/files/resources/Platform%20Runtime%20Mechanism%20-%20with%20legal%20notice.pdf
+[2]:
+https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/programmer-references/58088-0.75-pub.pdf
 
-Changing that can cause security problems in user space.
+Tree: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+Base commit: 4cece764965020c22cff7665b18a012006359095
 
-I haven't followed all details of this thread,
-please ignore me if that's all clear already :-)
+John Allen (2):
+  ACPI: PRM: Add PRM handler direct call support
+  RAS/AMD/ATL: Translate normalized to system physical addresses using
+    PRM
 
-Thanks!
-metze
+ drivers/acpi/prmt.c            | 24 +++++++++++++
+ drivers/ras/amd/atl/Makefile   |  1 +
+ drivers/ras/amd/atl/internal.h |  2 ++
+ drivers/ras/amd/atl/prm.c      | 61 ++++++++++++++++++++++++++++++++++
+ drivers/ras/amd/atl/umc.c      |  5 +++
+ include/linux/prmt.h           |  5 +++
+ 6 files changed, 98 insertions(+)
+ create mode 100644 drivers/ras/amd/atl/prm.c
 
+-- 
+2.34.1
 
 
