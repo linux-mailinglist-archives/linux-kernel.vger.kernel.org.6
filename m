@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-169212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146D28BC4EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:43:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6419F8BC4F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 02:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE64F2820EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1458A2821F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 00:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6438C11;
-	Mon,  6 May 2024 00:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FA1A94A;
+	Mon,  6 May 2024 00:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="sH8eA+ta"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="UOAB8NYu"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F746FD3
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 00:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFA48BFA;
+	Mon,  6 May 2024 00:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714956192; cv=none; b=ACsmm55uiF3fbunvxCzgZ31kUh6HfgR7FB1YpKTUwrhHNQkDQqALWBdBwKOfmrxJvyx0uhsF3nhiQqq2kBu9DVxu+7mv58haYZp5EcexcoHg1mZ5F8QRS8k7o1r8cuFmhcuHCtkX0ojYibW906/rXrbHSqPaFGxxRiBdl+UhR6E=
+	t=1714956418; cv=none; b=SDgf00gLKIaeoFvvNVDfyYH8evdX2OivbMajpFnrDnFwspCvjU7HHz8YdlUqrJYiX7cR1hMgUM/TBZPxZciDU3p4vZzudEhUb/t+VzQu+q/k4WCijegjDMAwAV8d5SgYvq2CUkYcoqB8RSCqBqwsjGwo2fWjPtR27n2Xa+meyPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714956192; c=relaxed/simple;
-	bh=uOX0PhmvNHgWxT86ZneadqdUQba8W5dne4B8qtTTjss=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pJGTlhTfWDH7ttrRt/TBcyV2uXQY4Ervo9KQtlHx6SKlZJdHcRlzCKzs6hx9B2yhZGkXY2P5yyq3RNqgFZ6oeumd02emOeJ5DV1zsS5ymskqHS3f+4S5EE2ezhBFgrF67zKBV/cwIf2B4cExjWH5N6mgDBszcFv3/e/avUFT380=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=sH8eA+ta; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1714956418; c=relaxed/simple;
+	bh=MCWSf42J7Ydt7/06DV5oxor9m2vYQxvl2U5A48OU0b8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=raBj3Mjj7a0V0N9nXxtb3HqD4hJlY9eQ6rmTn0kad2egM8SFcGJQfdFsS/Uu6/Kn2AN5oOMQaVc+kCRsWxCcUzIZVJ2m2aPucVDZlWiL8MMZxZu8fuc/cIjSGKeKXgGdqs5wXWlCBxW+VXna/+fNGrNttzGh+YPWT1nsyNTw/0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=UOAB8NYu; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=G1Gj2Hnzo2ZD16fHfZrhJMRm2fpUj1qxW5xMXWXwHbE=; b=sH8eA+taaySOAqS2
-	qt12dVmoYI3Y6ZYzlOmi+CyYU161TSoMCsIRbq+oRWdIdJedYL7cVa+SheovSGhHknYX5DkSXI7Sx
-	hNnUT2xeeABib5fxcx5PFjOq/5PhS1BfpV+b39hp3wjLvk5cv0d3OWTaz/nGUHvBZKClldqO3OvnF
-	MYOQxiol6aBSxZqqIYW95N+7EQWwM8MnFXigAP3DUJkhGk1n7Q3FqIcJe1Xz+NoET0xm2CGc67ib7
-	janthHYkGQ3j6Yo2GOXRgGtmJfWKjRV5T69noHDcI4kfZT+SBReIHqUmcGCveVAtkbKBSMbdpN9c0
-	hJaPzKJdQoEOfDiSLA==;
+	:Subject; bh=hbpmqPehKNeC5DN8fCY+LuqViDM4iLNJexDFtFPKmY8=; b=UOAB8NYu0lXONDkd
+	oV9zpYk0rOSPw8lr3oFl9y7nli4Wg6ClBbyoVQ84Jv4SoHkF5ZHSmMdMKTcgwaSK7cFTDkUHCIvDe
+	f8z/RSHeODkQsqndhdi26KjoLi3kNmuYwv7krKFsAxhsqrxa6xSmrNW/j0hnmlgbBb4DIsjDmx5V3
+	F+KyGrWT9VpYXv6gmXuwNcVEjKsbX2bNy8YBuuIIyY+6OXdeoAUOsVYMjuplWhr079xGaxbDCPsZi
+	m5dPRli51gLJHo8qX/Lhm2sehlRHLXJ2bTNxeAqwXbeawc+0Dum7zv4yVq2URbMJJ1o5K3+KN42PY
+	y79elB7uFP1b3vnerg==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1s3mRb-004ph8-36;
-	Mon, 06 May 2024 00:43:03 +0000
+	id 1s3mVG-004piy-36;
+	Mon, 06 May 2024 00:46:50 +0000
 From: linux@treblig.org
-To: bp@alien8.de
+To: bhelgaas@google.com,
+	dave.hansen@linux.intel.com
 Cc: x86@kernel.org,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] x86/microcode: Remove unused struct 'cpu_info_ctx'
-Date: Mon,  6 May 2024 01:43:00 +0100
-Message-ID: <20240506004300.770564-1-linux@treblig.org>
+Subject: [PATCH] x86: ce4100: Remove unused struct 'sim_reg_op'
+Date: Mon,  6 May 2024 01:46:47 +0100
+Message-ID: <20240506004647.770666-1-linux@treblig.org>
 X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,30 +63,30 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This looks unused since:
-Commit 2071c0aeda22 ("x86/microcode: Simplify init path even more")
+This doesn't look like it was ever used.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/x86/pci/ce4100.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 232026a239a68..b3658d11e7b69 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -60,11 +60,6 @@ module_param(force_minrev, bool, S_IRUSR | S_IWUSR);
-  */
- struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
+diff --git a/arch/x86/pci/ce4100.c b/arch/x86/pci/ce4100.c
+index 87313701f069e..f5dbd25651e0f 100644
+--- a/arch/x86/pci/ce4100.c
++++ b/arch/x86/pci/ce4100.c
+@@ -35,12 +35,6 @@ struct sim_dev_reg {
+ 	struct sim_reg sim_reg;
+ };
  
--struct cpu_info_ctx {
--	struct cpu_signature	*cpu_sig;
--	int			err;
+-struct sim_reg_op {
+-	void (*init)(struct sim_dev_reg *reg);
+-	void (*read)(struct sim_dev_reg *reg, u32 value);
+-	void (*write)(struct sim_dev_reg *reg, u32 value);
 -};
 -
- /*
-  * Those patch levels cannot be updated to newer ones and thus should be final.
-  */
+ #define MB (1024 * 1024)
+ #define KB (1024)
+ #define SIZE_TO_MASK(size) (~(size - 1))
 -- 
 2.45.0
 
