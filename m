@@ -1,347 +1,142 @@
-Return-Path: <linux-kernel+bounces-169666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3C38BCBF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814F58BCBFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C952B284798
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0AD1F2223A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 10:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D127143867;
-	Mon,  6 May 2024 10:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062651428F5;
+	Mon,  6 May 2024 10:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="XzGdWnUI"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jt1Rqg3r";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mjX2g5On"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CABE1422C5;
-	Mon,  6 May 2024 10:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CC043AA5
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 10:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714991069; cv=none; b=pWqKKHu7sc5OdJ8fkL84cZ4QSbQCdudP268Z+uKjiU8grPcKLVRPiT75dfGABn/oSyftJP24iBO44Os2Iklh3A2hPDjr6+1Oa15pGH2VPpEcZr+Gs6VPnXLGgh0yXNE+5p7I9F43wboC5T279CVRiFhhl1sKiDwJVZxAe95aNUA=
+	t=1714991254; cv=none; b=BqBaPGBXRxmFPpMIISnnuTXCkDug5GRfpEDSNjQv71jX6Zh/xhHU5CObsWNRK08zD0kmWqwiyrQkdIe2y8Be3466YAvr97PAuQpGwtICZLWs/d0cXZ8d2VTFMZWwX4q4d3mZKJEMbdTXFO1e3JI6gaXajaGwArUDsDD8hPM9Ges=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714991069; c=relaxed/simple;
-	bh=+iGbmdojo/ysSAYj9+vv3uoYFfIvQYKAAZNiAJ+Gy3M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wz7EiVvTmk7wSb8F4pdl4ctlSykHHYaG8uq2StfEuZQnd5zeuM3exb/3x97vqhRmTBIWfo35eRR1VFUOXE5a0ZdtU/Inou6GcuMRoF3hd8XgHl3yGD9nP863ZbylvkLOMhG2Iu8qmbIp0sQFb4KS5ll5Cy9WHgTbqca1VWZMupk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=XzGdWnUI; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=DQm/agkAtB5qHs0WKvLGfyrGJ7CCayWji+zZYNYTpIk=; b=XzGdWnUIIZZD5TnSkfo3PNVvtI
-	e7FzcSNPzKOjyJA38ahUt3KPEAlgNhZKinpIshQ0oJYhtaGhf1aQyr37JoLyN8jTPX9a3JDhmWU5P
-	M0VMAj8b/WalJGVJKUorOe+kxsn0hloPrTfnFGUlsWHPtAjAN+cR+TT36JRpL1TaDvaMH0fDRpC2t
-	Oid9XJ/FOe1AhQgNZfzbbrcs8tomOxHGDtTnxGYdiHGug5jyyTnkzW17MOrtOoEufo4tps01cNby2
-	IxLqx8M8+nY6CVktwekHUXxVfG5H9FrM9+Nv988jiiCgeFrxTOcrYuKXwMhnclzHTyW0FXl/vNzd9
-	XRHuFztg==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1s3vVu-0007YK-Og; Mon, 06 May 2024 12:24:06 +0200
-Received: from [87.49.147.101] (helo=localhost)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1s3vVt-000OrS-1l;
-	Mon, 06 May 2024 12:24:05 +0200
-From: Esben Haabendal <esben@geanix.com>
-Date: Mon, 06 May 2024 12:23:55 +0200
-Subject: [PATCH v2 3/3] pinctrl: freescale: enable use with COMPILE_TEST
+	s=arc-20240116; t=1714991254; c=relaxed/simple;
+	bh=O7CuAc53qoweqFaCbds+l7yVEfHtaHVes11Wpj9zS7g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eRyKlj0fuIJog9Y6fYUR8QkthFW2s8ITD+BGJob1FgsbSlxK3wdsgz6J2HWBQOXGnWRBK3xz8vG8sOZnV1osb/hLVVZZwWnUxSQXEm96qLQ7do3xINYy2kF++4RHXY+QueOt9yMT21ruTS2ZRvqTstDPr02siuyv5pECoiSF8kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jt1Rqg3r; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mjX2g5On; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1714991251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5NDblSiaqpXJLG2pJGM/FfvdmGrpG1TyOiQ39YQ89Y4=;
+	b=jt1Rqg3rUcr2x//xCIkj/DmSwTF4YCG/WoUTSP5KMj1z2eNBm4xVFkTuwDEq0LVXsJFjCY
+	VR7zhnBeZdRJROsCzgRBt0D+RVIjye7++bQb9jK1KYcZPwSKTzmtLhXtjmI4U07IV82rON
+	CSNBpVw6EHDS3GAwy2cO6IYMO/DIp6bT+Xf9eROYUzHdegG+uTFYTAJeV2NTgSrDLtR7HN
+	UyNEsB/GxPv/Q4YTsHEZoJ9S9rnQFX0em2NTGuRzcH/uzvAKVCUkhaCiMeU8OVvpy5PGRy
+	wAggfG3MKZnBpq/8osuxvnJLQ6DPpWQGjMF+AOY4dF9QbNwdX9ybvfqokwQWuw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1714991251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5NDblSiaqpXJLG2pJGM/FfvdmGrpG1TyOiQ39YQ89Y4=;
+	b=mjX2g5On2ZMcJAJ3QpJEJNpSOWkXQQZIsloslp447SB9UZcaDTW5Ng4odD75+RYij0772A
+	b5Lo9BEtnT9dkJDA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v5 07/30] printk: nbcon: Use driver
+ synchronization while (un)registering
+In-Reply-To: <20240502213839.376636-8-john.ogness@linutronix.de>
+References: <20240502213839.376636-1-john.ogness@linutronix.de>
+ <20240502213839.376636-8-john.ogness@linutronix.de>
+Date: Mon, 06 May 2024 12:33:28 +0206
+Message-ID: <87msp3i6b3.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240506-imx-pinctrl-optional-v2-3-bdff75085156@geanix.com>
-References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
-In-Reply-To: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
-To: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, 
- Jacky Bai <ping.bai@nxp.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- Rasmus Villemoes <rasmus.villemoes@prevas.dk>, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Esben Haabendal <esben@geanix.com>
-X-Mailer: b4 0.13.0
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27267/Mon May  6 10:24:34 2024)
+Content-Type: text/plain
 
-Allow compile-testing of i.MX pinctrl drivers using CONFIG_COMPILE_TEST.
+On 2024-05-02, John Ogness <john.ogness@linutronix.de> wrote:
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index e6b91401895f..15d19d8461ed 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3537,6 +3538,19 @@ void register_console(struct console *newcon)
+>  		newcon->seq = init_seq;
+>  	}
+>  
+> +	/*
+> +	 * If another context is actively using the hardware of this new
+> +	 * console, it will not be aware of the nbcon synchronization. This
+> +	 * is a risk that two contexts could access the hardware
+> +	 * simultaneously if this new console is used for atomic printing
+> +	 * and the other context is still using the hardware.
+> +	 *
+> +	 * Use the driver synchronization to ensure that the hardware is not
+> +	 * in use while this new console transitions to being registered.
+> +	 */
+> +	if ((newcon->flags & CON_NBCON) && newcon->write_atomic)
+> +		newcon->device_lock(newcon, &flags);
+> +
+>  	/*
+>  	 * Put this console in the list - keep the
+>  	 * preferred driver at the head of the list.
+> @@ -3561,6 +3575,10 @@ void register_console(struct console *newcon)
+>  	 * register_console() completes.
+>  	 */
+>  
+> +	/* This new console is now registered. */
+> +	if ((newcon->flags & CON_NBCON) && newcon->write_atomic)
+> +		newcon->device_unlock(newcon, flags);
+> +
 
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
- drivers/pinctrl/freescale/Kconfig | 73 +++++++++++++++++++++++++--------------
- 1 file changed, 47 insertions(+), 26 deletions(-)
+Rather than writing the conditions twice, I will add a local variable
+and check that instead.
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index 2b19c40978c2..34a4255dfd4c 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -19,7 +19,8 @@ config PINCTRL_IMX1_CORE
- 
- config PINCTRL_IMX1
- 	bool "IMX1 pinctrl driver"
--	depends on SOC_IMX1
-+	depends on OF
-+	depends on SOC_IMX1 || COMPILE_TEST
- 	default SOC_IMX1
- 	select PINCTRL_IMX1_CORE
- 	help
-@@ -27,7 +28,8 @@ config PINCTRL_IMX1
- 
- config PINCTRL_IMX27
- 	bool "IMX27 pinctrl driver"
--	depends on SOC_IMX27
-+	depends on OF
-+	depends on SOC_IMX27 || COMPILE_TEST
- 	default SOC_IMX27
- 	select PINCTRL_IMX1_CORE
- 	help
-@@ -37,7 +39,7 @@ config PINCTRL_IMX27
- config PINCTRL_IMX25
- 	bool "IMX25 pinctrl driver"
- 	depends on OF
--	depends on SOC_IMX25
-+	depends on SOC_IMX25 || COMPILE_TEST
- 	default SOC_IMX25
- 	select PINCTRL_IMX
- 	help
-@@ -45,7 +47,8 @@ config PINCTRL_IMX25
- 
- config PINCTRL_IMX35
- 	bool "IMX35 pinctrl driver"
--	depends on SOC_IMX35
-+	depends on OF
-+	depends on SOC_IMX35 || COMPILE_TEST
- 	default SOC_IMX35
- 	select PINCTRL_IMX
- 	help
-@@ -53,7 +56,8 @@ config PINCTRL_IMX35
- 
- config PINCTRL_IMX50
- 	bool "IMX50 pinctrl driver"
--	depends on SOC_IMX50
-+	depends on OF
-+	depends on SOC_IMX50 || COMPILE_TEST
- 	default SOC_IMX50
- 	select PINCTRL_IMX
- 	help
-@@ -61,7 +65,8 @@ config PINCTRL_IMX50
- 
- config PINCTRL_IMX51
- 	bool "IMX51 pinctrl driver"
--	depends on SOC_IMX51
-+	depends on OF
-+	depends on SOC_IMX51 || COMPILE_TEST
- 	default SOC_IMX51
- 	select PINCTRL_IMX
- 	help
-@@ -69,7 +74,8 @@ config PINCTRL_IMX51
- 
- config PINCTRL_IMX53
- 	bool "IMX53 pinctrl driver"
--	depends on SOC_IMX53
-+	depends on OF
-+	depends on SOC_IMX53 || COMPILE_TEST
- 	default SOC_IMX53
- 	select PINCTRL_IMX
- 	help
-@@ -77,7 +83,8 @@ config PINCTRL_IMX53
- 
- config PINCTRL_IMX6Q
- 	bool "IMX6Q/DL pinctrl driver"
--	depends on SOC_IMX6Q
-+	depends on OF
-+	depends on SOC_IMX6Q || COMPILE_TEST
- 	default SOC_IMX6Q
- 	select PINCTRL_IMX
- 	help
-@@ -85,7 +92,8 @@ config PINCTRL_IMX6Q
- 
- config PINCTRL_IMX6SL
- 	bool "IMX6SL pinctrl driver"
--	depends on SOC_IMX6SL
-+	depends on OF
-+	depends on SOC_IMX6SL || COMPILE_TEST
- 	default SOC_IMX6SL
- 	select PINCTRL_IMX
- 	help
-@@ -93,7 +101,8 @@ config PINCTRL_IMX6SL
- 
- config PINCTRL_IMX6SLL
- 	bool "IMX6SLL pinctrl driver"
--	depends on SOC_IMX6SLL
-+	depends on OF
-+	depends on SOC_IMX6SLL || COMPILE_TEST
- 	default SOC_IMX6SLL
- 	select PINCTRL_IMX
- 	help
-@@ -101,7 +110,8 @@ config PINCTRL_IMX6SLL
- 
- config PINCTRL_IMX6SX
- 	bool "IMX6SX pinctrl driver"
--	depends on SOC_IMX6SX
-+	depends on OF
-+	depends on SOC_IMX6SX || COMPILE_TEST
- 	default SOC_IMX6SX
- 	select PINCTRL_IMX
- 	help
-@@ -109,7 +119,8 @@ config PINCTRL_IMX6SX
- 
- config PINCTRL_IMX6UL
- 	bool "IMX6UL pinctrl driver"
--	depends on SOC_IMX6UL
-+	depends on OF
-+	depends on SOC_IMX6UL || COMPILE_TEST
- 	default SOC_IMX6UL
- 	select PINCTRL_IMX
- 	help
-@@ -117,7 +128,8 @@ config PINCTRL_IMX6UL
- 
- config PINCTRL_IMX7D
- 	bool "IMX7D pinctrl driver"
--	depends on SOC_IMX7D
-+	depends on OF
-+	depends on SOC_IMX7D || COMPILE_TEST
- 	default SOC_IMX7D
- 	select PINCTRL_IMX
- 	help
-@@ -125,7 +137,8 @@ config PINCTRL_IMX7D
- 
- config PINCTRL_IMX7ULP
- 	bool "IMX7ULP pinctrl driver"
--	depends on SOC_IMX7ULP
-+	depends on OF
-+	depends on SOC_IMX7ULP || COMPILE_TEST
- 	default SOC_IMX7ULP
- 	select PINCTRL_IMX
- 	help
-@@ -134,7 +147,7 @@ config PINCTRL_IMX7ULP
- config PINCTRL_IMX8MM
- 	tristate "IMX8MM pinctrl driver"
- 	depends on OF
--	depends on SOC_IMX8M
-+	depends on SOC_IMX8M || COMPILE_TEST
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mm pinctrl driver
-@@ -142,7 +155,7 @@ config PINCTRL_IMX8MM
- config PINCTRL_IMX8MN
- 	tristate "IMX8MN pinctrl driver"
- 	depends on OF
--	depends on SOC_IMX8M
-+	depends on SOC_IMX8M || COMPILE_TEST
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mn pinctrl driver
-@@ -150,7 +163,7 @@ config PINCTRL_IMX8MN
- config PINCTRL_IMX8MP
- 	tristate "IMX8MP pinctrl driver"
- 	depends on OF
--	depends on SOC_IMX8M
-+	depends on SOC_IMX8M || COMPILE_TEST
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mp pinctrl driver
-@@ -158,42 +171,47 @@ config PINCTRL_IMX8MP
- config PINCTRL_IMX8MQ
- 	tristate "IMX8MQ pinctrl driver"
- 	depends on OF
--	depends on SOC_IMX8M
-+	depends on SOC_IMX8M || COMPILE_TEST
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mq pinctrl driver
- 
- config PINCTRL_IMX8QM
- 	tristate "IMX8QM pinctrl driver"
--	depends on IMX_SCU && ARCH_MXC && ARM64
-+	depends on OF
-+	depends on (IMX_SCU && ARCH_MXC && ARM64) || COMPILE_TEST
- 	select PINCTRL_IMX_SCU
- 	help
- 	  Say Y here to enable the imx8qm pinctrl driver
- 
- config PINCTRL_IMX8QXP
- 	tristate "IMX8QXP pinctrl driver"
--	depends on IMX_SCU && ARCH_MXC && ARM64
-+	depends on OF
-+	depends on (IMX_SCU && ARCH_MXC && ARM64) || COMPILE_TEST
- 	select PINCTRL_IMX_SCU
- 	help
- 	  Say Y here to enable the imx8qxp pinctrl driver
- 
- config PINCTRL_IMX8DXL
- 	tristate "IMX8DXL pinctrl driver"
--	depends on IMX_SCU && ARCH_MXC && ARM64
-+	depends on OF
-+	depends on (IMX_SCU && ARCH_MXC && ARM64) || COMPILE_TEST
- 	select PINCTRL_IMX_SCU
- 	help
- 	  Say Y here to enable the imx8dxl pinctrl driver
- 
- config PINCTRL_IMX8ULP
- 	tristate "IMX8ULP pinctrl driver"
--	depends on ARCH_MXC
-+	depends on OF
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8ulp pinctrl driver
- 
- config PINCTRL_IMXRT1050
- 	bool "IMXRT1050 pinctrl driver"
--	depends on SOC_IMXRT
-+	depends on OF
-+	depends on SOC_IMXRT || COMPILE_TEST
- 	default SOC_IMXRT
- 	select PINCTRL_IMX
- 	help
-@@ -201,14 +219,16 @@ config PINCTRL_IMXRT1050
- 
- config PINCTRL_IMX93
- 	tristate "IMX93 pinctrl driver"
--	depends on ARCH_MXC
-+	depends on OF
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx93 pinctrl driver
- 
- config PINCTRL_VF610
- 	bool "Freescale Vybrid VF610 pinctrl driver"
--	depends on SOC_VF610
-+	depends on OF
-+	depends on SOC_VF610 || COMPILE_TEST
- 	default SOC_VF610
- 	select PINCTRL_IMX
- 	help
-@@ -229,7 +249,8 @@ config PINCTRL_IMX28
- 
- config PINCTRL_IMXRT1170
- 	bool "IMXRT1170 pinctrl driver"
--	depends on SOC_IMXRT
-+	depends on OF
-+	depends on SOC_IMXRT || COMPILE_TEST
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imxrt1170 pinctrl driver
+bool use_device_lock = (newcon->flags & CON_NBCON) && newcon->write_atomic;
 
--- 
-2.45.0
+..
 
+if (use_device_lock)
+	newcon->device_lock(newcon, &flags);
+
+..
+
+if (use_device_lock)
+	newcon->device_unlock(newcon, flags);
+
+> @@ -3607,8 +3626,18 @@ static int unregister_console_locked(struct console *console)
+>  	if (!console_is_registered_locked(console))
+>  		return -ENODEV;
+>  
+> +	/*
+> +	 * Use the driver synchronization to ensure that the hardware is not
+> +	 * in use while this console transitions to being unregistered.
+> +	 */
+> +	if ((console->flags & CON_NBCON) && console->write_atomic)
+> +		console->device_lock(console, &flags);
+> +
+>  	hlist_del_init_rcu(&console->node);
+>  
+> +	if ((console->flags & CON_NBCON) && console->write_atomic)
+> +		console->device_unlock(console, flags);
+> +
+
+Ditto for unregister_console_locked().
+
+John
 
