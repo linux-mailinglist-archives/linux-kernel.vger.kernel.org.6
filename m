@@ -1,170 +1,97 @@
-Return-Path: <linux-kernel+bounces-169734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C048BCCD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:28:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E408BCCD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F15B21FE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:28:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F761C20974
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24145142E97;
-	Mon,  6 May 2024 11:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLQ1AkOh"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA86143736;
+	Mon,  6 May 2024 11:28:22 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCC14EB2B;
-	Mon,  6 May 2024 11:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5FE142E8F;
+	Mon,  6 May 2024 11:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714994877; cv=none; b=gLMg3wIDapNB61bohxVgCCg01lSgON712zq2cnmWeG4D6dYhrBcNcdj2j3V7LVCa0Et2gJ2b4EEIC68UVS5tCAuPvJp7oOqIGo7tCNJMjWOY8QdGnHynLgJYfjTnhOWLbXTz52PKK5KNcGKPL/SQD1s5qqf30QoXnaoM2esMDwQ=
+	t=1714994902; cv=none; b=qHHSaxYrKogrAvbMJ8ghYu9Q5M+m4BpgeeaHHw81zWsVqlUPG3lO3KAD/mwbv+7PpOfxjChw2DJNF1/DHYfACnLAvnz8o1mVo9XoXxPq/+b4XM3NQ4d1vhrRuJk3sxRp3dilvjpRTyrXWB+mtbgKSyCGAgqRlhHhyvlcTNzh4U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714994877; c=relaxed/simple;
-	bh=TYa7LqFUn4O54qe0PJ9xUIdydNrTgl1lnBS2X3KM/9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jd7OlchbsotdMGmZ+S02NsY5algOQMAyJ4BJBrI5gu8XG2+BxEYYMS4tLcxhr4R/3AsIA926/QvygroSy4RpY/sRELYotdbCgu1m/5pheo+IGJ47fHW5Hle6pyxafsT66pnKnvCqPNDD2mYKcEyfgFlO5yn82gchSU0Nooirv88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLQ1AkOh; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f300b318cso2124325e87.3;
-        Mon, 06 May 2024 04:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714994874; x=1715599674; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=98MA2KnZNukqEgivtO7pL7bJLRRsIxFS9OSQbEv7Vcs=;
-        b=dLQ1AkOhPmrADYd3WsEvky0BVxGW1Ot2kD4J0bZQwfg3DEg9W54u8RGUIqntm+UdWd
-         VKodVPzRG93dCiSFpZLWO9OSYau2A1Xps2VEfrGRJtpbpBM0YAVal7C+JJLJqb9t8/H+
-         zfgo+HZVb3GC8aulVihksMAYGHRlmpRuIvOJk1aiRjkevbtR29zY2QiES5IOBfZU86Q1
-         GMFpODmRv2N9pcHlMlrsk4hPpY//9Xey1m4OAbi/vrv8Kys/PJqcq2UB8zhDs13oMJ+t
-         eFuicBfW5uDsvOYpgAUBwASx58y8wZnq7wn4smosnWCeyfmGitZNsbQg/HtS3PbPSNHF
-         BOgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714994874; x=1715599674;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=98MA2KnZNukqEgivtO7pL7bJLRRsIxFS9OSQbEv7Vcs=;
-        b=vHadb66uIAYw8EF1pwh5zzJdPM0leO02WLQkTGwkDO2Bvv7hbXaTsB5azb7dt27KnI
-         KIpsyInsGZACQv2S2/GCV8I+eCO1dGTK8AlJlvuNkhK6ZxAGWPkXq5rHx9fmpo7UsZB3
-         3AwpPoSi4zo+PpOC+NhPqD1/FyhKvMOJt7qfsNU5y8YvmKfH6chQzhzoDNLvsNAYRPFK
-         gbTj64iaYKAwCRz4E8SKeHTlWiQicLSknBo8mrWPSi0O8okmD14JkoUCVcGjLibDl7lc
-         +fuB6TmfHnrxg/ihdlF7yMpIOX82P0q3bWurzPFi54oGXGu1bakIBxsLl65GQQAP5VHR
-         uvKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2wAfhdz9u1niMlXLLhqGMUGql8M025OfLDqA7Qbgi9akSPWti/rRry4EQgY3+xToilmJ+B3N88jMLMSZs3hE0IB0v6Sxw8MFdVW+R5VOOxqRTakt5/Kmeiid5RaRf30N6Mwqmkduqhg==
-X-Gm-Message-State: AOJu0YyVNEQExgX0eMZw1p7H9U45GJWSf65EkFA0YypsvUGiMlyM+fSR
-	p+l5hU4jv2+WbhbCDmhoWUfxyXv+qp0G+p3QTZkDt8gVeC2apOeX
-X-Google-Smtp-Source: AGHT+IGYR9rYJo2k5OgOsPl9WSRbVSU+FeAkCa2R7Yk80NbffyS5OzCW4i9hD486JQ1D9GgaSk9DNA==
-X-Received: by 2002:a05:6512:48c7:b0:51c:bf9f:ffb1 with SMTP id er7-20020a05651248c700b0051cbf9fffb1mr6070165lfb.34.1714994873758;
-        Mon, 06 May 2024 04:27:53 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id bp42-20020a05651215aa00b0051f131c08c4sm1645514lfb.183.2024.05.06.04.27.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 04:27:53 -0700 (PDT)
-Date: Mon, 6 May 2024 14:27:50 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Michal Simek <michal.simek@amd.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Tony Luck <tony.luck@intel.com>, 
-	James Morse <james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Robert Richter <rric@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, 
-	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sherry Sun <sherry.sun@nxp.com>, Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH v5 01/20] EDAC/synopsys: Fix ECC status data and IRQ
- disable race condition
-Message-ID: <vugkhnu5c7so7dk3z2cuhlbu66gv6skvicuseblrmkzyttnnlr@lqzqvysk6wbl>
-References: <20240222181324.28242-1-fancer.lancer@gmail.com>
- <20240222181324.28242-2-fancer.lancer@gmail.com>
- <20240415183616.GDZh1zoFsBzvAEduRo@fat_crate.local>
- <szcie4giwjykne4su6uu5wsmtsl3e3jd53rjfiwir6hm3ju7as@6eqh2xmj35ie>
- <20240421100712.GAZiTlUOm1hrLQvaMi@fat_crate.local>
- <whgp2xx4dv3szezz3bvmgutgazz6kvie3q7rgpr35zqzuzsygk@wppqzusteru4>
- <20240506102029.GGZjiu7TKP9FVp-2Sb@fat_crate.local>
+	s=arc-20240116; t=1714994902; c=relaxed/simple;
+	bh=8VT02Cplsv5SbgjU47mcWoqY++8UyIgndGhQEg+ULN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jh4j6UnFI22HTlCM1I4spSfsg3fGDY3ws65h3fkGvQrpIOfL7Ug1hcdbGaTCIAYUX9eNpqHWH43hkQnk5Otv00fwTrTbfhj6LwGNFCtzcokMIDIJMpx9vC5QMuE/0qcUMKfetq+NHN6QMDFu6Jd/0Y5xi6ZJ5UB1C3/JdgLSXfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VXzfz1nxJz4f3l8N;
+	Mon,  6 May 2024 19:28:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 7C6C11A06D6;
+	Mon,  6 May 2024 19:28:16 +0800 (CST)
+Received: from [10.67.108.244] (unknown [10.67.108.244])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAvNvjhm9aLKMA--.42285S3;
+	Mon, 06 May 2024 19:28:14 +0800 (CST)
+Message-ID: <c85cf47c-c972-4c11-a103-8811fe0b4680@huaweicloud.com>
+Date: Mon, 6 May 2024 19:28:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506102029.GGZjiu7TKP9FVp-2Sb@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 0/2] Fix small negative period being ignored
+Content-Language: en-US
+To: peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240417115446.2908769-1-luogengkun@huaweicloud.com>
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+In-Reply-To: <20240417115446.2908769-1-luogengkun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnmAvNvjhm9aLKMA--.42285S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYj7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJ
+	UUUUU==
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-On Mon, May 06, 2024 at 12:20:29PM +0200, Borislav Petkov wrote:
-> On Thu, Apr 25, 2024 at 03:52:38PM +0300, Serge Semin wrote:
-> > Even if we get to add the spin-lock serializing the ECCCLR writes it
-> > won't solve the problem since the IRQ-disabler critical section could
-> > be executed a bit before the IRQ-handler critical section so the later
-> > one will just re-enable the IRQs disabled by the former one.
-> > 
-> > Here is what is suggested in my patch to fix the problem:
-> > 
-> >      IRQ-handler                        |    IRQ-disabler
-> >                                         |
-> > zynqmp_get_error_info:                  |
-> >                                         | lock_irqsave
-> >                                         | ECCCLR = 0; // disable IRQs
-> >                                         | unlock_irqrestore
-> >  lock_irqsave;                          |
-> >  tmp = ECCCLR | clear_sts_bits;         |
-> >  ECCCLR = tmp;                          |
-> >  unlock_irqrestore;                     |
-> 
+Ping.
 
-> <--- I'm presuming here the IRQ-disabler will reenable interrupts at
-> some point?
-> 
-> Otherwise we have the same problem as before when interrupts remain off
-> after the IRQ handler has run.
+The previous link is : 
+https://lore.kernel.org/all/20240116083915.2859302-1-luogengkun2@huawei.com/
 
-In the sketch above the IRQ-disabler is the method which disables the
-IRQ in the concurrent manner. After my patch is applied the
-IRQ-handler will no longer touch the IRQ enable/disable bits, but will
-preserve them as is:
--       clearval = ECC_CTRL_CLR_CE_ERR | ECC_CTRL_CLR_CE_ERRCNT;
--       clearval |= ECC_CTRL_CLR_UE_ERR | ECC_CTRL_CLR_UE_ERRCNT;
-+       spin_lock_irqsave(&priv->reglock, flags);
-+
-+       clearval = readl(base + ECC_CLR_OFST) |
-+                  ECC_CTRL_CLR_CE_ERR | ECC_CTRL_CLR_CE_ERRCNT |
-+                  ECC_CTRL_CLR_UE_ERR | ECC_CTRL_CLR_UE_ERRCNT;
-        writel(clearval, base + ECC_CLR_OFST);
--       writel(0x0, base + ECC_CLR_OFST);
-+
-+       spin_unlock_irqrestore(&priv->reglock, flags);
+On 2024/4/17 19:54, Luo Gengkun wrote:
+> v1 -> v2:
+> 1. Add reviewed by for perf/core: Fix small negative period being ignored
+> 2. Add perf/core: Fix incorrected time diff in tick adjust period
+>
+> Luo Gengkun (2):
+>    perf/core: Fix small negative period being ignored
+>    perf/core: Fix incorrected time diff in tick adjust period
+>
+>   include/linux/perf_event.h |  1 +
+>   kernel/events/core.c       | 21 +++++++++++++++++----
+>   2 files changed, 18 insertions(+), 4 deletions(-)
+>
 
-Thus there won't be need in the IRQs re-enabling later in the handler:
-
-@@ -576,8 +601,6 @@ static irqreturn_t intr_handler(int irq, void *dev_id)
-        /* v3.0 of the controller does not have this register */
-        if (!(priv->p_data->quirks & DDR_ECC_INTR_SELF_CLEAR))
-                writel(regval, priv->baseaddr + DDR_QOS_IRQ_STAT_OFST);
--       else
--               enable_intr(priv);
-
-So the only IRQ-disabler left in the driver - disable_intr() - will be
-called from the device/driver remove() function. The ECCCLR CSR access
-will be guarded with the spin-lock in the IRQ-disabler and in the
-IRQ-handler. So it will be safe to have them executed concurrently.
-
-> 
-> Other than that, yes, I see it, we will need the locking.
-> 
-> Thanks for elaborating.
-
-Always welcome. Glad we've settled this.)
-
--Serge(y)
-
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
 
