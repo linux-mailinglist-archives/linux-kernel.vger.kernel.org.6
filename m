@@ -1,96 +1,152 @@
-Return-Path: <linux-kernel+bounces-169881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29A38BCEDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:21:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE458BCEDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 15:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606371F24191
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3611C23348
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E0B763F8;
-	Mon,  6 May 2024 13:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3280C763F8;
+	Mon,  6 May 2024 13:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiuREqk6"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGtMz7uH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF8215A5;
-	Mon,  6 May 2024 13:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD03FBF0
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 13:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715001672; cv=none; b=RLRe0c3b8cH2ekt+va5WCb1DkR1ttKaaLFnp4u6e5MUM3jlHzZ2oYFPLRwB0LsxZQPkUxhvFh/bGxzJoN1j+c5VuwgzOojjQcde4uhtoMnAUHEx5CWFO8/cle46me+IqDqqqavjyJYrbSW3eVWlNNNw/jNksofMOnBK3d2wx3Is=
+	t=1715001731; cv=none; b=SDYZqGXsZYRQ8Xx32dVqI8H3FnZkPhEZRFnzCo6Bh12+9Rp7W392akL+Fdg5Td/2r7o5UvDj9J9/DHOw8jZ6aSurJuynFNZRpZeVLp6WXDknBPPlEBUCTom5bxCdYuOhePfe/AjKo395uMZbcPXSEcsIZKun9alI5uBvxIOuUIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715001672; c=relaxed/simple;
-	bh=ynTZzxoxxo3keo82avsAabxo4oU1Mvhd/Rgmxy+qcWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6wNp+mDG8jLTCpteUU66LzMPxbzU42dvIY63Ni5Cl9UOFjNAienMrEdrjEnANRGwXj7otc6F5L2jAT/C2ivryr6GKSk1LTmyEZ7UkAchzJujfh4H0PlMzSJ5uxll+siemFKTRzsFh88j/1AHTpSLvs5H5axdoVoVhZJ5qOWX4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TiuREqk6; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6a0f5afd0a2so2979236d6.1;
-        Mon, 06 May 2024 06:21:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715001669; x=1715606469; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ynTZzxoxxo3keo82avsAabxo4oU1Mvhd/Rgmxy+qcWk=;
-        b=TiuREqk6SlcbP7Mkc/GD3k/g1JYlsjNeDhCi2Q71kjKWIcnoHjYXq45Yh+ZvPX1Pq7
-         w3t6xoeQglJf78a4K2p9C1OFrlfKg/Gut2s2xt0tccypi7TCpx5CLNrukoQFA5Shaf8V
-         U/QTOkpyLh7y16Hul/ml1aYIk0K+ySYpE8PFyDQIHO61XXJwistaKPLkTFn3FxtNbfz1
-         HqtCwQddvmsxXqYD18EajDlEJBL6sFPPwmWL/zrdTmvgUN2X/kCXWzNmaxPg5+jWDobe
-         bzTKiF9q73urDPkIe8C45Ewp1GnHJveoCB4WRkdD7fUeYeXFAlc4rn6Yw87G7ouUJjQc
-         F+aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715001669; x=1715606469;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ynTZzxoxxo3keo82avsAabxo4oU1Mvhd/Rgmxy+qcWk=;
-        b=kcPm45rxjROeRu0Rz/3kRNn6564GhWl1jitROP77w5zjeDdZdGktlw7ro5kytNPX/h
-         xA1foCebolWgqALheIN54MaJlLjj1hb7/rhe5XQVM831JJqZM8O/FnydaUC0UytAMXX7
-         f1d35ewZb1sx/So156UDOIugNpTr53LuxV03z6+FDslWNMJKV7actZzriYMFvQWhzBUM
-         IN3xpHEyvklFN+fiyazVENNCP9KzY8vbUVNd9PrusVod3sWo7r2pA0wvYF1AmoHDMcx9
-         Pq2eR0y1jKWeSmrnmIlLSQGnFHubDqTexZrG2wuwsodB4Evm8882nU05i5j64eigMQjG
-         cTWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLoUyMdjDQRSOxgvzoTY2ymilP3gQA5M6DGRMEY3bwvW7OLydwpvHug9FcWxwb1L5bNfxu5+m6+i0GMwoOFdlSpLFfvH/47K+0pkExPsrW/ucBkwy28axydM682exAzDf1CjNsda7IgwI=
-X-Gm-Message-State: AOJu0YwA3hyr6Y/2DRBzm8zvo7V+7uWAE+oJiWNw/bh5IhCAmeQgW7Zy
-	76vp9BVQBBohOEIGyqrb28jE5wBrTKbTziMLvocDZryzjR7dzGJp5tCAs0ENR1FbE2O1Ksc64ic
-	vwibvFQcF5lr7EnDI4ibDYHTtA5Zr7IKg
-X-Google-Smtp-Source: AGHT+IEwFc7U5/YcMmXDSCiD9wAEX+ogtSyTFxpVI7a3OLB8hYxciop5Lywg0hw32q0z24k1EaIDFAYHhMIPiw7pUjc=
-X-Received: by 2002:a05:6214:489:b0:6a0:b3ec:8ff2 with SMTP id
- pt9-20020a056214048900b006a0b3ec8ff2mr12091412qvb.5.1715001669370; Mon, 06
- May 2024 06:21:09 -0700 (PDT)
+	s=arc-20240116; t=1715001731; c=relaxed/simple;
+	bh=BCuAyhvvdHlZNeT/yRgbvu9IxMPed1+0m8MQqbV2QlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGKco2WuBQO2h9lUzkDtlx83G0216rCkimn+C59ICRX93/4NOrdgsekYdZRQKoWyRROt9R3jPmrZxYcjonYArY+1pUUx6A9nQbEa8EX3zPVNkdd4bQVul89ljj3FHFDLr1/Z1uJKsftLKy1X/VQdDpxEYlX8OUbr3r7kAZpliGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGtMz7uH; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715001730; x=1746537730;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BCuAyhvvdHlZNeT/yRgbvu9IxMPed1+0m8MQqbV2QlI=;
+  b=gGtMz7uHVirWTs1RbaZRydGj9Ixi1vnPKozbVf51yfmPIJScwd2Dq164
+   aynYfkVDluj2XK2TkWHn1SKFCIP9yNyCw+b3WcSjoXR8Y186F2TPghhYr
+   S9D7wfCDmmCZ2kRB0tVvD/PQVXuD+wDXm0v3AzV6urNH6uoYyRLkSAsiG
+   R6l2Ln12tXFm9WPTN20UebG8RBYvq5ldBv+rtaOHlNkR2qzYdPL2DS7xv
+   D7YtJRlmV/kPK5RE/TdgBQNtq9Vq491gUB738DsJG3bmlAr4Cjp/Amk+y
+   XRtcL4Jayj/5bEFYb79ho3IHDN5DklG50qerbOigXsV/93I8oDVhqDder
+   A==;
+X-CSE-ConnectionGUID: R8IOLx23Suq+jr2N5CQrbQ==
+X-CSE-MsgGUID: WiWlW4tnSVKea3ZKbn/HtA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21900692"
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="21900692"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 06:22:09 -0700
+X-CSE-ConnectionGUID: by/aMopuSXyo3mmKnNMsxg==
+X-CSE-MsgGUID: kPhhB31ETkuyZsPTIKNoJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
+   d="scan'208";a="28256756"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 06 May 2024 06:22:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 0513A12B; Mon, 06 May 2024 16:22:02 +0300 (EEST)
+Date: Mon, 6 May 2024 16:22:02 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: adrian.hunter@intel.com, ashish.kalra@amd.com, bhe@redhat.com, 
+	dave.hansen@linux.intel.com, elena.reshetova@intel.com, jun.nakajima@intel.com, 
+	kai.huang@intel.com, kexec@lists.infradead.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, ltao@redhat.com, mingo@redhat.com, nik.borisov@suse.com, 
+	peterz@infradead.org, rafael@kernel.org, rick.p.edgecombe@intel.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	x86@kernel.org
+Subject: Re: [PATCHv10.1 09/18] x86/mm: Adding callbacks to prepare encrypted
+ memory for kexec
+Message-ID: <ch244dd4k5nu5rcryuwqp4pztl4dduhciqunin5drr7a3yls2h@siisliaoc2f6>
+References: <20240427164747.GCZi0sM6HBCBYtgWqF@fat_crate.local>
+ <20240427170634.2397725-1-kirill.shutemov@linux.intel.com>
+ <20240502134506.GDZjOY4guvlKH9-73J@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506114752.47204-1-charles.goodix@gmail.com> <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
-In-Reply-To: <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
-From: Richard Hughes <hughsient@gmail.com>
-Date: Mon, 6 May 2024 14:20:57 +0100
-Message-ID: <CAD2FfiFv+R=AfAEh-ExU03PzmJz6+kpWAV0b=vVwsUzpUzMSDg@mail.gmail.com>
-Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
- and writing touch IC registers
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net, dmitry.torokhov@gmail.com, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	neil.armstrong@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502134506.GDZjOY4guvlKH9-73J@fat_crate.local>
 
-On Mon, 6 May 2024 at 13:03, Hans de Goede <hdegoede@redhat.com> wrote:
-> Adding Richard Hughes, fwupd maintainer to the Cc. Richard, do you have
-> any input on the suggested method for firmware updating ?
+On Thu, May 02, 2024 at 03:45:06PM +0200, Borislav Petkov wrote:
+> > diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+> > index e74d0c4286c1..f1b261be78b4 100644
+> > --- a/arch/x86/kernel/crash.c
+> > +++ b/arch/x86/kernel/crash.c
+> > @@ -128,6 +128,10 @@ void native_machine_crash_shutdown(struct pt_regs *regs)
+> >  #ifdef CONFIG_HPET_TIMER
+> >  	hpet_disable();
+> >  #endif
+> > +
+> > +	x86_platform.guest.enc_kexec_stop_conversion(true);
+> > +	x86_platform.guest.enc_kexec_unshare_mem();
+> > +
+> 
+> You call them here back-to-back...
+> 
+> >  	crash_save_cpu(regs, safe_smp_processor_id());
+> >  }
+> >  
+> > diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+> > index f3130f762784..c1920ec34f0c 100644
+> > --- a/arch/x86/kernel/reboot.c
+> > +++ b/arch/x86/kernel/reboot.c
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/delay.h>
+> >  #include <linux/objtool.h>
+> >  #include <linux/pgtable.h>
+> > +#include <linux/kexec.h>
+> >  #include <acpi/reboot.h>
+> >  #include <asm/io.h>
+> >  #include <asm/apic.h>
+> > @@ -716,6 +717,14 @@ static void native_machine_emergency_restart(void)
+> >  
+> >  void native_machine_shutdown(void)
+> >  {
+> > +	/*
+> > +	 * Call enc_kexec_stop_conversion() while all CPUs are still active and
+> > +	 * interrupts are enabled. This will allow all in-flight memory
+> > +	 * conversions to finish cleanly.
+> > +	 */
+> > +	if (kexec_in_progress)
+> > +		x86_platform.guest.enc_kexec_stop_conversion(false);
+> > +
+> >  	/* Stop the cpus and apics */
+> >  #ifdef CONFIG_X86_IO_APIC
+> >  	/*
+> > @@ -752,6 +761,9 @@ void native_machine_shutdown(void)
+> >  #ifdef CONFIG_X86_64
+> >  	x86_platform.iommu_shutdown();
+> >  #endif
+> > +
+> > +	if (kexec_in_progress)
+> > +		x86_platform.guest.enc_kexec_unshare_mem();
+> 
+> ... but they're split here.
+> 
+> And I don't know why and nothing tells me...
 
-I'm okay with either; it's obviously easier for fwupd to just squirt a
-file into a sysfs file to update the firmware, but some devices also
-need something a bit more nuanced -- e.g. putting the device into an
-update mode, setting the power domains, fallback recovery and stuff
-like that.
+I do. See comment just above enc_kexec_stop_conversion() call.
 
-Richard
+Do you want also comment for enc_kexec_unshare_mem() ?
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
