@@ -1,338 +1,121 @@
-Return-Path: <linux-kernel+bounces-169241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566338BC596
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F168BC599
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 03:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831851C21330
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:50:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 871031C21159
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 01:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320A63E476;
-	Mon,  6 May 2024 01:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZQWdlG7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845FD3D387;
+	Mon,  6 May 2024 01:50:11 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2751F1FC4;
-	Mon,  6 May 2024 01:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025DC42052;
+	Mon,  6 May 2024 01:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714960194; cv=none; b=lQqIkRYtD2dUzg1VOUkJN6Z7djkxMWl6EextpnxCuzW4NPHPwwKX6Aa9WR5j+6UyX3OQQ6laS5JP4RDKNtLFpakewpMiI/kNQvFHcw02tjShmrgQod7niRdY3jg28xyLQq7x1LdRAArbruDl7dvtc44CdD2j2EyjjbhwKJO2dCU=
+	t=1714960211; cv=none; b=E8y/Z3PGM+HQJn0QC8/r+EpMevD3A9M/I0Sk9/owOHjT8e/Pusx3X5+T0HogvTpgA2PCRLoD8K9aYY5tZMEpTJ23SSuoj7R4DyVtiAj8UgcAf5LMVAEVbSvEB6EgJWOGUvlp5G4j/26puE0yI5YrGGHHqYZ24JlpgqnBlQQ/FlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714960194; c=relaxed/simple;
-	bh=gYQGZyOiQYHIZ1WrvLkBT/wTJ55iEU1mQbEjApORefk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2xoqjS/+HJmAD0VoifZCe2c8NGynmHC1xFVWKmc+txNX5/i+fa+f/dLYwIMVf8Dnu8XtMOJWaH4Vl9+bmMfjNUsAdU4o0Jz2CPu0hWDIynaKReGHX6aEiNlrLYMtI6jlxZzeyXXwLV5O24u2774u4A/PmrvtJNL40YmIjFyJ3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZQWdlG7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8FACC4DDE1;
-	Mon,  6 May 2024 01:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714960193;
-	bh=gYQGZyOiQYHIZ1WrvLkBT/wTJ55iEU1mQbEjApORefk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tZQWdlG7XiPCj1bx4y466g4mE7uXFtYGuY2AjqDkLJ/EqedxPdNO6q6y0tEbxMINN
-	 RGzmD3S1fvbiyEaPy0nYYeV9IrGSlrb41o6v06iqa1p8nGdZgDsi2uWYm+jbgGTbDQ
-	 c6GBYVm18sU1QlM9/UrM6Q8rGoTMe7h7EW9KVbnZrArsR/wSZy+4fG39hnevp9t33n
-	 PNqOKVX18u/ZComuuWtedOCLGOssmEWEtvFiR0cFce7aEYT72HlTdQySejhgoJOMsO
-	 ODlR3M1aj/G1jBBAgJAj/VRVb2oVegKSvqfeZiDzTaLAs0h+O+zLWqkBRMT3JDeGCu
-	 OjSTpUvjtgAUg==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a387fbc9so301066066b.1;
-        Sun, 05 May 2024 18:49:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVqxQ01PYMzmZNFdiPbtF9UEX3qgB5VvfCFa9vmzhLw6m+sBW2ubWfi3rwKQUGb490m6Pn80NqkDK7Q5XgGNV6llEqAtcV5B349XH8Lr0jyDkJ4uv19pqZ93BWltJMhz7gO
-X-Gm-Message-State: AOJu0YwzeLeLl6FN4QXlq3XG0a5SC0AM56Ca0eLLew1ocUbIwMe7TOJ3
-	nJVbyGi1rNaXQkATN1AhFev7VjhYvuFE9rjissoLs+zXXwOCh0abqpfZsPmv2VrDuCmCFFDeIt4
-	N0TSIpyChO8jV9Sebl4SZq6aRfrw=
-X-Google-Smtp-Source: AGHT+IGTNGyPz70vBGDD1ALG+YqXxy7Bv7g2vDP7TCoJoDC6AlHMjWCYZzuLvBcS+7zqLq2kFrYmzjb2MaVGcFsVS6U=
-X-Received: by 2002:a17:907:60ce:b0:a59:9e55:7489 with SMTP id
- hv14-20020a17090760ce00b00a599e557489mr4977187ejc.25.1714960192238; Sun, 05
- May 2024 18:49:52 -0700 (PDT)
+	s=arc-20240116; t=1714960211; c=relaxed/simple;
+	bh=k8CAQVXY/1SB5nrtKOe5IPn90LXyDKDIfdFZpHC2h7A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=QSTUD7df5tXNhjHK2KBSEPaMqWUCr4v7xc0JJINK0yhFzuUOb3L58fNyR/1VwJCbW1tLQa+z1Dn38aYqCPvIO3ZYZD2UIDBijSzA8PiBPHBOQE5WsTOuGhT5KzTNPyuWP1JEIWq9T8fjkfRoJvn5dpQyiB2qP9V5R8xsT8L2mnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VXklY4qgxzYspc;
+	Mon,  6 May 2024 09:46:17 +0800 (CST)
+Received: from kwepemm600003.china.huawei.com (unknown [7.193.23.202])
+	by mail.maildlp.com (Postfix) with ESMTPS id C46E3140444;
+	Mon,  6 May 2024 09:50:04 +0800 (CST)
+Received: from [10.67.109.150] (10.67.109.150) by
+ kwepemm600003.china.huawei.com (7.193.23.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 6 May 2024 09:50:04 +0800
+Message-ID: <7fd75461-2083-3da5-f25b-d77a0e21b7bc@huawei.com>
+Date: Mon, 6 May 2024 09:50:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240428100518.1642324-1-maobibo@loongson.cn> <20240428100518.1642324-5-maobibo@loongson.cn>
-In-Reply-To: <20240428100518.1642324-5-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 6 May 2024 09:49:42 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6kBO_RTTHoLfKdAtLO1Aqb0KmAJ6wn0wZrvbCkzMszDQ@mail.gmail.com>
-Message-ID: <CAAhV-H6kBO_RTTHoLfKdAtLO1Aqb0KmAJ6wn0wZrvbCkzMszDQ@mail.gmail.com>
-Subject: Re: [PATCH v8 4/6] LoongArch: KVM: Add vcpu search support from
- physical cpuid
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Juergen Gross <jgross@suse.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [QUESTION]cgroup mount return -EBUSY
+Content-Language: en-US
+From: Lu Jialin <lujialin4@huawei.com>
+To: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes
+ Weiner <hannes@cmpxchg.org>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <5b5da2d3-37b3-60ee-5a94-149094cbe9dc@huawei.com>
+In-Reply-To: <5b5da2d3-37b3-60ee-5a94-149094cbe9dc@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600003.china.huawei.com (7.193.23.202)
 
-Hi, Bibo,
+ping
 
-On Sun, Apr 28, 2024 at 6:05=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> Physical cpuid is used for interrupt routing for irqchips such as
-> ipi/msi/extioi interrupt controller. And physical cpuid is stored
-> at CSR register LOONGARCH_CSR_CPUID, it can not be changed once vcpu
-> is created and physical cpuid of two vcpus cannot be the same.
->
-> Different irqchips have different size declaration about physical cpuid,
-> max cpuid value for CSR LOONGARCH_CSR_CPUID on 3A5000 is 512, max cpuid
-> supported by IPI hardware is 1024, 256 for extioi irqchip, and 65536
-> for MSI irqchip.
->
-> The smallest value from all interrupt controllers is selected now,
-> and the max cpuid size is defines as 256 by KVM which comes from
-> extioi irqchip.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/include/asm/kvm_host.h | 26 ++++++++
->  arch/loongarch/include/asm/kvm_vcpu.h |  1 +
->  arch/loongarch/kvm/vcpu.c             | 93 ++++++++++++++++++++++++++-
->  arch/loongarch/kvm/vm.c               | 11 ++++
->  4 files changed, 130 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/inclu=
-de/asm/kvm_host.h
-> index 2d62f7b0d377..3ba16ef1fe69 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -64,6 +64,30 @@ struct kvm_world_switch {
->
->  #define MAX_PGTABLE_LEVELS     4
->
-> +/*
-> + * Physical cpu id is used for interrupt routing, there are different
-> + * definitions about physical cpuid on different hardwares.
-> + *  For LOONGARCH_CSR_CPUID register, max cpuid size if 512
-> + *  For IPI HW, max dest CPUID size 1024
-> + *  For extioi interrupt controller, max dest CPUID size is 256
-> + *  For MSI interrupt controller, max supported CPUID size is 65536
-> + *
-> + * Currently max CPUID is defined as 256 for KVM hypervisor, in future
-> + * it will be expanded to 4096, including 16 packages at most. And every
-> + * package supports at most 256 vcpus
-> + */
-> +#define KVM_MAX_PHYID          256
-> +
-> +struct kvm_phyid_info {
-> +       struct kvm_vcpu *vcpu;
-> +       bool            enabled;
-> +};
-> +
-> +struct kvm_phyid_map {
-> +       int max_phyid;
-> +       struct kvm_phyid_info phys_map[KVM_MAX_PHYID];
-> +};
-> +
->  struct kvm_arch {
->         /* Guest physical mm */
->         kvm_pte_t *pgd;
-> @@ -71,6 +95,8 @@ struct kvm_arch {
->         unsigned long invalid_ptes[MAX_PGTABLE_LEVELS];
->         unsigned int  pte_shifts[MAX_PGTABLE_LEVELS];
->         unsigned int  root_level;
-> +       spinlock_t    phyid_map_lock;
-> +       struct kvm_phyid_map  *phyid_map;
->
->         s64 time_offset;
->         struct kvm_context __percpu *vmcs;
-> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/inclu=
-de/asm/kvm_vcpu.h
-> index 0cb4fdb8a9b5..9f53950959da 100644
-> --- a/arch/loongarch/include/asm/kvm_vcpu.h
-> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
-> @@ -81,6 +81,7 @@ void kvm_save_timer(struct kvm_vcpu *vcpu);
->  void kvm_restore_timer(struct kvm_vcpu *vcpu);
->
->  int kvm_vcpu_ioctl_interrupt(struct kvm_vcpu *vcpu, struct kvm_interrupt=
- *irq);
-> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid);
->
->  /*
->   * Loongarch KVM guest interrupt handling
-> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-> index 3a8779065f73..b633fd28b8db 100644
-> --- a/arch/loongarch/kvm/vcpu.c
-> +++ b/arch/loongarch/kvm/vcpu.c
-> @@ -274,6 +274,95 @@ static int _kvm_getcsr(struct kvm_vcpu *vcpu, unsign=
-ed int id, u64 *val)
->         return 0;
->  }
->
-> +static inline int kvm_set_cpuid(struct kvm_vcpu *vcpu, u64 val)
-> +{
-> +       int cpuid;
-> +       struct loongarch_csrs *csr =3D vcpu->arch.csr;
-> +       struct kvm_phyid_map  *map;
-> +
-> +       if (val >=3D KVM_MAX_PHYID)
-> +               return -EINVAL;
-> +
-> +       cpuid =3D kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
-> +       map =3D vcpu->kvm->arch.phyid_map;
-> +       spin_lock(&vcpu->kvm->arch.phyid_map_lock);
-> +       if (map->phys_map[cpuid].enabled) {
-> +               /*
-> +                * Cpuid is already set before
-> +                * Forbid changing different cpuid at runtime
-> +                */
-> +               if (cpuid !=3D val) {
-> +                       /*
-> +                        * Cpuid 0 is initial value for vcpu, maybe inval=
-id
-> +                        * unset value for vcpu
-> +                        */
-> +                       if (cpuid) {
-> +                               spin_unlock(&vcpu->kvm->arch.phyid_map_lo=
-ck);
-> +                               return -EINVAL;
-> +                       }
-> +               } else {
-> +                        /* Discard duplicated cpuid set */
-> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
-> +                       return 0;
-> +               }
-> +       }
-I have changed the logic and comments when I apply, you can double
-check whether it is correct.
-
-> +
-> +       if (map->phys_map[val].enabled) {
-> +               /*
-> +                * New cpuid is already set with other vcpu
-> +                * Forbid sharing the same cpuid between different vcpus
-> +                */
-> +               if (map->phys_map[val].vcpu !=3D vcpu) {
-> +                       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
-> +                       return -EINVAL;
-> +               }
-> +
-> +               /* Discard duplicated cpuid set operation*/
-> +               spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
-> +               return 0;
-> +       }
-> +
-> +       kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, val);
-> +       map->phys_map[val].enabled      =3D true;
-> +       map->phys_map[val].vcpu         =3D vcpu;
-> +       if (map->max_phyid < val)
-> +               map->max_phyid =3D val;
-> +       spin_unlock(&vcpu->kvm->arch.phyid_map_lock);
-> +       return 0;
-> +}
-> +
-> +struct kvm_vcpu *kvm_get_vcpu_by_cpuid(struct kvm *kvm, int cpuid)
-> +{
-> +       struct kvm_phyid_map  *map;
-> +
-> +       if (cpuid >=3D KVM_MAX_PHYID)
-> +               return NULL;
-> +
-> +       map =3D kvm->arch.phyid_map;
-> +       if (map->phys_map[cpuid].enabled)
-> +               return map->phys_map[cpuid].vcpu;
-> +
-> +       return NULL;
-> +}
-> +
-> +static inline void kvm_drop_cpuid(struct kvm_vcpu *vcpu)
-> +{
-> +       int cpuid;
-> +       struct loongarch_csrs *csr =3D vcpu->arch.csr;
-> +       struct kvm_phyid_map  *map;
-> +
-> +       map =3D vcpu->kvm->arch.phyid_map;
-> +       cpuid =3D kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT);
-> +       if (cpuid >=3D KVM_MAX_PHYID)
-> +               return;
-> +
-> +       if (map->phys_map[cpuid].enabled) {
-> +               map->phys_map[cpuid].vcpu =3D NULL;
-> +               map->phys_map[cpuid].enabled =3D false;
-> +               kvm_write_sw_gcsr(csr, LOONGARCH_CSR_CPUID, 0);
-> +       }
-> +}
-While kvm_set_cpuid() is protected by a spinlock, do kvm_drop_cpuid()
-and kvm_get_vcpu_by_cpuid() also need it?
-
-> +
->  static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 val)
->  {
->         int ret =3D 0, gintc;
-> @@ -291,7 +380,8 @@ static int _kvm_setcsr(struct kvm_vcpu *vcpu, unsigne=
-d int id, u64 val)
->                 kvm_set_sw_gcsr(csr, LOONGARCH_CSR_ESTAT, gintc);
->
->                 return ret;
-> -       }
-> +       } else if (id =3D=3D LOONGARCH_CSR_CPUID)
-> +               return kvm_set_cpuid(vcpu, val);
->
->         kvm_write_sw_gcsr(csr, id, val);
->
-> @@ -943,6 +1033,7 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
->         hrtimer_cancel(&vcpu->arch.swtimer);
->         kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
->         kfree(vcpu->arch.csr);
-> +       kvm_drop_cpuid(vcpu);
-I think this line should be before the above kfree(), otherwise you
-get a "use after free".
-
-Huacai
-
->
->         /*
->          * If the vCPU is freed and reused as another vCPU, we don't want=
- the
-> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-> index 0a37f6fa8f2d..6006a28653ad 100644
-> --- a/arch/loongarch/kvm/vm.c
-> +++ b/arch/loongarch/kvm/vm.c
-> @@ -30,6 +30,14 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long ty=
-pe)
->         if (!kvm->arch.pgd)
->                 return -ENOMEM;
->
-> +       kvm->arch.phyid_map =3D kvzalloc(sizeof(struct kvm_phyid_map),
-> +                               GFP_KERNEL_ACCOUNT);
-> +       if (!kvm->arch.phyid_map) {
-> +               free_page((unsigned long)kvm->arch.pgd);
-> +               kvm->arch.pgd =3D NULL;
-> +               return -ENOMEM;
-> +       }
-> +
->         kvm_init_vmcs(kvm);
->         kvm->arch.gpa_size =3D BIT(cpu_vabits - 1);
->         kvm->arch.root_level =3D CONFIG_PGTABLE_LEVELS - 1;
-> @@ -44,6 +52,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long typ=
-e)
->         for (i =3D 0; i <=3D kvm->arch.root_level; i++)
->                 kvm->arch.pte_shifts[i] =3D PAGE_SHIFT + i * (PAGE_SHIFT =
-- 3);
->
-> +       spin_lock_init(&kvm->arch.phyid_map_lock);
->         return 0;
->  }
->
-> @@ -51,7 +60,9 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
->  {
->         kvm_destroy_vcpus(kvm);
->         free_page((unsigned long)kvm->arch.pgd);
-> +       kvfree(kvm->arch.phyid_map);
->         kvm->arch.pgd =3D NULL;
-> +       kvm->arch.phyid_map =3D NULL;
->  }
->
->  int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
-> --
-> 2.39.3
->
+On 2024/4/26 12:55, Lu Jialin wrote:
+> Hello
+> 
+> I encountered a problem when I try to unmount the subsystem right after
+> all it's subcgroups are removed, the cgroup_root would remain. Mounting
+> this subsystem to another cgroup_root would return -EBUSY.
+> 
+> The problem could be reproduced with the following script.
+> 
+> test.sh:
+> 
+> mkdir /tmp/test1
+> mount -t cgroup -o pids pids /tmp/test1
+> mkdir /tmp/test1/test
+> rmdir /tmp/test1/test
+> umount /tmp/test1
+> mkdir /tmp/test
+> mount -t cgroup -o pids,cpu none /tmp/test
+> 
+> test.sh should return this.
+> mount: mounting none on /tmp/test failed: Device or resource busy.
+> 
+> It seems that when unmounting /tmp/test1, the original cgroup_root for
+> this PID is not released.
+> /test # cat /proc/cgroups
+> 
+> #subsys_name    hierarchy       num_cgroups     enabled
+> 
+> cpuset  0       1       1
+> 
+> cpu     0       1       1
+> 
+> cpuacct 0       1       1
+> 
+> blkio   0       1       1
+> 
+> devices 0       1       1
+> 
+> freezer 0       1       1
+> 
+> net_cls 0       1       1
+> 
+> perf_event      0       1       1
+> 
+> net_prio        0       1       1
+> 
+> hugetlb 0       1       1
+> 
+> pids    1       1       1
+> 
+> rdma    0       1       1
+> 
+> misc    0       1       1
+> 
+> debug   0       1       1
+> 
 
