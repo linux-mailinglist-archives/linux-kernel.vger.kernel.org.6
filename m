@@ -1,226 +1,676 @@
-Return-Path: <linux-kernel+bounces-170376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EDC8BD5F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:58:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C7A8BD602
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 22:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D446D1F21610
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9802874C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCD215B106;
-	Mon,  6 May 2024 19:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004BD15B0EC;
+	Mon,  6 May 2024 20:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="lFNOsuOT"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04olkn2028.outbound.protection.outlook.com [40.92.47.28])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=web.de header.i=heiner.kallweit@web.de header.b="BBzv2dVA"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C1C15B102;
-	Mon,  6 May 2024 19:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.47.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715025497; cv=fail; b=QpivTD+oMXowrJxal92pb5Fp4esEd50/mVT+o96GpCF7NBnnu+nS5AllckpuoemCjZZki5QVZxPibZuWr4TqrtYGdQuBFJfwEoZTSgGEuVmRuZh9jd8W6UqGD7aoUrrKLhvCoPONn2HBKbriKctjTbEouQlWXyQIB3SKToueOTk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715025497; c=relaxed/simple;
-	bh=zijQrdzw60OXMvkHbMO/Au15fIKSpDq6EzxqWcL3H5g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sPi416mS5aH6Wibz67gzhkrWQ/O765dCzmoavcedrqrJGt5mQ00upJ6Adr9hoi8TGBn5vhsCFJC+O76ySJg6sIwW7OHft9nwyxJnIO2nUY3kZYgY+74JGynmDoA16bPXw0cn5LtKij7bZV2fdHMuknJ42c4kahK6oWVBeMsiI+Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=lFNOsuOT; arc=fail smtp.client-ip=40.92.47.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=l6W+QwL01Gb92IQk9nef3CHxubXIoCEFueEKJqkGv9+4Szl1T3hNKuLsb1lau0u17rLmQplPsVcV28EZ05SsusT3F0y8fZMC1oGcVFQbz+R7Z80s30RSKmUB7/nUXwPJpzhLbmK+H24XxWuBg79mvGIPzsx+1Iivxh12ARA+fMz9hU1x0fARdIxoAnJbVvuy3GHl4ZfYb3eXg9pOoA7ipnZgU+pYHogVuXJJnGDlYEwJvwcIlzD0oIcsLEUHr8TLUVnNeARoLA+7sLsvPwcO412cCn95EOMR7axU2DyqW5tRDvoFPf6Xqs0EwhAmXYJSLbPLRszvz+jeWxxW4KMe8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zijQrdzw60OXMvkHbMO/Au15fIKSpDq6EzxqWcL3H5g=;
- b=IgcGHvIC61h1WFPfD5Upk/0PVgsYg7X/TqO/YZFsDw9WTNCw5hgKiJwPfd80TI9f52GU5rABklInTWy0DzpIf4OSimPpZQsKryXsfKFkQjzH8ErKyKJWVEZrCPTMySUcbxtJxnAz1MbnD2xMeYLn6gzNr180WwBEQX/IKCghCr3jNVY9/0OlsaMper5YTL1aco/F4x+p8rkvpfS4kRecrdJy3AZEtSb0rnizRxQVnjkaGPCHg/wBtUfVn84AgkyLVYw8Gn3GYBcYH1N0ML+Mf3n3Tf+0bu8pF0edENlD5qaynhfzz1TWEytG6cTjgb3Nd+ffi0n8rewgDSiJMKbhvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zijQrdzw60OXMvkHbMO/Au15fIKSpDq6EzxqWcL3H5g=;
- b=lFNOsuOT+OdjMc6C5iR7JbpGb4Ep5o3ZroagHodjpyjb1QJcmYT+sixeO7KzuVYgBmOsbRqJPHvT10GzmuTv/7VotucB7k8OqQmhDuX6eFjBtPXXlcnzaobepbO4NS7VUDFTS8muBLHh+tD6lyrNQF2awcNydJ4cHT5oYJIIAJRYiDU1Ywsa2i8q03hxqR7hlD5TRZH80IuWV0lDNwwqUSoMKZWafL0TY7hXAP1NGqUZ9X6jAPgXqTee0bkXpesxrV4VLgyJhsP3t52C1VkP0MfkURZUXEEjsk4Vkhh7GfzWlLkJkPDKlIOhiHPUb4wjhS7uluF+VOm0+IU0tYNP3g==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by MN2PR02MB6688.namprd02.prod.outlook.com (2603:10b6:208:15f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Mon, 6 May
- 2024 19:58:11 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7544.041; Mon, 6 May 2024
- 19:58:11 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: "T.J. Mercier" <tjmercier@google.com>, =?utf-8?B?UGV0ciBUZXNhxZnDrWs=?=
-	<petr@tesarici.cz>
-CC: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H. Peter
- Anvin" <hpa@zytor.com>, "hch@infradead.org" <hch@infradead.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"isaacmanjarres@google.com" <isaacmanjarres@google.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] swiotlb: iommu/dma: Clarify swiotlb options apply only to
- dma-direct
-Thread-Topic: [PATCH] swiotlb: iommu/dma: Clarify swiotlb options apply only
- to dma-direct
-Thread-Index: AQHanYjIGzxHZ57Nq0awSFl6FadUXLGGu8OAgAO9NQCAACjE0A==
-Date: Mon, 6 May 2024 19:58:11 +0000
-Message-ID:
- <SN6PR02MB4157EE83332FF789FA6BEEE8D41C2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240503183527.1548119-1-tjmercier@google.com>
- <20240504101651.7de5106f@meshulam.tesarici.cz>
- <CABdmKX06v23-w8PQJab8kgfPDRYLU3bQSQ4AsC3zrzxYL955gQ@mail.gmail.com>
-In-Reply-To:
- <CABdmKX06v23-w8PQJab8kgfPDRYLU3bQSQ4AsC3zrzxYL955gQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [xs8KVXq8VSRW9fvuelk2V03krZAb/G8f]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|MN2PR02MB6688:EE_
-x-ms-office365-filtering-correlation-id: 69f066cf-b88c-45ef-381c-08dc6e06dbad
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199019|102099023|3412199016|440099019|1602099003;
-x-microsoft-antispam-message-info:
- eLDtnjKUUCx2RjPr/50nsLVcKog1Wavz5k68G9/leDrqz8S5QOi65Nk24NaPESxPioFumdHFJ2RRu0eKogzHae6yCUxVAY7aY7wln1mmn+PcvExgIfjwj3I5x2v0MfNWfQNQbLpUbg35hfjT894FYK0k9uvd1LM9xc1e8u6/huUPTFanFSmzB0Njg79jAHjjgVZF70QdIYMXdJTOSmLnylwQ5ftWIZyrgAoD1PTu0latjmTD0nsUrXZlal82kmLMxdpJhygxVdYpczoesveoUHOKsOVBic8dyZI6BFWG+rESdrbDXbyi0X3+7Qd/ucvCIJjYHIB0O91a5qxI5F4rpeIm0PkIHpyZwCY+F4Zo8TaaGvtS0ptpwyX7K0O9/xdch5VfThuyHvfEH5DXbrg35e+89F+LCQmZLLtRZNof9++sSHCNPo0HoPAcJhxEdwt4tZ5vyA25VLh/tSM3vcrtJbfwOhHA3tZWENqPAeKd6x+rYbUGDwXV4YvTsvoCn7cJwwZnn7RaILeZtbVKGM2Tm7PxVyh5a0B2X8wliXGR73cevWmqqetlI+iDkGyk1CWwnkZMozZDkPUGVvCO094lojHKxWGWWnw6aGQpOrMeyO8drOVSv0bAcv1ROIRbfixDszI+B2wucOyoGc45+fPGE127QOwUpjO4wdKxjcNc5IM=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YmcxaUszMzBRTjJGYXVDdnREWXpXZTFnbWhHNUM2MDBMT1d4NUd0S2N1UmM0?=
- =?utf-8?B?MEV4eDBqeGxiM2UzNHlYZUM1b1hGQ09uU0FHU2x6NTA1bmtSQnN6M3hCTXhM?=
- =?utf-8?B?cVZhUm45OUZaZGxnUG5yaC8yWStkVDlZMzdmOGtwYlBtUDUvWDBKazZma3pr?=
- =?utf-8?B?OVk1aGhJMVFNdThzWTN3aFFaWlU2cUdMMUl1L2dLSTEyTEUya09nS2lGaXJi?=
- =?utf-8?B?eE5JNXg5a2xvV2F2UWlnSUJlWXJGa014QTBYN1ZxS0JndlhDa1RXZDlnZEVv?=
- =?utf-8?B?QnMrYTJtUGxRMDg0a3ZsMDJEYTRoQ3lVSmFOQS8xR0ZiekVyUmlVQU9uT0pt?=
- =?utf-8?B?Zis0T0s1ZlJ3Qjg3SlJ5UHN1OFQvb3dkalczd3FwaHFacVBDbGVEUllEWlIx?=
- =?utf-8?B?T0NoLys0YzZFQUhhdU9qN2NBRVdISlM4T1NPaWdzamQyWXlpUVFBeWQzUVcy?=
- =?utf-8?B?dFJ6elFBbWgxSlI5UXh1U0w2bllTb042WFgrSlJFbDY2NnFQOVlLNTMyM2FU?=
- =?utf-8?B?dmtPV3luNTA3NUpEV0krRU50K1NpOW9FR2pGRVZFeUp2ZzJZN3pUMVhnd3J2?=
- =?utf-8?B?K00wN2Mxby9wUVdXVUlWd0V0MENUS1E2ZGhKMjhYaHNwQXlGK2JnbG5iYkJu?=
- =?utf-8?B?cGxxdlpCWHQ2dG05OFJYYXBwMlNIaGh2UzlVaTVyaG5WS3EyVlBXSnZSZzJs?=
- =?utf-8?B?Y1BEVGZrOTlJbTQzNzlqN2daWmxsWkZyS09IYS82cEQvUlE3Lzd4emU3eFMv?=
- =?utf-8?B?aFBXMlpQYnliMnhDZiswVlR2RUpMY3NhRU8xeXhGZitqNExXY09sSGlLbFhJ?=
- =?utf-8?B?SGFuYXFrTWl4cm90Ymk2bVZMYm8vajFPL0l5YVZDeUhWbExCaXpCTExpV2RW?=
- =?utf-8?B?VDMvcld5UVluYzVmK0s2OGVFdTVHQlk0dHpLV1RkWEFDNll4MFB2QzhNaW5E?=
- =?utf-8?B?OGpyOXdMV2FUUGxkMk5ZOTVuWTdCY1psY0phVnBCUnVldVJJUHl0dlMrOTBE?=
- =?utf-8?B?WG5FYno0bk9CR0dvMklNa3FyUHNmQ1JlRXBoeTRTWXUxdVVGZUtkK01jQS9a?=
- =?utf-8?B?amFhaUJYSEtWbmxXNWZyL2lmNTMwUWppemo0bXpEeXd4SndBRHV5OHVaVk5N?=
- =?utf-8?B?TzZDWm1vUjMzRFVKck9URGFRT2JULzhnSnd4ajJjdUU4L3czT3d2OHhHMDlC?=
- =?utf-8?B?L2p2QXZHMnM0QTB3Mk9MWEdGVFljVDZGNzF3dGh3TVBmcGV1Sm5EV1kxUnRT?=
- =?utf-8?B?NDJ6ZEdTUjRsSUFJMU0wQzNUYkRqcDF5UzhGL0Z3eG5ocklKdHRzL21oRUpt?=
- =?utf-8?B?Y0lySm81YS9jV1pwS2JKcFVNejYzVENuL3pFdVRaRXFvd2NzWGg5RlpHTERn?=
- =?utf-8?B?VE1lRDloejlZWkdNeGxUNzU4OVNTUXRNc2JCb2lOOC96eVhESTN6YVMwUkpF?=
- =?utf-8?B?VGdmVmFKSDQ0TXZPbnViRm4zaFUwUmtLTDlnbTJJTnB4ODVPanRFcUViaElm?=
- =?utf-8?B?VjdlZ1M4a01tQ3U2clZZZ2ZsZVhkME5CSFNmOTVMNzg3Tm5vL3JuSFVST0J6?=
- =?utf-8?B?NTA3OFlYOEhjWHpmL25hdnovNmtCV0xsaklJcWRFMTdITkpRS0ZqOG1RUnRB?=
- =?utf-8?Q?jmF4BXnn3Fq7gsEwsYeZp64JaYFZWJdY3eIftCa/OMak=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE33E156F46;
+	Mon,  6 May 2024 20:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715025687; cv=none; b=KGH731rFNy8tpzWj2/82JIMGxRURlqa1Q/VrCoK8igDH7YBTzIH21FX73fMHyzAw5Vb7x+fDPqcppD63jSrcV3Bbze6Id0uMNp2oePKE5bdTBG/PIfW5HYyQX+JVvdsH8GBIRg8V4rRI/BVZpLVP2dRLQG4JhY5hcnm3ydYqW94=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715025687; c=relaxed/simple;
+	bh=Ktu/WWhNA/nQgbk2Teu4CABnBkQc1d0LVWdxo/68ah8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYhgsgJXhuDXoE6pLauhdUwUHiU2Ek80S/M3+KP/kJnChB0JnosN5ouEYveyO6A8F0rEh/lhUSd8vHnZ3p0wlJr2zn7HScWEm3fCKQtez9psWscbdJPd2TjZPmWDZGWwGqz1AaqI94ajk3sNEM7Y8zLTTbqomXP/kwtLYQAO+GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=heiner.kallweit@web.de header.b=BBzv2dVA; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715025658; x=1715630458; i=heiner.kallweit@web.de;
+	bh=Ktu/WWhNA/nQgbk2Teu4CABnBkQc1d0LVWdxo/68ah8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=BBzv2dVAdVtTLxz/pjA6IlORKmbWY6PhPS+oohjHaUvU46CZrrf6SIfgwMg0zouq
+	 T98jj+9kcf7L+fyUKJvtBM4ZvGVLztZu1tYcMzI9ZztzPhIoky6F4H0WKolRecdwC
+	 A5a845T/rd0hhtE3mQh4NnjUhBKucbqtXHPDUua8k5FIC/BOuHF07UwuaSf5XIk+Q
+	 BudDx39c/XCdyfWlcnrL6+/1uj8VL5iuhnZhLtlccs/Vcxlf7vZgpG4TspKi5YcTN
+	 7MmeWyB5/N631d9NQt67Wdut0R8ywOXsaf61xACrM9tHu43Cyxhpys6c4QhU5yyXV
+	 QQgFr2/Bxkq5tvSX4Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.86] ([77.2.63.73]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MPaMS-1sHs0R3YSQ-00MclL; Mon, 06
+ May 2024 22:00:57 +0200
+Message-ID: <a248e142-36b3-472a-bd3e-6271a08f177f@web.de>
+Date: Mon, 6 May 2024 22:00:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69f066cf-b88c-45ef-381c-08dc6e06dbad
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2024 19:58:11.3562
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6688
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.9.0-rc2+ kernel hangs on boot (bisected, maybe LED related)
+To: Ben Greear <greearb@candelatech.com>, LKML
+ <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org,
+ Lee Jones <lee@kernel.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+References: <30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com>
+ <30819e01-43ce-638f-0cc6-067d6a8d03c7@candelatech.com>
+ <89a9eec3-337f-3c9f-6bbe-00a26a15287c@candelatech.com>
+Content-Language: en-US
+From: Heiner Kallweit <heiner.kallweit@web.de>
+In-Reply-To: <89a9eec3-337f-3c9f-6bbe-00a26a15287c@candelatech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RXebSZgcnm2o5eGw+jMwebtx9j/VtmNm3EbgZcn4wCXuXjq92Sw
+ rDeVsBvmQtKDIYra9/WdqKjCOEo6iUHrgvgNeOZSBEET1MAHp6fXl8914CrIbmJdWFhHjjJ
+ CJss73dXiJF4Az2LR98qdU3omUH/CiyfGTpE9AOWxtznHqIH3R78JXwunVeMkxS1jXoB/OV
+ c9lsNg1+qxq4jw4sgJC7Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dX82Py60H/U=;ZGPDHS1X/2T1cvNq17HNsPx4GhS
+ g179yPMGir7UJqpwlqy/IuFoMYWnBPyKZ+zSq9ND+8X7Qd1+vO7ozc0UAjz8fqpeHn2UdVfWT
+ D14C+xdaZSh7XbBQv2tJytad8N//IUa0fCw4o7SY33+rIg6/hgMlWy1LU5gxwivhJ4A6GRdgD
+ meXWtyNDeuHwHJSI/plQ+KhbVVrJFoztjY64pkt2KCPmteN4WInnJkEV+Vh4ILSto+5wvSri7
+ Js2T78m2g5G/AcZQKzpczJ9QbagjlQv2ZncJJnC36i25BkzifayuP4mYbhuFGWuda8eJeDDSs
+ USTmPZFN+IIhe6/VFDjFP+ES5FlXzwGepRO+ZBtV6hT0R5QH3zu89r5xMSkE89zstNugdpaDd
+ /Fp+hdd8A8LEW6m8+Pbe3gbrApmvx7ueNdKugTM+ZiBQzTiY2hF5R9mnQqgow6DrOMeySv8DJ
+ lLBQQni5bxUwfWkXDUtHdtO+ExBdfrH2nPYNdSI0tnU9NbJeLchrWhzdHpEYzm7wPLlQfbOhb
+ aSiMQfHHP19OyQafQ/Ydrq9+aOPRDgPUjb6qVZqqp1Qh0s5i8N/QlozUcbRhHXYy4QeDVB5G9
+ YYd0cDyqw8mnnYLyVxCFL0jWat7jdVp3TBlasnHEcbG6zbI3Iq8bnnaLukcPBz/OcbutEmurw
+ qIlMwzQk6YoVRh4Fi/64OHGzW4WzAsoSNFyUlhHj8FWK599MDbUEZ+MmXFhmr/XwUiiTOjPJx
+ IIIifwKqBU++yZMY9gmJ+cnLziuEzDJdj9pibw9GeskIxwVcROpG/zv8hmhKviZ8rm0H/Lkaf
+ pxpVi3LuXAdOnR5YTG2LLrk2o0mQDnjzl4E+sZLlrmdn4=
 
-RnJvbTogVC5KLiBNZXJjaWVyIDx0am1lcmNpZXJAZ29vZ2xlLmNvbT4gU2VudDogTW9uZGF5LCBN
-YXkgNiwgMjAyNCAxMDoyMyBBTQ0KPiANCj4gT24gU2F0LCBNYXkgNCwgMjAyNCBhdCAxOjE24oCv
-QU0gUGV0ciBUZXNhxZnDrWsgPHBldHJAdGVzYXJpY2kuY3o+IHdyb3RlOg0KPiA+DQo+ID4gT24g
-RnJpLCAgMyBNYXkgMjAyNCAxODozNToyNiArMDAwMA0KPiA+ICJULkouIE1lcmNpZXIiIDx0am1l
-cmNpZXJAZ29vZ2xlLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+IElPTU1VIGltcGxlbWVudGF0aW9u
-cyBub3cgc29tZXRpbWVzIGJvdW5jZSBtZW1vcnkgdGhyb3VnaCBTV0lPVExCIHRvDQo+ID4gPiBh
-Y2hpZXZlIGNhY2hlbGluZSBhbGlnbm1lbnQgWzFdLCBvciBwcmV2ZW50IERNQSBhdHRhY2tzIGJ5
-IHVudHJ1c3RlZA0KPiA+ID4gZGV2aWNlcyBbMl0uIFRoZXNlIHVzZXMgb2YgU1dJT1RMQiBkaWZm
-ZXIgY29uY2VwdHVhbGx5IGZyb20gaGlzdG9yaWNhbA0KPiA+ID4gdXNlIHdoaWNoIHdhcyBhIHNv
-bHV0aW9uIHRvIHRoZSBwcm9ibGVtIG9mIGRldmljZSBhZGRyZXNzaW5nDQo+ID4gPiBsaW1pdGF0
-aW9ucyB0aGF0IHByZXZlbnQgRE1BIHRvIHNvbWUgcG9ydGlvbiBvZiBzeXN0ZW0gbWVtb3J5DQo+
-ID4gPiAodHlwaWNhbGx5IGJleW9uZCA0IEdpQikuIElPTU1VcyBhbHNvIHNvbHZlIHRoZSBwcm9i
-bGVtIG9mIGRldmljZQ0KPiA+ID4gYWRkcmVzc2luZyBsaW1pdGF0aW9ucyBhbmQgdGhlcmVmb3Jl
-IGVsaW1pbmF0ZSB0aGUgbmVlZCBmb3IgU1dJT1RMQiBmb3INCj4gPiA+IHRoYXQgcHVycG9zZS4g
-SG93ZXZlciBhcyBtZW50aW9uZWQsIElPTU1VcyBjYW4gdXNlIFNXSU9UTEIgZm9yIG90aGVyDQo+
-ID4gPiBwdXJwb3Nlcy4NCj4gPiA+DQo+ID4gPiBUaGUgc3dpb3RsYiBrZXJuZWwgY29tbWFuZCBs
-aW5lIHBhcmFtZXRlciBkb2VzIG5vdCBpbXBhY3QgSU9NTVUgcmVsYXRlZA0KPiA+ID4gdXNlIG9m
-IFNXSU9UTEIsIGFuZCB0aGF0IGlzIGludGVudGlvbmFsLiBJT01NVXMgY2Fubm90IGJlIGZvcmNl
-ZCB0byB1c2UNCj4gPiA+IFNXSU9UTEIgZm9yIGFsbCBidWZmZXJzLiBVcGRhdGUgdGhlIGRvY3Vt
-ZW50YXRpb24gZm9yIHRoZSBzd2lvdGxiDQo+ID4gPiBwYXJhbWV0ZXIgdG8gY2xhcmlmeSB0aGF0
-IFNXSU9UTEIgdXNlIGNhbiBvbmx5IGJlIGZvcmNlZCBpbiBzY2VuYXJpb3MNCj4gPiA+IHdoZXJl
-IGFuIElPTU1VIGlzIG5vdCBpbnZvbHZlZC4NCj4gPiA+DQo+ID4gPiBbMV0gaHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvYWxsLzIwMjMwNjEyMTUzMjAxLjU1NDc0Mi0xNi1jYXRhbGluLm1hcmluYXNA
-YXJtLmNvbS8NCj4gPiA+IFsyXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAxOTA5MDYw
-NjE0NTIuMzA3OTEtMS1iYW9sdS5sdUBsaW51eC5pbnRlbC5jb20vDQo+ID4gPiBTaWduZWQtb2Zm
-LWJ5OiBULkouIE1lcmNpZXIgPHRqbWVyY2llckBnb29nbGUuY29tPg0KPiA+ID4gLS0tDQo+ID4g
-PiAgRG9jdW1lbnRhdGlvbi9hZG1pbi1ndWlkZS9rZXJuZWwtcGFyYW1ldGVycy50eHQgfCAxICsN
-Cj4gPiA+ICBEb2N1bWVudGF0aW9uL2FyY2gveDg2L3g4Nl82NC9ib290LW9wdGlvbnMucnN0ICB8
-IDIgKy0NCj4gPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
-bigtKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2FkbWluLWd1aWRl
-L2tlcm5lbC1wYXJhbWV0ZXJzLnR4dCBiL0RvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUva2VybmVs
-LXBhcmFtZXRlcnMudHh0DQo+ID4gPiBpbmRleCAyMTNkMDcxOWUyYjcuLjg0YzU4MmFjMjQ2YyAx
-MDA2NDQNCj4gPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUva2VybmVsLXBhcmFt
-ZXRlcnMudHh0DQo+ID4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2FkbWluLWd1aWRlL2tlcm5lbC1w
-YXJhbWV0ZXJzLnR4dA0KPiA+ID4gQEAgLTY0ODYsNiArNjQ4Niw3IEBADQo+ID4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgdG8gYSBwb3dlciBvZiAyLg0KPiA+ID4gICAgICAgICAg
-ICAgICAgICAgICAgIGZvcmNlIC0tIGZvcmNlIHVzaW5nIG9mIGJvdW5jZSBidWZmZXJzIGV2ZW4g
-aWYgdGhleQ0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdvdWxkbid0IGJl
-IGF1dG9tYXRpY2FsbHkgdXNlZCBieSB0aGUga2VybmVsDQo+ID4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgd2hlcmUgYSBoYXJkd2FyZSBJT01NVSBpcyBub3QgaW52b2x2ZWQNCj4g
-PiA+ICAgICAgICAgICAgICAgICAgICAgICBub2ZvcmNlIC0tIE5ldmVyIHVzZSBib3VuY2UgYnVm
-ZmVycyAoZm9yIGRlYnVnZ2luZykNCj4gPiA+DQo+ID4gPiAgICAgICBzd2l0Y2hlcz0gICAgICAg
-W0hXLE02OGssRUFSTFldDQo+ID4NCj4gPiBZZXMsIHRoaXMgcGFydCBpcyBjb3JyZWN0LiBTV0lP
-VExCIGNhbm5vdCBiZSBmb3JjZWQgaWYgdGhlcmUgaXMgYW4gSU9NTVUuDQo+ID4NCj4gPiA+IGRp
-ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2FyY2gveDg2L3g4Nl82NC9ib290LW9wdGlvbnMucnN0
-IGIvRG9jdW1lbnRhdGlvbi9hcmNoL3g4Ni94ODZfNjQvYm9vdC1vcHRpb25zLnJzdA0KPiA+ID4g
-aW5kZXggMTM3NDMyZDM0MTA5Li4wNjZiNGJjODE1ODMgMTAwNjQ0DQo+ID4gPiAtLS0gYS9Eb2N1
-bWVudGF0aW9uL2FyY2gveDg2L3g4Nl82NC9ib290LW9wdGlvbnMucnN0DQo+ID4gPiArKysgYi9E
-b2N1bWVudGF0aW9uL2FyY2gveDg2L3g4Nl82NC9ib290LW9wdGlvbnMucnN0DQo+ID4gPiBAQCAt
-Mjg1LDcgKzI4NSw3IEBAIGlvbW11IG9wdGlvbnMgb25seSByZWxldmFudCB0byB0aGUgQU1EIEdB
-UlQgaGFyZHdhcmUgSU9NTVU6DQo+ID4gPiAgICAgICAgQWx3YXlzIHBhbmljIHdoZW4gSU9NTVUg
-b3ZlcmZsb3dzLg0KPiA+ID4NCj4gPiA+ICBpb21tdSBvcHRpb25zIG9ubHkgcmVsZXZhbnQgdG8g
-dGhlIHNvZnR3YXJlIGJvdW5jZSBidWZmZXJpbmcgKFNXSU9UTEIpIElPTU1VDQo+ID4gPiAtaW1w
-bGVtZW50YXRpb246DQo+ID4gPiAraW1wbGVtZW50YXRpb24gd2hlcmUgYSBoYXJkd2FyZSBJT01N
-VSBpcyBub3QgaW52b2x2ZWQ6DQo+ID4gPg0KPiA+ID4gICAgICBzd2lvdGxiPTxzbG90cz5bLGZv
-cmNlLG5vZm9yY2VdDQo+ID4gPiAgICAgICAgPHNsb3RzPg0KPiA+DQo+ID4gQnV0IHRoaXMgcGFy
-dCBuZWVkcyBzb21lIGltcHJvdmVtZW50LiBUaGUgInN3aW90bGIiIG9wdGlvbiBpcyBub3QNCj4g
-PiBlbnRpcmVseSBpZ25vcmVkIGlmIHRoZXJlIGlzIGEgaGFyZHdhcmUgSU9NTVUuIEZvciBleGFt
-cGxlLCB0aGUgc2l6ZSBvZg0KPiA+IHRoZSBTV0lPVExCIGNhbiBiZSBhZGp1c3RlZCB1c2luZyAi
-c3dpb3RsYj08c2xvdHM+IiwgYW5kIHNpbmNlIFNXSU9UTEINCj4gPiBjYW4gYmUgdXNlZCBieSBJ
-T01NVXMgZm9yIG90aGVyIHB1cnBvc2VzIChhcyB5b3UgY29ycmVjdGx5IG5vdGUgaW4gdGhlDQo+
-ID4gY29tbWl0IG1lc3NhZ2UpLCB0aGlzIHNldHRpbmcgaXMgcmVsZXZhbnQgZXZlbiB3aGVyZSBh
-IGhhcmR3YXJlIElPTU1VDQo+ID4gaXMgaW52b2x2ZWQuDQo+ID4NCj4gPiBQZXRyIFQNCj4gDQo+
-IFRoYW5rcy4gSSB0aGluayBJIHNob3VsZCBhbHNvIHVwZGF0ZSB0aGUgY29tbWl0IG1lc3NhZ2U6
-DQo+ICJUaGUgc3dpb3RsYj1mb3JjZSBrZXJuZWwgY29tbWFuZCBsaW5lIHBhcmFtZXRlciBkb2Vz
-IG5vdCBpbXBhY3QgSU9NTVUNCj4gcmVsYXRlZCB1c2Ugb2YgU1dJT1RMQiINCj4gYW5kIHRpdGxl
-Og0KPiAiQ2xhcmlmeSBzd2lvdGxiPWZvcmNlIG9wdGlvbiBhcHBsaWVzIG9ubHkgdG8gZG1hLWRp
-cmVjdCINCj4gDQo+IEFzIGZvciBmaXhpbmcgYm9vdC1vcHRpb25zLnR4dCwgSSB0aGluayBpdCBt
-YWtlcyB0aGUgbW9zdCBzZW5zZSB0bw0KPiBleHBhbmQgb24ganVzdCB0aGUgZm9yY2Ugb3B0aW9u
-IHJhdGhlciB0aGFuIHRoZSBzZWN0aW9uIHN1bW1hcnkgbGlrZQ0KPiBhYm92ZToNCj4gICAgICAg
-IGZvcmNlDQo+ICAgICAgICAgIEZvcmNlIGFsbCBJTyB0aHJvdWdoIHRoZSBzb2Z0d2FyZSBUTEIu
-DQo+ICsgICAgICAgIEhhcmR3YXJlIElPTU1VIGltcGxlbWVudGF0aW9ucyBjYW4gdXNlIFNXSU9U
-TEIgYm91bmNlIGJ1ZmZlcmluZyBpbg0KPiArICAgICAgICBzb21lIGNpcmN1bXN0YW5jZXMsIGJ1
-dCB0aGV5IGNhbm5vdCBiZSBmb3JjZWQgdG8gYWx3YXlzIHVzZSB0aGVtLCBzbw0KPiArICAgICAg
-ICB0aGlzIG9wdGlvbiBvbmx5IGhhcyBhbiBlZmZlY3Qgd2hlbiBubyBoYXJkd2FyZSBJT01NVSBp
-cyBpbnZvbHZlZC4NCj4gICAgICAgIG5vZm9yY2UNCg0KTm90ZSBhbHNvIHRoYXQgdGhlIGRvY3Vt
-ZW50YXRpb24gZm9yIHN3aW90bGI9IGluIGJvb3Qtb3B0aW9ucy5yc3QgaXMgc29tZXdoYXQNCm91
-dC1vZi1kYXRlLiAgSXQgZG9lc24ndCBoYXZlIHRoZSBvcHRpb25hbCBzZWNvbmQgaW50ZWdlciBw
-YXJhbWV0ZXIgdG8gc3BlY2lmeQ0KdGhlIG51bWJlciBvZiAiYXJlYXMiIHRoYXQgaGF2ZSB0aGVp
-ciBvd24gbG9jay4gIFBlcmhhcHMgdGhhdCBjb3VsZCBiZSBmaXhlZA0KYXQgdGhlIHNhbWUgdGlt
-ZT8NCg0KTWljaGFlbA0K
+On 03.04.2024 21:35, Ben Greear wrote:
+> On 4/2/24 10:38, Ben Greear wrote:
+>> On 4/2/24 09:37, Ben Greear wrote:
+>>> Hello,
+>>>
+>>> Sometime between rc1 and today's rc2, my system quit booting.
+>>> I'm not seeing any splats, it just stops.=C2=A0 Evidently before
+>>> sysrq is enabled.
+>>>
+
+For my understanding:
+You say 6.9-rc1 was ok, but 6.9-rc2 is not?
+
+If I look at the diff then I see no LED subsystem changes,
+but iwlwifi changes. It's not clear to me why your bisect
+points to something outside the diff.
+
+
+>>> [=C2=A0 OK=C2=A0 ] Started Flush Journal to Persistent Storage.
+>>> [=C2=A0 OK=C2=A0 ] Started udev Coldplug all Devices.
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Starting udev W=
+ait for Complete Device Initialization...
+>>> [=C2=A0 OK=C2=A0 ] Listening on Load/Save RF =E2=80=A6itch Status /dev=
+/rfkill Watch.
+>>> [=C2=A0 OK=C2=A0 ] Created slice system-lvm2\x2dpvscan.slice.
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Starting LVM2 P=
+V scan on device 8:19...
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Starting LVM2 P=
+V scan on device 8:3...
+>>> [=C2=A0 OK=C2=A0 ] Started Device-mapper event daemon.
+>>> iwlwifi 0000:04:00.0: WRT: Invalid buffer destination: 0
+>>> sysrq: This sysrq operation is disabled.
+>>>
+>>> I can start a bisect, but in case anyone knows the answer already, ple=
+ase let me know.
+>>>
+>>> Thanks,
+>>> Ben
+>>>
+>>
+>> So, deadlock I guess....
+>>
+>> =C2=A0=C2=A0INFO: task kworker/5:13:648 blocked for more than 180 secon=
+ds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:kworker/5:13=C2=A0=C2=A0=C2=A0 state:D stack:0=C2=A0=C2=A0=C2=A0=
+=C2=A0 pid:648=C2=A0=C2=A0 tgid:648=C2=A0=C2=A0 ppid:2=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 flags:0x00004000
+>> Workqueue: events deferred_probe_timeout_work_func
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? mark_held_locks+0x49/0x70
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0? __flush_work+0x1ff/0x460
+>> =C2=A0=C2=A0__flush_work+0x287/0x460
+>> =C2=A0=C2=A0? flush_workqueue_prep_pwqs+0x120/0x120
+>> =C2=A0=C2=A0deferred_probe_timeout_work_func+0x2b/0xa0
+>> =C2=A0=C2=A0process_one_work+0x212/0x710
+>> =C2=A0=C2=A0? lock_is_held_type+0xa5/0x110
+>> =C2=A0=C2=A0worker_thread+0x188/0x340
+>> =C2=A0=C2=A0? rescuer_thread+0x380/0x380
+>> =C2=A0=C2=A0kthread+0xd7/0x110
+>> =C2=A0=C2=A0? kthread_complete_and_exit+0x20/0x20
+>> =C2=A0=C2=A0ret_from_fork+0x28/0x40
+>> =C2=A0=C2=A0? kthread_complete_and_exit+0x20/0x20
+>> =C2=A0=C2=A0ret_from_fork_asm+0x11/0x20
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task udevadm:763 blocked for more than 180 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:udevadm=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D st=
+ack:0=C2=A0=C2=A0=C2=A0=C2=A0 pid:763=C2=A0=C2=A0 tgid:763=C2=A0=C2=A0 ppi=
+d:1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0? __flush_work+0x1ff/0x460
+>> =C2=A0=C2=A0__flush_work+0x287/0x460
+>> =C2=A0=C2=A0? flush_workqueue_prep_pwqs+0x120/0x120
+>> =C2=A0=C2=A0fsnotify_destroy_group+0x66/0xf0
+>> =C2=A0=C2=A0inotify_release+0x12/0x40
+>> =C2=A0=C2=A0__fput+0xa6/0x2d0
+>> =C2=A0=C2=A0__x64_sys_close+0x33/0x70
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7f744d5bc878
+>> RSP: 002b:00007ffcef12f8d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+>> RAX: ffffffffffffffda RBX: 00007f744cd048c0 RCX: 00007f744d5bc878
+>> RDX: ffffffffffffff80 RSI: 0000000000000000 RDI: 0000000000000003
+>> RBP: 0000000000000003 R08: 000055f9ce349fb0 R09: 0000000000000000
+>> R10: 00007ffcef12f8f0 R11: 0000000000000246 R12: 0000000000000002
+>> R13: 0000000007270e00 R14: 000055f99670c9b8 R15: 0000000000000002
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task modprobe:968 blocked for more than 180 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:modprobe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D stack:0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pid:968=C2=A0=C2=A0 tgid:968=C2=A0=C2=A0 ppid:65=
+=C2=A0=C2=A0=C2=A0=C2=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0idempotent_init_module+0x1ae/0x290
+>> =C2=A0=C2=A0__x64_sys_finit_module+0x55/0xb0
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7fde25530ddd
+>> RSP: 002b:00007fffac078518 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> RAX: ffffffffffffffda RBX: 0000558758e28ef0 RCX: 00007fde25530ddd
+>> RDX: 0000000000000000 RSI: 000055873cebf358 RDI: 0000000000000001
+>> RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000246 R12: 000055873cebf358
+>> R13: 0000000000000000 R14: 0000558758e29020 R15: 0000558758e28ef0
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task modprobe:969 blocked for more than 180 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:modprobe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D stack:0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pid:969=C2=A0=C2=A0 tgid:969=C2=A0=C2=A0 ppid:93=
+=C2=A0=C2=A0=C2=A0=C2=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0idempotent_init_module+0x1ae/0x290
+>> =C2=A0=C2=A0__x64_sys_finit_module+0x55/0xb0
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7f338d516ddd
+>> RSP: 002b:00007ffd155cd1e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> RAX: ffffffffffffffda RBX: 000056092cb0def0 RCX: 00007f338d516ddd
+>> RDX: 0000000000000000 RSI: 00005608ecb4a358 RDI: 0000000000000001
+>> RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000246 R12: 00005608ecb4a358
+>> R13: 0000000000000000 R14: 000056092cb0e020 R15: 000056092cb0def0
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task modprobe:1044 blocked for more than 180 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:modprobe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D stack:0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pid:1044=C2=A0 tgid:1044=C2=A0 ppid:10=C2=A0=C2=
+=A0=C2=A0=C2=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0idempotent_init_module+0x1ae/0x290
+>> =C2=A0=C2=A0__x64_sys_finit_module+0x55/0xb0
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7f7637b30ddd
+>> RSP: 002b:00007ffe6251da78 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> RAX: ffffffffffffffda RBX: 000055b889cb3ef0 RCX: 00007f7637b30ddd
+>> RDX: 0000000000000000 RSI: 000055b854eea358 RDI: 0000000000000001
+>> RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000246 R12: 000055b854eea358
+>> R13: 0000000000000000 R14: 000055b889cb4020 R15: 000055b889cb3ef0
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task modprobe:1047 blocked for more than 180 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:modprobe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D stack:0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pid:1047=C2=A0 tgid:1047=C2=A0 ppid:113=C2=A0=C2=
+=A0=C2=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0idempotent_init_module+0x1ae/0x290
+>> =C2=A0=C2=A0__x64_sys_finit_module+0x55/0xb0
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7f3907130ddd
+>> RSP: 002b:00007ffc36e4eb08 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> RAX: ffffffffffffffda RBX: 000056100a856ef0 RCX: 00007f3907130ddd
+>> RDX: 0000000000000000 RSI: 0000560fff0ec358 RDI: 0000000000000001
+>> RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000246 R12: 0000560fff0ec358
+>> R13: 0000000000000000 R14: 000056100a857020 R15: 000056100a856ef0
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task modprobe:1056 blocked for more than 180 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:modprobe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D stack:0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pid:1056=C2=A0 tgid:1056=C2=A0 ppid:1045=C2=A0=C2=
+=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0idempotent_init_module+0x1ae/0x290
+>> =C2=A0=C2=A0__x64_sys_finit_module+0x55/0xb0
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7fcb1e730ddd
+>> RSP: 002b:00007ffc692d0ad8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> RAX: ffffffffffffffda RBX: 000055f8d8828ef0 RCX: 00007fcb1e730ddd
+>> RDX: 0000000000000000 RSI: 000055f8bff36358 RDI: 0000000000000001
+>> RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000246 R12: 000055f8bff36358
+>> R13: 0000000000000000 R14: 000055f8d8829020 R15: 000055f8d8828ef0
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task modprobe:1058 blocked for more than 180 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:modprobe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D stack:0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pid:1058=C2=A0 tgid:1058=C2=A0 ppid:1051=C2=A0=C2=
+=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0idempotent_init_module+0x1ae/0x290
+>> =C2=A0=C2=A0__x64_sys_finit_module+0x55/0xb0
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7f0a17b30ddd
+>> RSP: 002b:00007fff56d619e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> RAX: ffffffffffffffda RBX: 000055abd6741ef0 RCX: 00007f0a17b30ddd
+>> RDX: 0000000000000000 RSI: 000055abc6586358 RDI: 0000000000000001
+>> RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000246 R12: 000055abc6586358
+>> R13: 0000000000000000 R14: 000055abd6742020 R15: 000055abd6741ef0
+>> =C2=A0=C2=A0</TASK>
+>> INFO: task modprobe:1060 blocked for more than 181 seconds.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+>> task:modprobe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state:D stack:0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pid:1060=C2=A0 tgid:1060=C2=A0 ppid:1057=C2=A0=C2=
+=A0 flags:0x00000000
+>> Call Trace:
+>> =C2=A0=C2=A0<TASK>
+>> =C2=A0=C2=A0__schedule+0x43d/0xe20
+>> =C2=A0=C2=A0schedule+0x31/0x130
+>> =C2=A0=C2=A0schedule_timeout+0x1b9/0x1d0
+>> =C2=A0=C2=A0? __wait_for_common+0xb0/0x1d0
+>> =C2=A0=C2=A0? lock_release+0xc6/0x290
+>> =C2=A0=C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
+>> =C2=A0=C2=A0__wait_for_common+0xb9/0x1d0
+>> =C2=A0=C2=A0? usleep_range_state+0xb0/0xb0
+>> =C2=A0=C2=A0idempotent_init_module+0x1ae/0x290
+>> =C2=A0=C2=A0__x64_sys_finit_module+0x55/0xb0
+>> =C2=A0=C2=A0do_syscall_64+0x6c/0x170
+>> =C2=A0=C2=A0entry_SYSCALL_64_after_hwframe+0x46/0x4e
+>> RIP: 0033:0x7f12c0130ddd
+>> RSP: 002b:00007ffccdef0488 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> RAX: ffffffffffffffda RBX: 000056249db40ef0 RCX: 00007f12c0130ddd
+>> RDX: 0000000000000000 RSI: 0000562471e4d358 RDI: 0000000000000001
+>> RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000001 R11: 0000000000000246 R12: 0000562471e4d358
+>> R13: 0000000000000000 R14: 000056249db41020 R15: 000056249db40ef0
+>> =C2=A0=C2=A0</TASK>
+>>
+>> Showing all locks held in the system:
+>> 2 locks held by systemd/1:
+>> =C2=A0=C2=A0#0: ffff88812a7a10a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty=
+_ldisc_ref_wait+0x1f/0x50
+>> =C2=A0=C2=A0#1: ffff88812a7a1130 (&tty->atomic_write_lock){+.+.}-{4:4},=
+ at: file_tty_write.constprop.0+0xab/0x330
+>> 2 locks held by kworker/0:1/9:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900000afe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/u32:0/10:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900000b7e50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/3:0/37:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900001cbe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/7:0/61:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc9000029be50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/u32:1/65:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900002bfe50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 1 lock held by khungtaskd/66:
+>> =C2=A0=C2=A0#0: ffffffff8296e760 (rcu_read_lock){....}-{1:3}, at: debug=
+_show_all_locks+0x32/0x1c0
+>> 2 locks held by kworker/1:1/79:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc9000032fe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/u32:2/93:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900003d3e50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/6:1/94:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900003dbe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/3:1/96:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900003ebe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/1:2/102:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90000eabe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/u32:3/107:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90000ed3e50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/u32:4/113:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90000f03e50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/6:2/189:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90000e0fe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/6:5/196:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90000f13e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/6:6/197:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90000f23e50 ((work_completion)(&(&hda->probe_work)=
+->work)){+.+.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/6:8/199:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90000f53e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/7:2/296:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc9000105be50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/7:3/297:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90001043e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/7:4/298:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90001063e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/7:5/320:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90001003e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/2:2/371:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc9000104be50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/5:13/648:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc9000198fe50 ((deferred_probe_timeout_work).work){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/5:14/649:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90001997e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/5:15/650:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc9000199fe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/5:16/651:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900019a7e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/4:3/722:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90001a27e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/1:4/768:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900010d7e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/1:5/769:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc900010dfe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/0:2/849:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90001353e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by lvm/860:
+>> =C2=A0=C2=A0#0: ffff8881323c19a8 (&md->type_lock){+.+.}-{4:4}, at: tabl=
+e_load+0xc9/0x400
+>> =C2=A0=C2=A0#1: ffff88813200c3b8 (&mddev->reconfig_mutex){+.+.}-{4:4}, =
+at: raid_ctr+0x13b3/0x2860 [dm_raid]
+>> 2 locks held by modprobe/1019:
+>> =C2=A0=C2=A0#0: ffffffffa0ca7b68 (iwlwifi_opmode_table_mtx){+.+.}-{4:4}=
+, at: iwl_opmode_register+0x27/0xd0 [iwlwifi]
+>> =C2=A0=C2=A0#1: ffff888139f88270 (&led_cdev->led_access){+.+.}-{4:4}, a=
+t: led_classdev_register_ext+0x195/0x450
+>> 2 locks held by kworker/u32:5/1045:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90004367e50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/u32:6/1051:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90004703e50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/u32:7/1057:
+>> =C2=A0=C2=A0#0: ffff888120070948 ((wq_completion)events_unbound){+.+.}-=
+{0:0}, at: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90004a97e50 ((work_completion)(&sub_info->work)){+=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/3:3/1111:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90005bafe50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>> 2 locks held by kworker/3:4/1132:
+>> =C2=A0=C2=A0#0: ffff88812006c548 ((wq_completion)events){+.+.}-{0:0}, a=
+t: process_one_work+0x41e/0x710
+>> =C2=A0=C2=A0#1: ffffc90005e13e50 ((work_completion)(&fw_work->work)){+.=
++.}-{0:0}, at: process_one_work+0x1d1/0x710
+>>
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>
+>>
+>
+> I ran a bisect on this.=C2=A0 The tagged bad commit is a LED related mer=
+ge, but commit
+> shows no code changes when I look at it in git.=C2=A0 I double checked t=
+hat the
+> merge is bad by manually going to it again at the end of the bisect and
+> indeed it fails.
+>
+> From looking at lockdep, this below may be interesting.=C2=A0 I do have =
+24 intel be200 radios
+> in this system, so maybe lots of iwlwifi radios help trigger the problem=
+?
+>
+>> 2 locks held by modprobe/1019:
+>>=C2=A0=C2=A0 #0: ffffffffa0ca7b68 (iwlwifi_opmode_table_mtx){+.+.}-{4:4}=
+, at: iwl_opmode_register+0x27/0xd0 [iwlwifi]
+>>=C2=A0=C2=A0 #1: ffff888139f88270 (&led_cdev->led_access){+.+.}-{4:4}, a=
+t: led_classdev_register_ext+0x195/0x450
+>
+> Please let me know if you have any suggestions for how to debug this fur=
+ther.
+>
+> [greearb@ben-dt5 linux-2.6]$ git bisect log
+> git bisect start
+> # status: waiting for both good and bad commits
+> # good: [e8f897f4afef0031fe618a8e94127a0934896aba] Linux 6.8
+> git bisect good e8f897f4afef0031fe618a8e94127a0934896aba
+> # status: waiting for bad commit, 1 good commit known
+> # bad: [4cece764965020c22cff7665b18a012006359095] Linux 6.9-rc1
+> git bisect bad 4cece764965020c22cff7665b18a012006359095
+> # good: [e5e038b7ae9da96b93974bf072ca1876899a01a3] Merge tag 'fs_for_v6.=
+9-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs
+> git bisect good e5e038b7ae9da96b93974bf072ca1876899a01a3
+> # bad: [32a50540c3d26341698505998dfca5b0e8fb4fd4] Merge tag 'bcachefs-20=
+24-03-13' of https://evilpiepirate.org/git/bcachefs
+> git bisect bad 32a50540c3d26341698505998dfca5b0e8fb4fd4
+> # good: [a3df5d5422b4edfcfe658d5057e7e059571e32ce] Merge tag 'pinctrl-v6=
+9-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctr=
+l
+> git bisect good a3df5d5422b4edfcfe658d5057e7e059571e32ce
+> # bad: [c0a614e82ece41d15b7a66f43ee79f4dbdbc925a] Merge tag 'lsm-pr-2024=
+0314' of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm
+> git bisect bad c0a614e82ece41d15b7a66f43ee79f4dbdbc925a
+> # bad: [705c1da8fa4816fb0159b5602fef1df5946a3ee2] Merge tag 'pci-v6.9-ch=
+anges' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci
+> git bisect bad 705c1da8fa4816fb0159b5602fef1df5946a3ee2
+> # bad: [f5c31bcf604db54470868f3118a60dc4a9ba8813] Merge tag 'leds-next-6=
+9' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/leds
+> git bisect bad f5c31bcf604db54470868f3118a60dc4a9ba8813
+> # good: [8403ce70be339d462892a2b935ae30ee52416f92] Merge tag 'mfd-next-6=
+9' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd
+> git bisect good 8403ce70be339d462892a2b935ae30ee52416f92
+> # good: [2cd0d1db31e78a63553876f8e6a4c9dcc1f9c061] leds: expresswire: Do=
+n't depend on NEW_LEDS
+> git bisect good 2cd0d1db31e78a63553876f8e6a4c9dcc1f9c061
+> # good: [23749cf3dfff5dcd706183ade1d27198a37b3881] backlight: gpio: Simp=
+lify with dev_err_probe()
+> git bisect good 23749cf3dfff5dcd706183ade1d27198a37b3881
+> # good: [2c7c70f54f791ece44541a9254c1a73790fd4595] dt-bindings: leds: Ad=
+d NCP5623 multi-LED Controller
+> git bisect good 2c7c70f54f791ece44541a9254c1a73790fd4595
+> # good: [c9128ed7b9edeb2b6f1faec06d96b2fd5bc72cb8] backlight: lm3630a_bl=
+: Simplify probe return on gpio request error
+> git bisect good c9128ed7b9edeb2b6f1faec06d96b2fd5bc72cb8
+> # good: [45066c4bbe8ca25f9f282245b84568116c783f1d] leds: ncp5623: Add MS=
+ suffix to time defines
+> git bisect good 45066c4bbe8ca25f9f282245b84568116c783f1d
+> # good: [f3d8f29d1f59230b8c2a09e6dee7db7bd295e42c] Merge tag 'backlight-=
+next-6.9' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight
+> git bisect good f3d8f29d1f59230b8c2a09e6dee7db7bd295e42c
+> # first bad commit: [f5c31bcf604db54470868f3118a60dc4a9ba8813] Merge tag=
+ 'leds-next-6.9' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/leds
+> [greearb@ben-dt5 linux-2.6]$
+>
+> Thanks,
+> Ben
+>
+
 
