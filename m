@@ -1,162 +1,222 @@
-Return-Path: <linux-kernel+bounces-169992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249998BD051
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:30:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A1E98BD055
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B161F21BB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EBBB287BE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECCE13D621;
-	Mon,  6 May 2024 14:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D8B137915;
+	Mon,  6 May 2024 14:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDmUm03g"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgSUMliR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B9213D2BC;
-	Mon,  6 May 2024 14:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA9D13D8BE;
+	Mon,  6 May 2024 14:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005791; cv=none; b=MsSBjz3HiZAlfroygYbKHzIJuMO35WdhcLstObn/rJxviWN0XhhGjDH0NPchFOjkKE63HdD9WjkJ1UcQS4tlU50FFGZH+7ibCQ8SUUuQL/NNqMHGd60U7z458za883mugwYN5P07n+UAJYqQZPE/EOqq9cDMbWqHIoTn456nbiU=
+	t=1715005802; cv=none; b=Btp/O0Eowlnz7ZlzDIfp58C3aXUv5Kg3+q2R6bF8NAc6eFSWORmIOnqhBP5nv7Ff32vpbQV/TrISWhfbD4JQkUMr97dyUaCPhluBoXR8cXj68V3DdPTxYFs5N5DVsWUiFhT5AXQwnWv5cUeWo/CQ0S2yHWzb+ZzHiBsSmkj7who=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005791; c=relaxed/simple;
-	bh=yTlY3cXJWgxA77cPCojHL92hb0JWShOiyiNH6acL9vQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CltvTkmKdlcPNXwfS1KUJ63TrAuFQJE8Y89Yoqv9CaAqcTB6kNReajUtbCaLOHYAPaIBM/xeNPGbIlELlJ9BReb2npcDPfBJ9eED2bBIn+IwDT36jg5TujDMfyurR/BDFFGrps2wB25sKAEoFzwVI5Y/D2WnZ86oM5xsCOiDYg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDmUm03g; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41dc9f98e8dso24159865e9.1;
-        Mon, 06 May 2024 07:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715005788; x=1715610588; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P7R2UF48atqv/gEumi+l7V+7dd7ac8J8DMLbixRpr6s=;
-        b=CDmUm03gDyBEmRV/wgQNUm07zfonxwQhKgLcCJNcO4yxPR1qE5g+j1w/u/Jem403Oe
-         Zpvk2RPhGWcMVKF6jMKwpPiuuUeWOF4T00WWNzFj6goIdx2xczgC30e3uWgRPvnCFCO1
-         I/bG4pXKB/3a3ALRwJMcPUAx04s/JZK9Mm9+11rPhzN9f5zopi5JxGIhWArvbjDe7g6r
-         TkJVp7bjOGM5G4UBsHwCx85ffiUX6I3VXduSe3dHj9Fww/zWae0Xn6sWDbT8gIWd8tz6
-         iyZ4uztzVVKdbXhgx8PQasShBSASyqmmXdMnf9yic3juzEFDO/orO5la75veKFPtXz0s
-         YMWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715005788; x=1715610588;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P7R2UF48atqv/gEumi+l7V+7dd7ac8J8DMLbixRpr6s=;
-        b=Pd9G5DmpTr7anUJHJ9qYpVyDUuL97hwEcrkG5TrUtWol3HB85dTp7aUSG7QcDZTE15
-         85LyEgQrfqRyxK9Rf6q3CLGOLKsfhUwrGIvN8lgfVNz4F+TjWKkA+0u8qvVMz1nslsMr
-         ZR0e/vXxeLBm+TWuDv6Z7NQHuoYVWT9WIOxlFDueYbQLrQDrMrB1eGexfPub6diGVAEd
-         GR952/xBakEoU1YMI7HBmg2gniHvjXnwg5nsh2eL/KBbr/dPNvFLzhLWVeQhMRv1wqxr
-         AoU8ShsJ4MOO3XqMWSEuAQEG5wVpWQNZfeJwD/KC2aI1u8xE2f0Uder+T+ejiqR5nexe
-         NdFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWIFQ+JSUQNy6OM8RR1b1Gm9nvgfr0wE2VqRbj0lywTvrLUYM2EIZO7WVah75ZsmXaM6nEThIQn2OjngecnICU1x+CeAM7n4AlYLXm19uYWVuuFVIeNy/7l6t5mzIgxbnI4rKtxTdt5vU6EcIsPDKX0BKhz7yXGuPRxxHxU75DCRAHIORGMM0JFSuWcYiGzxZcGBX8GlR63HQ1N4+HcYndH0Q=
-X-Gm-Message-State: AOJu0YweweVxKcH+D0TxJ7bMBzTcDS6uBcQRw+yj6MhvSiTm98pEsBht
-	SdFTrxx8eWkcpdM2tycqI+DnZ8/04H3F8Xa9PFvSj8gcdNHS1KkU
-X-Google-Smtp-Source: AGHT+IH+uilrYBzdDMiE5k3XA1ozo74RVRh9CEWscdREfkRqL3c1m4xxcjh8Y/GbZ1wlL8KfoUDDPg==
-X-Received: by 2002:adf:efc9:0:b0:34c:e6ca:b844 with SMTP id i9-20020adfefc9000000b0034ce6cab844mr8581498wrp.10.1715005787486;
-        Mon, 06 May 2024 07:29:47 -0700 (PDT)
-Received: from [192.168.178.25] ([185.254.126.157])
-        by smtp.gmail.com with ESMTPSA id dn2-20020a0560000c0200b0034e14d59f07sm10890219wrb.73.2024.05.06.07.29.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 07:29:46 -0700 (PDT)
-Message-ID: <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
-Date: Mon, 6 May 2024 16:29:44 +0200
+	s=arc-20240116; t=1715005802; c=relaxed/simple;
+	bh=xLyyQsgBKxOS7ju/Z1jQLkPWqUuski82jXjG4sGoz8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A6bYYqT74IESSui24NrkTIGh5iCj/6PGQgPSsHt3+8FAef+oMP2UHm1B85NeP1HOhoRFDnOYEF9R/9Q7SqW61vzjAFV/yxgkouYe0VVdn9UBNQoaoaZVAxZQnIlZsrDgKf2ff84Eic4WqaQQcMffIhDuJKPb+jzMMlp8cZMKwgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgSUMliR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43365C4AF63;
+	Mon,  6 May 2024 14:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715005801;
+	bh=xLyyQsgBKxOS7ju/Z1jQLkPWqUuski82jXjG4sGoz8w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qgSUMliRi/qdlo42bY09VW5dKPEjBw9ldcpgEjzTwevJIj1dfq6O6e1EAFPa+pDrY
+	 FLzUrvwfX3bfROez3MCZBCDoVObk4hzZIIa9HsNMrT8oXLPr5YCmUnox0M87In/P+b
+	 0+dM+vPrwLdcsagU0+j71jO9yQJZ4H2xbmX6lv1AmuhtV38wZOWXuqT7+hPdajtaIq
+	 mLxkoxt2Eh58K6D0Hu7Krf8og2mK7jf7Ur1i7s+Kp2YjlQ98he9GVbRNvWamAubOYp
+	 IH9feVvYL0ZJQ320d01epzTNyiK6mDfO15IWg9oCKsv8Aom2/KqkYxez9K7/WDVxzz
+	 o9mvjAjlEMazg==
+Date: Mon, 6 May 2024 15:29:46 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, kernel test robot <lkp@intel.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v6 10/10] iio: adc: ad7380: add support for
+ resolution boost
+Message-ID: <20240506152946.74f1438c@jic23-huawei>
+In-Reply-To: <20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
+References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+	<20240501-adding-new-ad738x-driver-v6-10-3c0741154728@baylibre.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
- axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
- io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name,
- linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- minhquangbui99@gmail.com, sumit.semwal@linaro.org,
- syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Am 04.05.24 um 20:20 schrieb Linus Torvalds:
-> On Sat, 4 May 2024 at 08:32, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> Lookie here, the fundamental issue is that epoll can call '->poll()'
->> on a file descriptor that is being closed concurrently.
-> Thinking some more about this, and replying to myself...
->
-> Actually, I wonder if we could *really* fix this by simply moving the
-> eventpoll_release() to where it really belongs.
->
-> If we did it in file_close_fd_locked(),  it would actually make a
-> *lot* more sense. Particularly since eventpoll actually uses this:
->
->      struct epoll_filefd {
->          struct file *file;
->          int fd;
->      } __packed;
->
-> ie it doesn't just use the 'struct file *', it uses the 'fd' itself
-> (for ep_find()).
->
-> (Strictly speaking, it should also have a pointer to the 'struct
-> files_struct' to make the 'int fd' be meaningful).
+On Wed, 01 May 2024 16:55:43 +0200
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-While I completely agree on this I unfortunately have to ruin the idea.
+> ad738x chips are able to use an additional 2 bits of resolution when
+> using oversampling. The 14-bits chips can have up to 16 bits of
+> resolution and the 16-bits chips can have up to 18 bits of resolution.
+> 
+> In order to dynamically allow to enable/disable the resolution boost
+> feature, we have to set iio realbits/storagebits to the maximum per chips.
+> This means that for iio, data will always be on the higher resolution
+> available, and to cope with that we adjust the iio scale and iio offset
+> depending on the resolution boost status.
+> 
+> The available scales can be displayed using the regular _scale_available
+> attributes and can be set by writing the regular _scale attribute.
+> The available scales depend on the oversampling status.
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> 
+> ---
+> 
+> In order to support the resolution boost (additional 2 bits of resolution)
+> we need to set realbits/storagebits to the maximum value i.e :
+>   - realbits = 16 + 2 = 18, and storagebits = 32 for 16-bits chips
+>   - realbits = 14 + 2 = 16, and storagebits = 16 for 14-bits chips
+> 
+> For 14-bits chips this does not have a major impact, but this
+> has the drawback of forcing 16-bits chip users to always use 32-bits
+> words in buffers even if they are not using oversampling and resolution
+> boost. Is there a better way of implementing this? For example
+> implementing dynamic scan_type?
+> 
+> Another issue is the location of the timestamps. I understood the need
+> for ts to be consistent between chips, but right now I do not have a
+> better solution.. I was thinking of maybe adding the timestamps at the
+> beginning? That would imply to change the iio_chan_spec struct and maybe
+> add a iio_push_to_buffers_with_timestamp_first() wrapper function? Is
+> that an option?
 
-Before we had KCMP some people relied on the strange behavior of 
-eventpoll to compare struct files when the fd is the same.
+Questions discussed in another branch of the thread.
 
-I just recently suggested that solution to somebody at AMD as a 
-workaround when KCMP is disabled because of security hardening and I'm 
-pretty sure I've seen it somewhere else as well.
+Jonathan
 
-So when we change that it would break (undocumented?) UAPI behavior.
+> 
+> Any suggestion would be very much appreciated.
+> ---
+>  drivers/iio/adc/ad7380.c | 226 ++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 194 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> index 7b021bb9cf87..e240098708e9 100644
+> --- a/drivers/iio/adc/ad7380.c
+> +++ b/drivers/iio/adc/ad7380.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/err.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> +#include <linux/units.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+> @@ -58,6 +59,8 @@
+>  #define AD7380_CONFIG1_CRC_R		BIT(4)
+>  #define AD7380_CONFIG1_ALERTEN		BIT(3)
+>  #define AD7380_CONFIG1_RES		BIT(2)
+> +#define RESOLUTION_BOOST_DISABLE	0
+> +#define RESOLUTION_BOOST_ENABLE		1
+If the field is defined, the values should be obvious.
+Also you used this as a boolean where simply passing in true
+or false would be less confusing.
 
-Regards,
-Christian.
+>  #define AD7380_CONFIG1_REFSEL		BIT(1)
+>  #define AD7380_CONFIG1_PMODE		BIT(0)
+>  
+> @@ -86,6 +89,14 @@ struct ad7380_chip_info {
+>  	const struct ad7380_timing_specs *timing_specs;
+>  };
 
+> @@ -259,6 +271,8 @@ struct ad7380_state {
+>  	struct spi_device *spi;
+>  	unsigned int oversampling_mode;
+>  	unsigned int oversampling_ratio;
+> +	unsigned int scales[2][2];
+> +	bool resolution_boost_enable;
+>  	struct regmap *regmap;
+>  	unsigned int vref_mv;
+>  	unsigned int vcm_mv[MAX_NUM_CHANNELS];
+> @@ -270,7 +284,10 @@ struct ad7380_state {
+>  	 * As MAX_NUM_CHANNELS is 4 the layout of the structure is the same for all parts
+>  	 */
+>  	struct {
+> -		u16 raw[MAX_NUM_CHANNELS];
+> +		union {
+> +			u16 u16[MAX_NUM_CHANNELS];
+> +			u32 u32[MAX_NUM_CHANNELS];
+> +		} raw;
+>  
+>  		s64 ts __aligned(8);
+
+As per earlier comments, roll this timestamp into the union as well
+because it will move around.
+
+>  	} scan_data __aligned(IIO_DMA_MINALIGN);
+> @@ -359,23 +376,67 @@ static int ad7380_debugfs_reg_access(struct iio_dev *indio_dev, u32 reg,
+>  	unreachable();
+>  }
+
+>  
+> +static int ad7380_set_resolution_boost(struct iio_dev *indio_dev, bool enable)
+You pass 1 or 0 in here rather than true or false which would make more sense.
+> +{
+> +	struct ad7380_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (st->resolution_boost_enable == enable)
+> +		return 0;
+> +
+> +	ret = regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG1,
+> +				 AD7380_CONFIG1_RES,
+> +				 FIELD_PREP(AD7380_CONFIG1_RES, enable));
+Mapping true / false to 1 / 0 whilst correct doesn't give particularly readable
+code. So useful to just have an
+	enable ? 1 : 0 
+in there to make the mapping more obvious.
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->resolution_boost_enable = enable;
+
+Trivial: blank line here.
+
+> +	return 0;
+> +}
 >
-> IOW, eventpoll already considers the file _descriptor_ relevant, not
-> just the file pointer, and that's destroyed at *close* time, not at
-> 'fput()' time.
->
-> Yeah, yeah, the locking situation in file_close_fd_locked() is a bit
-> inconvenient, but if we can solve that, it would solve the problem in
-> a fundamentally different way: remove the ep iterm before the
-> file->f_count has actually been decremented, so the whole "race with
-> fput()" would just go away entirely.
->
-> I dunno. I think that would be the right thing to do, but I wouldn't
-> be surprised if some disgusting eventpoll user then might depend on
-> the current situation where the eventpoll thing stays around even
-> after the close() if you have another copy of the file open.
->
->               Linus
-> _______________________________________________
-> Linaro-mm-sig mailing list -- linaro-mm-sig@lists.linaro.org
-> To unsubscribe send an email to linaro-mm-sig-leave@lists.linaro.org
+>  static int ad7380_init(struct ad7380_state *st, struct regulator *vref)
+>  {
+>  	int ret;
+> @@ -691,12 +849,16 @@ static int ad7380_init(struct ad7380_state *st, struct regulator *vref)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Disable oversampling by default.
+> -	 * This is the default value after reset,
+> +	/* Disable oversampling and resolution boost by default.
+
+Follow through from earlier.  Wrong comment syntax + wrap lines nearer 80 chars.
+
+> +	 * This are the default values after reset,
+>  	 * so just initialize internal data
+>  	 */
 
 
