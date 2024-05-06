@@ -1,162 +1,117 @@
-Return-Path: <linux-kernel+bounces-170343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6478BD570
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E5EB8BD576
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 21:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7531C2266A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F71B1C224D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 19:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B74915990F;
-	Mon,  6 May 2024 19:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o9hwrpB6"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3A515AAA2;
+	Mon,  6 May 2024 19:32:22 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BE81598FA
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2359015A48D
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 19:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715023769; cv=none; b=DnO2AyCSRJ/SB5X2EC3w0MdbTimyj5lIch3LXQ+iFK+Mv+5QNiq2Gxp1/46/JVmz6rhCtiQYR1IpATeYMBzu4UU1IjW6IjHNUft5w7R7qFHMzL4PEfaPZk5knDUctFnmyGXB/ij6ZQwTngvJmHmVqUlRclc+JWFocourUKhuefk=
+	t=1715023942; cv=none; b=STiRZDWCacNzOHJppKJn1Md9G3FIP18dg0qZ10e40tKl4gPn1WgEJ+oQfh65//Q8WOmkpfaMuvxW0e+gewkAjvLIY0Y9L4t1M07bBO0TfRpEdXzBeLrwjoezDHHHJm4dkPLESm9Q+xusvj4DQwsEP/+TDWT3kmEXEBEEFd8Tmmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715023769; c=relaxed/simple;
-	bh=78VsLkCuW49vhVgkUXJxT+pNVEKkHi1mMQj62BGccng=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Sd1biJ2RuhgO2fP2K4knGTpkPsa+ZmRyuCklrcjULYb+6N+0Gq3Q/GAOt8t54x3Ooz3F9o/OTmgLWqVFHOFHLuffmPtLB1m9MBan9iNDuWvWuCTs8hmettq+G8ID9ELi9Er49oWncSxtrwD1MQ37NF0CSLAR6UmTA/PUeHvd61I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o9hwrpB6; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61df903af62so46917167b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 12:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715023766; x=1715628566; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vMsFvGn5E9drw/PQULeDN2NnDOV6ZTK3bSrrukYn3gE=;
-        b=o9hwrpB6NbTHO0NadKc2rt6piAKOj5GzKtPIFzaiqwGV+ITfdeiQtvwVuLrxXaIzTf
-         VtQJtXsaW894aFAIhX6lV8Lan29VutEspRHsqs1Yuk+7hmCaHZqLrnPjTibSC3GYQHrh
-         CQGtv2NpTNkmwUISq7lkDGOh5tMcNFzsrsd4/poHlsnLNiYmrzNEoGxgD+j+ztESbLyl
-         Kr/iTsUfeAQuCpNhfU2NoVN+TcmI5DvWOOuBxT7MievIgWs9lEshs42WYQ9vqsuhqwZV
-         uomAXFkWCqQP5ZcxGKt+8KhisG5gpTGZeUTn0jYeDJUqM9Agn8xCPFIH+r29LzWlBMsF
-         mTmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715023766; x=1715628566;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vMsFvGn5E9drw/PQULeDN2NnDOV6ZTK3bSrrukYn3gE=;
-        b=N5rziKH/OpxSdbJVDxdSiINm7slgQcJai5YUHlf1/dJmAPTLq5TYHXIZnAN2YmGHyM
-         tRZnfJIqv80q48GpbU09j2GE7aIVm1NjJj7yY0CSA9sGzIsSHM09Yk+7GS7nWcBoThzJ
-         HLnOghgKnZLtIsSETKZu25MMSaGQuGstwPojEq33LbVHL43+UEuiXk0FfxD55nwwoa1+
-         ssM+/hHeozac8u3HXQA+gkUQCRK0i7KK/0YekO5Bjlt67+JbgWBOouwG5Jkq3y9mupK1
-         enhThNdRq1F1hAn1mh7A6xc6X5AYzUtYDffrl5D5w3XnenSmvSGXlXpqC0TPpis+fL9Q
-         /C6g==
-X-Forwarded-Encrypted: i=1; AJvYcCX/3XuBLMgN251CnHSHhb/TwutSwl1vR/5bXGlFFa3dyJW+mdTlIgwBuBZqlYEjvyrrQPjN1CkLgZh35YZdlv66Wnn6FK8MAjAKDs9I
-X-Gm-Message-State: AOJu0YzGcSw14y6CudV/LZJepv0/TXiGL3QcY5zTOFDmHrn459QCAHFG
-	3V/f1BC9fPzXZxWhcXNvEuqykJLBF2aXglmukhw037N+vNyih4FewkHnjdPb/JSsz3w4BR5e5Ct
-	5Jt79tW5UiAXn7QAOAQ==
-X-Google-Smtp-Source: AGHT+IENOCELgpMw5VEmqAi5bqOPnEO/Pk6007gBdU/F+qmzq+7vIo3uBQyfw0E3lDsJXlJtZTiPMqjyGbUwAkXi
-X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
- (user=yosryahmed job=sendgmr) by 2002:a81:4f05:0:b0:61b:e75b:4806 with SMTP
- id d5-20020a814f05000000b0061be75b4806mr3003407ywb.1.1715023766466; Mon, 06
- May 2024 12:29:26 -0700 (PDT)
-Date: Mon,  6 May 2024 19:29:24 +0000
+	s=arc-20240116; t=1715023942; c=relaxed/simple;
+	bh=eI+kER1SL3aEsFbNhtCuGNlJ0SLW6TBfDVzR78QACzM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=QJCuPETFqcZ+SoyWQZSg14gW6DTf3Fm3rhSW9+w8JmeRS/nV2ZvdpWRfuyD17/avoZV3E4I6rVRtK45+6KmcEOoQ2F6LfdAEiiCXgarDteGd6uMthL5ht+1Iwo5JZpj0zkWi834nkGsMIEJ9+GiDBFtiivSIjxMbRJWHTTJR6Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-85-QUctF-81M7WgRzXbUgngrA-1; Mon, 06 May 2024 20:32:15 +0100
+X-MC-Unique: QUctF-81M7WgRzXbUgngrA-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 6 May
+ 2024 20:31:36 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 6 May 2024 20:31:36 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Edward Liaw' <edliaw@google.com>, Justin Stitt <justinstitt@google.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shuah Khan
+	<shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, "H. Peter Anvin"
+	<hpa@linux.intel.com>, Andy Lutomirski <luto@mit.edu>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kernel-team@android.com" <kernel-team@android.com>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>
+Subject: RE: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for
+ elf_hash
+Thread-Topic: [PATCH v3] selftests/vDSO: Explicit unsigned char conversion for
+ elf_hash
+Thread-Index: AQHanAFdbmzmhwAPx0KMYxInfI6/rrGIpXPggAHZwnqAACCfUA==
+Date: Mon, 6 May 2024 19:31:36 +0000
+Message-ID: <7332ff979f3440bd8362d37d4d1f34b8@AcuMS.aculab.com>
+References: <20240501180622.1676340-1-edliaw@google.com>
+ <osgrbhnqlyh5yw4y4x6wjggx56dogsgje5yy3mkpu75ubs3zwg@5tliydzky37k>
+ <b55272cb757743548c789aa8c0efa448@AcuMS.aculab.com>
+ <CAFhGd8rAW4Mkctq5VkcfVjw_yr=jVdXaWbYXP-vmeVpw7q4ruQ@mail.gmail.com>
+ <CAG4es9WYrN_tOV1Uxi_ytO2qDRRZW5_uN=2p3iCg=P0r3mM3Og@mail.gmail.com>
+In-Reply-To: <CAG4es9WYrN_tOV1Uxi_ytO2qDRRZW5_uN=2p3iCg=P0r3mM3Og@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240506192924.271999-1-yosryahmed@google.com>
-Subject: [PATCH v2] mm: do not update memcg stats for NR_{FILE/SHMEM}_PMDMAPPED
-From: Yosry Ahmed <yosryahmed@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>, 
-	syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Previously, all NR_VM_EVENT_ITEMS stats were maintained per-memcg,
-although some of those fields are not exposed anywhere. Commit
-14e0f6c957e39 ("memcg: reduce memory for the lruvec and memcg stats")
-changed this such that we only maintain the stats we actually expose
-per-memcg via a translation table.
-
-Additionally, commit 514462bbe927b ("memcg: warn for unexpected events
-and stats") added a warning if a per-memcg stat update is attempted for
-a stat that is not in the translation table. The warning started firing
-for the NR_{FILE/SHMEM}_PMDMAPPED stat updates in the rmap code. These
-stats are not maintained per-memcg, and hence are not in the translation
-table.
-
-Do not use __lruvec_stat_mod_folio() when updating NR_FILE_PMDMAPPED and
-NR_SHMEM_PMDMAPPED. Use __mod_node_page_state() instead, which updates
-the global per-node stats only.
-
-Reported-by: syzbot+9319a4268a640e26b72b@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/lkml/0000000000001b9d500617c8b23c@google.com
-Fixes: 514462bbe927 ("memcg: warn for unexpected events and stats")
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
----
- mm/rmap.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 12be4241474ab..ed7f820369864 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1435,13 +1435,14 @@ static __always_inline void __folio_add_file_rmap(struct folio *folio,
- 		struct page *page, int nr_pages, struct vm_area_struct *vma,
- 		enum rmap_level level)
- {
-+	pg_data_t *pgdat = folio_pgdat(folio);
- 	int nr, nr_pmdmapped = 0;
- 
- 	VM_WARN_ON_FOLIO(folio_test_anon(folio), folio);
- 
- 	nr = __folio_add_rmap(folio, page, nr_pages, level, &nr_pmdmapped);
- 	if (nr_pmdmapped)
--		__lruvec_stat_mod_folio(folio, folio_test_swapbacked(folio) ?
-+		__mod_node_page_state(pgdat, folio_test_swapbacked(folio) ?
- 			NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED, nr_pmdmapped);
- 	if (nr)
- 		__lruvec_stat_mod_folio(folio, NR_FILE_MAPPED, nr);
-@@ -1493,6 +1494,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
- 		enum rmap_level level)
- {
- 	atomic_t *mapped = &folio->_nr_pages_mapped;
-+	pg_data_t *pgdat = folio_pgdat(folio);
- 	int last, nr = 0, nr_pmdmapped = 0;
- 	bool partially_mapped = false;
- 	enum node_stat_item idx;
-@@ -1540,13 +1542,14 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
- 	}
- 
- 	if (nr_pmdmapped) {
-+		/* NR_{FILE/SHMEM}_PMDMAPPED are not maintained per-memcg */
- 		if (folio_test_anon(folio))
--			idx = NR_ANON_THPS;
--		else if (folio_test_swapbacked(folio))
--			idx = NR_SHMEM_PMDMAPPED;
-+			__lruvec_stat_mod_folio(folio, NR_ANON_THPS, -nr_pmdmapped);
- 		else
--			idx = NR_FILE_PMDMAPPED;
--		__lruvec_stat_mod_folio(folio, idx, -nr_pmdmapped);
-+			__mod_node_page_state(pgdat,
-+					folio_test_swapbacked(folio) ?
-+					NR_SHMEM_PMDMAPPED : NR_FILE_PMDMAPPED,
-+					-nr_pmdmapped);
- 	}
- 	if (nr) {
- 		idx = folio_test_anon(folio) ? NR_ANON_MAPPED : NR_FILE_MAPPED;
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+RnJvbTogRWR3YXJkIExpYXcNCj4gU2VudDogMDYgTWF5IDIwMjQgMTg6MzQNCj4gDQo+IE9uIE1v
+biwgTWF5IDYsIDIwMjQgYXQgMTA6MTbigK9BTSBKdXN0aW4gU3RpdHQgPGp1c3RpbnN0aXR0QGdv
+b2dsZS5jb20+IHdyb3RlOg0KPiA+DQo+ID4gT24gU3VuLCBNYXkgNSwgMjAyNCBhdCA2OjIx4oCv
+QU0gRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4gPg0K
+PiA+ID4gRnJvbTogSnVzdGluIFN0aXR0DQo+ID4gPiA+IFNlbnQ6IDAxIE1heSAyMDI0IDIwOjU1
+DQo+ID4gPiAuLi4NCj4gPiA+ID4gPiBzdGF0aWMgdW5zaWduZWQgbG9uZyBlbGZfaGFzaChjb25z
+dCB1bnNpZ25lZCBjaGFyICpuYW1lKQ0KPiA+ID4gLi4uDQo+ID4gPiA+IElzIGl0IHBvc3NpYmxl
+IHRvIGp1c3QgY2hhbmdlIHRoZSB0eXBlcyBvZiB0aGUgcGFyYW1ldGVycyBvZiB2ZHNvX3N5bSgp
+DQo+ID4gPiA+IG9yIGRvZXMgdGhhdCB0cmlnZ2VyIGV2ZW4gbW9yZSB3YXJuaW5ncyBvbiB0aGUg
+Y2FsbHNpdGVzIG9mIHZkc29fc3ltKCk/DQo+ID4gPg0KPiA+ID4gSXNuJ3QgdGhlIHByb2JsZW0g
+dGhlIGRlZmluaXRpb24gb2YgZWxmX2hhc2goKT8NCj4gPiA+IEEgJ1wwJyB0ZXJtaW5hdGVkIHN0
+cmluZyByZWFsbHkgb3VnaHQgdG8gYmUgJ2NoYXIgKicgbm90ICd1bnNpZ25lZCBjaGFyIConLg0K
+PiA+DQo+ID4gUmlnaHQsIGFsdGhvdWdoIG5vdGUgdGhpcyBjb21tZW50IGp1c3QgYWJvdXQgaXRz
+IGRlZmluaXRpb246DQo+ID4NCj4gPiAvKiBTdHJhaWdodCBmcm9tIHRoZSBFTEYgc3BlY2lmaWNh
+dGlvbi4gKi8NCj4gPiBzdGF0aWMgdW5zaWduZWQgbG9uZyBlbGZfaGFzaChjb25zdCB1bnNpZ25l
+ZCBjaGFyICpuYW1lKQ0KPiA+IHsNCj4gPg0KPiA+IHdoaWNoIGluZGVlZCBtYXRjaGVzIFsxXQ0K
+PiA+DQo+ID4gWzFdOiBodHRwczovL21hbi5mcmVlYnNkLm9yZy9jZ2kvbWFuLmNnaT9xdWVyeT1l
+bGZfaGFzaCZzZWt0aW9uPTMmYXByb3Bvcz0wJm1hbnBhdGg9RnJlZUJTRCs3LjEtDQo+IFJFTEVB
+U0UNCj4gDQo+IEhvdyBhYm91dCBJIG1vdmUgdGhlIHR5cGUgY2FzdCBpbnRvIGVsZl9oYXNoLCBs
+aWtlIGxpYmVsZiBkb2VzDQo+IGh0dHBzOi8vc291cmNlZm9yZ2UubmV0L3AvZWxmdG9vbGNoYWlu
+L2NvZGUvSEVBRC90cmVlL3RydW5rL2xpYmVsZi9lbGZfaGFzaC5jI2w0Nw0KPiANCj4gZGlmZiAt
+LWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3ZEU08vcGFyc2VfdmRzby5jDQo+IGIvdG9v
+bHMvdGVzdGluZy9zZWxmdGVzdHMvdkRTTy9wYXJzZV92ZHNvLmMNCj4gaW5kZXggNDEzZjc1NjIw
+YTM1Li4zM2RiOGFiZDdkNTkgMTAwNjQ0DQo+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3Rz
+L3ZEU08vcGFyc2VfdmRzby5jDQo+ICsrKyBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3ZEU08v
+cGFyc2VfdmRzby5jDQo+IEBAIC01NiwxMiArNTYsMTUgQEAgc3RhdGljIHN0cnVjdCB2ZHNvX2lu
+Zm8NCj4gIH0gdmRzb19pbmZvOw0KPiANCj4gIC8qIFN0cmFpZ2h0IGZyb20gdGhlIEVMRiBzcGVj
+aWZpY2F0aW9uLiAqLw0KPiAtc3RhdGljIHVuc2lnbmVkIGxvbmcgZWxmX2hhc2goY29uc3QgdW5z
+aWduZWQgY2hhciAqbmFtZSkNCj4gK3N0YXRpYyB1bnNpZ25lZCBsb25nIGVsZl9oYXNoKGNvbnN0
+IGNoYXIgKm5hbWUpDQo+ICB7DQo+ICAgdW5zaWduZWQgbG9uZyBoID0gMCwgZzsNCj4gLSB3aGls
+ZSAoKm5hbWUpDQo+ICsgY29uc3QgdW5zaWduZWQgY2hhciAqczsNCj4gKw0KPiArIHMgPSAoY29u
+c3QgdW5zaWduZWQgY2hhciAqKSBuYW1lOw0KPiArIHdoaWxlICgqcykNCj4gICB7DQo+IC0gaCA9
+IChoIDw8IDQpICsgKm5hbWUrKzsNCj4gKyBoID0gKGggPDwgNCkgKyAqcysrOw0KPiAgIGlmIChn
+ID0gaCAmIDB4ZjAwMDAwMDApDQo+ICAgaCBePSBnID4+IDI0Ow0KPiAgIGggJj0gfmc7DQoNClRo
+YXQgbWFrZXMgYSBsb3QgbW9yZSBzZW5zZS4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRk
+cmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBN
+SzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
 
