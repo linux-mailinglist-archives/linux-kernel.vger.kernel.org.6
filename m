@@ -1,155 +1,139 @@
-Return-Path: <linux-kernel+bounces-169420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24CBD8BC868
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CA48BC86C
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 09:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428AF1C21384
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD1C1F20FDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 07:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEC113774B;
-	Mon,  6 May 2024 07:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E45140388;
+	Mon,  6 May 2024 07:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="SSp0jwKk"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazolkn19010000.outbound.protection.outlook.com [52.103.66.0])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOQe5kMT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0481E127E3B;
-	Mon,  6 May 2024 07:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714980785; cv=fail; b=M5eZRatG2u3thIPzEU79Xv71hC3Rv7L0t2L8UgFDCw3J4WONleCCciQvsEd35XhJBsiLszxj6qEsEo6d1LFRtoxG2YTdvaOi6mgeg1+qFDVG4SzD+NzRPbg9jlgvfpJBgWGGwVFtIeV2MqWHxXzaV0DJRJkSEi8AtAhEp+CZbpo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714980785; c=relaxed/simple;
-	bh=QWQepTr9HCBQbPnpPpOL2vIhU1/9nQ6mXKQCD+2+ft4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iuL65h6b4Jwrf61SiZ7mO1F9FBQGF3uAfcvRVcxH9i/5Z4oGLEUUPfWPF9EzE+Fkw2H2D8Xfrlpc7ol7IL6JzgTOUrzO8nGXT3wlvG2O8jooJddBv6Ocbwrwmo+fjGL7+5i8dHvQJUVw1aV399AGma6HS+gztVf2Epf4kQjlXPA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=SSp0jwKk; arc=fail smtp.client-ip=52.103.66.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eUa+4ph6riv/v5qmyBol+X0kVDxEsQMhCAEJnRgWhh2YySMXktdHrcm0tg58wGeq5DDTyyez4ZioIRRhJcUhqmyt9c9pgZMiOLlEUyL4L7xH6XBdPZwBKLHE9AYDu+deUi5WWvjy0pIszUTJVwv5cW7xkOK9w9EX8oirj43aejE/EmtdL1oZNZgKicT6br8HHr5iWB4m5DwmhmbmBgw+IlWhP7m9IcpBI7fwQTCY75ynjp43+KeH8o6fDR0Qyt3bG92iH57d88+taPlA7nVKQPNFaJ4jWfozjfJDzzq3RvOXHR0167BS7Dd42c2ec/BhGZaqyen8IXc471JG9rkpCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ooUvmidyDfcicUqHx4t4j6+vqcGKs/pdj6DnF+bzZ1I=;
- b=lFsWcs3jsSgovLjdHmCKeIXC8r7VFg8KRF7sNX336l8Nl8WpjfN2zVnDa+zzxaqNXmYDZvTaANmYfepXaHzuRg5S+oTB+Ay76/MSk5t9WWKJAZ5Gi8aC/QqGaTR0oLD68bn79DiDjKFygB8a9JZ/M5/TnvkdLZ2kcffxEn+GazT4s2X+g1Fu73EC1up8/y1grzL/xatocJGj8RbZVDGL4m0nEMS5I1KHx6K1ehtr89Bzbb3IwKnWOh6u488n5UFa0QtfGhIIt5vYuYUntT8z6nvD/BQ/SGmYwD0B2wIIHyYcvEtgztR0Tjvfu4f62joPZycwcnG1Z8bFy+5siu7VNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ooUvmidyDfcicUqHx4t4j6+vqcGKs/pdj6DnF+bzZ1I=;
- b=SSp0jwKkO0iKI/IxFFdI8PstzXS6GU6saeoDyPoHniJjBullyJ6UVmYQLgCRD6czvL/a3Aff0OUWXO8yTjS2Q7f058bS4axMINx4yj8bcUQTzfIhYo6FdZ+KJ9nGQXO7FLXD0MEliblrwlfrH2mZVNF7UdbA0PJESWUj+exKxo4UBYV/i7qBHiVolpIPIocGR+8DOgAhqxgavBH4t8YNj9X+LAiT2+rng6Pf6L/AcyPesKNQZbbjXui7vFRvrM+vrwQwfpTcEUEbIOYUFC/UD5Nz9yhVyoP/6jCmhSR+kOaNZ1tZVghN9X0Ks9mJkVwIriOFDnk2l7LiYm9D7Bc9Hw==
-Received: from TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:209::11)
- by TYYP286MB1643.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:114::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Mon, 6 May
- 2024 07:33:01 +0000
-Received: from TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM
- ([fe80::f2c3:e53f:2ea9:55c8]) by TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM
- ([fe80::f2c3:e53f:2ea9:55c8%6]) with mapi id 15.20.7544.041; Mon, 6 May 2024
- 07:33:01 +0000
-From: ArcticLampyrid <ArcticLampyrid@outlook.com>
-To: tiwai@suse.de, Jaroslav Kysela <perex@perex.cz>
-Cc: sbinding@opensource.cirrus.com, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- rf@opensource.cirrus.com
-Subject:
- Re: [PATCH v4 0/1] ALSA: hda/realtek: Fix internal speakers for Legion Y9000X
- 2022 IAH7
-Date: Mon, 06 May 2024 15:32:56 +0800
-Message-ID:
- <TYCP286MB2535FAD4F73A78C410CE11F0C41C2@TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM>
-In-Reply-To: <05819798-2ac2-4aed-9f4f-0494c4c24159@perex.cz>
-References:
- <TYCP286MB2535F8C34EB5E3D826B74C17C41C2@TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM>
- <05819798-2ac2-4aed-9f4f-0494c4c24159@perex.cz>
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-TMN: [h1URPMT38gAYzGf8zUtKQE/nwqfjz/a/dIOlNP54JqM=]
-X-ClientProxiedBy: TY2PR06CA0036.apcprd06.prod.outlook.com
- (2603:1096:404:2e::24) To TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:209::11)
-X-Microsoft-Original-Message-ID: <2763980.mvXUDI8C0e@qlaptoparch>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE1D127E3B;
+	Mon,  6 May 2024 07:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714980839; cv=none; b=nrN45KreTq99WaIWRgaad4Pfuq6utEM0STu5LZiWIa8oMIencsFqyM0rRqaY00CV6XI/PvpT4zhzQ44psq58I5yKLkwDO6+EvWe3r1Qcc9WEzYZ/34vMIBLGkauFd/36bfHHbUYxJjFbF99T5PkjKVRveCdgocnGzvLfLsZHC1c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714980839; c=relaxed/simple;
+	bh=6XLNTdDOjYZV+7BSZ8kYvHCZIOmfDSjbk8qhhZ/HN98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tDKt+BtRhAI004FqlSStLGoZEBtvjt9ENFDROytLkZU1gHO5r9eHDcebIhoDVQobLlK5v29xYEtShdxO5etZGOqmKMBKhbnVDMaUIzay7cOVG5W/+Q9vw7h0ZMql0UQ70NVDSmjldQwqC1NJzopEczregH/Yjc2+0ry/IEgIwVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOQe5kMT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6B6C116B1;
+	Mon,  6 May 2024 07:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714980838;
+	bh=6XLNTdDOjYZV+7BSZ8kYvHCZIOmfDSjbk8qhhZ/HN98=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oOQe5kMTblXJZ1LDCM4efVpiMDYgCPv9n4nmCcDqnsOCcoINVq/I8EYAU70iCFESU
+	 6iRbzA2fucAjcO4Y5v6Yh2RRUPXk/8yO4g4fkYljfz3F/4/LbZ2pbgkZSifQOrwzVC
+	 DtWG0CFNb6tksiEkIm5+/UYWKdX8v8U13M4r2QBkjzaofiVVlpJkpwxj07SOAqkZRE
+	 6xOGO2bCXFxCEsIwMXyiqQ0RV3T57ab8R9Osjqn4vmqKNNNvWHqitQ9FcBwi1sXgWj
+	 20UeGVq3oC1PLysvApckZumwIPjFquUgyomPXJQEKXIbKkqjh91BLyr40SOK5hmuTw
+	 9DPLK1r/TcoYA==
+Message-ID: <94e7366f-e791-4abf-b20d-4c7a1eed3b48@kernel.org>
+Date: Mon, 6 May 2024 09:33:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB2535:EE_|TYYP286MB1643:EE_
-X-MS-Office365-Filtering-Correlation-Id: 385501bb-6a92-4b6f-7754-08dc6d9ec21e
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|1602099003|440099019|3412199016;
-X-Microsoft-Antispam-Message-Info:
-	SgYh9TPojyFgm1UtUrgnM+WAXJ63WRxn9yuXflXhAAMsjVY9Y4urfUlol3TGY5FDah0Yu60DB2zFGx6zVzK4YS0XDt430rzE0MINGHLCVzIL/46VTzi83RyQDnjkk/G4H9fhTaOVLZxBWGB1+Ajm8S6ol8LUFKc24kWAP47Mka36QAzvz5MVlRPTDB4GJXOkC+OHDs67sw801Ktm929Flpc9/QgbrZMMKRLh6adwTOYdh0IV0ujLM7WiSGjtlBHeq61wjK+f9vWfkKVJ6UfOufiqSKWG66YPG4U3ktTXjdWJESD/UK8kSR5SPo4Y+g/ZKT0qXSb42nF1OMgdmjOnDiFYIejneNUBSTpU4Bbp/LQgarQQ+Jl4BCYGbaG4VFui39NqQF+WzFTY8xBkdQosvJN51fR4woBV5RLgJS8WQDJyLwnv1fhsiz4rBp11JWc9m5RRUgujaK0VWaGLFrnwnYSNWpFEFmF8tu11jaq7FiXgxfAxHERypuqHm5jFpHL72+Jl/+bTzPXpe6OiAeMwo7FOrttkhdnUfirooFNJyG4MAskc2krViOr2yVi2gQXuDTHOBBt++flV5ch9Xulk+ggyXCdhmLdRAkfGyX135KsrPTI/atEdlNEfk2qPouy+3G9c/wfmy8lDaIjzHMxSZM81FfhY2ZaZQQd0hNaRn5c=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Qi9lNXJ5NnhrU1Rsb3RNRTZoQU5MampsVnZjazl6TGJhTkRqOURCQW43QitI?=
- =?utf-8?B?QWNvOFF2SVFWWk4xY0cxN1NjcDI3UXkvTXY2aW1wNEJUQ28wWmJYRDJia0xa?=
- =?utf-8?B?dm5uOHNlaGgzU2RMcnVvSEtPQUNaU3VWQjhzTVBETGRNc016bnp2UDBJOXpQ?=
- =?utf-8?B?QW1SY1hnU3hDWXREbi9sbDN0bHN5S1EzbVgxMDhLTzVaRmNSUzdCdmUrMWpM?=
- =?utf-8?B?WXhqaVh3TWdxekFFc01iTUZZd3VZYlR5emV6L3V5bk9IY1JOM3pXc3gzRUN2?=
- =?utf-8?B?d2FhUDB2dmlybU1ScllIaHB6cmp3NjJuUGhDZTRvKzczUDZRRU1pcnlhZUFE?=
- =?utf-8?B?Z05Yc2R3QmltUU05bFlENkUycDV2MnZhK2t3VWlDZURlbGlOU2JJMVBOQy81?=
- =?utf-8?B?ZHNvdU1naGVuYmdKU1plWkg4QmpqMWhTSUc2RUZTUWFXNURnbmYyLzJzeXo0?=
- =?utf-8?B?NzBLRXJWdjBWSDFtdU5qSmRNUU9TU29sN1I2VFRnNERQaEJRRDFHcFBqMi9Q?=
- =?utf-8?B?OUo5Z0c4S0ZLQjlXcmF4WVh3NEVXSGhNRDF3Yld0c1FIZE92M2FYbWN6NVIr?=
- =?utf-8?B?VnRjZ0JnYytnQWVlQVQ3VlB5ZTJWT3ZWeGNyeEhzOStxZnM2NUJ0aE1hMWU3?=
- =?utf-8?B?RzZLVzlaMVBybTdXbFE0eGlqaStNMnd0NC9lS2I2R1RHOGEySVUybUI0NjZx?=
- =?utf-8?B?Nzh5ZkNoNWt3THZPZXBkVFpiNm1CaEVSTmY4MHJma29PcFBrZEpvYUJyRkp6?=
- =?utf-8?B?UHJ6SWcxUzhXQmFFb095OWpIZEFtQzlvbU95UjBFNnREWm4rOUxnTUJpbTl2?=
- =?utf-8?B?bk8raGg2a2haUVBUVm1YcjJHd2l4Qm5aY05VZWlGbldOeGRLV0JObFdzVzc2?=
- =?utf-8?B?MTh0Q21ISklMaXVDWkVNT0tYSFFUcW0wUStESm5seGRIM1YyMXhBSDlTdkhZ?=
- =?utf-8?B?MzZuRS9iQ2hCaVNoV2U2dUVwSFJUMXZMVUNkQnlYRWhSRE5MVDN5UStZbmM1?=
- =?utf-8?B?aWlWVm4vWXlxRW1SU05IdUxrMHBqdXZMd0JIR2VWKzRCbmwxMTJvelE5OXBZ?=
- =?utf-8?B?MU5TSDUwOXNZeHExSWN6eVo0Q2RzaFBIYTdWczZybldHemlMeUdUc3NERGt1?=
- =?utf-8?B?cGxOaVBiMHdOeE1aL2JIY2R2NHdNQ0F2b084RDB3TnlvRWs5eDlwZUtXRGZS?=
- =?utf-8?B?T09tRHpmRWpYN1Y5M0dCYzRLYWJ3M052NDArSnFJTHhtUmJvMzhJNDVCSXEv?=
- =?utf-8?B?dGkrQVJ0YUNjckNaS2QxdUlyaWNVaXo1eGtmd2xXZWxIUUZzZUFyajVYeXla?=
- =?utf-8?B?TDIyaWE5WWJ3VE9nOVlhUDVsTmtIT01iQXpjYnBIbjFqbUZrOURLRzR5UDVK?=
- =?utf-8?B?M0pBZHgzZGRhZXJPeVFyTkVaNXZyRDJvOVRoZ1dEdit2R1hkYlo2cE9WYWxV?=
- =?utf-8?B?SDhzNTViUWRiVVdqVlQ5bHBGUm5ZU21JWUE0T0QzSVJuV1F0YlFDa3p0UjJv?=
- =?utf-8?B?STFwZ1UrUmROVHZKQ0cvcllwbldkWnRCRHZjOHJDbkM1Rm81cklHV2E3RkND?=
- =?utf-8?B?SzAvV2lOSlBCbGNsQWdBWnJuU3BvUzZYM0NOYUk5TmtCc2VWRmp6SERpMzRj?=
- =?utf-8?B?blBrSm1FM1hjUG1Ec1p6aUhybmRpbFN1Z1JLNE43T0VRRjVSU0loOStidGoz?=
- =?utf-8?Q?wQQ6IZFNi1orBMKdZySN?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 385501bb-6a92-4b6f-7754-08dc6d9ec21e
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB2535.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 07:33:01.0341
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYP286MB1643
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] media: venus: fix use after free in vdec_close
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <1714975133-1777-1-git-send-email-quic_dikshita@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1714975133-1777-1-git-send-email-quic_dikshita@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> On 06. 05. 24 9:27, ArcticLampyrid wrote:
-> > This fixes the sound not working from internal speakers on
-> > Lenovo Legion Y9000X 2022 IAH7 models.
-> > 
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218744
-> > 
-> > This patch depends on [PATCH v1 1/2] ALSA: hda: cs35l41: Ignore errors
-> > when configuring IRQs (by Stefan Binding) See also
-> > <https://lore.kernel.org/lkml/20240429154853.9393-2-sbinding@opensource.c
-> > irrus.com/>
-> We don't accept commits from anonymous sources. Please, follow
-> Documentation/process/submitting-patches.rst .
+On 06/05/2024 07:58, Dikshita Agarwal wrote:
+> There appears to be a possible use after free with vdec_close().
+> The firmware will add buffer release work to the work queue through
+> HFI callbacks as a normal part of decoding. Randomly closing the
+> decoder device from userspace during normal decoding can incur
+> a read after free for inst.
 > 
-> 					Jaroslav
+> Fix it by cancelling the work in vdec_close.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: af2c3834c ("media: venus: adding core part and helper functions")
 
-I've signed it off in commit message.
-> Signed-off-by: Junhao Pei <ArcticLampyrid@outlook.com>
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+This is written in your instruction - go/upstream - so be sure you
+always follow it fully.
 
 
+Best regards,
+Krzysztof
 
 
