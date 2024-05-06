@@ -1,167 +1,328 @@
-Return-Path: <linux-kernel+bounces-169855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB1A8BCE9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 692078BCEA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D11D91C227D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA701C23C10
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66756BB29;
-	Mon,  6 May 2024 12:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EAC4EB4C;
+	Mon,  6 May 2024 12:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NVCEXrDK"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SO/AQUV2"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEF943687
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117A11C6B9
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715000270; cv=none; b=nr4RxG5W/9G7pmdZZB5rFQIJeg6k4/9PaBHPzcFNgsYhG78/7hbyKGKC9KNta52jha/tlYiom7RvTOMV6wmuTKwcQjrV0F37XVORsnDHJi86SPTRIxpVXuS3Wq9K6KEBpnvT4HApCMzELxqQuJq7VmOA8cx8sv/CRXTVPgsBLGI=
+	t=1715000314; cv=none; b=ojt5aRsrx3PcqZOqrFFnWwDTpucR47hd518gKxIcPmlF2ApWYbx7M17XhKU6SI1vQikRI2c7ExSTifkV4bA8G80JSCtz0d8XvuxrmWT/z+B4+8Lkraea4nNngmHnSaUBca8baM82lQPSNDb4VG9gbip2bL0roMw3tr0BdDIztJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715000270; c=relaxed/simple;
-	bh=UsBddcet5Sd4zyP9X920l8bRMzFSxcgmySjLBhYkM0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qnLeAc9yhNlTgX1XmcWmcykH68tJ11o+AqLnqoxbPJPY3dfD3LOHIVMHFOEFJQtBhm+MAtheAmlNlg4AGmrTfKz8xyt4qQTwIq51sh0pvcsehycW4+mxFAH+SO4UcOqryWOjBbNUKIA4VZjeRiz9FoRz3ucgvPdimbLXJfBYDcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NVCEXrDK; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5acdbfa7a45so646577eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:57:47 -0700 (PDT)
+	s=arc-20240116; t=1715000314; c=relaxed/simple;
+	bh=eJW2vIqh8FG4ctdH9YApKoKeSHZU1IamqD29LPhme40=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d8CpWg76lycbPE4YNY9Uogu2JNF9Gc5ZQrda0usqTbBoJof+GiW73vnl/rI142ke7MOgeqsUDW2EupJ24QBzaFgdnvxN/KGMFEGHvVCnj28piwnbFekxmutfbgAiXbUlEthZJG+/oBc5u3IEfBI9wkPwgM+f7Uvx3nb8YVxnOWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SO/AQUV2; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4df1cb3c87eso486105e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 05:58:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715000266; x=1715605066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nMciShd0EGYC7XDcTrn2YNrkROd7Rswy9QEQRWNAjUM=;
-        b=NVCEXrDKTUkIuOCgrmgGGD5CuP2Eij/BIo8wwbA8G+VlhtrKjkxwVdUDVYCvRmrvfN
-         w1dCBueomJ0PoqYxgtVto0zW2tnbPWTOdVQpTxOHrditzFV9CuWfUPbO6l5cgIdvqcb/
-         KXNoYBV6zpS+iGOjfiN7RDZzyG9EmJM6I1hejS1/1GMttki27x2lGCVOFEj0I29KZ6r8
-         bGJNLSOC2mqzTe5Kb2zWiYZMRi7Ws9F7QEcEcrue7OiKy5aQXUzGqdgIUHY2s2Ty8RWC
-         cxJJn6IGDHN3RRfuw0uxrKx5yEag9uhFxmAUk896yoXkXONtz7ns4xxN2QPcys89co+8
-         vZ8w==
+        d=gmail.com; s=20230601; t=1715000311; x=1715605111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yMEDKA2r/0kfL1be0rSeK9sjaBQ2sk31dP6B+oKhvyc=;
+        b=SO/AQUV2Shmmrdeyb+3NrawgxaF/LaUHxg9vGYafnVMFUyLwU9of2ggIMOlXYWiDK8
+         x+mORwtvHVvISZLvKowela7nMw7GBF/0Hs+a0egokIJXgVHAeHgfvhyyK1v8DArv8lmE
+         lIt6Bjiv8BjIkfipdIOqyTIzQSRjY0sGbfNBf4awws+G0oVqQW7m0YcwkD6zNlzikNly
+         04md//oGiEVtxQmb/dr4fGxaevj8nBeFdwiyFQShQPQMtXV8NUeqXt9oEQ8pWutJFRDd
+         z42gRS214p0L9jQJx9EHK+WrhZxFT4PZbVyq0DZP4Ag/aZdYfrQoQuC/5w7ehlxF3pru
+         eUGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715000266; x=1715605066;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMciShd0EGYC7XDcTrn2YNrkROd7Rswy9QEQRWNAjUM=;
-        b=ShUdslRJ113qToIF6ZCux6rBSubiqYa5A9eqxZNRJtZiqF8zCjG7VofsGgnt1JiAu2
-         yF1C0TivuN9qQHlCTpHZwxX3rTT8TmaSl1BAB1W9pXeTms3Fi8bIxz+bLouJrqnAJZSw
-         CSp3WhuN2hJDLtu5ALp4BnxswomZriTUnARVdnFhNSEL5YvbpIwbDZi2KDdsQiFvVzJ8
-         UxJWqnfAQ3J5eyMSuowVw1R+fN1IrUvFinyvyfN6ZMCryD1XNM57ZBxKbNJkZKOKmWyn
-         geFBLdyl5upHG3t7/lulBX7Qs4KwvqhYPSlc3jsg9PMdqxjkxoctta7hGKN+8BoyfjER
-         9X+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUgEfOT0cpYdAHS731dypEB5BBSxF2/WD51O0XKeK+gBGiysCqghbUFI4RogkHGAI8qaJKiT0QVYPSPnMmYKwyOyZMNItSy1oO8eFfg
-X-Gm-Message-State: AOJu0Yz1qhWNnBb3bpr84jYUnM9R0AIG7mjUSsM+H2ON+liuvIuqc77z
-	FwaldwzDagGg2iYNTtTuPHGwsL8lECyRfPKNB1cI8fmn/qt7QT3+vfPRXKdOl5M=
-X-Google-Smtp-Source: AGHT+IF0uaJyxDYlhm9O/TvO/iJ/Fz0qp7mFPyXdDKipzsEKCgfH9GqZEiBJUkM2K4CJPBtVCta/PQ==
-X-Received: by 2002:a05:6870:b4a7:b0:23c:9036:1f61 with SMTP id y39-20020a056870b4a700b0023c90361f61mr12457322oap.1.1715000266357;
-        Mon, 06 May 2024 05:57:46 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id g9-20020aa79dc9000000b006eae2d9298esm7596322pfq.194.2024.05.06.05.57.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 05:57:45 -0700 (PDT)
-Message-ID: <71c1f01f-f740-43b0-9962-afcf08cab686@kernel.dk>
-Date: Mon, 6 May 2024 06:57:44 -0600
+        d=1e100.net; s=20230601; t=1715000311; x=1715605111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yMEDKA2r/0kfL1be0rSeK9sjaBQ2sk31dP6B+oKhvyc=;
+        b=uYTxI/8UDyo7j7zey1WoHfGBSzdbKcw7SbgJy9nUK79aKPYDP/6vxkFlfA1+x7s43K
+         piOr7iyUmAf/+bJIc3/m+mkhbTLCFqzO2NA4bmxbGdtSKiYmU/vcq8+8GQ3S/6SKtoqq
+         VQdzvlX+qLEitv3R2/umHoeTnNQ/jGlTjnFIed6FuQzYAdXCyls+ms++Y+vUzQ3TUEJe
+         jTcGwTRSNbRrZKH9Og8DFemoV2xtKF6gJyXoW2V0pXlTd6gtSp+PJXJEz1VBmoMMZVLQ
+         sT5k87zsjCeyjx36HPiMkKqu2teVmI8ytjZjfkPyJ2lVXMOdhu5dhMRRyY1qDDXEscVN
+         QumQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkiG11vTN+bIJpUl3/z2ESNs1xq5Nqfz74vEKljP5RSAhDDcFqVtlAxjzPf4IT40fKj7RvqIIC+/nKzDdpbbbXMBLJyFFfYsfZdLFz
+X-Gm-Message-State: AOJu0Yx2Lj7KCyvW++Plvb91d6KyLNItzeIV3xb9zE2fFh05xmGRF6Wc
+	ehFdDc7uodGj2e+Kowg0OczkNxwTa65NZ6EzKnPDL5cCOQEfq1u3e7HaPr91XFF/1YmY1kSnJsq
+	O9DMu9ihCG8gZZMfgzS9prT8+Cds=
+X-Google-Smtp-Source: AGHT+IEgrUHg8vroUe/DxhaxUae5fr5W/MPFcn3eVDlE5IVIClXZqG3nR22jXYCIMkGDkB64W6N7Rr3Bmovncy4rnYY=
+X-Received: by 2002:a05:6122:1da1:b0:4d4:2069:eafb with SMTP id
+ gg33-20020a0561221da100b004d42069eafbmr7018977vkb.9.1715000310716; Mon, 06
+ May 2024 05:58:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: Add support for multi-folio buffer
- coalescing
-To: Chenliang Li <cliang01.li@samsung.com>, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- peiwei.li@samsung.com, joshi.k@samsung.com, kundan.kumar@samsung.com,
- gost.dev@samsung.com
-References: <CGME20240506075314epcas5p25333b80c8d6a3217d5352a5a7ed89278@epcas5p2.samsung.com>
- <20240506075303.25630-1-cliang01.li@samsung.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240506075303.25630-1-cliang01.li@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240503005023.174597-1-21cnbao@gmail.com> <20240503005023.174597-7-21cnbao@gmail.com>
+ <0b4d4d4b-91d8-4fd5-af4e-aebe9ee08b89@arm.com> <CAGsJ_4wm6v+xgh4jQ+u2-EzOXCLsz6L6nRJi_=FfWuGDUjxRYg@mail.gmail.com>
+ <ff5b371a-16f6-4d03-b80d-b56af0f488c3@redhat.com> <CAGsJ_4z93FwPZx7w2VuCEkHP_JCwkO0whKwymonRJ9bSiKMVyQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4z93FwPZx7w2VuCEkHP_JCwkO0whKwymonRJ9bSiKMVyQ@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 7 May 2024 00:58:19 +1200
+Message-ID: <CAGsJ_4xssg3CcjifePMmgk4aqLO+iAon0YdT9p=Uq-D8vFMxyQ@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] mm: swap: entirely map large folios found in swapcache
+To: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
+	hannes@cmpxchg.org, hughd@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
+	willy@infradead.org, xiang@kernel.org, ying.huang@intel.com, 
+	yosryahmed@google.com, yuzhao@google.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/6/24 1:53 AM, Chenliang Li wrote:
-> Currently fixed buffers consisting of pages in one same folio(huge page)
-> can be coalesced into a single bvec entry at registration.
-> This patch expands it to support coalescing fixed buffers
-> with multiple folios, by:
-> 1. Add a helper function and a helper struct to do the coalescing work
-> at buffer registration;
-> 2. Add the bvec setup procedure of the coalsced path;
+On Tue, May 7, 2024 at 12:38=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Tue, May 7, 2024 at 12:07=E2=80=AFAM David Hildenbrand <david@redhat.c=
+om> wrote:
+> >
+> > On 04.05.24 01:23, Barry Song wrote:
+> > > On Fri, May 3, 2024 at 6:50=E2=80=AFPM Ryan Roberts <ryan.roberts@arm=
+com> wrote:
+> > >>
+> > >> On 03/05/2024 01:50, Barry Song wrote:
+> > >>> From: Chuanhua Han <hanchuanhua@oppo.com>
+> > >>>
+> > >>> When a large folio is found in the swapcache, the current implement=
+ation
+> > >>> requires calling do_swap_page() nr_pages times, resulting in nr_pag=
+es
+> > >>> page faults. This patch opts to map the entire large folio at once =
+to
+> > >>> minimize page faults. Additionally, redundant checks and early exit=
+s
+> > >>> for ARM64 MTE restoring are removed.
+> > >>>
+> > >>> Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
+> > >>> Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+> > >>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > >>
+> > >> With the suggested changes below:
+> > >>
+> > >> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> > >>
+> > >>> ---
+> > >>>   mm/memory.c | 60 ++++++++++++++++++++++++++++++++++++++++++------=
+-----
+> > >>>   1 file changed, 48 insertions(+), 12 deletions(-)
+> > >>>
+> > >>> diff --git a/mm/memory.c b/mm/memory.c
+> > >>> index 22e7c33cc747..940fdbe69fa1 100644
+> > >>> --- a/mm/memory.c
+> > >>> +++ b/mm/memory.c
+> > >>> @@ -3968,6 +3968,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf=
+)
+> > >>>        pte_t pte;
+> > >>>        vm_fault_t ret =3D 0;
+> > >>>        void *shadow =3D NULL;
+> > >>> +     int nr_pages =3D 1;
+> > >>> +     unsigned long page_idx =3D 0;
+> > >>> +     unsigned long address =3D vmf->address;
+> > >>> +     pte_t *ptep;
+> > >>
+> > >> nit: Personally I'd prefer all these to get initialised just before =
+the "if
+> > >> (folio_test_large()..." block below. That way it is clear they are f=
+resh (incase
+> > >> any logic between here and there makes an adjustment) and its clear =
+that they
+> > >> are only to be used after that block (the compiler will warn if usin=
+g an
+> > >> uninitialized value).
+> > >
+> > > right. I agree this will make the code more readable.
+> > >
+> > >>
+> > >>>
+> > >>>        if (!pte_unmap_same(vmf))
+> > >>>                goto out;
+> > >>> @@ -4166,6 +4170,36 @@ vm_fault_t do_swap_page(struct vm_fault *vmf=
+)
+> > >>>                goto out_nomap;
+> > >>>        }
+> > >>>
+> > >>> +     ptep =3D vmf->pte;
+> > >>> +     if (folio_test_large(folio) && folio_test_swapcache(folio)) {
+> > >>> +             int nr =3D folio_nr_pages(folio);
+> > >>> +             unsigned long idx =3D folio_page_idx(folio, page);
+> > >>> +             unsigned long folio_start =3D vmf->address - idx * PA=
+GE_SIZE;
+> > >>> +             unsigned long folio_end =3D folio_start + nr * PAGE_S=
+IZE;
+> > >>> +             pte_t *folio_ptep;
+> > >>> +             pte_t folio_pte;
+> > >>> +
+> > >>> +             if (unlikely(folio_start < max(vmf->address & PMD_MAS=
+K, vma->vm_start)))
+> > >>> +                     goto check_folio;
+> > >>> +             if (unlikely(folio_end > pmd_addr_end(vmf->address, v=
+ma->vm_end)))
+> > >>> +                     goto check_folio;
+> > >>> +
+> > >>> +             folio_ptep =3D vmf->pte - idx;
+> > >>> +             folio_pte =3D ptep_get(folio_ptep);
+> > >>> +             if (!pte_same(folio_pte, pte_move_swp_offset(vmf->ori=
+g_pte, -idx)) ||
+> > >>> +                 swap_pte_batch(folio_ptep, nr, folio_pte) !=3D nr=
+)
+> > >>> +                     goto check_folio;
+> > >>> +
+> > >>> +             page_idx =3D idx;
+> > >>> +             address =3D folio_start;
+> > >>> +             ptep =3D folio_ptep;
+> > >>> +             nr_pages =3D nr;
+> > >>> +             entry =3D folio->swap;
+> > >>> +             page =3D &folio->page;
+> > >>> +     }
+> > >>> +
+> > >>> +check_folio:
+> > >>
+> > >> Is this still the correct label name, given the checks are now above=
+ the new
+> > >> block? Perhaps "one_page" or something like that?
+> > >
+> > > not quite sure about this, as the code after one_page can be multiple=
+_pages.
+> > > On the other hand, it seems we are really checking folio after "check=
+_folio"
+> > > :-)
+> > >
+> > >
+> > > BUG_ON(!folio_test_anon(folio) && folio_test_mappedtodisk(folio));
+> > > BUG_ON(folio_test_anon(folio) && PageAnonExclusive(page));
+> > >
+> > > /*
+> > > * Check under PT lock (to protect against concurrent fork() sharing
+> > > * the swap entry concurrently) for certainly exclusive pages.
+> > > */
+> > > if (!folio_test_ksm(folio)) {
+> > >
+> > >
+> > >>
+> > >>> +
+> > >>>        /*
+> > >>>         * PG_anon_exclusive reuses PG_mappedtodisk for anon pages. =
+A swap pte
+> > >>>         * must never point at an anonymous page in the swapcache th=
+at is
+> > >>> @@ -4225,12 +4259,13 @@ vm_fault_t do_swap_page(struct vm_fault *vm=
+f)
+> > >>>         * We're already holding a reference on the page but haven't=
+ mapped it
+> > >>>         * yet.
+> > >>>         */
+> > >>> -     swap_free_nr(entry, 1);
+> > >>> +     swap_free_nr(entry, nr_pages);
+> > >>>        if (should_try_to_free_swap(folio, vma, vmf->flags))
+> > >>>                folio_free_swap(folio);
+> > >>>
+> > >>> -     inc_mm_counter(vma->vm_mm, MM_ANONPAGES);
+> > >>> -     dec_mm_counter(vma->vm_mm, MM_SWAPENTS);
+> > >>> +     folio_ref_add(folio, nr_pages - 1);
+> > >>> +     add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
+> > >>> +     add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
+> > >>>        pte =3D mk_pte(page, vma->vm_page_prot);
+> > >>>
+> > >>>        /*
+> > >>> @@ -4240,34 +4275,35 @@ vm_fault_t do_swap_page(struct vm_fault *vm=
+f)
+> > >>>         * exclusivity.
+> > >>>         */
+> > >>>        if (!folio_test_ksm(folio) &&
+> > >>> -         (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+> > >>> +         (exclusive || (folio_ref_count(folio) =3D=3D nr_pages &&
+> > >>> +                        folio_nr_pages(folio) =3D=3D nr_pages))) {
+> > >>
+> > >> I think in practice there is no change here? If nr_pages > 1 then th=
+e folio is
+> > >> in the swapcache, so there is an extra ref on it? I agree with the c=
+hange for
+> > >> robustness sake. Just checking my understanding.
+> > >
+> > > This is the code showing we are reusing/(mkwrite) a folio either
+> > > 1. we meet a small folio and we are the only one hitting the small fo=
+lio
+> > > 2. we meet a large folio and we are the only one hitting the large fo=
+lio
+> > >
+> > > any corner cases besides the above two seems difficult. for example,
+> > >
+> > > while we hit a large folio in swapcache but if we can't entirely map =
+it
+> > > (nr_pages=3D=3D1) due to partial unmap, we will have folio_ref_count(=
+folio)
+> > > =3D=3D nr_pages =3D=3D 1
+> >
+> > No, there would be other references from the swapcache and
+> > folio_ref_count(folio) > 1. See my other reply.
+>
+> right. can be clearer by:
 
-coalesced
+Wait, do we still need folio_nr_pages(folio) =3D=3D nr_pages even if we use
+folio_ref_count(folio) =3D=3D 1 and moving folio_ref_add(folio, nr_pages - =
+1)?
 
-> 3. store page_mask and page_shift into io_mapped_ubuf for
-> later use in io_import_fixed.
+one case is that we have a large folio with 16 PTEs, and we unmap
+15 swap PTE entries, thus we have only one swap entry left. Then
+we hit the large folio in swapcache.  but we have only one PTE thus we will
+map only one PTE. lacking folio_nr_pages(folio) =3D=3D nr_pages, we reuse t=
+he
+large folio for one PTE. with it, do_wp_page() will migrate the large
+folio to a small one?
 
-Can you add some justification to this commit message? A good commit
-message should basically be the WHY of why this commit exists in the
-first place. Your commit message just explains what the patch does,
-which I can just read the code to see for myself.
+1AM, tired and sleepy. not quite sure I am correct.
+I look forward to seeing your reply tomorrow morning :-)
 
-As it stands, it's not clear to me or anyone casually reading this
-commit message why the change is being done in the first place.
-
-Outside of that, you probably want to split this into two parts - one
-that adds the helper for the existing code, then one that modifies it
-for your change. We need this to be as simple as possible to review, as
-we've had a security issue with page coalescing in this code in the
-past.
-
-Minor comments below, will wait with a full review until this is split
-to be more easily reviewable.
-
-> +/*
-> + * For coalesce to work, a buffer must be one or multiple
-> + * folios, all the folios except the first and last one
-> + * should be of the same size.
-> + */
-> +static bool io_sqe_buffer_try_coalesce(struct page **pages,
-> +				       unsigned int nr_pages,
-> +				       struct io_imu_folio_stats *stats)
-> +{
-> +	struct folio	*folio = NULL, *first_folio = NULL;
-> +	unsigned int	page_cnt;
-> +	int		i, j;
-
-Please don't make up your own style, follow the style that's already in
-the file to begin with.
-
-> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-> index c032ca3436ca..4c655e446150 100644
-> --- a/io_uring/rsrc.h
-> +++ b/io_uring/rsrc.h
-> @@ -47,9 +47,18 @@ struct io_mapped_ubuf {
->  	u64		ubuf_end;
->  	unsigned int	nr_bvecs;
->  	unsigned long	acct_pages;
-> +	unsigned int	page_shift;
-> +	unsigned long	page_mask;
->  	struct bio_vec	bvec[] __counted_by(nr_bvecs);
->  };
-
-When adding members to a struct, please be cognizant of how it packs.
-I'd suggest making the above:
-
-  	u64		ubuf_end;
-  	unsigned int	nr_bvecs;
-	unsigned int	page_shift;
-	unsigned long	page_mask;
-  	unsigned long	acct_pages;
-	struct bio_vec	bvec[] __counted_by(nr_bvecs);
-
-which should pack much nicer and actually save memory.
-
--- 
-Jens Axboe
-
+>
+> @@ -4263,7 +4264,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>         if (should_try_to_free_swap(folio, vma, vmf->flags))
+>                 folio_free_swap(folio);
+>
+> -       folio_ref_add(folio, nr_pages - 1);
+>         add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
+>         add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
+>         pte =3D mk_pte(page, vma->vm_page_prot);
+> @@ -4275,14 +4275,14 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>          * exclusivity.
+>          */
+>         if (!folio_test_ksm(folio) &&
+> -           (exclusive || (folio_ref_count(folio) =3D=3D nr_pages &&
+> -                          folio_nr_pages(folio) =3D=3D nr_pages))) {
+> +           (exclusive || folio_ref_count(folio) =3D=3D 1)) {
+>                 if (vmf->flags & FAULT_FLAG_WRITE) {
+>                         pte =3D maybe_mkwrite(pte_mkdirty(pte), vma);
+>                         vmf->flags &=3D ~FAULT_FLAG_WRITE;
+>                 }
+>                 rmap_flags |=3D RMAP_EXCLUSIVE;
+>         }
+> +       folio_ref_add(folio, nr_pages - 1);
+>         flush_icache_pages(vma, page, nr_pages);
+>         if (pte_swp_soft_dirty(vmf->orig_pte))
+>                 pte =3D pte_mksoft_dirty(pte);
+>
+>
+> >
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
 
