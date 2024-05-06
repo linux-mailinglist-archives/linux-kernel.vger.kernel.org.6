@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-169960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2008BCFE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:18:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205158BCFFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943C21F22667
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:18:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43901B277F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F1A13D50B;
-	Mon,  6 May 2024 14:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eny5UMju"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5C313E048;
+	Mon,  6 May 2024 14:18:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63F413D29A;
-	Mon,  6 May 2024 14:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5537B13CFAD;
+	Mon,  6 May 2024 14:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715005089; cv=none; b=BXAyZ+SFeEyiqRpHUKRgdL6lLxTo3HjVJGPd/3VptZRORT6c0rvAPvPIsp+1eki4v9Uj/Kno5pElxvKnSCol7QYdFLU7uYF0nKpLiITtNJJV13y1hB3+mnjcp5g6o0ix5oC4YQzrlNd2E/rRfDaZAXl6b5tvIv1TVeAnm9O+3+M=
+	t=1715005112; cv=none; b=VKArqGe++OAbXH8ZmC7Umr/0hOY43idfKUq/dmE7cICzUvZOARiMK78Tyc5iZn+APm+UQEk2K6sQelt9sBM5TmYTIgEQssRkyOyITBw5mi396QC65KrkFoOpKi3iD6nfWRgzP3jFwcUvHmTW2hdawfZDeFiOkqR2ntQ7u9viuTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715005089; c=relaxed/simple;
-	bh=QuPPpZCjbh9KHqVSDM8dTOKWSpW1SL8LzLyaE7eo07g=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FeZPLXp+Q37OxBEutKLKHlzgdONKqso0iyr+exhmeG5NqIGHnQp3fuPvkhDwcB40FqJDh3g92279GqnYsjBzC/hPxrYJnoIMjbsviPVGe2QL2OMaI5p0si9M0AA+i2ZbQHeyhXOxkK/Qrxn6eRkM/eONrzqfwnZhz1zan1+U0JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eny5UMju; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715005088; x=1746541088;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=QuPPpZCjbh9KHqVSDM8dTOKWSpW1SL8LzLyaE7eo07g=;
-  b=eny5UMjupkN8TKmwZjzDWLUp4BIWOlYhJCFs+/MQikWg+1pfQTgHMjiG
-   vmVGIRy4H8AzuwQ8960Sgfs5gu8zPsyrP5bIjyb8M2VOeK2P8QZ4IovCm
-   7OueY2GrJ3XkySAzsjEJEMu/bIp2nD5DyWwXvUksmpc7jehbg7Gv6erk1
-   Hot0tl4yw4hm5GQg8S8mJUEsWLhsIpEYNTazQkk8xWBsgvhHrTiD2t1kO
-   wuQqEqI2r3+WwRFvrC9YpcfDdBW4+aYnVv0Moqyhqh9KHwj5+6VCdzoYN
-   FUc+d+G3PZrSVGpvu0RmaEqdIEiT6a2/W/87NqFAqTowafkdcuVjqvt9n
-   g==;
-X-CSE-ConnectionGUID: 5xDGAX0BS1q1oj4vGEwL1w==
-X-CSE-MsgGUID: uIdOGG3SQZyGFqRg5mvkRg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="28277591"
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="28277591"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:18:07 -0700
-X-CSE-ConnectionGUID: z9ZDgbHbTQubAn77ZjhLaw==
-X-CSE-MsgGUID: QkMpvQWNQ1WnnIcE4Oi1Qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,258,1708416000"; 
-   d="scan'208";a="32766651"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.68])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 07:18:05 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 6 May 2024 17:17:58 +0300 (EEST)
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-cc: bhelgaas@google.com, dave.hansen@linux.intel.com, x86@kernel.org, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86: ce4100: Remove unused struct 'sim_reg_op'
-In-Reply-To: <20240506004647.770666-1-linux@treblig.org>
-Message-ID: <948a3829-96da-2708-60f8-f25546683436@linux.intel.com>
-References: <20240506004647.770666-1-linux@treblig.org>
+	s=arc-20240116; t=1715005112; c=relaxed/simple;
+	bh=Zm86qt6RdF+YDOSKq5gre7uYNIr5q4CDZPa9kGDuJIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=G1X106iIrK501kR8bEB17ktDlskLRMPoHkRojYh49zftV6PKG2dhSNd3Huq23PQ0wun2mSNMoVqnHja47Xr9l0BzMTD26qpWex3xTcsGsYX/jq7VHyERWAsFDGFMi/M3z30iuv5jCWtYNNr7Vy6/XWfz2jxbW4VeWyKcAxQdOaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY3RD1Ljhz4f3n6g;
+	Mon,  6 May 2024 22:18:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id EA30B1A0568;
+	Mon,  6 May 2024 22:18:25 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP1 (Coremail) with SMTP id cCh0CgAH2RGu5jhmGgSzLw--.22965S9;
+	Mon, 06 May 2024 22:18:25 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: tytso@mit.edu,
+	jack@suse.com
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 7/9] jbd2: remove dead equality check of j_commit_[sequence/request] in kjournald2
+Date: Mon,  6 May 2024 22:17:59 +0800
+Message-Id: <20240506141801.1165315-8-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
+References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAH2RGu5jhmGgSzLw--.22965S9
+X-Coremail-Antispam: 1UD129KBjvdXoWrur4DKw4kZr17Cr4UCw1kAFb_yoWkKwb_Wr
+	WSyrnF9rWftr15Ja1kCw15ur1aqrn7Zrn5J3Z7ta1UKr1jyan2kFWkJay5Wwnru3yFqr45
+	A39akw48trnavjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
+	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
+	Av7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY
+	6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7IU13l1DUUUUU==
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Mon, 6 May 2024, linux@treblig.org wrote:
+In kjournald2, two equality checks of j_commit_[sequence/request] are
+under the same j_state_lock. As j_commit_[sequence/request] are updated
+concurrently with j_state_lock held during runtime, the second check is
+unnecessary.
+The j_commit_sequence is only updated concurrently in
+jbd2_journal_commit_transaction with j_state_lock held.
+The j_commit_request is only updated concurrently in
+__jbd2_log_start_commit with j_state_lock held.
+Also see comment in struct journal_s about lock rule of j_commit_sequence
+and j_commit_request.
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> This doesn't look like it was ever used.
+Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+---
+ fs/jbd2/journal.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Don't start with "This" but spell what you're talking about out so it 
-can be read and understood without shortlog in Subject (or looking into 
-the code change).
-
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  arch/x86/pci/ce4100.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/arch/x86/pci/ce4100.c b/arch/x86/pci/ce4100.c
-> index 87313701f069e..f5dbd25651e0f 100644
-> --- a/arch/x86/pci/ce4100.c
-> +++ b/arch/x86/pci/ce4100.c
-> @@ -35,12 +35,6 @@ struct sim_dev_reg {
->  	struct sim_reg sim_reg;
->  };
->  
-> -struct sim_reg_op {
-> -	void (*init)(struct sim_dev_reg *reg);
-> -	void (*read)(struct sim_dev_reg *reg, u32 value);
-> -	void (*write)(struct sim_dev_reg *reg, u32 value);
-> -};
-> -
->  #define MB (1024 * 1024)
->  #define KB (1024)
->  #define SIZE_TO_MASK(size) (~(size - 1))
-> 
-
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 01e33b643e4d..e8f592fbd6e1 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -224,8 +224,6 @@ static int kjournald2(void *arg)
+ 
+ 		prepare_to_wait(&journal->j_wait_commit, &wait,
+ 				TASK_INTERRUPTIBLE);
+-		if (journal->j_commit_sequence != journal->j_commit_request)
+-			should_sleep = 0;
+ 		transaction = journal->j_running_transaction;
+ 		if (transaction && time_after_eq(jiffies,
+ 						transaction->t_expires))
 -- 
- i.
+2.30.0
 
 
