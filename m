@@ -1,111 +1,201 @@
-Return-Path: <linux-kernel+bounces-169779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D299E8BCD8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:13:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F303D8BCD88
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 14:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE501C22178
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B226F283174
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 12:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1176B143C49;
-	Mon,  6 May 2024 12:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SexplnPz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140FB143898;
+	Mon,  6 May 2024 12:12:49 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD55143895;
-	Mon,  6 May 2024 12:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18992143884
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 12:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714997587; cv=none; b=BH/rFKxlgiwXkTCa14pfEedFwsvm/fIxJSCGEfPV7v3s/ioaqUbJ7IsVs0OcZmK65lzSEb7zOiufo/cPOEyyWytowjBvveXikza0lChhrCm+4CCoVhnDaSAHdPe+lakBPD+9kTdrnXo86/8i9vPUw+4IkPCaoGg28gafT0DmcAY=
+	t=1714997568; cv=none; b=UUd+NbRXr5wTRzmTXbjoHQYEGrsonNDtNaP1cMVC9JQPznEKo1ebWltP4PxYZqM9vUqYFwGF55+aLi5gzQi83C35gDXfWVb6+EN9aNo6ZmykVzcs93R29DMpcqJF2Ul4ntnKKyRJuyRGHtELTXki/oZfmEoDGM8xEANYgG8N8Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714997587; c=relaxed/simple;
-	bh=JG4F5Vliq1cxbKJA3HniZ3sx6UHw/Yf2C1Q65sEsqrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=noebAiBGYCFTTb7Lqw18RkxD7h3q71srMGz6IBwpebzGTMLubFHCYEWobhkThiMeqdqCFNw8H689W0fK4wqCjBWtpOFZM389Lr5EDnlf7u7WJ8Z+OxMoeHn/ik2kSdakgR4E9pIE439r95StSDt7DwO20BtQ8+SUf+g25t7yc8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SexplnPz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7971340E01E8;
-	Mon,  6 May 2024 12:13:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id rJfRrwpOcMj5; Mon,  6 May 2024 12:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1714997579; bh=/of+dyTW6UaI+A6BFaoUs57S0GorDUxHRqObed0VRzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SexplnPzD845D+0w5+eP+0ESkaUvL6gUYWbrNRIpCCuz4OGDoKbSBa1Tu/U7Xbd+I
-	 mwlut2leWuEoIZU7PdPiKcwoRPab8QMn23dHrBAVLjwE8eA74TFlnAc7wBNiNB6HPn
-	 9oy2JEokTaIY0t11CKL0LVc/JcoKuz3grWqgS+wb6yuYUdhsZtuQ+rWYzhEWY4XhoA
-	 vRLFQByu9+kEWbrbVDJOlfMT4bIsw7cvJGH6S6MtrmuI/upRGNFFcjeUnbuLFD6Ret
-	 p6jBHz0AAt15YEKS+BRLe4wdGFnXXtC9Lmp4Bm9EGcZXWAnfgBWuIuPx56ftf4ZN4/
-	 EXcmUGX0krYdPVweESAWlAeU/nC2l0XHSMhqAg2hW2+Mjg8b6iGaT4GPbdADsglESU
-	 4gjakgghhzSTNU4JcIFOW5XtY3E/+oXc4cD/+YtjUsBJHOLKMxTKz9aAu26Kblqdk0
-	 UZwjxIAxh2nVBvqPuM1VLGGq//APBQc3oOj+Ulzni5YFNQ9pQ9AwJLvsnNMey7AL4b
-	 kwDmsMFt0eQS3y2fRS9LQvtpYlcEj/l22wa3qxIvysJy0Tu4HCUO5DI/YwbpZJScGo
-	 I1+DUWnLGNf2hXdU6etWiuJ1d8e3vOjO2/rlZ4LzmHFVqO5Zc4TpPkG5b493kkzehX
-	 gX6GyQCoALjr5JpNMGI1bXFQ=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2CE9540E0187;
-	Mon,  6 May 2024 12:12:43 +0000 (UTC)
-Date: Mon, 6 May 2024 14:12:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Michal Simek <michal.simek@amd.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
-	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sherry Sun <sherry.sun@nxp.com>,
-	Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH v5 01/20] EDAC/synopsys: Fix ECC status data and IRQ
- disable race condition
-Message-ID: <20240506121237.GIZjjJNRhtixp7VVHl@fat_crate.local>
-References: <20240222181324.28242-1-fancer.lancer@gmail.com>
- <20240222181324.28242-2-fancer.lancer@gmail.com>
- <20240415183616.GDZh1zoFsBzvAEduRo@fat_crate.local>
- <szcie4giwjykne4su6uu5wsmtsl3e3jd53rjfiwir6hm3ju7as@6eqh2xmj35ie>
- <20240421100712.GAZiTlUOm1hrLQvaMi@fat_crate.local>
- <whgp2xx4dv3szezz3bvmgutgazz6kvie3q7rgpr35zqzuzsygk@wppqzusteru4>
- <20240506102029.GGZjiu7TKP9FVp-2Sb@fat_crate.local>
- <vugkhnu5c7so7dk3z2cuhlbu66gv6skvicuseblrmkzyttnnlr@lqzqvysk6wbl>
+	s=arc-20240116; t=1714997568; c=relaxed/simple;
+	bh=q04s1HvnktcJyr1ZfLDdHVvrdmfLfNxlRmGKaPfRWpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=me4mqT1zOI5eMLEBOocWUZgSj878oOd3L7dxyImyU6G7HudIJfWgh+0uViiFMYtM8qHOiVfLQLzD9IFWMBjs6RDn/sc7MaTktEsJfKZFxnT6q+erzzNmwGldZCZ/Y4rzTNtswn+XwbcuscOFdOIVB3U5wb5hPkJXYuH3lyh5E/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VY0ZR3KxwztT80;
+	Mon,  6 May 2024 20:09:19 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 67E6D1800C7;
+	Mon,  6 May 2024 20:12:43 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Mon, 6 May 2024 20:12:39 +0800
+Message-ID: <91ebac93-099d-9e4a-537b-e2f2c3e7b521@huawei.com>
+Date: Mon, 6 May 2024 20:12:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <vugkhnu5c7so7dk3z2cuhlbu66gv6skvicuseblrmkzyttnnlr@lqzqvysk6wbl>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
+ versions of MSR ALLINT
+To: Mark Rutland <mark.rutland@arm.com>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <maz@kernel.org>,
+	<oliver.upton@linux.dev>, <james.morse@arm.com>, <suzuki.poulose@arm.com>,
+	<yuzenghui@huawei.com>, <tglx@linutronix.de>, <ardb@kernel.org>,
+	<broonie@kernel.org>, <anshuman.khandual@arm.com>, <miguel.luis@oracle.com>,
+	<joey.gouly@arm.com>, <ryan.roberts@arm.com>, <jeremy.linton@arm.com>,
+	<ericchancf@google.com>, <kristina.martsenko@arm.com>, <robh@kernel.org>,
+	<scott@os.amperecomputing.com>, <songshuaishuai@tinylab.org>,
+	<shijie@os.amperecomputing.com>, <akpm@linux-foundation.org>,
+	<bhe@redhat.com>, <horms@kernel.org>, <mhiramat@kernel.org>,
+	<rmk+kernel@armlinux.org.uk>, <shahuang@redhat.com>,
+	<takakura@valinux.co.jp>, <dianders@chromium.org>, <swboyd@chromium.org>,
+	<sumit.garg@linaro.org>, <frederic@kernel.org>, <reijiw@google.com>,
+	<akihiko.odaki@daynix.com>, <ruanjinjie@huawei.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>
+References: <20240415064758.3250209-1-liaochang1@huawei.com>
+ <20240415064758.3250209-2-liaochang1@huawei.com>
+ <ZjUKMWPknEhLYoK8@FVFF77S0Q05N>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <ZjUKMWPknEhLYoK8@FVFF77S0Q05N>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Mon, May 06, 2024 at 02:27:50PM +0300, Serge Semin wrote:
-> Always welcome. Glad we've settled this.)
 
-Yap, it looks good so far.
 
-Lemme queue it into urgent and send it Linuswards soon-ish.
+在 2024/5/4 0:00, Mark Rutland 写道:
+> On Mon, Apr 15, 2024 at 06:47:51AM +0000, Liao Chang wrote:
+>> From: Mark Brown <broonie@kernel.org>
+>>
+>> Encodings are provided for ALLINT which allow setting of ALLINT.ALLINT
+>> using an immediate rather than requiring that a register be loaded with
+>> the value to write. Since these don't currently fit within the scheme we
+>> have for sysreg generation add manual encodings like we currently do for
+>> other similar registers such as SVCR.
+>>
+>> Since it is required that these immediate versions be encoded with xzr
+>> as the source register provide asm wrapper which ensure this is the
+>> case.
+>>
+>> Signed-off-by: Mark Brown <broonie@kernel.org>
+>> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+>> ---
+>>  arch/arm64/include/asm/nmi.h    | 27 +++++++++++++++++++++++++++
+>>  arch/arm64/include/asm/sysreg.h |  2 ++
+>>  2 files changed, 29 insertions(+)
+>>  create mode 100644 arch/arm64/include/asm/nmi.h
+> 
+> We have helpers for manipulating PSTATE bits; AFAICT we only need the three
+> lines below:
+> 
+> ----8<----
+> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> index 9e8999592f3af..5c209d07ae57e 100644
+> --- a/arch/arm64/include/asm/sysreg.h
+> +++ b/arch/arm64/include/asm/sysreg.h
+> @@ -94,18 +94,21 @@
+>  
+>  #define PSTATE_PAN                     pstate_field(0, 4)
+>  #define PSTATE_UAO                     pstate_field(0, 3)
+> +#define PSTATE_ALLINT                  pstate_field(1, 0)
+>  #define PSTATE_SSBS                    pstate_field(3, 1)
+>  #define PSTATE_DIT                     pstate_field(3, 2)
+>  #define PSTATE_TCO                     pstate_field(3, 4)
+>  
+>  #define SET_PSTATE_PAN(x)              SET_PSTATE((x), PAN)
+>  #define SET_PSTATE_UAO(x)              SET_PSTATE((x), UAO)
+> +#define SET_PSTATE_ALLINT(x)           SET_PSTATE((x), ALLINT)
+>  #define SET_PSTATE_SSBS(x)             SET_PSTATE((x), SSBS)
+>  #define SET_PSTATE_DIT(x)              SET_PSTATE((x), DIT)
+>  #define SET_PSTATE_TCO(x)              SET_PSTATE((x), TCO)
+>  
+>  #define set_pstate_pan(x)              asm volatile(SET_PSTATE_PAN(x))
+>  #define set_pstate_uao(x)              asm volatile(SET_PSTATE_UAO(x))
+> +#define set_pstate_allint(x)           asm volatile(SET_PSTATE_ALLINT(x))
+>  #define set_pstate_ssbs(x)             asm volatile(SET_PSTATE_SSBS(x))
+>  #define set_pstate_dit(x)              asm volatile(SET_PSTATE_DIT(x))
+> ---->8---- 
 
-Thx.
+Acked, I strongly prefer reusing existing helpers to introducing new ones.
+
+> 
+> The addition of <asm/nmi.h> and refrences to <linux/cpumask.h> and
+> arm64_supports_nmi() don't seem like they should be part of this patch.
+
+Agree, what about to remove the nmi.h completely in this patch?
+
+Thanks.
+
+> 
+> Mark.
+> 
+>>
+>> diff --git a/arch/arm64/include/asm/nmi.h b/arch/arm64/include/asm/nmi.h
+>> new file mode 100644
+>> index 000000000000..0c566c649485
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/nmi.h
+>> @@ -0,0 +1,27 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2022 ARM Ltd.
+>> + */
+>> +#ifndef __ASM_NMI_H
+>> +#define __ASM_NMI_H
+>> +
+>> +#ifndef __ASSEMBLER__
+>> +
+>> +#include <linux/cpumask.h>
+>> +
+>> +extern bool arm64_supports_nmi(void);
+>> +
+>> +#endif /* !__ASSEMBLER__ */
+>> +
+>> +static __always_inline void _allint_clear(void)
+>> +{
+>> +	asm volatile(__msr_s(SYS_ALLINT_CLR, "xzr"));
+>> +}
+>> +
+>> +static __always_inline void _allint_set(void)
+>> +{
+>> +	asm volatile(__msr_s(SYS_ALLINT_SET, "xzr"));
+>> +}
+>> +
+>> +#endif
+>> +
+>> diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+>> index 9e8999592f3a..b105773c57ca 100644
+>> --- a/arch/arm64/include/asm/sysreg.h
+>> +++ b/arch/arm64/include/asm/sysreg.h
+>> @@ -167,6 +167,8 @@
+>>   * System registers, organised loosely by encoding but grouped together
+>>   * where the architected name contains an index. e.g. ID_MMFR<n>_EL1.
+>>   */
+>> +#define SYS_ALLINT_CLR			sys_reg(0, 1, 4, 0, 0)
+>> +#define SYS_ALLINT_SET			sys_reg(0, 1, 4, 1, 0)
+>>  #define SYS_SVCR_SMSTOP_SM_EL0		sys_reg(0, 3, 4, 2, 3)
+>>  #define SYS_SVCR_SMSTART_SM_EL0		sys_reg(0, 3, 4, 3, 3)
+>>  #define SYS_SVCR_SMSTOP_SMZA_EL0	sys_reg(0, 3, 4, 6, 3)
+>> -- 
+>> 2.34.1
+>>
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+BR
+Liao, Chang
 
