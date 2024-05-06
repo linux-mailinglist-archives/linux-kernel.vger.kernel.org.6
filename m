@@ -1,111 +1,183 @@
-Return-Path: <linux-kernel+bounces-170262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503FF8BD442
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85DB8BD440
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 20:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061611F2114A
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5B5283E3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B80D158A37;
-	Mon,  6 May 2024 18:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DMGWyMjn"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6F5158862;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7AF15885D;
 	Mon,  6 May 2024 18:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YE0vQ+R6"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C2C197;
+	Mon,  6 May 2024 18:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715018430; cv=none; b=jR1CkLqriPxsH08SDkXlXr6MQR0hj9kdNm5/1ZCDzkSDFLg5j6Xd6knuH5RIrTlkDWtNZIDRj0dZe7NQoDK3slJGYT4t/pQfpFnVizpmGtVnZh9utNezDR5FCaJuFAf6+f4lbV2bKQzf7wZdvZACx6O5WQlkNfxrfuhTjXYuV8w=
+	t=1715018428; cv=none; b=LhHSIvYP+3a67Od1C391/Do7JFjwtDIUC3GZJzgcv0PYpZV7pYkt+Y7EswQTBWTXogqepgO9J+PnVCEIall/MjcmEF5ZeF4sMduvvYKFD34mKmkNCwCz7E0rkpBY8u+Xcxl6t0xq/pDz/FBl6VMoMBBD8yCbySIToQ9z0sI8kYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715018430; c=relaxed/simple;
-	bh=XZbRa2/CC1i0OKL/XxQNlvYNIDcAl0wDNwFniFr7p6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPMTvvzEtSFTUT9FF9MfWtUjbmivzcAFHmEddOq2N2O3hwnPfu8BindqSIyMPRRBEZmaFgcQ6/1oAIaCLJASXblq75qA4CyMk2SJGI7g6h8u533nb54EDqAAiH9qmCq3zjL6ahUvgZtjFm2dSfxiBchDEb+z9ha0LiAdVPuUShI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DMGWyMjn; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2C3EFA98;
-	Mon,  6 May 2024 20:00:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715018426;
-	bh=XZbRa2/CC1i0OKL/XxQNlvYNIDcAl0wDNwFniFr7p6A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DMGWyMjnHOPYAoGyNs7FCC+QI5qcN8NyDeAOnlwB6r5VDo2Ulc0F1EkabeKNeEFeA
-	 7Pk4KzfSABahfKGfVGOx6hr4Os2GIgtntgNHuOJxzXr5R1TBG8BCYcKUxXVhuCjtFX
-	 3H+U+79SGCp/JVK84t1Q+0FwwuZqSIAwjcQIcyX0=
-Date: Mon, 6 May 2024 21:00:19 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 1/3] media: bcm2835-unicam: Fix error handling for
- platform_get_irq
-Message-ID: <20240506180019.GE29108@pendragon.ideasonboard.com>
-References: <20240430-fix-broad-v1-0-cf3b81bf97ff@chromium.org>
- <20240430-fix-broad-v1-1-cf3b81bf97ff@chromium.org>
+	s=arc-20240116; t=1715018428; c=relaxed/simple;
+	bh=no6tilYKngaoTOqfGFWOgA/5oNjItKCJRl53C/eguWs=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=SflK/qCXpvhQZtf6wTN2tDm0BXbCyCV5AfbIN+seXLEKuDZepjOasmYlJejUjkAWZQ3AK8YQ/J7bzDHdr9BJRiAU8UW7XUofQJwUsklbN8EQNIpk+hcp4iY4LiWD5Wjtn0qnvrX733B9ti59IrvNxLyvPfs9PEadHmTIIn73XIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YE0vQ+R6; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-69b5de48126so6386056d6.3;
+        Mon, 06 May 2024 11:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715018426; x=1715623226; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ewxWon8y3EC8f5KNKIlRB63vgk6021CZpyEJEMa3QaQ=;
+        b=YE0vQ+R6b8+ln631z0TtxZkL1Hc1RORoY4+kXk8FURwK21zPa25F8JvJ8zqnt53rtK
+         gw3EvkB5iLLQiGvYeJTaSArvTf3sv3Rjt2aeti674KU0iyDw6IglO/nDFouh6e1Kow6h
+         c+qQwBR8VY13D86XMOFeH8i7lIM7VHLAJZgP/uyZXY6gO1v+pZsIpr3Q9HYUpESJr0Wm
+         rZYLikTE77RD1uyHASYnGmUDEd7mLSNjSD05bzyaB17eEXr3AXqLDBDxgWuJRzUE7+eq
+         QE9RXAqPB0GO322+dT8WSmtofjBxuJdUSHPWzmfFl7bU9bqsMpmBsUorPfzEYX6iIzmd
+         PBbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715018426; x=1715623226;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ewxWon8y3EC8f5KNKIlRB63vgk6021CZpyEJEMa3QaQ=;
+        b=WWiIWcSgiSmpwjm+EggzLxwtn3qXwQPYu6aqUPHmas1N19MOHcjPqbEzX1X2wxwUsE
+         iXg/9PwamYRkj65GYurSGpMeO2n1OT4ckeuDMAett6LegDJ8zztPtbFOQ40bSYQ30AuI
+         vQzXMnv96eWenNhU4lr+PxsPSd/xQ5g5LGmnsBy122cFMJdG6XmreIWjsTFMIjjMOOnZ
+         Qo/IhV6BKo02Zj7yv+aJrAK8x2qSa/RHB7O6mOmcgHIlC2REJtT/rbhMRKloTO1KxTWz
+         jp/VMfvH47mFOcxTn/DdLFJYBCmVTXl9hzxZv4A7ktBqpen3rVuiYOcKizmb6D3tLOLI
+         n+vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfD0366mWmWkicBUoCOMr1l+74+NHMSSfYuBMfZwD1xbiSP1VQMoxMatVuObq/DFtyInwpjMfhc12zn3fPUg3LtGciHgxsSemtdBcEubsOfWTJc0EmTVPquKmRXRzzY9UWJxSKUUkGn2KbkWHFXLP7JT3YpVCIV+vzO6l38tfzB3Sw1+en
+X-Gm-Message-State: AOJu0YxiXNso2uEDwj1kbZuHgnDup8G0nozOxzcNOQGKzh1JV+i9BlBA
+	mvI1f08b/VP3rhdqpAzOmG4f9r0gnDl6tk/VUwUGM2z7EkN5d/d2cneAZQ==
+X-Google-Smtp-Source: AGHT+IHwxi+MsesdxS51NMGdi8E37iQPGrsyCgG+iNUpxejrVgz1gYPJSIt1PiQCGOpKWPnlFwfCJg==
+X-Received: by 2002:a05:6214:19e8:b0:69b:17b2:df34 with SMTP id q8-20020a05621419e800b0069b17b2df34mr13732146qvc.63.1715018424782;
+        Mon, 06 May 2024 11:00:24 -0700 (PDT)
+Received: from localhost (164.146.150.34.bc.googleusercontent.com. [34.150.146.164])
+        by smtp.gmail.com with ESMTPSA id qb17-20020ad44711000000b006a0e585dc77sm3903456qvb.70.2024.05.06.11.00.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 11:00:24 -0700 (PDT)
+Date: Mon, 06 May 2024 14:00:24 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: John Hubbard <jhubbard@nvidia.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ richardbgobert@gmail.com
+Cc: "David S . Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Steffen Klassert <steffen.klassert@secunet.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Matthieu Baerts <matttbe@kernel.org>, 
+ Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, 
+ Pravin B Shelar <pshelar@ovn.org>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
+ zhujun2 <zhujun2@cmss.chinamobile.com>, 
+ Petr Machata <petrm@nvidia.com>, 
+ Ido Schimmel <idosch@nvidia.com>, 
+ Hangbin Liu <liuhangbin@gmail.com>, 
+ Nikolay Aleksandrov <razor@blackwall.org>, 
+ Benjamin Poirier <bpoirier@nvidia.com>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Dmitry Safonov <0x7f454c46@gmail.com>, 
+ netdev@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ linux-actions@lists.infradead.org, 
+ mptcp@lists.linux.dev, 
+ dev@openvswitch.org, 
+ Valentin Obst <kernel@valentinobst.de>, 
+ linux-kselftest@vger.kernel.org, 
+ LKML <linux-kernel@vger.kernel.org>, 
+ llvm@lists.linux.dev, 
+ John Hubbard <jhubbard@nvidia.com>
+Message-ID: <66391ab83771c_516de294d7@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240505222639.70317-2-jhubbard@nvidia.com>
+References: <20240505222639.70317-1-jhubbard@nvidia.com>
+ <20240505222639.70317-2-jhubbard@nvidia.com>
+Subject: Re: [PATCH 2/2] selftests/net: fix uninitialized variables
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240430-fix-broad-v1-1-cf3b81bf97ff@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hi Ricardo,
-
-Thank you for the patch.
-
-On Tue, Apr 30, 2024 at 07:51:26AM +0000, Ricardo Ribalda wrote:
-> platform_get_irq() cannot return the value 0.
+John Hubbard wrote:
+> When building with clang, via:
 > 
-> If it returns -EPROBE_DEFER, we need to populate the error code upwards
-> to retry probing once the irq handler is ready.
+>     make LLVM=1 -C tools/testing/selftest
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ...clang warns about three variables that are not initialized in all
+> cases:
+> 
+> 1) The opt_ipproto_off variable is used uninitialized if "testname" is
+> not "ip". This seems like an actual bug.
+> 
+> 2) The addr_len is used uninitialized, but only in the assert case,
+>    which bails out, so this is harmless.
+> 
+> 3) The family variable in add_listener() is only used uninitialized in
+>    the error case (neither IPv4 nor IPv6 is specified), so it's also
+>    harmless.
+> 
+> Fix by initializing each variable.
+> 
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 > ---
->  drivers/media/platform/broadcom/bcm2835-unicam.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  tools/testing/selftests/net/gro.c                 | 3 ++-
+>  tools/testing/selftests/net/ip_local_port_range.c | 2 +-
+>  tools/testing/selftests/net/mptcp/pm_nl_ctl.c     | 2 +-
+>  3 files changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> index bd2bbb53070e..2a3a27ac70ba 100644
-> --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> @@ -2660,9 +2660,10 @@ static int unicam_probe(struct platform_device *pdev)
->  	}
->  
->  	ret = platform_get_irq(pdev, 0);
-> -	if (ret <= 0) {
-> +	if (ret < 0) {
->  		dev_err(&pdev->dev, "No IRQ resource\n");
-> -		ret = -EINVAL;
-> +		if (ret != -EPROBE_DEFER)
-> +			ret = -EINVAL;
+> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
+> index 353e1e867fbb..0eb61edaad83 100644
+> --- a/tools/testing/selftests/net/gro.c
+> +++ b/tools/testing/selftests/net/gro.c
+> @@ -110,7 +110,8 @@ static void setup_sock_filter(int fd)
+>  	const int dport_off = tcp_offset + offsetof(struct tcphdr, dest);
+>  	const int ethproto_off = offsetof(struct ethhdr, h_proto);
+>  	int optlen = 0;
+> -	int ipproto_off, opt_ipproto_off;
+> +	int ipproto_off;
+> +	int opt_ipproto_off = 0;
 
-What's wrong with leaving ret untouched ? I assume it was set to -EINVAL
-to avoid returning success in case ret was 0. Now that the test has
-changed, I think we can leave the value as-is.
+This is only intended to be used in the case where the IP proto is not TCP:
 
->  		goto err_unicam_put;
->  	}
->  
-> 
+                        BPF_STMT(BPF_LD  + BPF_B   + BPF_ABS, ipproto_off),
++                       BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, IPPROTO_TCP, 2, 0),
++                       BPF_STMT(BPF_LD  + BPF_B   + BPF_ABS, opt_ipproto_off),
+                        BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, IPPROTO_TCP, 0, 5),
 
--- 
-Regards,
+In that case the test tries again at a different offset that accounts
+for optional IPv6 extension headers.
 
-Laurent Pinchart
+This is indeed buggy, in that it might accidentally accept packets
+that should be dropped.
+
+Initializing to 0 compares against against the first byte of the
+Ethernet header. Which is an external argument to the test. So
+safest is to initialize opt_ipproto_off to ipproto_off and just
+repeat the previous check. Perhaps:
+
+@@ -118,6 +118,7 @@ static void setup_sock_filter(int fd)
+        else
+                next_off = offsetof(struct ipv6hdr, nexthdr);
+        ipproto_off = ETH_HLEN + next_off;
++       opt_ipproto_off = ipproto_off;  /* overridden later if may have exthdrs */
 
