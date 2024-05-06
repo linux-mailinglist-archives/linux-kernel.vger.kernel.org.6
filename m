@@ -1,87 +1,210 @@
-Return-Path: <linux-kernel+bounces-170131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F878BD238
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CD98BD23A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 18:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2431F237A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F541F237FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 16:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFB3156238;
-	Mon,  6 May 2024 16:14:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DE615623B;
+	Mon,  6 May 2024 16:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="ul3ihFHV"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8CA155A5C
-	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D737762D2
+	for <linux-kernel@vger.kernel.org>; Mon,  6 May 2024 16:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715012045; cv=none; b=j5Cy3F5mYbgt38Mw+A4UKvNb/cp0OnMuECvVZi9Mj3+zmkI+l6q97fxvVm36QCY8fxzgHRUIPgwWwtk8SzU4NV/xCkRr4TZnZTRVt403yCSsOro20bxp7Y3H5vVnOTMSzjNFD5HxDcKTlGqmNViYAe1hFR7sr6rLsSjujST2ZM4=
+	t=1715012082; cv=none; b=WWfmeorUVdilC7SHTGAqmI08UraKMnGhXSHRdxGbcIyU9lB/6mSP8AFppV8UDZZ4JHqiu8kq76ddm8e70fAaqiSzb3wnh0q0Stfk1l/bDM0c3FCY9fg0cjG6p0JUcXzkrfrEXZ3mTv9XTuLEekkcrHJrAnpc5A+9XuQpVI4phhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715012045; c=relaxed/simple;
-	bh=BY9JsAoht7mmHoYih+jIMwCwYIwSSvVTzIKTAuQvSj4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=S7vAtiZ+ti5OL5k4NIqgfgeVEjmU7r2peER2bT/SJ2xnscKkkIZg5KglYx94PCgOxtGGMY8mW6wG6oX/g+BPXeM72YS+W+TXPt2iW8PtL8viDXFmF4v+fyLU21ZylrnEt6ldBW8Q8ILyLk9nI0Xxcw0uIjGaPG8+1T5Sr41y2lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c602d713eso25823445ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 09:14:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715012044; x=1715616844;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JDyv5ylTMOTj8BjgVNbgI2llj6hv7/ifg+PovlFAma0=;
-        b=jUrIFZ+RkhzG1nqOfrzXqYvVxd5aaFIH+OgyJ9YqA8LEHUCgENDo5nRL3vBCROJ0O9
-         xXqWmX6CDGQrc8wB5CBYqMhKSIIKWhgHQFIMoS2wZkYdcD1NhCQ217cjcNsCeOjE/yMr
-         s8cKZh7lgA54dHzQidM0u2kSyjU71dS2M5tjYKoIFZu/lmNG/6MGE7NtjMeOhpRr3da0
-         QdnHCBxDmTahHmFmKoKVWTJ1gXhhxP3seefyv7KT89D8QRvbgyl5Sww81dGmTb3gLVJL
-         vCJj6+KWeGUm7fglUn8NNAtry1kMuT/3NpsLEN5sbk3o8z813PSBl8wEKM96qNnv9OWO
-         QOuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFU4ZUz4g+IFPwo43/hztaahee9N9nRc0WOJECjbWKe5S7f6Nf9TYzmgLlX2EuqxR0z0tSzlkqrtNr1PitUcDOs3QLtkiM1s5rieCN
-X-Gm-Message-State: AOJu0Yx3NECYjl5cR348lGjKAvCZWuw/k/flNtEiOKf88pl0b/KvpKW1
-	Zf1MsOMSMmHfK4E9axRQU30+arIH9js6OyjpE1lIqf6+DZO2O4zXwwty+vCEPKwcB0eaz6zqJrI
-	5va2prItT//9QCJk1tBQPnJ+hYZgucECzwZ7SZEZMjjaMko4pEgXrE9U=
-X-Google-Smtp-Source: AGHT+IEPpwXwqyDVJ42zLoK/cjm20dXbCCvicn3NPIp4P+XCJKhXUwfB1wnVweKc8Fu3PY/N7phv1M51YXhqAlE3pG47624DFBtp
+	s=arc-20240116; t=1715012082; c=relaxed/simple;
+	bh=rAQ7znbFu0VNsAK/JAArOiyCdUHS/gS3L/4dtOvRdW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hS2ZkyX7jLHc5p3yaPmYA09OTnnbF+313BdkSTbXe5VOTMhXiNoa3F76hLtMckDJ1iau7z5jLkA1xVkwDVo25imiTa5dsxFbNh7vPQDG/4fqh/mDnOQKKBSKdD5ZtmHuW4o0PXEFySUWtbEO5OOx1PO5ZUuZcv37iyrby1ATUrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=ul3ihFHV; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1715012056;
+ bh=N/kMPXOW+9pj2iXbtfmhz5wAtX8HuIAcCJSd79oIR9Y=;
+ b=ul3ihFHV4SbKwJnLGHOHuXodFg8JiSVR38YAEVKiCAj/Fuwcj3kTIRiqmfoviRFYbRwAJwRk2
+ FgugDDjnKi2J6AfLVfbnmt48aZpU+XgvoAxC7Wp+zrkffUe1XKbPocI6r2PcakkC6YMORSSDusv
+ lZpyOnkDi306aDmUidqZiI6z9aDaVMTNbHyx9YEpVl/n3cfMvHSBKFLSMc2TrmIeVwN9xj9EEHZ
+ KJWBm9+AyAv+z0duMXdynYov0kdpJ/RGXIqnK1NPZ3kvBv/kdvex87C9A+XC/fJJ14cEuyk0JsS
+ t4bg2sMIwX9G6c4BSJK5RTpUurNa6rokI7siotj24tMQ==
+Message-ID: <76519e53-a226-497b-9db1-4f11ea83151a@kwiboo.se>
+Date: Mon, 6 May 2024 18:14:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c3:b0:36c:1004:9aa1 with SMTP id
- 3-20020a056e0220c300b0036c10049aa1mr509536ilq.3.1715012043817; Mon, 06 May
- 2024 09:14:03 -0700 (PDT)
-Date: Mon, 06 May 2024 09:14:03 -0700
-In-Reply-To: <af1a4b81-22f3-4955-8c44-95bede13a7bb@redhat.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a85db50617cb5b3e@google.com>
-Subject: Re: [syzbot] [mm?] [io-uring?] WARNING in hpage_collapse_scan_pmd (2)
-From: syzbot <syzbot+5ea2845f44caa77f5543@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, david@redhat.com, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	peterx@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: mfd: rk809: Add audio codec properties
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Heiko
+ Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, Chris Zhong
+ <zyw@rock-chips.com>, Zhang Qing <zhangqing@rock-chips.com>
+References: <20240505134120.2828885-1-jonas@kwiboo.se>
+ <20240505134120.2828885-3-jonas@kwiboo.se>
+ <5c4a6d57-82e0-430b-a12e-59c331a32eab@linaro.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <5c4a6d57-82e0-430b-a12e-59c331a32eab@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 663901d049216dcdc6f4249f
 
-Hello,
+Hi Krzysztof,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 2024-05-06 12:47, Krzysztof Kozlowski wrote:
+> On 05/05/2024 15:41, Jonas Karlman wrote:
+>> Similar to RK817 the RK809 also integrates a complete audio system.
+>>
+>> Add audio codec properties to binding to reflect this.
+>>
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> 
+> Except sending untested patches...
 
-Reported-and-tested-by: syzbot+5ea2845f44caa77f5543@syzkaller.appspotmail.com
+This patch was a 1:1 copy from rockchip,rk817.yaml so I expected
+everything to already be correct, my bad.
 
-Tested on:
+Guess rockchip,rk817.yaml also needs same fixes/changes as listed below.
 
-commit:         5f8be0ef mailmap: add entry for John Garry
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-hotfixes-unstable
-console output: https://syzkaller.appspot.com/x/log.txt?x=1511f1c0980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=85dbe39cf8e4f599
-dashboard link: https://syzkaller.appspot.com/bug?extid=5ea2845f44caa77f5543
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Will send a v2 with example fixed in a separate patch and try to fix
+your remarks on this patch in v2.
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+> 
+>> ---
+>>  .../bindings/mfd/rockchip,rk809.yaml          | 34 ++++++++++++++++++-
+>>  1 file changed, 33 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml b/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml
+>> index c951056b8b4d..b78e1b090105 100644
+>> --- a/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml
+>> +++ b/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml
+>> @@ -12,7 +12,7 @@ maintainers:
+>>  
+>>  description: |
+>>    Rockchip RK809 series PMIC. This device consists of an i2c controlled MFD
+>> -  that includes regulators, an RTC, and power button.
+>> +  that includes regulators, an RTC, a power button and an audio codec.
+>>  
+>>  properties:
+>>    compatible:
+>> @@ -93,6 +93,34 @@ properties:
+>>          unevaluatedProperties: false
+>>      unevaluatedProperties: false
+>>  
+>> +  clocks:
+>> +    description:
+>> +      The input clock for the audio codec.
+> 
+> No, this allows anything. You must be here specific, see example-schema.
+> maxItems: 1
+> 
+> Drop description, redundant.
+> 
+>> +
+>> +  clock-names:
+>> +    description:
+>> +      The clock name for the codec clock.
+> 
+> Drop description, redundant.
+> 
+>> +    items:
+>> +      - const: mclk
+>> +
+>> +  '#sound-dai-cells':
+>> +    description:
+>> +      Needed for the interpretation of sound dais.
+> 
+> Drop description, redundant. Do you see it anywhere for such properties?
+> 
+>> +    const: 0
+> 
+> 
+> Missing ref to dai-common in your allOf (again: take a look how other
+> bindings are doing it).
+> 
+> 
+>> +
+>> +  codec:
+>> +    description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
+> 
+>> +      The child node for the codec to hold additional properties. If no
+>> +      additional properties are required for the codec, this node can be
+>> +      omitted.
+> 
+> That's useless description. Describe hardware, not syntax. This must say
+> what this node represents.
+> 
+> Anyway drop it. You do not have any resources there, so put properties
+> in top level.
+
+This just tries to follow the rockchip,rk817 binding, not fully sure
+about the reasoning behind this node in the the rk817 binding.
+
+RK809/RK817 are very similar and their schema files could possible be
+merged.
+
+> 
+> 
+>> +    type: object
+>> +    additionalProperties: false
+>> +    properties:
+>> +      rockchip,mic-in-differential:
+>> +        type: boolean
+>> +        description:
+>> +          Describes if the microphone uses differential mode.
+> 
+> Your description copies property name. Do not describe the syntax
+> "Description describes", but say what is it.
+> 
+>> +
+>>  allOf:
+>>    - if:
+>>        properties:
+>> @@ -284,5 +312,9 @@ examples:
+>>                      };
+>>                  };
+>>              };
+>> +
+>> +            rk809_codec: codec {
+>> +                rockchip,mic-in-differential;
+> 
+> Missing all other properties. Make your example complete.
+
+Noticed that the example used in this schema file is for RK808 and not
+RK809 so will also add a patch that replaces/fixes the example in v2.
+
+Regards,
+Jonas
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
