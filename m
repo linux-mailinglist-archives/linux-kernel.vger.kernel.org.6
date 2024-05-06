@@ -1,150 +1,175 @@
-Return-Path: <linux-kernel+bounces-169753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27A18BCD17
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 333268BCD0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 13:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74431F22AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:46:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4BDE1F22A2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 11:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C828E143867;
-	Mon,  6 May 2024 11:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bt0Ema8W"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EC0143870;
+	Mon,  6 May 2024 11:44:54 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB94142E84;
-	Mon,  6 May 2024 11:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7591DFE4;
+	Mon,  6 May 2024 11:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714996008; cv=none; b=P6RKSi4eB2RCcGOpI7hi/uLm89pprF+QA1SDiJdbY8X+czIs4OcsNkpFsYN8CKyZCUkWMq3KCb6GrnxxF1Wiq4FCKSq1KuGPqrIYbMsTzL/L/xOEV/Y4M639XFjGp0H/9xBF8tCHf2YVqOopx+nr/5BY9IxYIH9HjPU5y+SX2Kk=
+	t=1714995893; cv=none; b=ggAvtEKVJB1qdvMZQmsA/ciGoIodb5ni+jkZLikm9pWXiiziyRPYtwArSsvm5L5D9a4nTkY6nCtun2W+bbjkm5tn3jRD18Rcs3oLjwB+hVtehWDrFEJqnojNvDPf9ePa1QrC/s9cfztB6KTfaHehonWriKyz9ej3W2oAUZku4fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714996008; c=relaxed/simple;
-	bh=8gm94IPzY1EllvpEzmwfNcxaM9/OizDp+WJ8cyXqxqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qocmFeYRq8Oox4aj2Xm5qukdmgGykZZp5VSdgdisKo8eWOm2mCkBokOixK2WHvwvxZQ5igetoLZeehexS1JRuf1wZAW8N8OihwQuwhwJko2xLCq35XQDFmBU/ZzFEYbRWRQKEBU5d0RawJ0f055oZmJgK4czq+f3b2RjNDa8AGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bt0Ema8W; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 446AtZSO009763;
-	Mon, 6 May 2024 11:46:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=ssVYx8DFLRCYEqKw7BBLusisPSbLDkbjoF3ZQ+pP1Lo=;
- b=bt0Ema8W6jNpuPBPkfC0ojbVdvYrny4j6YLC96b7XN3XfeuVhTTsY4u+ljVeERXNYQQR
- 1DU+YMQXDv85IbpJrd7EQ1EtB9T9qUdKo1tO/IsjYPsi0ypv8AipivCm6tOICYlFe1Ac
- 05APv1DpmN7fsZpz042FuoOQv6XPIZ+wGlph17d9gRajHm9FIuDLKOMocL0HhnncQNZe
- EHohrx977i79z11KsoXe72MvEzX/2zekillafRwzcSMJ0ldh/wxCm1CbiqgGcMzImcu2
- DMcNEE+wkPpUCN11kuOK2nv/Jj3Dc+0darIwb65T6//ABMhvPuiZpkA+jNQsjmBtkHEd Hw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xxw8pg5tn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 11:46:04 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 446Bk4Zb022505;
-	Mon, 6 May 2024 11:46:04 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xxw8pg5sy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 11:46:04 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 446BfBst030855;
-	Mon, 6 May 2024 11:42:18 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xwybtqw2c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 May 2024 11:42:18 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 446BgCIt50987286
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 6 May 2024 11:42:14 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D0C4220040;
-	Mon,  6 May 2024 11:42:12 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B7ACF2004F;
-	Mon,  6 May 2024 11:42:11 +0000 (GMT)
-Received: from [9.171.11.27] (unknown [9.171.11.27])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  6 May 2024 11:42:11 +0000 (GMT)
-Message-ID: <5f586a9e-2982-497a-8674-cd788f2e8308@linux.ibm.com>
-Date: Mon, 6 May 2024 13:42:11 +0200
+	s=arc-20240116; t=1714995893; c=relaxed/simple;
+	bh=vVX8ey54S/LNAFujtNUW9wAhLyLI3G3H+odAJkJ87V0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ueJAM5uhJT284QvF+/j0pKBwJVbWUfznpKgHn6cYRkEzhNtlAAY1hS/XFRd649b60Gvgv9w7uL/DRQLXXFOc307srDel5CTik/hUvaodGkPb83zlQB68nPtDvKO5albCjwaZ6cwbKsNy5Kk0cjm0/USbFrARwkHTa38mOwQwD28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VY0215r8Yz4f3m8v;
+	Mon,  6 May 2024 19:44:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 148D51A1072;
+	Mon,  6 May 2024 19:44:47 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgDH6w6swjhmHsDLMA--.57384S3;
+	Mon, 06 May 2024 19:44:46 +0800 (CST)
+Subject: Re: [RFC PATCH v4 24/34] ext4: implement buffered write iomap path
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+ hch@infradead.org, djwong@kernel.org, willy@infradead.org,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240410142948.2817554-1-yi.zhang@huaweicloud.com>
+ <20240410142948.2817554-25-yi.zhang@huaweicloud.com>
+ <ZjH5Ia+dWGss5Duv@dread.disaster.area> <ZjH+QFVXLlcDkSdh@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <96bbdb25-b420-67b1-d4c4-b838a5c70f9f@huaweicloud.com>
+Date: Mon, 6 May 2024 19:44:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 3/3] KVM: s390: don't setup dummy routing when
- KVM_CREATE_IRQCHIP
-To: Yi Wang <up2wing@gmail.com>, seanjc@google.com, pbonzini@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wanpengli@tencent.com, foxywang@tencent.com, oliver.upton@linux.dev,
-        maz@kernel.org, anup@brainfault.org, atishp@atishpatra.org,
-        frankja@linux.ibm.com, imbrenda@linux.ibm.com, weijiang.yang@intel.com
-References: <20240506101751.3145407-1-foxywang@tencent.com>
- <20240506101751.3145407-4-foxywang@tencent.com>
+In-Reply-To: <ZjH+QFVXLlcDkSdh@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <20240506101751.3145407-4-foxywang@tencent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -3rVY9e6HKMibw3KM8wRM2As9cVhC9ek
-X-Proofpoint-ORIG-GUID: A5QC-S3BEL0a3wBsNlOlErSe1WfvT42r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-06_07,2024-05-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 phishscore=0 suspectscore=0
- impostorscore=0 bulkscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2405060081
+X-CM-TRANSID:Syh0CgDH6w6swjhmHsDLMA--.57384S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFWxCryDXFyDtw17Cry3Jwb_yoWrJw1kpr
+	Z8KFWUKFsrXr18ur1vvF4UWF1Fk3WxGr17Wr45WryqvFZ8ZFySga48GF1Y9FW7Ars2kF10
+	qFWUuFyxZa4Yy37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-
-Am 06.05.24 um 12:17 schrieb Yi Wang:
-> From: Yi Wang <foxywang@tencent.com>
+On 2024/5/1 16:33, Dave Chinner wrote:
+> On Wed, May 01, 2024 at 06:11:13PM +1000, Dave Chinner wrote:
+>> On Wed, Apr 10, 2024 at 10:29:38PM +0800, Zhang Yi wrote:
+>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>
+>>> Implement buffered write iomap path, use ext4_da_map_blocks() to map
+>>> delalloc extents and add ext4_iomap_get_blocks() to allocate blocks if
+>>> delalloc is disabled or free space is about to run out.
+>>>
+>>> Note that we always allocate unwritten extents for new blocks in the
+>>> iomap write path, this means that the allocation type is no longer
+>>> controlled by the dioread_nolock mount option. After that, we could
+>>> postpone the i_disksize updating to the writeback path, and drop journal
+>>> handle in the buffered dealloc write path completely.
+> .....
+>>> +/*
+>>> + * Drop the staled delayed allocation range from the write failure,
+>>> + * including both start and end blocks. If not, we could leave a range
+>>> + * of delayed extents covered by a clean folio, it could lead to
+>>> + * inaccurate space reservation.
+>>> + */
+>>> +static int ext4_iomap_punch_delalloc(struct inode *inode, loff_t offset,
+>>> +				     loff_t length)
+>>> +{
+>>> +	ext4_es_remove_extent(inode, offset >> inode->i_blkbits,
+>>> +			DIV_ROUND_UP_ULL(length, EXT4_BLOCK_SIZE(inode->i_sb)));
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +static int ext4_iomap_buffered_write_end(struct inode *inode, loff_t offset,
+>>> +					 loff_t length, ssize_t written,
+>>> +					 unsigned int flags,
+>>> +					 struct iomap *iomap)
+>>> +{
+>>> +	handle_t *handle;
+>>> +	loff_t end;
+>>> +	int ret = 0, ret2;
+>>> +
+>>> +	/* delalloc */
+>>> +	if (iomap->flags & IOMAP_F_EXT4_DELALLOC) {
+>>> +		ret = iomap_file_buffered_write_punch_delalloc(inode, iomap,
+>>> +			offset, length, written, ext4_iomap_punch_delalloc);
+>>> +		if (ret)
+>>> +			ext4_warning(inode->i_sb,
+>>> +			     "Failed to clean up delalloc for inode %lu, %d",
+>>> +			     inode->i_ino, ret);
+>>> +		return ret;
+>>> +	}
+>>
+>> Why are you creating a delalloc extent for the write operation and
+>> then immediately deleting it from the extent tree once the write
+>> operation is done?
 > 
-> As we have setup empty irq routing in kvm_create_vm(), there's
-> no need to setup dummy routing when KVM_CREATE_IRQCHIP.
+> Ignore this, I mixed up the ext4_iomap_punch_delalloc() code
+> directly above with iomap_file_buffered_write_punch_delalloc().
 > 
-> Signed-off-by: Yi Wang <foxywang@tencent.com>
-
-Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-
-
-> ---
->   arch/s390/kvm/kvm-s390.c | 9 +--------
->   1 file changed, 1 insertion(+), 8 deletions(-)
+> In hindsight, iomap_file_buffered_write_punch_delalloc() is poorly
+> named, as it is handling a short write situation which requires
+> newly allocated delalloc blocks to be punched.
+> iomap_file_buffered_write_finish() would probably be a better name
+> for it....
 > 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 5147b943a864..ba7fd39bcbf4 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -2998,14 +2998,7 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
->   		break;
->   	}
->   	case KVM_CREATE_IRQCHIP: {
-> -		struct kvm_irq_routing_entry routing;
-> -
-> -		r = -EINVAL;
-> -		if (kvm->arch.use_irqchip) {
-> -			/* Set up dummy routing. */
-> -			memset(&routing, 0, sizeof(routing));
-> -			r = kvm_set_irq_routing(kvm, &routing, 0, 0);
-> -		}
-> +		r = 0;
->   		break;
->   	}
->   	case KVM_SET_DEVICE_ATTR: {
+>> Also, why do you need IOMAP_F_EXT4_DELALLOC? Isn't a delalloc iomap
+>> set up with iomap->type = IOMAP_DELALLOC? Why can't that be used?
+> 
+> But this still stands - the first thing
+> iomap_file_buffered_write_punch_delalloc() is:
+> 
+> 	if (iomap->type != IOMAP_DELALLOC)
+>                 return 0;
+> 
+
+Thanks for the suggestion, the delalloc and non-delalloc write paths
+share the same ->iomap_end() now (i.e. ext4_iomap_buffered_write_end()),
+I use the IOMAP_F_EXT4_DELALLOC to identify the write path. For
+non-delalloc path, If we have allocated more blocks and copied less, we
+should truncate extra blocks that newly allocated by ->iomap_begin().
+If we use IOMAP_DELALLOC, we can't tell if the blocks are pre-existing
+or newly allocated, we can't truncate the pre-existing blocks, so I have
+to introduce IOMAP_F_EXT4_DELALLOC. But if we split the delalloc and
+non-delalloc handler, we could drop IOMAP_F_EXT4_DELALLOC.
+
+I also checked xfs, IIUC, xfs doesn't free the extra blocks beyond EOF
+in xfs_buffered_write_iomap_end() for non-delalloc case since they will
+be freed by xfs_free_eofblocks in some other inactive paths, like
+xfs_release()/xfs_inactive()/..., is that right?
+
+Thanks,
+Yi.
+
 
