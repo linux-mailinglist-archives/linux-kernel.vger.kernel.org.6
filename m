@@ -1,122 +1,82 @@
-Return-Path: <linux-kernel+bounces-169302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-169303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F2B8BC692
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:36:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888678BC699
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 06:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307A51C213C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:36:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADCAAB21686
+	for <lists+linux-kernel@lfdr.de>; Mon,  6 May 2024 04:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D7F4654B;
-	Mon,  6 May 2024 04:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348F747F45;
+	Mon,  6 May 2024 04:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XkvXXdEu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aB2+YbNy"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2076.outbound.protection.outlook.com [40.107.212.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E54C1EB36;
-	Mon,  6 May 2024 04:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2339345943;
+	Mon,  6 May 2024 04:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714970149; cv=fail; b=pry7Hq3QqOp8fK7cb5kp110vXk3idSDhvuGk5V5Oc3zy+RUieomycuP0UsLqQs0j4Afe0C21G56rPIga5ZiEv6nCICWVM+Iyf3GLluMnmmsJz/aJzD98c2b13Z6aID5vOyPhQvKIl4iO06/Blomryf24qiR6FyBj1UOq9uQzumI=
+	t=1714970963; cv=fail; b=Tk38plm1/v6Eagy+/PDvJJUU9x6PCuWP1OiNPrrJ/lb9bsEwaKgqYDW0Be48VdDW8/F7MR46Il7LHKL1cnFc048WzLhl/FOZCdA9fn2njoWc61twNfrvp8BRX5IC2sgO2FRrsh5fhR3wb6Xo/LK7g1gJ+qJMtNncAZ9TBG/XtBc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714970149; c=relaxed/simple;
-	bh=ItI1xlddnTgbSoLUEY4MvvGr0OHvzj7tAGC/MOI7JOo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=c5AojmTTp0sYStM1uNjaDoXM252gC6lGyToAzcLnvPNiZ+8RyRpxXLpGeQjtGlWRym0F6GuvVMPUuf3W+SXNMgQ5gOzGd6KCUbVhjIMvsH/WjrBKSkbaW7vPSQh/28X1lUU0sWeSnRWzACEFNACXgMef1dA7esssrWvInfqw5fw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XkvXXdEu; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714970147; x=1746506147;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=ItI1xlddnTgbSoLUEY4MvvGr0OHvzj7tAGC/MOI7JOo=;
-  b=XkvXXdEuCA1qXivLnEM5PS7Wb8LBqD3ZSqT3+cVewEJ62f72/3H5B/76
-   Hv6Wp7cM6P9kkojtFaWqRa9KU6GUhjY28z7ugqAYuzX6ocZz8ZqZOks3I
-   d8Dowjm9IDu5iItx+u8ajD2TW3S+dgjFujVeeFw7PSwKI8N2mpUOnA8LM
-   9yzQgp2UC+03ev3LmsWEn2m75ZiZ3Oqvk6fugKupiXBtnatLQpXZwdJlB
-   hPmn4vtFTAFdiWOSg/GXN4gGawRShWh9uC3CMvRRY39zcxZciP8ajodys
-   salxtU3IBWeP5PAN94d/by4Ce3wvccFI+g75u22hxguquIyw6wLp3RxtK
-   w==;
-X-CSE-ConnectionGUID: 8e0W9w5uSXOxl55Y6T15JQ==
-X-CSE-MsgGUID: dQ9on6I2T0a91nqfQ0iZ7g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11064"; a="21253952"
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="21253952"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 21:35:46 -0700
-X-CSE-ConnectionGUID: BKVfxM99RQSZVtmS6Yowog==
-X-CSE-MsgGUID: dIJEq91QTYmkeQJeV6VVBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,257,1708416000"; 
-   d="scan'208";a="32516608"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 May 2024 21:35:45 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 5 May 2024 21:35:45 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 5 May 2024 21:35:44 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Sun, 5 May 2024 21:35:44 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sun, 5 May 2024 21:35:44 -0700
+	s=arc-20240116; t=1714970963; c=relaxed/simple;
+	bh=mfB8NTYkh/wTP/xKaBKwLTj1+Z4KkYqahvSPCA+U+Bk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kd4mErIT7dmBOIEqrWykNw6IbaHIgEI96ch1lAPk0JoXZw2yQN+m+bU4ZAtT26viPUZG+Yh4DJcP2ZVSKpmUcaV13aljS5lkqgVBeql/RNRq+ry6v5KDKBy8gCkIKcnAMfrbi7zijGaJ/50zmJd0riOe1MV3kf9OPREM0+JGcL4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aB2+YbNy; arc=fail smtp.client-ip=40.107.212.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lbQEmkLr5lXXb3WVPh+QzC2clZ+yMESyRqcyIklt4+7mUGH+MGXB51WMjUOSwcxCo+xP9ukl8i1eQiq7DOPz7nyTe+NGOkXM9w5XTkL76+tSQuJti05C1WZLVgN1tt/3O1xuiQfFAA1EKceciM5bKZRYUu2Xl3rnu3EDrqi5ywRmVEeuPEHqSH9eNcE4D/oVNVEzXZpfldPSrKZzpOaRNzepdO7GmVRdJidK4zrQv2P0tWDXAnHEwZeb6EtyQ6gks75pon7BhLHI/YIBwJnAM7NawossbeSfp6mEofRRqHuwznFOI7Gq+LjN445bFPaz6u3G07PLhl6cKLOj6Ns97A==
+ b=UidfyqCoorawTeflRliugvWejv/KNuql6xuX6ll2GpC2eCVNYHWCqLw4jNkIaFJnfoxCP8xl46IBWp/ZhQaH0QwoEx2+qMouafOlfAlFz5Dy3N5XhMKLrySXpz/cz6tB4nBJ63l5a1spYlcBlE4pCngXuXHFbUJV+YzlPbAQIg6aipJDpKIW7csdzWe+xZN5gqiFEOAMTJsB7eIVbO8Pc8GZxHp5EF2Enrru6GVPKDK159qM5IABZUQDs6yE2Fk77rDYo0aIhF+O3ZAXiPJXZ1WGLnz/MtgjOhTYJysglbpoXUNqsRmW189BE3Nd9jG/S2tf4urvC1dwGMn8fC/eAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wy+LdVj2mPIvgBCWtMG2XwuX50IgtB98CLP9CboWVik=;
- b=dZaQl3mlegoXa0wyfSY6AO/TOI9S9NaaemiKwh/gc1ZStjVXM3Z9aTnAzfI6tmao2JPSMkYZPkncn53xa1ylUwy9Cj5grBWCgziMkyXC5bF0tKAXXgkUaIzqiSd8TQoSqeIpN8HoKj0M5Wxa12bcUlfCUTWO5/UyUL+/6SQWgMxswWyT5cLlui4zUquN7tIERZhErp4nYJ4RToYxyAnFs36NpCwGvWALscXOruaq/qWvOqbnKI3LIscmu9qeAE/qSGM5l/+XCRwsQ0UcBwVFSrxqhZ88LFZBfkZjF1Rjih/BkfcMtfIXf4UIsNBeiRLCru2li4/kc2gKIcLrOzpCzQ==
+ bh=cKZvdIFbpRou2pU9PEf2THyxHuMdbtsqpHz4hveELvw=;
+ b=GdOgtMA4J3u3V8rqxWWPF/R+ZDlkE3R5o6dhx90/zM4Wc4VgVMMU3P3a85Jf5lDYVptbs/OTqDBAU4fiNNxyNjpDedcEXYpQDwfjIFrHxZyplsNaekbQVEJQK+t4nPIROa1T/EW1gB16TQO3Z7Qbz6qvds7ASZwdGJym+PrIuKwNIQnZfbWOoaVmT+0+pDCiKvRWHazXAILFabVmumRqZ+XI5uwxdN5edDXAD+LPS2WDnxbf9lm5AY06bbHj5LGiTyq6GA6O4nwtpunaMv/FA8v/XwYoY7lkacM8m6qh3tmhwPiJVmPj3fLzJm18UD4ZJ2mvnMJ+xy4zN4Z7ZIRB6Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cKZvdIFbpRou2pU9PEf2THyxHuMdbtsqpHz4hveELvw=;
+ b=aB2+YbNy5J83rmNF7Xt7zzq4LlpeAWH2yYbGLh6UJfZFY4MGOZHX40Z8Q8fiNLbVlwg5RXKiQa2Ti3oC2whf0B25IRomxk9MQS7yw1nd53a5vixbbRwXURL6dMR/AslL0oPs4L5EWax+Bz5K+OReQvVx4z9f696UwZ+MaowJbg8=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by SA1PR11MB6823.namprd11.prod.outlook.com (2603:10b6:806:2b0::7) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by DM4PR12MB6566.namprd12.prod.outlook.com (2603:10b6:8:8d::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.29; Mon, 6 May
- 2024 04:35:42 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%4]) with mapi id 15.20.7544.041; Mon, 6 May 2024
- 04:35:42 +0000
-Date: Sun, 5 May 2024 21:35:39 -0700
-From: Ira Weiny <ira.weiny@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 16/26] cxl/extent: Realize extent devices
-Message-ID: <66385e1b63173_25842129417@iweiny-mobl.notmuch>
-References: <20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com>
- <20240324-dcd-type2-upstream-v1-16-b7b00d623625@intel.com>
- <20240404173241.00003a6f@Huawei.com>
- <6630641e5238e_e1f5829431@iweiny-mobl.notmuch>
- <663401ba2e237_1384629438@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <663401ba2e237_1384629438@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-X-ClientProxiedBy: BYAPR02CA0014.namprd02.prod.outlook.com
- (2603:10b6:a02:ee::27) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.39; Mon, 6 May
+ 2024 04:49:16 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%5]) with mapi id 15.20.7544.041; Mon, 6 May 2024
+ 04:49:16 +0000
+Message-ID: <9252b68e-2b6a-6173-2e13-20154903097d@amd.com>
+Date: Mon, 6 May 2024 10:19:05 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
+ SEV-ES guests
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com,
+ Ravi Bangoria <ravi.bangoria@amd.com>
+References: <20240416050338.517-1-ravi.bangoria@amd.com>
+ <ZjQnFO9Pf4OLZdLU@google.com>
+Content-Language: en-US
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+In-Reply-To: <ZjQnFO9Pf4OLZdLU@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0248.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:21a::19) To PH7PR12MB6588.namprd12.prod.outlook.com
+ (2603:10b6:510:210::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -124,207 +84,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA1PR11MB6823:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4199748-39a3-480a-f51c-08dc6d85fd0d
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|DM4PR12MB6566:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2cf128c0-9efd-428f-628d-08dc6d87e25e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VT8KlVhwtB5f7yGbI8FuntIWZhd3dKpE7GTsVULSgbMoLX1wToQk5qVpP8N4?=
- =?us-ascii?Q?EhHBzcOKwN7NSIpXvfqrpor6BerqfTrBdi58+M2pGmzqq1sSBM6eaxMQ7lsY?=
- =?us-ascii?Q?REoH2wcyljG5De4dr1OeZdPNzg2xPFfvhfmNThaqzx80bydex2uYDBZI5fvc?=
- =?us-ascii?Q?qhK0fqn8hfKFcM5S6/ta7w3116iORzfGYtkXRvzs0S2hDPEbWfjBYxideJPT?=
- =?us-ascii?Q?h8Lhvs08mjIHbqm772OfLgLdVfRPIP19wrfoM0dQmksY/Izvy58kx6iMe1rp?=
- =?us-ascii?Q?lBo84+i2+yaQoTYa068xzj6kvzBweLtRg5Inquec2x6FysE9qsSap0O1T1pv?=
- =?us-ascii?Q?nGzFoPhNtHnWvordvJF/R0+lL287MaEpEvKUxeqn9EWnvKG3Lm9B5GKBDaEb?=
- =?us-ascii?Q?hn6W1gI2M0Pb1OkKGKICJrnWGmQcTcYlJxtxlPUNdJ35J0Pa8f9hsJNTQIOS?=
- =?us-ascii?Q?JUKRA6g/j9yx2lE+Dwi6Wc+B4LCUn4CoOrPDyBKMonfmeGWBmI+6ashq2Z1d?=
- =?us-ascii?Q?O8HapBGNce2ntpYhj3uuyx6dBIM8h2fjsm2fLer3TYh0Jkd3LM3ZA4zJowuv?=
- =?us-ascii?Q?7y4ZS6qTbrVIKVAF19jLZ0vElICDYlSQQU43aFc/X5rQyfuNdLqNq2IpmdQd?=
- =?us-ascii?Q?qZgyNnFZd+xyXdS1m4T5JIp3YYLiv2uHH0wEZw6QenuY5yjNs6/zYZyULwf5?=
- =?us-ascii?Q?TBm5JuC77v0Y9JZdGkBJ+0LN4UDHizHTYq+Xu6Bxt2p+Abhs+rgrZgTgOpd2?=
- =?us-ascii?Q?KmkN603J7gBce05/xhZwFAWLcSddmDfadGmc1Ms4qCsUJWHd3WEEQY+ulNbF?=
- =?us-ascii?Q?GvqNZFq7uNVLkBNANb8QfwMEPshxdGjUGroBgO8SyY385usXqB3Gcw0VsJvX?=
- =?us-ascii?Q?TxuzVuw8tYBwWPhy+39d6b0n5montmkKGxLcXe4zTHVQjIxqHaiesl6KmxFc?=
- =?us-ascii?Q?7wvA8q9yhttZAaB5oSYkSyWn86h7q5TzPDlLC5afGSGSjUp0Z8z6lGurtvDz?=
- =?us-ascii?Q?n4NsHoovdYazwRhfySOSYzzOSK8Ps5fDpjsu2VGwRgRogNJEM08+ofRyEe2a?=
- =?us-ascii?Q?IkYncCa0IB0H8/LmYbpb/Uu7M0IzdUUYS8Vv2GnLEPB26P8OXWBVGgNzSyWQ?=
- =?us-ascii?Q?vsyrG8Bt6sQt5IOIPe9C5nqOFcJylajXSmcIzptcc6jY18ZUjsMox8HHZklL?=
- =?us-ascii?Q?YuHe09pHDoGXSp5gp+LlCTmjcVSY1bgkAzNEDbHRYNRcuUv2crYG0raMZiTA?=
- =?us-ascii?Q?KbcFjAxBNu6UlXplt9cyU5e3uh+FOPRyIwlNuFXPvw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Ymp5blZFSGFGL0x2eE9BWmlnVkQ4ZkxKVEpSVkNLeG4zd2MwWVpVcUdIUmJt?=
+ =?utf-8?B?M1NpREVhNTZ2MWROaCtlQ1poMmpvZno2cGhwbEhvOUQ0aTN4cmJ4amJkSW1x?=
+ =?utf-8?B?akJJeE5nbEtWdUNYbjlJdm9jVXl6M09GUTlScDhuYjNSbTV5cXVUdVhabDVD?=
+ =?utf-8?B?dHJGL2doSVFIUGZxcS90THRxbW05Z0JJZmR6M3I5VmhONGtvaDQ5MkpuK1NS?=
+ =?utf-8?B?UkJoTXc0VVpvdTdIaHVyNVZMSVhyaU9IT3hTaVduY1pTWG5mcE9XNnRSS0pp?=
+ =?utf-8?B?amdCZURFbDZudWJqczNLMnF1MWY0dm5SNmtNMjhTcnN2eEFKZVdQTnRWL0pl?=
+ =?utf-8?B?N285SGRqNm9yUHM3aWhzd2VKZUlPd05NdzJEcTFhdkZ2eXByODZFVXhieGk3?=
+ =?utf-8?B?SXRzM3REWFd3aXN5TGpSUXNpclRQVEhxby9PekVsT3I5UWpxZy80ejZIVmNu?=
+ =?utf-8?B?YXFFRFBTeXRzMlRzUlUzY25qNXVJOVo0blhKNENBWDd6K1JNZmtHbGlGZ0w5?=
+ =?utf-8?B?ZlMyVlIwMnA5Y1dyOU5TZVpiK0MvdWZUNDljNVZmcGwvZUFmRDdTaTBSbXlE?=
+ =?utf-8?B?T3pqRHhrNWZXc1dWVy9QUE56QzFZNHpIMS9URTN1ZkRuVndzS0hkVTYvVXNE?=
+ =?utf-8?B?VVB6end3aW1iSFp2U2kvazhldlRWY3NjRGR3VXlSQzFIc1VCeVZmZFZZd24r?=
+ =?utf-8?B?ODl3UlQ4VVhSMjlUUnJRMEQvMmtjRnAvYW1UR3JZR0NmWi9jRXVZV2lFWHFD?=
+ =?utf-8?B?YVdSdXYxZ2c5amFSNHd5Wk5LTCs5cGRRLzkwSTNnMU1ZbXpsbXFIQkRIWktD?=
+ =?utf-8?B?KzgraG14ZEFXVHJzSXovVTVuZW5MaDRZaUNISUJROFhpaU9rL2Zxa1YvSVpn?=
+ =?utf-8?B?enBBRDgzN0Q5REw0M0FxdVhZY3hjb0N1NDkvZ1V3VU5CWnRNWDdmSmFSb3NH?=
+ =?utf-8?B?eUlZY0w2Nk9oVFJrZ0RSZGFJZXlXQ1A3UTlWL0dLOU9NYkUvaU9jWW8rdEFZ?=
+ =?utf-8?B?S1RRZjdHYVRnZVg4em9oMnhza3RjNXd4QXNrWGtsQTZnWlVRdjlVV3ljd1Bv?=
+ =?utf-8?B?VkpDMEVaQ3VnUThEMk5LOFZqZ08vZk1LNXN6cWxLaENkcDFwaTM2STA4YkJ3?=
+ =?utf-8?B?eERYMEF1WGtCSHJFbDBYOUR4ZzQ3QVkzdUsvZ2JURXFMcDZnbkFNcndmdUZK?=
+ =?utf-8?B?cTRnSmNQNis4cW1RTS94T2Q2Mlc3ZjVFWDhqQnlMTHhTNUJHeGhiTEU0ajlJ?=
+ =?utf-8?B?YjJHQjZyaFRJK3dvTWY5eTZ6bEJIY1JoY1NhS0Y1eitjK0dnbnMwYU9xbS9I?=
+ =?utf-8?B?SnF0bHE3TWhaRU5QYjg4YXlXTjZ6MnhpTUdwZ04rQjI1LzVzSWl1a2IvVWZ3?=
+ =?utf-8?B?RVBhTWlzMkt1L3ZnY3Z3YzF2MU4za0JQdE5BVGtWZGhaZFFBNzFmK3grZUxZ?=
+ =?utf-8?B?c2h6MXJwRTBvUmxJODhSRmkvR3BXd2ZyZDVXM0hQOFhrOTJuNWlhZVRXbjJU?=
+ =?utf-8?B?Qy8xSkFkbU1BK3VxcmhVMTFwd2V0VElxWGpUQ2VNNm1zNEZYMjBLR3R5L3Uw?=
+ =?utf-8?B?RUowdXhjeEh5bnE4QjJRKzZwMzhBaXdUTkJoMzNXRVlEQ0xNa0JUTXRxN3VL?=
+ =?utf-8?Q?IhJlh0SjgH3p+4m40/RTeVhUpsXSWPVewOZb32OMo5FY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nG9qRyJaou7ar+qXHNLyuX9trYCc8USk3lcV6WvFF8/Q3QInNvJa6t/1QgA8?=
- =?us-ascii?Q?5skLiEFM0XSMmF5QmQ0h+Bs+h4FxtDKMbyQwf+SlT3zcUtVJhiBOXRjgaddB?=
- =?us-ascii?Q?12DvvQWZpgGDKLUVdNhKcp6qlV0Q1HlmllQvQn+7NksnlGASDIUfU759rMDp?=
- =?us-ascii?Q?fToS3aHxMbFbNqd1EE0ZB50OZjWsAIAJqS4NQJFXn0pNN/0ca9pIfmojmvhF?=
- =?us-ascii?Q?haCjcWhoPFsqQvr0HI/K11WUfgIem2u5WXEx5pEvvAe7KQKLKmWxn+NWHk6l?=
- =?us-ascii?Q?zt4IXNqNaLnOPsqyPlxv4+1QET5Zegmf1ETlI+x9C/D3g9WxrrIj2zSwY3R6?=
- =?us-ascii?Q?zl5BFIYpEmw4nVeJot4JcG79c1tIzmXF71EykNgyI6np4vJLxqBGX4xLeVtB?=
- =?us-ascii?Q?Jxyoo1+w5kz51aAnv6E7E2MJRyOoApREu3utafhDlYbQfatVMiu8kgnDCEo+?=
- =?us-ascii?Q?tp8oor3zy1D9GTij1x+VXnbaDARH37MF92ufHUJSA3/4dlHpuTlFQSHgWTUy?=
- =?us-ascii?Q?sTDsYn6fhJlQmGzmeU0BzI/lV8wF+GUb/wnA/NWk6uzH5RV6F3D6lTUrPOEI?=
- =?us-ascii?Q?8RTxVKfA9Bo+3XEawQsXeP4KVKgUbpNOJPMHBfEw1b9YVQKux5FHA1IGznCz?=
- =?us-ascii?Q?t/CT5bYNY+Ukj2u8Q2NRDh1WCQ8DOvxMp70fDFHxSxkPJ/7ibrWdsBSYO1S0?=
- =?us-ascii?Q?oNtkDiBcyjaySutFJnGiDbm8GhO5hjqLZ1/jL/4FBKFmhnoPJb/sHHnY+Pxe?=
- =?us-ascii?Q?KPnzzO3y3J1j5elUAG2/imS8ziLPf99vgFdtvPQ8azCSbgip7ccMwURs38AL?=
- =?us-ascii?Q?3pGWszrHXyW2Ihn/FUSG3T3kX8NV+tA3eM6g+2Unra2UU79VoB6Hzc51myXE?=
- =?us-ascii?Q?oAATd9b+5Mep9DAVKp7oR5FY18N32jYvWi09V4tCGN1zoBFwmGBx1laIL6xu?=
- =?us-ascii?Q?8e4Wrtv26GqAkcF7dGOQPhd7SYyM04pCYICEDYPgTHojdj4r/UmzZ1ExOwJx?=
- =?us-ascii?Q?g0rUAoRckKguyenjyYl9jMyfw5zxYSo6MFMp2CE8fSecPubLRHTANfegcA0B?=
- =?us-ascii?Q?zxxQk1EliN1DnWGVLRFjiMS4Zpei6z/HnFwi+qn2z3mpUHM/VMSuKVxDM3xV?=
- =?us-ascii?Q?o1yW+TGURoP/sbaxrR7z6J1paUBN5FhvRDwokbahesb92yQd44HSMP3ocTfo?=
- =?us-ascii?Q?S9EuDO4o+JYrAHQ8F0qLju/nEIpms5uU0b4Vfdf2mvd/goAYCANbdMaThji+?=
- =?us-ascii?Q?cxPW2fcW0iZw0AGc7X8TpI/ppTIz1mcoQZqSiWE+y3yTdyoL8Vbt/a3Gk+/f?=
- =?us-ascii?Q?u9KL93topSyKRN9dYvkBaN2vCdGjZMRrL5wQ8phAbMidpmtmwv7lgvIa4vLi?=
- =?us-ascii?Q?xqXgNIucvHBmuxFLuMdYQRdruKtKyCGeaA/Mfp7ZJ6TbCWsWpll+TUd+XnXf?=
- =?us-ascii?Q?9rPRISQJj2iTIskZps55x8j1PDh8juZlOEHv9Vr9G/5zJWz7SCMuRGMD1H8A?=
- =?us-ascii?Q?2qVs5GH7tDjjzxH6Wx/KNuMAIa1RFHTC+ASR3rXVTXzQvUPu6ffSVrzIfjED?=
- =?us-ascii?Q?zfrPpcTIeJzhagAe8DG+uw1L7JOLtUvG4ZWQEXfo?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4199748-39a3-480a-f51c-08dc6d85fd0d
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZG5ua29ja0piOStLMEovRlRPTHVOd0JnSnI2ZVVqY1krUHlKb2dOSmpSWDlp?=
+ =?utf-8?B?L2Qva2xmVEdRdUc3Z1RnTWgwYzZ5aGE5UVVMbW4raFhvR3JTZjdrNktuNWUz?=
+ =?utf-8?B?NTJGeGdPU2RkVzh0TGwvd0xPVnFVUlJCZWpWbUVnUDQzeUJocmx5SHFaMUp6?=
+ =?utf-8?B?UHRQOGpnanRibDcrZTFJK2l2T2NsM1h5WjdjZjNXTnBnVi9iN3JJT0t5ekJm?=
+ =?utf-8?B?UVJsblowbjRCVGtjanVaSk5EWnZTOUxxRWNSeE5VM25PbkxSUlVKVFFwZ2g3?=
+ =?utf-8?B?bUc1Rzl3Z29HN0VIcktObzVVSC9uWlFJRzdMK2U5WDF3SklPVFlVdVZZdEZ3?=
+ =?utf-8?B?WVlST05kbGtUeTZKSFZKS3kzMDBXQkJrTmh6U3hzTm9pMlBBUmdpTlNxaXpr?=
+ =?utf-8?B?VGlTNnVReWFVNGRla1RmeXZXWS81bC9NeUhDUkV3V1oxVHpBVEp5OERhR1Bk?=
+ =?utf-8?B?ME43L3FhWFRyc1grZ3Q4VEE1SVloYWsxL1hxWnlmTXQ4SkhmbE13b3YydnpE?=
+ =?utf-8?B?Q25kenFEbFhrQ1NOcXQzeXY0NkF4WVlvUmFRM1AxbnY3Q2xzM2Jhb01zUXBH?=
+ =?utf-8?B?eTJPVThkaGJzYjAweGJUaGRXVmtLc3NsMStBWjBRbk96ZWYrOEFwTHFZMFI1?=
+ =?utf-8?B?dkJVTlZWMld5dmVlOFlRUU1ZUW5rV2RGclBGOUE5US9FcDJrMXBEVVk1KzRM?=
+ =?utf-8?B?RzFybjY5eUlzRHovUTVHM3MwcHFzNlE1NVlIWFVwc1hCR2laSi9jYVJ0cEZS?=
+ =?utf-8?B?d0JxRlBoNnBOQmlURyt4QmxsZnc1UklqLzNUeDRGUlNjMjdvT09yejRkQXhQ?=
+ =?utf-8?B?ci85R3Z1YjBKQjc3dkNXQ2tsZ3FNL0Y4QVJWYUR4WGl6c2dUaDhRc05uODNQ?=
+ =?utf-8?B?UHI4VC9iM2J5ejhhSkc4THdUNjRYZ3VvN1VCRHFQeDdsZ0lmWUxjVkZOOXIr?=
+ =?utf-8?B?bElGV1h5L0xYeEVwZVRPOVZJakVGK0ZGMFZveG80RkFFT2FndTg2WU1USzVt?=
+ =?utf-8?B?ZmRmcXFqNTltZytndlBuS0pDcG9ueExnYXZSV2hWR0k3NFUyZTFJcHF6a3N5?=
+ =?utf-8?B?R0I0dldjWDBwbFdtNW96UW45M25iUGQ2eTNhYnlHNkQxWFBQOUdTd2J6MXVD?=
+ =?utf-8?B?MDVKd0ZLOVJlYXJjMysrOTRhdW1DaDRiQ096eWM3bUtscFRIYk1IbXZLR0Vu?=
+ =?utf-8?B?cjRueTlFdjhwVmZkTmxsL1E0Q2FHL2VnWGNMME4yM0VNYy9UYVgwWEtmdHRs?=
+ =?utf-8?B?bEcwZCtkSWNLQXdZb1NvRjZDQTc2QVhWV2VlL0c3SXBINWxUbm1mSXJVU2o1?=
+ =?utf-8?B?d041NTl6SURaSHVOang3WUFTcW5jYkRmNWNvNWc0bmkrTll6ZG5FeHJxT0hq?=
+ =?utf-8?B?TTMwU1d6KzFYTlRWR1RBOFh0dld5V1N0V2p3U1hxNHRINGUrbUdsenVSM3ZW?=
+ =?utf-8?B?SUxDYkdueU9OL3pIMkhsdU1JeDlIWXB5Um54UnBNSVNWZFp2c0wrYUV1b3dG?=
+ =?utf-8?B?LzE5MHlVSW44SW5rR1lYUHRJd0N3M0YyVnFCdnVjcTFhd2VXY25hQmdQTFpP?=
+ =?utf-8?B?K2pGY3lMTVZWYlVsNmRJMVJtSGt1WGQyb2Jrb1cwZEx0TlUwMmlickhBVjJp?=
+ =?utf-8?B?TEpJcVFNK203bnNZR3ZyaXZJQ3NEZ0RZK1RxV1A1dkNlbHNiRVgvMW04a0g1?=
+ =?utf-8?B?Z3FiVnJKb1JLYXVlMGpxTDc4UlRxU2lQN3lHK3pFa01WQkVyV2twSWI1VzBu?=
+ =?utf-8?B?aGU1OE0rLzNEaGlvVU10OUtoeXJpRFVERlpLck93NUVqajRQcWcxUDQxbklx?=
+ =?utf-8?B?TjRoNW4vempOQ2xGT0pWZGk3UENqZ0hwUWd2N3QwcHovcHZKZ0ZHVU9heVZH?=
+ =?utf-8?B?aWJyaHZ5Qi83cWV0QXBqNnZVWFNRZjA3aGpwL1M0MU5Od1drREh0OEdVMkJY?=
+ =?utf-8?B?K2FpMWNiM041L1lOL0JqdFJmQkZxQTNxS2xQNEFlV3BucHlYZzJpSXdpbmdQ?=
+ =?utf-8?B?WDgrRFhmOHBjQ3dFOU5scDRKOS9UaGwvN1BlUHVUL0FUWllrMEptVWM4UGgw?=
+ =?utf-8?B?eHhwT2ozQzl4WFhoZmxnU2Uvcy9TUjVGYlByTzEyYUdpcUF0dkFPNnpzaGtZ?=
+ =?utf-8?Q?7riaYcDkqkmskU2pGcuQliNFv?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cf128c0-9efd-428f-628d-08dc6d87e25e
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 04:35:42.4817
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2024 04:49:16.7213
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4qG0/TxZ+LKoCyXgtDIPx75xFiFle49ngt+zKgbIXy/uXJ9TrJEzP8Ms1yNez1xjPV9lmVO9bHLqdN9mrVQXPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6823
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3gqdTAAnt7Zmr+5dIXmfg89LZ2pHQ3g5xjrkMRa8Smrzy3iGZOpUbc+Gx4HbcKr+AGpazgYKlCP/Y4QmkQoCPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6566
 
-Dan Williams wrote:
-> Ira Weiny wrote:
-> > Jonathan Cameron wrote:
-> > > On Sun, 24 Mar 2024 16:18:19 -0700
-> > > ira.weiny@intel.com wrote:
-> > > 
-> > > > From: Navneet Singh <navneet.singh@intel.com>
-> > > > 
-> > > > Once all extents of an interleave set are present a region must
-> > > > surface an extent to the region.
-> > > > 
-> > > > Without interleaving; endpoint decoder and region extents have a 1:1
-> > > > relationship.  Future support for IW > 1 will maintain a N:1
-> > > > relationship between the device extents and region extents.
-> > > > 
-> > > > Create a region extent device for every device extent found.  Release of
-> > > > the extent device triggers a response to the underlying hardware extent.
-> > > > 
-> > > > There is no strong use case to support the addition of extents which
-> > > > overlap previously accepted extent ranges.  Reject such new extents
-> > > > until such time as a good use case emerges.
-> > > > 
-> > > > Expose the necessary details of region extents by creating the following
-> > > > sysfs entries.
-> > > > 
-> > > > 	/sys/bus/cxl/devices/dax_regionX/extentY
-> > > > 	/sys/bus/cxl/devices/dax_regionX/extentY/offset
-> > > > 	/sys/bus/cxl/devices/dax_regionX/extentY/length
-> > > > 	/sys/bus/cxl/devices/dax_regionX/extentY/label
-> > > 
-> > > Docs?
-> > 
-> > That is a good idea.
-> > 
-> > > The label in particular worries me a little as I'm not sure what
-> > > is in it.
-> > 
-> > I envisioned a pass through of the tag.
-> > 
-> > >
-> > > If it's the tag one possible format is a uuid (not a coincidence
-> > > that it is the same length) and interpreting that as characters isn't
-> > > going to get us far.  I wonder if we have to treat it as a binary attr
-> > > given we have no idea what it is.
-> > 
-> > In thinking about this more (and running some experiments): none of these are
-> > strictly necessary in this initial implementation.  No code currently uses
-> > them directly.
-> > 
-> > I questioned these in the past and I've done so again over the weekend.
-> > 
-> > I was about to rip them out entirely when I remembered Gregory Price's
-> > comments on Discord.  There he indicating a desire to very carefully place
-> > dax devices.  Without at least the offset and length above (and to a
-> > lesser extent the label) this can't be done.
+On 03-May-24 5:21 AM, Sean Christopherson wrote:
+> On Tue, Apr 16, 2024, Ravi Bangoria wrote:
+>> Currently, LBR Virtualization is dynamically enabled and disabled for
+>> a vcpu by intercepting writes to MSR_IA32_DEBUGCTLMSR. This helps by
+>> avoiding unnecessary save/restore of LBR MSRs when nobody is using it
+>> in the guest. However, SEV-ES guest mandates LBR Virtualization to be
+>> _always_ ON[1] and thus this dynamic toggling doesn't work for SEV-ES
+>> guest, in fact it results into fatal error:
+>>
+>> SEV-ES guest on Zen3, kvm-amd.ko loaded with lbrv=1
+>>
+>>   [guest ~]# wrmsr 0x1d9 0x4
+>>   KVM: entry failed, hardware error 0xffffffff
+>>   EAX=00000004 EBX=00000000 ECX=000001d9 EDX=00000000
+>>   ...
+>>
+>> Fix this by never intercepting MSR_IA32_DEBUGCTLMSR for SEV-ES guests.
 > 
-> Careful placement of dax-devices physically requires an entirely new
-> allocation ABI. There is the mapping_store() interface that was added
-> for a specific kexec / VMM fast restore use case, but that never
-> envisioned the sparse region case. So I do think it is worthwhile to
-> punt on that question to a later add-on feature.
-
-Agreed.
-
->  
-> [..]
-> > I don't think this is exactly what the user is going to expect.  This can
-> > be resolved by by looking at the dax device mappings though.[0]  So I'm going
-> > to leave this for now.  But I expect some additional porcelain is going to
-> > be required to fully meet Gregory's requirements.
+> Uh, what?  I mean, sure, it works, maybe, I dunno.  But there's a _massive_
+> disconnect between the first paragraph and this statement.
 > 
-> Not sure what the exact requirement is, but if it's the typical, "I want
-> to allocate by tag",
-
-I'm extrapolating that it will be.  I want to allocate on the first extent.
-Tags were removed from the series a while ago.
-
-> then I think there is another potential coarse
-> grained solution that probably covers most cases. Allow multiple
-> dax_regions per cxl_dcd_regions, where each dax_region manages an
-> exclusive set of tags.
-
-I'll have to think on that because don't dax regions map to specific dpas on
-creation?
-
+> Oh, good gravy, it "works" because SEV already forces LBR virtualization.
 > 
-> The host negotiates a dax_region tag layout with the orchestrator and
-> can then trust that all of the extents that show up in a given dax_region
-> belong to a given tag or set of tags.
+> 	svm->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
 > 
-> This is not something that needs to be considered in the initial
-> enabling, but is potentially a way to avoid bolting-on a new fine grained
-> allocation api after the fact.
-> 
+> (a) the changelog needs to call that out.
 
-The point is I'm not trying to bolt anything on.  Just trying to explain what
-can and can't be done.   The purpose of these entries was to give the user the
-ability to see what extents existed and by correlating the dax mappings could
-see where their dax mappings landed.  Careful allocation of dax devices could
-result in the use of some extents and not others.  But this was __not__ at all
-intended to be done initially.  Just use the space as it come available without
-any tag use at all.
+Sorry, I should have called that out explicitly.
 
-> 
-> > [0]
-> > 	/sys/bus/dax/devices/daxX.Y/mapping[0..N]/start
-> > 	/sys/bus/dax/devices/daxX.Y/mapping[0..N]/end
-> > 
-> > Back to the label field:  It is currently just the 'tag' of the individual
-> > extent (because no interleaving).  My vision for the interleave case would
-> > be for the kernel to assemble device extents into a region extent only if
-> > the tags match and export that.
-> > 
-> > Thinking on it more though we should leave label out for now.  This is the
-> > second time it has been questioned.
-> 
-> I don't understand the issue. That is a critical piece of information
-> and it is at the cxl device level
-> 
-> /sys/bus/cxl/devices/dax_regionX/extentY/label
-> 
-> ...now I would just call that "tag" and UUID format it (to Jonathan's
-> point), but I see no rationale to hide what is most likely the most
-> useful information about an extent.
+>  (b) KVM needs to disallow SEV-ES if
+> LBR virtualization is disabled by the admin, i.e. if lbrv=false.
 
-The rationale is that the user was not going to use it.  So no use case == no
-reason to have it...  yet.  I had code a while back to allocate dax devices on
-specific tags.  But that was deemed to different from the current dax
-allocation mechanism so it was scrapped...  for now.
+That's what I initially thought. But since KVM currently allows booting SEV-ES
+guests even when lbrv=0 (by silently ignoring lbrv value), erroring out would
+be a behavior change.
 
-I can add it back...  But I'm just getting a bit testy about who wants what and
-how this is all going to get used.
+> Alternatively, I would be a-ok simply deleting lbrv, e.g. to avoid yet more
+> printks about why SEV-ES couldn't be enabled.
+> 
+> Hmm, I'd probably be more than ok.  Because AMD (thankfully, blessedly) uses CPUID
+> bits for SVM features, the admin can disable LBRV via clear_cpuid (or whatever it's
+> called now).  And there are hardly any checks on the feature, so it's not like
+> having a boolean saves anything.  AMD is clearly committed to making sure LBRV
+> works, so the odds of KVM really getting much value out of a module param is low.
 
-Ira
+Currently, lbrv is not enabled by default with model specific -cpu profiles in
+qemu. So I guess this is not backward compatible?
+
+> And then when you delete lbrv, please add a WARN_ON_ONCE() sanity check in
+> sev_hardware_setup() (if SEV-ES is supported), because like the DECODEASSISTS
+> and FLUSHBYASID requirements, it's not super obvious that LBRV is a hard
+> requirement for SEV-ES (that's an understatment; I'm curious how some decided
+> that LBR virtualization is where the line go drawn for "yeah, _this_ is mandatory").
+
+I'm not sure. Some ES internal dependency.
+
+In any case, the patch simply fixes 'missed clearing MSR Interception' for
+SEV-ES guests. So, would it be okay to apply this patch as is and do lbrv
+cleanup as a followup series?
+
+PS: AMD Bus Lock Detect virtualization also dependents on LBR Virtualization:
+https://lore.kernel.org/r/20240429060643.211-4-ravi.bangoria@amd.com
+
+Thanks for the review,
+Ravi
 
