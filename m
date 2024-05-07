@@ -1,150 +1,118 @@
-Return-Path: <linux-kernel+bounces-171897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1338BEA1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:10:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F7B8BEA2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B361F22AFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:10:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFA51C21FB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905E68F72;
-	Tue,  7 May 2024 17:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066D315ECC6;
+	Tue,  7 May 2024 17:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="pagzj0ZW"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcY/b8Dy"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A767013D63B
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F7453E28;
+	Tue,  7 May 2024 17:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715101787; cv=none; b=IVI2sg734iFDMQyNuOpSwd874/09npxkEO0DusOMRwHRbczUmbz95rEjy9sdV+rzq1dHNKyjp6+EvtjqBOtirz/oWJHX7KVSFXe5mSduZcI84jMfe+DuqkH0ASA9+nNiH8roiN7TKNISGWEWrFdjHX2sGbkF1mOxLbmUl8syboI=
+	t=1715102024; cv=none; b=kpKAlnRMZkZSdtwQaNWTGY2+S5EVXKBlRrk6mNAJgeF/YVHyYwBQmE+7f+rsqUfat1RGWRw9tvWIWGlEGL8pW2T3EOVI4s2WMatrI8yRtDjvKNYrg0W0FwUGK0SJQmH01cBQS5i/DuLapnWOfUHzAqak6L94nye6kSgNjnLQ59M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715101787; c=relaxed/simple;
-	bh=cxBnI0V+A77Y2HA8nkpU/SoRJL2gunBwBElfZQaz99I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ubSjvejtE+nulRsd4K+d6+8uiPgZir7XNPNLWc/VjiPgnpfpHM8DgFgY96Tn1Gj4LeLVewfp0YH5+zh2pnsQMIGMPeRGaPkcm2lGLOWYYM5Nz5uanu41lZXjaJyI+6+THhtZ9h3o6WOnd80d6jPZbf07Bmcpb+KZ78e4vAWkz8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pagzj0ZW; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc647f65573so7814243276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:09:45 -0700 (PDT)
+	s=arc-20240116; t=1715102024; c=relaxed/simple;
+	bh=zccQnclxIldZ+IxR9G6WltGhLfvpZ5MaRvCWBfvHgtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sxcDOkLtNPSc9H2EGTtNpbkAfD/FS9L/7md2hGpkr/SPRWvEMOwHlQAgxTQmBmI6Y+fHOMJuDBk0luLkm8b0T5xtBV44+GNBMvijJ31GWEaG2x4Pvu4XZ+V+dWV/WNv4LFwaSWPAI60zmUYMT4RMGtqBkAJW1VIPuU+fSVdYPbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcY/b8Dy; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-61bec6bab2bso36552757b3.1;
+        Tue, 07 May 2024 10:13:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715101784; x=1715706584; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3SG1rzAoM8uY88FvswpqM+Szlp+5zBUjcIa4szFSpCo=;
-        b=pagzj0ZWIQI35Q1jNM+r1mYS3nNi5E6xMZ2DyE8W/8dVInUTw0hb94Jdha/RBuy0XS
-         ALFB6JY512bJhu3niKs3cV+zt3vFwLJAZ2AndtdQnZRjfM48/rZQT09a1mh9hnOGDgkv
-         XSDeiCtVDoo3xESa3ZdclrkD4qvqJ9XSC3m3og0Wzw8I0eFXw7zqc1DELgxo91hKu+WA
-         WpqZoJlb5bWW1GnrxneiP5uvrG8HrtNDeE0c7wTUF/wssCGrne/ddLjhimLdjdiEHdmw
-         wfe4NyMpbPpAD8IUsfan7Ip6H56hskNiMHvbDhOh7Fe4ExiEPc7tB32atqE6DJs+AhK+
-         wy6Q==
+        d=gmail.com; s=20230601; t=1715102022; x=1715706822; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EYum/RRI+2OZh34IaDs9A+wweg7qNiOwsJ++IUalaZs=;
+        b=RcY/b8DyooeVQbJsCyVPE3lQb+HGjAAiAhDzmR63Ap9GR9nCB9Pn9sKmW3BCTuooUV
+         aM5qcTLtX1JzLFijLXnxcKMFbFhNLDjXQ+sx40j+BiTXkwyldKzQLsgj77jFa73w6q4p
+         NHhBVGsFHOf/DYUdZTMY8bu8gz4QGEVWYVJOAxygDm2Qc50XDjZpQNiD1Ayh74kAwcEZ
+         WhfP/MKqO/loXjGjQ0ERae7kCxQak6v4SDld1krI1PX7c6WWVzqNu3BFZ41r5/d4aiw1
+         3kecQIaBVJIuQ5fEp6Z1wTAt6bhn7af+rxNfhXy+c7dGGddAGKljGHTIZJSKpdZuxs31
+         wybw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715101784; x=1715706584;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3SG1rzAoM8uY88FvswpqM+Szlp+5zBUjcIa4szFSpCo=;
-        b=N4XyyIleoeiO5yH6bEGnVcBHQo/fz5SLVrQH6B3t9SwZmhfQRAD0mCEgi43BQn6lZB
-         y82LUiqMmLXjP4SM9ySaW0Pc/SRvJMSpuYWmB9f6Brpi9spEdskC1M9nazcIepcI3njJ
-         UEXwK1RTD8HbGO6XAYlNyKPI/i/hT1NY+ZXgqyoKR6JMO+3B9WP32WPFna6NQiYb8rhI
-         HdUg2MEaDVSi0P7sNgdX3I1q9ufSH+cok64oXNUz/hTTPj6ZaOzT4z4Eunu+lPPk8qnN
-         dTpHj6OCDSey54RVMrRsojdklhoZ4bNVhHGqTUqrQlukZgA2vieNcukSnDbFYJPo6ZyD
-         TmzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ+QVVO3lHLhO8HWBCgLvsnrAFus+75E68XVp1lzAQpmWTDMMq8Fx/NkNYYCQn/HwSqwpFe8J1yvRSpf6YqUlxOCR8oj6dg2vGUMrr
-X-Gm-Message-State: AOJu0YznnkbdckKe0+yTaVCXS6zvHXICNcbe6rkHttgyUY9WQHAs8ZSl
-	DvBdp52loKuw2S67kZcg2jbHtY8zNHKzgI4Bqt2neHbkopheskAFgy4ZgOlh2T95ubloghtra7C
-	GzA==
-X-Google-Smtp-Source: AGHT+IHae491wrusprky728M5llnp1S0vUofuj0e6wCJ8itraYOwy9j7fA4JfRi45Q/XtiuCFnR0clXdXnY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:dc82:0:b0:deb:8bc4:e27f with SMTP id
- 3f1490d57ef6-debb9db1ffdmr56200276.6.1715101784626; Tue, 07 May 2024 10:09:44
- -0700 (PDT)
-Date: Tue, 7 May 2024 10:09:43 -0700
-In-Reply-To: <20240507114814.GBZjoU_u5kYBhLips3@fat_crate.local>
+        d=1e100.net; s=20230601; t=1715102022; x=1715706822;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EYum/RRI+2OZh34IaDs9A+wweg7qNiOwsJ++IUalaZs=;
+        b=MnY1bWNSlzhuUqfNVm1+MAZQrP5QGUJwFQm6jGOwwX3fGOEsVdzeU/RkApXvmoFSXk
+         XCtvYFTENitW2sbwmqLpXt8ayhNUGcWA+pgksg7lckJOYl7Dw6eIJiksOL1eYFPSKVGA
+         ENgtFIbUriZwLi/8IflF7H7vdQUf04iVkp43bUYTQfu+ctx2F3KiNfIxkqBgjkxAAar7
+         vkOaA/BY2p96B9mLhCSMftHd31ABvU/aYAqmsXDICM6tqSoQ4ZC//rQW4l8u9vyH2hTY
+         JzqvFtLt/TCqI9hgWXlldoN3ZQ6grRH52n0UlZO1LAZbnRAVV3z2AS92f1McB4Y+oIzD
+         /L6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXNI/R+aeS9dxilCIHvVHpbufm1WYK6tkPpn3uCrPLvTIGUcPaVC9EtKUHhjAJjmeFg/MMisxV4XSRlCxFOlEvFy+cAKPmsFannYunw
+X-Gm-Message-State: AOJu0YwvT0zC97IW1twXVBP7wkJLYtcPrC7D7hB1IBgpj0PRVwon2FmF
+	IYtDLVi0dRtzVU48yp3hle+Dufhy/HxVDH18rWqPW60f7zdjPaAGwXXw4uMVyWG6/KIcrHwGg6C
+	fTWNW04cOu3wN79NlX5NXf0kK+b8=
+X-Google-Smtp-Source: AGHT+IEtaUXVcDdFFPrSZfNzsTmU796n7ghfMyjhUtMghx8kl6qZabBPVyKTNI4/IqH+SGyg0CFCtF4iR3B+DBpgkkU=
+X-Received: by 2002:a81:4c0d:0:b0:618:5e8c:c66f with SMTP id
+ 00721157ae682-62085d1b43dmr4533657b3.7.1715102021955; Tue, 07 May 2024
+ 10:13:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ZjE7DkTBSbPlBN8k@google.com> <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
- <ZjFLpkgI3Zl4dsXs@google.com> <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
- <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local> <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
- <Zjj3Lrv2NNHLEzzk@google.com> <20240506155759.GOZjj-B_Qrz4DCXwmb@fat_crate.local>
- <ZjnTW4XQwVHEiSaW@xsang-OptiPlex-9020> <20240507114814.GBZjoU_u5kYBhLips3@fat_crate.local>
-Message-ID: <ZjpgV-_bjOQh1SL3@google.com>
-Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a: WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Srikanth Aithal <sraithal@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240506193700.7884-1-apais@linux.microsoft.com> <171510137055.3977159.13112533071742599257.b4-ty@chromium.org>
+In-Reply-To: <171510137055.3977159.13112533071742599257.b4-ty@chromium.org>
+From: Allen <allen.lkml@gmail.com>
+Date: Tue, 7 May 2024 10:13:30 -0700
+Message-ID: <CAOMdWS+u5gBpkJyryge5mWt-eX6+OmkiSkS5zc-VZ=_uJQszLw@mail.gmail.com>
+Subject: Re: [PATCH v4] fs/coredump: Enable dynamic configuration of max file
+ note size
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-fsdevel@vger.kernel.org, Allen Pais <apais@linux.microsoft.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, ebiederm@xmission.com, mcgrof@kernel.org, 
+	j.granados@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 07, 2024, Borislav Petkov wrote:
-> From: Borislav Petkov <bp@alien8.de>
-> To: Oliver Sang <oliver.sang@intel.com>
-> Cc: Sean Christopherson <seanjc@google.com>, oe-lkp@lists.linux.dev,
-> 	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
-> 	Ingo Molnar <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>
-> Bcc: bp@alien8.de
-> Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
->  WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
-> Reply-To: 
-> In-Reply-To: <ZjnTW4XQwVHEiSaW@xsang-OptiPlex-9020>
-> 
-> On Tue, May 07, 2024 at 03:08:11PM +0800, Oliver Sang wrote:
-> > I applied the debug pach ontop of lastest Linus master:
-> > 
-> > 1621a826233a7 debug patch from Boris for ee8962082a
-> > dccb07f2914cd (HEAD, linus/master) Merge tag 'for-6.9-rc7-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
-> > 
-> > attached dmesg and cpuinfo (a little diff, so I attached it again)
-> 
-> Thanks, now what are we seeing here:
-> 
-> [    0.763720][    T0] x86/cpu: init_ia32_feat_ctl: CPU0: FEAT_CTL: 0x5, tboot: 0
-
-..
-
-> FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX, bit 2 is set. So that conditional is
-> not true either. And the pr_err_once() doesn't appear in dmesg.
-> 
-> BUT(!), look what the original dmesg said:
-> 
-> [    0.055225][    T0] x86/cpu: VMX (outside TXT) disabled by BIOS
-> 
-> So that FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX bit was not set back then. Why?
-> 
-> Oliver, have you done any BIOS config changes in the meantime?
-> 
-> This all looks really weird.
-> 
-> The other possibility would be if something changed between -rc3
-> (the branch x86/alternatives is based on) and -rc7. Unlikely but by now
-> everything's possible.
+> On Mon, 06 May 2024 19:37:00 +0000, Allen Pais wrote:
+> > Introduce the capability to dynamically configure the maximum file
+> > note size for ELF core dumps via sysctl.
+> >
+> > Why is this being done?
+> > We have observed that during a crash when there are more than 65k mmaps
+> > in memory, the existing fixed limit on the size of the ELF notes section
+> > becomes a bottleneck. The notes section quickly reaches its capacity,
+> > leading to incomplete memory segment information in the resulting coredump.
+> > This truncation compromises the utility of the coredumps, as crucial
+> > information about the memory state at the time of the crash might be
+> > omitted.
+> >
+> > [...]
 >
-> What could also be the case is, the BSP's FEAT_CTL is 0x0 (unconfigured,
-> whatever), we'd go in, set FEAT_CTL_LOCKED and that'll lock the bit in
-> all FEAT_CTLs on all cores, then it'll set
-> FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX.o
+> I adjusted file names, but put it in -next. I had given some confusing
+> feedback on v3, but I didn't realize until later; apologies for that! The
+> end result is the sysctl is named kernel.core_file_note_size_limit and
+> the internal const min/max variables have the _min and _max suffixes.
+>
+> Applied to for-next/execve, thanks!
+>
+> [1/1] fs/coredump: Enable dynamic configuration of max file note size
+>       https://git.kernel.org/kees/c/81e238b1299e
+>
 
-I would say it's beyond unlikely that a kernel change is responsible.  In both
-traces, FEAT_CTL.LOCKED is '1' before init_ia32_feat_ctl() runs, i.e. the MSR was
-already locked by BIOS.  And that is by far the most common scenario, it's all
-but unheard of for BIOS to leave FEAT_CTL unlocked.
+ I should have put some thought into the feedback.
+Thank you for reviewing and fixing the patch.
 
-For giggles, I hacked QEMU to simulate FEAT_CTL being (a) unlocked by BIOS and
-(b) locked with VMX disabled.  For both (a) and (b), an -rc3 based kernel behaves
-as expected, i.e. configures the MSR correctly for (a), and complains once on the
-BSP about VMX being disabled for (b).  Neither case triggers the WARN_ON()
-alternatives being applied.
 
-Oliver, are you able to reproduce the WARN using the "original" kernel?  If not,
-then I don't think it's more time looking at this from a kernel perspective, as
-it's more or less guaranteed to be some sort of environmental issue.
+-- 
+       - Allen
 
