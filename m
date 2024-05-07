@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-170693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B0C8BDAAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D40E8BDAAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 403672853B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E498286A05
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079A56CDA1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92FE6D1CC;
 	Tue,  7 May 2024 05:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYdaz3zv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFouRxV1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075586BB5C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1766CDA0
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715059816; cv=none; b=DGExgpTzdA/j4aEk0RdE0wD7IEX+acsfiUlc55hr9SuuifzR0BL956zrbDvL1xjg/Uta0Iji14dHPqbT87YF0aWu1fVOLhkNRjM1Blj2Uuewx8TeGvDKrAVQ5rYDU8vr2nKpN6Qa0yyJTjd8pWdApheFH1SGW+aF4HW3LrulXXs=
+	t=1715059817; cv=none; b=gPa2nD1gfMwK71wSRSTWwNC5qATImsWplOSREeEAooYiw1uK74KBOCmD1wqO+NKiDPiDI6sRfLDrzToiiCEpKXTsVpQjDZ6HQYSIkjGwEHdKf8Vv0HlgvP8wYQX/tLNnaj+oFdaZs39aaj/HZ2oPxZj6hi0KydaLKaCarq2E8CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715059816; c=relaxed/simple;
-	bh=dhxD0BQmqAI706CsxHyKFe5uwn+sRIafwU06Kh0NXw4=;
+	s=arc-20240116; t=1715059817; c=relaxed/simple;
+	bh=2XWzJuggqdkJpIwIhJYrHAlr+6tDiUNf1CJRhn6Hg/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WigpqKOCU5u6P4nEkQ7ITXhXs+8yUYckv4ziUYGIXzmW+Pf+yOPA7NusFvHcdbuPmOuewmThfeXZKUXyD/K3597SGS2VUj38qOkpeJBZA1J7l6Obj/2FTjLofGrngl96VsjkAqXil18jjSPgQgRAFqr/GvECdoBWu/XvFHRwAMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYdaz3zv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC77BC4AF68;
-	Tue,  7 May 2024 05:30:14 +0000 (UTC)
+	 MIME-Version; b=o1cMzt0XW8LHK50+9KNdPvwD3gqxhuk4R/OyRedSbZIdO5oCNCCcU+4VvBWGiWmdI4OOtawD6ZDNMfobViOLkPeEZS+JeP/WAJA45124WW0sgaMV2T31rAg4SsPM0FWKuvziU/GMC9t6eMgGfQH05IFOuc4B36DjK3LCXPMgY2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LFouRxV1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82CAC2BBFC;
+	Tue,  7 May 2024 05:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715059815;
-	bh=dhxD0BQmqAI706CsxHyKFe5uwn+sRIafwU06Kh0NXw4=;
+	s=k20201202; t=1715059816;
+	bh=2XWzJuggqdkJpIwIhJYrHAlr+6tDiUNf1CJRhn6Hg/U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lYdaz3zvz+6R1+VsKAteD6VEepUrjlOJILbgrPdVhObtoC6LSIDnDPV1zVX+y6OvE
-	 JhIjYkWK8YLZkklgMJfm1ZCk4tMWRSszyV1d+q4rBvy4XBiEg/xjCwW7936d7YBkcj
-	 YRC7Rm7lVes5u6nT0LkBqD4byG/h7SUtMp/QeBdHDofNaHd3xGGW0DdfpY9TDS4W+t
-	 x2Ven+V/E7MbEZCltiGW1cBWhgtnipcx3EaVpjVQ5zVke4hEB/lsJVBQ3hMxZuB4wK
-	 4D5g8oWyvL4qoB6RFPxpaz7THX7yFht2CyGmZe4yUpDm5ifxPt2mhOfsDGeXGWnD4C
-	 nR7uwNNjy+Viw==
+	b=LFouRxV1SP6C7lHXFAJ9qwPjuT7MqVhEDOAQ0cuKyPEw9Javd0m9EITQ9LX2ortYv
+	 PClEWv3ZlKxVuwuZMcqwnlzl7Kjx2jXwh+02ts3T/ezfPJkupQdd/Hgj7Ca0w34Xws
+	 fJJb0GBdlYgkYMtcFk0h98yPcZxGirDXUVd+RvgV4r2ZHCMEHREiwr+CVpvmRKtwS1
+	 8wCbnaQJb8HyQgivbQ2neRcRhFy2OcCgtB22P7cEnGk8+AUIIl0gBrIh+Np+0eqPy6
+	 e+QNSTzvsuADcOhTcGi0zoBBP+sSLD/6XAFLVlSTwnbcTMw8RF1E4xKulqu77FkT1K
+	 m69kB/pspqq4A==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -58,11 +58,10 @@ Cc: linux-kernel@vger.kernel.org,
 	KP Singh <kpsingh@kernel.org>,
 	Waiman Long <longman@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v5 1/3] x86/syscall: Mark exit[_group] syscall handlers __noreturn
-Date: Mon,  6 May 2024 22:30:04 -0700
-Message-ID: <9ad251f6258adde596fb1f4d6826309b9f239ed3.1715059256.git.jpoimboe@kernel.org>
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH v5 2/3] x86/bugs: Remove duplicate Spectre cmdline option descriptions
+Date: Mon,  6 May 2024 22:30:05 -0700
+Message-ID: <cdfe36cf9c8b6cd98eb0f32b798d5af1af95cb2c.1715059256.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1715059256.git.jpoimboe@kernel.org>
 References: <cover.1715059256.git.jpoimboe@kernel.org>
@@ -74,302 +73,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The direct-call syscall dispatch function doesn't know that the exit()
-and exit_group() syscall handlers don't return, so the call sites aren't
-optimized accordingly.
+Duplicating the documentation of all the Spectre kernel cmdline options
+in two separate files is unwieldy and error-prone.  Instead just add a
+reference to kernel-parameters.txt from spectre.rst.
 
-Fix that by marking those exit syscall declarations __noreturn.
-
-Fixes the following warnings:
-
-  vmlinux.o: warning: objtool: x64_sys_call+0x2804: __x64_sys_exit() is missing a __noreturn annotation
-  vmlinux.o: warning: objtool: ia32_sys_call+0x29b6: __ia32_sys_exit_group() is missing a __noreturn annotation
-
-Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Closes: https://lkml.kernel.org/lkml/6dba9b32-db2c-4e6d-9500-7a08852f17a3@paulmck-laptop
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/entry/syscall_32.c            | 10 ++++++----
- arch/x86/entry/syscall_64.c            |  9 ++++++---
- arch/x86/entry/syscall_x32.c           |  7 +++++--
- arch/x86/entry/syscalls/syscall_32.tbl |  6 +++---
- arch/x86/entry/syscalls/syscall_64.tbl |  6 +++---
- arch/x86/um/sys_call_table_32.c        | 10 ++++++----
- arch/x86/um/sys_call_table_64.c        | 11 +++++++----
- scripts/syscalltbl.sh                  | 18 ++++++++++++++++--
- tools/objtool/noreturns.h              |  4 ++++
- 9 files changed, 56 insertions(+), 25 deletions(-)
+ Documentation/admin-guide/hw-vuln/spectre.rst | 84 ++-----------------
+ 1 file changed, 9 insertions(+), 75 deletions(-)
 
-diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
-index c2235bae17ef..8cc9950d7104 100644
---- a/arch/x86/entry/syscall_32.c
-+++ b/arch/x86/entry/syscall_32.c
-@@ -14,9 +14,12 @@
- #endif
+diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
+index 25a04cda4c2c..f9797ab6b38f 100644
+--- a/Documentation/admin-guide/hw-vuln/spectre.rst
++++ b/Documentation/admin-guide/hw-vuln/spectre.rst
+@@ -592,85 +592,19 @@ Spectre variant 2
+ Mitigation control on the kernel command line
+ ---------------------------------------------
  
- #define __SYSCALL(nr, sym) extern long __ia32_##sym(const struct pt_regs *);
--
-+#define __SYSCALL_NORETURN(nr, sym) extern long __noreturn __ia32_##sym(const struct pt_regs *);
- #include <asm/syscalls_32.h>
--#undef __SYSCALL
-+#undef  __SYSCALL
+-Spectre variant 2 mitigation can be disabled or force enabled at the
+-kernel command line.
++In general the kernel selects reasonable default mitigations for the
++current CPU.
 +
-+#undef  __SYSCALL_NORETURN
-+#define __SYSCALL_NORETURN __SYSCALL
++Spectre default mitigations can be disabled or changed at the kernel
++command line with the following options:
  
- /*
-  * The sys_call_table[] is no longer used for system calls, but
-@@ -28,11 +31,10 @@
- const sys_call_ptr_t sys_call_table[] = {
- #include <asm/syscalls_32.h>
- };
--#undef __SYSCALL
-+#undef  __SYSCALL
- #endif
- 
- #define __SYSCALL(nr, sym) case nr: return __ia32_##sym(regs);
+ 	nospectre_v1
 -
- long ia32_sys_call(const struct pt_regs *regs, unsigned int nr)
- {
- 	switch (nr) {
-diff --git a/arch/x86/entry/syscall_64.c b/arch/x86/entry/syscall_64.c
-index 33b3f09e6f15..ba8354424860 100644
---- a/arch/x86/entry/syscall_64.c
-+++ b/arch/x86/entry/syscall_64.c
-@@ -8,8 +8,12 @@
- #include <asm/syscall.h>
- 
- #define __SYSCALL(nr, sym) extern long __x64_##sym(const struct pt_regs *);
-+#define __SYSCALL_NORETURN(nr, sym) extern long __noreturn __x64_##sym(const struct pt_regs *);
- #include <asm/syscalls_64.h>
--#undef __SYSCALL
-+#undef  __SYSCALL
-+
-+#undef  __SYSCALL_NORETURN
-+#define __SYSCALL_NORETURN __SYSCALL
- 
- /*
-  * The sys_call_table[] is no longer used for system calls, but
-@@ -20,10 +24,9 @@
- const sys_call_ptr_t sys_call_table[] = {
- #include <asm/syscalls_64.h>
- };
--#undef __SYSCALL
-+#undef  __SYSCALL
- 
- #define __SYSCALL(nr, sym) case nr: return __x64_##sym(regs);
+-		[X86,PPC] Disable mitigations for Spectre Variant 1
+-		(bounds check bypass). With this option data leaks are
+-		possible in the system.
 -
- long x64_sys_call(const struct pt_regs *regs, unsigned int nr)
- {
- 	switch (nr) {
-diff --git a/arch/x86/entry/syscall_x32.c b/arch/x86/entry/syscall_x32.c
-index 03de4a932131..fb77908f44f3 100644
---- a/arch/x86/entry/syscall_x32.c
-+++ b/arch/x86/entry/syscall_x32.c
-@@ -8,11 +8,14 @@
- #include <asm/syscall.h>
+ 	nospectre_v2
++	spectre_v2={option}
++	spectre_v2_user={option}
++	spectre_bhi={option}
  
- #define __SYSCALL(nr, sym) extern long __x64_##sym(const struct pt_regs *);
-+#define __SYSCALL_NORETURN(nr, sym) extern long __noreturn __x64_##sym(const struct pt_regs *);
- #include <asm/syscalls_x32.h>
--#undef __SYSCALL
-+#undef  __SYSCALL
-+
-+#undef  __SYSCALL_NORETURN
-+#define __SYSCALL_NORETURN __SYSCALL
- 
- #define __SYSCALL(nr, sym) case nr: return __x64_##sym(regs);
+-		[X86] Disable all mitigations for the Spectre variant 2
+-		(indirect branch prediction) vulnerability. System may
+-		allow data leaks with this option, which is equivalent
+-		to spectre_v2=off.
 -
- long x32_sys_call(const struct pt_regs *regs, unsigned int nr)
- {
- 	switch (nr) {
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 5f8591ce7f25..9e9a908cd50d 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -2,7 +2,7 @@
- # 32-bit system call numbers and entry vectors
- #
- # The format is:
--# <number> <abi> <name> <entry point> <compat entry point>
-+# <number> <abi> <name> <entry point> [<compat entry point> [noreturn]]
- #
- # The __ia32_sys and __ia32_compat_sys stubs are created on-the-fly for
- # sys_*() system calls and compat_sys_*() compat system calls if
-@@ -12,7 +12,7 @@
- # The abi is always "i386" for this file.
- #
- 0	i386	restart_syscall		sys_restart_syscall
--1	i386	exit			sys_exit
-+1	i386	exit			sys_exit			-			noreturn
- 2	i386	fork			sys_fork
- 3	i386	read			sys_read
- 4	i386	write			sys_write
-@@ -263,7 +263,7 @@
- 249	i386	io_cancel		sys_io_cancel
- 250	i386	fadvise64		sys_ia32_fadvise64
- # 251 is available for reuse (was briefly sys_set_zone_reclaim)
--252	i386	exit_group		sys_exit_group
-+252	i386	exit_group		sys_exit_group			-			noreturn
- 253	i386	lookup_dcookie
- 254	i386	epoll_create		sys_epoll_create
- 255	i386	epoll_ctl		sys_epoll_ctl
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 7e8d46f4147f..5ea7387c1aa1 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -2,7 +2,7 @@
- # 64-bit system call numbers and entry vectors
- #
- # The format is:
--# <number> <abi> <name> <entry point>
-+# <number> <abi> <name> <entry point> [<compat entry point> [noreturn]]
- #
- # The __x64_sys_*() stubs are created on-the-fly for sys_*() system calls
- #
-@@ -68,7 +68,7 @@
- 57	common	fork			sys_fork
- 58	common	vfork			sys_vfork
- 59	64	execve			sys_execve
--60	common	exit			sys_exit
-+60	common	exit			sys_exit			-			noreturn
- 61	common	wait4			sys_wait4
- 62	common	kill			sys_kill
- 63	common	uname			sys_newuname
-@@ -239,7 +239,7 @@
- 228	common	clock_gettime		sys_clock_gettime
- 229	common	clock_getres		sys_clock_getres
- 230	common	clock_nanosleep		sys_clock_nanosleep
--231	common	exit_group		sys_exit_group
-+231	common	exit_group		sys_exit_group			-			noreturn
- 232	common	epoll_wait		sys_epoll_wait
- 233	common	epoll_ctl		sys_epoll_ctl
- 234	common	tgkill			sys_tgkill
-diff --git a/arch/x86/um/sys_call_table_32.c b/arch/x86/um/sys_call_table_32.c
-index 89df5d89d664..51655133eee3 100644
---- a/arch/x86/um/sys_call_table_32.c
-+++ b/arch/x86/um/sys_call_table_32.c
-@@ -9,6 +9,10 @@
- #include <linux/cache.h>
- #include <asm/syscall.h>
- 
-+extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long,
-+				      unsigned long, unsigned long,
-+				      unsigned long, unsigned long);
-+
- /*
-  * Below you can see, in terms of #define's, the differences between the x86-64
-  * and the UML syscall table.
-@@ -22,15 +26,13 @@
- #define sys_vm86 sys_ni_syscall
- 
- #define __SYSCALL_WITH_COMPAT(nr, native, compat)	__SYSCALL(nr, native)
-+#define __SYSCALL_NORETURN __SYSCALL
- 
- #define __SYSCALL(nr, sym) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
- #include <asm/syscalls_32.h>
-+#undef  __SYSCALL
- 
--#undef __SYSCALL
- #define __SYSCALL(nr, sym) sym,
 -
--extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+-        spectre_v2=
 -
- const sys_call_ptr_t sys_call_table[] ____cacheline_aligned = {
- #include <asm/syscalls_32.h>
- };
-diff --git a/arch/x86/um/sys_call_table_64.c b/arch/x86/um/sys_call_table_64.c
-index b0b4cfd2308c..943d414f2109 100644
---- a/arch/x86/um/sys_call_table_64.c
-+++ b/arch/x86/um/sys_call_table_64.c
-@@ -9,6 +9,10 @@
- #include <linux/cache.h>
- #include <asm/syscall.h>
- 
-+extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long,
-+				      unsigned long, unsigned long,
-+				      unsigned long, unsigned long);
-+
- /*
-  * Below you can see, in terms of #define's, the differences between the x86-64
-  * and the UML syscall table.
-@@ -18,14 +22,13 @@
- #define sys_iopl sys_ni_syscall
- #define sys_ioperm sys_ni_syscall
- 
-+#define __SYSCALL_NORETURN __SYSCALL
-+
- #define __SYSCALL(nr, sym) extern asmlinkage long sym(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
- #include <asm/syscalls_64.h>
-+#undef  __SYSCALL
- 
--#undef __SYSCALL
- #define __SYSCALL(nr, sym) sym,
+-		[X86] Control mitigation of Spectre variant 2
+-		(indirect branch speculation) vulnerability.
+-		The default operation protects the kernel from
+-		user space attacks.
 -
--extern asmlinkage long sys_ni_syscall(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long);
+-		on
+-			unconditionally enable, implies
+-			spectre_v2_user=on
+-		off
+-			unconditionally disable, implies
+-		        spectre_v2_user=off
+-		auto
+-			kernel detects whether your CPU model is
+-		        vulnerable
 -
- const sys_call_ptr_t sys_call_table[] ____cacheline_aligned = {
- #include <asm/syscalls_64.h>
- };
-diff --git a/scripts/syscalltbl.sh b/scripts/syscalltbl.sh
-index 6abe143889ef..6a903b87a7c2 100755
---- a/scripts/syscalltbl.sh
-+++ b/scripts/syscalltbl.sh
-@@ -54,7 +54,7 @@ nxt=0
+-		Selecting 'on' will, and 'auto' may, choose a
+-		mitigation method at run time according to the
+-		CPU, the available microcode, the setting of the
+-		CONFIG_MITIGATION_RETPOLINE configuration option,
+-		and the compiler with which the kernel was built.
+-
+-		Selecting 'on' will also enable the mitigation
+-		against user space to user space task attacks.
+-
+-		Selecting 'off' will disable both the kernel and
+-		the user space protections.
+-
+-		Specific mitigations can also be selected manually:
+-
+-                retpoline               auto pick between generic,lfence
+-                retpoline,generic       Retpolines
+-                retpoline,lfence        LFENCE; indirect branch
+-                retpoline,amd           alias for retpoline,lfence
+-                eibrs                   Enhanced/Auto IBRS
+-                eibrs,retpoline         Enhanced/Auto IBRS + Retpolines
+-                eibrs,lfence            Enhanced/Auto IBRS + LFENCE
+-                ibrs                    use IBRS to protect kernel
+-
+-		Not specifying this option is equivalent to
+-		spectre_v2=auto.
+-
+-		In general the kernel by default selects
+-		reasonable mitigations for the current CPU. To
+-		disable Spectre variant 2 mitigations, boot with
+-		spectre_v2=off. Spectre variant 1 mitigations
+-		cannot be disabled.
+-
+-	spectre_bhi=
+-
+-		[X86] Control mitigation of Branch History Injection
+-		(BHI) vulnerability.  This setting affects the deployment
+-		of the HW BHI control and the SW BHB clearing sequence.
+-
+-		on
+-			(default) Enable the HW or SW mitigation as
+-			needed.
+-		off
+-			Disable the mitigation.
+-
+-For spectre_v2_user see Documentation/admin-guide/kernel-parameters.txt
++For more details on the available options, refer to Documentation/admin-guide/kernel-parameters.txt
  
- grep -E "^[0-9]+[[:space:]]+$abis" "$infile" | {
- 
--	while read nr abi name native compat ; do
-+	while read nr abi name native compat noreturn; do
- 
- 		if [ $nxt -gt $nr ]; then
- 			echo "error: $infile: syscall table is not sorted or duplicates the same syscall number" >&2
-@@ -66,7 +66,21 @@ grep -E "^[0-9]+[[:space:]]+$abis" "$infile" | {
- 			nxt=$((nxt + 1))
- 		done
- 
--		if [ -n "$compat" ]; then
-+		if [ "$compat" = "-" ]; then
-+			unset compat
-+		fi
-+
-+		if [ -n "$noreturn" ]; then
-+			if [ "$noreturn" != "noreturn" ]; then
-+				echo "error: $infile: invalid string \"$noreturn\" in 'noreturn' column"
-+				exit 1
-+			fi
-+			if [ -n "$compat" ]; then
-+				echo "__SYSCALL_COMPAT_NORETURN($nr, $native, $compat)"
-+			else
-+				echo "__SYSCALL_NORETURN($nr, $native)"
-+			fi
-+		elif [ -n "$compat" ]; then
- 			echo "__SYSCALL_WITH_COMPAT($nr, $native, $compat)"
- 		elif [ -n "$native" ]; then
- 			echo "__SYSCALL($nr, $native)"
-diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-index 7ebf29c91184..1e8141ef1b15 100644
---- a/tools/objtool/noreturns.h
-+++ b/tools/objtool/noreturns.h
-@@ -7,12 +7,16 @@
-  * Yes, this is unfortunate.  A better solution is in the works.
-  */
- NORETURN(__fortify_panic)
-+NORETURN(__ia32_sys_exit)
-+NORETURN(__ia32_sys_exit_group)
- NORETURN(__kunit_abort)
- NORETURN(__module_put_and_kthread_exit)
- NORETURN(__reiserfs_panic)
- NORETURN(__stack_chk_fail)
- NORETURN(__tdx_hypercall_failed)
- NORETURN(__ubsan_handle_builtin_unreachable)
-+NORETURN(__x64_sys_exit)
-+NORETURN(__x64_sys_exit_group)
- NORETURN(arch_cpu_idle_dead)
- NORETURN(bch2_trans_in_restart_error)
- NORETURN(bch2_trans_restart_error)
+ Mitigation selection guide
+ --------------------------
 -- 
 2.44.0
 
