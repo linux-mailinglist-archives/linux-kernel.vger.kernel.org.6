@@ -1,150 +1,151 @@
-Return-Path: <linux-kernel+bounces-171315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422C08BE287
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:52:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCC58BE28C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD2328C8C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562D928C81B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4D515E813;
-	Tue,  7 May 2024 12:51:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6826B15E5CC
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6781315CD70;
+	Tue,  7 May 2024 12:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGPbKqa1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976D315B12B;
+	Tue,  7 May 2024 12:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715086262; cv=none; b=jBAzLGJPjMmoS/sR51UDDn+O/u7iRv9dalT+w3QCeV4GUL/M9bmtNOVDgZY1f9WLnXtSnrXihXqd/dmfDoEhQuKeJBk1SX1o2QRqvOkeeOyn777dw5dVbx6lg6Lu71j52/YhdYNW/xFLpUqrlcrLVlyy01kzE1JOQdTjI2SsJFw=
+	t=1715086315; cv=none; b=EJ7vIS8n6pddTFFIJWMYOgskVHeR2ivq0ibgYbgx0KrvGhLgTaOn8t8lxm2l5PuAoOJfmEl2r1dZ0ZfFPvYdHZ+bBfkF0j6WQ9t14J5HfO6sibpC9rkx68ZXQV4zPHDpbbJINp4Yk1Cjt3UDt6Rsi+dn8xNONnWFEYKt57K6Di0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715086262; c=relaxed/simple;
-	bh=kCOFTh2w1NJO+h53GHlkLLXq/I3SCktxk8/Z5w+DA04=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i77hMn9ZR8OLmJ58b/sYVLzQLZ2lnngsJG69Lgt0e9gOcbZzYgaTFzOuCwtO3rpCEAoM8sSdaJ2tkfcd0ELfUNrhDPghX3TM/68Yui/2yyZhibTDSqOAiqsvqL7syLwZj/YhCexKDpftryfEC2nP0w8gXM4d7i2Xz1apFzcg1SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4AC31063;
-	Tue,  7 May 2024 05:51:26 -0700 (PDT)
-Received: from e130256.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1EF83F793;
-	Tue,  7 May 2024 05:50:58 -0700 (PDT)
-From: Hongyan Xia <hongyan.xia2@arm.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: Qais Yousef <qyousef@layalina.io>,
-	Morten Rasmussen <morten.rasmussen@arm.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	pierre.gondois@arm.com,
-	linux-kernel@vger.kernel.org,
-	Hongyan Xia <hongyan.xia2@arm.com>
-Subject: [RFC PATCH v3 6/6] Propagate negative bias
-Date: Tue,  7 May 2024 13:50:29 +0100
-Message-Id: <f60a29ac1af5098e0d37d426aec27db05d5d43e1.1715082714.git.hongyan.xia2@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1715082714.git.hongyan.xia2@arm.com>
-References: <cover.1715082714.git.hongyan.xia2@arm.com>
+	s=arc-20240116; t=1715086315; c=relaxed/simple;
+	bh=YkrG41OUg30UlrJKdM2bXKdavDQXZarnRBrRAJenv4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMYeNzV63szQv+ZoaQ9fzc6TdJMniSSdwgGVn75+TJoMphCrm+JRI0oYMN8Rm6n37tb+PRgvQLs9PzLAsR6vRs2aQOFXWdM3QKLEAUz5SjgY3J/fIwwD1hFcTLDAPoXu56Mt/COfjjAkkq6nPskdirzuYNsnUOJD+5SY4+yP6sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGPbKqa1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23982C2BBFC;
+	Tue,  7 May 2024 12:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715086315;
+	bh=YkrG41OUg30UlrJKdM2bXKdavDQXZarnRBrRAJenv4U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGPbKqa1QRN6Q8vFBcvwfLx5Wt0iXO2sD7KX/SqIxxdt7QCFRTz59ORppTJzP/E5E
+	 E+o5R2lTJKTnve0vuPp7cVVXZpzmLKXIOrZArK+Q6i6BeGTxTLNoaeobynnF1zW6pa
+	 pM1WTbYOysJHbgGRcD6z3H5idi+XFleUZu9ys5UFfGq503If2Ob2d2b7XpQsPM3a/a
+	 8q7Dj6g32Y+2DS+lXznIz4TvIhD3GdvEFdo5CyO1TwZs8vZxnqlpsymVbhUdvB7Lqk
+	 3fyNLOhyfENEckwYD0ia99Ne2XOAtcLZPo/G7tTHXEx474rUyeyQnlHsdZ7DosI1LZ
+	 LXSrzSxeS8jnw==
+Date: Tue, 7 May 2024 07:51:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH v2 03/11] dt-bindings: soc: mobileye: add EyeQ OLB system
+ controller
+Message-ID: <20240507125152.GA38845-robh@kernel.org>
+References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
+ <20240503-mbly-olb-v2-3-95ce5a1e18fe@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240503-mbly-olb-v2-3-95ce5a1e18fe@bootlin.com>
 
-Negative bias is interesting, because dequeuing such a task will
-actually increase utilization.
+On Fri, May 03, 2024 at 04:20:48PM +0200, Théo Lebrun wrote:
+> Add documentation to describe the "Other Logic Block" system-controller.
+> It deals with three platforms: EyeQ5, EyeQ6L and EyeQ6H. First two have
+> a single instance, whereas EyeQ6H has seven named instances.
+> 
+> Features provided are:
+>  - Clocks, children to main crystal. Some PLLs and divider clocks.
+>  - Resets. EyeQ6H central, south, DDR0 and DDR1 do not have resets.
+>  - Pinctrl. Only EyeQ5 has such feature.
+> 
+> Those are NOT the only registers exposed in OLB system-controllers! Many
+> individual registers, related to IP block integration, can be found.
+> 
+> We simplify devicetree references to OLB in two ways:
+>  - Compatibles exposing a single clock do not ask for a index argument.
+>  - Compatibles exposing a single reset domain do not ask for a domain
+>    index, only a reset index.
+> 
+> About pinctrl subnodes: all pins have two functionality, either GPIO or
+> something-else. The latter is pin dependent, we express constraints
+> using many if-then.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 375 +++++++++++++++++++++
+>  MAINTAINERS                                        |   2 +
+>  include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 ++
+>  3 files changed, 398 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+> new file mode 100644
+> index 000000000000..bbd75b81166e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+> @@ -0,0 +1,375 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mobileye EyeQ SoC system controller
+> +
+> +maintainers:
+> +  - Grégory Clement <gregory.clement@bootlin.com>
+> +  - Théo Lebrun <theo.lebrun@bootlin.com>
+> +  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+> +
+> +description:
+> +  OLB ("Other Logic Block") is a hardware block grouping smaller blocks. Clocks,
+> +  resets, pinctrl are being handled from here. EyeQ5 and EyeQ6L host a single
+> +  instance. EyeQ6H hosts seven instances.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mobileye,eyeq5-olb
+> +          - mobileye,eyeq6l-olb
+> +          - mobileye,eyeq6h-acc-olb
+> +          - mobileye,eyeq6h-central-olb
+> +          - mobileye,eyeq6h-east-olb
+> +          - mobileye,eyeq6h-west-olb
+> +          - mobileye,eyeq6h-south-olb
+> +          - mobileye,eyeq6h-ddr0-olb
+> +          - mobileye,eyeq6h-ddr1-olb
+> +      - const: syscon
+> +      - const: simple-mfd
 
-Solve by applying PELT decay to negative biases as well. This in fact
-can be implemented easily with some math tricks.
+You are getting rid of the child nodes, so you shouldn't need simple-mfd 
+any more.
 
-Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
----
- kernel/sched/fair.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0177d7e8f364..7259a61e9ae5 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4863,6 +4863,45 @@ static inline unsigned long task_util_est_uclamp(struct task_struct *p)
- {
- 	return max(task_util_uclamp(p), _task_util_est_uclamp(p));
- }
-+
-+/*
-+ * Negative biases are tricky. If we remove them right away then dequeuing a
-+ * uclamp_max task has the interesting effect that dequeuing results in a higher
-+ * rq utilization. Solve this by applying PELT decay to the bias itself.
-+ *
-+ * Keeping track of a PELT-decayed negative bias is extra overhead. However, we
-+ * observe this interesting math property, where y is the decay factor and p is
-+ * the number of periods elapsed:
-+ *
-+ *	util_new = util_old * y^p - neg_bias * y^p
-+ *		 = (util_old - neg_bias) * y^p
-+ *
-+ * Therefore, we simply subtract the negative bias from util_avg the moment we
-+ * dequeue, then the PELT signal itself is the total of util_avg and the decayed
-+ * negative bias, and we no longer need to track the decayed bias separately.
-+ */
-+static void propagate_negative_bias(struct task_struct *p)
-+{
-+	if (task_util_bias(p) < 0 && !task_on_rq_migrating(p)) {
-+		unsigned long neg_bias = -task_util_bias(p);
-+		struct sched_entity *se = &p->se;
-+		struct cfs_rq *cfs_rq;
-+
-+		p->se.avg.util_avg_bias = 0;
-+
-+		for_each_sched_entity(se) {
-+			u32 divider, neg_sum;
-+
-+			cfs_rq = cfs_rq_of(se);
-+			divider = get_pelt_divider(&cfs_rq->avg);
-+			neg_sum = neg_bias * divider;
-+			sub_positive(&se->avg.util_avg, neg_bias);
-+			sub_positive(&se->avg.util_sum, neg_sum);
-+			sub_positive(&cfs_rq->avg.util_avg, neg_bias);
-+			sub_positive(&cfs_rq->avg.util_sum, neg_sum);
-+		}
-+	}
-+}
- #else
- static inline long task_util_bias(struct task_struct *p)
- {
-@@ -4883,6 +4922,10 @@ static inline unsigned long task_util_est_uclamp(struct task_struct *p)
- {
- 	return task_util_est(p);
- }
-+
-+static void propagate_negative_bias(struct task_struct *p)
-+{
-+}
- #endif
- 
- static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
-@@ -6844,6 +6887,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	/* At this point se is NULL and we are at root level*/
- 	sub_nr_running(rq, 1);
- 	util_bias_dequeue(&rq->cfs.avg, p);
-+	propagate_negative_bias(p);
- 	/* XXX: We should skip the update above and only do it once here. */
- 	cpufreq_update_util(rq, 0);
- 
--- 
-2.34.1
-
+Rob
 
