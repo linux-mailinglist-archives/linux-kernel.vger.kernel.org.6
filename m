@@ -1,137 +1,250 @@
-Return-Path: <linux-kernel+bounces-171714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A5B8BE7AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:45:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18B88BE7A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 630E51C203A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:45:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F4D4B2171D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B7C165FDA;
-	Tue,  7 May 2024 15:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668EE168AEA;
+	Tue,  7 May 2024 15:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bkCuAjeY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4lOqjEN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D34316ABCE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9146015F30F;
+	Tue,  7 May 2024 15:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715096707; cv=none; b=jqghYRWQkxTELKyi/adroP7/MUXpdlIROuMqk7ZOayz3Vu/jKybAyKgLzpPdDts5WrdRtuKtWS9O8ua5FrIKlckDVlREVRl87JK67xO/63HZiKjyqDY9IUlTVMJl/eTa+X9I+9hSeNQ5uw9a+pDTmOfj9NXdZvMVJ1cewMrV2P0=
+	t=1715096695; cv=none; b=q+zmP32jd6SZZ5SWwqkQiatQTpi1S/461EiHsaFIl1BvJKHGjwBtcR00g8lIBehPMecR7/X1YSUjV1ZFKpt4pI0jHYBVcpdcOTrD4dW+PMIiXKte9CX6IXWP6zfZ7tl4ns7qzA+711Tsvpe6OLQs1Kj3WbQRW5Zlx6KRluMIhGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715096707; c=relaxed/simple;
-	bh=4HXBDWMcQ63we0cEK0lxOWQf5yGqFZt0BPuAapREAcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z9iPnECk6oeWKq+cpVUsFccLc1SNXPNja1Sr3bPil1ibfatov8Mu22ut5N3Wvm3rZ3i3qfNz1b33ki2OXoGPYwHnAJZyHDAkvmFRLc/zhoQERxs/lU9N+t795R3JuzVC6x/bRSOoSep6sv1WKOE8Lbtym6yMRIKtcudVrObDtRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bkCuAjeY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715096705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iRVZJpf95iM8a2spygqO8CfFJRsMsampTCJH+nL0n8M=;
-	b=bkCuAjeYN/Dh7iv2sY6HVDBGEOY9mjLb1CI7JEw86Gn1Ka1ac7nXNWMKeS3sgZf+ISiwlX
-	ecLLUBmAZSOq/g41iarvLfeb/FMzjRxSikv44aunpCoARf9kmMKoagRb4vzsXLrS8C6xoJ
-	RMTpHAp4KDgFf0hsXH3nXcSWEA9wPiM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-tkMVwKYXMVOVqBQaGEr4rw-1; Tue, 07 May 2024 11:45:01 -0400
-X-MC-Unique: tkMVwKYXMVOVqBQaGEr4rw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6B174101A553;
-	Tue,  7 May 2024 15:45:01 +0000 (UTC)
-Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 4A30BC159AE;
-	Tue,  7 May 2024 15:45:01 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>,
-	Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH 4/7] KVM: x86/mmu: Add Suppress VE bit to EPT shadow_mmio_mask/shadow_present_mask
-Date: Tue,  7 May 2024 11:44:56 -0400
-Message-ID: <20240507154459.3950778-5-pbonzini@redhat.com>
-In-Reply-To: <20240507154459.3950778-1-pbonzini@redhat.com>
-References: <20240507154459.3950778-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1715096695; c=relaxed/simple;
+	bh=yFzbHrUIErgI/K91OQv9I/OpYVQQJu7B8yxVKKO+SzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gifa4UlwrBUF5AbeyhTGERM/Txl2Mb61LXaxTO6El4NXqAbBcM1M09e6KPpT2rAuYAHtf8j5Ovf7pfhPPAFeqNARg9VoCEF/UD32OS/gDd0KjxDcvz32Ph4p9dnrt++7JiuX0eNq9qHrp5KJPDoNeaY5JE5j+RnmB1php9KB83E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4lOqjEN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BEA0C2BBFC;
+	Tue,  7 May 2024 15:44:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715096695;
+	bh=yFzbHrUIErgI/K91OQv9I/OpYVQQJu7B8yxVKKO+SzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P4lOqjENPtah9e5qgGQEp/wINkms6VgwKnJh9NPCBjGY+i/g/SrwKxIl9X0D4ZjPL
+	 qFJcLf5k1dq+jjf+7ASYn9kBNmp9/1j+kI6eaNsJNH983lp0jKo5ERRmH54k+UXWo0
+	 KYvc8ce2T1UNM7+ZoYOma7FhZdNNyT9PSFymDGR457iL6GhHqyJb0KoLSMJg4cXjSC
+	 i6x0ld8brNqNY6ledquErLyFDvzG2F6iQ3LQgbykcSvyTyP9q2n1HArF3xrd3tYNaq
+	 tES8Q9NVC0+kh/K2LTeaNnsK0QXQD4Ul6RRKI+w7tTgc29reP88Uih6isPu3ZMA0zt
+	 GV4nUy8grFExg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s4Mzx-0000000051g-16t0;
+	Tue, 07 May 2024 17:44:57 +0200
+Date: Tue, 7 May 2024 17:44:57 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+Message-ID: <ZjpMeVk_HiixZUEu@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-13-johan+linaro@kernel.org>
+ <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
 
-From: Isaku Yamahata <isaku.yamahata@intel.com>
+On Mon, May 06, 2024 at 10:09:50PM +0300, Andy Shevchenko wrote:
+> Mon, May 06, 2024 at 05:08:29PM +0200, Johan Hovold kirjoitti:
+> > From: Satya Priya <quic_c_skakit@quicinc.com>
+> > 
+> > Qualcomm Technologies, Inc. PM8008 is an I2C-controlled PMIC containing
+> > seven LDO regulators. Add a PM8008 regulator driver to support PMIC
+> > regulator management via the regulator framework.
+> > 
+> > Note that this driver, originally submitted by Satya Priya [1], has been
+> > reworked to match the new devicetree binding which no longer describes
+> > each regulator as a separate device.
 
-To make use of the same value of shadow_mmio_mask and shadow_present_mask
-for TDX and VMX, add Suppress-VE bit to shadow_mmio_mask and
-shadow_present_mask so that they can be common for both VMX and TDX.
+> > [1] https://lore.kernel.org/r/1655200111-18357-8-git-send-email-quic_c_skakit@quicinc.com
+> 
+> Make it Link: tag?
+> 
+> Link: URL [1]
 
-TDX will require shadow_mmio_mask and shadow_present_mask to include
-VMX_SUPPRESS_VE for shared GPA so that EPT violation is triggered for
-shared GPA.  For VMX, VMX_SUPPRESS_VE doesn't matter for MMIO because the
-spte value is defined so as to cause EPT misconfig.
+Sure.
 
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Message-Id: <97cc616b3563cd8277be91aaeb3e14bce23c3649.1705965635.git.isaku.yamahata@intel.com>
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/vmx.h | 1 +
- arch/x86/kvm/mmu/spte.c    | 6 ++++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+> > [ johan: rework probe to match new binding, amend commit message and
+> >          Kconfig entry]
+> 
+> Wouldn't be better on one line?
 
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index 4dba17363008..ac6da0a5f5e6 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -514,6 +514,7 @@ enum vmcs_field {
- #define VMX_EPT_IPAT_BIT    			(1ull << 6)
- #define VMX_EPT_ACCESS_BIT			(1ull << 8)
- #define VMX_EPT_DIRTY_BIT			(1ull << 9)
-+#define VMX_EPT_SUPPRESS_VE_BIT			(1ull << 63)
- #define VMX_EPT_RWX_MASK                        (VMX_EPT_READABLE_MASK |       \
- 						 VMX_EPT_WRITABLE_MASK |       \
- 						 VMX_EPT_EXECUTABLE_MASK)
-diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-index 768aaeddf5fa..0a0e83859c27 100644
---- a/arch/x86/kvm/mmu/spte.c
-+++ b/arch/x86/kvm/mmu/spte.c
-@@ -413,7 +413,9 @@ void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only)
- 	shadow_dirty_mask	= has_ad_bits ? VMX_EPT_DIRTY_BIT : 0ull;
- 	shadow_nx_mask		= 0ull;
- 	shadow_x_mask		= VMX_EPT_EXECUTABLE_MASK;
--	shadow_present_mask	= has_exec_only ? 0ull : VMX_EPT_READABLE_MASK;
-+	/* VMX_EPT_SUPPRESS_VE_BIT is needed for W or X violation. */
-+	shadow_present_mask	=
-+		(has_exec_only ? 0ull : VMX_EPT_READABLE_MASK) | VMX_EPT_SUPPRESS_VE_BIT;
- 	/*
- 	 * EPT overrides the host MTRRs, and so KVM must program the desired
- 	 * memtype directly into the SPTEs.  Note, this mask is just the mask
-@@ -430,7 +432,7 @@ void kvm_mmu_set_ept_masks(bool has_ad_bits, bool has_exec_only)
- 	 * of an EPT paging-structure entry is 110b (write/execute).
- 	 */
- 	kvm_mmu_set_mmio_spte_mask(VMX_EPT_MISCONFIG_WX_VALUE,
--				   VMX_EPT_RWX_MASK, 0);
-+				   VMX_EPT_RWX_MASK | VMX_EPT_SUPPRESS_VE_BIT, 0);
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_set_ept_masks);
- 
--- 
-2.43.0
+Now you're really nit picking. ;) I think I prefer to stay within 72
+columns.
 
+> + array_size.h
+> + bits.h
 
+Ok.
+
+> > +#include <linux/device.h>
+> 
+> > +#include <linux/kernel.h>
+> 
+> What is this header for?
+
+Probably the ones that are not explicitly included.
+
+> + math.h
+> 
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/regulator/driver.h>
+> 
+> + asm/byteorder.h
+
+Ok, thanks.
+
+> > +static int pm8008_regulator_get_voltage(struct regulator_dev *rdev)
+> > +{
+> > +	struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
+> > +	__le16 mV;
+> > +	int uV;
+> > +
+> > +	regmap_bulk_read(pm8008_reg->regmap,
+> > +			LDO_VSET_LB_REG(pm8008_reg->base), (void *)&mV, 2);
+> 
+> Why casting?
+
+I tried not change things in the v15 from Qualcomm that I based this
+on. I couldn't help cleaning up a few things in probe, which I was
+touching anyway, but I left it there.
+
+I'll drop the unnecessary cast.
+
+> > +	uV = le16_to_cpu(mV) * 1000;
+> > +	return (uV - pm8008_reg->rdesc.min_uV) / pm8008_reg->rdesc.uV_step;
+> > +}
+> > +
+> > +static inline int pm8008_write_voltage(struct pm8008_regulator *pm8008_reg,
+> > +							int mV)
+> > +{
+> > +	__le16 vset_raw;
+> > +
+> > +	vset_raw = cpu_to_le16(mV);
+> 
+> Can be joined to a single line.
+
+Sure.
+
+> > +	return regmap_bulk_write(pm8008_reg->regmap,
+> > +			LDO_VSET_LB_REG(pm8008_reg->base),
+> > +			(const void *)&vset_raw, sizeof(vset_raw));
+> 
+> Why casting?
+
+Same answer as above. Will drop.
+
+> > +}
+> 
+> ...
+> 
+> > +static int pm8008_regulator_set_voltage(struct regulator_dev *rdev,
+> > +					unsigned int selector)
+> > +{
+> > +	struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
+> > +	int rc, mV;
+> > +
+> > +	rc = regulator_list_voltage_linear_range(rdev, selector);
+> > +	if (rc < 0)
+> > +		return rc;
+> > +
+> > +	/* voltage control register is set with voltage in millivolts */
+> > +	mV = DIV_ROUND_UP(rc, 1000);
+> 
+> > +	rc = pm8008_write_voltage(pm8008_reg, mV);
+> > +	if (rc < 0)
+> > +		return rc;
+> > +
+> > +	return 0;
+> 
+> 	return pm8008_write_voltage(pm8008_reg, mV);
+
+Possibly, but I tend to prefer explicit error paths.
+
+> > +}
+> 
+> > +
+> > +	regmap = dev_get_regmap(dev->parent, "secondary");
+> > +	if (!regmap)
+> > +		return -EINVAL;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(reg_data); i++) {
+> > +		pm8008_reg = devm_kzalloc(dev, sizeof(*pm8008_reg), GFP_KERNEL);
+> > +		if (!pm8008_reg)
+> > +			return -ENOMEM;
+> > +
+> > +		pm8008_reg->regmap = regmap;
+> > +		pm8008_reg->base = reg_data[i].base;
+> > +
+> > +		/* get slew rate */
+> > +		rc = regmap_bulk_read(pm8008_reg->regmap,
+> > +				LDO_STEPPER_CTL_REG(pm8008_reg->base), &val, 1);
+> > +		if (rc < 0) {
+> > +			dev_err(dev, "failed to read step rate: %d\n", rc);
+> > +			return rc;
+> 
+> 			return dev_err_probe(...);
+
+Nah, regmap won't trigger a probe deferral.
+
+> > +static struct platform_driver pm8008_regulator_driver = {
+> > +	.driver	= {
+> > +		.name = "qcom-pm8008-regulator",
+> > +	},
+> > +	.probe = pm8008_regulator_probe,
+> > +};
+> 
+> > +
+> 
+> Unneeded blank line.
+
+I noticed that one too, but such things are up the author to decide.
+
+> > +module_platform_driver(pm8008_regulator_driver);
+> 
+> ...
+> 
+> > +MODULE_ALIAS("platform:qcom-pm8008-regulator");
+> 
+> Use ID table instead.
+
+No, the driver is not using an id-table for matching so the alias is
+needed for module auto-loading.
+
+Johan
 
