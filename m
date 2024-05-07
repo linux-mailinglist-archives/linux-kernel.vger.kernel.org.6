@@ -1,212 +1,111 @@
-Return-Path: <linux-kernel+bounces-171118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61B48BDFF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:42:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1B08BDFFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6E328A055
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C5F1F257AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5582A14F9C1;
-	Tue,  7 May 2024 10:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9781514EE;
+	Tue,  7 May 2024 10:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="E/o9YTuf"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="qVOqEXLr"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C664B14D430
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628EC14F118;
+	Tue,  7 May 2024 10:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715078530; cv=none; b=cqDtW70UHXzxnKH3iM3hIQxvVaW92W3qw+sf0UvsHDfyLtHSiST/2qPLkrj7euU0TV35aA6RsrZn0sGOQkt6/Bw3qAplcEWokYKk/4lSpB2NDdWiCHUQEHt0gjem8CpVyrBFNTt2YrphkT+OKoctbTgtTAfTtK52J8eaIzhCbOA=
+	t=1715078686; cv=none; b=mZLhdzUdR2niUrCPnMf9zR4zv7XU7KPq7lP1mxeqq1GWt7hlzBZknqeM42TfdjC/EiEj4dcNxtRTSC1W6rwIGTFOL6M8D4L7/uvFKkpAj5rh6hKxNzaE4ZXLS+MdzcjOOB/m5MYdU19NRSqfcdLS6BEw1xyujzsYUN21g2k77cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715078530; c=relaxed/simple;
-	bh=U5VgfOOP6YcgNQcpBS/3Hv+gg9zIwZpEKcCDlvS0cGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsqbvZukP3cZI9FQCStxamH45ZpfHkPwaNBFsWp9BMaGsX3/inCFgwopO/Ac/bv1IyoDJbLGwZogbllTKgwclYPvsQIkZIwrUpkUegNQdY5R1V6mKGalfyBt2mnO4hC8JRp9/apW5E6RZ7JjEschfewnUjLKWhdP8fXgQwoFjv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=E/o9YTuf; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41b794510cdso24155795e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:42:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1715078527; x=1715683327; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tXzvyFG6l9gTH5dCnOcuMruwGnZepx9teig8QB5iF2w=;
-        b=E/o9YTufLkZ0xMxexdfkMsCaAjTTCHkOi1CIMx0E8a0u1tjv7jzICEttAxmDqyZ5z7
-         JbJQgIak1bgefKBe+MEniElFkQ/NVw7XEZZdAaqUOJI7niQd2gele80ghwHs9dLktpAX
-         4KG6hqahm3jOhP1uEewVwsYIaI+V3nKxfKjtqXNf3ibEhSj9cRPDFhKDcMvmtZYFExh6
-         mx9S5yWJxzuFXRZaoZZamZwBEQM5MJkxp6fvlg9z6JNqzUCUwGZjfF+bZ7OejeVw1GI7
-         obgVdt5tiZkRf1cjI6Lr0HFqWv/lytQ1iYltoLlxG1NaXTD4nm4Tzr0AozDDZyDiqVFN
-         tgRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715078527; x=1715683327;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tXzvyFG6l9gTH5dCnOcuMruwGnZepx9teig8QB5iF2w=;
-        b=Di1s1c5JlCT/dA3kxJnIV7n5I2Y0Fgoh1Uy41fqKiwNmBABpSZG6ssGcyIjgWz8Ult
-         fjpd92fW+jq7tFCeU4BGAPCCmAdkLpWYbXuvKrrSZUJcBXKMRwXiGq5MxIeZG6lXRbrp
-         Sc901lpIjDY16UwpBCnIOlIcNifc/iEbGIEgVA0TOWJuumOqI3KLcqy6pTDs9vXQGwKZ
-         oHHWRgpZXfiqtL/JIaYhyZqlBqAdud/YjXXJEaayFKU2vapiUVoz4LKZthPYnUahEdEC
-         UiouA3ryzvOfr5ohX/YiDHdRaTnV9ANMzjIGre2f1WQbXJe6+VDhW4QdmJmMMDF4w8IT
-         9xng==
-X-Forwarded-Encrypted: i=1; AJvYcCWMtDKnNQ5fXshu9gXbRj2BuQ5nbXi3HFisEXo1LO+pHgMEblDBfWJ7ReEn2AhSIyd7fGQ0v1jifAVgOXT7rMS4a58Py76Cn9xKGymM
-X-Gm-Message-State: AOJu0Yx36V5xwLj1xJGwuaz7SFK9OpBmn5wdE09+zjIKFJQRPXrbotvb
-	pOnfSksybzkKWYhHBkvMAftOCeq5gcyqKAtS2Z4tjioxxP4l3aRrq27CzVzu25s=
-X-Google-Smtp-Source: AGHT+IEwQzUr+WPNmHd8pSO2aHlUlJakrkwXToj6yKou3S87UBLoS3VKq0/TORQePW3TDQ05vb4nxw==
-X-Received: by 2002:a05:600c:46ca:b0:41c:11fe:4de3 with SMTP id q10-20020a05600c46ca00b0041c11fe4de3mr10030220wmo.24.1715078527041;
-        Tue, 07 May 2024 03:42:07 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id p17-20020a05600c469100b0041b083e16e2sm23107663wmo.2.2024.05.07.03.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 03:42:06 -0700 (PDT)
-Date: Tue, 7 May 2024 11:42:04 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched: Consolidate cpufreq updates
-Message-ID: <20240507104204.ugnyrpwhrbtjkv7d@airbuntu>
-References: <20240505233103.168766-1-qyousef@layalina.io>
- <20240506100509.GL40213@noisy.programming.kicks-ass.net>
- <20240507005659.d4rzzaoq3isanndf@airbuntu>
- <20240507080230.GP40213@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1715078686; c=relaxed/simple;
+	bh=zbaNIyKrKMoQ1XFqRlHQyqFViL3R5sD8FLdycEfNc8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UUzWu5f8k6jdG2Bfn8fSUrhDYhDrJV/J1dfye0PI8n9uLY4p0LJgOg4mTZrFALjmRCeZKTBpwVzbzxDzTusQVsx0xy4tZl8lVbd7D5r2gNMVfj4ROfUob7ZKSkD8EAu69dTeHgtWIWoFawFkCD7dM1txJ5csZYjBGuD3ZR3TvDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=qVOqEXLr; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 1B9EB600A7;
+	Tue,  7 May 2024 10:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1715078675;
+	bh=zbaNIyKrKMoQ1XFqRlHQyqFViL3R5sD8FLdycEfNc8w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qVOqEXLrJsKtTB07rZIRastM82Y3qxWb6lLuNpwPPNCgeNpXD4J/egmc7TnE7dAvH
+	 8g5OqxD1tfyUOHxfuwxjO6PibfGHqmnd7Et3sEDc0Vcce6XQwnKZ6eT6RKucPzMuR2
+	 61L7NmWKKGJ7IHyFVbFbmWnCsok945vPyhgVZ64ENo1tKqBS7mxPNJJn9tVtZWRoBj
+	 8VxaqBe4aI5npHpNj6N27fAGyr3t9BChany0iYsF8/vlyV7kLnokAVugtPIsXZmuyB
+	 OS/DkdvZC6bporPlkD7efDuHG/MFvyTungA8F1pLN1HCbNOL+cGHb1aLU8A3qLuJou
+	 xeNOv2K4lDmQA==
+Received: by x201s (Postfix, from userid 1000)
+	id 0A46620314C; Tue, 07 May 2024 10:44:22 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Manish Chopra <manishc@marvell.com>
+Subject: [PATCH net-next 00/14] net: qede: convert filter code to use extack
+Date: Tue,  7 May 2024 10:44:01 +0000
+Message-ID: <20240507104421.1628139-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240507080230.GP40213@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 05/07/24 10:02, Peter Zijlstra wrote:
-> On Tue, May 07, 2024 at 01:56:59AM +0100, Qais Yousef wrote:
-> 
-> > Yes. How about this? Since stopper class appears as RT, we should still check
-> > for this class specifically.
-> 
-> Much nicer!
-> 
-> > static inline void update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> > {
-> > #ifdef CONFIG_CPU_FREQ
-> > 	if (likely(fair_policy(current->policy))) {
-> > 
-> > 		if (unlikely(current->in_iowait)) {
-> > 			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
-> > 			return;
-> > 		}
-> > 
-> > #ifdef CONFIG_SMP
-> > 		/*
-> > 		 * Allow cpufreq updates once for every update_load_avg() decay.
-> > 		 */
-> > 		if (unlikely(rq->cfs.decayed)) {
-> > 			rq->cfs.decayed = false;
-> > 			cpufreq_update_util(rq, 0);
-> > 			return;
-> > 		}
-> > #endif
-> > 		return;
-> > 	}
-> > 
-> > 	/*
-> > 	 * RT and DL should always send a freq update. But we can do some
-> > 	 * simple checks to avoid it when we know it's not necessary.
-> > 	 */
-> > 	if (task_is_realtime(current)) {
-> > 		if (dl_task(current) && current->dl.flags & SCHED_FLAG_SUGOV) {
-> > 			/* Ignore sugov kthreads, they're responding to our requests */
-> > 			return;
-> > 		}
-> > 
-> > 		if (rt_task(current) && rt_task(prev)) {
-> 
-> doesn't task_is_realtime() impy rt_task() ?
-> 
-> Also, this clause still includes DL tasks, is that okay?
+This series converts the filter code in the qede driver
+to use NL_SET_ERR_MSG_*(extack, ...) for error handling.
 
-Ugh, yes. The earlier check for dl_task() is not good enough. I should send
-a patch to fix the definition of rt_task()!
+Patch 1-12 converts qede_parse_flow_attr() to use extack,
+along with all it's static helper functions.
 
-I think at this stage open coding the policy check with a switch statement
-is the best thing to do
+qede_parse_flow_attr() is used in two places:
+- qede_add_tc_flower_fltr()
+- qede_flow_spec_to_rule()
 
-static inline void update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-{
-#ifdef CONFIG_CPU_FREQ
-	/*
-	 * RT and DL should always send a freq update. But we can do some
-	 * simple checks to avoid it when we know it's not necessary.
-	 *
-	 * iowait_boost will always trigger a freq update too.
-	 *
-	 * Fair tasks will only trigger an update if the root cfs_rq has
-	 * decayed.
-	 *
-	 * Everything else should do nothing.
-	 */
-	switch (current->policy) {
-	case SCHED_NORMAL:
-	case SCHED_BATCH:
-		if (unlikely(current->in_iowait)) {
-			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
-			return;
-		}
+In the latter call site extack is faked in the same way as
+is done in mlxsw (patch 12).
 
-#ifdef CONFIG_SMP
-		if (unlikely(rq->cfs.decayed)) {
-			rq->cfs.decayed = false;
-			cpufreq_update_util(rq, 0);
-			return;
-		}
-#endif
-		return;
-	case SCHED_FIFO:
-	case SCHED_RR:
-		if (rt_policy(prev)) {
-#ifdef CONFIG_UCLAMP_TASK
-			unsigned long curr_uclamp_min = uclamp_eff_value(current, UCLAMP_MIN);
-			unsigned long prev_uclamp_min = uclamp_eff_value(prev, UCLAMP_MIN);
+While the conversion is going on, some error messages are silenced
+in between patch 1-12. If wanted could squash patch 1-12 in a v2, but
+I felt that it would be easier to review as 12 more trivial patches.
 
-			if (curr_uclamp_min == prev_uclamp_min)
-#endif
-				return;
-		}
-#ifdef CONFIG_SMP
-		/* Stopper task masquerades as RT */
-		if (unlikely(current->sched_class == &stop_sched_class))
-			return;
-#endif
-		cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
-		return;
-	case SCHED_DEADLINE:
-		if (current->dl.flags & SCHED_FLAG_SUGOV) {
-			/* Ignore sugov kthreads, they're responding to our requests */
-			return;
-		}
-		cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
-		return;
-	default:
-		return;
-	}
-#endif
-}
+Patch 13 and 14, finishes up by converting qede_parse_actions(),
+and ensures that extack is propagated to it, in both call contexts.
+
+Asbjørn Sloth Tønnesen (14):
+  net: qede: use extack in qede_flow_parse_ports()
+  net: qede: use extack in qede_set_v6_tuple_to_profile()
+  net: qede: use extack in qede_set_v4_tuple_to_profile()
+  net: qede: use extack in qede_flow_parse_v6_common()
+  net: qede: use extack in qede_flow_parse_v4_common()
+  net: qede: use extack in qede_flow_parse_tcp_v6()
+  net: qede: use extack in qede_flow_parse_tcp_v4()
+  net: qede: use extack in qede_flow_parse_udp_v6()
+  net: qede: use extack in qede_flow_parse_udp_v4()
+  net: qede: add extack in qede_add_tc_flower_fltr()
+  net: qede: use extack in qede_parse_flow_attr()
+  net: qede: use faked extack in qede_flow_spec_to_rule()
+  net: qede: propagate extack through qede_flow_spec_validate()
+  net: qede: use extack in qede_parse_actions()
+
+ .../net/ethernet/qlogic/qede/qede_filter.c    | 99 ++++++++++---------
+ 1 file changed, 55 insertions(+), 44 deletions(-)
+
+-- 
+2.43.0
+
 
