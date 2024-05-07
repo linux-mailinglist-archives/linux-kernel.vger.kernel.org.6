@@ -1,103 +1,184 @@
-Return-Path: <linux-kernel+bounces-171942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB98D8BEB01
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:01:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA9DA8BEB00
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E20285E00
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:01:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078171C2371D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D6B16D325;
-	Tue,  7 May 2024 18:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C4C16D30C;
+	Tue,  7 May 2024 18:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fF1pfyVR"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="GXDI3QbS"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F4F10E6
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B88F16C84E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104850; cv=none; b=OaDpS4wQKdlodklS8NSp1Bzc4oY/CnnK8thc+jJ5GpRM1r/8pWQzEMuCmi34O1EQperl7D5aCLagrGOB3a8GbRU2fjaU7wPY4sk5NiVjJHe60qQUyhcUoXYysIq9NL8VUqnFy5RruTs1OLiCxcjx+1CAGHwWEovI1dKnqdvIXqo=
+	t=1715104850; cv=none; b=XUbKymnVROob5pPmpH+VOAq2zeDg9pERd4HgXIyzbpNIGONT7K4povAPci4NTDMQNAhbZ6YdF6SlqC+XVHdE9FxIHqLKXUZ92yjtL8jPlAus1PmRD/pIBDwt4ggJBfr3Y+gtt29k9BXSqaIE/RtHy/8az2lrMYpjiIg+0MJMYgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715104850; c=relaxed/simple;
-	bh=xN1VWl6d7UWw/9znVR7KQPIH2t/Yorb7YaTWcrZ9B2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKhcPCd+4WfrxAhxgH5O8Vp9ARvWDqRsMoEG2esd8HNBD1VPvOCcQkgmThl2h5wsWopGFMK8AZguqvgRWqf7kfZ41oVz3ta7op7cKiSKy+FOEs43XTEF5t7GaYoRDsId4q/uTIl/qe+xqPTqMqx2IT1Sk7PuT3EBLYjb7B9Uxek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fF1pfyVR; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715104845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3dZRrtiT6u2AQq8yaWtkXaA1FaAqAm5F7GJug5lWD1c=;
-	b=fF1pfyVRJsGtYEYWjlhft20hOLvQU81HyMeiblHpjRdS/UCf5xhyKb218MQmfB+XnCgCS7
-	jNvfMjSlFRYOz7Aqg5x/U5+JObktZdfdxFEFsVvQtRc4WGw4hrhwVObI7qaWdsyJQwol8e
-	Kqz+jsP+03xpnZjnVSr8f5EX5RiauRs=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Andrzej Hajda <andrzej.hajda@intel.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH] drm/drm-bridge.c: Drop conditionals around of_node pointers
-Date: Wed,  8 May 2024 02:00:00 +0800
-Message-Id: <20240507180001.1358816-1-sui.jingfeng@linux.dev>
+	bh=SrBJtaDxX4rLGSaJtZXCxh87ShbEo2DG2RkklX3dRTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E6ddNw3PW5pDuOm0k7FHIf3ah/kL/bZ/RFmVMmPmVxHp8y1FkCQBChqk3yw1uFmgWA8IOrECwHwHyjGR1TMcJlNXqYcZhhfp0b/vA/C0fDGZpjMdaUpnXVYrvAHtMECBYqonfmPKCBeQ/TtRs4jm/im5InmMLtbJtF2kRMz6TTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GXDI3QbS; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc236729a2bso3492420276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:00:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715104847; x=1715709647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HL+ln2vLAazbLqwL47bYmOmnDjxG1bXnX9QaBIaL77Y=;
+        b=GXDI3QbSYwRk8FIum8s2zKXXVIWecjGyLuvqA01wpk2fSUTgfAvlt000rReq3Z+fyC
+         xMquVe9bnNoDKCAMgBy1n9OKFrop8oI3u9TDPCpCCJJQceJFTgjkpcSqAX5a+MXYmXPv
+         4Wb3zTyg64xXJtBoTMHtmcFX204kj+2SWPGD2FjcQi25kvkRWRuxoYV2IyvHOzaxh2U8
+         IBzwJVM75XJv6t7mdYQD+tnH0d23bdOHC+K0EDMLQvo2A0eTBFFZM9TONfzuXjfVTEKo
+         juuX1eWXVxuhy+erZUuFnbbxlhF5aaw5GD/ehlyF4kbHylkAZ89j8hzSDyAI5Lsmigcl
+         PvTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715104847; x=1715709647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HL+ln2vLAazbLqwL47bYmOmnDjxG1bXnX9QaBIaL77Y=;
+        b=WyBztc5QeUeAExemNgcU9IdxQOveFXTO3p1fmzNbUXcCx2DPz6nVbJgoGmFW5WH3cg
+         DXCwnOGEAPnUFX614tm/4gsMRr0rj7VxQt8y/vNqztBzvcQeA01VNtzCor0vaxH7wL0D
+         HlTwOdWkq4QehvyNf9vQ1OYJuBskxZHl3syn0PGSRlMeCF+PDr0YacZgB9fi+L9ugCZy
+         HRfBZuC/PFpfbWP9MSbR6W96piAW3ft6A8+fLsFFbzXOjiDR3p0xG8euKTyx71lt6M8u
+         uDgVSaM/OdSiyRKGFaNzdGP9ejryOXCE3RwXSB5OmVrtrg2QUdKfXIc9kqAWka++9+B+
+         C7/A==
+X-Forwarded-Encrypted: i=1; AJvYcCX9iPJxKqpElaNeUEGUblXdCj3lHXAHHYkSOVMfSfmzBK1WUKiQvRgF+8msxh302AS/B2owbmWbFU/7qnZUMKIwTje3KKihherCHyaN
+X-Gm-Message-State: AOJu0YwmAFga40Qk4fHvaOX5f5Nsof34NnCw5d/Ptol+FAX7ub54HeTM
+	eJCCQytZXnipt0giniul10eTw5kNmspuIyfqK8hamsr8Ju4qoUf6tfSRj72Qn7b+j4OHeiP2jjE
+	rdIB3e6qBpzENbp1iJ2SLX3ZzHVkGczBb/Vjd
+X-Google-Smtp-Source: AGHT+IGIGFru+LOx4cY9EsrZp/X/+zrxiy5UoCJnZGTW/H4TVQQOuIByLlX2TxCmmFQ9x8W3Bkc7Lsm3wP/ljInKJtk=
+X-Received: by 2002:a25:e303:0:b0:de6:327:fa2 with SMTP id 3f1490d57ef6-debb9d6cdbcmr404346276.8.1715104847273;
+ Tue, 07 May 2024 11:00:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <4fedd80c-d5b6-4478-bfd3-02d1ee1a26e5@vivo.com>
+ <aab5ec51-fcff-44f2-a4f5-2979bd776a03@amd.com> <2ebca2fd-9465-4e64-b3cc-ffb88ef87800@vivo.com>
+ <d4209754-5f26-422d-aca0-45cccbc44ad0@amd.com> <289b9ad6-58a3-aa39-48ae-a244fe108354@quicinc.com>
+ <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
+ <8ca45837-cbed-28da-4a6f-0dcec8294f51@quicinc.com> <83605228-92ee-b666-d894-1c145af2e5ab@quicinc.com>
+ <CABdmKX2MWU9-9YN46PXx-Jy-O9CHMv8hCkvArd7BbWUBs=GPnw@mail.gmail.com>
+ <8915fcc1-d8f1-48c2-9e51-65159aaa5a3b@amd.com> <ZjovD5WaWjknd-qv@phenom.ffwll.local>
+ <44b08793-cf44-4cbd-a3bb-583af351ab9e@amd.com>
+In-Reply-To: <44b08793-cf44-4cbd-a3bb-583af351ab9e@amd.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Tue, 7 May 2024 11:00:35 -0700
+Message-ID: <CABdmKX3SpOk4BQU6i31r8jHc1f-o8sz7rXgtRyhTQZ4GJYHH=Q@mail.gmail.com>
+Subject: Re: [PATCH] dmabuf: fix dmabuf file poll uaf issue
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Charan Teja Kalla <quic_charante@quicinc.com>, zhiguojiang <justinjiang@vivo.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Having conditional around the of_node pointer of the drm_bridge structure
-is not necessary, since drm_bridge structure always has the of_node as its
-member.
-
-Let's drop the conditional to get a better looks, please also note that
-this is following the already accepted commitments. see commit d8dfccde2709
-("drm/bridge: Drop conditionals around of_node pointers") for reference.
-
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/drm_bridge.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 30d66bee0ec6..a6dbe1751e88 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -352,13 +352,8 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	bridge->encoder = NULL;
- 	list_del(&bridge->chain_node);
- 
--#ifdef CONFIG_OF
- 	DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
- 		  bridge->of_node, encoder->name, ret);
--#else
--	DRM_ERROR("failed to attach bridge to encoder %s: %d\n",
--		  encoder->name, ret);
--#endif
- 
- 	return ret;
- }
--- 
-2.34.1
-
+On Tue, May 7, 2024 at 7:04=E2=80=AFAM Christian K=C3=B6nig <christian.koen=
+ig@amd.com> wrote:
+>
+> Am 07.05.24 um 15:39 schrieb Daniel Vetter:
+> > On Tue, May 07, 2024 at 12:10:07PM +0200, Christian K=C3=B6nig wrote:
+> >> Am 06.05.24 um 21:04 schrieb T.J. Mercier:
+> >>> On Mon, May 6, 2024 at 2:30=E2=80=AFAM Charan Teja Kalla
+> >>> <quic_charante@quicinc.com> wrote:
+> >>>> Hi TJ,
+> >>>>
+> >>>> Seems I have got answers from [1], where it is agreed upon epoll() i=
+s
+> >>>> the source of issue.
+> >>>>
+> >>>> Thanks a lot for the discussion.
+> >>>>
+> >>>> [1] https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google=
+com/
+> >>>>
+> >>>> Thanks
+> >>>> Charan
+> >>> Oh man, quite a set of threads on this over the weekend. Thanks for t=
+he link.
+> >> Yeah and it also has some interesting side conclusion: We should proba=
+bly
+> >> tell people to stop using DMA-buf with epoll.
+> >>
+> >> The background is that the mutex approach epoll uses to make files dis=
+appear
+> >> from the interest list on close results in the fact that each file can=
+ only
+> >> be part of a single epoll at a time.
+> >>
+> >> Now since DMA-buf is build around the idea that we share the buffer
+> >> representation as file between processes it means that only one proces=
+s at a
+> >> time can use epoll with each DMA-buf.
+> >>
+> >> So for example if a window manager uses epoll everything is fine. If a
+> >> client is using epoll everything is fine as well. But if *both* use ep=
+oll at
+> >> the same time it won't work.
+> >>
+> >> This can lead to rather funny and hard to debug combinations of failur=
+es and
+> >> I think we need to document this limitation and explicitly point it ou=
+t.
+> > Ok, I tested this with a small C program, and you're mixing things up.
+> > Here's what I got
+> >
+> > - You cannot add a file twice to the same epoll file/fd. So that part i=
+s
+> >    correct, and also my understanding from reading the kernel code.
+> >
+> > - You can add the same file to two different epoll file instaces. Which
+> >    means it's totally fine to use epoll on a dma_buf in different proce=
+sses
+> >    like both in the compositor and in clients.
+>
+> Ah! Than I misunderstood that comment in the discussion. Thanks for
+> clarifying that.
+>
+> >
+> > - Substantially more entertaining, you can nest epoll instances, and e.=
+g.
+> >    add a 2nd epoll file as an event to the first one. That way you can =
+add
+> >    the same file to both epoll fds, and so end up with the same file
+> >    essentially being added twice to the top-level epoll file. So even
+> >    within one application there's no real issue when e.g. different
+> >    userspace drivers all want to use epoll on the same fd, because you =
+can
+> >    just throw in another level of epoll and it's fine again and you won=
+'t
+> >    get an EEXISTS on EPOLL_CTL_ADD.
+> >
+> >    But I also don't think we have this issue right now anywhere, since =
+it's
+> >    kinda a general epoll issue that happens with any duplicated file.
+>
+> I actually have been telling people to (ab)use the epoll behavior to
+> check if two file descriptors point to the same underlying file when
+> KCMP isn't available.
+>
+> Some environments (Android?) disable KCMP because they see it as
+> security problem.
+>
+Didn't know about this so I checked. Our kernel has CONFIG_KCMP, but
+seccomp does look like it's blocking kcmp for apps.
+https://cs.android.com/android/platform/superproject/main/+/main:bionic/lib=
+c/SYSCALLS.TXT
 
