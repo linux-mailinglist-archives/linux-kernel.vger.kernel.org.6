@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-171590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16CB8BE61F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC84B8BE624
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C70728CF1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:36:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05701C22159
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5A815FA73;
-	Tue,  7 May 2024 14:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950C01607A7;
+	Tue,  7 May 2024 14:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mq6/KdbR"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ILhQRlYz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357DC1514C5;
-	Tue,  7 May 2024 14:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FC915FA80
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715092593; cv=none; b=Y9WKM4PQpRdGxZRepq01FmdWDxDivp1E9vqnZtjOLy3YLDrcgrkZB1ms9juj/ZEPvwvHVhS+wVJU7w4TCK5dHBLcTRlHqHvc1xtEQuxgU81XXelN1xtFR5qh0RgB/ZtV+DNlSItgJMct+lUEqV/g44RK/vxB7OhRkxsrJpwr7RA=
+	t=1715092607; cv=none; b=T8a767x6B/458rZhcoMmmouisSdiZQuPk+cCPY85rY0nf9Z4EpsI5CBf0TkRhOY2fAm0HvUHdEI66mzM3JV8MWqAi8V3NnicHWiQYUwYzl3ITCwIBv63mMtdJFZsUheD7LgRCYCEMmhT8QsQrNdUM51yizK0rC0I3qTTv2MO1Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715092593; c=relaxed/simple;
-	bh=ltkHF7USXEUiblC57EI2w5ExeCBBkAO5TlznSzRIeWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r2b7a9Y+qJY5cJ57h/0Lvjx4RTeC9Q1b+65brjXJIi0T3pgLBCqEEWt38oP53aWK3OQhqfs6fhL2AGtyftA+xA/fiW3iUCrNsZwSW/0Yi82ml+msKxoEGomcWXGX6NPYbKJ/l8GsEAz06x+E0a86WRnGTBVtktyamRPgqkdh4EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mq6/KdbR; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34ef66c0178so1873018f8f.1;
-        Tue, 07 May 2024 07:36:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715092589; x=1715697389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ltkHF7USXEUiblC57EI2w5ExeCBBkAO5TlznSzRIeWg=;
-        b=mq6/KdbRwdTPQMSRwYPD3fXvfvoj3V8L22IKTWwAtkaI/bgezFfzTd8JIJizjhrNWD
-         Qd+q2XQh3XY+WRw0DlUK4SyocXMj28jMojqvf8C562Xk+7/+XO+bym6QvTZQauaGHKS5
-         xVD8OFy7/ZJsUTEEkXvMIwnnpiuC/t1X5+OXAASr5gAD9IoIsCv8K1u8f9iB/+Oy7XM2
-         Rrr461egeZyLcwzcZK0nCPVWaW5uL3cix0l7lnLkEW5GJkWjsYr8EyxGok5OU38nrB9m
-         9sjXgQ9VfECgQgmYnjXWZ2NzD0s91OAgP6Sb6vIDS0f5Zuk/EkYOC4Ljq7EIJSWPKrrE
-         Rbvw==
+	s=arc-20240116; t=1715092607; c=relaxed/simple;
+	bh=1nLbM1ptcwD7xsCexw9/9id1x6y7D7jbqpEOYd4k+OQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ooZvYVmExKc6ouiOj/+eTdPiLhBvjpP+DW5Utik5aALY4WLuqlkt8v1pKTf+fYTrnHtOoDosqsI9jzuJyRvblxAZLFqhAzzMvmlz2JFvFrsmnUBd2Z6dVhwLidUSjSvMGs5NV5EYfGnYkfui5rgpKvyljOqo+Y0f3gkswlJ9Qrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ILhQRlYz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715092605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=q7HVnwjvSt8iPkONjlCrJffpYCEpxZC33LnAmwF0ZIs=;
+	b=ILhQRlYzqrXvAdzE8hk7MHI1+vw+f2LtDANipBY7cSzv3F4N4p48u9VlBdV79HTZ2k9Zjo
+	xuFut/3i+htCWtMkIPMmeB3a1ZiH8ftEYx7jPvxhhZJ1rID/LsWKXqRP5NtnJK0YLqYt7a
+	KS57PyVIjaP4n2O0vjU08d4jQUWkvAg=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-12-TJHaL40tN1u07flWbrRGSg-1; Tue, 07 May 2024 10:36:43 -0400
+X-MC-Unique: TJHaL40tN1u07flWbrRGSg-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-572afd6e96fso1332521a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:36:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715092589; x=1715697389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ltkHF7USXEUiblC57EI2w5ExeCBBkAO5TlznSzRIeWg=;
-        b=X0oaMgafNaKUuL78FMi4536T7kq+I3z70H3FGSiL1YtNGKfo32igi3etCK59qp3dB9
-         pKQ4QiMgbJwmNHbue3ewuJrYRI2ubIv4EiIKMu3MOwLss1iKU0QsPaD4URjcIf+etIq/
-         a37fuu3R6U7MNj/MZbOC8uTvm9c+F8ScptvZLgPpKt8flpzKQdwoJtQr4n2PW220viQX
-         FP8o7ZRBGv3yewqxuYgLaaZ5v9EQm0h/9Rc+Cn216ih4fr4PbBrIjWJ9wuPnwLifWJ+0
-         F3o8pyM+oKW+eEyLhWWFICQ8Iayar6D0UPUN7xNih014wnyXv83bnAds4Z2mJ7ddlxLj
-         fKrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDH3Z7myb5KGZNqm4JjcOtx26jecXo+mrA51OU4dIR2XDrRg+ASnt2ciqXGGIWXYKaX9Vm1v4BPvIVkvqol5izbS7f/iBxA3kYHjdO
-X-Gm-Message-State: AOJu0Yxek0Y3XMvGQbolktFfisSvCEnEm3bNGDyS0Per+iylTlzoAEU0
-	QNQ56fsjm4oOdX0M2R+XbQmNw4zfsIGxR8EJ5Gt3s3n0bcKjV3FDrBlgkUTEfE0HQ2bRvDpQV9D
-	rLWPFhGk08jGorgghQkQCuIYbHmU=
-X-Google-Smtp-Source: AGHT+IHTsLpepLtn1ceKo4nbzm7tDYWoONlZoXEISnwYHFP/Vzwk2BC/YEf3kkUVPJYp9IlI09mYAlfXbVpY7XA7PkQ=
-X-Received: by 2002:adf:f8c6:0:b0:34d:9c8f:61a1 with SMTP id
- f6-20020adff8c6000000b0034d9c8f61a1mr11820520wrq.60.1715092589280; Tue, 07
- May 2024 07:36:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715092602; x=1715697402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q7HVnwjvSt8iPkONjlCrJffpYCEpxZC33LnAmwF0ZIs=;
+        b=u6wQ+K/bMj48CBag5NjmetlNN7POT1/Bja/v7miszbIzPUWlLfvNpqD0cr+y1q6zfP
+         gUjAD3IGum2sBt4xujI47YKHvsH3UzdlpKNrQeuTFn9hkkQOjNWEWlWDUrk6uGXzhK2t
+         eZq3R84H1z2k5Fl+yQInq5WDKi1xuex4bBHIDC0REdFlcJtm5v+sxFs7qaM6HjSyepcX
+         dIwMUkG+ZsvobdjDDyj2bTbSOfu4Zd3Se/c3HoIoFzTGiZ7wAtqkQ0/9BrupHsNzvaQR
+         0JA6qWJ6/PNh+R3kAVKaqr1zSAzoHk8/niiycC+RMRuNOqfuEFku/VnutR99rIozhXM/
+         kKlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtGU9A0zW0J7SOxkn3nqZbeX09GDpl83rf7+yWiXHHB3dXp6fwQu1B1SrqmCyj8zz78t++QwF/oq4byjqlFU8gewgoftOnf949RasG
+X-Gm-Message-State: AOJu0YzafONmZ8gwYmYXcCwTZ2ohcNIQNilJThdyuXoRoVJ/HEx/duir
+	UKPxSOU6TFaLqHWUV/LdXnjJnhHHRidA0rR0+S9ilQchPxzN6DQg3Hdf0J+jY/zOK7qFrkEqRVd
+	rxoi5KLQAPxI4ypVwjQmED1l5eCE7qQ/Sz+sC/fOqtiXX3Hcq/QP9k4ZNJcVKpQ==
+X-Received: by 2002:a50:cd5d:0:b0:56c:1696:58a8 with SMTP id d29-20020a50cd5d000000b0056c169658a8mr12098640edj.0.1715092602084;
+        Tue, 07 May 2024 07:36:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEY7d0zX5iF23LmZa2kdYMHYLArbIB3lGdBmgCb7Vbc8ZFRfJsz9dwxj/ZSVy7TQT4rRhoceQ==
+X-Received: by 2002:a50:cd5d:0:b0:56c:1696:58a8 with SMTP id d29-20020a50cd5d000000b0056c169658a8mr12098622edj.0.1715092601795;
+        Tue, 07 May 2024 07:36:41 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id u1-20020aa7d541000000b00572eebbfc61sm3485364edr.35.2024.05.07.07.36.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 07:36:41 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: repair file entry in BROADCOM BCM2835 CAMERA DRIVERS
+Date: Tue,  7 May 2024 16:36:37 +0200
+Message-ID: <20240507143637.179101-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507024952.1590681-1-haiyue.wang@intel.com>
-In-Reply-To: <20240507024952.1590681-1-haiyue.wang@intel.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 7 May 2024 07:36:17 -0700
-Message-ID: <CAADnVQK7zD312WRJboMib8HJnNzN=i2FKH2QxkVVy736b7sNTQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v1] bpf,arena: Rename the kfunc set variable
-To: Haiyue Wang <haiyue.wang@intel.com>
-Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 6, 2024 at 7:46=E2=80=AFPM Haiyue Wang <haiyue.wang@intel.com> =
-wrote:
->
-> Rename the kfunc set variable to specify the 'arena' function scope,
-> although the 'UNSPEC' type BPF program is mapped to 'COMMON' hook.
->
-> And there is 'common_kfunc_set' defined for real 'common' function in
-> file 'kernel/bpf/helpers.c'.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-I think common_kfunc_set is a better name to describe that these
-two kfuncs are in a common category.
-BPF_PROG_TYPE_UNSPEC is a lot less obvious.
+Commit 392cd78d495f ("media: bcm2835-unicam: Add support for CCP2/CSI2
+camera interface") adds the new file entry drivers/media/platform/bcm2835/.
+The commit however adds the driver in drivers/media/platform/broadcom/.
 
-There are two static common_kfunc_set in helpers.c and arena.c
-and that's fine.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-pw-bot: cr
+Repair this file entry in the BROADCOM BCM2835 CAMERA DRIVERS section.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2fe4506f9fe8..fe6d37745106 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4176,7 +4176,7 @@ M:	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/brcm,bcm2835-unicam.yaml
+-F:	drivers/media/platform/bcm2835/
++F:	drivers/media/platform/broadcom/
+ 
+ BROADCOM BCM47XX MIPS ARCHITECTURE
+ M:	Hauke Mehrtens <hauke@hauke-m.de>
+-- 
+2.44.0
+
 
