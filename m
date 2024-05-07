@@ -1,187 +1,92 @@
-Return-Path: <linux-kernel+bounces-170876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAEB8BDD2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDB18BDD36
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BFC528109E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF771F21B90
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2338013D2AD;
-	Tue,  7 May 2024 08:31:01 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D08714D29A;
+	Tue,  7 May 2024 08:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="wz+oXJ81"
+Received: from mail.avm.de (mail.avm.de [212.42.244.119])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9D913D26B;
-	Tue,  7 May 2024 08:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F36197;
+	Tue,  7 May 2024 08:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715070660; cv=none; b=ilBTcR2rB7AHIigrPXIwZ8Lc8THFZWIijZJdkdwGRvSH8pG43hVgVqHOQu5EM+a96UHtESaqea+E0Cx9aEZQFZ89r1dcL1m4rQpV5F7Tt3EjzQvJFH5rqt7I7zRbAzrN5Z8olxi/Oe7q0GP9Nd795VVG2j9sN4TQWEEGD73L0jc=
+	t=1715071004; cv=none; b=UraTjdnxKFnt1PTS89yeSs1T/GRtigNXhzhDusJmgYhJnKhJdR8uaDXq6Ts05evNEJVniKSS/xFfgOwedWv3eV6t1akVyJT8yyXPmi/fNxDC4XNpRioKWHtsRfD2AjaswkLI/6wejPhL0LmFeyvIoDWFpfTdPODK5uzWFQeYMrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715070660; c=relaxed/simple;
-	bh=GYtaM+tCrLAnsNRMA8561Tg5jtwIwouA1R/o8fttqbo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=AWnExb6yxinZeAY/BAFQf6K0+gI8yIPBn39z9seWXXFpxU2wL92LBxPzt8OXiEHlFN0j3PuvclF4+Jf3EQxmTIxr3fZiQENSwL+vQjgCv8D0JOnlLnPqB4DGrmGfG22Tt48ry7/WuHgylefLRyr4jHpxirdZ/GbuovXpcRdIaUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VYWbZ1gYlzYsnK;
-	Tue,  7 May 2024 16:27:06 +0800 (CST)
-Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3EF3F180AA0;
-	Tue,  7 May 2024 16:30:55 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemm600005.china.huawei.com (7.193.23.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 7 May 2024 16:30:52 +0800
-Subject: Re: [PATCH v6 3/5] hisi_acc_vfio_pci: create subfunction for data
- reading
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: <jgg@nvidia.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
-References: <20240425132322.12041-1-liulongfang@huawei.com>
- <20240425132322.12041-4-liulongfang@huawei.com>
- <20240503102506.5b7a41ef.alex.williamson@redhat.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <77e776eb-bc46-0a07-217c-e3bf385c7502@huawei.com>
-Date: Tue, 7 May 2024 16:30:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1715071004; c=relaxed/simple;
+	bh=sZS4MN5xnifmnLSkaYI1Llu+jnyg2fYDwfngQe1qpnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/1n34Xmtw8VDd8WEr0MvqdFePdRKS+ndzD4ThN29pB6AR8bb5tUCK72+ZO9sGXut/i+CnOc+kE3Ukz7pBVIiVAN/wb99JuzuRGVeC7W4Z/v1dFhl/sWJp2eiw6YpGhFvXE4z7u6j9iIMxsds399t2pU0W51IEydU0R2Ka2mv6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=wz+oXJ81; arc=none smtp.client-ip=212.42.244.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1715070655; bh=sZS4MN5xnifmnLSkaYI1Llu+jnyg2fYDwfngQe1qpnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wz+oXJ81r4WEnyfs98d9WGOi2aktrZTBTJm6wy5XLHwI/prbStLyIiAPK9oPvX5OT
+	 udYjS7M6sJZx6ejERAUq49LyiTl5VSJsMIA2LcaDVCcnfGNGzEGsGI+gYhJquWBJRu
+	 zSUG7s5KbPHRBt8+MUoPnbUCKH40axgq0iZVeyGs=
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Tue,  7 May 2024 10:30:55 +0200 (CEST)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 32455806B0;
+	Tue,  7 May 2024 10:30:55 +0200 (CEST)
+Received: by buildd.core.avm.de (Postfix, from userid 1000)
+	id 25ACE181070; Tue,  7 May 2024 10:30:55 +0200 (CEST)
+Date: Tue, 7 May 2024 10:30:55 +0200
+From: Nicolas Schier <n.schier@avm.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Matt Porter <mporter@kernel.crashing.org>,
+	Alexandre Bounine <alex.bou9@gmail.com>
+Subject: Re: [PATCH 1/2] rapidio: specify the type for tristate choice
+ explicitly
+Message-ID: <Zjnmv1os_fM_j7M0@buildd.core.avm.de>
+References: <20240427104231.2728905-1-masahiroy@kernel.org>
+ <20240427104231.2728905-2-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240503102506.5b7a41ef.alex.williamson@redhat.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600005.china.huawei.com (7.193.23.191)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240427104231.2728905-2-masahiroy@kernel.org>
+X-purgate-ID: 149429::1715070655-A65A22A6-CAA48F91/0/0
+X-purgate-type: clean
+X-purgate-size: 697
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
-On 2024/5/4 0:25, Alex Williamson wrote:
-> On Thu, 25 Apr 2024 21:23:20 +0800
-> Longfang Liu <liulongfang@huawei.com> wrote:
+On Sat, Apr 27, 2024 at 07:42:30PM +0900, Masahiro Yamada wrote:
+> If the type of choice is not specified, it is implied by the first
+> entry within the choice block.
 > 
->> During the live migration process.
+> In this case, the first (and only) entry, RAPIDIO_ENUM_BASIC, is
+> tristate, hence this choice behaves as tristate.
 > 
-> This is not a complete sentence.
+> Kconfig will stop this implication because it has a bug, and 99% of
+> choice use cases are bool. In fact, this is the only instance of
+> tristate choice in the kernel.
 > 
->> It needs to obtain various status
->> data of drivers and devices.
+> Before transitioning the default choice type to 'bool', specify the
+> type explicitly for this case.
 > 
-> What's "It" describing here?
-> 
->> In order to facilitate calling it in the
->> debugfs function.
-> 
-> Also not a complete sentence.
-> 
->> For all operations that read data from device registers,
->> the driver creates a subfunction.
-> 
-> There's only one sub-function.
-> 
->> Also fixed the location of address data.
-> 
-> I think this is addressed in the previous patch now?  Thanks,
-> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-OK, I'll update the descriptions again.
-
-> Alex
->
-
-Thanks,
-Longfang.
-
->> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
->> ---
->>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 54 +++++++++++--------
->>  1 file changed, 33 insertions(+), 21 deletions(-)
->>
->> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> index 0c7e31076ff4..bf358ba94b5d 100644
->> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> @@ -486,31 +486,11 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>  	return 0;
->>  }
->>  
->> -static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->> -			    struct hisi_acc_vf_migration_file *migf)
->> +static int vf_qm_read_data(struct hisi_qm *vf_qm, struct acc_vf_data *vf_data)
->>  {
->> -	struct acc_vf_data *vf_data = &migf->vf_data;
->> -	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
->>  	struct device *dev = &vf_qm->pdev->dev;
->>  	int ret;
->>  
->> -	if (unlikely(qm_wait_dev_not_ready(vf_qm))) {
->> -		/* Update state and return with match data */
->> -		vf_data->vf_qm_state = QM_NOT_READY;
->> -		hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->> -		migf->total_length = QM_MATCH_SIZE;
->> -		return 0;
->> -	}
->> -
->> -	vf_data->vf_qm_state = QM_READY;
->> -	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->> -
->> -	ret = vf_qm_cache_wb(vf_qm);
->> -	if (ret) {
->> -		dev_err(dev, "failed to writeback QM Cache!\n");
->> -		return ret;
->> -	}
->> -
->>  	ret = qm_get_regs(vf_qm, vf_data);
->>  	if (ret)
->>  		return -EINVAL;
->> @@ -536,6 +516,38 @@ static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>  		return -EINVAL;
->>  	}
->>  
->> +	return 0;
->> +}
->> +
->> +static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->> +			    struct hisi_acc_vf_migration_file *migf)
->> +{
->> +	struct acc_vf_data *vf_data = &migf->vf_data;
->> +	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
->> +	struct device *dev = &vf_qm->pdev->dev;
->> +	int ret;
->> +
->> +	if (unlikely(qm_wait_dev_not_ready(vf_qm))) {
->> +		/* Update state and return with match data */
->> +		vf_data->vf_qm_state = QM_NOT_READY;
->> +		hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->> +		migf->total_length = QM_MATCH_SIZE;
->> +		return 0;
->> +	}
->> +
->> +	vf_data->vf_qm_state = QM_READY;
->> +	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->> +
->> +	ret = vf_qm_cache_wb(vf_qm);
->> +	if (ret) {
->> +		dev_err(dev, "failed to writeback QM Cache!\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = vf_qm_read_data(vf_qm, vf_data);
->> +	if (ret)
->> +		return -EINVAL;
->> +
->>  	migf->total_length = sizeof(struct acc_vf_data);
->>  	return 0;
->>  }
-> 
-> .
-> 
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
 
