@@ -1,46 +1,79 @@
-Return-Path: <linux-kernel+bounces-171586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DEF8BE60B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:34:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573CF8BE606
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9453B1F2526D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43E228BA5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0A015FCF9;
-	Tue,  7 May 2024 14:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BEC14EC53;
+	Tue,  7 May 2024 14:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dD/2g+G8"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TnXk4B34"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC3A15DBC1;
-	Tue,  7 May 2024 14:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5E415ECF2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715092473; cv=none; b=FzVWi4Xigq5apxaFRKQmorIITZ8titCk0W5q988te8lVJXm012UFsPDlItLJXAH+xIvZRMr4Rw6ySqsRnN0BvxAKJuGMCcMW1xa3eEABdi8hv+DR8GXy3wpcI9nzaYWwRlniNoaIldpSraf+Oemxcq3TfYLXwNfHNhP0ti61hSo=
+	t=1715092472; cv=none; b=Q/BmAO6ee4A2ZdkrZ+nJSbXf1u7+Y707YMoh/luPIBqxZXXn22HBwmZDOIEp29CTLaVDOnjEh/D+UngPr+6NCV4lOWjuPB9d1Bwjnd5w3f8b5uWgQzgZfiIU4PtNL48XCOOStksIhpmLWeCli8XGubK5Q5IRfKv6NZwiPNXGWCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715092473; c=relaxed/simple;
-	bh=Rn98kkZoCRyzEDUHujvEdeSt3a+LcvSTBCAGe29A2To=;
+	s=arc-20240116; t=1715092472; c=relaxed/simple;
+	bh=HNtKzgl9HwI6J7a5I/qX+lgiBT0k9lV+t79iUHomqQs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nKyutH8wGubMf2A8EkNfTdfDZmI8/7lhPMhBj1kfuQssxarF+Nz5eAraaRuQ2739NS7DT+0LleuTvPOHDIDJS6r+XGuQdDCWtQQi9PMr0Wsg4dc1ev5f2rCdSHQAvSnE0UN4132HsyA2MTu7D0YzrjmvGczLnWDYOnlJkdSfjng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dD/2g+G8; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715092463; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=o6bWFqpzN6Wrt8MSD5ofMjZort1RodcrLsBtj4xyd/s=;
-	b=dD/2g+G8AcBnrB61lNFhlUquRhuOdpa4VZwRIBd6gdWgM0ONU3jakQRnCAYgJoUUKsxdkgTtJv49y9LnIFJWF3F8Kk6F6maLJkztb3LmD2+aZ5kht0R3mz7Tgn+FX8sQ0t8oZxXofJ8qp73gcZAd/VOeA4WHAj4FX/8Bn21Xlfc=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0W60RrX4_1715092449;
-Received: from 30.221.130.197(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W60RrX4_1715092449)
-          by smtp.aliyun-inc.com;
-          Tue, 07 May 2024 22:34:22 +0800
-Message-ID: <2e34e4ea-b198-487e-be5b-ba854965dbeb@linux.alibaba.com>
-Date: Tue, 7 May 2024 22:34:09 +0800
+	 In-Reply-To:Content-Type; b=ZjpuIj2d9o4/++9XKHBEuTbrrFi9kAFGjzll34j0VpdgGWJz+twsXmevoEpvpdqZWZfJrNCp3Dt53ve2noJIkuNQ6L2Bb0+q2puOESOk0xgtUWCxw1TWE5vCqnfd6to/IYll9AkTfGDH+0XlJiJbFt43z11c2dERL+M+bx8CaMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TnXk4B34; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715092470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dxfYA0kT/oiCPR8P3ZGYKwq4gr+a/9ebQZcuGC0TkRM=;
+	b=TnXk4B34dhbCSpeZR1BDKde4rBhXL2x+t+1G+2ZvVZHRwXDLVAjvjamllRohyYyyjkBOvH
+	UFD60ZcLyD0IyRdXfS0OpFHfKpMEqFL4OjYgaJGBIhLpKvMDzFulY0XpHi5Lc96APthpWI
+	vacJYmC6AYLk4GM6mcDXjZ15/uT7l80=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-267-8nxCPunlO8WPIhI4QpIfXA-1; Tue, 07 May 2024 10:34:27 -0400
+X-MC-Unique: 8nxCPunlO8WPIhI4QpIfXA-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-51b1a65c68eso2829827e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:34:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715092466; x=1715697266;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxfYA0kT/oiCPR8P3ZGYKwq4gr+a/9ebQZcuGC0TkRM=;
+        b=opJRSgvf5YLm2z0fCr38bYkh/R9xpD9aI7MybylFHM5ek5PFlCDMVybgCWW6GM5zQ7
+         dS6FWDzGkilCqo0M2+V8Mp+4y7Ibuk09z9PT2wEnMyg7ii08j7MjcW/v49hmIt3R4lzG
+         /hOQusHdBwbLSbG7fNPyWhBFZiH21sT3VWe9ho4TgoYPyIlNaMr1OSMXMQHN1cNpt7w3
+         t8cONv5QlKCGFJSNlc82NwNtVwKdPU9ki936GUZXxvbOPaeb5qcB5Q9+KAZ+m6mF7ce0
+         wLhZiPzaUo/Po6KZ0Bzsnw8g8t93l3kVPYPrdJXHbGSGO6Zu1DU03t2pcREiJvdYT48K
+         TSxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGMx8kKD+s/OQ6a8MrjL5ran+TVZC2nqfldgYg/V4HCeSFFDoEpgE7gWDyYIBLggd7fcgkLQEEWh+8x9eREMwbVmbwRaZ8wJlu27Hd
+X-Gm-Message-State: AOJu0Yzxzwn0TtR5JPObNpyiNuir1Ga66SNHxdInpQIOi3eMgb3iaesz
+	y3Nlav8FPaBM6Y/+kjbR8UcN/Dgr+n6ha/tbWjyDSkpUGX2BbJxi5+sSRZm42w2xbxOZaL1pPYa
+	iGQ7KuzSwaTZsBYnixxxvNAyLeIP1Cnzak+LVGsFWCCaDTB22jGt4VtOeDMJ80A==
+X-Received: by 2002:ac2:4214:0:b0:519:1e33:9d85 with SMTP id y20-20020ac24214000000b005191e339d85mr8206480lfh.36.1715092465996;
+        Tue, 07 May 2024 07:34:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJf6M7/XK+2/GfqsOz3VPdKfvdQSS9fpgAz3ojdSlixZ5gK65wQW/LGj1l0TFGD5KOfhLbVw==
+X-Received: by 2002:ac2:4214:0:b0:519:1e33:9d85 with SMTP id y20-20020ac24214000000b005191e339d85mr8206456lfh.36.1715092465580;
+        Tue, 07 May 2024 07:34:25 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:2a07:3a01:e7a9:b143:57e6:261b? (2001-1c00-2a07-3a01-e7a9-b143-57e6-261b.cable.dynamic.v6.ziggo.nl. [2001:1c00:2a07:3a01:e7a9:b143:57e6:261b])
+        by smtp.gmail.com with ESMTPSA id b19-20020a1709062b5300b00a59a05a8030sm4709239ejg.25.2024.05.07.07.34.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 07:34:25 -0700 (PDT)
+Message-ID: <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
+Date: Tue, 7 May 2024 16:34:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,78 +81,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v7 00/11] net/smc: SMC intra-OS shortcut with
- loopback-ism
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: wintera@linux.ibm.com, twinkler@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, agordeev@linux.ibm.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- wenjia@linux.ibm.com, jaka@linux.ibm.com, borntraeger@linux.ibm.com,
- svens@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org
-References: <20240428060738.60843-1-guwen@linux.alibaba.com>
- <Zi5wIrf3nAeJh1u5@pop-os.localdomain>
-From: Wen Gu <guwen@linux.alibaba.com>
-In-Reply-To: <Zi5wIrf3nAeJh1u5@pop-os.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Lennart Poettering <mzxreary@0pointer.de>,
+ Robert Mader <robert.mader@collabora.com>,
+ Sebastien Bacher <sebastien.bacher@canonical.com>,
+ Linux Media Mailing List <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ linaro-mm-sig@lists.linaro.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Milan Zamazal <mzamazal@redhat.com>, Maxime Ripard <mripard@redhat.com>,
+ Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi Dmitry,
 
-
-On 2024/4/28 23:49, Cong Wang wrote:
-> On Sun, Apr 28, 2024 at 02:07:27PM +0800, Wen Gu wrote:
->> This patch set acts as the second part of the new version of [1] (The first
->> part can be referred from [2]), the updated things of this version are listed
->> at the end.
+On 5/7/24 3:32 PM, Dmitry Baryshkov wrote:
+> On Mon, May 06, 2024 at 01:49:17PM +0200, Hans de Goede wrote:
+>> Hi dma-buf maintainers, et.al.,
 >>
->> - Background
+>> Various people have been working on making complex/MIPI cameras work OOTB
+>> with mainline Linux kernels and an opensource userspace stack.
 >>
->> SMC-D is now used in IBM z with ISM function to optimize network interconnect
->> for intra-CPC communications. Inspired by this, we try to make SMC-D available
->> on the non-s390 architecture through a software-implemented Emulated-ISM device,
->> that is the loopback-ism device here, to accelerate inter-process or
->> inter-containers communication within the same OS instance.
+>> The generic solution adds a software ISP (for Debayering and 3A) to
+>> libcamera. Libcamera's API guarantees that buffers handed to applications
+>> using it are dma-bufs so that these can be passed to e.g. a video encoder.
+>>
+>> In order to meet this API guarantee the libcamera software ISP allocates
+>> dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
+>> the Fedora COPR repo for the PoC of this:
+>> https://hansdegoede.dreamwidth.org/28153.html
 > 
-> Just FYI:
+> Is there any reason for allocating DMA buffers for libcamera through
+> /dev/dma_heap/ rather than allocating them via corresponding media
+> device and then giving them away to DRM / VPU / etc?
 > 
-> Cilium has implemented this kind of shortcut with sockmap and sockops.
-> In fact, for intra-OS case, it is _very_ simple. The core code is less
-> than 50 lines. Please take a look here:
-> https://github.com/cilium/cilium/blob/v1.11.4/bpf/sockops/bpf_sockops.c
-> 
-> Like I mentioned in my LSF/MM/BPF proposal, we plan to implement
-> similiar eBPF things for inter-OS (aka VM) case.
-> 
-> More importantly, even LD_PRELOAD is not needed for this eBPF approach.
-> :)
-> 
-> Thanks.
+> At least this should solve the permission usecase: if the app can open
+> camera device, it can allocate a buffer.
 
-Hi, Cong. Thank you very much for the information. I learned about sockmap
-before and from my perspective smcd loopback and sockmap each have their own
-pros and cons.
+This is with a software ISP, the input buffers with raw bayer data
+come from a v4l2 device, but the output buffers with the processed
+data are purely userspace managed in this case.
 
-The pros of smcd loopback is that it uses a standard process that defined
-by RFC-7609 for negotiation, this CLC handshake helps smc correctly determine
-whether the tcp connection should be upgraded no matter what middleware the
-connection passes, e.g. through NAT. So we don't need to pay extra effort to
-check whether the connection should be shortcut, unlike checking various policy
-by bpf_sock_ops_ipv4() in sockmap. And since the handshake automatically select
-different underlay devices for different scenarios (loopback-ism in intra-OS,
-ISM in inter-VM of IBM z and RDMA in inter-VM of different hosts), various
-scenarios can be covered through one smc protocol stack.
+Regards,
 
-The cons of smcd loopback is also related to the CLC handshake, one more round
-handshake may cause smc to perform worse than TCP in short-lived connection
-scenarios. So we basically use smc upgrade in long-lived connection scenarios
-and are exploring IPPROTO_SMC[1] to provide lossless fallback under adverse cases.
+Hans
 
-And we are also working on other upgrade ways than LD_PRELOAD, e.g. using eBPF
-hook[2] with IPPROTO_SMC, to enhance the usability.
-
-[1] https://lore.kernel.org/netdev/1708412505-34470-1-git-send-email-alibuda@linux.alibaba.com/
-[2] https://lore.kernel.org/all/ac84be00f97072a46f8a72b4e2be46cbb7fa5053.1692147782.git.geliang.tang@suse.com/
-
-Thanks!
 
