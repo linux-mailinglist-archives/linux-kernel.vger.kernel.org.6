@@ -1,264 +1,138 @@
-Return-Path: <linux-kernel+bounces-170941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FDF8BDE33
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE788BDE37
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C4D1F23119
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762601F23B28
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9CD14E2CB;
-	Tue,  7 May 2024 09:29:10 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8946D14E2CF;
+	Tue,  7 May 2024 09:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="cB06D8GB"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E1D6E61B;
-	Tue,  7 May 2024 09:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82F114D2B5;
+	Tue,  7 May 2024 09:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074150; cv=none; b=mwMPDC4YnCmv5H5Ktgt8NCbLh4pvWjUBklwtsu1KEzQEZVK2VFQZ6yh/8zFQB7GtcUtiZzhzqMg48Z13eYc51s42JZcKVxw+zAm6m8GMzbV+zorE3lBnttLYaupdL9eWtuyzTZIjTD/5DvPVWnCjonsVPbfjmFdTIHuYZeDpM4Y=
+	t=1715074183; cv=none; b=raTnb57i0sQLdEx0xnNqxhKXmx0g3ZRc3+g1QafZwzIXHY3ji0wkdGYGgryWRuIOdba4lgcnQtfwvaMdFnJtEmjMvl1FX4pL5qYv3c4L1NZHQk8Fdzo5GBdMh8htddjMtzkbibz5yeBTx1/BH7V5DoBX4s+eZXqWuVfxn1Pm4eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074150; c=relaxed/simple;
-	bh=35twsSiMDlm/W87ud83BDqRk6dzvwB3GRw0RWgmTKdA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=puntpwB1P4R1jgm7QiolNUxhywz6GQSXfK0IUGC9HP8W65GzT7yjyb/lMLbIDAO3+cgyU2IRvYqTebCWNDo0w8saJVQf185yYVS1UW0JE6mpHjo7G+qXmKBS01y4LWgHeMifSR7tSelxn3wUAzANnGymsJw524NKHEYzQDwDUTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VYXbX2mH8z9v7gQ;
-	Tue,  7 May 2024 17:12:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 0A35B1407FB;
-	Tue,  7 May 2024 17:28:58 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwB3YydN9DlmpJ6tBw--.32254S2;
-	Tue, 07 May 2024 10:28:57 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	john.johansen@canonical.com,
-	stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com,
-	eparis@redhat.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guozihua@huawei.com,
-	omosnace@redhat.com,
-	audit@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	selinux@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH] ima: Use sequence number to wait for policy updates
-Date: Tue,  7 May 2024 11:28:31 +0200
-Message-Id: <20240507092831.3590793-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715074183; c=relaxed/simple;
+	bh=+b0PqBmWiKM8fSbUCScwguB7ROVDToBniJB8hjgJhHs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CxuoUjsRmiDLNfhaXeVWOur6JaFSFb/JEZCc5oV1RcdXf8aXGj/huLOs6JtuDQuYdboDIxSs/1E2RbBzAkn3r8DglSagLiBEwps9/P706xLtVtXiPaY0wwlB9/L+L/BKc1RKFSCYOokDjN6OcQVlEKS/19Bq9kCqpXzFLAeO+vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=cB06D8GB; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4478Qxlb005008;
+	Tue, 7 May 2024 02:29:23 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pfpt0220; bh=V3Tg6uTIXEi5tFnn8HB+4v
+	Z22SCVpPXl19hGHqdsyx8=; b=cB06D8GBOysMaiXZDzKxH7erL7QiJ8lT9f9qgO
+	52YSWme11bRV9si5kUz4YsPUdqA6X9H6bYlJE7joaZaw0QAlg0ZJrZAMU/FTqBmT
+	CEGWKWAjEQVR6bdy+9YShf4YwjJuv2HRlghNbmL7sJDxRKutNRkgopK9Ya9OCW3B
+	SP064sqRYQTGbh2jBp8OeLdHuZsHSsv9W8EDZ/SlmWoPnpSZvDUP4ErYmbf9n7cE
+	6Sl1nTVvKt36maWUVKHTRp/BzRabKqP2v3Ian/zBwjHJlNLZP7Y13CyiAkxl35zr
+	uPgw8TS0/0vGQWrhACI+gA6a/jVFx62d5DHXcBCHgl8c6/Sg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3xygt2r5aa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 02:29:22 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 7 May 2024 02:29:21 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 7 May 2024 02:29:21 -0700
+Received: from maili.marvell.com (unknown [10.28.36.165])
+	by maili.marvell.com (Postfix) with SMTP id C08753F7067;
+	Tue,  7 May 2024 02:29:18 -0700 (PDT)
+Date: Tue, 7 May 2024 14:59:17 +0530
+From: Ratheesh Kannoth <rkannoth@marvell.com>
+To: Duoming Zhou <duoming@zju.edu.cn>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hams@vger.kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <jreuter@yaina.de>, <dan.carpenter@linaro.org>
+Subject: Re: [PATCH net v5 1/4] ax25: Use kernel universal linked list to
+ implement ax25_dev_list
+Message-ID: <20240507092917.GA1049473@maili.marvell.com>
+References: <cover.1715065005.git.duoming@zju.edu.cn>
+ <bd49e83817604e61a12c9bf688a0825f116e67c0.1715065005.git.duoming@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwB3YydN9DlmpJ6tBw--.32254S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxurW8Wr48Zr48ZF4kKr13CFg_yoW7JF1xpF
-	Wvga4DCF40vFWI9r4xC34UZw4Y9F18ur1Ut3s8W34aywsxAr10gF18tFy2va4fGrW5Cr1f
-	XF4YgrsYkw1jv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU0bAw3UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBF1jj5kT+gAAsX
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <bd49e83817604e61a12c9bf688a0825f116e67c0.1715065005.git.duoming@zju.edu.cn>
+X-Proofpoint-ORIG-GUID: KfjDknZKjbqKtls64QpGuiYWmbBMGvzA
+X-Proofpoint-GUID: KfjDknZKjbqKtls64QpGuiYWmbBMGvzA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_03,2024-05-06_02,2023-05-22_02
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 2024-05-07 at 12:33:39, Duoming Zhou (duoming@zju.edu.cn) wrote:
+> The origin ax25_dev_list implements its own single linked list,
+> which is complicated and error-prone. For example, when deleting
+> the node of ax25_dev_list in ax25_dev_device_down(), we have to
+> operate on the head node and other nodes separately.
+>
+> This patch uses kernel universal linked list to replace original
+> ax25_dev_list, which make the operation of ax25_dev_list easier.
+> There are two points that need to notice:
+>
+> [1] We should add a check to judge whether the list is empty before
+> INIT_LIST_HEAD in ax25_dev_device_up(), otherwise it will empty the
+> list for each new ax25_dev added.
+>
+> [2] We should do "dev->ax25_ptr = ax25_dev;" and "dev->ax25_ptr = NULL;"
+> while holding the spinlock, otherwise the ax25_dev_device_up() and
+> ax25_dev_device_down() could race, we're not guaranteed to find a match
+> ax25_dev in ax25_dev_device_down().
+>
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+> -ax25_dev *ax25_dev_list;
+> +static struct list_head ax25_dev_list;
+>  DEFINE_SPINLOCK(ax25_dev_lock);
+>
+>  ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
+> @@ -34,7 +35,7 @@ ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
+>  	ax25_dev *ax25_dev, *res = NULL;
+>
+>  	spin_lock_bh(&ax25_dev_lock);
+> -	for (ax25_dev = ax25_dev_list; ax25_dev != NULL; ax25_dev = ax25_dev->next)
+> +	list_for_each_entry(ax25_dev, &ax25_dev_list, list)
+>  		if (ax25cmp(addr, (const ax25_address *)ax25_dev->dev->dev_addr) == 0) {
+>  			res = ax25_dev;
+>  			ax25_dev_hold(ax25_dev);
+> @@ -52,6 +53,9 @@ void ax25_dev_device_up(struct net_device *dev)
+>  {
+>  	ax25_dev *ax25_dev;
+>
+> +	/* Initialized the list for the first entry */
+> +	if (!ax25_dev_list.next)
+> +		INIT_LIST_HEAD(&ax25_dev_list);
+if you define ax25_dev_list using 'static LIST_HEAD(ax25_dev_list)', you need this conditional check and
+initialization ?
 
-Maintain a global sequence number, and set it to individual policy rules,
-when they are created.
-
-When a rule is stale, wait for the global sequence number to increase,
-which happens when the LSM policy has been fully updated.
-
-Finally, restart the ima_match_policy() loop, which should not encounter
-the stale rule anymore.
-
-On policy update, already increase the rule sequence number, so that a wait
-can be implemented for the next policy update.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_policy.c | 65 +++++++++++++++--------------
- 1 file changed, 33 insertions(+), 32 deletions(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index c0556907c2e6..4f8275e216fe 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -51,9 +51,12 @@
- #define INVALID_PCR(a) (((a) < 0) || \
- 	(a) >= (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
- 
-+DECLARE_WAIT_QUEUE_HEAD(wait_queue_t);
-+
- int ima_policy_flag;
- static int temp_ima_appraise;
- static int build_ima_appraise __ro_after_init;
-+static int global_seqno;
- 
- atomic_t ima_setxattr_allowed_hash_algorithms;
- 
-@@ -122,6 +125,7 @@ struct ima_rule_entry {
- 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
- 	struct ima_rule_opt_list *label; /* Measure data grouped under this label */
- 	struct ima_template_desc *template;
-+	int seqno;
- };
- 
- /*
-@@ -442,6 +446,8 @@ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
- 	if (!nentry)
- 		return -ENOMEM;
- 
-+	nentry->seqno++;
-+
- 	list_replace_rcu(&entry->list, &nentry->list);
- 	synchronize_rcu();
- 	/*
-@@ -497,6 +503,8 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
- 		return NOTIFY_DONE;
- 
- 	ima_lsm_update_rules();
-+	global_seqno++;
-+	wake_up(&wait_queue_t);
- 	return NOTIFY_OK;
- }
- 
-@@ -560,18 +568,16 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
-  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-  * @func_data: func specific data, may be NULL
-  *
-- * Returns true on rule match, false on failure.
-+ * Returns 1 on rule match, 0 on mismatch, -ESTALE on stale policy.
-  */
--static bool ima_match_rules(struct ima_rule_entry *rule,
--			    struct mnt_idmap *idmap,
--			    struct inode *inode, const struct cred *cred,
--			    u32 secid, enum ima_hooks func, int mask,
--			    const char *func_data)
-+static int ima_match_rules(struct ima_rule_entry *rule,
-+			   struct mnt_idmap *idmap,
-+			   struct inode *inode, const struct cred *cred,
-+			   u32 secid, enum ima_hooks func, int mask,
-+			   const char *func_data)
- {
- 	int i;
--	bool result = false;
- 	struct ima_rule_entry *lsm_rule = rule;
--	bool rule_reinitialized = false;
- 
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
-@@ -642,7 +648,6 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 				return false;
- 		}
- 
--retry:
- 		switch (i) {
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
-@@ -663,27 +668,13 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 			break;
- 		}
- 
--		if (rc == -ESTALE && !rule_reinitialized) {
--			lsm_rule = ima_lsm_copy_rule(rule);
--			if (lsm_rule) {
--				rule_reinitialized = true;
--				goto retry;
--			}
--		}
--		if (!rc) {
--			result = false;
--			goto out;
--		}
-+		if (!rc)
-+			return false;
-+		else if (rc == -ESTALE)
-+			return rc;
- 	}
--	result = true;
- 
--out:
--	if (rule_reinitialized) {
--		for (i = 0; i < MAX_LSM_RULES; i++)
--			ima_filter_rule_free(lsm_rule->lsm[i].rule);
--		kfree(lsm_rule);
--	}
--	return result;
-+	return true;
- }
- 
- /*
-@@ -741,12 +732,12 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
- 		     const char *func_data, unsigned int *allowed_algos)
- {
- 	struct ima_rule_entry *entry;
--	int action = 0, actmask = flags | (flags << 1);
-+	int action = 0, rc, actmask = flags | (flags << 1);
- 	struct list_head *ima_rules_tmp;
- 
- 	if (template_desc && !*template_desc)
- 		*template_desc = ima_template_desc_current();
--
-+retry:
- 	rcu_read_lock();
- 	ima_rules_tmp = rcu_dereference(ima_rules);
- 	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
-@@ -754,9 +745,18 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
- 		if (!(entry->action & actmask))
- 			continue;
- 
--		if (!ima_match_rules(entry, idmap, inode, cred, secid,
--				     func, mask, func_data))
-+		rc = ima_match_rules(entry, idmap, inode, cred, secid,
-+				     func, mask, func_data);
-+		if (!rc)
- 			continue;
-+		else if (rc == -ESTALE) {
-+			rcu_read_unlock();
-+
-+			wait_event_interruptible(wait_queue_t,
-+				(global_seqno == entry->seqno + 1));
-+
-+			goto retry;
-+		}
- 
- 		action |= entry->flags & IMA_NONACTION_FLAGS;
- 
-@@ -1153,6 +1153,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
- 			result = 0;
- 	}
- 
-+	entry->seqno = global_seqno;
- 	return result;
- }
- 
--- 
-2.34.1
-
+>  	ax25_dev = kzalloc(sizeof(*ax25_dev), GFP_KERNEL);
+>  	if (!ax25_dev) {
+>  		printk(KERN_ERR "AX.25: ax25_dev_device_up - out of memory\n");
+> @@ -59,7 +63,6 @@ void ax25_dev_device_up(struct net_device *dev)
+>  	}
+>
+>  	refcount_set(&ax25_dev->refcount, 1);
+>
 
