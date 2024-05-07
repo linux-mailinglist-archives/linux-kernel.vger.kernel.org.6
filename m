@@ -1,827 +1,215 @@
-Return-Path: <linux-kernel+bounces-170663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80A28BDA50
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D1E8BDA59
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00DE11C238EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23FFB1C2281D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE1673196;
-	Tue,  7 May 2024 04:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AFA6CDCB;
+	Tue,  7 May 2024 04:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ARBXxHwQ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="X+oOh1x2"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B1371757
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BFA6BB45
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715057712; cv=none; b=K6scXKoZhwiHaW/nXRaizPwSRhBF5XWwiEWYzeYMs2bz7XE6E9rEfMcMG+rWFCbHFQ0DgAr+5GGzVfnfSDp2wC6En0SdIPuABf9w6shCHHtsbCQYogzDD8NW7BDy8grp3wuTCGo7Q4rIMnFihJMxoJbq6aKgFLbT9zSmW8RD064=
+	t=1715057855; cv=none; b=bpwV/OpaUGTuJ7CCQNkJavDMzhy1nGsU9aXAu0RBjW5xWQ1w9fazjq2B2yb7sGP0mrlp5juXo6DqYl1t6RDHYn1JL9OWoEh7NFous4zV4EqiFPAkFy6Ki9g8D7MxFKIRlopOQoGWbaNCmEdGK690y17NoRYYIMy+CZ3ZGDP5Lz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715057712; c=relaxed/simple;
-	bh=c0CTlNWIT2VmkUCh6P94jxABJG5lfMRKmxS1WBdA+zM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dj1jzGaRpbMbHGgbB7ympOg3Glj688oIWAknUZ02ypncSFR+oiHhNTLlEULfKxWZeYmbdNOygNsCee1n8LdWPYcig+svemhBKDIK5UlHVSEezYzaihRZrQ8O6RAMzvJOcYQDfrjhqGRIfuxUq9gchzpQ9SnJjAaddA/vjDVL9d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ARBXxHwQ; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6ef9edf9910so3524807b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 21:55:09 -0700 (PDT)
+	s=arc-20240116; t=1715057855; c=relaxed/simple;
+	bh=Kv/msdpJ1elnStt/Fuiw74roHrhOO4hA59fpxGbOOkg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=I4C+ix2C2KnXm/5AN9zREG57MKLvMl/E6UDn2FJZq/Dv8ihuQTbVGc0RFk4e9evq6NSylTucRDHXxWEpSm4YFWpkNUsDq164FE6HQ6V6rRwSGNiAqps2+xB8qB4vhEQYLIHg/wiqYihnzD4ItzenwqPtq78NLiHiFreQBHMul4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=X+oOh1x2; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f0307322d5so1322008a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 21:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715057709; x=1715662509; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z81Liy4u6PT+n9ZgAyfJktjHXoOW7bLB/k6KjtnCoO0=;
-        b=ARBXxHwQkenVdE25uVCX45Uu95rW48Z0MIgVTXdxaBDPmbs38LJTFOCw0iCxjD0IAz
-         zi0YYFYOs/Mjxh1yb4/CaoCwBhxoRpw4VgmFFDfzEFU5I/p1JjgagiLTDhr108VOTz/W
-         Ni2aZtcsI4YrFqK8UFT2NPQjZeyx3tuTOhmZpUIX+ob4Ty8yUEFBJzCYks3eHcBMnwmM
-         iL5mC7arzV4qwuOgXhwcKY68NASjuuXVEk0Oc6saVi4aYN/p13Cz0GMjcnzt81lKL2dO
-         upHRO1iTzSAPHp9y00xmMa3GxZKb6h/wrqLEp8XB89Z9cYGef+09TlB4yknTaJkram9u
-         ctCQ==
+        d=tenstorrent.com; s=google; t=1715057850; x=1715662650; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=waVLk68pwl0wnoLZMqeGSJBVn9GxZms6bUMETdjaegw=;
+        b=X+oOh1x2Gl34M2EVSn/XbHPlVs4RVXaP+mWguuUUgiUK03pw/j5bk3+mwiZRCmn4Lp
+         5Iu9sI4TpL21+23QTA3WuzzSsbOLsdullU/5RQXF7pM62D6OdlE2pbcXABvdTcXIVZH3
+         vRzUfi0rB9btyFnIuS1jP7l2iH7l7NDpwgKlPKlkd0IxPiR9wknFXiU8uSJYZZVXMXwO
+         95jTsQ7MnjuyqqiF9fK9NYhYqHfsrMtsMW+b+V/I9VVwA+mSWEoya2aFTd5aK9345ofl
+         Ljda2ldGiNh2o2pxfMnrXQA/g5N6HzYFvV4LaLYvDicDYHnyVYuXtrsOm4r7fyLT4z7t
+         Z3uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715057709; x=1715662509;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z81Liy4u6PT+n9ZgAyfJktjHXoOW7bLB/k6KjtnCoO0=;
-        b=AChrjeam/zHW8hs5cawvcva77x/jd/ZcLxVPmULM7sNz8rTw6jcCSIUv4Yp+Y2dHc2
-         tQm3JSb/W/HaE1wrdpLkmL6xWn0qP9CwvbQ2OJTLMxyuzbDGCoTOfBU3WeDW99A2v6Ie
-         dqtyOI7WuPDGkXMt3FDXWnQ8JKcxz4ahq0ybHx7JZv4R8NfgUeMqv1ab8OkpMVmuwE+/
-         JdoRbjeoZFdG6jqrEJWU0QWBiZHNXlqJ78L9tzEkVS98pSyqACvagBRcwHXh1v2W7Gnq
-         QqhAl0ySovfBnwZH/tMtcR3SZr4PIcEwzDTZN6D7F+lPQ8PttYNCgCKUBGCA0yMtb4wf
-         j9MA==
-X-Gm-Message-State: AOJu0YwEtO5yjtibjnCiRu2Li/Exa3dnXEcELFnaAURtoSas0uN5Rt1Y
-	fh5P8u9s5ItiZgKWd7n1s+ql6m0jNub46Jedw0Y/iTs2rkFqzl1yElKC1lAl1NxgOHJVceZoN3M
-	XaTDhYYl2UGytTQjxSjWrXTNzRfBicdrw52OWo5mlsa2Vs70o49RfFHiYs/BuE/lmmFNJPxQWek
-	sgbZSfHsGQC248BQZ0QTlz+pw4/Y2cKSJ55CUdgGW9vY9s
-X-Google-Smtp-Source: AGHT+IFbiOTBRpUY+fKzB/py8nOYBkzA+8Xge7AMh2xZEzZuGmV0+KXUbMo0Wg29OmbJohXfDWFp0lapBEuS
-X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
- (user=jstultz job=sendgmr) by 2002:a05:6a00:3a01:b0:6f3:8468:432f with SMTP
- id fj1-20020a056a003a0100b006f38468432fmr320614pfb.3.1715057709034; Mon, 06
- May 2024 21:55:09 -0700 (PDT)
-Date: Mon,  6 May 2024 21:54:36 -0700
-In-Reply-To: <20240507045450.895430-1-jstultz@google.com>
+        d=1e100.net; s=20230601; t=1715057850; x=1715662650;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=waVLk68pwl0wnoLZMqeGSJBVn9GxZms6bUMETdjaegw=;
+        b=PL6vq8zVJWfvx6t1kOYHwBpb3s5uRi3EJGqDwlUxNwb3HBNLeJiMo9gk400loTJ9k5
+         fbywRGa+1H0FpgzcLPHggdr+fp/9j2HWQ0SBNpjbD3PlMV5i8Qggx2bFsje5n46H4jx3
+         FzlHtYYS75THGjPC7O7MkMbBsUP+6BXnmeYkKPbckTa87UmmGam2QBT1iLAJgIigmJBT
+         bS1OmTiNXoGSvvgpNl2iuBRALig6OXJexQibWubNnlW4lpQLcY5f5JJiYVorw+jEJKSI
+         qlkMhWbA4+r6O1ID6O4S/idq+KHEHEek9zAaIMLYemJnaZvhbB9xbTa0CyIo9Sr/ut8l
+         q07w==
+X-Forwarded-Encrypted: i=1; AJvYcCUVYQFDNOSG1fZkOOnWm1OKooTohNbVIJAgPE9uOb4rD1X5KrALB1pUuEEJzl05sEauVcF3Ujjur7m0+u/0sGsrSC/HZ3rfx5LTqwHd
+X-Gm-Message-State: AOJu0YzRTtwhoTAxrVmUyZmkY9YR34Vr7K7wipBdhu3qg3g+0njXagfM
+	MpR7goErZXKIbIl09den6pZ1x2D2Ns0v8aMtVm4frF9Ra2ofz6ytzrsngHI00Pw=
+X-Google-Smtp-Source: AGHT+IEdQBdDHh+kTKH2iegz5oZNNio4fA+PfCvxJrBMCJGCaCJIX70vmHdJ6AP/M5EO85tchFEWQw==
+X-Received: by 2002:a05:6358:7242:b0:183:4336:b901 with SMTP id i2-20020a056358724200b001834336b901mr14530874rwa.5.1715057850154;
+        Mon, 06 May 2024 21:57:30 -0700 (PDT)
+Received: from [127.0.1.1] ([2601:1c2:1802:170:6870:7119:e255:c3a0])
+        by smtp.gmail.com with ESMTPSA id o14-20020a637e4e000000b005f80aced5f3sm8987249pgn.0.2024.05.06.21.57.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 21:57:29 -0700 (PDT)
+From: Drew Fustini <dfustini@tenstorrent.com>
+Subject: [PATCH RFC v3 0/7] clk: thead: Add support for TH1520 AP_SUBSYS
+ clock controller
+Date: Mon, 06 May 2024 21:55:13 -0700
+Message-Id: <20240506-th1520-clk-v3-0-085a18a23a7f@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507045450.895430-1-jstultz@google.com>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240507045450.895430-8-jstultz@google.com>
-Subject: [PATCH v10 7/7] sched: Split scheduler and execution contexts
-From: John Stultz <jstultz@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Joel Fernandes <joelaf@google.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Youssef Esmat <youssefesmat@google.com>, 
-	Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Xuewen Yan <xuewen.yan94@gmail.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com, 
-	Metin Kaya <metin.kaya@arm.com>, "Connor O'Brien" <connoro@google.com>, 
-	John Stultz <jstultz@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADG0OWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUwNT3ZIMQ1MjA93knGzdJIs0i7Qko9TkNCMLJaCGgqLUtMwKsGHRSkF
+ uzkqxtbUAWlphu2EAAAA=
+To: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Drew Fustini <dfustini@tenstorrent.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715057849; l=4980;
+ i=dfustini@tenstorrent.com; s=20230430; h=from:subject:message-id;
+ bh=Kv/msdpJ1elnStt/Fuiw74roHrhOO4hA59fpxGbOOkg=;
+ b=y5ZAyWsd6EbHRcRpmYTlHiOaNM7wWAYKf19ARGrR1YmgZxDuVewz6AxKgNoDaevHGWQMTaFAF
+ QWD93cAqpnIBRmvRk4UPB8iBdYWDDHlQNs2QympbvZUdLXm+LvLREVz
+X-Developer-Key: i=dfustini@tenstorrent.com; a=ed25519;
+ pk=p3GKE9XFmjhwAayAHG4U108yag7V8xQVd4zJLdW0g7g=
 
-From: Peter Zijlstra <peterz@infradead.org>
+This series adds support for the AP sub-system clock controller in the
+T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
+2023 [2]. Jisheng made additional improvements and then passed on the
+work in progress to me.
 
-Let's define the scheduling context as all the scheduler state
-in task_struct for the task selected to run, and the execution
-context as all state required to actually run the task.
+Changes in RFC v3:
+ - Drop redundant new line and unused clk label from the dts example in
+   the DT binding which I failed to fix in v2.
+ - Add patch [3] from Thomas Bonnefille that fixes dts node ordering in
+   th1520.dtsi. Conor has already merged it into riscv-dt-for-next so
+   the dts patches in this series are based on top of that.
+ - Remove fixed uart clock and converted uart DT nodes to use clocks
+   from the clock controller.
+ - Remove fixed apb clock and converted the dma controller and timer DT
+   nodes to use a clock from the clock controller.
+ - Made ccu_disable_helper() and ccu_enable_helper() to static functions
+ - Follow the advice from Stephen Boyd in Yangtao's original series to
+   not use strings for clk tree topology. Created clk_parent_data arrays
+   to be used with CLK_HW_INIT_PARENTS_DATA instead of parent strings.
+ - Rebase on top of v6.9-rc7
 
-Currently both are intertwined in task_struct. We want to
-logically split these such that we can use the scheduling
-context of the task selected to be scheduled, but use the
-execution context of a different task to actually be run.
+Changes in RFC v2 [4]:
+ - squash the header file patch into the DT schema patch
+ - describe the changes I made to original series in the cover letter
+   instead of the individual patches
+ - fix my typo in my email address
 
-To this purpose, introduce rq_selected() macro to point to the
-task_struct selected from the runqueue by the scheduler, and
-will be used for scheduler state, and preserve rq->curr to
-indicate the execution context of the task that will actually be
-run.
+Changes in RFC v1 [5] from the original series:
+ - corrected the npu_clk enable bit
+ - deduplicated CLK_NPU and CLK_NPU_AXI number in header
+ - fixed c910_i0_clk reg typo
+ - fixed checkpatch and dt_binding_check warnings
+ - rebased on v6.9-rc5
+ - revised commit descriptions
 
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Zimuzo Ezeozue <zezeozue@google.com>
-Cc: Youssef Esmat <youssefesmat@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Metin Kaya <Metin.Kaya@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-team@android.com
-Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Tested-by: Metin Kaya <metin.kaya@arm.com>
-Reviewed-by: Metin Kaya <metin.kaya@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20181009092434.26221-5-juri.lelli@redhat.com
-[add additional comments and update more sched_class code to use
- rq::proxy]
-Signed-off-by: Connor O'Brien <connoro@google.com>
-[jstultz: Rebased and resolved minor collisions, reworked to use
- accessors, tweaked update_curr_common to use rq_proxy fixing rt
- scheduling issues]
-Signed-off-by: John Stultz <jstultz@google.com>
+TODO:
+This is still marked as an RFC because I still need to make the
+improvements that Emil suggested in v1:
+ - Input predivider is not handled correctly in ccu_mdiv_recalc_rate().
+   The PLL multiplies the input frequency and outputs "Foutvco". This is
+   followed by a post divider to produce "Foutpostdiv". However, some
+   clocks derive directly from the "Foutvco". These should be modelled
+   as two differnt clocks.
+ - Use devm_clk_hw_register_gate() for the gates
+ - Use devm_clk_hw_register_mux() for the muxes
+
+I'll post a v1 patch once I've addressed the above issues.
+
+Thank you,
+Drew
+
+[1] https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+[2] https://lore.kernel.org/all/20230515054402.27633-1-frank.li@vivo.com/
+[3] https://lore.kernel.org/all/20240425082138.374445-1-thomas.bonnefille@bootlin.com/
+[4] https://lore.kernel.org/all/20240426-th1520-clk-v2-v2-0-96b829e6fcee@tenstorrent.com/
+[5] https://lore.kernel.org/all/20240110-clk-th1520-v1-0-8b0682567984@tenstorrent.com/
+
+To: Jisheng Zhang <jszhang@kernel.org>
+To: Guo Ren <guoren@kernel.org>
+To: Fu Wei <wefu@redhat.com>
+To: Yangtao Li <frank.li@vivo.com>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+To: Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 ---
-v2:
-* Reworked to use accessors
-* Fixed update_curr_common to use proxy instead of curr
-v3:
-* Tweaked wrapper names
-* Swapped proxy for selected for clarity
-v4:
-* Minor variable name tweaks for readability
-* Use a macro instead of a inline function and drop
-  other helper functions as suggested by Peter.
-* Remove verbose comments/questions to avoid review
-  distractions, as suggested by Dietmar
-v5:
-* Add CONFIG_PROXY_EXEC option to this patch so the
-  new logic can be tested with this change
-* Minor fix to grab rq_selected when holding the rq lock
-v7:
-* Minor spelling fix and unused argument fixes suggested by
-  Metin Kaya
-* Switch to curr_selected for consistency, and minor rewording
-  of commit message for clarity
-* Rename variables selected instead of curr when we're using
-  rq_selected()
-* Reduce macros in CONFIG_SCHED_PROXY_EXEC ifdef sections,
-  as suggested by Metin Kaya
-v8:
-* Use rq->curr, not rq_selected with task_tick, as suggested by
-  Valentin
-* Minor rework to reorder this with CONFIG_SCHED_PROXY_EXEC patch
-v10:
-* Use rq_selected in push_rt_task & get_push_task
----
- kernel/sched/core.c     | 46 ++++++++++++++++++++++++++---------------
- kernel/sched/deadline.c | 35 ++++++++++++++++---------------
- kernel/sched/fair.c     | 18 ++++++++--------
- kernel/sched/rt.c       | 42 ++++++++++++++++++-------------------
- kernel/sched/sched.h    | 27 +++++++++++++++++++++---
- 5 files changed, 101 insertions(+), 67 deletions(-)
+Drew Fustini (6):
+      dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS controller
+      clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks
+      riscv: dts: thead: Add TH1520 AP_SUBSYS clock controller
+      riscv: dts: thead: change TH1520 uart nodes to use clock controller
+      riscv: dts: thead: change TH1520 mmc nodes to use clock controller
+      riscv: dts: thead: update TH1520 dma and timer nodes to use clock controller
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8bc5844ebab9..30af17648f8c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -794,7 +794,7 @@ static enum hrtimer_restart hrtick(struct hrtimer *timer)
- 
- 	rq_lock(rq, &rf);
- 	update_rq_clock(rq);
--	rq->curr->sched_class->task_tick(rq, rq->curr, 1);
-+	rq_selected(rq)->sched_class->task_tick(rq, rq->curr, 1);
- 	rq_unlock(rq, &rf);
- 
- 	return HRTIMER_NORESTART;
-@@ -2236,16 +2236,18 @@ static inline void check_class_changed(struct rq *rq, struct task_struct *p,
- 
- void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
- {
--	if (p->sched_class == rq->curr->sched_class)
--		rq->curr->sched_class->wakeup_preempt(rq, p, flags);
--	else if (sched_class_above(p->sched_class, rq->curr->sched_class))
-+	struct task_struct *selected = rq_selected(rq);
-+
-+	if (p->sched_class == selected->sched_class)
-+		selected->sched_class->wakeup_preempt(rq, p, flags);
-+	else if (sched_class_above(p->sched_class, selected->sched_class))
- 		resched_curr(rq);
- 
- 	/*
- 	 * A queue event has occurred, and we're going to schedule.  In
- 	 * this case, we can save a useless back to back clock update.
- 	 */
--	if (task_on_rq_queued(rq->curr) && test_tsk_need_resched(rq->curr))
-+	if (task_on_rq_queued(selected) && test_tsk_need_resched(rq->curr))
- 		rq_clock_skip_update(rq);
- }
- 
-@@ -2772,7 +2774,7 @@ __do_set_cpus_allowed(struct task_struct *p, struct affinity_context *ctx)
- 		lockdep_assert_held(&p->pi_lock);
- 
- 	queued = task_on_rq_queued(p);
--	running = task_current(rq, p);
-+	running = task_current_selected(rq, p);
- 
- 	if (queued) {
- 		/*
-@@ -5596,7 +5598,7 @@ unsigned long long task_sched_runtime(struct task_struct *p)
- 	 * project cycles that may never be accounted to this
- 	 * thread, breaking clock_gettime().
- 	 */
--	if (task_current(rq, p) && task_on_rq_queued(p)) {
-+	if (task_current_selected(rq, p) && task_on_rq_queued(p)) {
- 		prefetch_curr_exec_start(p);
- 		update_rq_clock(rq);
- 		p->sched_class->update_curr(rq);
-@@ -5664,7 +5666,8 @@ void scheduler_tick(void)
- {
- 	int cpu = smp_processor_id();
- 	struct rq *rq = cpu_rq(cpu);
--	struct task_struct *curr = rq->curr;
-+	/* accounting goes to the selected task */
-+	struct task_struct *selected;
- 	struct rq_flags rf;
- 	unsigned long thermal_pressure;
- 	u64 resched_latency;
-@@ -5675,16 +5678,17 @@ void scheduler_tick(void)
- 	sched_clock_tick();
- 
- 	rq_lock(rq, &rf);
-+	selected = rq_selected(rq);
- 
- 	update_rq_clock(rq);
- 	thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
- 	update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure);
--	curr->sched_class->task_tick(rq, curr, 0);
-+	selected->sched_class->task_tick(rq, selected, 0);
- 	if (sched_feat(LATENCY_WARN))
- 		resched_latency = cpu_resched_latency(rq);
- 	calc_global_load_tick(rq);
- 	sched_core_tick(rq);
--	task_tick_mm_cid(rq, curr);
-+	task_tick_mm_cid(rq, selected);
- 
- 	rq_unlock(rq, &rf);
- 
-@@ -5693,8 +5697,8 @@ void scheduler_tick(void)
- 
- 	perf_event_task_tick();
- 
--	if (curr->flags & PF_WQ_WORKER)
--		wq_worker_tick(curr);
-+	if (selected->flags & PF_WQ_WORKER)
-+		wq_worker_tick(selected);
- 
- #ifdef CONFIG_SMP
- 	rq->idle_balance = idle_cpu(cpu);
-@@ -5759,6 +5763,12 @@ static void sched_tick_remote(struct work_struct *work)
- 		struct task_struct *curr = rq->curr;
- 
- 		if (cpu_online(cpu)) {
-+			/*
-+			 * Since this is a remote tick for full dynticks mode,
-+			 * we are always sure that there is no proxy (only a
-+			 * single task is running).
-+			 */
-+			SCHED_WARN_ON(rq->curr != rq_selected(rq));
- 			update_rq_clock(rq);
- 
- 			if (!is_idle_task(curr)) {
-@@ -6712,6 +6722,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 	}
- 
- 	next = pick_next_task(rq, prev, &rf);
-+	rq_set_selected(rq, next);
- 	clear_tsk_need_resched(prev);
- 	clear_preempt_need_resched();
- #ifdef CONFIG_SCHED_DEBUG
-@@ -7222,7 +7233,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
- 
- 	prev_class = p->sched_class;
- 	queued = task_on_rq_queued(p);
--	running = task_current(rq, p);
-+	running = task_current_selected(rq, p);
- 	if (queued)
- 		dequeue_task(rq, p, queue_flag);
- 	if (running)
-@@ -7312,7 +7323,7 @@ void set_user_nice(struct task_struct *p, long nice)
- 	}
- 
- 	queued = task_on_rq_queued(p);
--	running = task_current(rq, p);
-+	running = task_current_selected(rq, p);
- 	if (queued)
- 		dequeue_task(rq, p, DEQUEUE_SAVE | DEQUEUE_NOCLOCK);
- 	if (running)
-@@ -7891,7 +7902,7 @@ static int __sched_setscheduler(struct task_struct *p,
- 	}
- 
- 	queued = task_on_rq_queued(p);
--	running = task_current(rq, p);
-+	running = task_current_selected(rq, p);
- 	if (queued)
- 		dequeue_task(rq, p, queue_flags);
- 	if (running)
-@@ -9318,6 +9329,7 @@ void __init init_idle(struct task_struct *idle, int cpu)
- 	rcu_read_unlock();
- 
- 	rq->idle = idle;
-+	rq_set_selected(rq, idle);
- 	rcu_assign_pointer(rq->curr, idle);
- 	idle->on_rq = TASK_ON_RQ_QUEUED;
- #ifdef CONFIG_SMP
-@@ -9407,7 +9419,7 @@ void sched_setnuma(struct task_struct *p, int nid)
- 
- 	rq = task_rq_lock(p, &rf);
- 	queued = task_on_rq_queued(p);
--	running = task_current(rq, p);
-+	running = task_current_selected(rq, p);
- 
- 	if (queued)
- 		dequeue_task(rq, p, DEQUEUE_SAVE);
-@@ -10512,7 +10524,7 @@ void sched_move_task(struct task_struct *tsk)
- 
- 	update_rq_clock(rq);
- 
--	running = task_current(rq, tsk);
-+	running = task_current_selected(rq, tsk);
- 	queued = task_on_rq_queued(tsk);
- 
- 	if (queued)
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index ae583a427539..6b49f9229414 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1218,7 +1218,7 @@ static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
- #endif
- 
- 	enqueue_task_dl(rq, p, ENQUEUE_REPLENISH);
--	if (dl_task(rq->curr))
-+	if (dl_task(rq_selected(rq)))
- 		wakeup_preempt_dl(rq, p, 0);
- 	else
- 		resched_curr(rq);
-@@ -1442,7 +1442,7 @@ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
-  */
- static void update_curr_dl(struct rq *rq)
- {
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr = rq_selected(rq);
- 	struct sched_dl_entity *dl_se = &curr->dl;
- 	s64 delta_exec;
- 
-@@ -1899,7 +1899,7 @@ static int find_later_rq(struct task_struct *task);
- static int
- select_task_rq_dl(struct task_struct *p, int cpu, int flags)
- {
--	struct task_struct *curr;
-+	struct task_struct *curr, *selected;
- 	bool select_rq;
- 	struct rq *rq;
- 
-@@ -1910,6 +1910,7 @@ select_task_rq_dl(struct task_struct *p, int cpu, int flags)
- 
- 	rcu_read_lock();
- 	curr = READ_ONCE(rq->curr); /* unlocked access */
-+	selected = READ_ONCE(rq_selected(rq));
- 
- 	/*
- 	 * If we are dealing with a -deadline task, we must
-@@ -1920,9 +1921,9 @@ select_task_rq_dl(struct task_struct *p, int cpu, int flags)
- 	 * other hand, if it has a shorter deadline, we
- 	 * try to make it stay here, it might be important.
- 	 */
--	select_rq = unlikely(dl_task(curr)) &&
-+	select_rq = unlikely(dl_task(selected)) &&
- 		    (curr->nr_cpus_allowed < 2 ||
--		     !dl_entity_preempt(&p->dl, &curr->dl)) &&
-+		     !dl_entity_preempt(&p->dl, &selected->dl)) &&
- 		    p->nr_cpus_allowed > 1;
- 
- 	/*
-@@ -1985,7 +1986,7 @@ static void check_preempt_equal_dl(struct rq *rq, struct task_struct *p)
- 	 * let's hope p can move out.
- 	 */
- 	if (rq->curr->nr_cpus_allowed == 1 ||
--	    !cpudl_find(&rq->rd->cpudl, rq->curr, NULL))
-+	    !cpudl_find(&rq->rd->cpudl, rq_selected(rq), NULL))
- 		return;
- 
- 	/*
-@@ -2024,7 +2025,7 @@ static int balance_dl(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
- static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p,
- 				  int flags)
- {
--	if (dl_entity_preempt(&p->dl, &rq->curr->dl)) {
-+	if (dl_entity_preempt(&p->dl, &rq_selected(rq)->dl)) {
- 		resched_curr(rq);
- 		return;
- 	}
-@@ -2034,7 +2035,7 @@ static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p,
- 	 * In the unlikely case current and p have the same deadline
- 	 * let us try to decide what's the best thing to do...
- 	 */
--	if ((p->dl.deadline == rq->curr->dl.deadline) &&
-+	if ((p->dl.deadline == rq_selected(rq)->dl.deadline) &&
- 	    !test_tsk_need_resched(rq->curr))
- 		check_preempt_equal_dl(rq, p);
- #endif /* CONFIG_SMP */
-@@ -2066,7 +2067,7 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, bool first)
- 	if (!first)
- 		return;
- 
--	if (rq->curr->sched_class != &dl_sched_class)
-+	if (rq_selected(rq)->sched_class != &dl_sched_class)
- 		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
- 
- 	deadline_queue_push_tasks(rq);
-@@ -2391,8 +2392,8 @@ static int push_dl_task(struct rq *rq)
- 	 * can move away, it makes sense to just reschedule
- 	 * without going further in pushing next_task.
- 	 */
--	if (dl_task(rq->curr) &&
--	    dl_time_before(next_task->dl.deadline, rq->curr->dl.deadline) &&
-+	if (dl_task(rq_selected(rq)) &&
-+	    dl_time_before(next_task->dl.deadline, rq_selected(rq)->dl.deadline) &&
- 	    rq->curr->nr_cpus_allowed > 1) {
- 		resched_curr(rq);
- 		return 0;
-@@ -2515,7 +2516,7 @@ static void pull_dl_task(struct rq *this_rq)
- 			 * deadline than the current task of its runqueue.
- 			 */
- 			if (dl_time_before(p->dl.deadline,
--					   src_rq->curr->dl.deadline))
-+					   rq_selected(src_rq)->dl.deadline))
- 				goto skip;
- 
- 			if (is_migration_disabled(p)) {
-@@ -2554,9 +2555,9 @@ static void task_woken_dl(struct rq *rq, struct task_struct *p)
- 	if (!task_on_cpu(rq, p) &&
- 	    !test_tsk_need_resched(rq->curr) &&
- 	    p->nr_cpus_allowed > 1 &&
--	    dl_task(rq->curr) &&
-+	    dl_task(rq_selected(rq)) &&
- 	    (rq->curr->nr_cpus_allowed < 2 ||
--	     !dl_entity_preempt(&p->dl, &rq->curr->dl))) {
-+	     !dl_entity_preempt(&p->dl, &rq_selected(rq)->dl))) {
- 		push_dl_tasks(rq);
- 	}
- }
-@@ -2731,12 +2732,12 @@ static void switched_to_dl(struct rq *rq, struct task_struct *p)
- 		return;
- 	}
- 
--	if (rq->curr != p) {
-+	if (rq_selected(rq) != p) {
- #ifdef CONFIG_SMP
- 		if (p->nr_cpus_allowed > 1 && rq->dl.overloaded)
- 			deadline_queue_push_tasks(rq);
- #endif
--		if (dl_task(rq->curr))
-+		if (dl_task(rq_selected(rq)))
- 			wakeup_preempt_dl(rq, p, 0);
- 		else
- 			resched_curr(rq);
-@@ -2765,7 +2766,7 @@ static void prio_changed_dl(struct rq *rq, struct task_struct *p,
- 	if (!rq->dl.overloaded)
- 		deadline_queue_pull_task(rq);
- 
--	if (task_current(rq, p)) {
-+	if (task_current_selected(rq, p)) {
- 		/*
- 		 * If we now have a earlier deadline task than p,
- 		 * then reschedule, provided p is still on this
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c62805dbd608..4c0018ba7ea3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1146,7 +1146,7 @@ static inline void update_curr_task(struct task_struct *p, s64 delta_exec)
-  */
- s64 update_curr_common(struct rq *rq)
- {
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr = rq_selected(rq);
- 	s64 delta_exec;
- 
- 	delta_exec = update_curr_se(rq, &curr->se);
-@@ -1183,7 +1183,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
- 
- static void update_curr_fair(struct rq *rq)
- {
--	update_curr(cfs_rq_of(&rq->curr->se));
-+	update_curr(cfs_rq_of(&rq_selected(rq)->se));
- }
- 
- static inline void
-@@ -6639,7 +6639,7 @@ static void hrtick_start_fair(struct rq *rq, struct task_struct *p)
- 		s64 delta = slice - ran;
- 
- 		if (delta < 0) {
--			if (task_current(rq, p))
-+			if (task_current_selected(rq, p))
- 				resched_curr(rq);
- 			return;
- 		}
-@@ -6654,7 +6654,7 @@ static void hrtick_start_fair(struct rq *rq, struct task_struct *p)
-  */
- static void hrtick_update(struct rq *rq)
- {
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr = rq_selected(rq);
- 
- 	if (!hrtick_enabled_fair(rq) || curr->sched_class != &fair_sched_class)
- 		return;
-@@ -8285,7 +8285,7 @@ static void set_next_buddy(struct sched_entity *se)
-  */
- static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int wake_flags)
- {
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr = rq_selected(rq);
- 	struct sched_entity *se = &curr->se, *pse = &p->se;
- 	struct cfs_rq *cfs_rq = task_cfs_rq(curr);
- 	int cse_is_idle, pse_is_idle;
-@@ -8316,7 +8316,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
- 	 * prevents us from potentially nominating it as a false LAST_BUDDY
- 	 * below.
- 	 */
--	if (test_tsk_need_resched(curr))
-+	if (test_tsk_need_resched(rq->curr))
- 		return;
- 
- 	/* Idle tasks are by definition preempted by non-idle tasks. */
-@@ -9298,7 +9298,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
- 	 * update_load_avg() can call cpufreq_update_util(). Make sure that RT,
- 	 * DL and IRQ signals have been updated before updating CFS.
- 	 */
--	curr_class = rq->curr->sched_class;
-+	curr_class = rq_selected(rq)->sched_class;
- 
- 	thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
- 
-@@ -12667,7 +12667,7 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
- 	 * our priority decreased, or if we are not currently running on
- 	 * this runqueue and our priority is higher than the current's
- 	 */
--	if (task_current(rq, p)) {
-+	if (task_current_selected(rq, p)) {
- 		if (p->prio > oldprio)
- 			resched_curr(rq);
- 	} else
-@@ -12770,7 +12770,7 @@ static void switched_to_fair(struct rq *rq, struct task_struct *p)
- 		 * kick off the schedule if running, otherwise just see
- 		 * if we can still preempt the current task.
- 		 */
--		if (task_current(rq, p))
-+		if (task_current_selected(rq, p))
- 			resched_curr(rq);
- 		else
- 			wakeup_preempt(rq, p, 0);
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 8b6fb77e095b..b02e8aad9b86 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -530,7 +530,7 @@ static void dequeue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
- 
- static void sched_rt_rq_enqueue(struct rt_rq *rt_rq)
- {
--	struct task_struct *curr = rq_of_rt_rq(rt_rq)->curr;
-+	struct task_struct *curr = rq_selected(rq_of_rt_rq(rt_rq));
- 	struct rq *rq = rq_of_rt_rq(rt_rq);
- 	struct sched_rt_entity *rt_se;
- 
-@@ -1000,7 +1000,7 @@ static int sched_rt_runtime_exceeded(struct rt_rq *rt_rq)
-  */
- static void update_curr_rt(struct rq *rq)
- {
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr = rq_selected(rq);
- 	struct sched_rt_entity *rt_se = &curr->rt;
- 	s64 delta_exec;
- 
-@@ -1543,7 +1543,7 @@ static int find_lowest_rq(struct task_struct *task);
- static int
- select_task_rq_rt(struct task_struct *p, int cpu, int flags)
- {
--	struct task_struct *curr;
-+	struct task_struct *curr, *selected;
- 	struct rq *rq;
- 	bool test;
- 
-@@ -1555,6 +1555,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int flags)
- 
- 	rcu_read_lock();
- 	curr = READ_ONCE(rq->curr); /* unlocked access */
-+	selected = READ_ONCE(rq_selected(rq));
- 
- 	/*
- 	 * If the current task on @p's runqueue is an RT task, then
-@@ -1583,8 +1584,8 @@ select_task_rq_rt(struct task_struct *p, int cpu, int flags)
- 	 * systems like big.LITTLE.
- 	 */
- 	test = curr &&
--	       unlikely(rt_task(curr)) &&
--	       (curr->nr_cpus_allowed < 2 || curr->prio <= p->prio);
-+	       unlikely(rt_task(selected)) &&
-+	       (curr->nr_cpus_allowed < 2 || selected->prio <= p->prio);
- 
- 	if (test || !rt_task_fits_capacity(p, cpu)) {
- 		int target = find_lowest_rq(p);
-@@ -1614,12 +1615,8 @@ select_task_rq_rt(struct task_struct *p, int cpu, int flags)
- 
- static void check_preempt_equal_prio(struct rq *rq, struct task_struct *p)
- {
--	/*
--	 * Current can't be migrated, useless to reschedule,
--	 * let's hope p can move out.
--	 */
- 	if (rq->curr->nr_cpus_allowed == 1 ||
--	    !cpupri_find(&rq->rd->cpupri, rq->curr, NULL))
-+	    !cpupri_find(&rq->rd->cpupri, rq_selected(rq), NULL))
- 		return;
- 
- 	/*
-@@ -1662,7 +1659,9 @@ static int balance_rt(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-  */
- static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
- {
--	if (p->prio < rq->curr->prio) {
-+	struct task_struct *curr = rq_selected(rq);
-+
-+	if (p->prio < curr->prio) {
- 		resched_curr(rq);
- 		return;
- 	}
-@@ -1680,7 +1679,7 @@ static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
- 	 * to move current somewhere else, making room for our non-migratable
- 	 * task.
- 	 */
--	if (p->prio == rq->curr->prio && !test_tsk_need_resched(rq->curr))
-+	if (p->prio == curr->prio && !test_tsk_need_resched(rq->curr))
- 		check_preempt_equal_prio(rq, p);
- #endif
- }
-@@ -1705,7 +1704,7 @@ static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool f
- 	 * utilization. We only care of the case where we start to schedule a
- 	 * rt task
- 	 */
--	if (rq->curr->sched_class != &rt_sched_class)
-+	if (rq_selected(rq)->sched_class != &rt_sched_class)
- 		update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 0);
- 
- 	rt_queue_push_tasks(rq);
-@@ -1977,6 +1976,7 @@ static struct task_struct *pick_next_pushable_task(struct rq *rq)
- 
- 	BUG_ON(rq->cpu != task_cpu(p));
- 	BUG_ON(task_current(rq, p));
-+	BUG_ON(task_current_selected(rq, p));
- 	BUG_ON(p->nr_cpus_allowed <= 1);
- 
- 	BUG_ON(!task_on_rq_queued(p));
-@@ -2009,7 +2009,7 @@ static int push_rt_task(struct rq *rq, bool pull)
- 	 * higher priority than current. If that's the case
- 	 * just reschedule current.
- 	 */
--	if (unlikely(next_task->prio < rq->curr->prio)) {
-+	if (unlikely(next_task->prio < rq_selected(rq)->prio)) {
- 		resched_curr(rq);
- 		return 0;
- 	}
-@@ -2030,7 +2030,7 @@ static int push_rt_task(struct rq *rq, bool pull)
- 		 * Note that the stoppers are masqueraded as SCHED_FIFO
- 		 * (cf. sched_set_stop_task()), so we can't rely on rt_task().
- 		 */
--		if (rq->curr->sched_class != &rt_sched_class)
-+		if (rq_selected(rq)->sched_class != &rt_sched_class)
- 			return 0;
- 
- 		cpu = find_lowest_rq(rq->curr);
-@@ -2362,7 +2362,7 @@ static void pull_rt_task(struct rq *this_rq)
- 			 * p if it is lower in priority than the
- 			 * current task on the run queue
- 			 */
--			if (p->prio < src_rq->curr->prio)
-+			if (p->prio < rq_selected(src_rq)->prio)
- 				goto skip;
- 
- 			if (is_migration_disabled(p)) {
-@@ -2404,9 +2404,9 @@ static void task_woken_rt(struct rq *rq, struct task_struct *p)
- 	bool need_to_push = !task_on_cpu(rq, p) &&
- 			    !test_tsk_need_resched(rq->curr) &&
- 			    p->nr_cpus_allowed > 1 &&
--			    (dl_task(rq->curr) || rt_task(rq->curr)) &&
-+			    (dl_task(rq_selected(rq)) || rt_task(rq_selected(rq))) &&
- 			    (rq->curr->nr_cpus_allowed < 2 ||
--			     rq->curr->prio <= p->prio);
-+			     rq_selected(rq)->prio <= p->prio);
- 
- 	if (need_to_push)
- 		push_rt_tasks(rq);
-@@ -2490,7 +2490,7 @@ static void switched_to_rt(struct rq *rq, struct task_struct *p)
- 		if (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
- 			rt_queue_push_tasks(rq);
- #endif /* CONFIG_SMP */
--		if (p->prio < rq->curr->prio && cpu_online(cpu_of(rq)))
-+		if (p->prio < rq_selected(rq)->prio && cpu_online(cpu_of(rq)))
- 			resched_curr(rq);
- 	}
- }
-@@ -2505,7 +2505,7 @@ prio_changed_rt(struct rq *rq, struct task_struct *p, int oldprio)
- 	if (!task_on_rq_queued(p))
- 		return;
- 
--	if (task_current(rq, p)) {
-+	if (task_current_selected(rq, p)) {
- #ifdef CONFIG_SMP
- 		/*
- 		 * If our priority decreases while running, we
-@@ -2531,7 +2531,7 @@ prio_changed_rt(struct rq *rq, struct task_struct *p, int oldprio)
- 		 * greater than the current running task
- 		 * then reschedule.
- 		 */
--		if (p->prio < rq->curr->prio)
-+		if (p->prio < rq_selected(rq)->prio)
- 			resched_curr(rq);
- 	}
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e46f69ba9ba2..747233cf1116 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1032,7 +1032,7 @@ struct rq {
- 	 */
- 	unsigned int		nr_uninterruptible;
- 
--	struct task_struct __rcu	*curr;
-+	struct task_struct __rcu	*curr;       /* Execution context */
- 	struct task_struct	*idle;
- 	struct task_struct	*stop;
- 	unsigned long		next_balance;
-@@ -1227,6 +1227,13 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
- #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
- #define raw_rq()		raw_cpu_ptr(&runqueues)
- 
-+/* For now, rq_selected == rq->curr */
-+#define rq_selected(rq)		((rq)->curr)
-+static inline void rq_set_selected(struct rq *rq, struct task_struct *t)
-+{
-+	/* Do nothing */
-+}
-+
- struct sched_group;
- #ifdef CONFIG_SCHED_CORE
- static inline struct cpumask *sched_group_span(struct sched_group *sg);
-@@ -2150,11 +2157,25 @@ static inline u64 global_rt_runtime(void)
- 	return (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
- }
- 
-+/*
-+ * Is p the current execution context?
-+ */
- static inline int task_current(struct rq *rq, struct task_struct *p)
- {
- 	return rq->curr == p;
- }
- 
-+/*
-+ * Is p the current scheduling context?
-+ *
-+ * Note that it might be the current execution context at the same time if
-+ * rq->curr == rq_selected() == p.
-+ */
-+static inline int task_current_selected(struct rq *rq, struct task_struct *p)
-+{
-+	return rq_selected(rq) == p;
-+}
-+
- static inline int task_on_cpu(struct rq *rq, struct task_struct *p)
- {
- #ifdef CONFIG_SMP
-@@ -2324,7 +2345,7 @@ struct sched_class {
- 
- static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
- {
--	WARN_ON_ONCE(rq->curr != prev);
-+	WARN_ON_ONCE(rq_selected(rq) != prev);
- 	prev->sched_class->put_prev_task(rq, prev);
- }
- 
-@@ -2405,7 +2426,7 @@ extern void set_cpus_allowed_common(struct task_struct *p, struct affinity_conte
- 
- static inline struct task_struct *get_push_task(struct rq *rq)
- {
--	struct task_struct *p = rq->curr;
-+	struct task_struct *p = rq_selected(rq);
- 
- 	lockdep_assert_rq_held(rq);
- 
+Thomas Bonnefille (1):
+      riscv: dts: thead: Fix node ordering in TH1520 device tree
+
+ .../bindings/clock/thead,th1520-clk-ap.yaml        |   64 ++
+ MAINTAINERS                                        |    3 +
+ arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |   12 -
+ .../boot/dts/thead/th1520-lichee-module-4a.dtsi    |   12 -
+ arch/riscv/boot/dts/thead/th1520.dtsi              |  118 ++-
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/thead/Kconfig                          |   12 +
+ drivers/clk/thead/Makefile                         |    2 +
+ drivers/clk/thead/clk-th1520-ap.c                  | 1074 ++++++++++++++++++++
+ include/dt-bindings/clock/thead,th1520-clk-ap.h    |   96 ++
+ 11 files changed, 1310 insertions(+), 85 deletions(-)
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240505-th1520-clk-b8f8fb2ecf28
+
+Best regards,
 -- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+Drew Fustini <dfustini@tenstorrent.com>
 
 
