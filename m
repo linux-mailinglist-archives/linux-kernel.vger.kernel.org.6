@@ -1,206 +1,181 @@
-Return-Path: <linux-kernel+bounces-172037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1852E8BEC4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:08:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835318BEC57
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9EDFB232F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394EB1F26084
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010CB16F0E0;
-	Tue,  7 May 2024 19:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE7516EC09;
+	Tue,  7 May 2024 19:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lb84cuJQ"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WSXdBAtN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7A516EBFD
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC41616DEB6;
+	Tue,  7 May 2024 19:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715108868; cv=none; b=ZvMUTR227TZXcJAfYbN5XHFQRbOyFiDP1/UzmLe/ITYRTCfPL5v/jFLx2YTt/J1OYXqdBC03+FmKckZlYsWnp7hETaWZLAbRASdksRu4sJIR7KUaSdErA79hLvi9ot35sfowQfv6Nk2xud7uSVhScC5cAlBlJJDfXXyGkdkHdO8=
+	t=1715108933; cv=none; b=paZfk9R9QExCwt+OeHVs67K+i9oekgxsdBD43hdzUvmVNZ9NpzLJ9ChGJDTEN0SGf0W8A0VRzV6jPPWf8rgzIeR1vMQ92ruBbEz8IjrWRrTqiIM9PPYVpAUEO7EdjaUoXvrTxqs0bfy4K4lqHYNnf1KJ6JdlUMZ9fT+gQruZYOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715108868; c=relaxed/simple;
-	bh=9K/bO5jtlWAadEx++bJ4tBnwyCoDvk5e6sU6qqppTJc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J7FyLcuI610QWDjpubJNTEkE+venc4wBtUSmHTyX2z8Z0HOvcXB+GhpRsgmMlgN+hl50p+IRkv7AhRTi1q3BxTdoCZmUnSTbC/uwYUSzmPW3op8iLddmMRvbKq36S/z3/BL9DXouKZ/hdUSk8Omt+3mohqCoHnTyS3GRUMhJ/Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lb84cuJQ; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-5c65e666609so3690832a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:07:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715108866; x=1715713666; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jkQu4Jm3xj+OSWk/nhy3+Jt5eXwFDQEAw7ll75hZ8tw=;
-        b=Lb84cuJQCVpWPod3fTIPvQb3Nm1Rf2NGWNrgl9RX53l4L8anb8uMsdJD+nz4GGYcIY
-         4sWzPkbwSMk+thBfJNoxWBEUVIUbp/bHAYnzqyyHnsxuuOE4b24KobqlLhGE4AvHI1JV
-         FHEcjL7wkeIe+SvlK1Hbomduy+gplLYdBEhbD//ozHLVvSHr8dgawJd5Kij/UtnLepQr
-         Ze3TY8K9OiuAE3B/iQyPJ0HhxpocuMGP6mfjOma2kM0vr2IoEc4RmAP60XuCf+ipKGoF
-         3t11FG5teEJj6bSmq7kIOGOV4QEA1ZOAp0rR2q7ugbwCmpPuLc5JJJsyeuOMZBtHGQvg
-         camw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715108866; x=1715713666;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jkQu4Jm3xj+OSWk/nhy3+Jt5eXwFDQEAw7ll75hZ8tw=;
-        b=sRf75qp1FOK+te/81sBuLeaFNgoT3PPUiUGHlRT/jGFLTfdWvp/W6+4SFYONV12FK0
-         wAsHpg1L/ubOqbaLGt5dQUfl67OZLi+fZjU6+37OhwlGwj9PcJAEhhboRMtj8S8IoRpz
-         PUpOEUf66H0Pqwi3FvxjAYocHckokhHWSaKh0UQBApYopqJLOvULb/t+qwJm/daDi9M/
-         L9nleQiFWfTVmPb+MrmRjnkfkI4+bQNKPsNUh6x10BfYR8+ZWC0WYDMokwix6rcxqZwq
-         7vZiY4NVc+wguVSetu774R5ZaDxwRRQm+7dUAYdO3eF0gTzB7vPOqaaFpZeflq9CBDHa
-         XyyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMyyZv9+nW/IyKThKh2BWemzE7ccDJjLH4VGw2gVFauys8iP9EoCFG6w5AskTTKn7n32IiZ6TfTU8JY2TsIaUXh5hxuqCVgQX9dQ9D
-X-Gm-Message-State: AOJu0YwXkwEudfA1+Vb4znDlb7Ncm4fmIkTvzut0l1IOVTY9E1BZMOh3
-	b1VY+ULgGMtGrdvGU5tgozZ2wjvBgqmjZ76YzxbPBi3XpOVYBgNl8tK7QOaOwmcXUmZb5QXg/Dy
-	daw==
-X-Google-Smtp-Source: AGHT+IEgjxdsHk9aJmOIaJyY9cp6EJfT5579+ZXn0lQR+zEfJ/cnb/Xx+FkIFQJQtpXQchgkEeeXdrdRsVg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:fe18:0:b0:5d6:cfc:2f39 with SMTP id
- 41be03b00d2f7-62f23220b0fmr23804a12.11.1715108865796; Tue, 07 May 2024
- 12:07:45 -0700 (PDT)
-Date: Tue, 7 May 2024 12:07:44 -0700
-In-Reply-To: <9252b68e-2b6a-6173-2e13-20154903097d@amd.com>
+	s=arc-20240116; t=1715108933; c=relaxed/simple;
+	bh=NkCcFJMiI2fIuafu13ahaUzYsqra2h0cXjW2V5EMPoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cMeiL359RaOT3S9maomWHJuwZkcQTKz9HGtZoKL98xfgk97wPPiRytQwChEyiF1yKq0xkbAFuR84fJwuTvyVJUrVUPkA4+2lTPO3C7l6tKuiTRKWhDnDW4CO8KEa/LcWidl/BPHxSyHgk6j058yx2oSMWkCUYeoTgMS+W2IQcc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WSXdBAtN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447IKEcg001484;
+	Tue, 7 May 2024 19:08:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=xVPphSKUlVh/m4wKeSY0WKuT3/YvZYGtZ2wCat41/zQ=; b=WS
+	XdBAtNmpIka7OVy1BTfiJKJ8Xb0TtgXHs6hymdhDrjg+hbOSYCwMLspqfQmrhz3T
+	Cafe5pms2mIMNS1akeWHk0xAzDLSJR4QGLrw3PP6CQUovSm0XdXY8hbzZ5zOmi6p
+	8+3SvVwviKaB8arHAvQ5XkTMSgfjTEUKFAIwMi/ckvclTcWBBk8iD7+WCc8PvfDZ
+	NyLlYVAU9xJP5qE38Ec/3Bqdm4Biw5lXeFqP0U5JApkesYRAvNzx9HbmsY9M3fja
+	rU4O1M7Mx385YFoIBeNgaQm5MU4hLSrRH3tc9RgXd07pExPWO198LoWRXZujyQoU
+	xW9HNKjNXcuITwWEctfg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xysg403g6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 19:08:28 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 447J8Sn8031305
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 7 May 2024 19:08:28 GMT
+Received: from [10.110.127.27] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
+ 12:08:24 -0700
+Message-ID: <fc8334a6-6961-41f4-affc-28bdfc3dd697@quicinc.com>
+Date: Tue, 7 May 2024 12:08:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
- <9252b68e-2b6a-6173-2e13-20154903097d@amd.com>
-Message-ID: <Zjp8AIorXJ-TEZP0@google.com>
-Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
- SEV-ES guests
-From: Sean Christopherson <seanjc@google.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH bpf-next v6 2/3] net: Add additional bit to support
+ clockid_t timestamp type
+Content-Language: en-US
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        Martin KaFai Lau
+	<martin.lau@linux.dev>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Martin
+ KaFai Lau" <martin.lau@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
+ <20240504031331.2737365-3-quic_abchauha@quicinc.com>
+ <cab0c7ba-90bf-49e2-908d-ecd879160667@linux.dev>
+ <663a12f089b81_726ea29426@willemb.c.googlers.com.notmuch>
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <663a12f089b81_726ea29426@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0ZnVXcfSMYO1lo2QZkiXV9RYeAgI8NH3
+X-Proofpoint-ORIG-GUID: 0ZnVXcfSMYO1lo2QZkiXV9RYeAgI8NH3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_12,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405070135
 
-On Mon, May 06, 2024, Ravi Bangoria wrote:
-> On 03-May-24 5:21 AM, Sean Christopherson wrote:
-> > On Tue, Apr 16, 2024, Ravi Bangoria wrote:
-> >> Currently, LBR Virtualization is dynamically enabled and disabled for
-> >> a vcpu by intercepting writes to MSR_IA32_DEBUGCTLMSR. This helps by
-> >> avoiding unnecessary save/restore of LBR MSRs when nobody is using it
-> >> in the guest. However, SEV-ES guest mandates LBR Virtualization to be
-> >> _always_ ON[1] and thus this dynamic toggling doesn't work for SEV-ES
-> >> guest, in fact it results into fatal error:
-> >>
-> >> SEV-ES guest on Zen3, kvm-amd.ko loaded with lbrv=1
-> >>
-> >>   [guest ~]# wrmsr 0x1d9 0x4
-> >>   KVM: entry failed, hardware error 0xffffffff
-> >>   EAX=00000004 EBX=00000000 ECX=000001d9 EDX=00000000
-> >>   ...
-> >>
-> >> Fix this by never intercepting MSR_IA32_DEBUGCTLMSR for SEV-ES guests.
-> > 
-> > Uh, what?  I mean, sure, it works, maybe, I dunno.  But there's a _massive_
-> > disconnect between the first paragraph and this statement.
-> > 
-> > Oh, good gravy, it "works" because SEV already forces LBR virtualization.
-> > 
-> > 	svm->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
-> > 
-> > (a) the changelog needs to call that out.
+
+
+On 5/7/2024 4:39 AM, Willem de Bruijn wrote:
+> Martin KaFai Lau wrote:
+>> On 5/3/24 8:13 PM, Abhishek Chauhan wrote:
+>>> diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+>>> index fe86cadfa85b..c3d852eecb01 100644
+>>> --- a/net/ipv4/ip_output.c
+>>> +++ b/net/ipv4/ip_output.c
+>>> @@ -1457,7 +1457,10 @@ struct sk_buff *__ip_make_skb(struct sock *sk,
+>>>   
+>>>   	skb->priority = (cork->tos != -1) ? cork->priority: READ_ONCE(sk->sk_priority);
+>>>   	skb->mark = cork->mark;
+>>> -	skb->tstamp = cork->transmit_time;
+>>> +	if (sk_is_tcp(sk))
+>>
+>> This seems not catching all IPPROTO_TCP case. In particular, the percpu 
+>> "ipv4_tcp_sk" is SOCK_RAW. sk_is_tcp() is checking SOCK_STREAM:
+>>
+>> void __init tcp_v4_init(void)
+>> {
+>>
+>> 	/* ... */
+>> 	res = inet_ctl_sock_create(&sk, PF_INET, SOCK_RAW,
+>> 				   IPPROTO_TCP, &init_net);
+>>
+>> 	/* ... */
+>> }
+>>
+>> "while :; do ./test_progs -t tc_redirect/tc_redirect_dtime || break; done" 
+>> failed pretty often exactly in this case.
+>>
 > 
-> Sorry, I should have called that out explicitly.
+> Interesting. The TCP stack opens non TCP sockets.
 > 
-> >  (b) KVM needs to disallow SEV-ES if
-> > LBR virtualization is disabled by the admin, i.e. if lbrv=false.
+> Initializing sk->sk_clockid for this socket should address that.
 > 
-> That's what I initially thought. But since KVM currently allows booting SEV-ES
-> guests even when lbrv=0 (by silently ignoring lbrv value), erroring out would
-> be a behavior change.
+Willem, Are you suggesting your point from the previous patch ? 
 
-IMO, that's totally fine.  There are no hard guarantees regarding module params,
+"I think we want to avoid special casing if we can. Note the if.
 
-> > Alternatively, I would be a-ok simply deleting lbrv, e.g. to avoid yet more
-> > printks about why SEV-ES couldn't be enabled.
-> > 
-> > Hmm, I'd probably be more than ok.  Because AMD (thankfully, blessedly) uses CPUID
-> > bits for SVM features, the admin can disable LBRV via clear_cpuid (or whatever it's
-> > called now).  And there are hardly any checks on the feature, so it's not like
-> > having a boolean saves anything.  AMD is clearly committed to making sure LBRV
-> > works, so the odds of KVM really getting much value out of a module param is low.
-> 
-> Currently, lbrv is not enabled by default with model specific -cpu profiles in
-> qemu. So I guess this is not backward compatible?
+If TCP always uses monotonic, we could consider initializing
+sk_clockid to CLOCK_MONONOTIC in tcp_init_sock.
 
-I am talking about LBRV being disabled in the _host_ kernel, not guest CPUID.
-QEMU enabling LBRV only affects nested SVM, which is out of scope for SEV-ES.
+I guess TCP logic currently entirely ignores sk_clockid. If we are to
+start using this, then setsocktop SO_TXTIME must explicitly fail or
+ignore for TCP sockets, or silently skip the write.
 
-> > And then when you delete lbrv, please add a WARN_ON_ONCE() sanity check in
-> > sev_hardware_setup() (if SEV-ES is supported), because like the DECODEASSISTS
-> > and FLUSHBYASID requirements, it's not super obvious that LBRV is a hard
-> > requirement for SEV-ES (that's an understatment; I'm curious how some decided
-> > that LBR virtualization is where the line go drawn for "yeah, _this_ is mandatory").
-> 
-> I'm not sure. Some ES internal dependency.
-> 
-> In any case, the patch simply fixes 'missed clearing MSR Interception' for
-> SEV-ES guests. So, would it be okay to apply this patch as is and do lbrv
-> cleanup as a followup series?
+All of that is more complexity. Than is maybe warranted for this one
+case. So no objections from me to special casing using sk_is_tcp(sk)
+either." 
 
-No.
+Few places we need to initialize the clock base for tcp to monotonic 
+1. tcp_init_sock 
+2. void __init tcp_v4_init(void) in tcp_ipv4.c
+3. static int __net_init tcpv6_net_init(struct net *net)
+4. Ignore setsockopts for SO_TXTIME if the sk->protocol is tcp.  
 
-(a) the lbrv module param mess needs to be sorted out.
-(b) this is not a complete fix.
-(c) I'm not convinced it's the right way to fix this, at all.
-(d) there's a big gaping hole in KVM's handling of MSRs that are passed through
-    to SEV-ES guests.
-(e) it's not clear to me that KVM needs to dynamically toggle LBRV for _any_ guest.
-(f) I don't like that sev_es_init_vmcb() mucks with the LBRV intercepts without
-    using svm_enable_lbrv().
+Is it safe to assume the TCP will never use any other close base ? 
 
-Unless I'm missing something, KVM allows userspace to get/set MSRs for SEV-ES
-guests, even after the VMSA is encrypted.  E.g. a naive userspace could attempt
-to migrate MSR_IA32_DEBUGCTLMSR and end up unintentionally disabling LBRV on the
-target.  The proper fix for VMSA being encrypted is to likely to disallow
-KVM_{G,S}ET_MSR on MSRs that are contexted switched via the VMSA.
 
-But that doesn't address the issue where KVM will disable LBRV if userspace
-sets MSR_IA32_DEBUGCTLMSR before the VMSA is encrypted.  The easiest fix for
-that is to have svm_disable_lbrv() do nothing for SEV-ES guests, but I'm not
-convinced that's the best fix.
+OR 
 
-AFAICT, host perf doesn't use the relevant MSRs, and even if host perf did use
-the MSRs, IIUC there is no "stack", and #VMEXIT retains the guest values for
-non-SEV-ES guests.  I.e. functionally, running with and without LBRV would be
-largely equivalent as far as perf is concerned.  The guest could scribble an MSR
-with garbage, but overall, host perf wouldn't be meaningfully affected by LBRV.
 
-So unless I'm missing something, the only reason to ever disable LBRV would be
-for performance reasons.  Indeed the original commits more or less says as much:
+For now we can do just protocol level check in ip_make_skb and ip6_make_skb 
+like 
+if (iph->protocol == IPPROTO_TCP)
+    /* ... */
+else
+    /* ... */
 
-  commit 24e09cbf480a72f9c952af4ca77b159503dca44b
-  Author:     Joerg Roedel <joerg.roedel@amd.com>
-  AuthorDate: Wed Feb 13 18:58:47 2008 +0100
 
-    KVM: SVM: enable LBR virtualization
-    
-    This patch implements the Last Branch Record Virtualization (LBRV) feature of
-    the AMD Barcelona and Phenom processors into the kvm-amd module. It will only
-    be enabled if the guest enables last branch recording in the DEBUG_CTL MSR. So
-    there is no increased world switch overhead when the guest doesn't use these
-    MSRs.
 
-but what it _doesn't_ say is what the world switch overhead is when LBRV is
-enabled.  If the overhead is small, e.g. 20 cycles?, then I see no reason to
-keep the dynamically toggling.
 
-And if we ditch the dynamic toggling, then this patch is unnecessary to fix the
-LBRV issue.  It _is_ necessary to actually let the guest use the LBRs, but that's
-a wildly different changelog and justification.
 
-And if we _don't_ ditch the dynamic toggling, then sev_es_init_vmcb() should be
-using svm_enable_lbrv(), not open coding the exact same thing.
 
