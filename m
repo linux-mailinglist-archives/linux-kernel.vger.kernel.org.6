@@ -1,162 +1,103 @@
-Return-Path: <linux-kernel+bounces-170746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD9D8BDB5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:24:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DC38BDB6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FA72B22B54
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:24:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49C13B21F36
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFFF757F0;
-	Tue,  7 May 2024 06:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B116F09C;
+	Tue,  7 May 2024 06:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CB/HxcOU"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Xi2NaIzO"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B8E71748
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9576F08B;
+	Tue,  7 May 2024 06:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062960; cv=none; b=QBPasKRxXK5Knuog0ylFez+0j6KG7qUUkn6gvpd9N5uN8j2T5Nx7SdgyUXozCDgvSP2IYg266g4lpp9Zkb9dR5o8Oc2+OfqQTgWNC7P4inOha4xmnqR1DVtioyWEq+63UEJ6Bf03lvYAAPzPi887EVm2jw1UNDgdJD2NmFpdh44=
+	t=1715063191; cv=none; b=epQvLNPIn0vpqxD/d1qFTLjK6UolCQ0GI/dtq0XVQk+Xxv+tWgw4HleRV4KyXhN8GeSOG7Zel5iaolUA+kKMoWW8urD2fvVi26FvaObbIKECZZu2Pwz29PMv77j17xSVyGRvDjB7wcKyOAH7eKHZ+IU/Q2NSd11rxEr79H+l2Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062960; c=relaxed/simple;
-	bh=Q9AC4r0AoK1M0oAdVpTsYKUhXM2mN3GI1mDvVnQGC2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nx7ZvmV1HGoiPL71J8iZ8Udx+OcR59Zv3go7qpXwp9smA/VLh8kZGWUK95YSvIeWDZJt3jn0vroinsAZuQh3zlWHlXU+0Oa578i4OEqu+/1wWKRf+epwrANArRxf+g1EnPNACvXWARjp3Cku4BOqKl4Qs8MrjHPL4BDepB5QxEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CB/HxcOU; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59b178b75bso442535166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715062957; x=1715667757; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=beiw27RTXIH5HRrfx88EYC36+Lb2A/WvRn/ALhCTLBU=;
-        b=CB/HxcOUN7v7THf5jYm/wD96f8cvjw+PfTEUE3TLz1YNchRtjijJHLILhYwoWUfVoF
-         z0Ry8VZZkdfYS+CMHeQZvIOPmevJ8Cpd3HR+Kv4/Oh0pxmSo4ATh1RXDulFNLl66c8gw
-         SJMjTIPqLIbSsfEah1Wy1RxXLzClrousGEooFwX0PGc+q+0rO2679QYl7S4SQhBuo6Lu
-         PlesTyVDtfA0MvIP2Q060xyWL3qazZV6P+AGgQKRppNEkem4vlbOL6Y0U/mVoNwovwcH
-         RYYGWiM1lngShA2lYiZVirs35+bT44HeoEegBN3F4geQZgppN52egBk9816Np4yWINe8
-         bKvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715062957; x=1715667757;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=beiw27RTXIH5HRrfx88EYC36+Lb2A/WvRn/ALhCTLBU=;
-        b=WHRcR11OK9JRhoJnD+DbGX7Vb7Oos6IoZe5GjC1qlDxkEDO8smS9pLtWVkllmZHMOM
-         5VU7uPkhe+DYd6IPeF1STejZ9Zh3oKBOlpQCQLlYxWca0uePlvy6wyUqcit2ruVkM4pX
-         hybv6NaPV+u06dF1b+xvjB5P81SzPQGklyLay76igsA5DbpTo7NYuvCby6anWog7Hlw6
-         3llU783Shu+5fsVwcvzOp+99eFToPoVZkeiUBPUiBA7OuOdPK8sjxw/L18RExu0VRkyH
-         tOwTb6gtqsEMS4arNFBjDHmePV12KNSWq0SSdNXAgoE1eDxYHTip0aNr1YoNo3D2FvCl
-         R9YA==
-X-Forwarded-Encrypted: i=1; AJvYcCXS4mDGj+l6QZ9rXLsLD31A6lcGT1yLWy5FLgH+ruQBV8UWUdXCG7q1ljFx/rZurLZyGxqn5GPDARKxpWp8nL5x4ZEI9J0QDQBv6P8m
-X-Gm-Message-State: AOJu0YxESrJRzTjyG4ZnGgHDv39efVISDnMvOfzRCGSnfYOIzMCDDlsP
-	QjtJIdK+wVDK0QGgbjVvXz1WuaUar8cHg3MdYE8YNhGXbu+NkTcYF87T5j9ZCjI=
-X-Google-Smtp-Source: AGHT+IGkmasyA6LmWUlawvuHFNSmPuwvaCT3lWPXH/IhCvTJz5otxmN9wRBrgft7QO7QH3iambCjZg==
-X-Received: by 2002:a17:907:94c1:b0:a59:cdf4:f940 with SMTP id dn1-20020a17090794c100b00a59cdf4f940mr3536242ejc.28.1715062957112;
-        Mon, 06 May 2024 23:22:37 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id r25-20020a170906351900b00a59b2683971sm3305778eja.187.2024.05.06.23.22.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 23:22:36 -0700 (PDT)
-Message-ID: <d3f9f091-37a5-42fb-aebf-62109db6fa42@linaro.org>
-Date: Tue, 7 May 2024 08:22:34 +0200
+	s=arc-20240116; t=1715063191; c=relaxed/simple;
+	bh=+fE/W+Ef2b72t6qc7ynSEofl4rRYDITSbAJ+pHYSwDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DDoy70Z1gCNb4zFupGC0gZ7lTZrqPySOLVzSfjIedvBFoK0rF8GGywgp0+m33tyer0mZ9d3L2l7eLKWcqpvDBY+hgnAf6o85N/vagzyopcB0aIrC6NkjJhxYOa+OvOWpSqBfSjjv4hNEnkaH+ehipEtOF/cwk9a6U2Y3L4a82UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Xi2NaIzO; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715063186;
+	bh=EcutFKNIZ1/CVm8NDXaDBXw1sgllUPbSN8CzTkQAeXY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Xi2NaIzOM1tDOW1K9WqXHb6Yz+P1WnOhFPX0xDT7ecjGlfxy6B8s9atM2Nsq9AXPm
+	 S1qxvLoz1M+HjX+NxrcP0untTHcCgaBXDpi3Mx2+FcVYn22nfySXPRns7sM3ATiPQN
+	 JqAHLmU4T45PaK9j1zivU2Toa6Ek4liJsu2c4K9XuyQqMDXeOrhVDRnE4ThV1RoEXK
+	 DBDkPQVJ6r7q+fWnmfmDgpmi/wxINeAsu1HkGbOATCrlKXn0QP7njlNqZI1lp0PbfX
+	 zk+k6P0TYpmGCUaZlDCVEFyoNoo84pIXXP8RiOJ0AEeyDiyroCl2yMSBvRP205AVV5
+	 jXEgs1ulG79HA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VYSwL5NXjz4wcF;
+	Tue,  7 May 2024 16:26:26 +1000 (AEST)
+Date: Tue, 7 May 2024 16:26:23 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm tree
+Message-ID: <20240507162623.4d94d455@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfc: nci: Fix kcov check in nci_rx_work()
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Ryosuke Yasuoka <ryasuoka@redhat.com>, Jeremy Cline <jeremy@jcline.org>,
- "David S. Miller" <davem@davemloft.net>
-Cc: syzbot <syzbot+0438378d6f157baae1a2@syzkaller.appspotmail.com>,
- edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>,
- Johannes Berg <johannes@sipsolutions.net>, Dmitry Vyukov <dvyukov@google.com>
-References: <0000000000007b02500614b66e31@google.com>
- <550cc81a3dffd07ec1235dc32fd7bbde22d9bf57.camel@sipsolutions.net>
- <CA+fCnZe_fuT2y4ryFeb8A49k19MY3Nct79JCoGwQh0hjcq6bqA@mail.gmail.com>
- <6d10f829-5a0c-405a-b39a-d7266f3a1a0b@I-love.SAKURA.ne.jp>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <6d10f829-5a0c-405a-b39a-d7266f3a1a0b@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/+bD8Cm=Pn8RzzfDWoyIMpUX";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 05/05/2024 12:36, Tetsuo Handa wrote:
-> Commit 7e8cdc97148c ("nfc: Add KCOV annotations") added
-> kcov_remote_start_common()/kcov_remote_stop() pair into nci_rx_work(),
-> with an assumption that kcov_remote_stop() is called upon continue of
-> the for loop. But commit d24b03535e5e ("nfc: nci: Fix uninit-value in
-> nci_dev_up and nci_ntf_packet") forgot to call kcov_remote_stop() before
-> break of the for loop.
-> 
-> Reported-by: syzbot <syzbot+0438378d6f157baae1a2@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=0438378d6f157baae1a2
-> Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
-> Debugged-by: Andrey Konovalov <andreyknvl@gmail.com>
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+--Sig_/+bD8Cm=Pn8RzzfDWoyIMpUX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi all,
 
-Best regards,
-Krzysztof
+After merging the mm tree, today's linux-next build (htmldocs)
+produced this warning:
 
+Documentation/mm/damon/design.rst:482: ERROR: Unexpected indentation.
+Documentation/mm/damon/design.rst:483: WARNING: Block quote ends without a =
+blank line; unexpected unindent.
+
+Introduced by commit
+
+  b7138c7d40b0 ("Docs/mm/damon/design: use a list for supported filters")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+bD8Cm=Pn8RzzfDWoyIMpUX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY5yY8ACgkQAVBC80lX
+0Gy3NQgAiI1px7I31AcaBQNw1XvxK9y8rQ+KAtXRqJMAx3KNLvzbCAkHGgalcagV
+1FQd/PshFXFh7d1XQgAYloH1rDTm4QfGuYcJX8s7Un7j/6F4gw1QwicZnTrPXf9A
+NvdckCkYofVC9hxILcPO+WIandm+MeNAgY+Yo8Yy/2SJ6TCUd/yXaO27kBBilOr2
+2wei9UUv/o530LfbvzxpNFdyrQjdlS9muE3uNmHcPnGfKWRozl+MdyqX59h1qyyL
+Ye7kP5StEk0EFDVOPazEOKPR/MdkmeCDulVIUMu//8y9Kbi3ODRIvgElIPxhKE14
+caLVrmmCT37uGd0BP7un6dHl+Y+x4Q==
+=yJAi
+-----END PGP SIGNATURE-----
+
+--Sig_/+bD8Cm=Pn8RzzfDWoyIMpUX--
 
