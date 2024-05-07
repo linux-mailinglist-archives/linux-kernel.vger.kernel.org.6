@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-172138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739798BEE02
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:21:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F102E8BEE04
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1417DB24D17
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E2F01C2328C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B9418734E;
-	Tue,  7 May 2024 20:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EFE18734A;
+	Tue,  7 May 2024 20:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgrRuc0v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eJn2f38I"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC35718733D;
-	Tue,  7 May 2024 20:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11152187343
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 20:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715113259; cv=none; b=DxZ7vnaqAUMU12/jXW8jIOSbYP4DBAevZevLOmG0nhQms+l3lCeV+hiSWIGQ1q1BZVf6xI8ru3g8YJn5HE6xnPV2viAkqSNC9UhXKJ5oI2IosX+d4TbmleexJFUODKH8lgIpZyJWbfUjzc0UticQkboM/3GbhgvNneB7yQMKp5c=
+	t=1715113303; cv=none; b=jGU5wRePOzJq1LeahkutQ927aBZ7IFB33GsKBcpOkX51GiJT169TTzM0TUjw8yE7zlITkNvcKcPcJpOm2qSnEzr10U/1J7ZH4vgZb8wSWL3Hiu8vhZe9XYoGP5bn5NUeLS+YY6+VO7iCcMbHvT2XzSUcPgVQCIPvo2v6xV9VrcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715113259; c=relaxed/simple;
-	bh=qgkgWJ6hcc+kLK5jJ2rjoDUnCXJexR2EWKimTvT98Qs=;
+	s=arc-20240116; t=1715113303; c=relaxed/simple;
+	bh=qnFkKVTP+o//0MobSjb1ptmrlHIH+f6uJ/IOr5bJrH4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bADa8Tlg8usKCk+Ldn4fo4W7yg0hZ+XjcvckELxtxigP4A8U5bZNoaLOeyg9AMYTCJfEh+p8QndfRBN7x9LzaWRjCk+zJGwkrX5WV1eLCskDKTHvJH5A+ieMxQLltw+PvOLJH180qM7fu85aaN+122tsE6G3Wm/K0VLN5McRy+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgrRuc0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4BD5C2BBFC;
-	Tue,  7 May 2024 20:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715113259;
-	bh=qgkgWJ6hcc+kLK5jJ2rjoDUnCXJexR2EWKimTvT98Qs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zt+udofr9/d1Y9MLK1xCFHeuoEJ3nQ4dh83QsT+8Nqulv6JZ9teO+dh/hOHPCcXjp/p7A5jBGn5Ea3474XGNwIn846lq1+pT/GDEZeOTlLKyjLF7hstcoMS0g86lSrmtyUj0HdFkfKpM5JZDfXQBPP+R7R+1ypNxJ6ZtXmD+c8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=eJn2f38I; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BD5A4DFB;
+	Tue,  7 May 2024 22:21:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715113298;
+	bh=qnFkKVTP+o//0MobSjb1ptmrlHIH+f6uJ/IOr5bJrH4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XgrRuc0vDNKHe1SLI2TEjr6N1r1ndxQH6wjicKasHQzQT6m3T1CPhuTRVW7dgRddM
-	 tMJ5O0A9/HFOSPuCo5nD1OEDitxNen0+WvpjTEHGux/GYjc79Ey61nQWCtzvtVsEXe
-	 d4kFgtMLoxbk8PyLoU4Ty/M0zDHHoD+EUSMkX8h+UhSlA5OU/4v269RsvA9wRlaJnP
-	 tWYkxoCaBFOCwG7IlnNacHUzKhSFYoFmtFhDfwBU1mn1lC2nukdwUUYWTTF7ycGnX8
-	 QAes6I53KVDdIitBmvqJDsJaa8C70zdWUUYgVJxlce8LHIQSkoPM0+BlzYErzlYpX1
-	 A6kfCCBZUOF2w==
-Date: Tue, 7 May 2024 17:20:56 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Clark <james.clark@arm.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>,
-	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 1/8] perf ui browser: Don't save pointer to stack
- memory
-Message-ID: <ZjqNKPgWR7mBFaV4@x1>
-References: <20240507183545.1236093-1-irogers@google.com>
- <20240507183545.1236093-2-irogers@google.com>
+	b=eJn2f38IciskKjGoUsWEFqR08CSxOqqeyhTCurgnYSb92k3fopsbbA+MhNdvgr2BA
+	 yU+GR05PEhk3eMlYiLThHwGD7DTc/F/bij2tVLGupzu+Kv6Wl+lc/tnteNSk57zEJy
+	 RgLYE5U+Ai8Emz6drdQafZ2rJmKJwT+/cLGThob8=
+Date: Tue, 7 May 2024 23:21:31 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/drm-bridge.c: Drop conditionals around of_node
+ pointers
+Message-ID: <20240507202131.GD2012@pendragon.ideasonboard.com>
+References: <20240507180001.1358816-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240507183545.1236093-2-irogers@google.com>
+In-Reply-To: <20240507180001.1358816-1-sui.jingfeng@linux.dev>
 
-On Tue, May 07, 2024 at 11:35:38AM -0700, Ian Rogers wrote:
-> ui_browser__show is capturing the input title that is stack allocated
-> memory in hist_browser__run. Avoid a use after return by strdup-ing
-> the string.
-
-But everything happens in that context, i.e. hist_brower__run() will
-call ui_browser__ methods and then exit.
-
-We end up having browser->title pointing to returned stack memory
-(invalid) but there will be no references to it, no?
-
-If we return to hist_browser__run() we then call ui_browser__show
-passing a new title, for "live" stack memory, rinse repeat. Or have you
-noticed an actual use-after-"free"?
-
-- Arnaldo
- 
-> Fixes: 05e8b0804ec4 ("perf ui browser: Stop using 'self'")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/ui/browser.c | 4 +++-
->  tools/perf/ui/browser.h | 2 +-
->  2 files changed, 4 insertions(+), 2 deletions(-)
+On Wed, May 08, 2024 at 02:00:00AM +0800, Sui Jingfeng wrote:
+> Having conditional around the of_node pointer of the drm_bridge structure
+> is not necessary, since drm_bridge structure always has the of_node as its
+> member.
 > 
-> diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
-> index 603d11283cbd..c4cdf2ea69b7 100644
-> --- a/tools/perf/ui/browser.c
-> +++ b/tools/perf/ui/browser.c
-> @@ -287,7 +287,8 @@ int ui_browser__show(struct ui_browser *browser, const char *title,
->  	mutex_lock(&ui__lock);
->  	__ui_browser__show_title(browser, title);
+> Let's drop the conditional to get a better looks, please also note that
+> this is following the already accepted commitments. see commit d8dfccde2709
+> ("drm/bridge: Drop conditionals around of_node pointers") for reference.
+> 
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+
+It looks like this was forgotten in commit d8dfccde2709 ("drm/bridge:
+Drop conditionals around of_node pointers").
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 30d66bee0ec6..a6dbe1751e88 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -352,13 +352,8 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>  	bridge->encoder = NULL;
+>  	list_del(&bridge->chain_node);
 >  
-> -	browser->title = title;
-> +	free(browser->title);
-> +	browser->title = strdup(title);
->  	zfree(&browser->helpline);
+> -#ifdef CONFIG_OF
+>  	DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
+>  		  bridge->of_node, encoder->name, ret);
+> -#else
+> -	DRM_ERROR("failed to attach bridge to encoder %s: %d\n",
+> -		  encoder->name, ret);
+> -#endif
 >  
->  	va_start(ap, helpline);
-> @@ -304,6 +305,7 @@ void ui_browser__hide(struct ui_browser *browser)
->  	mutex_lock(&ui__lock);
->  	ui_helpline__pop();
->  	zfree(&browser->helpline);
-> +	zfree(&browser->title);
->  	mutex_unlock(&ui__lock);
+>  	return ret;
 >  }
->  
-> diff --git a/tools/perf/ui/browser.h b/tools/perf/ui/browser.h
-> index 510ce4554050..6e98d5f8f71c 100644
-> --- a/tools/perf/ui/browser.h
-> +++ b/tools/perf/ui/browser.h
-> @@ -21,7 +21,7 @@ struct ui_browser {
->  	u8	      extra_title_lines;
->  	int	      current_color;
->  	void	      *priv;
-> -	const char    *title;
-> +	char	      *title;
->  	char	      *helpline;
->  	const char    *no_samples_msg;
->  	void 	      (*refresh_dimensions)(struct ui_browser *browser);
-> -- 
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
+
+-- 
+Regards,
+
+Laurent Pinchart
 
