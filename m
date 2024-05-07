@@ -1,45 +1,79 @@
-Return-Path: <linux-kernel+bounces-170868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E438BDD1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:25:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BF68BDD1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4250E1F24B37
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC052834D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1F013C9B7;
-	Tue,  7 May 2024 08:25:33 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F7313CAB3;
+	Tue,  7 May 2024 08:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UgRYx20c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B905F13C906
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AED13C9BD
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715070332; cv=none; b=JUt4/JXISW9/cgmd6yRwKfKUSWDI50BRcNbhwRiTEfznPiLokUxpqujSDBThokedzHuhXPXMnu4SOGEDZHBiPcKeC7K75LKiiiwrvFArdDW5A+W1Z4N3KNv0hNGyBS91gEPAKWTg7GFQz+r874bseQMRyQlOvjrBTV/n3jJ+wD4=
+	t=1715070336; cv=none; b=CtjAkrlNoPmHq0SHvbcOYBDWSDU5la0FBTWluFMtVl8LLHHp9ehIjfpjiymhy2HK+vA4/eX76WNXoz7R30dpYmciIEUQNZ7qKEBnyzZLfeVaa8e4m+ZuuK84RXVJx19g4oU94lLR2eN44NlOj9p0xD2H5wJqJr0t8ZIx9aMgvhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715070332; c=relaxed/simple;
-	bh=nF+jtbQISogPnLSN8zDZPpgx7UsE3Qqv7RvetFHa+hs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=O0qfWSma5YvPvOVXmr33ibJOel+fjft8Fg6vdRMQXzRDPvj7KvGXDswFx51OtR8/L7wCgDzvSfggUkwBLw8obo26/IXw8hh0uy6/n2rfKKMmCu+cYQPe3WxSgbysDI5zLr1ZESqYkEfbPhdtCMeCGTUo46fp9riEO+ONN+X2eAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VYWX53WTqz1HBj2;
-	Tue,  7 May 2024 16:24:05 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03895140154;
-	Tue,  7 May 2024 16:25:21 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 7 May 2024 16:25:20 +0800
-Message-ID: <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
-Date: Tue, 7 May 2024 16:25:19 +0800
+	s=arc-20240116; t=1715070336; c=relaxed/simple;
+	bh=Ru/3Cuwl0Ds0fAdi+u7L2g+qfrHVWs2fWeekuJRZ6DM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DAizAXoHNPdAY9DOSz/1BakMi87D94z97hmTo/HNgTZkfszxe2S21eQQVtZibR8QCz8HKGnLp2L7P5i3sdRFLGtvBVoN+W/H1+GP2srCDD7kkimjTEDYwM1yeRAnH3Q8uNMIlD3YUNXO1qRg6x98bv7eb8tfwlhYAtCLVUJ+UvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UgRYx20c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715070333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hIV59TTIklTZ8E7Mjg7QWgOJHw97ato/FlS68wODcd0=;
+	b=UgRYx20chkX/enaEyqFmAr9yFUywYwoInJHdYMMBGKwK1olev3biKiE0d7MAtNVOIBxHK/
+	7D8jFnWG+awZBt3YPN3QjLaBzCX2ahw7JPkF4ETxyUOlUtrcpsozQDlrqZTET+TmzF1UT9
+	TgJy0JMp//Rf3mQjM+nDC5iqr5FU3aE=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-279-q7AD0pMqNhSLy5oPvbOwGw-1; Tue, 07 May 2024 04:25:32 -0400
+X-MC-Unique: q7AD0pMqNhSLy5oPvbOwGw-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a592c35ac06so292604566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 01:25:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715070331; x=1715675131;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hIV59TTIklTZ8E7Mjg7QWgOJHw97ato/FlS68wODcd0=;
+        b=jCY9Xa0czkd0AOdS+1+Venc6TYF0QyXm2J85s4HAsHlqrCcIcCWPeC1qdjtUW3ccWv
+         nZDEaJse0dkj9YRzWx43/M3tjxtZLi8IsIJtRxJQ7l2DEUVcR+QhnLbuO80fZuCMR1c+
+         qwDX2xSeN4/8LE3K3GlPxmbgpPFMvOkwtem5RDeuDrAusNkxWEOoJ26qXWRykNdzHEqa
+         yXcYRNiX8B+/63cUgF6TwjMOlBdnHWZLU/pY3Mh2+T+0Fw73Rz+1XO+K4PDyzZHMKppV
+         uYLDwTes39kDPedJrSVEGjhVgWVkmmJi8u/I19mXFAdlj1QPnEwBFYVOpwVMoxAOoeSs
+         cf4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV78AvAngLMrkNfFCfkpdBlMlM4Dl5PqqiJ9eMOA0rEh5qmP2ukENn0wFFrnHt+j0AMCms8lSBgFgsGG6InWKJ+ENm3WduTYxB22S50
+X-Gm-Message-State: AOJu0YzW+85Sf5Hd8RqaGXGUVEVIbIP6sBlAqcArTEx9b9nE013/mS2P
+	jC8JMUA9bG74d64OyCl9W1L4+OY0aPJ+6HIB/HLc6J77fZoobo54J10OL+nKCH0Ch1JwaPvOUxJ
+	RHNPp+0Y8ohdTfhU4VUCR8HUYa22UR6Kpeygcj7JfbB9a+DGdRbauXk8NFBkyYQ==
+X-Received: by 2002:a17:907:9451:b0:a59:f2d2:49b1 with SMTP id dl17-20020a170907945100b00a59f2d249b1mr513044ejc.9.1715070331099;
+        Tue, 07 May 2024 01:25:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHE0YLDxSU/VMUbuSbDaD4PxbC8U7jFZ/xx4z1XkZHULEfaIHq2T/SXOucES9GSEXN/mDLg3A==
+X-Received: by 2002:a17:907:9451:b0:a59:f2d2:49b1 with SMTP id dl17-20020a170907945100b00a59f2d249b1mr513024ejc.9.1715070330705;
+        Tue, 07 May 2024 01:25:30 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id ao18-20020a170907359200b00a59bda080ffsm3123769ejc.194.2024.05.07.01.25.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 01:25:30 -0700 (PDT)
+Message-ID: <155361c0-5068-44df-9fca-d775fc518b7d@redhat.com>
+Date: Tue, 7 May 2024 10:25:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,254 +81,170 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
- boundaries
-To: Ryan Roberts <ryan.roberts@arm.com>, Yang Shi <shy828301@gmail.com>
-CC: Matthew Wilcox <willy@infradead.org>, Yang Shi
-	<yang@os.amperecomputing.com>, <riel@surriel.com>, <cl@linux.com>,
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, Ze Zuo <zuoze1@huawei.com>
-References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
- <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
- <Zav3UK7ESNxCMjyP@casper.infradead.org>
- <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
- <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
- <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
- <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
- <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
-Content-Language: en-US
-In-Reply-To: <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
+ and writing touch IC registers
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net,
+ Richard Hughes <hughsient@gmail.com>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
+ Mark Brown <broonie@kernel.org>
+References: <20240506114752.47204-1-charles.goodix@gmail.com>
+ <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
+ <ZjmOUp725QTHrfcT@google.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZjmOUp725QTHrfcT@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Ryan, Yang and all,
+Hi,
 
-We see another regression on arm64(no issue on x86) when test memory
-latency from lmbench,
-
-/lat_mem_rd -P 1 512M 128
-
-memory latency(smaller is better)
-
-MiB     6.9-rc7	6.9-rc7+revert
-0.00049	1.539 	1.539
-0.00098	1.539 	1.539
-0.00195	1.539 	1.539
-0.00293	1.539 	1.539
-0.00391	1.539 	1.539
-0.00586	1.539 	1.539
-0.00781	1.539 	1.539
-0.01172	1.539 	1.539
-0.01562	1.539 	1.539
-0.02344	1.539 	1.539
-0.03125	1.539 	1.539
-0.04688	1.539 	1.539
-0.0625	1.540 	1.540
-0.09375	3.634 	3.086
-0.125   3.874 	3.175
-0.1875  3.544 	3.288
-0.25    3.556 	3.461
-0.375   3.641 	3.644
-0.5     4.125 	3.851
-0.75    4.968 	4.323
-1       5.143 	4.686
-1.5     5.309 	4.957
-2       5.370 	5.116
-3       5.430 	5.471
-4       5.457 	5.671
-6       6.100 	6.170
-8       6.496 	6.468
-
------------------------s
-* L1 cache = 8M, it is no big changes below 8M *
-* but the latency reduce a lot when revert this patch from L2 *
-
-12      6.917 	6.840
-16      7.268 	7.077
-24      7.536 	7.345
-32      10.723 	9.421
-48      14.220 	11.350
-64      16.253 	12.189
-96      14.494 	12.507
-128     14.630 	12.560
-192     15.402 	12.967
-256     16.178 	12.957
-384     15.177 	13.346
-512     15.235 	13.233
-
-After quickly check the smaps, but don't find any clues, any suggestion?
-
-Thanks.
-
-On 2024/1/24 1:26, Ryan Roberts wrote:
-> On 23/01/2024 17:14, Yang Shi wrote:
->> On Tue, Jan 23, 2024 at 1:41 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>
->>> On 22/01/2024 19:43, Yang Shi wrote:
->>>> On Mon, Jan 22, 2024 at 3:37 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>>
->>>>> On 20/01/2024 16:39, Matthew Wilcox wrote:
->>>>>> On Sat, Jan 20, 2024 at 12:04:27PM +0000, Ryan Roberts wrote:
->>>>>>> However, after this patch, each allocation is in its own VMA, and there is a 2M
->>>>>>> gap between each VMA. This causes 2 problems: 1) mmap becomes MUCH slower
->>>>>>> because there are so many VMAs to check to find a new 1G gap. 2) It fails once
->>>>>>> it hits the VMA limit (/proc/sys/vm/max_map_count). Hitting this limit then
->>>>>>> causes a subsequent calloc() to fail, which causes the test to fail.
->>>>>>>
->>>>>>> Looking at the code, I think the problem is that arm64 selects
->>>>>>> ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT. But __thp_get_unmapped_area() allocates
->>>>>>> len+2M then always aligns to the bottom of the discovered gap. That causes the
->>>>>>> 2M hole. As far as I can see, x86 allocates bottom up, so you don't get a hole.
->>>>>>
->>>>>> As a quick hack, perhaps
->>>>>> #ifdef ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
->>>>>> take-the-top-half
->>>>>> #else
->>>>>> current-take-bottom-half-code
->>>>>> #endif
->>>>>>
->>>>>> ?
->>>>
->>>> Thanks for the suggestion. It makes sense to me. Doing the alignment
->>>> needs to take into account this.
->>>>
->>>>>
->>>>> There is a general problem though that there is a trade-off between abutting
->>>>> VMAs, and aligning them to PMD boundaries. This patch has decided that in
->>>>> general the latter is preferable. The case I'm hitting is special though, in
->>>>> that both requirements could be achieved but currently are not.
->>>>>
->>>>> The below fixes it, but I feel like there should be some bitwise magic that
->>>>> would give the correct answer without the conditional - but my head is gone and
->>>>> I can't see it. Any thoughts?
->>>>
->>>> Thanks Ryan for the patch. TBH I didn't see a bitwise magic without
->>>> the conditional either.
->>>>
->>>>>
->>>>> Beyond this, though, there is also a latent bug where the offset provided to
->>>>> mmap() is carried all the way through to the get_unmapped_area()
->>>>> impelementation, even for MAP_ANONYMOUS - I'm pretty sure we should be
->>>>> force-zeroing it for MAP_ANONYMOUS? Certainly before this change, for arches
->>>>> that use the default get_unmapped_area(), any non-zero offset would not have
->>>>> been used. But this change starts using it, which is incorrect. That said, there
->>>>> are some arches that override the default get_unmapped_area() and do use the
->>>>> offset. So I'm not sure if this is a bug or a feature that user space can pass
->>>>> an arbitrary value to the implementation for anon memory??
->>>>
->>>> Thanks for noticing this. If I read the code correctly, the pgoff used
->>>> by some arches to workaround VIPT caches, and it looks like it is for
->>>> shared mapping only (just checked arm and mips). And I believe
->>>> everybody assumes 0 should be used when doing anonymous mapping. The
->>>> offset should have nothing to do with seeking proper unmapped virtual
->>>> area. But the pgoff does make sense for file THP due to the alignment
->>>> requirements. I think it should be zero'ed for anonymous mappings,
->>>> like:
->>>>
->>>> diff --git a/mm/mmap.c b/mm/mmap.c
->>>> index 2ff79b1d1564..a9ed353ce627 100644
->>>> --- a/mm/mmap.c
->>>> +++ b/mm/mmap.c
->>>> @@ -1830,6 +1830,7 @@ get_unmapped_area(struct file *file, unsigned
->>>> long addr, unsigned long len,
->>>>                  pgoff = 0;
->>>>                  get_area = shmem_get_unmapped_area;
->>>>          } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
->>>> +               pgoff = 0;
->>>>                  /* Ensures that larger anonymous mappings are THP aligned. */
->>>>                  get_area = thp_get_unmapped_area;
->>>>          }
->>>
->>> I think it would be cleaner to just zero pgoff if file==NULL, then it covers the
->>> shared case, the THP case, and the non-THP case properly. I'll prepare a
->>> separate patch for this.
+On 5/7/24 4:13 AM, Dmitry Torokhov wrote:
+> On Mon, May 06, 2024 at 02:03:13PM +0200, Hans de Goede wrote:
+>> Hi,
 >>
->> IIUC I don't think this is ok for those arches which have to
->> workaround VIPT cache since MAP_ANONYMOUS | MAP_SHARED with NULL file
->> pointer is a common case for creating tmpfs mapping. For example,
->> arm's arch_get_unmapped_area() has:
+>> On 5/6/24 1:47 PM, Charles Wang wrote:
+>>> Export a sysfs interface that would allow reading and writing touchscreen
+>>> IC registers. With this interface many things can be done in usersapce
+>>> such as firmware updates. An example tool that utilizes this interface
+>>> for performing firmware updates can be found at [1].
 >>
->> if (aliasing)
->>          do_align = filp || (flags & MAP_SHARED);
+>> I'm not sure if I'm a fan of adding an interface to export raw register
+>> access for fwupdate.
 >>
->> The pgoff is needed if do_align is true. So we should just zero pgoff
->> iff !file && !MAP_SHARED like what my patch does, we can move the
->> zeroing to a better place.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/input/touchscreen/goodix_fwupload.c
+>>
+>> Contains update support for older goodix touchscreens and it is not
+>> that big. I think it might be better to just have an in kernel fwupdate
+>> driver for this and have a sysfs file to which to write the new firmware.
+>>
+>> Adding Richard Hughes, fwupd maintainer to the Cc. Richard, do you have
+>> any input on the suggested method for firmware updating ?
+>>
+>> If raw register access is seen as a good solution, then I think this
+>> should use regmap + some generic helpers (to be written) to export
+>> regmap r/w access to userspace.
 > 
-> We crossed streams - I sent out the patch just as you sent this. My patch is
-> implemented as I proposed.
-> 
-> I'm not sure I agree with what you are saying. The mmap man page says this:
-> 
->    The  contents  of  a file mapping (as opposed to an anonymous mapping; see
->    MAP_ANONYMOUS below), are initialized using length bytes starting at offset
->    offset in the file (or other object) referred to by the file descriptor fd.
-> 
-> So that implies offset is only relavent when a file is provided. It then goes on
-> to say:
-> 
->    MAP_ANONYMOUS
->    The mapping is not backed by any file; its contents are initialized to zero.
->    The fd argument is ignored; however, some implementations require fd to be -1
->    if MAP_ANONYMOUS (or MAP_ANON) is specified, and portable applications should
->    ensure this. The offset argument should be zero.
-> 
-> So users are expected to pass offset=0 when mapping anon memory, for both shared
-> and private cases.
-> 
-> Infact, in the line above where you made your proposed change, pgoff is also
-> being zeroed for the (!file && (flags & MAP_SHARED)) case.
-> 
+> I think the less code we have in kernel the better,
+
+Ok.
+
+> especially if in
+> cases where firmware flashing is not essential for device to work (i.e.
+> it the controller has a flash memory).
+
+Right the existing older goodix fw-upload is different because some
+controllers are flash-less so they need a fw upload every boot.
+
+> That said IIRC Mark felt very
+> strongly about allowing regmap writes from userspace... but maybe he
+> softened the stance or we could have this functionality opt-in?
+
+Right when I was talking about generic helpers that was meant for
+code re-use purposes. Actually exposing the regmap r/w functionality
+to userspace is something which should be decided on a case by case
+basis by the driver (IMHO).
+
+Regards,
+
+Hans
+
+
+
 > 
 >>
->>>
->>>
->>>>
->>>>>
->>>>> Finally, the second test failure I reported (ksm_tests) is actually caused by a
->>>>> bug in the test code, but provoked by this change. So I'll send out a fix for
->>>>> the test code separately.
->>>>>
->>>>>
->>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>>> index 4f542444a91f..68ac54117c77 100644
->>>>> --- a/mm/huge_memory.c
->>>>> +++ b/mm/huge_memory.c
->>>>> @@ -632,7 +632,7 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
->>>>>   {
->>>>>          loff_t off_end = off + len;
->>>>>          loff_t off_align = round_up(off, size);
->>>>> -       unsigned long len_pad, ret;
->>>>> +       unsigned long len_pad, ret, off_sub;
->>>>>
->>>>>          if (off_end <= off_align || (off_end - off_align) < size)
->>>>>                  return 0;
->>>>> @@ -658,7 +658,13 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
->>>>>          if (ret == addr)
->>>>>                  return addr;
->>>>>
->>>>> -       ret += (off - ret) & (size - 1);
->>>>> +       off_sub = (off - ret) & (size - 1);
->>>>> +
->>>>> +       if (current->mm->get_unmapped_area == arch_get_unmapped_area_topdown &&
->>>>> +           !off_sub)
->>>>> +               return ret + size;
->>>>> +
->>>>> +       ret += off_sub;
->>>>>          return ret;
->>>>>   }
->>>>
->>>> I didn't spot any problem, would you please come up with a formal patch?
->>>
->>> Yeah, I'll aim to post today.
+>>> [1] https://github.com/goodix/fwupdate_for_berlin_linux
 >>
->> Thanks!
+>> Hmm, that tool seems to have some licensing issues there is an Apache License v2.0
+>> LICENSE file, but the header of fwupdate.c claims it is confidential ...
 >>
+>> Regards,
+>>
+>> Hans
+>>
+>>
+>>> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+>>> ---
+>>>  drivers/input/touchscreen/goodix_berlin.h     |  2 +
+>>>  .../input/touchscreen/goodix_berlin_core.c    | 52 +++++++++++++++++++
+>>>  drivers/input/touchscreen/goodix_berlin_i2c.c |  6 +++
+>>>  drivers/input/touchscreen/goodix_berlin_spi.c |  6 +++
+>>>  4 files changed, 66 insertions(+)
 >>>
->>>
+>>> diff --git a/drivers/input/touchscreen/goodix_berlin.h b/drivers/input/touchscreen/goodix_berlin.h
+>>> index 1fd77eb69..1741f2d15 100644
+>>> --- a/drivers/input/touchscreen/goodix_berlin.h
+>>> +++ b/drivers/input/touchscreen/goodix_berlin.h
+>>> @@ -19,6 +19,8 @@ struct regmap;
+>>>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>>>  			struct regmap *regmap);
+>>>  
+>>> +void goodix_berlin_remove(struct device *dev);
+>>> +
+>>>  extern const struct dev_pm_ops goodix_berlin_pm_ops;
+>>>  
+>>>  #endif
+>>> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
+>>> index e7b41a926..e02160841 100644
+>>> --- a/drivers/input/touchscreen/goodix_berlin_core.c
+>>> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
+>>> @@ -672,6 +672,44 @@ static void goodix_berlin_power_off_act(void *data)
+>>>  	goodix_berlin_power_off(cd);
+>>>  }
+>>>  
+>>> +static ssize_t goodix_berlin_registers_read(struct file *filp, struct kobject *kobj,
+>>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
+>>> +{
+>>> +	struct goodix_berlin_core *cd;
+>>> +	struct device *dev;
+>>> +	int error;
+>>> +
+>>> +	dev = kobj_to_dev(kobj);
+>>> +	cd = dev_get_drvdata(dev);
+>>> +
+>>> +	error = regmap_raw_read(cd->regmap, (unsigned int)off,
+>>> +				buf, count);
+>>> +
+>>> +	return error ? error : count;
+>>> +}
+>>> +
+>>> +static ssize_t goodix_berlin_registers_write(struct file *filp, struct kobject *kobj,
+>>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
+>>> +{
+>>> +	struct goodix_berlin_core *cd;
+>>> +	struct device *dev;
+>>> +	int error;
+>>> +
+>>> +	dev = kobj_to_dev(kobj);
+>>> +	cd = dev_get_drvdata(dev);
+>>> +
+>>> +	error = regmap_raw_write(cd->regmap, (unsigned int)off,
+>>> +				 buf, count);
+>>> +
+>>> +	return error ? error : count;
+>>> +}
+>>> +
+>>> +static struct bin_attribute goodix_berlin_registers_attr = {
+>>> +	.attr = {.name = "registers", .mode = 0600},
+>>> +	.read = goodix_berlin_registers_read,
+>>> +	.write = goodix_berlin_registers_write,
+>>> +};
+>>> +
+>>>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>>>  			struct regmap *regmap)
+>>>  {
+>>> @@ -743,6 +781,14 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>>>  
+>>>  	dev_set_drvdata(dev, cd);
+>>>  
+>>> +	error = sysfs_create_bin_file(&cd->dev->kobj,
+>>> +				      &goodix_berlin_registers_attr);
 > 
+> If we want to instantiate attributes from the driver please utilize
+> dev_groups in respective driver structures to create and remove the
+> attributes automatically.
 > 
+> Thanks.
+> 
+
 
