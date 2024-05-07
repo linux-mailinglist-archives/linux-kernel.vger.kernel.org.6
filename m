@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-171609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8AF78BE65E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:48:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE378BE687
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7D81F24DA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:48:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FC9284751
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C27747F;
-	Tue,  7 May 2024 14:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A714F16C86A;
+	Tue,  7 May 2024 14:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PCHoPc57"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHnrMSKP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CD22F50
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C724F161336;
+	Tue,  7 May 2024 14:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093299; cv=none; b=D8KDTuEZvaLgOCceN1jUYETLLSYXjOKbWbLWBHWw29GMzUrptx6zfjKhRwaF6QYW+wCA9GIfooUKr4t8CaRW1Axp97Q41Kv9+EzOmpHhTcgaOlu2ZnRHbJS0GZXXg+Z0B5HA8wL1m+515J3qptQJ+XS7jPUHSSmV+ahe7wCfs7s=
+	t=1715093330; cv=none; b=C22g4AdFsmgkPyzfMoaMli0pT9VJmpuK9UMM40vEGUvjI9jDguJpzmmK549+CQs4ikZmjZU6zgkULGHV1sh/4ECny5UxtCzqgBkNW3TVTgg9vbLzk5t9112LNHzGA2y990/sJ7K43Cx0vRYPIaKjFuvIGHmYgJsQ4C2zQIyqi3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093299; c=relaxed/simple;
-	bh=O9U7eifATy8AucP2fwKsqv2Qi7a/NxF2S8DlLhQxBOk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EomIPQ9YDNVdMdwmYVjE1cavpHoFlqydeKrFrAqAlsEYkuYYsXCzXRu13Ai2foJRjhptSXMnC/dwsJ3Tmb/s2OIre5o2FtlEJaLoD8YWDRE5zqwuBm2HRmTTzXHUUhs5qBKwy9SppcD7IlNhgagINJfUKRegjHTBa66IV9jV6DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PCHoPc57; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e43c481b53so1945381fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715093296; x=1715698096; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6E2tOH2LZeelmKHGCVRYEwTjym6Omr1xato4eYpOm4E=;
-        b=PCHoPc57NicYWeCbCLKQYtSzZ48TuQrqMCrl8LMUNj1+cWv5FFlocjDP5Ngpw3Xj6A
-         /8O3ynUZRCUQnO7z8PJfGkD+AeDrPLCEzEk+AVONMHcEneXGaArld6X6WA3Ruc4aj1WE
-         QfrZoxDS293sasejpLyGJFGL2JMNrQX12NRBu7NYcqFpg1z3v+qkf5VzNZksenEbbrbl
-         mPBFHb0dDbkWG6ec0QgMx4EmflB1wo8dJhXIfllZD7DgxIXEY787uqhvgD0BCJ80uBTh
-         5svbzqg8tseNOdKKzNBkyFi//p++C6BnsSiQOKXVWfpljM8AO/a7vaBdlSwR0wW1MIyX
-         ttVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715093296; x=1715698096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6E2tOH2LZeelmKHGCVRYEwTjym6Omr1xato4eYpOm4E=;
-        b=CJFhQ9Bww3DrmrcbKGApuXYVqsccMsADybCMMsJxyNRfBdaSLnrQPZfwdsE06SQno9
-         Brog8yCXLt96LQ43VlIdZRuaLXKc1EgJVm+1bifqchKBYMlv15Y71z0QtumdV8TRDxgH
-         daWHhQ7OlFyxzxGMILt39S6Hne0RyhxbJHfYBC7hLDE9aMX1d4ZCjKhvm8eV9UPkBQFj
-         WL+EUV5udr5D0K082FWUiN57FK/FlPPrRBVIanaD56DP34etY3FiKmbAU8FwGW3Ocz0q
-         nUj3askcKIrK2g8FsmEpk3K9nFOc2S1Aqyk2VBU99we/0DDz1UMo9+fxyuwlzjd/yL5S
-         iYhw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0o0Fm9zZK+U1np3FvryEfQHwcqmZqVfMWsubGZp+5Yqk+gUb9Tte41xlcTrPYSFnDeBFzvJM1A3Y0L3Zeaw8h2nWcZflQj68sVZoV
-X-Gm-Message-State: AOJu0YzovEiwaLhVV6gK/l1vkW56WdM/MdOF9Zm0im774USy22hzPdF8
-	LbbA69ZmW3S4aXJ+IRhL+qylxFdvZwUU+R/rV1bjjyL5MUqfSXVLdkUclfbCf15zKXg2LikBFcb
-	NZdEIiOx1vh9UI4c1lRNaf5I/rdTv8631fRL5sf/K2FKHGuqC
-X-Google-Smtp-Source: AGHT+IEWf5bz0gIK/ChOYdDJ2AEL/N1lGY6OKBycVzHc97pVufGbuietFwGdydp8PqHnPhjEha+mXPz4acp5wASwKDE=
-X-Received: by 2002:a2e:b0d5:0:b0:2e1:d94a:773f with SMTP id
- g21-20020a2eb0d5000000b002e1d94a773fmr8924737ljl.11.1715093295962; Tue, 07
- May 2024 07:48:15 -0700 (PDT)
+	s=arc-20240116; t=1715093330; c=relaxed/simple;
+	bh=yUKF0vOKySzX0i3skMdUAskVsEKGqMSmVaxqmiM/wrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jzKrRK9rbbZaEbxLccjma4u7VpGHtAPcwoW0Ik22WhdKV/bTBCM4fE8161TdC3X5GTKljGQO9sg79HdLxDTuIGY8XmYWfvBgsMaBEnpHa8R2sLwNhOt49B5VHKaICaF+tY937GXLtBeAz/Bed/ORuJmqP0ZGGMu46SPLEGXWlv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHnrMSKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CBAC4DDE1;
+	Tue,  7 May 2024 14:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715093330;
+	bh=yUKF0vOKySzX0i3skMdUAskVsEKGqMSmVaxqmiM/wrA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kHnrMSKPu/3b7txA0FRvWa4P1k2QMO+cjAf5ukUF0wZPI/Q4kWMAEayobHHC6b0UU
+	 C+rxxbSBZ+xwqadlmjeG9aQEefBYn1eTCrc+lXvSo4yTDxPsuRsrd5O7tfxTF8yY4t
+	 t7NNEaLvQFW0Xb+5+aO/bX5pEKdquNyX8FkmPprWELal9ThweladBc2tC3CUrEQStV
+	 KEMMQiOs5FezxrWiIP/6ZkQtOk2GOzaZJajEgt4SaK4Y+gLyVqSbbbJwjn86JMETgC
+	 ORD0hb0eCOaV0fXlo+iqbz5M1N9uSV2+09Z4PL+yeylBPsct4gxMBbXAnOBbBp05ml
+	 xcZlVgsufXezQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1s4M7f-000000003Cm-225g;
+	Tue, 07 May 2024 16:48:52 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v2 0/7] HID/arm64: dts: qcom: sc8280xp-x13s: fix touchscreen power on
+Date: Tue,  7 May 2024 16:48:14 +0200
+Message-ID: <20240507144821.12275-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507121346.16969-1-brgl@bgdev.pl> <597f5da2-71be-4144-a570-fdc4f06c4cc6@paulmck-laptop>
-In-Reply-To: <597f5da2-71be-4144-a570-fdc4f06c4cc6@paulmck-laptop>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 7 May 2024 16:48:04 +0200
-Message-ID: <CAMRc=MexihBpLBcY-8aX06buUYmtE07ZpkMq0Ho3jrHb6VE7Sw@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: fix the speed of descriptor label setting with SRCU
-To: paulmck@kernel.org
-Cc: Kent Gibson <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 7, 2024 at 4:24=E2=80=AFPM Paul E. McKenney <paulmck@kernel.org=
-> wrote:
->
-> On Tue, May 07, 2024 at 02:13:46PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Commit 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
-> > caused a massive drop in performance of requesting GPIO lines due to th=
-e
-> > call to synchronize_srcu() on each label change. Rework the code to not
-> > wait until all read-only users are done with reading the label but
-> > instead atomically replace the label pointer and schedule its release
-> > after all read-only critical sections are done.
-> >
-> > To that end wrap the descriptor label in a struct that also contains th=
-e
-> > rcu_head struct required for deferring tasks using call_srcu() and stop
-> > using kstrdup_const() as we're required to allocate memory anyway. Just
-> > allocate enough for the label string and rcu_head in one go.
-> >
-> > Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > Closes: https://lore.kernel.org/linux-gpio/CAMRc=3DMfig2oooDQYTqo23W3PX=
-SdzhVO4p=3DG4+P8y1ppBOrkrJQ@mail.gmail.com/
-> > Fixes: 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
-> > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Looks good to me!
->
-> Acked-by: Paul E. McKenney <paulmck@kernel.org>
->
-> One semi-related question...  Why the per-descriptor srcu_struct?
->
-> If the srcu_struct was shared among all of these, you could just do one
-> synchronize_srcu() and one cleanup_srcu_struct() instead of needing to
-> do one per gdev->desc[] entry.
->
-> You might be able to go further and have one srcu_struct for all the
-> gpio devices.
->
-> Or did you guys run tests and find some performance problem with sharing
-> srcu_struct structures?   (I wouldn't expect one, but sometimes the
-> hardware has a better imagination than I do.)
->
+The Elan eKTH5015M touch controller on the X13s requires a 300 ms delay
+before sending commands after having deasserted reset during power on.
 
-I guess my goal was not to make synchronize_srcu() for descriptor X
-wait for read-only operations on descriptor Y. But with that gone, I
-suppose you're right, we can improve this patch further by switching
-to a single SRCU descriptor.
+This series switches the X13s devicetree to use the Elan specific
+binding so that the OS can determine the required power-on sequence and
+make sure that the controller is always detected during boot. [1]
 
-I'll send a v2.
+The Elan hid-i2c driver currently asserts reset unconditionally during
+suspend, which does not work on the X13s where the touch controller
+supply is shared with other peripherals that may remain powered. Holding
+the controller in reset can increase power consumption and also leaks
+current through the reset circuitry pull ups.
 
-Bart
+Note that the latter also affects X13s variants where the touchscreen is
+not populated as the driver also exits probe() with reset asserted.
+
+Fix this by adding a new 'no-reset-on-power-off' devicetree property
+which can be used by the OS to determine when reset needs to be asserted
+on power down and when it safe and desirable to leave it deasserted.
+
+I tried to look for drivers that had already addressed this but it was
+only after I finished implementing this that I noticed Doug's reference
+to commit 18eeef46d359 ("HID: i2c-hid: goodix: Tie the reset line to
+true state of the regulator"), which tried to solve a related problem.
+
+That commit has since been reverted but ultimately resulted in commit
+7607f12ba735 ("HID: i2c-hid: goodix: Add support for
+"goodix,no-reset-during-suspend" property") being merged to handle the
+related case where the touch controller supply is always on.
+
+The implementation is very similar, but I decided to use the slightly
+more generic 'no-reset-on-power-off' property name after considering a
+number of alternatives (including trying to describe the hardware
+configuration in the name). (And as this is not vendor specific, I left
+out the prefix.)
+
+Note that my X13s does not have a touchscreen, but I have done partial
+verification of the implementation using that machine and the sc8280xp
+CRD reference design. Bjorn has promised to help out with final
+verification on an X13s with a touchscreen.
+
+The devicetree changes are expected to go in through the Qualcomm tree
+once the binding and driver updates have been merged.
+
+Johan
+
+
+[1] The reset signal is currently deasserted using the pin configuration
+    and the controller would be detected if probe is deferred or if user
+    space triggers a reprobe through sysfs.
+
+Changes in v2
+ - drop redundant 'items' from binding
+ - include a "should" in description of 'no-reset-on-power-off' property
+ - always assert reset on probe
+ - enable elan i2c-hid driver in arm64 defconfig
+
+Johan Hovold (7):
+  dt-bindings: HID: i2c-hid: add dedicated Ilitek ILI2901 schema
+  dt-bindings: HID: i2c-hid: elan: add Elan eKTH5015M
+  dt-bindings: HID: i2c-hid: elan: add 'no-reset-on-power-off' property
+  HID: i2c-hid: elan: fix reset suspend current leakage
+  arm64: dts: qcom: sc8280xp-x13s: fix touchscreen power on
+  arm64: dts: qcom: sc8280xp-crd: use external pull up for touch reset
+  arm64: defconfig: enable Elan i2c-hid driver
+
+ .../bindings/input/elan,ekth6915.yaml         | 19 ++++--
+ .../bindings/input/ilitek,ili2901.yaml        | 66 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc8280xp-crd.dts     |  3 +-
+ .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 15 +++--
+ arch/arm64/configs/defconfig                  |  1 +
+ drivers/hid/i2c-hid/i2c-hid-of-elan.c         | 59 +++++++++++++----
+ 6 files changed, 137 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/ilitek,ili2901.yaml
+
+-- 
+2.43.2
+
 
