@@ -1,250 +1,402 @@
-Return-Path: <linux-kernel+bounces-170671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7DA8BDA6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:59:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660F48BDA70
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54BAEB25379
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E942D1F25547
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA9A78276;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F317478C72;
 	Tue,  7 May 2024 04:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="f+T8K9QX"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532BF6FE21
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FF971B4C;
+	Tue,  7 May 2024 04:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715057860; cv=none; b=qaxNxBlD0Zjiu+JcUswT0dl0ZMBe7UrkqkF7FlY8H77HpwXHIQC1gWNyDbe0Spc3EYhm9TfWPM8xiL6U9VHBJUq/2HXlCvHHAtPuevadd26TCwaZeEXuGKb1R6SCHZNZd7QXoEcz+qMGsqnjQ7p0C5QTiKPJ/jvWuxVMK5iNGfc=
+	t=1715057861; cv=none; b=E6+PQJZaEMS7PLHyawE58uPftmLjf8uxR4geppjrYvA5ZT0famHcx2yKkumPJtYy1R3A5Rmcj7bLMQBAZSBlfIm03kSRfv7ifv6SwoEDzbUcemE53xjE2s/62nBAuOXgw2AVviC8GOX1PTB6crg9WgWmzxn+1SesNH7DpAFGxsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715057860; c=relaxed/simple;
-	bh=uoSZcE5Xsilp2h5kGfeS4a/3IqaGYxAdmgKgnxrBUNU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uIuXlawQFfr9sw7TxSqgnVldDklosMOANyps4CweWgUSf8LUTCcN+2uV9oJZgi7sARaDDESFjp3+/tHmxCPA1CkTaxgobuZzyjfRT8Y7LWx4alG9F+GbyuqnRsMuHGa94NrPnWWZx4H9reaRq+9EpxrNOOZzlXG3cqRl4MaEJng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=f+T8K9QX; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6f0442816e7so1159381a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 21:57:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1715057857; x=1715662657; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H2lHWLueNqka2AOPVIme5EVkkFZiGfvJi+3KgwWaTVY=;
-        b=f+T8K9QXa+YaVglHch31/iPrzzedmDT1m01HWO2oUMALlURQz2kvCuFhg4FzizbsxS
-         ryZlWVaBm+DoCajCWJ4Lrdfplg3JgN8swDJS/mCRV6EIvcn4SW8bg30aRl2K3LSL719M
-         0Im6kMAhvzuSiJYq2hDc7g6zgmTN03T7jsnKGiMl7vp94u5WfcX9ciettnTCzyy0g+o1
-         Sqs9TjZNPEZCpDmT9xRR6a/OpiQfUAeI6wdwEejGUeA2AzxVW+LM57tO1Y8g2j6HhEVg
-         zVBjQY8tBB29C+vWHXBJKLx9p3LmTFjTWZDR1pdw7M2YY+kE226lP+UslHwMD32TnBTh
-         Rk0A==
+	s=arc-20240116; t=1715057861; c=relaxed/simple;
+	bh=1ndGqnt0Yucv/TtBDYG6nGnM4UoIraHXey9EMNGl6ac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z8w67swiNySsKcOlAHyHGlGnf/NmU3wxzBj5DqwaFkfmT+UGsn7+165sPr6JXofQLbHycyzTcsTfXGNfGLF4vJc7TyTcoAuQ0RzeL5eSVmHFiZ8o0qK9gL8FD2WFWob2XDnYjYvw8lAPz9glh8HdCWjrsgBTFCcAdCvO3XQODCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-60585faa69fso1714115a12.1;
+        Mon, 06 May 2024 21:57:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715057857; x=1715662657;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715057858; x=1715662658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H2lHWLueNqka2AOPVIme5EVkkFZiGfvJi+3KgwWaTVY=;
-        b=QWrUJi9pOZdo33usDaqP4VqkAT/SvdRwHH337Ei3dK6ZaqLkZ7LoMkkpzyu5GtlP2D
-         YdmzjEVLixWgwuUmaYfHQYBqTpNke0iKISm+NCJIfil7vgMT+g6nlsFI2G6hSipAhH4F
-         AezZRzZCM/4BFuYoKOTs432yakpV4iahsF4YjB09FXpc6Zi8lw2pYWSARTpzRZke+v+7
-         AKGB7WxaX6DQ2bRKXQbCeWN3/YW8lnD3u+zjHfdR43vf4lsFpJ1aYIYgd3XMXOGHrK9M
-         S0pWz/f9jAugdPtfOYPU63t13xCu7JbJ97KXUtVNUDlo5Uc/HI8nn6XTssC8js+8Abcq
-         i8gw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1/mjfuB1gY1Dr6QfqIhve4gKucLI9aSKAU2hhTb2xsBxowV8qhyFYglnONOtcEt6FOaLsP1hyJX7Har+GuLqFaaHmQZnG+1plY5/u
-X-Gm-Message-State: AOJu0Yz24cvtPX8zKtYtYSpMe6pkohrnB+7cpXEvxC6MvzXstvGR7seD
-	mGryeKUubm096dgdq1REXUBPRX5nj9FNsvq5k/rbcr3hqm55XVtt1fqk05/Psvg=
-X-Google-Smtp-Source: AGHT+IHeM+LZlAASDgAgZoJYi6IfqhYsJvdtMF0w6gMHjoszi7FeDpQTCR5RBlOwPb4z0zSfsEZQvQ==
-X-Received: by 2002:a9d:66c3:0:b0:6ef:9159:8915 with SMTP id t3-20020a9d66c3000000b006ef91598915mr13321544otm.37.1715057857495;
-        Mon, 06 May 2024 21:57:37 -0700 (PDT)
-Received: from [127.0.1.1] ([2601:1c2:1802:170:6870:7119:e255:c3a0])
-        by smtp.gmail.com with ESMTPSA id o14-20020a637e4e000000b005f80aced5f3sm8987249pgn.0.2024.05.06.21.57.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 21:57:37 -0700 (PDT)
-From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Mon, 06 May 2024 21:55:20 -0700
-Subject: [PATCH RFC v3 7/7] riscv: dts: thead: update TH1520 dma and timer
- nodes to use clock controller
+        bh=stzd46xkuc3HDoFga9LqxNKWgbIkvsfh9h+FPDMTTcg=;
+        b=tdN58cevMhsuZsXKpoASf/BQ+jBNKQaWRHNPwVx6nzgIXVCAJlAEyotSTn11KSWlra
+         iZtRz1c5dnwfRwCl7stkn8g7ELFREtpNCDga0L0kMDXMTjyouBNG3hRexZQgNZEeKEDl
+         CHYX0+NEa+hp07aBt0diMnvnRsimC7Br1z1hCQpVmTLJY2yjarlVN9B6kKUybzh5c4Xp
+         +hW/qqvXBTp7lAytBnR8inKTej8neJKFD/75ylTsgGTdjFPQPHERQcCApkdsPxNXj25K
+         88wLmIH62SIm7UunAp1A98D18KZAMo5oGLvMW+FbF5WtzmXvQ8tRMgrq9gBUcyOFD+Jy
+         nLOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTTXTHGWxENw+qPZqacNFVlPIcP1w/IWxphkA5lNnSjYHQ2CuYUNAk4G776gtQ9+8RuNovbvZ5OHJxdZ4Kj+TQmNAVuNtfHO0jvHEFGnvPWtsW3TRH32kQAdf1AOjBWx3RPHB91fntSaWs0RbtcQ==
+X-Gm-Message-State: AOJu0YxrecfoFz77VohT0/zkzj+gJHzex3PvRvvXW1CiulAIuGocQ6/d
+	EcQtnnWKJ4HszCJDWrz07C6Irzt2/ygywHA5A2ry6TU56jNV0LLxwHptVDrC8pr6xHifVeGBAej
+	KG9bnTyGGFTX73RXk6fiWNKwkp8E=
+X-Google-Smtp-Source: AGHT+IH2NF8/ctvHIcMuqKsanTtAceI5j8zU119ATbhXrxOC2Se2De+unE5jfahH1dbciqnk41/8L3uePUQtYbGiMic=
+X-Received: by 2002:a17:90a:b018:b0:2b2:da7:2c83 with SMTP id
+ x24-20020a17090ab01800b002b20da72c83mr2473617pjq.4.1715057858240; Mon, 06 May
+ 2024 21:57:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240506-th1520-clk-v3-7-085a18a23a7f@tenstorrent.com>
-References: <20240506-th1520-clk-v3-0-085a18a23a7f@tenstorrent.com>
-In-Reply-To: <20240506-th1520-clk-v3-0-085a18a23a7f@tenstorrent.com>
-To: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Drew Fustini <dfustini@tenstorrent.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715057849; l=4851;
- i=dfustini@tenstorrent.com; s=20230430; h=from:subject:message-id;
- bh=uoSZcE5Xsilp2h5kGfeS4a/3IqaGYxAdmgKgnxrBUNU=;
- b=BifQO2sCcHe9fBTRk7kaehpgYjaAujHk0VCVti7HuFvmS4vxrzgImnYMt0/hjY1s2xpIUoVAI
- 3VNZYMYtEGwCH+FsfP6I8l3tUiDWT1Vg/QZawgOwqZNahnDphwqvTET
-X-Developer-Key: i=dfustini@tenstorrent.com; a=ed25519;
- pk=p3GKE9XFmjhwAayAHG4U108yag7V8xQVd4zJLdW0g7g=
+References: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com> <20240506121906.76639-5-atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <20240506121906.76639-5-atrajeev@linux.vnet.ibm.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 6 May 2024 21:57:27 -0700
+Message-ID: <CAM9d7ci1LDa7moT2qDr2qK+DTNLU6ZBkmROnbdozAjuQLQfNog@mail.gmail.com>
+Subject: Re: [PATCH V2 4/9] tools/perf: Add support to capture and parse raw
+ instruction in objdump
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com, 
+	irogers@google.com, segher@kernel.crashing.org, christophe.leroy@csgroup.eu, 
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com, 
+	linux-kernel@vger.kernel.org, akanksha@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Change the dma-controller and timer nodes to use the APB clock provided
-by the AP_SUBSYS clock controller.
+On Mon, May 6, 2024 at 5:21=E2=80=AFAM Athira Rajeev
+<atrajeev@linux.vnet.ibm.com> wrote:
+>
+> Add support to capture and parse raw instruction in objdump.
+> Currently, the perf tool infrastructure uses "--no-show-raw-insn" option
+> with "objdump" while disassemble. Example from powerpc with this option
+> for an instruction address is:
+>
+> Snippet from:
+> objdump  --start-address=3D<address> --stop-address=3D<address>  -d --no-=
+show-raw-insn -C <vmlinux>
+>
+> c0000000010224b4:       lwz     r10,0(r9)
+>
+> This line "lwz r10,0(r9)" is parsed to extract instruction name,
+> registers names and offset. Also to find whether there is a memory
+> reference in the operands, "memory_ref_char" field of objdump is used.
+> For x86, "(" is used as memory_ref_char to tackle instructions of the
+> form "mov  (%rax), %rcx".
+>
+> In case of powerpc, not all instructions using "(" are the only memory
+> instructions. Example, above instruction can also be of extended form (X
+> form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
+> and extract the source/target registers, patch adds support to use raw
+> instruction. With raw instruction, macros are added to extract opcode
+> and register fields.
+>
+> "struct ins_operands" and "struct ins" is updated to carry opcode and
+> raw instruction binary code (raw_insn). Function "disasm_line__parse"
+> is updated to fill the raw instruction hex value and opcode in newly
+> added fields. There is no changes in existing code paths, which parses
+> the disassembled code. The architecture using the instruction name and
+> present approach is not altered. Since this approach targets powerpc,
+> the macro implementation is added for powerpc as of now.
+>
+> Example:
+> representation using --show-raw-insn in objdump gives result:
+>
+> 38 01 81 e8     ld      r4,312(r1)
+>
+> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+> this translates to instruction form: "ld RT,DS(RA)" and binary code
+> as:
+> _____________________________________
+> | 58 |  RT  |  RA |      DS       | |
+> -------------------------------------
+> 0    6     11    16              30 31
+>
+> Function "disasm_line__parse" is updated to capture:
+>
+> line:    38 01 81 e8     ld      r4,312(r1)
+> opcode and raw instruction "38 01 81 e8"
+> Raw instruction is used later to extract the reg/offset fields.
+>
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> ---
+>  tools/include/linux/string.h              |  2 +
+>  tools/lib/string.c                        | 13 +++++++
+>  tools/perf/arch/powerpc/util/dwarf-regs.c | 19 ++++++++++
+>  tools/perf/util/disasm.c                  | 46 +++++++++++++++++++----
+>  tools/perf/util/disasm.h                  |  6 +++
+>  tools/perf/util/include/dwarf-regs.h      |  9 +++++
+>  6 files changed, 88 insertions(+), 7 deletions(-)
+>
+> diff --git a/tools/include/linux/string.h b/tools/include/linux/string.h
+> index db5c99318c79..0acb1fc14e19 100644
+> --- a/tools/include/linux/string.h
+> +++ b/tools/include/linux/string.h
+> @@ -46,5 +46,7 @@ extern char * __must_check skip_spaces(const char *);
+>
+>  extern char *strim(char *);
+>
+> +extern void remove_spaces(char *s);
+> +
+>  extern void *memchr_inv(const void *start, int c, size_t bytes);
+>  #endif /* _TOOLS_LINUX_STRING_H_ */
+> diff --git a/tools/lib/string.c b/tools/lib/string.c
+> index 8b6892f959ab..21d273e69951 100644
+> --- a/tools/lib/string.c
+> +++ b/tools/lib/string.c
+> @@ -153,6 +153,19 @@ char *strim(char *s)
+>         return skip_spaces(s);
+>  }
+>
+> +/*
+> + * remove_spaces - Removes whitespaces from @s
+> + */
+> +void remove_spaces(char *s)
+> +{
+> +       char *d =3D s;
+> +       do {
+> +               while (*d =3D=3D ' ') {
+> +                       ++d;
+> +               }
+> +       } while ((*s++ =3D *d++));
+> +}
+> +
+>  /**
+>   * strreplace - Replace all occurrences of character in string.
+>   * @s: The string to operate on.
+> diff --git a/tools/perf/arch/powerpc/util/dwarf-regs.c b/tools/perf/arch/=
+powerpc/util/dwarf-regs.c
+> index 0c4f4caf53ac..e60a71fd846e 100644
+> --- a/tools/perf/arch/powerpc/util/dwarf-regs.c
+> +++ b/tools/perf/arch/powerpc/util/dwarf-regs.c
+> @@ -98,3 +98,22 @@ int regs_query_register_offset(const char *name)
+>                         return roff->ptregs_offset;
+>         return -EINVAL;
+>  }
+> +
+> +#define        PPC_OP(op)      (((op) >> 26) & 0x3F)
+> +#define PPC_RA(a)      (((a) >> 16) & 0x1f)
+> +#define PPC_RT(t)      (((t) >> 21) & 0x1f)
+> +
+> +int get_opcode_insn(unsigned int raw_insn)
+> +{
+> +       return PPC_OP(raw_insn);
+> +}
+> +
+> +int get_source_reg(unsigned int raw_insn)
+> +{
+> +       return PPC_RA(raw_insn);
+> +}
+> +
+> +int get_target_reg(unsigned int raw_insn)
+> +{
+> +       return PPC_RT(raw_insn);
+> +}
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index 2de66a092cab..85692f73e78f 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -43,7 +43,7 @@ static int call__scnprintf(struct ins *ins, char *bf, s=
+ize_t size,
+>                            struct ins_operands *ops, int max_ins_name);
+>
+>  static void ins__sort(struct arch *arch);
+> -static int disasm_line__parse(char *line, const char **namep, char **raw=
+p);
+> +static int disasm_line__parse(char *line, const char **namep, char **raw=
+p, int *opcode, int *rawp_insn);
+>
+>  static __attribute__((constructor)) void symbol__init_regexpr(void)
+>  {
+> @@ -512,7 +512,7 @@ static int lock__parse(struct arch *arch, struct ins_=
+operands *ops, struct map_s
+>         if (ops->locked.ops =3D=3D NULL)
+>                 return 0;
+>
+> -       if (disasm_line__parse(ops->raw, &ops->locked.ins.name, &ops->loc=
+ked.ops->raw) < 0)
+> +       if (disasm_line__parse(ops->raw, &ops->locked.ins.name, &ops->loc=
+ked.ops->raw, &ops->locked.ins.opcode, &ops->locked.ops->raw_insn) < 0)
 
-Remove apb_clk reference from BeagleV Ahead and LPI4a dts.
+This line is too long.
 
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
----
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  4 ----
- .../boot/dts/thead/th1520-lichee-module-4a.dtsi    |  4 ----
- arch/riscv/boot/dts/thead/th1520.dtsi              | 24 ++++++++--------------
- 3 files changed, 9 insertions(+), 23 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index 55f1ed0cb433..1180e41c7b07 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -44,10 +44,6 @@ &osc_32k {
- 	clock-frequency = <32768>;
- };
- 
--&apb_clk {
--	clock-frequency = <62500000>;
--};
--
- &dmac0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-index 762eceb415f8..78977bdbbe3d 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-@@ -25,10 +25,6 @@ &osc_32k {
- 	clock-frequency = <32768>;
- };
- 
--&apb_clk {
--	clock-frequency = <62500000>;
--};
--
- &dmac0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index cf2141c3976f..34bd58b45baa 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -135,12 +135,6 @@ osc_32k: 32k-oscillator {
- 		#clock-cells = <0>;
- 	};
- 
--	apb_clk: apb-clk-clock {
--		compatible = "fixed-clock";
--		clock-output-names = "apb_clk";
--		#clock-cells = <0>;
--	};
--
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&plic>;
-@@ -326,7 +320,7 @@ dmac0: dma-controller@ffefc00000 {
- 			compatible = "snps,axi-dma-1.01a";
- 			reg = <0xff 0xefc00000 0x0 0x1000>;
- 			interrupts = <27 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb_clk>, <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>, <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "core-clk", "cfgr-clk";
- 			#dma-cells = <1>;
- 			dma-channels = <4>;
-@@ -341,7 +335,7 @@ dmac0: dma-controller@ffefc00000 {
- 		timer0: timer@ffefc32000 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc32000 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -350,7 +344,7 @@ timer0: timer@ffefc32000 {
- 		timer1: timer@ffefc32014 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc32014 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -359,7 +353,7 @@ timer1: timer@ffefc32014 {
- 		timer2: timer@ffefc32028 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc32028 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -368,7 +362,7 @@ timer2: timer@ffefc32028 {
- 		timer3: timer@ffefc3203c {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc3203c 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -399,7 +393,7 @@ uart5: serial@fff7f0c000 {
- 		timer4: timer@ffffc33000 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc33000 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -408,7 +402,7 @@ timer4: timer@ffffc33000 {
- 		timer5: timer@ffffc33014 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc33014 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <21 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -417,7 +411,7 @@ timer5: timer@ffffc33014 {
- 		timer6: timer@ffffc33028 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc33028 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <22 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -426,7 +420,7 @@ timer6: timer@ffffc33028 {
- 		timer7: timer@ffffc3303c {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc3303c 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <23 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
+>                 goto out_free_ops;
+>
+>         ops->locked.ins.ops =3D ins__find(arch, ops->locked.ins.name);
+> @@ -815,11 +815,38 @@ static void disasm_line__init_ins(struct disasm_lin=
+e *dl, struct arch *arch, str
+>                 dl->ins.ops =3D NULL;
+>  }
+>
+> -static int disasm_line__parse(char *line, const char **namep, char **raw=
+p)
+> +int __weak get_opcode_insn(unsigned int raw_insn __maybe_unused)
+>  {
+> -       char tmp, *name =3D skip_spaces(line);
+> +       return -1;
+> +}
+> +
+> +int __weak get_source_reg(unsigned int raw_insn __maybe_unused)
+> +{
+> +       return -1;
+> +}
+> +
+> +int __weak get_target_reg(unsigned int raw_insn __maybe_unused)
+> +{
+> +       return -1;
+> +}
 
--- 
-2.34.1
+I prefer having conditional code with #ifdef rather than weak
+functions especially if it isn't needed for every arch.
 
+> +
+> +/*
+> + * Parses the objdump result captured with --show-raw-insn.
+> + * Example, objdump line from powerpc:
+> + * line:    38 01 81 e8     ld      r4,312(r1)
+> + * namep : ld
+> + * rawp  : "ld r4,312(r1)"
+> + * opcode: fetched from arch specific get_opcode_insn
+> + * rawp_insn: e8810138
+> + *
+> + * rawp_insn is used later to extract the reg/offset fields
+> + */
+> +static int disasm_line__parse(char *line, const char **namep, char **raw=
+p, int *opcode, int *rawp_insn)
+> +{
+> +       char tmp, *tmp_opcode, *name_opcode =3D skip_spaces(line);
+> +       char *name =3D skip_spaces(name_opcode + 11);
+>
+> -       if (name[0] =3D=3D '\0')
+> +       if (name_opcode[0] =3D=3D '\0')
+>                 return -1;
+>
+>         *rawp =3D name + 1;
+> @@ -829,13 +856,18 @@ static int disasm_line__parse(char *line, const cha=
+r **namep, char **rawp)
+>
+>         tmp =3D (*rawp)[0];
+>         (*rawp)[0] =3D '\0';
+> +       tmp_opcode =3D strdup(name_opcode);
+> +       tmp_opcode[11] =3D '\0';
+
+Looks like powerpc specific.  Can we move it under arch check?
+
+
+> +       remove_spaces(tmp_opcode);
+>         *namep =3D strdup(name);
+> +       *opcode =3D get_opcode_insn(be32_to_cpu(strtol(tmp_opcode, NULL, =
+16)));
+
+This as well.  Maybe we could have per-arch disasm_line__parse().
+
+>
+>         if (*namep =3D=3D NULL)
+>                 goto out;
+>
+>         (*rawp)[0] =3D tmp;
+>         *rawp =3D strim(*rawp);
+> +       *rawp_insn =3D be32_to_cpu(strtol(tmp_opcode, NULL, 16));
+>
+>         return 0;
+>
+> @@ -896,7 +928,7 @@ struct disasm_line *disasm_line__new(struct annotate_=
+args *args)
+>                 goto out_delete;
+>
+>         if (args->offset !=3D -1) {
+> -               if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->o=
+ps.raw) < 0)
+> +               if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->o=
+ps.raw, &dl->ins.opcode, &dl->ops.raw_insn) < 0)
+>                         goto out_free_line;
+>
+>                 disasm_line__init_ins(dl, args->arch, &args->ms);
+> @@ -1726,7 +1758,7 @@ int symbol__disassemble(struct symbol *sym, struct =
+annotate_args *args)
+>                  map__rip_2objdump(map, sym->start),
+>                  map__rip_2objdump(map, sym->end),
+>                  opts->show_linenr ? "-l" : "",
+> -                opts->show_asm_raw ? "" : "--no-show-raw-insn",
+> +                opts->show_asm_raw ? "" : "--show-raw-insn",
+
+This is not what we want.  According to the man page of objdump
+the --show-raw-insn should be enabled by default.  So I think the
+default value prints nothing.  But if it's not the case on powerpc
+(maybe on x86 too?) we could add it in the positive case too and
+make powerpc init code reset the option.
+
+Thanks,
+Namhyung
+
+
+>                  opts->annotate_src ? "-S" : "",
+>                  opts->prefix ? "--prefix " : "",
+>                  opts->prefix ? '"' : ' ',
+> diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
+> index 718177fa4775..5c1520010ca7 100644
+> --- a/tools/perf/util/disasm.h
+> +++ b/tools/perf/util/disasm.h
+> @@ -43,14 +43,18 @@ struct arch {
+>
+>  struct ins {
+>         const char     *name;
+> +       int     opcode;
+>         struct ins_ops *ops;
+>  };
+>
+>  struct ins_operands {
+>         char    *raw;
+> +       int     raw_insn;
+>         struct {
+>                 char    *raw;
+>                 char    *name;
+> +               int     opcode;
+> +               int     raw_insn;
+>                 struct symbol *sym;
+>                 u64     addr;
+>                 s64     offset;
+> @@ -62,6 +66,8 @@ struct ins_operands {
+>                 struct {
+>                         char    *raw;
+>                         char    *name;
+> +                       int     opcode;
+> +                       int     raw_insn;
+>                         u64     addr;
+>                         bool    multi_regs;
+>                 } source;
+> diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/inclu=
+de/dwarf-regs.h
+> index 01fb25a1150a..2a4e1e16e52c 100644
+> --- a/tools/perf/util/include/dwarf-regs.h
+> +++ b/tools/perf/util/include/dwarf-regs.h
+> @@ -31,6 +31,15 @@ static inline int get_dwarf_regnum(const char *name __=
+maybe_unused,
+>  }
+>  #endif
+>
+> +/*
+> + * get_opcode_insn - Return opcode from raw instruction
+> + * get_source_reg - Return source reg from raw instruction
+> + * get_target_reg - Return target reg from raw instruction
+> + */
+> +int get_opcode_insn(unsigned int raw_insn);
+> +int get_source_reg(unsigned int raw_insn);
+> +int get_target_reg(unsigned int raw_insn);
+> +
+>  #ifdef HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
+>  /*
+>   * Arch should support fetching the offset of a register in pt_regs
+> --
+> 2.43.0
+>
 
