@@ -1,231 +1,140 @@
-Return-Path: <linux-kernel+bounces-171454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B0A8BE47F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:42:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55498BE484
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745201C20FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:42:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B3028958B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE6C15ECEF;
-	Tue,  7 May 2024 13:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E568B15E5D4;
+	Tue,  7 May 2024 13:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhPT6k17"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTn6Rbfx"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB7315E21B
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC792156F29
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715089172; cv=none; b=U507UYh8PPuyATSZZijzDJEbCCQssmW3ovjfzgF0Ftz1LJT6o4dEnBudJ18rucybftIa5utuQgd25uef24iXQys0oV6/qnffS9Nf79XyDYwTo428TbXAiGu5Mv7j48BhX+D+6863/+33MYIySdgEC3ZrJVYwwx1GAPvBSGkbImw=
+	t=1715089305; cv=none; b=AcaB8wZxh/ov4mnAl2Jungme55bBVpPCCwsOgNhOD0zELGRBu9Z3MBPZIqpzFZKbUH3R4QnyDaapWP838EZZ2tVxfyEpdMbLftL/zbTFwut7t5bjoL0pcCWsc+53M8bCK3vM7/CJPnu/17W0vSHW77mclyKWU25P9Nf1gvqBk24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715089172; c=relaxed/simple;
-	bh=23g3MFnkovGPXs2xnNJPD1QwfJ6200xpIAAFCZB8vAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUxnze/t0AtYtCWdE/hTfdxgU0Ht30uPdRHcixlq95ueF2AahmNcF1Xy6wAFnve9OWKNZZpYBo2ZskpVJhrk+cdA6+8FatjhxBeW19VqHNdHt2cP08zKncQsclfKkgDtE1ULN4F/CD3ZdCzRx972uVXoQ3pJme1hPVKLV8YPYkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhPT6k17; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1715089305; c=relaxed/simple;
+	bh=U3rGI4TXjzTskPSdX5hfRfaXW8W6u8mc2k9lgqQ4Kyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tBhkFZ8RGoa8+RcPnJG9S+a5wRjN9eoaEdkpG/fp5Qe5KPC3tl+XdKLTUx8Vkin/OEyGVtdf03D98ZTqWaw2b45BOsDdgJxYIQ43sN0E6mA5OQi8NN6zJWcISTjlJcmotIKLqrTV3GFeN1OvM5zOSEI7rqY0nWoTsbzACH1CvX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hTn6Rbfx; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f45104ef0so3419724e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:39:30 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3efa18e6aso6845161fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:41:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715089169; x=1715693969; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5p3RC2fOBcO/yszjFBGlQ+kLMIrLhRgtWIMaY5UGI4Q=;
-        b=bhPT6k17QFbeS9+4Zk+rsuyLAqlweagUCww8acNCfONOcAB40emdJbq/yC9nMn6e4u
-         NmnlobSt7n8sofp6ltWF2GAu7sA9nWZ3dbiqxBPLGgr1bti+DRHfZawBraqbTxFkT+Ma
-         FsNFLc1RsZ+t+L5OrWM2QIHIpE/rI20m/udrPsWhdgXXV3UKy7Ty1frXSI0spXT8FufU
-         7qYMHSrRcT+1RiPtO2RYY45nMDfV2c1B+JzIpW4+RAFCKKutJXwxx5sM+sHfsXgMwMkM
-         PX2zlV22luWkSZrTypgqlDji3XLCVPDzRACrCweDB3fA1w5dg5SubO2yn/87o3DnAuBO
-         weeg==
+        d=linaro.org; s=google; t=1715089302; x=1715694102; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eBYWPKKxIxo8aRFjjK9T2hA9r6Tr0Rm6zJjBWqA8aQQ=;
+        b=hTn6RbfxugjDJ83Lc9VWNGsRvHgrKFgborM0GZE0mE1fdiNtMjJJnZhNUcYF3Lbyu5
+         /Dg0qhjwaJ7RseO7gRyPZTGkE3L+qeCJToZd2jQj9wiooptBo+a8Z4wbV6Zl5dMuX3eQ
+         pp5Ai+vbHm325mzuKIpXxctM7vOlJ2fVIKxlFgGbo7GWkkTnNNPJ/BrK+V+MOiu1eM9u
+         S7wvbOeQGLjYV0SVRjIIELTTu8b0Iyqcdrvfj25PaFhXliZ/tVh9megjfu6ujWhcISGU
+         O2pFB2fyxN6O7JwuF1PXR5bLqH/bn5Kaz9lh0wihpAUnNAD2K1OjgV0ROzavx2BeznJu
+         3JIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715089169; x=1715693969;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1715089302; x=1715694102;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5p3RC2fOBcO/yszjFBGlQ+kLMIrLhRgtWIMaY5UGI4Q=;
-        b=ummBUotENkvLDZrkyXWNCidmI1aCJgJ5eRcV+2di90lCcDTjjw7ERrJOGmjrMX148L
-         Y1qLZRJe/+8OIBEQ0X2k0Cr2ILPoqrGp0TCdyENY05bhEvNyJCkeW4aEyQNrx+CRuVQW
-         Jx1fWzD+MnimdfXsKhS/TSZhZv1kojciC9tw1Mt5Z6AYfI2Ypiwt4aSdg9g8QJK8JLlX
-         CnBaqz6nki3nQjZRlrg9tWfsuulTHVITb7fXnmFpC4u/FHOx8z13Ip4yuKEvaVgVjXPP
-         9wMtyPsKT7AI0JlsjveZ36LukS/clkCwDJxmL3kiwSoHD/XRgK45b+NcDDZRLYAgHjtm
-         YchQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnADti6VadG7wtA/PgVVn4LDgXsqED2Ez89XxmjGE+Uv/6EoORYKuoSt5f1EPcAanP5a40CcHTE8ojYQpwzphodfen2Rje+8AJVzrM
-X-Gm-Message-State: AOJu0YzwTbEq4zBSldWNyfSUxyi+YpGE+HkkH49phZ4cniJcXM69ERH1
-	8k5lj80Cx3SJ9aIFctuii5QCHs0KqiRy4hYuKNKuPiGpb9whJrsllflxqArjnGc=
-X-Google-Smtp-Source: AGHT+IESLrpsKBO3/nRqeo+k6p8A6E2bV8DthVHdN8GSSDT4aFa4P1rb+4V8Tlme+ePuRrgdQdEv7A==
-X-Received: by 2002:a19:8c16:0:b0:51e:150e:2c45 with SMTP id o22-20020a198c16000000b0051e150e2c45mr8493801lfd.63.1715089168968;
-        Tue, 07 May 2024 06:39:28 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id x36-20020a056512132400b0051d4321ef58sm2127976lfu.61.2024.05.07.06.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 06:39:28 -0700 (PDT)
-Date: Tue, 7 May 2024 16:39:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Vinay Simha BN <simhavcs@gmail.com>, Tony Lindgren <tony@atomide.com>, 
-	dri-devel@lists.freedesktop.org, Michael Walle <mwalle@kernel.org>, 
-	Daniel Semkowicz <dse@thaumatec.com>, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/20] drm/bridge: add dsi_lp11_notify mechanism
-Message-ID: <577v55mspa672t2bqbwwvdtfdgtbj6mpejo3n56qk7bt2j6bt3@q54dfnupcvs4>
-References: <20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org>
- <20240506-tc358775-fix-powerup-v1-1-545dcf00b8dd@kernel.org>
- <2189493.irdbgypaU6@steina-w>
+        bh=eBYWPKKxIxo8aRFjjK9T2hA9r6Tr0Rm6zJjBWqA8aQQ=;
+        b=Q1YwKDAAjJ+FJY09v1kYbJt+BSmxDz6eeNuPVCRbtXMqePBtpG1+dd4vJ11Qwo3HWe
+         XZ7BcxFA5xfnLAHyD9ppaZ7KS/cWW2+d6Dkm7kPQ5uZaKC24oBvLXmVJ6u9whkjB4OVv
+         PAYhCiCTpU8NmihHIbUFIa/zLjAU0+hDehbnf3qPjR6XzzJqltP7wnNymep0UiQ5IHdZ
+         4S8n5ckeq2hlRcgLdd+jzL6ntQguOAdp67nJ3x2CAw5tb6+p8RPnr0dF/tdkHkUYLl8W
+         eGUnvJ5kplUPjkBcY4W8hkzjATjg4BlbuFu8kpLpHyMM04usanvJi4uI9ty8Sf8XsXVw
+         yVMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtQ5P7k7KK+ITQwPuecMOc+Ba3OqtBeVQ7Us7fss/mHPO7Cr8e1p7zncrnMMhUibojHYI3siseEIxrGqNLKUphMeHJPmZfbij+5oqq
+X-Gm-Message-State: AOJu0YzykLO7V8c5K2xHsAyJSPznsKAFg9VIEIrXoT6rsqfP3Xt/RIkI
+	ECUzT80iOCd0oZ7FOy9/Gk7KzaIh66T8qpnn34d4SlY3pzOdF2hlQw1mmgrYrD1Jm22AShMzu1i
+	/
+X-Google-Smtp-Source: AGHT+IFhusLgGPzXhOPfN0j+8HODL1lRzxw67tVfNgxWdHZALf7v7+cLKSB0NTJACUQLd+5spu3LXw==
+X-Received: by 2002:a2e:7d0e:0:b0:2e1:eb38:d4b4 with SMTP id 38308e7fff4ca-2e3d9cb3781mr7358371fa.21.1715089301860;
+        Tue, 07 May 2024 06:41:41 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:c0d:408:fa88:abdb:17c2:cf24? ([2a00:f41:c0d:408:fa88:abdb:17c2:cf24])
+        by smtp.gmail.com with ESMTPSA id i16-20020a2e8650000000b002e15aec44fesm2054159ljj.96.2024.05.07.06.41.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 06:41:41 -0700 (PDT)
+Message-ID: <163a0c01-8f9f-48e6-89dc-2b702e755622@linaro.org>
+Date: Tue, 7 May 2024 15:41:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2189493.irdbgypaU6@steina-w>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: qcom-snps-femto-v2: Add load and voltage setting for
+ LDO's used
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Udipto Goswami <quic_ugoswami@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240502123312.31083-1-quic_ugoswami@quicinc.com>
+ <CAA8EJppeQTadmny=hcs4xCQDXHwXEBHXjeecvZCUVcSXmwBTgg@mail.gmail.com>
+ <90a5b641-af5b-4640-b2ad-85dbbab523bf@linaro.org>
+ <CAA8EJpoWWXvJabcVqp+YSa8arQbLPC=v+XkvPZe6nwH7aaKnfQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAA8EJpoWWXvJabcVqp+YSa8arQbLPC=v+XkvPZe6nwH7aaKnfQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 07, 2024 at 10:37:54AM +0200, Alexander Stein wrote:
-> Hi Michael,
-> 
-> Am Montag, 6. Mai 2024, 15:34:30 CEST schrieb Michael Walle:
-> > Some bridges have very strict power-up reqirements. In this case, the
-> > Toshiba TC358775. The reset has to be deasserted while *both* the DSI
-> > clock and DSI data lanes are in LP-11 mode. After the reset is relased,
-> > the bridge needs the DSI clock to actually be able to process I2C
-> > access. This access will configure the DSI side of the bridge during
-> > which the DSI data lanes have to be in LP-11 mode.
-> 
-> Apparently this is an issue for a lot of DSI bridges. But enabling LP-11 for
-> a bridge is impossible with current documentation [1], which states "A DSI
-> host should keep the PHY powered down until the pre_enable operation is
-> called."
-> Additionally tc358767/tc9595 (DSI-DP bridge) needs LP-11 for AUX channel
-> access to even get EDID. This is a requirement before pre_enable would
-> even be possible.
-> 
-> So some changes to the current flow are needed. But I am not so sure
-> about LP-11 notification. IMHO a device request to the DSI host to
-> enable LP-11 seems more sensible.
 
-Granted that there can be several DSI devices sharing the DSI bus (aka
-split-link), I was toying with the idea of making the DSI host call
-attached DSI devices when the transition happens.
 
-I don't have a fully working PoC and I probably won't have it ready til
-the end of May because of the lack of time and different local
-priorities.
+On 5/7/24 13:55, Dmitry Baryshkov wrote:
+> On Tue, 7 May 2024 at 14:43, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>>
+>>
+>> On 5/2/24 15:12, Dmitry Baryshkov wrote:
+>>> On Thu, 2 May 2024 at 15:33, Udipto Goswami <quic_ugoswami@quicinc.com> wrote:
+>>>>
+>>>> The Femto phy depends on 0.88/ 1.8/ 3.3V regulators for its operation.
+>>>> If one of the regulators is not voted to the required minimum voltage
+>>>> for phy to operate, then High speed mode of operation will fail.
+>>>>
+>>>> On certain targets like (qcm6490_rb3gen2) where the minimum voltage
+>>>> of the regulator is lower than the operating voltage of the phy.
+>>>> If not voted properly, the phy supply would be limited to the min value
+>>>> of the LDO thereby rendering the phy non-operational.
+>>>>
+>>>> The current implementation of the regulators in the Femto PHY is not
+>>>> setting the load and voltage for each LDO. The appropriate voltages and
+>>>> loads required for the PHY to operate should be set.
+>>>
+>>> Please move min/max voltages to the DTS. There is no need to set them
+>>> from the driver.
+>>>
+>>> Also, is there any reason why you can't use `regulator-initial-mode =
+>>> <RPMH_REGULATOR_MODE_HPM>;` like other boards do?
+>>
+>> The point is to aggregate the values and switch to HPM if a threshold is
+>> crossed (or stay in LPM otherwise)
+> 
+> I see that other boards use regulator-initial-mode for the USB PHY
+> regulators. Are we going to change all of them too?
 
-> 
-> Best regards,
-> Alexander
-> 
-> [1] https://www.kernel.org/doc/html/latest/gpu/drm-kms-helpers.html#mipi-dsi-bridge-operation
-> 
-> > After everything is
-> > configured the video stream can finally be enabled.
-> > 
-> > This means:
-> >  (1) The bridge has to be configured completely in .pre_enable() op
-> >      (with the clock turned on and data lanes in LP-11 mode, thus
-> >      .pre_enable_prev_first has to be set).
-> >  (2) The bridge will enable its output in the .enable() op
-> >  (3) There must be some mechanism before (1) where the bridge can
-> >      release its reset while the clock lane is still in LP-11 mode.
-> > 
-> > Unfortunately, (3) is crucial for a correct operation of the bridge.
-> > To satisfy this requriment, introduce a new callback .dsi_lp11_notify()
-> > which will be called by the DSI host driver.
-> > 
-> > Signed-off-by: Michael Walle <mwalle@kernel.org>
-> > ---
-> >  drivers/gpu/drm/drm_bridge.c | 16 ++++++++++++++++
-> >  include/drm/drm_bridge.h     | 12 ++++++++++++
-> >  2 files changed, 28 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> > index 28abe9aa99ca..98cd6558aecb 100644
-> > --- a/drivers/gpu/drm/drm_bridge.c
-> > +++ b/drivers/gpu/drm/drm_bridge.c
-> > @@ -1339,6 +1339,22 @@ void drm_bridge_hpd_notify(struct drm_bridge *bridge,
-> >  }
-> >  EXPORT_SYMBOL_GPL(drm_bridge_hpd_notify);
-> >  
-> > +/**
-> > + * drm_bridge_dsi_lp11_notify - notify clock/data lanes LP-11 mode
-> > + * @bridge: bridge control structure
-> > + *
-> > + * DSI host drivers shall call this function while the clock and data lanes
-> > + * are still in LP-11 mode.
-> > + *
-> > + * This function shall be called in a context that can sleep.
-> > + */
-> > +void drm_bridge_dsi_lp11_notify(struct drm_bridge *bridge)
-> > +{
-> > +	if (bridge->funcs->dsi_lp11_notify)
-> > +		bridge->funcs->dsi_lp11_notify(bridge);
-> > +}
-> > +EXPORT_SYMBOL_GPL(drm_bridge_dsi_lp11_notify);
-> > +
-> >  #ifdef CONFIG_OF
-> >  /**
-> >   * of_drm_find_bridge - find the bridge corresponding to the device node in
-> > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> > index 4baca0d9107b..4ef61274e0a8 100644
-> > --- a/include/drm/drm_bridge.h
-> > +++ b/include/drm/drm_bridge.h
-> > @@ -630,6 +630,17 @@ struct drm_bridge_funcs {
-> >  	 */
-> >  	void (*hpd_disable)(struct drm_bridge *bridge);
-> >  
-> > +	/**
-> > +	 * dsi_lp11_notify:
-> > +	 *
-> > +	 * Will be called by the DSI host driver while both the DSI clock
-> > +	 * lane as well as the DSI data lanes are in LP-11 mode. Some bridges
-> > +	 * need this state while releasing the reset, for example.
-> > +	 * Not all DSI host drivers will support this. Therefore, the DSI
-> > +	 * bridge driver must not rely on this op to be called.
-> > +	 */
-> > +	void (*dsi_lp11_notify)(struct drm_bridge *bridge);
-> > +
-> >  	/**
-> >  	 * @debugfs_init:
-> >  	 *
-> > @@ -898,6 +909,7 @@ void drm_bridge_hpd_enable(struct drm_bridge *bridge,
-> >  void drm_bridge_hpd_disable(struct drm_bridge *bridge);
-> >  void drm_bridge_hpd_notify(struct drm_bridge *bridge,
-> >  			   enum drm_connector_status status);
-> > +void drm_bridge_dsi_lp11_notify(struct drm_bridge *bridge);
-> >  
-> >  #ifdef CONFIG_DRM_PANEL_BRIDGE
-> >  bool drm_bridge_is_panel(const struct drm_bridge *bridge);
-> > 
-> > 
-> 
-> 
-> -- 
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> http://www.tq-group.com/
-> 
-> 
+Not sure about initial mode yet.
 
--- 
-With best wishes
-Dmitry
+> Also note, that while the combo QMP driver sets the loads, the pure
+> USB QMP PHY driver doesn't set the loads. This way we can end up with
+> the undervolted PHY.
+
+Sounds like something to fix, then
+
+Konrad
 
