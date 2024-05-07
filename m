@@ -1,155 +1,147 @@
-Return-Path: <linux-kernel+bounces-171446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019E68BE45E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385D18BE460
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A771C23CD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C10E1C23DF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CA216D30E;
-	Tue,  7 May 2024 13:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EF116D336;
+	Tue,  7 May 2024 13:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U/ZtlBcD"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aAqzNXdi"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA52416C86B
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C18F16D320
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715088744; cv=none; b=ssvAo4K6f3tgkniN42uLaVjP5aDmC/GPJvX6G8QKN9LVBeq14a0w0gMdH/5T8kCY4jzTbnnU3wz+i0zgO0edQjh2f8r2wP7YaZm0rJUkG22WmAGOw4PtPEFIoHNIvgTenP904sDstiKs/MFTloXtBnKfHfcGqme311BNPB/PX+A=
+	t=1715088751; cv=none; b=EeREqxVzK8x21rsSoQH77C6U/HFnJcxuyGctPQoe0qILgWVcVjecjoQD1KfVAuzEzc/FsS50Qo33IsYQbvRMBsfJEy9s1QSBkZPK+hq2SZYykIguBQeVH5zgWdvmuN2LWH+yiMFmzz4EAPE6u8bB1KjYPnpHaKh22BtXWLIaadY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715088744; c=relaxed/simple;
-	bh=UJlF2bhHHChbK6u5/+NFiBJBntvOiOhalI3jj92AG7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHTXWCL+5pki6YHQPmyHFEa5K9Vs7rl8szIXJ3CCfL3ToTRdJb1OFfTO45179+v1o1RWWih/pabrB7vjXG+sjz4Wjs+t086rGKOv95MTroaiTcH1H0fo1qQky8igVt6DTuz2k3aJWithadr8ODOfTYRq4+SnbL/CMCMhiL8OHaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U/ZtlBcD; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso11508001fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:32:22 -0700 (PDT)
+	s=arc-20240116; t=1715088751; c=relaxed/simple;
+	bh=KIRJRDa1gvyO+tBmFgCCfyHg5Usq9RjA8yXIGF3j01c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LbrrupBxW/gFV4c2lTob4C0wyY/ES6EhsDna6jUX30ZHtl5CBx08HaCZGS8e4LChSzeEf7Hqs7UefCQVPGTAq6G2//rdVyKfH/RZhds4pQiAPgK7q2FNxJMaELnzL9hgrzlZoFSiXubUNwbxWzknO/PjPoVjfKFmwyFKQoSD9+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aAqzNXdi; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7e186367651so4676839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:32:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715088741; x=1715693541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=huJibqJN85r8uyZHaWnhr5W8KxIdUNVSaNrUGy1RNcA=;
-        b=U/ZtlBcDMKQwr+oxdoDKvKuQAfz/338KvF5K7MizbQYLET5G6KLOA2qNQXC/1nGyHR
-         GxZ8UzFM9KzoJOB+Qbr3FEYqi28C5l7cERzs1z3jK2UPT0S9xViJDXogz3+8QcdUJFyM
-         tRzXsjFVD5qb/ixF3Kt9LMKzgb9fyBP8vEco50tLty34vKexEM2TzXeku81NX/I0zEHZ
-         yZjCab5cvE8kBXj/sBEAtHr2pSV9dMhqb8EzxP0D3PJFtv/TUPBGQ4yt90xFd5IK3O3U
-         cDgYZKpj6FfSxeY5Binj66HBJG2tAki/0oKtZyC87ITvr0u27wBkyBTDeWfnPTAhg+z0
-         mVwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715088741; x=1715693541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715088749; x=1715693549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=huJibqJN85r8uyZHaWnhr5W8KxIdUNVSaNrUGy1RNcA=;
-        b=Pg3KE6MrxB80i8XoF1SYqVD4dems5Ho2VIBsQC9T8KxdzEVbOOEcoljx2GYG8YiA4Z
-         EvWNrlGMVCcy2fAYKd3tazHNKUC3pjLX243mVSe4gOeJ4uLPQk0u3pLUgHKt+ArSemXa
-         1R5QbL3vVVNb6jQfmksF+eLBOAkxyAIuTjVeNqVUU7hKx1zne+qsunDa2oUiytUdx4hr
-         s2kExD5ex/pFB3a8YghsVvHdxVCJ1HkQyU6kl7+b+ES8kud6ZoRMF3ypaJBpLjTXV0SG
-         R/lwkSJwEp0tbJhsHXqA4K6QtFdGmkWonzefRVUayMe1qmkV/T8xFCEFawzYkIP+73Su
-         UTKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkGD3qDwegYr3lk/9sozc8Gbvr/noeiA6G6tQGSZfCCNNHL1Y8OK5Ee4DIdoHJXdDiuHYYSOO5CwppgMDY+Rdvsd1/RHz6KNrD6gVp
-X-Gm-Message-State: AOJu0YxtYccgVESG6nXAKFhNP8Kzkv7d0VC9524MGJstqI0g6/XHWa1y
-	zRhITm3kscYgKuooUFipJBZtCKGa66KgEB8wpt3/eDAcz270HFywku9yYM4Vjjk=
-X-Google-Smtp-Source: AGHT+IGD/JeQgTpquE7MLFJE26/XO1UVjUN5TKpuK/IVcoLAzeSx3fB3SA/M1rPKsXsUuic7yU+dKQ==
-X-Received: by 2002:a05:651c:20a:b0:2df:dea1:5378 with SMTP id y10-20020a05651c020a00b002dfdea15378mr10307465ljn.16.1715088740904;
-        Tue, 07 May 2024 06:32:20 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id i6-20020a2ea366000000b002e2b229d8d5sm1403183ljn.83.2024.05.07.06.32.20
+        bh=+wEpUHSgdU/K4nhfhPHL/T/9eC8GMc/mPSpVyaQLiYM=;
+        b=aAqzNXdiXEh/bvlXtewdWv2VguKTpxhpoystxJuMLulDJpZLToDvdvIRe0L0J/GzSY
+         ln3hMK9AsL5b9lSTHZmOp6AnHzCA7TCYQWZZsJ36Q1YrhuSjd0WwY0i7c573YbbcJ/qe
+         olmo0vfAU49HQZyOWFA13p9V9dWNdiUlKch9JF25gPgOmBMvsGuIn222PdJTxtdhbQB3
+         E951vulcZBagcA/6rWTXbWHzEJV4/3YFsh8RkWuzjwk1GG9ynEg766HxG5im3iS1tvKb
+         HNXvVuBzovbadVPW5d2274R3ICqBNtXg7HQqjjTgRM1K4uiVWYA4XUMe0nCB2Bc1vdV5
+         K/PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715088749; x=1715693549;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+wEpUHSgdU/K4nhfhPHL/T/9eC8GMc/mPSpVyaQLiYM=;
+        b=nsY63K2coTWtizY7CdqBo2d7Gc88+8c4VYxlHJIbJchvlHmAL9YyyaHq+N/Rf+gXVR
+         kcJ67J7adhE2aoNWGPjNW9ODkrzOlJzLoXdOv4tUxuPoxV2phZzX4Bry2XroEp/AStt+
+         aezsTsddv1FV/8WKRNz3R5oPFR+OvzhT2ElCiCdgSrZXNwoInlVvStEpFMIY6yZ0rBCA
+         oTQe7W3Bw7xeHGCanYlbdLBcskNd+5brJzjjsJQVh8s3rulM/lpMbSf+sbzdtOfR6/Re
+         DcgzTcaNmC8mHQTWch/vmVS8XBdt3YZa0+TbYnMPdQ7yCuJ6vJdfE+deEumsw6qivyLn
+         1IsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjYsqCp+KIl+tzf1kbNzqOZWO2xUqDEcXODViFZrmQ1tXQoVIPNqvYEU5nagaeKG5K0rqtiDSJs7csntxfLCWwCPf4k+RdwKeGXb0C
+X-Gm-Message-State: AOJu0YzLifiWVhdVZ90pNA69wxCSkEzeb+zfhjZgDJp/e1tCAZWcECa7
+	uvOaqWpbgA/kiTADDT0FS4dgk59vz4MPGal3tJ6o0TcGEikZbuaSueH800NEDb0=
+X-Google-Smtp-Source: AGHT+IF04Oo8ziX3v7vzRLo38KRqnxrxsDhJVppfzLrwRctcIFsm2uI/0CDJtecpHxmUUtUA9cN8/Q==
+X-Received: by 2002:a05:6602:3f48:b0:7e1:8bc8:8228 with SMTP id en8-20020a0566023f4800b007e18bc88228mr626486iob.0.1715088749205;
+        Tue, 07 May 2024 06:32:29 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id kw24-20020a056638931800b00488b8c8eae9sm727626jab.104.2024.05.07.06.32.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 06:32:20 -0700 (PDT)
-Date: Tue, 7 May 2024 16:32:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Robert Mader <robert.mader@collabora.com>, Sebastien Bacher <sebastien.bacher@canonical.com>, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Milan Zamazal <mzamazal@redhat.com>, Maxime Ripard <mripard@redhat.com>, 
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+        Tue, 07 May 2024 06:32:28 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+ Justin Stitt <justinstitt@google.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev
+In-Reply-To: <20240507-b4-sio-block-ioctl-v3-1-ba0c2b32275e@google.com>
+References: <20240507-b4-sio-block-ioctl-v3-1-ba0c2b32275e@google.com>
+Subject: Re: [PATCH v3] block/ioctl: prefer different overflow check
+Message-Id: <171508874856.11829.2888197344803458968.b4-ty@kernel.dk>
+Date: Tue, 07 May 2024 07:32:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Mon, May 06, 2024 at 01:49:17PM +0200, Hans de Goede wrote:
-> Hi dma-buf maintainers, et.al.,
-> 
-> Various people have been working on making complex/MIPI cameras work OOTB
-> with mainline Linux kernels and an opensource userspace stack.
-> 
-> The generic solution adds a software ISP (for Debayering and 3A) to
-> libcamera. Libcamera's API guarantees that buffers handed to applications
-> using it are dma-bufs so that these can be passed to e.g. a video encoder.
-> 
-> In order to meet this API guarantee the libcamera software ISP allocates
-> dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
-> the Fedora COPR repo for the PoC of this:
-> https://hansdegoede.dreamwidth.org/28153.html
 
-Is there any reason for allocating DMA buffers for libcamera through
-/dev/dma_heap/ rather than allocating them via corresponding media
-device and then giving them away to DRM / VPU / etc?
+On Tue, 07 May 2024 03:53:49 +0000, Justin Stitt wrote:
+> Running syzkaller with the newly reintroduced signed integer overflow
+> sanitizer shows this report:
+> 
+> [   62.982337] ------------[ cut here ]------------
+> [   62.985692] cgroup: Invalid name
+> [   62.986211] UBSAN: signed-integer-overflow in ../block/ioctl.c:36:46
+> [   62.989370] 9pnet_fd: p9_fd_create_tcp (7343): problem connecting socket to 127.0.0.1
+> [   62.992992] 9223372036854775807 + 4095 cannot be represented in type 'long long'
+> [   62.997827] 9pnet_fd: p9_fd_create_tcp (7345): problem connecting socket to 127.0.0.1
+> [   62.999369] random: crng reseeded on system resumption
+> [   63.000634] GUP no longer grows the stack in syz-executor.2 (7353): 20002000-20003000 (20001000)
+> [   63.000668] CPU: 0 PID: 7353 Comm: syz-executor.2 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+> [   63.000677] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [   63.000682] Call Trace:
+> [   63.000686]  <TASK>
+> [   63.000731]  dump_stack_lvl+0x93/0xd0
+> [   63.000919]  __get_user_pages+0x903/0xd30
+> [   63.001030]  __gup_longterm_locked+0x153e/0x1ba0
+> [   63.001041]  ? _raw_read_unlock_irqrestore+0x17/0x50
+> [   63.001072]  ? try_get_folio+0x29c/0x2d0
+> [   63.001083]  internal_get_user_pages_fast+0x1119/0x1530
+> [   63.001109]  iov_iter_extract_pages+0x23b/0x580
+> [   63.001206]  bio_iov_iter_get_pages+0x4de/0x1220
+> [   63.001235]  iomap_dio_bio_iter+0x9b6/0x1410
+> [   63.001297]  __iomap_dio_rw+0xab4/0x1810
+> [   63.001316]  iomap_dio_rw+0x45/0xa0
+> [   63.001328]  ext4_file_write_iter+0xdde/0x1390
+> [   63.001372]  vfs_write+0x599/0xbd0
+> [   63.001394]  ksys_write+0xc8/0x190
+> [   63.001403]  do_syscall_64+0xd4/0x1b0
+> [   63.001421]  ? arch_exit_to_user_mode_prepare+0x3a/0x60
+> [   63.001479]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> [   63.001535] RIP: 0033:0x7f7fd3ebf539
+> [   63.001551] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> [   63.001562] RSP: 002b:00007f7fd32570c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> [   63.001584] RAX: ffffffffffffffda RBX: 00007f7fd3ff3f80 RCX: 00007f7fd3ebf539
+> [   63.001590] RDX: 4db6d1e4f7e43360 RSI: 0000000020000000 RDI: 0000000000000004
+> [   63.001595] RBP: 00007f7fd3f1e496 R08: 0000000000000000 R09: 0000000000000000
+> [   63.001599] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> [   63.001604] R13: 0000000000000006 R14: 00007f7fd3ff3f80 R15: 00007ffd415ad2b8
+> ...
+> [   63.018142] ---[ end trace ]---
+> 
+> [...]
 
-At least this should solve the permission usecase: if the app can open
-camera device, it can allocate a buffer.
+Applied, thanks!
 
-> I have added a simple udev rule to give physically present users access
-> to the dma_heap-s:
-> 
-> KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
-> 
-> (and on Rasperry Pi devices any users in the video group get access)
-> 
-> This was just a quick fix for the PoC. Now that we are ready to move out
-> of the PoC phase and start actually integrating this into distributions
-> the question becomes if this is an acceptable solution; or if we need some
-> other way to deal with this ?
-> 
-> Specifically the question is if this will have any negative security
-> implications? I can certainly see this being used to do some sort of
-> denial of service attack on the system (1). This is especially true for
-> the cma heap which generally speaking is a limited resource.
-> 
-> But devices tagged for uaccess are only opened up to users who are 
-> physcially present behind the machine and those can just hit
-> the powerbutton, so I don't believe that any *on purpose* DOS is part of
-> the thread model. Any accidental DOS would be a userspace stack bug.
-> 
-> Do you foresee any other negative security implications from allowing
-> physically present non root users to create (u)dma-bufs ?
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 1) There are some limits in drivers/dma-buf/udmabuf.c and distributions
-> could narrow these.
-> 
-> 
+[1/1] block/ioctl: prefer different overflow check
+      commit: ccb326b5f9e623eb7f130fbbf2505ec0e2dcaff9
 
+Best regards,
 -- 
-With best wishes
-Dmitry
+Jens Axboe
+
+
+
 
