@@ -1,109 +1,161 @@
-Return-Path: <linux-kernel+bounces-172218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4410E8BEEE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:35:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685628BEEE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 767F81C23E77
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:35:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0336A1F25381
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44E676410;
-	Tue,  7 May 2024 21:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C8A77F22;
+	Tue,  7 May 2024 21:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nPlwt06N"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+vpBcZ1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906FA71B3B;
-	Tue,  7 May 2024 21:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE022187326;
+	Tue,  7 May 2024 21:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715117737; cv=none; b=uvc46g+VPcN9LDlkAS1p2Nk1TEJnVXqEJ/bnjVNvmq4K7QvioJs3pgy8jUgLToRyTNHUk8wDeJJ89XaG9ev4FL88m/e1Zz+NBGfyVIvgvZalAbg38JS1PqlO97PTDzw9Gdfx3oOzMTL00tEyff9cjauGwg0/IroxFy879ooTkYo=
+	t=1715117879; cv=none; b=grlZm6QEaSSkcj8RXKZZ13gG44LS1islPYV7kp4LfCsyBPnxgr0KvWVpg9sfKpWEF46+OXUNSosgLc6yN8DRLLag1eBSKCJSXDgQhPC7Ab7uPjAu+2O6QqAuJH+aCmNoLDTGksJCoFyxeg2CWSqbUSI4MWuGzyf2I6eBLRt3hG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715117737; c=relaxed/simple;
-	bh=CyHw+cmaB4qsnEteed8SCnprBZ+3kinqqoR/+5a2P/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SH01X11GRIFW9SzsbjmoDQ5lSX6+qET7Vee7qRSnwBrqHL+CXDCISO4G1gK54aSv/27kG+bTwT4f/GRaoPiwQLwCgGC9XFRRODJdJ+hFUF0AlhMetD2rh5xrfYaFuf8EuY+SQeYYiBXwCsUubKJ7aD1QKzsb7gyEhhFdNSUwfcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nPlwt06N; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715117731;
-	bh=DZtUHYA+kexgbHK7aZAYgffYQNDumUuaxY/y7THF2Wo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nPlwt06NT7cTWxS8W8JwlnVwJZG/L4sHvoGXiw236aJaUVdoJzBX3ayx5s7OyEHM5
-	 nljktS6XC/G7qHg0GUEIM7qH96LUTMyByyMLG92eqmccgPHmzqN178jR0IEIGItrMa
-	 Ldf7NzeVGsYVvg+6mOXyppvJiiCTvsD8XT29etM86J+qhfsThNxoH7CMJcZEUeTE4D
-	 FRRSKa08sQI/CHn64xa+qgePqhPkOtxMkVQdaxamlVjFCuJn8cngFcf3i7LCALQqR7
-	 wTbBXx9EylBe47W0q3ydO8LWUxw/Gzg8J6Lwme62Sq0hSGX5K1JvFLspZrWUtcOPnC
-	 oCvd2mrNDefWA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VYs5H0L8sz4wcn;
-	Wed,  8 May 2024 07:35:31 +1000 (AEST)
-Date: Wed, 8 May 2024 07:35:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
- <benjamin.tissoires@redhat.com>
-Cc: Kenny Levinsen <kl@kl.wtf>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the hid tree
-Message-ID: <20240508073528.402fd13f@canb.auug.org.au>
+	s=arc-20240116; t=1715117879; c=relaxed/simple;
+	bh=b0erpGJkbKehHG2oRo2+D/HPvaIA53JmaUColexBDK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8+0pPooxruE72mv00ydKVaPD+ljqYITFVlwHR0Nmq6IsLL9C3fdfy+w2e6FRNDoj8qsa9MTnykeQbsneDe6UPHV2SLtXro2FEB1YjDwUfTj63hxC/Ekk9+lPU1tE65VgjFWFteO52FT3rnKJRX9trlHrsEZ8UawC4hRZXC0m20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+vpBcZ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C325C2BBFC;
+	Tue,  7 May 2024 21:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715117878;
+	bh=b0erpGJkbKehHG2oRo2+D/HPvaIA53JmaUColexBDK0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=W+vpBcZ1T0cZAzGv4Vm3pWP6Skmffhzq9UvcBveRu2iX51Pcp4aBUZWS6arxPQTTJ
+	 k8pYZasyBwioDP/z7EVPkIn7+ZtGun1LAN5Ux9S08WhuH6HiMD/qjA6npj1W+t+pnO
+	 zJR1uvpOWxMtEhsyYXpm2ob/oQ23glrIcfxmU0SonH5a/sg4Pu1ZUOBTZMDShDmQvX
+	 +YNVOnALWHHjlkI50GCjyfsoPNWmnpv5kAdagepBJC7S/ztTXhON53jbwYDP5ghoYw
+	 O1ofq1BOP/KDdomjtPe1nlSr8k+UTOZSG39DmcjkdTHOBS1zUYTqQWnylZreXRYXoS
+	 QrOWdIKLpvi+w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id DEB30CE0FF3; Tue,  7 May 2024 14:37:57 -0700 (PDT)
+Date: Tue, 7 May 2024 14:37:57 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Leonardo Bras <leobras@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+Message-ID: <0e239143-65ed-445a-9782-e905527ea572@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240328171949.743211-1-leobras@redhat.com>
+ <ZgsXRUTj40LmXVS4@google.com>
+ <ZjUwHvyvkM3lj80Q@LeoBras>
+ <ZjVXVc2e_V8NiMy3@google.com>
+ <3b2c222b-9ef7-43e2-8ab3-653a5ee824d4@paulmck-laptop>
+ <ZjprKm5jG3JYsgGB@google.com>
+ <663a659d-3a6f-4bec-a84b-4dd5fd16c3c1@paulmck-laptop>
+ <ZjqWXPFuoYWWcxP3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2UungqK9KDKC26rIbe8qXZU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjqWXPFuoYWWcxP3@google.com>
 
---Sig_/2UungqK9KDKC26rIbe8qXZU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 07, 2024 at 02:00:12PM -0700, Sean Christopherson wrote:
+> On Tue, May 07, 2024, Paul E. McKenney wrote:
+> > On Tue, May 07, 2024 at 10:55:54AM -0700, Sean Christopherson wrote:
+> > > On Fri, May 03, 2024, Paul E. McKenney wrote:
+> > > > On Fri, May 03, 2024 at 02:29:57PM -0700, Sean Christopherson wrote:
+> > > > > So if we're comfortable relying on the 1 second timeout to guard against a
+> > > > > misbehaving userspace, IMO we might as well fully rely on that guardrail.  I.e.
+> > > > > add a generic PF_xxx flag (or whatever flag location is most appropriate) to let
+> > > > > userspace communicate to the kernel that it's a real-time task that spends the
+> > > > > overwhelming majority of its time in userspace or guest context, i.e. should be
+> > > > > given extra leniency with respect to rcuc if the task happens to be interrupted
+> > > > > while it's in kernel context.
+> > > > 
+> > > > But if the task is executing in host kernel context for quite some time,
+> > > > then the host kernel's RCU really does need to take evasive action.
+> > > 
+> > > Agreed, but what I'm saying is that RCU already has the mechanism to do so in the
+> > > form of the 1 second timeout.
+> > 
+> > Plus RCU will force-enable that CPU's scheduler-clock tick after about
+> > ten milliseconds of that CPU not being in a quiescent state, with
+> > the time varying depending on the value of HZ and the number of CPUs.
+> > After about ten seconds (halfway to the RCU CPU stall warning), it will
+> > resched_cpu() that CPU every few milliseconds.
+> > 
+> > > And while KVM does not guarantee that it will immediately resume the guest after
+> > > servicing the IRQ, neither does the existing userspace logic.  E.g. I don't see
+> > > anything that would prevent the kernel from preempting the interrupt task.
+> > 
+> > Similarly, the hypervisor could preempt a guest OS's RCU read-side
+> > critical section or its preempt_disable() code.
+> > 
+> > Or am I missing your point?
+> 
+> I think you're missing my point?  I'm talking specifically about host RCU, what
+> is or isn't happening in the guest is completely out of scope.
 
-Hi all,
+Ah, I was thinking of nested virtualization.
 
-In commit
+> My overarching point is that the existing @user check in rcu_pending() is optimistic,
+> in the sense that the CPU is _likely_ to quickly enter a quiescent state if @user
+> is true, but it's not 100% guaranteed.  And because it's not guaranteed, RCU has
+> the aforementioned guardrails.
 
-  d2b34fa81445 ("HID: i2c-hid: Remove unused label in i2c_hid_set_power")
+You lost me on this one.
 
-Fixes tag
+The "user" argument to rcu_pending() comes from the context saved at
+the time of the scheduling-clock interrupt.  In other words, the CPU
+really was executing in user mode (which is an RCU quiescent state)
+when the interrupt arrived.
 
-  Fixes: bb1033c8a3ea ("HID: i2c-hid: Use address probe to wake on resume")
+And that suffices, 100% guaranteed.
 
-has these problem(s):
+The reason that it suffices is that other RCU code such as rcu_qs() and
+rcu_note_context_switch() ensure that this CPU does not pay attention to
+the user-argument-induced quiescent state unless this CPU had previously
+acknowledged the current grace period.
 
-  - Target SHA1 does not exist
+And if the CPU has previously acknowledged the current grace period, that
+acknowledgement must have preceded the interrupt from user-mode execution.
+Thus the prior quiescent state represented by that user-mode execution
+applies to that previously acknowledged grace period.
 
-Maybe you meant
+This is admittedly a bit indirect, but then again this is Linux-kernel
+RCU that we are talking about.
 
-Fixes: 7d6f065de37c ("HID: i2c-hid: Use address probe to wake on resume")
+> And I'm arguing that, since the @user check isn't bombproof, there's no reason to
+> try to harden against every possible edge case in an equivalent @guest check,
+> because it's unnecessary for kernel safety, thanks to the guardrails.
 
---=20
-Cheers,
-Stephen Rothwell
+And the same argument above would also apply to an equivalent check for
+execution in guest mode at the time of the interrupt.
 
---Sig_/2UungqK9KDKC26rIbe8qXZU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Please understand that I am not saying that we absolutely need an
+additional check (you tell me!).  But if we do need RCU to be more
+aggressive about treating guest execution as an RCU quiescent state
+within the host, that additional check would be an excellent way of
+making that happen.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY6nqAACgkQAVBC80lX
-0GzQHAgAl2yJasIOz+xJijTxAfUWodUqRcYw3Qzbl5JcSVbUIetzqcKMO7TqV+NS
-4dgUYiRFfOlJ1Z3ALyQyhVMv8askDNSKa0RlkgF2DsyW/mDCQY39Yq0YNjjQL9Zu
-+l1dEtVjdmRy3ENCkhhpqCh/0INGoLKVprUWq3vvCF7sadmnyz74aOFW7oSQblRd
-/f3yOz4FBNXMT9p1bEbgRxYszYwaQqZvsAGETR9NALxP6jDvyj8ZVc27+cVHPf8J
-uaHeay+oxzOt6i9MOIR6Dd0/f4vhejNwylub8O4SyKjHJtZrzjegXNB9wxhPx/Vf
-lg2tczGjsPSQigdcjZ9IJ7LZVBHEFA==
-=g60Y
------END PGP SIGNATURE-----
-
---Sig_/2UungqK9KDKC26rIbe8qXZU--
+							Thanx, Paul
 
