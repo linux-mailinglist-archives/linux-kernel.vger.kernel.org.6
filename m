@@ -1,119 +1,125 @@
-Return-Path: <linux-kernel+bounces-171822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DAFB8BE920
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:34:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31DDD8BE98B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CECBD1F21EE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:34:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0B0EB26D0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9777816D9CA;
-	Tue,  7 May 2024 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D0816DEDF;
+	Tue,  7 May 2024 16:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X/hjTej+"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Fgw9Q1BU"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883BE16D9BF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34216DEA1;
+	Tue,  7 May 2024 16:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099369; cv=none; b=smQDXcCf600kbIZNHN8wsxNOH8NGCfawFiGJ0Gsm0nVz3G5nRnG2rM4xNAGw1JMV6H7SWOAgpolQEg3FnZd1VRym5kFFZI8vpm0uAeVc0qmVHNmwxpcwBbV4PcOt6vY41gn0fmGymcFR6UiuRWA0W1pVpl21d8gHodqQBkcsCD0=
+	t=1715099374; cv=none; b=Y8aQhZcxdXm7nqAcrl691bFelFEDawqGZIaE8Fs7LmpFvu8C68TlnClJWJ2Kk2tM4LXC7M9pBPK+tNf1xQZ90AoOv12o0GGP0i1Ycg35A7iqAvTzhcbYf+HYIisaDJTso5GA9KeZlYssx1G2ijOffNORJDwsxZoBJSbkJY+eiL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099369; c=relaxed/simple;
-	bh=gA40961915NjpJzym6L6HzsY7i//kdLIcIZ/CTYpdew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eVulHGEnoJjiWMs5tpPl1lF2fnzRvNWAXdtKE2U0Z9evzBS6YB9SnMZvAZbLsnda8iUMqxnPxGDGRA2+5mzZxWBnXnCFssma8VzVHQUvw6lW5gN5FQ3UfcuvZxQs0/W03+Uh8ro3jrwfSbE7zkr3qdS8hmSruqp49HRu0sh2lAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X/hjTej+; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4df37a78069so928798e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715099366; x=1715704166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmBmzg39oPwlHH3+Q/yrquaQKff44gbWHvBa/1NwxMw=;
-        b=X/hjTej+A5nnm3H73DCw/vCZIPUWkPnXa8+GyCEzYQa3M1nwMcr6v4ci8Fty94O0XG
-         tzge8yx0MvBr+fUioL1OT+GKLtokhk9GzU+g2mS9PwDmSrILHtEnbdcWAKk9Rc76RXcU
-         ALVEo5Kxrn9/WVMQkF4Sxs+d4i5N5d6bfLZRU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715099366; x=1715704166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hmBmzg39oPwlHH3+Q/yrquaQKff44gbWHvBa/1NwxMw=;
-        b=lriOZNUUIew86tyYwDFQEE16hLQMRobQnS9g9YLMqG5tp0oqQve/0U3AQk46pCjtgf
-         3R+k0ZgFbfwTX8sNLnvt3xdECVTShUCPjv2VAdXaHIHDkkN+b4fc33v9Oo5GWBIfg5o4
-         vTD2JgSZ2+9gu6rXo1lfkbEmHmf6WZShT/zw2mc/vpITOtIZtsyGozxptwfr6J4aONIX
-         G4OZXOlCk5aFMM+IMeqvp/q+7YR1p6vvmsj7djDCPhaJr1H/vmEXcf32SJ7DwM7ZxLFq
-         X+azFqb+9M5oTyjQGSEAyEocUvjn2o0RV9TEpM6HVF/+t+VAvNSnX7kiym/sdRUb/jtg
-         QXuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Lz2xjdWlEs8cRNQIkR7oDzLtqp523lnEmhVZxsSbBoWMvLABNpwnsUHRamQXO1WyP2B9sRgE2/R/RhXrA6YsT1eD2IL8LLzJVTdU
-X-Gm-Message-State: AOJu0Yz211JfibO1DcJjKfLa5igyI/zEyQIW9f2vNZy8HT0zFaN9DVAM
-	8+P9oy7I//mdXSNxkqmtkQlqggn434F4H2bzwP9WW3Bhfe8tbipQdOaCZk1myAKlgo4ZOy5PY9E
-	=
-X-Google-Smtp-Source: AGHT+IEQtNRlYZhu5sE3cUyEeDxJxaRQd/ZSPmtlE07rsEqelbrGL6ZhYIy6/0yaCLCe0mmZTAS6SQ==
-X-Received: by 2002:a05:6122:3188:b0:4d3:36b9:2c26 with SMTP id 71dfb90a1353d-4df6940bc15mr12583e0c.14.1715099366052;
-        Tue, 07 May 2024 09:29:26 -0700 (PDT)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com. [209.85.160.176])
-        by smtp.gmail.com with ESMTPSA id p5-20020ac87405000000b00439549ef9d8sm2132601qtq.82.2024.05.07.09.29.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 09:29:25 -0700 (PDT)
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-43ae23431fbso1141cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:29:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMS0VfrI69b34CY9evPAD4nM1mwvgMW/h80hUMg487I3CH8IVkmVH9vJY2XC/DzmRN0rCyRcKCwEFpGka5tuQvmgdq3krAvw8OZqjG
-X-Received: by 2002:a05:622a:1243:b0:43d:a002:b with SMTP id
- d75a77b69052e-43da00202a4mr2608201cf.9.1715099364710; Tue, 07 May 2024
- 09:29:24 -0700 (PDT)
+	s=arc-20240116; t=1715099374; c=relaxed/simple;
+	bh=9sfwyDKRmxF+pTpkLlzmOLefQHCjWWc7iSr3ec30vOg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bap+8Gpe9X0cQVjAXAItW0RWXIIYgdfOx3TpO45E5kdRocOOJ69O17KDDtNaYjFPRaHt+071QfdaxPXgi0RtNISS7nG3kTjKl7OvVE4n2NVlLjZLUZHfn7Ijy0Rqlsfp9UksJxT/E0+LD0kvvMChUmgGgcBYCMJ8aypwFYcY86s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Fgw9Q1BU; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715099369;
+	bh=9sfwyDKRmxF+pTpkLlzmOLefQHCjWWc7iSr3ec30vOg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Fgw9Q1BUCCXQzKX/Seupbc5VGQQWavr9E/i4o4Sa0P9+hEHwIIxDi+GeNPZFsQGEj
+	 8IAu55TMPO7SqlUGnvfA6UCZM1Tfiy2ffshhesQs/GpLusdwv6O+WoXEjd1EB7DZNR
+	 XoFj0Gvyq7/GKHU/Rk+QupTdkFmKejX8vNAlGdJ4=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 0/2] ChromeOS Embedded controller hwmon driver
+Date: Tue, 07 May 2024 18:29:21 +0200
+Message-Id: <20240507-cros_ec-hwmon-v2-0-1222c5fca0f7@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240424023010.2099949-1-yangcong5@huaqin.corp-partner.google.com>
- <20240424023010.2099949-3-yangcong5@huaqin.corp-partner.google.com>
- <CAD=FV=VFk3epSxksh+n_LupTiZp=gK=LB2NESGy5iNF=5xFAmg@mail.gmail.com> <CAHwB_NJMWR883kjshtfBFuDBcM9Av87Fx2Jf4d=3_5LLnhUFXg@mail.gmail.com>
-In-Reply-To: <CAHwB_NJMWR883kjshtfBFuDBcM9Av87Fx2Jf4d=3_5LLnhUFXg@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 7 May 2024 09:29:13 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Wjgc4F2zMhzeLY1hmRN1PTjEpZ7nbYBCp8RPMM7LhPbg@mail.gmail.com>
-Message-ID: <CAD=FV=Wjgc4F2zMhzeLY1hmRN1PTjEpZ7nbYBCp8RPMM7LhPbg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] drm/panel: himax-hx83102: Break out as separate driver
-To: cong yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
-	linus.walleij@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
-	robh+dt@kernel.org, conor+dt@kernel.org, airlied@gmail.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOFWOmYC/13MQQrCMBCF4auUWRtJY5oWV95Diug4MbMwkUxtl
+ dK7GwtuXP4P3jeDUGYS2FczZBpZOMUSZlMBhnO8keJraTDaWN1opzAnORGqMN1TVMa6nb3oFr3
+ zUD6PTJ5fq3fsSweWIeX3yo/1d/1J7Z801korg7bFBqmjrjlMxCKC4Rm2kQbol2X5AI2pjkivA
+ AAA
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>
+Cc: Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ Dustin Howett <dustin@howett.net>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Moritz Fischer <mdf@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715099369; l=2085;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=9sfwyDKRmxF+pTpkLlzmOLefQHCjWWc7iSr3ec30vOg=;
+ b=0jCWjX9D/3fVSGdqPDZs149i5r21UtsarpozrO7JFeoruZq/fCNZkhnpnnrRBiADSkfxKWazT
+ pVhhpWhIkscBKc73KVRaeZoWQkuBZJ2NuaOqlQjfHYHIkGHHDRGaDnD
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Hi,
+Add a hwmon driver that reports fan and temperature readings from the
+ChromeOS Embedded controller.
 
-On Tue, May 7, 2024 at 6:44=E2=80=AFAM cong yang
-<yangcong5@huaqin.corp-partner.google.com> wrote:
->
-> > Speaking of which, some of the panels that you add to this driver seem
-> > to disable extended commands at the end of their init sequence, but
-> > this one doesn't. Should it?
->
-> I  have confirmed with himax that disable extended commands  used
-> at the end to prevent accidental writing. And our inital code has been
-> confirmed by himax before FSI. Considering that this has been on the
-> market for a long time and there are no feedback issues, I think it shoul=
-d
-> remain the same as `panel-boe-tv101wum-nl6.c`.  What do you think?
+There was an earlier effort in 2017 to add such a driver [0], but there
+was no followup after v1.
+The new driver is complete reimplementation based on newer APIs and with
+more features (temp sensor names).
 
-It's fine with me to leave it the same as `panel-boe-tv101wum-nl6.c`
-had it. At least it should be more obvious to people that there's a
-difference now. ;-)
+It only works on LPC-connected ECs, as only those implement direct
+memory-map access.
+For other busses the data would need to be read with a command.
+Adding some helpers was discussed in the previous patchset [1].
 
--Doug
+The EC protocols also support reading and writing fan curves but that is
+not implemented.
+
+Tested on a Framework 13 AMD, Firmware 3.05.
+
+[0] https://lore.kernel.org/all/1491602410-31518-1-git-send-email-moritz.fischer@ettus.com/
+[1] https://lore.kernel.org/all/ac61bfca-bfa0-143b-c9ca-365b8026ce8d@roeck-us.net/
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- drop unnecessary range checks (Guenter)
+- only validate thermal_version during probing
+- reorder some variable declarations
+- validate thermal_version directly in cros_ec_hwmon_probe (Mario)
+- drop return value from probe_temp_sensors as it can't fail anymore
+- fail with -ENODEV if cmd_readmem is missing to avoid spurious warnings
+- Link to v1: https://lore.kernel.org/r/20240507-cros_ec-hwmon-v1-0-2c47c5ce8e85@weissschuh.net
+
+---
+Thomas Weißschuh (2):
+      hwmon: add ChromeOS EC driver
+      mfd: cros_ec: Register hardware monitoring subdevice
+
+ Documentation/hwmon/cros_ec_hwmon.rst |  26 ++++
+ Documentation/hwmon/index.rst         |   1 +
+ MAINTAINERS                           |   8 +
+ drivers/hwmon/Kconfig                 |  11 ++
+ drivers/hwmon/Makefile                |   1 +
+ drivers/hwmon/cros_ec_hwmon.c         | 269 ++++++++++++++++++++++++++++++++++
+ drivers/mfd/cros_ec_dev.c             |   1 +
+ 7 files changed, 317 insertions(+)
+---
+base-commit: 2fbe479c0024e1c6b992184a799055e19932aa48
+change-id: 20240506-cros_ec-hwmon-24634b07cf6f
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
