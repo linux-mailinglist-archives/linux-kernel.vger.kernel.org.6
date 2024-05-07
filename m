@@ -1,71 +1,79 @@
-Return-Path: <linux-kernel+bounces-170695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4808BDAAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:30:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD3F8BDAB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0C01F254A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:30:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0C6AB23E15
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8B26F066;
-	Tue,  7 May 2024 05:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143CC6BB5E;
+	Tue,  7 May 2024 05:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prRdCP2g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="dg+J8jDO"
+Received: from esa12.hc1455-7.c3s2.iphmx.com (esa12.hc1455-7.c3s2.iphmx.com [139.138.37.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE576E602
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74E944C9D;
+	Tue,  7 May 2024 05:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.37.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715059817; cv=none; b=RhmYhY7L8I+pPRZZHrW1mbGWou0h8uSpXBdOoi3eVt8HD199V1LyWj7HpqyI4Q2rVx3dtjSINMn3JIJlwabNzJV1Yv4sQigtuwrP3CfGTzmPYXQFbVMkyHz+dwb73c87dVhQQuNdo0u3ajJ2lzJeegP5wUILVwFNhQkhl/Nzjtk=
+	t=1715060084; cv=none; b=QGDzAqCMU8UY06mu8T0WHe6UIv4uiCdQO38Cb+5avpHqCdG5Vpp3lWxBEJlRa+LmJ04nVdTPHMfhlTXbjtWAk3c7TQywr8fC/VwnNgdcoAf4t6HRE6HOiCQtNUgnyIcaP+5UCn/wAcPk5mnW/CUewb3vSUQi+e59/i+trwJWNuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715059817; c=relaxed/simple;
-	bh=rjjbb87qU0Az3V5tnqRivUixNJ5fK4IwNpaXSwSoEyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qHj6Jsum50M97HoKti/tR+BeUX8U1Ov49g8pDkz/kpGFE5GOE9fbVMswY8/GkTKeEJV0+pFFaGoShGzqTVUrAKGXGDrKC0qQ2DmWbXA1f5+rNTG+uJ5RdSi9cQ2NSohjA92eiUw3Hc0WtPo2cPU3TaOEwpxKODKe9D5I/bdMEvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prRdCP2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 958C1C4AF65;
-	Tue,  7 May 2024 05:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715059817;
-	bh=rjjbb87qU0Az3V5tnqRivUixNJ5fK4IwNpaXSwSoEyg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=prRdCP2g1WIHQ6TnRGJ6c13LybTEElCD1qSCXAh1DwIp1eLggps4Ipp1zdZ/QCsLG
-	 Zlj29uzTwEjaAXplnphLtVCnNc0NMpvhlAPk11Rsx/fQBesEl0feWPHW1uY/OI4sBD
-	 jzUbNKk1xIr/tPPFe/k4JMHudCfCXtUGlP28GjTaAKc5FNs+cIsvMo9I4bxNlSdhjJ
-	 PihDmFqvhphN1nXSiZpnNPUhb65kkKPt1SdaQMpWkLf+tsora9Mf0ekmuMJs2ji6Ol
-	 WoFy0nh7J6I7W/CQq3Y5gVis5sJMfHmOKStLF3BvNB7H5esJ9GRIm/VToFvtgrn7hj
-	 x42M3c+sU1wwg==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
+	s=arc-20240116; t=1715060084; c=relaxed/simple;
+	bh=kWsx9r+IsZebycMvtu2kA8q1XeItoXHgG6C79L0hDcA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BGo0cajDxZHCMreIkAQTbN7hyXRJhm197Mil0JHAdKaJhMDGxm3Q8Abc/Yud6AqSzfX7Tiy/BR2vWt+fMy7auCANr0pWksLeYDUV4nScq1FlMF9xGrS1nu3owCp0c9kGZhMVkmQ6HUqBhrDX2lY9KB4aqkMGV/GUjVUoF6z6MSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=dg+J8jDO; arc=none smtp.client-ip=139.138.37.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1715060082; x=1746596082;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kWsx9r+IsZebycMvtu2kA8q1XeItoXHgG6C79L0hDcA=;
+  b=dg+J8jDOZbrrye0q/2PbNnFuY7gnNR7gEKWrxfdoMjmf89BRB6K+hPqe
+   F3v4w5fEZ75ZoxXj9nsYljVL0uW9kqlqj459F1OVi+u9bzu1hqRAgMVmq
+   TcrkYNRws+L4ElFnJBycmkJZRXZ/GhroDycgVpEoDtLpidZbHIP3mRIWF
+   BVrEmw2xSzpj4UEQIKWhgApN4UgHWT1zazS/I7X+iHJjuI2IjJxqOCkB2
+   L/CiAKjoEa+ToQI/cOd1pCVSeA1q2tnIGETchwkVN/4F8JlYewbBiulXl
+   tZb86drjSlk79Lse/0cDlpDJL1FLUkufQPdRBrgquXKIPzuCWEUfh1vpK
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="136791182"
+X-IronPort-AV: E=Sophos;i="6.07,260,1708354800"; 
+   d="scan'208";a="136791182"
+Received: from unknown (HELO yto-r1.gw.nic.fujitsu.com) ([218.44.52.217])
+  by esa12.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 14:34:32 +0900
+Received: from yto-m3.gw.nic.fujitsu.com (yto-nat-yto-m3.gw.nic.fujitsu.com [192.168.83.66])
+	by yto-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 7CB5BD6EFE;
+	Tue,  7 May 2024 14:34:30 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by yto-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id A7313D9732;
+	Tue,  7 May 2024 14:34:29 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 4557220071A34;
+	Tue,  7 May 2024 14:34:29 +0900 (JST)
+Received: from localhost.localdomain (unknown [10.167.226.45])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 643281A0002;
+	Tue,  7 May 2024 13:34:28 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	linux-cxl@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Maksim Davydov <davydov-max@yandex-team.ru>
-Subject: [PATCH v5 3/3] x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
-Date: Mon,  6 May 2024 22:30:06 -0700
-Message-ID: <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1715059256.git.jpoimboe@kernel.org>
-References: <cover.1715059256.git.jpoimboe@kernel.org>
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH v2] cxl/region: Fix memregion leaks in devm_cxl_add_region()
+Date: Tue,  7 May 2024 13:34:21 +0800
+Message-Id: <20240507053421.456439-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,98 +81,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28366.005
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28366.005
+X-TMASE-Result: 10--5.654200-10.000000
+X-TMASE-MatchedRID: JUGAxiLh1cP/rbll2ZPJSIL5ja7E+OhynpdnAKvzbsEBLwIiWDU8a78F
+	Hrw7frluf146W0iUu2tDc4lSgrowpc2IoAvAG8CyBe3KRVyu+k3DCscXmnDN78fASe7knCttQIs
+	gZTZgm0Ggx1wnIrEXsoAy6p60ZV62yA7duzCw6dLdB/CxWTRRu25FeHtsUoHu60fgqs6GC2l5dg
+	k0gqkmKXunP19LriDGzAxqArotu/kfwV6sBPR0lg==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-In cloud environments it can be useful to *only* enable the vmexit
-mitigation and leave syscalls vulnerable.  Add that as an option.
+Move the mode verification to __create_region() before allocating the
+memregion to avoid the memregion leaks.
 
-This is similar to the old spectre_bhi=auto option which was removed
-with the following commit:
-
-  36d4fe147c87 ("x86/bugs: Remove CONFIG_BHI_MITIGATION_AUTO and spectre_bhi=auto")
-
-with the main difference being that this has a more descriptive name and
-is disabled by default.
-
-Requested-by: Maksim Davydov <davydov-max@yandex-team.ru>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Fixes: 6e099264185d ("cxl/region: Add volatile region creation support")
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++---
- arch/x86/kernel/cpu/bugs.c                      | 16 +++++++++++-----
- 2 files changed, 20 insertions(+), 8 deletions(-)
+V2: Move the mode verification to __create_region() # Dan
+---
+ drivers/cxl/core/region.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 213d0719e2b7..9c1f63f04502 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6072,9 +6072,15 @@
- 			deployment of the HW BHI control and the SW BHB
- 			clearing sequence.
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 812b2948b6c6..18b95149640b 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -2352,15 +2352,6 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
+ 	struct device *dev;
+ 	int rc;
  
--			on   - (default) Enable the HW or SW mitigation
--			       as needed.
--			off  - Disable the mitigation.
-+			on     - (default) Enable the HW or SW mitigation as
-+				 needed.  This protects the kernel from
-+				 both syscalls and VMs.
-+			vmexit - On systems which don't have the HW mitigation
-+				 available, enable the SW mitigation on vmexit
-+				 ONLY.  On such systems, the host kernel is
-+				 protected from VM-originated BHI attacks, but
-+				 may still be vulnerable to syscall attacks.
-+			off    - Disable the mitigation.
+-	switch (mode) {
+-	case CXL_DECODER_RAM:
+-	case CXL_DECODER_PMEM:
+-		break;
+-	default:
+-		dev_err(&cxlrd->cxlsd.cxld.dev, "unsupported mode %d\n", mode);
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	cxlr = cxl_region_alloc(cxlrd, id);
+ 	if (IS_ERR(cxlr))
+ 		return cxlr;
+@@ -2415,6 +2406,15 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
+ {
+ 	int rc;
  
- 	spectre_v2=	[X86,EARLY] Control mitigation of Spectre variant 2
- 			(indirect branch speculation) vulnerability.
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index ab18185894df..6974c8c9792d 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1625,6 +1625,7 @@ static bool __init spec_ctrl_bhi_dis(void)
- enum bhi_mitigations {
- 	BHI_MITIGATION_OFF,
- 	BHI_MITIGATION_ON,
-+	BHI_MITIGATION_VMEXIT_ONLY,
- };
- 
- static enum bhi_mitigations bhi_mitigation __ro_after_init =
-@@ -1639,6 +1640,8 @@ static int __init spectre_bhi_parse_cmdline(char *str)
- 		bhi_mitigation = BHI_MITIGATION_OFF;
- 	else if (!strcmp(str, "on"))
- 		bhi_mitigation = BHI_MITIGATION_ON;
-+	else if (!strcmp(str, "vmexit"))
-+		bhi_mitigation = BHI_MITIGATION_VMEXIT_ONLY;
- 	else
- 		pr_err("Ignoring unknown spectre_bhi option (%s)", str);
- 
-@@ -1659,19 +1662,22 @@ static void __init bhi_select_mitigation(void)
- 			return;
- 	}
- 
-+	/* Mitigate in hardware if supported */
- 	if (spec_ctrl_bhi_dis())
- 		return;
- 
- 	if (!IS_ENABLED(CONFIG_X86_64))
- 		return;
- 
--	/* Mitigate KVM by default */
--	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
--	pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit\n");
-+	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
-+		pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit only\n");
-+		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
-+		return;
++	switch (mode) {
++	case CXL_DECODER_RAM:
++	case CXL_DECODER_PMEM:
++		break;
++	default:
++		dev_err(&cxlrd->cxlsd.cxld.dev, "unsupported mode %d\n", mode);
++		return ERR_PTR(-EINVAL);
 +	}
- 
--	/* Mitigate syscalls when the mitigation is forced =on */
-+	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall and vm exit\n");
- 	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
--	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall\n");
-+	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
- }
- 
- static void __init spectre_v2_select_mitigation(void)
++
+ 	rc = memregion_alloc(GFP_KERNEL);
+ 	if (rc < 0)
+ 		return ERR_PTR(rc);
 -- 
-2.44.0
+2.29.2
 
 
