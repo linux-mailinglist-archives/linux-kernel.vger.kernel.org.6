@@ -1,276 +1,208 @@
-Return-Path: <linux-kernel+bounces-170952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13738BDE61
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2D48BDE63
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA8DD1C2330E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA34B1F25949
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B3114E2CA;
-	Tue,  7 May 2024 09:32:35 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B247C14EC6F;
+	Tue,  7 May 2024 09:32:50 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED0414D710;
-	Tue,  7 May 2024 09:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6FF14E2E4;
+	Tue,  7 May 2024 09:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074354; cv=none; b=E/4Z7YDQg2LJBpRe6+ey9SgrAJCvkX1sUSxtDecNZ+o3OA3BaCC5Q4saDIyENp1fmMQg7K+6RebXussXiiYA0z6etrFymK89SqQ/addSBjWnN3dCl1ly3GnISKQxunnKwHDhiyutnoA/xtzOSxl43MBE/QLxcHRgC6r8Dj5Qayk=
+	t=1715074370; cv=none; b=ljj0O4Znom4JSJ5ENlfjr9FWpcGKKye/4Fz/J9zvDhlyB0LLp1QIcqf8J5aMwTmUuiSRs4/k7xu/lOXz11Kc/WzF3m/rlNib/L4XjjGASNCG8nOgKZ9XTyE3gSbX64Z/wG7Pm1zL6qN7f+Bm1ymoxgsU0Ywj2bZFhizuox++Z5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074354; c=relaxed/simple;
-	bh=db02E+eKNl5BqO07hsPeoCeQYWkq162mXseaLq+BHJA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ag9vZnt0APsxf1JxMXntRJDerUGWYllqlXUbxifYnDTzF7J8lgEOuAA7W+4JC2WRxIMg7JLjHsHSIT0OnrZF4eU7dA53VaXzb0yOpxvo79bf0Tol5gl/HfxLXyjQGQSBaPNvUjd+8F5WBNTkY+eOR06pHMVxY/Yp+CLmbzyl8Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+	s=arc-20240116; t=1715074370; c=relaxed/simple;
+	bh=QWEBtmOnxBgInrUWtYXy54jN0BcfjzLNlCGWLtloyVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LppMt1UTSLaQxtIdZNbi18BY+gjdhuiY27J7gJtyyGtU0iMhX9UW5r7+ZtbVBuc/QPDlv6Etg5KEEWzSP+aE/xVnStPvCEJM/r/VTLEm8+Rr0oLdXKZsuWASRYuDeLvCLXG0Wox8Yi9Sh73AACs5oILkUPC6TWwKIOzv9vnOFv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VYXZ91DWTz9v7Y8;
-	Tue,  7 May 2024 17:10:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 04C5E140390;
-	Tue,  7 May 2024 17:32:18 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAnXSEV9TlmiKitBw--.25415S2;
-	Tue, 07 May 2024 10:32:17 +0100 (CET)
-Message-ID: <e6e2b31983610bf566d8046edbac0e00c8453233.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] ima: Use sequence number to wait for policy updates
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com,  john.johansen@canonical.com,
- stephen.smalley.work@gmail.com,  casey@schaufler-ca.com, eparis@redhat.com
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, guozihua@huawei.com, omosnace@redhat.com, 
-	audit@vger.kernel.org, apparmor@lists.ubuntu.com, selinux@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Date: Tue, 07 May 2024 11:32:03 +0200
-In-Reply-To: <20240507092831.3590793-1-roberto.sassu@huaweicloud.com>
-References: <20240507092831.3590793-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VYY381TfDz4f3xsJ;
+	Tue,  7 May 2024 17:32:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 77FA51A016E;
+	Tue,  7 May 2024 17:32:41 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBE19Tlmph79Lw--.16187S3;
+	Tue, 07 May 2024 17:32:41 +0800 (CST)
+Message-ID: <e0c5708c-67c0-770b-6dd4-d85102bf6600@huaweicloud.com>
+Date: Tue, 7 May 2024 17:32:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAnXSEV9TlmiKitBw--.25415S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFW8urWxXF47AF13KF4UArb_yoW7Ww4UpF
-	Wvga4UCFyvvrWS9r4xC3yDZrWY9ry8Zr1UZ3s8W347AwnxXr10qF18Jry7Za4fGrW5CF1x
-	XF4jgrs09w1jvrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
-	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
-	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0x
-	vE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
-	aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1rMa5UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBF1jj5kUAwAAsp
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH 08/12] cachefiles: never get a new anon fd if ondemand_id
+ is valid
+Content-Language: en-US
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-9-libaokun@huaweicloud.com>
+ <625acc9e-b871-4912-965e-82fe3f9228d7@linux.alibaba.com>
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <625acc9e-b871-4912-965e-82fe3f9228d7@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgCXaBE19Tlmph79Lw--.16187S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFW5Zr4kXFy8Zw4fZr1fZwb_yoWrur4DpF
+	Way3W3KFyxWF1xWrZ7AFs5WFyFy34kZFnrWa4aga4UArn09r1fZr17trnxZFn8A3s7Wrsr
+	tF4UWr9xKw1qk3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-On Tue, 2024-05-07 at 11:28 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> Maintain a global sequence number, and set it to individual policy rules,
-> when they are created.
+Hi Jingbo,
 
-Just did an attempt, to see if this path is viable.
+On 2024/5/6 11:09, Jingbo Xu wrote:
+>
+> On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Now every time the daemon reads an open request, it requests a new anon fd
+>> and ondemand_id. With the introduction of "restore", it is possible to read
+>> the same open request more than once, and therefore have multiple anon fd's
+>> for the same object.
+>>
+>> To avoid this, allocate a new anon fd only if no anon fd has been allocated
+>> (ondemand_id == 0) or if the previously allocated anon fd has been closed
+>> (ondemand_id == -1). Returns an error if ondemand_id is valid, letting the
+>> daemon know that the current userland restore logic is abnormal and needs
+>> to be checked.
+> I have no obvious preference on strengthening this on kernel side or
+> not.  Could you explain more about what will happen if the daemon gets
+> several distinct anon fd corresponding to one same object?  IMHO the
+> daemon should expect the side effect if it issues a 'restore' command
+> when the daemon doesn't crash.  IOW, it's something that shall be fixed
+> or managed either on the kernel side, or on the daemon side.
+If the anon_fd is not unique, the daemon will only close the anon_fd
+corresponding to the newest object_id during drop_object, and the
+other anon_fds will not be closed until the daemon exits.
 
-This patch would be an alternative to:
+However, the anon_fd holds the reference count of the object, so the
+object will not be freed, and the cookie will also not be freed. So
+mounting a same-named image at this point will cause a hung task
+in fscache_hash_cookie() by waiting for the cookie to unhash.
 
-[PATCH v3] ima: Avoid blocking in RCU read-side critical section
+The object_id and anon_fd of an object are supposed to be unique
+under normal circumstances, this patch just provides that guarantee
+even in the case of an exception.
 
-Roberto
+Thank you very much for the review!
 
-> When a rule is stale, wait for the global sequence number to increase,
-> which happens when the LSM policy has been fully updated.
->=20
-> Finally, restart the ima_match_policy() loop, which should not encounter
-> the stale rule anymore.
->=20
-> On policy update, already increase the rule sequence number, so that a wa=
-it
-> can be implemented for the next policy update.
->=20
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/ima/ima_policy.c | 65 +++++++++++++++--------------
->  1 file changed, 33 insertions(+), 32 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
-/ima_policy.c
-> index c0556907c2e6..4f8275e216fe 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -51,9 +51,12 @@
->  #define INVALID_PCR(a) (((a) < 0) || \
->  	(a) >=3D (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
-> =20
-> +DECLARE_WAIT_QUEUE_HEAD(wait_queue_t);
-> +
->  int ima_policy_flag;
->  static int temp_ima_appraise;
->  static int build_ima_appraise __ro_after_init;
-> +static int global_seqno;
-> =20
->  atomic_t ima_setxattr_allowed_hash_algorithms;
-> =20
-> @@ -122,6 +125,7 @@ struct ima_rule_entry {
->  	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyr=
-ings */
->  	struct ima_rule_opt_list *label; /* Measure data grouped under this lab=
-el */
->  	struct ima_template_desc *template;
-> +	int seqno;
->  };
-> =20
->  /*
-> @@ -442,6 +446,8 @@ static int ima_lsm_update_rule(struct ima_rule_entry =
-*entry)
->  	if (!nentry)
->  		return -ENOMEM;
-> =20
-> +	nentry->seqno++;
-> +
->  	list_replace_rcu(&entry->list, &nentry->list);
->  	synchronize_rcu();
->  	/*
-> @@ -497,6 +503,8 @@ int ima_lsm_policy_change(struct notifier_block *nb, =
-unsigned long event,
->  		return NOTIFY_DONE;
-> =20
->  	ima_lsm_update_rules();
-> +	global_seqno++;
-> +	wake_up(&wait_queue_t);
->  	return NOTIFY_OK;
->  }
-> =20
-> @@ -560,18 +568,16 @@ static bool ima_match_rule_data(struct ima_rule_ent=
-ry *rule,
->   * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC=
-)
->   * @func_data: func specific data, may be NULL
->   *
-> - * Returns true on rule match, false on failure.
-> + * Returns 1 on rule match, 0 on mismatch, -ESTALE on stale policy.
->   */
-> -static bool ima_match_rules(struct ima_rule_entry *rule,
-> -			    struct mnt_idmap *idmap,
-> -			    struct inode *inode, const struct cred *cred,
-> -			    u32 secid, enum ima_hooks func, int mask,
-> -			    const char *func_data)
-> +static int ima_match_rules(struct ima_rule_entry *rule,
-> +			   struct mnt_idmap *idmap,
-> +			   struct inode *inode, const struct cred *cred,
-> +			   u32 secid, enum ima_hooks func, int mask,
-> +			   const char *func_data)
->  {
->  	int i;
-> -	bool result =3D false;
->  	struct ima_rule_entry *lsm_rule =3D rule;
-> -	bool rule_reinitialized =3D false;
-> =20
->  	if ((rule->flags & IMA_FUNC) &&
->  	    (rule->func !=3D func && func !=3D POST_SETATTR))
-> @@ -642,7 +648,6 @@ static bool ima_match_rules(struct ima_rule_entry *ru=
-le,
->  				return false;
->  		}
-> =20
-> -retry:
->  		switch (i) {
->  		case LSM_OBJ_USER:
->  		case LSM_OBJ_ROLE:
-> @@ -663,27 +668,13 @@ static bool ima_match_rules(struct ima_rule_entry *=
-rule,
->  			break;
->  		}
-> =20
-> -		if (rc =3D=3D -ESTALE && !rule_reinitialized) {
-> -			lsm_rule =3D ima_lsm_copy_rule(rule);
-> -			if (lsm_rule) {
-> -				rule_reinitialized =3D true;
-> -				goto retry;
-> -			}
-> -		}
-> -		if (!rc) {
-> -			result =3D false;
-> -			goto out;
-> -		}
-> +		if (!rc)
-> +			return false;
-> +		else if (rc =3D=3D -ESTALE)
-> +			return rc;
->  	}
-> -	result =3D true;
-> =20
-> -out:
-> -	if (rule_reinitialized) {
-> -		for (i =3D 0; i < MAX_LSM_RULES; i++)
-> -			ima_filter_rule_free(lsm_rule->lsm[i].rule);
-> -		kfree(lsm_rule);
-> -	}
-> -	return result;
-> +	return true;
->  }
-> =20
->  /*
-> @@ -741,12 +732,12 @@ int ima_match_policy(struct mnt_idmap *idmap, struc=
-t inode *inode,
->  		     const char *func_data, unsigned int *allowed_algos)
->  {
->  	struct ima_rule_entry *entry;
-> -	int action =3D 0, actmask =3D flags | (flags << 1);
-> +	int action =3D 0, rc, actmask =3D flags | (flags << 1);
->  	struct list_head *ima_rules_tmp;
-> =20
->  	if (template_desc && !*template_desc)
->  		*template_desc =3D ima_template_desc_current();
-> -
-> +retry:
->  	rcu_read_lock();
->  	ima_rules_tmp =3D rcu_dereference(ima_rules);
->  	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
-> @@ -754,9 +745,18 @@ int ima_match_policy(struct mnt_idmap *idmap, struct=
- inode *inode,
->  		if (!(entry->action & actmask))
->  			continue;
-> =20
-> -		if (!ima_match_rules(entry, idmap, inode, cred, secid,
-> -				     func, mask, func_data))
-> +		rc =3D ima_match_rules(entry, idmap, inode, cred, secid,
-> +				     func, mask, func_data);
-> +		if (!rc)
->  			continue;
-> +		else if (rc =3D=3D -ESTALE) {
-> +			rcu_read_unlock();
-> +
-> +			wait_event_interruptible(wait_queue_t,
-> +				(global_seqno =3D=3D entry->seqno + 1));
-> +
-> +			goto retry;
-> +		}
-> =20
->  		action |=3D entry->flags & IMA_NONACTION_FLAGS;
-> =20
-> @@ -1153,6 +1153,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry =
-*entry,
->  			result =3D 0;
->  	}
-> =20
-> +	entry->seqno =3D global_seqno;
->  	return result;
->  }
-> =20
+Regards,
+Baokun
+>> ---
+>>   fs/cachefiles/ondemand.c | 34 ++++++++++++++++++++++++++++------
+>>   1 file changed, 28 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>> index b5e6a851ef04..0cf63bfedc9e 100644
+>> --- a/fs/cachefiles/ondemand.c
+>> +++ b/fs/cachefiles/ondemand.c
+>> @@ -14,11 +14,18 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
+>>   					  struct file *file)
+>>   {
+>>   	struct cachefiles_object *object = file->private_data;
+>> -	struct cachefiles_cache *cache = object->volume->cache;
+>> -	struct cachefiles_ondemand_info *info = object->ondemand;
+>> +	struct cachefiles_cache *cache;
+>> +	struct cachefiles_ondemand_info *info;
+>>   	int object_id;
+>>   	struct cachefiles_req *req;
+>> -	XA_STATE(xas, &cache->reqs, 0);
+>> +	XA_STATE(xas, NULL, 0);
+>> +
+>> +	if (!object)
+>> +		return 0;
+>> +
+>> +	info = object->ondemand;
+>> +	cache = object->volume->cache;
+>> +	xas.xa = &cache->reqs;
+>>   
+>>   	xa_lock(&cache->reqs);
+>>   	spin_lock(&info->lock);
+>> @@ -269,22 +276,39 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
+>>   		goto err_put_fd;
+>>   	}
+>>   
+>> +	spin_lock(&object->ondemand->lock);
+>> +	if (object->ondemand->ondemand_id > 0) {
+>> +		spin_unlock(&object->ondemand->lock);
+>> +		ret = -EEXIST;
+>> +		/* Avoid performing cachefiles_ondemand_fd_release(). */
+>> +		file->private_data = NULL;
+>> +		goto err_put_file;
+>> +	}
+>> +
+>>   	file->f_mode |= FMODE_PWRITE | FMODE_LSEEK;
+>>   	fd_install(fd, file);
+>>   
+>>   	load = (void *)req->msg.data;
+>>   	load->fd = fd;
+>>   	object->ondemand->ondemand_id = object_id;
+>> +	spin_unlock(&object->ondemand->lock);
+>>   
+>>   	cachefiles_get_unbind_pincount(cache);
+>>   	trace_cachefiles_ondemand_open(object, &req->msg, load);
+>>   	return 0;
+>>   
+>> +err_put_file:
+>> +	fput(file);
+>>   err_put_fd:
+>>   	put_unused_fd(fd);
+>>   err_free_id:
+>>   	xa_erase(&cache->ondemand_ids, object_id);
+>>   err:
+>> +	spin_lock(&object->ondemand->lock);
+>> +	/* Avoid marking an opened object as closed. */
+>> +	if (object->ondemand->ondemand_id <= 0)
+>> +		cachefiles_ondemand_set_object_close(object);
+>> +	spin_unlock(&object->ondemand->lock);
+>>   	cachefiles_put_object(object, cachefiles_obj_put_ondemand_fd);
+>>   	return ret;
+>>   }
+>> @@ -367,10 +391,8 @@ ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
+>>   
+>>   	if (msg->opcode == CACHEFILES_OP_OPEN) {
+>>   		ret = cachefiles_ondemand_get_fd(req);
+>> -		if (ret) {
+>> -			cachefiles_ondemand_set_object_close(req->object);
+>> +		if (ret)
+>>   			goto out;
+>> -		}
+>>   	}
+>>   
+>>   	msg->msg_id = xas.xa_index;
+
 
 
