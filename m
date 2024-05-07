@@ -1,97 +1,300 @@
-Return-Path: <linux-kernel+bounces-170867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF268BDD1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:25:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E438BDD1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1A58B215C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:25:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4250E1F24B37
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E8413CA9F;
-	Tue,  7 May 2024 08:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXHdNnfi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1F013C9B7;
+	Tue,  7 May 2024 08:25:33 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C98D13C906;
-	Tue,  7 May 2024 08:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B905F13C906
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715070320; cv=none; b=nQFgfwPYlijHqZ0jiUIqu5aTLCBrUkKMhJmz2km9McyPLGDe15ejeBxHRXHULwAV8Sk+eDMaVU1uoJwXbAi+TNsFpeFaFBxRADmx9aQyMfAhWd3sQwHTLrW4kh2nR2+rg3bclOxGbtRQINBnB8hsoPBCo5T/xJrLiEbnG27P6D8=
+	t=1715070332; cv=none; b=JUt4/JXISW9/cgmd6yRwKfKUSWDI50BRcNbhwRiTEfznPiLokUxpqujSDBThokedzHuhXPXMnu4SOGEDZHBiPcKeC7K75LKiiiwrvFArdDW5A+W1Z4N3KNv0hNGyBS91gEPAKWTg7GFQz+r874bseQMRyQlOvjrBTV/n3jJ+wD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715070320; c=relaxed/simple;
-	bh=RcBA2s21AzE7oMqOdlHU19eeBPj8PCXsQETJXQClDlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pce0eF7CbwaJAPWyjefftbevGTxbdfBr41ekx175NIPqCe3RTsl+SdP+Ixs1U6BEr4mo7T2pjzUJ80eFGlVr2Oco6664l5WbSt7ZmXbregHMwsEjjlYfgwpg20ZeL8x9DrtS3RbsfYVIk6YBhgkVrh19j3bE25ncmNCZ43ExkS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXHdNnfi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF9CCC2BBFC;
-	Tue,  7 May 2024 08:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715070320;
-	bh=RcBA2s21AzE7oMqOdlHU19eeBPj8PCXsQETJXQClDlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SXHdNnfidtX3vASoxnFmDut6vxkdddskEoNThYrIVkyn8/nuGan068oLCq9q9xb/j
-	 Ptjj8L7hCIUBaT5qgGuEihlF86lrxHDulOPehluN8qzq2jUJw/PDh/DqbkjE/JNbKm
-	 IdIDo5q1o88OknvR4s8UuKaDqTTy4pjOYMWzr6QQxkBAH3pQIieIOI4SGCJTH7yrbX
-	 5IbVocEjiXhv+spWbHIj+A2v2TGIfIJ9mAz/0jI0YM/6G9P6FSGx0xn14zG4G/QEqu
-	 6bC1ZTYCEnoUlunghj2hw+wA5KvfacRyDEt3CRxu9UjZ0q+FNmyTs0XFOnOsPPDgFT
-	 Co7LTDy8zidBA==
-Date: Tue, 7 May 2024 09:25:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Dustin L. Howett" <dustin@howett.net>,
-	Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/2] platform/chrome: cros_ec_framework_laptop: introduce
- driver
-Message-ID: <20240507082514.GT1227636@google.com>
-References: <20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net>
- <20240505-cros_ec-framework-v1-1-402662d6276b@weissschuh.net>
+	s=arc-20240116; t=1715070332; c=relaxed/simple;
+	bh=nF+jtbQISogPnLSN8zDZPpgx7UsE3Qqv7RvetFHa+hs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=O0qfWSma5YvPvOVXmr33ibJOel+fjft8Fg6vdRMQXzRDPvj7KvGXDswFx51OtR8/L7wCgDzvSfggUkwBLw8obo26/IXw8hh0uy6/n2rfKKMmCu+cYQPe3WxSgbysDI5zLr1ZESqYkEfbPhdtCMeCGTUo46fp9riEO+ONN+X2eAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VYWX53WTqz1HBj2;
+	Tue,  7 May 2024 16:24:05 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 03895140154;
+	Tue,  7 May 2024 16:25:21 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 16:25:20 +0800
+Message-ID: <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
+Date: Tue, 7 May 2024 16:25:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
+ boundaries
+To: Ryan Roberts <ryan.roberts@arm.com>, Yang Shi <shy828301@gmail.com>
+CC: Matthew Wilcox <willy@infradead.org>, Yang Shi
+	<yang@os.amperecomputing.com>, <riel@surriel.com>, <cl@linux.com>,
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, Ze Zuo <zuoze1@huawei.com>
+References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
+ <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
+ <Zav3UK7ESNxCMjyP@casper.infradead.org>
+ <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
+ <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
+ <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
+ <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
+ <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
+Content-Language: en-US
+In-Reply-To: <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240505-cros_ec-framework-v1-1-402662d6276b@weissschuh.net>
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-On Sun, 05 May 2024, Thomas Weißschuh wrote:
+Hi Ryan, Yang and all,
 
-> Framework Laptops are using embedded controller firmware based on the
-> ChromeOS EC project.
-> In addition to the standard upstream commands, some vendor-specific
-> ones are implemented.
+We see another regression on arm64(no issue on x86) when test memory
+latency from lmbench,
+
+/lat_mem_rd -P 1 512M 128
+
+memory latency(smaller is better)
+
+MiB     6.9-rc7	6.9-rc7+revert
+0.00049	1.539 	1.539
+0.00098	1.539 	1.539
+0.00195	1.539 	1.539
+0.00293	1.539 	1.539
+0.00391	1.539 	1.539
+0.00586	1.539 	1.539
+0.00781	1.539 	1.539
+0.01172	1.539 	1.539
+0.01562	1.539 	1.539
+0.02344	1.539 	1.539
+0.03125	1.539 	1.539
+0.04688	1.539 	1.539
+0.0625	1.540 	1.540
+0.09375	3.634 	3.086
+0.125   3.874 	3.175
+0.1875  3.544 	3.288
+0.25    3.556 	3.461
+0.375   3.641 	3.644
+0.5     4.125 	3.851
+0.75    4.968 	4.323
+1       5.143 	4.686
+1.5     5.309 	4.957
+2       5.370 	5.116
+3       5.430 	5.471
+4       5.457 	5.671
+6       6.100 	6.170
+8       6.496 	6.468
+
+-----------------------s
+* L1 cache = 8M, it is no big changes below 8M *
+* but the latency reduce a lot when revert this patch from L2 *
+
+12      6.917 	6.840
+16      7.268 	7.077
+24      7.536 	7.345
+32      10.723 	9.421
+48      14.220 	11.350
+64      16.253 	12.189
+96      14.494 	12.507
+128     14.630 	12.560
+192     15.402 	12.967
+256     16.178 	12.957
+384     15.177 	13.346
+512     15.235 	13.233
+
+After quickly check the smaps, but don't find any clues, any suggestion?
+
+Thanks.
+
+On 2024/1/24 1:26, Ryan Roberts wrote:
+> On 23/01/2024 17:14, Yang Shi wrote:
+>> On Tue, Jan 23, 2024 at 1:41 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>
+>>> On 22/01/2024 19:43, Yang Shi wrote:
+>>>> On Mon, Jan 22, 2024 at 3:37 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>>
+>>>>> On 20/01/2024 16:39, Matthew Wilcox wrote:
+>>>>>> On Sat, Jan 20, 2024 at 12:04:27PM +0000, Ryan Roberts wrote:
+>>>>>>> However, after this patch, each allocation is in its own VMA, and there is a 2M
+>>>>>>> gap between each VMA. This causes 2 problems: 1) mmap becomes MUCH slower
+>>>>>>> because there are so many VMAs to check to find a new 1G gap. 2) It fails once
+>>>>>>> it hits the VMA limit (/proc/sys/vm/max_map_count). Hitting this limit then
+>>>>>>> causes a subsequent calloc() to fail, which causes the test to fail.
+>>>>>>>
+>>>>>>> Looking at the code, I think the problem is that arm64 selects
+>>>>>>> ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT. But __thp_get_unmapped_area() allocates
+>>>>>>> len+2M then always aligns to the bottom of the discovered gap. That causes the
+>>>>>>> 2M hole. As far as I can see, x86 allocates bottom up, so you don't get a hole.
+>>>>>>
+>>>>>> As a quick hack, perhaps
+>>>>>> #ifdef ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
+>>>>>> take-the-top-half
+>>>>>> #else
+>>>>>> current-take-bottom-half-code
+>>>>>> #endif
+>>>>>>
+>>>>>> ?
+>>>>
+>>>> Thanks for the suggestion. It makes sense to me. Doing the alignment
+>>>> needs to take into account this.
+>>>>
+>>>>>
+>>>>> There is a general problem though that there is a trade-off between abutting
+>>>>> VMAs, and aligning them to PMD boundaries. This patch has decided that in
+>>>>> general the latter is preferable. The case I'm hitting is special though, in
+>>>>> that both requirements could be achieved but currently are not.
+>>>>>
+>>>>> The below fixes it, but I feel like there should be some bitwise magic that
+>>>>> would give the correct answer without the conditional - but my head is gone and
+>>>>> I can't see it. Any thoughts?
+>>>>
+>>>> Thanks Ryan for the patch. TBH I didn't see a bitwise magic without
+>>>> the conditional either.
+>>>>
+>>>>>
+>>>>> Beyond this, though, there is also a latent bug where the offset provided to
+>>>>> mmap() is carried all the way through to the get_unmapped_area()
+>>>>> impelementation, even for MAP_ANONYMOUS - I'm pretty sure we should be
+>>>>> force-zeroing it for MAP_ANONYMOUS? Certainly before this change, for arches
+>>>>> that use the default get_unmapped_area(), any non-zero offset would not have
+>>>>> been used. But this change starts using it, which is incorrect. That said, there
+>>>>> are some arches that override the default get_unmapped_area() and do use the
+>>>>> offset. So I'm not sure if this is a bug or a feature that user space can pass
+>>>>> an arbitrary value to the implementation for anon memory??
+>>>>
+>>>> Thanks for noticing this. If I read the code correctly, the pgoff used
+>>>> by some arches to workaround VIPT caches, and it looks like it is for
+>>>> shared mapping only (just checked arm and mips). And I believe
+>>>> everybody assumes 0 should be used when doing anonymous mapping. The
+>>>> offset should have nothing to do with seeking proper unmapped virtual
+>>>> area. But the pgoff does make sense for file THP due to the alignment
+>>>> requirements. I think it should be zero'ed for anonymous mappings,
+>>>> like:
+>>>>
+>>>> diff --git a/mm/mmap.c b/mm/mmap.c
+>>>> index 2ff79b1d1564..a9ed353ce627 100644
+>>>> --- a/mm/mmap.c
+>>>> +++ b/mm/mmap.c
+>>>> @@ -1830,6 +1830,7 @@ get_unmapped_area(struct file *file, unsigned
+>>>> long addr, unsigned long len,
+>>>>                  pgoff = 0;
+>>>>                  get_area = shmem_get_unmapped_area;
+>>>>          } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
+>>>> +               pgoff = 0;
+>>>>                  /* Ensures that larger anonymous mappings are THP aligned. */
+>>>>                  get_area = thp_get_unmapped_area;
+>>>>          }
+>>>
+>>> I think it would be cleaner to just zero pgoff if file==NULL, then it covers the
+>>> shared case, the THP case, and the non-THP case properly. I'll prepare a
+>>> separate patch for this.
+>>
+>> IIUC I don't think this is ok for those arches which have to
+>> workaround VIPT cache since MAP_ANONYMOUS | MAP_SHARED with NULL file
+>> pointer is a common case for creating tmpfs mapping. For example,
+>> arm's arch_get_unmapped_area() has:
+>>
+>> if (aliasing)
+>>          do_align = filp || (flags & MAP_SHARED);
+>>
+>> The pgoff is needed if do_align is true. So we should just zero pgoff
+>> iff !file && !MAP_SHARED like what my patch does, we can move the
+>> zeroing to a better place.
 > 
-> Add a driver for those custom EC commands.
+> We crossed streams - I sent out the patch just as you sent this. My patch is
+> implemented as I proposed.
 > 
-> At first, provide an empty driver that only takes care of scaffolding and
-> device binding.
-> Further patches will add functionality to the driver.
+> I'm not sure I agree with what you are saying. The mmap man page says this:
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->  MAINTAINERS                                        |  5 ++
->  drivers/mfd/cros_ec_dev.c                          | 13 ++++++
-
-I do not see any build-time deps here.
-
-Please split this change out.
-
->  drivers/platform/chrome/Kconfig                    | 11 +++++
->  drivers/platform/chrome/Makefile                   |  1 +
->  drivers/platform/chrome/cros_ec_framework_laptop.c | 53 ++++++++++++++++++++++
->  5 files changed, 83 insertions(+)
-
--- 
-Lee Jones [李琼斯]
+>    The  contents  of  a file mapping (as opposed to an anonymous mapping; see
+>    MAP_ANONYMOUS below), are initialized using length bytes starting at offset
+>    offset in the file (or other object) referred to by the file descriptor fd.
+> 
+> So that implies offset is only relavent when a file is provided. It then goes on
+> to say:
+> 
+>    MAP_ANONYMOUS
+>    The mapping is not backed by any file; its contents are initialized to zero.
+>    The fd argument is ignored; however, some implementations require fd to be -1
+>    if MAP_ANONYMOUS (or MAP_ANON) is specified, and portable applications should
+>    ensure this. The offset argument should be zero.
+> 
+> So users are expected to pass offset=0 when mapping anon memory, for both shared
+> and private cases.
+> 
+> Infact, in the line above where you made your proposed change, pgoff is also
+> being zeroed for the (!file && (flags & MAP_SHARED)) case.
+> 
+> 
+>>
+>>>
+>>>
+>>>>
+>>>>>
+>>>>> Finally, the second test failure I reported (ksm_tests) is actually caused by a
+>>>>> bug in the test code, but provoked by this change. So I'll send out a fix for
+>>>>> the test code separately.
+>>>>>
+>>>>>
+>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>>> index 4f542444a91f..68ac54117c77 100644
+>>>>> --- a/mm/huge_memory.c
+>>>>> +++ b/mm/huge_memory.c
+>>>>> @@ -632,7 +632,7 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
+>>>>>   {
+>>>>>          loff_t off_end = off + len;
+>>>>>          loff_t off_align = round_up(off, size);
+>>>>> -       unsigned long len_pad, ret;
+>>>>> +       unsigned long len_pad, ret, off_sub;
+>>>>>
+>>>>>          if (off_end <= off_align || (off_end - off_align) < size)
+>>>>>                  return 0;
+>>>>> @@ -658,7 +658,13 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
+>>>>>          if (ret == addr)
+>>>>>                  return addr;
+>>>>>
+>>>>> -       ret += (off - ret) & (size - 1);
+>>>>> +       off_sub = (off - ret) & (size - 1);
+>>>>> +
+>>>>> +       if (current->mm->get_unmapped_area == arch_get_unmapped_area_topdown &&
+>>>>> +           !off_sub)
+>>>>> +               return ret + size;
+>>>>> +
+>>>>> +       ret += off_sub;
+>>>>>          return ret;
+>>>>>   }
+>>>>
+>>>> I didn't spot any problem, would you please come up with a formal patch?
+>>>
+>>> Yeah, I'll aim to post today.
+>>
+>> Thanks!
+>>
+>>>
+>>>
+> 
+> 
 
