@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-171682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D68B8BE743
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:19:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C17C8BE75D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4A31C23F2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:19:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5EDB26ABA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA57168B08;
-	Tue,  7 May 2024 15:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NBs9kHyG"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B1C14EC79
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D41165FD4;
+	Tue,  7 May 2024 15:19:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCBE1635AD;
+	Tue,  7 May 2024 15:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715095172; cv=none; b=QnyxvPve9pn6z/h9qs27IY+NykB2fyHmGfrYfczqXqggCX4M3Gj63Ywe2yxB6Sb17pzKnweNdzXnJd0bLY2mGR4gnrWXc+E3s+ExShAR8JpOT8yIIOVIk9HYY0rD4wgkuFSe1s+Eed+/uCR4N254Ba1jvM1+MDxnlRDGLxOAuaQ=
+	t=1715095172; cv=none; b=MUa9YvvciFrYdGvDrmrrCwvZs945sKL2JNHkYabz/18ZOWq1kxbc9jxNZTzo3BiPK4ZgaIsrrwDgX2DI3J3AiOVkaYrtvGS3CjfBiLskfAnR8anPqQcfElkKXsB22jDLuD1JSXXeD/ihJsbbOB4W4Tsho+y4zMwUutzBjokUzrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715095172; c=relaxed/simple;
-	bh=/wEyjI5m2O8HKuKdgtP+XsFBKrfzCPrB269/6Nd2+YM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fpkcHPAnaoiNTqBwW6+L/5+pWNsuOJDgLAOt1U5h5P/k2ew+ABCMLMcXLvBu9EIjhJefGRBsZdM6I2UcDC8HZgDbvM/FxZvA5CqhKpqKv81YUpjRwqm3nIuz59zDvxGxQSw4fRtvgzCWhDRPKN38e2n2aExC/ELlcj51bB6cwLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NBs9kHyG; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-de46b113a5dso3318784276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715095170; x=1715699970; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ysPCrT6aDiInuFk99HtusnAXRwhdESoITC61IbLRas=;
-        b=NBs9kHyGPLxxXrDFj1qW08YcW8p+bdkBM/KlzVlb5f3MAHLqlIECJj/LN+xOPeHO5Y
-         5e7gIKrTKfyuttAIw47A8EESpV/EWuTANdN0/Kzgu2teN+CB/uk8FXunzGKSgy6tj6if
-         JAhoKcle40muA964rUqWwy89x2WY6sVEUcZiNb2u3Nr0eVzSlJGMMe+SAC8KFK1JXLXC
-         nTPMah/fGWR92pj80GIykY2caaW+Vv57YrFYWb0LeZ+DfChS4jNnsGtuHPygmY7LGctH
-         avKAZ1GbXrr87ENVIEnylKzeiujtodMysob+sXG/z1LV05VI/3jAa2M7vFHLlDpzCwVe
-         dXow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715095170; x=1715699970;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3ysPCrT6aDiInuFk99HtusnAXRwhdESoITC61IbLRas=;
-        b=qckOiIOvUv5R5tw3cJ8C9/Bz/2COglWxq51Qnqq75AZdhpck/0eb+5ICU5nIMneiEB
-         QDCZADU3RR/WiDRsjb7Vb7zrlPj38zyVTNb+PLp8hYBJ6Q6HMviZQl0UG59FnEDkAZmO
-         6K60JE77SoiI3XZJpadGoUpz8xjcQ0469mGf2clyYCgU1cMhdR2klwKqASwKvjEZrzNH
-         QWG80b4QvBguKBVI+EUm4RCli9qpgiPyHcKFN9stXJtoK2hcMlLvTDpvBAy7kKksu6VO
-         +85di50yefh5VkeDj636lYXtcfGrzSTLS3MP3wOkcIXD2dGrd+cYb2Q2I9cwu1Kv/wG/
-         KQXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHZxkJS3659LLzj/iNPok9U5OUFVdmxq06gpENXTQyw+M4SdhA7b/gx7j7rbXG16S+HDIds8m/99N0xRz/j0ddfOge4oCaIa1zPVrX
-X-Gm-Message-State: AOJu0YxEY1z3wnHsnNUrI6Q+KipfLWyFaZ84BccWxzhICgyKm52b9v3r
-	tPb3JKNd/f1gEO+IxgYnUtSCzZxOr7hdYS53Bc8cAB5hxvz0OnUeoHpOhDviEJ/X1gUw0lAxT/5
-	Y5ZUhdLPJfVufn25qxPmQY0cvOu/aJ+n+mnXjXA==
-X-Google-Smtp-Source: AGHT+IEML+Kw1JVUOv0nN6ekdfHok6Y4DPu4GGX6sExCN5x0nEZTwSwW2OQ/aCjdgj8HeWcGREcPXHHI22erdbPufQA=
-X-Received: by 2002:a05:6902:2187:b0:de6:327:fa2 with SMTP id
- dl7-20020a056902218700b00de603270fa2mr15626519ybb.8.1715095170220; Tue, 07
- May 2024 08:19:30 -0700 (PDT)
+	bh=HCiNuMOgUWLAa2QGV+NRM5PIIgw4/qkm4rQshhilttE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hFq+e7vbzuhUL183fepk5cpq+0/21LRea4QI6SFqHRoYaNjJngwtzu88a9FJ4rA/Voa8ZXmrb/mMYPcZ+c6LXyRtZTN8sp2f6VqD4XiwNxfG5Ut/hs11QH5vOcCR0TduimtFjg5jwlspHjLGPiqGWg4it7fwRiahaHVXL0vW11k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F1A1063;
+	Tue,  7 May 2024 08:19:51 -0700 (PDT)
+Received: from [10.1.34.28] (e133047.arm.com [10.1.34.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F3D23F587;
+	Tue,  7 May 2024 08:19:22 -0700 (PDT)
+Message-ID: <80da988f-899e-4b93-a648-ffd0680d4000@arm.com>
+Date: Tue, 7 May 2024 16:19:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
- <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com> <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
-In-Reply-To: <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 7 May 2024 18:19:18 +0300
-Message-ID: <CAA8EJpr4bJUQt2T63_FZ=KHGEm4vixfpk3pMV9naABEONJfMmQ@mail.gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, 
-	Sebastien Bacher <sebastien.bacher@canonical.com>, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal <mzamazal@redhat.com>, 
-	Maxime Ripard <mripard@redhat.com>, Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] cpufreq/schedutil: Remove iowait boost
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
+ dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
+ Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
+ andres@anarazel.de, asml.silence@gmail.com, linux-pm@vger.kernel.org,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org
+References: <20240304201625.100619-1-christian.loehle@arm.com>
+ <20240304201625.100619-3-christian.loehle@arm.com>
+ <CAJZ5v0gMni0QJTBJXoVOav=kOtQ9W--NyXAgq+dXA+m-bciG8w@mail.gmail.com>
+ <5060c335-e90a-430f-bca5-c0ee46a49249@arm.com>
+ <CAJZ5v0janPrWRkjcLkFeP9gmTC-nVRF-NQCh6CTET6ENy-_knQ@mail.gmail.com>
+ <20240325023726.itkhlg66uo5kbljx@airbuntu>
+ <d99fd27a-dac5-4c71-b644-1213f51f2ba0@arm.com>
+ <20240429111816.mqok5biihvy46eba@airbuntu>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240429111816.mqok5biihvy46eba@airbuntu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 7 May 2024 at 18:15, Bryan O'Donoghue
-<bryan.odonoghue@linaro.org> wrote:
->
-> On 07/05/2024 16:09, Dmitry Baryshkov wrote:
-> > Ah, I see. Then why do you require the DMA-ble buffer at all? If you are
-> > providing data to VPU or DRM, then you should be able to get the buffer
-> > from the data-consuming device.
->
-> Because we don't necessarily know what the consuming device is, if any.
->
-> Could be VPU, could be Zoom/Hangouts via pipewire, could for argument
-> sake be GPU or DSP.
->
-> Also if we introduce a dependency on another device to allocate the
-> output buffers - say always taking the output buffer from the GPU, then
-> we've added another dependency which is more difficult to guarantee
-> across different arches.
+On 29/04/2024 12:18, Qais Yousef wrote:
+> On 04/19/24 14:42, Christian Loehle wrote:
+> 
+>>> I think the major thing we need to be careful about is the behavior when the
+>>> task is sleeping. I think the boosting will be removed when the task is
+>>> dequeued and I can bet there will be systems out there where the BLOCK softirq
+>>> being boosted when the task is sleeping will matter.
+>>
+>> Currently I see this mainly protected by the sugov rate_limit_us.
+>> With the enqueue's being the dominating cpufreq updates it's not really an
+>> issue, the boost is expected to survive the sleep duration, during which it
+>> wouldn't be active.
+>> I did experiment with some sort of 'stickiness' of the boost to the rq, but
+>> it is somewhat of a pain to deal with if we want to remove it once enqueued
+>> on a different rq. A sugov 1ms timer is much simpler of course.
+>> Currently it's not necessary IMO, but for the sake of being future-proof in
+>> terms of more frequent freq updates I might include it in v2.
+> 
+> Making sure things work with purpose would be really great. This implicit
+> dependency is not great IMHO and make both testing and reasoning about why
+> things are good or bad harder when analysing real workloads. Especially by non
+> kernel developers.
 
-Yes. And it should be expected. It's a consumer who knows the
-restrictions on the buffer. As I wrote, Zoom/Hangouts should not
-require a DMA buffer at all. Applications should be able to allocate
-the buffer out of the generic memory. GPUs might also have different
-requirements. Consider GPUs with VRAM. It might be beneficial to
-allocate a buffer out of VRAM rather than generic DMA mem.
+Agreed.
+Even without your proposed changes [1] relying on sugov rate_limit_us is
+unfortunate.
+There is a problem with an arbitrarily low rate_limit_us more generally, not
+just because we kind of rely on the CPU being boosted right before the task is
+actually enqueued (for the interrupt/softirq part of it), but also because of
+the latency from requested frequency improvement to actually running on that
+frequency. If the task is 90% done by the time it sees the improvement and
+the frequency will be updated (back to a lower one) before the next enqueue,
+then that's hardly worth the effort.
+Currently this is covered by rate_limit_us probabillistically and that seems
+to be good enough in practice, but it's not very pleasing (and also EAS can't
+take it into consideration).
+That's not just exclusive for iowait wakeup tasks of course, but in theory any
+that is off the rq frequently (and still requests a higher frequency than it can
+realistically build up through util_avg like through uclamp_min).
 
--- 
-With best wishes
-Dmitry
+>>>
+>>> FWIW I do have an implementation for per-task iowait boost where I went a step
+>>> further and converted intel_pstate too and like Christian didn't notice
+>>> a regression. But I am not sure (rather don't think) I triggered this use case.
+>>> I can't tell when the systems truly have per-cpu cpufreq control or just appear
+>>> so and they are actually shared but not visible at linux level.
+>>
+>> Please do share your intel_pstate proposal!
+> 
+> This is what I had. I haven't been working on this for the past few months, but
+> I remember tried several tests on different machines then without a problem.
+> I tried to re-order patches at some point though and I hope I didn't break
+> something accidentally and forgot the state.
+> 
+> https://github.com/torvalds/linux/compare/master...qais-yousef:linux:uclamp-max-aggregation
+> 
+
+Thanks for sharing, that looks reasonable with consolidating it into uclamp_min.
+Couple of thoughts on yours, I'm sure you're aware, but consider it me thinking out
+loud:
+- iowait boost is taken into consideration for task placement, but with just the
+4 steps that made it more aggressive on HMP. (Potentially 2-3 consecutive iowait
+wakeups to land on the big instead of running at max OPP of a LITTLE).
+- If the current iowait boost decay is sensible is questionable, but there should
+probably be some decay. Taken to the extreme this would mean something
+like blk_wait_io() demands 1024 utilization, if it waits for a very long time.
+Repeating myself here, but iowait wakeups itself is tricky to work with (and I
+try to work around that).
+- The intel_pstate solution will increase boost even if
+previous_wakeup->iowait_boost > current->iowait_boost
+right? But using current->iowait_boost is a clever idea.
+
+[1]
+https://lore.kernel.org/lkml/ZgKFT5b423hfQdl9@gmail.com/T/
+
+Kind Regards,
+Christian
 
