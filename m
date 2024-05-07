@@ -1,145 +1,230 @@
-Return-Path: <linux-kernel+bounces-172528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FC68BF320
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:06:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717578BF31F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17BE51F22ADD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8280B235BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F8A12FB38;
-	Tue,  7 May 2024 23:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73291332B7;
+	Tue,  7 May 2024 23:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UXDFj5xq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WH1d1Zrd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E42134404;
-	Tue,  7 May 2024 23:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C242B13329C;
+	Tue,  7 May 2024 23:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715125323; cv=none; b=uIE9PLUecnjAA8l9WVGXdVegqjE5+74udMcMmWBL4NOrEwjXIl0zd+9Ypdputtk1IsjkD3mwKw6g9xuNBTuvXI9fJWB7TH0a8WvECq+u3qew5Ce+Du4InnaU8VUjFe14l15I+PgIRj+0MzEwZErUGtzej6yclz8fIdVDuw16elA=
+	t=1715125274; cv=none; b=OkB35gfkdzPhtxtDSZ4xgBJaX+HxhZRSo/vGhdQEEV5SQ3ksd4gKg110XV6oqNBBnWG8KIrg6i0gwC28u81zkEaeCKv2aG1aTHFRZ4SGQJc6xiwi22vHHkA0ro4iKNjdg8lGoLJOKgqC9G9mHqwnUFwN3gpTLAqnx0RSIXLU52w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715125323; c=relaxed/simple;
-	bh=DOOMxtEONE1StSq2FtWYdjIVYayHInKfiOQ2VQA8DqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hhMVAvC6EJupRdCjeKIlKqRAUilu2MrKn19/UrmIVROl546v/phtPjsjwfvTQuZvlYtn5RKDTN4DwK2CQtClBIhQUHe8Cz4KPlGUuTae5ql03rMbP7F+IsLpoSFtVzRZTojNnfNesLutBYvCbxHm9ZdJl3Pgl+vvT+rIimE+I7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UXDFj5xq; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715125321; x=1746661321;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DOOMxtEONE1StSq2FtWYdjIVYayHInKfiOQ2VQA8DqI=;
-  b=UXDFj5xqHcn2keI2wIp5o3MoJYHegM+hzdAf5exf7WVZM1FNpyZCoYAV
-   Gbyjk9X0bzIKw1y3ILOeARk51M0YsOCob9yMoGZhgk2xJGchsE5JNFFOB
-   0OitHE24y6pcsS5jCBhvG63b8+tXhSf6EBjwftvF45eFpp5d0k5RD8gcM
-   bq6AYNPck75gZ6q1tl7R/I+GDEptUvzPmBb0RdJe/Y/r85FPB6kC2bM4+
-   h29qy977hKNiPoGE4hoynFr1VZv+Ix2Qv/FcTgDdl5rq65Bz2U6HWFHw/
-   zSPccqoYo4smu04ZWqfCOH9aLqaxFcDGhreyF3r88CHGozRMJ18F+tmKo
-   w==;
-X-CSE-ConnectionGUID: kPUi0FPQSluMmcjq/mu8Ug==
-X-CSE-MsgGUID: Ai0UVv9OSWiO1ZrbWvoTLQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="33468078"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="33468078"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:42:00 -0700
-X-CSE-ConnectionGUID: yPv5lb/DRsK/JtKV/zB6FA==
-X-CSE-MsgGUID: bkpKzxQHSzu23mvdV7jzUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="28647216"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 07 May 2024 16:41:55 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4URV-0002km-0v;
-	Tue, 07 May 2024 23:41:53 +0000
-Date: Wed, 8 May 2024 07:40:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vignesh Balasubramanian <vigbalas@amd.com>,
-	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mpe@ellerman.id.au, npiggin@gmail.com,
-	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
-	naveen.n.rao@linux.ibm.com, ebiederm@xmission.com,
-	keescook@chromium.org, x86@kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, bpetkov@amd.com,
-	jinisusan.george@amd.com, matz@suse.de, binutils@sourceware.org,
-	jhb@freebsd.org, felix.willgerodt@intel.com,
-	Vignesh Balasubramanian <vigbalas@amd.com>
-Subject: Re: [PATCH v2 1/1] x86/elf: Add a new .note section containing
- Xfeatures information to x86 core files
-Message-ID: <202405080715.hYQ1ae9v-lkp@intel.com>
-References: <20240507095330.2674-2-vigbalas@amd.com>
+	s=arc-20240116; t=1715125274; c=relaxed/simple;
+	bh=ODKOUMcSjW/vZC3ltI6tPmb1ZIxhx2e2qI8/N+kVOFM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=t6CwqmleLwgGY8hf61vJqTDLDLKUtwOl7IzBSRD290G2mMXBMDMCx2LipMBcNV+MIlJJGXlHmZeFSZuCnSIP01uaA+ypqj6ovQ9E8BObn5JsrlczQyJPZMNFW+hJSgwjhYqdHmj6d7yuiJRfiFhF3lDHotmh5ouLRqgfEu8Km9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WH1d1Zrd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7C2C2BBFC;
+	Tue,  7 May 2024 23:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715125273;
+	bh=ODKOUMcSjW/vZC3ltI6tPmb1ZIxhx2e2qI8/N+kVOFM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WH1d1ZrdOijFn1cT49Jm2ZUSrhswkNac03IVHqq7Eohwb66eyC/upbIRg5OmSQrS5
+	 590jVcfK2eY7mGIT+Mu2vfZ+2kgvT+bvvG+nO0mpjkaiB/hzuVoCqKdsgEfcB6GUI1
+	 tZHVMdm8HMaoJWCDDdSEsUeSS2shrn9LwS64jApcEtp551mG5S0J2RXLfrbG59V5J/
+	 HlHuUhoLZsEzbSOo52SetyHK+GisTyafXt2qQ3WQN6uI/FPqAL3Mvb4Ag0onvgsMRn
+	 PVoqChvTS3nyekeTg4nrB1W8PoOH/gLtrOXEqRETwcHpFeC7NS6eZgZtaW77r3KgQl
+	 SXWjnlSGSut3Q==
+Date: Wed, 8 May 2024 08:41:02 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, "David S. Miller"
+ <davem@davemloft.net>, Dinh Nguyen <dinguyen@kernel.org>, Donald Dutile
+ <ddutile@redhat.com>, Eric Chanudet <echanude@redhat.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>, Huacai Chen
+ <chenhuacai@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, Liviu
+ Dudau <liviu@dudau.co.uk>, Luis Chamberlain <mcgrof@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nadav Amit <nadav.amit@gmail.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>,
+ Philippe =?UTF-8?B?TWF0aGlldS1EYXVkw6k=?= <philmd@linaro.org>, Rick
+ Edgecombe <rick.p.edgecombe@intel.com>, Russell King
+ <linux@armlinux.org.uk>, Sam Ravnborg <sam@ravnborg.org>, Song Liu
+ <song@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+ <tglx@linutronix.de>, Will Deacon <will@kernel.org>, bpf@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mips@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, netdev@vger.kernel.org,
+ sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH RESEND v8 05/16] module: make module_memory_{alloc,free}
+ more self-contained
+Message-Id: <20240508084102.9e9b18a9b111d427e7cc9c94@kernel.org>
+In-Reply-To: <20240505160628.2323363-6-rppt@kernel.org>
+References: <20240505160628.2323363-1-rppt@kernel.org>
+	<20240505160628.2323363-6-rppt@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507095330.2674-2-vigbalas@amd.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Vignesh,
+On Sun,  5 May 2024 19:06:17 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> From: "Mike Rapoport (IBM)" <rppt@kernel.org>
+> 
+> Move the logic related to the memory allocation and freeing into
+> module_memory_alloc() and module_memory_free().
+> 
 
-[auto build test WARNING on kees/for-next/execve]
-[also build test WARNING on tip/x86/core kees/for-next/pstore kees/for-next/kspp linus/master v6.9-rc7 next-20240507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Looks good to me.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vignesh-Balasubramanian/x86-elf-Add-a-new-note-section-containing-Xfeatures-information-to-x86-core-files/20240507-175615
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
-patch link:    https://lore.kernel.org/r/20240507095330.2674-2-vigbalas%40amd.com
-patch subject: [PATCH v2 1/1] x86/elf: Add a new .note section containing Xfeatures information to x86 core files
-config: i386-buildonly-randconfig-006-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080715.hYQ1ae9v-lkp@intel.com/config)
-compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080715.hYQ1ae9v-lkp@intel.com/reproduce)
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080715.hYQ1ae9v-lkp@intel.com/
+Thanks,
 
-All warnings (new ones prefixed by >>):
+> Signed-off-by: Mike Rapoport (IBM) <rppt@kernel.org>
+> Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+> ---
+>  kernel/module/main.c | 64 +++++++++++++++++++++++++++-----------------
+>  1 file changed, 39 insertions(+), 25 deletions(-)
+> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index e1e8a7a9d6c1..5b82b069e0d3 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -1203,15 +1203,44 @@ static bool mod_mem_use_vmalloc(enum mod_mem_type type)
+>  		mod_mem_type_is_core_data(type);
+>  }
+>  
+> -static void *module_memory_alloc(unsigned int size, enum mod_mem_type type)
+> +static int module_memory_alloc(struct module *mod, enum mod_mem_type type)
+>  {
+> +	unsigned int size = PAGE_ALIGN(mod->mem[type].size);
+> +	void *ptr;
+> +
+> +	mod->mem[type].size = size;
+> +
+>  	if (mod_mem_use_vmalloc(type))
+> -		return vzalloc(size);
+> -	return module_alloc(size);
+> +		ptr = vmalloc(size);
+> +	else
+> +		ptr = module_alloc(size);
+> +
+> +	if (!ptr)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * The pointer to these blocks of memory are stored on the module
+> +	 * structure and we keep that around so long as the module is
+> +	 * around. We only free that memory when we unload the module.
+> +	 * Just mark them as not being a leak then. The .init* ELF
+> +	 * sections *do* get freed after boot so we *could* treat them
+> +	 * slightly differently with kmemleak_ignore() and only grey
+> +	 * them out as they work as typical memory allocations which
+> +	 * *do* eventually get freed, but let's just keep things simple
+> +	 * and avoid *any* false positives.
+> +	 */
+> +	kmemleak_not_leak(ptr);
+> +
+> +	memset(ptr, 0, size);
+> +	mod->mem[type].base = ptr;
+> +
+> +	return 0;
+>  }
+>  
+> -static void module_memory_free(void *ptr, enum mod_mem_type type)
+> +static void module_memory_free(struct module *mod, enum mod_mem_type type)
+>  {
+> +	void *ptr = mod->mem[type].base;
+> +
+>  	if (mod_mem_use_vmalloc(type))
+>  		vfree(ptr);
+>  	else
+> @@ -1229,12 +1258,12 @@ static void free_mod_mem(struct module *mod)
+>  		/* Free lock-classes; relies on the preceding sync_rcu(). */
+>  		lockdep_free_key_range(mod_mem->base, mod_mem->size);
+>  		if (mod_mem->size)
+> -			module_memory_free(mod_mem->base, type);
+> +			module_memory_free(mod, type);
+>  	}
+>  
+>  	/* MOD_DATA hosts mod, so free it at last */
+>  	lockdep_free_key_range(mod->mem[MOD_DATA].base, mod->mem[MOD_DATA].size);
+> -	module_memory_free(mod->mem[MOD_DATA].base, MOD_DATA);
+> +	module_memory_free(mod, MOD_DATA);
+>  }
+>  
+>  /* Free a module, remove from lists, etc. */
+> @@ -2225,7 +2254,6 @@ static int find_module_sections(struct module *mod, struct load_info *info)
+>  static int move_module(struct module *mod, struct load_info *info)
+>  {
+>  	int i;
+> -	void *ptr;
+>  	enum mod_mem_type t = 0;
+>  	int ret = -ENOMEM;
+>  
+> @@ -2234,26 +2262,12 @@ static int move_module(struct module *mod, struct load_info *info)
+>  			mod->mem[type].base = NULL;
+>  			continue;
+>  		}
+> -		mod->mem[type].size = PAGE_ALIGN(mod->mem[type].size);
+> -		ptr = module_memory_alloc(mod->mem[type].size, type);
+> -		/*
+> -                 * The pointer to these blocks of memory are stored on the module
+> -                 * structure and we keep that around so long as the module is
+> -                 * around. We only free that memory when we unload the module.
+> -                 * Just mark them as not being a leak then. The .init* ELF
+> -                 * sections *do* get freed after boot so we *could* treat them
+> -                 * slightly differently with kmemleak_ignore() and only grey
+> -                 * them out as they work as typical memory allocations which
+> -                 * *do* eventually get freed, but let's just keep things simple
+> -                 * and avoid *any* false positives.
+> -		 */
+> -		kmemleak_not_leak(ptr);
+> -		if (!ptr) {
+> +
+> +		ret = module_memory_alloc(mod, type);
+> +		if (ret) {
+>  			t = type;
+>  			goto out_enomem;
+>  		}
+> -		memset(ptr, 0, mod->mem[type].size);
+> -		mod->mem[type].base = ptr;
+>  	}
+>  
+>  	/* Transfer each section which specifies SHF_ALLOC */
+> @@ -2296,7 +2310,7 @@ static int move_module(struct module *mod, struct load_info *info)
+>  	return 0;
+>  out_enomem:
+>  	for (t--; t >= 0; t--)
+> -		module_memory_free(mod->mem[t].base, t);
+> +		module_memory_free(mod, t);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.43.0
+> 
 
->> arch/x86/kernel/fpu/xstate.c:91:19: warning: 'owner_name' defined but not used [-Wunused-const-variable=]
-    static const char owner_name[] = "LINUX";
-                      ^~~~~~~~~~
-   In file included from include/linux/string.h:369,
-                    from arch/x86/include/asm/page_32.h:18,
-                    from arch/x86/include/asm/page.h:14,
-                    from arch/x86/include/asm/processor.h:20,
-                    from arch/x86/include/asm/timex.h:5,
-                    from include/linux/timex.h:67,
-                    from include/linux/time32.h:13,
-                    from include/linux/time.h:60,
-                    from include/linux/compat.h:10,
-                    from arch/x86/kernel/fpu/xstate.c:8:
-   In function 'fortify_memcpy_chk',
-       inlined from 'membuf_write.isra.6' at include/linux/regset.h:42:3,
-       inlined from '__copy_xstate_to_uabi_buf' at arch/x86/kernel/fpu/xstate.c:1049:2:
-   include/linux/fortify-string.h:562:4: warning: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()?
-       __read_overflow2_field(q_size_field, size);
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/owner_name +91 arch/x86/kernel/fpu/xstate.c
-
-    90	
-  > 91	static const char owner_name[] = "LINUX";
-    92	
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
