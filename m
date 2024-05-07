@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-171662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23EB8BE70A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:10:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2628BE710
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FCD21C23A7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:10:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FFA283A17
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CA0165FBB;
-	Tue,  7 May 2024 15:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80831161906;
+	Tue,  7 May 2024 15:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sv8TdImZ"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QPc2lD4J"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69DD1635B6
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4059A1EB3F;
+	Tue,  7 May 2024 15:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715094576; cv=none; b=OsW7rloqYU4lDxtijqgrcvRFn1F+jbOSsTHorEIvpUkuOkHnASHhdsPg0jJnqyOh6jvx4U4vFWpCG6D8ZCaJbiM6sSyhkLetQDcRORe7gtLD9MOqsx4ceh+rQUv59nArZhXmIDnS/eanltfNTkKw4fVZKOY11XzPFpEa2ZLGayA=
+	t=1715094663; cv=none; b=iGjlbOXmpSQRUQI1vwtfSLRUW/YxrhIH46WMbeZT3TqEeLIEbib77mPghIPa9vJf9hErm5tuDFQrS52Am644qPgi2lJ2Ozc0McApNNji/ni3WmyIOXOhdcOq7jpH5sRiY1MXUUabIapSCzY1/9KodNnne1+1kfPd1TA61yt3yA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715094576; c=relaxed/simple;
-	bh=eQZdBa//GiiwWU5saLscyQ/eNFxlEase1Y9Rz4G07L0=;
+	s=arc-20240116; t=1715094663; c=relaxed/simple;
+	bh=VMnu+pDmL+oYK7xiki7kzb8soYvaBtZJpE+R7cKcFxY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i1kHPp5EQ/nFDzBgrE1i0l5FYxlf0Qwq0mhIRHvVIHzsS9QP5yGBiTqD145rulU2Cl40PGa8b04LuTEOJlgF11TLNXoSNFIWs4Bn6DSELsUccWwmmm0rrTdnmk+aDbkqPMJK8jj9AyIRke9LrqhbqLoS/IKBaqLohuxYQP48PPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sv8TdImZ; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7decabf4a36so22483039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715094572; x=1715699372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E3D/yzAnQonQm6YpOqNskMzHHJ7JMLgQ77zwyP/bNEI=;
-        b=sv8TdImZqS6aZsCrKHrNTlU7Fe+I6yid9cgMoyhGjULwNIrBIa3xpBG3I872GA88Qt
-         WthjiA9yRZ5G7cIQ0PI7Z3EEsIjYR+HHRe1MCYTB7eFOhxrEy+L720ggO27rJ5PdU6Uo
-         LFsHRA2Cn9D3U9XLCZUFoKAxSw4Cg9arTbVyy5+EaBrO/WUd8RjfqaLzcJogT5X+GBcq
-         X2kGH9/8FKXl/2tAwQEr7EhvgdBJY+iV3nPiEbnNQYGNzF0opdz9NMaYwd0ELtsV+6Fw
-         bljQ/wRGHsS9bGllkPlgKhDwjgR5UmaKCe/cwM6TLNE+ip8u0TxK50Q89KOKBDX+heDE
-         l1Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715094572; x=1715699372;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E3D/yzAnQonQm6YpOqNskMzHHJ7JMLgQ77zwyP/bNEI=;
-        b=CUPRSELVrTzNReo0OgRXJoCzq0YUDa5h0I44NBX9FNQ3b/XbuhwrIJDwvIJoY19qr9
-         nsiDl5QbXG0Ts6N2TsyKG2OJqOGpNS0t5kNC9YMBRjEO6NKNH61cdKWxbjsvTX7Vtkt+
-         ZVZVczCLQwyfAhcnsYIrBJs9pl5ofNzAzpv5yc9RCklyHirgkZX6EZvNGR576SpcbnZB
-         z7s4JcJljA+Nei143ipSgDCOkg/Y6G5D6q3ThXVxkDfK8KbJOBEfN9ker1+Q/CDx9ZjV
-         kYxUtXKfstePMGGU99F5cuER6cePwP6QkGqSWVj0baN4jCchJrXaK5BGhgfPXiBk7nCq
-         BfzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwz3gqLvPmv/Pw0ahhdn/ILvOUUC+HVYcz6qszMNRiiglsLXE+7RGgQfSaMEbWDqTv0Bw6ptHfloOH5I6U4TV3Lo4AXDuRnph2Le+0
-X-Gm-Message-State: AOJu0YwRZcsc6z7WvinTJgK86QgzEl4rhRIDmovBCP2yIl7K0AMEWBLC
-	axQOK9epSs0H61mWg5ofeuig4M5VP7rFn2RKmwcMVeqwc3iwKF13/pwXKXvAKJQ=
-X-Google-Smtp-Source: AGHT+IH/xpJNOj9b9GueLYwJ09ytVaIiUnOPLZsziqVJEzXxE/krpfrw37GQ1qd29ae0cQaKRTT7Tw==
-X-Received: by 2002:a05:6602:3f48:b0:7e1:8bc8:8228 with SMTP id en8-20020a0566023f4800b007e18bc88228mr963919iob.0.1715094571886;
-        Tue, 07 May 2024 08:09:31 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id r20-20020a056638131400b00488609cd945sm1915683jad.20.2024.05.07.08.09.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 08:09:31 -0700 (PDT)
-Message-ID: <d7d87db7-af34-4d48-8e26-ac13b5abced9@kernel.dk>
-Date: Tue, 7 May 2024 09:09:30 -0600
+	 In-Reply-To:Content-Type; b=LadJ00ZzYx54aipe8GmeWztEnviAWA4pcemXtzvmHT6t04yUlwUGBD2+4c2+8hck8f+Eo7he9OetB+VjDDi5XxlCTgun3gc+ay1eQVe0WK7nGvqm28yNRUhhTmMBnpoXzjcZwYgZKx0IxBfz0G7HPJAZ7IcDZkTML00Z7KuyJ5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QPc2lD4J; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447Em1DS018420;
+	Tue, 7 May 2024 15:10:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=VMnu+pDmL+oYK7xiki7kzb8soYvaBtZJpE+R7cKcFxY=;
+ b=QPc2lD4JTvtN0dOCusf02LiAEeVIKQODE0mSW35TJxQ5vrTqx+UMkAh0gmsf73NJ73ng
+ WlXvDL5yZGwnzPar137I8oybZ29oTtih3lLodvw++S3HycN+Si2MTycqZLyGlKQaXmf0
+ K8OxXGJkfwXOhKdBJCXmVHHuTIQjHIX+AlOxRul/MoDEnstoIuttFFlerjIOXEfpzPtE
+ 5qvPgsB7tUkJEyXa4/LDoFCcA7K6lVFPTeYOfD7wKJHsnyeN37RCkyFC+fQcqzi/c12p
+ kQuyiHpLdGVaQDPX9JJzXqLM8XzK4BbH1WO34z2kwpObYPBeSp5x/kcVqmV3GONr10wL jQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xypc6g25h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 15:10:35 +0000
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447FAYij024802;
+	Tue, 7 May 2024 15:10:35 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xypc6g25d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 15:10:34 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447Eg5bt028576;
+	Tue, 7 May 2024 15:10:33 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xwyr070js-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 15:10:33 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447FAR8820906388
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 7 May 2024 15:10:29 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B3D8820043;
+	Tue,  7 May 2024 15:10:27 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E7E782004E;
+	Tue,  7 May 2024 15:10:23 +0000 (GMT)
+Received: from [9.79.183.213] (unknown [9.79.183.213])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  7 May 2024 15:10:23 +0000 (GMT)
+Message-ID: <1c277ae0-14cc-4d79-a7a1-455ed996b67a@linux.ibm.com>
+Date: Tue, 7 May 2024 20:40:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,34 +82,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring/io-wq: Use set_bit() and test_bit() at
- worker->flags
-To: Breno Leitao <leitao@debian.org>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: christophe.jaillet@wanadoo.fr,
- "open list:IO_URING" <io-uring@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240507150506.1748059-1-leitao@debian.org>
+Subject: Re: [RFC PATCH v2 0/6] powerpc: pSeries: vfio: iommu: Re-enable
+ support for SPAPR TCE VFIO
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240507150506.1748059-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexey Kardashevskiy <aik@amd.com>, mpe@ellerman.id.au,
+        tpearson@raptorengineering.com, alex.williamson@redhat.com,
+        linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
+        naveen.n.rao@linux.ibm.com, gbatra@linux.vnet.ibm.com,
+        brking@linux.vnet.ibm.com, aik@ozlabs.ru, ruscur@russell.cc,
+        robh@kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au,
+        kvm@vger.kernel.org, msuchanek@suse.de, oohall@gmail.com,
+        mahesh@linux.ibm.com, jroedel@suse.de, vaibhav@linux.ibm.com,
+        svaidy@linux.ibm.com
+References: <171450753489.10851.3056035705169121613.stgit@linux.ibm.com>
+ <20240501140942.GA1723318@ziepe.ca>
+ <703f15b0-d895-4518-9886-0827a6c4e769@amd.com>
+ <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
+ <20240506174357.GF901876@ziepe.ca>
+From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+In-Reply-To: <20240506174357.GF901876@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: J4Gsgo8V3_3M_QYRnBmu-upxnqO-CmvX
+X-Proofpoint-ORIG-GUID: TasHpAtQk2MCFNjakLGTISoKhTN09Sii
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_08,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ spamscore=0 suspectscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 mlxlogscore=960
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405070104
 
-On 5/7/24 9:05 AM, Breno Leitao wrote:
-> @@ -631,7 +631,7 @@ static int io_wq_worker(void *data)
->  	bool exit_mask = false, last_timeout = false;
->  	char buf[TASK_COMM_LEN];
->  
-> -	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
-> +	set_mask_bits(&worker->flags, 0, IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
+Hi Jason,
 
-This takes a mask, no? I think this should be:
 
-set_mask_bits(&worker->flags, 0, BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING);
+On 5/6/24 23:13, Jason Gunthorpe wrote:
+> On Sat, May 04, 2024 at 12:33:53AM +0530, Shivaprasad G Bhat wrote:
+>> We have legacy workloads using VFIO in userspace/kvm guests running
+>> on downstream distro kernels. We want these workloads to be able to
+>> continue running on our arch.
+> It has been broken since 2018, I don't find this reasoning entirely
+> reasonable :\
 
-Hmm?
+Though upstream has been broken since 2018 for pSeries, the breaking
 
--- 
-Jens Axboe
+patches got trickled into downstream distro kernels only in the last few
 
+years. The legacy workloads that were running on PowerNV with these
+
+downstream distros are now broken on the pSeries logical partitions
+
+without the fixes in this series.
+
+>> I firmly believe the refactoring in this patch series is a step in
+>> that direction.
+> But fine, as long as we are going to fix it. PPC really needs this to
+> be resolved to keep working.
+
+Thanks, We are working on it.
+
+
+Regards,
+
+Shivaprasad
+
+>
+> Jason
 
