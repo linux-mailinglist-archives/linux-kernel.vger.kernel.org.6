@@ -1,159 +1,150 @@
-Return-Path: <linux-kernel+bounces-172117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC3B8BEDC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:07:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CAF48BEDCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E58A1F224C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:07:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07299281893
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675EA16F84D;
-	Tue,  7 May 2024 19:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B334716F8F0;
+	Tue,  7 May 2024 20:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XmcZxY1Z"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ux55KAKb"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A9E16E89D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7440C21373
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 20:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715111995; cv=none; b=qYASoHBJ6rx9nQ2iLzfzVrOriWDH3TPUMXxXlGLrLMNUTB5aiGYfJNBIp5Q20us8fBAe0yKwvU8F7cUFwsR2dfq1Klx3AMq6rBv8X0fxwcSA0X5gNsWH1ICMO9F/uB5DqeyuOvatDYkZ0mWWbQ+V1tphFyFuzL8BWyv3UGJWPc4=
+	t=1715112041; cv=none; b=pyeIPfB483vQAcndCwiiTH0KuEWX8SZLY+py0rT0nTLXf3J7iy2UORZgQ0IGYcuz/9+42VyOWmnFMb75CuPZWE4JN11hhLsXwutj2NGHmXqUpNVtGdttmBRWgWGQ+fzBlfOxwAOK9e4myNWu9t1aHjmf46ssrOlIsbPjWccyiMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715111995; c=relaxed/simple;
-	bh=i96+goKGZdI8wImUoBjARaHLkBInrQRdMejjNFZXHzw=;
+	s=arc-20240116; t=1715112041; c=relaxed/simple;
+	bh=X+Xadyc7sdCFiVHFD+t7jMRpxudrW1hnI3AG8/xjqPw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IH6w5hm4h112eqFO+ktQD1D8TLjYqD4iTGzmKsrD3Z3zA0oJPM0FkJc1fUiul+d5PsTazMhAYvgjQFoaarbAL3bMOwQ635thknmIEQud4TtL5Kv15/Fh/VrgoPHBRxdor9pZIq8Vaetz0//Y+ZGyxa83ZOgwgZRm39xmcDaI15k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XmcZxY1Z; arc=none smtp.client-ip=209.85.219.174
+	 To:Cc:Content-Type; b=Zk7BpY7VbmZwaLrWCeVe24Ih/rcGocP3n8yOAvJoAezVo2dEUox1cpsMz+fZdx6mnBWW7JIPFw4rLIIrauMfiOQZWZ5dozG0mutB6eh65Y7Hi/EgnrBmci8+xYF/ZRJAYoiIrqiTZqxvSMpPMhh1Vs5pihONSjnq7lt9Pllavns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ux55KAKb; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-deb654482bcso3631860276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:59:53 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-deb99fa47c3so2049807276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 13:00:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715111993; x=1715716793; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715112038; x=1715716838; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9u4+z96HwXR809ZF1PkEWCwnBjus+4ZFL2JjXWvh/IY=;
-        b=XmcZxY1ZgEkDXw/DzhDQvc5uElkUX6GOVrhwWzoXkytPq8zHWUpViRFjZY4v7TlXLn
-         iQgZRBo0IT6nczarnCP4M1JHMGENvHKDZUreFSfSzzPqLIIGCTPozXdxLx+Hc7ubhgmO
-         PCSaRbywb+q0I5AAeC2pQLbkXA3nJJ2dyavcbE3V2jstY1EXKzxMl9KJXBk6Wnx9yecv
-         RIDOAYyuUQHCWhg9yfoXXOz3mu8PwzWIyFXg/zdFrCDdfIagTYj6JuMVhxAAsDCvwKtx
-         ElOstvG4nuBa8PSZy48RYAOGmN5iPE7JcfArX89MEGYV5iOgEzGEFP2bCJzfxyXm5TxW
-         GXOg==
+        bh=Z6TCN9feXfNh1jAxhagWihzVe8ZvEfnj2X4SFV0NO20=;
+        b=Ux55KAKbWZ81kDEnyZ610y9+/YYIP1alVvWbk1m16otzzW/+0akVJDHScN6gdhKWp1
+         PADrPwjIlKZ1ToY42+be6QtzyB//2T7MrjJuL69bIZmPp4tGE4vvDvrBwJbPaVpHTWul
+         KdMl81iU6jVfyPm8wIlFWOvBl1Bkm/JPEwDN1Pi5dVJe3SRAT9wrKoB5Fz8+h+P+ZeoD
+         RGOTNG9cuYHPWAmADbGm56NotC1ye2JrzCchJD6zXY5luo0pPVp9/0RcwDFcPRmEHuz3
+         MYJ7pfMSfImvORBDPbvu+FYesevIVlu2fNR45+QEgZ93s2vYtylvRmlmruK8MLfJ+H3+
+         QS0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715111993; x=1715716793;
+        d=1e100.net; s=20230601; t=1715112038; x=1715716838;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9u4+z96HwXR809ZF1PkEWCwnBjus+4ZFL2JjXWvh/IY=;
-        b=S1b6GbevEBjnx4bNDLp1EEG22UiJ626nVkMTHgL7C/6u1dbHEO4aSQMEa4nrn4othx
-         szjYfl8CtSqWg9WS5lbng3BhOQ6ihXN4zuaD1DH9daux6LNhzl3PnqvJRerY70Z4U5ut
-         UNACKZbdJZH6aV2GPm2BxjqQRWiXcmYjLO0QFjOAG3jMmq3NRP0fV/Cld0QavGr0lw63
-         SQNbF2E5+DzeRZMoCRhvP1SGm/njG7wsmfymSKBdnN+rhzhYEZnUlN7tNkLrM2Cv6UCd
-         9SW7+Xol9CEKAvPSAYf0D1E0sYpiNMHXItnOPKvzdLSCMMw5UhK7Q0VJ2+zlkQOYO6Fg
-         vqMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbTYhpaDHtB5Beo/XHDODQH+2ZfVdLK1weowGmgdML+qTtLLreS3V84n+8QjGG3ODlAHlg7Gl+7NERu8EX7kxkq8KuIP4EWPRElFvB
-X-Gm-Message-State: AOJu0YwG7MavrLuxjZUhVoqkCRSUAKCr+f6n0CcaUd1jmcrP9+wKqzh+
-	fijiVyckkl2rpq4q7oofV+LSkYTgQjJ0OAg604Q/PC2jLLzsS0THfsv8xQOAHILAg7nsb1tcCFx
-	1e453N9/P5UBlV53X8h8FVz5snzayKWnn64Nlkw==
-X-Google-Smtp-Source: AGHT+IHOidTRxfaPcTyYfkMUG+K57a4v9CN0Di3Y62BasjAdrMLYfJVqOjaj2F7Xus+0Xcdfeto1KfCFGsurjzlI9PQ=
-X-Received: by 2002:a5b:881:0:b0:deb:b3da:b1ad with SMTP id
- 3f1490d57ef6-debb9cf9739mr749935276.12.1715111993047; Tue, 07 May 2024
- 12:59:53 -0700 (PDT)
+        bh=Z6TCN9feXfNh1jAxhagWihzVe8ZvEfnj2X4SFV0NO20=;
+        b=eLynN9jTBprzT5yTt7JUf7b0TkPvaEABXUlyt2pc39BJtDZdb7DrMW3M2rgK8GmSWV
+         8vwFng07MJEznmf0ES5QtAvcjP4THEK+gX8XZcTd2EUGrUkTXdcJZfWMBkiTbQjX6A9t
+         8PcnJX//Gk50fD7A8C/6hMXtXjS+fjPWL0phHCopnSiNboeNOP0jVGzfntkLTYWWuiZX
+         X5qsTyUk0fjBf2WCZV11qffl5FAsAZzB1131+fFydCe9Z/wWgE7+KKYrw3A+AlCxsdtL
+         JZdnMWfMB/oA55X0Riu7jTCoLLKeAzKVvZXCQIJ1MR6bwbQmjo9VZgI8zmyw0miCtE1R
+         hsrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyg77UJPacMx3SbYKF56jO4b89exiVbSXK5oiQp4K1O/XA1GDj333Na8HiEmpVHiq2mlqz4NBIAxUvJn3eegS4tFkdf0VGrA9d1D00
+X-Gm-Message-State: AOJu0YxwzbosPSb6VJ9vDb2Skeo6AETC03zGgpcXczX95NOXz8dzRE0t
+	cXY86AzOL0Uizu2BUG5A6PTgPpIRVt267TfdZUYXVb1pV+l9YSg1qtCuxH2Gv0XGhWYpALMizRW
+	BwaOx/hQKkjgI2tKYdYPNBt+G1YLXsd4YISDj2A==
+X-Google-Smtp-Source: AGHT+IF60hyBbjrnBKrhZePsOuZiXssFt8q1j+2GeW5Nikua4rfikn2nZlySLqvaFitVitDqb6f/6c7TSTgAxbIfE+0=
+X-Received: by 2002:a25:8f88:0:b0:dd1:48c9:53f3 with SMTP id
+ 3f1490d57ef6-debb9e4f729mr646274276.60.1715112038171; Tue, 07 May 2024
+ 13:00:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
- <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com> <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org> <CAA8EJpr4bJUQt2T63_FZ=KHGEm4vixfpk3pMV9naABEONJfMmQ@mail.gmail.com>
- <20240507184049.GC20390@pendragon.ideasonboard.com>
-In-Reply-To: <20240507184049.GC20390@pendragon.ideasonboard.com>
+References: <CA+G9fYs1ZN2K=UHOjrwRR2JNE-M0nf9iW_Q-YPzVgmW+9daU4Q@mail.gmail.com>
+ <CA+G9fYs1F=kO11-+DtAOsNwZGEd8mmojXEfXfg431JG=Spubcg@mail.gmail.com>
+ <CAA8EJpoMwy2w3a9VF3ejGkcxFK905DCczZOdD4k-cd7ouKHYcA@mail.gmail.com>
+ <CA+G9fYuGLz76C9F=onq6u2hk9_YYHhyjT+bvwXmeN8U6bhejNQ@mail.gmail.com>
+ <CAA8EJpp5TO9CkwWCUy_OL5T4px9gTjmB-pKPr1dNPgudVc78Tg@mail.gmail.com> <c3013f57-0d0b-4e3c-9658-7cc989b77c73@app.fastmail.com>
+In-Reply-To: <c3013f57-0d0b-4e3c-9658-7cc989b77c73@app.fastmail.com>
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 7 May 2024 22:59:42 +0300
-Message-ID: <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, 
-	Sebastien Bacher <sebastien.bacher@canonical.com>, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal <mzamazal@redhat.com>, 
-	Maxime Ripard <mripard@redhat.com>, Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Date: Tue, 7 May 2024 23:00:26 +0300
+Message-ID: <CAA8EJpqqYrSLoLmhBLTG=dH2dxk=8Ab4PW35nt6b_Vfe5722Fg@mail.gmail.com>
+Subject: Re: arm64: defconfig: gcc-8: failed: AttributeError: module
+ 'argparse' has no attribute 'BooleanOptionalAction'
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, lkft-triage@lists.linaro.org, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 7 May 2024 at 21:40, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+On Tue, 7 May 2024 at 22:18, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Tue, May 07, 2024 at 06:19:18PM +0300, Dmitry Baryshkov wrote:
-> > On Tue, 7 May 2024 at 18:15, Bryan O'Donoghue wrote:
-> > > On 07/05/2024 16:09, Dmitry Baryshkov wrote:
-> > > > Ah, I see. Then why do you require the DMA-ble buffer at all? If you are
-> > > > providing data to VPU or DRM, then you should be able to get the buffer
-> > > > from the data-consuming device.
-> > >
-> > > Because we don't necessarily know what the consuming device is, if any.
-> > >
-> > > Could be VPU, could be Zoom/Hangouts via pipewire, could for argument
-> > > sake be GPU or DSP.
-> > >
-> > > Also if we introduce a dependency on another device to allocate the
-> > > output buffers - say always taking the output buffer from the GPU, then
-> > > we've added another dependency which is more difficult to guarantee
-> > > across different arches.
+> On Tue, May 7, 2024, at 20:19, Dmitry Baryshkov wrote:
+> > On Tue, 7 May 2024 at 21:06, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >> On Tue, 7 May 2024 at 20:58, Dmitry Baryshkov
+> >> <dmitry.baryshkov@linaro.org> wrote:
+> >> >
+> >> > On Tue, 7 May 2024 at 16:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >> > >
+> >> > > On Tue, 7 May 2024 at 17:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >> > > >
+> >> > > > The arm and arm64 with gcc-8 builds failed on Linux next-20240507 tag
+> >> > > > with gcc-8 due to following warnings / errors.
+> >> > > >
+> >> > > > arm64 and arm:
+> >> > > >   defconfig - gcc-8 - failed
+> >> > >
+> >> > > Anders bisected this build problem and found the first bad commit:
+> >> > >
+> >> > > 07a2f8716c41 drm/msm/gen_header: allow skipping the validation
+> >> > >
+> >> > > Steps to reproduce:
+> >> > > -----
+> >> > > # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
+> >> > > --kconfig defconfig
+> >> >
+> >> > What is the python version on that platform / system?
+> >>
+> >> # python --version
+> >>  Python 3.7.3
 > >
-> > Yes. And it should be expected. It's a consumer who knows the
-> > restrictions on the buffer. As I wrote, Zoom/Hangouts should not
-> > require a DMA buffer at all.
+> > EOL.
+> > I'll check what we can do, but please consider updating the platform.
 >
-> Why not ? If you want to capture to a buffer that you then compose on
-> the screen without copying data, dma-buf is the way to go. That's the
-> Linux solution for buffer sharing.
-
-Yes. But it should be allocated by the DRM driver. As Sima wrote,
-there is no guarantee that the buffer allocated from dma-heaps is
-accessible to the GPU.
-
+> I don't think we can rely on everyone to have 3.9, 3.8
+> is not EOL yet, and we do want to still test in distros with
+> older compilers that may also come with old python.
 >
-> > Applications should be able to allocate
-> > the buffer out of the generic memory.
+> It should just work with a regular optional argument instead
+> of the BooleanOptionalAction (without the --no-validate flag):
 >
-> If applications really want to copy data and degrade performance, they
-> are free to shoot themselves in the foot of course. Applications (or
-> compositors) need to support copying as a fallback in the worst case,
-> but all components should at least aim for the zero-copy case.
-
-I'd say that they should aim for the optimal case. It might include
-both zero-copying access from another DMA master or simple software
-processing of some kind.
-
-> > GPUs might also have different
-> > requirements. Consider GPUs with VRAM. It might be beneficial to
-> > allocate a buffer out of VRAM rather than generic DMA mem.
+> https://docs.python.org/3/howto/argparse.html#introducing-optional-arguments
 >
-> Absolutely. For that we need a centralized device memory allocator in
-> userspace. An effort was started by James Jones in 2016, see [1]. It has
-> unfortunately stalled. If I didn't have a camera framework to develop, I
-> would try to tackle that issue :-)
-
-I'll review the talk. However the fact that the effort has stalled
-most likely means that 'one fits them all' approach didn't really fly
-well. We have too many usecases.
-
+> > @@ -538,6 +538,9 @@ class Parser(object):
+> >               self.variants.add(reg.domain)
+> >
+> >       def do_validate(self, schemafile):
+> > +             if self.validate == False:
+> > +                     return
+> > +
+> >               try:
+> >                       from lxml import etree
 >
-> [1] https://www.x.org/wiki/Events/XDC2016/Program/Unix_Device_Memory_Allocation.pdf
+> This bit may have to become 'if not self.validate',
+> since the flag in this case is None rather than equal
+> to False. This also improves readability.
+
+Could you please send a patch?
 
 -- 
 With best wishes
