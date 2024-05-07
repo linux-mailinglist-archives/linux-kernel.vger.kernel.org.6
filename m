@@ -1,120 +1,140 @@
-Return-Path: <linux-kernel+bounces-171250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4703D8BE1D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6068BE1D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7444288A80
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:16:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1624F282389
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6E815747E;
-	Tue,  7 May 2024 12:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F85B156F45;
+	Tue,  7 May 2024 12:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bursov.com header.i=vitaly@bursov.com header.b="DlBDuFVN"
-Received: from sender-of-o51.zoho.eu (sender-of-o51.zoho.eu [136.143.169.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="QY69fWhW"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99BA73530
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715084183; cv=pass; b=rPjUreElMk1bZjax+IWuNzrJs+/6TYDFkq8ZAPrn+Hxur+OuHxBFcdDyMk0Kc6dsf3+ft+85igGZSioacmdA+OjnDyP3YYcgwjn5WNSoJKhyScfmM46+Fw+VPGz4dzAG9pnv6aj8MX9JJcg7FGGwSKCRs6Q+o9Fa8Hb7ibMBN1M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715084183; c=relaxed/simple;
-	bh=UNytWRjy0n4ufLE4F4bgxm6zk7gEYUpI72DLf8Lh5nI=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u98cPtB4tuv5RLYwwvWxjt7pBPkKKXmFZy0wy5NkCaHg0md/RylY7xSGxrxNjg37fIZST1d5odXO/sAfRsCX+oXbKDsFtLpJyeGdvnfw7oLpV9YYZvaBg6MrOlPxp3S70m1J7Dluu25t3/V+PdarWuH+6swnDuE36q2i+uQaC/k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bursov.com; spf=pass smtp.mailfrom=bursov.com; dkim=pass (1024-bit key) header.d=bursov.com header.i=vitaly@bursov.com header.b=DlBDuFVN; arc=pass smtp.client-ip=136.143.169.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bursov.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bursov.com
-Delivered-To: vitaly@bursov.com
-ARC-Seal: i=1; a=rsa-sha256; t=1715084147; cv=none; 
-	d=zohomail.eu; s=zohoarc; 
-	b=eDhgaghwNO9TkR+6P3sk9209X/Av29QJ+dZ08tiqdNuNI4cO/NbU+FZ9qILWIAFcFELF5KDRIYTUUtCZAZG3UDVhnCloVz/Y/oSkef/idXRnc+HK5hWWhw3fRH4SsM3YvBsIFDLJpWrWNcfDExox9rjD+IrYbev0Y608pwSn3X4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
-	t=1715084147; h=Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=ztyWG1tL5SLCHcSqhDRsGp0b5KZvYGYaxjeAuQmObZI=; 
-	b=C2WDLSV4C3vw7yohjhzOuQmkQE/AXQFqX44q2lX1yhdS4k6w2xy/LjqKbYEaRn02DCgi1h75cWqiOrLmVO9QKIzbBIxBZX9fN6Gs8AroY6L/3wdYQkg5DybRn5TzIl2yGCuUmUDEnPWS01lIZkvg7FdZQNnG+C5Tb4If36ypG+Q=
-ARC-Authentication-Results: i=1; mx.zohomail.eu;
-	dkim=pass  header.i=bursov.com;
-	spf=pass  smtp.mailfrom=vitaly@bursov.com;
-	dmarc=pass header.from=<vitaly@bursov.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1715084147;
-	s=zoho; d=bursov.com; i=vitaly@bursov.com;
-	h=From:From:To:To:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To:Cc;
-	bh=ztyWG1tL5SLCHcSqhDRsGp0b5KZvYGYaxjeAuQmObZI=;
-	b=DlBDuFVNVCo7Y0r8HV6HNTPJ3bCx3tbX3/guZf9EpcjlakXuGYdSZsJajtJDUx1c
-	u6SQyfkwIyqnlQaemwep7bVHUhVVFei43+CBJKAR6whOeHW/vqiiXvJho5YDDQ7qSdw
-	LG3cX7e/ehTLCQ9TxD1cT3Ld8+hyRCJNVlrBQa8A=
-Received: by mx.zoho.eu with SMTPS id 1715084145078400.64154813110486;
-	Tue, 7 May 2024 14:15:45 +0200 (CEST)
-From: Vitalii Bursov <vitaly@bursov.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Vitalii Bursov <vitaly@bursov.com>
-Subject: [PATCH v5 3/3] docs: cgroup-v1: clarify that domain levels are system-specific
-Date: Tue,  7 May 2024 15:15:33 +0300
-Message-Id: <986e31abb79644e74df0b80adc829eb71a1e4551.1715083479.git.vitaly@bursov.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1715083479.git.vitaly@bursov.com>
-References: <cover.1715083479.git.vitaly@bursov.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BCB1514F1
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715084149; cv=none; b=PxcAyhp6OAhVOOVcLCXE2A9p99tmEGVXnxjxb78tUDZm1TfmaTuMScdr3Mp7M6ivw7Yy1nw+g8zGH+9baq4iUgvpgj6pz2nhhTLMlbhI14xyh0n3yJMlb+GlvDQNXkPXkgZpSNcaV4s16NOZ0DK9+c3DGpsIYs6JaO/5oQk4wCU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715084149; c=relaxed/simple;
+	bh=dWYuhSmaw6zHw/xPyvKvmeoz7fmgJSbAFIN1ULigx1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bnDscfUXQHUXEkkjVdU6DqKovHYo1Rs+Rpzhm75BUHHmI0pYD8kqdDsC3mGEx68OlQCJuW5fvTiOtihmZ8VlCKwc0mNlGtCdQc4SFUzhCy1YoujXRtvDpw5xW05Yf4hQd0V7Mn7UhV2Kvf27WXZfUEvl4ndRR7pmnfEZiJ10cIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=QY69fWhW; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso564629766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 05:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1715084146; x=1715688946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IUKfXenJAG2N5WSgqguRSHR3qBfgjkNSXZ2oXGFiItU=;
+        b=QY69fWhWTMO3yG0urr8Aozglu4L7uxGOzS5TmFk/WK6iITOQanhnK1ahmYOtxnzzG8
+         JYb7EDzzh0gkeDc0+BzFaf60CCXOb+IoQ7FIX6VHymQDUsxolg3vXsoOaBwUOTRSn5wP
+         UjxzfaNKs4pJEDAavj89x+VfKE+yP4d2nMEHroOv4WkTGrgbQB2O6afZIK8bgmTcBBgH
+         3CrZrXQYTmZvLbuz18E7KTud7+k5ytqi8GYCIbzPLOTtcif7gA8FoUbwHrofMBPsrs5j
+         EJETQYi9jnHMbau0E0aH1lM9xPaBMa3Y3CaKHDB9WrTLz5o1eHR1pE9kruO79+zjKqpc
+         KNKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715084146; x=1715688946;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUKfXenJAG2N5WSgqguRSHR3qBfgjkNSXZ2oXGFiItU=;
+        b=w4MBpOYJvrmfeb948XsKwFXE5nIiLtSrbCIuuRKMHGgtxZ5L83fzgGHzT3Jt3anmQF
+         u2dE0VrLPib5HUQ1DY/sd7ZpT36BA3yUJAVfnv2YxgriNRgLluP+KJzibDcc67tZp16q
+         hpTkwf/OTGsQ7M2jdHtyv96g3agrqL2c9FOERuT4RlUUnuppjnRP344T8pfblFVJkQY+
+         N1ZedCT5k3+cC/iAEg0Vn6Lz/s8Fyf3zU7Ttlhg91ipWpro/C8gsdFln/nH/ifsIlBBH
+         7u4ZUb7dC6En8eaWUes4P4XdF88i/egwlQsmPa2RRjgd1dvqBEQtdrxJpA5VXrh3M43E
+         +gVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSynSg6CN8htbN8jsPJ9JJVGqs/1af7GvptJMEHS1loQ87OdRqvrpP5zy/d9xhFejAqplVDSFwm9VkKt85Ck+Vd7j+iwZ8R9TK8nn1
+X-Gm-Message-State: AOJu0Yweh+AFBwkvuN90AjCEn4CzkYV6R7aevz7zX9oiSD2JA2cWo6eP
+	nZwis844Yo3UXrP3gbxNqgXqQznikexmgyYDlmwgZERAGMFmZV49UR8YTrmgR68=
+X-Google-Smtp-Source: AGHT+IG9cak2fCNRkjLA6nMOklMc3wR0gPeYdLkCkvN53U7wFdtqN+DcTu8b6RKxXiaT5kYD3tNeag==
+X-Received: by 2002:a50:d4d3:0:b0:570:cd6:8ef with SMTP id e19-20020a50d4d3000000b005700cd608efmr9909187edj.29.1715084145631;
+        Tue, 07 May 2024 05:15:45 -0700 (PDT)
+Received: from [192.168.51.243] ([78.128.78.220])
+        by smtp.gmail.com with ESMTPSA id j8-20020a50ed08000000b0056e718795f8sm6289854eds.36.2024.05.07.05.15.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 05:15:45 -0700 (PDT)
+Message-ID: <9a1825ff-3a55-4c2a-86bc-0709d4ff8153@blackwall.org>
+Date: Tue, 7 May 2024 15:15:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: bridge: fix corrupted ethernet header on
+ multicast-to-unicast
+To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
+ Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: bridge@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240505184239.15002-1-nbd@nbd.name>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20240505184239.15002-1-nbd@nbd.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add a clarification that domain levels are system-specific
-and where to check for system details.
+On 05/05/2024 21:42, Felix Fietkau wrote:
+> The change from skb_copy to pskb_copy unfortunately changed the data
+> copying to omit the ethernet header, since it was pulled before reaching
+> this point. Fix this by calling __skb_push/pull around pskb_copy.
+> 
+> Fixes: 59c878cbcdd8 ("net: bridge: fix multicast-to-unicast with fraglist GSO")
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+> ---
+>   net/bridge/br_forward.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
+> index d7c35f55bd69..d97064d460dc 100644
+> --- a/net/bridge/br_forward.c
+> +++ b/net/bridge/br_forward.c
+> @@ -258,6 +258,7 @@ static void maybe_deliver_addr(struct net_bridge_port *p, struct sk_buff *skb,
+>   {
+>   	struct net_device *dev = BR_INPUT_SKB_CB(skb)->brdev;
+>   	const unsigned char *src = eth_hdr(skb)->h_source;
+> +	struct sk_buff *nskb;
+>   
+>   	if (!should_deliver(p, skb))
+>   		return;
+> @@ -266,12 +267,16 @@ static void maybe_deliver_addr(struct net_bridge_port *p, struct sk_buff *skb,
+>   	if (skb->dev == p->dev && ether_addr_equal(src, addr))
+>   		return;
+>   
+> -	skb = pskb_copy(skb, GFP_ATOMIC);
+> -	if (!skb) {
+> +	__skb_push(skb, ETH_HLEN);
+> +	nskb = pskb_copy(skb, GFP_ATOMIC);
+> +	__skb_pull(skb, ETH_HLEN);
+> +	if (!nskb) {
+>   		DEV_STATS_INC(dev, tx_dropped);
+>   		return;
+>   	}
+>   
+> +	skb = nskb;
+> +	__skb_pull(skb, ETH_HLEN);
+>   	if (!is_broadcast_ether_addr(addr))
+>   		memcpy(eth_hdr(skb)->h_dest, addr, ETH_ALEN);
+>   
 
-Signed-off-by: Vitalii Bursov <vitaly@bursov.com>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
----
- Documentation/admin-guide/cgroup-v1/cpusets.rst | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+This dance is getting ugly, but better to have it correct.
+It'd be nice if you could add a selftest that exercises it.
 
-diff --git a/Documentation/admin-guide/cgroup-v1/cpusets.rst b/Documentation/admin-guide/cgroup-v1/cpusets.rst
-index 7d3415eea05d..f401af5e2f09 100644
---- a/Documentation/admin-guide/cgroup-v1/cpusets.rst
-+++ b/Documentation/admin-guide/cgroup-v1/cpusets.rst
-@@ -568,7 +568,7 @@ on the next tick.  For some applications in special situation, waiting
- 
- The 'cpuset.sched_relax_domain_level' file allows you to request changing
- this searching range as you like.  This file takes int value which
--indicates size of searching range in levels ideally as follows,
-+indicates size of searching range in levels approximately as follows,
- otherwise initial value -1 that indicates the cpuset has no request.
- 
- ====== ===========================================================
-@@ -581,6 +581,11 @@ otherwise initial value -1 that indicates the cpuset has no request.
-    5   search system wide [on NUMA system]
- ====== ===========================================================
- 
-+Not all levels can be present and values can change depending on the
-+system architecture and kernel configuration. Check
-+/sys/kernel/debug/sched/domains/cpu*/domain*/ for system-specific
-+details.
-+
- The system default is architecture dependent.  The system default
- can be changed using the relax_domain_level= boot parameter.
- 
--- 
-2.20.1
+Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
 
 
