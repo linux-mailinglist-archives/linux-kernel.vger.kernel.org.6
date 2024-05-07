@@ -1,85 +1,131 @@
-Return-Path: <linux-kernel+bounces-171154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F2D8BE05D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:57:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0078BE07B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1941F27563
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6406B28A775
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476EA15E5A2;
-	Tue,  7 May 2024 10:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRSHGPst"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6B01514D4;
-	Tue,  7 May 2024 10:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C6A14E2CF;
+	Tue,  7 May 2024 10:57:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3881214F9DE;
+	Tue,  7 May 2024 10:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715079265; cv=none; b=CMZcBI2tIrBzratrMIEaP6XtvKIhTDFBcZBtdQhyicQmcG3KNeuaEKRXiQ23j+mH+5EiIc+fmA9a/f2llQ0bivxCckNRA5WHhS2LP4bOUxryI4GSN7yq/viiggngUvXTAvsN/ZItuMHbgEzZPS0VYUh/guTe/ts+BnK/3LMKFKA=
+	t=1715079454; cv=none; b=nvNdvP/SHCd/0DDSBTKrDDHTEC2h03c4TrQjVKG4TY6F6a5sBqbxpHwakQ6B1NaPMfxLkf0HfFCPm94XihrSVmKZTkNStADydzrgqXO76RQ8HFolAJeVPwCV95XAnP0WE5NWZ0+StIREHzsoCPhQb6WNj/RNhJb3GUdFMQS5HY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715079265; c=relaxed/simple;
-	bh=x3+TjIsYg6xVZcpqHsEC6+vHNVSJS+vbAGLYUkgzoHY=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=tFRGOQgcZonpDCAW6Gk9HbFdpxDRqBBTfLeDrTkCmvoDzIYrZ/6ITHI9pY+50X2oJRs5hb7Od81nyJzOr57uqjBvqM9BEnvQPFgAWRcw/o5P3p0YrGwThczMuo1/efMstiPMHbOW3Nr1DLLoKvSHmxoRgcsgr6F7BcG+tMyWxwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRSHGPst; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B813BC2BBFC;
-	Tue,  7 May 2024 10:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715079265;
-	bh=x3+TjIsYg6xVZcpqHsEC6+vHNVSJS+vbAGLYUkgzoHY=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=oRSHGPstoXLM047W8nTxzF4tFZ7raDGOAmpEJB9rhPiCcoLHBjWwoJHmZdtkfxVdT
-	 QlvDSgvEJ0EqXM8xPMHtTlgczZ5QHkPZ3fPmGCCKqB3hMo+Hg9TczVvCyVRUhZ5KS0
-	 lW4QVQBKoYUw0pfodhxPlPviHpbaAwWaKmGQQ+ru/UK9uLfQMvXuDy0XwvifE8iM/s
-	 uy+ts1jMRRXeEf0A0meDdPNcItDiu6+r0YdalFc2DvKJhOdZw/XLrvET70SLOvLDAD
-	 y4Fs984dyHSmDEy5VsJQpr5U5NlrD3NTo5lutoEo0wKZ0ZRYwnqHuZxI7hS2aPEbmv
-	 Mvd9r2RSrNLYw==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715079454; c=relaxed/simple;
+	bh=njXfh2vlNt8e02BLkhSMu8rI1c4JuveTMOFghreNkOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YO4eN2ubfCeMyJgIaqMNXkssV2m7gyuJ0Lj1QlYcymYAHG5t6o1IW1/iXN1Ut5s81HhX9YqtJqiNW3NDSnbgFOyvMC4FPVe5UuTgTPmZ6AwB8xlu2WeHGwk1cWLtuWcZkmH0xwvUHsSGoLo+MRA6ulyxwwVqSzqLx0BQ6zN3a4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B5191063;
+	Tue,  7 May 2024 03:57:58 -0700 (PDT)
+Received: from [10.163.37.41] (unknown [10.163.37.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31DEF3F587;
+	Tue,  7 May 2024 03:57:23 -0700 (PDT)
+Message-ID: <ecb16ad9-7c91-4cf6-ab7e-4b4b5be7165c@arm.com>
+Date: Tue, 7 May 2024 16:27:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/17] perf cs-etm: Print error for new
+ PERF_RECORD_AUX_OUTPUT_HW_ID versions
+Content-Language: en-US
+To: James Clark <james.clark@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-perf-users@vger.kernel.org, gankulkarni@os.amperecomputing.com,
+ scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
+ mike.leach@linaro.org
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-2-james.clark@arm.com>
+ <08bcd616-5006-45df-b8cc-45cf3a1dd762@arm.com>
+ <de635db0-6510-452f-91be-4fc5f7fdf671@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <de635db0-6510-452f-91be-4fc5f7fdf671@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 1/2] wifi: ath12k: fix misspelling of "dma" in
- num_rxmda_per_pdev
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: 
- <20240504-ath12k_dp_rxdma_ring_sel_config_wcn7850-ret-v1-1-44d2843a2857@quicinc.com>
-References: 
- <20240504-ath12k_dp_rxdma_ring_sel_config_wcn7850-ret-v1-1-44d2843a2857@quicinc.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jeff Johnson <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
- <ath12k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- Jeff Johnson <quic_jjohnson@quicinc.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171507926213.4120318.15441054563934456845.kvalo@kernel.org>
-Date: Tue,  7 May 2024 10:54:23 +0000 (UTC)
 
-Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-> The ath12k_hw_params member num_rxmda_per_pdev contains a misspelling
-> of "dma" so fix it.
+
+On 5/7/24 15:36, James Clark wrote:
 > 
-> No functional changes, compile tested only.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> On 07/05/2024 04:47, Anshuman Khandual wrote:
+>>
+>>
+>> On 4/29/24 20:51, James Clark wrote:
+>>> The likely fix for this is to update Perf so print a helpful message.
+>>>
+>>> Signed-off-by: James Clark <james.clark@arm.com>
+>>> ---
+>>>  tools/perf/util/cs-etm.c | 5 ++++-
+>>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+>>> index d65d7485886c..32818bd7cd17 100644
+>>> --- a/tools/perf/util/cs-etm.c
+>>> +++ b/tools/perf/util/cs-etm.c
+>>> @@ -335,8 +335,11 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
+>>>  	trace_chan_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
+>>>  
+>>>  	/* check that we can handle this version */
+>>> -	if (version > CS_AUX_HW_ID_CURR_VERSION)
+>>> +	if (version > CS_AUX_HW_ID_CURR_VERSION) {
+>>> +		pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID version %d not supported. Please update Perf.\n",
+>>
+>> Is not this bit misleading ? PERF_RECORD_AUX_OUTPUT_HW_ID is just the perf record
+>> format identifier. The record version here, is derived from the platform specific
+>> hardware ID information embedded in this perf record.
+> 
+> Not sure I follow what you mean here. 'version' is something that's
+> output by the kernel. It's saved into a perf.data file, and if Perf
+> can't handle version 2 for example, you need to update Perf.
 
-There was a trivial conflict in ath12k_dp_rx_pdev_srng_free(), please check my changes:
+Got it.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=238d04b67c32e99181b0249bb847b11ce702960b
+> 
+>>
+>> Should not this be just s/PERF_RECORD_AUX_OUTPUT_HW_ID/hardware ID/ instead ?
+>>
+> 
+> It's just a way to go from the error message to the part of the code or
+> docs that you need to look at. "hardware ID" wouldn't lead you anywhere
+> so I don't think it would be useful.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240504-ath12k_dp_rxdma_ring_sel_config_wcn7850-ret-v1-1-44d2843a2857@quicinc.com/
+Sure, fair enough.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+> 
+>>> +		       version);
+>>>  		return -EINVAL;
+>>> +	}
+>>>  
+>>>  	/* get access to the etm metadata */
+>>>  	etm = container_of(session->auxtrace, struct cs_etm_auxtrace, auxtrace);
+>>
+> _______________________________________________
+> CoreSight mailing list -- coresight@lists.linaro.org
+> To unsubscribe send an email to coresight-leave@lists.linaro.org
 
