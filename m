@@ -1,288 +1,122 @@
-Return-Path: <linux-kernel+bounces-171688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B523B8BE755
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:22:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B0C8BE758
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ADE3282CF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EEA1C2387C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6469216ABF3;
-	Tue,  7 May 2024 15:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5677A1649DA;
+	Tue,  7 May 2024 15:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Pw4ZbWsN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MfR7q9PK"
-Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OO46xxDR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD492168AF8;
-	Tue,  7 May 2024 15:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1C416192D;
+	Tue,  7 May 2024 15:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715095338; cv=none; b=uLLHZnEGIYsKV5pBDBMoIDo76YAt03lz0o2w5Tpi6h16BUyF/o0W7coTmHiCzL50hs/COGomjWqkrTzidxmw0YEF/Tc15Ftr/iZkjcpu4ZuVHWKhav5+7uqoDICVbeoja3SIJ8FHqPkcZ30rxB5kfWRhCY9kPii8SvPtdcqC/68=
+	t=1715095383; cv=none; b=nymAVCEMMDbjPDkFFKAV/27WmFyIFpNcBP+4OT2d0V6NuqRt6v2tfNKDamJP0ZSIXNeN/+dSpCMUUYKYTAu6DKl3XWqhDqeSX3k+FSNAplNgkKWX9s7vayeL9JITcj+l55EFuesQI92//B3ByFLXOh26d4l+lspySoOuWrBD7IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715095338; c=relaxed/simple;
-	bh=pQz0w1yBfPHUBv/v0nbOyM9aMVNE+JcqduRqxVhK+yQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RSIPxuPPT9qENnEGefleu9rAwGU/wp/6psvvSJoyBfh+uh2OJoTQUp7OvFAJ9S+qd6IyK+hLdIIXrjEV0ClCG8w+BY15B8SSpu9iJAkOTJCcIY8Vb03LZE0emIHNeveVDVQX5PS6hnuzQDiZqTC/dn303CxHCu1y+tYJa3v8QoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=Pw4ZbWsN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MfR7q9PK; arc=none smtp.client-ip=64.147.123.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfhigh.west.internal (Postfix) with ESMTP id E623C180013F;
-	Tue,  7 May 2024 11:22:15 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Tue, 07 May 2024 11:22:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1715095335;
-	 x=1715181735; bh=3D0GaVF05UsiobMGqr5NYu1yNUERD1Uibyz1tRmG9fM=; b=
-	Pw4ZbWsN/RUod8jQLaOL2WJEEMdQba8MbGhrUKPtnQbZtx04SKiJDdR5tJykk9bz
-	+DUId1bJxG1RJ6xa82TX0dLJc+FbB1a3tZG4g7cfeIkBJe0FWUqyDWcxXdDEX6uH
-	bSwz/zrM5gLY/CUbKX10SNWjbNJObCpdRx0Z+tGKwXohfOqww/nrUGBcW++Iexug
-	uxRMWtqjiLzYi5fUm5xBXcDBZkKo03lI581lER7F5+NoEH4KMvRwbCJELmFxiqFv
-	zwfIPvSLgdLU72Jqouxpmln3P8LAXd39JaVu94E7qTrKmv98ZA8bLyf7IFwWHBgR
-	wVvt8T9g1hALJOmy6COVEw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715095335; x=
-	1715181735; bh=3D0GaVF05UsiobMGqr5NYu1yNUERD1Uibyz1tRmG9fM=; b=M
-	fR7q9PKO26AnH9L4CgQLtPo6e8M4TqPOAUFH3anG7GTblZALqimK/FofhuQeUvE9
-	DPmNokjWTX+yz6LiUHmXLCQvQhSfTWLFbkjBaFECtwRdYm+j8gY60Pr9R1Lv2OlU
-	V/QRRi2clCwSEgGzi10atPdIyuFP3z+8RpTooF96quDhgT6JCJHYskYFWVCdX20G
-	v92TIKjDJVsNLjMorwsykgzFs3NPFl0VUUyq0Dg/ZO2CkmHfndcr4Gompo0EDTYl
-	ZH1UGwmypCWXgKAYn67LWEj4l1l+6fO0X6JhPL/4DTxnlgg8Kb+geWKFTCEL+LsQ
-	9Z1ldv6U6sqxRw+ALNcDA==
-X-ME-Sender: <xms:J0c6ZhNB5Z4crQc-Ak--CB_3r8Dg6NYIO0qDJwCfdvx-Ksvdl8C8fw>
-    <xme:J0c6Zj_jjV-3tXRLmKQQmyG2QXnoNYeoxTI_wQb66CZMooMFyw_CTEbtNRsjhmzKQ
-    1ivHWAZQRXlZ6zns8M>
-X-ME-Received: <xmr:J0c6ZgS0CEFpaiaajdy2-MjgpGea57epJPoZ1UihesgGCS1CR8OQC_o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgkeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflihgr
-    gihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqne
-    cuggftrfgrthhtvghrnhepiefgleeivefgieejhfdvhfdvieeiudehvdevfeetveetieek
-    tdfffedufffhgeehnecuffhomhgrihhnpehslhgvvghpvghrrdhssgenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhg
-    sehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:J0c6ZtupAzN8AN5gEeZHf6yx2vUCUWU3fl38JqQ_ZIcA80OSVyOVjA>
-    <xmx:J0c6ZpfYUb-H8chJJbSMmKBymfmV2-em5wBM0CDlK46tL_G-fHsivA>
-    <xmx:J0c6Zp1-ixz35OaJMPLl2nMtMXoLG059NKJTRKSVUihYepj7tMZPLw>
-    <xmx:J0c6Zl-If8x4GqC7cRaqGDFeunii7vNfIaqDCbtCB64paTnsIhj9gA>
-    <xmx:J0c6ZiHkNMcmJS-0jwGNeLaYZfOLuiNSsRVtGM8NBLMzyRe_Q-feVMc8>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 May 2024 11:22:14 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Tue, 07 May 2024 16:22:01 +0100
-Subject: [PATCH 3/3] MIPS: Loongson64: Implement PM suspend for LEFI
- firmware
+	s=arc-20240116; t=1715095383; c=relaxed/simple;
+	bh=Z6tWue+8yucqeQBE8UAQi/bkQKKKwed4j9928aTPaIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+VJCwTDlJ7vneIBM/J2V3PJgPYpb1miBZY8aVSDJpC01CfqLDWl5wb2wYoDAXxRPhclSlRPj0P4N8T2twY5lk2xTpoScFb3suesfh/JgnJQOy+ZpgqFUUfMfZXF542DnfIxIIcToymxiIFY7F/AsBryJxfwR3Aq/aprsrgNpN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OO46xxDR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2B3C2BBFC;
+	Tue,  7 May 2024 15:23:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715095383;
+	bh=Z6tWue+8yucqeQBE8UAQi/bkQKKKwed4j9928aTPaIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OO46xxDRGYhLgI+TLHc8PcATHXBhyAElovS45M7OI2JnvkkylNooynXnoJM8svtJu
+	 4TDqAwZS1ioUEsPIVJAc+ySzTgI/zTMy8ae3k7d6OG8qrKsyaGXf7ktdKRiTbI7+y9
+	 u9U5BJuEKRJHDt1DlgxBlAbTuetSLlTOa1xLhTYmSlm1u45+dgkF6phZId2XweyB03
+	 VrGrHUClrboXeU7VcEDDamNBVxKaJ8Bf02MKyTXB/i6OTEJt7UNAmqtTHKloHKaca1
+	 ch5IccDq9uHeapugsnWfgMHJPpxUpQaXL+WCC2iRE9/PRSnoN8GXe+ZpX8UFo47pif
+	 TVdDtOATY18Dg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s4Mem-000000004j2-39NS;
+	Tue, 07 May 2024 17:23:05 +0200
+Date: Tue, 7 May 2024 17:23:04 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 10/13] dt-bindings: mfd: pm8008: rework binding
+Message-ID: <ZjpHWIKeFrJ1QZDj@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-11-johan+linaro@kernel.org>
+ <fa54422f-329e-4c3e-b297-b84438f75abe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240507-loongson64-suspend-v1-3-534d92a4e09a@flygoat.com>
-References: <20240507-loongson64-suspend-v1-0-534d92a4e09a@flygoat.com>
-In-Reply-To: <20240507-loongson64-suspend-v1-0-534d92a4e09a@flygoat.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Huacai Chen <chenhuacai@kernel.org>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4701;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=pQz0w1yBfPHUBv/v0nbOyM9aMVNE+JcqduRqxVhK+yQ=;
- b=owGbwMvMwCHmXMhTe71c8zDjabUkhjQrd8VJbZHfa7xbO1M4Zy16/EJD0fPswri0fG3zug37P
- h4Vtq/oKGVhEONgkBVTZAkRUOrb0HhxwfUHWX9g5rAygQxh4OIUgInI9zP84cn/Ezpxy+q9R47n
- 9/zQDLJPDGxd4RoY2Vt+z7b2kVXmZIa/0hN2nbq1675885YLf+OT50Rn2ITHdMUkcHc33TN/a+X
- GBAA=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa54422f-329e-4c3e-b297-b84438f75abe@kernel.org>
 
-Implement PM suspend for LEFI firmware.
-Entering STR (Suspend to RAM) is as simple as save our context
-then go to a firmware vector.
-Wake is a little bit treaky as we need to setup some CP0 status
-first, which can be done with smp_slave_setup.
+On Tue, May 07, 2024 at 08:43:08AM +0200, Krzysztof Kozlowski wrote:
+> On 06/05/2024 17:08, Johan Hovold wrote:
+> > Rework the pm8008 binding by dropping internal details like register
+> > offsets and interrupts and by adding the missing regulator and
+> > temperature alarm properties.
+> > 
+> > Note that child nodes are still used for pinctrl and regulator
+> > configuration.
+> > 
+> > Also note that the pinctrl state definition will be extended later and
+> > could eventually also be shared with other PMICs (e.g. by breaking out
+> > bits of qcom,pmic-gpio.yaml).
+> > 
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+ 
+> >    reg:
+> > -    description:
+> > -      I2C slave address.
+> 
+> Please split cleanups from actual functional/content rework.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/loongson64/Makefile  |  2 +-
- arch/mips/loongson64/pm.c      | 88 +++++++++---------------------------------
- arch/mips/loongson64/sleeper.S | 17 ++++++++
- 3 files changed, 36 insertions(+), 71 deletions(-)
+Sure.
 
-diff --git a/arch/mips/loongson64/Makefile b/arch/mips/loongson64/Makefile
-index e806280bbb85..cbba30dfddf5 100644
---- a/arch/mips/loongson64/Makefile
-+++ b/arch/mips/loongson64/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_MACH_LOONGSON64) += cop2-ex.o dma.o \
- obj-$(CONFIG_SMP)	+= smp.o
- obj-$(CONFIG_NUMA)	+= numa.o
- obj-$(CONFIG_RS780_HPET) += hpet.o
--obj-$(CONFIG_SUSPEND) += pm.o
-+obj-$(CONFIG_SUSPEND) += pm.o sleeper.o
- obj-$(CONFIG_PCI_QUIRKS) += vbios_quirk.o
- obj-$(CONFIG_CPU_LOONGSON3_CPUCFG_EMULATION) += cpucfg-emul.o
- obj-$(CONFIG_SYSFS) += boardinfo.o
-diff --git a/arch/mips/loongson64/pm.c b/arch/mips/loongson64/pm.c
-index 7c8556f09781..5f0604af8f13 100644
---- a/arch/mips/loongson64/pm.c
-+++ b/arch/mips/loongson64/pm.c
-@@ -6,98 +6,46 @@
-  *  Author: Wu Zhangjin <wuzhangjin@gmail.com>
-  */
- #include <linux/suspend.h>
--#include <linux/interrupt.h>
- #include <linux/pm.h>
- 
--#include <asm/i8259.h>
- #include <asm/mipsregs.h>
- 
- #include <loongson.h>
- 
--static unsigned int __maybe_unused cached_master_mask;	/* i8259A */
--static unsigned int __maybe_unused cached_slave_mask;
--static unsigned int __maybe_unused cached_bonito_irq_mask; /* bonito */
-+asmlinkage void loongson_lefi_sleep(unsigned long sleep_addr);
- 
--void arch_suspend_disable_irqs(void)
-+static int lefi_pm_enter(suspend_state_t state)
- {
--	/* disable all mips events */
--	local_irq_disable();
--
--#ifdef CONFIG_I8259
--	/* disable all events of i8259A */
--	cached_slave_mask = inb(PIC_SLAVE_IMR);
--	cached_master_mask = inb(PIC_MASTER_IMR);
--
--	outb(0xff, PIC_SLAVE_IMR);
--	inb(PIC_SLAVE_IMR);
--	outb(0xff, PIC_MASTER_IMR);
--	inb(PIC_MASTER_IMR);
--#endif
--	/* disable all events of bonito */
--	cached_bonito_irq_mask = LOONGSON_INTEN;
--	LOONGSON_INTENCLR = 0xffff;
--	(void)LOONGSON_INTENCLR;
--}
--
--void arch_suspend_enable_irqs(void)
--{
--	/* enable all mips events */
--	local_irq_enable();
--#ifdef CONFIG_I8259
--	/* only enable the cached events of i8259A */
--	outb(cached_slave_mask, PIC_SLAVE_IMR);
--	outb(cached_master_mask, PIC_MASTER_IMR);
--#endif
--	/* enable all cached events of bonito */
--	LOONGSON_INTENSET = cached_bonito_irq_mask;
--	(void)LOONGSON_INTENSET;
--}
--
--/*
-- * Setup the board-specific events for waking up loongson from wait mode
-- */
--void __weak setup_wakeup_events(void)
--{
--}
--
--void __weak mach_suspend(void)
--{
--}
--
--void __weak mach_resume(void)
--{
--}
--
--static int loongson_pm_enter(suspend_state_t state)
--{
--	mach_suspend();
--
--	mach_resume();
--
--	return 0;
-+	switch (state) {
-+	case PM_SUSPEND_MEM:
-+		pm_set_suspend_via_firmware();
-+		loongson_lefi_sleep(loongson_sysconf.suspend_addr);
-+		pm_set_resume_via_firmware();
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
--static int loongson_pm_valid_state(suspend_state_t state)
-+static int lefi_pm_valid_state(suspend_state_t state)
- {
- 	switch (state) {
--	case PM_SUSPEND_ON:
--	case PM_SUSPEND_STANDBY:
- 	case PM_SUSPEND_MEM:
--		return 1;
--
-+		return !!loongson_sysconf.suspend_addr;
- 	default:
- 		return 0;
- 	}
- }
- 
--static const struct platform_suspend_ops loongson_pm_ops = {
--	.valid	= loongson_pm_valid_state,
--	.enter	= loongson_pm_enter,
-+static const struct platform_suspend_ops lefi_pm_ops = {
-+	.valid	= lefi_pm_valid_state,
-+	.enter	= lefi_pm_enter,
- };
- 
- static int __init loongson_pm_init(void)
- {
--	suspend_set_ops(&loongson_pm_ops);
-+	if (loongson_sysconf.fw_interface == LOONGSON_LEFI)
-+		suspend_set_ops(&lefi_pm_ops);
- 
- 	return 0;
- }
-diff --git a/arch/mips/loongson64/sleeper.S b/arch/mips/loongson64/sleeper.S
-new file mode 100644
-index 000000000000..04874b9bf430
---- /dev/null
-+++ b/arch/mips/loongson64/sleeper.S
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ *  Copyright (C) 2024, Jiaxun Yang <jiaxun.yang@flygoat.com>
-+ *  Loongson EFI firmware sleeper routine
-+ */
-+
-+#include <asm/asm.h>
-+#include <asm/pm.h>
-+
-+#include <kernel-entry-init.h>
-+
-+LEAF(loongson_lefi_sleep)
-+	SUSPEND_SAVE
-+	jalr    a0
-+    smp_slave_setup
-+	RESUME_RESTORE_REGS_RETURN
-+END(loongson_lefi_sleep)
+> > -
+> >      maxItems: 1
+> >  
+> >    interrupts:
+> >      maxItems: 1
+> >  
+> > -    description: Parent interrupt.
+> > -
+> >    reset-gpios:
+> >      maxItems: 1
+> >  
+> > -  "#interrupt-cells":
+> > +  vdd_l1_l2-supply: true
+> 
+> No underscores in property names.
 
--- 
-2.34.1
+Indeed. These names come from Qualcomm's v15, but I should have caught
+that. Thanks.
 
+Johan
 
