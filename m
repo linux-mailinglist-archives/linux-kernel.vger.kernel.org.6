@@ -1,159 +1,191 @@
-Return-Path: <linux-kernel+bounces-171724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68B58BE7CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4DF8BE7D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633291F289D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ECEB1F28D7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FA4168AEA;
-	Tue,  7 May 2024 15:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901AC168AEB;
+	Tue,  7 May 2024 15:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="D9O+KEzz"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVzrSY41"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682B2155A55
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B05F1649D3;
+	Tue,  7 May 2024 15:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097148; cv=none; b=er9vMLnB4BFIImNjv3Pp4TIYo+7+CJ/JmDQCLy3EAtoFup/uaOgEoigOSf546EgqQFzktB828NzShNObDQ74EQTTIPc677HwJoYr2BipquXIc9gg/bNKxVAtbvjBK3xsMNXSBKWUg8oUPYgNPYXmRTKZNGLCYllKeWYsmBC8CrU=
+	t=1715097176; cv=none; b=SOB+jPcNN18cjG91DpW+XKl1b6pfVgKUXqgR5zT09lPSRqrZpibL0nZtGRkEkzQrylzccCbgQTHvpvcvWAP6kfD81uyVVrAtshwtntVEuXHiMCxJq+VAiSS/afziTZmKJccx35pgVkWsFc3m2sIKWsFlVBNOqx5FnZ3b6/bqpjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097148; c=relaxed/simple;
-	bh=1Rv56/oBFuyRJwYgTZCyvFrjtKjGcVyqzKsoClMQ1k0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OrfFLIs9CCP00HwrhJTMyfJXd4qI4REKRIwCzRRNq/q8huawmt63ky4wUhndt7kJJbw3gSYte0C+NKw7SIMjfxRiRbysMaaqtMEvJSdLqhen6khuYeX93o/o+nIZQBGwjdYsPyMpZF5TnsWaRqdu0bk0+DT3K24zHQ86n15ZH58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=D9O+KEzz; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e1835a9339so20558239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:52:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1715097146; x=1715701946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MdwrYxvKykWEvU1ciSRbQbFvSgqU+2A+2xiS1iPvfJQ=;
-        b=D9O+KEzzVVmVQHUbR5HU6mdo0t7mCbBTNdJi0ZEchfD/TX6uWe2UEgE6ro7+YjuQcA
-         T8iIxlX+7Qh/3crxvEoSSyyRzDqT269gbkEiZP4mSsW32/pDSR4uigEQebxm/g2Oeicq
-         DWxHralEairhoiyPIZ0+NfcisYCQdIi5vDqMI64wcX3UfOHJ11P3Z/7XvJjqDLY7sjQD
-         +I51Wxop1uGfo64e3NUXrXsBbMsECyF6SVj8Yo2dwJL02ETGpcCOBnOULhHt+M+pER0Q
-         awRvsQNgeGP7oeVo+bVCYfsZt4im48A6F4zLfOb1kjbz9QJ3qS9Vh8ARhdd+fNUu+l4E
-         uUeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715097146; x=1715701946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MdwrYxvKykWEvU1ciSRbQbFvSgqU+2A+2xiS1iPvfJQ=;
-        b=mdjefqpqW6UocLOG4wBa5fw7okkQtNR75NiPlHsqYR6Sq4LT6w4CdNjwToz3TXFToI
-         BQCABkTNL/8myhMWDGTmIvmqpCZMj0H+5l2+eoGxKj86Qykid2ywdby+IJOVUP4l418m
-         nps/h2WcWUJrrFUbnfdEMZaxbNVQQyJxpZSK1qpF/3i5xIqNj3OqgtdjTm8vtMOTDwC0
-         xd6Rzp+hurI54JFFXzlThT/l8C6lSub4vk7XCCgHUED13Wj89G7XCIP9mRGebXAF5bdB
-         Xb4DrvFCD4E0Nw7jEXjaG9lTRZZic+tsSy5RlauXf+Qs2I1syUOWKXcy8Gk5uy+W49oA
-         XIag==
-X-Forwarded-Encrypted: i=1; AJvYcCVLVMcSS/fEWC9gt8Sua5rukLMnm//ieTOcwjWCOM4qL2BbE/cTWv4swk9EAV7hiih0GlFeQhfDiZ2sKM7WodgkPaKtGYdrFLw1fAFB
-X-Gm-Message-State: AOJu0YxqECCfgtSELd+Fza9+zBx4B8kOwZfC8/j5Q+x7QdF7RdroO0Z8
-	N3CAyXZz+3E55IXkl/Lw9XJqul5jdC7QroUIrBIf7d/ygZGRaaQiDMXY9dMKnqVxlzchbluTA6D
-	1o5ly5NRNxrQw7IsuzdPxl+MIaSiMkCpV8r0SWg==
-X-Google-Smtp-Source: AGHT+IGgeNVgdFJDVuDgv9ivECfpykkOYp4g95K8N5g+DPVmrNpWUToncN7f6H6A1ruTyO44ONnmAEe/3TdfEor5yQg=
-X-Received: by 2002:a5e:db42:0:b0:7de:c47d:a740 with SMTP id
- ca18e2360f4ac-7e18f722d8amr13408539f.8.1715097146605; Tue, 07 May 2024
- 08:52:26 -0700 (PDT)
+	s=arc-20240116; t=1715097176; c=relaxed/simple;
+	bh=oATHeOCDE4cJRmzez2BOUIoT8jvPZHsD3t1b1GDNdSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ahdlC68gfrWbC7L7e5lSYZhSoNYrUktsyYLYugk8vZK7KyJO6WVlf2h8YOq5zVt0WJcyI5OiHqpOVycaBVnMFSjRSEp9KePx7HIFSzjykjwowmlHJ1Bkr0eLrdv8AZW+RPEoM/qISQl0yks/KGd34fSysOLkJc98VeFO7g3dUaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVzrSY41; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715097175; x=1746633175;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oATHeOCDE4cJRmzez2BOUIoT8jvPZHsD3t1b1GDNdSo=;
+  b=TVzrSY41auyJUqQR04J/rpBcUY0MQ7RnUQjcZiASNhw5EYJqjvf/T9Gt
+   Drc3qg3vRtBGmR6h8TZm5kB/KhNWw9PeRzCAtXXxdGvalcUZsLRe3woEZ
+   0UmyBAv3KJFOmRB8xOXXorm7ARyZGm8xF+7o034fODXVs24xso4YS8ac3
+   o5KdCuLUDgPVD8orzkbdQJbTBhaaWSInkfLGPFodWs0JFIfeZ79Zr+zI6
+   VAZTV7pvWoPmK1eipOLfKVWaELb9tVagSIjIjYYLr4RPEhDq2xOOLlwvJ
+   uIcv5Dq1vBL3mSb9GJ7Pwm9ymYfca4PmPg2nVVGqobeQCpaxoriaHpDva
+   Q==;
+X-CSE-ConnectionGUID: /OVPfpzeTXu2b4MmNWeADg==
+X-CSE-MsgGUID: WBFNy7hASXa+e2FLOljT8w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10839797"
+X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
+   d="scan'208";a="10839797"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 08:52:54 -0700
+X-CSE-ConnectionGUID: XD28RgZ7Tu2MAYcICRY2fg==
+X-CSE-MsgGUID: 6lk8MhRUSFWB58AJas18ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
+   d="scan'208";a="29140265"
+Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.110.95]) ([10.125.110.95])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 08:52:54 -0700
+Message-ID: <0a086052-5ed0-4b5f-b676-338662c2dbea@intel.com>
+Date: Tue, 7 May 2024 08:52:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507142600.23844-1-zong.li@sifive.com> <20240507142600.23844-4-zong.li@sifive.com>
- <20240507151516.GK901876@ziepe.ca>
-In-Reply-To: <20240507151516.GK901876@ziepe.ca>
-From: Zong Li <zong.li@sifive.com>
-Date: Tue, 7 May 2024 23:52:15 +0800
-Message-ID: <CANXhq0qLbC2RgW04C5DcuzR-kSmT3hA9rWW=w3e3PKHr+QsyzQ@mail.gmail.com>
-Subject: Re: [PATCH RFC RESEND 3/6] iommu/riscv: support GSCID
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
-	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, kevin.tian@intel.com, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cxl/region: Fix memregion leaks in devm_cxl_add_region()
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
+ Ira Weiny <ira.weiny@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+ "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+ "alison.schofield@intel.com" <alison.schofield@intel.com>,
+ "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+ "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+ "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240428053715.327444-1-lizhijian@fujitsu.com>
+ <662fc9659f6ab_19ca3929435@iweiny-mobl.notmuch>
+ <0782e741-5478-4b62-866e-f966ab5cad91@fujitsu.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <0782e741-5478-4b62-866e-f966ab5cad91@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 7, 2024 at 11:15=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Tue, May 07, 2024 at 10:25:57PM +0800, Zong Li wrote:
-> > @@ -919,29 +924,43 @@ static void riscv_iommu_iotlb_inval(struct riscv_=
-iommu_domain *domain,
-> >       rcu_read_lock();
-> >
-> >       prev =3D NULL;
-> > -     list_for_each_entry_rcu(bond, &domain->bonds, list) {
-> > -             iommu =3D dev_to_iommu(bond->dev);
-> >
-> > -             /*
-> > -              * IOTLB invalidation request can be safely omitted if al=
-ready sent
-> > -              * to the IOMMU for the same PSCID, and with domain->bond=
-s list
-> > -              * arranged based on the device's IOMMU, it's sufficient =
-to check
-> > -              * last device the invalidation was sent to.
-> > -              */
-> > -             if (iommu =3D=3D prev)
-> > -                     continue;
-> > -
-> > -             riscv_iommu_cmd_inval_vma(&cmd);
-> > -             riscv_iommu_cmd_inval_set_pscid(&cmd, domain->pscid);
-> > -             if (len && len >=3D RISCV_IOMMU_IOTLB_INVAL_LIMIT) {
-> > -                     for (iova =3D start; iova < end; iova +=3D PAGE_S=
-IZE) {
-> > -                             riscv_iommu_cmd_inval_set_addr(&cmd, iova=
-);
-> > +     /*
-> > +      * Host domain needs to flush entries in stage-2 for MSI mapping.
-> > +      * However, device is bound to s1 domain instead of s2 domain.
-> > +      * We need to flush mapping without looping devices of s2 domain
-> > +      */
-> > +     if (domain->gscid) {
-> > +             riscv_iommu_cmd_inval_gvma(&cmd);
-> > +             riscv_iommu_cmd_inval_set_gscid(&cmd, domain->gscid);
-> > +             riscv_iommu_cmd_send(iommu, &cmd, 0);
-> > +             riscv_iommu_cmd_iofence(&cmd);
-> > +             riscv_iommu_cmd_send(iommu, &cmd, RISCV_IOMMU_QUEUE_TIMEO=
-UT);
->
-> Is iommu null here? Where did it come from?
->
-> This looks wrong too. The "bonds" list is sort of misnamed, it is
-> really a list of invalidation instructions. If you need a special
-> invalidation instruction for this case then you should allocate a
-> memory and add it to the bond list when the attach is done.
->
-> Invalidation should simply iterate over the bond list and do the
-> instructions it contains, always.
 
-I messed up this piece of code while cleaning it. I will fix it in the
-next version. However, after your tips, it seems to me that we should
-allocate a new bond entry in the s2 domain's list. This is because the
-original bond entry becomes detached from the s2 domain and is
-attached to the s1 domain when the device passes through to the guest,
-if we don't create a new bond in s2 domain, then the list in s2 domain
-would lose it. Let me modify the implementation here. Thanks.
 
->
-> >  static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
-> > -                                  struct device *dev, u64 fsc, u64 ta)
-> > +                                  struct device *dev, u64 fsc, u64 ta,=
- u64 iohgatp)
->
-> I think you should make a struct to represent the dc entry.
->
-> Jason
+On 5/6/24 7:42 PM, Zhijian Li (Fujitsu) wrote:
+> 
+> 
+> On 30/04/2024 00:23, Ira Weiny wrote:
+>> Li Zhijian wrote:
+>>> Move memregion_free(id) out of cxl_region_alloc() and
+>>> explicately free memregion in devm_cxl_add_region() error path.
+>>    ^^^^
+>>    explicitly
+>>
+>> BTW you should run checkpatch.pl which will check spelling.
+> 
+> 
+> I remember I've done this check, but it seems the it doesn't work for me.
+> Did I miss something?
+> 
+> $ ./scripts/checkpatch.pl 0001-cxl-region-Fix-memregion-leaks-in-devm_cxl_add_regio.patch
+> total: 0 errors, 0 warnings, 23 lines checked
+> 
+> 0001-cxl-region-Fix-memregion-leaks-in-devm_cxl_add_regio.patch has no obvious style problems and is ready for submission.
+
+Pass in --codespell parameter. And make sure you have the codespell dictionary installed (i.e. /usr/share/codespell/dictionary.txt). 
+
+DJ
+
+> 
+> 
+> 
+>>
+>> I'm not following what the problem is you are trying to fix.  This seems
+>> like it just moves the memregion_free() around a bit but the logic is the
+>> same.
+>>
+> 
+> Sorry, I think my commit log may be misleading. In fact, this patch mainly fixes
+> the memregion leak in devm_cxl_add_region() when it gets an invalid mode.
+> 
+>>>   	default:
+>>>   		dev_err(&cxlrd->cxlsd.cxld.dev, "unsupported mode %d\n", mode);
+>>> +		memregion_free(id);
+>>>   		return ERR_PTR(-EINVAL);
+>>>   	}
+> 
+> Additionally, to maintain consistent error handling, I also moved memregion_free(id) from
+> cxl_region_alloc() to devm_cxl_add_region() so that devm_cxl_add_region() can
+> free memregion explicitly in error path.
+> 
+> 
+> Thanks
+> Zhijian
+> 
+> 
+>> Ira
+>>
+>>>
+>>> After cxl_region_alloc() succeed, memregion will be freed by
+>>> cxl_region_type.release()
+>>>
+>>> Fixes: 6e099264185d ("cxl/region: Add volatile region creation support")
+>>> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+>>> ---
+>>>   drivers/cxl/core/region.c | 9 +++++----
+>>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>>> index 812b2948b6c6..8535718a20f0 100644
+>>> --- a/drivers/cxl/core/region.c
+>>> +++ b/drivers/cxl/core/region.c
+>>> @@ -2250,10 +2250,8 @@ static struct cxl_region *cxl_region_alloc(struct cxl_root_decoder *cxlrd, int i
+>>>   	struct device *dev;
+>>>   
+>>>   	cxlr = kzalloc(sizeof(*cxlr), GFP_KERNEL);
+>>> -	if (!cxlr) {
+>>> -		memregion_free(id);
+>>> +	if (!cxlr)
+>>>   		return ERR_PTR(-ENOMEM);
+>>> -	}
+>>>   
+>>>   	dev = &cxlr->dev;
+>>>   	device_initialize(dev);
+>>> @@ -2358,12 +2356,15 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
+>>>   		break;
+>>>   	default:
+>>>   		dev_err(&cxlrd->cxlsd.cxld.dev, "unsupported mode %d\n", mode);
+>>> +		memregion_free(id);
+>>>   		return ERR_PTR(-EINVAL);
+>>>   	}
+>>>   
+>>>   	cxlr = cxl_region_alloc(cxlrd, id);
+>>> -	if (IS_ERR(cxlr))
+>>> +	if (IS_ERR(cxlr)) {
+>>> +		memregion_free(id);
+>>>   		return cxlr;
+>>> +	}
+>>>   	cxlr->mode = mode;
+>>>   	cxlr->type = type;
+>>>   
+>>> -- 
+>>> 2.29.2
+>>>
+>>
+>>
 
