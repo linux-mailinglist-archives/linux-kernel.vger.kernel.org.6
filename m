@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-170687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C4C8BDAA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:17:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E238E8BDAA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD922886C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:17:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F32E2B22E64
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4A76BB5B;
-	Tue,  7 May 2024 05:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A096BFA4;
+	Tue,  7 May 2024 05:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmCncGDS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qL2BIh1h"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C97454BE4
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024E86BB4E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715059064; cv=none; b=kU6aOCU3uaFd4QkWsZ/VqUyRqXh6cMKAtC2tGp8x/k3g4Dpj+HR/IfpcmxZHrxmBd4eOhJLCES0kc5hocT94Jb4xjOMOeS758yKN8fQir3Dx9/CJyAhSDIQZpwm1/+Bkbn0QoOMMdCFAKpHxhUjWi6jyTRlFTkPPM20G6fgPJEE=
+	t=1715059440; cv=none; b=cw1gcr+90SayAL/Q8EwllbvUw9siXAVSKrNEw3Cvq5OzpQNXOewa/lLmzgecVN9FrosIXzbJqUSNy95+NPucIoo/TOby7SiNgPE1UnAGuVipZb7ouVEGePZoNe+PWrXB03X49e89oVsvkkFoPplsyFoBzbeOTOy9urzFhehViQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715059064; c=relaxed/simple;
-	bh=MVxJV0DmzBRnFYcte+tBATygTJyvAiF8PMo21+ADg0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1Hy/aJS348QOKlLDcEF9+/J4viZSAAHb+rmf0q1qDoWyKGHMX85tcXwmT8Zm8nFCpc1IHOfPJKaO1KQD/TfzfIrc4nnpIbmO+Q3u9aFJyUg9NdNmNcmSOoMIbOcVtsZ6Vy+aHZfW7VGbuwhOT+gqSMR5/FYHtBRBh2s5Yzc71A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmCncGDS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE31C2BBFC;
-	Tue,  7 May 2024 05:17:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715059063;
-	bh=MVxJV0DmzBRnFYcte+tBATygTJyvAiF8PMo21+ADg0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dmCncGDSSdcfqIIrRxuvPGq8GBzaMWSoFP1+/GbVdC4S+pb6vOXXwwEYHfnHZY8Cn
-	 VTBPcvNG7zAi5DgR4J+25vLRX/APnkwzEXsdfke2GInWIiVzVTsNxBxLQZl0VKUjN3
-	 ZfLTGeOcFKc2Jm5+9m5Q0V3a8bYU3Uurv4a1pnsZEUeC/qWLsHCOoZ5trQaEXR8AiF
-	 KjmaCqd7fPFkQHg5zRuiYiXSkne0H9al2+0X9KcGY6pu2jRj7yjZEH0D4Tv2m9x2bt
-	 QUJttVFp4LpaZ/Ct1npI/v4VKJm6uFhzDVTz0sSjqQElyHYk5v3dSuchc8Q80shHUM
-	 GTANWxXuf7vAg==
-Date: Mon, 6 May 2024 22:17:41 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Yujie Liu <yujie.liu@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v4 1/5] x86/bugs: Only harden syscalls when needed
-Message-ID: <20240507051741.4crk2pd2fuh4euyd@treble>
-References: <982d05a2f669140f26500bee643011896d661094.1713559768.git.jpoimboe@kernel.org>
- <ZiYbPZ1biNCEndKZ@yujie-X299>
+	s=arc-20240116; t=1715059440; c=relaxed/simple;
+	bh=rw1WD8iW0Gin6xrr/ze+7VZddUt6rFngb7Xf/Hf/NyU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=mnMcfRDCMPs0QOLB87OFyvLFGEZVlrvigHWXqqbXvMHi8XB1lzBbGkPe+EKnCZ7n59Wgye3a5N7tdGFtN9i18ajitxgsIgVAVRyC1A+cw0L8MpVlRi81BPDlAMi7M+WSyUI+5b9UdXLTjA3oN9ENlRNNkt57q+G/Xk5UNjj6z1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qL2BIh1h; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240507052349epoutp01c67f7853fcce86e2779fe86abd214477~NHXbufxJV0306303063epoutp01I
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:23:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240507052349epoutp01c67f7853fcce86e2779fe86abd214477~NHXbufxJV0306303063epoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715059429;
+	bh=eLSWL99Uk2hAz/dS69zc+plpzQva2XWJGmy85zm1bw4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qL2BIh1h16G9HTz2nd1pylvnymLz0PDVPwidNxOG6BNKGiOepmJ4NXbexkI3H1iB3
+	 RN++JVBBOJwxc3wfQjPXaoccqt0gLtRaIc7g0eSmAJaByyQqHsN8Htgb3D8ReTQ9RU
+	 YJF6tl62DMayR2jpdZljxWj4SFeDiRtUYAxmoXi8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240507052349epcas5p46bd9f56be2888b628cd91add6763f454~NHXbV55eN0641106411epcas5p4I;
+	Tue,  7 May 2024 05:23:49 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VYRX40d2cz4x9QF; Tue,  7 May
+	2024 05:23:48 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	DB.96.09665.3EAB9366; Tue,  7 May 2024 14:23:47 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c~NHWCwn0zA2998529985epcas5p3f;
+	Tue,  7 May 2024 05:22:14 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240507052214epsmtrp2e601e6ceb4c3eddd58d0bb9ddc50a35e~NHWCv7nyU0876208762epsmtrp2t;
+	Tue,  7 May 2024 05:22:14 +0000 (GMT)
+X-AuditID: b6c32a4b-5cdff700000025c1-e7-6639bae3e951
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	66.D4.08390.68AB9366; Tue,  7 May 2024 14:22:14 +0900 (KST)
+Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240507052213epsmtip21f1e5c1752b1be67e1da93dc2a912ef9~NHWB2xYii1163211632epsmtip2X;
+	Tue,  7 May 2024 05:22:13 +0000 (GMT)
+From: Chenliang Li <cliang01.li@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, cliang01.li@samsung.com, gost.dev@samsung.com,
+	io-uring@vger.kernel.org, joshi.k@samsung.com, kundan.kumar@samsung.com,
+	linux-kernel@vger.kernel.org, peiwei.li@samsung.com
+Subject: Re: [PATCH] io_uring/rsrc: Add support for multi-folio buffer
+ coalescing
+Date: Tue,  7 May 2024 13:22:03 +0800
+Message-Id: <20240507052203.67459-1-cliang01.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <71c1f01f-f740-43b0-9962-afcf08cab686@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZiYbPZ1biNCEndKZ@yujie-X299>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmpu7jXZZpBvseyVvMWbWN0WL13X42
+	i9N/H7NY3Dywk8niXes5Fouj/9+yWWz98pXV4vKuOWwWz/ZyOnB67Jx1l93j8tlSj74tqxg9
+	Pm+SC2CJyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvM
+	AbpESaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeXWmJlaGBg
+	ZApUmJCd0bRrL2tBG0fF1Fvn2RsYl7B1MXJwSAiYSLw6qdjFyMUhJLCbUeLO/p/sEM4nRomu
+	s0fZIJxvjBJHd85jhel4eIwLIr6XUeLI/2tQHb8YJSbO+MfUxcjJwSagI/F7xS8WEFtEQFhi
+	f0crC0gRs8BpRol9R3+wgSSEBYIlDrW/ALNZBFQlep6tB2vmFbCRaGvYDBaXEJCX2H/wLDOI
+	zSlgK7H1z2d2iBpBiZMzn4AtYAaqad46mxlkgYTAR3aJVb19TBDNLhIzHx6HGiQs8er4FnYI
+	W0ri87u90AAolli2Tg6it4VR4v27OYwQNdYS/67sYQGpYRbQlFi/Sx8iLCsx9dQ6Joi9fBK9
+	v59AreKV2DEPxlaVuHBwG9QqaYm1E7YyQ9geEouX34EG6QRGiaU991gnMCrMQvLPLCT/zEJY
+	vYCReRWjZGpBcW56arFpgXFeajk8lpPzczcxglOnlvcOxkcPPugdYmTiYDzEKMHBrCTCe7Td
+	PE2INyWxsiq1KD++qDQntfgQoykwwCcyS4km5wOTd15JvKGJpYGJmZmZiaWxmaGSOO/r1rkp
+	QgLpiSWp2ampBalFMH1MHJxSDUw6DWvfa/IkSTbd9nRUi7vyokz65Iq6yx/PZirdEZ6YpdpV
+	ss9HY97jTltp/8/1lQ7tB8sn3/zo4LYgba2AqXmVyIkv6st8F7RO2h/DzXEnd9kjNxWeg0/b
+	mg+wT/tnvW/S1IuTdkz7Ylk/OdT3+u5Zxq9UrszWYrdNVXqblGDclf/3x2H/f89254tM5lsu
+	r/9w/6WYuez3J0cvTeg8Ld1s6bNSzXplXsy660x988IrFz76Pudx3qqwyG3ySbemdnr+5Lqw
+	ZNNKjbKQHWquIvt2z2fukP08Wdwx5VBB/GF+DZfzRh4Lb15M12va9W7ajV83niyrO7Lj9IlF
+	8bN/LOotmbKsq2li86uV7o43vjx/pcRSnJFoqMVcVJwIAJpWiH0mBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsWy7bCSvG7bLss0g2NHWCzmrNrGaLH6bj+b
+	xem/j1ksbh7YyWTxrvUci8XR/2/ZLLZ++cpqcXnXHDaLZ3s5HTg9ds66y+5x+WypR9+WVYwe
+	nzfJBbBEcdmkpOZklqUW6dslcGU07drLWtDGUTH11nn2BsYlbF2MHBwSAiYSD49xdTFycQgJ
+	7GaU6J63gLGLkRMoLi3RcaiVHcIWllj57zmYLSTwg1Hi3TJREJtNQEfi94pfLCC2CFDN/o5W
+	FpBBzAJXGSW2nlnLBpIQFgiUWPLzPzOIzSKgKtHzbD0TiM0rYCPR1rCZDWKBvMT+g2fBajgF
+	bCW2/vkMtcxG4t3WQ8wQ9YISJ2c+AVvGDFTfvHU28wRGgVlIUrOQpBYwMq1ilEwtKM5Nzy02
+	LDDKSy3XK07MLS7NS9dLzs/dxAgObS2tHYx7Vn3QO8TIxMF4iFGCg1lJhPdou3maEG9KYmVV
+	alF+fFFpTmrxIUZpDhYlcd5vr3tThATSE0tSs1NTC1KLYLJMHJxSDUzHFu5VZM7eNU9gzp+P
+	qrzWyzJUWc5r9NUvm8CwY/YR12u3uk152JYWHNqY0Cem6xSTXNh7UGPtpbqNC5jzPzY+nvH5
+	qNKC4pW9wUsL46doVOj+c3I2TWDYH7KC/+C/afVXlhmIVf49OX/K1CdhVa2syY+c3P/Nr7wT
+	8+7q5jm5B2cdXNq8I3TZ9P+eNzf3f4idccrhT4Kw/8l253tHNpfMX/0kwej0mXveP1n1rTqO
+	6M69HB6XdGBK5o8eZpe6sN9cMjWb/Z6aPmYI2nRs18tMvWvnlUuX5NZ63bzcpPPlzutVy5ya
+	/q3eZJMY0qP58/7X4y+zql55yGWm2f26UZp8STfZSt+2tr3yh9bUSUdilFiKMxINtZiLihMB
+	IMa+5twCAAA=
+X-CMS-MailID: 20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c
+References: <71c1f01f-f740-43b0-9962-afcf08cab686@kernel.dk>
+	<CGME20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c@epcas5p3.samsung.com>
 
-On Mon, Apr 22, 2024 at 04:09:33PM +0800, Yujie Liu wrote:
-> On Fri, Apr 19, 2024 at 02:09:47PM -0700, Josh Poimboeuf wrote:
-> > Syscall hardening (converting the syscall indirect branch to a series of
-> > direct branches) has shown some performance regressions:
-> >
-> > - Red Hat internal testing showed up to 12% slowdowns in database
-> >   benchmark testing on Sapphire Rapids when the DB was stressed with 80+
-> >   users to cause contention.
-> >
-> > - The kernel test robot's will-it-scale benchmarks showed significant
-> >   regressions on Skylake with IBRS:
-> >   https://lkml.kernel.org/lkml/202404191333.178a0eed-yujie.liu@intel.com
+On 5/6/24 6:57 AM, Jens Axboe wrote:
+> Can you add some justification to this commit message? A good commit
+> message should basically be the WHY of why this commit exists in the
+> first place. Your commit message just explains what the patch does,
+> which I can just read the code to see for myself.
 > 
-> To clarify, we reported a +1.4% improvement (not regression) of
-> will-it-scale futex4 benchmark on Skylake. Meanwhile we did observe some
-> regressions by running other benchmarks on Ice Lake, such as:
-> 
->     stress-ng.null.ops_per_sec -4.0% regression on Intel Xeon Gold 6346 (Ice Lake)
->     unixbench.fsbuffer.throughput -1.4% regression on Intel Xeon Gold 6346 (Ice Lake)
+> As it stands, it's not clear to me or anyone casually reading this
+> commit message why the change is being done in the first place.
 
-Thanks for clarifying that.  I'm not sure what I was looking at.
+Thank you for the instruction. I'll submit a V2 patchset with better
+commit message.
 
-I also saw your email where Ice Lake showed a ~10% regression for
-1e3ad78334a6.  Unfortunately my patch wouldn't help with that, as it's
-designed to help with older systems (e.g., Skylake) and newer (e.g.,
-Sapphire Rapids) but not Ice/Cascade Lake.
+> Outside of that, you probably want to split this into two parts - one
+> that adds the helper for the existing code, then one that modifies it
+> for your change. We need this to be as simple as possible to review, as
+> we've had a security issue with page coalescing in this code in the
+> past.
 
-Whether 1e3ad78334a6 helps or hurts seems very workload-dependent.
+Will split this in V2.
 
-It would be especially interesting to see if my patch helps on the newer
-systems which have the HW mitigation: Raptor Lake, Meteor Lake, Sapphire
-Rapids, Emerald Rapids.
+> Minor comments below, will wait with a full review until this is split
+> to be more easily reviewable.
 
-For now, maybe I'll just table this patch until we have more data.
-
--- 
-Josh
+Thank you for the comments. Will address them in V2.
 
