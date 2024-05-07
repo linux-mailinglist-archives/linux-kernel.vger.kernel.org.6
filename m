@@ -1,121 +1,82 @@
-Return-Path: <linux-kernel+bounces-170584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD0D8BD967
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:30:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74EA8BD966
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 213D81C21CE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C59AD1C21795
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6130D8BF9;
-	Tue,  7 May 2024 02:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90F84C8A;
+	Tue,  7 May 2024 02:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YVoFb30W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E6N2iGA3"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2055.outbound.protection.outlook.com [40.107.220.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890F84A3E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 02:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1061C4C6B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 02:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715048987; cv=fail; b=qItswHhCZ3lE+5d8sS+e9c1AkGxItnRwf7lPc5NrkCju8WiNNnupe1l4/rkkJjfvyuYwPbyyG1pZbhDUD+wI2c79uPfOvJvk5hVaR/VigRPmPHhsXX4bMUmQHtbEwDMjsd37xLdizdClB9GDQoC+qsAPGWgIHzT+gVL6Z6pmuM8=
+	t=1715048989; cv=fail; b=iJtlw6n783/w1BfJWniQnLJiWoDDbOX9SBiZc6jfiJLjIczlwS8rcxlTN4Zq/zx/a3tgCz5wEA3IiqWPy59UzeQI+Lhsf1F+9+/s4slgD8GJnjYMfGx0JnU6RFwQ1C7olE2zxoxVGuRpUiye9G/z8Ua8PC7rFZwRDnX6F3sm4Ic=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715048987; c=relaxed/simple;
-	bh=i/m7pwkGkkGI/cFTpaT8zCUU2oRy62NYHRE8UU0Evmo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Sj1fA2kardCxcPYlGI4WdAT+wMdFqRsFHAH3AT2hI5yFD31n9z8aS1EVoqQfvaFyApzwPP6404Ktba0hKvHshVNaMH+AyDDfuG8uVSjrOUPUqUKWpWp8pQBpH0DSrpgeGhhHQoU8IKnAcIOiu34O5a4rVCtLWUjLO0iK2ja7L3E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YVoFb30W; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715048983; x=1746584983;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=i/m7pwkGkkGI/cFTpaT8zCUU2oRy62NYHRE8UU0Evmo=;
-  b=YVoFb30WqehINxB18cALpd/5yxW9766LOtbEVKRLbppE1UIIGgaej2Gq
-   u5WLdyBpOqZ/Jyteo/aVgthB2LnX6qWynx9UdjWjCt4DnaI36PKKd8Ruv
-   EmcwYc2Zu7lWMJvfk/pfWYUrj5yYvJaGfYYd5V5Xa1WBhGfTHCJslqW7G
-   707iVGczA7cVxeaiPG1FKJlKG7IbA+L/teVvk+2V3IZiNQWlleHQ8XWYV
-   Ttz3wq8oVy/w97CJDlrM3c2miqYt+2JQQx+EAvwiv/YLQ16IE7hZ1S8Nw
-   SfXJzCtFIULoj7ET0tkHXtqRQAHjvvG7+WEzROzFSHWQ9Uk0E00jVJX2E
-   Q==;
-X-CSE-ConnectionGUID: ZfEfnsj8TOmEPA+g5ER7zQ==
-X-CSE-MsgGUID: P6zn1moFQ/KktDBdn5u+jA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10655807"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="xz'341?scan'341,208,341";a="10655807"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 19:29:42 -0700
-X-CSE-ConnectionGUID: dz3x6Zn+QHaD0bUjbgdALA==
-X-CSE-MsgGUID: /E38H+tyRs28zAkwjEftuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="xz'341?scan'341,208,341";a="28361795"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 May 2024 19:29:42 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 6 May 2024 19:29:41 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Mon, 6 May 2024 19:29:41 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 6 May 2024 19:29:41 -0700
+	s=arc-20240116; t=1715048989; c=relaxed/simple;
+	bh=QG8K0urlTegMXIJmUHrfaN+9oodsTzMxmIsQn4IykSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uzTdXybzpUjofSdg/aLJ/YvJHhmbMDJ02euwkvVTvlstQPvzVmhW59l81JzJvMnSujOst1QLp8QjL/5cSGRfvJ/npju76PYxD11r75j4FYO2ncDQRCbViB09A1V0smeLiOat9gASYVPluJ5hkcIMYMaulEcID0LOx+qdYaw7afI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E6N2iGA3; arc=fail smtp.client-ip=40.107.220.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JnsK4Wr24dlHdCPCdw5ZiGEaId8TuW70VOtpKI2tq/EftvLE8O18CgL556/znXJk8U30oJJrP0843O7+zyZyBSF6gTqFmVIXw4UOaLU007UA0S+hzRGbd40pwf+0lNWEov2QLdQF5Rpmq2FBfjk8lsApBtWzM1VHImViM+cuOIakhrKFKofNlj521A6HRIVlBHT8RzVhGXbxs06YCn++F6uDd7MwYmV5OqUsl62QWLAbLvg9U6tdm2xeA0Nh62+YNnLT0DP0mDe1te9evtUWAHXJ7N+DirbO1CgwtUr8GZPiVjJVW7cY/zybi2M39YxhQcGN0QgFntjbITmubBU8/A==
+ b=Rlom7QOVfNNOKHiLbweKNVttKlpYgdyfAl/eSG7cSh33nqa3wSF23CvEsO3HxihHYv4kVZ6CpXLcjQKQgbOTeDKw0lJyhTuD9ohEV5GtRGODOmhQ70mioOym6YK1FJtbINlRCk1IcjS9/EKlsnJptI2AzqDL/DKTDf0GlUaUaIA+eHzo4cmHHOWglrLvNhu0TKuZOiyGce1/0e+gzOj82t9g9VDT8LLY1nV3r4s8SznewkFTmJ4tvN4yv4VtN7LCzu4of67YB/7r3MPupNNM9OTzPtzyjrDwnGGfC3xLCQtBm8WHG9SptI6F1qUS5zMmPjGABduWUCb/X6yBTs6d5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=spzogJi3gJO9a3kFYavXrLe9DF0oWAFzTDsdXnLq+CY=;
- b=HJckPjVtre38E87pj4yOU/maKl3m6a4Po/+Jl7MgaROYogwejh12sj9luP3pKBiv/LrSctiy85y/NMUrT9FJrjI4bpp7Yhp9OIDQ0h7DfsEHvs0BE3I8oyrqDVwm+cc0TxYL+cTiD8opUap7RkOlBjncsNeDUCfZbEj+4uD10Ie7I/yYgij5QcDyCN+P4pPAFYcjTVyrRQ+5FgdEXQ0MD7WSHluix/+iUkCrIx4dc5mb6uJseCqsIrcIbudGC3tLdSy9tVz1juF/z+cq3LsrVul5jRRu6P4kuD+KvxpWnf+O62VIMKX3aB4ivJohPBrYJk/fHLTHWYc19dpBSJtJ3g==
+ bh=qGGj2aazpVHVj2n5fnqoj1QVO9AwzTD7xPqUsAEEeQU=;
+ b=ksaozMKwNagjMwG/tdhLBcgjryPZ15I6ozGaV9Cq6qn8ZesOJss1ve+tRt/E4DO43CJDXM3j0736w6dl6Bvkti5DzgA3h6j4NmfkQ59qJSijMmMmGYGh6o1Nqhhh8sENyplDN38oxvOLzLxQW4Gfb6i8s8Nyb1oVfUN1/S1lbR+vw70/Bw6S9vjrA1fKO8gjVITreQOWSV8F9tBN7sthcRPWRV0dENgkANlLkCND9YDs++y9CRhKZ4HoY0rDHfTjo5MlnuQd7JqA1lqFfhXulgbT8xanWiNy6g35futn68VhEbmEA/S0nrtAz5HNgfG/KWYbBbowv1uEGW/cr4WpPA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qGGj2aazpVHVj2n5fnqoj1QVO9AwzTD7xPqUsAEEeQU=;
+ b=E6N2iGA3WjAgHwj4fHaMHDIbehP7oMFuJxdYs1Jj+qF7laofw2tyw8l/ockQ+m06Rkpo5zi8X6xL4w6BbIdti8J7LJeOQZdlQcDlbWCStKmFf/dwOGZ6AkcqOa78EzAmFyPI1WAYxt4R+fA9lwENxKM5QkkpX7qCKD8A9gaXa/qpK6Ox4gh2rSo/hSegmAeM+sWFxcKria7o15ulN984fxbQckeYDaUJN9m8h9OxbK6YdZRjb0ouHPNtGqcYjMSP/AGxbA/PFIPou8PaG/5Nuia9JLQEycWDz6zFXZ8xKeTOM6W5lsuf/O4ShCju7ysDTwDALifStXE8Geip3DTsYg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by PH0PR11MB7471.namprd11.prod.outlook.com (2603:10b6:510:28a::13) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB4140.namprd12.prod.outlook.com (2603:10b6:5:221::13)
+ by SN7PR12MB7022.namprd12.prod.outlook.com (2603:10b6:806:261::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Tue, 7 May
- 2024 02:29:37 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7544.041; Tue, 7 May 2024
- 02:29:36 +0000
-Date: Tue, 7 May 2024 10:29:27 +0800
-From: Oliver Sang <oliver.sang@intel.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Sean Christopherson <seanjc@google.com>, <oe-lkp@lists.linux.dev>,
-	<lkp@intel.com>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>, "Ingo
- Molnar" <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>,
-	<oliver.sang@intel.com>
-Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
- WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
-Message-ID: <ZjmSB95mY7+bRLQ0@xsang-OptiPlex-9020>
-References: <20240430172313.GCZjEpAfUECkEZ9S5L@fat_crate.local>
- <ZjE7DkTBSbPlBN8k@google.com>
- <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
- <ZjFLpkgI3Zl4dsXs@google.com>
- <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
- <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
- <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
- <20240506073903.GAZjiJF7BQyjYJQLYx@fat_crate.local>
- <20240506080156.GBZjiOdHjn-NdmbnTw@fat_crate.local>
- <20240506081235.GCZjiQ8-MC7wL7Ue8z@fat_crate.local>
-Content-Type: multipart/mixed; boundary="eCpROXW4U2566AFY"
-Content-Disposition: inline
-In-Reply-To: <20240506081235.GCZjiQ8-MC7wL7Ue8z@fat_crate.local>
-X-ClientProxiedBy: SI2PR02CA0013.apcprd02.prod.outlook.com
- (2603:1096:4:194::21) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Tue, 7 May
+ 2024 02:29:44 +0000
+Received: from DM6PR12MB4140.namprd12.prod.outlook.com
+ ([fe80::5b0:8154:dfef:2cac]) by DM6PR12MB4140.namprd12.prod.outlook.com
+ ([fe80::5b0:8154:dfef:2cac%3]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 02:29:44 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-mm@kvack.org,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH] x86/fault: speed up uffd-unit-test by 10x: rate-limit "MCE: Killing" logs
+Date: Mon,  6 May 2024 19:29:39 -0700
+Message-ID: <20240507022939.236896-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.45.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR03CA0024.namprd03.prod.outlook.com
+ (2603:10b6:a02:a8::37) To DM6PR12MB4140.namprd12.prod.outlook.com
+ (2603:10b6:5:221::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,1572 +84,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH0PR11MB7471:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22ecc85e-7ae9-482e-4fb6-08dc6e3d89b8
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4140:EE_|SN7PR12MB7022:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61b320d6-d61b-4a41-12a0-08dc6e3d8e82
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?BnRaHVQCkQ6+pUdlxQ0ORBNPhCXlYtdJGJYIkPzWAGntyEeRBYSmU+7uZ6kM?=
- =?us-ascii?Q?eRpOFOFvyX4xFuJogltFHSwJTGe3oeYVwWzCVTukn6twnFZH+tr4dcxBcGpK?=
- =?us-ascii?Q?/1AkOG8bMcxaumhIr/UwGVVUC60Jnn2ukolnI8LvERAk8+8WvkLooI7fSSm3?=
- =?us-ascii?Q?GwanB6JvCHs9f42OjJYKzRK3+9o7CdNE2Kp006U893hng0fXuNO1VkBUfWsH?=
- =?us-ascii?Q?1V1zjuDky0FyNdOUX3DhSmWMD01INeQ3xrr+obg5D2huBZ2K4YUz/FMTTNnU?=
- =?us-ascii?Q?fM6r1aHJdAsm7t2ln0M/Xu+75AYher9f4XA+GDSx2FDeacxzD5GW3S4HOT/M?=
- =?us-ascii?Q?369E5d3brDp+8MPCglZ6Mathe5d2XqyGmv/yXhoTG5sfy/SXDxJ3iNSozr78?=
- =?us-ascii?Q?h7uKOIObkF+bbliiQOV9wH8Qb4Y29SuqOe35Iiwbw8sdRIAXooVBFDhHsJRe?=
- =?us-ascii?Q?Qqd5NbJf/wUCPrh3u/Bl2fVwCE2f82zfh49sLQBOpxJH2LoKe4HpUT07dZIX?=
- =?us-ascii?Q?FfGsuWmHRCyQsPYlx5BUuFse+Vo5fO/Mdb7Nhyqv9IqQE22g4TxeGdtlRLE4?=
- =?us-ascii?Q?FGmLW60z15hJuQPN84g98KGzhOeKWMUYEXM2O8gG0psipBYgC3G+WM3DbhMg?=
- =?us-ascii?Q?9XPvmUiM9zmfJBr1j07ltzeeRlf010hSx+zkBnUsNr8G+PMnp+9fz3XC2k2O?=
- =?us-ascii?Q?TeoUkTxkovMBePzD0s9G1cOcGJaDDO7sNOZvjfL+Rq2kxorsjMzMj+6ZjegL?=
- =?us-ascii?Q?3sHCivVhDn16unNKwIQ7f0K++unug3Mzw8nr25fyHDzNXX56Pa/MWkwYloM8?=
- =?us-ascii?Q?7roIQ9pbudHgVPIRPLT8o/JfCwPss1XnHxOHITfbbvOIR5tWGnudiDix8mef?=
- =?us-ascii?Q?dreangqvVb3Od56YB/vyXN7Y1A70fSi3ggm7pzPMTo1G/5zlhpl0EQDOX0lJ?=
- =?us-ascii?Q?ELt8I60pDo5Td0Y6Hv6GBLroM4vCYDPPu9z8nKZbwE4bbglM0NywZFbAD+zG?=
- =?us-ascii?Q?k1t4Oc5CAdHPMF66uhWrXZcy9nnVp/oVB4ramdBCBjj3R5HPfrYicH0hHj1I?=
- =?us-ascii?Q?Dnhg25qej50ykUdLMt2mWB+q6IloszQv5C0uldQCF/zvwa0oUsFnfk7fQBVn?=
- =?us-ascii?Q?VXQTnxpB4uPPLP4GerRi1PblGxepl7xhZHIhfqVAFPyEnHelogKb0JIVWWDX?=
- =?us-ascii?Q?0zMWU3YRIHUlHIrWbQ+QvY7LxXG8dDMGZStxJOhzlFTB7lzPSAKRQew0IH0?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JPn2N5eYHKioKaCOlWQPjZ5PrlN4W96RdUbs2piHBVpl6k1yFjAyX0jqAEMQ?=
+ =?us-ascii?Q?YsJPADMWKdMJ2zZo58xGUtqC/JxvMBRecxNbuBabpaFTGY0+f3My1Lix4cIF?=
+ =?us-ascii?Q?u/SIHxmnxGwM+kV5mLHKZ88m3sDRoVq2lwNu5+5XhMHmIIwglWBNY2de1dD/?=
+ =?us-ascii?Q?Bf3eFT8yAjZgMBeqJ0duYkGrGrp5HTGoN7sdoQ54VgVEfMC/JYcI7afCkArG?=
+ =?us-ascii?Q?NQDFSa3B6eoDY42SLWfa/ZraPPzjUj6byc/lShtA1TCEBdt+w60jZudAxLuk?=
+ =?us-ascii?Q?erjWt2sY8JrdLqeGye8d6UkrntsBzut1yKU39a4Eqmhl1IyRrwsCOVP5P0gM?=
+ =?us-ascii?Q?gRYK1bfwoVSyzLq2jf18j3G80DYqe0y9sa/Q0wRbkPIoGVe4dGqSwzGcqVAN?=
+ =?us-ascii?Q?b0beeY/uI8biNfBgIKn07nM1JTfgiC+Ork3nOwIRRZLD/WZvpDbMT2Fp5UM1?=
+ =?us-ascii?Q?w/w80QEN5aJSrvz/CNpdGBkAddw5//RtGWS894T1+6KIRqIg/wI8w5tU36Ik?=
+ =?us-ascii?Q?Iv5NEgartP54Gb+kRcxVovzF4dVXQyg9KkStSIeUkTGKMOcKvEXxOmpAx95t?=
+ =?us-ascii?Q?l95vaauwe4VOl27s/EgNoYw0ZxeBGKUyOkfMQ+GiUeZtrw5BD7egBX1BveAX?=
+ =?us-ascii?Q?4z/Gzbu4mq2BqWtLpRTrGzf2FTb0Wp5dFihMGQJ7LOPTWUnCBZg9upU7uT89?=
+ =?us-ascii?Q?qYYFmRc9Gkw5Be+J9xAoTWla8HgX8AO86ZG+GXn4lVesb831hbEwhd5n1m7x?=
+ =?us-ascii?Q?Dz9giIj8Pi1lurDzvPt6/f/rPyLsULxbzY9VMQOkrWInieJ6KF1/jsJ75gAL?=
+ =?us-ascii?Q?M0LIKf7o9M9ebQO/5e8z8hyokSABbMYFuBB8zintK8VidGpM/oHR7w5qkk+5?=
+ =?us-ascii?Q?vy4LNNBSgyu4iZMfrp/sgxZImfIbUiH221lBAUFwRnv/h27beGxbGFQgEt3z?=
+ =?us-ascii?Q?QLt7Uci7D7vMnUalmJzgqWMjSiYDi9FbJOt20QzshRPfq9hkCjVZwVS8+JV2?=
+ =?us-ascii?Q?ZmQDyntjwAryFrCT66OU28IEtHQsHXUyTbKHTB/8VHbgt6m/+EPlQ67hLVAt?=
+ =?us-ascii?Q?e/IlpUZWSmjxCBcjqjNjSylqJ1AYPbfm2RmuovyioCxSV55iyrmaOhZrERyI?=
+ =?us-ascii?Q?1clbKoOIEG8ImSAWp9O3NrRpGABrd15aVz1plFvVgO3hG/2r/58eXix2Mdgq?=
+ =?us-ascii?Q?ZLJbm9WjbPhUi3lE8GLfuDPFar0DSCsKAvkZDTSicQWRbmNNZYkBOJ/PkVbW?=
+ =?us-ascii?Q?yl9wS5vvKp9japs5wOw+tVQq5CvCibMPCNhU9F2kTg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4140.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hy3/VB/MXCnOUcLwHBEHHtuo8QEaB/PGERNFyJres0fIvHKrawQQ/RenVMT/?=
- =?us-ascii?Q?+ztJv3Qlpu24USKtS4iBpbblEcC3291+81r9XZh2fBw/+z/1taNAjpJtWUhS?=
- =?us-ascii?Q?0ky984xQOoY4PPaJO6XmGpFs2pTHHQcxa6DniRqxcUo09FVHALX722/ncSuT?=
- =?us-ascii?Q?CFQvb+0SMauVvtxHSxCla78j/Hjm12dblz5GuK5/aHC9OCCqAkCKvenpCriB?=
- =?us-ascii?Q?gyaDiXd0O6hGr69njA0mS8mK9CBOIenimSDWo2By2myl9d/VWuW/5b4QQk7E?=
- =?us-ascii?Q?N2j5C6BtZ0dI5FHXUWlcHDoBnKJMxCSos45xXCa0r9h76lqr+5L9CKw/nShb?=
- =?us-ascii?Q?d4UWPexEkqwZLEiR7qCpIHnxu1DobOAdmQej++uk8xleCg2Uubf7tI3izNfW?=
- =?us-ascii?Q?Q5DcAw9xYAM35pwxToCr/okpCyBCi+lDmgV96+NUcTs3BlVSbaQgNfLUOtfZ?=
- =?us-ascii?Q?pikuhT/kvWMx5H272I13r/V03TkIwZdL9i0f8b/4tGwcIKtgic96UdfIWBhF?=
- =?us-ascii?Q?GWaOMAjn8SM3gPKInr8sUVKmrQ/ZKPksZ6bVunwNGu4P+/+zIqgFfD1breVm?=
- =?us-ascii?Q?iUZHa0Qa1PyTyDINCBY9csopp+HneVLPzswkJmZw0NXOXck117Yz1nFpyAb1?=
- =?us-ascii?Q?lwAhJ7nNp4UB1O1DPMnFXoRKzVlhikt182FNHRqfuycRPyzTiZqcFUe7ey/t?=
- =?us-ascii?Q?rWq9bqyOKJrtDy3//C1VQ75tg1q76XO5mXCer0zO9KC2hkAgD8kbekPQ5taz?=
- =?us-ascii?Q?7KiikZjdq6S+j2WlM5xV4o/PO9ICdNJ59NZHfsKQ8FxDv3r/ZyCdOQZZNkFR?=
- =?us-ascii?Q?NHfnMfjjorzt6/W80p5Ne0jJh+BJ5FjOrtoCEkHJlxAoygJsDYHgDWbUNyEL?=
- =?us-ascii?Q?kODzywmKc4syu/Ym4sTt5ONCn100zQvOyX8x0WFYK3KXvDjR1JxlpSW6NDxY?=
- =?us-ascii?Q?NqXfcs7UvTXJE8JK/Jw3ouLCGLUYBY8QVxySsalGBrV6OBjTLOAacxGQmwiw?=
- =?us-ascii?Q?gUmIt4Wd8TeHoXRXvl3YexqyxmTjOcyhY238nLisrRbIbL0NoScVMFgMeZ1N?=
- =?us-ascii?Q?u2tgDZ6aZ2bGvBplQHYWesfWUJiSmYU/LYzm8l8izpOvRuxaNkYzp1cc06Hw?=
- =?us-ascii?Q?0ePgQ8E5vPpFjNePCmwC+x2gDf6KQCxt6m1m22bDkFSuz2FeUDmvAc/FXFtq?=
- =?us-ascii?Q?0wJb7oDJrVnRHYkj5MNHp0+dqjJhXkW6qdtNQjSBNB260FHuwP26mLL7EEDe?=
- =?us-ascii?Q?b6B0+pfLvvrQP2pXcqhdRGEcr46oo6g9UkGPrD3sAtX66eygMKFieXmjmAce?=
- =?us-ascii?Q?Zbu1AVDuNvT/fzKBSQRf49bzBQ16ziV/OntnatISCghyftFZzvAM13nrR3JN?=
- =?us-ascii?Q?3NmJJ3sScLloL46c6x6iT1W0lpjMU/Z9+gbi/5z6VKzguiO0B8oymW48o45b?=
- =?us-ascii?Q?hyDNh7pHvfGPKgx+AWv+wteW8/FGzpU/HwKjF8AbHDxV5UNoQCfdYR7uC2Ds?=
- =?us-ascii?Q?k5LmwW9Q5BhhnZK4SN1W34dYs47xupY5r7KniOXiyVJcM6KL4Jujg0qCeVR+?=
- =?us-ascii?Q?0JgwzkOVXFZOBteyp7OZardpykzpwg/klKPSwvxRi4TuKW6EpBBHrmuZx+yP?=
- =?us-ascii?Q?Qg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22ecc85e-7ae9-482e-4fb6-08dc6e3d89b8
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?o9ezY0XY/DIKEVAhBcNeVkVM27juuJAz3OnvziRLAnyC4w6BCcS7+Uwgx9pm?=
+ =?us-ascii?Q?gE8Ix0Y5INzBtY3JRnrKrAdteKZbtS9qehIZ2mlj2Wi8ZY28Wtv6eTpl6jCO?=
+ =?us-ascii?Q?fmnWqRb0gkXCQma3wqu961Aync+NX1chXjpKk0uYdi7z9Be6D8fBL8cXIgbQ?=
+ =?us-ascii?Q?maTpphhx0VPe/4GggLnrVJ39uoWWm+y7dIywTeaPnAtT6mmBFi3RBNu1g9xU?=
+ =?us-ascii?Q?vxHhIo1/hubxsuUQdQ5NbOt5jeH/NKByA+pg7TOV/Bqz5MyVUdey1VnRwZw4?=
+ =?us-ascii?Q?9CAaCjRBMK0YGV9tJQCdHfwO4MY8N0ldl2E56oKniZNA4oh/DbdfWfV9UT++?=
+ =?us-ascii?Q?HsNlRPmzwQ8v8dA3WXQ4zGFwNalrjcJTKC5uJnVbaG9TUTJWne5yK3Cc/RaW?=
+ =?us-ascii?Q?I0UcSxcrCYu7J+p4mzXPwx47OUcVdROyEPmBzIYzpXBkSEWoSh72D6GSqt2C?=
+ =?us-ascii?Q?RQg9HHwH1CVerFMcGaBOuc2823cbm7Xkb7B3JH/+M5vwCu1mRkGe8N8Lrrd9?=
+ =?us-ascii?Q?1b4diYiQhI2270ESjC0rvGyWcOWgEpnoUhtR3UkYW0IjV8D9rotfAPKCknVr?=
+ =?us-ascii?Q?8iOEtSBaz1N4yaHt0UXkj9hRlFLqrPeVAJDfmQRAY3N95Y/1QAWmTbfkmZoD?=
+ =?us-ascii?Q?EcfxUpMb4Mub79B8VxkmwMStOBnykgLxt5pWup4z51FP2fr1mgVTRQ8k+byv?=
+ =?us-ascii?Q?4EL2miu/oYf3DDkaMDi7C5hQnuTR6EFlpNS3t14LHZTIDGQsJA3szkuDnm+f?=
+ =?us-ascii?Q?FtKE1cMqAd6TtBrGTKdwbaf4f/YXt+Ok3vU0oLTD9C7hLr3XBdwXn2SpdzRw?=
+ =?us-ascii?Q?bksosZxTI/EzeyERlKu/qAS7wkOgTwKOIX1wK14b57ixvVdCqqRykgXD+sU2?=
+ =?us-ascii?Q?bVyUS7w3BkEXphjbUD07sChBVN9Z4WMeKiCzBFg1QaITVsbKmoimDIsalKIo?=
+ =?us-ascii?Q?BcOVyMrfhQi6dPAwePsPVgwYqXcZxR8UUv+YfctCqA9PjyxsSlgeiV/s/ETC?=
+ =?us-ascii?Q?a84Jf+ihw0rxsoxX7W5WlyM0gNXTMq9d8kxuRLHdSgVGATvUTQqxSgpfEFS4?=
+ =?us-ascii?Q?GVfF6fpTe+xcn2oxfPb3Sr7c4xb0QyZflpBxuInBie+leaaVqhRxtcVcVhkJ?=
+ =?us-ascii?Q?D1oTsHksfbOXHO+/5fLXoRTxtGt44BQsOingOBOmLw2jf9sDjlYfhhcEopJa?=
+ =?us-ascii?Q?cviqPo8jaIPui0N8K+ZmQD5hOb1W2FnJaOZ1wOBad3Q36Bq7ts3QyLoVanjN?=
+ =?us-ascii?Q?KSEFFXjbuupSEWb25Z6QcCLwTdw2V06y84DClJHO16GSEBzcbBhX0bHu9f2H?=
+ =?us-ascii?Q?o6UoJoocNh/B82jdwbqfGUUX2KHUkJo9+bW3uH+fmLtW4iOFE/wKT1AN2tme?=
+ =?us-ascii?Q?THnk24H8JJzAvVOOg6zrLZo/HNU1Yj6h45vRDXdYhz50FfYZG0R5Pcqaq6Pq?=
+ =?us-ascii?Q?TUV4TCKPmajVp0tPjXJf/+BbmEWuP23SwtvnEtQW4nlTN6Zoww144k3hkJJx?=
+ =?us-ascii?Q?68vYxWypuA+WQStRCl2Y3lr0fwIPOBzkc6R22TeCMBLUvTZJlD8EoNE90eqv?=
+ =?us-ascii?Q?L8RrsgmCrH+P2HXw1QMiYE79iPi5UAuEK3YTNB+8?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61b320d6-d61b-4a41-12a0-08dc6e3d8e82
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4140.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 02:29:36.8638
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 02:29:44.3862
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Rw3c1Sj/pdCaYVF+k4+EllGz4VPnKOIRSvpnl7hTSrhQ5vMPjFcYzUNI6eTKQCCtTPjdHj2QLXsTlkIZ2kbaQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7471
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: oTtwXzF8bFHelC7iE+CYM243Kw7JRNkl6SV4OPpaJ+Mwz3zrXw59u/zbqxyCMXcTMSn9sNb5rua8/bUuJ/Naxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7022
 
---eCpROXW4U2566AFY
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+If a system experiences a lot of memory failures, then any associated
+printk() output really needs to be rate-limited. I noticed this while
+running selftests/mm/uffd-unit-tests, which logs 12,305 lines of output,
+adding (on my system) an extra 97 seconds of runtime due to printk time.
 
-hi, Boris,
+The test normally only takes about 10 seconds, and the enclosing set of
+mm selftests normally takes 305 seconds, so the additional 97 seconds
+really hurts.
 
-On Mon, May 06, 2024 at 10:12:35AM +0200, Borislav Petkov wrote:
-> Oliver,
-> 
-> does the warning go away when you run *only* the second patch?
-> 
-> I.e., this one:
-> 
-> https://lore.kernel.org/r/20240504125040.GCZjYvIAK9_DzKuHXh@fat_crate.local
-> 
-> ?
-> 
-> I think in this case, it'll make sure that the misconfigured system is
-> "reconfigured" properly wrt VMX etc...
-> 
-> Can you pls send dmesg and /proc/cpuinfo from that run?
+Generating lots of memory poisoning events seems like a valid use case,
+by which I mean that this is not just a testing artifact. And that's why
+the fix applies to the code that directly generates the output, rather
+than the selftest that triggers it.
 
-not sure if this is still needed, anyway, our tests done, just update you the
-status (we are testing your debug patch in a later thread now)
+With this patch, all but 10 lines are suppressed, thus speeding up that
+particular selftest by 90% (runtime drops from 107 seconds, to 10.6
+seconds).
 
-yes, the WARNING disappears when only running the second patch.
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ arch/x86/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-dmesg and /proc/cpuinfo are attached.
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index bba4e020dd64..e4f3c7721f45 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -928,7 +928,7 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
+ 		struct task_struct *tsk = current;
+ 		unsigned lsb = 0;
+ 
+-		pr_err(
++		pr_err_ratelimited(
+ 	"MCE: Killing %s:%d due to hardware memory corruption fault at %lx\n",
+ 			tsk->comm, tsk->pid, address);
+ 		if (fault & VM_FAULT_HWPOISON_LARGE)
 
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
-> 
+base-commit: dccb07f2914cdab2ac3a5b6c98406f765acab803
+prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
+-- 
+2.45.0
 
---eCpROXW4U2566AFY
-Content-Type: application/x-xz
-Content-Disposition: attachment; filename="dmesg.xz"
-Content-Transfer-Encoding: base64
-
-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
-
---eCpROXW4U2566AFY
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: attachment; filename="cpuinfo"
-
-
-root@lkp-csl-d01 ~# uname -r
-6.9.0-rc3-00002-g14376a76dc27
-
-root@lkp-csl-d01 ~# cat /proc/cpuinfo
-processor       : 0
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4327.389
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 0
-cpu cores       : 18
-apicid          : 0
-initial apicid  : 0
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 1
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 1
-cpu cores       : 18
-apicid          : 2
-initial apicid  : 2
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 2
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4105.748
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 2
-cpu cores       : 18
-apicid          : 4
-initial apicid  : 4
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 3
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 3
-cpu cores       : 18
-apicid          : 6
-initial apicid  : 6
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 4
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 4
-cpu cores       : 18
-apicid          : 8
-initial apicid  : 8
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 5
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 8
-cpu cores       : 18
-apicid          : 16
-initial apicid  : 16
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 6
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4201.640
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 9
-cpu cores       : 18
-apicid          : 18
-initial apicid  : 18
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 7
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4300.741
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 10
-cpu cores       : 18
-apicid          : 20
-initial apicid  : 20
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 8
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 11
-cpu cores       : 18
-apicid          : 22
-initial apicid  : 22
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 9
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 16
-cpu cores       : 18
-apicid          : 32
-initial apicid  : 32
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 10
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 17
-cpu cores       : 18
-apicid          : 34
-initial apicid  : 34
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 11
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 18
-cpu cores       : 18
-apicid          : 36
-initial apicid  : 36
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 12
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4300.006
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 19
-cpu cores       : 18
-apicid          : 38
-initial apicid  : 38
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 13
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4300.001
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 20
-cpu cores       : 18
-apicid          : 40
-initial apicid  : 40
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 14
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 24
-cpu cores       : 18
-apicid          : 48
-initial apicid  : 48
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 15
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 25
-cpu cores       : 18
-apicid          : 50
-initial apicid  : 50
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 16
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 26
-cpu cores       : 18
-apicid          : 52
-initial apicid  : 52
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 17
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4299.883
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 27
-cpu cores       : 18
-apicid          : 54
-initial apicid  : 54
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 18
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 0
-cpu cores       : 18
-apicid          : 1
-initial apicid  : 1
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 19
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 1
-cpu cores       : 18
-apicid          : 3
-initial apicid  : 3
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 20
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 2
-cpu cores       : 18
-apicid          : 5
-initial apicid  : 5
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 21
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 3
-cpu cores       : 18
-apicid          : 7
-initial apicid  : 7
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 22
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 4
-cpu cores       : 18
-apicid          : 9
-initial apicid  : 9
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 23
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 8
-cpu cores       : 18
-apicid          : 17
-initial apicid  : 17
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 24
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 9
-cpu cores       : 18
-apicid          : 19
-initial apicid  : 19
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 25
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4299.909
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 10
-cpu cores       : 18
-apicid          : 21
-initial apicid  : 21
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 26
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 4299.959
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 11
-cpu cores       : 18
-apicid          : 23
-initial apicid  : 23
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 27
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 16
-cpu cores       : 18
-apicid          : 33
-initial apicid  : 33
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 28
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 17
-cpu cores       : 18
-apicid          : 35
-initial apicid  : 35
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 29
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 18
-cpu cores       : 18
-apicid          : 37
-initial apicid  : 37
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 30
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 19
-cpu cores       : 18
-apicid          : 39
-initial apicid  : 39
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 31
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 20
-cpu cores       : 18
-apicid          : 41
-initial apicid  : 41
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 32
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 24
-cpu cores       : 18
-apicid          : 49
-initial apicid  : 49
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 33
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 25
-cpu cores       : 18
-apicid          : 51
-initial apicid  : 51
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 34
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 26
-cpu cores       : 18
-apicid          : 53
-initial apicid  : 53
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-processor       : 35
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 85
-model name      : Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz
-stepping        : 7
-microcode       : 0x5003604
-cpu MHz         : 1200.000
-cache size      : 25344 KB
-physical id     : 0
-siblings        : 36
-core id         : 27
-cpu cores       : 18
-apicid          : 55
-initial apicid  : 55
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 22
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512_vnni md_clear flush_l1d arch_capabilities
-vmx flags       : vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple ept_mode_based_exec tsc_scaling
-bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs taa itlb_multihit mmio_stale_data retbleed eibrs_pbrsb gds
-bogomips        : 6000.00
-clflush size    : 64
-cache_alignment : 64
-address sizes   : 46 bits physical, 48 bits virtual
-power management:
-
-
---eCpROXW4U2566AFY--
 
