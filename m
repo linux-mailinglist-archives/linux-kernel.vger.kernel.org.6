@@ -1,104 +1,90 @@
-Return-Path: <linux-kernel+bounces-171016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849E68BDED2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:49:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0838A8BDED5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55C21C2313D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A04284FA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7EB15B11A;
-	Tue,  7 May 2024 09:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nKBqsw0o"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9B415CD57;
+	Tue,  7 May 2024 09:43:19 +0000 (UTC)
+Received: from mail.avm.de (mail.avm.de [212.42.244.119])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC328821;
-	Tue,  7 May 2024 09:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615018821;
+	Tue,  7 May 2024 09:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074979; cv=none; b=kcd5kda9hnDvM33WhrFUKcB1s6iF9oDzatarFCUXjRyWjr70W0DAURWvfb6K3+EUsMH8/dbXGmQD3Fczxg7GZFebMcmWiUzowfp4f9Qh/KNxTJ6DELfQOoHehEnWuR0xY12dMZ3eEO2u+GNJvx4fv9ow8Oe0n/f6g1S5Dss8PSQ=
+	t=1715074999; cv=none; b=GnB3Br1LPqkLPyjvhLiAoOaXj7fbM7XS+MqvqgiK8GjDOxeDEazajnFRsh1a9VE04b23h4akltZtUKqKmrFac1uQYKv0+de+igshhuuQkj2I7h/1YZ4dpydnUeOSmXtHZUxUjpoqst8SJio3r6n4rOsj3TYT14qgLztFZ0i/M7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074979; c=relaxed/simple;
-	bh=+nDEuH5Ssq5bYvy+3zosscDSP7Lvm/QwrqbbeTHFOLI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=C2AXAB3w7od8hJcs5rOfDHcbMzc0Wdp3+qNMH8CUrC7Z6q9qjsK0FUoWBYeZKBuszde1bFRr0/03lOoU7ZmXW6gfKVEVt77fuj0Oua27y9uxBMD6aDyiY6BhpKulJvou1qxBSkg5hcI5T4IIiSVE9VSktClf6KarzujljNH5kqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nKBqsw0o; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715074954; x=1715679754; i=markus.elfring@web.de;
-	bh=r5NM6ZMZAAS7E+M7pm2Z6LYVfm8zSH5Ol4T7cTS539Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=nKBqsw0oAKDdVsM6Jj5ohfvf5oZ9bOf5AX3U3i7JjkMLfrecLADdiGLI+8uB4kjC
-	 jY9dhdnqebyZBlg93wEWyIPryKfO44WQkySseyVc1fvr+1ulilua5lSId7Q5st2OP
-	 aVTNN+JuZ+28QUWvQuATNLVJpH4sh43ImzMMrklk/NSZ6nNHghfUtv74edXRdFZAJ
-	 qs/Lecur6n/ZVtvfjSv56ueyFtTOZafD/Rj97kbk0fywOnij83XGr0pvktsOwSa5q
-	 VV6dL+WODaN0QqtDlYIPZZfxV60P8BfophFpExDMY4F+2Y2WMXGZt9BRuUFuVsYdH
-	 0fDeypTMNxcUa9fpwQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDv9a-1rwXaI1nMK-009LgC; Tue, 07
- May 2024 11:42:34 +0200
-Message-ID: <dd736c19-ee7e-4040-aeba-6b79ec15f266@web.de>
-Date: Tue, 7 May 2024 11:42:32 +0200
+	s=arc-20240116; t=1715074999; c=relaxed/simple;
+	bh=AyIeyy4Y/0cN0CMD93LR0lvMMoCUzrM2+LTpR3EBJr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sSFVoGp/stz9BgihghJGCxrskHg5nWZ7ZZVnKJ9ODy4d9ccPnRUos+YEiMey9h3mb2jGqxf26zd7KJom1gj+HiJpE7sCJaboEJr63YilOX3ApIy8N72fwuXeV5Ku4to+2acPoTjf1fQvJlLmEhHAs4k3TlOEQD89DDTqOdxPtKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+Received: from mail-auth.avm.de (unknown [IPv6:2001:bf0:244:244::71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Tue,  7 May 2024 11:43:10 +0200 (CEST)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 18E0C802BF;
+	Tue,  7 May 2024 11:43:10 +0200 (CEST)
+Received: by buildd.core.avm.de (Postfix, from userid 1000)
+	id 0E361180D04; Tue,  7 May 2024 11:43:10 +0200 (CEST)
+Date: Tue, 7 May 2024 11:43:10 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 1/2] kbuild: remove redundant $(wildcard ) for rm-files
+Message-ID: <Zjn3rg9YhdDmkySV@buildd.core.avm.de>
+References: <20240427153253.2809911-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- =?UTF-8?Q?J=C3=B6rg_Reuter?= <jreuter@yaina.de>,
- Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- Lars Kellogg-Stedman <lars@oddbit.com>, Simon Horman <horms@kernel.org>
-References: <5c61fea1b20f3c1596e4fb46282c3dedc54513a3.1715065005.git.duoming@zju.edu.cn>
-Subject: Re: [PATCH net v5 4/4] ax25: Change kfree() in ax25_dev_free() to
- ax25_dev_put()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <5c61fea1b20f3c1596e4fb46282c3dedc54513a3.1715065005.git.duoming@zju.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+pdHRZr7m21n7xLmFkZBY95nM+/t80yhgyKvXQ93ITu5O3mm8uG
- XaGOT59O3eUQWzDy/AZkainCMmuSFVxftcplkLa6sF3jrelLvvPzdpdGOFmAcGVy5CBhlhz
- OtEgrpt0m00ojq6Tg+yh688lPq991nOuHx9R55AjsYjClPZ47j9+6j12RSOgjx/ohGB/MSj
- QHTPoPj4A8MEEWkZ8kgmA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oT1Lk3+spDI=;sGvZy0c3wuS6usgKSYG8TBtSNlT
- vPzS14FAqAzkjIjurTFX7iaYYVAd6Iy9Aqi/3PbOCmIh/isjRaWV1blXGf3CXh/dmhNhdfnyp
- iAcR6t6FSn6BHN6BEGpN8a8Ir7t/fRPm/LRrdiK0whDesYL4iXaIKoewYz95cForHUYB61h1L
- 3nAwJQEfW4jNlEdq5O47Mb5qGzBeyPzwznbtScsZl6emJikicj8HKF5EySb0WGOKo9VPESLuG
- /Vp1J+1DMfMriq2zRajTg1mLkOdaj4RG5b+iMO1G3oG85T53I3XUau7VOm90rZZvXQdnqZdll
- sxKCtW0JGG6rlRDNeyBJfzsoCE7G5RTb7ZjSF9F9hoI8Dcc2/2DGrtwciAxcGrjvu5u9oUf/8
- e9OnEmtF3f5uQorLS7Xp1Du8DKX3JE0t5+GdvrFN8mfVQBWnpXc7HiHdHzyuDQY8S9EQ/5Rj5
- 1qIdT5plALgCaAEYDBL0nik5/ARmN5aqJTenHoeHf3hXUMfld++uAaaPuT+1QWeMyLDR8uUje
- xWtvC4D/d3SziQVSswMoeCWnLjexSRI3CF0YgkSfTV6iucqztQW9khPYGpZxP4lwJr/nWheZ7
- rPtqqgXi3onjNM6SzDOqqEjzfrBE6AYgcofIJa8STAh+f8WyIb3QHSLwp5IhMZLMHH/Q3S6uv
- zGzNgB5rHuAm7pn6bqFYXUdtd6RRlGyOxNETHjhwbeEJQ2EDOjnBYo/83wreFJui0Ta+d4zV4
- oMdrEWJx2zpzfN3cOcolrqpSslWMCivQ5di/cb1g5TeHkooVsOyfchbv+3WlZ+PuyS8svwh9j
- Z0Wv5QB5mfwOSKgZS6OaZjkESngH8oN2C1vS9S+sq0bJQ=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240427153253.2809911-1-masahiroy@kernel.org>
+X-purgate-ID: 149429::1715074990-91D892A6-4B84E111/0/0
+X-purgate-type: clean
+X-purgate-size: 801
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
->                                          =E2=80=A6 in ax25_dev_free(). R=
-eplace
-=E2=80=A6
+On Sun, Apr 28, 2024 at 12:32:52AM +0900, Masahiro Yamada wrote:
+> The $(wildcard ) is called in quiet_cmd_rmfiles.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index a1c19979e13e..62557fabfee5 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1512,7 +1512,7 @@ clean: archclean vmlinuxclean resolve_btfids_clean
+>  
+>  # mrproper - Delete all generated files, including .config
+>  #
+> -mrproper: rm-files := $(wildcard $(MRPROPER_FILES))
+> +mrproper: rm-files := $(MRPROPER_FILES)
+>  mrproper-dirs      := $(addprefix _mrproper_,scripts)
+>  
+>  PHONY += $(mrproper-dirs) mrproper
+> -- 
+> 2.40.1
+> 
 
-Can word wrapping look a bit nicer if a single word at the end will be mov=
-ed
-into the subsequent text line?
-
-Regards,
-Markus
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
 
