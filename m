@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-170995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3240B8BDEA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:43:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B608BDEAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0AE1F20D45
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:43:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B6B4B25F9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08668161B4D;
-	Tue,  7 May 2024 09:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111DD168B1E;
+	Tue,  7 May 2024 09:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYZ0ep+x"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEH12vyn"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9226B15ECCC;
-	Tue,  7 May 2024 09:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACD615FA82;
+	Tue,  7 May 2024 09:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074574; cv=none; b=ht7Js9Z18dtj7op/t4dpAIMFSzvGLaTrfLII9+rs2fpTscgqbtjFP4zJGZNbUor9TY3r2RhJy9kuFkrc8w1gvEOWYnxKXNacwwTvqy/CZoueIRk3rYLW6QnANHf8ukwUX1PGODWrDx41qFhGg3BBBnQPFJTG0QWd7x9MhALCft4=
+	t=1715074577; cv=none; b=Rh/fZScds+IGSArgM9FZFgOH5IwUHYVy2E9glNo+eDTPmYudSs01TjCNVmlB/F+t84BKR2DILNZVIlzyaJqaYoJOfJYvdcEQ9Aoirgg89mjQRvZufWP6FCfNGLqRUz4qIRm2UJZJakJiMiQma94rv4GtL8JQCw7hyyuR8uwGwIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074574; c=relaxed/simple;
-	bh=FSe7L4XahPulJ5NWwKASJPrFyN+6QSNIQKLFJWJyFOU=;
+	s=arc-20240116; t=1715074577; c=relaxed/simple;
+	bh=QKSqgdzxusUu2mHIh3mAgH0aWgzgQr+xVcxYkLJ9pLo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r8M/7TPahBJZW53Br+cmnXoGptq1BXiWFwoeMMIthVnUVdnqCYnGduJDAXzoKqQCnZ6ajOl9VVBkGhCDiE2wzcCzX8MyuOZVEQaRs8fZBAdwdjJRb/kbpeYR7xz3YU6d13hAxFdZACVjbq2RQq+lh82SyR5zAZWJNKFAVk2WiRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYZ0ep+x; arc=none smtp.client-ip=209.85.208.178
+	 MIME-Version; b=C40F2mBE5XDLohFCFoqrUPQC03vHl3fRGZbptnHTTG/tfRENj029aBxXSB74807+3FGSrDrICBdTRBs5UNpCg6CvXs3cHq9Ob5H16B/d9iHylihuo8oMoE7he3OpbJaK5465uK6UtfEFGw/CqmyGfpDttIQZDSPBBXrNN2dsspo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEH12vyn; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso8460181fa.0;
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2df848f9325so34230421fa.1;
         Tue, 07 May 2024 02:36:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715074569; x=1715679369; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715074570; x=1715679370; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2K4LgSBtjYfVsokX8qgwwcmFotZID2ml7T+yfPfGHDY=;
-        b=mYZ0ep+x5jwNKoVZINdgBE3KuH9yfI/Rwi2PxKVpeKEWuS0CW24QSi43BPPcFfcbGg
-         WJcUDbmLhyaeg3fdbkPqidgc723KRKFhfjC4hYf2xzZaNrEpvMDuYJSp0amp5FYj0Zcm
-         h+w21M3gr/smMzqU3xa9Xulfpli8QW8ZiNJ/tD7vVTcG2JuufKLFTvXTGtqasWGjY6pC
-         WFf3jQsZQa8i+ObFfkvAaZHfcvEGnWZW4ekzyyIg1bglqUSlqfcWxz/2YYN5nXbhlYDo
-         3EmZWz/nl4gIlMcruzHRZpusex/35AXB/daPbWMv9J6thojEbcKbaQAzBSBkXuh9bM6u
-         Zthg==
+        bh=vMiIpeM1d8lFeOaPEE+VPZ7k+2yYPj98QEqarfz20oU=;
+        b=QEH12vynqZPLxg6EMqXvkYhrKvN5tud8VrEukfJBisF8RfKVrrk/QNOTrq5kMp0tY0
+         wNWvApK9INPloEPdLkTIuSFa8ldVAE9onHoQwDfuWqgYV+YmqB4tw7cylBjk18CrV7e1
+         u0M0vB5IMfBUecT77hediettyrmYy/EyCmOwEEBF+AovM2YXThJQnYp1S/1LduE3wnOD
+         koblzXyJT2lGS89iSt9cu+nLteUvvkzrvp3n3RZ3JRTgvs8bHHNBLYSQfH/LZhyd3deT
+         CsLjTZn6/BEGHfzm4p+tWVC+rwJMmAjg/Ak0tWQ2Q+EA8Xs1pRs1ex3rBKyHOrXeUwBs
+         Lv1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715074569; x=1715679369;
+        d=1e100.net; s=20230601; t=1715074570; x=1715679370;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2K4LgSBtjYfVsokX8qgwwcmFotZID2ml7T+yfPfGHDY=;
-        b=QgMZdVf29veObcmVNTjY1ZSxmud+Bg1p5ez/kRr6rAwvK/3qzFaJDvig/+XenHaktj
-         Y0/lV6ybCsvKX4ScvhkhQ3ITZPPu52FZvKFYJ3UEJNvWndtDybhGrgpLxnY3aFnDn+NZ
-         5J/no/mW0j5o/gQO8V8QnylL4zqKVcRQRZJzMTc3wSO/FGyn0AFtK/eO+qKyKeveBCye
-         H+0Jdy/8p0FBsFFHMVbK1wrUqb1SQoejk8sA7vGzcBCRRbOKzAeeWuvQKU3vPhVdh8qT
-         AWZbf8cDB0mJwSp9zuKaaf62KXe/zNiwq9GFii3jKjIl3c6D8sZI2VvyauA7scDRnYiW
-         CNdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhhNSr+CMYOVVGVxZEuhz7dRgT5bkpqx6gjYlyM62RmzQihmxYiOp4zjfoD8EZ+BKV1tcGnQHDYDc5fITupVCDVUfUiulxZniWdAGP
-X-Gm-Message-State: AOJu0YwPEr1WFb5BAx1M4E4J+yEa+EHHAwUMn7sPsvzCtMQHKq9NyZCm
-	+bENiiE+344sSrqA+7AkCsZVDduRA9zx0iGI+aeXrzoQSFZRUbaI
-X-Google-Smtp-Source: AGHT+IHFO+7vnyh7sLgrAAy1bapshrWvgpxYIMic2T3SiCD6fIcqP0vLE6uWUTB4gSO9QyJ3221r+A==
-X-Received: by 2002:a2e:3309:0:b0:2e1:f05f:6424 with SMTP id d9-20020a2e3309000000b002e1f05f6424mr9920045ljc.15.1715074569596;
-        Tue, 07 May 2024 02:36:09 -0700 (PDT)
+        bh=vMiIpeM1d8lFeOaPEE+VPZ7k+2yYPj98QEqarfz20oU=;
+        b=gks9z8R8BhsVxVUdi/sdIr9Pcjka/naISdMOSOME0T0bBlIjvUQ90gqVC99ZUnWpHP
+         BQWGJ6fq7/4pmvwCvHh2QKK+r4zENlql83VxXSF0hj1V77XnQeb1EZ/m2OVR1GTEC92B
+         Y22JnVGIyruakadxIZgOQBCMNZFS8tPX+3OS/5ywMxOmbn2HxygD4tOvsk4o1FsQN44P
+         c7T3IPeXvWwx30rfHV7W8WS6qKxjtqAnzGrsFy3N1aqs5TY4GFEhLX/cv9QY7qZSmoDQ
+         M3ZF/E4gDDcCir6LBMYFJ8UPJSZiSeA4GJBdUXl+ObCgcghBUnNoHEr4A6olBMEIRcO8
+         6gOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVi3rSoXbxpfRppSP0JcguXtuo4/9sMlmsvEqlA373WHvUrQpcF7T/bXTX8BDx/0jeaWBbc2st5alaropt/jszb23WL+c5LVRmS46Y
+X-Gm-Message-State: AOJu0Yzr2yxE5nmw3vyAVch6MfPxmNTsgByCoB13u/NdUixkSWR5Qi0I
+	LHai7p6KYM9RIuD/jCH+9hQImmJmqpr/MtZoDTgpcZ/9oELPh0w1
+X-Google-Smtp-Source: AGHT+IFTSPnMqNJuabynMCKLpS20u3n4+Lw184hqoe3LFtLJl+j8mMtkSJH2spEebBcJhJkTG6mi8Q==
+X-Received: by 2002:a2e:b173:0:b0:2da:49cc:ef3f with SMTP id a19-20020a2eb173000000b002da49ccef3fmr7916188ljm.42.1715074570392;
+        Tue, 07 May 2024 02:36:10 -0700 (PDT)
 Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.36.08
+        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.36.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 02:36:09 -0700 (PDT)
+        Tue, 07 May 2024 02:36:10 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: "Paul E . McKenney" <paulmck@kernel.org>
 Cc: RCU <rcu@vger.kernel.org>,
@@ -77,9 +77,9 @@ Cc: RCU <rcu@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 37/48] rcu: Support direct wake-up of synchronize_rcu() users
-Date: Tue,  7 May 2024 11:35:19 +0200
-Message-Id: <20240507093530.3043-38-urezki@gmail.com>
+Subject: [PATCH 38/48] rcu: Allocate WQ with WQ_MEM_RECLAIM bit set
+Date: Tue,  7 May 2024 11:35:20 +0200
+Message-Id: <20240507093530.3043-39-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
 References: <20240507093530.3043-1-urezki@gmail.com>
@@ -91,87 +91,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch introduces a small enhancement which allows to do a
-direct wake-up of synchronize_rcu() callers. It occurs after a
-completion of grace period, thus by the gp-kthread.
-
-Number of clients is limited by the hard-coded maximum allowed
-threshold. The remaining part, if still exists is deferred to
-a main worker.
-
-Link: https://lore.kernel.org/lkml/Zd0ZtNu+Rt0qXkfS@lothringen/
+synchronize_rcu() users have to be processed regardless
+of memory pressure so our private WQ needs to have at least
+one execution context what WQ_MEM_RECLAIM flag guarantees.
 
 Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- kernel/rcu/tree.c | 24 +++++++++++++++++++++++-
- kernel/rcu/tree.h |  6 ++++++
- 2 files changed, 29 insertions(+), 1 deletion(-)
+ kernel/rcu/tree.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 2e1c5be6d64b..2a270abade4d 100644
+index 2a270abade4d..1d5c000e5c7a 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1645,7 +1645,8 @@ static void rcu_sr_normal_gp_cleanup_work(struct work_struct *work)
-  */
- static void rcu_sr_normal_gp_cleanup(void)
+@@ -1582,6 +1582,7 @@ static void rcu_sr_put_wait_head(struct llist_node *node)
+ /* Disabled by default. */
+ static int rcu_normal_wake_from_gp;
+ module_param(rcu_normal_wake_from_gp, int, 0644);
++static struct workqueue_struct *sync_wq;
+ 
+ static void rcu_sr_normal_complete(struct llist_node *node)
  {
--	struct llist_node *wait_tail;
-+	struct llist_node *wait_tail, *next, *rcu;
-+	int done = 0;
- 
- 	wait_tail = rcu_state.srs_wait_tail;
- 	if (wait_tail == NULL)
-@@ -1653,11 +1654,32 @@ static void rcu_sr_normal_gp_cleanup(void)
- 
- 	rcu_state.srs_wait_tail = NULL;
- 	ASSERT_EXCLUSIVE_WRITER(rcu_state.srs_wait_tail);
-+	WARN_ON_ONCE(!rcu_sr_is_wait_head(wait_tail));
-+
-+	/*
-+	 * Process (a) and (d) cases. See an illustration.
-+	 */
-+	llist_for_each_safe(rcu, next, wait_tail->next) {
-+		if (rcu_sr_is_wait_head(rcu))
-+			break;
-+
-+		rcu_sr_normal_complete(rcu);
-+		// It can be last, update a next on this step.
-+		wait_tail->next = next;
-+
-+		if (++done == SR_MAX_USERS_WAKE_FROM_GP)
-+			break;
-+	}
- 
- 	// concurrent sr_normal_gp_cleanup work might observe this update.
- 	smp_store_release(&rcu_state.srs_done_tail, wait_tail);
- 	ASSERT_EXCLUSIVE_WRITER(rcu_state.srs_done_tail);
- 
-+	/*
-+	 * We schedule a work in order to perform a final processing
-+	 * of outstanding users(if still left) and releasing wait-heads
-+	 * added by rcu_sr_normal_gp_init() call.
-+	 */
- 	schedule_work(&rcu_state.srs_cleanup_work);
+@@ -1680,7 +1681,7 @@ static void rcu_sr_normal_gp_cleanup(void)
+ 	 * of outstanding users(if still left) and releasing wait-heads
+ 	 * added by rcu_sr_normal_gp_init() call.
+ 	 */
+-	schedule_work(&rcu_state.srs_cleanup_work);
++	queue_work(sync_wq, &rcu_state.srs_cleanup_work);
  }
  
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index b942b9437438..2832787cee1d 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -315,6 +315,12 @@ do {									\
- 	__set_current_state(TASK_RUNNING);				\
- } while (0)
+ /*
+@@ -5585,6 +5586,9 @@ void __init rcu_init(void)
+ 	rcu_gp_wq = alloc_workqueue("rcu_gp", WQ_MEM_RECLAIM, 0);
+ 	WARN_ON(!rcu_gp_wq);
  
-+/*
-+ * A max threshold for synchronize_rcu() users which are
-+ * awaken directly by the rcu_gp_kthread(). Left part is
-+ * deferred to the main worker.
-+ */
-+#define SR_MAX_USERS_WAKE_FROM_GP 5
- #define SR_NORMAL_GP_WAIT_HEAD_MAX 5
- 
- struct sr_wait_node {
++	sync_wq = alloc_workqueue("sync_wq", WQ_MEM_RECLAIM, 0);
++	WARN_ON(!sync_wq);
++
+ 	/* Fill in default value for rcutree.qovld boot parameter. */
+ 	/* -After- the rcu_node ->lock fields are initialized! */
+ 	if (qovld < 0)
 -- 
 2.39.2
 
