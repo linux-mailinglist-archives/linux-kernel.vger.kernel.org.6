@@ -1,290 +1,365 @@
-Return-Path: <linux-kernel+bounces-170852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F658BDCEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:08:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EC78BDCFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC15EB2161A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:08:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED97D285B06
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2295B13C83A;
-	Tue,  7 May 2024 08:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122CA13C91C;
+	Tue,  7 May 2024 08:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SDqLOHt7"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VHZ8bVTh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502CB13B7AF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0134713C808
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715069302; cv=none; b=itpvJu311qtguoENm+9vXWBM/zryr5EtT+SdleNbRqKbedPBfApGeeJBj+qn14GA9/Ho7mDTvsBE6E03KUKSAo1n05SVPzlWksAKg3B/YeCAjwaDQXW7a/18kYa+LOxEz5ymdpH1KuSYafJMxkTJ2pY/G/dduoe/IU/DOloFtOo=
+	t=1715069506; cv=none; b=VCx+lz5prAbS4MCNOhG1zvE2RR1ws1s/5Xl34ZgFr2+j6+SDbqjRr2GvWrJscJV3SWus2Gx3PsuhOR2XJkEUOVMf8UhQ0eYhhjUH8mf9hKXFadOwjvr2/fmN9tp68M/a1An/PgbJFyjYXQNF4HIkK5ji5htNeVBGSqRRIfz2vvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715069302; c=relaxed/simple;
-	bh=Ddn1VNGItzdsWA45trh+gGxmlymXdQHn0cHiYXpmuHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1hKhB3Psoc8HpWwX/om/a2fDunfSUdbsWiuAJgqH9CqWBmLD+FnXmNbAAD+wTjgZlvoIGwqh8ubqi8/9dmqij/79T+IEgMqhmmgBFcTlErs7l1MlmDP3FEvfqxcMvAimmiZXouaywVE9FTGgP22QSIiY2Xx6D8eFUfYxsyX/N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SDqLOHt7; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41ba1ba5591so21111725e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 01:08:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715069299; x=1715674099; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JwnUMMgXN/Wsuo8wQ8xw0lvYZHuA8pjKO6osAN4WAm0=;
-        b=SDqLOHt7dCI45kvQwLXxgzToIVid6VAE1pqeNt8x+7FGAlmmAWEaUzacNTopxvPAcY
-         h2dOhjsLRLmA6XhcFedZyojW6rrjUK+JJz2mk+3o79DAWqk7LoSloZIACUzCW90d1x+7
-         I74Bzl8ampQJPQJFQ1RIdp7bysYry8qBRLucsvQNNL5T3YBzHLOmm6MCOaSCI8+e7+C6
-         gQn0taRvk8JlPQUPrpuNSTkHB7bQ+VyegxvadaK44pS3shU5U9zEvztid6sHfipmLG/M
-         ooBFQqe+aejF6a70Vn59/ObFW/y72XwC3s4NRA5futZg9STSrOyKoLQeTr8o7oyZ4Ucp
-         ZpnQ==
+	s=arc-20240116; t=1715069506; c=relaxed/simple;
+	bh=Q1WtGpJ/PqnOdfl24h9oU0yMCxyLbKUfiHt5Vr8Pucw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iAf/l71Q9lRqxogON5QQ+ezqjgMR1o3wZb6+0j/aSnwgK+8Tod0HHnxhXzvClbZLbRs5x4wY+grNWDh6zse3vGutbdsAi/Akh6uYLlgC5qNQQSb3Dhk8KkLdA4FXHklTfC95qwO4D9VbbN+o1j4OtjtXeSkV2YPZJ2UALSighjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VHZ8bVTh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715069502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=97EnrSmoY+vqswtinWEF90pPBNS1du8dFQW0Vh3EGhg=;
+	b=VHZ8bVThy9JQgguf+9pdZZu8fQBLud7p4DEcn1jq4oH2ask2jW6WT4BCm+cEuu1tHTGlRg
+	fA8efEbJ6S14z29UDCNAyekYNLkEd/FM/9OYxoAVC2w2MWvtTgUMEYSXivMEmHQ+eKIHOk
+	T/YpT3sXdlwx6jh5cNX07+d9ba5Q4Sc=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-259-oKtvfD67PBiyqrve2oT7Ug-1; Tue, 07 May 2024 04:11:41 -0400
+X-MC-Unique: oKtvfD67PBiyqrve2oT7Ug-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6a123aaa5b6so3013216d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 01:11:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715069299; x=1715674099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JwnUMMgXN/Wsuo8wQ8xw0lvYZHuA8pjKO6osAN4WAm0=;
-        b=gS++Vd7lvlJljBwmQcF/bIILEamyLEYh+wVxlz0mjno/+ZJJIzlt21jyBsJaflqb+1
-         5V8537SAv1MSlgJiH4wXUGPuY6gNyVKj4WX1CLCmpZVrNQnvUuMIedpIR67oR9Y/iyCY
-         KxDLR2Y0CtB8/ImhGj2QooeoAIkRqgrW7wJN7dgNqYc/mYkLPu7IX0Sufiet7Uk+/eZg
-         I7aQYxTFrY38CHibSO4x0le0lX0tf7R21xgLiw7UPwReFeAPryym7gbKjv/mcM0l7c6O
-         BXkojvX78QuSgNs3Cl64TWu4EdSH2N+CanwgmjXBSKR8em6FMwUZt7ynWuhrwzilFvub
-         012A==
-X-Forwarded-Encrypted: i=1; AJvYcCXcVptQhFVPeUXFXRLot8slwP+dW+30g7l6cU1wxvwLqFXMcve+Qj4xlsevZFFnCe590WE0esU+PajfdCdbRwIHCEy+JnFArOHQYbwO
-X-Gm-Message-State: AOJu0YwMlsciLq49yls6i3HlkVFnowzHT9y3Z+QTlDzaQDusBMz91TIR
-	x30bErGzePOoKTzAv4Gxb50Re7B881UWPpYYa6lktGzVA4ylhcJiQPl4Y/Q1zhg=
-X-Google-Smtp-Source: AGHT+IHqmQLgl9Xz8cz4mPbBXMEtaAgjCTg++laQLsGNn99J2GLAx77yo3TSr95zHIwcTpNcgqKpPQ==
-X-Received: by 2002:adf:f606:0:b0:34d:414:5f99 with SMTP id t6-20020adff606000000b0034d04145f99mr7323220wrp.25.1715069298429;
-        Tue, 07 May 2024 01:08:18 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id e30-20020a5d595e000000b0034e8784473dsm9418578wri.41.2024.05.07.01.08.17
+        d=1e100.net; s=20230601; t=1715069501; x=1715674301;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=97EnrSmoY+vqswtinWEF90pPBNS1du8dFQW0Vh3EGhg=;
+        b=JAinzqbHZQnK1Nhl0tygGhL3MfOb0vQJJAIxti5FGIljeTFy49SKMBtX8JYStKNzwu
+         25u+hZBYUZl1DKQIz/B6WykAZW3LxxQnnDiOCAlfT5lpz1CLdg3NUNe0Nbcsq3bBudOZ
+         2cXNy8st3VBe3QCAWgyJNbc1QYTE4KxCurQhz6bkNxCx+my8ji1FYUDLvWBf2X/TX+ja
+         oSlihsHey8ST0wThNdHlFYlakI+k3PfRti5mue8sXlXvwZVvxEwQaXWcSnwI9TCfyLM9
+         eG+m8HzWfeK+/gC12o9xBZi+nNlLN2LmTMalyKpL65anBa6KHIEjwVP+oWaUisOeK5gx
+         Yxjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAwFBS+aHDWyXtcYeAkXSeAXnkB141h9SZJchH6MxPemZWphHgKL8ktz2W3gA5zHVodjKgfKaTDm55CDgzOr1Jf9i5DU4mMHD58BU+
+X-Gm-Message-State: AOJu0Yyz4CTbuj0yaXxPGjnB56O1Asf2VntpZMwPUZucFh05bz4tfZLZ
+	haDuNvVeGHMUFvhyUj7VEzE7bt5H1PjaGc14//z6R93kquS6f+GQJYxI3nmX/r1OWLLFhjAomvR
+	vwcEBVE1km07Z4egM2hyw976hN7TDmyuqui5vl8kPlb8hIu4Wmvx4ZcWHaqEBAw==
+X-Received: by 2002:a05:6214:501d:b0:696:b235:f39 with SMTP id jo29-20020a056214501d00b00696b2350f39mr13688422qvb.6.1715069501188;
+        Tue, 07 May 2024 01:11:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFeqOJc8IqNgGmZu33Ok/1DP7gT5PQ9QKjlQHeC8Or8EBxR8EsuVNKcoVeuI0e3CuBmBE3YQ==
+X-Received: by 2002:a05:6214:501d:b0:696:b235:f39 with SMTP id jo29-20020a056214501d00b00696b2350f39mr13688400qvb.6.1715069500595;
+        Tue, 07 May 2024 01:11:40 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ml11-20020a056214584b00b006a0e5cb0254sm4503993qvb.55.2024.05.07.01.11.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 01:08:18 -0700 (PDT)
-Date: Tue, 7 May 2024 11:08:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lars Kellogg-Stedman <lars@oddbit.com>
-Cc: Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
-	davem@davemloft.net, jreuter@yaina.de
-Subject: Re: [PATCH net] ax25: Fix refcount leak issues of ax25_dev
-Message-ID: <79dc1067-76dc-43b2-9413-7754f96fe08e@moroto.mountain>
-References: <20240501060218.32898-1-duoming@zju.edu.cn>
- <my4l7ljo35dnwxl33maqhyvw7666dmuwtduwtyhnzdlb6bbf5m@5sbp4tvg246f>
- <78ae8aa0-eac5-4ade-8e85-0479a22e98a3@moroto.mountain>
- <ekgwuycs3hioz6vve57e6z7igovpls6s644rvdxpxqqr7v7is6@u5lqegkuwcex>
- <1e14f4f1-29dd-4fe5-8010-de7df0866e93@moroto.mountain>
- <movur4qy7wwavdyw2ugwfsz6kvshrqlvx32ym3fyx5gg66llge@citxuw5ztgwc>
- <eb5oil2exor2bq5n3pn62575phxjdex6wdjwwjxjd3pd4je55o@4k4iu2xobel5>
+        Tue, 07 May 2024 01:11:40 -0700 (PDT)
+Message-ID: <829fbd8671ca770adaf894ce8a3e8fa625739504.camel@redhat.com>
+Subject: Re: [PATCH v6 00/10] Make PCI's devres API more consistent
+From: Philipp Stanner <pstanner@redhat.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Sam
+ Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org
+Date: Tue, 07 May 2024 10:11:36 +0200
+In-Reply-To: <20240426220150.GA608828@bhelgaas>
+References: <20240426220150.GA608828@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb5oil2exor2bq5n3pn62575phxjdex6wdjwwjxjd3pd4je55o@4k4iu2xobel5>
 
-On Mon, May 06, 2024 at 11:18:06PM -0400, Lars Kellogg-Stedman wrote:
-> On Sat, May 04, 2024 at 06:16:14PM GMT, Lars Kellogg-Stedman wrote:
-> > My original patch corrected this by adding the call to netdev_hold()
-> > right next to the ax25_cb_add() in ax25_rcv(), which solves this
-> > problem. If it seems weird to have this login in ax25_rcv, we could move
-> > it to ax25_accept, right around line 1430 [3]; that would look
-> > something like:
-> 
-> The same patch applies cleanly against the Raspberry Pi 6.6.30 kernel,
-> and clears up the frequeny crashes I was experiencing in that
-> environment as well.
+Hey Bjorn,
 
-I have reviewed this code some more.  My theory is:
+so I have spent a few hours seeing how we could simplify this series.
+Here are my thoughts.
 
-ax25_dev_device_up() <- sets refcount to 1
-ax25_dev_device_down() <- set refcount to 0 and frees it
 
-If the refcount is not 1 at ax25_dev_device_down() then something is
-screwed up.  So why do we even need more refcounting than that?  But
-apparently we do.  I don't really understand networking that well so
-maybe we can have lingering connections after the device is down.
+On Fri, 2024-04-26 at 17:01 -0500, Bjorn Helgaas wrote:
+> On Fri, Apr 26, 2024 at 10:07:02AM +0200, Philipp Stanner wrote:
+> > On Wed, 2024-04-24 at 15:12 -0500, Bjorn Helgaas wrote:
+> > > On Mon, Apr 08, 2024 at 10:44:12AM +0200, Philipp Stanner wrote:
+> > > > ...
+> > > > PCI's devres API suffers several weaknesses:
+> > > >=20
+> > > > 1. There are functions prefixed with pcim_. Those are always
+> > > > managed
+> > > > =C2=A0=C2=A0 counterparts to never-managed functions prefixed with =
+pci_ =E2=80=93
+> > > > or
+> > > > so one
+> > > > =C2=A0=C2=A0 would like to think. There are some apparently unmanag=
+ed
+> > > > functions
+> > > > =C2=A0=C2=A0 (all region-request / release functions, and pci_intx(=
+))
+> > > > which
+> > > > =C2=A0=C2=A0 suddenly become managed once the user has initialized =
+the
+> > > > device
+> > > > with
+> > > > =C2=A0=C2=A0 pcim_enable_device() instead of pci_enable_device(). T=
+his
+> > > > "sometimes
+> > > > =C2=A0=C2=A0 yes, sometimes no" nature of those functions is confus=
+ing
+> > > > and
+> > > > =C2=A0=C2=A0 therefore bug-provoking. In fact, it has already cause=
+d a
+> > > > bug in
+> > > > DRM.
+> > > > =C2=A0=C2=A0 The last patch in this series fixes that bug.
+> > > > 2. iomappings: Instead of giving each mapping its own callback,
+> > > > the
+> > > > =C2=A0=C2=A0 existing API uses a statically allocated struct tracki=
+ng one
+> > > > mapping
+> > > > =C2=A0=C2=A0 per bar. This is not extensible. Especially, you can't
+> > > > create
+> > > > =C2=A0=C2=A0 _ranged_ managed mappings that way, which many drivers=
+ want.
+> > > > 3. Managed request functions only exist as "plural versions"
+> > > > with a
+> > > > =C2=A0=C2=A0 bit-mask as a parameter. That's quite over-engineered
+> > > > considering
+> > > > =C2=A0=C2=A0 that each user only ever mapps one, maybe two bars.
+> > > >=20
+> > > > This series:
+> > > > - add a set of new "singular" devres functions that use devres
+> > > > the
+> > > > way
+> > > > =C2=A0 its intended, with one callback per resource.
+> > > > - deprecates the existing iomap-table mechanism.
+> > > > - deprecates the hybrid nature of pci_ functions.
+> > > > - preserves backwards compatibility so that drivers using the
+> > > > existing
+> > > > =C2=A0 API won't notice any changes.
+> > > > - adds documentation, especially some warning users about the
+> > > > =C2=A0 complicated nature of PCI's devres.
+> > >=20
+> > > There's a lot of good work here; thanks for working on it.
+> >=20
+> > Thanks!
+> > Good to get some more feedback from you
+> >=20
+> > >=20
+> > > > Philipp Stanner (10):
+> > > > =C2=A0 PCI: Add new set of devres functions
+> > >=20
+> > > This first patch adds some infrastructure and several new
+> > > exported
+> > > interfaces:
+> > >=20
+> > > =C2=A0 void __iomem *pcim_iomap_region(struct pci_dev *pdev, int bar,
+> > > const char *name)
+> > > =C2=A0 void pcim_iounmap_region(struct pci_dev *pdev, int bar)
+> > > =C2=A0 int pcim_request_region(struct pci_dev *pdev, int bar, const
+> > > char
+> > > *name)
+> > > =C2=A0 void pcim_release_region(struct pci_dev *pdev, int bar)
+> > > =C2=A0 void __iomem *pcim_iomap_range(struct pci_dev *pdev, int bar,
+> > > =C2=A0 void __iomem *pcim_iomap_region_range(struct pci_dev *pdev, in=
+t
+> > > bar,
+> > > =C2=A0 void pcim_iounmap_region_range(struct pci_dev *pdev, int bar,
+> > >=20
+> > > > =C2=A0 PCI: Deprecate iomap-table functions
+> > >=20
+> > > This adds a little bit of infrastructure (add/remove to
+> > > legacy_table),
+> > > reimplements these existing interfaces:
+> > >=20
+> > > =C2=A0 void __iomem *pcim_iomap(struct pci_dev *pdev, int bar,
+> > > unsigned
+> > > long maxlen)
+> > > =C2=A0 void pcim_iounmap(struct pci_dev *pdev, void __iomem *addr)
+> > > =C2=A0 int pcim_iomap_regions(struct pci_dev *pdev, int mask, const
+> > > char
+> > > *name)
+> > > =C2=A0 int pcim_iomap_regions_request_all(struct pci_dev *pdev, int
+> > > mask,
+> > > =C2=A0 void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
+> > >=20
+> > > and adds a couple new exported interfaces:
+> > >=20
+> > > =C2=A0 void pcim_release_all_regions(struct pci_dev *pdev)
+> > > =C2=A0 int pcim_request_all_regions(struct pci_dev *pdev, const char
+> > > *name)
+> > >=20
+> > > There's a lot going on in these two patches, so they're hard to
+> > > review.=C2=A0 I think it would be easier if you could do the fixes to
+> > > existing interfaces first,
+> >=20
+> > I agree that the patches can be further split into smaller chunks
+> > to
+> > make them more atomic and easier to review. I can do that.
+> >=20
+> > BUT I'd need some more details about what you mean by "do the fixes
+> > first" =E2=80=93 which fixes?
+> > The later patches at least in part rely on the new better functions
+> > being available.
+> >=20
+> > > followed by adding new things, maybe
+> > > something like separate patches that:
+> > >=20
+> > > =C2=A0 - Add pcim_addr_devres_alloc(), pcim_addr_devres_free(),
+> > > =C2=A0=C2=A0=C2=A0 pcim_addr_devres_clear().
+> > >=20
+> > > =C2=A0 - Add pcim_add_mapping_to_legacy_table(),
+> > > =C2=A0=C2=A0=C2=A0 pcim_remove_mapping_from_legacy_table(),
+> > > =C2=A0=C2=A0=C2=A0 pcim_remove_bar_from_legacy_table().
+> > >=20
+> > > =C2=A0 - Reimplement pcim_iomap(), pcim_iomap_regions(),
+> > > pcim_iounmap().
+>=20
+> This is the part I meant by "fixes", but maybe it's not so much a fix
+> as it is reimplementing based on different infrastructure.=C2=A0 The diff=
+s
+> in "PCI: Deprecate iomap-table functions" for pcim_iomap() and
+> pcim_iounmap() are fairly straightforward and only depend on the
+> above.
+>=20
+> pcim_iomap_regions() is a bit more complicated and probably needs
+> pcim_iomap_region() but not necessarily __pcim_request_region() and
+> __pcim_request_region_range().
 
-So the next rule is if we set ax25->ax25_dev from NULL to non-NULL then
-bump the refcount and decrement it if we set it back to NULL or we free
-ax25. Right now that's happening in ax25_bind() and ax25_release().  And
-also in ax25_kill_by_device() but not consistently.
 
-But it needs to happen *everywhere* we set ax25->ax25_dev and we need to
-decrement it when ax25 is freed in ax25_cb_put().  My patch is similar
-to yours in that every ax25_rcv() will now bump the reference through
-calling ax25_fillin_cb() or ax25_make_new().  The send path also bumps
-the reference.
+Well, pcim_iomap_region() relies on __pcim_request_region() and
+__pcim_request_region_range().
+The entire architecture circles around those: At the bottom you have
+generic functions that can reserve you any range, and at the top you
+have functions that use those to get a whole BAR if needed.
 
-There are a few questions I don't know how to answer.  I added two
--EBUSY paths to this patch.  I'm not sure if this is correct.
-Second, I don't understand the netdev_put(ax25_dev->dev, &s->dev_tracker);
-stuff.  Maybe that should be done in ax25_dev_hold/put().
+That was done very specifically to have an extensible API that doesn't
+suffer the limitations of the current devres API. It's super easy this
+way to add all sorts of request() functions should the need ever arise,
+all you need to do is add a PCIM_ADDR_* counterpart, basically.
 
-This patch might not work because of the netdev_hold/put() thing...
+Right now, I wouldn't even know how I could implement
+pcim_iomap_region() without my __pcim_* helpers, since the later are
+(see the comment above them) written as counter parts to the ones in
+pci.c =E2=80=93 which are hybrid again.
+So I couldn't write it that way, because then we'd have circle where
+the pcim_ function calls the pci_ function which might call the pcim_
+function again...
 
-I used the Smatch cross function database to show where ax25->ax25_dev
-is set to NULL/non-NULL.
+So the one thing I really want is to keep __pcim_request_region_range()
+and its wrappers.
 
-$ smdb.py where ax25_cb ax25_dev | grep -v "min-max"
-net/ax25/ax25_route.c          | ax25_rt_autobind               | (struct ax25_cb)->ax25_dev | 0-u64max
-net/ax25/af_ax25.c             | ax25_kill_by_device            | (struct ax25_cb)->ax25_dev | 0-u64max
-net/ax25/af_ax25.c             | ax25_fillin_cb                 | (struct ax25_cb)->ax25_dev | 0-u64max
-net/ax25/af_ax25.c             | ax25_setsockopt                | (struct ax25_cb)->ax25_dev | 0-u64max
-net/ax25/af_ax25.c             | ax25_make_new                  | (struct ax25_cb)->ax25_dev | 0-u64max
-net/ax25/af_ax25.c             | ax25_bind                      | (struct ax25_cb)->ax25_dev | 4096-ptr_max
-net/ax25/ax25_in.c             | ax25_rcv                       | (struct ax25_cb)->ax25_dev | 0-u64max
-net/ax25/ax25_out.c            | ax25_send_frame                | (struct ax25_cb)->ax25_dev | 0-u64max
+The algorithms for the region ranges in __pcim_request_region_range()
+can IMO be trusted to work because they are just copies of the existing
+ones in pci_iomap_region(). Only difference is that they request
+instead of ioremap(). And the request part in turn is copied from
+__pci_request_region(), only difference being that I tried to make it
+more readable by storing the pci_resource_*() return values at the top
+:)
 
-regards,
-dan carpenter
 
-diff --git a/include/net/ax25.h b/include/net/ax25.h
-index eb9cee8252c8..2cc94352b13d 100644
---- a/include/net/ax25.h
-+++ b/include/net/ax25.h
-@@ -275,25 +275,30 @@ static inline struct ax25_cb *sk_to_ax25(const struct sock *sk)
- #define ax25_cb_hold(__ax25) \
- 	refcount_inc(&((__ax25)->refcount))
- 
--static __inline__ void ax25_cb_put(ax25_cb *ax25)
-+static inline ax25_dev *ax25_dev_hold(ax25_dev *ax25_dev)
- {
--	if (refcount_dec_and_test(&ax25->refcount)) {
--		kfree(ax25->digipeat);
--		kfree(ax25);
--	}
-+	if (ax25_dev)
-+		refcount_inc(&ax25_dev->refcount);
-+	return ax25_dev;
- }
- 
--static inline void ax25_dev_hold(ax25_dev *ax25_dev)
-+static inline void ax25_dev_put(ax25_dev *ax25_dev)
- {
--	refcount_inc(&ax25_dev->refcount);
-+	if (ax25_dev && refcount_dec_and_test(&ax25_dev->refcount)) {
-+		kfree(ax25_dev);
-+	}
- }
- 
--static inline void ax25_dev_put(ax25_dev *ax25_dev)
-+static __inline__ void ax25_cb_put(ax25_cb *ax25)
- {
--	if (refcount_dec_and_test(&ax25_dev->refcount)) {
--		kfree(ax25_dev);
-+	if (refcount_dec_and_test(&ax25->refcount)) {
-+		if (ax25->ax25_dev)
-+			ax25_dev_put(ax25->ax25_dev);
-+		kfree(ax25->digipeat);
-+		kfree(ax25);
- 	}
- }
-+
- static inline __be16 ax25_type_trans(struct sk_buff *skb, struct net_device *dev)
- {
- 	skb->dev      = dev;
-diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-index 9169efb2f43a..4d1ab296d52c 100644
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -92,6 +92,7 @@ static void ax25_kill_by_device(struct net_device *dev)
- 				spin_unlock_bh(&ax25_list_lock);
- 				ax25_disconnect(s, ENETUNREACH);
- 				s->ax25_dev = NULL;
-+				ax25_dev_put(ax25_dev);
- 				ax25_cb_del(s);
- 				spin_lock_bh(&ax25_list_lock);
- 				goto again;
-@@ -101,11 +102,8 @@ static void ax25_kill_by_device(struct net_device *dev)
- 			lock_sock(sk);
- 			ax25_disconnect(s, ENETUNREACH);
- 			s->ax25_dev = NULL;
--			if (sk->sk_socket) {
--				netdev_put(ax25_dev->dev,
--					   &s->dev_tracker);
--				ax25_dev_put(ax25_dev);
--			}
-+			netdev_put(ax25_dev->dev, &s->dev_tracker);
-+			ax25_dev_put(ax25_dev);
- 			ax25_cb_del(s);
- 			release_sock(sk);
- 			spin_lock_bh(&ax25_list_lock);
-@@ -496,6 +494,7 @@ void ax25_fillin_cb(ax25_cb *ax25, ax25_dev *ax25_dev)
- 	ax25->ax25_dev = ax25_dev;
- 
- 	if (ax25->ax25_dev != NULL) {
-+		ax25_dev_hold(ax25->ax25_dev);
- 		ax25_fillin_cb_from_dev(ax25, ax25_dev);
- 		return;
- 	}
-@@ -685,6 +684,11 @@ static int ax25_setsockopt(struct socket *sock, int level, int optname,
- 			break;
- 		}
- 
-+		if (ax25->ax25_dev) {
-+			rtnl_unlock();
-+			res = -EBUSY;
-+			break;
-+		}
- 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
- 		if (!ax25->ax25_dev) {
- 			rtnl_unlock();
-@@ -961,7 +965,7 @@ struct sock *ax25_make_new(struct sock *osk, struct ax25_dev *ax25_dev)
- 	ax25->paclen  = oax25->paclen;
- 	ax25->window  = oax25->window;
- 
--	ax25->ax25_dev    = ax25_dev;
-+	ax25->ax25_dev    = ax25_dev_hold(ax25_dev);
- 	ax25->source_addr = oax25->source_addr;
- 
- 	if (oax25->digipeat != NULL) {
-@@ -995,6 +999,11 @@ static int ax25_release(struct socket *sock)
- 	sock_orphan(sk);
- 	ax25 = sk_to_ax25(sk);
- 	ax25_dev = ax25->ax25_dev;
-+	/*
-+	 * The ax25_destroy_socket() function decrements the reference but we
-+	 * need to keep a reference until the end of the function.
-+	 */
-+	ax25_dev_hold(ax25_dev);
- 
- 	if (sk->sk_type == SOCK_SEQPACKET) {
- 		switch (ax25->state) {
-@@ -1147,6 +1156,12 @@ static int ax25_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
- 
- 	if (ax25_dev) {
- 		ax25_fillin_cb(ax25, ax25_dev);
-+		/*
-+		 * both ax25_addr_ax25dev() and ax25_fillin_cb() take a
-+		 * reference but we only want to take one reference so drop
-+		 * the extra reference.
-+		 */
-+		ax25_dev_put(ax25_dev);
- 		netdev_hold(ax25_dev->dev, &ax25->dev_tracker, GFP_ATOMIC);
- 	}
- 
-diff --git a/net/ax25/ax25_route.c b/net/ax25/ax25_route.c
-index b7c4d656a94b..d7f6d9f4f20c 100644
---- a/net/ax25/ax25_route.c
-+++ b/net/ax25/ax25_route.c
-@@ -406,6 +406,10 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
- 		ax25_route_lock_unuse();
- 		return -EHOSTUNREACH;
- 	}
-+	if (ax25->ax25_dev) {
-+		err = -EBUSY;
-+		goto put;
-+	}
- 	if ((ax25->ax25_dev = ax25_dev_ax25dev(ax25_rt->dev)) == NULL) {
- 		err = -EHOSTUNREACH;
- 		goto put;
+There's really a reason why I did it this way:
+   1. Add new, better interfaces
+   2. Reimplement pcim_iomap() & partners
+   3. Separate that hybrid API as much as possible
+
+I really tried to put some thought into the existing approach.
+Changing that now in v7 would be very work intensive, because I'd have
+to think everything through again, refactor it, drop APIs again, split
+commits, readjust commit messages and all the clean up comments inline
+(which wouldn't fit anymore), test the build commit-by-commit carefully
+once again with KASAN & Co...
+
+Yesterday I also found that abandoning that "inner nature" of the
+series would actually decrease readability in many cases, because
+pcim_addr_resources_match() would be added later, whereas the logic
+added in pcim_addr_resource_release() would be now empty at the
+beginning and scattered over several patches etc.
+
+>=20
+> This would be a pretty small patch and defer making them deprecated
+> until replacements are added.
+
+
+I understand your desire to make those two patches smaller. We can work
+on making things more readable and reduce the exported APIs
+
+Let me suggest this:
+ * I drop luxury functions no one needs (neither internally nor
+   externally) yet (e.g., pcim_request_region_range()). That will
+   already make patch #1 quite a bit smaller.
+ * We don't export anything else which is not needed by users yet
+   (pcim_request_all_regions(), pcim_request_region_exclusive() etc.)
+ * I split patches #1 and #2 into smaller chunks where possible
+   according to your suggestions above.
+ * We keep __pcim_request_region(), and use it as the working horse
+   cleanly separated from the hybrid counterparts in pci.c.
+
+Would that work for you?
+
+
+P.
+
+
+>=20
+> > > =C2=A0 - Add new interfaces like pcim_iomap_region(),
+> > > =C2=A0=C2=A0=C2=A0 pcim_request_region(), etc.
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0 AFAICS, except for pcim_iomap_range() (used by vbo=
+x), these
+> > > new
+> > > =C2=A0=C2=A0=C2=A0 interfaces have no users outside drivers/pci, so .=
+. we might
+> > > =C2=A0=C2=A0=C2=A0 defer adding them, or at least defer exposing them=
+ via
+> > > =C2=A0=C2=A0=C2=A0 include/linux/pci.h, until we have users for them.
+> >=20
+> > Dropping (the export of) functions like pcim_request_region_range()
+> > or
+> > pcim_request_all_regions() is not a problem.
+> >=20
+> > What I quite fundamentally have to disagree with, however, is not
+> > to
+> > export the functions=C2=A0
+> >=20
+> > =C2=A0* pcim_request_region()
+> > =C2=A0* pcim_iomap_region()
+> >=20
+> > the main point of this series is to deprecate that hybrid nature of
+> > those existing pci_* functions. You can only deprecate something
+> > when
+> > you provide users with new, better alternatives.
+>=20
+> Right.=C2=A0 But the new alternatives are only better when there are
+> actual
+> examples in the tree for people to look at.=C2=A0 If there are no users,
+> more interfaces are at best confusing and at worst dead code.
+>=20
+> Bjorn
+>=20
+
 
