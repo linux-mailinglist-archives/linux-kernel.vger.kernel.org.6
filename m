@@ -1,203 +1,137 @@
-Return-Path: <linux-kernel+bounces-171599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC3D8BE643
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEDF8BE644
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12406282D47
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7784028312E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3795515FD19;
-	Tue,  7 May 2024 14:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B09C15FA9F;
+	Tue,  7 May 2024 14:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0xnmC1d"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DumC/H3K"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA12B15ECF2;
-	Tue,  7 May 2024 14:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9A615ECF2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715092960; cv=none; b=NugQDbzSQlZ1UOsAQ2SOUL+j0VutUHlf5LSkTEmHzdZyo2EFQMTiEBZdLaph2fAFNglc+untfRtY52kVOrYfD19sHoBbuBjp6V0ZKjDbCd3FC/v581MuLSexu4nCq+hTEMhigEuPcZeo5FrORdo9fU41xSeKIBEkm56I05llQlo=
+	t=1715092998; cv=none; b=QOZr2SZSI+Q3aGg4JSLB/DLjSqgc3CDo8oTnStYNkFMnPZhl8PmHqNOHUT2ONZDdn5Y2UIcnxVfhIa8osy2b1+NyDuKaI5zIPvxniXlerco4cc4E5BO5mJHOZ81Dw9V0RGaafYDU6BbIGAyW5Mfq+4FnQrYxUxvo3PTybOcNKzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715092960; c=relaxed/simple;
-	bh=2hDHe+BxfhbTIY+eRrN47IQp9mJ0BXA8h0pGpREmulU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jxnSqnDDyYBY+C7ye8MxdtXmmnGl9RhJwjCOJI1mXHl2A12zpPf6gGyWzhOGizJr2z+dnkr5iOcsB4zD9USA2YDtUu4GrdBV0NniymEHKLCl3YxW1GEC4MR6sQjqj/HBAkjHdTe/TPm7Q1KjS0z9ADUu3wNuG+zyqVvdy82/tfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0xnmC1d; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c97a485733so587411b6e.2;
-        Tue, 07 May 2024 07:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715092957; x=1715697757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sf/d1izAzYn8pGMlcSPp+yg8MEOH4IhpznhPjUIMeI=;
-        b=H0xnmC1dya106GzD5iPH0tua8h4eAAHP3ZITcU5/0TeE5abuj3byTNfl7Vz5PhTHjd
-         /HX5cS2oTbYXIEw62esUN6TU1WfAUp6yT6kzdoRO2l1F45Rq+mLEeqoeoynkVHRgLf5s
-         I1zDfYobybcCLfkcAXNjoj6Hyf1iqtEJPD3pCWXMAkL07mmjPzJNe1d7jTO1V6GoYrJi
-         9L9WMr+Ju0l4C9nX4Oocvii8UVaWstBLdLKqIPOpsA9MIlhAghZcJjgK/zgQocEqqQP2
-         HVydVCa2jp7yroVInO3VRxRkP47Q2QiZB0elIch3l/9WhlVQZHwHtL3uFN4dWj4wXrMX
-         oY/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715092957; x=1715697757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4sf/d1izAzYn8pGMlcSPp+yg8MEOH4IhpznhPjUIMeI=;
-        b=FthdtrItx8qckTcf74ztUB1YD/4epReXxKzIDff6S//NDV6hlTA0axIJssFeHieIWG
-         W+FKQ7V3WDW4+O912NA1f7/OXhZ0wBfjX1ax9kg8DfgFW5mt3ryIyX8npNjP9NXLOHBL
-         WuyfQTg3fgSIbMoIVXPnTr7YbGyD9w8LgONHHMQH/WSlARhKdS2O3ZL2vV7P/HU4uFE6
-         sViiEU3C5XGLGcfQTP77WdvMvWd9QqG+RrDr99uH0+E+TGwHyc/5H2Jz1Vm+S1GYRNgk
-         jLn8C11I4yl2xWTjvouwZ1gqd8bq/eOC3Gos8R9ZwrpfuHPcOoO8oaLPycV1h6PbUSQO
-         mmXQ==
-X-Gm-Message-State: AOJu0YzLElNYWbhapDKzWpMkBvriALlNcbtVzE5Y3j85zCBRnDdWr28v
-	hEcj3jhPKzVokVmVqzpGLqh8l30lPL7HAzZDfofPHZwdE+u6PkYWTJpxAD1B
-X-Google-Smtp-Source: AGHT+IHigzRue/7XVS9M6mYwNQD8aM3IkuuuN4CaPpPfqTKlH1xnPiTL2C7FDEPg4oLSnOd5LigDFw==
-X-Received: by 2002:a05:6808:1687:b0:3c7:2607:c541 with SMTP id bb7-20020a056808168700b003c72607c541mr18182153oib.13.1715092957394;
-        Tue, 07 May 2024 07:42:37 -0700 (PDT)
-Received: from fionn.redhat.com (bras-base-rdwyon0600w-grc-16-74-12-5-183.dsl.bell.ca. [74.12.5.183])
-        by smtp.gmail.com with ESMTPSA id t10-20020a0cef0a000000b006a0f7d872ccsm4719722qvr.59.2024.05.07.07.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 07:42:37 -0700 (PDT)
-Sender: John Kacur <jkacur@gmail.com>
-From: John Kacur <jkacur@redhat.com>
-To: RT <linux-rt-users@vger.kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-	Clark Williams <williams@redhat.com>,
-	Chris White <chwhite@redhat.com>,
-	Kate Carcia Poulin <kcarcia@redhat.com>,
-	Crystal Wood <crwood@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: ANNOUNCE rt-tests version 2.7
-Date: Tue,  7 May 2024 10:42:29 -0400
-Message-ID: <20240507144229.42909-1-jkacur@redhat.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1715092998; c=relaxed/simple;
+	bh=yMTYiE0yi2WG4jip/daktPxAKElfeIGSd2hHRBT8yE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=n1e7yg7QnIs57nQx2P9X85EwTdPfKrKZ7NTihMLSZkOKmt2hqOqBXu7e7e96mi1WRm4nVbPv7q1pvH8WD/PC/cmjcrjAFJdhqt2Mwjl1i/Oti30mosfmpIj1TPqni4jUjzavzhObO5THBkIEpTiiRaNiKbs+KK2n6LvFLv4V0m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DumC/H3K; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 7 May 2024 10:43:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715092994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=sha76ykCa1g2wvPF/U7W10Wc8ZjbPd+Jmr0g6Xvn2xk=;
+	b=DumC/H3KXeDU9ZS0hQ2zOM9me2PlDRkxJqlgMbzekLZ4hduOp4YQ/GHabXFnf9Dr8rYJ+d
+	3M87SayNmH5HsjwHTnaR+Wayzrs+fAaV2rfvEA6gYuWsAS8BvRvKgwKRL6mv8qpQxpKGiM
+	g5i85WETeEuW9LMSVFQfx6qMbNFG5vo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.9
+Message-ID: <3x4p5h5f4itasrdylf5cldow6anxie6ixop3o4iaqcucqi7ob4@7ewzp7azzj7i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-I am pleased to announce rt-tests-2.7
+Hi Linus, another stack of fixes for you.
 
-The most significant changes here are from Crystal who changed the
-cyclictest histogram code into a library and added it to cyclicdeadline.
-This makes it possible for tools like rteval to parse the results.
+Apologies for the size of the pull request, it's almost all syzbot stuff
+which we just started receiving, and pretty much all simple validation
+fixes. One user reported bugfix in here, a fix for an integer overflow
+which was preventing returning the full list of extents to filefrag().
 
-histogram output could be added to other tools in the rt-tests suite as
-well.
+The following changes since commit c258c08add1cc8fa7719f112c5db36c08c507f1e:
 
-In addition Chris White has added a dockerfile for people who want to
-experiment with running rt-tests in a container.
+  bcachefs: fix integer conversion bug (2024-04-28 21:34:29 -0400)
 
-In addition there are various tweaks and fixes from a few different
-people, thank you to everyone who contributed.
+are available in the Git repository at:
 
-Bug reports and patches are always welcome
+  https://evilpiepirate.org/git/bcachefs.git/ tags/bcachefs-2024-05-07
 
-To get rt-tests
+for you to fetch changes up to 536502fc14db1fd3e12e6871828f773bd1ef854e:
 
-Clone one of the following
-git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
-https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
-https://kernel.googlesource.com/pub/scm/utils/rt-tests/rt-tests.git
+  bcachefs: Add missing sched_annotate_sleep() in bch2_journal_flush_seq_async() (2024-05-06 23:12:09 -0400)
 
-Branch: main
-Tag: v2.7
+----------------------------------------------------------------
+bcachefs fixes for 6.9
 
-Tarballs are available here:
-https://kernel.org/pub/linux/utils/rt-tests
+- Various syzbot fixes; mainly small gaps in validation
+- Fix an integer overflow in fiemap() which was preventing filefrag from
+  returning the full list of extents
+- Fix a refcounting bug on the device refcount, turned up by new
+  assertions in the development branch
+- Fix a device removal/readd bug; write_super() was repeatedly dropping
+  and retaking bch_dev->io_ref references
 
-Older version tarballs are available here:
-https://kernel.org/pub/linux/utils/rt-tests/older
+----------------------------------------------------------------
+Kent Overstreet (20):
+      bcachefs: Fix a scheduler splat in __bch2_next_write_buffer_flush_journal_buf()
+      bcachefs: don't free error pointers
+      bcachefs: bucket_pos_to_bp_noerror()
+      bcachefs: Fix early error path in bch2_fs_btree_key_cache_exit()
+      bcachefs: Inodes need extra padding for varint_decode_fast()
+      bcachefs: Fix refcount put in sb_field_resize error path
+      bcachefs: Initialize bch_write_op->failed in inline data path
+      bcachefs: Fix bch2_dev_lookup() refcounting
+      bcachefs: Fix lifetime issue in device iterator helpers
+      bcachefs: Add a better limit for maximum number of buckets
+      bcachefs: Fix assert in bch2_alloc_v4_invalid()
+      bcachefs: Add missing validation for superblock section clean
+      bcachefs: Guard against unknown k.k->type in __bkey_invalid()
+      bcachefs: Fix shift-by-64 in bformat_needs_redo()
+      bcachefs: Fix snapshot_t() usage in bch2_fs_quota_read_inode()
+      bcachefs: Add missing skcipher_request_set_callback() call
+      bcachefs: BCH_SB_LAYOUT_SIZE_BITS_MAX
+      bcachefs: Fix sb_field_downgrade validation
+      bcachefs: Fix race in bch2_write_super()
+      bcachefs: Add missing sched_annotate_sleep() in bch2_journal_flush_seq_async()
 
-Note in some distributions such as Fedora and RedHat the program is 
-renamed realtime-tests because of a naming conflict.
+Reed Riley (1):
+      bcachefs: fix overflow in fiemap
 
-Chris White (2):
-  rt-tests: Add interactive source-to-image Dockerfile
-  rt-tests: Add Dockerfile README
-
-Crystal Wood (8):
-  rt-tests: Fix warnings
-  rt-tests: cyclictest: Remove histogram totals
-  rt-tests: cyclictest: Replace histogram code with library
-  rt-tests: cyclicdeadline: Add histogram support
-  rt-tests: cyclics: Fix json segfault when not using histogram
-  rt-tests: cyclicdeadline: Print the histogram regardless of quiet
-  rt-tests: cyclicdeadline: Remove dead "verbose" code in print_stat()
-  rt-tests: cyclictest: Omit empty histogram buckets
-
-John Kacur (4):
-  rt-tests: Add missing SPDX licenses
-  rt-tests: Remove remaining unnecessary texts after adding SPDX
-    licenses
-  rt-tests:ssdd: Ensure there are one or more iterations
-  rt-tests: Change to version v2.7
-
-Marcelo Tosatti (2):
-  rt-tests: oslat should use MHz, not Mhz
-  rt-tests: oslat: convert to nanoseconds correctly
-
-Mathias Krause (1):
-  rt-tests: Makefile: Restore support for Exuberant Ctags
-
-Nam Cao (1):
-  rt-tests: hackbench: drop incorrect and unnecessary usage of optind
-
-Rodrigo Queiro (1):
-  Support --smi on newer processors
-
- .gitignore                               |   1 +
- Dockerfile                               |  26 +++
- Makefile                                 |  15 +-
- README-Dockerfile                        |  49 ++++++
- src/backfire/backfire.4                  |   1 +
- src/backfire/sendme.8                    |   1 +
- src/backfire/sendme.c                    |  15 +-
- src/cyclictest/cyclictest.8              |   1 +
- src/cyclictest/cyclictest.c              | 196 +++++------------------
- src/cyclictest/get_cyclictest_snapshot.8 |   1 +
- src/hackbench/hackbench.8                |   1 +
- src/hackbench/hackbench.c                |  12 +-
- src/hwlatdetect/hwlatdetect.8            |   1 +
- src/include/histogram.h                  |  42 +++++
- src/lib/histogram.c                      | 181 +++++++++++++++++++++
- src/oslat/oslat.8                        |   1 +
- src/oslat/oslat.c                        |   4 +-
- src/pi_tests/pi_stress.8                 |   1 +
- src/pi_tests/pip_stress.8                |   1 +
- src/pmqtest/pmqtest.8                    |   1 +
- src/ptsematest/ptsematest.8              |   1 +
- src/queuelat/determine_maximum_mpps.8    |   1 +
- src/queuelat/queuelat.8                  |   1 +
- src/queuelat/targeted-ipi/Kbuild         |   1 +
- src/queuelat/targeted-ipi/Makefile       |   1 +
- src/rt-migrate-test/rt-migrate-test.8    |   1 +
- src/sched_deadline/cyclicdeadline.8      |   1 +
- src/sched_deadline/cyclicdeadline.c      | 164 ++++++++++++++-----
- src/sched_deadline/deadline_test.8       |   1 +
- src/sched_deadline/deadline_test.c       |  10 +-
- src/signaltest/signaltest.8              |   1 +
- src/signaltest/signaltest.c              |   4 -
- src/sigwaittest/sigwaittest.8            |   1 +
- src/sigwaittest/sigwaittest.c            |  20 +--
- src/ssdd/ssdd.8                          |   3 +
- src/ssdd/ssdd.c                          |   5 +-
- src/svsematest/svsematest.8              |   1 +
- 37 files changed, 512 insertions(+), 256 deletions(-)
- create mode 100644 Dockerfile
- create mode 100644 README-Dockerfile
- create mode 100644 src/include/histogram.h
- create mode 100644 src/lib/histogram.c
-
--- 
-2.44.0
-
+ fs/bcachefs/alloc_background.c |  4 ++--
+ fs/bcachefs/alloc_background.h |  8 +++++--
+ fs/bcachefs/backpointers.c     |  2 +-
+ fs/bcachefs/backpointers.h     | 14 ++++++++----
+ fs/bcachefs/bcachefs_format.h  |  8 +++++++
+ fs/bcachefs/bkey_methods.c     |  4 ++--
+ fs/bcachefs/btree_key_cache.c  | 16 +++++++------
+ fs/bcachefs/checksum.c         |  1 +
+ fs/bcachefs/errcode.h          |  1 +
+ fs/bcachefs/fs.c               |  2 +-
+ fs/bcachefs/io_write.c         | 30 ++++++++++++++++---------
+ fs/bcachefs/journal.c          |  8 +++++++
+ fs/bcachefs/move.c             | 22 +++++++++++-------
+ fs/bcachefs/quota.c            |  8 +++----
+ fs/bcachefs/recovery.c         |  3 ++-
+ fs/bcachefs/sb-clean.c         | 14 ++++++++++++
+ fs/bcachefs/sb-downgrade.c     | 13 +++++++++--
+ fs/bcachefs/sb-members.c       |  6 ++---
+ fs/bcachefs/sb-members.h       |  4 ++--
+ fs/bcachefs/super-io.c         | 51 ++++++++++++++++++++++++++++--------------
+ fs/bcachefs/super.c            | 15 ++++++++-----
+ 21 files changed, 161 insertions(+), 73 deletions(-)
 
