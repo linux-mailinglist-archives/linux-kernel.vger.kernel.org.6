@@ -1,111 +1,128 @@
-Return-Path: <linux-kernel+bounces-170644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3370D8BDA22
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:21:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971F38BDA23
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64946B22B1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4814B282A87
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFB64EB56;
-	Tue,  7 May 2024 04:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A8D4F5EC;
+	Tue,  7 May 2024 04:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="HJx+U4Dd"
-Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.164])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QiMrqx7p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E4642A97;
-	Tue,  7 May 2024 04:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBBC4A12
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715055697; cv=none; b=BJWJn3jptvYxbPZSP1XRRFlvIS3Y7K/qo0VGTOicO9edLocDzQZ7hE0d1yFa5HRH3nM5MH9mNCKzX4dzPkrULbvwBrP2jDkHKMQcmDcTZTAhvNncGQRcErUJrsvx0gS/8lTqCjzoX4sOEo2oIDZ2LIp3LF4pmahxHcx8Gsg6idE=
+	t=1715055867; cv=none; b=Iatg0BEqTFgEA+O6PE9jUm5nPfSfQcg0Gyo+S9+OzUIDy+L6G5SK7+e5HWHUR66EoYM3ZEEU/LbGdEOk9xJ3LKWZbcCP8I1W8glvNOYNpb9KnXbnlKzpKsEMScYQ7MIGJYekc64lusJ7kbEbHEezsT2IeNxd+HerAuKA2vVvNy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715055697; c=relaxed/simple;
-	bh=c72GuTr4ExGvonfEeMmEgADVHU9OOr5JbOujrkeH2Bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cetjoj1DNp3++XPpTP25/yS7GcpKQZRyZTWrz5J7bUqaP4EEMgVDNmN3q4uZCOhTBDnOsQTngC08rNfXNf6Nt+Om8guzH4fMdMkERucdGKa36S12Qzyo/d8zbI3YzNiA7QPcJkOEGPaURaCwhiSQyfU9inI1u4AQrd57z0BMnhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=HJx+U4Dd; arc=none smtp.client-ip=67.231.154.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
-	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 8D97424006D;
-	Tue,  7 May 2024 04:21:27 +0000 (UTC)
-Received: from [192.168.2.14] (80-61-14-254.fixed.kpn.net [80.61.14.254])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail3.candelatech.com (Postfix) with ESMTPSA id 086E213C2B0;
-	Mon,  6 May 2024 21:21:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 086E213C2B0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-	s=default; t=1715055686;
-	bh=c72GuTr4ExGvonfEeMmEgADVHU9OOr5JbOujrkeH2Bs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HJx+U4DdhKHIyPOdPTy1pSA8Jq/gSNdAEEC13Pj7JNRjgjlEscPBhK8WMzBerwiGV
-	 YTUYxbw4p1JeXq7TpUd8k9yCy21+hDX1yT/psChGWeBUChc/MZN89xHsrmn7Tu9Vuv
-	 Ak8rnrGoFV1OsXZgBp18ymo0wuKg5/x6PYj+F6t4=
-Message-ID: <738e5de5-0916-c13d-22fb-4c9cb1213036@candelatech.com>
-Date: Mon, 6 May 2024 21:21:23 -0700
+	s=arc-20240116; t=1715055867; c=relaxed/simple;
+	bh=Osnwlt73s2bBh2Vn+sRNlDF+9e+02nXzC/g27ZohqLk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=krXAxjHJMUHT/sUPYK4tBggXVe/2cwhTU3rOr0SmxM38baHakEqNkU8tgDxojWFIl3oL8w6caJqexMm/lASOyfh3SeMNN5Acw7j9Z4Yi75JyyOpfwM7zBOz8cjulvoXzqS36fZyK/QuoV7v/m+NEKz6vxr1DpbILA9m0YKHxd5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QiMrqx7p; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715055865; x=1746591865;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Osnwlt73s2bBh2Vn+sRNlDF+9e+02nXzC/g27ZohqLk=;
+  b=QiMrqx7pbjVbf6ujL1+WY4fA+Syu27nKD+mMmDqiEVPudrSqdtOfYzw5
+   KTZPIxgs8HF6UJhDA4iogtCK2+nKDIQoTsosoLzN3GY6VS82TgeNRd/FQ
+   OBcbeKOJpnHa3vm6xjEteJ/0ERIuw/X5b8qyMgeIO1WbCgv1B/sGBmNfn
+   U1TRllM+/BA+PDRqhUQbvbDgmAOP1eujr+ZLU54bZffCYgd4c5LmqQ6/k
+   n8M7Fkl/7VtCZtEypLSlW6dUfT6Th7qZV7KKqh5alqME9aQUJfyDdmWxu
+   vJDPQfboes1XnabKXO2dH2/UkHnn/dhTpsDAntEDEKvxjvJw8PUpu0QZl
+   Q==;
+X-CSE-ConnectionGUID: MIvDX2DgSA+CZ5LrK3QqfA==
+X-CSE-MsgGUID: r82q6Kd+RXarK5UGixuFAQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="22230747"
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="22230747"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 21:24:25 -0700
+X-CSE-ConnectionGUID: Xqj0oIQ/RGiSvVL8nNnZMw==
+X-CSE-MsgGUID: p0P9FwWTQACXs1QSyWokug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="33047152"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO localhost) ([10.212.193.196])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 21:24:24 -0700
+From: alison.schofield@intel.com
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Remove unneeded MKTME detection
+Date: Mon,  6 May 2024 21:24:20 -0700
+Message-Id: <cover.1715054189.git.alison.schofield@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: 6.9.0-rc2+ kernel hangs on boot (bisected, maybe LED related)
-Content-Language: en-MW
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Lee Jones <lee@kernel.org>,
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com>
- <30819e01-43ce-638f-0cc6-067d6a8d03c7@candelatech.com>
- <89a9eec3-337f-3c9f-6bbe-00a26a15287c@candelatech.com>
- <20240411070718.GD6194@google.com>
- <de43c7e1-7e8c-bdbe-f59e-7632c21da24a@candelatech.com>
- <8736ebc8881e1e0cabfbbf033725a3123a5e8e90.camel@sipsolutions.net>
- <bc420f3a-5809-4c4a-80ad-ccd8a46853b6@leemhuis.info>
- <8ab88be5de30bcbd0d1cac3cfde6b2085dcfc8fb.camel@sipsolutions.net>
- <0197efe8-828b-43ae-85c9-5d521913a289@leemhuis.info>
- <20240502071908.GB5338@google.com>
- <8054cc9c-fbfe-a08d-5968-57b90a25af65@candelatech.com>
- <dd5d511e-9b02-4481-b22b-28da7b188b29@I-love.SAKURA.ne.jp>
-From: Ben Greear <greearb@candelatech.com>
-Organization: Candela Technologies
-In-Reply-To: <dd5d511e-9b02-4481-b22b-28da7b188b29@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MDID: 1715055688-TpvrKO0XMact
-X-MDID-O:
- us5;at1;1715055688;TpvrKO0XMact;<greearb@candelatech.com>;5d67d90982e6d4d760f4a321edc7d576
 
-On 5/5/24 03:55, Tetsuo Handa wrote:
-> On 2024/05/05 14:48, Ben Greear wrote:
->> If someone has a different suggested fix than the hack I posted, I will be happy to
->> test.  On my system with lots of radios, it is 100% reproducible.
->> Maybe email me directly as I don't keep close watch on LKML.
-> 
-> Please collect stacktraces of all lock holders using
-> https://lkml.kernel.org/r/77e32fdc-3f63-e124-588e-7d60dd66fc9a@I-love.SAKURA.ne.jp .
-> 
-> Depending on the output, I might ask you to decode addresses using ./scripts/faddr2line .
-> 
-> 
+From: Alison Schofield <alison.schofield@intel.com>
 
-I am travelling for next few weeks, but will work on this when I return.
+Changes in v2:
+- Print the phys_addr bits reduction when BIOS enables MKTME (Kai)
+- Remove init of keyid_bits (Kirill)
+- Pick up Acked-by tags (Kirill, Kai)
+- Update Patch 1 commit message phys addr bits note
+- Rebase to latest tiptree
+- Add note in this cover letter saying patches are independent
 
-Thanks,
-Ben
+Link to v1: 
+https://lore.kernel.org/all/cover.1713929290.git.alison.schofield@intel.com/
 
+
+Begin original cover letter:
+ 
+MKTME detection was added in anticipation of full kernel support
+that never followed. Aside from just good housekeeping, this
+cleanup is inspired by users who are confused by the TME/MKTME
+messaging during boot.
+
+The first patch cleans up the TME & MKTME detection code and the
+second patch removes the unused pconfig code. There are no
+dependencies between the 2 patches. The code that Patch 2 removes
+is not used anywhere, not even pre-Patch 1.
+
+Testing was done on a platform supporting MKTME using the BIOS
+option to enable/disable MKTME prior to boot.
+
+Alison Schofield (2):
+  x86/cpu: Remove useless work in detect_tme_early()
+  x86/pconfig: Remove unused MKTME pconfig code
+
+ arch/x86/include/asm/intel_pconfig.h | 65 ---------------------
+ arch/x86/kernel/cpu/Makefile         |  2 +-
+ arch/x86/kernel/cpu/intel.c          | 72 ++++--------------------
+ arch/x86/kernel/cpu/intel_pconfig.c  | 84 ----------------------------
+ 4 files changed, 13 insertions(+), 210 deletions(-)
+ delete mode 100644 arch/x86/include/asm/intel_pconfig.h
+ delete mode 100644 arch/x86/kernel/cpu/intel_pconfig.c
+
+
+base-commit: 89948cc11a08639df9f004e866e51f9be887de88
 -- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+2.37.3
+
 
