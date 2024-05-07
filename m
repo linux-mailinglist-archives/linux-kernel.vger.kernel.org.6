@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-171483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B7B8BE4E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:56:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293F28BE4F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D54771C2375B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90DE2834CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA32C15EFDF;
-	Tue,  7 May 2024 13:53:56 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47FB15F326;
+	Tue,  7 May 2024 13:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Vz4iGHg7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C577615EFAE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A7315ECDD;
+	Tue,  7 May 2024 13:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090036; cv=none; b=D5k10VNqM3T4Hoqfj5aPopUaLJXKdkwOksNFGxKVHy8RIavC7uMctkKf44KqBZltLKMBDx4CMElU+X3LaTtHhJwdMAHfy1229BkjG99nWuZcNmIEAAi+56qUmrRpXlXID+ScdEqfUG4uZqF92UYqewMWY2QuiBuOB8VzPlQKGW0=
+	t=1715090251; cv=none; b=fIAvHgBWgbcMeeYYKWWzuxlsRs+g4RPtDnsB9yvvVYcggGrKv78Lq+65AQoBXosDREYZrqDBQIiwjvKLqOlX6A45B6slFwMrbjpOnxCyCIPWS7I7FA5vWLLeuUlJenT91MHhtERhFVudhqGENXaudWdw3fMrDfrYLaaWpuCnlmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090036; c=relaxed/simple;
-	bh=alx+N3tB3mWJOHYdmXWrKl8FRBhlljKhCrlkTIOaJBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ufGMUhcz060bKd2y+XVAKkOiLyToKAkCpQZFTCg9HhOpr73wSJ5OYnhCtbLdqD1vn1mHpfheighGF1ulKk7uCpvcSeK3EoC3w3QjW0Y9/NXNepFTr6KTbMfqcFF8aYgotaNgj6Jpj+OAWfsmz9+RgNjbYjMNxOtzlXQtRn2gGKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VYfnQ5tdwzNw3W;
-	Tue,  7 May 2024 21:51:06 +0800 (CST)
-Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 943C318007D;
-	Tue,  7 May 2024 21:53:52 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 7 May 2024 21:53:51 +0800
-Message-ID: <da24d8bb-3723-48fa-86f4-8b24457d3556@huawei.com>
-Date: Tue, 7 May 2024 21:53:51 +0800
+	s=arc-20240116; t=1715090251; c=relaxed/simple;
+	bh=CtbVsaAWGVPtKOnSGhlvMhVfqRtNMnCw7MAcBD0skng=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iRAFY6H8GBidim0u6pjZwWN2BexVdKQly1wD4ElQ10nJ4NTMiewOGBpUDubTvNmnt1i1Gs4oenWGArIOMjD2jGE4DSC/R+l8E9vEkXiBgVTPDG+45qK2g68HXydb/mXabfxvOjqb+q1IEdulU6OGsBoezBEgFmIrHqTLXFqjgQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Vz4iGHg7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715090246;
+	bh=CtbVsaAWGVPtKOnSGhlvMhVfqRtNMnCw7MAcBD0skng=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Vz4iGHg7drjKVl7d7EcyvXo83nonOFwB5y6lH/5NvWV61VrAswtaDwBI4AFC4TR5v
+	 ZvhbBJjYwepLgF7DCkA3dL+rv+ubFIbQpH9e6ztZIHLs65RIYggo/YnrvHnrlFOcy0
+	 9rVJUYuol2etOoYhsbThfGNnldad7OI8pGv2OOkk=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 0/2] ChromeOS Embedded controller hwmon driver
+Date: Tue, 07 May 2024 15:57:23 +0200
+Message-Id: <20240507-cros_ec-hwmon-v1-0-2c47c5ce8e85@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
- boundaries
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Yang Shi <shy828301@gmail.com>
-CC: Matthew Wilcox <willy@infradead.org>, Yang Shi
-	<yang@os.amperecomputing.com>, <riel@surriel.com>, <cl@linux.com>,
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, Ze Zuo <zuoze1@huawei.com>
-References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
- <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
- <Zav3UK7ESNxCMjyP@casper.infradead.org>
- <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
- <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
- <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
- <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
- <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
- <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
- <1dc9a561-55f7-4d65-8b86-8a40fa0e84f9@arm.com>
- <6016c0e9-b567-4205-8368-1f1c76184a28@huawei.com>
- <2c14d9ad-c5a3-4f29-a6eb-633cdf3a5e9e@redhat.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <2c14d9ad-c5a3-4f29-a6eb-633cdf3a5e9e@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm100001.china.huawei.com (7.185.36.93)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEMzOmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUwMz3eSi/OL41GTdjPLc/DxdIxMzY5MkA/PkNLM0JaCegqLUtMwKsHn
+ RsbW1AGFFcgNfAAAA
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>
+Cc: Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ Dustin Howett <dustin@howett.net>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Moritz Fischer <mdf@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715090246; l=1624;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=CtbVsaAWGVPtKOnSGhlvMhVfqRtNMnCw7MAcBD0skng=;
+ b=PnxbvT1dqivcDWo2rkJkvaTA8qizq977AD1ZU/4fP2zcQBn8+V8jD1fdAH4zKrH58JAvPFdId
+ tLu+/z+L7xlBu5JLMKqWeQRcHzz2qSGNUNy1+EVpPG/QQM06y4tdTwJ
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
+Add a hwmon driver that reports fan and temperature readings from the
+ChromeOS Embedded controller.
 
+There was an earlier effort in 2017 to add such a driver [0], but there
+was no followup after v1.
+The new driver is complete reimplementation based on newer APIs and with
+more features (temp sensor names).
 
-On 2024/5/7 19:13, David Hildenbrand wrote:
-> 
->> https://github.com/intel/lmbench/blob/master/src/lat_mem_rd.c#L95
->>
->>> suggest. If you want to try something semi-randomly; it might be 
->>> useful to rule
->>> out the arm64 contpte feature. I don't see how that would be 
->>> interacting here if
->>> mTHP is disabled (is it?). But its new for 6.9 and arm64 only. 
->>> Disable with
->>> ARM64_CONTPTE (needs EXPERT) at compile time.
->> I don't enabled mTHP, so it should be not related about ARM64_CONTPTE,
->> but will have a try.
+It only works on LPC-connected ECs, as only those implement direct
+memory-map access.
+For other busses the data would need to be read with a command.
+Adding some helpers was discussed in the previous patchset [1].
 
-After ARM64_CONTPTE disabled, memory read latency is similar with 
-ARM64_CONTPTE enabled(default 6.9-rc7), still larger than align anon 
-reverted.
+The EC protocols also support reading and writing fan curves but that is
+not implemented.
 
-> 
-> cont-pte can get active if we're just lucky when allocating pages in the 
-> right order, correct Ryan?
-> 
+Tested on a Framework 13 AMD, Firmware 3.05.
+
+[0] https://lore.kernel.org/all/1491602410-31518-1-git-send-email-moritz.fischer@ettus.com/
+[1] https://lore.kernel.org/all/ac61bfca-bfa0-143b-c9ca-365b8026ce8d@roeck-us.net/
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (2):
+      hwmon: add ChromeOS EC driver
+      mfd: cros_ec: Register hardware monitoring subdevice
+
+ Documentation/hwmon/cros_ec_hwmon.rst |  26 ++++
+ Documentation/hwmon/index.rst         |   1 +
+ MAINTAINERS                           |   8 +
+ drivers/hwmon/Kconfig                 |  11 ++
+ drivers/hwmon/Makefile                |   1 +
+ drivers/hwmon/cros_ec_hwmon.c         | 279 ++++++++++++++++++++++++++++++++++
+ drivers/mfd/cros_ec_dev.c             |   1 +
+ 7 files changed, 327 insertions(+)
+---
+base-commit: 2fbe479c0024e1c6b992184a799055e19932aa48
+change-id: 20240506-cros_ec-hwmon-24634b07cf6f
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
