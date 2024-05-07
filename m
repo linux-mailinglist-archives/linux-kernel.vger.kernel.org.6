@@ -1,131 +1,182 @@
-Return-Path: <linux-kernel+bounces-170757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922548BDB8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:33:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2068BDB92
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C38A71C20CA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:33:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326B3282ACD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B560874414;
-	Tue,  7 May 2024 06:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BE678685;
+	Tue,  7 May 2024 06:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjgkM5tp"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKXQ49cV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E988374F9
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D698830;
+	Tue,  7 May 2024 06:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715063629; cv=none; b=MjnX819rR03sc4plKPHBh/Ps6YYUYKruzZHdDt9Fg2Kt32lJUlBqWDQ2VLbf9fc5F0wUdXcs8yEbvccOemPVemtzpl8DY+tHG6rumGbO0ZrptTYN55ZVUGJSQI6A7D53/Zi4enaSoiqN2EoFtYJro+twI/EoghI0MYvq7wgWe1g=
+	t=1715063707; cv=none; b=L1mRbKdZg182ZJmquyKUpoHgT6hjLEnGFXphhfVUJiY1xN6tsyiR5RjfaF8bUv+WgaTkFwJ/1dWTbG7CSQfUEoQbi4jazmpB8dPMtuf5hZQuCQEDRqWd17MtED9oMzzQMKKzBJy85QDmM51sFgNRqafxyJvCnuG8frFK4WyE43o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715063629; c=relaxed/simple;
-	bh=2tSt1cPD/UO58Gs2DE4g6wcOYjTWKRl2MUhi4dKWd7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdghBGTJNp5Sk/eCZaepbfMJKibblBFtcWH3BqaJmQsIiHevpZNzYhpfgLaMl4emremg5KuqaQrQZs64eZXGfzCYP745l3Cm+LHg1q81VPE0FjJfGLZmRvQxLqbeAvPE6veh98pck50CknYIypcrSI0fSeNCCOXy0FFs8qcI/C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OjgkM5tp; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e9so22491815e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:33:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715063626; x=1715668426; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ZceNyQkkA5SipGRuhtz98PdxDwJKZgpzV7BnccqbLw=;
-        b=OjgkM5tp8Sb98BxeStvjA1jNxQD8OT7lnEL7jIZqyM2qZUV1DG+ibeEXdtMAp2V3oc
-         5ovF3MUk0MGVVTzOmNdM1xHD+L61pYLZL3S3RGcxENUpsVM+EjuiGK9YL2q2bKezi9mZ
-         zvWrvmRGezMINa90ihWKC1rSjU7eYXo1CxZ0uhLlOd+eI6IHvOX3wfMKNved9nxnOe6u
-         RjqTwmislUTKSCKyuFQK9AkOCWTa3UrjK8qFxipMu6qiD8drijjOJleCYboD5EsSN9Nt
-         B+En6Y+hPIbHLXsMOZu8tfOK3wc9/Gt5Hq64fwc9HCrmZ6Y5FKGi/jHisV9uD2E7lbTE
-         UGbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715063626; x=1715668426;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ZceNyQkkA5SipGRuhtz98PdxDwJKZgpzV7BnccqbLw=;
-        b=OrxXfXz3f+1my4moNzpsvrJd2VxYovBwzKXelhLme+sIAxzP50Yp0z5GXN6Vkb81fa
-         SpetRDcyJA7WK/PSZTsqB+Za2vOUurqDMV/wM//OVWmHaw3rDcd+IrKCWIhlB9n4qgcm
-         VPHXu5+ypP/4I93FwsHCsDxFdeDSzXLZSzhlZYP1q3H6wiQ0UTA3i6xacI9kRFJVSNWW
-         dv8aIsImzuQzJDUcqe+6D04GHa8IpP8KQ0JXyXIoyrUogDidLPFO1JmzAdyHi6IRQnqJ
-         IeZ+AyXGXtMIYOyJcrgUhdPXpGAq3ItmhJss77bSOQgsKuNkbg5OpvOL3ncOlUVNPOLR
-         FdqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTHvsaeR2/p9NDZXkIjYk4CSjtKo+Zy0r5v6AM+IXcCJZgUZ25JnwQjKCbcOM7ZucadeufFz1aeuZ6VZUXeESdG2Bq0iFDzm5sVGRt
-X-Gm-Message-State: AOJu0Yyu9hEh34xVw0ZySs4veDCGyk508T8qFos2UoaOG+l1Vu9xKIsL
-	IBEsoK9D2CAsRv2l7B5GuVi/mbdWZJ0FrSlhyY6MW4g/ZlQExMg62r6xKqXCmWc=
-X-Google-Smtp-Source: AGHT+IG5xGMmKq41996Zvafki2sGa8A1qFQDqQcWnfzKnmpjsvJvBGxoRMoI0HOYlwRX3IOjzEI0Mw==
-X-Received: by 2002:a05:600c:19d2:b0:419:f241:632f with SMTP id u18-20020a05600c19d200b00419f241632fmr9996714wmq.31.1715063625822;
-        Mon, 06 May 2024 23:33:45 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id z18-20020adff752000000b0034e19861891sm12163393wrp.33.2024.05.06.23.33.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 23:33:45 -0700 (PDT)
-Date: Tue, 7 May 2024 09:33:40 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
-Message-ID: <d953392c-44d1-4c9f-a671-b25803181b97@moroto.mountain>
-References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
- <ZjnE2SjU7lGD0x5A@infradead.org>
+	s=arc-20240116; t=1715063707; c=relaxed/simple;
+	bh=Npl6n3qMCOWszNNP57mJKVD1PsB2Ftcv70QRdDy1gIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uj/5jTI5++hbBJCngXqkEfLVURpOYDG1iFlELjgjb2z8oEhCZ0aQXj9gQiDfbjfotC2hYpsRWrSmgcPTUfBoE/2DikYXgqoOB5kTVWMjgSl2KOIBmXrigXkOVO3UcT+W1vdULpRE+4vIBOx5OrJ6coY9U11uR3FJyTD+PwXtOCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKXQ49cV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A26E4C2BBFC;
+	Tue,  7 May 2024 06:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715063706;
+	bh=Npl6n3qMCOWszNNP57mJKVD1PsB2Ftcv70QRdDy1gIY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lKXQ49cVZS+jZynUD9r6q775VrrxdMbPair1BTpd1cq/w8Wy4i2XWFpCG+MJRRkKu
+	 sPp3dlE9k5tP7mzJ3aGH9UM3tJKCLm5ZCPTocFCmngo/Yu8nha0P6OkEkdAJuJjGFY
+	 TCH9LoImqnAWLzmcFtqLprRpJ6v4uSxo1eP/GIDxsnztKlTUjwTsvBjWgH+7jhlHKs
+	 uLhvrsTFQn/3WogIejgvT40sHRc2i8WeOgUuEM/dXYYFWm907pbD8kxJj3dDA0b3j2
+	 yUCZy4S6LxSeVaT1qZXnVtLCWhQxrUGunhvkQBuyn2R1H9yzz2GhWyA9SVE5WFhKb0
+	 iP+EOcO6FfK2w==
+Message-ID: <c5711272-b302-430c-820f-81b475178e65@kernel.org>
+Date: Tue, 7 May 2024 08:34:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjnE2SjU7lGD0x5A@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 04/11] i2c: dt-bindings: configuration settings
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+ andi.shyti@kernel.org, wsa+renesas@sang-engineering.com,
+ ulf.hansson@linaro.org, adrian.hunter@intel.com, digetx@gmail.com,
+ ldewangan@nvidia.com, mkumard@nvidia.com
+References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
+ <20240506225139.57647-5-kyarlagadda@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240506225139.57647-5-kyarlagadda@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 06, 2024 at 11:06:17PM -0700, Christoph Hellwig wrote:
-> On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
-> > The fxr->file1_offset and fxr->file2_offset variables come from the user
-> > in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
-> > Check the they aren't negative.
-> > 
-> > Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
+On 07/05/2024 00:51, Krishna Yarlagadda wrote:
+> I2C interface timing registers are configured using config setting
+> framework. Document available properties for Tegra I2C controllers.
 > 
-> In this commit file1_offset and file2_offset are u64.  They used to
-> be u64 in the initial submission, but we changed that as part of the
-> review process.
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  .../bindings/i2c/nvidia,tegra20-i2c.yaml      | 104 ++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+> 
 
-I've just checked again, and I think it was loff_t in that commit.
-There are two related structs, the one that's userspace API and the
-one that's internal.  The userspace API is u64 but internally it's
-loff_t.
+You called it RFC, so not ready for review, thus just few remarks.
 
-fs/xfs/libxfs/xfs_fs.h
-   818  struct xfs_exchange_range {
-   819          __s32           file1_fd;
-   820          __u32           pad;            /* must be zeroes */
-   821          __u64           file1_offset;   /* file1 offset, bytes */
-   822          __u64           file2_offset;   /* file2 offset, bytes */
-   823          __u64           length;         /* bytes to exchange */
-   824  
-   825          __u64           flags;          /* see XFS_EXCHANGE_RANGE_* below */
-   826  };
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-fs/xfs/xfs_exchrange.h
-    16  struct xfs_exchrange {
-    17          struct file             *file1;
-    18          struct file             *file2;
-    19  
-    20          loff_t                  file1_offset;
-    21          loff_t                  file2_offset;
-    22          u64                     length;
-    23  
-    24          u64                     flags;  /* XFS_EXCHANGE_RANGE flags */
-    25  };
 
-regards,
-dan carpenter
+> diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> index 424a4fc218b6..3b22e75e5aa0 100644
+> --- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> @@ -119,6 +119,96 @@ properties:
+>        - const: rx
+>        - const: tx
+>  
+> +  config:
+> +    description: Config settings for I2C devices enlisted with I2C controller.
+> +      Config setting is the configuration based on chip/board/system
+> +      characterization on interface/controller settings. This is needed for
+> +      - making the controller internal configuration to better perform
+> +      - making the interface to work proper by setting drive strength, slew
+> +        rates etc
+> +      - making the low power leakage.
+> +      There are two types of recommended configuration settings
+> +      - Controller register specific for internal operation of controller.
+> +      - Pad control/Pinmux/pincontrol registers for interfacing.
+> +      These configurations can further be categorized as static and dynamic.
+> +      - Static config does not change until a controller is reset.
+> +      - Dynamic config changes based on mode or condition, controller is
+> +        operating in.
+> +      I2C has configuration based on clock speed and has below modes.
+> +      - common is set on all speeds and can be overridden by speed mode.
+> +      - high is set when clock mode is high speed.
+> +      - fastplus is set when clock mode is fast plus.
+> +      - fast is set when clock mode is fast mode.
+> +      - standard is set when clock mode is standard mode.
+> +    $ref: /schemas/misc/nvidia,tegra-config-settings.yaml
+> +    unevaluatedProperties: false
+> +    properties:
+> +      nvidia,i2c-clk-divisor-hs-mode:
+> +        description: I2C clock divisor for HS mode.
+
+So you decided to implement clocks in DT? No.
+
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 0xffff
+
+Anyway divisors, clock rates and everything is human-readable so in
+decimal, not hex.
+
+There are also several issues further, like using wrong units (time has
+a unit), but since this is RFC, I will just NAK.
+
+Best regards,
+Krzysztof
 
 
