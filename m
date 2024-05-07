@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-171259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C908BE1F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:23:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738E88BE1ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1105287E08
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242861F215BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D64315D5BE;
-	Tue,  7 May 2024 12:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7015D15B120;
+	Tue,  7 May 2024 12:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XEYY1UF0"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mI6M8Yvs"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF14315B153;
-	Tue,  7 May 2024 12:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D53158DD4;
+	Tue,  7 May 2024 12:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715084547; cv=none; b=Slm3vobD9yuGNLFqcP8ol0dMEy8aEsmVoJi8O2PRRQPEMd0T7o0KFxIBsciXgg2LMYOVant3nsRuPhYSHOY4OsycYNrgydMQVKUVCbw9QV1eQiPmDttUId7aa8DD3Pow9zBrNFsb3Kjkau30SMw11RPW+P0WdK5NIlIc34Dut9A=
+	t=1715084541; cv=none; b=NQYLJqaCjAsyLocE/8nLFXqKCJZZlOf4E4U9TFjOPidpo4HyWlYrOy9GWWDIKJT9YiA0u2nKQx5vnuW2RM1slbXZBqUFkKa6mHIvVsO4JR2kRiKUgb5Of4JH7jejje77yXk8kFjtbGga3yP5UqB8McZFgjpxTPC7Z1J6SQJKKr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715084547; c=relaxed/simple;
-	bh=oeMrBKuDgHqrwSGXoJz3vqRIgZgm8z04pAJTFR28RCw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iansNCD2pVIzUx4YfWRUDdnq9S/PaTiPJ+1bmWwm8BGVQSu+hKFoMf29QuQMs5iH7A85cL0co8Mi/9jzUmqGMmp81cMT6M4RrNvwp8PVkvo0h/kxL1+B+kGG5wLMFZxRr/LtwcWSVXwKqEZ7IWMqG5CUHLsEvxQA62ihL8ZPlBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XEYY1UF0; arc=none smtp.client-ip=198.47.19.141
+	s=arc-20240116; t=1715084541; c=relaxed/simple;
+	bh=TBQJkp0cSO4wK8acG0VnKtXJX+J7TdjIHkOssuvBkVE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XEU0VNfDI/iiLNY41Z53KVAAN2pMjhmvHZURfOtIDb4hEdK98ImFztdXd/tVTJAKj0C0mn6DgN75WxJf8nChKcCUEhIB2KpPAKBTJfwzQMcbjWP3TFVcbtLrGqXlAilJku2Wr2xn+SkSYY1YQlZO5NG73BHfvB3AGJIYk5NUDv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mI6M8Yvs; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 447CM3o5047595;
-	Tue, 7 May 2024 07:22:03 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 447CM7GP005768;
+	Tue, 7 May 2024 07:22:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715084523;
-	bh=13XDjECo3o9dcQc+3q2Ty+J8LvNEN05S/B+l10NtHLQ=;
-	h=From:To:CC:Subject:Date;
-	b=XEYY1UF0WFLQXJwTRANaN0bhpaW20g4oVBqrewWDcayF9N1JkE7qVDknrxuEqD+xS
-	 +/Mw9rB4b8g6Ps/jw74/Ha76+MxftMuNJUthwPX3mIUSycMGoIdYNWhiS7OLnGUu9N
-	 IzuziESg0MwB7YHUQ/OYd03Bvmas5H6zFJ2Oe0AA=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 447CM3il049889
+	s=ti-com-17Q1; t=1715084527;
+	bh=T/RkWX9FF1gd05lbbr3DFlqsKgFxiCWHWrytrtgwAfk=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=mI6M8YvsLYG+CCP9TJCrqai4a0a2BLZT9KcNzRWTr7UTnkK0bm95euKiuVq/g5eHt
+	 +TEAovYa+7gcwyIh/6HVu4PUnLawuPH+LJHb7fBLNGZYXXV7vWo+cWxljlzaCgN6pn
+	 9QjGB5EJEhCWgGPLTtmIcOCSt7j9QYJeGkIJsd5o=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 447CM7n5077373
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 7 May 2024 07:22:03 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 7 May 2024 07:22:07 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 7
- May 2024 07:22:03 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ May 2024 07:22:07 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 7 May 2024 07:22:03 -0500
+ Frontend Transport; Tue, 7 May 2024 07:22:07 -0500
 Received: from a0497641-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 447CLwDN038074;
-	Tue, 7 May 2024 07:21:59 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 447CLwDO038074;
+	Tue, 7 May 2024 07:22:03 -0500
 From: Neha Malcom Francis <n-francis@ti.com>
 To: <robh@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
         <kristo@kernel.org>, <vigneshr@ti.com>, <nm@ti.com>,
@@ -61,10 +62,12 @@ To: <robh@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
 CC: <marten.lindahl@axis.com>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <u-kumar1@ti.com>, <n-francis@ti.com>
-Subject: [PATCH 0/5] arm64: ti: Add TPS6287 nodes
-Date: Tue, 7 May 2024 17:51:53 +0530
-Message-ID: <20240507122158.3739291-1-n-francis@ti.com>
+Subject: [PATCH 1/5] regulator: dt-bindings: Unify compatible
+Date: Tue, 7 May 2024 17:51:54 +0530
+Message-ID: <20240507122158.3739291-2-n-francis@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240507122158.3739291-1-n-francis@ti.com>
+References: <20240507122158.3739291-1-n-francis@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,31 +78,41 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add nodes for TPS6287x present in AM68 SK, AM69 SK and J784S4 EVM. They
-are a family of synchronous step-down DC/DC converters. These converters
-are used to enable AVS (Adaptive Voltage Scaling) for these devices.
+TPS62870/1/2/3 devices have different output currents (6A/9A/12A/15A) of
+the TPS6287x family. The I2C addresses are the same between them. There
+is no need for different compatibles for each for these devices so drop
+them and add a unified "ti,tps6287x" compatible.
 
-Also since AM68 SK lacks DT node of it's PMIC, LP8733; make use of this
-series to add that in as well.
+Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
+---
+ .../devicetree/bindings/regulator/ti,tps62870.yaml         | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Data sheet: https://www.ti.com/lit/ds/slvsgc5a/slvsgc5a.pdf
-Boot logs: https://gist.github.com/nehamalcom/1a288f534d730e8af43c48a175919b19
-
-Neha Malcom Francis (5):
-  regulator: dt-bindings: Unify compatible
-  drivers: regulator: tps6287x: Unify compatible
-  arm64: boot: dts: ti: k3-am68-sk-base-board: Add LP8733 and TPS6287
-    nodes
-  arm64: boot: dts: ti: k3-am69-sk: Add TPS62873 node
-  arm64: boot: dts: ti: k3-j784s4-evm: Add TPS62873 node
-
- .../bindings/regulator/ti,tps62870.yaml       |  7 +-
- .../boot/dts/ti/k3-am68-sk-base-board.dts     | 78 +++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am69-sk.dts         | 22 ++++++
- arch/arm64/boot/dts/ti/k3-j784s4-evm.dts      | 22 ++++++
- drivers/regulator/tps6287x-regulator.c        | 10 +--
- 5 files changed, 126 insertions(+), 13 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml b/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml
+index 386989544dac..2998773db990 100644
+--- a/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml
++++ b/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml
+@@ -15,10 +15,7 @@ allOf:
+ properties:
+   compatible:
+     enum:
+-      - ti,tps62870
+-      - ti,tps62871
+-      - ti,tps62872
+-      - ti,tps62873
++      - ti,tps6287x
+ 
+   reg:
+     maxItems: 1
+@@ -40,7 +37,7 @@ examples:
+       #size-cells = <0>;
+ 
+       regulator@41 {
+-        compatible = "ti,tps62873";
++        compatible = "ti,tps6287x";
+         reg = <0x41>;
+         regulator-name = "+0.75V";
+         regulator-min-microvolt = <400000>;
 -- 
 2.34.1
 
