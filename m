@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-171973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625CB8BEB58
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0F98BEB5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 859DF1C24674
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA3BD1C241CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD9516D4EA;
-	Tue,  7 May 2024 18:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E6B16D322;
+	Tue,  7 May 2024 18:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="za29yH6G"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uUPaU451"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDB516D4DF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F7E16D307
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715105755; cv=none; b=We1ZHksVIo6gbaYhTPSse0FC7pG4hCWtOh2PK/URSXODV4HC21/9TAr3wlNCOUhV1epWWWSBUPN7hV2NjCXCvIgEI4BbWQawM/HfzWPdIO5ss1hFtc+ABpGXPOh1K92LLOLjWqTqxQtANpKtbrPLqazn1slIuSV6Tg1KJA0RdT8=
+	t=1715105776; cv=none; b=pKDskZO41f9JOpHe6VZig0b0wVBuwRtLpkC5aJ0EPgY0BmW1/PD2/TUjV+y9CyD6gFsDgzvLEzlSFoz/LBvAFcze+76JJoQQGkggCZ63v24kSpMtXrUNSxNhmBFUStfqbwRu9SVLdhlACp7K8jfezyel1TCP3/xQ4/eWeesiVcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715105755; c=relaxed/simple;
-	bh=e+Ui+xuAdmPzJfWHKGip4nd/QAAMiIFEurpFnUaCqqM=;
+	s=arc-20240116; t=1715105776; c=relaxed/simple;
+	bh=z56DW4uwWXSfy2S2WxG5hWfb4HBVtScM8Dx6WGp0vzQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PGXU3hjWkwwJx7PSRS8bAtUv2+CRKm9kZ+FTLiGs6/+Tn9pJmZt0fFCYTTNeOb5o6byLUpaxW0EnKRL7Ki/eEkCsnla5qGiHdOcAXigMfNcnHtGpuNPbOlFqXsDQRG9J6KLklg9jJqsYdeqw+kNyo4oO4aWBaRDGmdAklz8z4bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=za29yH6G; arc=none smtp.client-ip=209.85.218.41
+	 In-Reply-To:Content-Type; b=lkwrvn8hSONx3WPgzFpb9X/nJHQk1g+Wz7Fh14eYTkJHPHldIebX25hShgNWEFKnAdb0xO0VaRf/yT2JF+v9W1IUMYzWhnhB6sDk912Qqm8J9ihkbr2mTkTZTpzTjSF28N7TVZKqf4yRZ10REBFZWlmh6FVxi06+h1a7Hc/Nxl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uUPaU451; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a0168c75so899171066b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:15:53 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f300b318cso4134500e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:16:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715105752; x=1715710552; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=32C2VWO0lNkaeoP0mjNW3/Db2bUiU2Lhen0koGKYiUM=;
-        b=za29yH6GuqAy7ACnaDkTEepI4s1nM4gfmGbvStsBMOA0puPJpm9OJOPuaYKjVM86eT
-         4iSABOQ3U+I8auaBcEMxyXTFXgDr9vpTa/k40izuFXehAWWUGvNwjyqheNg9LFdxgTtp
-         Usnu7JuR1It/AqLVDHkOwLWmMLxyWZHLmyzdybdVtc/O7AlPmsPr+wOQbJ8l0WMObfiq
-         R5uwtq1Kyp3vO0A3+MsLiSu8lI1GccKgwfWndRPl652dpUP0GoLP4MNvd1c19BOcAcBS
-         pxAfhuY3XSeb7mhNxu6vAE1XXHqIVuxedQK8b1ZlvKq3ywfwuwtblyvhaLz3wXYNT2ub
-         anog==
+        d=linaro.org; s=google; t=1715105773; x=1715710573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtF0ji+6sky/klPDr1qbiHk0/IYbyBDqkgtl3xUgr1E=;
+        b=uUPaU451gBRCru7K58KlFwbPu0GSW6LXsrl7rS8JaZcggCUa55tzMN0o18DTPqtDE1
+         5BjLzmFg8Qbfmjl2lNjqy1fQRqfe2FsGgPkrAKT9L3dgSJlPYyPBtR3jOwwWP8FAeQDE
+         1EWkXd+W6WJb5Om3ylSWXVGwk3ZNb9nKDMWLIFxYm1vgccrTww0wm58+a7dUmGjzw0ht
+         Q4DpUUFJwHF7eGaJl99IWD8ZXlMh7jXXFZjTKeHfcKVl8S4cfZoLAOa6Ej8ZC+oIEfZ6
+         2fNmU+MikG4SyWdzN1MzjIjj6+HrZRbUOxI4o+/rqv0Eh5J3U55L7Bb3ck8IFK0Lx3KF
+         9ZCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715105752; x=1715710552;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=32C2VWO0lNkaeoP0mjNW3/Db2bUiU2Lhen0koGKYiUM=;
-        b=gVL1Y844mzsDR4iwR0/9sLy3Mn4DLhyl+OI2fGa44MbLClvjlBdE/Ls24mg3C4AK3u
-         HQbae2u6QDMm89IrXy0A39Hi8500CclN8iRrJOF4IUbZ4/Dixs08IJCA/95giKrxbr8Z
-         GdjbRK6Eggzv9yRNYxk1edUS/TnCGm5CD8bPfm3DNgWrrx6Gfo4aHiTBRggmxcI8HIbs
-         K6R0pyltYmfao3F1m+iQJZNnFx2pjMszPw6dXIGDKFSnjA9zR+wc9WaADJTk5bttgSJo
-         MzBk5esDjpBoM2y4UOd+y4JZh3ww/Ws1Zw3JtR1NddI0kjrO6mkFGJsafnizw919+F2p
-         BxiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG8XDGu4yw3J5FEaP7KB489B0UDtofaQPzmperaLjQHD91Axyhexz8x1uz+6iJ6XkVJGZ/dvtzTItLpcKf5ngud9K02SPhuiu8tY6h
-X-Gm-Message-State: AOJu0YwNWwE94dWpalx7MKxkB5HDHWkoneb/2KFZn19YOIQaTzi7OEos
-	NwvOYRYR8ew2DsOfOLSAgDPtidiXPx2h35qWfTjF5tcTiH4iTixO7u8PGQ9sSqk=
-X-Google-Smtp-Source: AGHT+IGqQGhRcCdpz1oNkC71DfaAcJyX6V8oR2QBO2ftNr4lnVvUu68bKc6YICcBN4y8APlxouEmKA==
-X-Received: by 2002:a50:c319:0:b0:570:5b3d:91f with SMTP id 4fb4d7f45d1cf-5731d9db2d1mr347441a12.23.1715105752469;
-        Tue, 07 May 2024 11:15:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715105773; x=1715710573;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FtF0ji+6sky/klPDr1qbiHk0/IYbyBDqkgtl3xUgr1E=;
+        b=hLiy6GvJj7p+XwPLnTD67lZPcsVcJ5zXen19hDLv0NvI9hYe03Iq1RLZZciVIdFlEl
+         HMcXv84ReCg1TdBl1uwD/mPIf9Qj5tNIW+HajdgONDpYLygnGEoT5br0hubYVBC7uJ1f
+         Ds70juWN7lG1v7KP5MonyQDKQX32h/hYdVBB+VIeh+k61VmERa3HYXmWQKzk7W/PgDPo
+         JIh+bWDMc8Q7uzIZeSaNhPsyRn5ptpnfVObnuaHE8ufJArNducCkdRMD1GhZ5qDgw//c
+         TXfimPeErLy+Pvw9x4KECSepSe0p7HzRfNihz2JlHZ1Qq2IITdGdi+KYKRDwEPpd/76B
+         BxBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsIthrt4gMeMm6cWRuI1V955zMHz2gxjDp/i1YfaPtwjcXzg9RrFpxSW7BRzZPtdPvEyO9NFTAMG8E/mumqvqPCKYP3Ympe8pHSUVr
+X-Gm-Message-State: AOJu0YwnKqImqwWBejN8ShjcdEpe1mDOJQGqCOcR77surViJL/NaODpR
+	DrWDdL8QETfCZ30Y1nDRD65zvjyKaIOJEuX6P6zb2O2x105rp3ldM5ZYvOvJyUY=
+X-Google-Smtp-Source: AGHT+IEaffYJmtcSK9ATh0btRVS69w4HbbXHVxQX/eRQ4nldlJt0OgzferuLRuqtQg0E9ut8Lg5j2w==
+X-Received: by 2002:ac2:4c0b:0:b0:51f:5d1a:7838 with SMTP id 2adb3069b0e04-5217c566a27mr187547e87.25.1715105772565;
+        Tue, 07 May 2024 11:16:12 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id n15-20020a05640206cf00b00572b029ca57sm6499357edy.25.2024.05.07.11.15.51
+        by smtp.gmail.com with ESMTPSA id a26-20020a50ff1a000000b005728a272753sm6516812edu.67.2024.05.07.11.16.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 11:15:52 -0700 (PDT)
-Message-ID: <c9462148-2131-4660-9f65-b53f22979387@linaro.org>
-Date: Tue, 7 May 2024 20:15:49 +0200
+        Tue, 07 May 2024 11:16:11 -0700 (PDT)
+Message-ID: <cd26593f-31bc-4a1d-abd9-2fbf3539b030@linaro.org>
+Date: Tue, 7 May 2024 20:16:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] ASoC: qcom: x1e80100: Correct channel mapping
+Subject: Re: [PATCH 2/4] ASoC: qcom: q6dsp: Implement proper channel mapping
+ in Audioreach
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
  James Schulman <james.schulman@cirrus.com>,
  David Rhodes <david.rhodes@cirrus.com>,
@@ -88,10 +89,10 @@ To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
  linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240507-asoc-x1e80100-4-channel-mapping-v1-0-b12c13e0a55d@linaro.org>
- <20240507-asoc-x1e80100-4-channel-mapping-v1-4-b12c13e0a55d@linaro.org>
- <738045d2-a445-4f93-abfd-203348a538d1@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ <20240507-asoc-x1e80100-4-channel-mapping-v1-2-b12c13e0a55d@linaro.org>
+ <89cf75d8-1f85-43d8-9c33-377a04b36121@linaro.org>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -136,79 +137,38 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <738045d2-a445-4f93-abfd-203348a538d1@linaro.org>
+In-Reply-To: <89cf75d8-1f85-43d8-9c33-377a04b36121@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/05/2024 15:20, Srinivas Kandagatla wrote:
-> Thanks Krzystof for the patch.
+On 07/05/2024 15:25, Srinivas Kandagatla wrote:
+> 
 > 
 > On 07/05/2024 11:27, Krzysztof Kozlowski wrote:
->> X1E80100 CRD board comes with four speakers arranged as left front+back
->> and then right front+back.  Using default channel mapping causes front
->> right speaker to play left back stream.
+>> Instead of relying on default channel mapping in all Audioreach
+>> platforms, implement set_channel_map() callback to allow sound cards
+>> customize the mapping depending on needs.
 >>
->> Adjust the channel maps for frontend DAIs to fix stereo and four-channel
->> playback.
+>> The channel mapping is set on frontend DAIs coming from the topology,
+>> not DTS, thus need to add DAI ops in topology dai_load() callback.
 >>
 >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >> ---
->>   sound/soc/qcom/x1e80100.c | 37 +++++++++++++++++++++++++++++++++++--
->>   1 file changed, 35 insertions(+), 2 deletions(-)
->>
->> diff --git a/sound/soc/qcom/x1e80100.c b/sound/soc/qcom/x1e80100.c
->> index c3c8bf7ffb5b..e90c68815b5c 100644
->> --- a/sound/soc/qcom/x1e80100.c
->> +++ b/sound/soc/qcom/x1e80100.c
->> @@ -12,6 +12,7 @@
->>   
->>   #include "common.h"
->>   #include "qdsp6/q6afe.h"
->> +#include "qdsp6/q6dsp-common.h"
->>   #include "sdw.h"
->>   
->>   struct x1e80100_snd_data {
->> @@ -74,7 +75,7 @@ static int x1e80100_snd_hw_params(struct snd_pcm_substream *substream,
->>   	return qcom_snd_sdw_hw_params(substream, params, &data->sruntime[cpu_dai->id]);
->>   }
->>   
->> -static int x1e80100_snd_prepare(struct snd_pcm_substream *substream)
->> +static int x1e80100_snd_be_prepare(struct snd_pcm_substream *substream)
->>   {
->>   	struct snd_soc_pcm_runtime *rtd = substream->private_data;
->>   	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
->> @@ -96,12 +97,34 @@ static int x1e80100_snd_hw_free(struct snd_pcm_substream *substream)
->>   				    &data->stream_prepared[cpu_dai->id]);
->>   }
->>   
->> +static int x1e80100_snd_fe_prepare(struct snd_pcm_substream *substream)
->> +{
->> +	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
->> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
->> +
->> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
->> +		const unsigned int rx_slot[4] = { PCM_CHANNEL_FL,
->> +						  PCM_CHANNEL_LB,
->> +						  PCM_CHANNEL_FR,
->> +						  PCM_CHANNEL_RB };
->> +
->> +		snd_soc_dai_set_channel_map(cpu_dai, 0, NULL, ARRAY_SIZE(rx_slot),
->> +					    rx_slot);
+>>   sound/soc/qcom/qdsp6/audioreach.c |  2 +-
+>>   sound/soc/qcom/qdsp6/audioreach.h |  1 +
+>>   sound/soc/qcom/qdsp6/q6apm.c      | 28 +++++++++++++++++++++++++++-
+>>   sound/soc/qcom/qdsp6/q6apm.h      |  8 ++++++++
+>>   sound/soc/qcom/qdsp6/topology.c   | 12 ++++++++++++
+>>   5 files changed, 49 insertions(+), 2 deletions(-)
+> Please use the existing q6dma_set_channel_map() and set the channel map 
+> for the backend dai from machine driver, this should work.
 > 
-> Channel mapping are specific to backend dais rather than front end pcm dais.
+> setting channels on FE is not a scalable one.
 > 
-> This will set all the playback pcms with this channel maps, which is a 
-> problem.
+> Please take a look at some of the patches that I shared privately.
 > 
-> example the 2 channel headset we will endup with data of front channel 
-> and zeros on the right channel, however a speaker might work as you have 
-> 4 speakers in your system.
-> 
-> 
-> So No for this approach.
 
-OK, I'll go with setting channels for MFC (and expecting MFC being part
-of backend).
+Ack
 
 Best regards,
 Krzysztof
