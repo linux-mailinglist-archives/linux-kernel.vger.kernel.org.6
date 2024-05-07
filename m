@@ -1,150 +1,299 @@
-Return-Path: <linux-kernel+bounces-171992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DF38BEB8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:38:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96CD8BEB93
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E9A1C23535
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:38:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF2C1B215E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A69116F296;
-	Tue,  7 May 2024 18:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E6416D9A5;
+	Tue,  7 May 2024 18:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="X/mgoeSO"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WL4fSDCu";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MU2+bulk"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872AB16F274;
-	Tue,  7 May 2024 18:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715106991; cv=none; b=kOx+IkpdwmP9CtwpDJanLWC+0f5mJNddpZjuvytPOqvV9qoeMr4X/Y5XWsmOfQKkoUawmi+9uI7CAQHYDZpspV4po8GVnRio2/oupA05Pl3vv2WH6CcOct01qqWG0dtYGuLyTgTAMO2ucm4SH3Aog0q6KRY0XcqtoRj4QbQQius=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715106991; c=relaxed/simple;
-	bh=teQKchOEq9uRazgHEW2r0xLVQ+sR4ZkcVno60PW+UY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mi7o5ztFrzo8ZhojP8RuRWkOnW5ZMfJ83/9kekBnNs2tJ9LnTZbI75BmYzpBqvICap2iEe1sJ0h0dFFG2nS1wFguk49E92sBPJYhCEr0XBYfIoysNx1N0biUDdL+mbySegx/qSyFtmOSgbqjfs638wk6tBkAgzfIHXzc61+JzUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=X/mgoeSO; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 728A3904;
-	Tue,  7 May 2024 20:36:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715106979;
-	bh=teQKchOEq9uRazgHEW2r0xLVQ+sR4ZkcVno60PW+UY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X/mgoeSODr0I6iobUNwoM8X5WMzal5pkTvtETqp7JW0yE1ELUfsgZlkItx6WSn1HJ
-	 kzHWjIBCuvr2wAwoOLsnlLqOzbCsETelWIbA77BDOdTVMxL86OdaD3yTc4QfaE4LPe
-	 +7YclK0P+9Me7DLG/h1upYg/q3F1J9HBn0qofRIs=
-Date: Tue, 7 May 2024 21:36:13 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Maxime Ripard <mripard@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240507183613.GB20390@pendragon.ideasonboard.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
- <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
- <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
- <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0894D6CDC2;
+	Tue,  7 May 2024 18:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715107049; cv=fail; b=TMqQ3DlxpqKZkx5DFk1yqfmHi9v/RjeeuWWxBwr/C8dAY1320W1jO+djTF+gTQYZy4qWBobOcbzHUt1yCc1vxC/84EraKWBe8a/rDrYXt5Wxai1RL5Hi6tho+S8HfvBZLiVlUPphbok5DhxVS+Hy43YSd15JLFeEkML593uxn0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715107049; c=relaxed/simple;
+	bh=tVSeIf6jLE8Th0LQMoL76hJ3nD1kQFbQgxjcugr5FmU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=PpZdeLbpN1XITxSeAlqp9YZHcqm/CucDq3Z5C5OkN7vwDM8zCDhaOCfHqK5pEDjZdsx3yeorm8M6+Ucut4re/zMEuhMLSLHDz0zZlWnOM9UIcwYfd8QrWsovVOxQN3slOhxHchgXfb3MGnxzdX1Vo5/1LK8U/IG2C1cmug7teks=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WL4fSDCu; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MU2+bulk; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447IK7WP026216;
+	Tue, 7 May 2024 18:36:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=+NSfvSZq2CrY+rd+lSMoaVY+9pa/iDvVFk9ybBAz1Uo=;
+ b=WL4fSDCuTlQ7boD0bHFUX+FcX5xDta1jJkhAnHtGy9xCKM0fyTGq2FtgT/mXnPqXo9Bw
+ CH8L/WocXZNQ1RIG0g9LsdEi7ptES9gNIgkY9zGBO1jjQBoP1DCILgXkfAnfJYpd6D/K
+ J2/dYnAw4+zwGDPm6+H9j52QMw4f24ItDcUiUmzSYxyYoadKr9TusQTLhFVhuoG6B0DR
+ K3yc5qa1h2ZGnLU3bCzn1xnb62D5/V/C1R69PZQxLC7K0spP0dIh3kKjz8BKZsz1sJAt
+ nBfmA/ori6SY7Dx8CeIGq/1Q9ePYr3zxWN5xJoBt0JPW9lFno7WQYeO9ho/H38HqZK1T 8g== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xysfvg1be-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 07 May 2024 18:36:32 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 447IJ1KN030927;
+	Tue, 7 May 2024 18:36:31 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfk0pxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 07 May 2024 18:36:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Hli/8+9nF9PDwC6oCEyFjrzC8UXPQJLxkm2Z+wBMf7lCGNdO0pHSvy1sdMB9IL4Hz2OBjund8OLuipznCO3FxRvmPmH15qRAgFobgjTP84dTxhi1C9Hasa0C5SMH6RaLIzNbIU81Wm7KahVz8jTbCUHa98KNSymeBZjldGfViRfp2U+dEoOB/j+23Lc67XmlBsBKl/6eHj0JUQGcn19HHDZN1deGkgy1HSy9s48oHyQW892fL+XPReTmTGs9EjySxqqHQfFc2sA4p1FNs7anxK2aNzGWcga3KG1dzSJLubfSMjlwTyT35ey51nyA7aDLTp2S0h7jDlQzuTAgjMHh4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+NSfvSZq2CrY+rd+lSMoaVY+9pa/iDvVFk9ybBAz1Uo=;
+ b=Nph4N1R9zW9UY2VNMkzqJ5q6P/SE3I4Rw4Cv5Zya15jg6UZAIwiOfIemn8QI9PaM7X0AcRLBV28QdGb7OdBnV/+G3f0yMN5HhG4Why0arSULajSPdlIyUr09rBxR4ZFISDgc00yC3bxBtMCUXYc3fksSD+ujy5QgvGTgV86ZbLkNQ3XnE7oqIB8dQ8XIkktbywDswi/RGOmfQJ3jsBl5Uh4XR458Jq8Hp1Hyx3vFt8BMyLG/a48vkmv6VxCI92lAJ1raLZBIaL7SLn6MJvs2rkfr4gA6+2I+YsdMYTh/3K9mWy2JfuOSj2T1L4kJW0SXRlJuSjx1oqMJkIoOh0G9Vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+NSfvSZq2CrY+rd+lSMoaVY+9pa/iDvVFk9ybBAz1Uo=;
+ b=MU2+bulkRRXqhtacPUuHMNjzkCyYM/WS6TT2aZ6QaO56trABCmQd8u0hJbAgQIXuM9ZZR063kdmT5oRaY7TB0fvWeNYpRGD8m6aiGJIXYGQi7aJntP9EjJTFKA2iQhBO8duDNeDzYfjQm+zNSAxbLoT2TFnhMQU5zTNqL+GASQg=
+Received: from PH8PR10MB6597.namprd10.prod.outlook.com (2603:10b6:510:226::20)
+ by BN0PR10MB5175.namprd10.prod.outlook.com (2603:10b6:408:115::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Tue, 7 May
+ 2024 18:36:25 +0000
+Received: from PH8PR10MB6597.namprd10.prod.outlook.com
+ ([fe80::6874:4af6:bf0a:6ca]) by PH8PR10MB6597.namprd10.prod.outlook.com
+ ([fe80::6874:4af6:bf0a:6ca%3]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 18:36:25 +0000
+From: Stephen Brennan <stephen.s.brennan@oracle.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Steven Rostedt
+ <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>
+Cc: Guo Ren <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+        WANG
+ Xuerui <kernel@xen0n.name>,
+        "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin
+ <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+        "Naveen
+ N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Paul Walmsley
+ <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou
+ <aou@eecs.berkeley.edu>,
+        Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander
+ Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav
+ Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+        "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>
+Subject: Re: [PATCH v3] kprobe/ftrace: bail out if ftrace was killed
+In-Reply-To: <fd8283ac-232e-49e8-a5be-60e54d87b9eb@csgroup.eu>
+References: <20240501162956.229427-1-stephen.s.brennan@oracle.com>
+ <fd8283ac-232e-49e8-a5be-60e54d87b9eb@csgroup.eu>
+Date: Tue, 07 May 2024 11:36:22 -0700
+Message-ID: <87ttj9h3kp.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BL1PR13CA0150.namprd13.prod.outlook.com
+ (2603:10b6:208:2bb::35) To PH8PR10MB6597.namprd10.prod.outlook.com
+ (2603:10b6:510:226::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR10MB6597:EE_|BN0PR10MB5175:EE_
+X-MS-Office365-Filtering-Correlation-Id: ded9d75e-bc25-49eb-49f4-08dc6ec4996d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?RGVwZkRRaW96TWg1QVlpakpJMjFwUjBjVVIrdFV5NU5OMFAvV3VFVXkrVVBU?=
+ =?utf-8?B?V2d5djJ2N0tRUEI2V2dqL3dZYVBneGVuQ09RUFVVQUpLeVBxd0RCTExxRks2?=
+ =?utf-8?B?VXdnZXZGVmJqU0RhdHpMSDVibmM0WTViSUJNMS9zd2lRNDViQ25KNWFEdU50?=
+ =?utf-8?B?WENjcWpvUWsxUXQ2dkk2WGtndjJVbjhIMUU0dExOaHYydkJ1RlljdHRkM092?=
+ =?utf-8?B?WVAreDNLU28zbEZNU3JhZUxKa0xTMWo0VGVCd1pqeUdyenVIU1ZRd1NpZkwr?=
+ =?utf-8?B?ZmZsbm9ub0dIWXh4VW9nTmd3YTI0Vk81b2YwdmR6TjB1T0JNeXVMTHdtM2lt?=
+ =?utf-8?B?VHNMYjhmZzhqYWw0VEkwOW9rajNYZXBWNFovMThTeG9OUWRTMnFGYTBGVFpV?=
+ =?utf-8?B?R2E1UXNPTjdwYVpaZ2pGZ3dNdCtHNzY1OVE4RE1wWHNzTStZOTdYbjBUV1hw?=
+ =?utf-8?B?MHdoS3EwUGMxNTcrNTlEbFlndjVueTZySGR6OE5jMGR3WHhIUnJaRkNobWth?=
+ =?utf-8?B?a0o1bndoSWptbDBVZGZjeUd2VDIzaWNJazhGUTVSSVZlYWxLUzhQMks0Q2Qy?=
+ =?utf-8?B?WFl2c1A5SnI0VkxqYWlncXQzbzNWbmQrMmR3cTI3VTRpUEZiV1RMK1VnVFRu?=
+ =?utf-8?B?M2NoU0ZMOGhPS0M2NVcxalgxaFdYcFh4anA0MnBZTFRoL2RQN1E4YTg5NkN6?=
+ =?utf-8?B?cmxPeWMrckFwNDdwNVRRS3FNQkNTU1Yrd2ovS1ZUaXdhTmpySWlCalkxRDBu?=
+ =?utf-8?B?aXUzUFdnaGpNWEtqbWJsbHNTNE56U2oyRi9uMVJSR2IyYkNYWUdDZHJNMkFy?=
+ =?utf-8?B?RmMxQXo5VzcvNE01V0VkMnpEK0pXa292VGQwb3R2TVhUQlBxZnh1SG9QNGNQ?=
+ =?utf-8?B?NUlxZFMrVERmekwxU3dVMThLelQ3REpMei82WnlKb3EyMTFkNTgvNHRLek84?=
+ =?utf-8?B?QVJkUHAyck05YkFrSG92MHhoVUo3MklIaUlVV3hDVzZTMmZPeVJ0MWp1MnRJ?=
+ =?utf-8?B?VmdwQWtHMldkdStkaUN1OC8ycFN6SGJ0S2tKc1dkQjNPWlIwODFqQWpPTTFp?=
+ =?utf-8?B?WmdVR1hOTEs1Y2lNVHB6RVNvU085MXZ4akdFa0hTR3REMXRQK0NlVUw2Mmpo?=
+ =?utf-8?B?ajlIRGUvVncvVGREdVV3Y2dPOTlXSVVpMjY3dmQ5T280czFCVVVDV0tHanF1?=
+ =?utf-8?B?WnIwdlF4NitERDNBMWc0R042MjNWMllsWVllMStaYVdrTDMzUjY3K21SQnhp?=
+ =?utf-8?B?NEFraDBEVzFtNS96NE84THB1V2orUzBibCtBeG1ybGp5cjVCVFdtdnFaNkFJ?=
+ =?utf-8?B?ck9kWi8yai83a2F4RmJaSHdYRkpwdXd4RXhMMnB2K1RBUmJUYlBjb1I4ZXFF?=
+ =?utf-8?B?eFM4UGM5K0xoY3FlcXZUZkhmck1saTJydjlxbHZVdTVZT3p0cHJ3bDVYaHJu?=
+ =?utf-8?B?bE9LUE9uVlZpeTdSTVkrbENxdWVWdVI0c0N5cEhMck9CcW1GMlNnRWFlRlZs?=
+ =?utf-8?B?QTRCRU5Wd2dvNjZEUXBabmVDVVh6T1UzS01CekxBajQyVUFUK1BySVVrWGtn?=
+ =?utf-8?B?Z2QwbFNqck54SEtEL2k0N290c1JNdkhtNms2ZWZVbWhuVXpQaXJxR1hkci9l?=
+ =?utf-8?Q?2f7+Q0sLsVgDn+Y9Q9w7OEAm+5kASeFZVr6g+NB03e/k=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6597.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?Nzl5eWJiRG16Q1lVRy9yZmt3bE5KQUNNUFBWTXkxVlFBTFM5V1Rrc0hvWDBN?=
+ =?utf-8?B?WVlNbC9tSmZBMjQ2czZ0Z2JQWFFVbmgrWFhDTmM0TWhYOEVLbjBYME50Vmwv?=
+ =?utf-8?B?TXFHVXJiMzZmWHVJU3VDK2VLcXZWWUQwSUN0bHhRTXo2VE5DTnVPbytMdWdL?=
+ =?utf-8?B?cEJnSGVCb1l0K1pBdDlBb0dLSVlqOTcraUd3cytCR1BTL3ZOTEZqSkYyaUFa?=
+ =?utf-8?B?a2QwZnpxYnFuZVBKU2FJUy9ZajQrNnExYXVGVlFpNHRqWEFKSUtEQm44NHdm?=
+ =?utf-8?B?b3J5endKdDZXejFLcGN5eWlxTUlWYjBiOGYvNnF0Q01BeWUwM24vaDUzN1pZ?=
+ =?utf-8?B?anhKcG9YbUtLLzVvekdxbzlYY0ltZWFZNHZ2VEs0ZlRRY00zUzdpZklnbnk0?=
+ =?utf-8?B?bTF2a2owSkZJK1V2UjBDcXNneHVIWDZST0NEM1JDSWFFU2RnNXBUTUZnTjh0?=
+ =?utf-8?B?dDJNMkRhZHVjam9vWC9uMlpiSWNybC8xK1lTU3NjbTBOQWVwNkxqNW45UWhY?=
+ =?utf-8?B?dVNZYXdvT1g5blVTanhEUElGRHhJaEVTdWZmTFMvbFFZY0ZRcDhhdEZ3eG5H?=
+ =?utf-8?B?dzNnOEZ4eTR1cnVEbTgvOVZwTDRkWjQyem9CMlY4ODgyNVNuY3dqYmxXbGlL?=
+ =?utf-8?B?YWJhRXl6ajUzOHhSUkNqT0lYZHRNbEhSY1BsdlRONDBRT08wV1NjRzVaV2pW?=
+ =?utf-8?B?b0d5NzBYcjlBMGpqc05udU4zbG1aTktRelhkVm9lbFpadmI1QktXWUxOTk9K?=
+ =?utf-8?B?aXcvOXh2STVwT0ZQNllGZFBCSVRjQWdPMVlmR3Jka0dtbE9pN0JQTlZwTFdP?=
+ =?utf-8?B?Z1lkeWFMblVKYXBBY0FITjBBSnVBSmVOWVZNWERmMHcwRjVzOFYyUVd0ZHh6?=
+ =?utf-8?B?bmZkcXc1MytCYk9HRksrdTFmNDM4Yk1qL21pajJuWnVxc3prZExaVW0xVjJ6?=
+ =?utf-8?B?ei9BeDdHZXZIa0c2MXBQK0FWV1l2UFZndjJTSklRNHNub1BGT3JLeDVscEw4?=
+ =?utf-8?B?Z3FWQ3g3MFI4S1hZcmEvblZVdmNyS2NlOE0rUDNHMEdiR21qbFhqbmtyYU1s?=
+ =?utf-8?B?bjZNNWtNbEtKNGJTYyt4cHJneEZVQSs2MFFzdjFhVzc1d2I4V1ZERGdpNmpY?=
+ =?utf-8?B?SDlLUDZQNUVWdzFOSkJETTloTlpybWh3R2JFN3UvK0ZpbmR0V3ZNdlpZbzkz?=
+ =?utf-8?B?dzZJZ3pIb01ja0pxNk45S1VmWEt1R2VRZ1pLLzlLQmRHR09yZWFsM0VYcWhK?=
+ =?utf-8?B?NzdRZzNYTndLVWZoWkRqZVYxTHZPTVpqWm5DSk84YjJFTFBVUzVPUU9WK0l3?=
+ =?utf-8?B?RkpQY2tLUTA5RHB6cVp3c25BTHlza2d4ZkExUUxwNEFIWkdjRGhVVVJhZlkw?=
+ =?utf-8?B?YW1tZ1U0N2tKczZwUWRFOHhOS0JpNE1OTUd0Mmp4N0liNTlQZHZvazc1UVl6?=
+ =?utf-8?B?OVJObVF0NTUyeC8wMmxPb0hNclRZYm9ENG1QUkN4enRwNVZvZVFWRnBid0tl?=
+ =?utf-8?B?b1EvOFF4MnJLUWs2bVhZQ3RKMmxiODl1cFZzcGNLR0d5RDNwdUdxcnNHekp1?=
+ =?utf-8?B?WExPaHdYQVB0QVY4RTNxMkpsbjdVT1FnZTFkKzRWSGtObW0rajF2YnMxZVEx?=
+ =?utf-8?B?SnZlKzhEclFLOGRWTzVHM0xJL0dvTXBOS3VOTWtkZk42QWV1N1hCUHEvbXJW?=
+ =?utf-8?B?cWJhTDdVdFUxenNxRUptRGtxRkdVSExRQWRZcy81cUJmVTUrNk5lUSs5NDZu?=
+ =?utf-8?B?Q0hGWUw5Z0ZKMWx1c1AxVTlXVzFQK2RtMUI3UU9idHI3ZTBnSHhKVTh6ejZh?=
+ =?utf-8?B?dHNXZkdpNnlERUs4eU9QTmpFL0R1eUlSSFR3MFRlaXRQVnQwVVl4K1JlUGZI?=
+ =?utf-8?B?aGtLdXQ1NlZ0eGFEc2FwRk8xQkFnb3FPQkVOWUVvTlZzTVk3MDdPendsOFRw?=
+ =?utf-8?B?bnNKTmpJd1Bwb1JERkNTUkRFR3BuZXhrVTFFVmw3dUhhdEhBL3Vxb0VIVGxC?=
+ =?utf-8?B?TjczS2U5S3IwTXp0R1BzTTBSNkh1R1hicTRRYndsKy8zV0MvZVM4MXZPejky?=
+ =?utf-8?B?VVIzc25RWExxZmdtVXJEVTNEWGhESEVmTXBxREFDUW1pbzhMVnc0QkhyRzF6?=
+ =?utf-8?B?QVVaMmhObHdtZHhrWXBGd1U3UkJPNFBYZWpkRDRFWmJrcm5WcVNXRnNic0Nv?=
+ =?utf-8?Q?haBgcaU/iOiriI6vHqJmqfg=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	GyWSZpflPjHJQXVh/b1/6ZH2xUHXQdYVOZw+gFcBkfqmv8XH/mTImkhSx7NOM3v81Q6rssqmZB7qct3ggSGKA/Eda8mL/p5QjdL8ocsxlsgKvXDcr6QCMOUUysL8+BwfO7/1QuHV5GvryYaH55uoA2PNU9Q3HZy33isLuMkuiYTcFvqSzITQs2C9vKgF/yR6HvLcmSMguWL8iP8/gZXs+vOoI4jP5y9KEW3qGFwBCbUyu2K7oLC/0zox2uVmTh4vvSFFX8m7/39pnWUoNlF28offR8hrxFIPBCktYQXyLlz0MD79V4d8bPj/2APlNjM6mTvKNRAg6wsT154sNm46FZ0s0mFDm5nS/naOzZ2KtlqpW0dekmCV+Nl1TUoFeXifEaDaMztA2RbqNWGXp/2CyJXPkcOdtH8VbVJLDBt7jjgjt3BQhucMK7rD7zQr72ewbpy3XawpxsBLkQukamC+buo3RtZ0e1Nkvk+k6AbEhaz4l4634maaaasbJBFLkRJSl52BH8voN6PRZgpQPkiPbt+YMBaRA/PjO55kzki0QVEJL9XfWa7VC+Vx/cG2Ikt9587A/qvOR75XQx3gBlftOmizLHUs2Kqp/2ReQKDGOYI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ded9d75e-bc25-49eb-49f4-08dc6ec4996d
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6597.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 18:36:24.9008
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WwOZnOdTcj9ULTuqz/0avjVKx9btM5qxYc0NMnjYQFMlaisO/0u5IjF03NoaoJjK95a7QmQlppYstMra0ggegeG22juA3e7wn+gl49mVWfI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5175
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_11,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405070130
+X-Proofpoint-ORIG-GUID: wo5v_Q4_FFO82DYzsVnZnT63OzaEeOFg
+X-Proofpoint-GUID: wo5v_Q4_FFO82DYzsVnZnT63OzaEeOFg
 
-On Tue, May 07, 2024 at 07:36:59PM +0200, Daniel Vetter wrote:
-> On Tue, May 07, 2024 at 04:15:05PM +0100, Bryan O'Donoghue wrote:
-> > On 07/05/2024 16:09, Dmitry Baryshkov wrote:
-> > > Ah, I see. Then why do you require the DMA-ble buffer at all? If you are
-> > > providing data to VPU or DRM, then you should be able to get the buffer
-> > > from the data-consuming device.
-> > 
-> > Because we don't necessarily know what the consuming device is, if any.
-> 
-> Well ... that's an entirely different issue. And it's unsolved.
-> 
-> Currently the approach is to allocate where the constraints are usually
-> most severe (like display, if you need that, or the camera module for
-> input) and then just pray the stack works out without too much copying.
-> All userspace (whether the generic glue or the userspace driver depends a
-> bit upon the exact api) does need to have a copy fallback for these
-> sharing cases, ideally with the copying accelerated by hw.
-> 
-> If you try to solve this by just preemptive allocating everything as cma
-> buffers, then you'll make the situation substantially worse (because now
-> you're wasting tons of cma memory where you might not even need it).
-> And without really solving the problem, since for some gpus that memory
-> might be unusable (because you cannot scan that out on any discrete gpu,
-> and sometimes not even on an integrated one).
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+> Le 01/05/2024 =C3=A0 18:29, Stephen Brennan a =C3=A9crit=C2=A0:
+>> If an error happens in ftrace, ftrace_kill() will prevent disarming
+>> kprobes. Eventually, the ftrace_ops associated with the kprobes will be
+>> freed, yet the kprobes will still be active, and when triggered, they
+>> will use the freed memory, likely resulting in a page fault and panic.
+>>=20
+>> This behavior can be reproduced quite easily, by creating a kprobe and
+>> then triggering a ftrace_kill(). For simplicity, we can simulate an
+>> ftrace error with a kernel module like [1]:
+>>=20
+>> [1]: https://github.com/brenns10/kernel_stuff/tree/master/ftrace_killer
+>>=20
+>>    sudo perf probe --add commit_creds
+>>    sudo perf trace -e probe:commit_creds
+>>    # In another terminal
+>>    make
+>>    sudo insmod ftrace_killer.ko  # calls ftrace_kill(), simulating bug
+>>    # Back to perf terminal
+>>    # ctrl-c
+>>    sudo perf probe --del commit_creds
+>>=20
+>> After a short period, a page fault and panic would occur as the kprobe
+>> continues to execute and uses the freed ftrace_ops. While ftrace_kill()
+>> is supposed to be used only in extreme circumstances, it is invoked in
+>> FTRACE_WARN_ON() and so there are many places where an unexpected bug
+>> could be triggered, yet the system may continue operating, possibly
+>> without the administrator noticing. If ftrace_kill() does not panic the
+>> system, then we should do everything we can to continue operating,
+>> rather than leave a ticking time bomb.
+>>=20
+>> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+>> ---
+>> Changes in v3:
+>>    Don't expose ftrace_is_dead(). Create a "kprobe_ftrace_disabled"
+>>    variable and check it directly in the kprobe handlers.
+>
+> Isn't it safer to provide a fonction rather than a direct access to a=20
+> variable ?
 
-I think we have a general agreement that the proposed solution is a
-stop-gap measure for an unsolved issue.
+Is the concern that other code could modify this variable? If so, then I
+suppose the function call is safer. But the variable is not exported and
+I think built-in code can be trusted not to muck with it. Maybe I'm
+missing your point about safety though?
 
-Note that libcamera is already designed that way. The API is designed to
-import buffers, using dma-buf file handles. If an application has a way
-to allocate dma-buf instances through another means (from the display or
-from a video encoder for instance), it should do so, and use those
-buffers with libcamera.
+> By the way, wouldn't it be more performant to use a static branch (jump=20
+> label) ?
 
-For applications that don't have an easy way to get hold of dma-buf
-instances, we have a buffer allocator helper as a side component. That
-allocator uses the underlying camera capture device, and allocates
-buffers from the V4L2 video device. It's only on platforms where we have
-no hardware camera processing (or, rather, platforms where the hardware
-vendors doesn't give us access to the camera hardware, such as recent
-Intel SoCs, or Qualcomm SoCs used in ARM laptops) that we need to
-allocate memory elsewhere.
+I agree with Steven's concern that text modification would unfortunately
+not be a good way to handle an error in text modification. Especially, I
+believe there could be deadlock risks, as static key enablement requires
+taking the text_mutex and the jump_label_mutex. I'd be concerned that
+the text_mutex could already be held in some situations where
+ftrace_kill() is called. But I'm not certain about that.
 
-In the long run, I want a centralized memory allocator accessible by
-userspace applications (something similar in purpose to gralloc on
-Android), and I want to get rid of buffer allocation in libcamera (and
-even in V4L2, in the even longer term). That's the long run.
-
-Shorter term, we have a problem to solve, and the best option we have
-found so far is to rely on dma-buf heaps as a backend for the frame
-buffer allocatro helper in libcamera for the use case described above.
-This won't work in 100% of the cases, clearly. It's a stop-gap measure
-until we can do better.
-
-> > Could be VPU, could be Zoom/Hangouts via pipewire, could for argument sake
-> > be GPU or DSP.
-> > 
-> > Also if we introduce a dependency on another device to allocate the output
-> > buffers - say always taking the output buffer from the GPU, then we've added
-> > another dependency which is more difficult to guarantee across different
-> > arches.
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks for taking a look!
+Stephen
 
