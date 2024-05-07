@@ -1,174 +1,151 @@
-Return-Path: <linux-kernel+bounces-172171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957098BEE66
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620288BEE68
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDBE01C22270
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE8D1F23A13
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1422D71B3B;
-	Tue,  7 May 2024 20:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A6558AB8;
+	Tue,  7 May 2024 20:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hivFTRQ1"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="q/C3Dsnb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ArRExtQ5"
+Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAE6187353;
-	Tue,  7 May 2024 20:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B696479CF;
+	Tue,  7 May 2024 20:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115124; cv=none; b=T71EJlxTQ32EICOI4wQPRMrjQaV8JZOxT6Ol9INPan+PESGewiarOrQUdC95Hdi6GzYcMTxUXD4g9m4e/hxeVPLacq9giI14L2ZWnlwI+o43nDx3OF5ckvhWakuZ5FUBI1rRv7d5ShadMFlVXMRs3M7xHI0xrAA8y+xPgeVKzEA=
+	t=1715115203; cv=none; b=PjjB0BnRROyDq6AlQxcBPKM4OxePB4MtZKnugJSqubSewba67nEMGJxtYDZnyVdxGmz/No20b1AGnU3+D4zGFe5D9rxVknl/4ZKS4v+2mJWBEVqk+wse7ti8BIhUy4YiJyKOw/8DFsKkdpv9LfSsGWNR2vcgoDohj2Y1FLvuLaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115124; c=relaxed/simple;
-	bh=b8UZ2RsJ1KvRwNE/4/qun7NqMNi9/Ak7SZwXxlqtD5E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J9pRjKyQiNn8dZmoasPGruBMpZlKQ5l9/Y9miIO3QCpTuF0v2y/N+VxxQrNi2OfX33dKUx1uSlyPEoreW1RUKTfBKtkJA3XI3JKhfMQRTpsOfeso6kc9E5zRI70XopSmQOn8tdAiqhqy8XoIUb06L4yY6S3rpWejjbETBsGIdRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hivFTRQ1; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34f0e55787aso1973011f8f.2;
-        Tue, 07 May 2024 13:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715115120; x=1715719920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qdcR2a16esVT3UB13Wto/4zRmwQIrll7yYTlz1PQXa8=;
-        b=hivFTRQ1huyE+NCd428B/jvRiaUVey7DtoY4duh1oTE/7nFH3Ke53YiZrFXCpeDLpo
-         xwzhgDoPhnxA5OkXtVqFRyIZ6IZPoFGuMI73TpMzHxHRpcUxdVkrsX2fhTO9TY9YHVeB
-         UI52nlJLt4vX5jCRL45dyHtyBaTkcidP3BKqYXcz4K+OTGK+VTRkpkAjRWihvJH7UdF7
-         YSEeIS9m7/YG+1m+RH25SywwaCNovK+51E8IMhr0C8K+wXs9H42dp+ruDDb2zlsssr4u
-         6OPBN2YR7Bf+Q83/cyS5qxO0u8gHMWdNE+7KN7blntCJ1nZ9iIfEtf4y+T7KYdzFcqYD
-         21tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715115120; x=1715719920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qdcR2a16esVT3UB13Wto/4zRmwQIrll7yYTlz1PQXa8=;
-        b=J4beitXZdLy2O1OKoVaSZTWCadg+ncBVE4g0hIjbZjxDMP+jfEGGqL/oDHzCZC5AtA
-         5aNWWfARRs6Q8olWkh3WdhX9eRCHDDZvvtMwRSQjp4pY47Y24ox6yVjcSi3SFQB4Fe8X
-         ppOBXs2rGxl/w4QgNwACB6frtHWAqwWhMWUV6ds+R/OB5drohJ7RCrQ83B72/bZZk3Lv
-         4h/npxjwDT6zPNDHhCCMBFuSrGaWMxtMjhG5jkSfYLEK9As4tKkk+BZ1rlZRxZrv1LDn
-         HzeaSIF+w3ncufDcjP8HLs43hIqA2kS0rgaIsgEcNYWCp/ji/Gkb4anWqhhWl/6OzNMl
-         q0dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEAJjE1Igtb6yVqoA4DNawhh1E7OIMBldNEcaf7DF/oH4rY5lgA0NsdLBGkyEni29QbkF2kQ5NKugXT+palOJnB5n5hjCJNcleiLlVtWbl8zj/Yodh29+WzJ0zg9D9imlJkIBl7EIfJujAnFyUEgINS9ppNr+1qWk+UG8UkTb6MwsZlBO9ULB+UuTGqMUpliQpLkP2V/E8Md/l
-X-Gm-Message-State: AOJu0YwomNR/mgfvLvQ3pX3Ad/R2DyWhjhsqBZ9OdGmVu93jfIhZO8la
-	QEo6t7yPrYSV73rFwQsrnBUk6D4Dx7PSjCoEaJcI2dWgvIrKhfBMhd79WCZxM/rZLG6W0JO+6ZK
-	FQSG1mJErpf3JCkN9GY3EHtkECJM=
-X-Google-Smtp-Source: AGHT+IEupALi3YmwRAFNO89hfoLq5x2UZOxByq4dlLEg5tUq6l7C9/2mHmwsQr3MawIVxEWxb4cV0A1MmIur9qWOZgc=
-X-Received: by 2002:a5d:6e55:0:b0:34a:3f3d:bb14 with SMTP id
- ffacd0b85a97d-34fca242709mr600329f8f.27.1715115119939; Tue, 07 May 2024
- 13:51:59 -0700 (PDT)
+	s=arc-20240116; t=1715115203; c=relaxed/simple;
+	bh=QT6rlQem4K0cBiuJlPrc72yqzW+2FdpcJ3xEIfA5RXs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=j4Vs5TWQj0IUzD/cX3Y0oEyCuZRL7nRx2TOdrx+Y1zaRncu14iV+M22fSydE4pPQ6BFTHuTH22bZxvSCOCtiHC/gOGDi0o2dAh1k3HJMbKW+kh1tJjuxIkfla7F+pwsuT9JeAlIwAMv+IheGQyNgULlTOjth/z+x80LFczbAQKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=q/C3Dsnb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ArRExtQ5; arc=none smtp.client-ip=64.147.123.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id 4323F1C000B9;
+	Tue,  7 May 2024 16:53:20 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 07 May 2024 16:53:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715115199; x=1715201599; bh=UafRVQ7xw7
+	cygAYylCOVgFjlvkwiscSglHTE53mJ0OY=; b=q/C3Dsnbm7E/JV3fCuw1PDrQcw
+	HA/oh6aI9toEOwAS5YLndn32HSnDVixRsdx2/U6oMWwz9+S7t/rodklKRuD+Je5u
+	+9YP+TAtK3xoLzlbZ6hVclJ8oip2y40E3Nafl512UNTy7OYce65GvlypbFqz4nr8
+	XfBWjwWO6TnljXAyzjt3OHmElJ4IcisYhqORrUTpkkk2imf56fOQCy1QVfeYvV4Y
+	PrevypsEV7t5vVN4gC6NyezZ/nLu3Hsq8okP1D9PDy5eyHnnrFmFsK88hei/Hm5U
+	4yaB90LszHpjQ8nfF9DrbbF88lGNVmSm5WkLvLNarHrW7nsWn+wagHgQaOLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715115199; x=1715201599; bh=UafRVQ7xw7cygAYylCOVgFjlvkwi
+	scSglHTE53mJ0OY=; b=ArRExtQ5IUH0Na9nEjjm9KMcHmunuDg1wJgDqTHBT58f
+	uTSftQvEmscGM6EHwwW6Uf3lWg5xKKkBoa4YCC5RyHGqTOT/imBDOxSUnmyDZxdV
+	6Q7mM8bR9mx359oHLnYcool851ghHeKHZ3MjU1A+mMmFyAI0Q3VEyCr+Yghliy01
+	/IsJ4yr9/8IlxIAVndlqYz87+P+YaTMHs/qnRJ0+fS5eDjoeK6+ijgCf8YWyHk/X
+	Tn5t+FDQ+xoRXmhcmv8lz8G4V7IpTlPfYRQOKBFW2vVBekwsGLSZ9HElWCbSAXvC
+	FQeOJbD+Qvj3C+v7uov9nKkmMsKbMlKsGDy1MDw9DA==
+X-ME-Sender: <xms:v5Q6ZvQuIHHZeRVLOyhAbccudcN7GL-BZkPcJjPOSr2fw55HHJUV7A>
+    <xme:v5Q6ZgxSyT2jYsEuKOLXp4xq1fbpt30omce9fnwBB_9ZPYIRQ-23ZnlyeAgPh5pCk
+    -nb_y9W9BOpH3G9m94>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgudehvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
+    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:v5Q6Zk0P3zDwcfFRIGzr4MV8HmP5w9_JSLCS5Zl5OkSLY9R-ye-eMg>
+    <xmx:v5Q6ZvAdmFzCR3FzLIpvSDHfmg9aVNGNDK_Z5IgGeizvY1hG8MghAQ>
+    <xmx:v5Q6ZogjLg2qcOW_sBXLWBxHrRyPQf1vs9ewkg3BJSFGhBH6c3daVQ>
+    <xmx:v5Q6Zjrt10LNhArBp5fx_ioekBocovlhyS6QiiGH9TWOwthYHxk73Q>
+    <xmx:v5Q6ZtanBF80sYCSsSOxxByV_twdAh5IAUoLjpH_Ajti8xkUVV9yrifj>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 63A4CB6008D; Tue,  7 May 2024 16:53:19 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org>
- <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-2-e2bcbdf49857@kernel.org>
- <CAADnVQJ5-APFxMeGsUDSWBsiAbhJGivs=fBUapgYEFNHgnEVeA@mail.gmail.com> <d28dec16-9029-42f5-b979-a0f11656a991@kernel.org>
-In-Reply-To: <d28dec16-9029-42f5-b979-a0f11656a991@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 7 May 2024 13:51:48 -0700
-Message-ID: <CAADnVQJM73g9gTq3GxR-RMmpJPK3DGgzUTQiJXjz_B1G_4JAAw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/4] selftests/bpf: Add RUN_MPTCP_TEST macro
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: MPTCP Upstream <mptcp@lists.linux.dev>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Geliang Tang <tanggeliang@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <e93acd4c-20f7-4b46-bb9c-84fac451c894@app.fastmail.com>
+In-Reply-To: <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+References: 
+ <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+ <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
+ <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+Date: Tue, 07 May 2024 22:52:59 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stephen Boyd" <sboyd@kernel.org>,
+ "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ "open list" <linux-kernel@vger.kernel.org>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Marek Szyprowski" <m.szyprowski@samsung.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+Content-Type: text/plain
 
-On Tue, May 7, 2024 at 9:02=E2=80=AFAM Matthieu Baerts <matttbe@kernel.org>=
- wrote:
+On Tue, May 7, 2024, at 22:26, Stephen Boyd wrote:
+> Quoting Arnd Bergmann (2024-05-07 00:44:15)
+>> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+>> > The WinLink E850-96 board boot failed with Linux next-20240506 but there
+>> > is no kernel crash log on the serial [1].
+>> >
+>> > Anders bisection results pointing to this commit,
+>> > # first bad commit:
+>> >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+>> >   clkdev: report over-sized strings when creating clkdev entrie
+>> >
+>> > After reverting the above patch the boot test passed [2].
+>> >
+>> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>> >
 >
-> Hi Alexei,
+> There are two fixes on the list: [1] and [2]. Perhaps one of those
+> resolves this?
 >
-> Thank you for the review!
->
-> On 07/05/2024 16:44, Alexei Starovoitov wrote:
-> > On Tue, May 7, 2024 at 3:53=E2=80=AFAM Matthieu Baerts (NGI0)
-> > <matttbe@kernel.org> wrote:
-> >>
-> >> From: Geliang Tang <tanggeliang@kylinos.cn>
-> >>
-> >> Each MPTCP subtest tests test__start_subtest(suffix), then invokes
-> >> test_suffix(). It makes sense to add a new macro RUN_MPTCP_TEST to
-> >> simpolify the code.
-> >>
-> >> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-> >> Reviewed-by: Mat Martineau <martineau@kernel.org>
-> >> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> >> ---
-> >>  tools/testing/selftests/bpf/prog_tests/mptcp.c | 12 ++++++++----
-> >>  1 file changed, 8 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/te=
-sting/selftests/bpf/prog_tests/mptcp.c
-> >> index baf976a7a1dd..9d1b255bb654 100644
-> >> --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-> >> +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-> >> @@ -347,10 +347,14 @@ static void test_mptcpify(void)
-> >>         close(cgroup_fd);
-> >>  }
-> >>
-> >> +#define RUN_MPTCP_TEST(suffix)                                 \
-> >> +do {                                                           \
-> >> +       if (test__start_subtest(#suffix))                       \
-> >> +               test_##suffix();                                \
-> >> +} while (0)
-> >
-> > Please no.
-> > Don't hide it behind macros.
->
-> I understand, I'm personally not a big fan of hiding code being a macro
-> too. This one saves only one line. Geliang added a few more tests in our
-> tree [1], for a total of 9, so that's only saving 9 lines.
->
-> Related to that, if you don't mind, Geliang also added another macro --
-> MPTCP_SCHED_TEST -- for tests that are currently only in our tree [2]
-> (not ready yet). We asked him to reduce the size of this macro to the
-> minimum. We accepted it because it removed quite a lot of similar code
-> with very small differences [3]. Do you think we should revert this
-> modification too?
+> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
+> [2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@samsung.com
 
-Yeah. Pls don't hide such things in macros.
-Refactor into helper function in normal C.
+My guess is that either one avoids the crash, but we actually
+want both of them since the problem is a combination of the two
+issues.
 
-But, what do you mean "in your tree" ?
-That's your development tree and you plan to send all that
-properly as patches to bpf-next someday?
+I think we also need this one on top, to have a va_end() for
+each return() statement:
 
->
-> [1]
-> https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961a=
-c0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L578-L5=
-95
->
-> [2]
-> https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961a=
-c0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L559-L5=
-76
->
-> [3]
-> https://lore.kernel.org/mptcp/cover.1713321357.git.tanggeliang@kylinos.cn=
-/T/#m0b9c14f1cbae8653c6fd119f6b71d1797961d6ba
->
-> Cheers,
-> Matt
-> --
-> Sponsored by the NGI0 Core fund.
->
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -193,6 +193,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+                cla->cl.dev_id = cla->dev_id;
+        }
+ 
++       va_end(ap_copy);
+        return &cla->cl;
+ 
+ fail:
+
+
+      Arnd
 
