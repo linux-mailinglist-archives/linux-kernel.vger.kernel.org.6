@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-170956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939FB8BDE6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28F88BDE92
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500E828219F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E12F2863BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C128C14E2C8;
-	Tue,  7 May 2024 09:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE85315F3E0;
+	Tue,  7 May 2024 09:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f0Kb1CCE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzOLN8DI"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0D25B1E0;
-	Tue,  7 May 2024 09:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1DE15EFB2;
+	Tue,  7 May 2024 09:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074518; cv=none; b=VpWUrXio+5UWH6K2tDebpmneDdxkZ9O++iGDn2vWlguMJ1B5tXpA+ZLousz2gXCjccH3M9r7adHIu/H59K7FM75sDL+b0v+JPYp9IpCSWdcS4TW/8oykwwBwyiRAsrwRLGNiP3Pf0ed/PsrIkodnfvSPw9084csjMsubFcxp4vw=
+	t=1715074563; cv=none; b=a1LPRkd2nAN4EOte66FM0kPnY0j/kXZP89GR+XXzaF2qqWvcQrdj2cm7cM/iyRYABUYVyv4+T0F8lZv2PDlukqM8Uf7DTcAajnAvO40BQ5hDr5Emtwh3hTZJ2c+7nRzIqrkc1ncWtuhPc00x2sIRPHOoSq9NdfJQnNd8TP4LPYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074518; c=relaxed/simple;
-	bh=Mi58uVSDi+5iePNr8b+aVN0PSLs4Zw96zhsxEeRqYmE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dhvkUqyBAFVgq+pIfEa27ts4YkZ54eaoTW4iM8VhBFnD9fr0XnHgpgqBAyHWXTHDsqm1kPCs1iRYpqB17N7Mnbf3rCqDbtInyiFyev/A04DmiRon+EJImHb+o4jS+c9XTMnKiPsaJft62fRgHMy2a8yFgHA8D0xMRnCRQSzU/GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f0Kb1CCE; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715074516; x=1746610516;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Mi58uVSDi+5iePNr8b+aVN0PSLs4Zw96zhsxEeRqYmE=;
-  b=f0Kb1CCElH2s0NtHZN9vrxssW0dato7Y3zPkKX0LBLcw69wtcmAf+TBq
-   l/uO12yE8pkl5wBCmQOS4ULoVcC2KnHgFn6lasRfd1VxwRTxilSfvaJgW
-   T0MZqapWfXT9A11ugQTsFKZVeS1ij4Bg661w8s0NBDiUh+TX4qqa65Iqv
-   ATE/16Td/R8lzn2NCiS4SvAz1gfQ1Iw7LKRxSue36oe3gR4PeeuWKBZUK
-   IiJDdgLHbnOaLcacUML+J50PIP8/S0+KCB6KPPNjXO/PiMD+iFu+4nIGW
-   TADhbyohG+YL4joV5gk3SD1S+rIVbQdz5UR/k0DFV5UH4yN3ophC6SDDl
-   A==;
-X-CSE-ConnectionGUID: k6iR+1LGRnuafXBASfEWDw==
-X-CSE-MsgGUID: gIzHRv1nTFW+9P/+t8QS+g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="28329410"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="28329410"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 02:35:15 -0700
-X-CSE-ConnectionGUID: mbnN2bOrQTSC4WJUNs+SKg==
-X-CSE-MsgGUID: xehOBnBQQpmFgGKtOm2zIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="33029128"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.31])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 02:35:12 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>,
- Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 0/4] acpi/ghes, cper,
- cxl: Trace FW-First CXL Protocol Errors
-Date: Tue, 07 May 2024 11:35:09 +0200
-Message-ID: <2649256.vYhyI6sBWr@fdefranc-mobl3>
-In-Reply-To: <20240109034755.100555-1-Smita.KoralahalliChannabasappa@amd.com>
-References: <20240109034755.100555-1-Smita.KoralahalliChannabasappa@amd.com>
+	s=arc-20240116; t=1715074563; c=relaxed/simple;
+	bh=iDqzod0vjDc8e7O6tpb8LaBVtP1pQYzDsaE2j9NUzOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bSjoZjjp4i+nt2UhTiPlVwdxWvlLBVWNJY5T4e5vZgMhlEvvoox7Nn3GL1iR7bs1DVxlU3aEx3mK+nUFdTKxWMkNIFKKJ5ElZYzG7+t/ASo/wr96yjWTqJ6FLdwUKbSd3kTMqePHHXOWGhEgIH0FBoOXSoiD0IVh84MEHUel74k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzOLN8DI; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e0a0cc5e83so29089591fa.1;
+        Tue, 07 May 2024 02:36:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715074559; x=1715679359; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=meUQG6It7c61OX5rw+9ctPkRI+dN99MXSc+fu3Gh8lA=;
+        b=DzOLN8DImWwbVEVYYUUilnSRVyt+e2OQV/Kz5dhSdsvmO4NHJcMFb6YKJnMYPOuOl7
+         xXaSj/LIHeqBExtRN283haciyPzqy2JRYo9Fppv3V88bxhaxeTSFaxw0PnyO5azPX89w
+         8ZAGGqvU+xoy03whP2kHpDBgPaFN6M9xFgN3NLlOKr+oJYxcPs/BSAJ4DKX7qk2acJD7
+         O8kGHPChGRhUd/ykBYzaB/d/9dJYOAcjTizGkKOO6yxxBQBC1lOd/+uBav8NIYdJWZje
+         mhzViClqF9o4kvkmwIxkhYCcAHBlNCLdbk6JdWeEwEm+1I7msPVNpEd4Z/0GLCTgFzTK
+         woeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715074559; x=1715679359;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=meUQG6It7c61OX5rw+9ctPkRI+dN99MXSc+fu3Gh8lA=;
+        b=iBYH7TlQ6Iaz8s/Vtn9MmF8gKV8CZIuzVjwH6zPSKbYJBX7hXVJF3w68DObXECofrf
+         q1MRfmcv07nOtVqjiUcpII8PaPuDT5vAgxiAxN1p//EJIXU9k87FD9HAU7ok6tdGe6gd
+         mJggTPskgec2dHv5AxC5YJ1mYzEAlYYmF/87vA3rumU42v49TjAcSJPCfyCu/fWorTc7
+         IJmsZdudBP3y8YtafaomEreISZSgo0LZ5VNi+xT0ogZvvDPhY1h0xAAIh9DSohLcIheq
+         IL96CFdV3FPpTuUFZbtJZUgexpQZsbJ3x2DbwpUI/M4KW8yjobJ5o8WT4t4AGUVO0GIv
+         oetQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWksIknfyrmVDaDIqH9yu7dTqQEAlren2oYCPdPy8WN9Lc7adbRQdgFzneC5oUmg478u+s+l6QUXq6Aut0Cl+xXHJ/WSsBkcxYHPqF+
+X-Gm-Message-State: AOJu0YzFiNua8BOzuk9vYHycobQm45KtviobIB1xqkd0HvJ5F5oGZoyA
+	EjkarVdbIMqoMLpQkIYFikrwcRJQBb7PslTh5UlpLidEg5E/dSSr
+X-Google-Smtp-Source: AGHT+IGtWDWZT1q9jjh7d1r3JJDYU35pFBtvbBC29f67kkjeb18Ee/eBuT3cN+DDecPGl6zjxnSY3Q==
+X-Received: by 2002:a05:651c:141e:b0:2d8:729f:cf3a with SMTP id u30-20020a05651c141e00b002d8729fcf3amr6498619lje.32.1715074559518;
+        Tue, 07 May 2024 02:35:59 -0700 (PDT)
+Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
+        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 02:35:59 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>
+Cc: RCU <rcu@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Marco Elver <elver@google.com>
+Subject: [PATCH 28/48] rcu: Inform KCSAN of one-byte cmpxchg() in rcu_trc_cmpxchg_need_qs()
+Date: Tue,  7 May 2024 11:35:10 +0200
+Message-Id: <20240507093530.3043-29-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
+References: <20240507093530.3043-1-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tuesday, January 9, 2024 4:47:51=E2=80=AFAM GMT+2 Smita Koralahalli wrot=
-e:
-> This patchset adds trace event support for FW-First Protocol Errors.
->=20
-> This series depends on:
-> https://lore.kernel.org/linux-cxl/20231220-cxl-cper-v5-0-1bb8a4ca2c7a@int=
-el.
-> com
->=20
-Hello Smita,
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-I'm working on a small series of enhancement and additions to kernel logs a=
-nd=20
-trace events in extlog_print() (ELOG). I'm interested to reuse from ELOG th=
-e=20
-infrastructure which you made to trace the CXL Protocol Errors.
+Tasks Trace RCU needs a single-byte cmpxchg(), but no such thing exists.
+Therefore, rcu_trc_cmpxchg_need_qs() emulates one using field substitution
+and a four-byte cmpxchg(), such that the other three bytes are always
+atomically updated to their old values.  This works, but results in
+false-positive KCSAN failures because as far as KCSAN knows, this
+cmpxchg() operation is updating all four bytes.
 
-I'm aware that this series depends on an old one from Ira which has been=20
-superseded by a different implementation and, furthermore, that this needs =
-to=20
-be reworked   because the execution of this code may sleep while in atomic=
-=20
-context.=20
+This commit therefore encloses the cmpxchg() in a data_race() and adds
+a single-byte instrument_atomic_read_write(), thus telling KCSAN exactly
+what is going on so as to avoid the false positives.
 
-I'd like to ask if you plan to fix and rebase this series to a current cxl=
-=20
-branch. If so, I'll wait for the next version to integrate in ELOG.
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ kernel/rcu/tasks.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Otherwise, if you are not anymore actively working on this series, please=20
-notice that I'd be glad to help by making the necessary changes and by port=
-ing=20
-your code to a current cxl branch (of course, retaining your authorship).
-
-Thanks,
-
-=46abio M. De Francesco
->
-> Link to v1:
-> https://lore.kernel.org/all/20240102150933.161009-1-Smita.KoralahalliChan=
-nab
-> asappa@amd.com
->=20
-> Smita Koralahalli (4):
->   acpi/ghes, cxl: Create a common CXL struct to handle different CXL
->     CPER records
->   efi/cper, cxl: Make definitions and structures global
->   acpi/ghes, efi/cper: Recognize and process CXL Protocol Errors.
->   acpi/ghes, cxl/pci: Trace FW-First CXL Protocol Errors
->=20
->  drivers/acpi/apei/ghes.c        | 22 ++++++++-
->  drivers/cxl/core/pci.c          | 29 ++++++++++++
->  drivers/cxl/cxlpci.h            |  3 ++
->  drivers/cxl/pci.c               | 13 ++++--
->  drivers/firmware/efi/cper_cxl.c | 79 ++++++++++++++++++++++++++++-----
->  drivers/firmware/efi/cper_cxl.h |  7 +--
->  include/linux/cper.h            |  4 ++
->  include/linux/cxl-event.h       | 31 ++++++++++++-
->  8 files changed, 166 insertions(+), 22 deletions(-)
-
-
-
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 147b5945d67a..327fbfc999c8 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -1457,6 +1457,7 @@ static void rcu_st_need_qs(struct task_struct *t, u8 v)
+ /*
+  * Do a cmpxchg() on ->trc_reader_special.b.need_qs, allowing for
+  * the four-byte operand-size restriction of some platforms.
++ *
+  * Returns the old value, which is often ignored.
+  */
+ u8 rcu_trc_cmpxchg_need_qs(struct task_struct *t, u8 old, u8 new)
+@@ -1468,7 +1469,14 @@ u8 rcu_trc_cmpxchg_need_qs(struct task_struct *t, u8 old, u8 new)
+ 	if (trs_old.b.need_qs != old)
+ 		return trs_old.b.need_qs;
+ 	trs_new.b.need_qs = new;
+-	ret.s = cmpxchg(&t->trc_reader_special.s, trs_old.s, trs_new.s);
++
++	// Although cmpxchg() appears to KCSAN to update all four bytes,
++	// only the .b.need_qs byte actually changes.
++	instrument_atomic_read_write(&t->trc_reader_special.b.need_qs,
++				     sizeof(t->trc_reader_special.b.need_qs));
++	// Avoid false-positive KCSAN failures.
++	ret.s = data_race(cmpxchg(&t->trc_reader_special.s, trs_old.s, trs_new.s));
++
+ 	return ret.b.need_qs;
+ }
+ EXPORT_SYMBOL_GPL(rcu_trc_cmpxchg_need_qs);
+-- 
+2.39.2
 
 
