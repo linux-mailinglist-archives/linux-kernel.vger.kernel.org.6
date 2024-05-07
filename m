@@ -1,102 +1,155 @@
-Return-Path: <linux-kernel+bounces-171950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810698BEB1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:06:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9FD8BEB1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFBB287AFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:06:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7004B244D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5069116D31B;
-	Tue,  7 May 2024 18:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4BD16D4EE;
+	Tue,  7 May 2024 18:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FKPkDXTu"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jqwBqJye"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281941635A6;
-	Tue,  7 May 2024 18:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E1E16D339
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715105155; cv=none; b=uk/KpDWVPObsgfIQIdxqoSWXMGs9jbDlIKMx1qFdMkOGRfjSYfb/eXJmrJgTkcjolxipluojBbcbEWPmRZa3XwPPpTaLTys+NenixqULejaRnCGXrbf+Z3Qtxwz7Zwf+2sPUwpb7ttlXEMdveM5GNQB3O7S0L1alpoLKjckZGF8=
+	t=1715105158; cv=none; b=kRP0Q3tC5FoWiNHozfCPwXNK0XQs5cDKF9Heh1eEioJnPeiVdkcSPMoLejaNdHlCganL9eAyC+y4/kvBmSl0ayAVGIWwu3QBLdol+mQHWqpWSwlOcvkWG+zkddS2Im2zu099S6kFbdXfoJHBjgvcovXXSdHGFC5zTsdD1lId9Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715105155; c=relaxed/simple;
-	bh=KwgLxBAb3iwpt/iHMxBuGpes7bPXDJu6zekRMK5A15g=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Wjs73+g8leUoB/Ia5ZGXkNaJPRZ6KWy6d+8Y/7o9OiMPRBD8JjfDx85jVQSzs9keA/cV7Bf93Zhw4fthiH7a9Dgq6c4zqAynCRXj1B6MVGNRf4Uknkrb9eDiAM4CmEiwVfZpgeSj1uYY7ABDIdRBdnu0myvqC2qiK2jQBeiTIgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FKPkDXTu; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715105114; x=1715709914; i=markus.elfring@web.de;
-	bh=KwgLxBAb3iwpt/iHMxBuGpes7bPXDJu6zekRMK5A15g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FKPkDXTuO6UzJyDNra68QLidcEjaQ6FMzZNRo1DMKZsyINUfwpOKuodSvLjFTTih
-	 S/cMyK7la5OzQLlREXvjRtJA329VqmujRTV4eA5YSxVTXdEiVxReh90aICANGzTxq
-	 uz+NMCW2TxxmznQN8S9wSSg2zNXjMMFUTpdn86DoHIgsbMCFcVH7uTJnwz0+M0b1C
-	 kjhBDiC3i9kMaQ7Mf9DaxBU5hjRitZV6kKyn8dE4K0vKK2CzzIbZCe8gPLJozEGDD
-	 x7phrhq+uX9fNUjaK1rUZAGBm/uM5qA1C6wjGUu9fDZCPgzhAyftY0X7llogQrqWt
-	 UuV8nAx3wvJdGjoZ6Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MOm0r-1sGAL71mVb-00ObnB; Tue, 07
- May 2024 20:05:14 +0200
-Message-ID: <1c658f95-d3ed-489b-b000-d219e125604c@web.de>
-Date: Tue, 7 May 2024 20:05:12 +0200
+	s=arc-20240116; t=1715105158; c=relaxed/simple;
+	bh=Xb5whRwDyx5E2riHjw3KTgP+9PH574imG/syxIYEytQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jk5Yi95ci5cmDUv2KW4GBphgfcN+9UKUMsGo1m74igecjYSWiwn1Cc+79YCZf86JF4cpECPUxHbg7wFBJPSNjERchrZYBT4nScjFHBdj7JLapXtl2/g4EmCveXDUkMk6CRjCh2nKixgRAKujT8hDONbyerJZkaoOncjJJhWZbIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jqwBqJye; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f4755be972so1894152b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715105157; x=1715709957; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4B3b0fSHvBV0t0bfPLzBXODTqy0x2bXlGHdHOkNN940=;
+        b=jqwBqJye19do5EWiytzLlpVtzf0lqGFylsGNz8vZp1F1W6dQpp63id7T7FFAv8T+va
+         wbE7pnNA7j7Tgchl+Z9bOfbP9Xk3J4/J0acmfhkdDevlTFmrrUdMVj0b+2dHrzLvjG0s
+         EGSADrdL7krrzZtgIUSEnX8vjALX4YkuQ4ki/EFv0dPOoXjx0lfpyddRr1/YqjwbFS98
+         tjmhNfUyOk5yil79poH80o04VU4aoUaxVrnxirXTjsodm+v2gKDhTTDOUjEYHElSUQB1
+         VS+8Hk44RGPkiXa8LRzQRqIMV5fcOPjhEtp6+/lgkubmlh/bp7WcUPPKrzZosZcpga2q
+         ylVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715105157; x=1715709957;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4B3b0fSHvBV0t0bfPLzBXODTqy0x2bXlGHdHOkNN940=;
+        b=hGcKlfC0ge50Wrsr7S3j1qXWFnn9MmEBBI4YnzjXtY96q9UG0MhRWFL8ezYxRDjwbD
+         tKoi+iwRySpNyrpPLUIqpew8OCOnxkSHKVL1vfggWg/uPbza4O6Ah9pvfdWe87/sRiO1
+         XUZj7aSjIpyeaWv4wkAQAYzW10n1t4MIR8bXDrXA9vUGVrvrNuD/f0St9hanfAnp4yN6
+         t6ncHepEdtmz6knLI1j2TxO/lSrEB5JhMIXzjhGiibFHXGU/i96ZeppQuEAzOYLXDfBa
+         VPjKXHJ14BoxfgFrB2ofNtd/7tvjtY1ErRaXmMjvXCqDUFvw32f3HmBKjOuqJ3duBxXt
+         kchg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhdRmG5zKy8KsRorkfY0DzauAaqUWaX+yDqsyipgTTn+0oppGl9v0YZa5kTbLSkKslnCR+gGfpgD74ttjkoyIVCl/GNsyLucxYCjti
+X-Gm-Message-State: AOJu0YweUeh1oOmQDvOZddrSuC12JerHG8yVV6GtT4BkA0ciOI280fIO
+	LbUUCFGYG/7fnSWhC4KPZESjN3YBrLjdUpAWGDbSTYyNSXwnAw3KQ12rob6uoeClGKM9K+3hDUI
+	W8Q==
+X-Google-Smtp-Source: AGHT+IHEZwm2ACyKJwy8891F9ZqV8QggRFcnt3bRT/yT7KZWsBFqpyB+AjiErMqKZ/bjCLkxY7pledYiulk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:2191:b0:6f4:9fc7:d21e with SMTP id
+ d2e1a72fcca58-6f49fc7d436mr734b3a.5.1715105156569; Tue, 07 May 2024 11:05:56
+ -0700 (PDT)
+Date: Tue, 7 May 2024 11:05:55 -0700
+In-Reply-To: <ZjkludR5wh0mKZ2H@tpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jijie Shao <shaojijie@huawei.com>, Yonglong Liu <liuyonglong@huawei.com>,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
- Paolo Abeni <pabeni@redhat.com>, Salil Mehta <salil.mehta@huawei.com>,
- Simon Horman <horms@kernel.org>, Yisen Zhuang <yisen.zhuang@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Hao Chen <chenhao418@huawei.com>,
- Jie Wang <wangjie125@huawei.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <20240507134224.2646246-8-shaojijie@huawei.com>
-Subject: Re: [PATCH V3 net 7/7] net: hns3: fix kernel crash when devlink
- reload during initialization
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240507134224.2646246-8-shaojijie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4ljOFxrLOUDQYHqD33BOOnE6MAXLQQm3Fqqr5teS3PZBCUUulsw
- QggAeDCg5mo8zcK5o8VNtct3Vkq5yW8aw3wrvDyxJUPiqsQhAZHUX5hZ1on1hdw1j9kSgUn
- Mefhg4WlgjuJSv1+yvBFJiP8iOqVFl+5mAWB43+FiZO/xd7AiQcVv6vFR27uK1DlHvRwr4X
- 9ErYPcasZ2fSapJJs1juQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rzAuSBM7lXY=;LxDZWg3qyJ1os83KwKjeM6yvo8M
- KKgD/J/19ip7fW1np5A7wRtzk+R+liuH99FaGk6fv8Cb/Rm4BsxUeMsaLKp6KW4oK4IlULaKB
- yhrzDemgc+3ZAiz2xPfBpay1suA6ia/bV3M+RSPeB2ESIrZxY9a/oTascqWfMDb/0QH+3UF7g
- nrdmUSTwmBLXcy/aHqbhJ2swu0s+lkzMgBaim9R+PTsQHljnSSDmeeF2x4gFxDW0hyEC59LcD
- 1avZtZuVF7vZmf7L/+7crlD0ubp+5eCFyQkJT8K9Rpkm7E+lmvczzcTSsPqIyxpihC2xk1Dto
- /omDTr9h7kpX94sV5+BElY65sjs7hFCGAU3xmNMqr3bI2A9gmcSeY4yYlPr66Op8J5a5i9a9A
- 3u9PBZtMryk+4LKH274u0jou1TgJ8/tIsKNW88T0fI+UENEszJ3BB08bGpIunw/YzoBMTqaMw
- 7iv1Gn+1MbU4g8pX3dJ1G+HAf4hHtnDi+jvF88Fe2Cei0c2XmVQ06ClXvvNLzf4OQDjdTsz9I
- O+iGV19+6T+4OzAOJ5zmXo7g+uAYhrYl1HXQoYYP75JpXrKFg9tJpy5guFvPMqrQRfYV+HyJJ
- lWqgjfi7jwyk7DMDcUtZBl0S+ODU1nbadbDEyWRRWPmYy2/qJzRNpaW4tcbrQF77xZb2OLWl9
- JXfsIfDYv41pPSfT7tqnbNIOtV4bioT6rpXkbkYxzdfvfNjIZMGyar3LH2Kzwo71a4gsqRkq2
- yRTlj9uZFsTG+iMcfAkt3fWKGh5uoDjG1vWrLGGJMecVaNd52TypecIeCqKkP0HbYSy7hXcIX
- /tHq6Q8CzXJHFKib/gUOL0qb914398dMfq8BwG60v3ctQ=
+Mime-Version: 1.0
+References: <a7398da4-a72c-4933-bb8b-5bc8965d96d0@paulmck-laptop>
+ <ZhQmaEXPCqmx1rTW@google.com> <Zh2EQVj5bC0z5R90@tpad> <Zh2cPJ-5xh72ojzu@google.com>
+ <Zh5w6rAWL+08a5lj@tpad> <Zh6GC0NRonCpzpV4@google.com> <Zh/1U8MtPWQ/yN2T@tpad>
+ <ZiAFSlZwxyKzOTRL@google.com> <ZjVMpj7zcSf-JYd_@LeoBras> <ZjkludR5wh0mKZ2H@tpad>
+Message-ID: <Zjptg53OzzKwImH5@google.com>
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+From: Sean Christopherson <seanjc@google.com>
+To: Marcelo Tosatti <mtosatti@redhat.com>
+Cc: Leonardo Bras <leobras@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-=E2=80=A6
-> This patch fixes this by registering =E2=80=A6
+On Mon, May 06, 2024, Marcelo Tosatti wrote:
+> On Fri, May 03, 2024 at 05:44:22PM -0300, Leonardo Bras wrote:
+> > > And that race exists in general, i.e. any IRQ that arrives just as the idle task
+> > > is being scheduled in will unnecessarily wakeup rcuc.
+> > 
+> > That's a race could be solved with the timeout (snapshot) solution, if we 
+> > don't zero last_guest_exit on kvm_sched_out(), right?
+> 
+> Yes.
 
-Please choose an imperative wording for a better change description.
+And if KVM doesn't zero last_guest_exit on kvm_sched_out(), then we're right back
+in the situation where RCU can get false positives (see below).
 
-Regards,
-Markus
+> > > > > >         /* Is the RCU core waiting for a quiescent state from this CPU? */
+> > > > > > 
+> > > > > > The problem is:
+> > > > > > 
+> > > > > > 1) You should only set that flag, in the VM-entry path, after the point
+> > > > > > where no use of RCU is made: close to guest_state_enter_irqoff call.
+> > > > > 
+> > > > > Why?  As established above, KVM essentially has 1 second to enter the guest after
+> > > > > setting in_guest_run_loop (or whatever we call it).  In the vast majority of cases,
+> > > > > the time before KVM enters the guest can probably be measured in microseconds.
+> > > > 
+> > > > OK.
+> > > > 
+> > > > > Snapshotting the exit time has the exact same problem of depending on KVM to
+> > > > > re-enter the guest soon-ish, so I don't understand why this would be considered
+> > > > > a problem with a flag to note the CPU is in KVM's run loop, but not with a
+> > > > > snapshot to say the CPU recently exited a KVM guest.
+> > > > 
+> > > > See the race above.
+> > > 
+> > > Ya, but if kvm_last_guest_exit is zeroed in kvm_sched_out(), then the snapshot
+> > > approach ends up with the same race.  And not zeroing kvm_last_guest_exit is
+> > > arguably much more problematic as encountering a false positive doesn't require
+> > > hitting a small window.
+> > 
+> > For the false positive (only on nohz_full) the maximum delay for the
+> > rcu_core() to be run would be 1s, and that would be in case we don't
+> > schedule out for some userspace task or idle thread, in which case we have
+> > a quiescent state without the need of rcu_core().
+> > 
+> > Now, for not being an userspace nor idle thread, it would need to be one or
+> > more kernel threads, which I suppose aren't usually many, nor usually take
+> > that long for completing, if we consider to be running on an isolated
+> > (nohz_full) cpu. 
+> > 
+> > So, for the kvm_sched_out() case, I don't actually think we are  
+> > statistically introducing that much of a delay in the RCU mechanism.
+> > 
+> > (I may be missing some point, though)
+
+My point is that if kvm_last_guest_exit is left as-is on kvm_sched_out() and
+vcpu_put(), then from a kernel/RCU safety perspective there is no meaningful
+difference between KVM setting kvm_last_guest_exit and userspace being allowed
+to mark a task as being exempt from being preempted by rcuc.  Userspace can
+simply do KVM_RUN once to gain exemption from rcuc until the 1 second timeout
+expires.
+
+And if KVM does zero kvm_last_guest_exit on kvm_sched_out()/vcpu_put(), then the
+approach has the exact same window as my in_guest_run_loop idea, i.e. rcuc can be
+unnecessarily awakened in the time between KVM puts the vCPU and the CPU exits to
+userspace.
 
