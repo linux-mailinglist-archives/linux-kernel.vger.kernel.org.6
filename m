@@ -1,114 +1,252 @@
-Return-Path: <linux-kernel+bounces-170919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E9C8BDDDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9825E8BDDE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D46283DD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F75728386E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0E914D704;
-	Tue,  7 May 2024 09:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225F714D703;
+	Tue,  7 May 2024 09:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Dqbd9DaC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fH2yJVU7"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0F914D2BF;
-	Tue,  7 May 2024 09:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CF110E3
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715073311; cv=none; b=aq4fm5ZZ88NyXcvLlQZ39R3CyR/3mset49BlwxS4fHx4QWT9cE6TaiuedK/wQeWjdeR74HK++YnhVftZNKLCsg00Oeo4P1UkF0cJpkG6LWu+NI4sJw53NY/lkzP0QnjNxHnAu2gRqCGOBHvl7ku75PeQwD9+6Dz4V/h935WUId4=
+	t=1715073409; cv=none; b=tpVNTtWDk4buknxB+x6klWi9yMZyIYGBa1a3jwzC5WQntd6BnKRt6r1Zf8eG2pexpKt+baZPMaUSlxEU1DMsiTb2wKM9bt7z+WwGTTsiHLxVej1tMRdeEOsOwAG1AWDvCYw2hF6NIUjD017eMIRRLbh1cQeL81IItLCzDl+gAN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715073311; c=relaxed/simple;
-	bh=p2Sw5egmhJ8iO8j3y++LQsz5uCOkVobYnG2RRGBZZ74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1TVgjHSOpX9yM2slxv6ApVISTcSEkRjEj/+WfMxdw2uDzN+HQbKqME4TZ59Qe7u2L2owIdrf/4n0Pgm2SL1drhXEepQnyjg9mt7F6uNmffZs8CFQdPTQA97CnnSePc8ut7PEoR4n9D4rqluH+Tjd4OxQ4Q377EPnOX8wvpnlOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Dqbd9DaC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5B0DF40E024C;
-	Tue,  7 May 2024 09:15:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id t-Ir9M_E86JN; Tue,  7 May 2024 09:14:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715073296; bh=hA/EMMoeb0yie87OtKrLxzw3vDjsbX8N+BD3HDiz4bA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dqbd9DaChjaUs6Gf5ijBOtLj75ALUwFjP33YhDNe96oth7dWvkwSAEYC6w6/7goFD
-	 rF3sHKacblkoCoAaw6E4bRh3zB+G4kCZz2QRn44ov6MB23bLu6TqDs8OhiBMpFM9R8
-	 Tj6zCtBBQvudwFAgI3aqf2cZwmsCXLPds2SHZ4BG1jM4M01Gu+iid4/l3HDXXImTBx
-	 DaXGgVxur9yr4aq4+EqVrAkRD0wJ9foGFlKI1QpGnyT96/cRqGdHK+Nkns/sSW3EAt
-	 8hlAB886/1B5el3/zg+9MNf7KFK8o7v+ELDYRiIkLGGF5quh5mwvpgeFhgg87u8MFL
-	 ibZuTFuEUuIXPhmi3tzmJbxBX2O3reR7H9KHSqMIS8EQ8/XlMTe3QdoQSwxjvsSG/7
-	 NzriVHS6gNn1dad88kcY/bvtdRBAqCkPXaKaac5PnYYlFifKw7yjclffpi4vRBZx5t
-	 /6mo3hw1y2IE/5s3v7fgK0ts97gSdfiTveDHo+40CnpQRPdGfNcU9wivREWdmbRJb1
-	 9qCYczwdKUNfw1OqL8AhCa33w6OE2cOtJpiAkXA0kP5OkrBqJGTJx/inq43sk/WRKo
-	 VxIym094m9x2zxhcJciuWm7sQy1cB12gsVF6jEAnmOnAI/tWEqSflNX7C88meKZuzw
-	 eF3nqOHBWbG+ACJ+MBC682cU=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0A3C340E0249;
-	Tue,  7 May 2024 09:14:30 +0000 (UTC)
-Date: Tue, 7 May 2024 11:14:24 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
-	tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
-	richardcochran@gmail.com, linux-input@vger.kernel.org,
-	dmitry.torokhov@gmail.com, zackr@vmware.com,
-	linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
-	timothym@vmware.com, akaher@vmware.com,
-	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
-	tzimmermann@suse.de, mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com, horms@kernel.org,
-	kirill.shutemov@linux.intel.com, Nadav Amit <nadav.amit@gmail.com>
-Subject: Re: [PATCH v9 1/8] x86/vmware: Move common macros to vmware.h
-Message-ID: <20240507091424.GUZjnw8ErpQT6XJLVM@fat_crate.local>
-References: <20240505182829.GBZjfPzeEijTsBUth5@fat_crate.local>
- <20240506215305.30756-1-alexey.makhalov@broadcom.com>
- <20240506215305.30756-2-alexey.makhalov@broadcom.com>
+	s=arc-20240116; t=1715073409; c=relaxed/simple;
+	bh=ZlFj5mE6OAnUWsN7WRwEHHNDMDdnvkwd2e0VijNGXzs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qSHzGUU6hmBe4z2bZkX0QDIz7jmW+yVtusRK7WbKG9tisaaQlvdYJCoqhWt9ZjMUWNCNg3OLUvufaB4y7zWQQUfy+zcuswOoqOs/8Kz9jYj1PwABeolg2tol5qMOvPZoQ+G13npbcXSmTJFx4WbUT/sbKVv1+mbvZ/ACjmsOlco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fH2yJVU7; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a64db066so712173666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 02:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715073405; x=1715678205; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TWFAIax7VgJLZxRlWO/4+BtD7d88wmBQmcI+YeYknLY=;
+        b=fH2yJVU77NtsEfkpS6kmlwVNYevL7P1/nR/3Emd4WkumDTh2XBo7kMKPWL0FI38KtO
+         e3mg4xfSLDmxgdteqT82bGrCmDLOc7szuiPi8IhZIl1Gk4zpqaXqh6o+M9VjuAQT2Dpf
+         aLXPxX4LyEsPrynqw0EmeERTmKoCXCm/fImnZmh+AyxwJQgG5TqNGGn/gjlxKFxV/h4C
+         /9aLD/+y/yoYRhq1AjY9G/STGl2X5c4n4jKWSGPUddI7xvzcG1etolo8J3OXu9C5k1ej
+         gfTYzfxDZ/ftVaV8Br6m4DVvTXshBWfGg5XVfayXBGvvZFkNKolcxirDBcENOtqut0YF
+         yU8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715073405; x=1715678205;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TWFAIax7VgJLZxRlWO/4+BtD7d88wmBQmcI+YeYknLY=;
+        b=KsXwQGtDjHEgZPIy9h2aqkzRoNjwalasS/ojGiAowRtSJ16mQNPjiRijCgwXvGqWFQ
+         ZUZyo1jOdwSAoM2Ac8nmFkIxh7HU+tBywF4MEOclBPseUAFeUWck/aHtOchd7AHINO1p
+         S3l+BKYcOp9b0iURBjms5IFxCMGipkl1QN2gJFNSDKIRQ3zJ5WMVIYda8guKo7PY4Gt/
+         yS6gQ2gCdiihQ1CiYra3iDuERT0A5bXBqi4NltQ8XlRi9eXVWsQALkS8ASZmoWzNq5r1
+         RvpNFWw5IwCuqYXwlXda6HAAdIkyAv541dY+lhoUCvgNdZzkQiW9h1fqneeyzNN+fWOM
+         dSaA==
+X-Gm-Message-State: AOJu0YzPizWSDUceinzLQs5I7SAO93oO3G+OVdqh5Tlp+y+EFASvH8FQ
+	eV4JLjbk/pSiEof+zWak7qWuDzql1/EhpgxmGUK1vkMvQlQmjYLwEerXqgKpxtvYMigt9gvk+0N
+	X
+X-Google-Smtp-Source: AGHT+IEHkV+dxQN39dASSA+4rssDDDEvk7fegprmsO5hRlrhJRTjV5H4N1Mnt6oCq8E5JymnbLiWMw==
+X-Received: by 2002:a17:907:50f:b0:a59:9c4d:da3c with SMTP id wj15-20020a170907050f00b00a599c4dda3cmr6249505ejb.40.1715073404835;
+        Tue, 07 May 2024 02:16:44 -0700 (PDT)
+Received: from rayden.urgonet (h-217-31-164-171.A175.priv.bahnhof.se. [217.31.164.171])
+        by smtp.gmail.com with ESMTPSA id o7-20020a1709061d4700b00a59a93a3ef4sm3976134ejh.149.2024.05.07.02.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 02:16:44 -0700 (PDT)
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org
+Cc: Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Manuel Traut <manut@mecka.net>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: [PATCH v6 0/3] Replay Protected Memory Block (RPMB) subsystem
+Date: Tue,  7 May 2024 11:16:16 +0200
+Message-Id: <20240507091619.2208810-1-jens.wiklander@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240506215305.30756-2-alexey.makhalov@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 06, 2024 at 02:52:58PM -0700, Alexey Makhalov wrote:
-> +#define VMWARE_HYPERVISOR_PORT		0x5658
-> +#define VMWARE_HYPERVISOR_PORT_HB	(VMWARE_HYPERVISOR_PORT | \
-> +					 VMWARE_HYPERVISOR_HB)
+Hi,
 
-You can't help yourself not sneaking in any changes which are not code
-movement, can ya?
+This patch set introduces a new RPMB subsystem, based on patches from [1],
+[2], and [3]. The RPMB subsystem aims at providing access to RPMB
+partitions to other kernel drivers, in particular the OP-TEE driver. A new
+user space ABI isn't needed, we can instead continue using the already
+present ABI when writing the RPMB key during production.
 
-The purpose of a sole code movement patch is to ease the review. Not to
-have to look at the code movement *and* some *additional* changes which
-you've done in-flight. Just because you felt like it. But which is nasty
-to review.
+I've added and removed things to keep only what is needed by the OP-TEE
+driver. Since the posting of [3], there has been major changes in the MMC
+subsystem so "mmc: block: register RPMB partition with the RPMB subsystem"
+is in practice completely rewritten.
 
-Maybe you'll understand that better when you get to review someone
-else's patch which does crap like that.
+With this OP-TEE can access RPMB during early boot instead of having to
+wait for user space to become available as in the current design [4].
+This will benefit the efi variables [5] since we wont rely on userspace as
+well as some TPM issues [6] that were solved.
 
-Make sure you remember that in the future, when sending patches.
+The OP-TEE driver finds the correct RPMB device to interact with by
+iterating over available devices until one is found with a programmed
+authentication matching the one OP-TEE is using. This enables coexisting
+users of other RPMBs since the owner can be determined by who knows the
+authentication key.
+
+The corresponding secure world OP-TEE patches are available at [7].
+
+I've put myself as a maintainer for the RPMB subsystem as I have an
+interest in the OP-TEE driver to keep this in good shape. However, if you'd
+rather see someone else taking the maintainership that's fine too. I'll
+help keep the subsystem updated regardless.
+
+[1] https://lore.kernel.org/lkml/20230722014037.42647-1-shyamsaini@linux.microsoft.com/
+[2] https://lore.kernel.org/lkml/20220405093759.1126835-2-alex.bennee@linaro.org/
+[3] https://lore.kernel.org/linux-mmc/1478548394-8184-2-git-send-email-tomas.winkler@intel.com/
+[4] https://optee.readthedocs.io/en/latest/architecture/secure_storage.html#rpmb-secure-storage
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c44b6be62e8dd4ee0a308c36a70620613e6fc55f
+[6] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7269cba53d906cf257c139d3b3a53ad272176bca
+[7] https://github.com/jenswi-linaro/optee_os/tree/rpmb_probe_v6
+
+Thanks,
+Jens
+
+Changes since v5:
+Manuel Traut reported and investigated an error on an i.MX8MM, the root
+cause was identified as insufficient alignment on frames sent to the RPMB
+device. Fixed in the OP-TEE driver as described below.
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Adding a missing EXPORT_SYMBOL_GPL()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Replacing the old OPTEE_RPC_CMD_RPMB ABI with OPTEE_RPC_CMD_RPMB_FRAMES
+    to get rid of the small header struct rpmb_req (now removed) causing
+    the problem.
+  - Matching changes on the secure side + support for re-initializing
+    RPMB in case a boot stage has used RPMB, the latter also reported by 
+    Manuel Traut.
+
+Changes since v4:
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Describing struct rpmb_descr as RPMB description instead of descriptor
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Addressing review comments
+  - Adding more comments for struct rpmb_frame
+  - Fixing assignment of reliable_wr_count and capacity in mmc_blk_rpmb_add()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Updating struct rpmb_dev_info to match changes in "rpmb: add Replay
+    Protected Memory Block (RPMB) subsystem"
+
+Changes since v3:
+* Move struct rpmb_frame into the MMC driver since the format of the RPMB
+  frames depend on the implementation, one format for eMMC, another for
+  UFS, and so on
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Adding Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+  - Adding more description of the API functions
+  - Removing the set_dev_info() op from struct rpmb_ops, the needed information
+    is supplied in the arguments to rpmb_dev_register() instead.
+  - Getting rid of struct rpmb_ops since only the route_frames() op was
+    remaining, store that op directly in struct rpmb_dev
+  - Changed rpmb_interface_register() and rpmb_interface_unregister() to use
+    notifier_block instead of implementing the same thing ourselves
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Moving the call to rpmb_dev_register() to be done at the end of
+    mmc_blk_probe() when the device is fully available
+* "optee: probe RPMB device using RPMB subsystem"
+  - Use IS_REACHABLE(CONFIG_RPMB) to determine if the RPMB subsystem is
+    available
+  - Translate TEE_ERROR_STORAGE_NOT_AVAILABLE if encountered in get_devices()
+    to recognize the error in optee_rpmb_scan()
+  - Simplified optee_rpmb_scan() and optee_rpmb_intf_rdev()
+
+Changes since v2:
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Fixing documentation issues
+  - Adding a "depends on MMC" in the Kconfig
+  - Removed the class-device and the embedded device, struct rpmb_dev now
+    relies on the parent device for reference counting as requested
+  - Removed the now unneeded rpmb_ops get_resources() and put_resources()
+    since references are already taken in mmc_blk_alloc_rpmb_part() before
+    rpmb_dev_register() is called
+  - Added rpmb_interface_{,un}register() now that
+    class_interface_{,un}register() can't be used ay longer
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Adding the missing error cleanup in alloc_idata()
+  - Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part()
+    instead of in mmc_rpmb_chrdev_open() and rpmb_op_mmc_get_resources()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Registering to get a notification when an RPMB device comes online
+  - Probes for RPMB devices each time an RPMB device comes online, until
+    a usable device is found
+  - When a usable RPMB device is found, call
+    optee_enumerate_devices(PTA_CMD_GET_DEVICES_RPMB)
+  - Pass type of rpmb in return value from OPTEE_RPC_CMD_RPMB_PROBE_NEXT
+
+Changes since Shyam's RFC:
+* Removed the remaining leftover rpmb_cdev_*() function calls
+* Refactored the struct rpmb_ops with all the previous ops replaced, in
+  some sense closer to [3] with the route_frames() op
+* Added rpmb_route_frames()
+* Added struct rpmb_frame, enum rpmb_op_result, and enum rpmb_type from [3]
+* Removed all functions not needed in the OP-TEE use case
+* Added "mmc: block: register RPMB partition with the RPMB subsystem", based
+  on the commit with the same name in [3]
+* Added "optee: probe RPMB device using RPMB subsystem" for integration
+  with OP-TEE
+* Moved the RPMB driver into drivers/misc/rpmb-core.c
+* Added my name to MODULE_AUTHOR() in rpmb-core.c
+* Added an rpmb_mutex to serialize access to the IDA
+* Removed the target parameter from all rpmb_*() functions since it's
+  currently unused
+
+Jens Wiklander (3):
+  rpmb: add Replay Protected Memory Block (RPMB) subsystem
+  mmc: block: register RPMB partition with the RPMB subsystem
+  optee: probe RPMB device using RPMB subsystem
+
+ MAINTAINERS                       |   7 +
+ drivers/misc/Kconfig              |  10 ++
+ drivers/misc/Makefile             |   1 +
+ drivers/misc/rpmb-core.c          | 233 +++++++++++++++++++++++++++++
+ drivers/mmc/core/block.c          | 241 +++++++++++++++++++++++++++++-
+ drivers/tee/optee/core.c          |  30 ++++
+ drivers/tee/optee/device.c        |   7 +
+ drivers/tee/optee/ffa_abi.c       |   8 +
+ drivers/tee/optee/optee_private.h |  21 ++-
+ drivers/tee/optee/optee_rpc_cmd.h |  35 +++++
+ drivers/tee/optee/rpc.c           | 166 ++++++++++++++++++++
+ drivers/tee/optee/smc_abi.c       |   7 +
+ include/linux/rpmb.h              | 136 +++++++++++++++++
+ 13 files changed, 899 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/misc/rpmb-core.c
+ create mode 100644 include/linux/rpmb.h
 
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
