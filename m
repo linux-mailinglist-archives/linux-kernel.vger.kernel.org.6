@@ -1,151 +1,131 @@
-Return-Path: <linux-kernel+bounces-172172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620288BEE68
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 004A08BEE69
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE8D1F23A13
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9641F24D8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A6558AB8;
-	Tue,  7 May 2024 20:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A7957898;
+	Tue,  7 May 2024 20:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="q/C3Dsnb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ArRExtQ5"
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b="azZOnxEX"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B696479CF;
-	Tue,  7 May 2024 20:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E5757887
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 20:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115203; cv=none; b=PjjB0BnRROyDq6AlQxcBPKM4OxePB4MtZKnugJSqubSewba67nEMGJxtYDZnyVdxGmz/No20b1AGnU3+D4zGFe5D9rxVknl/4ZKS4v+2mJWBEVqk+wse7ti8BIhUy4YiJyKOw/8DFsKkdpv9LfSsGWNR2vcgoDohj2Y1FLvuLaQ=
+	t=1715115223; cv=none; b=Lg5ERbzbDXR6KLtum9h6/6bgWPKdU7nxhLNJj0Ez0YABHVkFpMPkPDmZiSd/+I7zCav/DnCLz9OWmM0cSLDk9EIlUfIyiQitCaaF9rh2qYxxHm2CGaTtkX3ewujjeYyum7kPZOY3Tr93yWQ6n8O6/OfOlCEGpURdjCg81BIUoMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115203; c=relaxed/simple;
-	bh=QT6rlQem4K0cBiuJlPrc72yqzW+2FdpcJ3xEIfA5RXs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=j4Vs5TWQj0IUzD/cX3Y0oEyCuZRL7nRx2TOdrx+Y1zaRncu14iV+M22fSydE4pPQ6BFTHuTH22bZxvSCOCtiHC/gOGDi0o2dAh1k3HJMbKW+kh1tJjuxIkfla7F+pwsuT9JeAlIwAMv+IheGQyNgULlTOjth/z+x80LFczbAQKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=q/C3Dsnb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ArRExtQ5; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 4323F1C000B9;
-	Tue,  7 May 2024 16:53:20 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 07 May 2024 16:53:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1715115199; x=1715201599; bh=UafRVQ7xw7
-	cygAYylCOVgFjlvkwiscSglHTE53mJ0OY=; b=q/C3Dsnbm7E/JV3fCuw1PDrQcw
-	HA/oh6aI9toEOwAS5YLndn32HSnDVixRsdx2/U6oMWwz9+S7t/rodklKRuD+Je5u
-	+9YP+TAtK3xoLzlbZ6hVclJ8oip2y40E3Nafl512UNTy7OYce65GvlypbFqz4nr8
-	XfBWjwWO6TnljXAyzjt3OHmElJ4IcisYhqORrUTpkkk2imf56fOQCy1QVfeYvV4Y
-	PrevypsEV7t5vVN4gC6NyezZ/nLu3Hsq8okP1D9PDy5eyHnnrFmFsK88hei/Hm5U
-	4yaB90LszHpjQ8nfF9DrbbF88lGNVmSm5WkLvLNarHrW7nsWn+wagHgQaOLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715115199; x=1715201599; bh=UafRVQ7xw7cygAYylCOVgFjlvkwi
-	scSglHTE53mJ0OY=; b=ArRExtQ5IUH0Na9nEjjm9KMcHmunuDg1wJgDqTHBT58f
-	uTSftQvEmscGM6EHwwW6Uf3lWg5xKKkBoa4YCC5RyHGqTOT/imBDOxSUnmyDZxdV
-	6Q7mM8bR9mx359oHLnYcool851ghHeKHZ3MjU1A+mMmFyAI0Q3VEyCr+Yghliy01
-	/IsJ4yr9/8IlxIAVndlqYz87+P+YaTMHs/qnRJ0+fS5eDjoeK6+ijgCf8YWyHk/X
-	Tn5t+FDQ+xoRXmhcmv8lz8G4V7IpTlPfYRQOKBFW2vVBekwsGLSZ9HElWCbSAXvC
-	FQeOJbD+Qvj3C+v7uov9nKkmMsKbMlKsGDy1MDw9DA==
-X-ME-Sender: <xms:v5Q6ZvQuIHHZeRVLOyhAbccudcN7GL-BZkPcJjPOSr2fw55HHJUV7A>
-    <xme:v5Q6ZgxSyT2jYsEuKOLXp4xq1fbpt30omce9fnwBB_9ZPYIRQ-23ZnlyeAgPh5pCk
-    -nb_y9W9BOpH3G9m94>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgudehvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
-    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:v5Q6Zk0P3zDwcfFRIGzr4MV8HmP5w9_JSLCS5Zl5OkSLY9R-ye-eMg>
-    <xmx:v5Q6ZvAdmFzCR3FzLIpvSDHfmg9aVNGNDK_Z5IgGeizvY1hG8MghAQ>
-    <xmx:v5Q6ZogjLg2qcOW_sBXLWBxHrRyPQf1vs9ewkg3BJSFGhBH6c3daVQ>
-    <xmx:v5Q6Zjrt10LNhArBp5fx_ioekBocovlhyS6QiiGH9TWOwthYHxk73Q>
-    <xmx:v5Q6ZtanBF80sYCSsSOxxByV_twdAh5IAUoLjpH_Ajti8xkUVV9yrifj>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 63A4CB6008D; Tue,  7 May 2024 16:53:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	s=arc-20240116; t=1715115223; c=relaxed/simple;
+	bh=7M+NtxKZnPDppdk30q3K/jPePHvgBrshS2sV34FSFas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mm5btR0WYUc0wA09N2ts/1ucZG6GAvpxWHRFiPNzMBxCT6Vq/LQpnRJm+Y1K4btsnVXZufi7g7iN8yx6YDIdsZTs5DCpjImh0lqMT39qGjPwh+NPeh1/rNmfsimTyrpzfGXlCQtX+93d7fFcKc3w/mnta09jpHAxNTRjVykHt+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk; spf=pass smtp.mailfrom=philpotter.co.uk; dkim=pass (2048-bit key) header.d=philpotter-co-uk.20230601.gappssmtp.com header.i=@philpotter-co-uk.20230601.gappssmtp.com header.b=azZOnxEX; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=philpotter.co.uk
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34e28e32ea4so2656190f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 13:53:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20230601.gappssmtp.com; s=20230601; t=1715115220; x=1715720020; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hFVFsbOtBEE+BmWcqY4bLdtjzye15d8lPmfNqQm2W7E=;
+        b=azZOnxEXgKyFh6XChqzJnZeEO3m0oulwTF4s+PcxbURLJBqlFW2BUokOwUo8Ha0opW
+         FTzXH1FS/OnPWx9eo7QowtrJaoyS058NVAsEaqcWZpbP1jq/26sEXU3+9lgvIH7ilx65
+         whdfLL31LPm6+jnqEDpXy8LZRcIYfHVMEr78JKFbLIHwHCxF1QVnmsfm7SUTdpxKSGwA
+         gDDcCC6Q0GIBWlzjKM06XCcHaj3OjXiEdEg+4veapYHOfDOCBr+geAbGFylenGIYRQAh
+         LLZ4D6O0icTb63DVb0vsZvgL4gFXGwAGL/TihS1FkCeSTngSqbAdwleC6aOoh2NBxzRr
+         tj0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715115220; x=1715720020;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hFVFsbOtBEE+BmWcqY4bLdtjzye15d8lPmfNqQm2W7E=;
+        b=SIoTl1N6Mq3Te5cT8Sn1X4Ud2LgTSA7LoOC/zc74bPgod3RXTQ87umerp3APMIOOzH
+         /v1cFkQDxiKIHlZrGou19VpwgFc9MBUI12MxFE6PZF+xWRw27kwbprqcmnelBzib29sq
+         FRBHRE/nR7wZOv9qQJSfqvGf82epe3uEz4xq9Oc2qeM6WsoxJswR+amU3/NxrZARqhho
+         5Es4IM0pFAWNF3YMPtiM3XyMitSKJfICli6blL4b1KC5dZAJlGPERr7z5B4uh3TeYM3y
+         aoi497c2Q4r7hQ3PuZhGFCQtndfXMRlPIxuK1leigT6eVPCeOmGkrkJ+Q7EYlMaLtSEw
+         lr+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXsSVy00x09fzBn2ESm3HZQV3EK+Y1CjQ7BLjcaxkWbpmVSsQlrtRQQRpmc97sKdYAeI/CuphgLwNh7jtpgsBAL04nYidqq8LHVZe6c
+X-Gm-Message-State: AOJu0Yy0UZbrj8deYtqOIkHLJpw6M4F1dToVqWPQswlQaqeVqyazRlsT
+	J85XcvcCDVpfRGuoUR+BfB+FoJuth4e1m9j7TAZEZjl8J32BL3aG4YCOFJ4Zu3Y=
+X-Google-Smtp-Source: AGHT+IGvKgByFba511+kQjW5eQZwi1LEu6PO71nv4QsVrnVhDPPAGCjI1x7cguks0dBbCf7Cf+etgQ==
+X-Received: by 2002:a5d:58f2:0:b0:349:8a7e:e0af with SMTP id ffacd0b85a97d-34fcaddda53mr545108f8f.11.1715115219785;
+        Tue, 07 May 2024 13:53:39 -0700 (PDT)
+Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.a.1.e.e.d.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:dfde:e1a0::2])
+        by smtp.gmail.com with ESMTPSA id ay35-20020a05600c1e2300b00419f419236fsm20909420wmb.41.2024.05.07.13.53.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 13:53:39 -0700 (PDT)
+Date: Tue, 7 May 2024 21:53:37 +0100
+From: Phillip Potter <phil@philpotter.co.uk>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Phillip Potter <phil@philpotter.co.uk>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH] cdrom: rearrange last_media_change check to avoid
+ unintentional overflow
+Message-ID: <ZjqU0fbzHrlnad8D@equinox>
+References: <20240507-b4-sio-ata1-v1-1-810ffac6080a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <e93acd4c-20f7-4b46-bb9c-84fac451c894@app.fastmail.com>
-In-Reply-To: <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-References: 
- <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
- <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-Date: Tue, 07 May 2024 22:52:59 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stephen Boyd" <sboyd@kernel.org>,
- "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
- "open list" <linux-kernel@vger.kernel.org>
-Cc: "Russell King" <linux@armlinux.org.uk>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Marek Szyprowski" <m.szyprowski@samsung.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507-b4-sio-ata1-v1-1-810ffac6080a@google.com>
 
-On Tue, May 7, 2024, at 22:26, Stephen Boyd wrote:
-> Quoting Arnd Bergmann (2024-05-07 00:44:15)
->> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
->> > The WinLink E850-96 board boot failed with Linux next-20240506 but there
->> > is no kernel crash log on the serial [1].
->> >
->> > Anders bisection results pointing to this commit,
->> > # first bad commit:
->> >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
->> >   clkdev: report over-sized strings when creating clkdev entrie
->> >
->> > After reverting the above patch the boot test passed [2].
->> >
->> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->> >
->
-> There are two fixes on the list: [1] and [2]. Perhaps one of those
-> resolves this?
->
-> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
-> [2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@samsung.com
+On Tue, May 07, 2024 at 04:54:04AM +0000, Justin Stitt wrote:
+> When running syzkaller with the newly reintroduced signed integer wrap
+> sanitizer we encounter this splat:
+> 
+> [  366.015950] UBSAN: signed-integer-overflow in ../drivers/cdrom/cdrom.c:2361:33
+> [  366.021089] -9223372036854775808 - 346321 cannot be represented in type '__s64' (aka 'long long')
+> [  366.025894] program syz-executor.4 is using a deprecated SCSI ioctl, please convert it to SG_IO
+> [  366.027502] CPU: 5 PID: 28472 Comm: syz-executor.7 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+> [  366.027512] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [  366.027518] Call Trace:
+> [  366.027523]  <TASK>
+> [  366.027533]  dump_stack_lvl+0x93/0xd0
+> [  366.027899]  handle_overflow+0x171/0x1b0
+> [  366.038787] ata1.00: invalid multi_count 32 ignored
+> [  366.043924]  cdrom_ioctl+0x2c3f/0x2d10
+> [  366.063932]  ? __pm_runtime_resume+0xe6/0x130
+> [  366.071923]  sr_block_ioctl+0x15d/0x1d0
+> [  366.074624]  ? __pfx_sr_block_ioctl+0x10/0x10
+> [  366.077642]  blkdev_ioctl+0x419/0x500
+> [  366.080231]  ? __pfx_blkdev_ioctl+0x10/0x10
+> ...
+> 
+> Historically, the signed integer overflow sanitizer did not work in the
+> kernel due to its interaction with `-fwrapv` but this has since been
+> changed [1] in the newest version of Clang. It was re-enabled in the
+> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+> sanitizer").
+> 
+> Let's rearrange the check to not perform any arithmetic, thus not
+> tripping the sanitizer.
+> ...
 
-My guess is that either one avoids the crash, but we actually
-want both of them since the problem is a combination of the two
-issues.
+Hi Justin,
 
-I think we also need this one on top, to have a va_end() for
-each return() statement:
+Thanks for the patch, looks good to me and seems like a sensible change.
+Reviewed and build/runtime tested, I will send on for inclusion.
 
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -193,6 +193,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
-                cla->cl.dev_id = cla->dev_id;
-        }
- 
-+       va_end(ap_copy);
-        return &cla->cl;
- 
- fail:
+Reviewed-by: Phillip Potter <phil@philpotter.co.uk>
 
-
-      Arnd
+Regards,
+Phil
 
