@@ -1,221 +1,159 @@
-Return-Path: <linux-kernel+bounces-172185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D09A8BEE90
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:04:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8FF8BEE99
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6151F1C20B58
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098F41F23743
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999E173183;
-	Tue,  7 May 2024 21:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAF97316F;
+	Tue,  7 May 2024 21:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrijNEh1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkmyOVhS"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B0C5FDDB;
-	Tue,  7 May 2024 21:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2E8187353;
+	Tue,  7 May 2024 21:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115886; cv=none; b=Nz/N8KbiQZQNxSBP4ex7tuG+6hTOmvsvcr37f1WOZevKUe+O3u8OW72dYujQApsz11gB8pob0T1xjgxkZk7QxNaSu+PmMI0j2tUlhwdGWPcGm0lIYh7I7xObW2UIDDV2oiHW+rAQr+YsKIOR9uftBo2hjeSlUaBraSNheZXTkWw=
+	t=1715115959; cv=none; b=XJCCbEzyphFQMWWh7Pny5VOAMEAS+xl7Xs6vA7fvN/tuJt5eACKANLjfHOGYtNwKvZpf1v96F46wY32LPtRgtuEJe3pN9JwhnL/A299nuBH8xQnZ4TYAyKuvtnqDB0zTaELnazZpgYqrRTe1Z9jXgn2cfmeGgq3y9fvqmkBhu3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115886; c=relaxed/simple;
-	bh=tEhMYN8iSO5xd390JBFyRRwfWCDHKQ76/l1oEa+Gk6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GAP6Jy7v246MkqDJv8spyNLhvE4sYe+L0u9yovOIfRskuAMB1Z/CfqC7nMqHNOqj+vMJtQdbR+HreYWyBi4+ExMIBZUCoLK1dPp7VoIFRbZA90g7hL1PzlRcV1oMkQaVb26rRsy+NhQjX4K2umPB29eWU8Cqwp0fDi+w35KCFqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrijNEh1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB757C4AF67;
-	Tue,  7 May 2024 21:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715115886;
-	bh=tEhMYN8iSO5xd390JBFyRRwfWCDHKQ76/l1oEa+Gk6Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QrijNEh1yk9Zow4I+g9VIJ0jb/0CAQFNofXu0tYGC3GhTa5gZRFKBczJyEFuE9tnT
-	 AAifD5DC9unsBjT6f7hu9asyOEbMKp8VN9ToS2WdmhjIixSCKfoLaWSnzsCswIis13
-	 Pez9JzwMlY2mO5MFNXannJJj2RhdjTYGNQukaLI77FS7wZTElPepvwGgHJqRc4fx3E
-	 w4iJ0tmgIz57+Cxv2H5vj8aqUuHF8ytHFHpyuMocdocTYrrBGWBK/n/leuGkjCDdoi
-	 IB5U0iKBlhjLyfXuYXjWDxf3WXMcjwKzWtK1KUQ22H77YD2vYI/eeZ0X/K8vdRtKST
-	 4QrRLQSmfUTOQ==
-Date: Tue, 7 May 2024 18:04:43 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Clark <james.clark@arm.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>,
-	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 1/8] perf ui browser: Don't save pointer to stack
- memory
-Message-ID: <ZjqXa25BnFncJmw-@x1>
-References: <20240507183545.1236093-1-irogers@google.com>
- <20240507183545.1236093-2-irogers@google.com>
- <ZjqNKPgWR7mBFaV4@x1>
- <ZjqNjrJ2ElrT11iB@x1>
- <CAP-5=fUsQwKsCi3us+dp-Tj+PayNPrYTqTQeo-YLbvSuOt1=9w@mail.gmail.com>
+	s=arc-20240116; t=1715115959; c=relaxed/simple;
+	bh=eETH8qyLZaEqH0jAscPRS9ATGH9bfwR8HhG7OFw2pEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iULKKoCpSjARI6az3xDQCyoNUnQRPmUUQdUmzXvh99Q731yHE6KCWRBsyDCXprliBhPdL+8Ts2UnozBsdPrtKuiealLYxpF7rKOvqDCSCIsGCkb9hZ5wbAgfbgz2JCiTTZrKMhCuvCS7xI3q3JhaRuX2fhtkZwZoMAYLHq6JXQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkmyOVhS; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e22a1bed91so47999291fa.0;
+        Tue, 07 May 2024 14:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715115956; x=1715720756; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ef/OTw1FTNHv7I5hPzJjnHJ7ssdwk8G3HA7pFWiHOs=;
+        b=fkmyOVhSpq30fxaVZF35CHYrIdhVf63/OzaOys7u8nGP/uva+8JtHlJqTMsK9xCg/A
+         VJgFeltcOczLES/TQdJoZlhdDIn+eb05NV2XqmEpnAeDucPzoqE1FVMPRDyZvPWeW6W/
+         dt20Qfz8/nORVQSivqR9nEsYVyGzHkuUPTkgJwqXSTi5trS8TzaUyKn+xDQ2eOqf61SN
+         1Z1asqXbUpC5obCvrLVVxkP16JQdvALaIEPRK0OIdJZTcQi9ocb2oxZ913F5TVDF2DT5
+         7TDvM2evGc0QCKUKvK5nJhJr71srsg5N8GUIITxXI9UpSRMc/UvV8etwXfQE48LB797A
+         5XWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715115956; x=1715720756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ef/OTw1FTNHv7I5hPzJjnHJ7ssdwk8G3HA7pFWiHOs=;
+        b=r2OWQIm7bCy3LOF+KxyXNZPCdXNcYOhUheQogYyClUvQYK6T0QifwrgrAm6mdjFQpb
+         +ZPHSr+FC+bysW8BK1ltwp3UzWwEJJc2+r8iu9QPmFT43EmlFqWjpjPMyunsU4GvlsOp
+         TF9bBETXCgxDrSMfNtYt2M7E+1V6H9jsBAWlStybwT6eukgyJVUyxKrzUDe5IpppzYLz
+         bFqVadozXk5mCoP6H9MWJ0Qdo48mjF9GPFWBJDZVvuOQuLw6eeeODeypL323zR7gz88a
+         z44KJ0eYfFMKF4ECdxYsM4bqgO2q53bAS7E9ytQqKPVccsgXTCpeFrYD+15kVX+1bgVP
+         xdEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ4gAN6kSnJFA8uJ0UTnhNiDCmymG3XPKFEDnCWbxytMwP5Fq2bCD/rhMriSNgP6XKyW5RIdp+XaKezif/Vv9qg2A4NjkUR6u0q9eedb+E8s4sTCM0E1HvSW90zbIeHskkwKph/XaaE+E=
+X-Gm-Message-State: AOJu0YwF18jv86VGjSbcQQGjJsp4ZGNO7CmGeGL88TmfjMewxcYa70PL
+	FEi+dyHQfplDc/UdTzuVOS6k5OJzey/RcBcElSmYwftznBEHOIab773Cde4sOCCwWyXkYn0KO67
+	HDarWHBhZApSbySWVi7eKN6eL1wY=
+X-Google-Smtp-Source: AGHT+IEIPqLuIXqUPlxdyHE8emQsQqvKcbB68EsssulBsPpJLcFAWFAY6+qF2e0EvPA5ZpCevCys7JBbmezZOATtWNk=
+X-Received: by 2002:ac2:520b:0:b0:51d:4472:c3f8 with SMTP id
+ 2adb3069b0e04-5217c667418mr362253e87.35.1715115955829; Tue, 07 May 2024
+ 14:05:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUsQwKsCi3us+dp-Tj+PayNPrYTqTQeo-YLbvSuOt1=9w@mail.gmail.com>
+References: <20240507142454.3344-1-konishi.ryusuke@gmail.com> <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
+In-Reply-To: <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Wed, 8 May 2024 06:05:39 +0900
+Message-ID: <CAKFNMonSDOWt20nq6UngSO1_7L-DLRMiAbcKXmquF04qbfC55Q@mail.gmail.com>
+Subject: Re: [PATCH -mm] nilfs2: Use __field_struct() for a bitwise field
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Bart Van Assche <bvanassche@acm.org>, 
+	linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 01:48:28PM -0700, Ian Rogers wrote:
-> On Tue, May 7, 2024 at 1:22 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+On Wed, May 8, 2024 at 1:25=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, 7 May 2024 at 07:25, Ryusuke Konishi <konishi.ryusuke@gmail.com> =
+wrote:
 > >
-> > On Tue, May 07, 2024 at 05:20:59PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Tue, May 07, 2024 at 11:35:38AM -0700, Ian Rogers wrote:
-> > > > ui_browser__show is capturing the input title that is stack allocated
-> > > > memory in hist_browser__run. Avoid a use after return by strdup-ing
-> > > > the string.
-> > >
-> > > But everything happens in that context, i.e. hist_brower__run() will
-> > > call ui_browser__ methods and then exit.
-> > >
-> > > We end up having browser->title pointing to returned stack memory
-> > > (invalid) but there will be no references to it, no?
-> > >
-> > > If we return to hist_browser__run() we then call ui_browser__show
-> > > passing a new title, for "live" stack memory, rinse repeat. Or have you
-> > > noticed an actual use-after-"free"?
-> >
-> > And I'll take the patch, I'm just trying to figure it out if it fixed a
-> > real bug or if it just makes the code more future proof, i.e. to avoid
-> > us adding code that actually uses invalid stack memory.
-> 
-> My command line using tui is:
-> $ sudo bash -c 'rm /tmp/asan.log*; export
-> ASAN_OPTIONS="log_path=/tmp/asan.log"; /tmp/perf/perf mem record -a
-> sleep 1; /tmp/perf/perf mem report'
-> I then go to the perf annotate view and quit. This triggers the asan
-> error (from the log file):
-> ```
+> >    Despite that change, sparse complains when
+> > passing a bitwise type to is_signed_type(). It is not clear to me why.
+>
+> Bah. The reason is this:
+>
+>    #define is_signed_type(type) (((type)(-1)) < (__force type)1)
+>
+> Basically, the way "is_signed_type()" works is that it casts a
+> negative integer to the type, and checks to see if the value has now
+> become a large value.
+>
+> Now, it looks odd, because only one of those casts has a "__force" on
+> it, but the reason for that is that casting all-ones and all-zeroes is
+> ok for bitwise types (think of bitwise types as being a "collection of
+> bits" - so all bits set or all bits clear are sane concepts regardless
+> of any other semantics).
+>
+> So it's not the casts themselves that are problematic: that part works fi=
+ne.
+>
+> But you cannot compare a random collection of bits for greater than or
+> lesser than.
+>
+> Think of things like byte orders: you can compare two values for
+> _equality_ even if they are in the wrong byte order, but you can't
+> compare them for "larger than" unless you turn them into the right CPU
+> byte order.
+>
+> Basically, a "collection of bits" doesn't have an ordering in itself,
+> even if equality comparisons are ok.
+>
+> So yeah, is_signed_type() doesn't work for bitwise types.
+>
+> And I don't see a sane way to make "is_signed_type()" to work for
+> bitwise types - the whole concept of signedness of "bunch of bits" is
+> kind of nonsensical - so I suspect your workaround is the best we can
+> do (alternatively, tracing would have to figure out a different way to
+> test for signedness).
+>
+>                  Linus
 
-Thanks, it is indeed a bug, I'll keep that Fixes tag, people interested
-in the full details can hopefully find this message going from the Link:
-tag.
+Linus, thank you very much for your detailed explanation.
 
-- Arnaldo
+I would like to edit the quoted part of his commit message
 
-> ==1254591==ERROR: AddressSanitizer: stack-use-after-return on address
-> 0x7f2813331920 at pc 0x7f28180
-> 65991 bp 0x7fff0a21c750 sp 0x7fff0a21bf10
-> READ of size 80 at 0x7f2813331920 thread T0
->     #0 0x7f2818065990 in __interceptor_strlen
-> ../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:461
->     #1 0x7f2817698251 in SLsmg_write_wrapped_string
-> (/lib/x86_64-linux-gnu/libslang.so.2+0x98251)
->     #2 0x7f28176984b9 in SLsmg_write_nstring
-> (/lib/x86_64-linux-gnu/libslang.so.2+0x984b9)
->     #3 0x55c94045b365 in ui_browser__write_nstring ui/browser.c:60
->     #4 0x55c94045c558 in __ui_browser__show_title ui/browser.c:266
->     #5 0x55c94045c776 in ui_browser__show ui/browser.c:288
->     #6 0x55c94045c06d in ui_browser__handle_resize ui/browser.c:206
->     #7 0x55c94047979b in do_annotate ui/browsers/hists.c:2458
->     #8 0x55c94047fb17 in evsel__hists_browse ui/browsers/hists.c:3412
->     #9 0x55c940480a0c in perf_evsel_menu__run ui/browsers/hists.c:3527
->     #10 0x55c940481108 in __evlist__tui_browse_hists ui/browsers/hists.c:3613
->     #11 0x55c9404813f7 in evlist__tui_browse_hists ui/browsers/hists.c:3661
->     #12 0x55c93ffa253f in report__browse_hists tools/perf/builtin-report.c:671
->     #13 0x55c93ffa58ca in __cmd_report tools/perf/builtin-report.c:1141
->     #14 0x55c93ffaf159 in cmd_report tools/perf/builtin-report.c:1805
->     #15 0x55c94000c05c in report_events tools/perf/builtin-mem.c:374
->     #16 0x55c94000d96d in cmd_mem tools/perf/builtin-mem.c:516
->     #17 0x55c9400e44ee in run_builtin tools/perf/perf.c:350
->     #18 0x55c9400e4a5a in handle_internal_command tools/perf/perf.c:403
->     #19 0x55c9400e4e22 in run_argv tools/perf/perf.c:447
->     #20 0x55c9400e53ad in main tools/perf/perf.c:561
->     #21 0x7f28170456c9 in __libc_start_call_main
-> ../sysdeps/nptl/libc_start_call_main.h:58
->     #22 0x7f2817045784 in __libc_start_main_impl ../csu/libc-start.c:360
->     #23 0x55c93ff544c0 in _start (/tmp/perf/perf+0x19a4c0) (BuildId:
-> 84899b0e8c7d3a3eaa67b2eb35e3d8b2f8cd4c93)
-> 
-> Address 0x7f2813331920 is located in stack of thread T0 at offset 32 in frame
->     #0 0x55c94046e85e in hist_browser__run ui/browsers/hists.c:746
-> 
->   This frame has 1 object(s):
->     [32, 192) 'title' (line 747) <== Memory access at offset 32 is
-> inside this variable
-> HINT: this may be a false positive if your program uses some custom
-> stack unwind mechanism, swapcontext or vfork
-> ```
-> hist_browser__run isn't on the stack so the asan error looks legit.
-> There's no clean init/exit on struct ui_browser so I may be trading a
-> use-after-return for a memory leak, but that seems look a good trade
-> anyway.
-> 
-> Thanks,
-> Ian
-> 
-> > - Arnaldo
-> >
-> > > - Arnaldo
-> > >
-> > > > Fixes: 05e8b0804ec4 ("perf ui browser: Stop using 'self'")
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > > ---
-> > > >  tools/perf/ui/browser.c | 4 +++-
-> > > >  tools/perf/ui/browser.h | 2 +-
-> > > >  2 files changed, 4 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
-> > > > index 603d11283cbd..c4cdf2ea69b7 100644
-> > > > --- a/tools/perf/ui/browser.c
-> > > > +++ b/tools/perf/ui/browser.c
-> > > > @@ -287,7 +287,8 @@ int ui_browser__show(struct ui_browser *browser, const char *title,
-> > > >     mutex_lock(&ui__lock);
-> > > >     __ui_browser__show_title(browser, title);
-> > > >
-> > > > -   browser->title = title;
-> > > > +   free(browser->title);
-> > > > +   browser->title = strdup(title);
-> > > >     zfree(&browser->helpline);
-> > > >
-> > > >     va_start(ap, helpline);
-> > > > @@ -304,6 +305,7 @@ void ui_browser__hide(struct ui_browser *browser)
-> > > >     mutex_lock(&ui__lock);
-> > > >     ui_helpline__pop();
-> > > >     zfree(&browser->helpline);
-> > > > +   zfree(&browser->title);
-> > > >     mutex_unlock(&ui__lock);
-> > > >  }
-> > > >
-> > > > diff --git a/tools/perf/ui/browser.h b/tools/perf/ui/browser.h
-> > > > index 510ce4554050..6e98d5f8f71c 100644
-> > > > --- a/tools/perf/ui/browser.h
-> > > > +++ b/tools/perf/ui/browser.h
-> > > > @@ -21,7 +21,7 @@ struct ui_browser {
-> > > >     u8            extra_title_lines;
-> > > >     int           current_color;
-> > > >     void          *priv;
-> > > > -   const char    *title;
-> > > > +   char          *title;
-> > > >     char          *helpline;
-> > > >     const char    *no_samples_msg;
-> > > >     void          (*refresh_dimensions)(struct ui_browser *browser);
-> > > > --
-> > > > 2.45.0.rc1.225.g2a3ae87e7f-goog
+> >    Despite that change, sparse complains when
+> > passing a bitwise type to is_signed_type(). It is not clear to me why.
+
+as follows:
+
+ Despite that change, sparse complains when passing a bitwise type
+ to is_signed_type().  The reason is that in its definition below, a
+ comparison will be made against bitwise types, which are
+ random collections of bits (the casts to bitwise types themselves
+ are semantically valid and are not problematic):
+
+  #define is_signed_type(type) (((type)(-1)) < (__force type)1)
+
+ So, as a workaround, fix the warnings by using __field_struct() macro
+ that doesn't use is_signed_type() instead of __field().
+ ...
+
+I will try to resend the patch later unless there's a misunderstanding or
+I'm missing too many points.
+
+Thanks,
+Ryusuke Konishi
 
