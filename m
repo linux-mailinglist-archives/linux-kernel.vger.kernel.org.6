@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-170933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E348BDE03
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:22:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD8E8BDE05
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E316C284BEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:22:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704721F24204
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1FA14D71E;
-	Tue,  7 May 2024 09:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SMG7SAJH"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60AB14D71F;
+	Tue,  7 May 2024 09:22:22 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398A514D713
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFFC14D703;
+	Tue,  7 May 2024 09:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715073732; cv=none; b=VSTwuLoD+wrUSmEO9fuOVt4IOlK89Zmv52dy8BUTUorSJfSdFJqLo5nETNjPeGm6dT/Uyelnwss/rB9LipQ76usBtTGw1hkhqIK44cx+tWz60FZj/VpJU2CNvwaCr/U5/dypHAHqDVXigk4vu0itvEs74+p8uTVXkvdtzXq9i5k=
+	t=1715073742; cv=none; b=gYqvzMQP1zt3diRoY1VPvrqouRDULgu/ePaiwuvLCerICCZSwUusC+MNDcTE0RG4vZxv7PG2mPFofgJIEhJjjW8IJI2dizb2CZU23zAeZb7d3RFyN7N2UETfFW+/bV3RBVJtYjDDH/KAgm0SBL3PYIyfv5iikcaeZh1XhbtbrXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715073732; c=relaxed/simple;
-	bh=MYbuBqfdt+dluLElLanY3jhxaBB9u5sP0QgbMlw6Cds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tpvZop5FU3mRNRiXZkq1kZhfZ5+j5qRVTYWgrlziHdX9kx30G4g5uvy6ZWpAupGys6jvor+am9/GGUkj3YiuH95iny6JJUgADGTSHWNZ5+j9saLQNql9w4dmMh91UAW676Ubrlv/8QyrCjRBYlyfSoJFtkXP3uuo3FzzAdhU1VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SMG7SAJH; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5b203c9933dso1542923eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 02:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715073730; x=1715678530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MYbuBqfdt+dluLElLanY3jhxaBB9u5sP0QgbMlw6Cds=;
-        b=SMG7SAJHNXGovld8lQ1jlyj0OeSUAhQsbGGNvlSRUMu0zai4KfRsfA7VpfDnWLwLfd
-         ImOWkx5ToyVOiHnNKNTnYHIju7QogtZB66JRm1R9uh7qc7uaahU2bl6FcqrHn6SKKRE/
-         YptLXKJ19AmayZRVEkz+xKZKHTcLszWIQHDiw+MsoJDS94uZTT8zSjf36GqIEANWUXs9
-         2B0A1Sduc9X6bwRP5mxXYozkgOf8B7lKLj+JflLwwikbcdmuR5hA3JDWzzrqX++ZPrQw
-         gGloHL9mUGW3Ss5opr+qATTgbrSD1tOBqvMaRlKdRzS1gehl39kpLL4Lxs9jYDaETxeh
-         xy5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715073730; x=1715678530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MYbuBqfdt+dluLElLanY3jhxaBB9u5sP0QgbMlw6Cds=;
-        b=A9DObHQikEUy1K8eB1Mk1hWSUEWLl2Z54NVbhHwhqVNeLk/tHxhBcLfjJEBlvhvi0Z
-         WMBQo5hdJ6m5G5hw78vrVk3ZBzbTJ6yw8SND0dAj4jWEPtP9Bq2KPPYekszVUYg7nh4R
-         NUEki/KghkbYfmT3mfJh40D6X6/FyBH+ht9hCPEB9W6sjZ3tolcdNMttmXpGYRIeBzxR
-         cyLdZhdQ70qkz7eQNpoXYN/f/pVw3GxuK4vmLDH8bjbFJ54TrlHKuC3uvhM/VFHXrKwu
-         zMp+2Ig1dV9YuqPQfNeshnmYeY9SPfVz8AAndrNePM7jPhFWUyx7L7tTZOGEqpRpTXd+
-         kcsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQnBDnDsIOVQ6lbIJRYcWq0P2I+0vG2z1NLjvKob8cI9n8MdOMHpILNB56QMYZiF+n4yWggJwevaht0KOSJSlBqzD8sW0rp0fZZPxK
-X-Gm-Message-State: AOJu0YyTxP9Jqi1QTZFL9Oy/LoAB7AuylDlc5IE8z75OndX3vU0UB7ah
-	Kp+G83m3gEDje54r0CM5m6qmkQMkZDMHppvepv860xgCHgTC61fiP24fWRvfH8PfkWJ4o3dFIs8
-	ZhVy9K8t16L6R6qsbmc796Era2dNE7DIwUyL8OQ==
-X-Google-Smtp-Source: AGHT+IHJK0WiaCWVqELVAzoNebQZ8ZxPZXO8o9tEhvNxNCLWnV1DUAg/rrh+Q4aj4rpoZ3w6JUobtDl1KXMWZfo/3gE=
-X-Received: by 2002:a4a:5441:0:b0:5aa:538a:ed60 with SMTP id
- t62-20020a4a5441000000b005aa538aed60mr12850169ooa.3.1715073730349; Tue, 07
- May 2024 02:22:10 -0700 (PDT)
+	s=arc-20240116; t=1715073742; c=relaxed/simple;
+	bh=wfcedzwG+EhgUy8lT3Z1ANBJKqDx/DtvFKy2hoN5u6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u/KynaxKCa4+xA1tQYUB+NKD1JIbPbC2/RIfNFlRh9SfjkIP0TOL4QCDUm+AUfo6xj/KnS78sIqPNIckZZYAmAAvSGz6BZhJEwYCeYQ/qRM3a2p0ZLOURSew/MA8ompUwBj85BGxad6VRUpvValJ4nZmKwztoAYyH3crwkoTDX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VYXlN55pfz1R9sh;
+	Tue,  7 May 2024 17:18:56 +0800 (CST)
+Received: from kwepemi500006.china.huawei.com (unknown [7.221.188.68])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1C8B918007D;
+	Tue,  7 May 2024 17:22:15 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemi500006.china.huawei.com (7.221.188.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 17:22:14 +0800
+Message-ID: <ce0de356-1ca1-df5f-c7db-fbe5a7fabff5@hisilicon.com>
+Date: Tue, 7 May 2024 17:22:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240422091936.3714381-1-jens.wiklander@linaro.org>
- <20240422091936.3714381-3-jens.wiklander@linaro.org> <ZioXkvnIw5V5MXBU@mecka.net>
- <CAHUa44Fojanryuc+ciJrVZUopRLcTt2teS_pC4BBjt1Wmy240A@mail.gmail.com>
- <Zi9rKzz8u8z7cIy0@mecka.net> <CAHUa44HHtcaYXhcWg5zL5EQ8pEP7aEDKS+yjpaMJH8vTtF3xFw@mail.gmail.com>
- <DM6PR04MB6575AC5DEB3A46D1AE11705FFC1B2@DM6PR04MB6575.namprd04.prod.outlook.com>
-In-Reply-To: <DM6PR04MB6575AC5DEB3A46D1AE11705FFC1B2@DM6PR04MB6575.namprd04.prod.outlook.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Tue, 7 May 2024 11:21:58 +0200
-Message-ID: <CAHUa44GLGT7F0=LL6fjw1inf0N-OPpVL+D44F84yndUmk-xLhA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] mmc: block: register RPMB partition with the RPMB subsystem
-To: Avri Altman <Avri.Altman@wdc.com>
-Cc: Manuel Traut <manut@mecka.net>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
-	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
-	Sumit Garg <sumit.garg@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomas Winkler <tomas.winkler@intel.com>, 
-	Alexander Usyskin <alexander.usyskin@intel.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH for-next] RDMA/hns: Support flexible WQE buffer page size
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: <leon@kernel.org>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20240430092845.4058786-1-huangjunxian6@hisilicon.com>
+ <20240430134113.GU231144@ziepe.ca>
+Content-Language: en-US
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20240430134113.GU231144@ziepe.ca>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi500006.china.huawei.com (7.221.188.68)
 
-On Mon, Apr 29, 2024 at 9:36=E2=80=AFPM Avri Altman <Avri.Altman@wdc.com> w=
-rote:
->
-> > > > >
-> > > > > Is it possible that idata->buf is not DMA capable? Any other idea=
-s?
-> > > >
-> > > > Thanks for testing. I don't know, the idata->buf is allocated using
-> > > > alloc_pages_exact(nr_pages * PAGE_SIZE, GFP_KERNEL | __GFP_ZERO); i=
-n
-> > > > optee_pool_op_alloc_helper().
-> > >
-> > > Is this really true for idata->buf or isnt the complete RPMB frame
-> > > memory allocated like this and therefore idata->buf not page aligned?
-> >
-> > You're right.
-> Maybe add an assert of PAGE_ALIGNED(idata->buf)?
 
-That might be a bit much. It turned out that there was a 2-byte
-alignment causing the trouble. I don't know exactly what's needed, but
-the amount used by kmalloc() by default is good.
 
-Cheers,
-Jens
+On 2024/4/30 21:41, Jason Gunthorpe wrote:
+> On Tue, Apr 30, 2024 at 05:28:45PM +0800, Junxian Huang wrote:
+>> From: Chengchang Tang <tangchengchang@huawei.com>
+>>
+>> Currently, driver fixedly allocates 4K pages for userspace WQE buffer
+>> and results in HW reading WQE with a granularity of 4K even in a 64K
+>> system. HW has to switch pages every 4K, leading to a loss of performance.
+> 
+>> In order to improve performance, add support for userspace to allocate
+>> flexible WQE buffer page size between 4K to system PAGESIZE.
+>> @@ -90,7 +90,8 @@ struct hns_roce_ib_create_qp {
+>>  	__u8    log_sq_bb_count;
+>>  	__u8    log_sq_stride;
+>>  	__u8    sq_no_prefetch;
+>> -	__u8    reserved[5];
+>> +	__u8    pageshift;
+>> +	__u8    reserved[4];
+> 
+> It doesn't make any sense to pass in a pageshift from userspace.
+> 
+> Kernel should detect whatever underlying physical contiguity userspace
+> has been able to create and configure the hardware optimally. The umem
+> already has all the tools to do this trivially.
+> 
+> Why would you need to specify anything?
+> 
+> Jason
 
->
-> Thanks,
-> Avri
->
-> >
-> > >
-> > > For RPMB via tee-supplicant the idata->buf is allocated within
-> > > memdup_user and therefore page aligned.
-> >
-> > Yes, that's a difference. Have you tested with page-aligned buffers to =
-see if it
-> > helps?
+Hi Jason. Sorry for the late response.
+
+WQE buffer of hns HW actually consists of 3 regions: SQ WQE, RQ WQE and
+ext SGE. Userspace and kernel driver both computes buffer size and start
+offset of these 3 regions based on the page shift. Kernel needs to obtains
+the page shift from userspace to ensure the buffer size and start offset
+are the same between kernel and userspace and avoid invalid memory access.
+
+The "tools of umem" you said refers to ib_umem_find_best_pgsz() I assume.
+This API cannot ensure returning the same page size as userspace, and
+kernel cannot determine the start offset of the 3 regions in userspace in
+this case.
+
+Junxian
 
