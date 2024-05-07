@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-170765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D318BDBB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:39:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71E38BDBB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B35D3B20DE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:39:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D9BDB217E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146627CF3E;
-	Tue,  7 May 2024 06:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4393C78C8F;
+	Tue,  7 May 2024 06:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNMp4fVL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="idOjJyk7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED9C79DD5;
-	Tue,  7 May 2024 06:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7476078685;
+	Tue,  7 May 2024 06:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715063919; cv=none; b=qchlBIVlaGw71iqi1XaEvmNMA45/9sEe2lXMEf1BIKsK+JoVuPG5gxqrwK/GwSw5BGsQQRUvwlWcWIg/N0+9C50AToI+c82FyuF9TAPhTbCvSGYUFIZXcbirQvZAzFa2OYodmx6KDCVP45ftkqM3otn6JRgerJKEjHi8XhtWotM=
+	t=1715063943; cv=none; b=LQlIqUqlxHWIHAU1TXm1NMHcCvQ2Qp3XLwRrf99hM4mEOXj+ybx6zNRSNOOBgxwXrjSBuK72JNaB36BTaHkaDiA0dInoWKcnJJ28P6H8aYafE+k7YtwtNa+QVNmsJQ9gtyN2ijSGfWFdF7PgQnjnxoXndFXl+N5nsu2OiZyhilI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715063919; c=relaxed/simple;
-	bh=+jCl/Bk8B/p/WIdgE2PrsvxstUDWmFgiL+fNpMkcHFo=;
+	s=arc-20240116; t=1715063943; c=relaxed/simple;
+	bh=6tMH+Ue0cPv8Ydx1cx5w4FvF1zoat+8A48ho3NUCMoo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PQa19QeYYVEen/ac5Te6yNPbmeO8sAnUVb6bzLUBaT3kecgng8QZd2Sz3zpR1/LLOza+fFd3WK3SSWIeuguKzj9aNbViJBGaFTjaHFxKzNNUY/cWgNJGM6Aa8YY97blA+9atG6E9+gE4s510i6aFIocU0KyW+tYLHCsCwGROXwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNMp4fVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95200C4AF18;
-	Tue,  7 May 2024 06:38:32 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=VVPLj0cwfs5gG4FakercVcQMHCACdz0dV+eQfoSgpF45aX+8FlzUC/qOqqaVcvA8tosp9TBLF0qWWcKTC/rX6SYnXUcV6r0FsZc4g1HjtuIG6aoMII7+ZUyXNCwZvyjpIXJZ3RrRZTRhH6k1/PL9CKmZFwk8FrGg9GlfI1CENtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=idOjJyk7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C0A0C2BBFC;
+	Tue,  7 May 2024 06:38:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715063918;
-	bh=+jCl/Bk8B/p/WIdgE2PrsvxstUDWmFgiL+fNpMkcHFo=;
+	s=k20201202; t=1715063943;
+	bh=6tMH+Ue0cPv8Ydx1cx5w4FvF1zoat+8A48ho3NUCMoo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KNMp4fVLnSPgfy5ylptuzEO7/8ac7568vebJpzCEw8qkGah60Ks0TizdNiJrZYfN8
-	 OFXd/rwO7kbXAfCTTKga3u3PIqqasgjM639hymnm3+NqGiGCc+GAEeciZC2agY/Rv6
-	 w/YSu8spKVS6c2Mivy6kfLMj4ey41FASJL7tLP52FK0Pe/WKbfW4bLTBTNsRQV9Y5q
-	 bsc5bdwGyEdrSATiKTcldkcUGXBE3BA2ROQQJREl0zsOT9aOWFUlJrTjYXNK8Znx4V
-	 x5sqHNSnwEMbffqlUdGSEbUZ7y32U2b2XkvtPMzcoH7Z7460FrIeIRUBMQ3mWtDRz0
-	 Zoi0cCJ/JOiiA==
-Message-ID: <71c52a0d-b788-4bbd-b409-6e62e6aff222@kernel.org>
-Date: Tue, 7 May 2024 08:38:29 +0200
+	b=idOjJyk7XistPhdtgHR2vppVHaYcg60tgMCM6Rpv433nB68m+lEYCJEONyhONGL4m
+	 CBSdZ9EZIWUJkwBkc4Am6sGrfrcEPsUxKQLvRb7pM6KbNjouH+GGIBbjyFvvRntUqp
+	 i87DIPsc/zNBlctFx2uo3tdbNjcrUSTc9/5enrQ/9ykMz+Lciif3nLJSVpxPt3XIpq
+	 f2MfWhAXvopGeyfvBDM+W2PdOowU1zlS+Es9BRrufVuS1rdIYiEbHlmqpxiM12xZFZ
+	 6l3M0XDnWXnK27kQc6+8jglT23TupiK8BIKU8RuP18qdnVRHVfhwZwR9gib5gC42CY
+	 HRbXUsItpWevw==
+Message-ID: <ce331f5d-d690-474b-91aa-5257cf58884d@kernel.org>
+Date: Tue, 7 May 2024 08:38:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/11] Introduce Tegra register config settings
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
- andi.shyti@kernel.org, wsa+renesas@sang-engineering.com,
- ulf.hansson@linaro.org, adrian.hunter@intel.com, digetx@gmail.com,
- ldewangan@nvidia.com, mkumard@nvidia.com
-References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
+Subject: Re: [PATCH 01/13] dt-bindings: mfd: pm8008: add reset gpio
+To: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-2-johan+linaro@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,28 +107,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240506225139.57647-1-kyarlagadda@nvidia.com>
+In-Reply-To: <20240506150830.23709-2-johan+linaro@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/05/2024 00:51, Krishna Yarlagadda wrote:
->  
->  Patch 01: Documentation about the device tree binding for common config framework.
->  Patch 02: Common parser of the device tree config setting node for Tegra SoC.
->  Patch 03: Device tree binding documentation for config setting.
->  Patch 04: Device tree binding documentation for the I2C config setting.
->  Patch 05: Avoid config settings child node to be treated as I2C device.
->  Patch 06: Move clock initialization code into new methods
->  Patch 07: Using config settings in Tegra I2C driver for interface timing registers.
->  Patch 08: Add Tegra234 I2C config settings in DT.
->  Patch 09: Device tree binding documentation for the SDHCI config setting.
->  Patch 10: Using config settings in Tegra SDHCI driver for tuning iteration.
->  Patch 11: Add Tegra234 SDHCI config settings in DT.
+On 06/05/2024 17:08, Johan Hovold wrote:
+> Describe the optional reset gpio (which may not be wired up).
 > 
-> Known Issues:
->  - DTC warning for config 'missing or empty reg property for I2C nodes'
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-Which should stop you from sending buggy code, till you fix it.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
