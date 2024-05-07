@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-172115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32998BEDC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:06:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCB58BEDC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698741F21914
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE231F24C9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD9B16F0E3;
-	Tue,  7 May 2024 19:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4298B16F28D;
+	Tue,  7 May 2024 19:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="StqMaae6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fr2NXN+F"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85871150999
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2724016F265
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715111720; cv=none; b=r0d6xRei+sGzwEWFgIVJMRTForItCC7dfJqfaN5JPRI0XkCtDrLOH7WSkADt4AheIYtV0A+G98/oDCDCfmgyoMkbb3ck+yRtvND9SfY29rOAtDUtTxaqlWkmypu4zrsH8nKp0yiowD/wivIrZ8nz5OT9Y1zITbX3nhWQ1Q/uX84=
+	t=1715111723; cv=none; b=jy4mbUEzZjboEUIchCXoUUSKUu3JQSLNvKZlEyvnjmT2wXbBkNG8cCGduGDrdlhN34AL3PNsj2Ifa3Gcxf+c6hwHBoBjM7zLt7iTkUWwh5UN9jAqRuJdNnVUz2AIAgJXVkAj4m5G3vAnw/g5peCHybB4S3gLH7GNqG/djMYHPpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715111720; c=relaxed/simple;
-	bh=a0wY0qoFOsxghYv4yN8+yu9MTxt8hu8AS20FIolS/uU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PWpa8Be/S8gewZP2kjdYSIRw0aYpQd8vqyR2WKcmIctau2+9g5g7T1MR1IROdizH0GL3PXEAoaMwDI2IxgDVKHr+ut3GNZFNzvarCfa4mglJOBIMVVPVsbYMw79Y+zD69hLAE6McOOx/7caStP2gzJ3ARsNlg+belcmuA0WMtvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=StqMaae6; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1715111723; c=relaxed/simple;
+	bh=qkKdzACF1keOV6J4gFQTNFSJosbImY3UiiUaqJIsSvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bjgNBxE7a+auX7EpTNWdqoZSguT2GYnMXnPBH0NiCud0Jt1Z0qZyWruCZyESs/AsLsBMstlQ5CeNU4rNgoQkSs34Gev4Qald2mAdmjkeMuDiWv872aQuqSGxfRB53+LjRCnUQIx2Rz/3k7T4VuNWk71lClTp+Q5WKCeHqKgI4fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fr2NXN+F; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715111717;
+	s=mimecast20190719; t=1715111721;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qlhwsbkKKVd2ohQ0kuBs8V/ScuJpgv65EhyU0mX2mEQ=;
-	b=StqMaae6+PbwCJgrRcOVDDsSVCMyAydrNV7RpbgNvFVXxhyL1PGLDV7Zfb7W+96SKtsUn8
-	xXts+zIG2XmYPBbvHW07JHGspkhn/qtlzIfbTtegJjLz2DBAD+taF11ejJDB1wRfRTZ/Nd
-	nxc8JLLo/hSF5zZ17HV0gRt+EBZgWc8=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=udTceohd6Xr0o0t6E07fDA2ozt9gdMnkrdCtTzzon0Y=;
+	b=fr2NXN+FZdLFolBtyikFlcJKynDTV2jTFYf1hTsd6eDwro7DPyD/mRRiiKjlGKSwLpEoSN
+	C1tZ8+JxyLQUs52GYbSC34c0UTQV6jbBSurzN2pHMsvWFHAQoW5U6Rb6W0okODc3m/Vqtg
+	FA4C58CuYjzCE/Nny0yKTm7AvZxHTrA=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-567-BSvfzLQPO9mBz_2vPSWUpg-1; Tue,
- 07 May 2024 15:55:16 -0400
-X-MC-Unique: BSvfzLQPO9mBz_2vPSWUpg-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-1kGYvzdaMBCNdauAjag6xQ-1; Tue,
+ 07 May 2024 15:55:17 -0400
+X-MC-Unique: 1kGYvzdaMBCNdauAjag6xQ-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6BBCD1C031BB;
-	Tue,  7 May 2024 19:55:15 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 524043803523;
+	Tue,  7 May 2024 19:55:17 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.22.18.45])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 21C3820B96E0;
-	Tue,  7 May 2024 19:55:15 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 16DA220B96E0;
+	Tue,  7 May 2024 19:55:17 +0000 (UTC)
 From: Audra Mitchell <audra@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: brauner@kernel.org,
@@ -63,9 +65,11 @@ Cc: brauner@kernel.org,
 	linux-kselftest@vger.kernel.org,
 	linux-mm@kvack.org,
 	raquini@redhat.com
-Subject: [PATCH 1/2] Fix userfaultfd_api to return EINVAL as expected
-Date: Tue,  7 May 2024 15:55:09 -0400
-Message-ID: <20240507195510.283744-1-audra@redhat.com>
+Subject: [PATCH 2/2] Update uffd-stress to handle EINVAL for unset config features
+Date: Tue,  7 May 2024 15:55:10 -0400
+Message-ID: <20240507195510.283744-2-audra@redhat.com>
+In-Reply-To: <20240507195510.283744-1-audra@redhat.com>
+References: <20240507195510.283744-1-audra@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,35 +79,67 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-Currently if we request a feature that is not set in the Kernel
-config we fail silently and return the available features. However, the
-documentation indicates we should return an EINVAL.
-
-We need to fix this issue since we can end up with a Kernel warning
-should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
-a kernel with the config not set with this feature.
+Now that we have updated userfaultfd_api to correctly return
+EIVAL when a feature is requested but not available, let's fix
+the uffd-stress test to only set the UFFD_FEATURE_WP_UNPOPULATED
+feature when the config is set. In addition, still run the test if
+the CONFIG_PTE_MARKER_UFFD_WP is not set, just dont use the corresponding
+UFFD_FEATURE_WP_UNPOPULATED feature.
 
 Signed-off-by: Audra Mitchell <audra@redhat.com>
 ---
- fs/userfaultfd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ tools/testing/selftests/mm/uffd-stress.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 60dcfafdc11a..17210558de79 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -2073,6 +2073,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
- 	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
- 	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
- #endif
+diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
+index f78bab0f3d45..b9b6d858eab8 100644
+--- a/tools/testing/selftests/mm/uffd-stress.c
++++ b/tools/testing/selftests/mm/uffd-stress.c
+@@ -38,6 +38,8 @@
+ 
+ #ifdef __NR_userfaultfd
+ 
++uint64_t features;
 +
-+	ret = -EINVAL;
-+	if (features & ~uffdio_api.features)
-+		goto err_out;
+ #define BOUNCE_RANDOM		(1<<0)
+ #define BOUNCE_RACINGFAULTS	(1<<1)
+ #define BOUNCE_VERIFY		(1<<2)
+@@ -247,10 +249,14 @@ static int userfaultfd_stress(void)
+ 	unsigned long nr;
+ 	struct uffd_args args[nr_cpus];
+ 	uint64_t mem_size = nr_pages * page_size;
++	int flags = 0;
+ 
+ 	memset(args, 0, sizeof(struct uffd_args) * nr_cpus);
+ 
+-	if (uffd_test_ctx_init(UFFD_FEATURE_WP_UNPOPULATED, NULL))
++	if (features & UFFD_FEATURE_WP_UNPOPULATED && test_type == TEST_ANON)
++		flags = UFFD_FEATURE_WP_UNPOPULATED;
 +
- 	uffdio_api.ioctls = UFFD_API_IOCTLS;
- 	ret = -EFAULT;
- 	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
++	if (uffd_test_ctx_init(flags, NULL))
+ 		err("context init failed");
+ 
+ 	if (posix_memalign(&area, page_size, page_size))
+@@ -385,8 +391,6 @@ static void set_test_type(const char *type)
+ 
+ static void parse_test_type_arg(const char *raw_type)
+ {
+-	uint64_t features = UFFD_API_FEATURES;
+-
+ 	set_test_type(raw_type);
+ 
+ 	if (!test_type)
+@@ -409,8 +413,8 @@ static void parse_test_type_arg(const char *raw_type)
+ 	 * feature.
+ 	 */
+ 
+-	if (userfaultfd_open(&features))
+-		err("Userfaultfd open failed");
++	if (uffd_get_features(&features))
++		err("failed to get available features");
+ 
+ 	test_uffdio_wp = test_uffdio_wp &&
+ 		(features & UFFD_FEATURE_PAGEFAULT_FLAG_WP);
 -- 
 2.44.0
 
