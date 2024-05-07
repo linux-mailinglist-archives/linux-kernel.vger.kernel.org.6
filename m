@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-172027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB88E8BEC2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:02:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0068BEC30
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5971A1F26130
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:02:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30783B237FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D9016DEDB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9D816E873;
 	Tue,  7 May 2024 19:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1qfWtfeW"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GHvNY/NQ"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849BF16D4CF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858C316D4F1
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715108542; cv=none; b=IAcEIhN4ki+OkpLfxylAUDHolBXzD9Qs2g1S0mpyBidjov2ahDdV5GPc+ey2qLdMqWRjmytNGHOaStdYT+BP+++UinoTwETdZGbWZrT+u3uEyHunrxogejDMtsX8JytI2auP1saplkcJ66sY0vKfM+WWQSxHAZNXDjpLewORMgA=
+	t=1715108542; cv=none; b=snIa+M8WzMjSq7r5QyYQLFbpfzSuSZvtyGzVOCi8NOOqoXNowXa2j/TM9ZjtKdnRB/Txzdp0krRe9eKcu4nl/zOtID81SIxbhLNkZHIiriNVEuytUBMb+jkos7cPAb3T7VKyTemO5t54AV3h+m8CXv5kWXXeMFxJYWvq5sYxrP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715108542; c=relaxed/simple;
-	bh=lPUQfi00hz3EZzfmxjqGDaeJ2LGzL0z8Fh1NDCHiCqI=;
+	bh=Fn1xbpXsu4PAcmCL4wCw7+fLXWr43hwXXVU0yqQAbdw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KbQm6HRdPc7XOBBsLQ7A5+UYPQB+UPn/LBZD2tEcO6uKMUhYg82qgBpDhtBjq9lFNRuGtf0DYoJivteqTfyVypdz6lKUi2KQUfaFgYUb9o+qD54qGQq8tu6vWhCWHy23fatblEfbZoKnNCi57XM5W5Hiz00BsZimnexhhsAAsUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1qfWtfeW; arc=none smtp.client-ip=209.85.167.175
+	 MIME-Version:Content-Type; b=RkuYMAhzTeg3MRG/2yf8S8GniA7HYG40SA9KCy7HqBFGvSTedHqzEkw+n/NtHRGKwpeMUg9WfzUXb2Wd0RkFm16ADZkySeiRrXnRS7kcr/jitzo4gPXfOWItHP5PqrgYSbipxftGrPMjfybpl2DSHMkj49xugGSazW6xuec4Pfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GHvNY/NQ; arc=none smtp.client-ip=209.85.167.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3c70d8bb618so1745879b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:02:19 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c86f066256so1990689b6e.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:02:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715108539; x=1715713339; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gusPUkvJw+HUxHjWbJgthYj3tkXrP9EigZmtbqwV49I=;
-        b=1qfWtfeWufUUgUDqjw6SEulZOWdeKJ+rTduwhcuw7lLk50AKcN9IhNYkXgiXpIcogS
-         Umxm3QY+i8+eVvYL5NhBoIJF/Xr4FZ2fqFX2w9NbXFDYdCl1CvnTZwtWk8svzZYN/yDu
-         ucFLajGzaHMl/IXl55S88WOTzNydkfounRXn7sweAW10DAxhbVwgTcMCfErfoxZ1BNCP
-         c5B7kPZ/QWpRXD75W9hEzNYi5s10IhBRgDxkh1lFRxf6TW5DMzAWoz05mr56s94b6VvA
-         /XeaOcTt0dfcYnG8E4vmic30+K6/zKSI9Hhj6motWbA8l8VBummhEkbPERjqAAiAheMq
-         TLvg==
+        bh=Zva8gT55IALq82V9YRVJAnVfhuhJYt5YJF4Qc5Cxi6Y=;
+        b=GHvNY/NQZo+CQQgda26XuIvNNy6w6ux4LR1BizIemG/ioiNlpQUMAAngs6ljWPgmIg
+         oRrWbsOAB6SPA2kQJvoMIV1lTEvzd7zOjYEhYY65IjmnvrPtxAA7KgZNuTkS5+mvTQPd
+         QuRMOVOJlXjMYm5bsjGkYgzqoeT3veGT2QrM++SBFUqzwJE8IbvF8jZCHRV/qud+7hbw
+         ssZ9zgOlOk+7FFItAFygJ7/axZ3R4U4MnY1hDIg1LYsvUU620s0Xu7KPs9xB7JR2JvhQ
+         lpb/AOYvxghbScH0MBNS8NGqNESZ2Ju7shsqccLNknyMITH3TSpzQoICpsF4nOlb5XTe
+         6YBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1715108539; x=1715713339;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gusPUkvJw+HUxHjWbJgthYj3tkXrP9EigZmtbqwV49I=;
-        b=OCrFoLw4Y+lXdN+mk8CTBgrckzsDL1FZgsC8e4ZHVKFpxEBael1/vKvOFyZhhm6doU
-         uCrB371tO6o7y0bOkeOhXtWEMEeqbXX76hyQi4dUYPwnmhQPJH5la/brbbRLMyecJr3D
-         HdmJgW0EXPQ/0pkd86VGp/I4Dgf3kUfUygioP6/WZ/ZsHFK6SXurKj1ZVBZUqzPyZykb
-         ShFOaib5UikgIeRl7FAXpRxoGZv+A7KxCOBebv4kdwMaYUQJyoi+bFO3CkpTzk2U4QT6
-         MzZgra9F7F2x8Crc6UJ8yRh5f1N8VespTvge2ZY29hRA7515Z5PhZTr50FGoP/0xptDn
-         AWYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8GInCPBsiffkf6dGx67eI/bSs2JKeV0XKDMufhKI6VaFO4AATBj8FKtKP8RvhkcBcy6TMPBY7tc4qp2oQ16rHiDrkA5UVQKcZMS1E
-X-Gm-Message-State: AOJu0YwBFeViGfyOrLmIT/sEn4Eub1QmYVZgkZFELfSkqR+cm/3bq2jI
-	67z53FGj1sRElNz+PrrYgdEqB/jgIuSCmkc3Pbho/apeilI/y6IgLEMHMjnSvjQ=
-X-Google-Smtp-Source: AGHT+IFHtu+tsKrhcPKjEbahD4o9LGQo0jYOer1kDmQ9GUynkWoVDP2V0354NOUJT5/NuXaQabwhyw==
-X-Received: by 2002:a05:6808:202:b0:3c9:7013:85c3 with SMTP id 5614622812f47-3c9852aac11mr598484b6e.9.1715108538793;
-        Tue, 07 May 2024 12:02:18 -0700 (PDT)
+        bh=Zva8gT55IALq82V9YRVJAnVfhuhJYt5YJF4Qc5Cxi6Y=;
+        b=LZBWBth6olualg4LaJQBlNp3LdqisIZGnkkEJI3Rt7xX0XzlOk/asZzp1xopT71qrb
+         q1pI0rmLkuVvRGtcN9lBRqKDxoNQMoYv7LcrBJB5vwzmNWpFfsT6DPy80OY0/xNaC0Ya
+         KnncXVVAsJdkpQxEmcPtupb/xwE5F8mn7WYWnd2sNdZy6f45simGEAoN1np8VZvuVluc
+         Ozi+Fp0N9rQlct5eVZ1NeV2j7FcmRqvJx0LaWWtUd+LJbnlGJFcSKd1/Onia8e9Uqcnw
+         ukSjq2wMQoJMWMpxPBHCBghYlUpb7SFC5b0I12AjEcUu4lA06BjPGg7cRkFX6zX88xQx
+         Kzgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz/HXjQFt9JkgI6UcrsO97c8VYFhrcXKrEZKt9E/sLUUCva91XCjJgG07OBKuIcieVpFUA6j7hAZ+F0O4OOQwXCq8nAH00wiAOhsyl
+X-Gm-Message-State: AOJu0Yw6Cper2Ns9AfHVIr8kc/yjFb/kHA2kbruLpN/hhyAVYjAM/mph
+	v/6x5IzzJzfyNcEmoLaJy+P/7H7dDU464HpUsNEhqRHOBjJIve69Yp1HwM3eDE8=
+X-Google-Smtp-Source: AGHT+IH9wjghj4HrhmVD/ukOy+0Q7pKFtsk6AEg9jWoiV/hwRi2mH9xji406zXVARSpFy9wOTkJbuQ==
+X-Received: by 2002:aca:1e06:0:b0:3c5:f4b3:e0e3 with SMTP id 5614622812f47-3c985305afdmr446220b6e.41.1715108539681;
+        Tue, 07 May 2024 12:02:19 -0700 (PDT)
 Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
         by smtp.gmail.com with ESMTPSA id j14-20020a54480e000000b003c96bbe0e79sm909652oij.13.2024.05.07.12.02.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 12:02:18 -0700 (PDT)
+        Tue, 07 May 2024 12:02:19 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>
 Cc: David Lechner <dlechner@baylibre.com>,
@@ -75,9 +75,9 @@ Cc: David Lechner <dlechner@baylibre.com>,
 	Esteban Blanc <eblanc@baylibre.com>,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 2/4] iio: buffer: use struct iio_scan_type to simplify code
-Date: Tue,  7 May 2024 14:02:06 -0500
-Message-ID: <20240507-iio-add-support-for-multiple-scan-types-v1-2-95ac33ee51e9@baylibre.com>
+Subject: [PATCH RFC 3/4] iio: add support for multiple scan types per channel
+Date: Tue,  7 May 2024 14:02:07 -0500
+Message-ID: <20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
 X-Mailer: git-send-email 2.43.2
 In-Reply-To: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
 References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
@@ -91,112 +91,186 @@ Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.12.4
 Content-Transfer-Encoding: 8bit
 
-By using struct iio_scan_type, we can simplify the code by removing
-lots of duplicate pointer deferences. This make the code a bit easier to
-read.
+This adds new fields to the iio_channel structure to support multiple
+scan types per channel. This is useful for devices that support multiple
+resolution modes or other modes that require different data formats of
+the raw data.
 
-This also prepares for a future where channels may have more than one
-scan_type.
+To make use of this, drivers can still use the old scan_type field for
+the "default" scan type and use the new scan_type_ext field for any
+additional scan types. And they must implement the new callback
+get_current_scan_type() to return the current scan type based on the
+current state of the device.
+
+The buffer code is the only code in the IIO core code that is using the
+scan_type field. This patch updates the buffer code to use the new
+iio_channel_validate_scan_type() function to ensure it is returning the
+correct scan type for the current state of the device when reading the
+sysfs attributes. The buffer validation code is also update to validate
+any additional scan types that are set in the scan_type_ext field. Part
+of that code is refactored to a new function to avoid duplication.
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/iio/industrialio-buffer.c | 48 +++++++++++++++++++++++----------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+ drivers/iio/industrialio-buffer.c | 43 +++++++++++++++++++++++++++++----------
+ include/linux/iio/iio.h           | 33 ++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index cec58a604d73..08103a9e77f7 100644
+index 08103a9e77f7..ef27ce71ec25 100644
 --- a/drivers/iio/industrialio-buffer.c
 +++ b/drivers/iio/industrialio-buffer.c
-@@ -366,7 +366,8 @@ static ssize_t iio_show_fixed_type(struct device *dev,
+@@ -365,8 +365,10 @@ static ssize_t iio_show_fixed_type(struct device *dev,
+ 				   struct device_attribute *attr,
  				   char *buf)
  {
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
--	u8 type = this_attr->c->scan_type.endianness;
-+	const struct iio_scan_type *scan_type = &this_attr->c->scan_type;
-+	u8 type = scan_type->endianness;
+-	const struct iio_scan_type *scan_type = &this_attr->c->scan_type;
++	const struct iio_scan_type *scan_type =
++				iio_get_current_scan_type(indio_dev, this_attr->c);
+ 	u8 type = scan_type->endianness;
  
  	if (type == IIO_CPU) {
- #ifdef __LITTLE_ENDIAN
-@@ -375,21 +376,21 @@ static ssize_t iio_show_fixed_type(struct device *dev,
- 		type = IIO_BE;
- #endif
- 	}
--	if (this_attr->c->scan_type.repeat > 1)
-+	if (scan_type->repeat > 1)
- 		return sysfs_emit(buf, "%s:%c%d/%dX%d>>%u\n",
- 		       iio_endian_prefix[type],
--		       this_attr->c->scan_type.sign,
--		       this_attr->c->scan_type.realbits,
--		       this_attr->c->scan_type.storagebits,
--		       this_attr->c->scan_type.repeat,
--		       this_attr->c->scan_type.shift);
-+		       scan_type->sign,
-+		       scan_type->realbits,
-+		       scan_type->storagebits,
-+		       scan_type->repeat,
-+		       scan_type->shift);
- 	else
- 		return sysfs_emit(buf, "%s:%c%d/%d>>%u\n",
- 		       iio_endian_prefix[type],
--		       this_attr->c->scan_type.sign,
--		       this_attr->c->scan_type.realbits,
--		       this_attr->c->scan_type.storagebits,
--		       this_attr->c->scan_type.shift);
-+		       scan_type->sign,
-+		       scan_type->realbits,
-+		       scan_type->storagebits,
-+		       scan_type->shift);
- }
- 
- static ssize_t iio_scan_el_show(struct device *dev,
-@@ -694,12 +695,16 @@ static unsigned int iio_storage_bytes_for_si(struct iio_dev *indio_dev,
- 					     unsigned int scan_index)
- {
- 	const struct iio_chan_spec *ch;
-+	const struct iio_scan_type *scan_type;
+@@ -699,7 +701,7 @@ static unsigned int iio_storage_bytes_for_si(struct iio_dev *indio_dev,
  	unsigned int bytes;
  
  	ch = iio_find_channel_from_si(indio_dev, scan_index);
--	bytes = ch->scan_type.storagebits / 8;
--	if (ch->scan_type.repeat > 1)
--		bytes *= ch->scan_type.repeat;
-+	scan_type = &ch->scan_type;
-+	bytes = scan_type->storagebits / 8;
-+
-+	if (scan_type->repeat > 1)
-+		bytes *= scan_type->repeat;
-+
- 	return bytes;
+-	scan_type = &ch->scan_type;
++	scan_type = iio_get_current_scan_type(indio_dev, ch);
+ 	bytes = scan_type->storagebits / 8;
+ 
+ 	if (scan_type->repeat > 1)
+@@ -1597,6 +1599,22 @@ static long iio_device_buffer_ioctl(struct iio_dev *indio_dev, struct file *filp
+ 	}
  }
  
-@@ -1616,18 +1621,21 @@ static int __iio_buffer_alloc_sysfs_and_mask(struct iio_buffer *buffer,
- 	if (channels) {
++static int iio_channel_validate_scan_type(struct device *dev, int ch,
++					  const struct iio_scan_type *scan_type)
++{
++	/* Verify that sample bits fit into storage */
++	if (scan_type->storagebits < scan_type->realbits + scan_type->shift) {
++		dev_err(dev,
++			"Channel %d storagebits (%d) < shifted realbits (%d + %d)\n",
++			ch, scan_type->storagebits,
++			scan_type->realbits,
++			scan_type->shift);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int __iio_buffer_alloc_sysfs_and_mask(struct iio_buffer *buffer,
+ 					     struct iio_dev *indio_dev,
+ 					     int index)
+@@ -1622,22 +1640,25 @@ static int __iio_buffer_alloc_sysfs_and_mask(struct iio_buffer *buffer,
  		/* new magic */
  		for (i = 0; i < indio_dev->num_channels; i++) {
-+			const struct iio_scan_type *scan_type;
-+
+ 			const struct iio_scan_type *scan_type;
++			int j;
+ 
  			if (channels[i].scan_index < 0)
  				continue;
  
-+			scan_type = &channels[i].scan_type;
-+
- 			/* Verify that sample bits fit into storage */
--			if (channels[i].scan_type.storagebits <
--			    channels[i].scan_type.realbits +
--			    channels[i].scan_type.shift) {
-+			if (scan_type->storagebits <
-+			    scan_type->realbits + scan_type->shift) {
- 				dev_err(&indio_dev->dev,
- 					"Channel %d storagebits (%d) < shifted realbits (%d + %d)\n",
--					i, channels[i].scan_type.storagebits,
--					channels[i].scan_type.realbits,
--					channels[i].scan_type.shift);
-+					i, scan_type->storagebits,
-+					scan_type->realbits,
-+					scan_type->shift);
- 				ret = -EINVAL;
+ 			scan_type = &channels[i].scan_type;
+ 
+-			/* Verify that sample bits fit into storage */
+-			if (scan_type->storagebits <
+-			    scan_type->realbits + scan_type->shift) {
+-				dev_err(&indio_dev->dev,
+-					"Channel %d storagebits (%d) < shifted realbits (%d + %d)\n",
+-					i, scan_type->storagebits,
+-					scan_type->realbits,
+-					scan_type->shift);
+-				ret = -EINVAL;
++			ret = iio_channel_validate_scan_type(&indio_dev->dev,
++							     i, scan_type);
++			if (ret)
  				goto error_cleanup_dynamic;
++
++			for (j = 0; j < channels[i].num_ext_scan_type; j++) {
++				scan_type = &channels[i].ext_scan_type[j];
++
++				ret = iio_channel_validate_scan_type(
++						&indio_dev->dev, i, scan_type);
++				if (ret)
++					goto error_cleanup_dynamic;
  			}
+ 
+ 			ret = iio_buffer_add_channel_sysfs(indio_dev, buffer,
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 19de573a944a..66f0b4c68f53 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -205,6 +205,9 @@ struct iio_scan_type {
+  * @scan_index:		Monotonic index to give ordering in scans when read
+  *			from a buffer.
+  * @scan_type:		struct describing the scan type
++ * @ext_scan_type:	Used in rare cases where there is more than one scan
++ *			format for a channel. When this is used, omit scan_type.
++ * @num_ext_scan_type:	Number of elements in ext_scan_type.
+  * @info_mask_separate: What information is to be exported that is specific to
+  *			this channel.
+  * @info_mask_separate_available: What availability information is to be
+@@ -256,6 +259,8 @@ struct iio_chan_spec {
+ 	unsigned long		address;
+ 	int			scan_index;
+ 	struct iio_scan_type scan_type;
++	const struct iio_scan_type *ext_scan_type;
++	unsigned int		num_ext_scan_type;
+ 	long			info_mask_separate;
+ 	long			info_mask_separate_available;
+ 	long			info_mask_shared_by_type;
+@@ -435,6 +440,9 @@ struct iio_trigger; /* forward declaration */
+  *			for better event identification.
+  * @validate_trigger:	function to validate the trigger when the
+  *			current trigger gets changed.
++ * @get_current_scan_type: must be implemented by drivers that use ext_scan_type
++ *			in the channel spec to return the currently active scan
++ *			type based on the current state of the device.
+  * @update_scan_mode:	function to configure device and scan buffer when
+  *			channels have changed
+  * @debugfs_reg_access:	function to read or write register value of device
+@@ -519,6 +527,9 @@ struct iio_info {
+ 
+ 	int (*validate_trigger)(struct iio_dev *indio_dev,
+ 				struct iio_trigger *trig);
++	const struct iio_scan_type *(*get_current_scan_type)(
++					const struct iio_dev *indio_dev,
++					const struct iio_chan_spec *chan);
+ 	int (*update_scan_mode)(struct iio_dev *indio_dev,
+ 				const unsigned long *scan_mask);
+ 	int (*debugfs_reg_access)(struct iio_dev *indio_dev,
+@@ -804,6 +815,28 @@ static inline bool iio_read_acpi_mount_matrix(struct device *dev,
+ }
+ #endif
+ 
++/**
++ * iio_get_current_scan_type - Get the current scan type for a channel
++ * @indio_dev:	the IIO device to get the scan type for
++ * @chan:	the channel to get the scan type for
++ *
++ * Most devices only have one scan type per channel and can just access it
++ * directly without calling this function. Core IIO code and drivers that
++ * implement ext_scan_type in the channel spec should use this function to
++ * get the current scan type for a channel.
++ *
++ * Returns: the current scan type for the channel
++ */
++static inline const struct iio_scan_type *iio_get_current_scan_type(
++					const struct iio_dev *indio_dev,
++					const struct iio_chan_spec *chan)
++{
++	if (indio_dev->info->get_current_scan_type)
++		return indio_dev->info->get_current_scan_type(indio_dev, chan);
++
++	return &chan->scan_type;
++}
++
+ ssize_t iio_format_value(char *buf, unsigned int type, int size, int *vals);
+ 
+ int iio_str_to_fixpoint(const char *str, int fract_mult, int *integer,
 
 -- 
 2.43.2
