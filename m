@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-171312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284EF8BE284
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:51:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2DF8BE285
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CBF41F22E3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE73A1C21C59
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B353215CD51;
-	Tue,  7 May 2024 12:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F1B15B995;
+	Tue,  7 May 2024 12:50:59 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063F415E21B;
-	Tue,  7 May 2024 12:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C588115E5B4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715086254; cv=none; b=fhC3NWq2c818T0mT08KzG/gfj8V2w+LiO7TbmoGssXavUJircSJ0s4PAczwH0d21vmojeJ2oPgscQm3V3yS6CTFxXQzMbCgM+zqp6V1WV2IRu7HV2OGsApG/YhgqtVhOOj2NyuMn7vHgM42lSiMznJYjUU9E3RiL8CIbqUz9afk=
+	t=1715086257; cv=none; b=M8o6FT16kDWFGXUJ/d7pKAx8rlwjBNqoMmm8bnCLd6vlvF03mTrPeu0xNKFbwDSjzYHRz72oBkvVzfuw7g74Pn1f8v3dY9h1eI14coueb+IdhW6EUrUgIIgFm/3A6GN5FUauGZvksBvMp7cw5DZY792732NplpjiVvvR3zyLswg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715086254; c=relaxed/simple;
-	bh=9hdnvJMfIv/yHQL/aii/w2JikW+sqzV2aECWY0g6NQo=;
+	s=arc-20240116; t=1715086257; c=relaxed/simple;
+	bh=YKWAqPAngEFoIrG0vJWJol9P57Yzl2zcApvZBFsNO9o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OdgJTXdldL77f/jZklqMXDQ8QxmW9FKBc9y7+KT990WRdyNedpK6co+s/H6KyH+stWiTKOwcq7wMRyPwIKoF/hwG0ojYxugKmGQJI+AvPnRApY9+BSfYIDK+rqRFXWUd9IpAoiNbwXivTBLM0MJO2wUHOamRmkqVc9jKC8RJ/PU=
+	 MIME-Version; b=F8xMAncJdKfoYmkR6YKz4p5lbOL0swy2czwk+/u8w2fA7qg14rU9eBDz/VS73fS4lZdeiZWOpnBLGXw0HD5ymrJjZI+8h9hk/eF4xVOxnILxtoKwIPM4i7uXcBZWreZ4Fr9SH5SWxK4ni2pz+7MqIFdzYTu3tpiktQYw3sS26rg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CCED1063;
-	Tue,  7 May 2024 05:51:17 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C9901063;
+	Tue,  7 May 2024 05:51:21 -0700 (PDT)
 Received: from e130256.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC5D83F793;
-	Tue,  7 May 2024 05:50:48 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 108633F793;
+	Tue,  7 May 2024 05:50:52 -0700 (PDT)
 From: Hongyan Xia <hongyan.xia2@arm.com>
 To: Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
@@ -42,20 +42,17 @@ To: Ingo Molnar <mingo@redhat.com>,
 	Ben Segall <bsegall@google.com>,
 	Mel Gorman <mgorman@suse.de>,
 	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
+	Valentin Schneider <vschneid@redhat.com>
 Cc: Qais Yousef <qyousef@layalina.io>,
 	Morten Rasmussen <morten.rasmussen@arm.com>,
 	Lukasz Luba <lukasz.luba@arm.com>,
 	Christian Loehle <christian.loehle@arm.com>,
 	pierre.gondois@arm.com,
 	linux-kernel@vger.kernel.org,
-	Hongyan Xia <hongyan.xia2@arm.com>,
-	linux-pm@vger.kernel.org
-Subject: [RFC PATCH v3 3/6] sched/fair: Use util biases for utilization and frequency
-Date: Tue,  7 May 2024 13:50:26 +0100
-Message-Id: <f0be5911214d2f6f7ea92c6c3eed37270215c590.1715082714.git.hongyan.xia2@arm.com>
+	Hongyan Xia <hongyan.xia2@arm.com>
+Subject: [RFC PATCH v3 4/6] sched/uclamp: Remove all uclamp bucket logic
+Date: Tue,  7 May 2024 13:50:27 +0100
+Message-Id: <6df43e8141a2243a8d7fc7462a00bd84e45fecb1.1715082714.git.hongyan.xia2@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1715082714.git.hongyan.xia2@arm.com>
 References: <cover.1715082714.git.hongyan.xia2@arm.com>
@@ -67,713 +64,661 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the new util_avg_bias for task and runqueue utilization. We also
-maintain separate util_est and util_est_uclamp signals.
+Also rewrite uclamp_update_active() so that the effective uclamp values
+are updated every time we change task group properties, change system
+defaults or a request is issued from userspace.
 
-Now that we have the sum aggregated CFS util value, we do not need to
-consult uclamp buckets to know how the frequency should be clamped. We
-simply look at the aggregated top level rq->cfs.avg.util_avg +
-rq->cfs.avg.util_avg_bias and rq->cfs.avg.util_est_uclamp to know what
-frequency to choose and how to place tasks.
+This also signnificantly reduces uclamp overhead because we no longer
+need to compute effective uclamp values and manipulate buckets every
+time a task is enqueued or dequeued (in uclamp_rq_{inc/dec}()).
+
+TODO: Rewrite documentation to match the new logic.
 
 Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
 ---
- kernel/sched/core.c              |  14 +-
- kernel/sched/cpufreq_schedutil.c |  12 +-
- kernel/sched/fair.c              | 336 ++++++++++++++-----------------
- kernel/sched/sched.h             |  22 +-
- 4 files changed, 160 insertions(+), 224 deletions(-)
+ include/linux/sched.h |   4 -
+ init/Kconfig          |  32 -----
+ kernel/sched/core.c   | 300 +++---------------------------------------
+ kernel/sched/fair.c   |   4 -
+ kernel/sched/rt.c     |   4 -
+ kernel/sched/sched.h  |  85 ------------
+ 6 files changed, 19 insertions(+), 410 deletions(-)
 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 4ea4b8b30f54..3ca0f47b9ff8 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -685,9 +685,6 @@ struct sched_dl_entity {
+ };
+ 
+ #ifdef CONFIG_UCLAMP_TASK
+-/* Number of utilization clamp buckets (shorter alias) */
+-#define UCLAMP_BUCKETS CONFIG_UCLAMP_BUCKETS_COUNT
+-
+ /*
+  * Utilization clamp for a scheduling entity
+  * @value:		clamp value "assigned" to a se
+@@ -713,7 +710,6 @@ struct sched_dl_entity {
+  */
+ struct uclamp_se {
+ 	unsigned int value		: bits_per(SCHED_CAPACITY_SCALE);
+-	unsigned int bucket_id		: bits_per(UCLAMP_BUCKETS);
+ 	unsigned int active		: 1;
+ 	unsigned int user_defined	: 1;
+ };
+diff --git a/init/Kconfig b/init/Kconfig
+index f0c9117962ec..65ea2655bea8 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -817,38 +817,6 @@ config UCLAMP_TASK
+ 	  enforce or grant any specific bandwidth for tasks.
+ 
+ 	  If in doubt, say N.
+-
+-config UCLAMP_BUCKETS_COUNT
+-	int "Number of supported utilization clamp buckets"
+-	range 5 20
+-	default 5
+-	depends on UCLAMP_TASK
+-	help
+-	  Defines the number of clamp buckets to use. The range of each bucket
+-	  will be SCHED_CAPACITY_SCALE/UCLAMP_BUCKETS_COUNT. The higher the
+-	  number of clamp buckets the finer their granularity and the higher
+-	  the precision of clamping aggregation and tracking at run-time.
+-
+-	  For example, with the minimum configuration value we will have 5
+-	  clamp buckets tracking 20% utilization each. A 25% boosted tasks will
+-	  be refcounted in the [20..39]% bucket and will set the bucket clamp
+-	  effective value to 25%.
+-	  If a second 30% boosted task should be co-scheduled on the same CPU,
+-	  that task will be refcounted in the same bucket of the first task and
+-	  it will boost the bucket clamp effective value to 30%.
+-	  The clamp effective value of a bucket is reset to its nominal value
+-	  (20% in the example above) when there are no more tasks refcounted in
+-	  that bucket.
+-
+-	  An additional boost/capping margin can be added to some tasks. In the
+-	  example above the 25% task will be boosted to 30% until it exits the
+-	  CPU. If that should be considered not acceptable on certain systems,
+-	  it's always possible to reduce the margin by increasing the number of
+-	  clamp buckets to trade off used memory for run-time tracking
+-	  precision.
+-
+-	  If in doubt, use the default value.
+-
+ endmenu
+ 
+ #
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 1a914388144a..04736b846c85 100644
+index 04736b846c85..981ec9205fe8 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -7512,13 +7512,7 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
- 	}
+@@ -1409,17 +1409,9 @@ static struct uclamp_se uclamp_default[UCLAMP_CNT];
+  */
+ DEFINE_STATIC_KEY_FALSE(sched_uclamp_used);
  
- 	if (min) {
--		/*
--		 * The minimum utilization returns the highest level between:
--		 * - the computed DL bandwidth needed with the IRQ pressure which
--		 *   steals time to the deadline task.
--		 * - The minimum performance requirement for CFS and/or RT.
--		 */
--		*min = max(irq + cpu_bw_dl(rq), uclamp_rq_get(rq, UCLAMP_MIN));
-+		*min = irq + cpu_bw_dl(rq);
+-/* Integer rounded range for each bucket */
+-#define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
+-
+ #define for_each_clamp_id(clamp_id) \
+ 	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
  
- 		/*
- 		 * When an RT task is runnable and uclamp is not used, we must
-@@ -7537,12 +7531,8 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
- 	util = util_cfs + cpu_util_rt(rq);
- 	util += cpu_util_dl(rq);
+-static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
+-{
+-	return min_t(unsigned int, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
+-}
+-
+ static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
+ {
+ 	if (clamp_id == UCLAMP_MIN)
+@@ -1431,58 +1423,9 @@ static inline void uclamp_se_set(struct uclamp_se *uc_se,
+ 				 unsigned int value, bool user_defined)
+ {
+ 	uc_se->value = value;
+-	uc_se->bucket_id = uclamp_bucket_id(value);
+ 	uc_se->user_defined = user_defined;
+ }
+ 
+-static inline unsigned int
+-uclamp_idle_value(struct rq *rq, enum uclamp_id clamp_id,
+-		  unsigned int clamp_value)
+-{
+-	/*
+-	 * Avoid blocked utilization pushing up the frequency when we go
+-	 * idle (which drops the max-clamp) by retaining the last known
+-	 * max-clamp.
+-	 */
+-	if (clamp_id == UCLAMP_MAX) {
+-		rq->uclamp_flags |= UCLAMP_FLAG_IDLE;
+-		return clamp_value;
+-	}
+-
+-	return uclamp_none(UCLAMP_MIN);
+-}
+-
+-static inline void uclamp_idle_reset(struct rq *rq, enum uclamp_id clamp_id,
+-				     unsigned int clamp_value)
+-{
+-	/* Reset max-clamp retention only on idle exit */
+-	if (!(rq->uclamp_flags & UCLAMP_FLAG_IDLE))
+-		return;
+-
+-	uclamp_rq_set(rq, clamp_id, clamp_value);
+-}
+-
+-static inline
+-unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
+-				   unsigned int clamp_value)
+-{
+-	struct uclamp_bucket *bucket = rq->uclamp[clamp_id].bucket;
+-	int bucket_id = UCLAMP_BUCKETS - 1;
+-
+-	/*
+-	 * Since both min and max clamps are max aggregated, find the
+-	 * top most bucket with tasks in.
+-	 */
+-	for ( ; bucket_id >= 0; bucket_id--) {
+-		if (!bucket[bucket_id].tasks)
+-			continue;
+-		return bucket[bucket_id].value;
+-	}
+-
+-	/* No tasks -- default clamp values */
+-	return uclamp_idle_value(rq, clamp_id, clamp_value);
+-}
+-
+ static void __uclamp_update_util_min_rt_default(struct task_struct *p)
+ {
+ 	unsigned int default_util_min;
+@@ -1538,8 +1481,7 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+ }
+ 
+ /*
+- * The effective clamp bucket index of a task depends on, by increasing
+- * priority:
++ * The effective uclamp value of a task depends on, by increasing priority:
+  * - the task specific clamp value, when explicitly requested from userspace
+  * - the task group effective clamp value, for tasks not either in the root
+  *   group or in an autogroup
+@@ -1560,196 +1502,24 @@ uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+ 
+ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+ {
+-	struct uclamp_se uc_eff;
+-
+-	/* Task currently refcounted: use back-annotated (effective) value */
+-	if (p->uclamp[clamp_id].active)
+-		return (unsigned long)p->uclamp[clamp_id].value;
+-
+-	uc_eff = uclamp_eff_get(p, clamp_id);
+-
+-	return (unsigned long)uc_eff.value;
+-}
+-
+-/*
+- * When a task is enqueued on a rq, the clamp bucket currently defined by the
+- * task's uclamp::bucket_id is refcounted on that rq. This also immediately
+- * updates the rq's clamp value if required.
+- *
+- * Tasks can have a task-specific value requested from user-space, track
+- * within each bucket the maximum value for tasks refcounted in it.
+- * This "local max aggregation" allows to track the exact "requested" value
+- * for each bucket when all its RUNNABLE tasks require the same clamp.
+- */
+-static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
+-				    enum uclamp_id clamp_id)
+-{
+-	struct uclamp_rq *uc_rq = &rq->uclamp[clamp_id];
+-	struct uclamp_se *uc_se = &p->uclamp[clamp_id];
+-	struct uclamp_bucket *bucket;
+-
+-	lockdep_assert_rq_held(rq);
++	if (!uclamp_is_used() || !p->uclamp[clamp_id].active)
++		return uclamp_none(clamp_id);
+ 
+-	/* Update task effective clamp */
+-	p->uclamp[clamp_id] = uclamp_eff_get(p, clamp_id);
+-
+-	bucket = &uc_rq->bucket[uc_se->bucket_id];
+-	bucket->tasks++;
+-	uc_se->active = true;
+-
+-	uclamp_idle_reset(rq, clamp_id, uc_se->value);
+-
+-	/*
+-	 * Local max aggregation: rq buckets always track the max
+-	 * "requested" clamp value of its RUNNABLE tasks.
+-	 */
+-	if (bucket->tasks == 1 || uc_se->value > bucket->value)
+-		bucket->value = uc_se->value;
+-
+-	if (uc_se->value > uclamp_rq_get(rq, clamp_id))
+-		uclamp_rq_set(rq, clamp_id, uc_se->value);
++	return p->uclamp[clamp_id].value;
+ }
+ 
+-/*
+- * When a task is dequeued from a rq, the clamp bucket refcounted by the task
+- * is released. If this is the last task reference counting the rq's max
+- * active clamp value, then the rq's clamp value is updated.
+- *
+- * Both refcounted tasks and rq's cached clamp values are expected to be
+- * always valid. If it's detected they are not, as defensive programming,
+- * enforce the expected state and warn.
+- */
+-static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
+-				    enum uclamp_id clamp_id)
+-{
+-	struct uclamp_rq *uc_rq = &rq->uclamp[clamp_id];
+-	struct uclamp_se *uc_se = &p->uclamp[clamp_id];
+-	struct uclamp_bucket *bucket;
+-	unsigned int bkt_clamp;
+-	unsigned int rq_clamp;
+-
+-	lockdep_assert_rq_held(rq);
+-
+-	/*
+-	 * If sched_uclamp_used was enabled after task @p was enqueued,
+-	 * we could end up with unbalanced call to uclamp_rq_dec_id().
+-	 *
+-	 * In this case the uc_se->active flag should be false since no uclamp
+-	 * accounting was performed at enqueue time and we can just return
+-	 * here.
+-	 *
+-	 * Need to be careful of the following enqueue/dequeue ordering
+-	 * problem too
+-	 *
+-	 *	enqueue(taskA)
+-	 *	// sched_uclamp_used gets enabled
+-	 *	enqueue(taskB)
+-	 *	dequeue(taskA)
+-	 *	// Must not decrement bucket->tasks here
+-	 *	dequeue(taskB)
+-	 *
+-	 * where we could end up with stale data in uc_se and
+-	 * bucket[uc_se->bucket_id].
+-	 *
+-	 * The following check here eliminates the possibility of such race.
+-	 */
+-	if (unlikely(!uc_se->active))
+-		return;
+-
+-	bucket = &uc_rq->bucket[uc_se->bucket_id];
+-
+-	SCHED_WARN_ON(!bucket->tasks);
+-	if (likely(bucket->tasks))
+-		bucket->tasks--;
+-
+-	uc_se->active = false;
+-
+-	/*
+-	 * Keep "local max aggregation" simple and accept to (possibly)
+-	 * overboost some RUNNABLE tasks in the same bucket.
+-	 * The rq clamp bucket value is reset to its base value whenever
+-	 * there are no more RUNNABLE tasks refcounting it.
+-	 */
+-	if (likely(bucket->tasks))
+-		return;
+-
+-	rq_clamp = uclamp_rq_get(rq, clamp_id);
+-	/*
+-	 * Defensive programming: this should never happen. If it happens,
+-	 * e.g. due to future modification, warn and fixup the expected value.
+-	 */
+-	SCHED_WARN_ON(bucket->value > rq_clamp);
+-	if (bucket->value >= rq_clamp) {
+-		bkt_clamp = uclamp_rq_max_value(rq, clamp_id, uc_se->value);
+-		uclamp_rq_set(rq, clamp_id, bkt_clamp);
+-	}
+-}
+-
+-static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+-{
+-	enum uclamp_id clamp_id;
+-
+-	/*
+-	 * Avoid any overhead until uclamp is actually used by the userspace.
+-	 *
+-	 * The condition is constructed such that a NOP is generated when
+-	 * sched_uclamp_used is disabled.
+-	 */
+-	if (!static_branch_unlikely(&sched_uclamp_used))
+-		return;
+-
+-	if (unlikely(!p->sched_class->uclamp_enabled))
+-		return;
+-
+-	for_each_clamp_id(clamp_id)
+-		uclamp_rq_inc_id(rq, p, clamp_id);
+-
+-	/* Reset clamp idle holding when there is one RUNNABLE task */
+-	if (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
+-		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
+-}
+-
+-static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
++static inline void
++uclamp_update_active_nolock(struct task_struct *p)
+ {
+ 	enum uclamp_id clamp_id;
  
 -	/*
--	 * The maximum hint is a soft bandwidth requirement, which can be lower
--	 * than the actual utilization because of uclamp_max requirements.
+-	 * Avoid any overhead until uclamp is actually used by the userspace.
+-	 *
+-	 * The condition is constructed such that a NOP is generated when
+-	 * sched_uclamp_used is disabled.
 -	 */
- 	if (max)
--		*max = min(scale, uclamp_rq_get(rq, UCLAMP_MAX));
-+		*max = scale;
+-	if (!static_branch_unlikely(&sched_uclamp_used))
+-		return;
+-
+-	if (unlikely(!p->sched_class->uclamp_enabled))
+-		return;
+-
+ 	for_each_clamp_id(clamp_id)
+-		uclamp_rq_dec_id(rq, p, clamp_id);
+-}
+-
+-static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
+-				      enum uclamp_id clamp_id)
+-{
+-	if (!p->uclamp[clamp_id].active)
+-		return;
+-
+-	uclamp_rq_dec_id(rq, p, clamp_id);
+-	uclamp_rq_inc_id(rq, p, clamp_id);
+-
+-	/*
+-	 * Make sure to clear the idle flag if we've transiently reached 0
+-	 * active tasks on rq.
+-	 */
+-	if (clamp_id == UCLAMP_MAX && (rq->uclamp_flags & UCLAMP_FLAG_IDLE))
+-		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
++		p->uclamp[clamp_id] = uclamp_eff_get(p, clamp_id);
+ }
  
- 	if (util >= scale)
- 		return scale;
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index eece6244f9d2..65fdcf4d73d1 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -197,7 +197,7 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
- 
- static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
+ static inline void
+ uclamp_update_active(struct task_struct *p)
  {
--	unsigned long min, max, util = cpu_util_cfs_boost(sg_cpu->cpu);
-+	unsigned long min, max, util = cpu_util_cfs_boost_uclamp(sg_cpu->cpu);
+-	enum uclamp_id clamp_id;
+ 	struct rq_flags rf;
+ 	struct rq *rq;
  
- 	util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
- 	util = max(util, boost);
-@@ -385,11 +385,8 @@ static void sugov_update_single_freq(struct update_util_data *hook, u64 time,
- 	/*
- 	 * Do not reduce the frequency if the CPU has not been idle
- 	 * recently, as the reduction is likely to be premature then.
--	 *
--	 * Except when the rq is capped by uclamp_max.
+@@ -1763,14 +1533,7 @@ uclamp_update_active(struct task_struct *p)
  	 */
--	if (!uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)) &&
--	    sugov_cpu_is_busy(sg_cpu) && next_f < sg_policy->next_freq &&
-+	if (sugov_cpu_is_busy(sg_cpu) && next_f < sg_policy->next_freq &&
- 	    !sg_policy->need_freq_update) {
- 		next_f = sg_policy->next_freq;
+ 	rq = task_rq_lock(p, &rf);
  
-@@ -439,11 +436,8 @@ static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
- 	/*
- 	 * Do not reduce the target performance level if the CPU has not been
- 	 * idle recently, as the reduction is likely to be premature then.
--	 *
--	 * Except when the rq is capped by uclamp_max.
- 	 */
--	if (!uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)) &&
--	    sugov_cpu_is_busy(sg_cpu) && sg_cpu->util < prev_util)
-+	if (sugov_cpu_is_busy(sg_cpu) && sg_cpu->util < prev_util)
- 		sg_cpu->util = prev_util;
+-	/*
+-	 * Setting the clamp bucket is serialized by task_rq_lock().
+-	 * If the task is not yet RUNNABLE and its task_struct is not
+-	 * affecting a valid clamp bucket, the next time it's enqueued,
+-	 * it will already see the updated clamp bucket value.
+-	 */
+-	for_each_clamp_id(clamp_id)
+-		uclamp_rq_reinc_id(rq, p, clamp_id);
++	uclamp_update_active_nolock(p);
  
- 	cpufreq_driver_adjust_perf(sg_cpu->cpu, sg_cpu->bw_min,
+ 	task_rq_unlock(rq, p, &rf);
+ }
+@@ -1997,26 +1760,22 @@ static void __setscheduler_uclamp(struct task_struct *p,
+ 		uclamp_se_set(&p->uclamp_req[UCLAMP_MAX],
+ 			      attr->sched_util_max, true);
+ 	}
++
++	uclamp_update_active_nolock(p);
+ }
+ 
+ static void uclamp_fork(struct task_struct *p)
+ {
+ 	enum uclamp_id clamp_id;
+ 
+-	/*
+-	 * We don't need to hold task_rq_lock() when updating p->uclamp_* here
+-	 * as the task is still at its early fork stages.
+-	 */
+-	for_each_clamp_id(clamp_id)
+-		p->uclamp[clamp_id].active = false;
+-
+-	if (likely(!p->sched_reset_on_fork))
+-		return;
+-
+-	for_each_clamp_id(clamp_id) {
+-		uclamp_se_set(&p->uclamp_req[clamp_id],
+-			      uclamp_none(clamp_id), false);
++	if (unlikely(p->sched_reset_on_fork)) {
++		for_each_clamp_id(clamp_id) {
++			uclamp_se_set(&p->uclamp_req[clamp_id],
++				      uclamp_none(clamp_id), false);
++		}
+ 	}
++
++	uclamp_update_active(p);
+ }
+ 
+ static void uclamp_post_fork(struct task_struct *p)
+@@ -2024,28 +1783,10 @@ static void uclamp_post_fork(struct task_struct *p)
+ 	uclamp_update_util_min_rt_default(p);
+ }
+ 
+-static void __init init_uclamp_rq(struct rq *rq)
+-{
+-	enum uclamp_id clamp_id;
+-	struct uclamp_rq *uc_rq = rq->uclamp;
+-
+-	for_each_clamp_id(clamp_id) {
+-		uc_rq[clamp_id] = (struct uclamp_rq) {
+-			.value = uclamp_none(clamp_id)
+-		};
+-	}
+-
+-	rq->uclamp_flags = UCLAMP_FLAG_IDLE;
+-}
+-
+ static void __init init_uclamp(void)
+ {
+ 	struct uclamp_se uc_max = {};
+ 	enum uclamp_id clamp_id;
+-	int cpu;
+-
+-	for_each_possible_cpu(cpu)
+-		init_uclamp_rq(cpu_rq(cpu));
+ 
+ 	for_each_clamp_id(clamp_id) {
+ 		uclamp_se_set(&init_task.uclamp_req[clamp_id],
+@@ -2064,8 +1805,7 @@ static void __init init_uclamp(void)
+ }
+ 
+ #else /* !CONFIG_UCLAMP_TASK */
+-static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p) { }
+-static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { }
++static inline void uclamp_update_active_nolock(struct task_struct *p) { }
+ static inline int uclamp_validate(struct task_struct *p,
+ 				  const struct sched_attr *attr)
+ {
+@@ -2112,7 +1852,6 @@ static inline void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+ 		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
+ 	}
+ 
+-	uclamp_rq_inc(rq, p);
+ 	p->sched_class->enqueue_task(rq, p, flags);
+ 
+ 	if (sched_core_enabled(rq))
+@@ -2132,7 +1871,6 @@ static inline void dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+ 		psi_dequeue(p, flags & DEQUEUE_SLEEP);
+ 	}
+ 
+-	uclamp_rq_dec(rq, p);
+ 	p->sched_class->dequeue_task(rq, p, flags);
+ }
+ 
+@@ -10499,6 +10237,7 @@ void sched_move_task(struct task_struct *tsk)
+ 		put_prev_task(rq, tsk);
+ 
+ 	sched_change_group(tsk, group);
++	uclamp_update_active_nolock(tsk);
+ 
+ 	if (queued)
+ 		enqueue_task(rq, tsk, queue_flags);
+@@ -10631,7 +10370,6 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
+ 			if (eff[clamp_id] == uc_se[clamp_id].value)
+ 				continue;
+ 			uc_se[clamp_id].value = eff[clamp_id];
+-			uc_se[clamp_id].bucket_id = uclamp_bucket_id(eff[clamp_id]);
+ 			clamps |= (0x1 << clamp_id);
+ 		}
+ 		if (!clamps) {
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 571c8de59508..14376f23a8b7 100644
+index 14376f23a8b7..0177d7e8f364 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -4819,14 +4819,14 @@ static inline unsigned long cfs_rq_load_avg(struct cfs_rq *cfs_rq)
- 
- static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf);
- 
--static inline unsigned long task_util(struct task_struct *p)
-+static inline unsigned long task_runnable(struct task_struct *p)
- {
--	return READ_ONCE(p->se.avg.util_avg);
-+	return READ_ONCE(p->se.avg.runnable_avg);
- }
- 
--static inline unsigned long task_runnable(struct task_struct *p)
-+static inline unsigned long task_util(struct task_struct *p)
- {
--	return READ_ONCE(p->se.avg.runnable_avg);
-+	return READ_ONCE(p->se.avg.util_avg);
- }
- 
- static inline unsigned long _task_util_est(struct task_struct *p)
-@@ -4839,6 +4839,52 @@ static inline unsigned long task_util_est(struct task_struct *p)
- 	return max(task_util(p), _task_util_est(p));
- }
- 
-+#ifdef CONFIG_UCLAMP_TASK
-+static inline long task_util_bias(struct task_struct *p)
-+{
-+	return READ_ONCE(p->se.avg.util_avg_bias);
-+}
-+
-+static inline unsigned long task_util_uclamp(struct task_struct *p)
-+{
-+	long ret = task_util(p);
-+
-+	ret += task_util_bias(p);
-+
-+	return ret < 0 ? 0 : ret;
-+}
-+
-+static inline unsigned long _task_util_est_uclamp(struct task_struct *p)
-+{
-+	return READ_ONCE(p->se.avg.util_est_uclamp);
-+}
-+
-+static inline unsigned long task_util_est_uclamp(struct task_struct *p)
-+{
-+	return max(task_util_uclamp(p), _task_util_est_uclamp(p));
-+}
-+#else
-+static inline long task_util_bias(struct task_struct *p)
-+{
-+	return 0;
-+}
-+
-+static inline unsigned long task_util_uclamp(struct task_struct *p)
-+{
-+	return task_util(p);
-+}
-+
-+static inline unsigned long _task_util_est_uclamp(struct task_struct *p)
-+{
-+	return _task_util_est(p);
-+}
-+
-+static inline unsigned long task_util_est_uclamp(struct task_struct *p)
-+{
-+	return task_util_est(p);
-+}
-+#endif
-+
- static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
- 				    struct task_struct *p)
- {
-@@ -4851,6 +4897,9 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
- 	enqueued  = cfs_rq->avg.util_est;
- 	enqueued += _task_util_est(p);
- 	WRITE_ONCE(cfs_rq->avg.util_est, enqueued);
-+	enqueued  = cfs_rq->avg.util_est_uclamp;
-+	enqueued += _task_util_est_uclamp(p);
-+	WRITE_ONCE(cfs_rq->avg.util_est_uclamp, enqueued);
- 
- 	trace_sched_util_est_cfs_tp(cfs_rq);
- }
-@@ -4867,6 +4916,9 @@ static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
- 	enqueued  = cfs_rq->avg.util_est;
- 	enqueued -= min_t(unsigned int, enqueued, _task_util_est(p));
- 	WRITE_ONCE(cfs_rq->avg.util_est, enqueued);
-+	enqueued  = cfs_rq->avg.util_est_uclamp;
-+	enqueued -= min_t(unsigned int, enqueued, _task_util_est_uclamp(p));
-+	WRITE_ONCE(cfs_rq->avg.util_est_uclamp, enqueued);
- 
- 	trace_sched_util_est_cfs_tp(cfs_rq);
- }
-@@ -4954,6 +5006,10 @@ static inline void util_est_update(struct cfs_rq *cfs_rq,
- 	ewma  -= last_ewma_diff;
- 	ewma >>= UTIL_EST_WEIGHT_SHIFT;
- done:
-+	WRITE_ONCE(p->se.avg.util_est_uclamp,
-+		   clamp(ewma,
-+			 (unsigned int)uclamp_eff_value(p, UCLAMP_MIN),
-+			 (unsigned int)uclamp_eff_value(p, UCLAMP_MAX)));
- 	ewma |= UTIL_AVG_UNCHANGED;
- 	WRITE_ONCE(p->se.avg.util_est, ewma);
- 
-@@ -4970,134 +5026,29 @@ static inline unsigned long get_actual_cpu_capacity(int cpu)
- }
- 
- static inline int util_fits_cpu(unsigned long util,
--				unsigned long uclamp_min,
--				unsigned long uclamp_max,
-+				unsigned long util_uclamp,
- 				int cpu)
- {
- 	unsigned long capacity = capacity_of(cpu);
--	unsigned long capacity_orig;
--	bool fits, uclamp_max_fits;
--
--	/*
--	 * Check if the real util fits without any uclamp boost/cap applied.
--	 */
--	fits = fits_capacity(util, capacity);
--
--	if (!uclamp_is_used())
--		return fits;
--
--	/*
--	 * We must use arch_scale_cpu_capacity() for comparing against uclamp_min and
--	 * uclamp_max. We only care about capacity pressure (by using
--	 * capacity_of()) for comparing against the real util.
--	 *
--	 * If a task is boosted to 1024 for example, we don't want a tiny
--	 * pressure to skew the check whether it fits a CPU or not.
--	 *
--	 * Similarly if a task is capped to arch_scale_cpu_capacity(little_cpu), it
--	 * should fit a little cpu even if there's some pressure.
--	 *
--	 * Only exception is for HW or cpufreq pressure since it has a direct impact
--	 * on available OPP of the system.
--	 *
--	 * We honour it for uclamp_min only as a drop in performance level
--	 * could result in not getting the requested minimum performance level.
--	 *
--	 * For uclamp_max, we can tolerate a drop in performance level as the
--	 * goal is to cap the task. So it's okay if it's getting less.
--	 */
--	capacity_orig = arch_scale_cpu_capacity(cpu);
- 
--	/*
--	 * We want to force a task to fit a cpu as implied by uclamp_max.
--	 * But we do have some corner cases to cater for..
--	 *
--	 *
--	 *                                 C=z
--	 *   |                             ___
--	 *   |                  C=y       |   |
--	 *   |_ _ _ _ _ _ _ _ _ ___ _ _ _ | _ | _ _ _ _ _  uclamp_max
--	 *   |      C=x        |   |      |   |
--	 *   |      ___        |   |      |   |
--	 *   |     |   |       |   |      |   |    (util somewhere in this region)
--	 *   |     |   |       |   |      |   |
--	 *   |     |   |       |   |      |   |
--	 *   +----------------------------------------
--	 *         CPU0        CPU1       CPU2
--	 *
--	 *   In the above example if a task is capped to a specific performance
--	 *   point, y, then when:
--	 *
--	 *   * util = 80% of x then it does not fit on CPU0 and should migrate
--	 *     to CPU1
--	 *   * util = 80% of y then it is forced to fit on CPU1 to honour
--	 *     uclamp_max request.
--	 *
--	 *   which is what we're enforcing here. A task always fits if
--	 *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
--	 *   the normal upmigration rules should withhold still.
--	 *
--	 *   Only exception is when we are on max capacity, then we need to be
--	 *   careful not to block overutilized state. This is so because:
--	 *
--	 *     1. There's no concept of capping at max_capacity! We can't go
--	 *        beyond this performance level anyway.
--	 *     2. The system is being saturated when we're operating near
--	 *        max capacity, it doesn't make sense to block overutilized.
--	 */
--	uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
--	uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
--	fits = fits || uclamp_max_fits;
-+	if (fits_capacity(util_uclamp, capacity))
-+		return 1;
- 
--	/*
--	 *
--	 *                                 C=z
--	 *   |                             ___       (region a, capped, util >= uclamp_max)
--	 *   |                  C=y       |   |
--	 *   |_ _ _ _ _ _ _ _ _ ___ _ _ _ | _ | _ _ _ _ _ uclamp_max
--	 *   |      C=x        |   |      |   |
--	 *   |      ___        |   |      |   |      (region b, uclamp_min <= util <= uclamp_max)
--	 *   |_ _ _|_ _|_ _ _ _| _ | _ _ _| _ | _ _ _ _ _ uclamp_min
--	 *   |     |   |       |   |      |   |
--	 *   |     |   |       |   |      |   |      (region c, boosted, util < uclamp_min)
--	 *   +----------------------------------------
--	 *         CPU0        CPU1       CPU2
--	 *
--	 * a) If util > uclamp_max, then we're capped, we don't care about
--	 *    actual fitness value here. We only care if uclamp_max fits
--	 *    capacity without taking margin/pressure into account.
--	 *    See comment above.
--	 *
--	 * b) If uclamp_min <= util <= uclamp_max, then the normal
--	 *    fits_capacity() rules apply. Except we need to ensure that we
--	 *    enforce we remain within uclamp_max, see comment above.
--	 *
--	 * c) If util < uclamp_min, then we are boosted. Same as (b) but we
--	 *    need to take into account the boosted value fits the CPU without
--	 *    taking margin/pressure into account.
--	 *
--	 * Cases (a) and (b) are handled in the 'fits' variable already. We
--	 * just need to consider an extra check for case (c) after ensuring we
--	 * handle the case uclamp_min > uclamp_max.
--	 */
--	uclamp_min = min(uclamp_min, uclamp_max);
--	if (fits && (util < uclamp_min) &&
--	    (uclamp_min > get_actual_cpu_capacity(cpu)))
-+	if (fits_capacity(util, capacity))
- 		return -1;
- 
--	return fits;
-+	return 0;
- }
- 
- static inline int task_fits_cpu(struct task_struct *p, int cpu)
- {
--	unsigned long uclamp_min = uclamp_eff_value(p, UCLAMP_MIN);
--	unsigned long uclamp_max = uclamp_eff_value(p, UCLAMP_MAX);
- 	unsigned long util = task_util_est(p);
-+	unsigned long util_uclamp = task_util_est_uclamp(p);
- 	/*
- 	 * Return true only if the cpu fully fits the task requirements, which
- 	 * include the utilization but also the performance hints.
- 	 */
--	return (util_fits_cpu(util, uclamp_min, uclamp_max, cpu) > 0);
-+	return (util_fits_cpu(util, util_uclamp, cpu) > 0);
- }
- 
- static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
-@@ -6675,18 +6626,14 @@ static inline void hrtick_update(struct rq *rq)
+@@ -13196,10 +13196,6 @@ DEFINE_SCHED_CLASS(fair) = {
+ #ifdef CONFIG_SCHED_CORE
+ 	.task_is_throttled	= task_is_throttled_fair,
  #endif
- 
- #ifdef CONFIG_SMP
-+static unsigned long cpu_util_cfs_uclamp(int cpu);
-+
- static inline bool cpu_overutilized(int cpu)
- {
--	unsigned long  rq_util_min, rq_util_max;
 -
- 	if (!sched_energy_enabled())
- 		return false;
+-#ifdef CONFIG_UCLAMP_TASK
+-	.uclamp_enabled		= 1,
+-#endif
+ };
  
--	rq_util_min = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MIN);
--	rq_util_max = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MAX);
--
--	/* Return true only if the utilization doesn't fit CPU's capacity */
--	return !util_fits_cpu(cpu_util_cfs(cpu), rq_util_min, rq_util_max, cpu);
-+	return !util_fits_cpu(cpu_util_cfs(cpu), cpu_util_cfs_uclamp(cpu), cpu);
- }
- 
- /*
-@@ -6914,6 +6861,10 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 			"0 tasks on CFS of CPU %d, but util_avg_bias is %d\n",
- 			rq->cpu, rq->cfs.avg.util_avg_bias);
- 		WRITE_ONCE(rq->cfs.avg.util_avg_bias, 0);
-+		WARN_ONCE(rq->cfs.avg.util_est_uclamp,
-+			"0 tasks on CFS of CPU %d, but util_est_uclamp is %u\n",
-+			rq->cpu, rq->cfs.avg.util_est_uclamp);
-+		WRITE_ONCE(rq->cfs.avg.util_est_uclamp, 0);
- 	}
+ #ifdef CONFIG_SCHED_DEBUG
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 3261b067b67e..86733bed0e3c 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2681,10 +2681,6 @@ DEFINE_SCHED_CLASS(rt) = {
+ #ifdef CONFIG_SCHED_CORE
+ 	.task_is_throttled	= task_is_throttled_rt,
  #endif
- }
-@@ -7485,7 +7436,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
- static int
- select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
- {
--	unsigned long task_util, util_min, util_max, best_cap = 0;
-+	unsigned long task_util, task_util_uclamp, best_cap = 0;
- 	int fits, best_fits = 0;
- 	int cpu, best_cpu = -1;
- 	struct cpumask *cpus;
-@@ -7494,8 +7445,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
- 	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
- 
- 	task_util = task_util_est(p);
--	util_min = uclamp_eff_value(p, UCLAMP_MIN);
--	util_max = uclamp_eff_value(p, UCLAMP_MAX);
-+	task_util_uclamp = task_util_est_uclamp(p);
- 
- 	for_each_cpu_wrap(cpu, cpus, target) {
- 		unsigned long cpu_cap = capacity_of(cpu);
-@@ -7503,7 +7453,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
- 		if (!available_idle_cpu(cpu) && !sched_idle_cpu(cpu))
- 			continue;
- 
--		fits = util_fits_cpu(task_util, util_min, util_max, cpu);
-+		fits = util_fits_cpu(task_util, task_util_uclamp, cpu);
- 
- 		/* This CPU fits with all requirements */
- 		if (fits > 0)
-@@ -7531,8 +7481,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
- }
- 
- static inline bool asym_fits_cpu(unsigned long util,
--				 unsigned long util_min,
--				 unsigned long util_max,
-+				 unsigned long util_uclamp,
- 				 int cpu)
- {
- 	if (sched_asym_cpucap_active())
-@@ -7540,7 +7489,7 @@ static inline bool asym_fits_cpu(unsigned long util,
- 		 * Return true only if the cpu fully fits the task requirements
- 		 * which include the utilization and the performance hints.
- 		 */
--		return (util_fits_cpu(util, util_min, util_max, cpu) > 0);
-+		return (util_fits_cpu(util, util_uclamp, cpu) > 0);
- 
- 	return true;
- }
-@@ -7552,7 +7501,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- {
- 	bool has_idle_core = false;
- 	struct sched_domain *sd;
--	unsigned long task_util, util_min, util_max;
-+	unsigned long task_util, task_util_uclamp;
- 	int i, recent_used_cpu, prev_aff = -1;
- 
- 	/*
-@@ -7562,8 +7511,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	if (sched_asym_cpucap_active()) {
- 		sync_entity_load_avg(&p->se);
- 		task_util = task_util_est(p);
--		util_min = uclamp_eff_value(p, UCLAMP_MIN);
--		util_max = uclamp_eff_value(p, UCLAMP_MAX);
-+		task_util_uclamp = task_util_est_uclamp(p);
- 	}
- 
- 	/*
-@@ -7572,7 +7520,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	lockdep_assert_irqs_disabled();
- 
- 	if ((available_idle_cpu(target) || sched_idle_cpu(target)) &&
--	    asym_fits_cpu(task_util, util_min, util_max, target))
-+	    asym_fits_cpu(task_util, task_util_uclamp, target))
- 		return target;
- 
- 	/*
-@@ -7580,7 +7528,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	 */
- 	if (prev != target && cpus_share_cache(prev, target) &&
- 	    (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
--	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
-+	    asym_fits_cpu(task_util, task_util_uclamp, prev)) {
- 
- 		if (!static_branch_unlikely(&sched_cluster_active) ||
- 		    cpus_share_resources(prev, target))
-@@ -7601,7 +7549,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	    in_task() &&
- 	    prev == smp_processor_id() &&
- 	    this_rq()->nr_running <= 1 &&
--	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
-+	    asym_fits_cpu(task_util, task_util_uclamp, prev)) {
- 		return prev;
- 	}
- 
-@@ -7613,7 +7561,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	    cpus_share_cache(recent_used_cpu, target) &&
- 	    (available_idle_cpu(recent_used_cpu) || sched_idle_cpu(recent_used_cpu)) &&
- 	    cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
--	    asym_fits_cpu(task_util, util_min, util_max, recent_used_cpu)) {
-+	    asym_fits_cpu(task_util, task_util_uclamp, recent_used_cpu)) {
- 
- 		if (!static_branch_unlikely(&sched_cluster_active) ||
- 		    cpus_share_resources(recent_used_cpu, target))
-@@ -7781,16 +7729,67 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
- 	return min(util, arch_scale_cpu_capacity(cpu));
- }
- 
-+/* This is basically a copy-paste from cpu_util(), but instead using uclamp values. */
-+static unsigned long
-+cpu_util_uclamp(int cpu, struct task_struct *p, int dst_cpu, int boost)
-+{
-+	struct rq *rq = cpu_rq(cpu);
-+	struct cfs_rq *cfs_rq = &rq->cfs;
-+	unsigned long util = root_cfs_util_uclamp(rq);
-+
-+	if (boost) {
-+		unsigned long runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
-+		unsigned long util_raw = READ_ONCE(cfs_rq->avg.util_avg);
-+
-+		util = max(util, util_raw ? util * runnable / util_raw : 0);
-+	}
-+
-+	if (p) {
-+		if (task_cpu(p) == cpu && !p->se.on_rq) {
-+			util += task_util_bias(p);
-+			if ((long)util < 0)
-+				util = 0;
-+		}
-+		if (task_cpu(p) == cpu && dst_cpu != cpu)
-+			lsub_positive(&util, task_util_uclamp(p));
-+		else if (task_cpu(p) != cpu && dst_cpu == cpu)
-+			util += task_util_uclamp(p);
-+	}
-+
-+	if (sched_feat(UTIL_EST)) {
-+		unsigned long util_est = READ_ONCE(cfs_rq->avg.util_est_uclamp);
-+
-+		if (dst_cpu == cpu)
-+			util_est += _task_util_est_uclamp(p);
-+		else if (p && unlikely(task_on_rq_queued(p) || current == p))
-+			lsub_positive(&util_est, _task_util_est_uclamp(p));
-+
-+		util = max(util, util_est);
-+	}
-+
-+	return min(util, arch_scale_cpu_capacity(cpu));
-+}
-+
- unsigned long cpu_util_cfs(int cpu)
- {
- 	return cpu_util(cpu, NULL, -1, 0);
- }
- 
--unsigned long cpu_util_cfs_boost(int cpu)
-+static unsigned long cpu_util_cfs_uclamp(int cpu)
-+{
-+	return cpu_util_uclamp(cpu, NULL, -1, 0);
-+}
-+
-+static unsigned long cpu_util_cfs_boost(int cpu)
- {
- 	return cpu_util(cpu, NULL, -1, 1);
- }
- 
-+unsigned long cpu_util_cfs_boost_uclamp(int cpu)
-+{
-+	return cpu_util_uclamp(cpu, NULL, -1, 1);
-+}
-+
- /*
-  * cpu_util_without: compute cpu utilization without any contributions from *p
-  * @cpu: the CPU which utilization is requested
-@@ -7901,33 +7900,15 @@ eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
- 	int cpu;
- 
- 	for_each_cpu(cpu, pd_cpus) {
--		struct task_struct *tsk = (cpu == dst_cpu) ? p : NULL;
--		unsigned long util = cpu_util(cpu, p, dst_cpu, 1);
-+		unsigned long util = cpu_util_uclamp(cpu, p, dst_cpu, 1);
- 		unsigned long eff_util, min, max;
- 
- 		/*
--		 * Performance domain frequency: utilization clamping
--		 * must be considered since it affects the selection
--		 * of the performance domain frequency.
- 		 * NOTE: in case RT tasks are running, by default the
- 		 * FREQUENCY_UTIL's utilization can be max OPP.
- 		 */
- 		eff_util = effective_cpu_util(cpu, util, &min, &max);
- 
--		/* Task's uclamp can modify min and max value */
--		if (tsk && uclamp_is_used()) {
--			min = max(min, uclamp_eff_value(p, UCLAMP_MIN));
 -
--			/*
--			 * If there is no active max uclamp constraint,
--			 * directly use task's one, otherwise keep max.
--			 */
--			if (uclamp_rq_is_idle(cpu_rq(cpu)))
--				max = uclamp_eff_value(p, UCLAMP_MAX);
--			else
--				max = max(max, uclamp_eff_value(p, UCLAMP_MAX));
--		}
--
- 		eff_util = sugov_effective_cpu_perf(cpu, eff_util, min, max);
- 		max_util = max(max_util, eff_util);
- 	}
-@@ -8001,8 +7982,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- {
- 	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
- 	unsigned long prev_delta = ULONG_MAX, best_delta = ULONG_MAX;
--	unsigned long p_util_min = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MIN) : 0;
--	unsigned long p_util_max = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MAX) : 1024;
- 	struct root_domain *rd = this_rq()->rd;
- 	int cpu, best_energy_cpu, target = -1;
- 	int prev_fits = -1, best_fits = -1;
-@@ -8030,16 +8009,14 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 	target = prev_cpu;
+-#ifdef CONFIG_UCLAMP_TASK
+-	.uclamp_enabled		= 1,
+-#endif
+ };
  
- 	sync_entity_load_avg(&p->se);
--	if (!task_util_est(p) && p_util_min == 0)
-+	if (!task_util_est_uclamp(p))
- 		goto unlock;
- 
- 	eenv_task_busy_time(&eenv, p, prev_cpu);
- 
- 	for (; pd; pd = pd->next) {
--		unsigned long util_min = p_util_min, util_max = p_util_max;
--		unsigned long cpu_cap, cpu_actual_cap, util;
-+		unsigned long cpu_cap, cpu_actual_cap, util, util_uclamp;
- 		unsigned long cur_delta, max_spare_cap = 0;
--		unsigned long rq_util_min, rq_util_max;
- 		unsigned long prev_spare_cap = 0;
- 		int max_spare_cap_cpu = -1;
- 		unsigned long base_energy;
-@@ -8058,8 +8035,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 		eenv.pd_cap = 0;
- 
- 		for_each_cpu(cpu, cpus) {
--			struct rq *rq = cpu_rq(cpu);
--
- 			eenv.pd_cap += cpu_actual_cap;
- 
- 			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-@@ -8069,36 +8044,17 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 				continue;
- 
- 			util = cpu_util(cpu, p, cpu, 0);
-+			util_uclamp = cpu_util_uclamp(cpu, p, cpu, 0);
- 			cpu_cap = capacity_of(cpu);
- 
--			/*
--			 * Skip CPUs that cannot satisfy the capacity request.
--			 * IOW, placing the task there would make the CPU
--			 * overutilized. Take uclamp into account to see how
--			 * much capacity we can get out of the CPU; this is
--			 * aligned with sched_cpu_util().
--			 */
--			if (uclamp_is_used() && !uclamp_rq_is_idle(rq)) {
--				/*
--				 * Open code uclamp_rq_util_with() except for
--				 * the clamp() part. I.e.: apply max aggregation
--				 * only. util_fits_cpu() logic requires to
--				 * operate on non clamped util but must use the
--				 * max-aggregated uclamp_{min, max}.
--				 */
--				rq_util_min = uclamp_rq_get(rq, UCLAMP_MIN);
--				rq_util_max = uclamp_rq_get(rq, UCLAMP_MAX);
--
--				util_min = max(rq_util_min, p_util_min);
--				util_max = max(rq_util_max, p_util_max);
--			}
--
--			fits = util_fits_cpu(util, util_min, util_max, cpu);
-+			fits = util_fits_cpu(util, util_uclamp, cpu);
-+			if (fits == 1)
-+				lsub_positive(&cpu_cap, util_uclamp);
-+			else if (fits == -1)
-+				lsub_positive(&cpu_cap, util);
- 			if (!fits)
- 				continue;
- 
--			lsub_positive(&cpu_cap, util);
--
- 			if (cpu == prev_cpu) {
- 				/* Always use prev_cpu as a candidate. */
- 				prev_spare_cap = cpu_cap;
+ #ifdef CONFIG_RT_GROUP_SCHED
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index aec812e6c6ba..733bd746319a 100644
+index 733bd746319a..b99d176623e1 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -3038,9 +3038,8 @@ static inline unsigned long cpu_util_dl(struct rq *rq)
- 	return READ_ONCE(rq->avg_dl.util_avg);
- }
+@@ -943,46 +943,6 @@ extern void rto_push_irq_work_func(struct irq_work *work);
+ #endif /* CONFIG_SMP */
  
+ #ifdef CONFIG_UCLAMP_TASK
+-/*
+- * struct uclamp_bucket - Utilization clamp bucket
+- * @value: utilization clamp value for tasks on this clamp bucket
+- * @tasks: number of RUNNABLE tasks on this clamp bucket
+- *
+- * Keep track of how many tasks are RUNNABLE for a given utilization
+- * clamp value.
+- */
+-struct uclamp_bucket {
+-	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
+-	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
+-};
 -
- extern unsigned long cpu_util_cfs(int cpu);
--extern unsigned long cpu_util_cfs_boost(int cpu);
-+extern unsigned long cpu_util_cfs_boost_uclamp(int cpu);
- 
- static inline unsigned long cpu_util_rt(struct rq *rq)
- {
-@@ -3068,19 +3067,13 @@ static inline bool uclamp_rq_is_idle(struct rq *rq)
- 	return rq->uclamp_flags & UCLAMP_FLAG_IDLE;
- }
- 
--/* Is the rq being capped/throttled by uclamp_max? */
--static inline bool uclamp_rq_is_capped(struct rq *rq)
-+static inline unsigned long root_cfs_util_uclamp(struct rq *rq)
- {
--	unsigned long rq_util;
--	unsigned long max_util;
+-/*
+- * struct uclamp_rq - rq's utilization clamp
+- * @value: currently active clamp values for a rq
+- * @bucket: utilization clamp buckets affecting a rq
+- *
+- * Keep track of RUNNABLE tasks on a rq to aggregate their clamp values.
+- * A clamp value is affecting a rq when there is at least one task RUNNABLE
+- * (or actually running) with that value.
+- *
+- * There are up to UCLAMP_CNT possible different clamp values, currently there
+- * are only two: minimum utilization and maximum utilization.
+- *
+- * All utilization clamping values are MAX aggregated, since:
+- * - for util_min: we want to run the CPU at least at the max of the minimum
+- *   utilization required by its currently RUNNABLE tasks.
+- * - for util_max: we want to allow the CPU to run up to the max of the
+- *   maximum utilization allowed by its currently RUNNABLE tasks.
+- *
+- * Since on each system we expect only a limited number of different
+- * utilization clamp values (UCLAMP_BUCKETS), use a simple array to track
+- * the metrics required to compute all the per-rq utilization clamp values.
+- */
+-struct uclamp_rq {
+-	unsigned int value;
+-	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+-};
 -
--	if (!static_branch_likely(&sched_uclamp_used))
--		return false;
-+	long ret = READ_ONCE(rq->cfs.avg.util_avg);
+ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
+ #endif /* CONFIG_UCLAMP_TASK */
  
--	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
--	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
-+	ret += READ_ONCE(rq->cfs.avg.util_avg_bias);
+@@ -1025,10 +985,6 @@ struct rq {
+ 	u64			nr_switches;
  
--	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
-+	return ret < 0 ? 0 : ret;
+ #ifdef CONFIG_UCLAMP_TASK
+-	/* Utilization clamp values based on CPU's RUNNABLE tasks */
+-	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+-	unsigned int		uclamp_flags;
+-#define UCLAMP_FLAG_IDLE 0x01
+ #endif
+ 
+ 	struct cfs_rq		cfs;
+@@ -2258,11 +2214,6 @@ struct affinity_context {
+ extern s64 update_curr_common(struct rq *rq);
+ 
+ struct sched_class {
+-
+-#ifdef CONFIG_UCLAMP_TASK
+-	int uclamp_enabled;
+-#endif
+-
+ 	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+ 	void (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+ 	void (*yield_task)   (struct rq *rq);
+@@ -3050,23 +3001,6 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
+ #ifdef CONFIG_UCLAMP_TASK
+ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+ 
+-static inline unsigned long uclamp_rq_get(struct rq *rq,
+-					  enum uclamp_id clamp_id)
+-{
+-	return READ_ONCE(rq->uclamp[clamp_id].value);
+-}
+-
+-static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
+-				 unsigned int value)
+-{
+-	WRITE_ONCE(rq->uclamp[clamp_id].value, value);
+-}
+-
+-static inline bool uclamp_rq_is_idle(struct rq *rq)
+-{
+-	return rq->uclamp_flags & UCLAMP_FLAG_IDLE;
+-}
+-
+ static inline unsigned long root_cfs_util_uclamp(struct rq *rq)
+ {
+ 	long ret = READ_ONCE(rq->cfs.avg.util_avg);
+@@ -3126,25 +3060,6 @@ static inline bool uclamp_is_used(void)
+ 	return false;
  }
  
- /*
-@@ -3123,7 +3116,10 @@ static inline unsigned long uclamp_eff_value(struct task_struct *p,
- 	return SCHED_CAPACITY_SCALE;
- }
- 
--static inline bool uclamp_rq_is_capped(struct rq *rq) { return false; }
-+static inline unsigned long root_cfs_util_uclamp(struct rq *rq)
-+{
-+	return READ_ONCE(rq->cfs.avg.util_avg);
-+}
- 
- static inline bool uclamp_is_used(void)
+-static inline unsigned long uclamp_rq_get(struct rq *rq,
+-					  enum uclamp_id clamp_id)
+-{
+-	if (clamp_id == UCLAMP_MIN)
+-		return 0;
+-
+-	return SCHED_CAPACITY_SCALE;
+-}
+-
+-static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
+-				 unsigned int value)
+-{
+-}
+-
+-static inline bool uclamp_rq_is_idle(struct rq *rq)
+-{
+-	return false;
+-}
+-
+ static inline void util_bias_enqueue(struct sched_avg *avg,
+ 				     struct task_struct *p)
  {
 -- 
 2.34.1
