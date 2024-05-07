@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-171218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC2698BE153
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:45:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60308BE155
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13114B28707
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6EDB1C203F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A79156864;
-	Tue,  7 May 2024 11:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njLZyg7m"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E945B153811;
+	Tue,  7 May 2024 11:45:19 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EC6152DF5;
-	Tue,  7 May 2024 11:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F16152172
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715082303; cv=none; b=evSyDoedgBuL5vk9BamPXO9cEZkN86S1pY/R29FG92bypy9B+edysXW+RY7UD9Xvlirht00+OJviMf9uN1HykYZTBJYl9tT7Yola8v3GSSQF5hPIuKBMjVYWx+wr5fB9lqPo3lTb0EhDnAokmTsaKFeEOwvc6IjwsWmfqDIDtGU=
+	t=1715082319; cv=none; b=Gpzo3WICpgKH142egxTUCe9L7Rno1dBDvWUe/QXiJRStJNv1lYi5AEeN96VqjntP81RU6pbOJ9hn+FgamvUCvbJm29B554QluHEa5fsoFfIViwiBjNuMFTOI3qwedguRMU5/ikt7278qKTH18kzklhARVHnRA1gvNXwLXnEwtv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715082303; c=relaxed/simple;
-	bh=yRrP8pE+cnSBCXddwAV+0wggGCo/3qBnwVjy9lG0DIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fo3riWXcnwa/4UrWBgij8s4oxffD9BCmJ5Iz/gtREztPAZpzIveHASzViIZ4Qx0LOabxJmYBiQC0IhvyAg0rIwxQt402xUwj1l7/RchF1e0Kwf7J0HxUK0TzMDbdtMyoHKjopRUIrX/ae4Zm15Ej2N7Dm23x0pZLm/cE4p9FM6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njLZyg7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A111C4AF63;
-	Tue,  7 May 2024 11:45:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715082303;
-	bh=yRrP8pE+cnSBCXddwAV+0wggGCo/3qBnwVjy9lG0DIc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=njLZyg7mEGBsO3m/qUFsP4vDq62ehhq0lIHdF+VucBnhhXyIgj6YL0kcnufHKtsiB
-	 sk6qNur6tlRM41gCqY6WMNwXhoMDMVk0XakrkwU6REBIsmlRKFdP8UDrCYV1d1NFpI
-	 7k2N/lNme4dV6R/J6TYOwoFZjRJE+U5RqEOvZG8xNxBeCezVHu4hzT4yWzL8vlZZDf
-	 MnMpKmvqsK0qu8M0B1IYcIamQVTdFdZtjQNGKGHPAPlre+jZ8NqzmzWQNwtQv4xpmZ
-	 xNFQWICaSr6A95KGe108NGshyHDY+xa1q7tYjwGdAiTr71xTaGAq2X5qjdmB6ZwnzQ
-	 Fcjwimcgp7nmQ==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5acdbfa7a45so940542eaf.2;
-        Tue, 07 May 2024 04:45:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMeucH20J1wgTRf2GhMx128DVW5klLfJRLWcJ8VvQNahWjBY7vtUeqlpOIGxpbB5LOKIHk6ltWo+IGimgW0iWnr5uQZcPIvmU6ar3XZI3O6WCQpc6DC+SA55QT4kWcZhzajXzzALwAQw==
-X-Gm-Message-State: AOJu0YzBM3U5aBpAfODjz1gQCI+YcOe0LuJCh5/zDPZqNY/lStYow+yJ
-	fMBTPoMZUxYL8buUNfAw+LOaUY7hFGo2u7NqpDCXiPTuGV8vkpKwZmCLLgPmCsFMwFJVmcdex2Q
-	Ubn/oQSwOeQOt+OKZugde6LpvveE=
-X-Google-Smtp-Source: AGHT+IGujf0HE2s52vBaVtFJe+W6PCGHX/xRpuc+C1tN4ht2ZVbTCa6YrYMAqAxvip7nOK6smp2xCH+v30oZEFwW39Q=
-X-Received: by 2002:a4a:b6c2:0:b0:5aa:3e4f:f01e with SMTP id
- w2-20020a4ab6c2000000b005aa3e4ff01emr13215058ooo.1.1715082302489; Tue, 07 May
- 2024 04:45:02 -0700 (PDT)
+	s=arc-20240116; t=1715082319; c=relaxed/simple;
+	bh=Rtv5oSv1iIBoJqb3A4DN0/IqS7sdGnxSfTJJoBWqabg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+j7ZcEzT//YHR/bcms64+U4lwR/Xj23DQSdHgAqSNswoB+h/C8V5B67xShgYVbGmFIoRDpYPtpQgM4UoJgfwRrxNjatG5IizNNcuma7WuvIMGxa5etSVZ4V4Xpweqlewzj4oe55f+DIljYD12XlPJBh5qCpvC9AJXAanl+qkAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F356CC2BBFC;
+	Tue,  7 May 2024 11:45:16 +0000 (UTC)
+Date: Tue, 7 May 2024 12:45:14 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
+	Mike Rapoport <rppt@linux.ibm.com>,
+	Shivansh Vij <shivanshvij@outlook.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] arm64/mm: Enable userfaultfd write-protect
+Message-ID: <ZjoUSjWhEbohMfX0@arm.com>
+References: <20240503144604.151095-1-ryan.roberts@arm.com>
+ <20240507110750.GA22289@willie-the-truck>
+ <3764382b-9fa6-4e94-ad5b-2e22e3e7c71a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506140906.26034-1-tiwai@suse.de>
-In-Reply-To: <20240506140906.26034-1-tiwai@suse.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 7 May 2024 13:44:51 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g0gaHQ1VxKgJYZTyEEd3foQXm315eWFoOM2U8mZpCQgQ@mail.gmail.com>
-Message-ID: <CAJZ5v0g0gaHQ1VxKgJYZTyEEd3foQXm315eWFoOM2U8mZpCQgQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: video: Add backlight=native quirk for Lenovo Slim 7 16ARH7
-To: Takashi Iwai <tiwai@suse.de>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3764382b-9fa6-4e94-ad5b-2e22e3e7c71a@arm.com>
 
-On Mon, May 6, 2024 at 4:08=E2=80=AFPM Takashi Iwai <tiwai@suse.de> wrote:
->
-> Lenovo Slim 7 16ARH7 is a machine with switchable graphics between AMD
-> and Nvidia, and the backlight can't be adjusted properly unless
-> acpi_backlight=3Dnative is passed.  Although nvidia-wmi-backlight is
-> present and loaded, this doesn't work as expected at all.
->
-> For making it working as default, add the corresponding quirk entry
-> with a DMI matching "LENOVO" "82UX".
->
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=3D1217750
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->  drivers/acpi/video_detect.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-> index 9fdcc620c652..2cc3821b2b16 100644
-> --- a/drivers/acpi/video_detect.c
-> +++ b/drivers/acpi/video_detect.c
-> @@ -497,6 +497,14 @@ static const struct dmi_system_id video_detect_dmi_t=
-able[] =3D {
->                 DMI_MATCH(DMI_PRODUCT_NAME, "82BK"),
->                 },
->         },
-> +       {
-> +        .callback =3D video_detect_force_native,
-> +        /* Lenovo Slim 7 16ARH7 */
-> +        .matches =3D {
-> +               DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-> +               DMI_MATCH(DMI_PRODUCT_NAME, "82UX"),
-> +               },
-> +       },
->         {
->          .callback =3D video_detect_force_native,
->          /* Lenovo ThinkPad X131e (3371 AMD version) */
-> --
+On Tue, May 07, 2024 at 12:17:18PM +0100, Ryan Roberts wrote:
+> On 07/05/2024 12:07, Will Deacon wrote:
+> > On Fri, May 03, 2024 at 03:45:58PM +0100, Ryan Roberts wrote:
+> >> This series adds uffd write-protect support for arm64.
+> >>
+> >> Previous attempts to add uffd-wp (and soft-dirty) have failed because of a
+> >> perceived lack of available PTE SW bits. However it actually turns out that
+> >> there are 2 available but they are hidden. PTE_PROT_NONE was previously
+> >> occupying a SW bit, but can be moved, freeing up the SW bit. Bit 63 is marked as
+> >> "IGNORED" in the Arm ARM, but it does not currently indicate "reserved for SW
+> >> use" like it does for the other SW bits. I've confirmed with the spec owner that
+> >> this is an oversight; the bit is intended to be reserved for SW use and the spec
+> >> will clarify this in a future update.
+> >>
+> >> So now we have two spare bits; patch 4 enables uffd-wp on arm64, using the SW
+> >> bit freed up by moving PTE_PROT_NONE. This leaves bit 63 spare for future use
+> >> (e.g. soft-dirty - see RFC at [4] - or some other usage).
+> >>
+> >> ---
+> >>
+> >> This applies on top of v6.9-rc5.
+> > 
+> > I chucked this into the CI on Friday and it looks to have survived the
+> > long weekend, so I've gone ahead and merged it into for-next/core. Short
+> > of any last minute failures (touch wood), this should land in 6.10.
+> 
+> Oh great - thanks!
+> 
+> Catalin was previously proposing to hold this until 6.11 - I'll leave you two to
+> fight it out in case that's still his preference ;-)
 
-Applied as 6.10 material, thanks!
+Fine by me as well to go in 6.10. Will is taking the blame if it all
+falls apart ;).
+
+-- 
+Catalin
 
