@@ -1,121 +1,103 @@
-Return-Path: <linux-kernel+bounces-171545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10938BE599
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1B08BE59B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34281C2341F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:19:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDFB11C22317
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB6D16EBFA;
-	Tue,  7 May 2024 14:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D913A16EC11;
+	Tue,  7 May 2024 14:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Av4TfY/Z"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q66lvOV4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBB316EBEC
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C8016C684;
+	Tue,  7 May 2024 14:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091271; cv=none; b=S4FWCjNG7XbqBg/IoSPHv+HNj65EGjPUxilKjPElE1eiEP+t2QifHwQc85BDcbfG+m2rGRiMTi85vZ4oc9+fdtHI/RYVOx5r/Jzfyerbtr5Ubh4QNewI5SH2LjYWwVAM3K2uLQOopXKDOHPRKvkVmowZzjd3DC37u3l4YUCpl6Q=
+	t=1715091274; cv=none; b=TzwjGMpgDLJUoSLT7+GnfMF5MInxyoP4mv484QuN2hZFVIHiBIByolh0YcgNGewc1sgyKojHiMcroI564+BYMpxmx35sW3hPQKTYe4y9MzrrapbGQPSPo896p2tyslXL79z0ZvBoT6nznEKf/jBQ/IfI6QZN2+3CB8HaHdUINkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091271; c=relaxed/simple;
-	bh=xdOHfuHS5StnxBHCTEJkYsqUj8aOzNvad/FTP0nEDaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJVGYc3BmTGtVVbhXgxVB4mDxL73P+lB0Wrh+ia43GwAK2NXtOmQ3Bs9RRyqFrfJKFdx9yczidyXfSEMetAdA+49D4R8icp1tNwyOS2akBegXJdNUu80NcDKuP5vf4cZzMiVlFR6+PSIlYLjOPCRi7lXBcSq0tHoxnSK3dzsmas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Av4TfY/Z; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 7 May 2024 10:14:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715091266;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VRyoFPGhxdjbkIozpMsjzFu89GHel68HSD+8ZqqtWG0=;
-	b=Av4TfY/ZIvxNTOvtyyb+RY1VowrMG5yD4yAQcHHjk7mtfG2am+asc1aypyqQNNh+eMf+aj
-	xCspfKfbcKl2rGkWluqfmHWGMr8QvxXmmwiZMFHvkmV/8gFSRz5PpHabzMG5RbsJ+WEO3c
-	O7H1jBCxqPHp9aBvk8j2tctCqLmDgZg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com, 
-	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Message-ID: <x73mcz4gjzdmwlynj426sq34zj232wr2z2xjbjc4tkcdbfpegb@hr55sh6pn7ol>
-References: <000000000000918c290617b914ba@google.com>
- <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+	s=arc-20240116; t=1715091274; c=relaxed/simple;
+	bh=wZEjksI48uEO6V4KtS7yN1QVU17ztXbJ6mD6JSkXebk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lSc8nwf5ViNtMcXVv8/AdXxKy3ZnWkTJf4L6xqFx00j5Vx9RjviKs/RTbCitjsxXA3q/8MKPq6N41ACHf9x3FcRx9wpC+wiusRxwCKPjFX68iLdg7bHI1BXQPmsZ0qVpCbW5hbxinWKEvwVAF45leOwKvy0MIUoA9+IeqKFtHl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q66lvOV4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DAEDC2BBFC;
+	Tue,  7 May 2024 14:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715091273;
+	bh=wZEjksI48uEO6V4KtS7yN1QVU17ztXbJ6mD6JSkXebk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Q66lvOV4Nhaer1pSuul2OXBcyjKHVwetMsSBS3FZobVW/OwnFkoFdsEGs/gtYaJe6
+	 sOb8HmPiBCtLHOcIBLUrLoaPq518zceYPS/FBJe8x1QEoj3fspmQdpc/fPfwzinpMu
+	 raWfayyluGGdYt/RkqQd080BRNUne1lkrNpvxmX7DD2UfO0Fr2ci0kaq/ZUZmQxejl
+	 8LA8WnSYzKYw7muqPbxY+n8v4DjKw7gm1qY4Eb55pDvPqSY+ZPS/Jmbu3TwcUpRS1w
+	 LF+iQvvlj0nkb/TLSq+ed85p+w3hJZ8Qs38deW8RzIYFIj7VDdhNR6cuM6JGNoRuD5
+	 y0CgDO/2CXrPA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Guo Ren <guoren@kernel.org>
+Subject: [PATCH v10 33/36] selftests: ftrace: Remove obsolate maxactive syntax check
+Date: Tue,  7 May 2024 23:14:27 +0900
+Message-Id: <171509126787.162236.9237333343981184360.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <171509088006.162236.7227326999861366050.stgit@devnote2>
+References: <171509088006.162236.7227326999861366050.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 07, 2024 at 05:19:29PM +0800, Edward Adam Davis wrote:
-> When got too small clean field, entry will never equal vstruct_end(&clean->field), 
-> the dead loop resulted in out of bounds access.
-> 
-> Fixes: 12bf93a429c9 ("bcachefs: Add .to_text() methods for all superblock sections")
-> Fixes: a37ad1a3aba9 ("bcachefs: sb-clean.c")
-> Reported-and-tested-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-I've already got a patch up for this - the validation was missing as
-well.
+Since the fprobe event does not support maxactive anymore, stop
+testing the maxactive syntax error checking.
 
-commit f39055220f6f98a180e3503fe05bbf9921c425c8
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sun May 5 22:28:00 2024 -0400
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-    bcachefs: Add missing validation for superblock section clean
-    
-    We were forgetting to check for jset entries that overrun the end of the
-    section - both in validate and to_text(); to_text() needs to be safe for
-    types that fail to validate.
-    
-    Reported-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-index 35ca3f138de6..194e55b11137 100644
---- a/fs/bcachefs/sb-clean.c
-+++ b/fs/bcachefs/sb-clean.c
-@@ -278,6 +278,17 @@ static int bch2_sb_clean_validate(struct bch_sb *sb,
- 		return -BCH_ERR_invalid_sb_clean;
- 	}
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+index 61877d166451..c9425a34fae3 100644
+--- a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+@@ -16,9 +16,7 @@ aarch64)
+   REG=%r0 ;;
+ esac
  
-+	for (struct jset_entry *entry = clean->start;
-+	     entry != vstruct_end(&clean->field);
-+	     entry = vstruct_next(entry)) {
-+		if ((void *) vstruct_next(entry) > vstruct_end(&clean->field)) {
-+			prt_str(err, "entry type ");
-+			bch2_prt_jset_entry_type(err, le16_to_cpu(entry->type));
-+			prt_str(err, " overruns end of section");
-+			return -BCH_ERR_invalid_sb_clean;
-+		}
-+	}
-+
- 	return 0;
- }
+-check_error 'f^100 vfs_read'		# MAXACT_NO_KPROBE
+-check_error 'f^1a111 vfs_read'		# BAD_MAXACT
+-check_error 'f^100000 vfs_read'		# MAXACT_TOO_BIG
++check_error 'f^100 vfs_read'		# BAD_MAXACT
  
-@@ -295,6 +306,9 @@ static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
- 	for (entry = clean->start;
- 	     entry != vstruct_end(&clean->field);
- 	     entry = vstruct_next(entry)) {
-+		if ((void *) vstruct_next(entry) > vstruct_end(&clean->field))
-+			break;
-+
- 		if (entry->type == BCH_JSET_ENTRY_btree_keys &&
- 		    !entry->u64s)
- 			continue;
+ check_error 'f ^non_exist_func'		# BAD_PROBE_ADDR (enoent)
+ check_error 'f ^vfs_read+10'		# BAD_PROBE_ADDR
+
 
