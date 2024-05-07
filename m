@@ -1,156 +1,90 @@
-Return-Path: <linux-kernel+bounces-172133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477AB8BEDED
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AC08BEDF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBFA7B21C12
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:15:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43729B214C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E54A187320;
-	Tue,  7 May 2024 20:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF46F187337;
+	Tue,  7 May 2024 20:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZjPGeIOJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzCd5kht"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B613187324;
-	Tue,  7 May 2024 20:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC943187320;
+	Tue,  7 May 2024 20:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715112919; cv=none; b=qcvvrkuUcczn8DITWEkyJsyQ/dzosYciZay2AXCrDIluXjrxgaEh5OnxDGiAk3KFKLcp5KuX9FivlzS7vo+LxZtKjGLd/MU5JGztp29gUIDPZKvudpKY0RDm/99tOWIaElvS426RT+IUQk1wd26cXQKWlCMtrPLpF9+Q9uk5Ick=
+	t=1715113011; cv=none; b=B+MEvJGG7kQIZghqXkkaWPWaJqiqnCuPVmIX27AeHnVpx0/AEY/FX7SL7IbRkPL5VydraUkXB2HS4vn6Qp47K7v1Gso8ZMUIX0ieFp0+N6UUAOWg7nJ8W2N+3nlWZ5nrAlVhzaMq80PiyuOHurAJuRKFtor8hsp0i12nMAfbQnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715112919; c=relaxed/simple;
-	bh=gpzcY4y3i2KBXNv1yb0z2rP0d1+GAgC9/AU3xoG+moM=;
+	s=arc-20240116; t=1715113011; c=relaxed/simple;
+	bh=cGaAkkEOXpEMKaanh5pAkmdxFKN5fg25gZkTzU10KXQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGlGybk7ZU21R2sMV2gGIz8JiC1HdWMZpPA5LHpHRazjmLrRPtZoDxm6zKeb1dS5WesXk/LaEMfgDXWtKeOV2g/s12M9eE0bHThaTOw7tqJ5DFRbVM+NWOOrrW2a58UFvsLQFwRTadWHur42Qnggfm0PHAejuHhANUGHVF5FUB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZjPGeIOJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C2E26DFB;
-	Tue,  7 May 2024 22:15:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715112909;
-	bh=gpzcY4y3i2KBXNv1yb0z2rP0d1+GAgC9/AU3xoG+moM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHSlECtaKtj1cAkmpxHw0aMe5saAmJ1lj2ssWdmYQUpv5pt7TqEezsc2NBCOwXnM4z5d+D6jICOWpp7x9HxtefH2JlavWrDw1rtfdevU1wbg/OZo/L2shVrzOQiIgcbSLvSrXn/yretLgqmy3qyfaSG310fWnJNw08x22yU2lW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzCd5kht; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBFAC2BBFC;
+	Tue,  7 May 2024 20:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715113010;
+	bh=cGaAkkEOXpEMKaanh5pAkmdxFKN5fg25gZkTzU10KXQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZjPGeIOJTDi4STMtKK6eRAtKTpi5o3A1Luo604bMWViu+xRjvML3zbzSvIkJw3ocP
-	 UHz4M9uRyXtZjvHW0U6OIGFZVGYQ/cLL8yS5QF7s4z9C72gXFpE34klgqi+laBoxJH
-	 ASfjttCYYcd0K9T9QjIQ7QeK0dGXZAV20oUxCgg8=
-Date: Tue, 7 May 2024 23:15:02 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Maxime Ripard <mripard@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240507201502.GC2012@pendragon.ideasonboard.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
- <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
- <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
- <CAA8EJpr4bJUQt2T63_FZ=KHGEm4vixfpk3pMV9naABEONJfMmQ@mail.gmail.com>
- <20240507184049.GC20390@pendragon.ideasonboard.com>
- <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
+	b=DzCd5kht5CJIc7xsbUMaE6HsmKbfChDDD1LJUcuBiK3Dl+rVaoYyxpGs8hZzE07Yj
+	 dLBXaoXx5Gq1PZ1KzqqDoCBnjNZqGc1D0LxU2t1Ee4zW9Jjo/Nz0eDs1o6kUO97Jmb
+	 tOKXF8acwihZSthw04n2tVCjY0niFo7R9e4iGQPMZ7E3t8eO7cvxtWEun7stK1KL+g
+	 vTcwg8eo5P1+Q1n9ZqDiAGZBToF3iZcbcnSfteaF8owH+28/SHfw9XMxBeyxP4Axkj
+	 Pjfzu9DUdhXHttJ2YMfT2jtHBGhR3FPHvkjWKeZqiKhVtUk5m2CxRQYV0AO/SPVbsU
+	 SYq7FfQx6p1wg==
+Date: Tue, 7 May 2024 15:16:48 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	Jisheng Zhang <jszhang@kernel.org>, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	devicetree@vger.kernel.org, Guo Ren <guoren@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, Fu Wei <wefu@redhat.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH RFC v3 2/7] dt-bindings: clock: Document T-Head TH1520
+ AP_SUBSYS controller
+Message-ID: <171511300571.994683.10040593951113632886.robh@kernel.org>
+References: <20240506-th1520-clk-v3-0-085a18a23a7f@tenstorrent.com>
+ <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
+In-Reply-To: <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
 
-On Tue, May 07, 2024 at 10:59:42PM +0300, Dmitry Baryshkov wrote:
-> On Tue, 7 May 2024 at 21:40, Laurent Pinchart wrote:
-> > On Tue, May 07, 2024 at 06:19:18PM +0300, Dmitry Baryshkov wrote:
-> > > On Tue, 7 May 2024 at 18:15, Bryan O'Donoghue wrote:
-> > > > On 07/05/2024 16:09, Dmitry Baryshkov wrote:
-> > > > > Ah, I see. Then why do you require the DMA-ble buffer at all? If you are
-> > > > > providing data to VPU or DRM, then you should be able to get the buffer
-> > > > > from the data-consuming device.
-> > > >
-> > > > Because we don't necessarily know what the consuming device is, if any.
-> > > >
-> > > > Could be VPU, could be Zoom/Hangouts via pipewire, could for argument
-> > > > sake be GPU or DSP.
-> > > >
-> > > > Also if we introduce a dependency on another device to allocate the
-> > > > output buffers - say always taking the output buffer from the GPU, then
-> > > > we've added another dependency which is more difficult to guarantee
-> > > > across different arches.
-> > >
-> > > Yes. And it should be expected. It's a consumer who knows the
-> > > restrictions on the buffer. As I wrote, Zoom/Hangouts should not
-> > > require a DMA buffer at all.
-> >
-> > Why not ? If you want to capture to a buffer that you then compose on
-> > the screen without copying data, dma-buf is the way to go. That's the
-> > Linux solution for buffer sharing.
-> 
-> Yes. But it should be allocated by the DRM driver. As Sima wrote,
-> there is no guarantee that the buffer allocated from dma-heaps is
-> accessible to the GPU.
 
-No disagreement there. From a libcamera point of view, we want to import
-buffers allocated externally. It's for use cases where applications
-can't provide dma buf instances easily that we need to allocate them
-through the libcamera buffer allocator helper. That helper has to a)
-provide dma buf fds, and b) make a best effort to allocate buffers that
-will have a decent chance of being usable by other devices. We're open
-to exploring other solutions than dma heaps, although I wonder what the
-dma heaps are for if nobody enables them :-)
+On Mon, 06 May 2024 21:55:15 -0700, Drew Fustini wrote:
+> Document bindings for the T-Head TH1520 AP sub-system clock controller.
+> 
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+> Co-developed-by: Yangtao Li <frank.li@vivo.com>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> ---
+>  .../bindings/clock/thead,th1520-clk-ap.yaml        | 64 +++++++++++++++
+>  MAINTAINERS                                        |  2 +
+>  include/dt-bindings/clock/thead,th1520-clk-ap.h    | 96 ++++++++++++++++++++++
+>  3 files changed, 162 insertions(+)
+> 
 
-> > > Applications should be able to allocate
-> > > the buffer out of the generic memory.
-> >
-> > If applications really want to copy data and degrade performance, they
-> > are free to shoot themselves in the foot of course. Applications (or
-> > compositors) need to support copying as a fallback in the worst case,
-> > but all components should at least aim for the zero-copy case.
-> 
-> I'd say that they should aim for the optimal case. It might include
-> both zero-copying access from another DMA master or simple software
-> processing of some kind.
-> 
-> > > GPUs might also have different
-> > > requirements. Consider GPUs with VRAM. It might be beneficial to
-> > > allocate a buffer out of VRAM rather than generic DMA mem.
-> >
-> > Absolutely. For that we need a centralized device memory allocator in
-> > userspace. An effort was started by James Jones in 2016, see [1]. It has
-> > unfortunately stalled. If I didn't have a camera framework to develop, I
-> > would try to tackle that issue :-)
-> 
-> I'll review the talk. However the fact that the effort has stalled
-> most likely means that 'one fits them all' approach didn't really fly
-> well. We have too many usecases.
-> 
-> > [1] https://www.x.org/wiki/Events/XDC2016/Program/Unix_Device_Memory_Allocation.pdf
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
--- 
-Regards,
-
-Laurent Pinchart
 
