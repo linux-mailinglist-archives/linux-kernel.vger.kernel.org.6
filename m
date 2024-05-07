@@ -1,67 +1,65 @@
-Return-Path: <linux-kernel+bounces-171741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334208BE808
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:59:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ABD8BE809
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2221284E4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:59:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D00B271C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC2716C691;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527CD16C692;
 	Tue,  7 May 2024 15:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SwEJdwy1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R6GYWB8h"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04CC168AE5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2F3168AE8
 	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097503; cv=none; b=JgbcphVWMV/R3NUexqfs9Kq0u5TjJLqDbgTcE0uik01AVFZpmIB7IzZICr81030bZbnr3el5mMAyyQgjx+ap3n2rEYPbqBe7sGETxpPJeSh0sDuMXjxa0R1COvaEO2sxLyjn4KllFNEDUcYjK75oNj14jiAVqeJ9n58DT+TGITc=
+	t=1715097503; cv=none; b=r5Cz/VkviahH5axjZg0lmD3ECF7aVvHpjrIKEaseCjNj7rGr/m51cJdQxusSVu1gyIuHTh5bBe/98JHeDbH8uFwHI4a3BKK/OTZTQizHkbR3ig1u+m/4APlLUDcXkE1E0B8QKJQ+mOLxvFCLax0tZ1T5QEly/X//TiTVBH5FT+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715097503; c=relaxed/simple;
-	bh=AwlqnsCSKXmL+zh7tGroTBL13MxtFzkuzy2rZlOyj3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cCJrikcy/JshDK80UVefA/uwQLyuvxTEUe8P9vEH/iXFetg8zOvvKnz71ugoiVodxfzOBnV1BqCzyzANquyv9ZH78OVInjLLGRiudK9EGJM+0n11/Hf3R6700+zLMHFiFc1XvP9GSAPGpoIljxkAMqE3rbu7yKZ5ojuuwQldO3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SwEJdwy1; arc=none smtp.client-ip=170.10.129.124
+	bh=YVVYTXttJ4LkCC584GInQE8V0YjGwyUoQqfsU6EilkQ=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mwV9jHpyO4bMDkzOXSarimdejkhal1R/Nj9+uSWFQkYV5toyz+DHVWmP6FxqawSNtUKOwE3/viA5Zbgs+DtQ5vYBWgDtlVCJPbB7IfxdluNrLqbOQKQpWOLJdB2yd2Prx5G3nKphjOtf9YyW0pz8wjpQ/ks7kJ+6vqZfi/lz6js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R6GYWB8h; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715097500;
+	s=mimecast20190719; t=1715097501;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PXxjl50hEC2qppHKNMFhSPiYPocMPg5Dd/CMdIJMIV0=;
-	b=SwEJdwy16xP87m3ZBzc6rMRncdWmfowhakwDYrNrjsI+oMs1ZUwukrcnPAkzXtgX9BwMIB
-	q1LXuFPzgYglu7dRgT8GnC8Seu2TY2aySHgoT+6uynzBuj/V/zHPAFqRAgx8G49eD8IqcP
-	RTmG4Hh1Srwon8wpKfJ7nBLgsAHm478=
+	bh=52eBoQ222XsSSPXCV6rIxS2omD7NQFg6WZmtpTUgzVs=;
+	b=R6GYWB8hM40W5HusOJ6FMhDQJ+SV10O+V+claOe+NZgW1ZDrw5/nb0AVAbuDJCihkqqa3N
+	m90jR3yJiN0ABJ0OpkuySk2zuVlrJRYYXQKtfdpH8s7L+b2Ei8IS4OYXVrQ8iJy6ApaKYa
+	lzRUtIWdXCT3QtkLjNqM5dioApzOvFI=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-jNxS35wVOeWvEGg1J_5CaA-1; Tue, 07 May 2024 11:58:19 -0400
-X-MC-Unique: jNxS35wVOeWvEGg1J_5CaA-1
+ us-mta-137-DQt2rFq4N0O60xCcg4yU4w-1; Tue, 07 May 2024 11:58:19 -0400
+X-MC-Unique: DQt2rFq4N0O60xCcg4yU4w-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 115AB80027F;
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 547C81816EC3;
 	Tue,  7 May 2024 15:58:19 +0000 (UTC)
 Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id E46D0200B2F6;
-	Tue,  7 May 2024 15:58:18 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 3D989200C7E5;
+	Tue,  7 May 2024 15:58:19 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>,
-	Kai Huang <kai.huang@intel.com>
-Subject: [PATCH 06/17] KVM: x86/mmu: WARN if upper 32 bits of legacy #PF error code are non-zero
-Date: Tue,  7 May 2024 11:58:06 -0400
-Message-ID: <20240507155817.3951344-7-pbonzini@redhat.com>
+Subject: [PATCH 08/17] KVM: x86/mmu: check for invalid async page faults involving private memory
+Date: Tue,  7 May 2024 11:58:08 -0400
+Message-ID: <20240507155817.3951344-9-pbonzini@redhat.com>
 In-Reply-To: <20240507155817.3951344-1-pbonzini@redhat.com>
 References: <20240507155817.3951344-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -74,60 +72,94 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-From: Sean Christopherson <seanjc@google.com>
+Right now the error code is not used when an async page fault is completed.
+This is not a problem in the current code, but it is untidy.  For protected
+VMs, we will also need to check that the page attributes match the current
+state of the page, because asynchronous page faults can only occur on
+shared pages (private pages go through kvm_faultin_pfn_private() instead of
+__gfn_to_pfn_memslot()).
 
-WARN if bits 63:32 are non-zero when handling an intercepted legacy #PF,
-as the error code for #PF is limited to 32 bits (and in practice, 16 bits
-on Intel CPUS).  This behavior is architectural, is part of KVM's ABI
-(see kvm_vcpu_events.error_code), and is explicitly documented as being
-preserved for intecerpted #PF in both the APM:
+Start by piping the error code from kvm_arch_setup_async_pf() to
+kvm_arch_async_page_ready() via the architecture-specific async page
+fault data.  For now, it can be used to assert that there are no
+async page faults on private memory.
 
-  The error code saved in EXITINFO1 is the same as would be pushed onto
-  the stack by a non-intercepted #PF exception in protected mode.
+Extracted from a patch by Isaku Yamahata.
 
-and even more explicitly in the SDM as VMCS.VM_EXIT_INTR_ERROR_CODE is a
-32-bit field.
-
-Simply drop the upper bits if hardware provides garbage, as spurious
-information should do no harm (though in all likelihood hardware is buggy
-and the kernel is doomed).
-
-Handling all upper 32 bits in the #PF path will allow moving the sanity
-check on synthetic checks from kvm_mmu_page_fault() to npf_interception(),
-which in turn will allow deriving PFERR_PRIVATE_ACCESS from AMD's
-PFERR_GUEST_ENC_MASK without running afoul of the sanity check.
-
-Note, this is also why Intel uses bit 15 for SGX (highest bit on Intel CPUs)
-and AMD uses bit 31 for RMP (highest bit on AMD CPUs); using the highest
-bit minimizes the probability of a collision with the "other" vendor,
-without needing to plumb more bits through microcode.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Message-ID: <20240228024147.41573-7-seanjc@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/kvm/mmu/mmu.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/mmu/mmu.c          | 18 +++++++++++-------
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 0dc755a6dc0c..9d6368512be6 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1851,6 +1851,7 @@ struct kvm_arch_async_pf {
+ 	gfn_t gfn;
+ 	unsigned long cr3;
+ 	bool direct_map;
++	u64 error_code;
+ };
+ 
+ extern u32 __read_mostly kvm_nr_uret_msrs;
 diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 28b1e7657d7f..3609167ba30e 100644
+index eb041acec2dc..d52794663290 100644
 --- a/arch/x86/kvm/mmu/mmu.c
 +++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4501,6 +4501,13 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
- 	if (WARN_ON_ONCE(fault_address >> 32))
- 		return -EFAULT;
- #endif
-+	/*
-+	 * Legacy #PF exception only have a 32-bit error code.  Simply drop the
-+	 * upper bits as KVM doesn't use them for #PF (because they are never
-+	 * set), and to ensure there are no collisions with KVM-defined bits.
-+	 */
-+	if (WARN_ON_ONCE(error_code >> 32))
-+		error_code = lower_32_bits(error_code);
+@@ -4207,24 +4207,28 @@ static u32 alloc_apf_token(struct kvm_vcpu *vcpu)
+ 	return (vcpu->arch.apf.id++ << 12) | vcpu->vcpu_id;
+ }
  
- 	/* Ensure the above sanity check also covers KVM-defined flags. */
- 	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
+-static bool kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+-				    gfn_t gfn)
++static bool kvm_arch_setup_async_pf(struct kvm_vcpu *vcpu,
++				    struct kvm_page_fault *fault)
+ {
+ 	struct kvm_arch_async_pf arch;
+ 
+ 	arch.token = alloc_apf_token(vcpu);
+-	arch.gfn = gfn;
++	arch.gfn = fault->gfn;
++	arch.error_code = fault->error_code;
+ 	arch.direct_map = vcpu->arch.mmu->root_role.direct;
+ 	arch.cr3 = kvm_mmu_get_guest_pgd(vcpu, vcpu->arch.mmu);
+ 
+-	return kvm_setup_async_pf(vcpu, cr2_or_gpa,
+-				  kvm_vcpu_gfn_to_hva(vcpu, gfn), &arch);
++	return kvm_setup_async_pf(vcpu, fault->addr,
++				  kvm_vcpu_gfn_to_hva(vcpu, fault->gfn), &arch);
+ }
+ 
+ void kvm_arch_async_page_ready(struct kvm_vcpu *vcpu, struct kvm_async_pf *work)
+ {
+ 	int r;
+ 
++	if (WARN_ON_ONCE(work->arch.error_code & PFERR_PRIVATE_ACCESS))
++		return;
++
+ 	if ((vcpu->arch.mmu->root_role.direct != work->arch.direct_map) ||
+ 	      work->wakeup_all)
+ 		return;
+@@ -4237,7 +4241,7 @@ void kvm_arch_async_page_ready(struct kvm_vcpu *vcpu, struct kvm_async_pf *work)
+ 	      work->arch.cr3 != kvm_mmu_get_guest_pgd(vcpu, vcpu->arch.mmu))
+ 		return;
+ 
+-	kvm_mmu_do_page_fault(vcpu, work->cr2_or_gpa, 0, true, NULL);
++	kvm_mmu_do_page_fault(vcpu, work->cr2_or_gpa, work->arch.error_code, true, NULL);
+ }
+ 
+ static inline u8 kvm_max_level_for_order(int order)
+@@ -4334,7 +4338,7 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+ 			trace_kvm_async_pf_repeated_fault(fault->addr, fault->gfn);
+ 			kvm_make_request(KVM_REQ_APF_HALT, vcpu);
+ 			return RET_PF_RETRY;
+-		} else if (kvm_arch_setup_async_pf(vcpu, fault->addr, fault->gfn)) {
++		} else if (kvm_arch_setup_async_pf(vcpu, fault)) {
+ 			return RET_PF_RETRY;
+ 		}
+ 	}
 -- 
 2.43.0
 
