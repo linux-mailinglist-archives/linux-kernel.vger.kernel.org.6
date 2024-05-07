@@ -1,109 +1,96 @@
-Return-Path: <linux-kernel+bounces-171707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5FE8BE795
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7D48BE79E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40130281BFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819491F258CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E483E1635DB;
-	Tue,  7 May 2024 15:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5801168AF8;
+	Tue,  7 May 2024 15:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNJl3sa4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="MUOnRR6p"
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF2B1649DF;
-	Tue,  7 May 2024 15:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901751635A6
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715096476; cv=none; b=IX9ylult48YYZHr9uYAT43lOPY8EsCTGjabTmrMC3vQqgDoWu0xOcuEqywzeXwdNx5/aWOzA51S/QAo+b3XdErvQv5YLZzYuaD/to0sNYZSUPpolosqMkBEij3StR1Ii1OcvfFWJooPFBFmgkTwtCOe3+ci0HWBHPRVXF7nPJV0=
+	t=1715096565; cv=none; b=NakXZpt3eXy4ytjSYu5l70FNuvf+OgEcm3XIL1Wx0JjgG2RQLuuR0OWeNWA773wF+o/r4oP1Tn0fb+2ez31sGVnu716mEIiqkXkr4VkTR+fr5Rg9eaBkOurF8PZDCklEOxXmedQkPgmUxYojfQJ1sFb4oj083urpqiGbpUhhPeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715096476; c=relaxed/simple;
-	bh=Fm3kzqfwbL20dUiZTvcEiKVme7HzjtZRBfeFTPuMJ8o=;
+	s=arc-20240116; t=1715096565; c=relaxed/simple;
+	bh=tG7GC4Detn+hIijiFJM2CHvKICrWG0m6s3hG3mjp4q8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCZ0Tam7t19fw8PLuM0MqUytgl1IUm8dIXdaeMajwcshfQj8UnWzS9LitLdUwfXeu3tQeFwVhR8vfstHwgkyX2bj3LYnP72ZEdgtBrScR9Ul1Y3JtZnDPEVG/eWpW5PMf8CuxEosvSMr4EpENptpKLRECk71gTN3+V4Lqv0tZS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNJl3sa4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7435C4AF18;
-	Tue,  7 May 2024 15:41:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715096475;
-	bh=Fm3kzqfwbL20dUiZTvcEiKVme7HzjtZRBfeFTPuMJ8o=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UeE5iYhRuahKvibI6iIX9b4gsv05fm4QHlBdToNWSG7e41mbiXEvIxBoqYTwbYE/PGYkT4zE+5bx+Gg8797WN0cU8Eft6lIBFpF9wZfTxqJwI7QhRakH0GUbzu06gdusNtN5Rv3vck6RQtvKjsmvnFUlDyOhHLK4DmVhiDu9He0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=MUOnRR6p; arc=none smtp.client-ip=84.16.66.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VYjG70TZqz7Y0;
+	Tue,  7 May 2024 17:42:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1715096558;
+	bh=tG7GC4Detn+hIijiFJM2CHvKICrWG0m6s3hG3mjp4q8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNJl3sa4vGVlw395QkltOVW2lIldb+PH66bS4OinhXTuYU5MP2ykg4k6unw0iW9yO
-	 gSRhQYUQSBQMOmilwSbIa4j5MuVAHVKxThfb8my9DqwyiecolW4ZnUYf7MS1OL78pX
-	 j9Clsv1fWMwjB5JPWx1tcoy1HAG/Xh8YxjJcwgcL4Ud2HQw5jxpjdDnJnHZCtDlKhy
-	 6MsuIvG9xCOxFfOj7lgj6i6u6XEzuBmZbgwxAeExR7UjiJKk4v0XaWrovPxJwDPzXb
-	 ieuIftMXY1TJZEbZfnDDTtzrJs7OG8DVQD2tl78NxyHSNbjH3koXQ+AvWPaghB1S2+
-	 63pFKzU5uEkTQ==
-Date: Tue, 7 May 2024 12:41:12 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: He Zhe <zhe.he@windriver.com>
-Cc: namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf bench: Fix trap divide error of perf bench
- internals inject-build-id
-Message-ID: <ZjpLmBvW0LqZET3U@x1>
-References: <20240507065026.2652929-1-zhe.he@windriver.com>
+	b=MUOnRR6pm2mGnKlpB/Nx/dz12RcHc2yr2ELwVY5eOLXq+GbViBrtPNka3Kz/TNG1G
+	 IXKw6TApqZkuD21ikd/ZZkAzz3GK8OguOaVYUg/E3n8Uy4YsQVND5YqqjlHnJjIl1E
+	 mAJ2LaDL5NK9EBeihxeYw60XkVtzrqtRprU+xOsQ=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VYjG42vCWzb2J;
+	Tue,  7 May 2024 17:42:36 +0200 (CEST)
+Date: Tue, 7 May 2024 17:42:34 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Kees Cook <keescook@chromium.org>, 
+	Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, 
+	Shengyu Li <shengyu.li.evgeny@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+	Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, 
+	"David S . Miller" <davem@davemloft.net>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>, 
+	Ronald Warsow <rwarsow@gmx.de>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Will Drewry <wad@chromium.org>, kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v6 00/10] Fix Kselftest's vfork() side effects
+Message-ID: <20240507.aevi0xaeWohb@digikod.net>
+References: <20240506165518.474504-1-mic@digikod.net>
+ <202405061002.01D399877A@keescook>
+ <Zjo1xyhjmehsRhZ2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240507065026.2652929-1-zhe.he@windriver.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zjo1xyhjmehsRhZ2@google.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, May 07, 2024 at 02:50:26PM +0800, He Zhe wrote:
-> perf bench internals inject-build-id suffers from the following error when
-> only one DSO is collected.
+On Tue, May 07, 2024 at 07:12:51AM GMT, Sean Christopherson wrote:
+> On Mon, May 06, 2024, Kees Cook wrote:
+> > On Mon, May 06, 2024 at 06:55:08PM +0200, Mickaël Salaün wrote:
+> > > Shuah, I think this should be in -next really soon to make sure
+> > > everything works fine for the v6.9 release, which is not currently the
+> > > case.  I cannot test against all kselftests though.  I would prefer to
+> > > let you handle this, but I guess you're not able to do so and I'll push
+> > > it on my branch without reply from you.  Even if I push it on my branch,
+> > > please push it on yours too as soon as you see this and I'll remove it
+> > > from mine.
+> > 
+> > Yes, please. Getting this into v6.9 is preferred,
 > 
-> perf bench internals inject-build-id -v
->   Collected 1 DSOs
-> traps: internals-injec[2305] trap divide error
-> ip:557566ba6394 sp:7ffd4de97fe0 error:0 in perf[557566b2a000+23d000]
->   Build-id injection benchmark
->   Iteration #1
-> Floating point exception
-> 
-> This patch removes the unnecessary minus one from the divisor which also
-> corrects the randomization range.
+> Very strongly prefered for KVM selftests.  The negative impact on KVM isn't that
+> the bugs cause failures, it's that they cause false passes, which is far worse
+> (and why the bugs went unnoticed for most of the cycle).
 
-Thanks, applied to perf-tools-next, and added:
-
-Fixes: 0bf02a0d80427f26 ("perf bench: Add build-id injection benchmark")
-
-To make sure this ends up being picked by the stable guys and
-backporters.
-
-- Arnaldo
- 
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
->  tools/perf/bench/inject-buildid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
-> index 49331743c743..a759eb2328be 100644
-> --- a/tools/perf/bench/inject-buildid.c
-> +++ b/tools/perf/bench/inject-buildid.c
-> @@ -362,7 +362,7 @@ static int inject_build_id(struct bench_data *data, u64 *max_rss)
->  		return -1;
->  
->  	for (i = 0; i < nr_mmaps; i++) {
-> -		int idx = rand() % (nr_dsos - 1);
-> +		int idx = rand() % nr_dsos;
->  		struct bench_dso *dso = &dsos[idx];
->  		u64 timestamp = rand() % 1000000;
->  
-> -- 
-> 2.25.1
-> 
+FYI it's now in linux-next.
 
