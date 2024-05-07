@@ -1,111 +1,86 @@
-Return-Path: <linux-kernel+bounces-171361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F81E8BE345
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C675D8BE347
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4C511F27D71
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6736E1F27D58
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28DC15E7F2;
-	Tue,  7 May 2024 13:13:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9292315DBDD;
+	Tue,  7 May 2024 13:14:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5807215E5D2;
-	Tue,  7 May 2024 13:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6002C15E810
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087616; cv=none; b=mmiDWBKWfc1RgFB9nOMbaarNFYCxv2xFutmSlSgI19eQ/A++yQ6SyLthAOdFU4qLxg6ouKdlSLwFGRumqo4OGfrHxt3l+zzhmpzaEEwYJhPDNKpbjqJVkGrxL/zdV4YMkzWEB9nqlM1J5uLUwqWLC99S0hv10FZUwy1yXXKFAJQ=
+	t=1715087646; cv=none; b=VTPq+3j0qHHLsMXZxSkmx27MyERJkVO9HvKDQ8Wf4xmKpEk9ZPosBTlt2/+pKEIuMXQK71xo1aCGXCpQUdU24+QH8Axr1KH1aVI4ilmC+nmL9KHGadif8KHaakMlN/mNfkrPU2o+pAorh6rT2UCQTnS7l6zfSsxzSm1mrKGX3+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715087616; c=relaxed/simple;
-	bh=nXTXydUjZ0AYCUSfBjFdB1M0Cpdjkm6cUoTgReWw5So=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=lddK7dzNr1VQz8w+P6YDvHuIr4OKrApFWkmbJdaeaNxL0l1aytFBHMPZ1rjDeHyOod0NaU6+PZ5CbRdtJQ9gxxwI3/UqxdNtSiJoV18wsAQbGykFw9FOY5tK1B2rBP62CFM/kqNtAU8D8kregBCxx7CQeWe/8s6rmCmIQGyPtaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VYdxt4t88z4f3kG1;
-	Tue,  7 May 2024 21:13:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id E64221A0568;
-	Tue,  7 May 2024 21:13:30 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgCnyw76KDpmLTcxMQ--.42256S3;
-	Tue, 07 May 2024 21:13:30 +0800 (CST)
-Subject: Re: [PATCH 6/9] jbd2: use bh_in instead of jh2bh(jh_in) to simplify
- code
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
- <20240506141801.1165315-7-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <aaaf9df6-dad5-f405-eb7f-8056ba5e69f1@huaweicloud.com>
-Date: Tue, 7 May 2024 21:13:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715087646; c=relaxed/simple;
+	bh=MBVFigmtXp+fa1asaeuDh6UbDMKNYhBh484SRpNvfBQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kP/r9hKBoy3FTLJ6uDyCW7BK1bGmKBl0W8bGo+EuxDkYBesVsx7Qt4r5gZp3auCYrv6ljTpyzV9HuPYqFlSikuddFmEOhOzencl6GFZt2NwR3hHK5Al1eCoasOLr37btnXqDsr1LjuW9sBuSX5fZ/L1TgrLRTaMXIqTBYqErAdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e18055c2dfso117632339f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:14:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715087643; x=1715692443;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLJ+z7LiDDY0HOHJwBMnTZsmDE8ItBIhU+B6/yu3WkY=;
+        b=GN8EHC4+WSD42AFzp0/+8/VjaH3MV+v9J1bXi8mC1x4CLOZU4SFVacDl3gKoraJKh1
+         eUnyMz4pX2AxHEExNPKb/Ic6JH70QfReffKj33ukYttCIiXEnEqvwY2ORpWUcxtY0C6m
+         GA2Np71LcYdQJb2Ldf2VcfvIbwqPpIUrj2ARQb4F/8YKn2f4OHp1hLGlWjqor/j8jXts
+         WnXrq0Jl7/ZeybVJA4+qVsd1tZcXJ90khY8zvU0aTi/1Elv0Q3UjgEqv/nreJHibsyc0
+         6TpLSBbB3ypw6tjL7nO54BzcakOgF+FxSEkfDleoAN2B2tPKs2hBRp/pbSS6tzQgBHZ1
+         f0Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCVU930i1GSYTfJQ65YswjaP0L4DN+En18xuJSQjRB4iFQ8XG/x95xYOQ6hZL2YLo9x8XrO0VrkDEtgfNhYECtNJ+ZivVLkQtInhtYBT
+X-Gm-Message-State: AOJu0Yxui2NGXjNsR87CQYjiwgTLOk/Mxt8C+3hMiSA9Qv26tBAbWm/M
+	FSp+oZfj6oy7jBPhn+uEv/25kJBSEsPItV3xqKuqHJscqnfpSdr6vIqEQKtyx7wSWzjTHm25NYP
+	/YFMYDKCWqT8d9XA/LFVAzBJ5qz7CybaOLmEFcCGKFOwmi95WTrgQ0eE=
+X-Google-Smtp-Source: AGHT+IGa21QCk3sWiFYZGFqpbaNRCFKMKPO28VWuuTQBFB+DP7EdYgN29hplV7/2tnE6LjIpupawkAU815VnCoXIErk4yk20HYat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240506141801.1165315-7-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgCnyw76KDpmLTcxMQ--.42256S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr1kGw13XFW8Gw43Zr4UCFg_yoWDCrg_Za
-	yvyw1kX39IqF4kJw4rCw1xWr4Ygw1rZr1kCw1xtFyUuFnIvFn5Z3Z8KrWvyrnrWa1xKrW5
-	Z3Z7uF4FyasrXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrNtxDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6638:a58a:b0:488:59cc:eb41 with SMTP id
+ kd10-20020a056638a58a00b0048859cceb41mr184770jab.3.1715087643594; Tue, 07 May
+ 2024 06:14:03 -0700 (PDT)
+Date: Tue, 07 May 2024 06:14:03 -0700
+In-Reply-To: <20240507123456.2204-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c162cd0617dcf580@google.com>
+Subject: Re: [syzbot] [net?] INFO: rcu detected stall in sock_write_iter (3)
+From: syzbot <syzbot+2b5fbaaa4280010beda7@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/6 22:17, Kemeng Shi wrote:
-> We save jh2bh(jh_in) to bh_in, so use bh_in directly instead of
-> jh2bh(jh_in) to simplify the code.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Hello,
 
-Looks good to me.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Reported-and-tested-by: syzbot+2b5fbaaa4280010beda7@syzkaller.appspotmail.com
 
-> ---
->  fs/jbd2/journal.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 87f558bd2e8a..01e33b643e4d 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -363,8 +363,8 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  		new_folio = virt_to_folio(jh_in->b_frozen_data);
->  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
->  	} else {
-> -		new_folio = jh2bh(jh_in)->b_folio;
-> -		new_offset = offset_in_folio(new_folio, jh2bh(jh_in)->b_data);
-> +		new_folio = bh_in->b_folio;
-> +		new_offset = offset_in_folio(new_folio, bh_in->b_data);
->  	}
->  
->  	mapped_data = kmap_local_folio(new_folio, new_offset);
-> 
+Tested on:
 
+commit:         7367539a Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c8bfdf180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3714fc09f933e505
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b5fbaaa4280010beda7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11a5c104980000
+
+Note: testing is done by a robot and is best-effort only.
 
