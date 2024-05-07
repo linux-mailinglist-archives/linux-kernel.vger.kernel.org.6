@@ -1,207 +1,207 @@
-Return-Path: <linux-kernel+bounces-171817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C3F8BE916
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEB28BE91E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C87528CF0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:33:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC26E285BD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567C416C85B;
-	Tue,  7 May 2024 16:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9306216D4F7;
+	Tue,  7 May 2024 16:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBMwDUYA"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aursnnQ/"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3F316C447;
-	Tue,  7 May 2024 16:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661C416D304;
+	Tue,  7 May 2024 16:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099283; cv=none; b=fLUIhsFmVC/gSKOO2nDxIBY043tJw93y/ZZrcuFaKkq06OBvfnV+ZAhLw7B9U30+PrJ3rmJ3YFO0h03Xpem4RMvzbnezRQDx0bwHz6Dv2eJqBvXnXf4mDRxkWxTL06ggqBFOkNn8An8qyA+5TNHZy/g9O3YTJVfhYotjQ0IniGY=
+	t=1715099365; cv=none; b=SY/ZkPJdyYVFHlzc1xGE9kngwYlW9QCWGSaf8sp2GN4xW5coy1OvBQgjJnYskqiu/N2HQxG8rugthaEwrMaGqweZHNWxuOe0cG+XRFJaqG41f7yYUw2W8xbXD0jYAZ1VssXHtSV2KHVM+APbzOJa5raVuGUK+U6QziD3wwmeObU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099283; c=relaxed/simple;
-	bh=hD+M8iZyRZ2U9jnt01xrNmHVdD1Kc6oVV4hfl9YcSjg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=r2IdKelf98fJTD4rxOepQwLJtlhRh2Ii59hAO1mAZqmC077Gb9L++NtqLYBHQ0m9SkKqFMU8NWbT45RSl3oodkPuIS3LZFY3K7EfaKGKVocZ/E+dJ3qdfK4o/orC2ACDK3lCp+yMIzUSELi8XDANA0TZl8uqMB0Poxe9rI/XVNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBMwDUYA; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1715099365; c=relaxed/simple;
+	bh=JzWG+TVT24xjUV+BtqvHafFb5mVQUUD55uKYF3ryVwk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Jkw533WSiWA3FEEnQVqc+38yLDZ+cQCMVEKsddiRJIJhCzRwLsvDZok8bBTXsTpstmGCka/T9uo4C3rHNsIN1VoEolqiZpyvHhMMsV0qdLBpFFPWBD7lcYvVyP/ksGRz4XQ9n54H5Yy9Q0T3BBmaTeHI2cBdixpbiuY2MKtBeDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aursnnQ/; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so726402966b.0;
-        Tue, 07 May 2024 09:28:01 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-34d96054375so2047128f8f.2;
+        Tue, 07 May 2024 09:29:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715099280; x=1715704080; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1715099362; x=1715704162; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rICwxurU6A+ycOmFzrxmjMEY+vAR/gQDdccoIGBtMqA=;
-        b=bBMwDUYAyCNo3SnY7dqiYWGUDAvA5KOLaMSiryJybhsYi6F3uv8Dk1M503llh38mDi
-         HIgw8yvrsBjKH1NCuwmy4VO6VuR1keoV7U0KfmGiM4fcjPwaNyvSi++I7Utb/B8Knpz1
-         n5d1HVwXE4Moa3MzBmlh3nunz1R3I9EDHHlxEQtZejf4zCbGFOMQR0qhVydp9YbSw1qh
-         ++QsvpHuvU2mNYohr+R71VP4K0qusnci6AHhqG4yMKnJX3DzsaJE3gEKuDgGA9ADDTTF
-         NF6cZWDsEOYSz4ul7WzUnSeHxRVwuvHQYaEsFgQobQwmtmNDYhz2+cXxjC4lKvqnSHx+
-         qESQ==
+        bh=EEZf3QdtDW8MX2mGFJXyG0+aloiqU19g1Raki3JNYco=;
+        b=aursnnQ/ixMLBGtPF248OSuCMa046/dp7Hy2XhmeFXRmHniZkrwQ8wc/EgmslYQ2qS
+         96sWQA23uI9A7dQP1G17Z4DxJL2H+XPeJeCT1WyKsS3lB8m6wHln5pvyfCta8nKnlP6t
+         2sb7OP8a7zQ9Pt3RuQSEoE9ia2L1VnsFggWjPQuYCs0W78rAJr+07OkdlrlhqnZfABpD
+         hMuHSan+xycKN/IgP3qcwo5D3HDvjEekLt1ivM9RmrDVU0+54Ds3/3VqgNuPaGA8GKRQ
+         l+PbTDV1dQdsV5w58F3pAwWENnrVHzBX1BMLslDisa3JlnmiP/tZo0ZxR955PBzf3qXk
+         gWzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715099280; x=1715704080;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715099362; x=1715704162;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rICwxurU6A+ycOmFzrxmjMEY+vAR/gQDdccoIGBtMqA=;
-        b=uvjLqg/D1zzLa7UnQK+qUpfKKyW1p6XrvMNCi/egzMMEqF8iVvJjaXFgGrrKyeSDbN
-         jx947CcEYNwBb2zW3+k/oJlW/5j1kk2Wq+jMN4JCZFC4AWfefszUsXlwWe1iOJnMmxkS
-         sq6VEqW2aLE9WEBaaoMdnqwpSyM6s1hAReYig72oV9coPTsddNeN2ILymeW7yxsNe1LB
-         djGaJZl/WuqzhbcYDWYSX0GBQHidEg2J/1//OJW8beQuMXQlNNu7wyrH5ra/x8CvSlSE
-         c41YVN6MHDCSj/3GOQ+0ztRl9uaC6Nt4zyCMszCwSbDpfR77WMI+Hl+jn8Qk7gRK0Lvy
-         uZtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/S9cMRb/1qZlxyNA7JLDHukaAvAecZPcIVUKxj5wAEHfyDeJfhecT7M8OmenhDopbxf072CFSHxnzcE+dRUmnroLe+GNoh7S6clgjR039gxAS76ij57C/qzAJoX9iowlpOfgTNPiO74wcHN5DFxK5mf6igbBBoiPnE+qnfj08GA==
-X-Gm-Message-State: AOJu0YyfMgjkZ6H3IjrIxEAt1oa9K+fij8zYzj0lnjEHTpeBTaj8VJT9
-	Ve+t2L7cZiYlO7KMG9508x0vegDlkrDpaoiZznt4s3oOFQcypwUcRUpvSx61Lx9uzQKixQsSLaL
-	wOECtEdA66lfHU+BJpmyEsIkE7R0=
-X-Google-Smtp-Source: AGHT+IFn3p6+IU8MNAx4QtWppQukiCZTYwwesAVqUICe2KaycZuCykzGNsekqL7kux4xcd7LRFMUFDcyPHBLQ7Tec6w=
-X-Received: by 2002:a17:907:3f9a:b0:a59:c5c2:a31c with SMTP id
- hr26-20020a1709073f9a00b00a59c5c2a31cmr8176135ejc.33.1715099279965; Tue, 07
- May 2024 09:27:59 -0700 (PDT)
+        bh=EEZf3QdtDW8MX2mGFJXyG0+aloiqU19g1Raki3JNYco=;
+        b=VLV0NzZSKWfUvyw9BY1XvI4Wgp2egk4T94Zjj6W/048kK8Ns6PLYFNjICK/Tm8phA/
+         COVGe3aIF6gFUdzonjeE5KZq72r+dLZ0+Mh/8f2MgzKJjrLJETjn3ufQLqYSwctlh8Wq
+         jaRqGqCV0PmMY9+l6XzPus658dNcPIwi8GigwzFXydXwkZDE17yj2utm+2y5xIAS10X2
+         wgbWa5Wu1zWoMIkPL5mh2WNsWeTQUrGIr0vIJzIcOLfx1bqGwIyV446ewOzBIS6sObbb
+         BebteNyeC50Skep9Z9hE2guhPNXLcm/EYHqVPLXO9y6Lrh4CzQPxdgocvKYJeIgkLQKN
+         OSPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoPNm0c0LRGtlueQdP8KjnP7wo9zwfDcfeFFZ1+lGshouDeDfq1S3PsDo+3/dsSzsQjlik4iFAWsaMyjJiEm5AJAW229bUQJzGN/qWiCPuH4kOEXzWM1HHxJw4p4KCOACZVOu5izN0yZdKpUHXvdfIuGt6rGZ+eJ+/6Qcv3emxuJ8os3Uv
+X-Gm-Message-State: AOJu0Yw2Cy7gxekqD4G7tSz0/elZfwtWrbj/W0FuLpioP3jkTMbOgcRt
+	E+AVClHTBnHObk/xosJp03VsQZUsDtyA9oN1D76pf8tZEak5mPSV
+X-Google-Smtp-Source: AGHT+IFBrRQrSXMbG9wKr15tpJDto9Vjg6ilQT7Kem7TZzJWhnSOUDQRDf6xOwDGzDRn3Lw5E6jFig==
+X-Received: by 2002:adf:f4c3:0:b0:34f:5d07:ebd1 with SMTP id ffacd0b85a97d-34fca6214d3mr194693f8f.56.1715099361786;
+        Tue, 07 May 2024 09:29:21 -0700 (PDT)
+Received: from localhost ([146.70.204.204])
+        by smtp.gmail.com with ESMTPSA id o10-20020a5d47ca000000b0034d9e5411ebsm13371417wrc.45.2024.05.07.09.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 09:29:21 -0700 (PDT)
+From: Richard Gobert <richardbgobert@gmail.com>
+To: richardbgobert@gmail.com
+Cc: alexander.duyck@gmail.com,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	willemdebruijn.kernel@gmail.com
+Subject: [PATCH net-next v9 1/3] net: gro: use cb instead of skb->network_header
+Date: Tue,  7 May 2024 18:28:07 +0200
+Message-Id: <20240507162807.130396-1-richardbgobert@gmail.com>
+In-Reply-To: <20240507162349.130277-1-richardbgobert@gmail.com>
+References: <20240507162349.130277-1-richardbgobert@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
- <2024050425-setting-enhance-3bcd@gregkh> <CAEf4BzbiTQk6pLPQj=p9d18YW4fgn9k2V=zk6nUYAOK975J=xg@mail.gmail.com>
- <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
-In-Reply-To: <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 7 May 2024 09:27:44 -0700
-Message-ID: <CAEf4BzZQexjTvROUMkNb2MMB2scmjJHNRunA-NqeNzfo-yYh9g@mail.gmail.com>
-Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
- /proc/<pid>/maps APIs
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, Suren Baghdasaryan <surenb@google.com>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 7, 2024 at 8:49=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracle=
-com> wrote:
->
-> .. Adding Suren & Willy to the Cc
->
-> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240504 18:14]:
-> > On Sat, May 4, 2024 at 8:32=E2=80=AFAM Greg KH <gregkh@linuxfoundation.=
-org> wrote:
-> > >
-> > > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
-> > > > I also did an strace run of both cases. In text-based one the tool =
-did
-> > > > 68 read() syscalls, fetching up to 4KB of data in one go.
-> > >
-> > > Why not fetch more at once?
-> > >
-> >
-> > I didn't expect to be interrogated so much on the performance of the
-> > text parsing front, sorry. :) You can probably tune this, but where is
-> > the reasonable limit? 64KB? 256KB? 1MB? See below for some more
-> > production numbers.
->
-> The reason the file reads are limited to 4KB is because this file is
-> used for monitoring processes.  We have a significant number of
-> organisations polling this file so frequently that the mmap lock
-> contention becomes an issue. (reading a file is free, right?)  People
-> also tend to try to figure out why a process is slow by reading this
-> file - which amplifies the lock contention.
->
-> What happens today is that the lock is yielded after 4KB to allow time
-> for mmap writes to happen.  This also means your data may be
-> inconsistent from one 4KB block to the next (the write may be around
-> this boundary).
->
-> This new interface also takes the lock in do_procmap_query() and does
-> the 4kb blocks as well.  Extending this size means more time spent
-> blocking mmap writes, but a more consistent view of the world (less
-> "tearing" of the addresses).
+This patch converts references of skb->network_header to napi_gro_cb's
+network_offset and inner_network_offset.
 
-Hold on. There is no 4KB in the new ioctl-based API I'm adding. It
-does a single VMA look up (presumably O(logN) operation) using a
-single vma_iter_init(addr) + vma_next() call on vma_iterator.
+Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+---
+ include/net/gro.h        | 9 +++++++--
+ net/ipv4/af_inet.c       | 4 ----
+ net/ipv4/tcp_offload.c   | 3 ++-
+ net/ipv6/ip6_offload.c   | 5 ++---
+ net/ipv6/tcpv6_offload.c | 3 ++-
+ 5 files changed, 13 insertions(+), 11 deletions(-)
 
-As for the mmap_read_lock_killable() (is that what we are talking
-about?), I'm happy to use anything else available, please give me a
-pointer. But I suspect given how fast and small this new API is,
-mmap_read_lock_killable() in it is not comparable to holding it for
-producing /proc/<pid>/maps contents.
+diff --git a/include/net/gro.h b/include/net/gro.h
+index c1d4ca0463a1..3dafa0f31ae1 100644
+--- a/include/net/gro.h
++++ b/include/net/gro.h
+@@ -181,12 +181,17 @@ static inline void *skb_gro_header(struct sk_buff *skb, unsigned int hlen,
+ 	return ptr;
+ }
+ 
++static inline int skb_gro_receive_network_offset(const struct sk_buff *skb)
++{
++	return NAPI_GRO_CB(skb)->network_offsets[NAPI_GRO_CB(skb)->encap_mark];
++}
++
+ static inline void *skb_gro_network_header(const struct sk_buff *skb)
+ {
+ 	if (skb_gro_may_pull(skb, skb_gro_offset(skb)))
+-		return skb_gro_header_fast(skb, skb_network_offset(skb));
++		return skb_gro_header_fast(skb, skb_gro_receive_network_offset(skb));
+ 
+-	return skb_network_header(skb);
++	return skb->data + skb_gro_receive_network_offset(skb);
+ }
+ 
+ static inline __wsum inet_gro_compute_pseudo(const struct sk_buff *skb,
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index a7bad18bc8b5..428196e1541f 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -1569,10 +1569,6 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 
+ 	NAPI_GRO_CB(skb)->is_atomic = !!(iph->frag_off & htons(IP_DF));
+ 	NAPI_GRO_CB(skb)->flush |= flush;
+-	skb_set_network_header(skb, off);
+-	/* The above will be needed by the transport layer if there is one
+-	 * immediately following this IP hdr.
+-	 */
+ 	NAPI_GRO_CB(skb)->inner_network_offset = off;
+ 
+ 	/* Note : No need to call skb_gro_postpull_rcsum() here,
+diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
+index fab0973f995b..b70ae50e658d 100644
+--- a/net/ipv4/tcp_offload.c
++++ b/net/ipv4/tcp_offload.c
+@@ -330,7 +330,8 @@ struct sk_buff *tcp4_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 
+ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
+ {
+-	const struct iphdr *iph = ip_hdr(skb);
++	const u16 offset = NAPI_GRO_CB(skb)->network_offsets[skb->encapsulation];
++	const struct iphdr *iph = (struct iphdr *)(skb->data + offset);
+ 	struct tcphdr *th = tcp_hdr(skb);
+ 
+ 	th->check = ~tcp_v4_check(skb->len - thoff, iph->saddr,
+diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
+index c8b909a9904f..288c7c6ea50f 100644
+--- a/net/ipv6/ip6_offload.c
++++ b/net/ipv6/ip6_offload.c
+@@ -67,7 +67,7 @@ static int ipv6_gro_pull_exthdrs(struct sk_buff *skb, int off, int proto)
+ 		off += len;
+ 	}
+ 
+-	skb_gro_pull(skb, off - skb_network_offset(skb));
++	skb_gro_pull(skb, off - skb_gro_receive_network_offset(skb));
+ 	return proto;
+ }
+ 
+@@ -236,7 +236,6 @@ INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
+ 	if (unlikely(!iph))
+ 		goto out;
+ 
+-	skb_set_network_header(skb, off);
+ 	NAPI_GRO_CB(skb)->inner_network_offset = off;
+ 
+ 	flush += ntohs(iph->payload_len) != skb->len - hlen;
+@@ -260,7 +259,7 @@ INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
+ 	NAPI_GRO_CB(skb)->proto = proto;
+ 
+ 	flush--;
+-	nlen = skb_network_header_len(skb);
++	nlen = skb_gro_offset(skb) - off;
+ 
+ 	list_for_each_entry(p, head, list) {
+ 		const struct ipv6hdr *iph2;
+diff --git a/net/ipv6/tcpv6_offload.c b/net/ipv6/tcpv6_offload.c
+index 4b07d1e6c952..e70d60e0f86f 100644
+--- a/net/ipv6/tcpv6_offload.c
++++ b/net/ipv6/tcpv6_offload.c
+@@ -29,7 +29,8 @@ struct sk_buff *tcp6_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 
+ INDIRECT_CALLABLE_SCOPE int tcp6_gro_complete(struct sk_buff *skb, int thoff)
+ {
+-	const struct ipv6hdr *iph = ipv6_hdr(skb);
++	const u16 offset = NAPI_GRO_CB(skb)->network_offsets[skb->encapsulation];
++	const struct ipv6hdr *iph = (struct ipv6hdr *)(skb->data + offset);
+ 	struct tcphdr *th = tcp_hdr(skb);
+ 
+ 	th->check = ~tcp_v6_check(skb->len - thoff, &iph->saddr,
+-- 
+2.36.1
 
->
-> We are working to reduce these issues by switching the /proc/<pid>/maps
-> file to use rcu lookup.  I would recommend we do not proceed with this
-> interface using the old method and instead, implement it using rcu from
-> the start - if it fits your use case (or we can make it fit your use
-> case).
->
-> At least, for most page faults, we can work around the lock contention
-> (since v6.6), but not all and not on all archs.
->
-> ...
->
-> >
-> > > > In comparison,
-> > > > ioctl-based implementation had to do only 6 ioctl() calls to fetch =
-all
-> > > > relevant VMAs.
-> > > >
-> > > > It is projected that savings from processing big production applica=
-tions
-> > > > would only widen the gap in favor of binary-based querying ioctl AP=
-I, as
-> > > > bigger applications will tend to have even more non-executable VMA
-> > > > mappings relative to executable ones.
-> > >
-> > > Define "bigger applications" please.  Is this some "large database
-> > > company workload" type of thing, or something else?
-> >
-> > I don't have a definition. But I had in mind, as one example, an
-> > ads-serving service we use internally (it's a pretty large application
-> > by pretty much any metric you can come up with). I just randomly
-> > picked one of the production hosts, found one instance of that
-> > service, and looked at its /proc/<pid>/maps file. Hopefully it will
-> > satisfy your need for specifics.
-> >
-> > # cat /proc/1126243/maps | wc -c
-> > 1570178
-> > # cat /proc/1126243/maps | wc -l
-> > 28875
-> > # cat /proc/1126243/maps | grep ' ..x. ' | wc -l
-> > 7347
->
-> We have distributions increasing the map_count to an insane number to
-> allow games to work [1].  It is, unfortunately, only a matter of time unt=
-il
-> this is regularly an issue as it is being normalised and allowed by an
-> increased number of distributions (fedora, arch, ubuntu).  So, despite
-> my email address, I am not talking about large database companies here.
->
-> Also, note that applications that use guard VMAs double the number for
-> the guards.  Fun stuff.
->
-> We are really doing a lot in the VMA area to reduce the mmap locking
-> contention and it seems you have a use case for a new interface that can
-> leverage these changes.
->
-> We have at least two talks around this area at LSF if you are attending.
-
-I am attending LSFMM, yes, I'll try to not miss them.
-
->
-> Thanks,
-> Liam
->
-> [1] https://lore.kernel.org/linux-mm/8f6e2d69-b4df-45f3-aed4-5190966e2dea=
-@valvesoftware.com/
->
 
