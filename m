@@ -1,114 +1,161 @@
-Return-Path: <linux-kernel+bounces-172500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CF78BF2C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:58:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30FD8BF2C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F21A1282A1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131F11C20970
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD462126F36;
-	Tue,  7 May 2024 23:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FFC1A2C3B;
+	Tue,  7 May 2024 23:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jZucxqg/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PtiqjXJs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A66B1A2C06;
-	Tue,  7 May 2024 23:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ABD1A2C2C;
+	Tue,  7 May 2024 23:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123800; cv=none; b=WhIYPi4eytLSFeSpJwiCD2smQFisZpU8NP3H61eOGoMTtU6Ol8v6x2q56YKqoXLrC1FIqROBOY8Vqzep1qD+G/KN12qn8blfF5Wxwu9qsgDF8WCQYBFd1/AWPQIihiNUqX/ixFIIv1UNhuI0rXiF2llCBi2fOudKSEDeYbsQVCg=
+	t=1715123833; cv=none; b=KO+tinD8Sb7pQYISrA9YaO6Meb+sOEKuY5VtMYgH0ZiJ4D7vxMmyNBNT47eGPzAj/WX4AddO+AG4ZwcTXnuIpVzP3hQdlP1Obp5cWW1bncxt6ck4O3Pf/hP9b6lENhCIDrp+YnLQU2rsnG37cAng7/B/RQrw5TaqugWLcygabbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123800; c=relaxed/simple;
-	bh=YumvVvqReLYKoW4wwlEP0/V/rN7kO/ivsqSVOjkIvCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E8UufvMckRnGnEX4vEXqj5/UOCyaCDO7NUu5zGH8gnNfaE822W1r31u0OoiJ0PBwJPg1zvdvNi2GzIEtYGDCokLYw9q614NkHnLgYjH1J5hm3nchUE+f4T2LNOsgyIMT/eSA7PueQwybdhBzn/MbbsdqOJzkgjd0Sg5HMgVfRHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jZucxqg/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715123793;
-	bh=XV2g+5XSPcq7e8sRPcZijxcMrUgWgzXLkFao8GfRXak=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jZucxqg/EcpmEgcs4KHTt+F4uZGc0IVHMo45DJkCQypilJEa9EIJkWTE/yHWFSy57
-	 KLVTXGm0R5biJgMvpHpPgErKMMYGYUoqHIxc/ASoU0vEWAY8vTUxPk343NBQBqGz1z
-	 AyxnF742gtOuCMg9N3bLO4Wcp9yojEVHZhu3xrucu4x1fdi6uUl8y3ZK3UaL2gRLxa
-	 ps7jkK+GXnBR74xi6NZ9JNmA6AMboqkfo9nz0s1YpDqb8z/AKhe0qOEet/hEdgyrAB
-	 e3VI98njAbCORPXDnHopf6UfZbqoEU33PsEReLWklKoZWcYcHn2Ax4a/HjcYMPO33r
-	 YS7mOO5Sm7g3A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VYvKs3KP1z4wny;
-	Wed,  8 May 2024 09:16:32 +1000 (AEST)
-Date: Wed, 8 May 2024 09:16:31 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the dma-mapping tree
-Message-ID: <20240508091631.1ec34a25@canb.auug.org.au>
+	s=arc-20240116; t=1715123833; c=relaxed/simple;
+	bh=B5sed5cD0tFGfPPl8ZuyN1Mtoj9J0cyirngFnFvehDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MJwV3DbxGOIfnWzrXCDHm48+apoO2h8cLo7hoDDxo/Fj2YRS0+TdRCRpcNcB3YC9eVPs3DEJ/EOBFPQ8wd0I0pdSGy0E/5VcXsB4PMGwCuLWIXioJa94CM79qNjdk6Vdsw/IlZ4BauKVm7xDJKkUxWvUVMNZOaCzgf4xbTapQ0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PtiqjXJs; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715123832; x=1746659832;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=B5sed5cD0tFGfPPl8ZuyN1Mtoj9J0cyirngFnFvehDY=;
+  b=PtiqjXJs/0JIAHWHlbelLk4vGMjue7shVk+Wo4zW20nvcgJpjs4skYly
+   PrB5R/4LQA6sJsYeA1jmD4rKfgAGqJj9qis1shTuWEZO7SQXR35RxjZcA
+   F2e5xV6Su2v0k+fG1L7fVYpjsUFRlnFgUb9loTpqdw23nsfp7a1S6oQ3o
+   8WP6ScCdkMcGw07o+RiMttL6zw/aaKYdNQIhCKORPAR0JVNFcH4q/vcms
+   tYhF3Y7iPwJJAkgpFgLsM2jBp1//pX/THJPlNRUtvxIjpj3FHUT4OInOU
+   jQlkSU9nObJF42bCxX8MPg4hG07HQ6aoWFfyH6dldN72chch539edKpe6
+   g==;
+X-CSE-ConnectionGUID: 0aQWMACETtukRh5XduQpwA==
+X-CSE-MsgGUID: TFFCACrmRTOTQaXy0yOJsw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10824388"
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="10824388"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:17:11 -0700
+X-CSE-ConnectionGUID: lyEAteqBTdexIi7z6YFrRw==
+X-CSE-MsgGUID: 2DuMD2hdQuGn3kmMuqF0sA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="28780835"
+Received: from vidhyath-mobl2.amr.corp.intel.com (HELO [10.212.210.63]) ([10.212.210.63])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:17:11 -0700
+Message-ID: <1159c4e1-dae6-462a-8e34-6f74be4c83b3@intel.com>
+Date: Tue, 7 May 2024 16:17:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//4TjJokJkJIemIax+.tT4wC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 04/27] x86/fpu/xstate: Introduce
+ XFEATURE_MASK_KERNEL_DYNAMIC xfeature set
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yang Weijiang <weijiang.yang@intel.com>, pbonzini@redhat.com,
+ x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peterz@infradead.org, chao.gao@intel.com, rick.p.edgecombe@intel.com,
+ mlevitsk@redhat.com, john.allen@amd.com
+References: <20240219074733.122080-1-weijiang.yang@intel.com>
+ <20240219074733.122080-5-weijiang.yang@intel.com>
+ <ZjKNxt1Sq71DI0K8@google.com>
+ <893ac578-baaf-4f4f-96ee-e012dfc073a8@intel.com>
+ <Zjqx8-ZPyB--6Eys@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Zjqx8-ZPyB--6Eys@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_//4TjJokJkJIemIax+.tT4wC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/7/24 15:57, Sean Christopherson wrote:
+>> So I still prefer calling it "KERNEL" over "GUEST".  But I also don't
+>> feel strongly about it and I've said my peace.  I won't NAK it one way
+>> or the other.
+> I assume you mean "DYNAMIC" over "GUEST"?  I'm ok with DYNAMIC, reflecting the
+> impact on each buffer makes sense.
 
-Hi all,
+Yes.  Silly thinko/typo on my part.
 
-After merging the dma-mapping tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> My one request would be to change the WARN in os_xsave() to fire on CET_KERNEL,
+> not KERNEL_DYNAMIC, because it's specifically CET_KERNEL that is guest-only.
+> Future dynamic xfeatures could be guest-only, but they could also be dynamic for
+> some completely different reason.  That was my other hang-up with "DYNAMIC";
+> as-is, os_xsave() implies that it really truly is GUEST_ONLY.
+> 
+> diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+> index 83ebf1e1cbb4..2a1ff49ccfd5 100644
+> --- a/arch/x86/kernel/fpu/xstate.h
+> +++ b/arch/x86/kernel/fpu/xstate.h
+> @@ -185,8 +185,7 @@ static inline void os_xsave(struct fpstate *fpstate)
+>         WARN_ON_FPU(!alternatives_patched);
+>         xfd_validate_state(fpstate, mask, false);
+>  
+> -       WARN_ON_FPU(!fpstate->is_guest &&
+> -                   (mask & XFEATURE_MASK_KERNEL_DYNAMIC));
+> +       WARN_ON_FPU(!fpstate->is_guest && (mask & XFEATURE_MASK_CET_KERNEL));
+>  
+>         XSTATE_XSAVE(&fpstate->regs.xsave, lmask, hmask, err);
 
-net/core/page_pool.c: In function '__page_pool_dma_sync_for_device':
-net/core/page_pool.c:406:54: error: passing argument 1 of 'page_pool_get_dm=
-a_addr' discards 'const' qualifier from pointer target type [-Werror=3Ddisc=
-arded-qualifiers]
-  406 |         dma_addr_t dma_addr =3D page_pool_get_dma_addr(page);
-      |                                                      ^~~~
-In file included from net/core/page_pool.c:13:
-include/net/page_pool/helpers.h:373:62: note: expected 'struct page *' but =
-argument is of type 'const struct page *'
-  373 | static inline dma_addr_t page_pool_get_dma_addr(struct page *page)
-      |                                                 ~~~~~~~~~~~~~^~~~
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  8bf4d7154d4c ("page_pool: check for DMA sync shortcut earlier")
-
-I have used the dma-mapping tree from next-20240507 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//4TjJokJkJIemIax+.tT4wC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY6tk8ACgkQAVBC80lX
-0GxhKQf+PxcyvYJu829pKTIX9GLNDUrPhGIJ/QQm0+8Lhx3FoD7IlCIMqa3HsUPI
-sd97Ju3+wPPtke0mVb7O+A4xwdGqdiixYVtFUPjwMLxHMZGsS5hVLMaUO/tyC6wx
-n/KBglFmb/2NNXyS4pFHlvmvt0bSWaba9vaMWz9Jook8MvS+0EUiIBXV0YZFCHND
-Elbom+vRb5n3NeYFk6s9kRFWKWfN6mVXAbDTn9kScH7llzV+Qap0QjwW6IWszwxh
-z6ip11TEfXs5dFkopSfWBNiMuJDoD+g3mzMpspNejs0J3D0B4xMAuEore9poaqFe
-7tcEQTNja0njIJOWYwxZvX85nWQqhQ==
-=64Vw
------END PGP SIGNATURE-----
-
---Sig_//4TjJokJkJIemIax+.tT4wC--
+Yeah, that would make a lot of sense.  We could add a more generic
+#define for it later if another feature gets added like this.
 
