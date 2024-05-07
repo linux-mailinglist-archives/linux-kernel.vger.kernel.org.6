@@ -1,103 +1,127 @@
-Return-Path: <linux-kernel+bounces-171109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521068BDFD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE508BDFCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1D41C2195B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43FB0281618
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8D84F8A3;
-	Tue,  7 May 2024 10:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b="eGRKrAns"
-Received: from phoenix.uberspace.de (phoenix.uberspace.de [95.143.172.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA3013C69A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.172.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF01613D26C;
+	Tue,  7 May 2024 10:32:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AA322064
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715078299; cv=none; b=Wh1P96vPD8h0sD4b5gNtFdIK/MWVuvVcfA0IOWuDdotWWb8qftr23Bg1DTNT2W9GIqL0G4bN/3qsdVpIb6MGHyN/46kgBFltoi3CqpOo88me+yk0sEXa5iiEds76eYckG0kkWNXs6qoQIUCTRL9fZ5qHOy0SmhsL6M+x06H5a+0=
+	t=1715077941; cv=none; b=dBwOKLucCUL8rAuuLwplTDqVIVXzj+2XCpjnVpqTZGIhVe9WUNpm7FQnJz620lrIP+EAYqLCPau8CGdSx4VPfwRt8sRcILuigE0VsRuhCmWSFD4Mok6l+m4GQjBC6XifVn3hdx15iN2h9S5ML4jpfcL3nB5hzakiq+NbZ+xzJOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715078299; c=relaxed/simple;
-	bh=C5Q8d7JYtURFJbkMrFTwRw8yPtwQ4hTSCRGnP6zKl9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=czlLQwTD9WSSyek23RKwtHua7FW8evkOZ+hLFZtEqoMU+SBnfClmSIw9mnbkCikuXTaTqkA9rxZUtaUDh1Y9qXCsj5vnXiEBHoyk/XJKnGw0bkeHu+Slk6OuXH9CXCDE8dQ0oppZouNaDI0g6ddbCYltimexWgEsupW3x/hY4/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com; spf=pass smtp.mailfrom=yshyn.com; dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b=eGRKrAns; arc=none smtp.client-ip=95.143.172.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yshyn.com
-Received: (qmail 4617 invoked by uid 988); 7 May 2024 10:31:34 -0000
-Authentication-Results: phoenix.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by phoenix.uberspace.de (Haraka/3.0.1) with ESMTPSA; Tue, 07 May 2024 12:31:34 +0200
-From: Illia Ostapyshyn <illia@yshyn.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Illia Ostapyshyn <illia@yshyn.com>
-Subject: [PATCH] docs: cgroup-v1: Update page cache removal functions
-Date: Tue,  7 May 2024 12:30:39 +0200
-Message-Id: <20240507103038.541462-1-illia@yshyn.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715077941; c=relaxed/simple;
+	bh=u/BiEH3uaN9Y0kT7PVoWcpdxWQWEfIsnIh/Z0uYsUa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7L+hJ7vF42uGbR0Kprj/PNAp/pdiSGaVfRl8EBrPNSRMhpyJJ5P83bczRyyFOaP13HLLx5I0UBWB9QpDsmBdalmi+cW41kQ5Gtw644tFJlGwC8tp1llvYry+XqWhpOcZL1xQN5NwMMlINeDvcYDUF4qi9gG6p7pXv9Oo4Hkgr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3FD51063;
+	Tue,  7 May 2024 03:32:44 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5ECB3F587;
+	Tue,  7 May 2024 03:32:17 -0700 (PDT)
+Date: Tue, 7 May 2024 11:32:15 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, javier.carrasco.cruz@gmail.com,
+	Sudeep Holla <sudeep.holla@arm.com>, julia.lawall@inria.fr,
+	linux-kernel@vger.kernel.org, rafael@kernel.org,
+	skhan@linuxfoundation.org, conor@kernel.org
+Subject: Re: [PATCH 2/2 v3] drivers: use __free attribute instead of
+ of_node_put()
+Message-ID: <ZjoDL6EkDcRf6hML@bogus>
+References: <20240424125401.oxvt5n64d7a57ge3@bogus>
+ <20240501094313.407820-1-vincenzo.mezzela@gmail.com>
+ <20240501094313.407820-3-vincenzo.mezzela@gmail.com>
+ <2024050102-reshuffle-licking-f84e@gregkh>
+ <673df61a-e0f5-450b-8fb4-746bc950e3d1@gmail.com>
+ <2024050148-dutiful-unsubtle-dbb1@gregkh>
+ <2398ca58-eafc-46df-92c1-c03cd920fd06@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Bar: ++
-X-Rspamd-Report: SUSPICIOUS_RECIPS(1.5) BAYES_HAM(-0.001507) MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
-X-Rspamd-Score: 2.898492
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=yshyn.com; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=C5Q8d7JYtURFJbkMrFTwRw8yPtwQ4hTSCRGnP6zKl9s=;
-	b=eGRKrAnszQmFTpMjqn/A5h3sOPnvpexXMqr5mH+Xbxr5GGA7mBEXY0jQfTjle+2TsalgBkZh0M
-	XPmoMloDmmeavn24pdfuXuQ/ZOX1Hk73CgbRQOSmEzoTw/XzbHWxWDMuZFYMcezmFEHotwHOf1Z/
-	2Pa0npQL2oCKEgBmLjI4BIJwEySseZu2ngdSlsVXEtYJ0U2Ja4+O4hEOgtfwfHrp/gvIz/8jGF2g
-	vwtjuqvIrRx1WCYXyjp6FHPWPmaO3vgO2Vtpu3THdw5qrpBbDSz+nnqmN/Rl4fE55aGdrZ0KjjZ+
-	uRc+tZ1PD9QO2CEkKpaHZ2WilYbTLk0cvt7QbpAQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2398ca58-eafc-46df-92c1-c03cd920fd06@gmail.com>
 
-Commit 452e9e6992fe ("filemap: Add filemap_remove_folio and
-__filemap_remove_folio") reimplemented __delete_from_page_cache() as
-__filemap_remove_folio() and delete_from_page_cache() as
-filemap_remove_folio().  The compatibility wrappers were finally removed
-in ece62684dcfb ("hugetlbfs: convert hugetlb_delete_from_page_cache() to
-use folios") and 6ffcd825e7d0 ("mm: Remove __delete_from_page_cache()").
+On Mon, May 06, 2024 at 05:30:49PM +0200, Vincenzo Mezzela wrote:
+> 
+> On 01/05/24 15:06, Greg KH wrote:
+> > On Wed, May 01, 2024 at 02:33:39PM +0200, Vincenzo Mezzela wrote:
+> > > On 01/05/24 12:48, Greg KH wrote:
+> > > > On Wed, May 01, 2024 at 11:43:13AM +0200, Vincenzo Mezzela wrote:
+> > > > > Introduce the __free attribute for scope-based resource management.
+> > > > > Resources allocated with __free are automatically released at the end of
+> > > > > the scope. This enhancement aims to mitigate memory management issues
+> > > > > associated with forgetting to release resources by utilizing __free
+> > > > > instead of of_node_put().
+> > > > > 
+> > > > > The declaration of the device_node used within the do-while loops is
+> > > > > moved directly within the loop so that the resource is automatically
+> > > > > freed at the end of each iteration.
+> > > > > 
+> > > > > Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+> > > > > Signed-off-by: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
+> > > > > ---
+> > > > >    drivers/base/arch_topology.c | 51 +++++++++++++++---------------------
+> > > > >    1 file changed, 21 insertions(+), 30 deletions(-)
+> > > > How was all of this tested?
+> > > > 
+> > > > thanks,
+> > > > 
+> > > > greg k-h
+> > > Hi,
+> > > 
+> > > I just cross-compiled it for RISC-V to enable the config
+> > > GENERIC_ARCH_TOPOLOGY
+> > > and include arch_topology.c as well.
+> > Cross-compile is nice, how about running it?
+> > 
+> > > Do you have any suggestion to trigger the affected code and perform some
+> > > testing?
+> > That is up to you to determine if you wish to modify it :)
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> Hi,
+> 
+> I've successfully run it on QEMU. There are no differences in the dmesg
+> after applying the patches.
+>
 
-Update the remaining references to dead functions in the memcg
-implementation memo.
+For this patch, dmesg delta may not be of any use.
 
-Signed-off-by: Illia Ostapyshyn <illia@yshyn.com>
----
- Documentation/admin-guide/cgroup-v1/memcg_test.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Furthermore, I've tracked the execution of the parse_dt_topology() which is
+> calling all the functions that I've modified with the patches and I checked
+> that of_node_put was correctly called at the end of each scope.
+>
 
-diff --git a/Documentation/admin-guide/cgroup-v1/memcg_test.rst b/Documentation/admin-guide/cgroup-v1/memcg_test.rst
-index 1f128458ddea..4386362f2ed8 100644
---- a/Documentation/admin-guide/cgroup-v1/memcg_test.rst
-+++ b/Documentation/admin-guide/cgroup-v1/memcg_test.rst
-@@ -102,7 +102,7 @@ Under below explanation, we assume CONFIG_SWAP=y.
- 	The logic is very clear. (About migration, see below)
- 
- 	Note:
--	  __remove_from_page_cache() is called by remove_from_page_cache()
-+	  __filemap_remove_folio() is called by filemap_free_folio()
- 	  and __remove_mapping().
- 
- 6. Shmem(tmpfs) Page Cache
--- 
-2.39.2
+That should be good enough.
 
+> Is there anything else that can be done to further testing this changes?
+>
+
+I don't think there is much we can test other than what you have done already.
+If you fix the subject and any other comments me and others had suggested, I
+am happy to Ack.
+
+--
+Regards,
+Sudeep
 
