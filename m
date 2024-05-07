@@ -1,401 +1,97 @@
-Return-Path: <linux-kernel+bounces-171195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D617C8BE0F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:23:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CD88BE0FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8E1288C28
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FA661C21574
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18DE15E7F9;
-	Tue,  7 May 2024 11:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FS+Qaw0Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED34115E5D0;
-	Tue,  7 May 2024 11:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB9E15219B;
+	Tue,  7 May 2024 11:26:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA1E522E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715080892; cv=none; b=mQfWInXm2StGF8SbRt7pB+po+NQXdmawxUeozedhcqJf3rblZUUS2OUzqR8iJjfdUyk+tQoNnvOJQi87OA4qkbZWMtXFFQkid7yR0HwOuEelpwULEqu4jARCmymIJpBx6u3Ob2v2kE18SG97yFykPOVXXzZ+6kPtECtSeCuoseo=
+	t=1715081216; cv=none; b=RQsIEFS9RF3YK3JHvOLGs4aIYPRIzkiEZWFKBZrZ2CxpPxX9Ui0LIPEce1K4XmEnLPabDqi2k2xgGl0FdQ5WzpldX9r6iz481IR27Y6i2G9GdZTBFmwpQRvLSxeV5FHXbQHgznbMDIjtKYaX04hbpnkdWRMGKw17MOOyrGLT/+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715080892; c=relaxed/simple;
-	bh=Rge3zKaGi+wO+cXrAMB2kLWk6O7srVMhbzA812qOaK0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZQFFbf//5ANhzQ5jpkJ3THDSTlllISwT8+urEIHBu0ZgpR/KJdQKBpO/qPvBZKORa32Sw8gBQRbmbTRSX6fhlvG674CfiUZjGbIzABoPBDSqEogXyM92OjE4chyeofVb87jp2z3ANJDYVh/wywzAFvYMvtvZMTRc4+uAGx9zHS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FS+Qaw0Y; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715080891; x=1746616891;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Rge3zKaGi+wO+cXrAMB2kLWk6O7srVMhbzA812qOaK0=;
-  b=FS+Qaw0YPyite8A8p0M5C+UdeThTokBcMNd7G9ViAuYlIRmLkTyVIJzW
-   2lWfAbM0+hBD/m4K1PRls9BbBnbYWNVO6VUIjWRfib2izrMWF7m2f25Sw
-   3d7VTDJMEm6bKX+VW6HDVq/dGnnT6+moggbjb5RFmZ6P47MtwnxLvXyh8
-   tvfY6To7FF/etOfQygaw55zuj+yhd1TlsyC0CbbJCNjugWIDRMfvwBT+w
-   vzaw83MYF/NqL5YsMabe2bG9Uck7fgI0tiu7JBa/OUNOJleGs+UsGX70d
-   YiChLFqODOIeI3SE2CGW+JtRDVId1nwLEQNgBaEZodQqgjknpb7Z+Otvg
-   Q==;
-X-CSE-ConnectionGUID: Wkd7A8vJR6myb41nBv0edA==
-X-CSE-MsgGUID: qux4qRl+QK2qJENUQ9ngkA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21472704"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="21472704"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 04:21:30 -0700
-X-CSE-ConnectionGUID: FMKEUUzWTG2Mc3Iz6jQ04g==
-X-CSE-MsgGUID: XeRoQ91lRh6EGcbRQjKdJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="33316335"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa004.jf.intel.com with ESMTP; 07 May 2024 04:21:28 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 7/7] xsk: use generic DMA sync shortcut instead of a custom one
-Date: Tue,  7 May 2024 13:20:26 +0200
-Message-ID: <20240507112026.1803778-8-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240507112026.1803778-1-aleksander.lobakin@intel.com>
-References: <20240507112026.1803778-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1715081216; c=relaxed/simple;
+	bh=W7S2v33HPqpr6Hg+sdpbHfoD8E2GMIdOEdVd5GGP8/g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=i6CmnuoHSGRlWFt25MGtTvHHReZzblgyZwlaNaBDhieREolTS6aPeNNfh9dJH/wvndKcaveebjFSn780JX2jsnmypyYvi9wTM+2+1SbXR9eJ5AVcZovlTWr3Q3mgtfMTXvn8LaicdsvmAFKfb/Y0o2Fkq9Wv72fkMCfSfXNbAag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0F861063;
+	Tue,  7 May 2024 04:27:19 -0700 (PDT)
+Received: from [10.1.34.181] (XHFQ2J9959.cambridge.arm.com [10.1.34.181])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AB6E3F587;
+	Tue,  7 May 2024 04:26:52 -0700 (PDT)
+Message-ID: <9ce8a0f4-d1af-44ea-87b5-57ebdb3d2910@arm.com>
+Date: Tue, 7 May 2024 12:26:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
+ boundaries
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: David Hildenbrand <david@redhat.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Yang Shi <yang@os.amperecomputing.com>, riel@surriel.com, cl@linux.com,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Ze Zuo <zuoze1@huawei.com>
+References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
+ <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
+ <Zav3UK7ESNxCMjyP@casper.infradead.org>
+ <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
+ <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
+ <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
+ <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
+ <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
+ <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
+ <1dc9a561-55f7-4d65-8b86-8a40fa0e84f9@arm.com>
+ <6016c0e9-b567-4205-8368-1f1c76184a28@huawei.com>
+ <2c14d9ad-c5a3-4f29-a6eb-633cdf3a5e9e@redhat.com>
+ <4e7ce57f-cad1-44d5-a1d8-4cd47683a358@arm.com>
+In-Reply-To: <4e7ce57f-cad1-44d5-a1d8-4cd47683a358@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-XSk infra's been using its own DMA sync shortcut to try avoiding
-redundant function calls. Now that there is a generic one, remove
-the custom implementation and rely on the generic helpers.
-xsk_buff_dma_sync_for_cpu() doesn't need the second argument anymore,
-remove it.
+On 07/05/2024 12:14, Ryan Roberts wrote:
+> On 07/05/2024 12:13, David Hildenbrand wrote:
+>>
+>>> https://github.com/intel/lmbench/blob/master/src/lat_mem_rd.c#L95
+>>>
+>>>> suggest. If you want to try something semi-randomly; it might be useful to rule
+>>>> out the arm64 contpte feature. I don't see how that would be interacting here if
+>>>> mTHP is disabled (is it?). But its new for 6.9 and arm64 only. Disable with
+>>>> ARM64_CONTPTE (needs EXPERT) at compile time.
+>>> I don't enabled mTHP, so it should be not related about ARM64_CONTPTE,
+>>> but will have a try.
+>>
+>> cont-pte can get active if we're just lucky when allocating pages in the right
+>> order, correct Ryan?
+> 
+> No it shouldn't do; it requires the pages to be in the same folio.
+> 
 
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/net/xdp_sock_drv.h                    |  7 ++---
- include/net/xsk_buff_pool.h                   | 14 +++------
- drivers/net/ethernet/engleder/tsnep_main.c    |  2 +-
- .../net/ethernet/freescale/dpaa2/dpaa2-xsk.c  |  2 +-
- drivers/net/ethernet/intel/i40e/i40e_xsk.c    |  2 +-
- drivers/net/ethernet/intel/ice/ice_xsk.c      |  2 +-
- drivers/net/ethernet/intel/igc/igc_main.c     |  2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c  |  2 +-
- .../ethernet/mellanox/mlx5/core/en/xsk/rx.c   |  4 +--
- .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  2 +-
- drivers/net/ethernet/netronome/nfp/nfd3/xsk.c |  2 +-
- .../net/ethernet/stmicro/stmmac/stmmac_main.c |  2 +-
- net/xdp/xsk_buff_pool.c                       | 29 +++----------------
- 13 files changed, 21 insertions(+), 51 deletions(-)
+That said, if we got lucky in allocating the "right" pages, then we will end up
+doing an extra function call and a bit of maths per every 16 PTEs in order to
+figure out that the span is not contained by a single folio, before backing out
+of an attempt to fold. That would probably be just about measurable.
 
-diff --git a/include/net/xdp_sock_drv.h b/include/net/xdp_sock_drv.h
-index c9aec9ab6191..0a5dca2b2b3f 100644
---- a/include/net/xdp_sock_drv.h
-+++ b/include/net/xdp_sock_drv.h
-@@ -219,13 +219,10 @@ static inline struct xsk_tx_metadata *xsk_buff_get_metadata(struct xsk_buff_pool
- 	return meta;
- }
- 
--static inline void xsk_buff_dma_sync_for_cpu(struct xdp_buff *xdp, struct xsk_buff_pool *pool)
-+static inline void xsk_buff_dma_sync_for_cpu(struct xdp_buff *xdp)
- {
- 	struct xdp_buff_xsk *xskb = container_of(xdp, struct xdp_buff_xsk, xdp);
- 
--	if (!pool->dma_need_sync)
--		return;
--
- 	xp_dma_sync_for_cpu(xskb);
- }
- 
-@@ -402,7 +399,7 @@ static inline struct xsk_tx_metadata *xsk_buff_get_metadata(struct xsk_buff_pool
- 	return NULL;
- }
- 
--static inline void xsk_buff_dma_sync_for_cpu(struct xdp_buff *xdp, struct xsk_buff_pool *pool)
-+static inline void xsk_buff_dma_sync_for_cpu(struct xdp_buff *xdp)
- {
- }
- 
-diff --git a/include/net/xsk_buff_pool.h b/include/net/xsk_buff_pool.h
-index 99dd7376df6a..bacb33f1e3e5 100644
---- a/include/net/xsk_buff_pool.h
-+++ b/include/net/xsk_buff_pool.h
-@@ -43,7 +43,6 @@ struct xsk_dma_map {
- 	refcount_t users;
- 	struct list_head list; /* Protected by the RTNL_LOCK */
- 	u32 dma_pages_cnt;
--	bool dma_need_sync;
- };
- 
- struct xsk_buff_pool {
-@@ -82,7 +81,6 @@ struct xsk_buff_pool {
- 	u8 tx_metadata_len; /* inherited from umem */
- 	u8 cached_need_wakeup;
- 	bool uses_need_wakeup;
--	bool dma_need_sync;
- 	bool unaligned;
- 	bool tx_sw_csum;
- 	void *addrs;
-@@ -155,21 +153,17 @@ static inline dma_addr_t xp_get_frame_dma(struct xdp_buff_xsk *xskb)
- 	return xskb->frame_dma;
- }
- 
--void xp_dma_sync_for_cpu_slow(struct xdp_buff_xsk *xskb);
- static inline void xp_dma_sync_for_cpu(struct xdp_buff_xsk *xskb)
- {
--	xp_dma_sync_for_cpu_slow(xskb);
-+	dma_sync_single_for_cpu(xskb->pool->dev, xskb->dma,
-+				xskb->pool->frame_len,
-+				DMA_BIDIRECTIONAL);
- }
- 
--void xp_dma_sync_for_device_slow(struct xsk_buff_pool *pool, dma_addr_t dma,
--				 size_t size);
- static inline void xp_dma_sync_for_device(struct xsk_buff_pool *pool,
- 					  dma_addr_t dma, size_t size)
- {
--	if (!pool->dma_need_sync)
--		return;
--
--	xp_dma_sync_for_device_slow(pool, dma, size);
-+	dma_sync_single_for_device(pool->dev, dma, size, DMA_BIDIRECTIONAL);
- }
- 
- /* Masks for xdp_umem_page flags.
-diff --git a/drivers/net/ethernet/engleder/tsnep_main.c b/drivers/net/ethernet/engleder/tsnep_main.c
-index 4b15af6b7122..44da335d66bd 100644
---- a/drivers/net/ethernet/engleder/tsnep_main.c
-+++ b/drivers/net/ethernet/engleder/tsnep_main.c
-@@ -1587,7 +1587,7 @@ static int tsnep_rx_poll_zc(struct tsnep_rx *rx, struct napi_struct *napi,
- 		length = __le32_to_cpu(entry->desc_wb->properties) &
- 			 TSNEP_DESC_LENGTH_MASK;
- 		xsk_buff_set_size(entry->xdp, length - ETH_FCS_LEN);
--		xsk_buff_dma_sync_for_cpu(entry->xdp, rx->xsk_pool);
-+		xsk_buff_dma_sync_for_cpu(entry->xdp);
- 
- 		/* RX metadata with timestamps is in front of actual data,
- 		 * subtract metadata size to get length of actual data and
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-xsk.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-xsk.c
-index 051748b997f3..a466c2379146 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-xsk.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-xsk.c
-@@ -55,7 +55,7 @@ static u32 dpaa2_xsk_run_xdp(struct dpaa2_eth_priv *priv,
- 	xdp_set_data_meta_invalid(xdp_buff);
- 	xdp_buff->rxq = &ch->xdp_rxq;
- 
--	xsk_buff_dma_sync_for_cpu(xdp_buff, ch->xsk_pool);
-+	xsk_buff_dma_sync_for_cpu(xdp_buff);
- 	xdp_act = bpf_prog_run_xdp(xdp_prog, xdp_buff);
- 
- 	/* xdp.data pointer may have changed */
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-index 11500003af0d..d20ce517426e 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-@@ -483,7 +483,7 @@ int i40e_clean_rx_irq_zc(struct i40e_ring *rx_ring, int budget)
- 
- 		bi = *i40e_rx_bi(rx_ring, next_to_process);
- 		xsk_buff_set_size(bi, size);
--		xsk_buff_dma_sync_for_cpu(bi, rx_ring->xsk_pool);
-+		xsk_buff_dma_sync_for_cpu(bi);
- 
- 		if (!first)
- 			first = bi;
-diff --git a/drivers/net/ethernet/intel/ice/ice_xsk.c b/drivers/net/ethernet/intel/ice/ice_xsk.c
-index 1857220d27fe..cecd5b1e0757 100644
---- a/drivers/net/ethernet/intel/ice/ice_xsk.c
-+++ b/drivers/net/ethernet/intel/ice/ice_xsk.c
-@@ -879,7 +879,7 @@ int ice_clean_rx_irq_zc(struct ice_rx_ring *rx_ring, int budget)
- 				   ICE_RX_FLX_DESC_PKT_LEN_M;
- 
- 		xsk_buff_set_size(xdp, size);
--		xsk_buff_dma_sync_for_cpu(xdp, xsk_pool);
-+		xsk_buff_dma_sync_for_cpu(xdp);
- 
- 		if (!first) {
- 			first = xdp;
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 4d975d620a8e..07692e2a7c64 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -2813,7 +2813,7 @@ static int igc_clean_rx_irq_zc(struct igc_q_vector *q_vector, const int budget)
- 		}
- 
- 		bi->xdp->data_end = bi->xdp->data + size;
--		xsk_buff_dma_sync_for_cpu(bi->xdp, ring->xsk_pool);
-+		xsk_buff_dma_sync_for_cpu(bi->xdp);
- 
- 		res = __igc_xdp_run_prog(adapter, prog, bi->xdp);
- 		switch (res) {
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-index d34d715c59eb..ee2d0ec12b2d 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-@@ -304,7 +304,7 @@ int ixgbe_clean_rx_irq_zc(struct ixgbe_q_vector *q_vector,
- 		}
- 
- 		bi->xdp->data_end = bi->xdp->data + size;
--		xsk_buff_dma_sync_for_cpu(bi->xdp, rx_ring->xsk_pool);
-+		xsk_buff_dma_sync_for_cpu(bi->xdp);
- 		xdp_res = ixgbe_run_xdp_zc(adapter, rx_ring, bi->xdp);
- 
- 		if (likely(xdp_res & (IXGBE_XDP_TX | IXGBE_XDP_REDIR))) {
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-index b8dd74453655..1b7132fa70de 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xsk/rx.c
-@@ -270,7 +270,7 @@ struct sk_buff *mlx5e_xsk_skb_from_cqe_mpwrq_linear(struct mlx5e_rq *rq,
- 	/* mxbuf->rq is set on allocation, but cqe is per-packet so set it here */
- 	mxbuf->cqe = cqe;
- 	xsk_buff_set_size(&mxbuf->xdp, cqe_bcnt);
--	xsk_buff_dma_sync_for_cpu(&mxbuf->xdp, rq->xsk_pool);
-+	xsk_buff_dma_sync_for_cpu(&mxbuf->xdp);
- 	net_prefetch(mxbuf->xdp.data);
- 
- 	/* Possible flows:
-@@ -319,7 +319,7 @@ struct sk_buff *mlx5e_xsk_skb_from_cqe_linear(struct mlx5e_rq *rq,
- 	/* mxbuf->rq is set on allocation, but cqe is per-packet so set it here */
- 	mxbuf->cqe = cqe;
- 	xsk_buff_set_size(&mxbuf->xdp, cqe_bcnt);
--	xsk_buff_dma_sync_for_cpu(&mxbuf->xdp, rq->xsk_pool);
-+	xsk_buff_dma_sync_for_cpu(&mxbuf->xdp);
- 	net_prefetch(mxbuf->xdp.data);
- 
- 	prog = rcu_dereference(rq->xdp_prog);
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-index d601b5faaed5..b5333da20e8a 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -917,7 +917,7 @@ INDIRECT_CALLABLE_SCOPE bool mlx5e_post_rx_wqes(struct mlx5e_rq *rq)
- 
- 	if (!rq->xsk_pool) {
- 		count = mlx5e_refill_rx_wqes(rq, head, wqe_bulk);
--	} else if (likely(!rq->xsk_pool->dma_need_sync)) {
-+	} else if (likely(!dma_dev_need_sync(rq->pdev))) {
- 		mlx5e_xsk_free_rx_wqes(rq, head, wqe_bulk);
- 		count = mlx5e_xsk_alloc_rx_wqes_batched(rq, head, wqe_bulk);
- 	} else {
-diff --git a/drivers/net/ethernet/netronome/nfp/nfd3/xsk.c b/drivers/net/ethernet/netronome/nfp/nfd3/xsk.c
-index 45be6954d5aa..01cfa9cc1b5e 100644
---- a/drivers/net/ethernet/netronome/nfp/nfd3/xsk.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfd3/xsk.c
-@@ -184,7 +184,7 @@ nfp_nfd3_xsk_rx(struct nfp_net_rx_ring *rx_ring, int budget,
- 		xrxbuf->xdp->data += meta_len;
- 		xrxbuf->xdp->data_end = xrxbuf->xdp->data + pkt_len;
- 		xdp_set_data_meta_invalid(xrxbuf->xdp);
--		xsk_buff_dma_sync_for_cpu(xrxbuf->xdp, r_vec->xsk_pool);
-+		xsk_buff_dma_sync_for_cpu(xrxbuf->xdp);
- 		net_prefetch(xrxbuf->xdp->data);
- 
- 		if (meta_len) {
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 7c6fb14b5555..206cba44dd30 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -5352,7 +5352,7 @@ static int stmmac_rx_zc(struct stmmac_priv *priv, int limit, u32 queue)
- 
- 		/* RX buffer is good and fit into a XSK pool buffer */
- 		buf->xdp->data_end = buf->xdp->data + buf1_len;
--		xsk_buff_dma_sync_for_cpu(buf->xdp, rx_q->xsk_pool);
-+		xsk_buff_dma_sync_for_cpu(buf->xdp);
- 
- 		prog = READ_ONCE(priv->xdp_prog);
- 		res = __stmmac_xdp_run_prog(priv, prog, buf->xdp);
-diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
-index ce60ecd48a4d..c0e0204b9630 100644
---- a/net/xdp/xsk_buff_pool.c
-+++ b/net/xdp/xsk_buff_pool.c
-@@ -338,7 +338,6 @@ static struct xsk_dma_map *xp_create_dma_map(struct device *dev, struct net_devi
- 
- 	dma_map->netdev = netdev;
- 	dma_map->dev = dev;
--	dma_map->dma_need_sync = false;
- 	dma_map->dma_pages_cnt = nr_pages;
- 	refcount_set(&dma_map->users, 1);
- 	list_add(&dma_map->list, &umem->xsk_dma_list);
-@@ -424,7 +423,6 @@ static int xp_init_dma_info(struct xsk_buff_pool *pool, struct xsk_dma_map *dma_
- 
- 	pool->dev = dma_map->dev;
- 	pool->dma_pages_cnt = dma_map->dma_pages_cnt;
--	pool->dma_need_sync = dma_map->dma_need_sync;
- 	memcpy(pool->dma_pages, dma_map->dma_pages,
- 	       pool->dma_pages_cnt * sizeof(*pool->dma_pages));
- 
-@@ -460,8 +458,6 @@ int xp_dma_map(struct xsk_buff_pool *pool, struct device *dev,
- 			__xp_dma_unmap(dma_map, attrs);
- 			return -ENOMEM;
- 		}
--		if (dma_need_sync(dev, dma))
--			dma_map->dma_need_sync = true;
- 		dma_map->dma_pages[i] = dma;
- 	}
- 
-@@ -557,11 +553,9 @@ struct xdp_buff *xp_alloc(struct xsk_buff_pool *pool)
- 	xskb->xdp.data_meta = xskb->xdp.data;
- 	xskb->xdp.flags = 0;
- 
--	if (pool->dma_need_sync) {
--		dma_sync_single_range_for_device(pool->dev, xskb->dma, 0,
--						 pool->frame_len,
--						 DMA_BIDIRECTIONAL);
--	}
-+	if (pool->dev)
-+		xp_dma_sync_for_device(pool, xskb->dma, pool->frame_len);
-+
- 	return &xskb->xdp;
- }
- EXPORT_SYMBOL(xp_alloc);
-@@ -633,7 +627,7 @@ u32 xp_alloc_batch(struct xsk_buff_pool *pool, struct xdp_buff **xdp, u32 max)
- {
- 	u32 nb_entries1 = 0, nb_entries2;
- 
--	if (unlikely(pool->dma_need_sync)) {
-+	if (unlikely(pool->dev && dma_dev_need_sync(pool->dev))) {
- 		struct xdp_buff *buff;
- 
- 		/* Slow path */
-@@ -693,18 +687,3 @@ dma_addr_t xp_raw_get_dma(struct xsk_buff_pool *pool, u64 addr)
- 		(addr & ~PAGE_MASK);
- }
- EXPORT_SYMBOL(xp_raw_get_dma);
--
--void xp_dma_sync_for_cpu_slow(struct xdp_buff_xsk *xskb)
--{
--	dma_sync_single_range_for_cpu(xskb->pool->dev, xskb->dma, 0,
--				      xskb->pool->frame_len, DMA_BIDIRECTIONAL);
--}
--EXPORT_SYMBOL(xp_dma_sync_for_cpu_slow);
--
--void xp_dma_sync_for_device_slow(struct xsk_buff_pool *pool, dma_addr_t dma,
--				 size_t size)
--{
--	dma_sync_single_range_for_device(pool->dev, dma, 0,
--					 size, DMA_BIDIRECTIONAL);
--}
--EXPORT_SYMBOL(xp_dma_sync_for_device_slow);
--- 
-2.45.0
-
+But the regression doesn't kick in until 96K, which is the step after 64K. I'd
+expect to see the regression on 64K too if that was the issue. The cacheline is
+64K so I suspect it could be something related to the cache?
 
