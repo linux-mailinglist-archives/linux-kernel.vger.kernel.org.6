@@ -1,113 +1,166 @@
-Return-Path: <linux-kernel+bounces-172243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6378BEFA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:10:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243528BEFB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37814B2289A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:10:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EEA5B214A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50087150999;
-	Tue,  7 May 2024 22:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E34816D4E9;
+	Tue,  7 May 2024 22:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uwC9pMGa"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALbIg50z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EF634CDD
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 22:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF4277658;
+	Tue,  7 May 2024 22:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715119799; cv=none; b=Er0rglz9zHHGwY1kVZBlT7ykMT/eq/t0r4BY/bj9RTyXhXQL1Uhz0YQeJV4HulQ9tC3yb71N0XtDnOFSD10U/nembFfIiScOiWaFBdnNkKz4xHRRPX4uqHwJH9Ig2PWfB8MZDlH3cExV2W0oI41X1pDKKBZQkCAOAdk0ThRJz3A=
+	t=1715120069; cv=none; b=lgacVGKxIn1Vhv6BpSG7GAfHp8eu5DW6b+PC1fcHsdkk/Bz06hinUxQayZGMjLgIgL7e/+ruyA/p0QbeDXlSaJmIMrQ8vbR5G7DePX6uyBFif71/B7vH7RpDizXORWLkAcI7KI0cZtX4sFvrhXABWn9KYEPtZ5UOnWfaKQW+d6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715119799; c=relaxed/simple;
-	bh=rz4ZDYMxudbdC8GSlW3kEF1CvatRJGfB9hkcnF0t+1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K3sFnkZubG9luKVxG0Es3Ps3OX/M6GDxyShnKt72/1LN/lLqDAEIecHvHUnka5NOaqabA6DGNUDOCGSGS2/qIEwZDQf7EYsAUo+IfHjCx4fxnikcCzSbA8WWuPQePht1omAqhHYwuHIPJYC0/WnwTi3sowE4TyUtw//Ili0hh3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uwC9pMGa; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e3e18c23f9so23677151fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 15:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715119796; x=1715724596; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ac4p6+1ybm5UDnW5YmcAzBGvGhVt4yypjSgPS4Q8TxY=;
-        b=uwC9pMGaMq0L8MdFA5rJGAmVMpaxa1weap19mgiiNV/XuGe1bh7J2d8/kULKKZHC2a
-         q2u55Zqq3B24kRw3Y4C7rTPjnqMKcX+VaBeORVKHEWrUqxH3bE5QLP6q6JRon/UuJLKG
-         nB7xto/6VdpCPZWQq8FnFJPdr8QHgwSWbXd7ah2OxGhilOxhKNvRBV12SjDK/4WcHx+N
-         MbFr/geLvWsVSsGOtwwId7Uu9v8OYm2al2uwBd9n6UiRAEIb5wdiDlz4cu+KH12TWwC4
-         D8SiZzOzH20MHu+ahQ8JKTci+8z1tUOTskH7T/r/sBogukghiEz8GNLtV3z08JP+TeCb
-         l1dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715119796; x=1715724596;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ac4p6+1ybm5UDnW5YmcAzBGvGhVt4yypjSgPS4Q8TxY=;
-        b=qS1GGADkOUAh5vLEhImcILQV0RwZ/CglhXOX4ZQoVvNtJkpjPZM4HxpS7wxHGItoKd
-         EPbReH4biEgQ1rBOEQ2k8A6jpjG42oR3jr+yA8boP/JwXiQqkDWfx611NJc41/ju7Zs1
-         d9PizUAo9thc+Z1vtR3Qkpo2tp2u9Oz0Vr3rts6GIk4cUwOPiMdMo7RL+jRaBnyRY7zL
-         SbyN2Py+sezcv7CW4mQ05fZ01ow9HrFo9VDh4tXAgh7fv8NFztpbZHk9/Pt72MzxddSQ
-         NgJH9qAXHUmKy0f75W9WB1dW5sFbtLSTIblXEFfosQ+NblWCQRNFNMZP/zUT0vHcwwOd
-         NqhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNrHUpaMbdv/ifmftlKIW8iXrbOX1AE9sjV9lGpCcngebpxGN6r27cMIp8SyxO3Xni2idPeVtoVxiOj3Qp8YVhopBpJoyuKSsAQ5Cp
-X-Gm-Message-State: AOJu0Yxn4os7DTaFxJsS9NASoJSmO7jnX0k/QiMtgpB3q5TznqSR7Dew
-	WP3IJTxHajgmg0qi8mLEzJCB+aH523vle9AAbJ+qvp77gzK0n1rDHkcktO1EIAVerZCruFvC1o7
-	7tOWIyCLxaAcXnEYZTqS3CYHmSGpKGpnMZ2ieRSCNOnpZagCKHGg=
-X-Google-Smtp-Source: AGHT+IGd4OLJ8TyONdPhu6+NfNprGQFNyY6nogkdByV/4wLX6NhgqopTXlvMPXz5HdHB96Qr6UROFsAkbdh+80WHfwA=
-X-Received: by 2002:a2e:3004:0:b0:2d6:ff04:200f with SMTP id
- 38308e7fff4ca-2e4476af8e9mr4709961fa.33.1715119796124; Tue, 07 May 2024
- 15:09:56 -0700 (PDT)
+	s=arc-20240116; t=1715120069; c=relaxed/simple;
+	bh=o0BvgHGmxdYnf92yz4XgS3qkmI6Mq1AJhjPlCvLYTqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiC1Z74epBNUtrO4JjZ/lAojSdkFjldSYM1Uvjgcns4uOFJ7eJm33XD8qB7o9h+yhDNEQ1vUaDtqNzoiCw3nRuHZXTEiM+8nMf45e5N6s+IfoMsZrHWicizVotjxSVwT3ZPG8bgYtfmuvqSBTJhHz9wKNwvBsPpk1aHGi79AeXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALbIg50z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71081C2BBFC;
+	Tue,  7 May 2024 22:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715120068;
+	bh=o0BvgHGmxdYnf92yz4XgS3qkmI6Mq1AJhjPlCvLYTqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ALbIg50zFavQMLf9IBWLbCDyPBBkUPmabZviBbilontbOpQbBGEPA/8RiffCTVnmw
+	 14abzhtHL6UfY/GZe+H2NbVGqswA60zl3HfsmLZsOqE2pi4l/eceT0HzszPfrp6rMR
+	 XJlmweiwQeA+nJGs0fqUDG6AzK1CK5QaqkXgsG7vdjh8NN6TpcTrsodOcXN4O2SRw3
+	 mvyFpQGbKX9RFVO6034bNw7cDbYKgFPYGdUS9GINLbmDBVzShOFTFVvWzx9sbBd9aM
+	 yQ8UKm5EYiWdzTAcM9hgUhP6nYLxyMQ2t+tU7VmqJcGZaa1dJlU0/s1e5gbNkTZV7C
+	 aL2KBEY6eHd5w==
+Date: Tue, 7 May 2024 15:14:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Hugo Valtier <hugo@valtier.fr>, viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Mark Fasheh <mark@fasheh.com>
+Subject: Re: bug in may_dedupe_file allows to deduplicate files we aren't
+ allowed to write to
+Message-ID: <20240507221427.GA2049409@frogsfrogsfrogs>
+References: <CAF+WW=oKQak6ktiOH75pHSDe7YEkYD-1ditgcsWB=z+aRKJogQ@mail.gmail.com>
+ <CAOQ4uxjh5iQ0_knRebNRS271vR2-2f_9bNZyBG5vUy3rw6xh-g@mail.gmail.com>
+ <CAF+WW=rRz0L-P9X2tV9svGdTbhAhpBea=huf-_DDfkz29fXUyQ@mail.gmail.com>
+ <CAOQ4uxiGpShrki9dnJM1hvz1GPPcDos6P8pAkAz_jksy4gJdsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com>
-In-Reply-To: <20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 7 May 2024 17:09:45 -0500
-Message-ID: <CAMknhBEdcg3O9A5rDPkPSgpshn_F2CTRdNR1FjYud3i0F-VOtQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Add support for bosch bmi120
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Danila Tikhonov <danila@jiaxyga.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiGpShrki9dnJM1hvz1GPPcDos6P8pAkAz_jksy4gJdsw@mail.gmail.com>
 
-On Sat, May 4, 2024 at 8:00=E2=80=AFAM Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trab=
-arni@gmail.com> wrote:
->
-> Add support for bosch bmi120.
-> BMI120 is an energy-efficient version of BMI160. Despite having a differe=
-nt
-> CHIPID value, this variant seems to be fully compatible with BMI160.
-> It could be find in many phones like xiaomi-vince or xiaomi-tissot.
->
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
-> ---
-> Changes in v2:
-> - Add bosch,bmi120 as a fallback compatible.
-> - Remove error path if chipid is not found.
-> - Link to v1: https://lore.kernel.org/r/20240504-bmi120-v1-0-478470a85058=
-@gmail.com
->
-> ---
-> Danila Tikhonov (2):
->       iio: imu: bmi160: add support for bmi120
->       dt-bindings: iio: imu: bmi160: add bmi120
->
+[add fsdevel to cc because why not?]
 
-Preferably, the DT bindings patch should go first in the series before
-the code that use it (makes it easier for reviewers to read it in
-right order).
+On Sun, May 05, 2024 at 09:57:23AM +0300, Amir Goldstein wrote:
+> [change email for Mark Fashe]
+> 
+> On Sat, May 4, 2024 at 11:51 PM Hugo Valtier <hugo@valtier.fr> wrote:
+> >
+> > > My guess is that not many users try to dedupe other users' files,
+> > > so this feature was never used and nobody complained.
+> >
+> > +1
+
+So I guess the rest of the thread is here?
+
+https://lore.kernel.org/lkml/CAF+WW=oKQak6ktiOH75pHSDe7YEkYD-1ditgcsWB=z+aRKJogQ@mail.gmail.com/
+
+Which in turn is discussing the change made here?
+
+https://lore.kernel.org/linux-fsdevel/20180511192651.21324-2-mfasheh@suse.de/
+
+Based on the stated intent in the original patch ("process can write
+inode") I do not think Mr. Valtier's patch is correct.
+inode_permission(..., MAY_WRITE) returns 0 if the caller can access the
+file in the given mode, or some negative errno if it cannot.  I don't
+know why he sees the behavior he describes:
+
+"I've tested that I can create an other readonly file as root and have
+my unprivileged user deduplicate it however if I then make the file
+other writeable I cannot anymore*."
+
+Which test exactly is the one that results in a denial?  I don't think I
+can reproduce this:
+
+$ ls /opt/a /opt/b
+-rw-r--r-- 1 root root 65536 May  7 15:09 /opt/a
+-rw-rw-rw- 1 root root 65536 May  7 15:09 /opt/b
+$ xfs_io -r -c 'dedupe /opt/b 4096 4096 4096' /opt/a
+XFS_IOC_FILE_EXTENT_SAME: Operation not permitted
+
+<confused>
+
+> > Thx for the answer, I'm new to this to be sure I understood what you meant:
+> > > You should add an xfstest for this and include a
+> > > _fixed_by_kernel_commit and that will signal all the distros that
+> > > care to backport the fix.
+> >
+> > So right now I wait for 6.9 to be released soon enough then
+> > I then submit my patch which invert the condition.
+> 
+> There is no need to wait for the 6.9 release.
+> Fixes can and should be posted at any time.
+> 
+> > Once that is merged in some tree (fsdevel I guess ?) I submit a patch for
+> 
+> Yes, this is a good candidate for Christian Brauner's vfs tree.
+> Please CC the VFS maintainers (from MAINTAINERS file) and fsdevel.
+> 
+> A note about backporting to stable kernels.
+> stable maintainer bots would do best effort to auto backport
+> patches marked with a Fixes: commit to the supported LTS kernel,
+> once the fix is merged to master,
+> but if the fix does not apply cleanly, you will need to post the
+> backport yourself (if you want the fix backported).
+> 
+> For your case, the fix will not apply cleanly before
+> 4609e1f18e19 ("fs: port ->permission() to pass mnt_idmap")
+> so at lease from 6.1.y and backwards, you will need to post
+a> manual backports if you want the fix in LTS kernels or you can
+> let the distros that find the new xfstest failure take care of that...
+> 
+> > xfstest which adds a regression test and has _fixed_by_kernel_commit
+> > mentioning the commit just merged in the fsdevel linux tree.
+> 
+> Correct.
+> You may take inspiration from existing dedupe tests
+> [CC Darrick who wrote most of them]
+> but I did not find any test coverage for may_dedupe_file() among them.
+> 
+> There is one test that is dealing with permissions that you can
+> use as a template:
+> 
+> $ git grep -w _begin_fstest.*dedupe tests/generic/|grep perms
+> tests/generic/674:_begin_fstest auto clone quick perms dedupe
+> 
+> Hint: use $XFS_IO_PROG -r to open the destination file read only.
+> 
+> Because there is currently no test coverage for read-only dest
+> for the admin and user owned files, I suggest that you start with
+> writing this test, making sure that your fix does not regress it and
+> then add the other writable file case.
+
+..and yes, the unusual permissions behavior of FIDEDUPERANGE should be
+better tested.
+
+--D
+
+> Thanks,
+> Amir.
 
