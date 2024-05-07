@@ -1,130 +1,108 @@
-Return-Path: <linux-kernel+bounces-171041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24CED8BDF0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:55:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B458BDF11
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DE4CB25D6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:55:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F4F1C20EF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDCC14EC60;
-	Tue,  7 May 2024 09:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A1114E2E9;
+	Tue,  7 May 2024 09:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V0dSg1IF"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="giqUDCDQ"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B0014EC49
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A360E4F894;
+	Tue,  7 May 2024 09:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715075712; cv=none; b=QfF2mubz93NKfLzWfdsdtSoJs4+1vXuTlZQfL6pKFAxO2oryjsOc0z0NbeVgWsqKmkHV6dyzZ550DW83tJnSspFvd0IlXWGZeQYFYS5t6Tosm3l69T+jdU4Ui5qnD9OR0wUqvvaqcn5z/CF/SLr/KfNY/imAMjKgXGYmVxcGnAM=
+	t=1715075758; cv=none; b=YVl1T9dOQZquAVsi9HkwYkgqj+aIzUC7zqH/zfHpK9vWC2OAWSPIAS4k7K1MRvwutWJXbyElOR999HXI0mFEtQLP35frf66te0gIq32hcJV0LtBcjPy9bwqvQWTq8enE012L3a2qK4gB5nyP0UeN+SpjET8ydiEJfoR2bwXtnAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715075712; c=relaxed/simple;
-	bh=ySzqAdBy3XIuOsN+4M43h3v/XUU1e6byy3HPdS66zkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o2dLFCF8QWU23f85m1PbqAWuIvmqqpRUKDxbB80mhzPqZiKw8/su8sTMqqXnsCSoJy84RJHUHtvegfHL4eHfN58InC8yihFbsThr6ukN0Tmx0gfyNuuFKnQpbzt/NsVKrAtxlQB+fnXigswrw4y49Nb5Iae3GlJrsQhWUrmB0xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V0dSg1IF; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-34da35cd01cso2676654f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 02:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715075708; x=1715680508; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jhfsqJjab/igtBSwSRfO0D4527C8EIUuYcZOQelhvBc=;
-        b=V0dSg1IFxe1jQLFl2gadot4iA8yd3gwclG6/dmeZr0pa7k1QonT/afNaxbtj/T6yE3
-         F9C/uwty+h5F7YrQuOHKzclX+XKDHf8omtL8PFGzXyVUWwhOzUfO9aW9xeozf0P4U4pU
-         QyYkYngC0x6FOwWLtImJJWejto4AHVIKin5dfB8EE1kLAPWYFkHs4JC/YYoh7aEQ4CAf
-         AB9X+5AY1g2h1xqGSdN3QZ8pexdubdNPFxqYhmTtB4PQkmWuFEQ0e4nzSlJEpoq1U6ZV
-         m/qDyaKEh+MA7/Hg9ce2QuqVWt7CT1ujyoAkRWh/xJ5FghGTXcaNRr86e65vA3D8bl/B
-         wnpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715075708; x=1715680508;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jhfsqJjab/igtBSwSRfO0D4527C8EIUuYcZOQelhvBc=;
-        b=O+5276yYliV4uch5IeiUi9FZM5s8p/VOCCylx/5wIXHqvY2HqqIh+NLn95H3l6pcO/
-         SzO5pLbhO9SHAZl+mxnSLeYPY+Cfye5Jo6pe84QRSn92RU4j3uhl8yjc51EYWBLiy9Ui
-         6Yz0ZjRTtZl5owV3xugxzI7Xo49FOgjTHxHxkzrnHveQw/MXmLv3JKR8V+VGp3NFc+eI
-         WTwgNhK09U+ZL8XAphifkC2cdEDdSmR7zV3bYyMu1UHBBPjoIRI3a2p0LNnc7bRdllb1
-         UvtDNmOhyqmhlg//DtExz6mtaY2dLQ9OgCjxWwBxEUHoURKdBGbpINZvNdlYaXMCPv+n
-         PwZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJpcxPXmpxUnSE/h7+sLZ1cpu11Wk8DyY2DcUTbZNZbtmOH+9WLiqGi46cb+bsi/xpZh+veXQSDyUKXi3yOO6bTvLoW0IerEomHAJo
-X-Gm-Message-State: AOJu0YzsCG2UwxZpm1hix53dmGX/ceKRinifZIA7NU5Cvck248P1ZZXw
-	fVcWh/bJO5zQ/cDpadD9kvFDleTvnWTZJ1eOhLjvAanhAJgXWqOc7jDcmGjRXHs=
-X-Google-Smtp-Source: AGHT+IEnX+GiP1H1R7a/PVZu6gZKW9nIWDfc/aLhP5NK80VEMsnFZNqObUfhm9M51FbyUiTT3ER0zA==
-X-Received: by 2002:a5d:4903:0:b0:34a:beb3:f6dc with SMTP id x3-20020a5d4903000000b0034abeb3f6dcmr12404727wrq.2.1715075708291;
-        Tue, 07 May 2024 02:55:08 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id l27-20020a05600c1d1b00b0041c5151dc1csm22844866wms.29.2024.05.07.02.55.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 02:55:08 -0700 (PDT)
-Date: Tue, 7 May 2024 11:55:06 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] printk: cleanup deprecated uses of strncpy/strcpy
-Message-ID: <Zjn6ejJ9ecsuGsK2@pathway.suse.cz>
-References: <20240429-strncpy-kernel-printk-printk-c-v1-1-4da7926d7b69@google.com>
+	s=arc-20240116; t=1715075758; c=relaxed/simple;
+	bh=9jWL+RVVX1qVd3kU2nm+exdcflWB3XJ3hRh2aLyMlr8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l3unyLVxsdnzSCkkmInKcQD2wnV9PuVrXONTr/n77p83JJsdFt8nP8N9nwnGeb+zBsM2j3Ayf00Gh58g6br41ZMfXmNpKR9VMA4X+8CGTUdedgbBpIoofgb6OK6AsnKr0Hy4z/O40X6ARAgxQjxrRkY8PuJd9rgBaKOMYtXapBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=giqUDCDQ; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4479tnTU100331;
+	Tue, 7 May 2024 04:55:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715075749;
+	bh=GUn0NZVvuTz2voPwCEaXEML7orKNXf7WSWlCKMQrMUM=;
+	h=From:To:CC:Subject:Date;
+	b=giqUDCDQmJbGpo3oF6S9CHnAYhln7YG2Fn0PZKdfzFSPnCE8rBID0P4Glo7op5YZE
+	 pEly4b2kztpg1WUQfWwbrHMB8VoYtVlNZfCAE2GCJSnOTXe2nnlDbxxAwtNcMRLdzs
+	 06E0mro8sfiN2xU92a6dIW/Ql9DOvH+7W+MnYgN0=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4479tno9067788
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 7 May 2024 04:55:49 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 7
+ May 2024 04:55:49 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 7 May 2024 04:55:49 -0500
+Received: from uda0500640.dal.design.ti.com (uda0500640.dhcp.ti.com [172.24.227.88])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4479tjn7007273;
+	Tue, 7 May 2024 04:55:46 -0500
+From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
+        <r-gunasekaran@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/2] Add USB 3.0 support for J784S4
+Date: Tue, 7 May 2024 15:25:43 +0530
+Message-ID: <20240507095545.8210-1-r-gunasekaran@ti.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240429-strncpy-kernel-printk-printk-c-v1-1-4da7926d7b69@google.com>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon 2024-04-29 23:06:54, Justin Stitt wrote:
-> Cleanup some deprecated uses of strncpy() and strcpy() [1].
-> 
-> There doesn't seem to be any bugs with the current code but the
-> readability of this code could benefit from a quick makeover while
-> removing some deprecated stuff as a benefit.
-> 
-> The most interesting replacement made in this patch involves
-> concatenating "ttyS" with a digit-led user-supplied string. Instead of
-> doing two distinct string copies with carefully managed offsets and
-> lengths, let's use the more robust and self-explanatory scnprintf().
-> scnprintf will 1) respect the bounds of @buf, 2) null-terminate @buf, 3)
-> do the concatenation. This allows us to drop the manual NUL-byte assignment.
-> 
-> Also, since isdigit() is used about a dozen lines after the open-coded
-> version we'll replace it for uniformity's sake.
-> 
-> All the strcpy() --> strscpy() replacements are trivial as the source
-> strings are literals and much smaller than the destination size. No
-> behavioral change here.
-> 
-> Use the new 2-argument version of strscpy() introduced in Commit
-> e6584c3964f2f ("string: Allow 2-argument strscpy()"). However, to make
-> this work fully (since the size must be known at compile time), also
-> update the extern-qualified declaration to have the proper size
-> information.
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
-> Link: https://github.com/KSPP/linux/issues/90 [2]
-> Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html [3]
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
+J784S4 has one USB sub system.
+This series adds and enables support for USB 3.0 for
+J784S4 EVM.
 
-JFYI, the patch has been comitted into printk/linux.git, branch for-6.10.
+Change log:
 
-I have removed the obsoleted brackets and added some empty lines
-to break the blob of code a bit, see
-https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.10&id=e0550222e03bae3fd629641e246ef7f47803d795
+Changes since v2:
+-----------------
+* Used generic node names; Renamed "cdns-usb" to "usb"
+* Rebased to tip of -next
 
-Best Regards,
-Petr
+Changes since v1:
+-----------------
+* Fixed dtbs_check warning in [2/2]
+* Rebased to tip of -next
+
+v2: https://lore.kernel.org/all/20240506052044.8228-1-r-gunasekaran@ti.com/
+v1: https://lore.kernel.org/all/20240502053615.29514-1-r-gunasekaran@ti.com/
+
+Matt Ranostay (2):
+  arm64: dts: ti: k3-j784s4-main: Add support for USB
+  arm64: dts: ti: k3-j784s4-evm: Enable USB3 support
+
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts   | 41 ++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 39 ++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
+
+
+base-commit: 2b84edefcad14934796fad37b16512b6a2ca467e
+-- 
+2.17.1
 
 
