@@ -1,74 +1,49 @@
-Return-Path: <linux-kernel+bounces-170937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A4E8BDE15
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:24:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787658BDDFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 689EBB22E90
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED131F22AD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6A914D71D;
-	Tue,  7 May 2024 09:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA3114D712;
+	Tue,  7 May 2024 09:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="gVyt63eS"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGT+Nvke"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9876414D451;
-	Tue,  7 May 2024 09:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEB814D451;
+	Tue,  7 May 2024 09:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715073885; cv=none; b=UW/Lv/x8m1wxv0exZoIwvOIuOmGPsxjHU6iZFQ0J8y2VngvF1PmXFADR1LRYAwFKuRUpJlJdrrJmhEG8qFMdYdZVhYgnsi3woPlGjrgFfYuXPuChMoDMGyyvc3CvXWFt1ajOjM90TbhUS0zheEYsTRJ80nv5Ijg/MmWrLvFdGwk=
+	t=1715073629; cv=none; b=SWN0FPw30rXS9Q3EFPqWu2OwSU9Yfx4KYxZWPVw7kFQZpND4h3LDlJxbtvEWrTrApGYLFnzc6rt3ZOSlcEn2tsZzjOXVWtYNvikg6PcM2prLXD5bKoVfHgXzn59z5KmuC30H1NiiLqXDlf9ObCCsseKFUR7nrCK+NKZ6/JUkFoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715073885; c=relaxed/simple;
-	bh=+yW59onyXg0Pbvf487LVUARxqJvPaBeg6/Sc/ikl7Nw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=R2M6+5k+KnPvFJaQB6f34jkmFET74+X2NCarso4ka5t6DWyt+fkIkK9dPL4vn1t0UeIOD/Z8TRRtJl0C/aNcyNTX8wEx6AURLE4tcctjOxzhmsdEaMGK0KUh8k006IEHgZMKzi+bNXf64Oow9uC3DPP3eyHUpgxDZSz1ABHrqzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=gVyt63eS; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1715073576; bh=yO/k90JymUOXJTCvLXq3LY5H5yoKY6KSmEgQ9wMKlJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=gVyt63eSG4URXpc+GaOAIBpWiMDj4in5Tlrb84tjARNEAt0YfDMuD0ZcnQxgb9RYQ
-	 iHMJtSdxXJN89EJ58BNxfByWFy5nk+s4yY1bK0UJKbaj5fU9weAGmbrgyeZ8C8PT4C
-	 nyokwNbAsBK4WMGYbTQ2kxH9QjcTTKRCsTBvQxlw=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 4DCB0648; Tue, 07 May 2024 17:19:28 +0800
-X-QQ-mid: xmsmtpt1715073568t102emhnj
-Message-ID: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
-X-QQ-XMAILINFO: MZChPk4K8ikNlT2Eddi9Ggrs0oV4G9NbiHl6MtG6ekOPsfZopI6QIM/z/aIUSO
-	 goslJ60GRySBTLq1ngjWjUItTYKOInN+rKDsQj1lXUOaKrAy2xb3k/g7opZJGfA5tS80axKCTdbM
-	 FbJCtj93Em7qowzBXjUSDBZVRSa3oTkCmArSaPyAlcrQuOQbIH7XeVR01ecsiBRpH3kEDLeCTOzf
-	 UhoOq3XXWJhFkp+KjGlG4yZz301QSR24RQmOqzRGZkunD2iPByVKS3eQRy1U7mYMGwtHGvk78lp/
-	 SVzJdl0iXuJYqknPzgI8EWaz2vCT7z+jHxhtI0ihlzbDXGwnRIoyoGOmVzRQ6tRo7Dg25HcjONW8
-	 /O9rFDYzp/48tIsf1aHg9j4oMnpIKWQ7QxT8BCh5vXkgQ4UcNEO6NYH7BoPpobmRgRywEnPJV4WG
-	 czoC30voVF2ILfkwGk4nHFmL9rBH9Qt6Iv9uR1lISK3CIsz59VHPTljSiyUo0U0cclc1ysEBUBwO
-	 dlgxxB8SeV5s1tXj+/YzB/dvNJjABSOocMzEHSydcUKhfyEZRfsl3JnI2kSmtQTfJR3PjrYYo9xS
-	 CARXLrJKczs85wwFpC4Jf2MyEcfe9iuAACRB6XFf7YjhjDhUEHpyUvwB2oOd3n2u1xg7YUoLXVG/
-	 l1AgzbIZchyLnMmR8SyQ+YUDTptGk+aOGRN6sxZZvdx48aXJOPjDNGFHp1yrj6zfVUugG3Q/oF6g
-	 gTuWBrddmh2FSdGuULKPym9/5/jMjBoDRTi8h1Zf6mNFu7MbQTmGJlUDuQTzcyHt9JMmxX+M51zM
-	 y7axxD4RjO7MCzBOSMi28IfBqfRIOVY545KEnozNg0At+S5o9d6ugvfrdLbafcMNDj8vJgYooz10
-	 tfVe4iY5WBeO+GxXhjyKTm9SuXUf8GFJgHeEcAt3hE/lhxKTHJMC/IXFPO8TQ5cLvNnNvljJrN
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Cc: bfoster@redhat.com,
-	kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Date: Tue,  7 May 2024 17:19:29 +0800
-X-OQ-MSGID: <20240507091928.2789219-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000918c290617b914ba@google.com>
-References: <000000000000918c290617b914ba@google.com>
+	s=arc-20240116; t=1715073629; c=relaxed/simple;
+	bh=uOZNtUaSA1NitsAwAQwP0IwamEmkrJ7p/dRtfpW0oxU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=VxU7fKrOgwcYOFKh5WjU8k7ZyDqcQTLjxV2eQVNUvCVeJb2RrDjPMlTQXEaQBc6AZrE3hJKpbt0TXe/HrVuXQgaj1eUjxNlzxWHRRHdBzetktxdmhPEnLHg56ssYK6qReOAPCXsxIDNEJVlltIV4cPTwDw9pQZ9j/lydQAEgyVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGT+Nvke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C72DFC4AF66;
+	Tue,  7 May 2024 09:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715073628;
+	bh=uOZNtUaSA1NitsAwAQwP0IwamEmkrJ7p/dRtfpW0oxU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bGT+NvkeqUqQom3lqasvsjqjWnqfi3h43vie3FeumHw1qxVGJbbja1ioFoeyPkt9a
+	 wTBcyKP6yY/+1h5MD6EGX3EyeHrwpfYUCrpfnNyfTkZK7LDD7jK5AGtNQm1DNZfZtT
+	 Tt7kyLToerrWg0x2GdQUqvV51XVvhOcokWIgQ7Oh47f1bn0zyFO1Api6DAFjue06XU
+	 +h57xiIXfRvxUxa+YGMdG2mXXDnDFmmg3HdRskhypMlMFn0MjrA82G+2HTnI79jEBu
+	 yQ7Xm5E5c3bVettgZjin5gN8dA7HzlJ9zA4KJ1ztBBhpbMl70XCOM17w/o9k3UV4fW
+	 yPDx36kwSwwBQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B9E1AC43332;
+	Tue,  7 May 2024 09:20:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,32 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/3] net: qede: don't restrict error codes
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171507362875.12123.6973193327747912095.git-patchwork-notify@kernel.org>
+Date: Tue, 07 May 2024 09:20:28 +0000
+References: <20240503105505.839342-1-ast@fiberby.net>
+In-Reply-To: <20240503105505.839342-1-ast@fiberby.net>
+To: =?utf-8?b?QXNiasO4cm4gU2xvdGggVMO4bm5lc2VuIDxhc3RAZmliZXJieS5uZXQ+?=@codeaurora.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, manishc@marvell.com
 
-When got too small clean field, entry will never equal vstruct_end(&clean->field), 
-the dead loop resulted in out of bounds access.
+Hello:
 
-Fixes: 12bf93a429c9 ("bcachefs: Add .to_text() methods for all superblock sections")
-Fixes: a37ad1a3aba9 ("bcachefs: sb-clean.c")
-Reported-and-tested-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/sb-clean.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-index 5980ba2563fe..02101687853e 100644
---- a/fs/bcachefs/sb-clean.c
-+++ b/fs/bcachefs/sb-clean.c
-@@ -285,7 +285,7 @@ static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
- 	prt_newline(out);
- 
- 	for (entry = clean->start;
--	     entry != vstruct_end(&clean->field);
-+	     entry < vstruct_end(&clean->field);
- 	     entry = vstruct_next(entry)) {
- 		if (entry->type == BCH_JSET_ENTRY_btree_keys &&
- 		    !entry->u64s)
+On Fri,  3 May 2024 10:55:00 +0000 you wrote:
+> This series fixes the qede driver, so that when a helper function fails,
+> then the callee should return the returned error code, instead just
+> assuming that the error is eg. -EINVAL.
+> 
+> The patches in this series, reduces the change of future bugs, so new
+> error codes can be returned from the helpers, without having to update
+> the call sites.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,1/3] net: qede: use return from qede_parse_actions() for flow_spec
+    https://git.kernel.org/netdev/net-next/c/146817ec3209
+  - [net-next,2/3] net: qede: use return from qede_flow_spec_validate_unused()
+    https://git.kernel.org/netdev/net-next/c/e5ed2f0349bf
+  - [net-next,3/3] net: qede: use return from qede_flow_parse_ports()
+    https://git.kernel.org/netdev/net-next/c/c0c66eba6322
+
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
