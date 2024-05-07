@@ -1,174 +1,133 @@
-Return-Path: <linux-kernel+bounces-171972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4BC8BEB61
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:16:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104408BEB55
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98F6FB22354
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:16:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4111F1C2467C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFDA16D307;
-	Tue,  7 May 2024 18:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3228116C870;
+	Tue,  7 May 2024 18:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZDEZVI/b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y0KIFMQI"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB02F15ECC6;
-	Tue,  7 May 2024 18:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA5773513
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715105751; cv=none; b=iltsjZEE54yC7a+csgCw3MXPFPg95iZj3jqULJ1NKQvUApytnVOItDkGSLvfemrwnADIT98lA0jl4sHnGnsucZFqzTFTH9vHnS2Lxbr+4l8KVzxzxYTFQ6gqmdJ1SrAjZv3TlNX6shpUJWFBiMEV0ciH7uqACN8Zxe+KdtZIQV8=
+	t=1715105741; cv=none; b=JjHUBu1QF7uh5bBYZpidptvv8oTs/XAwv8E0yYl/faxmm6Uf3JWuI12nrhk8hcWo755q/361anCwwzkoxQC5vmtdFhfqboOtB+RnrpdvBMDf0Vem8wwhOxdTZn3zzDWArlG1ghwiKrrUyALzDT9IXXdeVnGUqdo/K6mk/Rw31Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715105751; c=relaxed/simple;
-	bh=mf5UmPMNWI6z/l0QJkKwSomwSt9p6Keyb3TpKEP4LUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cE6GzU2vqfKo6BtTjPKpdWYCHrTl4EQmvmGqGVFTEJI+wFpkZZP7OQ8fL7wCzRvfhFKbe8PS7MJpVa+dna6Wmb9KvLMHIW5j1+eU/D+GJT9p/6IhmxmlyoImYb1qOgN3B5Jtgj/JuL3QavOSnz6mY89V7oizspkZl1L44b+3FJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZDEZVI/b; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715105749; x=1746641749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mf5UmPMNWI6z/l0QJkKwSomwSt9p6Keyb3TpKEP4LUc=;
-  b=ZDEZVI/bYlZKvYfZ6BSa4qEN5jbxbuvrVD3wWE0LC+b+2UjKgxy6ms5M
-   N8e2eCcsC6AgX8dYZdArZe1EdbdFIdyjA58g57eTZIxCIXLXXrmfpwG66
-   +BdbNXlCYAdPd7IwMtJiUzpPCk8iKWwOeDXEiLNmubG50heeUf9sC3LGZ
-   RUR8ApAUEKwsZTtuHiwEGqOhLNI7ni0akqcEeZR1Bl5Vu5RO1xXZO3UJw
-   OSFTYkmYkHLUwlb12dbLvRcPWb67+Oiu0hotARELV1YYjvCuggEU0NHjj
-   SeXUGmuQlW1m7NtfXqJ1kln6UkPQGmFoKHHAYpy8wPLf/knI0ddN4mOBD
-   Q==;
-X-CSE-ConnectionGUID: BsA16zYkTGWFlGFr9pcNNA==
-X-CSE-MsgGUID: yLoa/AGmTlG8Qxxo1tWUlA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11049798"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="11049798"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 11:15:48 -0700
-X-CSE-ConnectionGUID: zfCVuL4KQOuW0pBFkG9aDw==
-X-CSE-MsgGUID: NBKi7VABT0ewefpDuLOBiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="33167004"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 07 May 2024 11:15:45 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4PLq-0002Xs-1r;
-	Tue, 07 May 2024 18:15:42 +0000
-Date: Wed, 8 May 2024 02:14:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Perry Yuan <perry.yuan@amd.com>, rafael.j.wysocki@intel.com,
-	Mario.Limonciello@amd.com, viresh.kumar@linaro.org,
-	Ray.Huang@amd.com, gautham.shenoy@amd.com, Borislav.Petkov@amd.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
-	Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] cpufreq: amd-pstate: implement heterogeneous core
- topology for highest performance initialization
-Message-ID: <202405080122.4pEEcR2C-lkp@intel.com>
-References: <731a28ea8dda4ca1db64f673c87770de4646290b.1715065568.git.perry.yuan@amd.com>
+	s=arc-20240116; t=1715105741; c=relaxed/simple;
+	bh=B6+1EVHa+BxNC/qNjMSbBDQufkF0NNXGNNBGPC9g5A8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DTkrVvfcr8durmGzoD1+uvkHvX7+vEiHzJWPu+gv6WJYLLN/tcH+Uoi2Mm6Qtf66qRgEbgoXqK54bgaSqqsGswuSaLo69BHNEDrSMEg1kNJ1lcRgT+U1Ui87Pd5SiPwjyB5QFKwTSwok/Gs2g1qSLRS3UqgNGVq6RGOeccylEyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y0KIFMQI; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34e7a35d5d4so2580490f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715105738; x=1715710538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B6+1EVHa+BxNC/qNjMSbBDQufkF0NNXGNNBGPC9g5A8=;
+        b=Y0KIFMQIY3rUK9a+s+68qD8L6zYhqwOXJy8bzzS/9+ACOJsJdGAJoOgvS4/sWe7uTv
+         k0DFAy6cjTQXJYBNxrwmK5C2TUPXJOMkFMqJG1qebB1RAJsUaNTLvulys24TyafHz4JT
+         3n5/OqwbDx64ERIUXAzP/UpCnzs5JjICapDfzQxpe62Tu2H8gFcFUabgs66K6uDml0qX
+         59C5JsOy7zeFepuCDdalLLoOl3184ittZu0C+iuYGcr16KC8HgS/aURF595hIxk3noUB
+         oBZhDVcO9I9nCZYKF1XYGertO5W3/pk3ezPXtkMuZwOesn9I0CEZersX6JhrxszniLy8
+         r0NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715105738; x=1715710538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B6+1EVHa+BxNC/qNjMSbBDQufkF0NNXGNNBGPC9g5A8=;
+        b=ElZVPdCEkpZRc73wqkFUr6BryrI+D0wiwfJBfpRPOrkOHa3SAd52stbKv/SgREGT3/
+         QzltJNPX4//a4SdV1YnJA0K0s3uokx04bq2bOEZYQ2QIfSoDFX5ahIim02aNGUMIqff5
+         Eq90ifI4jU8cpPmuOtx873YQk4f0ivUEkt4fimLcMoPZGrE5knxBs1FKKriwl3GzbMOB
+         h2+M9wqDINZx/g/5MJ6UBvPIZgrLTJT+N1irDOCSHtJFsqOoa6T9vqjcR4RdBHHpPni5
+         y0sQLqqnND+yu9UowItnGIAozKxkKnviMGmNczpfA8tYs8G/W0q/Mo3thTTze0iA3gF5
+         UfLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXabsO/SQptOwUY9iTqvWN6esMJi0AfgravLsKka+sjCCck2n1F/s4Z786S5ioU4jEDG1Zle7MOtjuy040Z7yxM5VBaXVFVGe3aT9H
+X-Gm-Message-State: AOJu0Yya+FTQvW/g7LHq42gvdha/7jW5h2WNG8mdm2fcqp9mPMYtdT3p
+	kizyyUmMPdaOo1gD2gTarLsvf12aaNb3AfZyWqD9kd75ft2EDhuFiVXd3klDe+v6xnbPwkvRJ+9
+	syN9Trri711xEgpmlhp+JqCIzDRR2MHdGuxUa
+X-Google-Smtp-Source: AGHT+IGiBLfJdAu/j1h1St0V1qhBnv47XeLp3sDStOowYbzmVGS+F9ghfuJ76RnsVj0Nru5zzf74YpLbJGjySEDtGfI=
+X-Received: by 2002:adf:e781:0:b0:34c:f3cb:759d with SMTP id
+ ffacd0b85a97d-34fca718376mr330142f8f.45.1715105738140; Tue, 07 May 2024
+ 11:15:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <731a28ea8dda4ca1db64f673c87770de4646290b.1715065568.git.perry.yuan@amd.com>
+References: <20240507022939.236896-1-jhubbard@nvidia.com> <016d8cff-efc3-4ef1-9aff-7c21c48f2d69@redhat.com>
+ <302d50ac-45ff-470e-90a0-b349821706a6@nvidia.com> <21d88422-7378-4a63-8fbf-f70889f309c1@redhat.com>
+ <CAJHvVcgYsZJ3Hm1Hpc1pifH49uVniAedL-YxUpS8q7=Y8veZ5g@mail.gmail.com> <cf7eaed2-6331-45cc-a66e-76abb5448afe@nvidia.com>
+In-Reply-To: <cf7eaed2-6331-45cc-a66e-76abb5448afe@nvidia.com>
+From: Axel Rasmussen <axelrasmussen@google.com>
+Date: Tue, 7 May 2024 11:15:01 -0700
+Message-ID: <CAJHvVcg2FQCGBwm0Y41YGgpMYKs8_KJaonwyDg7SPuQipxqH2A@mail.gmail.com>
+Subject: Re: [PATCH] x86/fault: speed up uffd-unit-test by 10x: rate-limit
+ "MCE: Killing" logs
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, 
+	Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Perry,
+On Tue, May 7, 2024 at 11:11=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> =
+wrote:
+>
+> On 5/7/24 11:08 AM, Axel Rasmussen wrote:
+> > On Tue, May 7, 2024 at 9:43=E2=80=AFAM David Hildenbrand <david@redhat.=
+com> wrote:
+> ...
+> >>> That thread seems to have stalled.
+> >>
+> >> Yes, there was no follow-up.
+> >
+> > Apologies, I had completely forgotten about this. I blame the weekend. =
+:)
+> >
+> > No objections from me to the simple rate limiting proposed here, if
+> > useful you can take:
+> >
+> > Acked-by: Axel Rasmussen <axelrasmussen@google.com>
+> >
+> > But, it seems to me the earlier proposal may still be useful.
+> > Specifically, don't print at all for "synthetic" poisons from
+> > UFFDIO_POISON or similar mechanisms. This way, "real" errors aren't
+> > gobbled up by the ratelimit due to spam from "synthetic" errors. If
+> > folks agree, I can *actually* send a patch this time. :)
+> >
+>
+> That sounds good to me. (Should it also rate limit, though? I'm leaning
+> toward yes.)
 
-kernel test robot noticed the following build warnings:
+I believe the proposal so far was, simulated poisons aren't really
+"global" events, and are only relevant to the process itself. So don't
+send them to the global kernel log at all, and instead let the process
+do whatever it wants with them (e.g. it could print something when it
+receives a signal, perhaps with rate limiting).
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge next-20240507]
-[cannot apply to tip/x86/core linus/master v6.9-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Perry-Yuan/cpufreq-amd-pstate-optimiza-the-initial-frequency-values-verification/20240507-151930
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/731a28ea8dda4ca1db64f673c87770de4646290b.1715065568.git.perry.yuan%40amd.com
-patch subject: [PATCH 09/11] cpufreq: amd-pstate: implement heterogeneous core topology for highest performance initialization
-config: x86_64-buildonly-randconfig-001-20240507 (https://download.01.org/0day-ci/archive/20240508/202405080122.4pEEcR2C-lkp@intel.com/config)
-compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080122.4pEEcR2C-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080122.4pEEcR2C-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from arch/x86/kernel/asm-offsets.c:9:
-   In file included from include/linux/crypto.h:15:
-   In file included from include/linux/completion.h:12:
-   In file included from include/linux/swait.h:7:
-   In file included from include/linux/spinlock.h:60:
-   In file included from include/linux/thread_info.h:60:
-   In file included from arch/x86/include/asm/thread_info.h:59:
-   In file included from arch/x86/include/asm/cpufeature.h:5:
->> arch/x86/include/asm/processor.h:690:51: warning: non-void function does not return a value [-Wreturn-type]
-     690 | static inline int amd_get_this_core_type(void)          { }
-         |                                                           ^
-   1 warning generated.
---
-   In file included from drivers/usb/dwc2/hcd_ddma.c:12:
-   In file included from include/linux/module.h:13:
-   In file included from include/linux/stat.h:19:
-   In file included from include/linux/time.h:60:
-   In file included from include/linux/time32.h:13:
-   In file included from include/linux/timex.h:67:
-   In file included from arch/x86/include/asm/timex.h:5:
->> arch/x86/include/asm/processor.h:690:51: warning: non-void function does not return a value [-Wreturn-type]
-     690 | static inline int amd_get_this_core_type(void)          { }
-         |                                                           ^
-   drivers/usb/dwc2/hcd_ddma.c:555:16: warning: variable 'n_desc' set but not used [-Wunused-but-set-variable]
-     555 |         u16 idx, inc, n_desc = 0, ntd_max = 0;
-         |                       ^
-   2 warnings generated.
---
-   In file included from arch/x86/kernel/asm-offsets.c:9:
-   In file included from include/linux/crypto.h:15:
-   In file included from include/linux/completion.h:12:
-   In file included from include/linux/swait.h:7:
-   In file included from include/linux/spinlock.h:60:
-   In file included from include/linux/thread_info.h:60:
-   In file included from arch/x86/include/asm/thread_info.h:59:
-   In file included from arch/x86/include/asm/cpufeature.h:5:
->> arch/x86/include/asm/processor.h:690:51: warning: non-void function does not return a value [-Wreturn-type]
-     690 | static inline int amd_get_this_core_type(void)          { }
-         |                                                           ^
-   1 warning generated.
-
-
-vim +690 arch/x86/include/asm/processor.h
-
-   680	
-   681	#ifdef CONFIG_CPU_SUP_AMD
-   682	extern u32 amd_get_highest_perf(void);
-   683	extern void amd_clear_divider(void);
-   684	extern void amd_check_microcode(void);
-   685	extern int amd_get_this_core_type(void);
-   686	#else
-   687	static inline u32 amd_get_highest_perf(void)		{ return 0; }
-   688	static inline void amd_clear_divider(void)		{ }
-   689	static inline void amd_check_microcode(void)		{ }
- > 690	static inline int amd_get_this_core_type(void)		{ }
-   691	#endif
-   692	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+>
+> thanks,
+> --
+> John Hubbard
+> NVIDIA
+>
 
