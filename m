@@ -1,173 +1,166 @@
-Return-Path: <linux-kernel+bounces-171087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122B38BDFA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:26:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2DA8BDFB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 439CE1C22803
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFCAE1C23094
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148BF150991;
-	Tue,  7 May 2024 10:25:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A483214E2DE;
-	Tue,  7 May 2024 10:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5008414F115;
+	Tue,  7 May 2024 10:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ApJpkcCu"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DD114E2EF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715077552; cv=none; b=b2oNOT80CNykLTFD5PbWH/0jn6RIpItsc5kk1QQBx2EfwR4ZOcppAP1gPZynN+k2IIfuzmOyVFzmrD3QYT3Yy1822lTLqp40xSDnxeCU+b3LGdYlpZmR5LHr9uuL473DPjMKJdSKkbA9+GTvlafinpma0Y2Bj/6VyC/kyyugxKE=
+	t=1715077666; cv=none; b=qZ6W+WbTc5Snxe0CQXHZqYg26bPMEvitQ//ukyhtqkUxyUbSRppOfrW28JrCOzq2InuvKEvQpYS3RKl0rMVhe1kxD4XV7yZeDmDH0C1c67aeDncu3ysrm2igGFr/y4U+CU4K84S7VU+sgYRbJ2G0xt0sqZur3mF8u7b1LwhTfSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715077552; c=relaxed/simple;
-	bh=XOj366TPRt2uSSw//lAyqbR2em7cRTX0TeQlf1mrSGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0geyW70/Nq/BKKdGxAOAxNrE28Y7Ysrp+1YorAAuZEXBDnpRdM5/C97QymVEcXZP54INrIbdr4AukffUduTgN3zwxn4F9GWhV6hc7MHEDudzOhaZL/o8BUjPN/laYKCccKQY1mM2pXR2vCLiwabYzpf5O9l7VYnjebLBoqxakw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D4881063;
-	Tue,  7 May 2024 03:26:16 -0700 (PDT)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A67933F587;
-	Tue,  7 May 2024 03:25:49 -0700 (PDT)
-Date: Tue, 7 May 2024 11:25:48 +0100
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: liwei <liwei728@huawei.com>, Beata Michalska <beata.michalska@arm.com>,
-	Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	rafael@kernel.org, al.stone@linaro.org, ashwin.chaugule@linaro.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	liwei391@huawei.com, liaoyu15@huawei.com
-Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
- cppc_cpufreq_cpu_init()
-Message-ID: <ZjoBrF4bAK5ukm7H@arm.com>
-References: <20240428092852.1588188-1-liwei728@huawei.com>
- <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+	s=arc-20240116; t=1715077666; c=relaxed/simple;
+	bh=UA3F40A7r6F4bjPkfKJpAKLHE1h9mHy8CdOamekYs/0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y70maRhBs4oHQMEJbODREAXTHrr1SZOvMf6V+Kw0pYcAAGtXsFptIxQeO1zS0zF5PawKM91h2VcllMulS5N7QAuv/3NarlFnB35WhaY6R/hmHM90OvdOF6OcgNyDd3hRHwY1G6GaHULn/1yNWgSc/vPWFbjraIiss3d9m8QzqUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ApJpkcCu; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a4702457ccbso748468666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:27:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715077663; x=1715682463; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IFiLG2QOTgMREMZMtW7unZxhYPzyuGBw42NHTzIrjEg=;
+        b=ApJpkcCuvAzwMcmep+s4Ks0+8uF0N5fODwHEPL0HJ5tbLufuq+nYlT9+KHKy8RLERp
+         i8dy4UVBSO9wyuqlREwPliPt2m4/TY9usUJw1wJNnMVlGBXNEyV7RBVq/Jv62QfGT7rp
+         TiLWcdO3tjNicOlHDm7Ivt/hxfcUKfoFbk9oZbPBhMCPiCvj32vgQ7caFcCVouTiCwUa
+         JOOSLe99IPmGIPdVXfm8BrXMREvQdSnFly8iCJd+ijE3IbsElVMhvzU2W8buLcS5EgEM
+         w3XWnf775EAJs1ALOz+iWkaxW3StA5n0ksIOXsLA3wUpLUqQVcEvv9T7f0gy9m2JeZF+
+         /5lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715077663; x=1715682463;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IFiLG2QOTgMREMZMtW7unZxhYPzyuGBw42NHTzIrjEg=;
+        b=ZhBY+4oTYjZS5KBuRZbJxtKb6GyazlNTHmwrrJycYNgFSZTa9zaJtpG+BZYthYPdvk
+         FFi8qwXBUMEiln+HIJliDG3gVtZyR75Qmppa7VRX5N5XYGmKEQ9KW7DltaqJ567g9Qhj
+         fXFkw6gBTVxChIl31EobppjCDqKoz46O87wfhwfy0IsotlTW6fJlMxZYA1Sm3ckBsQWu
+         9mlrSTjq0IG/c9qMPov/Rvg2FZ/3ui/7jqVUOEtmj5UNs0bg/B26Y8KA850bqYxUV7iV
+         BMxsmAuHBenudkjxhh4FWkdnj7ygkPpVWF309EKoMDvYLu0Iuaw1EpFAwgKQrBcCoAj1
+         /4ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJqCb0b8F6x6wi60b+cm/kzvws8OLgnT0qdAizcS09fFEqTq3iSQh6aC7O/DRf0ix9RdcFIAfa+mOYcCWXUclFTH/kp5Esefy/PywD
+X-Gm-Message-State: AOJu0YzXhC6LD6DHVnRB8mw858sSlMWp6AltDMIuoy5yj87BEE7dSG3R
+	xV8iFT83XD1XHZN4D21MF/cV2on+kuGuQK4L6k1sAgVDSHhIZrvKSukqZotaf10=
+X-Google-Smtp-Source: AGHT+IGiGDBt5yxrFViI2K6OwEdG5BxYWaB5AQ6x9sPDuZmTlizY4kXoke2k+cqZtkEZS82lyV2hMg==
+X-Received: by 2002:a17:906:f595:b0:a59:affe:b9f with SMTP id cm21-20020a170906f59500b00a59affe0b9fmr6075822ejd.6.1715077663076;
+        Tue, 07 May 2024 03:27:43 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id bo15-20020a170906d04f00b00a59b87dd0bbsm3370093ejb.161.2024.05.07.03.27.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 03:27:42 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/4] ASoC: qcom: x1e80100: Correct channel mapping
+Date: Tue, 07 May 2024 12:27:29 +0200
+Message-Id: <20240507-asoc-x1e80100-4-channel-mapping-v1-0-b12c13e0a55d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240429104945.esdukn6ayudgyumc@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABECOmYC/x2NwQqDMBAFf0X23IVNiNX2V0oPUZ92QWNIQATx3
+ xs9DgwzB2UkRaZ3dVDCplnXUMA8Kup/PkxgHQqTFeukloZ9XnveDVoxIuz4sgJmXnyMGiaGr0e
+ x3QvPpqVSiQmj7vfh8z3PP1coU5NxAAAA
+To: James Schulman <james.schulman@cirrus.com>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2066;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=UA3F40A7r6F4bjPkfKJpAKLHE1h9mHy8CdOamekYs/0=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmOgIZDiepsVWvVzHlozJIF74v2e8BDRMWdJ9yg
+ tul3Qy5IlSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZjoCGQAKCRDBN2bmhouD
+ 106XD/492uoI9DGw7QfAgKxvhjg/WFIaXDR7JoFHNQBWWpD6g8oM/uOyKXhus/RrfCk7ZXcD+H9
+ 1bhDN+FFWC9W43rhUMYNBsJlql7J5BH5PXmEuB2YdsEmIgEHw9fuzNtXCeN/hj4DVtmcpuVlZ62
+ 8lpWMKS3FSpH9BYVlMKzN7C1V1RvxktZl2h/bXs4eHVMCGnUBNkyzOTzkFwdIPdRy33RBidEjBP
+ AVPtgRJMSg2SENodHxrjpvdM9gzNZD7Ag4h1S1AIUm14eD1fdnNeaZoDwrinJ0U+G4NOIScL2NS
+ VxDR8P437XoyX5dsE/1kviIFmp7ZvB3jhXf/gqJm0HYq6sbnx3GXWcuGrxSiVnHuIpMhCu9VQhn
+ DVFU2IcSCJlXZpd/PteAxMbE12AOQUrKCac3CnJHl38KiceuRIyF4iasoquQmtsEL2WEA94z+ie
+ BA8IP+TPVkABmK5jhnLs8gULj5/mshiB+jPdqGCMuXRSt/iwBkuV83XFk5y42RYy6dr286bz3r5
+ JK2Xpj6KCLkpD6/mpHknjMk2Eb2NJzoAMjsU4qaGgjNI/07WAT/GLCnV3eswbEl2Jet58KdMA3+
+ TEzMjoO7nZ8GsatHKT/TLgKrV90MCRwXw4aloqAZdjAz60ocAoZi9meM0T77FLj0KstAFiq1iQX
+ hGestPGsZPrgzaw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
 Hi,
 
-Thanks for adding me to this.
+First patch is a build dependency.
 
-On Monday 29 Apr 2024 at 16:19:45 (+0530), Viresh Kumar wrote:
-> CC'ing few folks who are working with the driver.
-> 
-> On 28-04-24, 17:28, liwei wrote:
-> > When turning on turbo, if frequency configuration takes effect slowly,
-> > the updated policy->cur may be equal to the frequency configured in
-> > governor->limits(), performance governor will not adjust the frequency,
-> > configured frequency will remain at turbo-freq.
-> > 
-> > Simplified call stack looks as follows:
-> > cpufreq_register_driver(&cppc_cpufreq_driver)
-> > 	...
-> > 	cppc_cpufreq_cpu_init()
-> > 		cppc_get_perf_caps()
-> > 		policy->max = cppc_perf_to_khz(caps, caps->nominal_perf)
-> > 			cppc_set_perf(highest_perf) // set highest_perf
-> > 			policy->cur = cpufreq_driver->get() // if cur == policy->max
-> > 	cpufreq_init_policy()
-> > 		...
-> > 		cpufreq_start_governor() // governor: performance
-> > 			new_freq = cpufreq_driver->get() // if new_freq == policy->max
-> > 			if (policy->cur != new_freq)
-> > 			cpufreq_out_of_sync(policy, new_freq)
-> > 				...
-> > 				policy->cur = new_freq
-I believe the problem is here   ^^^^^^^^^^^^^^^^^^^^^^.
+Description
+===========
+X1E80100 CRD is the first board, which comes with four speakers, so we
+still keep fixing and adding missing pieces.
 
-cpufreq_verify_current_freq() should not update policy->cur unless a
-request to change frequency has actually reached the driver. I believe
-policy->cur should always reflect the request, not the actual current
-frequency of the CPU.
+The board has speaker arranged as left front+back and then right
+front+back.  Using default channel mapping causes front right speaker to
+play left back stream.
 
-Given that new_freq is the current (hardware) frequency of the CPU,
-obtained via .get(), it can be the nominal frequency, as it is in your
-case, or any frequency, if there is any firmware/hardware capping in
-place.
+Adjust the channel maps for frontend DAIs to fix stereo and four-channel
+playback.
 
-This causes the issue in your scenario, in which __cpufreq_driver_target()
-filters the request from the governor as it finds it equal to policy->cur,
-and it believes it's already set by hardware.
+Best regards,
+Krzysztof
 
-This causes another issue in which scaling_cur_freq, which for some
-systems returns policy->cur, ends up returning the hardware frequency of
-the CPUs, and not the last frequency request, as it should:
+---
+Krzysztof Kozlowski (4):
+      ASoC: Constify channel mapping array arguments in set_channel_map()
+      ASoC: qcom: q6dsp: Implement proper channel mapping in Audioreach
+      ASoC: qcom: q6dsp: Set channel mapping instead of fixed defaults
+      ASoC: qcom: x1e80100: Correct channel mapping
 
-"scaling_cur_freq
-Current frequency of all of the CPUs belonging to this policy (in kHz).
+ include/sound/cs35l41.h                 |  4 ++--
+ include/sound/soc-dai.h                 |  8 +++----
+ sound/soc/codecs/adau7118.c             |  6 ++++--
+ sound/soc/codecs/cs35l41-lib.c          |  4 ++--
+ sound/soc/codecs/cs35l41.c              |  3 ++-
+ sound/soc/codecs/max98504.c             |  6 ++++--
+ sound/soc/codecs/wcd9335.c              |  6 ++++--
+ sound/soc/codecs/wcd934x.c              |  6 ++++--
+ sound/soc/qcom/qdsp6/audioreach.c       | 14 +++++--------
+ sound/soc/qcom/qdsp6/audioreach.h       |  1 +
+ sound/soc/qcom/qdsp6/q6afe-dai.c        | 16 ++++++++------
+ sound/soc/qcom/qdsp6/q6apm-dai.c        | 12 +++++++++++
+ sound/soc/qcom/qdsp6/q6apm-lpass-dais.c |  6 ++++--
+ sound/soc/qcom/qdsp6/q6apm.c            | 28 ++++++++++++++++++++++++-
+ sound/soc/qcom/qdsp6/q6apm.h            |  8 +++++++
+ sound/soc/qcom/qdsp6/topology.c         | 12 +++++++++++
+ sound/soc/qcom/x1e80100.c               | 37 +++++++++++++++++++++++++++++++--
+ sound/soc/soc-dai.c                     |  4 ++--
+ 18 files changed, 142 insertions(+), 39 deletions(-)
+---
+base-commit: c5e512ffe106f751c61e5a036560f522e58eadcd
+change-id: 20240507-asoc-x1e80100-4-channel-mapping-ea5f02b9e678
 
-In the majority of cases, this is the frequency of the last P-state
-requested by the scaling driver from the hardware using the scaling
-interface provided by it, which may or may not reflect the frequency
-the CPU is actually running at (due to hardware design and other
-limitations)." [1]
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Therefore policy->cur gets polluted with the hardware frequency of the
-CPU sampled at that one time, and this affects governor decisions, as
-in your case, and scaling_cur_freq feedback as well. This bad value will
-not change until there's another .target() or cpufreq_out_of_sync()
-call, which will never happen for fixed frequency governors like the
-performance governor.
-
-Thanks,
-Ionela.
-
-
-[1] https://docs.kernel.org/admin-guide/pm/cpufreq.html
-
-> > 			...
-> > 			policy->governor->limits()
-> > 				__cpufreq_driver_target(policy->max)
-> > 					if (policy->cur==target)
-> > 					// generate error, keep set highest_perf
-> > 						ret
-> > 					cppc_set_perf(target)
-> > 
-> > Fix this by changing highest_perf to nominal_perf in cppc_cpufreq_cpu_init().
-> > 
-> > Fixes: 5477fb3bd1e8 ("ACPI / CPPC: Add a CPUFreq driver for use with CPPC")
-> > Signed-off-by: liwei <liwei728@huawei.com>
-> > ---
-> >  drivers/cpufreq/cppc_cpufreq.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> > index 64420d9cfd1e..db04a82b8a97 100644
-> > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > @@ -669,14 +669,14 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
-> >  	if (caps->highest_perf > caps->nominal_perf)
-> >  		boost_supported = true;
-> >  
-> > -	/* Set policy->cur to max now. The governors will adjust later. */
-> > -	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
-> > -	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
-> > +	/* Set policy->cur to norm now. */
-> > +	policy->cur = cppc_perf_to_khz(caps, caps->nominal_perf);
-> > +	cpu_data->perf_ctrls.desired_perf =  caps->nominal_perf;
-> >  
-> >  	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-> >  	if (ret) {
-> >  		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
-> > -			 caps->highest_perf, cpu, ret);
-> > +			 caps->nominal_perf, cpu, ret);
-> >  		goto out;
-> >  	}
-> >  
-> > -- 
-> > 2.25.1
-> 
-> -- 
-> viresh
 
