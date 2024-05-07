@@ -1,146 +1,114 @@
-Return-Path: <linux-kernel+bounces-172303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D328BF0A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 810EE8BF0B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB4E28624E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:09:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD6C282E77
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D7D135A7F;
-	Tue,  7 May 2024 23:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA68136669;
+	Tue,  7 May 2024 23:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5qctsaG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AOmSgRzX"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60854135A6A;
-	Tue,  7 May 2024 23:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30D4135A7D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715122813; cv=none; b=pwiVzno1rmo3uEIg6BQMfvTBsdcV+IOYe5/vEsq11zc4oq5KZgoHA7nEgenEv/iUajoQrihnISwIekdMuWx29v/FTIhqi5kyFG4aHK5pCVQTA6bub1qAVAc6i4BD9GW5GPajeQjUe+oCumMUNQX6ywiDtghr3090svAwYuIRlxM=
+	t=1715122815; cv=none; b=g+rWAqNwE5q69Av0Z4ZRIQvKLSSrz3BQiZervKGVzpbojwtL4Qbo1MyVeLWpKQdqAjYLbtTUSSwgJLi/uSkkD4gwYboLGvlJWBLaCt982QDAR9MeTWAknafvpVBNQMmtg1dy9NphJT2XXP//bqY24aGK5To77J+QEaocbDXKSyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715122813; c=relaxed/simple;
-	bh=c3Zrankq9kyXbpJ5b7Mar568CnEDDczmTAIpy0VNr7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uYIBfwrnaLioiDcKLkpDzWlTtgIM5AxSZ3jJCh0VUiY56ECeap47Sk6CO4XA10aFWv64r524Eokui+KqrE8VvlpTr8cFqQp7Rcm2/EVsDJ7YJXFqBpsxG+NPl3LqDEquFsMxxCYAl8N9aWQr9F3D8YBS/0misXw0IGNpb15fSMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5qctsaG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED527C3277B;
-	Tue,  7 May 2024 23:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715122813;
-	bh=c3Zrankq9kyXbpJ5b7Mar568CnEDDczmTAIpy0VNr7s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l5qctsaGeaFBFr3oItPi1kqgHQplckPrgemqbF598bs4h9Ufp3hgsgH6mXczXxDEu
-	 4l1Q75geAtsA7KxQB9a5eHEtYDtr0yjxWnaqfsi0qJLGB1xTFqh8yeRZAM4rilwtB3
-	 TaXz1OdEh+gV/cS97KHPPtLHthEokQ7dLyK6eehocnLeqplFfFH183QLgt2WcGMApc
-	 euQmIqgTYyeYafgXw6tHW6PZDn89K/vQWisLaL5z+W7EiTfSUsP6dLCoh/PAVywNYk
-	 8Rr25P7KcMIBVZem3WCKfPVUocuDhXH3axTcRPFT+CLjs8A1RCAifbrTnODj5DLmqG
-	 wgIX2Cr929qDQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Phil Auld <pauld@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Subject: [PATCH AUTOSEL 6.6 19/19] sched/isolation: Fix boot crash when maxcpus < first housekeeping CPU
-Date: Tue,  7 May 2024 18:58:41 -0400
-Message-ID: <20240507225910.390914-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240507225910.390914-1-sashal@kernel.org>
-References: <20240507225910.390914-1-sashal@kernel.org>
+	s=arc-20240116; t=1715122815; c=relaxed/simple;
+	bh=/GU79Kgff0skDDvMaY4WHPvnPx8SIQ17Sgl7wKmolF0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=G6qoJxkHbqQFsjtMApSIS8fsr/sim4SqddEbivjTvPZN2y7xEQbkVVmCsaIK6JuPa5CCDazdz9+w+xYQbs2Omcwz04zMqXLzkW20Y0czy9/DNnBsml1GOKXJyGuneI+gMaz6iD7jWLHAXCVAiCWG45DQeMfSHrTPcYhTyp7inXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AOmSgRzX; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6b269686aso6237292276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 16:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715122813; x=1715727613; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Sf3hv/X+FVx/KMJP0srRJep+yhny1t3ptyDpy1jPj74=;
+        b=AOmSgRzXXwfLLqiNCZkJp6O0EUuuF0oKiRgNjk0Ewotd46jSpvc7izMXfu9/hBBU0N
+         QWeCLgXqG80yikXuSRSfruaHy+59IgezRqhpoiVN8NzosIWPhQ2+DY9/wCaVjNM+ygoc
+         Nqd+gCtV5mfRrKzHh/blHRFQdmXMexlBmUfVZfjU2hpQIP22wFxdm2Xq/eT/KIxxyQVC
+         kbfhmVTYzeBCEqqLNZf/dck/hXE60ps0YY2n2cNTDxuc5nKAnk0jYEpMc3j6dy4AkTJ3
+         ZgbAWovBCdGOsL/AoVDn4wdmXplE4uRP9EvgS1gdMnqIIxo7mp0eL9dTe/v9S7qtbiQi
+         moqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715122813; x=1715727613;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Sf3hv/X+FVx/KMJP0srRJep+yhny1t3ptyDpy1jPj74=;
+        b=ZZTZzSK1hPVJ1pSuSm+uL6LvCpLJ9LfZLc6ycEbC3K3gFUjNgCSH+xgKtWcNd6SCNu
+         FWqp8QHRlIq6cMSSGI085MZvANCGXh/EpnihVkYT46V7LdSmjrOd75UPJhjpfH6BC8i7
+         PGQk8jJtT5bU8GhCLFWvnKLTseDp69JrNHsudW5hz5thKWQ/44DpP6Swgh+k9+eP9QOK
+         +DjliCD/7+cjdYifTKSa4YS42Dx89zbZrRzwdTjgUOUQErDydbQmYRjCLYVpFG3pq01z
+         Kgz1zBqoOa97uBTePUrRHDgwyko7TchdEXFI9/LRehJ8ec1gsvxijmioqgIny3L6ybWF
+         Yk9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhXI0e+XXkVAEgFESa87AECKWaenAMJH8DCJrmUE33VTNJdyFK+/Z3K9YpstpNVgahXR/I+MakSJllEP8LoFQgAXH7LxedVELG/b0d
+X-Gm-Message-State: AOJu0Yxv/Up/16cKMS9BSmaKdltqQMVlRV/j3y8goElr9G4C7ATlbX1z
+	/kDrKswQTr2YS5N8G2S19xgNekrr60SuimHHbQTcRUOM2WGi55c1ggzUlAACFdKKPOZbf65lpzD
+	qyhq42TS1++oTiQ==
+X-Google-Smtp-Source: AGHT+IE9hOPN2lt7RSFJKIcZOyuNLU/r5OYWzliZ9pt3xeeJDz4hCT8iZ4E+txRGrb5DPst/gTSHqMgp3YtnFDE=
+X-Received: from ziwei-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:9b0])
+ (user=ziweixiao job=sendgmr) by 2002:a25:8d03:0:b0:de1:d49:7ff6 with SMTP id
+ 3f1490d57ef6-debb9d3003cmr123671276.7.1715122812981; Tue, 07 May 2024
+ 16:00:12 -0700 (PDT)
+Date: Tue,  7 May 2024 22:59:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.30
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Message-ID: <20240507225945.1408516-1-ziweixiao@google.com>
+Subject: [PATCH net-next 0/5] gve: Add flow steering support
+From: Ziwei Xiao <ziweixiao@google.com>
+To: netdev@vger.kernel.org
+Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	willemb@google.com, hramamurthy@google.com, rushilg@google.com, 
+	ziweixiao@google.com, jfraker@google.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Oleg Nesterov <oleg@redhat.com>
+To support flow steering in GVE driver, there are two adminq changes
+need to be made in advance. The first one is adding adminq mutex lock,
+which is to allow the incoming flow steering operations to be able to
+temporarily drop the rtnl_lock to reduce the latency for registering
+flow rules among several NICs at the same time. The second one is to
+add the extended adminq command so that we can support larger adminq
+command such as configure_flow_rule command. The other three patches
+are needed for the actual flow steering feature support.
 
-[ Upstream commit 257bf89d84121280904800acd25cc2c444c717ae ]
+Jeroen de Borst (4):
+  gve: Add adminq extended command
+  gve: Add flow steering device option
+  gve: Add flow steering adminq commands
+  gve: Add flow steering ethtool support
 
-housekeeping_setup() checks cpumask_intersects(present, online) to ensure
-that the kernel will have at least one housekeeping CPU after smp_init(),
-but this doesn't work if the maxcpus= kernel parameter limits the number of
-processors available after bootup.
+Ziwei Xiao (1):
+  gve: Add adminq mutex lock
 
-For example, a kernel with "maxcpus=2 nohz_full=0-2" parameters crashes at
-boot time on a virtual machine with 4 CPUs.
+ drivers/net/ethernet/google/gve/Makefile      |   2 +-
+ drivers/net/ethernet/google/gve/gve.h         |  53 +++-
+ drivers/net/ethernet/google/gve/gve_adminq.c  | 228 +++++++++++++-
+ drivers/net/ethernet/google/gve/gve_adminq.h  |  98 ++++++
+ drivers/net/ethernet/google/gve/gve_ethtool.c |  91 +++++-
+ .../net/ethernet/google/gve/gve_flow_rule.c   | 296 ++++++++++++++++++
+ drivers/net/ethernet/google/gve/gve_main.c    |  86 ++++-
+ 7 files changed, 829 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/net/ethernet/google/gve/gve_flow_rule.c
 
-Change housekeeping_setup() to use cpumask_first_and() and check that the
-returned CPU number is valid and less than setup_max_cpus.
-
-Another corner case is "nohz_full=0" on a machine with a single CPU or with
-the maxcpus=1 kernel argument. In this case non_housekeeping_mask is empty
-and tick_nohz_full_setup() makes no sense. And indeed, the kernel hits the
-WARN_ON(tick_nohz_full_running) in tick_sched_do_timer().
-
-And how should the kernel interpret the "nohz_full=" parameter? It should
-be silently ignored, but currently cpulist_parse() happily returns the
-empty cpumask and this leads to the same problem.
-
-Change housekeeping_setup() to check cpumask_empty(non_housekeeping_mask)
-and do nothing in this case.
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Phil Auld <pauld@redhat.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/r/20240413141746.GA10008@redhat.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/sched/isolation.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index 373d42c707bc5..82e2f7fc7c267 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -109,6 +109,7 @@ static void __init housekeeping_setup_type(enum hk_type type,
- static int __init housekeeping_setup(char *str, unsigned long flags)
- {
- 	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
-+	unsigned int first_cpu;
- 	int err = 0;
- 
- 	if ((flags & HK_FLAG_TICK) && !(housekeeping.flags & HK_FLAG_TICK)) {
-@@ -129,7 +130,8 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
- 	cpumask_andnot(housekeeping_staging,
- 		       cpu_possible_mask, non_housekeeping_mask);
- 
--	if (!cpumask_intersects(cpu_present_mask, housekeeping_staging)) {
-+	first_cpu = cpumask_first_and(cpu_present_mask, housekeeping_staging);
-+	if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
- 		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
- 		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
- 		if (!housekeeping.flags) {
-@@ -138,6 +140,9 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
- 		}
- 	}
- 
-+	if (cpumask_empty(non_housekeeping_mask))
-+		goto free_housekeeping_staging;
-+
- 	if (!housekeeping.flags) {
- 		/* First setup call ("nohz_full=" or "isolcpus=") */
- 		enum hk_type type;
 -- 
-2.43.0
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
 
