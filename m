@@ -1,159 +1,148 @@
-Return-Path: <linux-kernel+bounces-172395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0872E8BF1CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B47B8BF1A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4191C21FD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07477281E10
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB936148315;
-	Tue,  7 May 2024 23:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE23143C7E;
+	Tue,  7 May 2024 23:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lup6xZXF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X0KEDMGR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1851482FE;
-	Tue,  7 May 2024 23:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FECF142E79;
+	Tue,  7 May 2024 23:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123403; cv=none; b=NrUcI8YXAPwUvffDFcMiMRgKAqJ25WilGppLJ4CIZYt7KNulXL4Rcz3u2fVfDfMj0XqfGOvTDOt9UrrA4Lt//doemNNMdv0XLQv2eBYRpxcTBlEzPRLiFjC8nKC6vhORvpV5LEpwxIhQ82sLtzElbugNZir0ifeF6ezz44XHRx4=
+	t=1715123344; cv=none; b=jRS5ZOecUdWhEecLYMgHcCMa6Xk+pPokAYTx6Vd7MBtEfBC75Aqo+oNMYlr1RJGWR6p0KPl9Vfxt49MqtK/toyKj6Yb6sJYehB59D0+X1SQLkzJDonNPee+Xxz2NapfDr4poKGwR2HovPrlMX+7p0NqzZPBEENB20QCgMAYHfLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123403; c=relaxed/simple;
-	bh=KkfjDOzCjuo4G0ptW4GbKhoE2FZMfGdLBMqlhs1mn80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WOrBlshnbmYOpFYhmjotHRV+GLa4fbEVpDJSoqIs/scFNlj9jeaMwDkHpOzguB5XbEfhjNhTF3fIWqo18e/o0SqexH+uO1lXhJN20Xdvwhcl9kjrZcRAhbJll1G8TQd2E4Et6fnRvtPjalsAWJm7WG8u+197h49migH5nKDTJ90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lup6xZXF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B9E0C3277B;
-	Tue,  7 May 2024 23:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715123403;
-	bh=KkfjDOzCjuo4G0ptW4GbKhoE2FZMfGdLBMqlhs1mn80=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lup6xZXFfFRqV4DvwMcWc4rYF4KFVPO7epiDhKGLIvp7HgVaFbZCQWaZ83jx+JkyX
-	 OALdDns+oRcFLIftILiSUv+YGoCREn6Bk67VbnouKx4DiQo0wSLZoKE9FWFRYC1bMl
-	 w+qy06ngNlr7dBKYlrkT42KYZFep5/MRxcGA6iZmu7WwJodR6GOKHlU+a0m5AofwlL
-	 X9+Awf2KIG884rUIN6sU4vSpEIMp/tenCI3LRbdxyRqq2B4DPTizRB17o4Gnmz9G1Y
-	 1RfRf/1V7nxJLqckFVd4vhmCqUuKblGkUNnrKSL/xEyPIB962l8tY+w7hiJLNH+52b
-	 wk2RQKsMm7wPQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.8 52/52] epoll: be better about file lifetimes
-Date: Tue,  7 May 2024 19:07:18 -0400
-Message-ID: <20240507230800.392128-52-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240507230800.392128-1-sashal@kernel.org>
-References: <20240507230800.392128-1-sashal@kernel.org>
+	s=arc-20240116; t=1715123344; c=relaxed/simple;
+	bh=sbBCo2A1xLZ0vOXmtjRmskZzILCS1fwj9Xtelg+/+co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0k5Epvj9PlxM623iB1nfjIgB4KEz9LfhkFxWwRw9jnhYjZ9kYFRwZ+EmgbeBZ+uZeeQNI5tyPTyu+DKh8SHGi217DfOqyOD+Igv/oe0dlA23Jmx2bIfrsTsuMIl3rY7D1089R6SFUwwcJQQAKP312Jv8cZKi/IHQ+vRD6QFd90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X0KEDMGR; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715123341; x=1746659341;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sbBCo2A1xLZ0vOXmtjRmskZzILCS1fwj9Xtelg+/+co=;
+  b=X0KEDMGRgyzKg8DoCh4Rp18rOYNySsYSKplat1Ez+uU9KoSh0BM4Zfxu
+   3Oh1y2jSjyzXzE2pqzTJmub/22yXbQI+ZqlJNWlM0vVnvud/erblqancR
+   wBPbvOoIUT865fni+SWMk///aSulPo/W4+bOW6k7FIedo2Mi7r5tAZREz
+   mXBFY4vV3GB+IGnYX6OShQN79RqGWMiKjkMfRDbiChZfKyhtzVopEu3Il
+   D0LIM3S08TFr7ECbqf9R45dgtd2NdlrNzqCw7RX06+Am8vZr2hRLzvc4Z
+   e93+DNWJW94lxSXKZ3YkrEfz6svwJuWI2lzONQ/Ouj86d4FDlTSYYx1PO
+   A==;
+X-CSE-ConnectionGUID: Jq1kagcoT7+Dwi0wMNgi1Q==
+X-CSE-MsgGUID: HUMzRYzXQXORvj9PeU1D+g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11113109"
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="11113109"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:09:00 -0700
+X-CSE-ConnectionGUID: dGaliaqjQ72/tYjH1V1Nfg==
+X-CSE-MsgGUID: pJeQw4WkSaSxWq4X0sagaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="66110058"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 07 May 2024 16:08:55 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s4TvY-0002iq-0A;
+	Tue, 07 May 2024 23:08:52 +0000
+Date: Wed, 8 May 2024 07:08:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: oe-kbuild-all@lists.linux.dev,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH net-next 2/2] net: phy: phy_link_topology:
+ Lazy-initialize the link topology
+Message-ID: <202405080732.pSwJSarc-lkp@intel.com>
+References: <20240507102822.2023826-3-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.8.9
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507102822.2023826-3-maxime.chevallier@bootlin.com>
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+Hi Maxime,
 
-[ Upstream commit 4efaa5acf0a1d2b5947f98abb3acf8bfd966422b ]
+kernel test robot noticed the following build warnings:
 
-epoll can call out to vfs_poll() with a file pointer that may race with
-the last 'fput()'. That would make f_count go down to zero, and while
-the ep->mtx locking means that the resulting file pointer tear-down will
-be blocked until the poll returns, it means that f_count is already
-dead, and any use of it won't actually get a reference to the file any
-more: it's dead regardless.
+[auto build test WARNING on net-next/main]
 
-Make sure we have a valid ref on the file pointer before we call down to
-vfs_poll() from the epoll routines.
+url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Chevallier/net-phy-phy_link_topology-Pass-netdevice-to-phy_link_topo-helpers/20240507-183130
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240507102822.2023826-3-maxime.chevallier%40bootlin.com
+patch subject: [PATCH net-next 2/2] net: phy: phy_link_topology: Lazy-initialize the link topology
+config: parisc-defconfig (https://download.01.org/0day-ci/archive/20240508/202405080732.pSwJSarc-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080732.pSwJSarc-lkp@intel.com/reproduce)
 
-Link: https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
-Reported-by: syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/eventpoll.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405080732.pSwJSarc-lkp@intel.com/
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 3534d36a14740..c5a9a483fb538 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -875,6 +875,34 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- 	return res;
- }
- 
-+/*
-+ * The ffd.file pointer may be in the process of being torn down due to
-+ * being closed, but we may not have finished eventpoll_release() yet.
-+ *
-+ * Normally, even with the atomic_long_inc_not_zero, the file may have
-+ * been free'd and then gotten re-allocated to something else (since
-+ * files are not RCU-delayed, they are SLAB_TYPESAFE_BY_RCU).
-+ *
-+ * But for epoll, users hold the ep->mtx mutex, and as such any file in
-+ * the process of being free'd will block in eventpoll_release_file()
-+ * and thus the underlying file allocation will not be free'd, and the
-+ * file re-use cannot happen.
-+ *
-+ * For the same reason we can avoid a rcu_read_lock() around the
-+ * operation - 'ffd.file' cannot go away even if the refcount has
-+ * reached zero (but we must still not call out to ->poll() functions
-+ * etc).
-+ */
-+static struct file *epi_fget(const struct epitem *epi)
-+{
-+	struct file *file;
-+
-+	file = epi->ffd.file;
-+	if (!atomic_long_inc_not_zero(&file->f_count))
-+		file = NULL;
-+	return file;
-+}
-+
- /*
-  * Differs from ep_eventpoll_poll() in that internal callers already have
-  * the ep->mtx so we need to start from depth=1, such that mutex_lock_nested()
-@@ -883,14 +911,22 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
- 				 int depth)
- {
--	struct file *file = epi->ffd.file;
-+	struct file *file = epi_fget(epi);
- 	__poll_t res;
- 
-+	/*
-+	 * We could return EPOLLERR | EPOLLHUP or something, but let's
-+	 * treat this more as "file doesn't exist, poll didn't happen".
-+	 */
-+	if (!file)
-+		return 0;
-+
- 	pt->_key = epi->event.events;
- 	if (!is_file_epoll(file))
- 		res = vfs_poll(file, pt);
- 	else
- 		res = __ep_eventpoll_poll(file, pt, depth);
-+	fput(file);
- 	return res & epi->event.events;
- }
- 
+All warnings (new ones prefixed by >>):
+
+>> net/core/dev.c:10276:13: warning: 'netdev_free_phy_link_topology' defined but not used [-Wunused-function]
+   10276 | static void netdev_free_phy_link_topology(struct net_device *dev)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/netdev_free_phy_link_topology +10276 net/core/dev.c
+
+ 10275	
+ 10276	static void netdev_free_phy_link_topology(struct net_device *dev)
+ 10277	{
+ 10278		struct phy_link_topology *topo = dev->link_topo;
+ 10279	
+ 10280		if (!topo)
+ 10281			return;
+ 10282	
+ 10283		xa_destroy(&topo->phys);
+ 10284		kfree(topo);
+ 10285		dev->link_topo = NULL;
+ 10286	}
+ 10287	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
