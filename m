@@ -1,316 +1,212 @@
-Return-Path: <linux-kernel+bounces-171783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612CC8BE89F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:20:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374DA8BE8A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6361F28330
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:20:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B15B1C2317B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797E916C870;
-	Tue,  7 May 2024 16:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DB316C456;
+	Tue,  7 May 2024 16:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CqQlc0QR";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="K5LmxLBC"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="esRV53WM";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="BShKId5r"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D684A168AF1;
-	Tue,  7 May 2024 16:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB2C16D302;
+	Tue,  7 May 2024 16:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715098749; cv=fail; b=V1HFXNbrCDCye6HzcOfX7TEAr+4v6RG9U/9Jxy1gCf/1oGSo5B4P+JNs9e/mxD1gwC4zpuhFM3XZUDnMt5SPcd4l/XoU400lG9ejwcz1E6zWJnVDVPdoHdvBxD9PjyesZIm9wOZUrobPigMjAqjxHU+xhjimtFx3BE14uCuzXhk=
+	t=1715098756; cv=fail; b=JUWMFKlSQxKpLrMC6zhVSVFZXjzzBZRxVutSJb5wsYTuew2JtMM9vl1JGs083l2A1SeASLn5RPz8PRC4uIw5tR3+AurEBKk4ZKHdVERC/alUbFJEEpUn7oa9Tv6nQDGWEHdT+65/s/mvKtN6jszySYoTG3lQdhcE9D5kR6QitoY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715098749; c=relaxed/simple;
-	bh=prKQFYozuWwL5cVHuZlrfiJadSzmzHiK9glDEIcLsGc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oBLCxKvdkq0iNB94Hd53yjc993pPSlVywdIgaasP3XxImOdGsfQNjXl6ypn21TPmJ+kgtOAmNaJ4ZjdUjfDii/Lzne/mk0eEKTUbW7PMo8wsIeB4QWCbfr4plaLaVt+6mx+deCHnmC8siOnLVCaKzjN7m7LNpj01bxdUyFgUEis=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CqQlc0QR; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=K5LmxLBC; arc=fail smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715098746; x=1746634746;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=prKQFYozuWwL5cVHuZlrfiJadSzmzHiK9glDEIcLsGc=;
-  b=CqQlc0QRO7nIkIsnMNDM7679NtfSL7G8HlFy7BS1yHnRS828qtHyx5N4
-   Cd4NMdeiH8js/c8lvVwFLvf/oP3WeHXxeL5wI+VWIrEbJCE/0ZV5ajOvZ
-   e4LmJnKt4ZkIFrdfXtUMX4gS0uQOHUPB9jCivFiKiPgzh5SWUqHvATUiN
-   DyKjobiD9iIGsms0aVOv/WS+E01SxemEhF1P33szZrs0DXRnr9k1ZEnzv
-   LPwmzs7JqiNxBEwHrtRLPKeRHma1W2/leBAnqkQmKwojvPL/Emkm0wZ7E
-   +virraCFn7sCpgZyj9lDZL5Znn09hM5XcO5BCzkdInlWacAg9pKa4MfCr
-   Q==;
-X-CSE-ConnectionGUID: iX7H8nhCSiiWw+rx9lVSkg==
-X-CSE-MsgGUID: 4/nfqMllTFycyzcV7OVkBA==
-X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
-   d="scan'208";a="191326679"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 May 2024 09:18:59 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 7 May 2024 09:18:30 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 7 May 2024 09:18:30 -0700
+	s=arc-20240116; t=1715098756; c=relaxed/simple;
+	bh=E3EnNBaCrBqi1xLK/yj9vR+bXtZQyi4tyafp+CUXQy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LSdB155yiLaGqgvo+wo3/cwFioxWrl/He2zwXMRGCuQotGJKkAd+inHTvVqImXrjHSw/vUrib0noP2phCWUzLy5Cg1X47tUTWMATq8T+0FLdhbbHnlN2IGvs8Dv+RkeZUMKxjZXxcjVZQ6NzUEL39FKE0qtCF3Ecc5zGIzzxNN8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=esRV53WM; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=BShKId5r; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447947QY016601;
+	Tue, 7 May 2024 16:18:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=PdjQH7ndETKUhbYg9P5vMSqQguE1LmS+M80bmGHyeN4=;
+ b=esRV53WMsQUWKJHELPmYZK/h4E937ef/tlJdEnHrRrCX6SGpoIjpw17j6X40gc/edtJe
+ opyR+vgPn6ul2KPTpMWemwZEF2ktHGXoeDBbuWNTH/xUuUutfAePH6pXjGxJm3APOaHh
+ XaHzlov5Fv3eEFeoPFemg1xCxImW1w+a8MbsW8W/ofJj6qg2Dvdcg+Xu5qYc8VY2DUdY
+ QSC8eiR2/86bjW4nzzRq1J0rNCK938PlU11PdBv4FtQLxdIUe/KprLUC0t7tNYzb9vhn
+ bKy2RxM3BDwA0ES+SoROWYpX+PD+dPViMcWhSthEtidcTtXepfHKF0bQTZKz4TftLZb2 Dg== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xwbt55eav-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 07 May 2024 16:18:54 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 447FVhIx039371;
+	Tue, 7 May 2024 16:18:53 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3xwbf78dbv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 07 May 2024 16:18:53 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a5SSUzfT5t1IRGNtDf2yJxM20KQM1tTE4uxXQOrXLifSbn+Wn2TmywaSOX5vueq2EL1CufW7g2JjBdPQxAA/EZ6Qc5N/pC74cwWt5ZURFlRSXsijxfgGTJEYkaqW2ASgw7APELrwAtNtw2gToslxUuRLInZUjC8bOw36LgaP7A2F7ZJ58/REHQ5qjOv0cEpu4v3HTfyvQnvY7u/iGXaE+7J5DqWrXMXvGWxwMd9bQqb9guuhyUbdQ70swurWey0FWnRy6GQbbp9RIW4hj86oU9+i5y9E7YXk1eHESXovgK8O62guYpe++mnW93Up8XGy6PurJUmcUVXI579bPrYhZg==
+ b=dC/mKf6jUV0aUemrWJ8UOWM9pTvEIVlZ3p92ru8zo38uaLBYugE5yQtX529HAb2dO9miDzx4vnIhUK28W+HgB6EVeDDta5Hdrl2hlmknalCu8J9K4lJ61xQYx9m8kz5boSrNZLDcTA/2BXNaG7ElZuv5kJWSEIsMGVhuHuMoEQf5jQ3VIM04oGOS9s6oMkufRPexRsv4q7I4Pg+xfn8NYWDZWIkN0ato4UtCwqeUq9c79x0qXoemOz5IrAw6Kd6a4q9weOQTmXhuC0IIDdyxi2YmoJ15GWXWVOIFV8+r0d1Ovl/5YBLUwEa+oFjZKng78AUyqgyq2rEc6ASn/D9yYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=prKQFYozuWwL5cVHuZlrfiJadSzmzHiK9glDEIcLsGc=;
- b=Bd70jW1GsplhGm51AHROo0OYEckJ2OeE1eNDyJ339Y7HMedUErpO/odT3qhh61Bo6dbJzGx7Mcbeeofnu3cDJECocHzQ9TjEZ3KR39IEFaahuk0XHDiWzAmnlMIZFZjb0xwfOk4kSiuWLM1Ktk9oN1C5IVj+9BRYLd+GZem3FSai08lvUHsBkDAfgsIgif2mCODt6Yd3L+DOWWQYocPCUeR+OH26p/2ITjcvGFuNBqhpknGG80PkcjlrDmkLHI3uFAIztoDPg8gdcDcpj0pPgeuHLWV/EyAuohhHnjSv4Js7/ZPGN9qD3VI0H73NwsEQ6FdUheiVgPTftHJf4h4EfA==
+ bh=PdjQH7ndETKUhbYg9P5vMSqQguE1LmS+M80bmGHyeN4=;
+ b=Cl56nCuEDnDHo0VzJnIAElsgLSeqVHKhzftW+HoEnRdZKKmGFOP2uizQSh9+Jr5Y2DfKOVYOb/CVxNz03JjA+qSHGiExyk3Ypp5hVGN5nr9Wenmf9kNnO2uFnXYF5lvhnkbh/frQd2AyePHIi5CljX+UItkDEO1edL0DimfdCsy+tUZ+zT2yB2DJt5pxwl6b3Rr1/c4QJTJEprnFloOPWAdLUevcVe1sTe5oObzEiFxqmmJz8MWvgODuzIJ6jxsrRB4IuuY58e8JjHhdyJgZg5JRuFjlo6GLGgtIDO89nz+VtUJ5rd1Mj1jWIK5iqXmSACK/JoUaQOopYwTNiForXg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=prKQFYozuWwL5cVHuZlrfiJadSzmzHiK9glDEIcLsGc=;
- b=K5LmxLBC4Mkrso+0h6fk0Qmyj5Wt/hNoZTOt529sk4zqnl6x1MVs/Pd7JVDjhn4CW+Xbqo4JoZyDQi/8jDyMuS5bWkkBbHLgDT46o4+E34AipPtqd1HsIb8N9dOjboB5Egqw4zifNAl8AczyFSEaf6GPkgOC6+ZIAYqWDbueEo6hI1kibxhnuxi49JD6rgSBjUUATKJ0zO3rzCIdVVIyCrokCq04ODQmiiBSDpKgmn98M8AjaOB5YEmgQuhzghfZ0uyhZ3UgvMPRgcLRgp05UrJNcXGIB96hihLIzqk+cDfhZgbY69Ir33cBeJUkljbgVOIHwDqosH03EZHdsP7d1w==
-Received: from PH8PR11MB7965.namprd11.prod.outlook.com (2603:10b6:510:25c::13)
- by MW5PR11MB5930.namprd11.prod.outlook.com (2603:10b6:303:1a1::16) with
+ bh=PdjQH7ndETKUhbYg9P5vMSqQguE1LmS+M80bmGHyeN4=;
+ b=BShKId5r9ESYrsFX36v0UFZIpyKixzMogkch8iOa23sk3wdhiCHibTFfNkCI4TwQAMackp5iux57uLVmK+LtAhJG2RcsPaSb+qfxKcUzTc/R9THuRQzD/lMGgDBdYjYaA86WSZMRpjPuVZ+PNYDF1W8GdvEYYa7hVmaHKS+5F3g=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by PH7PR10MB5721.namprd10.prod.outlook.com (2603:10b6:510:130::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Tue, 7 May
- 2024 16:18:27 +0000
-Received: from PH8PR11MB7965.namprd11.prod.outlook.com
- ([fe80::ad6c:cf56:3c3d:4739]) by PH8PR11MB7965.namprd11.prod.outlook.com
- ([fe80::ad6c:cf56:3c3d:4739%3]) with mapi id 15.20.7544.036; Tue, 7 May 2024
- 16:18:27 +0000
-From: <Ronnie.Kunin@microchip.com>
-To: <linux@armlinux.org.uk>, <Raju.Lakkaraju@microchip.com>
-CC: <andrew@lunn.ch>, <netdev@vger.kernel.org>, <lxu@maxlinear.com>,
-	<hkallweit1@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<UNGLinuxDriver@microchip.com>
-Subject: RE: [PATCH net-next] net: phy: add wol config options in phy device
-Thread-Topic: [PATCH net-next] net: phy: add wol config options in phy device
-Thread-Index: AQHamryInbCB9BYIukGo4mVuOjWyY7GECwQAgAAS4wCAB30KgIAAGgIAgAA4RqA=
-Date: Tue, 7 May 2024 16:18:27 +0000
-Message-ID: <PH8PR11MB79658C7D202D67EEDDBD861495E42@PH8PR11MB7965.namprd11.prod.outlook.com>
-References: <20240430050635.46319-1-Raju.Lakkaraju@microchip.com>
- <7fe419b2-fc73-4584-ae12-e9e313d229c3@lunn.ch>
- <ZjO4VrYR+FCGMMSp@shell.armlinux.org.uk>
- <ZjoAd2vsiqGhCVCv@HYD-DK-UNGSW21.microchip.com>
- <ZjoWSJNS0BbeySuQ@shell.armlinux.org.uk>
-In-Reply-To: <ZjoWSJNS0BbeySuQ@shell.armlinux.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8PR11MB7965:EE_|MW5PR11MB5930:EE_
-x-ms-office365-filtering-correlation-id: 3e496bec-c1ed-413b-a1fc-08dc6eb153d6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|7416005|1800799015|366007|376005|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?VI5V/YCdv1KcbbASF5An+fIq2ZAOXbZ84VorKtq4vZjHzvl8L8HZ5chV4enC?=
- =?us-ascii?Q?aj20qrGKEKa44eUeNOB1YcOse0Mnxs9y5gGFCPhl6+1IDp27n+YrjEtu3940?=
- =?us-ascii?Q?1ylrq72PmIemNhmK+Uz5rP9z23rhrHqiflLpyNlLbqorSp9MMkRHuNDRAScg?=
- =?us-ascii?Q?1qfvATryI/Ng3GKTjsXaOAd1a9+EreeqLWXm52VDWueb4SADxTg00eO9ja/5?=
- =?us-ascii?Q?S1h+6O7VJq8r10jEdbmgvvD5w9X8U6OuFoE6RQbS+Q65cCdgxvjZJRU3wIZN?=
- =?us-ascii?Q?NKeXvQWq2pbn+2B7TjNX86TbAGWxIwZm1TVKq/0ugl5gq8F8l4aJfmWA2ogM?=
- =?us-ascii?Q?kzln4fvSil0/qboJWeR+x1ZJTkI3ObM5RRjNzLNCmPN0n5FDbomTxeWNiqKj?=
- =?us-ascii?Q?2exxgzpgpUIotm7+Snj1GtWlZjm+SMHr1hIetLUWr8drD3yIrJGMAylNCZaS?=
- =?us-ascii?Q?9TGk3TbMhWUMHdjC77VuHJJYFArwBYpjfNzZxSuozO6xIexuzctNTNN9eLcc?=
- =?us-ascii?Q?FRd0ZOg1q4Bk9Kfb4bLmcS2H2j2q5JcHBRzXwUxN9kqmX6nRoS/p56pC8AUh?=
- =?us-ascii?Q?LjMfPv/M0A/1YH2SVoKsSTR0Hdl4EhjPy9gitGNwgzTpWpf6QMgJx9TXlRan?=
- =?us-ascii?Q?NxcsoFhMkeF8pyqGFXrFLksyHa7Y0fKGzvVyuQWOymPJ6y9nqdfErRMWT0eo?=
- =?us-ascii?Q?Io/mZp2norE1oi8KpjSBF4PtCProWxBq+y+I+5UF5IkR7fjpuNNIaN/cMljo?=
- =?us-ascii?Q?ctOi16sLk4qT0CRkuqbm5aVUG29k2eUdmDaqk4qRlOw07gE7ChTA+nCFkBbQ?=
- =?us-ascii?Q?zlCBQzriqNAc0z67fwVLJUfjkGtL1H7vM5WFCfU6exRpvBFsFC64PLSox+MB?=
- =?us-ascii?Q?EmjfVeu5YMJd+6OSsog9Ve+KP6ydahCN8w4ACVLo3NUf6G4Xg7ZDQ2INJHWF?=
- =?us-ascii?Q?gI7DtpeaQrFm5/bjkD52eZQce6FSI4o+URUXER14Y1OJ+JB2r6UhSkKfmlJy?=
- =?us-ascii?Q?eElbh9nGEf3o0v+/SiPgZK2Rtwfy/1FIuQHW5UB7pBx15lFAzEBj+y8YTIuq?=
- =?us-ascii?Q?DaHDpZvbDuWPJSrZJFm0xuMOkY+S88Xz6BolPHfj6moXtU8ahC1Kgmxxi5pK?=
- =?us-ascii?Q?Gqq8CwgrTf8VFTp83ayTgtuHEvcG8234wz0s0zJXyVSvn1iH7PD3jNZh8auH?=
- =?us-ascii?Q?IapXteDvKmctlbtobihjpANFljKzCpSwjm6vXjX6vlvRQZVqr7OplgRJYCXz?=
- =?us-ascii?Q?hWPOoAJ1vuyTxDPWFh2UQEoTkcttiXthUMb24kzSiQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB7965.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?mRQSnSNmqUA6uMmyUFHidP9Fu4k5lD1EzT1qeN3CADk1NXdk3ql04fz4DfMd?=
- =?us-ascii?Q?u35YfJEoZf7D4oBLpSRT9xua/jQPjSDvJP4iW8xo1IgmI7xq1Kz51JFFTWlY?=
- =?us-ascii?Q?UiQDq8rrTZKDamVHe7Vi8iCXpkMQEZgYiG7su+W2qnQ9wqgUfEZwMlUvYKuz?=
- =?us-ascii?Q?MHLq9plaZm8OnH7ZcpY7O60NuDuLYT60mgvsNGU8FhCPYxjwctjHkGpl7RTB?=
- =?us-ascii?Q?dVU+rnzql7+nRkOXGzRZnUn81WqLTjhdDOdsZNKHvBg8xI+iipfiVfTGcnJC?=
- =?us-ascii?Q?Zs8cMYWdV7W2MOfP4m9NXdHnblIlz2qMVQrRTlCLKoC1eZ2Mrn7euS+pDvpf?=
- =?us-ascii?Q?CdW72krQLKi/ULk56gGgOykWYt7taCUGwAGgbwvxP4cvqiT8CgVMQNMrBzRA?=
- =?us-ascii?Q?y+KncnlLoWoMB0jGdCQxk4C7hOr+6ppNrLSc9VHNhyYQxlulOiMTaPsRQod5?=
- =?us-ascii?Q?fvt1OaH1AeQ/N2XWPSltubCHdfzbzX7cnN+INZJcU/ILDO06vb8DS1bUuDt0?=
- =?us-ascii?Q?rbkoE7pVVXDNL22vOJL7Lg/8W1nXEQksNrvrpDVa3nPQ3BGKXOBKiGdmvSPI?=
- =?us-ascii?Q?kZkoKiOV5+X+Y9NMIVpaOoIsDYr34nQr7++/hLIN/05UHRhl/24Mupx6MHW0?=
- =?us-ascii?Q?GJH0oiLnerBD2HgfPvZs2PxJ1CP2pgZZu1gwbNc93QHBIqcpuzAg+05uwY4H?=
- =?us-ascii?Q?8U9TIhiicoENNwsvUOyzIneLwTrSXnwD54bzJmrC4SbXYk4altgEJicxcyRM?=
- =?us-ascii?Q?AeJP6vaT0Z1NRfo2Fp5fc67UAu8qTOjuXFrZmgAY/8fdvm0V9N8yyTJjnY0K?=
- =?us-ascii?Q?/wq1XBfuszUNdiHtQlLGFZVnAAWxD0+y5e2XGTfUp5yJKE3Xl66znP2dfPni?=
- =?us-ascii?Q?LpoDYofrhIREy4wESpFjhV2A6GhspZTVca0sX6Ql4jInc8Ndj6/wGllb4W4S?=
- =?us-ascii?Q?x7Le11oMQ+3gjd9FOuBcxXff0MgpQagIYjBzneJ4cPwmAz0IukUnEIuLB5/l?=
- =?us-ascii?Q?/PgTEmk64XSaWrs1nOc08YdmKK/zpm1ygt6rcCUxdyYPXTxUdQhZZrSNEzf8?=
- =?us-ascii?Q?s18QIraMq/UEEoRxDIANeU+tMaGsVhfWIXAWl+eXsnNfHwN/8iuMgUDOaOd5?=
- =?us-ascii?Q?OvZfry2quPDzm58CXsLwnHoCYEtphFH6JQUsAQGddRWTRPmWGV/b+MPU9EnY?=
- =?us-ascii?Q?2Vo0TRz7zQTRuU5xoc6ZGZ8LVe4Cr/IWC9UQtCvwQa5DSpaatB3fcbIZRMUK?=
- =?us-ascii?Q?myAgC71uw5Ciqcd0gZa0y4GAt+bm17B5Tturo797wTGsNcKorjLOLdqGEF8x?=
- =?us-ascii?Q?3Pt4n3bKsaSFam9Fr9GuoGo9ENPXQcSWCxDI4gZQoj3T0g1vqxlGFdWMB6wV?=
- =?us-ascii?Q?KGmGGj0qodiPQ/U0oDqgz1GMIuYHrlzWaDTC20gATl0d/wNsfyB6UxjNKc2M?=
- =?us-ascii?Q?Mxktm6RRlTTPG4WusNBtxS+/2HbyXgF0cyMsTapFEKM8LcL8XNw9obVMi3JN?=
- =?us-ascii?Q?eQSQfw4Tr5UpN1nLrOXj0IYDJLt4qhkjlIp7XK9kVmKYl+kBhpfZLyRPIEnv?=
- =?us-ascii?Q?fVotytZUDfmb1isssHAel8ZLMI7WRgzC9fle4cAR?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Tue, 7 May
+ 2024 16:18:51 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 16:18:51 +0000
+Date: Tue, 7 May 2024 12:18:49 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+        brauner@kernel.org, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-mm@kvack.org,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
+ /proc/<pid>/maps APIs
+Message-ID: <rfnxxcbejlysbmwgslpz37jliuhaghynipymjzrafs4qoyf3dj@g6jubiu2jjay>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, Suren Baghdasaryan <surenb@google.com>
+References: <20240504003006.3303334-1-andrii@kernel.org>
+ <20240504003006.3303334-6-andrii@kernel.org>
+ <2024050425-setting-enhance-3bcd@gregkh>
+ <CAEf4BzbiTQk6pLPQj=p9d18YW4fgn9k2V=zk6nUYAOK975J=xg@mail.gmail.com>
+ <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
+ <ZjpSYmgNdmIAF9su@casper.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjpSYmgNdmIAF9su@casper.infradead.org>
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: YT3PR01CA0015.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:86::24) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH7PR10MB5721:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0d8d683-bb67-43bc-668f-08dc6eb161f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?LDqg1HS52T0/gz/XhRO9iNuNTpv78cjkLSdyhgBdQZTYT6GAxA8ZVvxRQO21?=
+ =?us-ascii?Q?+O8NQ4H4NtqiEIV1r3u5wiPlDRYV2Qal3F52tkTQt3mn1dueQYWTXZ+X1WrN?=
+ =?us-ascii?Q?z/G2CMcMgXE8pc4mnl+gGO0RKKXyumNODBQHSe9cRaxASB1ykb8XrG0Dd5HX?=
+ =?us-ascii?Q?zhocPNKmCYSAtgLQIxmC8JqM0hpNyohLdC5mJMK3CPvwZ7jLOVbBD49HnbTs?=
+ =?us-ascii?Q?AxKR+c0L0BOwFveZNKtdrpOza+fAGmbH3ugy+TO8l8JBlvz+4DnVLSIVKsOi?=
+ =?us-ascii?Q?1AjZ5WhdNT5w0dq11EKM/ixrL6uRkHdvv4pjCdAbrokAOc/5DcsxwSsrn3Nx?=
+ =?us-ascii?Q?44S1bIN/jPpS4iHw7IQQZs0kK83ew/zECt2zFGc8u70TiXdFNtbI/XQYP3pL?=
+ =?us-ascii?Q?Elpj2TUV1N7USXamsCIDnkYhw7iQiqyYm4C0XfC5olMSCLS56/y3TeubW9gc?=
+ =?us-ascii?Q?EHbgsILywMmynlAGSXJ8Bp+1ajulRGqubI/vFIeRaA1ruoz3TeZGbUx7TE7B?=
+ =?us-ascii?Q?S6IZJGZtG6+f/v/HvS0yRsUB6Ad/AJnRqlXJ9UC62h+GfBoehtyCeY/ABzrQ?=
+ =?us-ascii?Q?/kBufXSzaJ3Gn1yDekU1SlYmZrPzycCplhDGHC+R89H7nu71tx55r+9ITW5D?=
+ =?us-ascii?Q?BYGWUukldJWT1ThzPy3gVb1es/5ZvCozVLyy7tw+MoaUhKcUzrBN4cd0Z7SH?=
+ =?us-ascii?Q?WSXzt7j5+eZtaZdJBm3Y0HP9TY+UxBXoh3hL/68BafT+ywHRtn2xWG0IVxAd?=
+ =?us-ascii?Q?X+kCfLlbKSnCzACFrCSOCOpSci7xrr25DbZ8TbbCvvtxkPOyFzT8rbGXlENz?=
+ =?us-ascii?Q?iWvrTfhJDva2+nvTU6kNkLaDy0yAKuXqvA3cbBIjM3VHYTGQf5jVPgUOrxEU?=
+ =?us-ascii?Q?TBduLO59Sgmu3BDhpiPZ1FOxVQBbrpnVFJ6oLk+iPjnVdmaRhWQArgd7pu+m?=
+ =?us-ascii?Q?yWrfnJEYkGmxwp/Pp/kO9/Mhv29w0V8PL+46g92iInEcnflTXREtebOl7Uo3?=
+ =?us-ascii?Q?CFhzYS5LrsxpDv8y17ApRt/Fk2G2/Gk6k5JYok+o5v2No3ZrDgNsp7bxGplC?=
+ =?us-ascii?Q?zclGJWQU5yCPKwMjUbhzjnRkhDaODctRFe4nl4LwfzpC3EXtde7h4hBK+pWq?=
+ =?us-ascii?Q?1+blu6jCvDZq1ZDL1lhKWbj9aHpN8BpiGYKgmrQl2gdrcS3tSS+IEcW1oagC?=
+ =?us-ascii?Q?FsGo6CMmrf7QsOvJ1mpSY5o+CyJmWILuTi3B7hT/eeFMZ6iAYBlOnQqEcflJ?=
+ =?us-ascii?Q?VYz5GkTXPkh+UgDfVGXIoTKhXsZ0+azO98TwIRGqxA=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?WQnEpxs3MeJhBzqd/8GEsJSQz7ZALei1L/vPCzA20A1B4bmtUI12DFnyZdpG?=
+ =?us-ascii?Q?R8Bn5oe5xLt4OOY2Q1VheDYjNrDABtEavXq4ZPJI6FpZDr1NwZinGbxPwbRp?=
+ =?us-ascii?Q?zfUQXVEDBv2vL9nLC1EYDxLVGg0zZO774N3Kz0CMX9PC1lnaNy6kdKJm1TAV?=
+ =?us-ascii?Q?inl2hJAufZ+BwUFnQFUBFoug/dw7xaDRL3Ckf1yLuWFgwJzfBzua+72L4zG9?=
+ =?us-ascii?Q?XW3Q/jpgOtxVNznUhK9bhVy8+cVd2gw2IAwLk32KwbMVklhKqrdTPv6283M7?=
+ =?us-ascii?Q?ZWOj06EOwHjqzzUxWqRJYlj1/tH3yn9V2+9K0g3/Qi4NhXO00kTEIMSZdeJg?=
+ =?us-ascii?Q?HfuZigrLgahnbtuU6RA9Dxb6ct0IJ1eeAS534RoB5vBsFaa7hoqdgkQ9jct6?=
+ =?us-ascii?Q?vs8lfiEeqH8qOfiJ5ysTmW6vn+rOuAPyzfIIKTLO7/cFdPGySTTh9gl+MJy9?=
+ =?us-ascii?Q?olRgDQfenQr+bwNK8TB+0VqdEn3v2l5yjAu9NBuonp+UI+DfP+UQHSCO4leN?=
+ =?us-ascii?Q?/2tKewqb0LddW3lcnYJqvaAH/elMvBt1yOcCnzd8INCL2VefqP4Atzys/0uM?=
+ =?us-ascii?Q?176o3sP5H7e05ljDkHmqqvPPX357lahrNrZI3A6XuhZd3zJlwP961LmkyNEJ?=
+ =?us-ascii?Q?B97pNsIITbY5nSo000L/ylaxRc7OAfhL8bGAIfwuqlvJmCPVTNQZwPxbXpxF?=
+ =?us-ascii?Q?U2xLRWq/LTb5AT6gQ14Y0VyP/GzQQF1uc5OSeI8UA8usfNNOJQ4OSWp2hc2j?=
+ =?us-ascii?Q?NpvRmUuen6WmVlhL+45SG76E1wWcOLQsiZZ10C1DsUaPMGjuXC/mtOnY6FvR?=
+ =?us-ascii?Q?XGmgksKaVov4xiEx053NB5DVAHAbHAnIQLDw02g950j3TQSYoqlkb3WaE54h?=
+ =?us-ascii?Q?9cBKVKow2Q/IwCD4vOKQnb6xaPQutrRpYiOTH3/LbTRG7K3wm5L6v7dl/Hk/?=
+ =?us-ascii?Q?K6lrkR5uF5PCKVXVKpbgqoDt0bbUltcf24SUSgeULGbIGLNYT8ApRVGodi3q?=
+ =?us-ascii?Q?qr50yuAjRhBlYtwBVeHs0syrJcL0SpjeztwZxOwebbUhiLm1tcoSEB/7rbyj?=
+ =?us-ascii?Q?Z4G47S+Vq+34XiDPgjo2P9xx6fL7wV9kaLZRXpsG+rcaBjR7JavObdu1W39t?=
+ =?us-ascii?Q?mejWAbYV36z3Tdcab/Yd0/szBblSB2C+VQOfNBanrWfNaGhX4HvAm17gUx11?=
+ =?us-ascii?Q?+L0QZZvzG2JGIPa5qIAPpdFtvP5hM1l7CUkUC5XtPy56C1Nzodu9piO9MJmd?=
+ =?us-ascii?Q?WUQd+drKz1j4cWqSiAZdKw13vtZBnWQLHDQa8h6uOYC37TtHsIfQ4EXlyoR2?=
+ =?us-ascii?Q?pLcooGAL/SSsuVKW7VYBluS2bskCEhnLc5OI+hnkXI08FSnNm7aEXeWkl7FD?=
+ =?us-ascii?Q?miUdVaA8r08gHlW0sEh0k20c8nPdACfedDOmgcwuMmwiaHZpKOJ2EgRsdJCd?=
+ =?us-ascii?Q?d+VLj8AW3pYjh7GofGXny7WQ3P0/573xqKmswcpivN3OMb1TlMEZ/a506y/B?=
+ =?us-ascii?Q?P2iy212/HGexW8NVFi8L6FIpdTn1ZSlPzq1vxT/m6C1gZk+y1/15YvS7tMbj?=
+ =?us-ascii?Q?eBiPVrMEuYmFvLtX8N9w4wkMCQT2Oz0sZEHIqX3k?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	bWYa3m/e5jeJxJtjzRc8Hfgs90juxqWdIAGfG+4S93VZVDyOC6XLB1QSGdBTtRpyOXBQ2IzL+7Y2nNB69daRQTAZNnznZ25djmt0B6UI5HFXS2acB6EaImGj7jw5Lnpx0SjEEYHhRN28nA2kgAbJwqVU0RUDzUg5z1kn8ULSG7FF007mlgU4DBS0+un/IbAc0WbeCrzY6JpKC8dnUWnxqiEGHqMZqhu1TZ9h6k1Fno6D8V/xZHf5T5ukTP0MLIzfQ1SEcyX+Pnn0lyJQY8t6t3DG3sHiv5ExjK9axPC2SChUr1tPpKnDuPg7hGiiLk+k4FCGbXh8NEY2jbZmzGJdbApmDn4gDkAzW3ANIl13kjMvZYAp/A4IxEA80UfMXBjEa3URFEHwxFFkgRBrttmaTmT1z22tBLrWqnXqbEmWR2ASbtxbPLF7hKcuBO4Bn6TlrPyLW7x5Bf2dw5H5tOk0JW0DRh7MH5y6jpQtip7qUX/Es/cbGbiG2hKd6NREDP/PrCCykJFjvzI1ZBHmmZwttAi6p6o51qiKg0rr576q2OorwfaJGez2oDxRvPJdXtp2HbeT9Dibrv1wxIbH8dcXagYl81lLAl76ZBWiCKV0yVQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0d8d683-bb67-43bc-668f-08dc6eb161f0
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB7965.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e496bec-c1ed-413b-a1fc-08dc6eb153d6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2024 16:18:27.4471
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 16:18:51.2532
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L0dC85wC34hEB5t4wnuvutbM13SmFfffAMrCckj47FCg1YbfQ4SLxURBrOiaM+I4JqZcWa7lUENRNFB0EhwsY8kZ4ksglwJeYYCNlYYcHvk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5930
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0eA4yrBDNWU44I4yX9XHCLgcFMvfy3bhFbhk+tUVDVb0pofpOy8dL0Ce3z0QXJUiA37dbwAztmTx//iHo3hl8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5721
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_09,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=831
+ bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405070112
+X-Proofpoint-GUID: YWSDDc9qjWD80W0pKABtcPvdgc98gHeb
+X-Proofpoint-ORIG-GUID: YWSDDc9qjWD80W0pKABtcPvdgc98gHeb
 
-Hi Russell,
-I do agree with most of what you posted below, including that the Maxlinear=
- gpy driver has a bug in the handling of interrupts which is the culprit, a=
-nd that it can be fixed within that driver itself without additions to phyl=
-ib.
+* Matthew Wilcox <willy@infradead.org> [240507 12:10]:
+> On Tue, May 07, 2024 at 11:48:44AM -0400, Liam R. Howlett wrote:
+> > .. Adding Suren & Willy to the Cc
+> 
+> I've been staying out of this disaster.  i thought steven rostedt was
+> going to do all of this in the kernel anyway.  wasn't thre a session on
+> that at lsfmm in vancouver last year?
 
-Additional comment / question below
-
-Thanks,
-Ronnie
-
-> -----Original Message-----
-> From: Russell King <linux@armlinux.org.uk>
-> Sent: Tuesday, May 7, 2024 7:54 AM
-> To: Raju Lakkaraju - I30499 <Raju.Lakkaraju@microchip.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>; netdev@vger.kernel.org; lxu@maxlinear.c=
-om;
-> hkallweit1@gmail.com; davem@davemloft.net; edumazet@google.com; kuba@kern=
-el.org;
-> pabeni@redhat.com; linux-kernel@vger.kernel.org; UNGLinuxDriver <UNGLinux=
-Driver@microchip.com>
-> Subject: Re: [PATCH net-next] net: phy: add wol config options in phy dev=
-ice
->=20
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e content is safe
->=20
-> On Tue, May 07, 2024 at 03:50:39PM +0530, Raju Lakkaraju wrote:
-> > Hi Russell King,
-> >
-> > Sorry for late response
-> >
-> > If we have phy's wolopts which holds the user configuration, Ethernet
-> > MAC device can configure Power Manager's WOL registers whether handle
-> > only PHY interrupts or MAC's WOL functionality.
->=20
-> That is the responsibility of the MAC driver to detect whether the MAC ne=
-eds to be programmed for
-> WoL, or whether the PHY is doing the wakeup.
-> This doesn't need phylib to do any tracking.
->=20
-> > In existing code, we don't have any information about PHY's user
-> > configure to configure the PM mode
->=20
-> So you want the MAC driver to access your new phydev->wolopts. What if th=
-ere isn't a PHY, or the PHY
-> is on a pluggable module (e.g. SFP.) No, you don't want to have phylib tr=
-acking this for the MAC. The
-> MAC needs to track this itself if required.
->=20
-
-There is definite value to having the phy be able to effectively communicat=
-e which specific wol events it currently has enabled so the mac driver can =
-make better decisions on what to enable or not in the mac hardware (which o=
-f course will lead to more efficient power management). While not really ne=
-eded for the purpose of fixing this driver's bugs, Raju's proposed addition=
- of a wolopts tracking variable to phydev was also providing a direct way t=
-o access that information. In the current patch Raju is working on, the fir=
-st call the lan743x mac driver does in its set_wol() function is to call th=
-e phy's set_wol() so that it gives the phy priority in wol handling. I gues=
-s when you say that phylib does not need to track this by adding a wolops m=
-ember to the phydev structure, if we need that information the alternative =
-way is to just immediately call the phy's get_wol() after set_wol() returns=
-, correct ?
-
-> > The 05/02/2024 16:59, Russell King (Oracle) wrote:
-> > > and why the PHY isn't retaining it.
-> >
-> > mxl-gpy driver does not have soft_reset( ) function.
-> > In resume sequence, mxl-gpy driver is clearing the WOL configuration
-> > and interrupt i.e. gpy_config_init( ) and gpy_config_intr( )
->=20
-> That sounds like the bug in this instance.
->=20
-> If a PHY driver has different behaviour from what's expected then it's bu=
-ggy, and implementing
-> workarounds in phylib rather than addressing the buggy driver is a no-no.=
- Sorry.
->=20
-> Why is mxl-gpy always masking and acknowledging interrupts in gpy_config_=
-init()? This goes completely
-> against what phylib expects.
-> Interrupts are supposed to be managed by the config_intr() method, not th=
-e config_init() method.
->=20
-> Moreover, if phydev->interrupts =3D=3D PHY_INTERRUPT_ENABLED, then we exp=
-ect interrupts to remain
-> enabled, yet mxl-gpy *always* disables all interrupts in gpy_config_init(=
-) and then re-enables them in
-> gpy_config_intr() leaving out the WoL interrupt.
->=20
-> Given that gpy_config_intr() is called immediately after
-> gpy_config_init() in phy_init_hw(), this is nonsense, and it is this nons=
-ense that is at the root of the
-> problem here. This is *not* expected PHY driver behaviour.
->=20
-> See for example the at803x driver, specifically at803x_config_intr().
-> When PHY_INTERRUPT_ENABLED, it doesn't clear the WoL interrupt (via the
-> AT803X_INTR_ENABLE_WOL bit.)
->=20
-> The dp83822 driver enables the WoL interrupt in dp83822_config_intr() if =
-not in fibre mode and
-> interupts are requested to be enabled.
->=20
-> The dp83867 driver leaves the WoL interrupt untouched in
-> dp83867_config_intr() if interrupts are requested to be enabled - if it w=
-as already enabled (via
-> set_wol()) then that state is preserved if interrupts are being used. dp8=
-3869 is the same.
->=20
-> motorcomm doesn't support interrupts, but does appear to use the interrup=
-t pin for WoL, and doesn't
-> touch the interrupt mask state in config_intr/config_init.
->=20
-> mscc looks broken in a similar way to mxl-gpy - even worse, if userspace =
-hammers on the set_wol()
-> method, it'll read the interrupt status which appears to clear the status=
- - possibly preventing real
-> interrupts to be delivered. It also does the
-> clear-MII_VSC85XX_INT_MASK-on-config_init() which will break WoL.
->=20
->=20
-> So, in summary, please fix mxl-gpy.c not to clear the interrupt mask in t=
-he config_init() method. The
-> contents of gpy_config_init() needs to move to gpy_config_intr(), and it =
-needs not to mask the WoL
-> interrupt if phydev->interrupts =3D=3D PHY_INTERRUPT_ENABLED.
->=20
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+sframes?  The only other one that comes to mind is the one where he and
+kent were yelling at each other.
 
