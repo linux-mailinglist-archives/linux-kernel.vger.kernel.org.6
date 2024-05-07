@@ -1,149 +1,277 @@
-Return-Path: <linux-kernel+bounces-170655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6268BDA46
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:54:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 629118BDA49
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ADEE1F25554
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:54:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21ECD286C55
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA316A8D2;
-	Tue,  7 May 2024 04:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAD66BB44;
+	Tue,  7 May 2024 04:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Q6zEu8j9"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xc19Aci4"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BCA6A8C1
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071886BB26
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715057648; cv=none; b=B8jF9YUVhOsjXr2GnhzghkogLF00EeE+RdJu3Z5eEFLWwJkzWnx28AFybjnCOGCvow73S5YCedg6h45YsirtEzG+TcQeGe1NmXK8AtJyLPZYZb0HsmjKx4MFPd9ZUh9s1Fp0eiqp8RFoQJpRXJj2seQAptDKFHQXe08QegCZ7n4=
+	t=1715057700; cv=none; b=PRgta7fYq5Djg5ehyvx2UmgHx9fdfghjZSP9QbL4yuKcwDHjmKwmi5B0ghdO0ORFPYAFHCdp5k9iAe5ZGRdkWANZlwbUDQ6kglOywxxW6j86Ddm/QZjDYUiIuvetQEQIRtfFiyfMr68N+eac1SGCInHUhT0CWIEgETf+vJZWo+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715057648; c=relaxed/simple;
-	bh=EG/4mQn3iUCIUBQpyIxWSzOoZetr0X+2/VpJcryuHiw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WPN0pC3CiEJu9LEaVv5f0FpPKicUkkzdwcAWFlBn3jtms4IHyHaC30RCTP7hZ3rBHpUoGoPxz4NTxoV1SLH7/Fi0uycjIy8PNaK8KDJIfJrQZVhmTs+0qVKkI1icbbg0kvu1L5hgTs9VuGfA031lXVgZ2oZGivlB30uFuutniRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q6zEu8j9; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1715057700; c=relaxed/simple;
+	bh=3ZCZy/HoQtFdIhsGB5dJf8G5rpP2j3/UO2fvvQgqw3A=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FL4+N2HiSKWWRrAAmsWASHWQcMNBwpEqGIlBqOn0cd8ksIoLGXChZSL91zpO0qOlFu5saiJMTfTOFCjT6FFQbutyWZRbMB6jfG6lKf54y0rYI0ZlhuXT7A73tDp4+yBdwvbvbP6J/X/OKLRnJ9N7+z0uYEA43AO2NPxazqAlFC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xc19Aci4; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61b1200cc92so50184997b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 21:54:07 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-62a379a7c80so610595a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 21:54:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715057646; x=1715662446; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gbyIudFO5PLYpDqrCMxnrthgngfgspkn0imu/2S7Rx0=;
-        b=Q6zEu8j9L6dQ29M473DdLfMMePGUzV2KOnf/YlYTsCackm31VJOLfrjPLFXKkPdEFq
-         1JD14EXShmBc7WmhY534nSAXdUTGK1615MeId/jLYmSJpQaycmnWh2Zd1T4dkEqmJiIU
-         yMMbJZ7MN9LplM8MrFPnIgKoRh1n8r8PbLi+8+Pt5agnkvb3YulkTOGq1ZZ4y0FyztXw
-         aZMnt3SKmYlH7Dqaco0/DtlMvCDHovYutpa7aTsPtDQUEyzbdKLMrlN62D0lUIGa2iB3
-         Kb9U+PDsREC/cQjscQOI/yrTd3VSCWGbjKZAgoLhmWCVz96iHiTPpJjinTSwxznFyJlO
-         dDsQ==
+        d=google.com; s=20230601; t=1715057698; x=1715662498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MV8LMwbIv3s10LPcUQCJEkpYWXTzgw68gY5nsFwahbI=;
+        b=Xc19Aci4ba6/bX+isLzUPFRIxLjuJa7/SUwoBEot1d/w8PyTx1obUC8DLIt46meCJf
+         KJTGFZ9qSVq0Nct9KZj2DxIgUEMbj/tj8ahrPs4SWfJHr7uK11h9OsVO2HJnNnioiv03
+         E4T0YnJPoewCOhOB8OJ9Tc21zHaAtmM5ZDz19knPIPBNTvrOG3i/aHnMhDRc/SVmEzNV
+         wqvR63/7fXO6MzLvJx1Bvv0W3eh9izmaMpHlTwSWecZ9bRcU0QAGSJWzxmD8+hYrUXc7
+         cEzhIb2UmU7aE/cq0Qy5DEnK/Y1zIRCXSm5WQQhjeSdHzRy8gf/1Ei/Jz0PfIe4Dtbt5
+         zWzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715057646; x=1715662446;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gbyIudFO5PLYpDqrCMxnrthgngfgspkn0imu/2S7Rx0=;
-        b=c82V+PNH87ZeZmbk9PDeHJofm/EMH6TfZZq7aLaI3fdLaEW2Zg9M6Ze49jWR9PrYcB
-         XHGPzlgpbDGXPwt0ftN8Nk5/REEP7vp104pd21rIP+hwmbSmpBJIljBmEc7an2t34zC+
-         Qf241hhWo0Y89iURnaGMdlCJ4BQ0vfNBGA1brUcNfziRBTwpzLmyg9lonJ2WgAYhRAzf
-         NEzjJi/n0wQSHgPm7C9CDm5xNNmH8cnTTmT4P0VleJoKyxggfO9WxqYxsjQlU47Vrg9N
-         FMhq0tUbLGKityX7AKEp5uaSAn7b0PWx/8Ww4UPEQLuWWtScfpKgNljPbWfNrlHJEr8W
-         rWpg==
-X-Gm-Message-State: AOJu0YzV9cBuZYXTPKeqKzJKKCpZ9hzFXz1xzPdcMA1iW1AN4WsBoMy5
-	kAIBO37LT3RwZA3ArqsdRNKY6ztemnbuMeSQQLSdjPm+zoqjUzDgBHtQFhzyBFqRqq0NAKSASqW
-	CcjSsIrNrucgBQgqP/UP9BA==
-X-Google-Smtp-Source: AGHT+IGtKc62aRJNXjBywonvm66zw3a+Ig610QNJpk2AMRvk3n/gRL2OtIFIddRHProULXF8OuFC4WeKNq/6R4hLuQ==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a05:6902:1004:b0:de4:7be7:1c2d with
- SMTP id w4-20020a056902100400b00de47be71c2dmr4112750ybt.11.1715057646473;
- Mon, 06 May 2024 21:54:06 -0700 (PDT)
-Date: Tue, 07 May 2024 04:54:04 +0000
+        d=1e100.net; s=20230601; t=1715057698; x=1715662498;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MV8LMwbIv3s10LPcUQCJEkpYWXTzgw68gY5nsFwahbI=;
+        b=mr4SftXhaCmmV6txZtcFsmtA8Fc0X56Enn7ZiyiGuobq3H4wSyS+onP4uFKbkp8qOL
+         gG+WsqkPMu/GqbvQaZCNR52/VPRRZp3WTxnadQuD7o/r8nnE9RWlMosKFP5xROAlXJR+
+         0i+dp/cySIbCghivqv2OWIK0JqEBnD/HPPrF5xEFutJTRi3gFZtn7nURWQ/EApCrxMgB
+         EQDFWb1nGuDdmYnteeJ6raiP6IeJiSBc3MWDxXkZxLaEpz9fD2bi1styzPE0DvPLoHqi
+         hXEMvrqRCFUw6L6R49yDLzsTzxzICtR6BzpcPB5cNZO/d8Ve1ICZSP8zT5AO9m8mFGIE
+         tkzg==
+X-Gm-Message-State: AOJu0YwKGKWSk0GODOYRp9rOJeRHZvNar3mV4CvtGu+fD/0Xs2UHLHK0
+	HTaIRz07NvaSVg1h9mw0+1uLUj6RVSuIA60LcQYNfWe+wrqLG07/eum/iNXoV/rqAyKy137Dmnd
+	1VJ0J6udbdyT1W3cw+Mp6F/kJooIwdBo8WFVNWTPuDTzbUj0rhN0L5YM/iqpAmdMfXHmA91uiVd
+	5MxNftU/iWLwPqzhvAx48F2B7DCHTSpBCPrpeDd+f2wmyL
+X-Google-Smtp-Source: AGHT+IFwARfqnh1THNFSd5KGhhVU0w79NS5ZR95Zr71e2ky0jLzCnvCsRc8LjD/FmlxHyCR1/Ht+X0HB3w5S
+X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
+ (user=jstultz job=sendgmr) by 2002:a05:6a02:446:b0:61e:c365:8234 with SMTP id
+ 41be03b00d2f7-62b759e8042mr4877a12.5.1715057695879; Mon, 06 May 2024 21:54:55
+ -0700 (PDT)
+Date: Mon,  6 May 2024 21:54:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAOuzOWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUwNz3SQTXaAa3cSSRENdyxQzEwMLyzRLw2QDJaCOgqLUtMwKsGnRsbW 1AM2QDzFdAAAA
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715057645; l=2482;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=EG/4mQn3iUCIUBQpyIxWSzOoZetr0X+2/VpJcryuHiw=; b=SG4WJI+L6YOTiMwNSdEmj0jgzxl6qA7a97Uc0+ganqFCfS1wHKfVd1XhLQOXZVmhdVMKl2a25
- uMiefYABR+SC/NkK5u/lNKaNx0YBHwD1rgKAWp3ByFHKBsGuCMDB8ax
-X-Mailer: b4 0.12.3
-Message-ID: <20240507-b4-sio-ata1-v1-1-810ffac6080a@google.com>
-Subject: [PATCH] cdrom: rearrange last_media_change check to avoid
- unintentional overflow
-From: Justin Stitt <justinstitt@google.com>
-To: Phillip Potter <phil@philpotter.co.uk>, Nathan Chancellor <nathan@kernel.org>, 
-	Bill Wendling <morbo@google.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-hardening@vger.kernel.org, Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Message-ID: <20240507045450.895430-1-jstultz@google.com>
+Subject: [PATCH v10 0/7] Preparatory changes for Proxy Execution v10
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelaf@google.com>, 
+	Qais Yousef <qyousef@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, 
+	Youssef Esmat <youssefesmat@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Metin Kaya <Metin.Kaya@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When running syzkaller with the newly reintroduced signed integer wrap
-sanitizer we encounter this splat:
+As mentioned a few times previously[1], after earlier
+submissions of the Proxy Execution series didn=E2=80=99t get much in the
+way of feedback, it was noted that the patch series was getting
+a bit unwieldy to review. Qais suggested I break out just the
+cleanups/preparatory components of the patch series and submit
+them on their own in the hope we can start to merge the less
+complex bits and discussion can focus on the more complicated
+portions afterwards.  This so far has not been very successful,
+with the submission & RESEND of the v8 & v9 preparatory changes
+not getting all that much in the way of review or feedback.
 
-[  366.015950] UBSAN: signed-integer-overflow in ../drivers/cdrom/cdrom.c:2361:33
-[  366.021089] -9223372036854775808 - 346321 cannot be represented in type '__s64' (aka 'long long')
-[  366.025894] program syz-executor.4 is using a deprecated SCSI ioctl, please convert it to SG_IO
-[  366.027502] CPU: 5 PID: 28472 Comm: syz-executor.7 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
-[  366.027512] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  366.027518] Call Trace:
-[  366.027523]  <TASK>
-[  366.027533]  dump_stack_lvl+0x93/0xd0
-[  366.027899]  handle_overflow+0x171/0x1b0
-[  366.038787] ata1.00: invalid multi_count 32 ignored
-[  366.043924]  cdrom_ioctl+0x2c3f/0x2d10
-[  366.063932]  ? __pm_runtime_resume+0xe6/0x130
-[  366.071923]  sr_block_ioctl+0x15d/0x1d0
-[  366.074624]  ? __pfx_sr_block_ioctl+0x10/0x10
-[  366.077642]  blkdev_ioctl+0x419/0x500
-[  366.080231]  ? __pfx_blkdev_ioctl+0x10/0x10
-..
+For v10 of this series, I=E2=80=99m again only submitting those early
+cleanup/preparatory changes here. However, please let me know if
+there is any way to make reviewing the series easier to move
+this forward.
 
-Historically, the signed integer overflow sanitizer did not work in the
-kernel due to its interaction with `-fwrapv` but this has since been
-changed [1] in the newest version of Clang. It was re-enabled in the
-kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-sanitizer").
+In the meantime, I=E2=80=99ve continued to put effort into the full
+series, mostly focused on polishing the series for correctness.
 
-Let's rearrange the check to not perform any arithmetic, thus not
-tripping the sanitizer.
+Unfortunately one issue I found ended up taking awhile to
+determine it was actually a problem in mainline (the RT_PUSH_IPI
+feature broke the RT scheduling invariant -  after disabling it
+I don=E2=80=99t see problems with mainline or with proxy-exec). But going
+through the analysis process was helpful, and I=E2=80=99ve made some
+tweaks to Metin=E2=80=99s patch for trace events to make it easier to
+follow along the proxy behavior using ftrace & perfetto. Doing
+this also helped find a case where when we were proxy-migrating
+current, we first schedule idle, but didn=E2=80=99t preserve the
+needs_resched flag, needlessly delaying things.
 
-Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-Closes: https://github.com/KSPP/linux/issues/354
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
- drivers/cdrom/cdrom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you are interested, the full v10 series, it can be found here:
+  https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v10-6.9-r=
+c7
+  https://github.com/johnstultz-work/linux-dev.git proxy-exec-v10-6.9-rc7
 
-diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index a5e07270e0d4..20c90ebb3a3f 100644
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2358,7 +2358,7 @@ static int cdrom_ioctl_timed_media_change(struct cdrom_device_info *cdi,
- 		return -EFAULT;
- 
- 	tmp_info.media_flags = 0;
--	if (tmp_info.last_media_change - cdi->last_media_change_ms < 0)
-+	if (cdi->last_media_change_ms > tmp_info.last_media_change)
- 		tmp_info.media_flags |= MEDIA_CHANGED_FLAG;
- 
- 	tmp_info.last_media_change = cdi->last_media_change_ms;
 
----
-base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-change-id: 20240507-b4-sio-ata1-9d64089f91c0
+New in v10 (in the preparatory patches submitted here)
+---------
+* Switched preempt_enable to be lower close to the unlock as
+  suggested by Valentin
 
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
+* Added additional preempt_disable coverage around the wake_q
+  calls as again noted by Valentin
+
+* Handle null lock ptr in __mutex_owner, to simplify later code,
+  as suggested by Metin Kaya
+
+* Changed do_push_task to move_queued_task_locked as suggested
+  by Valentin
+
+* Use rq_selected in push_rt_task & get_push_task
+
+* Added Reviewed by tags
+
+New in v10 (in the rest of the series)
+---------
+* Tweak so that if find_proxy_task returns idle, we should
+  always preserve needs_resched
+
+* Drop WARN_ON(task_is_blocked(p)) in ttwu current case
+
+* Add more details to the traceevents (owner task for proxy
+  migrations, and  prev, selected and next for task selection)
+  so its easier to understand the proxy behavior.
+
+* Simplify logic to task_queued_on_rq suggested by Metin
+
+* Rework from do_push_task usage to move_queued_task_locked
+
+* Further Cleanups suggested by Metin
+
+
+Performance:
+---------
+K Prateek Nayak provided some feedback on the full v8 series
+here[2]. Given the potential extra overhead of doing rq
+migrations/return migrations/etc for the proxy case, it=E2=80=99s not
+completely surprising a few of K Prateek=E2=80=99s test cases saw ~3-5%
+regressions, but I=E2=80=99m hoping to look into this soon to see if we
+can reduce those further.
+
+
+Issues still to address:
+---------
+* The chain migration functionality needs further iterations and
+  better validation to ensure it truly maintains the RT/DL load
+  balancing invariants.
+
+* CFS load balancing. There was concern that blocked tasks may
+  carry forward load (PELT) to the lock owner's CPU, so the CPU
+  may look like it is overloaded. Needs investigation.
+
+* The sleeping owner handling (where we deactivate waiting tasks
+  and enqueue them onto a list, then reactivate them when the
+  owner wakes up) doesn=E2=80=99t feel great. This is in part because
+  when we want to activate tasks, we=E2=80=99re already holding a
+  task.pi_lock and a rq_lock, just not the locks for the task
+  we=E2=80=99re activating, nor the rq we=E2=80=99re enqueuing it onto. So =
+there
+  has to be a bit of lock juggling to drop and acquire the right
+  locks (in the right order). It feels like there=E2=80=99s got to be a
+  better way. Also needs some rework to get rid of the
+  recursion.
+
+
+Credit/Disclaimer:
+=E2=80=94--------------------
+As mentioned previously, this Proxy Execution series has a long
+history:=20
+
+First described in a paper[3] by Watkins, Straub, Niehaus, then
+from patches from Peter Zijlstra, extended with lots of work by
+Juri Lelli, Valentin Schneider, and Connor O'Brien. (and thank
+you to Steven Rostedt for providing additional details here!)
+
+So again, many thanks to those above, as all the credit for this
+series really is due to them - while the mistakes are likely
+mine.
+
+Thanks so much!
+-john
+
+[1] https://lore.kernel.org/lkml/20240401234439.834544-1-jstultz@google.com=
+/
+[2] https://lore.kernel.org/lkml/c26251d2-e1bf-e5c7-0636-12ad886e1ea8@amd.c=
+om/
+[3] https://static.lwn.net/images/conf/rtlws11/papers/proc/p38.pdf
+
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Qais Yousef <qyousef@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Zimuzo Ezeozue <zezeozue@google.com>
+Cc: Youssef Esmat <youssefesmat@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Metin Kaya <Metin.Kaya@arm.com>
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-team@android.com
+
+
+Connor O'Brien (2):
+  sched: Add move_queued_task_locked helper
+  sched: Consolidate pick_*_task to task_is_pushable helper
+
+John Stultz (1):
+  sched: Split out __schedule() deactivate task logic into a helper
+
+Juri Lelli (2):
+  locking/mutex: Make mutex::wait_lock irq safe
+  locking/mutex: Expose __mutex_owner()
+
+Peter Zijlstra (2):
+  locking/mutex: Remove wakeups from under mutex::wait_lock
+  sched: Split scheduler and execution contexts
+
+ kernel/locking/mutex.c       |  60 +++++++----------
+ kernel/locking/mutex.h       |  27 ++++++++
+ kernel/locking/rtmutex.c     |  30 ++++++---
+ kernel/locking/rwbase_rt.c   |   8 ++-
+ kernel/locking/rwsem.c       |   4 +-
+ kernel/locking/spinlock_rt.c |   3 +-
+ kernel/locking/ww_mutex.h    |  49 ++++++++------
+ kernel/sched/core.c          | 122 +++++++++++++++++++++--------------
+ kernel/sched/deadline.c      |  53 ++++++---------
+ kernel/sched/fair.c          |  18 +++---
+ kernel/sched/rt.c            |  61 +++++++-----------
+ kernel/sched/sched.h         |  48 +++++++++++++-
+ 12 files changed, 282 insertions(+), 201 deletions(-)
+
+--=20
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
 
