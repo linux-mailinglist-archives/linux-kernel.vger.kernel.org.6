@@ -1,104 +1,164 @@
-Return-Path: <linux-kernel+bounces-171667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E028BE719
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:12:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F048BE71F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F503281BFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01BD2813E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EF01649CC;
-	Tue,  7 May 2024 15:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA88161313;
+	Tue,  7 May 2024 15:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPCFaH9Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ISpe8zWi"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC57C1635CE;
-	Tue,  7 May 2024 15:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB3215EFDE;
+	Tue,  7 May 2024 15:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715094760; cv=none; b=ZzJ/ZVzh7fb6/42y3qvDN91Mm3GTwwx5kwaKWgpwhcK6elSGdwXGvplJSsPdEYX/EuPDDU8WNgJXdYw1lqYV02v3QxAX8r0irUMeM76nEHVOSduyK3Zo1k1DN7Xjxkl6bajHCDo3bu9KXmlxsDBQnl56biT2r8yB07cjULThyvg=
+	t=1715094872; cv=none; b=jei0tJAQv+AKVXcsphCaX7cXRbYLQkbU7e8YUcDZ+KFSI/v3YGlgfFyvmqQQUfFLFAXJQGnZI5HqitBOpmX/THc823iDLOV6VVdLJJy8Uyqzf7kKMFCbVyETRN2Y6WpZeFA9Q59xSrgzPRWePB2G3cJfRSN+Yl8RSK/FRpnNtok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715094760; c=relaxed/simple;
-	bh=CXLjYfLWjcW6h21E1qVlgB2tJ6ZoVOvZXdLSoPbpeQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IbRfuVPPMz9W7u9LT35L8SZhjeik+w1NsO4NpCJMCLYnsKk4eDW2zdRa+vPahklFVPhr0/GdjRwVXVP4ZvVRA6kt2cypMuDFqVkN3skn5PKsktc2bZtbw++l0y2odedKCA3Aad8qztbcyfwl/IloSfWfOJc11HkdbDWV3mEdaWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPCFaH9Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE3BC4AF67;
-	Tue,  7 May 2024 15:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715094759;
-	bh=CXLjYfLWjcW6h21E1qVlgB2tJ6ZoVOvZXdLSoPbpeQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sPCFaH9ZYRWC8WYu168aEE+/NSpLngqdAgzKhKQrDEeO9VNHXCf3bKpEbLvgNggs4
-	 STXzErw4ugrSIMeyOgqGqpNnEkFHx02jjKY/JTP7JqF2zbwpQilo3k+8GiN4kiAWB7
-	 Oil1vZvLNzS/Knrl286FQ7KfyJMYwYaOwf+vH5DpgP1Bbk7FWE6afXvdxMExXSQTBj
-	 S2knS+qJoY7JNRLjkOKjg3rMH/aCgKAUqZZjJmRm+s6dyM8AjcLOfuXzVUZO6V5p+2
-	 ZO9DNOO5sjWqoaKaTQAzw8ipfz3QP3txK+v9M8ILbqzEeZ3w5ZsoK2Y90Fz8Yfpv2v
-	 fBpi4IO8dXr4A==
-Date: Tue, 7 May 2024 12:12:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@arm.com>
-Cc: linux-perf-users@vger.kernel.org, atrajeev@linux.vnet.ibm.com,
-	irogers@google.com, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] perf maps/symbols: Various assert fixes
-Message-ID: <ZjpE5KfP_Wm3fxNm@x1>
-References: <20240507141210.195939-1-james.clark@arm.com>
- <ZjpEqyR74rl92jhb@x1>
+	s=arc-20240116; t=1715094872; c=relaxed/simple;
+	bh=nB/cJv7IcDvCVPO18M+qfbJN1yWBxowX9QN+QZhjrR4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=H4khYe0h5U/qJ6NHesExnrc4F1L4uHtETnecZXQyP3l8FpBReFUQuvOzXk6g/HzzYJILtwP081Rulj0+v7k1VIXJQvyeu9BdrpodEHdKvfOZEAxygEUb0mry+A2J50huTSNIaCCJzqe8CCq6jxjv8tNfbk4kj61hPrbo42xxT90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ISpe8zWi; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E1D86E0005;
+	Tue,  7 May 2024 15:14:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715094867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=206gGNUNB5hA5ZcFAZ6jyveJ5RgZY1MARbRfGQUc+HM=;
+	b=ISpe8zWiQep2P8Frm93frtzWECPQK7E31QuFfs4MQwQGxwF1LFceQXULO98URfaceGT6Pa
+	jd4Zwu76vmRl0LoukyAE9I4K5l8c8SUb5DBZzHHcw3hrTHvqkYr2ajIoRqQ5xcZmBMsaoO
+	mNRJInwwjq8LXBtvcpKIP/bFFbFDdLjsLaWqrqqeLU8C4FBgvnvEkmqsG+PNicz8fn1Hon
+	Fndh/FnABacFn11AoTLhgl5WSfUw1ks8SZSeCAQWVu0BWwIpo2bknBUYO/DPHUQqjVScoI
+	ZBu3nmgXHXdEvbSPJoT7Z5PLlX5yPraMtGNFME/46CrnxcK7PhdX0+lnB1KFOg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjpEqyR74rl92jhb@x1>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 May 2024 17:14:25 +0200
+Message-Id: <D13IE06GUEJ9.UUNOU4QH2QN9@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support
+ (clk, reset, pinctrl)
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+X-Mailer: aerc 0.17.0
+References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
+ <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
+ <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
+In-Reply-To: <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, May 07, 2024 at 12:11:42PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, May 07, 2024 at 03:12:04PM +0100, James Clark wrote:
-> > A few different asserts are hit when running perf report on minimal
-> > Arm systems when kcore is used, or the .debug/ info can't be loaded or
-> > /boot isn't mounted etc.
-> > 
-> > These result in some less common paths being hit for resolving symbols
-> > and things are done in an order that breaks some assumptions. I'm not
-> > sure if we could do something to make the tests pick this up, but maybe
-> > not easily if it would involve mocking the filesystem or even a specific
-> > kernel. I tried a few different variations of --kcore and --vmlinux
-> > arguments but ultimately I could only reproduce these issues by running
-> > on specific kernels and root filesystems.
-> 
-> Please consider adding Fixes tags so that we can help the work of
-> backporters/stable?
+Hello,
 
-Sorry, you already did it for the last two patches in the series, so you
-couldn't find easily what were the csets that introduced the problems in
-the first two patches?
+On Tue May 7, 2024 at 4:52 PM CEST, Th=C3=A9o Lebrun wrote:
+> On Sat May 4, 2024 at 4:34 AM CEST, Stephen Boyd wrote:
+> > Quoting Th=C3=A9o Lebrun (2024-05-03 07:20:45)
+> > > This builds on previous EyeQ5 system-controller revisions[0], support=
+ing
+> > > EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
+> > > features here:
+> > >  - Clocks: some read-only PLLs derived from main crystal and some
+> > >    divider clocks based on PLLs.
+> > >  - Resets.
+> > >  - Pin controller, only on EyeQ5 (rest will use generic pinctrl-singl=
+e).
+> > >=20
+> > > EyeQ6H is special in that it has seven instances of this
+> > > system-controller. Those are spread around and cannot be seen as a
+> > > single device, hence are exposed as seven DT nodes and seven
+> > > compatibles.
+> > >=20
+> > > This revision differs from previous in that it exposes all devices as=
+ a
+> > > single DT node. Driver-wise, a MFD registers multiple cells for each
+> > > device. Each driver is still in isolation from one another, each in
+> > > their respective subsystem.
+> >
+> > Why can't you use auxiliary device and driver APIs?
+>
+> Good question. Reasons I see:
+>
+>  - I didn't know about auxdev beforehand. I discussed the rework with a
+>    few colleagues and none mentioned it either.
+>
+>  - It feels simpler to let each device access iomem resources. From my
+>    understanding, an auxdev is supposed to make function calls to its
+>    parent without inheriting iomem access. That sounds like it will put
+>    the register logic/knowledge inside a single driver, which could or
+>    could not be a better option.
+>
+>    Implementing a function like this feels like cheating:
+>       int olb_read(struct device *dev, u32 offset, u32 *val);
+>
+>    With an MFD, we hand over a part of the iomem resource to each child
+>    and they deal with it however they like.
+>
+>  - Syscon is what I picked to share parts of OLB to other devices that
+>    need it. Currently that is only for I2C speed mode but other devices
+>    have wrapping-related registers. MFD and syscon are deeply connected
+>    so an MFD felt natural.
+>
+>  - That would require picking one device that is platform driver, the
+>    rest being all aux devices. Clock driver appears to be the one, same
+>    as two existing mpfs and starfive-jh7110 that use auxdev for clk and
+>    reset.
+>
+> Main reason I see for picking auxdev is that it forces devices to
+> interact with a defined internal API. That can lead to nicer
+> abstractions rather than inheriting resources as is being done in MFD.
+>
+> Are there other reasons?
 
-- Arnaldo
->  
-> > James Clark (4):
-> >   perf symbols: Remove map from list before updating addresses
-> >   perf maps: Re-use __maps__free_maps_by_name()
-> >   perf symbols: Update kcore map before merging in remaining symbols
-> >   perf symbols: Fix ownership of string in dso__load_vmlinux()
-> > 
-> >  tools/perf/util/maps.c   | 14 ++++++------
-> >  tools/perf/util/symbol.c | 49 ++++++++++++++++++++++++----------------
-> >  2 files changed, 36 insertions(+), 27 deletions(-)
-> > 
-> > -- 
-> > 2.34.1
+Self replying myself. I gave myself some time to think about that but I
+still have more thought now that I've written the previous email, and
+re-read almost all old revisions of this series.
+
+I do like this auxdev proposal. More so than current MFD revision. One
+really nice feature is that it centralises access to iomem. I've
+noticed recently a register that has most its fields for reset but one
+lost bit dealing with a clock mux. Logic to handle that would be in one
+location.
+
+Also, I just noticed you hinted at auxiliary devices in previous emails,
+which I thought was a generic term. I did not see it as a specific
+kernel infrastructure to be used. Sorry about that.
+
+Regards,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
