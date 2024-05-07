@@ -1,209 +1,413 @@
-Return-Path: <linux-kernel+bounces-171728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237608BE7D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D7B8BE7E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E39F1F2937A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26831F293B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8CA168AEB;
-	Tue,  7 May 2024 15:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F84516132A;
+	Tue,  7 May 2024 15:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BEF2GMcW"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4S0i42gK"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F499161327
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168C21649D3
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097282; cv=none; b=WUMIQ7ASla28gGczWIGmLh9TyPSdLPDMeG0BZl3I6v1mq0CPlE7TtkyIqNZKOXVEc4lwlb2l/+lrvoei/XqDssGhPccendSoQSmyELwSw6WU61VSZ59qvCB+PDmiDP9gTQVrRWa4uvkOnrfrwP/ntrRfKJC/VMrdyCF+rrw7mFo=
+	t=1715097313; cv=none; b=rDm9jbD62Qxo/gv535UqUoNAm2u06k9g0j+VElg+9rYCrDb8kQJ2g6HgViTeZ+VNe027vnaGx+H6hhQqi1PCLH8rI5sBg403dkjUzj8sWGllOLFiZi/PUykV5ULIcrNd8WO/Pl7vDcjsVpksOmqyAKmS8IXz/89f8aCpd1Mfh94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097282; c=relaxed/simple;
-	bh=aBJBQLQUjfT7PWQGJ5g0Hkb16T+DG7DAQh4PmBiCF2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E5fNzszKMBMF9Ggf0msgcdiADAqHSz4lSVYiygUIDi9W6f6IUaUxe8D/T4J739Vtf+HC7W3PZL9UIHsj+as6LBM2ukV01FhLb/MumAAneC2+kug8spnMzBsd2/wkuY41LuDPJcJGjLur0CWWGdhV/wTrkF5biK2OfV25KSADDxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BEF2GMcW; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1715097313; c=relaxed/simple;
+	bh=pQm6/UbnhlQ71QOAiSXRcdkBS2j1QGiiSL9FOmgC6gM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YEoqDqim0r11bfxKhj6b0lxgJWHGIUot+L/4hIiNIp7CEVyAXErQb8HurAZE/Q6JV8J2ju8wzgZr8tMdB0aaMCzaVBAVQ5dcbA2zUol8L4FpCGkSIjZQY5N7q84F7ZYMHIdxtCnm/KWtizCsrvsBq5JbwTu/onoIYz8AFnmfLYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--panikiel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4S0i42gK; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a599af16934so831822566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:54:40 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--panikiel.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-417bf71efb4so18094885e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715097279; x=1715702079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+//lctqNApZOsedm3CHZikHUh063xmeaaMM6XmCk0O8=;
-        b=BEF2GMcWj932ti2szi19iUpOUZd1/Lig71u2jVPieWqc2wO5T08uqywcm9oW2cBua4
-         OaSgXatQLMWbDLa0+HWUIwq88d9uWGvtqSGsFDL8qXwuSXGMviEINxjaEtcwcM/Ztbyx
-         5LBFUFLxq7W64DPQTRzfDk7OfbpE407b5tG6p8L3a0jYoNZ7Ya30XhaOC3ubPE4yaCdu
-         TFi9K8CvOPLBgODzhBTLYbxR3hVCwWAuLRfti0GpXmRX5HkRnsq9nNptYggtx/dUqIVN
-         huyd78joXEP+7eq8T3oLyffsWfhL/FUT8meRni8FF/1R/A9UvnaRPbNQAW5CwqSNNuaf
-         733w==
+        d=google.com; s=20230601; t=1715097309; x=1715702109; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RJ47pWXAtCFdZcUV/HEfsVY67B3nHtrNt0g1FksRjBo=;
+        b=4S0i42gKd3EeegV5AhTOhEC6lgJPEbZn/elkAHZw61uVnRBOblNRY88bzYz3bN78Kn
+         jzwr5OXnwLXC5RzP0BHTAhTSR9TOWe1AU4PyEdZu5Mh9cicRm8GaEZ2MDQSVy+WinQl5
+         qzxXGdu6UaNCoECk4NGLX3+/sTGO8k0c37v7ZTvleG3HHVjaDIka7kiO48kB7kLfJBue
+         feOwqcXbRLC6StobF0EyIy3fgWpx+cdbX22x51dX4M7XDW4fxl65IOYbGS/fQdXrC3OI
+         Xn4uknrkmQUBBwqqk4MyYNNfnRgUumJNOszSy3BP73QwH2uvtoPtYl5qfmhkSz9QqS9b
+         6UTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715097279; x=1715702079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+//lctqNApZOsedm3CHZikHUh063xmeaaMM6XmCk0O8=;
-        b=MtDHoEEUwSx5oLvJfH777QXTgpZljCoxnU5dxsbkBWNjCVmQ6grGsOLuLL6m54hYMp
-         Sd9rbQb300c9nVUpHHWolBixPUJsRlpFog16npXHGhGJoQW+wUP8mY9kBw8ZeSkZPxwj
-         WAarHxWQm5/lFtMIhuDQS40KPDaPCA6Os70jPE72zRBrHV/wsgFzoGwID88bcMhAvMQe
-         noe/vtwX6iko0N9Us0j26DhIoSVQcRVS9PtaFy8thQ1LFTbgF1TmTNo0ReYpg4T6LW2w
-         Y6z3wLn7MnmbRYS21JzAoIR7Ei+5VblJRlKx2p2w+I3xWirwiUYF2nTZVlmtNBF4e6s0
-         k0Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdH1eWDaL073WLb4P9V5hXbFh3zHiwBAy/jnGA1PJzoifVBYcIRHtz2fAb5msFCWsQe1S6SZ2wL0SwBUhb0G3+0m2u9eCm+mjXTcyc
-X-Gm-Message-State: AOJu0Ywl1SZexgoNBTi1bnEOaoFYiun47TX7Id7LaBKdeW/obmQ0BJhf
-	OUmGeTCs7Bsd/BAEO5zESnx3K3fKwz/YI+aJG5wl4UgAwHgp4ZM3nG1tcfF4HJZj3aU2OlgIRzY
-	+B6Q6JWNZu6cQe5ZRB5ptXrgyf7Qy15XlpbbV2HMgrRA4fdXkrv9AqFg=
-X-Google-Smtp-Source: AGHT+IFxN2iMkSNNChJnnCrpQyYGZeo+zP3RyqjYIB5+hyDPmeiBMPxXA+yp70ayfL9q+R57TS3RzGHxOJgdbXrGQCQ=
-X-Received: by 2002:a17:906:1d0e:b0:a59:c28a:7eb6 with SMTP id
- n14-20020a1709061d0e00b00a59c28a7eb6mr4883867ejh.24.1715097279321; Tue, 07
- May 2024 08:54:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715097309; x=1715702109;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RJ47pWXAtCFdZcUV/HEfsVY67B3nHtrNt0g1FksRjBo=;
+        b=oOLvXZCebpoUG8g/SI8kDTJhgQuvuEvj0J3ysSD8wzdAhTln4bGwbabpUhIO3n6rRr
+         j1nwv5JlSh/CnGKsynfbw22KsUHeofij1zp0bYacLY2T6wUHH0J1hwhTgPlcJC/DIj4a
+         wqQ4Yuka5p0orukQP6WmLYC+cQEa2fMArseWNRU37McAfFnweeyxcfkhO0FhpHsAgfB5
+         bKITQuUpIDsBKTi1pgOj3WjtRZfN576UiC6Pvw1vBTgvYdPRaAXDZ2dueMHO+SrrpV5q
+         Nbr2MozTEA6EQeS6ybnzAGiigVlafHqrzxKGKRkttF+qMgwUOmvSs/lJgutMwq9QliJW
+         ig2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWzZtz12VTCCq3kbUP+myUlBAXeAM6c/zrtu1oYMjwZqNpVGF94utLf3SDrg3Ifpz57rneab5TkQjs8PQVojbVquc5ZGzMW54jgnBrF
+X-Gm-Message-State: AOJu0YxnxTNgOdzZ7vJIiHbiTvwsWcVTQCKQ+Z5LjFNnZKDJrNzi1TGy
+	MMG6k+WC6e7q6QPqzVt7183n4cEfuKPpgWLqLPlISV1xoVk58DJ1FnPQNu+nqssg2cRV7crEjH1
+	XfcIUjC1lIg==
+X-Google-Smtp-Source: AGHT+IH8xn8VWc+XkVkTbMSGWBKDl+TyyuL6M2xFwlfEJnC34wjOlZXzDZDE9agYnoRWzeKbkzLvsId01BSlcg==
+X-Received: from szatan.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:2d83])
+ (user=panikiel job=sendgmr) by 2002:a05:600c:5103:b0:41e:8543:c5ea with SMTP
+ id 5b1f17b1804b1-41f2d44054cmr326105e9.1.1715097309052; Tue, 07 May 2024
+ 08:55:09 -0700 (PDT)
+Date: Tue,  7 May 2024 15:54:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240506211333.346605-1-yosryahmed@google.com> <1a408ed1-7e81-457e-a205-db274b4d6b78@redhat.com>
-In-Reply-To: <1a408ed1-7e81-457e-a205-db274b4d6b78@redhat.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 7 May 2024 08:54:01 -0700
-Message-ID: <CAJD7tkam8BvLvOrw_FfgZ8XOsfdu-Hv2oCv_s+LAMcGvd44hTA@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable] mm: rmap: abstract updating per-node and
- per-memcg stats
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Message-ID: <20240507155413.266057-1-panikiel@google.com>
+Subject: [PATCH v3 00/10] Add Chameleon v3 video support
+From: "=?UTF-8?q?Pawe=C5=82=20Anikiel?=" <panikiel@google.com>
+To: airlied@gmail.com, akpm@linux-foundation.org, conor+dt@kernel.org, 
+	daniel@ffwll.ch, dinguyen@kernel.org, hverkuil-cisco@xs4all.nl, 
+	krzysztof.kozlowski+dt@linaro.org, maarten.lankhorst@linux.intel.com, 
+	mchehab@kernel.org, mripard@kernel.org, robh+dt@kernel.org, 
+	tzimmermann@suse.de
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	chromeos-krk-upstreaming@google.com, 
+	"=?UTF-8?q?Pawe=C5=82=20Anikiel?=" <panikiel@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2024 at 1:52=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 06.05.24 23:13, Yosry Ahmed wrote:
-> > A lot of intricacies go into updating the stats when adding or removing
-> > mappings: which stat index to use and which function. Abstract this awa=
-y
-> > into a new static helper in rmap.c, __folio_mod_stat().
-> >
-> > This adds an unnecessary call to folio_test_anon() in
-> > __folio_add_anon_rmap() and __folio_add_file_rmap(). However, the folio
-> > struct should already be in the cache at this point, so it shouldn't
-> > cause any noticeable overhead.
->
-> Depending on the inlining, we might have more branches that could be avoi=
-ded
-> (especially in folio_add_new_anon_rmap()).
->
-> [the rmap code is more performance-sensitive and relevant than you might =
-think]
+Google Chameleon v3 is a testing device capable of emulating multiple
+DisplayPort monitors, used for testing purposes.  It is based on an Arria
+10 SoCFPGA.  This patchset adds V4L2 drivers for two IP blocks used in the
+device's FPGA: the Chameleon v3 video interface, and the Intel DisplayPort
+RX IP.  The former is a video capture device that takes video signal and
+writes frames into memory, which can be later processed by userspace.
+The latter is a DisplayPort receiver IP from Intel, its datasheet can
+be found at:
+https://www.intel.com/programmable/technical-pdfs/683273.pdf
 
-I thought about making the helper __always_inline. Would that be better?
+The video interface driver is a regular v4l2 capture device driver, while
+the DP RX driver is a v4l2 subdevice driver. In order to avoid code
+duplication, some parts of the DisplayPort code from the DRM subsystem
+were put into headers usable by the DP RX driver.
 
->
-> >
-> > No functional change intended.
-> >
-> > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> > ---
-> >
-> > This applies on top of "mm: do not update memcg stats for
-> > NR_{FILE/SHMEM}_PMDMAPPED":
-> > https://lore.kernel.org/lkml/20240506192924.271999-1-yosryahmed@google.=
-com/
-> >
-> > David, I was on the fence about adding a Suggested-by here. You did
-> > suggest adding a helper, but the one with the extra folio_test_anon()
-> > was my idea and I didn't want to blame it on you. So I'll leave this up
-> > to you :)
->
-> :) fair enough! It's a clear improvement to readability.
->
-> [...]
-> >
-> > -     if (nr_pmdmapped) {
-> > -             /* NR_{FILE/SHMEM}_PMDMAPPED are not maintained per-memcg=
- */
-> > -             if (folio_test_anon(folio))
-> > -                     __lruvec_stat_mod_folio(folio, NR_ANON_THPS, -nr_=
-pmdmapped);
-> > -             else
-> > -                     __mod_node_page_state(pgdat,
-> > -                                     folio_test_swapbacked(folio) ?
-> > -                                     NR_SHMEM_PMDMAPPED : NR_FILE_PMDM=
-APPED,
-> > -                                     -nr_pmdmapped);
-> > -     }
-> >       if (nr) {
-> > -             idx =3D folio_test_anon(folio) ? NR_ANON_MAPPED : NR_FILE=
-_MAPPED;
-> > -             __lruvec_stat_mod_folio(folio, idx, -nr);
-> > -
->
->
-> We can now even do:
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 9ed995da4709..7a147195e512 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1555,18 +1555,17 @@ static __always_inline void __folio_remove_rmap(s=
-truct folio *folio,
->                  break;
->          }
->
-> -       if (nr) {
-> -               /*
-> -                * Queue anon large folio for deferred split if at least =
-one
-> -                * page of the folio is unmapped and at least one page
-> -                * is still mapped.
-> -                *
-> -                * Check partially_mapped first to ensure it is a large f=
-olio.
-> -                */
-> -               if (folio_test_anon(folio) && partially_mapped &&
-> -                   list_empty(&folio->_deferred_list))
-> -                       deferred_split_folio(folio);
-> -       }
-> +       /*
-> +        * Queue anon large folio for deferred split if at least one
-> +        * page of the folio is unmapped and at least one page
-> +        * is still mapped.
-> +        *
-> +        * Check partially_mapped first to ensure it is a large folio.
-> +        */
-> +       if (folio_test_anon(folio) && partially_mapped &&
-> +           list_empty(&folio->_deferred_list))
-> +               deferred_split_folio(folio);
-> +
+This patchset depends on changes merged into the linux-media tree at:
+git://linuxtv.org/hverkuil/media_tree.git tags/br-v6.10d
 
-Dumb question: why is it okay to remove the 'if (nr)' condition here?
-It seems to me by looking at the code in case RMAP_LEVEL_PMD that it
-is possible for partially_mapped to be true while nr =3D=3D 0.
+Here is the output of `v4l2-compliance -s` run on a Chameleon v3 for
+/dev/video0 (no attached subdevice):
 
-Is this practically impossible for some reason, or is adding the folio
-to the deferred split queue okay either way?
+```
+v4l2-compliance 1.27.0-5204, 32 bits, 32-bit time_t
+v4l2-compliance SHA: dd049328e528 2024-04-29 13:40:09
 
->          __folio_mod_stat(folio, nr, nr_pmdmapped);
->
->          /*
->
->
-> Which will help some of my upcoming patches.
->
-> Feel free to include that in a v2, otherwise I'll include it in an upcomi=
-ng
-> patch series.
->
->
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+Compliance test for chv3-video device /dev/video0:
 
-Thanks!
+Driver Info:
+	Driver name      : chv3-video
+	Card type        : Chameleon v3 video
+	Bus info         : platform:c0060500.video
+	Driver version   : 6.9.0
+	Capabilities     : 0x84200001
+		Video Capture
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04200001
+		Video Capture
+		Streaming
+		Extended Pix Format
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+	test invalid ioctls: OK
+
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+	test VIDIOC_DV_TIMINGS_CAP: OK
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test CREATE_BUFS maximum buffers: OK
+	test VIDIOC_REMOVE_BUFS: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+	test TIME32/64: OK
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK (Not Supported)
+	test blocking wait: OK
+	test MMAP (no poll): OK
+	test MMAP (select): OK
+	test MMAP (epoll): OK
+	test USERPTR (no poll): OK (Not Supported)
+	test USERPTR (select): OK (Not Supported)
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total for chv3-video device /dev/video0: 55, Succeeded: 55, Failed: 0, Warn=
+ings: 0
+```
+
+Here is the output of `v4l2-compliance -s` run on a Chameleon v3 for
+/dev/video4 (attached subdevice):
+
+```
+v4l2-compliance 1.27.0-5204, 32 bits, 32-bit time_t
+v4l2-compliance SHA: dd049328e528 2024-04-29 13:40:09
+
+Compliance test for chv3-video device /dev/video4:
+
+Driver Info:
+	Driver name      : chv3-video
+	Card type        : Chameleon v3 video
+	Bus info         : platform:c0060600.video
+	Driver version   : 6.9.0
+	Capabilities     : 0x84200001
+		Video Capture
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04200001
+		Video Capture
+		Streaming
+		Extended Pix Format
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+	test invalid ioctls: OK
+
+Allow for multiple opens:
+	test second /dev/video4 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+	test VIDIOC_DV_TIMINGS_CAP: OK
+	test VIDIOC_G/S_EDID: OK
+
+Control ioctls (Input 0):
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test CREATE_BUFS maximum buffers: OK
+	test VIDIOC_REMOVE_BUFS: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+	test TIME32/64: OK
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK (Not Supported)
+	test blocking wait: OK
+	test MMAP (no poll): OK
+	test MMAP (select): OK
+	test MMAP (epoll): OK
+	test USERPTR (no poll): OK (Not Supported)
+	test USERPTR (select): OK (Not Supported)
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total for chv3-video device /dev/video4: 55, Succeeded: 55, Failed: 0, Warn=
+ings: 0
+```
+
+v3 changes:
+  - Send v4l2-subdev API changes as a separate patchset
+  - Drop chameleonv3/ directory
+  - Change capture device name from "framebuffer" to "video interface"
+  - Set sensible min and max dv timing caps
+  - Set pixelclock to htotal * vtotal * 24Hz (we can't detect the actual va=
+lue)
+  - Remove enum_framesizes
+  - Use v4l2_match_dv_timings()
+  - Add V4L2_CID_DV_RX_POWER_PRESENT control
+  - Use V4L2_DV_BT_CEA_1920X1080P60 as default timing
+  - Use vb2_video_unregister_device()
+  - Move subdev pad initialization to probe
+  - Change subdev entity function to MEDIA_ENT_F_DV_DECODER
+  - Drop dprx 'port' property and always use 'ports' instead
+  - Remove legacy-format property and use multiple compats
+  - Cleanup notifier only in non-fallback mode
+  - Cleanup subdev entity using media_entity_cleanup()
+  - Increase HPD pulse length to 500ms (see comment in dprx_set_edid())
+  - Pull HPD low before updating EDID
+  - Add a DisplayPort media bus type
+  - Move receiver properties to port endpoint (data-lanes, link-frequencies=
+)
+
+v2 changes:
+  - Add missing includes in dt binding examples
+  - Add version number to intel,dprx compatible
+  - Use generic node names in dts
+  - Add and document IP configuration parameters
+  - Remove IRQ registers from intel-dprx (they're not a part of the IP)
+  - Remove no-endpoint property and check for "port" node instead
+
+Pawe=C5=82 Anikiel (10):
+  media: Add Chameleon v3 video interface driver
+  drm/dp_mst: Move DRM-independent structures to separate header
+  lib: Move DisplayPort CRC functions to common lib
+  drm/display: Add mask definitions for DP_PAYLOAD_ALLOCATE_* registers
+  media: dt-bindings: video-interfaces: Support DisplayPort MST
+  media: v4l2-mediabus: Add support for DisplayPort media bus
+  media: intel: Add Displayport RX IP driver
+  media: dt-bindings: Add Chameleon v3 video interface
+  media: dt-bindings: Add Intel Displayport RX IP
+  ARM: dts: chameleonv3: Add video device nodes
+
+ .../bindings/media/google,chv3-video.yaml     |   64 +
+ .../devicetree/bindings/media/intel,dprx.yaml |  172 ++
+ .../bindings/media/video-interfaces.yaml      |    7 +
+ .../socfpga/socfpga_arria10_chameleonv3.dts   |  194 ++
+ drivers/gpu/drm/display/Kconfig               |    1 +
+ drivers/gpu/drm/display/drm_dp_mst_topology.c |   76 +-
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/google/Kconfig         |   13 +
+ drivers/media/platform/google/Makefile        |    3 +
+ drivers/media/platform/google/chv3-video.c    |  891 +++++++
+ drivers/media/platform/intel/Kconfig          |   12 +
+ drivers/media/platform/intel/Makefile         |    1 +
+ drivers/media/platform/intel/intel-dprx.c     | 2283 +++++++++++++++++
+ drivers/media/v4l2-core/v4l2-fwnode.c         |   38 +
+ include/drm/display/drm_dp.h                  |    9 +-
+ include/drm/display/drm_dp_mst.h              |  238 ++
+ include/drm/display/drm_dp_mst_helper.h       |  232 +-
+ include/dt-bindings/media/video-interfaces.h  |    2 +
+ include/linux/crc-dp.h                        |   10 +
+ include/media/v4l2-fwnode.h                   |    5 +
+ include/media/v4l2-mediabus.h                 |   17 +
+ lib/Kconfig                                   |    8 +
+ lib/Makefile                                  |    1 +
+ lib/crc-dp.c                                  |   78 +
+ 25 files changed, 4053 insertions(+), 304 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/google,chv3-vid=
+eo.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/intel,dprx.yaml
+ create mode 100644 drivers/media/platform/google/Kconfig
+ create mode 100644 drivers/media/platform/google/Makefile
+ create mode 100644 drivers/media/platform/google/chv3-video.c
+ create mode 100644 drivers/media/platform/intel/intel-dprx.c
+ create mode 100644 include/drm/display/drm_dp_mst.h
+ create mode 100644 include/linux/crc-dp.h
+ create mode 100644 lib/crc-dp.c
+
+--=20
+2.45.0.rc1.225.g2a3ae87e7f-goog
+
 
