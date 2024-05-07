@@ -1,115 +1,269 @@
-Return-Path: <linux-kernel+bounces-170822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59748BDC89
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:39:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003778BDC8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1316A1C20D58
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:39:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD9171F238EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5504513C3D7;
-	Tue,  7 May 2024 07:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9gF+7FZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5903213C3E7;
+	Tue,  7 May 2024 07:41:40 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4B3A59;
-	Tue,  7 May 2024 07:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE79A59;
+	Tue,  7 May 2024 07:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715067575; cv=none; b=b02KVfIbHs80DEWx0iGuZoVFV9LPsvtd3S1soAOaI53e6X7VYYb4Rd8wLVmgKr9J2ozR0dC/i4EbCj4gvXBqRZemjHQpumFpbDk0As8i/VdB9jGn8xHc3QQGpAvbcOW/K6is1wU7l5UdB5Nxz8SQX/Ts/nKa/rP7aNI/y2R8Zns=
+	t=1715067699; cv=none; b=M3SbO2qIu1GMGC6NeLo+ZTXJEOLejz6lGtvU3tISn0kdQm6IOBky2zlep/BMHiX4nzPMtu+4sII61mTYxTtS1nNPAhOkyA94dvGK1oimcxWvIKCt2VFuodut09eM03erNz8cwkj01Fz5gPc7NnM3J5T4+iqWnDhOhjGReLOr3F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715067575; c=relaxed/simple;
-	bh=rJpFn1AO9QkoOchyzDCE9TfU4pQm9RHy9KJ9ICU1PyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D1EsRuKe4uhCEikRUaPWhztRojkrB7Z+GmIYLVPy/9hKsbuIgZVWN7EINiKkkjn375uOOklZW6OXiQQU8YKLY3nNGZJM6UtwxOY6cOw4KN6ZHNc1ANqAhcJtjPFACc0SZ5TWPbXofUylUbvxPonjL0grn4BKIC1ZPU19UvJ7HVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L9gF+7FZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609DCC2BBFC;
-	Tue,  7 May 2024 07:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715067575;
-	bh=rJpFn1AO9QkoOchyzDCE9TfU4pQm9RHy9KJ9ICU1PyM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L9gF+7FZ6nHYPWp4shMqyCWwss9CfOmgX3yR+TzEemeEu6/MM9FfL5tmUoHUnJxC/
-	 Ee0P8hN8UE31H1Lezd8mAQ/SOUYZfehRwVYz0o9KQthH2+fnknhPPlNdflrL1mruLJ
-	 nPQTRja9UDNtTkqRDZH4yhbiJu9444DCGyxQFI/99Cuje6MKfp9Q3+9VuTAn+qIucx
-	 6EPNF8uPXyEHP2vkM6Z6gfq7RcFbeES9fuwpjlpR/zdX0uS0HMV9vmRc0lPYOb63vU
-	 P3oyxFFRNCb1sJvxbK/7Q9GJgE/cPxrWjBqzhBL2qSDgfGTUchkmFvdcE/O/uKkJVw
-	 9G9UXN9PNqeLQ==
-Message-ID: <41e54b6e-7848-415f-b913-d481509d5e8a@kernel.org>
-Date: Tue, 7 May 2024 16:39:32 +0900
+	s=arc-20240116; t=1715067699; c=relaxed/simple;
+	bh=ceduBYXRbbfogzwmGKdp8Jhm4BA04QpGl8pajoF75DQ=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=C2XOVnEBWL1tZZMOAFzTSLiTOeaflM47Pmwo/LVs3V2XF5d+6DS0EFJGdFYg4UG9hxP3TzuOCqsIadhBbc26guSkSQcPry47AOxgJIjuey8jmfLW2rNG+5nNVmT19kvgqPH+UM/4ay9WkRs5QQ3mtUiUXL8wLjKVVnD5OC3LCqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxde.zte.com.cn (unknown [10.35.20.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4VYVZz4x4kzCgyJ;
+	Tue,  7 May 2024 15:41:31 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4VYVZs6h7rzBRHKd;
+	Tue,  7 May 2024 15:41:25 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VYVZh0VzBz4xPBc;
+	Tue,  7 May 2024 15:41:16 +0800 (CST)
+Received: from xaxapp03.zte.com.cn ([10.88.97.17])
+	by mse-fl1.zte.com.cn with SMTP id 4477f1Mo043774;
+	Tue, 7 May 2024 15:41:01 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp03[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 7 May 2024 15:41:03 +0800 (CST)
+Date: Tue, 7 May 2024 15:41:03 +0800 (CST)
+X-Zmail-TransId: 2afb6639db0ffffffffff2f-66cf8
+X-Mailer: Zmail v1.0
+Message-ID: <202405071541038433DpxXxFl-a_4XcQGTy_BU@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>, rick.wertenbroek@heig-vd.ch
-Cc: stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <kuba@kernel.org>
+Cc: <horms@kernel.org>, <davem@davemloft.net>, <rostedt@goodmis.org>,
+        <mhiramat@kernel.org>, <dsahern@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <he.peilin@zte.com.cn>, <liu.chun2@zte.com.cn>,
+        <jiang.xuexin@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
+        <kerneljasonxing@gmail.com>, <fan.yu9@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <ran.xiaokai@zte.com.cn>,
+        <zhang.run@zte.com.cn>, <wang.haoyi@zte.com.cn>, <si.hao@zte.com.cn>,
+        <lu.zhongjun@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0IHY5XSBuZXQvaXB2NDogYWRkIHRyYWNlcG9pbnQgZm9yIGljbXBfc2VuZA==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 4477f1Mo043774
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6639DB2A.001/4VYVZz4x4kzCgyJ
 
-On 4/3/24 23:45, Rick Wertenbroek wrote:
-> Remove wrong mask on subsys_vendor_id. Both the Vendor ID and Subsystem
-> Vendor ID are u16 variables and are written to a u32 register of the
-> controller. The Subsystem Vendor ID was always 0 because the u16 value
-> was masked incorrectly with GENMASK(31,16) resulting in all lower 16
-> bits being set to 0 prior to the shift.
-> 
-> Remove both masks as they are unnecessary and set the register correctly
-> i.e., the lower 16-bits are the Vendor ID and the upper 16-bits are the
-> Subsystem Vendor ID.
-> 
-> This is documented in the RK3399 TRM section 17.6.7.1.17
-> 
-> Fixes: cf590b078391 ("PCI: rockchip: Add EP driver for Rockchip PCIe controller")
-> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-> Cc: stable@vger.kernel.org
+From: Peilin He <he.peilin@zte.com.cn>
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Introduce a tracepoint for icmp_send, which can help users to get more
+detail information conveniently when icmp abnormal events happen.
 
-> ---
->  drivers/pci/controller/pcie-rockchip-ep.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> index c9046e97a1d2..37d4bcb8bd5b 100644
-> --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> @@ -98,10 +98,9 @@ static int rockchip_pcie_ep_write_header(struct pci_epc *epc, u8 fn, u8 vfn,
->  
->  	/* All functions share the same vendor ID with function 0 */
->  	if (fn == 0) {
-> -		u32 vid_regs = (hdr->vendorid & GENMASK(15, 0)) |
-> -			       (hdr->subsys_vendor_id & GENMASK(31, 16)) << 16;
-> -
-> -		rockchip_pcie_write(rockchip, vid_regs,
-> +		rockchip_pcie_write(rockchip,
-> +				    hdr->vendorid |
-> +				    hdr->subsys_vendor_id << 16,
->  				    PCIE_CORE_CONFIG_VENDOR);
->  	}
->  
+1. Giving an usecase example:
+=============================
+When an application experiences packet loss due to an unreachable UDP
+destination port, the kernel will send an exception message through the
+icmp_send function. By adding a trace point for icmp_send, developers or
+system administrators can obtain detailed information about the UDP
+packet loss, including the type, code, source address, destination address,
+source port, and destination port. This facilitates the trouble-shooting
+of UDP packet loss issues especially for those network-service
+applications.
 
+2. Operation Instructions:
+==========================
+Switch to the tracing directory.
+        cd /sys/kernel/tracing
+Filter for destination port unreachable.
+        echo "type==3 && code==3" > events/icmp/icmp_send/filter
+Enable trace event.
+        echo 1 > events/icmp/icmp_send/enable
+
+3. Result View:
+================
+ udp_client_erro-11370   [002] ...s.12   124.728002:
+ icmp_send: icmp_send: type=3, code=3.
+ From 127.0.0.1:41895 to 127.0.0.1:6666 ulen=23
+ skbaddr=00000000589b167a
+
+Signed-off-by: Peilin He <he.peilin@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
+Cc: Yang Yang <yang.yang29@zte.com.cn>
+Cc: Liu Chun <liu.chun2@zte.com.cn>
+Cc: Xuexin Jiang <jiang.xuexin@zte.com.cn>
+---
+v8->v9:
+Rebase the patch on the latest net-next.
+
+v7->v8:
+Some fixes according to
+https://lore.kernel.org/all/CANn89iKNtKmN5im8K4dSZGqAV8=e3bZb
+Z5AhxbcNbjFxk5V1Jw@mail.gmail.com/
+1.Combine all variable definitions together without mixing
+code and variables.
+
+v6->v7:
+Some fixes according to
+https://lore.kernel.org/all/20240425081210.720a4cd9@kernel.org/
+1. Fix patch format issues.
+
+v5->v6:
+Some fixes according to
+https://lore.kernel.org/all/20240413161319.GA853376@kernel.org/
+1.Resubmit patches based on the latest net-next code.
+
+v4->v5:
+Some fixes according to
+https://lore.kernel.org/all/CAL+tcoDeXXh+zcRk4PHnUk8ELnx=CE2pc
+Cqs7sFm0y9aK-Eehg@mail.gmail.com/
+1.Adjust the position of trace_icmp_send() to before icmp_push_reply().
+
+v3->v4:
+Some fixes according to
+https://lore.kernel.org/all/CANn89i+EFEr7VHXNdOi59Ba_R1nFKSBJz
+BzkJFVgCTdXBx=YBg@mail.gmail.com/
+1.Add legality check for UDP header in SKB.
+2.Target this patch for net-next.
+
+v2->v3:
+Some fixes according to
+https://lore.kernel.org/all/20240319102549.7f7f6f53@gandalf.local.home/
+1. Change the tracking directory to/sys/kernel/tracking.
+2. Adjust the layout of the TP-STRUCT_entry parameter structure.
+
+v1->v2:
+Some fixes according to
+https://lore.kernel.org/all/CANn89iL-y9e_VFpdw=sZtRnKRu_tnUwqHu
+FQTJvJsv-nz1xPDw@mail.gmail.com/
+1. adjust the trace_icmp_send() to more protocols than UDP.
+2. move the calling of trace_icmp_send after sanity checks
+in __icmp_send().
+---
+ include/trace/events/icmp.h | 67 +++++++++++++++++++++++++++++++++++++
+ net/ipv4/icmp.c             |  4 +++
+ 2 files changed, 71 insertions(+)
+ create mode 100644 include/trace/events/icmp.h
+
+diff --git a/include/trace/events/icmp.h b/include/trace/events/icmp.h
+new file mode 100644
+index 000000000000..31559796949a
+--- /dev/null
++++ b/include/trace/events/icmp.h
+@@ -0,0 +1,67 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM icmp
++
++#if !defined(_TRACE_ICMP_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_ICMP_H
++
++#include <linux/icmp.h>
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(icmp_send,
++
++		TP_PROTO(const struct sk_buff *skb, int type, int code),
++
++		TP_ARGS(skb, type, code),
++
++		TP_STRUCT__entry(
++			__field(const void *, skbaddr)
++			__field(int, type)
++			__field(int, code)
++			__array(__u8, saddr, 4)
++			__array(__u8, daddr, 4)
++			__field(__u16, sport)
++			__field(__u16, dport)
++			__field(unsigned short, ulen)
++		),
++
++		TP_fast_assign(
++			struct iphdr *iph = ip_hdr(skb);
++			struct udphdr *uh = udp_hdr(skb);
++			int proto_4 = iph->protocol;
++			__be32 *p32;
++
++			__entry->skbaddr = skb;
++			__entry->type = type;
++			__entry->code = code;
++
++			if (proto_4 != IPPROTO_UDP || (u8 *)uh < skb->head ||
++				(u8 *)uh + sizeof(struct udphdr)
++				> skb_tail_pointer(skb)) {
++				__entry->sport = 0;
++				__entry->dport = 0;
++				__entry->ulen = 0;
++			} else {
++				__entry->sport = ntohs(uh->source);
++				__entry->dport = ntohs(uh->dest);
++				__entry->ulen = ntohs(uh->len);
++			}
++
++			p32 = (__be32 *) __entry->saddr;
++			*p32 = iph->saddr;
++
++			p32 = (__be32 *) __entry->daddr;
++			*p32 = iph->daddr;
++		),
++
++		TP_printk("icmp_send: type=%d, code=%d. From %pI4:%u to %pI4:%u ulen=%d skbaddr=%p",
++			__entry->type, __entry->code,
++			__entry->saddr, __entry->sport, __entry->daddr,
++			__entry->dport, __entry->ulen, __entry->skbaddr)
++);
++
++#endif /* _TRACE_ICMP_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
++
+diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
+index 207482d30dc7..ab6d0d98dbc3 100644
+--- a/net/ipv4/icmp.c
++++ b/net/ipv4/icmp.c
+@@ -93,6 +93,8 @@
+ #include <net/ip_fib.h>
+ #include <net/l3mdev.h>
+ #include <net/addrconf.h>
++#define CREATE_TRACE_POINTS
++#include <trace/events/icmp.h>
+
+ /*
+  *	Build xmit assembly blocks
+@@ -770,6 +772,8 @@ void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
+ 	if (!fl4.saddr)
+ 		fl4.saddr = htonl(INADDR_DUMMY);
+
++	trace_icmp_send(skb_in, type, code);
++
+ 	icmp_push_reply(sk, &icmp_param, &fl4, &ipc, &rt);
+ ende:
+ 	ip_rt_put(rt);
 -- 
-Damien Le Moal
-Western Digital Research
-
+2.17.1
 
