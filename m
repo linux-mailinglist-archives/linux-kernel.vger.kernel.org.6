@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-170983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0948BDE90
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D874C8BDE93
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DA3B1C23463
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 083DD1C22232
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C7F15EFD5;
-	Tue,  7 May 2024 09:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA5E15F3FF;
+	Tue,  7 May 2024 09:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHZ24tCE"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URAp9JHq"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8B915ECEE;
-	Tue,  7 May 2024 09:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA3415EFA1;
+	Tue,  7 May 2024 09:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074562; cv=none; b=Ull7cVf82cS9NcSwb+FSWxIflxJ4Sm7liXz7y5dmjI2kgflNUjDtEyXqHoSrJAYa4PJ7E0EodEYFgQDrLsJTg4ejtoPOOXiSQnGUXoQuLCDuWGvhHFCg0RPd6CICycwVZ7dOSnWCSI3VHNG/cUYp8UmaH6bRCJATXUIm3f7btmY=
+	t=1715074564; cv=none; b=nyXYf5yaydlkd9Ep4xR9UK4NNkKcwHpY9++tl9G5rJYgp51IdZlptdLEOhdWB/uIHN9S5NUPnmsVxEHfREK08ML7lp8cdES0mKeaTY7Y8NDJXLiFZbRUVYxvuchA+oR473UgwKGMeuRfht5rcWo3Mjq0MzU3ed4NNquajn5oRQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074562; c=relaxed/simple;
-	bh=po1Bc4OlQN2l2sQd7lU08kIpHqYxLZA1VMA8exIsmUo=;
+	s=arc-20240116; t=1715074564; c=relaxed/simple;
+	bh=xLIkzUhYqkpoaAiaQxcqMO2Ytt7HUJ27tzDsmg6WfCM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UwGgjMryFtwQkF6npD0+BJiDCcjyna3s2v0LOj49w9rgsIYkC5rcBtZRaGdLBF3c7A6kLYL0A/l7wVOR/B3C3bMIUnuF+XL+h/pDg4VHLu7FcTROcZAhXjQQcxKkwFFpFkSgnP0AEb6djBxcoob9/zCY2sOeiJxel6Zo3iIcamA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHZ24tCE; arc=none smtp.client-ip=209.85.208.182
+	 MIME-Version; b=KGvrZwkCnvz21DEXX0kMIy953m2/j3ehMq0QlHuJYIiF9J1ABgoagpo5KkK4kY6W/Ah7PssGWp8SMP/9myLWUJ2kikzjgs8dS/iQuMdWW1v2bY9bNkduZP4vozJg/ZBt2TUyNZVJwHQ51dA/u52xVcTFS+hMyz43CuDosqUzkf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URAp9JHq; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2db17e8767cso36154381fa.3;
-        Tue, 07 May 2024 02:35:59 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so8252951fa.0;
+        Tue, 07 May 2024 02:36:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715074557; x=1715679357; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715074559; x=1715679359; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WDR1Qmw00xm3OT7ACyqw6PuZVtuXarB9fOJED0vsuzo=;
-        b=UHZ24tCEUDvRXib+9H4EbocJrIM6EhhBlQ7hu1VHOdbwxs/FCbQZKW1om9ctEkpBzS
-         MvxpvLTRjKrT96iubo+O/B3I6XjAOYV1OknJnJasaJ11L0wOdS0T98tyE52Q4SpZ3zkx
-         2epBO7I5GApf/cI3OzCvV/3naLDtyrSCFbuyPFPc5wE0tTXNSzzvRBFX0a8RINXFtDNP
-         apgvnLlnJc4dlefkIhbPsjm7EkVyy8ia/c//E3q+1cCohBx0F+r36l53xRAf0QplcMgq
-         JuSZcXnNJoF+i012N/DFFd4VENvjTGUzRsMqba3st+EQqNmIu6XqlNAyGq3XRcDDzTPw
-         nczw==
+        bh=WdJY0TZw/fjltnhvg0EPkwklXe5dzlu0wabU2jZ/52w=;
+        b=URAp9JHq9K2vrhXWLr9yPZnKObzQo/IvLOJCvDYgJLqZP1m6Yq2dIQEGSvV+2snydK
+         H0rHvmue5VnuKh1SWZn88El1ANktAsHPMRj8qfQ7k7tgID7ZDmpSFDiVWmnBvS1Co2FT
+         4K55opFA4KFxQW7Hz9mj+/7l8Sn0iwEbWPhmQJMHYsx8d+tlxmr4MIfaTHmo7fVJZeNE
+         ZO64dQhiVMsrkN3eSFLda2iwm60hyH2WS4Eg5pS2rLI8qZG63hPdokF8Lr3Bue1u10Ub
+         95apv8G7Lea70EK/FXmbCPpPmh+EoEsms+pNnwdtOa2jf37H7+WILmiQD/sQm8NzoNyQ
+         AvwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715074557; x=1715679357;
+        d=1e100.net; s=20230601; t=1715074559; x=1715679359;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WDR1Qmw00xm3OT7ACyqw6PuZVtuXarB9fOJED0vsuzo=;
-        b=bhCrDP8gZwRVqzacWdWkv5L3Ht/Un9zpMmC2jEYi2yyGT6ru46YHh2fdmFMx7vBNh7
-         Xud1yO4/xg8drtW+BSRWITPecGM6842IYIEmC1+ikJMEFvVOkgItBsmqmQ7pMswKIOsy
-         cQhVRJf48yda4itmK1R9mo8K+SRU2a0R43Bcqox2zOzpNTZLXsqSp1deG3pfRtnXIQ9+
-         +ub9By9uNQENAp1bRe+UCDZnGbYi2fP93GaJDXwoAWDHUP0tvWlG9jaY0FAmiCBQ9Uqh
-         mPqaQ3Ltos9VMqj5VeqhAGgdikAOViwarrvyAv+LASpqniDlLParwjjmgJc9Hd/N0f6X
-         MmTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyp5b/gCFlfNh6NG04U24PWpbu6n0kfu1nTMk5PNTf84yNPJur/yRKyRURwpuVS/qBrym+O5WpJYDrPXhqd/wVRUrXHCqhuE+IsB1q
-X-Gm-Message-State: AOJu0YzOQyYSBTYKQOtMQpTpI+Zcm6jQHP5BdZWHDbBUkHLp/E0wetyZ
-	huL3dWYcYQdokXEMs4PcoV8v9WrYV5KDrwwtdZ51+5wK6tWjBCod
-X-Google-Smtp-Source: AGHT+IGGQQ38KZ2VpG4c3sSrj1xA0S5pzEkwKFmmMks9ZmyND9PKewFv0bBW5uRGltNzXdTOUCk8Pw==
-X-Received: by 2002:a2e:9f45:0:b0:2e1:f591:a857 with SMTP id v5-20020a2e9f45000000b002e1f591a857mr8358944ljk.34.1715074557467;
-        Tue, 07 May 2024 02:35:57 -0700 (PDT)
+        bh=WdJY0TZw/fjltnhvg0EPkwklXe5dzlu0wabU2jZ/52w=;
+        b=t4ONy/ykzgRW0YvxTb3Cu5nBUj/3nrxNWcmFSU9sOEvGCrtNrAu5vxTshQesEcb/NK
+         57EaMdjrSMQs9b2dBUND4MmKvk/U/DRrem++MyMafaX9P1vz5oLmYZc8legrMRjNjA3r
+         gUx6kR6Yu2EW6hoDBQBYMP0xJGyYjrmp4QTpbnd8gs0tYuJsD/z6E+CfOXwj/0/djHLi
+         /At2MhaOeDTbFWhPFGfbCWCWhzRty80EPvbgNsQ+40KRVXtCEKsHhH753LyW6Y45Qm4b
+         zqf8e4J2Llzo92rqoWD2/zpwQo3DZR5XqaQpu2wubQQe+j3f9IZBkc29PmnXH8QXzPAz
+         WaGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuLWELE/29xUT1pzgTuZoHKtp3VKjfHnLbQHJf3Cc45qodu7zad6iEkRJDyyBrkJimo87xCQgZlNJI9FGA2EqRKq/Zkau5WMGyWH16
+X-Gm-Message-State: AOJu0YwMnMcRNeenSx99x4B2HE5Dpi/KC3OdVi8Bj+jd2bGWIoPT+UIr
+	MzXt7sqFhU33gjsYmspUc6HeuuyAkotvuAl9XyCJFeuTsee8yHF6
+X-Google-Smtp-Source: AGHT+IEA+c+gDL6J8ZrBuC+CGl6J+uw0YGSUA+D3NFyQuktUotuVGX88q5QGcMdQcwvZvDQ8PfEoXg==
+X-Received: by 2002:a2e:2406:0:b0:2e2:5fd:7030 with SMTP id k6-20020a2e2406000000b002e205fd7030mr7916249ljk.13.1715074558517;
+        Tue, 07 May 2024 02:35:58 -0700 (PDT)
 Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.56
+        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 02:35:57 -0700 (PDT)
+        Tue, 07 May 2024 02:35:58 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: "Paul E . McKenney" <paulmck@kernel.org>
 Cc: RCU <rcu@vger.kernel.org>,
@@ -77,9 +77,9 @@ Cc: RCU <rcu@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 26/48] rcu: Mark loads from rcu_state.n_online_cpus
-Date: Tue,  7 May 2024 11:35:08 +0200
-Message-Id: <20240507093530.3043-27-urezki@gmail.com>
+Subject: [PATCH 27/48] rcu: Make hotplug operations track GP state, not flags
+Date: Tue,  7 May 2024 11:35:09 +0200
+Message-Id: <20240507093530.3043-28-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
 References: <20240507093530.3043-1-urezki@gmail.com>
@@ -93,72 +93,104 @@ Content-Transfer-Encoding: 8bit
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-The rcu_state.n_online_cpus value is only ever updated by CPU-hotplug
-operations, which are serialized.  However, this value is read locklessly.
-This commit therefore marks those reads.  While in the area, it also
-adds ASSERT_EXCLUSIVE_WRITER() calls just in case parallel CPU hotplug
-becomes a thing.
+Currently, there are rcu_data structure fields named ->rcu_onl_gp_seq
+and ->rcu_ofl_gp_seq that track the rcu_state.gp_flags field at the
+time of the corresponding CPU's last online or offline operation,
+respectively.  However, this information is not particularly useful.
+It would be better to instead track the grace period state kept
+in rcu_state.gp_state.  This would also be consistent with the
+initialization in rcu_boot_init_percpu_data(), which is to RCU_GP_CLEANED
+(an rcu_state.gp_state value), and also with the diagnostics in
+rcu_implicit_dynticks_qs(), whose format is consistent with an integer,
+not a bitmask.
+
+This commit therefore makes this change and changes the names to
+->rcu_onl_gp_flags and ->rcu_ofl_gp_flags, respectively.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- kernel/rcu/tree.c       | 4 +++-
- kernel/rcu/tree_stall.h | 6 ++++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ kernel/rcu/tree.c        | 12 ++++++------
+ kernel/rcu/tree.h        |  4 ++--
+ kernel/rcu/tree_plugin.h |  4 ++--
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 559f2d0d271f..7149b2d5cdd6 100644
+index 7149b2d5cdd6..306f55b81d10 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -4328,7 +4328,7 @@ EXPORT_SYMBOL_GPL(rcu_lockdep_current_cpu_online);
- // whether spinlocks may be acquired safely.
- static bool rcu_init_invoked(void)
- {
--	return !!rcu_state.n_online_cpus;
-+	return !!READ_ONCE(rcu_state.n_online_cpus);
+@@ -841,8 +841,8 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
+ 				__func__, rnp1->grplo, rnp1->grphi, rnp1->qsmask, rnp1->qsmaskinit, rnp1->qsmaskinitnext, rnp1->rcu_gp_init_mask);
+ 		pr_info("%s %d: %c online: %ld(%d) offline: %ld(%d)\n",
+ 			__func__, rdp->cpu, ".o"[rcu_rdp_cpu_online(rdp)],
+-			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_flags,
+-			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_flags);
++			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_state,
++			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_state);
+ 		return 1; /* Break things loose after complaining. */
+ 	}
+ 
+@@ -4420,9 +4420,9 @@ rcu_boot_init_percpu_data(int cpu)
+ 	WARN_ON_ONCE(rcu_dynticks_in_eqs(rcu_dynticks_snap(cpu)));
+ 	rdp->barrier_seq_snap = rcu_state.barrier_sequence;
+ 	rdp->rcu_ofl_gp_seq = rcu_state.gp_seq;
+-	rdp->rcu_ofl_gp_flags = RCU_GP_CLEANED;
++	rdp->rcu_ofl_gp_state = RCU_GP_CLEANED;
+ 	rdp->rcu_onl_gp_seq = rcu_state.gp_seq;
+-	rdp->rcu_onl_gp_flags = RCU_GP_CLEANED;
++	rdp->rcu_onl_gp_state = RCU_GP_CLEANED;
+ 	rdp->last_sched_clock = jiffies;
+ 	rdp->cpu = cpu;
+ 	rcu_boot_init_nocb_percpu_data(rdp);
+@@ -4682,7 +4682,7 @@ void rcutree_report_cpu_starting(unsigned int cpu)
+ 	ASSERT_EXCLUSIVE_WRITER(rcu_state.ncpus);
+ 	rcu_gpnum_ovf(rnp, rdp); /* Offline-induced counter wrap? */
+ 	rdp->rcu_onl_gp_seq = READ_ONCE(rcu_state.gp_seq);
+-	rdp->rcu_onl_gp_flags = READ_ONCE(rcu_state.gp_flags);
++	rdp->rcu_onl_gp_state = READ_ONCE(rcu_state.gp_state);
+ 
+ 	/* An incoming CPU should never be blocking a grace period. */
+ 	if (WARN_ON_ONCE(rnp->qsmask & mask)) { /* RCU waiting on incoming CPU? */
+@@ -4733,7 +4733,7 @@ void rcutree_report_cpu_dead(void)
+ 	arch_spin_lock(&rcu_state.ofl_lock);
+ 	raw_spin_lock_irqsave_rcu_node(rnp, flags); /* Enforce GP memory-order guarantee. */
+ 	rdp->rcu_ofl_gp_seq = READ_ONCE(rcu_state.gp_seq);
+-	rdp->rcu_ofl_gp_flags = READ_ONCE(rcu_state.gp_flags);
++	rdp->rcu_ofl_gp_state = READ_ONCE(rcu_state.gp_state);
+ 	if (rnp->qsmask & mask) { /* RCU waiting on outgoing CPU? */
+ 		/* Report quiescent state -before- changing ->qsmaskinitnext! */
+ 		rcu_disable_urgency_upon_qs(rdp);
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index df48160b3136..ff4d8b60554b 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -273,9 +273,9 @@ struct rcu_data {
+ 	bool rcu_iw_pending;		/* Is ->rcu_iw pending? */
+ 	unsigned long rcu_iw_gp_seq;	/* ->gp_seq associated with ->rcu_iw. */
+ 	unsigned long rcu_ofl_gp_seq;	/* ->gp_seq at last offline. */
+-	short rcu_ofl_gp_flags;		/* ->gp_flags at last offline. */
++	short rcu_ofl_gp_state;		/* ->gp_state at last offline. */
+ 	unsigned long rcu_onl_gp_seq;	/* ->gp_seq at last online. */
+-	short rcu_onl_gp_flags;		/* ->gp_flags at last online. */
++	short rcu_onl_gp_state;		/* ->gp_state at last online. */
+ 	unsigned long last_fqs_resched;	/* Time of last rcu_resched(). */
+ 	unsigned long last_sched_clock;	/* Jiffies of last rcu_sched_clock_irq(). */
+ 	struct rcu_snap_record snap_record; /* Snapshot of core stats at half of */
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 36a8b5dbf5b5..340bbefe5f65 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -805,8 +805,8 @@ dump_blkd_tasks(struct rcu_node *rnp, int ncheck)
+ 		rdp = per_cpu_ptr(&rcu_data, cpu);
+ 		pr_info("\t%d: %c online: %ld(%d) offline: %ld(%d)\n",
+ 			cpu, ".o"[rcu_rdp_cpu_online(rdp)],
+-			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_flags,
+-			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_flags);
++			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_state,
++			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_state);
+ 	}
  }
  
- /*
-@@ -4538,6 +4538,7 @@ int rcutree_prepare_cpu(unsigned int cpu)
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	rcu_spawn_rnp_kthreads(rnp);
- 	rcu_spawn_cpu_nocb_kthread(cpu);
-+	ASSERT_EXCLUSIVE_WRITER(rcu_state.n_online_cpus);
- 	WRITE_ONCE(rcu_state.n_online_cpus, rcu_state.n_online_cpus + 1);
- 
- 	return 0;
-@@ -4806,6 +4807,7 @@ void rcutree_migrate_callbacks(int cpu)
-  */
- int rcutree_dead_cpu(unsigned int cpu)
- {
-+	ASSERT_EXCLUSIVE_WRITER(rcu_state.n_online_cpus);
- 	WRITE_ONCE(rcu_state.n_online_cpus, rcu_state.n_online_cpus - 1);
- 	// Stop-machine done, so allow nohz_full to disable tick.
- 	tick_dep_clear(TICK_DEP_BIT_RCU);
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 62b2c4858028..8a2edf6a1ef5 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -628,7 +628,8 @@ static void print_other_cpu_stall(unsigned long gp_seq, unsigned long gps)
- 		totqlen += rcu_get_n_cbs_cpu(cpu);
- 	pr_err("\t(detected by %d, t=%ld jiffies, g=%ld, q=%lu ncpus=%d)\n",
- 	       smp_processor_id(), (long)(jiffies - gps),
--	       (long)rcu_seq_current(&rcu_state.gp_seq), totqlen, rcu_state.n_online_cpus);
-+	       (long)rcu_seq_current(&rcu_state.gp_seq), totqlen,
-+	       data_race(rcu_state.n_online_cpus)); // Diagnostic read
- 	if (ndetected) {
- 		rcu_dump_cpu_stacks();
- 
-@@ -689,7 +690,8 @@ static void print_cpu_stall(unsigned long gps)
- 		totqlen += rcu_get_n_cbs_cpu(cpu);
- 	pr_err("\t(t=%lu jiffies g=%ld q=%lu ncpus=%d)\n",
- 		jiffies - gps,
--		(long)rcu_seq_current(&rcu_state.gp_seq), totqlen, rcu_state.n_online_cpus);
-+		(long)rcu_seq_current(&rcu_state.gp_seq), totqlen,
-+		data_race(rcu_state.n_online_cpus)); // Diagnostic read
- 
- 	rcu_check_gp_kthread_expired_fqs_timer();
- 	rcu_check_gp_kthread_starvation();
 -- 
 2.39.2
 
