@@ -1,249 +1,115 @@
-Return-Path: <linux-kernel+bounces-171529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170658BE56E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:15:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 143AC8BE574
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 995061F22EE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EE81C21E11
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F53F16C850;
-	Tue,  7 May 2024 14:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D41516D4D0;
+	Tue,  7 May 2024 14:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvEqtlWI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qqcv7LlC"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14B415FA95;
-	Tue,  7 May 2024 14:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131E416C867
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091168; cv=none; b=ukFOLx0EYDqdwxCdTuQv6dR1PtQBxGhKMjr5AexGsQDE8RdXuoHZGFtAs8NyoBa6wfrAtnzfbLIJdX7UX8B5zDHtROvFuWpPft6Tziv0VbeSAciBcuJYYpJ5w9BcGpiAPp3IHcEF045zKMyKbuSNTIgSiT+mZpw5htaiwN52k38=
+	t=1715091190; cv=none; b=pexzk5UzxBcVaoHS2oN0VlZwRcO79bcuc6+WRh1KlMgkMghXoBLBtG5QMlAIRI+xpKz+DNeeTo9uDqJ+79PGimWHSu1AGrFA+FG4X7dySYyMQdVEyjIGg85mrIoCO9VmXlchGQqgYIefXmhuK+pdHJ1XQm8mofwwrldE73HwMto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091168; c=relaxed/simple;
-	bh=HfLzW7gY6sADE0fisBfdaO8CHFo3jCDdFS+KF7R2yVc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B/pdhgh4aMoMbfzTBkCEQ6o9yxxvwdM7F93xvQOGfw5yt2UpykPC96HCbwUZugbNkXujv2aIQym6cdivkhdn5cYTnRO028nxtgU4aVjqlyfHlWOKVI9JlSEMFjWhIwcS2GBoqZUoGPofvJiRkXwOxriDd0ljGMwmLh2ESsPwCp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qvEqtlWI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF90DC2BBFC;
-	Tue,  7 May 2024 14:12:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715091167;
-	bh=HfLzW7gY6sADE0fisBfdaO8CHFo3jCDdFS+KF7R2yVc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qvEqtlWIdml+Rb9X/HMIJ8KqkumJrBjIFnFtajbVMHAktTqof46i8DcPZ0mmc05cD
-	 4AG5T3lQ8/YAzqArQt9y993bucdbHsQvak5GVsNwFamSc+G9xJehF/2ymFdS0JfVib
-	 vxkpH0AQlv9PBSTmlmjDq8c+kppzcgjKb5cY0JCj91Jk6ZAs8XyT2oUnACR5sKXRLH
-	 AHkRNP2Sqs6MwYHazLHEW5QtYcArJl7NqAFBIhvSDCAkzDmcOI95MIsisXxHcAAOBb
-	 l+ql54KpLTjh4o3xXIe3T3M0Yk03OqtgACSxM165jD4jWr4HomNX46XyWQgJ5DgA5I
-	 XR0UlK6p90djg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>
-Subject: [PATCH v10 24/36] fprobe: Use ftrace_regs in fprobe entry handler
-Date: Tue,  7 May 2024 23:12:41 +0900
-Message-Id: <171509116161.162236.16827756178116380029.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <171509088006.162236.7227326999861366050.stgit@devnote2>
-References: <171509088006.162236.7227326999861366050.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1715091190; c=relaxed/simple;
+	bh=zchA9qCZkbTbiKP4dWASuNmwzS8UpJKwMcrmBhDATqo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pdCPyXIJyGYRQjDMK3srp4qyONzaZw7+dELtp8kJwxS9UbK494/whdFkrSBfF5sYtpTdXsWbvuTVYkzaTxy8vCc4mIxLXOvG3ABHZOlNcoKeYoPTsHXi26+1BD3COkrfOvskemhJLDjJGAxjJxAPgZ5HcPKEPz6s6JpOquDpavk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qqcv7LlC; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de54be7066bso6035738276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715091173; x=1715695973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WETraqwVUAnZYIOXp5ZtLEEE1VYRO8MGNkm01fdovIk=;
+        b=Qqcv7LlCIOJvBe8ClD5U2l4Vj91uUJ1zIUjEjaKr6vohBi/GFK/kCBkhW9qZZdGHpC
+         nxwyf2tAeD9my0a/qM1hJuFLQ5WLbt9BIL0qxKTsdW5atZMtIoDfpEumiMKhONL+q6GC
+         72o1+zEuLefO3WFSRbvMdj98ysyUkJMpfe7bhvl6A005A3nsrGayxqodnVvhsMT20pAt
+         yNYTWrA21yYGzTAFWGKYYldNzy6HfLhHLr9P8AMYSNlf/aDrueIH/wUsf3uXieIgzDX+
+         O5JA/bxh+xBYg6hbKTMR+zx9CtluRtqSpv7bEPdFtCNAqD41I+kZK/yYDSFaH5tcnybA
+         cKyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715091173; x=1715695973;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WETraqwVUAnZYIOXp5ZtLEEE1VYRO8MGNkm01fdovIk=;
+        b=j+1GrwSHAdOBGPX0//jNO8r6M4da8D9GM1ejkulN7OI8mpSw/JJdyq2bAy+zRTdvRu
+         wprlrAqwkQFpAzKFz/+/Oj80WYK34zvypZ0jk+dHPij0TiBsXkSQXIXRGTnK7VclV0Sk
+         xQW6sCNifmR9KE70icblPHzaaVck7/BpW4EUuvxWyW8DIbCwX63SwMz1jyorHnDewAwU
+         gSPq1rzS2GyZMfDmJdqTaKwQVyszWUwmAQGXopvPxev/0L+ADJpPyxFhbPjB7IlUrSS9
+         feVjTbI4njjwvj0VpKgPQxEfelLUiHimmvrqfMKFv2eVxsB4mUWtV6eiozz9aHwk8ljr
+         ZuuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBUUBe6RLy634ghe2QV/v3zpg0LALQwuBxC3cNEmADqrXwQwjYN6phYqradlA7f5CfT1FfCxbx+qpKr3upSNkvX91LEHbXao0U3c86
+X-Gm-Message-State: AOJu0YxQSuk4ER+P33ZHMhKbyfk3S+e0wxIjDaQLO6kkFZTYYV3HtMaO
+	KFYHFOxXn+gyGMI0tZZdS8aDh89LQcT63mh1tMVZ3DRF+zcmORMLrR7/p9rQavvvdnJV8JqxFTh
+	SFg==
+X-Google-Smtp-Source: AGHT+IGplKwNSTSkBTAvhdXpqfJnr+yrgmgSEfcIAM5opFxBtA3BpCgSqdbY3obOQsQH1wjTlAweJ+rLPgI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:69cc:0:b0:de5:5225:c3a4 with SMTP id
+ e195-20020a2569cc000000b00de55225c3a4mr3998230ybc.7.1715091172929; Tue, 07
+ May 2024 07:12:52 -0700 (PDT)
+Date: Tue, 7 May 2024 07:12:51 -0700
+In-Reply-To: <202405061002.01D399877A@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20240506165518.474504-1-mic@digikod.net> <202405061002.01D399877A@keescook>
+Message-ID: <Zjo1xyhjmehsRhZ2@google.com>
+Subject: Re: [PATCH v6 00/10] Fix Kselftest's vfork() side effects
+From: Sean Christopherson <seanjc@google.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, 
+	Sasha Levin <sashal@kernel.org>, Shengyu Li <shengyu.li.evgeny@gmail.com>, 
+	Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Brendan Higgins <brendanhiggins@google.com>, 
+	David Gow <davidgow@google.com>, "David S . Miller" <davem@davemloft.net>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	"=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>, Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>, 
+	Ronald Warsow <rwarsow@gmx.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Will Drewry <wad@chromium.org>, 
+	kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Mon, May 06, 2024, Kees Cook wrote:
+> On Mon, May 06, 2024 at 06:55:08PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> > Shuah, I think this should be in -next really soon to make sure
+> > everything works fine for the v6.9 release, which is not currently the
+> > case.  I cannot test against all kselftests though.  I would prefer to
+> > let you handle this, but I guess you're not able to do so and I'll push
+> > it on my branch without reply from you.  Even if I push it on my branch=
+,
+> > please push it on yours too as soon as you see this and I'll remove it
+> > from mine.
+>=20
+> Yes, please. Getting this into v6.9 is preferred,
 
-This allows fprobes to be available with CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-instead of CONFIG_DYNAMIC_FTRACE_WITH_REGS, then we can enable fprobe
-on arm64.
-
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Florent Revest <revest@chromium.org>
----
- Changes in v6:
-  - Keep using SAVE_REGS flag to avoid breaking bpf kprobe-multi test.
----
- include/linux/fprobe.h          |    2 +-
- kernel/trace/Kconfig            |    3 ++-
- kernel/trace/bpf_trace.c        |   10 +++++++---
- kernel/trace/fprobe.c           |    3 ++-
- kernel/trace/trace_fprobe.c     |    6 +++++-
- lib/test_fprobe.c               |    4 ++--
- samples/fprobe/fprobe_example.c |    2 +-
- 7 files changed, 20 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-index f39869588117..ca64ee5e45d2 100644
---- a/include/linux/fprobe.h
-+++ b/include/linux/fprobe.h
-@@ -10,7 +10,7 @@
- struct fprobe;
- 
- typedef int (*fprobe_entry_cb)(struct fprobe *fp, unsigned long entry_ip,
--			       unsigned long ret_ip, struct pt_regs *regs,
-+			       unsigned long ret_ip, struct ftrace_regs *regs,
- 			       void *entry_data);
- 
- typedef void (*fprobe_exit_cb)(struct fprobe *fp, unsigned long entry_ip,
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index f909792713ff..4a850250dab4 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -287,7 +287,7 @@ config DYNAMIC_FTRACE_WITH_ARGS
- config FPROBE
- 	bool "Kernel Function Probe (fprobe)"
- 	depends on FUNCTION_TRACER
--	depends on DYNAMIC_FTRACE_WITH_REGS
-+	depends on DYNAMIC_FTRACE_WITH_REGS || DYNAMIC_FTRACE_WITH_ARGS
- 	depends on HAVE_RETHOOK
- 	select RETHOOK
- 	default n
-@@ -672,6 +672,7 @@ config FPROBE_EVENTS
- 	select TRACING
- 	select PROBE_EVENTS
- 	select DYNAMIC_EVENTS
-+	depends on DYNAMIC_FTRACE_WITH_REGS
- 	default y
- 	help
- 	  This allows user to add tracing events on the function entry and
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 9dc605f08a23..7837cf4e39d9 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2577,7 +2577,7 @@ static int __init bpf_event_init(void)
- fs_initcall(bpf_event_init);
- #endif /* CONFIG_MODULES */
- 
--#ifdef CONFIG_FPROBE
-+#if defined(CONFIG_FPROBE) && defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
- struct bpf_kprobe_multi_link {
- 	struct bpf_link link;
- 	struct fprobe fp;
-@@ -2822,10 +2822,14 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
- 
- static int
- kprobe_multi_link_handler(struct fprobe *fp, unsigned long fentry_ip,
--			  unsigned long ret_ip, struct pt_regs *regs,
-+			  unsigned long ret_ip, struct ftrace_regs *fregs,
- 			  void *data)
- {
- 	struct bpf_kprobe_multi_link *link;
-+	struct pt_regs *regs = ftrace_get_regs(fregs);
-+
-+	if (!regs)
-+		return 0;
- 
- 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
- 	kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), regs);
-@@ -3099,7 +3103,7 @@ int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 	kvfree(cookies);
- 	return err;
- }
--#else /* !CONFIG_FPROBE */
-+#else /* !CONFIG_FPROBE || !CONFIG_DYNAMIC_FTRACE_WITH_REGS */
- int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
- {
- 	return -EOPNOTSUPP;
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index 9ff018245840..3d3789283873 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -46,7 +46,7 @@ static inline void __fprobe_handler(unsigned long ip, unsigned long parent_ip,
- 	}
- 
- 	if (fp->entry_handler)
--		ret = fp->entry_handler(fp, ip, parent_ip, ftrace_get_regs(fregs), entry_data);
-+		ret = fp->entry_handler(fp, ip, parent_ip, fregs, entry_data);
- 
- 	/* If entry_handler returns !0, nmissed is not counted. */
- 	if (rh) {
-@@ -182,6 +182,7 @@ static void fprobe_init(struct fprobe *fp)
- 		fp->ops.func = fprobe_kprobe_handler;
- 	else
- 		fp->ops.func = fprobe_handler;
-+
- 	fp->ops.flags |= FTRACE_OPS_FL_SAVE_REGS;
- }
- 
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index 62e6a8f4aae9..b2c20d4fdfd7 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -338,12 +338,16 @@ NOKPROBE_SYMBOL(fexit_perf_func);
- #endif	/* CONFIG_PERF_EVENTS */
- 
- static int fentry_dispatcher(struct fprobe *fp, unsigned long entry_ip,
--			     unsigned long ret_ip, struct pt_regs *regs,
-+			     unsigned long ret_ip, struct ftrace_regs *fregs,
- 			     void *entry_data)
- {
- 	struct trace_fprobe *tf = container_of(fp, struct trace_fprobe, fp);
-+	struct pt_regs *regs = ftrace_get_regs(fregs);
- 	int ret = 0;
- 
-+	if (!regs)
-+		return 0;
-+
- 	if (trace_probe_test_flag(&tf->tp, TP_FLAG_TRACE))
- 		fentry_trace_func(tf, entry_ip, regs);
- #ifdef CONFIG_PERF_EVENTS
-diff --git a/lib/test_fprobe.c b/lib/test_fprobe.c
-index 24de0e5ff859..ff607babba18 100644
---- a/lib/test_fprobe.c
-+++ b/lib/test_fprobe.c
-@@ -40,7 +40,7 @@ static noinline u32 fprobe_selftest_nest_target(u32 value, u32 (*nest)(u32))
- 
- static notrace int fp_entry_handler(struct fprobe *fp, unsigned long ip,
- 				    unsigned long ret_ip,
--				    struct pt_regs *regs, void *data)
-+				    struct ftrace_regs *fregs, void *data)
- {
- 	KUNIT_EXPECT_FALSE(current_test, preemptible());
- 	/* This can be called on the fprobe_selftest_target and the fprobe_selftest_target2 */
-@@ -81,7 +81,7 @@ static notrace void fp_exit_handler(struct fprobe *fp, unsigned long ip,
- 
- static notrace int nest_entry_handler(struct fprobe *fp, unsigned long ip,
- 				      unsigned long ret_ip,
--				      struct pt_regs *regs, void *data)
-+				      struct ftrace_regs *fregs, void *data)
- {
- 	KUNIT_EXPECT_FALSE(current_test, preemptible());
- 	return 0;
-diff --git a/samples/fprobe/fprobe_example.c b/samples/fprobe/fprobe_example.c
-index 64e715e7ed11..1545a1aac616 100644
---- a/samples/fprobe/fprobe_example.c
-+++ b/samples/fprobe/fprobe_example.c
-@@ -50,7 +50,7 @@ static void show_backtrace(void)
- 
- static int sample_entry_handler(struct fprobe *fp, unsigned long ip,
- 				unsigned long ret_ip,
--				struct pt_regs *regs, void *data)
-+				struct ftrace_regs *fregs, void *data)
- {
- 	if (use_trace)
- 		/*
-
+Very strongly prefered for KVM selftests.  The negative impact on KVM isn't=
+ that
+the bugs cause failures, it's that they cause false passes, which is far wo=
+rse
+(and why the bugs went unnoticed for most of the cycle).
 
