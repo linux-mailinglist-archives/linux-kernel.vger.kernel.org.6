@@ -1,114 +1,136 @@
-Return-Path: <linux-kernel+bounces-171348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D518BE323
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA408BE33A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F184C1F27119
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:11:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD831F27BF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028D015E5C4;
-	Tue,  7 May 2024 13:11:42 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821E215E7F1;
+	Tue,  7 May 2024 13:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZbChpJAr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1755415DBB9;
-	Tue,  7 May 2024 13:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2585915DBDD;
+	Tue,  7 May 2024 13:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087501; cv=none; b=LO03IWjwaWNyUTJbiVpGEauAnBEseOuJA1I2gJ4AJR+cN2H3DEG7+SqLwW2CoNvjYPOyIfho6sGxDLR249u+/knRD6fUZh9pkvjjXwx2SmATU7wkE3eYfWPMyPG255OG2SdGvRqSiaBP9cZ1Ad8gxk3kLryVSeiTIEprkmqNoRs=
+	t=1715087572; cv=none; b=YBdvhw7uimx6WbttXgr2I4/pwkE/07OpdQK6jjv44VTPIy1DX55xGF5HPXHxpYKzIx13ubuOkTgqFND5hWQAN8jlTMK2vpXZ6MfMPcmrltqJnjRPlY6v5sc43L+hBYtFUQBVfZY79tlhU2T9Tc4C4rUKfFWjdRO19X3YvkrY9r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715087501; c=relaxed/simple;
-	bh=l03cTZG83CQkVjnsc8Q28HnnucLh+YYVgCjPTYHUUQU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VY9nOgSo7pudut+Wzl/IUwvo3jLm7AXcV9+ctYk9Gela+ZVb8alhSao3u/qQMcgEiIK4gDNPUyAmKuk+DMtnMDNDQkFn5No8sSdk4zUHvc51Ul1w/ZVtGM4FaKdpyCi4vszwqKWPMc43gZxjI4y+ZEaaqqamcTOEtzHJoeg2JnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VYdvg0lLTz4f3kFP;
-	Tue,  7 May 2024 21:11:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 5918F1A01D2;
-	Tue,  7 May 2024 21:11:35 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAnmAuFKDpmixUxMQ--.27812S3;
-	Tue, 07 May 2024 21:11:35 +0800 (CST)
-Subject: Re: [PATCH 5/9] jbd2: remove unneeded kmap to do escape in
- jbd2_journal_write_metadata_buffer
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
- <20240506141801.1165315-6-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <1fbac8b4-167f-6f03-35f2-cabe6fc0b5e3@huaweicloud.com>
-Date: Tue, 7 May 2024 21:11:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715087572; c=relaxed/simple;
+	bh=a6gSLSNzkB7vq5lvXJKxfEYqY5Zj8C4OuyJc6Y6NlXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrpkVfnJky6YgXfsTJwoURDCiQCAOKKQ5+HR5O1/GC8BXFef2iW8YnUe0MZYmLKaB6HaRBVLfgiyINHe43g14VWAGJkQs4HInOXUB+v22r18Vak5VNv/jsoVUmYHkJvImL4cty2Ij6nmMK/CgHX19n0nXNdc3Tl32LwZiSwCfTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZbChpJAr; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715087571; x=1746623571;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=a6gSLSNzkB7vq5lvXJKxfEYqY5Zj8C4OuyJc6Y6NlXY=;
+  b=ZbChpJArKKyAZtijh9SZK5lQT+/9D+Z3PF2ie8fJU9RldW+A5gjAGaQe
+   /Y+C2Y+6ve62ddd4yC0eZJOQjvOjXwF5i4qwK3vCx7x8foz8Rnhp5egCK
+   /5FkFpJ6rxTvYntGyU7WETqNyNY7rO4wVQ7TPwZ3JTl7fGFp8b22R9/3g
+   kFpUZGJbH7F8BvnxZpOENEwjtc2zkemH7ibSS/wywW+aNHZqIE/iOapMq
+   0lucxkxRsRzh4SzG8ej5lt6syH+EmYdNTGnSE9X7uC2WeyiYyi0j30li3
+   P2RYwZQPka8IIMNSKXKjmDxVfxxBWT4NF72DsSSsA1X14Hw2NSU6zDSfy
+   w==;
+X-CSE-ConnectionGUID: N9U1l4zQQm2ybNIbe0Jzvw==
+X-CSE-MsgGUID: kerm2+NSRcmgoLVbalMd8Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21483943"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="21483943"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:12:50 -0700
+X-CSE-ConnectionGUID: Fu6nYwQcTgeZWSY044wYqQ==
+X-CSE-MsgGUID: MsXTeSYhRgedCqb9bG/apQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="28920705"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:12:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s4KcY-000000052fm-0iB8;
+	Tue, 07 May 2024 16:12:38 +0300
+Date: Tue, 7 May 2024 16:12:37 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Subject: Re: [PATCH v4 0/5] PCI: controller: Move to agnostic GPIO API
+Message-ID: <ZjooxTO3wb2ItvGv@smile.fi.intel.com>
+References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkda=a3X=jyZKQoOFrfgzpE2C+rZ9UC1VDnCvGL7QP4x4BA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240506141801.1165315-6-shikemeng@huaweicloud.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAnmAuFKDpmixUxMQ--.27812S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr15AF43KFykuw1Duw17ZFb_yoWDAFX_Xa
-	1vy34kursxXrn7ZF4Fk3W5WrZ5Ww15Gr1kCF10q34Uuw10q3W8GrnIkrWktrnrWa1xKr45
-	Xa4q9F4rtF9IvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UE-erUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkda=a3X=jyZKQoOFrfgzpE2C+rZ9UC1VDnCvGL7QP4x4BA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2024/5/6 22:17, Kemeng Shi wrote:
-> The data to do escape could be accessed directly from b_frozen_data,
-> just remove unneeded kmap.
+On Tue, May 07, 2024 at 12:03:50PM +0200, Linus Walleij wrote:
+> On Mon, May 6, 2024 at 4:22 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-
-Looks good to me.
-
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
-> ---
->  fs/jbd2/journal.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+> > In v4:
+> > - added tag (Mani)
+> > - fixed a polarity bug in iMX.6 driver (Linus)
 > 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 77fcdc76fdfd..87f558bd2e8a 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -423,11 +423,8 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	 * Did we need to do an escaping?  Now we've done all the
->  	 * copying, we can finally do so.
->  	 */
-> -	if (do_escape) {
-> -		mapped_data = kmap_local_folio(new_folio, new_offset);
-> -		*((unsigned int *)mapped_data) = 0;
-> -		kunmap_local(mapped_data);
-> -	}
-> +	if (do_escape)
-> +		*((unsigned int *)jh_in->b_frozen_data) = 0;
->  
->  	folio_set_bh(new_bh, new_folio, new_offset);
->  	new_bh->b_size = bh_in->b_size;
-> 
+> Looks good now. The series:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thank you!
+
+> Perhaps the use of  _raw accessors could be avoided in 5/5 by some
+> elaborart polarity quirk but I'm no perfectionist and it can be fixed later.
+
+After your comment I was thinking the same, and came to the similar conclusion,
+we might fix this later as in comparison to iMX.6 case this requires an
+additional code to be added to gpiolib-of.c.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
