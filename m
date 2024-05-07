@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-170611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF7C8BD9B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:26:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18ED58BD9B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33797283134
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BAF6B237C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C013FB9F;
-	Tue,  7 May 2024 03:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98483FBA2;
+	Tue,  7 May 2024 03:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="ZyzpYOlQ"
-Received: from out0-205.mail.aliyun.com (out0-205.mail.aliyun.com [140.205.0.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYwa9sLS"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694A98F59
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C8C4C94;
+	Tue,  7 May 2024 03:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715052391; cv=none; b=WBYUxDzPHUmJ/+2H6/AAl5dRe/FqHQ6Z/QQX5dqrixv7rv8e96DAR2gjm0ubRwEHQUJ5cbUjWTlJSv2BvLKWe55n90KDGbo7pGE5/DErebe4/XGxtLAKdjHnrFvR66vc2E8Vb0G6vWnnMFceD3VZ7Qvf72lANJIKrRJRcRQV9zY=
+	t=1715052498; cv=none; b=oUHssI82dNwPIfwNn/d+RMBxxTo6ExE4zTgLJtHpBekiE8NcZuDqPX7piJ67YDbouKZHeOMC4i9rD+zT46eYlxUUUaOzdL1svvtq+bJeLtGkHYH1aB8Ml+UN6CPL6klo3TjR6VrUN9V0ZROp9ldjWqyWdiN6cgSVwh4wu4ZsHME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715052391; c=relaxed/simple;
-	bh=iHuRD/dtOgMuKMHeBX+HNdWTT10H1EJDGlz7gP05Kv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MEBNV6rW9qzsYeqqg1baSiaM5WmjKa14FLkwDCFc/+m3R4cIv0P2tTyRgulMmKJKSnJ8DUXH2nVxrN8H8cTgNuWIIujHDjZJaf3fZ9cCf+efZ3XMVLV0Sc9KVFjljLo/O8vAo+FDu26W9b7Klge4IQd6RcW77aRbPwqwCrfvXNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=ZyzpYOlQ; arc=none smtp.client-ip=140.205.0.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1715052384; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=5G08kj7fI6VhU0nVl7AlR+J897u+++S/y5nHUajrQj8=;
-	b=ZyzpYOlQBVti3aUO6gWt5/JahWz5Q7gUt59jjVE9DOu+GV1bBet0zeEL3P+ZDp8FZsEjEkTcXFSQRiFL6V/4Eat2IyKSKJkJ9G9V1+C81fCMARBc13m6qplYvJODwCO3QeTI5zlJ7un9p24bml4IbNxihtFOCeTj+o98OmD3zEs=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047187;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---.XU6c0Rr_1715052381;
-Received: from 30.230.85.161(mailfrom:libang.li@antgroup.com fp:SMTPD_---.XU6c0Rr_1715052381)
-          by smtp.aliyun-inc.com;
-          Tue, 07 May 2024 11:26:22 +0800
-Message-ID: <9d251090-ed68-49a2-9e94-7347b71367b3@antgroup.com>
-Date: Tue, 07 May 2024 11:26:17 +0800
+	s=arc-20240116; t=1715052498; c=relaxed/simple;
+	bh=oFI7tm++PMwnpezXZl6+RVdttyuxeXzDX3sJCx+Aak0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oEJa28YVE8+VNnUfd5+q8jJ8/oJ3N3KG6SAMOrFZo/hr3D7lp40WMsnCIU4iODRPZy12fVZqZpBTaPL8jg6HXhCPqUYptvNebmM/E6CYf15MI0JhOw8G7cLC70PfTfpr8e1Kw09lo55AZ74Noezuv0UEfMuBS1M4e0bzYQm94iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYwa9sLS; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f457853950so1679565b3a.0;
+        Mon, 06 May 2024 20:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715052496; x=1715657296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yG0hyI/fiqqTDu9hk0CUtBDwmucjumAbk3/rvFBap28=;
+        b=KYwa9sLSXcn+NCJnGyeLhjD/tgCat5GQegioFbSBlGBjPXiQ2BoO5sIkd4Y2kThUuy
+         MoaZ/MzBs0OwxDWiJ1fRYRo61OpL/f62miUwwiUalY7McLwCYaOx72hh9Hmzom+zdpk2
+         A55E01C9B+ike+WEuWu18ujwJKbjR2/vFy9pgXEBlAQzNBcQQm7vqe648cEHn/ElepYJ
+         N0htIxc9KOCju+q5sMkkfUYV4D6fQPggzP85t/FHZBXSLMtQyzTOK2B08l3SH2qfpnpY
+         j/tfiy1Ud2UY35HpQ7xJ2D9NBQXQM4Hs/vp+2jT9aAN6QAYsaYyYNruao0JwdegkvZ7p
+         GP7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715052496; x=1715657296;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yG0hyI/fiqqTDu9hk0CUtBDwmucjumAbk3/rvFBap28=;
+        b=QPZteD9g1gclYg8sc+AYd2+DR7cMph7fJszicZ2RvnT07/HWB/grnGB53m4DsSH7lz
+         Wgx4QGeoh+64Df+hoJBkQES+1CW5J/wkARnOHSMf8tftRPForyJ88nq9/AgDPhvF0dTj
+         J8r+aIj3L3gp/j09VMY+9snVcVLRsU1fTRH+bYquA8Z7kWE3EYs6KlyzxFPZAbfVIKCF
+         vWvc0bBZaBZxj6csUKOllGUVNkspI/MaAhbxKwYBGyN/6zX32KTnvLCSiYCs1jPl6+9z
+         AQrd15HDAeJpNwW7dZ1mNw18yJU5vH6kBMBiNRDxkOXjYNRi9ktwhJeQAp/339uQ2ZEF
+         l5Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCVL/g9CZnNwRLGdioQO8TUiVx5H+tF4jq9/UujnS+FH0Gfl+AhzCc9HD28cYhAbbRC6loCD6jFnDvxc2SZzVBzHoUQI0Oy5hgdW0kLswmlBCdRi8sAGJAndCUDC2z9zbvQQ3DLGGgfrysviSHW4tlZlLHpmI3PLmPLmQ/wp70vQrHH2
+X-Gm-Message-State: AOJu0Yy8FMp0q9JyPBKUgxHQHaAtc+9lk74EBg8fYhg3oNZZGfdDion8
+	T0dCanFQ3tpxMZqYnx+1pSr/Z+Jzxm0deDGYVZ3n5TI5gi8IyP2r
+X-Google-Smtp-Source: AGHT+IHQGrM3apVuTaRp7pOKdv1cKN0aYiJobTHZXaiaDf5r+6av+oBOFd+j2BhjsX3MB0aaP8V7tA==
+X-Received: by 2002:a17:902:e891:b0:1e2:58f:7ed4 with SMTP id w17-20020a170902e89100b001e2058f7ed4mr2443528plg.5.1715052495885;
+        Mon, 06 May 2024 20:28:15 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id p16-20020a170902ebd000b001ebd7bdaaffsm8988409plg.288.2024.05.06.20.28.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 20:28:15 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-doc@vger.kernel.org
+Cc: apw@canonical.com,
+	broonie@kernel.org,
+	chenhuacai@loongson.cn,
+	chris@zankel.net,
+	corbet@lwn.net,
+	dwaipayanray1@gmail.com,
+	herbert@gondor.apana.org.au,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lukas.bulwahn@gmail.com,
+	mac.xxn@outlook.com,
+	sfr@canb.auug.org.au,
+	v-songbaohua@oppo.com,
+	workflows@vger.kernel.org
+Subject: [PATCH v7 0/2] codingstyle: avoid unused parameters for a function-like macro
+Date: Tue,  7 May 2024 15:27:55 +1200
+Message-Id: <20240507032757.146386-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] mm: Add update_mmu_tlb_range()
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, chenhuacai@kernel.org,
- tsbogend@alpha.franken.de, paul.walmsley@sifive.com, palmer@dabbelt.com,
- chris@zankel.net, jcmvbkbc@gmail.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, loongarch@lists.linux.dev,
- linux-riscv@lists.infradead.org, david@redhat.com, ryan.roberts@arm.com,
- libang.linux@gmail.com
-References: <20240506155120.83105-1-libang.li@antgroup.com>
- <20240506155120.83105-6-libang.li@antgroup.com>
- <CAK1f24nX6mvLXiXNJUQWSKKUQ-Avhs0_NU1k8JBhVupOr3W6Mg@mail.gmail.com>
-Content-Language: en-US
-From: "Bang Li" <libang.li@antgroup.com>
-In-Reply-To: <CAK1f24nX6mvLXiXNJUQWSKKUQ-Avhs0_NU1k8JBhVupOr3W6Mg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hey Lance,
+From: Barry Song <v-songbaohua@oppo.com>
 
-Thanks for taking time to review!
+-v7:
+ * collect ack of Joe for checkpatch.pl, thanks!
+ * fixed an indentation per Joe
 
-On 2024/5/7 0:07, Lance Yang wrote:
-> On Mon, May 6, 2024 at 11:52 PM Bang Li <libang.li@antgroup.com> wrote:
->>
->> After the commit 19eaf44954df ("mm: thp: support allocation of anonymous
->> multi-size THP"), it may need to batch update tlb of an address range
->> through the update_mmu_tlb function. We can simplify this operation by
->> adding the update_mmu_tlb_range function, which may also reduce the
->> execution of some unnecessary code in some architectures.
->>
->> Signed-off-by: Bang Li <libang.li@antgroup.com>
->> ---
->>   include/linux/pgtable.h | 8 ++++++++
->>   mm/memory.c             | 4 +---
->>   2 files changed, 9 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->> index 18019f037bae..869bfe6054f1 100644
->> --- a/include/linux/pgtable.h
->> +++ b/include/linux/pgtable.h
->> @@ -737,6 +737,14 @@ static inline void update_mmu_tlb(struct vm_area_struct *vma,
->>   #define __HAVE_ARCH_UPDATE_MMU_TLB
->>   #endif
->>
->> +#ifndef __HAVE_ARCH_UPDATE_MMU_TLB_RANGE
-> 
-> IIRC, the contemporary practice is to define a macro with the same name
-> as the function if it is being overridden.
+-v6:
+ * collect ack of Joe, thanks!
+ * refine docs according to Jonathan, thanks!
+ * add checkpatch doc according to Joe, thanks!
+ v6 link:
+ https://lore.kernel.org/lkml/20240506014606.8638-1-21cnbao@gmail.com/
 
-The macro __HAVE_ARCH_UPDATE_MMU_TLB_RANGE defined here is aligned with
-the macro __HAVE_ARCH_UPDATE_MMU_TLB corresponding to the update_mmu_tlb
-function. IMO, it should be better to use my method in this case.
+-v5:
+ * Simplify the code for Patch 2 according to Joe's suggestions.
+ * add s-o-b of Barry according to Jeff Johnson
+ v5 link:
+ https://lore.kernel.org/all/20240401012120.6052-1-21cnbao@gmail.com/
 
-Thanks,
-Bang
+-v4:
+ * fix Xining's email address, s/ma.xxn@outlook.com/mac.xxn@outlook.com/g
+ * fix some false positives of checkpatch.pl
+ * downgrade from ERROR to WARN in checkpatch.pl
 
-> 
-> Thanks,
-> Lance
-> 
->> +static inline void update_mmu_tlb_range(struct vm_area_struct *vma,
->> +                               unsigned long address, pte_t *ptep, unsigned int nr)
->> +{
->> +}
->> +#define __HAVE_ARCH_UPDATE_MMU_TLB_RANGE
->> +#endif
->> +
->>   /*
->>    * Some architectures may be able to avoid expensive synchronization
->>    * primitives when modifications are made to PTE's which are already
->> diff --git a/mm/memory.c b/mm/memory.c
->> index eea6e4984eae..2d53e29cf76e 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -4421,7 +4421,6 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
->>          vm_fault_t ret = 0;
->>          int nr_pages = 1;
->>          pte_t entry;
->> -       int i;
->>
->>          /* File mapping without ->vm_ops ? */
->>          if (vma->vm_flags & VM_SHARED)
->> @@ -4491,8 +4490,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
->>                  update_mmu_tlb(vma, addr, vmf->pte);
->>                  goto release;
->>          } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
->> -               for (i = 0; i < nr_pages; i++)
->> -                       update_mmu_tlb(vma, addr + PAGE_SIZE * i, vmf->pte + i);
->> +               update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
->>                  goto release;
->>          }
->>
->> --
->> 2.19.1.6.gb485710b
->>
+ Thanks for Joe's comments!
+
+ v4 link: https://lore.kernel.org/all/20240328022136.5789-1-21cnbao@gmail.com/
+
+-v3:
+ https://lore.kernel.org/all/20240322084937.66018-1-21cnbao@gmail.com/
+
+A function-like macro could result in build warnings such as
+"unused variable." This patchset updates the guidance to
+recommend always using a static inline function instead
+and also provides checkpatch support for this new rule.
+
+Barry Song (1):
+  Documentation: coding-style: ask function-like macros to evaluate
+    parameters
+
+Xining Xu (1):
+  scripts: checkpatch: check unused parameters for function-like macro
+
+ Documentation/dev-tools/checkpatch.rst | 14 ++++++++++++++
+ Documentation/process/coding-style.rst | 23 +++++++++++++++++++++++
+ scripts/checkpatch.pl                  |  6 ++++++
+ 3 files changed, 43 insertions(+)
+
+-- 
+2.34.1
+
 
