@@ -1,135 +1,142 @@
-Return-Path: <linux-kernel+bounces-172137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA438BEDFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:20:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739798BEE02
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 178751C24C03
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:20:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1417DB24D17
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B56F18734F;
-	Tue,  7 May 2024 20:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B9418734E;
+	Tue,  7 May 2024 20:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBf6lg/2"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgrRuc0v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FDC187330;
-	Tue,  7 May 2024 20:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC35718733D;
+	Tue,  7 May 2024 20:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715113207; cv=none; b=COa3RQZdyEK19+p1WNWNznp/U25ZXmbwbZd4ucKXn0uOdoAb9PJkvt+3xu7xLm0yszASKCY2F3IYMGdA4b5bDsQUJZvGf8fXSk2WVOj4l78FDKv67lEV72tDrNIs4LIBZMEYtnim2w8VNGLbvyzprpBv5mafPH5j3DLYUgL1Eto=
+	t=1715113259; cv=none; b=DxZ7vnaqAUMU12/jXW8jIOSbYP4DBAevZevLOmG0nhQms+l3lCeV+hiSWIGQ1q1BZVf6xI8ru3g8YJn5HE6xnPV2viAkqSNC9UhXKJ5oI2IosX+d4TbmleexJFUODKH8lgIpZyJWbfUjzc0UticQkboM/3GbhgvNneB7yQMKp5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715113207; c=relaxed/simple;
-	bh=1WgW6mD2uzRFCDe53uN5b1jmdo1xPM2JOfOuoFEvBF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C8fqx5VeUmcRw3euQ2Vr0EuXBagNd5iSc7h8Y7OsOQ5my0BgZR7ThvRp3kmIFWwt3HS1ZOFEjQmKr8CnClFM4P06ayYx/Ftbs2a5e2che6WoHSTljjfiVbwa58DlD9mJv3CXG9rNbGlkblc70D3auFkHxkSrsswV5B2dAQKuNKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBf6lg/2; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-61c4ebd0c99so2340942a12.0;
-        Tue, 07 May 2024 13:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715113205; x=1715718005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UOS+DwiwThAh+JeyziX6fFDWuUeHtd9N1ebV4bxlAQU=;
-        b=kBf6lg/2Ea0PnnDny0Z/pyDFT2zmWH/nhsFfI/kK1tkVeTzxVJO0EL1ZaAKmLNQC9Q
-         RIko9cnaRQtfEUD/0pblVN6wG803/9xOFHbzT3pplKJhkMKik+nHxfvVZ2lrX0IsxpGT
-         ExMKHOca6zHwgHMuon8+xqKOGpidC1x/8SIvaIJmxTz2/oB+CbCUgJRbvugfSh6U12q+
-         dO8rBwXOPSKOJJdM9qmjbavsKxeClV4MbcntHGvlhtCJaD1rOzP6P9k3jE0TMyr8dIWI
-         O44bmiXKGsCljDhjdEgA+W4RYx/74n2140CipMpJvpTi9rXWKZ9GVd2alPHhsg4qU5WB
-         Y8HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715113205; x=1715718005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UOS+DwiwThAh+JeyziX6fFDWuUeHtd9N1ebV4bxlAQU=;
-        b=WvCCMiaoBafBDqDdH1eWPaYCwmPln/6tQ9nx+5KmBiQnkgxGCw5SkriqN8mfGE1USY
-         5lMmNQzGz8F9aEJZ1ldxm3n8MJ6F/C+wEGytLlXOPx/LKBqejbUuESpuac72Ncu5sufx
-         FQGSZHWQ4gwJluZJDUK+WHImlAPhHyKOc3zDv0OrBgvadv39ll0lb+NSsCaan//C5vtf
-         oE3hFLrgUwIAM1wqAdCoaSxR1JZbfG44Z+GJoCb3x2zGypuDAQEDvVrS8ZRPPLwmprbJ
-         Qy1oZa8jw37+hFVUL/hKZJz2dsxfSCoEYzL7d+8jwJ9AiOujNSz2I7gSsHAuCMjzzNBa
-         YGbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK/sdfZmC4aW7MVB1c6tlTCU1Wtx0M8HDD/4wsE3hlVmJ/Z864PENQn5wsz86AKTTMp6m3/ZjzmiQPjKJ/+wkLnL3xjuw2dPaAIKISvkOY4WYU1y6fxesqXuOxsVpyNd+o52L7AvJ9KcGASjZM9pDxoHbPcaT0j5D+zU9v4ejHioitCLqWmjVyv+YpPa5bkvwgAbF8qJMYL7110Wx8ewA5IZVn
-X-Gm-Message-State: AOJu0Yxx3aTTKBvKdHfUN69nSXkQC+h7RvOGWxdOElsfdhOcdJ4goiV2
-	qzBcwwGef+h+x0QgiFKHo7tKu1/9LFZaFjMOwc8AKBAqXcle54RdCtVUbJlg6Q6GiZa3uUMDdR0
-	s2oGsdJ90yvQGSx5qaZHnXA9nbgE=
-X-Google-Smtp-Source: AGHT+IGL2NXuNpuHrUZFX7GDbjtT+8cU3XmhVi6XIF5jF0zB73opX7J/BblIEVFRD3f3D/FEeJvYXk2tDmmfeYy6mUU=
-X-Received: by 2002:a17:90a:f014:b0:2b5:258c:5f10 with SMTP id
- 98e67ed59e1d1-2b616be1e5fmr656512a91.30.1715113205407; Tue, 07 May 2024
- 13:20:05 -0700 (PDT)
+	s=arc-20240116; t=1715113259; c=relaxed/simple;
+	bh=qgkgWJ6hcc+kLK5jJ2rjoDUnCXJexR2EWKimTvT98Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bADa8Tlg8usKCk+Ldn4fo4W7yg0hZ+XjcvckELxtxigP4A8U5bZNoaLOeyg9AMYTCJfEh+p8QndfRBN7x9LzaWRjCk+zJGwkrX5WV1eLCskDKTHvJH5A+ieMxQLltw+PvOLJH180qM7fu85aaN+122tsE6G3Wm/K0VLN5McRy+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgrRuc0v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4BD5C2BBFC;
+	Tue,  7 May 2024 20:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715113259;
+	bh=qgkgWJ6hcc+kLK5jJ2rjoDUnCXJexR2EWKimTvT98Qs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XgrRuc0vDNKHe1SLI2TEjr6N1r1ndxQH6wjicKasHQzQT6m3T1CPhuTRVW7dgRddM
+	 tMJ5O0A9/HFOSPuCo5nD1OEDitxNen0+WvpjTEHGux/GYjc79Ey61nQWCtzvtVsEXe
+	 d4kFgtMLoxbk8PyLoU4Ty/M0zDHHoD+EUSMkX8h+UhSlA5OU/4v269RsvA9wRlaJnP
+	 tWYkxoCaBFOCwG7IlnNacHUzKhSFYoFmtFhDfwBU1mn1lC2nukdwUUYWTTF7ycGnX8
+	 QAes6I53KVDdIitBmvqJDsJaa8C70zdWUUYgVJxlce8LHIQSkoPM0+BlzYErzlYpX1
+	 A6kfCCBZUOF2w==
+Date: Tue, 7 May 2024 17:20:56 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Clark <james.clark@arm.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>,
+	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 1/8] perf ui browser: Don't save pointer to stack
+ memory
+Message-ID: <ZjqNKPgWR7mBFaV4@x1>
+References: <20240507183545.1236093-1-irogers@google.com>
+ <20240507183545.1236093-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501112059.1348423-1-colin.i.king@gmail.com>
-In-Reply-To: <20240501112059.1348423-1-colin.i.king@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 7 May 2024 13:19:53 -0700
-Message-ID: <CAEf4BzZ98z5eQmE42RKn2=TdVTqVjxkOehc-OydPd2PQ+fgmvw@mail.gmail.com>
-Subject: Re: [PATCH][next] selftests/bpf: Fix spelling mistake
- "{GET|SET}SOCKOP" -> "{GET|SET}SOCKOPT"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507183545.1236093-2-irogers@google.com>
 
-On Wed, May 1, 2024 at 4:21=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
-om> wrote:
->
-> There are two spelling mistakes in .descr literal strings. Fix them.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Tue, May 07, 2024 at 11:35:38AM -0700, Ian Rogers wrote:
+> ui_browser__show is capturing the input title that is stack allocated
+> memory in hist_browser__run. Avoid a use after return by strdup-ing
+> the string.
+
+But everything happens in that context, i.e. hist_brower__run() will
+call ui_browser__ methods and then exit.
+
+We end up having browser->title pointing to returned stack memory
+(invalid) but there will be no references to it, no?
+
+If we return to hist_browser__run() we then call ui_browser__show
+passing a new title, for "live" stack memory, rinse repeat. Or have you
+noticed an actual use-after-"free"?
+
+- Arnaldo
+ 
+> Fixes: 05e8b0804ec4 ("perf ui browser: Stop using 'self'")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
->  tools/testing/selftests/bpf/prog_tests/sockopt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-
-This doesn't apply cleanly onto bpf-next/master, unfortunately. Can
-you please rebase and resend?
-
-pw-bot: cr
-
-
-> diff --git a/tools/testing/selftests/bpf/prog_tests/sockopt.c b/tools/tes=
-ting/selftests/bpf/prog_tests/sockopt.c
-> index eaac83a7f388..ecf5a7a047a4 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/sockopt.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/sockopt.c
-> @@ -933,7 +933,7 @@ static struct sockopt_test {
->         /* =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D p=
-rog_type =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  */
->
->         {
-> -               .descr =3D "can attach only BPF_CGROUP_SETSOCKOP",
-> +               .descr =3D "can attach only BPF_CGROUP_SETSOCKOPT",
->                 .insns =3D {
->                         /* return 1 */
->                         BPF_MOV64_IMM(BPF_REG_0, 1),
-> @@ -947,7 +947,7 @@ static struct sockopt_test {
->         },
->
->         {
-> -               .descr =3D "can attach only BPF_CGROUP_GETSOCKOP",
-> +               .descr =3D "can attach only BPF_CGROUP_GETSOCKOPT",
->                 .insns =3D {
->                         /* return 1 */
->                         BPF_MOV64_IMM(BPF_REG_0, 1),
-> --
-> 2.39.2
->
+>  tools/perf/ui/browser.c | 4 +++-
+>  tools/perf/ui/browser.h | 2 +-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
+> index 603d11283cbd..c4cdf2ea69b7 100644
+> --- a/tools/perf/ui/browser.c
+> +++ b/tools/perf/ui/browser.c
+> @@ -287,7 +287,8 @@ int ui_browser__show(struct ui_browser *browser, const char *title,
+>  	mutex_lock(&ui__lock);
+>  	__ui_browser__show_title(browser, title);
+>  
+> -	browser->title = title;
+> +	free(browser->title);
+> +	browser->title = strdup(title);
+>  	zfree(&browser->helpline);
+>  
+>  	va_start(ap, helpline);
+> @@ -304,6 +305,7 @@ void ui_browser__hide(struct ui_browser *browser)
+>  	mutex_lock(&ui__lock);
+>  	ui_helpline__pop();
+>  	zfree(&browser->helpline);
+> +	zfree(&browser->title);
+>  	mutex_unlock(&ui__lock);
+>  }
+>  
+> diff --git a/tools/perf/ui/browser.h b/tools/perf/ui/browser.h
+> index 510ce4554050..6e98d5f8f71c 100644
+> --- a/tools/perf/ui/browser.h
+> +++ b/tools/perf/ui/browser.h
+> @@ -21,7 +21,7 @@ struct ui_browser {
+>  	u8	      extra_title_lines;
+>  	int	      current_color;
+>  	void	      *priv;
+> -	const char    *title;
+> +	char	      *title;
+>  	char	      *helpline;
+>  	const char    *no_samples_msg;
+>  	void 	      (*refresh_dimensions)(struct ui_browser *browser);
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
 
