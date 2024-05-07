@@ -1,140 +1,94 @@
-Return-Path: <linux-kernel+bounces-171248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6068BE1D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D81498BE1D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1624F282389
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C32328859A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F85B156F45;
-	Tue,  7 May 2024 12:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14921156F57;
+	Tue,  7 May 2024 12:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="QY69fWhW"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X7UCZjWd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nFTOIi0I"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BCB1514F1
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EDA156F37
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715084149; cv=none; b=PxcAyhp6OAhVOOVcLCXE2A9p99tmEGVXnxjxb78tUDZm1TfmaTuMScdr3Mp7M6ivw7Yy1nw+g8zGH+9baq4iUgvpgj6pz2nhhTLMlbhI14xyh0n3yJMlb+GlvDQNXkPXkgZpSNcaV4s16NOZ0DK9+c3DGpsIYs6JaO/5oQk4wCU=
+	t=1715084171; cv=none; b=VS2LcjjnZZiUE0ZGVjVqAjHm93Jm4kJx+ybupb/T3fnhsba/71rc4LaLOU1P4sVPLGsSddrmdFEvgmB237d06DqwpkW0JbYgR/aOuY9mqM1WszadZ56xfb6uNk/wVIlS1Zb2Tij1iQXs4PpYVhVVivGgtoL++UpBJ/Opq35L8MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715084149; c=relaxed/simple;
-	bh=dWYuhSmaw6zHw/xPyvKvmeoz7fmgJSbAFIN1ULigx1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bnDscfUXQHUXEkkjVdU6DqKovHYo1Rs+Rpzhm75BUHHmI0pYD8kqdDsC3mGEx68OlQCJuW5fvTiOtihmZ8VlCKwc0mNlGtCdQc4SFUzhCy1YoujXRtvDpw5xW05Yf4hQd0V7Mn7UhV2Kvf27WXZfUEvl4ndRR7pmnfEZiJ10cIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=QY69fWhW; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso564629766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 05:15:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1715084146; x=1715688946; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IUKfXenJAG2N5WSgqguRSHR3qBfgjkNSXZ2oXGFiItU=;
-        b=QY69fWhWTMO3yG0urr8Aozglu4L7uxGOzS5TmFk/WK6iITOQanhnK1ahmYOtxnzzG8
-         JYb7EDzzh0gkeDc0+BzFaf60CCXOb+IoQ7FIX6VHymQDUsxolg3vXsoOaBwUOTRSn5wP
-         UjxzfaNKs4pJEDAavj89x+VfKE+yP4d2nMEHroOv4WkTGrgbQB2O6afZIK8bgmTcBBgH
-         3CrZrXQYTmZvLbuz18E7KTud7+k5ytqi8GYCIbzPLOTtcif7gA8FoUbwHrofMBPsrs5j
-         EJETQYi9jnHMbau0E0aH1lM9xPaBMa3Y3CaKHDB9WrTLz5o1eHR1pE9kruO79+zjKqpc
-         KNKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715084146; x=1715688946;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUKfXenJAG2N5WSgqguRSHR3qBfgjkNSXZ2oXGFiItU=;
-        b=w4MBpOYJvrmfeb948XsKwFXE5nIiLtSrbCIuuRKMHGgtxZ5L83fzgGHzT3Jt3anmQF
-         u2dE0VrLPib5HUQ1DY/sd7ZpT36BA3yUJAVfnv2YxgriNRgLluP+KJzibDcc67tZp16q
-         hpTkwf/OTGsQ7M2jdHtyv96g3agrqL2c9FOERuT4RlUUnuppjnRP344T8pfblFVJkQY+
-         N1ZedCT5k3+cC/iAEg0Vn6Lz/s8Fyf3zU7Ttlhg91ipWpro/C8gsdFln/nH/ifsIlBBH
-         7u4ZUb7dC6En8eaWUes4P4XdF88i/egwlQsmPa2RRjgd1dvqBEQtdrxJpA5VXrh3M43E
-         +gVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSynSg6CN8htbN8jsPJ9JJVGqs/1af7GvptJMEHS1loQ87OdRqvrpP5zy/d9xhFejAqplVDSFwm9VkKt85Ck+Vd7j+iwZ8R9TK8nn1
-X-Gm-Message-State: AOJu0Yweh+AFBwkvuN90AjCEn4CzkYV6R7aevz7zX9oiSD2JA2cWo6eP
-	nZwis844Yo3UXrP3gbxNqgXqQznikexmgyYDlmwgZERAGMFmZV49UR8YTrmgR68=
-X-Google-Smtp-Source: AGHT+IG9cak2fCNRkjLA6nMOklMc3wR0gPeYdLkCkvN53U7wFdtqN+DcTu8b6RKxXiaT5kYD3tNeag==
-X-Received: by 2002:a50:d4d3:0:b0:570:cd6:8ef with SMTP id e19-20020a50d4d3000000b005700cd608efmr9909187edj.29.1715084145631;
-        Tue, 07 May 2024 05:15:45 -0700 (PDT)
-Received: from [192.168.51.243] ([78.128.78.220])
-        by smtp.gmail.com with ESMTPSA id j8-20020a50ed08000000b0056e718795f8sm6289854eds.36.2024.05.07.05.15.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 05:15:45 -0700 (PDT)
-Message-ID: <9a1825ff-3a55-4c2a-86bc-0709d4ff8153@blackwall.org>
-Date: Tue, 7 May 2024 15:15:43 +0300
+	s=arc-20240116; t=1715084171; c=relaxed/simple;
+	bh=yn6EY4L9QHQF9Qi6rYdMXrRWWmhUr+graHI1uNE59kY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s6EkfeR5pouufBuRPGBOJAGoq4mvnegwTHmmdFemMvpwqa0PBgCpkQ8zW1oo8i+GEcDPC9Bow/0ngV7Tt657evhPdMQplfMkOSUzS2/eG+T3h+kpyCKbRZGFXYZnQgvFB6+R3R1dL30bnYPJVy6SuGDWBt2kP73gqzYaRNODrFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X7UCZjWd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nFTOIi0I; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715084168;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZW8opu3qoaDFkriJzblpb7PWP6Mdk3qACtPXpvLAX9I=;
+	b=X7UCZjWd2O5+VsfJIYVuaFBwa4dhrKBo9oi399o54J4Ktkotp25DYSOdmrlBJg9B44tGpv
+	33W2zw6QSiOze+7ULxw0YOgkQkWvCc1t/iNBXp5c2l6N+CZ1JNfpe80SSN1+yr6YL0UCqp
+	lw6tg0HRRxqk3iTlCsAykp9CGQTIWM1TxJN6/yphClEE7WNgU5an4vkzemwqHtmKNpfj4i
+	RdLcyoSDD07rVb+1gpp4Q7uCVX3Z8bbACYG3BZiLSBEIgWUBM/nae4DbWLTcfdEp0JeN55
+	2z+gCASYSr7k4kuNkNaJ61thP0MUy9qQZWJZ7f+d3C7cNpPIsZW/M5K2rVGskQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715084168;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZW8opu3qoaDFkriJzblpb7PWP6Mdk3qACtPXpvLAX9I=;
+	b=nFTOIi0IXXXF3fCyFBc9/nVyd1rEoi7KgBk/6lbKqzJK/bqQ6j1dOtJkFcuy+wfJIRNXaF
+	99zwlD7Z9BRyhKDQ==
+To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+ linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
+ keith.lucas@oracle.com, aruna.ramakrishna@oracle.com
+Subject: Re: [PATCH v3 1/4] x86/pkeys: Signal handling function interface
+ changes to accept PKRU as a parameter
+In-Reply-To: <20240425180542.1042933-2-aruna.ramakrishna@oracle.com>
+References: <20240425180542.1042933-1-aruna.ramakrishna@oracle.com>
+ <20240425180542.1042933-2-aruna.ramakrishna@oracle.com>
+Date: Tue, 07 May 2024 14:16:08 +0200
+Message-ID: <8734qtrf5j.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: bridge: fix corrupted ethernet header on
- multicast-to-unicast
-To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
- Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: bridge@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240505184239.15002-1-nbd@nbd.name>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240505184239.15002-1-nbd@nbd.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 05/05/2024 21:42, Felix Fietkau wrote:
-> The change from skb_copy to pskb_copy unfortunately changed the data
-> copying to omit the ethernet header, since it was pulled before reaching
-> this point. Fix this by calling __skb_push/pull around pskb_copy.
-> 
-> Fixes: 59c878cbcdd8 ("net: bridge: fix multicast-to-unicast with fraglist GSO")
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> ---
->   net/bridge/br_forward.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
-> index d7c35f55bd69..d97064d460dc 100644
-> --- a/net/bridge/br_forward.c
-> +++ b/net/bridge/br_forward.c
-> @@ -258,6 +258,7 @@ static void maybe_deliver_addr(struct net_bridge_port *p, struct sk_buff *skb,
->   {
->   	struct net_device *dev = BR_INPUT_SKB_CB(skb)->brdev;
->   	const unsigned char *src = eth_hdr(skb)->h_source;
-> +	struct sk_buff *nskb;
->   
->   	if (!should_deliver(p, skb))
->   		return;
-> @@ -266,12 +267,16 @@ static void maybe_deliver_addr(struct net_bridge_port *p, struct sk_buff *skb,
->   	if (skb->dev == p->dev && ether_addr_equal(src, addr))
->   		return;
->   
-> -	skb = pskb_copy(skb, GFP_ATOMIC);
-> -	if (!skb) {
-> +	__skb_push(skb, ETH_HLEN);
-> +	nskb = pskb_copy(skb, GFP_ATOMIC);
-> +	__skb_pull(skb, ETH_HLEN);
-> +	if (!nskb) {
->   		DEV_STATS_INC(dev, tx_dropped);
->   		return;
->   	}
->   
-> +	skb = nskb;
-> +	__skb_pull(skb, ETH_HLEN);
->   	if (!is_broadcast_ether_addr(addr))
->   		memcpy(eth_hdr(skb)->h_dest, addr, ETH_ALEN);
->   
+On Thu, Apr 25 2024 at 18:05, Aruna Ramakrishna wrote:
+>  
+> -extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size);
+> +extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size,
+> +				     u32 pkru);
 
-This dance is getting ugly, but better to have it correct.
-It'd be nice if you could add a selftest that exercises it.
+No line break required. Line length is 100 characters. All over the place.
+ 
+> @@ -229,6 +230,7 @@ handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+>  {
+>  	bool stepping, failed;
+>  	struct fpu *fpu = &current->thread.fpu;
+> +	u32 pkru = read_pkru();
 
-Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
+Please use reverse fir tree ordering of variables:
 
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
+  
+Thanks,
+
+        tglx
 
