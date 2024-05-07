@@ -1,218 +1,136 @@
-Return-Path: <linux-kernel+bounces-171601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E558BE646
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F0A8BE649
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6313D2838A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600D228357E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122D015FA93;
-	Tue,  7 May 2024 14:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E860715FD16;
+	Tue,  7 May 2024 14:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FAZX997d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vrNfPLDD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yY9pTwQQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ywGCfOMb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRT5LAzr"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8057315098D;
-	Tue,  7 May 2024 14:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75A156F39;
+	Tue,  7 May 2024 14:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093007; cv=none; b=ZDsOTSfZHGLt6n86JcZ4b4rQVOXwlx0kzKmZWyXEzJaCnNiRX/lnYrdNsz7FvvWq+WVEfImbGHUeLsRKq3hnAj7LSefTiYKsqjTUD8FQzyNLZFupQA1+zUeNNtIaALO/nt9tj8MX1XKEimisqtGNy+YBBqkGtYfkX3ygzkrGo0o=
+	t=1715093033; cv=none; b=HSxohsMz1TIkWULJA1zw1rJ6dcdX8z55+eb638/JXIyILsPw9QK+BQkC53cEDK/TJyfjdZbPqHy4t/FlMfa5MnBKyXJM3B2GCwRWf3AycbniGnnPav4ZxXoaAk136z8oJS2kGaAlPCsZ2td46nMXl3lB4WK8Be2+FrmL4aMBC38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093007; c=relaxed/simple;
-	bh=dEaNxRAzhuVz2zwbLAZO0fodhXrNZ3heVpfnOCqIK7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roqVQ121Nw562gaMx7kX0WkywdD+l9mMlXL07QYnMLg3C0Nvn2lPVMj6sb8vROJrDKjeNsBJKs422UvoyMMYssGqEt+Py9fyBPAhevJqChHum+LMDB3Jue/rWIWPzqfG3zLK0AJZk4rLiV9ok7TZEUQI7vMeHBqnnMw2ztZXmYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FAZX997d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vrNfPLDD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yY9pTwQQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ywGCfOMb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B6C4E20B91;
-	Tue,  7 May 2024 14:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715093003;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FTczNht+/rGWhzBV/ml37bhYIYXRuHDflYaAfTgiSPU=;
-	b=FAZX997d0a+fkSSKoXTgQSrhSNNti6Zgvfo4437EYJuYUMVH5W6r2uYxuKU8dlwe2ls/+7
-	oPO7YTN+7dVGkUiePtexuvQZj4QZfGqZg+NCrjRzdNQgCH2crIZ7mBpX/wqi/B6i7uVDJf
-	0vKUVG+jea62HCHSfC1biYmM6xcX78M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715093003;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FTczNht+/rGWhzBV/ml37bhYIYXRuHDflYaAfTgiSPU=;
-	b=vrNfPLDDpir1UoY5RLPszseMSgfgKCCJ8S6M/BTFia9i8UYJYfrTFrdMoGNnZmuDYKTZc4
-	vGCSEi+hCYOKCsBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715093002;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FTczNht+/rGWhzBV/ml37bhYIYXRuHDflYaAfTgiSPU=;
-	b=yY9pTwQQoKlrgi2cOsgmkfaWzZi+R+D47hXWcTJNGWKoU6dx8QBUn5gptNykuTNHXnQ806
-	lpZqLQMCcW3pCEosNcBqbIqrUwMkM7JA8omSGkG8D2/9hF725opOUInjtupkjZnawc6bqM
-	phgt8YENTN1cubLFOn8FdberSJ/9OkA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715093002;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FTczNht+/rGWhzBV/ml37bhYIYXRuHDflYaAfTgiSPU=;
-	b=ywGCfOMbjmEJzOiWvFBKDjkQxqa87Vr/qCcvtiEVA08EaV/hrzRVkwYlhghFnuoXFpoEa8
-	e/orznv0i4KiNhDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E5A5C13A3C;
-	Tue,  7 May 2024 14:43:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dtbULwk+OmaARAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 07 May 2024 14:43:21 +0000
-Date: Tue, 7 May 2024 16:43:19 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-bcachefs@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>, Su Yue <l@damenly.org>,
-	Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC to UAPI magic.h
-Message-ID: <20240507144319.GC138935@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20240507111124.118520-1-pvorel@suse.cz>
- <Zjot36J9negcVlfh@bfoster>
+	s=arc-20240116; t=1715093033; c=relaxed/simple;
+	bh=cVK00FVDWLzEDng1ImuaW8RdJLe7pFz6qhNng9TB52w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hsmL83J9qgyQqpqU51kIwEACkBRThBQbwZCtjrzmv1tlnEIxoenJgQMZ8KWdOiEPQuxS5frcK23Wn/VRHJy0v2dneYWTv9wrvlQvKydrk/k0VKL0HyNIAnP9/F5FmMpAY3K30PqlUY+1XZYbAVokhfDIKPpteFYjYNa3HARI6jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRT5LAzr; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34e7a35d5d4so2413424f8f.2;
+        Tue, 07 May 2024 07:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715093030; x=1715697830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8bM5RjluxHipg60pIjQCs1Kdq4Li1XFga7CcO2QMKNA=;
+        b=IRT5LAzrgTDwtonDzUoI5cmF6WkEZrb4Kdff8G5dzDYdL0UOehPFnnn4jQyucGMVNh
+         xjbSPUV7o7ne4svcyMAJGhk9lSiHY09I9bUIP2DlPoFA3KfsFHUViFDG9cZXyuz6kIfP
+         YknA2lt75aMkeZEA2BziEuYQ0S49lpj43co9I3/+zDFRId+vFT01WLsBTzhEH5JrN0ul
+         ofm2BbO2vBbZRnw8cnB9ZiGsrGVUhnwi64hyrj/mFZwyIjrCa9f6QNasdZGQe8dr/aW0
+         zWt02ej9L+AooRBsKvnmQdq56q2Oj7S4O2uWowGZLZVXaYalCmpjVlD4RMoHUgCVrH5B
+         9fKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715093030; x=1715697830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8bM5RjluxHipg60pIjQCs1Kdq4Li1XFga7CcO2QMKNA=;
+        b=amBwxvfaJ1QAH9jfyKcxOSfj98uiHDu+FJM6t3jmSVPcxkUAmakDAnhy+e9anr37mW
+         Xxy+6xKFuleFVK9zLvUmf9H2lct8LJXJBrcxoCCXwfcQcTGZA5q2tzosCWhXZkuvOjEr
+         RJXGPSH8EK+X+DHLDr2L9kt9VzlvczRLhvxvqBzaIIRKBf0Cjx06N5TDcEqtZt4GvF+j
+         5ao/7arABXL/gKZSqmXBv7YTsAPJGVjFuwdsUaWWzhbTL6cl+2PPJK+2235QHjsRT7Sc
+         VEvUANivpexQawZv0qSMBSRrLew6hAiqeW1xdIRbLVoW9P4fkzKT+TQZ+pbF7PCwv6je
+         4dYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNISGbTtAKlGaw7ymPqRozg9kzFPuqOXiNQNbzLf/5pBoCzGOlrWVREZlElrqqdUVJZzrfi63iha4KiAkzB7SoiZZcbzXUmn/IqwlQfVt3sFGC4PdFH5kws7Pf/ySZ9xnvxu1ugmSg2DXqUGKpf9C7Go1IpCTG6FSBWNRWKLsji5TP+zYHeTESFJIzA/TfiEdqcIvXVp/kmHO6
+X-Gm-Message-State: AOJu0YxuQ9U35RNO6qG4cWz5omXDSTca5zRURn75+a9ztSSUG/x9uqJ/
+	GzonDJ2Uf/qtfiki70aTgZzbYBO7TdmTS6ofN6cagS3PCMSXIYf7rgdS0NSJy0JLVxEtoRUaznA
+	jc6/XQ/htKsa+6RLFDToKXRiIk98=
+X-Google-Smtp-Source: AGHT+IGohbKdu5N5Ex+4EkZMkPfNXVJa4QuvuOwWy2p6XWZL9RHKYD+h27FqkUdbOj4eiHLrpqiOUEpbKJrSf/ZV38w=
+X-Received: by 2002:a5d:42d2:0:b0:34a:56e7:5cc4 with SMTP id
+ ffacd0b85a97d-34fca14b3bamr36578f8f.2.1715093030024; Tue, 07 May 2024
+ 07:43:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zjot36J9negcVlfh@bfoster>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:email];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Score: -3.50
-X-Spam-Flag: NO
+References: <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org>
+ <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-1-e2bcbdf49857@kernel.org>
+In-Reply-To: <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-1-e2bcbdf49857@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 7 May 2024 07:43:39 -0700
+Message-ID: <CAADnVQKWCVfUhQnoYBoEZaZbfiX8MROcj7Ct-nB4-axhZqMecw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/4] selftests/bpf: Handle SIGINT when creating netns
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: MPTCP Upstream <mptcp@lists.linux.dev>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Geliang Tang <tanggeliang@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
+On Tue, May 7, 2024 at 3:53=E2=80=AFAM Matthieu Baerts (NGI0)
+<matttbe@kernel.org> wrote:
+>
+> From: Geliang Tang <tanggeliang@kylinos.cn>
+>
+> It's necessary to delete netns during the MPTCP bpf tests interrupt,
+> otherwise the next tests run will fail due to unable to create netns.
+>
+> This patch adds a new SIGINT handle sig_int, and deletes NS_TEST in it.
+>
+> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> Reviewed-by: Mat Martineau <martineau@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> ---
+>  tools/testing/selftests/bpf/prog_tests/mptcp.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testi=
+ng/selftests/bpf/prog_tests/mptcp.c
+> index 274d2e033e39..baf976a7a1dd 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> @@ -64,11 +64,18 @@ struct mptcp_storage {
+>         char ca_name[TCP_CA_NAME_MAX];
+>  };
+>
+> +static void sig_int(int sig)
+> +{
+> +       signal(sig, SIG_IGN);
+> +       SYS_NOFAIL("ip netns del %s", NS_TEST);
+> +}
+> +
+>  static struct nstoken *create_netns(void)
+>  {
+>         SYS(fail, "ip netns add %s", NS_TEST);
+>         SYS(fail, "ip -net %s link set dev lo up", NS_TEST);
+>
+> +       signal(SIGINT, sig_int);
+>         return open_netns(NS_TEST);
 
-> On Tue, May 07, 2024 at 01:11:24PM +0200, Petr Vorel wrote:
-> > There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
-> > which use UUID_INIT() and are used only in libbcachefs. Therefore move
-> > to <linux/magic.h> only BCACHEFS_STATFS_MAGIC, which can be used outside
-> > of libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
-
-> > Keeping non-standard name BCACHEFS_STATFS_MAGIC instead of renaming it
-> > to more generic BCACHEFS_MAGIC to not confuse with the other bcachefs
-> > definitions.
-
-
-> Perhaps it would be better to use the standard naming for the global
-> header and let the bcachefs subsystem catch up with better names for
-> internal defs? Something like BCACHEFS_SUPER_MAGIC also seems like it
-> would be generally consistent, FWIW.
-
-I was also thinking about this. I'll send v2.
-
-> > Suggested-by: Su Yue <l@damenly.org>
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
-> >  fs/bcachefs/bcachefs_format.h | 2 --
-> >  fs/bcachefs/fs.c              | 1 +
-> >  include/uapi/linux/magic.h    | 2 ++
-> >  3 files changed, 3 insertions(+), 2 deletions(-)
-
-> > diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-> > index f7fbfccd2b1e..52e03f13b780 100644
-> > --- a/fs/bcachefs/bcachefs_format.h
-> > +++ b/fs/bcachefs/bcachefs_format.h
-> > @@ -1275,8 +1275,6 @@ enum bch_compression_opts {
-> >  	UUID_INIT(0xc68573f6, 0x66ce, 0x90a9,				\
-> >  		  0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
-
-> > -#define BCACHEFS_STATFS_MAGIC		0xca451a4e
-> > -
-> >  #define JSET_MAGIC		__cpu_to_le64(0x245235c1a3625032ULL)
-> >  #define BSET_MAGIC		__cpu_to_le64(0x90135c78b99e07f5ULL)
-
-> > diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> > index fce690007edf..1c856ae2b0e2 100644
-> > --- a/fs/bcachefs/fs.c
-> > +++ b/fs/bcachefs/fs.c
-> > @@ -27,6 +27,7 @@
-> >  #include "super.h"
-> >  #include "xattr.h"
-
-> > +#include <uapi/linux/magic.h>
-> >  #include <linux/aio.h>
-> >  #include <linux/backing-dev.h>
-> >  #include <linux/exportfs.h>
-> > diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> > index 1b40a968ba91..45c8f4916167 100644
-> > --- a/include/uapi/linux/magic.h
-> > +++ b/include/uapi/linux/magic.h
-> > @@ -103,4 +103,6 @@
-> >  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
-> >  #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
-
-> > +#define BCACHEFS_STATFS_MAGIC		0xca451a4e
-> > +
-
-> Is there intended to be at least some logical organization to this file?
-> It kind of looks like it, but maybe not as a rule. Personally, I'd
-> probably stick this somewhere in the first chunk of definitions where
-> the other major local/block filesystems are, but just a nit.
-
-I was asking myself, but did not see any rule :). But sure, I can add it below
-FUSE_SUPER_MAGIC (the end of the first chunk).
-
-Thanks for your review!
-
-Kind regards,
-Petr
-
-> Brian
-
-> >  #endif /* __LINUX_MAGIC_H__ */
-> > -- 
-> > 2.43.0
-
-
+That's a drop in the bucket.
+ctrl-c of test_progs doesn't really work.
+Such clean up needs to be generic as part of network_helpers.c
 
