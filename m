@@ -1,83 +1,269 @@
-Return-Path: <linux-kernel+bounces-170545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C068BD8F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:33:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FAC8BD8FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5FA1C21317
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C11031F22C85
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D022A443D;
-	Tue,  7 May 2024 01:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0074A2C;
+	Tue,  7 May 2024 01:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nzViaw57"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KPY8ssQ8"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F7D139F;
-	Tue,  7 May 2024 01:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C72B139F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 01:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715045597; cv=none; b=sTYwZ1M/kwtIIsiKvcfRDdXcBN+g/cUTeuASwty0CRhBYq4KHmjM2bGLS8meBiBP9vc0aADBTooVVBhpnS9sQHSyOS+uB0+noFT4FL//evdeEU5k5PJt+/udoHAJoZ8AtCQMTBlfGbMUIbNxzgS8oOg6Uzu3qrmpaeVeCLzEc7M=
+	t=1715045697; cv=none; b=kQdSuAv2MSI2WJy0Ybl89wweIp+wkNC9RtnKvNo61i+tbbH0CtAR0Q5efOIfSohGxM4ygB1h9oLjqomGxUoDLm85fnZ6S2atmqgHWvvccIYHhOo6bnvXqA/cNTbEio5vo9aIMzxnR3+oE6INnxchgnyxZqr3sHVfmG+g3x7emfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715045597; c=relaxed/simple;
-	bh=qPRJnYhfG3ihAcwLFlEiL3vMYD133/E5GbZFFwNXRHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSzgc8oQfSU1mTeJIe3xWf7Yxr1m+MZNVjo4CLy7M88mWu9jitWPcoZt6SqM0gZbyFyGN8cjwbY8ur8KjdbrnJAeUuSrT+26+ezEoqkks+E/t+uzHAiZEIecW/jG5nK1qir0EVKRp1BmEKX3Jid9ymkol5YPRvKgTej57K+AK3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nzViaw57; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=w7qpPlO1ia49EiV1A7IncpyuhlxwrR2pVKc054DktVE=; b=nzViaw57oJ4jG5xzUHra90T2OI
-	qHIwcqcuZxUMtuM6QPghR6oGcnkw4kSFk6mBS548GtN8g2jMxAEulIvaDSVrbDNnzkMjp5E9cRlv/
-	4YEp/uPp3UbV+S+SoXj+9cEUI0S3hmPOzYwe6ZOTBLB03PMnTHPEphnD5Um0Lg8U0uII=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s49hV-00EoJm-1l; Tue, 07 May 2024 03:33:01 +0200
-Date: Tue, 7 May 2024 03:33:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rengarajan S <rengarajan.s@microchip.com>
-Cc: bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, richardcochran@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1] net: microchip: lan743x: Reduce PTP timeout
- on HW failure
-Message-ID: <01145749-30a7-47a3-a5e6-03f4d0ee1264@lunn.ch>
-References: <20240502050300.38689-1-rengarajan.s@microchip.com>
+	s=arc-20240116; t=1715045697; c=relaxed/simple;
+	bh=nflotAw23OF8DzsvPikj7Zp6lbojRMt3XmZ/DkGkNJg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LGF2JPbtzmioNhpRcjP6ZJc6Yh5xkzVq3SxcNSt+iSWanZjczAeue/kzNlQunxFhggmQNm7bCgm2+5lWUnaoOL4brypd0k+qS4/TBFghDb+5zb3CesN98CdGuApEq+nYwKMh/XesMs7LepATOdNzHJg0acjulbARRLKa+Fc5ofo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KPY8ssQ8; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61e0949fc17so51015997b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 18:34:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715045695; x=1715650495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VvGkjH9SPvsjHvBH/WrCy4dSbt+wcqHhkwU5LfzuS0Q=;
+        b=KPY8ssQ8w5cp4ybcGORn6eJGseLb4POUHAkDqjpmZqIIXnqhAnNGrHx6PN9oGcz7+Q
+         rVwY8Gl++OY8cq395XSlzSbqXOS6O4EhWqncMtQqhF5seyBLYjzDOo5N1Y2BqiVEvSu4
+         qVx+3jMDNpigUE69jZnSHy8TiJjnxJiVisZ5tmivWC/r7azKt0dgQeW0oPKLlzlLizgN
+         2/qw5AowBJo+LyS53mVN0TBf1G+I4syo5pBmifiQrcT/BlHORI22bzEXv+9VOR3UY9um
+         2M1NEcmNzByKVm3sTwRQfahuGpEncHwtls96j36waw0fMJ0ZrwKZ5Qcpk4zTJXN6a9JW
+         9SXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715045695; x=1715650495;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VvGkjH9SPvsjHvBH/WrCy4dSbt+wcqHhkwU5LfzuS0Q=;
+        b=wVbLXK9XgPwPLnSO9U7JK1jGHcDIB2g1DW95LDm0Xq/LcFMDai8UlEbvZqt33dZ+qv
+         vuA/z5CpbJc6Y45DqL3r+/DQ5TcTHRXpDjAvzTZoGBoVj02zKJpMO+tjws8cntDrtirg
+         mFjuGpqQ38TVwsH8PvcQ/epdrg1lOkOIjcb2isgWCbk3hwRJXRo7mvViYU4U554A/O4g
+         mA2FslqTpPdkfoH5zxhc3kbXHXxets/DcRvlwGC7EZGNJKTbBii3+7ZIdVCUvCJBMwup
+         6DtYEo1prynSwKQy+k00aH8D9RgsnxtcxFSC3IG9QAxbTwYgxLHhIlncdODdv2m18d6d
+         niRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcLKXcSN5skNUDguwzI5nz17nMDLn9VkS3TrS0aIfrvoohIx5NWfU/eg/rujF2DL4kS5iNem/0m5LiZ19A9mTSS5tJgCdRn3cRWlho
+X-Gm-Message-State: AOJu0YzXZrsn3qEb2BU3GhvPGyJL3Fq23ROVTdom1a4YMMIWjGzv39Ti
+	IrDyDUERw+XeaLOwUnj7MK2i7PrPlC3tBBc52+k57+X/MDYV4YO31bWIMlqRvCcqfAidBkYh82I
+	UDw==
+X-Google-Smtp-Source: AGHT+IEuRRNgC6bmH2Ym7Hdh0kKkoS5NCGgVEW4kTiZkpma4/j2gQOn7KVKqRXFpAim0ldEq7Pn05YmuCaI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1893:b0:de4:67d9:a2c6 with SMTP id
+ cj19-20020a056902189300b00de467d9a2c6mr1291648ybb.2.1715045695256; Mon, 06
+ May 2024 18:34:55 -0700 (PDT)
+Date: Mon, 6 May 2024 18:34:53 -0700
+In-Reply-To: <20240506.ohwe7eewu0oB@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502050300.38689-1-rengarajan.s@microchip.com>
+Mime-Version: 1.0
+References: <20240503131910.307630-1-mic@digikod.net> <20240503131910.307630-4-mic@digikod.net>
+ <ZjTuqV-AxQQRWwUW@google.com> <20240506.ohwe7eewu0oB@digikod.net>
+Message-ID: <ZjmFPZd5q_hEBdBz@google.com>
+Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
+ configuration and violation
+From: Sean Christopherson <seanjc@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
+	Angelina Vu <angelinavu@linux.microsoft.com>, 
+	Anna Trikalinou <atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Forrest Yuan Yu <yuanyu@google.com>, James Gowans <jgowans@amazon.com>, 
+	James Morris <jamorris@linux.microsoft.com>, John Andersen <john.s.andersen@intel.com>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>, 
+	"Mihai =?utf-8?B?RG9uyJt1?=" <mdontu@bitdefender.com>, 
+	"=?utf-8?B?TmljdciZb3IgQ8OuyJt1?=" <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, 
+	Will Deacon <will@kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	"=?utf-8?Q?=C8=98tefan_=C8=98icleru?=" <ssicleru@bitdefender.com>, dev@lists.cloudhypervisor.org, 
+	kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, 
+	virtualization@lists.linux-foundation.org, x86@kernel.org, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 02, 2024 at 10:33:00AM +0530, Rengarajan S wrote:
-> The PTP_CMD_CTL is a self clearing register which controls the PTP clock
-> values. In the current implementation driver waits for a duration of 20
-> sec in case of HW failure to clear the PTP_CMD_CTL register bit. This
-> timeout of 20 sec is very long to recognize a HW failure, as it is
-> typically cleared in one clock(<16ns). Hence reducing the timeout to 1 sec
-> would be sufficient to conclude if there is any HW failure observed. The
-> usleep_range will sleep somewhere between 1 msec to 20 msec for each
-> iteration. By setting the PTP_CMD_CTL_TIMEOUT_CNT to 50 the max timeout
-> is extended to 1 sec.
+On Mon, May 06, 2024, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, May 03, 2024 at 07:03:21AM GMT, Sean Christopherson wrote:
+> > > ---
+> > >=20
+> > > Changes since v1:
+> > > * New patch. Making user space aware of Heki properties was requested=
+ by
+> > >   Sean Christopherson.
+> >=20
+> > No, I suggested having userspace _control_ the pinning[*], not merely b=
+e notified
+> > of pinning.
+> >=20
+> >  : IMO, manipulation of protections, both for memory (this patch) and C=
+PU state
+> >  : (control registers in the next patch) should come from userspace.  I=
+ have no
+> >  : objection to KVM providing plumbing if necessary, but I think usersp=
+ace needs to
+> >  : to have full control over the actual state.
+> >  :=20
+> >  : One of the things that caused Intel's control register pinning serie=
+s to stall
+> >  : out was how to handle edge cases like kexec() and reboot.  Deferring=
+ to userspace
+> >  : means the kernel doesn't need to define policy, e.g. when to unprote=
+ct memory,
+> >  : and avoids questions like "should userspace be able to overwrite pin=
+ned control
+> >  : registers".
+> >  :=20
+> >  : And like the confidential VM use case, keeping userspace in the loop=
+ is a big
+> >  : beneifit, e.g. the guest can't circumvent protections by coercing us=
+erspace into
+> >  : writing to protected memory.
+> >=20
+> > I stand by that suggestion, because I don't see a sane way to handle th=
+ings like
+> > kexec() and reboot without having a _much_ more sophisticated policy th=
+an would
+> > ever be acceptable in KVM.
+> >=20
+> > I think that can be done without KVM having any awareness of CR pinning=
+ whatsoever.
+> > E.g. userspace just needs to ability to intercept CR writes and inject =
+#GPs.  Off
+> > the cuff, I suspect the uAPI could look very similar to MSR filtering. =
+ E.g. I bet
+> > userspace could enforce MSR pinning without any new KVM uAPI at all.
+> >=20
+> > [*] https://lore.kernel.org/all/ZFUyhPuhtMbYdJ76@google.com
+>=20
+> OK, I had concern about the control not directly coming from the guest,
+> especially in the case of pKVM and confidential computing, but I get you
 
-This patch has already been merged, so this is just for my
-curiosity. The hardware is dead. Does it really matter if we wait 1s
-or 20 seconds. It is still dead? This is a void function. Other than
-reporting that the hardware is dead, nothing is done. So this change
-seems pointless?
+Hardware-based CoCo is completely out of scope, because KVM has zero visibi=
+lity
+into the guest (well, SNP technically allows trapping CR0/CR4, but KVM real=
+ly
+shouldn't intercept CR0/CR4 for SNP guests).
 
-	Andrew
+And more importantly, _KVM_ doesn't define any policies for CoCo VMs.  KVM =
+might
+help enforce policies that are defined by hardware/firmware, but KVM doesn'=
+t
+define any of its own.
+
+If pKVM on x86 comes along, then KVM will likely get in the business of def=
+ining
+policy, but until that happens, KVM needs to stay firmly out of the picture=
+.
+
+> point.  It should indeed be quite similar to the MSR filtering on the
+> userspace side, except that we need another interface for the guest to
+> request such change (i.e. self-protection).
+>=20
+> Would it be OK to keep this new KVM_HC_LOCK_CR_UPDATE hypercall but
+> forward the request to userspace with a VM exit instead?  That would
+> also enable userspace to get the request and directly configure the CR
+> pinning with the same VM exit.
+
+No?  Maybe?  I strongly suspect that full support will need a richer set of=
+ APIs
+than a single hypercall.  E.g. to handle kexec(), suspend+resume, emulated =
+SMM,
+and so on and so forth.  And that's just for CR pinning.
+
+And hypercalls are hampered by the fact that VMCALL/VMMCALL don't allow for
+delegation or restriction, i.e. there's no way for the guest to communicate=
+ to
+the hypervisor that a less privileged component is allowed to perform some =
+action,
+nor is there a way for the guest to say some chunk of CPL0 code *isn't* all=
+owed
+to request transition.  Delegation and restriction all has to be done out-o=
+f-band.
+
+It'd probably be more annoying to setup initially, but I think a synthetic =
+device
+with an MMIO-based interface would be more powerful and flexible in the lon=
+g run.
+Then userspace can evolve without needing to wait for KVM to catch up.
+
+Actually, potential bad/crazy idea.  Why does the _host_ need to define pol=
+icy?
+Linux already knows what assets it wants to (un)protect and when.  What's m=
+issing
+is a way for the guest kernel to effectively deprivilege and re-authenticat=
+e
+itself as needed.  We've been tossing around the idea of paired VMs+vCPUs t=
+o
+support VTLs and SEV's VMPLs, what if we usurped/piggybacked those ideas, w=
+ith a
+bit of pKVM mixed in?
+
+Borrowing VTL terminology, where VTL0 is the least privileged, userspace la=
+unches
+the VM at VTL0.  At some point, the guest triggers the deprivileging sequen=
+ce and
+userspace creates VTL1.  Userpace also provides a way for VTL0 restrict acc=
+ess to
+its memory, e.g. to effectively make the page tables for the kernel's direc=
+t map
+writable only from VTL1, to make kernel text RO (or XO), etc.  And VTL0 cou=
+ld then
+also completely remove its access to code that changes CR0/CR4.
+
+It would obviously require a _lot_ more upfront work, e.g. to isolate the k=
+ernel
+text that modifies CR0/CR4 so that it can be removed from VTL0, but that sh=
+ould
+be doable with annotations, e.g. tag relevant functions with __magic or wha=
+tever,
+throw them in a dedicated section, and then free/protect the section(s) at =
+the
+appropriate time.
+
+KVM would likely need to provide the ability to switch VTLs (or whatever th=
+ey get
+called), and host userspace would need to provide a decent amount of the ba=
+ckend
+mechanisms and "core" policies, e.g. to manage VTL0 memory, teardown (turn =
+off?)
+VTL1 on kexec(), etc.  But everything else could live in the guest kernel i=
+tself.
+E.g. to have CR pinning play nice with kexec(), toss the relevant kexec() c=
+ode into
+VTL1.  That way VTL1 can verify the kexec() target and tear itself down bef=
+ore
+jumping into the new kernel.=20
+
+This is very off the cuff and have-wavy, e.g. I don't have much of an idea =
+what
+it would take to harden kernel text patching, but keeping the policy in the=
+ guest
+seems like it'd make everything more tractable than trying to define an ABI
+between Linux and a VMM that is rich and flexible enough to support all the
+fancy things Linux does (and will do in the future).
+
+Am I crazy?  Or maybe reinventing whatever that McAfee thing was that led t=
+o
+Intel implementing EPTP switching?
 
