@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-172259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8821E8BEFF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:54:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4975B8BEFF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D1828286E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:54:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC90D1F234A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFFC7E107;
-	Tue,  7 May 2024 22:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9548B7E107;
+	Tue,  7 May 2024 22:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a2SyUCMt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKc0PXdk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817AE374D9;
-	Tue,  7 May 2024 22:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9E27E112;
+	Tue,  7 May 2024 22:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715122459; cv=none; b=lvymKOJAxXi0hEn0vEJBbqCBLmZU4LXxdR2Xg4+9gxtKAcUgkyaBKCyBAzkiNVWBP6JyrjbaL/wol34wtqZnH4EAGLZ3x3JziuhmcR9yGWKHcDIFu7geZABLu6ZO1hwbDNFRgjkm9gqYwVxpvYeD8p9f8QkKEiTcvK2AmL2gs9I=
+	t=1715122648; cv=none; b=IBZn3LZeFhjL4UkAc+N/nO59LujgyTnJFkBNgasi6zl6amoqLwMGebuoyiycKJFuX9PZNHbogeycFzbgVjibrndqEmArr07uMTkHOjEpyW/c/f1apm64f85hT9SpIDQ5QpNfKYdH6VDO+daaHykxXp0b/9YhVItr2myI6SgV1xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715122459; c=relaxed/simple;
-	bh=weDT3AULG+DpymysMWig04MbDKwtN3q1YtaWP79mB3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tSTYxRY/cw+exUcphe2kFhrVtITPmMzKmD1l1wB+56eV+ia2kLQPzbZnvW3m0gqo6/PIEJeiTyvXHs1jZIkti/wF8VW2SS9HUmTv5u6ng8/gEMmEakLHu5D8h/voGSs48NdVELDInInRUtytgL6o+PR8EveF/ccqKCmxw3Ck1Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a2SyUCMt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447LY5jb023828;
-	Tue, 7 May 2024 22:54:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=jyuABFncq0D2svYrB9Ea/MoDwXfjAhm3n9NkBI3OXIw=; b=a2
-	SyUCMtTYFraD8tzVLCCGUHVZSPGFMwgyyvnASA1hD32xvty9cvnbE2UVC8BMp371
-	VQ5RlXZrrLyhCRwTBDTK2EgejXo5vNFrsLh9qOxrmh0yB5OVul+znT0vupw34Ue6
-	jqjMis4rj14aGI3XQVUjilxjX4nTSS/wa17zKxnB8E/sMdMADBPMKM1dtopbEEOt
-	MHoQB/ixERhmRddUHvVtned4H3VSKYZ0XhbpJk/8tHcEVCK0J7Uw410bAhW7cIfz
-	tz6cs6NpVAd5IEnJF4nvC+porV2/pT0s/+UpAvuAreeUgKbVtgdUPw7ACX6iU6an
-	bv/5y70JCrEmqs4o5VYA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyspggebj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 22:54:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 447MsDEd021810
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 May 2024 22:54:13 GMT
-Received: from [10.110.84.74] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
- 15:54:07 -0700
-Message-ID: <9d9c2912-e965-435d-b0d9-7e6071c24ab3@quicinc.com>
-Date: Tue, 7 May 2024 15:54:06 -0700
+	s=arc-20240116; t=1715122648; c=relaxed/simple;
+	bh=QGtUVOE9/CgDIc5ostJalO8E2HHFGOn1/f1N88nAV5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u1g/vB0UERyky++aRSfRnWxEIF6l2kwDgQeqpLhJrupfLqW4hdPwJLgaqhen5YIECTJ3ru1EnxGa+CjgOquUdi9JwVbSL2PkpM/ShyI+8KxxfdK4kRK+WtYvQEA2xE9v92B3jClG6z4hnTJ/kXHNc2MSdRpOiXDj/7ZQFzY105o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKc0PXdk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47DF2C2BBFC;
+	Tue,  7 May 2024 22:57:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715122648;
+	bh=QGtUVOE9/CgDIc5ostJalO8E2HHFGOn1/f1N88nAV5k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GKc0PXdkr8iQ9Cmf2aj4lCpTn/aMVcF2CWUI5gNp7NIrQfgfvETAo0D9flSBoH/dl
+	 yYpQAVdbGXPlc3DVewgyfZwC6m+mtk8CcXxyt0kYIdF5NNd7Re/t5g9vuU1vPxjyQN
+	 zEwZFY/fOf0+jTXEEGhxg1rCGEv8RedNP9hBqYoQF6U6I6agV1gz03IQKYly9lgZb9
+	 rjzSTh3625X8JndT79I7BndhdtmGGmuEMvhSHGS0FMX0su90m6AIaTS735gyhA5VVR
+	 Dg+UD3B8vEeveqkuBOafkviUW4SBXBHgJmmeoMfIRrG6hz3eJJVYQUGgPn26gGmZxS
+	 KYH9N1xlOe+Lg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Nuno Pereira <nf.pereira@outlook.pt>,
+	Jiri Kosina <jkosina@suse.com>,
+	Sasha Levin <sashal@kernel.org>,
+	djogorchock@gmail.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.8 01/23] HID: nintendo: Fix N64 controller being identified as mouse
+Date: Tue,  7 May 2024 18:56:27 -0400
+Message-ID: <20240507225725.390306-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nilfs2: fix nilfs_btree_commit_convert_and_insert()
- kernel-doc
-Content-Language: en-US
-To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-CC: <linux-nilfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240507-nilfs_btree_convert_and_insert-kdoc-v1-1-bab3514eb753@quicinc.com>
- <CAKFNMomG+GuKJ53WmdWFONtimhbanKU-B_ZTdt5sEFxcuYxJ3w@mail.gmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <CAKFNMomG+GuKJ53WmdWFONtimhbanKU-B_ZTdt5sEFxcuYxJ3w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.8.9
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W7eNOJR1f83XcDyEtKRY46EpQEVwCOd6
-X-Proofpoint-ORIG-GUID: W7eNOJR1f83XcDyEtKRY46EpQEVwCOd6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_14,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999
- adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405070160
 
-On 5/7/2024 3:45 PM, Ryusuke Konishi wrote:
-> On Wed, May 8, 2024 at 7:23 AM Jeff Johnson wrote:
->>
->> Fix the following reported by make W=1:
->>
->> fs/nilfs2/btree.c:1871: warning: Function parameter or struct member 'btree' not described in 'nilfs_btree_convert_and_insert'
->> fs/nilfs2/btree.c:1871: warning: Excess function parameter 'bmap' description in 'nilfs_btree_convert_and_insert'
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  fs/nilfs2/btree.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
->> index 65659fa0372e..8299839b5129 100644
->> --- a/fs/nilfs2/btree.c
->> +++ b/fs/nilfs2/btree.c
->> @@ -1858,7 +1858,7 @@ nilfs_btree_commit_convert_and_insert(struct nilfs_bmap *btree,
->>
->>  /**
->>   * nilfs_btree_convert_and_insert -
->> - * @bmap:
->> + * @btree: bmap struct of btree
->>   * @key:
->>   * @ptr:
->>   * @keys:
->>
->> ---
->> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
->> change-id: 20240507-nilfs_btree_convert_and_insert-kdoc-7753c4a6e7c3
->>
-> 
-> Hi Jeff, thank you for posting.
-> 
-> However, a fix for this kernel-doc warnings is already queued in the
-> mm tree (to be merged in the next merge window).
-> 
-> Please refer to the patch below:
-> 
-> https://lkml.kernel.org/r/20240410075629.3441-3-konishi.ryusuke@gmail.com
-> https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-nonmm-stable&id=3da9b9650acc3a2a0c3d3f4542b93d4abe9da1de
-> 
-> 
-> Thanks,
-> Ryusuke Konishi
+From: Nuno Pereira <nf.pereira@outlook.pt>
 
-Awesome that others are helping to clean these :)
+[ Upstream commit 8db8c77059e75a0f418b10ede39dd82a9eb031fa ]
 
-Guess I should check lore before fixing so that I don't replicate work!
+This patch is regarding the recent addition of support for the NSO
+controllers to hid-nintendo. All controllers are working correctly with the
+exception of the N64 controller, which is being identified as a mouse by
+udev. This results in the joystick controlling the mouse cursor and the
+controller not being detected by games.
 
-/jeff
+The reason for this is because the N64's C buttons have been attributed to
+BTN_FORWARD, BTN_BACK, BTN_LEFT, BTN_RIGHT, which are buttons typically
+attributed to mice.
+
+This patch changes those buttons to controller buttons, making the
+controller be correctly identified as such.
+
+Signed-off-by: Nuno Pereira <nf.pereira@outlook.pt>
+Signed-off-by: Jiri Kosina <jkosina@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hid/hid-nintendo.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hid/hid-nintendo.c b/drivers/hid/hid-nintendo.c
+index ccc4032fb2b03..4b2c81b49b80e 100644
+--- a/drivers/hid/hid-nintendo.c
++++ b/drivers/hid/hid-nintendo.c
+@@ -481,10 +481,10 @@ static const struct joycon_ctlr_button_mapping n64con_button_mappings[] = {
+ 	{ BTN_TR,		JC_BTN_R,	},
+ 	{ BTN_TR2,		JC_BTN_LSTICK,	}, /* ZR */
+ 	{ BTN_START,		JC_BTN_PLUS,	},
+-	{ BTN_FORWARD,		JC_BTN_Y,	}, /* C UP */
+-	{ BTN_BACK,		JC_BTN_ZR,	}, /* C DOWN */
+-	{ BTN_LEFT,		JC_BTN_X,	}, /* C LEFT */
+-	{ BTN_RIGHT,		JC_BTN_MINUS,	}, /* C RIGHT */
++	{ BTN_SELECT,		JC_BTN_Y,	}, /* C UP */
++	{ BTN_X,		JC_BTN_ZR,	}, /* C DOWN */
++	{ BTN_Y,		JC_BTN_X,	}, /* C LEFT */
++	{ BTN_C,		JC_BTN_MINUS,	}, /* C RIGHT */
+ 	{ BTN_MODE,		JC_BTN_HOME,	},
+ 	{ BTN_Z,		JC_BTN_CAP,	},
+ 	{ /* sentinel */ },
+-- 
+2.43.0
+
 
