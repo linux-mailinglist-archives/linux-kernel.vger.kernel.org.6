@@ -1,159 +1,118 @@
-Return-Path: <linux-kernel+bounces-172439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CB88BF235
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC6F8BF22C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050321C203E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48964283E2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20269181306;
-	Tue,  7 May 2024 23:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CBC178CCA;
+	Tue,  7 May 2024 23:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mw5YEZCA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hc+MSFru"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEFF1802B9;
-	Tue,  7 May 2024 23:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C251708B9
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123532; cv=none; b=s62//80lRHwXX7i6jV4AF1zJAnQFc8P8t8j7fC2pJuepnwKIT2P8JVgDy8uTWTeHFaPpkgRMkHbb7QEEb/Vbh5V9im4DOQChPyvhaGv9YJa4R38/0j6oWr/zJ1xjDvu4foq8ijn+YvlXfpOabDWvTbq1NBxDjoOQ5VNXHyStkJM=
+	t=1715123525; cv=none; b=nHnUtPqEhpqW5cRHb1lKvOKJleg9S1qY0rO6zA6IG4dUOpvwm480Co670kANStC9zs0zHNLJLRBXzgAMpEqYtB34tgrPkNGrWWsHJHKZCrCOkp0ljcKvqT33MvC1HddqA2hJlA+R9p9ffJ6MGGm7skGjySGJLHiO7ceiSzlQ0pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123532; c=relaxed/simple;
-	bh=/nBKgpfChelk2SWz1tzhxnvoEXltEphE4iQB999gYxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SYTT26gK17t93X1eKqkqLNDwbHKLknjwtiZHtekCVOByxa/MT7NKTuwtkroFZO/XZPZeNpC54w+hQpgcQNNbvWu8WNZCLJdOuDk42hv4zm7EcUPGBS1IJNGrt82TpMOHBQ/BwtHpz4A7Hf2UyIhJSqTYeSyVCiw/LgoRJRoN8l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mw5YEZCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B44AC3277B;
-	Tue,  7 May 2024 23:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715123532;
-	bh=/nBKgpfChelk2SWz1tzhxnvoEXltEphE4iQB999gYxI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Mw5YEZCAVQVgS5c6a3iPzIGoKohZ/KWKKI3jPBxVVBKjkvHEbFGvbcx0xvtp8rpfr
-	 JJfKgKJK2gDUxE9ZKAG8QvG1WXxmFciOfwwsCLFR+V9uuqJrPkYy7j0WT4KfHmAEk8
-	 ZNUuY19mhfA543l6W+W5g7cj1Rbf4S3nEwcP8X/5UivhClOGTaYL6qJKeabTV5WrC0
-	 PGZybv6h7aXHJlE0eyfheXTAd83uZD2yohgyPNvGGVcPhXSEXyQdoCF9UNlfdNsSxo
-	 m2e9gLGBFEvtnAanN1Osk+tDxIGB5f5Jh8/8bh1ilhpE3cxYSYHJZNJHXq8cnahtBF
-	 9TMGmLBBq/2yw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 43/43] epoll: be better about file lifetimes
-Date: Tue,  7 May 2024 19:10:04 -0400
-Message-ID: <20240507231033.393285-43-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240507231033.393285-1-sashal@kernel.org>
-References: <20240507231033.393285-1-sashal@kernel.org>
+	s=arc-20240116; t=1715123525; c=relaxed/simple;
+	bh=QFNhWj9sw5gktxPchvCgkasg4aDKpludZsqro1wl380=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JsvqacVXeDA1SRbV8LX/7sbCWIAkoyqJl90EJ2npf0Ft3zQdu+IQ6r+lLE7mUuBlR9uTdxWIEJaSLpjYS3beUVdkWyY8L/cuBhjyoF/ggRiMNREIsA0mneOSkpTsIh9VVWzyBb9m5U6Qb58dYm9DBFeuCgA/F3c10FII2ihGFcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hc+MSFru; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447Msx4q010709;
+	Tue, 7 May 2024 23:11:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=FBqAShKqXxbLSTi/XWNVbqzsTD06CXSdErRUFZ9RsK4=; b=hc
+	+MSFruqfWcg1znotrs5tziKCvXR3FjMA4nk8QDejELOj+Vjw/5HMeje90ppqHJcp
+	vdDccjqn6OmlD0Ct1OCwgwrlLldjSnksW+XMvha+Vf67BM2NYfP7YsUGFMnQYNXf
+	gGtW4cYmkZakVcTWJWzBY7CYqo71pgj1cu+OtRPlGJwalpZa6tsVf7pX9CQw37wf
+	O4lk4qE7hc8LbFzhHH6Fqjedwh3Y1qco6ZChj2qOMoe+VKewWFSWc6iREYwiTGKy
+	LmNrSEZoadu+WAzyPhM5m1U/XER+vDZs93G2mT61rDSkvS+mCYiwM7E8BgYmAG2W
+	YSqpPgrMrZcvL0k/Ez6w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xysg4rg6f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 23:11:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 447NBGws015491
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 7 May 2024 23:11:16 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
+ 16:11:15 -0700
+Message-ID: <ae3ebe43-be3b-49dd-a5ad-4dae097e9ff8@quicinc.com>
+Date: Tue, 7 May 2024 16:11:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.30
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] jffs2: nodemgmt: fix kernel-doc comments
+To: Randy Dunlap <rdunlap@infradead.org>, <linux-kernel@vger.kernel.org>
+CC: David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger
+	<richard@nod.at>, <linux-mtd@lists.infradead.org>
+References: <20231205173222.12575-1-rdunlap@infradead.org>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20231205173222.12575-1-rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yFu2nQXpwZLoMKxzG9dgbeON128BV444
+X-Proofpoint-ORIG-GUID: yFu2nQXpwZLoMKxzG9dgbeON128BV444
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_15,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 mlxlogscore=999 clxscore=1011 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405070164
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+On 12/5/23 09:32, Randy Dunlap wrote:
+> Update the end of one sentence where a comment was truncated. (dwmw2)
+> 
+> Fix a bunch of kernel-doc warnings:
+> 
+> nodemgmt.c:72: warning: Function parameter or member 'sumsize' not described in 'jffs2_do_reserve_space'
+> nodemgmt.c:72: warning: expecting prototype for jffs2_reserve_space(). Prototype was for jffs2_do_reserve_space() instead
+> nodemgmt.c:76: warning: Function parameter or member 'sumsize' not described in 'jffs2_reserve_space'
+> nodemgmt.c:76: warning: No description found for return value of 'jffs2_reserve_space'
+> nodemgmt.c:503: warning: Function parameter or member 'ofs' not described in 'jffs2_add_physical_node_ref'
+> nodemgmt.c:503: warning: Function parameter or member 'ic' not described in 'jffs2_add_physical_node_ref'
+> nodemgmt.c:503: warning: Excess function parameter 'new' description in 'jffs2_add_physical_node_ref'
+> nodemgmt.c:503: warning: No description found for return value of 'jffs2_add_physical_node_ref'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: linux-mtd@lists.infradead.org
 
-[ Upstream commit 4efaa5acf0a1d2b5947f98abb3acf8bfd966422b ]
+I was about to submit a patch for these, but then checked lore and saw 
+this was posted a while back, but so far not merged. Hopefully my R-B 
+will provide some momentum
 
-epoll can call out to vfs_poll() with a file pointer that may race with
-the last 'fput()'. That would make f_count go down to zero, and while
-the ep->mtx locking means that the resulting file pointer tear-down will
-be blocked until the poll returns, it means that f_count is already
-dead, and any use of it won't actually get a reference to the file any
-more: it's dead regardless.
-
-Make sure we have a valid ref on the file pointer before we call down to
-vfs_poll() from the epoll routines.
-
-Link: https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
-Reported-by: syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/eventpoll.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 1d9a71a0c4c16..0ed73bc7d4652 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -876,6 +876,34 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- 	return res;
- }
- 
-+/*
-+ * The ffd.file pointer may be in the process of being torn down due to
-+ * being closed, but we may not have finished eventpoll_release() yet.
-+ *
-+ * Normally, even with the atomic_long_inc_not_zero, the file may have
-+ * been free'd and then gotten re-allocated to something else (since
-+ * files are not RCU-delayed, they are SLAB_TYPESAFE_BY_RCU).
-+ *
-+ * But for epoll, users hold the ep->mtx mutex, and as such any file in
-+ * the process of being free'd will block in eventpoll_release_file()
-+ * and thus the underlying file allocation will not be free'd, and the
-+ * file re-use cannot happen.
-+ *
-+ * For the same reason we can avoid a rcu_read_lock() around the
-+ * operation - 'ffd.file' cannot go away even if the refcount has
-+ * reached zero (but we must still not call out to ->poll() functions
-+ * etc).
-+ */
-+static struct file *epi_fget(const struct epitem *epi)
-+{
-+	struct file *file;
-+
-+	file = epi->ffd.file;
-+	if (!atomic_long_inc_not_zero(&file->f_count))
-+		file = NULL;
-+	return file;
-+}
-+
- /*
-  * Differs from ep_eventpoll_poll() in that internal callers already have
-  * the ep->mtx so we need to start from depth=1, such that mutex_lock_nested()
-@@ -884,14 +912,22 @@ static __poll_t __ep_eventpoll_poll(struct file *file, poll_table *wait, int dep
- static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
- 				 int depth)
- {
--	struct file *file = epi->ffd.file;
-+	struct file *file = epi_fget(epi);
- 	__poll_t res;
- 
-+	/*
-+	 * We could return EPOLLERR | EPOLLHUP or something, but let's
-+	 * treat this more as "file doesn't exist, poll didn't happen".
-+	 */
-+	if (!file)
-+		return 0;
-+
- 	pt->_key = epi->event.events;
- 	if (!is_file_epoll(file))
- 		res = vfs_poll(file, pt);
- 	else
- 		res = __ep_eventpoll_poll(file, pt, depth);
-+	fput(file);
- 	return res & epi->event.events;
- }
- 
--- 
-2.43.0
+Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
 
