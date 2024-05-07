@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-170821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFFF8BDC86
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59748BDC89
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6672825E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:39:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1316A1C20D58
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD27B77F2F;
-	Tue,  7 May 2024 07:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5504513C3D7;
+	Tue,  7 May 2024 07:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBZ1e2+k"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9gF+7FZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEC2A59;
-	Tue,  7 May 2024 07:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4B3A59;
+	Tue,  7 May 2024 07:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715067560; cv=none; b=RrQstek3DihkbDdnAnCbpD4yg+7e6utySo3uEd8EETrBazuKgzt+t5dXB+k0wfd0flTAtM1gvTG7d348W51FPpTN5a223TdfI5XUI3MqLs7m/QQOtluyanNf5ubLUqbLHDvSsY1DMg+L8KHB4gvjYhZDRd9h+HlLt+Ahp+zJhf8=
+	t=1715067575; cv=none; b=b02KVfIbHs80DEWx0iGuZoVFV9LPsvtd3S1soAOaI53e6X7VYYb4Rd8wLVmgKr9J2ozR0dC/i4EbCj4gvXBqRZemjHQpumFpbDk0As8i/VdB9jGn8xHc3QQGpAvbcOW/K6is1wU7l5UdB5Nxz8SQX/Ts/nKa/rP7aNI/y2R8Zns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715067560; c=relaxed/simple;
-	bh=W3rMoftBCTnFGhHuj562gmyJ5nTr3AiKfDHakVAztus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TGXLPFFzyLCU4YJ3sXSzjRHRfwKfQZVDsKWLTOQbNOLpXwxkatkjvvZnZYBW+QgEjDnc/JnfAHAIK7QqF67YN/5krsydhpXbydfkxaGOICFFPyjAzGEnU3Gd7FokmB4HhH6KxnfPiWEmjm7yYMUIRtEEN9TtF4NDguErvZGVb/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBZ1e2+k; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-51fea3031c3so3443851e87.0;
-        Tue, 07 May 2024 00:39:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715067557; x=1715672357; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dxn9PE6PqeRe9A+FKlp89jxfX2ErRJUfIgz4NjuiDr4=;
-        b=OBZ1e2+kL6yBeLZsUAG9VgXgsWl+tFLc45HeNTbLiXFGPdaqv3qsdyDu6M/Jeaie0T
-         dklW4ugILOJFOClaCgMN/FZhIDVB7Yqlr121xoDTGRC48FJR7mtGzdNF6yxS6kfsmICp
-         macP3ORSfgoIUTi+7gqfQpMazu0cpgEiKwF0jsq3UB7bhRnC0xaML4xJZByqPHBJRaS3
-         XH8+Rckzd9gPzJxHjSwF40RA2++osEK2Qh3ryBSj4szZS/igAGN6zrnjW2vD/MGIRkiV
-         R+9y/xY5aWc/3K/2ifj2GmWDcXKYAXkleHpOrtuBfDJTeQa8CiR8ei5VD47oN0habNLT
-         6TAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715067557; x=1715672357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dxn9PE6PqeRe9A+FKlp89jxfX2ErRJUfIgz4NjuiDr4=;
-        b=gaBqIl3NBwPLd/on7pV8c0e2YrUfmIuTDWRNALrFTEHZ4zUgsfZhdkQzfHiit6W8su
-         On/i6EEk/jFtTa70bqb/Nc6UwJI37xtyqtmTRyde01aOxMkrlP+ykyWptyNrubAVaHqE
-         ZbBKKWFO8aEVAo+UhR7M1IxF4TvgCfxZaZ53ohp+tgYuXAWqRvY2zkU0p1f2882p2UEj
-         69ph6SCT8ZoYBtc4UEbWuzPrLOdQ5AXSiLsT6LyRRNeWD6g5xqO48sdRR6multVscVhI
-         J8kE23+HlzyUyuRAnmyn8HrYlxrPlSYJwpib7bmFyNfhEW4cSsgEttq93vtW8Bjb0W/E
-         1RFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJdN3xmyLEbAbzqLgumMUDyXwIGzfdFWpvaBx7AsqAVePVxIoo4I8XdnFj+6PFWsjrSuRTMXbA4KVqUxwm2ATySBxmymKL
-X-Gm-Message-State: AOJu0YyLFLTwkYWbU37mHdpZIkqDWBaPWy95/b2UZSs3HVLwYtLAutsl
-	WCAMggjpBpFXB6s7QdOCINPdVXeyB/mJbkJYS2CH7OTy0AZ8mkqdEApf53oeFti42Fo0BSxXpQF
-	X08PprN602OxFHk1MAGDoBXQ1KHNhK67ytTU=
-X-Google-Smtp-Source: AGHT+IG6MwTWs/fqrivz7LO6egxrTEGvus1Z/0Ga9g4atGV0GQFGxW3aC0oo32jK10Gd4z5XCUAVOQbdLs4XrdVSUBg=
-X-Received: by 2002:a05:6512:131e:b0:51a:f11c:81db with SMTP id
- x30-20020a056512131e00b0051af11c81dbmr12067377lfu.30.1715067556390; Tue, 07
- May 2024 00:39:16 -0700 (PDT)
+	s=arc-20240116; t=1715067575; c=relaxed/simple;
+	bh=rJpFn1AO9QkoOchyzDCE9TfU4pQm9RHy9KJ9ICU1PyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D1EsRuKe4uhCEikRUaPWhztRojkrB7Z+GmIYLVPy/9hKsbuIgZVWN7EINiKkkjn375uOOklZW6OXiQQU8YKLY3nNGZJM6UtwxOY6cOw4KN6ZHNc1ANqAhcJtjPFACc0SZ5TWPbXofUylUbvxPonjL0grn4BKIC1ZPU19UvJ7HVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L9gF+7FZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609DCC2BBFC;
+	Tue,  7 May 2024 07:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715067575;
+	bh=rJpFn1AO9QkoOchyzDCE9TfU4pQm9RHy9KJ9ICU1PyM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=L9gF+7FZ6nHYPWp4shMqyCWwss9CfOmgX3yR+TzEemeEu6/MM9FfL5tmUoHUnJxC/
+	 Ee0P8hN8UE31H1Lezd8mAQ/SOUYZfehRwVYz0o9KQthH2+fnknhPPlNdflrL1mruLJ
+	 nPQTRja9UDNtTkqRDZH4yhbiJu9444DCGyxQFI/99Cuje6MKfp9Q3+9VuTAn+qIucx
+	 6EPNF8uPXyEHP2vkM6Z6gfq7RcFbeES9fuwpjlpR/zdX0uS0HMV9vmRc0lPYOb63vU
+	 P3oyxFFRNCb1sJvxbK/7Q9GJgE/cPxrWjBqzhBL2qSDgfGTUchkmFvdcE/O/uKkJVw
+	 9G9UXN9PNqeLQ==
+Message-ID: <41e54b6e-7848-415f-b913-d481509d5e8a@kernel.org>
+Date: Tue, 7 May 2024 16:39:32 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEkJfYOoJZZnXioMsaHNHVj8e77Ch8UqKhNcR_UrzU9tJUKoSg@mail.gmail.com>
- <CANn89iLFvGd+=YCbzm==fA3Q0dj=FC-gTZy3kVJ0DTpZ5hZC8w@mail.gmail.com>
-In-Reply-To: <CANn89iLFvGd+=YCbzm==fA3Q0dj=FC-gTZy3kVJ0DTpZ5hZC8w@mail.gmail.com>
-From: Sam Sun <samsun1006219@gmail.com>
-Date: Tue, 7 May 2024 15:39:04 +0800
-Message-ID: <CAEkJfYP9PdD=4kbqWac0ny+X-D5YdZrtqW8VukFak0zRMo+=7Q@mail.gmail.com>
-Subject: Re: [Linux kernel bug] general protection fault in nexthop_is_blackhole
-To: Eric Dumazet <edumazet@google.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, davem@davemloft.net, 
-	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xrivendell7@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: rockchip-ep: Remove wrong mask on subsys_vendor_id
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>, rick.wertenbroek@heig-vd.ch
+Cc: stable@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240403144508.489835-1-rick.wertenbroek@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 7, 2024 at 3:31=E2=80=AFPM Eric Dumazet <edumazet@google.com> w=
-rote:
->
-> On Tue, May 7, 2024 at 9:00=E2=80=AFAM Sam Sun <samsun1006219@gmail.com> =
-wrote:
-> >
-> > Dear developers and maintainers,
-> >
-> > We encountered a general protection fault in function
-> > nexthop_is_blackhole. It was tested against the latest upstream linux
-> > (tag 6.9-rc7). C repro and kernel config are attached to this email.
-> > Kernel crash log is listed below.
->
-> This is another reiserfs bug, please let's not be mistaken.
->
-> We have dozens of syzbot reports about reiserfs.
->
-> Thank you.
->
+On 4/3/24 23:45, Rick Wertenbroek wrote:
+> Remove wrong mask on subsys_vendor_id. Both the Vendor ID and Subsystem
+> Vendor ID are u16 variables and are written to a u32 register of the
+> controller. The Subsystem Vendor ID was always 0 because the u16 value
+> was masked incorrectly with GENMASK(31,16) resulting in all lower 16
+> bits being set to 0 prior to the shift.
+> 
+> Remove both masks as they are unnecessary and set the register correctly
+> i.e., the lower 16-bits are the Vendor ID and the upper 16-bits are the
+> Subsystem Vendor ID.
+> 
+> This is documented in the RK3399 TRM section 17.6.7.1.17
+> 
+> Fixes: cf590b078391 ("PCI: rockchip: Add EP driver for Rockchip PCIe controller")
+> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+> Cc: stable@vger.kernel.org
 
-Sorry for my mistake and thanks for pointing out. I only checked the
-call stack without checking the repro.  I will ban the reiserfs in
-future testing.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-Best Regards,
-Yue
+> ---
+>  drivers/pci/controller/pcie-rockchip-ep.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
+> index c9046e97a1d2..37d4bcb8bd5b 100644
+> --- a/drivers/pci/controller/pcie-rockchip-ep.c
+> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
+> @@ -98,10 +98,9 @@ static int rockchip_pcie_ep_write_header(struct pci_epc *epc, u8 fn, u8 vfn,
+>  
+>  	/* All functions share the same vendor ID with function 0 */
+>  	if (fn == 0) {
+> -		u32 vid_regs = (hdr->vendorid & GENMASK(15, 0)) |
+> -			       (hdr->subsys_vendor_id & GENMASK(31, 16)) << 16;
+> -
+> -		rockchip_pcie_write(rockchip, vid_regs,
+> +		rockchip_pcie_write(rockchip,
+> +				    hdr->vendorid |
+> +				    hdr->subsys_vendor_id << 16,
+>  				    PCIE_CORE_CONFIG_VENDOR);
+>  	}
+>  
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
