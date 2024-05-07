@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-172158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0723B8BEE3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:43:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E908BEE5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BFE1B22672
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:43:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8107B24BAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD34941C87;
-	Tue,  7 May 2024 20:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A419A56462;
+	Tue,  7 May 2024 20:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MT8jwcyT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jHLGKIa3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kObYxWcr"
+Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EB0187330;
-	Tue,  7 May 2024 20:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC03454FAA;
+	Tue,  7 May 2024 20:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715114604; cv=none; b=n6FLm3LG3gf5yvtbUTTZavNuoow19EBOTKSdFnlFO/HKTR6jrQeFIemG/j6Hetef75oD7qRjtu8Zqq6Y8BJvN3IZuFxJp7ZcOb8smSCcOU4L1PRjZV526FgpneTn9j3vKUBHzA8m45zj6g5JudhGpkv1D53VFCbcM4diz5asiV8=
+	t=1715114932; cv=none; b=RswfOPwZhD71jVX5rtFQFpNW+AuP6lZ35W8EKfW3eWrEBqzbH92omItNbn8fZrS9/dqDew463rbZ7cli6HAm/Z8Smu8xS9mJ6vZLyx4ZzgLMqPSxNywDmdfIUPj+sI4ka21osWHHfeSPCZ2qL9lJYOXqJ4ue13Jwmcbf3W55fYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715114604; c=relaxed/simple;
-	bh=HXRsZkxS+ayWCNvb2KUtd+RjbkcIYEhK6dtv1mcsY7U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=A9eT9H9VFxdSF+bEULdzORxnEi0WmhoLBEhWACQRdSGYcbK+xF2JFDq6dIfCawkbxSCDWq6iLaQUmw7dVTUvG12At9s7MJkVNhr0rv1E0LBmuaecdH/ierwbpf8cYgiLMyccJNujG/DolrVctTUn4ALWEWaAunoFGW3G5ALqtfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MT8jwcyT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880F6C2BBFC;
-	Tue,  7 May 2024 20:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715114603;
-	bh=HXRsZkxS+ayWCNvb2KUtd+RjbkcIYEhK6dtv1mcsY7U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MT8jwcyTzSKWbb+y2Camk4Jqm6WK5lJDfWK//yqNx0NxtIdvOgU6UyiiIeBzo0uSN
-	 SA8EJv3VAlxiAhS0zMrOLqpA5OwWD7RC/Ym4Vc+90vbU1reOgzeCXZXvelJfS4/8RW
-	 e2VQzttr+cSVsqX0nw3Wc9t246ng+u19syJjOrKaKaJtYIYi0+K/rWChJgv/7QhQhR
-	 8b+Djf9IkECGAkwW6nHyWmvpsQJuop2Z5BWX+bHZ2rxtagjBLZ3hjNy96B7T76wy1o
-	 zHRFpkVViVP7+5Y1DBH7ieN2LM200vyEc+1UCfMCWJR9yvpbpe062LgCG1Fyu36HzW
-	 3DONOBu8HdW2A==
-Message-ID: <b3e320ecb16320f88d7db566be51b1e9.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715114932; c=relaxed/simple;
+	bh=HEUFsU6+GbrvvWJ5r0D3OYRudWAEMmNWkbpg2pnlAck=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=sUHfAz5FxE00XIVobYAviz2PSX4ZMXDH4z3QIlzWxL5Tbg5yPiaybGAW1nmyi43ioS83sQWHvL/y/wz+kYTtShdxKecVFfFQEdsXkxE/8ze6k5sz08mcwjw1IFWSuYO5Y7wHZWgNd03IbGd6thlJqKerg5r89N0dEXuDicpBNaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jHLGKIa3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kObYxWcr; arc=none smtp.client-ip=64.147.123.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id 94C0C1C0010C;
+	Tue,  7 May 2024 16:48:49 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 07 May 2024 16:48:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715114929; x=1715201329; bh=bk57LfF5IJ
+	RUTZp8F/Afjo6cLQ7YrYnev8qqlUkN1Fs=; b=jHLGKIa3qEI3RgJasiaH9SsUaw
+	X79aOnnHvHVgkOosQFLPc0t963nlCvuO6Yc03ZS1ruBcJ8btrM3KtGhm5FxgW0Ll
+	zgA8HBjq6ioGdUnu/Ddd8+KRNY0lCeGYsZmDdULvrjAgxa2JuSpsTUx4I/shvVDy
+	w3VqVmVATXrwND1RmJWvN04/R6aVOcCdohU+3Iq9YDWEbzy3TeLH7wT5HApuDuYI
+	Pt/0hPQIYxVXD4YlvA9gvX2MZdfIPWTBngvCVprCECXA4110EDIjq5K0A1pXtYuK
+	6k635JQn+T8nEHKyjiFKlUxx8uk8hHvs9+lk9iO7QLjrIY69zC/tHlEsUaJw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715114929; x=1715201329; bh=bk57LfF5IJRUTZp8F/Afjo6cLQ7Y
+	rYnev8qqlUkN1Fs=; b=kObYxWcrRekpOxEtvCJBSwu9WrJ3saNNzge2zGuNoBkK
+	OCyjfJ1ke1ifE84O6HIWbIQtCfLaWYOdA9eVjNm4Rh3ezbzgqIzT81Z/15epD+g5
+	9hI2FzEvaKdhx1O81buQ28ue1Obdqnhy/FvqLCFQKEOyHeDPd5kgraO0GFHSWylJ
+	0H2ReUCM8VrfN6izgNefffb9qTCNp32uyxrqKK2ek+U64enwd2iP0it6T05+PCAX
+	015josKe+GqYO0MTd2AZdQ6Y2yvZD+u0abyxgeZsAyaKKQr6dOuQBfp2VUQNYn3u
+	lzG9vKW8vbO6RC+bNlbz2O0WZZlpRfU0fOrelwouOA==
+X-ME-Sender: <xms:sJM6ZgYcnENuCjx08OQtuFu4Bn5Sk7IfKmQZT7owBLRVLRgiW6Wn9A>
+    <xme:sJM6ZrZuI1wZIqDwOXMaagJ0HkbxkbDYXSx-TGerC6uW533z3NbIs6tC0qRg4W-hn
+    iRzXXJ1gJV0p4Ck2H4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgudehudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:sJM6Zq__tesrTM01qibvZ852Q1AhH79yZ3aK9WAxR3rZj_-moilUEQ>
+    <xmx:sJM6ZqqDbJwp8ksHWcC1EJhShau5KOYKIRgPRG-uLpqAvQvgTyzZEQ>
+    <xmx:sJM6ZrqPeiGf_qyhkUVH3o5Z6DtENDPwu62tAojKoNBdPcwqWkF-DQ>
+    <xmx:sJM6ZoTqrqq9BW7LwxJX_RGtBtEYjPHVNWBECyCEnXLvMSANbohagQ>
+    <xmx:sZM6ZsDEhhKTFp0mu6xGdHAFdYMxjSvfBua4b8Lwogc9Bq79pFNUjfgP>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BB590B6008F; Tue,  7 May 2024 16:48:48 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b1fd9806-3e33-488a-a5a9-a156a2c735d2@kernel.org>
-References: <20240504120624.6574-1-krzysztof.kozlowski@linaro.org> <8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org> <b1fd9806-3e33-488a-a5a9-a156a2c735d2@kernel.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 07 May 2024 13:43:21 -0700
-User-Agent: alot/0.10
+Message-Id: <29b33c18-f123-4656-8507-406c87a12ec8@app.fastmail.com>
+In-Reply-To: <20240507201238.213396-2-thorsten.blum@toblux.com>
+References: <20240507201238.213396-2-thorsten.blum@toblux.com>
+Date: Tue, 07 May 2024 22:48:26 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thorsten Blum" <thorsten.blum@toblux.com>,
+ "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>,
+ "Amol Maheshwari" <amahesh@qti.qualcomm.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] misc: fastrpc: Use memdup_user()
+Content-Type: text/plain
 
-Quoting Krzysztof Kozlowski (2024-05-06 22:54:10)
-> On 07/05/2024 01:44, Stephen Boyd wrote:
-> > Quoting Krzysztof Kozlowski (2024-05-04 05:06:22)
-> >> The following changes since commit 4cece764965020c22cff7665b18a0120063=
-59095:
-> >>
-> >>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-> >>
-> >> are available in the Git repository at:
-> >>
-> >>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/=
-samsung-clk-6.10
-> >=20
-> > I'm getting compile warnings. Is there a pending fix? Also, why is GS101
->=20
-> I don't see any of these warnings. Neither local (W=3D1), nor on my CI,
-> nor reported by LKP (which reported build successes for this branch).
-> How can I reproduce it?
+On Tue, May 7, 2024, at 22:12, Thorsten Blum wrote:
+> Switching to memdup_user() overwrites the allocated memory only once,
+> whereas kzalloc() followed by copy_from_user() initializes the allocated
+> memory to zero and then immediately overwrites it.
+>
+> Fixes the following Coccinelle/coccicheck warning reported by
+> memdup_user.cocci:
+>
+> 	WARNING opportunity for memdup_user
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-I ran this command
+The patch looks correct to me.
 
- make W=3D1 ARCH=3Darm CROSS_COMPILE=3Darm-linux-gnueabi- drivers/clk/samsu=
-ng/clk-gs101.o
+> ---
+>  drivers/misc/fastrpc.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 4c67e2c5a82e..2857cddaf812 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -1259,17 +1259,12 @@ static int 
+> fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>  		goto err;
+>  	}
+> 
+> -	name = kzalloc(init.namelen, GFP_KERNEL);
+> -	if (!name) {
+> -		err = -ENOMEM;
+> +	name = memdup_user((void __user *)(uintptr_t)init.name, init.namelen);
+> +	if (IS_ERR(name)) {
+> +		err = PTR_ERR(name);
+>  		goto err;
+>  	}
 
-and I see the warnings. They're actually upgraded to errors.
+There is also a chance to simplify this further using u64_to_user_ptr()
+instead of the double cast if you want.
 
->=20
->=20
-> > describing clk parents with strings instead of using clk_parent_data?
->=20
-> GS101 uses existing Samsuung clock framework, so that's how it is done
-> there. There is nothing odd here, comparing to other Samsung clocks.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Ok. Is anyone working on migrating Samsung clk drivers to the non-string
-way?
+      Arnd
 
->=20
-> >=20
-> > In file included from drivers/clk/samsung/clk-gs101.c:16:
-> > drivers/clk/samsung/clk-gs101.c:2616:7: error: =E2=80=98mout_hsi2_mmc_c=
-ard_p=E2=80=99
-> > defined but not used [-Werror=3Dunused-const-variable=3D]
-> >  2616 | PNAME(mout_hsi2_mmc_card_p)     =3D { "fout_shared2_pll", "fout=
-_shared3_pll",
->=20
-> I see indeed some unused variables and I will drop them but your
-> warnings are not reproducible.
-
-Weird! I use gcc-12.2 if that helps. I've been meaning to upgrade but I
-also don't see much urgency.
-
-I'll wait for the next PR.
 
