@@ -1,77 +1,202 @@
-Return-Path: <linux-kernel+bounces-170724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEACE8BDB19
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:06:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85A28BDB20
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7071F22DC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D977D1C21F9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF5F6F079;
-	Tue,  7 May 2024 06:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A62C6EB75;
+	Tue,  7 May 2024 06:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jY+4x5NE"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ipqF4hl/"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3B16D1C8;
-	Tue,  7 May 2024 06:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A596D5FDA5;
+	Tue,  7 May 2024 06:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715061982; cv=none; b=RexPLrRTla5bzNuTgncbCKb7hmBXa2ZdJ5QXV83pt9dKCMTiN2d3x82bRrvTgakA1kpnZi2BNEeegWCuFPX/3sMWMg0PdlDTWHtaotKQvXNG7gd09uHvJzXGj9D7pwRu8pE8Rrxa/tHiX3GTXKVMyB0vz4YdjhM0J1r+KsjoLzo=
+	t=1715062074; cv=none; b=B/IfhnCS3Q/Ov3rZ0/nLqNp8xNT6H55Y2/g88jYV09H2EyO7H6IuE58Z36dsAOABTy3hptcVnV9zSaV1mriD7e+Ch3r9YpVTxkhFZTOMo3PwU21v8Yb0wRbBSry83OUwt+nRF0ze4x/k+cweZY046VHQqVLry3Ny5moibF67myc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715061982; c=relaxed/simple;
-	bh=kq0iE4Ltuz++mXgjo8EXa1DxZTvpmf9jk3QNV+WGZTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnW1NFEdIYSNtlt1vNVOE/fypBw+k8fKQ7zbcPEOYxe8lMnpsL5NmT7nEcxX54sA+Bg3+aumo2ddlDAW0maqj1cHcckWo+R7gNOUaMIUf9b2JHb7jagMk6rdBUBBQpvorm0OxecWldl85cfEAH5WdICv++7qN0DfYzzgAE1IZ/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jY+4x5NE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AbyBUhF1bZR9QzFx1wqzPcMYZQU9/Sfuec0QHc4Ti30=; b=jY+4x5NEQ57r046QXBQyh12aaV
-	Q0kcP7nsaiQxk0TujJcJmmB3DzHR6560Kp2VpnrUWoz1RbzuQwudmHvlig3XZFfjvmCK1uKSybQoQ
-	tFlQ2aLMNrfSdpG8EoBn0d3oi91PfqGsmJ5Q65WDkKikWcTD30tS9uvj25m2Qv71FPhEiGSNVP+CW
-	e3ejvgmwPdApmsDMKau6IhFtqdyQqRCXMHHFkOr1G4d6NJyG7NgQB2oMFzcYiEqgU7wis7ii9/CAG
-	5khYwAS4qVTDsBCB1fzO0BnPGBTha6rzeczrAhGxl16drwMqmgbbL+RKq3G8fsk8GB+pNiMBmuEnt
-	8l0ePAtQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4Dxx-00000009mYM-2Fks;
-	Tue, 07 May 2024 06:06:17 +0000
-Date: Mon, 6 May 2024 23:06:17 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
-Message-ID: <ZjnE2SjU7lGD0x5A@infradead.org>
-References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
+	s=arc-20240116; t=1715062074; c=relaxed/simple;
+	bh=PlQSgc+9IxLV0sJ6C1/5bvFwcWpttEUfHiGgnmdu6Dw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cUzBYdEq6OjEwqlwZuCGJBuA6F8W5dqrVs/kwK4vVk3LOGu5frBNnenmU+6Jt/OZXhMut75df8+9dI9FS1zGMvuId3mgEOL30KU2MDMvOOeuXPeApU2O0++FY/dv9YHQ4PFpCX4b84haJ4tuQq+UX1/vAHs5MVw+4LNK2iXdRhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ipqF4hl/; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715062070;
+	bh=PlQSgc+9IxLV0sJ6C1/5bvFwcWpttEUfHiGgnmdu6Dw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ipqF4hl/Rcm2Qj/XN/NVqODYOMJ6wZnkt9fpAiy98aO/tLdRWOib8pnJYQu2KXfWq
+	 nFr9SSNAWgzhhZuIWGSvUbIYAO3FvKoBHBqvJcyZBCP/fAIb4S6dQZaDrSko8AHZqe
+	 ghJQ7o3IXG0a9eGDBLCZwXNawWI6oRa3DmJwCkCXzBbR/7dWsX3lp1irUIqgJGy56w
+	 TexPPvhiblZgrBX8xS3O/wsGBqPYX/pE8IZridNeFfqFuDPqcoxiSga7I59V3jjvEV
+	 wKTl9+sm3eXksZXwIrDdEevFXuH8R4SHwP+g9TCVBVD8PFDssxfR112SS9CSE0ZrQ2
+	 EErlUtRQ5weZw==
+Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 19B6D3782112;
+	Tue,  7 May 2024 06:07:46 +0000 (UTC)
+Message-ID: <b143f1e8-e595-4f09-b6ab-d7e5743d586e@collabora.com>
+Date: Tue, 7 May 2024 11:37:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/5] drm/ci: update xfails for the new testlist
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
+ helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
+ robdclark@gmail.com, david.heidelberg@collabora.com,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ mcanal@igalia.com, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org,
+ linux-kernel@vger.kernel.org
+References: <20240430091121.508099-1-vignesh.raman@collabora.com>
+ <20240430091121.508099-6-vignesh.raman@collabora.com>
+ <hon4klkoaouuxhtvm3qb3qstsrdcibihksyrmvxkt3taijl6wb@ubitr6namryw>
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <hon4klkoaouuxhtvm3qb3qstsrdcibihksyrmvxkt3taijl6wb@ubitr6namryw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
-> The fxr->file1_offset and fxr->file2_offset variables come from the user
-> in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
-> Check the they aren't negative.
+Hi Dmitry,
+
+On 30/04/24 15:45, Dmitry Baryshkov wrote:
+> On Tue, Apr 30, 2024 at 02:41:21PM +0530, Vignesh Raman wrote:
+>> Now the testlist is used from IGT build, so update
+>> xfails with the new testlist.
+>>
+>> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+>> ---
+>>   .../gpu/drm/ci/xfails/amdgpu-stoney-fails.txt | 47 +++++++----
+>>   .../drm/ci/xfails/amdgpu-stoney-flakes.txt    |  8 +-
+>>   .../gpu/drm/ci/xfails/amdgpu-stoney-skips.txt | 15 ++++
+>>   drivers/gpu/drm/ci/xfails/i915-amly-fails.txt | 22 ++++-
+>>   .../gpu/drm/ci/xfails/i915-amly-flakes.txt    |  8 ++
+>>   drivers/gpu/drm/ci/xfails/i915-amly-skips.txt |  8 ++
+>>   drivers/gpu/drm/ci/xfails/i915-apl-fails.txt  | 45 +++++-----
+>>   drivers/gpu/drm/ci/xfails/i915-apl-flakes.txt |  5 ++
+>>   drivers/gpu/drm/ci/xfails/i915-apl-skips.txt  | 12 +++
+>>   drivers/gpu/drm/ci/xfails/i915-cml-fails.txt  | 26 +++++-
+>>   drivers/gpu/drm/ci/xfails/i915-cml-flakes.txt |  6 ++
+>>   drivers/gpu/drm/ci/xfails/i915-cml-skips.txt  |  8 ++
+>>   drivers/gpu/drm/ci/xfails/i915-glk-fails.txt  | 28 +++++--
+>>   drivers/gpu/drm/ci/xfails/i915-glk-skips.txt  | 12 +++
+>>   drivers/gpu/drm/ci/xfails/i915-kbl-fails.txt  | 39 ++++-----
+>>   drivers/gpu/drm/ci/xfails/i915-kbl-flakes.txt | 10 ++-
+>>   drivers/gpu/drm/ci/xfails/i915-kbl-skips.txt  | 21 +++++
+>>   drivers/gpu/drm/ci/xfails/i915-tgl-fails.txt  | 75 +++++++++--------
+>>   drivers/gpu/drm/ci/xfails/i915-tgl-skips.txt  | 13 +++
+>>   drivers/gpu/drm/ci/xfails/i915-whl-fails.txt  | 46 +++++------
+>>   drivers/gpu/drm/ci/xfails/i915-whl-skips.txt  |  8 ++
+>>   .../drm/ci/xfails/mediatek-mt8173-fails.txt   | 47 +++--------
+>>   .../drm/ci/xfails/mediatek-mt8183-fails.txt   | 17 +---
+>>   .../drm/ci/xfails/mediatek-mt8183-flakes.txt  |  5 ++
+>>   .../gpu/drm/ci/xfails/meson-g12b-fails.txt    | 20 +----
+>>   .../gpu/drm/ci/xfails/meson-g12b-flakes.txt   |  5 ++
+>>   .../gpu/drm/ci/xfails/msm-apq8016-fails.txt   | 26 ++----
+>>   .../gpu/drm/ci/xfails/msm-apq8016-flakes.txt  |  5 ++
+>>   .../gpu/drm/ci/xfails/msm-apq8096-fails.txt   |  5 +-
+>>   .../gpu/drm/ci/xfails/msm-apq8096-flakes.txt  |  5 ++
+>>   .../gpu/drm/ci/xfails/msm-apq8096-skips.txt   | 67 +++++++++++++++
+>>   .../msm-sc7180-trogdor-kingoftown-fails.txt   | 34 ++++----
+>>   .../msm-sc7180-trogdor-kingoftown-flakes.txt  |  5 ++
+>>   ...sm-sc7180-trogdor-lazor-limozeen-fails.txt | 34 ++++----
+>>   ...m-sc7180-trogdor-lazor-limozeen-flakes.txt |  5 ++
+>>   .../gpu/drm/ci/xfails/msm-sdm845-fails.txt    | 75 ++++-------------
+>>   .../gpu/drm/ci/xfails/msm-sdm845-flakes.txt   | 26 ++----
+>>   .../drm/ci/xfails/rockchip-rk3288-fails.txt   | 54 ------------
+>>   .../drm/ci/xfails/rockchip-rk3399-fails.txt   | 80 ++----------------
+>>   .../drm/ci/xfails/rockchip-rk3399-flakes.txt  |  7 --
+>>   .../drm/ci/xfails/virtio_gpu-none-fails.txt   | 82 +++++++++++++------
+>>   .../drm/ci/xfails/virtio_gpu-none-skips.txt   |  3 +
+>>   42 files changed, 574 insertions(+), 495 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/i915-amly-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/i915-apl-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/i915-cml-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/mediatek-mt8183-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/meson-g12b-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/msm-apq8096-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-flakes.txt
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-flakes.txt
+>>   delete mode 100644 drivers/gpu/drm/ci/xfails/rockchip-rk3288-fails.txt
+>>   delete mode 100644 drivers/gpu/drm/ci/xfails/rockchip-rk3399-flakes.txt
+>>
 > 
-> Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
+> [skipped]
+> 
+>> diff --git a/drivers/gpu/drm/ci/xfails/msm-apq8016-fails.txt b/drivers/gpu/drm/ci/xfails/msm-apq8016-fails.txt
+>> index 44a5c62dedad..96e9faf0e607 100644
+>> --- a/drivers/gpu/drm/ci/xfails/msm-apq8016-fails.txt
+>> +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-fails.txt
+>> @@ -1,19 +1,9 @@
+>> +core_setmaster_vs_auth,Fail
+>> +device_reset,Fail
+>> +dumb_buffer,Fail
+> 
+> This doesn't look correct, core tests should be passing.
+> 
+>>   kms_3d,Fail
+>> -kms_addfb_basic@addfb25-bad-modifier,Fail
+>> -kms_cursor_legacy@all-pipes-forked-bo,Fail
+>> -kms_cursor_legacy@all-pipes-forked-move,Fail
+>> -kms_cursor_legacy@all-pipes-single-bo,Fail
+>> -kms_cursor_legacy@all-pipes-single-move,Fail
+>> -kms_cursor_legacy@all-pipes-torture-bo,Fail
+>> -kms_cursor_legacy@all-pipes-torture-move,Fail
+>> -kms_cursor_legacy@pipe-A-forked-bo,Fail
+>> -kms_cursor_legacy@pipe-A-forked-move,Fail
+>> -kms_cursor_legacy@pipe-A-single-bo,Fail
+>> -kms_cursor_legacy@pipe-A-single-move,Fail
+>> -kms_cursor_legacy@pipe-A-torture-bo,Fail
+>> -kms_cursor_legacy@pipe-A-torture-move,Fail
+>> -kms_force_connector_basic@force-edid,Fail
+>> -kms_hdmi_inject@inject-4k,Fail
+>> -kms_selftest@drm_format,Timeout
+>> -kms_selftest@drm_format_helper,Timeout
+> 
+> Fine, kms_cursor_legacy tests were migrated to -flakes. But what
+> happened with the rest of the failures? >
+>> -msm_mapping@ring,Fail
+>> +kms_force_connector_basic,Fail
+>> +kms_lease,Fail
+>> +msm_mapping,Fail
+>> +msm_submit,Fail
+>> +tools_test,Fail
+>> diff --git a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+>> new file mode 100644
+>> index 000000000000..3cc361b3d3b3
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+>> @@ -0,0 +1,5 @@
+>> +# Board Name: apq8016-sbc-usb-host
+>> +# Bug Report: TBD
+>> +# IGT Version: 1.28-gd2af13d9f
+>> +# Linux Version: 6.9.0-rc4
+>> +kms_cursor_legacy
+> 
+> It looks like one of the scripts has lost subtest granularity. It should
+> be fixed before the patchset can be merged
+I will recheck these files with the script fix. Thanks.
 
-In this commit file1_offset and file2_offset are u64.  They used to
-be u64 in the initial submission, but we changed that as part of the
-review process.
-
+Regards,
+Vignesh
 
