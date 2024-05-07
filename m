@@ -1,80 +1,114 @@
-Return-Path: <linux-kernel+bounces-171347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C018BE322
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D518BE323
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84630B21FD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:11:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F184C1F27119
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372B215E1EC;
-	Tue,  7 May 2024 13:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aC6mRpHl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028D015E5C4;
+	Tue,  7 May 2024 13:11:42 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3CA15DBB9;
-	Tue,  7 May 2024 13:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1755415DBB9;
+	Tue,  7 May 2024 13:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087492; cv=none; b=YgkxST5g57GEudVvyrD32PBQGyU9US25SzcaWaGqZSas383ypPOiz3q44+Z2iGfm0uw/lFbERFDWiCpjMw5NIRcspkxJqn5jegGW9NqkUpVNkhFwJgL89RcPxYIY8d2mqCPWfRXj6rv/KRX1Q0Cz9qbENt3RUy+BcJFH5hkcw88=
+	t=1715087501; cv=none; b=LO03IWjwaWNyUTJbiVpGEauAnBEseOuJA1I2gJ4AJR+cN2H3DEG7+SqLwW2CoNvjYPOyIfho6sGxDLR249u+/knRD6fUZh9pkvjjXwx2SmATU7wkE3eYfWPMyPG255OG2SdGvRqSiaBP9cZ1Ad8gxk3kLryVSeiTIEprkmqNoRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715087492; c=relaxed/simple;
-	bh=AerjoA16ifkt+w7gQAm7UDwlvJXI2Arc2QWZpKi8VsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n8ah3QX7/8AWeBN2reOKiXouQ8BKFV1X51mOoZIpiKVdXAJMC8s4ZDLp1m4KUc88PKda6bJTt3bZHywJ2rwK3R6raPvPoa6Vp1GFuzGOlujid56w3x2czCgN45WcVqR7JzCT0v3LtlL4yiq47VrX+Ocq3IoOin+0fSY4ak//V/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aC6mRpHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73396C3277B;
-	Tue,  7 May 2024 13:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715087491;
-	bh=AerjoA16ifkt+w7gQAm7UDwlvJXI2Arc2QWZpKi8VsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aC6mRpHlT29x11ZIDA08O9QkEDb8LpSKFs+I0SzTccIrSUz7txP7TkKLkt8QSFiQ0
-	 zy4D7uhdEarVJ4FEJSeeFWqt6Xk7hWu07+TyKK4LgJHNqovZrWOX95fxVS6MUXS8Jz
-	 UDemTkpdD0n8EHnAMdvuF1tLdEzfh6SRIcDd7C6RN+Yd/Daxt+uUkquqEEhgnx/HRL
-	 Ozj9/XtFM3dyGKjfEJNNdjYC+O+OfMWJ/DnptWvmz+inLoY9qUDs8YlfceOYX8xfQ9
-	 4bpGsEPk8Se2I6E0NtvCnhkg/wmbYH3PXsK9bkusHRbxCFRb7BxTsyVPOw3ZDopAsV
-	 Xc83cG3j2GGfw==
-Date: Tue, 7 May 2024 15:11:27 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v2 16/27] rcu: Rename rcu_dynticks_snap() into
- rcu_watching_snap()
-Message-ID: <Zjoof8-Qm2Q92uS5@localhost.localdomain>
-References: <20240430091740.1826862-1-vschneid@redhat.com>
- <20240430091740.1826862-17-vschneid@redhat.com>
+	s=arc-20240116; t=1715087501; c=relaxed/simple;
+	bh=l03cTZG83CQkVjnsc8Q28HnnucLh+YYVgCjPTYHUUQU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VY9nOgSo7pudut+Wzl/IUwvo3jLm7AXcV9+ctYk9Gela+ZVb8alhSao3u/qQMcgEiIK4gDNPUyAmKuk+DMtnMDNDQkFn5No8sSdk4zUHvc51Ul1w/ZVtGM4FaKdpyCi4vszwqKWPMc43gZxjI4y+ZEaaqqamcTOEtzHJoeg2JnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VYdvg0lLTz4f3kFP;
+	Tue,  7 May 2024 21:11:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 5918F1A01D2;
+	Tue,  7 May 2024 21:11:35 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAuFKDpmixUxMQ--.27812S3;
+	Tue, 07 May 2024 21:11:35 +0800 (CST)
+Subject: Re: [PATCH 5/9] jbd2: remove unneeded kmap to do escape in
+ jbd2_journal_write_metadata_buffer
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ jack@suse.com
+References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
+ <20240506141801.1165315-6-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <1fbac8b4-167f-6f03-35f2-cabe6fc0b5e3@huaweicloud.com>
+Date: Tue, 7 May 2024 21:11:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240430091740.1826862-17-vschneid@redhat.com>
+In-Reply-To: <20240506141801.1165315-6-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnmAuFKDpmixUxMQ--.27812S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr15AF43KFykuw1Duw17ZFb_yoWDAFX_Xa
+	1vy34kursxXrn7ZF4Fk3W5WrZ5Ww15Gr1kCF10q34Uuw10q3W8GrnIkrWktrnrWa1xKr45
+	Xa4q9F4rtF9IvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
+	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UE-erUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Le Tue, Apr 30, 2024 at 11:17:20AM +0200, Valentin Schneider a écrit :
-> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
-> RCU_WATCHING, reflect that change in the related helpers.
+On 2024/5/6 22:17, Kemeng Shi wrote:
+> The data to do escape could be accessed directly from b_frozen_data,
+> just remove unneeded kmap.
 > 
-> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Looks good to me.
+
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+> ---
+>  fs/jbd2/journal.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 77fcdc76fdfd..87f558bd2e8a 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -423,11 +423,8 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  	 * Did we need to do an escaping?  Now we've done all the
+>  	 * copying, we can finally do so.
+>  	 */
+> -	if (do_escape) {
+> -		mapped_data = kmap_local_folio(new_folio, new_offset);
+> -		*((unsigned int *)mapped_data) = 0;
+> -		kunmap_local(mapped_data);
+> -	}
+> +	if (do_escape)
+> +		*((unsigned int *)jh_in->b_frozen_data) = 0;
+>  
+>  	folio_set_bh(new_bh, new_folio, new_offset);
+>  	new_bh->b_size = bh_in->b_size;
+> 
+
 
