@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-170516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA8A8BD860
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:04:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCA48BD862
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D681F24068
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:04:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5CE2841A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD1D637;
-	Tue,  7 May 2024 00:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124E3622;
+	Tue,  7 May 2024 00:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lCjvESUs"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B2T7twXE"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE061854;
-	Tue,  7 May 2024 00:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FAD64F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 00:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715040292; cv=none; b=Uj8JSdEbXP8DHeEiJwcqLd/DnQoa3fQqR5XkE2sGHpORzg1QIjtFupFyizUC+S6FMjVKvyQFAy1rshVRUSyH2UlQG8N0JjttfKQR3lh2/ZL8Ciz3id3mwoKkjTyMYGE0S8xxc4VS+df/RRWPVYefzCg5eeF8XLOKGdmeU6lrINg=
+	t=1715040321; cv=none; b=g+tak3JPoOOX2wd88/t06QiqRMR/F3eFdGCx2W1iQ9tpiCMbwAgR3raXAWjlHUELHT21QvnKwTzGSDTYmIG8TdvgOzhC5JEM8YdvZ/pNZKVQigbRvHKAVr/aKlwc6rLbnOLsfg2gopj0G/L9DHj+zrWcUmtKppzh8zoXl9R8aDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715040292; c=relaxed/simple;
-	bh=f4IBlK9RjYI+9fnJnyhkx+oAYMOHVrCAwdD2Hq5rgT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nvCoNot8OradVTa09rpgvhF9KXK76IAV2Ia2vJatySFcux/Y42DCZ/Gnl8Vnr6xZJzdqbB8NzzQvg/4+a9U1xdeTkUIz+GZUSZG238ROO+1c2vhBniLlWAC4hGi3vfhmuJQR/NkjfVsVa1pEZC/hiBr7tDB98KeVFLL/bjCdMeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lCjvESUs; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715040286;
-	bh=hB9NaGtn0Ed1umyavuftHblA0GfvfFPA+kBeEH5epLU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lCjvESUslbl9iBCnNsSNcaLyjlsbvxsWCdrgnh75Pncsy+UD/sToVEVgPqWdGmrNV
-	 KuoIIMpDe0hWidof8pElUq999Vvwoc6wq3EVfNgGLSFkeRfj6ETuDUS3XCGWU9a6oS
-	 ZA1d/zjikqDehZkqCjv1/5oF9bq8oJu+v4XpMop5Kkd8NWimKCPE1PK1C1OWqbBIdE
-	 sK4Wut3vGjs31724JN+ModQf2lZ2TghlO5hCDyBRgwIlxZPVXD3oGQUE/0mmNsfOwP
-	 dqcF+bUPA2Qx2YWCvp0gWGSHe4fznP3C2PXGgL6VoByEepoV52hrq7aa91zKnLHPZL
-	 qkwqTmL+kfFAA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VYJRx716pz4x11;
-	Tue,  7 May 2024 10:04:45 +1000 (AEST)
-Date: Tue, 7 May 2024 10:04:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>,
- Michael Ellerman <mpe@ellerman.id.au>
-Cc: Benjamin Gray <bgray@linux.ibm.com>, Charlie Jenkins
- <charlie@rivosinc.com>, Palmer Dabbelt <palmer@rivosinc.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Subject: linux-next: manual merge of the risc-v tree with the powerpc tree
-Message-ID: <20240507100441.0ffefbd9@canb.auug.org.au>
+	s=arc-20240116; t=1715040321; c=relaxed/simple;
+	bh=HPz//ch8ZRi2x8WCzJmSVsNjI/8HfUnEKKxsvoVrGaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTAexwoBtyNLDudVUwY1SCmJwzJEbV47mHYI7b0kLO4g06hvAnpP3taCyWsKcKQw/n0SFOS9c7f/eauYU5MtcA5fyh3EvMaF52+p+Jwj/GBjdHS69gCQFf743oMOkVsst3lItfhmZYnBW7YVDZz3aQVzDKiDA0qWen9mynMI2v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B2T7twXE; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1e65a1370b7so23074655ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 17:05:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715040319; x=1715645119; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KlvDANCVrZHWMQYFIBtkDUG6BaCteNwh6wwcOjijmC0=;
+        b=B2T7twXEB5RJ1Ok+IYaKCubmp18Thhih0wzfdCpwPxjODkuaXcVAxSaH2g7Py6nBAi
+         qzbiJaXFIvcWWty+WikiVp5VqH00+1mUwvimQblg7qbUwra2VgjYBVB5JcY5znazjo/z
+         znF8oJK0skjAL93x3E9ErRk/ByXLj3uEs2hqE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715040319; x=1715645119;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KlvDANCVrZHWMQYFIBtkDUG6BaCteNwh6wwcOjijmC0=;
+        b=phItyAVl/7dKw69M/Z4+ODh/q3mzOxzXdT6kSVvtOg1Qrcsmqg9HPzXtGVAnP9wUbO
+         QoDe1Rtu7HQXlO/vJBhUWS4Uw1b6kaXNSyQQPB1IjTIOM3CuZlhQ08KIaigwbAJ5Dr05
+         w2JcxkIAzZTwFZ8haBU2fb7SS/wbLARQclSQmB8GL0tKpPwweDFdBq4dHM8RKwkdaue+
+         k2i8mk8Vrd4xMiSqpKxXPz893gBpPFjMNqlf2sxOZpmSNW8TEXyyxGklrvSTzDm7HlIr
+         joYXwKrA7iEfs3yQurFbhgmJ0I9KFcxbZALJvXw1ZDg3V9Xb9j6R9T6y5/aVNjEyEA26
+         8HDg==
+X-Forwarded-Encrypted: i=1; AJvYcCULU2VbIzrhapvd+egHYiuwexH9GsKhbIMqzol+Jz8u4jFkCJB6QWQiYyWL6orP9onV+3MeIzOt5PAooGCgTfMinCc4PvxBppYQ+Ijx
+X-Gm-Message-State: AOJu0YwJAhG6W4qWlxSpijAmh2nRJNrq0PDgGOXd5qM7Dw0G6U9ZNGmk
+	Ibc5nVd6qIe5jB8SMFhUayipe9BAmdflH2yUUCT9PE547jiiGnlW1Bo+dMydHQ==
+X-Google-Smtp-Source: AGHT+IFhCMIL115zdj8pY5gtzUEO5BqoE/SHP70FTQHqPl7M/NDkraWKJXcYOem7iaZCavnsw+unMA==
+X-Received: by 2002:a17:902:eb86:b0:1e4:a667:5528 with SMTP id q6-20020a170902eb8600b001e4a6675528mr16349817plg.3.1715040319219;
+        Mon, 06 May 2024 17:05:19 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id jz7-20020a170903430700b001eb17af8493sm8832219plb.184.2024.05.06.17.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 17:05:18 -0700 (PDT)
+Date: Mon, 6 May 2024 17:05:18 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Fangrui Song <maskray@google.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yang Yingliang <yangyingliang@huawei.com>, kernel@collabora.com,
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] selftests: exec: make binaries position independent
+Message-ID: <202405061704.DD3AF674@keescook>
+References: <20240416152831.3199999-1-usama.anjum@collabora.com>
+ <202404161027.63F4D4FDEB@keescook>
+ <CAFP8O3Jjkh0U94CbS=epXELMtCBpYt4fGejX3spH4=GdF7zVSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3T=VzYrZQdMsHplSnkWYqcq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFP8O3Jjkh0U94CbS=epXELMtCBpYt4fGejX3spH4=GdF7zVSw@mail.gmail.com>
 
---Sig_/3T=VzYrZQdMsHplSnkWYqcq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 06, 2024 at 04:30:27PM -0700, Fangrui Song wrote:
+> On Tue, Apr 16, 2024 at 10:28 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Tue, Apr 16, 2024 at 08:28:29PM +0500, Muhammad Usama Anjum wrote:
+> > > The -static overrides the -pie and binaries aren't position independent
+> > > anymore. Use -static-pie instead which would produce a static and
+> > > position independent binary. This has been caught by clang's warnings:
+> > >
+> > >   clang: warning: argument unused during compilation: '-pie'
+> > >   [-Wunused-command-line-argument]
+> > >
+> > > Tested with both gcc and clang after this change.
+> > >
+> > > Fixes: 4d1cd3b2c5c1 ("tools/testing/selftests/exec: fix link error")
+> > > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> >
+> > Thanks for this!
+> >
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> >
+> > --
+> > Kees Cook
+> 
+> GCC versions before 8.1 do not support -static-pie,
+> while https://www.kernel.org/doc/html/next/process/changes.html says
+> the minimal version is GCC 5.1.
+> Is this a problem?
+> 
+> If not, and CFLAGS is guaranteed to include -fpie/-fpic/-fPIE/-fPIC
+> (PIC), using -static-pie looks good to me.
 
-Hi all,
+Should we use this alternative, which may be more portable?
+https://lore.kernel.org/all/20240504022301.35250-1-jhubbard@nvidia.com/
 
-Today's linux-next merge of the risc-v tree got conflicts in:
+-Kees
 
-  include/uapi/linux/prctl.h
-  kernel/sys.c
-
-between commit:
-
-  628d701f2de5 ("powerpc/dexcr: Add DEXCR prctl interface")
-
-from the powerpc tree and commit:
-
-  6b9391b581fd ("riscv: Include riscv_set_icache_flush_ctx prctl")
-
-from the risc-v tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/uapi/linux/prctl.h
-index 713d28788df7,524d546d697b..000000000000
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@@ -306,20 -306,10 +306,26 @@@ struct prctl_mm_map=20
-  # define PR_RISCV_V_VSTATE_CTRL_NEXT_MASK	0xc
-  # define PR_RISCV_V_VSTATE_CTRL_MASK		0x1f
- =20
-+ #define PR_RISCV_SET_ICACHE_FLUSH_CTX	71
-+ # define PR_RISCV_CTX_SW_FENCEI_ON	0
-+ # define PR_RISCV_CTX_SW_FENCEI_OFF	1
-+ # define PR_RISCV_SCOPE_PER_PROCESS	0
-+ # define PR_RISCV_SCOPE_PER_THREAD	1
-+=20
- +/* PowerPC Dynamic Execution Control Register (DEXCR) controls */
- +#define PR_PPC_GET_DEXCR		72
- +#define PR_PPC_SET_DEXCR		73
- +/* DEXCR aspect to act on */
- +# define PR_PPC_DEXCR_SBHE		0 /* Speculative branch hint enable */
- +# define PR_PPC_DEXCR_IBRTPD		1 /* Indirect branch recurrent target predi=
-ction disable */
- +# define PR_PPC_DEXCR_SRAPD		2 /* Subroutine return address prediction di=
-sable */
- +# define PR_PPC_DEXCR_NPHIE		3 /* Non-privileged hash instruction enable =
-*/
- +/* Action to apply / return */
- +# define PR_PPC_DEXCR_CTRL_EDITABLE	 0x1 /* Aspect can be modified with P=
-R_PPC_SET_DEXCR */
- +# define PR_PPC_DEXCR_CTRL_SET		 0x2 /* Set the aspect for this process */
- +# define PR_PPC_DEXCR_CTRL_CLEAR	 0x4 /* Clear the aspect for this proces=
-s */
- +# define PR_PPC_DEXCR_CTRL_SET_ONEXEC	 0x8 /* Set the aspect on exec */
- +# define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec =
-*/
- +# define PR_PPC_DEXCR_CTRL_MASK		0x1f
- +
-  #endif /* _LINUX_PRCTL_H */
-diff --cc kernel/sys.c
-index f9c95410278c,1b7bda0722ca..000000000000
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@@ -146,12 -146,9 +146,15 @@@
-  #ifndef RISCV_V_GET_CONTROL
-  # define RISCV_V_GET_CONTROL()		(-EINVAL)
-  #endif
-+ #ifndef RISCV_SET_ICACHE_FLUSH_CTX
-+ # define RISCV_SET_ICACHE_FLUSH_CTX(a, b)	(-EINVAL)
-+ #endif
- +#ifndef PPC_GET_DEXCR_ASPECT
- +# define PPC_GET_DEXCR_ASPECT(a, b)	(-EINVAL)
- +#endif
- +#ifndef PPC_SET_DEXCR_ASPECT
- +# define PPC_SET_DEXCR_ASPECT(a, b, c)	(-EINVAL)
- +#endif
- =20
-  /*
-   * this is where the system-wide overflow UID and GID are defined, for
-
---Sig_/3T=VzYrZQdMsHplSnkWYqcq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY5cBkACgkQAVBC80lX
-0Gz+pwgAhkAnVZU+luoCbsYirXDx3Xxlo6uOJV6u+H4LLUJPErrmeLvOl0cbkiQg
-BV4Z5+g8N28etB+MhVXLQ5RzzMz3QvP5cH2kK3VVHgvLo/VmaO/Z/Z7ky/O0rvrU
-+Kss/3sekJ4rHWTrysg7/9HkJu3X2KM4rPEx+kNcQAMZ2+PxLI26ek7VUhj56NKh
-3koT56fiNT0SG/hJfufIx/EKdKdFRHdZYHCWnT0mO0b+90E9/kr4b7mTqVz6Hp4H
-DEj15/19dydr5G7ZcmCsBhAmwbzsuKtxSE+tUD/yKAYr3NFvOiJyFsDAr5GrBwk5
-WfV9mi1r0hd25KdgyJz2MI29TLc1oA==
-=ACh2
------END PGP SIGNATURE-----
-
---Sig_/3T=VzYrZQdMsHplSnkWYqcq--
+-- 
+Kees Cook
 
