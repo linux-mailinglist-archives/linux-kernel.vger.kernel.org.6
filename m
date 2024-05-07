@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-171928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CFF8BEACD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890658BEAD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C069AB235FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C262819FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AD116C870;
-	Tue,  7 May 2024 17:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6895416C85E;
+	Tue,  7 May 2024 17:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E16icK21"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHJYTVhB"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73ECA168AF5
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2506E1607A7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104104; cv=none; b=RY/pBeE77T89O/rdkfpoC4uuT3TPXkQGLYggxVxqT3pFmfgQw9tzjkbtvBDoWqj+m0Pl7BThc0UTc2i4/fmBAfW8bBNCbB1VM2cpp0MbCGbOwFDS+AE+Vzu4gb4Y45MFCZqnR+k3lb68knHETzA5ymEbe1A+ttrnTyw28uo3CR4=
+	t=1715104151; cv=none; b=OUcgeA4gWbPBlL4IMoIjJ1zIL2HgFP/fr3W5Mxdrnc411AFE1uR9RmrUhdBpd/ZpLv67Qj4E+R1tmLTGh8Py+zvd3QJUTUWLHiGjc4fJ2MgOV7Ovz31x9Cl9D5L7l//mu0wJ29yDf5n2/B6Xc/C5GzTUlCmRm/s84E8urI3J3RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104104; c=relaxed/simple;
-	bh=G4sKnEbJdMGDqqOOZcGjKlz86s6SEc8Aai9Vaa1zX6Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P2Ix3WVqriC1OnUBBX1h4CaktK3PiatjzFfNRfrrZXVCrzhxzj8d/34Q9fqNRm7BGXPq1y7S9pQ/mZ6nV5gK3G/9dIokRyFrdmhP835N98x2icKD3i/ll3TKopf9dAbCB3bmTmgsFZ6O7KwcZCon4OgOmijcKzfv2jkBlL1SKBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E16icK21; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715104101;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U7NSWv2sngdGccyzHhW9zKoCfPe+XKegdqJlyPFodbI=;
-	b=E16icK2184rGoPWH2bEBWPXJZtGGn9IuSbomFmgWyhqqa1ruGKqhGhtqOmdBud9HvxmNF8
-	k+VmqjaN1GCvbVHjRurw9a5R6X8ORqMflupozOg9FWcquJGX2GuADfbdyV2D6n3le9qlAy
-	7cR7RWsjIaPqUqnhqUs2tSPvXoMUcDw=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-308-PoGURnTGMFCdzMgdngfTjw-1; Tue, 07 May 2024 13:48:19 -0400
-X-MC-Unique: PoGURnTGMFCdzMgdngfTjw-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-56c1ac93679so2820194a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:48:19 -0700 (PDT)
+	s=arc-20240116; t=1715104151; c=relaxed/simple;
+	bh=pwh4kKnyJTvJNbrZR87w9WNS7/BMALHW64bn1krHADg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sEBN9pgf75m2EcQohOA2/ksTYI6Y6XuBfcw80IcqLvNy6zPihPgZtjKpLfRRMLVE8VOtBCanZdu/ZVVktiUSf8k+pphzGhZ8n21SaMPqaE+bLZVGPIMhz9youQ/6uawoTFHvejZcMTaNe+Jz8w4JYv3sSqV49Ccr4Bfmvklk6gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHJYTVhB; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a86fb052so112962366b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715104148; x=1715708948; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5KzNsGk04Aj/iaOaD0uQRj7sJlFSLSEs6o0qY1ztONQ=;
+        b=hHJYTVhBDZRgrg5RqswHinfPStn8JnrTZGcUNUItjRn/zlDRAYtpV4oX62bJi5RQ1x
+         KBF+ZWdAZVLR8ZW5riuZJiSs2Wnu78VdPUyqfh/AcBWQX9cz86vRsM07Cbq+7vAtV8Y7
+         2aNeXzARj5PAjb89JcyqXMUXJYvEHtXoByzedD0Ioz2EK9SpJhWLYgkmfLt8pQUF1ixB
+         8JXe/fplQc02xvv0sbeoKcerfzM4R176pCO7fn6q6lgcbmeo7gc3iaHFuZSv5b/slt7+
+         fOUKXMoHApvLo3ixlBQl0I6Z42q+VjebbcU+UmjUbViqsf7L5PVqlFHW3pJUgdHanhlL
+         kwUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715104098; x=1715708898;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U7NSWv2sngdGccyzHhW9zKoCfPe+XKegdqJlyPFodbI=;
-        b=p1vSUUo0+KOW667q/kUZDH7M21NlgLF1yGBmOzpsWUugtcSIERZSLqfU4D52svmhRP
-         +NNboOI3voE0kU79a3iA7EgfPSiAMoxEzsrU+nM0k1unwCFp772Gb3oK4foHXky/lq+f
-         RuNlj1z38q+hNEHj+0szR8LnVI6N50ZWnSQESK4gzi/WFm68cZX+/XwK1Cb8Rzplb8/v
-         dx1A2OsmD9hipND+1SwzI86jejT6YYD5/ibRW0UUmk4+cV1kLzbKWTQOpepDrSGzQOcG
-         P0F1MFXfgK4YJ1v+Fj+b0nHPjKSaYIjXSbh7Rhx0eT6uMI4p5YNpE1C6qzJdJ8qDsntM
-         +FJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxiuRDGEQMUBBfzeiRBb5oBzo1XrWfTOirByG77Po5I9ot//DGl/ZzSgGtaZqCrsrRjnuABnwyciEQJaDhKjAGbHjTPma2Ns21O8Ok
-X-Gm-Message-State: AOJu0Yz5NPW1cIiKuLVXk2uMENiPBVFQ7QGVBVaBq8QrMBDEu2RCPtDY
-	NPh29qIM5NaxnBezz1CoBiwg/XJqQVERZg0yksGL/7Wag/+6VzTqD9joW+Up/erp4BuZR7ZvAd8
-	WesuikRstEplNoE1sMl4arfbAjDORlfNI37gNhcWa5JaGvhRLAHHyp/9u3jaPQw==
-X-Received: by 2002:a50:8ac8:0:b0:572:9d8a:20f4 with SMTP id 4fb4d7f45d1cf-5731da81922mr272396a12.32.1715104098655;
-        Tue, 07 May 2024 10:48:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWO0ZFjdL3U8Z+4qw3ObkPaduqAGsZ1NMcH6woNnJqGwZdQRg/xxY47WaZMcri4ZL0ky7IXA==
-X-Received: by 2002:a50:8ac8:0:b0:572:9d8a:20f4 with SMTP id 4fb4d7f45d1cf-5731da81922mr272359a12.32.1715104098236;
-        Tue, 07 May 2024 10:48:18 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.155.52])
-        by smtp.googlemail.com with ESMTPSA id b14-20020a0564021f0e00b00572cebc5f32sm5776641edb.65.2024.05.07.10.48.16
+        d=1e100.net; s=20230601; t=1715104148; x=1715708948;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5KzNsGk04Aj/iaOaD0uQRj7sJlFSLSEs6o0qY1ztONQ=;
+        b=NqGMe2ibfC9Ad/NYYlAwZR0msflTrapo4yz058m2NTmmLtm9cNVnkFmY96fZEUQDlQ
+         ErEQJTdVnTntHciAFwOt2HTUSzygocgZPpBfUL2rnn2A8i0G1r2nwF4y2lkeQXSw+AAm
+         I7UGV4h/PjYg1zEMbk0W4zgZ4CdtgvkleZUtgaowwKmjTseCCTIsuyCjM31NmFEdGz1v
+         3DJ/ms+PUHutVRVfxmaE23xya+v4MOGImZtU1vcmeN4+eRNjpLaAQGXS7e7/PYP3HBeW
+         rIgWX6MWWni3c8JYLwJ6grn7idXJ62o/cDmP0UEENerosAo7VZyz5mr8YMxQr/YmPTGJ
+         3tNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUH0g3niQ0sWRIhvfz/GpFw543DV1c2HsGlJVqoSsOH+zXcthW6Zp+D/Muo3aKUvza/y+9KSQwlOEWefmYMGdpfqx0mPnO7GwTwSXMJ
+X-Gm-Message-State: AOJu0Yx1g85BU/vo3FAxhMfINarM97TvcKaRCZ1wDIs3bazXMQ740f5c
+	6Q2FTLcRQC4b9a4lu9+jXObI/SQDmBM13SBRCV52gpNcgPEO3/Lr
+X-Google-Smtp-Source: AGHT+IE5DMX+XI/tzZLisS11tES8cNFOzvMrHLvepHpBfRDTKb+hpqZQWQrvtTKVVJucSTr7rAL40w==
+X-Received: by 2002:a05:6402:401e:b0:572:65f7:eed0 with SMTP id 4fb4d7f45d1cf-5731d91696bmr355648a12.0.1715104148260;
+        Tue, 07 May 2024 10:49:08 -0700 (PDT)
+Received: from [192.168.0.104] (p57935690.dip0.t-ipconnect.de. [87.147.86.144])
+        by smtp.gmail.com with ESMTPSA id fj20-20020a0564022b9400b00572336c900asm6554848edb.74.2024.05.07.10.49.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 10:48:17 -0700 (PDT)
-Message-ID: <044e8953-56f0-405e-9b50-7dde4ca8986b@redhat.com>
-Date: Tue, 7 May 2024 19:48:15 +0200
+        Tue, 07 May 2024 10:49:07 -0700 (PDT)
+Message-ID: <42016d13-b69c-400a-98a6-f34db6dd3e06@gmail.com>
+Date: Tue, 7 May 2024 19:49:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,174 +75,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 02/20] KVM: x86: Add hook for determining max NPT
- mapping level
-To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org
-Cc: linux-coco@lists.linux.dev, linux-mm@kvack.org,
- linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
- tglx@linutronix.de, mingo@redhat.com, jroedel@suse.de,
- thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org, seanjc@google.com,
- vkuznets@redhat.com, jmattson@google.com, luto@kernel.org,
- dave.hansen@linux.intel.com, slp@redhat.com, pgonda@google.com,
- peterz@infradead.org, srinivas.pandruvada@linux.intel.com,
- rientjes@google.com, dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de,
- vbabka@suse.cz, kirill@shutemov.name, ak@linux.intel.com,
- tony.luck@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- alpergun@google.com, jarkko@kernel.org, ashish.kalra@amd.com,
- nikunj.dadhania@amd.com, pankaj.gupta@amd.com, liam.merwick@oracle.com
-References: <20240501085210.2213060-1-michael.roth@amd.com>
- <20240501085210.2213060-3-michael.roth@amd.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] staging:rtl8192e:fixes unnecessary braces
+To: Chen shuo <1289151713@qq.com>, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <tencent_1423E8EA63C9C00B49636738FF1050480C06@qq.com>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240501085210.2213060-3-michael.roth@amd.com>
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <tencent_1423E8EA63C9C00B49636738FF1050480C06@qq.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/1/24 10:51, Michael Roth wrote:
-> In the case of SEV-SNP, whether or not a 2MB page can be mapped via a
-> 2MB mapping in the guest's nested page table depends on whether or not
-> any subpages within the range have already been initialized as private
-> in the RMP table. The existing mixed-attribute tracking in KVM is
-> insufficient here, for instance:
+On 5/7/24 14:13, Chen shuo wrote:
+> This patch fixes the warnings reported by checkpatch.pl
+> for braces {} are not necessary for single statement blocks
 > 
-> - gmem allocates 2MB page
-> - guest issues PVALIDATE on 2MB page
-> - guest later converts a subpage to shared
-> - SNP host code issues PSMASH to split 2MB RMP mapping to 4K
-> - KVM MMU splits NPT mapping to 4K
-> - guest later converts that shared page back to private
-> 
-> At this point there are no mixed attributes, and KVM would normally
-> allow for 2MB NPT mappings again, but this is actually not allowed
-> because the RMP table mappings are 4K and cannot be promoted on the
-> hypervisor side, so the NPT mappings must still be limited to 4K to
-> match this.
-> 
-> Add a hook to determine the max NPT mapping size in situations like
-> this.
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Michael Roth <michael.roth@amd.com>
+> Signed-off-by: Chen shuo <1289151713@qq.com>
 > ---
->   arch/x86/include/asm/kvm-x86-ops.h |  1 +
->   arch/x86/include/asm/kvm_host.h    |  1 +
->   arch/x86/kvm/mmu/mmu.c             | 18 ++++++++++++++++--
->   3 files changed, 18 insertions(+), 2 deletions(-)
+>   drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-> index c81990937ab4..566d19b02483 100644
-> --- a/arch/x86/include/asm/kvm-x86-ops.h
-> +++ b/arch/x86/include/asm/kvm-x86-ops.h
-> @@ -140,6 +140,7 @@ KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
->   KVM_X86_OP_OPTIONAL(get_untagged_addr)
->   KVM_X86_OP_OPTIONAL(alloc_apic_backing_page)
->   KVM_X86_OP_OPTIONAL_RET0(gmem_prepare)
-> +KVM_X86_OP_OPTIONAL_RET0(private_max_mapping_level)
->   KVM_X86_OP_OPTIONAL(gmem_invalidate)
+> diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+> index e3ed709a7674..1862a9899966 100644
+> --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+> +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+> @@ -1640,9 +1640,8 @@ bool rtl92e_get_rx_stats(struct net_device *dev, struct rtllib_rx_stats *stats,
+>   	if (stats->Length < 24)
+>   		stats->bHwError |= 1;
 >   
->   #undef KVM_X86_OP
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index c6c5018376be..87265b73906a 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1816,6 +1816,7 @@ struct kvm_x86_ops {
->   	void *(*alloc_apic_backing_page)(struct kvm_vcpu *vcpu);
->   	int (*gmem_prepare)(struct kvm *kvm, kvm_pfn_t pfn, gfn_t gfn, int max_order);
->   	void (*gmem_invalidate)(kvm_pfn_t start, kvm_pfn_t end);
-> +	int (*private_max_mapping_level)(struct kvm *kvm, kvm_pfn_t pfn);
->   };
+> -	if (stats->bHwError) {
+> +	if (stats->bHwError)
+>   		return false;
+> -	}
 >   
->   struct kvm_x86_nested_ops {
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 510eb1117012..0d556da052f6 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4271,6 +4271,20 @@ static inline u8 kvm_max_level_for_order(int order)
->   	return PG_LEVEL_4K;
->   }
->   
-> +static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
-> +					u8 max_level, int gmem_order)
-> +{
-> +	if (max_level == PG_LEVEL_4K)
-> +		return PG_LEVEL_4K;
-> +
-> +	max_level = min(kvm_max_level_for_order(gmem_order), max_level);
-> +	if (max_level == PG_LEVEL_4K)
-> +		return PG_LEVEL_4K;
-> +
-> +	return min(max_level,
-> +		   static_call(kvm_x86_private_max_mapping_level)(kvm, pfn));
-> +}
-
-Since you're returning 0 both as a default and, later in the series, for non-SNP guests, you need to treat 0 as "don't care":
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index de35dee25bf6..62ad38b2a8c9 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4274,6 +4274,8 @@ static inline u8 kvm_max_level_for_order(int order)
-  static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
-  					u8 max_level, int gmem_order)
-  {
-+	u8 req_max_level;
-+
-  	if (max_level == PG_LEVEL_4K)
-  		return PG_LEVEL_4K;
-  
-@@ -4281,8 +4283,11 @@ static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
-  	if (max_level == PG_LEVEL_4K)
-  		return PG_LEVEL_4K;
-  
--	return min(max_level,
--		   static_call(kvm_x86_private_max_mapping_level)(kvm, pfn));
-+	req_max_level = static_call(kvm_x86_private_max_mapping_level)(kvm, pfn);
-+	if (req_max_level)
-+		max_level = min(max_level, req_max_level);
-+
-+	return req_max_level;
-  }
-  
-  static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
+>   	stats->RxDrvInfoSize = pdesc->RxDrvInfoSize;
+>   	stats->RxBufShift = (pdesc->Shift) & 0x03;
 
 
-Not beautiful but it does the job I guess.
+Hi Chen,
 
-Paolo
+Please make your "Subject" line more unique. Consider that we may end up
+with having dozen of commits like yours, all of them referring to
+different removals and all without the necessary information to tell 
+what they differ in (except the driver/subsystem). So it would help if 
+you add the changed file or function to make it more unique.
+
+Also typically we use space after : and driver name in the subject.
+
+It is not required to add the name of the tool who found this. Much more 
+important is a good description __why__ this change makes sense...
+For example:
+.. to shorten code.
+.. to improve readability.
+
+If you send in a second version of this patch please use a change 
+history. Description from Dan under:
+https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+
+Feel free to contact me direct for further questions.
+
+Thanks for your support.
+
+Bye Philipp
 
 
