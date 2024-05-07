@@ -1,184 +1,99 @@
-Return-Path: <linux-kernel+bounces-171763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7F18BE839
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77438BE83B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34EBF1F2CBB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910D028D55E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C46816D33A;
-	Tue,  7 May 2024 16:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZOpIzSM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D705F16D4EC;
+	Tue,  7 May 2024 16:03:06 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA5D1649DA;
-	Tue,  7 May 2024 16:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52D016D4DC;
+	Tue,  7 May 2024 16:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097758; cv=none; b=VHm7OSHLOhcYJhANCCPpu2+3BkZR2RX0Fvm4kPqYYrx0U7OKQ/63zJWKcrP6WfFyXrS33dgKIKIK1xFlkkjVhr4jfe1uRzFr3Wgu30l1V0Hg8dQtcBIbebcPwXE3mSpURUL3pd8JOCSCNHqOpR2Q1fNPEAlVZJ5vW0BwInQSFjk=
+	t=1715097786; cv=none; b=A2Tmwx+RYzP2frqtJFhBxiPDY8Ab8S0WH9QO9jyQ9Y4eJEIN7dsMqOj5IoB1Llq0vYlh88OXtCo2cpqmHgB2UDEvXDnddgKtxLsQdHw2E+2H15mtjdlXv4jKj2FrjGH4mmzVV0gzT/oD1l7020UK+Lw0zXn2D0N7+fbBWInMnJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097758; c=relaxed/simple;
-	bh=nwWf43oku86e2innSvDOoVJQyhHvzwCs++ipm8hqsbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cap3nJvj0tB4MKj0yV+ahb7lfKeCMlK5bGNz6s5bJ2ISFihQER/tmvOUjDn6KFNvKeT0p866ctVdyRV4bH5ALAslvXXsXJsRNCY9CTWCy2R/mQJCgjt8i2/p2ty8r9dRUhrzAqxR5MyvU0OuvmvIpW5svhIAapjmuy294BdIeyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZOpIzSM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D7CC2BBFC;
-	Tue,  7 May 2024 16:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715097757;
-	bh=nwWf43oku86e2innSvDOoVJQyhHvzwCs++ipm8hqsbc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sZOpIzSM6uihAF2+L2js+eSP8DbgFV0i6mLaYEUHTgRfN/62+qGPaT1y0xTx6V2cG
-	 HskidmpdiJCdi1A86YO4RVapEBjOpipUHZouKD2B+1otTpNJKeFceJunbQEkh/R759
-	 2JX4R9fnNWAzxsYrI8RZ+KgyXwW2JmdpDdEbhiOE08XYuDxPoQHAXyZCgEUCSFd/ml
-	 q5Jx4x0aUjG0vgt2cwDif0WWV7dm/+uz7pN+z2STPSneRJmsHAA0KC+Bg57YkzmK0o
-	 iTYLxrZVTGUcnXxY19/ZshZ5u8/sR+3Iv1Eo5qEFgD9PZQZCpw+2R79FMusTF9Mp18
-	 1cFN7vogHdY4A==
-Message-ID: <d28dec16-9029-42f5-b979-a0f11656a991@kernel.org>
-Date: Tue, 7 May 2024 18:02:31 +0200
+	s=arc-20240116; t=1715097786; c=relaxed/simple;
+	bh=lNe2OKBPTAJiByLVNklZt3fwsF2kSncvssGXrmbVVqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0FJfCpK2z9O9EuT2mlYqTFn2/6xhBzS29UmUc1/IehnXQNpnkgXUYfbmfzEiC00p2aDujw26foDF60e7OvABAFLNGFfME8sq6zf4dJWuO4/udVUIhLZaV0T05/9MfWa2uehI9F3igJB21tfi71EvxYngpnzFba5R04lYlEbs0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59cdf7cd78so622954866b.0;
+        Tue, 07 May 2024 09:03:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715097783; x=1715702583;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AXEoid+P4y9d9rlcyx/evf5V3Cmxvkdb7Jf8hRQs27Y=;
+        b=njnDiqf9+Tvwuoayrgwz8CATRyA7vnF2FUAFa0r/wxtgkGYxx7L40el/onM7MsaZkX
+         VuzW9CL8+2K6LbVZNLhg4H2FL15hIe3ANRVt/BTnpYIyor1HLxeNL/DG8obSWTg1zZTL
+         0TBNAQuSbut0ipV5TNl5FHLj6UsuNKaB24vkTSzviBmDAey3oHf7rMplYI4SYr2QZMlv
+         4TVUVONsC+iC/d5z3vU8o0MkObT6WECL+zct4zjr4/y/gslHrSDweYbMOaYLj5w7HQeD
+         6AwJAs+lr5PN974klc31gCVl0kjsZsOKOiGp+jwbK49wZB/B4rjiof+9nFCqjMnWDlvu
+         o56w==
+X-Forwarded-Encrypted: i=1; AJvYcCUV56NHKywqVCNgcjd49PVg3VVPni71uYzEMTlTiPxnT69A+IuhmaotzhHODcBSVUb01sJtp/VQCl7uT9jN3h1JYIk6mViSp509bIBOOHa3OTbVZ8X5B4v9xU1MKEzT6iZmVGy3tQ==
+X-Gm-Message-State: AOJu0Yx9J7aJOOWL0D0n2JomRL68jdMEh3azKGHK0QGupaf4//kiODRj
+	jj/OELbMW9Bcwa1fDSrhnVqGwBBTZgT+Tll2nfbcVs+9U8553aWL+ZA2/g==
+X-Google-Smtp-Source: AGHT+IFtMMmBt2l5Z1o6dwv8yMonvYSVpTqzn3bwquAqseHLd2VYeqJJU7FnCoTxbJrq9Fw5nmTMKQ==
+X-Received: by 2002:a17:907:da2:b0:a59:ca9c:4de9 with SMTP id go34-20020a1709070da200b00a59ca9c4de9mr6079850ejc.76.1715097783279;
+        Tue, 07 May 2024 09:03:03 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id xa8-20020a170907b9c800b00a59eb443e01sm922487ejc.74.2024.05.07.09.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 09:03:02 -0700 (PDT)
+Date: Tue, 7 May 2024 09:03:00 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>, leit@meta.com,
+	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <cgroups@vger.kernel.org>,
+	"open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" <linux-mm@kvack.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg: Fix data-race KCSAN bug in rstats
+Message-ID: <ZjpQtDE9aixy0hZf@gmail.com>
+References: <20240424125940.2410718-1-leitao@debian.org>
+ <ZjTKLVjxuUJwwFPg@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH bpf-next 2/4] selftests/bpf: Add RUN_MPTCP_TEST macro
-Content-Language: en-GB
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: MPTCP Upstream <mptcp@lists.linux.dev>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- Geliang Tang <tanggeliang@kylinos.cn>
-References: <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org>
- <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-2-e2bcbdf49857@kernel.org>
- <CAADnVQJ5-APFxMeGsUDSWBsiAbhJGivs=fBUapgYEFNHgnEVeA@mail.gmail.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <CAADnVQJ5-APFxMeGsUDSWBsiAbhJGivs=fBUapgYEFNHgnEVeA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjTKLVjxuUJwwFPg@tiehlicka>
 
-Hi Alexei,
+Hello Michal,
 
-Thank you for the review!
-
-On 07/05/2024 16:44, Alexei Starovoitov wrote:
-> On Tue, May 7, 2024 at 3:53 AM Matthieu Baerts (NGI0)
-> <matttbe@kernel.org> wrote:
->>
->> From: Geliang Tang <tanggeliang@kylinos.cn>
->>
->> Each MPTCP subtest tests test__start_subtest(suffix), then invokes
->> test_suffix(). It makes sense to add a new macro RUN_MPTCP_TEST to
->> simpolify the code.
->>
->> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
->> Reviewed-by: Mat Martineau <martineau@kernel.org>
->> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->> ---
->>  tools/testing/selftests/bpf/prog_tests/mptcp.c | 12 ++++++++----
->>  1 file changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
->> index baf976a7a1dd..9d1b255bb654 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
->> @@ -347,10 +347,14 @@ static void test_mptcpify(void)
->>         close(cgroup_fd);
->>  }
->>
->> +#define RUN_MPTCP_TEST(suffix)                                 \
->> +do {                                                           \
->> +       if (test__start_subtest(#suffix))                       \
->> +               test_##suffix();                                \
->> +} while (0)
+On Fri, May 03, 2024 at 01:27:41PM +0200, Michal Hocko wrote:
+> On Wed 24-04-24 05:59:39, Breno Leitao wrote:
+> > The race occurs because two code paths access the same "stats_updates"
+> > location. Although "stats_updates" is a per-CPU variable, it is remotely
+> > accessed by another CPU at
+> > cgroup_rstat_flush_locked()->mem_cgroup_css_rstat_flush(), leading to
+> > the data race mentioned.
 > 
-> Please no.
-> Don't hide it behind macros.
+> It is worth mentioning that the race is harmless.
 
-I understand, I'm personally not a big fan of hiding code being a macro
-too. This one saves only one line. Geliang added a few more tests in our
-tree [1], for a total of 9, so that's only saving 9 lines.
+Are you suggesting that the race consistently avoids producing corrupt
+data, or even if corruption occurs, it's inconsequential because it only
+affects statistics?
 
-Related to that, if you don't mind, Geliang also added another macro --
-MPTCP_SCHED_TEST -- for tests that are currently only in our tree [2]
-(not ready yet). We asked him to reduce the size of this macro to the
-minimum. We accepted it because it removed quite a lot of similar code
-with very small differences [3]. Do you think we should revert this
-modification too?
+If there's no data corruption, does it incur any performance drawbacks?
 
-[1]
-https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961ac0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L578-L595
-
-[2]
-https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961ac0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L559-L576
-
-[3]
-https://lore.kernel.org/mptcp/cover.1713321357.git.tanggeliang@kylinos.cn/T/#m0b9c14f1cbae8653c6fd119f6b71d1797961d6ba
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Thanks!
 
