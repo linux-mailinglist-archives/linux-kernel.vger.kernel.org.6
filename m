@@ -1,177 +1,374 @@
-Return-Path: <linux-kernel+bounces-171497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31328BE52A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EBA8BE538
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A261B22106
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA6B1F22A03
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C221D15F3E2;
-	Tue,  7 May 2024 14:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CC215F320;
+	Tue,  7 May 2024 14:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnJzb3bI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m8aoXmM6"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F32156C7A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E03C15E7E4;
+	Tue,  7 May 2024 14:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090765; cv=none; b=Dc//fgAW/RAWN+rdiHiyAjgFvvxtZix+cMCX7PM4/CbkkD2DYwmlBlVkaZTO9Kbxb5+5cR5JP5eWByxk9PlfbgVxAk7FZHYt9eOh7lxJpTkLL/DOJaYZSmmtJcwh8uoJJoaWgW+nBUz4K35R26jCD/tc3IyUNyz37r1pJ7xEvfk=
+	t=1715090831; cv=none; b=lmE38qC3YJBgbKyz4uXOmU8YecNJwjikazeLeJcQXp5/PcORxjn87CKPcbmunAnK33Yps6kYFu3FDmTYds+crIvp2bDo9RFhVWXjZlJau5k3Vl4b6xmJU47/PkDy9FLBhUnW5zawiD+edMFdvGCG7cHz8EwodG0U7gE/GJ3hmcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090765; c=relaxed/simple;
-	bh=t2Zobjc7MI6+ixD8KnilMidW0woMS15GwGLeKi1FmbM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PLYniHDp9blEk5Y8KvPRaRb1+MXhr/kKrFABCYPlL/PN5CI4nfaq4zDyg3EPvSWoJGZ2NuqfAJsoEUHZXpaRNR7nIcLU93H7S1xYRipmNnZ4+rTPoAE9W8IUAsiLXzZ2+DOxXjOz+ZIJpD4buF6QuBuqB3t2mIO75RVq3pLt2KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnJzb3bI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54827C2BBFC;
-	Tue,  7 May 2024 14:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715090764;
-	bh=t2Zobjc7MI6+ixD8KnilMidW0woMS15GwGLeKi1FmbM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YnJzb3bIQFe3kLH190BdMGPr0E/HvQ4xdxZGybOaO0N2371wx4TdQn1Qlpnc4pqMc
-	 yuDw2t8/UehvZupwNXyC2fmmU5nmGiECGwUcGjy/LnJ4Q4YmAFMb+jQiLT2PjXkgqc
-	 31l/kzAmeZlDUF5hxsnytnFkn0TUkXrS6ebSKySBtDGqYWJiwFVjkUgO+UPdA/0vXn
-	 DHojnbLRKJJhT8C5DfTqXFbXrjdZnTU5pvNlK87FWDc0+sr0n4RghyFC9hJ36dt2n1
-	 oduTM/T+Hj82UmNM3cqeUePZ4ohusMGBu7bfrDYxXaZOXcOrhpiq+13shK1VhoW7WP
-	 rE71W4TunDKBg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to avoid racing in between buffered read and OPU dio write
-Date: Tue,  7 May 2024 22:05:56 +0800
-Message-Id: <20240507140556.1293003-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1715090831; c=relaxed/simple;
+	bh=RnSnnIBaIv8995gmimhjYrXTZEZ2sbsQAMLxEaMzgiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qc5JmhErrZXcYNlwPVeC329M8RVmB8Irj4qsp/6/HOEvCK4Y/psZ/t/SG3b261TBOJ8wFfhlg1zBb+gcWPEbs3DeOf4lbvHA4tdGy1E8Syom4bumBQWmrd2MTwz69aLw61xx+bkpEdgn2oJmOzusiDZiM2sO8b6r85n0RyffwYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m8aoXmM6; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715090827;
+	bh=RnSnnIBaIv8995gmimhjYrXTZEZ2sbsQAMLxEaMzgiY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m8aoXmM6wOBYG811jg1mwfUO/i2Y7i0TydyPeFIzthOrO5pqNbZPW4VsJhjjxGdN6
+	 R6DSYRgaPeSHmoiSYWipCr2mCYCV04oSpHFrOG+jbwRI9EqwVcbc36VTX1quI2QNuj
+	 XQtvZ/MVPCmVt49o+dCX32NSl/+FLF+/Wl+H+kWwnU78j/q3v9C4qWj/p0hSqrTgSn
+	 GEHFFmvGpCxlSsxFoc5UamzxRk1g2c/8lxgJFqQNETzuhK/IB+aGyVSeDzi53m4Wez
+	 B0dBiczAKmC73ixqerGRmlUIH68lzllvVG3Mt2wJpCRhdFg4MW+xPE4uZekRjb6mGN
+	 pBrD5tU8qkx9g==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E91D337820FC;
+	Tue,  7 May 2024 14:07:05 +0000 (UTC)
+Message-ID: <46347f5d-e09b-4e83-a5a2-e12407f442a4@collabora.com>
+Date: Tue, 7 May 2024 16:07:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
+ support for board path
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "wenst@chromium.org" <wenst@chromium.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
+ "daniel@ffwll.ch" <daniel@ffwll.ch>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
+ <20240409120211.321153-3-angelogioacchino.delregno@collabora.com>
+ <aa7e3bcf70383e563a65919f924ec2e5e4cd778c.camel@mediatek.com>
+ <becdc2e5-4a1d-4280-b6f8-78d4903be283@collabora.com>
+ <4dfb09b9c437ab2baa0898eca13a43fd7475047a.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <4dfb09b9c437ab2baa0898eca13a43fd7475047a.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-If lfs mode is on, buffered read may race w/ OPU dio write as below,
-it may cause buffered read hits unwritten data unexpectly.
+Il 07/05/24 08:59, CK Hu (胡俊光) ha scritto:
+> On Thu, 2024-05-02 at 10:50 +0200, AngeloGioacchino Del Regno wrote:
+>> Il 25/04/24 04:23, CK Hu (胡俊光) ha scritto:
+>>> Hi, Angelo:
+>>>
+>>> On Tue, 2024-04-09 at 14:02 +0200, AngeloGioacchino Del Regno
+>>> wrote:
+>>>> Document OF graph on MMSYS/VDOSYS: this supports up to three DDP
+>>>> paths
+>>>> per HW instance (so potentially up to six displays for multi-vdo
+>>>> SoCs).
+>>>>
+>>>> The MMSYS or VDOSYS is always the first component in the DDP
+>>>> pipeline,
+>>>> so it only supports an output port with multiple endpoints -
+>>>> where
+>>>> each
+>>>> endpoint defines the starting point for one of the (currently
+>>>> three)
+>>>> possible hardware paths.
+>>>>
+>>>> Signed-off-by: AngeloGioacchino Del Regno <
+>>>> angelogioacchino.delregno@collabora.com>
+>>>> ---
+>>>>    .../bindings/arm/mediatek/mediatek,mmsys.yaml | 23
+>>>> +++++++++++++++++++
+>>>>    1 file changed, 23 insertions(+)
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.y
+>>>> aml
+>>>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.y
+>>>> aml
+>>>> index b3c6888c1457..4e9acd966aa5 100644
+>>>> ---
+>>>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.y
+>>>> aml
+>>>> +++
+>>>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.y
+>>>> aml
+>>>> @@ -93,6 +93,29 @@ properties:
+>>>>      '#reset-cells':
+>>>>        const: 1
+>>>>    
+>>>> +  port:
+>>>> +    $ref: /schemas/graph.yaml#/properties/port
+>>>> +    description:
+>>>> +      Output port node. This port connects the MMSYS/VDOSYS
+>>>> output
+>>>> to
+>>>> +      the first component of one display pipeline, for example
+>>>> one
+>>>> of
+>>>> +      the available OVL or RDMA blocks.
+>>>> +      Some MediaTek SoCs support up to three display outputs per
+>>>> MMSYS.
+>>>> +    properties:
+>>>> +      endpoint@0:
+>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
+>>>> +        description: Output to the primary display pipeline
+>>>> +
+>>>> +      endpoint@1:
+>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
+>>>> +        description: Output to the secondary display pipeline
+>>>> +
+>>>> +      endpoint@2:
+>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
+>>>> +        description: Output to the tertiary display pipeline
+>>>> +
+>>>> +    required:
+>>>> +      - endpoint@0
+>>>> +
+>>>
+>>> mmsys/vdosys does not output data to the first component of display
+>>> pipeline, so this connection looks 'virtual'. Shall we add
+>>> something
+>>> virtual in device tree? You add this in order to decide which
+>>> pipeline
+>>> is 1st, 2nd, 3rd, but for device it don't care which one is first.
+>>> In
+>>> computer, software could change which display is the primary
+>>> display.
+>>> I'm not sure it's good to decide display order in device tree?
+>>>
+>>
+>> Devicetree describes hardware, so nothing virtual can be present -
+>> and in any case,
+>> the primary/secondary/tertiary pipeline is in relation to MM/VDO SYS,
+>> not referred
+>> to software.
+>>
+>> Better explaining, the primary pipeline is not necessarily the
+>> primary display in
+>> DRM terms: that's a concept that is completely detached from the
+>> scope of this
+>> series and this graph - and it's something that shall be managed
+>> solely by the
+>> driver (mediatek-drm in this case).
+>>
+>> Coming back to the connection looking, but *not* being virtual: the
+>> sense here is
+>> that the MM/VDOSYS blocks are used in the display pipeline to
+>> "stitch" together
+>> the various display pipeline hardware blocks, or, said differently,
+>> setting up the
+>> routing between all of those (P.S.: mmsys_mtxxxx_routing_table!)
+>> through the VDO
+>> Input Selection (VDOx_SEL_IN) or Output Selection (VDOx_SEL_OUT) and
+>> with the
+>> assistance of the VDO Multiple Output Mask (VDOx_MOUT) for the
+>> multiple outputs
+>> usecase, both of which, are described by this graph.
+> 
+> I agree this part, but this is related to display device OF graph.
+> These display device would output video data from one device and input
+> to another video device. These video device would not input or output
+> video data to mmsys/vdosys.
+> 
+>>
+>> This means that the VDOSYS is really the "master" of the display
+>> pipeline since
+>> everything gets enabled, mixed and matched from there - and that's in
+>> the sense
+>> of hardware operation, so we are *really* (and not virtually!)
+>> flipping switches.
+> 
+> I agree mmsys/vdosys is master of video pipeline, so let's define what
+> the port in mmsys/vdosys is. If the port means the master relationship,
+> mmsys/vdosys should output port to every display device. Or use a
+> simply way to show the master relation ship
+> 
+> mmsys-subdev = <&ovl0, &rdma0, &color0, ...>, <&ovl1, &rdma1, &color1,
+> ...>;
+> 
 
-Thread A			Thread B
-- f2fs_file_write_iter
- - f2fs_dio_write_iter
-  - __iomap_dio_rw
-   - f2fs_iomap_begin
-    - f2fs_map_blocks
-     - __allocate_data_block
-      - allocated blkaddr #x
-       - iomap_dio_submit_bio
-				- f2fs_file_read_iter
-				 - filemap_read
-				  - f2fs_read_data_folio
-				   - f2fs_mpage_readpages
-				    - f2fs_map_blocks
-				     : get blkaddr #x
-				    - f2fs_submit_read_bio
-				IRQ
-				- f2fs_read_end_io
-				 : read IO on blkaddr #x complete
-IRQ
-- iomap_dio_bio_end_io
- : direct write IO on blkaddr #x complete
+There's no need to list all of the VDO0/VDO1/mmsys devices in one big array
+property, because the actual possible devices can be defined:
+   1. In the bindings; and
+   2. In the actual OF graph that we write for each SoC+board combination.
 
-This patch introduces a new per-inode i_opu_rwsem lock to avoid
-such race condition.
+A graph cannot contain a connection to a device that cannot be connected to
+the previous, so, your "mmsys-subdev" list can be retrieved by looking at the
+graph:
+  - Start from VDO0/1 or MMSYS
+  - Walk through (visually, even) OUTPUT ports
+    - VDO0 (read output ep) -> ovl0 (read output ep) -> rdma0 (read output ep) ->
+      color0 (...) -> etc
+  - Nothing more - it's all defined there.
 
-Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/file.c  | 20 ++++++++++++++++++--
- fs/f2fs/super.c |  1 +
- 3 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> Another problem is how to group display device? If two pipeline could
+> be route to the same display interface, such as
+> 
+> rdma0 -> dsi
+> rdma1 -> dsi
+> 
+> Would this be single group?
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 145b985bf252..b69ec1109572 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -847,6 +847,7 @@ struct f2fs_inode_info {
- 	/* avoid racing between foreground op and gc */
- 	struct f2fs_rwsem i_gc_rwsem[2];
- 	struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
-+	struct f2fs_rwsem i_opu_rwsem;	/* avoid racing between buf read and opu dio write */
- 
- 	int i_extra_isize;		/* size of extra space located in i_addr */
- 	kprojid_t i_projid;		/* id for project quota */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ef4cfb4436ef..c761db952b37 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4545,7 +4545,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (f2fs_should_use_dio(inode, iocb, to)) {
- 		ret = f2fs_dio_read_iter(iocb, to);
- 	} else {
-+		bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
-+
-+		if (do_opu)
-+			f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
- 		ret = filemap_read(iocb, to, 0);
-+		if (do_opu)
-+			f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
- 		if (ret > 0)
- 			f2fs_update_iostat(F2FS_I_SB(inode), inode,
- 						APP_BUFFERED_READ_IO, ret);
-@@ -4770,14 +4776,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 			ret = -EAGAIN;
- 			goto out;
- 		}
-+		if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
-+			f2fs_up_read(&fi->i_gc_rwsem[READ]);
-+			f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
-+			ret = -EAGAIN;
-+			goto out;
-+		}
- 	} else {
- 		ret = f2fs_convert_inline_inode(inode);
- 		if (ret)
- 			goto out;
- 
- 		f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
--		if (do_opu)
-+		if (do_opu) {
- 			f2fs_down_read(&fi->i_gc_rwsem[READ]);
-+			f2fs_down_write(&fi->i_opu_rwsem);
-+		}
- 	}
- 
- 	/*
-@@ -4801,8 +4815,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 		ret = iomap_dio_complete(dio);
- 	}
- 
--	if (do_opu)
-+	if (do_opu) {
-+		f2fs_up_write(&fi->i_opu_rwsem);
- 		f2fs_up_read(&fi->i_gc_rwsem[READ]);
-+	}
- 	f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
- 
- 	if (ret < 0)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index daf2c4dbe150..b4ed3b094366 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
- 	init_f2fs_rwsem(&fi->i_xattr_sem);
-+	init_f2fs_rwsem(&fi->i_opu_rwsem);
- 
- 	/* Will be used by directory only */
- 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
--- 
-2.40.1
+There are multiple ways of doing this, but one that comes to my mind right now and
+that looks clean as well is the following:
+
+ovl0@ef01 {
+    .....
+   ports {
+     port@0 {
+       reg = <0>;
+       ovl0_in: endpoint {
+         remote-endpoint = <&vdosys0_out>;
+       };
+     };
+
+     port@1 {
+       reg = <1>;
+       ovl0_out0: endpoint@0 {
+         remote-endpoint = <&rdma0_in>;
+       };
+       ovl0_out1: endpoint@1 {
+         remote-endpoint = <&rdma1_in>;
+       };
+     };
+   };
+};
+
+rdma0@1234 {
+    .....
+   ports {
+     port@0 {
+       reg = <0>;
+       rdma0_in: endpoint {
+         remote-endpoint = <&ovl0_out0>; /* assuming ovl0 outputs to rdma0...*/
+       };
+     };
+     port@1 {
+       reg = <1>;
+       rdma0_out: endpoint@1 {
+         remote-endpoint = <&dsi_dual_intf0_in>;
+       };
+     };
+   };
+};
+
+
+rdma1@5678 {
+    .....
+   ports {
+     port@0 {
+       reg = <0>;
+       rdma1_in: endpoint {
+         /* assuming ovl0 outputs to rdma1 as well... can be something else. */
+         remote-endpoint = <&ovl0_out1>;
+       };
+     };
+     port@1 {
+       reg = <1>;
+       rdma1_out: endpoint {
+         remote-endpoint = <&dsi_dual_intf1_in>;
+       };
+     };
+   };
+};
+
+
+dsi@9abcd {
+    .....
+   ports {
+     port@0 {
+       reg = <0>;
+       /* Where endpoint@0 could be always DSI LEFT CTRL */
+       dsi_dual_intf0_in: endpoint@0 {
+         remote-endpoint = <&rdma0_out>;
+       };
+       /* ...and @1 could be always DSI RIGHT CTRL */
+       dsi_dual_intf1_in: endpoint@1 {
+         remote-endpoint = <&rdma1_out>;
+       };
+     };
+
+     port@1 {
+       reg = <1>;
+       dsi0_out: endpoint {
+         remote-endpoint = <&dsi_panel_in>;
+       };
+     };
+   };
+};
+
+..for a dual-dsi panel, it'd be a similar graph.
+
+Cheers,
+Angelo
+
+> 
+> mmsys-subdev = <&rdma0, &rdma1, &dsi>;
+> 
+> Or two group?
+> 
+> mmsys-subdev = <&rdma0, &dsi>, <&rdma1, &dsi>;
+> 
+> I think we should clearly define this.
+> 
+> Regards,
+> CK
+> 
+>>
+>>
+>> Cheers,
+>> Angelo
+>>
+>>> Regards,
+>>> CK
+>>>
+>>>
+>>>>    required:
+>>>>      - compatible
+>>>>      - reg
+>>
+>>
+
+
 
 
