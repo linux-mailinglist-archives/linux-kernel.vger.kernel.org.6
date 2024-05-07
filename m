@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-170550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7718BD903
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:36:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56DC8BD909
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9051C1C210D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C212838E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95FE79DF;
-	Tue,  7 May 2024 01:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B154436;
+	Tue,  7 May 2024 01:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXUZg10z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBz7L4vP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D10523D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 01:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561A1139F;
+	Tue,  7 May 2024 01:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715045748; cv=none; b=MF7AVYRB7yAeV8S2VnxH028bU1a/pyKrK/bhhEXTMw4A8F1YYclrZks44B4YMIOAqqjbSmHtGqfDlFcCQcb8OL9r4lZ1l2j5SxqLVSeha7S/bkfHjbfuoerK6zTitndityoQL2Zy5fRHeXFORsYX7eN+OM/zWeUnx410D1r6qd0=
+	t=1715045861; cv=none; b=NVNthuDQay40o2+1xgVK7mipTPVU17gOp8g83OISBLzvCOiX1E9olcwEpb2mDI6CQJw6XMCCn6LBnQ3s69FOjdrOv2lmVbfIWjtv6IxLXptrrAKm58VLlRyQkeDESh7dZ6IL4kaxAKoj+HdcypML7HJdOZn8mwFdeLZMwKgBWoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715045748; c=relaxed/simple;
-	bh=i4HnHQzydUh3clXw1HQgCDinqsGXvhs5w/dIG4yr6tM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GCDmg0h+zaPlIIvSKsxKVs1aHddYccW478YIk4GTihX9T/t/LLMxl5lFE/CzmD8+qbh2YHfB6jgMuJnxeTymp4BcnqOaX7r2QdG5g1vS7+6mNbFnXLpaJwuIAVdQd8EYK+EGh2s/aHK0rLHAulc173jT/VM1q1LvnGvvtZAkPFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXUZg10z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58DE3C116B1;
-	Tue,  7 May 2024 01:35:44 +0000 (UTC)
+	s=arc-20240116; t=1715045861; c=relaxed/simple;
+	bh=7T6mbhT6vl3m4fgPrZ7Q4EESsIvLkdSI1gi4g130v+A=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=u2ZklVhD1OkMyXai/mZ/P0U0uQmBZ81KZJGTPWR5lHnySu27Z7fS1BrKyLkZRVZAckdO8m+Mkh4/PT9PZIv0snckYx2mx738lAKBOoTJZu1rLShijgjVyxF3ot8JBCprWdMUYon8zw0ssyEEHi/Y7UxstLd8O7bq+ND//GaHfQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBz7L4vP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C72FBC116B1;
+	Tue,  7 May 2024 01:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715045747;
-	bh=i4HnHQzydUh3clXw1HQgCDinqsGXvhs5w/dIG4yr6tM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=EXUZg10znflx8/JeaPt/Hi9xIRMfdQA2o/GpPOvONurSvlt44sCjhhA7GBU6yH8TL
-	 8X+ohJSZUJ7So0gvZS7u1BfjneYH/vnGx0+fJ0+y/nTnuNtCuqE9xC1mXzI79GL/qN
-	 br/s0BOPUIxJemHLTER9inlh2hANLtzmh43e+CD9Jm/rGo0PM54tuLryVBbIxuuL2z
-	 f446PXieb8lk+1iOc1lPNbrziKr8Ej6P++vNbDMdfxSKWnMCaiHkRoUZ9JAQOR9IJ6
-	 RMoWfBSMz5EqCelzMufmSzPxxphU2m+RBaauHHd97v1JRto1dheAEpu0ewtROmNY4c
-	 bW7XCUdN0pGfw==
+	s=k20201202; t=1715045861;
+	bh=7T6mbhT6vl3m4fgPrZ7Q4EESsIvLkdSI1gi4g130v+A=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=vBz7L4vP2Lq9kPOax3KC896V0R5+hpIpSoTkR3mAHMguXMEnuOoeq+5jq64VcKFu5
+	 edcgLaJzuZOzmYGFNEL/oZFCkK2aA6iPnuBRizwZVMlB36FiWrSONg6n+571nUOAoC
+	 xMv00XnGPzSoIBq/O5w6wJPf0s34K2Xh/Z5gHt2XyfzG0zK8DB5dGxwZj1YRYJJD+j
+	 i+pEw6MCyiyiN+v5kxCSUr5pazs99ogdtqvunH/jUzsUNKHSBKTr2pW351cauOwoFb
+	 aVH/k8S3TVhAc/pii7VtGW1UUVsdDYNiFFfmSANbV3xz5n1ZpAnj4VwsufKTE5MA5a
+	 ihw1K14PpI8lQ==
 From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz, 
- pierre-louis.bossart@linux.intel.com, 13916275206@139.com, 
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, 
- liam.r.girdwood@intel.com, bard.liao@intel.com, 
- yung-chuan.liao@linux.intel.com, kevin-lu@ti.com, 
- cameron.berkenpas@gmail.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu, 
- Baojun.Xu@fpt.com
-In-Reply-To: <20240505122346.1326-1-shenghao-ding@ti.com>
-References: <20240505122346.1326-1-shenghao-ding@ti.com>
-Subject: Re: [PATCH v2] ASoC: tas2781: Fix a warning reported by robot
- kernel test
-Message-Id: <171504574426.1980570.10154577788713612869.b4-ty@kernel.org>
-Date: Tue, 07 May 2024 10:35:44 +0900
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240430140954.328127-1-krzysztof.kozlowski@linaro.org>
+References: <20240430140954.328127-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ASoC: qcom: q6apm-dai: drop unused 'q6apm_dai_rtd'
+ fields
+Message-Id: <171504585856.1982545.5694703211311117079.b4-ty@kernel.org>
+Date: Tue, 07 May 2024 10:37:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,11 +63,8 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev
 
-On Sun, 05 May 2024 20:23:45 +0800, Shenghao Ding wrote:
-> Fix a warning reported by robot kernel test that 'fw_entry' in function
-> 'tas2781_load_calibration' is used uninitialized with compiler
-> sh4-linux-gcc (GCC) 13.2.0, an update of copyright and a correction of the
-> comments.
+On Tue, 30 Apr 2024 16:09:54 +0200, Krzysztof Kozlowski wrote:
+> Remove few unused fields from 'struct q6apm_dai_rtd'.
 > 
 > 
 
@@ -79,8 +74,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: tas2781: Fix a warning reported by robot kernel test
-      commit: 1ae14f3520b1a0ad144610a3f592c81a3e81cd1b
+[1/1] ASoC: qcom: q6apm-dai: drop unused 'q6apm_dai_rtd' fields
+      commit: bd381c9d151467e784988bbacf22bd7ca02455d6
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
