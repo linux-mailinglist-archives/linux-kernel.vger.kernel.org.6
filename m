@@ -1,207 +1,129 @@
-Return-Path: <linux-kernel+bounces-171885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A518BE9E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F2F8BE9EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E08C1C21F78
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADBB282EA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D300742065;
-	Tue,  7 May 2024 16:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0AC1509AC;
+	Tue,  7 May 2024 16:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/G+nh7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZT8ZsJjc"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B8916C443
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3805B43687;
+	Tue,  7 May 2024 16:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715101006; cv=none; b=CGEzzxkBZBeJ71Jbh4XcHF4CF0spKXMjfzpp25+K1MUdkQATfRl9zlu7eAxVWVr+3iACqs9mOAyJUHsw0mBQlyjtFklsRCcEehlJQg006NJlnvKb1rEFWO4ZCDFAu5RyVC9dQz3Q0+di6S1pzsWSbFEjew9KTIV3cGRY8muold8=
+	t=1715101072; cv=none; b=dGjTdKM8w5XjVSJ/Huam0bqlqusJhMaYAAEKgHRsOnw5s4IaVXgyc0+WxrzTyxG/VjWtiAXQjRdLox0GLlG7wPVY/EKbyjB0btlP0Ayj5+pEv5Sy2u2+PpdH/JRTBkYyoTdNg58itxJoMmTIhrPpHS/zCXG5/7PuNfYhNWec7x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715101006; c=relaxed/simple;
-	bh=cpSnBOlxoobeW93e7dJEkEHD7EOpMpJthLmloLNdINo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AED3SmmgcN6YX2nGxn9girPsPh5It6tPcEyq5IxCXHQ0rjiP6wW1d4o9vnX3K7+3pLTgs6dLIYtfEW8Ve2ewfW6xQQoyn434+LJYCR0M6/yLsX+PuClMZQ5EZv1PgJh40ePVgL2gFKT1UIHiYCjwA8F7WFWLn/0lbZzLgA3PvGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/G+nh7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF1CC4DDE1;
-	Tue,  7 May 2024 16:56:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715101005;
-	bh=cpSnBOlxoobeW93e7dJEkEHD7EOpMpJthLmloLNdINo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=E/G+nh7MycQtNscnJTuv0PuvL1b+CIRXIRXtEJYIdUxxCuB8qLiRlLSYx8GFul1sM
-	 5Sl79y1bvolz5SfuGBoV+/jdcYBxmvQSXhU8zGcYgf+GTrXMM2Ws5UbO2NKLeGpaAj
-	 6pS2RaTP17vUcOjLvaOCmJvGA4X6ricYA4nR+2TnIt8q59pv3nnk3bTL1Uj1dLyzby
-	 wWTiCajH3dWEUlZIMvsz8horcyw08ZT6D96TLfblS7RPznZvyI2+P7EMlDH2lLavDj
-	 HS70QamYgMSx5berMmBEkUJ1LaRq3/F/sG+kyS15mqKbekaZOo4TR0QO8ZGxyDs4MC
-	 xY+PJAPEJAtuA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 839E3CE14CC; Tue,  7 May 2024 09:56:45 -0700 (PDT)
-Date: Tue, 7 May 2024 09:56:45 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	Boqun Feng <boqun.feng@gmail.com>, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH] kcsan, compiler_types: Introduce __data_racy type
- qualifier
-Message-ID: <f140eb01-fc94-478b-8931-3e1d281949ce@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240502141242.2765090-1-elver@google.com>
+	s=arc-20240116; t=1715101072; c=relaxed/simple;
+	bh=FP0ElEzdfWrFJOFrGuCbCMsFbslobdXDgrTN9rgKL8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pt7sLRFELJohEYrFQjbl70lS+DoSp11lLuwcNjCxwMnMf7XJJ2hjpwN8DQlO7yC4lvJ3rgQDumb9a0FvbyHcLPQja3HQFk7D9C7ApFZzrmM4hO8T7VsPUfwFY2oLrDrce8Zid4uSddH3IzM6w8wKTEBblAyseOBZqyxLOZwBMpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZT8ZsJjc; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b432be5cc9so2403268a91.3;
+        Tue, 07 May 2024 09:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715101070; x=1715705870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eE31Eu7TV3EXJzBcDGMth8eM0CNdcvipjciguAMPYxc=;
+        b=ZT8ZsJjcYWzhA8r32jk+kosx8TGMaIPyzOmX2wbw/0ezqCrO+v/WX3ldSqd385rpaD
+         LXMpU31bForGjTHelp3vddCG7+r0hiExvloDJ8jz48bnQVoC8dD216r9Cz7pQIzJkt29
+         FGVM7LbF45Ltd4d+I24RyAnMZ3IUPv7JCRse8yetjaBrkP/SpSUDPeDUpXc8cJ9dChov
+         L+O/QxdLwLXh7qMJtR30/Gv2xSaayD9fBDLhWK304dj2fiyOKWf7AM1l/gEKbZ3xM4uu
+         /bgaGsq/D4sm8mFEqZv3eCTAGPJtz1Q0F+O1lJ6dM1cRplT7wTgRuD0jvo0bbAF6lUd5
+         YlyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715101070; x=1715705870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eE31Eu7TV3EXJzBcDGMth8eM0CNdcvipjciguAMPYxc=;
+        b=deNAfdXU5sTp++f7xTQTFZ+K9A3mR2L7Y2+vO+NJUmpWxEAlpWGaZb/IsCXQBpmivL
+         6Be8/tV8z5x3K0iojq8vCv6fhtfTZt3P6UPJC5yWyhDUqr6fJZpM8GsDZzEn0BvxTBb0
+         wptGynj9EG3YKrs7WD/QrUW6NYotB3r+XoHFDLzI5RYKkHrfIIEcp/+VW4ehRcFuYvdX
+         7NjmuFnt9o4BN2eiINaTGThVDY2ICK+uaZUMdV5Gap5jtosrzcy1max/1bUeVtD0m+SP
+         m/ETctZEiIzn8HEiJyPwI/lR/2vkz2/NZOLMIjb862UdRUjkgavINQVLdbjzwWybaCRB
+         ZkxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0IPFV9MixY30R+0HGMxfw3Go2bOYnprYZKgQDMxH1XNh8eiLmRk+ppscCVqq0UqcTMhHDG9ZtQS+f6amyxkIfOvU6Vyq9mzojogCtX/tyobcmHoCayhYW4wgrVWwFrqEByChMFXtj2h4f0pDUHMXhV8XA7B29bh25ChGxOcFeMp9rlnVkh4kyNFJGN9ykJ9NTxIGH6DbJyU6HlVHu4YFB6AF25jHjHbLscBjizl2GWE2GXjdSZzVny7hZ
+X-Gm-Message-State: AOJu0YxxV7kmX37664ih2r7D1vjLgZNMzE81o3AFxdhk8L8ebE8PThn9
+	MV0rPWinFQ6rbRuyMlV3e+ZvJDFP8d4NvfZZG/8twR7vzn+ic/Vi1rZ5pNAkS07v2p+whaVM/7W
+	tXWGWjHbVcnjC22LjXukC/+TeeSk=
+X-Google-Smtp-Source: AGHT+IFCvOCTLmh+vR5MnBpK3/YRcqFHtkZuMt2ZICN4OeIQqhzuC5AVJClKepVlRCu/ozUA1GJbduUjtNqkOz5da18=
+X-Received: by 2002:a17:90a:cf14:b0:2b3:ed2:1a91 with SMTP id
+ 98e67ed59e1d1-2b616ae2ca0mr110952a91.45.1715101070491; Tue, 07 May 2024
+ 09:57:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502141242.2765090-1-elver@google.com>
+References: <20240507105321.71524-1-jolsa@kernel.org> <20240507105321.71524-6-jolsa@kernel.org>
+In-Reply-To: <20240507105321.71524-6-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 7 May 2024 09:57:37 -0700
+Message-ID: <CAEf4Bzbb0on_GA3Gnzc09Yy-1H3hAZa+AQ9hyXgvd830cJZS4w@mail.gmail.com>
+Subject: Re: [PATCHv5 bpf-next 5/8] selftests/bpf: Add uretprobe syscall call
+ from user space test
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	Andy Lutomirski <luto@kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	Deepak Gupta <debug@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 02, 2024 at 04:12:17PM +0200, Marco Elver wrote:
-> Based on the discussion at [1], it would be helpful to mark certain
-> variables as explicitly "data racy", which would result in KCSAN not
-> reporting data races involving any accesses on such variables. To do
-> that, introduce the __data_racy type qualifier:
-> 
-> 	struct foo {
-> 		...
-> 		int __data_racy bar;
-> 		...
-> 	};
-> 
-> In KCSAN-kernels, __data_racy turns into volatile, which KCSAN already
-> treats specially by considering them "marked". In non-KCSAN kernels the
-> type qualifier turns into no-op.
-> 
-> The generated code between KCSAN-instrumented kernels and non-KCSAN
-> kernels is already huge (inserted calls into runtime for every memory
-> access), so the extra generated code (if any) due to volatile for few
-> such __data_racy variables are unlikely to have measurable impact on
-> performance.
-> 
-> Link: https://lore.kernel.org/all/CAHk-=wi3iondeh_9V2g3Qz5oHTRjLsOpoy83hb58MVh=nRZe0A@mail.gmail.com/ [1]
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Marco Elver <elver@google.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-
-I have queued and pushed this, thank you!
-
-I have started testing, and if all goes well I will rebase this on top
-of v6.9-rc2 (same base as the rest of my commits for next merge window),
-merge it in and push it out.  With a little luck, this will get it into
-tomorrow's -next.  With more luck than anyone deserves, today's.
-
-							Thanx, Paul
-
+On Tue, May 7, 2024 at 3:54=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Adding test to verify that when called from outside of the
+> trampoline provided by kernel, the uretprobe syscall will cause
+> calling process to receive SIGILL signal and the attached bpf
+> program is not executed.
+>
+> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  Documentation/dev-tools/kcsan.rst | 10 ++++++++++
->  include/linux/compiler_types.h    |  7 +++++++
->  kernel/kcsan/kcsan_test.c         | 17 +++++++++++++++++
->  3 files changed, 34 insertions(+)
-> 
-> diff --git a/Documentation/dev-tools/kcsan.rst b/Documentation/dev-tools/kcsan.rst
-> index 94b6802ab0ab..02143f060b22 100644
-> --- a/Documentation/dev-tools/kcsan.rst
-> +++ b/Documentation/dev-tools/kcsan.rst
-> @@ -91,6 +91,16 @@ the below options are available:
->    behaviour when encountering a data race is deemed safe.  Please see
->    `"Marking Shared-Memory Accesses" in the LKMM`_ for more information.
->  
-> +* Similar to ``data_race(...)``, the type qualifier ``__data_racy`` can be used
-> +  to document that all data races due to accesses to a variable are intended
-> +  and should be ignored by KCSAN::
-> +
-> +    struct foo {
-> +        ...
-> +        int __data_racy stats_counter;
-> +        ...
-> +    };
-> +
->  * Disabling data race detection for entire functions can be accomplished by
->    using the function attribute ``__no_kcsan``::
->  
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index 2abaa3a825a9..a38162a8590d 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -273,9 +273,16 @@ struct ftrace_likely_data {
->   * disable all instrumentation. See Kconfig.kcsan where this is mandatory.
->   */
->  # define __no_kcsan __no_sanitize_thread __disable_sanitizer_instrumentation
-> +/*
-> + * Type qualifier to mark variables where all data-racy accesses should be
-> + * ignored by KCSAN. Note, the implementation simply marks these variables as
-> + * volatile, since KCSAN will treat such accesses as "marked".
-> + */
-> +# define __data_racy volatile
->  # define __no_sanitize_or_inline __no_kcsan notrace __maybe_unused
->  #else
->  # define __no_kcsan
-> +# define __data_racy
->  #endif
->  
->  #ifndef __no_sanitize_or_inline
-> diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
-> index 015586217875..0c17b4c83e1c 100644
-> --- a/kernel/kcsan/kcsan_test.c
-> +++ b/kernel/kcsan/kcsan_test.c
-> @@ -304,6 +304,7 @@ static long test_array[3 * PAGE_SIZE / sizeof(long)];
->  static struct {
->  	long val[8];
->  } test_struct;
-> +static long __data_racy test_data_racy;
->  static DEFINE_SEQLOCK(test_seqlock);
->  static DEFINE_SPINLOCK(test_spinlock);
->  static DEFINE_MUTEX(test_mutex);
-> @@ -358,6 +359,8 @@ static noinline void test_kernel_write_uninstrumented(void) { test_var++; }
->  
->  static noinline void test_kernel_data_race(void) { data_race(test_var++); }
->  
-> +static noinline void test_kernel_data_racy_qualifier(void) { test_data_racy++; }
-> +
->  static noinline void test_kernel_assert_writer(void)
->  {
->  	ASSERT_EXCLUSIVE_WRITER(test_var);
-> @@ -1009,6 +1012,19 @@ static void test_data_race(struct kunit *test)
->  	KUNIT_EXPECT_FALSE(test, match_never);
->  }
->  
-> +/* Test the __data_racy type qualifier. */
-> +__no_kcsan
-> +static void test_data_racy_qualifier(struct kunit *test)
-> +{
-> +	bool match_never = false;
-> +
-> +	begin_test_checks(test_kernel_data_racy_qualifier, test_kernel_data_racy_qualifier);
-> +	do {
-> +		match_never = report_available();
-> +	} while (!end_test_checks(match_never));
-> +	KUNIT_EXPECT_FALSE(test, match_never);
-> +}
-> +
->  __no_kcsan
->  static void test_assert_exclusive_writer(struct kunit *test)
->  {
-> @@ -1424,6 +1440,7 @@ static struct kunit_case kcsan_test_cases[] = {
->  	KCSAN_KUNIT_CASE(test_read_plain_atomic_rmw),
->  	KCSAN_KUNIT_CASE(test_zero_size_access),
->  	KCSAN_KUNIT_CASE(test_data_race),
-> +	KCSAN_KUNIT_CASE(test_data_racy_qualifier),
->  	KCSAN_KUNIT_CASE(test_assert_exclusive_writer),
->  	KCSAN_KUNIT_CASE(test_assert_exclusive_access),
->  	KCSAN_KUNIT_CASE(test_assert_exclusive_access_writer),
-> -- 
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
-> 
+>  .../selftests/bpf/prog_tests/uprobe_syscall.c | 95 +++++++++++++++++++
+>  .../bpf/progs/uprobe_syscall_executed.c       | 17 ++++
+>  2 files changed, 112 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall_exec=
+uted.c
+>
+
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+> diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/to=
+ols/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> index 1a50cd35205d..3ef324c2db50 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> @@ -7,7 +7,10 @@
+>  #include <unistd.h>
+>  #include <asm/ptrace.h>
+>  #include <linux/compiler.h>
+> +#include <linux/stringify.h>
+> +#include <sys/wait.h>
+>  #include "uprobe_syscall.skel.h"
+> +#include "uprobe_syscall_executed.skel.h"
+>
+
+[...]
 
