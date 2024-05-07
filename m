@@ -1,102 +1,136 @@
-Return-Path: <linux-kernel+bounces-170617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216938BD9BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:33:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452EC8BD9D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1848284899
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:33:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E6DDB232B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6EC42AAE;
-	Tue,  7 May 2024 03:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C1D4087C;
+	Tue,  7 May 2024 03:43:20 +0000 (UTC)
 Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78D14C94;
-	Tue,  7 May 2024 03:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7413AA5F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715052782; cv=none; b=UdXsZFb3e8dF/BrqTRQHpsc7mYXPVnjvwha9m7ZXC0HHUnpEdtGh0Qw7jPkR87hcY+WK0C1apNdx2CpJQ1QpcVRiZqpBxN3evFD/cGNUHBRt89n5p3I+/Fsg0FvFhYWn6vvosrn2sLtGarmp1A4vSjFUvPVaq7yUUq5MF53tyhM=
+	t=1715053400; cv=none; b=tWADjdFc9SMi/ttJuwmH//E7yiT2Opd+JXYbi+YxLlQa1RI1ANAaHgRTtaEtKBblxhwd8p4dzwrMGfVmTRPEK3pU595ueVqk9TVOacCWtmBkfcC6GzC6RLuGbqTPqfJDR/DWNIk+gieFHW+JI9rvdbNqAObxtJeikmmR6K4/62c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715052782; c=relaxed/simple;
-	bh=7wd/yUfKcL6tjsmswtHH9lv5HGLnvEwVClY4hN6jGIs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iU7Mw87T14BXVyCpL4zBzH6eCSFQ/Lql+BhoLepwTGbwwT4gybU1g3he8sOnAheE8E+VHMZOOd1L8r67r1j3ew+ruVjOfntVGrULUOAY5MXe1U7onwQPN8w5FYSncEwquadBBYKXDgOFrJdBkyLS9WeIRGcpJkBGXfwSv9NIdec=
+	s=arc-20240116; t=1715053400; c=relaxed/simple;
+	bh=9sWrn5PGtwLfkUZbew0fDDmmTJ2xh7Bx1beKJx9CeNM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZLma7ueR6tAwOMM78VCcOrQgga0uL8n9jr4hunGXUsoZvO9XcQ2YPiOIcf9hqIE+347jdiJvJ5Uvm0feCpGKTroS/d+26QBdtDeMirsc3S5qRufCi4ZUNcB+ComamE9B2bXEPBXdaYnWCxRKkkrLmgJ+vvGqX9RwnjXCcf58emU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 77bd87380c2211ef9305a59a3cc225df-20240507
+X-UUID: 2f3460e40c2311ef9305a59a3cc225df-20240507
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.37,REQID:9ce386ab-0914-421d-8764-ed15d5d60748,IP:20,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:0
-X-CID-INFO: VERSION:1.1.37,REQID:9ce386ab-0914-421d-8764-ed15d5d60748,IP:20,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:0
-X-CID-META: VersionHash:6f543d0,CLOUDID:953b18f2e0dff68bcc53e53b1d5fe9c7,BulkI
-	D:2405071132467M9YECP2,BulkQuantity:0,Recheck:0,SF:19|44|66|24|17|102,TC:n
-	il,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 1,UOG
-X-CID-BAS: 1,UOG,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_ULS
-X-UUID: 77bd87380c2211ef9305a59a3cc225df-20240507
-Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <luyun@kylinos.cn>)
+X-CID-O-INFO: VERSION:1.1.37,REQID:8d3dde92-39c0-42cf-be35-07d152472bb0,IP:10,
+	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:24
+X-CID-INFO: VERSION:1.1.37,REQID:8d3dde92-39c0-42cf-be35-07d152472bb0,IP:10,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:24
+X-CID-META: VersionHash:6f543d0,CLOUDID:a7f1be296293f0ea6ea28dab44b48c3f,BulkI
+	D:240429110502VVCX1UY7,BulkQuantity:1,Recheck:0,SF:19|44|66|38|25|17|102,T
+	C:nil,Content:0,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,C
+	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, DN_TRUSTED
+	SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
+	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
+	AMN_C_BU, ABX_MISS_RDNS
+X-UUID: 2f3460e40c2311ef9305a59a3cc225df-20240507
+X-User: liweishi@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.169)] by mailgw.kylinos.cn
+	(envelope-from <liweishi@kylinos.cn>)
 	(Generic MTA)
-	with ESMTP id 764133066; Tue, 07 May 2024 11:32:44 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id A4719B8075B2;
-	Tue,  7 May 2024 11:32:44 +0800 (CST)
-X-ns-mid: postfix-6639A0DC-523906690
-Received: from localhost.localdomain (unknown [10.42.176.164])
-	by node2.com.cn (NSMail) with ESMTPA id DBB2FB8075B2;
-	Tue,  7 May 2024 03:32:42 +0000 (UTC)
-From: Yun Lu <luyun@kylinos.cn>
-To: hdanton@sina.com
-Cc: linux-kernel@vger.kernel.org,
-	syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	vinicius.gomes@intel.com,
-	jhs@mojatatu.com,
-	netdev@vger.kernel.org
-Subject: Re: [syzbot] [kasan?] [mm?] INFO: rcu detected stall in __run_timer_base
-Date: Tue,  7 May 2024 11:32:42 +0800
-Message-Id: <20240507033242.1616594-1-luyun@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240414025336.2016-1-hdanton@sina.com>
-References: <20240414025336.2016-1-hdanton@sina.com>
+	with ESMTP id 953568615; Tue, 07 May 2024 11:37:52 +0800
+From: Weishi Li <liweishi@kylinos.cn>
+To: airlied@redhat.com,
+	kraxel@redhat.com,
+	gurchetansingh@chromium.org,
+	olvaffe@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	liweishi@kylinos.cn
+Subject: [PATCH] [PATCH RESEND] drm/virtio: fix memory leak of vbuf
+Date: Tue,  7 May 2024 11:38:14 +0800
+Message-Id: <20240507033814.57906-1-liweishi@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Both virtio_gpu_queue_ctrl_buffer and virtio_gpu_queue_cursor use
+virtqueue_add_sgs to upload the structure virtio_gpu_vbuffer * vbuf
+to virtqueue. However, when the vbuf fails to upload and virtqueue_add_sgs
+returns -EIO or -ENOMEM, the vbuf will not be able to be free by
+virtio_gpu_dequeue_*_func, resulting in a continuous increase
+in memory allocated to vgdev ->vbufs.
 
-Indeed, the taprio hrtimer does cause CPU stuck in certain specific scena=
-rios,
-and this patch indirectly confirms it.
+Therefore, make virtio_gpu_queue_ctrl_sgs and virtio_gpu_queue_cursor
+free vbuf directly after virtqueue_add_sgs returns -EIO or -ENOMEM.
 
-However, it seems this patch isn't the final solution?=20
+Signed-off-by: Weishi Li <liweishi@kylinos.cn>
+---
+ drivers/gpu/drm/virtio/virtgpu_vq.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-On my testing machine, after starting Taprio hrtimer and then adjusting t=
-he
-system time backward, it can be observed that the taprio hrtimer indeed g=
-ets stuck
-in an infinite loop through tracing. And, the patch below can effectively=
- resolve
-this issue, but it doesn't work for syzbot's tests.
-
-https://lore.kernel.org/all/20240506023617.1309937-1-luyun@kylinos.cn/
-
-Are there any better suggestions from others regarding the resolution of =
-this CPU stuck issue?
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index b1a00c0c25a7..e90751cc97f2 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -356,12 +356,14 @@ static int virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
+ 
+ 	ret = virtqueue_add_sgs(vq, sgs, outcnt, incnt, vbuf, GFP_ATOMIC);
+ 	WARN_ON(ret);
++	if (ret < 0 && ret != -ENOSPC) {
++		free_vbuf(vgdev, vbuf);
++	} else {
++		vbuf->seqno = ++vgdev->ctrlq.seqno;
++		trace_virtio_gpu_cmd_queue(vq, virtio_gpu_vbuf_ctrl_hdr(vbuf), vbuf->seqno);
+ 
+-	vbuf->seqno = ++vgdev->ctrlq.seqno;
+-	trace_virtio_gpu_cmd_queue(vq, virtio_gpu_vbuf_ctrl_hdr(vbuf), vbuf->seqno);
+-
+-	atomic_inc(&vgdev->pending_commands);
+-
++		atomic_inc(&vgdev->pending_commands);
++	}
+ 	spin_unlock(&vgdev->ctrlq.qlock);
+ 
+ 	drm_dev_exit(idx);
+@@ -469,6 +471,8 @@ static void virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
+ 		wait_event(vgdev->cursorq.ack_queue, vq->num_free >= outcnt);
+ 		spin_lock(&vgdev->cursorq.qlock);
+ 		goto retry;
++	} else if (ret < 0) {
++		free_vbuf(vgdev, vbuf);
+ 	} else {
+ 		vbuf->seqno = ++vgdev->cursorq.seqno;
+ 		trace_virtio_gpu_cmd_queue(vq,
+-- 
+2.25.1
 
 
