@@ -1,271 +1,397 @@
-Return-Path: <linux-kernel+bounces-171729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A1A8BE7DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:55:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4B28BE80A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55C4F1C22FF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B113C1C232C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7413168B1B;
-	Tue,  7 May 2024 15:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1255716C6BF;
+	Tue,  7 May 2024 15:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H8ZEkNHI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M5Qx9M32"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4919116132A;
-	Tue,  7 May 2024 15:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097298; cv=fail; b=KJm9/GYxoYXwG78h5+nRCzDJm+bWws6uRbkQ1VhJ30ghTVJgWZxb3NUYXjJ9FqNJBquxM0dY1RjznZKCBJWJqmT4V7XyR8uN9M9q+NyZhaa9zMqcuQajDp1/grDnjcNwTgesh+D+zzReDSzNyRNUxsgI7Hg7lpBnoPKSi/kR7+A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097298; c=relaxed/simple;
-	bh=TJtXAgodlfk2muYMs1ZHEwK/pCWhBrUeUvz41xe/PNw=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fzMTdTewKfJv95NCTbHe0LnF3Eh0rs3UTTxCDqGCsj+Bh84qtgnv60sak8PafEsmkImXQzDsbZFCWVl3p5xGnJRYyuwbRzRbRX6riHzaZi0/dGLmeXacfSWG4SzvF479jDHb1OVjl3GibW5GgdLrIKg9yMTIJyFVzWhsB0ovqCo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H8ZEkNHI; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715097298; x=1746633298;
-  h=message-id:date:subject:to:references:from:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=TJtXAgodlfk2muYMs1ZHEwK/pCWhBrUeUvz41xe/PNw=;
-  b=H8ZEkNHIQ7HzREGqfQA4gTH+X2N4R48UnJo6HQcH3Ve8zkj102eSYE1l
-   DmxFkx42R+6zwuD8Oe5xUkmfBwIUSzUdPBWPtIWy3KTp1dXITjYuhQMh/
-   XLZs96Vp5l+fBqdkaliKRv5jj8bUOLd5bZD4EBj35w1P+YGiNigIik0Xl
-   Wgwp4Pu3e9kuX1ITp4uYn0jEcALSefg1DZTa+UOb0rVt8SkVWaFgyqaSU
-   c9jFiJYHR2Xg3FuudH0KNNi95vW9S+mhuxi+jlQZHdpF0D4UoDXhzuyb2
-   ZDYPnNi9cPeHQDPKIOWh9ZMg2AZ1jA0Z1xWlYdgE9pi3/83ccvolkR6x0
-   g==;
-X-CSE-ConnectionGUID: gnlKjX+VTO2VbPW2ZLQT1w==
-X-CSE-MsgGUID: 8VVPCw2TTwuseeuGP5Hopg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="14690625"
-X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
-   d="scan'208";a="14690625"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 08:54:57 -0700
-X-CSE-ConnectionGUID: +dAE8OswRVSiU7klsTrCRA==
-X-CSE-MsgGUID: mZBpqNoxSnmCPN9FHhiY0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
-   d="scan'208";a="29088897"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 May 2024 08:54:56 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 7 May 2024 08:54:55 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 7 May 2024 08:54:55 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 7 May 2024 08:54:55 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 7 May 2024 08:54:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=htWYmJy31eXfjergSa9a8DBfNELbRCPMLjlNv0YLUPt5y1dMXexIz4Cvh6OWElsfPA5bpbob/p9/EdUnliEn7tsaa5bJevYe8q7sB4JU3+X6mTv9o+r34L/AunznI58J9GzmN8l0NHqqG7nvjNXHRDavhSXbMuxV0bvy05T7Krq9HNd7zJlSdIC/Iofsbid7XqAEj+9tprQUDa23izeLjDiaIUryf/pc+0PM0SHavGM8c0KAPj6oprW6UdNttEGWCzI0YXrZTFkvxbZ3HIA3XEW1T+WvzgzHZb0q6nDuKO8LFuelsILoPByJ81MMeL7Vqnw43OFL+6ukqnGXLoY2hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Yocex2f039OEQzoZ87Ru2nEr1g5DkLXmF70q2YrfF0=;
- b=Vgmbo2Y60nEc79+HdX3tlJ0DDsqCTSkMHk8nmYqKMgyeCVqu5QLbvRl056GwQr7pfGrmy5WTpkugjd+0CPE+mEOX+b+TuP3Ab9piAmRZj/tPC7hsqSKrAlznBat0JYInFpzY3rEx4LaEMO5Fo6Xgtn0/MQeOFSpcWOvOuhDG8zVvrI+UPXcS7hNXrEtn3hgipyfkOBdcUqCBSWQdCAZTuHQdCR0wj1HGesQIS86f/w+yKAB3nXAVEX/HisNRKHIm2SfJ99oR8EOYtDOEhneV3Xt1ukjtMhafQ35QFSzblXcpV1rBspFB0SrN+XQD+5hlkCeStbc2qSXbDU95k3JkHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by MW4PR11MB6984.namprd11.prod.outlook.com (2603:10b6:303:22e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Tue, 7 May
- 2024 15:54:52 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::bfb:c63:7490:93eb]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::bfb:c63:7490:93eb%3]) with mapi id 15.20.7544.041; Tue, 7 May 2024
- 15:54:52 +0000
-Message-ID: <9b9a42af-1a73-4896-9bfe-afd55ae5b278@intel.com>
-Date: Tue, 7 May 2024 17:54:46 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 2/2] net: ethernet: mediatek: use ADMAv1 instead of
- ADMAv2.0 on MT7981 and MT7986
-Content-Language: en-US
-To: Daniel Golle <daniel@makrotopia.org>, Felix Fietkau <nbd@nbd.name>, "Sean
- Wang" <sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, "Lorenzo
- Bianconi" <lorenzo@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-References: <6747c038f4fc3b490e1b7a355cdaaf361e359def.1715084578.git.daniel@makrotopia.org>
- <9a694114ffbbf5f03384b0cbf0c27b9528c94576.1715084578.git.daniel@makrotopia.org>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-In-Reply-To: <9a694114ffbbf5f03384b0cbf0c27b9528c94576.1715084578.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA1P291CA0024.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:19::18) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1D015FD0E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715097503; cv=none; b=rT7864RcQYcarU8eUGfSzWTEyxPhByLinOH35aeCsioR4fAHUBmkRrJ05l2WVIB4Qo+wljn0+5xzIppsH7+ImIsPXRmTLKAHBVDYyPtVZ/YJRPdiephq4iReqjeIAKQeXAJ6WrqzeJS7dvnuxLcnG5uswUX2KcENgcuK8psdXtA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715097503; c=relaxed/simple;
+	bh=4RohMnPCJFnKpKqUnP8yO28gs460BLP/sGG3w/07gi0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e2o87aKeVPOTiDxzS4RA7DB6BF0+335vkQOrngPDbwnVYlucsOABMukkEB7qS0EKpeslYO6h6dc+2wNC6cCz6PFvxeMuJNDQYLMZkH7AfqaUTO2ch+BhpXrnQhoPbQdrYK93Sp1G1juAjhGBXKb5uH8z5SPuxJLU++ugy7GYiEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M5Qx9M32; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715097500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iN5+TAR35lqisRhmEUIVe+XBdqZArxYl3xk4LC3xq68=;
+	b=M5Qx9M329FawDpWfAU4E7n+JE9TWAsMVmqNpQtNCo9VUfhkAmnyaX1hDoOb+B5ZGlJAjaO
+	/P4orwMyju9y8MFLatteVujFtpMur6+fb/aW+HMl/84dRV1ePhqr6TYVyF5kMRFH1gJ5zi
+	x8EUomwQ8jDQ8oulvn8PISiTKbOgaDA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-135-DYBDo6HCM9GHDhLJzKkOow-1; Tue, 07 May 2024 11:58:18 -0400
+X-MC-Unique: DYBDo6HCM9GHDhLJzKkOow-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 05E801816EC5;
+	Tue,  7 May 2024 15:58:18 +0000 (UTC)
+Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id DD19E2141800;
+	Tue,  7 May 2024 15:58:17 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [PATCH v2 00/17] KVM: x86/mmu: Page fault and MMIO cleanups
+Date: Tue,  7 May 2024 11:58:00 -0400
+Message-ID: <20240507155817.3951344-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|MW4PR11MB6984:EE_
-X-MS-Office365-Filtering-Correlation-Id: bae6844f-7c73-4539-7404-08dc6eae0869
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015|921011;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZHhmNVNKTnhNL3R1Tkg2eVhvanpzZ21taFZuMUpwTWNvYWU3SXZIMGpSTU8x?=
- =?utf-8?B?b3E3L3BwS0hrb3lqakNOSzFNTHhxMldpdGlZR29Tak4xbE91d0lNYXF6cjg2?=
- =?utf-8?B?TCtZTXl1Q3hYaFBsZzNmVlZmMjQ2czNFK3lUSGN4c3ZQN2d4T0pMdTdGZ1hH?=
- =?utf-8?B?RG0yUWZWUFV6eFBHWkQ1RG12U1V0TVAvTXFjdHJURnk3SExKTHhtS3BpeGta?=
- =?utf-8?B?VXBlWmZNYnBDbzNEc1hDNk5Rbmc0ekgwL0NxSTA3dDdRVUhoSVhleDFPSXoy?=
- =?utf-8?B?TTdVd2lsSmZZK29teVJkcVB4YW9zVFhyMUZjblpOK0YyL1dBVmRWYy96WkRq?=
- =?utf-8?B?QUF1a1h3R2dSTE84TXJadnFZeVFtclY3bVRmc0k0b2llTm5senBUMSs3ZEUy?=
- =?utf-8?B?NkFzR2NWdksyWlBNbHpibVdhL1ArL1R3ajJRN3dCWmhzYUlUcll0R01LaWRH?=
- =?utf-8?B?OWdSODBBMFpFZUI3NGE5RFl0YXh0ZmhuZG1qTnF3SGYyOVFJWm9admdSdU8r?=
- =?utf-8?B?UHdkeVpPaSsycDJieGZ5VnRybzBjajJPdXhjV1VoZUFZZ3QwM0dNUUhsTFRm?=
- =?utf-8?B?UDJ4eVFDNXpjWUNlMFpGZ2xFWUxjL2N4bDZ2QW5EMktPUGhxK0hvM1VJWTI5?=
- =?utf-8?B?NnVCbTI1REhEQldXNHh1OEZra2JLKy9WeU5nUXdTZ0EzeDJidVVuSHNkb21P?=
- =?utf-8?B?Y29qbWxqZFZxZXpsZjJsdHhxaEIxTEdzVmNyTXZ4clRTWGpsaHJPYWo2TkJ3?=
- =?utf-8?B?RWFCMXNWQWhnNXdvTW9kdWplL09kUlBUVG9JNEU3NXM2SW1MUXFNUE14a0Jw?=
- =?utf-8?B?aURKckhPWWZtL0kyM2FSNTNqU2U3UjNjbzZFVkFJd0lwVUlhMkE4bHJmNHlt?=
- =?utf-8?B?ZVpab0U3b2kySTk0ck1IdWRhbEphS1hENW9qQ1JhV3JiS0F4ODhhZDdtVHRt?=
- =?utf-8?B?SkFiUEN4clhreWpQRUhyVzN6UW5YQ1pBcUhVYU50TTVxNDZzRFo1WUhPV1dF?=
- =?utf-8?B?c2NmZGtqVm1zRUMvbi9RUTNsb00vRklTNHoreGFVVnpmTHVwdmpsVmhhWWpM?=
- =?utf-8?B?YWU0SHE4WmJKSG9kdXJCN25JQTVMeTAxQmkxdFpPVFhKSHB1dnV6dmtQaS9Q?=
- =?utf-8?B?Umw2SFB5U3l2cFJMWXJ1Zm84MXRwVG5CSnorRzhNSW4ya0NmRDJJa3FiNFZX?=
- =?utf-8?B?dTdKZ0FKS1VGZTVWNTRSdUtPTm9adlNJS0pFenI5TEg0RHk5SG1NcEsybXM4?=
- =?utf-8?B?NGErd1FPdGlTOVlHYkorT01ZVVJyWkN3clVVcGFjeU5jVFFZOU91Zk50djEw?=
- =?utf-8?B?cHZUV0FMWmh1YnIwZG10RWRvclNOdzE0SG95Mm9VZHVkZzA2UWtaeWd4bVJj?=
- =?utf-8?B?N0t4aFlYUzE2dFNSM1poNHY3ZVZHM3VLNUpnM3RoSmQ5Q3o5cllUM1pUcERa?=
- =?utf-8?B?dUZiajQwazBSV3hObnNnTXhMSW9RNi9nRHp1YnBzOE5YZCtzcUlLSys4YTlJ?=
- =?utf-8?B?blczbmdsbGRIQWdJdXVFeUtETlgrQXVMRDc4RS9CS2FJUHpUWWwvVnd5bWFt?=
- =?utf-8?B?TFd4d3JuODFCWFFlT09YN2dZbnJUOS85WjF1T25BWUdrTm9iUitwVHN6alFZ?=
- =?utf-8?B?K0F1NTIxV1M3cGxQalgweVpxZ2hRc0lLZmo2dnB5SEVVVTFBY1BEQ0NsUUcv?=
- =?utf-8?B?UXBTWWNOSjdzYjgxUVFPRVE5VEIxVFFLdzdqYlVtZTRwVVNlSVkvQmVpUGRB?=
- =?utf-8?Q?/OZEI/IMhoVF/JjSeL0y8x3PZSxiYDEwG7aNveS?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SnpJZzFTSmF5djN0cVZEWE5jL2lGVXVQQitEQTJWK2JEV3VaRWgvMkZoZ0Zy?=
- =?utf-8?B?VWVmUTduSUtUck1CY0UyR29TY0RyQSticVNTUnpnbVJOUy9IeHdZOCtWTXRH?=
- =?utf-8?B?QUV2azNWN2lPVVVNc2RlbnZaUlhzZ2hFTENWSS9kVUV2QWZiS0dLNGpCRExC?=
- =?utf-8?B?ZXFweFRUSlI3ek1BTlRBQVFoZDMzWDFsa2JsTHBmTU0yWTlBbjNKUndkOUZw?=
- =?utf-8?B?S0hzSHkvaElBd1pYMkk1Ri85SW1aSG9sKzQyMS81UUxHSkZmaTFqaUxVWmhD?=
- =?utf-8?B?dE1yZnlleVd3alhUSEdvZ2U0eU5JNGFaUjREMlRNNDFhNU5sdkJsdU1JenRD?=
- =?utf-8?B?VXhHNjF0YjVQZ2J4WFhEeWtWbjlCOGdQbTMzQ3ZCb3NHTWhiODJYRVRHeFNi?=
- =?utf-8?B?NHRrakhyWDNiSjZaOExFTlRpY0s1L0l5a3dBY21JNUI0SVVNckZ4MkU2MWs4?=
- =?utf-8?B?YlJ5VnZ6alhkVGkvVWJEdG5YRHlyUlhqY3RuMVVxeWlmSDl6aVZubFFqS21u?=
- =?utf-8?B?b0MwTldHRkVwWWZPOFd2aDhFSG83aWF4d2EzR2kwQUNDTEtESUR6bW81VzY0?=
- =?utf-8?B?cWI1Mm1sVnVOU1d4dXV4VkhKR1FiOTVROUJCVXVuUUhRT1hEN25tbVRNUTRt?=
- =?utf-8?B?eGgyMHZUckh6VDZEL0NGMGVHS3B4bzRpTDhLbFlZZDZvY0k1Tkk2QUF5VkdT?=
- =?utf-8?B?dHZYZDVWWUU0S3hGcUQvZ3ZKd0xPRnJUUTlRVkd5dnE3Sm0xUFJ2SVN0QndE?=
- =?utf-8?B?UitVT2V6UlgybGdMb2d3NFZld1dRY2IvUXlIak9jdmtmcDNDNnMvczJaY2lL?=
- =?utf-8?B?S0pmNnAyaVQ5ZHhla3BneTU0QnovMFJhWVgrY0ZuMXFnenV1V09BMzVrUlhi?=
- =?utf-8?B?RjlvZWFrMVd1L1pXRG11Rmk5ay91TGZpMnJOc2pwMjNua2xDT1NsS0hPT0dX?=
- =?utf-8?B?T0tSUG9Ma2VkNnkyKzlrNmZwZmhEZ3VGT3lLSW9BUTU5NDBHdnU4WXJBYXpZ?=
- =?utf-8?B?dGkzRy9NTnh2b013bEg3Mzk4WjhMRFpPcTNyL0V6M0NCUmRFN3ZwRmw0RTFm?=
- =?utf-8?B?dDU1aGZYZXJGaDZzV29BNjdiOW0wTkdBa0JoNVpab0ZCS2JmSCt5a1RWbCtS?=
- =?utf-8?B?aGIveUNtYndiOHpFSld4Q2ZxdHBpcGN3TkowbXdickIxUGNpcC9KY3pOdmds?=
- =?utf-8?B?RkY0SjJ6dm93VXZCaDJkVHFhc3RQQkl1SDI2bmIyamYxeC9hZ1RnZjdZaXFt?=
- =?utf-8?B?cnJwSi9BK0h1cVZMV09NRjBEeDdrTWdQV2hvdHgrVkJqZmEvY1kxbkF3VWpv?=
- =?utf-8?B?dUNNUm43YitMSXpvL1kyZmFpQ0wza282MExReGZ0NXNlYUMyemhxd3pHc0Uy?=
- =?utf-8?B?ck1TVXh2MngxdWxOdkgxNDE2bGZDblBwMXhaRWpVeld5OTVIRXptMElNRG4v?=
- =?utf-8?B?Vy9GNkczS0lYUllyU1NDc29rV2FSS25LeVBxWUQ5Y1FPSk5RU1lpNFVTT2tF?=
- =?utf-8?B?aXM2ZVhSUE9WeDAyanF6dWJjaHFVWUYya2ZGNUFSbnVyQ2RBdzJCWGl3NEdS?=
- =?utf-8?B?aUNscURJbmhHd1pNTGNpT2xoa0ZSZVNQdUh6TDJ6ZVpVSHV2VGNYNG1JZ0FL?=
- =?utf-8?B?SmFyZ3dOK0ZFMzE0UkpqT1pYa1FwZEUzMHI4dnRDUVZjNXZKR2xZZGdreHFl?=
- =?utf-8?B?ZktDRXBNU3JHN1pPUVNtWGY3amM2T2kxVDI2RlkrVmtiZjVjd0ZDeFhqZ05K?=
- =?utf-8?B?TjRvQ2JLSDlCUU5wWEFlZTFVNHV1OUxZUm1lVVJpSzZyYnNaeFpUYlN2RTVl?=
- =?utf-8?B?UFBMelNmS3hTdDhjRyt1alozQVhjbE5JSkp5VDZZbE02NjBFdTNpMk4yMWdn?=
- =?utf-8?B?bURvZDJtRjl6eThBNzVJenM4Yjd0T24xTCtaSWdkbk15V3VUc0JmUWI4d2ZT?=
- =?utf-8?B?WTAwbkxiK2FYTEJZUjA4NENvSkw1TTAwSHdZVWRBckY1QitsUSt2Wm1tWHAy?=
- =?utf-8?B?UUV6Q0ZXcXFHYUdTMjd5MHZKd1ZPRGdVNEJGcmlQV3U4ZDdqMlk4U2JybHd1?=
- =?utf-8?B?bUdYWVA3bUxoZGlveHdMZXRWMEI0ZzVkUXFoV1NCTFFnNDFRUzN5THFhWXZB?=
- =?utf-8?B?VkRxRGRDdCt0aU1ET2ZTNkVTY0NtSjZDUW1JQ0FNSFBTN3NyRnhBVk1XQ05y?=
- =?utf-8?B?c3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bae6844f-7c73-4539-7404-08dc6eae0869
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 15:54:52.4923
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: adrXBkzz8BaodIuvaURg4gmtpp91/wCeI2Ca3dSHJJAWgRgu6z32kfH+X4gSIcRKiNsz7HL5T1eJFIxvPHTT3bOqMy+uDmJRq9PS90mlA9w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6984
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On 5/7/24 14:25, Daniel Golle wrote:
-> ADMAv2.0 is plagued by RX hangs which can't easily detected and happen upon
+This is an updated version of the series at
+https://patchew.org/linux/20240228024147.41573-1-seanjc@google.com/
+which has been used for SEV-SNP development, taking into account
+all review comments.  Patch 8 is the only completely new patch
+(and even then it had been posted together with the various
+TDX/SNP prep series).
 
-nit: missing "be" after "can't",
-but no need to respin just for that
+Here is an annotated git range-diff:
 
-> receival of a corrupted Ethernet frame.
-> 
-> Use ADMAv1 instead which is also still present and usable, and doesn't
-> suffer from that problem.
-> 
-> Fixes: 197c9e9b17b1 ("net: ethernet: mtk_eth_soc: introduce support for mt7986 chipset")
-> Co-developed-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> v2: improve commit message
->   drivers/net/ethernet/mediatek/mtk_eth_soc.c | 46 ++++++++++-----------
->   1 file changed, 23 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> index 3eefb735ce19..d7d73295f0dc 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> @@ -110,16 +110,16 @@ static const struct mtk_reg_map mt7986_reg_map = {
+==============================================================================
+KVM: x86/mmu: Exit to userspace with -EFAULT if private fault hits emulation
+- tweak commit message, add comment
 
-MT7981 uses the same regmap, so is covered too, fine
+    @@ Commit message
+         Exit to userspace with -EFAULT / KVM_EXIT_MEMORY_FAULT if a private fault
+         triggers emulation of any kind, as KVM doesn't currently support emulating
+         access to guest private memory.  Practically speaking, private faults and
+    -    emulation are already mutually exclusive, but there are edge cases upon
+    -    edge cases where KVM can return RET_PF_EMULATE, and adding one last check
+    -    to harden against weird, unexpected combinations is inexpensive.
+    +    emulation are already mutually exclusive, but there are many flow that
+    +    can result in KVM returning RET_PF_EMULATE, and adding one last check
+    +    to harden against weird, unexpected combinations and/or KVM bugs is
+    +    inexpensive.
+     
+         Suggested-by: Yan Zhao <yan.y.zhao@intel.com>
+         Signed-off-by: Sean Christopherson <seanjc@google.com>
+    @@ arch/x86/kvm/mmu/mmu_internal.h: static inline int kvm_mmu_do_page_fault(struct
+      	else
+      		r = vcpu->arch.mmu->page_fault(vcpu, &fault);
+      
+    ++	/*
+    ++	 * Not sure what's happening, but punt to userspace and hope that
+    ++	 * they can fix it by changing memory to shared, or they can
+    ++	 * provide a better error.
+    ++	 */
+     +	if (r == RET_PF_EMULATE && fault.is_private) {
+    ++		pr_warn_ratelimited("kvm: unexpected emulation request on private memory\n");
+     +		kvm_mmu_prepare_memory_fault_exit(vcpu, &fault);
+     +		return -EFAULT;
+     +	}
 
->   	.tx_irq_mask		= 0x461c,
->   	.tx_irq_status		= 0x4618,
->   	.pdma = {
-> -		.rx_ptr		= 0x6100,
-> -		.rx_cnt_cfg	= 0x6104,
-> -		.pcrx_ptr	= 0x6108,
-> -		.glo_cfg	= 0x6204,
-> -		.rst_idx	= 0x6208,
-> -		.delay_irq	= 0x620c,
-> -		.irq_status	= 0x6220,
-> -		.irq_mask	= 0x6228,
-> -		.adma_rx_dbg0	= 0x6238,
-> -		.int_grp	= 0x6250,
-> +		.rx_ptr		= 0x4100,
-> +		.rx_cnt_cfg	= 0x4104,
-> +		.pcrx_ptr	= 0x4108,
-> +		.glo_cfg	= 0x4204,
-> +		.rst_idx	= 0x4208,
-> +		.delay_irq	= 0x420c,
-> +		.irq_status	= 0x4220,
-> +		.irq_mask	= 0x4228,
-> +		.adma_rx_dbg0	= 0x4238,
-> +		.int_grp	= 0x4250,
->   	},
->   	.qdma = {
->   		.qtx_cfg	= 0x4400,
 
-// ...
+==============================================================================
+KVM: x86: Remove separate "bit" defines for page fault error code masks
+- do not use ilog2
 
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+    @@ Commit message
+         just to see which flag corresponds to which bit is quite annoying, as is
+         having to define two macros just to add recognition of a new flag.
+     
+    -    Use ilog2() to derive the bit in permission_fault(), the one function that
+    -    actually needs the bit number (it does clever shifting to manipulate flags
+    -    in order to avoid conditional branches).
+    +    Use ternary operator to derive the bit in permission_fault(), the one
+    +    function that actually needs the bit number as part of clever shifting
+    +    to avoid conditional branches.  Generally the compiler is able to turn
+    +    it into a conditional move, and if not it's not really a big deal.
+     
+         No functional change intended.
+     
+    @@ arch/x86/kvm/mmu.h: static inline u8 permission_fault(struct kvm_vcpu *vcpu, str
+      	u64 implicit_access = access & PFERR_IMPLICIT_ACCESS;
+      	bool not_smap = ((rflags & X86_EFLAGS_AC) | implicit_access) == X86_EFLAGS_AC;
+     -	int index = (pfec + (not_smap << PFERR_RSVD_BIT)) >> 1;
+    -+	int index = (pfec + (not_smap << ilog2(PFERR_RSVD_MASK))) >> 1;
+    ++	int index = (pfec | (not_smap ? PFERR_RSVD_MASK : 0)) >> 1;
+      	u32 errcode = PFERR_PRESENT_MASK;
+      	bool fault;
+      
+     @@ arch/x86/kvm/mmu.h: static inline u8 permission_fault(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+    + 		pkru_bits = (vcpu->arch.pkru >> (pte_pkey * 2)) & 3;
+      
+      		/* clear present bit, replace PFEC.RSVD with ACC_USER_MASK. */
+    - 		offset = (pfec & ~1) +
+    +-		offset = (pfec & ~1) +
+     -			((pte_access & PT_USER_MASK) << (PFERR_RSVD_BIT - PT_USER_SHIFT));
+    -+			((pte_access & PT_USER_MASK) << (ilog2(PFERR_RSVD_MASK) - PT_USER_SHIFT));
+    ++		offset = (pfec & ~1) | ((pte_access & PT_USER_MASK) ? PFERR_RSVD_MASK : 0);
+      
+      		pkru_bits &= mmu->pkru_mask >> offset;
+      		errcode |= -pkru_bits & PFERR_PK_MASK;
+
+==============================================================================
+KVM: x86: Define more SEV+ page fault error bits/flags for #NPF
+- match commit message to bits defined in header file
+
+    @@ Commit message
+         Define more #NPF error code flags that are relevant to SEV+ (mostly SNP)
+         guests, as specified by the APM:
+     
+    +     * Bit 31 (RMP):   Set to 1 if the fault was caused due to an RMP check or a
+    +                       VMPL check failure, 0 otherwise.
+          * Bit 34 (ENC):   Set to 1 if the guest’s effective C-bit was 1, 0 otherwise.
+          * Bit 35 (SIZEM): Set to 1 if the fault was caused by a size mismatch between
+                            PVALIDATE or RMPADJUST and the RMP, 0 otherwise.
+          * Bit 36 (VMPL):  Set to 1 if the fault was caused by a VMPL permission
+                            check failure, 0 otherwise.
+    -     * Bit 37 (SSS):   Set to VMPL permission mask SSS (bit 4) value if VmplSSS is
+    -                       enabled.
+     
+         Note, the APM is *extremely* misleading, and strongly implies that the
+         above flags can _only_ be set for #NPF exits from SNP guests.  That is a
+
+
+==============================================================================
+KVM: x86: Move synthetic PFERR_* sanity checks to SVM's #NPF handler
+- add a description of PFERR_IMPLICIT_ACCESS
+
+    @@ Commit message
+         Add a compile-time assert in the legacy #PF handler to make sure that KVM-
+         define flags are covered by its existing sanity check on the upper bits.
+     
+    +    Opportunistically add a description of PFERR_IMPLICIT_ACCESS, since we
+    +    are removing the comment that defined it.
+    +
+         Signed-off-by: Sean Christopherson <seanjc@google.com>
+    +    Reviewed-by: Kai Huang <kai.huang@intel.com>
+    +    Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+         Message-ID: <20240228024147.41573-8-seanjc@google.com>
+    +    Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+    +
+    + ## arch/x86/include/asm/kvm_host.h ##
+    +@@ arch/x86/include/asm/kvm_host.h: enum x86_intercept_stage;
+    + #define PFERR_GUEST_ENC_MASK	BIT_ULL(34)
+    + #define PFERR_GUEST_SIZEM_MASK	BIT_ULL(35)
+    + #define PFERR_GUEST_VMPL_MASK	BIT_ULL(36)
+    ++
+    ++/*
+    ++ * IMPLICIT_ACCESS is a KVM-defined flag used to correctly perform SMAP checks
+    ++ * when emulating instructions that triggers implicit access.
+    ++ */
+    + #define PFERR_IMPLICIT_ACCESS	BIT_ULL(48)
+    ++#define PFERR_SYNTHETIC_MASK	(PFERR_IMPLICIT_ACCESS)
+    + 
+    + #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
+    + 				 PFERR_WRITE_MASK |		\
+     
+      ## arch/x86/kvm/mmu/mmu.c ##
+     @@ arch/x86/kvm/mmu/mmu.c: int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
+    - 	if (WARN_ON_ONCE(error_code >> 32))
+    - 		error_code = lower_32_bits(error_code);
+    + 		return -EFAULT;
+    + #endif
+      
+     +	/* Ensure the above sanity check also covers KVM-defined flags. */
+     +	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
+
+- move in front of the other synthetic page fault error code patches
+
+==============================================================================
+KVM: x86/mmu: WARN if upper 32 bits of legacy #PF error code are non-zero
+  commit message copy editing
+
+    @@ Commit message
+         and even more explicitly in the SDM as VMCS.VM_EXIT_INTR_ERROR_CODE is a
+         32-bit field.
+     
+    -    Simply drop the upper bits of hardware provides garbage, as spurious
+    +    Simply drop the upper bits if hardware provides garbage, as spurious
+         information should do no harm (though in all likelihood hardware is buggy
+         and the kernel is doomed).
+     
+    @@ Commit message
+         which in turn will allow deriving PFERR_PRIVATE_ACCESS from AMD's
+         PFERR_GUEST_ENC_MASK without running afoul of the sanity check.
+     
+    -    Note, this also why Intel uses bit 15 for SGX (highest bit on Intel CPUs)
+    +    Note, this is also why Intel uses bit 15 for SGX (highest bit on Intel CPUs)
+         and AMD uses bit 31 for RMP (highest bit on AMD CPUs); using the highest
+         bit minimizes the probability of a collision with the "other" vendor,
+         without needing to plumb more bits through microcode.
+
+
+==============================================================================
+KVM: x86/mmu: Use synthetic page fault error code to indicate private faults
+- patch reordering, no other changes
+
+==============================================================================
+KVM: x86/mmu: check for invalid async page faults involving private memory
+- new patch coming from TDX/SNP prep series; test PFERR_PRIVATE_ACCESS, set arch.error_code
+
+    @@ arch/x86/kvm/mmu/mmu.c: static u32 alloc_apf_token(struct kvm_vcpu *vcpu)
+      	arch.token = alloc_apf_token(vcpu);
+     -	arch.gfn = gfn;
+     +	arch.gfn = fault->gfn;
+    ++	arch.error_code = fault->error_code;
+      	arch.direct_map = vcpu->arch.mmu->root_role.direct;
+      	arch.cr3 = kvm_mmu_get_guest_pgd(vcpu, vcpu->arch.mmu);
+      
+    @@ arch/x86/kvm/mmu/mmu.c: static u32 alloc_apf_token(struct kvm_vcpu *vcpu)
+      {
+      	int r;
+      
+    -+	if (WARN_ON_ONCE(work->arch.error_code & PFERR_GUEST_ENC_MASK))
+    ++	if (WARN_ON_ONCE(work->arch.error_code & PFERR_PRIVATE_ACCESS))
+     +		return;
+     +
+      	if ((vcpu->arch.mmu->root_role.direct != work->arch.direct_map) ||
+
+
+==============================================================================
+KVM: x86/mmu: WARN and skip MMIO cache on private, reserved page faults
+- exit to userspace if the wrong case happens, test PFERR_PRIVATE_ACCESS
+
+    @@ Commit message
+     
+      ## arch/x86/kvm/mmu/mmu.c ##
+     @@ arch/x86/kvm/mmu/mmu.c: int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
+    - 		error_code |= PFERR_PRIVATE_ACCESS;
+      
+      	r = RET_PF_INVALID;
+    --	if (unlikely(error_code & PFERR_RSVD_MASK)) {
+    -+	if (unlikely((error_code & PFERR_RSVD_MASK) &&
+    -+		     !WARN_ON_ONCE(error_code & PFERR_GUEST_ENC_MASK))) {
+    + 	if (unlikely(error_code & PFERR_RSVD_MASK)) {
+    ++		if (WARN_ON_ONCE(error_code & PFERR_PRIVATE_ACCESS))
+    ++			return -EFAULT;
+    ++
+      		r = handle_mmio_page_fault(vcpu, cr2_or_gpa, direct);
+      		if (r == RET_PF_EMULATE)
+      			goto emulate;
+
+==============================================================================
+KVM: x86/mmu: Move private vs. shared check above slot validity checks
+- add comment about use of mmu_invalidate_seq
+
+    @@ arch/x86/kvm/mmu/mmu.c: static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, stru
+      		return kvm_faultin_pfn_private(vcpu, fault);
+      
+     @@ arch/x86/kvm/mmu/mmu.c: static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
+    + {
+    + 	int ret;
+    + 
+    ++	/*
+    ++	 * Note that the mmu_invalidate_seq also serves to detect a concurrent
+    ++	 * change in attributes.  is_page_fault_stale() will detect an
+    ++	 * invalidation relate to fault->fn and resume the guest without
+    ++	 * installing a mapping in the page tables.
+    ++	 */
+      	fault->mmu_seq = vcpu->kvm->mmu_invalidate_seq;
+      	smp_rmb();
+      
+     +	/*
+    -+	 * Check for a private vs. shared mismatch *after* taking a snapshot of
+    -+	 * mmu_invalidate_seq, as changes to gfn attributes are guarded by the
+    -+	 * invalidation notifier.
+    ++	 * Now that we have a snapshot of mmu_invalidate_seq we can check for a
+    ++	 * private vs. shared mismatch.
+     +	 */
+     +	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+     +		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+
+
+
+==============================================================================
+KVM: x86/mmu: Move slot checks from __kvm_faultin_pfn() to kvm_faultin_pfn()
+- differences in moved code, range-diff is unreadable
+
+
+==============================================================================
+KVM: x86/mmu: Handle no-slot faults at the beginning of kvm_faultin_pfn()
+- remove unnecessary change
+
+    @@ arch/x86/kvm/mmu/mmu.c: static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct
+      		return kvm_handle_noslot_fault(vcpu, fault, access);
+      
+      	/*
+    -
+    - ## arch/x86/kvm/mmu/mmu_internal.h ##
+    -@@ arch/x86/kvm/mmu/mmu_internal.h: struct kvm_page_fault {
+    - 	/* The memslot containing gfn. May be NULL. */
+    - 	struct kvm_memory_slot *slot;
+    - 
+    --	/* Outputs of kvm_faultin_pfn.  */
+    -+	/* Outputs of kvm_faultin_pfn. */
+    - 	unsigned long mmu_seq;
+    - 	kvm_pfn_t pfn;
+    - 	hva_t hva;
+
+
+Isaku Yamahata (1):
+  KVM: x86/mmu: Pass full 64-bit error code when handling page faults
+
+Paolo Bonzini (1):
+  KVM: x86/mmu: check for invalid async page faults involving private
+    memory
+
+Sean Christopherson (15):
+  KVM: x86/mmu: Exit to userspace with -EFAULT if private fault hits
+    emulation
+  KVM: x86: Remove separate "bit" defines for page fault error code
+    masks
+  KVM: x86: Define more SEV+ page fault error bits/flags for #NPF
+  KVM: x86: Move synthetic PFERR_* sanity checks to SVM's #NPF handler
+  KVM: x86/mmu: WARN if upper 32 bits of legacy #PF error code are
+    non-zero
+  KVM: x86/mmu: Use synthetic page fault error code to indicate private
+    faults
+  KVM: x86/mmu: WARN and skip MMIO cache on private, reserved page
+    faults
+  KVM: x86/mmu: Move private vs. shared check above slot validity checks
+  KVM: x86/mmu: Don't force emulation of L2 accesses to non-APIC
+    internal slots
+  KVM: x86/mmu: Explicitly disallow private accesses to emulated MMIO
+  KVM: x86/mmu: Move slot checks from __kvm_faultin_pfn() to
+    kvm_faultin_pfn()
+  KVM: x86/mmu: Handle no-slot faults at the beginning of
+    kvm_faultin_pfn()
+  KVM: x86/mmu: Set kvm_page_fault.hva to KVM_HVA_ERR_BAD for "no slot"
+    faults
+  KVM: x86/mmu: Initialize kvm_page_fault's pfn and hva to error values
+  KVM: x86/mmu: Sanity check that __kvm_faultin_pfn() doesn't create
+    noslot pfns
+
+ arch/x86/include/asm/kvm_host.h |  46 ++++----
+ arch/x86/kvm/mmu.h              |   5 +-
+ arch/x86/kvm/mmu/mmu.c          | 182 ++++++++++++++++++++------------
+ arch/x86/kvm/mmu/mmu_internal.h |  28 ++++-
+ arch/x86/kvm/mmu/mmutrace.h     |   2 +-
+ arch/x86/kvm/svm/svm.c          |   9 ++
+ 6 files changed, 174 insertions(+), 98 deletions(-)
+
+-- 
+2.43.0
+
 
