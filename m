@@ -1,109 +1,273 @@
-Return-Path: <linux-kernel+bounces-170652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E0F8BDA39
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECFA8BDA3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F7B5B23182
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C38D01C22BDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6356BB20;
-	Tue,  7 May 2024 04:37:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4CB6A8DB;
+	Tue,  7 May 2024 04:39:55 +0000 (UTC)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98ED6A8A6
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2867E26AF0;
+	Tue,  7 May 2024 04:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715056666; cv=none; b=ksbhykAnPLgMKPqx34dNPYNLApA8yK4C/8JUy8Wyk1rLSvivz9nKbhRjtaX7L274fb1CW3E+TH1A5zuzpkWyUOtsTcwsu1vuNuJrxIA0xz6Q37rZDCS8lYDi19Cb4qme4FSsJHMCE3ZuQ1tW4n0yUmqW0c/vDe3dYvt/zyLTfxY=
+	t=1715056794; cv=none; b=uii9LiBGISEguINm4sP2BTMCwBXuydPX56fz9U2/0TmbKCoCzyE8KxdMruvqwGctBxa/0XdCRrO7hR9re0GDLnRabYaQGfmtcF1P05PWGhiDzesYRIHxFrVeMiaVLw3vpOwPqxecUmCYg6/DGouNb6rjxMax3Ays2oXW/xt1JZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715056666; c=relaxed/simple;
-	bh=aT0c/mqPMZJlJvVQg+gBBzEWKmKlW36JzyIBfyetZd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QlRqHMmPzYb5m6zKRzuXgsiPfNv9ooMpyJsHbXG0wNqss9vOKg3pgDIJkax8WGj3wEM6imTvFxijklrv+YCrQJOmYmgq3TiH1fwtj5KXMD/tlyYonUNapJ3vGYVyMldwBVD8cqunxLGMYtgnyr7LKIjkysTR4YiuLHPelF3bW/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s4CaA-0003Rb-AE; Tue, 07 May 2024 06:37:38 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s4Ca8-00028P-Hp; Tue, 07 May 2024 06:37:36 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s4Ca8-00GKQ6-1R;
-	Tue, 07 May 2024 06:37:36 +0200
-Date: Tue, 7 May 2024 06:37:36 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Woojung.Huh@microchip.com
-Cc: davem@davemloft.net, andrew@lunn.ch, edumazet@google.com,
-	f.fainelli@gmail.com, kuba@kernel.org, pabeni@redhat.com,
-	olteanv@gmail.com, Arun.Ramadoss@microchip.com,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	dsahern@kernel.org, horms@kernel.org, willemb@google.com,
-	san@skov.dk
-Subject: Re: [PATCH net-next v7 02/12] net: dsa: microchip: add IPV
- information support
-Message-ID: <ZjmwEPS0BM0QJUc5@pengutronix.de>
-References: <20240503131351.1969097-1-o.rempel@pengutronix.de>
- <20240503131351.1969097-3-o.rempel@pengutronix.de>
- <BL0PR11MB29131C40E4B39B119F9891C2E71C2@BL0PR11MB2913.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1715056794; c=relaxed/simple;
+	bh=PXcf8UdGLpgEAwJs/0k4TRl8KsNL6z/uYEZO1ZTMrK8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YeVLrULf8OjCakXRC1NhHPgP4dQpQXsXec95gSaz/t1aS0wKwPnAK9cQ4XG2hteiXC2J+jz8W/0WR9c8izlybnm42E8jA8UEzcbTwP7aeSEdHddCBg7ZHoxmHS4dHpHsW4OkgPcdwJRrg811JPqVSkQZWjbPGFakmUs7hb3aLjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d8b887bb0cso2281578a12.2;
+        Mon, 06 May 2024 21:39:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715056792; x=1715661592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4MKQ1m0cR5GXTfV3vrKrtXRNV5HtWIapOkkD1OPNVow=;
+        b=MhdimmUZiDhpOtSe0mb5jGbiYA4291VL0SuMnr3nbNqtdf0DL7Y9igh3tORo33+EPc
+         YoX6aMNqajGBbaJtjoRQNCAHbSmkKbn6mckOdiKn/f8onEM5gplT1ZpRQ3mJFOV2sW5Q
+         HLwfBBJGZ1RPW1HI5qXxJgd7Vwu/iDpsOL/Uz9itJjoDR4u1+1xZ8OEtfUl04K8tpVFr
+         z3JdNP7Ry2+FTbCa/ZkZ4UeGRvd0SXKKy1bid3xVdE/JWNmzs4GfZvLZAVZSmjOynoSG
+         gltMzq9VOvTfblWmiZlvwHSHiqKCmCJZ/jAH6OfVaDqQEJMoALkA2jM3eDToYM0AOMk7
+         K4cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWdlT1QBgSjOpVVEAr94X0y6pXF/JE0tMyb88bxXf5ItpqjGXNRfB0zePmN5VHggIb/AQ7U6844G0jiYeS13odCk6cYUTecgOU0edGDPw0mO5MhfMvlQvM5/k6FWEXYGPZTifjo/7l7QbmCkpedw==
+X-Gm-Message-State: AOJu0YzJHS5aY02+l81Klfwxc/GX7y1XpoE+aOmMAeF+x5qYFLYI6iXS
+	Vjh2bAPzaUp8qdQch4+LuP8x258/1PAe/l6EZScnQV+a0BaDCTEI6WjvfaF+q8Ig/jbFLmScYU6
+	L183VFfG6Ws/WWcTG47rDsntRL1s=
+X-Google-Smtp-Source: AGHT+IEhW9HUanbWLcjSZcgHRFbiBKujsMANA8EaogR44KM6NRvbonmJQQ4kHJKv+YtTfKurtgeq2mgKWtfY3r+cEUE=
+X-Received: by 2002:a05:6a20:7348:b0:1a9:b4ed:a with SMTP id
+ v8-20020a056a20734800b001a9b4ed000amr16356223pzc.20.1715056792347; Mon, 06
+ May 2024 21:39:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <BL0PR11MB29131C40E4B39B119F9891C2E71C2@BL0PR11MB2913.namprd11.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 6 May 2024 21:39:40 -0700
+Message-ID: <CAM9d7ci=AZFpcYy4=qwTYTTVhWd6g6HHHUuV2B53hS-t8SOCag@mail.gmail.com>
+Subject: Re: [PATCH V2 0/9] Add data type profiling support for powerpc
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com, 
+	irogers@google.com, segher@kernel.crashing.org, christophe.leroy@csgroup.eu, 
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com, 
+	linux-kernel@vger.kernel.org, akanksha@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Woojung,
+Hello,
 
-On Mon, May 06, 2024 at 08:43:48PM +0000, Woojung.Huh@microchip.com wrote:
-> Hi Oleksij,
-> 
-> Thanks for the patch and sorry about late comment on this.
-> 
-> I have a comment on the name of IPV (Internal Priority Value)
-> IPV is added and used term in 802.1Qci PSFP
-> (https://ieeexplore.ieee.org/document/8064221) and, merged into 802.1Q (from 802.1Q-2018)
-> for another functions. 
-> 
-> Even it does similar operation holding temporal priority value internally (as it is named),
-> because KSZ datasheet doesn't use the term of IPV (Internal Priority Value) and
-> avoiding any confusion later when PSFP is in the Linux world,
-> I would like to recommend a different name such as IPM (Internal Priority Mapping) than IPV.
-> 
-> How do you think?
+On Mon, May 6, 2024 at 5:19=E2=80=AFAM Athira Rajeev
+<atrajeev@linux.vnet.ibm.com> wrote:
+>
+> The patchset from Namhyung added support for data type profiling
+> in perf tool. This enabled support to associate PMU samples to data
+> types they refer using DWARF debug information. With the upstream
+> perf, currently it possible to run perf report or perf annotate to
+> view the data type information on x86.
+>
+> Initial patchset posted here had changes need to enable data type
+> profiling support for powerpc.
+>
+> https://lore.kernel.org/all/6e09dc28-4a2e-49d8-a2b5-ffb3396a9952@csgroup.=
+eu/T/
+>
+> Main change were:
+> 1. powerpc instruction nmemonic table to associate load/store
+> instructions with move_ops which is use to identify if instruction
+> is a memory access one.
+> 2. To get register number and access offset from the given
+> instruction, code uses fields from "struct arch" -> objump.
+> Added entry for powerpc here.
+> 3. A get_arch_regnum to return register number from the
+> register name string.
+>
+> But the apporach used in the initial patchset used parsing of
+> disassembled code which the current perf tool implementation does.
+>
+> Example: lwz     r10,0(r9)
+>
+> This line "lwz r10,0(r9)" is parsed to extract instruction name,
+> registers names and offset. Also to find whether there is a memory
+> reference in the operands, "memory_ref_char" field of objdump is used.
+> For x86, "(" is used as memory_ref_char to tackle instructions of the
+> form "mov  (%rax), %rcx".
+>
+> In case of powerpc, not all instructions using "(" are the only memory
+> instructions. Example, above instruction can also be of extended form (X
+> form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
+> and extract the source/target registers, this patchset adds support to us=
+e
+> raw instruction. With raw instruction, macros are added to extract opcode
+> and register fields.
+>
+> Example representation using --show-raw-insn in objdump gives result:
+>
+> 38 01 81 e8     ld      r4,312(r1)
+>
+> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+> this translates to instruction form: "ld RT,DS(RA)" and binary code
+> as:
+> _____________________________________
+> | 58 |  RT  |  RA |      DS       | |
+> -------------------------------------
+> 0    6     11    16              30 31
+>
+> Patchset adds support to pick the opcode and reg fields from this
+> raw/binary instruction code. This approach came in from review comment
+> by Segher Boessenkool for the initial patchset.
+>
+> Apart from that, instruction tracking is enabled for powerpc and
+> support function is added to find variables defined as registers
+> Example, in powerpc, two registers are
+> defined to represent variable:
+> 1. r13: represents local_paca
+> register struct paca_struct *local_paca asm("r13");
+>
+> 2. r1: represents stack_pointer
+> register void *__stack_pointer asm("r1");
+>
+> These are handled in this patchset.
+>
+> - Patch 1 is to rearrange register state type structures to header file
+> so that it can referred from other arch specific files
+> - Patch 2 is to make instruction tracking as a callback to"struct arch"
+> so that it can be implemented by other archs easily and defined in arch
+> specific files
+> - Patch 3 is to fix a small comment
+> - Patch 4 adds support to capture and parse raw instruction in objdump
+> by keeping existing approach intact.
+> - Patch 5 update parameters for reg extract functions to use raw
+> instruction on powerpc
+> - Patch 6 and patch 7 handles instruction tracking for powerpc.
+> - Patch 8 and Patch 8 handles support to find global register variables
+>
+> With the current patchset:
+>
+>  ./perf record -a -e mem-loads sleep 1
+>  ./perf report -s type,typeoff --hierarchy --group --stdio
+>  ./perf annotate --data-type --insn-stat
+>
+> perf annotate logs:
+>
+> Annotate Instruction stats
+> total 562, ok 441 (78.5%), bad 121 (21.5%)
+>
+>   Name      :  Good   Bad
+> -----------------------------------------------------------
+>   ld        :   313    54
+>   lwz       :    51    32
+>   lbz       :    31     5
+>   ldx       :     6    21
+>   lhz       :    23     0
+>   lwa       :     4     3
+>   lwarx     :     5     0
+>   lwzx      :     2     2
+>   ldarx     :     3     0
+>   lwzu      :     2     0
+>   stdcx.    :     0     1
+>   nop       :     0     1
+>   ldu       :     1     0
+>   lbzx      :     0     1
+>   lwax      :     0     1
+>
+> perf report logs:
+>
+> # Samples: 1K of event 'mem-loads'
+> # Event count (approx.): 937238
+> #
+> # Overhead  Data Type  Data Type Offset
+> # ........  .........  ................
+> #
+>     48.81%  (unknown)  (unknown) +0 (no field)
+>     12.85%  long unsigned int  long unsigned int +0 (current_stack_pointe=
+r)
+>      4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+>      4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
+>      2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+>      2.64%  struct paca_struct  struct paca_struct +2808 (canary)
+>      2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+>      1.41%  struct vm_fault  struct vm_fault +0 (vma)
+>      1.29%  struct task_struct  struct task_struct +276 (flags)
+>      1.03%  struct pt_regs  struct pt_regs +264 (user_regs.msr)
+>      1.00%  struct menu_device  struct menu_device +4 (tick_wakeup)
+>      0.90%  struct security_hook_list  struct security_hook_list +0 (list=
+next)
+>      0.76%  struct irq_desc  struct irq_desc +304 (irq_data.chip)
+>      0.76%  struct rq  struct rq +2856 (cpu)
 
-Ok.
+Looks great!  I'm glad it worked on powerpc too.
+We still need to verify the returned type is properly annotated.
+But overall it looks really good, I will leave comments in reply.
 
-Do IPV in LAN9372 datasheet means, IPV 802.1Qci PSFP or IPM?
+Thanks,
+Namhyung
 
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>
+> Thanks
+> Athira Rajeev
+>
+> Changelog:
+> From v1->v2:
+> - Addressed suggestion from Christophe Leroy and Segher Boessenkool
+>   to use the binary code (raw insn) to fetch opcode, register and
+>   offset fields.
+> - Added support for instruction tracking in powerpc
+> - Find the register defined variables (r13 and r1 which points to
+>   local_paca and current_stack_pointer in powerpc)
+>
+> Athira Rajeev (9):
+>   tools/perf: Move the data structures related to register  type to
+>     header file
+>   tools/perf: Add "update_insn_state" callback function to handle arch
+>     specific instruction tracking
+>   tools/perf: Fix a comment about multi_regs in extract_reg_offset
+>     function
+>   tools/perf: Add support to capture and parse raw instruction in
+>     objdump
+>   tools/perf: Update parameters for reg extract functions to use raw
+>     instruction on powerpc
+>   tools/perf: Update instruction tracking for powerpc
+>   tools/perf: Update instruction tracking with add instruction
+>   tools/perf: Add support to find global register variables using
+>     find_data_type_global_reg
+>   tools/perf: Add support for global_die to capture name of variable in
+>     case of register defined variable
+>
+>  tools/include/linux/string.h                  |   2 +
+>  tools/lib/string.c                            |  13 +
+>  .../perf/arch/powerpc/annotate/instructions.c |  84 +++
+>  tools/perf/arch/powerpc/util/dwarf-regs.c     |  52 ++
+>  tools/perf/arch/x86/annotate/instructions.c   | 383 +++++++++++++
+>  tools/perf/util/annotate-data.c               | 519 +++---------------
+>  tools/perf/util/annotate-data.h               |  78 +++
+>  tools/perf/util/annotate.c                    |  32 +-
+>  tools/perf/util/annotate.h                    |   1 +
+>  tools/perf/util/disasm.c                      | 109 +++-
+>  tools/perf/util/disasm.h                      |  17 +-
+>  tools/perf/util/dwarf-aux.c                   |   1 +
+>  tools/perf/util/dwarf-aux.h                   |   1 +
+>  tools/perf/util/include/dwarf-regs.h          |  12 +
+>  tools/perf/util/sort.c                        |   7 +-
+>  15 files changed, 854 insertions(+), 457 deletions(-)
+>
+> --
+> 2.43.0
+>
 
