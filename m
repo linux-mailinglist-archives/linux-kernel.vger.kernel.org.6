@@ -1,151 +1,114 @@
-Return-Path: <linux-kernel+bounces-170736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294C18BDB44
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:21:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AEC8BDB43
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40F81F220D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:21:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 070CBB2284D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189786F525;
-	Tue,  7 May 2024 06:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAA86F08E;
+	Tue,  7 May 2024 06:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjhQvOzA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ny7IEwlY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D296D1C8;
-	Tue,  7 May 2024 06:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93056EB5C
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062854; cv=none; b=XpZgqXqhg1LRIyVJii5q00v/xrFs41FTa/g7m/VDgka7SDCkFZ3UPx+JF3XPS6h7wM/dKVaRoPlyhE9UvgPtStE/vHfw6opnpwmr+rwnrWh4xY75JCpRjgOUFH6gGSniM/Vz87Q4i19Kclrc2VYqnMbz0AE850x7mDZ1te99fl8=
+	t=1715062826; cv=none; b=EtX1gGqHJNIV/xwej+BYEp//MytNV8/ZGVO1lf2ROnqvDT+TpXIuGObZbMNsu+sNAiFHjpxbbiLc+fVD73rn4A7cQ8QcNzg4gharVUv+RrtcsbtjbFEZRE9d4ZOjs/5EUUBdxIszq+vK4chKQSEvpkuFbZ+c3V2UBq4R1WsEg8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062854; c=relaxed/simple;
-	bh=8eu/qd0HcIEbXA6xsMR5u7EcC2Nxb+4PTTFdq2/lk6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=oYggI4ShDAQkWHR2rTFOKeHHRRXBzMUUZSI5fMjGpApctOgAk/9twIdB/56RV+MilhyioY4SD/7HhrelpqvvZFGO5bvH3gZSIANxE9uxb6WegfBZaxEW/2T2LPMQTLxrVL4+u7ZHF6dlJ4a557Slp6rwvQA9tmfXlOOBKfI8cfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjhQvOzA; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715062851; x=1746598851;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=8eu/qd0HcIEbXA6xsMR5u7EcC2Nxb+4PTTFdq2/lk6A=;
-  b=hjhQvOzA3r5o+tiyaj2hNao1zpGCm8Eol3+TEfmS5XLHFAmL65MN6sWP
-   LracWAdcV93fEScw7JjSYbp/ZgizcyiG6nh0tLPR0oYl3IHAaiDWoVC6S
-   ZGmtIkR+C7AeSO/y0k8TVmYDgt2ux47EIDtV+wqDOae8u4OaouYYvJ4YA
-   QEVvz819v3xbkxXTV3k8WbvRhetVQq/Co3fsfC8i221sRZ6lSljbugv09
-   eosREatjpvHW+ZFHYrZlcL1RLqjsitqNvMYPqbRaI4dmRl18f71beGrz0
-   pUZMc08RQ9GAKu4KypZdrYMA+vVJ6QTeh+Yk+jBrcooYOuEtQylsSlv/N
-   w==;
-X-CSE-ConnectionGUID: KKa3DMqCT0qcf72sucr+cg==
-X-CSE-MsgGUID: SlIoQ+5ERaqXsxJ90rfU6g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10991991"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="10991991"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:20:51 -0700
-X-CSE-ConnectionGUID: +8utow1dTNavv5QvzC3s3Q==
-X-CSE-MsgGUID: fDhGMvmsQ4+ufRX3B4RVDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="28296498"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:20:46 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: kvm@vger.kernel.org,
+	s=arc-20240116; t=1715062826; c=relaxed/simple;
+	bh=xpV/nMuQfBh/yww28aaTVU+mxRQ+Qd7MQI6xXDS/QtE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NgZ3BeLBp71e4Svw7UIohmcAyr3r+TWk7Ew3msZI4usLkNqNUKslSP3Xc4gfKud4ITrmCrBzppUSXwuYvi86nyheBC5hU/UE6hhGkvUNFfCWoUI+khx3btPKmlYb1B2kpCg6CvaTPJR5ZtsB2gEFz04IcMCpiv+1gdT45Pq8F2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ny7IEwlY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFB70C2BBFC;
+	Tue,  7 May 2024 06:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715062826;
+	bh=xpV/nMuQfBh/yww28aaTVU+mxRQ+Qd7MQI6xXDS/QtE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ny7IEwlYDjKPkuW7sQuFVUIV+twKDFaKkaFI2EnsKMZSNDGHsiOACxYZ3ZsLjPkPQ
+	 xsn2thhcDhBtKKqB5c3woONt7bKMxoQpZgrJ6uCO8m3rLKewTLNraO+ecg+Y2PVgat
+	 14HASIEVf1zQ9AgNsDUYBsSUq4YQFKjqZKUCYqlKNQkRptsE/8gvN94g9l7OTglt8Q
+	 iYJ4ZkSE4MfK8FuvV5eFRZf0vn5zNYv/lnqUC0fT7jNuOHhSyee5cikPkpbmda6Ixg
+	 QAFO7Q0WPiOccyX0l9h8MxQQE1S0UsC57UcFJ0bmShmAEeyqW5QPgUDHaakJLywy9W
+	 kX4zhkpynMiKg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	alex.williamson@redhat.com,
-	jgg@nvidia.com,
-	kevin.tian@intel.com
-Cc: iommu@lists.linux.dev,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	corbet@lwn.net,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	baolu.lu@linux.intel.com,
-	yi.l.liu@intel.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 2/5] KVM: x86/mmu: Fine-grained check of whether a invalid & RAM PFN is MMIO
-Date: Tue,  7 May 2024 14:20:09 +0800
-Message-Id: <20240507062009.20336-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240507061802.20184-1-yan.y.zhao@intel.com>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2 5/5] f2fs: compress: don't allow unaligned truncation on released compress inode
+Date: Tue,  7 May 2024 14:20:19 +0800
+Message-Id: <20240507062019.1097683-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Fine-grained check to decide whether a PFN, which is !pfn_valid() and
-identified within the raw e820 table as RAM, should be treated as MMIO by
-KVM in order to prevent guest cachable access.
+f2fs image may be corrupted after below testcase:
+- mkfs.f2fs -O extra_attr,compression -f /dev/vdb
+- mount /dev/vdb /mnt/f2fs
+- touch /mnt/f2fs/file
+- f2fs_io setflags compression /mnt/f2fs/file
+- dd if=/dev/zero of=/mnt/f2fs/file bs=4k count=4
+- f2fs_io release_cblocks /mnt/f2fs/file
+- truncate -s 8192 /mnt/f2fs/file
+- umount /mnt/f2fs
+- fsck.f2fs /dev/vdb
 
-Previously, a PFN that is !pfn_valid() and identified within the raw e820
-table as RAM was not considered as MMIO. This is for the scenerio when
-"mem=" was passed to the kernel, resulting in certain valid pages lacking
-an associated struct page. See commit 0c55671f84ff ("kvm, x86: Properly
-check whether a pfn is an MMIO or not").
+[ASSERT] (fsck_chk_inode_blk:1256)  --> ino: 0x5 has i_blocks: 0x00000002, but has 0x3 blocks
+[FSCK] valid_block_count matching with CP             [Fail] [0x4, 0x5]
+[FSCK] other corrupted bugs                           [Fail]
 
-However, that approach is only based on guest performance perspective
-and may cause cacheable access to potential MMIO PFNs if
-pat_pfn_immune_to_uc_mtrr() identifies the PFN as having a PAT type of
-UC/WC/UC-. Therefore, do a fine-graned check for PAT in primary MMU so that
-KVM would map the PFN as UC in EPT to prevent cachable access from guest.
+The reason is: partial truncation assume compressed inode has reserved
+blocks, after partial truncation, valid block count may change w/
+i_blocks and .total_valid_block_count update, result in corruption.
 
-For the rare case when PAT is not enabled, default the PFN to MMIO to avoid
-further checking MTRR (since functions for MTRR related checking are not
-exported now).
+This patch only allow cluster size aligned truncation on released
+compress inode for fixing.
 
-Cc: Kevin Tian <kevin.tian@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Fixes: c61404153eb6 ("f2fs: introduce FI_COMPRESS_RELEASED instead of using IMMUTABLE bit")
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- arch/x86/kvm/mmu/spte.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+v2:
+- fix compile warning reported by lkp.
+ fs/f2fs/file.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-index 4a599130e9c9..5db0fb7b74f5 100644
---- a/arch/x86/kvm/mmu/spte.c
-+++ b/arch/x86/kvm/mmu/spte.c
-@@ -101,9 +101,21 @@ static bool kvm_is_mmio_pfn(kvm_pfn_t pfn)
- 			 */
- 			(!pat_enabled() || pat_pfn_immune_to_uc_mtrr(pfn));
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 3f0db351e976..0c8194dc6807 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -952,9 +952,14 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 				  ATTR_GID | ATTR_TIMES_SET))))
+ 		return -EPERM;
  
-+	/*
-+	 * If the PFN is invalid and not RAM in raw e820 table, keep treating it
-+	 * as MMIO.
-+	 *
-+	 * If the PFN is invalid and is RAM in raw e820 table,
-+	 * - if PAT is not enabled, always treat the PFN as MMIO to avoid futher
-+	 *   checking of MTRRs.
-+	 * - if PAT is enabled, treat the PFN as MMIO if its PAT is UC/WC/UC- in
-+	 *   primary MMU.
-+	 * to prevent guest cacheable access to MMIO PFNs.
-+	 */
- 	return !e820__mapped_raw_any(pfn_to_hpa(pfn),
- 				     pfn_to_hpa(pfn + 1) - 1,
--				     E820_TYPE_RAM);
-+				     E820_TYPE_RAM) ? true :
-+				     (!pat_enabled() || pat_pfn_immune_to_uc_mtrr(pfn));
- }
+-	if ((attr->ia_valid & ATTR_SIZE) &&
+-		!f2fs_is_compress_backend_ready(inode))
+-		return -EOPNOTSUPP;
++	if ((attr->ia_valid & ATTR_SIZE)) {
++		if (!f2fs_is_compress_backend_ready(inode))
++			return -EOPNOTSUPP;
++		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
++			!IS_ALIGNED(attr->ia_size,
++			F2FS_BLK_TO_BYTES(F2FS_I(inode)->i_cluster_size)))
++			return -EINVAL;
++	}
  
- /*
+ 	err = setattr_prepare(idmap, dentry, attr);
+ 	if (err)
 -- 
-2.17.1
+2.40.1
 
 
