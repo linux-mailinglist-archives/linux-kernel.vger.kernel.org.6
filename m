@@ -1,207 +1,114 @@
-Return-Path: <linux-kernel+bounces-170943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8618BDE3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:30:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95DC8BDE52
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74B451F23D6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 669EF1F20F92
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFF614E2E8;
-	Tue,  7 May 2024 09:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015A314F116;
+	Tue,  7 May 2024 09:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="g4cR8t/i"
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="Mdr1CwOL"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C04314D71D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EEA14D710;
+	Tue,  7 May 2024 09:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074236; cv=none; b=YUnaE9BCTYrczMXDlGR0+T9MLLEvZ5T5igylRFsJdz9Qxsjug648zrpsd039MJPil1/OkOHI5GABdN4u5M5TeRJfDRT5YDiaoPDim2ekLiopl29OQ7eLNDQEBlt32cVQuuKdNttMa+1WeXA+h0HKf/K9Z+jhPWnw50EdeCNKYnA=
+	t=1715074295; cv=none; b=o7NZpcxcO60Q3wcEiaBARCgsFHPcFksmnYCISy7QMuuiWYPnzbDrPkCa0nyQwj90zj/y1nCSijkSJLGdU3tKV8Pt3F0qO0VO9ulHt4y79GhFwM1VaqXziwI4XVsEmr07BFf/bmmorJyLgchu+KlUquXJDCho0K2eIoBAK0mLdHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074236; c=relaxed/simple;
-	bh=N7C083XW9HErJ1+R52TKnyEZNzil5v9FCazYyr/JQx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qf81RWJj41CvWPHwiIQlrtq6A0drtfSBAXV+tXUqd8Lr2xqCZxU5O0XShzDyBToiYUdDfG45nUeox27vfX/qJxNpulsXtexX9n/O5ts7iqO01vmjXEp3UxXK4wOMzOYRS9pZhITHpjAWhaEEWCyBwmiSMfZM52lXgf/YexY98K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=g4cR8t/i; arc=none smtp.client-ip=83.166.143.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VYY0h64rLzhcB;
-	Tue,  7 May 2024 11:30:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1715074228;
-	bh=N7C083XW9HErJ1+R52TKnyEZNzil5v9FCazYyr/JQx0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g4cR8t/iRRSN5giqF0Iwy3XXWNCfhqE/qqqfoxy0lSmFuyqhdQ4FyOhVfsBJ5BFWv
-	 xFaM80SdAPMBtmnCReKLZkFRcwvBisebzGQz+PahxsjXN1dm1r13uXB5fKC058GUn5
-	 E40tFjEfU9DKYpAc1PGGy+RZ3L2pJN9bZLXwuqBg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VYY0d4NWlzhxd;
-	Tue,  7 May 2024 11:30:25 +0200 (CEST)
-Date: Tue, 7 May 2024 11:30:24 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
-	Angelina Vu <angelinavu@linux.microsoft.com>, Anna Trikalinou <atrikalinou@microsoft.com>, 
-	Chao Peng <chao.p.peng@linux.intel.com>, Forrest Yuan Yu <yuanyu@google.com>, 
-	James Gowans <jgowans@amazon.com>, James Morris <jamorris@linux.microsoft.com>, 
-	John Andersen <john.s.andersen@intel.com>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Marian Rotariu <marian.c.rotariu@gmail.com>, Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>, 
-	=?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, 
-	Yu Zhang <yu.c.zhang@linux.intel.com>, =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>, 
-	dev@lists.cloudhypervisor.org, kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org, 
-	x86@kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-Message-ID: <20240507.ieghomae0UoC@digikod.net>
-References: <20240503131910.307630-1-mic@digikod.net>
- <20240503131910.307630-4-mic@digikod.net>
- <ZjTuqV-AxQQRWwUW@google.com>
- <20240506.ohwe7eewu0oB@digikod.net>
- <ZjmFPZd5q_hEBdBz@google.com>
+	s=arc-20240116; t=1715074295; c=relaxed/simple;
+	bh=nYlvIjN/vI1uSydxBC5D1E/w7aPnXwHz90IQ3TgTx0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3oMxCHT1SkdtdqqsjAmY/mRU6xZd4K+XFe4i2sAjcKWcMyaStmeV0OTxCmsO2l40HUbiFQ1ZHWAoxagkh4TMF8cKyKoSm7PFq+inVbwIqVIJAzvvlDBFnT91Bcsc5Z82ytazYpYyQ+URQFk93PLK8tIWdR3VNHXYMU+RP5mbZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=Mdr1CwOL; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id EE8D2600025E;
+	Tue,  7 May 2024 10:31:14 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with UTF8LMTP id vwISVftW0pFm; Tue,  7 May 2024 10:31:12 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 30F8B6003022;
+	Tue,  7 May 2024 10:31:12 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1715074272;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dHSi4Ua53336TG8hHwkSnq4/HDY6QEuYI57pe/Aoj8M=;
+	b=Mdr1CwOLRKbwAtHt1jA4dC99vXzgFWnaJ7nQ3SO6FDArEAYMun/UEoq+d/em8kGJlNT6fX
+	w0DK2/Wal6rdBmZl/A/uINBfe5JqIFIARC9EnN258v39LkniNE2T86gch6ddqX4R3bBLp+
+	5j2xDslyHo9xM6LpXqNj4DCW2iI5uMc=
+Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:4589:2164:1bc5:2670])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id D324436006F;
+	Tue,  7 May 2024 10:31:11 +0100 (WEST)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To: krzysztof.kozlowski@linaro.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Subject: [PATCH RESEND v3 0/7] Cleanup Tegra210 EMC frequency scaling
+Date: Tue,  7 May 2024 10:30:43 +0100
+Message-ID: <20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjmFPZd5q_hEBdBz@google.com>
-X-Infomaniak-Routing: alpha
 
-On Mon, May 06, 2024 at 06:34:53PM GMT, Sean Christopherson wrote:
-> On Mon, May 06, 2024, Mickaël Salaün wrote:
-> > On Fri, May 03, 2024 at 07:03:21AM GMT, Sean Christopherson wrote:
-> > > > ---
-> > > > 
-> > > > Changes since v1:
-> > > > * New patch. Making user space aware of Heki properties was requested by
-> > > >   Sean Christopherson.
-> > > 
-> > > No, I suggested having userspace _control_ the pinning[*], not merely be notified
-> > > of pinning.
-> > > 
-> > >  : IMO, manipulation of protections, both for memory (this patch) and CPU state
-> > >  : (control registers in the next patch) should come from userspace.  I have no
-> > >  : objection to KVM providing plumbing if necessary, but I think userspace needs to
-> > >  : to have full control over the actual state.
-> > >  : 
-> > >  : One of the things that caused Intel's control register pinning series to stall
-> > >  : out was how to handle edge cases like kexec() and reboot.  Deferring to userspace
-> > >  : means the kernel doesn't need to define policy, e.g. when to unprotect memory,
-> > >  : and avoids questions like "should userspace be able to overwrite pinned control
-> > >  : registers".
-> > >  : 
-> > >  : And like the confidential VM use case, keeping userspace in the loop is a big
-> > >  : beneifit, e.g. the guest can't circumvent protections by coercing userspace into
-> > >  : writing to protected memory.
-> > > 
-> > > I stand by that suggestion, because I don't see a sane way to handle things like
-> > > kexec() and reboot without having a _much_ more sophisticated policy than would
-> > > ever be acceptable in KVM.
-> > > 
-> > > I think that can be done without KVM having any awareness of CR pinning whatsoever.
-> > > E.g. userspace just needs to ability to intercept CR writes and inject #GPs.  Off
-> > > the cuff, I suspect the uAPI could look very similar to MSR filtering.  E.g. I bet
-> > > userspace could enforce MSR pinning without any new KVM uAPI at all.
-> > > 
-> > > [*] https://lore.kernel.org/all/ZFUyhPuhtMbYdJ76@google.com
-> > 
-> > OK, I had concern about the control not directly coming from the guest,
-> > especially in the case of pKVM and confidential computing, but I get you
-> 
-> Hardware-based CoCo is completely out of scope, because KVM has zero visibility
-> into the guest (well, SNP technically allows trapping CR0/CR4, but KVM really
-> shouldn't intercept CR0/CR4 for SNP guests).
-> 
-> And more importantly, _KVM_ doesn't define any policies for CoCo VMs.  KVM might
-> help enforce policies that are defined by hardware/firmware, but KVM doesn't
-> define any of its own.
-> 
-> If pKVM on x86 comes along, then KVM will likely get in the business of defining
-> policy, but until that happens, KVM needs to stay firmly out of the picture.
-> 
-> > point.  It should indeed be quite similar to the MSR filtering on the
-> > userspace side, except that we need another interface for the guest to
-> > request such change (i.e. self-protection).
-> > 
-> > Would it be OK to keep this new KVM_HC_LOCK_CR_UPDATE hypercall but
-> > forward the request to userspace with a VM exit instead?  That would
-> > also enable userspace to get the request and directly configure the CR
-> > pinning with the same VM exit.
-> 
-> No?  Maybe?  I strongly suspect that full support will need a richer set of APIs
-> than a single hypercall.  E.g. to handle kexec(), suspend+resume, emulated SMM,
-> and so on and so forth.  And that's just for CR pinning.
-> 
-> And hypercalls are hampered by the fact that VMCALL/VMMCALL don't allow for
-> delegation or restriction, i.e. there's no way for the guest to communicate to
-> the hypervisor that a less privileged component is allowed to perform some action,
-> nor is there a way for the guest to say some chunk of CPL0 code *isn't* allowed
-> to request transition.  Delegation and restriction all has to be done out-of-band.
-> 
-> It'd probably be more annoying to setup initially, but I think a synthetic device
-> with an MMIO-based interface would be more powerful and flexible in the long run.
-> Then userspace can evolve without needing to wait for KVM to catch up.
-> 
-> Actually, potential bad/crazy idea.  Why does the _host_ need to define policy?
-> Linux already knows what assets it wants to (un)protect and when.  What's missing
-> is a way for the guest kernel to effectively deprivilege and re-authenticate
-> itself as needed.  We've been tossing around the idea of paired VMs+vCPUs to
-> support VTLs and SEV's VMPLs, what if we usurped/piggybacked those ideas, with a
-> bit of pKVM mixed in?
-> 
-> Borrowing VTL terminology, where VTL0 is the least privileged, userspace launches
-> the VM at VTL0.  At some point, the guest triggers the deprivileging sequence and
-> userspace creates VTL1.  Userpace also provides a way for VTL0 restrict access to
-> its memory, e.g. to effectively make the page tables for the kernel's direct map
-> writable only from VTL1, to make kernel text RO (or XO), etc.  And VTL0 could then
-> also completely remove its access to code that changes CR0/CR4.
-> 
-> It would obviously require a _lot_ more upfront work, e.g. to isolate the kernel
-> text that modifies CR0/CR4 so that it can be removed from VTL0, but that should
-> be doable with annotations, e.g. tag relevant functions with __magic or whatever,
-> throw them in a dedicated section, and then free/protect the section(s) at the
-> appropriate time.
-> 
-> KVM would likely need to provide the ability to switch VTLs (or whatever they get
-> called), and host userspace would need to provide a decent amount of the backend
-> mechanisms and "core" policies, e.g. to manage VTL0 memory, teardown (turn off?)
-> VTL1 on kexec(), etc.  But everything else could live in the guest kernel itself.
-> E.g. to have CR pinning play nice with kexec(), toss the relevant kexec() code into
-> VTL1.  That way VTL1 can verify the kexec() target and tear itself down before
-> jumping into the new kernel. 
-> 
-> This is very off the cuff and have-wavy, e.g. I don't have much of an idea what
-> it would take to harden kernel text patching, but keeping the policy in the guest
-> seems like it'd make everything more tractable than trying to define an ABI
-> between Linux and a VMM that is rich and flexible enough to support all the
-> fancy things Linux does (and will do in the future).
+Hello,
 
-Yes, we agree that the guest needs to manage its own policy.  That's why
-we implemented Heki for KVM this way, but without VTLs because KVM
-doesn't support them.
+This patch series consists of a general cleanup of the Tegra210 EMC
+frequency scaling code for revision 7.
 
-To sum up, is the VTL approach the only one that would be acceptable for
-KVM?  If yes, that would indeed require a *lot* of work for something
-we're not sure will be accepted later on.
+Currently the code is relying heavily on a function, update_clock_tree_delay(),
+that is responsible for too many things, making it long and confusing.
+The general idea with these patches is to simplify this function and its
+surrounding code, making it more modular.
 
-> 
-> Am I crazy?  Or maybe reinventing whatever that McAfee thing was that led to
-> Intel implementing EPTP switching?
-> 
+The motivation behind these changes (besides improving readability and
+maintainability) is to make it simpler to add support in the future for
+frequency change revisions other than 7, where we can reuse a large
+portion of the modularized code rather than essentially repeating 2k
+lines of code with minimal changes.
+
+There are no functional changes with this patch set, as it is only meant
+as preparation for following patches where revision 6 support is added.
+
+The second version of the series can be found in [1]. v3 contains
+changes only in patch 02/07 where a variable is renamed in order to fix
+a build error on some architectures.
+
+[1]: https://lore.kernel.org/linux-tegra/20240419104516.308975-1-diogo.ivo@tecnico.ulisboa.pt/
+
+Diogo Ivo (7):
+  memory: tegra: Remove periodic compensation duplicate calls
+  memory: tegra: Move DQSOSC measurement to common place
+  memory: tegra: Reword and correct comments
+  memory: tegra: Change macros to interpret parameter as integer
+  memory: tegra: Loop update_clock_tree_delay()
+  memory: tegra: Move compare/update current delay values to a function
+  memory: tegra: Rework update_clock_tree_delay()
+
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 427 ++++--------------
+ 1 file changed, 84 insertions(+), 343 deletions(-)
+
+-- 
+2.44.0
+
 
