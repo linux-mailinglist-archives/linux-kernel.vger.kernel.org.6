@@ -1,112 +1,91 @@
-Return-Path: <linux-kernel+bounces-172336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D288BF137
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:20:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AAA8BF13D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2511D2830EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 887291C211F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C12413D63A;
-	Tue,  7 May 2024 23:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37BA823DD;
+	Tue,  7 May 2024 23:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URTlsLSo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="hiQZmb9O"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E142112B163;
-	Tue,  7 May 2024 23:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B7A81740
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715122929; cv=none; b=dj9ReQR4l7k5ulkUfnGKkeFTSlZf8kWdnfAeldSwirX1xIrBH7NDNMMkQ7VJVuux6ZVyJRZGKRup5hWFTyvWA5n0pYe0TbhJcfXog0M935sn1Qo9jcSsan0kpCqmSbtJ56pKqay9GV8E0qIFiIfxrLOJtiAAhjAwIu6k4z+knho=
+	t=1715123058; cv=none; b=NGnqk2lZhRq4w8GQgq8qmGSU0tceKMRaQd9QMARNxVdGfAN9Vjt7n8Xy5M8dvPSjQYElafbKPDV9t9RExoF0Y3mMGtOIpG1jYLdSOdnr099y5/78X4UuV2XzXauwA7CsW9O+EkVPetl9Kfx8rFULeC0mY7rPCX+X+UHvwpAhf/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715122929; c=relaxed/simple;
-	bh=/vI2vAORbGe6dlIg7gvs2UgWVFM4jEnbGfNAbZdbNsY=;
+	s=arc-20240116; t=1715123058; c=relaxed/simple;
+	bh=IgULpxQxANS9vvlOG9lGlantPOqWUSw18OIpd0nF34A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jqOhmxIl3MfFamOc333mLdGpD7PAqAaaytq07mlrl2vnipUJwG8V05GyTq/fuQhMFWfFHgICIO5AzJ8jz7lgDHw6sXxgVNpKUF4YeEs949RYqifrvOYoK44WZkZHXew6JzhLhw28qdaCz57bRUlW9YIW5L4bVU5CW44zAJe3DKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URTlsLSo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BADBC4AF17;
-	Tue,  7 May 2024 23:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715122928;
-	bh=/vI2vAORbGe6dlIg7gvs2UgWVFM4jEnbGfNAbZdbNsY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=URTlsLSoWohIhIZE1+zTdkk8dBimjq8+unG6kPkiRw0EIFEG1BQzjQ1J9MVQN15n+
-	 Ir87U9DmYQviVkdyUTVpmIU2Rn/2+aETDYAbMEOLB2zN8TUOtWNieDppTWZSagB7pw
-	 mjfUpgMPvGvLEP9Rh6W54uFh7PUGyl60D9THQJ85PQ3kdiB0zfLmPseJOjqaLHxJZn
-	 QIGUTbm+mhLnTOd+bkt8lL0+JXPFHME72ihha3+FNQzmtAhLN2gV1cSbO4hmlaLxAN
-	 ho9J8DTWxYy8bAbBKKkiM7P9c9n/9Lzpbb3AxO4agyDaXSbDN5AR0gjW2oiyjrtaxI
-	 oEhM4r7QHGXcA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Joshua Ashton <joshua@froggi.es>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Sasha Levin <sashal@kernel.org>,
-	sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	alex.hung@amd.com,
-	hamza.mahfooz@amd.com,
-	wayne.lin@amd.com,
-	srinivasan.shanmugam@amd.com,
-	mario.limonciello@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 3/3] drm/amd/display: Set color_mgmt_changed to true on unsuspend
-Date: Tue,  7 May 2024 19:01:56 -0400
-Message-ID: <20240507230159.392002-3-sashal@kernel.org>
+	 MIME-Version:Content-Type; b=ZDhU5ofxY+o0i5mu9xgvfUr5Jbxi/r6s53NOYHqh4vHuHthaFil0CPMPy00Gtcd8/oTLBf2/HbKjuRlB/mRhuJ/OPvF5fIrdYfE/X4HRWy2EQK2vXtvUFpk/Vh2Nkk63n6E4ebDwBp+UbjtP4W5g+NGuq2+/wcNrIHM26g1Oh28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=hiQZmb9O; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 447N40Xc026170
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 7 May 2024 19:04:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1715123042; bh=P2j7YaaKodp8+E02KPh1U1zOLLuv/QDQ+Bqrchm2mTw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=hiQZmb9OH0RJV2FFJ3UTJp05ieqpJUk2liPQUhVtOd21wwDvJIwFceWbGOsxHPrY5
+	 VsgJmUi8TVoTTBszlNPVv74ugs5ik2sG+cJVuebmQcuvQQDzYMPXbt4CmF3NERRe66
+	 0YcVqi9AdQZXhUc/viRhWxc2iaas3wHWTvzX+ZLzxLaa+NEme9tuuc8NUCm/1hZWZZ
+	 4E4LGZbaxOFGD/II2/dsMT8Rczkque7qMkht391v0zKdwu7dJJ7iZw1Gg9PDDPLl2p
+	 l60Gx3uLq3k08hqVrXEwzUBY40KEsNaFrMRKTTbNszVFWV12TU2knMiKTGV65laDIP
+	 nmFv06BeqC6yw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 0946215C026D; Tue, 07 May 2024 19:04:00 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] jbd2: remove redundant assignement to variable err
+Date: Tue,  7 May 2024 19:03:49 -0400
+Message-ID: <171512302200.3602678.5356035160659391900.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240507230159.392002-1-sashal@kernel.org>
-References: <20240507230159.392002-1-sashal@kernel.org>
+In-Reply-To: <20240410112803.232993-1-colin.i.king@gmail.com>
+References: <20240410112803.232993-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.313
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Joshua Ashton <joshua@froggi.es>
 
-[ Upstream commit 2eb9dd497a698dc384c0dd3e0311d541eb2e13dd ]
+On Wed, 10 Apr 2024 12:28:03 +0100, Colin Ian King wrote:
+> The variable err is being assigned a value that is never read, it
+> is being re-assigned inside the following while loop and also
+> after the while loop. The assignment is redundant and can be
+> removed.
+> 
+> Cleans up clang scan build warning:
+> fs/jbd2/commit.c:574:2: warning: Value stored to 'err' is never
+> read [deadcode.DeadStores]
+> 
+> [...]
 
-Otherwise we can end up with a frame on unsuspend where color management
-is not applied when userspace has not committed themselves.
+Applied, thanks!
 
-Fixes re-applying color management on Steam Deck/Gamescope on S3 resume.
+[1/1] jbd2: remove redundant assignement to variable err
+      commit: 8b57de1c5edde3faf8a4f6a440b7ec16bb3c81d4
 
-Signed-off-by: Joshua Ashton <joshua@froggi.es>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 98d51bc204172..e4139723c473c 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -816,6 +816,7 @@ static int dm_resume(void *handle)
- 			dc_stream_release(dm_new_crtc_state->stream);
- 			dm_new_crtc_state->stream = NULL;
- 		}
-+		dm_new_crtc_state->base.color_mgmt_changed = true;
- 	}
- 
- 	for_each_new_plane_in_state(dm->cached_state, plane, new_plane_state, i) {
+Best regards,
 -- 
-2.43.0
-
+Theodore Ts'o <tytso@mit.edu>
 
