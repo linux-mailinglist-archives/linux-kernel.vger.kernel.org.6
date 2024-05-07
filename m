@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-170825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54AF78BDC91
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:43:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A474B8BDC99
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F64FB22B76
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:42:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEFC4B221F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E2913C3FA;
-	Tue,  7 May 2024 07:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BAC13C83F;
+	Tue,  7 May 2024 07:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwcYuXFS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ddo8WbCU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XPN1d7bg"
+Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4AE13BAE9;
-	Tue,  7 May 2024 07:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B0413C69B;
+	Tue,  7 May 2024 07:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715067769; cv=none; b=VQM3/uMnEcN1k8bymCBresYpX7slGKLr2JZmrM5xouRLDt8TgpiGBn601UIm2u1ZmMubUwEh5AEyFdC7j2uj1eLT1yhviv9JCIdL/MpAAqZR5jknhcqsGVJ8zRw+jZimd4CxIS3kQew1SpR35mMwBm++Fnb3LL0R4Sa9u10psM8=
+	t=1715067838; cv=none; b=JL7TVvrr0vznOS3i6BAZwgN8urdwCP0yWnSXlb+buAt9HqfoJ4i8fhbtaJLpkZ1i5IM8R8yuTd8lRYWthmx65HuyD1+mR0a5UEutuvqwHsKzFSxJRn+oFR1yTuLTzxrorV3dcWX7/TbhE+4KNFz1wP7RQwV34i1WZpA6dKm/xAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715067769; c=relaxed/simple;
-	bh=mi3mXWnBFgpXPxlG257vqa4x77kAtsjGzS+btNQZe28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaaRfdyJBfddeHBhyeLXAsLWI7N+bI/JJHXzdftJ1kA3LfiRiES1CJQIOdX+UCCNDClsL/bGFYyJWMYYgPHKidWQViUKTXS6rnIdnT43ezOeG0inc1VJo4WdmYjyR58ktrbHoda5LjrpV7aA8IQPhhTIN0FYunIow5FwttEcQuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kwcYuXFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF88C2BBFC;
-	Tue,  7 May 2024 07:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715067769;
-	bh=mi3mXWnBFgpXPxlG257vqa4x77kAtsjGzS+btNQZe28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kwcYuXFS1rY4n6mNBVtmRT1XBNZmpqVk6pq/YRV3g3QbnOM+waK0fNUpKwhFMp+Z2
-	 PYG9wZGheNahTisSY1g61QlJCRDIleNcVsmFhZzM11mmByNjORLiboHISsjU6ZIivQ
-	 8bLkMNw/q9BwtsjCZS7Ye46qhfjzlevAaGhSpDcrJAQhhb4NkT/fngVYcK0esR3D9o
-	 2e/x9FDCPhfzSDwOZusWXq9OBjyvQY3ssjrRF7J5LNMUxC/ypcgPva6uqn203wMT3j
-	 09kyzgrYaM9smHVBcWqiraGg6H9L147uFKvtwqicegDRWd5W0svdf3JajjdVUncd5R
-	 1P8x8QqJ934PA==
-Date: Tue, 7 May 2024 09:42:42 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Stas Sergeev <stsp2@yandex.ru>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	Stefan Metzmacher <metze@samba.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
-Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Message-ID: <20240507-verpennen-defekt-b6f2c9a46916@brauner>
-References: <20240426133310.1159976-1-stsp2@yandex.ru>
- <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
- <20240428.171236-tangy.giblet.idle.helpline-y9LqufL7EAAV@cyphar.com>
- <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
+	s=arc-20240116; t=1715067838; c=relaxed/simple;
+	bh=g6fhHHq292p9kLriuFL1SHKTwn+Nzn2QhEszy1OcCBI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=e5QEABWzhaYsy2ziA+/O3xWlPaRnRDCKXcVKHoViN+6VS6F+ycF8SK0wQyQqYUHnbC5nHCxYICnF+qRuP0fUCVuJbCzuMzuTkl43JKfjFP53H0v1ilsUJSXy5lCAU37/QCP5ucNvPX9hloLuEVmMpz/M3CC5rF3O3xCsi1mNElM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ddo8WbCU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XPN1d7bg; arc=none smtp.client-ip=64.147.123.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 37088180008F;
+	Tue,  7 May 2024 03:43:55 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 07 May 2024 03:43:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715067834; x=1715154234; bh=vXPfMRB/3T
+	UDYWRS7PTwpTJ3S3jPVhG0XFAxiG18T9o=; b=ddo8WbCU43F2hE/einqY2JG9B5
+	U6fys2bSof7xfPpvB0rWSydXLRgkWBY6HqOaDG2Oy1MI+r+imPkLEntBqnEvaeRo
+	qNtXtLNlVtrAjAA+3cwhxUOIh+xzNgtH2OtHYsN4p+4/1jjaX/hOWIBf3eRjn4Ms
+	dYtu2nbeHOK/VIAD+Z6k11ozW/cM8orTBufFUAztZgcGG0RifHKhlq889epy7TFI
+	ZkRuzTRepEB5var1xqBWDQXX0UqD1OWkLXCShijBo/jScEbEM7bK2G1dHK0WsGc6
+	b88iwAx/yQOR9JNHon6Pk191kX4KOeTGCGnz14hYa4FIC1hKr2BXrRgcDYXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715067834; x=1715154234; bh=vXPfMRB/3TUDYWRS7PTwpTJ3S3jP
+	VhG0XFAxiG18T9o=; b=XPN1d7bgvQ1kPuWnZrXVYj8XUMWeEs0q6HAfq9QCmNq1
+	MfPwWFrvqnFL4CnzfaR+DPkHgrYz2DP9W6QPNMwGKqXwq5Jg5EmXUl9Z4Nn7dOHB
+	9Un5pturWPAsHZ8A/s3mWV6FTXZIjLUpZa6Eh+giIYaHyJPbby24Cnu8wyHugIUw
+	wuFGEI0omqmXl7oQXNITr6UPisdDOzkYdzfVTvAXrLUdrwCQCE9UT9CTeyjCxkcN
+	ZTiWrppkqIJBvywyvcrUGSTF/EHpgi+nfuHXyBxUKo14jeOFOU6U2GWY1RneZ44R
+	5Zs9ccOXBMmZ16EEYnO3ykSk/qGli4zdQfuG9CJ3XA==
+X-ME-Sender: <xms:uts5Zvl7-nEq-CbF7QGNhobayzAeohw3tv0Ejxu14PR1zvsSnFgIyQ>
+    <xme:uts5Zi2bihLmybG1yqeKLHGOC9DeZey6QdEo8U0ZYv7VUMamAoTZtHu41vMMZmypO
+    scYH8hF0o_zLd__vTo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvjedguddujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:uts5ZlrYSndBEJjDurgNdyAnizkGaL550-rFSG8IbQoYzXvJs4QT4Q>
+    <xmx:uts5ZnlmGs0rWEkFtYSXKopQH_s1142cx8ljGNwJcUo9UDwmJnsSdw>
+    <xmx:uts5Zt0bHq7RqMby2NcDs7M2qulNICqFyD-5_kjxoFOp9XX9kkbM3g>
+    <xmx:uts5ZmsHfQZki9eDHmArUCMXLkeQQP83Qn-95pb26amDgq2PN6O85A>
+    <xmx:uts5Zs1I6GVHr8XkXk_9IE4HJUWtOLyGmFk5D44BVVzsmlziBVnbXsTX>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 4D40AB6008F; Tue,  7 May 2024 03:43:54 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
+Message-Id: <cfd19433-c8de-4157-bdde-dcb6aa490792@app.fastmail.com>
+In-Reply-To: <87r0eef4xz.fsf@geanix.com>
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-2-bdff75085156@geanix.com>
+ <8accb26e-c7a8-43aa-90d5-d83d5a1575de@app.fastmail.com>
+ <87r0eef4xz.fsf@geanix.com>
+Date: Tue, 07 May 2024 09:43:33 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Esben Haabendal" <esben@geanix.com>
+Cc: "Russell King" <linux@armlinux.org.uk>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Fabio Estevam" <festevam@gmail.com>, "Dong Aisheng" <aisheng.dong@nxp.com>,
+ "Jacky Bai" <ping.bai@nxp.com>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Rasmus Villemoes" <rasmus.villemoes@prevas.dk>,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] pinctrl: freescale: Use CONFIG_SOC_IMXRT to guard i.MX
+ RT1xxx drivers
+Content-Type: text/plain
 
-> With my kernel hat on, maybe I agree.  But with my *user* hat on, I
-> think I pretty strongly disagree.  Look, idmapis lousy for
-> unprivileged use:
-> 
-> $ install -m 0700 -d test_directory
-> $ echo 'hi there' >test_directory/file
-> $ podman run -it --rm
-> --mount=type=bind,src=test_directory,dst=/tmp,idmap [debian-slim]
+On Tue, May 7, 2024, at 09:37, Esben Haabendal wrote:
+> "Arnd Bergmann" <arnd@arndb.de> writes:
+>
+>> On Mon, May 6, 2024, at 12:23, Esben Haabendal wrote:
+>>>
+>>>  config PINCTRL_IMXRT1050
+>>>  	bool "IMXRT1050 pinctrl driver"
+>>> -	depends on ARCH_MXC
+>>> +	depends on SOC_IMXRT
+>>> +	default SOC_IMXRT
+>>>  	select PINCTRL_IMX
+>>>  	help
+>>>  	  Say Y here to enable the imxrt1050 pinctrl driver
+>>
+>> Maybe make this
+>>
+>>        depends on SOC_IMXRT || COMPILE_TEST
+>
+> That is done in patch 3/3.
+>
+>> I see that all the i.MX pinctrl drivers are currently missing
+>> this, but a lot of other platforms have the ||COMPILE_TEST
+>> bit so it gets included in x86 allmodconfig tests that
+>> often gets run before sending or merging changes.
+>
+> Take a look at patch 3/3 in this series. It does a wholesale addition of
+> ||COMPILE_TEST to these drivers.
 
-$ podman run -it --rm --mount=type=bind,src=test_directory,dst=/tmp,idmap [debian-slim]
+Ok, great! Sorry I missed that bit. Whole series
 
-as an unprivileged user doesn't use idmapped mounts at all. So I'm not
-sure what this is showing. I suppose you're talking about idmaps in
-general.
-
-> # cat /tmp/file
-> hi there
-> 
-> <-- Hey, look, this kind of works!
-> 
-> # setpriv --reuid=1 ls /tmp
-> ls: cannot open directory '/tmp': Permission denied
-> 
-> <-- Gee, thanks, Linux!
-> 
-> 
-> Obviously this is a made up example.  But it's quite analogous to a
-> real example.  Suppose I want to make a directory that will contain
-> some MySQL data.  I don't want to share this directory with anyone
-> else, so I set its mode to 0700.  Then I want to fire up an
-> unprivileged MySQL container, so I build or download it, and then I
-> run it and bind my directory to /var/lib/mysql and I run it.  I don't
-> need to think about UIDs or anything because it's 2024 and containers
-> just work.  Okay, I need to setenforce 0 because I'm on Fedora and
-> SELinux makes absolutely no sense in a container world, but I can live
-> with that.
-> 
-> Except that it doesn't work!  Because unless I want to manually futz
-> with the idmaps to get mysql to have access to the directory inside
-> the container, only *root* gets to get in.  But I bet that even
-> futzing with the idmap doesn't work, because software like mysql often
-> expects that root *and* a user can access data.  And some software
-> even does privilege separation and uses more than one UID.
-
-If the directory is 700 and it's owned by say root:root on the host and
-you want to share that with arbitrary container users then this isn't
-something you can do today (ignoring group permissions and ACLs for the
-sake of your argument) even on the host so that's not a limitation of
-userns or idmapped mounts. That means many to one mappings of uids/gids.
-
-> So I want a way to give *an entire container* access to a directory.
-> Classic UNIX DAC is just *wrong* for this use case.  Maybe idmaps
-> could learn a way to squash multiple ids down to one.  Or maybe
-
-Many idmappings to one is in principle possible and I've noted that idea
-down as a possible extension at
-https://github.com/uapi-group/kernel-features quite a while (2 years?) ago.
-
-> I haven't looked at the idmap implementation nearly enough to have any
-> opinion as to whether squashing UID is practical or whether there's
-
-It's doable. The interesting bit to me was that if we want to allow
-writes we'd need a way to determine what the uid/gid would be to write
-down. Imho, that's not super difficult to solve though. The most obvious
-one is that userspace can just determine it when creating the idmapped
-mount.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
