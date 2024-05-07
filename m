@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-171930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890658BEAD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:49:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F11C8BEAD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C262819FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82661F23A93
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6895416C85E;
-	Tue,  7 May 2024 17:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7713D16C87A;
+	Tue,  7 May 2024 17:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHJYTVhB"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aKRIcrzc"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2506E1607A7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A70A16C854;
+	Tue,  7 May 2024 17:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104151; cv=none; b=OUcgeA4gWbPBlL4IMoIjJ1zIL2HgFP/fr3W5Mxdrnc411AFE1uR9RmrUhdBpd/ZpLv67Qj4E+R1tmLTGh8Py+zvd3QJUTUWLHiGjc4fJ2MgOV7Ovz31x9Cl9D5L7l//mu0wJ29yDf5n2/B6Xc/C5GzTUlCmRm/s84E8urI3J3RE=
+	t=1715104321; cv=none; b=usg2c30oY/0Ga0KUMv2weD8OfQ1Sa5EcMhJj+gr4p7SWjYmDioxAm0FGuoJFM22/pqBXkiZJ+DpQcYSJqhLsF3nnLKo00Z2JNNmT1wavbdWZJ0jBf8s/Qj/fEfsQoO+UG1yuCiqaTHAtrk7evSTd2q8uEFA+TDlpBBqPZHcbMSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104151; c=relaxed/simple;
-	bh=pwh4kKnyJTvJNbrZR87w9WNS7/BMALHW64bn1krHADg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sEBN9pgf75m2EcQohOA2/ksTYI6Y6XuBfcw80IcqLvNy6zPihPgZtjKpLfRRMLVE8VOtBCanZdu/ZVVktiUSf8k+pphzGhZ8n21SaMPqaE+bLZVGPIMhz9youQ/6uawoTFHvejZcMTaNe+Jz8w4JYv3sSqV49Ccr4Bfmvklk6gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHJYTVhB; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a86fb052so112962366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715104148; x=1715708948; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5KzNsGk04Aj/iaOaD0uQRj7sJlFSLSEs6o0qY1ztONQ=;
-        b=hHJYTVhBDZRgrg5RqswHinfPStn8JnrTZGcUNUItjRn/zlDRAYtpV4oX62bJi5RQ1x
-         KBF+ZWdAZVLR8ZW5riuZJiSs2Wnu78VdPUyqfh/AcBWQX9cz86vRsM07Cbq+7vAtV8Y7
-         2aNeXzARj5PAjb89JcyqXMUXJYvEHtXoByzedD0Ioz2EK9SpJhWLYgkmfLt8pQUF1ixB
-         8JXe/fplQc02xvv0sbeoKcerfzM4R176pCO7fn6q6lgcbmeo7gc3iaHFuZSv5b/slt7+
-         fOUKXMoHApvLo3ixlBQl0I6Z42q+VjebbcU+UmjUbViqsf7L5PVqlFHW3pJUgdHanhlL
-         kwUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715104148; x=1715708948;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5KzNsGk04Aj/iaOaD0uQRj7sJlFSLSEs6o0qY1ztONQ=;
-        b=NqGMe2ibfC9Ad/NYYlAwZR0msflTrapo4yz058m2NTmmLtm9cNVnkFmY96fZEUQDlQ
-         ErEQJTdVnTntHciAFwOt2HTUSzygocgZPpBfUL2rnn2A8i0G1r2nwF4y2lkeQXSw+AAm
-         I7UGV4h/PjYg1zEMbk0W4zgZ4CdtgvkleZUtgaowwKmjTseCCTIsuyCjM31NmFEdGz1v
-         3DJ/ms+PUHutVRVfxmaE23xya+v4MOGImZtU1vcmeN4+eRNjpLaAQGXS7e7/PYP3HBeW
-         rIgWX6MWWni3c8JYLwJ6grn7idXJ62o/cDmP0UEENerosAo7VZyz5mr8YMxQr/YmPTGJ
-         3tNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH0g3niQ0sWRIhvfz/GpFw543DV1c2HsGlJVqoSsOH+zXcthW6Zp+D/Muo3aKUvza/y+9KSQwlOEWefmYMGdpfqx0mPnO7GwTwSXMJ
-X-Gm-Message-State: AOJu0Yx1g85BU/vo3FAxhMfINarM97TvcKaRCZ1wDIs3bazXMQ740f5c
-	6Q2FTLcRQC4b9a4lu9+jXObI/SQDmBM13SBRCV52gpNcgPEO3/Lr
-X-Google-Smtp-Source: AGHT+IE5DMX+XI/tzZLisS11tES8cNFOzvMrHLvepHpBfRDTKb+hpqZQWQrvtTKVVJucSTr7rAL40w==
-X-Received: by 2002:a05:6402:401e:b0:572:65f7:eed0 with SMTP id 4fb4d7f45d1cf-5731d91696bmr355648a12.0.1715104148260;
-        Tue, 07 May 2024 10:49:08 -0700 (PDT)
-Received: from [192.168.0.104] (p57935690.dip0.t-ipconnect.de. [87.147.86.144])
-        by smtp.gmail.com with ESMTPSA id fj20-20020a0564022b9400b00572336c900asm6554848edb.74.2024.05.07.10.49.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 10:49:07 -0700 (PDT)
-Message-ID: <42016d13-b69c-400a-98a6-f34db6dd3e06@gmail.com>
-Date: Tue, 7 May 2024 19:49:06 +0200
+	s=arc-20240116; t=1715104321; c=relaxed/simple;
+	bh=GY3MBfwuO10L82PUAiXJzgv81jWZBClNChn/m41ZtcA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=eMBOeM1ZNTVBwz2V5qafspAaOHt4rUgpCOFsqVKIJBprBDzJ/40UXWsE1LGTghyJLnQKokRKd50f4fuhiUh8TLuxE+S6rDyahL8enD8NRpNhvofYYvnUGBPgY4/fWoKapIEWmQP5JHymW5ZsDaHK/6Vdxe/IX8Sb09IGRIP8lug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aKRIcrzc; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715104288; x=1715709088; i=markus.elfring@web.de;
+	bh=xvGl9zg4bC/oN/5QMDwRD8vK477Q2XXZGmLCg9b9k3E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aKRIcrzcx8N58iwithOFmR/DZtGvGfJKN11C2CUxVlWKN02Oca8FViV8VZMeD6js
+	 GnUoC+10QjWG7uXDJ1TG65uLRfu4+3Cbx/axJ92j5snYH7e4Q17hsjw25LYzupOlL
+	 z3S67MPg8cbyQQOCRt4y1dJzz37ve3cgvwb8AJwl6BLTUxY73Fa8jsjwfZhxTlTxc
+	 2FI3BqZhL2+bVt0pLMxi4Vt74SFOPHiz08mmlI4LTowdCqQFBzf5ea9njs8C6fBCi
+	 PN+aumtvT+6ONm7f4Y2qxrc5r4wvM2pp3JXV8Ve8gNbvQ/BhPvYnfyzxKNs6Pk0Gu
+	 lk7cXrQGkpqwTBt9ww==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N01Zk-1srRCA17Nm-00vSKI; Tue, 07
+ May 2024 19:51:28 +0200
+Message-ID: <1c3856f2-94dd-4947-a3c7-e011181283c8@web.de>
+Date: Tue, 7 May 2024 19:51:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,66 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging:rtl8192e:fixes unnecessary braces
-To: Chen shuo <1289151713@qq.com>, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <tencent_1423E8EA63C9C00B49636738FF1050480C06@qq.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <tencent_1423E8EA63C9C00B49636738FF1050480C06@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Jijie Shao <shaojijie@huawei.com>, Yonglong Liu <liuyonglong@huawei.com>,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
+ Paolo Abeni <pabeni@redhat.com>, Salil Mehta <salil.mehta@huawei.com>,
+ Simon Horman <horms@kernel.org>, Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Hao Chen <chenhao418@huawei.com>,
+ Jie Wang <wangjie125@huawei.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>
+References: <20240507134224.2646246-7-shaojijie@huawei.com>
+Subject: Re: [PATCH V3 net 6/7] net: hns3: fix port vlan filter not disabled
+ issue
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240507134224.2646246-7-shaojijie@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sftMbWoZIxbDBpbVsIOYNDzevExKQuQKOfTM9MBs3QdgTtma/kv
+ 9oITSvN4DvQi2An/EEt1hGI/F/JWaKUyyiNegkOsR9FEz9lbPQitxV1xkXAVB4fs4JG0cTp
+ Oz5+NKFx4d7LTNOxwFnuiGr2zXLk6PRt9VTJvU4hOUBJ1HansZBWN7kOSfIG3ONDZKoNhhQ
+ SDtTQC/uBt5eZ46nvk1lA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:b40jeLTvkj0=;FvF090lHEDLVj+pkFpO+hodhSbJ
+ zyinFBXQY7ZbhZyNq1XlnSsaadG++YLmBX30Y6f0q6Fwkz3Gbu+409dsYx611B9flLC0Q5slY
+ 77Y0lla7GwX5rWOYtOGqIPoLPjogk8ZfeE1Pj4xeVc3G9e/ErH/QoTunomfmSY5Q/flc1ac3J
+ IDLPHZUA40MZ57DpkCBNsbIHyEpEHW5emXR7nfS3R45I6nymJjgi8vZ4VQGT+R884X+olU1an
+ cdSHu7P6OI0pTRCix8fPD3PZZ5cBYJ8eup9tJKoVHl7v9G2rQ1J0c0YVX6mB7Il5Y7E7yFqYT
+ wZmQ8rK5dXUN2mbUyySVWqPUTU+LoGKYlM8Av7qtUZjwbGARIQ4gpOd+sF8prqF1Sue2rME8j
+ mCDouhReBHqa2FnC1H9udDHmhlmNO+412+PA2yOk9508BJrAa1h+T4gJzGVyrAkYpdXCvBn/j
+ lSyUFCLq2lWAXXGDofVooySWFDLtEiF3mGQYmrOcZSXnWcqPzDF+kB4Xs5bUUQxk/Mr0MFWzp
+ KVOOJY70YjrIZCmp/b5UEY9gepwIqLVgdZWc4CL2s1RuSxw1BA8QDf/uBpkNCN2fFa7AWPooQ
+ CZShpnfZJhSx9MaysTNSwBo2J+WN5wHQc4e7+ZA/lEp7+h4K8nPjac6tA2yCknjTr/fnD7iWs
+ d/qvy6DbgWNfjboUHynFPj2RGXjAVhLiN2ezK/cCLKsNesL1HvJEBzV3ZVlF2A5dP/dQNxlPB
+ BZhYa1BnBvO6SXpJlN12WjuF7xd/X0KSVoe0sqtf17dAQcaBNiTKDkHtoRfCSGOBEo/V20++l
+ GtsW3Kapw9haNLbF4vit04qLxybyMuwbNaIa5saGHQ4zI=
 
-On 5/7/24 14:13, Chen shuo wrote:
-> This patch fixes the warnings reported by checkpatch.pl
-> for braces {} are not necessary for single statement blocks
-> 
-> Signed-off-by: Chen shuo <1289151713@qq.com>
-> ---
->   drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-> index e3ed709a7674..1862a9899966 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-> @@ -1640,9 +1640,8 @@ bool rtl92e_get_rx_stats(struct net_device *dev, struct rtllib_rx_stats *stats,
->   	if (stats->Length < 24)
->   		stats->bHwError |= 1;
->   
-> -	if (stats->bHwError) {
-> +	if (stats->bHwError)
->   		return false;
-> -	}
->   
->   	stats->RxDrvInfoSize = pdesc->RxDrvInfoSize;
->   	stats->RxBufShift = (pdesc->Shift) & 0x03;
+=E2=80=A6
+> will not update the VLAN filter state,  and the port VLAN filter
+> remains enabled.
+
+I suggest to use more than 64 characters in further lines of such
+a change description.
 
 
-Hi Chen,
+> To fix the problem, if support modify VLAN filter state but not
+> support bypass port VLAN filter, =E2=80=A6
 
-Please make your "Subject" line more unique. Consider that we may end up
-with having dozen of commits like yours, all of them referring to
-different removals and all without the necessary information to tell 
-what they differ in (except the driver/subsystem). So it would help if 
-you add the changed file or function to make it more unique.
+I find a few wording adjustments helpful in this changelog.
 
-Also typically we use space after : and driver name in the subject.
-
-It is not required to add the name of the tool who found this. Much more 
-important is a good description __why__ this change makes sense...
-For example:
-.. to shorten code.
-.. to improve readability.
-
-If you send in a second version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-
-Feel free to contact me direct for further questions.
-
-Thanks for your support.
-
-Bye Philipp
-
+Regards,
+Markus
 
