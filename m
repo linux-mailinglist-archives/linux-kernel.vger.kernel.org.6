@@ -1,210 +1,173 @@
-Return-Path: <linux-kernel+bounces-172180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0237F8BEE7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:02:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 174798BEE80
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1741F2621A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FEB7B20CB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713071B3A;
-	Tue,  7 May 2024 21:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7720473165;
+	Tue,  7 May 2024 21:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LQxPkjUH"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WHrajR/4"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E330618733E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 21:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DBC58AB8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 21:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115718; cv=none; b=kd4qgSBvSgLUkQDYVsSOPim3KZHtRwCmJsxfkwR/bZTDiv/hOGrDAmoNOcqHyw3/kgezMoUSsPSiiCWIOeDg5R0qJx1X8lpUlJCnaq2gSo7ndYUShFZtDRGE5ybJ6lk/vJHfSzavbLf5l0NH08or+e6XQcZk+I7EOv1mm9yvex4=
+	t=1715115759; cv=none; b=pXyLPXqoUiF1WVBH1ry7Nbn+SjK+UVQnFiAKI7PgSjfD+hZdsMNxkXyCQ4DeSI6Zyj0ELHmGit4X2TvDpA9O3ewarwjmu+efIw943v7qxVubXsRnz4aQHUPpieN1nlKkLwnFPsjGvgdlUmT7XZ9NKRgOJXrSyxawQW4iRKpjL30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115718; c=relaxed/simple;
-	bh=JiWno9R6/bTX27Lyw4lnPCe5j/IzJx7mLRUg0SFwwzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PybLTAY2J0t5HwhtngS33/MNiAoMrxJ2ype/gwg39LElzQbF21K8yGRhNSc6BegJ1iMeGWWjvmenZ4ahka1sAP9yVfhJAta0jWLHg/i8SOscPdiW+3Pqo+k5BktkgbQfmG/X+Oppox3e21YIie9BZA1HrOyhqvk5YWNM9M92O6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LQxPkjUH; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 8 May 2024 05:01:51 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715115714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zZNs4tA7go3R/DMVxte1WF4G+JtqmyTgtWCsoCAO8/U=;
-	b=LQxPkjUHpSk5OiqLAHPQlApMHIdCDDWwHwWi5rhrQDv8xB+Zra1Sex3T5nBDL+Jlo5OC2f
-	UKTBXWUxiNGEY7cWSa+q1Uw1ZVV4yMiuXfMCUKT+E7eoJcRkl6AS+Rhe37TPYH/fbTdq6U
-	BDBhov3gOiz0f6H3vaLu2x9nDJyuWm8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leo Yan <leo.yan@linux.dev>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf maps: Process kcore maps in order
-Message-ID: <20240507210151.GB1384@debian-dev>
-References: <20240505202805.583253-1-leo.yan@arm.com>
- <d47346fc-51b4-4af5-a014-0bd6f3b7bae0@intel.com>
+	s=arc-20240116; t=1715115759; c=relaxed/simple;
+	bh=dcQifiRnXyza9FW3AFxD5R6V5brxDJJNyh8xJafA31M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TJwax/Ce6Ct0H9GtenC+222fL6wyntXzeE7j1c4Omfe8bKK0qKmN5Zxrq35YgsDrM0zyBQToILgQuR3U2I+RYa8L19vFaYwNpNEmry7ZQXGXBahg9t68rnpsYfGDEuimg1RjW/N+MfgyHajmac9q7Li0rixMqwjXM/IetQIXVxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WHrajR/4; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ee0ccf9c2fso47315ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 14:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715115758; x=1715720558; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7PXKFoq0ULEX3xHp8L36jXb3EJwEiOL/fywMVJVG9EM=;
+        b=WHrajR/4mTPdVWLUxjY7VmaVQHGq6UnoFgvXR2adb1Z0QZXwzqCsyZfuUExndYDV16
+         t1gD3WizvKEatxalEFMvWygzuCGy4Ss35y+PRNoTDzOZyQMnOBjrBaRr14KxgK84Wbmp
+         3Z1k9MqmALDuXBA1ce6tEWVQDU/vRdxGBfZpUjscoCZVOGvusH5cxeAtHW9bVwG21q2X
+         uIShYsQQosvT+06h0HW8U+Rihe9C5ydFNe0uY7Ga75l4u5HuB5DquDynxD05hBR+6KBO
+         MDmq80fJyrl8Npec1c+7GAuPdLlPLjKfZI/dYXTXgGS4Lsm3LyJ8kU0EG17pY1VP4KBl
+         RBIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715115758; x=1715720558;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7PXKFoq0ULEX3xHp8L36jXb3EJwEiOL/fywMVJVG9EM=;
+        b=wQ70erb/h7fiKzPmD8bIS7Yj/pGbvGX8celWdx9NPDoQ8eIRbPrOkS8synzHs+poh7
+         sZlvRTUlos332QbJmR+Q/72Vru7EICeczdjI4Y2J2SSjwmY5wqtGiozDb3EX3SwxBxdo
+         /F2DZrktNINM6e5vR2Ice5UpYEP/Gsbp/OwReX8Ka3VI6N5tW8cPrQ+1bgQ5k/cOONux
+         wIswASH7TYUNODg9r9MOeQ6Sx0hvUkfwkwaQI4bLo8EeaDEjWMV7WXgg2GqXWmeIldy+
+         FPl+oB/SJSiW2j3Qyri8B96AAH/Z2HzOJBXK7k/jCVTaBUPpS/tONFK8vmuv0EPOtAkl
+         KApA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwSNJHiPGcIgSW29rFNETqppKO6hCstpvsx6GhXteyQKQnB15vCuaUNYw37UNbiw3cXfumg7HO/4eu1EpCnxOy7KCZ/1vGvLT0kY1L
+X-Gm-Message-State: AOJu0YzhgQkBkrM2UNG5n/Bn+dv44L6D5XQYvRl64EYpPl/CWJ69oU9y
+	OvKHq/lG0qlp8ZGCB0DdhIe1ZcvYouPmGJcR8LkW2KupTkZC4hXFfpR1UeBqbw==
+X-Google-Smtp-Source: AGHT+IFcx/zsGsoDBaEiKVAbBojnCcKrrO7wSjP8pFBrW3hvSPSIk4fhXYgzXGfwU+OuYarW72LzoA==
+X-Received: by 2002:a17:903:947:b0:1e3:e08c:5a98 with SMTP id d9443c01a7336-1eebe6a7a10mr95045ad.29.1715115757192;
+        Tue, 07 May 2024 14:02:37 -0700 (PDT)
+Received: from ?IPV6:2620:0:1000:8411:3fc2:a19c:5e57:eee5? ([2620:0:1000:8411:3fc2:a19c:5e57:eee5])
+        by smtp.gmail.com with ESMTPSA id u10-20020a170902e80a00b001e826e4d087sm10453005plg.142.2024.05.07.14.02.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 14:02:36 -0700 (PDT)
+Message-ID: <d174e5cf-402d-48a0-b077-89740b873b73@google.com>
+Date: Tue, 7 May 2024 14:02:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d47346fc-51b4-4af5-a014-0bd6f3b7bae0@intel.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] usb: typec: tcpm: unregister existing source caps
+ before re-registration
+To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>, linux@roeck-us.net,
+ heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org,
+ badhri@google.com, rdbabiera@google.com, linux-usb@vger.kernel.org,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>
+References: <20240424223227.1807844-1-amitsd@google.com>
+ <y4lla7vqsrl75qhesmyexq7yvcu6hl6kryh3ctwq5ci3r4mlpw@rsnhfkmlmtt7>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <y4lla7vqsrl75qhesmyexq7yvcu6hl6kryh3ctwq5ci3r4mlpw@rsnhfkmlmtt7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Adrian,
+Hi Ondřej,
 
-On Mon, May 06, 2024 at 08:43:01AM +0300, Adrian Hunter wrote:
+On 5/7/24 09:19, Ondřej Jirman wrote:
+> On Wed, Apr 24, 2024 at 03:32:16PM GMT, Amit Sunil Dhamne wrote:
+>> Check and unregister existing source caps in tcpm_register_source_caps
+>> function before registering new ones. This change fixes following
+>> warning when port partner resends source caps after negotiating PD contract
+>> for the purpose of re-negotiation.
+>>
+>> [  343.135030][  T151] sysfs: cannot create duplicate filename '/devices/virtual/usb_power_delivery/pd1/source-capabilities'
+>> [  343.135071][  T151] Call trace:
+>> [  343.135076][  T151]  dump_backtrace+0xe8/0x108
+>> [  343.135099][  T151]  show_stack+0x18/0x24
+>> [  343.135106][  T151]  dump_stack_lvl+0x50/0x6c
+>> [  343.135119][  T151]  dump_stack+0x18/0x24
+>> [  343.135126][  T151]  sysfs_create_dir_ns+0xe0/0x140
+>> [  343.135137][  T151]  kobject_add_internal+0x228/0x424
+>> [  343.135146][  T151]  kobject_add+0x94/0x10c
+>> [  343.135152][  T151]  device_add+0x1b0/0x4c0
+>> [  343.135187][  T151]  device_register+0x20/0x34
+>> [  343.135195][  T151]  usb_power_delivery_register_capabilities+0x90/0x20c
+>> [  343.135209][  T151]  tcpm_pd_rx_handler+0x9f0/0x15b8
+>> [  343.135216][  T151]  kthread_worker_fn+0x11c/0x260
+>> [  343.135227][  T151]  kthread+0x114/0x1bc
+>> [  343.135235][  T151]  ret_from_fork+0x10/0x20
+>> [  343.135265][  T151] kobject: kobject_add_internal failed for source-capabilities with -EEXIST, don't try to register things with the same name in the same directory.
+>>
+>> Fixes: 8203d26905ee ("usb: typec: tcpm: Register USB Power Delivery Capabilities")
+>> Cc: linux-usb@vger.kernel.org
+>> Cc: stable@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>> ---
+>>   drivers/usb/typec/tcpm/tcpm.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+>> index ab6ed6111ed0..d8eb89f4f0c3 100644
+>> --- a/drivers/usb/typec/tcpm/tcpm.c
+>> +++ b/drivers/usb/typec/tcpm/tcpm.c
+>> @@ -2996,7 +2996,7 @@ static int tcpm_register_source_caps(struct tcpm_port *port)
+>>   {
+>>   	struct usb_power_delivery_desc desc = { port->negotiated_rev };
+>>   	struct usb_power_delivery_capabilities_desc caps = { };
+>> -	struct usb_power_delivery_capabilities *cap;
+>> +	struct usb_power_delivery_capabilities *cap = port->partner_source_caps;
+>>   
+>>   	if (!port->partner_pd)
+>>   		port->partner_pd = usb_power_delivery_register(NULL, &desc);
+>> @@ -3006,6 +3006,9 @@ static int tcpm_register_source_caps(struct tcpm_port *port)
+>>   	memcpy(caps.pdo, port->source_caps, sizeof(u32) * port->nr_source_caps);
+>>   	caps.role = TYPEC_SOURCE;
+>>   
+>> +	if (cap)
+>> +		usb_power_delivery_unregister_capabilities(cap);
+> This certainly looks like it's asking for use after free on port->partner_source_caps
+> later on, since you're not clearing the pointer for the data that you just freed.
+>
+>> +
+>>   	cap = usb_power_delivery_register_capabilities(port->partner_pd, &caps);
+>>   	if (IS_ERR(cap))
+>>   		return PTR_ERR(cap);
+> This can easily fail if caps contain invalid PDOs, resulting in keeping pointer
+> to freed memory in port->partner_source_caps.
 
-[...]
+Makes sense. I will send a fix for this. Thanks for the review.
 
-> > diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> > index 9ebdb8e13c0b..e15d70845488 100644
-> > --- a/tools/perf/util/symbol.c
-> > +++ b/tools/perf/util/symbol.c
-> > @@ -1266,7 +1266,24 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
-> >  	map__set_end(list_node->map, map__start(list_node->map) + len);
-> >  	map__set_pgoff(list_node->map, pgoff);
-> >  
-> > -	list_add(&list_node->node, &md->maps);
-> > +	/*
-> > +	 * Kcore maps are ordered with:
-> > +	 *   [_text.._end): Kernel text section
-> > +	 *   [VMALLOC_START..VMALLOC_END): vmalloc
-> > +	 *   ...
-> > +	 *
-> > +	 * On Arm64, the '_text' and 'VMALLOC_START' are the same values
-> > +	 * but VMALLOC_END (~124TiB) is much bigger then the text end
-> > +	 * address. So '_text' region is the subset of the vmalloc region.
-> > +	 *
-> > +	 * Afterwards, when dso__load_kcore() adjusts kernel maps, we must
-> > +	 * process the kernel text size prior to handling vmalloc region.
-> > +	 * This can avoid to using any inaccurate kernel text size when
-> > +	 * extending maps with vmalloc region. For this reason, here it
-> > +	 * always adds kcore maps to the tail of list to make sure the
-> > +	 * sequential handling is in order.
-> > +	 */
-> > +	list_add_tail(&list_node->node, &md->maps);
-> 
-> This seems reasonable, but I wonder if it might be robust
-> and future proof to also process the main map first
-> e.g. totally untested:
+Thanks,
 
-Makes sense for me, I verified your proposal with a minor improvment,
-please see the comment below.
+Amit
 
-> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> index 9ebdb8e13c0b..63bce45a5abb 100644
-> --- a/tools/perf/util/symbol.c
-> +++ b/tools/perf/util/symbol.c
-> @@ -1365,16 +1365,15 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
->  	if (!replacement_map)
->  		replacement_map = list_entry(md.maps.next, struct map_list_node, node)->map;
->  
-> -	/* Add new maps */
-> +	/* Add replacement_map */
->  	while (!list_empty(&md.maps)) {
-
-For the replacement map, as we have located it in the list, here we
-don't need to iterate the whole kcore map list anymore. We can
-directly use the replacement map to update the passed map:
-
-        /* Update replacement_map */
-        if (replacement_map) {
-                struct map *map_ref;
-
-                list_del_init(&replacement_node->node);
-                map__set_start(map, map__start(replacement_map));
-                map__set_end(map, map__end(replacement_map));
-                map__set_pgoff(map, map__pgoff(replacement_map));
-                map__set_mapping_type(map, map__mapping_type(replacement_map));
-                /* Ensure maps are correctly ordered */
-                map_ref = map__get(map);
-                maps__remove(kmaps, map_ref);
-                err = maps__insert(kmaps, map_ref);
-                map__put(map_ref);
-                map__put(replacement_map);
-                if (err)
-                        goto out_err;
-                free(replacement_node);
-        }
-
-I also uploaded the verified change to https://termbin.com/rrfo.
-
-Please let me know if you would like to send a patch for this, or you
-want me to spin a new version. Either is fine for me.
-
-Thanks for review and suggestion!
-Leo
-
->  		struct map_list_node *new_node = list_entry(md.maps.next, struct map_list_node, node);
->  		struct map *new_map = new_node->map;
->  
-> -		list_del_init(&new_node->node);
-> -
->  		if (RC_CHK_EQUAL(new_map, replacement_map)) {
->  			struct map *map_ref;
->  
-> +			list_del_init(&new_node->node);
->  			map__set_start(map, map__start(new_map));
->  			map__set_end(map, map__end(new_map));
->  			map__set_pgoff(map, map__pgoff(new_map));
-> @@ -1385,20 +1384,29 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
->  			err = maps__insert(kmaps, map_ref);
->  			map__put(map_ref);
->  			map__put(new_map);
-> +			free(new_node);
->  			if (err)
->  				goto out_err;
-> -		} else {
-> -			/*
-> -			 * Merge kcore map into existing maps,
-> -			 * and ensure that current maps (eBPF)
-> -			 * stay intact.
-> -			 */
-> -			if (maps__merge_in(kmaps, new_map)) {
-> -				err = -EINVAL;
-> -				goto out_err;
-> -			}
->  		}
-> +	}
-> +
-> +	/* Add new maps */
-> +	while (!list_empty(&md.maps)) {
-> +		struct map_list_node *new_node = list_entry(md.maps.next, struct map_list_node, node);
-> +		struct map *new_map = new_node->map;
-> +
-> +		list_del_init(&new_node->node);
-> +
-> +		/*
-> +		 * Merge kcore map into existing maps,
-> +		 * and ensure that current maps (eBPF)
-> +		 * stay intact.
-> +		 */
-> +		if (maps__merge_in(kmaps, new_map))
-> +			err = -EINVAL;
->  		free(new_node);
-> +		if (err)
-> +			goto out_err;
->  	}
->  
->  	if (machine__is(machine, "x86_64")) {
-> 
-> 
-> 
+>
+> Kind regards,
+> 	o.
+>
+>> base-commit: 0d31ea587709216d88183fe4ca0c8aba5e0205b8
+>> -- 
+>> 2.44.0.769.g3c40516874-goog
+>>
 
