@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-171295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435078BE253
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:39:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27968BE24E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 583D0B22C4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6508428A197
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62588158D9C;
-	Tue,  7 May 2024 12:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C87B158A37;
+	Tue,  7 May 2024 12:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="yUpJq8Rb"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hnSzkkOf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771BF14F9E4;
-	Tue,  7 May 2024 12:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A3C1DA3A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715085545; cv=none; b=Scqph9jVDk9yxpoGAZpnOoprBaj6vvr7Qx3KEzlQOE9fA7V9LLQJEtjaGmxF6edUov1ZiYW96JuEl0OGgJRGc4JGjB0TCI0rxKoaohaK2i9BWXM1VhyWhUiJtnB/fHwWiJadESr6nr/cKh/36jQAXf9VBNQMWYl3cs1fnHSLUVU=
+	t=1715085518; cv=none; b=kaA0lgo1oDoAfgaRvmQ/wFG1mxXWFMkNvDYLMlnYyUgnrCT9XPmlR3Mv4y0ssVULpJEFGlnVeCuP6ZdX98p8nm+aY+aWXIh6AiMWexxP4ELc2+Dl/sgMIDhQa5l3RXCHN+thwxetF9lbbYqoVml/Yd0qzEdZdg4iDzbJ/n4B3BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715085545; c=relaxed/simple;
-	bh=+Q3D1pwy5ZS+pAVkDDZ5fVc527hZFvpuS1PEQZU9MPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HFO4QOIlU96HtUM8UC/sgGzE6rWIAuFm4HGISjemG8A/EG71ZrkjWq+UfWWo7PUty/1O2eV2vzr6zVy8ZCvbgWNb9IFIQcfG4cC9DmFEWd4dTRoSIhuTd+C0bar7hVEODZEPNh9ctkRy+Hcd+lgZbfnSMTi3dJhGxwRaKtR0RjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=yUpJq8Rb; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447BU3o7015293;
-	Tue, 7 May 2024 14:38:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=3qiNad6x8nitVdBqmEwvTox+u+eOjMKAzrRDqOFgNqk=; b=yU
-	pJq8RbP6KPnmwTrLGmrjcNLqKBOgXfewISyJ56HJGVNPlxB8OJSXZtpYCPgLx9FK
-	qVQmy/NnXOuxKJV3lbKDHz9sKvzctFg/v0NrjNu1FJlfWrsEXceSHbUVLuyd8O3h
-	ssMde6+uKwJ8gNT80JL8n3rzuI0wje4rR8Cc5zYzDViXOhQ6WDL8I3DOjrPvCam1
-	kv+eeYFAFeXedgUOLaZZ75hSVIubXdGx47WzLDBumLqUlz8aCzh7qFvB+RXHv8cE
-	Z1ul+T3OKKFRbu7OZPN3kAqT7RKR6XRXZ09jk3su4OD6LPtdMHwwXSlSTFTjmzjj
-	xrKfe9vGo/yvLCKQ/H5g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwxk1hv16-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 14:38:35 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7F3914002D;
-	Tue,  7 May 2024 14:38:29 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F2F1921A8F6;
-	Tue,  7 May 2024 14:37:38 +0200 (CEST)
-Received: from [10.48.86.143] (10.48.86.143) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 7 May
- 2024 14:37:38 +0200
-Message-ID: <41d66c51-be2d-43a5-9dfd-9e94304980dd@foss.st.com>
-Date: Tue, 7 May 2024 14:37:37 +0200
+	s=arc-20240116; t=1715085518; c=relaxed/simple;
+	bh=N4x7ddF13TSS9Nea4s5diAVC6CLhsJR/c+e98qA9adw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PA5h/cFEZOUTVD2mO0E4+ILYbPfG/zj78RKhqlYMFm9YCIRcIVXQWuxtM9HGz4biNPXp9K8wS9TBwAt6llbw1ePtg+vAWF5Jhejn1iV3AjNb03m345ewmR14mQn2Bcvmd3cBOhTy8USl4JskHJm/cB/LE/KCocw8WJLyunrG/QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hnSzkkOf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715085515;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lWPEcqR9ErU9XdKxA7hqSt4OB0qwEGWcYY6ZOijOyEI=;
+	b=hnSzkkOfUVdYZlyG6EAvlA3KFclUf4JgKpPqg8Rj9op7Lg4RHWAOjjlCcSkYYlDH+muIC+
+	pNub+Azj/+HvC+p0BjolcnFq0Za/qJVXS6G+KCYKYXIKS9rNa6QvocASiEag1cpGvGNdnI
+	lwm/5J2E9AAN5WBMIx8ZKetvVtw7oKM=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-241-DaUQEzgwNf-ZaLZQzJajyA-1; Tue, 07 May 2024 08:38:34 -0400
+X-MC-Unique: DaUQEzgwNf-ZaLZQzJajyA-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a599dbd2b6aso181900866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 05:38:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715085513; x=1715690313;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWPEcqR9ErU9XdKxA7hqSt4OB0qwEGWcYY6ZOijOyEI=;
+        b=OsZRL6kovmwAFJwjoKEkNBNpM7/1iZ/+tNAeTekLfn91D8xxh9FENOHwvN1nn5AcuV
+         JH0EApBHJFhBzRsCYBVpr1wLF5Y6D1j1krP51BMT8NVS3hkVOrp6l+hwvX6Du3LM7bpU
+         bm+UI5mCfCWiOag2aUix7gPuU7AgIP3LdjGRD2IMy4yt+/rvKJyTzbx86fi2HuM3h/EM
+         cro123ExRFJ9H+Fez0lvQm+5nZexMXBq7XFwm347pJSHscP7oDsEcXoSFoL1BMBOLOsb
+         YqUK7Iiutxfuvoz9MZRvh33hdF8oY1lcCtURA1NCVwa6xUw0W+tfEig8m5zEKcGmyLB9
+         8xEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwAZROPE+YGeDHiedIEP/vEf1GVJ3mJk0RCXUCLud1wE83tKMQdPZbxcoTjrLCXKU+COtpHaT3E47vs+OUW1LqL+rl/f8jqQ4NeMvN
+X-Gm-Message-State: AOJu0Ywh2UsH61MgDD/skE4EbnqTputpyNDGZsNR0fO4rLDZE09zOCBI
+	XHikAt+672TtNixJuUR+6fzC66NNtt/f3ZNtRmDQTXFzdg3zzXlrBj5ZzvCEMhe7/aWDo3Sc3sb
+	T7npr2jf2MjpdkincRMySaFpeYRlRXXoCb6tN4NoQjRLie29hU8f5AFkFfcNdkA==
+X-Received: by 2002:a50:ab5e:0:b0:572:3cc4:2dcf with SMTP id t30-20020a50ab5e000000b005723cc42dcfmr8859969edc.14.1715085512806;
+        Tue, 07 May 2024 05:38:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHroxd8bLzrqkFtsPgGzF1TvuHA3TG7s9IGZVCQTAMan3/CD0a4Lwt87DsFEPiKjQIkUlgyMg==
+X-Received: by 2002:a50:ab5e:0:b0:572:3cc4:2dcf with SMTP id t30-20020a50ab5e000000b005723cc42dcfmr8859958edc.14.1715085512396;
+        Tue, 07 May 2024 05:38:32 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id u1-20020aa7d541000000b00572eebbfc61sm3387091edr.35.2024.05.07.05.38.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 05:38:31 -0700 (PDT)
+Message-ID: <3b379071-d5ff-4861-aa38-874e92d4461a@redhat.com>
+Date: Tue, 7 May 2024 14:38:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,107 +81,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/12] dmaengine: Add STM32 DMA3 support
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC: <alexandre.torgue@foss.st.com>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <mcoquelin.stm32@gmail.com>, <robh+dt@kernel.org>, <vkoul@kernel.org>
-References: <20240423123302.1550592-1-amelie.delaunay@foss.st.com>
- <20240423123302.1550592-6-amelie.delaunay@foss.st.com>
- <38193848-597d-47c1-9aea-5357e58f9983@wanadoo.fr>
-Content-Language: en-US
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <38193848-597d-47c1-9aea-5357e58f9983@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_06,2024-05-06_02,2023-05-22_02
+Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
+ and writing touch IC registers
+To: Charles Wang <charles.goodix@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: hadess@hadess.net, Richard Hughes <hughsient@gmail.com>,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ neil.armstrong@linaro.org, Mark Brown <broonie@kernel.org>
+References: <20240506114752.47204-1-charles.goodix@gmail.com>
+ <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
+ <ZjmOUp725QTHrfcT@google.com> <ZjocV1nvWnxr_qUI@mb-board>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZjocV1nvWnxr_qUI@mb-board>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Christophe,
+Hi,
 
-Thanks for the review.
-
-On 5/4/24 16:27, Christophe JAILLET wrote:
-> Le 23/04/2024 à 14:32, Amelie Delaunay a écrit :
->> STM32 DMA3 driver supports the 3 hardware configurations of the STM32 
->> DMA3
->> controller:
->> - LPDMA (Low Power): 4 channels, no FIFO
->> - GPDMA (General Purpose): 16 channels, FIFO from 8 to 32 bytes
->> - HPDMA (High Performance): 16 channels, FIFO from 8 to 256 bytes
->> Hardware configuration of the channels is retrieved from the hardware
->> configuration registers.
->> The client can specify its channel requirements through device tree.
->> STM32 DMA3 channels can be individually reserved either because they are
->> secure, or dedicated to another CPU.
->> Indeed, channels availability depends on Resource Isolation Framework
->> (RIF) configuration. RIF grants access to buses with Compartiment ID
->> (CIF) filtering, secure and privilege level. It also assigns DMA channels
->> to one or several processors.
->> DMA channels used by Linux should be CID-filtered and statically assigned
->> to CID1 or shared with other CPUs but using semaphore. In case CID
->> filtering is not configured, dma-channel-mask property can be used to
->> specify available DMA channels to the kernel, otherwise such channels
->> will be marked as reserved and can't be used by Linux.
->>
->> Signed-off-by: Amelie Delaunay 
->> <amelie.delaunay-rj0Iel/JR4NBDgjK7y7TUQ@public.gmane.org>
->> ---
-> 
-> ...
-> 
->> +    pm_runtime_set_active(&pdev->dev);
->> +    pm_runtime_enable(&pdev->dev);
->> +    pm_runtime_get_noresume(&pdev->dev);
->> +    pm_runtime_put(&pdev->dev);
->> +
->> +    dev_info(&pdev->dev, "STM32 DMA3 registered rev:%lu.%lu\n",
->> +         FIELD_GET(VERR_MAJREV, verr), FIELD_GET(VERR_MINREV, verr));
->> +
->> +    return 0;
->> +
->> +err_clk_disable:
->> +    clk_disable_unprepare(ddata->clk);
->> +
->> +    return ret;
->> +}
->> +
->> +static void stm32_dma3_remove(struct platform_device *pdev)
->> +{
->> +    pm_runtime_disable(&pdev->dev);
-> 
+On 5/7/24 2:28 PM, Charles Wang wrote:
 > Hi,
 > 
-> missing clk_disable_unprepare(ddata->clk);?
+> On Tue, May 07, 2024 at 10:25:29AM +0200, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 5/7/24 4:13 AM, Dmitry Torokhov wrote:
+>>> On Mon, May 06, 2024 at 02:03:13PM +0200, Hans de Goede wrote:
+>>>> Hi,
+>>>>
+>>>> On 5/6/24 1:47 PM, Charles Wang wrote:
+>>>>> Export a sysfs interface that would allow reading and writing touchscreen
+>>>>> IC registers. With this interface many things can be done in usersapce
+>>>>> such as firmware updates. An example tool that utilizes this interface
+>>>>> for performing firmware updates can be found at [1].
+>>>>
+>>>> I'm not sure if I'm a fan of adding an interface to export raw register
+>>>> access for fwupdate.
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/input/touchscreen/goodix_fwupload.c
+>>>>
+>>>> Contains update support for older goodix touchscreens and it is not
+>>>> that big. I think it might be better to just have an in kernel fwupdate
+>>>> driver for this and have a sysfs file to which to write the new firmware.
+>>>>
+>>>> Adding Richard Hughes, fwupd maintainer to the Cc. Richard, do you have
+>>>> any input on the suggested method for firmware updating ?
+>>>>
+>>>> If raw register access is seen as a good solution, then I think this
+>>>> should use regmap + some generic helpers (to be written) to export
+>>>> regmap r/w access to userspace.
+>>>
+>>> I think the less code we have in kernel the better,
+>>
+>> Ok.
+>>
+>>> especially if in
+>>> cases where firmware flashing is not essential for device to work (i.e.
+>>> it the controller has a flash memory).
+>>
+>> Right the existing older goodix fw-upload is different because some
+>> controllers are flash-less so they need a fw upload every boot.
+>>
+>>> That said IIRC Mark felt very
+>>> strongly about allowing regmap writes from userspace... but maybe he
+>>> softened the stance or we could have this functionality opt-in?
+>>
+>> Right when I was talking about generic helpers that was meant for
+>> code re-use purposes. Actually exposing the regmap r/w functionality
+>> to userspace is something which should be decided on a case by case
+>> basis by the driver (IMHO).
 > 
-> as in the error handling path on the probe just above?
-> 
-> CJ
-> 
+> So what's the final conclusion, does the interface need to be modified?
 
-Clock is entirely managed by pm_runtime, except in error path of probe 
-since pm_runtime is enabled only at the very end.
-Clock is enabled with pm_runtime_resume_and_get() when a channel is 
-requested or when an asynchronous register access occurs (filter_fn, 
-debugfs, runtime_resume) and clock is disabled with 
-pm_runtime_put_sync() when releasing a channel or at the end of 
-asynchronous register access (filter_fn, debugfs, runtime_suspend).
-Adding clk_disable_unprepare(ddata->clk); here leads to clock already 
-disabled/unprepared warnings in drivers/clk/clk.c 
-clk_core_disable()/clk_core_unprepare().
+I believe that the final conclusion is that the interface is fine.
 
->> +}
-> 
-> ...
-> 
+Personally I think if the syfs store/show functions used for this
+could be made into generic regmap helpers and then use those helpers
+in the driver, so that if other drivers want similar functionality
+they can re-use the show / store functions.
+
+You should be able to use dev_get_regmap() to make the show/store
+functions generic.
 
 Regards,
-Amelie
+
+Hans
+
+
+
+
+
+>>>>> ---
+>>>>>  drivers/input/touchscreen/goodix_berlin.h     |  2 +
+>>>>>  .../input/touchscreen/goodix_berlin_core.c    | 52 +++++++++++++++++++
+>>>>>  drivers/input/touchscreen/goodix_berlin_i2c.c |  6 +++
+>>>>>  drivers/input/touchscreen/goodix_berlin_spi.c |  6 +++
+>>>>>  4 files changed, 66 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/input/touchscreen/goodix_berlin.h b/drivers/input/touchscreen/goodix_berlin.h
+>>>>> index 1fd77eb69..1741f2d15 100644
+>>>>> --- a/drivers/input/touchscreen/goodix_berlin.h
+>>>>> +++ b/drivers/input/touchscreen/goodix_berlin.h
+>>>>> @@ -19,6 +19,8 @@ struct regmap;
+>>>>>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>>>>>  			struct regmap *regmap);
+>>>>>  
+>>>>> +void goodix_berlin_remove(struct device *dev);
+>>>>> +
+>>>>>  extern const struct dev_pm_ops goodix_berlin_pm_ops;
+>>>>>  
+>>>>>  #endif
+>>>>> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
+>>>>> index e7b41a926..e02160841 100644
+>>>>> --- a/drivers/input/touchscreen/goodix_berlin_core.c
+>>>>> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
+>>>>> @@ -672,6 +672,44 @@ static void goodix_berlin_power_off_act(void *data)
+>>>>>  	goodix_berlin_power_off(cd);
+>>>>>  }
+>>>>>  
+>>>>> +static ssize_t goodix_berlin_registers_read(struct file *filp, struct kobject *kobj,
+>>>>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
+>>>>> +{
+>>>>> +	struct goodix_berlin_core *cd;
+>>>>> +	struct device *dev;
+>>>>> +	int error;
+>>>>> +
+>>>>> +	dev = kobj_to_dev(kobj);
+>>>>> +	cd = dev_get_drvdata(dev);
+>>>>> +
+>>>>> +	error = regmap_raw_read(cd->regmap, (unsigned int)off,
+>>>>> +				buf, count);
+>>>>> +
+>>>>> +	return error ? error : count;
+>>>>> +}
+>>>>> +
+>>>>> +static ssize_t goodix_berlin_registers_write(struct file *filp, struct kobject *kobj,
+>>>>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
+>>>>> +{
+>>>>> +	struct goodix_berlin_core *cd;
+>>>>> +	struct device *dev;
+>>>>> +	int error;
+>>>>> +
+>>>>> +	dev = kobj_to_dev(kobj);
+>>>>> +	cd = dev_get_drvdata(dev);
+>>>>> +
+>>>>> +	error = regmap_raw_write(cd->regmap, (unsigned int)off,
+>>>>> +				 buf, count);
+>>>>> +
+>>>>> +	return error ? error : count;
+>>>>> +}
+>>>>> +
+>>>>> +static struct bin_attribute goodix_berlin_registers_attr = {
+>>>>> +	.attr = {.name = "registers", .mode = 0600},
+>>>>> +	.read = goodix_berlin_registers_read,
+>>>>> +	.write = goodix_berlin_registers_write,
+>>>>> +};
+>>>>> +
+>>>>>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>>>>>  			struct regmap *regmap)
+>>>>>  {
+>>>>> @@ -743,6 +781,14 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>>>>>  
+>>>>>  	dev_set_drvdata(dev, cd);
+>>>>>  
+>>>>> +	error = sysfs_create_bin_file(&cd->dev->kobj,
+>>>>> +				      &goodix_berlin_registers_attr);
+>>>
+>>> If we want to instantiate attributes from the driver please utilize
+>>> dev_groups in respective driver structures to create and remove the
+>>> attributes automatically.
+>>>
+>>> Thanks.
+>>>
+>>
+> 
+
 
