@@ -1,45 +1,50 @@
-Return-Path: <linux-kernel+bounces-171308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99AD38BE279
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:47:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32C88BE29A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E1E289C1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:47:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDB63B24E33
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262E815B979;
-	Tue,  7 May 2024 12:47:23 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEB915D5BE;
+	Tue,  7 May 2024 12:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="szMkz5XQ"
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF913158D9A;
-	Tue,  7 May 2024 12:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F28015B153;
+	Tue,  7 May 2024 12:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715086042; cv=none; b=NTITYmpDxCpLqs/iEyWUD/fArh/BfexX22yYhxB+edJP6ql2nhElkMRF8elqUAypTXGO5xGD0uFfLM0/hTVQTS5Xs6M16PS89c1Jog5XIdo4YJ2vM0dXIcvVz169qx8tD1sYSUI03C6xNru7vFKMSUiu2zNd97U8u7yJq4NOSEM=
+	t=1715086554; cv=none; b=lkyRw0wCtQjqgCMedezZ215X9JHBuZFdxwS9DdRtiN/iynYrJvxR/2zeO+EKyZtL+6ZQgKn8/Al4412tgHK0YNuEPBWhdBuDfgWiDTwx4BeeWCQ0B6V/in6YMe+PYwuxwumhd6FCKESr2eek33n/DIZLJRXu+fvMgcgV7r0M/ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715086042; c=relaxed/simple;
-	bh=GKhXYVZz0pG3Da+o3ocD9EU+yf7bVkGor/Rs5rLaM4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IZcZQwLYvUDeI+2KhhZvlCNrhHMcn26GtPUCPADERkeBPjYLGyc5gr8f3AoFihbrlxPzJGzDC2meSqvgwE53j3dKiRHosDPzCMWYyvcG/+9jeAaM4BFv/7ZsCi8NW5shs8n9F/9H/WOyGBa+YSmNdbueUgJdKyfHahXG0VttwH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VYdHM1fVJzYmKg;
-	Tue,  7 May 2024 20:43:27 +0800 (CST)
-Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
-	by mail.maildlp.com (Postfix) with ESMTPS id 89DE2180065;
-	Tue,  7 May 2024 20:47:16 +0800 (CST)
-Received: from [10.67.109.184] (10.67.109.184) by
- kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 7 May 2024 20:47:15 +0800
-Message-ID: <6836eb5c-f135-4e58-987b-987ab446b27c@huawei.com>
-Date: Tue, 7 May 2024 20:47:15 +0800
+	s=arc-20240116; t=1715086554; c=relaxed/simple;
+	bh=7mLQ4noYOwaZz0uIOPLa+mJodEytp0OT+zTex7p1R9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mR5WtHVhTbpXfW3Ql19fJiZYapBA4PEPF7fc6tO87EgnSocJx/b8bbkRI4Cru+zO/WfwfTxjfwK97rXml1iXGFjTunQPqmWhAsxthXr3jI+8AVzrqMzSz9zvRBShbUqMOsYomf+f+fPuSz1jXtC0ELRxduh8JBCl98Z1Mn7aPRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=szMkz5XQ; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:230c:0:640:f8e:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 3390E61277;
+	Tue,  7 May 2024 15:48:25 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id MmXuqmAmDqM0-G4BR5X7Q;
+	Tue, 07 May 2024 15:48:24 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1715086104; bh=zAPclAFMPPKUlH6qpuAnNZJMeX8QiDYjKI0Oitzf9Wg=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=szMkz5XQXmyp2MPWrKjBmUyCNvF4aEiWBUHmeQuOvbJ+FrIwFO5zMOe5s9r3DFbuY
+	 y3OvHyeI6zCWBYm8xV4pmdhi/ldtf9ACwxzz9kUvbTK84BTzHgCL8jB+0xLQIhuhwa
+	 SIuvfx3CMflI8RM6yWMNn/teOn3X4MbK3GIdz2fk=
+Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <7fcb3f51-468f-444d-9dd4-fa4028f018fc@yandex.ru>
+Date: Tue, 7 May 2024 15:48:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,120 +52,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv, bpf: Optimize zextw insn with Zba extension
+Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
 Content-Language: en-US
-To: Xiao Wang <xiao.w.wang@intel.com>, <paul.walmsley@sifive.com>,
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <luke.r.nels@gmail.com>,
-	<xi.wang@gmail.com>, <bjorn@kernel.org>
-CC: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
-	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <haicheng.li@intel.com>
-References: <20240507104528.435980-1-xiao.w.wang@intel.com>
-From: Pu Lehui <pulehui@huawei.com>
-In-Reply-To: <20240507104528.435980-1-xiao.w.wang@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100007.china.huawei.com (7.202.181.221)
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
+ Eric Biederman <ebiederm@xmission.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+References: <20240427112451.1609471-1-stsp2@yandex.ru>
+ <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
+ <5b5cc31f-a5be-4f64-a97b-7708466ace82@yandex.ru>
+ <20240507.110127-muggy.duff.trained.hobby-u9ZNUZ9CW5k@cyphar.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <20240507.110127-muggy.duff.trained.hobby-u9ZNUZ9CW5k@cyphar.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+07.05.2024 14:58, Aleksa Sarai пишет:
+> On 2024-05-07, stsp <stsp2@yandex.ru> wrote:
+>> 07.05.2024 10:50, Aleksa Sarai пишет:
+>>> If you are a privileged process which plans to change users,
+>> Not privileged at all. But I think what you say is still possible with
+>> userns?
+> It is possible to configure MOUNT_ATTR_IDMAP in a user namespace but
+> there are some restrictions that I suspect will make this complicated.
+> If you try to do something with a regular filesystem you'll probably run
+> into issues because you won't have CAP_SYS_ADMIN in the super block's
+> userns. But you could probably do it with tmpfs.
 
-On 2024/5/7 18:45, Xiao Wang wrote:
-> The Zba extension provides add.uw insn which can be used to implement
-> zext.w with rs2 set as ZERO.
-> 
-> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
-> ---
->   arch/riscv/Kconfig       | 19 +++++++++++++++++++
->   arch/riscv/net/bpf_jit.h | 18 ++++++++++++++++++
->   2 files changed, 37 insertions(+)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 6bec1bce6586..0679127cc0ea 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -586,6 +586,14 @@ config RISCV_ISA_V_PREEMPTIVE
->   	  preemption. Enabling this config will result in higher memory
->   	  consumption due to the allocation of per-task's kernel Vector context.
->   
-> +config TOOLCHAIN_HAS_ZBA
-> +	bool
-> +	default y
-> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zba)
-> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zba)
-> +	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
-> +	depends on AS_HAS_OPTION_ARCH
-> +
->   config TOOLCHAIN_HAS_ZBB
->   	bool
->   	default y
-> @@ -601,6 +609,17 @@ config TOOLCHAIN_HAS_VECTOR_CRYPTO
->   	def_bool $(as-instr, .option arch$(comma) +v$(comma) +zvkb)
->   	depends on AS_HAS_OPTION_ARCH
->   
-> +config RISCV_ISA_ZBA
-> +	bool "Zba extension support for bit manipulation instructions"
-> +	depends on TOOLCHAIN_HAS_ZBA
-> +	depends on RISCV_ALTERNATIVE
-> +	default y
-> +	help
-> +	   Adds support to dynamically detect the presence of the ZBA
-> +	   extension (address generation acceleration) and enable its usage.
+Then its likely not a replacement for
+my proposal, as I really don't need that
+on tmpfs.
+Perhaps right now I can use the helper
+process and an rpc as a replacement.
+This is much more work and is slower,
+but more or less can approximate my
+original design decision quite precisely.
+Another disadvantage of an rpc approach
+is that the fds I get from the helper
+process, can not be trusted, as in this
+case kernel doesn't guarantee the fd
+actually refers to the resource I requested.
+I've seen a few OSes where rpc is checked
+by a trusted entity to avoid such problem.
 
-It would be better to add Zba's function description like Zbb.
+>>> A new attack I just thought of while writing this mail is that because
+>>> there is no RESOLVE_NO_XDEV requirement, it should be possible for the
+>>> process to get an arbitrary write primitive by creating a new
+>>> userns+mountns and then bind-mounting / underneath the directory.
+>> Doesn't this need a write perm to a
+>> directory? In his case this is not a threat,
+>> because you are not supposed to have a
+>> write perm to that dir. OA2_CRED_INHERIT
+>> is the only way to write.
+> No, bind-mounts don't require write permission.
 
-> +
-> +	   If you don't know what to do here, say Y.
-> +
->   config RISCV_ISA_ZBB
->   	bool "Zbb extension support for bit manipulation instructions"
->   	depends on TOOLCHAIN_HAS_ZBB
-> diff --git a/arch/riscv/net/bpf_jit.h b/arch/riscv/net/bpf_jit.h
-> index f4b6b3b9edda..18a7885ba95e 100644
-> --- a/arch/riscv/net/bpf_jit.h
-> +++ b/arch/riscv/net/bpf_jit.h
-> @@ -18,6 +18,11 @@ static inline bool rvc_enabled(void)
->   	return IS_ENABLED(CONFIG_RISCV_ISA_C);
->   }
->   
-> +static inline bool rvzba_enabled(void)
-> +{
-> +	return IS_ENABLED(CONFIG_RISCV_ISA_ZBA) && riscv_has_extension_likely(RISCV_ISA_EXT_ZBA);
-> +}
-> +
->   static inline bool rvzbb_enabled(void)
->   {
->   	return IS_ENABLED(CONFIG_RISCV_ISA_ZBB) && riscv_has_extension_likely(RISCV_ISA_EXT_ZBB);
-> @@ -937,6 +942,14 @@ static inline u16 rvc_sdsp(u32 imm9, u8 rs2)
->   	return rv_css_insn(0x7, imm, rs2, 0x2);
->   }
->   
-> +/* RV64-only ZBA instructions. */
-> +
-> +static inline u32 rvzba_zextw(u8 rd, u8 rs1)
-> +{
-> +	/* add.uw rd, rs1, ZERO */
-> +	return rv_r_insn(0x04, RV_REG_ZERO, rs1, 0, rd, 0x3b);
-> +}
-> +
->   #endif /* __riscv_xlen == 64 */
->   
->   /* Helper functions that emit RVC instructions when possible. */
-> @@ -1159,6 +1172,11 @@ static inline void emit_zexth(u8 rd, u8 rs, struct rv_jit_context *ctx)
->   
->   static inline void emit_zextw(u8 rd, u8 rs, struct rv_jit_context *ctx)
->   {
-> +	if (rvzba_enabled()) {
-> +		emit(rvzba_zextw(rd, rs), ctx);
-> +		return;
-> +	}
+Oh, isn't this a problem by itself?
+Yes, in this case my patch needs to
+avoid RESOLVE_NO_XDEV, but I find this a harsh restriction. Maybe the 
+bind mount was done before a priv drop? Then it is fully legitimate. 
+Anyway, I don't know if I should work on it or not, as there seem to be 
+no indication of a possible acceptance.
 
-Looks good to me. It seems that Zba has fewer uses in rv64 bpf jit.
-
-> +
->   	emit_slli(rd, rs, 32, ctx);
->   	emit_srli(rd, rd, 32, ctx);
->   }
 
