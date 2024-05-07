@@ -1,126 +1,64 @@
-Return-Path: <linux-kernel+bounces-170525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA5D8BD8B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CAB48BD8B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273E42832DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADCB1F248BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AEE1854;
-	Tue,  7 May 2024 00:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hbbLEjJK"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83A915C3;
+	Tue,  7 May 2024 00:49:55 +0000 (UTC)
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A8210E3
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 00:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3E5389;
+	Tue,  7 May 2024 00:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715042708; cv=none; b=R6PY2SKkMyPgnUeKZnfb5v0OkPlxrmoCLctEik98WjAIak0y2egmY2faMeXr64U/zTsWTCRWxeZdc9roancytlniLvaZ3Q7irl+oSfQOQ1ava6X1hsunFgr/fBYkf0OjySRWPcEPLB/dJ4BdJzqNsf/i6DJb+mqA11r3/bNEWSY=
+	t=1715042995; cv=none; b=DG2aUz6EMtKwBs/D2f+H+sXeNpCGzbAKgGfkYDj9JAO0L9XofFt7MEDeYaKc4jPBHKS3Mkdfp1hWE15Irn0HZE20msIMXx8AkheBfY9qjcbjgebSP22F30r2OT6QWzR7D1IcRyObXAJaocwGVxWtimvSXIstkb4ZuZ6cDJvond8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715042708; c=relaxed/simple;
-	bh=3q8dZA3RYVxRLzlIk4TjtCOswwWtpfJrGsc5PYHxJ5Y=;
+	s=arc-20240116; t=1715042995; c=relaxed/simple;
+	bh=Rkwf+HH53PBe8IThDakfA+vpDQrCiG/LeR8Rkg3rohM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qMZRXcpEUJKJvc/ua5SxSWMDjD/zCwluCSefAStjriNkqs/K3o5Od7xF4cB3RZ8BwwpKLrNWRP8jYyHwwszWQ+p5mhbwGUGxNAQsNF6IbvcXMRAGLCwPWA3idp0ttFsvWM8fZD+zN5fcer/Q3geztDiX/zdn5UaYs6XTS1IBGTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hbbLEjJK; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <cab0c7ba-90bf-49e2-908d-ecd879160667@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715042704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PmC0CJo8VGzdQ+lw2Wkc3ro98vq94DGKwTKxAwIJ2N8=;
-	b=hbbLEjJKcnmdol7u+0trYocZ/jOzebxlC08hEzYJsAmRpFEcoDH7g08lwsHZ/kI6Zw+DWe
-	rdCXGeJxV2BIODY7ys+Yc9tVi2/EKFdfNbWgXurK/Qm+oMKTp0L1Bogjhftm0qAX8AeNeK
-	MQQNU84f+HtzLLwpUr/DBZVPbSv/Oms=
-Date: Mon, 6 May 2024 17:44:56 -0700
+	 In-Reply-To:Content-Type; b=psBOe/SRsRqZclMj2LpxBPb666QKxda9R8iUUW4pQyha6FYxuz8L5v3vVoMGer/0RrVIQMLDK3L8Eo3UCVPmUFwQEI1UD60RhizGYrtzOFHihRA/lBAky6bpZdM3/2WXl7ySMXt0H2+83Vvfmv7brAAEYHz3aKdlTNK4FONjJmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id 919D3FF9C3;
+	Tue,  7 May 2024 00:49:42 +0000 (UTC)
+Message-ID: <09292780-b815-4880-8022-b905ea0042ef@enpas.org>
+Date: Tue, 7 May 2024 09:49:37 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH bpf-next v6 2/3] net: Add additional bit to support
- clockid_t timestamp type
-To: Abhishek Chauhan <quic_abchauha@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Martin KaFai Lau <martin.lau@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>,
- kernel@quicinc.com
-References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
- <20240504031331.2737365-3-quic_abchauha@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] HID: playstation: DS4: Fix calibration workaround for
+ clone devices
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>,
+ Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240504165531.21315-1-max@enpas.org>
+ <nycvar.YFH.7.76.2405062331420.16865@cbobk.fhfr.pm>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20240504031331.2737365-3-quic_abchauha@quicinc.com>
+From: Max Staudt <max@enpas.org>
+In-Reply-To: <nycvar.YFH.7.76.2405062331420.16865@cbobk.fhfr.pm>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 5/3/24 8:13 PM, Abhishek Chauhan wrote:
-> diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-> index fe86cadfa85b..c3d852eecb01 100644
-> --- a/net/ipv4/ip_output.c
-> +++ b/net/ipv4/ip_output.c
-> @@ -1457,7 +1457,10 @@ struct sk_buff *__ip_make_skb(struct sock *sk,
->   
->   	skb->priority = (cork->tos != -1) ? cork->priority: READ_ONCE(sk->sk_priority);
->   	skb->mark = cork->mark;
-> -	skb->tstamp = cork->transmit_time;
-> +	if (sk_is_tcp(sk))
+On 5/7/24 06:32, Jiri Kosina wrote:
+> Now queued on top of the for-6.10/playstation pile in hid.git.
 
-This seems not catching all IPPROTO_TCP case. In particular, the percpu 
-"ipv4_tcp_sk" is SOCK_RAW. sk_is_tcp() is checking SOCK_STREAM:
+Thank you all!
 
-void __init tcp_v4_init(void)
-{
-
-	/* ... */
-	res = inet_ctl_sock_create(&sk, PF_INET, SOCK_RAW,
-				   IPPROTO_TCP, &init_net);
-
-	/* ... */
-}
-
-"while :; do ./test_progs -t tc_redirect/tc_redirect_dtime || break; done" 
-failed pretty often exactly in this case.
-
-> +		skb_set_delivery_type_by_clockid(skb, cork->transmit_time, CLOCK_MONOTONIC);
-> +	else
-> +		skb_set_delivery_type_by_clockid(skb, cork->transmit_time, sk->sk_clockid);
->   	/*
->   	 * Steal rt from cork.dst to avoid a pair of atomic_inc/atomic_dec
->   	 * on dst refcount
-
-[ ... ]
-
-> diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-> index 05067bd44775..797a9764e8fe 100644
-> --- a/net/ipv6/ip6_output.c
-> +++ b/net/ipv6/ip6_output.c
-> @@ -1924,7 +1924,10 @@ struct sk_buff *__ip6_make_skb(struct sock *sk,
->   
->   	skb->priority = READ_ONCE(sk->sk_priority);
->   	skb->mark = cork->base.mark;
-> -	skb->tstamp = cork->base.transmit_time;
-> +	if (sk_is_tcp(sk))
-> +		skb_set_delivery_type_by_clockid(skb, cork->base.transmit_time, CLOCK_MONOTONIC);
-> +	else
-> +		skb_set_delivery_type_by_clockid(skb, cork->base.transmit_time, sk->sk_clockid);
->   
->   	ip6_cork_steal_dst(skb, cork);
->   	IP6_INC_STATS(net, rt->rt6i_idev, IPSTATS_MIB_OUTREQUESTS);
+Max
 
 
