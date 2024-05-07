@@ -1,142 +1,93 @@
-Return-Path: <linux-kernel+bounces-170609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693188BD9AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:21:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BA08BD9B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A8A1C20EE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BCE284A08
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E3C15E83;
-	Tue,  7 May 2024 03:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A893FB9F;
+	Tue,  7 May 2024 03:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jht/WCEf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELeABIZq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53A62905;
-	Tue,  7 May 2024 03:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19D73D0BD;
+	Tue,  7 May 2024 03:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715052107; cv=none; b=TrmKML+u53hI0J9UUwHE5ZbYrTGEng1VMsvEAe4lyRR+lUKBMszl1pd6J3/nQbjPRqmncDUYc8kuBN33pIqSPAdvQtv0uLW8wEwUFvqgnlm4D4/erDHCjrYUHU1+OzAjcLSFOoFvHkvVSP8biKnGtzIQsAS5VH90EVuZBDPkE2A=
+	t=1715052242; cv=none; b=I+u4j2ovYGYykBO8ak6+fm0582S+CyKWiAmS/TAMXbowV/jMu4CRhZdjgYmKpSKsizgsz9Ik13rpOJk2Ou2Dits29nRWZzAfOSvWbQoKkRlKNkzdW1109jDrUTh5FdsOk6W45bwg5yonclfI3Qevo6HAB73rl+xZm0ZbVduTgUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715052107; c=relaxed/simple;
-	bh=QrF9TwEH0bSyakVTwuwlcAamVHR4GvbvPuF+3SepQ0o=;
-	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=usN0Pe94tbd127LvtoIK+OOqzSzZYOSzup6POmHAWTyv3Kt2D6fZHrzpnwAwpmM87OGm8MiZHQx43ut9yHIGURj1ajOYc0tDMjeK1VHXABTawSdo7cLd1sS0cDINyehSWxskT3jokz8+6zto8Po073jEE6hi/KdGFI5RQ1GasmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jht/WCEf; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715052106; x=1746588106;
-  h=to:cc:subject:references:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=QrF9TwEH0bSyakVTwuwlcAamVHR4GvbvPuF+3SepQ0o=;
-  b=Jht/WCEfXdbbUNEutqNE9egp+9qQIFgkFmub8tplLV97qyT73nWvlgYb
-   GU5CwSnc7IkrF5aV55uhb2LGn7tYNDe7kGvIl/axbNdzcL0iyZ/SgLxci
-   eOfdU+6SFpFc5XkYolYmS9eMgPD+I1SN1GfghrZ1xKlxc/Yj+ofTuTG0P
-   wZXFWX1371wq/ESvEdXB2ArnKK+h8vRZ4wzuXNeGMyGprsyioGkyAFDqs
-   aa2iblZBoZ7+skOzqcgQ4LAsB+GcoLs/bubTbjSSeaIqXwo8jE/hBsGgl
-   W97iiKoYl3gLAxO1/QGiwfq/kCS8SGmfYZ54lT5xSTELVhtYRK8KmS+H3
-   A==;
-X-CSE-ConnectionGUID: 0+8hWHR+RBKu97cTbHxrwg==
-X-CSE-MsgGUID: dazL67NESOGaL5pv55IJ6A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="33327748"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="33327748"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 20:21:45 -0700
-X-CSE-ConnectionGUID: lLZ22eSTT6Oofk9l6SWAFg==
-X-CSE-MsgGUID: MrrfXQK0SI+otFkiSj0D8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="28951428"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.125.210.0])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 06 May 2024 20:21:41 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-To: jarkko@kernel.org, dave.hansen@linux.intel.com, tj@kernel.org,
- mkoutny@suse.com, linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
- x86@kernel.org, cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, hpa@zytor.com, sohil.mehta@intel.com,
- tim.c.chen@linux.intel.com, "Huang, Kai" <kai.huang@intel.com>
-Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
- zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
- yangjie@microsoft.com, chrisyan@microsoft.com
-Subject: Re: [PATCH v13 12/14] x86/sgx: Turn on per-cgroup EPC reclamation
-References: <20240430195108.5676-1-haitao.huang@linux.intel.com>
- <20240430195108.5676-13-haitao.huang@linux.intel.com>
- <966e4afe-b177-4527-80c9-1146d2503c93@intel.com>
-Date: Mon, 06 May 2024 22:21:39 -0500
+	s=arc-20240116; t=1715052242; c=relaxed/simple;
+	bh=wwRDMK2MTHyfmFutWwVpB0wuAlNULl9BsyJ4npcXu/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AF57CQ3nyyAI18P5cAWbvbQTnBNC9oxuYqKsIRoQslhJqQzbZHY+CKZWUvElRXT2Gk9gYER0Wt2Yf2ch2rOr9KtR6FsDtgsh37SbUFtLIERP2J+mJvu37/XfCyH2P+kwU9ppAzRo5PJBUOGCTs/SuNt0O5XSQFKhccaxFdYIeNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELeABIZq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31A14C4AF63;
+	Tue,  7 May 2024 03:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715052242;
+	bh=wwRDMK2MTHyfmFutWwVpB0wuAlNULl9BsyJ4npcXu/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ELeABIZqtUy5w2w+CIgX5YOv+COx2TwYQUIsI3SescFNSB292IcSt+SPewSdMlnfn
+	 Ikq5cZJzk3eQFXGpXj6LHOickkuBaI6J1/GsVYxxrRnBInOlmk+XOTWyazhYZLmeiF
+	 b32PBXwe/tMzdiS5zviboUxiBHYzgIwfhzuuhDjqpd1PqzgNVgaMQN7LepaZypY6Cq
+	 I5QB8ZlGHhdaCiVzggV33hdBFqgxxx/6/oe1kmWeTNipIiRPbYYhDjwpBq98j/EHu0
+	 EeWKQWw1/wW5/0uLj3YIcLigubjqTFJYoc+iuj3QZK7mU0YdhqPwQ8qT9w61FHADpq
+	 jMYKPMQQ6Crcg==
+Date: Mon, 6 May 2024 20:24:00 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] objtool: Report section name in
+ elf_init_reloc_text_sym() warning
+Message-ID: <20240507032400.gxorrjm3q7mg5cac@treble>
+References: <20240506155537.it.760-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2ndsydgywjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <966e4afe-b177-4527-80c9-1146d2503c93@intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240506155537.it.760-kees@kernel.org>
 
-On Mon, 06 May 2024 19:10:42 -0500, Huang, Kai <kai.huang@intel.com> wrote:
+On Mon, May 06, 2024 at 08:55:54AM -0700, Kees Cook wrote:
+> While tracking down issues with LKDTM's .rodata "function", I found
+> the warning from elf_init_reloc_text_sym() to be unhelpful because it
+> wasn't clear which calling path it was coming from. Report the sec->name
+> and rephrase the warning a bit. Additionally check for NULL sym->name,
+> which may happen.
 
->
->
-> On 1/05/2024 7:51 am, Haitao Huang wrote:
->>     static void sgx_reclaim_pages_global(struct mm_struct *charge_mm)
->>   {
->> -	sgx_reclaim_pages(&sgx_global_lru, charge_mm);
->> +	if (IS_ENABLED(CONFIG_CGROUP_MISC))
->> +		sgx_cgroup_reclaim_pages(misc_cg_root(), charge_mm);
->> +	else
->> +		sgx_reclaim_pages(&sgx_global_lru, charge_mm);
->>   }
->>
->
-> I think we have a problem here when we do global reclaim starting from  
-> the ROOT cgroup:
->
-> This function will mostly just only try to reclaim from the ROOT cgroup,  
-> but won't reclaim from the descendants.
->
-> The reason is the sgx_cgroup_reclaim_pages() will simply return after  
-> "scanning" SGX_NR_TO_SCAN (16) pages w/o going to the descendants, and  
-> the "scanning" here simply means "removing the EPC page from the  
-> cgroup's LRU list".
->
-> So as long as the ROOT cgroup LRU contains more than SGX_NR_TO_SCAN (16)  
-> pages, effectively sgx_cgroup_reclaim_pages() will just scan and return  
-> w/o going into the descendants.  Having 16 EPC pages should be a "almost  
-> always true" case I suppose.
->
-> When the sgx_reclaim_pages_global() is called again, we will start from  
-> the ROOT again.
->
-> That means the this doesn't truly reclaim "from global" at all.
->
-> IMHO the behaviour of sgx_cgroup_reclaim_pages() is OK for per-cgroup  
-> reclaim because I think in this case our intention is we should try best  
-> to reclaim from the cgroup, i.e., whether we can reclaim from  
-> descendants doesn't matter.
->
-> But for global reclaim this doesn't work.
->
-> Am I missing anything?
->
-Good catch. This is indeed a problem if pages in a higher level cgroup are  
-always busy (being 'young').The reclamation loop starting from this group  
-may be stuck in only shifting the pages from front to tail in this group  
-and never tries to scan & reclaim pages in its descendants.
+Hm, as far as I know sym->name shouldn't ever be NULL.
 
-Though this may not happen often, I think it does require a fix. Will do  
-it in v14 :-)
+Though, looking at this code again I'm realizing that 'sym' could be
+NULL because it refers to the symbol for the function's *section* rather
+than for the function itself.  And sometimes the toolchain doesn't
+generate symbols for some sections, if they're not referenced anywhere.
+(Note the code immediately below your patch actually makes a section
+symbol if it doesn't exist.)
 
-Thanks
-Haitao
+But also, this warning doesn't even need the section's symbol.  It can
+just get the name from the section directly (insn_sec->name).  And it
+would probably also be useful to print the offset (insn_off), like
+".rodata+0x1234".
+
+Though, even better, we have an offstr() helper which can pretty-print
+the name of the function or variable, if one exists at that address.
+
+tl;dr, does the following work?
+
+		WARN("%s: unexpected reference to non-executable '%s'",
+		     sec->name, offstr(insn_sec, insn_off));
+
+-- 
+Josh
 
