@@ -1,208 +1,143 @@
-Return-Path: <linux-kernel+bounces-171441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93278BE450
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:38:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419458BE456
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DA01C20ED4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F104B288F3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE04816ABDE;
-	Tue,  7 May 2024 13:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HPGyjPaY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25B416C6A9;
+	Tue,  7 May 2024 13:31:45 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEEE168B0B;
-	Tue,  7 May 2024 13:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187F216C45B;
+	Tue,  7 May 2024 13:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715088677; cv=none; b=vA0KUnqc9OZ3lhr5U2lTjUUDLC5ZNLGH3e8mo1FwndXOVrsbaYAnjn8xt9v5Dhw6+gcsTSGmb+MznxaDJJZcEjanAnkjEKqXMLeVpd4P6y7YLmsbOlCmB14pWI204bkWJwRJQ8R/42NnB++XNA6wY6DogPuAsxrM3Cru4RR/72Q=
+	t=1715088705; cv=none; b=XEUQlKqYqefET9OgKgQGIhN/huhtMDK5LSKS/XfwVh/BOX6B8kTA3XGqLBuZF6i52sg+FC6hFwygmu4pKBdgUJlAtBEYA0x+08hbbRQq1BkomoqKvX3r205Wwauje+eIdjxAVQk9T/MDqScQIk+2g7FuUvP675vgIu3TP0tOtQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715088677; c=relaxed/simple;
-	bh=xG/CVNYAc6xO6S2uwsWYr2AwXm5itgYm4sDIAGI1kII=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JqdzYAsMvj8Egl6bHwY2LEjMPaLi4It3Hf9+Zi19SGG6KkrX2Brw/t1bCNSuWTmUw1Dl+1R+CJA09fjHOuUuexlDdGleM+S+ECZ65/DALOtE58NC8ZH1nd0rNYthdZyIM6VbJn/GipJEoHHi+Dd2vht8WkCwkYl06xlbdHQ4+PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HPGyjPaY; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715088676; x=1746624676;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xG/CVNYAc6xO6S2uwsWYr2AwXm5itgYm4sDIAGI1kII=;
-  b=HPGyjPaYPvGXd8o+kGTXcDLD6gLLPCWb8ROpUs2TuoMYWIK59GWmAEiX
-   xT3SC3phpwoyf4Me5xVdghfQmhdNZnPoWguEofXcmELplVo4HlMTdEuiI
-   1FgwQJY7LzqpEHONs1ZWtJ3E6RtwcBuxdyGXis2UZjh3kggeCl+pMNMn4
-   JMX/PfP99lK1s2wmUw+NDvFoVzNv8uLJRNsWVfBOLFuyZXhltN0qr0/Fx
-   u5EjVbM6gMv2a8yb/sNy7LLKuHh8z1CtusXmyew16Z1Wrpyio4BP7sj1Y
-   ml6Z+QgWAZsw1M+BIbn6rWa8zyMHCVOfOsCrZoJokyfxev758sXNvKJbt
-   w==;
-X-CSE-ConnectionGUID: MtgAVVyhSs2clMcB3Ejbcg==
-X-CSE-MsgGUID: 9QjH4d6USvOiOLguHfbtKQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="28361584"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="28361584"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:31:15 -0700
-X-CSE-ConnectionGUID: eqwSv8WXT3OG8FZgXw0ToA==
-X-CSE-MsgGUID: 3T/ltbUpTN29r7nDjqYnFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="33330804"
-Received: from tdx-lm.sh.intel.com ([10.239.53.27])
-  by orviesa005.jf.intel.com with ESMTP; 07 May 2024 06:31:14 -0700
-From: Wei Wang <wei.w.wang@intel.com>
-To: seanjc@google.com,
-	pbonzini@redhat.com
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wei Wang <wei.w.wang@intel.com>
-Subject: [PATCH v4 3/3] KVM: x86/pmu: Add kvm_pmu_call() to simplify static calls of kvm_pmu_ops
-Date: Tue,  7 May 2024 21:31:03 +0800
-Message-Id: <20240507133103.15052-4-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20240507133103.15052-1-wei.w.wang@intel.com>
-References: <20240507133103.15052-1-wei.w.wang@intel.com>
+	s=arc-20240116; t=1715088705; c=relaxed/simple;
+	bh=Z3Oh7sCEytYAY+1dl6YfvZQmJ7dlWmL4kQ0K0NhJyGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vp7p4L9eF0ZRWGLWYt+V3VDMp0bG6ZmZvxCnIqcrIcabIEBWKct2NJI9TDXa0/iA9R0i+OGYjZyw4BM7c/K4kX3lDspM2i7QMbU6zvJwAr1W0a9KP8gedfellJbwrUbg5eK00cycgviqe8FU8Q0Re2FWEJiw6V1em85o3pYdCg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VYfH32hTsztT4H;
+	Tue,  7 May 2024 21:28:15 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7EE801800C9;
+	Tue,  7 May 2024 21:31:40 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 21:31:40 +0800
+Message-ID: <10484734-13e6-4c56-d7dc-6c4cf74bd8de@huawei.com>
+Date: Tue, 7 May 2024 21:31:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2 -next] mm: memcg: make alloc_mem_cgroup_per_node_info()
+ return bool
+Content-Language: en-US
+To: Michal Hocko <mhocko@suse.com>
+CC: <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>,
+	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
+	<akpm@linux-foundation.org>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240507110832.1128370-1-xiujianfeng@huawei.com>
+ <ZjooSnQ_vS30EXCT@tiehlicka>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <ZjooSnQ_vS30EXCT@tiehlicka>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-Similar to kvm_x86_call(), kvm_pmu_call() is added to streamline the usage
-of static calls of kvm_pmu_ops, which improves code readability.
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
----
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/pmu.c              | 24 ++++++++++++------------
- 2 files changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 44d19eb5a27a..7088a5d189a7 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1853,6 +1853,7 @@ extern bool __read_mostly enable_apicv;
- extern struct kvm_x86_ops kvm_x86_ops;
- 
- #define kvm_x86_call(func) static_call(kvm_x86_##func)
-+#define kvm_pmu_call(func) static_call(kvm_x86_pmu_##func)
- 
- #define KVM_X86_OP(func) \
- 	DECLARE_STATIC_CALL(kvm_x86_##func, *(((struct kvm_x86_ops *)0)->func));
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 68b5826328b1..ed42d4eedb7f 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -542,7 +542,7 @@ int kvm_pmu_check_rdpmc_early(struct kvm_vcpu *vcpu, unsigned int idx)
- 	if (!kvm_pmu_ops.check_rdpmc_early)
- 		return 0;
- 
--	return static_call(kvm_x86_pmu_check_rdpmc_early)(vcpu, idx);
-+	return kvm_pmu_call(check_rdpmc_early)(vcpu, idx);
- }
- 
- bool is_vmware_backdoor_pmc(u32 pmc_idx)
-@@ -591,7 +591,7 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
- 	if (is_vmware_backdoor_pmc(idx))
- 		return kvm_pmu_rdpmc_vmware(vcpu, idx, data);
- 
--	pmc = static_call(kvm_x86_pmu_rdpmc_ecx_to_pmc)(vcpu, idx, &mask);
-+	pmc = kvm_pmu_call(rdpmc_ecx_to_pmc)(vcpu, idx, &mask);
- 	if (!pmc)
- 		return 1;
- 
-@@ -607,7 +607,7 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
- void kvm_pmu_deliver_pmi(struct kvm_vcpu *vcpu)
- {
- 	if (lapic_in_kernel(vcpu)) {
--		static_call(kvm_x86_pmu_deliver_pmi)(vcpu);
-+		kvm_pmu_call(deliver_pmi)(vcpu);
- 		kvm_apic_local_deliver(vcpu->arch.apic, APIC_LVTPC);
- 	}
- }
-@@ -622,14 +622,14 @@ bool kvm_pmu_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
- 	default:
- 		break;
- 	}
--	return static_call(kvm_x86_pmu_msr_idx_to_pmc)(vcpu, msr) ||
--		static_call(kvm_x86_pmu_is_valid_msr)(vcpu, msr);
-+	return kvm_pmu_call(msr_idx_to_pmc)(vcpu, msr) ||
-+	       kvm_pmu_call(is_valid_msr)(vcpu, msr);
- }
- 
- static void kvm_pmu_mark_pmc_in_use(struct kvm_vcpu *vcpu, u32 msr)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
--	struct kvm_pmc *pmc = static_call(kvm_x86_pmu_msr_idx_to_pmc)(vcpu, msr);
-+	struct kvm_pmc *pmc = kvm_pmu_call(msr_idx_to_pmc)(vcpu, msr);
- 
- 	if (pmc)
- 		__set_bit(pmc->idx, pmu->pmc_in_use);
-@@ -654,7 +654,7 @@ int kvm_pmu_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		msr_info->data = 0;
- 		break;
- 	default:
--		return static_call(kvm_x86_pmu_get_msr)(vcpu, msr_info);
-+		return kvm_pmu_call(get_msr)(vcpu, msr_info);
- 	}
- 
- 	return 0;
-@@ -713,7 +713,7 @@ int kvm_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		break;
- 	default:
- 		kvm_pmu_mark_pmc_in_use(vcpu, msr_info->index);
--		return static_call(kvm_x86_pmu_set_msr)(vcpu, msr_info);
-+		return kvm_pmu_call(set_msr)(vcpu, msr_info);
- 	}
- 
- 	return 0;
-@@ -740,7 +740,7 @@ static void kvm_pmu_reset(struct kvm_vcpu *vcpu)
- 
- 	pmu->fixed_ctr_ctrl = pmu->global_ctrl = pmu->global_status = 0;
- 
--	static_call(kvm_x86_pmu_reset)(vcpu);
-+	kvm_pmu_call(reset)(vcpu);
- }
- 
- 
-@@ -778,7 +778,7 @@ void kvm_pmu_refresh(struct kvm_vcpu *vcpu)
- 	if (!vcpu->kvm->arch.enable_pmu)
- 		return;
- 
--	static_call(kvm_x86_pmu_refresh)(vcpu);
-+	kvm_pmu_call(refresh)(vcpu);
- 
- 	/*
- 	 * At RESET, both Intel and AMD CPUs set all enable bits for general
-@@ -796,7 +796,7 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu)
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
- 
- 	memset(pmu, 0, sizeof(*pmu));
--	static_call(kvm_x86_pmu_init)(vcpu);
-+	kvm_pmu_call(init)(vcpu);
- 	kvm_pmu_refresh(vcpu);
- }
- 
-@@ -818,7 +818,7 @@ void kvm_pmu_cleanup(struct kvm_vcpu *vcpu)
- 			pmc_stop_counter(pmc);
- 	}
- 
--	static_call(kvm_x86_pmu_cleanup)(vcpu);
-+	kvm_pmu_call(cleanup)(vcpu);
- 
- 	bitmap_zero(pmu->pmc_in_use, X86_PMC_IDX_MAX);
- }
--- 
-2.27.0
+On 2024/5/7 21:10, Michal Hocko wrote:
+> On Tue 07-05-24 11:08:32, Xiu Jianfeng wrote:
+>> Currently alloc_mem_cgroup_per_node_info() returns 1 if failed,
+>> make it return bool, false for failure and true for success.
+> 
+> This describes what the patch does rather than why it is doing that.
+> The former is clear from the diff while the motivation for this change
+> is unclear. I would propose something like:
+> 
+> alloc_mem_cgroup_per_node_info() returns int that doesn't map to any
+> errno error code. The only existing caller doesn't really need an error
+> code so change the the function to return bool (true on success) because
+> this is slightly less confusing and more consistent with the other code.
 
+Thanks, it looks much better now.
+
+> 
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> 
+> With changelog clarified feel free to add
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+>> ---
+>>  mm/memcontrol.c | 10 +++++-----
+>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index d11536ef59ef..69d70feb8e68 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -5653,13 +5653,13 @@ struct mem_cgroup *mem_cgroup_get_from_ino(unsigned long ino)
+>>  }
+>>  #endif
+>>  
+>> -static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+>> +static bool alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+>>  {
+>>  	struct mem_cgroup_per_node *pn;
+>>  
+>>  	pn = kzalloc_node(sizeof(*pn), GFP_KERNEL, node);
+>>  	if (!pn)
+>> -		return 1;
+>> +		return false;
+>>  
+>>  	pn->lruvec_stats = kzalloc_node(sizeof(struct lruvec_stats), GFP_KERNEL,
+>>  					node);
+>> @@ -5675,11 +5675,11 @@ static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+>>  	pn->memcg = memcg;
+>>  
+>>  	memcg->nodeinfo[node] = pn;
+>> -	return 0;
+>> +	return true;
+>>  fail:
+>>  	kfree(pn->lruvec_stats);
+>>  	kfree(pn);
+>> -	return 1;
+>> +	return false;
+>>  }
+>>  
+>>  static void free_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+>> @@ -5751,7 +5751,7 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
+>>  	}
+>>  
+>>  	for_each_node(node)
+>> -		if (alloc_mem_cgroup_per_node_info(memcg, node))
+>> +		if (!alloc_mem_cgroup_per_node_info(memcg, node))
+>>  			goto fail;
+>>  
+>>  	if (memcg_wb_domain_init(memcg, GFP_KERNEL))
+>> -- 
+>> 2.34.1
+>>
+> 
 
