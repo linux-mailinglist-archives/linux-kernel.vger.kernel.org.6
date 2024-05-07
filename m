@@ -1,73 +1,78 @@
-Return-Path: <linux-kernel+bounces-172219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685628BEEE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:38:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342618BEEEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0336A1F25381
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF5CB1F24E94
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C8A77F22;
-	Tue,  7 May 2024 21:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D9B75818;
+	Tue,  7 May 2024 21:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+vpBcZ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhUx3oFc"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE022187326;
-	Tue,  7 May 2024 21:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3F7187326
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 21:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715117879; cv=none; b=grlZm6QEaSSkcj8RXKZZ13gG44LS1islPYV7kp4LfCsyBPnxgr0KvWVpg9sfKpWEF46+OXUNSosgLc6yN8DRLLag1eBSKCJSXDgQhPC7Ab7uPjAu+2O6QqAuJH+aCmNoLDTGksJCoFyxeg2CWSqbUSI4MWuGzyf2I6eBLRt3hG8=
+	t=1715117887; cv=none; b=CL5e1jt0PVFOKfBHopFozt0RL9VUqZY5AIPlY336XgSafhSmYf9TP/b/ImJ2yNE2z5ahko2rLRJjVrJINavwxPxKpxJPwHsr4ulvGt5QZvZ+8tu6uRU6jM0utZEtcFY80HjGhdVcXGKZRgnPLk7I9nfImq5csVhlQ90VIfn0R+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715117879; c=relaxed/simple;
-	bh=b0erpGJkbKehHG2oRo2+D/HPvaIA53JmaUColexBDK0=;
+	s=arc-20240116; t=1715117887; c=relaxed/simple;
+	bh=AZFqcBuqYSo71H41eUUtSnMMr07VxouumttOzkTRRkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8+0pPooxruE72mv00ydKVaPD+ljqYITFVlwHR0Nmq6IsLL9C3fdfy+w2e6FRNDoj8qsa9MTnykeQbsneDe6UPHV2SLtXro2FEB1YjDwUfTj63hxC/Ekk9+lPU1tE65VgjFWFteO52FT3rnKJRX9trlHrsEZ8UawC4hRZXC0m20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+vpBcZ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C325C2BBFC;
-	Tue,  7 May 2024 21:37:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715117878;
-	bh=b0erpGJkbKehHG2oRo2+D/HPvaIA53JmaUColexBDK0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=W+vpBcZ1T0cZAzGv4Vm3pWP6Skmffhzq9UvcBveRu2iX51Pcp4aBUZWS6arxPQTTJ
-	 k8pYZasyBwioDP/z7EVPkIn7+ZtGun1LAN5Ux9S08WhuH6HiMD/qjA6npj1W+t+pnO
-	 zJR1uvpOWxMtEhsyYXpm2ob/oQ23glrIcfxmU0SonH5a/sg4Pu1ZUOBTZMDShDmQvX
-	 +YNVOnALWHHjlkI50GCjyfsoPNWmnpv5kAdagepBJC7S/ztTXhON53jbwYDP5ghoYw
-	 O1ofq1BOP/KDdomjtPe1nlSr8k+UTOZSG39DmcjkdTHOBS1zUYTqQWnylZreXRYXoS
-	 QrOWdIKLpvi+w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id DEB30CE0FF3; Tue,  7 May 2024 14:37:57 -0700 (PDT)
-Date: Tue, 7 May 2024 14:37:57 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Leonardo Bras <leobras@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
-Message-ID: <0e239143-65ed-445a-9782-e905527ea572@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240328171949.743211-1-leobras@redhat.com>
- <ZgsXRUTj40LmXVS4@google.com>
- <ZjUwHvyvkM3lj80Q@LeoBras>
- <ZjVXVc2e_V8NiMy3@google.com>
- <3b2c222b-9ef7-43e2-8ab3-653a5ee824d4@paulmck-laptop>
- <ZjprKm5jG3JYsgGB@google.com>
- <663a659d-3a6f-4bec-a84b-4dd5fd16c3c1@paulmck-laptop>
- <ZjqWXPFuoYWWcxP3@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZMyZFnIPevrJJNFfE+IypzeIcDzOH09R4Stjph8dZe22uIFLiTUBuxO/GvOWTYdVJEiF/Up2N7ZTH9PRBQ9qBnz2a/aQcfoQ0AWT8wMsk0A9DHNyTiqXNitX/sCnNQerSGTLOuuGWvDDm9H0BF7qJ9jeIUAFYnnTm+kWG082Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lhUx3oFc; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-de8b66d1726so187131276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 14:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715117885; x=1715722685; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6UHygWSZRhuWrzQrskSZNrlKbfdaZk57WEJ9KAhSxvQ=;
+        b=lhUx3oFclofdYetCN69qMHHc65y11JtAfcHQmaVMmP3D9+0qfhYAfTE9ZZ/rKGMKnC
+         FESxbtV8Yu0MBdpHLZ1ipGpq9DBdg7xGPxT8iaHoRXbelmtr192mEdbuL65duLnJoSGe
+         g7nKNoDTb/mWQ8GH1rujVvQ2VDgNOfR3lvngI8D3vCj8QWxYtAsOjSTgpodGHFyn6xa7
+         1sgeWZvaUenNQSFRes+jiiBJIgiJagBfHkmOREJb3Cd9v/jsNUeA8lJu31ffdRJ3U8zl
+         jCSqp/h8EAmgbdx96KetKMY9YJaIMrT7iJn84dzHkq9dobcIwESa5KceqqA9oktiz7Ui
+         aq/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715117885; x=1715722685;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6UHygWSZRhuWrzQrskSZNrlKbfdaZk57WEJ9KAhSxvQ=;
+        b=nJC5yO9yxaRZ6acD2K6MFxazkzQOePyVE1yLFKtIAbG9sCPHsCmwktmwXhDNjzvA1e
+         rLUwxwsiymLadcknOxw/kl8aKTUhuHLipBoX+kiiagHUouMpKqAgeALks6prcGFilUwb
+         KTiSZaJKJCab7XKeVJEEzZoTjfBnGMBYdAoHCpJS0Ac6izzYWUyrsrgBzre2d+OCQ9Dr
+         SxAzl/UYIhn4Jmgz3d4ei2s9Jra8v9Xnyl9ofEimEVcKYWMAr0bizMsQ8bKLhJEdLrM8
+         Yh4upKuGqZnDqbyjOv8EIsZ5nf3qt3nWiPhGf295PHm7i9bHvJSYJpet1TaRlpxc6jKS
+         +D2g==
+X-Gm-Message-State: AOJu0Yx0BqXWR21oF/HDIKibOWwxtv9W414JgmW8MAOVbJi1przEzBJl
+	ebvJFOdCNMs1u0++0/NxIAlOUD9hVsjU+9nJxdaEx8SPqke/IJKtghfqBA==
+X-Google-Smtp-Source: AGHT+IGUHmpYNFbdnZFYOXUKYb/tVQWbc7jXHdiS94Jm9UDvU1z9Y5VYeJgiiaJ2407HatDTQyyw1w==
+X-Received: by 2002:a25:d094:0:b0:de6:d50:ea0f with SMTP id 3f1490d57ef6-debb95b0850mr948602276.2.1715117885195;
+        Tue, 07 May 2024 14:38:05 -0700 (PDT)
+Received: from localhost ([2601:344:8301:57f0:5343:96f7:3e43:fa89])
+        by smtp.gmail.com with ESMTPSA id h8-20020a5b02c8000000b00de7e97cd06esm2782956ybp.37.2024.05.07.14.38.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 14:38:04 -0700 (PDT)
+Date: Tue, 7 May 2024 14:38:03 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 0/2] bitops: Reshuffle bitops.h and wordpart,h
+Message-ID: <ZjqfOzO/L0031fgA@yury-ThinkPad>
+References: <20240507200236.527688-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,86 +81,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjqWXPFuoYWWcxP3@google.com>
+In-Reply-To: <20240507200236.527688-1-andriy.shevchenko@linux.intel.com>
 
-On Tue, May 07, 2024 at 02:00:12PM -0700, Sean Christopherson wrote:
-> On Tue, May 07, 2024, Paul E. McKenney wrote:
-> > On Tue, May 07, 2024 at 10:55:54AM -0700, Sean Christopherson wrote:
-> > > On Fri, May 03, 2024, Paul E. McKenney wrote:
-> > > > On Fri, May 03, 2024 at 02:29:57PM -0700, Sean Christopherson wrote:
-> > > > > So if we're comfortable relying on the 1 second timeout to guard against a
-> > > > > misbehaving userspace, IMO we might as well fully rely on that guardrail.  I.e.
-> > > > > add a generic PF_xxx flag (or whatever flag location is most appropriate) to let
-> > > > > userspace communicate to the kernel that it's a real-time task that spends the
-> > > > > overwhelming majority of its time in userspace or guest context, i.e. should be
-> > > > > given extra leniency with respect to rcuc if the task happens to be interrupted
-> > > > > while it's in kernel context.
-> > > > 
-> > > > But if the task is executing in host kernel context for quite some time,
-> > > > then the host kernel's RCU really does need to take evasive action.
-> > > 
-> > > Agreed, but what I'm saying is that RCU already has the mechanism to do so in the
-> > > form of the 1 second timeout.
-> > 
-> > Plus RCU will force-enable that CPU's scheduler-clock tick after about
-> > ten milliseconds of that CPU not being in a quiescent state, with
-> > the time varying depending on the value of HZ and the number of CPUs.
-> > After about ten seconds (halfway to the RCU CPU stall warning), it will
-> > resched_cpu() that CPU every few milliseconds.
-> > 
-> > > And while KVM does not guarantee that it will immediately resume the guest after
-> > > servicing the IRQ, neither does the existing userspace logic.  E.g. I don't see
-> > > anything that would prevent the kernel from preempting the interrupt task.
-> > 
-> > Similarly, the hypervisor could preempt a guest OS's RCU read-side
-> > critical section or its preempt_disable() code.
-> > 
-> > Or am I missing your point?
+On Tue, May 07, 2024 at 11:01:30PM +0300, Andy Shevchenko wrote:
+> Move word part related macros to the respective header.
+> While at it, fix the inclusion mess in lib/usercopy.h.
 > 
-> I think you're missing my point?  I'm talking specifically about host RCU, what
-> is or isn't happening in the guest is completely out of scope.
+> Andy Shevchenko (2):
+>   bitops: Move aligned_byte_mask() to wordpart.h
+>   usercopy: Don't use "proxy" headers
+> 
+>  include/linux/bitops.h   | 7 -------
+>  include/linux/wordpart.h | 7 +++++++
+>  lib/usercopy.c           | 9 +++++++--
+>  3 files changed, 14 insertions(+), 9 deletions(-)
 
-Ah, I was thinking of nested virtualization.
-
-> My overarching point is that the existing @user check in rcu_pending() is optimistic,
-> in the sense that the CPU is _likely_ to quickly enter a quiescent state if @user
-> is true, but it's not 100% guaranteed.  And because it's not guaranteed, RCU has
-> the aforementioned guardrails.
-
-You lost me on this one.
-
-The "user" argument to rcu_pending() comes from the context saved at
-the time of the scheduling-clock interrupt.  In other words, the CPU
-really was executing in user mode (which is an RCU quiescent state)
-when the interrupt arrived.
-
-And that suffices, 100% guaranteed.
-
-The reason that it suffices is that other RCU code such as rcu_qs() and
-rcu_note_context_switch() ensure that this CPU does not pay attention to
-the user-argument-induced quiescent state unless this CPU had previously
-acknowledged the current grace period.
-
-And if the CPU has previously acknowledged the current grace period, that
-acknowledgement must have preceded the interrupt from user-mode execution.
-Thus the prior quiescent state represented by that user-mode execution
-applies to that previously acknowledged grace period.
-
-This is admittedly a bit indirect, but then again this is Linux-kernel
-RCU that we are talking about.
-
-> And I'm arguing that, since the @user check isn't bombproof, there's no reason to
-> try to harden against every possible edge case in an equivalent @guest check,
-> because it's unnecessary for kernel safety, thanks to the guardrails.
-
-And the same argument above would also apply to an equivalent check for
-execution in guest mode at the time of the interrupt.
-
-Please understand that I am not saying that we absolutely need an
-additional check (you tell me!).  But if we do need RCU to be more
-aggressive about treating guest execution as an RCU quiescent state
-within the host, that additional check would be an excellent way of
-making that happen.
-
-							Thanx, Paul
+Thanks, adding it in bitmap-for-next for testing.
 
