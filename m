@@ -1,162 +1,146 @@
-Return-Path: <linux-kernel+bounces-171626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38FE8BE69D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7B98BE69A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29661C22340
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41181F22206
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2912161911;
-	Tue,  7 May 2024 14:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9337216078F;
+	Tue,  7 May 2024 14:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQzhVbB/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BWWaekmb"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1CA15FD1D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7EF15FCF0;
+	Tue,  7 May 2024 14:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093586; cv=none; b=VwdVbv2v2DMX4oXRXvbqY8I3Y4AR6iKnQfGYGft2dcOkvr5DAX+GvdRBFqgA5/FEpRcqNSQApgfvC59F3PFHoqPXffyLqnLGPfKILMMf5322ijPEFF55It33+pxNom+CIyCXo5Aar49k4BLJxIWixVg0HJzaSTNrFaMaJB0IiAA=
+	t=1715093575; cv=none; b=skNfStd2FyDIoD85YFKGJIb30qVfmzrEGAM8zCUynS6dFqFL2eFvDBrfuo23/fyXiNXon3RY0GEu3psiSD9Mm2gcczC39ABstTlVzpZxDp16VLxUYw7Wqa1hW4HBrJdB735sEiTaLIPq0mA+1jN8NmXUu/P1FOH8rQFz2dYLNGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093586; c=relaxed/simple;
-	bh=SM4uZsG+ZWU6pdCh+KmiT6fjGXAk/BqY7E2j+X8XI4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D+Z8GRS1/OvZ2FG19N5T4gAtAh1m2eIk3FORBd0AWAumKyqAt4bf/Qwt3foyQW8dyaFQoeonwrwgXCF4EL7bclRWayjrdW/XZg5Sehkk85lLmyqeB4RpAe8BQxo+QBucoGpgWx4QAAzMSV6cb+v+FjRQRTGqZwwZ4rfhvGPzbu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQzhVbB/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74DBAC4AF18
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715093586;
-	bh=SM4uZsG+ZWU6pdCh+KmiT6fjGXAk/BqY7E2j+X8XI4c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WQzhVbB/fda7TB78952CC1FEynnAydSEv8hqNeH4gltwW5b4TL0e3A0nCSQ3xOqy6
-	 Y8F2H780LQc6R5wOIMk2gU7xTgHzC6y7F99/bqvdUMvVVZYh4SIRwr1v+9K7ZuL0Je
-	 Vi73J5KiYQ4zXQxxSH3OQplyxA5vgkxxKIDxOx/8PcCtjriqLBTLPkI1UdJS334dAW
-	 iweDOTMO30pkPMFhylJk44bSxlYmsiNcu0yAWBCSuaUlSj3+VjdcT1XZFpNaXUX3FP
-	 zWTA8uZsaLiPxskSEy4kc+0HarFmYtu6Gu9t5V4vcv/GenV1mKnOJxdrqofn+VacbZ
-	 jUk/BSvjVHuRw==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e3fa13f018so8986611fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:53:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVutT3PO7kRVgek5P+IKZJVrInqnrUmKygLn1eCxQSKkwsV9CEqfaAk8vj4xq1u9QgDBVWi6cdUJBkXeWjoETLK9jL1WKK5r1LdHync
-X-Gm-Message-State: AOJu0Yz2Yzoz0897vvOCKKbMQ5mvPIDXxtGEkcu7YcRXcAPuV6HyW5gD
-	yIxuHB+rxwipvzwCS7pSrT34kmoKNFHjaoILxgwFyNkkcT4wl38GgXls7XIqK03z/Pjk4IlatC+
-	3QHT9uPbEcN5EoJmwvdlVp73BY3Y=
-X-Google-Smtp-Source: AGHT+IG8+gtXhNlZpJi3zCkLvurmd/IHF8T50fiTAvbZuF34/Xyr06janW6+OswVbMpvYUgdeNn0GONt0kX59Ir1Gk8=
-X-Received: by 2002:a2e:a41a:0:b0:2e2:b716:e67c with SMTP id
- p26-20020a2ea41a000000b002e2b716e67cmr6828012ljn.7.1715093564082; Tue, 07 May
- 2024 07:52:44 -0700 (PDT)
+	s=arc-20240116; t=1715093575; c=relaxed/simple;
+	bh=MlQMJtQlUuf6lLca3bql80rz2yBaAuTOSQM7x4CO/+E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=YEie/5xLR5KGKMqFhvia7yN02pILKObNf3TAanbAQ/cpROO3pqtMdmW798mTZHZrb8cxQB1Ezp4KjeoG4BDG+5FlTivbBy1YrmeRURaOSSl8rmkik2SdM42GIK9l7EXIyOV6GNzYf0e9wFITSPSRLTXmnSN7mse6dKve7FFDGFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BWWaekmb; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D8DBC0002;
+	Tue,  7 May 2024 14:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715093570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UGenY7YAzUwlgiT73G7TaHalCSUU2X6AFVguS+ovgFw=;
+	b=BWWaekmbWtG3JQ8gcKhy7e0+HcN08YNNci5RJE5FZSeN+mPVBdOtCyww7UraBvBuBvNe4j
+	roYAhUgVdwh+j5vWIebRHxzomUrJwZcQ/rWk189pVSdKnmtnMoUiZQnH9uyhOUzhuFQfNP
+	LMPFRd2atO3kzm+eFRMubYigSEaCuE+BqOnl9Jc3yZtRx9YorACLWdx9KZJcOpAN0cXTK9
+	BpzVO+y3YCNj2AWGaxSiF8EnDdT9NWnes/ppIWSp+tMJw4iBuCmvMs2+q8ESc8VIzGX/61
+	KexeA06fv4ck3ADqNmciQ4qi8pZnbmmPuJ0WYduRP8DP0xw1NhkhKm3qPyDtBQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240411-tso-v1-0-754f11abfbff@marcan.st> <20240411132853.GA26481@willie-the-truck>
- <87seythqct.fsf@draig.linaro.org>
-In-Reply-To: <87seythqct.fsf@draig.linaro.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 7 May 2024 16:52:30 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFqG7D2Q_T_NXZ-y3NYOjK6d8bP8ihJTeFz8TUJ77W7tw@mail.gmail.com>
-Message-ID: <CAMj1kXFqG7D2Q_T_NXZ-y3NYOjK6d8bP8ihJTeFz8TUJ77W7tw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] arm64: Support the TSO memory model
-To: =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>
-Cc: Will Deacon <will@kernel.org>, Hector Martin <marcan@marcan.st>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Zayd Qumsieh <zayd_qumsieh@apple.com>, 
-	Justin Lu <ih_justin@apple.com>, Ryan Houdek <Houdek.Ryan@fex-emu.org>, 
-	Mark Brown <broonie@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Miguel Luis <miguel.luis@oracle.com>, Joey Gouly <joey.gouly@arm.com>, 
-	Christoph Paasch <cpaasch@apple.com>, Kees Cook <keescook@chromium.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Baoquan He <bhe@redhat.com>, 
-	Joel Granados <j.granados@samsung.com>, Dawei Li <dawei.li@shingroup.cn>, 
-	Andrew Morton <akpm@linux-foundation.org>, Florent Revest <revest@chromium.org>, 
-	David Hildenbrand <david@redhat.com>, Stefan Roesch <shr@devkernel.io>, Andy Chiu <andy.chiu@sifive.com>, 
-	Josh Triplett <josh@joshtriplett.org>, Oleg Nesterov <oleg@redhat.com>, Helge Deller <deller@gmx.de>, 
-	Zev Weiss <zev@bewilderbeest.net>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Asahi Linux <asahi@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 May 2024 16:52:49 +0200
+Message-Id: <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support
+ (clk, reset, pinctrl)
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+X-Mailer: aerc 0.17.0
+References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
+ <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
+In-Reply-To: <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, 7 May 2024 at 12:24, Alex Benn=C3=A9e <alex.bennee@linaro.org> wrot=
-e:
->
-> Will Deacon <will@kernel.org> writes:
->
-> > Hi Hector,
-> >
-> > On Thu, Apr 11, 2024 at 09:51:19AM +0900, Hector Martin wrote:
-> >> x86 CPUs implement a stricter memory modern than ARM64 (TSO). For this
-> >> reason, x86 emulation on baseline ARM64 systems requires very expensiv=
-e
-> >> memory model emulation. Having hardware that supports this natively is
-> >> therefore very attractive. Such hardware, in fact, exists. This series
-> >> adds support for userspace to identify when TSO is available and
-> >> toggle it on, if supported.
-> >
-> > I'm probably going to make myself hugely unpopular here, but I have a
-> > strong objection to this patch series as it stands. I firmly believe
-> > that providing a prctl() to query and toggle the memory model to/from
-> > TSO is going to lead to subtle fragmentation of arm64 Linux userspace.
-> >
-> > It's not difficult to envisage this TSO switch being abused for native
-> > arm64 applications:
-> >
-> >   * A program no longer crashes when TSO is enabled, so the developer
-> >     just toggles TSO to meet a deadline.
-> >
-> >   * Some legacy x86 sources are being ported to arm64 but concurrency
-> >     is hard so the developer just enables TSO to (mostly) avoid thinkin=
+Hello,
+
+On Sat May 4, 2024 at 4:34 AM CEST, Stephen Boyd wrote:
+> Quoting Th=C3=A9o Lebrun (2024-05-03 07:20:45)
+> > This builds on previous EyeQ5 system-controller revisions[0], supportin=
 g
-> >     about it.
-> >
-> >   * Some binaries in a distribution exhibit instability which goes away
-> >     in TSO mode, so a taskset-like program is used to run them with TSO
-> >     enabled.
+> > EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
+> > features here:
+> >  - Clocks: some read-only PLLs derived from main crystal and some
+> >    divider clocks based on PLLs.
+> >  - Resets.
+> >  - Pin controller, only on EyeQ5 (rest will use generic pinctrl-single)=
+.
+> >=20
+> > EyeQ6H is special in that it has seven instances of this
+> > system-controller. Those are spread around and cannot be seen as a
+> > single device, hence are exposed as seven DT nodes and seven
+> > compatibles.
+> >=20
+> > This revision differs from previous in that it exposes all devices as a
+> > single DT node. Driver-wise, a MFD registers multiple cells for each
+> > device. Each driver is still in isolation from one another, each in
+> > their respective subsystem.
 >
-> These all just seem like cases of engineers hiding from their very real
-> problems. I don't know if its really the kernels place to avoid giving
-> them the foot gun. Would it assuage your concerns at all if we set a
-> taint flag so bug reports/core dumps indicated we were in a
-> non-architectural memory mode?
->
-> > In all these cases, we end up with native arm64 applications that will
-> > either fail to load or will crash in subtle ways on CPUs without the TS=
-O
-> > feature. Assuming that the application cannot be fixed, a better
-> > approach would be to recompile using stronger instructions (e.g.
-> > LDAR/STLR) so that at least the resulting binary is portable. Now, it's
-> > true that some existing CPUs are TSO by design (this is a perfectly
-> > valid implementation of the arm64 memory model), but I think there's a
-> > big difference between quietly providing more ordering guarantees than
-> > software may be relying on and providing a mechanism to discover,
-> > request and ultimately rely upon the stronger behaviour.
->
-> I think the main use case here is for emulation. When we run x86-on-arm
-> in QEMU we do currently insert lots of extra barrier instructions on
-> every load and store. If we can probe and set a TSO mode I can assure
-> you we'll do the right thing ;-)
->
+> Why can't you use auxiliary device and driver APIs?
 
-Without a public specification of what TSO mode actually entails,
-deciding which of those barriers can be dropped is not going to be as
-straight-forward as you make it out to be.
+Good question. Reasons I see:
 
-Apple's TSO mode is vertically integrated with Rosetta, which means
-that TSO mode provides whatever Rosetta needs to run x86 code
-correctly, and that it could mean different things on different
-generations of the micro-architecture. And whether Apple's TSO is the
-same as Fujitsu's is anyone's guess afaik.
+ - I didn't know about auxdev beforehand. I discussed the rework with a
+   few colleagues and none mentioned it either.
 
-Running a game and seeing it perform better is great, but it is not
-the kind of rigor we usually attempt to apply when adding support for
-architectural features. Hopefully, there will be some architectural
-support for this in the future, but without any spec that defines the
-memory model it implements, I am not convinced we should merge this.
+ - It feels simpler to let each device access iomem resources. From my
+   understanding, an auxdev is supposed to make function calls to its
+   parent without inheriting iomem access. That sounds like it will put
+   the register logic/knowledge inside a single driver, which could or
+   could not be a better option.
+
+   Implementing a function like this feels like cheating:
+      int olb_read(struct device *dev, u32 offset, u32 *val);
+
+   With an MFD, we hand over a part of the iomem resource to each child
+   and they deal with it however they like.
+
+ - Syscon is what I picked to share parts of OLB to other devices that
+   need it. Currently that is only for I2C speed mode but other devices
+   have wrapping-related registers. MFD and syscon are deeply connected
+   so an MFD felt natural.
+
+ - That would require picking one device that is platform driver, the
+   rest being all aux devices. Clock driver appears to be the one, same
+   as two existing mpfs and starfive-jh7110 that use auxdev for clk and
+   reset.
+
+Main reason I see for picking auxdev is that it forces devices to
+interact with a defined internal API. That can lead to nicer
+abstractions rather than inheriting resources as is being done in MFD.
+
+Are there other reasons?
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
