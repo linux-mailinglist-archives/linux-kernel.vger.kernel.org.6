@@ -1,238 +1,272 @@
-Return-Path: <linux-kernel+bounces-171494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634EB8BE512
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:03:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BB88BE517
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F5C1F21ED8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1431C240E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE2315EFBB;
-	Tue,  7 May 2024 14:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F03715F3EA;
+	Tue,  7 May 2024 14:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E4r1i8bY"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUAHuDB8"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A115E7EE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADC015E5A2;
+	Tue,  7 May 2024 14:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090584; cv=none; b=kHVVECd9/N98fQg9vwWOIBQjaRWrEJT8EozXhZ7bOKkMrFDA8qSLh/1V7r9fZn5GzunavhjJaHFzTnzC34SS/1l4Ah8cG25zgU0RBxfRCdaiK6Y8w57lrG8+dO1oYmTvKDa9StznEsIW6Ek9P/O+V+YitaQCd89ngNHOhoV0Br8=
+	t=1715090614; cv=none; b=Rh/Esz1Kg3EsfgVYJh11N+65J4TtscmTwjShFWhAQdrrS3p/3G66i9TPj02bBrwfIMlLA6XkMQrzpcAflFuDEifPaTYSNLvw6sdyfiPzmVeng/OsW3IX32EqnFed+Zgza9KUctZv8/pUY74fxJuKHpvIVbI5vCNECfXpXPYb3gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090584; c=relaxed/simple;
-	bh=zMgf+YFtkL7wyKeWiQblCBbykN0pGyoBYairoO36Hxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IZ4n59H4OZuWXRzMV61e+ZW4tj6LkCyEn59fW4gE+13PUKxgZ9W/bc2jpHZgADLq5AI9P0NihsAEctk76ohhmVXlf8zrzx1N19A+OzHBRbokbDt0EJnCRNYnyj1IinC9xxaHIfIuIZU/TrJOaCLndzywQaL+z1/hqjqQFMUH24E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E4r1i8bY; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 978B42000A;
-	Tue,  7 May 2024 14:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715090574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cKI7GlnVF7vzPp/kl1uAX4B6WlmM2PiXc58H6Tpvbjw=;
-	b=E4r1i8bYOzJhf5Sasi5cIRU42VYipoxolzO9WnWIkyaJR83FxpDdM2jd+co9I8M1HD9rib
-	6WjRiX2Nbv847FQZAM9zLdi8EyReUAptAaShBzdXFSFcjkiNyblF9xpnalOPTQWRzjgOST
-	RbgbhtQdK/2VClqmulKWBzLKeMj0H513kmUWkobSHmN2kgrXJdpDY/siWWyjbB0kJseovh
-	XmJaqGv3LlrL9UdDXl9sUvYJgzFtZVCabkggrmC8rJlTm4/IgGo5WqT6KwDuMMaXog8kJb
-	81CrVn4HrgIEfz3Lz6Eko04UK2S8tINVRE5IoMRmqt9eNOuuJyVPp/0R0oBUVA==
-Date: Tue, 7 May 2024 16:02:51 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mtd: nand: mxc_nand: support software ECC
-Message-ID: <20240507160251.7f804eb7@xps-13>
-In-Reply-To: <ZjoDYzVNOk06-Q3D@pengutronix.de>
-References: <20240417-mtd-nand-mxc-nand-exec-op-v1-0-d12564fe54e9@pengutronix.de>
-	<20240417-mtd-nand-mxc-nand-exec-op-v1-3-d12564fe54e9@pengutronix.de>
-	<20240506160508.6c60d50f@xps-13>
-	<20240506175106.2ab7c844@xps-13>
-	<ZjnUXtWGR3cmtYB0@pengutronix.de>
-	<20240507094538.745fb5a9@xps-13>
-	<ZjoDYzVNOk06-Q3D@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715090614; c=relaxed/simple;
+	bh=4uyjjtLlvy23G4uGT8iYgbWNw67cUrp97HGC7a98lzs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UXp9PHn9Ggqti5dcoZ0fTeFf8q9NxY5wFO3CofJL7T3co3HIqNsKg97NRRJygzNQgA3iQl2keABEnlNndx/PJsMOs7tRHhjJ0VaswJpyHIX+Io2K45QuQr6la5dy6SJcSZcFdF0xYrMGLmYZnGO+sGLAjMBcOh7uFCiBOLOflRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jUAHuDB8; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41b782405bbso22166335e9.1;
+        Tue, 07 May 2024 07:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715090611; x=1715695411; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ACRiFz5JMT7HATdqtB6Qwjpz19aIG/dJdFvDLMioqk4=;
+        b=jUAHuDB8C2IvnGI+LejGLv2ZCa1Cxf+Jvt3LPY0ufErLQRCp2xjoQfji15ANOLzp/A
+         xtVMmhS+womnTuKrlU6fbi0Z5kyUnESdV2qpm2iPw1xd7Q3HNCiguR4iM28jsT1lKr8G
+         jPN7ehMVTTT13ZTIPSJ4qnxVSAdU7/fPwN/spaIcDIpNtLEtrxZ+WL4XJSnJrgZtNySB
+         6qB1NVLR1aeRmhf/sszC4/l6JEhfH5RtdjfYggJWYalVEru+lueo5jCjgEXcfpaNEqdf
+         GeVFvRoNfNOYTSmMbykq+sJo0XNdymGBUN3/rWSzhxxtIy+1PEtyIgIczAMETmMQozM0
+         46xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715090611; x=1715695411;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ACRiFz5JMT7HATdqtB6Qwjpz19aIG/dJdFvDLMioqk4=;
+        b=VjixlTZ+Rg03VTmlPeLP1W3+tOAVExsyeEU/rvDzW458OQBfPM8A3SlC0vCaGMTlGY
+         WW6DQiFm4CChGHSgTRXwGky35xfMyusXHklANDr4+rLxI9uTW8wUKIW+VF/qlSWjkzUK
+         nTX6TO06bA3cTEBnaSK//olrC0AjAjY2q6kTlwQ14bRXEWWgO7pSQ/AzC7k34xMWqev7
+         L+7cpYD8qAFt2yPoqB1gHQu9MPSyOm11oZk9Ep14aDJl028hEPpPvJFtQYlh9o/I3mIw
+         5EK18xDkyDw3WupTEcyBq0PwCS8ztVqcAQSL82Gu2k4UKd/fyVRumWNj1Hk/ZGm+R/nX
+         JBzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKYnrHB/OH5lBuC2b9b67kEmd/CmQ3mOzWY8NljKXJDfgUZ19foV3+vPqkjdA4oKU9sOngdxQmlRXNNQAFWqjWbUy5d1xydMxzJDb5U6qn2MLrGH0fNEkRJ8Nrb5wYaXu3JrcZyms+yxhODbFHOVVp309JhL5fdMfUTfTbEQO5vU7kEhaGD9ZQtayA9VX1sXDPc8P5UhEG
+X-Gm-Message-State: AOJu0Yyns0kRVEc4cX0o9FtPUn21QJ41LFDnOPmFgDp2+0ZK+vAc11en
+	D5sfDzgdJr9ePMoIqNN8pWOo71lO/QPve9rIzZ/SqzBlQcyndxyU
+X-Google-Smtp-Source: AGHT+IHBxCIKJZOjU+GXnLH3UtwF/07SzqBHvP3On8U6hnAh099ag9MfwbvP7+0U55XvbNa/LQfHlg==
+X-Received: by 2002:a05:600c:3150:b0:41b:3e4e:bd99 with SMTP id h16-20020a05600c315000b0041b3e4ebd99mr9641420wmo.12.1715090610529;
+        Tue, 07 May 2024 07:03:30 -0700 (PDT)
+Received: from ?IPv6:2001:8a0:e622:f700:855f:a005:34c7:4367? ([2001:8a0:e622:f700:855f:a005:34c7:4367])
+        by smtp.gmail.com with ESMTPSA id c1-20020a05600c0a4100b0041bf3a716b9sm19768132wmq.34.2024.05.07.07.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 07:03:30 -0700 (PDT)
+Message-ID: <6c8bf4a2cb2c9494d1a7325d4ca6adb72aad93fa.camel@gmail.com>
+Subject: Re: [PATCH v4] can: mcp251xfd: fix infinite loop when xmit fails
+From: Vitor Soares <ivitro@gmail.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp
+ <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Vitor Soares <vitor.soares@toradex.com>,
+ linux-can@vger.kernel.org,  netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Tue, 07 May 2024 15:03:28 +0100
+In-Reply-To: <20240506-bronze-snake-of-imagination-1db027-mkl@pengutronix.de>
+References: <20240506144918.419536-1-ivitro@gmail.com>
+	 <20240506-bronze-snake-of-imagination-1db027-mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Sascha,
+Hi Marc,
 
-> > No need, I believe the only reason for interleaving is that your
-> > hardware ECC engine works like that (writes the ECC bytes slightly
-> > after each chunk of data). So if you don't use on-host hardware ECC,
-> > you don't need to deal with this data layout. =20
->=20
-> Right, I could use a different layout for software ECC. Using the same
-> layout for both hardware and software ECC is just quite convenient as
-> the same mxc_nand_read_page_raw()/mxc_nand_write_page_raw() could be
-> used for both software and hardware ECC.
-
-I'm not sure I see why it would be more convenient, as you basically
-don't need to provide anything if you use software ECC engines besides
-a minimal exec_op() implementation. Anyway, that's clearly not the good
-approach for software ECC: the engine decides where it wants to put the
-data, there is just no reason to complexify the software layout (which
-is free from any constraints).
-
-> Another thing that might be worth considering is that if we use
-> different functions for raw read/write page is that we would get
-> different views on the same raw page data if we switch from software to
-> hardware ECC or the other way round which might be confusing.
-
-Don't worry about that: it's impossible to manage. Data layout might be
-different of course, but most importantly once you've chosen an ECC
-configuration, any access with another configuration will simply fail.
-And I'm not just talking about the ECC/step size parameters, each
-engine has it's own base polynomial on which it bases all its internal
-calculations, and besides trying very hard to mimic your hardware
-engine in software for some very good reason, you'll never want to do
-that. Especially since the very first reason why you want software
-support is usually to go beyond your hardware engine capabilities in
-terms of strength.
-
-Here is a blog post about such situation, if deemed useful:
-https://bootlin.com/blog/supporting-a-misbehaving-nand-ecc-engine/
-
-> > > This works fine currently, but means that NAND_CMD_RNDOUT can't be us=
-ed.
-> > > Using NAND_CMD_RNDOUT to position the cursor at offset 512b for examp=
-le
-> > > doesn't give you the second subpage, but instead oob0. Positioning the
-> > > cursor at offset 2048 doesn't give you the start of OOB, but some
-> > > position in the middle of data3.
-> > >=20
-> > > Ok, NAND_CMD_RNDOUT can't be used for hardware ECC and there's no way
-> > > around it. For software ECC we could change the organisation in the c=
-hip
-> > > to be [2048b data][64b oob]. With that NAND_CMD_RNDOUT then could be
-> > > used with software ECC.
-> > >=20
-> > > You say that NAND_CMD_RNDOUT is a basic command that is supported by =
-all
-> > > controllers, and yes, it is also supported with the mxc_nand controll=
-er.
-> > > You just can't control how many bytes are transferred between the NAND
-> > > chip and the controller. When using NAND_CMD_RNDOUT to read a few byt=
-es
-> > > at a certain page offset we'll end up reading 512 bytes discarding mo=
-st
-> > > of it. For the next ECC block we would move the cursor forward using
-> > > another NAND_CMD_RNDOUT command, again read 512 bytes and discard most
-> > > it (altough the desired data would have been in the first read alread=
-y). =20
+On Mon, 2024-05-06 at 17:14 +0200, Marc Kleine-Budde wrote:
+> On 06.05.2024 15:49:18, Vitor Soares wrote:
+> > From: Vitor Soares <vitor.soares@toradex.com>
 > >=20
-> > I'm not sure the controller limitations are so bad in this case. The
-> > core helpers (using the same example) will ask for:
-> > - 512b at offset 0
-> > - 512b at offset 512...
-> > - and finally 64b at offset 2048.
-> > In practice it does not look like a huge drawback? I don't understand
-> > in which case so much data would be read and then discarded? =20
->=20
-> Yes, you're right. I misread the code and thought the core would read
-> the ECC separately for each subpage. In fact it doesn't do so, the ECC
-> is always read in one go even for multiple subpages.
-
-"interleaved" layouts actually force us to perform so much
-sub-readings, that's probably one reason why there is no reason to try
-using an interleaved layout with software ECC engines.
-
-> > > So I think NAND_CMD_RNDOUT should really be avoided for this controll=
-er,
-> > > eventhough we might be able to support it. =20
+> > When the mcp251xfd_start_xmit() function fails, the driver stops
+> > processing messages, and the interrupt routine does not return,
+> > running indefinitely even after killing the running application.
 > >=20
-> > I also mentioned the monolithic accessors which try to avoid these
-> > random column changes. You probably want to check them out, they might
-> > just avoid the need for NAND_CMD_RNDOUT by forcing full page accesses
-> > directly. The reason why they were introduced is not exactly our
-> > current use case, but it feels like they might be handy.
+> > Error messages:
+> > [=C2=A0 441.298819] mcp251xfd spi2.0 can0: ERROR in mcp251xfd_start_xmi=
+t: -16
+> > [=C2=A0 441.306498] mcp251xfd spi2.0 can0: Transmit Event FIFO buffer n=
+ot empty.
+> > (seq=3D0x000017c7, tef_tail=3D0x000017cf, tef_head=3D0x000017d0,
+> > tx_head=3D0x000017d3).
+> > ... and repeat forever.
 > >=20
-> > 658beb663960 ("mtd: rawnand: Expose monolithic read/write_page_raw() he=
-lpers")
-> > 0e7f4b64ea46 ("mtd: rawnand: Allow controllers to overload soft ECC hoo=
-ks") =20
+> > The issue can be triggered when multiple devices share the same
+> > SPI interface. And there is concurrent access to the bus.
+> >=20
+> > The problem occurs because tx_ring->head increments even if
+> > mcp251xfd_start_xmit() fails. Consequently, the driver skips one
+> > TX package while still expecting a response in
+> > mcp251xfd_handle_tefif_one().
+> >=20
+> > This patch resolves the issue by decreasing tx_ring->head and removing
+> > the skb from the echo stack if mcp251xfd_start_xmit() fails.
+> > Consequently, the package is dropped not been possible to re-transmit.
+> >=20
+> > Fixes: 55e5b97f003e ("can: mcp25xxfd: add driver for Microchip MCP25xxF=
+D SPI
+> > CAN")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> > ---
+> > With this approach, some packages get lost in concurrent SPI bus access
+> > due to can_put_echo_skb() being called before mcp251xfd_tx_obj_write().
+> > The can_put_echo_skb() calls can_create_echo_skb() that consumes the
+> > original skb
+> > resulting in a Kernel NULL pointer dereference error if return
+> > NETDEV_TX_BUSY on
+> > mcp251xfd_tx_obj_write() failure.
+> > A potential solution would be to change the code to use spi_sync(), whi=
+ch
+> > would
+> > wait for SPI bus to be unlocked. Any thoughts about this?
 >=20
-> Yes, I already make use of 0e7f4b64ea46. My problem is only the ecc.read_=
-subpage
-> hook which can't be overwritten and AFAIK this is the only way
-> NAND_CMD_RNDOUT might be used in my case.
-
-It needs to be supported, we don't expect in the core that this command
-will not be supported. There may be some constraints and limitations,
-and this we can workaround them somehow, but we expect support for
-NAND_CMD_RNDOUT.
-
-Look at all users of nand_change_read_column_op(), NAND manufacturer
-drivers use it, jedec/onfi drivers use it as well in case of
-bitflip in the parameter page, and the core may want to use it (although
-in your case I don't think it actually does if you don't try to support
-over complex layouts, as software ECC engines will always request the
-OOB data whereas subpages are not used in this situation).
-
-> I think my favourite solution would be to:
+> This is not an option. I think you need a echo_skb function that does
+> the necessary cleanup, something like:
 >=20
-> - store data/OOB interleaved for both hardware and software ECC
-> - For software ECC use a similar OOB layout as used with hardware
->   ECC. This allows us to read a subpage including its ECC data in
->   a single step (just like with hardware ECC the controller just
->   reads 512b + 16b for each subpage)
-> - Allow to disable subpage reads in the NAND core
+> void can_remove_echo_skb(struct net_device *dev, unsigned int idx)
+> {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct can_priv *priv =3D=
+ netdev_priv(dev);
 >=20
-> As a further optimisation we could make ecc.read_subpage overwritable
-> for ecc->engine_type =3D=3D NAND_ECC_ENGINE_TYPE_SOFT && ecc->algo =3D=3D
-> NAND_ECC_ALGO_BCH. With the OOB layout described above that would be
-> easily implementable with the mxc_nand controller.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->echo_skb[idx] =3D NULL;
+> }
 >=20
-> What do you think?
+> I think you can open-code the "priv->echo_skb[idx] =3D NULL;" directly in
+> the driver.
+>=20
+> And you have to take care of calling netdev_completed_queue(priv->ndev,
+> 1, frame_len);
 
-I'm sorry but I feel like I need to answer "no" to all three items
-above. It would be totally backwards.
+I have tried this approach and got the following trace:
 
-> If you insist I would go the path of making NAND_CMD_RNDOUT work for
-> software ECC, although I think it would cause me extra work with no
-> clear gain for me.
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 858 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0=
+x144
+Modules linked in: can_raw can tpm_tis_spi tpm_tis_core 8021q garp stp mrp =
+llc
+rf6
+CPU: 0 PID: 858 Comm: cansend Not tainted 6.9.0-rc6-00132-g31a65174a15c-dir=
+ty
+#16
+Hardware name: Toradex Verdin iMX8M Mini WB on Verdin Development Board (DT=
+)
+pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+pc : refcount_warn_saturate+0xf4/0x144
+lr : refcount_warn_saturate+0xf4/0x144
+sp : ffff800080003cc0
+x29: ffff800080003cc0 x28: 0000000000000101 x27: ffff0000060ba0ac
+x26: 0000000000000000 x25: 0000000000000000 x24: ffff800080003ea4
+x23: ffff8000816f9000 x22: 0000000000000000 x21: 0000000000000000
+x20: ffff000009e8196c x19: ffff000009e81800 x18: 0000000000000006
+x17: ffff7ffffe6dc000 x16: ffff800080000000 x15: 072007200720072e
+x14: 0765076507720766 x13: ffff8000817124e0 x12: 000000000000056a
+x11: 00000000000001ce x10: ffff80008176a4e0 x9 : ffff8000817124e0
+x8 : 00000000ffffefff x7 : ffff80008176a4e0 x6 : 80000000fffff000
+x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000003754500
+Call trace
+refcount_warn_saturate+0xf4/0x144
+sock_wfree+0x158/0x248
+skb_release_head_state+0x2c/0x144
+kfree_skb_reason+0x30/0xb0
+can_dropped_invalid_skb+0x3c/0x17c [can_dev]
+mcp251xfd_start_xmit+0x78/0x4e0 [mcp251xfd]
+dev_hard_start_xmit+0x98/0x118
+sch_direct_xmit+0x88/0x37c
+__qdisc_run+0x118/0x66c
+net_tx_action+0x158/0x218
+__do_softirq+0x10c/0x264
+____do_softirq+0x10/0x1c
+call_on_irq_stack+0x24/0x4c
+do_softirq_own_stack+0x1c/0x28
+do_softirq+0x54/0x6c
+__local_bh_enable_ip+0x8c/0x98
+__dev_queue_xmit+0x224/0xd84
+can_send+0xd4/0x2a4 [can
+raw_sendmsg+0x270/0x3a0 [can_raw]
+sock_write_iter+0xa4/0x110
+vfs_write+0x2f0/0x358
+ksys_write+0xe8/0x104
+__arm64_sys_write+0x1c/0x28
+invoke_syscall+0x48/0x118
+el0_svc_common.constprop.0+0xc0/0xe0
+do_el0_svc+0x1c/0x28
+el0_svc+0x34/0xdc
+el0t_64_sync_handler+0x100/0x12c
+el0t_64_sync+0x190/0x194
+--[ end trace 0000000000000000 ]---
 
-Yes, please. I believe this command is not that complex to implement,
-even with strong (and clearly advertised) limitations. I had a look at
-your exec_op() implementation and to the datasheet of the imx27, the
-controller clearly supports CMD/ADDR/CMD/DATAIN ops. It's true that you
-can only request 16, 512 or 528 bytes, but, why not? It just needs
-to be clearly identified that reading more data is not supported. Once
-the data is in the local SRAM you just take what you need and done.
-=46rom a performance perspective, I don't think this operation will be
-used often, at least not in the fast path (see above why), but we need
-it for the driver to work properly in all situations.
+My understanding is that can_create_echo_skb() does consume_skb(), which fr=
+ees
+the original skb and when the stack retry to transmit again it is not there=
+.
 
-There is perhaps something that is missing in your current
-implementation though: there is a check_only boolean in ->exec_op()
-which might require additional handling so that the core does not try to
-perform unsupported operations. You can do that either manually by
-checking the ops entirely by hand if there are only a couple that
-cannot be supported, or leverage the core parser otherwise.
+In consequence of this, I moved the consume_skb() from can_create_echo_skb(=
+) to
+the driver and I could do can_free_echo_skb() and return NETDEV_TX_BUSY wit=
+hout
+issues on my tests.
 
-In this case you can have a look at the use of the "struct
-nand_op_parser" in the subsystem. Please also don't hesitate to take
-inspiration from other drivers, as you might need to advertise
-limitations such as a maximum number of command, address or
-data cycles (in this case, 528 or 512 if it's easier).
+..
+err =3D mcp251xfd_tx_obj_write(priv, tx_obj);
+if (err) {
+	tx_ring->head--;
 
-Thanks,
-Miqu=C3=A8l
+	if (!echo_err) {
+		can_free_echo_skb(ndev, tx_head, &frame_len);
+		netdev_completed_queue(ndev, 1, frame_len);
+	}
+
+	if (mcp251xfd_get_tx_free(tx_ring))
+		netif_wake_queue(ndev);
+
+	if (err =3D=3D -EBUSY)
+		return NETDEV_TX_BUSY;
+
+	stats->tx_dropped++;
+	if (net_ratelimit())
+		netdev_err(priv->ndev,
+				"ERROR in %s: %d\n", __func__, err);
+}
+
+consume_skb(skb);
+..
+
+
+>=20
+> Another option would be to start a workqueue and use spi_sync() in case
+> the spi_async() is busy.
+>=20
+> regards,
+> Marc
+>=20
+
+Meanwhile, I wonder if there is anything to add to the current patch so I c=
+an
+address this topic in another patchset.
+
+Best regards,
+Vitor Soares
+
 
