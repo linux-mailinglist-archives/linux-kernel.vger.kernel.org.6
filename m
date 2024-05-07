@@ -1,337 +1,248 @@
-Return-Path: <linux-kernel+bounces-170747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE1B8BDB61
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC128BDB5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDCA1F21359
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF34C1F22096
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2A878274;
-	Tue,  7 May 2024 06:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DdKxo+O3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C1A71B3A;
-	Tue,  7 May 2024 06:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6686171739;
+	Tue,  7 May 2024 06:22:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695797C09F;
+	Tue,  7 May 2024 06:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062978; cv=none; b=Na7OvryLTmv8At474OQ33rwWQ5p21DeRgyb37XDv0hmL0Mj22LLLChrwScGuvYf8bWkM3W8tNOOBv0AWLeIaAty1+4PsSffHPmqOE7QEw7bsz72QineASjFUqwPrUuCr+1rjDOoxXzYturSOzhjx+ab3tOONaUPwc2Hr09Z9NpY=
+	t=1715062945; cv=none; b=fqOi++oNQOHxyaIbLyoIhaR4DaOOtlGqV8HFyWEzoc/OAxTnrkinpkEWX400aEAD3Ul5lCvIOaUiHgXIg7c2oLAC+7XQL1LdOLmJiUTt56jYEKdDg7gII0t8g0R8gj6TjEOoFgeHYVNLJQHrSRrp5bGX1M8W9ItuoIgTAqOmrk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062978; c=relaxed/simple;
-	bh=TL0UZXMfyUTYYFYNxhfZM0gx/hJkCl1fIxqe8cLgHB0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=jgiGH4OWFkV3ZTrhKMyTK6VX+IMqGQY+Dj/7Z4MTCv/S62HGXK8PU/rXXsX+r1fezrj4rkJ0FF+mWwYrXf6uYiOXA/Uoir2twSwzmFYIg7uebSQQskYq5F5S8wWUIaRuPARYBNwsVqFbdJi7pDStvogebgZtJNQKCLtspUv+gPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DdKxo+O3; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715062974; x=1746598974;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=TL0UZXMfyUTYYFYNxhfZM0gx/hJkCl1fIxqe8cLgHB0=;
-  b=DdKxo+O36SyUhE0W7MSwC43ZvL++v0DmAj3qS3B5SVMsRMMhuBFM9RHI
-   2Q0jtXvBTl+e7JShS+350r2gA0s5SmbOTzURCaWdv6nrcW4GBBRKLPPLx
-   T50IskMtycQ0gbbexB+tbiZo0M5nHfnUVu4/tnHgca+0Uf1NmLrpymI0O
-   EvGkcr3A3neo1C4O8TGHyK6kxuB0A44Rcl4SfGE3KgsmVD709oxt5oEhh
-   4ZSfU9Bhp6JrMzd0Wob1q7XWCs/1LiyaYaBXNoCeVRopJZz/xRMkRmfeP
-   x8ay+r8wNAtJuVm3v1qMT+pDDwhQqoGamoYjlrZnIqs7htDMEXRQcSfqh
-   A==;
-X-CSE-ConnectionGUID: OUec294VRwuXogdB6eGP/Q==
-X-CSE-MsgGUID: ULSFlFI1SjKZkYTKhK4Jgw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10720354"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="10720354"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:22:53 -0700
-X-CSE-ConnectionGUID: /8n9UBt7RNevDb1XsRFpXw==
-X-CSE-MsgGUID: XGQwIr8gRyGZnywFHvC53w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="65857923"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:22:48 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	alex.williamson@redhat.com,
-	jgg@nvidia.com,
-	kevin.tian@intel.com
-Cc: iommu@lists.linux.dev,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	corbet@lwn.net,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	baolu.lu@linux.intel.com,
-	yi.l.liu@intel.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 5/5] iommufd: Flush CPU caches on DMA pages in non-coherent domains
-Date: Tue,  7 May 2024 14:22:12 +0800
-Message-Id: <20240507062212.20535-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240507061802.20184-1-yan.y.zhao@intel.com>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1715062945; c=relaxed/simple;
+	bh=UcXX3KNSYlqvFcS0Le04L6qUtC0bLkxJUWV2p8KPdSg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oqvub1rqWlv16csSUxFpTSs4DCEBD9Hr4i8rjzZgPPXobF25FeoQsWAcdYMsaPSlKj/KH68idCMfsrx4Cja2tn5pNXwKGncdRaospCfL0sl34oOZsgObH4PGgMKxJNq1RvuU1FLwYNpWbc12W03hl1MchdVNrHNgBVK7aS2+i+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D42F01042;
+	Mon,  6 May 2024 23:22:48 -0700 (PDT)
+Received: from [10.163.37.41] (unknown [10.163.37.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B6093F587;
+	Mon,  6 May 2024 23:22:13 -0700 (PDT)
+Message-ID: <8080ae06-7014-4afe-8620-ffaca6e3c597@arm.com>
+Date: Tue, 7 May 2024 11:52:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/17] coresight: Make CPU id map a property of a trace ID
+ map
+Content-Language: en-US
+To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
+ coresight@lists.linaro.org, suzuki.poulose@arm.com, mike.leach@linaro.org
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-14-james.clark@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240429152207.479221-14-james.clark@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Flush CPU cache on DMA pages before mapping them into the first
-non-coherent domain (domain that does not enforce cache coherency, i.e. CPU
-caches are not force-snooped) and after unmapping them from the last
-domain.
 
-Devices attached to non-coherent domains can execute non-coherent DMAs
-(DMAs that lack CPU cache snooping) to access physical memory with CPU
-caches bypassed.
 
-Such a scenario could be exploited by a malicious guest, allowing them to
-access stale host data in memory rather than the data initialized by the
-host (e.g., zeros) in the cache, thus posing a risk of information leakage
-attack.
+On 4/29/24 20:51, James Clark wrote:
+> The global CPU ID mappings won't work for per-sink ID maps so move it to
+> the ID map struct. coresight_trace_id_release_all_pending() is hard
+> coded to operate on the default map, but once Perf sessions use their
+> own maps the pending release mechanism will be deleted. So it doesn't
+> need to be extended to accept a trace ID map argument at this point.
+> 
+> Signed-off-by: James Clark <james.clark@arm.com>
+> ---
+>  .../hwtracing/coresight/coresight-etm-perf.c  |  3 +-
+>  .../coresight/coresight-etm3x-core.c          |  3 +-
+>  .../coresight/coresight-etm4x-core.c          |  3 +-
+>  .../hwtracing/coresight/coresight-trace-id.c  | 28 ++++++++-----------
+>  .../hwtracing/coresight/coresight-trace-id.h  |  2 +-
+>  include/linux/coresight.h                     |  1 +
+>  6 files changed, 20 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index 4afb9d29f355..25f1f87c90d1 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -508,7 +508,8 @@ static void etm_event_start(struct perf_event *event, int flags)
+>  		hw_id = FIELD_PREP(CS_AUX_HW_ID_VERSION_MASK,
+>  				   CS_AUX_HW_ID_CURR_VERSION);
+>  		hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK,
+> -				    coresight_trace_id_read_cpu_id(cpu));
+> +				    coresight_trace_id_read_cpu_id(cpu,
+> +						coresight_trace_id_map_default()));
+>  		perf_report_aux_output_id(event, hw_id);
+>  	}
+>  
+> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> index 4149e7675ceb..b21f5ad94e63 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> @@ -501,7 +501,8 @@ static int etm_enable_perf(struct coresight_device *csdev,
+>  	 * with perf locks - we know the ID cannot change until perf shuts down
+>  	 * the session
+>  	 */
+> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
+> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
+> +						  coresight_trace_id_map_default());
+>  	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>  		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
+>  			dev_name(&drvdata->csdev->dev), drvdata->cpu);
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index f32c8cd7742d..d16d6efb26fa 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -776,7 +776,8 @@ static int etm4_enable_perf(struct coresight_device *csdev,
+>  	 * with perf locks - we know the ID cannot change until perf shuts down
+>  	 * the session
+>  	 */
+> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
+> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
+> +						  coresight_trace_id_map_default());
+>  	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>  		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
+>  			dev_name(&drvdata->csdev->dev), drvdata->cpu);
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+> index 45ddd50d09a6..b393603dd713 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+> @@ -13,10 +13,12 @@
+>  #include "coresight-trace-id.h"
+>  
+>  /* Default trace ID map. Used in sysfs mode and for system sources */
+> -static struct coresight_trace_id_map id_map_default;
+> +static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
+> +static struct coresight_trace_id_map id_map_default = {
+> +	.cpu_map = &id_map_default_cpu_ids
+> +};
+>  
+> -/* maintain a record of the mapping of IDs and pending releases per cpu */
+> -static DEFINE_PER_CPU(atomic_t, cpu_id) = ATOMIC_INIT(0);
+> +/* maintain a record of the pending releases per cpu */
+>  static cpumask_t cpu_id_release_pending;
+>  
+>  /* perf session active counter */
+> @@ -46,12 +48,6 @@ static void coresight_trace_id_dump_table(struct coresight_trace_id_map *id_map,
+>  #define PERF_SESSION(n)
+>  #endif
+>  
+> -/* unlocked read of current trace ID value for given CPU */
+> -static int _coresight_trace_id_read_cpu_id(int cpu)
+> -{
+> -	return atomic_read(&per_cpu(cpu_id, cpu));
+> -}
 
-Furthermore, the host kernel (e.g. a ksm thread) might encounter
-inconsistent data between the CPU cache and memory (left by a malicious
-guest) after a page is unpinned for DMA but before it's recycled.
+Just wondering where this per cpu cpu_id ^^ is being dropped off as well
+OR is it still getting used ?
 
-Therefore, it is required to flush the CPU cache before a page is
-accessible to non-coherent DMAs and after the page is inaccessible to
-non-coherent DMAs.
-
-However, the CPU cache is not flushed immediately when the page is unmapped
-from the last non-coherent domain. Instead, the flushing is performed
-lazily, right before the page is unpinned.
-Take the following example to illustrate the process. The CPU cache is
-flushed right before step 2 and step 5.
-1. A page is mapped into a coherent domain.
-2. The page is mapped into a non-coherent domain.
-3. The page is unmapped from the non-coherent domain e.g.due to hot-unplug.
-4. The page is unmapped from the coherent domain.
-5. The page is unpinned.
-
-Reasons for adopting this lazily flushing design include:
-- There're several unmap paths and only one unpin path. Lazily flush before
-  unpin wipes out the inconsistency between cache and physical memory
-  before a page is globally visible and produces code that is simpler, more
-  maintainable and easier to backport.
-- Avoid dividing a large unmap range into several smaller ones or
-  allocating additional memory to hold IOVA to HPA relationship.
-
-Unlike "has_noncoherent_domain" flag used in vfio_iommu, the
-"noncoherent_domain_cnt" counter is implemented in io_pagetable to track
-whether an iopt has non-coherent domains attached.
-Such a difference is because in iommufd only hwpt of type paging contains
-flag "enforce_cache_coherency" and iommu domains in io_pagetable has no
-flag "enforce_cache_coherency" as that in vfio_domain.
-A counter in io_pagetable can avoid traversing ioas->hwpt_list and holding
-ioas->mutex.
-
-Reported-by: Jason Gunthorpe <jgg@nvidia.com>
-Closes: https://lore.kernel.org/lkml/20240109002220.GA439767@nvidia.com
-Fixes: e8d57210035b ("iommufd: Add kAPI toward external drivers for physical devices")
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- drivers/iommu/iommufd/hw_pagetable.c    | 19 +++++++++--
- drivers/iommu/iommufd/io_pagetable.h    |  5 +++
- drivers/iommu/iommufd/iommufd_private.h |  1 +
- drivers/iommu/iommufd/pages.c           | 44 +++++++++++++++++++++++--
- 4 files changed, 65 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iommu/iommufd/hw_pagetable.c b/drivers/iommu/iommufd/hw_pagetable.c
-index 33d142f8057d..e3099d732c5c 100644
---- a/drivers/iommu/iommufd/hw_pagetable.c
-+++ b/drivers/iommu/iommufd/hw_pagetable.c
-@@ -14,12 +14,18 @@ void iommufd_hwpt_paging_destroy(struct iommufd_object *obj)
- 		container_of(obj, struct iommufd_hwpt_paging, common.obj);
- 
- 	if (!list_empty(&hwpt_paging->hwpt_item)) {
-+		struct io_pagetable *iopt = &hwpt_paging->ioas->iopt;
- 		mutex_lock(&hwpt_paging->ioas->mutex);
- 		list_del(&hwpt_paging->hwpt_item);
- 		mutex_unlock(&hwpt_paging->ioas->mutex);
- 
--		iopt_table_remove_domain(&hwpt_paging->ioas->iopt,
--					 hwpt_paging->common.domain);
-+		iopt_table_remove_domain(iopt, hwpt_paging->common.domain);
-+
-+		if (!hwpt_paging->enforce_cache_coherency) {
-+			down_write(&iopt->domains_rwsem);
-+			iopt->noncoherent_domain_cnt--;
-+			up_write(&iopt->domains_rwsem);
-+		}
- 	}
- 
- 	if (hwpt_paging->common.domain)
-@@ -176,6 +182,12 @@ iommufd_hwpt_paging_alloc(struct iommufd_ctx *ictx, struct iommufd_ioas *ioas,
- 			goto out_abort;
- 	}
- 
-+	if (!hwpt_paging->enforce_cache_coherency) {
-+		down_write(&ioas->iopt.domains_rwsem);
-+		ioas->iopt.noncoherent_domain_cnt++;
-+		up_write(&ioas->iopt.domains_rwsem);
-+	}
-+
- 	rc = iopt_table_add_domain(&ioas->iopt, hwpt->domain);
- 	if (rc)
- 		goto out_detach;
-@@ -183,6 +195,9 @@ iommufd_hwpt_paging_alloc(struct iommufd_ctx *ictx, struct iommufd_ioas *ioas,
- 	return hwpt_paging;
- 
- out_detach:
-+	down_write(&ioas->iopt.domains_rwsem);
-+	ioas->iopt.noncoherent_domain_cnt--;
-+	up_write(&ioas->iopt.domains_rwsem);
- 	if (immediate_attach)
- 		iommufd_hw_pagetable_detach(idev);
- out_abort:
-diff --git a/drivers/iommu/iommufd/io_pagetable.h b/drivers/iommu/iommufd/io_pagetable.h
-index 0ec3509b7e33..557da8fb83d9 100644
---- a/drivers/iommu/iommufd/io_pagetable.h
-+++ b/drivers/iommu/iommufd/io_pagetable.h
-@@ -198,6 +198,11 @@ struct iopt_pages {
- 	void __user *uptr;
- 	bool writable:1;
- 	u8 account_mode;
-+	/*
-+	 * CPU cache flush is required before mapping the pages to or after
-+	 * unmapping it from a noncoherent domain
-+	 */
-+	bool cache_flush_required:1;
- 
- 	struct xarray pinned_pfns;
- 	/* Of iopt_pages_access::node */
-diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-index 991f864d1f9b..fc77fd43b232 100644
---- a/drivers/iommu/iommufd/iommufd_private.h
-+++ b/drivers/iommu/iommufd/iommufd_private.h
-@@ -53,6 +53,7 @@ struct io_pagetable {
- 	struct rb_root_cached reserved_itree;
- 	u8 disable_large_pages;
- 	unsigned long iova_alignment;
-+	unsigned int noncoherent_domain_cnt;
- };
- 
- void iopt_init_table(struct io_pagetable *iopt);
-diff --git a/drivers/iommu/iommufd/pages.c b/drivers/iommu/iommufd/pages.c
-index 528f356238b3..8f4b939cba5b 100644
---- a/drivers/iommu/iommufd/pages.c
-+++ b/drivers/iommu/iommufd/pages.c
-@@ -272,6 +272,17 @@ struct pfn_batch {
- 	unsigned int total_pfns;
- };
- 
-+static void iopt_cache_flush_pfn_batch(struct pfn_batch *batch)
-+{
-+	unsigned long cur, i;
-+
-+	for (cur = 0; cur < batch->end; cur++) {
-+		for (i = 0; i < batch->npfns[cur]; i++)
-+			arch_clean_nonsnoop_dma(PFN_PHYS(batch->pfns[cur] + i),
-+						PAGE_SIZE);
-+	}
-+}
-+
- static void batch_clear(struct pfn_batch *batch)
- {
- 	batch->total_pfns = 0;
-@@ -637,10 +648,18 @@ static void batch_unpin(struct pfn_batch *batch, struct iopt_pages *pages,
- 	while (npages) {
- 		size_t to_unpin = min_t(size_t, npages,
- 					batch->npfns[cur] - first_page_off);
-+		unsigned long pfn = batch->pfns[cur] + first_page_off;
-+
-+		/*
-+		 * Lazily flushing CPU caches when a page is about to be
-+		 * unpinned if the page was mapped into a noncoherent domain
-+		 */
-+		if (pages->cache_flush_required)
-+			arch_clean_nonsnoop_dma(pfn << PAGE_SHIFT,
-+						to_unpin << PAGE_SHIFT);
- 
- 		unpin_user_page_range_dirty_lock(
--			pfn_to_page(batch->pfns[cur] + first_page_off),
--			to_unpin, pages->writable);
-+			pfn_to_page(pfn), to_unpin, pages->writable);
- 		iopt_pages_sub_npinned(pages, to_unpin);
- 		cur++;
- 		first_page_off = 0;
-@@ -1358,10 +1377,17 @@ int iopt_area_fill_domain(struct iopt_area *area, struct iommu_domain *domain)
- {
- 	unsigned long done_end_index;
- 	struct pfn_reader pfns;
-+	bool cache_flush_required;
- 	int rc;
- 
- 	lockdep_assert_held(&area->pages->mutex);
- 
-+	cache_flush_required = area->iopt->noncoherent_domain_cnt &&
-+			       !area->pages->cache_flush_required;
-+
-+	if (cache_flush_required)
-+		area->pages->cache_flush_required = true;
-+
- 	rc = pfn_reader_first(&pfns, area->pages, iopt_area_index(area),
- 			      iopt_area_last_index(area));
- 	if (rc)
-@@ -1369,6 +1395,9 @@ int iopt_area_fill_domain(struct iopt_area *area, struct iommu_domain *domain)
- 
- 	while (!pfn_reader_done(&pfns)) {
- 		done_end_index = pfns.batch_start_index;
-+		if (cache_flush_required)
-+			iopt_cache_flush_pfn_batch(&pfns.batch);
-+
- 		rc = batch_to_domain(&pfns.batch, domain, area,
- 				     pfns.batch_start_index);
- 		if (rc)
-@@ -1413,6 +1442,7 @@ int iopt_area_fill_domains(struct iopt_area *area, struct iopt_pages *pages)
- 	unsigned long unmap_index;
- 	struct pfn_reader pfns;
- 	unsigned long index;
-+	bool cache_flush_required;
- 	int rc;
- 
- 	lockdep_assert_held(&area->iopt->domains_rwsem);
-@@ -1426,9 +1456,19 @@ int iopt_area_fill_domains(struct iopt_area *area, struct iopt_pages *pages)
- 	if (rc)
- 		goto out_unlock;
- 
-+	cache_flush_required = area->iopt->noncoherent_domain_cnt &&
-+			       !pages->cache_flush_required;
-+
-+	if (cache_flush_required)
-+		pages->cache_flush_required = true;
-+
- 	while (!pfn_reader_done(&pfns)) {
- 		done_first_end_index = pfns.batch_end_index;
- 		done_all_end_index = pfns.batch_start_index;
-+
-+		if (cache_flush_required)
-+			iopt_cache_flush_pfn_batch(&pfns.batch);
-+
- 		xa_for_each(&area->iopt->domains, index, domain) {
- 			rc = batch_to_domain(&pfns.batch, domain, area,
- 					     pfns.batch_start_index);
--- 
-2.17.1
-
+> -
+>  /* look for next available odd ID, return 0 if none found */
+>  static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
+>  {
+> @@ -145,7 +141,7 @@ static void coresight_trace_id_release_all_pending(void)
+>  		clear_bit(bit, id_map->pend_rel_ids);
+>  	}
+>  	for_each_cpu(cpu, &cpu_id_release_pending) {
+> -		atomic_set(&per_cpu(cpu_id, cpu), 0);
+> +		atomic_set(per_cpu_ptr(id_map_default.cpu_map, cpu), 0);
+>  		cpumask_clear_cpu(cpu, &cpu_id_release_pending);
+>  	}
+>  	spin_unlock_irqrestore(&id_map_lock, flags);
+> @@ -160,7 +156,7 @@ int coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map
+>  	spin_lock_irqsave(&id_map_lock, flags);
+>  
+>  	/* check for existing allocation for this CPU */
+> -	id = _coresight_trace_id_read_cpu_id(cpu);
+> +	id = coresight_trace_id_read_cpu_id(cpu, id_map);
+>  	if (id)
+>  		goto get_cpu_id_clr_pend;
+>  
+> @@ -181,7 +177,7 @@ int coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map
+>  		goto get_cpu_id_out_unlock;
+>  
+>  	/* allocate the new id to the cpu */
+> -	atomic_set(&per_cpu(cpu_id, cpu), id);
+> +	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
+>  
+>  get_cpu_id_clr_pend:
+>  	/* we are (re)using this ID - so ensure it is not marked for release */
+> @@ -203,7 +199,7 @@ void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_ma
+>  	int id;
+>  
+>  	/* check for existing allocation for this CPU */
+> -	id = _coresight_trace_id_read_cpu_id(cpu);
+> +	id = coresight_trace_id_read_cpu_id(cpu, id_map);
+>  	if (!id)
+>  		return;
+>  
+> @@ -216,7 +212,7 @@ void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_ma
+>  	} else {
+>  		/* otherwise clear id */
+>  		coresight_trace_id_free(id, id_map);
+> -		atomic_set(&per_cpu(cpu_id, cpu), 0);
+> +		atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
+>  	}
+>  
+>  	spin_unlock_irqrestore(&id_map_lock, flags);
+> @@ -258,9 +254,9 @@ struct coresight_trace_id_map *coresight_trace_id_map_default(void)
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_trace_id_map_default);
+>  
+> -int coresight_trace_id_read_cpu_id(int cpu)
+> +int coresight_trace_id_read_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+>  {
+> -	return _coresight_trace_id_read_cpu_id(cpu);
+> +	return atomic_read(per_cpu_ptr(id_map->cpu_map, cpu));
+>  }
+>  EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id);
+>  
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+> index 54b9d8ed903b..ed2bc4b3ad2a 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+> @@ -93,7 +93,7 @@ void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_ma
+>   *
+>   * return: current value, will be 0 if unallocated.
+>   */
+> -int coresight_trace_id_read_cpu_id(int cpu);
+> +int coresight_trace_id_read_cpu_id(int cpu, struct coresight_trace_id_map *id_map);
+>  
+>  /**
+>   * Allocate a CoreSight trace ID for a system component.
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index c16c61a8411d..7d62b88bfb5c 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -234,6 +234,7 @@ struct coresight_sysfs_link {
+>  struct coresight_trace_id_map {
+>  	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
+>  	DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
+> +	atomic_t __percpu *cpu_map;
+>  };
+>  
+>  /**
 
