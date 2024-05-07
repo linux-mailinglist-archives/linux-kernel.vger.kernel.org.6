@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-172126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFB08BEDD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:09:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAF38BEDDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2AE1C24E2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:09:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C371C24C9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFACC187357;
-	Tue,  7 May 2024 20:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3E316E88D;
+	Tue,  7 May 2024 20:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUErLruN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UtGykWW+"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089C318734B;
-	Tue,  7 May 2024 20:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5421914B940
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 20:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715112437; cv=none; b=Vv/gAL/PNPXqKYDeKRr95vldQOzIFqwoliVaHyUPFb7oUdEO9K9QpRNFxy7EdoxBoSBEwoqf6+gIWXHZvuuO+R17bWHYqzNUCrVGbs44U14ItVlBX33ch06l2QS6SjD6SERhX5vrU+zWqhBHB7UJRB/aPxqcgDwwOT9K/2cnbW8=
+	t=1715112447; cv=none; b=FLuB6myOQ+h+rnOasWoBWevpK1whougDI1Ff5GEfhf8F2wfCI2KdtC+i3YFZXS8FmKkCcVSpp1gCsA0XQ0eDJO2oOo3gTgV3UwPDKVt/JObayYy2mn/JHPOxKgEGqsrq1BXAa8TlXbX5fmy8tsUp6tGYnLH8i8RQccuMRAT5RhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715112437; c=relaxed/simple;
-	bh=iouoE3NOSOWqeVXlFJuuPM3HYDT1sH9d1FLLf5+gr54=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=pGA7R4f2ofLYqQV3yVEsS3LSnBmBzT+w7VmH75Kh0ufpFOra3pVVrM14hWmQNhlMGpW0BISfosqeCTHqWURmCB66HJGj9IKhd2PlwdtyWr6sHu9Dz31lDAeiH3OJMlbDnBBiej1zdML6Os0WPHPl90DItQBs3wcmJSAFJQHNnhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUErLruN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11177C2BBFC;
-	Tue,  7 May 2024 20:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715112436;
-	bh=iouoE3NOSOWqeVXlFJuuPM3HYDT1sH9d1FLLf5+gr54=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=YUErLruNSL+Ty3sAfCM3UPFRKHSkTY/WeokRS4GvJrYW5CGgMrcNTVr24VWAcKMNo
-	 e1lyGc9BlMVd5rCv7m2jIka9XAryLjnWcRr0vI4lVEj/f4T68idq8DlUhEEw5Bhugk
-	 XQdg3Nwc+B/PJyI2YXRydSIN6RTKwx+gutjoQb94w4wJxtX7glfLKOqQtWJMs+q0ND
-	 EZdWMXRTJ7DpXxy3oExqrs+PV1IPQVJfUduvN6JY4GBJU0ldqluAwHilB4reb8TuCS
-	 1/Vyh240Z0hFOV9LYt5A6KVa44B84Bcum3WNyralnsAT+Rt+N/IFkWn1XsX4OYXxOA
-	 5GpI8CIZEKApg==
+	s=arc-20240116; t=1715112447; c=relaxed/simple;
+	bh=Mc50FQ9sa791H2dMnsRK0GR1vGBbxHb1li3CAQ2ZdSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7U+SZhP88VGJzDl7kKRWwDPUCcY7mwqP3039H2xjttP6LYf4QS5ioaeLs5YkiKEotp551Xc107WFsEEil2rMBu5cT2X4/4B2j6ZRaocdgZBkhl/LZA22F7E5P4sJN4wJPsIT3x/MyVfnEbtgYUYg80l34nqoP4uNursTKcH3aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UtGykWW+; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a4347e43-06f7-4ede-b50f-554d1194a1f6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715112443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nt2uO6TpJx24xGPFvSzYImK2G9i5k2qnHj1h7z6S7Lg=;
+	b=UtGykWW+noX7yFU08r1avJm7A81zlM2rR29tIloa0n2uR86TOf+TRIjG4Bp23h5dAh6GpO
+	XZcLGHJc+2ahGxUgVCJJB+n+S0FA1+fHztZ8J5241liHKgdMkb3sy6vx5zUrLFcN7ba34M
+	jVLuK0BJ7p2aluYRpfDvBx8wxZAG0kE=
+Date: Tue, 7 May 2024 16:07:18 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Subject: Re: [PATCH v2 1/7] dt-bindings: pci: xilinx-nwl: Add phys
+To: Rob Herring <robh@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ linux-pci@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ devicetree@vger.kernel.org
+References: <20240506161510.2841755-1-sean.anderson@linux.dev>
+ <20240506161510.2841755-2-sean.anderson@linux.dev>
+ <20240507200640.GA955773-robh@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20240507200640.GA955773-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 May 2024 23:07:13 +0300
-Message-Id: <D13OM6OQ0QRS.SSJJRFNR92LJ@kernel.org>
-Cc: "Jonathan Corbet" <corbet@lwn.net>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Stephen Rothwell"
- <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] Documentation: tpm: Add TPM security docs toctree entry
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Bagas Sanjaya" <bagasdotme@gmail.com>, "Linux Documentation"
- <linux-doc@vger.kernel.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240506105936.37073-1-bagasdotme@gmail.com>
-In-Reply-To: <20240506105936.37073-1-bagasdotme@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon May 6, 2024 at 1:59 PM EEST, Bagas Sanjaya wrote:
-> Stephen Rothwell reports htmldocs warning when merging tpmdd tree for
-> linux-next:
->
-> Documentation/security/tpm/tpm-security.rst: WARNING: document isn't incl=
-uded in any toctree
->
-> Add toctree entry for TPM security docs to fix above warning.
->
-> Fixes: ddfb3687c538 ("Documentation: add tpm-security.rst")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20240506162105.42ce2ff7@canb.a=
-uug.org.au/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/security/tpm/index.rst | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/security/tpm/index.rst b/Documentation/securit=
-y/tpm/index.rst
-> index f27a17f60a9602..fa593d960040a9 100644
-> --- a/Documentation/security/tpm/index.rst
-> +++ b/Documentation/security/tpm/index.rst
-> @@ -5,6 +5,7 @@ Trusted Platform Module documentation
->  .. toctree::
-> =20
->     tpm_event_log
-> +   tpm-security
->     tpm_tis
->     tpm_vtpm_proxy
->     xen-tpmfront
->
-> base-commit: 152585665f0f6b89e67ed6d04c17b18d1f0f4077
+On 5/7/24 16:06, Rob Herring wrote:
+> On Mon, May 06, 2024 at 12:15:04PM -0400, Sean Anderson wrote:
+>> Add phys properties so Linux can power-on/configure the GTR
+>> transcievers.
+>> 
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>> 
+>> Changes in v2:
+>> - Remove phy-names
+>> - Add an example
+>> 
+>>  Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
+>> index 426f90a47f35..693b29039a9b 100644
+>> --- a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
+>> +++ b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
+>> @@ -61,6 +61,10 @@ properties:
+>>    interrupt-map:
+>>      maxItems: 4
+>>  
+>> +  phys:
+>> +    minItems: 1
+>> +    maxItems: 4
+> 
+> I assume this is 1 phy per lane, but don't make me assume and define it.
+> 
+> Rob
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+It's one per lane. I'll add that to the description.
 
-I'll apply asap
-
-BR, Jarkko
+--Sean
 
