@@ -1,135 +1,152 @@
-Return-Path: <linux-kernel+bounces-171834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731BC8BE944
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:38:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2178BE961
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FBA1F27494
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52E7FB2A33D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EC416C85B;
-	Tue,  7 May 2024 16:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfo07i9Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B03B16C84C;
-	Tue,  7 May 2024 16:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB6F16C858;
+	Tue,  7 May 2024 16:34:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C622316C453;
+	Tue,  7 May 2024 16:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099617; cv=none; b=mxWgu4OCiGuKiCuDzX9WWzvrE657axGQIHhEc80oirqF5DcWwtTjjrTFhJPxuGV3tkLr7RRMA1gjN7lWOe9ZQWs/MUV8QvzdayUTfiTYuLW/JPERuQBPlJSb07SEb/5TEaTqKlQldmKGiWlTu4MC9QLNXNHIK5Jv6bCN3Kbur88=
+	t=1715099661; cv=none; b=FJDQDKmoZYztIJ1rX4CUBcnUJmvskM9A3L6XULOsySQdmJTiRft+kUrGatwa5SZovDStODpKpaoCipp5kAqYAQYOVtEZN2iKZrZJr0/AEltPSfvN/u761WDqK+ASZWc0/uwfGKhaMBQqVwrQARYzSvDNxyEb9WM9SDT9d/8Du6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099617; c=relaxed/simple;
-	bh=h6S4jaOC0aV8EtTLZZAvbBGuhtbnGCg7d9YmTgoY+Wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bWhFjwjBnC4Zfm83tKL0iO1jXtllS5bGbylydpZtvGn7Kh8jcMm7UakoFbETs5ZJy93Wdcst/RyJCASucI11GXSn/CtoxQqz2PrkrlBfwrld2AUYVoTlYydpMPVmTxCj9kPvwqkb4EBCJil9aFEZ2ECXM+HP8R7Tdm5Jt1um8RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfo07i9Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED7CDC2BBFC;
-	Tue,  7 May 2024 16:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715099616;
-	bh=h6S4jaOC0aV8EtTLZZAvbBGuhtbnGCg7d9YmTgoY+Wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nfo07i9Yx7hl5j/5Lh2CU6EkQ6awdzkCSZmBGF1pzDf4W3+b5lL0ozYtstVp7MP6K
-	 wU+Ha9YotBvgHkjUhXi2UV5f1KNdKyTjmWz86IJ1K3nHKNuSc2o95jGyBO/Gk2rfcR
-	 f7K5bBoEGXk1mUj7smvmBP5TbIeZlWQdp4jrPWhUCYcDITk++1CJhr87GHS9A4dyBI
-	 7TaUXKYUcBgC1P9TDjbUVHKB2URiJhYXqR41bwhtGicYWZnJ1rmh1dB0wKPARiJmR3
-	 IWgzMZR7XkMw9BzLUWsF/XcqdXQyaVmUWo/sarL11K8cTBQDveUlMwv8l6Gt3p3eBo
-	 OOJgxpF53Fktw==
-Date: Tue, 7 May 2024 17:33:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch,
-	dianders@chromium.org, linus.walleij@linaro.org,
-	krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-	conor+dt@kernel.org, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	xuxinxiong@huaqin.corp-partner.google.com
-Subject: Re: [PATCH v4 6/7] dt-bindings: display: panel: Add compatible for
- IVO t109nw41
-Message-ID: <20240507-thriving-spew-0636f8447512@spud>
-References: <20240507135234.1356855-1-yangcong5@huaqin.corp-partner.google.com>
- <20240507135234.1356855-7-yangcong5@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1715099661; c=relaxed/simple;
+	bh=iRYaj26xe3Mr9cMwrKwc53RE8huH+KTl5l/a7Ec9pW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uwa/jNZRQBmrGWBGB58aImbAbi6UWDikaidOIQIicOMUUGGEHbi6LdR46M9Vu+j7IB8Ohu/tm7P1L9CdOOh5cJEm81FL7LwnOX9tuyyT0ZZv/vT1navkqjRKEhaWBNSl1YRshFE0m5ob44ozLDiBXb4IUvTw19GozWk4sLbCPEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7BA01063;
+	Tue,  7 May 2024 09:34:42 -0700 (PDT)
+Received: from [10.1.34.181] (XHFQ2J9959.cambridge.arm.com [10.1.34.181])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FFA83F587;
+	Tue,  7 May 2024 09:34:15 -0700 (PDT)
+Message-ID: <518dd1e3-e31a-41c3-b488-9b75a64b6c8a@arm.com>
+Date: Tue, 7 May 2024 17:34:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="s6rXDa8KkkcgOAA6"
-Content-Disposition: inline
-In-Reply-To: <20240507135234.1356855-7-yangcong5@huaqin.corp-partner.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests/openat2: fix clang build failures:
+ -static-libasan, LOCAL_HDRS
+Content-Language: en-GB
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Alexey Gladkov <legion@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
+ linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ llvm@lists.linux.dev
+References: <20240504044336.14411-1-jhubbard@nvidia.com>
+ <8fdefaa9-675e-4b37-9456-896b9989d18f@arm.com>
+ <9e346b64-0a7c-4eb9-88c4-8fb6cf65b33f@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <9e346b64-0a7c-4eb9-88c4-8fb6cf65b33f@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 07/05/2024 17:19, John Hubbard wrote:
+> On 5/7/24 12:45 AM, Ryan Roberts wrote:
+>> On 04/05/2024 05:43, John Hubbard wrote:
+> ...
+>> Hi John,
+>>
+>> I sent out a similar fix a couple of weeks ago, see [1]. I don't think it got
+>> picked up though. It takes a slightly different approach, explicitly adding
+>> -static-libsan (note no 'a') for clang, instead of relying on its default.
+>>
+>> And it just drops helpers.h from the makefile altogether, on the assumption that
+>> it was a mistake; its just a header and shouldn't be compiled directly. I'm not
+>> exactly sure what the benefit of adding it to LOCAL_HDRS is?
+> 
+> Ah no, you must not drop headers.h. That's a mistake itself, because
+> LOCAL_HDRS adds a Make dependency; that's its purpose. If you touch
+> helpers.h it should cause a rebuild, which won't happen if you remove it
+> from LOCAL_HDRS.
 
---s6rXDa8KkkcgOAA6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ahh. I was under the impression that the compiler was configured to output the
+list of dependencies for make to track (something like -M, from memory ?). Since
+helpers.h is included from helpers.c I assumed it would be tracked like this - I
+guess its not that simple?
 
-On Tue, May 07, 2024 at 09:52:33PM +0800, Cong Yang wrote:
-> The IVO t109nw41 is a 11.0" WUXGA TFT LCD panel with himax-hx83102
-> controller. Hence, we add a new compatible with panel specific config.
->=20
-> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+Anyway, on the basis that LOCAL_HDRS is the right way to do this, let's go with
+your version and drop mine:
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-Cheers,
-Conor.
+> 
+> The way it works is that lib.mk adds $(LOCAL_HDRS) to the dependencies list,
+> but then filters precisely that same set *out* of the list that it provides
+> to the compile invocation.
+> 
+> The other way to implement this requirement of "some things need to be
+> Make dependencies, and some need to be both dependencies and compilation
+> inputs", is to add everything to the dependency list, but then use a
+> separate list of files to pass to the compiler. For an example of that,
+> see $(EXTRA_FILES) in patch 1/7 [1] of my selftests/x86 cleanup.
+> 
+> [1] https://lore.kernel.org/all/20240503030214.86681-2-jhubbard@nvidia.com/
+> 
+> thanks,
+> John Hubbard
+> 
+>>
+>> [1]
+>> https://lore.kernel.org/linux-kselftest/20240417160740.2019530-1-ryan.roberts@arm.com/
+>>
+>> Thanks,
+>> Ryan
+>>
+>>
+>>> ---
+>>>   tools/testing/selftests/openat2/Makefile | 14 ++++++++++++--
+>>>   1 file changed, 12 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/openat2/Makefile
+>>> b/tools/testing/selftests/openat2/Makefile
+>>> index 254d676a2689..185dc76ebb5f 100644
+>>> --- a/tools/testing/selftests/openat2/Makefile
+>>> +++ b/tools/testing/selftests/openat2/Makefile
+>>> @@ -1,8 +1,18 @@
+>>>   # SPDX-License-Identifier: GPL-2.0-or-later
+>>>   -CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
+>>> -static-libasan
+>>> +CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
+>>>   TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
+>>>   +# gcc requires -static-libasan in order to ensure that Address Sanitizer's
+>>> +# library is the first one loaded. However, clang already statically links the
+>>> +# Address Sanitizer if -fsanitize is specified. Therefore, simply omit
+>>> +# -static-libasan for clang builds.
+>>> +ifeq ($(LLVM),)
+>>> +    CFLAGS += -static-libasan
+>>> +endif
+>>> +
+>>> +LOCAL_HDRS += helpers.h
+>>> +
+>>>   include ../lib.mk
+>>>   -$(TEST_GEN_PROGS): helpers.c helpers.h
+>>> +$(TEST_GEN_PROGS): helpers.c
+>>>
+>>> base-commit: ddb4c3f25b7b95df3d6932db0b379d768a6ebdf7
+>>> prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
+>>
+> 
+> thanks,
 
-> ---
-> Chage since V4:
->=20
-> - No change.
->=20
-> V3: https://lore.kernel.org/all/20240424023010.2099949-7-yangcong5@huaqin=
-=2Ecorp-partner.google.com
->=20
-> Chage since V3:
->=20
-> - Update commit message.
->=20
-> V2: https://lore.kernel.org/all/20240422090310.3311429-7-yangcong5@huaqin=
-=2Ecorp-partner.google.com/
->=20
-> ---
->  .../devicetree/bindings/display/panel/himax,hx83102.yaml        | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx8310=
-2.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx83102.yaml
-> index 53a6ace75ada..f65b47cad0d4 100644
-> --- a/Documentation/devicetree/bindings/display/panel/himax,hx83102.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/himax,hx83102.yaml
-> @@ -18,6 +18,8 @@ properties:
->        - enum:
->            # Boe nv110wum-l60 11.0" WUXGA TFT LCD panel
->            - boe,nv110wum-l60
-> +          # IVO t109nw41 11.0" WUXGA TFT LCD panel
-> +          - ivo,t109nw41
->            # STARRY himax83102-j02 10.51" WUXGA TFT LCD panel
->            - starry,himax83102-j02
->        - const: himax,hx83102
-> --=20
-> 2.25.1
->=20
-
---s6rXDa8KkkcgOAA6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjpX2wAKCRB4tDGHoIJi
-0hRuAP9ycIFgKcITLc5QzLZdzt7wCDXhxk2Hpe97pGBjNdmvOQEAwbDwk94WQkCi
-mm9z4rFd5Rg0Kkb40XtZ8mo3Co025QQ=
-=/muk
------END PGP SIGNATURE-----
-
---s6rXDa8KkkcgOAA6--
 
