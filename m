@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-171564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F98BE5C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:24:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA12F8BE5CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DE481F23032
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB2041C22018
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1BF16C84B;
-	Tue,  7 May 2024 14:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEDD16D301;
+	Tue,  7 May 2024 14:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FZOYk/qm"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7NPxJIF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D8116C686
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9178D16C860;
+	Tue,  7 May 2024 14:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091692; cv=none; b=HDIpuJjPHl2R+rQ1IvkyLJCgi8Q3H02lz+bDtD0h88vVGZo+HoRyAGGFWNCE6WqYk2LPqx7xnQD+ozHMP0ziiE0lekAsP7sPmrSt3loCpRIhsIdKj6fEiW4H7cgK2IbbJ4+EQQqJItf6I+qdtsTDUyeUr923O0BgsY2/ZHJqYqE=
+	t=1715091696; cv=none; b=f4IUUiw7a9QWyeVvto97Hkx63jFluxHvH+PCT7jzODZV4JYsvhN60VYu1ieVOa2mUZfwCl0lNAPxYz8MZjtpjw8xvfhKdQWNNPTt/M0xczaXKxuSeZ4PhAVJ5iCnAO0dtMCBST4Xi+8Eu+63la4pRbW2ikJs/djkL8cQQ9NKro4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091692; c=relaxed/simple;
-	bh=8QYdibYVRNGlJBkqihgTrWLMvE6OLOwqy6jEWIRcti8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mbC+57uHV70/8w55TtS+wTQL4IflWM8IKZdIdCK5hUvAIpj+NVDHJnX+bFubvySewfKKruSmmLM5JTG+52cK5srGgmKZvZdVEGHuHr6LAgOAeQl9ni89bNE4g8HsNhmvP/PwF/jYwamZlqwM3ksunwMKRZQW+qXcTpDNlBjEYt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FZOYk/qm; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de54ccab44aso6489442276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715091690; x=1715696490; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WlQ1ODIcC8LnzvsFQdv3tqPlhpmjYXCiPBeyIiWiI7o=;
-        b=FZOYk/qmgGxpQKKrmMyDY5df994gwzVMb+ejlxrGSqcP1HxZ8qofU8HUg9SqiNnL45
-         029oQAeOXM7oUx8N4zSfZ6Dike+MnZZ3b7zAAdYf0fy7PZZU2i8c810m3LJBkf7f3xwb
-         +xm7DRTKM1H/dhb/qABxLdiawlpIejGtVzwT2wE75O5KKrlH4X+/9SCHFpnGM4eCAjah
-         TaX9VlBgTqnvCVwCNhbth5x9IFdB5hwr4zol0qUCLVpDQi+RE4vCrJ2x0NEpS6Pu0OuY
-         /8sq8ZdORlhuuOglfY3tJk9TL6ff3pXWjhofWep5frsDmqDyHh9ivsq+0lp2+pBvt2ol
-         mCsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715091690; x=1715696490;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WlQ1ODIcC8LnzvsFQdv3tqPlhpmjYXCiPBeyIiWiI7o=;
-        b=lK1jBH3U7BxNdyf9fP3FAcew6D5PSbz++UGMTJSynJAjgPxhLSZB6zXfcOKyLW4fLk
-         8Z9UJNEBYedlQtmfsXRAOU8NIX7T6/9rAkGQiFuMYGXpihwO5aH5yrycvxKbZ3n1rmso
-         yk5B7WMb8ilh3nYKmGn0/EaMjRlHuGfdNZ6NRky/oj3jl8weniZ1SOqmAm/LLQ6q6lTP
-         i2m2tOZbAVP4iPHUqsFxNiXnopHOPBrJX5nPj8xebToy0jVmDFbrAvtdvJl1xsk5zmxS
-         R8y7S+4UUEF6gL06qYBMVzoU0ya1pZDoVvWuzZfjsPknGbqSETxoCraFTtpRWtnz2AJ0
-         aNCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkBYQ2vZ5AXsQtD2Kc7GHYbiCpPP/Yf7nkGz5xwfHwdzyzU320m95T/WtMkZNmSSmFfFa4g/Bp+S7QRKnStPZlSn4CLnWm6ARUKpF9
-X-Gm-Message-State: AOJu0YxBJZlQfkw/UfXVusaeJly21ERRp7Xgqw5ItIlLTb/C1mhzCQlm
-	EKlU3/o96uny7G6IYTbWhj+8+fUn9QQRDtqIP5LYSzXAVebYCuDTPBGO+vGgMr3Efatsi0MOWYV
-	lkA==
-X-Google-Smtp-Source: AGHT+IGQflJmsb6ITkvKxK5+27cDVP96WKoxLdJLDdOq9myYIbuYllja2Yh8BEpJiRr7bbUZVOQJEVjPros=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1004:b0:de4:7be7:1c2d with SMTP id
- w4-20020a056902100400b00de47be71c2dmr4460818ybt.11.1715091690487; Tue, 07 May
- 2024 07:21:30 -0700 (PDT)
-Date: Tue, 7 May 2024 07:21:28 -0700
-In-Reply-To: <8a6c88c7457f9677449b0be3835c7844b34b4e8a.camel@intel.com>
+	s=arc-20240116; t=1715091696; c=relaxed/simple;
+	bh=i2E5f+dB1EUwb3tuR1XJwg1cOzf13xFovo4QS6A7gTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ughg8s7quCo4z6KBP6OfVf5C25dZkQ4JMaCEktFQ2nWi6uQAzOtaYslTvJkvm9B+hTVZTRFHzMSa7ja2AC8h4OBwMvovPJUqjhAEcSTUky727u2k0TBEAtJk8uLpYubsAy2VhmPKGYrzrYmIT1IULsWFTdW86aEQ1lOknktcESo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7NPxJIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EDAC2BBFC;
+	Tue,  7 May 2024 14:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715091696;
+	bh=i2E5f+dB1EUwb3tuR1XJwg1cOzf13xFovo4QS6A7gTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V7NPxJIFUnhj41GEADsCnTt0O/mg9WsB7JFfNkseRXukJoeOZ7qfekt2H2oYKxvPc
+	 sDhp9VrS+Umsdf3lq0jV8eFnQr+zUVxom9DrXDbXlYy/bILEaD4zWk1zsP4+nZuBU5
+	 C5kvWCmM2I0YCP8nn8dBqHcVxDv6KW7z2Scu3eeKK03RXxXn1x8QFHcL2TjbuBwjtQ
+	 9ptcQRePaqfexMQIVr1Eu8Zbg6tiHT+Rn759rMZ6hbT5sRaWBrbkoB/G/jo8hm3Da3
+	 4HLSBBiSSv00c9b25uLBnYJZberuqKLnBBt/2f/PkK8joNdyafr4/87Y+yhQ4cd7Fh
+	 dob8ZjGFpFaKw==
+Date: Tue, 7 May 2024 07:21:33 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Kees Cook <keescook@chromium.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] wifi: nl80211: Avoid address calculations via out of
+ bounds array indexing
+Message-ID: <20240507142133.GB2746430@thelio-3990X>
+References: <20240424220057.work.819-kees@kernel.org>
+ <20240425181342.GA657080@dev-arch.thelio-3990X>
+ <10256004963b6e1a1813c6f07c5d21abfc843070.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240219074733.122080-1-weijiang.yang@intel.com>
- <20240219074733.122080-25-weijiang.yang@intel.com> <ZjLNEPwXwPFJ5HJ3@google.com>
- <e39f609f-314b-43c7-b297-5c01e90c023a@intel.com> <038379acaf26dd942a744290bde0fc772084dbe9.camel@intel.com>
- <ZjlovaBlLicFb6Z_@google.com> <8a6c88c7457f9677449b0be3835c7844b34b4e8a.camel@intel.com>
-Message-ID: <Zjo46HkBg2eKYMc7@google.com>
-Subject: Re: [PATCH v10 24/27] KVM: x86: Enable CET virtualization for VMX and
- advertise to userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "john.allen@amd.com" <john.allen@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Weijiang Yang <weijiang.yang@intel.com>, 
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10256004963b6e1a1813c6f07c5d21abfc843070.camel@sipsolutions.net>
 
-On Mon, May 06, 2024, Rick P Edgecombe wrote:
-> I don't immediately see what trouble will be in giving kernel IBT a disable
-> parameter that doesn't touch X86_FEATURE_IBT at some point in the future.
+On Tue, May 07, 2024 at 12:46:46PM +0200, Johannes Berg wrote:
+> On Thu, 2024-04-25 at 11:13 -0700, Nathan Chancellor wrote:
+> > On Wed, Apr 24, 2024 at 03:01:01PM -0700, Kees Cook wrote:
+> > > Before request->channels[] can be used, request->n_channels must be set.
+> > > Additionally, address calculations for memory after the "channels" array
+> > > need to be calculated from the allocation base ("request") rather than
+> > > via the first "out of bounds" index of "channels", otherwise run-time
+> > > bounds checking will throw a warning.
+> > > 
+> > > Reported-by: Nathan Chancellor <nathan@kernel.org>
+> > > Fixes: e3eac9f32ec0 ("wifi: cfg80211: Annotate struct cfg80211_scan_request with __counted_by")
+> > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > 
+> > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> > 
+> 
+> How do you get this tested? We have the same, and more, bugs in
+> cfg80211_scan_6ghz() which I'm fixing right now, but no idea how to
+> actually get the checks done?
 
-Keeping X86_FEATURE_IBT set will result in "ibt" being reported in /proc/cpuinfo,
-i.e. will mislead userspace into thinking IBT is supported and fully enabled by
-the kernel.  For a security feature, that's a pretty big issue.
+You'll need a toolchain with __counted_by support, which I believe is
+only clang 18+ at this point (I have prebuilts available at [1]), and
+CONFIG_UBSAN_BOUNDS enabled, then they should just pop up in dmesg.
 
-To fudge around that, we could add a synthetic feature flag to let the kernel
-tell KVM whether or not it's safe to virtualize IBT, but I don't see what value
-that adds over KVM checking raw host CPUID.
+[1]: https://mirrors.edge.kernel.org/pub/tools/llvm/
+
+Cheers,
+Nathan
 
