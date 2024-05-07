@@ -1,80 +1,45 @@
-Return-Path: <linux-kernel+bounces-171482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78CA48BE4E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:56:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B7B8BE4E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3982828BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D54771C2375B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AC615EFBC;
-	Tue,  7 May 2024 13:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lKiwXRgo"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA32C15EFDF;
+	Tue,  7 May 2024 13:53:56 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C04315EFAE;
-	Tue,  7 May 2024 13:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C577615EFAE
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090023; cv=none; b=CjBEEdw2YKzJ6kbPm9YmVidBeMtnT7r4u74oqn4LIQPumtFFr9h8TeraKNlm1qQkxw467LQrekn57Qx/Ft2lswAPTbTiGEb1NeyBOCJtPQavBXPh/dF+2pyFwjPCtpOPgYpCGUiBYSsnQVQl/eVANtTNupmrp+94gEb81Z/d1+0=
+	t=1715090036; cv=none; b=D5k10VNqM3T4Hoqfj5aPopUaLJXKdkwOksNFGxKVHy8RIavC7uMctkKf44KqBZltLKMBDx4CMElU+X3LaTtHhJwdMAHfy1229BkjG99nWuZcNmIEAAi+56qUmrRpXlXID+ScdEqfUG4uZqF92UYqewMWY2QuiBuOB8VzPlQKGW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090023; c=relaxed/simple;
-	bh=QSB7S/LhI6JWUqm9lJDQdaIp2gPu/DOcCrLhezWQFN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EcqWfrvTRivf87cCt3YZ62ltYbkhbcFK71TDa7awhkXoykZlJs0Ciln6d89eKbbxHKF+ipH2QWLUDpLqajnTVQvcHsRsz/lVh72fbJm0TaPtm9+bwA1whkKnV6Nhuzk74A3+FtS81/A52HddqCt2ftlS0ZAPUTVcIIYxV40pkNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lKiwXRgo; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447DgAWK027989;
-	Tue, 7 May 2024 13:53:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=5Cllnt0584C2d9JWXBonYHexJ7Kt7quU4B5rCiNuDu4=;
- b=lKiwXRgoC38gQkjgwSLux11Ivt5uzNtzAGnhwzeyq3tIY/tNbTya041ia3bALWUanSq/
- 8rdrTJKGXyoDRZYAF/xZnvnOB/tv7G4SZg5VFn1K8Y4eGGhuFWeAhRJ0vnR0r7IzR/EF
- w/Vjyt3zOqY/W0JPwe/U8qhELx3fhIilUr0Igfrc4sj2AllfLGTIlj39S3/iM/guGx2n
- x5N4LAq5RLHd8RuOhRnGDaAejy2+A/B9SaaTABz/wdH68l9BqApPUchehPOLGY4QUoKq
- 6Mx4t/krvpJF6Sw4Duhs22GBS0suJVo0kp5U7589/DS5ykLvKnOWV8gYlPdDq+Yb5quI uw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyndn011x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 13:53:40 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447DrdtA015788;
-	Tue, 7 May 2024 13:53:39 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyndn011t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 13:53:39 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447ClfdS010584;
-	Tue, 7 May 2024 13:53:38 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xx0bp6f86-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 13:53:38 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447DrXUG56754622
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 May 2024 13:53:35 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EFBF020043;
-	Tue,  7 May 2024 13:53:32 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6CCC220040;
-	Tue,  7 May 2024 13:53:32 +0000 (GMT)
-Received: from [9.171.75.172] (unknown [9.171.75.172])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 May 2024 13:53:32 +0000 (GMT)
-Message-ID: <f121b42b-bde5-4a40-a61b-5c8a97a25827@linux.ibm.com>
-Date: Tue, 7 May 2024 15:53:32 +0200
+	s=arc-20240116; t=1715090036; c=relaxed/simple;
+	bh=alx+N3tB3mWJOHYdmXWrKl8FRBhlljKhCrlkTIOaJBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ufGMUhcz060bKd2y+XVAKkOiLyToKAkCpQZFTCg9HhOpr73wSJ5OYnhCtbLdqD1vn1mHpfheighGF1ulKk7uCpvcSeK3EoC3w3QjW0Y9/NXNepFTr6KTbMfqcFF8aYgotaNgj6Jpj+OAWfsmz9+RgNjbYjMNxOtzlXQtRn2gGKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VYfnQ5tdwzNw3W;
+	Tue,  7 May 2024 21:51:06 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 943C318007D;
+	Tue,  7 May 2024 21:53:52 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 21:53:51 +0800
+Message-ID: <da24d8bb-3723-48fa-86f4-8b24457d3556@huawei.com>
+Date: Tue, 7 May 2024 21:53:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,96 +47,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] s390/pkey: use kvfree_sensitive() to fix Coccinelle
- warning
-To: Jules Irenge <jbi.octave@gmail.com>, svens@linux.ibm.com
-Cc: borntraeger@linux.ibm.com, agordeev@linux.ibm.com, gor@linux.ibm.com,
-        hca@linux.ibm.com, freude@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <ZjkRlmoCtpsR-bBC@octinomon.home>
-Content-Language: de-DE
-From: Holger Dengler <dengler@linux.ibm.com>
-In-Reply-To: <ZjkRlmoCtpsR-bBC@octinomon.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jISLAJNWvulb0UUZFACxiJDomZXIgCFj
-X-Proofpoint-ORIG-GUID: aqUcxu8K29swAtnzzdbpRUSbrsi2gEUv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_07,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2404010000
- definitions=main-2405070095
+Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
+ boundaries
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Yang Shi <shy828301@gmail.com>
+CC: Matthew Wilcox <willy@infradead.org>, Yang Shi
+	<yang@os.amperecomputing.com>, <riel@surriel.com>, <cl@linux.com>,
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, Ze Zuo <zuoze1@huawei.com>
+References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
+ <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
+ <Zav3UK7ESNxCMjyP@casper.infradead.org>
+ <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
+ <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
+ <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
+ <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
+ <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
+ <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
+ <1dc9a561-55f7-4d65-8b86-8a40fa0e84f9@arm.com>
+ <6016c0e9-b567-4205-8368-1f1c76184a28@huawei.com>
+ <2c14d9ad-c5a3-4f29-a6eb-633cdf3a5e9e@redhat.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <2c14d9ad-c5a3-4f29-a6eb-633cdf3a5e9e@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-On 06/05/2024 19:21, Jules Irenge wrote:
-> Replace memzero_expliocit() and kfree() with kvfree_sensitive() to fix
-> warnings reported by Coccinelle
 
-Thanks Jules for pointing that out. But instead of using kvfree_sensitive() I would recommend kfree_sensitive() here. We're not on a performance critical path so kfree_sensitive() would be in my opinion the better choice, because we don't need to take care about the right size.
 
-> WARNING opportunity for kfree_sensitive/kvfree_sensitive (line 1506)
-> WARNING opportunity for kfree_sensitive/kvfree_sensitive (line 1643)
-> WARNING opportunity for kfree_sensitive/kvfree_sensitive (line 1770)
+On 2024/5/7 19:13, David Hildenbrand wrote:
 > 
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-> ---
-> Changes in v2:
->  - merges all patches that fixe same problem into one
+>> https://github.com/intel/lmbench/blob/master/src/lat_mem_rd.c#L95
+>>
+>>> suggest. If you want to try something semi-randomly; it might be 
+>>> useful to rule
+>>> out the arm64 contpte feature. I don't see how that would be 
+>>> interacting here if
+>>> mTHP is disabled (is it?). But its new for 6.9 and arm64 only. 
+>>> Disable with
+>>> ARM64_CONTPTE (needs EXPERT) at compile time.
+>> I don't enabled mTHP, so it should be not related about ARM64_CONTPTE,
+>> but will have a try.
+
+After ARM64_CONTPTE disabled, memory read latency is similar with 
+ARM64_CONTPTE enabled(default 6.9-rc7), still larger than align anon 
+reverted.
+
 > 
->  drivers/s390/crypto/pkey_api.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
+> cont-pte can get active if we're just lucky when allocating pages in the 
+> right order, correct Ryan?
 > 
-> diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
-> index dccf664a3d95..e1dd7e0bdfd4 100644
-> --- a/drivers/s390/crypto/pkey_api.c
-> +++ b/drivers/s390/crypto/pkey_api.c
-> @@ -1503,8 +1503,7 @@ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
->  		rc = pkey_keyblob2pkey(kkey, ktp.keylen, ktp.protkey.protkey,
->  				       &ktp.protkey.len, &ktp.protkey.type);
->  		pr_debug("%s pkey_keyblob2pkey()=%d\n", __func__, rc);
-> -		memzero_explicit(kkey, ktp.keylen);
-> -		kfree(kkey);
-> +		kvfree_sensitive(kkey, ktp.keylen);
-
-kfree_sensitive(kkey);
-
->  		if (rc)
->  			break;
->  		if (copy_to_user(utp, &ktp, sizeof(ktp)))
-> @@ -1640,8 +1639,7 @@ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
->  					&ktp.protkey.type);
->  		pr_debug("%s pkey_keyblob2pkey2()=%d\n", __func__, rc);
->  		kfree(apqns);
-> -		memzero_explicit(kkey, ktp.keylen);
-> -		kfree(kkey);
-> +		kvfree_sensitive(kkey, ktp.keylen);
-
-kfree_sensitive(kkey);
-
->  		if (rc)
->  			break;
->  		if (copy_to_user(utp, &ktp, sizeof(ktp)))
-> @@ -1767,8 +1765,7 @@ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
->  					protkey, &protkeylen, &ktp.pkeytype);
->  		pr_debug("%s pkey_keyblob2pkey3()=%d\n", __func__, rc);
->  		kfree(apqns);
-> -		memzero_explicit(kkey, ktp.keylen);
-> -		kfree(kkey);
-> +		kvfree_sensitive(kkey, ktp.keylen);
-
-kfree_sensitive(kkey);
-
->  		if (rc) {
->  			kfree(protkey);
->  			break;
-
--- 
-Mit freundlichen Grüßen / Kind regards
-Holger Dengler
---
-IBM Systems, Linux on IBM Z Development
-dengler@linux.ibm.com
 
