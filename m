@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-170703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838E48BDAC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:46:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9298BDAC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5AF282BC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:46:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617561F21EBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A826BFDD;
-	Tue,  7 May 2024 05:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FuNCQ0Fc"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0656BB20;
-	Tue,  7 May 2024 05:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD24C6BFC5;
+	Tue,  7 May 2024 05:50:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C60D6BB20;
+	Tue,  7 May 2024 05:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715060807; cv=none; b=PdgPJxZkuKTN29O8PlB2ybhDO35V79ZBuWOI9FHlLzTsoDmaqyzmCu9tdMNPwiFw46Owk2PhitQVTffviQNtXdpi8b0b+jf0hW9SKPd/72jBJzEKQVSOwNOtNatcU5TqIkUmIIDrQ+wb03NiuIGGtEBcj8YN85a/xXW6PVnqXZU=
+	t=1715061034; cv=none; b=MxS68HjrQgDcharyZPCauNmpXYNNx5YmW9zfNoilnMLTMoQ9kmLKoQX+cYsqbxImCmk/6dKAwXLTlYqY+al1aSK/8/ar6NMy2CXUVTCrr8LarRXlLfWeajubxFEV87FA+ol6me8ZlULVqmYFIpplPknp9t3unq1vox52g6PReVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715060807; c=relaxed/simple;
-	bh=/NxMfXX51LM6wRVaE17ulyFtkVct5TM0jpzpKe/PK9U=;
+	s=arc-20240116; t=1715061034; c=relaxed/simple;
+	bh=/W6dzYssMBIkOqmW8TDIbDK8oNlXxHa/fxO/udxGjWU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MrkHHrYmtT682O6mdbMY5bFf2hLQbB+JatsMPK47kO8kQUuC/kKWlZ9S+quHcexENezVS9w5mLS8XpzgUIXFvB3mmMdN7OYnepwc52I1Ay1X6JXc26GdDHzg269cLreTB5rjLNNPI5bfqvNirUoRYc49jeFd4ULtDF6XOcOHto0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FuNCQ0Fc; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715060797;
-	bh=/NxMfXX51LM6wRVaE17ulyFtkVct5TM0jpzpKe/PK9U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FuNCQ0FcD+ZiIfF/od4b4YLkcRCXp0rGoT+N7WjM9oDvvlxsjT6MHIJpOjY9CAeLi
-	 lbBqMMTrBcbEomZO8hEKDPeNiifXlvgQ5BefORRhZ1Nl4clkVZeQIRufHGARJ6C4Gw
-	 ng2QdkYlG4zyiHeI4HnDVEmdka24eWcpTLlh2c12W7tw2yxbzZ0CTP2kdUhrl8mvuH
-	 4gC+cNIrBnJ4z2e0d93ltIPinESo7lf5c/8fM3QHzetcQ2B0ERSZl6sqToa+s+mZpE
-	 su/MOeBms3n85AwVi5jrTulqPOCdt3gcitgUIVAxz94JxzVbcaoK99ml7BLHEgj7Yy
-	 jy7JMOcnJtY9w==
-Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 93DFB3781FE9;
-	Tue,  7 May 2024 05:46:34 +0000 (UTC)
-Message-ID: <0e56241a-859b-45d6-bc7e-da2ed894d01a@collabora.com>
-Date: Tue, 7 May 2024 11:16:32 +0530
+	 In-Reply-To:Content-Type; b=c+lsBR5MI74hzIFYpqKBhlafeWl1bo5q4sgEfvtMJutwt+xIjXLYUxntgmFLYOq+ldTfxMFY45M116PP3lVKlhDP/6bc4xdj48f6E1IUh+tigujh4m6Zx0D0M96xgYTCoFuiZBPbHbpILsdgx9Y3AYxdkaJ0KO4YNP19x+ssmNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32A7F1042;
+	Mon,  6 May 2024 22:50:56 -0700 (PDT)
+Received: from [10.163.37.41] (unknown [10.163.37.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06D393F587;
+	Mon,  6 May 2024 22:50:21 -0700 (PDT)
+Message-ID: <f6bcac4a-ba21-48dc-94f5-e1f1e1ac37a4@arm.com>
+Date: Tue, 7 May 2024 11:20:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,123 +41,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/5] drm/ci: generate testlist from build
+Subject: Re: [PATCH 10/17] coresight: Move struct coresight_trace_id_map to
+ common header
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
- robdclark@gmail.com, david.heidelberg@collabora.com,
- guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
- mcanal@igalia.com, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
- amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org,
- linux-kernel@vger.kernel.org
-References: <20240430091121.508099-1-vignesh.raman@collabora.com>
- <20240430091121.508099-3-vignesh.raman@collabora.com>
- <k7sepoksttro3dgxxtwxfmlxwv5w5zn3aeso7p24mm3n74bo45@kx2dpe2qkqgo>
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <k7sepoksttro3dgxxtwxfmlxwv5w5zn3aeso7p24mm3n74bo45@kx2dpe2qkqgo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
+ coresight@lists.linaro.org, suzuki.poulose@arm.com, mike.leach@linaro.org
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-11-james.clark@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240429152207.479221-11-james.clark@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Dmitry,
 
-On 30/04/24 15:47, Dmitry Baryshkov wrote:
-> On Tue, Apr 30, 2024 at 02:41:18PM +0530, Vignesh Raman wrote:
->> Stop vendoring the testlist into the kernel. Instead, use the
->> testlist from the IGT build to ensure we do not miss renamed
->> or newly added tests.
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
->>   drivers/gpu/drm/ci/build-igt.sh  |   23 +
->>   drivers/gpu/drm/ci/igt_runner.sh |    9 +-
->>   drivers/gpu/drm/ci/testlist.txt  | 2761 ------------------------------
->>   3 files changed, 28 insertions(+), 2765 deletions(-)
->>   delete mode 100644 drivers/gpu/drm/ci/testlist.txt
->>
->> diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
->> index 500fa4f5c30a..cedc62baba1e 100644
->> --- a/drivers/gpu/drm/ci/build-igt.sh
->> +++ b/drivers/gpu/drm/ci/build-igt.sh
->> @@ -26,6 +26,29 @@ meson build $MESON_OPTIONS $EXTRA_MESON_ARGS
->>   ninja -C build -j${FDO_CI_CONCURRENT:-4} || ninja -C build -j 1
->>   ninja -C build install
->>   
->> +set +ex
->> +export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib64
->> +while read -r line; do
->> +    if [ "$line" = "TESTLIST" ] || [ "$line" = "END TESTLIST" ]; then
->> +        continue
->> +    fi
->> +
->> +    tests=$(echo "$line" | tr ' ' '\n')
->> +
->> +    for test in $tests; do
->> +        output=$(/igt/libexec/igt-gpu-tools/"$test" --list-subtests)
->> +
->> +        if [ -z "$output" ]; then
->> +            echo "$test"
->> +        else
->> +            echo "$output" | while read -r subtest; do
->> +                echo "$test@$subtest"
->> +            done
->> +        fi
->> +    done
->> +done < /igt/libexec/igt-gpu-tools/test-list.txt > /igt/libexec/igt-gpu-tools/testlist.txt
->> +set -ex
+
+On 4/29/24 20:51, James Clark wrote:
+> The trace ID maps will need to be created and stored by the core and
+> Perf code so move the definition up to the common header.
 > 
-> Is the list in sync between x86 and arm/arm64 IGT builds? Is there a
-> chance of having a safety net here?
+> Signed-off-by: James Clark <james.clark@arm.com>
 
-We need to handle arm/arm64 cases also. IGT is not generating test-list 
-for arm and it is fixed now with 
-https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/commit/1cf83083f855894dd287d9cf84bbcc2952b52d02
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-Will uprev IGT to latest commit to include this fix. Thanks.
-
-Regards,
-Vignesh
-
->> +
->>   mkdir -p artifacts/
->>   tar -cf artifacts/igt.tar /igt
->>   
->> diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
->> index f1a08b9b146f..20026612a9bd 100755
->> --- a/drivers/gpu/drm/ci/igt_runner.sh
->> +++ b/drivers/gpu/drm/ci/igt_runner.sh
->> @@ -59,25 +59,26 @@ fi
->>   
->>   curl -L --retry 4 -f --retry-all-errors --retry-delay 60 -s ${FDO_HTTP_CACHE_URI:-}$PIPELINE_ARTIFACTS_BASE/$ARCH/igt.tar.gz | tar --zstd -v -x -C /
->>   
->> +TESTLIST="/igt/libexec/igt-gpu-tools/testlist.txt"
->>   
->>   # If the job is parallel at the gitab job level, take the corresponding fraction
->>   # of the caselist.
->>   if [ -n "$CI_NODE_INDEX" ]; then
->> -    sed -ni $CI_NODE_INDEX~$CI_NODE_TOTAL"p" /install/testlist.txt
->> +    sed -ni $CI_NODE_INDEX~$CI_NODE_TOTAL"p" $TESTLIST
->>   fi
->>   
->>   # core_getversion checks if the driver is loaded and probed correctly
->>   # so run it in all shards
->> -if ! grep -q "core_getversion" /install/testlist.txt; then
->> +if ! grep -q "core_getversion" $TESTLIST; then
->>       # Add the line to the file
->> -    echo "core_getversion" >> /install/testlist.txt
->> +    echo "core_getversion" >> $TESTLIST
->>   fi
->>   
->>   set +e
->>   igt-runner \
->>       run \
->>       --igt-folder /igt/libexec/igt-gpu-tools \
->> -    --caselist /install/testlist.txt \
->> +    --caselist $TESTLIST \
->>       --output /results \
->>       $IGT_SKIPS \
->>       $IGT_FLAKES \
+> ---
+>  .../hwtracing/coresight/coresight-trace-id.c  |  1 +
+>  .../hwtracing/coresight/coresight-trace-id.h  | 19 -------------------
+>  include/linux/coresight.h                     | 18 ++++++++++++++++++
+>  3 files changed, 19 insertions(+), 19 deletions(-)
 > 
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+> index af5b4ef59cea..19005b5b4dc4 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (c) 2022, Linaro Limited, All rights reserved.
+>   * Author: Mike Leach <mike.leach@linaro.org>
+>   */
+> +#include <linux/coresight.h>
+>  #include <linux/coresight-pmu.h>
+>  #include <linux/cpumask.h>
+>  #include <linux/kernel.h>
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+> index 3797777d367e..49438a96fcc6 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+> @@ -32,10 +32,6 @@
+>  #include <linux/bitops.h>
+>  #include <linux/types.h>
+>  
+> -
+> -/* architecturally we have 128 IDs some of which are reserved */
+> -#define CORESIGHT_TRACE_IDS_MAX 128
+> -
+>  /* ID 0 is reserved */
+>  #define CORESIGHT_TRACE_ID_RES_0 0
+>  
+> @@ -46,21 +42,6 @@
+>  #define IS_VALID_CS_TRACE_ID(id)	\
+>  	((id > CORESIGHT_TRACE_ID_RES_0) && (id < CORESIGHT_TRACE_ID_RES_TOP))
+>  
+> -/**
+> - * Trace ID map.
+> - *
+> - * @used_ids:	Bitmap to register available (bit = 0) and in use (bit = 1) IDs.
+> - *		Initialised so that the reserved IDs are permanently marked as
+> - *		in use.
+> - * @pend_rel_ids: CPU IDs that have been released by the trace source but not
+> - *		  yet marked as available, to allow re-allocation to the same
+> - *		  CPU during a perf session.
+> - */
+> -struct coresight_trace_id_map {
+> -	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
+> -	DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
+> -};
+> -
+>  /* Allocate and release IDs for a single default trace ID map */
+>  
+>  /**
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index f09ace92176e..c16c61a8411d 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -218,6 +218,24 @@ struct coresight_sysfs_link {
+>  	const char *target_name;
+>  };
+>  
+> +/* architecturally we have 128 IDs some of which are reserved */
+> +#define CORESIGHT_TRACE_IDS_MAX 128
+> +
+> +/**
+> + * Trace ID map.
+> + *
+> + * @used_ids:	Bitmap to register available (bit = 0) and in use (bit = 1) IDs.
+> + *		Initialised so that the reserved IDs are permanently marked as
+> + *		in use.
+> + * @pend_rel_ids: CPU IDs that have been released by the trace source but not
+> + *		  yet marked as available, to allow re-allocation to the same
+> + *		  CPU during a perf session.
+> + */
+> +struct coresight_trace_id_map {
+> +	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
+> +	DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
+> +};
+> +
+>  /**
+>   * struct coresight_device - representation of a device as used by the framework
+>   * @pdata:	Platform data with device connections associated to this device.
 
