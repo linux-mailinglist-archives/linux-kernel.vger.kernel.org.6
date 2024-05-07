@@ -1,133 +1,206 @@
-Return-Path: <linux-kernel+bounces-172033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3683B8BEC45
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:07:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1852E8BEC4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2BA1C231B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:07:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9EDFB232F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4F916DEC0;
-	Tue,  7 May 2024 19:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010CB16F0E0;
+	Tue,  7 May 2024 19:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UQ4COlZi"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lb84cuJQ"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE1916D9C8
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7A516EBFD
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715108853; cv=none; b=bxyR/YtxHBEu194ttuTrRAteB2creJknGtbVZRNhyuUSxtXtZ32yePIXi9JLWQZb29mai32AT/X/cQLbRFXMWoekWSjn1FblU8JaviZ+qz8Vz99U/9aPGQdqU68/pep0jzWlLUio2CkB9uPhcO3t8rcWENTG3dZ6s9s8bh15in4=
+	t=1715108868; cv=none; b=ZvMUTR227TZXcJAfYbN5XHFQRbOyFiDP1/UzmLe/ITYRTCfPL5v/jFLx2YTt/J1OYXqdBC03+FmKckZlYsWnp7hETaWZLAbRASdksRu4sJIR7KUaSdErA79hLvi9ot35sfowQfv6Nk2xud7uSVhScC5cAlBlJJDfXXyGkdkHdO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715108853; c=relaxed/simple;
-	bh=pui840tsR5Yet33PCWgvY2wZoLY0nvaSbhvNkKxiwJY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O0sSao7P2CG0t9PjOBvXBHO+jdMj4C/i+lCpXX6Rk5644UqkxZaDvPBH2UfXOL17EuqIT0bPMrzRO6TByozXYE9iSr/+n5HFQI4Oa3AZc8S8cwAK0P4cDo8/0PBH3+oedcoK3sDgb40AFR9fn0htIZUE5OPYmYAp3l+A9XYALCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UQ4COlZi; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59a5f81af4so918586766b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:07:30 -0700 (PDT)
+	s=arc-20240116; t=1715108868; c=relaxed/simple;
+	bh=9K/bO5jtlWAadEx++bJ4tBnwyCoDvk5e6sU6qqppTJc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=J7FyLcuI610QWDjpubJNTEkE+venc4wBtUSmHTyX2z8Z0HOvcXB+GhpRsgmMlgN+hl50p+IRkv7AhRTi1q3BxTdoCZmUnSTbC/uwYUSzmPW3op8iLddmMRvbKq36S/z3/BL9DXouKZ/hdUSk8Omt+3mohqCoHnTyS3GRUMhJ/Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lb84cuJQ; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-5c65e666609so3690832a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:07:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715108849; x=1715713649; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JwU1IWNzhlSP5EH9iyMHaFmRpSbbE8IFJCVgZMlAkcM=;
-        b=UQ4COlZi1wjGRec1vXSHfd/ePwofzv5i+nayllj0aKOQVMkogpronwS7fiNKGmJYdc
-         REVt1UaVKAKyPpoa8plwTreCFTeU3qc2gfW4ylySKcUh3P80ZgAPmXXBjy+U3z68P0a7
-         6wtqLOMLsQfLwo6VHZ4W8c4W0n2CIrr86nD1I=
+        d=google.com; s=20230601; t=1715108866; x=1715713666; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jkQu4Jm3xj+OSWk/nhy3+Jt5eXwFDQEAw7ll75hZ8tw=;
+        b=Lb84cuJQCVpWPod3fTIPvQb3Nm1Rf2NGWNrgl9RX53l4L8anb8uMsdJD+nz4GGYcIY
+         4sWzPkbwSMk+thBfJNoxWBEUVIUbp/bHAYnzqyyHnsxuuOE4b24KobqlLhGE4AvHI1JV
+         FHEcjL7wkeIe+SvlK1Hbomduy+gplLYdBEhbD//ozHLVvSHr8dgawJd5Kij/UtnLepQr
+         Ze3TY8K9OiuAE3B/iQyPJ0HhxpocuMGP6mfjOma2kM0vr2IoEc4RmAP60XuCf+ipKGoF
+         3t11FG5teEJj6bSmq7kIOGOV4QEA1ZOAp0rR2q7ugbwCmpPuLc5JJJsyeuOMZBtHGQvg
+         camw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715108849; x=1715713649;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JwU1IWNzhlSP5EH9iyMHaFmRpSbbE8IFJCVgZMlAkcM=;
-        b=jBGBh5z5x+1Bws3nC1rwDm/jhaH6g+xGJN118Tv68W0gpuzxORj+J1TdS6OEbFSrmE
-         5E5lUwfZ6PFmIKE8bvFaWOyL8EJ+w5qMcc7ijcD9Yh5+JEsGI8GmonRmMzUjYk7maPnf
-         oc9nhbf03uLtPgSv6f5zkG3FUApvU98p68jTqmZsniDZdSd1jv7j0MhluIMLhznc+jOF
-         PWiHcKmOFwf4PQIReIkCZdGGauRokA1NryR8U2AY5IxOrYcR4axcJZHYt40mA9/pcRMO
-         rlQDuft0o5gvPWCHFVKaXH2lq/1qMYvbTmoXT1jb73TZrPvupKbkbtZcOqZgTiRQzw1z
-         iQag==
-X-Forwarded-Encrypted: i=1; AJvYcCVvjI+qdVSqrYtrNkwqLJhUzHoNV2kxOPYWH8T9qsHflYTCUtaftDeCFn4f8Oei46QtBiPeVfKmrdqZ+XcIQkhlX8MCHVNQapPRIQdE
-X-Gm-Message-State: AOJu0YzRDiaXstY49ERmVmCqrAhPjSEqRUXHwA2lQ9s1WGdYGp7hp70e
-	EEtQAks/Fxg70JHeHIv9rdLSTEmPrDwXQP/bZaMx0g6OQBIqJ6uFFriCj5qIhPbJ3A0LyuZRe7k
-	9y636cw==
-X-Google-Smtp-Source: AGHT+IFNXFm+GFjbDBdDFbFSW94KSS9dvmrTomdqJ7ToLhDZTIKKho/hh1kXCohu2aSedXgL7RtbnQ==
-X-Received: by 2002:a50:cdd9:0:b0:572:6aaf:e0d3 with SMTP id 4fb4d7f45d1cf-5731d9b78d4mr398358a12.7.1715108849149;
-        Tue, 07 May 2024 12:07:29 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id bd14-20020a056402206e00b00572bd30320esm6655077edb.82.2024.05.07.12.07.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 12:07:28 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59a5f81af4so918579466b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:07:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXCEWfHzas8dbyGI5R8IAa2P269fYt3s55xxKrn5e2eLnAar9r1xfHFxFrjvK2UAl1aCo6rIv91Q2dP6f7yJpRcOcOUTEhwhR1Jnse4
-X-Received: by 2002:a17:906:1957:b0:a59:a977:a157 with SMTP id
- a640c23a62f3a-a59fb9f209dmr23097766b.73.1715108847432; Tue, 07 May 2024
- 12:07:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715108866; x=1715713666;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jkQu4Jm3xj+OSWk/nhy3+Jt5eXwFDQEAw7ll75hZ8tw=;
+        b=sRf75qp1FOK+te/81sBuLeaFNgoT3PPUiUGHlRT/jGFLTfdWvp/W6+4SFYONV12FK0
+         wAsHpg1L/ubOqbaLGt5dQUfl67OZLi+fZjU6+37OhwlGwj9PcJAEhhboRMtj8S8IoRpz
+         PUpOEUf66H0Pqwi3FvxjAYocHckokhHWSaKh0UQBApYopqJLOvULb/t+qwJm/daDi9M/
+         L9nleQiFWfTVmPb+MrmRjnkfkI4+bQNKPsNUh6x10BfYR8+ZWC0WYDMokwix6rcxqZwq
+         7vZiY4NVc+wguVSetu774R5ZaDxwRRQm+7dUAYdO3eF0gTzB7vPOqaaFpZeflq9CBDHa
+         XyyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMyyZv9+nW/IyKThKh2BWemzE7ccDJjLH4VGw2gVFauys8iP9EoCFG6w5AskTTKn7n32IiZ6TfTU8JY2TsIaUXh5hxuqCVgQX9dQ9D
+X-Gm-Message-State: AOJu0YwXkwEudfA1+Vb4znDlb7Ncm4fmIkTvzut0l1IOVTY9E1BZMOh3
+	b1VY+ULgGMtGrdvGU5tgozZ2wjvBgqmjZ76YzxbPBi3XpOVYBgNl8tK7QOaOwmcXUmZb5QXg/Dy
+	daw==
+X-Google-Smtp-Source: AGHT+IEgjxdsHk9aJmOIaJyY9cp6EJfT5579+ZXn0lQR+zEfJ/cnb/Xx+FkIFQJQtpXQchgkEeeXdrdRsVg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:fe18:0:b0:5d6:cfc:2f39 with SMTP id
+ 41be03b00d2f7-62f23220b0fmr23804a12.11.1715108865796; Tue, 07 May 2024
+ 12:07:45 -0700 (PDT)
+Date: Tue, 7 May 2024 12:07:44 -0700
+In-Reply-To: <9252b68e-2b6a-6173-2e13-20154903097d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com> <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
-In-Reply-To: <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 7 May 2024 12:07:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Message-ID: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Simon Ser <contact@emersion.fr>, Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
+ <9252b68e-2b6a-6173-2e13-20154903097d@amd.com>
+Message-ID: <Zjp8AIorXJ-TEZP0@google.com>
+Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
+ SEV-ES guests
+From: Sean Christopherson <seanjc@google.com>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: pbonzini@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 7 May 2024 at 11:04, Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
->
-> > I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
-> > too, if this is possibly a more common thing. and not just DRM wants
-> > it.
-> >
-> > Would something like that work for you?
->
-> Yes.
->
-> Adding Simon and Pekka as two of the usual suspects for this kind of
-> stuff. Also example code (the int return value is just so that callers know
-> when kcmp isn't available, they all only care about equality):
->
-> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
+On Mon, May 06, 2024, Ravi Bangoria wrote:
+> On 03-May-24 5:21 AM, Sean Christopherson wrote:
+> > On Tue, Apr 16, 2024, Ravi Bangoria wrote:
+> >> Currently, LBR Virtualization is dynamically enabled and disabled for
+> >> a vcpu by intercepting writes to MSR_IA32_DEBUGCTLMSR. This helps by
+> >> avoiding unnecessary save/restore of LBR MSRs when nobody is using it
+> >> in the guest. However, SEV-ES guest mandates LBR Virtualization to be
+> >> _always_ ON[1] and thus this dynamic toggling doesn't work for SEV-ES
+> >> guest, in fact it results into fatal error:
+> >>
+> >> SEV-ES guest on Zen3, kvm-amd.ko loaded with lbrv=1
+> >>
+> >>   [guest ~]# wrmsr 0x1d9 0x4
+> >>   KVM: entry failed, hardware error 0xffffffff
+> >>   EAX=00000004 EBX=00000000 ECX=000001d9 EDX=00000000
+> >>   ...
+> >>
+> >> Fix this by never intercepting MSR_IA32_DEBUGCTLMSR for SEV-ES guests.
+> > 
+> > Uh, what?  I mean, sure, it works, maybe, I dunno.  But there's a _massive_
+> > disconnect between the first paragraph and this statement.
+> > 
+> > Oh, good gravy, it "works" because SEV already forces LBR virtualization.
+> > 
+> > 	svm->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
+> > 
+> > (a) the changelog needs to call that out.
+> 
+> Sorry, I should have called that out explicitly.
+> 
+> >  (b) KVM needs to disallow SEV-ES if
+> > LBR virtualization is disabled by the admin, i.e. if lbrv=false.
+> 
+> That's what I initially thought. But since KVM currently allows booting SEV-ES
+> guests even when lbrv=0 (by silently ignoring lbrv value), erroring out would
+> be a behavior change.
 
-That example thing shows that we shouldn't make it a FISAME ioctl - we
-should make it a fcntl() instead, and it would just be a companion to
-F_DUPFD.
+IMO, that's totally fine.  There are no hard guarantees regarding module params,
 
-Doesn't that strike everybody as a *much* cleaner interface? I think
-F_ISDUP would work very naturally indeed with F_DUPFD.
+> > Alternatively, I would be a-ok simply deleting lbrv, e.g. to avoid yet more
+> > printks about why SEV-ES couldn't be enabled.
+> > 
+> > Hmm, I'd probably be more than ok.  Because AMD (thankfully, blessedly) uses CPUID
+> > bits for SVM features, the admin can disable LBRV via clear_cpuid (or whatever it's
+> > called now).  And there are hardly any checks on the feature, so it's not like
+> > having a boolean saves anything.  AMD is clearly committed to making sure LBRV
+> > works, so the odds of KVM really getting much value out of a module param is low.
+> 
+> Currently, lbrv is not enabled by default with model specific -cpu profiles in
+> qemu. So I guess this is not backward compatible?
 
-Yes? No?
+I am talking about LBRV being disabled in the _host_ kernel, not guest CPUID.
+QEMU enabling LBRV only affects nested SVM, which is out of scope for SEV-ES.
 
-                       Linus
+> > And then when you delete lbrv, please add a WARN_ON_ONCE() sanity check in
+> > sev_hardware_setup() (if SEV-ES is supported), because like the DECODEASSISTS
+> > and FLUSHBYASID requirements, it's not super obvious that LBRV is a hard
+> > requirement for SEV-ES (that's an understatment; I'm curious how some decided
+> > that LBR virtualization is where the line go drawn for "yeah, _this_ is mandatory").
+> 
+> I'm not sure. Some ES internal dependency.
+> 
+> In any case, the patch simply fixes 'missed clearing MSR Interception' for
+> SEV-ES guests. So, would it be okay to apply this patch as is and do lbrv
+> cleanup as a followup series?
+
+No.
+
+(a) the lbrv module param mess needs to be sorted out.
+(b) this is not a complete fix.
+(c) I'm not convinced it's the right way to fix this, at all.
+(d) there's a big gaping hole in KVM's handling of MSRs that are passed through
+    to SEV-ES guests.
+(e) it's not clear to me that KVM needs to dynamically toggle LBRV for _any_ guest.
+(f) I don't like that sev_es_init_vmcb() mucks with the LBRV intercepts without
+    using svm_enable_lbrv().
+
+Unless I'm missing something, KVM allows userspace to get/set MSRs for SEV-ES
+guests, even after the VMSA is encrypted.  E.g. a naive userspace could attempt
+to migrate MSR_IA32_DEBUGCTLMSR and end up unintentionally disabling LBRV on the
+target.  The proper fix for VMSA being encrypted is to likely to disallow
+KVM_{G,S}ET_MSR on MSRs that are contexted switched via the VMSA.
+
+But that doesn't address the issue where KVM will disable LBRV if userspace
+sets MSR_IA32_DEBUGCTLMSR before the VMSA is encrypted.  The easiest fix for
+that is to have svm_disable_lbrv() do nothing for SEV-ES guests, but I'm not
+convinced that's the best fix.
+
+AFAICT, host perf doesn't use the relevant MSRs, and even if host perf did use
+the MSRs, IIUC there is no "stack", and #VMEXIT retains the guest values for
+non-SEV-ES guests.  I.e. functionally, running with and without LBRV would be
+largely equivalent as far as perf is concerned.  The guest could scribble an MSR
+with garbage, but overall, host perf wouldn't be meaningfully affected by LBRV.
+
+So unless I'm missing something, the only reason to ever disable LBRV would be
+for performance reasons.  Indeed the original commits more or less says as much:
+
+  commit 24e09cbf480a72f9c952af4ca77b159503dca44b
+  Author:     Joerg Roedel <joerg.roedel@amd.com>
+  AuthorDate: Wed Feb 13 18:58:47 2008 +0100
+
+    KVM: SVM: enable LBR virtualization
+    
+    This patch implements the Last Branch Record Virtualization (LBRV) feature of
+    the AMD Barcelona and Phenom processors into the kvm-amd module. It will only
+    be enabled if the guest enables last branch recording in the DEBUG_CTL MSR. So
+    there is no increased world switch overhead when the guest doesn't use these
+    MSRs.
+
+but what it _doesn't_ say is what the world switch overhead is when LBRV is
+enabled.  If the overhead is small, e.g. 20 cycles?, then I see no reason to
+keep the dynamically toggling.
+
+And if we ditch the dynamic toggling, then this patch is unnecessary to fix the
+LBRV issue.  It _is_ necessary to actually let the guest use the LBRs, but that's
+a wildly different changelog and justification.
+
+And if we _don't_ ditch the dynamic toggling, then sev_es_init_vmcb() should be
+using svm_enable_lbrv(), not open coding the exact same thing.
 
