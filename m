@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-171785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE0B8BE8AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:21:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DDA8BE8AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFC71C23357
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF91A1F23748
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C816D4E1;
-	Tue,  7 May 2024 16:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665F316C691;
+	Tue,  7 May 2024 16:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="i2EWCR3b"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VWErID3z"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148B316C45D;
-	Tue,  7 May 2024 16:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497B416ABC4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715098766; cv=none; b=eyGEWAvnj5Q6Hqt4lDRvjpMJyaG8ejtU8sYRopPeTCsEeR6Q9TdWGUzt+w4R/XxYdn1nfla1so3WhD5luP0VZGcPaaravm6AsVk8iBBYQY5XBIDHywWHKAwntahyGcJt2k2+ioQ/c4ErSvMjB4jo/e5LpNBFWs68IlsJpZgZPvc=
+	t=1715098785; cv=none; b=LjI+wOoHWCtbQqMlZSRXphAXMOlXLPWJqsXTKQ8kTOpZTtXONvf0TEKxTF61VKstHW3EQKEIhDRqJSkJcn5ADvLiaa/Sxes/Z3YjoyenyXrePYUeMXV0YJwmYdkw5JSSC524xcvy8C4021vPE9aWpqEZLVGxWACq1Ss3ur3QLtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715098766; c=relaxed/simple;
-	bh=wPfBBBqz4mWAHQz6NwLA3VhGyV0ey36YDnag2Ti6L8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nyb/ItFnLXZrBCqx8KU+JDnIY8ZOLIysI21pyJiqLawIhwQvDWWDpfR0Gnu/L9t53VLLPpAhpofGOPfiUZ0drCx+zyWG+e1jEetZgNcT3ovC9H43pUQBq52g4mIZmMVyVM2gpq5tlItW8RrZRrRz4TFuFtEPLx0xepRB1aO/DUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=i2EWCR3b; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1715098754; bh=wPfBBBqz4mWAHQz6NwLA3VhGyV0ey36YDnag2Ti6L8U=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=i2EWCR3bNy9bWRT9zukZaUGi24OmEe3DfnT3nOg9HZarTot8adruRC2klo9I3yCaY
-	 v1qz3xF8PmF1mfBwz8SkKd2yJE3D6wzt7nXo6y4xfDzk6H+K0xujtzOuo+u2h+sKBm
-	 Vg1wX2wooUyLByC0p64y4rpA+lafXjZszPkfphdk=
-Date: Tue, 7 May 2024 18:19:13 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: linux@roeck-us.net, heikki.krogerus@linux.intel.com, 
-	gregkh@linuxfoundation.org, badhri@google.com, rdbabiera@google.com, 
-	linux-usb@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v1] usb: typec: tcpm: unregister existing source caps
- before re-registration
-Message-ID: <y4lla7vqsrl75qhesmyexq7yvcu6hl6kryh3ctwq5ci3r4mlpw@rsnhfkmlmtt7>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	Amit Sunil Dhamne <amitsd@google.com>, linux@roeck-us.net, heikki.krogerus@linux.intel.com, 
-	gregkh@linuxfoundation.org, badhri@google.com, rdbabiera@google.com, 
-	linux-usb@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20240424223227.1807844-1-amitsd@google.com>
+	s=arc-20240116; t=1715098785; c=relaxed/simple;
+	bh=nuE7Hje15d435noQ6oio6QflofQiQ/LyahZFOtihOUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D34Q0/XyKneCAsv2rnv4+y2nPL2egiYGU1JkxnOWZ8ZrSj1htB8FuTOINVUF7EM3RX93CzKncgzxvIxgC17Q1gbQvXKX9qX2g6/z7GwJXeu8XutlsZxdabW+GLOaweDPWhh7JbKX/enzjRkjY9fCxOklXs+vgJvh0bmX+KvHYBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VWErID3z; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-439656c1b50so18553761cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715098781; x=1715703581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DrlcgV/ss0UWVmE0JQWGJQN7bh+N6Cn4d6Xqz8KuFtk=;
+        b=VWErID3zThFRlwHB6xUsvrzUx4nF4Mqm3er0+LA8p/b0SNTMI3EKLo75bEYGEBaW2J
+         NuET7uledLJF1HlCpn2YGc/py+Ih2f+dJqDI3R3qSWDmud7hJBETw/Mh+vhxt9ic6rk5
+         nmgeFPN6Y43g3I+N5Fqz/GYkHGLeEf489JHlY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715098781; x=1715703581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DrlcgV/ss0UWVmE0JQWGJQN7bh+N6Cn4d6Xqz8KuFtk=;
+        b=Zeoif7SMfGNm/xGcRJccvpbO3DOl4isNvkW5MT5vIzqCDwm308k2kffRV/eDSeGIVp
+         P3KX6l5AFxN0l2lMirAZqAiHEffim4Qh/ZdTqUy3e+qgY9DBYonThExPgW7BL9FKKyYi
+         vurZJR3KEAm2zFJvtvfNKNBZxj7wKXLCGV2Ca9VokubRppgG4iIZbJe+PsPP4DspqHb6
+         urxavdCjJOPlJHwABgNyM8BEWcAw+PfPPV+DERmtQPvNnnb1qa4mt0l9Ql5pJxvZ6KOV
+         tO7T41Wfjf8ZzcmQzrx0QxWhKz1vBBUMlQ4k94V6CB8QbBG0uwSK8JKw82+V9BhLIigE
+         zi3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXcLuQgHa/YjGQMCx0bmJhHqAxnX1DwS95LsClVTYnhPj/ytGRoIQ6nI9u19z4o15hBQuNbRX/0b+0Wgr1obMIl8Jb2FfzKNqdZxE40
+X-Gm-Message-State: AOJu0YxRsdKceD+k7KMKNycm6pf40cEqyPZdDZH0xPEYn1v5WuEYcYnM
+	uh0zGrEsq143I7WCDTYHJaf0joJy9LuZAi4tPWGS3VnLdYkN3X1KvEXg4S2DAnME7O/1IFIrZx8
+	=
+X-Google-Smtp-Source: AGHT+IFAsMQWKmNMT/WJYZOWTIG/S/IcsKkgbxdO5mT7mp53cWu6hNcCakzzxp1OS+qKgQLll27Mcg==
+X-Received: by 2002:a05:622a:5b8f:b0:43a:ecf9:c19d with SMTP id d75a77b69052e-43dbed4c9c7mr2202291cf.40.1715098781542;
+        Tue, 07 May 2024 09:19:41 -0700 (PDT)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
+        by smtp.gmail.com with ESMTPSA id bz6-20020a05622a1e8600b00439c1419553sm6611495qtb.44.2024.05.07.09.19.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 09:19:40 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43d55133609so390311cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:19:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVp8MxQb60141+fLHDDg854T/BO63h5lpQChW3vFRvpHnL1b191zNA4Zr50QxkhjIp2CXG7txepFXQL+v3/yH1pnl7ZBfxT4daYzloI
+X-Received: by 2002:ac8:6ecf:0:b0:43a:e2ea:bfa5 with SMTP id
+ d75a77b69052e-43d984d1473mr2462641cf.17.1715098779928; Tue, 07 May 2024
+ 09:19:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240424223227.1807844-1-amitsd@google.com>
+References: <20240502153234.1.I2052f01c8d209d9ae9c300b87c6e4f60bd3cc99e@changeid>
+In-Reply-To: <20240502153234.1.I2052f01c8d209d9ae9c300b87c6e4f60bd3cc99e@changeid>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 7 May 2024 09:19:24 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WWQiv8WEdjDYXV3i7RSOssnvurq_aNwGU+-EDcVGK=LQ@mail.gmail.com>
+Message-ID: <CAD=FV=WWQiv8WEdjDYXV3i7RSOssnvurq_aNwGU+-EDcVGK=LQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/connector: Add \n to message about demoting connector force-probes
+To: dri-devel@lists.freedesktop.org
+Cc: Rob Clark <robdclark@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Pekka Paalanen <pekka.paalanen@collabora.com>, 
+	Simon Ser <contact@emersion.fr>, Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 24, 2024 at 03:32:16PM GMT, Amit Sunil Dhamne wrote:
-> Check and unregister existing source caps in tcpm_register_source_caps
-> function before registering new ones. This change fixes following
-> warning when port partner resends source caps after negotiating PD contract
-> for the purpose of re-negotiation.
-> 
-> [  343.135030][  T151] sysfs: cannot create duplicate filename '/devices/virtual/usb_power_delivery/pd1/source-capabilities'
-> [  343.135071][  T151] Call trace:
-> [  343.135076][  T151]  dump_backtrace+0xe8/0x108
-> [  343.135099][  T151]  show_stack+0x18/0x24
-> [  343.135106][  T151]  dump_stack_lvl+0x50/0x6c
-> [  343.135119][  T151]  dump_stack+0x18/0x24
-> [  343.135126][  T151]  sysfs_create_dir_ns+0xe0/0x140
-> [  343.135137][  T151]  kobject_add_internal+0x228/0x424
-> [  343.135146][  T151]  kobject_add+0x94/0x10c
-> [  343.135152][  T151]  device_add+0x1b0/0x4c0
-> [  343.135187][  T151]  device_register+0x20/0x34
-> [  343.135195][  T151]  usb_power_delivery_register_capabilities+0x90/0x20c
-> [  343.135209][  T151]  tcpm_pd_rx_handler+0x9f0/0x15b8
-> [  343.135216][  T151]  kthread_worker_fn+0x11c/0x260
-> [  343.135227][  T151]  kthread+0x114/0x1bc
-> [  343.135235][  T151]  ret_from_fork+0x10/0x20
-> [  343.135265][  T151] kobject: kobject_add_internal failed for source-capabilities with -EEXIST, don't try to register things with the same name in the same directory.
-> 
-> Fixes: 8203d26905ee ("usb: typec: tcpm: Register USB Power Delivery Capabilities")
-> Cc: linux-usb@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+Hi,
+
+On Thu, May 2, 2024 at 3:33=E2=80=AFPM Douglas Anderson <dianders@chromium.=
+org> wrote:
+>
+> The debug print clearly lacks a \n at the end. Add it.
+>
+> Fixes: 8f86c82aba8b ("drm/connector: demote connector force-probes for no=
+n-master clients")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  drivers/usb/typec/tcpm/tcpm.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index ab6ed6111ed0..d8eb89f4f0c3 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -2996,7 +2996,7 @@ static int tcpm_register_source_caps(struct tcpm_port *port)
->  {
->  	struct usb_power_delivery_desc desc = { port->negotiated_rev };
->  	struct usb_power_delivery_capabilities_desc caps = { };
-> -	struct usb_power_delivery_capabilities *cap;
-> +	struct usb_power_delivery_capabilities *cap = port->partner_source_caps;
->  
->  	if (!port->partner_pd)
->  		port->partner_pd = usb_power_delivery_register(NULL, &desc);
-> @@ -3006,6 +3006,9 @@ static int tcpm_register_source_caps(struct tcpm_port *port)
->  	memcpy(caps.pdo, port->source_caps, sizeof(u32) * port->nr_source_caps);
->  	caps.role = TYPEC_SOURCE;
->  
-> +	if (cap)
-> +		usb_power_delivery_unregister_capabilities(cap);
+>
+>  drivers/gpu/drm/drm_connector.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This certainly looks like it's asking for use after free on port->partner_source_caps
-later on, since you're not clearing the pointer for the data that you just freed.
+Pushed to drm-misc-fixes:
 
-> +
->  	cap = usb_power_delivery_register_capabilities(port->partner_pd, &caps);
->  	if (IS_ERR(cap))
->  		return PTR_ERR(cap);
-
-This can easily fail if caps contain invalid PDOs, resulting in keeping pointer
-to freed memory in port->partner_source_caps.
-
-Kind regards,
-	o.
-
-> base-commit: 0d31ea587709216d88183fe4ca0c8aba5e0205b8
-> -- 
-> 2.44.0.769.g3c40516874-goog
-> 
+6897204ea3df drm/connector: Add \n to message about demoting connector
+force-probes
 
