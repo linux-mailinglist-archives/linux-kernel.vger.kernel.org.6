@@ -1,255 +1,241 @@
-Return-Path: <linux-kernel+bounces-170750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EB68BDB75
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:29:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3CB8BDB7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6CD1C2139E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:29:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC2DDB2359B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80AD6F08B;
-	Tue,  7 May 2024 06:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D97571739;
+	Tue,  7 May 2024 06:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VbUkpL0k"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="klPOq7Bf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94A76BB4E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D9970CC9;
+	Tue,  7 May 2024 06:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715063387; cv=none; b=elOUsQuyi9tN6QabirV2MbLvblE3HJzLAVhoSy2WyMw4o5LiEjjnnQdpD7weGGw5gRLPvkJN1ZF2OFqCUXrRQfRJa9CMjWXL0WGXZzbEItABQBBiPTSyUCEC/oliop+aJpeCEJihbLJHnSmNvruGsiX6nTJbN+ifLP5iToKzh54=
+	t=1715063425; cv=none; b=Lj0BAQ3jVIDHfdBZ9oBotOjfn7WwdmWBh7D2p132+V/YKI6p7Bv4Q2WivpuUp7iRmxN8s+PhUlxziU1V2EAVdSwNPbCfiCt3T3+F7g2WkjjUn4aYCE7sM+v45uqhHf6lFD1jzTGg0e5r/cfie2rj34ckTfDBE+AdwyigWJ5HbAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715063387; c=relaxed/simple;
-	bh=atp/aVS6XRyaycB+GiGU7MqL3fI66SBjQjST9/hUzWc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ac90I4JOEdwCMM5tUfMdCr/9co44ndS1XGmKrEoVrszgABF975g1pdlAvpE5nXe9M67VvoSBbmirC0nHkY4Z7g0cl8HdB2QRUKFUi8iJghKX2KfHsX1+8jc8cw2huc8PIirmo2u90R35y38mQY7wuGOA+yGmaSd7uKdz6Rfx2Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VbUkpL0k; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59ce1e8609so274241866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715063384; x=1715668184; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HpZEoAqJyFLLuJwwHaEU4Ss44j0+PYHwovy5rYv4HZs=;
-        b=VbUkpL0kOuAdsa9CyxSjT0KOGjd7dEQEvLLDpY2toYTuqa544W1qAv+o67G8GNTUU0
-         w5jmENPs3USO4KTdFSEZX0erGklrKOHGm6G23jNGVXG/UTBvDqrUN7nmN3rx6OhNA9kE
-         kGiWH5HHkV+LJFDJ1R1fUB1Y1tpez441KuV6mO3XpWyCMX5BfUOh7ySUE1yGOdt9CosZ
-         dHpHZ4Dt7yPRyadUSJhfXoYcqMuFl/U2H8QJmwTWGSnFuNUfpjp3t5hD5/ESoX6VRd1w
-         yeY0/kKV4naj8ooS+9p45XUF+7TX6Des+kL+mibs6CAen8t9OVwlqR9SaFG+G/O1vjRF
-         aS2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715063384; x=1715668184;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HpZEoAqJyFLLuJwwHaEU4Ss44j0+PYHwovy5rYv4HZs=;
-        b=IcYruLjlCAY4Bp/2swMI3je6vh6IyXEO2SyNs7MrLA9tyntWAYV1GORIpJYv9KuS1z
-         aCe+OG+BDn5ZqGrBSd1JQk3wUzIjNuVPURIF61Dlj5M9DzrQWg0alsgyCDqKlkyW/pu9
-         IrKABCK6NnSDLDSptuRwBgT53YM1+hk8MuKf9vddlSNf6IjCUEA1Yoy0doaXAOQ9T7EL
-         u9LkD8DTssY9W5wfBP6If6ilHc8RRpJDNj6K+m95tXdFCYwNpD0K+0WCBjkrtimyAkIO
-         b2nkYsUCCTsGVFV3VGXzUlXGVumbYzSsTiqIUAydzKc23dHNWhdwNpdAERuddVuaX7+C
-         OF7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXuWffhkQWTUfAL7NLOx0Vgyl6T1k5XIARUFQGUJG3GI7gKs9W0UyJW2yASMMxHlUyqD61xosqAWGgFx+PnWuDuRwXUfjDSsw40beW
-X-Gm-Message-State: AOJu0YxcjVf55O3Gl8MRj2mVIycxMLJC4ogNbl1z5eKK4Vl09o3g7su+
-	8mSklGGcYv9zSrL0p5V4VQO9j1LfpeyPDFWkf7HSKr1fOaDf2TvoDM6L8G/GrUY=
-X-Google-Smtp-Source: AGHT+IEJgcKo+G/xpGo9QxOwLCrnEdMnA0yLoli/R5ICGZreB03Spa5VseZrIK/Edle5/SOhbPjlaw==
-X-Received: by 2002:a17:907:174d:b0:a59:a5c0:9a40 with SMTP id lf13-20020a170907174d00b00a59a5c09a40mr1170661ejc.25.1715063384141;
-        Mon, 06 May 2024 23:29:44 -0700 (PDT)
-Received: from [10.24.4.35] ([89.207.171.118])
-        by smtp.gmail.com with ESMTPSA id p25-20020a170906141900b00a55a5384986sm6037008ejc.24.2024.05.06.23.29.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 23:29:43 -0700 (PDT)
-Message-ID: <2b0c832c-0e82-4be7-aeb7-eb5ec3711c37@linaro.org>
-Date: Tue, 7 May 2024 08:29:39 +0200
+	s=arc-20240116; t=1715063425; c=relaxed/simple;
+	bh=yI1QXgpwkkvbEH1Ku7BMujWu9zmZZy/s+Vkj0FGX0Gs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=lKMt3qXMXf/eAAoVndobYxniO9MC1VejsLOaMZjKTnnML0nop1PWK1w/PMPZ79jIx89K2KgTHvuy1twnzW4pw2/U28Ii67kKkEeyJZYp1DleElDy56ozPbu5MZyvpKf+3C8NZpixa6bdUOd1keXmSj3syTxqS0IeLnIIawKfGeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=klPOq7Bf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4475lvkK002610;
+	Tue, 7 May 2024 06:30:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id; s=qcppdkim1; bh=D+m2+YkQlZgk
+	Ucb7R1YJIcsm/RN8EUqn1RxqnRme4WU=; b=klPOq7Bfm+Z89TQEUWyOywGJW4ov
+	qMsom6vflRVtTuD2Pd8nV5MtnRhK7f5pU3ckYOicDlU/SD35hwCiHsOJ7JoSNUgt
+	pnBIdGPAiJPzguWCLbsK3D6FIVIg4O/jVwF1jFcE8xnoOA7fhREuO9zfb0LzfqBK
+	sNoo51b0buPMKgy5+d4avHA6NCWTLeiS7FmYeez4R+AIwAe1uZ7OyDm6Su777RsR
+	X/kNoI81eJ7v38YCVgGqQ0j5yvMOkkYpUO6bkTrPRdkVDSDccFPXCaeRMP/SOKF9
+	cWunjdhJnfsZ+AXAwfMONSfEhpw6Vpwvps/u/HjnbGk9qJpZIezdPXDMJA==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyc03gapn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 06:30:11 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 4476U8Wm031230;
+	Tue, 7 May 2024 06:30:08 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 3xwe3kbws4-1;
+	Tue, 07 May 2024 06:30:08 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4476U8ds031221;
+	Tue, 7 May 2024 06:30:08 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-vdadhani-hyd.qualcomm.com [10.213.106.28])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 4476U7je031215;
+	Tue, 07 May 2024 06:30:08 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4047106)
+	id 219685000AB; Tue,  7 May 2024 12:00:06 +0530 (+0530)
+From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+To: andersson@kernel.org, konrad.dybcio@linaro.org,
+        srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
+        quic_anupkulk@quicinc.com, quic_cchiluve@quicinc.com,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Subject: [PATCH v1] slimbus: qcom-ngd-ctrl: Add stream disable support
+Date: Tue,  7 May 2024 12:00:04 +0530
+Message-Id: <20240507063004.21853-1-quic_vdadhani@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bzMpiYyZ9pHrJJCAj_lHQ_qhkwR4rM0g
+X-Proofpoint-GUID: bzMpiYyZ9pHrJJCAj_lHQ_qhkwR4rM0g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_02,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ phishscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=999
+ adultscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2404010003
+ definitions=main-2405070044
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
- and writing touch IC registers
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>
-Cc: Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net,
- Richard Hughes <hughsient@gmail.com>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20240506114752.47204-1-charles.goodix@gmail.com>
- <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
- <ZjmOUp725QTHrfcT@google.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <ZjmOUp725QTHrfcT@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 07/05/2024 04:13, Dmitry Torokhov wrote:
-> On Mon, May 06, 2024 at 02:03:13PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 5/6/24 1:47 PM, Charles Wang wrote:
->>> Export a sysfs interface that would allow reading and writing touchscreen
->>> IC registers. With this interface many things can be done in usersapce
->>> such as firmware updates. An example tool that utilizes this interface
->>> for performing firmware updates can be found at [1].
->>
->> I'm not sure if I'm a fan of adding an interface to export raw register
->> access for fwupdate.
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/input/touchscreen/goodix_fwupload.c
->>
->> Contains update support for older goodix touchscreens and it is not
->> that big. I think it might be better to just have an in kernel fwupdate
->> driver for this and have a sysfs file to which to write the new firmware.
->>
->> Adding Richard Hughes, fwupd maintainer to the Cc. Richard, do you have
->> any input on the suggested method for firmware updating ?
->>
->> If raw register access is seen as a good solution, then I think this
->> should use regmap + some generic helpers (to be written) to export
->> regmap r/w access to userspace.
-> 
-> I think the less code we have in kernel the better, especially if in
-> cases where firmware flashing is not essential for device to work (i.e.
-> it the controller has a flash memory). That said IIRC Mark felt very
-> strongly about allowing regmap writes from userspace... but maybe he
-> softened the stance or we could have this functionality opt-in?
+Currently slimbus driver doesn't support stream disable
+callback, it only supports stream enable callback.
 
-The update code is quite ugly, but we could probably limit the functionnality
-and filtering the registers read/write to only the update registers.
+In slimbus usecase, client is switching to new frequency
+with same channel and calling enable stream callback for
+new frequency but DSP subsystem is crashing as we are switching
+to new frequency with same channel without disabling stream
+for older frequency.
 
-Neil
+Ideally, before switching to another frequency, client should
+call disable stream callback and then enable stream for newer frequency.
 
-> 
->>
->>> [1] https://github.com/goodix/fwupdate_for_berlin_linux
->>
->> Hmm, that tool seems to have some licensing issues there is an Apache License v2.0
->> LICENSE file, but the header of fwupdate.c claims it is confidential ...
->>
->> Regards,
->>
->> Hans
->>
->>
->>> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
->>> ---
->>>   drivers/input/touchscreen/goodix_berlin.h     |  2 +
->>>   .../input/touchscreen/goodix_berlin_core.c    | 52 +++++++++++++++++++
->>>   drivers/input/touchscreen/goodix_berlin_i2c.c |  6 +++
->>>   drivers/input/touchscreen/goodix_berlin_spi.c |  6 +++
->>>   4 files changed, 66 insertions(+)
->>>
->>> diff --git a/drivers/input/touchscreen/goodix_berlin.h b/drivers/input/touchscreen/goodix_berlin.h
->>> index 1fd77eb69..1741f2d15 100644
->>> --- a/drivers/input/touchscreen/goodix_berlin.h
->>> +++ b/drivers/input/touchscreen/goodix_berlin.h
->>> @@ -19,6 +19,8 @@ struct regmap;
->>>   int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
->>>   			struct regmap *regmap);
->>>   
->>> +void goodix_berlin_remove(struct device *dev);
->>> +
->>>   extern const struct dev_pm_ops goodix_berlin_pm_ops;
->>>   
->>>   #endif
->>> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
->>> index e7b41a926..e02160841 100644
->>> --- a/drivers/input/touchscreen/goodix_berlin_core.c
->>> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
->>> @@ -672,6 +672,44 @@ static void goodix_berlin_power_off_act(void *data)
->>>   	goodix_berlin_power_off(cd);
->>>   }
->>>   
->>> +static ssize_t goodix_berlin_registers_read(struct file *filp, struct kobject *kobj,
->>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
->>> +{
->>> +	struct goodix_berlin_core *cd;
->>> +	struct device *dev;
->>> +	int error;
->>> +
->>> +	dev = kobj_to_dev(kobj);
->>> +	cd = dev_get_drvdata(dev);
->>> +
->>> +	error = regmap_raw_read(cd->regmap, (unsigned int)off,
->>> +				buf, count);
->>> +
->>> +	return error ? error : count;
->>> +}
->>> +
->>> +static ssize_t goodix_berlin_registers_write(struct file *filp, struct kobject *kobj,
->>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
->>> +{
->>> +	struct goodix_berlin_core *cd;
->>> +	struct device *dev;
->>> +	int error;
->>> +
->>> +	dev = kobj_to_dev(kobj);
->>> +	cd = dev_get_drvdata(dev);
->>> +
->>> +	error = regmap_raw_write(cd->regmap, (unsigned int)off,
->>> +				 buf, count);
->>> +
->>> +	return error ? error : count;
->>> +}
->>> +
->>> +static struct bin_attribute goodix_berlin_registers_attr = {
->>> +	.attr = {.name = "registers", .mode = 0600},
->>> +	.read = goodix_berlin_registers_read,
->>> +	.write = goodix_berlin_registers_write,
->>> +};
->>> +
->>>   int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
->>>   			struct regmap *regmap)
->>>   {
->>> @@ -743,6 +781,14 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
->>>   
->>>   	dev_set_drvdata(dev, cd);
->>>   
->>> +	error = sysfs_create_bin_file(&cd->dev->kobj,
->>> +				      &goodix_berlin_registers_attr);
-> 
-> If we want to instantiate attributes from the driver please utilize
-> dev_groups in respective driver structures to create and remove the
-> attributes automatically.
-> 
-> Thanks.
-> 
+Hence add support to disable stream via qcom_slim_ngd_disable_stream().
+
+Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+---
+ drivers/slimbus/qcom-ngd-ctrl.c | 70 +++++++++++++++++++++++++++++++++
+ drivers/slimbus/slimbus.h       | 13 ++++++
+ 2 files changed, 83 insertions(+)
+
+diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
+index e0b21f0f79c1..d952827d2e12 100644
+--- a/drivers/slimbus/qcom-ngd-ctrl.c
++++ b/drivers/slimbus/qcom-ngd-ctrl.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2011-2017, The Linux Foundation. All rights reserved.
+ // Copyright (c) 2018, Linaro Limited
++// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ 
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+@@ -1084,6 +1085,74 @@ static int qcom_slim_ngd_enable_stream(struct slim_stream_runtime *rt)
+ 	return ret;
+ }
+ 
++static int qcom_slim_ngd_disable_stream(struct slim_stream_runtime *rt)
++{
++	struct slim_device *sdev = rt->dev;
++	struct slim_controller *ctrl = sdev->ctrl;
++	struct slim_val_inf msg =  {0};
++	u8 wbuf[SLIM_MSGQ_BUF_LEN];
++	u8 rbuf[SLIM_MSGQ_BUF_LEN];
++	struct slim_msg_txn txn = {0,};
++	int i, ret;
++
++	txn.mt = SLIM_MSG_MT_DEST_REFERRED_USER;
++	txn.dt = SLIM_MSG_DEST_LOGICALADDR;
++	txn.la = SLIM_LA_MGR;
++	txn.ec = 0;
++	txn.msg = &msg;
++	txn.msg->num_bytes = 0;
++	txn.msg->wbuf = wbuf;
++	txn.msg->rbuf = rbuf;
++
++	for (i = 0; i < rt->num_ports; i++) {
++		struct slim_port *port = &rt->ports[i];
++
++		if (txn.msg->num_bytes == 0) {
++			wbuf[txn.msg->num_bytes++] = (u8)(SLIM_CH_REMOVE << 6)
++							| (sdev->laddr & 0x1f);
++
++			ret = slim_alloc_txn_tid(ctrl, &txn);
++			if (ret) {
++				dev_err(&sdev->dev, "Fail to allocate TID\n");
++				return -ENXIO;
++			}
++			wbuf[txn.msg->num_bytes++] = txn.tid;
++		}
++		wbuf[txn.msg->num_bytes++] = port->ch.id;
++	}
++
++	txn.mc = SLIM_USR_MC_CHAN_CTRL;
++	txn.rl = txn.msg->num_bytes + 4;
++	ret = qcom_slim_ngd_xfer_msg_sync(ctrl, &txn);
++	if (ret) {
++		slim_free_txn_tid(ctrl, &txn);
++		dev_err(&sdev->dev, "TX timed out:MC:0x%x,mt:0x%x ret:%d\n",
++			txn.mc,	txn.mt, ret);
++		return ret;
++	}
++
++	txn.mc = SLIM_USR_MC_RECONFIG_NOW;
++	txn.msg->num_bytes = 2;
++	wbuf[1] = sdev->laddr;
++	txn.rl = txn.msg->num_bytes + 4;
++
++	ret = slim_alloc_txn_tid(ctrl, &txn);
++	if (ret) {
++		dev_err(ctrl->dev, "Fail to allocate TID ret:%d\n", ret);
++		return ret;
++	}
++
++	wbuf[0] = txn.tid;
++	ret = qcom_slim_ngd_xfer_msg_sync(ctrl, &txn);
++	if (ret) {
++		slim_free_txn_tid(ctrl, &txn);
++		dev_err(&sdev->dev, "TX timed out:MC:0x%x,mt:0x%x ret:%d\n",
++			txn.mc,	txn.mt, ret);
++	}
++
++	return ret;
++}
++
+ static int qcom_slim_ngd_get_laddr(struct slim_controller *ctrl,
+ 				   struct slim_eaddr *ea, u8 *laddr)
+ {
+@@ -1642,6 +1711,7 @@ static int qcom_slim_ngd_ctrl_probe(struct platform_device *pdev)
+ 	ctrl->ctrl.clkgear = SLIM_MAX_CLK_GEAR;
+ 	ctrl->ctrl.get_laddr = qcom_slim_ngd_get_laddr;
+ 	ctrl->ctrl.enable_stream = qcom_slim_ngd_enable_stream;
++	ctrl->ctrl.disable_stream = qcom_slim_ngd_disable_stream;
+ 	ctrl->ctrl.xfer_msg = qcom_slim_ngd_xfer_msg;
+ 	ctrl->ctrl.wakeup = NULL;
+ 	ctrl->state = QCOM_SLIM_NGD_CTRL_DOWN;
+diff --git a/drivers/slimbus/slimbus.h b/drivers/slimbus/slimbus.h
+index 00a7f112574b..21543d125614 100644
+--- a/drivers/slimbus/slimbus.h
++++ b/drivers/slimbus/slimbus.h
+@@ -1,6 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2011-2017, The Linux Foundation
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ #ifndef _DRIVERS_SLIMBUS_H
+@@ -316,6 +317,18 @@ enum slim_transport_protocol {
+ 	SLIM_PROTO_EXT_HALF_DUP,
+ };
+ 
++/*
++ * enum slim_ch_control: Channel control.
++ * Activate will schedule channel and/or group of channels in the TDM frame.
++ * Suspend will keep the schedule but data-transfer won't happen.
++ * Remove will remove the channel/group from the TDM frame.
++ */
++enum slim_ch_control {
++	SLIM_CH_ACTIVATE,
++	SLIM_CH_SUSPEND,
++	SLIM_CH_REMOVE,
++};
++
+ /**
+  * struct slim_stream_runtime  - SLIMbus stream runtime instance
+  *
+-- 
+2.17.1
 
 
