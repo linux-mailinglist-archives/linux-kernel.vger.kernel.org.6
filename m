@@ -1,323 +1,240 @@
-Return-Path: <linux-kernel+bounces-170871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD86D8BDD22
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:26:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5528BDD24
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628AE2834DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361BD283BF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD0A13C91F;
-	Tue,  7 May 2024 08:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A9913C9B7;
+	Tue,  7 May 2024 08:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLETlW+z"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OtKLIAEZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A914087C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715070409; cv=none; b=rgIABIA7qJYwAsDIXEFG6F/em0tnyskUanVGTKo7luupAeSm6FL9a/oNDBmg32SP9GlAZL9F6UE0pqVuXsAe3X8Mt0TeWOoF6RxX6tYgRXjwZ/RRR3nDA8anDFt+CANApdtVYGQt2Xzb19ntw91HltqJHz03dDpdRO/FoHC7G64=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715070409; c=relaxed/simple;
-	bh=5X97teEDwdlg+wj/1dAb6da3SRv06Mi+ZtNsrnpQKJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ULDVlmbSzL/PrO43PDnQoW04YdJgTKXAjJ0rLPSa8Z65gwgvYAV6f9ugp6/lT0mrHXrx/jNjY8iiy9A4hYR5AlWeuWItAl4SUIU92Q0KkaDG3OknpZ8NxS0G9a6J6EwjfvjfpqLbuAyDvXeeoDK/rUVOy7XrH0jMueAHOuj4FR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cLETlW+z; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59b58fe083so416703466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 01:26:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715070406; x=1715675206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ABsOP8SEu68sVFLiASZm/u0Hmy8w+mAVpH8nCUwY0A=;
-        b=cLETlW+zmEL/lBs12DgakGlBsXqjQov1VvyuOhNQRTHzo/vAfkp0oo4Wm6dHNZQwIU
-         X36vnNKE7BxjaoVHIfgFOhKxUVziaO25vV94Oor8IJf6Guka59mkSVhaBUYHQsRd/6Rc
-         IyLreqdAQ84uyy079A5f1+rWU8JN/xJ9bA5NSZt+bjMiajbfiLqqK9TKoTcme8XJpPPR
-         wR+6zlBwynxboI3Lq5f/6rsGEIyPpSwUp4L63d4mYt0O063RoJFFCaz8D5OdJu4lMFXe
-         cISEefW8sldbOdpOxR20CyumaLJwqw14t/qsuQFDYghqw9QU+KkELKxmHh6HqSLXOf0T
-         PKOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715070406; x=1715675206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ABsOP8SEu68sVFLiASZm/u0Hmy8w+mAVpH8nCUwY0A=;
-        b=uNtOzwolg1cvV4tAZ9mBjR0DgEKHgEc2I9wpnUQW1Y6/oPAyRf/DO3SxJQ7Er4RL5/
-         eLd1+9+0+Rum5Wwb95oRJYYu/Pli9nKNXn9Ci3kiCSTK5Q4bOKv0Sygkf5NvB4Un57WM
-         oleS/qXvotBKNgsAeeDuvY1aWSk/rLhIUef+832OIWT6zNOtXJ7S+TrpDZ0QRcBfHL+b
-         hAD9Gld2UNwuWHge9VxGnJD3JM4EAu5/On/Bs8gTUAiA6an7G6SGv4jB075OS92eq3uK
-         L9OmBn496GHLBEeqFCn7VsJVevM6SpjxZhu2v+9qU0TWnBjAOO+HK0zk7/mDQW2U9pT/
-         V9VA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+f4TRWewNjIUNYn+vy1Ts7DQ+32opReAAzJafFyuVLsJ4Tu0i5cWdSQ2Mar6RlWvRD+Yzd0Gk5drld0u0KGIH5Z95Jikaz8EhivMS
-X-Gm-Message-State: AOJu0YzCRH/bQN/02me4kdYNIQeUSBnwnXi1l8AhSz3Z/Ijyuv6X4CxT
-	i3myAvW1EWYNwmprPPYQmua03A6Tdp1ZMSzpkU3phbClPbPf1lGBB33MCcMuqtPP4wGxgxIjRNa
-	bjKTVHo40SSzTFSPbcCTUfwWWMbo=
-X-Google-Smtp-Source: AGHT+IF0jDUUvlcUjVjTQnZ6YPtFqBDAtPQ4FSE7s7+H1V9lbJUvo7JZ6dtpIaCxEfRyi6RpoG4WFbQ41B0qq/63bk8=
-X-Received: by 2002:a50:8755:0:b0:572:a183:49a4 with SMTP id
- 21-20020a508755000000b00572a18349a4mr8345591edv.28.1715070405633; Tue, 07 May
- 2024 01:26:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBCC13C906;
+	Tue,  7 May 2024 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715070439; cv=fail; b=ER5x5mLpXstPHVf3hNtwPtVsP7pcb+tXuNajiCrrdjWWaWqqIjU9e8hrT045khwA1/1PR/dpEf6lL/90InRgi2qkKrmgBILrDBrJMTeyqWNW5uvOgpUR89FmQRUx+Psr/G/m6m2EbjFfzvWGab/NbI0g+DpOaWTswTjPbjGv4Eg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715070439; c=relaxed/simple;
+	bh=za2fFwdMLJYCLlBxAdZEX8b16wtgxEmVy2MCHWBBk3o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JT8ouWrmm8FAQR5M+TIXye3xQ86Q5HLTEP385/UJDIFRo4mJb0Hwi7W4xtgzW6eQNp+7hk8hwgOskTEKKUgvfQNB3185kV3zNUth0six2gMddlmrRbPwKve2NHmf1fQyQCjrT/Ev1o3GtibXYp4CzwBNAjKSyE3dIAN76lXmFbQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OtKLIAEZ; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715070438; x=1746606438;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=za2fFwdMLJYCLlBxAdZEX8b16wtgxEmVy2MCHWBBk3o=;
+  b=OtKLIAEZuKDiL0FbUY1XkvGwytp8TmrBioDokCKEJ8K9WKUGksjZfGfi
+   fbyCDlu33GAcNwZLvvzwq5CI5jK8urFTsrAtztKwkIn1Tp6G81hiR+EN/
+   bAeYsEk8aq4riS9jv2ZdWfTjEeG7JY0mnhWwlWqnM62vjjkVdsB6JBjGS
+   Hn4w6X1xsSMNbB8gL+wP4vkSF7hJq/8OUQcvOBfABPNtzJYA5pY+YH6a/
+   t4lVAfUTP2RAJigYDqju76+fj5Fhn7AvcplqNQ2AajqcUGJMgNDf8OeF4
+   OCVwZ7hqIsQzc3ByqKpRHmG8vKYLNiZO/oOJucofC5LMaxhBeiJ1vAcmR
+   A==;
+X-CSE-ConnectionGUID: KVanxWxMR3qNLpUAaEFM1g==
+X-CSE-MsgGUID: idqGDblsR1CpzoCEzLduUw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10779286"
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="10779286"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 01:26:42 -0700
+X-CSE-ConnectionGUID: 9sNv/EBCS8Cb/+j7G1S37Q==
+X-CSE-MsgGUID: IMDSDoPmRRGU3+uYHXOnFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="33271421"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 May 2024 01:26:42 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 7 May 2024 01:26:40 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Tue, 7 May 2024 01:26:40 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 01:26:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lxZw492UT1ElA3BYX+gsVV2d5bAmnrbJepl3hH4cPANEkPeNZtqsiQfjxvyJWbBsp4X4xXgulSG1UJYjuLN0A5ugYiEYO0nxUnlNPoMtvqxRcK7ZKZtOhbzrfsArgXM6W2zn1dNEh/xOp42QreojeAiOjD6KGJwBPc5jtimCAqsx1AZxbc/tbwpL1GK1rygRrXDo+bTsuKIs9+lDYhPYrKpX/EXwh+HqymnQb+iBcEYu5uo9P6moE8vHHYkpF1Ab9luR8SkjQxG1BgtvIvLiYa/4YojH3hZc++7RuixrQNqUJY+op+Iw3RWY1q1XThtlZzDfUb1KGhckHh6/C8tJ7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SJiY02D17b+6Pp4Zg9CSqx87ln8FVFJvvhKKXlFtUa8=;
+ b=aZq94g8B8e1xLUg+edgsrx7zJ3oMVeWMdUiRxobI8hrv7HM+3cxwJDKZBVXJGZcH4jyVhM4/Ysehe/U6XsiAYhnnqozdvYuIn4nOwmJeFSW9F+3iHPZvZMqpuXIkb4QPmitcXUGaaS8/2X1NLLq5Q6cJmJsdlrAEUa1us7UFXS4uMOqZQBQNZV5R7XDW4SBoUFzeGqUxHNMfLKR2Ee3lcqv4+GnyASlmd10BLs4O+btdmJeXB9NwOHZp4XyF+/dBPUEvDnMMzXQeGw4HCFLP6IZStRm4+2GLSQtDNSmNc37uzqF9AkC2Hjda1Obt7JJIpvOOJrk4y3W8qDxG5c69Zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by IA1PR11MB6171.namprd11.prod.outlook.com (2603:10b6:208:3e9::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.34; Tue, 7 May
+ 2024 08:26:38 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 08:26:38 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: "Zhao, Yan Y" <yan.y.zhao@intel.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
+	<jgg@nvidia.com>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"luto@kernel.org" <luto@kernel.org>, "peterz@infradead.org"
+	<peterz@infradead.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"hpa@zytor.com" <hpa@zytor.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>, "baolu.lu@linux.intel.com"
+	<baolu.lu@linux.intel.com>, "Liu, Yi L" <yi.l.liu@intel.com>
+Subject: RE: [PATCH 1/5] x86/pat: Let pat_pfn_immune_to_uc_mtrr() check MTRR
+ for untracked PAT range
+Thread-Topic: [PATCH 1/5] x86/pat: Let pat_pfn_immune_to_uc_mtrr() check MTRR
+ for untracked PAT range
+Thread-Index: AQHaoEaluFlXp2ccfkynqcQr/+5ZoLGLbskw
+Date: Tue, 7 May 2024 08:26:37 +0000
+Message-ID: <BN9PR11MB5276DA8F389AAE7237C7F48E8CE42@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+ <20240507061924.20251-1-yan.y.zhao@intel.com>
+In-Reply-To: <20240507061924.20251-1-yan.y.zhao@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|IA1PR11MB6171:EE_
+x-ms-office365-filtering-correlation-id: bb03a302-c1b4-4e71-1a20-08dc6e6f6a25
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|7416005|38070700009;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Li62sNZJtDjr7j1dKlkpz7739sxszap+FDXK8uhe9rHYfb5Z4A9uKLgZ0fJl?=
+ =?us-ascii?Q?mn/sSod0yA0A5dvVIYWrrGYicRdiigmhZnX+eE44bGF9uCz7lMF5eWtISdL1?=
+ =?us-ascii?Q?TO7/l9L1c14odbWoDKXrfZVhp1reQ1Z1XajbZVBjNX0Zt5PzlN3E8G/Yezdx?=
+ =?us-ascii?Q?BdKFR4e93lF8pseFC8X7wa0y239bJM939UEBhs6jI23peJmj6hkMNCO7XUwJ?=
+ =?us-ascii?Q?S3exQbYkP3rLxWCAbjnXuPgpoRl7934/VAD51SYlxgnWhwYuSVgNI1Y9JpML?=
+ =?us-ascii?Q?+D24qUwsBQIqC6ifATmouEg2EwzZWnIkQvOgYMgU/iRR8lOJ2lNMT5WVW2rI?=
+ =?us-ascii?Q?N68iMGiIxiMt2ReX4ZA3TxhaC9TiOZoHQgu5NSL5OZjhN5F6ECih/4GnWyx9?=
+ =?us-ascii?Q?wr5BWLCX05FyVtN4A3HxgFcNRpPeK4tO5tn0eMYwLaPDdGjBIM2kLZ9g7NCO?=
+ =?us-ascii?Q?nkRR+GSF58RxdI6uLzM4K3LfXAT5wAD3zG+G8tudug9BA48W0s0SRkaXDnrO?=
+ =?us-ascii?Q?X6jBN8pmIe8+Vi91Kq5Nf7rwMsOCqFgOdn+D9y+tmNo+r9di+HxlLHknWGpC?=
+ =?us-ascii?Q?OwM2TKGc5QqpvIgWvRGlbflzq/xoeWctRRKp93kNI/gR5OoAOzMe5xXjaeh2?=
+ =?us-ascii?Q?PGluyGgm+Li2HjYxu7lkK+W5KNLa6DWw7h6LL4FWWDrq98W8jasIm3z4sjf4?=
+ =?us-ascii?Q?UFYxXQ8E9AxcN2o0tgLSYDKhqebCnrJrNxC+O/AglbUdW7wVtVCLYpQwMYvX?=
+ =?us-ascii?Q?wTr/1aeMXKgqCM0FV8Iz0EwdM0EELbT45AjjReKK989SIcoCERCx7VlOKNyv?=
+ =?us-ascii?Q?ESYPONudBJOg5uCMrSFkdwZMkDhxsYIFbfM5ruEAvCYgULgcJlZqJP2HpTV9?=
+ =?us-ascii?Q?d+IplcDeMFBerIkvNPE6gIAOWmmPsHuBNrM8Ptw1bGjtBVXkRIZLqr1HL/mj?=
+ =?us-ascii?Q?/gan/YXRK3u1WodnjUjxD21+kW8VEl5YbzR+7AxeU10fGr40TgrcPAmy7czR?=
+ =?us-ascii?Q?JvUJBUqYqC0cJPFl21RxBv/efzaz971lg3eS+CvlHB94ZPXcCXoUw0q0GiBe?=
+ =?us-ascii?Q?K2F3qZ1r1lnVMOyIkSvhs2PFvpQAQIgyPX7rXZC/i0DeosByIgzRIZt1YeyI?=
+ =?us-ascii?Q?P9KVMbHS+pLohowlQCoNFEIWQVKl0TpynsOnWp8ABJhUNqJElQ4UEox6IOmb?=
+ =?us-ascii?Q?pwov1iCmtVHscRKhYjVlFKxS3NJXNpfxAZUkecttm/LN8Rh10HDMnA+4Qzv9?=
+ =?us-ascii?Q?+0djH9s74b4AkumBmGwXyFgsjTl9yz5ZqOm533UR3hwaFxURru0PL77W9MKs?=
+ =?us-ascii?Q?KHgrpVB0prZ8XZqeA73/GL9n+zPyfeKc/bknJx+hZMJhtQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(7416005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?3cX+e2A7AHwhZ1znJyo70tYOCXFZz5RQ63Pn+PUiZ2qWtyhcN4vPNo8MmLMa?=
+ =?us-ascii?Q?Bhe/fwXw+6PwHYC2jCQkBFFLwDDnd6Kmk2qe72dXKo579V4m9DvCLAasjuol?=
+ =?us-ascii?Q?TqyRzE2fnT7wfHZ3Svnng1YbovBunIq1uWJY2T4rhkCzlDFbYMdVYlF1Lfvb?=
+ =?us-ascii?Q?zwjFIwjrdCxo9YRZ7xdmEoMjhfx6/AyqYRQcQC9rhFcRl82IKP+XDE+gzloB?=
+ =?us-ascii?Q?m7lZ25g/2kg3/PJwRwagl49fJnUaokhj/mSjoNRSV90fXtQD4EmX0S+ZgHKt?=
+ =?us-ascii?Q?4KnWf4sMjPblENTXfYvxUnM2DzVgQYAnP6R8sMAiiPiyPINyPxwxkTcMojGx?=
+ =?us-ascii?Q?AMnfRPw1QVOndsezigJLt9/S4f2N09xaAb10MtHYQtR8gn8khWP0Wxza+Nig?=
+ =?us-ascii?Q?6M4+Es3Xmcrexib51fly85xjQBX1uoOmlKEFzpPyPCxFWa+JWWje0vMlLZV9?=
+ =?us-ascii?Q?AB7ywVb+EK6a4DS9K2/QZ0wgqIYwNva3Dok4bx5ZV2gddQfpctUorE8SAGf1?=
+ =?us-ascii?Q?eP5tHQlt3TH48UJhB2U7zHRTVwZEXsFOG8UeaKJqpqpUBKAkCtaQ2X9+ZEZ1?=
+ =?us-ascii?Q?A7S+06AHPojnYCwWvwh+a+Nzx+8q4pUVywK3a3yna45FNd8KmUL5nOzTPrwB?=
+ =?us-ascii?Q?UmRTXR/kDcV3xm024OKIF7d3lY4VQzPltygOmx+RSpbd0wcpXa3t+JJ9KEA8?=
+ =?us-ascii?Q?xV8iSYvFNW/iirXpLkFQwgDJZR+hQNrM7hY81VJoEHL4mEnj+90LfSCeQSbC?=
+ =?us-ascii?Q?Jt1+nmV7Cdv9DE73NQFWwFKqs1YzgmkyVrcD2nhkaz2Ms377YZtyG/Jhv8O+?=
+ =?us-ascii?Q?+qGzDuyAjb/s5K+6K7l+Ssyh2flNlT5kp0dIW5GOhU4KHV/GjduAuHn+D//H?=
+ =?us-ascii?Q?yF5OKkq3hITO9OC4xPGp+vWmY6Ve234oSq0zMoqPpDZA63jYmnugVcJfoBtW?=
+ =?us-ascii?Q?qtEQ/wOeQWcqAITQA3NBIDrVlD2l4Um0OBHQyk9zRhJtf79GAqyipEiv9wXe?=
+ =?us-ascii?Q?Pv4U10nH41pR8MomyFpz1F0Xn7ihg/5rKsS6w3Q3iukcCZ2cMAhLbZBCB/7M?=
+ =?us-ascii?Q?EzYyBrrEXuRai2lQcwEQAFdMkWCDL/D4PqX9y/zPnbghDzTr7EB2aZNG5kdM?=
+ =?us-ascii?Q?KelxzPExZHJl07UUm/YncIVO8Yhd8OefcC5FSYIZKX3yvEd2wcXUu70CvMSj?=
+ =?us-ascii?Q?Se5MPw7FnIEyEibGIYx0F06h/oxke3KWCPq0DVSptvkTkAnveEPbQz2b/NxV?=
+ =?us-ascii?Q?dUlLDxdvaLoOJqkTCi478j22cSmSVu1mMBFEz/0pm8VM/8DYnIVKYO3QDF4+?=
+ =?us-ascii?Q?iLQDBJ6RM7lEBEK14RyRt5zrWRiMRIt4EkMe3ydVZNAHs8GIzWwWwno7z63W?=
+ =?us-ascii?Q?4OOzuUrXsfqmrG+AUpDHd+JnfyC1P5JlSpGC7pTNexJ2lcQyt3sLT98q8YDR?=
+ =?us-ascii?Q?eYG+Iuta2w2YuPiJelV2hVAHO8Oca0smd88S44C/QoTITWusswy9AhwxWBvi?=
+ =?us-ascii?Q?dY/H53elL4BUh4BH5XFPXtdBvYMCmdocn1znZkfmsOOhxeflNBPsp20ngfUS?=
+ =?us-ascii?Q?eyJ7uyj0kMapLlLcGYM3CE7RG5UJdGyt4b/ffIX+?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-4-ioworker0@gmail.com>
- <e0b8a282-973f-41f7-a878-4a287bab81ea@linux.alibaba.com> <CAK1f24=gc7VojzSDyNck-03L03UWR4AFxji8Rw+xMKBg1_M7fw@mail.gmail.com>
-In-Reply-To: <CAK1f24=gc7VojzSDyNck-03L03UWR4AFxji8Rw+xMKBg1_M7fw@mail.gmail.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Tue, 7 May 2024 16:26:34 +0800
-Message-ID: <CAK1f24=HYM8zAw88apModHZdaLu849PH=JKPrZ3nxGqQWWzoyQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com, david@redhat.com, 
-	21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
-	shy828301@gmail.com, xiehuan09@gmail.com, libang.li@antgroup.com, 
-	wangkefeng.wang@huawei.com, songmuchun@bytedance.com, peterx@redhat.com, 
-	minchan@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb03a302-c1b4-4e71-1a20-08dc6e6f6a25
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2024 08:26:38.0769
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xaDCPSNtP6Ovmj78VwYqcBU99bt9DgRzJvTRDqGZQOpfDSexmk5M1U9dLUaziuBBTINLfsNyqgOJImeIsSbAjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6171
+X-OriginatorOrg: intel.com
 
-On Tue, May 7, 2024 at 2:32=E2=80=AFPM Lance Yang <ioworker0@gmail.com> wro=
-te:
->
-> Hey Baolin,
->
-> Thanks a lot for taking time to review!
->
-> On Tue, May 7, 2024 at 12:01=E2=80=AFPM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
-> >
-> >
-> >
-> > On 2024/5/1 12:27, Lance Yang wrote:
-> > > When the user no longer requires the pages, they would use
-> > > madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
-> > > typically would not re-write to that memory again.
-> > >
-> > > During memory reclaim, if we detect that the large folio and its PMD =
-are
-> > > both still marked as clean and there are no unexpected references
-> > > (such as GUP), so we can just discard the memory lazily, improving th=
-e
-> > > efficiency of memory reclamation in this case.  On an Intel i5 CPU, r=
-eclaiming 1GiB of lazyfree THPs using
-> > > mem_cgroup_force_empty() results in the following runtimes in seconds
-> > > (shorter is better):
-> > >
-> > > --------------------------------------------
-> > > |     Old       |      New       |  Change  |
-> > > --------------------------------------------
-> > > |   0.683426    |    0.049197    |  -92.80% |
-> > > --------------------------------------------
-> > >
-> > > Suggested-by: Zi Yan <ziy@nvidia.com>
-> > > Suggested-by: David Hildenbrand <david@redhat.com>
-> > > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > > ---
-> > >   include/linux/huge_mm.h |  9 +++++
-> > >   mm/huge_memory.c        | 73 ++++++++++++++++++++++++++++++++++++++=
-+++
-> > >   mm/rmap.c               |  3 ++
-> > >   3 files changed, 85 insertions(+)
-> > >
-> > > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > > index 38c4b5537715..017cee864080 100644
-> > > --- a/include/linux/huge_mm.h
-> > > +++ b/include/linux/huge_mm.h
-> > > @@ -411,6 +411,8 @@ static inline bool thp_migration_supported(void)
-> > >
-> > >   void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned lon=
-g address,
-> > >                          pmd_t *pmd, bool freeze, struct folio *folio=
-);
-> > > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long=
- addr,
-> > > +                        pmd_t *pmdp, struct folio *folio);
-> > >
-> > >   static inline void align_huge_pmd_range(struct vm_area_struct *vma,
-> > >                                       unsigned long *start,
-> > > @@ -492,6 +494,13 @@ static inline void align_huge_pmd_range(struct v=
-m_area_struct *vma,
-> > >                                       unsigned long *start,
-> > >                                       unsigned long *end) {}
-> > >
-> > > +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
-> > > +                                      unsigned long addr, pmd_t *pmd=
-p,
-> > > +                                      struct folio *folio)
-> > > +{
-> > > +     return false;
-> > > +}
-> > > +
-> > >   #define split_huge_pud(__vma, __pmd, __address)     \
-> > >       do { } while (0)
-> > >
-> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > index 145505a1dd05..90fdef847a88 100644
-> > > --- a/mm/huge_memory.c
-> > > +++ b/mm/huge_memory.c
-> > > @@ -2690,6 +2690,79 @@ static void unmap_folio(struct folio *folio)
-> > >       try_to_unmap_flush();
-> > >   }
-> > >
-> > > +static bool __discard_trans_pmd_locked(struct vm_area_struct *vma,
-> > > +                                    unsigned long addr, pmd_t *pmdp,
-> > > +                                    struct folio *folio)
-> > > +{
-> > > +     struct mm_struct *mm =3D vma->vm_mm;
-> > > +     int ref_count, map_count;
-> > > +     pmd_t orig_pmd =3D *pmdp;
-> > > +     struct mmu_gather tlb;
-> > > +     struct page *page;
-> > > +
-> > > +     if (pmd_dirty(orig_pmd) || folio_test_dirty(folio))
-> > > +             return false;
-> > > +     if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd=
-)))
-> > > +             return false;
-> > > +
-> > > +     page =3D pmd_page(orig_pmd);
-> > > +     if (unlikely(page_folio(page) !=3D folio))
-> > > +             return false;
-> > > +
-> > > +     tlb_gather_mmu(&tlb, mm);
-> > > +     orig_pmd =3D pmdp_huge_get_and_clear(mm, addr, pmdp);
-> > > +     tlb_remove_pmd_tlb_entry(&tlb, pmdp, addr);
-> > > +
-> > > +     /*
-> > > +      * Syncing against concurrent GUP-fast:
-> > > +      * - clear PMD; barrier; read refcount
-> > > +      * - inc refcount; barrier; read PMD
-> > > +      */
-> > > +     smp_mb();
-> > > +
-> > > +     ref_count =3D folio_ref_count(folio);
-> > > +     map_count =3D folio_mapcount(folio);
-> > > +
-> > > +     /*
-> > > +      * Order reads for folio refcount and dirty flag
-> > > +      * (see comments in __remove_mapping()).
-> > > +      */
-> > > +     smp_rmb();
-> > > +
-> > > +     /*
-> > > +      * If the PMD or folio is redirtied at this point, or if there =
-are
-> > > +      * unexpected references, we will give up to discard this folio
-> > > +      * and remap it.
-> > > +      *
-> > > +      * The only folio refs must be one from isolation plus the rmap=
-(s).
-> > > +      */
-> > > +     if (ref_count !=3D map_count + 1 || folio_test_dirty(folio) ||
-> > > +         pmd_dirty(orig_pmd)) {
-> > > +             set_pmd_at(mm, addr, pmdp, orig_pmd);
-> > > +             return false;
-> > > +     }
-> > > +
-> > > +     folio_remove_rmap_pmd(folio, page, vma);
-> > > +     zap_deposited_table(mm, pmdp);
-> > > +     add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
-> > > +     folio_put(folio);
-> >
-> > IIUC, you missed handling mlock vma, see mlock_drain_local() in
-> > try_to_unmap_one().
->
-> Good spot!
->
-> I suddenly realized that I overlooked another thing: If we detect that a
-> PMD-mapped THP is within the range of the VM_LOCKED VMA, we
-> should check whether the TTU_IGNORE_MLOCK flag is set in
-> try_to_unmap_one(). If the flag is set, we will remove the PMD mapping
-> from the folio. Otherwise, the folio should be mlocked, which avoids
-> splitting the folio and then mlocking each page again.
+> From: Zhao, Yan Y <yan.y.zhao@intel.com>
+> Sent: Tuesday, May 7, 2024 2:19 PM
+>=20
+> However, lookup_memtype() defaults to returning WB for PFNs within the
+> untracked PAT range, regardless of their actual MTRR type. This behavior
+> could lead KVM to misclassify the PFN as non-MMIO, permitting cacheable
+> guest access. Such access might result in MCE on certain platforms, (e.g.
+> clflush on VGA range (0xA0000-0xBFFFF) triggers MCE on some platforms).
 
-My previous response above is flawed - sorry :(
+the VGA range is not exposed to any guest today. So is it just trying to
+fix a theoretical problem?
 
-If we detect that a PMD-mapped THP is within the range of the
-VM_LOCKED VMA.
+> @@ -705,7 +705,17 @@ static enum page_cache_mode
+> lookup_memtype(u64 paddr)
+>   */
+>  bool pat_pfn_immune_to_uc_mtrr(unsigned long pfn)
+>  {
+> -	enum page_cache_mode cm =3D lookup_memtype(PFN_PHYS(pfn));
+> +	u64 paddr =3D PFN_PHYS(pfn);
+> +	enum page_cache_mode cm;
+> +
+> +	/*
+> +	 * Check MTRR type for untracked pat range since lookup_memtype()
+> always
+> +	 * returns WB for this range.
+> +	 */
+> +	if (x86_platform.is_untracked_pat_range(paddr, paddr + PAGE_SIZE))
+> +		cm =3D pat_x_mtrr_type(paddr, paddr + PAGE_SIZE,
+> _PAGE_CACHE_MODE_WB);
 
-1) If the TTU_IGNORE_MLOCK flag is set, we will try to remove the
-PMD mapping from the folio, as this series has done.
+doing so violates the name of this function. The PAT of the untracked
+range is still WB and not immune to UC MTRR.
 
-2) If the flag is not set, the large folio should be mlocked to prevent it
-from being picked during memory reclaim? Currently, we just leave it
-as is and do not to mlock it, IIUC.
+> +	else
+> +		cm =3D lookup_memtype(paddr);
+>=20
+>  	return cm =3D=3D _PAGE_CACHE_MODE_UC ||
+>  	       cm =3D=3D _PAGE_CACHE_MODE_UC_MINUS ||
 
-What do you think?
-
-Thanks,
-Lance
-
->
-> What do you think?
->
-> >
-> > > +
-> > > +     return true;
-> > > +}
-> > > +
-> > > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long=
- addr,
-> > > +                        pmd_t *pmdp, struct folio *folio)
-> > > +{
-> > > +     VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
-> > > +     VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
-> > > +     VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
-> > > +
-> > > +     if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
-> > > +             return __discard_trans_pmd_locked(vma, addr, pmdp, foli=
-o);
-> >
-> > Why add a new function, which is only used by unmap_huge_pmd_locked()?
-> > Seems can be folded in unmap_huge_pmd_locked(), but not a strong
-> > preference:)
->
-> Thanks for the suggestion!
->
-> Personally, I prefer adding a new function, rather than folding
-> __discard_trans_pmd_locked() into unmap_huge_pmd_locked().
->
-> While unmap_huge_pmd_locked() currently only deals with lazyfree THP,
-> It could be expanded to support other types of large folios that are
-> PMD-mapped in the future if needed.
->
-> Thanks a lot again for the review!
-> Lance
->
-> >
-> > > +
-> > > +     return false;
-> > > +}
-> > > +
-> > >   static void remap_page(struct folio *folio, unsigned long nr)
-> > >   {
-> > >       int i =3D 0;
-> > > diff --git a/mm/rmap.c b/mm/rmap.c
-> > > index 432601154583..1d3d30cb752c 100644
-> > > --- a/mm/rmap.c
-> > > +++ b/mm/rmap.c
-> > > @@ -1675,6 +1675,9 @@ static bool try_to_unmap_one(struct folio *foli=
-o, struct vm_area_struct *vma,
-> > >               }
-> > >
-> > >               if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
-> > > +                     if (unmap_huge_pmd_locked(vma, range.start, pvm=
-w.pmd,
-> > > +                                               folio))
-> > > +                             goto walk_done;
-> > >                       /*
-> > >                        * We temporarily have to drop the PTL and star=
-t once
-> > >                        * again from that now-PTE-mapped page table.
 
