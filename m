@@ -1,67 +1,61 @@
-Return-Path: <linux-kernel+bounces-172318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5A98BF0FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:14:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877378BF100
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631591F2349F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E2B1C21F38
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C41126F36;
-	Tue,  7 May 2024 23:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE96B13AD01;
+	Tue,  7 May 2024 23:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejiwwGE3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjQtPh/w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58D613A897;
-	Tue,  7 May 2024 23:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D9413AA3C;
+	Tue,  7 May 2024 23:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715122863; cv=none; b=ozgR9tiyhrEuz7Qwpgqv03JjZs1Y0FCKgKe3eWfjv3wZSXvA7rn+ZqxVYpba2bfqnE3o7FSexNeq/50rDNvscW2glfHRBLWN/JfUUiuKG1ivXlxO1JnQRVUGEHLwe3Jy3VebFy7Ya09YP2xDLrBFBsswg4DsuuqDunRQJ0aH3Z0=
+	t=1715122865; cv=none; b=l/Hvjd6fqSb1qX/InDUYsEphvkxOW45Gses05T3RaXdYI2pNBJHSAbuULoW6NWjiFNyQXWOpPY7y4tSfCgxvv1DcWi2NYsU54D5E3AGPYBaIh6Kzlzu9FLY10qkiPl4UJcCL4puL9DnvQHWGnc1mZIPqXKaeh9Wj7EPs94QQndw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715122863; c=relaxed/simple;
-	bh=B/GZDjaew3eFAUQrGbv/TKwXyHTUiAo67mAVzMwgEYg=;
+	s=arc-20240116; t=1715122865; c=relaxed/simple;
+	bh=HfHC/IKjd29RyVoUIyYS/IWsYCa94QbsfVMu+nM6rjo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bukq6eH8cyytdnlwSS822CKMlbkUvfEtZuuYmFWCNpWjDHP6lgthoL8WawI/yy8lSCINS0STkggDgpS6e9msd2hDiGAN03IaisEXXJPaHDq4pGIugRjjjqrZAL/CvBubYB+Z/4zmLUI9eH5O/MFR7w2zR+mk5WTbA3mlaXFLLJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejiwwGE3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C84DC2BBFC;
-	Tue,  7 May 2024 23:01:01 +0000 (UTC)
+	 MIME-Version; b=sguLiqkOlKaH5VDfBxGeOFJKUzT+phdA3PUJ7r2/EDD18l874esYtxIRLHC4RPxYwY6ulj9uZVTcipDU1Dr3NPRMqcVCLiohkIzl5AfQ3jNMNaGsCIASeafBd04Juqb703FvthwGcsGCjzuM+yGnqpo2UhVQwGbs1l6bgxt23L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjQtPh/w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C3FC4AF17;
+	Tue,  7 May 2024 23:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715122863;
-	bh=B/GZDjaew3eFAUQrGbv/TKwXyHTUiAo67mAVzMwgEYg=;
+	s=k20201202; t=1715122865;
+	bh=HfHC/IKjd29RyVoUIyYS/IWsYCa94QbsfVMu+nM6rjo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ejiwwGE3xKDa3hdyx5l6U8JRxim6N8EQIy2MsH/Punfh5mvv+Z73y0kfwCZDFeqJB
-	 qhzWvr9Cl/IIBq+WvDFKrF8Sg74C3Yr8pFl3/Li7YHVYjaaFlivGDuFjsdgM+rGUrk
-	 Bqd/BDvu38Q0o6DorKIQLITMByvaskRQm3iY/5JfJDmAHCWtOsmHH0zn15iCzRTAvK
-	 lZn8uMI6lEWXZ8b4H2a6Hx12URij7DP9l3xYpp5EkqrKDjvEWyarJRbvGOa+pJAVqx
-	 yLscHiVlGwk2HxN4dGmMwyEGBILKxOvlbw6jy/D6kLOvLd2VElV1hF/ufZPTjBnT5P
-	 V80sE5b0TlEaA==
+	b=YjQtPh/wc73G9sIeF8iIwUWpChX14DizXYzxXkjx9qxQCCjFe+WiP/kQrfQZ/IsL1
+	 eh3fiXdmDZrUnu2OXNgtJe/dC4Y1GxbZvQqU+SMlKBScXef/KsVM4kok4Ug/aKW5RP
+	 WASWHgVYA3wnv0/AxPNbkM118Pp6EX2gOzLDhEUxAFi+Fk7QGSRAGaIcHHvK3MbvRF
+	 iD5pS3msY1DMcoIpOM10NxRbj8BrGkV8DfEybCNptzYIJ2t916KT/P+PQWEgujzG9O
+	 IiGYxVgQK6k2TljA3BMoLSn9ypiDo/kilRdcJJuXztpcHCbXLgWLKY//msoe/+1C+d
+	 75/SSiCpiJ8xQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Jack Xiao <Jack.Xiao@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>,
 	Sasha Levin <sashal@kernel.org>,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	Felix.Kuehling@amd.com,
-	shaoyun.liu@amd.com,
-	jonathan.kim@amd.com,
-	guchun.chen@amd.com,
-	shashank.sharma@amd.com,
-	Tim.Huang@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.1 09/12] drm/amdgpu/mes: fix use-after-free issue
-Date: Tue,  7 May 2024 19:00:11 -0400
-Message-ID: <20240507230031.391436-9-sashal@kernel.org>
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	chenhuacai@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	loongarch@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.1 10/12] LoongArch: Lately init pmu after smp is online
+Date: Tue,  7 May 2024 19:00:12 -0400
+Message-ID: <20240507230031.391436-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240507230031.391436-1-sashal@kernel.org>
 References: <20240507230031.391436-1-sashal@kernel.org>
@@ -71,42 +65,43 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.90
 Content-Transfer-Encoding: 8bit
 
-From: Jack Xiao <Jack.Xiao@amd.com>
+From: Bibo Mao <maobibo@loongson.cn>
 
-[ Upstream commit 948255282074d9367e01908b3f5dcf8c10fc9c3d ]
+[ Upstream commit f3334ebb8a2a1841c2824594dd992e66de19deb2 ]
 
-Delete fence fallback timer to fix the ramdom
-use-after-free issue.
+There is an smp function call named reset_counters() to init PMU
+registers of every CPU in PMU initialization state. It requires that all
+CPUs are online. However there is an early_initcall() wrapper for the
+PMU init funciton init_hw_perf_events(), so that pmu init funciton is
+called in do_pre_smp_initcalls() which before function smp_init().
+Function reset_counters() cannot work on other CPUs since they haven't
+boot up still.
 
-v2: move to amdgpu_mes.c
+Here replace the wrapper early_initcall() with pure_initcall(), so that
+the PMU init function is called after every cpu is online.
 
-Signed-off-by: Jack Xiao <Jack.Xiao@amd.com>
-Acked-by: Lijo Lazar <lijo.lazar@amd.com>
-Acked-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/loongarch/kernel/perf_event.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
-index bebd136ed5444..9a4cbfbd5d9e5 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
-@@ -1083,6 +1083,7 @@ void amdgpu_mes_remove_ring(struct amdgpu_device *adev,
- 		return;
+diff --git a/arch/loongarch/kernel/perf_event.c b/arch/loongarch/kernel/perf_event.c
+index 3a2edb157b65a..1563bf47f3e2c 100644
+--- a/arch/loongarch/kernel/perf_event.c
++++ b/arch/loongarch/kernel/perf_event.c
+@@ -884,4 +884,4 @@ static int __init init_hw_perf_events(void)
  
- 	amdgpu_mes_remove_hw_queue(adev, ring->hw_queue_id);
-+	del_timer_sync(&ring->fence_drv.fallback_timer);
- 	amdgpu_ring_fini(ring);
- 	kfree(ring);
+ 	return 0;
  }
+-early_initcall(init_hw_perf_events);
++pure_initcall(init_hw_perf_events);
 -- 
 2.43.0
 
