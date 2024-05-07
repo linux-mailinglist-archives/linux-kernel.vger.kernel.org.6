@@ -1,115 +1,295 @@
-Return-Path: <linux-kernel+bounces-171531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143AC8BE574
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7FA8BE570
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EE81C21E11
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:16:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BF181C20D10
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D41516D4D0;
-	Tue,  7 May 2024 14:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C1D16D315;
+	Tue,  7 May 2024 14:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qqcv7LlC"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4bffuRK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131E416C867
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDD816C847;
+	Tue,  7 May 2024 14:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091190; cv=none; b=pexzk5UzxBcVaoHS2oN0VlZwRcO79bcuc6+WRh1KlMgkMghXoBLBtG5QMlAIRI+xpKz+DNeeTo9uDqJ+79PGimWHSu1AGrFA+FG4X7dySYyMQdVEyjIGg85mrIoCO9VmXlchGQqgYIefXmhuK+pdHJ1XQm8mofwwrldE73HwMto=
+	t=1715091180; cv=none; b=EhzIFuuiTWho59nq8JJF1E4dXncXKn+VDyyXAl3iLhH+v2FrACK661P6A88bT9X4gYz6xMcZ9ual7AMeLwEJYMgI9hIf4wRBChJZwSR4v8fToqGvAB0FDaSJydjk4hVPEfeSSxc/WkKSY/aEnMtJhlCfxT1wIgEBlcq4BNvN37g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091190; c=relaxed/simple;
-	bh=zchA9qCZkbTbiKP4dWASuNmwzS8UpJKwMcrmBhDATqo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pdCPyXIJyGYRQjDMK3srp4qyONzaZw7+dELtp8kJwxS9UbK494/whdFkrSBfF5sYtpTdXsWbvuTVYkzaTxy8vCc4mIxLXOvG3ABHZOlNcoKeYoPTsHXi26+1BD3COkrfOvskemhJLDjJGAxjJxAPgZ5HcPKEPz6s6JpOquDpavk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qqcv7LlC; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de54be7066bso6035738276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:12:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715091173; x=1715695973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WETraqwVUAnZYIOXp5ZtLEEE1VYRO8MGNkm01fdovIk=;
-        b=Qqcv7LlCIOJvBe8ClD5U2l4Vj91uUJ1zIUjEjaKr6vohBi/GFK/kCBkhW9qZZdGHpC
-         nxwyf2tAeD9my0a/qM1hJuFLQ5WLbt9BIL0qxKTsdW5atZMtIoDfpEumiMKhONL+q6GC
-         72o1+zEuLefO3WFSRbvMdj98ysyUkJMpfe7bhvl6A005A3nsrGayxqodnVvhsMT20pAt
-         yNYTWrA21yYGzTAFWGKYYldNzy6HfLhHLr9P8AMYSNlf/aDrueIH/wUsf3uXieIgzDX+
-         O5JA/bxh+xBYg6hbKTMR+zx9CtluRtqSpv7bEPdFtCNAqD41I+kZK/yYDSFaH5tcnybA
-         cKyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715091173; x=1715695973;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WETraqwVUAnZYIOXp5ZtLEEE1VYRO8MGNkm01fdovIk=;
-        b=j+1GrwSHAdOBGPX0//jNO8r6M4da8D9GM1ejkulN7OI8mpSw/JJdyq2bAy+zRTdvRu
-         wprlrAqwkQFpAzKFz/+/Oj80WYK34zvypZ0jk+dHPij0TiBsXkSQXIXRGTnK7VclV0Sk
-         xQW6sCNifmR9KE70icblPHzaaVck7/BpW4EUuvxWyW8DIbCwX63SwMz1jyorHnDewAwU
-         gSPq1rzS2GyZMfDmJdqTaKwQVyszWUwmAQGXopvPxev/0L+ADJpPyxFhbPjB7IlUrSS9
-         feVjTbI4njjwvj0VpKgPQxEfelLUiHimmvrqfMKFv2eVxsB4mUWtV6eiozz9aHwk8ljr
-         ZuuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBUUBe6RLy634ghe2QV/v3zpg0LALQwuBxC3cNEmADqrXwQwjYN6phYqradlA7f5CfT1FfCxbx+qpKr3upSNkvX91LEHbXao0U3c86
-X-Gm-Message-State: AOJu0YxQSuk4ER+P33ZHMhKbyfk3S+e0wxIjDaQLO6kkFZTYYV3HtMaO
-	KFYHFOxXn+gyGMI0tZZdS8aDh89LQcT63mh1tMVZ3DRF+zcmORMLrR7/p9rQavvvdnJV8JqxFTh
-	SFg==
-X-Google-Smtp-Source: AGHT+IGplKwNSTSkBTAvhdXpqfJnr+yrgmgSEfcIAM5opFxBtA3BpCgSqdbY3obOQsQH1wjTlAweJ+rLPgI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:69cc:0:b0:de5:5225:c3a4 with SMTP id
- e195-20020a2569cc000000b00de55225c3a4mr3998230ybc.7.1715091172929; Tue, 07
- May 2024 07:12:52 -0700 (PDT)
-Date: Tue, 7 May 2024 07:12:51 -0700
-In-Reply-To: <202405061002.01D399877A@keescook>
+	s=arc-20240116; t=1715091180; c=relaxed/simple;
+	bh=0eu8his3U78IMAslZKsNzAHrJZV8LGipE0PZ4lG264Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CcrT2UPNfDHKhPsmyINs8wYmCIaYS76PqmeBGivpiGCZmqIsLn56fBRE+doZSqFzUu80EJ25Cd3BV9lyRgayAyOHG/GRNWgUsOOo6STU+q+T0HcftZdc6v6vXBhqLOuuy/FTN/teWmfWfh+9w+aghBzlr5KLFuL7oRVmQFhwNko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4bffuRK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF208C3277B;
+	Tue,  7 May 2024 14:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715091179;
+	bh=0eu8his3U78IMAslZKsNzAHrJZV8LGipE0PZ4lG264Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=l4bffuRK7qytcuTxH76/COvMjBmdoB6KPrSIAUADkAxXKnoi5X1daPr3cb5OO4utV
+	 Ia1aAi85AM1ZF/wVckJiKgcwAG4oMtyr2T5pOGMRq75MhmdpmlJ7UK6lygGvkVzK1s
+	 bwsIiRbGlKrYzlh2hduZIUjqTKdrbL6eY4sHQXWhMVlHoscHVcmksSRasaKvqCDNZl
+	 T5PtQvYLZADFH42g77foSXsEcp8cbLpNT3/IC5878aF75kio9urMC5FyM9Toh8OLsb
+	 BB//X8gfkvCFGZ9dYXNTStgL0su0IfMO2Sh/nRtvca0EHlVXmqp/J3LXlq56USCVGd
+	 gHZW7p1pjp4Eg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Guo Ren <guoren@kernel.org>
+Subject: [PATCH v10 25/36] fprobe: Use ftrace_regs in fprobe exit handler
+Date: Tue,  7 May 2024 23:12:53 +0900
+Message-Id: <171509117307.162236.3726826966573848503.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <171509088006.162236.7227326999861366050.stgit@devnote2>
+References: <171509088006.162236.7227326999861366050.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240506165518.474504-1-mic@digikod.net> <202405061002.01D399877A@keescook>
-Message-ID: <Zjo1xyhjmehsRhZ2@google.com>
-Subject: Re: [PATCH v6 00/10] Fix Kselftest's vfork() side effects
-From: Sean Christopherson <seanjc@google.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, 
-	Sasha Levin <sashal@kernel.org>, Shengyu Li <shengyu.li.evgeny@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Brendan Higgins <brendanhiggins@google.com>, 
-	David Gow <davidgow@google.com>, "David S . Miller" <davem@davemloft.net>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	"=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>, Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>, 
-	Ronald Warsow <rwarsow@gmx.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Will Drewry <wad@chromium.org>, 
-	kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
-	stable@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 06, 2024, Kees Cook wrote:
-> On Mon, May 06, 2024 at 06:55:08PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > Shuah, I think this should be in -next really soon to make sure
-> > everything works fine for the v6.9 release, which is not currently the
-> > case.  I cannot test against all kselftests though.  I would prefer to
-> > let you handle this, but I guess you're not able to do so and I'll push
-> > it on my branch without reply from you.  Even if I push it on my branch=
-,
-> > please push it on yours too as soon as you see this and I'll remove it
-> > from mine.
->=20
-> Yes, please. Getting this into v6.9 is preferred,
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Very strongly prefered for KVM selftests.  The negative impact on KVM isn't=
- that
-the bugs cause failures, it's that they cause false passes, which is far wo=
-rse
-(and why the bugs went unnoticed for most of the cycle).
+Change the fprobe exit handler to use ftrace_regs structure instead of
+pt_regs. This also introduce HAVE_PT_REGS_TO_FTRACE_REGS_CAST which means
+the ftrace_regs's memory layout is equal to the pt_regs so that those are
+able to cast. Fprobe introduces a new dependency with that.
+
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+  Changes in v3:
+   - Use ftrace_regs_get_return_value()
+  Changes from previous series: NOTHING, just forward ported.
+---
+ arch/loongarch/Kconfig          |    1 +
+ arch/s390/Kconfig               |    1 +
+ arch/x86/Kconfig                |    1 +
+ include/linux/fprobe.h          |    2 +-
+ include/linux/ftrace.h          |    6 ++++++
+ kernel/trace/Kconfig            |    8 ++++++++
+ kernel/trace/bpf_trace.c        |    6 +++++-
+ kernel/trace/fprobe.c           |    3 ++-
+ kernel/trace/trace_fprobe.c     |    6 +++++-
+ lib/test_fprobe.c               |    6 +++---
+ samples/fprobe/fprobe_example.c |    2 +-
+ 11 files changed, 34 insertions(+), 8 deletions(-)
+
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 6897eacac063..21dc39ae6bc2 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -114,6 +114,7 @@ config LOONGARCH
+ 	select HAVE_DMA_CONTIGUOUS
+ 	select HAVE_DYNAMIC_FTRACE
+ 	select HAVE_DYNAMIC_FTRACE_WITH_ARGS
++	select HAVE_PT_REGS_TO_FTRACE_REGS_CAST
+ 	select HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
+ 	select HAVE_EBPF_JIT
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 1ed25b72eb47..ce85b3165065 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -170,6 +170,7 @@ config S390
+ 	select HAVE_DMA_CONTIGUOUS
+ 	select HAVE_DYNAMIC_FTRACE
+ 	select HAVE_DYNAMIC_FTRACE_WITH_ARGS
++	select HAVE_PT_REGS_TO_FTRACE_REGS_CAST
+ 	select HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
+ 	select HAVE_EBPF_JIT if HAVE_MARCH_Z196_FEATURES
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index ea198adb11d2..4da23dc0b07c 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -215,6 +215,7 @@ config X86
+ 	select HAVE_DYNAMIC_FTRACE
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
+ 	select HAVE_DYNAMIC_FTRACE_WITH_ARGS	if X86_64
++	select HAVE_PT_REGS_TO_FTRACE_REGS_CAST	if X86_64
+ 	select HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 	select HAVE_SAMPLE_FTRACE_DIRECT	if X86_64
+ 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI	if X86_64
+diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
+index ca64ee5e45d2..ef609bcca0f9 100644
+--- a/include/linux/fprobe.h
++++ b/include/linux/fprobe.h
+@@ -14,7 +14,7 @@ typedef int (*fprobe_entry_cb)(struct fprobe *fp, unsigned long entry_ip,
+ 			       void *entry_data);
+ 
+ typedef void (*fprobe_exit_cb)(struct fprobe *fp, unsigned long entry_ip,
+-			       unsigned long ret_ip, struct pt_regs *regs,
++			       unsigned long ret_ip, struct ftrace_regs *regs,
+ 			       void *entry_data);
+ 
+ /**
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 1c185fefd932..ff2966a1b529 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -163,6 +163,12 @@ struct ftrace_regs {
+ #define ftrace_regs_set_instruction_pointer(fregs, ip) do { } while (0)
+ #endif /* CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS */
+ 
++#ifdef CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST
++
++static_assert(sizeof(struct pt_regs) == sizeof(struct ftrace_regs));
++
++#endif /* CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST */
++
+ static __always_inline struct pt_regs *ftrace_get_regs(struct ftrace_regs *fregs)
+ {
+ 	if (!fregs)
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 4a850250dab4..7df7b1fb305c 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -57,6 +57,13 @@ config HAVE_DYNAMIC_FTRACE_WITH_ARGS
+ 	 This allows for use of ftrace_regs_get_argument() and
+ 	 ftrace_regs_get_stack_pointer().
+ 
++config HAVE_PT_REGS_TO_FTRACE_REGS_CAST
++	bool
++	help
++	 If this is set, the memory layout of the ftrace_regs data structure
++	 is the same as the pt_regs. So the pt_regs is possible to be casted
++	 to ftrace_regs.
++
+ config HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+ 	bool
+ 	help
+@@ -288,6 +295,7 @@ config FPROBE
+ 	bool "Kernel Function Probe (fprobe)"
+ 	depends on FUNCTION_TRACER
+ 	depends on DYNAMIC_FTRACE_WITH_REGS || DYNAMIC_FTRACE_WITH_ARGS
++	depends on HAVE_PT_REGS_TO_FTRACE_REGS_CAST || !HAVE_DYNAMIC_FTRACE_WITH_ARGS
+ 	depends on HAVE_RETHOOK
+ 	select RETHOOK
+ 	default n
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 7837cf4e39d9..e51a6ef87167 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2838,10 +2838,14 @@ kprobe_multi_link_handler(struct fprobe *fp, unsigned long fentry_ip,
+ 
+ static void
+ kprobe_multi_link_exit_handler(struct fprobe *fp, unsigned long fentry_ip,
+-			       unsigned long ret_ip, struct pt_regs *regs,
++			       unsigned long ret_ip, struct ftrace_regs *fregs,
+ 			       void *data)
+ {
+ 	struct bpf_kprobe_multi_link *link;
++	struct pt_regs *regs = ftrace_get_regs(fregs);
++
++	if (!regs)
++		return;
+ 
+ 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
+ 	kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), regs);
+diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+index 3d3789283873..90a3c8e2bbdf 100644
+--- a/kernel/trace/fprobe.c
++++ b/kernel/trace/fprobe.c
+@@ -124,6 +124,7 @@ static void fprobe_exit_handler(struct rethook_node *rh, void *data,
+ {
+ 	struct fprobe *fp = (struct fprobe *)data;
+ 	struct fprobe_rethook_node *fpr;
++	struct ftrace_regs *fregs = (struct ftrace_regs *)regs;
+ 	int bit;
+ 
+ 	if (!fp || fprobe_disabled(fp))
+@@ -141,7 +142,7 @@ static void fprobe_exit_handler(struct rethook_node *rh, void *data,
+ 		return;
+ 	}
+ 
+-	fp->exit_handler(fp, fpr->entry_ip, ret_ip, regs,
++	fp->exit_handler(fp, fpr->entry_ip, ret_ip, fregs,
+ 			 fp->entry_data_size ? (void *)fpr->data : NULL);
+ 	ftrace_test_recursion_unlock(bit);
+ }
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index b2c20d4fdfd7..273cdf3cf70c 100644
+--- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -359,10 +359,14 @@ static int fentry_dispatcher(struct fprobe *fp, unsigned long entry_ip,
+ NOKPROBE_SYMBOL(fentry_dispatcher);
+ 
+ static void fexit_dispatcher(struct fprobe *fp, unsigned long entry_ip,
+-			     unsigned long ret_ip, struct pt_regs *regs,
++			     unsigned long ret_ip, struct ftrace_regs *fregs,
+ 			     void *entry_data)
+ {
+ 	struct trace_fprobe *tf = container_of(fp, struct trace_fprobe, fp);
++	struct pt_regs *regs = ftrace_get_regs(fregs);
++
++	if (!regs)
++		return;
+ 
+ 	if (trace_probe_test_flag(&tf->tp, TP_FLAG_TRACE))
+ 		fexit_trace_func(tf, entry_ip, ret_ip, regs, entry_data);
+diff --git a/lib/test_fprobe.c b/lib/test_fprobe.c
+index ff607babba18..271ce0caeec0 100644
+--- a/lib/test_fprobe.c
++++ b/lib/test_fprobe.c
+@@ -59,9 +59,9 @@ static notrace int fp_entry_handler(struct fprobe *fp, unsigned long ip,
+ 
+ static notrace void fp_exit_handler(struct fprobe *fp, unsigned long ip,
+ 				    unsigned long ret_ip,
+-				    struct pt_regs *regs, void *data)
++				    struct ftrace_regs *fregs, void *data)
+ {
+-	unsigned long ret = regs_return_value(regs);
++	unsigned long ret = ftrace_regs_get_return_value(fregs);
+ 
+ 	KUNIT_EXPECT_FALSE(current_test, preemptible());
+ 	if (ip != target_ip) {
+@@ -89,7 +89,7 @@ static notrace int nest_entry_handler(struct fprobe *fp, unsigned long ip,
+ 
+ static notrace void nest_exit_handler(struct fprobe *fp, unsigned long ip,
+ 				      unsigned long ret_ip,
+-				      struct pt_regs *regs, void *data)
++				      struct ftrace_regs *fregs, void *data)
+ {
+ 	KUNIT_EXPECT_FALSE(current_test, preemptible());
+ 	KUNIT_EXPECT_EQ(current_test, ip, target_nest_ip);
+diff --git a/samples/fprobe/fprobe_example.c b/samples/fprobe/fprobe_example.c
+index 1545a1aac616..d476d1f07538 100644
+--- a/samples/fprobe/fprobe_example.c
++++ b/samples/fprobe/fprobe_example.c
+@@ -67,7 +67,7 @@ static int sample_entry_handler(struct fprobe *fp, unsigned long ip,
+ }
+ 
+ static void sample_exit_handler(struct fprobe *fp, unsigned long ip,
+-				unsigned long ret_ip, struct pt_regs *regs,
++				unsigned long ret_ip, struct ftrace_regs *regs,
+ 				void *data)
+ {
+ 	unsigned long rip = ret_ip;
+
 
