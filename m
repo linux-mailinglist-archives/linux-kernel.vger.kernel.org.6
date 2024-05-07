@@ -1,180 +1,239 @@
-Return-Path: <linux-kernel+bounces-171759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D929E8BE830
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:05:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7758BE874
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2BD1F2C112
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:05:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66922B2A060
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633F16C443;
-	Tue,  7 May 2024 16:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D5616C6BA;
+	Tue,  7 May 2024 16:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPMTml4D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b="WM5EB99d";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eSTXjV9P"
+Received: from wfhigh8-smtp.messagingengine.com (wfhigh8-smtp.messagingengine.com [64.147.123.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543A31649D3;
-	Tue,  7 May 2024 16:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B19D1649D3;
+	Tue,  7 May 2024 16:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097613; cv=none; b=dwFMtPijXae57ICtZTg8olk66bgmnq7T2//8gbbqfQ0bvFRs/Zy0TJxp6icLlUax2e9jWfkVv8ANphG76NEqTeXBVHrA8Vfn0AkRFNuWvT/K1m86zgbSq50eWKDyYK0kZ09bnYUu5T0zVdTognKXK4ADvHRmzJEi4w+S1oySkXw=
+	t=1715097655; cv=none; b=dL7lvXoPHHMxZ1uyC3K0rI0Ph6/Nui8NHo4T1P/+uffQnlW2cue5thKBK3echCqBOsGh5SkDDiMPDwRi/WKP+0bGW+8QJYF4eM2r8S8wBqlncm1PJurH1gSkeorrwZ1Q9FPf+7ccwUDBeOkDBQbYz79KW6sx10b3bqosTTvwpGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097613; c=relaxed/simple;
-	bh=Y5R+jdVdl3nIfGghNCZCSFf/nI98te4Naa50ljeiVSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g+LF0L/nxBk5JAu9MSIs6710l62jA6Eiv6ywupRMnsUP66wPSzbl8SYDaK9RGMry7EdUYWj7QfS/78ix7wbtZo+0YRbiLrbQBXeI0udC6hMlJUGzQG1IeIGSatfQHgucXUsu0uUVJDScIDQsVfdDqhJ7P5MvLizkD/zg6U4IrJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPMTml4D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C75DC2BBFC;
-	Tue,  7 May 2024 16:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715097612;
-	bh=Y5R+jdVdl3nIfGghNCZCSFf/nI98te4Naa50ljeiVSU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aPMTml4DjnrDVFUNBl5j04oKV4dIwvB/tzzxYbC38/ichYh6n7YLzveS6DXtYUC2n
-	 83dVR4PqyrRV8bs8RNpoeiaWH/gBG8P+LoU3xHv2a3AJozno5ojzh+CuERA5tn8Gwu
-	 x45OIjtUjEEJjd90MtoZXjL6mAm2RiSrG/j89td6hPiGRhyYzbpKh18t67p5bbsqNj
-	 wVl8QvuTnmBg7iro5kG+aY3yybCjRX7ClUYkCbM6Ykw9CEGdogEJNwT4jDEuIF7Cnd
-	 XMtXOvshql9U1yF+NVuvz8lf/8WnkK385+pMadg8ZXPGMIs3ah9cQdleHhn65N7HDo
-	 kCiir/lWdDBPg==
-Message-ID: <e5629ad4-9652-4aa9-ba26-ee7d0df1d1ba@kernel.org>
-Date: Tue, 7 May 2024 17:59:05 +0200
+	s=arc-20240116; t=1715097655; c=relaxed/simple;
+	bh=FddP+c4dgFZb9XdTcHg7G1UtgfmUmewlW32Kal5emFk=;
+	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sDnXqqWQsqsJAkuHk+4JdpyA0zR+XGUQZQDPi146ZxrrAp4pkNTYlHFqD4zrcIrLzKI+gaJApoJ3TRI+mjfHvOOo657Cb3s4d/ebMULJzvtk9EXOzRbBszb5lVfMJopY8GYCuF1PjRqBTZivT8d+3YXd3hXDcU3i4aUs0tMHxOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca; spf=pass smtp.mailfrom=lyndeno.ca; dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b=WM5EB99d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eSTXjV9P; arc=none smtp.client-ip=64.147.123.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lyndeno.ca
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfhigh.west.internal (Postfix) with ESMTP id C808F18000E1;
+	Tue,  7 May 2024 12:00:51 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Tue, 07 May 2024 12:00:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lyndeno.ca; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715097650; x=1715184050; bh=x9SXQUaEjS
+	lb5DAJspjir6oHwES+a/5cta9M20wGfws=; b=WM5EB99deHS6/YdZrhB1WiWOsT
+	9RjEotf3L1RU8tVMjYbuMiuC+DFfGOFx4kXsYynGUsWLdXUHPtbw0gSYilAUUfNN
+	s1OvtIexwbQsJ3FG3p9nX8zT/kbCw3SOpPGdU5ZEbPPyMTREucaRYgZYc3aBYG58
+	/aoFehJ/W0dhKDBLstNFumaNWs3zIrq0fITK7KRUeeTfRJ+wX+MU6IPOfJatU1bu
+	3EtiN8RIY/kqINrvf7m34TbT4GCJ4Kqa33u8ttJvLzeWsFtpmqRw8Y8VqcAZdfaD
+	mopAeYwlx02M3E7TF/NJBdKk9iK6h1z2NxrdQi1yjehVsLkOWyUjVZx7PJ4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715097650; x=1715184050; bh=x9SXQUaEjSlb5DAJspjir6oHwES+
+	a/5cta9M20wGfws=; b=eSTXjV9PxS8BRR/5pdxJbkNthk6INdFXzSVtret03MOl
+	+I/wk8/hMVzrNt19myDKRS+y35QieKcTViO8abvIyrEuPE+dZgXS9viFFHpLJcce
+	MAsTsgosUXJI09LWX5b8p68r5VUQwIj3X3zckUStbgLOgVrLgaUkrgQbDwTsMB8x
+	yhTz92rwwgOP9/R4r2CqWYgiQJA506M8sjDP74pJ0HNMwbhYvtI4d9EUOe36/u/A
+	krWn74VL36cp55EcAes4vbno7nOc9bnOrbE42K+HOf+/UN9HoO1tSDL0SfAgh+cM
+	rn9qTLdf+mcLEPwzh5FlqSEkAn2EobtHRr+nssmw+w==
+X-ME-Sender: <xms:MVA6Zvy2cC3gTDiG_gj8l5UgmwuK_vafMQSazFuoLZ-o27zKPqUcow>
+    <xme:MVA6ZnRtqh082m2305P2kvCoD9mVh1CCpMixR-OrOAJ7sm6FQa0gZysn8PA6w5d4z
+    pn7TdycuGOr3TlR8as>
+X-ME-Received: <xmr:MVA6ZpUqNzbDVqIGC3OwXwlPlxx8-XWGAweaKYj1AeVC2nWPRpXJfGEGASo5SERpYsw7Pw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhuffvvefkjghfofggtgesthdtredtredtvdenucfhrhhomhepnfihnhgu
+    ohhnucfurghntghhvgcuoehlshgrnhgthhgvsehlhihnuggvnhhordgtrgeqnecuggftrf
+    grthhtvghrnhepvdfgjeduvddtheekkeduiedtieegveefgeekgfevffffjeevgeffueev
+    heejjedtnecuffhomhgrihhnpehgihhtqdhstghmrdgtohhmpdhgihhthhhusgdrtghomh
+    dpkhgvrhhnvghlrdhorhhgpddtuddrohhrghenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpehlshgrnhgthhgvsehlhihnuggvnhhordgtrg
+X-ME-Proxy: <xmx:MVA6Zphr_mHn0ROrXrxSuf5s3IrRSW7tMa7W6Cz1My0_xWLhSCszBw>
+    <xmx:MVA6ZhAkYopwc5mE9wysh0rHnwrmmI1aXNyN9PR1W3eD1-VKkYmWnw>
+    <xmx:MVA6ZiJX1rcsNobFuk1g8oGrPSBkvz3bR7bkciotQfZGnzNLqdDj2w>
+    <xmx:MVA6ZgA3gRqE-Hp1GLhhtUVLxUbpxU1_MfM8toM6bYsCeAATIeZY_A>
+    <xmx:MlA6Zl3OKYHu3VH2ojdk4xDeC9FUponUcqAeddS7mEP1IVPiC1po8ES2>
+Feedback-ID: i1719461a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 May 2024 12:00:44 -0400 (EDT)
+Date: Tue, 07 May 2024 10:00:33 -0600
+From: Lyndon Sanche <lsanche@lyndeno.ca>
+Subject: Re: [PATCH v5] platform/x86: dell-laptop: Implement platform_profile
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: kernel test robot <lkp@intel.com>, Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>, oe-kbuild-all@lists.linux.dev,
+	mario.limonciello@amd.com, pali@kernel.org, W_Armin@gmx.de,
+	srinivas.pandruvada@linux.intel.com, ilpo.jarvinen@linux.intel.com,
+	Matthew Garrett <mjg59@srcf.ucam.org>, Jonathan Corbet <corbet@lwn.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>, Vegard Nossum
+	<vegard.nossum@oracle.com>, platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dell.Client.Kernel@dell.com
+Message-Id: <XSH4DS.Y4TZMDPWKC5Z1@lyndeno.ca>
+In-Reply-To: <4bb43e89-c387-4219-9051-421d700f332e@redhat.com>
+References: <20240501215829.4991-2-lsanche@lyndeno.ca>
+	<202405031851.NYy0ZB02-lkp@intel.com> <A9SXCS.IUN31UTTT9GM2@lyndeno.ca>
+	<4bb43e89-c387-4219-9051-421d700f332e@redhat.com>
+X-Mailer: geary/44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH bpf-next 1/4] selftests/bpf: Handle SIGINT when creating
- netns
-Content-Language: en-GB
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: MPTCP Upstream <mptcp@lists.linux.dev>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- Geliang Tang <tanggeliang@kylinos.cn>
-References: <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org>
- <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-1-e2bcbdf49857@kernel.org>
- <CAADnVQKWCVfUhQnoYBoEZaZbfiX8MROcj7Ct-nB4-axhZqMecw@mail.gmail.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <CAADnVQKWCVfUhQnoYBoEZaZbfiX8MROcj7Ct-nB4-axhZqMecw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
 
-Hi Alexei,
 
-Thank you for the review!
 
-On 07/05/2024 16:43, Alexei Starovoitov wrote:
-> On Tue, May 7, 2024 at 3:53 AM Matthieu Baerts (NGI0)
-> <matttbe@kernel.org> wrote:
->>
->> From: Geliang Tang <tanggeliang@kylinos.cn>
->>
->> It's necessary to delete netns during the MPTCP bpf tests interrupt,
->> otherwise the next tests run will fail due to unable to create netns.
->>
->> This patch adds a new SIGINT handle sig_int, and deletes NS_TEST in it.
->>
->> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
->> Reviewed-by: Mat Martineau <martineau@kernel.org>
->> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->> ---
->>  tools/testing/selftests/bpf/prog_tests/mptcp.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
->> index 274d2e033e39..baf976a7a1dd 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
->> @@ -64,11 +64,18 @@ struct mptcp_storage {
->>         char ca_name[TCP_CA_NAME_MAX];
->>  };
->>
->> +static void sig_int(int sig)
->> +{
->> +       signal(sig, SIG_IGN);
->> +       SYS_NOFAIL("ip netns del %s", NS_TEST);
->> +}
->> +
->>  static struct nstoken *create_netns(void)
->>  {
->>         SYS(fail, "ip netns add %s", NS_TEST);
->>         SYS(fail, "ip -net %s link set dev lo up", NS_TEST);
->>
->> +       signal(SIGINT, sig_int);
->>         return open_netns(NS_TEST);
+On Mon, May 6 2024 at 12:18:05 PM +02:00:00, Hans de Goede 
+<hdegoede@redhat.com> wrote:
+> Hi Lyndon,
 > 
-> That's a drop in the bucket.
-> ctrl-c of test_progs doesn't really work.
-> Such clean up needs to be generic as part of network_helpers.c
+> Thank you for your patch!
+> 
+> On 5/4/24 3:03 AM, Lyndon Sanche wrote:
+>> 
+>> 
+>>  On Fri, May 3 2024 at 06:19:18 PM +08:00:00, kernel test robot 
+>> <lkp@intel.com> wrote:
+>>>  Hi Lyndon,
+>>> 
+>>>  kernel test robot noticed the following build warnings:
+>>> 
+>>>  [auto build test WARNING on linus/master]
+>>>  [also build test WARNING on v6.9-rc6 next-20240503]
+>>>  [If your patch is applied to the wrong git tree, kindly drop us a 
+>>> note.
+>>>  And when submitting patch, we suggest to use '--base' as 
+>>> documented in
+>>>  https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>> 
+>>>  url:    
+>>> https://github.com/intel-lab-lkp/linux/commits/Lyndon-Sanche/platform-x86-dell-laptop-Implement-platform_profile/20240502-060146
+>>>  base:   linus/master
+>>>  patch link:    
+>>> https://lore.kernel.org/r/20240501215829.4991-2-lsanche%40lyndeno.ca
+>>>  patch subject: [PATCH v5] platform/x86: dell-laptop: Implement 
+>>> platform_profile
+>>>  config: 
+>>> i386-kismet-CONFIG_ACPI_PLATFORM_PROFILE-CONFIG_DELL_LAPTOP-0-0 
+>>> (https://download.01.org/0day-ci/archive/20240503/202405031851.NYy0ZB02-lkp@intel.com/config)
+>>>  reproduce: 
+>>> (https://download.01.org/0day-ci/archive/20240503/202405031851.NYy0ZB02-lkp@intel.com/reproduce)
+>>> 
+>>>  If you fix the issue in a separate patch/commit (i.e. not just a 
+>>> new version of
+>>>  the same patch/commit), kindly add following tags
+>>>  | Reported-by: kernel test robot <lkp@intel.com>
+>>>  | Closes: 
+>>> https://lore.kernel.org/oe-kbuild-all/202405031851.NYy0ZB02-lkp@intel.com/
+>>> 
+>>>  kismet warnings: (new ones prefixed by >>)
+>>>>>   kismet: WARNING: unmet direct dependencies detected for 
+>>>>> ACPI_PLATFORM_PROFILE when selected by DELL_LAPTOP
+>>>     WARNING: unmet direct dependencies detected for 
+>>> ACPI_PLATFORM_PROFILE
+>>>       Depends on [n]: ACPI [=n]
+>>>       Selected by [y]:
+>>>       - DELL_LAPTOP [=y] && X86_PLATFORM_DEVICES [=y] && 
+>>> X86_PLATFORM_DRIVERS_DELL [=y] && DMI [=y] && 
+>>> BACKLIGHT_CLASS_DEVICE [=y] && (ACPI_VIDEO [=n] || ACPI_VIDEO 
+>>> [=n]=n) && (RFKILL [=n] || RFKILL [=n]=n) && (DELL_WMI [=n] || 
+>>> DELL_WMI [=n]=n) && SERIO_I8042 [=y] && DELL_SMBIOS [=y]
+>>> 
+>>>  --
+>>>  0-DAY CI Kernel Test Service
+>>>  https://github.com/intel/lkp-tests/wiki
+>> 
+>>  I will try reproducing this test on my machine, to avoid spamming 
+>> the mailing list with the same error over and over.
+> 
+> No need to reproduce this. When you select something in Kconfig you 
+> must ensure
+> that the item doing the selecting depends on all the dependencies of 
+> what you
+> are selecting.
+> 
+> IOW if you add this change to your next version then that should fix 
+> this:
+> 
+> diff --git a/drivers/platform/x86/dell/Kconfig 
+> b/drivers/platform/x86/dell/Kconfig
+> index bd9f445974cc..d18fbc6a5fbf 100644
+> --- a/drivers/platform/x86/dell/Kconfig
+> +++ b/drivers/platform/x86/dell/Kconfig
+> @@ -47,6 +47,7 @@ config DCDBAS
+>  config DELL_LAPTOP
+>  	tristate "Dell Laptop Extras"
+>  	default m
+> +	depends on ACPI
+>  	depends on DMI
+>  	depends on BACKLIGHT_CLASS_DEVICE
+>  	depends on ACPI_VIDEO || ACPI_VIDEO = n
+> 
+> And please also address Armin's remark about making sure that failure
+> to initialize platform_profile support should not cause the entire 
+> driver
+> to fail to probe.
+> 
+> I see that Armin suggests to check da_supported_commands for this,
+> this is a good idea but atm this is private to dell-smbios-base. So
+> you will first need to do a small preparation patch adding a small:
+> 
+> bool dell_laptop_check_supported_cmds(struct calling_interface_buffer 
+> *buffer)
+> {
+> 	return da_supported_commands & (1 << buffer->cmd_class);
+> }
+> EXPORT_SYMBOL_GPL(dell_laptop_check_supported_cmds):
+> 
+> helper for this.
+> 
+> If this check fails (returns false) make the code not register
+> the platform_profile() while allowing probe() to continue / succeed,
+> please do not log anything in this case (or use dev_dbg())
+> 
+> If this check succeeds but subsequent dell_smbios_call()'s
+> fail during probe, then it is ok to log an error but please
+> still let probe() continue / succeed (without registering
+> a platform_profile handler).
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+Hello Hans:
 
-It makes sense. I can drop this patch and ask Geliang to add a similar
-'create_netns()' helper in network_helpers.c creating the netns, and
-handling SIGINT. This helper will no longer be specific to MPTCP BPF
-selftests then.
+Thank you very much for your feedback and suggestions! I have been busy 
+the past few days, but will be able to tackle this this week. These are 
+good ideas which I plan to implement.
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+Thank you,
+
+Lyndon
+
 
 
