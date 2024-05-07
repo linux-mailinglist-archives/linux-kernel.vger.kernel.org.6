@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-170985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28F88BDE92
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:41:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9558BDE94
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E12F2863BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDD91C2354E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE85315F3E0;
-	Tue,  7 May 2024 09:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEC414E2ED;
+	Tue,  7 May 2024 09:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzOLN8DI"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OFBIqBY/"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1DE15EFB2;
-	Tue,  7 May 2024 09:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADEC15ECD2;
+	Tue,  7 May 2024 09:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074563; cv=none; b=a1LPRkd2nAN4EOte66FM0kPnY0j/kXZP89GR+XXzaF2qqWvcQrdj2cm7cM/iyRYABUYVyv4+T0F8lZv2PDlukqM8Uf7DTcAajnAvO40BQ5hDr5Emtwh3hTZJ2c+7nRzIqrkc1ncWtuhPc00x2sIRPHOoSq9NdfJQnNd8TP4LPYo=
+	t=1715074564; cv=none; b=dypMjQxxREDpugB6X9lK8PTB3eI/lFXFZZZCLobOFlKsxyHVkBI87dj9c0X4/fW/qMwv4gXrK3TEvLORjthUtXyNo9BZDQ8EdZQmLU7+lSjcD9MGec5p0vMORsSp9JtPRJUy0BHPcvi/8jdpieGA5tbwi66L32iFtvMhSyz+Tv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074563; c=relaxed/simple;
-	bh=iDqzod0vjDc8e7O6tpb8LaBVtP1pQYzDsaE2j9NUzOo=;
+	s=arc-20240116; t=1715074564; c=relaxed/simple;
+	bh=L9yyqsasGcBRwTVVl5BvyZK7asmI7UPEWvqiN+AHkfY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bSjoZjjp4i+nt2UhTiPlVwdxWvlLBVWNJY5T4e5vZgMhlEvvoox7Nn3GL1iR7bs1DVxlU3aEx3mK+nUFdTKxWMkNIFKKJ5ElZYzG7+t/ASo/wr96yjWTqJ6FLdwUKbSd3kTMqePHHXOWGhEgIH0FBoOXSoiD0IVh84MEHUel74k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzOLN8DI; arc=none smtp.client-ip=209.85.208.174
+	 MIME-Version; b=NbapZE0U4yjDjGyGt0h/NXLjLeEyxkceDitsec7fAjNmpYoSpaGFPtUbY3us6rPsWiC7LdKIoqtk+T2OtXlLY97kKZNMsmiAdtivX6i3kMPVNpDTDU1Z5zSUMshSaXdQg0xrFD95awZGSJ8pKOcaj0aR2B5BAsa6/c3V+S7FR+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OFBIqBY/; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e0a0cc5e83so29089591fa.1;
-        Tue, 07 May 2024 02:36:01 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2df9af57b5eso38862831fa.2;
+        Tue, 07 May 2024 02:36:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715074559; x=1715679359; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715074560; x=1715679360; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=meUQG6It7c61OX5rw+9ctPkRI+dN99MXSc+fu3Gh8lA=;
-        b=DzOLN8DImWwbVEVYYUUilnSRVyt+e2OQV/Kz5dhSdsvmO4NHJcMFb6YKJnMYPOuOl7
-         xXaSj/LIHeqBExtRN283haciyPzqy2JRYo9Fppv3V88bxhaxeTSFaxw0PnyO5azPX89w
-         8ZAGGqvU+xoy03whP2kHpDBgPaFN6M9xFgN3NLlOKr+oJYxcPs/BSAJ4DKX7qk2acJD7
-         O8kGHPChGRhUd/ykBYzaB/d/9dJYOAcjTizGkKOO6yxxBQBC1lOd/+uBav8NIYdJWZje
-         mhzViClqF9o4kvkmwIxkhYCcAHBlNCLdbk6JdWeEwEm+1I7msPVNpEd4Z/0GLCTgFzTK
-         woeA==
+        bh=w1tkz/C4aSczVsYDDvrLDAru1oEnBIKM9qUQq3rJqNA=;
+        b=OFBIqBY/penvTFEvzDMkB83jyhUCTSiIYdGhLomlYiwBDYeNDQv3O9kDTT3p7ISOjC
+         kxe1nE6LP9fg3IuC06wPb6aRT13ohfemTHR7/mPBZSHZgMh2NC8VYVOsMY04P2pcdMbV
+         5Qv+ekTH0G+ojyY7NdmbcSecAa2Rnk0NT7+PBBSOzrdco6Wir+PcR5StByq1SaFf1/+F
+         V/nWL0leuSf89pQmsDP5WjfoEylyzIUG6QtNqyEJMB4Th/yYOYNg1FhDUZNljfsOKDaM
+         QpC0F++ofZgLNTTYMXM9aYL/x/rC/rXOERxn/E00jCR04owKTCgevuzAcpD2EeCJhMup
+         7o0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715074559; x=1715679359;
+        d=1e100.net; s=20230601; t=1715074560; x=1715679360;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=meUQG6It7c61OX5rw+9ctPkRI+dN99MXSc+fu3Gh8lA=;
-        b=iBYH7TlQ6Iaz8s/Vtn9MmF8gKV8CZIuzVjwH6zPSKbYJBX7hXVJF3w68DObXECofrf
-         q1MRfmcv07nOtVqjiUcpII8PaPuDT5vAgxiAxN1p//EJIXU9k87FD9HAU7ok6tdGe6gd
-         mJggTPskgec2dHv5AxC5YJ1mYzEAlYYmF/87vA3rumU42v49TjAcSJPCfyCu/fWorTc7
-         IJmsZdudBP3y8YtafaomEreISZSgo0LZ5VNi+xT0ogZvvDPhY1h0xAAIh9DSohLcIheq
-         IL96CFdV3FPpTuUFZbtJZUgexpQZsbJ3x2DbwpUI/M4KW8yjobJ5o8WT4t4AGUVO0GIv
-         oetQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWksIknfyrmVDaDIqH9yu7dTqQEAlren2oYCPdPy8WN9Lc7adbRQdgFzneC5oUmg478u+s+l6QUXq6Aut0Cl+xXHJ/WSsBkcxYHPqF+
-X-Gm-Message-State: AOJu0YzFiNua8BOzuk9vYHycobQm45KtviobIB1xqkd0HvJ5F5oGZoyA
-	EjkarVdbIMqoMLpQkIYFikrwcRJQBb7PslTh5UlpLidEg5E/dSSr
-X-Google-Smtp-Source: AGHT+IGtWDWZT1q9jjh7d1r3JJDYU35pFBtvbBC29f67kkjeb18Ee/eBuT3cN+DDecPGl6zjxnSY3Q==
-X-Received: by 2002:a05:651c:141e:b0:2d8:729f:cf3a with SMTP id u30-20020a05651c141e00b002d8729fcf3amr6498619lje.32.1715074559518;
-        Tue, 07 May 2024 02:35:59 -0700 (PDT)
+        bh=w1tkz/C4aSczVsYDDvrLDAru1oEnBIKM9qUQq3rJqNA=;
+        b=X/ZmyBFVeXIPmeBIdZwo9TCkQp1uOdvlaQdVIC2e6arNtfBE9f0YNKlwZciKwzU+lW
+         VnAOru9QyaNGX9xSf87uzo18xBReqiLwsD2sYUNeR0QB9CIcAjqLeLx3LC/y/RGsxp08
+         ygaD4u46qbwS6US1Ck6i7W+TqHSs4ZCxH9Iu+bCoO5iMVEzwlA0EiimIQJrKzSquSgNz
+         42eNXrCcSgctO5ZYUaiQl6i7Or4IJnvygK0HzvmTcrD+yeuiWGWJXE1mJL6MicPXb6tN
+         HXc3cvDhdqCbm6C2NK9Sx7p4x+ELtAaylrKGt7qr9lphEN301TrKNe88czQ9FqsCHrl1
+         79Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlWeOrC+tUXHbotycASOOz/WE/LYlvLvYg2tghGWBCHvRgHC6pv41UuHHjJuRyziOGjs2EwibAZXyDoTK2runv/6Ncsen8s+JWqCCE
+X-Gm-Message-State: AOJu0YyVNABP9XfEoOu0Zg1SCXWjalCoxVUet3hlyTUNCHTlPHzQKoaU
+	swJoeBJwASyEBH1o6bWfF/ETTvbcCg/XsemtVoNnDxDq+1rnD58t
+X-Google-Smtp-Source: AGHT+IEe29Z4B5o9+JvHcbUN9sMcQQWlKTFt0TCj3L378xX+JENFQMwDnGLqTaJiYVlrjSE+Qd/rhg==
+X-Received: by 2002:a2e:8904:0:b0:2df:4bad:cb7a with SMTP id d4-20020a2e8904000000b002df4badcb7amr10088812lji.0.1715074560360;
+        Tue, 07 May 2024 02:36:00 -0700 (PDT)
 Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.58
+        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 07 May 2024 02:35:59 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
@@ -76,11 +76,10 @@ Cc: RCU <rcu@vger.kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Marco Elver <elver@google.com>
-Subject: [PATCH 28/48] rcu: Inform KCSAN of one-byte cmpxchg() in rcu_trc_cmpxchg_need_qs()
-Date: Tue,  7 May 2024 11:35:10 +0200
-Message-Id: <20240507093530.3043-29-urezki@gmail.com>
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH 29/48] rcu: Remove redundant CONFIG_PROVE_RCU #if condition
+Date: Tue,  7 May 2024 11:35:11 +0200
+Message-Id: <20240507093530.3043-30-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
 References: <20240507093530.3043-1-urezki@gmail.com>
@@ -94,52 +93,40 @@ Content-Transfer-Encoding: 8bit
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Tasks Trace RCU needs a single-byte cmpxchg(), but no such thing exists.
-Therefore, rcu_trc_cmpxchg_need_qs() emulates one using field substitution
-and a four-byte cmpxchg(), such that the other three bytes are always
-atomically updated to their old values.  This works, but results in
-false-positive KCSAN failures because as far as KCSAN knows, this
-cmpxchg() operation is updating all four bytes.
-
-This commit therefore encloses the cmpxchg() in a data_race() and adds
-a single-byte instrument_atomic_read_write(), thus telling KCSAN exactly
-what is going on so as to avoid the false positives.
+The #if condition controlling the rcu_preempt_sleep_check() definition
+has a redundant check for CONFIG_PREEMPT_RCU, which is already checked
+for by an enclosing #ifndef.  This commit therefore removes this redundant
+condition from the inner #if.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Marco Elver <elver@google.com>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- kernel/rcu/tasks.h | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ include/linux/rcupdate.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 147b5945d67a..327fbfc999c8 100644
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@ -1457,6 +1457,7 @@ static void rcu_st_need_qs(struct task_struct *t, u8 v)
- /*
-  * Do a cmpxchg() on ->trc_reader_special.b.need_qs, allowing for
-  * the four-byte operand-size restriction of some platforms.
-+ *
-  * Returns the old value, which is often ignored.
-  */
- u8 rcu_trc_cmpxchg_need_qs(struct task_struct *t, u8 old, u8 new)
-@@ -1468,7 +1469,14 @@ u8 rcu_trc_cmpxchg_need_qs(struct task_struct *t, u8 old, u8 new)
- 	if (trs_old.b.need_qs != old)
- 		return trs_old.b.need_qs;
- 	trs_new.b.need_qs = new;
--	ret.s = cmpxchg(&t->trc_reader_special.s, trs_old.s, trs_new.s);
-+
-+	// Although cmpxchg() appears to KCSAN to update all four bytes,
-+	// only the .b.need_qs byte actually changes.
-+	instrument_atomic_read_write(&t->trc_reader_special.b.need_qs,
-+				     sizeof(t->trc_reader_special.b.need_qs));
-+	// Avoid false-positive KCSAN failures.
-+	ret.s = data_race(cmpxchg(&t->trc_reader_special.s, trs_old.s, trs_new.s));
-+
- 	return ret.b.need_qs;
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 2c54750e36a0..382780bb60f4 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -401,15 +401,15 @@ static inline int debug_lockdep_rcu_enabled(void)
+ 		}							\
+ 	} while (0)
+ 
+-#if defined(CONFIG_PROVE_RCU) && !defined(CONFIG_PREEMPT_RCU)
++#ifndef CONFIG_PREEMPT_RCU
+ static inline void rcu_preempt_sleep_check(void)
+ {
+ 	RCU_LOCKDEP_WARN(lock_is_held(&rcu_lock_map),
+ 			 "Illegal context switch in RCU read-side critical section");
  }
- EXPORT_SYMBOL_GPL(rcu_trc_cmpxchg_need_qs);
+-#else /* #ifdef CONFIG_PROVE_RCU */
++#else // #ifndef CONFIG_PREEMPT_RCU
+ static inline void rcu_preempt_sleep_check(void) { }
+-#endif /* #else #ifdef CONFIG_PROVE_RCU */
++#endif // #else // #ifndef CONFIG_PREEMPT_RCU
+ 
+ #define rcu_sleep_check()						\
+ 	do {								\
 -- 
 2.39.2
 
