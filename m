@@ -1,143 +1,108 @@
-Return-Path: <linux-kernel+bounces-171633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0328BE6AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:56:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2998BE6B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C9BD284252
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297CD1C23632
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D6C16131C;
-	Tue,  7 May 2024 14:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEB1160880;
+	Tue,  7 May 2024 14:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEUq8giv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DN3fyCly"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA7415FCF0;
-	Tue,  7 May 2024 14:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE42615F414
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093759; cv=none; b=dAZTa9DOKlFyuhL06s1l8DQ1t6tcl7DyJknJSeRosuoHLb45LJItkdGO6dNKux+FmA9fl21mOoYkvVkBp1bU1ZBkEupRrZzwGx/CWSZDKrRxz0+cx67ZcFmOGXXNEd+a7ShAYJThlu686zqzSdCaM8+W4VLRre3xoYNFtaL0ID0=
+	t=1715093778; cv=none; b=VvCaxMtuGuuPDjb49H7Xbb5I5Qi30cXqhS6K+VqZGJMgCzjLI2HJUtKvT0cU6jxbSmi/xw6kmEpqxA8N6OwTsvbZn5OK0/4eVAtvKNEIBwoHiBJIo4nLZWn8CGmur82CBTChPSzu/qjb6g2JU7DGN0Lp8HvM8EyGEyfFrWWLm80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093759; c=relaxed/simple;
-	bh=hDoeAt0aCGqvaRLZUhPUSNs/Q6T/LZp1Y/m0zwy/8VA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a16QLWM4Kw+jewiYEsmvgn+xeFZKHse80UmdICkCcIYugzSg7SuxmdvzOunDavYptLV6DM5K26QFQ7xNtwnd/j5600A+cC9I3zFUPVVkrkmni3SaCy9PJe0+/a61JOp9eWxI0i9CJ1rBkdE0z/enr247UrRDQgGVCJfiB5LGHaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEUq8giv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7414C2BBFC;
-	Tue,  7 May 2024 14:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715093759;
-	bh=hDoeAt0aCGqvaRLZUhPUSNs/Q6T/LZp1Y/m0zwy/8VA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QEUq8givoAZQpiA+7kCVzFHDZ7o4/uRf2Ar8D35gCBskdc8ctAAiedeU/2XcNdmDT
-	 /jJ4W9KC09jl5eJwW1gWoAcrkfDbCHuF/ztqlKUSN5B07z8NBbUEr8A/F2GuvPAsUD
-	 VzzyajXyTrylJteeF95fmW9DZRu9p88ZJe+A4v5sw67LOfTOr/KgAnubAfaJ9VZhJ+
-	 VIucFJJmVs9jM0KQ5vMNZz9383IvHLtkceQlByPzxQFXKNG+gwncdHKxoDGqs8QXbs
-	 AWNngkoj6WDB2F6S0p3I1G2z1cg9AjAkW8wYzfsuCo+i4vnruH75rqVzsiQgCLLSIt
-	 P59VCWQBxvNhQ==
-Date: Tue, 7 May 2024 09:55:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 10/11] dt-bindings: imx6q-pcie: Add i.MX8Q pcie
- compatible string
-Message-ID: <20240507145557.GA461201-robh@kernel.org>
-References: <20240402-pci2_upstream-v3-0-803414bdb430@nxp.com>
- <20240402-pci2_upstream-v3-10-803414bdb430@nxp.com>
- <20240429154823.GD1709920-robh@kernel.org>
- <ZjAPy05fGLqX6W1I@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1715093778; c=relaxed/simple;
+	bh=U3aPuCdf8BbTSweuMDZBoEtz3ysiU7++KCuwqbH6O1w=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=eGEwgDcd0/g2iuhKqjUwxipHgp3oOErBGK05BUpsoXAIAMXX6iRgQcRfo3b82tv1fSrPB3xCbOE9By+XkUf9XNVEbuL2spdQhaHbg++OsEOFiCKO8pJpNT4h3/H+nCqvkrrzwZ5TpSajYDqNlYHogQFUZCzlzRa0Nud2dkddJ94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DN3fyCly; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7928c5cb63fso230362085a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1715093775; x=1715698575; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dAG7TUb5hoiO+hKAcnLS9PzWLaNdTanXbfa2plm364c=;
+        b=DN3fyClytqoCR4cfD3WOtNU+djSVllhQO5tGwqPEIt0ipIqZSK+d0Y5MviA/Yp39PA
+         ZI6e/YWKRN+f8o11TMzv7+6DamdydPOJ9Dg8gmiuPVLwsewKoGEME9ECawBu+0CZ0NLM
+         qkyZQoCDT72LxXWdGzj/zOzf0pVjQ5qDi8mShWxTOvOROuYcHgNV63iODnNteDIj29XP
+         OmNftbCk95mqCYVAYhSSPlpRHsZpajCXUuFrdF0rQTUHI1yj++J0g47QBPNnsdkl6ypR
+         hsM7guqSL5/o9L2bLT9fWKiZyu3HoLc2ItlYlFjUyAJJo40nu5N7Ic7659+Mv2acIAD6
+         YTAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715093775; x=1715698575;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dAG7TUb5hoiO+hKAcnLS9PzWLaNdTanXbfa2plm364c=;
+        b=A3szPeh4qaZQIHit6RNA7fGm8P6suBosmrY9FMfsJv8dyEafooNJH5UMxyhdogxLMh
+         2Nqf3eSF6puRLGWJb65PM+8moqXLcPNq3FLJZg2rzKaJ98fr+Uuhie0yROYKGNtQujZt
+         z95EP56E3J1x3tmKZSeVu1kIGlEn9t2MqQ4YvOpIJRur/k6tIu2N4VZ/0GtGDt+RlfON
+         heI6B8JpZV4iyCLntBaNJsAzLNuBnb/y0Py6sZmS0Hw0RDiYXCzW+79XYbr7c0+547OU
+         l859KmABqrWsSxtNZHxSdSmklPHOy+nGLtJ4CwiIEMcHlCcbm4ErpBcOQRbLMcN2rROT
+         Yo0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWy4v8hotjokEHYcKFm/b+MTH8rpaBaUllnQy3HmoVFyPobIMR9lycY+Mo2SkFxbJnyFtEpKYaLhrid5qfFrxfVFgI6p22tRKM15fZ0
+X-Gm-Message-State: AOJu0YzgJyhr/M2j5k1DycbtkF2my1XMRy8SNNAVnRbs98Q6TlmMTwCe
+	x2wi77PLx8n62DOlI9yCqc/6870GQw5CtQNOcd6Y2Q+D5TnrJ9AVQVPquqS9sg==
+X-Google-Smtp-Source: AGHT+IFJ9/XdlpsfijSJp8NgxZMyJgNfVe9RyIheVG2oMchZOjGjf2Ye6/u1d77c4EA1le1mWmQnVg==
+X-Received: by 2002:ae9:f443:0:b0:792:92cc:41f6 with SMTP id af79cd13be357-792b24c8372mr3784685a.17.1715093774767;
+        Tue, 07 May 2024 07:56:14 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 11-20020a05620a04cb00b0079293ebf935sm2562969qks.54.2024.05.07.07.56.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 07:56:14 -0700 (PDT)
+Date: Tue, 07 May 2024 10:56:13 -0400
+Message-ID: <06a6ed315cacd41043f9f9e67ea379af@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjAPy05fGLqX6W1I@lizhi-Precision-Tower-5810>
+From: Paul Moore <paul@paul-moore.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: repair file entry in SECURITY SUBSYSTEM
+References: <20240507140122.176304-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20240507140122.176304-1-lukas.bulwahn@redhat.com>
 
-On Mon, Apr 29, 2024 at 05:23:23PM -0400, Frank Li wrote:
-> On Mon, Apr 29, 2024 at 10:48:23AM -0500, Rob Herring wrote:
-> > On Tue, Apr 02, 2024 at 10:33:46AM -0400, Frank Li wrote:
-> > > From: Richard Zhu <hongxing.zhu@nxp.com>
-> > > 
-> > > Add i.MX8Q PCIe "fsl,imx8q-pcie" compatible strings.
-> > > 
-> > > Add "fsl,local-address" property for i.MX8Q platforms. fsl,local-address
-> > > is address of PCIe module in high speed io (HSIO)subsystem bus fabric. HSIO
-> > > bus fabric convert the incoming address base to this local-address. Two
-> > > instances of PCI have difference local address.
-> > 
-> > This is just some intermediate bus address? We really should be able to 
-> > describe this with standard ranges properties.
+On May  7, 2024 Lukas Bulwahn <lbulwahn@redhat.com> wrote:
 > 
-> Yes, Maybe dwc's implement have some problem. After read below doc again
-> https://elinux.org/Device_Tree_Usage#PCI_Address_Translation
+> Commit 67889688e05b ("MAINTAINERS: update the LSM file list") adds a few
+> file entries to lsm-related header files. Among them, there is a reference
+> to include/security.h. However, security.h is located in include/linux/,
+> not in include/.
 > 
->                   ┌──────┐  ┌──────────┐                                 
-> ┌────┐0x18001000  │      │  │          │                                 
-> │CPU ├───────────►│      ├──┤  Others  │                                 
-> └────┘            │      │  │          │                                 
->                   │      │  └──────────┘                                 
->                   │      │                                               
->                   │      │   ┌─────────┐                                 
->                   │      │   │         │            ┌───────────┐        
->                   │      ├──►│ HSIO    │ 0xB8001000 ├───────────┤        
->                   │      │   │ Fabric  ├───────────►│Bar0       │ TLP mem 0xB8001000   
->                   │      │   │         │            │0xB8000000 ├───────►
->                   └──────┘   └─────────┘            │           │        
-
-Note the 0xB8xxxxxxx address on the right is a PCI address which could 
-be anything though folks often make it 1:1.
-
->                   Main Fabric                       ├───────────┤        
->                                                     │           │        
->                                                     │           │        
->                                                     │           │        
->                                                     │           │        
->                                                     │           │        
->                                                     │           │        
->                                                     │ DWC       │        
->                                                     │ PCIe      │        
->                                                     │ Controller│        
->                                                     │           │        
->                                                     │           │        
->                                                     └───────────┘        
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
 > 
+> Repair this new file entry in the SECURITY SUBSYSTEM section.
 > 
-> dts should be
-> 
-> ranges = <0x82000000 0 0xB8000000 0x18000000 0 0x07f00000>
-> 		       ^^^^
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-And HSIO needs a node with 
+My mistake, thanks for the fix Lukas; merged into lsm/dev.
 
-ranges = <0xb8000000 0x18000000 size>;
-
-Rob
-
+--
+paul-moore.com
 
