@@ -1,93 +1,145 @@
-Return-Path: <linux-kernel+bounces-171925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2918BEAB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDBD8BEAB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193F41F26098
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B341F25C88
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DEE16C855;
-	Tue,  7 May 2024 17:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BFD16C853;
+	Tue,  7 May 2024 17:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ten4Eycf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ce6zh//P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73186E570
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ADD17BA1;
+	Tue,  7 May 2024 17:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715103525; cv=none; b=olD+119hH9EHWwzgZuFbpY7N2MsVfJqP5PTHX4koGM8YcGZfk14/Ooxf73xVcm+bVpMU9o0chUZOem5Qrob6GJB20nmzRdz4rJnGsE0chZUQCFpuahrk8eLji4RfvKgRyevdTZpJxu0RxHk1yYH0/b4wK6NL01j25Tcy9VrJrkA=
+	t=1715103889; cv=none; b=H2azH4FsOyxU1OX/h87Ce4et/Nd9vvMKoS6Kih85IMnl/dWLhitvp9h9VC52o4Q0IkjP/Bjfp9It1TcV7pTb97H9qacMn75AsAOKwkogxNF+MU5uOzafD9VuhfLgkivlbgQYWIM8sXycOXKfrj69o2NrDv9bwQBRlRE4VDY4vAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715103525; c=relaxed/simple;
-	bh=Kk5dtahjbr3xZRYks0JLO6NbANU6wiMK62UB4BoVbkA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=j26ysRpD6NAC2PvlsOxU6uFQSLGfk8KG/NExJDyGu07dRL2D2jkgHE4Lfe0fpCmmYRS9Reeke/hryiP66ixywUseCF0wVJAZgn+hTgMQHM9Sik3DfsejxdeJXcd7TAqP74mhjscxKo7OoVjzGpzbth9Qj2Wj1orCaDMBkk9Cr14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ten4Eycf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB8CC2BBFC;
-	Tue,  7 May 2024 17:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1715103525;
-	bh=Kk5dtahjbr3xZRYks0JLO6NbANU6wiMK62UB4BoVbkA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ten4EycfJ89RrJXXlLX05LJcpfxrIS+lzOLKwW2O0r1LFLT2lRMhjYR4kJ5AdXzIh
-	 mMxn91I6Uzl6t7WZmAGNyDsXaCDbOCBYSPj4GDMzewBJ1DAworDtivTPzQohIZhomb
-	 S1sTqTe37Z+jIErKvjB16Ot3WKlt+XVlGaXHuxxU=
-Date: Tue, 7 May 2024 10:38:43 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lance Yang <ioworker0@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, willy@infradead.org, sj@kernel.org,
- maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com,
- 21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com,
- zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com,
- libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] mm/rmap: integrate PMD-mapped folio splitting
- into pagewalk loop
-Message-Id: <20240507103843.d15414e356d60612f94ec6ce@linux-foundation.org>
-In-Reply-To: <19645506-f17d-4202-807e-f0e5c99af742@redhat.com>
-References: <20240501042700.83974-1-ioworker0@gmail.com>
-	<20240501042700.83974-3-ioworker0@gmail.com>
-	<cc9fd23f-7d87-48a7-a737-acbea8e95fb7@linux.alibaba.com>
-	<CAK1f24kyCj2Svguuu07wDuVEWYYbcmRc_18ihgVAzSjoJ9ox2A@mail.gmail.com>
-	<a8f7a8da-c2e1-443c-9220-a224d97b1c81@redhat.com>
-	<CAK1f24=rWdgscbDa6pMqOmTEDOHVLo5NQ=7jOo9TdyJRXahHZg@mail.gmail.com>
-	<20240507102241.0a09db69afd62efb5ce84f17@linux-foundation.org>
-	<19645506-f17d-4202-807e-f0e5c99af742@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715103889; c=relaxed/simple;
+	bh=Gogk1VdeqklvN8V+Xf671pTC95Wvzn4UGS93Wm7/U1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bS+KIr6xpl+70iDVQWJoYyYXBp5nKfDPBbl89a8LE0OwnUMhMyo411jBb5w5hwZXfqWVR7VgEGg4bhAgIduT2JycV0xI2lefO/UQM7iaaSYl7LV0zsEt+9neU4j3Kp4nyH/HJgmXzhNqUAl50wcuu+GP+/+03inw2T1qQSMGwoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ce6zh//P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 002F0C2BBFC;
+	Tue,  7 May 2024 17:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715103889;
+	bh=Gogk1VdeqklvN8V+Xf671pTC95Wvzn4UGS93Wm7/U1Q=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ce6zh//PwJaXHIO4sEZXJeSoFQcJUUIIjo7Xwh+/KhL25ylW61NDQqxGUbVctU3VY
+	 afEP5EFeyU8Damlq49jFg2ovH+9WqKD1oTJd7aOdUe1RYH1udtcVWTF8FgT2XEOiCi
+	 UfZXIXRfx6KyUetdePENZ2XuwJssYokK7+ZLNrUB3kUo0++IZWk2cg+6Qrv9NoT+72
+	 MX8Iu8dyyYph77peAObFKA4qW9RIPm/ulcIrxvPSsBC1BFkH5lJZ5m80u57IPVxlbx
+	 Lk1vqX+rwAPgXwiJDl9uQM1T1FSuB061L2y90AkWzME4xuVdzF7BgMS0g4/65WcJFS
+	 +SpfkndOqKX8Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 8446ACE14CC; Tue,  7 May 2024 10:44:48 -0700 (PDT)
+Date: Tue, 7 May 2024 10:44:48 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
+Message-ID: <4c9e89b5-c981-4809-8bc2-247563ce04e9@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240507093530.3043-1-urezki@gmail.com>
+ <20240507093530.3043-26-urezki@gmail.com>
+ <ZjpAsYJIfzYSKgdA@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjpAsYJIfzYSKgdA@redhat.com>
 
-On Tue, 7 May 2024 19:33:05 +0200 David Hildenbrand <david@redhat.com> wrote:
-
-> > Well, which series are we talking about?  "mm/madvise: enhance
-> > lazyfreeing with mTHP in madvise_free v10" or ""Reclaim lazyfree THP
-> > without splitting v4" or both?
+On Tue, May 07, 2024 at 10:54:41AM -0400, Oleg Nesterov wrote:
+> Hello,
 > 
-> See my other mail, "mm/madvise: enhance lazyfreeing with mTHP in 
-> madvise_free v10" is all acked/reviewed and good to go.
-> 
-> > 
-> > And how significant are the needed fixup patches?
-> > 
-> > And what is our confidence level after those fixups are in place?
-> 
-> I'm afraid I won't have time to review this series this/next week, so I 
-> cannot tell. I already assumed this would not be 6.10 material.
+> I feel I don't really like this patch but I am travelling without my working
+> laptop, can't read the source code ;) Quite possibly I am wrong, I'll return
+> to this when I get back on May 10.
 
-OK, I've dropped the series "Reclaim lazyfree THP without splitting",
-v4.  Let's revisit in the next cycle.
+By the stricter data-race rules used in RCU code [1], this is a bug that
+needs to be fixed.  This code is updating ->gp_count, which is read
+locklessly, which in turn results in a data race.  The fix is to mark
+the updates (as below) with WRITE_ONCE().
 
+Or is there something in one or the other of these updates to ->gp_count
+that excludes lockless readers?  (I am not seeing it, but you know this
+code way better than I do!)
+
+							Thanx, Paul
+
+[1] https://docs.google.com/document/d/1FwZaXSg3A55ivVoWffA9iMuhJ3_Gmj_E494dLYjjyLQ/edit?usp=sharing
+
+> Oleg.
+> 
+> On 05/07, Uladzislau Rezki (Sony) wrote:
+> >
+> > From: "Paul E. McKenney" <paulmck@kernel.org>
+> >
+> > The rcu_sync structure's ->gp_count field is updated under the protection
+> > of ->rss_lock, but read locklessly, and KCSAN noted the data race.
+> > This commit therefore uses WRITE_ONCE() to do this update to clearly
+> > document its racy nature.
+> >
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Oleg Nesterov <oleg@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > ---
+> >  kernel/rcu/sync.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
+> > index 86df878a2fee..6c2bd9001adc 100644
+> > --- a/kernel/rcu/sync.c
+> > +++ b/kernel/rcu/sync.c
+> > @@ -122,7 +122,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+> >  		 * we are called at early boot time but this shouldn't happen.
+> >  		 */
+> >  	}
+> > -	rsp->gp_count++;
+> > +	WRITE_ONCE(rsp->gp_count, rsp->gp_count + 1);
+> >  	spin_unlock_irq(&rsp->rss_lock);
+> >
+> >  	if (gp_state == GP_IDLE) {
+> > @@ -151,11 +151,15 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+> >   */
+> >  void rcu_sync_exit(struct rcu_sync *rsp)
+> >  {
+> > +	int gpc;
+> > +
+> >  	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
+> >  	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
+> >
+> >  	spin_lock_irq(&rsp->rss_lock);
+> > -	if (!--rsp->gp_count) {
+> > +	gpc = rsp->gp_count - 1;
+> > +	WRITE_ONCE(rsp->gp_count, gpc);
+> > +	if (!gpc) {
+> >  		if (rsp->gp_state == GP_PASSED) {
+> >  			WRITE_ONCE(rsp->gp_state, GP_EXIT);
+> >  			rcu_sync_call(rsp);
+> > --
+> > 2.39.2
+> >
+> 
 
