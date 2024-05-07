@@ -1,250 +1,214 @@
-Return-Path: <linux-kernel+bounces-171710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18B88BE7A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865C48BE7B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F4D4B2171D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A79F91C2232C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668EE168AEA;
-	Tue,  7 May 2024 15:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D81D16ABF8;
+	Tue,  7 May 2024 15:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4lOqjEN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ef/0Kx5P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9146015F30F;
-	Tue,  7 May 2024 15:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DC7165FBB
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715096695; cv=none; b=q+zmP32jd6SZZ5SWwqkQiatQTpi1S/461EiHsaFIl1BvJKHGjwBtcR00g8lIBehPMecR7/X1YSUjV1ZFKpt4pI0jHYBVcpdcOTrD4dW+PMIiXKte9CX6IXWP6zfZ7tl4ns7qzA+711Tsvpe6OLQs1Kj3WbQRW5Zlx6KRluMIhGk=
+	t=1715096709; cv=none; b=bhQsBI39Em0Szog/54TWjSYB9fBQNX1/KXMxK95wqTmH7bzJJMb0IHqtWv7EsLVmeo2ldBW8A8BuBXNcuYNG6G2PcF/px+eJgPgDrWo6IDpU6lGCqGL3Air2UwjG9gSMekdAm5u+tGSj1Y62KiJitghZOHujn5MJdOF6HX6glP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715096695; c=relaxed/simple;
-	bh=yFzbHrUIErgI/K91OQv9I/OpYVQQJu7B8yxVKKO+SzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gifa4UlwrBUF5AbeyhTGERM/Txl2Mb61LXaxTO6El4NXqAbBcM1M09e6KPpT2rAuYAHtf8j5Ovf7pfhPPAFeqNARg9VoCEF/UD32OS/gDd0KjxDcvz32Ph4p9dnrt++7JiuX0eNq9qHrp5KJPDoNeaY5JE5j+RnmB1php9KB83E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4lOqjEN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BEA0C2BBFC;
-	Tue,  7 May 2024 15:44:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715096695;
-	bh=yFzbHrUIErgI/K91OQv9I/OpYVQQJu7B8yxVKKO+SzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P4lOqjENPtah9e5qgGQEp/wINkms6VgwKnJh9NPCBjGY+i/g/SrwKxIl9X0D4ZjPL
-	 qFJcLf5k1dq+jjf+7ASYn9kBNmp9/1j+kI6eaNsJNH983lp0jKo5ERRmH54k+UXWo0
-	 KYvc8ce2T1UNM7+ZoYOma7FhZdNNyT9PSFymDGR457iL6GhHqyJb0KoLSMJg4cXjSC
-	 i6x0ld8brNqNY6ledquErLyFDvzG2F6iQ3LQgbykcSvyTyP9q2n1HArF3xrd3tYNaq
-	 tES8Q9NVC0+kh/K2LTeaNnsK0QXQD4Ul6RRKI+w7tTgc29reP88Uih6isPu3ZMA0zt
-	 GV4nUy8grFExg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1s4Mzx-0000000051g-16t0;
-	Tue, 07 May 2024 17:44:57 +0200
-Date: Tue, 7 May 2024 17:44:57 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya <quic_c_skakit@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
-Message-ID: <ZjpMeVk_HiixZUEu@hovoldconsulting.com>
-References: <20240506150830.23709-1-johan+linaro@kernel.org>
- <20240506150830.23709-13-johan+linaro@kernel.org>
- <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
+	s=arc-20240116; t=1715096709; c=relaxed/simple;
+	bh=kBa0ttNLzIYcw56Tj7ZRgDCKQbljsWpNgIINUFwTnJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EVISamTyM8nJ7AyOJcAOa3UHF3E8SNZPk2XSCg29TKrLHNd074yhOzi5ELHTDJoRFeBDO85JgAZ4JxloGsD3oQuhqQP4Meuy2ah2o5/6fAgHDxklR4kM0pGaWNEmQTgGLmnmUrjPYiLT6+IMMKkFxU9bzqGnRpLykZjOuIYd9IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ef/0Kx5P; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715096706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YQLC+xwt/HGEzdmMe/E3njAwGkq+LzsNlxhiuERSL3g=;
+	b=ef/0Kx5P9+TwodwJjt0Bz7fsIYcIYvadWndhRzON+I3wLa8Bu5jfV1ZlLnGNWhcFNQGizD
+	5fsYWlvceNDT4jFU2znyTTLBGCWKnhOA2z9SX53+dqNbXJ2JOfP9RtQWh25boxYb8gtjJv
+	jx6fypMnLXBj/vYNzmIid4KlgJXUDHE=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-wrrKja8xO3qVT36UHE2SAQ-1; Tue,
+ 07 May 2024 11:45:02 -0400
+X-MC-Unique: wrrKja8xO3qVT36UHE2SAQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A0ED51C01725;
+	Tue,  7 May 2024 15:45:01 +0000 (UTC)
+Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 75CD8C154E5;
+	Tue,  7 May 2024 15:45:01 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Xiaoyao Li <xiaoyao.li@intel.com>,
+	Binbin Wu <binbin.wu@linux.intel.com>
+Subject: [PATCH 5/7] KVM: x86/mmu: Track shadow MMIO value on a per-VM basis
+Date: Tue,  7 May 2024 11:44:57 -0400
+Message-ID: <20240507154459.3950778-6-pbonzini@redhat.com>
+In-Reply-To: <20240507154459.3950778-1-pbonzini@redhat.com>
+References: <20240507154459.3950778-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Mon, May 06, 2024 at 10:09:50PM +0300, Andy Shevchenko wrote:
-> Mon, May 06, 2024 at 05:08:29PM +0200, Johan Hovold kirjoitti:
-> > From: Satya Priya <quic_c_skakit@quicinc.com>
-> > 
-> > Qualcomm Technologies, Inc. PM8008 is an I2C-controlled PMIC containing
-> > seven LDO regulators. Add a PM8008 regulator driver to support PMIC
-> > regulator management via the regulator framework.
-> > 
-> > Note that this driver, originally submitted by Satya Priya [1], has been
-> > reworked to match the new devicetree binding which no longer describes
-> > each regulator as a separate device.
+From: Sean Christopherson <seanjc@google.com>
 
-> > [1] https://lore.kernel.org/r/1655200111-18357-8-git-send-email-quic_c_skakit@quicinc.com
-> 
-> Make it Link: tag?
-> 
-> Link: URL [1]
+TDX will use a different shadow PTE entry value for MMIO from VMX.  Add a
+member to kvm_arch and track value for MMIO per-VM instead of a global
+variable.  By using the per-VM EPT entry value for MMIO, the existing VMX
+logic is kept working.  Introduce a separate setter function so that guest
+TD can use a different value later.
 
-Sure.
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Message-Id: <229a18434e5d83f45b1fcd7bf1544d79db1becb6.1705965635.git.isaku.yamahata@intel.com>
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/include/asm/kvm_host.h | 2 ++
+ arch/x86/kvm/mmu/mmu.c          | 7 ++++---
+ arch/x86/kvm/mmu/spte.c         | 4 ++--
+ arch/x86/kvm/mmu/spte.h         | 4 ++--
+ arch/x86/kvm/mmu/tdp_mmu.c      | 6 +++---
+ 5 files changed, 13 insertions(+), 10 deletions(-)
 
-> > [ johan: rework probe to match new binding, amend commit message and
-> >          Kconfig entry]
-> 
-> Wouldn't be better on one line?
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 01c69840647e..9f92bdb78504 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1313,6 +1313,8 @@ struct kvm_arch {
+ 	 */
+ 	spinlock_t mmu_unsync_pages_lock;
+ 
++	u64 shadow_mmio_value;
++
+ 	struct iommu_domain *iommu_domain;
+ 	bool iommu_noncoherent;
+ #define __KVM_HAVE_ARCH_NONCOHERENT_DMA
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index fbfdc606f1f1..45b6d8f9e359 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -2462,7 +2462,7 @@ static int mmu_page_zap_pte(struct kvm *kvm, struct kvm_mmu_page *sp,
+ 				return kvm_mmu_prepare_zap_page(kvm, child,
+ 								invalid_list);
+ 		}
+-	} else if (is_mmio_spte(pte)) {
++	} else if (is_mmio_spte(kvm, pte)) {
+ 		mmu_spte_clear_no_track(spte);
+ 	}
+ 	return 0;
+@@ -4144,7 +4144,7 @@ static int handle_mmio_page_fault(struct kvm_vcpu *vcpu, u64 addr, bool direct)
+ 	if (WARN_ON_ONCE(reserved))
+ 		return -EINVAL;
+ 
+-	if (is_mmio_spte(spte)) {
++	if (is_mmio_spte(vcpu->kvm, spte)) {
+ 		gfn_t gfn = get_mmio_spte_gfn(spte);
+ 		unsigned int access = get_mmio_spte_access(spte);
+ 
+@@ -4760,7 +4760,7 @@ EXPORT_SYMBOL_GPL(kvm_mmu_new_pgd);
+ static bool sync_mmio_spte(struct kvm_vcpu *vcpu, u64 *sptep, gfn_t gfn,
+ 			   unsigned int access)
+ {
+-	if (unlikely(is_mmio_spte(*sptep))) {
++	if (unlikely(is_mmio_spte(vcpu->kvm, *sptep))) {
+ 		if (gfn != get_mmio_spte_gfn(*sptep)) {
+ 			mmu_spte_clear_no_track(sptep);
+ 			return true;
+@@ -6267,6 +6267,7 @@ static bool kvm_has_zapped_obsolete_pages(struct kvm *kvm)
+ 
+ void kvm_mmu_init_vm(struct kvm *kvm)
+ {
++	kvm->arch.shadow_mmio_value = shadow_mmio_value;
+ 	INIT_LIST_HEAD(&kvm->arch.active_mmu_pages);
+ 	INIT_LIST_HEAD(&kvm->arch.zapped_obsolete_pages);
+ 	INIT_LIST_HEAD(&kvm->arch.possible_nx_huge_pages);
+diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
+index 0a0e83859c27..a5e014d7bc62 100644
+--- a/arch/x86/kvm/mmu/spte.c
++++ b/arch/x86/kvm/mmu/spte.c
+@@ -74,10 +74,10 @@ u64 make_mmio_spte(struct kvm_vcpu *vcpu, u64 gfn, unsigned int access)
+ 	u64 spte = generation_mmio_spte_mask(gen);
+ 	u64 gpa = gfn << PAGE_SHIFT;
+ 
+-	WARN_ON_ONCE(!shadow_mmio_value);
++	WARN_ON_ONCE(!vcpu->kvm->arch.shadow_mmio_value);
+ 
+ 	access &= shadow_mmio_access_mask;
+-	spte |= shadow_mmio_value | access;
++	spte |= vcpu->kvm->arch.shadow_mmio_value | access;
+ 	spte |= gpa | shadow_nonpresent_or_rsvd_mask;
+ 	spte |= (gpa & shadow_nonpresent_or_rsvd_mask)
+ 		<< SHADOW_NONPRESENT_OR_RSVD_MASK_LEN;
+diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
+index 8056b7853a79..5dd5405fa07a 100644
+--- a/arch/x86/kvm/mmu/spte.h
++++ b/arch/x86/kvm/mmu/spte.h
+@@ -265,9 +265,9 @@ static inline struct kvm_mmu_page *root_to_sp(hpa_t root)
+ 	return spte_to_child_sp(root);
+ }
+ 
+-static inline bool is_mmio_spte(u64 spte)
++static inline bool is_mmio_spte(struct kvm *kvm, u64 spte)
+ {
+-	return (spte & shadow_mmio_mask) == shadow_mmio_value &&
++	return (spte & shadow_mmio_mask) == kvm->arch.shadow_mmio_value &&
+ 	       likely(enable_mmio_caching);
+ }
+ 
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index f5401967897a..5fd618abc243 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -495,8 +495,8 @@ static void handle_changed_spte(struct kvm *kvm, int as_id, gfn_t gfn,
+ 		 * impact the guest since both the former and current SPTEs
+ 		 * are nonpresent.
+ 		 */
+-		if (WARN_ON_ONCE(!is_mmio_spte(old_spte) &&
+-				 !is_mmio_spte(new_spte) &&
++		if (WARN_ON_ONCE(!is_mmio_spte(kvm, old_spte) &&
++				 !is_mmio_spte(kvm, new_spte) &&
+ 				 !is_removed_spte(new_spte)))
+ 			pr_err("Unexpected SPTE change! Nonpresent SPTEs\n"
+ 			       "should not be replaced with another,\n"
+@@ -1028,7 +1028,7 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
+ 	}
+ 
+ 	/* If a MMIO SPTE is installed, the MMIO will need to be emulated. */
+-	if (unlikely(is_mmio_spte(new_spte))) {
++	if (unlikely(is_mmio_spte(vcpu->kvm, new_spte))) {
+ 		vcpu->stat.pf_mmio_spte_created++;
+ 		trace_mark_mmio_spte(rcu_dereference(iter->sptep), iter->gfn,
+ 				     new_spte);
+-- 
+2.43.0
 
-Now you're really nit picking. ;) I think I prefer to stay within 72
-columns.
 
-> + array_size.h
-> + bits.h
-
-Ok.
-
-> > +#include <linux/device.h>
-> 
-> > +#include <linux/kernel.h>
-> 
-> What is this header for?
-
-Probably the ones that are not explicitly included.
-
-> + math.h
-> 
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/regulator/driver.h>
-> 
-> + asm/byteorder.h
-
-Ok, thanks.
-
-> > +static int pm8008_regulator_get_voltage(struct regulator_dev *rdev)
-> > +{
-> > +	struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
-> > +	__le16 mV;
-> > +	int uV;
-> > +
-> > +	regmap_bulk_read(pm8008_reg->regmap,
-> > +			LDO_VSET_LB_REG(pm8008_reg->base), (void *)&mV, 2);
-> 
-> Why casting?
-
-I tried not change things in the v15 from Qualcomm that I based this
-on. I couldn't help cleaning up a few things in probe, which I was
-touching anyway, but I left it there.
-
-I'll drop the unnecessary cast.
-
-> > +	uV = le16_to_cpu(mV) * 1000;
-> > +	return (uV - pm8008_reg->rdesc.min_uV) / pm8008_reg->rdesc.uV_step;
-> > +}
-> > +
-> > +static inline int pm8008_write_voltage(struct pm8008_regulator *pm8008_reg,
-> > +							int mV)
-> > +{
-> > +	__le16 vset_raw;
-> > +
-> > +	vset_raw = cpu_to_le16(mV);
-> 
-> Can be joined to a single line.
-
-Sure.
-
-> > +	return regmap_bulk_write(pm8008_reg->regmap,
-> > +			LDO_VSET_LB_REG(pm8008_reg->base),
-> > +			(const void *)&vset_raw, sizeof(vset_raw));
-> 
-> Why casting?
-
-Same answer as above. Will drop.
-
-> > +}
-> 
-> ...
-> 
-> > +static int pm8008_regulator_set_voltage(struct regulator_dev *rdev,
-> > +					unsigned int selector)
-> > +{
-> > +	struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
-> > +	int rc, mV;
-> > +
-> > +	rc = regulator_list_voltage_linear_range(rdev, selector);
-> > +	if (rc < 0)
-> > +		return rc;
-> > +
-> > +	/* voltage control register is set with voltage in millivolts */
-> > +	mV = DIV_ROUND_UP(rc, 1000);
-> 
-> > +	rc = pm8008_write_voltage(pm8008_reg, mV);
-> > +	if (rc < 0)
-> > +		return rc;
-> > +
-> > +	return 0;
-> 
-> 	return pm8008_write_voltage(pm8008_reg, mV);
-
-Possibly, but I tend to prefer explicit error paths.
-
-> > +}
-> 
-> > +
-> > +	regmap = dev_get_regmap(dev->parent, "secondary");
-> > +	if (!regmap)
-> > +		return -EINVAL;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(reg_data); i++) {
-> > +		pm8008_reg = devm_kzalloc(dev, sizeof(*pm8008_reg), GFP_KERNEL);
-> > +		if (!pm8008_reg)
-> > +			return -ENOMEM;
-> > +
-> > +		pm8008_reg->regmap = regmap;
-> > +		pm8008_reg->base = reg_data[i].base;
-> > +
-> > +		/* get slew rate */
-> > +		rc = regmap_bulk_read(pm8008_reg->regmap,
-> > +				LDO_STEPPER_CTL_REG(pm8008_reg->base), &val, 1);
-> > +		if (rc < 0) {
-> > +			dev_err(dev, "failed to read step rate: %d\n", rc);
-> > +			return rc;
-> 
-> 			return dev_err_probe(...);
-
-Nah, regmap won't trigger a probe deferral.
-
-> > +static struct platform_driver pm8008_regulator_driver = {
-> > +	.driver	= {
-> > +		.name = "qcom-pm8008-regulator",
-> > +	},
-> > +	.probe = pm8008_regulator_probe,
-> > +};
-> 
-> > +
-> 
-> Unneeded blank line.
-
-I noticed that one too, but such things are up the author to decide.
-
-> > +module_platform_driver(pm8008_regulator_driver);
-> 
-> ...
-> 
-> > +MODULE_ALIAS("platform:qcom-pm8008-regulator");
-> 
-> Use ID table instead.
-
-No, the driver is not using an id-table for matching so the alias is
-needed for module auto-loading.
-
-Johan
 
