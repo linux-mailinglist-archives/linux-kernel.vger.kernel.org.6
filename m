@@ -1,96 +1,85 @@
-Return-Path: <linux-kernel+bounces-170522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32D88BD8A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5461E8BD8AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696A91F24AEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:31:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A09A1F245FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824C04A3E;
-	Tue,  7 May 2024 00:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF65110A;
+	Tue,  7 May 2024 00:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mWLcirb8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JY9tXfZm"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891AC3209;
-	Tue,  7 May 2024 00:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11D57E2;
+	Tue,  7 May 2024 00:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715041864; cv=none; b=F+TMHyPEbVyRp5yHF7Y5TrDkUB98J8S9ojVbynj6kYo9yTFTdwxcgcSNIdR1kMh5Px3TtIcmD/ThG10adDAh5w3shjJnxWR/vvcNbMTCn8eaZIFoX0SEI8UCEWRutTLJBz0NFNlv8pt5qIAnrt9oRqrYnFem6CAk/GfZvJeqBKE=
+	t=1715042096; cv=none; b=R14a0tcy2twPiM11ZydREwj2L7liMTDP4g9D293ZBOMIrvq9DBXZ2Mf9kD/zRviDjEd2bSO5FV4SPBEPy3G+KVO/hn8MOLCysCzC63OXTmddQYbbb6Uq8fAHHQECxTd0SetHkQ84EMYWeO3NN025yBgb5WDq2fiJek+jVHY3ykg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715041864; c=relaxed/simple;
-	bh=6K/qVLxvWM+JIRdXSYZ3gg4O0292aBjfYPKpsDaPkkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9IwFaWtj0XFW+QGM6xWmZ1NtJnwxzyeNdQPR7SltuMINtrzEV8cFOTKuWrgsTLHLKxn5qzFlX9g+DmLvHsU9F3AYP3cn4QpVGpMCR45i9MvlxcNB9t2VUtAgAWz57mQQHwsqXZvVR04aRTGagzSvwk9Dmms7qp2HBir+4PbUGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mWLcirb8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eVoHe7gki5cWDhouGnejYKP4ZymSrtyZjdYp0G0mgKs=; b=mWLcirb8e/jEqvmhJ5A9D8/csD
-	GZZ6qmjoVb/dLSKXjivspzcuigXDctbMT0xjlSfuxYiNClIYJRz5tk4mOOh/tlTKRSoxpSCb10GEH
-	qxpWb0wEa4LHrM62CK7RezooI1KocproXqycgvEfDhml8xak9raWOh7W36eU2O6VJcj9mqcL0TDt9
-	Vk6AWv+cSLHqbslgSgK23PX2aNc9yf55LiY3DxSs+6pN9qIMmAiTgMdSeEnxF74MOgXfqXVywu7lm
-	xulB4lhrD0MDVF5NTWxLh+Gxg0ExHXWZlXw0Dsa9sSee5/3frZ+/pvlVLFFTUjlemnyLWuIodKEEM
-	rrcABVHw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s48jT-00000009A5v-15iX;
-	Tue, 07 May 2024 00:30:59 +0000
-Date: Mon, 6 May 2024 17:30:59 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: ziy@nvidia.com, linux-mm@kvack.org, fstests@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	willy@infradead.org, hare@suse.de, john.g.garry@oracle.com,
-	p.raghav@samsung.com, da.gomez@samsung.com
-Subject: Re: [PATCH 1/2] mm/huge_memory: skip invalid debugfs file entry for
- folio split
-Message-ID: <Zjl2Q5fjudt75uvk@bombadil.infradead.org>
-References: <20240424225449.1498244-1-mcgrof@kernel.org>
- <20240424225449.1498244-2-mcgrof@kernel.org>
- <20240425140126.2a62a5ec686813ee7deea658@linux-foundation.org>
- <Zi8cYrtxyO7Uw-Mc@bombadil.infradead.org>
- <20240429092307.37bf51c79f70bad4922f6277@linux-foundation.org>
+	s=arc-20240116; t=1715042096; c=relaxed/simple;
+	bh=lmoD7OVGd+QojINcFSvTvWpgNlKx2KIF+0G96Ys6I/s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l+vVvso/6/sj1cdzIArMUGcnx9F/PxH4jmOIA7XG8nqYoTS8snGJOGbZnxee73Q/7Vtu/Kn/N2U7bNM/b3eJX82GGv49VfOUdqnirWNtfo7+LcmC8+e3bCi5egdmmysh71VhsJzyY8SNf8Wtro39DjBPCLbIXSUSZDCvUbrcD/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JY9tXfZm; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715042090; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=Ba+5FP5FJO2/Suyp4hDjWNInibf1ZnvZ5BNqQp+lmQA=;
+	b=JY9tXfZmXxK6N5sSt8tk2Xrk/FjngPwj8Sv6ErqYe949B01AF2dcHXuhmUC/s2DOzTX+hZFUIWzRxQytnsXB/n26rw1L1uLyD+6eUYWhLxW5wa70C7g8Fc4tRGUoi8PuZbIwICDVaK94X4SThhTiokBBBKxda77giCp3KhA8J80=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W6-1Pzd_1715042088;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0W6-1Pzd_1715042088)
+          by smtp.aliyun-inc.com;
+          Tue, 07 May 2024 08:34:49 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: richard.henderson@linaro.org,
+	mattst88@gmail.com
+Cc: linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] alpha: Remove duplicated include in fpreg.c
+Date: Tue,  7 May 2024 08:34:47 +0800
+Message-Id: <20240507003447.35833-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240429092307.37bf51c79f70bad4922f6277@linux-foundation.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 29, 2024 at 09:23:07AM -0700, Andrew Morton wrote:
-> On Sun, 28 Apr 2024 21:04:50 -0700 Luis Chamberlain <mcgrof@kernel.org> wrote:
-> 
-> > On Thu, Apr 25, 2024 at 02:01:26PM -0700, Andrew Morton wrote:
-> > > On Wed, 24 Apr 2024 15:54:48 -0700 Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > > 
-> > > > If the file entry is too long we may easily end up going out of bounds
-> > > > and crash after strsep() on sscanf(). 
-> > > > 
-> > > 
-> > > Can you explain why?  I'm not seeing it.
-> > 
-> > I couldn't see it either but I just looked at the crash below and
-> > its the only thing I could think of. So I think its when userspace
-> > somehow abuses MAX_INPUT_BUF_SZ a lot somehow.
-> 
-> This isn't a good basis for making kernel changes :(
-> 
-> Can you investigate a little further please?
+The header files asm/fpu.h is included twice in fpreg.c,
+so one inclusion of each can be removed.
 
-Sure, this will require some more time, feel free to ignore these two
-patches for now then.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=8945
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ arch/alpha/lib/fpreg.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-  Luis
+diff --git a/arch/alpha/lib/fpreg.c b/arch/alpha/lib/fpreg.c
+index 9a238e7536ae..3d32165043f8 100644
+--- a/arch/alpha/lib/fpreg.c
++++ b/arch/alpha/lib/fpreg.c
+@@ -10,7 +10,6 @@
+ #include <linux/preempt.h>
+ #include <asm/fpu.h>
+ #include <asm/thread_info.h>
+-#include <asm/fpu.h>
+ 
+ #if defined(CONFIG_ALPHA_EV6) || defined(CONFIG_ALPHA_EV67)
+ #define STT(reg,val)  asm volatile ("ftoit $f"#reg",%0" : "=r"(val));
+-- 
+2.20.1.7.g153144c
+
 
