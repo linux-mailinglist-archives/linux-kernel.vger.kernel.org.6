@@ -1,212 +1,180 @@
-Return-Path: <linux-kernel+bounces-170626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E329F8BD9E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A3A8BD9E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C361C21FA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035B61C2208E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9A644C9D;
-	Tue,  7 May 2024 03:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5461C1D524;
+	Tue,  7 May 2024 03:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bJrnz/PF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="pj4SQWVJ"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844E13FB2F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1413D3FBA2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715053881; cv=none; b=arzpHzZD4zB7a79Jm83umtzpdnmQLdwxinMyjT2VCtu2CJ1jlON7VB6rvd3piVPQuTkzU5xmeYtejq+E5tmR6+gg9dX2uCSebB2c1QtPhKEfp3LK6GA/KRrqn7gvbT2vrMy+Seol8xrHrwC+vnNs/2HAwxJbUaaXc8RecNAUCRY=
+	t=1715054032; cv=none; b=d0M++khrb6omoEfoTUTg6UgeYFwunCssnqfaRGy8Opn5QHPGtRrkUPP3fPNaM32XQR/mFFViFrlCmO8TYhi9yyGd6UAFI6K8+usXZlRRAve/Qpu9Vc/KkeaYmgSz2Ki0XNqe1zqThC+2LHAAQN0ctVFV0fVb/BKMtmC913NW+Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715053881; c=relaxed/simple;
-	bh=q47IA65bs4sHFJRSLYpD3ly9bWfItSnbXYvuwDSigu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D54wJr5rYHeBmMEQKpprqO1J8HoVIGvZIgRpzGWqjYasnh30ACweX/strxxJwApZqQ1jYXcvqjaVF/mJFx5qMDrJhX/97iNlGrWkyOSB9aV2NZEAFl1KAHvaV9VlRucrWNABC2tBpPNwf0qyVsn0z/L47o+7Jk8cQBns4ZInx8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bJrnz/PF; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715053880; x=1746589880;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q47IA65bs4sHFJRSLYpD3ly9bWfItSnbXYvuwDSigu8=;
-  b=bJrnz/PFDxH6CPw3UUigydtG4q2jxHvmsyYm0ymtGtgH+CfvVApcuVpI
-   jIUPQ0ii6cqErDSW66Ttomcj2APH5Rj6+ubr3tHQAv1TG9CEQuGyU8ZqX
-   2WSi2r+O89a9I8UavvwAV2aN9d/kKlWqTICN3nn7wRfeaSgaOdkdnIvGl
-   Xt39zxa+Ez62HCQOhbM092MHgUYTFPRgpWPYr1Sj04fK2Zx50lQa9XqeC
-   j1FLdWGK59aRJMRzG5smq0zs6P6j0NrK7DpPapC0jDi4H/OFgbPz2Ibyt
-   kUCCC2AiRe210NyLyYM4e2upCB56kWAVB+G1rFBvTV3EeKYmAq5/Bz0xu
-   g==;
-X-CSE-ConnectionGUID: cO3vZqrmT2aAPQVBWS5mgg==
-X-CSE-MsgGUID: o5CbFornS1i/99U4aS6cIw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="14608217"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="14608217"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 20:51:19 -0700
-X-CSE-ConnectionGUID: D6uWiVoFQPeaWMewdJ99fg==
-X-CSE-MsgGUID: djmXPHx7THmacJBEs+N9Jg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="33201687"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.212.193.196])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 20:51:18 -0700
-Date: Mon, 6 May 2024 20:51:17 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kai.huang@linux.intel.com" <kai.huang@linux.intel.com>
-Subject: Re: [PATCH 1/2] x86/cpu: Remove useless work in detect_tme_early()
-Message-ID: <ZjmlNSwForEVNeOv@aschofie-mobl2>
-References: <cover.1713929290.git.alison.schofield@intel.com>
- <4e159cdb00907dd7884c191acdab3a028d2f4857.1713929290.git.alison.schofield@intel.com>
- <25da8fb143b361740660bccff3973e04f1506b39.camel@intel.com>
+	s=arc-20240116; t=1715054032; c=relaxed/simple;
+	bh=tsOaVF+iFdOoeubnHXAxYCPcXOkgBthMQC/BpJg6mDU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hCIjJz5I/D0Mo/mBfFy9f+7AvDtCFiGBw8K8E6dtqrg1udvSYY1CX8GeGz/+4mX1lRUUJxugRexsjxC+ksbu82RpBE1n9OEf3ogbF33kMeLGm9zYHj6l9JUIv5Tb87BKzgu0oxgdat9b5os2Wo+dJRWSLsFgXNyC4xws9GoANTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pj4SQWVJ; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de0b4063e59so2352770276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 20:53:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715054030; x=1715658830; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xtepmuyQ0j0fsK9BoVO4wO3hfVCGXVxAllLwZnrs0Ig=;
+        b=pj4SQWVJ5b9orFmM1v2RvXO8mz8U3qmQ9EVLPGEUXeLH5zS/f0u44/Uxs08d09xsBu
+         BZ0J/Pw8/BLAmcPClu3XRD52gsfi5UaY/iYh8wNZkhVGFQUwSMEKblkvVJFA1hnCidM7
+         Sqyq+PpUiQLW9nxcoKFuwPcgZc0GM/X5bwOPUQ+7Kp/wdARuC0Xoeedte8qC/fr4yYKh
+         f7mnMMuow5goUDCgTXUORRhCU6R+TiCDMwqdH1lAZ5hal0HK44Zg2VsUmtnMh834r1qT
+         GLRSi7Xg/2RypZ3/3DcUE+oQhdOtsWPxllvrdsC8JH8JHvjr0HgSvp5+8zXLBmM6OLoY
+         DxPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715054030; x=1715658830;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xtepmuyQ0j0fsK9BoVO4wO3hfVCGXVxAllLwZnrs0Ig=;
+        b=OmYp/fgR3f4bp292phIsQ4N2IGbUAY7VSoOYGa0D0ibfQ/n70sCWH7fDRWHDQJyGGT
+         iuzA64Mp4n2gc/G8/rJXNaGhMB6hjrMqrHRoD/iQXyCGby0qBUbhDP17y9lHcr9TNBaH
+         xEMYdizAtRlXeDIlCo6G+nwZEZCN1lJZPhX0WyEbP3vYoJOFl/clIcrvSgu/cMfRuily
+         qQIhnsBP8uSO0dKD3u95VaDn+EIs+qRS+tyFXt2kz2Tue/YVhR0m4WShdxwyQzxQ0x79
+         wNPIYS+pVF0U4cEkfaISYuH/Vapk1qPpM2TW0kj3HHiEjxXgvs3Nvwsmfi3+1aN/sDGx
+         nnAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNklSMxgx3SbgzKMPzfdBNn9M9EW+ifKPrdLYcVn4z/S1vV/+5ZCPreFLR974kI36enK4tNg2Z50e8yyQepsoqJYauvw2c7+05Z2WM
+X-Gm-Message-State: AOJu0YwLu3wBm38igEfHDwpbrl7MHySppxTYCZoblfrKrke/mpUlxA8q
+	mGdSytpx7B8gX23OaTYMaseIPks1uSt+VTIDKhfWtTdZRcm1R4yVK2v+U3y+4NdSmDBX37+PfGC
+	Zn7b/S3BCK49sSfEfH+dKHg==
+X-Google-Smtp-Source: AGHT+IE9JqdbYYGhT5dM3MiTfDeGoOhvE3xQLWEsDBrRVm7M4ik9C0WBPWd/yifRjOzvgqJjjFlZ+qdE5R2kEIGQjA==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6902:1889:b0:de6:16d6:2f34 with
+ SMTP id cj9-20020a056902188900b00de616d62f34mr4167590ybb.1.1715054030102;
+ Mon, 06 May 2024 20:53:50 -0700 (PDT)
+Date: Tue, 07 May 2024 03:53:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25da8fb143b361740660bccff3973e04f1506b39.camel@intel.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAMylOWYC/33NwQ6CMAwG4FchO1uzjSHGk+9hPEDXQSMys5FFQ
+ 3h3BydNjL39zd+vs4gUmKI4FbMIlDiyH3Mod4XAvhk7ArY5Cy21kZU8QGsgd6AdPN6APU4D1Ed
+ ytjbaOWdEPnwEcvzc0Ms1557j5MNr+5HUuv3LJQUKbFOVFaLU0uK5874baI/+LlYv6U+j/mnob JDKUzbUKum+jGVZ3saeDbT5AAAA
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715054029; l=4424;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=tsOaVF+iFdOoeubnHXAxYCPcXOkgBthMQC/BpJg6mDU=; b=U4yDqR/Ij+0HPgX8SfS3YkJfZ7uQewzFArl33ppZN2YGNOdQ//XyIk2iFqRLOnLag5yuQAUQ2
+ n4AEYLAQ7XTDYQZ2X6qpTa1o8h/6Z6RNblBtIZfdrfZYShLu3kAhwer
+X-Mailer: b4 0.12.3
+Message-ID: <20240507-b4-sio-block-ioctl-v3-1-ba0c2b32275e@google.com>
+Subject: [PATCH v3] block/ioctl: prefer different overflow check
+From: Justin Stitt <justinstitt@google.com>
+To: Jens Axboe <axboe@kernel.dk>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Apr 29, 2024 at 04:17:12AM -0700, Huang, Kai wrote:
-> On Thu, 2024-04-25 at 21:24 -0700, alison.schofield@intel.com wrote:
-> > From: Alison Schofield <alison.schofield@intel.com>
-> >
-> > TME (Total Memory Encryption) and MKTME (Multi-Key Total Memory
-> > Encryption) BIOS detection were introduced together here [1] and
-> > are loosely coupled in the Intel CPU init code.
-> >
-> > TME is a hardware only feature and its BIOS status is all that needs
-> > to be shared with the kernel user: enabled or disabled. The TME
-> > algorithm the BIOS is using and whether or not the kernel recognizes
-> > that algorithm is useless to the kernel user.
-> >
-> > MKTME is a hardware feature that requires kernel support. MKTME
-> > detection code was added in advance of broader kernel support for
-> > MKTME that never followed. So, rather than continuing to emit
-> > needless and confusing messages about BIOS MKTME status, remove
-> > most of the MKTME pieces from detect_tme_early().
-> >
-> > Keep one important piece: when the BIOS is configured with MKTME
-> > 'on' any BIOS defined KeyID bits do take away from the physaddr bits
-> > available in the kernel. Add a pr_info_once() informing about the
-> > enabled keyids so the user can address (by rebooting with MKTME off)
-> > if the user needs to recover the MKTME consumed bits.
-> 
-> Nitpickings below:
+Running syzkaller with the newly reintroduced signed integer overflow
+sanitizer shows this report:
 
-Hi Kai,
-Thanks for the review -
+[   62.982337] ------------[ cut here ]------------
+[   62.985692] cgroup: Invalid name
+[   62.986211] UBSAN: signed-integer-overflow in ../block/ioctl.c:36:46
+[   62.989370] 9pnet_fd: p9_fd_create_tcp (7343): problem connecting socket to 127.0.0.1
+[   62.992992] 9223372036854775807 + 4095 cannot be represented in type 'long long'
+[   62.997827] 9pnet_fd: p9_fd_create_tcp (7345): problem connecting socket to 127.0.0.1
+[   62.999369] random: crng reseeded on system resumption
+[   63.000634] GUP no longer grows the stack in syz-executor.2 (7353): 20002000-20003000 (20001000)
+[   63.000668] CPU: 0 PID: 7353 Comm: syz-executor.2 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+[   63.000677] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   63.000682] Call Trace:
+[   63.000686]  <TASK>
+[   63.000731]  dump_stack_lvl+0x93/0xd0
+[   63.000919]  __get_user_pages+0x903/0xd30
+[   63.001030]  __gup_longterm_locked+0x153e/0x1ba0
+[   63.001041]  ? _raw_read_unlock_irqrestore+0x17/0x50
+[   63.001072]  ? try_get_folio+0x29c/0x2d0
+[   63.001083]  internal_get_user_pages_fast+0x1119/0x1530
+[   63.001109]  iov_iter_extract_pages+0x23b/0x580
+[   63.001206]  bio_iov_iter_get_pages+0x4de/0x1220
+[   63.001235]  iomap_dio_bio_iter+0x9b6/0x1410
+[   63.001297]  __iomap_dio_rw+0xab4/0x1810
+[   63.001316]  iomap_dio_rw+0x45/0xa0
+[   63.001328]  ext4_file_write_iter+0xdde/0x1390
+[   63.001372]  vfs_write+0x599/0xbd0
+[   63.001394]  ksys_write+0xc8/0x190
+[   63.001403]  do_syscall_64+0xd4/0x1b0
+[   63.001421]  ? arch_exit_to_user_mode_prepare+0x3a/0x60
+[   63.001479]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+[   63.001535] RIP: 0033:0x7f7fd3ebf539
+[   63.001551] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+[   63.001562] RSP: 002b:00007f7fd32570c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   63.001584] RAX: ffffffffffffffda RBX: 00007f7fd3ff3f80 RCX: 00007f7fd3ebf539
+[   63.001590] RDX: 4db6d1e4f7e43360 RSI: 0000000020000000 RDI: 0000000000000004
+[   63.001595] RBP: 00007f7fd3f1e496 R08: 0000000000000000 R09: 0000000000000000
+[   63.001599] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+[   63.001604] R13: 0000000000000006 R14: 00007f7fd3ff3f80 R15: 00007ffd415ad2b8
+..
+[   63.018142] ---[ end trace ]---
 
-> 
-> The original code checks the MSR value consistency between BSP and APs,
-> but the new code removed that.
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang; It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
 
-BSP? AP?
+Let's rework this overflow checking logic to not actually perform an
+overflow during the check itself, thus avoiding the UBSAN splat.
 
-I understood the check you are referring to as being for pronouncing MKTME
-as disabled. When MKTME is removed from consideration, as is done here, the
-code doesn't need to remember and compare a 'state'. It examines tme_activate
-of each CPU. If one is !_LOCKED or !_ENABLED, the 'not enabled by BIOS'
-message is emitted and the cpu cap is cleared. If another CPU reports TME
-as properly enabled before or after that failed CPU, it is still disabled
-in the kernel view. So, we don't set a state, like was done for MKTME, but
-the worst status is *the* TME status.
+[1]: https://github.com/llvm/llvm-project/pull/82432
 
-> 
-> I think the changelog should mention why it is OK.
-> 
-> I guess perhaps we can say something like the machine shouldn't be able to
-> boot if BIOS configures TME activate MSR inconsistently among CPUs, so
-> don't bother to have the consistency check.
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v3:
+- move first line of commit body down one to avoid its inclusion in
+  subject line
+- Link to v2: https://lore.kernel.org/r/20240507-b4-sio-block-ioctl-v2-1-e11113aeb10f@google.com
 
-I basically understand what you are saying, but because I don't see
-that explanation in the spec, I wouldn't write that this code relies
-on it.
+Changes in v2:
+- don't use check_add_overflow as I accidentally was writing to p.start
+  and the alternative of using a dummy (unused) variable does not seem great.
+- Link to v1: https://lore.kernel.org/r/20240506-b4-sio-block-ioctl-v1-1-da535cc020dc@google.com
+---
+ block/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> >
-> > There is no functional change for the user, only this change in boot
-> > messages:
-> >
-> > Before:
-> > [] x86/tme: enabled by BIOS
-> > [] x86/tme: Unknown policy is active: 0x2
-> > [] x86/mktme: No known encryption algorithm is supported: 0x4
-> > [] x86/mktme: enabled by BIOS
-> > [] x86/mktme: 127 KeyIDs available
-> >
-> > After:
-> > [] x86/tme: enabled by BIOS
-> > [] x86/mktme: BIOS enabled 127 keyids
-> 
-> Regarding to what to print:
-> 
-> 1) IMHO, it's still better to print the algorithm here.  The user/admin
-> may want to know what algorithm is enabled by the BIOS (especially there
-> are more than one that can be selected in the BIOS).  E.g., the user may
-> find the default AES-XTS-128 (0) isn't secure enough and wants the more
-> secure algorithm using 256-bit key.
-> 
-> I understand we might not want to maintain a "value to name" table for
-> this so the kernel can print the algorithm in name, but it would be still
-> helpful if we just dump the raw value here like:
-> 
->   x86/tme: policy activated: 0x2
+diff --git a/block/ioctl.c b/block/ioctl.c
+index f505f9c341eb..2639ce9df385 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -33,7 +33,7 @@ static int blkpg_do_ioctl(struct block_device *bdev,
+ 	if (op == BLKPG_DEL_PARTITION)
+ 		return bdev_del_partition(disk, p.pno);
+ 
+-	if (p.start < 0 || p.length <= 0 || p.start + p.length < 0)
++	if (p.start < 0 || p.length <= 0 || LLONG_MAX - p.length < p.start)
+ 		return -EINVAL;
+ 	/* Check that the partition is aligned to the block size */
+ 	if (!IS_ALIGNED(p.start | p.length, bdev_logical_block_size(bdev)))
 
-The path that is cleaned up here never emitted the policies, either by
-value or name. It only emitted a message if the policy was unknown. This
-is a new (albeit little) feature request and seems it would be best
-submitted as a separate patch.
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240506-b4-sio-block-ioctl-78efd742fff4
 
-> 
-> 2) Given the kernel doesn't support MKTME, I think people may be more
-> interested in the reduced physical address bits, instead of how MKTME
-> keyIDs are activated.
-> 
->   x86/tme: MKTME enabled, physical address bits reduced from <xx> to <xx>.
-
-I added something like this in v2:
-x86/mktme: BIOS enabled: x86_phys_bits reduced by %d
-
-I chose to report just the number of bits reduced because it is not
-clear to me that this code is, or always will be, the only path
-mucking with the number of phys addr bits. For that reason I didn't
-want to spew absolute values. User can look up their 'final' number
-using lscpu or /proc/cpu, right?
-
-snip
-
-> > +
-> > +     pr_info_once("x86/mktme: BIOS enabled %d keyids\n", nr_keyids);
-> 
-> If I read correctly, if you print
-> 
->   physical address bits reduced from <xx> to <xx>.
-> 
-
-as I wrote above, didn't write it quite like that...
-
-> instead of the number of KeyIDs, you can even get rid of the 'nr_keyids'
-> variable.
-
-Got rid of nr_keyids. 
-
--- Alison
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
 
 
