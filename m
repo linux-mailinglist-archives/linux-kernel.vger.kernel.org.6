@@ -1,210 +1,155 @@
-Return-Path: <linux-kernel+bounces-171567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AE28BE5D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F858BE5D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41CD1C21F9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:25:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6781F22F6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C9615FD0D;
-	Tue,  7 May 2024 14:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FDF14EC64;
+	Tue,  7 May 2024 14:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tj8C9NPF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIS9Otwf"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD15A15F417;
-	Tue,  7 May 2024 14:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D72815FA79;
+	Tue,  7 May 2024 14:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091854; cv=none; b=W58cYllsnQEZ5Y/qcqpI2g6a/lybGGUQCNGt7JfItk7W+2KR72RQxd0+Jugs0FsU1bzPWbVLOFHpAiOrT7OCVndEm8eee0VJhKpbil7ZGI1KwVkVv4Hx4W+0xBx2UDwTAeXdcavNmghROAFkNdjPbHITAfb1ryzC5l5wwa/FNfg=
+	t=1715091903; cv=none; b=r0qMSguAZCYStmLcbJ88Aipwc0tW2JNi8iHpwSdkrOf6lezdOE0sNVE4Lsp4g73S6gv4UzngykjbageFumwTDcOjqxB5aFn9+2LqZlcf6/HeibeyY2NG02TjTpnvQFZUrbYCaD5lmX5mh3OJ82GoyvS1MhVnX0469c2wjD/JbEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091854; c=relaxed/simple;
-	bh=Zp41r/yYmWHwZsrp8pLB9sTFQRfp3NwkITAqbXQDiSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cS/VfPyVONB1tRgHOAv6Srp8kaXjU5xFsp/b/6dOeXMhIAFS9nE//ar26W9IX/dhoWXY7plXOvsTHhyYEmBkOeWYHEaZqM8PLRpMS9rD48HhefZSOZmJ0icQ1bwy0dmj6mlz8fDfJ9Dl/H8/Me8DrXmS+Mhf1e0u945Tt7da8MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tj8C9NPF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615FBC2BBFC;
-	Tue,  7 May 2024 14:24:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715091854;
-	bh=Zp41r/yYmWHwZsrp8pLB9sTFQRfp3NwkITAqbXQDiSU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Tj8C9NPF1Ns9iCUnWotpt1qn0fdCPefMgCAZ/4hxDQ6Gb/c3+r6bTxekCJe3Rh9x0
-	 PKR3LWbXCksqpwY9bbOObzd26dixMWFjtoNJcWPNaLo3wMCZmP7zmDTkwffRRX8SFt
-	 QDBFlMHMNrqtTCI+EOSed54Z5TSFyOBCB3czHtseUzYO8xXtSOGHPSzBQckaJvlxaO
-	 sBXCZpPzabwdL+VE9emrPflwh5OmvcLYtwq+YFi0991I3yun6BWA+bRiM3oMmCb481
-	 Gu0fw/njd9xKaG3wbFccid+f3bRstjRu3p0bPVQrqpiAWZKLhoio1sciBZFNKST1LV
-	 m38WWOdUnGWfQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0596ACE12BD; Tue,  7 May 2024 07:24:14 -0700 (PDT)
-Date: Tue, 7 May 2024 07:24:14 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] gpiolib: fix the speed of descriptor label setting with
- SRCU
-Message-ID: <597f5da2-71be-4144-a570-fdc4f06c4cc6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240507121346.16969-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1715091903; c=relaxed/simple;
+	bh=+IdeP0WxTQxueZFiufonTCIn4CaPWcqXKf2H5nxLy3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=izY62xA5OFQU2kFqCIPkEbZtKuy/Ei0+P4iJzG5nYDSa8kMoHtdA1WKsmWmgYpDstxuNVhAwe2fyyg592WFeR5whaj3xOeCfgwfT/H+O4COARVrvW3VaLb1UzuF+rBvKV8rBxmcR8jwfWZgF0/t8rybL3zivewNsWV2j2HGDhs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIS9Otwf; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ed012c1afbso24420215ad.1;
+        Tue, 07 May 2024 07:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715091901; x=1715696701; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLOr8T9rn6W4Mui4y9GmHNfyW1LxBncW4ibg3T7qe5A=;
+        b=XIS9Otwfbg6X+kxGOul8PxBtEZErKGVz/ENeM18Jqr5hqhuJF+DcgzmTCy2mRUD248
+         cTqKyYtbSYIY1OcLaBc1xaClCC0te2IKob1gpfhmBlR9u+mvAi1BYlL8JU5u0Jz9jNvP
+         qnYamVZk1l/efbID56gcx9iTkKwrHjNxE/FDmHhbS4AL3xAjPwymxF/91OyNb/cRBASy
+         0hWzhR8f5s6u/KLFCIwZjSuq5c58eDyCzI4GtqFOkjOjOpt8WhqKx3vmSdcIBYBB7nnz
+         sKfsekTIgNHN2ndH4f+o7dPKeyLn60qrwljd6QyLc1Ax/KGQJ3/pWL+nWUzpJuAgtSij
+         oE5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715091901; x=1715696701;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mLOr8T9rn6W4Mui4y9GmHNfyW1LxBncW4ibg3T7qe5A=;
+        b=LbTDAnXWaWVKZ4+TouY1CTnj+ZuiF1t5N3XwuVNwqvIO6QMRFWs6j095L99G8P9j2Z
+         6FWKQgTy5vz6Ij8aO6HiArPFG7ofY3UND+nLwDSPiPDl0zSL6kNqHO7s7uPjfgOq7BNA
+         4wnjUZGCwwdq2+bCsJqDCd4MGG3uGlbB6J2QpcnZnbGPtnMRmlSFlQPo0IsV4kgaUq78
+         +A8gOUNKBXmov8keA63hcTp0zXjOKEkyhGsclJCYSRf0JpE8xXy5XpGPPdBqqia7T90o
+         ViJKKmo6fvzuX8nvOfTTfNI6GxpyTgSlI7RYTCeNkB3UyCwuM2aFacy6+IKsOk1j9Lnq
+         yAdA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8hOnqskuVSHD0779wpaVi0QT5Dm6siIhXn5VRBzSL60OCExqk8wjI6irba8zkJyUkkTH48oMvHSxzHuSZhVJdHbteYpYAPq77NBBf
+X-Gm-Message-State: AOJu0YyHjyZqCAwROtLdxHC1KoKqRP1Q8mKIHZbwVRmnrJMrqT5DWsF3
+	u2uSSA+OVkMc3Dnp1sA62QWFYIM1fjJIMBPwmq6GQ3HHoMj/PFOVgcd1fg==
+X-Google-Smtp-Source: AGHT+IHuDDbaVCQrzL9ZE7Rxk221c0XDYvkAhrpc4yZ9dwfAawVlc+FjU83xuKfP4/aM4r9AVMxtjw==
+X-Received: by 2002:a17:903:41cb:b0:1ec:25d3:7335 with SMTP id u11-20020a17090341cb00b001ec25d37335mr3998626ple.26.1715091901185;
+        Tue, 07 May 2024 07:25:01 -0700 (PDT)
+Received: from carrot.. (i222-151-5-6.s42.a014.ap.plala.or.jp. [222.151.5.6])
+        by smtp.gmail.com with ESMTPSA id u3-20020a17090341c300b001e245c5afbfsm10075091ple.155.2024.05.07.07.24.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 07:25:00 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH -mm] nilfs2: Use __field_struct() for a bitwise field
+Date: Tue,  7 May 2024 23:24:54 +0900
+Message-Id: <20240507142454.3344-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507121346.16969-1-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 07, 2024 at 02:13:46PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Commit 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
-> caused a massive drop in performance of requesting GPIO lines due to the
-> call to synchronize_srcu() on each label change. Rework the code to not
-> wait until all read-only users are done with reading the label but
-> instead atomically replace the label pointer and schedule its release
-> after all read-only critical sections are done.
-> 
-> To that end wrap the descriptor label in a struct that also contains the
-> rcu_head struct required for deferring tasks using call_srcu() and stop
-> using kstrdup_const() as we're required to allocate memory anyway. Just
-> allocate enough for the label string and rcu_head in one go.
-> 
-> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Closes: https://lore.kernel.org/linux-gpio/CAMRc=Mfig2oooDQYTqo23W3PXSdzhVO4p=G4+P8y1ppBOrkrJQ@mail.gmail.com/
-> Fixes: 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Bart Van Assche <bvanassche@acm.org>
 
-Looks good to me!
+As one can see in include/trace/stages/stage4_event_fields.h, the
+implementation of __field() uses the is_signed_type() macro. As one can see
+in commit dcf8e5633e2e ("tracing: Define the is_signed_type() macro once"),
+there has been an attempt to not make is_signed_type() trigger sparse
+warnings for bitwise types. Despite that change, sparse complains when
+passing a bitwise type to is_signed_type(). It is not clear to me why.
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Follow the example of <trace/events/initcall.h> and suppress the following
+sparse warnings by changing __field() into __field_struct():
 
-One semi-related question...  Why the per-descriptor srcu_struct?
-Please see below for more on this question.
+ fs/nilfs2/segment.c: note: in included file (through
+   include/trace/trace_events.h, include/trace/define_trace.h,
+   include/trace/events/nilfs2.h):
+ ./include/trace/events/nilfs2.h:191:1: warning: cast to restricted
+   blk_opf_t
+ ./include/trace/events/nilfs2.h:191:1: warning: restricted blk_opf_t
+   degrades to integer
+ ./include/trace/events/nilfs2.h:191:1: warning: restricted blk_opf_t
+   degrades to integer
 
-							Thanx, Paul
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202401092241.I4mm9OWl-lkp@intel.com/
+Reported-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Closes: https://lore.kernel.org/all/20240430080019.4242-2-konishi.ryusuke@gmail.com/
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+---
+Hi Andrew, Bart has completed a patch that fixes the sparse warnings
+related to event trace header, as he kindly shared the link with you
+earlier.
 
-> ---
->  drivers/gpio/gpiolib.c | 31 ++++++++++++++++++++++++-------
->  drivers/gpio/gpiolib.h |  7 ++++++-
->  2 files changed, 30 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 94903fc1c145..2fa3756c9073 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -101,6 +101,7 @@ static bool gpiolib_initialized;
->  
->  const char *gpiod_get_label(struct gpio_desc *desc)
->  {
-> +	struct gpio_desc_label *label;
->  	unsigned long flags;
->  
->  	flags = READ_ONCE(desc->flags);
-> @@ -108,23 +109,36 @@ const char *gpiod_get_label(struct gpio_desc *desc)
->  	    !test_bit(FLAG_REQUESTED, &flags))
->  		return "interrupt";
->  
-> -	return test_bit(FLAG_REQUESTED, &flags) ?
-> -			srcu_dereference(desc->label, &desc->srcu) : NULL;
-> +	if (!test_bit(FLAG_REQUESTED, &flags))
-> +		return NULL;
-> +
-> +	label = srcu_dereference_check(desc->label, &desc->srcu,
-> +				       srcu_read_lock_held(&desc->srcu));
-> +
-> +	return label->str;
-> +}
-> +
-> +static void desc_free_label(struct rcu_head *rh)
-> +{
-> +	kfree(container_of(rh, struct gpio_desc_label, rh));
->  }
->  
->  static int desc_set_label(struct gpio_desc *desc, const char *label)
->  {
-> -	const char *new = NULL, *old;
-> +	struct gpio_desc_label *new = NULL, *old;
->  
->  	if (label) {
-> -		new = kstrdup_const(label, GFP_KERNEL);
-> +		new = kzalloc(struct_size(new, str, strlen(label) + 1),
-> +			      GFP_KERNEL);
->  		if (!new)
->  			return -ENOMEM;
-> +
-> +		strcpy(new->str, label);
->  	}
->  
->  	old = rcu_replace_pointer(desc->label, new, 1);
-> -	synchronize_srcu(&desc->srcu);
-> -	kfree_const(old);
-> +	if (old)
-> +		call_srcu(&desc->srcu, &old->rh, desc_free_label);
->  
->  	return 0;
->  }
-> @@ -697,8 +711,11 @@ static void gpiodev_release(struct device *dev)
->  	struct gpio_device *gdev = to_gpio_device(dev);
->  	unsigned int i;
->  
-> -	for (i = 0; i < gdev->ngpio; i++)
-> +	for (i = 0; i < gdev->ngpio; i++) {
-> +		/* Free pending label. */
-> +		synchronize_srcu(&gdev->descs[i].srcu);
->  		cleanup_srcu_struct(&gdev->descs[i].srcu);
-> +	}
+Here is the patch (I added a few tags), could you add this to your
+tree queue?
+I'll send this via email just in case since we don't usually exchange
+links.
 
-If the srcu_struct was shared among all of these, you could just do one
-synchronize_srcu() and one cleanup_srcu_struct() instead of needing to
-do one per gdev->desc[] entry.
+The patch "nilfs2: use integer type instead of enum req_op for event
+tracing header" that I sent is no longer needed, so I will withdraw it.
 
-You might be able to go further and have one srcu_struct for all the
-gpio devices.
+Thanks,
+Ryusuke Konishi
 
-Or did you guys run tests and find some performance problem with sharing
-srcu_struct structures?   (I wouldn't expect one, but sometimes the
-hardware has a better imagination than I do.)
+ include/trace/events/nilfs2.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
->  	ida_free(&gpio_ida, gdev->id);
->  	kfree_const(gdev->label);
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index f67d5991ab1c..69a353c789f0 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -137,6 +137,11 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
->  
->  void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action);
->  
-> +struct gpio_desc_label {
-> +	struct rcu_head rh;
-> +	char str[];
-> +};
-> +
->  /**
->   * struct gpio_desc - Opaque descriptor for a GPIO
->   *
-> @@ -177,7 +182,7 @@ struct gpio_desc {
->  #define FLAG_EVENT_CLOCK_HTE		19 /* GPIO CDEV reports hardware timestamps in events */
->  
->  	/* Connection label */
-> -	const char __rcu	*label;
-> +	struct gpio_desc_label __rcu *label;
->  	/* Name of the GPIO */
->  	const char		*name;
->  #ifdef CONFIG_OF_DYNAMIC
-> -- 
-> 2.40.1
-> 
+diff --git a/include/trace/events/nilfs2.h b/include/trace/events/nilfs2.h
+index 8efc6236f57c..8880c11733dd 100644
+--- a/include/trace/events/nilfs2.h
++++ b/include/trace/events/nilfs2.h
+@@ -200,7 +200,11 @@ TRACE_EVENT(nilfs2_mdt_submit_block,
+ 		    __field(struct inode *, inode)
+ 		    __field(unsigned long, ino)
+ 		    __field(unsigned long, blkoff)
+-		    __field(enum req_op, mode)
++		    /*
++		     * Use field_struct() to avoid is_signed_type() on the
++		     * bitwise type enum req_op.
++		     */
++		    __field_struct(enum req_op, mode)
+ 	    ),
+ 
+ 	    TP_fast_assign(
+-- 
+2.34.1
+
 
