@@ -1,101 +1,67 @@
-Return-Path: <linux-kernel+bounces-171115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A658BDFEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:40:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338368BDFF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180FE1F25733
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:40:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BB3287CCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9C014F118;
-	Tue,  7 May 2024 10:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fCgx7jU1"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A1D15099E;
+	Tue,  7 May 2024 10:41:23 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27B414EC4A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165BF14EC4D;
+	Tue,  7 May 2024 10:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715078409; cv=none; b=BuDIXmSB1qAQFnP1dyvQA4f5ZOvVBUAHx3xVCtcNkBTjEdHsXM1yqRPMN/3Fdzwvxzh0BjqC19KmuLu+GKHw9Mkp0D3knZQGhPm1J/8EcK5v1cLnLlGXmfrdB2U163s8XOE0PDR7+WyNg9jdoUU8QSyMEJiP9jJdgo1iTtTzhpw=
+	t=1715078482; cv=none; b=k1nbd0JYXgkZW2y66eiCahQI5EqZ0bEOi3xTzC2CdQEMBhgz0WNBxAXd3Se+kX2380s4ckX72ckP3zf8s6Uzv9SB99hq7kJFJ5N3HuS4jM0Zqz48UCC4i4CEZ4XkAJLENDjYMNblXIwo36JXfwskB7FoZPvbZP3cbqbs2BojPJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715078409; c=relaxed/simple;
-	bh=RVraaqpU90T9jNynBtCQENH1uJ2RcPjIHtQUyCKdwiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cVtwFUPYHbkxv1st4LUV/+eHYvnPZbEP3Pddw69v9jPTgjLKNxGqQsmFsJHHg11+e54x77H10UixsGBtV7WuAWfqQZoP7A1m5pnGEDhArFpRreRiuC8//p+WMVAD29BVMdYlTbrmHWoJqHU5tc/fx8UGy2Nj/Ol0dbSSfZsA1vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fCgx7jU1; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso13640a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715078406; x=1715683206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVraaqpU90T9jNynBtCQENH1uJ2RcPjIHtQUyCKdwiE=;
-        b=fCgx7jU1Vi89ZQGCFu2/QnRfHtiWPfbRHcU+kdtVk9XO6SV4Red2KNBljrXdtwhgKh
-         qpQ/MRspQYGbeJ8Q5Ih1xuDE4zLG6JmQ3bxyZ4c6TWVVbkcYXIPLG8ICPTlt64SA1E4S
-         JpEpvjDRhQUJcSTo95i+Zz8azUjPJaslE+3+JJ7Svfeu3BTOw0Ntx1//FxLtcaoCW+t2
-         9x2qfAwDp15Vbf/V/UEeiC3rzVEc6zFavWSJOCwRMq6IuEBWkKITZO96EyTKpF6QY+Di
-         So82IvE7sWU5tZHahsmJKd0lQZinXSihE3HDAktbIRM18CXVPpgsVXTk8R+Ez5Row8s/
-         BUlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715078406; x=1715683206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RVraaqpU90T9jNynBtCQENH1uJ2RcPjIHtQUyCKdwiE=;
-        b=Wd7TQiZNLNgMzkYNXQZPAnaHFpudVo+SlPnLp0GCUyiWjqFMQWXzswwYxt4uy0Ti7A
-         k8lyVZ9w91tjop6UzvoMP034/mseF34vgxq6Rxw1jwRWs2YjNCwE6f4lFp9ZbwDUBsdu
-         1paq3Pg19YJgrPsMgTbj4sha06F/PnL3U7c0cJZNci483xEL4weShOB6INTDkiYGTeHZ
-         a+vOV7dxuL2qovyQOebO+yP4usmx7h0ZFscMhkTB61QEIvPtjia6dTmU9aR8QeQbhLnr
-         6wUJ+oXKfpmZA3k2yp8pZtbPB90wlXKi4Jf+2SA1hf08s6qnh7YfaKcQFC+7wPMHlsbe
-         NVEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsxVAtKFsFVEn6muIFhea9yKtwe9yK4WGVwOW9aIj2XIXewzc+obFvWWIj85DGzPheniGcdf2eqgyCUe0CsmUZkMyT0TuzVMC2u26H
-X-Gm-Message-State: AOJu0Yz7jcj8s07FzZ0PBr4f85LzBoLVSUQk9mDj9elBwFActsGI39rU
-	RHqm+Ppcpy1u3YDIzVHkdfk2d05+xRWCakxLqZbRAMD5200RbRlnyo1ZjZpe0kEJ0z7NyCvE3/B
-	wGH51tbkH7h2QZBo9jpPxPdmFKrPOHL3vyw+o
-X-Google-Smtp-Source: AGHT+IGURH+TAKjYVx7HNPEQu9fLSg4tmEpjWWFcBoWqrK3Jf56PPoCH0wcN5v4H9exUF8MPoXuFORZW4WZOvliX6zM=
-X-Received: by 2002:a05:6402:35d1:b0:572:554b:ec66 with SMTP id
- 4fb4d7f45d1cf-5731310fe6fmr162918a12.3.1715078405878; Tue, 07 May 2024
- 03:40:05 -0700 (PDT)
+	s=arc-20240116; t=1715078482; c=relaxed/simple;
+	bh=k19UIoVzfb6WaHcLncGqEWmOOqziApTj+I8zVsWYhdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSxu23Yg7wXCQ0tuVia5PJTeHzt8TO/tp/gtVxQTZY8GEcTFGnIwH0S677FQVDY6Sr/1MRw2/fT4FnmbDkEQhXrY3ST5UOelPmbiHxPNm8RazjPambddnZdNgagUosFybVLUkxiqN+KqcwOl9bWp2QJxLO4hwVzK7Xd/AEARtOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 06418227A87; Tue,  7 May 2024 12:41:16 +0200 (CEST)
+Date: Tue, 7 May 2024 12:41:15 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Christoph Hellwig <hch@lst.de>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 6/7] page_pool: check for DMA sync shortcut
+ earlier
+Message-ID: <20240507104115.GA21875@lst.de>
+References: <20240506094855.12944-1-aleksander.lobakin@intel.com> <20240506094855.12944-7-aleksander.lobakin@intel.com> <20240506115043.GA28172@lst.de> <e9a8d649-40b0-4595-a702-9fd8164e5326@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507090520.284821-1-wei.fang@nxp.com>
-In-Reply-To: <20240507090520.284821-1-wei.fang@nxp.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 7 May 2024 12:39:54 +0200
-Message-ID: <CANn89iJuEubWMu4Jg3rAac=HM95U3yS9PSq1eSx+-JC6rhOdbA@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: fec: Convert fec driver to use lock guards
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	shenwei.wang@nxp.com, xiaoning.wang@nxp.com, richardcochran@gmail.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9a8d649-40b0-4595-a702-9fd8164e5326@intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, May 7, 2024 at 11:16=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wrote:
->
-> Use guard() and scoped_guard() defined in linux/cleanup.h to automate
-> lock lifetime control in fec driver.
->
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
->
+On Tue, May 07, 2024 at 11:51:46AM +0200, Alexander Lobakin wrote:
+> My CI fails now fails to compile this patch when !HAS_DMA. Let me fix
+> this, rebase on top of your tree and resend?
 
-To me, this looks like a nice recipe for future disasters when doing backpo=
-rts,
-because I am pretty sure the "goto ..." that assumes the lock is
-magically released
-will fail horribly.
-
-I would use scoped_guard() only for new code.
+Ok.
 
