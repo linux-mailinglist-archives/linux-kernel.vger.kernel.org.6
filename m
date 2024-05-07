@@ -1,102 +1,135 @@
-Return-Path: <linux-kernel+bounces-172339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789DC8BF142
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:20:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211A58BF148
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D6351F25E9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:20:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5351F1C21FF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708B012BF29;
-	Tue,  7 May 2024 23:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E9184A52;
+	Tue,  7 May 2024 23:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="ew1Iw2JF"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NyJ57G1l"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307AC82496
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AC683CD2;
+	Tue,  7 May 2024 23:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123066; cv=none; b=rdbCspsVbA+u9b7lQoPq9I/8gUvZbLC20J5OkooN9NRiCK+DK7f9TC8jFfHEsi75CcXr3tW7XtCDmB+zwxZS5KAvWZz0mJKcy7y4QmKm6qeh4FKTXeiHOhIedZsaPUwigSf89dSD1iBFLI++rXyK8WrPr1ZXrWVeGZAELrxhgzc=
+	t=1715123123; cv=none; b=jQYaApNEByzKTQO35db76sBbayg+ha1ixYbFTsnQCVuyfCac3t2FAGi1gXnVDZIbkKX0EKUCCI3WIkugyf2yzJETwCMURQ/SvwL3IPa+voO9U5MmTwAx+4wc7zKLzOSlZdxO1fuJxRFJd3lTonBfgrrwL21lXlQcqo0QvEs/NcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123066; c=relaxed/simple;
-	bh=2M+KmZprJCApjJb20RXD0Lpgyd9aK69CB+zmwx+ItRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mhn61UPjLLp7b6aWlyhZtQ1AP0ntpwWlkvrMMc00xplehfOi4DyE2Tc6S7LrcSrWd9RMXccDfDmDtGPVwCGbPaAoFoiC19kJiDqG83NPkVZPkOq7md1HAgrEeIzSuqWR7V+Ha7WeNZoOVKOe5LvKwrmme8e89OmefdCD84d9Ygw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=ew1Iw2JF; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 447N40OQ026156
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 May 2024 19:04:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1715123045; bh=lzTTUd9PzF3vgkpDA0XZwUuNlJRtK6e/3MWs0LiCM48=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=ew1Iw2JFeLEdQwrfvi0xcZfYttH5v4zB2JNSje15Xr1quqv8W/K61uknB6ucFWBPi
-	 2UyVlxfOCt0lFatngMXEdZYritpHCGkxBpLFC2MqvtX3PUIX1K2cvkqzC8kxUnH0gc
-	 O72eLjcdud/MJ/9sBe+PWXQoc09R4O5wtWC/ITgd2vwkV33pCEygYcSIPBGQTjqLaU
-	 g3KuctgPT6jFnm/km3HJGcPSGcggISlq9xq+qV0BLZpOGiB8CYJQvLtgnCBbQa0lSZ
-	 C+ZM8IFGTqoC2rvHYIpKbfBbO+mGWgepqYQJeYP5kFyxnVCdMK+Hb/UxcpTgmgyNBg
-	 HaYEauT4Amn5g==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 0FDA715C02B8; Tue, 07 May 2024 19:04:00 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, jack@suse.cz, ojaswin@linux.ibm.com,
-        ritesh.list@gmail.com
-Subject: Re: [PATCH v3 0/5] Minor improvements and cleanups to ext4 mballoc
-Date: Tue,  7 May 2024 19:03:52 -0400
-Message-ID: <171512302194.3602678.5608981738614745810.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240424061904.987525-1-shikemeng@huaweicloud.com>
-References: <20240424061904.987525-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1715123123; c=relaxed/simple;
+	bh=jvuUv/gpzsuOrwEs/4QwZfNNTb8zlGmd4Bztr7m2hVE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dRitLiboM584YxIcpV9vP9RL7kZuV42jbA57vCL99aGQmmTXEh9izj+9R743O8shtQjPmszCx8oKO829FVZfUNl9kPun4PCjx2G+KYPSIN20HPKE6dy6OInQQDH4YwqS3MKrenxITSAJb8/oFo7s0e21ulAWGvmjQRT+mHJPY0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NyJ57G1l; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447Mnk35030488;
+	Tue, 7 May 2024 23:05:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=Y7avjRX
+	egUR08hpaeu4He6mA5avWecSvWCQx3d/eSM0=; b=NyJ57G1lOu7KXx4mI+eW521
+	tocoYcGPbL5xIkV0/GvcjE1K58e94AO/Gs3n3WCLAHZLHfGGqySdP9AKf5HFPflf
+	ktsR5cvZ7Ab+nSr5vcHHhQXD8VLepsv2x3zGPCyEbAJIj3Zj3qfT9XzVhN4TzGgx
+	nHAbVFfVLihj3hUIIjy08ieiJSUgbhDC20a3s0KS1XWgCp2gfhUhGTGtL6ePgurQ
+	G36+7vDcqggM61lwJIMK3JgTGC1hChs24N2s1n8A2AURBGa1wpQr5RIYe0XIe3hw
+	X2wn5x4AMWQ4/fSlxYwDwKT3ICYQmEFRaSBGqM4tIO4K02/tbgN5RzMKgioeKzg=
+	=
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xysprrej1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 23:05:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 447N596w005521
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 7 May 2024 23:05:09 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 7 May 2024 16:05:08 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <seanpaul@chromium.org>,
+        <swboyd@chromium.org>, <quic_jesszhan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
+Date: Tue, 7 May 2024 16:04:40 -0700
+Message-ID: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DZg-dTmM5wmBFPryQnwiSe4krGJvwrJh
+X-Proofpoint-ORIG-GUID: DZg-dTmM5wmBFPryQnwiSe4krGJvwrJh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_15,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ suspectscore=0 spamscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
+ bulkscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405070161
 
+Since commit 5acf49119630 ("drm/msm: import gen_header.py script from Mesa"),
+compilation is broken on machines having python versions older than 3.9
+due to dependency on argparse.BooleanOptionalAction.
 
-On Wed, 24 Apr 2024 14:18:59 +0800, Kemeng Shi wrote:
-> v2->v3:
-> -Coleect RVB from Jan
-> -Remove more unneeded "cr =" in comment
-> 
-> v1->v2:
-> -Collect RVB from Jan and Ojaswin
-> -Rewrite changelog of "ext4: call ext4_mb_mark_free_simple to free
-> continuous bits in found chunk"
-> -Remove "cr =" in comment of criteria name as criteria name has CR_
-> prfefix now.
-> -Only open codeing repeated checks in next_linear_group
-> 
-> [...]
+Switch to use simple bool for the validate flag to remove the dependency.
 
-Applied, thanks!
+Fixes: 5acf49119630 ("drm/msm: import gen_header.py script from Mesa")
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+ drivers/gpu/drm/msm/registers/gen_header.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[1/5] ext4: keep "prefetch_grp" and "nr" consistent
-      commit: 9c97c34a998a01bc0cf970b1685456bc2ea16b64
-[2/5] ext4: add test_mb_mark_used_cost to estimate cost of mb_mark_used
-      commit: d0b88624f81f272626c767f4b715f4b690fcbed2
-[3/5] ext4: call ext4_mb_mark_free_simple to free continuous bits in found chunk
-      commit: d1a3924e43a35860ed7edaeec7f901a1ade2ac37
-[4/5] ext4: use correct criteria name instead stale integer number in comment
-      commit: 2caffb6a277bb0f2a482a2eb824d012d5f45f4d0
-[5/5] ext4: open coding repeated check in next_linear_group
-      commit: da5704eef7037a5bc84a56519729d93d10a0e0a0
-
-Best regards,
+diff --git a/drivers/gpu/drm/msm/registers/gen_header.py b/drivers/gpu/drm/msm/registers/gen_header.py
+index fc3bfdc991d2..3926485bb197 100644
+--- a/drivers/gpu/drm/msm/registers/gen_header.py
++++ b/drivers/gpu/drm/msm/registers/gen_header.py
+@@ -538,7 +538,7 @@ class Parser(object):
+ 		self.variants.add(reg.domain)
+ 
+ 	def do_validate(self, schemafile):
+-		if self.validate == False:
++		if not self.validate:
+ 			return
+ 
+ 		try:
+@@ -948,7 +948,8 @@ def main():
+ 	parser = argparse.ArgumentParser()
+ 	parser.add_argument('--rnn', type=str, required=True)
+ 	parser.add_argument('--xml', type=str, required=True)
+-	parser.add_argument('--validate', action=argparse.BooleanOptionalAction)
++	parser.add_argument('--validate', default=False, action='store_true')
++	parser.add_argument('--no-validate', dest='validate', action='store_false')
+ 
+ 	subparsers = parser.add_subparsers()
+ 	subparsers.required = True
 -- 
-Theodore Ts'o <tytso@mit.edu>
+2.44.0
+
 
