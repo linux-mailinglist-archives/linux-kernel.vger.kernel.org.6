@@ -1,216 +1,113 @@
-Return-Path: <linux-kernel+bounces-172242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1208BEFA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:09:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6378BEFA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E74682841AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:09:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37814B2289A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3D9154434;
-	Tue,  7 May 2024 22:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50087150999;
+	Tue,  7 May 2024 22:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGSrOErq"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uwC9pMGa"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73FE77658;
-	Tue,  7 May 2024 22:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EF634CDD
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 22:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715119738; cv=none; b=rkM0AP2l+lwbc7vnY5CaomDqxxM1umhy3D3sPW0GyH/dR+RCW3VGa3wIRoNXgerepu8JJ5eXf+WTvkbv+qGcyeSbsdQvQXhmdeytdzmHZRnAopT2hOxjEDY/9F7PiI0YWkdE3y5gOMUJOh4Q2vHadsQwBJ0OSga6fXAg5CSEDj8=
+	t=1715119799; cv=none; b=Er0rglz9zHHGwY1kVZBlT7ykMT/eq/t0r4BY/bj9RTyXhXQL1Uhz0YQeJV4HulQ9tC3yb71N0XtDnOFSD10U/nembFfIiScOiWaFBdnNkKz4xHRRPX4uqHwJH9Ig2PWfB8MZDlH3cExV2W0oI41X1pDKKBZQkCAOAdk0ThRJz3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715119738; c=relaxed/simple;
-	bh=Qf1W05Wsq1RECY5871UQtu6YYQQ2FFsJYl+cvLY91W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6+3vIdk8O0+dCrcXFm2NNJPviH6LVYtj/Cc5Y9jv+0ABjNBkLTHNJk+cGU0OeSI/0qKqPREG+opPwieAhA6AcsHT15IPiqHozYu72uFlmzEprvYhsJQJzpuaKQPOm0yRFncdg7mJBvstKqb8lhflGawZEoAdTw5M7Bz47Av1HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGSrOErq; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6f042ff9ddcso1803574a34.1;
-        Tue, 07 May 2024 15:08:55 -0700 (PDT)
+	s=arc-20240116; t=1715119799; c=relaxed/simple;
+	bh=rz4ZDYMxudbdC8GSlW3kEF1CvatRJGfB9hkcnF0t+1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K3sFnkZubG9luKVxG0Es3Ps3OX/M6GDxyShnKt72/1LN/lLqDAEIecHvHUnka5NOaqabA6DGNUDOCGSGS2/qIEwZDQf7EYsAUo+IfHjCx4fxnikcCzSbA8WWuPQePht1omAqhHYwuHIPJYC0/WnwTi3sowE4TyUtw//Ili0hh3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uwC9pMGa; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e3e18c23f9so23677151fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 15:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715119735; x=1715724535; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=p3+3MfLUAKF4/pyGWC5WWqt+QStMiPGpndQCb8QPFNA=;
-        b=FGSrOErqWJ3y/YknQR0htmTIUBSCXGJb9/03wKz0Ty0EtinjLfdOSvnxKMlYGm56Zs
-         RYTiGmOGKiwXRtC07ZtfNXJaAburhRAQQl1hcOzHvWmQXHgjxmhTJOtIH06Nu3+N5iBR
-         qAoLB63hoMOGX55o6Wd1BfWVCMPnZPjwMpqDUagkkyh0lwo25UmZSo/WcoZ2QPGH8rUn
-         1YgKeCe/F+Ki0wQVt/8Z4nf81buIMOpPwOq4MXDJYkHX5H0BXX+GGoaDFgX2N7ZMpENB
-         x84NL6cMPoipLAHvqr7PcgJQaoAoSoFSeZ4YWAPuwxVaclsL7kGvJN+HMgfH4axgynQ6
-         80xg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715119796; x=1715724596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ac4p6+1ybm5UDnW5YmcAzBGvGhVt4yypjSgPS4Q8TxY=;
+        b=uwC9pMGaMq0L8MdFA5rJGAmVMpaxa1weap19mgiiNV/XuGe1bh7J2d8/kULKKZHC2a
+         q2u55Zqq3B24kRw3Y4C7rTPjnqMKcX+VaBeORVKHEWrUqxH3bE5QLP6q6JRon/UuJLKG
+         nB7xto/6VdpCPZWQq8FnFJPdr8QHgwSWbXd7ah2OxGhilOxhKNvRBV12SjDK/4WcHx+N
+         MbFr/geLvWsVSsGOtwwId7Uu9v8OYm2al2uwBd9n6UiRAEIb5wdiDlz4cu+KH12TWwC4
+         D8SiZzOzH20MHu+ahQ8JKTci+8z1tUOTskH7T/r/sBogukghiEz8GNLtV3z08JP+TeCb
+         l1dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715119735; x=1715724535;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p3+3MfLUAKF4/pyGWC5WWqt+QStMiPGpndQCb8QPFNA=;
-        b=eY2IUU4nli00TmqBsCK7sYiYSRkINVsQiLPBI/AcZeA9NUygIAYUuE4mKtgoINZNOR
-         HIUuOcoiT02F7QMTcb3tMlB/4BGkZzsymkn4B37jP4a7u2x7yBfcjOih2k6VKEmFXtvU
-         un9jkZl6k+SF3DmbrKed025/BBb/5uDlIU0gzgJFBLGm62wwp1sIk/bAo7dkbZwAPis/
-         Pk8NeSSni6hCdEqoVc23fQGvBjxtmyhnLbzp7WfQxyDcUJpvyWHZK31XJYOqrfOMUASw
-         3ec63FL+3jLTVytSRjQXWRjy7p7FrLI8+M++6dku39UYY88qH7/YN+Gwwru69QchIkEm
-         kBow==
-X-Forwarded-Encrypted: i=1; AJvYcCU19bEcn+2VrZgaXRxbbGzR0mQpG7/ksam3+XZfIYCiDfC6gv/WxBGZ3RjXRHsK0/KSuoRhLSBo0O8wTTzFsJzsuMKshrSaKc4MujG4Kl0I2vCHBAeBizaiSnmonIu2dQrHwRp9S3IIOxgqWrZQLXvJFR4ch7iLksk0GScT+ZacJKtl+D6GMgF8aVI=
-X-Gm-Message-State: AOJu0YxnmOnsm+L/nC+4LV4eufmHED+ZrPrm5yCjtTmSQ/yGtvgcAoUi
-	YHHiSNebupiJKg2YZ2NbfrQ3+OxHOIvRim9zvtcAuOxnnzyOxdlw
-X-Google-Smtp-Source: AGHT+IFqAzgfZRwusaHEZcuv1Ns5uHfe4qjx+iM2rzZ6X9V0WgPzMGL68fJUAfE0eSEilsOaCTg2Og==
-X-Received: by 2002:a9d:6756:0:b0:6f0:45ad:24b3 with SMTP id 46e09a7af769-6f0b7e9723bmr839188a34.26.1715119734884;
-        Tue, 07 May 2024 15:08:54 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id po10-20020a05620a384a00b0079299933594sm2367246qkn.95.2024.05.07.15.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 15:08:53 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id C94FC1200032;
-	Tue,  7 May 2024 18:08:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Tue, 07 May 2024 18:08:52 -0400
-X-ME-Sender: <xms:dKY6ZpnY9VmC-D5u6nPmqGophoFpqwkpzT4OMVdYpFuCSrAcOIdj3g>
-    <xme:dKY6Zk3LSNGOiWA-CgHrh3tClT_Oz7zHSDa9v2Fq-reTK7B5Dva8dt4kC1Vl-mLBy
-    UzFea8uScsT1I2vCw>
-X-ME-Received: <xmr:dKY6ZvoVAqtYYLtuGvX9zlZxWde_yeRaay1etZVxQWXARIKkVNsY-rf8vQI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvledgtdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepuefhledtjeeijeeuudelieekudfgkeeifeethfelgfekhffffeehgffg
-    heffhedtnecuffhomhgrihhnpeiiuhhlihhptghhrghtrdgtohhmpdhkvghrnhgvlhdroh
-    hrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegs
-    ohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeige
-    dqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihig
-    mhgvrdhnrghmvg
-X-ME-Proxy: <xmx:dKY6Zplj_QIOzR3y0oKEwyRbYF9ERQx4DrkEgr6EdP447XGLpxdkKw>
-    <xmx:dKY6Zn2irqgGWuu3TTydWHdF6C3OGGyGrxKA9Tn0c1V1K6fLPwddMw>
-    <xmx:dKY6ZosZemq54WiSiHmk0FdSG2nu3UsZ_rk4-6H9A2vwXq-S63PN5Q>
-    <xmx:dKY6ZrVTsZHXFhKR6iY17Pv4qJV6OqNpxfLcUPAMsIkwLtOcd58Ucg>
-    <xmx:dKY6Zu0OQoNgfQr9MzdNJGVIExjBgNvmO8bUc9M6oX3rDiZcS8DDweZF>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 May 2024 18:08:52 -0400 (EDT)
-Date: Tue, 7 May 2024 15:09:00 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Sergio =?iso-8859-1?Q?Gonz=E1lez?= Collado <sergio.collado@gmail.com>
-Subject: Re: [PATCH v2] kbuild: rust: split up helpers.c
-Message-ID: <ZjqmfIhRz99BqXtD@boqun-archlinux>
-References: <20240507210818.672517-1-ojeda@kernel.org>
+        d=1e100.net; s=20230601; t=1715119796; x=1715724596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ac4p6+1ybm5UDnW5YmcAzBGvGhVt4yypjSgPS4Q8TxY=;
+        b=qS1GGADkOUAh5vLEhImcILQV0RwZ/CglhXOX4ZQoVvNtJkpjPZM4HxpS7wxHGItoKd
+         EPbReH4biEgQ1rBOEQ2k8A6jpjG42oR3jr+yA8boP/JwXiQqkDWfx611NJc41/ju7Zs1
+         d9PizUAo9thc+Z1vtR3Qkpo2tp2u9Oz0Vr3rts6GIk4cUwOPiMdMo7RL+jRaBnyRY7zL
+         SbyN2Py+sezcv7CW4mQ05fZ01ow9HrFo9VDh4tXAgh7fv8NFztpbZHk9/Pt72MzxddSQ
+         NgJH9qAXHUmKy0f75W9WB1dW5sFbtLSTIblXEFfosQ+NblWCQRNFNMZP/zUT0vHcwwOd
+         NqhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNrHUpaMbdv/ifmftlKIW8iXrbOX1AE9sjV9lGpCcngebpxGN6r27cMIp8SyxO3Xni2idPeVtoVxiOj3Qp8YVhopBpJoyuKSsAQ5Cp
+X-Gm-Message-State: AOJu0Yxn4os7DTaFxJsS9NASoJSmO7jnX0k/QiMtgpB3q5TznqSR7Dew
+	WP3IJTxHajgmg0qi8mLEzJCB+aH523vle9AAbJ+qvp77gzK0n1rDHkcktO1EIAVerZCruFvC1o7
+	7tOWIyCLxaAcXnEYZTqS3CYHmSGpKGpnMZ2ieRSCNOnpZagCKHGg=
+X-Google-Smtp-Source: AGHT+IGd4OLJ8TyONdPhu6+NfNprGQFNyY6nogkdByV/4wLX6NhgqopTXlvMPXz5HdHB96Qr6UROFsAkbdh+80WHfwA=
+X-Received: by 2002:a2e:3004:0:b0:2d6:ff04:200f with SMTP id
+ 38308e7fff4ca-2e4476af8e9mr4709961fa.33.1715119796124; Tue, 07 May 2024
+ 15:09:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240507210818.672517-1-ojeda@kernel.org>
+References: <20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com>
+In-Reply-To: <20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 7 May 2024 17:09:45 -0500
+Message-ID: <CAMknhBEdcg3O9A5rDPkPSgpshn_F2CTRdNR1FjYud3i0F-VOtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Add support for bosch bmi120
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Danila Tikhonov <danila@jiaxyga.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 11:08:18PM +0200, Miguel Ojeda wrote:
-> From: Andreas Hindborg <a.hindborg@samsung.com>
-> 
-> When rebasing patch sets on top of upstream Linux, merge conflicts in
-> helpers.c are common and time consuming [1]. Thus, split the file so
-> that each kernel component can live in a separate file.
-> 
-> Each helper file is listed explicitly and thus conflicts in the file
-> list are still likely. However, they should be simpler to resolve than
-> the conflicts usually seen in helpers.c.
-> 
-> Link: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-General/topic/Splitting.20up.20helpers.2Ec/near/426694012 [1]
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> Reviewed-by: Sergio González Collado <sergio.collado@gmail.com>
-> Tested-by: Sergio González Collado <sergio.collado@gmail.com>
-> Link: https://lore.kernel.org/r/20240416074607.1395481-1-nmi@metaspace.dk
-> [ Reworded message slightly and fixed nits in it. Applied commit
->   84373132b831 ("rust: helpers: Fix grammar in comment") here. Added
->   SPDX license identifier in new Makefile. Applied Markdown formatting.
->   Added `.gitignore`. Included `helpers_combined.c` in the `clean`
->   target. - Miguel ]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-This overall looks good to me, one thing below I think should be
-changed..
-
+On Sat, May 4, 2024 at 8:00=E2=80=AFAM Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trab=
+arni@gmail.com> wrote:
+>
+> Add support for bosch bmi120.
+> BMI120 is an energy-efficient version of BMI160. Despite having a differe=
+nt
+> CHIPID value, this variant seems to be fully compatible with BMI160.
+> It could be find in many phones like xiaomi-vince or xiaomi-tissot.
+>
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
 > ---
-> This is a patch from Andreas that I was going to apply to `rust-next`
-> with the tweaks mentioned above, but I noticed Kbuild was not Cc'd, so
-> we decided to send this as a "v2" and thus give a chance to Kbuild to
-> take a look for next cycle.
-> 
-> If something in the diff to v1 is wrong, it is my fault, not Andreas' :)
-> 
+> Changes in v2:
+> - Add bosch,bmi120 as a fallback compatible.
+> - Remove error path if chipid is not found.
+> - Link to v1: https://lore.kernel.org/r/20240504-bmi120-v1-0-478470a85058=
+@gmail.com
+>
+> ---
+> Danila Tikhonov (2):
+>       iio: imu: bmi160: add support for bmi120
+>       dt-bindings: iio: imu: bmi160: add bmi120
+>
 
-[...]
-
-> diff --git a/rust/helpers/build_bug.c b/rust/helpers/build_bug.c
-> new file mode 100644
-> index 000000000000..f3106f248485
-> --- /dev/null
-> +++ b/rust/helpers/build_bug.c
-> @@ -0,0 +1,10 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/export.h>
-> +#include <linux/errname.h>
-> +
-> +const char *rust_helper_errname(int err)
-> +{
-> +	return errname(err);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_errname);
-
-. this build_bug.c should be avoided, but this function should go into
-err.c.
-
-Regards,
-Boqun
-
-> diff --git a/rust/helpers/err.c b/rust/helpers/err.c
-> new file mode 100644
-> index 000000000000..fba4e0be64f5
-> --- /dev/null
-> +++ b/rust/helpers/err.c
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/err.h>
-> +#include <linux/export.h>
-> +
-> +__force void *rust_helper_ERR_PTR(long err)
-> +{
-> +	return ERR_PTR(err);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_ERR_PTR);
-> +
-> +bool rust_helper_IS_ERR(__force const void *ptr)
-> +{
-> +	return IS_ERR(ptr);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_IS_ERR);
-> +
-> +long rust_helper_PTR_ERR(__force const void *ptr)
-> +{
-> +	return PTR_ERR(ptr);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_PTR_ERR);
-[...]
+Preferably, the DT bindings patch should go first in the series before
+the code that use it (makes it easier for reviewers to read it in
+right order).
 
