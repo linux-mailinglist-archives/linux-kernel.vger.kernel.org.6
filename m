@@ -1,222 +1,152 @@
-Return-Path: <linux-kernel+bounces-170856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D718BDCFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:14:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9168BDD03
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987421C20CC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:14:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A9E9B21E22
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8517413C8EC;
-	Tue,  7 May 2024 08:14:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4451C73530
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767DF13C9D3;
+	Tue,  7 May 2024 08:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WiaqiOs4"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6627A13C9C1
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715069691; cv=none; b=Q8kW2jUZacZcGe3JNXDO/SMsoBOwKheTnEWZuFya2Bn3jVpDsvp+2r4w88S1HQV4Gojd4pRSEhE+LYr3gJwCjahVGY0UP7wQZ4wE8turEroVNnjmUsqWhZHi9tSg4uVPBkvjy3qG8j0T67TT4AZ9eR5ZpRBRs2vBnk/WhkBRcAE=
+	t=1715069698; cv=none; b=JTqIXgPq1EFcwnyYx8C2sw1Pd4puemUEZLDGCSDlh8AxXXtDyKYj9PlE56mEyg3M5g1DY6qHAGTtqx2GUO0zGFgPfNcoXbP+Uj+2Z1LQAMr8dl1rtg4PEKwnc4prvVw4WBmM4k9eidDgRj86PacD6RI8aBz1A6SdpIdoc5GAJBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715069691; c=relaxed/simple;
-	bh=xjcWszMXQP7ztG4tH+y+zHrLit0jjU9w3LlBTEIg+BM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5Lj0xvgAjqPEJGnbi5z8NaDTigRqimgb1RjZawC47mKetltk0jOjqsu9Mpo+e7jlQGSD0sLaawZIQ7NaVjXJiQ1ZLAktwjWKpja7vL1P4uMv8dwM0F0iNrvEaSYJ1WUuZqK/WLlK32p/pacK2ldHDw41132H8wzgIRw5VmpQI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DCBF106F;
-	Tue,  7 May 2024 01:15:14 -0700 (PDT)
-Received: from [10.57.67.145] (unknown [10.57.67.145])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 152E53F793;
-	Tue,  7 May 2024 01:14:43 -0700 (PDT)
-Message-ID: <0bca057d-7344-40a6-a981-9a7a9347a19f@arm.com>
-Date: Tue, 7 May 2024 09:14:41 +0100
+	s=arc-20240116; t=1715069698; c=relaxed/simple;
+	bh=aFQgo/ziy0W2y9xqCxx31ymI6sX+uIn9KFqYXFLiQWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMKZPCjFtF7MyagJ9CnuFRtGVtTFpczDwSPnPtpl1DQiCWj7D+y5l5BeMXiWzFD1pxVCSNlHlAD2UjxyhVzcYPzxuiQ3RLvYiYXOtQI4m8hKar2ravFt84lwQDqDURy3/M/xuMCsgMOSMKKtYA332B+3pWkVs7vwTVfg9WlYMDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WiaqiOs4; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f4603237e0so1607464b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 01:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715069697; x=1715674497; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GqO/eiCLhjMrDJZ/oHlF6w3tQ/HJRwHOeX5fd3lD2/4=;
+        b=WiaqiOs4w0dmyeF0WX0eWphYt4SUnUU4pIl3C2onmoAY8S/2+tHY18nBKQraXLzcIE
+         E50OFNdm6XtlUTOrXANbh770kdECAPyJowHDoS4NDH+qyVd8YTwLr/pZoLYe7oTZSe2w
+         lGPQ+lxGX+ZrCmk1Rr8mRdBP3lFTYSk3uvXJ9JUQT6VbmXkRLJC70PU3TuwLgZ0drLsJ
+         z+uPjIPOtshmkx2yFNu95N8EoiYmdob3eBSQnMED7OXVEAsi8TJ70T41y6GyRcdqNlZ7
+         SJmLkGO4BcTi//xa6c/QEhS35bdgK3Fl0h15EM1kKTXXQPXT/8xIfFt9+KSxsyw+MjwT
+         jSgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715069697; x=1715674497;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GqO/eiCLhjMrDJZ/oHlF6w3tQ/HJRwHOeX5fd3lD2/4=;
+        b=EZPHWU+ZzzNqbTrUdUYOLrW3CReO71SZr9j0h8BguNhRNgxcTTOKxQpUblPMHR2RVC
+         aHTS1v1+RMwetcrzvz3C/qaObQglSRfE3LPujm+UygWJJqDEN05dwDi+F+NWIdnod897
+         XEarLAwhEqfYDNJsHTE76AqBz0tI9EfFRpd+4KJXHb3m0XcV7GhuMerqqZ3UIUaC949o
+         Y38E4SP+Ntf9gQ+PK7Ry1ImiSN3FO77OcgdGslQUzg80A5eY9SubOmls0TpKOq6uB58/
+         GOHh79AQLlfCVRcDLE7G3IP1sCtvKBfPaO+YK7xlV+CV29mDIeOUW+6ii/Y+Yms5aNIq
+         78LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrWkSIkca4ltXnPW5cr3AuCW1wH+H+6grlD9L85Eg2wZUKEP8mQ4B17StS/Sg1p/gtI4QqP0tt0Dm7QCeeUbXmzg1riauDDXJee17y
+X-Gm-Message-State: AOJu0YwjNEUUI1HMIO9wuMCDj1vNTSgupp7GQBOKLljxxhybukfQU/tO
+	6IL+0Gw8c7KE5xcyu1y0nWyoHKULQKaFkuvjl9KnnVl8mcrIdJ0cvR0e/5gESg==
+X-Google-Smtp-Source: AGHT+IHnAZTFdWiXFQwCMQRZCYd4TYAmRcm6JIyFZLn9J3uME67W+T2rImADb2DRfd7XSqJSBOyHVA==
+X-Received: by 2002:a05:6a20:3251:b0:1ac:3d3c:c1e7 with SMTP id adf61e73a8af0-1afbdca8a39mr2746431637.12.1715069696505;
+        Tue, 07 May 2024 01:14:56 -0700 (PDT)
+Received: from thinkpad ([117.213.100.197])
+        by smtp.gmail.com with ESMTPSA id u34-20020a631422000000b00600d20da76esm9156572pgl.60.2024.05.07.01.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 01:14:56 -0700 (PDT)
+Date: Tue, 7 May 2024 13:44:41 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Subject: Re: [PATCH v3 4/5] PCI: imx6: Convert to agnostic GPIO API
+Message-ID: <20240507081441.GA6025@thinkpad>
+References: <20240429102510.2665280-1-andriy.shevchenko@linux.intel.com>
+ <20240429102510.2665280-5-andriy.shevchenko@linux.intel.com>
+ <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] mm: introduce pte_move_swp_offset() helper which
- can move offset bidirectionally
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com,
- hannes@cmpxchg.org, hughd@google.com, kasong@tencent.com,
- linux-kernel@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com,
- willy@infradead.org, xiang@kernel.org, ying.huang@intel.com,
- yosryahmed@google.com, yuzhao@google.com, ziy@nvidia.com
-References: <20240503005023.174597-1-21cnbao@gmail.com>
- <20240503005023.174597-4-21cnbao@gmail.com>
- <7548e30c-d56a-4a57-ab87-86c9c8e523b1@arm.com>
- <CAGsJ_4wx60GoB1erTQ7v3GTXLb_140bOJ_+z=kqY39eOd3P23g@mail.gmail.com>
- <0d20d8af-e480-4eb8-8606-1e486b13fd7e@redhat.com>
- <CAGsJ_4wP75tFWDcKJZfw7Pk9AdigVCv0niGUeTY6RTZwk1UnjQ@mail.gmail.com>
- <ab283f1f-93bd-4f5e-8172-02109e02e8c4@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ab283f1f-93bd-4f5e-8172-02109e02e8c4@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
 
-On 06/05/2024 09:31, David Hildenbrand wrote:
-> On 06.05.24 10:20, Barry Song wrote:
->> On Mon, May 6, 2024 at 8:06 PM David Hildenbrand <david@redhat.com> wrote:
->>>
->>> On 04.05.24 01:40, Barry Song wrote:
->>>> On Fri, May 3, 2024 at 5:41 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>>
->>>>> On 03/05/2024 01:50, Barry Song wrote:
->>>>>> From: Barry Song <v-songbaohua@oppo.com>
->>>>>>
->>>>>> There could arise a necessity to obtain the first pte_t from a swap
->>>>>> pte_t located in the middle. For instance, this may occur within the
->>>>>> context of do_swap_page(), where a page fault can potentially occur in
->>>>>> any PTE of a large folio. To address this, the following patch introduces
->>>>>> pte_move_swp_offset(), a function capable of bidirectional movement by
->>>>>> a specified delta argument. Consequently, pte_increment_swp_offset()
->>>>>
->>>>> You mean pte_next_swp_offset()?
->>>>
->>>> yes.
->>>>
->>>>>
->>>>>> will directly invoke it with delta = 1.
->>>>>>
->>>>>> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
->>>>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
->>>>>> ---
->>>>>>    mm/internal.h | 25 +++++++++++++++++++++----
->>>>>>    1 file changed, 21 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/mm/internal.h b/mm/internal.h
->>>>>> index c5552d35d995..cfe4aed66a5c 100644
->>>>>> --- a/mm/internal.h
->>>>>> +++ b/mm/internal.h
->>>>>> @@ -211,18 +211,21 @@ static inline int folio_pte_batch(struct folio
->>>>>> *folio, unsigned long addr,
->>>>>>    }
->>>>>>
->>>>>>    /**
->>>>>> - * pte_next_swp_offset - Increment the swap entry offset field of a swap
->>>>>> pte.
->>>>>> + * pte_move_swp_offset - Move the swap entry offset field of a swap pte
->>>>>> + *    forward or backward by delta
->>>>>>     * @pte: The initial pte state; is_swap_pte(pte) must be true and
->>>>>>     *    non_swap_entry() must be false.
->>>>>> + * @delta: The direction and the offset we are moving; forward if delta
->>>>>> + *    is positive; backward if delta is negative
->>>>>>     *
->>>>>> - * Increments the swap offset, while maintaining all other fields, including
->>>>>> + * Moves the swap offset, while maintaining all other fields, including
->>>>>>     * swap type, and any swp pte bits. The resulting pte is returned.
->>>>>>     */
->>>>>> -static inline pte_t pte_next_swp_offset(pte_t pte)
->>>>>> +static inline pte_t pte_move_swp_offset(pte_t pte, long delta)
->>>>>
->>>>> We have equivalent functions for pfn:
->>>>>
->>>>>     pte_next_pfn()
->>>>>     pte_advance_pfn()
->>>>>
->>>>> Although the latter takes an unsigned long and only moves forward currently. I
->>>>> wonder if it makes sense to have their naming and semantics match? i.e. change
->>>>> pte_advance_pfn() to pte_move_pfn() and let it move backwards too.
->>>>>
->>>>> I guess we don't have a need for that and it adds more churn.
->>>>
->>>> we might have a need in the below case.
->>>> A forks B, then A and B share large folios. B unmap/exit, then large
->>>> folios of process
->>>> A become single-mapped.
->>>> Right now, while writing A's folios, we are CoWing A's large folios
->>>> into many small
->>>> folios. I believe we can reuse the entire large folios instead of doing
->>>> nr_pages
->>>> CoW and page faults.
->>>> In this case, we might want to get the first PTE from vmf->pte.
->>>
->>> Once we have COW reuse for large folios in place (I think you know that
->>> I am working on that), it might make sense to "COW-reuse around",
->>
->> TBH, I don't know if you are working on that. please Cc me next time :-)
+On Mon, May 06, 2024 at 02:10:24PM +0200, Linus Walleij wrote:
+> On Mon, Apr 29, 2024 at 12:25 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> I could have sworn I mentioned it to you already :)
+> > The of_gpio.h is going to be removed. In preparation of that convert
+> > the driver to the agnostic API.
+> >
+> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> See
-> 
-> https://lore.kernel.org/linux-mm/a9922f58-8129-4f15-b160-e0ace581bcbe@redhat.com/T/
-> 
-> I'll follow-up on that soonish (now that batching is upstream and the large
-> mapcount is on its way upstream).
-> 
->>
->>> meaning we look if some neighboring PTEs map the same large folio and
->>> map them writable as well. But if it's really worth it, increasing page
->>> fault latency, is to be decided separately.
->>
->> On the other hand, we eliminate latency for the remaining nr_pages - 1 PTEs.
->> Perhaps we can discover a more cost-effective method to signify that a large
->> folio is probably singly mapped?
-> 
-> Yes, precisely what I am up to!
-> 
->> and only call "multi-PTEs" reuse while that
->> condition is true in PF and avoid increasing latency always?
-> 
-> I'm thinking along those lines:
-> 
-> If we detect that it's exclusive, we can certainly mapped the current PTE
-> writable. Then, we can decide how much (and if) we want to fault-around writable
-> as an optimization.
-> 
-> For smallish large folios, it might make sense to try faulting around most of
-> the folio.
-> 
-> For large large folios (e.g., PTE-mapped 2MiB THP and bigger), we might not want
-> to fault around the whole thing -- especially if there is little benefit to be
-> had from contig-pte bits.
-> 
->>
->>>
->>>
->>>>
->>>> Another case, might be
->>>> A forks B, and we write either A or B, we might CoW an entire large
->>>> folios instead
->>>> CoWing nr_pages small folios.
->>>>
->>>> case 1 seems more useful, I might have a go after some days. then we might
->>>> see pte_move_pfn().
->>> pte_move_pfn() does sound odd to me. 
-
-Yes, I agree the name is odd. pte_move_swp_offset() sounds similarly odd tbh.
-Perhaps just pte_advance_swp_offset() with a negative value is clearer about
-what its doing?
-
->>> It might not be required to
->>> implement the optimization described above. (it's easier to simply read
->>> another PTE, check if it maps the same large folio, and to batch from there)
-
-Yes agreed.
-
->>>
->>
->> It appears that your proposal suggests potential reusability as follows: if we
->> have a large folio containing 16 PTEs, you might consider reusing only 4 by
->> examining PTEs "around" but not necessarily all 16 PTEs. please correct me
->> if my understanding is wrong.
->>
->> Initially, my idea was to obtain the first PTE using pte_move_pfn() and then
->> utilize folio_pte_batch() with the first PTE as arguments to ensure consistency
->> in nr_pages, thus enabling complete reuse of the whole folio.
-> 
-> Simply doing an vm_normal_folio(pte - X) == folio and then trying to batch from
-> there might be easier and cleaner.
+> I think there is a bug here, the code is respecting the OF property
+> "reset-gpio-active-high"
+> but the code in drivers/gpio/gpiolib-of.h actually has a quirk for
+> this so you can just
+> delete all the active high handling and rely on 1 = asserted and 0 =
+> deasserted when
+> using GPIO descriptors.
 > 
 
+Wow...
+
+So this bug is present even before this series, right?
+
+> Just delete this thing:
+> imx6_pcie->gpio_active_high = of_property_read_bool(node,
+>                                            "reset-gpio-active-high");
+
+But this is just a bandaid IMO. The flag for the PERST# GPIO should be properly
+set in the board dts as per the board design.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
