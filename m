@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-171356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38698BE33C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:13:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC228BE33B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A5D1C239EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0A491C21DED
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E2B15E819;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EE915E813;
 	Tue,  7 May 2024 13:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="C5VPJi11"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="McdDfK3J"
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CECD15E5C8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37A15E21B
 	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087574; cv=none; b=s7H4nR649ed/CH/4555xXhpPv89fH1t+n5oiyNhZ0QxJYwW2ThBadjG9SqRHOcBQI5g4cJ8yMwS9F0u7rtzHcMo4NpVdf8Md41Txhiw2ZBfvkk8d1Kq4j3TOu22PBXkatdxgmSKV7+YU0JIbFK2otrHwYBBu9gMiowzUnqawwUI=
+	t=1715087574; cv=none; b=F3vuUlBS3lPgg3rixMhXcbOOKcZ+85Ny+Pd77dnahrWQQVODi9KFfFvsrhSGTUxATn56G7R9vGiRYtPBBrFG866Do8E0OjmMZhWMqTLbpp1U3eTPWf/cASIWjq5ikVMVghwQqY8Y+ZZBvqjYbr/RvBpMyF+zV5POC0ZLPGvxMXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715087574; c=relaxed/simple;
-	bh=7vdmVPd+zYBt+314aPAhN9XuBmdJtkQGrUQZRQbJsto=;
+	bh=6iZyu6h2471MLh5Wb1cORQD9zmmQ2O6P79Od0ztmw3c=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tAevI4hMReRiUu2fU+dAZeNzizJuqKDmrSpI1aexbxuPa/I0jdMy/b1qmoECDPJ6r2oFCqlgWqeRRM6JfI1RxtS/Mhta5AA00lk4128Fozuuc6PuVp3MRXSnfCqNH70z8d/xA29ooBkHJ5LEaKZbYmheZVDHGF4vRwB5Z2mdClc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=C5VPJi11; arc=none smtp.client-ip=91.207.212.93
+	 MIME-Version:Content-Type; b=Ht11eAZywUOA99DobAElJuNmFdbCRcrnEfiZ90FZDhcSlu20RThBuAAnNq0gVHlKwh3+OTnda4Vq+Z6s7SWe5wf56xkzODqZPKLjjfcC41u9xYOLsektifVwNwzHkCZTLSoH605+tzf36uHjTiZ0BMthrDx0F5u/zsQKPsWq0Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=McdDfK3J; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447C601u005842;
-	Tue, 7 May 2024 15:12:38 +0200
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447C7A5A014051;
+	Tue, 7 May 2024 15:12:39 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
 	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=bXxkzTW4QOxeZ1W/fy4oEoPOwCf1R8czlhEkwm8Z9DE=; b=C5
-	VPJi11C/Q8nXrg9onmlvYCzCgQv5/3r8JMEnbeA8naupI3Rp4QHOUGLCq0aMBfBe
-	HFHsxKGQowLq/u8KaXo2KIYOzfcJwnonUOK8nFBkvvZpSLE9hPR2WDJKo7NQOTJ8
-	PMcKP6iIkmv8jArle5ySTF6xgjA9CfNRpv4SASLa6fceYDrvCIcfhjZdblneNml1
-	ivr5iXG8TbGXkzH6wXHZ+RVhqhtRde3w0/TV1Gj3ZUEt48p8AB0O2RjEJ2rUjRUC
-	R2TPFYMFKBOWTWaRHuvMK7mmZBjr0CNpEacH5E4Ke2ozwV4xBzPK3Coi5J/0k6Rp
-	Roo8iHMXzU/7CvOwgBnA==
+	selector1; bh=POWZoUc0X8Boorq4SPNqj49r2vjDIbLIFmBbp8SfjUo=; b=Mc
+	dDfK3JbCJ1pIDp3cuwA0BtzbFdWSvzYDt4OECLxaoHNb9IMBpXwgrq1SPxSSetgW
+	jXXAPgyY5GH9ptmNKmOqSR95TygxnsZfMseMo1gIb1ex8W+wTLNHqFGfx5crzYbi
+	lhTR0T2zegAigv7baU9bQzgN75BvlKxpF13S2qy4+e0DLf6tvHjLmERo8TcziKkb
+	ksv3uI9v8uBXhtBEa42HVX3BIVErG9eL1soh3wzg35+ki94p5KQOngwlyMO4CXm+
+	E6Dz5KnbnjvVEnLKMr1vGySlX+btU43WT74LM9YuCjePKwz3QeTAC5qxM3R8Po29
+	dSYUNmEUM4fzbPLVE1mg==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwbwckrxn-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwa553xh7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 15:12:38 +0200 (MEST)
+	Tue, 07 May 2024 15:12:39 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 17EA240044;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9FF3E40045;
 	Tue,  7 May 2024 15:12:35 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4144321B53C;
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C67EC21B53D;
 	Tue,  7 May 2024 15:12:01 +0200 (CEST)
 Received: from localhost (10.48.87.171) by SHFDAG1NODE1.st.com (10.75.129.69)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 7 May
- 2024 15:12:00 +0200
+ 2024 15:12:01 +0200
 From: Antonio Borneo <antonio.borneo@foss.st.com>
 To: Russell King <linux@armlinux.org.uk>,
         Maxime Coquelin
@@ -68,9 +68,9 @@ CC: Antonio Borneo <antonio.borneo@foss.st.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 6/8] irqchip/stm32mp-exti: allow build as module
-Date: Tue, 7 May 2024 15:10:49 +0200
-Message-ID: <20240507131051.980313-7-antonio.borneo@foss.st.com>
+Subject: [PATCH v2 7/8] ARM: stm32: allow build irq-stm32mp-exti driver as module
+Date: Tue, 7 May 2024 15:10:50 +0200
+Message-ID: <20240507131051.980313-8-antonio.borneo@foss.st.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240507131051.980313-1-antonio.borneo@foss.st.com>
 References: <20240507131051.980313-1-antonio.borneo@foss.st.com>
@@ -88,62 +88,26 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-05-07_06,2024-05-06_02,2023-05-22_02
 
-Allow build the driver as a module by adding the necessarily hooks
-in Kconfig and in the driver's code.
-
-Since all the probe dependencies linked to this driver has already
-been fixed, ignore the no more relevant 'arch_initcall'.
+Drop auto-selecting the driver, so it can be built either as a
+module or built-in.
 
 Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 ---
- drivers/irqchip/Kconfig            |  8 ++++++--
- drivers/irqchip/irq-stm32mp-exti.c | 15 ++++-----------
- 2 files changed, 10 insertions(+), 13 deletions(-)
+ arch/arm/mach-stm32/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 486022fb7806e..b804da28dccf5 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -393,9 +393,13 @@ config PARTITION_PERCPU
- 	bool
- 
- config STM32MP_EXTI
--	bool
--	select IRQ_DOMAIN
-+	tristate "STM32MP extended interrupts and event controller"
-+	depends on (ARCH_STM32 && !ARM_SINGLE_ARMV7M) || COMPILE_TEST
-+	default y
-+	select IRQ_DOMAIN_HIERARCHY
- 	select GENERIC_IRQ_CHIP
-+	help
-+	  Support STM32MP EXTI (extended interrupts and event) controller.
- 
- config STM32_EXTI
- 	bool
-diff --git a/drivers/irqchip/irq-stm32mp-exti.c b/drivers/irqchip/irq-stm32mp-exti.c
-index 3ceff6d25b702..2958fbcfbda12 100644
---- a/drivers/irqchip/irq-stm32mp-exti.c
-+++ b/drivers/irqchip/irq-stm32mp-exti.c
-@@ -730,15 +730,8 @@ static struct platform_driver stm32mp_exti_driver = {
- 	},
- };
- 
--static int __init stm32mp_exti_arch_init(void)
--{
--	return platform_driver_register(&stm32mp_exti_driver);
--}
--
--static void __exit stm32mp_exti_arch_exit(void)
--{
--	return platform_driver_unregister(&stm32mp_exti_driver);
--}
-+module_platform_driver(stm32mp_exti_driver);
- 
--arch_initcall(stm32mp_exti_arch_init);
--module_exit(stm32mp_exti_arch_exit);
-+MODULE_AUTHOR("Maxime Coquelin <mcoquelin.stm32@gmail.com>");
-+MODULE_DESCRIPTION("STM32MP EXTI driver");
-+MODULE_LICENSE("GPL");
+diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
+index 41bfcf31f8a76..8c8d5fc1217f6 100644
+--- a/arch/arm/mach-stm32/Kconfig
++++ b/arch/arm/mach-stm32/Kconfig
+@@ -11,7 +11,6 @@ menuconfig ARCH_STM32
+ 	select CLKSRC_STM32
+ 	select PINCTRL
+ 	select RESET_CONTROLLER
+-	select STM32MP_EXTI if ARCH_MULTI_V7
+ 	select STM32_EXTI if ARM_SINGLE_ARMV7M
+ 	help
+ 	  Support for STMicroelectronics STM32 processors.
 -- 
 2.34.1
 
