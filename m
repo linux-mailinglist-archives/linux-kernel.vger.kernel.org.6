@@ -1,184 +1,101 @@
-Return-Path: <linux-kernel+bounces-171116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7F28BDFED
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:40:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A658BDFEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41B21C231C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180FE1F25733
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B58150993;
-	Tue,  7 May 2024 10:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9C014F118;
+	Tue,  7 May 2024 10:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SZJCL35l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fCgx7jU1"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69F314EC4A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27B414EC4A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715078422; cv=none; b=ERd1NqX1MjO9eNpiDHjwkMwf4/K5zbM1Dxag3s7VW5w1XLkGpF06dCHt+nrpWlFFHEnlpaU5GMQ+GmYRB8dlX+6F8EyRu0pj7BXcwMX5Vi8FL1s7NH8t9IJxpW0Hrm5BoIJx0mV05WAnhrbgShUFYpN3z60fFvAtl/JpvLZdHgA=
+	t=1715078409; cv=none; b=BuDIXmSB1qAQFnP1dyvQA4f5ZOvVBUAHx3xVCtcNkBTjEdHsXM1yqRPMN/3Fdzwvxzh0BjqC19KmuLu+GKHw9Mkp0D3knZQGhPm1J/8EcK5v1cLnLlGXmfrdB2U163s8XOE0PDR7+WyNg9jdoUU8QSyMEJiP9jJdgo1iTtTzhpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715078422; c=relaxed/simple;
-	bh=X9UOm5QxQmoKFnw7VYuRiqytXd3mrNifyQakztYF7h0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g+F5OgAf2VysZBIHnj3xhRt46FUAquahq7/dHoGKBOBXgT6ZXR3NfqkR5lalptAzJTEUDtCyWdoczuKrzmPYvpPSkjS4zOxsrXvmSWL881rmctq7KJCGGKKwTBSfKdKXkQD7n20xvDL7yz78Dh0Z6BpkAk9R8exaSIbmy2EwxUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SZJCL35l; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715078419;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UQu/lfpz1bNTbtmouXE8uSwcjGxRPXhP7N7yJc5k/ko=;
-	b=SZJCL35lq+vWIWtD6VQC+YWCfQ5R0U7G28QDCjYN3QZ4cXG7xNgRdbYhqGh0lA46eptXSZ
-	VyK6PfCo3/wwVY05EOjnZ8JPLKcQU12sdCbifZb4mtDHHb5qFyXgX4D0AR/6z0dhsJxHWr
-	/SdinUM4gwOtnelcHXjoSKhp1G5Qod0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-625-o91bb09VPoGOr6rhArLFeA-1; Tue, 07 May 2024 06:40:13 -0400
-X-MC-Unique: o91bb09VPoGOr6rhArLFeA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9B455801211;
-	Tue,  7 May 2024 10:40:12 +0000 (UTC)
-Received: from toolbox.brq.redhat.com (unknown [10.43.2.89])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 7BB96EC68D;
-	Tue,  7 May 2024 10:40:11 +0000 (UTC)
-From: Michal Schmidt <mschmidt@redhat.com>
-To: Selvin Xavier <selvin.xavier@broadcom.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Devesh Sharma <devesh.sharma@broadcom.com>,
-	Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bnxt_re: avoid shift undefined behavior in bnxt_qplib_alloc_init_hwq
-Date: Tue,  7 May 2024 12:39:28 +0200
-Message-ID: <20240507103929.30003-1-mschmidt@redhat.com>
+	s=arc-20240116; t=1715078409; c=relaxed/simple;
+	bh=RVraaqpU90T9jNynBtCQENH1uJ2RcPjIHtQUyCKdwiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cVtwFUPYHbkxv1st4LUV/+eHYvnPZbEP3Pddw69v9jPTgjLKNxGqQsmFsJHHg11+e54x77H10UixsGBtV7WuAWfqQZoP7A1m5pnGEDhArFpRreRiuC8//p+WMVAD29BVMdYlTbrmHWoJqHU5tc/fx8UGy2Nj/Ol0dbSSfZsA1vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fCgx7jU1; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso13640a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715078406; x=1715683206; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RVraaqpU90T9jNynBtCQENH1uJ2RcPjIHtQUyCKdwiE=;
+        b=fCgx7jU1Vi89ZQGCFu2/QnRfHtiWPfbRHcU+kdtVk9XO6SV4Red2KNBljrXdtwhgKh
+         qpQ/MRspQYGbeJ8Q5Ih1xuDE4zLG6JmQ3bxyZ4c6TWVVbkcYXIPLG8ICPTlt64SA1E4S
+         JpEpvjDRhQUJcSTo95i+Zz8azUjPJaslE+3+JJ7Svfeu3BTOw0Ntx1//FxLtcaoCW+t2
+         9x2qfAwDp15Vbf/V/UEeiC3rzVEc6zFavWSJOCwRMq6IuEBWkKITZO96EyTKpF6QY+Di
+         So82IvE7sWU5tZHahsmJKd0lQZinXSihE3HDAktbIRM18CXVPpgsVXTk8R+Ez5Row8s/
+         BUlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715078406; x=1715683206;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RVraaqpU90T9jNynBtCQENH1uJ2RcPjIHtQUyCKdwiE=;
+        b=Wd7TQiZNLNgMzkYNXQZPAnaHFpudVo+SlPnLp0GCUyiWjqFMQWXzswwYxt4uy0Ti7A
+         k8lyVZ9w91tjop6UzvoMP034/mseF34vgxq6Rxw1jwRWs2YjNCwE6f4lFp9ZbwDUBsdu
+         1paq3Pg19YJgrPsMgTbj4sha06F/PnL3U7c0cJZNci483xEL4weShOB6INTDkiYGTeHZ
+         a+vOV7dxuL2qovyQOebO+yP4usmx7h0ZFscMhkTB61QEIvPtjia6dTmU9aR8QeQbhLnr
+         6wUJ+oXKfpmZA3k2yp8pZtbPB90wlXKi4Jf+2SA1hf08s6qnh7YfaKcQFC+7wPMHlsbe
+         NVEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsxVAtKFsFVEn6muIFhea9yKtwe9yK4WGVwOW9aIj2XIXewzc+obFvWWIj85DGzPheniGcdf2eqgyCUe0CsmUZkMyT0TuzVMC2u26H
+X-Gm-Message-State: AOJu0Yz7jcj8s07FzZ0PBr4f85LzBoLVSUQk9mDj9elBwFActsGI39rU
+	RHqm+Ppcpy1u3YDIzVHkdfk2d05+xRWCakxLqZbRAMD5200RbRlnyo1ZjZpe0kEJ0z7NyCvE3/B
+	wGH51tbkH7h2QZBo9jpPxPdmFKrPOHL3vyw+o
+X-Google-Smtp-Source: AGHT+IGURH+TAKjYVx7HNPEQu9fLSg4tmEpjWWFcBoWqrK3Jf56PPoCH0wcN5v4H9exUF8MPoXuFORZW4WZOvliX6zM=
+X-Received: by 2002:a05:6402:35d1:b0:572:554b:ec66 with SMTP id
+ 4fb4d7f45d1cf-5731310fe6fmr162918a12.3.1715078405878; Tue, 07 May 2024
+ 03:40:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+References: <20240507090520.284821-1-wei.fang@nxp.com>
+In-Reply-To: <20240507090520.284821-1-wei.fang@nxp.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 7 May 2024 12:39:54 +0200
+Message-ID: <CANn89iJuEubWMu4Jg3rAac=HM95U3yS9PSq1eSx+-JC6rhOdbA@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: fec: Convert fec driver to use lock guards
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	shenwei.wang@nxp.com, xiaoning.wang@nxp.com, richardcochran@gmail.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Undefined behavior is triggered when bnxt_qplib_alloc_init_hwq is called
-with hwq_attr->aux_depth != 0 and hwq_attr->aux_stride == 0.
-In that case, "roundup_pow_of_two(hwq_attr->aux_stride)" gets called.
-roundup_pow_of_two is documented as undefined for 0.
+On Tue, May 7, 2024 at 11:16=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wrote:
+>
+> Use guard() and scoped_guard() defined in linux/cleanup.h to automate
+> lock lifetime control in fec driver.
+>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+>
 
-Fix it in the one caller that had this combination.
+To me, this looks like a nice recipe for future disasters when doing backpo=
+rts,
+because I am pretty sure the "goto ..." that assumes the lock is
+magically released
+will fail horribly.
 
-The undefined behavior was detected by UBSAN:
-  UBSAN: shift-out-of-bounds in ./include/linux/log2.h:57:13
-  shift exponent 64 is too large for 64-bit type 'long unsigned int'
-  CPU: 24 PID: 1075 Comm: (udev-worker) Not tainted 6.9.0-rc6+ #4
-  Hardware name: Abacus electric, s.r.o. - servis@abacus.cz Super Server/H12SSW-iN, BIOS 2.7 10/25/2023
-  Call Trace:
-   <TASK>
-   dump_stack_lvl+0x5d/0x80
-   ubsan_epilogue+0x5/0x30
-   __ubsan_handle_shift_out_of_bounds.cold+0x61/0xec
-   __roundup_pow_of_two+0x25/0x35 [bnxt_re]
-   bnxt_qplib_alloc_init_hwq+0xa1/0x470 [bnxt_re]
-   bnxt_qplib_create_qp+0x19e/0x840 [bnxt_re]
-   bnxt_re_create_qp+0x9b1/0xcd0 [bnxt_re]
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? __kmalloc+0x1b6/0x4f0
-   ? create_qp.part.0+0x128/0x1c0 [ib_core]
-   ? __pfx_bnxt_re_create_qp+0x10/0x10 [bnxt_re]
-   create_qp.part.0+0x128/0x1c0 [ib_core]
-   ib_create_qp_kernel+0x50/0xd0 [ib_core]
-   create_mad_qp+0x8e/0xe0 [ib_core]
-   ? __pfx_qp_event_handler+0x10/0x10 [ib_core]
-   ib_mad_init_device+0x2be/0x680 [ib_core]
-   add_client_context+0x10d/0x1a0 [ib_core]
-   enable_device_and_get+0xe0/0x1d0 [ib_core]
-   ib_register_device+0x53c/0x630 [ib_core]
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   bnxt_re_probe+0xbd8/0xe50 [bnxt_re]
-   ? __pfx_bnxt_re_probe+0x10/0x10 [bnxt_re]
-   auxiliary_bus_probe+0x49/0x80
-   ? driver_sysfs_add+0x57/0xc0
-   really_probe+0xde/0x340
-   ? pm_runtime_barrier+0x54/0x90
-   ? __pfx___driver_attach+0x10/0x10
-   __driver_probe_device+0x78/0x110
-   driver_probe_device+0x1f/0xa0
-   __driver_attach+0xba/0x1c0
-   bus_for_each_dev+0x8f/0xe0
-   bus_add_driver+0x146/0x220
-   driver_register+0x72/0xd0
-   __auxiliary_driver_register+0x6e/0xd0
-   ? __pfx_bnxt_re_mod_init+0x10/0x10 [bnxt_re]
-   bnxt_re_mod_init+0x3e/0xff0 [bnxt_re]
-   ? __pfx_bnxt_re_mod_init+0x10/0x10 [bnxt_re]
-   do_one_initcall+0x5b/0x310
-   do_init_module+0x90/0x250
-   init_module_from_file+0x86/0xc0
-   idempotent_init_module+0x121/0x2b0
-   __x64_sys_finit_module+0x5e/0xb0
-   do_syscall_64+0x82/0x160
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? syscall_exit_to_user_mode_prepare+0x149/0x170
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? syscall_exit_to_user_mode+0x75/0x230
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? do_syscall_64+0x8e/0x160
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? __count_memcg_events+0x69/0x100
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? count_memcg_events.constprop.0+0x1a/0x30
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? handle_mm_fault+0x1f0/0x300
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? do_user_addr_fault+0x34e/0x640
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   ? srso_alias_return_thunk+0x5/0xfbef5
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  RIP: 0033:0x7f4e5132821d
-  Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e3 db 0c 00 f7 d8 64 89 01 48
-  RSP: 002b:00007ffca9c906a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-  RAX: ffffffffffffffda RBX: 0000563ec8a8f130 RCX: 00007f4e5132821d
-  RDX: 0000000000000000 RSI: 00007f4e518fa07d RDI: 000000000000003b
-  RBP: 00007ffca9c90760 R08: 00007f4e513f6b20 R09: 00007ffca9c906f0
-  R10: 0000563ec8a8faa0 R11: 0000000000000246 R12: 00007f4e518fa07d
-  R13: 0000000000020000 R14: 0000563ec8409e90 R15: 0000563ec8a8fa60
-   </TASK>
-  ---[ end trace ]---
-
-Fixes: 0c4dcd602817 ("RDMA/bnxt_re: Refactor hardware queue memory allocation")
-Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
----
- drivers/infiniband/hw/bnxt_re/qplib_fp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-index 439d0c7c5d0c..04258676d072 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-@@ -1013,7 +1013,8 @@ int bnxt_qplib_create_qp(struct bnxt_qplib_res *res, struct bnxt_qplib_qp *qp)
- 	hwq_attr.stride = sizeof(struct sq_sge);
- 	hwq_attr.depth = bnxt_qplib_get_depth(sq);
- 	hwq_attr.aux_stride = psn_sz;
--	hwq_attr.aux_depth = bnxt_qplib_set_sq_size(sq, qp->wqe_mode);
-+	hwq_attr.aux_depth = psn_sz ? bnxt_qplib_set_sq_size(sq, qp->wqe_mode)
-+				    : 0;
- 	/* Update msn tbl size */
- 	if (BNXT_RE_HW_RETX(qp->dev_cap_flags) && psn_sz) {
- 		hwq_attr.aux_depth = roundup_pow_of_two(bnxt_qplib_set_sq_size(sq, qp->wqe_mode));
--- 
-2.44.0
-
+I would use scoped_guard() only for new code.
 
