@@ -1,215 +1,136 @@
-Return-Path: <linux-kernel+bounces-171468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DEBD8BE4B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:52:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D458BE4B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D531C240AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265E71C24358
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27E615FD01;
-	Tue,  7 May 2024 13:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D1415E7EE;
+	Tue,  7 May 2024 13:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lPO4q6Dq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QmD0p47D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437E715F408;
-	Tue,  7 May 2024 13:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C6A15E5D2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715089802; cv=none; b=cBvLW0CkR0XKcb3dZelgFpH8G7kv/Fyc5HeBkMxtCnC4lFjidwSfstKR6SB3FJBSANKoME2sQTjNg022J5N+ocscoYnsGGP1nSBRSuwUdZ7NH/mHhIIKSBXuQ6YNHEJ6fHnJJirQsIt+CYCg7pE6+5KPH3ceROjPsZH03MhNdYU=
+	t=1715089856; cv=none; b=Q2/zHsxoLJSDLQ6UcOGh94o7onCsfm4mLZZ5lea2FJ7flkZOvxq3Y8ykntlQkF0TytbaL8yqGKcmbYXrKB+RolkKQUvaGhF7k2QSUhR+rnRRAdJGaBzkgcCDo6whz45WHKCSnv5e1jr3YhbVStx1EFYmRsoUYKEtjdHwwmvhvlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715089802; c=relaxed/simple;
-	bh=Hc/RNhSHcD+jiFZ3nckCqRmYXWrEE8CcqIQTZk2O420=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MzNS9Dm9tnYD9RF1K6buVPkIErlqDiSiUhKQrMqCGWToOYwFdj8OYKjKmjmDo6SNEY9yekvcNAihVpHbqlhmYsyZ1NWB5vOXwpHEkGQP30iQiSPQ5ySKQ/sUEzZ+mhF+Xb2bzqsSCUsGWcXdHNJa3PYcs3YNOGh36gNWDuBMt6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lPO4q6Dq; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715089801; x=1746625801;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Hc/RNhSHcD+jiFZ3nckCqRmYXWrEE8CcqIQTZk2O420=;
-  b=lPO4q6DqTv+La3L0KmoNPnbHjH9mjcd1qZgz4Ua8zFrrUTaBoXba/XSf
-   Onfu/MJ3XGVqELNP0WkzCDly/iNUBaM7yrjc6P1pAlyojCKsaz/C1dJW4
-   jr3/J3jejgbYBcALP5JxuKLADjAUM+JJt6hjM9kLHnX6fkUe3OEL7R3NY
-   WE0R4UHiKJZLpGTmoJPbPUFB9+2aV1VM16znyHpclKrA/c9Nk5ZDL27Yy
-   +HZaF889JItz2cvuCIvix00qOqTEgdRwco49SQiZlohCvFvSdXskTjvXY
-   jdJEgrrdsRMjEAMQq1XcCbFAYQ2bt3WL1q71BHwlRxs11R+IZFnAStowX
-   g==;
-X-CSE-ConnectionGUID: uH1djRypTx2HAzQdA+4hog==
-X-CSE-MsgGUID: EkPzERAtTTuypTkrfiU9CA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11009876"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="11009876"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:49:56 -0700
-X-CSE-ConnectionGUID: /XUIx9WsSy+oT5gg8tWNvw==
-X-CSE-MsgGUID: S/gy+mMrSb2BvdjaEjbhbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="29114486"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:49:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1s4LCX-000000053NT-2YJH;
-	Tue, 07 May 2024 16:49:49 +0300
-Date: Tue, 7 May 2024 16:49:49 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Igor Mammedov <imammedo@redhat.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-kernel@vger.kernel.org, Lidong Wang <lidong.wang@intel.com>
-Subject: Re: [PATCH v3 8/8] PCI: Relax bridge window tail sizing rules
-Message-ID: <ZjoxfYEi9mMQnRBh@smile.fi.intel.com>
-References: <20240507102523.57320-1-ilpo.jarvinen@linux.intel.com>
- <20240507102523.57320-9-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1715089856; c=relaxed/simple;
+	bh=TIJT24/Y/Kk/+RWnfVxsYYSG3i19tMA8dCXENC479kk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AApEq/zgpLJZfQqRhysywEgB0c3EJQzY2M90tAXP64m9w+klz6ubxEwWoZVJLLCdrHVTiNqrm+NSVicUuv+wnWjfLMFZy7t3ixw5mhX80HQSz9rORU9FPEYw6wSCaVF38EfOJNVDJT3D3uScc/hpXOhmJkq1oIiCu2rBnyOXsC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QmD0p47D; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715089854;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xTODE9eHYN04ukhQbjsh3NfbLHwJO8ke2b2LYl5imOw=;
+	b=QmD0p47DDS36/tfeC5lWnhS7wPjlFyFUuQuyQ1PUICB+0jCs5kc2Ebd7/bxnWYz0VFU+W4
+	CJ37UVS/Ci04hPYRuogNRpXfQ9385roCkttFjGzylYiZFArnv1g6XT2s0ohFbb9jyng0hH
+	IYE14Semdk4ryGT7QMn8Ia+LOaAUoqg=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-621-dX8X3nD6PhiqEpoAJTwV_g-1; Tue, 07 May 2024 09:50:52 -0400
+X-MC-Unique: dX8X3nD6PhiqEpoAJTwV_g-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-51f90454688so2568625e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:50:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715089851; x=1715694651;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xTODE9eHYN04ukhQbjsh3NfbLHwJO8ke2b2LYl5imOw=;
+        b=ncLbk+9lp7B8TwvsrxQzsYNzmTXP9DLpb2cIzDqhKgzHiuzUhwZ2jyak2+Xvy4qEOz
+         llp29vDxmB0vvavDjxrEl0zRFilEkmRV4ZZC+3Ue1z3y8/c4je+t9kGW0p6KXcUZSV12
+         HKwl+BMuphrhwezMIvC/UCl2NpnoYbnf8l/BrykstbVSv7P3Ekjln6W1bwSdyQFK1Hdl
+         yspeZAgwlmZbnLI/RNGtKV9GzgJ5upjUQN3lYPQwfwa5P3Zmgtao6chnGcBHgTCoA8/6
+         e0lpjP7YJr8W2pre+Cv1c6NJwXPiLgMINVEgcv3Ebhz79NayQ+T++csyHLv+O+QlQ3ZQ
+         Fa+w==
+X-Gm-Message-State: AOJu0YyoBJYZx+026erVnCrr0fPNdeYW9HvWSVWAhyqN2qyvd/a5eEMz
+	QpCEPSHz4nS2oLu/D66HADB2iEpwQjU0jsDK79RxSOwJ+hbrz5jY/PSTOajxHxjxcCrL+RY8XLq
+	f+9f20NgqyX8/LWEqpwRf1kyupu7WyeG3wq/VxgDK5HMYo5gWoW7yUNFySmQVLA==
+X-Received: by 2002:a05:6512:1588:b0:518:b283:1078 with SMTP id bp8-20020a056512158800b00518b2831078mr14091445lfb.26.1715089851188;
+        Tue, 07 May 2024 06:50:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHv9UwS+EKurT0TjqicSwHazMqzSvX4nL5tG19yPraKVt7fxXPC1+UwQnvq4wdl4VKNZqfd2w==
+X-Received: by 2002:a05:6512:1588:b0:518:b283:1078 with SMTP id bp8-20020a056512158800b00518b2831078mr14091422lfb.26.1715089850709;
+        Tue, 07 May 2024 06:50:50 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id ek10-20020a056402370a00b00572033ec969sm6344723edb.60.2024.05.07.06.50.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 06:50:50 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 6C3FE1275DC8; Tue, 07 May 2024 15:50:49 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann
+ <daniel@iogearbox.net>, Eric Dumazet <edumazet@google.com>, Frederic
+ Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Eduard
+ Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, Jiri Olsa <jolsa@kernel.org>, John
+ Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Yonghong Song
+ <yonghong.song@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH net-next 14/15] net: Reference bpf_redirect_info via
+ task_struct on PREEMPT_RT.
+In-Reply-To: <20240507105731.bjCHl0YH@linutronix.de>
+References: <20240503182957.1042122-1-bigeasy@linutronix.de>
+ <20240503182957.1042122-15-bigeasy@linutronix.de> <87y18mohhp.fsf@toke.dk>
+ <20240507105731.bjCHl0YH@linutronix.de>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Tue, 07 May 2024 15:50:49 +0200
+Message-ID: <874jb9ohmu.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240507102523.57320-9-ilpo.jarvinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 
-On Tue, May 07, 2024 at 01:25:23PM +0300, Ilpo Järvinen wrote:
-> During remove & rescan cycle, PCI subsystem will recalculate and adjust
-> the bridge window sizing that was initially done by "BIOS". The size
-> calculation is based on the required alignment of the largest resource
-> among the downstream resources as per pbus_size_mem() (unimportant or
-> zero parameters marked with "..."):
-> 
-> 	min_align = calculate_mem_align(aligns, max_order);
-> 	size0 = calculate_memsize(size, ..., min_align);
-> 
-> inside calculate_memsize(), for the largest alignment:
-> 	min_align = align1 >> 1;
-> 	...
-> 	return min_align;
-> 
-> and then in calculate_memsize():
-> 	return ALIGN(max(size, ...), align);
-> 
-> If the original bridge window sizing tried to conserve space, this will
-> lead to massive increase of the required bridge window size when the
-> downstream has a large disparity in BAR sizes. E.g., with 16MiB and
-> 16GiB BARs this results in 24GiB bridge window size even if 16MiB BAR
-> does not require gigabytes of space to fit.
-> 
-> When doing remove & rescan for a bus that contains such a PCI device, a
-> larger bridge window is suddenly required on rescan but when there is a
-> bridge window upstream that is already assigned based on the original
-> size, it cannot be enlarged to the new requirement. This causes the
-> allocation of the bridge window to fail (0x600000000 > 0x400ffffff):
-> 
-> pci 0000:02:01.0: PCI bridge to [bus 03]
-> pci 0000:02:01.0:   bridge window [mem 0x40400000-0x405fffff]
-> pci 0000:02:01.0:   bridge window [mem 0x6000000000-0x6400ffffff 64bit pref]
-> pci 0000:01:00.0: PCI bridge to [bus 02-04]
-> pci 0000:01:00.0:   bridge window [mem 0x40400000-0x406fffff]
-> pci 0000:01:00.0:   bridge window [mem 0x6000000000-0x6400ffffff 64bit pref]
-> 
-> pci 0000:03:00.0: device released
-> pci 0000:02:01.0: device released
-> pcieport 0000:01:00.0: scanning [bus 02-04] behind bridge, pass 0
-> pci 0000:02:01.0: PCI bridge to [bus 03]
-> pci 0000:02:01.0:   bridge window [mem 0x40400000-0x405fffff]
-> pci 0000:02:01.0:   bridge window [mem 0x6000000000-0x6400ffffff 64bit pref]
-> pci 0000:02:01.0: scanning [bus 03-03] behind bridge, pass 0
-> pci 0000:03:00.0: BAR 0 [mem 0x6400000000-0x6400ffffff 64bit pref]
-> pci 0000:03:00.0: BAR 2 [mem 0x6000000000-0x63ffffffff 64bit pref]
-> pci 0000:03:00.0: ROM [mem 0x40400000-0x405fffff pref]
-> 
-> pci 0000:02:01.0: PCI bridge to [bus 03]
-> pci 0000:02:01.0: scanning [bus 03-03] behind bridge, pass 1
-> pcieport 0000:01:00.0: scanning [bus 02-04] behind bridge, pass 1
-> pci 0000:02:01.0: bridge window [mem size 0x600000000 64bit pref]: can't assign; no space
-> pci 0000:02:01.0: bridge window [mem size 0x600000000 64bit pref]: failed to assign
-> pci 0000:02:01.0: bridge window [mem 0x40400000-0x405fffff]: assigned
-> pci 0000:03:00.0: BAR 2 [mem size 0x400000000 64bit pref]: can't assign; no space
-> pci 0000:03:00.0: BAR 2 [mem size 0x400000000 64bit pref]: failed to assign
-> pci 0000:03:00.0: BAR 0 [mem size 0x01000000 64bit pref]: can't assign; no space
-> pci 0000:03:00.0: BAR 0 [mem size 0x01000000 64bit pref]: failed to assign
-> pci 0000:03:00.0: ROM [mem 0x40400000-0x405fffff pref]: assigned
-> pci 0000:02:01.0: PCI bridge to [bus 03]
-> pci 0000:02:01.0:   bridge window [mem 0x40400000-0x405fffff]
-> 
-> This is a major surprise for users who are suddenly left with a PCIe
-> device that was working fine with the original bridge window sizing.
-> 
-> Even if the already assigned bridge window could be enlarged by
-> reallocation in some cases (something the current code does not attempt
-> to do), it is not possible in general case and the large amount of
-> wasted space at the tail of the bridge window may lead to other
-> resource exhaustion problems on Root Complex level (think of multiple
-> PCIe cards with VFs and BAR size disparity in a single system).
-> 
-> PCI specifications only expect natural alignment for BARs (PCI Express
-> Base Specification, rev. 6.1 sect. 7.5.1.2.1) and minimum of 1MiB
-> alignment for the bridge window (PCI Express Base Specification,
-> rev 6.1 sect. 7.5.1.3). The current bridge window tail alignment rule
-> was introduced in the commit 5d0a8965aea9 ("[PATCH] 2.5.14: New PCI
-> allocation code (alpha, arm, parisc) [2/2]") that only states:
-> "pbus_size_mem: core stuff; tested with randomly generated sets of
-> resources". It does not explain the motivation for the extra tail space
-> allocated that is not truly needed by the downstream resources. As
-> such, it is far from clear if it ever has been required by any HW.
-> 
-> To prevent PCIe cards with BAR size disparity from becoming unusable
-> after remove & rescan cycle, attempt to do a truly minimal allocation
-> for memory resources if needed. First check if the normally calculated
-> bridge window will not fit into an already assigned upstream resource.
-> In such case, try with relaxed bridge window tail sizing rules instead
-> where no extra tail space is requested beyond what the downstream
-> resources require. Only enforce the alignment requirement of the bridge
-> window itself (normally 1MiB).
-> 
-> With this patch, the resources are successfully allocated:
-> 
-> pci 0000:02:01.0: PCI bridge to [bus 03]
-> pci 0000:02:01.0: scanning [bus 03-03] behind bridge, pass 1
-> pcieport 0000:01:00.0: scanning [bus 02-04] behind bridge, pass 1
-> pcieport 0000:01:00.0: Assigned bridge window [mem 0x6000000000-0x6400ffffff 64bit pref] to [bus 02-04] cannot fit 0x600000000 required for 0000:02:01.0 bridging to [bus 03]
-> pci 0000:02:01.0: bridge window [mem 0x6000000000-0x6400ffffff 64bit pref] to [bus 03] requires relaxed alignment rules
-> pcieport 0000:01:00.0: Assigned bridge window [mem 0x40400000-0x406fffff] to [bus 02-04] free space at [mem 0x40400000-0x405fffff]
-> pci 0000:02:01.0: bridge window [mem 0x6000000000-0x6400ffffff 64bit pref]: assigned
-> pci 0000:02:01.0: bridge window [mem 0x40400000-0x405fffff]: assigned
-> pci 0000:03:00.0: BAR 2 [mem 0x6000000000-0x63ffffffff 64bit pref]: assigned
-> pci 0000:03:00.0: BAR 0 [mem 0x6400000000-0x6400ffffff 64bit pref]: assigned
-> pci 0000:03:00.0: ROM [mem 0x40400000-0x405fffff pref]: assigned
-> pci 0000:02:01.0: PCI bridge to [bus 03]
-> pci 0000:02:01.0:   bridge window [mem 0x40400000-0x405fffff]
-> pci 0000:02:01.0:   bridge window [mem 0x6000000000-0x6400ffffff 64bit pref]
-> 
-> This patch draws inspiration from the initial investigations and work
-> by Mika Westerberg.
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
 
-..
+>> > +static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
+>> > +{
+>> > +	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+>> > +
+>> > +	if (!bpf_net_ctx)
+>> > +		return NULL;
+>> 
+>> ... do we really need all the NULL checks?
+>> 
+>> (not just here, but in the code below as well).
+>> 
+>> I'm a little concerned that we are introducing a bunch of new branches
+>> in the XDP hot path. Which is also why I'm asking for benchmarks :)
+>
+> We could hide the WARN behind CONFIG_DEBUG_NET. The only purpose is to
+> see the backtrace where the context is missing. Having just an error
+> somewhere will make it difficult to track.
+>
+> The NULL check is to avoid a crash if the context is missing. You could
+> argue that this should be noticed in development and never hit
+> production. If so, then we get the backtrace from NULL-pointer
+> dereference and don't need the checks and WARN.
 
-> +		min_align = 1ULL << (max_order + __ffs(SZ_1M));
+Yup, this (relying on the NULL deref) SGTM :)
 
-In case of a new version of the series, this can utilise BIT_ULL().
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+-Toke
 
 
