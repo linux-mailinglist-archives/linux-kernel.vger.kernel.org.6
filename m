@@ -1,162 +1,95 @@
-Return-Path: <linux-kernel+bounces-170705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9298BDAC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:50:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AB88BDACE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617561F21EBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8701C211E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD24C6BFC5;
-	Tue,  7 May 2024 05:50:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C60D6BB20;
-	Tue,  7 May 2024 05:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A608E6CDB1;
+	Tue,  7 May 2024 05:52:27 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325EF6BB5C;
+	Tue,  7 May 2024 05:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715061034; cv=none; b=MxS68HjrQgDcharyZPCauNmpXYNNx5YmW9zfNoilnMLTMoQ9kmLKoQX+cYsqbxImCmk/6dKAwXLTlYqY+al1aSK/8/ar6NMy2CXUVTCrr8LarRXlLfWeajubxFEV87FA+ol6me8ZlULVqmYFIpplPknp9t3unq1vox52g6PReVE=
+	t=1715061147; cv=none; b=WYL2qIJj6AAvOOy911WobFVolYzQ8kIjTDCBlSJUytCFUKEpfn1Zlx+4FcbDCZnzn65BtAS50zV3IPrkRmQtTtq1tRFoXHqTGJPA4o35PZTpC+5FBxl4ASfWbjN0U2kdCqeyYxtheCR4IyPMXYfuPWc5PJOjVubejd03rejh95U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715061034; c=relaxed/simple;
-	bh=/W6dzYssMBIkOqmW8TDIbDK8oNlXxHa/fxO/udxGjWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c+lsBR5MI74hzIFYpqKBhlafeWl1bo5q4sgEfvtMJutwt+xIjXLYUxntgmFLYOq+ldTfxMFY45M116PP3lVKlhDP/6bc4xdj48f6E1IUh+tigujh4m6Zx0D0M96xgYTCoFuiZBPbHbpILsdgx9Y3AYxdkaJ0KO4YNP19x+ssmNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32A7F1042;
-	Mon,  6 May 2024 22:50:56 -0700 (PDT)
-Received: from [10.163.37.41] (unknown [10.163.37.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06D393F587;
-	Mon,  6 May 2024 22:50:21 -0700 (PDT)
-Message-ID: <f6bcac4a-ba21-48dc-94f5-e1f1e1ac37a4@arm.com>
-Date: Tue, 7 May 2024 11:20:23 +0530
+	s=arc-20240116; t=1715061147; c=relaxed/simple;
+	bh=gC0kKWlfBsustWrnJXdLxPwQMLG6KOvg1mzJaAOLwhM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=dJqm5D5b6KE0rPDg6JM1ggUuAmYMP/H3y+YABXQ5Nd9RrjGFeJPTBYemb5a0y2lj0IP7+AOTRaUp/TTu+ku7hOylca4gf3SK04gMYBgtYorVURg7wGYwpb+4727D/8DvgOYwXI98hwcUoKRrJqELC22QoNd4/S5tyJdncLNDZTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from ubuntu.localdomain (unknown [221.192.179.90])
+	by mail-app2 (Coremail) with SMTP id by_KCgAnIJ56wTlmGDBDAA--.3058S2;
+	Tue, 07 May 2024 13:51:57 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-hams@vger.kernel.org,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	edumazet@google.com,
+	davem@davemloft.net,
+	jreuter@yaina.de,
+	horms@kernel.org,
+	Markus.Elfring@web.de,
+	dan.carpenter@linaro.org,
+	lars@oddbit.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH net v4 0/4] ax25: Fix issues of ax25_dev and net_device
+Date: Tue,  7 May 2024 13:51:53 +0800
+Message-Id: <cover.1715059894.git.duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:by_KCgAnIJ56wTlmGDBDAA--.3058S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jr17CF4xCrWxAFyUArW8WFg_yoWfXFg_uF
+	ykAFWDZw18JFWDCa10ka1rXrZruF4jga1xXFyftFZ5Jry3Za4UJr4qgr4rXF18XFW7tr4k
+	t3Z5Gr1fAr17JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j
+	6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBuWLUUUUU=
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwMOAWY4-AkEPQA6sn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/17] coresight: Move struct coresight_trace_id_map to
- common header
-Content-Language: en-US
-To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
- gankulkarni@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
- coresight@lists.linaro.org, suzuki.poulose@arm.com, mike.leach@linaro.org
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20240429152207.479221-1-james.clark@arm.com>
- <20240429152207.479221-11-james.clark@arm.com>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240429152207.479221-11-james.clark@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+The first patch use kernel universal linked list to implement
+ax25_dev_list, which makes the operation of the list easier.
+The second and third patch fix reference count leak issues of
+the object "ax25_dev" and "net_device". The last patch uses
+ax25_dev_put() to replace kfree() in ax25_dev_free().
 
+You can see the former discussion in the following link:
+https://lore.kernel.org/netdev/20240501060218.32898-1-duoming@zju.edu.cn/
 
-On 4/29/24 20:51, James Clark wrote:
-> The trace ID maps will need to be created and stored by the core and
-> Perf code so move the definition up to the common header.
-> 
-> Signed-off-by: James Clark <james.clark@arm.com>
+Duoming Zhou (4):
+  ax25: Use kernel universal linked list to implement ax25_dev_list
+  ax25: Fix reference count leak issues of ax25_dev
+  ax25: Fix reference count leak issues of net_device
+  ax25: Change kfree() in ax25_dev_free() to ax25_dev_put()
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+ include/net/ax25.h  |  4 ++--
+ net/ax25/ax25_dev.c | 51 ++++++++++++++++-----------------------------
+ 2 files changed, 20 insertions(+), 35 deletions(-)
 
-> ---
->  .../hwtracing/coresight/coresight-trace-id.c  |  1 +
->  .../hwtracing/coresight/coresight-trace-id.h  | 19 -------------------
->  include/linux/coresight.h                     | 18 ++++++++++++++++++
->  3 files changed, 19 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
-> index af5b4ef59cea..19005b5b4dc4 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
-> @@ -3,6 +3,7 @@
->   * Copyright (c) 2022, Linaro Limited, All rights reserved.
->   * Author: Mike Leach <mike.leach@linaro.org>
->   */
-> +#include <linux/coresight.h>
->  #include <linux/coresight-pmu.h>
->  #include <linux/cpumask.h>
->  #include <linux/kernel.h>
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
-> index 3797777d367e..49438a96fcc6 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
-> @@ -32,10 +32,6 @@
->  #include <linux/bitops.h>
->  #include <linux/types.h>
->  
-> -
-> -/* architecturally we have 128 IDs some of which are reserved */
-> -#define CORESIGHT_TRACE_IDS_MAX 128
-> -
->  /* ID 0 is reserved */
->  #define CORESIGHT_TRACE_ID_RES_0 0
->  
-> @@ -46,21 +42,6 @@
->  #define IS_VALID_CS_TRACE_ID(id)	\
->  	((id > CORESIGHT_TRACE_ID_RES_0) && (id < CORESIGHT_TRACE_ID_RES_TOP))
->  
-> -/**
-> - * Trace ID map.
-> - *
-> - * @used_ids:	Bitmap to register available (bit = 0) and in use (bit = 1) IDs.
-> - *		Initialised so that the reserved IDs are permanently marked as
-> - *		in use.
-> - * @pend_rel_ids: CPU IDs that have been released by the trace source but not
-> - *		  yet marked as available, to allow re-allocation to the same
-> - *		  CPU during a perf session.
-> - */
-> -struct coresight_trace_id_map {
-> -	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
-> -	DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
-> -};
-> -
->  /* Allocate and release IDs for a single default trace ID map */
->  
->  /**
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index f09ace92176e..c16c61a8411d 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -218,6 +218,24 @@ struct coresight_sysfs_link {
->  	const char *target_name;
->  };
->  
-> +/* architecturally we have 128 IDs some of which are reserved */
-> +#define CORESIGHT_TRACE_IDS_MAX 128
-> +
-> +/**
-> + * Trace ID map.
-> + *
-> + * @used_ids:	Bitmap to register available (bit = 0) and in use (bit = 1) IDs.
-> + *		Initialised so that the reserved IDs are permanently marked as
-> + *		in use.
-> + * @pend_rel_ids: CPU IDs that have been released by the trace source but not
-> + *		  yet marked as available, to allow re-allocation to the same
-> + *		  CPU during a perf session.
-> + */
-> +struct coresight_trace_id_map {
-> +	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
-> +	DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
-> +};
-> +
->  /**
->   * struct coresight_device - representation of a device as used by the framework
->   * @pdata:	Platform data with device connections associated to this device.
+-- 
+2.17.1
+
 
