@@ -1,93 +1,81 @@
-Return-Path: <linux-kernel+bounces-170598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB7D8BD988
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:48:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C138BD980
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5C90B20DF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E493B1F2213E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2C64F8BD;
-	Tue,  7 May 2024 02:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF05D3AC25;
+	Tue,  7 May 2024 02:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMibQX2X"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pr5ywb6V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8BB3D0AF;
-	Tue,  7 May 2024 02:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AD615C9;
+	Tue,  7 May 2024 02:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715050086; cv=none; b=goNB127yTDQbCHPpjgzccFTb1GPSF19dXhYTEDGA1gyj4LS3oDZJTuwnNRVQLzyKaS/zgDRdA8YsoM5ZQ6xGQM7/j2FkWC52RiFCVVvDmITTzK85fxL3OC1I2H9dwSXvO1WRCM/PhuAVenW8s9GCioQ85QMDfsdT+r3H49Uf77E=
+	t=1715049959; cv=none; b=o9BtP0ZCEDFz+Kh1fHsdFFjm7MlcmIs6fr53mXgZ+5SGDmOmfOAJRjcPBO+tptpTUhs4Y/rF5Iqmd+rwGcQpOHzSeO2gugr58vj1UVi+SgkBLK2/ev0p0JuxE1DPIVeBHLETWH+H5rWiAjkONa7Bov10umaQWzUpEwbgxzQWrVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715050086; c=relaxed/simple;
-	bh=fPoxLXJ3y4JvA0eBPT3hLbERZiBjchIAQdBby/myRK4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fuf8AHdwUZriMw+rMyFn0mXwy6764OHPz0I2XHTHtZz1y7byV7wepNgSDzspoqknG5WIn2AP8OoM2Oalx7+6uPP1pKxYq2dKzJrUGzcxQWcX4EKffBp7JFL9YEXFCa3pOODeYx8YiwGyXcyYz47LaZUspLZAa49kbbk56tx01PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMibQX2X; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-23d477a1a4fso1981399fac.3;
-        Mon, 06 May 2024 19:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715050084; x=1715654884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B+2Yi0bAJKr/RmDXQertnEjM4vkBzvytl6JH2ermaTQ=;
-        b=CMibQX2XPZiifiivkDaPuvRldqwng7gnGLxitt1IN9O8hm7lNjJDBJNkXBK5x11bma
-         2ye76lE04AT+rG0plJQ0EecSRjqYxUtAxshEH4MCulU4wPL7eYCpxCG6QRiSohoffyqt
-         0LUtDpBoVyONTpWrrQnYqZFw01t4wP27fGKmPkREOQj7PV6Mrzovr72hkkUu4MuA6Kia
-         fqQT19ZR3U7LMt9KDiwoI4gIhUNu5N8Y267p2blCK6PZpgKB8ByjhvKVPRR90jb5dpx7
-         iytnxEtbc6pSHsqm+uCUWcY0bVOq7ielZQzWIBLHhTAtEsBP6ihf0Yf5qpYYyqjvfP9G
-         IfkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715050084; x=1715654884;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B+2Yi0bAJKr/RmDXQertnEjM4vkBzvytl6JH2ermaTQ=;
-        b=DFrO7TppBD1BYo6JAFr/1omUydGT2pGDbh5aza6D8xuma/JJWs6p16nIckkuXRjgcu
-         QGTGiGflharBTudkPPYo4aufodAHUxSF4mmg1qH89JIkKg6tIEnTwxt5J6YFwrD4m/kx
-         V8RHtmExZwRHI9D2IUdS3Xl5rAAK4N/OIr8GlEiJi9QfSmxnGJ/lFTEhsAurijUIXyy3
-         4C3S1ox533h3iE8u4Z9EAKLubAUUoyEKTsK90dAza08K0g6PHWJwynAmHwhfq/TgdhPQ
-         9/B0rorfbZIKqX+gZ4W9/n216Gc93mZ41ZKUIpyTUAdO/u1q3bxZydQQB4uSf2OLRwW+
-         62DA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTb/hn8K15qgH9EVNOJLPZfp1TOtlG0xZFcNb9/Y82BVv6myXts1v5Wpv9xWIfVp12qsPmt8+QBK3XeKjUnhKT40NTqQOyRiBMEnbc2eH4PJl3jaiPUCB5tga0DjlnDnWjbOrqkvDvrfVQuLJGvZf/O5fUEBB+vSBWQ7C4bWG3pnYsHgshEihZcMWG6QNyKTFMc+iV/cBu9MKAJmZO0zM=
-X-Gm-Message-State: AOJu0Yz9tV9SxG6/73aLABXj8MXzjctpBfD6qdFFooRxsaFnGTV3yMI/
-	5MdLsErh4158U1I9h3Bn5JTNNpDGdCxcgnAk9hjiuztze3uZbRXw
-X-Google-Smtp-Source: AGHT+IEJtWYKDRvNU/yVKOg4A3pz537ZV2ldoO1wACQTYe6gsoPCrXTTJ5sVgICq2SqIVXCsWUaWZg==
-X-Received: by 2002:a05:6871:7410:b0:23c:737f:5bcf with SMTP id nw16-20020a056871741000b0023c737f5bcfmr16880218oac.8.1715050084160;
-        Mon, 06 May 2024 19:48:04 -0700 (PDT)
-Received: from nukework.lan (c-98-197-58-203.hsd1.tx.comcast.net. [98.197.58.203])
-        by smtp.gmail.com with ESMTPSA id hg13-20020a056870790d00b002396fd308basm2333895oab.35.2024.05.06.19.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 19:48:03 -0700 (PDT)
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Robert Marko <robert.marko@sartura.hr>,
-	linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Subject: [PATCH v2 2/2] arm64: dts: qcom: ipq9574: add MDIO bus
-Date: Mon,  6 May 2024 21:47:58 -0500
-Message-Id: <20240507024758.2810514-2-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240507024758.2810514-1-mr.nuke.me@gmail.com>
-References: <20240507024758.2810514-1-mr.nuke.me@gmail.com>
+	s=arc-20240116; t=1715049959; c=relaxed/simple;
+	bh=4G4o0Jo/rKX6UsEbQz7dosJdScsz2KSFW0v5nc8PWqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u8RqalhO8oZPw1r8sBkk2lUtzKcilPMwFAZ4KTJ0JMp+NX1h9i9rZ+xX3/wIOzJC8LlD+Cf/8GV6zWxAbLoO3LORyyP/cnN180yI9z7GN1mEQKlTlcJd9UAqSqKbOxSkosTjra7NCY+kN+3BI5r3VDTzCTodbHM3Jb2rl1nU1bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pr5ywb6V; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715049958; x=1746585958;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4G4o0Jo/rKX6UsEbQz7dosJdScsz2KSFW0v5nc8PWqg=;
+  b=Pr5ywb6VEfrc7Zeja5XXGxL+XcfzHQ1RmXZUaHedLEuD6sPDtxpJyFpG
+   gHDcxK40gAuV3izHcxZZi2Wnzg1ab4ebJMptbXY0OLJYuBQOdmW53oBDQ
+   hRygk+GQVdfsg6bCaZ5Tc4PgvLb1YE9LB/GgdiYUDKJ2gHqhTJDwY+N/7
+   8BF45JEN11lGfd14kdT2YvuLjoDhEmNcIO7ngtOvzpENAr1NLbd7V5lkA
+   jXmT/AE1GlTbEvG1oFFhwdc5hpFMyl0aeSGBmtM0eoEshUuZ2080ZOFrJ
+   e42PaKCKQ7HgtUPdpg43TGjviRVVUuseIKcq7EiTn8t0J7SCAhU3Sa4tO
+   w==;
+X-CSE-ConnectionGUID: FB/7CP4HRHOFWYdr0BokRA==
+X-CSE-MsgGUID: F7fIWhnvRa6vD4DGvjbviA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="11361892"
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="11361892"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 19:45:57 -0700
+X-CSE-ConnectionGUID: NRqpgIBnQvOc3cwys/A6cA==
+X-CSE-MsgGUID: gqaHCpsDRqyB8yQbhPi6+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="32872793"
+Received: from unknown (HELO dcai-bmc-sherry-1.sh.intel.com) ([10.239.138.57])
+  by fmviesa003.fm.intel.com with ESMTP; 06 May 2024 19:45:52 -0700
+From: Haiyue Wang <haiyue.wang@intel.com>
+To: bpf@vger.kernel.org
+Cc: Haiyue Wang <haiyue.wang@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf-next v1] bpf,arena: Rename the kfunc set variable
+Date: Tue,  7 May 2024 10:49:15 +0800
+Message-ID: <20240507024952.1590681-1-haiyue.wang@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,39 +84,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The IPQ95xx uses an IPQ4019 compatible MDIO controller that is already
-supported. Add a DT node to expose it.
+Rename the kfunc set variable to specify the 'arena' function scope,
+although the 'UNSPEC' type BPF program is mapped to 'COMMON' hook.
 
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+And there is 'common_kfunc_set' defined for real 'common' function in
+file 'kernel/bpf/helpers.c'.
+
+Signed-off-by: Haiyue Wang <haiyue.wang@intel.com>
 ---
-changes since v1:
- - pad "reg" address to eight digits with leading zeroes
+ kernel/bpf/arena.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 7f2e5cbf3bbb..ded02bc39275 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -232,6 +232,16 @@ rng: rng@e3000 {
- 			clock-names = "core";
- 		};
-
-+		mdio: mdio@90000 {
-+			compatible =  "qcom,ipq9574-mdio", "qcom,ipq4019-mdio";
-+			reg = <0x00090000 0x64>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&gcc GCC_MDIO_AHB_CLK>;
-+			clock-names = "gcc_mdio_ahb_clk";
-+			status = "disabled";
-+		};
-+
- 		qfprom: efuse@a4000 {
- 			compatible = "qcom,ipq9574-qfprom", "qcom,qfprom";
- 			reg = <0x000a4000 0x5a1>;
---
-2.40.1
+diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
+index 6c81630c5293..ef2177c0465f 100644
+--- a/kernel/bpf/arena.c
++++ b/kernel/bpf/arena.c
+@@ -557,13 +557,13 @@ BTF_ID_FLAGS(func, bpf_arena_alloc_pages, KF_TRUSTED_ARGS | KF_SLEEPABLE)
+ BTF_ID_FLAGS(func, bpf_arena_free_pages, KF_TRUSTED_ARGS | KF_SLEEPABLE)
+ BTF_KFUNCS_END(arena_kfuncs)
+ 
+-static const struct btf_kfunc_id_set common_kfunc_set = {
++static const struct btf_kfunc_id_set arena_kfunc_set = {
+ 	.owner = THIS_MODULE,
+ 	.set   = &arena_kfuncs,
+ };
+ 
+ static int __init kfunc_init(void)
+ {
+-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_UNSPEC, &common_kfunc_set);
++	return register_btf_kfunc_id_set(BPF_PROG_TYPE_UNSPEC, &arena_kfunc_set);
+ }
+ late_initcall(kfunc_init);
+-- 
+2.43.2
 
 
