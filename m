@@ -1,116 +1,143 @@
-Return-Path: <linux-kernel+bounces-171062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549008BDF52
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F53D8BDF71
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4281C21464
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF6B283AD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733D114EC48;
-	Tue,  7 May 2024 10:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3407114EC57;
+	Tue,  7 May 2024 10:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ClqbICPf"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/QV+/dJ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A0E14D443
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34D614E2FB
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715076243; cv=none; b=Az9Zj/DYDqMQyVQXnuSurrYVkxzBsMjsCboRMJ248eaG/r73aKQJ6hD2v67GlwA69UIwdwqSDdmHEKapaIb8tKaPyrvSYwGhQsIsyZzb/w1RkWlaPNQDA8AGtjHKTNwl3bbvF0qSsUQ8d/IxUGFCj0wLBP1WC9JBdjKIMJjSb0U=
+	t=1715076667; cv=none; b=I0TBBZv9fRsU9X50s1csUAutYcOSps6di6u6876EbvRLTcd28bsGCqPqfhisNCmchA898OxxRZKkr6Yh1whipiRDW41HBO3rF7qkffMTvhpr6O63nkAbHO3nNOJzGoJlNMZ3LCpnwrGqweVrrz+D0GAU5RkI9jnHwLrX2Prw6fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715076243; c=relaxed/simple;
-	bh=jnbmoIfEkquEEjiJBAjqdCDBxOD1+Yzt7A7OKiFlJfw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCxuI2g47OS37rHBSUJnGSBTHNBY7/K3wtGmT8M1K5IBaU2Zn8u3eGJY50Mswbsofd575z5hzpeSRDfGlPkNuriTCxR3M6cB89apbN8sn1L9Ufqbjd0fyTdkTA1ewwCCDeLxInyIc5ZlQpAnWb2/e/TFhsqz2nJ3kMRwEreNMmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ClqbICPf; arc=none smtp.client-ip=209.85.219.171
+	s=arc-20240116; t=1715076667; c=relaxed/simple;
+	bh=pzN0QEsi5vW51SAWCGgbkaOsqw5VvfmrBvJ7uOk7Djk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IoSpNGvVpO/yzhlLJApDtEGqZr/EXQbeD1KOgmTAYl8kqybXESr6ZalgwAGZCUkBnp8/urAgBTNzK8jcSVkjah4jumGROwnzFH2jFLiocsJoIkoXbbF9Rn5I/1EX1cbVep03BX0sBYVaJeGcfh9l1a4vBg1UIXFJz0Xz4oRf+14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/QV+/dJ; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-de45dba15feso3080585276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:04:02 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41bab13ca81so31478625e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715076241; x=1715681041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ENlfgQ3ADPUMWuBuiOLhnFoQNEtfud/j+QDtLaNAUG0=;
-        b=ClqbICPfGWs4b3Kil8wr9qUk9sNcSadQx7MKrglRxSUZNtKHMoGjJUbwrtS+2iOZJY
-         eadxodiGOSOVLNQMyvANf317P6IFUtwTyUHhLOt7M7tvuVa/fwz9wN/+erbwFLXG2g2y
-         1oH8B115XICgrEKBcpZvfl1GSSwX37sXhcPF1RBF2im4pDZLcSScd1kn3Gou6n+G+CNJ
-         MDSKhUcbfeueiOci2vFZoYnyvQC5mgekuBzf5piN9ZJrWOwhVArEPla0MNH3XSuSPEQN
-         u87VP4F0SjIDS3IEoI6MmIpP0Ep7GIo0z+K7dW7iDrf4EWBDrubFEtAe81yZDOMJhAG1
-         LZWw==
+        d=linaro.org; s=google; t=1715076664; x=1715681464; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xRkoNOEv8gPHcq2P5UAKWS8B3jCr0cVjdP20g/cY62k=;
+        b=L/QV+/dJ7j42rpb8HLhc0HWVdxhS7FBN4FcTW8z4HzQMBAtZd12/MRDlMr+jaXVhzL
+         0gq/MQ7+jLEYc9cXq5ZI8qVm5dmGHd4lXhCx5oSmAD0wyZZQTsSuXF4gd404OL8BZBbU
+         NMNIDoHbQWmAD2yy3JzA91DkbwbwNVAbUX0r+L4MbGiVBI7s6a3ZUCMKxkp0+OxABgo8
+         zEx47alEjrFV90mEneAac+26I4rlI/tvAjw2gjNCdKnrV612+JYPFHP54nvbeNXLU/ko
+         if/JwpXjx7qxNClmWzw1EiUuY8ZdYzT6tnHBXmxbvyLUXLL9M9qQrmvW9b9uwssiE4zL
+         4CYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715076241; x=1715681041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ENlfgQ3ADPUMWuBuiOLhnFoQNEtfud/j+QDtLaNAUG0=;
-        b=NWZNcufY+XNuczcniQ1d9hSK/yuy+Jo6isE5/vDsbK7vWQr8RMoCYu7UjWBEvwUDTg
-         BsjDLh0vgsDOljiuJ0TJF8pjhOKzxSFe9Los9v9jjeGMFPa7yJwgtVeUQf4x9/hkqfG+
-         wifMyzFAzgHb95jav7IFyeuEDGDUphGCpO7s5Qp9Mp2enmpur84JBW4ggqs1Xdzg66KO
-         8yDep+6EiWM7r7AhjCF0DOrlU9nZjsWIWyrtVFdFmLUvumr4v3sWhra+//0sSX2ZINTE
-         D0veUndV10N8bPLuyxswtqm8rZH9zhFNZDgIMkKtgUcmg8cDjyJVOddWdf8BYz21ie7y
-         re2g==
-X-Forwarded-Encrypted: i=1; AJvYcCX2LKCc3Ue+fl7ommJgjRpYg3hG/ybT/hwKKghZv0exnvDv9fx696F1OltBdUv9nZuu5jM6PjOLCLkmvjf7SruXOz8x8lsXRxzXzkaU
-X-Gm-Message-State: AOJu0YxevLjh5oRgtS1AMGwt0pW8Pn3OmjqMUJ0slqgAeumk44L4Ewhz
-	kS4S5s1WE/w/XHWKM990L3f5RHwFNNW59WjYBNjvbtJShS3mP1aRLc95ro/RJAfflAFhwpf65Bk
-	f4R2SXriX2OMS7ZeOHafJkHAgzcUtIV0ox8dW/w==
-X-Google-Smtp-Source: AGHT+IE6RbboWA6zivUgxElWhiInYBOoZKZxCooBjJtVLVKzpcY065ewr27Om73FjNB7+c1CsbFfoFINBaR1I1fIna4=
-X-Received: by 2002:a5b:912:0:b0:de6:3c4:c3a with SMTP id a18-20020a5b0912000000b00de603c40c3amr12223334ybq.10.1715076241415;
- Tue, 07 May 2024 03:04:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715076664; x=1715681464;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xRkoNOEv8gPHcq2P5UAKWS8B3jCr0cVjdP20g/cY62k=;
+        b=te4+Yp0pXbDELrK4CIv58vPn6w7sQy2aeaMm7/UGojtYdOZxUsN/GmuXxntLT+nzRp
+         AVaF9Cobvof1A0rwZ9Zl1JPy7nTN1wVp8kcGU3e2n2qhsSydRXN+Ffr97/UZayEcWWUQ
+         2isJD2hvsjZAYSKqdYkjVbo3GVDdIIQngSectbYDS4ODql1gij3G1dTA21t1usOmj/4c
+         9mi0ntZ6cByJVKWKjo8LdW/EohJol/v63o+GCe/ZgQ11kOY8AFMAOhe2nw4xRbWarWxO
+         KhJAaZnWxQ4LePIItCsy5xIoDbS8eFeS24vtSklWJxOxp1UY7Zo6ltnyycjy/7WwsY+K
+         y4ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKJ3V+LBFK0Jd+mJIiheBc6lQUclacAPjp6MIJedZ/BVrSG4WpocC3sFZF4Cw3phJ1gtQwJ5ZbypdOdKuy9eIWhASmavOBik3T94nD
+X-Gm-Message-State: AOJu0YyJFKhBsD1XYP1E+gakYAY+q/Emabt/RhayIhfTxXnJFGGb0Ppg
+	QS/ICuPvemGULp2lSYX4GCecD27XSpeWF8liWl9uZP+1yKJmV0nB5wB+fTipAZo=
+X-Google-Smtp-Source: AGHT+IHQFXd45hAfqA6n0d5ImUefQlbvL7vaRViI8Nu6Qp2CarjGeOlr7thOVlNJO6zr1Os/EEcwqg==
+X-Received: by 2002:a05:600c:1553:b0:41b:e94f:1e88 with SMTP id f19-20020a05600c155300b0041be94f1e88mr13064142wmg.24.1715076663825;
+        Tue, 07 May 2024 03:11:03 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id n19-20020a05600c4f9300b0041c14061c71sm18935780wmq.15.2024.05.07.03.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 03:11:03 -0700 (PDT)
+Date: Tue, 7 May 2024 12:52:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ratheesh Kannoth <rkannoth@marvell.com>
+Cc: Duoming Zhou <duoming@zju.edu.cn>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hams@vger.kernel.org,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	jreuter@yaina.de
+Subject: Re: [PATCH net v5 1/4] ax25: Use kernel universal linked list to
+ implement ax25_dev_list
+Message-ID: <5863f2fc-ab8e-4f6e-873e-2667bc0a2e4b@moroto.mountain>
+References: <cover.1715065005.git.duoming@zju.edu.cn>
+ <bd49e83817604e61a12c9bf688a0825f116e67c0.1715065005.git.duoming@zju.edu.cn>
+ <20240507092917.GA1049473@maili.marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 7 May 2024 12:03:50 +0200
-Message-ID: <CACRpkda=a3X=jyZKQoOFrfgzpE2C+rZ9UC1VDnCvGL7QP4x4BA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] PCI: controller: Move to agnostic GPIO API
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Frank Li <Frank.Li@nxp.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-amlogic@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Yue Wang <yue.wang@amlogic.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang <wangbinghui@hisilicon.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507092917.GA1049473@maili.marvell.com>
 
-On Mon, May 6, 2024 at 4:22=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Tue, May 07, 2024 at 02:59:17PM +0530, Ratheesh Kannoth wrote:
+> On 2024-05-07 at 12:33:39, Duoming Zhou (duoming@zju.edu.cn) wrote:
+> > The origin ax25_dev_list implements its own single linked list,
+> > which is complicated and error-prone. For example, when deleting
+> > the node of ax25_dev_list in ax25_dev_device_down(), we have to
+> > operate on the head node and other nodes separately.
+> >
+> > This patch uses kernel universal linked list to replace original
+> > ax25_dev_list, which make the operation of ax25_dev_list easier.
+> > There are two points that need to notice:
+> >
+> > [1] We should add a check to judge whether the list is empty before
+> > INIT_LIST_HEAD in ax25_dev_device_up(), otherwise it will empty the
+> > list for each new ax25_dev added.
+> >
+> > [2] We should do "dev->ax25_ptr = ax25_dev;" and "dev->ax25_ptr = NULL;"
+> > while holding the spinlock, otherwise the ax25_dev_device_up() and
+> > ax25_dev_device_down() could race, we're not guaranteed to find a match
+> > ax25_dev in ax25_dev_device_down().
+> >
+> > Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+> > -ax25_dev *ax25_dev_list;
+> > +static struct list_head ax25_dev_list;
+> >  DEFINE_SPINLOCK(ax25_dev_lock);
+> >
+> >  ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
+> > @@ -34,7 +35,7 @@ ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
+> >  	ax25_dev *ax25_dev, *res = NULL;
+> >
+> >  	spin_lock_bh(&ax25_dev_lock);
+> > -	for (ax25_dev = ax25_dev_list; ax25_dev != NULL; ax25_dev = ax25_dev->next)
+> > +	list_for_each_entry(ax25_dev, &ax25_dev_list, list)
+> >  		if (ax25cmp(addr, (const ax25_address *)ax25_dev->dev->dev_addr) == 0) {
+> >  			res = ax25_dev;
+> >  			ax25_dev_hold(ax25_dev);
+> > @@ -52,6 +53,9 @@ void ax25_dev_device_up(struct net_device *dev)
+> >  {
+> >  	ax25_dev *ax25_dev;
+> >
+> > +	/* Initialized the list for the first entry */
+> > +	if (!ax25_dev_list.next)
+> > +		INIT_LIST_HEAD(&ax25_dev_list);
+> if you define ax25_dev_list using 'static LIST_HEAD(ax25_dev_list)', you need this conditional check and
+> initialization ?
+> 
 
-> In v4:
-> - added tag (Mani)
-> - fixed a polarity bug in iMX.6 driver (Linus)
+Ah, yes.  That's the proper way to do it.
 
-Looks good now. The series:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+regards,
+dan carpenter
 
-Perhaps the use of  _raw accessors could be avoided in 5/5 by some
-elaborart polarity quirk but I'm no perfectionist and it can be fixed later=
-.
-
-Yours,
-Linus Walleij
 
