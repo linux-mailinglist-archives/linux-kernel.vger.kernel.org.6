@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-171351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790EF8BE32C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:12:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4EE18BE32A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5841C23D9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:12:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0E0AB2301D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D417115E7E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E72415E216;
 	Tue,  7 May 2024 13:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="z4r4fhYi"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="QIrVVIpF"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC45B15DBCE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B4A15E1FD
 	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087521; cv=none; b=ozdipdoDd4rij0o5AxLFo/8H+mvHH/ySFOQkKOaViuhCL6WRsUu8gZDfJDcZ0lh8J2bD31fxAA8ti07KW4VDyU4uc3nrv3vfRH2E6smzGADUHMWiLIp6e+AVp7MZmGhYN5yqnvSEJBenCvfJ19DWaz96WLXSyEkgL2Q5gFFgU/g=
+	t=1715087520; cv=none; b=D6dxYLyIObhGIK3WzHIJGcx9uIZ3zjBbexx8snZasqUrl9wo+dj001+W8PBjobKNkVsxaZcSrRydMCSnsEqeYO5lGO5wLXzBDZ8FW9hNz8ruoSTxk2TtPcWHsEIYGjIUJdN72J74ZvKl0tkIe5qWRQcoajRKlFCOo5dbiLz1UfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715087521; c=relaxed/simple;
-	bh=7plsvwWt892ug+lOAVg1CmP/z4v5I8cCGR8iMFVxc1g=;
+	s=arc-20240116; t=1715087520; c=relaxed/simple;
+	bh=zEBS6JMl3E73sfcFbF9mHYYHU8BUvelv4sHVebvCgno=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gta7t0aDJON9oKZd6PoKmrAovNWs3ph7NXNZF1yiNnOnkO/26v/1YIvQc6l5BqOMmhU6TasohZjPVadSn1EQWiN/Kak9Yxr3hCxMYPF39VJIk9VO9flIHL6kSQbn54WUZuPUykIcqhfCPyG48anG04/nuo5zfOWwlewWtbTatkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=z4r4fhYi; arc=none smtp.client-ip=185.132.182.106
+	 MIME-Version:Content-Type; b=teihkF96YF3IgYLGJyUsz+QNYvQywqkuO4WENWbpG1pXLHe632c685t7GfBG597Ku5BVip2Up5d9/i8Ea8o1gPACywNfy6nrcwBPQSjGHyJOMJJVCta/QxbIBkWipuyOnbvELvyEIRtP4s9hXE+6dWgKEXPXdAnHxHIDh0M0DqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=QIrVVIpF; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4479G0lr006786;
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447BRcs2025853;
 	Tue, 7 May 2024 15:11:33 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
 	:mime-version:content-transfer-encoding:content-type; s=
-	selector1; bh=XIk/vz4CZvRDP46S7QF0CjZaFR83xkL+/AG9b+2atfg=; b=z4
-	r4fhYiVgS3LB/q0RE8qBs0BfPz1fTRDISLhKoYyyBk/Q3Q87NbzRa2TgwGMmiBqC
-	qJzzcldSLaTLt7nZExrElCvEoV114nz0+Upp6r1Qu2aFlKNer6igxfGOhYeT2Kq6
-	XKMaPvqFH7Z+/YDVyOgJGHqiZ4CJRfoHjmaYboHnwrmaF1NIZYTdv6HPdTA4Ltv2
-	0FpFDNKQlRD9eMhbF4Q/mImNaHrGF86UNVYCBS4D0hWy+780zjIVBWw6zfAxQ9qI
-	+ihuRVWgEfhTNS5bcEazLtmWEJ03Da9LVh0MOnl92fEOfiwoSz7D0VKswCLnJv1/
-	qIPkWAHWgfMMPvOEcECw==
+	selector1; bh=yAN5IQlno3nIPY6Uvv6ZYKb/KRQn6JTGU5DkXSWQ1EU=; b=QI
+	rVVIpF/Fsp1qrE0nBYyzHvp72LmJfPZ0SW8/2ocR9Xnq8YAitmEJiPRKvMZmr17Y
+	epYwv1UBwORZSIFLOKxLYvNyi+YSciQo16ovWTvp7GiIh2kZ3tQo5okAR7U19030
+	LwQSKD6NomQK/vZ9JZz9kNGirU+UAXSY6r3ayU4xaC/RBbbVC/F2YAM2IhNUIwal
+	omomhfVCnRSrggbR3U4IMnSz7xKEZGzB2M85JyZRZH1qL3s4SwD7t2Y1jq9SVZUn
+	b5o09Ka3YlLTfR2ujBSqQkb2TRY40kIhnLu9KsWyEUEmgfu7Dp8edC/X00Nk1X1B
+	encA7+88Qp2hyP76T/DQ==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwxk1j0du-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xwa553xd5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 07 May 2024 15:11:33 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DD72D40045;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DCB524002D;
 	Tue,  7 May 2024 15:11:28 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E013C21B53C;
-	Tue,  7 May 2024 15:10:55 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7DDC321B53E;
+	Tue,  7 May 2024 15:10:56 +0200 (CEST)
 Received: from localhost (10.48.87.171) by SHFDAG1NODE1.st.com (10.75.129.69)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 7 May
- 2024 15:10:55 +0200
+ 2024 15:10:56 +0200
 From: Antonio Borneo <antonio.borneo@foss.st.com>
 To: Russell King <linux@armlinux.org.uk>,
         Maxime Coquelin
@@ -68,9 +68,9 @@ CC: Antonio Borneo <antonio.borneo@foss.st.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/8] irqchip/stm32-exti: add CONFIG_STM32MP_EXTI
-Date: Tue, 7 May 2024 15:10:44 +0200
-Message-ID: <20240507131051.980313-2-antonio.borneo@foss.st.com>
+Subject: [PATCH v2 2/8] ARM: stm32: use different EXTI driver on ARMv7m and ARMv7a
+Date: Tue, 7 May 2024 15:10:45 +0200
+Message-ID: <20240507131051.980313-3-antonio.borneo@foss.st.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240507131051.980313-1-antonio.borneo@foss.st.com>
 References: <20240507131051.980313-1-antonio.borneo@foss.st.com>
@@ -88,30 +88,27 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-05-07_06,2024-05-06_02,2023-05-22_02
 
-To guarantee bisect-ability during split of stm32-exti in MCU and
-MPU code, introduce CONFIG_STM32MP_EXTI. It will be used in arch
-configuration.
+Build the proper driver by selecting the appropriate config flag.
 
 Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 ---
- drivers/irqchip/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/mach-stm32/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 14464716bacbb..798bd50f8ab23 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -392,6 +392,10 @@ config LS_SCFG_MSI
- config PARTITION_PERCPU
- 	bool
+diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
+index 98145031586f1..41bfcf31f8a76 100644
+--- a/arch/arm/mach-stm32/Kconfig
++++ b/arch/arm/mach-stm32/Kconfig
+@@ -11,7 +11,8 @@ menuconfig ARCH_STM32
+ 	select CLKSRC_STM32
+ 	select PINCTRL
+ 	select RESET_CONTROLLER
+-	select STM32_EXTI
++	select STM32MP_EXTI if ARCH_MULTI_V7
++	select STM32_EXTI if ARM_SINGLE_ARMV7M
+ 	help
+ 	  Support for STMicroelectronics STM32 processors.
  
-+config STM32MP_EXTI
-+	bool
-+	select STM32_EXTI
-+
- config STM32_EXTI
- 	bool
- 	select IRQ_DOMAIN
 -- 
 2.34.1
 
