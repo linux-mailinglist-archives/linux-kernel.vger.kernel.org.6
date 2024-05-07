@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-170991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63F68BDE99
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:43:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC7D8BDE9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773031F21592
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC8F7284287
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB4C160784;
-	Tue,  7 May 2024 09:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F243A15FD07;
+	Tue,  7 May 2024 09:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMOKybu/"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsC5mSFE"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B164915F3FD;
-	Tue,  7 May 2024 09:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794DE14E2F0;
+	Tue,  7 May 2024 09:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074569; cv=none; b=At3QjI1248GyFl1xrAifFmaVNDTXMrgtspGgJ+0FcwqsDcyjCOgLg9h3pAdHB/UshFITtFQTFv89AfYl6XX7vDdR9ffjAasUXTHlxPUFIBItUXpBGT39Y9gjiW2leoOtLMP6EOKYiwjnOja5DD+BHQnOX0ZESam6lVzDtgGy1TA=
+	t=1715074572; cv=none; b=jPDUisMyCUSVhpES+1KxtoAHdZeoFqabMN7ps2P6Lw22O3ddK0M43vkwefPgFVYANkR3qVey7V18NauJykXGn2Mo3tfVNdxY/BdyPmtqjRGdJJAgqyhTMV47k/5F8GbkvtUqfyDzd0W134LABJ9OpZmLsuKpRjrfFYyqxAsG6ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074569; c=relaxed/simple;
-	bh=rtlgupwLn0mEHf5kQVI1HauKwRCtBdwM7YKs0MzkqOQ=;
+	s=arc-20240116; t=1715074572; c=relaxed/simple;
+	bh=ZonPLdD8zHKArk7jKUAil4WyUpljr0gYV6ie6TPJnnk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jvPTE543jchiN9IyJtjL9mFckrhL3iqNd8tEEZ/2TDx0Aj8xTxKQZoC+vKbFed/ukOb578e00dezWdtIHmd6eRULYaw+wzyvxz7PA9HjkgQ4GYRoQOB8Q6+prNt1RP7G7RWukZ1sRu5akTQAiYmILUYDlK6kWVNL13ATdROLgK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMOKybu/; arc=none smtp.client-ip=209.85.208.177
+	 MIME-Version; b=MfjvyayXMPlpHk0BrPHz2nxAwleBPQnFS0BBzykZQs8BgVBGxhcS1N/J82XNTm+ctyaokJsm79a0RfMuvwFYbNDKDGZydnar26yV84gSQmxyRhf9Ej2d1D+IfSSO5B5uzvCsWuJypDS2P1NRoz3UBLEcQOIw6SnWEhjRej7douE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsC5mSFE; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e2c70f0c97so36450981fa.0;
-        Tue, 07 May 2024 02:36:05 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2dac77cdf43so37620041fa.2;
+        Tue, 07 May 2024 02:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715074564; x=1715679364; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715074565; x=1715679365; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u129STYD4noSkSCV7bqtBz9/OCTztdlN/hG4nYi33QI=;
-        b=OMOKybu/RRCKXDYNd9UavdQeBxrOeAqRcSxrBELL0nkkxRjU8zKyNtLiRrVuwI5o+U
-         oE3cihaSLHBooFe/TGjFPZfq8vSnl/dwClvxlfc8WSltJZ6augf/LsMljUxyO/hUC9gR
-         cHsn6vA8DxtAQe57369x7h0xTUUjM9Y5tZzFMiawrOPF61DUiNXa85j3WVyjNJNnEF46
-         owWdtHolqUNQ4524Ocd48+8zW5P3ln5H3sxqk9VOEy+LBsf7n5yJnBUbxpLoDvnevuuQ
-         iFy2BsSTeBLsSvVnOZb9jNzCchQsc5+Tp7YNAnitWFl60j9CPg3/SUNF7PZVZZ6kZzsL
-         5t6g==
+        bh=6Wzg2EFUCtxRH8etUmXaucx3Z1jVpwcvQQv3pqRMexI=;
+        b=XsC5mSFEsLRULTfr8tc4RBdISh+sjnmB25vQ9unNY+9BK7vR3I/ojNqjY+AoI9Pqho
+         PnWKZTf4iyAqWvQtwzzPS7363UFzuSFB+85TwhKD+TzfF+RhGx6+rmggNRycNxnvdjv4
+         fOdm9QjayDMgT3Wg2aSDjQbW34D+eOKgSUJgjGf2XsgIFr7rFY9MELljGqPZNHx1PYX9
+         r+O/VqhytIFxCLt3p+Z1qgfCHWHRdWo8HrgDi90zaec2sRSKSRolIA4cxQvAcefRNu+b
+         rYv0JQiNMcpKKfLSf3kZkD70itLtiVuxpK/70rsiBnPA98e2Dj7RXgZgo0NvF/aC0Gm0
+         Dbig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715074564; x=1715679364;
+        d=1e100.net; s=20230601; t=1715074565; x=1715679365;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u129STYD4noSkSCV7bqtBz9/OCTztdlN/hG4nYi33QI=;
-        b=aEjJXLBjm6JgplRX2vvSo19IqwqwB/X5n2SgCo2dQdQWeGHLbAvjfMy1DGxXmazXek
-         U6ui65FgUEEUwo9ZB3PePeM9SWKNEU3nFrZE4dpNSnG/No0MovUdZyXenn4DdaOJt7cM
-         g7NNcmIHilKAxSDT3sJ/ZpGCs82L8CXeWOV8e7DtNV2U118DvnYPYd7O44IbDjAMwkEL
-         qdFVcSKiAuHyR8oVEvia9CUFRZWlaiRFCrbUFTrasTWaMzB8RsW0bMR9rs9sIzba0T32
-         PNYCL8Bj7URhDby1WZsrgqFu4DsDff9hKUOT97ustvYDadWVTBy7JV1IUpiabske8jkN
-         HWLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVah6SxtlacwUXrM59kXSYpT25M86rr+v9q58TdSHLZXP2ZyMqRQpQ4RnVmQ1u4w1w+B2lhWvzuS6SuRroAefSt3Dw3mULWTjbX2WRV
-X-Gm-Message-State: AOJu0YwygtZtVKYkXmEv9uz0xyoVlWE7GsPwg5DrT0T9E+/VfSHTG4Go
-	uR8/1G7shotw5dpVph+8xZMPj+lX1M/0gc9BYM7nK71NIIKi5WMU
-X-Google-Smtp-Source: AGHT+IEpA2noZYzq8aC+0HCkFA+QhYdvlE4pW2LiUMUeMOTxNI385y3P3dy0MafU/I9r8SZ8wVetJg==
-X-Received: by 2002:a2e:610a:0:b0:2e3:1991:ec1b with SMTP id v10-20020a2e610a000000b002e31991ec1bmr4030953ljb.4.1715074563454;
-        Tue, 07 May 2024 02:36:03 -0700 (PDT)
+        bh=6Wzg2EFUCtxRH8etUmXaucx3Z1jVpwcvQQv3pqRMexI=;
+        b=otFYN+LQ1+nYS+WIvvsvJK/sSeWAk3T0fQ0XZzYRQMGy5sD9dFjyW1qEsm+un0va6z
+         toLdDopYwhKt94jqE2g/wUJgvj+1I8LihVvyT1B8pT8X3OvXDchYEP0VWFSlSfPz4V+R
+         1oXanZ1bA5qxJ7SsMaNeVfsoeqD77inDkwGHN3cK5AMhdDAk4FpISjVtEqkHN46merE7
+         mRZTBLlcYqj59TlVRAFiHtslcCwPrkQStIv3ww2wKmDl5Wi7fWUnCx0gEy5pKqIkzJY1
+         5IbE7S+tRWQv4b4QA9OgCpDDLC6UyaXgASOBAVsqo03BqBA8r/bF/yckGnnYxpOSeFPR
+         qOXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKWSsYmI15iNAvxr4XKile+jlW2MMHgZs+E4V9LXhPIKTvK/Dl7rVzIcYewStfM9HtZGvgMMKYWj90H1RoMQb5tV/UW6VdItw8z29
+X-Gm-Message-State: AOJu0Yxhjra6H70GJoQK0zhbqOZKi+R7Ft5Zu7Wnx8gDTHKlYCtsMbBe
+	VNabjkgGqyV6wu5nWSd1SI5JzPD0TWk/d9xfQ8xxQKONk9oWFvjr
+X-Google-Smtp-Source: AGHT+IFPcRIkObmSrDDYGtNVtOSeyoXB9l1lQvDPOWGnZFWV9+vj3HB5FDw55OWXNeurNzTdURHy8A==
+X-Received: by 2002:a2e:80d3:0:b0:2e0:c689:f8cd with SMTP id r19-20020a2e80d3000000b002e0c689f8cdmr8710468ljg.29.1715074564625;
+        Tue, 07 May 2024 02:36:04 -0700 (PDT)
 Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.36.02
+        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.36.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 02:36:03 -0700 (PDT)
+        Tue, 07 May 2024 02:36:04 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: "Paul E . McKenney" <paulmck@kernel.org>
 Cc: RCU <rcu@vger.kernel.org>,
@@ -77,10 +77,11 @@ Cc: RCU <rcu@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: [PATCH 31/48] rcu-tasks: Fix the comments for tasks_rcu_exit_srcu_stall_timer
-Date: Tue,  7 May 2024 11:35:13 +0200
-Message-Id: <20240507093530.3043-32-urezki@gmail.com>
+	Nikita Kiryushin <kiryushin@ancud.ru>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 32/48] rcu-tasks: Fix show_rcu_tasks_trace_gp_kthread buffer overflow
+Date: Tue,  7 May 2024 11:35:14 +0200
+Message-Id: <20240507093530.3043-33-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
 References: <20240507093530.3043-1-urezki@gmail.com>
@@ -92,13 +93,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Zqiang <qiang.zhang1211@gmail.com>
+From: Nikita Kiryushin <kiryushin@ancud.ru>
 
-The synchronize_srcu() has been removed by commit("rcu-tasks: Eliminate
-deadlocks involving do_exit() and RCU tasks") in rcu_tasks_postscan.
-This commit therefore fixes the tasks_rcu_exit_srcu_stall_timer comment.
+There is a possibility of buffer overflow in
+show_rcu_tasks_trace_gp_kthread() if counters, passed
+to sprintf() are huge. Counter numbers, needed for this
+are unrealistically high, but buffer overflow is still
+possible.
 
-Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+Use snprintf() with buffer size instead of sprintf().
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: edf3775f0ad6 ("rcu-tasks: Add count for idle tasks on offline CPUs")
+Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
@@ -106,18 +115,18 @@ Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 78d74c81cc24..d5319bbe8c98 100644
+index d5319bbe8c98..08a92bffeb84 100644
 --- a/kernel/rcu/tasks.h
 +++ b/kernel/rcu/tasks.h
-@@ -150,7 +150,7 @@ static struct rcu_tasks rt_name =							\
+@@ -1997,7 +1997,7 @@ void show_rcu_tasks_trace_gp_kthread(void)
+ {
+ 	char buf[64];
  
- #ifdef CONFIG_TASKS_RCU
- 
--/* Report delay in synchronize_srcu() completion in rcu_tasks_postscan(). */
-+/* Report delay of scan exiting tasklist in rcu_tasks_postscan(). */
- static void tasks_rcu_exit_srcu_stall(struct timer_list *unused);
- static DEFINE_TIMER(tasks_rcu_exit_srcu_stall_timer, tasks_rcu_exit_srcu_stall);
- #endif
+-	sprintf(buf, "N%lu h:%lu/%lu/%lu",
++	snprintf(buf, sizeof(buf), "N%lu h:%lu/%lu/%lu",
+ 		data_race(n_trc_holdouts),
+ 		data_race(n_heavy_reader_ofl_updates),
+ 		data_race(n_heavy_reader_updates),
 -- 
 2.39.2
 
