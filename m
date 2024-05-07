@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-170987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855148BDE95
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7C18BDE91
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C420DB21E78
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:42:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E5F9B23822
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92C215F410;
-	Tue,  7 May 2024 09:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AC115EFD3;
+	Tue,  7 May 2024 09:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDdmL3aq"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUd2qyDf"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C58D15ECCC;
-	Tue,  7 May 2024 09:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B275515ECE1;
+	Tue,  7 May 2024 09:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074564; cv=none; b=At1I2yLQk8QLXMhnn97+EqCeu5l+uVN0WNoAOIz9V2ljXVxJherWJ559JTek5j4ATy8+Ow/l/TO+psY81rLIrRurV3mSJF54xI4OXfFTP9+mt+x+yApmqKpQAb2tnOPr6ta4st3poeDAXzuShVo2mcqe2/fffu9Hat5VYl1hgoU=
+	t=1715074562; cv=none; b=b28z+RRz/b1G+vjkWpZoiiHCRYkQ9RX2ZQDsRfzJHAMs8HpUvMpan9nm9MiETjd5S49TA+H9Aju4i0yeym0Lkxn6qwhCZXOchU44QhD+6rX59dMIh/os97X0bL/qdKC1FfzGU7LWk59Jm1FCakY/WQ9f8kVHnzJDd/9CFzjKFB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074564; c=relaxed/simple;
-	bh=EWsVRIZxGPSXoY2Njx9/Sp9Wsqp8UVQL2ck7eZ/1txM=;
+	s=arc-20240116; t=1715074562; c=relaxed/simple;
+	bh=frqB9JdZ2wKj2UZVAquGEnh6KcOwmldyv4Qg+7qDgQ0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P1YxwSukEcxJ0vS8P/tcudPtj79rKw3KbVa3E0xw8caUqMsqpT8RSw6Y7jRso94gh3HQZxkSzMqt9JqHZvJcuCVJjl7NK8h2DyvJ9oIY2vyLauN6Re2Qpwj2DO6/RLJexKKMeYVM/tTm3uCUvIYkn7ZPg1u2flQEf3IIBmsukX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDdmL3aq; arc=none smtp.client-ip=209.85.208.173
+	 MIME-Version; b=qD5KXEpjXSYHU7bJ6keUKHL+9z7snzbYdGxPjUz1li1OoQO0iyzVufeY9ZOwBw/mnOvIjn1+CIbuyNGO3xTlw4jp4PR0bBlpCTkZs/vyxyAaTxPuOnCtAdSv6WKZlvZcPdhKGATjL9SsJAmQa3TTRujv84ses5bd0/ZbNtXVXRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUd2qyDf; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e367c2457bso20449381fa.1;
-        Tue, 07 May 2024 02:35:57 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so8252491fa.0;
+        Tue, 07 May 2024 02:35:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715074556; x=1715679356; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715074557; x=1715679357; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PfH9K/eXzjwreUAemmntcMfIwoR9Zl46+OauXvPYO0k=;
-        b=mDdmL3aqYgEx5+BpKsDxmxnJ7WUsS/5vaVGb4vCzgdlQmtMSbcmZMH6kgXhgNVSYx1
-         0T1T3O0WQQ/EvdDNxeDwMXXLY+Uywl6j1/myp71r6UFEFaZKGQiN9wRCFoFntSAebNNt
-         wTptxJrvTH/oobxk3QhXRmYb3LXSR7YMNT+v0GY8EAd6rXpYMpFOx+FYjHh+LHSiXS+N
-         UoeCWS/+AebRcMPudgu3olf68Q+w0kjznrdLznVFoyTb6Elfdo0gOdKDTlQ+9/K8R8M1
-         noQXysCa9Od7udgSQs61RrJ0u2AnR+4Y3Vw0+Ui3HTg6lLZFZPUnXLB//4vQpqnK2CK0
-         K6xg==
+        bh=3wXXp0y3/5Dvry2xeNwt9T3OFvkk1THegZM211jibMU=;
+        b=hUd2qyDf6Yd1OstOLXOUSm+9GB/qqI0Al6aDbMSm1KhuTERcul3i963bSnedE5uLgL
+         /1iRMMxpewRnn4ixryBfU2g8OmaW0hPdX0qE7fnDZlV7wuTYuI7YHqsKvF5BZxcML3Uf
+         S7IMa0b3voxbtVdB7znU16IFn28j0dYKxpY8IS5wGlcMmQgLWRYlrB8YQ5/xTUdnkXvt
+         sJjX4IKN5VcsAuWjknC8UORWyslbQxRPdY0s2Izx99CdoIhlEeKkrAI5Hzi9Y8RYFmSm
+         8nTkb8BK+ykrw7FWFUTpip8y7Ty84xHpKfa/10VyZ4h8w4aSAotMso+jXD5HbZ8ga6Uo
+         A/ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715074556; x=1715679356;
+        d=1e100.net; s=20230601; t=1715074557; x=1715679357;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PfH9K/eXzjwreUAemmntcMfIwoR9Zl46+OauXvPYO0k=;
-        b=R4f5gfiOKHdhOBCyljkJ8Whv6CVImfUaNknddI4FMEzL0Oz+KLDZQv+NTMpqaduHuZ
-         pSHkl5UElBvosyqv+gXAaMqj1p24KgyCJCs8q2Bv6iQ4s3ruWSKfkZaCNOKT50TA4WEr
-         vipV+lLdVpaBJJUbfJRalAhvm7ruOPAYRnh8GMaQg8dUY/+q7A8NIuh64e44aZtkt495
-         rSA3XVWUPY0Izsh6hIpapWgIXW/J0USorZX+9+UBHAjCF7r2d7IS5ZIeupJ+6JIdlOR1
-         X3c/pPmDCUhWrgJaI0KV81h3m2XQIICKafPyk/O5k67KLygYf0+Ln/lVWmuOFLa+gdvQ
-         IOJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAMoruT66F1Bv4QNbBWJ1BUnMjhlxwc1GaX8BN9MWl2CW4SElZSYmH5G7GJXGGhgEvBqLBy2/PAW6S4N+6RXWIvg0pZYkjRtVj3J4K
-X-Gm-Message-State: AOJu0YzTKhEMca7m7c/m4xUxtW5Y3Vu22yqrZpBIh+lgCwiAxXIj+3Ka
-	XhqVRDMi8VBaMxnkjj8raoD+xRdbiMuyxoZTRYDFRr87Tn7jViKjHTJPU4MS
-X-Google-Smtp-Source: AGHT+IHOIZDj0khBN1W8nHdPykH/y4sTAyNBeP5xmuK7akM5SJ1vs4umBw3oDZhkNvNfs4Mj+xr4NQ==
-X-Received: by 2002:a2e:6109:0:b0:2e2:ab69:d10a with SMTP id v9-20020a2e6109000000b002e2ab69d10amr6164194ljb.39.1715074555694;
-        Tue, 07 May 2024 02:35:55 -0700 (PDT)
+        bh=3wXXp0y3/5Dvry2xeNwt9T3OFvkk1THegZM211jibMU=;
+        b=odZRZSQkF4I+8yl/h/lFCqp3C36ZZdZnR6U9XhOYCtmfoJMFalz8+GOivFCH94ADZ0
+         RS3joLdLry2b5ykT2Zg51ALtDiOa9GfHxBZb89A+oijzzmWHBKw6ZfgfsLDPpcqRb3NL
+         IJ0+I+tYbrLjNFjak9XN0lIwVZFiYbVKVfwEwILBYv7UwrIyHHFT6gvo4QqqX11AaMvT
+         28fphWnvyNV66OpFUoalkcN8b7cRyWW2t3w2WlokzVC8JXeVJ59GU8QkyVjVNSeX3RUA
+         /0xhSAya5Faf9wG9uZ5bVNHk7LKUeMeWMS+1N+PtvHmqqRZgow5ouZuK5+zzSpPML1e2
+         mp5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeWiEvCDO1WT8AP2LNV8ClcyXUPJ0n4bRKn+J2gew67nGI/yeFqPrGrfIi00shRFyDMLa7Dd52i6Kg5s/bpHcs/cq4qVLIjMJJhnv6
+X-Gm-Message-State: AOJu0YxX6DBsgGopjv8vpDhM6iP5hTDg3Th0Lb5KBCAKGddPBb2G6B3A
+	rnuRNacelCOshWJg95pZBN5zHTwBUtzz7SPFd5cDBDKFM0ciDcw2
+X-Google-Smtp-Source: AGHT+IGrg8/gY8t0r/95q18a1/2aEvenTXHbcwBbeF3Em7DTV1B7pZ46ANDu9JWC/D6UZVRXaIA73g==
+X-Received: by 2002:a2e:2e0b:0:b0:2e2:3dac:447b with SMTP id u11-20020a2e2e0b000000b002e23dac447bmr9471424lju.18.1715074556582;
+        Tue, 07 May 2024 02:35:56 -0700 (PDT)
 Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
         by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 02:35:55 -0700 (PDT)
+        Tue, 07 May 2024 02:35:56 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: "Paul E . McKenney" <paulmck@kernel.org>
 Cc: RCU <rcu@vger.kernel.org>,
@@ -76,10 +76,12 @@ Cc: RCU <rcu@vger.kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 24/48] rcu: Bring diagnostic read of rcu_state.gp_flags into alignment
-Date: Tue,  7 May 2024 11:35:06 +0200
-Message-Id: <20240507093530.3043-25-urezki@gmail.com>
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
+Date: Tue,  7 May 2024 11:35:07 +0200
+Message-Id: <20240507093530.3043-26-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
 References: <20240507093530.3043-1-urezki@gmail.com>
@@ -93,29 +95,49 @@ Content-Transfer-Encoding: 8bit
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit adds READ_ONCE() to a lockless diagnostic read from
-rcu_state.gp_flags to avoid giving the compiler any chance whatsoever
-of confusing the diagnostic state printed.
+The rcu_sync structure's ->gp_count field is updated under the protection
+of ->rss_lock, but read locklessly, and KCSAN noted the data race.
+This commit therefore uses WRITE_ONCE() to do this update to clearly
+document its racy nature.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- kernel/rcu/tree_stall.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/rcu/sync.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 5d666428546b..62b2c4858028 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -579,7 +579,7 @@ static void rcu_check_gp_kthread_expired_fqs_timer(void)
- 		pr_err("%s kthread timer wakeup didn't happen for %ld jiffies! g%ld f%#x %s(%d) ->state=%#x\n",
- 		       rcu_state.name, (jiffies - jiffies_fqs),
- 		       (long)rcu_seq_current(&rcu_state.gp_seq),
--		       data_race(rcu_state.gp_flags),
-+		       data_race(READ_ONCE(rcu_state.gp_flags)), // Diagnostic read
- 		       gp_state_getname(RCU_GP_WAIT_FQS), RCU_GP_WAIT_FQS,
- 		       data_race(READ_ONCE(gpk->__state)));
- 		pr_err("\tPossible timer handling issue on cpu=%d timer-softirq=%u\n",
+diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
+index 86df878a2fee..6c2bd9001adc 100644
+--- a/kernel/rcu/sync.c
++++ b/kernel/rcu/sync.c
+@@ -122,7 +122,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+ 		 * we are called at early boot time but this shouldn't happen.
+ 		 */
+ 	}
+-	rsp->gp_count++;
++	WRITE_ONCE(rsp->gp_count, rsp->gp_count + 1);
+ 	spin_unlock_irq(&rsp->rss_lock);
+ 
+ 	if (gp_state == GP_IDLE) {
+@@ -151,11 +151,15 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+  */
+ void rcu_sync_exit(struct rcu_sync *rsp)
+ {
++	int gpc;
++
+ 	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
+ 	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
+ 
+ 	spin_lock_irq(&rsp->rss_lock);
+-	if (!--rsp->gp_count) {
++	gpc = rsp->gp_count - 1;
++	WRITE_ONCE(rsp->gp_count, gpc);
++	if (!gpc) {
+ 		if (rsp->gp_state == GP_PASSED) {
+ 			WRITE_ONCE(rsp->gp_state, GP_EXIT);
+ 			rcu_sync_call(rsp);
 -- 
 2.39.2
 
