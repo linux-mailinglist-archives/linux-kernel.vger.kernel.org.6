@@ -1,149 +1,247 @@
-Return-Path: <linux-kernel+bounces-170850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE8A8BDCE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:06:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FF88BDCEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55C741F24FF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:06:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E482CB22CA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF0113C83E;
-	Tue,  7 May 2024 08:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SpFGaQjH"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432EF13C90D;
+	Tue,  7 May 2024 08:06:50 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88896FE07;
-	Tue,  7 May 2024 08:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918E113B7AF;
+	Tue,  7 May 2024 08:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715069166; cv=none; b=BwHtDgbJEvYwEYmA73BB9rf6CyHG47Zs5EsN2KiFqfLVvFacDmEXqCNeHkfxTDrYtDQ6b5zuLYI05REDiSjXlrG7C7K/iivzvlsMfZaHFf8a2t5oiUcP+64uxCF5sR8n9gqq9xTa7lI6KpWGbJ96Dw/npYmLt0Kxg8DCPCFXfQ0=
+	t=1715069209; cv=none; b=ufwyqXcSXx2HmWSQgQ4/iuuEcZ8liwhfwuuJAonni6vmbx/a2uWnxzXebMxDUn2y95xQYnFlvwfD+jROFDZMssSn1979q6DkxexxDxNkM09SeD/Gr5SZ8bG936dfBAhE4TKL3XlsLt7D4+RaookgoRiKf7er8GqpM5jONFeqKXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715069166; c=relaxed/simple;
-	bh=7BzDO5vHL5DN5HBAl+odWGDXNjBgB+USvYPToRZISgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HpBNnApkcRO1FqwXb3I+2dsrxpPmwDh8hcceccdKtZjPhiiw+sIgZiPs093XWsBWoZltd2w9bMBGh/HkWAUm11XcnNGd3PdbDboMuUjK4eaiZ9cEtKGiEAqFGuqfEaXDok+iw3wIkt5ay0oadflZdNbva3TVgqKspp+Tw6DI6BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SpFGaQjH; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E695BE0009;
-	Tue,  7 May 2024 08:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715069155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9TepcGEoiKxLCbwlao4rlGSeQ9tpcI5kPyU38Gz2cI=;
-	b=SpFGaQjHqBa1/EmaMM0V0Yv5VoQyM6W/gWWjS2btE9ZQTQxVehDqriIXAkPgnynxrxhRD+
-	pV6OL/wqyJEdkYBN1GZVcgceosY9HP7sxbRWHej1+twLn+HQEuDNnEBBQVz5QPaFlUlyjT
-	y1mude0egUS4aG38ywFou0RQgSq2Vh716RUZhuHieuAz5TwR0nTlU6VRCYjTqIOyPGZeoR
-	aQxchupuRF8QxCgpd/JuICPP/BueU5pQ/QBMXstmsq7zugfzwcxKl+8RB1TtsI5J+DG/LP
-	9l/Ar29/NkMYolWtO7s9fa7Aa8QrCxBz+vJb8LUMW+ORYVt7HkTTSza3ZJHJeQ==
-Date: Tue, 7 May 2024 10:05:53 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
- <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
- <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <oxffffaa@gmail.com>, <kernel@sberdevices.ru>
-Subject: Re: [PATCH v5 1/2] dt-bindings: mtd: amlogic,meson-nand: support
- fields for boot ROM code
-Message-ID: <20240507100553.31578d0d@xps-13>
-In-Reply-To: <e3ea7238-c80d-dfe9-28bf-df95708872d6@salutedevices.com>
-References: <20240416085101.740458-1-avkrasnov@salutedevices.com>
-	<20240416085101.740458-2-avkrasnov@salutedevices.com>
-	<20240506154858.003bab54@xps-13>
-	<d90f9d3d-7823-503f-4cc6-73783a083d0e@salutedevices.com>
-	<20240507092726.4ab1afdb@xps-13>
-	<e3ea7238-c80d-dfe9-28bf-df95708872d6@salutedevices.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715069209; c=relaxed/simple;
+	bh=bfN0Lt/MHmbuk1zI5i8I74mbv+rVl0Hq7fCQ6JLhMFU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=J6SEhLRnUm1SNP0INPqQQzyLUKaLnHicgmZ0yoK8s+uT5Abkr0gK9mLEqtrxphDY5+HBhRvSWbaallZErQzk5WQvaWt/OuPhWF1sm2gFSaeDjceMC5tIIEDkJk/eAxNMGCdI+q7cmV+h0Z7LPemYXqMLQ3GD+ZwjrnrbyfDWRX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VYW6v651Fz6DB9c;
+	Tue,  7 May 2024 16:05:43 +0800 (CST)
+Received: from lhrpeml100002.china.huawei.com (unknown [7.191.160.241])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4CCE4140C9C;
+	Tue,  7 May 2024 16:06:11 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
+ lhrpeml100002.china.huawei.com (7.191.160.241) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 7 May 2024 09:06:04 +0100
+Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
+ lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
+ Tue, 7 May 2024 09:06:04 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Alex Williamson <alex.williamson@redhat.com>, liulongfang
+	<liulongfang@huawei.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v6 4/5] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+Thread-Topic: [PATCH v6 4/5] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+Thread-Index: AQHalxS9rabDiUo2yUOKARoyroN9ObGFvbMAgAW+J+A=
+Date: Tue, 7 May 2024 08:06:04 +0000
+Message-ID: <7b0645b43889431b9830bc17835c15e4@huawei.com>
+References: <20240425132322.12041-1-liulongfang@huawei.com>
+	<20240425132322.12041-5-liulongfang@huawei.com>
+ <20240503112120.3740da24.alex.williamson@redhat.com>
+In-Reply-To: <20240503112120.3740da24.alex.williamson@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Arseniy,
 
-avkrasnov@salutedevices.com wrote on Tue, 7 May 2024 10:35:51 +0300:
 
-> On 07.05.2024 10:27, Miquel Raynal wrote:
-> > Hi Arseniy,
-> >=20
-> > avkrasnov@salutedevices.com wrote on Tue, 7 May 2024 09:53:06 +0300:
-> >  =20
-> >> On 06.05.2024 16:48, Miquel Raynal wrote: =20
-> >>> Hi Arseniy,
-> >>>
-> >>> avkrasnov@salutedevices.com wrote on Tue, 16 Apr 2024 11:51:00 +0300:
-> >>>    =20
-> >>>> Boot ROM code on Meson requires that some pages on NAND must be writ=
-ten
-> >>>> in special mode: "short" ECC mode where each block is 384 bytes and
-> >>>> scrambling mode is on.   =20
-> >>>
-> >>> Ok
-> >>>    =20
-> >>>> Such pages located with the specified interval within specified offs=
-et.   =20
-> >>>
-> >>> I'm sorry I don't get that sentence.   =20
-> >>
-> >> Sorry, I mean this (let me draw :) ) :
-> >>
-> >> [ page 0 ][ page 1 ][ page 2 ][ page 3 ][ page 4 ][ page 5 ][ page 6 ]=
-[ page 7 ][ page 8 ][ page 9 ]
-> >>
-> >> For example, we have 10 pages starting from the beginning of the chip =
-- this is "within specified offset",
-> >> e.g. offset is 10. BootROM on axg needs that (for example) every third=
- page must be written in "special"
-> >> mode: scrambling is on and ECC is 384 bytes. Such pages are 0, 2, 4, 6=
-, 8. E.g. "specified interval" will
-> >> be 3. =20
-> >=20
-> > Shall be 2, no? =20
+> -----Original Message-----
+> From: Alex Williamson <alex.williamson@redhat.com>
+> Sent: Friday, May 3, 2024 6:21 PM
+> To: liulongfang <liulongfang@huawei.com>
+> Cc: jgg@nvidia.com; Shameerali Kolothum Thodi
+> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> <jonathan.cameron@huawei.com>; kvm@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linuxarm@openeuler.org
+> Subject: Re: [PATCH v6 4/5] hisi_acc_vfio_pci: register debugfs for hisil=
+icon
+> migration driver
 >=20
-> yes, starting from 0 - then 2. e.g.
-> if (!(page_num % 2))
->     boot ROM need this page
+> On Thu, 25 Apr 2024 21:23:21 +0800
+> Longfang Liu <liulongfang@huawei.com> wrote:
 >=20
-> >  =20
-> >>
-> >> So:
-> >>
-> >> amlogic,boot-pages: 10
-> >> amlogic,boot-page-step: 3 =20
-> >=20
-> > Ok I get it. Thanks for the explanation. I don't really understand the
-> > logic behind it though. Do you know why the bootROM would access only
-> > one page over 2 or 3? Is there a default value? Is this configurable? =
-=20
+> > On the debugfs framework of VFIO, if the CONFIG_VFIO_DEBUGFS macro is
+> > enabled, the debug function is registered for the live migration driver
+> > of the HiSilicon accelerator device.
+> >
+> > After registering the HiSilicon accelerator device on the debugfs
+> > framework of live migration of vfio, a directory file "hisi_acc"
+> > of debugfs is created, and then three debug function files are
+> > created in this directory:
+> >
+> >    vfio
+> >     |
+> >     +---<dev_name1>
+> >     |    +---migration
+> >     |        +--state
+> >     |        +--hisi_acc
+> >     |            +--dev_data
+> >     |            +--migf_data
+> >     |            +--cmd_state
+> >     |
+> >     +---<dev_name2>
+> >          +---migration
+> >              +--state
+> >              +--hisi_acc
+> >                  +--dev_data
+> >                  +--migf_data
+> >                  +--cmd_state
+> >
+> > dev_data file: read device data that needs to be migrated from the
+> > current device in real time
+> > migf_data file: read the migration data of the last live migration
+> > from the current driver.
+> > cmd_state: used to get the cmd channel state for the device.
+> >
+> > +----------------+        +--------------+       +---------------+
+> > | migration dev  |        |   src  dev   |       |   dst  dev    |
+> > +-------+--------+        +------+-------+       +-------+-------+
+> >         |                        |                       |
+> >         |                 +------v-------+       +-------v-------+
+> >         |                 |  saving_mif  |       | resuming_migf |
+> >   read  |                 |     file     |       |     file      |
+> >         |                 +------+-------+       +-------+-------+
+> >         |                        |          copy         |
+> >         |                        +------------+----------+
+> >         |                                     |
+> > +-------v---------+                   +-------v--------+
+> > |   data buffer   |                   |   debug_migf   |
+> > +-------+---------+                   +-------+--------+
+> >         |                                     |
+> >    cat  |                                 cat |
+> > +-------v--------+                    +-------v--------+
+> > |   dev_data     |                    |   migf_data    |
+> > +----------------+                    +----------------+
+> >
+> > When accessing debugfs, user can obtain the real-time status data
+> > of the device through the "dev_data" file. It will directly read
+> > the device status data and will not affect the live migration
+> > function. Its data is stored in the allocated memory buffer,
+> > and the memory is released after data returning to user mode.
+> >
+> > To obtain the data of the last complete migration, user need to
+> > obtain it through the "migf_data" file. Since the live migration
+> > data only exists during the migration process, it is destroyed
+> > after the migration is completed.
+> > In order to save this data, a debug_migf file is created in the
+> > driver. At the end of the live migration process, copy the data
+> > to debug_migf.
+> >
+> > Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+> > ---
+> >  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 225 ++++++++++++++++++
+> >  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |   7 +
+> >  2 files changed, 232 insertions(+)
+> >
+> > diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> > index bf358ba94b5d..656b3d975940 100644
+> > --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> > +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> > @@ -627,15 +627,33 @@ static void hisi_acc_vf_disable_fd(struct
+> hisi_acc_vf_migration_file *migf)
+> >  	mutex_unlock(&migf->lock);
+> >  }
+> >
+> > +static void hisi_acc_debug_migf_copy(struct hisi_acc_vf_core_device
+> *hisi_acc_vdev,
+> > +	struct hisi_acc_vf_migration_file *src_migf)
+> > +{
+> > +	struct hisi_acc_vf_migration_file *dst_migf =3D hisi_acc_vdev-
+> >debug_migf;
+> > +
+> > +	if (!dst_migf)
+> > +		return;
+> > +
+> > +	mutex_lock(&hisi_acc_vdev->enable_mutex);
+> > +	dst_migf->disabled =3D src_migf->disabled;
+> > +	dst_migf->total_length =3D src_migf->total_length;
+> > +	memcpy(&dst_migf->vf_data, &src_migf->vf_data,
+> > +		sizeof(struct acc_vf_data));
+> > +	mutex_unlock(&hisi_acc_vdev->enable_mutex);
+> > +}
+> > +
+> >  static void hisi_acc_vf_disable_fds(struct hisi_acc_vf_core_device
+> *hisi_acc_vdev)
+> >  {
+> >  	if (hisi_acc_vdev->resuming_migf) {
+> > +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-
+> >resuming_migf);
+> >  		hisi_acc_vf_disable_fd(hisi_acc_vdev->resuming_migf);
+> >  		fput(hisi_acc_vdev->resuming_migf->filp);
+> >  		hisi_acc_vdev->resuming_migf =3D NULL;
+> >  	}
+> >
+> >  	if (hisi_acc_vdev->saving_migf) {
+> > +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-
+> >saving_migf);
+> >  		hisi_acc_vf_disable_fd(hisi_acc_vdev->saving_migf);
+> >  		fput(hisi_acc_vdev->saving_migf->filp);
+> >  		hisi_acc_vdev->saving_migf =3D NULL;
+> > @@ -1144,6 +1162,7 @@ static int hisi_acc_vf_qm_init(struct
+> hisi_acc_vf_core_device *hisi_acc_vdev)
+> >  	if (!vf_qm->io_base)
+> >  		return -EIO;
+> >
+> > +	mutex_init(&hisi_acc_vdev->enable_mutex);
+> >  	vf_qm->fun_type =3D QM_HW_VF;
+> >  	vf_qm->pdev =3D vf_dev;
+> >  	mutex_init(&vf_qm->mailbox_lock);
+> > @@ -1294,6 +1313,203 @@ static long hisi_acc_vfio_pci_ioctl(struct
+> vfio_device *core_vdev, unsigned int
+> >  	return vfio_pci_core_ioctl(core_vdev, cmd, arg);
+> >  }
+> >
+> > +static int hisi_acc_vf_debug_check(struct seq_file *seq, struct vfio_d=
+evice
+> *vdev)
+> > +{
+> > +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_get_vf_dev(vdev);
+> > +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
+> > +	struct device *dev =3D vdev->dev;
+> > +	int ret;
+> > +
+> > +	if (!vdev->mig_ops) {
+> > +		dev_err(dev, "device does not support live migration!\n");
 >=20
-> No, boot rom source is closed, I don't have access to it. I get this logic
-> from old version of vendor's uboot - in practice they use non 2 or 3, they
-> use hardcoded 128 step value. And amlogic,boot-pages is 1024
+> Sorry, every error path should not spam dmesg with dev_err().  I'm
+> going to wait until your co-maintainer approves this before looking at
+> any further iterations of this series.  Thanks,
 
-Feels like they are trying to use only the first page of each block, no?
-
-That's very weird but I understand better.
+Sure. I will sync up with Longfang and also make sure we address all the ex=
+isting
+comments on this before posting the next revision.
 
 Thanks,
-Miqu=C3=A8l
+Shameer
 
