@@ -1,177 +1,214 @@
-Return-Path: <linux-kernel+bounces-170778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A576E8BDBE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:52:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F358BDC03
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 348961F21B94
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C2221C21370
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC96F78C97;
-	Tue,  7 May 2024 06:52:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3200279B84;
+	Tue,  7 May 2024 07:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="illmbUWL"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3396178C7D;
-	Tue,  7 May 2024 06:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE2171754;
+	Tue,  7 May 2024 07:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715064747; cv=none; b=hUsv8sqL8Lzb6mcSx+wRDol32/4ULJgejPx07dLDhxCGVifaMJDQux5eBYz025k48sQl4ZhM0EG9QaNPMQABUT0XZcrnZR6MwKFwBYQP86HYnh7igx7yREJssxYYvPQWtNnLBgNnHW81kXMkSDJgaobSdJ62lSXnawn7N5vJ7eE=
+	t=1715065444; cv=none; b=tNfpFxuVPV99LxqbJ7JiU/EEDJXOM9fAU9ZBhTj6LfBsYnOHrgWpJHp3qDCapq/DxUN4e1vr2H+Sla6ObvJ5PeyXwJudrlL9SVR+YhLJ1qn9a6hHJo1SEHDgKUPJVQ7s+tju8NsT0cZMZSSSkyxO9/7FtGzEQvUSGe6RyUHmXUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715064747; c=relaxed/simple;
-	bh=NXFA2n7R8fudSZ/3T2nEa5Ke4g54M+TnC5DNvRyOtkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a0FiZz/UKuLaF49GsFcncMEG+7eowegWZXF0jZ0zJtQPIx7ri07FVjOiZXoMX3WQ6M5vvMX1wJkV7vH2CYHBdZ2+p0BsF8W1yuFmV04of8w4npYx2sFDLYjqpwDZov+ye8JWCILDxNWQFuaON27gNthX3H0wbgZYMe17kkcnu60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VYTV73X47z4f3jkr;
-	Tue,  7 May 2024 14:52:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id BEF1B1A0179;
-	Tue,  7 May 2024 14:52:20 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g6gzzlmdMbyLw--.9131S3;
-	Tue, 07 May 2024 14:52:20 +0800 (CST)
-Message-ID: <7c5f0e28-100f-621e-61e2-65e5071f6a22@huaweicloud.com>
-Date: Tue, 7 May 2024 14:52:16 +0800
+	s=arc-20240116; t=1715065444; c=relaxed/simple;
+	bh=f5Y+RPch/7mrTdblk+FuyORnXeTj5LvlcQlkeUJhWus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NYcNWyLnYXokrmg9RKIzIoMZQugj73U1ts0p3CmXKLpjQ6qzNR5mnpY6RHbAqY64rcJckstu165hNEFFiJFfj5jxgJY4tFM5W+U/pz4HCmETDFpv3rTA9VVCKdkhPQfIs3G1uMcTRCPs6F7FFL4yFAIKn2xkekJkupLr2zBOA3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=illmbUWL; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id D6E6D120003;
+	Tue,  7 May 2024 10:03:50 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru D6E6D120003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715065430;
+	bh=H/kIGo3J8gDU/CLl+ICpmHfUJ577I1NNpGXMj98OV+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=illmbUWLUP6z8cEOzU19cEiOVtGCj2hwDhcZGlI5Yc5uaDBZNel5WH65as/Sb8LBg
+	 VRUTi/IrnSR7J71oIRujD2zE2S34MUJAYcEOgCKtvPddm2+fQMYRy5FMzZXIhCBDDa
+	 0oUKtm8Rr2b5lcfITxxpEyD74goehnon3BreSRjJ3z2ZZTHRDaJq1CsS9QU54T96ej
+	 sqHd53GI8LkbXLxZj129aPUcrHiPBoBobxuHCXaF7/gCfd2dzhjW1Is/1PcieG/xHl
+	 +0wBNCL0dtDy3trbWSiaOSlxlKfFPmD4QcU97jsxgyj1KH3vjyVTlpBnZcaUoNoaV3
+	 8lvQHeDAoV1dQ==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue,  7 May 2024 10:03:50 +0300 (MSK)
+Received: from [172.28.226.125] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Tue, 7 May 2024 10:03:50 +0300
+Message-ID: <d90f9d3d-7823-503f-4cc6-73783a083d0e@salutedevices.com>
+Date: Tue, 7 May 2024 09:53:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 01/12] cachefiles: remove request from xarry during flush
- requests
-To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
-Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
- libaokun@huaweicloud.com
-References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
- <20240424033916.2748488-2-libaokun@huaweicloud.com>
- <6e4a20f7-263a-46be-81cc-2667353c452d@linux.alibaba.com>
- <ba40eb22-dc28-54b6-a8cb-7a8ba4464c9a@huaweicloud.com>
- <876cd180-6268-4f1a-a3bc-6b7b2aa3279f@linux.alibaba.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v5 1/2] dt-bindings: mtd: amlogic,meson-nand: support
+ fields for boot ROM code
 Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <876cd180-6268-4f1a-a3bc-6b7b2aa3279f@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+	<vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, <linux-mtd@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<oxffffaa@gmail.com>, <kernel@sberdevices.ru>
+References: <20240416085101.740458-1-avkrasnov@salutedevices.com>
+ <20240416085101.740458-2-avkrasnov@salutedevices.com>
+ <20240506154858.003bab54@xps-13>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+In-Reply-To: <20240506154858.003bab54@xps-13>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g6gzzlmdMbyLw--.9131S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJFW7Ary3ZF4DCr13Xr47Arb_yoWrCr48pr
-	ySyFy7Jry8Gr1kJr1UJr1UJryUJr1UJ3WUXr1UJF18Ar1UAr1Yqr4UXr1vgryUJrW8Jr4U
-	Jr1UJr17Zr1UJr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCT
-	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185102 [May 07 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/07 04:23:00 #25112995
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Jingbo,
 
-Sorry for the late reply.
 
-On 2024/5/6 13:50, Jingbo Xu wrote:
->
-> On 5/6/24 11:57 AM, Baokun Li wrote:
->> On 2024/5/6 11:48, Jingbo Xu wrote:
->>> On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
->>>> From: Baokun Li <libaokun1@huawei.com>
->>>>
->>>> This prevents concurrency from causing access to a freed req.
->>> Could you give more details on how the concurrent access will happen?
->>> How could another process access the &cache->reqs xarray after it has
->>> been flushed?
->> Similar logic to restore leading to UAF:
+On 06.05.2024 16:48, Miquel Raynal wrote:
+> Hi Arseniy,
+> 
+> avkrasnov@salutedevices.com wrote on Tue, 16 Apr 2024 11:51:00 +0300:
+> 
+>> Boot ROM code on Meson requires that some pages on NAND must be written
+>> in special mode: "short" ECC mode where each block is 384 bytes and
+>> scrambling mode is on.
+> 
+> Ok
+> 
+>> Such pages located with the specified interval within specified offset.
+> 
+> I'm sorry I don't get that sentence.
+
+Sorry, I mean this (let me draw :) ) :
+
+[ page 0 ][ page 1 ][ page 2 ][ page 3 ][ page 4 ][ page 5 ][ page 6 ][ page 7 ][ page 8 ][ page 9 ]
+
+For example, we have 10 pages starting from the beginning of the chip - this is "within specified offset",
+e.g. offset is 10. BootROM on axg needs that (for example) every third page must be written in "special"
+mode: scrambling is on and ECC is 384 bytes. Such pages are 0, 2, 4, 6, 8. E.g. "specified interval" will
+be 3.
+
+So:
+
+amlogic,boot-pages: 10
+amlogic,boot-page-step: 3
+
+
+> 
+>> Both interval and offset are located in the
+>> device tree and used by driver if 'nand-is-boot-medium' is set for
+>> NAND chip.
+> 
+> This sentence is probably not needed.
+
+Ok
+
+> 
 >>
->>       mount  |   daemon_thread1    |    daemon_thread2
->> ------------------------------------------------------------
->>   cachefiles_ondemand_init_object
->>    cachefiles_ondemand_send_req
->>     REQ_A = kzalloc(sizeof(*req) + data_len)
->>     wait_for_completion(&REQ_A->done)
+>> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+>> ---
+>>  .../bindings/mtd/amlogic,meson-nand.yaml           | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
 >>
->>              cachefiles_daemon_read
->>               cachefiles_ondemand_daemon_read
->>                REQ_A = cachefiles_ondemand_select_req
->>                cachefiles_ondemand_get_fd
->>                copy_to_user(_buffer, msg, n)
->>              process_open_req(REQ_A)
->>                                    // close dev fd
->>                                    cachefiles_flush_reqs
->>                                     complete(&REQ_A->done)
->>     kfree(REQ_A)
->
->>               cachefiles_ondemand_get_fd(REQ_A)
->>                fd = get_unused_fd_flags
->>                file = anon_inode_getfile
->>                fd_install(fd, file)
->>                load = (void *)REQ_A->msg.data;
->>                load->fd = fd;
->>                // load UAF !!!
-> How could the second cachefiles_ondemand_get_fd() get called here, given
-> the cache has been flushed and flagged as DEAD?
->
-I was in a bit of a rush to reply earlier, and that graph above is
-wrong. Please see the one below:
+>> diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
+>> index 57b6957c8415..67b2f7c1259c 100644
+>> --- a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
+>> +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.yaml
+>> @@ -64,11 +64,25 @@ patternProperties:
+>>          items:
+>>            maximum: 0
+>>  
+>> +      amlogic,boot-pages:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        description:
+>> +          Number of pages starting from 0, where special ECC
+> 
+> from *offset* 0 I guess?
 
-      mount  |   daemon_thread1    |    daemon_thread2
-------------------------------------------------------------
-  cachefiles_ondemand_init_object
-   cachefiles_ondemand_send_req
-    REQ_A = kzalloc(sizeof(*req) + data_len)
-    wait_for_completion(&REQ_A->done)
-             cachefiles_daemon_read
-              cachefiles_ondemand_daemon_read
-                                   // close dev fd
-                                   cachefiles_flush_reqs
-                                    complete(&REQ_A->done)
-    kfree(REQ_A)
-               xa_lock(&cache->reqs);
-               cachefiles_ondemand_select_req
-                 req->msg.opcode != CACHEFILES_OP_READ
-                 // req use-after-free !!!
-               xa_unlock(&cache->reqs);
-                                    xa_destroy(&cache->reqs)
+Yes, or may be better "from beginning of the chip" ?
 
-Even with CACHEFILES_DEAD set, we can still read the requests, so
-accessing it after the request has been freed will trigger use-after-free.
+May be i can place here ascii picture from above, with reduced number of pages?
+And also place this picture in the commit message ?
 
-Thanks,
-Baokun
->>>> ---
->>>>    fs/cachefiles/daemon.c | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
->>>> index 6465e2574230..ccb7b707ea4b 100644
->>>> --- a/fs/cachefiles/daemon.c
->>>> +++ b/fs/cachefiles/daemon.c
->>>> @@ -159,6 +159,7 @@ static void cachefiles_flush_reqs(struct
->>>> cachefiles_cache *cache)
->>>>        xa_for_each(xa, index, req) {
->>>>            req->error = -EIO;
->>>>            complete(&req->done);
->>>> +        __xa_erase(xa, index);
->>>>        }
->>>>        xa_unlock(xa);
->>>>    
+> 
+>> +          algorithm will be used by the driver.
+> 
+> "where a special ECC configuration must be used because it is accessed
+> by the ROM code"? Maybe you can even detail what are these values if
+> they are fixed.
+> 
+> You should probably inform that scrambling shall be on as well.
+>  
+>> +
+>> +      amlogic,boot-page-step:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        description:
+>> +          Interval between pages, read/written by the driver with
+>> +          special ECC algorithm.
+> 
+> I'm not sure I fully get the description. What is the unit here? can
+> you draw a small ascii-art diagram?
+
+May be i can place here "please see diagram above" ? And in 'amlogic,boot-pages' there
+will be diagram.
 
 
+> 
+>> +
+>>      unevaluatedProperties: false
+>>  
+>>      dependencies:
+>>        nand-ecc-strength: [nand-ecc-step-size]
+>>        nand-ecc-step-size: [nand-ecc-strength]
+>> +      amlogic,boot-pages: [nand-is-boot-medium, "amlogic,boot-page-step"]
+>> +      amlogic,boot-page-step: [nand-is-boot-medium, "amlogic,boot-pages"]
+>>  
+>>  
+>>  required:
+> 
+> 
+> Thanks,
+> Miquèl
+
+Thanks, Arseniy
 
