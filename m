@@ -1,122 +1,151 @@
-Return-Path: <linux-kernel+bounces-171779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8054A8BE892
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:18:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29E08BE890
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B1DAB221E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E5E1F241D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E4716ABF7;
-	Tue,  7 May 2024 16:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF7B16ABFA;
+	Tue,  7 May 2024 16:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzyCpRuS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PcRhUQWN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D443F1635AD;
-	Tue,  7 May 2024 16:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C1C1649C8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715098674; cv=none; b=bi0qLqA4dE7XxUkV8Q/Wel6fQZEvz5M545SGi6VsSRrNYYiELW9h1OXYX3Bj7MEF9L/KtvqT8CR6DCbJTrRlXuDjTmrPGxVg+YySyd7/1HjSeCZmh3EV+s30+0fkrg7jWIrx3OfXtoWjqhy9lkoWGfhLykdb7QTUhXnmcsCxb1U=
+	t=1715098687; cv=none; b=h8FX/FMBEeHsHfGHM7tr6PiJ2e7HOtj+fqBmdKqMzOvYHHd+zwheBxNw9Bx0zINYtdg0jM55OSz9TcR9TFHy28SJtOcy4+3OWRMGAL7/Xiaulyxz+c80f/yTmM28RG+axVwPw0TsB3ZWIXD/Q1jz8SlRQSR9Ic4/T5O+mpOZxH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715098674; c=relaxed/simple;
-	bh=+EdSyGJvH/21wvtCtdWqpIduQUpmlkNHvWInRhO/rfM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HrsxHnhH3WXOx1vIgr5aHBSu5BVzj/iHIMce25SVUdO170pKQh/J1jvmQsGSv0i165t67JRRqqPqztUyAcVB4kadyUpL8h0PG3yPG3Zqe0i7cqj2H7ezCt9IZ9uhWTwxg0pcFXbrjUYWTr8mO9CWbLF7Lwb9GfYhK3zPMcd3yzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzyCpRuS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E230FC2BBFC;
-	Tue,  7 May 2024 16:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715098673;
-	bh=+EdSyGJvH/21wvtCtdWqpIduQUpmlkNHvWInRhO/rfM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DzyCpRuSW/aH3TOPxd84HNZGAObZKBcn5x5F//oO1euvpIRhnP0WaO52llBFnJNuz
-	 OPjNCF5G2gn/nSm7wIj9fNBD9PW+rpNwirCVy0FVfkARGLWZ2vbq8lMAIlRazgjwfB
-	 ckLJDeJEsrnjhjM4aFOaAHQ4MdmNgwGB8YuBZ+MZUZLO0lBIqDNkimAJm1HjI0iTTv
-	 Ay8d+b8Gpri7hKmkK3QYzsSG8P19Fwirec8qN8GXM+ZYfNBdhwEKPt+vO3MnzJLx8v
-	 bk1GFZuDDo8L64XcudNko1z4hZs0/m9UvUX8Rv2LWxTOuTGQ5cTAXAHpqfjLgSFnVW
-	 Dd10P6V/FK/yQ==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-next@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH mm-unstable] Docs/mm/damon/design: fix build warning
-Date: Tue,  7 May 2024 09:17:47 -0700
-Message-Id: <20240507161747.52430-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715098687; c=relaxed/simple;
+	bh=bmDYFgLs0Cmm7WmKjXSCVcMrHQMbufeoCPqNMYFR29c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A3Ru76dfWPAe9UN2Uwpa2ROqxjSWxMZPrIBnz0GMhELjbxyoeKIcUTtRqSnwJdVix8n4v4U+MtBhA+wfBT85DwF6fwHJSQbYODkRTey1NV6OxmJ1OWPWZ/+sHkdt6BaG1Ns59Og8ho1wef4Mndio9JHl7w9eqRGOExsTiViKYqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PcRhUQWN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715098684;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IJQKBDLXfhyqpp4QTxdihb4gZQvDUBNWPvIw0Yoz3nM=;
+	b=PcRhUQWNzbiau3hjOD7H4oCcBDBY4tUcDReIbdOkWyGGoEVU0f8Lmdu+nRC0Fuayj0/AMD
+	SbMUZbbxfQXlxgpU8h+maUcitvSCVzrAMeCvUiqNZh63tbQp22it7Fr8xTBUPYQBhzTZy8
+	+VZmVLQkTfMAzrrU2DiU3+1+yrN7mIA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-365-MUodNDrvNai0Yv1cffRgsw-1; Tue, 07 May 2024 12:18:02 -0400
+X-MC-Unique: MUodNDrvNai0Yv1cffRgsw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34db1830d7cso1534561f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:18:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715098681; x=1715703481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IJQKBDLXfhyqpp4QTxdihb4gZQvDUBNWPvIw0Yoz3nM=;
+        b=UUoeQNDpA3LHdi7YituXeCyBvgpMDe1YrIH6zh+C7fDHmBc4uba/nVshxZAAHCL+jK
+         dJeyKcWTDZhUuk1Htx6Q9xluAe4++4Bf+7S87cGaay37rrBjWp2pP6wkiQybxduOUFE7
+         sN6ZrLs8UHacMK5k3Yg7QF8h6BoM9TyMknygVC6BySUivZ8E7dicAW4l1qFlWyNFa1HF
+         HkRL6i+c298FGcY2EWTJfakz22WzM6y/ZT7VoNC3XOSfnwTN1xdJMHiuXJpyUhamkGCN
+         qSFJjWrAqTg0Bn4/5qyASg+Yd/FrvaJoVOWRgMd8YxQ0Wvx1NbGQSzK52SRXnREVHlJA
+         JhiQ==
+X-Gm-Message-State: AOJu0YyNUn5Ja1lDQcSJeNC/N3hw3tnMPclsgv4el2gahQFa/a2U91+W
+	kRGfYNXzt2ehv2qHkrBPiL4De6oOrSP5iYrd+gWVYC0EQS6siomXC2ROpxEps37BW1BXUbPMe9p
+	yAToCHUbP/+onoGwF+MtFCrmm3QXUh/XUTGHUnp8Fp17IyyichEM1S4Wj6Qk4ZqB5k0qfq0pRnx
+	RB3QASWq4sG/PHOyitrTg932hKoChhjGFhnG2c
+X-Received: by 2002:a5d:6205:0:b0:34c:e0d6:bea6 with SMTP id ffacd0b85a97d-34fcaa02522mr238392f8f.29.1715098681568;
+        Tue, 07 May 2024 09:18:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8XbzFM1yff/gSrevtfGkUyBLvE34lgU2RXofWjlWekolpZnAK33i5RBY8uSOBt5Tyolo+b18ASIZbf6Vtaoc=
+X-Received: by 2002:a5d:6205:0:b0:34c:e0d6:bea6 with SMTP id
+ ffacd0b85a97d-34fcaa02522mr238375f8f.29.1715098681160; Tue, 07 May 2024
+ 09:18:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240404185034.3184582-1-pbonzini@redhat.com> <20240404185034.3184582-7-pbonzini@redhat.com>
+ <ZiZBjtQvUuuqqKNF@yilunxu-OptiPlex-7050>
+In-Reply-To: <ZiZBjtQvUuuqqKNF@yilunxu-OptiPlex-7050>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 7 May 2024 18:17:49 +0200
+Message-ID: <CABgObfaULPdNbf8yZHEwesDx+KWvt1A+Eps4xY4DkgzhTq9AzA@mail.gmail.com>
+Subject: Re: [PATCH 06/11] KVM: guest_memfd: Add hook for initializing memory
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, seanjc@google.com, 
+	michael.roth@amd.com, isaku.yamahata@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit b7138c7d40b0 ("Docs/mm/damon/design: use a list for supported
-filters") of mm-unstable tree is causing below warning and error with
-'make htmldocs'.
+On Mon, Apr 22, 2024 at 12:58=E2=80=AFPM Xu Yilun <yilun.xu@linux.intel.com=
+> wrote:
+> > In some cases, it is necessary to defer the preparation of the pages to
+> > handle things like in-place encryption of initial guest memory payloads
+> > before marking these pages as 'private'/'guest-owned'.  Add an argument
+> > (always true for now) to kvm_gmem_get_folio() that allows for the
+> > preparation callback to be bypassed.  To detect possible issues in
+>
+> IIUC, we have 2 dedicated flows.
+> 1 kvm_gmem_get_pfn() or kvm_gmem_allocate()
+>   a. kvm_gmem_get_folio()
+>   b. gmem_prepare() for RMP
+>
+> 2 in-place encryption or whatever
+>   a. kvm_gmem_get_folio(FGP_CREAT_ONLY)
+>   b. in-place encryption
+>   c. gmem_prepare() for RMP
+>
+> Could we move gmem_prepare() out of kvm_gmem_get_folio(), then we could
+> have straightforward flow for each case, and don't have to have an
+> argument to pospone gmem_prepare().
 
-    Documentation/mm/damon/design.rst:482: ERROR: Unexpected indentation.
-    Documentation/mm/damon/design.rst:483: WARNING: Block quote ends without a blank line; unexpected unindent.
+There are 3 flows as you note above - kvm_gmem_get_pfn() and
+kvm_gmem_allocate() are different paths but they all need to call the
+prepare hook. It is a tempting idea to pull kvm_gmem_prepare_folio()
+to the two functions (get_pfn and allocate) but the resulting code is
+really ugly due to folio_unlock/folio_put.
 
-The problem caused by wrong indentation for nested list items.  Fix the
-wrong indentation.
+> > -static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t i=
+ndex)
+> > +#ifdef CONFIG_HAVE_KVM_GMEM_PREPARE
+> > +bool __weak kvm_arch_gmem_prepare_needed(struct kvm *kvm)
+> > +{
+> > +     return false;
+> > +}
+> > +#endif
+>
+> In which case HAVE_KVM_GMEM_PREPARE is selected but
+> gmem_prepare_needed() is never implemented?  Then all gmem_prepare stuff
+> are actually dead code.  Maybe we don't need this weak stub?
 
-Fixes: b7138c7d40b0 ("Docs/mm/damon/design: use a list for supported filters")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/20240507162623.4d94d455@canb.auug.org.au
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/mm/damon/design.rst | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+It's not needed indeed.
 
-diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-index 1873755358af..3df387249937 100644
---- a/Documentation/mm/damon/design.rst
-+++ b/Documentation/mm/damon/design.rst
-@@ -472,21 +472,21 @@ counted as the scheme has tried.  This difference affects the statistics.
- Below types of filters are currently supported.
- 
- - anonymous page
--  - Applied to pages that containing data that not stored in files.
--  - Handled by operations set layer.  Supported by only ``paddr`` set.
-+    - Applied to pages that containing data that not stored in files.
-+    - Handled by operations set layer.  Supported by only ``paddr`` set.
- - memory cgroup
--  - Applied to pages that belonging to a given cgroup.
--  - Handled by operations set layer.  Supported by only ``paddr`` set.
-+    - Applied to pages that belonging to a given cgroup.
-+    - Handled by operations set layer.  Supported by only ``paddr`` set.
- - young page
--  - Applied to pages that are accessed after the last access check from the
--    scheme.
--  - Handled by operations set layer.  Supported by only ``paddr`` set.
-+    - Applied to pages that are accessed after the last access check from the
-+      scheme.
-+    - Handled by operations set layer.  Supported by only ``paddr`` set.
- - address range
--  - Applied to pages that belonging to a given address range.
--  - Handled by the core logic.
-+    - Applied to pages that belonging to a given address range.
-+    - Handled by the core logic.
- - DAMON monitoring target
--  - Applied to pages that belonging to a given DAMON monitoring target.
--  - Handled by the core logic.
-+    - Applied to pages that belonging to a given DAMON monitoring target.
-+    - Handled by the core logic.
- 
- 
- Application Programming Interface
--- 
-2.39.2
+> > +     if (prepare) {
+> > +             int r =3D kvm_gmem_prepare_folio(inode, index, folio);
+> > +             if (r < 0) {
+> > +                     folio_unlock(folio);
+> > +                     folio_put(folio);
+> > +                     return ERR_PTR(r);
+> > +             }
+> > +     }
+> > +
+>
+> Do we still need to prepare the page if it is hwpoisoned? I see the
+> hwpoisoned check is outside, in kvm_gmem_get_pfn().
+
+Yep, it can be moved here.
+
+Paolo
 
 
