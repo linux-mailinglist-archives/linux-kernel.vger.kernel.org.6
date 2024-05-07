@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-170830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDDD8BDC9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A72B8BDCA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB78F281B53
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD7D285BA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A0413C66D;
-	Tue,  7 May 2024 07:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uigBo9Rd"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E72313C3E7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 07:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74F013C3FA;
+	Tue,  7 May 2024 07:45:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D935813BC39;
+	Tue,  7 May 2024 07:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715067892; cv=none; b=q3sGpNEZNxu1Dkc25HMYqJsBx2O/uC/a73grbS1LCesHXEi0iN+2gkEXn9l0k/jVmbxu3SwNb5KHV64r13KMDJfsekh/dslnC3vhoEHEdVhomjDTmYHrWBRvWQJFKgJBKRAu3UWYKfhhZquIutQy++WM0VxwtfTOdJ0iffC0kak=
+	t=1715067936; cv=none; b=LoaNLRVADUNX3Vo3PZKMPI5GFdqtiaiSCab8NnN0nfP4zpB9eScW8XDdLMxzbQEIhH5XAVvUnvUoaqL27T42arX01mLas0qHo6drQZMRpxyuqpgAxbExa1o5fCFm3JVflF/IRA2aSZwCOBxKrtO5xr4RuIgFeNSH9JHQaM1IUTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715067892; c=relaxed/simple;
-	bh=QZBqqw5CjPg1UIXq1sw3E1GLAGkrvPPvKo7F0LSWiIk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lHTc1wnRyPP16bA14qnPpKU7BwUtiAShazkgRma4HpOUM4jJdU79ja1mHNqpupgp3EnEj4fyV53Qn08xJcJBiTc5OCgbjZpD+x092jI6QXbIfhE3caecfJuKXl1JlE8NQiHp18jpNAd4t95/YyVgZtyyW2U5bIKNiGlMWC3ZG94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uigBo9Rd; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so6716001fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 00:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715067889; x=1715672689; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d1bi4jNn6UYAzYQiUUn5O+wqHqVm96iTmQL0Ia3V0gI=;
-        b=uigBo9RdN4BClZvRS5ko2kQLIFRMi0KMf7wiRDy5xMhZCqsx8oa870zU4AA5HBARZj
-         XXWzJuscX7AJ8F6R7usl/hCvCHq7AEoQ4idRzHWxYydxROyAvIm7syIX8L9+UEdYbVXU
-         l9AIkQabM+LeC0XbO0B+QtL5TFB1BlG8jknMh97M/6zC8/06Y/NdK3mjSM6TI/cTe1TY
-         u7VQsbtfPzOGYRGueivJDVWLVl7JFKD/91pBtsWm4FIClGHlZsKdsGJVWSEBzPc+pksl
-         ODkN2xEK7hffy9UdYZwDuqF8IRr4ANsGUT59/1605Mg8LQN9dAiSFK83W8AKQEzfQrxL
-         5f6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715067889; x=1715672689;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d1bi4jNn6UYAzYQiUUn5O+wqHqVm96iTmQL0Ia3V0gI=;
-        b=pbHl8GfLUw+eqKoYhExg6XGcWjR4gHjfhm6KFcx+XeE47VjmJ4HIRweuuYuz9qe6jV
-         BPbiZsDNl3QbB6b3VvmaXuLUpo5xj9XykLzY9C2X6CPvVIiPDymAy046tGjX4i1/v92O
-         x/jiqZ+UkH3+M/8sYpeQCWD9WmggOT8u9bstqqJG2hz3qg9IWt4/CtQ2C3KyL45TqmqY
-         Aj1gMh15V6RZuegbB5AVY8tJ3HTo98Wh41Ri1GI75qCo5xk56M5LbwCpR/kAdC93YS/6
-         a3wWB7WLr9o0MSBNnhrCVWGFw9mduOdt1rY3odGtk07umEfRKFIXo2ud5h0HG9uImQK0
-         ez+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVDVaibf4ckWHgot648s9LvKWq2wA3rV3fKcU5XpjlheSk6xjfWyZme3Qv1NLStnUWpoXvhmLnMaotAmAmx2LLLX7w/k5cFM1/ECwfb
-X-Gm-Message-State: AOJu0YyIIJfJRukYGnnpbkBUbvLU+zCPidncAcx755m+SKdwFhNok1Io
-	lQBG5AopIIV96w/j5rsDNzEG7q6ZklbWCnKPcDpAHvM/kYMfFj/aZ3KDL8kBcNY=
-X-Google-Smtp-Source: AGHT+IEqBq6InnqV5B1ebMw5bjIhWdea7zdgrrhAfTHQbMFBGkMMYvDCj4F0RXyjXFCvoK6BKa7DbA==
-X-Received: by 2002:a2e:b0d5:0:b0:2de:73b5:4280 with SMTP id g21-20020a2eb0d5000000b002de73b54280mr8434578ljl.3.1715067888674;
-        Tue, 07 May 2024 00:44:48 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:581a:1d:3b79:3b03])
-        by smtp.gmail.com with ESMTPSA id g20-20020a05600c311400b0041bf685921dsm18660565wmo.0.2024.05.07.00.44.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 00:44:48 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: JJLIU0@nuvoton.com,
-	KWLIU@nuvoton.com,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	dan.carpenter@linaro.org,
-	elfring@users.sourceforge.net,
-	Jim Liu <jim.t90615@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v4] gpio: nuvoton: Fix sgpio irq handle error
-Date: Tue,  7 May 2024 09:44:47 +0200
-Message-Id: <171506788090.6452.15729262435287015920.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240506064244.1645922-1-JJLIU0@nuvoton.com>
-References: <20240506064244.1645922-1-JJLIU0@nuvoton.com>
+	s=arc-20240116; t=1715067936; c=relaxed/simple;
+	bh=lVju8t74Z+z4Q0tbilEYLbe3G8jbkqVvp9HTVSKSQ40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WHwV/v9XqI08S/8NW4rKFZrTNpTBMnqUhJKcXNNxlQ2zAqQDhT8JOvBOdlR7db14TQV9Atw7YNk6awA7WzyoeqqLjGTg8DVKUY4QR0ptioqNjMSWgoNIimRuJlcU8kK+3N1XNzdx9fH4iJOtx18XteDOQhdXVh1mmLpVSA/50HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BADB106F;
+	Tue,  7 May 2024 00:46:00 -0700 (PDT)
+Received: from [10.57.67.145] (unknown [10.57.67.145])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96B843F762;
+	Tue,  7 May 2024 00:45:32 -0700 (PDT)
+Message-ID: <8fdefaa9-675e-4b37-9456-896b9989d18f@arm.com>
+Date: Tue, 7 May 2024 08:45:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests/openat2: fix clang build failures:
+ -static-libasan, LOCAL_HDRS
+Content-Language: en-GB
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Alexey Gladkov <legion@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
+ linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ llvm@lists.linux.dev
+References: <20240504044336.14411-1-jhubbard@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240504044336.14411-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Mon, 06 May 2024 14:42:44 +0800, Jim Liu wrote:
-> The generic_handle_domain_irq() function calls irq_resolve_mapping().
-> Thus delete a duplicative irq_find_mapping() call
-> so that a stack trace and an RCU stall will be avoided.
+On 04/05/2024 05:43, John Hubbard wrote:
+> When building with clang via:
 > 
+>     make LLVM=1 -C tools/testing/selftests
 > 
+> two distinct failures occur:
+> 
+> 1) gcc requires -static-libasan in order to ensure that Address
+> Sanitizer's library is the first one loaded. However, this leads to
+> build failures on clang, when building via:
+> 
+>        make LLVM=1 -C tools/testing/selftests
+> 
+> However, clang already does the right thing by default: it statically
+> links the Address Sanitizer if -fsanitize is specified. Therefore, fix
+> this by simply omitting -static-libasan for clang builds. And leave
+> behind a comment, because the whole reason for static linking might not
+> be obvious.
+> 
+> 2) clang won't accept invocations of this form, but gcc will:
+> 
+>     $(CC) file1.c header2.h
+> 
+> Fix this by using selftests/lib.mk facilities for tracking local header
+> file dependencies: add them to LOCAL_HDRS, leaving only the .c files to
+> be passed to the compiler.
+> 
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Applied, thanks!
+Hi John,
 
-[1/1] gpio: nuvoton: Fix sgpio irq handle error
-      commit: 7f45fe2ea3b8c85787976293126a4a7133b107de
+I sent out a similar fix a couple of weeks ago, see [1]. I don't think it got
+picked up though. It takes a slightly different approach, explicitly adding
+-static-libsan (note no 'a') for clang, instead of relying on its default.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+And it just drops helpers.h from the makefile altogether, on the assumption that
+it was a mistake; its just a header and shouldn't be compiled directly. I'm not
+exactly sure what the benefit of adding it to LOCAL_HDRS is?
+
+[1]
+https://lore.kernel.org/linux-kselftest/20240417160740.2019530-1-ryan.roberts@arm.com/
+
+Thanks,
+Ryan
+
+
+> ---
+>  tools/testing/selftests/openat2/Makefile | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
+> index 254d676a2689..185dc76ebb5f 100644
+> --- a/tools/testing/selftests/openat2/Makefile
+> +++ b/tools/testing/selftests/openat2/Makefile
+> @@ -1,8 +1,18 @@
+>  # SPDX-License-Identifier: GPL-2.0-or-later
+>  
+> -CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined -static-libasan
+> +CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
+>  TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
+>  
+> +# gcc requires -static-libasan in order to ensure that Address Sanitizer's
+> +# library is the first one loaded. However, clang already statically links the
+> +# Address Sanitizer if -fsanitize is specified. Therefore, simply omit
+> +# -static-libasan for clang builds.
+> +ifeq ($(LLVM),)
+> +    CFLAGS += -static-libasan
+> +endif
+> +
+> +LOCAL_HDRS += helpers.h
+> +
+>  include ../lib.mk
+>  
+> -$(TEST_GEN_PROGS): helpers.c helpers.h
+> +$(TEST_GEN_PROGS): helpers.c
+> 
+> base-commit: ddb4c3f25b7b95df3d6932db0b379d768a6ebdf7
+> prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
+
 
