@@ -1,147 +1,149 @@
-Return-Path: <linux-kernel+bounces-170853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E758BDCF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:08:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE8A8BDCE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D83E2846B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55C741F24FF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DF813C8FB;
-	Tue,  7 May 2024 08:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF0113C83E;
+	Tue,  7 May 2024 08:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dxMNaAMh"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SpFGaQjH"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D3113C667;
-	Tue,  7 May 2024 08:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88896FE07;
+	Tue,  7 May 2024 08:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715069314; cv=none; b=PVydSUl5oZY1tDdh3iMKK4omPy1ApwfUED7n+0+jX8Z4/bCIz1N+eGjPVhcyH2Xr6+BdAficLIQVtr9EpaLTVyTr5m8A36PslsLJpOIvl0nrq1Yos+C8hcFo2r0+8E6B57QRbLFIwiVMqufeBGAODvKRsT7i1eamnCC20HfOjdo=
+	t=1715069166; cv=none; b=BwHtDgbJEvYwEYmA73BB9rf6CyHG47Zs5EsN2KiFqfLVvFacDmEXqCNeHkfxTDrYtDQ6b5zuLYI05REDiSjXlrG7C7K/iivzvlsMfZaHFf8a2t5oiUcP+64uxCF5sR8n9gqq9xTa7lI6KpWGbJ96Dw/npYmLt0Kxg8DCPCFXfQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715069314; c=relaxed/simple;
-	bh=EWayG2dooI4l80D4YPv+uZuesHLcm/Cr3UnEsBDEcYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMNVv5mInEUMbuXvNSG18BOZpdeI46QCN2ytbibjZlH3WAs9xyFdQ2sVN/IhdiAdovv4lSao9+Xvkq34hS9N0s7k3wFd3F3yzxWCeELYwVjI9rxSfTFnoQsYnVsheqzSkXJ3SFOg35u4xuy7otRplopH9w7vGaukzmXvj5y0Bt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dxMNaAMh; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mwrUGiZ0asXgwHyY2TVTmTc3sgOxDoElawtH7VwSdAg=; b=dxMNaAMhkKp+u5Tf42Mj3ImcKi
-	OAVk7QxxSNtkMfxBYyMJw7PQ7YrnAd0UXs844ZTpEeKdHGhUL4pKtZTLDqa8xm9G8WVDh+ZQFxdzw
-	oWhpAK5vz++tK0pjvjxAlrGmiKFI0FXTJcsu/B+W3e7ZzdMOnhfmj8FyvcGJHd4eAeHV5KCsRsD+s
-	Peh+iAagKMZzuw0A3kAvI3S9PIJQCF3v9bs3hCVlDMOhwCgQ9Mll1FaO6YK4RcxWf9BU9M7uUrInT
-	nUJhoEdX8TMFD5ZcrmxkG0DLSUovFBpx8iDSNrBNno5t3kU7FWCfS4dGoM2F54w9uDeZJkLAxS4nh
-	CUb9GCow==;
-Received: from [24.132.130.84] (helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4Fmq-0000000218z-1JFp;
-	Tue, 07 May 2024 08:05:02 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6F9D8300276; Tue,  7 May 2024 10:02:30 +0200 (CEST)
-Date: Tue, 7 May 2024 10:02:30 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched: Consolidate cpufreq updates
-Message-ID: <20240507080230.GP40213@noisy.programming.kicks-ass.net>
-References: <20240505233103.168766-1-qyousef@layalina.io>
- <20240506100509.GL40213@noisy.programming.kicks-ass.net>
- <20240507005659.d4rzzaoq3isanndf@airbuntu>
+	s=arc-20240116; t=1715069166; c=relaxed/simple;
+	bh=7BzDO5vHL5DN5HBAl+odWGDXNjBgB+USvYPToRZISgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HpBNnApkcRO1FqwXb3I+2dsrxpPmwDh8hcceccdKtZjPhiiw+sIgZiPs093XWsBWoZltd2w9bMBGh/HkWAUm11XcnNGd3PdbDboMuUjK4eaiZ9cEtKGiEAqFGuqfEaXDok+iw3wIkt5ay0oadflZdNbva3TVgqKspp+Tw6DI6BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SpFGaQjH; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E695BE0009;
+	Tue,  7 May 2024 08:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715069155;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9TepcGEoiKxLCbwlao4rlGSeQ9tpcI5kPyU38Gz2cI=;
+	b=SpFGaQjHqBa1/EmaMM0V0Yv5VoQyM6W/gWWjS2btE9ZQTQxVehDqriIXAkPgnynxrxhRD+
+	pV6OL/wqyJEdkYBN1GZVcgceosY9HP7sxbRWHej1+twLn+HQEuDNnEBBQVz5QPaFlUlyjT
+	y1mude0egUS4aG38ywFou0RQgSq2Vh716RUZhuHieuAz5TwR0nTlU6VRCYjTqIOyPGZeoR
+	aQxchupuRF8QxCgpd/JuICPP/BueU5pQ/QBMXstmsq7zugfzwcxKl+8RB1TtsI5J+DG/LP
+	9l/Ar29/NkMYolWtO7s9fa7Aa8QrCxBz+vJb8LUMW+ORYVt7HkTTSza3ZJHJeQ==
+Date: Tue, 7 May 2024 10:05:53 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+ <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <oxffffaa@gmail.com>, <kernel@sberdevices.ru>
+Subject: Re: [PATCH v5 1/2] dt-bindings: mtd: amlogic,meson-nand: support
+ fields for boot ROM code
+Message-ID: <20240507100553.31578d0d@xps-13>
+In-Reply-To: <e3ea7238-c80d-dfe9-28bf-df95708872d6@salutedevices.com>
+References: <20240416085101.740458-1-avkrasnov@salutedevices.com>
+	<20240416085101.740458-2-avkrasnov@salutedevices.com>
+	<20240506154858.003bab54@xps-13>
+	<d90f9d3d-7823-503f-4cc6-73783a083d0e@salutedevices.com>
+	<20240507092726.4ab1afdb@xps-13>
+	<e3ea7238-c80d-dfe9-28bf-df95708872d6@salutedevices.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507005659.d4rzzaoq3isanndf@airbuntu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, May 07, 2024 at 01:56:59AM +0100, Qais Yousef wrote:
+Hi Arseniy,
 
-> Yes. How about this? Since stopper class appears as RT, we should still check
-> for this class specifically.
+avkrasnov@salutedevices.com wrote on Tue, 7 May 2024 10:35:51 +0300:
 
-Much nicer!
+> On 07.05.2024 10:27, Miquel Raynal wrote:
+> > Hi Arseniy,
+> >=20
+> > avkrasnov@salutedevices.com wrote on Tue, 7 May 2024 09:53:06 +0300:
+> >  =20
+> >> On 06.05.2024 16:48, Miquel Raynal wrote: =20
+> >>> Hi Arseniy,
+> >>>
+> >>> avkrasnov@salutedevices.com wrote on Tue, 16 Apr 2024 11:51:00 +0300:
+> >>>    =20
+> >>>> Boot ROM code on Meson requires that some pages on NAND must be writ=
+ten
+> >>>> in special mode: "short" ECC mode where each block is 384 bytes and
+> >>>> scrambling mode is on.   =20
+> >>>
+> >>> Ok
+> >>>    =20
+> >>>> Such pages located with the specified interval within specified offs=
+et.   =20
+> >>>
+> >>> I'm sorry I don't get that sentence.   =20
+> >>
+> >> Sorry, I mean this (let me draw :) ) :
+> >>
+> >> [ page 0 ][ page 1 ][ page 2 ][ page 3 ][ page 4 ][ page 5 ][ page 6 ]=
+[ page 7 ][ page 8 ][ page 9 ]
+> >>
+> >> For example, we have 10 pages starting from the beginning of the chip =
+- this is "within specified offset",
+> >> e.g. offset is 10. BootROM on axg needs that (for example) every third=
+ page must be written in "special"
+> >> mode: scrambling is on and ECC is 384 bytes. Such pages are 0, 2, 4, 6=
+, 8. E.g. "specified interval" will
+> >> be 3. =20
+> >=20
+> > Shall be 2, no? =20
+>=20
+> yes, starting from 0 - then 2. e.g.
+> if (!(page_num % 2))
+>     boot ROM need this page
+>=20
+> >  =20
+> >>
+> >> So:
+> >>
+> >> amlogic,boot-pages: 10
+> >> amlogic,boot-page-step: 3 =20
+> >=20
+> > Ok I get it. Thanks for the explanation. I don't really understand the
+> > logic behind it though. Do you know why the bootROM would access only
+> > one page over 2 or 3? Is there a default value? Is this configurable? =
+=20
+>=20
+> No, boot rom source is closed, I don't have access to it. I get this logic
+> from old version of vendor's uboot - in practice they use non 2 or 3, they
+> use hardcoded 128 step value. And amlogic,boot-pages is 1024
 
-> static inline void update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> {
-> #ifdef CONFIG_CPU_FREQ
-> 	if (likely(fair_policy(current->policy))) {
-> 
-> 		if (unlikely(current->in_iowait)) {
-> 			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
-> 			return;
-> 		}
-> 
-> #ifdef CONFIG_SMP
-> 		/*
-> 		 * Allow cpufreq updates once for every update_load_avg() decay.
-> 		 */
-> 		if (unlikely(rq->cfs.decayed)) {
-> 			rq->cfs.decayed = false;
-> 			cpufreq_update_util(rq, 0);
-> 			return;
-> 		}
-> #endif
-> 		return;
-> 	}
-> 
-> 	/*
-> 	 * RT and DL should always send a freq update. But we can do some
-> 	 * simple checks to avoid it when we know it's not necessary.
-> 	 */
-> 	if (task_is_realtime(current)) {
-> 		if (dl_task(current) && current->dl.flags & SCHED_FLAG_SUGOV) {
-> 			/* Ignore sugov kthreads, they're responding to our requests */
-> 			return;
-> 		}
-> 
-> 		if (rt_task(current) && rt_task(prev)) {
+Feels like they are trying to use only the first page of each block, no?
 
-doesn't task_is_realtime() impy rt_task() ?
+That's very weird but I understand better.
 
-Also, this clause still includes DL tasks, is that okay?
-
-> #ifdef CONFIG_UCLAMP_TASK
-> 			unsigned long curr_uclamp_min = uclamp_eff_value(current, UCLAMP_MIN);
-> 			unsigned long prev_uclamp_min = uclamp_eff_value(prev, UCLAMP_MIN);
-> 
-> 			if (curr_uclamp_min == prev_uclamp_min)
-> #endif
-> 				return;
-> 		}
-> 
-> #ifdef CONFIG_SMP
-> 		if (unlikely(current->sched_class == &stop_sched_class))
-> 			return;
-> #endif
-> 
-> 		cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
-> 		return;
-> 	}
-> 
-> 	/* Everything else shouldn't trigger a cpufreq update */
-> 	return;
-> #endif
-> }
+Thanks,
+Miqu=C3=A8l
 
