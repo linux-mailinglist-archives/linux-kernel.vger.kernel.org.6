@@ -1,164 +1,102 @@
-Return-Path: <linux-kernel+bounces-171044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FB58BDF16
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:56:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA6C8BDF17
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8248C1F223DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E201F223AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC4114F123;
-	Tue,  7 May 2024 09:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C8E14E2EA;
+	Tue,  7 May 2024 09:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t0R82+7f"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F91314EC65;
-	Tue,  7 May 2024 09:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="T/RwNUCg"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391BC14E2E4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715075764; cv=none; b=Sn8qN1pDSol+uk/6NBzne9QFqO8y5K8D6T9Q0+vMBjmjMDsLPcQ3V3y/eZ+M5asFtQ+f38T1TLoQd5GpLmVST2XIcWyuicvWuebZXHYskVfiv+hDuvSnaEUZClpGGE0ccWFn7DxCnwZPSZO9hH3NbTNsZyjxNNQzOwMM4Nc+nnk=
+	t=1715075774; cv=none; b=pL7VWGPZTP5RnufX2J0Xt7Q9oRHZM/v+yMeyXdrSWtNs4SXvzG65hd5Tw5CETg6Z/YVi7AT9AjfqPZgA/PKqH6j3JVvz+NYBcNpLve6//N8mF+gTczvSR4LoAzdkPiGez/GIVeqk9Me7ulOFI1W0LHPKH9iD4qbAt56GzRhKb0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715075764; c=relaxed/simple;
-	bh=pzBYIDYPxxaFkxuKahT7iMaeKL1h19wPwuGYCEHqVeU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=siVWbep8GypXLIKJEJ3vzXntNuneKGIJfBhPsL3oPyUAxN/BvFPAL1HOMq9iOw5pt+uctJlMu1pWvWIY0s9UVrYYiQeAmFlJGOA2UasjD+2jdp0Mmy5x8jdYhsgDEVwlw9KZQ8rhgfxZC+FaSMb2K/jBWvFw7yj5VEmW+SS0GH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=t0R82+7f; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4479tvtT107422;
-	Tue, 7 May 2024 04:55:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715075757;
-	bh=N17m9LzgCTati8EKmN4u+FCakx9xKHwIfJ2kC2zewIU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=t0R82+7fN0mf2mPZwWJWs/+OYC3s2mPXtf6ieThhSqhOimMVbw7/cmodUxjqqMeR2
-	 qZXcKoUg44l73LfnLP4qhrrUhDiC0dvPgPOVcr2hXiqdiSeU0z6Q9/Z9hRAkKeC+lX
-	 A9oIYJsGMf9Cr+f/1BPdKy6F7WEK9U9u0pRu3Egk=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4479tvcX034259
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 7 May 2024 04:55:57 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 7
- May 2024 04:55:56 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 7 May 2024 04:55:57 -0500
-Received: from uda0500640.dal.design.ti.com (uda0500640.dhcp.ti.com [172.24.227.88])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4479tjn9007273;
-	Tue, 7 May 2024 04:55:53 -0500
-From: Ravi Gunasekaran <r-gunasekaran@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
-        <r-gunasekaran@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 2/2] arm64: dts: ti: k3-j784s4-evm: Enable USB3 support
-Date: Tue, 7 May 2024 15:25:45 +0530
-Message-ID: <20240507095545.8210-3-r-gunasekaran@ti.com>
+	s=arc-20240116; t=1715075774; c=relaxed/simple;
+	bh=sRR+OoNe+CJbOABxoZNaQT2CCvoMwl0YHxGhGd8xLdY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FWhvd2Vg8YraG2h5UgQIFm2YYO8PVKVevuYjGr+48mL6uUM2zoG0J68WCQLrVE04XqPWQ54+xXSMANivOZm3PiQcIXrL49FGE5NajgM7vMAkeH1AyosWtbtLGZS1VM3i8fUQ9Nlmw0AKGR8gcuILGyHB3T+v5zci0GvTqfdgJaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=T/RwNUCg; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=WY9vcFIYHyY28AUyfY/N7+e9B4gmGc0udXw0k/OYO9k=;
+	b=T/RwNUCgCtPlL1Tz+IvhZmQnEuemqpXbQ52v4qVdmjEjZPB6whTLF4edXwPchf
+	QjYG86/bXC6gDZunq6XPzTi6bMiyBgtqt5TJYHX5jM83G13zk7eQDmdQ39UTm/yL
+	pWr7VS4rPA4p5u1iRYHp9iwQVbxfjJgBqvCzbikLTF2Jg=
+Received: from localhost.localdomain (unknown [111.48.58.10])
+	by gzga-smtp-mta-g2-0 (Coremail) with SMTP id _____wDnVy+x+jlmjspcBQ--.42362S2;
+	Tue, 07 May 2024 17:56:02 +0800 (CST)
+From: huanglei <huanglei814@163.com>
+To: sudipm.mukherjee@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	huanglei <huanglei@kylinos.cn>
+Subject: [PATCH] parport: Increase buffer max length to avoid memory out of bounds overflow
+Date: Tue,  7 May 2024 17:55:58 +0800
+Message-Id: <20240507095558.20828-1-huanglei814@163.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240507095545.8210-1-r-gunasekaran@ti.com>
-References: <20240507095545.8210-1-r-gunasekaran@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnVy+x+jlmjspcBQ--.42362S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ary7CFWfZw4kGr4UKr45Jrb_yoW8Gr4Upa
+	98Krs0krZ8t3yUGw4kZwsI93yrXa97X3W8WF17G34akr4jqFn7ZFn0kF9FkF9Ygrs7uaya
+	grs3Kr1UCr4jkF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UgYFZUUUUU=
+X-CM-SenderInfo: xkxd0wxohlmiqu6rljoofrz/1tbiUBXX9mXAklvZpgAAs3
 
-From: Matt Ranostay <mranostay@ti.com>
+From: huanglei <huanglei@kylinos.cn>
 
-The board uses SERDES0 Lane 3 for USB3 IP. So update the
-SerDes lane info for USB. Add the pin mux data and
-enable USB3 support.
+Most of the time，will use 64 bit address.
+such as port->base=0xffffffc010e21280 and then use
+len += sprintf (buffer, "%lu\t%lu\n", port->base, port->base_hi),
+port->base convert to string is "18446743799114896000" add
+port->base_hi is "0" and "\t" "\n" len will be 23.
+But buffer the original max length is 20, length 23 is out of buffer.
+So to make sure 64 bit address will not experience buffer overflow,
+need increase buffer size to 32.
 
-Signed-off-by: Matt Ranostay <mranostay@ti.com>
-Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+Signed-off-by: huanglei <huanglei@kylinos.cn>
 ---
-Changes since v2:
------------------
-* No change
+ drivers/parport/procfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes since v1:
-----------------
-* Fixed dtbs_check warning by renaming 'main-usbss0-pins-default'
-  to 'main-usbss0-default-pins'
-
-v2: https://lore.kernel.org/all/20240506052044.8228-3-r-gunasekaran@ti.com/
-v1: https://lore.kernel.org/all/20240502053615.29514-3-r-gunasekaran@ti.com/
-
- arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 41 ++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-index d511b25d62e3..a2d3cba0423e 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-@@ -336,6 +336,13 @@
- 			J784S4_IOPAD(0x010, PIN_INPUT_PULLUP, 8) /* (AH33) MCAN13_RX.I2C4_SDA */
- 		>;
- 	};
-+
-+	main_usbss0_pins_default: main-usbss0-default-pins {
-+		bootph-all;
-+		pinctrl-single,pins = <
-+			J784S4_IOPAD(0x0ec, PIN_OUTPUT, 6) /* (AN37) TIMER_IO1.USB0_DRVVBUS */
-+		>;
-+	};
- };
+diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
+index bd388560ed59..6722ae620b68 100644
+--- a/drivers/parport/procfs.c
++++ b/drivers/parport/procfs.c
+@@ -117,7 +117,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
+ 				 void *result, size_t *lenp, loff_t *ppos)
+ {
+ 	struct parport *port = (struct parport *)table->extra1;
+-	char buffer[20];
++	char buffer[32];
+ 	int len = 0;
  
- &wkup_pmx2 {
-@@ -1041,6 +1048,40 @@
- 				 <&k3_clks 218 22>;
- };
+ 	if (*ppos) {
+@@ -171,7 +171,7 @@ static int do_hardware_dma(struct ctl_table *table, int write,
+ 			   void *result, size_t *lenp, loff_t *ppos)
+ {
+ 	struct parport *port = (struct parport *)table->extra1;
+-	char buffer[20];
++	char buffer[32];
+ 	int len = 0;
  
-+&serdes0 {
-+	status = "okay";
-+
-+	serdes0_usb_link: phy@3 {
-+		reg = <3>;
-+		cdns,num-lanes = <1>;
-+		#phy-cells = <0>;
-+		cdns,phy-type = <PHY_TYPE_USB3>;
-+		resets = <&serdes_wiz0 4>;
-+	};
-+};
-+
-+&serdes_wiz0 {
-+	status = "okay";
-+};
-+
-+&usb_serdes_mux {
-+	idle-states = <0>; /* USB0 to SERDES lane 3 */
-+};
-+
-+&usbss0 {
-+	status = "okay";
-+	pinctrl-0 = <&main_usbss0_pins_default>;
-+	pinctrl-names = "default";
-+	ti,vbus-divider;
-+};
-+
-+&usb0 {
-+	dr_mode = "otg";
-+	maximum-speed = "super-speed";
-+	phys = <&serdes0_usb_link>;
-+	phy-names = "cdns3,usb3-phy";
-+};
-+
- &serdes_wiz4 {
- 	status = "okay";
- };
+ 	if (*ppos) {
 -- 
 2.17.1
 
