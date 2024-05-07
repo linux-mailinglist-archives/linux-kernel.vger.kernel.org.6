@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-172304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810EE8BF0B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:09:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548B98BF0B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD6C282E77
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:09:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE277B24B3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA68136669;
-	Tue,  7 May 2024 23:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E618686243;
+	Tue,  7 May 2024 23:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AOmSgRzX"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="muTyqvL6"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30D4135A7D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16E885950
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715122815; cv=none; b=g+rWAqNwE5q69Av0Z4ZRIQvKLSSrz3BQiZervKGVzpbojwtL4Qbo1MyVeLWpKQdqAjYLbtTUSSwgJLi/uSkkD4gwYboLGvlJWBLaCt982QDAR9MeTWAknafvpVBNQMmtg1dy9NphJT2XXP//bqY24aGK5To77J+QEaocbDXKSyc=
+	t=1715122825; cv=none; b=nP3IKUtSZ+IaL9toLxrHeidI17mRFJe9Qa49nUMGXkMbZ3bbrrJ62M2tren+wSftLJ3qcW5IqDf7W5mc4/AcLz1p7TdJfBd9Z13XScDL5/AkbXkgNZVSorhrFeP4znBx+YG53zKuKdm+c2FNlBqQNoApSQEW3nNwwFKPBPK2qrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715122815; c=relaxed/simple;
-	bh=/GU79Kgff0skDDvMaY4WHPvnPx8SIQ17Sgl7wKmolF0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=G6qoJxkHbqQFsjtMApSIS8fsr/sim4SqddEbivjTvPZN2y7xEQbkVVmCsaIK6JuPa5CCDazdz9+w+xYQbs2Omcwz04zMqXLzkW20Y0czy9/DNnBsml1GOKXJyGuneI+gMaz6iD7jWLHAXCVAiCWG45DQeMfSHrTPcYhTyp7inXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AOmSgRzX; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1715122825; c=relaxed/simple;
+	bh=s/dVkIkUpEFDuGji+Sn4Br+tvktQk5DrZvLWBha5wH0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WxgJmHtvPnKIGWpJiPrc2X6DA+qkdowmgFerZhJU2RyjaW2JXhXBGk1DUlq36Nz2iHM/mMjR2Hr/Fpo5PcNU3u4NAWQ6Y2NSxFfJJ1XfM2DUv1KWq2s39+OXD8xXedniVvsYTYn4Vf8wbWcn/960Q5Uk3Iq7umzF4/7NXhCzw7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=muTyqvL6; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6b269686aso6237292276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 16:00:13 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de615257412so7389358276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 16:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715122813; x=1715727613; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Sf3hv/X+FVx/KMJP0srRJep+yhny1t3ptyDpy1jPj74=;
-        b=AOmSgRzXXwfLLqiNCZkJp6O0EUuuF0oKiRgNjk0Ewotd46jSpvc7izMXfu9/hBBU0N
-         QWeCLgXqG80yikXuSRSfruaHy+59IgezRqhpoiVN8NzosIWPhQ2+DY9/wCaVjNM+ygoc
-         Nqd+gCtV5mfRrKzHh/blHRFQdmXMexlBmUfVZfjU2hpQIP22wFxdm2Xq/eT/KIxxyQVC
-         kbfhmVTYzeBCEqqLNZf/dck/hXE60ps0YY2n2cNTDxuc5nKAnk0jYEpMc3j6dy4AkTJ3
-         ZgbAWovBCdGOsL/AoVDn4wdmXplE4uRP9EvgS1gdMnqIIxo7mp0eL9dTe/v9S7qtbiQi
-         moqA==
+        d=google.com; s=20230601; t=1715122823; x=1715727623; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0RjaB4t+jqoB/u9GU06wWmu2KYLJOP55f0UnNOqajSk=;
+        b=muTyqvL6RLEpAHD4vpHiQxrYLa3LXGTrHJl0wpumFspI36Mbuqo6awNPevPlKqXmkd
+         cjz/LvyIKMBsyNRq1TevwuNJ9rMJCVV9hdQXH2RzQEJN5aSGnX15DkKlqGbd8n237+Ns
+         xqC0wigxGJJ7Q2u5tVM51h7HeCcJsjCLeuNlPDQN1YNweYPxiwArNbNjculIO+3a4xaJ
+         2U6cY8SzsVQTBZkIiSVYr1liDRXakuM2/oJhO8L5jwJGrpNXyCyfNmPnIBO7kkX7GVe5
+         NFKxu8s1Gn/NNqYOkyvTaWOAzms1H+B9GNveqRYl+YPTOYF4cdY6gZMP5P+lGLpK+1sg
+         MOBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715122813; x=1715727613;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sf3hv/X+FVx/KMJP0srRJep+yhny1t3ptyDpy1jPj74=;
-        b=ZZTZzSK1hPVJ1pSuSm+uL6LvCpLJ9LfZLc6ycEbC3K3gFUjNgCSH+xgKtWcNd6SCNu
-         FWqp8QHRlIq6cMSSGI085MZvANCGXh/EpnihVkYT46V7LdSmjrOd75UPJhjpfH6BC8i7
-         PGQk8jJtT5bU8GhCLFWvnKLTseDp69JrNHsudW5hz5thKWQ/44DpP6Swgh+k9+eP9QOK
-         +DjliCD/7+cjdYifTKSa4YS42Dx89zbZrRzwdTjgUOUQErDydbQmYRjCLYVpFG3pq01z
-         Kgz1zBqoOa97uBTePUrRHDgwyko7TchdEXFI9/LRehJ8ec1gsvxijmioqgIny3L6ybWF
-         Yk9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhXI0e+XXkVAEgFESa87AECKWaenAMJH8DCJrmUE33VTNJdyFK+/Z3K9YpstpNVgahXR/I+MakSJllEP8LoFQgAXH7LxedVELG/b0d
-X-Gm-Message-State: AOJu0Yxv/Up/16cKMS9BSmaKdltqQMVlRV/j3y8goElr9G4C7ATlbX1z
-	/kDrKswQTr2YS5N8G2S19xgNekrr60SuimHHbQTcRUOM2WGi55c1ggzUlAACFdKKPOZbf65lpzD
-	qyhq42TS1++oTiQ==
-X-Google-Smtp-Source: AGHT+IE9hOPN2lt7RSFJKIcZOyuNLU/r5OYWzliZ9pt3xeeJDz4hCT8iZ4E+txRGrb5DPst/gTSHqMgp3YtnFDE=
+        d=1e100.net; s=20230601; t=1715122823; x=1715727623;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0RjaB4t+jqoB/u9GU06wWmu2KYLJOP55f0UnNOqajSk=;
+        b=XKVE2+6DiPOWv2gEQzPimDi4jRNQi6ntPMkFysQWUCrUCdYeVAEFP4GYYizgK7LfKT
+         a2v78H9o1q59VlXiSEMHjHKW2Ue6zEbqbD9couSNk1YLL60Y+isiCeys2P/dWx/LNteQ
+         d7GW+l7mCW9lwNRAA5ziVtPQQeu3qcOtlci+ZLTI1Vygg/bCj6OFoSsYU6wRTePqohhS
+         Lmd9X9UmT2Q1CdXRco9ewnGQkFo7Lq2KnoatAsYHSWyMttLorfqeIR6AkfTeXgVnqUqq
+         Q4oVmh4t7tZuJkpP1NA1yMHblNXz1aMuvJ5VWeqV5WWTU1ZP6inDgBvfiLbDS6/2Oq/Y
+         DkOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY2A3q9on+p8qZOtk1E0E904V4Ni0eSXdN8QeqH3IvRgWYqVDxcBBJey7muF8Qv8uA4uNKTn2bGgoZIJbHzMHxyVW0/DMcS7tEB0CS
+X-Gm-Message-State: AOJu0YzA4ObFmUCG8L12RkHNixSloegTDa8xM1CDhvKfaCDqovrxNbC+
+	KRmCdYiIZ0DTYzMm24UZKeukWFQ0lBasRtd+L6cN77I0bt/qg1fJ65FXXBOHf4dapVFNkdrLAZ+
+	Mq0DuEe7zk7acaA==
+X-Google-Smtp-Source: AGHT+IHeHwpUsMz3naPYvRlDkGuNZZCEn9CqAnc0Smm5DESeStqFj91Zn/11qRtNpmoue13EExJCmpgR2BPwxrE=
 X-Received: from ziwei-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:9b0])
- (user=ziweixiao job=sendgmr) by 2002:a25:8d03:0:b0:de1:d49:7ff6 with SMTP id
- 3f1490d57ef6-debb9d3003cmr123671276.7.1715122812981; Tue, 07 May 2024
- 16:00:12 -0700 (PDT)
-Date: Tue,  7 May 2024 22:59:40 +0000
+ (user=ziweixiao job=sendgmr) by 2002:a05:6902:1881:b0:de5:250a:f1e7 with SMTP
+ id 3f1490d57ef6-debb9e397e4mr313067276.8.1715122822767; Tue, 07 May 2024
+ 16:00:22 -0700 (PDT)
+Date: Tue,  7 May 2024 22:59:41 +0000
+In-Reply-To: <20240507225945.1408516-1-ziweixiao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240507225945.1408516-1-ziweixiao@google.com>
 X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240507225945.1408516-1-ziweixiao@google.com>
-Subject: [PATCH net-next 0/5] gve: Add flow steering support
+Message-ID: <20240507225945.1408516-2-ziweixiao@google.com>
+Subject: [PATCH net-next 1/5] gve: Add adminq mutex lock
 From: Ziwei Xiao <ziweixiao@google.com>
 To: netdev@vger.kernel.org
 Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com, 
@@ -80,34 +83,86 @@ Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com,
 	ziweixiao@google.com, jfraker@google.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-To support flow steering in GVE driver, there are two adminq changes
-need to be made in advance. The first one is adding adminq mutex lock,
-which is to allow the incoming flow steering operations to be able to
-temporarily drop the rtnl_lock to reduce the latency for registering
-flow rules among several NICs at the same time. The second one is to
-add the extended adminq command so that we can support larger adminq
-command such as configure_flow_rule command. The other three patches
-are needed for the actual flow steering feature support.
+We were depending on the rtnl_lock to make sure there is only one adminq
+command running at a time. But some commands may take too long to hold
+the rtnl_lock, such as the upcoming flow steering operations. For such
+situations, it can temporarily drop the rtnl_lock, and replace it for
+these operations with a new adminq lock, which can ensure the adminq
+command execution to be thread-safe.
 
-Jeroen de Borst (4):
-  gve: Add adminq extended command
-  gve: Add flow steering device option
-  gve: Add flow steering adminq commands
-  gve: Add flow steering ethtool support
+Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
+Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+---
+ drivers/net/ethernet/google/gve/gve.h        |  1 +
+ drivers/net/ethernet/google/gve/gve_adminq.c | 22 +++++++++++---------
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-Ziwei Xiao (1):
-  gve: Add adminq mutex lock
-
- drivers/net/ethernet/google/gve/Makefile      |   2 +-
- drivers/net/ethernet/google/gve/gve.h         |  53 +++-
- drivers/net/ethernet/google/gve/gve_adminq.c  | 228 +++++++++++++-
- drivers/net/ethernet/google/gve/gve_adminq.h  |  98 ++++++
- drivers/net/ethernet/google/gve/gve_ethtool.c |  91 +++++-
- .../net/ethernet/google/gve/gve_flow_rule.c   | 296 ++++++++++++++++++
- drivers/net/ethernet/google/gve/gve_main.c    |  86 ++++-
- 7 files changed, 829 insertions(+), 25 deletions(-)
- create mode 100644 drivers/net/ethernet/google/gve/gve_flow_rule.c
-
+diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
+index ae1e21c9b0a5..ca7fce17f2c0 100644
+--- a/drivers/net/ethernet/google/gve/gve.h
++++ b/drivers/net/ethernet/google/gve/gve.h
+@@ -724,6 +724,7 @@ struct gve_priv {
+ 	union gve_adminq_command *adminq;
+ 	dma_addr_t adminq_bus_addr;
+ 	struct dma_pool *adminq_pool;
++	struct mutex adminq_lock; /* Protects adminq command execution */
+ 	u32 adminq_mask; /* masks prod_cnt to adminq size */
+ 	u32 adminq_prod_cnt; /* free-running count of AQ cmds executed */
+ 	u32 adminq_cmd_fail; /* free-running count of AQ cmds failed */
+diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
+index 3df8243680d9..2c3ec5c3b114 100644
+--- a/drivers/net/ethernet/google/gve/gve_adminq.c
++++ b/drivers/net/ethernet/google/gve/gve_adminq.c
+@@ -284,6 +284,7 @@ int gve_adminq_alloc(struct device *dev, struct gve_priv *priv)
+ 			    &priv->reg_bar0->adminq_base_address_lo);
+ 		iowrite32be(GVE_DRIVER_STATUS_RUN_MASK, &priv->reg_bar0->driver_status);
+ 	}
++	mutex_init(&priv->adminq_lock);
+ 	gve_set_admin_queue_ok(priv);
+ 	return 0;
+ }
+@@ -511,28 +512,29 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
+ 	return 0;
+ }
+ 
+-/* This function is not threadsafe - the caller is responsible for any
+- * necessary locks.
+- * The caller is also responsible for making sure there are no commands
+- * waiting to be executed.
+- */
+ static int gve_adminq_execute_cmd(struct gve_priv *priv,
+ 				  union gve_adminq_command *cmd_orig)
+ {
+ 	u32 tail, head;
+ 	int err;
+ 
++	mutex_lock(&priv->adminq_lock);
+ 	tail = ioread32be(&priv->reg_bar0->adminq_event_counter);
+ 	head = priv->adminq_prod_cnt;
+-	if (tail != head)
+-		// This is not a valid path
+-		return -EINVAL;
++	if (tail != head) {
++		err = -EINVAL;
++		goto out;
++	}
+ 
+ 	err = gve_adminq_issue_cmd(priv, cmd_orig);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+-	return gve_adminq_kick_and_wait(priv);
++	err = gve_adminq_kick_and_wait(priv);
++
++out:
++	mutex_unlock(&priv->adminq_lock);
++	return err;
+ }
+ 
+ /* The device specifies that the management vector can either be the first irq
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
 
