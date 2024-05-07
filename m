@@ -1,194 +1,156 @@
-Return-Path: <linux-kernel+bounces-172232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091F08BEF3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED598BEF42
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CD5DB21F24
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:53:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3684E286DC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2426914B963;
-	Tue,  7 May 2024 21:53:28 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976DE16D330;
+	Tue,  7 May 2024 21:56:07 +0000 (UTC)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B53618732F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 21:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64C179CF;
+	Tue,  7 May 2024 21:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715118807; cv=none; b=Zf+JQqh1dnz5yl6mpLKL6KNxezxWDLgWrxhbE1tGFA7HS7kTsLZKpsHUYW1CdVx0BGLFZ8dta3e26eSEolWF/0NvR95fwZU/anuFlyforOR5BVBOUFj86G0W7BfustPnoYyQYDzp2quN/mE7H/FNYUqjRDY4U1ASizTKtQ46NTk=
+	t=1715118967; cv=none; b=Sn/EJ+YK1AwL+SKrEI6Fvigk9+3q+NUqDhrc4EhDw/mnIj21W3bEbzTU6F27vkqVkm8lGT5vC9lGHRWrliN0nxBtRmEW1b6uH0+xlnbYR/m6SYJaDKs/kaHOnhF/aZ4Ti5BpLQFyvkTOBDKN+x0EC34XNKKWag1q2OcrtC3X11s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715118807; c=relaxed/simple;
-	bh=6PQruBQUs4L6XERNA5uo6tMnbMJaVAi3kCWYZOgC+HU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NYSuIYhlRJPbwvutZWxN6EDIARyEOj/CPm/3z0ko6uff+3GytAtZN0/nVEphhri8/o3x44ZIqP/EDJW204GozMrd1RV5XwXtYaEDLaq3oqprVUTfJJSnHMg2H23yMpN5krNDPBC+T5butKYiEInsFz+/D056E6u8SLWzEFr1NQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e1840023bbso121364039f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 14:53:25 -0700 (PDT)
+	s=arc-20240116; t=1715118967; c=relaxed/simple;
+	bh=c6YHGEYmPjpO9D/p2b9v83LdrifgicmhUFUwgBtopaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YqB9NJMJed0H5VWmyvBmYQeBPETNrrHfGS6+YvXFhofXbaiMSCaLH3jYaZTs1+6u/FOJkqHMJn6ra3UVJpDOE190kpYaDSDxRxcasKd833pOZa8h6oORUWfLDnOKfqikXwBPaUhPr1AZyI36D6h+Xm+4CMnSopF/vMb1jjv5Lus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-61aef9901deso2510504a12.1;
+        Tue, 07 May 2024 14:56:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715118805; x=1715723605;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vKrO+Yygx10DAdCAw+kzbS8LqYHN7hhctGK7Te+fD08=;
-        b=ZbwDunesdp05jJKKGd+uz7TSks8JR7fVncD4wqYTg0wmDFF2pfCYNQW4xTgkCp2NVZ
-         NTU6c85I9k+g8mkG5UC7BDc8D48Z8wI3iTRC35mIWQ/mhmV9UOR1+AIRTwsoeoq/Tolq
-         oR5xFrWbjCDbbe8Nz2vwYKSh69Mc1MCBkWMgqTiVMnu89D7F51t8mpplbLJBVse1auiX
-         F+6hPFkoh+JH/DKT339yn2L6EEje3iWnodOHt+JxCAx1XPzhOC7MsgvRF2ALHTuLVlJZ
-         +AELmsWspEAWliyD96eLTPEDNSRM8QgqN57Z2ULkU4eTe3JqQ4d7bX/GqlxOb3EFooqc
-         UDRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYyQ9ZMixzrsceM5np1jwzWb3GSmIBrjX146Zf1E2VgizXOLSH0sCxikVT5Tw/3meFzr0lDoyAi4yq0Pr9UAE3xcsUaH263vVtGMhP
-X-Gm-Message-State: AOJu0YxSldzFgXwMGDN94wsWoEva1PfrpUjAr+edn7s6ByTxfmnTcVCL
-	NtaiW4bwGWv83YnIIwS/NDUF5tQkuqq+Kjy2W3Tj/gOUfQMPGi/Y+FaVuAOD0Rp7sq7oqQRvxo0
-	OrFdAv8re4QkOWJesHOoaTfbsYVoIKYA3uToA0u3phZ4rNRc5fvuKTRk=
-X-Google-Smtp-Source: AGHT+IEULMXAyDEeN3qRsGmugC2JBVVwSztZqZzUncKCJwWIwLE89V/ds+NLip+RxrcopGTnSIIJLsPYt+dQ16lg0jToU6W7M1qs
+        d=1e100.net; s=20230601; t=1715118965; x=1715723765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nXTaPie4n8q7aWd8lKqdehPO2SNuKWmtizpezocD5H4=;
+        b=g9QpDvlOJwdxgjipCk2RplWsuZ+Vn4tRzRNZavLWVZiQ4mUsjpGo14ZsauiboTAuAK
+         aaAPPjWSF+hxSNG2/K/ls/xgrk/e55xXm5tG2Lo84DR0DaLRIZlnPyfsBH+7Yz/frfTC
+         Y4VfYwBf5Dsg5wNlF/LjveB+5FVO4q9b/6/W6WjknS4bHXIewBDTchpFiabzoYOgasJP
+         t765XvcjWLvWy/JKnHmi3OcSOiqEqLeNCVrP9PmdYg2xI2oh7ywtkyvqJ0ImQqV0TeXY
+         BhaNM8H9mrefaByESrkCo8TV8L5veV2Ih0vhvcWP9thVtjvV0sbSSiGSHaDRTgGMMuCb
+         JHCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXH8RFDpuyLH27tlWpjwdQbHU3tDCAPG5DH/MbMV0vIOXTPaUQ+VKgNB6tMyENoYJOt7fg1FYD2rp9OgJiXQJDAj+VB8oyqeirLfUZ0zAbnHO03s83h9GqZkQhhPE8BSn0fvqU3q2ZQbJR7KYWEiUkorQbRqpTTXtliKm9Le+EPqiFAhLxVtb0lvGhHFMKdDTFazLTfqj2UKtdFLBbLRIZZC7o=
+X-Gm-Message-State: AOJu0YxVMaZ4zQXlFdcoZ+Lvh5OhNQ7cOhrpQp4uNs4sgJIFMW+/F11R
+	XOAOkn/x/vVo1HT2vEPMi1uGyq1bAmtkOtyk7Z7NaP1wmyHf/Of6ga0kzBUm89jCcQE4yVi3H59
+	bR8i1PhBpcvMPiSLAvNd+UAS71HI=
+X-Google-Smtp-Source: AGHT+IFXpLdBXP0wh3twnNJnWEDW8JXUqluwb5PZEvCJy86sy4dMIzPSzZ/Bo27vj60SVq+hRMSHToV6/VUrIXVJVlQ=
+X-Received: by 2002:a17:90a:cf14:b0:2b3:ed2:1a91 with SMTP id
+ 98e67ed59e1d1-2b616ae2ca0mr732222a91.45.1715118965098; Tue, 07 May 2024
+ 14:56:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1648:b0:488:59cc:eb44 with SMTP id
- 8926c6da1cb9f-488fdd5404dmr53513173.3.1715118805225; Tue, 07 May 2024
- 14:53:25 -0700 (PDT)
-Date: Tue, 07 May 2024 14:53:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002223bc0617e437cc@google.com>
-Subject: [syzbot] [block?] WARNING: locking bug in mempool_init_node
-From: syzbot <syzbot+d24a87174027a66198b8@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-3-andrii@kernel.org>
+ <2024050439-janitor-scoff-be04@gregkh> <CAEf4BzZ6CaMrqRR1Rah7=HnTpU5-zw5HUnSH9NWCzAZZ55ZXFQ@mail.gmail.com>
+ <ZjjiFnNRbwsMJ3Gj@x1> <CAM9d7cgvCB8CBFGhMB_-4tCm6+jzoPBNg4CR7AEyMNo8pF9QKg@mail.gmail.com>
+ <ZjknNJSFcKaxGDS4@x1> <Zjksc3yqvkocS18M@x1>
+In-Reply-To: <Zjksc3yqvkocS18M@x1>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 7 May 2024 14:55:53 -0700
+Message-ID: <CAM9d7cj=zadZzQakNC7PeKWd5hfL83jvCRu-BuZ4EOzF2WPb-w@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fs/procfs: implement efficient VMA querying API for /proc/<pid>/maps
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	=?UTF-8?Q?Daniel_M=C3=BCller?= <deso@posteo.net>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, May 6, 2024 at 12:16=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, May 06, 2024 at 03:53:40PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Mon, May 06, 2024 at 11:05:17AM -0700, Namhyung Kim wrote:
+> > > On Mon, May 6, 2024 at 6:58=E2=80=AFAM Arnaldo Carvalho de Melo <acme=
+@kernel.org> wrote:
+> > > > On Sat, May 04, 2024 at 02:50:31PM -0700, Andrii Nakryiko wrote:
+> > > > > On Sat, May 4, 2024 at 8:28=E2=80=AFAM Greg KH <gregkh@linuxfound=
+ation.org> wrote:
+> > > > > > On Fri, May 03, 2024 at 05:30:03PM -0700, Andrii Nakryiko wrote=
+:
+> > > > > > > Note also, that fetching VMA name (e.g., backing file path, o=
+r special
+> > > > > > > hard-coded or user-provided names) is optional just like buil=
+d ID. If
+> > > > > > > user sets vma_name_size to zero, kernel code won't attempt to=
+ retrieve
+> > > > > > > it, saving resources.
+> >
+> > > > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> >
+> > > > > > Where is the userspace code that uses this new api you have cre=
+ated?
+> >
+> > > > > So I added a faithful comparison of existing /proc/<pid>/maps vs =
+new
+> > > > > ioctl() API to solve a common problem (as described above) in pat=
+ch
+> > > > > #5. The plan is to put it in mentioned blazesym library at the ve=
+ry
+> > > > > least.
+> > > > >
+> > > > > I'm sure perf would benefit from this as well (cc'ed Arnaldo and
+> > > > > linux-perf-user), as they need to do stack symbolization as well.
+> >
+> > > I think the general use case in perf is different.  This ioctl API is=
+ great
+> > > for live tracing of a single (or a small number of) process(es).  And
+> > > yes, perf tools have those tracing use cases too.  But I think the
+> > > major use case of perf tools is system-wide profiling.
+> >
+> > > For system-wide profiling, you need to process samples of many
+> > > different processes at a high frequency.  Now perf record doesn't
+> > > process them and just save it for offline processing (well, it does
+> > > at the end to find out build-ID but it can be omitted).
+> >
+> > Since:
+> >
+> >   Author: Jiri Olsa <jolsa@kernel.org>
+> >   Date:   Mon Dec 14 11:54:49 2020 +0100
+> >   1ca6e80254141d26 ("perf tools: Store build id when available in PERF_=
+RECORD_MMAP2 metadata events")
+> >
+> > We don't need to to process the events to find the build ids. I haven't
+> > checked if we still do it to find out which DSOs had hits, but we
+> > shouldn't need to do it for build-ids (unless they were not in memory
+> > when the kernel tried to stash them in the PERF_RECORD_MMAP2, which I
+> > haven't checked but IIRC is a possibility if that ELF part isn't in
+> > memory at the time we want to copy it).
+>
+> > If we're still traversing it like that I guess we can have a knob and
+> > make it the default to not do that and instead create the perf.data
+> > build ID header table with all the build-ids we got from
+> > PERF_RECORD_MMAP2, a (slightly) bigger perf.data file but no event
+> > processing at the end of a 'perf record' session.
+>
+> But then we don't process the PERF_RECORD_MMAP2 in 'perf record', it
+> just goes on directly to the perf.data file :-\
 
-syzbot found the following issue on:
+Yep, we don't process build-IDs at the end if --buildid-mmap
+option is given.  It won't have build-ID header table but it's
+not needed anymore and perf report can know build-ID from
+MMAP2 directly.
 
-HEAD commit:    3d25a941ea50 Merge tag 'block-6.9-20240503' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16314b1f180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=45d8db3acdc1ccc6
-dashboard link: https://syzkaller.appspot.com/bug?extid=d24a87174027a66198b8
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-3d25a941.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/49d9f26b0beb/vmlinux-3d25a941.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2c424c14fff/bzImage-3d25a941.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d24a87174027a66198b8@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-Looking for class "c->lock" with key __key.0, but found a different class "&c->lock" with the same key
-WARNING: CPU: 2 PID: 24525 at kernel/locking/lockdep.c:932 look_up_lock_class+0x133/0x140 kernel/locking/lockdep.c:932
-Modules linked in:
-CPU: 2 PID: 24525 Comm: syz-executor.0 Not tainted 6.9.0-rc6-syzkaller-00227-g3d25a941ea50 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:look_up_lock_class+0x133/0x140 kernel/locking/lockdep.c:932
-Code: c7 c7 40 b7 0c 8b e8 5c 55 7e f6 90 0f 0b 90 90 90 31 db eb be c6 05 5a 61 b4 04 01 90 48 c7 c7 60 ba 0c 8b e8 3e 55 7e f6 90 <0f> 0b 90 90 e9 62 ff ff ff 0f 1f 40 00 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90002b36eb8 EFLAGS: 00010082
-RAX: 0000000000000000 RBX: ffffffff93d6d800 RCX: ffffc90034a01000
-RDX: 0000000000040000 RSI: ffffffff81513a06 RDI: 0000000000000001
-RBP: ffffffff94661890 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 000000006b6f6f4c R12: ffffe8ffad4d9550
-R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff94649aa0
-FS:  0000000000000000(0000) GS:ffff88802c400000(0063) knlGS:00000000f5ebab40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000f7452054 CR3: 000000004c5e6000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- register_lock_class+0xb1/0x1230 kernel/locking/lockdep.c:1284
- __lock_acquire+0x111/0x3b30 kernel/locking/lockdep.c:5014
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
- ___slab_alloc+0x789/0x16d0 mm/slub.c:3569
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3610
- __slab_alloc_node mm/slub.c:3663 [inline]
- slab_alloc_node mm/slub.c:3835 [inline]
- kmem_cache_alloc+0x2e9/0x320 mm/slub.c:3852
- mempool_init_node+0x31e/0x760 mm/mempool.c:217
- mempool_init+0x3a/0x50 mm/mempool.c:246
- mempool_init_slab_pool include/linux/mempool.h:68 [inline]
- bioset_init+0x324/0x7a0 block/bio.c:1752
- bch2_fs_fs_io_direct_init+0x58/0x90 fs/bcachefs/fs-io-direct.c:679
- bch2_fs_alloc+0x1bdf/0x25c0 fs/bcachefs/super.c:938
- bch2_fs_open+0x713/0x10f0 fs/bcachefs/super.c:2081
- bch2_mount+0xd41/0x1090 fs/bcachefs/fs.c:1903
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8f/0x380 fs/super.c:1779
- do_new_mount fs/namespace.c:3352 [inline]
- path_mount+0x6e1/0x1f10 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __ia32_sys_mount+0x295/0x320 fs/namespace.c:3875
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72c8579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5eba400 EFLAGS: 00000292 ORIG_RAX: 0000000000000015
-RAX: ffffffffffffffda RBX: 00000000f5eba460 RCX: 0000000020011a40
-RDX: 0000000020011a00 RSI: 0000000001200014 RDI: 00000000f5eba4a0
-RBP: 00000000f5eba460 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Namhyung
 
