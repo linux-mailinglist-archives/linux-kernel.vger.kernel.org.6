@@ -1,124 +1,102 @@
-Return-Path: <linux-kernel+bounces-171289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32B08BE244
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:36:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A978BE246
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDD72891D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:36:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD0F1C239BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69FD15B155;
-	Tue,  7 May 2024 12:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E74715CD63;
+	Tue,  7 May 2024 12:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AoR2YtoX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIw1G/oQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6A615B0F0;
-	Tue,  7 May 2024 12:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5154E156F42;
+	Tue,  7 May 2024 12:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715085350; cv=none; b=DDV3q23foA1pH9v8Tg+7apTEnv7ran2jWJDfSljHhdRgsXmDGWEr1VT1Ir+9B26lBilnAd0lMAHq3AzpKSMLTXBKfD3ABjnmjvEXrAr+qdTRZ09CPWng7Em4oC8oxXKbikAc5XNXMrDXCwwqAbBkJ8PUw28qoVJo+KrkColoa9A=
+	t=1715085350; cv=none; b=ug0tRw72oVs/orFH0toepE9RsGdVTZ3RwAy8LMGgRppfLvv+ncRQCTEOOZamqzsRA9UcMQq4XTMTwfC12q2P/9Snasa/w3CRfsvI/T1sQiKgyQdbk5l732jZJ+QR+2TFoSb26fWLfmRRtw2Av3O9HXSwkbrcV1CZxesi8SZDwtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715085350; c=relaxed/simple;
-	bh=X4FmVbKa6yjE4CaSOREJV6y9jOcP4uNK45DQ+d3IE3s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GFl3UT/WgJJZ2md9FwBA75a51uSGPvtU89F+Y6nkLspTmwswYVT7Hn/89LeMuwcCdbBmy3h/oYY7gnfaZ2F2n00+E4/V6T8Vc3Me+5iaf8ODhhQS4ey/uTVu0axi/hSxmhe+X4FMPKf6gkA2XweiAavZ6C7kKF5nWGgG4Gw9+Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AoR2YtoX; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715085347; x=1746621347;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=X4FmVbKa6yjE4CaSOREJV6y9jOcP4uNK45DQ+d3IE3s=;
-  b=AoR2YtoXo2EMLsQukvihQLlRQBS0Rj020rF2HEG4NAS4jI8hTo0k3kxM
-   Jx+SKd/o2t3miThBpcSSM7S6aQu0kH6whvo9hnPP4zMrwKFQyeqmOXMqM
-   rmsAj8o/mPzxuD++SWk0oLCOZa7Pbe29QTEqEpml6HHyQrzxEXzGtKBF3
-   903AuwEN4P8y5Qh7YTSGCpkxSh9pP8icF9fG0iEAZf3U/csmj31ul7VJf
-   N/Rj5tjNn5rJqcWIN8ji/GlCwVxKzfus4wlUlFLVFR0Jz0cveHmPGhQTe
-   pEq8C/BXrIcldqO3VGGObEuS4slsV0spxceqDq2brbmXOXwD/FTitbVao
-   Q==;
-X-CSE-ConnectionGUID: KcPfTmHWRIKddOv0HWW1Og==
-X-CSE-MsgGUID: QDjQFDHvRFyIqunb93f+dQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="36257816"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="36257816"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 05:35:44 -0700
-X-CSE-ConnectionGUID: F+OnXcdQTIqEejs8wz+T4A==
-X-CSE-MsgGUID: ERHFetrTTmC+8FKUz1P69g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="28587041"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 05:35:41 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id AFC35120574;
-	Tue,  7 May 2024 15:35:38 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1s4K2k-003uZF-29;
-	Tue, 07 May 2024 15:35:38 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-media@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [RESEND PATCH v2 1/1] media: intel/ipu6: explicitly include vmalloc.h
-Date: Tue,  7 May 2024 15:35:28 +0300
-Message-Id: <20240507123528.932421-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240506104953.49666125@canb.auug.org.au>
-References: <20240506104953.49666125@canb.auug.org.au>
+	bh=LsmGeq70zt60QfE3cj3pndGAIZKzOL2F4FtFs2fO80w=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=RBs4vtd4JqtcOASeF5lcYVcNt28xE/VlEsBlagmq99YLUmJIoSUA0H8VEQh9ENvfuhYlXQhvKE823yKHwksjxfG/N17dsNI1/JaX1ZTFIAZqFW2CE/2tG2+YhCdHCzJ8IlPigV4iZyuD4wnVL+4CgZNQ4bBSZSqdXijcv/FM8KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIw1G/oQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91096C2BBFC;
+	Tue,  7 May 2024 12:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715085349;
+	bh=LsmGeq70zt60QfE3cj3pndGAIZKzOL2F4FtFs2fO80w=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=oIw1G/oQaH6QJ7LUBCSWj2KIl4GGSz9PdHcdmLDbLIVmyIBCOlP/LM0KIjUkBAaXR
+	 WNGUP4Zj/i4K14ZyqrwS7jBYybSsb3hHUX+YGW60mzwz/loSKX62oZxxKx5NkW4V3I
+	 /wwjC6gz4ucOsRsk1ywLrddJoN2mp6hQ01XRHuLIpjkDqxEBkkBjaq8lj8XJ8kxMRh
+	 HADHOf7YKDFDCeNFyL00HFblI96OwWOM1T3423QELHpZKdyEYEDKEWULNtLRTI203C
+	 mIi2XMGwN7rNGsw4AOv+eaa6HCL8eHbyXLcsa+DlHQ6//HCugWFP4pMT5OPCU80xD6
+	 tb90QlIe0AYcg==
+Date: Tue, 07 May 2024 07:35:46 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ krzk+dt@kernel.org, devicetree@vger.kernel.org, jonathanh@nvidia.com, 
+ conor+dt@kernel.org, adrian.hunter@intel.com, mkumard@nvidia.com, 
+ thierry.reding@gmail.com, linux-mmc@vger.kernel.org, andi.shyti@kernel.org, 
+ ulf.hansson@linaro.org, digetx@gmail.com, ldewangan@nvidia.com, 
+ wsa+renesas@sang-engineering.com, corbet@lwn.net, linux-doc@vger.kernel.org, 
+ linux-i2c@vger.kernel.org
+In-Reply-To: <20240506225139.57647-5-kyarlagadda@nvidia.com>
+References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
+ <20240506225139.57647-5-kyarlagadda@nvidia.com>
+Message-Id: <171508534676.3540.5341170642240109274.robh@kernel.org>
+Subject: Re: [RFC PATCH 04/11] i2c: dt-bindings: configuration settings
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-linux/vmalloc.h needs to be included explicitly nowadays. Do it.
+On Tue, 07 May 2024 04:21:32 +0530, Krishna Yarlagadda wrote:
+> I2C interface timing registers are configured using config setting
+> framework. Document available properties for Tegra I2C controllers.
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  .../bindings/i2c/nvidia,tegra20-i2c.yaml      | 104 ++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+> 
 
-Fixes: 9163d83573e4 ("media: intel/ipu6: add IPU6 DMA mapping API and MMU table")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-Fixed Kent's e-mail address.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-since v1:
+yamllint warnings/errors:
 
-- Rework the commit message a little.
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.example.dts:37.20-50.15: Warning (i2c_bus_reg): /example-0/i2c@7000c000/config: missing or empty reg property
 
- drivers/media/pci/intel/ipu6/ipu6-mmu.c | 1 +
- 1 file changed, 1 insertion(+)
+doc reference errors (make refcheckdocs):
 
-diff --git a/drivers/media/pci/intel/ipu6/ipu6-mmu.c b/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-index 98a4bf9ca267..c3a20507d6db 100644
---- a/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-@@ -22,6 +22,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-+#include <linux/vmalloc.h>
- 
- #include "ipu6.h"
- #include "ipu6-dma.h"
--- 
-2.39.2
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240506225139.57647-5-kyarlagadda@nvidia.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
