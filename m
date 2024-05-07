@@ -1,107 +1,158 @@
-Return-Path: <linux-kernel+bounces-172207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0777E8BEEB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:11:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DE58BEEBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19B61F261A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:11:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580C61F21E27
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859E976EEA;
-	Tue,  7 May 2024 21:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB28A745EF;
+	Tue,  7 May 2024 21:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPoixQPz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bONYswX2"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37A478276;
-	Tue,  7 May 2024 21:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CF571B5C;
+	Tue,  7 May 2024 21:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715116274; cv=none; b=CWMnjstTZ3oqhU++PtSsQpgclOEumXFSJlRogEt14cLblYND4eOo7YLvvfiSsaxLP60cxOwH+iTkheUnGtR0nvC7NvV/cpNkhFSrAXbvAqH1u9QU23YN+ecGW4JKVTPWS6vmk/YLxrHUGORlMrod1xIkl1gRrGso1CujixrcKxE=
+	t=1715116434; cv=none; b=LSEHpN2huQR2D6hTcovqGDIQHYq6XfsZc3caICt1imfCuXonm9qId5UpYI8TpcfXP61xiuPbKVn5IaB1db83geyGcxVOAQfYjTALyODrtIhSTNYlFcaS65h5IBR7Fw57cG/DAf1Zsx8hDGKAH+FY32YkAU82nVFk0LXcKnJ2KFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715116274; c=relaxed/simple;
-	bh=XdUodymdRB65eR7Rdr7ZYq48VpisLuK+dc2m5P9E1jE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i36OYuSNmVAjxXl5UMkuOb/bVB1aEayawOhHpvBneKNN1Gs6OrfqT1xO8W0jP7hDkkEcqL7QQ+1yFRGpeUESKIe6heVOTffTb/DowKUSTo7EGvzGIHpPFMt0Ex5UlEANK2KpSOcFwDR0J4k8R5DzQnlDxpf9kO9HPNHI1QT378o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPoixQPz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA90C2BBFC;
-	Tue,  7 May 2024 21:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715116274;
-	bh=XdUodymdRB65eR7Rdr7ZYq48VpisLuK+dc2m5P9E1jE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DPoixQPzNU6IyEpl+1YPBIPcbPSW507umWTlrI87a+x4ukswKKUhIL4Q0tRb2K7wO
-	 IFP7pGSsVDKfjN37CWzJquawoaZWDAv85aLKLe7xLaQd10BP2V4RNp1nOM6NaqiF/o
-	 r4dQhUZXgOSCQubJAGqRHk0H0jq7+iajzL/B3Xd1zbjZztZz0VMKknBZDgIF1W5qnW
-	 I5wDyluT2wYzMzLXt5wZx/gx8OycdII7C2YTyFnc3ElG1WwAHQLqizRTu2BQmSzgqa
-	 H7gDOx4K9VHZunRE+ELBhHsitZ1CMcbSW/c5dBS5X+fJl0RiJMtgzWwXjqxhmO0Ksr
-	 H4n86KutFUOUw==
-Date: Tue, 7 May 2024 16:11:12 -0500
-From: Rob Herring <robh@kernel.org>
-To: Neha Malcom Francis <n-francis@ti.com>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, kristo@kernel.org,
-	vigneshr@ti.com, nm@ti.com, broonie@kernel.org, lgirdwood@gmail.com,
-	marten.lindahl@axis.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	u-kumar1@ti.com
-Subject: Re: [PATCH 1/5] regulator: dt-bindings: Unify compatible
-Message-ID: <20240507211112.GA1053164-robh@kernel.org>
-References: <20240507122158.3739291-1-n-francis@ti.com>
- <20240507122158.3739291-2-n-francis@ti.com>
+	s=arc-20240116; t=1715116434; c=relaxed/simple;
+	bh=+CnbgeoeyKY+pUuJ0UF7xYamzyyRqgzkqxZgusuLnDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VOqpX2ebvWFOaL/hZ8fbxjZPk6ED/saTR9kUZP6UCRbiUAwY9nGy2dS+zSWTEtxcYIYwCP0pwZtxQblFzLVktU/BBl+nwtduKbdhWTD8Ni+B+Ucv3FHQ9vpAibLdO25wz/FG5Ea9FIaXY3EJDuoeYQMBLnkbVWHTcYqFsJfqdCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bONYswX2; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a599a298990so987332766b.2;
+        Tue, 07 May 2024 14:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715116431; x=1715721231; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=001STfTEIi9HG/YmKeuC4M5zLrVfd9BrqAqYYhpSj4w=;
+        b=bONYswX2ppKbReLeWZAEjal2mQUvqusaGPRp/6m+VUWN0EBK7SR0CZ8jpyDKAw8ory
+         Vo7m9bX0SrI48uhSZdb9QwfDEEq8UySRVGWlf6pAglD7Xl9qbWzBMo8ku2K/FBxBYvry
+         TEpqRC2op5chW/oQw3lq6FGw0EKhGSNAfzCDQHkjmhwjJG90quqp0wQegTOYF7ZzKMwt
+         5pSRKHECtMlF2igVTsCKTKfiULA7f0WEALmtX3onbpTDyuj6D9WVVz6AKIHH/gS+/0Z8
+         hs3llCScXJ+08Yzbidtaij8WwTAVF/xRbQMt85HGiM+SLTebo8WWu4MXX88hB35MeA/U
+         7atg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715116431; x=1715721231;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=001STfTEIi9HG/YmKeuC4M5zLrVfd9BrqAqYYhpSj4w=;
+        b=PPp+1DFFNvyy3TMo+LQSMEB1OCpxVp7AKJRuMxBqxkCDX22+B89fSBJlAl358hAEuB
+         PFckt/OELtq0pySlQUxtsAwgCe3dZ3RWuae73GEfuEzbqQPDTgHPVqb9qlDblJS4CWZx
+         ZqD5IV6NsVjPTMLrBqvrmRhLThbzswVzgVSZDhp67tYYw2NAbn4mHikZFjy3KTCiVzve
+         5bNCJ+FXYETYLc7kZJC9ss/5jeIBmiIFhvzXYrcXdzyHG97mv103f/7Au8+5qHFtsQwN
+         h1omLfwfaPE+IDiro+MX0b1eyZ64cqdWzsXG1ydt356TqMzlhOTF4U4AH+PsIlEmc4j7
+         53cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJq+sUASN17pmNbCQYUyLOK/tCkVquN7AF4LHvYP22OC4765UNfO0Q3JeB5qqc4e64zsDe7AuORW6RMmAQeSB91QWiiEJptrqj60crjdavHx5gAijjDGHsyG7D7NVxYd+4
+X-Gm-Message-State: AOJu0Yx9pD9O7YzQ0KOPaWQ1awWIAtebh3owAPv34tTCZM/gBJT2AdZX
+	E/ckyFozl5+Dp/xO1WezxVgS1phPs7WRIwVHbhqTuQ7v2658qlM/12NLnpCKgV9xcgPvebdEcmf
+	zhmjrHGG3YSKrRXzOWuuXlhGgCOQ=
+X-Google-Smtp-Source: AGHT+IHUGHnTRvMm9X123h02dodWBa2lkQmyUK9LajySIV8MnBD2b3k0S5vzr0OYU7IClNLHReNJd2boG1X34tX28K0=
+X-Received: by 2002:a17:906:7c55:b0:a59:ae39:bfba with SMTP id
+ a640c23a62f3a-a59fb959b4bmr40169466b.34.1715116430642; Tue, 07 May 2024
+ 14:13:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507122158.3739291-2-n-francis@ti.com>
+References: <20240502151854.9810-1-puranjay@kernel.org> <20240502151854.9810-4-puranjay@kernel.org>
+In-Reply-To: <20240502151854.9810-4-puranjay@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 7 May 2024 14:13:33 -0700
+Message-ID: <CAEf4BzYxgvJ7fq3N_05yNtv09Tvkw9D2UtYC4Zqud71qWHeh9g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v6 3/4] arm64, bpf: add internal-only MOV
+ instruction to resolve per-CPU addrs
+To: Puranjay Mohan <puranjay@kernel.org>, Will Deacon <will@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Zi Shen Lim <zlim.lnx@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Xu Kuohai <xukuohai@huawei.com>, 
+	Florent Revest <revest@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	puranjay12@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 05:51:54PM +0530, Neha Malcom Francis wrote:
-> TPS62870/1/2/3 devices have different output currents (6A/9A/12A/15A) of
-> the TPS6287x family. The I2C addresses are the same between them. There
-> is no need for different compatibles for each for these devices so drop
-> them and add a unified "ti,tps6287x" compatible.
-
-And s/w will never need to know what the max output current is?
-
-Same i2c address has no bearing. That's usually not even fixed for 1 
-device.
-
-> 
-> Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
+On Thu, May 2, 2024 at 8:19=E2=80=AFAM Puranjay Mohan <puranjay@kernel.org>=
+ wrote:
+>
+> From: Puranjay Mohan <puranjay12@gmail.com>
+>
+> Support an instruction for resolving absolute addresses of per-CPU
+> data from their per-CPU offsets. This instruction is internal-only and
+> users are not allowed to use them directly. They will only be used for
+> internal inlining optimizations for now between BPF verifier and BPF
+> JITs.
+>
+> Since commit 7158627686f0 ("arm64: percpu: implement optimised pcpu
+> access using tpidr_el1"), the per-cpu offset for the CPU is stored in
+> the tpidr_el1/2 register of that CPU.
+>
+> To support this BPF instruction in the ARM64 JIT, the following ARM64
+> instructions are emitted:
+>
+> mov dst, src            // Move src to dst, if src !=3D dst
+> mrs tmp, tpidr_el1/2    // Move per-cpu offset of the current cpu in tmp.
+> add dst, dst, tmp       // Add the per cpu offset to the dst.
+>
+> To measure the performance improvement provided by this change, the
+> benchmark in [1] was used:
+>
+> Before:
+> glob-arr-inc   :   23.597 =C2=B1 0.012M/s
+> arr-inc        :   23.173 =C2=B1 0.019M/s
+> hash-inc       :   12.186 =C2=B1 0.028M/s
+>
+> After:
+> glob-arr-inc   :   23.819 =C2=B1 0.034M/s
+> arr-inc        :   23.285 =C2=B1 0.017M/s
+> hash-inc       :   12.419 =C2=B1 0.011M/s
+>
+> [1] https://github.com/anakryiko/linux/commit/8dec900975ef
+>
+> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
 > ---
->  .../devicetree/bindings/regulator/ti,tps62870.yaml         | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml b/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml
-> index 386989544dac..2998773db990 100644
-> --- a/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/ti,tps62870.yaml
-> @@ -15,10 +15,7 @@ allOf:
->  properties:
->    compatible:
->      enum:
-> -      - ti,tps62870
-> -      - ti,tps62871
-> -      - ti,tps62872
-> -      - ti,tps62873
-> +      - ti,tps6287x
+>  arch/arm64/include/asm/insn.h |  7 +++++++
+>  arch/arm64/lib/insn.c         | 11 +++++++++++
+>  arch/arm64/net/bpf_jit.h      |  6 ++++++
+>  arch/arm64/net/bpf_jit_comp.c | 14 ++++++++++++++
+>  4 files changed, 38 insertions(+)
 
-You just broke the existing users.
+Catalin, Will, Zi,
 
-Wildcards in compatible names are generally discouraged. Maybe if this 
-was a new binding and had sufficient justification why we don't need to 
-distinguish parts, but this is an ABI and we're stuck with them.
+Any objections to landing these patches into the bpf-next tree? Can we
+get some acks from ARM64 folks? Thanks!
 
-If you are doing this to support more versions, then feel free to use 
-an existing string. It's just a unique identifier. You have 4 to choose 
-from.
+>
+> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.=
+h
+> index db1aeacd4cd9..8de0e39b29f3 100644
+> --- a/arch/arm64/include/asm/insn.h
+> +++ b/arch/arm64/include/asm/insn.h
+> @@ -135,6 +135,11 @@ enum aarch64_insn_special_register {
+>         AARCH64_INSN_SPCLREG_SP_EL2     =3D 0xF210
+>  };
+>
 
-Rob
+[...]
 
