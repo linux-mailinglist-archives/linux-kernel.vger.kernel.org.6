@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-171628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA43E8BE6A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA68F8BE6A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75048284DD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED2F2817E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E5216078F;
-	Tue,  7 May 2024 14:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC111607A2;
+	Tue,  7 May 2024 14:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnDutfrb"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maSV0SdS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83691155A55
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCC815FCFC;
+	Tue,  7 May 2024 14:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093638; cv=none; b=ezE/P5HV9or7XaeFELvEY2bat3NaJemyFC8A7Uct2uWHwkL+ko+oIajEIz7KAUiLR2eKugSWFCuGuawMcuHKMv3p5cBJGwsvMCBRgl6B5U8VVoQxlwcWuCkIH64nsBzMfR31016EOYHPVSLv7jbMHjUPhyuLmHVv2x+JlWq3Doo=
+	t=1715093669; cv=none; b=hQtj2XYPI3F8JC/ddJpde+8sHHJOFbGiFvhdWp5xEx3tGRzAcOUeMg6CSaG7UTqtsKRRu1alh4w/AeFsngtu+6ug9CU2WNKQ/2u1GpFyDskdpFkuDli2V+lXpNwIqEcm1tXcH4kvuydghyMgIe6T4rd4sLMzcnfnMtNCXwYCKnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093638; c=relaxed/simple;
-	bh=R3rN9uuCSrcyQrLmqe+2GgL8E4NP/EKwpC06F+iLVk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HVXTl+oi/2emhZinm9pkPK4MRXhx0RzAKky/rLpUIxRC+Ss6WNfTqyWsMFebYkwH66xKCS+pRsi5dw/3HK3k3afdOrwQYazYOqoaTDWrxEQIf7zmrcq57sqIzTcMJTPVlHPCcBzF3bCMNMmjygPqu5ZU8KNH5tKdIxAKTjbAzHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WnDutfrb; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a387fbc9so807654866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715093635; x=1715698435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8YKg7NkiQQzPDt2U04+751t+jIfci6F7qG1eD549Yk=;
-        b=WnDutfrbn2hxldjCn6KkP7RuBq0/yYvfn7AQFlJWkTYPbCMfn9O2KhaFk8CC0YYLP/
-         AS10+3oUahOjcOAGZV2H9LzUeVk6YIONA64oru6sVOq1uMJCKwBc9Q2CnfBoNBc3M1vN
-         XbdiASNb2Od+6wNqrPeQa9WoejEo5KADFVWIXlCfOyI5OMJnaNWMAuXE15f7icG+9uvt
-         44uzciAfAzldnY8h7voe6e20fUJcdIB7lUErFMpsujf9d21/d/3PM51HFx/yq7ll/yb6
-         NtAd7e8P9BHoY8u6oDOk9F14xKve985MywT1e6gGUKN8H0VRoNLCI+16PbxK9WGuknOu
-         JFqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715093635; x=1715698435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s8YKg7NkiQQzPDt2U04+751t+jIfci6F7qG1eD549Yk=;
-        b=pGx98kF5DC1ZXUvIyaE63lUP1aUxt6CLGzI8kIwvZg4CNmBkFOQU6KiYzCXSjJ/4S4
-         aXuIT+jdmtBbdJdZ4zp/mmmGUnNBjG7hobYJFJHM+y5O0nbvG+XU7MVtcEzM6t3K5fAp
-         oN7Q6rzyCJfWJQ6w4bKL30w/BRCITEpiQY4iimWWXkikilXxYonfyfH9BknPZcXe66F1
-         BQS+WALeQ2YeQ9oSYEsGj5k95Ncj5mjVx63ILe/pInKADm8lOzL1a9fOmKtl1GQC4VYh
-         7dH6NPfBoIqPo8riVU/Zf3WUyw+IL9YZtdG3A8m7LgLsDRzdLq24S7kjRX8IfKvAsCUA
-         mp8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX8DpHb72ANfRChwBdF7jyXXCm7qJiVDBodiLlKzg+tzw4ABFCLDAU70uWl9ihxOx/0EDe5SwHpPCcqqsORhnS0JpEzIBBHXD+OPHEW
-X-Gm-Message-State: AOJu0Yy38tDC5YYRE+xYV4+P9mwYrHqiRJxAfmQCU8eNFnRZ7N7yu9Ov
-	2ARtEk0mqif+NE0zd6otjoPP6gW8LyGetGEtpOdSF3iZdxVGhqkAAiXodFAOFLZw/tROD6Sp39N
-	fbWb2/ah28tU0XBJZbT7mAytxu9g=
-X-Google-Smtp-Source: AGHT+IFJ2ytPT0Nj7uGwYAQ3jKNVVBO7o8DONColK6Cp7RSU+lk399C6rgC/Fd7qavxTIn7Xi0esXHZBYS89ODEfi/c=
-X-Received: by 2002:a50:a44f:0:b0:56f:e75b:839a with SMTP id
- v15-20020a50a44f000000b0056fe75b839amr8760934edb.1.1715093634415; Tue, 07 May
- 2024 07:53:54 -0700 (PDT)
+	s=arc-20240116; t=1715093669; c=relaxed/simple;
+	bh=Yskj674ZMF177lDIJTS3t2DCNKi8KbRLjMbjRBFCvDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/GDEwrU+twUo+OElnN9YxLiSF5I/gOeUjs+iwZ88b5aPhUhP9fsG6CNiUrx0+7xHwtJ0OLeXifrgaiyGcYKKNV1bFwXhpwh9z79AvJ/qd7Lz210NXIPoMgr9YNgMCgBZJxqcUkELk2sxEqc4umMYpidXBscZgmnbIotZvQjGbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maSV0SdS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F295BC2BBFC;
+	Tue,  7 May 2024 14:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715093668;
+	bh=Yskj674ZMF177lDIJTS3t2DCNKi8KbRLjMbjRBFCvDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=maSV0SdSvYk9LCFNKcXLubAdxffaYIb9IBUOo8nvYgE/vbrjkokm7EXkhHi/46wbH
+	 jrQb/ujpzl8k+TDX13WUV9KSHBYjqxeSHtInzTDDQjjUwkWWWI+LB7snR8hLoGoDFf
+	 ArlNz1Nxtswsg3O23MwPQ1+TG9Pc9wg+oYxRH0rpSOnzLMlc4p/vM+7se4ojUb/PqK
+	 hgZQJY26vJkaiOlTKRJyE7iXXpXE4dw6Kr2vfGfjPLQp8dCuTyGJy74vz05Beh66ON
+	 X40v0Bpwp3eqBUIkjrIRDmOmuBIknqheXCQ4y6Ng1Rz+85tY+3YTaNWRKR33IxFFzE
+	 4gPD9fVMOzyIw==
+Date: Tue, 7 May 2024 11:54:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: James Clark <james.clark@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-perf-users@vger.kernel.org,
+	gankulkarni@os.amperecomputing.com,
+	scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
+	mike.leach@linaro.org
+Subject: Re: [PATCH 01/17] perf cs-etm: Print error for new
+ PERF_RECORD_AUX_OUTPUT_HW_ID versions
+Message-ID: <ZjpAoVEam4CQ96zC@x1>
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-2-james.clark@arm.com>
+ <08bcd616-5006-45df-b8cc-45cf3a1dd762@arm.com>
+ <de635db0-6510-452f-91be-4fc5f7fdf671@arm.com>
+ <ecb16ad9-7c91-4cf6-ab7e-4b4b5be7165c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-2-ioworker0@gmail.com>
- <0B21BF2F-26D1-44EA-B5C5-D0D490BB90CC@nvidia.com>
-In-Reply-To: <0B21BF2F-26D1-44EA-B5C5-D0D490BB90CC@nvidia.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Tue, 7 May 2024 22:53:43 +0800
-Message-ID: <CAK1f24mmhd1FT_YBZ=N27pzDCmaL-NJPP50pdmp=CnVG1kNPng@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] mm/rmap: remove duplicated exit code in pagewalk loop
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	maskray@google.com, ryan.roberts@arm.com, david@redhat.com, 21cnbao@gmail.com, 
-	mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
-	shy828301@gmail.com, xiehuan09@gmail.com, libang.li@antgroup.com, 
-	wangkefeng.wang@huawei.com, songmuchun@bytedance.com, peterx@redhat.com, 
-	minchan@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ecb16ad9-7c91-4cf6-ab7e-4b4b5be7165c@arm.com>
 
-On Tue, May 7, 2024 at 10:51=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 1 May 2024, at 0:26, Lance Yang wrote:
->
-> > Introduce the labels walk_done and walk_done_err as exit points to
-> > eliminate duplicated exit code in the pagewalk loop.
-> >
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > ---
-> >  mm/rmap.c | 40 +++++++++++++++-------------------------
-> >  1 file changed, 15 insertions(+), 25 deletions(-)
->
+On Tue, May 07, 2024 at 04:27:25PM +0530, Anshuman Khandual wrote:
+> On 5/7/24 15:36, James Clark wrote:
+> > On 07/05/2024 04:47, Anshuman Khandual wrote:
+> >> On 4/29/24 20:51, James Clark wrote:
+> >>> The likely fix for this is to update Perf so print a helpful message.
+> >>>
+> >>> Signed-off-by: James Clark <james.clark@arm.com>
+> >>> ---
+> >>>  tools/perf/util/cs-etm.c | 5 ++++-
+> >>>  1 file changed, 4 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> >>> index d65d7485886c..32818bd7cd17 100644
+> >>> --- a/tools/perf/util/cs-etm.c
+> >>> +++ b/tools/perf/util/cs-etm.c
+> >>> @@ -335,8 +335,11 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
+> >>>  	trace_chan_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
+> >>>  
+> >>>  	/* check that we can handle this version */
+> >>> -	if (version > CS_AUX_HW_ID_CURR_VERSION)
+> >>> +	if (version > CS_AUX_HW_ID_CURR_VERSION) {
+> >>> +		pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID version %d not supported. Please update Perf.\n",
+> >>
+> >> Is not this bit misleading ? PERF_RECORD_AUX_OUTPUT_HW_ID is just the perf record
+> >> format identifier. The record version here, is derived from the platform specific
+> >> hardware ID information embedded in this perf record.
+> > 
+> > Not sure I follow what you mean here. 'version' is something that's
+> > output by the kernel. It's saved into a perf.data file, and if Perf
+> > can't handle version 2 for example, you need to update Perf.
+ 
+> Got it.
+ 
+> >> Should not this be just s/PERF_RECORD_AUX_OUTPUT_HW_ID/hardware ID/ instead ?
+> >>
+> > 
+> > It's just a way to go from the error message to the part of the code or
+> > docs that you need to look at. "hardware ID" wouldn't lead you anywhere
+> > so I don't think it would be useful.
+> 
+> Sure, fair enough.
 
-Hey Zi,
+I'm taking this as an Acked-by, ok?
 
-> LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
-
-Thanks for taking time to review!
-Lance
-
-> --
-> Best Regards,
-> Yan, Zi
+- Arnaldo
 
