@@ -1,229 +1,255 @@
-Return-Path: <linux-kernel+bounces-171929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CADD8BEAD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:48:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CFF8BEACD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D648628575D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:48:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C069AB235FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C05516C864;
-	Tue,  7 May 2024 17:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AD116C870;
+	Tue,  7 May 2024 17:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bsGU1B+B"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E16icK21"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD0915B12E;
-	Tue,  7 May 2024 17:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104124; cv=fail; b=JIY6AARy6UfFKU4WzWU/qGKFG48zcdV1T9GikXlgJfw3Jpn/pBHr7N160LxyIFSj7P9g5wddwZEz9KoasrODM3hBGrXFBR/TBkObUW5HU3HW1Il4+DSOZmiyXnMvxFOkSn9tu/YMf+FiEOLvTQZkmQ7XmramZtJaNxSLV03ZhKY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104124; c=relaxed/simple;
-	bh=4K5ZdOocmCdFISI5RBbWdlQ9dFAf9p5UjD/lzJuUWo4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cvTqdWApoHp1PdxDAzMCps+y4vGXb7uqP1Uzfck/DOrKHJkU5pXw3wyq46nj0X8lzjNlT6UIqc90IRzYLLCNzmP2NE5bSincH+WZl/QnKeTNDEaQlYCsy4vQiilU0RF86UJGRg9rcseeFG3REszGCWN/fbJzaH2Zhr2bHZJYvuo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bsGU1B+B; arc=fail smtp.client-ip=40.107.220.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K+Mz51Kjd8iaKj/6nqxBGhL5ThqSCMCWHMZSu1ijJANS0Cja8yat69KAGLTOeEeKZbHUsmu3bueyPUFgVz0xpsD9JpNY0MgaSWFVp06Levg8jA3ibeCH7iy0/ukkrHLxPp/PMlcC4hUnDpQAIts22JSwdQ3Gg3LZdusMh/KfhdZ8lfT8RN6z1zCBMVXlav9O/caDDwpA2oF7VNvu/RJ/3kPr03WNpUuOSo5tyw8jylvPvndYfKKFWqVHFi9sGEq/VVOkBkMo5sffEPAsvGnoRXL0IiV4hMr126j4Wceo7S2tCo6OBonn+FWUcVJWBrFwk8N65CV8a1xtCJStIn3/Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vO4I2Ov3yX0hzquSBknXcKpIap6ggnm541Q9PA30iqs=;
- b=LH3SLEMSv9H3TLLc5amMlYRwNOOZuTjD86fWrvUCi8S2XsJ+5nhjme+o/MiROkpJK+OQQDLNAMSfJ1UwWVlCwNR4ddBeeWTQmiHtKKjfLKrZqZ+D+lhbed8EOFaXHZ3a0UU4Ic0Iu0QF98UteWdiv88ZlWnlSxCX2gEPt7JoH1Hdl50FmpCE7Nt2XXk1hrYevcrcECq0UIlK4BLUPIbdWqx6H+tRnudU6Z/4Zq/+FRlOBYq9t/nhWR8MsuH/Hm5XE24AKhWLP1/oKudL6pq0gDGX4vwhDGZkaror1y9d4/9ja6Mg+7IInxmq6BzSCLgVTPSuvOHdhPSQPfbcVe+klg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vO4I2Ov3yX0hzquSBknXcKpIap6ggnm541Q9PA30iqs=;
- b=bsGU1B+BmMrhEJ45R1mJ2/S2zaq514fglGf5DC9ON2q+ZHtPE8d/F1610bN86AcCHO8FpA79R+AF3zhyPnWw3Ep2DwHB9ZZcwc11XDkTN5rBqjg58URmRkOVNuExNqkO0KLic4yI4CEszToELjinIe9cuic5V/Yj9zbkfD4guEA=
-Received: from DM5PR07CA0095.namprd07.prod.outlook.com (2603:10b6:4:ae::24) by
- LV2PR12MB5821.namprd12.prod.outlook.com (2603:10b6:408:17a::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.42; Tue, 7 May 2024 17:48:38 +0000
-Received: from DS3PEPF0000C37C.namprd04.prod.outlook.com
- (2603:10b6:4:ae:cafe::99) by DM5PR07CA0095.outlook.office365.com
- (2603:10b6:4:ae::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43 via Frontend
- Transport; Tue, 7 May 2024 17:48:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF0000C37C.mail.protection.outlook.com (10.167.23.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7544.18 via Frontend Transport; Tue, 7 May 2024 17:48:38 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 7 May
- 2024 12:48:37 -0500
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: <gautham.shenoy@amd.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<regressions@lists.linux.dev>, <rafael@kernel.org>, Perry Yuan
-	<perry.yuan@amd.com>, Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH] cpufreq: amd-pstate: fix the highest frequency issue which limit performance
-Date: Tue, 7 May 2024 12:48:10 -0500
-Message-ID: <20240507174810.46709-1-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73ECA168AF5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715104104; cv=none; b=RY/pBeE77T89O/rdkfpoC4uuT3TPXkQGLYggxVxqT3pFmfgQw9tzjkbtvBDoWqj+m0Pl7BThc0UTc2i4/fmBAfW8bBNCbB1VM2cpp0MbCGbOwFDS+AE+Vzu4gb4Y45MFCZqnR+k3lb68knHETzA5ymEbe1A+ttrnTyw28uo3CR4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715104104; c=relaxed/simple;
+	bh=G4sKnEbJdMGDqqOOZcGjKlz86s6SEc8Aai9Vaa1zX6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2Ix3WVqriC1OnUBBX1h4CaktK3PiatjzFfNRfrrZXVCrzhxzj8d/34Q9fqNRm7BGXPq1y7S9pQ/mZ6nV5gK3G/9dIokRyFrdmhP835N98x2icKD3i/ll3TKopf9dAbCB3bmTmgsFZ6O7KwcZCon4OgOmijcKzfv2jkBlL1SKBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E16icK21; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715104101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=U7NSWv2sngdGccyzHhW9zKoCfPe+XKegdqJlyPFodbI=;
+	b=E16icK2184rGoPWH2bEBWPXJZtGGn9IuSbomFmgWyhqqa1ruGKqhGhtqOmdBud9HvxmNF8
+	k+VmqjaN1GCvbVHjRurw9a5R6X8ORqMflupozOg9FWcquJGX2GuADfbdyV2D6n3le9qlAy
+	7cR7RWsjIaPqUqnhqUs2tSPvXoMUcDw=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-308-PoGURnTGMFCdzMgdngfTjw-1; Tue, 07 May 2024 13:48:19 -0400
+X-MC-Unique: PoGURnTGMFCdzMgdngfTjw-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-56c1ac93679so2820194a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:48:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715104098; x=1715708898;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U7NSWv2sngdGccyzHhW9zKoCfPe+XKegdqJlyPFodbI=;
+        b=p1vSUUo0+KOW667q/kUZDH7M21NlgLF1yGBmOzpsWUugtcSIERZSLqfU4D52svmhRP
+         +NNboOI3voE0kU79a3iA7EgfPSiAMoxEzsrU+nM0k1unwCFp772Gb3oK4foHXky/lq+f
+         RuNlj1z38q+hNEHj+0szR8LnVI6N50ZWnSQESK4gzi/WFm68cZX+/XwK1Cb8Rzplb8/v
+         dx1A2OsmD9hipND+1SwzI86jejT6YYD5/ibRW0UUmk4+cV1kLzbKWTQOpepDrSGzQOcG
+         P0F1MFXfgK4YJ1v+Fj+b0nHPjKSaYIjXSbh7Rhx0eT6uMI4p5YNpE1C6qzJdJ8qDsntM
+         +FJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxiuRDGEQMUBBfzeiRBb5oBzo1XrWfTOirByG77Po5I9ot//DGl/ZzSgGtaZqCrsrRjnuABnwyciEQJaDhKjAGbHjTPma2Ns21O8Ok
+X-Gm-Message-State: AOJu0Yz5NPW1cIiKuLVXk2uMENiPBVFQ7QGVBVaBq8QrMBDEu2RCPtDY
+	NPh29qIM5NaxnBezz1CoBiwg/XJqQVERZg0yksGL/7Wag/+6VzTqD9joW+Up/erp4BuZR7ZvAd8
+	WesuikRstEplNoE1sMl4arfbAjDORlfNI37gNhcWa5JaGvhRLAHHyp/9u3jaPQw==
+X-Received: by 2002:a50:8ac8:0:b0:572:9d8a:20f4 with SMTP id 4fb4d7f45d1cf-5731da81922mr272396a12.32.1715104098655;
+        Tue, 07 May 2024 10:48:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWO0ZFjdL3U8Z+4qw3ObkPaduqAGsZ1NMcH6woNnJqGwZdQRg/xxY47WaZMcri4ZL0ky7IXA==
+X-Received: by 2002:a50:8ac8:0:b0:572:9d8a:20f4 with SMTP id 4fb4d7f45d1cf-5731da81922mr272359a12.32.1715104098236;
+        Tue, 07 May 2024 10:48:18 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.155.52])
+        by smtp.googlemail.com with ESMTPSA id b14-20020a0564021f0e00b00572cebc5f32sm5776641edb.65.2024.05.07.10.48.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 10:48:17 -0700 (PDT)
+Message-ID: <044e8953-56f0-405e-9b50-7dde4ca8986b@redhat.com>
+Date: Tue, 7 May 2024 19:48:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37C:EE_|LV2PR12MB5821:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b4c1114-42d4-4877-3a1a-08dc6ebded1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|376005|82310400017|36860700004;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Wc7Wf2AmPYwtuwsRuWNC2T21qZJAKiceByUQIoTY3NB/GU6PJMYNtGF87N7Q?=
- =?us-ascii?Q?8Xn7SF0aLFcJBmeXocK1VaJZWPrwY+tpkRYFkhguDDKsYfTIA/Jx7xuWf2ec?=
- =?us-ascii?Q?tCMwAgShqCsCUBYsjE7kxvTq2l3iE/bXYOZA2bretMZLoHiv68xWQnD1+ztl?=
- =?us-ascii?Q?WSyYQoYhtw/X9vO4aHeEmB4PxgT/kpAKe77sylMUkjI+AmuJ24akkSzjTmwO?=
- =?us-ascii?Q?fZ4Mhx/vNTdShvQKLtekQelXTQ8EAMp+S5HxScggEVYuK8VgwT0SmartS4BG?=
- =?us-ascii?Q?LI29aDsKZBOAM+pShoq29ELZsLL0PlnaM2J3doJAUtLoobFJvDUD44WwGWuM?=
- =?us-ascii?Q?Dk+TJEIrjANMN6PlN20JCoX+xItlXd8rEAFU8Zf8lwguM7DvJ7g/5UIWS83i?=
- =?us-ascii?Q?7o+Fb6PzlstVf2Km+cWiHNrwiRtO9gtthJI/2ND1phH+qFo/AB3I8jSYQYRk?=
- =?us-ascii?Q?scWtid07lIFtguG0ZHWHEUJtgNiJ1nZOkNbgTQCBUiD5x32G6NWTWsR3a9eP?=
- =?us-ascii?Q?nzsHWYWwsJf7MAlM3YwnTQyzr8gcmC0QV0vawofmsx2UEGrtWalIufKN2O3C?=
- =?us-ascii?Q?ZaTUlgcrMMQIjoGKXl2AH1Ut+dJJp0ll2ujs2wCF+xps0rdqhPnJviKLqcW9?=
- =?us-ascii?Q?QkK+ZfvBmiqfJG5BwRwtaal5bMxFFlxAGJij1ngy2xD/Dgr2yR6X5f3lTtlp?=
- =?us-ascii?Q?0Z796WeqHTDYkRLoDD/I8hoNcbOuXqhV9zs2z1oMiJPnLS5a7TIqJhMLWgXp?=
- =?us-ascii?Q?I6iEga6J+O5fL2E7EKXK3Er6h1zNbAebc6aug97cQRwOtEzTzkOlDrVuVekX?=
- =?us-ascii?Q?gdqZeUQIPVaadzhFQJz5hgLqOnvXElAYLJPUMIVGdtTLnPJrKFXH9XMkycl7?=
- =?us-ascii?Q?4zclNPgcQdUXfw+fD77l1YuOR4TENNjVXS5ts7u8Sfhz9MwV0+G1wwGXFYDm?=
- =?us-ascii?Q?dWkwj1iLk095N0RAGkw7rB1/2fys62UUKyrT7HmV1JBuU3U3rn6/vcfPtDJz?=
- =?us-ascii?Q?Mx4iPTJMvs3WfrkztKC5q6/YufLfHdx+Nat025FcmSmYJlhjMC6I/dQDEE73?=
- =?us-ascii?Q?twqeuDuNJ6wlhJxJBd1RqGqVb0/kKP+nNwh8qnCp/O/QEaxAcEDkHur4tra7?=
- =?us-ascii?Q?RdCqDDWfI641PB/JF8Gl0dNn6u58c3Sc1Pg6mPPGJNXYvEeBGbtRD1144k/N?=
- =?us-ascii?Q?svMbYm02adIZbL78weXvBaYEtOmeDqxpdDyyDrUzen9z69je5MouNZxpBupY?=
- =?us-ascii?Q?5gdrOWO2SyZjrxqyCvp2z3w6q9PM6TOMeb4ze1tsNDmIyZn0krmCGbctELHA?=
- =?us-ascii?Q?HJyKlvxFGiEQ4AppNoK3nTKzbp62jkIQMIdBDp4jXSn3mA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(376005)(82310400017)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 17:48:38.4951
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b4c1114-42d4-4877-3a1a-08dc6ebded1f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37C.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5821
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 02/20] KVM: x86: Add hook for determining max NPT
+ mapping level
+To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org
+Cc: linux-coco@lists.linux.dev, linux-mm@kvack.org,
+ linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, jroedel@suse.de,
+ thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org, seanjc@google.com,
+ vkuznets@redhat.com, jmattson@google.com, luto@kernel.org,
+ dave.hansen@linux.intel.com, slp@redhat.com, pgonda@google.com,
+ peterz@infradead.org, srinivas.pandruvada@linux.intel.com,
+ rientjes@google.com, dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de,
+ vbabka@suse.cz, kirill@shutemov.name, ak@linux.intel.com,
+ tony.luck@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ alpergun@google.com, jarkko@kernel.org, ashish.kalra@amd.com,
+ nikunj.dadhania@amd.com, pankaj.gupta@amd.com, liam.merwick@oracle.com
+References: <20240501085210.2213060-1-michael.roth@amd.com>
+ <20240501085210.2213060-3-michael.roth@amd.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240501085210.2213060-3-michael.roth@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Perry Yuan <perry.yuan@amd.com>
+On 5/1/24 10:51, Michael Roth wrote:
+> In the case of SEV-SNP, whether or not a 2MB page can be mapped via a
+> 2MB mapping in the guest's nested page table depends on whether or not
+> any subpages within the range have already been initialized as private
+> in the RMP table. The existing mixed-attribute tracking in KVM is
+> insufficient here, for instance:
+> 
+> - gmem allocates 2MB page
+> - guest issues PVALIDATE on 2MB page
+> - guest later converts a subpage to shared
+> - SNP host code issues PSMASH to split 2MB RMP mapping to 4K
+> - KVM MMU splits NPT mapping to 4K
+> - guest later converts that shared page back to private
+> 
+> At this point there are no mixed attributes, and KVM would normally
+> allow for 2MB NPT mappings again, but this is actually not allowed
+> because the RMP table mappings are 4K and cannot be promoted on the
+> hypervisor side, so the NPT mappings must still be limited to 4K to
+> match this.
+> 
+> Add a hook to determine the max NPT mapping size in situations like
+> this.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Michael Roth <michael.roth@amd.com>
+> ---
+>   arch/x86/include/asm/kvm-x86-ops.h |  1 +
+>   arch/x86/include/asm/kvm_host.h    |  1 +
+>   arch/x86/kvm/mmu/mmu.c             | 18 ++++++++++++++++--
+>   3 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+> index c81990937ab4..566d19b02483 100644
+> --- a/arch/x86/include/asm/kvm-x86-ops.h
+> +++ b/arch/x86/include/asm/kvm-x86-ops.h
+> @@ -140,6 +140,7 @@ KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
+>   KVM_X86_OP_OPTIONAL(get_untagged_addr)
+>   KVM_X86_OP_OPTIONAL(alloc_apic_backing_page)
+>   KVM_X86_OP_OPTIONAL_RET0(gmem_prepare)
+> +KVM_X86_OP_OPTIONAL_RET0(private_max_mapping_level)
+>   KVM_X86_OP_OPTIONAL(gmem_invalidate)
+>   
+>   #undef KVM_X86_OP
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index c6c5018376be..87265b73906a 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1816,6 +1816,7 @@ struct kvm_x86_ops {
+>   	void *(*alloc_apic_backing_page)(struct kvm_vcpu *vcpu);
+>   	int (*gmem_prepare)(struct kvm *kvm, kvm_pfn_t pfn, gfn_t gfn, int max_order);
+>   	void (*gmem_invalidate)(kvm_pfn_t start, kvm_pfn_t end);
+> +	int (*private_max_mapping_level)(struct kvm *kvm, kvm_pfn_t pfn);
+>   };
+>   
+>   struct kvm_x86_nested_ops {
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 510eb1117012..0d556da052f6 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4271,6 +4271,20 @@ static inline u8 kvm_max_level_for_order(int order)
+>   	return PG_LEVEL_4K;
+>   }
+>   
+> +static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
+> +					u8 max_level, int gmem_order)
+> +{
+> +	if (max_level == PG_LEVEL_4K)
+> +		return PG_LEVEL_4K;
+> +
+> +	max_level = min(kvm_max_level_for_order(gmem_order), max_level);
+> +	if (max_level == PG_LEVEL_4K)
+> +		return PG_LEVEL_4K;
+> +
+> +	return min(max_level,
+> +		   static_call(kvm_x86_private_max_mapping_level)(kvm, pfn));
+> +}
 
-To address the performance drop issue, an optimization has been
-implemented. The incorrect highest performance value previously set by the
-low-level power firmware for AMD CPUs with Family ID 0x19 and Model ID
-ranging from 0x70 to 0x7F series has been identified as the cause.
+Since you're returning 0 both as a default and, later in the series, for non-SNP guests, you need to treat 0 as "don't care":
 
-To resolve this, a check has been implemented to accurately determine the
-CPU family and model ID. The correct highest performance value is now set
-and the performance drop caused by the incorrect highest performance value
-are eliminated.
-
-Before the fix, the highest frequency was set to 4200MHz, now it is set
-to 4971MHz which is correct.
-
-CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
-  0    0      0    0 0:0:0:0          yes 4971.0000 400.0000  400.0000
-  1    0      0    0 0:0:0:0          yes 4971.0000 400.0000  400.0000
-  2    0      0    1 1:1:1:0          yes 4971.0000 400.0000 4865.8140
-  3    0      0    1 1:1:1:0          yes 4971.0000 400.0000  400.0000
-
-Fixes: f3a052391822 ("cpufreq: amd-pstate: Enable amd-pstate preferred core support")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218759
-Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-This comes from patch 10 originally by Perry in [1].  As there is a regression in 6.9
-it's pulled out separately from the rest of the series.
-This should go to 6.9 final if possible; otherwise 6.10-rc1 and CC to stable
-at that time.
-
-[1] https://lore.kernel.org/linux-pm/cover.1715065568.git.perry.yuan@amd.com/T/#t.
-
- drivers/cpufreq/amd-pstate.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index fbe57d356ee4..4859902eaf1a 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -50,7 +50,8 @@
- 
- #define AMD_PSTATE_TRANSITION_LATENCY	20000
- #define AMD_PSTATE_TRANSITION_DELAY	1000
--#define AMD_PSTATE_PREFCORE_THRESHOLD	166
-+#define CPPC_HIGHEST_PERF_PERFORMANCE	196
-+#define CPPC_HIGHEST_PERF_DEFAULT	166
- 
- /*
-  * TODO: We need more time to fine tune processors with shared memory solution
-@@ -264,6 +265,21 @@ static inline int amd_pstate_enable(bool enable)
- 	return static_call(amd_pstate_enable)(enable);
- }
- 
-+static u32 amd_pstate_highest_perf_set(struct amd_cpudata *cpudata)
-+{
-+	struct cpuinfo_x86 *c = &cpu_data(0);
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index de35dee25bf6..62ad38b2a8c9 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4274,6 +4274,8 @@ static inline u8 kvm_max_level_for_order(int order)
+  static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
+  					u8 max_level, int gmem_order)
+  {
++	u8 req_max_level;
 +
-+	/*
-+	 * For AMD CPUs with Family ID 19H and Model ID range 0x70 to 0x7f,
-+	 * the highest performance level is set to 196.
-+	 * https://bugzilla.kernel.org/show_bug.cgi?id=218759
-+	 */
-+	if (c->x86 == 0x19 && (c->x86_model >= 0x70 && c->x86_model <= 0x7f))
-+		return CPPC_HIGHEST_PERF_PERFORMANCE;
+  	if (max_level == PG_LEVEL_4K)
+  		return PG_LEVEL_4K;
+  
+@@ -4281,8 +4283,11 @@ static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
+  	if (max_level == PG_LEVEL_4K)
+  		return PG_LEVEL_4K;
+  
+-	return min(max_level,
+-		   static_call(kvm_x86_private_max_mapping_level)(kvm, pfn));
++	req_max_level = static_call(kvm_x86_private_max_mapping_level)(kvm, pfn);
++	if (req_max_level)
++		max_level = min(max_level, req_max_level);
 +
-+	return CPPC_HIGHEST_PERF_DEFAULT;
-+}
-+
- static int pstate_init_perf(struct amd_cpudata *cpudata)
- {
- 	u64 cap1;
-@@ -280,7 +296,7 @@ static int pstate_init_perf(struct amd_cpudata *cpudata)
- 	 * the default max perf.
- 	 */
- 	if (cpudata->hw_prefcore)
--		highest_perf = AMD_PSTATE_PREFCORE_THRESHOLD;
-+		highest_perf = amd_pstate_highest_perf_set(cpudata);
- 	else
- 		highest_perf = AMD_CPPC_HIGHEST_PERF(cap1);
- 
-@@ -304,7 +320,7 @@ static int cppc_init_perf(struct amd_cpudata *cpudata)
- 		return ret;
- 
- 	if (cpudata->hw_prefcore)
--		highest_perf = AMD_PSTATE_PREFCORE_THRESHOLD;
-+		highest_perf = amd_pstate_highest_perf_set(cpudata);
- 	else
- 		highest_perf = cppc_perf.highest_perf;
- 
--- 
-2.43.0
++	return req_max_level;
+  }
+  
+  static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
+
+
+Not beautiful but it does the job I guess.
+
+Paolo
 
 
