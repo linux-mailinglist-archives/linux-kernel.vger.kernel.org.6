@@ -1,159 +1,114 @@
-Return-Path: <linux-kernel+bounces-171936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837778BEAE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:56:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC78BEAE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51881C23F13
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0FBE1F22B81
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCB816C878;
-	Tue,  7 May 2024 17:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1823816C871;
+	Tue,  7 May 2024 17:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCs90TDy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtxI4VSX"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD0016C857;
-	Tue,  7 May 2024 17:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297471607A7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104575; cv=none; b=gLIuCMFEpN1Cgm6WNdsvOsWv3N5OHtOdTT9ic6DsX4PPMxBKaNkfep535uVQpulXP/LBj1buhnMGhvCsqkh/lu2omrOmAm/rdLJgbZreJxRvo35yrZ9zrz3Cc9whothZAPDHACk+BGw0dUKMPp9+AYZflTMngcSDsNZfwTH5t2E=
+	t=1715104594; cv=none; b=aJBbobs6YtcsVUlUZe4i3dEVeB2Ln+QnYamfxjaZAS3PqF0t4rXj7EKAJ41sPhkoW+OgIfe7JKmIgjY8AkHE28SHGN5l1hYc7kCoFdtbms2xCcai4D1JF+lSVjelcRR1jPZw6Y0Kh3xVZkkYo7GSTWrchlp6ZMBZPm57OvDWBGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104575; c=relaxed/simple;
-	bh=7vP8j6DVRtxLzZgNQl7oooXokBXhH16yTi4+Bilnelo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSVkvMRlipubU7roGxVl/ohSHGQL1hGlwAFYZqwVxhOBUuv5gGLjjyacrqMt9C2zEi77koytvna2lko6drohb+qUYupBrcKinZFJ0kf8SrcHfm6rMA6eG/T0gitYaDAPz1z84m4ZRMDKfU8jpuql0jM5kbN5wkrwERKgCt40btE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCs90TDy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2882DC2BBFC;
-	Tue,  7 May 2024 17:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715104575;
-	bh=7vP8j6DVRtxLzZgNQl7oooXokBXhH16yTi4+Bilnelo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KCs90TDyslyU+o0zAPC/FcymE8ykJh48djflVZPXK/dyFC2AkC1GlOXS1lItHn55y
-	 lqETo8ShtgbldxtGPqr+3BR4+QsxlleaDore6eHTZiOmmYVH/sapZjlb1W9YNJv1az
-	 ZI8Q7i4H142m9nZKsfQE/+eoqJe3UXmg/zzuGdF3Zbcmv1ZH4GnvzAnUTHIqnHbF9T
-	 Kx4yTRx225NL2gMFA95S1Dwhzr/gWcx5a05lEQgbe/otGcd9rykhUizINo1afsOGsu
-	 yQXFii/ahAN1H/zmWE/6fS1PdNe9u1bMsnH+faJHWAR73vA02IMMLYgMRSyiR4f1BH
-	 yWRVf720y6BHw==
-Date: Tue, 7 May 2024 10:56:13 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: tytso@mit.edu, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fscrypto: try to avoid refing parent dentry in
- fscrypt_file_open
-Message-ID: <20240507175613.GA25966@sol.localdomain>
-References: <20240507093653.297402-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1715104594; c=relaxed/simple;
+	bh=l50Vqp2ua5FSimEFnJjrmoroRGW3yD9rBbW6y+IZyMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQKtgrP7Mzj9rbHs5gzHr6oP+DVAkHo+DeUiAkwmtQXGbR1xUDBgd+VByuWRMazPpXnn/MIvMlLbtYoVXkFu4WDzUkoaygN0iTLlpLMkObJNR3mOr7xZ8qCac50g0qOM4aWo71WIZ4+iTKn9EezAKcPDKTwbD3P3kxTtRLHMhrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtxI4VSX; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so2703881b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715104592; x=1715709392; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ive3waDoK8gwDGEBUE2bkX5N+SnSEytp7ihvp6Bzhck=;
+        b=gtxI4VSX1hXW/2317mYablrhK7oeHe3wvtpEgmLxhc6oUEJQys5oMkAN1ICtRV1u+n
+         tPzeIJh2dT2E3xKTW9bpHNp81eBd1++444vft3Be+LlMLjjCdSvlwjMhJUKO32Stb2St
+         ASao/nYPuSQY2t9wA85ji2GdoANszh6t83XiTrNm+W9omAZGkGFjXrUauxRO/Y1ZE8uS
+         Fn+9qQcdGGa1o/dlwy2dimDpuiZO8hcY/AxDhZOOJI7uneayWD6TomDSWuF0gtOShu0D
+         JZQhzvW4wNe3FhtKrB+GqV9lA4Enw8wXEmtSbts4KHj2DajlDUZmTL05tvLPTvl+4hxl
+         aKdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715104592; x=1715709392;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ive3waDoK8gwDGEBUE2bkX5N+SnSEytp7ihvp6Bzhck=;
+        b=ooIzJLrVy230aqQWhWr9gAlAV8/rVbWFm0UQegCJF1t1bv5lAQ6bCpDEgAh/SZlFgp
+         iBvPzyeyEBK4do0Oqmq98dFgkKM61pDkZWf2zgrwsKQRk7zMLUAnUo1cZPVNmt6r3YcK
+         qOldS+x29dJHSZDWWchABKEaw2cAU2B5BsDwBKQbieT1s29QygTIYuazkwKh3pSBKyO4
+         qYf0z7dDA7GZB9an0J+Hu7IB8vbKZlT3wm6AtyhiPxbhKWn76viYguxmVpi4qO//ssV+
+         g8so4GPunD960RST5bZUtIoC3iD6ORB8NgR9x9JzajzUnF3gLxRXZqSFfI3XqduMex7C
+         IZvw==
+X-Gm-Message-State: AOJu0YyOWFrjf3P0N9N6nSEV7zmcxyb+5runDAkavGVslt1AScqPi8sc
+	Y4bpheY1vmYOv+MDPcnYxbUVYF+PCDuS4eeOdRCWJiaP/lemXn4/XBpEpA==
+X-Google-Smtp-Source: AGHT+IEjfRxzUs2wpGVAcI782dPodkBNSPfsWEd5VtY3GAR+bB9Wpak17hBN3oRvPuKogBnyQFbt9Q==
+X-Received: by 2002:a05:6a00:3a98:b0:6ea:d114:5ea1 with SMTP id d2e1a72fcca58-6f49c236254mr358654b3a.17.1715104592171;
+        Tue, 07 May 2024 10:56:32 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2620:0:1000:8411:1c98:67c4:cc33:3971])
+        by smtp.gmail.com with ESMTPSA id fc16-20020a056a002e1000b006f4596a2753sm6269387pfb.40.2024.05.07.10.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 10:56:31 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: allow dirty sections with zero valid block for checkpoint disabled
+Date: Tue,  7 May 2024 10:56:28 -0700
+Message-ID: <20240507175628.2460390-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507093653.297402-1-mjguzik@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-[+linux-fsdevel]
+From: Daeho Jeong <daehojeong@google.com>
 
-Thanks!  The general concept looks good.  A few nits below:
+Following the semantic for dirty segments in checkpoint disabled mode,
+apply the same rule to dirty sections.
 
-On Tue, May 07, 2024 at 11:36:53AM +0200, Mateusz Guzik wrote:
-> fscrypto: try to avoid refing parent dentry in fscrypt_file_open
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/segment.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-fscrypt, not fscrypto
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6474b7338e81..2463398b243f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -771,8 +771,11 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+ 			block_t valid_blocks =
+ 				get_valid_blocks(sbi, segno, true);
+ 
+-			f2fs_bug_on(sbi, unlikely(!valid_blocks ||
+-					valid_blocks == CAP_BLKS_PER_SEC(sbi)));
++			if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED))
++				f2fs_bug_on(sbi, unlikely(!valid_blocks));
++
++			f2fs_bug_on(sbi, unlikely(valid_blocks ==
++					CAP_BLKS_PER_SEC(sbi)));
+ 
+ 			if (!IS_CURSEC(sbi, secno))
+ 				set_bit(secno, dirty_i->dirty_secmap);
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
 
-> Merely checking if the directory is encrypted happens for every open
-> when using ext4, at the moment refing and unrefing the parent, costing 2
-> atomics and serializing opens of different files.
-> 
-> The most common case of encryption not being used can be checked for
-> with RCU instead.
-> 
-> Sample result from open1_processes -t 20 ("Separate file open/close") from
-
-Overly long line above
-
-> will-it-scale on Sapphire Rapids (ops/s):
-> before:	12539898
-> after:	25575494 (+103%)
-> 
-> Arguably a vfs helper would be nice here.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  fs/crypto/hooks.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-> index 104771c3d3f6..16328ec14266 100644
-> --- a/fs/crypto/hooks.c
-> +++ b/fs/crypto/hooks.c
-> @@ -30,21 +30,32 @@
->  int fscrypt_file_open(struct inode *inode, struct file *filp)
->  {
->  	int err;
-> -	struct dentry *dir;
-> +	struct dentry *dentry, *dentry_parent;
-> +	struct inode *inode_parent;
->  
->  	err = fscrypt_require_key(inode);
->  	if (err)
->  		return err;
->  
-> -	dir = dget_parent(file_dentry(filp));
-> -	if (IS_ENCRYPTED(d_inode(dir)) &&
-> -	    !fscrypt_has_permitted_context(d_inode(dir), inode)) {
-> +	dentry = file_dentry(filp);
-> +	rcu_read_lock();
-> +	dentry_parent = READ_ONCE(dentry->d_parent);
-> +	inode_parent = d_inode_rcu(dentry_parent);
-> +	if (inode_parent != NULL && !IS_ENCRYPTED(inode_parent)) {
-> +		rcu_read_unlock();
-> +		return 0;
-> +	}
-> +	rcu_read_unlock();
-
-It would be helpful for there to be a comment here that explains the
-optimization.  How about something like the following?
-
-	/*
-	 * Getting a reference to the parent dentry is needed for the actual
-	 * encryption policy comparison, but it's expensive on multi-core
-	 * systems.  Since this function runs on unencrypted files too, start
-	 * with a lightweight RCU-mode check for the parent directory being
-	 * unencrypted (in which case it's fine for the child to be either
-	 * unencrypted, or encrypted with any policy).  Only continue on to the
-	 * full policy check if the parent directory is actually encrypted.
-	 */
-
-	dentry = file_dentry(filp);
-	rcu_read_lock();
-        ...
-
-> +
-> +	dentry_parent = dget_parent(dentry);
-> +	if (IS_ENCRYPTED(d_inode(dentry_parent)) &&
-> +	    !fscrypt_has_permitted_context(d_inode(dentry_parent), inode)) {
->  		fscrypt_warn(inode,
->  			     "Inconsistent encryption context (parent directory: %lu)",
-> -			     d_inode(dir)->i_ino);
-> +			     d_inode(dentry_parent)->i_ino);
->  		err = -EPERM;
->  	}
-> -	dput(dir);
-> +	dput(dentry_parent);
->  	return err;
-
-The IS_ENCRYPTED() check above can be removed, because it becomes redundant due
-to this patch.  I think it was intended to optimize the case of unencrypted
-files, like your patch does.  But clearly it wasn't too effective, as it was
-after the dget_parent().
-
-- Eric
 
