@@ -1,302 +1,142 @@
-Return-Path: <linux-kernel+bounces-170762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBA38BDBA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8988BDB98
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 234FBB22413
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:38:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE211C20B5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D185278C8C;
-	Tue,  7 May 2024 06:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9581D78C60;
+	Tue,  7 May 2024 06:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BcQvIL6y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rD6QrtV9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AEA74267;
-	Tue,  7 May 2024 06:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28E42EB08;
+	Tue,  7 May 2024 06:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715063888; cv=none; b=ilaes5hP+JPTyTM3riSDfOK4R06O78mMLy5DqJLyGycNFfRmdUv2AmqNYhXyI9CtDpfW6WCzBIDD/l7D+Tciyr7nCcFTWMJF9Y3DccozL356OAe2Bci1JzxZvnrcTojVZmx/g1EvE7IdVTQ+21zGgUere1k+HqDWZYqNEzth/gs=
+	t=1715063749; cv=none; b=u6SN29XCloBaQ2jqYTi2sEJlVcKKFFMasIA2wANt/72ZrbznZnxOgl7OJYN10Qq+uvrnSUhcLq9UK2mxSk+8KZKuNjI0jmaroWsIGomM8dGqbszAAjJGRDFvpWAYvqAL8RtHSPQJBBkbHJ63VjqF3U/1c2qERaqC/R5RBZmpa4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715063888; c=relaxed/simple;
-	bh=al2uTCbUkaO+YN6iS/CsFF1oIj/GnxrR8GTTZRDImpY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=m1q59kGR3dpkG7TvmKQKatHUciC/m7i2/TMMfo4uju+MTEooYd0pOHgpygWx/h7nv6Q2krAzitY22W18eVj+93PJbQnHaXb3FQZh3kfAv0pjqkoWo+GKWxTkpUV6I9Q5BrKqv4SNNVI3FOqlKeXfnYtCVjf3LhgBftLrGkpG6vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BcQvIL6y; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715063887; x=1746599887;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=al2uTCbUkaO+YN6iS/CsFF1oIj/GnxrR8GTTZRDImpY=;
-  b=BcQvIL6yQcsTT3xBivU+wKVFTzJGuB/n0/87nk5kf4Srm7vRn4kpqWx2
-   T0sb8OOg7vPWyRu4wpKwa/4uflLF+Iq879gRJlXoBl2f/dop+3skUH6J7
-   jlRT9w08ol9Qkh0N6R1XdC/LtHfFeGyIeREGWVcNerlk4+gO6JUmsCKl7
-   CUqYuy6/thrjQRAw85ay2lGvB02ONtG4nEReeI30jSqm2Sj1+I3A3ncM+
-   85ADFyhJYj7WPy5nxQa5xhbJYB+0tU8IiUQvmyL0J9CZLfq01ldR68aFj
-   thTqp6CcEWzS1goEvlqf+v0cvmUc3grqqntOjtyLG57DiKd6/oudWM/Ab
-   g==;
-X-CSE-ConnectionGUID: ytcKcyc+Q5SmMDe+NMFAZQ==
-X-CSE-MsgGUID: 7RdM4LPVSzCnnBv5DrS6lA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="28360753"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="28360753"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:38:06 -0700
-X-CSE-ConnectionGUID: 0rO5EyK9SOGK0zZ0OrTZ8w==
-X-CSE-MsgGUID: d7fc7jBVRbqxLmJn3Qedww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="65861231"
-Received: from unknown (HELO st-server.bj.intel.com) ([10.240.193.102])
-  by orviesa001.jf.intel.com with ESMTP; 06 May 2024 23:38:00 -0700
-From: Tao Su <tao1.su@linux.intel.com>
-To: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	kvm@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-sgx@vger.kernel.org
-Cc: akpm@linux-foundation.org,
-	edliaw@google.com,
-	ivan.orlov0322@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shuah@kernel.org,
-	seanjc@google.com,
-	pbonzini@redhat.com,
-	bongsu.jeon@samsung.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	alexandre.belloni@bootlin.com,
-	jarkko@kernel.org,
-	dave.hansen@linux.intel.com,
-	tao1.su@linux.intel.com
-Subject: [PATCH] selftests: Add _GNU_SOURCE definition when including kselftest_harness.h
-Date: Tue,  7 May 2024 14:35:34 +0800
-Message-Id: <20240507063534.4191447-1-tao1.su@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715063749; c=relaxed/simple;
+	bh=/Mlhnh+UCfgw9ZOZJQ3oMWCD2KpVf5vQppclCcvAgLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EUPUJJMNOi5u5TC8PTFKc49dV2b1LW6spbGXmIaE1oVB3bkOc0IEDXm0sVana8TGA+mMPORNsNGkEQjWcVZUGNMXAD6/4Z1mBOqtIR8xgKI4cVWacs0RMgoZm6sbUtGpISXIOJ5iD4ICLD4DspbkIFNyt3v0tdULs7HJXqR3Crg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rD6QrtV9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C92F6C2BBFC;
+	Tue,  7 May 2024 06:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715063749;
+	bh=/Mlhnh+UCfgw9ZOZJQ3oMWCD2KpVf5vQppclCcvAgLQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rD6QrtV9qW6k0cGQYJWhixxTt7MFNwMKrQleRioW9eppgaO5tlBFTJqgudXH68Lxl
+	 hEIXYoEcKQjWZm1Dx53KyJGV+ICvVQLWm1ytCKQ7vVEdAKiGXocecKWyE7qOW/LvmP
+	 RkXuj3piPlKQLWvUbeI3vvztNvziA1w3Z/3givY3MYwXUqd4HCwh/4OEuwoya79if4
+	 1DV84Ms0zk94F/TcpDsnjOMgiw5V35bwlWCIEhTwbc4yPtA2pUXvD1KDI92ug28E3v
+	 /Nu2Mjyj7uuokyu1kw5giCAlRyKQM9qz4cszR6BhJrGCQCGW9eFxDrZ+YlshtyfrDe
+	 woDv0ZbVHn0qg==
+Message-ID: <8f3cc030-e3cb-4758-8114-7364ce47481a@kernel.org>
+Date: Tue, 7 May 2024 08:35:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 05/11] i2c: core: Avoid config node enumeration
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+ andi.shyti@kernel.org, wsa+renesas@sang-engineering.com,
+ ulf.hansson@linaro.org, adrian.hunter@intel.com, digetx@gmail.com,
+ ldewangan@nvidia.com, mkumard@nvidia.com
+References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
+ <20240506225139.57647-6-kyarlagadda@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240506225139.57647-6-kyarlagadda@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-asprintf() is declared in stdio.h when defining _GNU_SOURCE, but stdio.h
-is so common that many files don’t define _GNU_SOURCE before including
-stdio.h, and defining _GNU_SOURCE after including stdio.h will no longer
-take effect.
+On 07/05/2024 00:51, Krishna Yarlagadda wrote:
+> Add "config" as a common node to add device configuration settings and
+> other data. This child node should not be treated as a device.
+> Skip "config" child node during i2c device registration.
+> 
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  drivers/i2c/i2c-core-of.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+> index a6c407d36800..f50206c6c4d6 100644
+> --- a/drivers/i2c/i2c-core-of.c
+> +++ b/drivers/i2c/i2c-core-of.c
+> @@ -98,6 +98,9 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+>  		bus = of_node_get(adap->dev.of_node);
+>  
+>  	for_each_available_child_of_node(bus, node) {
+> +		if (!strcmp(node->name, "config"))
+> +			continue;
 
-Since kselftest_harness.h introduces asprintf(), it is necessary to add
-_GNU_SOURCE definition in all selftests including kselftest_harness.h,
-otherwise, there will be warnings or even errors during compilation.
-There are already many selftests that define _GNU_SOURCE or put the
-include of kselftest_harness.h at the very beginning of the .c file, just
-add the _GNU_SOURCE definition in the tests that have compilation warnings.
+NAK
 
-Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
-Signed-off-by: Tao Su <tao1.su@linux.intel.com>
----
- tools/testing/selftests/alsa/test-pcmtest-driver.c      | 1 +
- tools/testing/selftests/kvm/x86_64/fix_hypercall_test.c | 1 +
- tools/testing/selftests/nci/nci_dev.c                   | 1 +
- tools/testing/selftests/net/bind_wildcard.c             | 1 +
- tools/testing/selftests/net/ip_local_port_range.c       | 1 +
- tools/testing/selftests/net/reuseaddr_ports_exhausted.c | 1 +
- tools/testing/selftests/prctl/set-anon-vma-name-test.c  | 1 +
- tools/testing/selftests/prctl/set-process-name.c        | 1 +
- tools/testing/selftests/rtc/rtctest.c                   | 1 +
- tools/testing/selftests/sgx/main.c                      | 1 +
- tools/testing/selftests/tdx/tdx_guest_test.c            | 1 +
- tools/testing/selftests/user_events/dyn_test.c          | 1 +
- tools/testing/selftests/user_events/ftrace_test.c       | 1 +
- tools/testing/selftests/user_events/perf_test.c         | 1 +
- 14 files changed, 14 insertions(+)
+All children are devices (they have unit addresses). Do not introduce
+some another, parallel addressing.
 
-diff --git a/tools/testing/selftests/alsa/test-pcmtest-driver.c b/tools/testing/selftests/alsa/test-pcmtest-driver.c
-index ca81afa4ee90..5a01100d459d 100644
---- a/tools/testing/selftests/alsa/test-pcmtest-driver.c
-+++ b/tools/testing/selftests/alsa/test-pcmtest-driver.c
-@@ -5,6 +5,7 @@
-  *
-  * Copyright 2023 Ivan Orlov <ivan.orlov0322@gmail.com>
-  */
-+#define _GNU_SOURCE
- #include <string.h>
- #include <alsa/asoundlib.h>
- #include "../kselftest_harness.h"
-diff --git a/tools/testing/selftests/kvm/x86_64/fix_hypercall_test.c b/tools/testing/selftests/kvm/x86_64/fix_hypercall_test.c
-index f3c2239228b1..40f3e81b1a6c 100644
---- a/tools/testing/selftests/kvm/x86_64/fix_hypercall_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/fix_hypercall_test.c
-@@ -4,6 +4,7 @@
-  *
-  * Tests for KVM paravirtual feature disablement
-  */
-+#define _GNU_SOURCE
- #include <asm/kvm_para.h>
- #include <linux/kvm_para.h>
- #include <linux/stringify.h>
-diff --git a/tools/testing/selftests/nci/nci_dev.c b/tools/testing/selftests/nci/nci_dev.c
-index 1562aa7d60b0..7cf18aced644 100644
---- a/tools/testing/selftests/nci/nci_dev.c
-+++ b/tools/testing/selftests/nci/nci_dev.c
-@@ -6,6 +6,7 @@
-  * Test code for nci
-  */
- 
-+#define _GNU_SOURCE
- #include <stdlib.h>
- #include <errno.h>
- #include <string.h>
-diff --git a/tools/testing/selftests/net/bind_wildcard.c b/tools/testing/selftests/net/bind_wildcard.c
-index b7b54d646b93..f271e2ee6c7a 100644
---- a/tools/testing/selftests/net/bind_wildcard.c
-+++ b/tools/testing/selftests/net/bind_wildcard.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright Amazon.com Inc. or its affiliates. */
- 
-+#define _GNU_SOURCE
- #include <sys/socket.h>
- #include <netinet/in.h>
- 
-diff --git a/tools/testing/selftests/net/ip_local_port_range.c b/tools/testing/selftests/net/ip_local_port_range.c
-index 193b82745fd8..fadefb0ab147 100644
---- a/tools/testing/selftests/net/ip_local_port_range.c
-+++ b/tools/testing/selftests/net/ip_local_port_range.c
-@@ -7,6 +7,7 @@
-  * Don't run these directly but with ip_local_port_range.sh script.
-  */
- 
-+#define _GNU_SOURCE
- #include <fcntl.h>
- #include <netinet/ip.h>
- 
-diff --git a/tools/testing/selftests/net/reuseaddr_ports_exhausted.c b/tools/testing/selftests/net/reuseaddr_ports_exhausted.c
-index 066efd30e294..4f6fb2fbb96d 100644
---- a/tools/testing/selftests/net/reuseaddr_ports_exhausted.c
-+++ b/tools/testing/selftests/net/reuseaddr_ports_exhausted.c
-@@ -17,6 +17,7 @@
-  *
-  * Author: Kuniyuki Iwashima <kuniyu@amazon.co.jp>
-  */
-+#define _GNU_SOURCE
- #include <arpa/inet.h>
- #include <netinet/in.h>
- #include <sys/socket.h>
-diff --git a/tools/testing/selftests/prctl/set-anon-vma-name-test.c b/tools/testing/selftests/prctl/set-anon-vma-name-test.c
-index 4275cb256dce..e5ea821be241 100644
---- a/tools/testing/selftests/prctl/set-anon-vma-name-test.c
-+++ b/tools/testing/selftests/prctl/set-anon-vma-name-test.c
-@@ -3,6 +3,7 @@
-  * This test covers the anonymous VMA naming functionality through prctl calls
-  */
- 
-+#define _GNU_SOURCE
- #include <errno.h>
- #include <sys/prctl.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/prctl/set-process-name.c b/tools/testing/selftests/prctl/set-process-name.c
-index 562f707ba771..9cbfe9d38d72 100644
---- a/tools/testing/selftests/prctl/set-process-name.c
-+++ b/tools/testing/selftests/prctl/set-process-name.c
-@@ -3,6 +3,7 @@
-  * This test covers the PR_SET_NAME functionality of prctl calls
-  */
- 
-+#define _GNU_SOURCE
- #include <errno.h>
- #include <sys/prctl.h>
- #include <string.h>
-diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-index 63ce02d1d5cc..2ace7a75c638 100644
---- a/tools/testing/selftests/rtc/rtctest.c
-+++ b/tools/testing/selftests/rtc/rtctest.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2018 Alexandre Belloni <alexandre.belloni@bootlin.com>
-  */
- 
-+#define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <linux/rtc.h>
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 9820b3809c69..bb6e795d06e2 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*  Copyright(c) 2016-20 Intel Corporation. */
- 
-+#define _GNU_SOURCE
- #include <cpuid.h>
- #include <elf.h>
- #include <errno.h>
-diff --git a/tools/testing/selftests/tdx/tdx_guest_test.c b/tools/testing/selftests/tdx/tdx_guest_test.c
-index 81d8cb88ea1a..f966467d1ef1 100644
---- a/tools/testing/selftests/tdx/tdx_guest_test.c
-+++ b/tools/testing/selftests/tdx/tdx_guest_test.c
-@@ -7,6 +7,7 @@
-  * Author: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-  */
- 
-+#define _GNU_SOURCE
- #include <sys/ioctl.h>
- 
- #include <errno.h>
-diff --git a/tools/testing/selftests/user_events/dyn_test.c b/tools/testing/selftests/user_events/dyn_test.c
-index bdf9ab127488..9d090ba3bfc3 100644
---- a/tools/testing/selftests/user_events/dyn_test.c
-+++ b/tools/testing/selftests/user_events/dyn_test.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2021 Beau Belgrave <beaub@linux.microsoft.com>
-  */
- 
-+#define _GNU_SOURCE
- #include <errno.h>
- #include <linux/user_events.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/user_events/ftrace_test.c b/tools/testing/selftests/user_events/ftrace_test.c
-index dcd7509fe2e0..25adef590a94 100644
---- a/tools/testing/selftests/user_events/ftrace_test.c
-+++ b/tools/testing/selftests/user_events/ftrace_test.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2021 Beau Belgrave <beaub@linux.microsoft.com>
-  */
- 
-+#define _GNU_SOURCE
- #include <errno.h>
- #include <linux/user_events.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/user_events/perf_test.c b/tools/testing/selftests/user_events/perf_test.c
-index 5288e768b207..176740a0fc02 100644
---- a/tools/testing/selftests/user_events/perf_test.c
-+++ b/tools/testing/selftests/user_events/perf_test.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2021 Beau Belgrave <beaub@linux.microsoft.com>
-  */
- 
-+#define _GNU_SOURCE
- #include <errno.h>
- #include <linux/user_events.h>
- #include <linux/perf_event.h>
-
-base-commit: dccb07f2914cdab2ac3a5b6c98406f765acab803
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
