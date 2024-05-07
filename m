@@ -1,190 +1,188 @@
-Return-Path: <linux-kernel+bounces-171704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0738BE787
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:35:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0D88BE78F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53EF51F25705
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA10A1C23719
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AC21635DF;
-	Tue,  7 May 2024 15:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E401635DF;
+	Tue,  7 May 2024 15:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="i+sZlqOc"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aMZAFd2W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UWoWzIcc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aMZAFd2W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UWoWzIcc"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FA8161331
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A2F15E1E2;
+	Tue,  7 May 2024 15:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715096130; cv=none; b=B2hwRx25D9X/6pFD7Ygsguokp+UkcsProsfGGI+9O8OAUYQLSIleylLCyXIEmE4cRlJnJxofey8FsQ4eUilUKuztjieGDBe5HxvXnz9U3vGJwzPOiMRW1q5dbx0lCHIZ6ARCQYeeWu2C7egJ5lpFASyu1x3Iy6CLZsB94rjziR4=
+	t=1715096293; cv=none; b=Otlo7vLhGy6jMa0/U6eK9J/lMjcaPZRsTpiGZI+OdLq144y5XVKWIA5oUH5RQz3o5/MtiCt71pUXRtS4WpDU0d3znj6RK0HbQQWkMfhiZsgKGp0Ukb630GXVquUdwD7MKzNcdKVK2ZwVLKTDOWCr8Kd9poe2vah0cbFoltywRjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715096130; c=relaxed/simple;
-	bh=AHmd40tFLpuB76nYEEXIiv7NLdIIAMsC68vMChwHn6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uPgJzNZN4ziZDD/4FNfQPjHU48G56CjwMjtU7O73FmcmLeJJmSJheFBBN26kA/vUzJknwvXjLGJuLa+6yXe1j5XaYUXfjVCL2kntrReUPjWQZMOJdmaN4j3QjNYkwpcHdPWwakOHwhG+gjPtoIsbTffeAEJZ5M3SuEG+cJCxa10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=i+sZlqOc; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7ded01aa1d2so158264239f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1715096128; x=1715700928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7fZeIxGU7jDZbp8MIAMXuP3cI2fycrTuvDnx0IrbFAQ=;
-        b=i+sZlqOc3MkQmSognxggc5n17dDM4kHVWLwrl1hJW7/VpWZUXis/QTIMbVa7zVQvSc
-         Ka1xONl22MN2IIhvXLtnxAvobi2+uxT/REqLkBV0Wr93utOiXNQcqfKd+/IDqBtgI3yL
-         2eDEGin73/3hYX/nLXGGUwsY85plpOGNAm01Nx8rcqTy2pXYAPCyQ4H6/ZV9KZ1N0poK
-         2/V1WZkkAf0rezJL0xSXtIu197XmMqBVrOWn1Z3k4nbbhOGMzLtPehPIEC9O8I24rE6D
-         LS1BDMw9+AzS3leaI8HS1GNO+9zUNq49wBbFkhUTu2yr/MqP7wOFg7ImLSNTC8bp6mhl
-         ajiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715096128; x=1715700928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7fZeIxGU7jDZbp8MIAMXuP3cI2fycrTuvDnx0IrbFAQ=;
-        b=uicJ8aCATtHfaHnxPy4G2s3FqTXeZj0fJnUyCR2+mXNCXEqlEpNp6CHHVoy3Q32YRK
-         fCcjZkgyy0WKnghAEwcUYjj4oOJVTcBRhyx2w/eKhhOs3QeCRfe6fi6MlIKjOiZNXEtp
-         tkufS2ulD0ODf1h5/rTFHtKwS2LFSYRWg4vN+dSHOhiAipYn1frZ9j60mO4dDTscD5+f
-         ido+cVeFQO1AI3vcdL+RXp5lVcFn1gXv1WvG9zLpXM7stFjWhR6j42730CkEBMi0rzY9
-         O14jehBcnmSDOGSfap+tW1+zy294lXgi0w/LJ2QD6E9Aq7mY/lks5cergwqPdGhmuYeQ
-         iqng==
-X-Forwarded-Encrypted: i=1; AJvYcCUlnCMaah8nGq5LVrcPI0CalyNaQlnm3rggh1ubZi3q99/M4w6OBRJ+R+XkW0bfF564YOUx1un8nHKh43dIu3ojqapqCBINnOeIjkpn
-X-Gm-Message-State: AOJu0YxERYXBMlvPGfanrVMCjAacQHGMISKT1p0A7t8CneBkzV6usiLT
-	01TcdVswn1QOI4/lu7fpYZPmWwPZSDrsreXfF+ozAQPTDV2WbcYchr9fTcZBR74DvwJ1boqcJcn
-	Bv/dBjTjaIpVK06ABsgSLI6dmzhxAWNO1/5L04A==
-X-Google-Smtp-Source: AGHT+IHqhr+YVZAu1ZOtkTbNqavDX8MQUCsFnE/WXIvw3MsduOLxL3dNlYhKHRcJc+TT/v2hNtcpr3nZKzMPIQcSz3I=
-X-Received: by 2002:a05:6602:6d12:b0:7e1:7a0b:3091 with SMTP id
- im18-20020a0566026d1200b007e17a0b3091mr5247906iob.15.1715096127791; Tue, 07
- May 2024 08:35:27 -0700 (PDT)
+	s=arc-20240116; t=1715096293; c=relaxed/simple;
+	bh=xKF1H9j1MZHhQGjnP4Li4IMqEqKEwQtaBsnmRFKfjVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C7w9l3I2lcmPOiBolb/UBIXWBqQWizvseZj1b7j4ZQ1JMu/qUIPnpp1fAD4SCrPm5qXY3ayIJao/EYXBWtwOBzSf3UO4bxvQ1Ar1ipDLPeheGY6ytfUb9gD76h66v2XebQbEoKoaq0W54XUUGGGSVF1SYdjw9u1980AxmJkJs8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aMZAFd2W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UWoWzIcc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aMZAFd2W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UWoWzIcc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 84E5F20C58;
+	Tue,  7 May 2024 15:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715096290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=s8tHyXfzGfTlsq3wnZwT9oRxMRdo1cSBYtbKiUtIQco=;
+	b=aMZAFd2WDyOo3kNlkRIXgQyVXnNAfJqvvOWcSJLyMpKKneL1ttvioTqbihySrZ8/uzl1co
+	U2s82NePu7LvkW/lZQvwdJPPFOk0YmX77qwhNYcrr9m1zCWJe08hDR/uERFKPo0t1jIeW3
+	jsk7abCMZh5im1q4Yizd4/YW571q33I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715096290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=s8tHyXfzGfTlsq3wnZwT9oRxMRdo1cSBYtbKiUtIQco=;
+	b=UWoWzIcc3FV9goXAOBGFfxjWlWWh2/qs02leEd1u4ze2R6INRvtVZv0HFE3ugjv5dfJ5uG
+	CZB7j9UJouyoI+Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715096290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=s8tHyXfzGfTlsq3wnZwT9oRxMRdo1cSBYtbKiUtIQco=;
+	b=aMZAFd2WDyOo3kNlkRIXgQyVXnNAfJqvvOWcSJLyMpKKneL1ttvioTqbihySrZ8/uzl1co
+	U2s82NePu7LvkW/lZQvwdJPPFOk0YmX77qwhNYcrr9m1zCWJe08hDR/uERFKPo0t1jIeW3
+	jsk7abCMZh5im1q4Yizd4/YW571q33I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715096290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=s8tHyXfzGfTlsq3wnZwT9oRxMRdo1cSBYtbKiUtIQco=;
+	b=UWoWzIcc3FV9goXAOBGFfxjWlWWh2/qs02leEd1u4ze2R6INRvtVZv0HFE3ugjv5dfJ5uG
+	CZB7j9UJouyoI+Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4EF78139CB;
+	Tue,  7 May 2024 15:38:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IAEpEeFKOmZ/VwAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Tue, 07 May 2024 15:38:09 +0000
+From: Petr Vorel <pvorel@suse.cz>
+To: linux-bcachefs@vger.kernel.org
+Cc: Petr Vorel <pvorel@suse.cz>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Su Yue <l@damenly.org>,
+	Brian Foster <bfoster@redhat.com>,
+	Coly Li <colyli@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC value to UAPI magic.h
+Date: Tue,  7 May 2024 17:37:57 +0200
+Message-ID: <20240507153757.150891-1-pvorel@suse.cz>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507142600.23844-1-zong.li@sifive.com> <20240507142600.23844-7-zong.li@sifive.com>
- <20240507150829.GJ901876@ziepe.ca>
-In-Reply-To: <20240507150829.GJ901876@ziepe.ca>
-From: Zong Li <zong.li@sifive.com>
-Date: Tue, 7 May 2024 23:35:16 +0800
-Message-ID: <CANXhq0rnWUT4ia-cUoTbSyEQUeCcmC9bC7HHru6Se-1K-PZRDQ@mail.gmail.com>
-Subject: Re: [PATCH RFC RESEND 6/6] iommu/riscv: support nested iommu for
- flushing cache
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
-	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, kevin.tian@intel.com, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-On Tue, May 7, 2024 at 11:08=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Tue, May 07, 2024 at 10:26:00PM +0800, Zong Li wrote:
-> > This patch implements cache_invalidate_user operation for the userspace
-> > to flush the hardware caches for a nested domain through iommufd.
-> >
-> > Signed-off-by: Zong Li <zong.li@sifive.com>
-> > ---
-> >  drivers/iommu/riscv/iommu.c  | 91 ++++++++++++++++++++++++++++++++++++
-> >  include/uapi/linux/iommufd.h |  9 ++++
-> >  2 files changed, 100 insertions(+)
-> >
-> > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> > index 7eda850df475..4dd58fe2242d 100644
-> > --- a/drivers/iommu/riscv/iommu.c
-> > +++ b/drivers/iommu/riscv/iommu.c
-> > @@ -1522,9 +1522,100 @@ static void riscv_iommu_domain_free_nested(stru=
-ct iommu_domain *domain)
-> >       kfree(riscv_domain);
-> >  }
-> >
-> > +static int riscv_iommu_fix_user_cmd(struct riscv_iommu_command *cmd,
-> > +                                 unsigned int pscid, unsigned int gsci=
-d)
-> > +{
-> > +     u32 opcode =3D FIELD_GET(RISCV_IOMMU_CMD_OPCODE, cmd->dword0);
-> > +
-> > +     switch (opcode) {
-> > +     case RISCV_IOMMU_CMD_IOTINVAL_OPCODE:
-> > +             u32 func =3D FIELD_GET(RISCV_IOMMU_CMD_FUNC, cmd->dword0)=
-;
-> > +
-> > +             if (func !=3D RISCV_IOMMU_CMD_IOTINVAL_FUNC_GVMA &&
-> > +                 func !=3D RISCV_IOMMU_CMD_IOTINVAL_FUNC_VMA) {
-> > +                     pr_warn("The IOTINVAL function: 0x%x is not suppo=
-rted\n",
-> > +                             func);
-> > +                     return -EOPNOTSUPP;
-> > +             }
-> > +
-> > +             if (func =3D=3D RISCV_IOMMU_CMD_IOTINVAL_FUNC_GVMA) {
-> > +                     cmd->dword0 &=3D ~RISCV_IOMMU_CMD_FUNC;
-> > +                     cmd->dword0 |=3D FIELD_PREP(RISCV_IOMMU_CMD_FUNC,
-> > +                                               RISCV_IOMMU_CMD_IOTINVA=
-L_FUNC_VMA);
-> > +             }
-> > +
-> > +             cmd->dword0 &=3D ~(RISCV_IOMMU_CMD_IOTINVAL_PSCID |
-> > +                              RISCV_IOMMU_CMD_IOTINVAL_GSCID);
-> > +             riscv_iommu_cmd_inval_set_pscid(cmd, pscid);
-> > +             riscv_iommu_cmd_inval_set_gscid(cmd, gscid);
-> > +             break;
-> > +     case RISCV_IOMMU_CMD_IODIR_OPCODE:
-> > +             /*
-> > +              * Ensure the device ID is right. We expect that VMM has
-> > +              * transferred the device ID to host's from guest's.
-> > +              */
-> > +             break;
-> > +     default:
-> > +             pr_warn("The user command: 0x%x is not supported\n", opco=
-de);
-> > +             return -EOPNOTSUPP;
->
-> No userspace triggerable warnings.
+Move BCACHEFS_STATFS_MAGIC value to UAPI <linux/magic.h> under
+BCACHEFS_SUPER_MAGIC definition (use common approach for name) and reuse the
+definition in bcachefs_format.h BCACHEFS_STATFS_MAGIC.
 
-I don't complete understand about this. Could I know whether we should
-suppress the message and return the error directly, or if we should
-convert the warning to an error (i.e. pr_err)?
+There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
+which use UUID_INIT() and are used only in libbcachefs. Therefore move
+only BCACHEFS_STATFS_MAGIC value, which can be used outside of
+libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
 
->
-> > +static int riscv_iommu_cache_invalidate_user(struct iommu_domain *doma=
-in,
-> > +                                          struct iommu_user_data_array=
- *array)
-> > +{
-> > +     struct riscv_iommu_domain *riscv_domain =3D iommu_domain_to_riscv=
-(domain);
-> > +     struct riscv_iommu_device *iommu;
-> > +     struct riscv_iommu_bond *bond;
-> > +     struct riscv_iommu_command cmd;
-> > +     struct iommu_hwpt_riscv_iommu_invalidate inv_info;
-> > +     int ret, index;
-> > +
-> > +     if (!riscv_domain)
-> > +             return -EINVAL;
-> > +
-> > +     /* Assume attached devices in the domain go through the same IOMM=
-U device */
->
-> No, you can't assume that.
+Suggested-by: Su Yue <l@damenly.org>
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+Changes v2->v3:
+* Align tab with other entries.
 
-Do you think that it makes sense to add a riscv_iommu_device structure
-in riscv_iommu_domain? Or we might need to add some data structure to
-build the mapping of the riscv_iommu_device and riscv_iommu_domain,
-then we can get the corresponding riscv_iommu_device by
-riscv_iommu_domain?
-Thanks
+Changes v1->v2 (all suggested by Brian Foster - thanks!):
+* rename constant to BCACHEFS_SUPER_MAGIC,
+* keep BCACHEFS_STATFS_MAGIC in bcachefs_format.h, just include
+ <uapi/linux/magic.h> and use BCACHEFS_SUPER_MAGIC definition,
+* move the constant to the first chunk.
 
->
-> Jason
+Kind regards,
+Petr
+
+ fs/bcachefs/bcachefs_format.h | 3 ++-
+ include/uapi/linux/magic.h    | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+index f7fbfccd2b1e..3b831415409b 100644
+--- a/fs/bcachefs/bcachefs_format.h
++++ b/fs/bcachefs/bcachefs_format.h
+@@ -76,6 +76,7 @@
+ #include <asm/byteorder.h>
+ #include <linux/kernel.h>
+ #include <linux/uuid.h>
++#include <uapi/linux/magic.h>
+ #include "vstructs.h"
+ 
+ #ifdef __KERNEL__
+@@ -1275,7 +1276,7 @@ enum bch_compression_opts {
+ 	UUID_INIT(0xc68573f6, 0x66ce, 0x90a9,				\
+ 		  0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
+ 
+-#define BCACHEFS_STATFS_MAGIC		0xca451a4e
++#define BCACHEFS_STATFS_MAGIC		BCACHEFS_SUPER_MAGIC
+ 
+ #define JSET_MAGIC		__cpu_to_le64(0x245235c1a3625032ULL)
+ #define BSET_MAGIC		__cpu_to_le64(0x90135c78b99e07f5ULL)
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 1b40a968ba91..bb575f3ab45e 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -37,6 +37,7 @@
+ #define HOSTFS_SUPER_MAGIC	0x00c0ffee
+ #define OVERLAYFS_SUPER_MAGIC	0x794c7630
+ #define FUSE_SUPER_MAGIC	0x65735546
++#define BCACHEFS_SUPER_MAGIC	0xca451a4e
+ 
+ #define MINIX_SUPER_MAGIC	0x137F		/* minix v1 fs, 14 char names */
+ #define MINIX_SUPER_MAGIC2	0x138F		/* minix v1 fs, 30 char names */
+-- 
+2.43.0
+
 
