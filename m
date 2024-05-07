@@ -1,244 +1,250 @@
-Return-Path: <linux-kernel+bounces-171237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D308BE18A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:03:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D368BE1AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485CC2868E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096071F22200
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56858156F45;
-	Tue,  7 May 2024 12:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A20156F31;
+	Tue,  7 May 2024 12:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="HM39CiBx"
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2110.outbound.protection.outlook.com [40.107.7.110])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ui43uHGL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8w0y+dl6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699D114E2EC;
-	Tue,  7 May 2024 12:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.110
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715083417; cv=fail; b=kV9lQzsssB+CDXYo0ZJS4Sc6yyrOwxj9uVsXLFfXjRqnYLfJMxD9bplbEEyY0EyYDwmO1vrnxUPNqtlbhh0DcPk3LsFZiLxKg4XQPvCuGe6fbkzBIMIYXN1QOrA9Keydl61rFOPy4h0ooe/JOm22SfTXdmnUyYQ/JdfkKXC0CEU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715083417; c=relaxed/simple;
-	bh=ji+1kg7U/D0we0wMhkTh7xTEN7As2jK5SiQ1eze7Gok=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fxRsPnW+8P7EXMTUnPGZvrXCDB1txg4I7Hh0Xh9on9K1nygRkapjEYo2jtQFfGsRdx98iVOLTdlW1Pf7O7797KxgODkiKaMIHxQGfrj4AujPTYJ248xAu9B8lq3gcaBIsfl+EoMJRcUso6JlRqjR52vPMh9lwHBIXMIhtzGg4gs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=HM39CiBx; arc=fail smtp.client-ip=40.107.7.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Mnc+SSpR26dfjL/xdOU7VjmTFo/SH7LXlTZZdJqwLlcggklPPqJ1EEhT8jRWPY+Pcomyxvzj86X+KXTibprU+tnXDDOp7CdLUQKdVf/J48S/jfm0vHgykm8B+HaHHt3wWPGMhVLzs0IEoL1VgOeBpHzXt3gM2+FLmTtJ+RvpHT4pzsQwVc/hDQfC+eKpkdayJQrgYCTaIXlJ52viNN5lp7HRrBpWKHmIU71hJY+kVf+Lp5meHVBzKz0A44EzAX9mxPqg5BafzsDGm1jmi5RzDhpPB7rnBqq8u8U35QXxtjDDMqqOxiTuE7KM1vV1JSv3285v37B4FaXoHT0izPzINg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ji+1kg7U/D0we0wMhkTh7xTEN7As2jK5SiQ1eze7Gok=;
- b=bt38sRzKhb9F8ThLlU4W0sz01XUaD6DXxVyzzWPJq3+WogSMSGbtN4Gdk3QinsUPkXK4Jt/czzmRUxdBcPid/tW5igAYLdCYSWr9nAe4U1g1T6LM+gM3sZ3KKlyxIufBmV6pa8/iETKSOLUom7bYES5pvpoarS17FOS6mrPElwe8L10LTFQhm3fuoY+8DUswU9GbOmIoC5qObXhSVCywb4K5eYj93oK1lKj+q6S7+j1bFWzCeTxR6tGb7dGSNMpQy8x534BJYCE99QiRTZge2UHH+TQLzfdUBVlD4fs3HjjA5sGmtsBuCV94jqh8esWk6VEBu/37wCzE+p+Wpx40Uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ji+1kg7U/D0we0wMhkTh7xTEN7As2jK5SiQ1eze7Gok=;
- b=HM39CiBxLOSdnKbCPY4J5uTVTXmQvHEgXlCOXuBAefv1ybblCUODd9NcNdVwXTl/nJKzizAC7TcBYKSp/abDHuoMoHnJt2uHI5O5mcIp5GEM/l+DdJW0T28UnOBip7pl/FPJD7do5BVETBVGCDxmL6xo+DSZS8gjwQgoBfN7as4=
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
- by AM7PR04MB6774.eurprd04.prod.outlook.com (2603:10a6:20b:104::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Tue, 7 May
- 2024 12:03:31 +0000
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529%7]) with mapi id 15.20.7544.041; Tue, 7 May 2024
- 12:03:31 +0000
-From: Josua Mayer <josua@solid-run.com>
-To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mor Nagli
-	<mor.nagli@solid-run.com>
-Subject: Re: [PATCH net-next v3] net: dsa: mv88e6xxx: control mdio bus-id
- truncation for long paths
-Thread-Topic: [PATCH net-next v3] net: dsa: mv88e6xxx: control mdio bus-id
- truncation for long paths
-Thread-Index: AQHantH8wZxLbGkA70ONa4AkREvmfLGJAo6AgAKs9YA=
-Date: Tue, 7 May 2024 12:03:31 +0000
-Message-ID: <c30a0242-9c68-4930-a752-80fb4ad499d9@solid-run.com>
-References:
- <20240505-mv88e6xxx-truncate-busid-v3-1-e70d6ec2f3db@solid-run.com>
- <A40C71BD-A733-43D2-A563-FEB1322ECB5C@gmail.com>
-In-Reply-To: <A40C71BD-A733-43D2-A563-FEB1322ECB5C@gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=solid-run.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM9PR04MB7586:EE_|AM7PR04MB6774:EE_
-x-ms-office365-filtering-correlation-id: 4f212784-6e30-4f42-20b0-08dc6e8db6d9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ZFF1S05RbExWYnF1RDlIMVVOVHhBeTJsUUE2cVZQaUtld0Ztd3BUcGVadDF5?=
- =?utf-8?B?L3g1RmI0UXJOaUhkUWxpNmFRVHo4aVRISzd6Ty8rOFJVdlNQTTFNYzVhNzIw?=
- =?utf-8?B?WUNCVDc4NzV6aWwrdUt1OFVnSHFjaHlGMytWa2lYU2RuUzV3enNBYjgwMHZt?=
- =?utf-8?B?VW5KMlM1ZDVwbXNtb3ZYbEk5bE9KQ3lGakFtSzhiRDNFbVBDdC9aS2haeUJE?=
- =?utf-8?B?S2ZVT0pENTJsZkxkVnNHT3JDaGxETzFCMm95a2lHWEpubmlWV1BYekVLOUFx?=
- =?utf-8?B?MU5lT25rd0lXWUpZTjc5dXpoS0srbkNFVmNlWXBUYzJxWnFmZ1gwa1RyY250?=
- =?utf-8?B?a0NqMlRGUEd1b3RKMVA3QnVOTmd0bHlIK1lFcmhLdFBrRGJZa2U5dEE0VXdC?=
- =?utf-8?B?SWFUQytFNkhsbjFuekg0T2NXcE1OV2MxY1duTGgwaXhRckpSczIrL21aZDAr?=
- =?utf-8?B?M3Q2NnFYbkc0TEplWmdmYW1DT21sbHJVYmIrcWJEM3psTkJMcEg3ZXBZZEdE?=
- =?utf-8?B?MEdVa1pYTDVtNnc2d243ZlVZRjhoUEVSRmY4Q3R1a2tvZGlZUCsxL1FFL1Rs?=
- =?utf-8?B?UGlDTVM2UURTallEaHIvMDBMSG0wcWxNazNIRktCSWJ6ak15TzQxSUdNLzFN?=
- =?utf-8?B?eU96b0R0dTRJQlFHeTRNeHZYM2JKUjJCOVdWZ291Yklqa2JnQnk4cnNpT3RY?=
- =?utf-8?B?eUVRWDk3UE5oL3huVjVTSUhOZ2hqWkxJejM3MXdvYVliOHhCZDRpY20yaWNl?=
- =?utf-8?B?cDNhZ1U5UHNndUhsMUkvUlNZMmJWNCtlaFp2MmNUOXZYWWRoWWYxQ3R6QWxk?=
- =?utf-8?B?ZVdVejhHUEVCYk5sMW5RZ29rbVIyQ01KaUlzSHBNOTZKNEFSeEc1ZWRRVHVv?=
- =?utf-8?B?ZG84Mm9DQ0VyRW5KT2FwYkc4dkovQnhVYm5LekNsd0FXMTR1eTJCQ0J5dHN2?=
- =?utf-8?B?U3ZUZ1lJemo4Q3E3N08vQjBnTGVZL3p1Vyt2UUprWkNIemR3ZFBabVFUR2NV?=
- =?utf-8?B?ZWNqQ1B0QU9sRDYrU05POVg5ejlqT01PMHZMWHhRcDcwUHRhNlNsamJGcTY5?=
- =?utf-8?B?ZjFoTnArZXl4OU5PL0FtUm9Wc2h6RnJVY1ZDdGs1TXI0NEFaYTc4Y29xbnhX?=
- =?utf-8?B?allTcUtjRTBKaWdvbnk4bWdOa01PRURJMm1XUUZTYW9wWU0xMHRNempMNk1R?=
- =?utf-8?B?U2xRQnNXWkxiVFNmZjRYUTdlZnNFSFpFZkN2VTl0azVyQnQxNmhsNUhWNDdG?=
- =?utf-8?B?OEhVTUJqZmlLencwRlh2eHArOVo1QllSOGlEVTF0WEcza3AvR3FlSm5kVHRn?=
- =?utf-8?B?enlSK2JqMkNUaGxITkJiV2dxZUZMQ3E5NDdZTVFqN1R6SUl5N0ZMT0pxTno4?=
- =?utf-8?B?V0FadVRITk55bHpQd2xjWXh2UG4xSTJva2Z1VExOSFcwQnkrQmxycWYrNW8z?=
- =?utf-8?B?ODFFOHROekpiSVoxRmtCZ05wVXV6R0U2SDBvK2lUZDEwMmVjQ3VYWTVlemNi?=
- =?utf-8?B?bGJCbWdraGcwRjBpczF4WDVFSjFuREh5VEZ3OTc1RjcxSDdSQUNlNko4Rzly?=
- =?utf-8?B?aEhabmVJVjJUTnpHQXNSUGZuUXd5ZFRJY3pUVjM1OGVrVnM2YkxLMjNZbXUx?=
- =?utf-8?B?QTZaQUdsNWlIYlZINnFydXFiajZWMm9FTkNsazdvSExEdUQ1RWRoY3VGc0VP?=
- =?utf-8?B?UFQ2SUFyNDk0LzRRUGFvKzBsdVZCeEFMVStlVXFwU2hGWmFONkVTYWFBamR6?=
- =?utf-8?B?enZTY2xoSFZTdlZkc1BSa0Z0VlVFaGFsVjYrU016V1U5eGhpcExOTkxpMFFC?=
- =?utf-8?B?OGVMcG5TTU9HZjZ5MVNTZz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?b3pjTFE0aUlFdVAycjlpZXVFYU5LdXhYVy93Qms5VlloNmFtWWNpbjArV2g5?=
- =?utf-8?B?R3FtdW1RWnVIR2RDUlY3MzFTZEJmNTZvd3ZRSHRkYWxQYno5c0RpU2xoYi9R?=
- =?utf-8?B?V1NQbE1WQnFxaUJDSllUYUs5Skd5TG1EWXVXeUJXZktBV2JmMmRZUXBNRlVJ?=
- =?utf-8?B?bUhuZ0EwVEJZWUVBQmNDQmpqb1hyNGdjZ2VJK1FKZ3lGbjVhUkx5ZW1mWmdz?=
- =?utf-8?B?SSsxU2VkTk52aXE5TTA3MFN4Z2ZNVlNsYXdVbllxNUwwcDVWNUd1d2hjWlhh?=
- =?utf-8?B?Q2JsVFdtQUFVL0VxYWZQZEorTW1iWHlIdG9kc0EvdkdWWGgxYnVoVU5aVVZ6?=
- =?utf-8?B?ZHhqZWdHNUdoZkp4TzBhUlFTdXh3OHgzY1htL2ViWU11RG5CWTI0U0Q2eG41?=
- =?utf-8?B?TUpPR0JLMWJHeGMrZVBjUWpTOFM1Z1lhemhCNTE1NW9CUEhMQ0JPdkptS3c2?=
- =?utf-8?B?bGJINGFEeEZhd2gyZHI1eHNtUXlWRlZuUTRoMi9sdUhQKzFSY1lZOVRvRWZW?=
- =?utf-8?B?VkV0bXNvQ1F3dC9DSThXdmNVSFU2UEQ1WTVhcjUzb1ZzczRyVkVSRDFNSjFB?=
- =?utf-8?B?cFoxUFBRcjBLNVB4ZFJZeHNGdFFvbmwxYUY4c0Z3RkRJZ3o4WlBVUkY4cW9p?=
- =?utf-8?B?UFFXRytGS3h3emJPcGl3aC9SWkVMcm9RT3FkWWJOYTZnQ0YrRXpIM3BZL3V1?=
- =?utf-8?B?YVU5anNCLzhCdzFNenRPTVpjckFsRmpoNXVkWEprdmhsc1lSeUY2cmI1clMr?=
- =?utf-8?B?MkM2VXBvRE9PV2RqcEIzZDNzb0J5UEsyMldWdGF5UjEvTGZaRkNyS3VVOTZI?=
- =?utf-8?B?NlRJSnFVQUpFekhNU2tJK1BXek1LaGVCbUFma1Q4aG5HUzlXMnJic1Nlbmpy?=
- =?utf-8?B?TDFZVmFXT3pLM1pYeXBCbWxIQW8xZko0Z0wrVjErSGgwaUs4R0hLWE40bSt5?=
- =?utf-8?B?VVBlUDQzbC9jSXUwd0Z6L0dyWk82WkZ3WFNjMXk3d2pMK2Q2ME5MbCtwcUtO?=
- =?utf-8?B?YWtoaXZZRVdIdGZpSlFrQXdSdExsZTRBYjBBcGJmcXlFVWZIRUgwZFV3b2dB?=
- =?utf-8?B?NmhLQTNzSjlId0pmeUxSb1cyMUdleUFMUUVIME9KWFRHaTZHd0orMllQdHox?=
- =?utf-8?B?T3V3NW16a3o3ZjBJeHU5ZDdESGFXNlF6UDZscUN6TDNlMVNOeEppeU1VMEVi?=
- =?utf-8?B?NzI5SHJYWWlndHNxRjBSQmozVTNQNGViQzNLd1QrYUg3b0lJNlRyaTF5YlBB?=
- =?utf-8?B?ck1sMWFHdjc0aXZIRThXWkQxREdwWnNFRDd1SGkvZmpUY1AxRVpKbFB2R0pL?=
- =?utf-8?B?TEVTV2VCeVRMRkRtemVTMVpHRjlCUlZld0l2NW9LVUZOaitFQkNkWWczcXdQ?=
- =?utf-8?B?WXhwL2dEaTU1V2ZXUGRyYlMvVW82Wmk2WXV4bHI4S2VJY3kwR1ZtNXhkVGVy?=
- =?utf-8?B?TmZLczN5REdCUGRTdjAva2RwbjZKTmpOK2NodmlBdzdlTjVMU1NVaFh5eWtD?=
- =?utf-8?B?Q1phMHpPL0dWZkRuU1lFSjJIUG1yQ1FjZVhBRmdjaFVxK3p5VzVFS3pFMHE3?=
- =?utf-8?B?bmZibHEweFJrakY1N0RIUWdsWTFndlB1Y1g1K3ROVUVjcG9od1JGbjNtbjc0?=
- =?utf-8?B?cDN5RWZoaTBNeThvczUrWElsYkZ6eWgrMm5IZEpycjVuQnVyc1hpMkJFT3Rm?=
- =?utf-8?B?U2ppYysvYTU2K2RERjFjd01GbFZrVmZlOUs5RUtQdjB6QUhPbWVEMkc4Ymhm?=
- =?utf-8?B?Ylc5Y2xDanBJTzhTU3pGS3RQRDhkcXpFN2FSR01pamk3UUF5WVRlYXRBenhi?=
- =?utf-8?B?UzFPOEVaUEt3dkJXeDV1bWRBdGZtRUJYOTQxZjg3MTVMS08xWThITjgzNHpn?=
- =?utf-8?B?ajBsSWV1L2hGZ1kwdm9wYlB2N0tyNURIeFV4NmR0ZzhtdFFWZTRBOHNIS1dD?=
- =?utf-8?B?S3VjYzcxREQzQ0M5cHQzVW96TFppTktTSjN4UmVrdGlqbXhPckRDWDhjTzFz?=
- =?utf-8?B?dlkzOUxkZEcwOUNrdmxmc3JMTlFROElLdldIaWRONVorRHp4MXpScm0wM3hZ?=
- =?utf-8?B?RGRUWHFpbDIwYTF4UG0wZ2V3akFSSkRmK3VZTzVkM01CQ0Z4Z1piOWI0SGZ4?=
- =?utf-8?Q?eBk3lWbz6ugTSSAZ+4TTkbRn0?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E1CC0115994B08469CC872DA413A989B@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1776136E2D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715083523; cv=none; b=EXrGQ7YVxGDnO+uhzTCsRgUBxPQoKluJNxGDUvr3t7ft3Ax1yUTuzfPfhpjctS6R2gWO3krPQK0o3KLa+zLvbd9n9whQqB8hkmlCyziLt+2ycPymgo+JnDSm4sblBGVVZ9UFo737WWaSThD8+bUS0vDMCzHhQLwtoxv3Hlih5zE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715083523; c=relaxed/simple;
+	bh=evoM9HlQylj/rDbf0qwmbUPfPsTLEivtg+tdPZK1vo4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ll9PsZb1KAFnQW+QAMM1RBjOpWLAfSmZz9zZ+K43tTmq4pBnYJLSX5JxgDEHy+e4UqhIoLzfiOS3PWbLNgzb7aAmbvyi2xUsxTJzo83riFX6+NRMGr9M6+xJv/s46ELf8sTr1GXEZLHS4CmHJDGfcJPLOtTp2329CN7eYhW2Rh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ui43uHGL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8w0y+dl6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715083517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1UnPCWk4i2wn0TymzaPNuxSfIYvJI91hTpddeSSjiCc=;
+	b=ui43uHGLb5gr7sLC9i2K7/E++pot2RqhzpaikOCcUZyAzVJ99n0INmxYFHfOTTz+aJ4zE/
+	XwpvD91cWLJh2uxHYMRopYljyO0ESflunAwMW9yufxzJr6fQlwqOnOjF6NSBNawjuO7l27
+	TT5+3q0FlLJTD1XYnIxsQ+KeNoBVDnxZhSMd7cfJll6Wcv9v72eIhgXkwgCe9du/YSrA1w
+	2aZFizSbu1VuaEhCRUPq0NHndZ6lLCmt0A0y3pcjLPESc/S5rjGIQ2mllXXfesTBqXVS1p
+	i8UahD+v2/8yQ6ZJsOP8Rqjcgc378e7sv+EAkw8hmtWppT+ab6yTfPATc1bo4Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715083517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1UnPCWk4i2wn0TymzaPNuxSfIYvJI91hTpddeSSjiCc=;
+	b=8w0y+dl6LXvvzYP/ipzyifHTwc4ec3x/eUXn8EYgBa4Ac2BGHMYrqLFZAFWYbmMESEcZrT
+	zp49egnbexw5jrCQ==
+To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+ linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
+ keith.lucas@oracle.com, aruna.ramakrishna@oracle.com
+Subject: Re: [PATCH v3 4/4] selftests/mm: Add new testcases for pkeys
+In-Reply-To: <20240425180542.1042933-5-aruna.ramakrishna@oracle.com>
+References: <20240425180542.1042933-1-aruna.ramakrishna@oracle.com>
+ <20240425180542.1042933-5-aruna.ramakrishna@oracle.com>
+Date: Tue, 07 May 2024 14:05:17 +0200
+Message-ID: <875xvprfnm.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f212784-6e30-4f42-20b0-08dc6e8db6d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2024 12:03:31.6705
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cw/g0lgZxJ9X4+T+SioJt61RP0HbwYfhsiXkDuspEHKCmDRS4Gx8PrvXh6MfyMth5U8S577SJhzIQlfiS9/1og==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6774
+Content-Type: text/plain
 
-QW0gMDUuMDUuMjQgdW0gMjE6MTEgc2NocmllYiBGbG9yaWFuIEZhaW5lbGxpOg0KPiBMZSA1IG1h
-aSAyMDI0IDAyOjUyOjQ1IEdNVC0wNzowMCwgSm9zdWEgTWF5ZXIgPGpvc3VhQHNvbGlkLXJ1bi5j
-b20+IGEgw6ljcml0wqA6DQo+PiBtdjg4ZTZ4eHggc3VwcG9ydHMgbXVsdGlwbGUgbWRpbyBidXNl
-cyBhcyBjaGlsZHJlbiwgZS5nLiB0byBtb2RlbCBib3RoDQo+PiBpbnRlcm5hbCBhbmQgZXh0ZXJu
-YWwgcGh5cy4gSWYgdGhlIGNoaWxkIGJ1c2VzIG1kaW8gaWRzIGFyZSB0cnVuY2F0ZWQsDQo+PiB0
-aGV5IG1pZ2h0IGNvbGxpZGUgd2l0aCBlYWNoIG90aGVyIGxlYWRpbmcgdG8gYW4gb2JzY3VyZSBl
-cnJvciBmcm9tDQo+PiBrb2JqZWN0X2FkZC4NCj4+DQo+PiBUaGUgbWF4aW11bSBsZW5ndGggb2Yg
-YnVzIGlkIGlzIGN1cnJlbnRseSBkZWZpbmVkIGFzIDYxDQo+PiAoTUlJX0JVU19JRF9TSVpFKS4g
-VHJ1bmNhdGlvbiBjYW4gb2NjdXIgb24gcGxhdGZvcm1zIHdpdGggbG9uZyBub2RlDQo+PiBuYW1l
-cyBhbmQgbXVsdGlwbGUgbGV2ZWxzIGJlZm9yZSB0aGUgcGFyZW50IGJ1cyBvbiB3aGljaCB0aGUg
-ZHNhIHN3aXRjaA0KPj4gaXRzZWxmIHNpdHMsIGUuZy4gQ045MTMwIFsxXS4NCj4+DQo+PiBDb21w
-YXJlIHRoZSByZXR1cm4gdmFsdWUgb2Ygc25wcmludGYgYWdhaW5zdCBtYXhpbXVtIGJ1cy1pZCBs
-ZW5ndGggdG8NCj4+IGRldGVjdCB0cnVuY2F0aW9uLiBJbiB0aGF0IGNhc2Ugd3JpdGUgYW4gaW5j
-cmVtZW50aW5nIG1hcmtlciB0byB0aGUgZW5kDQo+PiB0byBhdm9pZCBuYW1lIGNvbGxpc2lvbnMu
-DQo+PiBUaGlzIGNoYW5nZXMgdGhlIHByb2JsZW1hdGljIGJ1cy1pZHMgbWRpbyBhbmQgbWRpby1l
-eHRlcm5hbCBmcm9tIFsxXQ0KPj4gdG8gWzJdLg0KPj4NCj4+IFRydW5jYXRpb24gYXQgdGhlIGJl
-Z2lubmluZyB3YXMgY29uc2lkZXJlZCBhcyBhIHdvcmthcm91bmQsIGhvd2V2ZXIgdGhhdA0KPj4g
-aXMgc3RpbGwgc3ViamVjdCB0byBuYW1lIGNvbGxpc2lvbnMgaW4gc3lzZnMgd2hlcmUgb25seSB0
-aGUgZmlyc3QNCj4+IGNoYXJhY3RlcnMgZGlmZmVyLg0KPj4NCj4+IFsxXQ0KPj4gWyAgICA4LjMy
-NDYzMV0gbXY4OGU2MDg1IGYyMTJhMjAwLm1kaW8tbWlpOjA0OiBzd2l0Y2ggMHgxNzYwIGRldGVj
-dGVkOiBNYXJ2ZWxsIDg4RTYxNzYsIHJldmlzaW9uIDENCj4+IFsgICAgOC4zODk1MTZdIG12ODhl
-NjA4NSBmMjEyYTIwMC5tZGlvLW1paTowNDogVHJ1bmNhdGVkIGJ1cy1pZCBtYXkgY29sbGlkZS4N
-Cj4+IFsgICAgOC41OTIzNjddIG12ODhlNjA4NSBmMjEyYTIwMC5tZGlvLW1paTowNDogVHJ1bmNh
-dGVkIGJ1cy1pZCBtYXkgY29sbGlkZS4NCj4+IFsgICAgOC42MjM1OTNdIHN5c2ZzOiBjYW5ub3Qg
-Y3JlYXRlIGR1cGxpY2F0ZSBmaWxlbmFtZSAnL2RldmljZXMvcGxhdGZvcm0vY3AwL2NwMDpjb25m
-aWctc3BhY2VAZjIwMDAwMDAvZjIxMmEyMDAubWRpby9tZGlvX2J1cy9mMjEyYTIwMC5tZGlvLW1p
-aS9mMjEyYTIwMC5tZGlvLW1paTowNC9tZGlvX2J1cy8hY3AwIWNvbmZpZy1zcGFjZUBmMjAwMDAw
-MCFtZGlvQDEyYTIwMCFldGhlcm5ldC1zd2l0Y2hANCFtZGknDQo+PiBbICAgIDguNzg1NDgwXSBr
-b2JqZWN0OiBrb2JqZWN0X2FkZF9pbnRlcm5hbCBmYWlsZWQgZm9yICFjcDAhY29uZmlnLXNwYWNl
-QGYyMDAwMDAwIW1kaW9AMTJhMjAwIWV0aGVybmV0LXN3aXRjaEA0IW1kaSB3aXRoIC1FRVhJU1Qs
-IGRvbid0IHRyeSB0byByZWdpc3RlciB0aGluZ3Mgd2l0aCB0aGUgc2FtZSBuYW1lIGluIHRoZSBz
-YW1lIGRpcmVjdG9yeS4NCj4+IFsgICAgOC45MzY1MTRdIGxpYnBoeTogbWlpX2J1cyAvY3AwL2Nv
-bmZpZy1zcGFjZUBmMjAwMDAwMC9tZGlvQDEyYTIwMC9ldGhlcm5ldC1zd2l0Y2hANC9tZGkgZmFp
-bGVkIHRvIHJlZ2lzdGVyDQo+PiBbICAgIDguOTQ2MzAwXSBtZGlvX2J1cyAhY3AwIWNvbmZpZy1z
-cGFjZUBmMjAwMDAwMCFtZGlvQDEyYTIwMCFldGhlcm5ldC1zd2l0Y2hANCFtZGk6IF9fbWRpb2J1
-c19yZWdpc3RlcjogLTIyDQo+PiBbICAgIDguOTU2MDAzXSBtdjg4ZTYwODUgZjIxMmEyMDAubWRp
-by1taWk6MDQ6IENhbm5vdCByZWdpc3RlciBNRElPIGJ1cyAoLTIyKQ0KPj4gWyAgICA4Ljk2NTMy
-OV0gbXY4OGU2MDg1OiBwcm9iZSBvZiBmMjEyYTIwMC5tZGlvLW1paTowNCBmYWlsZWQgd2l0aCBl
-cnJvciAtMjINCj4+DQo+PiBbMl0NCj4+IC9kZXZpY2VzL3BsYXRmb3JtL2NwMC9jcDA6Y29uZmln
-LXNwYWNlQGYyMDAwMDAwL2YyMTJhMjAwLm1kaW8vbWRpb19idXMvZjIxMmEyMDAubWRpby1taWkv
-ZjIxMmEyMDAubWRpby1taWk6MDQvbWRpb19idXMvIWNwMCFjb25maWctc3BhY2VAZjIwMDAwMDAh
-bWRpb0AxMmEyMDAhZXRoZXJuZXQtc3dpdGNoLi4uIS0wDQo+PiAvZGV2aWNlcy9wbGF0Zm9ybS9j
-cDAvY3AwOmNvbmZpZy1zcGFjZUBmMjAwMDAwMC9mMjEyYTIwMC5tZGlvL21kaW9fYnVzL2YyMTJh
-MjAwLm1kaW8tbWlpL2YyMTJhMjAwLm1kaW8tbWlpOjA0L21kaW9fYnVzLyFjcDAhY29uZmlnLXNw
-YWNlQGYyMDAwMDAwIW1kaW9AMTJhMjAwIWV0aGVybmV0LXN3aXRjaC4uLiEtMQ0KPj4NCj4+IFNp
-Z25lZC1vZmYtYnk6IEpvc3VhIE1heWVyIDxqb3N1YUBzb2xpZC1ydW4uY29tPg0KPj4gLS0tDQo+
-IFRoZSBpZGVhIGFuZCBpbXBsZW1lbnRhdGlvbiBpcyByZWFzb25hYmxlIGJ1dCB0aGlzIGNvdWxk
-IGFmZmVjdCBvdGhlciBkcml2ZXJzIHRoYW4gbXY4OGU2eHh4LCB3aHkgbm90IG1vdmUgdGhhdCBs
-b2dpYyB0byBtZGlvYnVzX3JlZ2lzdGVyKCkgYW5kIHRyYWNraW5nIHRoZSB0cnVuY2F0aW9uIGlu
-ZGV4IGdsb2JhbGx5IHdpdGhpbiB0aGUgTURJTyBidXMgbGF5ZXI/DQpDb25jZXB0dWFsbHkgSSBh
-Z3JlZSwgaXQgd291bGQgYmUgbmljZSB0byBoYXZlIGEgY2VudHJhbGl6ZWQNCnNvbHV0aW9uIHRv
-IHRoaXMgcHJvYmxlbSwgaXQgcHJvYmFibHkgY2FuIG9jY3VyIGluIG11bHRpcGxlIHBsYWNlcy4N
-Cg0KTXkgcmVhc29uaW5nIGlzIHRoYXQgc29sdmluZyB0aGUgcHJvYmxlbSB3aXRoaW4gYSBzaW5n
-bGUgZHJpdmVyDQppcyBhIG11Y2ggc21hbGxlciB0YXNrLCBlc3BlY2lhbGx5IGZvciBzcG9yYWRp
-YyBjb250cmlidXRvcnMNCndobyBsYWNrIGEgZGVlcCB1bmRlcnN0YW5kaW5nIGZvciBob3cgYWxs
-IGxheWVycyBpbnRlcmFjdC4NCg0KUGVyaGFwcyBhZ3JlZWluZyBvbiBhIGdvb2Qgc29sdXRpb24g
-d2l0aGluIHRoaXMgZHJpdmVyDQpjYW4gaW5mb3JtIGEgbW9yZSBnZW5lcmFsIHNvbHV0aW9uIHRv
-IGJlIGFkZGVkIGxhdGVyLg0KDQo+IElmIHdlIHByZWZlciBhIGRyaXZlciBiYXNlZCBzb2x1dGlv
-biwgdGhlIG1paV9idXMgb2JqZWN0IGNvdWxkIGNhcnJ5IGEgdHJ1bmNhdGlvbiBmb3JtYXQsIGF0
-IHRoZSByaXNrIG9mIGNyZWF0aW5nIG1vcmUgdmFyaWF0aW9uIGJldHdlZW4gZHJpdmVycyBpbiBj
-YXNlIG9mIHRydW5jYXRpb24uIFdlIGNvdWxkIGFsc28gd2FpdCB1bnRpbCB3ZSBoYXZlIGFub3Ro
-ZXIgZHJpdmVyIHJlcXVpcmluZyBhIHNpbWlsYXIgc29sdXRpb24gYmVmb3JlIHByb21vdGluZyB0
-aGlzIHRvIGEgd2lkZXIgcmFuZ2UuDQoNCg0KYnINCkpvc3VhIE1heWVyDQoNCg==
+On Thu, Apr 25 2024 at 18:05, Aruna Ramakrishna wrote:
+> This commit adds a few new tests to exercise the signal handler flow,
+
+"This commit" is equally useless as "This patch". See
+Documentation/process/ and grep for "This patch".
+
+> especially with pkey 0 disabled.
+>
+> Signed-off-by: Keith Lucas <keith.lucas@oracle.com>
+> Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+> ---
+>  tools/testing/selftests/mm/Makefile           |   2 +
+>  tools/testing/selftests/mm/pkey-helpers.h     |  11 +-
+>  .../selftests/mm/pkey_sighandler_tests.c      | 315 ++++++++++++++++++
+>  tools/testing/selftests/mm/protection_keys.c  |  10 -
+>  4 files changed, 327 insertions(+), 11 deletions(-)
+>  create mode 100644 tools/testing/selftests/mm/pkey_sighandler_tests.c
+>
+> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+> index eb5f39a2668b..2f90344ad11e 100644
+> --- a/tools/testing/selftests/mm/Makefile
+> +++ b/tools/testing/selftests/mm/Makefile
+> @@ -82,6 +82,7 @@ CAN_BUILD_X86_64 := $(shell ./../x86/check_cc.sh "$(CC)" ../x86/trivial_64bit_pr
+>  CAN_BUILD_WITH_NOPIE := $(shell ./../x86/check_cc.sh "$(CC)" ../x86/trivial_program.c -no-pie)
+>  
+>  VMTARGETS := protection_keys
+> +VMTARGETS := pkey_sighandler_tests
+>  BINARIES_32 := $(VMTARGETS:%=%_32)
+>  BINARIES_64 := $(VMTARGETS:%=%_64)
+>  
+> @@ -100,6 +101,7 @@ else
+>  
+>  ifneq (,$(findstring $(ARCH),ppc64))
+>  TEST_GEN_FILES += protection_keys
+> +TEST_GEN_FILES += pkey_sighandler_tests
+>  endif
+>  
+>  endif
+> diff --git a/tools/testing/selftests/mm/pkey-helpers.h b/tools/testing/selftests/mm/pkey-helpers.h
+> index 1af3156a9db8..a0766e3d9ab6 100644
+> --- a/tools/testing/selftests/mm/pkey-helpers.h
+> +++ b/tools/testing/selftests/mm/pkey-helpers.h
+> @@ -79,7 +79,16 @@ extern void abort_hooks(void);
+>  	}					\
+>  } while (0)
+>  
+> -__attribute__((noinline)) int read_ptr(int *ptr);
+> +#define barrier() __asm__ __volatile__("": : :"memory")
+
+#include <linux/compiler.h>
+
+> +__attribute__((noinline)) int read_ptr(int *ptr)
+> +{
+> +	        /*
+> +		 *          * Keep GCC from optimizing this away somehow
+> +		 *                   */
+
+That comment is completely malformatted.
+
+> +	        barrier();
+> +		        return *ptr;
+
+White space damage.
+
+> +
+> +static inline __attribute__((always_inline)) long
+> +syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
+> +{
+
+What for? syscall(2) provides exactly what you want, no?
+
+> +	unsigned long ret;
+> +	register long r10 asm("r10") = a4;
+> +	register long r8 asm("r8") = a5;
+> +	register long r9 asm("r9") = a6;
+> +	asm volatile ("syscall"
+> +		      : "=a"(ret)
+> +		      : "a"(n), "D"(a1), "S"(a2), "d"(a3), "r"(r10), "r"(r8), "r"(r9)
+> +		      : "rcx", "r11", "memory");
+
+Aside of that this breaks on 32-bit builds.
+
+> +	return ret;
+> +}
+> +
+
+> +static void *thread_segv_with_pkey0_disabled(void *ptr)
+> +{
+> +	/* Disable MPK 0 (and all others too) */
+> +	__write_pkey_reg(0x55555555);
+> +
+> +        /* Segfault (with SEGV_MAPERR) */
+
+Please use tabs for indentation. (All over the place)
+
+> +	*(int *) (0x1) = 1;
+> +	return NULL;
+> +}
+> +
+> +/*
+> + * Verify that the sigsegv handler is invoked when pkey 0 is disabled.
+> + * Note that the new thread stack and the alternate signal stack is
+> + * protected by MPK 0.
+> + */
+> +static void test_sigsegv_handler_with_pkey0_disabled(void)
+> +{
+> +	struct sigaction sa;
+> +
+> +	sa.sa_flags = SA_SIGINFO;
+> +
+> +	sa.sa_sigaction = sigsegv_handler;
+> +	sigemptyset(&sa.sa_mask);
+> +	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
+> +		perror("sigaction");
+> +		exit(EXIT_FAILURE);
+> +	}
+> +
+> +	memset(&siginfo, 0, sizeof(siginfo));
+> +
+> +	pthread_t thr;
+> +	pthread_attr_t attr;
+> +	pthread_attr_init(&attr);
+> +	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+> +
+> +	pthread_create(&thr, &attr, thread_segv_with_pkey0_disabled, NULL);
+> +
+> +	pthread_mutex_lock(&mutex);
+> +	while(siginfo.si_signo == 0)
+> +		pthread_cond_wait(&cond, &mutex);
+> +	pthread_mutex_unlock(&mutex);
+> +
+> +	assert(siginfo.si_signo == SIGSEGV);
+> +	assert(siginfo.si_code == SEGV_MAPERR);
+> +	assert(siginfo.si_addr == (void *)1);
+
+This should not use assert(). This wants to use proper kselftest result
+and exit mechanisms all over the place.
+
+> +	printf("%s passed!\n", __func__);
+
+Ditto for printf().
+
+> +}
+> +/*
+> + * Verify that the sigsegv handler that uses an alternate signal stack
+> + * is correctly invoked for a thread which uses a non-zero MPK to protect
+> + * its own stack, and disables all other MPKs (including 0).
+> + */
+> +static void test_sigsegv_handler_with_different_pkey_for_stack(void)
+> +{
+> +	struct sigaction sa;
+> +	static stack_t sigstack;
+> +        void *stack;
+> +	int pkey;
+> +	int parentPid = 0;
+> +	int childPid = 0;
+
+No camel case please
+
+> +int main(int argc, char *argv[])
+> +{
+> +	size_t i;
+
+size_t? What's wrong with int?
+
+> +
+> +	for (i = 0; i < sizeof(pkey_tests)/sizeof(pkey_tests[0]); i++) {
+
+                        ARRAY_SIZE() ?
+
+> +		(*pkey_tests[i])();
+> +	}
+
+Pointless brackets.
+
+Thanks,
+
+        tglx
 
