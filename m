@@ -1,156 +1,133 @@
-Return-Path: <linux-kernel+bounces-172032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68B68BEC3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3683B8BEC45
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D9A1F224F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2BA1C231B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB4716DEB0;
-	Tue,  7 May 2024 19:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4F916DEC0;
+	Tue,  7 May 2024 19:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjPMiHJ0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UQ4COlZi"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640F616D319;
-	Tue,  7 May 2024 19:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE1916D9C8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715108738; cv=none; b=L/yDg/OXdEts6v5q9nKAFYiiv8pEU706h97xbgTGXKrufZSFwK0S9sQoS1F/1xobMlHugZHCyHROyP3W47JgEgD2irQIo0MJw6+Yx8pQdbdo9ntCjdb21GfHUwbPaJffFr8By3st84/LwPQpq+FOdkQAajL2jOPGrIc/fgisQgA=
+	t=1715108853; cv=none; b=bxyR/YtxHBEu194ttuTrRAteB2creJknGtbVZRNhyuUSxtXtZ32yePIXi9JLWQZb29mai32AT/X/cQLbRFXMWoekWSjn1FblU8JaviZ+qz8Vz99U/9aPGQdqU68/pep0jzWlLUio2CkB9uPhcO3t8rcWENTG3dZ6s9s8bh15in4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715108738; c=relaxed/simple;
-	bh=RXjxiKuVIg66+4e4zRGgHnAS0eHWvtxBBhUDFGqspwU=;
+	s=arc-20240116; t=1715108853; c=relaxed/simple;
+	bh=pui840tsR5Yet33PCWgvY2wZoLY0nvaSbhvNkKxiwJY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PQrUjJ5/eDBhHxbfXmWSg71Ag+gG+W+tzapDmhGso0RqDwxeKakKsrxnoBZz2BYRMGtMO9FfrTYL7dvLHsqX4TfhJ3tXplOXRhBNMCEZfmdkW7RWVWLmB2PHGPEQacX8TZF0JC3LuFqOyk6xtbiawJoGtJ0hxCllLKABWKjpRj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjPMiHJ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9394C4DDE0;
-	Tue,  7 May 2024 19:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715108737;
-	bh=RXjxiKuVIg66+4e4zRGgHnAS0eHWvtxBBhUDFGqspwU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AjPMiHJ0Hm2xzIl7Alq1yoV8rbkVe5bNuUm7RDM5BclkgOkJtvitJv2e7bVWYycat
-	 7GaD0KVba/JY9YXF/tjK6GYceA1f5LthmtyHahTlgFKhmk2YPu7aAwYQ7aeRIBWv/5
-	 Mvsk/lcZenuxg5AqQDNx3zr18qhJ316CzqRHbGQbViw+HR4qRqCRaSa24jdsIEtBws
-	 XXJNXAJ82uKlxAr1fxk/9Cz+NxsQPXcEWfcIpGDTdVCquspzfMK6bLQpWlqSDl8MIE
-	 8AzGaw91fcfsop+XTvUZQhTBV96vwhV19nqDBPyNysPdqgGisaHl4Vj//GZP5OR7Sp
-	 eXrTZVflejSog==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5af609de0d2so318102eaf.2;
-        Tue, 07 May 2024 12:05:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7D8TBJ4LbzR2KfPuJt0EVoRcL0sjBPr+C1uULQQU1v2PneOhovbHFcgj10nQ3pPRQ8A8h9xmbAPX43BUNuDqtq8We4swnz/UgxTsJWiW4W78Df0WQ+KfFMS0kBXGMayUwCmNoyXp4dnafyYzS/poEwsB9bN+Y2kPIgoxErisN9SvWYUKvprIdvch5SPjFEF7oQ2Y+IqAaW5VI/Ljy+A==
-X-Gm-Message-State: AOJu0Yz/GsDIbVqWf46YFl5jFrNKdpeb9JAsoEeZlNbvcUIvHCKyndlN
-	t4WMZULPQTtBCH3x3NnyEamhWS8sin9VD1LdrQe+rwXcFTgX86LfG3OFyVUC2/vSAXwhQ18ih3X
-	PQv1g2/RDpGUGp9M7J9O+9dNPXt8=
-X-Google-Smtp-Source: AGHT+IF3DM1jvXt28nOSFpZ7axthsouZnF1Q5Tkxbf3eoVMe0Qp8gd2UpGhIK/KgeLsuVQ1JcjFRVflsYxqumunVBys=
-X-Received: by 2002:a05:6820:1f92:b0:5ac:6fc1:c2cb with SMTP id
- 006d021491bc7-5b24caad211mr423157eaf.0.1715108737184; Tue, 07 May 2024
- 12:05:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=O0sSao7P2CG0t9PjOBvXBHO+jdMj4C/i+lCpXX6Rk5644UqkxZaDvPBH2UfXOL17EuqIT0bPMrzRO6TByozXYE9iSr/+n5HFQI4Oa3AZc8S8cwAK0P4cDo8/0PBH3+oedcoK3sDgb40AFR9fn0htIZUE5OPYmYAp3l+A9XYALCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UQ4COlZi; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59a5f81af4so918586766b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:07:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715108849; x=1715713649; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JwU1IWNzhlSP5EH9iyMHaFmRpSbbE8IFJCVgZMlAkcM=;
+        b=UQ4COlZi1wjGRec1vXSHfd/ePwofzv5i+nayllj0aKOQVMkogpronwS7fiNKGmJYdc
+         REVt1UaVKAKyPpoa8plwTreCFTeU3qc2gfW4ylySKcUh3P80ZgAPmXXBjy+U3z68P0a7
+         6wtqLOMLsQfLwo6VHZ4W8c4W0n2CIrr86nD1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715108849; x=1715713649;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JwU1IWNzhlSP5EH9iyMHaFmRpSbbE8IFJCVgZMlAkcM=;
+        b=jBGBh5z5x+1Bws3nC1rwDm/jhaH6g+xGJN118Tv68W0gpuzxORj+J1TdS6OEbFSrmE
+         5E5lUwfZ6PFmIKE8bvFaWOyL8EJ+w5qMcc7ijcD9Yh5+JEsGI8GmonRmMzUjYk7maPnf
+         oc9nhbf03uLtPgSv6f5zkG3FUApvU98p68jTqmZsniDZdSd1jv7j0MhluIMLhznc+jOF
+         PWiHcKmOFwf4PQIReIkCZdGGauRokA1NryR8U2AY5IxOrYcR4axcJZHYt40mA9/pcRMO
+         rlQDuft0o5gvPWCHFVKaXH2lq/1qMYvbTmoXT1jb73TZrPvupKbkbtZcOqZgTiRQzw1z
+         iQag==
+X-Forwarded-Encrypted: i=1; AJvYcCVvjI+qdVSqrYtrNkwqLJhUzHoNV2kxOPYWH8T9qsHflYTCUtaftDeCFn4f8Oei46QtBiPeVfKmrdqZ+XcIQkhlX8MCHVNQapPRIQdE
+X-Gm-Message-State: AOJu0YzRDiaXstY49ERmVmCqrAhPjSEqRUXHwA2lQ9s1WGdYGp7hp70e
+	EEtQAks/Fxg70JHeHIv9rdLSTEmPrDwXQP/bZaMx0g6OQBIqJ6uFFriCj5qIhPbJ3A0LyuZRe7k
+	9y636cw==
+X-Google-Smtp-Source: AGHT+IFNXFm+GFjbDBdDFbFSW94KSS9dvmrTomdqJ7ToLhDZTIKKho/hh1kXCohu2aSedXgL7RtbnQ==
+X-Received: by 2002:a50:cdd9:0:b0:572:6aaf:e0d3 with SMTP id 4fb4d7f45d1cf-5731d9b78d4mr398358a12.7.1715108849149;
+        Tue, 07 May 2024 12:07:29 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id bd14-20020a056402206e00b00572bd30320esm6655077edb.82.2024.05.07.12.07.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 12:07:28 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59a5f81af4so918579466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:07:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXCEWfHzas8dbyGI5R8IAa2P269fYt3s55xxKrn5e2eLnAar9r1xfHFxFrjvK2UAl1aCo6rIv91Q2dP6f7yJpRcOcOUTEhwhR1Jnse4
+X-Received: by 2002:a17:906:1957:b0:a59:a977:a157 with SMTP id
+ a640c23a62f3a-a59fb9f209dmr23097766b.73.1715108847432; Tue, 07 May 2024
+ 12:07:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240430142434.10471-1-Jonathan.Cameron@huawei.com> <20240430142434.10471-8-Jonathan.Cameron@huawei.com>
-In-Reply-To: <20240430142434.10471-8-Jonathan.Cameron@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 7 May 2024 21:05:26 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gBF56XspBYaxZ2CoF0P0idVovJ_=s1Kks3xe4O9LJf9A@mail.gmail.com>
-Message-ID: <CAJZ5v0gBF56XspBYaxZ2CoF0P0idVovJ_=s1Kks3xe4O9LJf9A@mail.gmail.com>
-Subject: Re: [PATCH v9 07/19] ACPI: processor: Add acpi_get_processor_handle() helper
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, linux-pm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-acpi@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, x86@kernel.org, 
-	Russell King <linux@armlinux.org.uk>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Miguel Luis <miguel.luis@oracle.com>, James Morse <james.morse@arm.com>, 
-	Salil Mehta <salil.mehta@huawei.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Hanjun Guo <guohanjun@huawei.com>, Gavin Shan <gshan@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, linuxarm@huawei.com, 
-	justin.he@arm.com, jianyong.wu@arm.com
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com> <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
+In-Reply-To: <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 7 May 2024 12:07:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
+Message-ID: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
+ file lifetimes
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Simon Ser <contact@emersion.fr>, Pekka Paalanen <pekka.paalanen@collabora.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 30, 2024 at 4:28=E2=80=AFPM Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
+On Tue, 7 May 2024 at 11:04, Daniel Vetter <daniel@ffwll.ch> wrote:
 >
-> If CONFIG_ACPI_PROCESSOR provide a helper to retrieve the
-> acpi_handle for a given CPU allowing access to methods
-> in DSDT.
+> On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
 >
-> Tested-by: Miguel Luis <miguel.luis@oracle.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
+> > too, if this is possibly a more common thing. and not just DRM wants
+> > it.
+> >
+> > Would something like that work for you?
+>
+> Yes.
+>
+> Adding Simon and Pekka as two of the usual suspects for this kind of
+> stuff. Also example code (the int return value is just so that callers know
+> when kcmp isn't available, they all only care about equality):
+>
+> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+That example thing shows that we shouldn't make it a FISAME ioctl - we
+should make it a fcntl() instead, and it would just be a companion to
+F_DUPFD.
 
->
-> ---
-> v9: Tags
-> ---
->  drivers/acpi/acpi_processor.c | 11 +++++++++++
->  include/linux/acpi.h          |  7 +++++++
->  2 files changed, 18 insertions(+)
->
-> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.=
-c
-> index 4a79b42d649e..e8cbe0e40dd0 100644
-> --- a/drivers/acpi/acpi_processor.c
-> +++ b/drivers/acpi/acpi_processor.c
-> @@ -35,6 +35,17 @@ EXPORT_PER_CPU_SYMBOL(processors);
->  struct acpi_processor_errata errata __read_mostly;
->  EXPORT_SYMBOL_GPL(errata);
->
-> +acpi_handle acpi_get_processor_handle(int cpu)
-> +{
-> +       struct acpi_processor *pr;
-> +
-> +       pr =3D per_cpu(processors, cpu);
-> +       if (pr)
-> +               return pr->handle;
-> +
-> +       return NULL;
-> +}
-> +
->  static int acpi_processor_errata_piix4(struct pci_dev *dev)
->  {
->         u8 value1 =3D 0;
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 34829f2c517a..9844a3f9c4e5 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -309,6 +309,8 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t phy=
-sid, u32 acpi_id,
->  int acpi_unmap_cpu(int cpu);
->  #endif /* CONFIG_ACPI_HOTPLUG_CPU */
->
-> +acpi_handle acpi_get_processor_handle(int cpu);
-> +
->  #ifdef CONFIG_ACPI_HOTPLUG_IOAPIC
->  int acpi_get_ioapic_id(acpi_handle handle, u32 gsi_base, u64 *phys_addr)=
-;
->  #endif
-> @@ -1077,6 +1079,11 @@ static inline bool acpi_sleep_state_supported(u8 s=
-leep_state)
->         return false;
->  }
->
-> +static inline acpi_handle acpi_get_processor_handle(int cpu)
-> +{
-> +       return NULL;
-> +}
-> +
->  #endif /* !CONFIG_ACPI */
->
->  extern void arch_post_acpi_subsys_init(void);
-> --
-> 2.39.2
->
+Doesn't that strike everybody as a *much* cleaner interface? I think
+F_ISDUP would work very naturally indeed with F_DUPFD.
+
+Yes? No?
+
+                       Linus
 
