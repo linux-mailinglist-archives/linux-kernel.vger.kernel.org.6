@@ -1,206 +1,180 @@
-Return-Path: <linux-kernel+bounces-170777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48A78BDBE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A668BDBE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA2A4B20AC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:51:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33C861C21574
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62E478C8E;
-	Tue,  7 May 2024 06:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CECE78C8C;
+	Tue,  7 May 2024 06:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="jQ3XW17S"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlz54wGe"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF3F78C80;
-	Tue,  7 May 2024 06:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715064680; cv=fail; b=DS5cZ8fRKBVJO2L8sOD5itrFNrwjJKaDbfEynqyyfl87kH9dp0smnk7N/vGYancEqt+GNjma+iZGEqUU5tn3Ym4x9oE1AdbI+h76WXXY0I1IQaPpjlz1b8/TgBeeLFZDRqVq49eIcY0xkV8pbzadeBLNpWvnlBEb3pdmT7lH35I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715064680; c=relaxed/simple;
-	bh=1Dp0rj2DrTlLgwwVQwKLTLlnGy9rldBAuqR4G563msA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=URdJ1MPtHAqWbHGYU0UNjmmb5zwJPQ01SkgbdzjN28Z3Imv1IilQpTwNMMSk4JLeLGU3H/dFRr+BjSHLLfe4QYEpMRNiEasQtReahycXdAPfMR0VHIQCr6/D7GCMEgOqrjEzQDNEsXhHWMZ99PCyKhs7fDMl2PqvJ7lWCN4llGo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=jQ3XW17S; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 446MrNaj017227;
-	Tue, 7 May 2024 06:50:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=from:to:cc:subject:date:message-id:content-transfer-encoding
-	:content-type:mime-version; s=PPS06212021; bh=FglXVag+D07sMukdmz
-	IeUeteF4/gtq3w2rdSmQmDIU8=; b=jQ3XW17S+rWe3k5unBFnv+GRhn8SS6aoHZ
-	vuhgnP0a3LZMwYQCEyiAgvtJ6KUa1OBPsXW3c3B+fSCpZMt3eB/A4T7XT7kjUHiJ
-	EThevmbi+rxJyRbTRZ53eH21NnC4jUMKFYGL+KE6DIjDZW5LW1hOah9dnluR0Aln
-	+tHqcuh8sLoDRTeut4ySqpBgzDU1UieS4aj4RUv5A45gusFWIKe3ndOugs3cwY8K
-	RBZrrdYjuffK3xwR1syWpJKHVAlLNqMmoitAylt416ylzRVcco+z9erDmILkhz1A
-	6OW49Qf0rOzlXxV/V4Gzqc+tQ5Buv4v0ZWsWv5r3YfTleURXHLQw==
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2100.outbound.protection.outlook.com [104.47.55.100])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3xwc052h1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 06:50:53 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TzaTMafchkoqiomNQogj7JCYBL4GPaD2Qyh3xGaOQrpjpxbMsrzTBmsU2L1GydO6SgVptrSv+14VC590bh9yDQ+5oNXxvtExs3+e42SL2KqwkzddqYlfY72xlPY807wSDpk6U4VYCBcqnQW9EukP3cq0iWfIuehF5EK5z8oB1UpSjEZ5de85otQkjNbP9rd1VdH7BTakF2xI69LdCnF5bRL7jM2SSbVXf3F18xMTIpBqkuAlP33kCfCkhCCjFqMKTdE+VkWGS6NxSwhq4BpaOSAHBAI3Us6ApIRW7cim/Qfz2h3IVNIPm6+CZU+NM59Wg9/vtoIO/0sdhbwCyDYBBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FglXVag+D07sMukdmzIeUeteF4/gtq3w2rdSmQmDIU8=;
- b=jNxCOCM97t6OC71sy8pNcogsk0twsHDzBdo050XopzlFZO6prgU63y71ntDf2VyzjkgLlKVBSnxAMkhX5HajhDlmpefW73vk0SZzU++voMuZIUAOGg3Y8SgYNxB+dRvZl3G9znfQhbVHFDn6Sp7Yk9PgCfTVYJzQEWuSKmwT/FqW2zoIAD5IeJd3bRyJUJHOy0dz77tWMLCtJF68majhwS8qpQ3hKJqQnIjf1dRXWBJPVYNeYOzVOEyrW2YNz88vtiPcADL+80n7e7QjqrTFenQgD5jRLxPsyujxXwoR+rDLGgnkBt/Le/F3D7TL0bOBeK+6xuxQs57hqbcZtAMJow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from SA3PR11MB7527.namprd11.prod.outlook.com (2603:10b6:806:314::20)
- by DM4PR11MB6019.namprd11.prod.outlook.com (2603:10b6:8:60::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.41; Tue, 7 May 2024 06:50:50 +0000
-Received: from SA3PR11MB7527.namprd11.prod.outlook.com
- ([fe80::9135:7397:16e6:258c]) by SA3PR11MB7527.namprd11.prod.outlook.com
- ([fe80::9135:7397:16e6:258c%3]) with mapi id 15.20.7544.036; Tue, 7 May 2024
- 06:50:49 +0000
-From: He Zhe <zhe.he@windriver.com>
-To: namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com
-Cc: zhe.he@windriver.com, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf bench: Fix trap divide error of perf bench internals inject-build-id
-Date: Tue,  7 May 2024 14:50:26 +0800
-Message-Id: <20240507065026.2652929-1-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0047.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::15) To SA3PR11MB7527.namprd11.prod.outlook.com
- (2603:10b6:806:314::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CC778C7E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715064648; cv=none; b=UAs82Nblstr9pB0qmK8obBB+kOQ83b8ocqe7xU7p33NqGlgkpV+0ixGqUMOiPy4wrVhd24JJclAMoogC65kCVl6Wr/Z9RgnwLsyGFramakTW96JV5DhrjfiRZMpcYH6u9qebTh5dXWtvkrwKkxXqi/kXEJiyWS5I/qS+xv57tsk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715064648; c=relaxed/simple;
+	bh=B54nSfabufPf3bZUalOfLCZ3eIx8sLMVhlJmwFA+bkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YB6gRcazKT5M5hfFVzbzvAGw43VvNfdNPrzq5l6WwXhlPQxIPNoBTZ6WHP1ggClFnhX6yJwwFX7MMDSU35WFSON0DCeJHM1Err2Q+t7FiAPLZtUhRfxO11GvrMu8YWZMC6Hu47+4b3pSeaRlbf3SsaWqxWyIFbUf4TKSQqZtSFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlz54wGe; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a5f81af4so698596466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715064645; x=1715669445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vtf9JTxvmEium7Z5IYrhPwaVkYIMsaQSn2TAuNeOINo=;
+        b=nlz54wGeOOT96Saim//9XtEwgqbVrcuKyCB+lqqUeKr0QbblIqg3xu2oTMTxxRGjVe
+         HyTtWL/Xmp8nadfvzV1SHJmpum7ZrB/BYBQfK2D0MOh1ZN/5d3DZbMLupr8cxXlQvlUR
+         htEOeZbBzd2K5Mm7ik70XwJvJYIJa6YuFS7tk1HueEzZVBSZw5YqY+3df2vvdTGFEK0n
+         TU34N5jRJbYZW+rUjTxfC5t6JQDsgQeL9pHl2JMrJSN9IW8xoh5J1CDM3EhRnWjUA3ih
+         OxIZ31EI+wDDfD6JVnywAy1IEJLVtKj1U77tUTWzTyDtU3w8PzmGNg2Fbh1oHLzL3s7F
+         JyHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715064645; x=1715669445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vtf9JTxvmEium7Z5IYrhPwaVkYIMsaQSn2TAuNeOINo=;
+        b=flSHm+Q5EE2sZO8rBBkVcfa/VK0Ig6gAZIUWVpdCrIoRG3jnKICoGcJ0Ro8YxRbWQm
+         QW4aux6tMf9q2MnijYg74bfkdzWP/ZTn8kDq2rz24gt7K3JmR0pNjneaFN697XSf0211
+         Ucp6oqInE/oTZkGv5MAQucajwD+omMfNGq9LIUtHCh8yr9iX9z66sKxglXrtwV6UKiEA
+         Ij8c+nP00+YANPQgUGe87WMqrWEc2kVxULS9yXA4jPPylKEBqtJlwKPPVTh94dK4fCCE
+         HVXt94ZcnQeZdjR1TUuAC1eAUoBEjrvDkEwaRzwV0+AzziP5l13m7KxZJ5OfvwD90xcw
+         LtDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuAQn1TnYhk4nltngVCZedfXKP3pZJS4sJvdtx9dR7IFE3Z/37GL8qfGKvD8jByhbR+Hv2Vkr6vsadk3P4xypx4qWS5ux8BU6YR/jy
+X-Gm-Message-State: AOJu0YwtFJw7PGh5pSjnKRMELtXgNHtUc2oTCuORaQQbfKAegbXVK2bu
+	3tbhDqxdjS3bDrb70dO5elUSt9TFgOB53iIa4yekpGGHor+L9hsKUsIkSUl14LLfiP0zlcpm+Er
+	6XYoFMHxumkRCPt0+85Dl1q9zeos=
+X-Google-Smtp-Source: AGHT+IFdfdm61Vn8oi+xzryCzRzJSFLKb1UrL2QHh03A24gevJJW27V1tPShZQ9It2eEb4A0AnspboCZwuS1463YKFs=
+X-Received: by 2002:a50:a404:0:b0:570:1de9:4cd7 with SMTP id
+ u4-20020a50a404000000b005701de94cd7mr8065600edb.15.1715064645064; Mon, 06 May
+ 2024 23:50:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR11MB7527:EE_|DM4PR11MB6019:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05bac93f-ed66-4e3e-a275-08dc6e620737
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230031|1800799015|52116005|376005|366007|38350700005;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?nuBVVulkUsmSlbwSawQ/ao9FLVFkigFWbMeYrY9k7iSZHQIZJ/PR4h1SZ1XH?=
- =?us-ascii?Q?ZUCPgwxWXDNXuSR2G+U8DgVvjT1/2Vsyk2KtVOqDpG8IERs1BIbq/Y0+OYJs?=
- =?us-ascii?Q?T2D+fJRcBr6zfF4B1a6SXF2dPj8pydqApkct4doAIj71XPgSAXsTA2f8/d0n?=
- =?us-ascii?Q?DrwILAzw8jtEFA2TLJ4z+fE7kYAT/9uNbmfpXRsbyrAE4BSzqOyyA9vqwbNG?=
- =?us-ascii?Q?7ENcBSM1JcJQXa14tYsDM4ByqVTmmPsIfjrhBpJELbfde7flHNpE5QEV70eo?=
- =?us-ascii?Q?C4Q5+CCh/hxu0UCClSy2FwFZrzaFtMFJNWIMQyEncd7kIYBxb1+TQIxB+4vg?=
- =?us-ascii?Q?YbztiwGbcmxgHIWR9sg+Qyl7/fGrR2e0uFnXnWJ3SzciryQXunMS+qVtnA61?=
- =?us-ascii?Q?50do3U8MBvtsY0Tto3GRrp1qicVK5S1G7V5ZCAkzax0lUDYV6rdyt01RE+nj?=
- =?us-ascii?Q?jYtCFVcmWpqZBReJPfJfUkGTfChjLouFYB/1VS6MCOCxrPrmS77sjnzWN+A/?=
- =?us-ascii?Q?+oKRaBd9IUu35+cKvZzs0R9wIeKBtZ5UA67zkULH7thO5bBfdJVjO4EPwkSk?=
- =?us-ascii?Q?/fY3C3OoxLLHtXDkCpYgWmY+J6yYw0VjmgHItE/pH+pWmkVo51rF+B64S/yO?=
- =?us-ascii?Q?kDtI1PZkJiNPdAZcF0R/UnGuAOq5GWtUIjoBCkyxGSF5zjyK775SfkFW6GFM?=
- =?us-ascii?Q?xshJHxjyVUmJNrOXu8+UNLkEZiY7jv8WQiCqamQm06mdSSakEb1N/mgAWMLQ?=
- =?us-ascii?Q?fZj71O6hP4qnBrNjeU4N7yfBCICIHjd+GtKj//LRxfeK0zKw9wPDm0HwS/9/?=
- =?us-ascii?Q?wIBQFvhw0JlSaVfz2RJW/75FmQNHmvAKpbza84f2UdxL/SUpbVeo6yR37ghI?=
- =?us-ascii?Q?B+xYrE4I9C0dtTru4NV4CwrVWiJ7f+l2ZOvAs54TL9k+3DQTL9b3PRHZsiEF?=
- =?us-ascii?Q?l8Qhnciqun6aMm2BH5gUY5zYzkL4U6ipDkIRDqNr0UN84LeP7w66TX+TYc/3?=
- =?us-ascii?Q?SqBARiF805uwFFBbruqJXcFqNCVhbOBlEeqysi/yZlQNOjPUNa/495/Mr4Mg?=
- =?us-ascii?Q?63QHEdl6t9KjqKSfsmWgjA+sZBby2QEB/WqVvZr+xn6TDXXswDffbNHyyl12?=
- =?us-ascii?Q?I3VFm0AYa4PMYrRLr8c0s5XBqjIwwD49daKTp1e6QX2rqrFl31sVSf0lzSGY?=
- =?us-ascii?Q?5wzDCyPRXZWT/ibpIDBGtzHYrH680Elb1VZSiIoKSIjmaFVheZZFyG3xz0SB?=
- =?us-ascii?Q?eWlrMVa3qJS8nixEy7rsb260wDVf2a/0VD/v+LI0YbuwVLCJXBaaU0ZhISg2?=
- =?us-ascii?Q?v8EEdwBVDiVsT4lQPk6z79NeGqd2LrUO/lq7imEkcgZmAQ=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB7527.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(376005)(366007)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?SY0GFv9QyjVFykE8k8r6Da7VhCcuwV2d7wJGKYiPgEzdtKipTHoJElqhKwER?=
- =?us-ascii?Q?p1nS5q4pxKn1YPrG8wLcN0SPqBJ9LtrojQLGy/jDYAUlQxUvNGvVbKT8nQP/?=
- =?us-ascii?Q?RAro9237Y2jAjE/oct+OKy7E6PgM81s70pfNqpBGrk2gTo8dhhAX4KFvYVwX?=
- =?us-ascii?Q?FuJ4nXtrXLKurUDV/iqGlhXX1eP1qg0S9vXw6PPnC6USa2aE92/bFB0lZDOR?=
- =?us-ascii?Q?D1ck7cJiKVrRarWzWg3jCgmmq8C3AK+20wc3bWQb61g2itTsk03aB/rItcnx?=
- =?us-ascii?Q?H37coh+u7z3tq0dUVX8gQVysRtOErNQfjLXlxCOoEfJubOuoHUiRf1Bs/i83?=
- =?us-ascii?Q?Pq5qDvZfc5hGyh5NjNZQwIWHV+9ttyEFsTofSe2qXMDHVuELpBxdrJ2/tDXi?=
- =?us-ascii?Q?XSkIdFUdexeGmyJ5BOPR7ytGz5EE/d5e3tLg/S6emup8SlMj9SGYDuonLktX?=
- =?us-ascii?Q?lVmpOJM1EOD7wk0soz2fxuzjf8LWHE36/j4tjUJ4lf7JZhnIP0SqeC868bif?=
- =?us-ascii?Q?q/ERhllAW0MrtkIz7WiwUn+mgdwCZZiA0+gNlKg3C/8bJB7HmtC2mcMIrAV8?=
- =?us-ascii?Q?ZRgwNEEqgAVbxOsGXsc7YfRtV+lHsJzITp8kLNhpwUhfeNF02hWDbzmhCoo6?=
- =?us-ascii?Q?kKi1BIjS3Gou+OZnGhWZsOlmN5DhUUcFTQzUeTeGKXo7LtFCG7XhCtr+PT8g?=
- =?us-ascii?Q?L2Saq8kPQkRdsNMpsj/E0MvwLp9PPP4QiVgvEHS5cU2+WiI5zRUyUJsThN55?=
- =?us-ascii?Q?SBEPF/e0XM6Wr1A98D+4OYgE1bdIzPU21VBhyyySK7aup2ClrU2PejBpjZT4?=
- =?us-ascii?Q?Rii1FNVAdejfqRrq7MajP4XjkmLVKvGPWmwHk9ksIzYYXTiX1F9ESrXnVAcg?=
- =?us-ascii?Q?uMjujmOBmeSd5Ggrl0FBMZ+A067xU/avV4fMiIIQhSRxecGeicqr8VzOfgBB?=
- =?us-ascii?Q?+ZyzaCYa2aRDrTKIHSoldkugUmVjWUm7rKTSBUF30jwAikf9koRIUF1eEtrU?=
- =?us-ascii?Q?/AZ1Mvc+qTGbb4vSSc6YenUJ9500xr+UR30ZsZhfXInEvEGoA/MGIlhUgyUP?=
- =?us-ascii?Q?QLW1lJVD2dtbBPblzPYA50RJl4QBxlzBLwJbtL0ICJ07TLosq0qBHo8H57Jz?=
- =?us-ascii?Q?QWWWvBKZoMOcq7hd/OTQKBsrMsJEtRAvibfVZKYIr7xulZvgBKfKx4pNAmPI?=
- =?us-ascii?Q?GMz+t0AguuXS/WD9F+Cr/br+qCl+k58SOr33U+yVntaXybJ21C5amhn7ldA6?=
- =?us-ascii?Q?oGfY2aY1HxGjBuBBD5oRPfWyeZtG4uuTBlBW4KSyqLMU95+7fa00Hj9fschL?=
- =?us-ascii?Q?R5zBYHiiB9q5hru5NVix2PhXynuAkP8ZLvrEff9TK7ToTIBreFEGCiacG4oh?=
- =?us-ascii?Q?s2zs06O2t/MpXz+FVupayI09vO465dz2tklADCK7CVleda2q2wJf2B+eZVUU?=
- =?us-ascii?Q?FIGMupC7h9LzxpgpO4Z3Hk/39QvF76lBmpnEsa+15I4Y6PF+89U3rQ6wy9oc?=
- =?us-ascii?Q?tPAOfZk+Val+vNB8qGPBOVXHVhZZCfC50nQuTQZ6k9alRaiJ5kuKmlqMMqxs?=
- =?us-ascii?Q?mDOIqQC20MJfunEhU96Ua1ZcD54RPSGfsWLZGuoO?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05bac93f-ed66-4e3e-a275-08dc6e620737
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB7527.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 06:50:49.0415
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1RgLr+tG+qPVwYVC+0+sAXKn/WU9fXD5cwOV4lGWm1cOaC613SYrxiG040BGWW3UqAckV02Vx8C8VbAUmjDdxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6019
-X-Proofpoint-ORIG-GUID: yXRIa_82cqGIDP4xKt32oqVefADkagrJ
-X-Proofpoint-GUID: yXRIa_82cqGIDP4xKt32oqVefADkagrJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_02,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 clxscore=1011 suspectscore=0 adultscore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
- malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2404010003 definitions=main-2405070046
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <20240506105447.1171-1-ioworker0@gmail.com> <eaddd00d-8160-4800-b60f-25280dfe339b@linux.alibaba.com>
+In-Reply-To: <eaddd00d-8160-4800-b60f-25280dfe339b@linux.alibaba.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Tue, 7 May 2024 14:50:33 +0800
+Message-ID: <CAK1f24nB8D+zgphX3XXLWRq0_xwT+7EfV8dfxNmkHh_CCQrA-A@mail.gmail.com>
+Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, david@redhat.com, 
+	hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	ryan.roberts@arm.com, shy828301@gmail.com, wangkefeng.wang@huawei.com, 
+	willy@infradead.org, ying.huang@intel.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-perf bench internals inject-build-id suffers from the following error when
-only one DSO is collected.
+On Tue, May 7, 2024 at 9:47=E2=80=AFAM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+> Hi Lance,
+>
+> On 2024/5/6 18:54, Lance Yang wrote:
+> > Hey Baolin,
+> >
+> > I found a compilation issue that failed one[1] of my configurations
+> > after applying this series. The error message is as follows:
+> >
+> > mm/shmem.c: In function =E2=80=98shmem_get_unmapped_area=E2=80=99:
+> > ././include/linux/compiler_types.h:460:45: error: call to =E2=80=98__co=
+mpiletime_assert_481=E2=80=99 declared with attribute error: BUILD_BUG fail=
+ed
+> >          _compiletime_assert(condition, msg, __compiletime_assert_, __C=
+OUNTER__)
+> >                                              ^
+> > ././include/linux/compiler_types.h:441:25: note: in definition of macro=
+ =E2=80=98__compiletime_assert=E2=80=99
+> >                           prefix ## suffix();                          =
+   \
+> >                           ^~~~~~
+> > ././include/linux/compiler_types.h:460:9: note: in expansion of macro =
+=E2=80=98_compiletime_assert=E2=80=99
+> >          _compiletime_assert(condition, msg, __compiletime_assert_, __C=
+OUNTER__)
+> >          ^~~~~~~~~~~~~~~~~~~
+> > ./include/linux/build_bug.h:39:37: note: in expansion of macro =E2=80=
+=98compiletime_assert=E2=80=99
+> >   #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+> >                                       ^~~~~~~~~~~~~~~~~~
+> > ./include/linux/build_bug.h:59:21: note: in expansion of macro =E2=80=
+=98BUILD_BUG_ON_MSG=E2=80=99
+> >   #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+> >                       ^~~~~~~~~~~~~~~~
+> > ./include/linux/huge_mm.h:97:28: note: in expansion of macro =E2=80=98B=
+UILD_BUG=E2=80=99
+> >   #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+> >                              ^~~~~~~~~
+> > ./include/linux/huge_mm.h:104:35: note: in expansion of macro =E2=80=98=
+HPAGE_PMD_SHIFT=E2=80=99
+> >   #define HPAGE_PMD_SIZE  ((1UL) << HPAGE_PMD_SHIFT)
+> >                                     ^~~~~~~~~~~~~~~
+> > mm/shmem.c:2419:36: note: in expansion of macro =E2=80=98HPAGE_PMD_SIZE=
+=E2=80=99
+> >          unsigned long hpage_size =3D HPAGE_PMD_SIZE;
+> >                                     ^~~~~~~~~~~~~~~
+> >
+> > It seems like we need to handle the case where CONFIG_PGTABLE_HAS_HUGE_=
+LEAVES
+> > is undefined.
+> >
+> > [1] export ARCH=3Darm64 && make allnoconfig && make olddefconfig && mak=
+e -j$(nproc)
+>
+> Thanks for reporting. I can move the use of HPAGE_PMD_SIZE to after the
+> check for CONFIG_TRANSPARENT_HUGEPAGE, which can avoid the building error=
+:
 
-perf bench internals inject-build-id -v
-  Collected 1 DSOs
-traps: internals-injec[2305] trap divide error
-ip:557566ba6394 sp:7ffd4de97fe0 error:0 in perf[557566b2a000+23d000]
-  Build-id injection benchmark
-  Iteration #1
-Floating point exception
+I confirmed that the issue I reported before has disappeared after applying
+this change. For the fix,
 
-This patch removes the unnecessary minus one from the divisor which also
-corrects the randomization range.
+Tested-by: Lance Yang <ioworker0@gmail.com>
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
- tools/perf/bench/inject-buildid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Lance
 
-diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
-index 49331743c743..a759eb2328be 100644
---- a/tools/perf/bench/inject-buildid.c
-+++ b/tools/perf/bench/inject-buildid.c
-@@ -362,7 +362,7 @@ static int inject_build_id(struct bench_data *data, u64 *max_rss)
- 		return -1;
- 
- 	for (i = 0; i < nr_mmaps; i++) {
--		int idx = rand() % (nr_dsos - 1);
-+		int idx = rand() % nr_dsos;
- 		struct bench_dso *dso = &dsos[idx];
- 		u64 timestamp = rand() % 1000000;
- 
--- 
-2.25.1
-
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 1af2f0aa384d..d603e36e0f4f 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2416,7 +2416,7 @@ unsigned long shmem_get_unmapped_area(struct file
+> *file,
+>          unsigned long inflated_len;
+>          unsigned long inflated_addr;
+>          unsigned long inflated_offset;
+> -       unsigned long hpage_size =3D HPAGE_PMD_SIZE;
+> +       unsigned long hpage_size;
+>
+>          if (len > TASK_SIZE)
+>                  return -ENOMEM;
+> @@ -2446,6 +2446,7 @@ unsigned long shmem_get_unmapped_area(struct file
+> *file,
+>          if (uaddr =3D=3D addr)
+>                  return addr;
+>
+> +       hpage_size =3D HPAGE_PMD_SIZE;
+>          if (shmem_huge !=3D SHMEM_HUGE_FORCE) {
+>                  struct super_block *sb;
+>                  unsigned long __maybe_unused hpage_orders;
 
