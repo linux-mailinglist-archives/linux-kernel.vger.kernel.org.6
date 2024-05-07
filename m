@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-171924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929268BEAB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:38:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2918BEAB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24A422850EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:38:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 193F41F26098
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9B116C854;
-	Tue,  7 May 2024 17:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DEE16C855;
+	Tue,  7 May 2024 17:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ofcfxa5m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ten4Eycf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E886E570;
-	Tue,  7 May 2024 17:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73186E570
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715103510; cv=none; b=MviX0XFS7nGI12OJ3GrPk86AjHpEprHbdP1rSOvTmbpnpT4mEzBAQeDKqt4GQRkbmfOQ1hRQVBCmMK/9K8M+UsWzY+Oq19VW6Cv/O7ZvOrYMz0baMESSHuwJxm69H7XzgJT4ytmEbBDuJXK7M3nULHeZIFELcPdqWUxa4rVbLi0=
+	t=1715103525; cv=none; b=olD+119hH9EHWwzgZuFbpY7N2MsVfJqP5PTHX4koGM8YcGZfk14/Ooxf73xVcm+bVpMU9o0chUZOem5Qrob6GJB20nmzRdz4rJnGsE0chZUQCFpuahrk8eLji4RfvKgRyevdTZpJxu0RxHk1yYH0/b4wK6NL01j25Tcy9VrJrkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715103510; c=relaxed/simple;
-	bh=ky4yOz8ouS/xKriszP9tvW2GJTNUSiRNmFbQwPvPBWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FoS4hNrZ8j2omhe8Z8rxIffK0ZhtzeqXXDF/HJQeyKzZqU746yhCsatw1kTzU2OaL5vKQ6tKpfV8ezNeBQPlV4miEGcKP/aFbQNgi0B1Y7gBIQiptBUwBZHYyU4XPDRB8x9qq0hDISEwc3DoPbpgt77SrigbdOHaXcPH119nVg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ofcfxa5m; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715103508; x=1746639508;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ky4yOz8ouS/xKriszP9tvW2GJTNUSiRNmFbQwPvPBWg=;
-  b=Ofcfxa5mjssfgf4GKiXjcqgrs32eFnI+tfzzrBTPKRpFPohOjYoP+Kgf
-   fV3+hBR+FrXqvhALhgXaxhp1pEOIfAz6jnVmRDZR4WpuLn7Cyvae3p3U3
-   wMFDQMVrL+imJkNetVPkNAwKjnN1AwCeICFaq5bdFPsN99vx4dnInme4+
-   Tx6rodIand71j57811mKXtZ0t3YnW0q8xuM0+ubm9w1OV9NcO9v3cmJ9z
-   wuEi3vdIiHxLoIU6pQ3hI+SZDau+GyTqUOiziacOzcAzVjmoMCpsDthvD
-   ac08MYWwcSRhKqbFISYCdDowtQX++7d9TO/R0wyHJH40lsHt4642StQdW
-   w==;
-X-CSE-ConnectionGUID: rUl9Te5FSL+DRxkHLR8DZQ==
-X-CSE-MsgGUID: uWXgElVhT+qY5xuANqOxHQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11414138"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="11414138"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 10:38:27 -0700
-X-CSE-ConnectionGUID: Ka8MIClYQl2/10Rx24iguA==
-X-CSE-MsgGUID: SJ7gsFyPQnqhxoXyIPeuKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="66029789"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 10:38:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1s4Oli-000000058gR-0AkX;
-	Tue, 07 May 2024 20:38:22 +0300
-Date: Tue, 7 May 2024 20:38:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] gpiolib: fix the speed of descriptor label setting with
- SRCU
-Message-ID: <ZjpnDTXUSYCOAFRz@smile.fi.intel.com>
-References: <20240507121346.16969-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1715103525; c=relaxed/simple;
+	bh=Kk5dtahjbr3xZRYks0JLO6NbANU6wiMK62UB4BoVbkA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=j26ysRpD6NAC2PvlsOxU6uFQSLGfk8KG/NExJDyGu07dRL2D2jkgHE4Lfe0fpCmmYRS9Reeke/hryiP66ixywUseCF0wVJAZgn+hTgMQHM9Sik3DfsejxdeJXcd7TAqP74mhjscxKo7OoVjzGpzbth9Qj2Wj1orCaDMBkk9Cr14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ten4Eycf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB8CC2BBFC;
+	Tue,  7 May 2024 17:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1715103525;
+	bh=Kk5dtahjbr3xZRYks0JLO6NbANU6wiMK62UB4BoVbkA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ten4EycfJ89RrJXXlLX05LJcpfxrIS+lzOLKwW2O0r1LFLT2lRMhjYR4kJ5AdXzIh
+	 mMxn91I6Uzl6t7WZmAGNyDsXaCDbOCBYSPj4GDMzewBJ1DAworDtivTPzQohIZhomb
+	 S1sTqTe37Z+jIErKvjB16Ot3WKlt+XVlGaXHuxxU=
+Date: Tue, 7 May 2024 10:38:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Lance Yang <ioworker0@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, willy@infradead.org, sj@kernel.org,
+ maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com,
+ 21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com,
+ zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com,
+ libang.li@antgroup.com, wangkefeng.wang@huawei.com,
+ songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] mm/rmap: integrate PMD-mapped folio splitting
+ into pagewalk loop
+Message-Id: <20240507103843.d15414e356d60612f94ec6ce@linux-foundation.org>
+In-Reply-To: <19645506-f17d-4202-807e-f0e5c99af742@redhat.com>
+References: <20240501042700.83974-1-ioworker0@gmail.com>
+	<20240501042700.83974-3-ioworker0@gmail.com>
+	<cc9fd23f-7d87-48a7-a737-acbea8e95fb7@linux.alibaba.com>
+	<CAK1f24kyCj2Svguuu07wDuVEWYYbcmRc_18ihgVAzSjoJ9ox2A@mail.gmail.com>
+	<a8f7a8da-c2e1-443c-9220-a224d97b1c81@redhat.com>
+	<CAK1f24=rWdgscbDa6pMqOmTEDOHVLo5NQ=7jOo9TdyJRXahHZg@mail.gmail.com>
+	<20240507102241.0a09db69afd62efb5ce84f17@linux-foundation.org>
+	<19645506-f17d-4202-807e-f0e5c99af742@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507121346.16969-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 07, 2024 at 02:13:46PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, 7 May 2024 19:33:05 +0200 David Hildenbrand <david@redhat.com> wrote:
+
+> > Well, which series are we talking about?  "mm/madvise: enhance
+> > lazyfreeing with mTHP in madvise_free v10" or ""Reclaim lazyfree THP
+> > without splitting v4" or both?
 > 
-> Commit 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
-> caused a massive drop in performance of requesting GPIO lines due to the
-> call to synchronize_srcu() on each label change. Rework the code to not
-> wait until all read-only users are done with reading the label but
-> instead atomically replace the label pointer and schedule its release
-> after all read-only critical sections are done.
+> See my other mail, "mm/madvise: enhance lazyfreeing with mTHP in 
+> madvise_free v10" is all acked/reviewed and good to go.
+> 
+> > 
+> > And how significant are the needed fixup patches?
+> > 
+> > And what is our confidence level after those fixups are in place?
+> 
+> I'm afraid I won't have time to review this series this/next week, so I 
+> cannot tell. I already assumed this would not be 6.10 material.
 
-> To that end wrap the descriptor label in a struct that also contains the
-> rcu_head struct required for deferring tasks using call_srcu() and stop
-> using kstrdup_const() as we're required to allocate memory anyway.
-
-If there is no label and we assign something like "?" (two bytes) we got
-with your patch the allocation of most likely 32 bytes (as next power of
-two for the SLAB) instead of 18..24.
-
-OTOH, I dunno if SLAB supports 24-bytes. If not, it means that up to 16 bytes
-label there would be no difference. In any case, with a new update (as far
-as I understood the next move) it might return to kstrdup_const() or so.
-
-> Just allocate enough for the label string and rcu_head in one go.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+OK, I've dropped the series "Reclaim lazyfree THP without splitting",
+v4.  Let's revisit in the next cycle.
 
 
