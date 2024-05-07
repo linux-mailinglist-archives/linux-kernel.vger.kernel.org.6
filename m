@@ -1,208 +1,117 @@
-Return-Path: <linux-kernel+bounces-171535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6C38BE584
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:17:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E518BE591
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F64C1C23F72
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:17:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A872838C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9F515F416;
-	Tue,  7 May 2024 14:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E8616D4D3;
+	Tue,  7 May 2024 14:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQxngLPZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="YiqL1bcj"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B91816D9BE;
-	Tue,  7 May 2024 14:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E2416132A;
+	Tue,  7 May 2024 14:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091204; cv=none; b=Q5to0cdZo9KVDw5AE9RXKtIsw0jEdEghom0ok7frLxsFYZmDDMpoI2BRA1cPnX8rdhMNJxMPue6ZMch7TEDzNTnLv+xueYICIlhVvAVDMTK7r0AtBV83/WLtKj0GJT+pL6ccip1VP52bY80HRiR/kcUir7QWkeUFlN6Z3ODYyas=
+	t=1715091232; cv=none; b=BrVCwyEeQvkaaREyRQkxrGaMdJsKNTX+BQ//7oKVvniqFIJICTS2L4mAhjNfH2d8EF6PF0kPiWt1guo4PY++uuYeViYGeuYGY1bDHaQn/i/aVj9s6mtD0qCbrD+aZQFf2z031Fw8Id7vyusItF5+nmm8X5sAKAWvKkqgrL+3Gsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091204; c=relaxed/simple;
-	bh=gOkR25vPJsq975h06TT5co01adavwCbUKJg1NRIZp7U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g/LMjHjmHVR2xW6dC8lVSMw2aFQDXTaaar/oZHwjmtTleVWWbhvIJVKDAIfrE1lTU18iiX1sIUKjYLkR/UJQF5SVhOEQ9083PgiV9K/DQUaBT1XBKWUnqYx0H0ExDRTBLTZpgMec0YtBSlBvdh6qNRAU5sWfZbjBtszgE4rqUWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQxngLPZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78996C2BBFC;
-	Tue,  7 May 2024 14:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715091203;
-	bh=gOkR25vPJsq975h06TT5co01adavwCbUKJg1NRIZp7U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jQxngLPZMAZXXFRvv11al09QtCWuvnkwlPLIG1ezyROOe7fayNIrT5UDzmtTw79mf
-	 h72U/i+ueysRcCP/VcX5PXf/jSVbsh+RViKN0cNa36TOW+4kin3up92+n/xIrDvc2q
-	 Fy+J6Vn9/9wwvC30CEVMUI5nfnHynQfV5WuqU/UeQW0ox5HqqkoWeyfoODoHjnyUJ+
-	 Xq8VGWdWO8Pea2Su9EmUFUKJW4/mbSrLJMOb0O/+PcE7bkbmdStQnOvi5wjDtreg/D
-	 HVgQaL4j4MvC3bykkhrRkpel4KqdbVTtToXvbaKeE3FAr1hksHFLljPdeJLWf4jyoa
-	 uyS9Iown1QnJg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>
-Subject: [PATCH v10 27/36] tracing: Add ftrace_fill_perf_regs() for perf event
-Date: Tue,  7 May 2024 23:13:17 +0900
-Message-Id: <171509119701.162236.14077846449914839324.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <171509088006.162236.7227326999861366050.stgit@devnote2>
-References: <171509088006.162236.7227326999861366050.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1715091232; c=relaxed/simple;
+	bh=LbuUNo2s482mQRrIcVdTCP+fnZZxVYLbxTrPXeS+Ksg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0oM6R/jnHW5ySB6FmUMk3QjZPuY3VLgXj+yqx8owtsIJsJMO7HwCh07//wmcNAG6NketmONe/IG1ofXkUUNTbrKAiwOIX/n6zz3pO1w/tgf78RqBTtuHX4K53G6VKqBBBvxKKinl4QOKHT0CEB3vYPnl7WAo2dLH0DlZ47ThJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=YiqL1bcj; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4478bQdu006998;
+	Tue, 7 May 2024 07:13:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pfpt0220; bh=MXQybSTqFGSVtkBn7jZOAr
+	GJgra1Vr2nPLrSYts8mXw=; b=YiqL1bcjPaRyYag5ICulirsXfRPJ1RXprA75W/
+	QCSOuLnUghs9qmhjdqM0vzBqKB1JRvsP7sH/4jtmQqx1bQ7qgh+29cXarT0zHHXG
+	XLi0YHWxJQjs2agw9kOV/fAEa02keG23NtMybJDuAej/I5m8j7CE0cx7xDsEeU1Y
+	gogC0GeMPqKboYXuey4ZokoHRSzksmVqikxy8eKFYeLx05vRkvALkY+g4qVLJUcA
+	xbvdPD60I0sJEFcs4PDXAVX1Db7Fut9NLbcbCZltNbKU7126cjvkx4r4zB5Fek0Z
+	FZ7WDlOmRDelM0a6DRhdDcR2/FJ+FD1PmcqA4AIdRT1uoTBg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3xwmhghj5w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 07:13:31 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 7 May 2024 07:13:30 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 7 May 2024 07:13:30 -0700
+Received: from maili.marvell.com (unknown [10.28.36.165])
+	by maili.marvell.com (Postfix) with SMTP id B13823F7041;
+	Tue,  7 May 2024 07:13:27 -0700 (PDT)
+Date: Tue, 7 May 2024 19:43:26 +0530
+From: Ratheesh Kannoth <rkannoth@marvell.com>
+To: Duoming Zhou <duoming@zju.edu.cn>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hams@vger.kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <jreuter@yaina.de>, <dan.carpenter@linaro.org>
+Subject: Re: [PATCH net v5 4/4] ax25: Change kfree() in ax25_dev_free() to
+ ax25_dev_put()
+Message-ID: <20240507141326.GA1050877@maili.marvell.com>
+References: <cover.1715065005.git.duoming@zju.edu.cn>
+ <5c61fea1b20f3c1596e4fb46282c3dedc54513a3.1715065005.git.duoming@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5c61fea1b20f3c1596e4fb46282c3dedc54513a3.1715065005.git.duoming@zju.edu.cn>
+X-Proofpoint-ORIG-GUID: ifxI65k7sibW2qbX6yaRP1jxGqMYbOvE
+X-Proofpoint-GUID: ifxI65k7sibW2qbX6yaRP1jxGqMYbOvE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_07,2024-05-06_02,2023-05-22_02
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 2024-05-07 at 12:33:42, Duoming Zhou (duoming@zju.edu.cn) wrote:
+> The object "ax25_dev" is managed by reference counting. Thus it should
+> not be directly released by a kfree() call in ax25_dev_free(). Replace
+> it with a ax25_dev_put() call instead.
+>
+> Fixes: d01ffb9eee4a ("ax25: add refcount in ax25_dev to avoid UAF bugs")
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+> ---
+>  net/ax25/ax25_dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/ax25/ax25_dev.c b/net/ax25/ax25_dev.c
+> index c6ab9b0f0be..2a40c78f6a0 100644
+> --- a/net/ax25/ax25_dev.c
+> +++ b/net/ax25/ax25_dev.c
+> @@ -195,7 +195,7 @@ void __exit ax25_dev_free(void)
+>  	list_for_each_entry_safe(s, n, &ax25_dev_list, list) {
+>  		netdev_put(s->dev, &s->dev_tracker);
+>  		list_del(&s->list);
+> -		kfree(s);
+> +		ax25_dev_put(s);
+The commit message "The object "ax25_dev" is managed by reference counting"
+seems be not making sense here.  in case ref > 0 after the ax25_dev_put().
+ax25_dev_put(s) is not initiating any mechanism to come back and recheck.
 
-Add ftrace_fill_perf_regs() which should be compatible with the
-perf_fetch_caller_regs(). In other words, the pt_regs returned from the
-ftrace_fill_perf_regs() must satisfy 'user_mode(regs) == false' and can be
-used for stack tracing.
-
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
-  Changes from previous series: NOTHING, just forward ported.
----
- arch/arm64/include/asm/ftrace.h   |    7 +++++++
- arch/powerpc/include/asm/ftrace.h |    7 +++++++
- arch/s390/include/asm/ftrace.h    |    5 +++++
- arch/x86/include/asm/ftrace.h     |    7 +++++++
- include/linux/ftrace.h            |   31 +++++++++++++++++++++++++++++++
- 5 files changed, 57 insertions(+)
-
-diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
-index aab2b7a0f78c..95a8f349f871 100644
---- a/arch/arm64/include/asm/ftrace.h
-+++ b/arch/arm64/include/asm/ftrace.h
-@@ -154,6 +154,13 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
- 	return regs;
- }
- 
-+#define arch_ftrace_fill_perf_regs(fregs, _regs) do {		\
-+		(_regs)->pc = (fregs)->pc;			\
-+		(_regs)->regs[29] = (fregs)->fp;		\
-+		(_regs)->sp = (fregs)->sp;			\
-+		(_regs)->pstate = PSR_MODE_EL1h;		\
-+	} while (0)
-+
- int ftrace_regs_query_register_offset(const char *name);
- 
- int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec);
-diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
-index cfec6c5a47d0..51245fd6b45b 100644
---- a/arch/powerpc/include/asm/ftrace.h
-+++ b/arch/powerpc/include/asm/ftrace.h
-@@ -44,6 +44,13 @@ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *
- 	return fregs->regs.msr ? &fregs->regs : NULL;
- }
- 
-+#define arch_ftrace_fill_perf_regs(fregs, _regs) do {		\
-+		(_regs)->result = 0;				\
-+		(_regs)->nip = (fregs)->regs.nip;		\
-+		(_regs)->gpr[1] = (fregs)->regs.gpr[1];		\
-+		asm volatile("mfmsr %0" : "=r" ((_regs)->msr));	\
-+	} while (0)
-+
- static __always_inline void
- ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
- 				    unsigned long ip)
-diff --git a/arch/s390/include/asm/ftrace.h b/arch/s390/include/asm/ftrace.h
-index 9f8cc6d13bec..cb8d60a5fe1d 100644
---- a/arch/s390/include/asm/ftrace.h
-+++ b/arch/s390/include/asm/ftrace.h
-@@ -89,6 +89,11 @@ ftrace_regs_get_frame_pointer(struct ftrace_regs *fregs)
- 	return sp[0];	/* return backchain */
- }
- 
-+#define arch_ftrace_fill_perf_regs(fregs, _regs)	 do {		\
-+		(_regs)->psw.addr = (fregs)->regs.psw.addr;		\
-+		(_regs)->gprs[15] = (fregs)->regs.gprs[15];		\
-+	} while (0)
-+
- #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
- /*
-  * When an ftrace registered caller is tracing a function that is
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 8d6db2b7d03a..7625887fc49b 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -54,6 +54,13 @@ arch_ftrace_get_regs(struct ftrace_regs *fregs)
- 	return &fregs->regs;
- }
- 
-+#define arch_ftrace_fill_perf_regs(fregs, _regs) do {	\
-+		(_regs)->ip = (fregs)->regs.ip;		\
-+		(_regs)->sp = (fregs)->regs.sp;		\
-+		(_regs)->cs = __KERNEL_CS;		\
-+		(_regs)->flags = 0;			\
-+	} while (0)
-+
- #define ftrace_regs_set_instruction_pointer(fregs, _ip)	\
- 	do { (fregs)->regs.ip = (_ip); } while (0)
- 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 914f451b0d69..3871823c1429 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -194,6 +194,37 @@ ftrace_partial_regs(struct ftrace_regs *fregs, struct pt_regs *regs)
- 
- #endif /* !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS || CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST */
- 
-+#ifdef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
-+
-+/*
-+ * Please define arch dependent pt_regs which compatible to the
-+ * perf_arch_fetch_caller_regs() but based on ftrace_regs.
-+ * This requires
-+ *   - user_mode(_regs) returns false (always kernel mode).
-+ *   - able to use the _regs for stack trace.
-+ */
-+#ifndef arch_ftrace_fill_perf_regs
-+/* As same as perf_arch_fetch_caller_regs(), do nothing by default */
-+#define arch_ftrace_fill_perf_regs(fregs, _regs) do {} while (0)
-+#endif
-+
-+static __always_inline struct pt_regs *
-+ftrace_fill_perf_regs(struct ftrace_regs *fregs, struct pt_regs *regs)
-+{
-+	arch_ftrace_fill_perf_regs(fregs, regs);
-+	return regs;
-+}
-+
-+#else /* !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS */
-+
-+static __always_inline struct pt_regs *
-+ftrace_fill_perf_regs(struct ftrace_regs *fregs, struct pt_regs *regs)
-+{
-+	return &fregs->regs;
-+}
-+
-+#endif
-+
- /*
-  * When true, the ftrace_regs_{get,set}_*() functions may be used on fregs.
-  * Note: this can be true even when ftrace_get_regs() cannot provide a pt_regs.
-
+>  	}
+>  	spin_unlock_bh(&ax25_dev_lock);
+>  }
+> --
+> 2.17.1
+>
 
