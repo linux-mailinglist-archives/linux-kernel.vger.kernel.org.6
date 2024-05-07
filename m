@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-172130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B828BEDE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:10:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFB08BEDD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8A71F25E77
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2AE1C24E2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B43916EC0A;
-	Tue,  7 May 2024 20:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFACC187357;
+	Tue,  7 May 2024 20:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lidICO5K"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUErLruN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DCF14B962;
-	Tue,  7 May 2024 20:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089C318734B;
+	Tue,  7 May 2024 20:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715112505; cv=none; b=ZRB43cn0Pkl1bik85ivN/Q4nAVo1ZZaEthJt5Y+Cw5NgHWTx2EM0R1i+n7Hst/atIdyqGsojc5xfEgI6pdrjy2zR4T87jTyjLR9AcjKJ2BLL2K8xPt6/3zdvGubHgjzL37EnsG8FO8OeUgOVpvU3DltQt4BjrJDnZnGAtpX3dEo=
+	t=1715112437; cv=none; b=Vv/gAL/PNPXqKYDeKRr95vldQOzIFqwoliVaHyUPFb7oUdEO9K9QpRNFxy7EdoxBoSBEwoqf6+gIWXHZvuuO+R17bWHYqzNUCrVGbs44U14ItVlBX33ch06l2QS6SjD6SERhX5vrU+zWqhBHB7UJRB/aPxqcgDwwOT9K/2cnbW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715112505; c=relaxed/simple;
-	bh=m2RT8PC4x1UCnE8lG23iBCFVaGRGa4zOXUVtHgndTQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TjfnUXdCmVN9nfNcw6vyg4JChDBo+bTeHhFICa6fDfAZsWuOiImJdORdNWC1Ss7hHbu4tGhIirEXjtCjISbWKfkxQP0LZPZTUSp00NgelLrBIK6R/sfk1qVKLK0781qIFlpyr2aNhketK/ofUfn64LeHUchWmYrgPKBjI4/dPpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lidICO5K; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f4603237e0so98537b3a.0;
-        Tue, 07 May 2024 13:08:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715112503; x=1715717303; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6meDpwIFn6POwM0GTM589VI6wgTQh6ljoPgnNTkMk6k=;
-        b=lidICO5KmK6oZ13JRmAOHETckuejwuWUldFJckERavjx7zehVsxfpmGnOhq9jgfoeb
-         1JvjZBIuuYHWXjItwju+jTkCO90bnM/m0OPam5nQ/icQ5xrTjFeCKOJUnPqnDn/FIXqX
-         Rd64EOiprT6aLfYbfzTck1+Bw5PEIqKOXft2Dbbgd7hW5v7TUCg3VeE6f0d9ARYgEyiS
-         gvRNGZBPaiITDnfGTGzvKxCrNOPWNtCQVflm6aVA7VOdOLmN/ooiu5dpt277v+Vute2i
-         /LW7hh1tdaAbnDx5qF5ZZ6D9hDQWU3YHWH/BtbC88nzwOLFOmIkcUY9hUXSXZMVAqi4i
-         Zqhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715112503; x=1715717303;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6meDpwIFn6POwM0GTM589VI6wgTQh6ljoPgnNTkMk6k=;
-        b=N3tDIAILsparCEwmcB/o7aJwjRrSQTEjItfbZ/g9o1BmMFnQLsCw6TaQ1IThsookUT
-         GmD1ddF1nmhEKLTXhxex+h21jjqazTnh/DIxjJQk8F3OgwTut5fr24gULMAy896SIhTR
-         P66jQjDLhY1gI1L1OJuW6d/1626s65Q7Yoz7x8PNOLMgP6+ca4FXDyFnaCORbLaJI7Dw
-         rJV4t4fn5a0NTFrwyvmd6uQS2Gq9oh8k5VcYBLYtCgBsaxijGGxUP/EYUMF3jqk7up0s
-         3juZ6hY8h0D42Z3lRhkX55cic97DkEfW3KkPWsZn/SNmTIh+nAhY1knvtX91xmQFecvY
-         joTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUji+sxMgjEti80w77wpGnibIE/sZmAsfBvNGlSXjdqbpw5vPNu4ucOM8r3LE3P/TqH41XIkEEWait3mdpaPFTpn6JWEtkYi+DoNpBrwrp0dlQ8d+e4GfbMNthK1k94LfQ6CE653QgD
-X-Gm-Message-State: AOJu0Yz+1L3/KyeY/6TPhZXblug97HC6Y3CX/cI7TQ/HyCj+v7OGx1Bu
-	wYwkbLoGKGkuXTz4NADAhxbPDKvaEvi63+8mf7weV63RVFeP52wNw9seEI4W
-X-Google-Smtp-Source: AGHT+IFZwUjrLsg8NOeqZqvTwtxZQH+cAZNq93P6AoVgP0/DMGlcVNZAxah6QwTxMcsDtMHT4ATRkw==
-X-Received: by 2002:a05:6a00:2e1f:b0:6ed:de70:5ef9 with SMTP id d2e1a72fcca58-6f49bc48a4bmr1167605b3a.0.1715112502697;
-        Tue, 07 May 2024 13:08:22 -0700 (PDT)
-Received: from localhost ([202.88.220.221])
-        by smtp.gmail.com with ESMTPSA id y6-20020a056a00190600b006eab9ef5d4esm9823201pfi.50.2024.05.07.13.08.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 13:08:22 -0700 (PDT)
-Date: Wed, 8 May 2024 01:37:11 +0530
-From: Aryabhatta Dey <aryabhattadey35@gmail.com>
-To: linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: pavel@ucw.cz, lee@kernel.org, corbet@lwn.net, 
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Subject: [PATCH] docs: leds: fix typo in Documentation/leds/leds-blinkm.rst
-Message-ID: <qpnx2m6qo5abvbs65o452gicumxa7n5vnw42e3hxnnm7sou4xn@fvu52tilzujc>
+	s=arc-20240116; t=1715112437; c=relaxed/simple;
+	bh=iouoE3NOSOWqeVXlFJuuPM3HYDT1sH9d1FLLf5+gr54=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=pGA7R4f2ofLYqQV3yVEsS3LSnBmBzT+w7VmH75Kh0ufpFOra3pVVrM14hWmQNhlMGpW0BISfosqeCTHqWURmCB66HJGj9IKhd2PlwdtyWr6sHu9Dz31lDAeiH3OJMlbDnBBiej1zdML6Os0WPHPl90DItQBs3wcmJSAFJQHNnhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUErLruN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11177C2BBFC;
+	Tue,  7 May 2024 20:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715112436;
+	bh=iouoE3NOSOWqeVXlFJuuPM3HYDT1sH9d1FLLf5+gr54=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=YUErLruNSL+Ty3sAfCM3UPFRKHSkTY/WeokRS4GvJrYW5CGgMrcNTVr24VWAcKMNo
+	 e1lyGc9BlMVd5rCv7m2jIka9XAryLjnWcRr0vI4lVEj/f4T68idq8DlUhEEw5Bhugk
+	 XQdg3Nwc+B/PJyI2YXRydSIN6RTKwx+gutjoQb94w4wJxtX7glfLKOqQtWJMs+q0ND
+	 EZdWMXRTJ7DpXxy3oExqrs+PV1IPQVJfUduvN6JY4GBJU0ldqluAwHilB4reb8TuCS
+	 1/Vyh240Z0hFOV9LYt5A6KVa44B84Bcum3WNyralnsAT+Rt+N/IFkWn1XsX4OYXxOA
+	 5GpI8CIZEKApg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 May 2024 23:07:13 +0300
+Message-Id: <D13OM6OQ0QRS.SSJJRFNR92LJ@kernel.org>
+Cc: "Jonathan Corbet" <corbet@lwn.net>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Stephen Rothwell"
+ <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] Documentation: tpm: Add TPM security docs toctree entry
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Bagas Sanjaya" <bagasdotme@gmail.com>, "Linux Documentation"
+ <linux-doc@vger.kernel.org>, "Linux Kernel Mailing List"
+ <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
+ <linux-next@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240506105936.37073-1-bagasdotme@gmail.com>
+In-Reply-To: <20240506105936.37073-1-bagasdotme@gmail.com>
 
-Change 'dasy-chain' to 'daisy-chain'.
+On Mon May 6, 2024 at 1:59 PM EEST, Bagas Sanjaya wrote:
+> Stephen Rothwell reports htmldocs warning when merging tpmdd tree for
+> linux-next:
+>
+> Documentation/security/tpm/tpm-security.rst: WARNING: document isn't incl=
+uded in any toctree
+>
+> Add toctree entry for TPM security docs to fix above warning.
+>
+> Fixes: ddfb3687c538 ("Documentation: add tpm-security.rst")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20240506162105.42ce2ff7@canb.a=
+uug.org.au/
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/security/tpm/index.rst | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/security/tpm/index.rst b/Documentation/securit=
+y/tpm/index.rst
+> index f27a17f60a9602..fa593d960040a9 100644
+> --- a/Documentation/security/tpm/index.rst
+> +++ b/Documentation/security/tpm/index.rst
+> @@ -5,6 +5,7 @@ Trusted Platform Module documentation
+>  .. toctree::
+> =20
+>     tpm_event_log
+> +   tpm-security
+>     tpm_tis
+>     tpm_vtpm_proxy
+>     xen-tpmfront
+>
+> base-commit: 152585665f0f6b89e67ed6d04c17b18d1f0f4077
 
-Signed-off-by: Aryabhatta Dey <aryabhattadey35@gmail.com>
----
- Documentation/leds/leds-blinkm.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-diff --git a/Documentation/leds/leds-blinkm.rst b/Documentation/leds/leds-blinkm.rst
-index c74b5bc877b1..2d3c226a371a 100644
---- a/Documentation/leds/leds-blinkm.rst
-+++ b/Documentation/leds/leds-blinkm.rst
-@@ -7,7 +7,7 @@ The leds-blinkm driver supports the devices of the BlinkM family.
- They are RGB-LED modules driven by a (AT)tiny microcontroller and
- communicate through I2C. The default address of these modules is
- 0x09 but this can be changed through a command. By this you could
--dasy-chain up to 127 BlinkMs on an I2C bus.
-+daisy-chain up to 127 BlinkMs on an I2C bus.
- 
- The device accepts RGB and HSB color values through separate commands.
- Also you can store blinking sequences as "scripts" in
--- 
-2.44.0
+I'll apply asap
 
+BR, Jarkko
 
