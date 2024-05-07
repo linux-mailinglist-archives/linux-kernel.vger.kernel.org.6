@@ -1,116 +1,177 @@
-Return-Path: <linux-kernel+bounces-171593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F63F8BE629
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:37:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31328BE52A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D4AD1F22627
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:37:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A261B22106
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D0115FA97;
-	Tue,  7 May 2024 14:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C221D15F3E2;
+	Tue,  7 May 2024 14:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="lF29aSwl"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnJzb3bI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A2015ECE2;
-	Tue,  7 May 2024 14:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F32156C7A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715092623; cv=none; b=sqj4My9w5+4/MVC14NrckpcNIU27twCwp2shPUjFhvKXPr9Hj6/7rpyfvK6iZ3InC4WXirvmhF/18lJdY8xAkf3jMHQ5qiA4O8KVNpixnyWhgVQJyBOxFK/oWdeaMaTY3t8x6V97IS7ok2xQwi3ABiLWLfHZR8VEOk4daTgjngs=
+	t=1715090765; cv=none; b=Dc//fgAW/RAWN+rdiHiyAjgFvvxtZix+cMCX7PM4/CbkkD2DYwmlBlVkaZTO9Kbxb5+5cR5JP5eWByxk9PlfbgVxAk7FZHYt9eOh7lxJpTkLL/DOJaYZSmmtJcwh8uoJJoaWgW+nBUz4K35R26jCD/tc3IyUNyz37r1pJ7xEvfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715092623; c=relaxed/simple;
-	bh=8lBxj7OlkdnR3Nw99USWXlYjj/eD13fDPsd3mf0Jpz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TvdxLnCtoP3FzGcOKxRQbK6g90aXYTO2b6lpEKAqbd8Xc85orAcvMePGHPCmnjajrCCTJKpYUtD0Ph1FwiTvUdoqgYq6OovxowgNGAPxCm50TghNcMi8/kp+nHGe2UMuvistQHtET8PTfziAoNI7bPOhP+yMiCmS4Wx3+xH4bjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=lF29aSwl; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bE7QxHBl23SqmkvQImsRLD5Ew8sdZ2Sh0oNk8KX8UXI=; b=lF29aSwlz7rdbvZlOKsenoLRqj
-	WPB0gv4x5crFU+bqbBAuOVDDVwlxMWUqxkLYMqTigGdwilcGQOdG31W7ChRV00vDImXw9ktfgN2OX
-	r/02MyS0yrCoGE1Cz5ctBUr8GdVEkoHYzFUvAy6CXQhvghOyLmRR3WO0vNeCbr48AV33D/mRKEXOd
-	Nt5oSU7qQvtojXW4qyTc10bq8fvakg3LaRuuFtOfvSD4Me0QcFHERYeahgWuxk6ea89VOlQ9BH5b4
-	NylfnD0+nDTd6MryDtsvcy5lZQJcxNa3lYx8taKNzSWBXk/2zlWKhTlTC/irXHHLQcO13Z0Kl0jXg
-	PlInHUHg==;
-Received: from [217.161.79.54] (helo=[172.16.0.144])
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1s4LMT-008sEA-Fx; Tue, 07 May 2024 15:00:05 +0100
-Message-ID: <b7421822-4c07-40e2-b2a4-3599ba6b39da@codethink.co.uk>
-Date: Tue, 7 May 2024 15:00:04 +0100
+	s=arc-20240116; t=1715090765; c=relaxed/simple;
+	bh=t2Zobjc7MI6+ixD8KnilMidW0woMS15GwGLeKi1FmbM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PLYniHDp9blEk5Y8KvPRaRb1+MXhr/kKrFABCYPlL/PN5CI4nfaq4zDyg3EPvSWoJGZ2NuqfAJsoEUHZXpaRNR7nIcLU93H7S1xYRipmNnZ4+rTPoAE9W8IUAsiLXzZ2+DOxXjOz+ZIJpD4buF6QuBuqB3t2mIO75RVq3pLt2KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YnJzb3bI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54827C2BBFC;
+	Tue,  7 May 2024 14:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715090764;
+	bh=t2Zobjc7MI6+ixD8KnilMidW0woMS15GwGLeKi1FmbM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YnJzb3bIQFe3kLH190BdMGPr0E/HvQ4xdxZGybOaO0N2371wx4TdQn1Qlpnc4pqMc
+	 yuDw2t8/UehvZupwNXyC2fmmU5nmGiECGwUcGjy/LnJ4Q4YmAFMb+jQiLT2PjXkgqc
+	 31l/kzAmeZlDUF5hxsnytnFkn0TUkXrS6ebSKySBtDGqYWJiwFVjkUgO+UPdA/0vXn
+	 DHojnbLRKJJhT8C5DfTqXFbXrjdZnTU5pvNlK87FWDc0+sr0n4RghyFC9hJ36dt2n1
+	 oduTM/T+Hj82UmNM3cqeUePZ4ohusMGBu7bfrDYxXaZOXcOrhpiq+13shK1VhoW7WP
+	 rE71W4TunDKBg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to avoid racing in between buffered read and OPU dio write
+Date: Tue,  7 May 2024 22:05:56 +0800
+Message-Id: <20240507140556.1293003-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv, bpf: Optimize zextw insn with Zba extension
-To: Pu Lehui <pulehui@huawei.com>, Xiao Wang <xiao.w.wang@intel.com>,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- luke.r.nels@gmail.com, xi.wang@gmail.com, bjorn@kernel.org
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, haicheng.li@intel.com
-References: <20240507104528.435980-1-xiao.w.wang@intel.com>
- <6836eb5c-f135-4e58-987b-987ab446b27c@huawei.com>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <6836eb5c-f135-4e58-987b-987ab446b27c@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Sender: ben.dooks@codethink.co.uk
 
-On 07/05/2024 13:47, Pu Lehui wrote:
-> 
-> On 2024/5/7 18:45, Xiao Wang wrote:
->> The Zba extension provides add.uw insn which can be used to implement
->> zext.w with rs2 set as ZERO.
->>
->> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
->> ---
->>   arch/riscv/Kconfig       | 19 +++++++++++++++++++
->>   arch/riscv/net/bpf_jit.h | 18 ++++++++++++++++++
->>   2 files changed, 37 insertions(+)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index 6bec1bce6586..0679127cc0ea 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -586,6 +586,14 @@ config RISCV_ISA_V_PREEMPTIVE
->>         preemption. Enabling this config will result in higher memory
->>         consumption due to the allocation of per-task's kernel Vector 
->> context.
->> +config TOOLCHAIN_HAS_ZBA
->> +    bool
->> +    default y
->> +    depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zba)
->> +    depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zba)
->> +    depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
->> +    depends on AS_HAS_OPTION_ARCH
->> +
->>   config TOOLCHAIN_HAS_ZBB
+If lfs mode is on, buffered read may race w/ OPU dio write as below,
+it may cause buffered read hits unwritten data unexpectly.
 
-At this point would it be easier to ask the toolchain what's enabled
-and put into kconfig via some sort of script?
+Thread A			Thread B
+- f2fs_file_write_iter
+ - f2fs_dio_write_iter
+  - __iomap_dio_rw
+   - f2fs_iomap_begin
+    - f2fs_map_blocks
+     - __allocate_data_block
+      - allocated blkaddr #x
+       - iomap_dio_submit_bio
+				- f2fs_file_read_iter
+				 - filemap_read
+				  - f2fs_read_data_folio
+				   - f2fs_mpage_readpages
+				    - f2fs_map_blocks
+				     : get blkaddr #x
+				    - f2fs_submit_read_bio
+				IRQ
+				- f2fs_read_end_io
+				 : read IO on blkaddr #x complete
+IRQ
+- iomap_dio_bio_end_io
+ : direct write IO on blkaddr #x complete
 
+This patch introduces a new per-inode i_opu_rwsem lock to avoid
+such race condition.
+
+Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 20 ++++++++++++++++++--
+ fs/f2fs/super.c |  1 +
+ 3 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 145b985bf252..b69ec1109572 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -847,6 +847,7 @@ struct f2fs_inode_info {
+ 	/* avoid racing between foreground op and gc */
+ 	struct f2fs_rwsem i_gc_rwsem[2];
+ 	struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
++	struct f2fs_rwsem i_opu_rwsem;	/* avoid racing between buf read and opu dio write */
+ 
+ 	int i_extra_isize;		/* size of extra space located in i_addr */
+ 	kprojid_t i_projid;		/* id for project quota */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ef4cfb4436ef..c761db952b37 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4545,7 +4545,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (f2fs_should_use_dio(inode, iocb, to)) {
+ 		ret = f2fs_dio_read_iter(iocb, to);
+ 	} else {
++		bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
++
++		if (do_opu)
++			f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
+ 		ret = filemap_read(iocb, to, 0);
++		if (do_opu)
++			f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
+ 		if (ret > 0)
+ 			f2fs_update_iostat(F2FS_I_SB(inode), inode,
+ 						APP_BUFFERED_READ_IO, ret);
+@@ -4770,14 +4776,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 			ret = -EAGAIN;
+ 			goto out;
+ 		}
++		if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
++			f2fs_up_read(&fi->i_gc_rwsem[READ]);
++			f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
++			ret = -EAGAIN;
++			goto out;
++		}
+ 	} else {
+ 		ret = f2fs_convert_inline_inode(inode);
+ 		if (ret)
+ 			goto out;
+ 
+ 		f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
+-		if (do_opu)
++		if (do_opu) {
+ 			f2fs_down_read(&fi->i_gc_rwsem[READ]);
++			f2fs_down_write(&fi->i_opu_rwsem);
++		}
+ 	}
+ 
+ 	/*
+@@ -4801,8 +4815,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 		ret = iomap_dio_complete(dio);
+ 	}
+ 
+-	if (do_opu)
++	if (do_opu) {
++		f2fs_up_write(&fi->i_opu_rwsem);
+ 		f2fs_up_read(&fi->i_gc_rwsem[READ]);
++	}
+ 	f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
+ 
+ 	if (ret < 0)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index daf2c4dbe150..b4ed3b094366 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
+ 	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
+ 	init_f2fs_rwsem(&fi->i_xattr_sem);
++	init_f2fs_rwsem(&fi->i_opu_rwsem);
+ 
+ 	/* Will be used by directory only */
+ 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+2.40.1
 
 
