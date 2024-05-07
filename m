@@ -1,197 +1,147 @@
-Return-Path: <linux-kernel+bounces-170986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D874C8BDE93
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939FB8BDE6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 083DD1C22232
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500E828219F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA5E15F3FF;
-	Tue,  7 May 2024 09:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C128C14E2C8;
+	Tue,  7 May 2024 09:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URAp9JHq"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f0Kb1CCE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA3415EFA1;
-	Tue,  7 May 2024 09:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0D25B1E0;
+	Tue,  7 May 2024 09:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074564; cv=none; b=nyXYf5yaydlkd9Ep4xR9UK4NNkKcwHpY9++tl9G5rJYgp51IdZlptdLEOhdWB/uIHN9S5NUPnmsVxEHfREK08ML7lp8cdES0mKeaTY7Y8NDJXLiFZbRUVYxvuchA+oR473UgwKGMeuRfht5rcWo3Mjq0MzU3ed4NNquajn5oRQc=
+	t=1715074518; cv=none; b=VpWUrXio+5UWH6K2tDebpmneDdxkZ9O++iGDn2vWlguMJ1B5tXpA+ZLousz2gXCjccH3M9r7adHIu/H59K7FM75sDL+b0v+JPYp9IpCSWdcS4TW/8oykwwBwyiRAsrwRLGNiP3Pf0ed/PsrIkodnfvSPw9084csjMsubFcxp4vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074564; c=relaxed/simple;
-	bh=xLIkzUhYqkpoaAiaQxcqMO2Ytt7HUJ27tzDsmg6WfCM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KGvrZwkCnvz21DEXX0kMIy953m2/j3ehMq0QlHuJYIiF9J1ABgoagpo5KkK4kY6W/Ah7PssGWp8SMP/9myLWUJ2kikzjgs8dS/iQuMdWW1v2bY9bNkduZP4vozJg/ZBt2TUyNZVJwHQ51dA/u52xVcTFS+hMyz43CuDosqUzkf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URAp9JHq; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so8252951fa.0;
-        Tue, 07 May 2024 02:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715074559; x=1715679359; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WdJY0TZw/fjltnhvg0EPkwklXe5dzlu0wabU2jZ/52w=;
-        b=URAp9JHq9K2vrhXWLr9yPZnKObzQo/IvLOJCvDYgJLqZP1m6Yq2dIQEGSvV+2snydK
-         H0rHvmue5VnuKh1SWZn88El1ANktAsHPMRj8qfQ7k7tgID7ZDmpSFDiVWmnBvS1Co2FT
-         4K55opFA4KFxQW7Hz9mj+/7l8Sn0iwEbWPhmQJMHYsx8d+tlxmr4MIfaTHmo7fVJZeNE
-         ZO64dQhiVMsrkN3eSFLda2iwm60hyH2WS4Eg5pS2rLI8qZG63hPdokF8Lr3Bue1u10Ub
-         95apv8G7Lea70EK/FXmbCPpPmh+EoEsms+pNnwdtOa2jf37H7+WILmiQD/sQm8NzoNyQ
-         AvwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715074559; x=1715679359;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WdJY0TZw/fjltnhvg0EPkwklXe5dzlu0wabU2jZ/52w=;
-        b=t4ONy/ykzgRW0YvxTb3Cu5nBUj/3nrxNWcmFSU9sOEvGCrtNrAu5vxTshQesEcb/NK
-         57EaMdjrSMQs9b2dBUND4MmKvk/U/DRrem++MyMafaX9P1vz5oLmYZc8legrMRjNjA3r
-         gUx6kR6Yu2EW6hoDBQBYMP0xJGyYjrmp4QTpbnd8gs0tYuJsD/z6E+CfOXwj/0/djHLi
-         /At2MhaOeDTbFWhPFGfbCWCWhzRty80EPvbgNsQ+40KRVXtCEKsHhH753LyW6Y45Qm4b
-         zqf8e4J2Llzo92rqoWD2/zpwQo3DZR5XqaQpu2wubQQe+j3f9IZBkc29PmnXH8QXzPAz
-         WaGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuLWELE/29xUT1pzgTuZoHKtp3VKjfHnLbQHJf3Cc45qodu7zad6iEkRJDyyBrkJimo87xCQgZlNJI9FGA2EqRKq/Zkau5WMGyWH16
-X-Gm-Message-State: AOJu0YwMnMcRNeenSx99x4B2HE5Dpi/KC3OdVi8Bj+jd2bGWIoPT+UIr
-	MzXt7sqFhU33gjsYmspUc6HeuuyAkotvuAl9XyCJFeuTsee8yHF6
-X-Google-Smtp-Source: AGHT+IEA+c+gDL6J8ZrBuC+CGl6J+uw0YGSUA+D3NFyQuktUotuVGX88q5QGcMdQcwvZvDQ8PfEoXg==
-X-Received: by 2002:a2e:2406:0:b0:2e2:5fd:7030 with SMTP id k6-20020a2e2406000000b002e205fd7030mr7916249ljk.13.1715074558517;
-        Tue, 07 May 2024 02:35:58 -0700 (PDT)
-Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 02:35:58 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: "Paul E . McKenney" <paulmck@kernel.org>
-Cc: RCU <rcu@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 27/48] rcu: Make hotplug operations track GP state, not flags
-Date: Tue,  7 May 2024 11:35:09 +0200
-Message-Id: <20240507093530.3043-28-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
-References: <20240507093530.3043-1-urezki@gmail.com>
+	s=arc-20240116; t=1715074518; c=relaxed/simple;
+	bh=Mi58uVSDi+5iePNr8b+aVN0PSLs4Zw96zhsxEeRqYmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dhvkUqyBAFVgq+pIfEa27ts4YkZ54eaoTW4iM8VhBFnD9fr0XnHgpgqBAyHWXTHDsqm1kPCs1iRYpqB17N7Mnbf3rCqDbtInyiFyev/A04DmiRon+EJImHb+o4jS+c9XTMnKiPsaJft62fRgHMy2a8yFgHA8D0xMRnCRQSzU/GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f0Kb1CCE; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715074516; x=1746610516;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Mi58uVSDi+5iePNr8b+aVN0PSLs4Zw96zhsxEeRqYmE=;
+  b=f0Kb1CCElH2s0NtHZN9vrxssW0dato7Y3zPkKX0LBLcw69wtcmAf+TBq
+   l/uO12yE8pkl5wBCmQOS4ULoVcC2KnHgFn6lasRfd1VxwRTxilSfvaJgW
+   T0MZqapWfXT9A11ugQTsFKZVeS1ij4Bg661w8s0NBDiUh+TX4qqa65Iqv
+   ATE/16Td/R8lzn2NCiS4SvAz1gfQ1Iw7LKRxSue36oe3gR4PeeuWKBZUK
+   IiJDdgLHbnOaLcacUML+J50PIP8/S0+KCB6KPPNjXO/PiMD+iFu+4nIGW
+   TADhbyohG+YL4joV5gk3SD1S+rIVbQdz5UR/k0DFV5UH4yN3ophC6SDDl
+   A==;
+X-CSE-ConnectionGUID: k6iR+1LGRnuafXBASfEWDw==
+X-CSE-MsgGUID: gIzHRv1nTFW+9P/+t8QS+g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="28329410"
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="28329410"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 02:35:15 -0700
+X-CSE-ConnectionGUID: mbnN2bOrQTSC4WJUNs+SKg==
+X-CSE-MsgGUID: xehOBnBQQpmFgGKtOm2zIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="33029128"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.31])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 02:35:12 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>,
+ Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: [PATCH v2 0/4] acpi/ghes, cper,
+ cxl: Trace FW-First CXL Protocol Errors
+Date: Tue, 07 May 2024 11:35:09 +0200
+Message-ID: <2649256.vYhyI6sBWr@fdefranc-mobl3>
+In-Reply-To: <20240109034755.100555-1-Smita.KoralahalliChannabasappa@amd.com>
+References: <20240109034755.100555-1-Smita.KoralahalliChannabasappa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On Tuesday, January 9, 2024 4:47:51=E2=80=AFAM GMT+2 Smita Koralahalli wrot=
+e:
+> This patchset adds trace event support for FW-First Protocol Errors.
+>=20
+> This series depends on:
+> https://lore.kernel.org/linux-cxl/20231220-cxl-cper-v5-0-1bb8a4ca2c7a@int=
+el.
+> com
+>=20
+Hello Smita,
 
-Currently, there are rcu_data structure fields named ->rcu_onl_gp_seq
-and ->rcu_ofl_gp_seq that track the rcu_state.gp_flags field at the
-time of the corresponding CPU's last online or offline operation,
-respectively.  However, this information is not particularly useful.
-It would be better to instead track the grace period state kept
-in rcu_state.gp_state.  This would also be consistent with the
-initialization in rcu_boot_init_percpu_data(), which is to RCU_GP_CLEANED
-(an rcu_state.gp_state value), and also with the diagnostics in
-rcu_implicit_dynticks_qs(), whose format is consistent with an integer,
-not a bitmask.
+I'm working on a small series of enhancement and additions to kernel logs a=
+nd=20
+trace events in extlog_print() (ELOG). I'm interested to reuse from ELOG th=
+e=20
+infrastructure which you made to trace the CXL Protocol Errors.
 
-This commit therefore makes this change and changes the names to
-->rcu_onl_gp_flags and ->rcu_ofl_gp_flags, respectively.
+I'm aware that this series depends on an old one from Ira which has been=20
+superseded by a different implementation and, furthermore, that this needs =
+to=20
+be reworked   because the execution of this code may sleep while in atomic=
+=20
+context.=20
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- kernel/rcu/tree.c        | 12 ++++++------
- kernel/rcu/tree.h        |  4 ++--
- kernel/rcu/tree_plugin.h |  4 ++--
- 3 files changed, 10 insertions(+), 10 deletions(-)
+I'd like to ask if you plan to fix and rebase this series to a current cxl=
+=20
+branch. If so, I'll wait for the next version to integrate in ELOG.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 7149b2d5cdd6..306f55b81d10 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -841,8 +841,8 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
- 				__func__, rnp1->grplo, rnp1->grphi, rnp1->qsmask, rnp1->qsmaskinit, rnp1->qsmaskinitnext, rnp1->rcu_gp_init_mask);
- 		pr_info("%s %d: %c online: %ld(%d) offline: %ld(%d)\n",
- 			__func__, rdp->cpu, ".o"[rcu_rdp_cpu_online(rdp)],
--			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_flags,
--			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_flags);
-+			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_state,
-+			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_state);
- 		return 1; /* Break things loose after complaining. */
- 	}
- 
-@@ -4420,9 +4420,9 @@ rcu_boot_init_percpu_data(int cpu)
- 	WARN_ON_ONCE(rcu_dynticks_in_eqs(rcu_dynticks_snap(cpu)));
- 	rdp->barrier_seq_snap = rcu_state.barrier_sequence;
- 	rdp->rcu_ofl_gp_seq = rcu_state.gp_seq;
--	rdp->rcu_ofl_gp_flags = RCU_GP_CLEANED;
-+	rdp->rcu_ofl_gp_state = RCU_GP_CLEANED;
- 	rdp->rcu_onl_gp_seq = rcu_state.gp_seq;
--	rdp->rcu_onl_gp_flags = RCU_GP_CLEANED;
-+	rdp->rcu_onl_gp_state = RCU_GP_CLEANED;
- 	rdp->last_sched_clock = jiffies;
- 	rdp->cpu = cpu;
- 	rcu_boot_init_nocb_percpu_data(rdp);
-@@ -4682,7 +4682,7 @@ void rcutree_report_cpu_starting(unsigned int cpu)
- 	ASSERT_EXCLUSIVE_WRITER(rcu_state.ncpus);
- 	rcu_gpnum_ovf(rnp, rdp); /* Offline-induced counter wrap? */
- 	rdp->rcu_onl_gp_seq = READ_ONCE(rcu_state.gp_seq);
--	rdp->rcu_onl_gp_flags = READ_ONCE(rcu_state.gp_flags);
-+	rdp->rcu_onl_gp_state = READ_ONCE(rcu_state.gp_state);
- 
- 	/* An incoming CPU should never be blocking a grace period. */
- 	if (WARN_ON_ONCE(rnp->qsmask & mask)) { /* RCU waiting on incoming CPU? */
-@@ -4733,7 +4733,7 @@ void rcutree_report_cpu_dead(void)
- 	arch_spin_lock(&rcu_state.ofl_lock);
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags); /* Enforce GP memory-order guarantee. */
- 	rdp->rcu_ofl_gp_seq = READ_ONCE(rcu_state.gp_seq);
--	rdp->rcu_ofl_gp_flags = READ_ONCE(rcu_state.gp_flags);
-+	rdp->rcu_ofl_gp_state = READ_ONCE(rcu_state.gp_state);
- 	if (rnp->qsmask & mask) { /* RCU waiting on outgoing CPU? */
- 		/* Report quiescent state -before- changing ->qsmaskinitnext! */
- 		rcu_disable_urgency_upon_qs(rdp);
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index df48160b3136..ff4d8b60554b 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -273,9 +273,9 @@ struct rcu_data {
- 	bool rcu_iw_pending;		/* Is ->rcu_iw pending? */
- 	unsigned long rcu_iw_gp_seq;	/* ->gp_seq associated with ->rcu_iw. */
- 	unsigned long rcu_ofl_gp_seq;	/* ->gp_seq at last offline. */
--	short rcu_ofl_gp_flags;		/* ->gp_flags at last offline. */
-+	short rcu_ofl_gp_state;		/* ->gp_state at last offline. */
- 	unsigned long rcu_onl_gp_seq;	/* ->gp_seq at last online. */
--	short rcu_onl_gp_flags;		/* ->gp_flags at last online. */
-+	short rcu_onl_gp_state;		/* ->gp_state at last online. */
- 	unsigned long last_fqs_resched;	/* Time of last rcu_resched(). */
- 	unsigned long last_sched_clock;	/* Jiffies of last rcu_sched_clock_irq(). */
- 	struct rcu_snap_record snap_record; /* Snapshot of core stats at half of */
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 36a8b5dbf5b5..340bbefe5f65 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -805,8 +805,8 @@ dump_blkd_tasks(struct rcu_node *rnp, int ncheck)
- 		rdp = per_cpu_ptr(&rcu_data, cpu);
- 		pr_info("\t%d: %c online: %ld(%d) offline: %ld(%d)\n",
- 			cpu, ".o"[rcu_rdp_cpu_online(rdp)],
--			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_flags,
--			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_flags);
-+			(long)rdp->rcu_onl_gp_seq, rdp->rcu_onl_gp_state,
-+			(long)rdp->rcu_ofl_gp_seq, rdp->rcu_ofl_gp_state);
- 	}
- }
- 
--- 
-2.39.2
+Otherwise, if you are not anymore actively working on this series, please=20
+notice that I'd be glad to help by making the necessary changes and by port=
+ing=20
+your code to a current cxl branch (of course, retaining your authorship).
+
+Thanks,
+
+=46abio M. De Francesco
+>
+> Link to v1:
+> https://lore.kernel.org/all/20240102150933.161009-1-Smita.KoralahalliChan=
+nab
+> asappa@amd.com
+>=20
+> Smita Koralahalli (4):
+>   acpi/ghes, cxl: Create a common CXL struct to handle different CXL
+>     CPER records
+>   efi/cper, cxl: Make definitions and structures global
+>   acpi/ghes, efi/cper: Recognize and process CXL Protocol Errors.
+>   acpi/ghes, cxl/pci: Trace FW-First CXL Protocol Errors
+>=20
+>  drivers/acpi/apei/ghes.c        | 22 ++++++++-
+>  drivers/cxl/core/pci.c          | 29 ++++++++++++
+>  drivers/cxl/cxlpci.h            |  3 ++
+>  drivers/cxl/pci.c               | 13 ++++--
+>  drivers/firmware/efi/cper_cxl.c | 79 ++++++++++++++++++++++++++++-----
+>  drivers/firmware/efi/cper_cxl.h |  7 +--
+>  include/linux/cper.h            |  4 ++
+>  include/linux/cxl-event.h       | 31 ++++++++++++-
+>  8 files changed, 166 insertions(+), 22 deletions(-)
+
+
+
 
 
