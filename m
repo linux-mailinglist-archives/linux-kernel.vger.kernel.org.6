@@ -1,110 +1,180 @@
-Return-Path: <linux-kernel+bounces-171757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F538BE86D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:12:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D929E8BE830
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87784B286F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:04:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2BD1F2C112
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C9717799B;
-	Tue,  7 May 2024 15:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633F16C443;
+	Tue,  7 May 2024 16:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HS0TdCwm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPMTml4D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39AC16C6A1
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543A31649D3;
+	Tue,  7 May 2024 16:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097509; cv=none; b=tFqYS55jT2SBEThcJOZdFZ9JoDwVnhMceLBItApOfJbgvMSjeXA9PlHPVGjLs0SPckl0681dkGefkI9wudag25zqHN8ztwLhczHLZZ6G2JhFBCkvkimQbUniD0yxhZS1/pcWQlqbOF0vlsggNXnLJ7f6XbWjHhs/UQK1xmVQxqo=
+	t=1715097613; cv=none; b=dwFMtPijXae57ICtZTg8olk66bgmnq7T2//8gbbqfQ0bvFRs/Zy0TJxp6icLlUax2e9jWfkVv8ANphG76NEqTeXBVHrA8Vfn0AkRFNuWvT/K1m86zgbSq50eWKDyYK0kZ09bnYUu5T0zVdTognKXK4ADvHRmzJEi4w+S1oySkXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097509; c=relaxed/simple;
-	bh=AEDj0QP9X/29ZeWxz7Y3Z4nz0H8Ield92JGUU5fqxk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hCcnxyelKM240fx1uYcqB9PRhEG1DaAsYm+EW0Q/7wiw73uPpt9BD74e5PK1e50863ABawlBvydrDhirCM2equaotwaKpJ7Mkt+19p3DYYuuoXJXY/fDxpKsa0LFv/L7LmdDySCj4C3CARzvDGoePiEKXGM4l9KLvfZuRNDt5iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HS0TdCwm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715097503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KfYqWHCMNvvr7g3hZxttx2F/NwK+cEPEKDtwCJOPG4M=;
-	b=HS0TdCwmFYKwouePrQU/idx8LP6Q4mK3zNJ431omaB6a8VJL4wegglOfaoXNBQrBMO/ykq
-	u8ev0QXZeIwIfFGlUSK3HUODweKRyhb6u/tzLfgfHvprVZ59sMOANAWAIdpCsn9zdeUhGT
-	6HDa+Z3VH+EVcIgOVW5CZB+xEBUMn74=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-543-3Cwx2YUwN7qLulppB-IAtg-1; Tue, 07 May 2024 11:58:20 -0400
-X-MC-Unique: 3Cwx2YUwN7qLulppB-IAtg-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 33348802BF7;
-	Tue,  7 May 2024 15:58:20 +0000 (UTC)
-Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 16C4A401441;
-	Tue,  7 May 2024 15:58:20 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>
-Subject: [PATCH 12/17] KVM: x86/mmu: Explicitly disallow private accesses to emulated MMIO
-Date: Tue,  7 May 2024 11:58:12 -0400
-Message-ID: <20240507155817.3951344-13-pbonzini@redhat.com>
-In-Reply-To: <20240507155817.3951344-1-pbonzini@redhat.com>
-References: <20240507155817.3951344-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1715097613; c=relaxed/simple;
+	bh=Y5R+jdVdl3nIfGghNCZCSFf/nI98te4Naa50ljeiVSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g+LF0L/nxBk5JAu9MSIs6710l62jA6Eiv6ywupRMnsUP66wPSzbl8SYDaK9RGMry7EdUYWj7QfS/78ix7wbtZo+0YRbiLrbQBXeI0udC6hMlJUGzQG1IeIGSatfQHgucXUsu0uUVJDScIDQsVfdDqhJ7P5MvLizkD/zg6U4IrJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPMTml4D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C75DC2BBFC;
+	Tue,  7 May 2024 16:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715097612;
+	bh=Y5R+jdVdl3nIfGghNCZCSFf/nI98te4Naa50ljeiVSU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aPMTml4DjnrDVFUNBl5j04oKV4dIwvB/tzzxYbC38/ichYh6n7YLzveS6DXtYUC2n
+	 83dVR4PqyrRV8bs8RNpoeiaWH/gBG8P+LoU3xHv2a3AJozno5ojzh+CuERA5tn8Gwu
+	 x45OIjtUjEEJjd90MtoZXjL6mAm2RiSrG/j89td6hPiGRhyYzbpKh18t67p5bbsqNj
+	 wVl8QvuTnmBg7iro5kG+aY3yybCjRX7ClUYkCbM6Ykw9CEGdogEJNwT4jDEuIF7Cnd
+	 XMtXOvshql9U1yF+NVuvz8lf/8WnkK385+pMadg8ZXPGMIs3ah9cQdleHhn65N7HDo
+	 kCiir/lWdDBPg==
+Message-ID: <e5629ad4-9652-4aa9-ba26-ee7d0df1d1ba@kernel.org>
+Date: Tue, 7 May 2024 17:59:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH bpf-next 1/4] selftests/bpf: Handle SIGINT when creating
+ netns
+Content-Language: en-GB
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: MPTCP Upstream <mptcp@lists.linux.dev>,
+ Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ Geliang Tang <tanggeliang@kylinos.cn>
+References: <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org>
+ <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-1-e2bcbdf49857@kernel.org>
+ <CAADnVQKWCVfUhQnoYBoEZaZbfiX8MROcj7Ct-nB4-axhZqMecw@mail.gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <CAADnVQKWCVfUhQnoYBoEZaZbfiX8MROcj7Ct-nB4-axhZqMecw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-From: Sean Christopherson <seanjc@google.com>
+Hi Alexei,
 
-Explicitly detect and disallow private accesses to emulated MMIO in
-kvm_handle_noslot_fault() instead of relying on kvm_faultin_pfn_private()
-to perform the check.  This will allow the page fault path to go straight
-to kvm_handle_noslot_fault() without bouncing through __kvm_faultin_pfn().
+Thank you for the review!
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Message-ID: <20240228024147.41573-12-seanjc@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/mmu/mmu.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On 07/05/2024 16:43, Alexei Starovoitov wrote:
+> On Tue, May 7, 2024 at 3:53 AM Matthieu Baerts (NGI0)
+> <matttbe@kernel.org> wrote:
+>>
+>> From: Geliang Tang <tanggeliang@kylinos.cn>
+>>
+>> It's necessary to delete netns during the MPTCP bpf tests interrupt,
+>> otherwise the next tests run will fail due to unable to create netns.
+>>
+>> This patch adds a new SIGINT handle sig_int, and deletes NS_TEST in it.
+>>
+>> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+>> Reviewed-by: Mat Martineau <martineau@kernel.org>
+>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+>> ---
+>>  tools/testing/selftests/bpf/prog_tests/mptcp.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+>> index 274d2e033e39..baf976a7a1dd 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+>> @@ -64,11 +64,18 @@ struct mptcp_storage {
+>>         char ca_name[TCP_CA_NAME_MAX];
+>>  };
+>>
+>> +static void sig_int(int sig)
+>> +{
+>> +       signal(sig, SIG_IGN);
+>> +       SYS_NOFAIL("ip netns del %s", NS_TEST);
+>> +}
+>> +
+>>  static struct nstoken *create_netns(void)
+>>  {
+>>         SYS(fail, "ip netns add %s", NS_TEST);
+>>         SYS(fail, "ip -net %s link set dev lo up", NS_TEST);
+>>
+>> +       signal(SIGINT, sig_int);
+>>         return open_netns(NS_TEST);
+> 
+> That's a drop in the bucket.
+> ctrl-c of test_progs doesn't really work.
+> Such clean up needs to be generic as part of network_helpers.c
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index a8e14c2b68a7..fdae6d19e72b 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -3262,6 +3262,11 @@ static int kvm_handle_noslot_fault(struct kvm_vcpu *vcpu,
- {
- 	gva_t gva = fault->is_tdp ? 0 : fault->addr;
- 
-+	if (fault->is_private) {
-+		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-+		return -EFAULT;
-+	}
-+
- 	vcpu_cache_mmio_info(vcpu, gva, fault->gfn,
- 			     access & shadow_mmio_access_mask);
- 
+It makes sense. I can drop this patch and ask Geliang to add a similar
+'create_netns()' helper in network_helpers.c creating the netns, and
+handling SIGINT. This helper will no longer be specific to MPTCP BPF
+selftests then.
+
+Cheers,
+Matt
 -- 
-2.43.0
-
+Sponsored by the NGI0 Core fund.
 
 
