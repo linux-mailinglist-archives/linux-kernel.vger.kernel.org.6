@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-171629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA68F8BE6A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:54:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB158BE6A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED2F2817E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AFE1F21B2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC111607A2;
-	Tue,  7 May 2024 14:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEF516079C;
+	Tue,  7 May 2024 14:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maSV0SdS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E11HEBKP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCC815FCFC;
-	Tue,  7 May 2024 14:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7253615FCFC
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093669; cv=none; b=hQtj2XYPI3F8JC/ddJpde+8sHHJOFbGiFvhdWp5xEx3tGRzAcOUeMg6CSaG7UTqtsKRRu1alh4w/AeFsngtu+6ug9CU2WNKQ/2u1GpFyDskdpFkuDli2V+lXpNwIqEcm1tXcH4kvuydghyMgIe6T4rd4sLMzcnfnMtNCXwYCKnM=
+	t=1715093690; cv=none; b=t7yiZV3YoB9mGs+uQINMl/98kuOBafrEehsihyVravej4PoPnCgQ7L4okK5qTq0aDtorB39jdBxfC1NwP82MOd/1swxf8LPjP0TIM8Qj/G9zWeECaKxKBs50ogQBEYkCpsFOAXq3MjZE32LhtJpM9JWtRa8wu3OCtnwPaqzMaxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093669; c=relaxed/simple;
-	bh=Yskj674ZMF177lDIJTS3t2DCNKi8KbRLjMbjRBFCvDA=;
+	s=arc-20240116; t=1715093690; c=relaxed/simple;
+	bh=x1ynqQFHOK413TFZ0OfYJH7ssjMEsPRE5/yFxBbEta0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/GDEwrU+twUo+OElnN9YxLiSF5I/gOeUjs+iwZ88b5aPhUhP9fsG6CNiUrx0+7xHwtJ0OLeXifrgaiyGcYKKNV1bFwXhpwh9z79AvJ/qd7Lz210NXIPoMgr9YNgMCgBZJxqcUkELk2sxEqc4umMYpidXBscZgmnbIotZvQjGbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maSV0SdS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F295BC2BBFC;
-	Tue,  7 May 2024 14:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715093668;
-	bh=Yskj674ZMF177lDIJTS3t2DCNKi8KbRLjMbjRBFCvDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=maSV0SdSvYk9LCFNKcXLubAdxffaYIb9IBUOo8nvYgE/vbrjkokm7EXkhHi/46wbH
-	 jrQb/ujpzl8k+TDX13WUV9KSHBYjqxeSHtInzTDDQjjUwkWWWI+LB7snR8hLoGoDFf
-	 ArlNz1Nxtswsg3O23MwPQ1+TG9Pc9wg+oYxRH0rpSOnzLMlc4p/vM+7se4ojUb/PqK
-	 hgZQJY26vJkaiOlTKRJyE7iXXpXE4dw6Kr2vfGfjPLQp8dCuTyGJy74vz05Beh66ON
-	 X40v0Bpwp3eqBUIkjrIRDmOmuBIknqheXCQ4y6Ng1Rz+85tY+3YTaNWRKR33IxFFzE
-	 4gPD9fVMOzyIw==
-Date: Tue, 7 May 2024 11:54:25 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: James Clark <james.clark@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-perf-users@vger.kernel.org,
-	gankulkarni@os.amperecomputing.com,
-	scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
-	mike.leach@linaro.org
-Subject: Re: [PATCH 01/17] perf cs-etm: Print error for new
- PERF_RECORD_AUX_OUTPUT_HW_ID versions
-Message-ID: <ZjpAoVEam4CQ96zC@x1>
-References: <20240429152207.479221-1-james.clark@arm.com>
- <20240429152207.479221-2-james.clark@arm.com>
- <08bcd616-5006-45df-b8cc-45cf3a1dd762@arm.com>
- <de635db0-6510-452f-91be-4fc5f7fdf671@arm.com>
- <ecb16ad9-7c91-4cf6-ab7e-4b4b5be7165c@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eqpPw5Ay1nxgYfhNU5v/2qj0KBCZH+mWftBAMOu6eoce9KfF3cem9cK+hSAqaEvrPPezXeW0FClYAMCJaDx1KdSg0WUNZrrgrh4kdxBk0H3As5jsLKCbaHeFHXCUdyIo3yZ+ky961TezasDlP4pJGTMpHXlQqN1WRN07Na/44ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E11HEBKP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715093688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L5Q00hDqz0kX8rmCO430SmGXckCysDjESYgq4a/xGRA=;
+	b=E11HEBKPQUbfHt5UTDBPMzW8CrOsCCRTABigKPfPxPY9ofhPWmcjfVPZiYa50IKSllkArA
+	j11BnybtRlPC1DtqxN83U7QiswnY96HYmOKPlwuwyG0XisX9337YYyiFPO4MF/Fr7el8jl
+	O7tLWSEAUKE1LM+IImBvEfzaL4Lm1vo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-vZjh9jiYNri97qvEKcuSaQ-1; Tue, 07 May 2024 10:54:45 -0400
+X-MC-Unique: vZjh9jiYNri97qvEKcuSaQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7B821185A783;
+	Tue,  7 May 2024 14:54:44 +0000 (UTC)
+Received: from fedora (unknown [10.39.192.225])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 1CA37492CAA;
+	Tue,  7 May 2024 14:54:41 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  7 May 2024 10:54:44 -0400 (EDT)
+Date: Tue, 7 May 2024 10:54:41 -0400
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
+Message-ID: <ZjpAsYJIfzYSKgdA@redhat.com>
+References: <20240507093530.3043-1-urezki@gmail.com>
+ <20240507093530.3043-26-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,51 +78,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ecb16ad9-7c91-4cf6-ab7e-4b4b5be7165c@arm.com>
+In-Reply-To: <20240507093530.3043-26-urezki@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-On Tue, May 07, 2024 at 04:27:25PM +0530, Anshuman Khandual wrote:
-> On 5/7/24 15:36, James Clark wrote:
-> > On 07/05/2024 04:47, Anshuman Khandual wrote:
-> >> On 4/29/24 20:51, James Clark wrote:
-> >>> The likely fix for this is to update Perf so print a helpful message.
-> >>>
-> >>> Signed-off-by: James Clark <james.clark@arm.com>
-> >>> ---
-> >>>  tools/perf/util/cs-etm.c | 5 ++++-
-> >>>  1 file changed, 4 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> >>> index d65d7485886c..32818bd7cd17 100644
-> >>> --- a/tools/perf/util/cs-etm.c
-> >>> +++ b/tools/perf/util/cs-etm.c
-> >>> @@ -335,8 +335,11 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
-> >>>  	trace_chan_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
-> >>>  
-> >>>  	/* check that we can handle this version */
-> >>> -	if (version > CS_AUX_HW_ID_CURR_VERSION)
-> >>> +	if (version > CS_AUX_HW_ID_CURR_VERSION) {
-> >>> +		pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID version %d not supported. Please update Perf.\n",
-> >>
-> >> Is not this bit misleading ? PERF_RECORD_AUX_OUTPUT_HW_ID is just the perf record
-> >> format identifier. The record version here, is derived from the platform specific
-> >> hardware ID information embedded in this perf record.
-> > 
-> > Not sure I follow what you mean here. 'version' is something that's
-> > output by the kernel. It's saved into a perf.data file, and if Perf
-> > can't handle version 2 for example, you need to update Perf.
- 
-> Got it.
- 
-> >> Should not this be just s/PERF_RECORD_AUX_OUTPUT_HW_ID/hardware ID/ instead ?
-> >>
-> > 
-> > It's just a way to go from the error message to the part of the code or
-> > docs that you need to look at. "hardware ID" wouldn't lead you anywhere
-> > so I don't think it would be useful.
-> 
-> Sure, fair enough.
+Hello,
 
-I'm taking this as an Acked-by, ok?
+I feel I don't really like this patch but I am travelling without my working
+laptop, can't read the source code ;) Quite possibly I am wrong, I'll return
+to this when I get back on May 10.
 
-- Arnaldo
+Oleg.
+
+On 05/07, Uladzislau Rezki (Sony) wrote:
+>
+> From: "Paul E. McKenney" <paulmck@kernel.org>
+>
+> The rcu_sync structure's ->gp_count field is updated under the protection
+> of ->rss_lock, but read locklessly, and KCSAN noted the data race.
+> This commit therefore uses WRITE_ONCE() to do this update to clearly
+> document its racy nature.
+>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> ---
+>  kernel/rcu/sync.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
+> index 86df878a2fee..6c2bd9001adc 100644
+> --- a/kernel/rcu/sync.c
+> +++ b/kernel/rcu/sync.c
+> @@ -122,7 +122,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+>  		 * we are called at early boot time but this shouldn't happen.
+>  		 */
+>  	}
+> -	rsp->gp_count++;
+> +	WRITE_ONCE(rsp->gp_count, rsp->gp_count + 1);
+>  	spin_unlock_irq(&rsp->rss_lock);
+>
+>  	if (gp_state == GP_IDLE) {
+> @@ -151,11 +151,15 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+>   */
+>  void rcu_sync_exit(struct rcu_sync *rsp)
+>  {
+> +	int gpc;
+> +
+>  	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
+>  	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
+>
+>  	spin_lock_irq(&rsp->rss_lock);
+> -	if (!--rsp->gp_count) {
+> +	gpc = rsp->gp_count - 1;
+> +	WRITE_ONCE(rsp->gp_count, gpc);
+> +	if (!gpc) {
+>  		if (rsp->gp_state == GP_PASSED) {
+>  			WRITE_ONCE(rsp->gp_state, GP_EXIT);
+>  			rcu_sync_call(rsp);
+> --
+> 2.39.2
+>
+
 
