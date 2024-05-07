@@ -1,106 +1,148 @@
-Return-Path: <linux-kernel+bounces-171448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D982A8BE499
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC948BE459
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF39FB27EF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:40:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72071F27832
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD9615E204;
-	Tue,  7 May 2024 13:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82F816C45B;
+	Tue,  7 May 2024 13:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPVM6tgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PG0RxQ/t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EB916D4DF;
-	Tue,  7 May 2024 13:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8FF15ECFE
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715088760; cv=none; b=C9zGORXu2vhiYw+njxX1o/zBtWqoUKReQsqLFcFgYIrzNXsLuupYLl05paXLI4tTqT9Hjyo64bzg3q2cz2kx+om4UxHaSKl8PtbfBdp6kOcUPUpcU7lyNgSVC0Ru7809/zosmBEa+QuHmmiivdC0CkBcpI+41nY5FBzydhUitJg=
+	t=1715088729; cv=none; b=Kn5j2twu9LSJvR+qbnEDe3TlIMGvhdWz2PllscVrePKeAqiP5AmdqwnORXjlWyRHnI2WhYoj6EDCqeNxThgBKwCot3ugb2zUTx0fO1tSo7EuG0dc3/BF/oDduwzEttJgGwHnACqc8l7DFMn2vNaVhb5wEFb2ejb7xBabOpWD8o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715088760; c=relaxed/simple;
-	bh=G6I17PDBQdLIDBAVhfjVBp/SrAW4GX4/wPzwmMQSKYw=;
+	s=arc-20240116; t=1715088729; c=relaxed/simple;
+	bh=sBzFX/sadxZL2cJQXTBg/KJIkDZ/894I5/zI13q8LZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUUkJgWhEJthIC3d/V9DrS77A/h+VrgPWZAwdsl9/WaldqRteVND5FeaYP4cNk++k64HDNTmiyFgKd+h6vxUM2YQA0e6TsHpJSs1iXgUHf2DI2BReyzJPdj3Vk07OJu0jVHPWlZu3r8QXlAlCQU8uGITmNoBBoViGQt8Dupt6x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPVM6tgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529E2C3277B;
-	Tue,  7 May 2024 13:32:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715088759;
-	bh=G6I17PDBQdLIDBAVhfjVBp/SrAW4GX4/wPzwmMQSKYw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PPVM6tgYD0JdV7kF9pFpuUUG/SmXrDjBL3V4gGBLj05sJH+TsGk/K2R7NAmMT/mrz
-	 oUN+ueHb1ZTrKScUeZVpBLk7NN7F5SOdGocLE162Qf5kDa+mpBSwBcYZVx1PBEUKY+
-	 OYzw8voqQymQyCxDuoim5dkWKd1wuCae0CfTcm1eABBTZUMaH4dZWG1Cu4mbLM6A6C
-	 k+1YhnWb5PrPrO1cA/LjjV8qvECmwFRyeCzxe3Hb3BPq1m6mnKAKMIC6dbazZigoJE
-	 3l3Urdk991Hoqjy2I/T9HHQNDvJuvktJAvKFAq0bwflwIqnUf9UFDiOK4FWFZ92qc7
-	 Lp+8/fNIywzAg==
-Date: Tue, 7 May 2024 15:32:36 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v2 17/27] rcu: Rename rcu_dynticks_in_eqs() into
- rcu_watching_in_eqs()
-Message-ID: <ZjotdJwp3RXkrA7S@localhost.localdomain>
-References: <20240430091740.1826862-1-vschneid@redhat.com>
- <20240430091740.1826862-18-vschneid@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYrjXeKcInovSdptIzR35J85aYUlaFcZh92WmucCMQ8JlZmIRA9fipMIr+8jn9sTAefsrdM7Wesco4GbDtbod8Uhz9qf/b5AdV589IRCexBxYubrtFyWcjN3aJk7B+8imvC7dS7Cc3OFq0nSqX3GPuJkZojqX2ndcHCYuKjx8FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PG0RxQ/t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715088726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RIYdM7z5+Xm1S+hITzfLVzD6aDULkUJFC6+y9ilbGSk=;
+	b=PG0RxQ/t9HvQ/jrzumbNaLau9EK1YuEcTkvNDQNAkTlk3g2u4fEY9BYcm3lxfwXhOGZin5
+	Tb3PGRaYoTsHXyNR1y72lKWuRgcvTcwRlzhPrlYQ0INZ7rQqc9QqfXS40+qqyZIhRo4nok
+	XODVVNqcjrBDX+EMQCNgJ0+b77OPly8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-bPPBVKt9NLmUkqabt3Wgiw-1; Tue, 07 May 2024 09:32:03 -0400
+X-MC-Unique: bPPBVKt9NLmUkqabt3Wgiw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 474F784B16B;
+	Tue,  7 May 2024 13:32:02 +0000 (UTC)
+Received: from bfoster (unknown [10.22.32.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id C8C793C35;
+	Tue,  7 May 2024 13:32:01 +0000 (UTC)
+Date: Tue, 7 May 2024 09:34:23 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: linux-bcachefs@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>, Su Yue <l@damenly.org>,
+	Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC to UAPI magic.h
+Message-ID: <Zjot36J9negcVlfh@bfoster>
+References: <20240507111124.118520-1-pvorel@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240430091740.1826862-18-vschneid@redhat.com>
+In-Reply-To: <20240507111124.118520-1-pvorel@suse.cz>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-Le Tue, Apr 30, 2024 at 11:17:21AM +0200, Valentin Schneider a écrit :
-> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
-> RCU_WATCHING, reflect that change in the related helpers.
+On Tue, May 07, 2024 at 01:11:24PM +0200, Petr Vorel wrote:
+> There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
+> which use UUID_INIT() and are used only in libbcachefs. Therefore move
+> to <linux/magic.h> only BCACHEFS_STATFS_MAGIC, which can be used outside
+> of libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
 > 
-> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> Keeping non-standard name BCACHEFS_STATFS_MAGIC instead of renaming it
+> to more generic BCACHEFS_MAGIC to not confuse with the other bcachefs
+> definitions.
+> 
+
+Perhaps it would be better to use the standard naming for the global
+header and let the bcachefs subsystem catch up with better names for
+internal defs? Something like BCACHEFS_SUPER_MAGIC also seems like it
+would be generally consistent, FWIW.
+
+> Suggested-by: Su Yue <l@damenly.org>
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
 > ---
->  kernel/rcu/tree.c       | 8 ++++----
->  kernel/rcu/tree_exp.h   | 2 +-
->  kernel/rcu/tree_stall.h | 2 +-
->  3 files changed, 6 insertions(+), 6 deletions(-)
+>  fs/bcachefs/bcachefs_format.h | 2 --
+>  fs/bcachefs/fs.c              | 1 +
+>  include/uapi/linux/magic.h    | 2 ++
+>  3 files changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 857c2565efeac..d772755ccd564 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -308,9 +308,9 @@ static int rcu_watching_snap(int cpu)
+> diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+> index f7fbfccd2b1e..52e03f13b780 100644
+> --- a/fs/bcachefs/bcachefs_format.h
+> +++ b/fs/bcachefs/bcachefs_format.h
+> @@ -1275,8 +1275,6 @@ enum bch_compression_opts {
+>  	UUID_INIT(0xc68573f6, 0x66ce, 0x90a9,				\
+>  		  0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
 >  
->  /*
->   * Return true if the snapshot returned from rcu_watching_snap()
-> - * indicates that RCU is in an extended quiescent state.
-> + * indicates that RCU in an extended quiescent state (not watching).
+> -#define BCACHEFS_STATFS_MAGIC		0xca451a4e
+> -
+>  #define JSET_MAGIC		__cpu_to_le64(0x245235c1a3625032ULL)
+>  #define BSET_MAGIC		__cpu_to_le64(0x90135c78b99e07f5ULL)
+>  
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index fce690007edf..1c856ae2b0e2 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -27,6 +27,7 @@
+>  #include "super.h"
+>  #include "xattr.h"
+>  
+> +#include <uapi/linux/magic.h>
+>  #include <linux/aio.h>
+>  #include <linux/backing-dev.h>
+>  #include <linux/exportfs.h>
+> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> index 1b40a968ba91..45c8f4916167 100644
+> --- a/include/uapi/linux/magic.h
+> +++ b/include/uapi/linux/magic.h
+> @@ -103,4 +103,6 @@
+>  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+>  #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
+>  
+> +#define BCACHEFS_STATFS_MAGIC		0xca451a4e
+> +
 
-*is in
+Is there intended to be at least some logical organization to this file?
+It kind of looks like it, but maybe not as a rule. Personally, I'd
+probably stick this somewhere in the first chunk of definitions where
+the other major local/block filesystems are, but just a nit.
 
->   */
-> -static bool rcu_dynticks_in_eqs(int snap)
-> +static bool rcu_watching_in_eqs(int snap)
+Brian
 
-I would be tempted to propose rcu_watching_snap_in_eqs() but the
-purpose is not to dissuade people from intoning RCU code after all.
-
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+>  #endif /* __LINUX_MAGIC_H__ */
+> -- 
+> 2.43.0
+> 
 
 
