@@ -1,224 +1,175 @@
-Return-Path: <linux-kernel+bounces-170520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C3D8BD87A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:24:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15FA8BD8A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BBD71F23351
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:24:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2651F24963
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500B17E1;
-	Tue,  7 May 2024 00:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AF0811;
+	Tue,  7 May 2024 00:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iy3TuCbn"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2087.outbound.protection.outlook.com [40.107.101.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cfj0lzen"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445BE19E;
-	Tue,  7 May 2024 00:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715041468; cv=fail; b=QAAh4rVs/sao18tXAHVQn2wbxyj5rTtVlBMV3woCRVNaKv397UvIHvfGFAcXrtVZyREFu46gG3qVADD4UtNwoVgT9NS+W1Pye1GEYDIrQm2GOfKIWg8OBLLld6FSTizMPGNZI8JyCGqXcBlRW9COiy2PqS1oA1TJiCCIw/ceQDE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715041468; c=relaxed/simple;
-	bh=umG0Wkit5JLv8Rfjapg+x/UmroSu3T5o8IeOc6JhZwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=apTXihqWZFNQlOBI+xxTeZEGZNUXuxfWzLjzJW9r+NM4Iw5zEsDJfOXzvGgE8r6o5qAuEMykrN2CHybctC6UY3+QU7KAUMhIgEEB6NHHjPvwpLC3Xzl1OpNm0VdEIzH1BHvGaZLiM/4T7m7/RXbfZlDpE3RAHgWJkCRg9CLR1do=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iy3TuCbn; arc=fail smtp.client-ip=40.107.101.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CsgcTn/mNXdc0Sb8C45YS25Fmnzut3da5R+3C1czY/c7ypY5pTj1MHtSWP8jCeITkI8JTlHeDPjRgL/x8qZb32nMC5eX+0gZScv8yMZAiOFWvNdxWC+WBIugrtppVNdXGIU3co0af4zg+ecOKQbMuWmBh4Uz6Wbxa7W4Z1Zivqd1yiRMyFo7aBkOdRZr72e8KXFgZxK/UhxiNPpSTO5lfgLczzx4BQYuP0N8/YiEryj6WncNczUyqnJRyaxQVd9qAm+kiQQ28bK7ov+y523W2VtwK2Y1Z+zVvxLkM7eyYhq+1dT3JuA/0l4WXn8b3es//gsrP4u538UjcuiAUzL26g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XGGOsFm9XeVTgPl/hnPK4I5/jcO4KwRvz/I35mzY1sE=;
- b=lQiAJFDh6eMQKRBJXwSDTsbNwAES1CViSK2+f+un7sV6kWQEB6hmRLyvJGhj9YtyWP3CKJ3cnXXAdAsYB6ULRwtj/3v2Gvp46RgSJB54lYm2TicnVyBzjRw7ZR0bUojBslsAzF8yTyobqZzhdZW0qtEekLcMxcnnKdAN/oPAzG6loB2R8bVgtDfs5w/Dz+n/whoRk4FmimkSvauPL9VfXb3RCVOUNz3h0KBjjjARm29Vp+E7AcjNRe3q1JOuWsfHs6lTaTyy7bkhMdQHmLxdVsdtoy19TdoQpsLGzng/YTkS/HjZ5J0U5fida+gpoKyPf/XyoxT8oRcreDdL0lmEOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XGGOsFm9XeVTgPl/hnPK4I5/jcO4KwRvz/I35mzY1sE=;
- b=iy3TuCbnXmYSpkE9s7DnzEyMAVW9U+eKzmCw2ivlAm5x0Q3S7h2iZ9WnHwyFG3SPrzaGUx0BknuNXqQworW9Nsb4pJ/EKUpm3wjeCXdDlijVHXF94/PEHWdr39MHMQPRcRnWBhBybNUDQtLR2ESwTB7O6cY01HRfEozhKmbq17RKX//qL23YdcrI5BfUwQGJHyavBR5XmeeMsE9jpgSO9Zc7EUrToMGdMdC+NM9Afk8NfQg10iQ9wMcNMFhY8KV5V2fVhlIHOy+GuP6Px90Hs/ioO0F6794fMyvDmCSlIpafgCtQxJ/831Qfn8vcxMFxwRcAF9PSAS1tzFL8+qMClQ==
-Received: from PH7PR17CA0042.namprd17.prod.outlook.com (2603:10b6:510:323::21)
- by SA1PR12MB8917.namprd12.prod.outlook.com (2603:10b6:806:386::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.39; Tue, 7 May
- 2024 00:24:21 +0000
-Received: from SN1PEPF0002BA52.namprd03.prod.outlook.com
- (2603:10b6:510:323:cafe::a0) by PH7PR17CA0042.outlook.office365.com
- (2603:10b6:510:323::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42 via Frontend
- Transport; Tue, 7 May 2024 00:24:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF0002BA52.mail.protection.outlook.com (10.167.242.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.18 via Frontend Transport; Tue, 7 May 2024 00:24:20 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 6 May 2024
- 17:24:00 -0700
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 6 May 2024
- 17:23:59 -0700
-Message-ID: <963feb08-18c9-4891-b85e-e9e4667e40d8@nvidia.com>
-Date: Mon, 6 May 2024 17:23:59 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F51828F1;
+	Tue,  7 May 2024 00:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715041613; cv=none; b=LJVGWh44ztqGOH6MjxgZt+wKQHwOM9yZYYAaVsttCfBgl1PtGSQx+DoLfubRsU7Art7JurMwKgimMUlRBJ8/zFz0ZI0L3KnCIAC/QTN/eTzNnnRDilFMr78SQtpjKbY2Xys0GozuDYJaUiy2MibeJiKRWCBWL5wEngd29qt63S4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715041613; c=relaxed/simple;
+	bh=4NauqpMm0tV7vKEFnZFk1JYhRBUi68Bv+sS/I2VSX58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hd/SHZcXQFYHIrID8sZC4q7PmdgB8vuV+w6nY5BmZPfSkXtxmN8jCzu4790ZvlkOGQ7n95dqMo8FLab9QEDGJJCLrPtyI0Hp2Db7qVFuBQ3xvZtAY/8ZJGVl0D/7yZOpgMVxhOWiO2Qs8wwwNU5RVy/znxyFydgfZCU47h26FTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cfj0lzen; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41b79450f78so17151665e9.2;
+        Mon, 06 May 2024 17:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715041610; x=1715646410; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9vmtqOjRdDWAeYSRYS6X1pfJX7nQFvEEJNEhNJnhAZM=;
+        b=Cfj0lzenSqmNM59YRPZ0FJqN9Iw/a+RK9SY70TXXlymuVk9gbOQThFuixEPxWrr52S
+         Tg/NEfjx77P5yCBFjTFFy/hYg8UVakJ5MiPh62Zq0sGArjLnRVCTMyxOYwWhsxsynCZ/
+         XmQoPjsB5aaKsH1iUjf7XK/EnBTmjzN7uNN3wgh5uwjIc/ENpdLhowHFS6mnWaaK3JXa
+         NSfEBXE9QJ1lQddxC2XnlGrRJ2SUp6qUuDVqEztkNGD/w7R1YINx4mEdxeTggsgaTG2o
+         IzJrWkDXBXiDeBApi0bD3XXO9TJqx3m9UaCZsVrLnPDqaNYJ5nsiDF+eUN3Jm4t9Eox6
+         rVXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715041610; x=1715646410;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9vmtqOjRdDWAeYSRYS6X1pfJX7nQFvEEJNEhNJnhAZM=;
+        b=UcuDnuvfm65/JxtRlSDLx31Q784iobThykrrrG/EBeKTuY96bkvlv8UVa40dUD+jIK
+         vMhso5zE8hV5mOpR/xkEBTeYKi4ptRH76/+uaizcY6GrgFStEBbnpij8pTQjOCVRcX4P
+         GmBYpngfu5JawQU20akG8ZxZC2GVC/YTIvc4g+6+P7TlbvTyujrrqL7JF2JemLGyTWj3
+         DLc2FiwI7vcsIH12Z5k7mfAhOdmeXXNHFJMyXtduaR+7I4l9VDmDFjA8+ij4R1qiWGue
+         8lhbqxnlOpWzUIMveDmnN262y5HZHzyU403Rfnht+K6A1REVGNDmw2o3ER8pfAAKB7Xy
+         wdxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUySgI0aKaeWRdccClEixayn2EjtPR2CmX1Xg3KSBue0W6UMCtwwQFW3m+OGnrspSE2onEZ4f6DcEfmPkCce1jfDpoY8r2DpBkYOwvVppFWgK7iJL8w1MRBBLvn7r65xK6/
+X-Gm-Message-State: AOJu0Yz/1iWiJ2pmc97uGgsiMrHLI2Y8peTemlvss5RatHC84ief2qbJ
+	ZcFb7w/HyMpFemUP2gtSQwgXjWvLlbgvU/cMj0gf/47HOmmJztbqgKG8eAU8eG7jeZPSdDOTvQa
+	ezjDFk5HVx7YAxbOruFwJjci7F+I=
+X-Google-Smtp-Source: AGHT+IFQl0DZ/aiTAcdC6+dFd235npS3zZj+l5AobTAP+71QlNqWcv8dEDL+5B0bUKo8hj8sVOyFmOkG/I+CpWO9Ew8=
+X-Received: by 2002:a05:6000:1379:b0:34a:7a97:caa1 with SMTP id
+ q25-20020a056000137900b0034a7a97caa1mr11885263wrz.2.1715041609631; Mon, 06
+ May 2024 17:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: exec: make binaries position independent
-To: Fangrui Song <maskray@google.com>, Kees Cook <keescook@chromium.org>
-CC: Muhammad Usama Anjum <usama.anjum@collabora.com>, Eric Biederman
-	<ebiederm@xmission.com>, Shuah Khan <shuah@kernel.org>, Nathan Chancellor
-	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
- Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Yang Yingliang
-	<yangyingliang@huawei.com>, <kernel@collabora.com>, <linux-mm@kvack.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<llvm@lists.linux.dev>
-References: <20240416152831.3199999-1-usama.anjum@collabora.com>
- <202404161027.63F4D4FDEB@keescook>
- <CAFP8O3Jjkh0U94CbS=epXELMtCBpYt4fGejX3spH4=GdF7zVSw@mail.gmail.com>
- <202405061704.DD3AF674@keescook>
- <CAFP8O3Kx+bVCVQpQJVBrPkjrQO9d5rdcxGGP-Jn6t_Mpc995RA@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CAFP8O3Kx+bVCVQpQJVBrPkjrQO9d5rdcxGGP-Jn6t_Mpc995RA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA52:EE_|SA1PR12MB8917:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86b221c9-650a-4ac0-caae-08dc6e2c0a28
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|36860700004|82310400017|1800799015|7416005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TGVKYnUreDdNdHZHaFM2d0NIL0xBaUIvVnVHOHI4WENFUTN1NGUrZTEyZnJJ?=
- =?utf-8?B?ZDFucUV0UzZKWk1xNjAvcjExRktQbDZ3cWFYakFnK3F5dDZwd2tUR3FHczB3?=
- =?utf-8?B?RWxxSHpsWU5pbUxOenh5L0xmOEFsS3hHNm9ZNDhKdjlvYnRWZmpQeFRXM25q?=
- =?utf-8?B?ZjYva0pub0Rtc2xSYTZydUJHNHRqZXpzVzNta3dKcDVtMFFnalNTcHd5MWh3?=
- =?utf-8?B?WUlSclc1R0xCK3VyK3c4aU5WdTlRQWJ6SytvL1UxemlDenZRaXRpemJDeHZ4?=
- =?utf-8?B?VzgwSEN3MXdOcG5mZW1MYU9DWCtVc3gxOEswLzdpTGhRZkZ3TUJmK2hnOGtQ?=
- =?utf-8?B?ZkttTUZ4V1FMeWs1Zjg2cmR3SE1VVGRnbDcrTHpnVnNzM2x3WDNVaG5Sd1FL?=
- =?utf-8?B?K0QxdDg2Sk00QkFyNExndzU2dW9XQkY3S1B3QTBGeFZlOGlkWDNzVkZpWk5j?=
- =?utf-8?B?WkdEMThjQUV2UFhDcXpYY1VlL2UwWGpPbVlNVUtibWJWMVdqT3ZVU1hIRXA3?=
- =?utf-8?B?UUFHQVg0TjRYbE8rdHA0TFhTZ3NkRUg2SENOSlJtMFFTRDRzYVZNaVhYWXRU?=
- =?utf-8?B?dUpEb2ZnTmhRWnNDdi9GUnEyb09BRDh4eUxSYW9YT1pzWkVVY0prSDJGbGxH?=
- =?utf-8?B?Qi9HaFhpbm1TZStxUmR5WEQydU5lMEY3UElPNmhGanU4TG1WaTBBWmpnaXpt?=
- =?utf-8?B?WlE2akdFZWVVWVA3Tm4weGtXZUxIVEh5Z0JsTERneThLQW1MS0VydG5JQTl1?=
- =?utf-8?B?UmlTMzgyUnVVK2VxcytrSCtzZEZ5Vks5a1JuOHQrcTJBREtkdldJNHNDenVs?=
- =?utf-8?B?MG5ZeW1JMXBUL2FWL2VpVElBY0RmYzh6cFdmSkd4aDlmQWNiRjQrQ0Q2dm8v?=
- =?utf-8?B?SkxocFZzWHpiSGZ5MGZ4VjJUU1d6aEdvUXlHQUtFWHZrOXY3cWM4b29LRGRE?=
- =?utf-8?B?RDE2bGJ6Wjdid1haWlUxQUgrT0poQ2R6OXdob1FmWTEyMEhqQ2wwaHNNendI?=
- =?utf-8?B?N3Rna2Y0NTRRRlZQajdJbk1kVDdYVWpLQ1FxUDhGdi8rZEsvM2lKbGllODFW?=
- =?utf-8?B?ZTN0NFZ4eDFFVHE4V3phRVdzWkV0KzZFaEpVZVhjWjVrM1JQQWhZaERVbVV5?=
- =?utf-8?B?UmEwRG1jQ0t6ZFF5Q1ZVWW5qcUo1b0dYc0VlL200U3hHOUxLNjZId3lLRmQr?=
- =?utf-8?B?WFlGUTI5NlVXSE1sYWt5ZnBCRmdvR202Q1V1cUYzcTEwaHVMUWxMQUh5eVJN?=
- =?utf-8?B?UzJneGRoa01QRDFsdmgyQXpoWWV1aVk1M3prR2dSVGNGUGREbmdkclU3SGxo?=
- =?utf-8?B?SkFQeGRQU1hQdy9kTWdnSEtDNVQvRkdtQ1NpOFhLVFZ5QzU0YUt3Snkwb3BV?=
- =?utf-8?B?U0pJWE9TMStLdlBVZGlzRm1ENXpvREpJSlhCb0IrQXUxcm94anhSc0tZU0cz?=
- =?utf-8?B?WDlUNjBPQXJOZVdiUEdPUFZ5NGpwaWl2eVh6WEtXY2xEOFdYL2xHMVNXL0Vp?=
- =?utf-8?B?WWkzM2dwMmhNdWpuN3BhajJLUDdKc2tzZWVrZThxb253clZ2MDkxWWh0dHha?=
- =?utf-8?B?QTU1UzdFZlgvL3piSnVWNlR6Mm4wK2xqbDdwVnVPTElyN05icjgxT0QrUGQw?=
- =?utf-8?B?NXlNT0hYSDNLdjlxbTdRNDd3S2dDU3FRTGZxRS9MUW9tSlVobnRXckdTSFVH?=
- =?utf-8?B?Z2g0Sm5hTm9pU28rcUI5OERUZVNjc3pqTXFJNE90bFFFUU5FSkQ5Q0hJcnJR?=
- =?utf-8?B?ZlhDV0hEcjRReHNvcDdtL3ZyNWpDdU9ZQjdzcXhySTBjKzVpK1R6QzJVblVJ?=
- =?utf-8?B?TzhENWFxS3JBNFNQSGtmQVZ1c3Ntd3JydVUwaXhQZFpKaVdnbDM1QnZSRmV1?=
- =?utf-8?Q?q8Wa8SbuIP6aS?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400017)(1800799015)(7416005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 00:24:20.6110
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86b221c9-650a-4ac0-caae-08dc6e2c0a28
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA52.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8917
+References: <20240422-sleepable_array_progs-v1-1-7c46ccbaa6e2@kernel.org>
+ <7344022a-6f59-7cbf-ee45-6b7d59114be6@iogearbox.net> <un4jw2ef45vu3vwojpjca3wezso7fdp5gih7np73f4pmsmhmaj@csm3ix2ygd5i>
+ <35nbgxc7hqyef3iobfvhbftxtbxb3dfz574gbba4kwvbo6os4v@sya7ul5i6mmd>
+ <CAADnVQJaG8kDaJr5LV29ces+gVpgARLAWiUvE9Ee5huuiW5X=Q@mail.gmail.com> <mhkzkf4e23uvljtmwizwcxyuyat2tmfxn33xb4t7waafgmsa66@mcrzpj3b6ssx>
+In-Reply-To: <mhkzkf4e23uvljtmwizwcxyuyat2tmfxn33xb4t7waafgmsa66@mcrzpj3b6ssx>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 6 May 2024 17:26:38 -0700
+Message-ID: <CAADnVQLJ=nxp3bZYYMJd0yrUtMNx2DcvYXXmbGKBQAiG85kSLQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: verifier: allow arrays of progs to be used in
+ sleepable context
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/6/24 5:14 PM, Fangrui Song wrote:
-> On Mon, May 6, 2024 at 5:05 PM Kees Cook <keescook@chromium.org> wrote:
->>
->> On Mon, May 06, 2024 at 04:30:27PM -0700, Fangrui Song wrote:
->>> On Tue, Apr 16, 2024 at 10:28 AM Kees Cook <keescook@chromium.org> wrote:
->>>>
->>>> On Tue, Apr 16, 2024 at 08:28:29PM +0500, Muhammad Usama Anjum wrote:
->>>>> The -static overrides the -pie and binaries aren't position independent
->>>>> anymore. Use -static-pie instead which would produce a static and
->>>>> position independent binary. This has been caught by clang's warnings:
->>>>>
->>>>>    clang: warning: argument unused during compilation: '-pie'
->>>>>    [-Wunused-command-line-argument]
->>>>>
->>>>> Tested with both gcc and clang after this change.
->>>>>
->>>>> Fixes: 4d1cd3b2c5c1 ("tools/testing/selftests/exec: fix link error")
->>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>>>
->>>> Thanks for this!
->>>>
->>>> Reviewed-by: Kees Cook <keescook@chromium.org>
->>>>
->>>> --
->>>> Kees Cook
->>>
->>> GCC versions before 8.1 do not support -static-pie,
->>> while https://www.kernel.org/doc/html/next/process/changes.html says
->>> the minimal version is GCC 5.1.
->>> Is this a problem?
->>>
->>> If not, and CFLAGS is guaranteed to include -fpie/-fpic/-fPIE/-fPIC
->>> (PIC), using -static-pie looks good to me.
->>
->> Should we use this alternative, which may be more portable?
->> https://lore.kernel.org/all/20240504022301.35250-1-jhubbard@nvidia.com/
->>
->> -Kees
-> 
-> s/-fPIE -static/-static/ then it looks good to me:)
+On Tue, Apr 30, 2024 at 3:03=E2=80=AFAM Benjamin Tissoires <bentiss@kernel.=
+org> wrote:
+>
+>
+> Right now, what I am doing is (in simplified pseudo code):
+> - in a bpf program, the user calls hid_bpf_attach_prog(hid_device, progra=
+m_fd)
+>   where program fd is a tracing program on a never executed function
+>   but this allows to know the type of program to run
+> - the kernel stores that program into a dedicated prog array bpf_map
+>   pre-loaded at boot time
+> - when a event comes in, the kernel walks through the list of attached
+>   programs, calls __hid_bpf_tail_call() and there is a tracing program
+>   attached to it that just do the bpf_tail_call.
+>
+> This works and is simple enough from the user point of view, but is
+> rather inefficient and clunky from the kernel point of view IMO.
+>
+> The freplace mechnism would definitely work if I had a tracing-like
+> function to call, where I need to run the program any time the function
+> gets called. But given that I want per-device filtering, I'm not sure
+> how I could make this work. But given that I need to enable or not the
+> bpf_program, I'm not sure how I could make it work from the kernel point
+> of view.
+>
+> I tried using a simple bpf_prog_run() (which is exactly what I need in
+> the end) but I couldn't really convince the bpf verifier that the
+> provided context is a struct hid_bpf_ctx kernel pointer, and it felt not
+> quite right.
+>
+> So after seeing how the bpf_wq worked internally, and how simple it is
+> now to call a bpf program from the kernel as a simple function call, I
+> played around with allowing kfunc to declare async callback functions.
+>
+> I have a working prototype (probably not fully functional for all of the
+> cases), but I would like to know if you think it would be interesting to
+> have 3 new suffixes:
+> - "__async" for declaring an static bpf program that can be stored in
+>   the kernel and which would be non sleepable
+> - "__s_async" same as before, but for sleepable operations
+> - "__aux" (or "__prog_aux") for that extra parameter to
+>   bpf_wq_set_callback_impl() which contains the struct bpf_prog*.
 
-hmm, maybe that is better, considering that -static-pie is relatively
-new (as you pointed out in the other thread), and would break the
-minimum kernel gcc version requirements.
+Sorry for the delay. I've been traveling.
 
-> 
-> -static creates a position-dependent executable.
-> It doesn't matter whether the compiler uses -fno-pic/-fpie/-fpic
-> codegen, so -fPIE can be removed.
-> 
+I don't quite understand how these suffixes will work.
+You mean arguments of kfuncs to tell kfunc that an argument
+is a pointer to async callback?
+Sort-of generalization of is_async_callback_calling_kfunc() ?
+I cannot connect the dots.
 
-This is something I'd have to take your word for. The whole PIE
-story not completely clear to me, but if you're sure it is not
-required here, then of course leaving it out entirely works nicely...
+Feels dangerous to open up bpf prog calling to arbitrary kfuncs.
+wq/timer/others are calling progs with:
+        callback_fn((u64)(long)map, (u64)(long)key, (u64)(long)value, 0, 0)=
+;
+I feel we'll struggle to code review kfuncs that do such things.
+Plus all prog life time management concerns.
+wq/timer do careful bpf_prog_put/get dance.
 
+> (I still don't have the __aux yet FWIW)
+>
+> The way I'm doing it is looking at the btf information to fetch the
+> signature of the parameters of the callback, this way we can declare any
+> callback without having to teach the verifier of is arguments (5 max).
+>
+> Is this something you would be comfortable with or is there a simpler
+> mechanism already in place to call the bpf programs from the kernel
+> without the ctx limitations?
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+"ctx limitations" you mean 5 args?
+Have you looked at struct_ops ?
+It can have any number of args.
+Maybe declare struct_ops in hid and let user space provide struct_ops progs=
+?
 
+> I can also easily switch the bpf_wq specific cases in the verifier with
+> those suffixes. There are still one or two wq specifics I haven't
+> implemented through __s_async, but that would still makes things more
+> generic.
+>
+> Cheers,
+> Benjamin
 
