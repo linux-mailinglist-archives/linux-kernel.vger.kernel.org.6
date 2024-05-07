@@ -1,188 +1,111 @@
-Return-Path: <linux-kernel+bounces-171263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAB18BE1FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:24:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75A18BE1FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037012882FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:24:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3F352824A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121A015E7EE;
-	Tue,  7 May 2024 12:22:37 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207ED15E1FF;
-	Tue,  7 May 2024 12:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C135A15B56E;
+	Tue,  7 May 2024 12:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ifBw5NT9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PkvduBUX"
+Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3580C15B122;
+	Tue,  7 May 2024 12:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715084556; cv=none; b=NlH7OazC2qijWVbbBXzbswwSoLObtsn47nnTKvbIutYIP9UQLG8iEv/EcoGCnyw/sj8WUXTQ+qMyN7wxQDlkqaP+4bIubh8VZCMSfScSA8GbJa1ue8StptqoHMvFUw1UrBlpe6HO5g1h3Pr+aXxtfLdD/BCAk2zDehuTYbODJxQ=
+	t=1715084573; cv=none; b=RPNyeDXKZ+n2lhZIJFGOmkw7+XV0v1aMwkZvnVjWF3Yd4GZqc92CsNgARc6NkDRvIzPM2sSWQbTeDnYO7kjSzKijJh6BZRbEAoH5edpL4Qw5sow+wKswiVqYgg91o4CUKLuZm9DRmItiKMfKsw1sSWvGME8ZAeS0+z51VBL3K1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715084556; c=relaxed/simple;
-	bh=P6OVKvpCCsdebuKqd+D/tHWKONqi84dZHxn/mU5HZQM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hgY76/+/lZObaAfwgd6tonktWSc+RDWSvxtLY+ZD9MEI8+TntS9G7hHeotX7IRRpei0429tbMY/pNZDWb4rJ+aLDEtKiQ4LbhHW1pGAds3G8ljtdT0+48yMkguxWvDpa32W1KXFhuZthGCL1xXAaLd+maFVB4unFExYy+tgLnmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8Bx9eoHHTpm+9IIAA--.12116S3;
-	Tue, 07 May 2024 20:22:31 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Dx8VUGHTpm9QsUAA--.22782S2;
-	Tue, 07 May 2024 20:22:31 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	corbet@lwn.net,
-	alexs@kernel.org,
-	siyanteng@loongson.cn
-Cc: loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH 1/2] docs: Add advanced extended IRQ model description
-Date: Tue,  7 May 2024 20:22:28 +0800
-Message-Id: <20240507122228.5288-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1715084573; c=relaxed/simple;
+	bh=y8VaN2C2Lb/zwvs3WI8QGM2GRDqxMN19nU16yC+sBBY=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Dc3balR/HHysIcu/M7rjIuh894DbadPueamBu2KF86RpKYT99QJv2kk/ZwvdpzSFeTcJkZjbrwQ5oBs8DWWWKsGGcxWdzZWzMYMg2Amd7UOoFmVyd8z65c04MTXNWeRAhYpd/bhT40oP6ug6zLI/IuAoplxuEp0kmTR6Kns1jj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ifBw5NT9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PkvduBUX; arc=none smtp.client-ip=64.147.123.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id 0987E1C00147;
+	Tue,  7 May 2024 08:22:49 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 07 May 2024 08:22:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715084569; x=1715170969; bh=FSinqpKIaF
+	60W78nt3gDdxMV8XkuEU2I/rFx5MeDR5w=; b=ifBw5NT9jIIvAaFOaI8vH/kFHZ
+	ko5fDWZ71aq4Nhw3rhSwsNXxlrlR9XRv4LMJxiE52CdZbI/b8bnVzk6hA8j14/3C
+	KlCtOodftCo72BMI7yYqr4CYz9pxlpOSePny5SV713tfM788qXo4o2dZNrCciXPH
+	ul+0qITGiMd0xGLXqi+5PR//ZURar9b0ExzAlgK0Durcn1yGxUSOfxI3gPsk+Q43
+	wOXu0LETczPUtj8BY6+Ipq9uex0NSK59ya442VJ7skNwQ1uvxRV3L0Mq8Hzekwzz
+	vicdhPHaAoaDeZeJFK4K3rAI01Wsdola75sMx94inl1SYCDmcUZiM00IQNlg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715084569; x=1715170969; bh=FSinqpKIaF60W78nt3gDdxMV8Xku
+	EU2I/rFx5MeDR5w=; b=PkvduBUXlm/oqR55+wHQBugx+Vkaq2l17SVOoWH7zV5k
+	eq4VU3VLKnIoSnaUmefuqnQ8t7eebADu+WHshG0xpQWVN/c5GwaE5NWmxXSxrorO
+	QPQrdUd3PbcYYeav66oGydr0z72VAW8pgEa/Q2/wjAMXHcaapdRFG8/n9gKxIAJL
+	qiqQmFWL//EghKg0bO8iOSegdfZ2Qjc+9Hos1Vhs3sRuD1/D74yEskFZBwO9syEm
+	JDpGjr9Hh1uZWY1vwEAzw1+CEQMZl215fOf8Y2z4yLz6vbVQN7fcd1M4a5Ja5SBI
+	Ct345sFYHQ5uTKWfe9nRa66fCOwETxVYaXMg/CKzhA==
+X-ME-Sender: <xms:GR06Zj4Sj_r2obgH6pPBYbPowGVAAjgobVGZsdNWFPOJtF-sxegQ-g>
+    <xme:GR06Zo6UbBapwGj6PWtqcZGSgQPrxC106B4Pvka_8g__ENUzHhWJ9Btmpw5wQDhAr
+    az41wgj7UzYWMRlgaU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedggeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:GR06Zqcs-yfC7VPBJ--_tbScsUFfqL7Yg8H2ZUhn3N8xr4lJE2PIgw>
+    <xmx:GR06ZkJ55_AY2WqRN_6nwNucz_z388hIxcoonfdXEMIkFiu3vw_7wg>
+    <xmx:GR06ZnKxm8qnZLmdhf6IBiUA7fWNH2zUQDIUr_lbKgRHUg7qumpnWA>
+    <xmx:GR06ZtyVtRcMLlnoYJtHyAWK8eTMWI8-fx7BFtHHhVQFrj7mzjVNNA>
+    <xmx:GR06ZuW6jAG8v2SHIl1d1BZH08O9wPzuK2u-7xFy97LtX4tfylDDkoAk>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 638EEB6008F; Tue,  7 May 2024 08:22:49 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Dx8VUGHTpm9QsUAA--.22782S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxCFy8Gr17WryfWr47KF1fZrc_yoWrZr47pr
-	ZxCryIqF48Gry5Xr17Jr18Wr13G3Z3Ja1DtF1xtry8Xr1kAr1Utr1UtrykJFy7G34rAF1j
-	qFWrtw1UGw1UJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07URa0PUUUUU=
+Message-Id: <9d6ff3c1-752a-48ce-be28-00146f323dab@app.fastmail.com>
+In-Reply-To: <3E99B315-844D-4B5D-BD5B-CFC18EFE304D@toblux.com>
+References: <20240412135406.155947-2-thorsten.blum@toblux.com>
+ <3E99B315-844D-4B5D-BD5B-CFC18EFE304D@toblux.com>
+Date: Tue, 07 May 2024 14:22:29 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thorsten Blum" <thorsten.blum@toblux.com>
+Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bug: Improve comment
+Content-Type: text/plain
 
-From 3C6000, Loongarch began to support advanced extended
-interrupt mode, in which each CPU has an independent interrupt
-vector number.This will enhance the architecture's ability
-to support modern devices
+On Tue, May 7, 2024, at 12:17, Thorsten Blum wrote:
+> On 12. Apr 2024, at 15:54, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+>> 
+>> Add parentheses to WARN_ON_ONCE() for consistency.
+>
+> Hi Arnd,
+>
+> could you add this trivial patch to your tree?
 
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
----
- .../arch/loongarch/irq-chip-model.rst         | 33 +++++++++++++++++
- .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 +++++++++++++++++--
- 2 files changed, 67 insertions(+), 3 deletions(-)
+Merged now, I missed this earlier.
 
-diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
-index 7988f4192363..79228741d1b9 100644
---- a/Documentation/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/arch/loongarch/irq-chip-model.rst
-@@ -85,6 +85,39 @@ to CPUINTC directly::
-     | Devices |
-     +---------+
- 
-+Advanced Extended IRQ model
-+=======================
-+
-+In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
-+to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, MSI interrupts go to AVEC,
-+and then go to CPUINTC, Other devices interrupts go to PCH-PIC/PCH-LPC and gathered
-+by EIOINTC, and then go to CPUINTC directly::
-+
-+ +-----+     +--------------------------+     +-------+
-+ | IPI | --> |           CPUINTC        | <-- | Timer |
-+ +-----+     +--------------------------+     +-------+
-+              ^        ^             ^
-+              |        |             |
-+      +--------+  +---------+ +---------+     +-------+
-+      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
-+      +--------+  +---------+ +---------+     +-------+
-+           ^            ^
-+           |            |
-+         +---------+  +---------+
-+         |   MSI   |  | PCH-PIC |
-+         +---------+  +---------+
-+            ^          ^       ^
-+            |          |       |
-+    +---------+ +---------+ +---------+
-+    | Devices | | PCH-LPC | | Devices |
-+    +---------+ +---------+ +---------+
-+                     ^
-+                     |
-+                +---------+
-+                | Devices |
-+                +---------+
-+
-+
- ACPI-related definitions
- ========================
- 
-diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-index f1e9ab18206c..7ccde82dd666 100644
---- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-@@ -9,9 +9,8 @@
- LoongArch的IRQ芯片模型（层级关系）
- ==================================
- 
--目前，基于LoongArch的处理器（如龙芯3A5000）只能与LS7A芯片组配合工作。LoongArch计算机
--中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、LIOINTC（
--Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
-+LoongArch计算机中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、
-+LIOINTC（Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
- HTVECINTC（Hyper-Transport Vector Interrupt Controller）、PCH-PIC（LS7A芯片组的主中
- 断控制器）、PCH-LPC（LS7A芯片组的LPC中断控制器）和PCH-MSI（MSI中断控制器）。
- 
-@@ -87,6 +86,38 @@ PCH-LPC/PCH-MSI，然后被EIOINTC统一收集，再直接到达CPUINTC::
-     | Devices |
-     +---------+
- 
-+高级扩展IRQ模型
-+=======================
-+
-+在这种模型里面，IPI（Inter-Processor Interrupt）和CPU本地时钟中断直接发送到CPUINTC，
-+CPU串口（UARTs）中断发送到LIOINTC，MSI中断发送到AVEC,而后通过AVEC送达CPUINTC，而
-+其他所有设备的中断则分别发送到所连接的PCH-PIC/PCH-LPC，然后由EIOINTC统一收集，再直
-+接到达CPUINTC::
-+
-+ +-----+     +--------------------------+     +-------+
-+ | IPI | --> |           CPUINTC        | <-- | Timer |
-+ +-----+     +--------------------------+     +-------+
-+              ^        ^             ^
-+              |        |             |
-+      +--------+  +---------+ +---------+     +-------+
-+      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
-+      +--------+  +---------+ +---------+     +-------+
-+              ^        ^
-+              |        |
-+      +---------+  +-------------+
-+      |   MSI   |  |   PCH-PIC   |
-+      +---------+  +-------------+
-+            ^          ^       ^
-+            |          |       |
-+    +---------+ +---------+ +---------+
-+    | Devices | | PCH-LPC | | Devices |
-+    +---------+ +---------+ +---------+
-+                     ^
-+                     |
-+                +---------+
-+                | Devices |
-+                +---------+
-+
- ACPI相关的定义
- ==============
- 
--- 
-2.20.1
-
+   Arnd
 
