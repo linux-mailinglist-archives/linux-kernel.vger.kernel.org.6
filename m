@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-171755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34CC8BE869
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2274C8BE840
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB79AB28CAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:03:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75569B29AEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154FC16F854;
-	Tue,  7 May 2024 15:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE3517F398;
+	Tue,  7 May 2024 15:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jNAbiaL3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZedpxqK9"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1511316C86F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6010616C84A
 	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097508; cv=none; b=af3hfrcqda0NK78M+TO4O65pf62RcY+GJFC+9oTg/0gINWijr1gz4SlvqUz/gNj0oJ+2mbnQr8ujmWCZz4+L1fl0JGp4TTlH6/8wNrdujSFAS5JO7gDw6R3Tc+xP3yYlH4/GIVZ8A4Es3Ki2XfPPnpUzdhWPfVBiVnidfjQe3Uo=
+	t=1715097510; cv=none; b=DOoT+8VC2nNkl1f7oGwE5d0Sx1j2d0Vtw9vo8D8+4D39ln5EXs2Y3XBvWGJMIMillC6QvSkOeYrI+Vhq5Nd/sJbVv132T09ASoxidG2Rs+9C52VyxwsJN9E9cxUKqx5oS4fPqQgQQqMtIa/AZanwfcIZnOW/FjnVhs5bATe+T6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097508; c=relaxed/simple;
-	bh=Jc1Tbss7i1Ju4KveDSuZj4nCUDFkNCR8orrkEHkum5I=;
+	s=arc-20240116; t=1715097510; c=relaxed/simple;
+	bh=GnaXsr+zbd/U7GYWO/XXTnyktbvceHVhOXczQVr4XWs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IZrFTDYY7fas8nYqICJK5TIsuq3mRc7ZCB/eTg9fzaZPAg+IfIUOKXL4Z6Cr/VgotWEL9/fyaisRx8HHEetO2ScRvsfWrp4NOCzesypjUaqklmFI08CLnBQuzu7r5/pwLlUsQP/2Lx1st4Af4G6XYMTw4+mpeYYh2VDpeoF5UH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jNAbiaL3; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=Oin06P6R09yx9h6HvNxgD6Pbkn57g3jAQ4N8UZ5zqs0J2QH3BrgRDX2cfNDPYYV878kABUkLgl9IsidPbVE/PKWBMt5PFCoKdKoEYpgvMrWGHYRAcAZ6o1faRzsNeTJFCmhbkgPVcvjLaI6hlAPf86xgPPDQNGPPSTOlxfLpDZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZedpxqK9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -36,31 +36,37 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rUh2GSNIC9mFZceVpUckSJUlR16exki8Ae5fEBtcFTE=;
-	b=jNAbiaL32F0T3dRpc0bwaDyUwseKzmWbx4+IJ86M7E+Ls9vkLOFDwxcZiQ7cP9ibj60+0+
-	NMS3tlE93Lrt2lFxTq819D2P8Hc4I7eGEP3laVTehTTmqnDB/XnfcsB0U4gYjRI37Ca+sB
-	kn2NCS3jUgW/Lj1Fmnz88+lrH18PAM4=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-346-8y3twOTSMzaVkPuSJ1q2aA-1; Tue,
- 07 May 2024 11:58:19 -0400
-X-MC-Unique: 8y3twOTSMzaVkPuSJ1q2aA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	bh=5xfI8GlIpdk/dq7ZsckyDRl9W0stP1kv+OVmnAnTfxI=;
+	b=ZedpxqK9XNFMYAsemBoTBH2RizBIffP99E4PjrKvoAYQJsGtmFMaFBKwuKQlr9kh4xipOk
+	OKp8PKj/Rxh4hnNquE1AIds4f3SEHSQdo5xCvyr549YTHCbhqde+dWbia5K/s2esYZIeJX
+	0++Z10IjhazLwk+BNcqIzH1FspDxYD4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530--TK-8O3SNhOueOYN4IhQyA-1; Tue, 07 May 2024 11:58:20 -0400
+X-MC-Unique: -TK-8O3SNhOueOYN4IhQyA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 35AB33802AC9;
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D716D802BFB;
 	Tue,  7 May 2024 15:58:19 +0000 (UTC)
 Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 19A14200B2F6;
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 9AF89492CAA;
 	Tue,  7 May 2024 15:58:19 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>
-Subject: [PATCH 07/17] KVM: x86/mmu: Use synthetic page fault error code to indicate private faults
-Date: Tue,  7 May 2024 11:58:07 -0400
-Message-ID: <20240507155817.3951344-8-pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Yu Zhang <yu.c.zhang@linux.intel.com>,
+	Chao Peng <chao.p.peng@linux.intel.com>,
+	Fuad Tabba <tabba@google.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Kai Huang <kai.huang@intel.com>
+Subject: [PATCH 10/17] KVM: x86/mmu: Move private vs. shared check above slot validity checks
+Date: Tue,  7 May 2024 11:58:10 -0400
+Message-ID: <20240507155817.3951344-11-pbonzini@redhat.com>
 In-Reply-To: <20240507155817.3951344-1-pbonzini@redhat.com>
 References: <20240507155817.3951344-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -71,95 +77,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
 From: Sean Christopherson <seanjc@google.com>
 
-Add and use a synthetic, KVM-defined page fault error code to indicate
-whether a fault is to private vs. shared memory.  TDX and SNP have
-different mechanisms for reporting private vs. shared, and KVM's
-software-protected VMs have no mechanism at all.  Usurp an error code
-flag to avoid having to plumb another parameter to kvm_mmu_page_fault()
-and friends.
+Prioritize private vs. shared gfn attribute checks above slot validity
+checks to ensure a consistent userspace ABI.  E.g. as is, KVM will exit to
+userspace if there is no memslot, but emulate accesses to the APIC access
+page even if the attributes mismatch.
 
-Alternatively, KVM could borrow AMD's PFERR_GUEST_ENC_MASK, i.e. set it
-for TDX and software-protected VMs as appropriate, but that would require
-*clearing* the flag for SEV and SEV-ES VMs, which support encrypted
-memory at the hardware layer, but don't utilize private memory at the
-KVM layer.
-
-Opportunistically add a comment to call out that the logic for software-
-protected VMs is (and was before this commit) broken for nested MMUs, i.e.
-for nested TDP, as the GPA is an L2 GPA.  Punt on trying to play nice with
-nested MMUs as there is a _lot_ of functionality that simply doesn't work
-for software-protected VMs, e.g. all of the paths where KVM accesses guest
-memory need to be updated to be aware of private vs. shared memory.
-
+Fixes: 8dd2eee9d526 ("KVM: x86/mmu: Handle page fault for private memory")
+Cc: Yu Zhang <yu.c.zhang@linux.intel.com>
+Cc: Chao Peng <chao.p.peng@linux.intel.com>
+Cc: Fuad Tabba <tabba@google.com>
+Cc: Michael Roth <michael.roth@amd.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
-Message-Id: <20240228024147.41573-6-seanjc@google.com>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
+Message-ID: <20240228024147.41573-10-seanjc@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/include/asm/kvm_host.h |  7 ++++++-
- arch/x86/kvm/mmu/mmu.c          | 14 ++++++++++++++
- arch/x86/kvm/mmu/mmu_internal.h |  2 +-
- 3 files changed, 21 insertions(+), 2 deletions(-)
+ arch/x86/kvm/mmu/mmu.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 12e727301262..0dc755a6dc0c 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -273,7 +273,12 @@ enum x86_intercept_stage;
-  * when emulating instructions that triggers implicit access.
-  */
- #define PFERR_IMPLICIT_ACCESS	BIT_ULL(48)
--#define PFERR_SYNTHETIC_MASK	(PFERR_IMPLICIT_ACCESS)
-+/*
-+ * PRIVATE_ACCESS is a KVM-defined flag us to indicate that a fault occurred
-+ * when the guest was accessing private memory.
-+ */
-+#define PFERR_PRIVATE_ACCESS   BIT_ULL(49)
-+#define PFERR_SYNTHETIC_MASK   (PFERR_IMPLICIT_ACCESS | PFERR_PRIVATE_ACCESS)
- 
- #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
- 				 PFERR_WRITE_MASK |		\
 diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 3609167ba30e..eb041acec2dc 100644
+index 0d884d0b0f35..ba50b93e93ed 100644
 --- a/arch/x86/kvm/mmu/mmu.c
 +++ b/arch/x86/kvm/mmu/mmu.c
-@@ -5799,6 +5799,20 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
- 	if (WARN_ON_ONCE(!VALID_PAGE(vcpu->arch.mmu->root.hpa)))
- 		return RET_PF_RETRY;
+@@ -4317,11 +4317,6 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+ 			return RET_PF_EMULATE;
+ 	}
+ 
+-	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+-		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+-		return -EFAULT;
+-	}
+-
+ 	if (fault->is_private)
+ 		return kvm_faultin_pfn_private(vcpu, fault);
+ 
+@@ -4359,9 +4354,24 @@ static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
+ {
+ 	int ret;
  
 +	/*
-+	 * Except for reserved faults (emulated MMIO is shared-only), set the
-+	 * PFERR_PRIVATE_ACCESS flag for software-protected VMs based on the gfn's
-+	 * current attributes, which are the source of truth for such VMs.  Note,
-+	 * this wrong for nested MMUs as the GPA is an L2 GPA, but KVM doesn't
-+	 * currently supported nested virtualization (among many other things)
-+	 * for software-protected VMs.
++	 * Note that the mmu_invalidate_seq also serves to detect a concurrent
++	 * change in attributes.  is_page_fault_stale() will detect an
++	 * invalidation relate to fault->fn and resume the guest without
++	 * installing a mapping in the page tables.
 +	 */
-+	if (IS_ENABLED(CONFIG_KVM_SW_PROTECTED_VM) &&
-+	    !(error_code & PFERR_RSVD_MASK) &&
-+	    vcpu->kvm->arch.vm_type == KVM_X86_SW_PROTECTED_VM &&
-+	    kvm_mem_is_private(vcpu->kvm, gpa_to_gfn(cr2_or_gpa)))
-+		error_code |= PFERR_PRIVATE_ACCESS;
-+
- 	r = RET_PF_INVALID;
- 	if (unlikely(error_code & PFERR_RSVD_MASK)) {
- 		r = handle_mmio_page_fault(vcpu, cr2_or_gpa, direct);
-diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-index 797b80f996a7..dfd9ff383663 100644
---- a/arch/x86/kvm/mmu/mmu_internal.h
-+++ b/arch/x86/kvm/mmu/mmu_internal.h
-@@ -306,7 +306,7 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		.max_level = KVM_MAX_HUGEPAGE_LEVEL,
- 		.req_level = PG_LEVEL_4K,
- 		.goal_level = PG_LEVEL_4K,
--		.is_private = kvm_mem_is_private(vcpu->kvm, cr2_or_gpa >> PAGE_SHIFT),
-+		.is_private = err & PFERR_PRIVATE_ACCESS,
- 	};
- 	int r;
+ 	fault->mmu_seq = vcpu->kvm->mmu_invalidate_seq;
+ 	smp_rmb();
  
++	/*
++	 * Now that we have a snapshot of mmu_invalidate_seq we can check for a
++	 * private vs. shared mismatch.
++	 */
++	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
++		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
++		return -EFAULT;
++	}
++
+ 	/*
+ 	 * Check for a relevant mmu_notifier invalidation event before getting
+ 	 * the pfn from the primary MMU, and before acquiring mmu_lock.
 -- 
 2.43.0
 
