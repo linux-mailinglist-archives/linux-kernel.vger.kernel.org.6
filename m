@@ -1,132 +1,179 @@
-Return-Path: <linux-kernel+bounces-170529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FBB8BD8C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:53:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B2C8BD8C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 02:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E9A2849A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 733641C221DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 00:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0084015CB;
-	Tue,  7 May 2024 00:53:47 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742E21877;
+	Tue,  7 May 2024 00:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LkK5+wzm"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEDB138C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 00:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB0F10F2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 00:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715043226; cv=none; b=oRYn6G6hfchzEgLVdEq/s+u7rdyd8Q0Xyw2pfxE3Q7xvuxN74d09Ncx5mS/kQh+ZnkPI4foomKwuzYksBSWNxpeneBc3eYk8jyRoVK2IPx4FwQpkRa1Ocqlpy8sbTFIBSpQ2vzCbB/ZzfF6rJoaEj6vgDolI2D/lVxzMw8miSXg=
+	t=1715043263; cv=none; b=sO/HrZywD9hI7azWqJApMAwD/zq8AbihjI7VoL4KwczMZ0r/DIy27Ldt9p8Zh/5lo7comy0aJwStWVeahre+FADT1GMwpzm/g6w+V8LVwCZ+zEjM3R2IFuRtj0eTNTa1PnsMFptqekPlcYjOKsPTLlObz7YgRNTH3tZQtUfCGn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715043226; c=relaxed/simple;
-	bh=BvwOwdEwkzBwuontV5/k1TjqYo+Ur/6QmZosZoxyff0=;
+	s=arc-20240116; t=1715043263; c=relaxed/simple;
+	bh=o8Bc5Ez/6YqYURlwwo5HZX/zfkTVwJuvYFnD3wNE9ys=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sZfQMYp5bH5mDpS/gQFmf9yQT1/zRC+eA5GxXeE+FMmJ8T8H4HbNEB87sBFWj5BPBBDzD/Ovu4OTxnw0GPKUrNuKcZS8J2HdcUyI+5I3r+s35JLggzVUVpAxDbZSmv7jNr0gob0cs/QtYfKggdK0n9ZuOKiCCw2KgJxsA5NaC3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3573487e0c0c11ef9305a59a3cc225df-20240507
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.37,REQID:eb5294fa-9e18-4e84-af1b-a7aae4b81b95,IP:15,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:1
-X-CID-INFO: VERSION:1.1.37,REQID:eb5294fa-9e18-4e84-af1b-a7aae4b81b95,IP:15,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:1
-X-CID-META: VersionHash:6f543d0,CLOUDID:94606faf300839f6c8dc2633b89a9b4c,BulkI
-	D:240506172954AHTO5EQK,BulkQuantity:3,Recheck:0,SF:19|43|74|64|66|38|24|17
-	|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BE
-	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 3573487e0c0c11ef9305a59a3cc225df-20240507
-X-User: lijun01@kylinos.cn
-Received: from [172.30.60.202] [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <lijun01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1478085707; Tue, 07 May 2024 08:53:24 +0800
-Message-ID: <8809f5a7-de6e-0794-feab-726c26f87344@kylinos.cn>
-Date: Tue, 7 May 2024 08:53:23 +0800
+	 In-Reply-To:Content-Type; b=Zkjb8g1hdoxnVYSrgs1WTnn9ICXieXFqHjb90b7fHASfr9a7hxhGmn9ex+WyPSBbExYftgW2Wi8KoxyIMPePny+xxEtXdSgzawxHIPc6PS42R68rs9uK1J55MIKwpABxWnwCHe8nbpy4b0OFlDmetFWq76qMGa/e4OSPCoG541w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LkK5+wzm; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a4957aaf-6b3f-45e8-8c18-a9f74213d0f3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715043258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EkN5x92xDG37kTOdUdSnJWPAN51eOIj86lnHKaDFNr0=;
+	b=LkK5+wzmXqo5sFsIhsMoTy0VapcDfqDuxZ3bfxSNryi85yj7zKlSdh+mFCFFcQCLYMRSJj
+	TcSTdH1wcZC4ssayEtP5BM1mvNQEMHg029Xyq2bFVaS8lOF544saj0ciaq1yvd1nR/v0JP
+	OZAckBjKAHxAuJT5NGL77nQS9sWwcN0=
+Date: Mon, 6 May 2024 17:54:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] LoongArch: Update the flush cache policy
+Subject: Re: [RFC PATCH bpf-next v6 3/3] selftests/bpf: Handle forwarding of
+ UDP CLOCK_TAI packets
+To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Martin KaFai Lau <martin.lau@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>,
+ kernel@quicinc.com
+References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
+ <20240504031331.2737365-4-quic_abchauha@quicinc.com>
+ <663929b249143_516de2945@willemb.c.googlers.com.notmuch>
+ <d613c5a6-5081-4760-8a86-db1107bdc207@quicinc.com>
 Content-Language: en-US
-To: Xi Ruoyao <xry111@xry111.site>, chenhuacai@kernel.org, kernel@xen0n.name,
- lvjianmin@loongson.cn, dongbiao@loongson.cn, zhangbaoqi@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240506092419.4109941-1-lijun01@kylinos.cn>
- <8a8135eb0f1dc724cfbb4402dc6daf08db5b0bc7.camel@xry111.site>
- <cbb24599-8b40-cd27-6ce7-215476c0ddf4@kylinos.cn>
- <cbd6ed9d5be1d7112d69117a72e0cb0081f9b64b.camel@xry111.site>
-From: lijun <lijun01@kylinos.cn>
-In-Reply-To: <cbd6ed9d5be1d7112d69117a72e0cb0081f9b64b.camel@xry111.site>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <d613c5a6-5081-4760-8a86-db1107bdc207@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The value of addr changes very very quickly, and 'volatile' ensures that 
-every change can be read
-
-在 2024/5/6 18:17, Xi Ruoyao 写道:
-> On Mon, 2024-05-06 at 18:08 +0800, lijun wrote:
->> volatile prevents compiler optimization by allowing the compiler
->>
->>    to reread the address value of addr every time
-> But why is this ever needed?  What's wrong if the compiler optimizes it?
->
-> If the problem is the compiler may optimize it to cdesc->ways * 3 *
-> cdesc->sets * cdesc->linesz, unknowing cdesc->ways etc may magically
-> change, you should use READ_ONCE(cdesc->ways) etc.
->
-> I.e. use READ_ONCE on the expression which may magically change, instead
-> of hacking addr.  addr won't magically change.
->
->> 在 2024/5/6 17:28, Xi Ruoyao 写道:
->>> On Mon, 2024-05-06 at 17:24 +0800, Li Jun wrote:
->>>> fix when LoongArch s3 resume, Can't find image information
->>>>
->>>> Signed-off-by: Li Jun <lijun01@kylinos.cn>
->>>> Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
->>>> Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
->>>> Signed-off-by: Biao Dong <dongbiao@loongson.cn>
->>>> ---
->>>>    arch/loongarch/mm/cache.c | 24 +++++++++++++++++++++++-
->>>>    1 file changed, 23 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/loongarch/mm/cache.c b/arch/loongarch/mm/cache.c
->>>> index 6be04d36ca07..52872fa0e5d8 100644
->>>> --- a/arch/loongarch/mm/cache.c
->>>> +++ b/arch/loongarch/mm/cache.c
->>>> @@ -63,6 +63,28 @@ static void flush_cache_leaf(unsigned int leaf)
->>>>    	} while (--nr_nodes > 0);
->>>>    }
->>>>    
->>>> +static void flush_cache_last_level(unsigned int leaf)
->>>> +{
->>>> +	u64 addr;
->>>> +	int i, j, nr_nodes, way_size;
->>>> +	struct cache_desc *cdesc = current_cpu_data.cache_leaves
->>>> +
->>>> leaf;
->>>> +
->>>> +	nr_nodes = loongson_sysconf.nr_nodes;
->>>> +
->>>> +	addr = CSR_DMW1_BASE;
->>>> +	iocsr_write32(0x1, 0x280);
->>>> +	way_size = cdesc->sets * cdesc->linesz;
->>>> +	do {
->>>> +		for (i = 0; i < (cdesc->ways * 3); i++) {
->>>> +			for (j = 0; j < (cdesc->sets); j++) {
->>>> +				*(volatile u32 *)addr;
->>> ??? what does this line do?
+On 5/6/24 1:50 PM, Abhishek Chauhan (ABC) wrote:
+> 
+> 
+> On 5/6/2024 12:04 PM, Willem de Bruijn wrote:
+>> Abhishek Chauhan wrote:
+>>> With changes in the design to forward CLOCK_TAI in the skbuff
+>>> framework,  existing selftest framework needs modification
+>>> to handle forwarding of UDP packets with CLOCK_TAI as clockid.
 >>>
+>>> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+>>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>>> ---
+>>>   tools/include/uapi/linux/bpf.h                | 15 ++++---
+>>>   .../selftests/bpf/prog_tests/ctx_rewrite.c    | 10 +++--
+>>>   .../selftests/bpf/prog_tests/tc_redirect.c    |  3 --
+>>>   .../selftests/bpf/progs/test_tc_dtime.c       | 39 +++++++++----------
+>>>   4 files changed, 34 insertions(+), 33 deletions(-)
+>>>
+>>> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+>>> index 90706a47f6ff..25ea393cf084 100644
+>>> --- a/tools/include/uapi/linux/bpf.h
+>>> +++ b/tools/include/uapi/linux/bpf.h
+>>> @@ -6207,12 +6207,17 @@ union {					\
+>>>   	__u64 :64;			\
+>>>   } __attribute__((aligned(8)))
+>>>   
+>>> +/* The enum used in skb->tstamp_type. It specifies the clock type
+>>> + * of the time stored in the skb->tstamp.
+>>> + */
+>>>   enum {
+>>> -	BPF_SKB_TSTAMP_UNSPEC,
+>>> -	BPF_SKB_TSTAMP_DELIVERY_MONO,	/* tstamp has mono delivery time */
+>>> -	/* For any BPF_SKB_TSTAMP_* that the bpf prog cannot handle,
+>>> -	 * the bpf prog should handle it like BPF_SKB_TSTAMP_UNSPEC
+>>> -	 * and try to deduce it by ingress, egress or skb->sk->sk_clockid.
+>>> +	BPF_SKB_TSTAMP_UNSPEC = 0,		/* DEPRECATED */
+>>> +	BPF_SKB_TSTAMP_DELIVERY_MONO = 1,	/* DEPRECATED */
+>>> +	BPF_SKB_CLOCK_REALTIME = 0,
+>>> +	BPF_SKB_CLOCK_MONOTONIC = 1,
+>>> +	BPF_SKB_CLOCK_TAI = 2,
+>>> +	/* For any future BPF_SKB_CLOCK_* that the bpf prog cannot handle,
+>>> +	 * the bpf prog can try to deduce it by ingress/egress/skb->sk->sk_clockid.
+>>>   	 */
+>>>   };
+>>>   
+>>> diff --git a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>>> index 3b7c57fe55a5..71940f4ef0fb 100644
+>>> --- a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>>> +++ b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>>> @@ -69,15 +69,17 @@ static struct test_case test_cases[] = {
+>>>   	{
+>>>   		N(SCHED_CLS, struct __sk_buff, tstamp),
+>>>   		.read  = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+>>> -			 "w11 &= 3;"
+>>> -			 "if w11 != 0x3 goto pc+2;"
+>>> +			 "if w11 == 0x4 goto pc+1;"
+>>> +			 "goto pc+4;"
+>>> +			 "if w11 == 0x3 goto pc+1;"
+>>> +			 "goto pc+2;"
+>>
+>> Not an expert on this code, and I see that the existing code already
+>> has this below, but: isn't it odd and unnecessary to jump to an
+>> unconditional jump statement?
+>>
+> I am closely looking into your comment and i will evalute it(Martin can correct me
+> if the jumps are correct or not as i am new to BPF as well) but i found out that
+> JSET = "&" and not "==". So the above two ins has to change from -
+
+Yes, this should be bitwise "&" instead of "==".
+
+The bpf CI did report this: 
+https://github.com/kernel-patches/bpf/actions/runs/8947652196/job/24579927178
+
+Please monitor the bpf CI test result.
+
+Do you have issue running the test locally?
+
+> 
+> "if w11 == 0x4 goto pc+1;" ==>(needs to be corrected to) "if w11 & 0x4 goto pc+1;"
+>   "if w11 == 0x3 goto pc+1;" ==> (needs to be correct to) "if w11 & 0x3 goto pc+1;"
+> 
+> 
+>>>   			 "$dst = 0;"
+>>>   			 "goto pc+1;"
+>>>   			 "$dst = *(u64 *)($ctx + sk_buff::tstamp);",
+>>>   		.write = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+>>> -			 "if w11 & 0x2 goto pc+1;"
+>>> +			 "if w11 & 0x4 goto pc+1;"
+>>>   			 "goto pc+2;"
+>>> -			 "w11 &= -2;"
+>>> +			 "w11 &= -3;"
+> Martin,
+> Also i am not sure why the the dissembly complains because the value of SKB_TSTAMP_TYPE_MASK = 3 and we are
+> negating it ~3 = -3.
+> 
+>    Can't match disassembly(left) with pattern(right):
+>    r11 = *(u8 *)(r1 +129)  ;  r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset)
+>    if w11 & 0x4 goto pc+1  ;  if w11 & 0x4 goto pc+1
+>    goto pc+2               ;  goto pc+2
+>    w11 &= -4               ;  w11 &= -3
+> 
+>>>   			 "*(u8 *)($ctx + sk_buff::__mono_tc_offset) = r11;"
+>>>   			 "*(u64 *)($ctx + sk_buff::tstamp) = $src;",
+>>>   	},
+
 
