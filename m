@@ -1,219 +1,140 @@
-Return-Path: <linux-kernel+bounces-171223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581418BE15F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:49:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADC78BE15E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F803284845
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959811C21DE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED865156C77;
-	Tue,  7 May 2024 11:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C920F156645;
+	Tue,  7 May 2024 11:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QZ0wPCHY"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uf9H3qsB"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED6C153579
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF4215253A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715082520; cv=none; b=RxobUtrHkNe9eU6SH9g/LZCOeNQk9/X4RrVOa2aeVcsqTrSPhPg2FvxpVmknuXW+TI+ixynOkQeolvuSNfKNFjX5r8kr8ckAuXSbl3G88xfRPeS98/bNtcp4kbrJwDXdYC26zmwaL2cg95vmGwkxsrlpA48LwQkImpTZIwDGxHk=
+	t=1715082518; cv=none; b=Z6sA0QQvRNjN1g0XRYOmDBQ1aH50n7Vch+5ry61fM1FSe8UiaHDxjjTwPXT0ry9ngaKjeE9/+wcSECK1itAtUY8svYoxJKRW8PJSnxzGiib275hv1mKuqZS8NANIaP1UMcapMHwNj950+d/ygUxvVxXoC9HoStNiFloMbrjVUPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715082520; c=relaxed/simple;
-	bh=z1nN7toRozqp72FdyOy3sC0V5hmKBZsPJwEDpAqUO60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nnZCe0sADjg4ozJ56y5TOjcHLvnYLm6/WY4Tlr3ms2It67s/e9MrHymbgiJLlZlDrbhI3P1IDiVQkKVc90WxreYVulNeUGZrb29ppa3wrYjs4UOwEu/blC9NK6LsAiO+wOaRejWE3FSeyK9/lOXJHBBZ2540GVkyF3zbusqsL8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QZ0wPCHY; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7207A40E02A6;
-	Tue,  7 May 2024 11:48:34 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id hqhG_HD1IrE4; Tue,  7 May 2024 11:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715082510; bh=kP/yQ174leaMh52mtS/wH9FaH7QQoGonoP+0sEVJ940=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QZ0wPCHYjxr+4jOWhYNhg2umbIGNLKcphd1qGZTNaYyX4v3tqKETNU8vL9+HHJr87
-	 KNaA0h1E34+GZL+fdLNURO5NQqbVr+BwKs0iNW0ytBdSDBySywzQ0lRdsVSX8J31lh
-	 tQ5U1ewHAcnPfZAaAaNY6smU0cwceNHxLOjaJnjU8uNaa8NbvJ+xYMJWA4z/uXK4mO
-	 h48xI5S+siFv2HsipS/3iWL01Ly/2tYT6gjXOQbgiEaIJO21dlsUtKpu2NuqmVLhcB
-	 Mr8Ylf0DWaE2NyIFCqBTSJ4lXalYhEDhDCcYRAe9NkqvtGRUc1sx6DAjOZjMrlD0Df
-	 RvBdMSrniqxpejgvYIPYjcBa4Uboefk7nRpLpyFDUzczdVdbQlmKiADJ+iVMmjAg22
-	 G77DemR5YxaNBOzfu40KBNd+pTjw9w3amErmrsud9v0pNNnJlR3n8VRoPi3Y0QBX0w
-	 YqfCHnvz8O9YU3YyObOIo+aPRJmSC2uSXoAHbAEsHe6jpuYASbteUBTuO1YXgjb3mK
-	 MSuYKLFRGXzP+yyiy/DoZv2mOaFo3T24WXHLBII80dze4jqL82RjzVfVY9/rktkQ6F
-	 cvfLDvYzzkOHS9J9Vtlz9eWGmOFDf8FTdpwjG6Umqa9LfgdhND93A+RweVnIE43rlm
-	 RwTd/rRTkHDY04c3en8gtifo=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 47B8340E024C;
-	Tue,  7 May 2024 11:48:22 +0000 (UTC)
-Date: Tue, 7 May 2024 13:48:14 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>
-Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
- WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
-Message-ID: <20240507114814.GBZjoU_u5kYBhLips3@fat_crate.local>
-References: <20240430172313.GCZjEpAfUECkEZ9S5L@fat_crate.local>
- <ZjE7DkTBSbPlBN8k@google.com>
- <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
- <ZjFLpkgI3Zl4dsXs@google.com>
- <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
- <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
- <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
- <Zjj3Lrv2NNHLEzzk@google.com>
- <20240506155759.GOZjj-B_Qrz4DCXwmb@fat_crate.local>
- <ZjnTW4XQwVHEiSaW@xsang-OptiPlex-9020>
+	s=arc-20240116; t=1715082518; c=relaxed/simple;
+	bh=ZvJC+HUC23cfgfMiVTigE+cAqOZWAnz9vZbxnvZ8ru0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wm+eyVc/Adjp6QeNekc/JMmTg+btoeQ5+HGhTybQzDotH78fcDA6h2s8KUvwlANN5lc6PJ3IIvDEX0CT8ne95hJyM2UrAA4LpheZCY5lLmISxFxnUDaLz0Eq8PP1GqxJuDQxq+rIIHDw8YN5mdqu/dUk+qBg9DKx1roEt4KNDug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uf9H3qsB; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e3e18c23f9so11501991fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 04:48:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715082513; x=1715687313; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=72j6zNVVvGNrYMrCouTEzvFzVcRHh6PlR7ef9XOXTgQ=;
+        b=Uf9H3qsBB1mG3WF0plN0CboxxB8ch2s0qKwTRYjag5C+BU+IlXgsKM7hYhx0tiDts2
+         qc5GbbkGrphWjfcS+9odIxupiYn3+72eaOnbOPvQApgPU0thtOqJlCDYUz1XGu+dDaAH
+         Huc5tLjXXOFf2KLEjD28m96nOAVqIW7n0/sfFcMoSK8GYpQbS0s1RNUZb1eADTOmrwuz
+         8DuYQ7U+k5T+XgM60SVoz92dVdmP3eZeZh/Rxt+VwAlk0G6GyUUTIawqDpPuhDZL7exM
+         wtfjhEQwpPR0lbTGLdPgex00KjwZGJe/yoEJtW1tBOfEVywhncSXW2k1RYA7Lg1XzDiS
+         hyew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715082513; x=1715687313;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=72j6zNVVvGNrYMrCouTEzvFzVcRHh6PlR7ef9XOXTgQ=;
+        b=GQBnbMJsc0S9GB+Z51mbtq6JXQXyA8eDo5VGgDxHg5rp9ZYY9yz44S8cS1FNAwy+/m
+         kHzIlmLl8DuJV1e7d7p2DBxEltELTXELfIrg2a6blD2QKhZO/RGTITCEbRvGwQBkoCEo
+         gNhRUiWxkhn97xVNyIGnoehIRns7HIQz+bqw0inexVI2XQs9DmEdPcifkgaPeLRK3Aag
+         1zSwUJWdK7LlE1gqsxcGQHjCCpJLL5/83AOf9TE6QkR66Liip83dLtWG66xDnH2xpBls
+         wPhzwx4RGxlDxBWkLfoRBgMFDt7r9TtmuARW71jzgGglS/o9xKd9nZ64tpvs/ojih0FF
+         wgOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUslqxG1kqfO1qtM59vj6Kdg6sB0Q8xWoT50bLEKYbzpc/ctX3Qsl2P/bF79mAOUIT4yIHR3S21pFz/LBGdn8eLz1wBkFbyii6S+1Qq
+X-Gm-Message-State: AOJu0YzMStejEDxe2QV/lh4gACtgj3W1F/rhIB9Qv99eJ1Xr1CEo8saK
+	kOh25UGDp4J7hucHYqhB0GGtpnkv234RA78zwc5taSdvCezSbsoVUXQCJS8TLkU=
+X-Google-Smtp-Source: AGHT+IEztQUsixU46vbtT83NzSNtDU2V2kQ90UiEWc9l8x732HZwYxqrdp6DKhIl1y8iyklIcrQtPg==
+X-Received: by 2002:a19:f713:0:b0:51d:3675:6a08 with SMTP id z19-20020a19f713000000b0051d36756a08mr7293073lfe.66.1715082513172;
+        Tue, 07 May 2024 04:48:33 -0700 (PDT)
+Received: from [172.30.205.144] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id b15-20020ac2562f000000b0051884ea2a32sm2086190lff.31.2024.05.07.04.48.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 04:48:32 -0700 (PDT)
+Message-ID: <6dc632b0-792c-49c8-9f66-43f7a14789cc@linaro.org>
+Date: Tue, 7 May 2024 13:48:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZjnTW4XQwVHEiSaW@xsang-OptiPlex-9020>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+To: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-13-johan+linaro@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240506150830.23709-13-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Borislav Petkov <bp@alien8.de>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Srikanth Aithal <sraithal@amd.com>
-Bcc: bp@alien8.de
-Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
- WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
-Reply-To: 
-In-Reply-To: <ZjnTW4XQwVHEiSaW@xsang-OptiPlex-9020>
 
-On Tue, May 07, 2024 at 03:08:11PM +0800, Oliver Sang wrote:
-> I applied the debug pach ontop of lastest Linus master:
+
+On 5/6/24 17:08, Johan Hovold wrote:
+> From: Satya Priya <quic_c_skakit@quicinc.com>
 > 
-> 1621a826233a7 debug patch from Boris for ee8962082a
-> dccb07f2914cd (HEAD, linus/master) Merge tag 'for-6.9-rc7-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+> Qualcomm Technologies, Inc. PM8008 is an I2C-controlled PMIC containing
+> seven LDO regulators. Add a PM8008 regulator driver to support PMIC
+> regulator management via the regulator framework.
 > 
-> attached dmesg and cpuinfo (a little diff, so I attached it again)
+> Note that this driver, originally submitted by Satya Priya [1], has been
+> reworked to match the new devicetree binding which no longer describes
+> each regulator as a separate device.
+> 
+> This avoids describing internal details like register offsets in the
+> devicetree and allows for extending the implementation with features
+> like over-current protection without having to update the binding.
+> 
+> Specifically note that the regulator interrupts are shared between all
+> regulators.
+> 
+> Note that the secondary regmap is looked up by name and that if the
+> driver ever needs to be generalised to support regulators provided by
+> the primary regmap (I2C address) such information could be added to a
+> driver lookup table matching on the parent compatible.
+> 
+> This also fixes the original implementation, which looked up regulators
+> by 'regulator-name' property rather than devicetree node name and which
+> prevented the regulators from being named to match board schematics.
+> 
+> [1] https://lore.kernel.org/r/1655200111-18357-8-git-send-email-quic_c_skakit@quicinc.com
+> 
+> Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
+> Cc: Stephen Boyd <swboyd@chromium.org>
+> [ johan: rework probe to match new binding, amend commit message and
+>           Kconfig entry]
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
 
-Thanks, now what are we seeing here:
+I'm a bit lukewarm on calling this qcom-pm8008-regulator.. But then
+qcom-i2c-regulator or qpnp-i2c-regulator may bite due to being overly
+generic.. Would you know whether this code will also be used for e.g.
+PM8010?
 
-[    0.763720][    T0] x86/cpu: init_ia32_feat_ctl: CPU0: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU1: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU2: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU3: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU4: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU5: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU6: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU7: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU8: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU9: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU10: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU11: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU12: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU13: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU14: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU15: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU16: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU17: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU18: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU19: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU20: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU21: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU22: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU23: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU24: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU25: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU26: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU27: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU28: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU29: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU30: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU31: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU32: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU33: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU34: FEAT_CTL: 0x5, tboot: 0
-[    0.055231][    T0] x86/cpu: init_ia32_feat_ctl: CPU35: FEAT_CTL: 0x5, tboot: 0
-
-So following the code in init_ia32_feat_ctl(), the BSP'll get to
-
-	if (msr & FEAT_CTL_LOCKED)
-		goto update_caps;
-
-and that is the case - FEAT_CTL_LOCKED, bit 0, is set.
-
-It'll go to the update_caps label and there it'll do:
-
-	if (!cpu_has(c, X86_FEATURE_VMX))
-		goto update_sgx;
-
-VMX is set if I judge by the attached cpuinfo-2 so the next check comes:
-
-        if ( (tboot && !(msr & FEAT_CTL_VMX_ENABLED_INSIDE_SMX)) ||
-            (!tboot && !(msr & FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX))) {
-                if (IS_ENABLED(CONFIG_KVM_INTEL))
-                        pr_err_once("VMX (%s TXT) disabled by BIOS\n",
-                                    tboot ? "inside" : "outside");
-                clear_cpu_cap(c, X86_FEATURE_VMX);
-
-tboot is 0, so the second conditional:
-
-	(!tboot && !(msr & FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX))
-
-FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX, bit 2 is set. So that conditional is
-not true either. And the pr_err_once() doesn't appear in dmesg.
-
-BUT(!), look what the original dmesg said:
-
-[    0.055225][    T0] x86/cpu: VMX (outside TXT) disabled by BIOS
-
-So that FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX bit was not set back then. Why?
-
-Oliver, have you done any BIOS config changes in the meantime?
-
-This all looks really weird.
-
-The other possibility would be if something changed between -rc3
-(the branch x86/alternatives is based on) and -rc7. Unlikely but by now
-everything's possible.
-
-What could also be the case is, the BSP's FEAT_CTL is 0x0 (unconfigured,
-whatever), we'd go in, set FEAT_CTL_LOCKED and that'll lock the bit in
-all FEAT_CTLs on all cores, then it'll set
-FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX. I'm presuming microcode forces this
-and am obviously grasping at straws...
-
-Then CPU1 will come, FEAT_CTL_LOCKED will be set but
-FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX won't be set, leading to the warn.
-
-But then again, SDM says that that MSR's scope is "Thread" which means,
-locking that MSR on the BSP won't have effect on the same MSR on the
-other HT thread.
-
-Weird.
-
-Ok, here's a bit modified debug patch ontop of the alternatives branch:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=feat_ctl
-
-please run it and send me dmesg again.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Konrad
 
