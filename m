@@ -1,306 +1,316 @@
-Return-Path: <linux-kernel+bounces-170744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3728BDB5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:24:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C908BDB56
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D57202832D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:24:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5FA1F21313
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937506F086;
-	Tue,  7 May 2024 06:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EFA78C76;
+	Tue,  7 May 2024 06:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RXjWKWOC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gv3ZaK1v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234506F07E;
-	Tue,  7 May 2024 06:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062941; cv=none; b=S8A2w4A3Q7OTwdzVTbq8YJdGNZJppxftIAsQzElVf3XqIAxzncraF+aZCjpu0ib8pav6hQMisE2y2KsuKN7fTRKgXmljN2VhjzIKy2+WFgnGHbkR7HkBmJbznop9ClNun0SEgWGLlIVCx0UD/9xJ4m4LDmBeZzGHGjal2w4Hong=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062941; c=relaxed/simple;
-	bh=VNRR4fx4YmPYaR7+Cgk91GS1CDvBbw1zKYy24fWdEs4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=IopaWhFGc5zEN/iCBPwDmorReUmCTNI6MEZJK1TL8JcSArimzbmwe/MgclX6Pdhm+3U8Sku2LIcqJd63vUCOrw/Wpt793Ye80I31yjHQL31SQXACgw2fZWPKnE4h65aiE5K1sIS0GHyy+hJ1qaRKEzvuUMliPWroSI3RGDUSjfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RXjWKWOC; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BD471B52;
+	Tue,  7 May 2024 06:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715062925; cv=fail; b=Fl2c6RnbpD8aN6bqr8XH6gok6jKV9f/04+GimCAA2e63K8l1qSAAhixxH+hLQZpQpHO78BXcnVBeBpput3fv71iwsReV3t7K7yUFeQuXHivNkI7739ptW004wUa35RpQAxtlp922MnUn0IpN1OTH0k3n8DiULnQdDQ1E5oz5wuY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715062925; c=relaxed/simple;
+	bh=9l/uDptEKp6D8ESE9xXVMmYUQZsv2O2XH5zJfp3aO2g=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WW8i+hLclxJT0QJS27V1jXKMJ/cZ15abwZokiVMUl09bgvT8fNhJyqVNJRq2EjukoHqsZd+9wU03dr7p8+PCWtAb4kMPZV4H5wa07pxJHl2JSehRTLm5fCf58gYKVIju4fI7GTGY/nZy1y9XkSq7CmCtuN9uePyI/Bqb3mdE9p0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gv3ZaK1v; arc=fail smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715062940; x=1746598940;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=VNRR4fx4YmPYaR7+Cgk91GS1CDvBbw1zKYy24fWdEs4=;
-  b=RXjWKWOCnkNVGO02M8loVB3fzcKnd+I6ncMSMRNHqrfV8tAVO9PVJ2gT
-   dBx4PiSe2NwtKbVEqVfePuxJg0PxPf/0u872x3PwIAYQ7l77pBgjjy8Hm
-   ThOrHgnpoDHwcid4FOfcQG754pw9mwIYTvp64FLOvEaNX9g916CfMLz3f
-   0s9S45iyXM1XFT44Ne02vGwfDO1yxMX4/dwUj617mzVAA4Y9z6KA4I1Pl
-   nzO47soLevEBo5xpIqLXUOfI32VfbXnafj+ig15RsKbd6n+5riMX0SWa4
-   XVNsjeQDxJTKMxlDy55mus2qYDQhH4sq9hAlxW8mFKHLHFx4nez0u3WI8
-   A==;
-X-CSE-ConnectionGUID: 16a3ubdyRHO9QYTA++w5Vg==
-X-CSE-MsgGUID: CSAaFozYRTGl0eTMWsgSeA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="11376138"
+  t=1715062924; x=1746598924;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=9l/uDptEKp6D8ESE9xXVMmYUQZsv2O2XH5zJfp3aO2g=;
+  b=Gv3ZaK1vUdT5kUkclY7gZVo2y/6/XKSOUItgiv5PZzX2bFzles4yLUVA
+   kAE/BTAQiDiOKif7Rvp/9hRsERPkaY7xm8qGqeVwkC5XZR4ZcxaVRVyWx
+   4ieY6w00XKVHyt60v9Nmv15KxczZ9CKSXLUZC3YlwKQo9stLF9Qqr/hst
+   i0/+z8ETOQkvdOPunTlKV36hNKcVEpHY0BCzTHKyXnNofKlWMK2+Q858K
+   xtGI39m4JzmTI9TVyjH637uhhaMkOy8KyFNyz2JZhXjMY+NnaT6xH7CI2
+   dZyllOBwYNPzfFIkRsCQ1tmedR8JuK6856lyjj5TZHXzVFf3xeXkkEtLe
+   w==;
+X-CSE-ConnectionGUID: B0KYHYJCRKC5VGCJfSRVqg==
+X-CSE-MsgGUID: 1ScNW08MTlu10w/XQ8jfdg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="28309140"
 X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="11376138"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:22:19 -0700
-X-CSE-ConnectionGUID: vZ4DaZevSs2y/SHiQir9dA==
-X-CSE-MsgGUID: 3vFs5M/fS6yR8m5yKpRQbA==
+   d="scan'208";a="28309140"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:22:03 -0700
+X-CSE-ConnectionGUID: mJLRYvNpQ6e8aU1luetxqQ==
+X-CSE-MsgGUID: ogs3pKWUTx6J3CabdFdB5g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="28930445"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:22:14 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	alex.williamson@redhat.com,
-	jgg@nvidia.com,
-	kevin.tian@intel.com
-Cc: iommu@lists.linux.dev,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	corbet@lwn.net,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	baolu.lu@linux.intel.com,
-	yi.l.liu@intel.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in non-coherent domains
-Date: Tue,  7 May 2024 14:21:38 +0800
-Message-Id: <20240507062138.20465-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240507061802.20184-1-yan.y.zhao@intel.com>
-References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+   d="scan'208";a="28400121"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 May 2024 23:22:02 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 6 May 2024 23:22:02 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 6 May 2024 23:22:02 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Mon, 6 May 2024 23:22:02 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 6 May 2024 23:22:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KVcVE+cP+REVBbzh9VU60hMLJCAUkOTFd9VvKPVtrSapc8SLt4sVUqhjdojRpflJLrpPIYMkXw/xVZiEfd/MNob4mbCki2vNMRvy3W75yD7hazMYdbvOggI0p6Qm5ciey6VQ4GyuNksV1z55vkTZLOETreybAvGB9ld3kDFvfi430wUcaSU5Wn3m8duIghaLKfTuUKbvXtk5kXFzEaZNFee80XAv8WpUMGRcY/0LfO2pZ7fJJGnrz3M8+JuJ6gBE31lFT979qPdeZ4CkSqBRNO8DTZP8lvBmdpY3/N+arcCmhdhxEfjHJgrX/pQ3rN7pwQKr25qObKuhWmEpl7e64Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+WZK6upsQ/DqzpgV+ZPUscDAvAKieDA2uobvkXAyYq0=;
+ b=V/9K7UlqGKnhXFQqF5aFqIfU0Dzcj+an5Zjp9MI0nFixmJkxBhC1avSgfjS7SLoNbZkn2vBQeet+fXrptQUXycn9Q5Frnx64RcnGPAXKYReRFrU+AHo6FGdCtMYGO0jFwH3Y5v7O0WlpjeEIrxs59JB4PP7Z6K6sCZyaNelabaGW3TJYszHF1xluhY6K+8Bf08gcKB64+SINAO00GQ1uAYb0/fCDs5H413wL176W+aI3y0H3Yhy5FDB6ZaW4zMSRkMYK+UfuPMcLnt3QhtW9LiXLwTobY5pBg4ZuCCZfIOQFdi/ckXC/Xp4rCeqDkKN1PvkumeFKL5f1aIBBI6kedQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6280.namprd11.prod.outlook.com (2603:10b6:208:3c0::15)
+ by CY8PR11MB7108.namprd11.prod.outlook.com (2603:10b6:930:50::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Tue, 7 May
+ 2024 06:22:00 +0000
+Received: from MN0PR11MB6280.namprd11.prod.outlook.com
+ ([fe80::3f63:c727:6606:c089]) by MN0PR11MB6280.namprd11.prod.outlook.com
+ ([fe80::3f63:c727:6606:c089%4]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 06:21:59 +0000
+Message-ID: <d2d9c0a8-6d4f-4aff-84f3-35fc2bff49b7@intel.com>
+Date: Tue, 7 May 2024 09:21:53 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH v2 1/2] e1000e: let the sleep codes run
+ every time
+To: En-Wei WU <en-wei.wu@canonical.com>, Sasha Neftin <sasha.neftin@intel.com>
+CC: <netdev@vger.kernel.org>, <rickywu0421@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <edumazet@google.com>,
+	<intel-wired-lan@lists.osuosl.org>, <kuba@kernel.org>,
+	<anthony.l.nguyen@intel.com>, <pabeni@redhat.com>, <davem@davemloft.net>,
+	"Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "Lifshits, Vitaly"
+	<vitaly.lifshits@intel.com>
+References: <20240503101824.32717-1-en-wei.wu@canonical.com>
+ <7f533913-fba9-4a29-86a5-d3b32ac44632@intel.com>
+ <CAMqyJG1Fyt1pZJqEjQN_kqXwfJ+HnqvW1PnAOEEpzoS9f37KBg@mail.gmail.com>
+Content-Language: en-US
+From: "Ruinskiy, Dima" <dima.ruinskiy@intel.com>
+In-Reply-To: <CAMqyJG1Fyt1pZJqEjQN_kqXwfJ+HnqvW1PnAOEEpzoS9f37KBg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TLZP290CA0010.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:9::9)
+ To MN0PR11MB6280.namprd11.prod.outlook.com (2603:10b6:208:3c0::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6280:EE_|CY8PR11MB7108:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d3ce0fd-9c04-4819-088e-08dc6e5e0000
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?M1Z1RUs4OGFYbzA2ZmJoUWR5R2VkcXd1b3RzNUVPeUZCUVhYaENFZmkzMUhW?=
+ =?utf-8?B?Q0RyNGhBVW9YeEY4OVpFV3RINUhsMTVUZW8vUlRTdS9jRk9jWDFwSHcyVHky?=
+ =?utf-8?B?N2RmRkVYRTFIazdhREQwU2ZUaFI3RGV3a2ppZlZMbGxaRXZPK3Q3VTdTQU9B?=
+ =?utf-8?B?cU9xZStmVXhKd1ZIMHBjcExDSUFEblJoc3ljaUh2eWtLQlFOWlRmRWpoVnZv?=
+ =?utf-8?B?bXFVcFdhakxjeWtFaXJpMEVqcGNLbVhBYUlGNUhMYkUxUGpPOTlsUlpQbVll?=
+ =?utf-8?B?KzdLdHZ5Z0QzMkMzTHl3V1kxVDdNRnd1WFNPTVZWYU1nbmI4eENBUDgvczVY?=
+ =?utf-8?B?dE1kOTl5VDRybktRa1FjdyszVEl2bFhZS01ISlpRMHlETmIxWDhuNkd6OEpq?=
+ =?utf-8?B?V0pwS25rNVlPUWxibUhKVlRlOGZYTzdDMGJvNlZ2TWRrdkFtdzZtV2FqTEpF?=
+ =?utf-8?B?WEpES2hocmErZHlEalZUa1NqaDVhakZlM0prM3J2QnNkak1pYThra0xUS1NW?=
+ =?utf-8?B?NmxkWlZCZmFBOTFMOFZHbFE2NldXajI1M3VFYm5tT3BKMXhSbkdENzAzajJC?=
+ =?utf-8?B?QU94MmVRMitSZWEwRVRjczJEbVNTTlNMdVVGNHlBczJWaUE1cUFnbTgvbStS?=
+ =?utf-8?B?WHNEcjlyL2VzRngwN2tMbEMyMkc1d0N3UDBHdy93VVRBNGxGa1pzZ2Zzd20w?=
+ =?utf-8?B?dWxqbHNnWWljSWd1TXdoUnlhVERBZUh0NEMvNVh4NEdiZmdNZElmb2R0WEtY?=
+ =?utf-8?B?blFqeTY1YTVITmpwd0Fja2dpZThMa0plc3JyMDFUT3oxaWRocEU0NC9wb0Nu?=
+ =?utf-8?B?cVZVVlNOVldmLy9mQzRLL09kK2NiRXZGNkVTcU9aY1IzSGtTTTQ4NFc0bHph?=
+ =?utf-8?B?aWc1QUxwSGJqaS9Mcy80a25WVHNIbWxZNEI4cDl2UU5BTTRQSEM1SXMyb1Qr?=
+ =?utf-8?B?OVgzVzBVUzZTdlVZTXBtZkJDazZvK2xJK2lpWmJTaDdBdjNGRDErQ2ltdmxB?=
+ =?utf-8?B?TkhSQmt0ajZkR2w1UUgzemhUZ3ZOMlRRRmRYWmZ2amVlLzVaNDZ3M3JLTlJC?=
+ =?utf-8?B?d0FzQWVYWEFERVpabTRacFh5RkRhMWpKSlo0UEFCaVBDd1VvdHl1UDd1M2kz?=
+ =?utf-8?B?UE1PVm9TQzZwQnBndHZCNjZvL05WZDZQTVhGc2VLOW1mMjJWcUI0U2w5ME5V?=
+ =?utf-8?B?V25wTlM3SUloR2VxMW82eW1JUUpLTnlNRXFCVk15UW1MdW9NeG5TYVpDTzFs?=
+ =?utf-8?B?a0lSRk9WdDludEtYenRkSHVmVnZGK2VGWkVZWm5zSHE5d1FBVURyOGtiQ3lZ?=
+ =?utf-8?B?b1ZaWVZQOWcyT2xiK2xZWTBDSzNzRHlMbHUxcFdTVE9qT2NDRzIwTENETlRn?=
+ =?utf-8?B?Y3l2L0VnYUVkOGJRUm9EZ21MM2I3UFdJZ0s0RmZkQ2pzMVA4ZnRWTGRNM2lO?=
+ =?utf-8?B?MFZJYXZxcllpWmxDTTljTVQ5UHdZTnlKenRLTm5GcWpyRzRxRDV0cEJpbG9k?=
+ =?utf-8?B?UFRMT0l6ZlJOMGliR2xmOVJGaVl6UWZ1M2VXUitTV0dibEhkQUJzcW9kUmVU?=
+ =?utf-8?B?QmxiQy9BZnNJTk8wMXVKUmwweTJmbDJBYmFxdzg4ZUcrNTNwYUF1OVhid0xP?=
+ =?utf-8?Q?WyH5mDUwJf4MEWKaCA/X5ussDb3o28aDEev4qijwfwJo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6280.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?djd5UFNUeG90d2Q3cjRFMXZjTlVjakNUeFc5d2k5bmlIYU1ZUHBETnR3SWZa?=
+ =?utf-8?B?VFB4WURHVlkvSGZ6RWNzN20vMXI0WlF3V3V1NVZFdkwzWk9BWHJEeVlGTFdC?=
+ =?utf-8?B?MzMvOXBnRk90eUNOUEtKQll2ZzQ2NDZRNnpDRDFkYzVxam9xVTUzZFlMZW9M?=
+ =?utf-8?B?S2hDRUNxWWZSWjZpTno3ZFZkMlN1V1VZTnQ5NHZBRmp0RXpFSlRiTlEwWThY?=
+ =?utf-8?B?Z2lGL0NKS1dXRHFJemxRN01Hdy9qNkxKTHNHTG1GMjRxZzZ0S2VrbnhKLzBs?=
+ =?utf-8?B?UllJQmpmaEY5SFlTZjVwYnhMTS9icDB1MGM5WG5nRDNoSytrM2JPSEVobHYz?=
+ =?utf-8?B?UEIzUjBEM0xGTzlaQTlpMkdvNDNvVkgyU2d1N3J3WVRDcVdGMmUxMDFxaytq?=
+ =?utf-8?B?K2JEUGtNaHora2ViSGtzaWl0bExWdTM2S0ZVTzFYT0FhREpmdXp2dEJxQzN4?=
+ =?utf-8?B?K09za3U0RUdQcUcvN3FYVVdrRmJ1UnBPZDFLclNMckkvbjU3YU12RExCU0Vk?=
+ =?utf-8?B?aXQvUWtiajdPTG1waCtzMnBHK3dXVy9nTjlDVGtadkxaSTRHZEFrRkdoRnpt?=
+ =?utf-8?B?cUhtT2lHNEVUUEtnMnBwOU5jN2NFcnd6Qk1kSmN1dUpHNysxOHJHRW9CVEJk?=
+ =?utf-8?B?OE5MRU56WEJ2OWlIYW9OeVdUY3Q1ZlJNVTVmWHNtamFQTmYwSXdRdUtoellK?=
+ =?utf-8?B?NFpnTlZWcFo1OWphMmJuTjYvenBxTmllb3VPM09zOUF6OGFSeTB4bExLRGND?=
+ =?utf-8?B?Z1JTVllBZW9wVG1hQmtNVGsyQWFpQ2kzaXJTVDdyMDlhVkhGcHRXU0hVWE1m?=
+ =?utf-8?B?NW1MVmpvUlRSbXEwNGFyVmV1Y3hPRnZxenBDd3ltQ0t6VzhDUVFubjNzRjY2?=
+ =?utf-8?B?RUkrWDYzOXFZdnR4ZHVzdnpiNHF1R2Z3YVo0cjhSVXJYN0hUZVcwVlJlK0Vr?=
+ =?utf-8?B?V2U0QWpOYld3aXFyLzlMU24zRi80Z0hTY3phZVU0MHFldlNvV3RNK2o0SGhE?=
+ =?utf-8?B?bDlEQzU3SGJuSHVlVjJXdExjNGlGWkdmbEU4S0hSRFJVN3BzT3N4eUt4Q2RS?=
+ =?utf-8?B?VXZxUWlGYmZlUDd1dUhFMXZmQ0tVM3B4RmJhWk1IdjkwUjZBODR5R1d1elZK?=
+ =?utf-8?B?NXVqK01wa21wc2QxUEJ4eVRtbS9scXpzUWwxVGkxN3FORXFKczdsY2ZpVWFy?=
+ =?utf-8?B?WlJaSVVCTGRhTTByU0NNa1VNN3dvbU1BcFRZOWNnbUNleFM5VndaYkgwOFU4?=
+ =?utf-8?B?dGFhTTNNd1RoenpXSlppbk5nWEdDTlYweXFrU1E3RmJNWVdIWUREem9ORG1p?=
+ =?utf-8?B?UVNyRCtHYTVPS3hxUlB3eHJkeVNvZkJQNlR1VEdqak5kVXUzc3hlT2g5VzRa?=
+ =?utf-8?B?NXN0N2pUYUYxbnZkQkN0OG5OMDc5emN4dTVONnVIVThZaFdjVVJMQXdBek9n?=
+ =?utf-8?B?a2ZxVm5ZbElINzFSNGFtR2t4ZVo4YVQ1SytFdGhmUWRPMkd4YWtjN1haanlE?=
+ =?utf-8?B?Zm9FVGdrUHJYSTArVlBpZ1lGKzh2OFZvdWVlNkFJUzJMelBrUWxlYXR2dG8r?=
+ =?utf-8?B?VWpJaUU0UTA3ZDVFZDcwa1JXclpKdXJ0UVBXdE9oVENldTkydlBBMzZscVUw?=
+ =?utf-8?B?cWhJNWh1MEtYQmVmNE01SllFdEh5dUh4SVM2Wk51dkRDdHNyV0IyeXJzdmxR?=
+ =?utf-8?B?cnhBcVVkMmdlS2NkR2NkRytBaldLRDIrWEt3Qm9jQVBaWXFCSUEvZmd2Wi9n?=
+ =?utf-8?B?MkRnL2gzTlZaVDlFRTF5ejNhcHhCT0Q2ZGRvYlJEYnhwaUNOSlVKbUFzVC9r?=
+ =?utf-8?B?N0V3eFNLbm1VQzNIUE9KRjBDTmE2d2tZMlNTRjRpb0pMWnk4MEpMd0ZSWjVh?=
+ =?utf-8?B?SnRKWGRSZmN5ckx1aWFsb2J2VlYwb05KRVlvU2x5VWdBek0zbHV1VjFMbVJ0?=
+ =?utf-8?B?SGFaeDMxVlJQTXA3aS9nd3JrRzF1N2JTYTl6WjcyelhWOXBhNjhYTDYrL0tR?=
+ =?utf-8?B?eXFSK0lrS3VkeVpGSTM0QUdFbmx0WGRmMHp3SHh5bVQ5aDlTMHRlVnoxWWVl?=
+ =?utf-8?B?a1Q2NkE5UGVicFdqYU9aNGsyTWp0WnpCT0RuQS9PaUV0ZEdneG1qV0ZJMmg1?=
+ =?utf-8?B?RzJqRXhycjA0QjE0by9jYXpBdVZpOEUyWkc5TkZJZ3NxaDFaTGVBTmdhTHhC?=
+ =?utf-8?B?MUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d3ce0fd-9c04-4819-088e-08dc6e5e0000
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6280.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 06:21:58.8096
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bJ7LfFtQFYDDk9CmoY/AGuSkFgwXwaDDqYTMTuViZVqOPrbd3YKAkAe1t07jCU4x5v2sai3+7tia7JgHX+0uqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7108
+X-OriginatorOrg: intel.com
 
-Flush CPU cache on DMA pages before mapping them into the first
-non-coherent domain (domain that does not enforce cache coherency, i.e. CPU
-caches are not force-snooped) and after unmapping them from the last
-domain.
+On 06/05/2024 19:46, En-Wei WU wrote:
+> Thank you for your time.
+> 
+> Originally, sleep codes would only be executed if the first read fails
+> or the link status that is read is down. Some circumstances like the
+> [v2,2/2] "e1000e: fix link fluctuations problem" would need a delay
+> before first reading/accessing the PHY IEEE register, so that it won't
+> read the instability of the link status bit in the PHY status
+> register.
+> 
+> I've realized that this approach isn't good enough since the purpose
+> is only to fix the problem in another patch and it also changes the
+> behavior.
+> 
+> Here is the modification of the patch [v2,2/2] "e1000e: fix link
+> fluctuations problem":
+> --- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
+> +++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+> @@ -1428,7 +1428,17 @@  static s32
+> e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+> - ret_val = e1000e_phy_has_link_generic(hw, 1, 0, &link);
+> /* comments */
+> + ret_val = e1000e_phy_has_link_generic(hw, COPPER_LINK_UP_LIMIT,
+> 100000, &link);
+> 
+> Do you think we can just add a msleep/usleep_range in front of the
+> e1000e_phy_has_link_generic() instead of modifying the sleep codes in
+> e1000e_phy_has_link_generic()?
+> 
+> Thanks.
+> 
+> On Mon, 6 May 2024 at 23:53, Sasha Neftin <sasha.neftin@intel.com> wrote:
+>>
+>> On 03/05/2024 13:18, Ricky Wu wrote:
+>>> Originally, the sleep codes being moved forward only
+>>> ran if we met some conditions (e.g. BMSR_LSTATUS bit
+>>> not set in phy_status). Moving these sleep codes forward
+>>> makes the usec_interval take effect every time.
+>>>
+>>> Signed-off-by: Ricky Wu <en-wei.wu@canonical.com>
+>>> ---
+>>>
+>>> In v2:
+>>> * Split the sleep codes into this patch
+>>>
+>>>    drivers/net/ethernet/intel/e1000e/phy.c | 9 +++++----
+>>>    1 file changed, 5 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/intel/e1000e/phy.c b/drivers/net/ethernet/intel/e1000e/phy.c
+>>> index 93544f1cc2a5..4a58d56679c9 100644
+>>> --- a/drivers/net/ethernet/intel/e1000e/phy.c
+>>> +++ b/drivers/net/ethernet/intel/e1000e/phy.c
+>>> @@ -1777,6 +1777,11 @@ s32 e1000e_phy_has_link_generic(struct e1000_hw *hw, u32 iterations,
+>>>
+>>>        *success = false;
+>>>        for (i = 0; i < iterations; i++) {
+>>> +             if (usec_interval >= 1000)
+>>> +                     msleep(usec_interval / 1000);
+>>> +             else
+>>> +                     udelay(usec_interval);
+>>> +
+>>
+>> I do not understand this approach. Why wait before first
+>> reading/accessing the PHY IEEE register?
+>>
+>> For further discussion, I would like to introduce Dima Ruinskiy (architect)
+>>
+>>>                /* Some PHYs require the MII_BMSR register to be read
+>>>                 * twice due to the link bit being sticky.  No harm doing
+>>>                 * it across the board.
+>>> @@ -1799,10 +1804,6 @@ s32 e1000e_phy_has_link_generic(struct e1000_hw *hw, u32 iterations,
+>>>                        *success = true;
+>>>                        break;
+>>>                }
+>>> -             if (usec_interval >= 1000)
+>>> -                     msleep(usec_interval / 1000);
+>>> -             else
+>>> -                     udelay(usec_interval);
+>>>        }
+>>>
+>>>        return ret_val;
+>>
 
-Devices attached to non-coherent domains can execute non-coherent DMAs
-(DMAs that lack CPU cache snooping) to access physical memory with CPU
-caches bypassed.
+Regarding the usage of sleep/sleep_range functions - they can only be 
+used if this code will never be called from an atomic context. I do not 
+know if such a guarantee exists.
 
-Such a scenario could be exploited by a malicious guest, allowing them to
-access stale host data in memory rather than the data initialized by the
-host (e.g., zeros) in the cache, thus posing a risk of information leakage
-attack.
+In general I have quite a few questions and concerns regarding this 
+patch series. The comment in patch 2/2 states that it is designed to 
+work around a link flap issue with the average time between link up and 
+down is 3-4ms, and yet the code waits a whole 100ms before reading the 
+PHY bit the first time. Why so long?
 
-Furthermore, the host kernel (e.g. a ksm thread) might encounter
-inconsistent data between the CPU cache and memory (left by a malicious
-guest) after a page is unpinned for DMA but before it's recycled.
+Furthermore, if I am reading this right, it appears that, with the 
+proposed change, e1000e_phy_has_link_generic will poll the PHY link up 
+to 10 times, with 100ms delay between each iteration - until the link is 
+up. Won't it lead to wasting all this time, if the link is actually down?
 
-Therefore, it is required to flush the CPU cache before a page is
-accessible to non-coherent DMAs and after the page is inaccessible to
-non-coherent DMAs.
-
-However, the CPU cache is not flushed immediately when the page is unmapped
-from the last non-coherent domain. Instead, the flushing is performed
-lazily, right before the page is unpinned.
-Take the following example to illustrate the process. The CPU cache is
-flushed right before step 2 and step 5.
-1. A page is mapped into a coherent domain.
-2. The page is mapped into a non-coherent domain.
-3. The page is unmapped from the non-coherent domain e.g.due to hot-unplug.
-4. The page is unmapped from the coherent domain.
-5. The page is unpinned.
-
-Reasons for adopting this lazily flushing design include:
-- There're several unmap paths and only one unpin path. Lazily flush before
-  unpin wipes out the inconsistency between cache and physical memory
-  before a page is globally visible and produces code that is simpler, more
-  maintainable and easier to backport.
-- Avoid dividing a large unmap range into several smaller ones or
-  allocating additional memory to hold IOVA to HPA relationship.
-
-Reported-by: Jason Gunthorpe <jgg@nvidia.com>
-Closes: https://lore.kernel.org/lkml/20240109002220.GA439767@nvidia.com
-Fixes: 73fa0d10d077 ("vfio: Type1 IOMMU implementation")
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- drivers/vfio/vfio_iommu_type1.c | 51 +++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index b5c15fe8f9fc..ce873f4220bf 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -74,6 +74,7 @@ struct vfio_iommu {
- 	bool			v2;
- 	bool			nesting;
- 	bool			dirty_page_tracking;
-+	bool			has_noncoherent_domain;
- 	struct list_head	emulated_iommu_groups;
- };
- 
-@@ -99,6 +100,7 @@ struct vfio_dma {
- 	unsigned long		*bitmap;
- 	struct mm_struct	*mm;
- 	size_t			locked_vm;
-+	bool			cache_flush_required; /* For noncoherent domain */
- };
- 
- struct vfio_batch {
-@@ -716,6 +718,9 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
- 	long unlocked = 0, locked = 0;
- 	long i;
- 
-+	if (dma->cache_flush_required)
-+		arch_clean_nonsnoop_dma(pfn << PAGE_SHIFT, npage << PAGE_SHIFT);
-+
- 	for (i = 0; i < npage; i++, iova += PAGE_SIZE) {
- 		if (put_pfn(pfn++, dma->prot)) {
- 			unlocked++;
-@@ -1099,6 +1104,8 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 					    &iotlb_gather);
- 	}
- 
-+	dma->cache_flush_required = false;
-+
- 	if (do_accounting) {
- 		vfio_lock_acct(dma, -unlocked, true);
- 		return 0;
-@@ -1120,6 +1127,21 @@ static void vfio_remove_dma(struct vfio_iommu *iommu, struct vfio_dma *dma)
- 	iommu->dma_avail++;
- }
- 
-+static void vfio_update_noncoherent_domain_state(struct vfio_iommu *iommu)
-+{
-+	struct vfio_domain *domain;
-+	bool has_noncoherent = false;
-+
-+	list_for_each_entry(domain, &iommu->domain_list, next) {
-+		if (domain->enforce_cache_coherency)
-+			continue;
-+
-+		has_noncoherent = true;
-+		break;
-+	}
-+	iommu->has_noncoherent_domain = has_noncoherent;
-+}
-+
- static void vfio_update_pgsize_bitmap(struct vfio_iommu *iommu)
- {
- 	struct vfio_domain *domain;
-@@ -1455,6 +1477,12 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 
- 	vfio_batch_init(&batch);
- 
-+	/*
-+	 * Record necessity to flush CPU cache to make sure CPU cache is flushed
-+	 * for both pin & map and unmap & unpin (for unwind) paths.
-+	 */
-+	dma->cache_flush_required = iommu->has_noncoherent_domain;
-+
- 	while (size) {
- 		/* Pin a contiguous chunk of memory */
- 		npage = vfio_pin_pages_remote(dma, vaddr + dma->size,
-@@ -1466,6 +1494,10 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 			break;
- 		}
- 
-+		if (dma->cache_flush_required)
-+			arch_clean_nonsnoop_dma(pfn << PAGE_SHIFT,
-+						npage << PAGE_SHIFT);
-+
- 		/* Map it! */
- 		ret = vfio_iommu_map(iommu, iova + dma->size, pfn, npage,
- 				     dma->prot);
-@@ -1683,9 +1715,14 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 	for (; n; n = rb_next(n)) {
- 		struct vfio_dma *dma;
- 		dma_addr_t iova;
-+		bool cache_flush_required;
- 
- 		dma = rb_entry(n, struct vfio_dma, node);
- 		iova = dma->iova;
-+		cache_flush_required = !domain->enforce_cache_coherency &&
-+				       !dma->cache_flush_required;
-+		if (cache_flush_required)
-+			dma->cache_flush_required = true;
- 
- 		while (iova < dma->iova + dma->size) {
- 			phys_addr_t phys;
-@@ -1737,6 +1774,9 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 				size = npage << PAGE_SHIFT;
- 			}
- 
-+			if (cache_flush_required)
-+				arch_clean_nonsnoop_dma(phys, size);
-+
- 			ret = iommu_map(domain->domain, iova, phys, size,
- 					dma->prot | IOMMU_CACHE,
- 					GFP_KERNEL_ACCOUNT);
-@@ -1801,6 +1841,7 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 			vfio_unpin_pages_remote(dma, iova, phys >> PAGE_SHIFT,
- 						size >> PAGE_SHIFT, true);
- 		}
-+		dma->cache_flush_required = false;
- 	}
- 
- 	vfio_batch_fini(&batch);
-@@ -1828,6 +1869,9 @@ static void vfio_test_domain_fgsp(struct vfio_domain *domain, struct list_head *
- 	if (!pages)
- 		return;
- 
-+	if (!domain->enforce_cache_coherency)
-+		arch_clean_nonsnoop_dma(page_to_phys(pages), PAGE_SIZE * 2);
-+
- 	list_for_each_entry(region, regions, list) {
- 		start = ALIGN(region->start, PAGE_SIZE * 2);
- 		if (start >= region->end || (region->end - start < PAGE_SIZE * 2))
-@@ -1847,6 +1891,9 @@ static void vfio_test_domain_fgsp(struct vfio_domain *domain, struct list_head *
- 		break;
- 	}
- 
-+	if (!domain->enforce_cache_coherency)
-+		arch_clean_nonsnoop_dma(page_to_phys(pages), PAGE_SIZE * 2);
-+
- 	__free_pages(pages, order);
- }
- 
-@@ -2308,6 +2355,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 
- 	list_add(&domain->next, &iommu->domain_list);
- 	vfio_update_pgsize_bitmap(iommu);
-+	if (!domain->enforce_cache_coherency)
-+		vfio_update_noncoherent_domain_state(iommu);
- done:
- 	/* Delete the old one and insert new iova list */
- 	vfio_iommu_iova_insert_copy(iommu, &iova_copy);
-@@ -2508,6 +2557,8 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 			}
- 			iommu_domain_free(domain->domain);
- 			list_del(&domain->next);
-+			if (!domain->enforce_cache_coherency)
-+				vfio_update_noncoherent_domain_state(iommu);
- 			kfree(domain);
- 			vfio_iommu_aper_expand(iommu, &iova_copy);
- 			vfio_update_pgsize_bitmap(iommu);
--- 
-2.17.1
+Looking at https://bugzilla.kernel.org/show_bug.cgi?id=218642, at the 
+problem this commit series is trying to solve - I wonder:
+(1) How serious this problem is. It is normal for link establishment to 
+take a few seconds from plugging the cable (due to PHY 
+auto-negotiation), and I can accept some link instability during that time.
+(2) Assuming the problem is considered serious - have we root-caused it 
+correctly.
 
 
