@@ -1,268 +1,276 @@
-Return-Path: <linux-kernel+bounces-170951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CC08BDE5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:33:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13738BDE61
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2AA01C23050
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:33:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA8DD1C2330E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DA71514F3;
-	Tue,  7 May 2024 09:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="H0rgAmkI"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B3114E2CA;
+	Tue,  7 May 2024 09:32:35 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC3714D71E;
-	Tue,  7 May 2024 09:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED0414D710;
+	Tue,  7 May 2024 09:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074325; cv=none; b=PpXihCUsjslchNXM70kW9LXeIpFG2HolwIRYYe3YZ7RT8ZXQfU1H3VNrQ+z+8V1MpZIdk0tasQSh6UZsb5rpEnzOtPveaKQfjPuh3p3OzUNpgKKMIUvXgRDOGxSxLgh1unK1TD8n8zmGxHq0hV1q6gd2ervWu06k6SAZyUP0CJc=
+	t=1715074354; cv=none; b=E/4Z7YDQg2LJBpRe6+ey9SgrAJCvkX1sUSxtDecNZ+o3OA3BaCC5Q4saDIyENp1fmMQg7K+6RebXussXiiYA0z6etrFymK89SqQ/addSBjWnN3dCl1ly3GnISKQxunnKwHDhiyutnoA/xtzOSxl43MBE/QLxcHRgC6r8Dj5Qayk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074325; c=relaxed/simple;
-	bh=gBT0/GHP92n03Txi9j723w1y05utrjiv0+U12KD3wps=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hnmfzQqefz0hqMxWRMw+AIFHUK+hC9d1mn1ibHw3Wbip+vwcUffUT0Zb3yodJUosIhA0PAll3XtFXvwG2uM5umMUoRipFOTw7JZZO/3755d8B7rbN3cqFU3HlOtt+2RLBtgITGfV2E2r3SJaQkjeINHVM5k8rCKad04lDCUNUFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=H0rgAmkI; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id AA8FB60022EE;
-	Tue,  7 May 2024 10:32:01 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id ay96DduZCP8G; Tue,  7 May 2024 10:31:59 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 5D94A60022F5;
-	Tue,  7 May 2024 10:31:59 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1715074319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6L+o2xBlnX13VJHQyX2QgkyA28VGIf6z49wDsY/otFc=;
-	b=H0rgAmkIEd4gJ8YqWmT1Cq9CkmwJxZXXUa4fC48MImTP4uGi0KuCGWrYodjpy1ZuSe+c0K
-	m858ZGoy0szr/G98Bju0iflCPdzKGm9UlYVe/NnXqHvRlp9ytDJcNgaLW5ZL3XUfG8FzUi
-	MAucv5hLxEr+qmGHe3GR/EUtrEg7VQU=
-Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:4589:2164:1bc5:2670])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 39FF636006F;
-	Tue,  7 May 2024 10:31:59 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: krzysztof.kozlowski@linaro.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Subject: [PATCH RESEND v3 7/7] memory: tegra: Rework update_clock_tree_delay()
-Date: Tue,  7 May 2024 10:30:50 +0100
-Message-ID: <20240507093056.3921-8-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt>
+	s=arc-20240116; t=1715074354; c=relaxed/simple;
+	bh=db02E+eKNl5BqO07hsPeoCeQYWkq162mXseaLq+BHJA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ag9vZnt0APsxf1JxMXntRJDerUGWYllqlXUbxifYnDTzF7J8lgEOuAA7W+4JC2WRxIMg7JLjHsHSIT0OnrZF4eU7dA53VaXzb0yOpxvo79bf0Tol5gl/HfxLXyjQGQSBaPNvUjd+8F5WBNTkY+eOR06pHMVxY/Yp+CLmbzyl8Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VYXZ91DWTz9v7Y8;
+	Tue,  7 May 2024 17:10:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 04C5E140390;
+	Tue,  7 May 2024 17:32:18 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAnXSEV9TlmiKitBw--.25415S2;
+	Tue, 07 May 2024 10:32:17 +0100 (CET)
+Message-ID: <e6e2b31983610bf566d8046edbac0e00c8453233.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH] ima: Use sequence number to wait for policy updates
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com,  john.johansen@canonical.com,
+ stephen.smalley.work@gmail.com,  casey@schaufler-ca.com, eparis@redhat.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, guozihua@huawei.com, omosnace@redhat.com, 
+	audit@vger.kernel.org, apparmor@lists.ubuntu.com, selinux@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Date: Tue, 07 May 2024 11:32:03 +0200
+In-Reply-To: <20240507092831.3590793-1-roberto.sassu@huaweicloud.com>
+References: <20240507092831.3590793-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwAnXSEV9TlmiKitBw--.25415S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3GFW8urWxXF47AF13KF4UArb_yoW7Ww4UpF
+	Wvga4UCFyvvrWS9r4xC3yDZrWY9ry8Zr1UZ3s8W347AwnxXr10qF18Jry7Za4fGrW5CF1x
+	XF4jgrs09w1jvrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
+	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0x
+	vE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1rMa5UUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBF1jj5kUAwAAsp
 
-Further streamline this function by moving the delay post-processing
-to the callers, leaving it only with the task of returning the measured
-delay values.
+On Tue, 2024-05-07 at 11:28 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Maintain a global sequence number, and set it to individual policy rules,
+> when they are created.
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 120 +++++++-----------
- 1 file changed, 46 insertions(+), 74 deletions(-)
+Just did an attempt, to see if this path is viable.
 
-diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-index a8a217502f0c..277fca62f57e 100644
---- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-+++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-@@ -105,7 +105,7 @@ enum {
- 			  next->ptfv_list[w])) /			\
- 			(next->ptfv_list[w] + 1);			\
- 									\
--		emc_dbg(emc, EMA_UPDATES, "%s: (s=%lu) EMA: %u\n",	\
-+		emc_dbg(emc, EMA_UPDATES, "%s: (s=%u) EMA: %u\n",	\
- 			__stringify(dev), nval, next->ptfv_list[dqs]);	\
- 	} while (0)
- 
-@@ -130,93 +130,51 @@ static bool tegra210_emc_compare_update_delay(struct tegra210_emc_timing *timing
- 	return false;
- }
- 
--static bool update_clock_tree_delay(struct tegra210_emc *emc, int type)
-+static void tegra210_emc_get_clktree_delay(struct tegra210_emc *emc,
-+					   u32 delay[DRAM_CLKTREE_NUM])
- {
--	bool periodic_training_update = type == PERIODIC_TRAINING_UPDATE;
--	struct tegra210_emc_timing *last = emc->last;
--	struct tegra210_emc_timing *next = emc->next;
--	u32 last_timing_rate_mhz = last->rate / 1000;
--	bool dvfs_update = type == DVFS_UPDATE;
--	bool dvfs_pt1 = type == DVFS_PT1;
--	u32 temp[2][2], value, delay_us;
--	unsigned long cval = 0;
-+	struct tegra210_emc_timing *curr = emc->last;
-+	u32 rate_mhz = curr->rate / 1000;
-+	u32 msb, lsb, dqsosc, delay_us;
- 	unsigned int c, d, idx;
--	bool over = false;
-+	unsigned long clocks;
- 
--	if (dvfs_pt1 || periodic_training_update) {
--		delay_us = tegra210_emc_actual_osc_clocks(last->run_clocks);
--		delay_us *= 1000;
--		delay_us = 2 + (delay_us / last->rate);
-+	clocks = tegra210_emc_actual_osc_clocks(curr->run_clocks);
-+	delay_us = 2 + (clocks / rate_mhz);
- 
--		tegra210_emc_start_periodic_compensation(emc);
--		udelay(delay_us);
--	}
-+	tegra210_emc_start_periodic_compensation(emc);
-+	udelay(delay_us);
- 
- 	for (d = 0; d < emc->num_devices; d++) {
--		if (dvfs_pt1 || periodic_training_update) {
--			/* Dev[d] MSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 19);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] = (value & 0x00ff) << 8;
--				temp[c][1] = (value & 0xff00) << 0;
--				value >>= 16;
--			}
--
--			/* Dev[d] LSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 18);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] |= (value & 0x00ff) >> 0;
--				temp[c][1] |= (value & 0xff00) >> 8;
--				value >>= 16;
--			}
--		}
-+		/* Read DQSOSC from MRR18/19 */
-+		msb = tegra210_emc_mrr_read(emc, 2 - d, 19);
-+		lsb = tegra210_emc_mrr_read(emc, 2 - d, 18);
- 
- 		for (c = 0; c < emc->num_channels; c++) {
- 			/* C[c]D[d]U[0] */
- 			idx = c * 4 + d * 2;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][0];
--			}
--
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			dqsosc = (msb & 0x00ff) << 8;
-+			dqsosc |= (lsb & 0x00ff) >> 0;
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = clocks * 1000000 / rate_mhz * 2 * dqsosc;
- 
- 			/* C[c]D[d]U[1] */
- 			idx++;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][1];
--			}
-+			dqsosc = (msb & 0xff00) << 0;
-+			dqsosc |= (lsb & 0xff00) >> 8;
- 
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = clocks * 1000000 / rate_mhz * 2 * dqsosc;
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			msb >>= 16;
-+			lsb >>= 16;
- 		}
- 	}
--
--	return over;
- }
- 
- static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
-@@ -228,8 +186,8 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
- 
- 	u32 i, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
-+	u32 delay[DRAM_CLKTREE_NUM], idx;
- 	bool over = false;
--	u32 idx;
- 
- 	if (!next->periodic_training)
- 		return 0;
-@@ -252,16 +210,30 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 
- 			for (i = 0; i < samples; i++) {
- 				/* Generate next sample of data. */
--				update_clock_tree_delay(emc, DVFS_PT1);
-+				tegra210_emc_get_clktree_delay(emc, delay);
-+
-+				for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++)
-+					__INCREMENT_PTFV(idx, delay[idx]);
- 			}
- 		}
- 
--		/* Do the division part of the moving average */
--		over = update_clock_tree_delay(emc, DVFS_UPDATE);
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			/* Do the division part of the moving average */
-+			__AVERAGE_PTFV(idx);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
- 	}
- 
--	if (type == PERIODIC_TRAINING_SEQUENCE)
--		over = update_clock_tree_delay(emc, PERIODIC_TRAINING_UPDATE);
-+	if (type == PERIODIC_TRAINING_SEQUENCE) {
-+		tegra210_emc_get_clktree_delay(emc, delay);
-+
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			__WEIGHTED_UPDATE_PTFV(idx, delay[idx]);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
-+	}
- 
- 	return over;
- }
--- 
-2.44.0
+This patch would be an alternative to:
+
+[PATCH v3] ima: Avoid blocking in RCU read-side critical section
+
+Roberto
+
+> When a rule is stale, wait for the global sequence number to increase,
+> which happens when the LSM policy has been fully updated.
+>=20
+> Finally, restart the ima_match_policy() loop, which should not encounter
+> the stale rule anymore.
+>=20
+> On policy update, already increase the rule sequence number, so that a wa=
+it
+> can be implemented for the next policy update.
+>=20
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 65 +++++++++++++++--------------
+>  1 file changed, 33 insertions(+), 32 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
+/ima_policy.c
+> index c0556907c2e6..4f8275e216fe 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -51,9 +51,12 @@
+>  #define INVALID_PCR(a) (((a) < 0) || \
+>  	(a) >=3D (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
+> =20
+> +DECLARE_WAIT_QUEUE_HEAD(wait_queue_t);
+> +
+>  int ima_policy_flag;
+>  static int temp_ima_appraise;
+>  static int build_ima_appraise __ro_after_init;
+> +static int global_seqno;
+> =20
+>  atomic_t ima_setxattr_allowed_hash_algorithms;
+> =20
+> @@ -122,6 +125,7 @@ struct ima_rule_entry {
+>  	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyr=
+ings */
+>  	struct ima_rule_opt_list *label; /* Measure data grouped under this lab=
+el */
+>  	struct ima_template_desc *template;
+> +	int seqno;
+>  };
+> =20
+>  /*
+> @@ -442,6 +446,8 @@ static int ima_lsm_update_rule(struct ima_rule_entry =
+*entry)
+>  	if (!nentry)
+>  		return -ENOMEM;
+> =20
+> +	nentry->seqno++;
+> +
+>  	list_replace_rcu(&entry->list, &nentry->list);
+>  	synchronize_rcu();
+>  	/*
+> @@ -497,6 +503,8 @@ int ima_lsm_policy_change(struct notifier_block *nb, =
+unsigned long event,
+>  		return NOTIFY_DONE;
+> =20
+>  	ima_lsm_update_rules();
+> +	global_seqno++;
+> +	wake_up(&wait_queue_t);
+>  	return NOTIFY_OK;
+>  }
+> =20
+> @@ -560,18 +568,16 @@ static bool ima_match_rule_data(struct ima_rule_ent=
+ry *rule,
+>   * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC=
+)
+>   * @func_data: func specific data, may be NULL
+>   *
+> - * Returns true on rule match, false on failure.
+> + * Returns 1 on rule match, 0 on mismatch, -ESTALE on stale policy.
+>   */
+> -static bool ima_match_rules(struct ima_rule_entry *rule,
+> -			    struct mnt_idmap *idmap,
+> -			    struct inode *inode, const struct cred *cred,
+> -			    u32 secid, enum ima_hooks func, int mask,
+> -			    const char *func_data)
+> +static int ima_match_rules(struct ima_rule_entry *rule,
+> +			   struct mnt_idmap *idmap,
+> +			   struct inode *inode, const struct cred *cred,
+> +			   u32 secid, enum ima_hooks func, int mask,
+> +			   const char *func_data)
+>  {
+>  	int i;
+> -	bool result =3D false;
+>  	struct ima_rule_entry *lsm_rule =3D rule;
+> -	bool rule_reinitialized =3D false;
+> =20
+>  	if ((rule->flags & IMA_FUNC) &&
+>  	    (rule->func !=3D func && func !=3D POST_SETATTR))
+> @@ -642,7 +648,6 @@ static bool ima_match_rules(struct ima_rule_entry *ru=
+le,
+>  				return false;
+>  		}
+> =20
+> -retry:
+>  		switch (i) {
+>  		case LSM_OBJ_USER:
+>  		case LSM_OBJ_ROLE:
+> @@ -663,27 +668,13 @@ static bool ima_match_rules(struct ima_rule_entry *=
+rule,
+>  			break;
+>  		}
+> =20
+> -		if (rc =3D=3D -ESTALE && !rule_reinitialized) {
+> -			lsm_rule =3D ima_lsm_copy_rule(rule);
+> -			if (lsm_rule) {
+> -				rule_reinitialized =3D true;
+> -				goto retry;
+> -			}
+> -		}
+> -		if (!rc) {
+> -			result =3D false;
+> -			goto out;
+> -		}
+> +		if (!rc)
+> +			return false;
+> +		else if (rc =3D=3D -ESTALE)
+> +			return rc;
+>  	}
+> -	result =3D true;
+> =20
+> -out:
+> -	if (rule_reinitialized) {
+> -		for (i =3D 0; i < MAX_LSM_RULES; i++)
+> -			ima_filter_rule_free(lsm_rule->lsm[i].rule);
+> -		kfree(lsm_rule);
+> -	}
+> -	return result;
+> +	return true;
+>  }
+> =20
+>  /*
+> @@ -741,12 +732,12 @@ int ima_match_policy(struct mnt_idmap *idmap, struc=
+t inode *inode,
+>  		     const char *func_data, unsigned int *allowed_algos)
+>  {
+>  	struct ima_rule_entry *entry;
+> -	int action =3D 0, actmask =3D flags | (flags << 1);
+> +	int action =3D 0, rc, actmask =3D flags | (flags << 1);
+>  	struct list_head *ima_rules_tmp;
+> =20
+>  	if (template_desc && !*template_desc)
+>  		*template_desc =3D ima_template_desc_current();
+> -
+> +retry:
+>  	rcu_read_lock();
+>  	ima_rules_tmp =3D rcu_dereference(ima_rules);
+>  	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
+> @@ -754,9 +745,18 @@ int ima_match_policy(struct mnt_idmap *idmap, struct=
+ inode *inode,
+>  		if (!(entry->action & actmask))
+>  			continue;
+> =20
+> -		if (!ima_match_rules(entry, idmap, inode, cred, secid,
+> -				     func, mask, func_data))
+> +		rc =3D ima_match_rules(entry, idmap, inode, cred, secid,
+> +				     func, mask, func_data);
+> +		if (!rc)
+>  			continue;
+> +		else if (rc =3D=3D -ESTALE) {
+> +			rcu_read_unlock();
+> +
+> +			wait_event_interruptible(wait_queue_t,
+> +				(global_seqno =3D=3D entry->seqno + 1));
+> +
+> +			goto retry;
+> +		}
+> =20
+>  		action |=3D entry->flags & IMA_NONACTION_FLAGS;
+> =20
+> @@ -1153,6 +1153,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry =
+*entry,
+>  			result =3D 0;
+>  	}
+> =20
+> +	entry->seqno =3D global_seqno;
+>  	return result;
+>  }
+> =20
 
 
