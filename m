@@ -1,134 +1,258 @@
-Return-Path: <linux-kernel+bounces-170716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394218BDAF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:00:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2398BDAF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7A8282A5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:00:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88AF21F216EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4496DD0D;
-	Tue,  7 May 2024 05:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IItixv1P"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06738381C4
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F3B6E610;
+	Tue,  7 May 2024 06:00:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBB96E602;
+	Tue,  7 May 2024 06:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715061596; cv=none; b=bwEmvwPTUgzNYwLStt4CWjUqFXuTYs8nqX4DdkzqWo44l3iDoEVJ6uh47X5a9TOADMZU/LLnN9kGrgkhUMjS7iXM8T71RLLEqktZiDEiSIHC8xfeCrv8WjTPWCB4WOX6mEedOvnA2Eds5qHunuz7oR9xeZsUR3KfYHCUiPmj9jo=
+	t=1715061618; cv=none; b=EMZyk8NuksMG7LO30xEzT7NlxNAf1uKvXrMs86e0rdD8IDAi/6S9/rKLhufeTyCby72ik/RPsaejEYQHoXGc7nfhuIw1Mc805UAwLJjcFw9hL0eraJEwJN2kHwEDCz8hhj6SEp8EVUhr/XX4aJDiYscT1KedqGoQ/i2+gWght9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715061596; c=relaxed/simple;
-	bh=Yguzo2c8YUB36SQvoM6wmMpm2FeEziBCRIGTv3E6rIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U4ivcXDICIu42cVCVes854o6dNmt0d7QB+CcnuCuzmucN4LsLfY3GVqNqfyxD5ldmIe3p5pOhtBU/tVXJcAK/xBXCtZSDUuS6VsA8vaghYPpu3BVpcbWA4O/R7U2NuhYZQrcWaMIMbrM4K3MEKtcmS2F8Yq9JJVzonjwWnwKF6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IItixv1P; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so4637504e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 22:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715061592; x=1715666392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V2DqXD03WzJThrTJ1Ryt0LAxq6uqFsgoSmVFQ8TUEf8=;
-        b=IItixv1PJ99VTcEpMTtQgZ0xKHqvcCVVoCuyJkD7FuUHF0PoQ6p9fxj5r9vhATGz2U
-         0h3KN+yEb7o7pd+3yLLTzYVR+UUADNefZ94Jy4g8V3hvBqvMU0j1AIQdg443FK7A2RQi
-         Wl2xH72wmtjb2Ew/zL7oBa0pnPz/ZFSI+nWYrBRYn8spT14+LfVn0jsy0YgRpLaqsRfy
-         FsQJVTpvB/W4apPzylMUDhKXYqtd13b1A2mEeR2hdXIMJOpDksjK1S621j7J8yhHoQU0
-         aXOff9Ch9oOFJL+zch1XDsSuaB4s//0L7RF1YS+ZxSZ3B7Wg4VjTVbTiMI5AjajNMA8u
-         3plQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715061592; x=1715666392;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V2DqXD03WzJThrTJ1Ryt0LAxq6uqFsgoSmVFQ8TUEf8=;
-        b=nZSHpXTyne1/IMLMPeQAiK7qOhw4Yr7igKXnii57Hu9oFIi1ymbD8Ji1xwnha3BMF6
-         33Up/I78MrlOxmUx0y/A+qQ9RB5LeIHiO+TVPUu/PULdGzZBoaUOYCudEtVh3dV9oxIW
-         ntR6bWJlle4IFVTQ8y/2X35NrddUt9VERa1HEjpJO/mb+0gyxE8Ep7hg8VZFqCLcycnc
-         MUDq5sfT6vW4m7btE8rDd34rrYpX56GPRtjZKd6otPf13P292DxHETVzDYgiqtrqa+OE
-         w91W1LPyJREQNKurLhwfghegJbLIuRDSIwTLhiFssh3hC0WwosPAAo/TGQkJ0rzcm4bq
-         S+ug==
-X-Forwarded-Encrypted: i=1; AJvYcCV9hapeAqLe2MjYNG/N7cTqkIPnLMh3hLg9GLDmYKr/0owiPD5ofSHmgYIUtfla+AqgomP2xPKtk5FgFh2GYd8j7OmaD2P1uMk1UWei
-X-Gm-Message-State: AOJu0YwE1Qju6E9l8r6KbFWPkQ8tHGPV59FVly98kD1SjXbdk3n0DMQk
-	wsgpNH37OgbGheLFfGYZ3UsfI+D3/ASTwXrR7BP49vLRKsPbePgj74hAe6AcPgs=
-X-Google-Smtp-Source: AGHT+IHAoEd1Vj8PO/OsWzB6VwiWyVdXfuzPDSC6+IUdzvwVU7M5dm88SzviPvIsnMQnSANGCGrSDw==
-X-Received: by 2002:a05:6512:6d5:b0:51f:6ab6:9e5b with SMTP id u21-20020a05651206d500b0051f6ab69e5bmr13524658lff.36.1715061592083;
-        Mon, 06 May 2024 22:59:52 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id z18-20020a1709060bf200b00a59cf813f34sm1975488ejg.144.2024.05.06.22.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 22:59:51 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: samsung: gs101: drop unused HSI2 clock parent data
-Date: Tue,  7 May 2024 07:59:48 +0200
-Message-ID: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715061618; c=relaxed/simple;
+	bh=NoTu1cDaz5Vv906K626wxEwxNJv9Jn5/aGcFrxBl8Pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K4VIg3oZ5jsPsGSXlCLMi+LubN7fGQvdnv7sj1gHG4y0dG5xRdxSxGbuqXFLAox3izPy7E/ZEvkL4huxLP5DtLg8qJVPSXxmxyvvTqQ9vaQJrVOr4OW17TcDuk9ewndLZ+Ymq0n9xpYAEVGZ3Z1rkSJBfZh4AAQLAQQ43BSzDNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE3661042;
+	Mon,  6 May 2024 23:00:40 -0700 (PDT)
+Received: from [10.163.37.41] (unknown [10.163.37.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 860323F587;
+	Mon,  6 May 2024 23:00:06 -0700 (PDT)
+Message-ID: <0875aac2-61cb-484a-bd7e-043c208f53c1@arm.com>
+Date: Tue, 7 May 2024 11:30:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/17] coresight: Expose map argument in trace ID API
+Content-Language: en-US
+To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
+ coresight@lists.linaro.org, suzuki.poulose@arm.com, mike.leach@linaro.org
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-12-james.clark@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240429152207.479221-12-james.clark@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Drop static const arrays with HSI2 clocks parent data which are not
-referenced by any clock.  This might cause -Werror=unused-const-variable
-warnings.
 
-Reported-by: Stephen Boyd <sboyd@kernel.org>
-Closes: https://lore.kernel.org/all/8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org/
-Fixes: 093c290084a4 ("clk: samsung: gs101: add support for cmu_hsi2")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 15 ---------------
- 1 file changed, 15 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index e2a6a1992505..ba9570f7a5fa 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -2601,21 +2601,6 @@ static const unsigned long cmu_hsi2_clk_regs[] __initconst = {
- 	QUEUE_CTRL_REG_BLK_HSI2_CMU_HSI2,
- };
- 
--PNAME(mout_hsi2_ufs_embd_p)	= { "oscclk", "dout_cmu_shared0_div4",
--				    "dout_cmu_shared2_div2", "fout_spare_pll" };
--
--PNAME(mout_hsi2_pcie_p)		= { "oscclk", "dout_cmu_shared2_div2" };
--
--PNAME(mout_hsi2_bus_p)		= { "dout_cmu_shared0_div4",
--				    "dout_cmu_shared1_div4",
--				    "dout_cmu_shared2_div2",
--				    "dout_cmu_shared3_div2",
--				    "fout_spare_pll", "oscclk", "oscclk",
--				    "oscclk" };
--
--PNAME(mout_hsi2_mmc_card_p)	= { "fout_shared2_pll", "fout_shared3_pll",
--				    "dout_cmu_shared0_div4", "fout_spare_pll" };
--
- PNAME(mout_hsi2_bus_user_p)	= { "oscclk", "dout_cmu_hsi2_bus" };
- PNAME(mout_hsi2_mmc_card_user_p) = { "oscclk", "dout_cmu_hsi2_mmc_card" };
- PNAME(mout_hsi2_pcie_user_p)	= { "oscclk", "dout_cmu_hsi2_pcie" };
--- 
-2.43.0
+On 4/29/24 20:51, James Clark wrote:
+> The trace ID API is currently hard coded to always use the global map.
+> The functions that take the map as an argument aren't currently public.
+> Make them public so that Perf mode can pass in its own maps. At the
+> moment all usages are still hard coded to use the global map, but now
+> on the caller side.
+> 
+> System ID functions are unchanged because they will always use the
+> default map.
+> 
+> Signed-off-by: James Clark <james.clark@arm.com>
 
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+
+> ---
+>  .../hwtracing/coresight/coresight-etm-perf.c  |  5 +++--
+>  .../coresight/coresight-etm3x-core.c          |  5 +++--
+>  .../coresight/coresight-etm4x-core.c          |  5 +++--
+>  .../hwtracing/coresight/coresight-trace-id.c  | 22 +++++++------------
+>  .../hwtracing/coresight/coresight-trace-id.h  |  9 +++++---
+>  5 files changed, 23 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index c0c60e6a1703..4afb9d29f355 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -232,7 +232,7 @@ static void free_event_data(struct work_struct *work)
+>  		if (!(IS_ERR_OR_NULL(*ppath)))
+>  			coresight_release_path(*ppath);
+>  		*ppath = NULL;
+> -		coresight_trace_id_put_cpu_id(cpu);
+> +		coresight_trace_id_put_cpu_id(cpu, coresight_trace_id_map_default());
+>  	}
+>  
+>  	/* mark perf event as done for trace id allocator */
+> @@ -401,7 +401,8 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>  		}
+>  
+>  		/* ensure we can allocate a trace ID for this CPU */
+> -		trace_id = coresight_trace_id_get_cpu_id(cpu);
+> +		trace_id = coresight_trace_id_get_cpu_id(cpu,
+> +							 coresight_trace_id_map_default());
+>  		if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>  			cpumask_clear_cpu(cpu, mask);
+>  			coresight_release_path(path);
+> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> index 9d5c1391ffb1..4149e7675ceb 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> @@ -465,7 +465,8 @@ int etm_read_alloc_trace_id(struct etm_drvdata *drvdata)
+>  	 *
+>  	 * trace id function has its own lock
+>  	 */
+> -	trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu);
+> +	trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu,
+> +						 coresight_trace_id_map_default());
+>  	if (IS_VALID_CS_TRACE_ID(trace_id))
+>  		drvdata->traceid = (u8)trace_id;
+>  	else
+> @@ -477,7 +478,7 @@ int etm_read_alloc_trace_id(struct etm_drvdata *drvdata)
+>  
+>  void etm_release_trace_id(struct etm_drvdata *drvdata)
+>  {
+> -	coresight_trace_id_put_cpu_id(drvdata->cpu);
+> +	coresight_trace_id_put_cpu_id(drvdata->cpu, coresight_trace_id_map_default());
+>  }
+>  
+>  static int etm_enable_perf(struct coresight_device *csdev,
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index a0bdfabddbc6..f32c8cd7742d 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -241,7 +241,8 @@ int etm4_read_alloc_trace_id(struct etmv4_drvdata *drvdata)
+>  	 * or return the one currently allocated.
+>  	 * The trace id function has its own lock
+>  	 */
+> -	trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu);
+> +	trace_id = coresight_trace_id_get_cpu_id(drvdata->cpu,
+> +						 coresight_trace_id_map_default());
+>  	if (IS_VALID_CS_TRACE_ID(trace_id))
+>  		drvdata->trcid = (u8)trace_id;
+>  	else
+> @@ -253,7 +254,7 @@ int etm4_read_alloc_trace_id(struct etmv4_drvdata *drvdata)
+>  
+>  void etm4_release_trace_id(struct etmv4_drvdata *drvdata)
+>  {
+> -	coresight_trace_id_put_cpu_id(drvdata->cpu);
+> +	coresight_trace_id_put_cpu_id(drvdata->cpu, coresight_trace_id_map_default());
+>  }
+>  
+>  struct etm4_enable_arg {
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+> index 19005b5b4dc4..45ddd50d09a6 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+> @@ -12,7 +12,7 @@
+>  
+>  #include "coresight-trace-id.h"
+>  
+> -/* Default trace ID map. Used on systems that don't require per sink mappings */
+> +/* Default trace ID map. Used in sysfs mode and for system sources */
+>  static struct coresight_trace_id_map id_map_default;
+>  
+>  /* maintain a record of the mapping of IDs and pending releases per cpu */
+> @@ -152,7 +152,7 @@ static void coresight_trace_id_release_all_pending(void)
+>  	DUMP_ID_MAP(id_map);
+>  }
+>  
+> -static int coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+> +int coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+>  {
+>  	unsigned long flags;
+>  	int id;
+> @@ -195,8 +195,9 @@ static int coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_
+>  	DUMP_ID_MAP(id_map);
+>  	return id;
+>  }
+> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_cpu_id);
+>  
+> -static void coresight_trace_id_map_put_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+> +void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+>  {
+>  	unsigned long flags;
+>  	int id;
+> @@ -222,6 +223,7 @@ static void coresight_trace_id_map_put_cpu_id(int cpu, struct coresight_trace_id
+>  	DUMP_ID_CPU(cpu, id);
+>  	DUMP_ID_MAP(id_map);
+>  }
+> +EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id);
+>  
+>  static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
+>  {
+> @@ -250,19 +252,11 @@ static void coresight_trace_id_map_put_system_id(struct coresight_trace_id_map *
+>  	DUMP_ID_MAP(id_map);
+>  }
+>  
+> -/* API functions */
+> -
+> -int coresight_trace_id_get_cpu_id(int cpu)
+> -{
+> -	return coresight_trace_id_map_get_cpu_id(cpu, &id_map_default);
+> -}
+> -EXPORT_SYMBOL_GPL(coresight_trace_id_get_cpu_id);
+> -
+> -void coresight_trace_id_put_cpu_id(int cpu)
+> +struct coresight_trace_id_map *coresight_trace_id_map_default(void)
+>  {
+> -	coresight_trace_id_map_put_cpu_id(cpu, &id_map_default);
+> +	return &id_map_default;
+>  }
+> -EXPORT_SYMBOL_GPL(coresight_trace_id_put_cpu_id);
+> +EXPORT_SYMBOL_GPL(coresight_trace_id_map_default);
+>  
+>  int coresight_trace_id_read_cpu_id(int cpu)
+>  {
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+> index 49438a96fcc6..54b9d8ed903b 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+> @@ -42,7 +42,10 @@
+>  #define IS_VALID_CS_TRACE_ID(id)	\
+>  	((id > CORESIGHT_TRACE_ID_RES_0) && (id < CORESIGHT_TRACE_ID_RES_TOP))
+>  
+> -/* Allocate and release IDs for a single default trace ID map */
+> +/**
+> + * Get the global map that's used by sysfs
+> + */
+> +struct coresight_trace_id_map *coresight_trace_id_map_default(void);
+>  
+>  /**
+>   * Read and optionally allocate a CoreSight trace ID and associate with a CPU.
+> @@ -57,7 +60,7 @@
+>   *
+>   * return: CoreSight trace ID or -EINVAL if allocation impossible.
+>   */
+> -int coresight_trace_id_get_cpu_id(int cpu);
+> +int coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map);
+>  
+>  /**
+>   * Release an allocated trace ID associated with the CPU.
+> @@ -70,7 +73,7 @@ int coresight_trace_id_get_cpu_id(int cpu);
+>   *
+>   * @cpu: The CPU index to release the associated trace ID.
+>   */
+> -void coresight_trace_id_put_cpu_id(int cpu);
+> +void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_map);
+>  
+>  /**
+>   * Read the current allocated CoreSight Trace ID value for the CPU.
 
