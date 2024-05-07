@@ -1,172 +1,167 @@
-Return-Path: <linux-kernel+bounces-171840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9208BE97D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F34CC8BE869
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE7EEB2A57D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:40:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB79AB28CAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE7716D9C8;
-	Tue,  7 May 2024 16:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154FC16F854;
+	Tue,  7 May 2024 15:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="o1PUuU18"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jNAbiaL3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F3516D322;
-	Tue,  7 May 2024 16:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1511316C86F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099707; cv=none; b=YOXMvCpNSqZKr+pyr2qZaQ8COuHwdv3+avbQet06oAR1Ia2YBUfZv0XofeYsaaLs1uQ0Smat4lSUJmZIR6+8KJz3iZC0TqNkJPbHdM5ATvbCWVEeZccIgeQ5iHp4Kx/rq5bcHPK9qZ+qcNCXIx0WpMB+RHRzkKJYxxE6YO6kOco=
+	t=1715097508; cv=none; b=af3hfrcqda0NK78M+TO4O65pf62RcY+GJFC+9oTg/0gINWijr1gz4SlvqUz/gNj0oJ+2mbnQr8ujmWCZz4+L1fl0JGp4TTlH6/8wNrdujSFAS5JO7gDw6R3Tc+xP3yYlH4/GIVZ8A4Es3Ki2XfPPnpUzdhWPfVBiVnidfjQe3Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099707; c=relaxed/simple;
-	bh=57uYbuim9Hu4C7H4vfg5kDTB6ZjQdpi42ugRCkVfuqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OEVVNipzhZoVcOWtolORjYxD/Ay1RQxU+Cay8XhVFZ+fILTjJXk1RQp1mpEGqOzFbGvC3vtiy+Ow0kGShS8rCY7CRUmDz+J8hb40062Dkc1+b2uGjZgAzGGYw8qmgZ9J68PsGJlw+rPCz2ZKbfLWy8f25mFSI89QSccb1gnhOx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=o1PUuU18; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447FtEpQ015151;
-	Tue, 7 May 2024 16:34:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=pp1;
- bh=VJ012Q9//RmwPNni97kdU0owqsPV9uahC3XCnkLIBe8=;
- b=o1PUuU18fJj1aNuSb2C+shGqUUMHfreMcnwUXgkdl92PSAOnndbQxrpFmJkLaZVg94fc
- XBpbl5sEzaIWK1i8MwulMfNLbM/wX/8b3H7xmgYj7Pyiokb0RdfpUqP+xR9RHKGDByw7
- bQcSEUaq6hh6g177jQ8Xa88xIXt4RfWvLnpLZr+QamU4ifrM4aCVV+k0kwIcneoKgbuj
- m+tspAO9VAu21ycM/U383/yhzo2jGIAk0gTyBWWa+PEZERqH1lfYWbJbGqOzpzeGh3oT
- 87pgg8YaadsctMsPenHK4iZYGcai5zLIZnSQCN0DIic3KsZI4nh6WLDQoxTj6DXhc8BR 6Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqc503fe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:34:57 +0000
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447GYv7Q013548;
-	Tue, 7 May 2024 16:34:57 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqc503fb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:34:56 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447EbJxL031316;
-	Tue, 7 May 2024 16:34:56 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xwybtyj2x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:34:56 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447GYoTZ15597932
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 May 2024 16:34:52 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B3A8220043;
-	Tue,  7 May 2024 16:34:50 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 747CC20040;
-	Tue,  7 May 2024 16:34:50 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 May 2024 16:34:50 +0000 (GMT)
-Date: Tue, 7 May 2024 17:53:36 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>,
-        Matthew Wilcox
- <willy@infradead.org>, Thomas Huth <thuth@redhat.com>
-Subject: Re: [PATCH v2 06/10] s390/uv: make uv_convert_from_secure() a
- static function
-Message-ID: <20240507175336.4d7b14ec@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20240412142120.220087-7-david@redhat.com>
-References: <20240412142120.220087-1-david@redhat.com>
-	<20240412142120.220087-7-david@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715097508; c=relaxed/simple;
+	bh=Jc1Tbss7i1Ju4KveDSuZj4nCUDFkNCR8orrkEHkum5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IZrFTDYY7fas8nYqICJK5TIsuq3mRc7ZCB/eTg9fzaZPAg+IfIUOKXL4Z6Cr/VgotWEL9/fyaisRx8HHEetO2ScRvsfWrp4NOCzesypjUaqklmFI08CLnBQuzu7r5/pwLlUsQP/2Lx1st4Af4G6XYMTw4+mpeYYh2VDpeoF5UH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jNAbiaL3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715097504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rUh2GSNIC9mFZceVpUckSJUlR16exki8Ae5fEBtcFTE=;
+	b=jNAbiaL32F0T3dRpc0bwaDyUwseKzmWbx4+IJ86M7E+Ls9vkLOFDwxcZiQ7cP9ibj60+0+
+	NMS3tlE93Lrt2lFxTq819D2P8Hc4I7eGEP3laVTehTTmqnDB/XnfcsB0U4gYjRI37Ca+sB
+	kn2NCS3jUgW/Lj1Fmnz88+lrH18PAM4=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-346-8y3twOTSMzaVkPuSJ1q2aA-1; Tue,
+ 07 May 2024 11:58:19 -0400
+X-MC-Unique: 8y3twOTSMzaVkPuSJ1q2aA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 35AB33802AC9;
+	Tue,  7 May 2024 15:58:19 +0000 (UTC)
+Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 19A14200B2F6;
+	Tue,  7 May 2024 15:58:19 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>
+Subject: [PATCH 07/17] KVM: x86/mmu: Use synthetic page fault error code to indicate private faults
+Date: Tue,  7 May 2024 11:58:07 -0400
+Message-ID: <20240507155817.3951344-8-pbonzini@redhat.com>
+In-Reply-To: <20240507155817.3951344-1-pbonzini@redhat.com>
+References: <20240507155817.3951344-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: U_btB3z65KuGcB1VV8av_CPOkxk3SM2l
-X-Proofpoint-ORIG-GUID: E2fRKeg_CT-pqOiw-QThF8VNeX97y-ll
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_09,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 clxscore=1015 phishscore=0 mlxlogscore=942
- suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2405070112
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Fri, 12 Apr 2024 16:21:16 +0200
-David Hildenbrand <david@redhat.com> wrote:
+From: Sean Christopherson <seanjc@google.com>
 
-> It's not used outside of uv.c, so let's make it a static function.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Add and use a synthetic, KVM-defined page fault error code to indicate
+whether a fault is to private vs. shared memory.  TDX and SNP have
+different mechanisms for reporting private vs. shared, and KVM's
+software-protected VMs have no mechanism at all.  Usurp an error code
+flag to avoid having to plumb another parameter to kvm_mmu_page_fault()
+and friends.
 
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Alternatively, KVM could borrow AMD's PFERR_GUEST_ENC_MASK, i.e. set it
+for TDX and software-protected VMs as appropriate, but that would require
+*clearing* the flag for SEV and SEV-ES VMs, which support encrypted
+memory at the hardware layer, but don't utilize private memory at the
+KVM layer.
 
-> ---
->  arch/s390/include/asm/uv.h | 6 ------
->  arch/s390/kernel/uv.c      | 2 +-
->  2 files changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-> index 0e7bd3873907..d2205ff97007 100644
-> --- a/arch/s390/include/asm/uv.h
-> +++ b/arch/s390/include/asm/uv.h
-> @@ -484,7 +484,6 @@ int uv_pin_shared(unsigned long paddr);
->  int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb);
->  int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr);
->  int uv_destroy_owned_page(unsigned long paddr);
-> -int uv_convert_from_secure(unsigned long paddr);
->  int uv_convert_owned_from_secure(unsigned long paddr);
->  int gmap_convert_to_secure(struct gmap *gmap, unsigned long gaddr);
->  
-> @@ -503,11 +502,6 @@ static inline int uv_destroy_owned_page(unsigned long paddr)
->  	return 0;
->  }
->  
-> -static inline int uv_convert_from_secure(unsigned long paddr)
-> -{
-> -	return 0;
-> -}
-> -
->  static inline int uv_convert_owned_from_secure(unsigned long paddr)
->  {
->  	return 0;
-> diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-> index ecfc08902215..3d3250b406a6 100644
-> --- a/arch/s390/kernel/uv.c
-> +++ b/arch/s390/kernel/uv.c
-> @@ -156,7 +156,7 @@ int uv_destroy_owned_page(unsigned long paddr)
->   *
->   * @paddr: Absolute host address of page to be exported
->   */
-> -int uv_convert_from_secure(unsigned long paddr)
-> +static int uv_convert_from_secure(unsigned long paddr)
->  {
->  	struct uv_cb_cfs uvcb = {
->  		.header.cmd = UVC_CMD_CONV_FROM_SEC_STOR,
+Opportunistically add a comment to call out that the logic for software-
+protected VMs is (and was before this commit) broken for nested MMUs, i.e.
+for nested TDP, as the GPA is an L2 GPA.  Punt on trying to play nice with
+nested MMUs as there is a _lot_ of functionality that simply doesn't work
+for software-protected VMs, e.g. all of the paths where KVM accesses guest
+memory need to be updated to be aware of private vs. shared memory.
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Message-Id: <20240228024147.41573-6-seanjc@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/include/asm/kvm_host.h |  7 ++++++-
+ arch/x86/kvm/mmu/mmu.c          | 14 ++++++++++++++
+ arch/x86/kvm/mmu/mmu_internal.h |  2 +-
+ 3 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 12e727301262..0dc755a6dc0c 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -273,7 +273,12 @@ enum x86_intercept_stage;
+  * when emulating instructions that triggers implicit access.
+  */
+ #define PFERR_IMPLICIT_ACCESS	BIT_ULL(48)
+-#define PFERR_SYNTHETIC_MASK	(PFERR_IMPLICIT_ACCESS)
++/*
++ * PRIVATE_ACCESS is a KVM-defined flag us to indicate that a fault occurred
++ * when the guest was accessing private memory.
++ */
++#define PFERR_PRIVATE_ACCESS   BIT_ULL(49)
++#define PFERR_SYNTHETIC_MASK   (PFERR_IMPLICIT_ACCESS | PFERR_PRIVATE_ACCESS)
+ 
+ #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
+ 				 PFERR_WRITE_MASK |		\
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 3609167ba30e..eb041acec2dc 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -5799,6 +5799,20 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
+ 	if (WARN_ON_ONCE(!VALID_PAGE(vcpu->arch.mmu->root.hpa)))
+ 		return RET_PF_RETRY;
+ 
++	/*
++	 * Except for reserved faults (emulated MMIO is shared-only), set the
++	 * PFERR_PRIVATE_ACCESS flag for software-protected VMs based on the gfn's
++	 * current attributes, which are the source of truth for such VMs.  Note,
++	 * this wrong for nested MMUs as the GPA is an L2 GPA, but KVM doesn't
++	 * currently supported nested virtualization (among many other things)
++	 * for software-protected VMs.
++	 */
++	if (IS_ENABLED(CONFIG_KVM_SW_PROTECTED_VM) &&
++	    !(error_code & PFERR_RSVD_MASK) &&
++	    vcpu->kvm->arch.vm_type == KVM_X86_SW_PROTECTED_VM &&
++	    kvm_mem_is_private(vcpu->kvm, gpa_to_gfn(cr2_or_gpa)))
++		error_code |= PFERR_PRIVATE_ACCESS;
++
+ 	r = RET_PF_INVALID;
+ 	if (unlikely(error_code & PFERR_RSVD_MASK)) {
+ 		r = handle_mmio_page_fault(vcpu, cr2_or_gpa, direct);
+diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+index 797b80f996a7..dfd9ff383663 100644
+--- a/arch/x86/kvm/mmu/mmu_internal.h
++++ b/arch/x86/kvm/mmu/mmu_internal.h
+@@ -306,7 +306,7 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 		.max_level = KVM_MAX_HUGEPAGE_LEVEL,
+ 		.req_level = PG_LEVEL_4K,
+ 		.goal_level = PG_LEVEL_4K,
+-		.is_private = kvm_mem_is_private(vcpu->kvm, cr2_or_gpa >> PAGE_SHIFT),
++		.is_private = err & PFERR_PRIVATE_ACCESS,
+ 	};
+ 	int r;
+ 
+-- 
+2.43.0
+
 
 
