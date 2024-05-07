@@ -1,233 +1,123 @@
-Return-Path: <linux-kernel+bounces-171976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2998BEB65
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:17:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023968BEB6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B1D1C247A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B5A283460
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48ED16D32A;
-	Tue,  7 May 2024 18:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0A016D322;
+	Tue,  7 May 2024 18:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="HvQYFbPx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ff3XKmpn"
-Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bZDwPDC7"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE6716D30F;
-	Tue,  7 May 2024 18:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B734516C870
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715105814; cv=none; b=alVyYEiBfV5302Ydv8pYSN5Ptp8A7WnTQ/Dg+SbYMfRXnZsG6McrkPmRGjdO1IOvdQRmazEw2/uQoFsuHWuwkXkl9cyKGal8kwJlycBht6DxG9XY4vJrIiceZgJtyFfwPnwhqzkNH5ENg4Bez4n3eXKKfk1T8QwoCmgSFusUFC4=
+	t=1715105973; cv=none; b=mz+os0yxS1ACMjXVDFW3hKJvnNivTzdxuLc6gy3kSpBWld9P9+rTidrTv8tgCLVwapm/4phTvIyp+jNe9dLkSLQVi7VpM1TkAPbWyY6Z4NfTXfhKFfdlk1rcgV2IjLjRv/B7ymmVHajltc/ICaEO6fAutaW4db04gojwkNQ7v6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715105814; c=relaxed/simple;
-	bh=tkkLup4fz7SXQkE6wLRmN85VKtFi0Vkf6N3FNeMPO4M=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Me1iubFhZA6NVS4tycyGXTJfb55AoyRmF+d1gw2K7SzC0lJFCrGWJNsWYsVKcEDyXi0IU9D2sCci+762gEiae+VCOrK89i4isv0Gq0S0ZYxD0ah16HUJ7egxThId+/kNCmHSHDbO70h+vYn9cKVNnHjeRMo1Zaz5ut07cVCAUv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=HvQYFbPx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ff3XKmpn; arc=none smtp.client-ip=64.147.123.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 638291800101;
-	Tue,  7 May 2024 14:16:51 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Tue, 07 May 2024 14:16:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1715105811;
-	 x=1715192211; bh=xkZUyYvJJx8Ghug4jhe04XLSU69l2vONZ4Ow52k89Ng=; b=
-	HvQYFbPxc8YlfjpFXvw1MuSgSeGVfGjSsiV0vrW/5xGQMOoCpDmh5gyMAYAOl8Ym
-	NhEmh1T3kBzfPC4hT5VG+MLJllU0q6ABk3NtyEWCORXf3kli1ZgLtrKHnM7XUQf3
-	l4dW1/1flG6SOWec+rojzHejjnieogmsEGZ1AyWoBTRh8B78it2+JHD4mWjlVQIn
-	jqPjaCARHkKzQXRgKhEKBnDxvTQJWw51L85xmBNitw5WN8D/SkMG62vjDpOGgtL3
-	pIL/Cck6RWp60byfRHKp4cuPfnRxFORJV0iOpTFcjwxIahdmHTLkF1Ca/1J0Dwar
-	wFzzVz8OnP4BDAk1SXPW+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715105811; x=
-	1715192211; bh=xkZUyYvJJx8Ghug4jhe04XLSU69l2vONZ4Ow52k89Ng=; b=f
-	f3XKmpnrjqrj2Fofs2mBN4Pp58nD2YBGhsz7HVta5gtiVF0jwSkrFnKtwDHwnrbn
-	bNJWaaAAl1ctIjycb7GbAj6lKL2NJP+4GSUAzjzHdnfMqwhS1OcOBrqQ+/HZHlBg
-	A40qVCEtSmHNzGpHOlXj19pS3BRPXC9VC2QVEuMETjDInkmBQtmShpbQFnImgzjo
-	fMhrEkWmFrwrhjCi9YoU64eUNbzou74/VWMFZOmhGKFGyqJtsS7uEJ+j4+9f7Wbb
-	zWI/CGiyp15yEVMKtDQ6txbSveOOngph5MhTh+/c2DN1u7vvIbmvq0D0Gen2w9tE
-	FjF+8dgZVeqOOIUUVq7Yw==
-X-ME-Sender: <xms:EnA6ZjhgEbhjhOaTsBpa1trjh01D9uujWdp9FOWqtPQyg_kO7eZCMQ>
-    <xme:EnA6ZgBkbofPe7FeGJ76JCvwB8c0Ebzyu1zOwWUXbO8sGJ8BHpP7K4vMMDvo6RM_O
-    rDkBFSq7Vekkwt21Lc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedguddvtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
-    homheqnecuggftrfgrthhtvghrnhepjedutdeuhfdvjeevgfehudeitdehiefgveelheff
-    uddulefhkeeihfehudehgfevnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
-    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:EnA6ZjHsOP8reLn_5GRUUjNM8x-hVbOFx5O2GRPkZ3ZPn5DM2UYyPw>
-    <xmx:EnA6ZgQDgE_x1e2R-JJBWr2mTSYYemsGE8dIt6QiijgZ8FpNXKTcpg>
-    <xmx:EnA6ZgylKlh2ajJTVijgDmL5GbzRkohoN0YtOGQtqv86sjACZebceg>
-    <xmx:EnA6Zm6qZ-pcWPEiKrbH5tAGAeXLXtkcjLjlgoHq5rdC-gJcUII8eg>
-    <xmx:EnA6ZvlCL922gQQb2JU6kYwWLtk3jL6IoXeCnneu4bzu6-fUMZ-VKmLM>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 3ECE536A0074; Tue,  7 May 2024 14:16:50 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	s=arc-20240116; t=1715105973; c=relaxed/simple;
+	bh=c0Si3PAK9XuUohVtkgcxlmeIOxLMy40VadrfEZobTo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tAh4cj1rVk0Xy2G/o66w9DzdcwyWycHlwuLYXI1cUzwbwc9UEVsyyzNV3DlOpKYSbm9YA1bDc3pV2cbYQLlX0wR2a7CYkK/SHuKvmKMnryZtBO/TNSiGXrsbqinErVVwaSXZjMvcWwsc0fKIyM2ja728F/1CFmDqytitr6waoIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bZDwPDC7; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6203b1bc935so36100487b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:19:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715105971; x=1715710771; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SPGluv+uZ69E9hq5Ivvw3WNr4s+K3uFompbuzq730nY=;
+        b=bZDwPDC7PKBgw0wmaMFDyqpKFgVYspWbiXTlNv3anH6bSVyTxj1Uv15ibAVp/oXUOe
+         P+Sv+eNSNn5Rb4uEWStj2raYPnivNsGtInqq0k5tMO0cNHStrUIUQ6kNJiRYi+P+DGiF
+         yGjG4WFwAqVykEjMTaguYpe8xGSrsGU74qACtCLbzBCwxInNPDWGV70E8mFiVrqy4j35
+         EQQWC6DYbJ7tRUQEPxOLEMkxHY38uJpLlIAYlw3P4C6FRivWNr/gmE8roljOpiDplPpy
+         PfgSqkhnBlT7sCvvBUPaIRQZOviI+GUYK3e1sR1tBKK74y/JICbG69Yh5jyF10pkQXiU
+         CicA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715105971; x=1715710771;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SPGluv+uZ69E9hq5Ivvw3WNr4s+K3uFompbuzq730nY=;
+        b=ZN0PAT1bjBaKU8qdFA2y5RwZECR8xdAMW2sHvAb4/cdhrm0KWV7lcCD01aiZZZgqlE
+         JsLN4KgbtoiptoRVOdmnvXNGNKjE9OJaIqLo2FGTPkoeitYykwGruu1SlrS5ulWn99S9
+         UpQ5Km5vmoj6y87OFYnV2QU16esNmiBKOo3vTqPtC1j1jUOoPAtZ3bnNCB3MvjUcEC1V
+         3HyrpSFGplepIzaIhaR5bfBZPnmGD67ngXucqSiFWHrReg5+6nNyZJuX+ZhMRGSfz1KE
+         RzYxq48kb2/4Wt9ZIRbVYgyl12V36Z6QH7G6my1jtMiJThdJlSWdDtSU8GMAzkIjA74Z
+         wnXg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7SN3w0ORNKMwY7JFk4B7jqYcyg+2LT0OyrSVKTN1bHIAWn9gFwzgCQb2xT9W9JJJ9FzUWAKhL2zkJUDKhQgXP5EjNicvNfLcbFAot
+X-Gm-Message-State: AOJu0YwU1adw07101g6plZ8lEoOqu1QpQq12rVvXYMPrQ+/plemNwaro
+	5cVlFsx4MRzGREdCp2XMlJ5RM2bE+azDA7xq7jAlDkVA32E9Kn3eice0ApLgBpDlgg7KgvOViL/
+	emvsAlmDU2Svtf60cIUbcTAgDZ9DOYD/q+v8KmQ==
+X-Google-Smtp-Source: AGHT+IFbNfibs9GOcfAtE4djrU5hwEh8dEzw/WiiE8HunAJqzpN92edJJVHBU0ShyH7E9dvzYe30+V44n+imf+Z3g+w=
+X-Received: by 2002:a81:844c:0:b0:61a:db67:b84f with SMTP id
+ 00721157ae682-62085da981emr6811217b3.27.1715105970792; Tue, 07 May 2024
+ 11:19:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <fbb4b8e2-edf4-4b4e-8b71-154a09f24ccd@app.fastmail.com>
-In-Reply-To: <20240507-jokester-antelope-808b21b957e6@spud>
-References: <20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com>
- <20240507-cm_probe-v1-4-11dbfd598f3c@flygoat.com>
- <20240507-jokester-antelope-808b21b957e6@spud>
-Date: Tue, 07 May 2024 19:16:25 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Conor Dooley" <conor@kernel.org>
-Cc: "paulburton@kernel.org" <paulburton@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: mips: Document mti,mips-cm
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <CA+G9fYs1ZN2K=UHOjrwRR2JNE-M0nf9iW_Q-YPzVgmW+9daU4Q@mail.gmail.com>
+ <CA+G9fYs1F=kO11-+DtAOsNwZGEd8mmojXEfXfg431JG=Spubcg@mail.gmail.com>
+ <CAA8EJpoMwy2w3a9VF3ejGkcxFK905DCczZOdD4k-cd7ouKHYcA@mail.gmail.com> <CA+G9fYuGLz76C9F=onq6u2hk9_YYHhyjT+bvwXmeN8U6bhejNQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYuGLz76C9F=onq6u2hk9_YYHhyjT+bvwXmeN8U6bhejNQ@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 7 May 2024 21:19:19 +0300
+Message-ID: <CAA8EJpp5TO9CkwWCUy_OL5T4px9gTjmB-pKPr1dNPgudVc78Tg@mail.gmail.com>
+Subject: Re: arm64: defconfig: gcc-8: failed: AttributeError: module
+ 'argparse' has no attribute 'BooleanOptionalAction'
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-=E5=9C=A82024=E5=B9=B45=E6=9C=887=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
-=8D=885:50=EF=BC=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
-> On Tue, May 07, 2024 at 10:01:52AM +0100, Jiaxun Yang wrote:
->> Add devicetree binding documentation for MIPS Coherence Manager.
->>=20
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->>  .../devicetree/bindings/mips/mips-cm.yaml          | 37 ++++++++++++=
-++++++++++
->>  1 file changed, 37 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/mips/mips-cm.yaml b/Do=
-cumentation/devicetree/bindings/mips/mips-cm.yaml
->> new file mode 100644
->> index 000000000000..b92b008d7758
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mips/mips-cm.yaml
-Hi Cornor,
-
-Thanks for your comments.
-
+On Tue, 7 May 2024 at 21:06, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 >
-> Filename matching the compatible please.
-Ok.
+> On Tue, 7 May 2024 at 20:58, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Tue, 7 May 2024 at 16:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > >
+> > > On Tue, 7 May 2024 at 17:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > > >
+> > > > The arm and arm64 with gcc-8 builds failed on Linux next-20240507 tag
+> > > > with gcc-8 due to following warnings / errors.
+> > > >
+> > > > arm64 and arm:
+> > > >   defconfig - gcc-8 - failed
+> > >
+> > > Anders bisected this build problem and found the first bad commit:
+> > >
+> > > 07a2f8716c41 drm/msm/gen_header: allow skipping the validation
+> > >
+> > > Steps to reproduce:
+> > > -----
+> > > # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
+> > > --kconfig defconfig
+> >
+> > What is the python version on that platform / system?
+>
+> # python --version
+>  Python 3.7.3
 
->
->> @@ -0,0 +1,37 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mips/mips-cm.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MIPS Coherence Manager
->> +
->> +description: |
->> +  Defines a location of the MIPS Coherence Manager registers.
->> +
->> +maintainers:
->> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: mti,mips-cm
->
-> Is it actually only available on mips? Google seems to report there
-> being Coherence Managers on their RISC-V offerings too.
+EOL.
+I'll check what we can do, but please consider updating the platform.
 
-I think for MIPS's RISC-V system, it is only used by SBI and transparent
-to kernel, so it won't present in DT.=20
-
-Register fields for RISC-V system is totally different with MIPS one, and
-there is no driver to be reused. In MIPS system CM code is highly coupled
-with arch code, so for RISC-V if we want to expose it to kernel we'll ne=
-ed
-a new set of driver and a new binding.
-
->
->> +  reg:
->> +    description: |
->
-> The | isn't needed, there's no formatting to preserve.
-Ok.
-
->
->> +      Base address and size of an unoccupied memory region, which wi=
-ll be
->> +      used to map the MIPS CM registers block.
->
-> This sounds like it should actually be a memory-region that references
-> some reserved memory, not a reg, given the description. I think the
-> commit message here is lacking any information about what the intentio=
-ns
-> are for this binding.
-So it's actually a register block that can be remapped to anywhere in
-MMIO address space. DeviceTree usually passes firmware's mapping location
-to kernel.
-
-There are some other similar bindings like mti,mips-cdmm and mti,mips-cp=
-c,
-I just copied phraseology from them, should I try to explain it more her=
-e?
-
->
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    cm@1fbf8000 {
->
-> And a generic node name here please. I actually don't quite know what =
-to
-> suggest though, but "coherency-manager" would likely be better than
-> "cm".
-Ok
-
-Thanks!
-- Jiaxun
->
-> Thanks,
-> Conor.
->
->> +      compatible =3D "mti,mips-cm";
->> +      reg =3D <0x1bde8000 0x8000>;
->> +    };
->> +...
->>=20
->> --=20
->> 2.34.1
->>=20
->
-> =E9=99=84=E4=BB=B6:
-> * signature.asc
-
---=20
-- Jiaxun
+-- 
+With best wishes
+Dmitry
 
