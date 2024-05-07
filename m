@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-172189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106B98BEE9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A02368BEE9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 423401C21952
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3031D284579
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D3173184;
-	Tue,  7 May 2024 21:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF9478B60;
+	Tue,  7 May 2024 21:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRar/O50"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8F296cM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230E46EB65;
-	Tue,  7 May 2024 21:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E9D71B4C;
+	Tue,  7 May 2024 21:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715116052; cv=none; b=iv6u9bdlNTN/SZCknEHf0Ivb3r6ROlxMAr62LybmJxbIztUGhJmbx8hPWiLq3yEZCmnDecH89L3qToe7ISzhPrnN8M9gSdJd2hpkGmcBz/iWxYI1vHjzRP5A6qc3TKc0WEcRjB7EsufaRL7+t7yRrL/fl5OIb5lv9iqOuUc36yk=
+	t=1715116091; cv=none; b=Y1GIWvcJ1yTj9VGY9G6i5Ro30Jh2RmDB/oi1ZacHZCkC0wTuGhPZcIVG75yr19J0VMhu4oDFU+hgcH/jQMEaYh6ADFHXG5H01guEmatpGABUeWc66RSaHToontYJD1AFI++W1VUVQVKQqXe8hMiVNPY5F9Mq9N/T9ymSgP90tSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715116052; c=relaxed/simple;
-	bh=IruPKvmHK22rd3Atyzt9f//OhnIvVhMuPrqqtt9DPSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bGzEPq/PiZgj3Sv60NPYL1o2a4VRHCeIs8woOlWCsZZJShqUOZ6WQ9jB864XAdG01ZIb3DbkReu0szKebOq5sqV4XKkB/6bAl3sfQtoWJEbEsCtn1YPLIqhSrkVEGRFzh0faEfwOpvFCEMdZeAhuA9XkEnj2lXuTOP85Pb58g0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRar/O50; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A36C2BBFC;
-	Tue,  7 May 2024 21:07:30 +0000 (UTC)
+	s=arc-20240116; t=1715116091; c=relaxed/simple;
+	bh=r5oe1vkus2mJ8VOrgZSUKhQsffL0l19+uK5j58WulmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r+tUuddJzB/OMxP+m2JlExbbcas5MEFzKWGreeDJDaLX0deAPQpeqZG/jp2Evg/AZlk2ZJNu3OgyNjWGxIIuShJltHIpfahgT+vQ+Gm7a1f9mUZHSGVtUBLZ5fUEaLVaY5ND2vf2TKE7lDH5X6SwjEtiHuX9Y+JgFon8Ogxcz1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8F296cM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8933BC2BBFC;
+	Tue,  7 May 2024 21:08:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715116050;
-	bh=IruPKvmHK22rd3Atyzt9f//OhnIvVhMuPrqqtt9DPSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRar/O50ZvQKN+7xk/G/FDvHxyqaReRGL5ZpbC7aLsA36ByRqjQtnamcnNiR7/03U
-	 do6YQFagyR+x3Y+Sw0spCnqH2O/z/Ys0q+9J8Dr86991ivYuoZNgESUtNstMJYI/Hj
-	 z+ea713knJ+yIw0fkiXkFLHQcY+rzHC8o04ew8Xqsk+gUP0Qr2emt1XZdiggJoq85v
-	 h95cP/YanIE9j4eQwPntPjoan/WzBDfyx6XX1a9QAmsk7nZu1mR1P7SX8aR/rAOwca
-	 Wx9javJMlil7LRIJwFAgSuWkwVzsUXT0yfsSzXPJh+UpuaV8cE8vonzh8aQs6CNU/3
-	 e7LdQuEoqDgTQ==
-Date: Tue, 7 May 2024 18:07:27 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Clark <james.clark@arm.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>,
-	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 1/8] perf ui browser: Don't save pointer to stack
- memory
-Message-ID: <ZjqYD-q7EqQW6hVE@x1>
-References: <20240507183545.1236093-1-irogers@google.com>
- <20240507183545.1236093-2-irogers@google.com>
- <ZjqNKPgWR7mBFaV4@x1>
- <ZjqNjrJ2ElrT11iB@x1>
- <CAP-5=fUsQwKsCi3us+dp-Tj+PayNPrYTqTQeo-YLbvSuOt1=9w@mail.gmail.com>
- <ZjqXa25BnFncJmw-@x1>
+	s=k20201202; t=1715116091;
+	bh=r5oe1vkus2mJ8VOrgZSUKhQsffL0l19+uK5j58WulmA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P8F296cM2OZtZAxfLS5Ogn1h17YB/yHng2rofbQLr9r9YQZbjID9Tr8kgwdn/1d8f
+	 KWeTSP1zFiwXnl/Y5y2xJCLObbaAgJfKul6k4sB5Cz412sXHLBwCNQ3cksEAyRJFWH
+	 /mUkugQdqA1yb3ycjVs5fw6eQA90NMljzApy9qoQKr2HSRTFdXBSZ40vvCzJ3Zh8hl
+	 JdT64AC6ZHHfAILBSb1EmVeNb6noVP6vxGVyZpcuSgiost9PYy1VbfLVKOd5Vr3E1H
+	 82MqMmzPW0bp/NzTQlMhW1sCf96fCG1wsQMLn5l00JZe81XrfRFFeBPGRyxB7KNxJx
+	 DULHqiyomjGyA==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Markus Elfring <elfring@users.sourceforge.net>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Vamshi Gajjela <vamshigajjela@google.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	David Collins <quic_collinsd@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 00/12] SPMI patches for the merge window
+Date: Tue,  7 May 2024 14:07:37 -0700
+Message-ID: <20240507210809.3479953-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjqXa25BnFncJmw-@x1>
 
-On Tue, May 07, 2024 at 06:04:43PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, May 07, 2024 at 01:48:28PM -0700, Ian Rogers wrote:
-> > On Tue, May 7, 2024 at 1:22 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > >
-> > > On Tue, May 07, 2024 at 05:20:59PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > On Tue, May 07, 2024 at 11:35:38AM -0700, Ian Rogers wrote:
-> > > > > ui_browser__show is capturing the input title that is stack allocated
-> > > > > memory in hist_browser__run. Avoid a use after return by strdup-ing
-> > > > > the string.
-> > > >
-> > > > But everything happens in that context, i.e. hist_brower__run() will
-> > > > call ui_browser__ methods and then exit.
-> > > >
-> > > > We end up having browser->title pointing to returned stack memory
-> > > > (invalid) but there will be no references to it, no?
-> > > >
-> > > > If we return to hist_browser__run() we then call ui_browser__show
-> > > > passing a new title, for "live" stack memory, rinse repeat. Or have you
-> > > > noticed an actual use-after-"free"?
-> > >
-> > > And I'll take the patch, I'm just trying to figure it out if it fixed a
-> > > real bug or if it just makes the code more future proof, i.e. to avoid
-> > > us adding code that actually uses invalid stack memory.
-> > 
-> > My command line using tui is:
-> > $ sudo bash -c 'rm /tmp/asan.log*; export
-> > ASAN_OPTIONS="log_path=/tmp/asan.log"; /tmp/perf/perf mem record -a
-> > sleep 1; /tmp/perf/perf mem report'
-> > I then go to the perf annotate view and quit. This triggers the asan
-> > error (from the log file):
-> > ```
-> 
-> Thanks, it is indeed a bug, I'll keep that Fixes tag, people interested
-> in the full details can hopefully find this message going from the Link:
-> tag.
+Here's a stack of SPMI patches for the next merge window. The main
+chunk consists of adding support for multi bus SPMI controllers found on
+newer Qualcomm SoCs. Beyond that there's some cleanups in the bindings
+and code along with a non-critical fix to avoid an exit path ida bug.
 
-Nah, I added your explanation to the cset log message.
+Abel Vesa (7):
+  dt-bindings: spmi: Add X1E80100 SPMI PMIC ARB schema
+  dt-bindings: spmi: Deprecate qcom,bus-id
+  spmi: pmic-arb: Fix some compile warnings about members not being
+    described
+  spmi: pmic-arb: Make the APID init a version operation
+  spmi: pmic-arb: Make core resources acquiring a version operation
+  spmi: pmic-arb: Register controller for bus instead of arbiter
+  spmi: pmic-arb: Add multi bus support
 
-Thanks,
+Johan Hovold (2):
+  dt-bindings: spmi: hisilicon,hisi-spmi-controller: fix binding
+    references
+  dt-bindings: spmi: hisilicon,hisi-spmi-controller: clean up example
 
-- Arnaldo
+Markus Elfring (1):
+  spmi: pmic-arb: Replace three IS_ERR() calls by null pointer checks in
+    spmi_pmic_arb_probe()
+
+Ricardo B. Marliere (1):
+  spmi: make spmi_bus_type const
+
+Vamshi Gajjela (1):
+  spmi: hisi-spmi-controller: Do not override device identifier
+
+ .../spmi/hisilicon,hisi-spmi-controller.yaml  |  17 +-
+ .../bindings/spmi/qcom,spmi-pmic-arb.yaml     |   1 +
+ .../spmi/qcom,x1e80100-spmi-pmic-arb.yaml     | 136 +++
+ drivers/spmi/hisi-spmi-controller.c           |   1 -
+ drivers/spmi/spmi-pmic-arb.c                  | 980 +++++++++++-------
+ drivers/spmi/spmi.c                           |   2 +-
+ 6 files changed, 744 insertions(+), 393 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml
+
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>
+Cc: Markus Elfring <elfring@users.sourceforge.net>
+Cc: "Ricardo B. Marliere" <ricardo@marliere.net>
+Cc: Vamshi Gajjela <vamshigajjela@google.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: David Collins <quic_collinsd@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
 
