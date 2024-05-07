@@ -1,148 +1,108 @@
-Return-Path: <linux-kernel+bounces-171907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E82E8BEA63
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1F28BEA6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34E61F24FEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E78A1F25636
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EA916C451;
-	Tue,  7 May 2024 17:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9580B16C695;
+	Tue,  7 May 2024 17:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XYuITmd/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHpaEv2j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E3A7462
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06D21607B3;
+	Tue,  7 May 2024 17:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715102467; cv=none; b=cLzDgKznCcm8QjlkNbwGy3NnCzXeX1RM6ugrFqgicxzSVsxlWqCQrlJ2P3fw4EPYsv5hfutIvBqYLIOLI/uCKiI25OSiroenZv+2LKRWp/JpC9aAPXPb2+LURsdWo/g865vSTiQoCiLUNFfIDBT8JB6Y0MZiBY/5Ldw1f+gT2tI=
+	t=1715102490; cv=none; b=GvkdfiMAw4r7OMvYmtFWCCSd+suQmHQpIFsNT9a4PYgo3ArjzapL7oEBWQq2zAevijPQZdMbtN+KzruSGG2PYFXeFNfgxfdw15S7ohnp8Xv5QNCfhFhz8XAtAhdmLqtvhz3qBGv3UfOKnTqxSAdT0kZDY5NlevcU/1to8EREcYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715102467; c=relaxed/simple;
-	bh=Td1SHhWq6Wvpr0je4B4v22NIo5BXgO45S9j6dXvvWc0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IV7I/3DmwuOQ3GoHR39Me7u/CUQRkjtc3j6pM3RnXSYhFBX0GFk3J+S729FzIaAJw/0cY/I2WPeELT1iwylbX9K+3op7wQou959q8GQqN45/r4a2yq2S64ESHa4XDOC96bNqvNBU9XQebz0Ytqv4F5wUgOY9Llu0R9cTpcS9FLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XYuITmd/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715102464;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zvToZ7WqfcgMTwXbVfEgk8KX+0yA+ouGzL56lXRGL64=;
-	b=XYuITmd/gTiSEb+0SlodyydoJBx26vRqAiVomiyEwOojc3fTifDr47droaZJtOPnLuK3YY
-	dJP6GrRNfdl4LKYGLTf9CdQIkac0F6VrSPRd2bZguuueexkH4c+myLr4kP9vaLey4a+dEy
-	btejP+Qyq/n2hf0/8HTfM4plM23sj80=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-7EX72h-aO7m3VFyfko3ujQ-1; Tue, 07 May 2024 13:21:03 -0400
-X-MC-Unique: 7EX72h-aO7m3VFyfko3ujQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-34d99cc6c3dso2065790f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715102462; x=1715707262;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zvToZ7WqfcgMTwXbVfEgk8KX+0yA+ouGzL56lXRGL64=;
-        b=prBld3OP/0UWGLXGZpA9DFu8FeCc4VUJSG4rx81nThhLV0VuUrw1gmW9c5oSen911N
-         fxp1HG40fwjCvqqjMUbM4d0dS5U9L7VHTN5ApBHm8xHRD29IXA1VZ7ZVrHIOnns2FkQT
-         A4ejMNAXPmN2+PKWAhagPV0bBjf6meymDkyBC4iJb2TaCy1M2txZRojpS/2K0NZaFJHd
-         35LM3u1LNDWQKXb7QTIOsn5hpVtAZBeCERxDJUr9Oyrq2Z7g/UMf7KhzykqRVuHBxgDa
-         uCjEdXOJtZxepXCj0sGp8ENabFkFRtL8XXcUgeTHNJH7p1WKm0R0ozgJins/MrvdtlvD
-         IWsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXORsQZeHSxVliGcHyc8lVdssxEwfAlPEdXiDmkBeQeiUa3DiFGhy6ni2RslEtoCRw4ljx1hwKa9CR8N0KoafOfXK1+kASTdYtKCfTH
-X-Gm-Message-State: AOJu0Yzp9HR5JWVPDL6EqUNXBKycAvWXTWO/917mpOjTOzvG0CDBON4c
-	G//tAiWu/+83rJzNzH4OxUv+dd3uBPl/W7R01JtqiYPgW8HGUEgcD5NOJ02gJvIiVV3CaL0+dEh
-	hBgxyM4hKrMdO0hvHeuKwHw4El176L/SCPU5Ajhq5lvhQlHxEVRJMCNcOlDMXaJ0LwziHJq3/Tt
-	hav+45fso+dG5Qx9wr+8wXqrVS7XbTyyZy0FB6
-X-Received: by 2002:adf:ebcf:0:b0:34d:b243:5415 with SMTP id ffacd0b85a97d-34fcb3abdd8mr272807f8f.70.1715102462520;
-        Tue, 07 May 2024 10:21:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUEYCOfnDHy/EIoxjKGa949EaCj1vuoCQ08bvHLYnStorLuvGOeo1MfLxqAif12vjZfI5TzpEebQUV0rf5pgA=
-X-Received: by 2002:adf:ebcf:0:b0:34d:b243:5415 with SMTP id
- ffacd0b85a97d-34fcb3abdd8mr272797f8f.70.1715102462154; Tue, 07 May 2024
- 10:21:02 -0700 (PDT)
+	s=arc-20240116; t=1715102490; c=relaxed/simple;
+	bh=IDMR67aL+FJpg70JOZa/YqXPWKIXWABsZiy55mqfzgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DcYt4MjxOk/FMEWAlX+pPPsDZ2gba1aL5LiIIsExwoRJLR82nHHZgg0Lis0gao+Se6TyOfuUKtq08BX7vgc0y3hL11fz69JgDgPH1frnQGiXUxnRlRerDI5YDYt+cj1oonQpcEkLoxjdLUMCUiLQPN//q1WwJpBefq+V3GmiTag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NHpaEv2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75529C4AF66;
+	Tue,  7 May 2024 17:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715102490;
+	bh=IDMR67aL+FJpg70JOZa/YqXPWKIXWABsZiy55mqfzgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NHpaEv2jt8RdYDITiy9cW34apA5GulWZo2VGWPOY6kGTB/MLm0oZRf9vNRf+yh1t0
+	 nnLFMUAroOpck8gryD83BDIOqV5B1JNQSOHDEgBHku2e0v6SzhePDRTyap9EHC0c0t
+	 GLri1U62zVHUBw5Pk+C1zOD3GHkzQWJ63cFDa6XaovjXV/JtqfJCFND6TXfwjy//iX
+	 NnB/0+FdFpHCosbJlZsey2qMVPWvlegX/tZ/k9kWNqjSZAbrOQzZ2UMJyxvM4iGfV5
+	 LgZ7lVefiDXtvO/aRum2TckSTKmJkPwiSjVXVKOaNrjhjkbeEo/bfNLouO1uapMu4q
+	 iSiielqQjuNmw==
+Date: Tue, 7 May 2024 18:21:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Evan Green <evan@rivosinc.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>, Andy Chiu <andy.chiu@sifive.com>
+Subject: Re: [PATCH v6 00/17] riscv: Support vendor extensions and
+ xtheadvector
+Message-ID: <20240507-rising-ricotta-1be648c095ed@spud>
+References: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423165328.2853870-1-seanjc@google.com> <4a66f882-12bf-4a07-a80a-a1600e89a103@intel.com>
- <ZippEkpjrEsGh5mj@google.com> <7f3001de041334b5c196b5436680473786a21816.camel@intel.com>
- <ZivMkK5PJbCQXnw2@google.com> <514f75b3-a2c5-4e8f-a98a-1ec54acb10bc@intel.com>
- <Zi_DNaC4FIIr7bRP@google.com>
-In-Reply-To: <Zi_DNaC4FIIr7bRP@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 7 May 2024 19:20:51 +0200
-Message-ID: <CABgObfYvkT39Msd11uJMZMquOsvNKBa=Z548JQZGfOmCF=TPaA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] KVM: x86: Fix supported VM_TYPES caps
-To: Sean Christopherson <seanjc@google.com>
-Cc: Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vh6wbBhSwXsR2Sa9"
+Content-Disposition: inline
+In-Reply-To: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
 
-On Mon, Apr 29, 2024 at 5:56=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
-> > Perhaps we can make the kvm.ko as a dummy module which only keeps the m=
-odule
-> > parameters for backward compatibility?
->
-> Keeping parameters in a dummy kvm.ko would largely defeat the purpose of =
-linking
-> everything into vendor modules, i.e. would make it possible for the param=
-eters to
-> hold a stale value.
 
-We have the following read-write params:
+--vh6wbBhSwXsR2Sa9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-parm:           nx_huge_pages:bool
-parm:           nx_huge_pages_recovery_ratio:uint
-parm:           nx_huge_pages_recovery_period_ms:uint
-parm:           flush_on_reuse:bool
-parm:           ignore_msrs:bool
-parm:           report_ignored_msrs:bool
-parm:           min_timer_period_us:uint
-parm:           tsc_tolerance_ppm:uint
-parm:           lapic_timer_advance_ns:int
-parm:           force_emulation_prefix:int
-parm:           pi_inject_timer:bint
-parm:           eager_page_split:bool
-parm:           halt_poll_ns:uint
-parm:           halt_poll_ns_grow:uint
-parm:           halt_poll_ns_grow_start:uint
-parm:           halt_poll_ns_shrink:uint
+On Fri, May 03, 2024 at 11:18:15AM -0700, Charlie Jenkins wrote:
+> This patch series ended up much larger than expected, please bear with
+> me! The goal here is to support vendor extensions, starting at probing
+> the device tree and ending with reporting to userspace.
 
-Vendor modules do not muck with them (the only one that is exported is
-report_ignored_msrs for which permanency is obviously harmless).
+I think I've reviewed all the bits I care about, so thanks for all of
+your updates. It'd be nice if Andy could look at the actual vector parts
+of it, so I'm adding him to CC.
 
-And the following read-only params:
+Cheers,
+Conor.
 
-parm:           tdp_mmu:bool
-parm:           mmio_caching:bool
-parm:           kvmclock_periodic_sync:bool
-parm:           vector_hashing:bool
-parm:           enable_vmware_backdoor:bool
-parm:           enable_pmu:bool
-parm:           mitigate_smt_rsb:bool
 
-The only really bad one is tdp_mmu, which can change depending on the
-ept/npt parameters of kvm-intel/kvm-amd; everything else is okay to
-have in a common module.
+--vh6wbBhSwXsR2Sa9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-mitigate_smt_rsb could (should?) move to kvm-amd.ko if the modules
-were unified with kvm.ko as a dummy one.
+-----BEGIN PGP SIGNATURE-----
 
-Paolo
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjpjEwAKCRB4tDGHoIJi
+0szIAQDf5iSG/bM8HfBvrIsA44lVF79BoLK1Zcf3ndnVkXn1hQEA42EjkAPJta9g
+WY59vTOFOsAcXRSCDp9JbTmwIoNyvwM=
+=UC2O
+-----END PGP SIGNATURE-----
 
+--vh6wbBhSwXsR2Sa9--
 
