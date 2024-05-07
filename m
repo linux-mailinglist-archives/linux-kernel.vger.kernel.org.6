@@ -1,81 +1,127 @@
-Return-Path: <linux-kernel+bounces-170888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D978BDD57
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF558BDD5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27DD11C21A5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30421C218CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367CF14D422;
-	Tue,  7 May 2024 08:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A37E14D428;
+	Tue,  7 May 2024 08:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KleSiQcp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmsq7Mb3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7642113C9A2;
-	Tue,  7 May 2024 08:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDC84F889;
+	Tue,  7 May 2024 08:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715071390; cv=none; b=nwumvP06FrWVc4NvRqionfjefQhcyQRCLl+zBDs1srOYnEjDLf8j9xJs8xopIl/WA6SskMjARuspXCTe4V04kwlMfCHbz/C3MWDjtCJPXqn/gjV8DzwJtZe8Twvjxj7BT0rY1h9nmDNCc1zeIh5FmEd4Hs+n6BsHepkKBcibnp8=
+	t=1715071421; cv=none; b=oam4bvwcwVpfYZdlip+tcScdtVBcNbxVRYxzkGAJOddtrGooYCmnMRsqLL1nAWGCZwfwsDoSDqXhVDyzv9JT8VzJxqx6sUg/gm0LdSRwRpXXtXe2KDZHH771tEqZ7gdRo3xng88jkl/BHa2uBM7z8mTZil5MiwLZht/ECJoRvp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715071390; c=relaxed/simple;
-	bh=30R4BGw8vQ2acV/oSTZ/fB078AWccrZdsOiyGoe+OAU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=arnk4/CypLA8Jg8hxLvDOTLfgT/jhQlKk5xgBrPPJZQC2RsDd8eVnmWwgBJm5rkH1euZxkWWjgeI4boezhzO/cY4udP9wrVmZbiV9sBwZOYQ7LBwixLKIjlastKOQH8AlO788tbHA5PIaDNTIB6yVEHx8ZV0+9TiuiSAeiG5l8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KleSiQcp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DD4C3277B;
-	Tue,  7 May 2024 08:43:09 +0000 (UTC)
+	s=arc-20240116; t=1715071421; c=relaxed/simple;
+	bh=6jrOGZZQleYQuLgxpnrxrMV+9qFCw9xht/C6Z2bXZrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtdAMEQahAuwcIhFrRPaeTy2myifpJpwE6KjcZ9/6+edFjo+7CABUdWLlix+dPewVpLTLDzBHjTY6QZ8jSI6HmnsgwUjlPukoLO/TkwPk0ps2tPtcCPZZ4iOewAUfnq3ngLxf69v5QgiOKEDZwTqY73wcZurklWB3eI/Mh1Wzok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmsq7Mb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D13C2BBFC;
+	Tue,  7 May 2024 08:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715071390;
-	bh=30R4BGw8vQ2acV/oSTZ/fB078AWccrZdsOiyGoe+OAU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=KleSiQcpAeVQGDMv7tbDxKCMbgY3y6rcQNJIlZJoQrDvvnRNPJ+kMBpRpMCJKY4GR
-	 aAC23jJHZoWT2U9dPxYQ7P9O5QcWPo+dLfcPdw2IIPSNAFeiRUWr4gJETCIn7cIEVP
-	 9Q7nvhnTiTum6y70wfMHUb0rwEorZ/NzPOlD/2XVExXoAWS05gZfrpOtJgqHc4W/9/
-	 EwodRb6HMrQCCpRrRapX0kxqqGkS/zfwcyO9e+qxvpcJf8+zSzjpIyRW2EvZJhTGhn
-	 /PxVoysGnt6zw1cHbLy0paR1D+Oe8lY/MQr3RFo+Vxt0H+dqUBTH72gs03eoIW9qlA
-	 957NxJPSX9eiw==
-Date: Tue, 7 May 2024 10:43:07 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Kenny Levinsen <kl@kl.wtf>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    Stephen Rothwell <sfr@canb.auug.org.au>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: i2c-hid: Remove unused label in i2c_hid_set_power
-In-Reply-To: <20240507063656.2892-1-kl@kl.wtf>
-Message-ID: <nycvar.YFH.7.76.2405071042440.16865@cbobk.fhfr.pm>
-References: <20240507063656.2892-1-kl@kl.wtf>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1715071420;
+	bh=6jrOGZZQleYQuLgxpnrxrMV+9qFCw9xht/C6Z2bXZrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kmsq7Mb3syIcNZOG/YFCtgCLmpBtt/aPq3LWZfqt06CLGUO0qvuBr52HJnr76RCBb
+	 9pHneN025FgaF/nN1tjlOXqA+podWiFYcJXoJpcIEcyxck28fcneox6cMh7byfCSQg
+	 Eh/KSz3dU/6wwkb50V+NKLDz4iEG6DV6IfpiU89A8UFEwaHjnuv7jBMed5OG9rgwzG
+	 7B4kEGnI364EMBcOKzDF3rG4mVd3++fta/FKHPT5LEQTtRXGrF9stPkgf1DZD/5lCg
+	 Ws79j9H5rAdkmStV8rdcs0tcLOADeRWwodJq9+MAS16RKkto+vozkceh1UImGox76T
+	 px2eVWdSdJvXA==
+Date: Tue, 7 May 2024 09:43:36 +0100
+From: Lee Jones <lee@kernel.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] ptp: clockmatrix: Start comments with '/*'
+Message-ID: <20240507084336.GX1227636@google.com>
+References: <20240504-clockmatrix-kernel-doc-v1-1-acb07a33bb17@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240504-clockmatrix-kernel-doc-v1-1-acb07a33bb17@kernel.org>
 
-On Tue, 7 May 2024, Kenny Levinsen wrote:
+Subject line should start with:
 
-> This label was left behind when the wake-up logic was moved from
-> i2c_hid_set_power to i2c_hid_probe_address. Clean it up as it causes
-> warnings-as-errors builds to fail.
+  "mfd: idt8a340_reg: "
+
+On Sat, 04 May 2024, Simon Horman wrote:
+
+> Several comments in idt8a340_reg.h start with '/**',
+> which denotes the start of a Kernel doc,
+> but are otherwise not Kernel docs.
+
+Some very odd line breaking here.
+
+> Resolve this conflict by starting these comments with '/*' instead.
 > 
-> Fixes: bb1033c8a3ea ("HID: i2c-hid: Use address probe to wake on resume")
-> Signed-off-by: Kenny Levinsen <kl@kl.wtf>
-
-I have added
-
-	Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-and applied, thanks.
+> Flagged by ./scripts/kernel-doc -none
+> 
+> Signed-off-by: Simon Horman <horms@kernel.org>
+> ---
+>  include/linux/mfd/idt8a340_reg.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/mfd/idt8a340_reg.h b/include/linux/mfd/idt8a340_reg.h
+> index 0c706085c205..53a222605526 100644
+> --- a/include/linux/mfd/idt8a340_reg.h
+> +++ b/include/linux/mfd/idt8a340_reg.h
+> @@ -61,7 +61,7 @@
+>  #define HW_Q8_CTRL_SPARE  (0xa7d4)
+>  #define HW_Q11_CTRL_SPARE (0xa7ec)
+>  
+> -/**
+> +/*
+>   * Select FOD5 as sync_trigger for Q8 divider.
+>   * Transition from logic zero to one
+>   * sets trigger to sync Q8 divider.
+> @@ -70,7 +70,7 @@
+>   */
+>  #define Q9_TO_Q8_SYNC_TRIG  BIT(1)
+>  
+> -/**
+> +/*
+>   * Enable FOD5 as driver for clock and sync for Q8 divider.
+>   * Enable fanout buffer for FOD5.
+>   *
+> @@ -78,7 +78,7 @@
+>   */
+>  #define Q9_TO_Q8_FANOUT_AND_CLOCK_SYNC_ENABLE_MASK  (BIT(0) | BIT(2))
+>  
+> -/**
+> +/*
+>   * Select FOD6 as sync_trigger for Q11 divider.
+>   * Transition from logic zero to one
+>   * sets trigger to sync Q11 divider.
+> @@ -87,7 +87,7 @@
+>   */
+>  #define Q10_TO_Q11_SYNC_TRIG  BIT(1)
+>  
+> -/**
+> +/*
+>   * Enable FOD6 as driver for clock and sync for Q11 divider.
+>   * Enable fanout buffer for FOD6.
+>   *
+> 
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+Lee Jones [李琼斯]
 
