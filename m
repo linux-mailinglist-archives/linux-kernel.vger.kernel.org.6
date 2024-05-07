@@ -1,127 +1,98 @@
-Return-Path: <linux-kernel+bounces-171491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0BD8BE50D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:01:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE2E8BE50F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDE1A1C23E33
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:01:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4391F23A8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FAB15EFD5;
-	Tue,  7 May 2024 14:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296A315F3F3;
+	Tue,  7 May 2024 14:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QyQnBPPa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="SRwLjig1"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B8315FA60
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2490E158D9A;
+	Tue,  7 May 2024 14:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090492; cv=none; b=WtOdyiHpNzZ35osBqdsJRkt+zhArZ3fjSysVU2OUs99zVnjmjpaV8aIoSjeZcjrW96WhilbDPDos66ZBkBlbYUiT1Q6G9YlSuaFr5m+hU0rV9jtWfOuVdpEyaY+Li+fZhgEGqKTz1QLwRGgw3cE4syOWGNxstHL1R0quYPX2a/U=
+	t=1715090517; cv=none; b=YgofaOlMuGOE/3euIyCHN5Imyp+W3rYV4RzRBlM/rsJGm6u1Agwm86rhRpNsR96MgRVcc025/z28XJSNC32BmntXlIpdpOU9XbWQopM0osoxzGIHrCFZ9JiOOw2P0meZOSBSI10vYq2sBmtHS854e35l5BP5nMGRTR5ibxK3YcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090492; c=relaxed/simple;
-	bh=+g8grQa8IFxIKr6O761BzLF6WlW57k8wJHHqWVnea9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sr4SZrx1zS54wKEA2K1oLKcgUtGlWn6dSso/fiJDPepYLn4P6riB8Rv8Ofp5Z87bqqSmSrMreWP3w91PiRKZ4h5EDnSstJDeikZmtiGzDxDrPSevJT1EK2F7j03oWEKd4RAbtQNR7AZxef0dgfZnsGy6FzBumAsNl0cGcaEqMXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QyQnBPPa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715090489;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ULn520VtyFUFvINDBmnGTg2429ZFbTlPrrXCyiYuIFk=;
-	b=QyQnBPPadwxNNU3XPlipJ4VNjHKlFBY6jUTLZCcg15AmadsFo3HOeYImDkAQJpGhsadXQr
-	G0gkt/bNGIz7G3nL5IdFXEOfIpAH1nhpseogtREzkNNy/MkrnPR1SraKV2kzRjqh8nw+fF
-	k6rpz8rL5zPu0pUeQ9Kmt2WlY21+Af4=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-gTqQR7jfMvW1kpcThoKWQg-1; Tue, 07 May 2024 10:01:27 -0400
-X-MC-Unique: gTqQR7jfMvW1kpcThoKWQg-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a59a212d874so232422366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:01:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715090486; x=1715695286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ULn520VtyFUFvINDBmnGTg2429ZFbTlPrrXCyiYuIFk=;
-        b=aJJxegiYvM3zoWEqa6M5TeH7waMg9iwr36RsguygzLfxvOelXzOY7XZU8xD+qlBrgr
-         Mxxg+IbXiuyc0wUgDmhwxDwaJxCpYYn1gD154VAk/FHL3jRXSb/NlcNEZCwCdsytVOoi
-         4ZWI8Se++fHTl4QI0MU6BYfkSgjOONa/OKYXr8rKvA1GbWalJL/oUInJ6ez1drpMv1+1
-         xSHCv5Qi5cF8gc1/x2qUtIPe8SXE7XiemUP/OnAVf7+BLZqTgqT8Tpg9uCDo7i8Kox2c
-         aVB/Qa/xNzmDX30KR1B3aUJWqNoG3vPcknnwMi6wUpg0sxocx1v9iPGfmp2e3Y9P+tQc
-         m95Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXOqXXHxS+aPjXr8TtMHPs0P4jzUs0ReccnBnIwwsEAY2q2FWuEd4I/QwW96VCNU+GuCz7ZhBB9BZ9iYgF/3Ai4PbMbEbXboojQbQtU
-X-Gm-Message-State: AOJu0YyzPt120J0fsvTi0ImxkdjHkGcq0k6BD3wDPoDUInNfeTHGZ7eK
-	4MARKjFxiSxxbXZZrIQMgDPGoFk35ujJTFYPes4RrpFaBZaLtweTCotO9nn8GNG6f/kGLTs4Vt6
-	zAIgp7PwxzUVLKsq8XGVfohFynnmLcKlR4K9my4KPHD/KkzODmtb3t0bY7uZ68Q==
-X-Received: by 2002:a17:906:c311:b0:a59:b099:1544 with SMTP id s17-20020a170906c31100b00a59b0991544mr4636184ejz.42.1715090486687;
-        Tue, 07 May 2024 07:01:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWKHyguRFTZU0iJ+9SVdFZmCvdMPXw68yJmNWWRHcy4KBLCFlWQ0WOCjLrHyUtqT8caqLjSg==
-X-Received: by 2002:a17:906:c311:b0:a59:b099:1544 with SMTP id s17-20020a170906c31100b00a59b0991544mr4636165ejz.42.1715090486292;
-        Tue, 07 May 2024 07:01:26 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ag3-20020a1709069a8300b00a59a6fac3besm4341867ejc.211.2024.05.07.07.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 07:01:25 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: repair file entry in SECURITY SUBSYSTEM
-Date: Tue,  7 May 2024 16:01:22 +0200
-Message-ID: <20240507140122.176304-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1715090517; c=relaxed/simple;
+	bh=I8Jh/c0O3HmeTvddNyCG+LPiNook2RF0dJ160XS3vEE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kbwYnCe6ftBfl5WfBy40DEyGRA8+0tEYWBMt8213u0KMn34IzPGfOv+FCJei+CzhhsPCG2cvIS+J1dfPXlFIlDInty6qdwl+Bp40wXfQjNktlHL0SGs8lL4PXmj20kiHiZ6hsmaXcJQqkljtFxZDxtAihQzxqdcohWKcFqu7auo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=SRwLjig1; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6785247C42
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1715090515; bh=v8zpDZ52eJJsgwnWvpCntsojxBM4sw48U0a8jeYBkJU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=SRwLjig1A4b9jYCSZ43z5CULRf48H3strCTKj15I7/JjCqzo9uoTeVSy+nTIp/PMx
+	 f1nB9w5FFFySKx67fnvolXM5Q9vpGea3B1Ot2sdh2raJ1BYHhs44mfkTiE+jMPt6ZX
+	 7yUcOosRU+CP59izZcjoPa/DGctwmNbA+bcvwAzLuuGHM8H5bPRf9iLm3JJVtHIlzJ
+	 gYATyXtEUFmZ1kKQgtN06WQV2QQKLBW9UsA2Kw90VLvuc4eEhIhNVffSsc6UEX2JNH
+	 AcTrikbDSHFa7VIvtFY3HjuWazJJHHDum2exmiHRpwc/Tqb4n3/PTFw+polvai3wVu
+	 y1EXwEx2K5nzg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625:67c:16ff:fe81:5f9b])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 6785247C42;
+	Tue,  7 May 2024 14:01:55 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dennis Lam <dennis.lamerice@gmail.com>, chris@chrisdown.name
+Cc: Dennis Lam <dennis.lamerice@gmail.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs:core-api: fixed typos and grammar in printk-index
+ page
+In-Reply-To: <20240502212522.4263-1-dennis.lamerice@gmail.com>
+References: <dennis.lamerice@gmail.com>
+ <20240502212522.4263-1-dennis.lamerice@gmail.com>
+Date: Tue, 07 May 2024 08:01:54 -0600
+Message-ID: <87zft1g1pp.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Dennis Lam <dennis.lamerice@gmail.com> writes:
 
-Commit 67889688e05b ("MAINTAINERS: update the LSM file list") adds a few
-file entries to lsm-related header files. Among them, there is a reference
-to include/security.h. However, security.h is located in include/linux/,
-not in include/.
+> Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+> ---
+>  Documentation/core-api/printk-index.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/core-api/printk-index.rst b/Documentation/core-api/printk-index.rst
+> index 3062f37d119b..1979c5dd32fe 100644
+> --- a/Documentation/core-api/printk-index.rst
+> +++ b/Documentation/core-api/printk-index.rst
+> @@ -4,7 +4,7 @@
+>  Printk Index
+>  ============
+>  
+> -There are many ways how to monitor the state of the system. One important
+> +There are many ways to monitor the state of the system. One important
+>  source of information is the system log. It provides a lot of information,
+>  including more or less important warnings and error messages.
+>  
+> @@ -101,7 +101,7 @@ their own wrappers adding __printk_index_emit().
+>  
+>  Only few subsystem specific wrappers have been updated so far,
+>  for example, dev_printk(). As a result, the printk formats from
+> -some subsystes can be missing in the printk index.
+> +some subsystems can be missing in the printk index.
+>  
+Applied, thanks.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
-
-Repair this new file entry in the SECURITY SUBSYSTEM section.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a37cca3c47ef..ca79616a4836 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20140,7 +20140,7 @@ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
- F:	include/linux/lsm_audit.h
- F:	include/linux/lsm_hook_defs.h
- F:	include/linux/lsm_hooks.h
--F:	include/security.h
-+F:	include/linux/security.h
- F:	include/uapi/linux/lsm.h
- F:	security/
- F:	tools/testing/selftests/lsm/
--- 
-2.44.0
-
+jon
 
