@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-171791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE418BE8C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:24:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732CB8BE8EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507351C23A24
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:24:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17669B25D84
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE6016C44F;
-	Tue,  7 May 2024 16:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5399168AEB;
+	Tue,  7 May 2024 16:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n7K6i1j0"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QDa28c5e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C9916ABEA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E39116ABE8;
+	Tue,  7 May 2024 16:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099062; cv=none; b=OWEbKbu5+8zFVsJDi1HyxriT5OsnF8QEcKF+9PKMga7sfujgNnGkdRT1U0OFXX7hKaV+Iy0fwTmVcVFRm2jPGCCaBbyPNy0MBQylLmZshk1vcg7rSVSQvpcVn3rIviGUoS5e9GY8+9TMp+zqy5KKGbZf3OjuWieZb2WjWVD4HNc=
+	t=1715099092; cv=none; b=CAljEbOoVbNCdao2GzIzsV7r6Gl/uvjrSr0ARQ/HQ/hGmSBfKAmRuPo8M/JxpX8ulllz88iANLhfvN6tcyzWOnM0acLKjNWu00eq4POPoHMlHOBod4yOY+REwYKWjFYl00nYxGYxQEc0TOv7nYv3bsxC2FyxPC/VKCpBl0WqsJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099062; c=relaxed/simple;
-	bh=wJbp6WjEK+6FtVYJhPdauEq2bIrS1FhcPXI3PtQy6wU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RfT45XjfNAer3gzygXQbfggxKqvAcS1+g3dDzcwIrbxHrOei09kaViNRXKMSEF3iV9pEsxElZfvkj+aGx8HOoHosfIXCmxDs3ri2yWCh0zoY/HeYr9we18Bx37RneMksAs5haW0wvUYHQ30Euv8/cKlNMpuI1SAPeHPe/iJIdjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n7K6i1j0; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6dbdcfd39so6507150276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:24:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715099060; x=1715703860; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zDm0nic8Bf4ROxi6HvrqFLQrZg3PZkT7VQQx+aQhnBY=;
-        b=n7K6i1j0CKyRAITHjMEkX8wOIaFkNBux9wU875LGgXTUDjA6mWdy0g7obvcMlINETx
-         phVZICSPfWT1nQVGKBynSfnFcQ/9neh83sUHGf1oTu6vW8oMIJs63b5Bcwfh5VgrDZDm
-         kwWYcFCyldVwrqJwLwEMhyUlQA07BUUjC5SHDEEtPolQoWhCjZH+Rr6MB2Wub2Yq6m6/
-         3SaDgw9P/6tXWe3rOF7UVwJ2DhKqSo7T0WyVDdhslLM3q+WrxXH/puAXlNftOR1RLbmM
-         LFdaEF3H7A7H6mFCg7eK2gXMN4t2FzSDJRUGdSYkzImsyVmFVsd2Nvk0ivENfVF2YPHt
-         h/Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715099060; x=1715703860;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zDm0nic8Bf4ROxi6HvrqFLQrZg3PZkT7VQQx+aQhnBY=;
-        b=S6gcBTJ4u/RtrjzyjleHl7I+FCTHqtkDRimrE8q8Rf+jLpVi8GdosCym23HWfa57WH
-         RHiBR7u6exwC4csUokGBdyYuvXD7BbdCZ0HAxSeRNMFrAbkNdhy6IqFWro0a5DbWEUwS
-         Nv7wkt8KFKRfvMw0wVyCfbVZEPfPdI/0MD4FPT7Z/MW/Be+OzBBTcitq3uzk1v5P1h/3
-         1nb560wrr1r7g4ER2bSKIsmAfnDyrC/R38P+ZKwCbvQH8datFgOQko9csywvmBg/Bdoo
-         BVgJsGt+9mBTDKbxIztKkGtOAB1cycyG2Mx8dySJXGTmdqpb+VnB/CyJBy3o81ozdiDM
-         AcHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxOR2OxXomo8ydu2lNEPzSVzSbEiEh+XC3vWusQXJ6vtdpR0PIrUeaO2dtDVZq+gpKRHEMzgz7FXi+QV5pPvOtglaMNBTVRQDyPLlU
-X-Gm-Message-State: AOJu0YwZ/lxTKF7JZzhGShiGPdjyr6Bolfh40ZAhoe5oiUu70QPX7NfF
-	uPPu33o3qJ8ifyjC/phWxrV315WbN+C/G6Ho0K03tscMtbPhL9NyfeP6tRbrsmHC/699VB4Mpto
-	UKw==
-X-Google-Smtp-Source: AGHT+IHEV9Hww+r9vbzxSYmAo5y0EjAd48qQLH6oEVfcJ7yZe2szu31qLFICvdM4H82xlI8amm0za/20DLw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:44:0:b0:dc2:466a:23c4 with SMTP id
- 3f1490d57ef6-debb9d86d55mr29973276.4.1715099060476; Tue, 07 May 2024 09:24:20
- -0700 (PDT)
-Date: Tue, 7 May 2024 09:24:18 -0700
-In-Reply-To: <0ddb198c9a8ae72519c3f7847089d84a8de4821f.camel@intel.com>
+	s=arc-20240116; t=1715099092; c=relaxed/simple;
+	bh=xjqnat7biDHsSjLjF1RDSmbAHh5gsv1jZ8a8jPor4zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2vbq/dqLGuQ5V+EbS+vlG0Ne/tod/pbNGDScXZFDVazqlOI6TJJwpqJ7HoFs2c8bCyvuqvZkY+/kiuaz6XZ22HWQI+3kPnx0H4tVPKNukUQViyOj9mMHLD3Z6qq89XX0eIubUiKEVjUJhuXzZGOYVMC45xBTPADKqIlBRh0gb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QDa28c5e; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715099090; x=1746635090;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xjqnat7biDHsSjLjF1RDSmbAHh5gsv1jZ8a8jPor4zE=;
+  b=QDa28c5eIjDb0mlWxE12HHQ08Xk99KGl8fqTjRbeKx+E7BNGNhfx7RfQ
+   7c9Yn94wX50E3/D8fdjooEas5e6TxUhiS7jEX8VxtKwEmUvM1zJ2enA2R
+   mc0G+hXVSTFJRJdZvRGTZArB+UMJem7tBpu8V1gJvRptRPhLlO61Vaspn
+   /MExJ0Tt6wcD2DEpav3iR5MHQLI7qjcY+asNNRavVifmg1N60nALiQx0A
+   av/5A6g9YImucqNC0VQI3sDW3h6iXOfMkATXK1Jri62tOkBrbGQdNjpLo
+   ROs09AkieI/rgh+JFWCGTGAiqL3zuOaaGiQFuXQL5+z4G66NFsVuxwCjs
+   g==;
+X-CSE-ConnectionGUID: Z3x2xIBhS+qybM/Yt52p0g==
+X-CSE-MsgGUID: R0MNQZIFRcSmHvTyBWzxkQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="21577457"
+X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
+   d="scan'208";a="21577457"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 09:24:50 -0700
+X-CSE-ConnectionGUID: enH0uxdLSHmnEPpAFEeujw==
+X-CSE-MsgGUID: GjkPmm1BTeW4Dlv3J8Crfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
+   d="scan'208";a="28553500"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 09:24:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1s4NcU-000000056c9-0xMI;
+	Tue, 07 May 2024 19:24:46 +0300
+Date: Tue, 7 May 2024 19:24:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org
+Subject: Re: [PATCH v3 REBASED] spi: Add capability to perform some transfer
+ with chipselect off
+Message-ID: <ZjpVzexVvyih2vGG@smile.fi.intel.com>
+References: <20220907141344.oDJgraej0r_TWCpXPzNZwflzEvN3hBXTvsBehJGtLSY@z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <Zh7KrSwJXu-odQpN@google.com> <900fc6f75b3704780ac16c90ace23b2f465bb689.camel@intel.com>
- <Zh_exbWc90khzmYm@google.com> <2383a1e9-ba2b-470f-8807-5f5f2528c7ad@intel.com>
- <ZiBc13qU6P3OBn7w@google.com> <5ffd4052-4735-449a-9bee-f42563add778@intel.com>
- <ZiEulnEr4TiYQxsB@google.com> <22b19d11-056c-402b-ac19-a389000d6339@intel.com>
- <ZiKoqMk-wZKdiar9@google.com> <0ddb198c9a8ae72519c3f7847089d84a8de4821f.camel@intel.com>
-Message-ID: <ZjpVslp5M0JJbPrB@google.com>
-Subject: Re: [PATCH v19 023/130] KVM: TDX: Initialize the TDX module when
- loading the KVM intel kernel module
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Tina Zhang <tina.zhang@intel.com>, Hang Yuan <hang.yuan@intel.com>, 
-	Bo2 Chen <chen.bo@intel.com>, "sagis@google.com" <sagis@google.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Erdem Aktas <erdemaktas@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, 
-	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220907141344.oDJgraej0r_TWCpXPzNZwflzEvN3hBXTvsBehJGtLSY@z>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, May 07, 2024, Kai Huang wrote:
-> > > So I think we have consensus to go with the approach that shows in your
-> > > second diff -- that is to always enable virtualization during module loading
-> > > for all other ARCHs other than x86, for which we only always enables
-> > > virtualization during module loading for TDX.
-> > 
-> > Assuming the other arch maintainers are ok with that approach.  If waiting until
-> > a VM is created is desirable for other architectures, then we'll need to figure
-> > out a plan b.  E.g. KVM arm64 doesn't support being built as a module, so enabling
-> > hardware during initialization would mean virtualization is enabled for any kernel
-> > that is built with CONFIG_KVM=y.
-> > 
-> > Actually, duh.  There's absolutely no reason to force other architectures to
-> > choose when to enable virtualization.  As evidenced by the massaging to have x86
-> > keep enabling virtualization on-demand for !TDX, the cleanups don't come from
-> > enabling virtualization during module load, they come from registering cpuup and
-> > syscore ops when virtualization is enabled.
-> > 
-> > I.e. we can keep kvm_usage_count in common code, and just do exactly what I
-> > proposed for kvm_x86_enable_virtualization().
-> > 
-> > I have patches to do this, and initial testing suggests they aren't wildly
-> > broken.  I'll post them soon-ish, assuming nothing pops up in testing.  They are
-> > clean enough that they can land in advance of TDX, e.g. in kvm-coco-queue even
-> > before other architectures verify I didn't break them.
-> > 
+On Wed, Sep 07, 2022 at 04:13:44PM +0200, Christophe Leroy wrote:
+> Some components require a few clock cycles with chipselect off before
+> or/and after the data transfer done with CS on.
 > 
-> Hi Sean,
+> Typically IDT 801034 QUAD PCM CODEC datasheet states "Note *: CCLK
+> should have one cycle before CS goes low, and two cycles after
+> CS goes high".
 > 
-> Just want to check with you what is your plan on this?
+> The cycles "before" are implicitely provided by all previous activity
+> on the SPI bus. But the cycles "after" must be provided in order to
+> terminate the SPI transfer.
 > 
-> Please feel free to let me know if there's anything that I can help. 
+> In order to use that kind of component, add a cs_off flag to
+> spi_transfer struct. When this flag is set, the transfer is performed
+> with chipselect off. This allows consummer to add a dummy transfer
+> at the end of the transfer list which is performed with chipselect
+> OFF, providing the required additional clock cycles.
 
-Ah shoot, I posted patches[*] but managed to forget to Cc any of the TDX folks.
-Sorry :-/
+Interesting. Wondering if this helps to improve mmc-spi.c case, which
+abuses SPI protocol on the initialisation phase.
 
-[*] https://lore.kernel.org/all/20240425233951.3344485-1-seanjc@google.com
+P.S> just noticed this change in the Git history of spi.c changes :-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
