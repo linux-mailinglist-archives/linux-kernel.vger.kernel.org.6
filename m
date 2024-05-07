@@ -1,155 +1,133 @@
-Return-Path: <linux-kernel+bounces-170909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191CF8BDDB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D568BDDF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BEB6284F56
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 076001F240F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB1814E2CD;
-	Tue,  7 May 2024 09:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jXT81tP+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LfRkAYkX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jXT81tP+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LfRkAYkX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0841D14E2D2;
+	Tue,  7 May 2024 09:20:18 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0D614D44E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024D414D2BF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715072562; cv=none; b=hZY8JdSRGW3mG1CfiKbUAPn3FeoT1ggUdIKK+HSQPhp0ZWTRLomyA1T3FYQ6z3AixxZf31DzKlffPgMcjeq6TU9BO/0aA1E0PQz7y7xi06DZ6m1GenrQJg8BdOi+vuWDQhopQaPcdNPJZEaO0LJM0ZIIRU3IGducUVJiIUHWL9w=
+	t=1715073617; cv=none; b=iweMJsYUQKdMQ0IPAEGT7Fz7CjIRrRCgCnCxrla795Ujuqwj+en0RkrdNAv0VXlGQ27eVpgAga8CmTMFoRpLBI++ZdED5xoiEtpCophmNZ8oYbLhFNj8KS06A8j+K13wEjjg744GQJm7c+GuAB1BwyyR72QOkyQxQ6cIp3jZJhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715072562; c=relaxed/simple;
-	bh=60jS181WO5k71seEepe3WjZoVHuIO2PGj2XzHCB4kn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THdezfaDRkqdc/fPzW99oaJGKnqLUUNbQ3fOPlqU+eg95pKtFtMQQYh+pgDqhVP6Rl5ODI27tBC1Fsi29dsuSlHezecU/TjVbYGd71sMCToqoPnWeMxwb702w+tGbcmudxbwflf0I+cxYuDp9FvNnapeFHQzBW0JRhDZaEfV20Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jXT81tP+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LfRkAYkX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jXT81tP+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LfRkAYkX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D18DD206B1;
-	Tue,  7 May 2024 09:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715072552; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixaChRQaGvKUHEvNH8Bz6whyZ7S1illey/rZiGocvi8=;
-	b=jXT81tP+Re2hes4VND70fiagI72rujWt0OqRG9tVRAwmfQC3zILCE6avtnrzRQZ41VinIz
-	2KBi5Brli5rTF11eq++jiWUYuz7XE3x9p0oRgGSjKEp62voTVY3ld+2BoEOBAX0iZiFlCk
-	GgA6LfygyR6rao2k7JjHjmaFh8wjYig=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715072552;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixaChRQaGvKUHEvNH8Bz6whyZ7S1illey/rZiGocvi8=;
-	b=LfRkAYkX5N7Oao+7Jux7Gwo6vYjLRALURbKFhHMeME0iBTC6jyCpshpWJI0+Si3xJfUzQV
-	TEO2jM4i60bS72DQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715072552; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixaChRQaGvKUHEvNH8Bz6whyZ7S1illey/rZiGocvi8=;
-	b=jXT81tP+Re2hes4VND70fiagI72rujWt0OqRG9tVRAwmfQC3zILCE6avtnrzRQZ41VinIz
-	2KBi5Brli5rTF11eq++jiWUYuz7XE3x9p0oRgGSjKEp62voTVY3ld+2BoEOBAX0iZiFlCk
-	GgA6LfygyR6rao2k7JjHjmaFh8wjYig=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715072552;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixaChRQaGvKUHEvNH8Bz6whyZ7S1illey/rZiGocvi8=;
-	b=LfRkAYkX5N7Oao+7Jux7Gwo6vYjLRALURbKFhHMeME0iBTC6jyCpshpWJI0+Si3xJfUzQV
-	TEO2jM4i60bS72DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6FA5B139CB;
-	Tue,  7 May 2024 09:02:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OIEOGCjuOWalRgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 07 May 2024 09:02:32 +0000
-Date: Tue, 7 May 2024 11:02:30 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Jane Chu <jane.chu@oracle.com>
-Cc: linmiaohe@huawei.com, nao.horiguchi@gmail.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm/memory-failure: try to send SIGBUS even if unmap
- failed
-Message-ID: <ZjnuJgUVVnwYrr5p@localhost.localdomain>
-References: <20240501232458.3919593-1-jane.chu@oracle.com>
- <20240501232458.3919593-2-jane.chu@oracle.com>
+	s=arc-20240116; t=1715073617; c=relaxed/simple;
+	bh=wmfxCx98oiGEm0S2u+uUju/dQan/1Xv1qYRtUIqEhig=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OpLwmLsh8NP55aJWhqlSEki77AeBX0OwN/f8EyE04adOPcdBAdr8i+BNrs19xqkdP90Cu+MwdUUS4rqIkdTWh0rJP085yQRVlzGw/ceHpdZYxTcO2496gcxAn24nljrzhbRnIaY7PdOSlS43fzS6OiQ/FHJ2CbW0dGdneEWTVhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
+	by Atcsqr.andestech.com with ESMTP id 44793Dkq098770
+	for <linux-kernel@vger.kernel.org>; Tue, 7 May 2024 17:03:13 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from mail.andestech.com (ATCPCS16.andestech.com [10.0.1.222])
+	by Atcsqr.andestech.com with ESMTP id 447931Cg098720;
+	Tue, 7 May 2024 17:03:01 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.190) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.498.0; Tue, 7 May 2024
+ 17:03:01 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+        <irogers@google.com>, <adrian.hunter@intel.com>,
+        Ben Zong-You Xie
+	<ben717@andestech.com>
+Subject: [PATCH v2] perf daemon: Fix the warning about time_t
+Date: Tue, 7 May 2024 17:02:41 +0800
+Message-ID: <20240507090241.3853998-1-ben717@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240501232458.3919593-2-jane.chu@oracle.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.78
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.78 / 50.00];
-	BAYES_HAM(-2.98)[99.91%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[huawei.com,gmail.com,linux-foundation.org,kvack.org,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 44793Dkq098770
 
-On Wed, May 01, 2024 at 05:24:56PM -0600, Jane Chu wrote:
-> For years when it comes down to kill a process due to hwpoison,
-> a SIGBUS is delivered only if unmap has been successful.
-> Otherwise, a SIGKILL is delivered. And the reason for that is
-> to prevent the involved process from accessing the hwpoisoned
-> page again.
-> 
-> Since then a lot has changed, a hwpoisoned page is marked and
-> upon being re-accessed, the process will be killed immediately.
-> So let's take out the '!unmap_success' factor and try to deliver
-> SIGBUS if possible.
+On the 32-bit platform, the size of time_t is 32 bits or 64 bits according
+to the architecture. Therefore, use typecasting to resolve the warnings
+for some architectures, e.g. RISC-V.
 
-I am missing some details here.
-An unmapped hwpoison page will trigger a fault and will return
-VM_FAULT_HWPOISON all the way down and then deliver SIGBUS,
-but if the page was not unmapped, how will this be catch upon
-re-accessing? Will the system deliver a MCE event? 
+Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+---
 
+v2: By Palmer's remind, patch v1 may introduce a warning for some
+    other targets. Thus, use typecasting instead.
+ 
+---
+ tools/perf/builtin-daemon.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
+diff --git a/tools/perf/builtin-daemon.c b/tools/perf/builtin-daemon.c
+index 83954af36753..cb04caa902e8 100644
+--- a/tools/perf/builtin-daemon.c
++++ b/tools/perf/builtin-daemon.c
+@@ -688,9 +688,10 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
+ 			/* lock */
+ 			csv_sep, daemon->base, "lock");
+ 
+-		fprintf(out, "%c%lu",
++		fprintf(out, "%c%llu",
+ 			/* session up time */
+-			csv_sep, (curr - daemon->start) / 60);
++			csv_sep,
++			(unsigned long long)((curr - daemon->start) / 60));
+ 
+ 		fprintf(out, "\n");
+ 	} else {
+@@ -700,8 +701,8 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
+ 				daemon->base, SESSION_OUTPUT);
+ 			fprintf(out, "  lock:    %s/lock\n",
+ 				daemon->base);
+-			fprintf(out, "  up:      %lu minutes\n",
+-				(curr - daemon->start) / 60);
++			fprintf(out, "  up:      %llu minutes\n",
++				(unsigned long long)((curr - daemon->start) / 60));
+ 		}
+ 	}
+ 
+@@ -727,9 +728,10 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
+ 				/* session ack */
+ 				csv_sep, session->base, SESSION_ACK);
+ 
+-			fprintf(out, "%c%lu",
++			fprintf(out, "%c%llu",
+ 				/* session up time */
+-				csv_sep, (curr - session->start) / 60);
++				csv_sep,
++				(unsigned long long)((curr - session->start) / 60));
+ 
+ 			fprintf(out, "\n");
+ 		} else {
+@@ -745,8 +747,8 @@ static int cmd_session_list(struct daemon *daemon, union cmd *cmd, FILE *out)
+ 				session->base, SESSION_CONTROL);
+ 			fprintf(out, "  ack:     %s/%s\n",
+ 				session->base, SESSION_ACK);
+-			fprintf(out, "  up:      %lu minutes\n",
+-				(curr - session->start) / 60);
++			fprintf(out, "  up:      %llu minutes\n",
++				(unsigned long long)((curr - session->start) / 60));
+ 		}
+ 	}
+ 
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
