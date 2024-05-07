@@ -1,234 +1,221 @@
-Return-Path: <linux-kernel+bounces-172184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E0B8BEE8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D09A8BEE90
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD5C1C20C95
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6151F1C20B58
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167F473196;
-	Tue,  7 May 2024 21:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999E173183;
+	Tue,  7 May 2024 21:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZqNtQxR"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrijNEh1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC92A71B3A;
-	Tue,  7 May 2024 21:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B0C5FDDB;
+	Tue,  7 May 2024 21:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115862; cv=none; b=tUcgtKvUAzHHILVi66kOnHlmZ5tfUK+0XBPxwIGb+TiGTJ4W5nu4EVs4aYQm7e9J9G4BIE+TSLpisrRtxpd+8NBMuSMvcXbtBBHEVaqF01FZ3zp9amBp97XwAUMV8Z4t/94T7ct6lLRPyY9flIAVIZbHXw4b9+JGCsK8Lopi1jc=
+	t=1715115886; cv=none; b=Nz/N8KbiQZQNxSBP4ex7tuG+6hTOmvsvcr37f1WOZevKUe+O3u8OW72dYujQApsz11gB8pob0T1xjgxkZk7QxNaSu+PmMI0j2tUlhwdGWPcGm0lIYh7I7xObW2UIDDV2oiHW+rAQr+YsKIOR9uftBo2hjeSlUaBraSNheZXTkWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115862; c=relaxed/simple;
-	bh=9ythelcd555ehayoCK+v6PnGyHN2aIf5mfrvlET7y4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rlq3wbsDaluVZXYxNhnz6RHUVw0TwLtFTifXhnvpd46Lxfi8kb3ejVBqa++Wv3rTEJ6jcpqoZj21r5DMXHFxv4dTYyNwUU6og1Upi6watF2YIl38zpCYqdl7Lwz6SfkpbxLs7uJqYMerXPVF3oGwukGWj+/7dXt8WFElH4w+kNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZqNtQxR; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-61c4ebd0c99so2368262a12.0;
-        Tue, 07 May 2024 14:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715115860; x=1715720660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MFzLP9jypxz8zp9JCgtxnmrKkuxXPrSxPzVAWQBs/uM=;
-        b=jZqNtQxRsCskCePX71jcFMFj/K3q40uhIKi2if8KL/YIsEg2rFRdlgj8lCGD9Mewpj
-         DzaG9+2eDfIfpKaeKPfhxISweO5mOWhfYyhI/VCIRzsPWMgmkH6+YEUr076ePaDC8HYW
-         fOxfLrvq6trAImpWC6/ivbruvdBY3P0o3i6BdJWoMt+DgX7dbj5tY9RcYNMnTbj5jGTV
-         jvfP9I7Y5kGZWyiFucKwYpQAQ6qbjMdShiwmHAIyfWGunhUbMPTIOCQ5zGSHpJ0JQnzE
-         z8vdDKlptmwoWOQNzQ25DC8UIqF9oqKY3WAihX9DUYZ2c6ENlWiZxLQ+Lr/0GeDGe45e
-         9R4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715115860; x=1715720660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MFzLP9jypxz8zp9JCgtxnmrKkuxXPrSxPzVAWQBs/uM=;
-        b=VVzmgXdFHZkqNek/YmWR9AV9pjMucmKL93vg2U5fiOluZClNGR2XYsTKh4sMoXSK0g
-         78jefW2UGpqJ13MQCSU3v+N2yAa09Tnq2sdRUTrzUOj2HXhtcfAfOUXYgmCMlP55HCis
-         DF/o7qgI1AjNS0HioN5b0wKsnKSGEUPB5fWWvygV23R8k44YJLfBJvr3lCHtYPmihCH4
-         bKaNI+I0qVVv5bFGRBHJJ2Lh/btcVfwtL+UIihl70ppCymOZPfki6kGIwjVm/z9tb1vq
-         yV2otIM6PuQyzuwTJxnczlH13JiZCFqv1IAXOwU7SkPQ2W394cPPxDsSKTA6OT/PID57
-         OEog==
-X-Forwarded-Encrypted: i=1; AJvYcCV46FLTIRzbzsow448QTNhWlYd6rF4R8PSZyDJ+YSJQX/18aUa9s85YVVPqaafQJ+iu6qvh7yO2+H27OS8g1xbbktrKZQ1ZyG2yVa4B9l1BotvOeHhLkthhqRPuYFpR+yzIaQlTr0g9NFlgJr09K+gT/pmvZjjrxKI+DFYzD1VFq++ZbZB9
-X-Gm-Message-State: AOJu0YyAYA3tZGPTl7hnRmAbRgl3DyuzYu9RxSMGXIIIwlL1pLcN2Yf3
-	EHUzVYWEBo952RxxaQdMgXqPkgcpPSHKRFjNZ46bENN8ESp1p/EIHGkl/NfWqYJCl0GKKriZSrb
-	RO0pPnhsrPKoY2D0XaICUuzhdUAQ=
-X-Google-Smtp-Source: AGHT+IEvi+qh6FV6T7TpdH8lIa91LZDU7awvCKHqDLHp6p/u8XRcYsLVnh1NuA9JDVQ663ZK+HDD0OJS6hdKcdp/eaQ=
-X-Received: by 2002:a17:90b:348e:b0:2ac:513b:b316 with SMTP id
- 98e67ed59e1d1-2b6163a32ebmr826188a91.10.1715115860101; Tue, 07 May 2024
- 14:04:20 -0700 (PDT)
+	s=arc-20240116; t=1715115886; c=relaxed/simple;
+	bh=tEhMYN8iSO5xd390JBFyRRwfWCDHKQ76/l1oEa+Gk6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAP6Jy7v246MkqDJv8spyNLhvE4sYe+L0u9yovOIfRskuAMB1Z/CfqC7nMqHNOqj+vMJtQdbR+HreYWyBi4+ExMIBZUCoLK1dPp7VoIFRbZA90g7hL1PzlRcV1oMkQaVb26rRsy+NhQjX4K2umPB29eWU8Cqwp0fDi+w35KCFqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrijNEh1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB757C4AF67;
+	Tue,  7 May 2024 21:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715115886;
+	bh=tEhMYN8iSO5xd390JBFyRRwfWCDHKQ76/l1oEa+Gk6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QrijNEh1yk9Zow4I+g9VIJ0jb/0CAQFNofXu0tYGC3GhTa5gZRFKBczJyEFuE9tnT
+	 AAifD5DC9unsBjT6f7hu9asyOEbMKp8VN9ToS2WdmhjIixSCKfoLaWSnzsCswIis13
+	 Pez9JzwMlY2mO5MFNXannJJj2RhdjTYGNQukaLI77FS7wZTElPepvwGgHJqRc4fx3E
+	 w4iJ0tmgIz57+Cxv2H5vj8aqUuHF8ytHFHpyuMocdocTYrrBGWBK/n/leuGkjCDdoi
+	 IB5U0iKBlhjLyfXuYXjWDxf3WXMcjwKzWtK1KUQ22H77YD2vYI/eeZ0X/K8vdRtKST
+	 4QrRLQSmfUTOQ==
+Date: Tue, 7 May 2024 18:04:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Clark <james.clark@arm.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>,
+	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 1/8] perf ui browser: Don't save pointer to stack
+ memory
+Message-ID: <ZjqXa25BnFncJmw-@x1>
+References: <20240507183545.1236093-1-irogers@google.com>
+ <20240507183545.1236093-2-irogers@google.com>
+ <ZjqNKPgWR7mBFaV4@x1>
+ <ZjqNjrJ2ElrT11iB@x1>
+ <CAP-5=fUsQwKsCi3us+dp-Tj+PayNPrYTqTQeo-YLbvSuOt1=9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <171318533841.254850.15841395205784342850.stgit@devnote2>
- <CAEf4BzYMToveELxsOJ9dXz3H-9omhxRLKgGK-ppYvmK8pgDsfA@mail.gmail.com>
- <20240429225119.410833c12d9f6fbcce0a58db@kernel.org> <CAEf4BzZDqD4fyLpoq9r2M0HnES7aO7YW=ZNH-k8uPJWd_VbAJg@mail.gmail.com>
- <20240430223217.fd375d57d130a4207be18e94@kernel.org> <CAEf4BzZQLPL7419W1=yNw6gzB4gquiXfeANbUKbUL8bK+5if=w@mail.gmail.com>
- <20240502110610.412d54a0cf194293b82ee787@kernel.org>
-In-Reply-To: <20240502110610.412d54a0cf194293b82ee787@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 7 May 2024 14:04:08 -0700
-Message-ID: <CAEf4BzYb0LUKo_BUnd72qrBOtnbbHRS8SaDz0XcTx-DTgb2mVA@mail.gmail.com>
-Subject: Re: [PATCH v9 00/36] tracing: fprobe: function_graph: Multi-function
- graph and fprobe on fgraph
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Florent Revest <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alan Maguire <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUsQwKsCi3us+dp-Tj+PayNPrYTqTQeo-YLbvSuOt1=9w@mail.gmail.com>
 
-On Wed, May 1, 2024 at 7:06=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
-g> wrote:
->
-> On Tue, 30 Apr 2024 09:29:40 -0700
-> Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
->
-> > On Tue, Apr 30, 2024 at 6:32=E2=80=AFAM Masami Hiramatsu <mhiramat@kern=
-el.org> wrote:
-> > >
-> > > On Mon, 29 Apr 2024 13:25:04 -0700
-> > > Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > > On Mon, Apr 29, 2024 at 6:51=E2=80=AFAM Masami Hiramatsu <mhiramat@=
-kernel.org> wrote:
-> > > > >
-> > > > > Hi Andrii,
-> > > > >
-> > > > > On Thu, 25 Apr 2024 13:31:53 -0700
-> > > > > Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > > Hey Masami,
-> > > > > >
-> > > > > > I can't really review most of that code as I'm completely unfam=
-iliar
-> > > > > > with all those inner workings of fprobe/ftrace/function_graph. =
-I left
-> > > > > > a few comments where there were somewhat more obvious BPF-relat=
-ed
-> > > > > > pieces.
-> > > > > >
-> > > > > > But I also did run our BPF benchmarks on probes/for-next as a b=
-aseline
-> > > > > > and then with your series applied on top. Just to see if there =
-are any
-> > > > > > regressions. I think it will be a useful data point for you.
-> > > > >
-> > > > > Thanks for testing!
-> > > > >
-> > > > > >
-> > > > > > You should be already familiar with the bench tool we have in B=
-PF
-> > > > > > selftests (I used it on some other patches for your tree).
-> > > > >
-> > > > > What patches we need?
-> > > > >
-> > > >
-> > > > You mean for this `bench` tool? They are part of BPF selftests (und=
-er
-> > > > tools/testing/selftests/bpf), you can build them by running:
-> > > >
-> > > > $ make RELEASE=3D1 -j$(nproc) bench
-> > > >
-> > > > After that you'll get a self-container `bench` binary, which has al=
-l
-> > > > the self-contained benchmarks.
-> > > >
-> > > > You might also find a small script (benchs/run_bench_trigger.sh ins=
-ide
-> > > > BPF selftests directory) helpful, it collects final summary of the
-> > > > benchmark run and optionally accepts a specific set of benchmarks. =
-So
-> > > > you can use it like this:
-> > > >
-> > > > $ benchs/run_bench_trigger.sh kprobe kprobe-multi
-> > > > kprobe         :   18.731 =C2=B1 0.639M/s
-> > > > kprobe-multi   :   23.938 =C2=B1 0.612M/s
-> > > >
-> > > > By default it will run a wider set of benchmarks (no uprobes, but a
-> > > > bunch of extra fentry/fexit tests and stuff like this).
-> > >
-> > > origin:
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.329 =C2=B1 0.007M/s
-> > > kretprobe-multi:    1.341 =C2=B1 0.004M/s
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.288 =C2=B1 0.014M/s
-> > > kretprobe-multi:    1.365 =C2=B1 0.002M/s
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.329 =C2=B1 0.002M/s
-> > > kretprobe-multi:    1.331 =C2=B1 0.011M/s
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.311 =C2=B1 0.003M/s
-> > > kretprobe-multi:    1.318 =C2=B1 0.002M/s s
-> > >
-> > > patched:
-> > >
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.274 =C2=B1 0.003M/s
-> > > kretprobe-multi:    1.397 =C2=B1 0.002M/s
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.307 =C2=B1 0.002M/s
-> > > kretprobe-multi:    1.406 =C2=B1 0.004M/s
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.279 =C2=B1 0.004M/s
-> > > kretprobe-multi:    1.330 =C2=B1 0.014M/s
-> > > # benchs/run_bench_trigger.sh
-> > > kretprobe :    1.256 =C2=B1 0.010M/s
-> > > kretprobe-multi:    1.412 =C2=B1 0.003M/s
-> > >
-> > > Hmm, in my case, it seems smaller differences (~3%?).
-> > > I attached perf report results for those, but I don't see large diffe=
-rence.
+On Tue, May 07, 2024 at 01:48:28PM -0700, Ian Rogers wrote:
+> On Tue, May 7, 2024 at 1:22 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 > >
-> > I ran my benchmarks on bare metal machine (and quite powerful at that,
-> > you can see my numbers are almost 10x of yours), with mitigations
-> > disabled, no retpolines, etc. If you have any of those mitigations it
-> > might result in smaller differences, probably. If you are running
-> > inside QEMU/VM, the results might differ significantly as well.
->
-> I ran it on my bare metal machines again, but could not find any differen=
-ce
-> between them. But I think I enabled intel mitigations on, so it might mak=
-e
-> a difference from your result.
->
-> Can you run the benchmark with perf record? If there is such differences,
-> there should be recorded.
+> > On Tue, May 07, 2024 at 05:20:59PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Tue, May 07, 2024 at 11:35:38AM -0700, Ian Rogers wrote:
+> > > > ui_browser__show is capturing the input title that is stack allocated
+> > > > memory in hist_browser__run. Avoid a use after return by strdup-ing
+> > > > the string.
+> > >
+> > > But everything happens in that context, i.e. hist_brower__run() will
+> > > call ui_browser__ methods and then exit.
+> > >
+> > > We end up having browser->title pointing to returned stack memory
+> > > (invalid) but there will be no references to it, no?
+> > >
+> > > If we return to hist_browser__run() we then call ui_browser__show
+> > > passing a new title, for "live" stack memory, rinse repeat. Or have you
+> > > noticed an actual use-after-"free"?
+> >
+> > And I'll take the patch, I'm just trying to figure it out if it fixed a
+> > real bug or if it just makes the code more future proof, i.e. to avoid
+> > us adding code that actually uses invalid stack memory.
+> 
+> My command line using tui is:
+> $ sudo bash -c 'rm /tmp/asan.log*; export
+> ASAN_OPTIONS="log_path=/tmp/asan.log"; /tmp/perf/perf mem record -a
+> sleep 1; /tmp/perf/perf mem report'
+> I then go to the perf annotate view and quit. This triggers the asan
+> error (from the log file):
+> ```
 
-I can, yes, will try to do this week, I'm just trying to keep up with
-the rest of the stuff on my plate and haven't found yet time to do
-this. I'll get back to you (and I'll use the latest version of your
-patch set, of course).
+Thanks, it is indeed a bug, I'll keep that Fixes tag, people interested
+in the full details can hopefully find this message going from the Link:
+tag.
 
-> e.g.
->
-> # perf record -g -o perf.data-kretprobe-nopatch-raw-bpf -- bench -w2 -d5 =
--a trig-kretprobe
-> # perf report -G -i perf.data-kretprobe-nopatch-raw-bpf -k $VMLINUX --std=
-io > perf-out-kretprobe-nopatch-raw-bpf
->
-> I attached the results in my side.
-> The interesting point is, the functions int the result are not touched by
-> this series. Thus there may be another reason if you see the kretprobe
-> regression.
->
-> Thank you,
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+- Arnaldo
+
+> ==1254591==ERROR: AddressSanitizer: stack-use-after-return on address
+> 0x7f2813331920 at pc 0x7f28180
+> 65991 bp 0x7fff0a21c750 sp 0x7fff0a21bf10
+> READ of size 80 at 0x7f2813331920 thread T0
+>     #0 0x7f2818065990 in __interceptor_strlen
+> ../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:461
+>     #1 0x7f2817698251 in SLsmg_write_wrapped_string
+> (/lib/x86_64-linux-gnu/libslang.so.2+0x98251)
+>     #2 0x7f28176984b9 in SLsmg_write_nstring
+> (/lib/x86_64-linux-gnu/libslang.so.2+0x984b9)
+>     #3 0x55c94045b365 in ui_browser__write_nstring ui/browser.c:60
+>     #4 0x55c94045c558 in __ui_browser__show_title ui/browser.c:266
+>     #5 0x55c94045c776 in ui_browser__show ui/browser.c:288
+>     #6 0x55c94045c06d in ui_browser__handle_resize ui/browser.c:206
+>     #7 0x55c94047979b in do_annotate ui/browsers/hists.c:2458
+>     #8 0x55c94047fb17 in evsel__hists_browse ui/browsers/hists.c:3412
+>     #9 0x55c940480a0c in perf_evsel_menu__run ui/browsers/hists.c:3527
+>     #10 0x55c940481108 in __evlist__tui_browse_hists ui/browsers/hists.c:3613
+>     #11 0x55c9404813f7 in evlist__tui_browse_hists ui/browsers/hists.c:3661
+>     #12 0x55c93ffa253f in report__browse_hists tools/perf/builtin-report.c:671
+>     #13 0x55c93ffa58ca in __cmd_report tools/perf/builtin-report.c:1141
+>     #14 0x55c93ffaf159 in cmd_report tools/perf/builtin-report.c:1805
+>     #15 0x55c94000c05c in report_events tools/perf/builtin-mem.c:374
+>     #16 0x55c94000d96d in cmd_mem tools/perf/builtin-mem.c:516
+>     #17 0x55c9400e44ee in run_builtin tools/perf/perf.c:350
+>     #18 0x55c9400e4a5a in handle_internal_command tools/perf/perf.c:403
+>     #19 0x55c9400e4e22 in run_argv tools/perf/perf.c:447
+>     #20 0x55c9400e53ad in main tools/perf/perf.c:561
+>     #21 0x7f28170456c9 in __libc_start_call_main
+> ../sysdeps/nptl/libc_start_call_main.h:58
+>     #22 0x7f2817045784 in __libc_start_main_impl ../csu/libc-start.c:360
+>     #23 0x55c93ff544c0 in _start (/tmp/perf/perf+0x19a4c0) (BuildId:
+> 84899b0e8c7d3a3eaa67b2eb35e3d8b2f8cd4c93)
+> 
+> Address 0x7f2813331920 is located in stack of thread T0 at offset 32 in frame
+>     #0 0x55c94046e85e in hist_browser__run ui/browsers/hists.c:746
+> 
+>   This frame has 1 object(s):
+>     [32, 192) 'title' (line 747) <== Memory access at offset 32 is
+> inside this variable
+> HINT: this may be a false positive if your program uses some custom
+> stack unwind mechanism, swapcontext or vfork
+> ```
+> hist_browser__run isn't on the stack so the asan error looks legit.
+> There's no clean init/exit on struct ui_browser so I may be trading a
+> use-after-return for a memory leak, but that seems look a good trade
+> anyway.
+> 
+> Thanks,
+> Ian
+> 
+> > - Arnaldo
+> >
+> > > - Arnaldo
+> > >
+> > > > Fixes: 05e8b0804ec4 ("perf ui browser: Stop using 'self'")
+> > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > > ---
+> > > >  tools/perf/ui/browser.c | 4 +++-
+> > > >  tools/perf/ui/browser.h | 2 +-
+> > > >  2 files changed, 4 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
+> > > > index 603d11283cbd..c4cdf2ea69b7 100644
+> > > > --- a/tools/perf/ui/browser.c
+> > > > +++ b/tools/perf/ui/browser.c
+> > > > @@ -287,7 +287,8 @@ int ui_browser__show(struct ui_browser *browser, const char *title,
+> > > >     mutex_lock(&ui__lock);
+> > > >     __ui_browser__show_title(browser, title);
+> > > >
+> > > > -   browser->title = title;
+> > > > +   free(browser->title);
+> > > > +   browser->title = strdup(title);
+> > > >     zfree(&browser->helpline);
+> > > >
+> > > >     va_start(ap, helpline);
+> > > > @@ -304,6 +305,7 @@ void ui_browser__hide(struct ui_browser *browser)
+> > > >     mutex_lock(&ui__lock);
+> > > >     ui_helpline__pop();
+> > > >     zfree(&browser->helpline);
+> > > > +   zfree(&browser->title);
+> > > >     mutex_unlock(&ui__lock);
+> > > >  }
+> > > >
+> > > > diff --git a/tools/perf/ui/browser.h b/tools/perf/ui/browser.h
+> > > > index 510ce4554050..6e98d5f8f71c 100644
+> > > > --- a/tools/perf/ui/browser.h
+> > > > +++ b/tools/perf/ui/browser.h
+> > > > @@ -21,7 +21,7 @@ struct ui_browser {
+> > > >     u8            extra_title_lines;
+> > > >     int           current_color;
+> > > >     void          *priv;
+> > > > -   const char    *title;
+> > > > +   char          *title;
+> > > >     char          *helpline;
+> > > >     const char    *no_samples_msg;
+> > > >     void          (*refresh_dimensions)(struct ui_browser *browser);
+> > > > --
+> > > > 2.45.0.rc1.225.g2a3ae87e7f-goog
 
