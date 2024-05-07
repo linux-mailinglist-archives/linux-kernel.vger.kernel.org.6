@@ -1,392 +1,178 @@
-Return-Path: <linux-kernel+bounces-170729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009F58BDB2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:11:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630EC8BDB2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F002824AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:11:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BF14B224F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9B06F06F;
-	Tue,  7 May 2024 06:11:02 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC38B6D1C8;
-	Tue,  7 May 2024 06:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4220D6F06B;
+	Tue,  7 May 2024 06:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="d0S05ZBx"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8810F6D1C8;
+	Tue,  7 May 2024 06:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062262; cv=none; b=ErG5MbDOF5sfB011/r0FI+edojSi/8Ud39pCvGoVEAaWZl6GanEMpfokPu+qe5boVJ7Q6W/2stkhc4TBqxa/p+DVwVScYywWUjkUYbBy/wZXNmImycXVPiK3HXg5B+5m1NUdYjA4eNzs024h9YDDBNLvmLUJ1JcwQSb2c6WWxsI=
+	t=1715062271; cv=none; b=XrzVa3ZBCqznoBvKo+z45fIKrD5maqUDYC8wlyHJp86yT0fQ/pMrc8x2wOAsF4S4oJXtkEUDT10GPjhvzOwgsLYKF9wFWO/XEk/65h6o+/V6Peke5W12y1e8/fFZYbI5v05ECv1p0AYsrDMp2HpCGw8lw2kTM9Ql/4I5tySoWZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062262; c=relaxed/simple;
-	bh=z4ZUas3ieTVPeJDU8V4Wl29tWH6uVwnTcoAHsYxE4mY=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pfWjyiOfx6f0NlrqevaQ+bS2/ggtb8azRS9sKl/T6oXDhcnR0WJbr1e1VqwiOdZ7bliMI4E4gy0zRfaDARlYR0G8EoUa2z/9V68uxR/hUNVBlXul9RcWMI66bLUfZXzUXiffswyYB12lMxmo9i+d6btSyu1EDti+CfHeOn4om1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8DxNvDuxTlmXbAIAA--.23782S3;
-	Tue, 07 May 2024 14:10:54 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx+93oxTlmtqATAA--.38751S3;
-	Tue, 07 May 2024 14:10:51 +0800 (CST)
-Subject: Re: [PATCH v3] perf kvm: Add kvm-stat for loongarch64
-From: maobibo <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ian Rogers <irogers@google.com>
-Cc: Ming Wang <wangming01@loongson.cn>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20240411121047.2005033-1-maobibo@loongson.cn>
-Message-ID: <db839f86-6749-e15b-a084-d8a4a6735f1c@loongson.cn>
-Date: Tue, 7 May 2024 14:10:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1715062271; c=relaxed/simple;
+	bh=aOz9fe41WAKNxF6hfkGSEIu6azwOFn4nkwJSjri5io4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTkZsOcgi44QUl4nEDk+kQleKpszcYwzgWYRB0q22OZ6q6s7slu7G5KLMBa3N9j3X2mM9dAUCcMLuV3mWuBXEW/eqZ1cq71TvqxkBddvhunaXkftgNT0U1DlP7bw7HVncXXVOOiDaRiVIFLY4COrykTxSyr3Xumw+AawCmbIs0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=d0S05ZBx; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715062265;
+	bh=aOz9fe41WAKNxF6hfkGSEIu6azwOFn4nkwJSjri5io4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d0S05ZBxRizCGgFtKbQ7BtcO+yYMGuBiYUmrS2xORY55741JGhtObzfNA8rTfLGk+
+	 9J0XF+qHkeklti47dfmnUxFvdzO6At3vTtBjx3I59GGcYvwdOwbqm/OOAEN+ZIb/67
+	 OnCT5Vi9jUFNHV1c4oT6/bYZrhuEFfXy3ClXgoc8=
+Date: Tue, 7 May 2024 08:11:04 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Dustin Howett <dustin@howett.net>
+Cc: "Limonciello, Mario" <mario.limonciello@amd.com>, 
+	Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-kernel@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 0/2] platform/chrome: cros_ec_framework_laptop: new driver
+Message-ID: <99ae4866-a8cd-408c-8227-006f96f14dc7@t-8ch.de>
+References: <20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net>
+ <613369f9-42c5-4a59-b83f-45bd1773ffe4@t-8ch.de>
+ <a7ae8fc0-5e53-487a-86c6-f49dc6623688@amd.com>
+ <e716716e-87fe-46f5-8ea9-5f649f1da11b@t-8ch.de>
+ <CA+BfgNJzazn55wUMzjX=thqZGYz0LYU4cnO1Pn8U80B5FrSvxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240411121047.2005033-1-maobibo@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Bx+93oxTlmtqATAA--.38751S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3GF47Wry8Zr15CF43Kw1fKrX_yoWftF43pF
-	WjyrnxKr4rJF17Cwn7AFn093Z8Jw4xuFyjga47WrW7AFsxZr9rGa1IqFs8GFyayw4DJF40
-	9w1F9w40kFWkJabCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU466zUUUUU
+In-Reply-To: <CA+BfgNJzazn55wUMzjX=thqZGYz0LYU4cnO1Pn8U80B5FrSvxQ@mail.gmail.com>
 
-Hi Peter/Ian/Huacai,
+Hi Dustin,
 
-This patch stays one month without response, I know you are busy and 
-look through thousands of patch every day.
-
-Just one question, who has permission to merge perf kvm patch for 
-LoongArch. Is it LoongArch maintainer or perf kvm maintainer?
-
-Regards
-Bibo Mao
-
-
-On 2024/4/11 下午8:10, Bibo Mao wrote:
-> Add support for 'perf kvm stat' on loongarch64 platform, now only
-> kvm exit event is supported.
+On 2024-05-06 13:29:32+0000, Dustin Howett wrote:
+> On Mon, May 6, 2024 at 12:43 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > On 2024-05-06 08:09:07+0000, Limonciello, Mario wrote:
+> > > On 5/6/2024 1:09 AM, Thomas Weißschuh wrote:
+> > > > On 2024-05-05 22:56:33+0000, Thomas Weißschuh wrote:
+> > > > > Framework Laptops are using embedded controller firmware based on the
+> > > > > ChromeOS EC project.
+> > > > > In addition to the standard upstream commands some vendor-specific
+> > > > > commands are implemented.
+> > > > >
+> > > > > Add a driver that implements battery charge thresholds using these
+> > > > > custom commands.
+> > > >
+> > > > It turns out that standard ChromesOS EC defines EC_CMD_CHARGE_CONTROL.
+> > > > The kernel headers however only define v1 of the protocol, which is very
+> > > > limited.
+> > > >
+> > > > But in the upstream firmware repo there is a v3 which is much better.
+> > > >
+> > > > The Framework laptop only implements v2 which is also fine.
+> > > > Given that v3 was only introduced late last year, it seems better to
+> > > > stick to v2 anyways for now.
+> > > >
+> > > > So please disregard Patch 2, I'll see on how to use this via a normal
+> > > > cros_ec driver.
+> > > >
+> > > > There are some other Framework-only features that will use Patch 1,
+> > > > so feedback for that would still be good.
+> > >
+> > > What other kinds of features do you have in mind?
+> >
 > 
-> Here is example output about "perf kvm --host stat report" command
-> 
->     Event name   Samples   Sample%     Time (ns)   Time%   Mean Time (ns)
->      Mem store     83969    51.00%     625697070   8.00%             7451
->       Mem read     37641    22.00%     112485730   1.00%             2988
->      Interrupt     15542     9.00%      20620190   0.00%             1326
->          Iocsr     15207     9.00%      94296190   1.00%             6200
->      Hypercall      4873     2.00%      12265280   0.00%             2516
->           Idle      3713     2.00%    6322055860  87.00%          1702681
->            FPU      1819     1.00%       2750300   0.00%             1511
->         Ifecth       502     0.00%       1341740   0.00%             2672
->     Mem modify       324     0.00%        602240   0.00%             1858
->         Cpucfg        55     0.00%         77610   0.00%             1411
->            Csr        12     0.00%         19690   0.00%             1640
->           LASX         3     0.00%          4870   0.00%             1623
->            LSX         2     0.00%          2100   0.00%             1050
-> 
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
-> v2 --- v3:
->    1. Add NULL check with cpuid in function get_cpuid()
->    2. Add example output from /proc/cpuinfo before function get_cpuid()
-> v1 --- v2:
->    1. Add child_ops for kvm exit event, split kvm:kvm_exit_gspr events
-> into cpucfg/csr/iocsr/idle child events by decoding detailed gspr
-> instruction.
->    2. Remove some exception code type which does not happen in current
-> kvm implementation, such as meomry NR/NX/priviledge exception.
-> ---
->   tools/perf/arch/loongarch/Makefile        |   1 +
->   tools/perf/arch/loongarch/util/Build      |   2 +
->   tools/perf/arch/loongarch/util/header.c   |  88 ++++++++++++++
->   tools/perf/arch/loongarch/util/kvm-stat.c | 135 ++++++++++++++++++++++
->   4 files changed, 226 insertions(+)
->   create mode 100644 tools/perf/arch/loongarch/util/header.c
->   create mode 100644 tools/perf/arch/loongarch/util/kvm-stat.c
-> 
-> diff --git a/tools/perf/arch/loongarch/Makefile b/tools/perf/arch/loongarch/Makefile
-> index 3992a67a87d9..c89d6bb6b184 100644
-> --- a/tools/perf/arch/loongarch/Makefile
-> +++ b/tools/perf/arch/loongarch/Makefile
-> @@ -4,6 +4,7 @@ PERF_HAVE_DWARF_REGS := 1
->   endif
->   PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
->   PERF_HAVE_JITDUMP := 1
-> +HAVE_KVM_STAT_SUPPORT := 1
->   
->   #
->   # Syscall table generation for perf
-> diff --git a/tools/perf/arch/loongarch/util/Build b/tools/perf/arch/loongarch/util/Build
-> index d776125a2d06..b12d374d7096 100644
-> --- a/tools/perf/arch/loongarch/util/Build
-> +++ b/tools/perf/arch/loongarch/util/Build
-> @@ -1,5 +1,7 @@
-> +perf-y += header.o
->   perf-y += perf_regs.o
->   
->   perf-$(CONFIG_DWARF)     += dwarf-regs.o
->   perf-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
->   perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-> +perf-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
-> diff --git a/tools/perf/arch/loongarch/util/header.c b/tools/perf/arch/loongarch/util/header.c
-> new file mode 100644
-> index 000000000000..a4ed732b49c6
-> --- /dev/null
-> +++ b/tools/perf/arch/loongarch/util/header.c
-> @@ -0,0 +1,88 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Implementation of get_cpuid().
-> + *
-> + * Author: Nikita Shubin <n.shubin@yadro.com>
-> + */
-> +
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <api/fs/fs.h>
-> +#include <errno.h>
-> +#include "util/debug.h"
-> +#include "util/header.h"
-> +
-> +/*
-> + * Output example from /proc/cpuinfo
-> + *   CPU Family              : Loongson-64bit
-> + *   Model Name              : Loongson-3C5000
-> + *   CPU Revision            : 0x11
-> + */
-> +#define CPUINFO_MODEL	"Model Name"
-> +#define CPUINFO		"/proc/cpuinfo"
-> +static char *_get_field(const char *line)
-> +{
-> +	char *line2, *nl;
-> +
-> +	line2 = strrchr(line, ' ');
-> +	if (!line2)
-> +		return NULL;
-> +
-> +	line2++;
-> +	nl = strrchr(line, '\n');
-> +	if (!nl)
-> +		return NULL;
-> +
-> +	return strndup(line2, nl - line2);
-> +}
-> +
-> +static char *__get_cpuid(void)
-> +{
-> +	char *line, *model, *cpuid;
-> +	unsigned long line_sz;
-> +	FILE *file;
-> +
-> +	file = fopen(CPUINFO, "r");
-> +	if (file == NULL)
-> +		return cpuid;
-> +
-> +	line = model = cpuid = NULL;
-> +	while (getline(&line, &line_sz, file) != -1) {
-> +		if (strncmp(line, CPUINFO_MODEL, strlen(CPUINFO_MODEL)))
-> +			continue;
-> +
-> +		model = _get_field(line);
-> +		if (!model)
-> +			goto free;
-> +		break;
-> +	}
-> +
-> +	if (model && (asprintf(&cpuid, "%s", model) < 0))
-> +		cpuid = NULL;
-> +
-> +free:
-> +	fclose(file);
-> +	free(model);
-> +	return cpuid;
-> +}
-> +
-> +int get_cpuid(char *buffer, size_t sz)
-> +{
-> +	char *cpuid = __get_cpuid();
-> +	int ret = 0;
-> +
-> +	if (!cpuid)
-> +		return EINVAL;
-> +
-> +	if (sz >= strlen(cpuid))
-> +		scnprintf(buffer, sz, "%s", cpuid);
-> +	else
-> +		ret = ENOBUFS;
-> +	free(cpuid);
-> +	return ret;
-> +}
-> +
-> +char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
-> +{
-> +	return __get_cpuid();
-> +}
-> diff --git a/tools/perf/arch/loongarch/util/kvm-stat.c b/tools/perf/arch/loongarch/util/kvm-stat.c
-> new file mode 100644
-> index 000000000000..cc50adb0835a
-> --- /dev/null
-> +++ b/tools/perf/arch/loongarch/util/kvm-stat.c
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <errno.h>
-> +#include <memory.h>
-> +#include <errno.h>
-> +#include "util/kvm-stat.h"
-> +#include "util/parse-events.h"
-> +#include "util/debug.h"
-> +#include "util/evsel.h"
-> +#include "util/evlist.h"
-> +#include "util/pmus.h"
-> +
-> +#define LOONGARCH_EXCEPTION_INT		0
-> +#define LOONGARCH_EXCEPTION_PIL		1
-> +#define LOONGARCH_EXCEPTION_PIS		2
-> +#define LOONGARCH_EXCEPTION_PIF		3
-> +#define LOONGARCH_EXCEPTION_PME		4
-> +#define LOONGARCH_EXCEPTION_FPD		15
-> +#define LOONGARCH_EXCEPTION_SXD		16
-> +#define LOONGARCH_EXCEPTION_ASXD	17
-> +#define LOONGARCH_EXCEPTION_GSPR	22
-> +#define  LOONGARCH_EXCEPTION_CPUCFG	100
-> +#define  LOONGARCH_EXCEPTION_CSR	101
-> +#define  LOONGARCH_EXCEPTION_IOCSR	102
-> +#define  LOONGARCH_EXCEPTION_IDLE	103
-> +#define  LOONGARCH_EXCEPTION_OTHERS	104
-> +#define LOONGARCH_EXCEPTION_HVC		23
-> +
-> +#define loongarch_exception_type				\
-> +	{LOONGARCH_EXCEPTION_INT,  "Interrupt" },		\
-> +	{LOONGARCH_EXCEPTION_PIL,  "Mem read" },		\
-> +	{LOONGARCH_EXCEPTION_PIS,  "Mem store" },		\
-> +	{LOONGARCH_EXCEPTION_PIF,  "Ifecth" },			\
-> +	{LOONGARCH_EXCEPTION_PME,  "Mem modify" },		\
-> +	{LOONGARCH_EXCEPTION_FPD,  "FPU" },			\
-> +	{LOONGARCH_EXCEPTION_SXD,  "LSX" },			\
-> +	{LOONGARCH_EXCEPTION_ASXD, "LASX" },			\
-> +	{LOONGARCH_EXCEPTION_GSPR, "Privilege Error" },		\
-> +	{LOONGARCH_EXCEPTION_HVC,  "Hypercall" },		\
-> +	{LOONGARCH_EXCEPTION_CPUCFG, "Cpucfg" },		\
-> +	{LOONGARCH_EXCEPTION_CSR,    "Csr" },			\
-> +	{LOONGARCH_EXCEPTION_IOCSR,  "Iocsr" },			\
-> +	{LOONGARCH_EXCEPTION_IDLE,   "Idle" },			\
-> +	{LOONGARCH_EXCEPTION_OTHERS, "Others" }
-> +
-> +define_exit_reasons_table(loongarch_exit_reasons, loongarch_exception_type);
-> +
-> +const char *vcpu_id_str = "vcpu_id";
-> +const char *kvm_exit_reason = "reason";
-> +const char *kvm_entry_trace = "kvm:kvm_enter";
-> +const char *kvm_reenter_trace = "kvm:kvm_reenter";
-> +const char *kvm_exit_trace = "kvm:kvm_exit";
-> +const char *kvm_events_tp[] = {
-> +	"kvm:kvm_enter",
-> +	"kvm:kvm_reenter",
-> +	"kvm:kvm_exit",
-> +	"kvm:kvm_exit_gspr",
-> +	NULL,
-> +};
-> +
-> +static bool event_end(struct evsel *evsel,
-> +		struct perf_sample *sample __maybe_unused,
-> +		struct event_key *key __maybe_unused)
-> +{
-> +	/*
-> +	 * LoongArch kvm is different with other architectures
-> +	 *
-> +	 * There is kvm:kvm_reenter or kvm:kvm_enter event adjacent with
-> +	 * kvm:kvm_exit event.
-> +	 *   kvm:kvm_reenter means returning to guest immediately
-> +	 *   kvm:kvm_enter   means returning to vmm and then to guest
-> +	 */
-> +	return evsel__name_is(evsel, kvm_entry_trace) ||
-> +		evsel__name_is(evsel, kvm_reenter_trace);
-> +}
-> +
-> +static void event_gspr_get_key(struct evsel *evsel,
-> +			struct perf_sample *sample,
-> +			struct event_key *key)
-> +{
-> +	unsigned int insn;
-> +
-> +	key->key = LOONGARCH_EXCEPTION_OTHERS;
-> +	insn = evsel__intval(evsel, sample, "inst_word");
-> +	switch (insn >> 24) {
-> +	case 0:
-> +		/* cpucfg inst trap */
-> +		if ((insn >> 10) == 0x1b)
-> +			key->key = LOONGARCH_EXCEPTION_CPUCFG;
-> +		break;
-> +	case 4:
-> +		/* csr inst trap */
-> +		key->key = LOONGARCH_EXCEPTION_CSR;
-> +		break;
-> +	case 6:
-> +		/* iocsr inst trap */
-> +		if ((insn >> 15) == 0xc90)
-> +			key->key = LOONGARCH_EXCEPTION_IOCSR;
-> +		else if ((insn >> 15) == 0xc91)
-> +			/* idle inst trap */
-> +			key->key = LOONGARCH_EXCEPTION_IDLE;
-> +		break;
-> +	default:
-> +		key->key = LOONGARCH_EXCEPTION_OTHERS;
-> +		break;
-> +	}
-> +}
-> +
-> +static struct child_event_ops child_events[] = {
-> +	{ .name = "kvm:kvm_exit_gspr", .get_key = event_gspr_get_key },
-> +	{ NULL, NULL },
-> +};
-> +
-> +static struct kvm_events_ops exit_events = {
-> +	.is_begin_event = exit_event_begin,
-> +	.is_end_event = event_end,
-> +	.child_ops = child_events,
-> +	.decode_key = exit_event_decode_key,
-> +	.name = "VM-EXIT"
-> +};
-> +
-> +struct kvm_reg_events_ops kvm_reg_events_ops[] = {
-> +	{ .name	= "vmexit", .ops = &exit_events, },
-> +	{ NULL, NULL },
-> +};
-> +
-> +const char * const kvm_skip_events[] = {
-> +	NULL,
-> +};
-> +
-> +int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_unused)
-> +{
-> +	kvm->exit_reasons_isa = "loongarch64";
-> +	kvm->exit_reasons = loongarch_exit_reasons;
-> +	return 0;
-> +}
-> 
-> base-commit: 2c71fdf02a95b3dd425b42f28fd47fb2b1d22702
-> 
+> Definitely privacy switch reporting belongs in a driver like this.
 
+If it can't be done via one of the upstream CrOS EC commands, surely.
+
+> Overall, I'm not sure about making it a subjugate driver under the
+> cros_ec_mfd virtual "bus"... even though a lot of the features take a
+> dependency on cros_ec.
+> Doing so centralizes the work in the platform-chrome tree and may
+> serve as a guidepost for any future laptop OEMs that derive their
+> embedded controller firmware from ChromeOS's.
+> If the owners of this tree sign off on that, that's awesome! I'd be
+> concerned about making it all their responsibility.
+
+Yes, some guidance from the maintainers will be great.
+
+> I may be a bit biased, as I have been working on a driver of my own[1]
+> for this purpose. It currently supports battery charge limiting[3],
+> reporting fan speed via hwmon, the keyboard backlight[2], and has an
+> open pull request that exposes the status of the privacy switches.
+
+I have taken a look at that driver but wasn't fond of the fact that it
+is not using cros_ec mfd. Taking a reference on a completely different
+device looks iffy to me and in violation of the device hierarchy.
+
+FYI I have completely non-Framework-specific implementations for
+keyboard backlight [0], charge limiting [1] and hwmon [2].
+(I didn't look at the privacy switches yet, maybe there is a generic
+solution)
+(I'm currently polishing [1] and [2], any feedback already would also be
+much appreciated)
+
+All of them work correctly on my Framework 13 AMD, Firmware 3.05.
+These standard APIs are more powerful than the Framework-only ones.
+
+Charge control can do start_threshold, stop_threshold and
+charge_behaviour. Hwmon can do fans and temperature sensors.
+
+Keyboard backlight just reuses the existing mainline driver.
+
+> It is destined--once I find the time to clean it up--for
+> drivers\platforms\x86 instead of ...\chrome.
+> 
+> This may be a good place for us to combine our efforts!
+
+Surely!
+
+Personally I only have the AMD 13 device (Azalea),
+so I can't test anything else.
+And I'd like to focus on the mainline-compatible APIs (first).
+
+Feel free to contact me (privately?) if you have any suggestions.
+
+> [1] https://github.com/DHowett/framework-laptop-kmod
+> [2] I found that the Azalea did not report its keyboard backlight
+> values through the standard cros ec KBLIGHT interface like hx20/30
+> did, so the driver as it stands implements a fallback that uses the
+> raw PWM state. I'm sure that you'd've noticed this if it was still
+> true... so I am always happy to drop an unnecessary workaround. :)
+
+For me the posted driver under [0] works as expected.
+
+> [3] Which I believe still requires a special host command and is not
+> integrated into the charge manager, at least as of Azalea/Lotus and
+> _definitely_ not as of hx20/30!
+
+This also works for me correctly with [1].
+Do you know if there are plans by Framework to move the older devices to
+a newer firmware?
+This would also make their own maintenance work easier in the future,
+especially considering their commitment to software longevity[3].
+
+> [..]
+
+Thomas
+
+[0] https://lore.kernel.org/lkml/20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net/
+[1] https://git.sr.ht/~t-8ch/linux/tree/b4/cros_ec-charge-control
+[2] https://git.sr.ht/~t-8ch/linux/tree/b4/cros_ec-hwmon
+[3] https://frame.work/de/en/blog/enabling-software-longevity
 
