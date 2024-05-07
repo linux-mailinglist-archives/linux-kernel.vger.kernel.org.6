@@ -1,167 +1,312 @@
-Return-Path: <linux-kernel+bounces-170650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9CB8BDA34
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:34:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019578BDA37
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9260DB2278E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 162321C22D94
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 04:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780A55465C;
-	Tue,  7 May 2024 04:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEE16A8C1;
+	Tue,  7 May 2024 04:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="dfqDoKgA"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGF7GK4y"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546981849
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317566A356
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 04:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715056455; cv=none; b=lzjfPC+1tQX5jVeOWN2IZpMYJ7VIxqAwGJ/y4w5jSOP2UqFLBPEc3rsM4dif7EumC4JlX/T5L9zv9mVnkXbPxzepVtEHAIxM8XdfxBQYThrfl1vDlaX/tqelqq8C5JXRD8usgaI+Q2bNXfirCtY4ab/eGUaf40c7hyRtn0Xga20=
+	t=1715056645; cv=none; b=VvcF6XYe9s+z+pyu7AqcEqsKizwnpjNAfeRZRbyidIAtYy/YVxJpIInOQEuAiR6T7BQjXtAchned92hUn3LVzb/DgY2S2IezA6M+lyX3J7+PZPkFNsR65z9sQN1k0aolMeJHuDE4O9U6MT23VNJZkFDfCpod1O4OnDc1gA8J86U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715056455; c=relaxed/simple;
-	bh=VoLUIrz/OU6msMrgeqVOJYoI9HwcHFS/vVFRyCpgzQA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mma+bzr2dbA82rug4RMexfW6ebmf33QIJF8uywbRfpuXF+0QhXv12x8lckr2MyLgmrjxGidvI6KBm6lGUfEqYMObhf3zuw5LsCrdoHK4h1NNbGQ2EUk3UngOvSEN0V/ZI/Bp3cXkvVqqK4FOB7QHToX2PfeaCEG1b83HNNZSXK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dfqDoKgA; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7e18170ca14so39457839f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 21:34:14 -0700 (PDT)
+	s=arc-20240116; t=1715056645; c=relaxed/simple;
+	bh=R72DOGK6RyONwlbirO7ESOZ822EPE3UVvj9FpkCj9/k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=klc2z+Pfd6WkzIO3ZZGHB24AsFov6Ix6WfOphBmAtBd3sa/BLrR8qln1Uvd0X5Ql8CNPWctKEMdI/9xQAtS+9X0JHvxBLichSJhdoPACbyK3MI4nKyn/733Vt9nG2H8YKQ/Sm1odmX4/qxoShx3l9Rs+TntoJg8I3BAYdTwoXFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IGF7GK4y; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59ad344f7dso497288766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 21:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715056453; x=1715661253; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=L+ig3H9HcjFVWhM4GpWFctrqstrntznWN1owqzDtN7o=;
-        b=dfqDoKgAa1K4rb2rt+oMOuK3l9n9QoqAfcsq4d0dXMy3D6ecMfmj+WY2Iq4Rz7pDA0
-         WvwJwQhhIAfLO/672Vwk4liEZsdo7GI3ywWLo+XYNCkFmP6g+a/qrfzkSg3SnT/loTI8
-         iQLcQgNENdyRSTNmk2zlNB5/172ggPCGTMpvVXTzPK62xIgauS8KpbuYGWlXH8qt2D+8
-         yM2R6/1tOjM4FxjdyiuTuJ3baXY3/3TbdEjszLVFnLPevv3ng8kTQMM0CTkeUrkclyK9
-         ENiVcb8zrp+tyvEatx1+yvRWuGHCm78xVTgEAfEX2rfAE2tcv3hrgW0Ow1y2ohWKjVA9
-         QTpQ==
+        d=gmail.com; s=20230601; t=1715056641; x=1715661441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NDEi0vI8Iofmi+Jb2rsF44b3FI1pcGL98G5b9QzTf5k=;
+        b=IGF7GK4yX6AmPxJU+QsuVlQkeSgvWaL9TtsFBA1ivm1yfxnN+QMx0QnpDjVY/v0rLe
+         QDjSZAu0zA0iL4mmA2J4miHEdnHFe7w63Ysa8RsYke0XZsLo0VWYzXgBGd/Jpt/jBd3m
+         X9BddCDn90ji1WhIMITo4b2VaXFWsTKC1NYZ2jDJwfCJccThvbYDI1zm61S3G58L8o4s
+         Tlzf9+Ax0kaTOZhJS2/F0qkjNrBiVLQX0Ce591ThEyx9WMlFLfrrodUkgFM7f+50YcG7
+         +dMpwpsZmoGSwjt+Xpdg1lra8CEXCoufG78RovMODh3cvpRCCYfOJhfr2BU1AGgGKXhV
+         3Cyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715056453; x=1715661253;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L+ig3H9HcjFVWhM4GpWFctrqstrntznWN1owqzDtN7o=;
-        b=qECzAB1hPxCRL57sgmecdHv9B7NS1pbGD3BixE0ZnHSsRKoIX4hvZi1Zky9VuyXN09
-         /jEjUk7gVJ3Rv6NrLuJZLdtCYnY8KEVCOMWXEm6NGdGfcn8KOJDCIKHBH8QI4eXy//G+
-         u/d/hyP8pxH/nbZ34jW8RY2gJpp1JH6RKW9ltsXUVr08B/YT08f+cSU1JYEkCNB4CKvb
-         xzGJ7tEZ4vv+MEAK3h7UUsNu6tgZaj1ONDkqYq2Zxiks+67T6HRuXPSLz03JkD/OYxBk
-         YPOGmH8J8moGiHKq0ZFjIzlcXOsKfGtw5uc8QAHxLXoAewGv5Wj8KqqwgOBq1xqqrFRW
-         tagQ==
-X-Gm-Message-State: AOJu0Yy4iurOTgGAHhRkQBf6BuBIpvXFb0CL7FIb4OICwbU71AQZObSa
-	o+IwDeSI5k1fiAx6fwkVo9NiJdptQIfpRNlwQja6GWTTTOSrqwyKSwbsL/QUBpplv+MwzUVDO7/
-	i3wYDpyS/B0DgJry2/bc2fA==
-X-Google-Smtp-Source: AGHT+IGTILHjt43TXCxmtYxcfmS+4MJev84ovtenP1+KQDd/DVDEtEeUQDg3yhroMHs6a9dHyrDWNkWaDI7ujZB31A==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a05:6638:4c85:b0:488:59cc:eb42 with
- SMTP id do5-20020a0566384c8500b0048859cceb42mr378207jab.3.1715056453627; Mon,
- 06 May 2024 21:34:13 -0700 (PDT)
-Date: Tue, 07 May 2024 04:34:13 +0000
+        d=1e100.net; s=20230601; t=1715056641; x=1715661441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NDEi0vI8Iofmi+Jb2rsF44b3FI1pcGL98G5b9QzTf5k=;
+        b=f7qbHhxnU31NwdMkyw3OYqtR/9tiH5OHIjv9Fsi8WJ1rjJxi/JPe1yJqNVdEn+hplR
+         ZMA52MkfBVVivSd2XkrgMMbz/hd+9XWRUxtUWruMQ8sUpci8zS0Pk1MBa9h1921UWwhL
+         5PszJu1Oe6HLfDDtNXKKhgD9bUxnVEd1Q+b3rJeTHHqpddtjaIg/XtOlQ/Fbn7rzyeLY
+         RIjfDV4qVZrE2VXk+o5lGjgbq2PIhNkQyweRVCVXKif3kVzMTrn2W2QblhpsrO7V+5TZ
+         jdaYef05lbewmeyylSff3hn4uDGHJlLbyv6gYnvHJFoEPnThqawyKvtZSCnMoMKesUIC
+         JqWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYpWD8B1L6WKqswfZhdgdB7oPRoxheTZXEcv0sUnSMimZgOEDEUReorYIGxsaKU1xh1icFPJbfYaghRIYsFe6bdSqdnCroTX5/oYCw
+X-Gm-Message-State: AOJu0YzZkU4QVfTwWU50ZnNHo4uNh74QsTH669LYxEH4rG4WquWolk9k
+	NWslPr8IyXf+tmNhu7aKq2SbOGcwe7ZYr4PoilsaWMjtgURKe9tV0afeVUg+/YztOLATTXADLi+
+	EY302Cn1Umby95U+0E4SWkHx/klQ=
+X-Google-Smtp-Source: AGHT+IGjnJ4I7BOw3fF6piZmjPbN81pLzS9+ifamu3i+TBYkXnV5ID2ExlH22y0NF+lLcXO0JIGg9JngmdGFQeVPVKc=
+X-Received: by 2002:a50:8d1e:0:b0:566:f5d6:4b4 with SMTP id
+ s30-20020a508d1e000000b00566f5d604b4mr7087493eds.12.1715056641224; Mon, 06
+ May 2024 21:37:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAESvOWYC/x2MQQqAIBAAvxJ7bkHLEvpKdFDbai8mWhGIf086D
- sxMhkSRKcHUZIj0cOLTV5BtA+4wfifktTJ0olNiEBqtwuqgvwLeiRxK0xs7ars6klCrEGnj9z/ OSykfpVeGvmEAAAA=
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715056452; l=3068;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=VoLUIrz/OU6msMrgeqVOJYoI9HwcHFS/vVFRyCpgzQA=; b=H9gQ5PFH0w23ZB7xRv9INspYuKzIhVH014LQHjdeRlKZw/sFAHK0God3LCBXOJwShjxnVIZ4K
- uAen7JztfIyB7uoeFaR18jV7cx8FJGVE/vhjSfsSgKurk0StUR1Unf3
-X-Mailer: b4 0.12.3
-Message-ID: <20240507-b4-sio-ntp-usec-v1-1-15003fc9c2b4@google.com>
-Subject: [PATCH] ntp: remove accidental integer wrap-around
-From: Justin Stitt <justinstitt@google.com>
-To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-hardening@vger.kernel.org, Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-3-ioworker0@gmail.com>
+ <cc9fd23f-7d87-48a7-a737-acbea8e95fb7@linux.alibaba.com>
+In-Reply-To: <cc9fd23f-7d87-48a7-a737-acbea8e95fb7@linux.alibaba.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Tue, 7 May 2024 12:37:09 +0800
+Message-ID: <CAK1f24kyCj2Svguuu07wDuVEWYYbcmRc_18ihgVAzSjoJ9ox2A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] mm/rmap: integrate PMD-mapped folio splitting into
+ pagewalk loop
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com, david@redhat.com, 
+	21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
+	shy828301@gmail.com, xiehuan09@gmail.com, libang.li@antgroup.com, 
+	wangkefeng.wang@huawei.com, songmuchun@bytedance.com, peterx@redhat.com, 
+	minchan@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Using syzkaller alongside the newly reintroduced signed integer overflow
-sanitizer spits out this report:
+Hey Baolin,
 
-[  138.454979] ------------[ cut here ]------------
-[  138.458089] UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:461:16
-[  138.462134] 9223372036854775807 + 500 cannot be represented in type 'long'
-[  138.466234] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.8.0-rc2-00038-gc0a509640e93-dirty #10
-[  138.471498] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  138.477110] Call Trace:
-[  138.478657]  <IRQ>
-[  138.479964]  dump_stack_lvl+0x93/0xd0
-[  138.482276]  handle_overflow+0x171/0x1b0
-[  138.484699]  second_overflow+0x2d6/0x500
-[  138.487133]  accumulate_nsecs_to_secs+0x60/0x160
-[  138.489931]  timekeeping_advance+0x1fe/0x890
-[  138.492535]  update_wall_time+0x10/0x30
-..
+Thanks for taking time to review!
 
-Historically, the signed integer overflow sanitizer did not work in the
-kernel due to its interaction with `-fwrapv` but this has since been
-changed [1] in the newest version of Clang. It was re-enabled in the
-kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-sanitizer").
+On Tue, May 7, 2024 at 11:40=E2=80=AFAM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2024/5/1 12:26, Lance Yang wrote:
+> > In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
+> > folios, start the pagewalk first, then call split_huge_pmd_address()
+> > to split the folio.
+> >
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >   include/linux/huge_mm.h | 20 ++++++++++++++++++++
+> >   mm/huge_memory.c        | 42 +++++++++++++++++++++-------------------=
+-
+> >   mm/rmap.c               | 24 +++++++++++++++++------
+> >   3 files changed, 60 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index c8d3ec116e29..38c4b5537715 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -409,6 +409,20 @@ static inline bool thp_migration_supported(void)
+> >       return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
+> >   }
+> >
+> > +void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddress,
+> > +                        pmd_t *pmd, bool freeze, struct folio *folio);
+> > +
+> > +static inline void align_huge_pmd_range(struct vm_area_struct *vma,
+> > +                                     unsigned long *start,
+> > +                                     unsigned long *end)
+> > +{
+> > +     *start =3D ALIGN(*start, HPAGE_PMD_SIZE);
+> > +     *end =3D ALIGN_DOWN(*end, HPAGE_PMD_SIZE);
+> > +
+> > +     VM_WARN_ON_ONCE(vma->vm_start > *start);
+> > +     VM_WARN_ON_ONCE(vma->vm_end < *end);
+> > +}
+> > +
+> >   #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+> >
+> >   static inline bool folio_test_pmd_mappable(struct folio *folio)
+> > @@ -471,6 +485,12 @@ static inline void __split_huge_pmd(struct vm_area=
+_struct *vma, pmd_t *pmd,
+> >               unsigned long address, bool freeze, struct folio *folio) =
+{}
+> >   static inline void split_huge_pmd_address(struct vm_area_struct *vma,
+> >               unsigned long address, bool freeze, struct folio *folio) =
+{}
+> > +static inline void split_huge_pmd_locked(struct vm_area_struct *vma,
+> > +                                      unsigned long address, pmd_t *pm=
+d,
+> > +                                      bool freeze, struct folio *folio=
+) {}
+> > +static inline void align_huge_pmd_range(struct vm_area_struct *vma,
+> > +                                     unsigned long *start,
+> > +                                     unsigned long *end) {}
+> >
+> >   #define split_huge_pud(__vma, __pmd, __address)     \
+> >       do { } while (0)
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 8261b5669397..145505a1dd05 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -2584,6 +2584,27 @@ static void __split_huge_pmd_locked(struct vm_ar=
+ea_struct *vma, pmd_t *pmd,
+> >       pmd_populate(mm, pmd, pgtable);
+> >   }
+> >
+> > +void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddress,
+> > +                        pmd_t *pmd, bool freeze, struct folio *folio)
+> > +{
+> > +     VM_WARN_ON_ONCE(folio && !folio_test_pmd_mappable(folio));
+> > +     VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
+> > +     VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
+> > +     VM_BUG_ON(freeze && !folio);
+> > +
+> > +     /*
+> > +      * When the caller requests to set up a migration entry, we
+> > +      * require a folio to check the PMD against. Otherwise, there
+> > +      * is a risk of replacing the wrong folio.
+> > +      */
+> > +     if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
+> > +         is_pmd_migration_entry(*pmd)) {
+> > +             if (folio && folio !=3D pmd_folio(*pmd))
+> > +                     return;
+> > +             __split_huge_pmd_locked(vma, pmd, address, freeze);
+> > +     }
+> > +}
+> > +
+> >   void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> >               unsigned long address, bool freeze, struct folio *folio)
+> >   {
+> > @@ -2595,26 +2616,7 @@ void __split_huge_pmd(struct vm_area_struct *vma=
+, pmd_t *pmd,
+> >                               (address & HPAGE_PMD_MASK) + HPAGE_PMD_SI=
+ZE);
+> >       mmu_notifier_invalidate_range_start(&range);
+> >       ptl =3D pmd_lock(vma->vm_mm, pmd);
+> > -
+> > -     /*
+> > -      * If caller asks to setup a migration entry, we need a folio to =
+check
+> > -      * pmd against. Otherwise we can end up replacing wrong folio.
+> > -      */
+> > -     VM_BUG_ON(freeze && !folio);
+> > -     VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
+> > -
+> > -     if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
+> > -         is_pmd_migration_entry(*pmd)) {
+> > -             /*
+> > -              * It's safe to call pmd_page when folio is set because i=
+t's
+> > -              * guaranteed that pmd is present.
+> > -              */
+> > -             if (folio && folio !=3D pmd_folio(*pmd))
+> > -                     goto out;
+> > -             __split_huge_pmd_locked(vma, pmd, range.start, freeze);
+> > -     }
+> > -
+> > -out:
+> > +     split_huge_pmd_locked(vma, range.start, pmd, freeze, folio);
+> >       spin_unlock(ptl);
+> >       mmu_notifier_invalidate_range_end(&range);
+> >   }
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index 7e2575d669a9..432601154583 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1636,9 +1636,6 @@ static bool try_to_unmap_one(struct folio *folio,=
+ struct vm_area_struct *vma,
+> >       if (flags & TTU_SYNC)
+> >               pvmw.flags =3D PVMW_SYNC;
+> >
+> > -     if (flags & TTU_SPLIT_HUGE_PMD)
+> > -             split_huge_pmd_address(vma, address, false, folio);
+> > -
+> >       /*
+> >        * For THP, we have to assume the worse case ie pmd for invalidat=
+ion.
+> >        * For hugetlb, it could be much worse if we need to do pud
+> > @@ -1650,6 +1647,8 @@ static bool try_to_unmap_one(struct folio *folio,=
+ struct vm_area_struct *vma,
+> >       range.end =3D vma_address_end(&pvmw);
+> >       mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm,
+> >                               address, range.end);
+> > +     if (flags & TTU_SPLIT_HUGE_PMD)
+> > +             align_huge_pmd_range(vma, &range.start, &range.end);
+>
+> I am not sure why need this alignment?
+> (1) For a partially mapped THP, 'range.start' and 'range.end' can beyond
+> the VMA limits. For a PMD mapped THP, I think the address is already THP
+> size alignment returned from vma_address(&folio->page, vma).
+> (2) The range.end is not used.
 
-Let's introduce a new macro and use that against NTP_PHASE_LIMIT to
-properly limit the max size of time_maxerror without overflowing during
-the check itself.
+Thanks for pointing that out!
 
-Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-Closes: https://github.com/KSPP/linux/issues/354
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
- include/linux/timex.h | 1 +
- kernel/time/ntp.c     | 8 ++++----
- 2 files changed, 5 insertions(+), 4 deletions(-)
+I agree that this alignment is indeed redundant, and we should remove it.
+Especially for a partially mapped THP, it could cause 'range.start' and
+'range.end' beyond the VMA limits, which could lead us into trouble.
 
-diff --git a/include/linux/timex.h b/include/linux/timex.h
-index 3871b06bd302..976490a06915 100644
---- a/include/linux/timex.h
-+++ b/include/linux/timex.h
-@@ -138,6 +138,7 @@ unsigned long random_get_entropy_fallback(void);
- #define MINSEC 256		/* min interval between updates (s) */
- #define MAXSEC 2048		/* max interval between updates (s) */
- #define NTP_PHASE_LIMIT ((MAXPHASE / NSEC_PER_USEC) << 5) /* beyond max. dispersion */
-+#define NTP_MAXFREQ_USEC (MAXFREQ / NSEC_PER_USEC) /* scaled to microseconds */
- 
- /*
-  * kernel variables
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index 406dccb79c2b..19027b6d0827 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -454,12 +454,12 @@ int second_overflow(time64_t secs)
- 	}
- 
- 
--	/* Bump the maxerror field */
--	time_maxerror += MAXFREQ / NSEC_PER_USEC;
--	if (time_maxerror > NTP_PHASE_LIMIT) {
-+	/* Bump the maxerror field, making sure not to exceed NTP_PHASE_LIMIT */
-+	if (NTP_PHASE_LIMIT - NTP_MAXFREQ_USEC < time_maxerror) {
- 		time_maxerror = NTP_PHASE_LIMIT;
- 		time_status |= STA_UNSYNC;
--	}
-+	} else
-+		time_maxerror += NTP_MAXFREQ_USEC;
- 
- 	/* Compute the phase adjustment for the next second */
- 	tick_length	 = tick_length_base;
+>
+> >       if (folio_test_hugetlb(folio)) {
+> >               /*
+> >                * If sharing is possible, start and end will be adjusted
+> > @@ -1664,9 +1663,6 @@ static bool try_to_unmap_one(struct folio *folio,=
+ struct vm_area_struct *vma,
+> >       mmu_notifier_invalidate_range_start(&range);
+> >
+> >       while (page_vma_mapped_walk(&pvmw)) {
+> > -             /* Unexpected PMD-mapped THP? */
+> > -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+> > -
+> >               /*
+> >                * If the folio is in an mlock()d vma, we must not swap i=
+t out.
+> >                */
+> > @@ -1678,6 +1674,22 @@ static bool try_to_unmap_one(struct folio *folio=
+, struct vm_area_struct *vma,
+> >                       goto walk_done_err;
+> >               }
+> >
+> > +             if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
+> > +                     /*
+> > +                      * We temporarily have to drop the PTL and start =
+once
+> > +                      * again from that now-PTE-mapped page table.
+> > +                      */
+> > +                     split_huge_pmd_locked(vma, range.start, pvmw.pmd,=
+ false,
+> > +                                           folio);
+> > +                     pvmw.pmd =3D NULL;
+> > +                     spin_unlock(pvmw.ptl);
+>
+> IMO, you should also make the 'pvmw.ptl =3D NULL;' after unlocking as
+> page_vma_mapped_walk() did, in case some corner case met.
 
----
-base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-change-id: 20240507-b4-sio-ntp-usec-1a3ab67bdce1
+Yep, I'll also set pvmw.ptl to NULL here if any corner cases arise.
 
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
+Thanks again for the review!
+Lance
 
+>
+> > +                     flags &=3D ~TTU_SPLIT_HUGE_PMD;
+> > +                     continue;
+> > +             }
+> > +
+> > +             /* Unexpected PMD-mapped THP? */
+> > +             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+> > +
+> >               pfn =3D pte_pfn(ptep_get(pvmw.pte));
+> >               subpage =3D folio_page(folio, pfn - folio_pfn(folio));
+> >               address =3D pvmw.address;
 
