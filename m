@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-170751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122E98BDB77
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:30:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 922548BDB8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EC8F1C21A4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:30:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C38A71C20CA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F169C6FB9D;
-	Tue,  7 May 2024 06:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B560874414;
+	Tue,  7 May 2024 06:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MugYcY8m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjgkM5tp"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2AA6BB4E;
-	Tue,  7 May 2024 06:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E988374F9
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715063400; cv=none; b=DRx2KmrNdq5ZePBdLHslkyXUY7+WJ68kxEVTXecfSVZTK4Ntsv3+36qh+Sj2K+m+SgnL14VFIq8Q9Uu5Ojg048RpdqN10pjWgCtptdgHPQrXqIi0+1kC+rjn2EwYDqPUaQliljejyWBmn5g5uaUnvi8ZGjX0WIKtM3nWlfgrRO0=
+	t=1715063629; cv=none; b=MjnX819rR03sc4plKPHBh/Ps6YYUYKruzZHdDt9Fg2Kt32lJUlBqWDQ2VLbf9fc5F0wUdXcs8yEbvccOemPVemtzpl8DY+tHG6rumGbO0ZrptTYN55ZVUGJSQI6A7D53/Zi4enaSoiqN2EoFtYJro+twI/EoghI0MYvq7wgWe1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715063400; c=relaxed/simple;
-	bh=56e8bED4V6W28096yUKf8RNEXz6YOYzyF3VADr9TI8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ChSFIfwU1dwaR7373ajUWNJLdnH8zlzDN494BhDykZODwQfN/pG1/uABph05Zq7RW3xiLpkw/YdZM27uLaNpuDlephKjmLXg9G4Z3bwip6f0vh16dc6IJt3w6FrA/O6joyY1czA3iwYvjpj7gQvM6CfgkSrKTvEbCAtbWAt7MrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MugYcY8m; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715063399; x=1746599399;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=56e8bED4V6W28096yUKf8RNEXz6YOYzyF3VADr9TI8I=;
-  b=MugYcY8moHc+6DetqGQuaudOjoD6JL70gK/mRj2Q79CAZn5b/g6OGEAW
-   goNJeSs45qt4+2RiTGtd8Q0pqMJ2woWuq7P6Vc8J6iUTZFlZPxdAnWtRM
-   Ip6xEjKSRGlpvPEfaN2yrqw/8vjvvN8c1sRwbAHf6zNA9iNBNEXbZYQ+S
-   3CRgU5b0Fp493njPGjWzInecfM5PZqA7jy9FPN9VQllGG6FQ6tYgzjFqa
-   9MTmtGOE0h7nj8SxsJPUeuhPbZmEtqQFv7jrdpgXyEseQ47XqDS3TW2xa
-   phdwQIolbLztN3YdSvjAiLIF+IaYACg7zKbb+SQxyeRpQ3zhiQMdqwbu5
-   w==;
-X-CSE-ConnectionGUID: i1HkxT/OScufA5Ky3LnD3A==
-X-CSE-MsgGUID: ANjC379ASXKR5Ghx/VFMMg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="28310310"
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="28310310"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:29:58 -0700
-X-CSE-ConnectionGUID: ZbdwN7B/QKOYWMvoqZTbhg==
-X-CSE-MsgGUID: rhqLLXceR/WPYY+cor1KiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
-   d="scan'208";a="32872739"
-Received: from unknown (HELO dcai-bmc-sherry-1.sh.intel.com) ([10.239.138.57])
-  by fmviesa005.fm.intel.com with ESMTP; 06 May 2024 23:29:54 -0700
-From: Haiyue Wang <haiyue.wang@intel.com>
-To: bpf@vger.kernel.org
-Cc: Haiyue Wang <haiyue.wang@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH bpf-next v1] bpf,arena: Remove redundant page mask of vmf->address
-Date: Tue,  7 May 2024 14:33:39 +0800
-Message-ID: <20240507063358.8048-1-haiyue.wang@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1715063629; c=relaxed/simple;
+	bh=2tSt1cPD/UO58Gs2DE4g6wcOYjTWKRl2MUhi4dKWd7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdghBGTJNp5Sk/eCZaepbfMJKibblBFtcWH3BqaJmQsIiHevpZNzYhpfgLaMl4emremg5KuqaQrQZs64eZXGfzCYP745l3Cm+LHg1q81VPE0FjJfGLZmRvQxLqbeAvPE6veh98pck50CknYIypcrSI0fSeNCCOXy0FFs8qcI/C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OjgkM5tp; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e9so22491815e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715063626; x=1715668426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZceNyQkkA5SipGRuhtz98PdxDwJKZgpzV7BnccqbLw=;
+        b=OjgkM5tp8Sb98BxeStvjA1jNxQD8OT7lnEL7jIZqyM2qZUV1DG+ibeEXdtMAp2V3oc
+         5ovF3MUk0MGVVTzOmNdM1xHD+L61pYLZL3S3RGcxENUpsVM+EjuiGK9YL2q2bKezi9mZ
+         zvWrvmRGezMINa90ihWKC1rSjU7eYXo1CxZ0uhLlOd+eI6IHvOX3wfMKNved9nxnOe6u
+         RjqTwmislUTKSCKyuFQK9AkOCWTa3UrjK8qFxipMu6qiD8drijjOJleCYboD5EsSN9Nt
+         B+En6Y+hPIbHLXsMOZu8tfOK3wc9/Gt5Hq64fwc9HCrmZ6Y5FKGi/jHisV9uD2E7lbTE
+         UGbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715063626; x=1715668426;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ZceNyQkkA5SipGRuhtz98PdxDwJKZgpzV7BnccqbLw=;
+        b=OrxXfXz3f+1my4moNzpsvrJd2VxYovBwzKXelhLme+sIAxzP50Yp0z5GXN6Vkb81fa
+         SpetRDcyJA7WK/PSZTsqB+Za2vOUurqDMV/wM//OVWmHaw3rDcd+IrKCWIhlB9n4qgcm
+         VPHXu5+ypP/4I93FwsHCsDxFdeDSzXLZSzhlZYP1q3H6wiQ0UTA3i6xacI9kRFJVSNWW
+         dv8aIsImzuQzJDUcqe+6D04GHa8IpP8KQ0JXyXIoyrUogDidLPFO1JmzAdyHi6IRQnqJ
+         IeZ+AyXGXtMIYOyJcrgUhdPXpGAq3ItmhJss77bSOQgsKuNkbg5OpvOL3ncOlUVNPOLR
+         FdqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTHvsaeR2/p9NDZXkIjYk4CSjtKo+Zy0r5v6AM+IXcCJZgUZ25JnwQjKCbcOM7ZucadeufFz1aeuZ6VZUXeESdG2Bq0iFDzm5sVGRt
+X-Gm-Message-State: AOJu0Yyu9hEh34xVw0ZySs4veDCGyk508T8qFos2UoaOG+l1Vu9xKIsL
+	IBEsoK9D2CAsRv2l7B5GuVi/mbdWZJ0FrSlhyY6MW4g/ZlQExMg62r6xKqXCmWc=
+X-Google-Smtp-Source: AGHT+IG5xGMmKq41996Zvafki2sGa8A1qFQDqQcWnfzKnmpjsvJvBGxoRMoI0HOYlwRX3IOjzEI0Mw==
+X-Received: by 2002:a05:600c:19d2:b0:419:f241:632f with SMTP id u18-20020a05600c19d200b00419f241632fmr9996714wmq.31.1715063625822;
+        Mon, 06 May 2024 23:33:45 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id z18-20020adff752000000b0034e19861891sm12163393wrp.33.2024.05.06.23.33.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 23:33:45 -0700 (PDT)
+Date: Tue, 7 May 2024 09:33:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
+Message-ID: <d953392c-44d1-4c9f-a671-b25803181b97@moroto.mountain>
+References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
+ <ZjnE2SjU7lGD0x5A@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjnE2SjU7lGD0x5A@infradead.org>
 
-As the comment described in "struct vm_fault":
-	".address"      : 'Faulting virtual address - masked'
-	".real_address" : 'Faulting virtual address - unmasked'
+On Mon, May 06, 2024 at 11:06:17PM -0700, Christoph Hellwig wrote:
+> On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
+> > The fxr->file1_offset and fxr->file2_offset variables come from the user
+> > in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
+> > Check the they aren't negative.
+> > 
+> > Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
+> 
+> In this commit file1_offset and file2_offset are u64.  They used to
+> be u64 in the initial submission, but we changed that as part of the
+> review process.
 
-The link [1] said: "Whatever the routes, all architectures end up to the
-invocation of handle_mm_fault() which, in turn, (likely) ends up calling
-__handle_mm_fault() to carry out the actual work of allocating the page
-tables."
+I've just checked again, and I think it was loff_t in that commit.
+There are two related structs, the one that's userspace API and the
+one that's internal.  The userspace API is u64 but internally it's
+loff_t.
 
-  __handle_mm_fault() does address assignment:
-	.address = address & PAGE_MASK,
-	.real_address = address,
+fs/xfs/libxfs/xfs_fs.h
+   818  struct xfs_exchange_range {
+   819          __s32           file1_fd;
+   820          __u32           pad;            /* must be zeroes */
+   821          __u64           file1_offset;   /* file1 offset, bytes */
+   822          __u64           file2_offset;   /* file2 offset, bytes */
+   823          __u64           length;         /* bytes to exchange */
+   824  
+   825          __u64           flags;          /* see XFS_EXCHANGE_RANGE_* below */
+   826  };
 
-This is debug dump by running `./test_progs -a "*arena*"`:
+fs/xfs/xfs_exchrange.h
+    16  struct xfs_exchrange {
+    17          struct file             *file1;
+    18          struct file             *file2;
+    19  
+    20          loff_t                  file1_offset;
+    21          loff_t                  file2_offset;
+    22          u64                     length;
+    23  
+    24          u64                     flags;  /* XFS_EXCHANGE_RANGE flags */
+    25  };
 
-[   69.767494] arena fault: vmf->address = 10000001d000, vmf->real_address = 10000001d008
-[   69.767496] arena fault: vmf->address = 10000001c000, vmf->real_address = 10000001c008
-[   69.767499] arena fault: vmf->address = 10000001b000, vmf->real_address = 10000001b008
-[   69.767501] arena fault: vmf->address = 10000001a000, vmf->real_address = 10000001a008
-[   69.767504] arena fault: vmf->address = 100000019000, vmf->real_address = 100000019008
-[   69.769388] arena fault: vmf->address = 10000001e000, vmf->real_address = 10000001e1e8
-
-So we can use the value of 'vmf->address' to do BPF arena kernel address
-space cast directly.
-
-[1] https://docs.kernel.org/mm/page_tables.html
-
-Signed-off-by: Haiyue Wang <haiyue.wang@intel.com>
----
- kernel/bpf/arena.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
-index 343c3456c8dd..1876dc7ebb57 100644
---- a/kernel/bpf/arena.c
-+++ b/kernel/bpf/arena.c
-@@ -251,7 +251,7 @@ static vm_fault_t arena_vm_fault(struct vm_fault *vmf)
- 	int ret;
- 
- 	kbase = bpf_arena_get_kern_vm_start(arena);
--	kaddr = kbase + (u32)(vmf->address & PAGE_MASK);
-+	kaddr = kbase + (u32)(vmf->address);
- 
- 	guard(mutex)(&arena->lock);
- 	page = vmalloc_to_page((void *)kaddr);
--- 
-2.43.2
+regards,
+dan carpenter
 
 
