@@ -1,203 +1,201 @@
-Return-Path: <linux-kernel+bounces-170630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00EA88BD9EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:56:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC558BD9F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3CB2837D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9D251C20E4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680774C618;
-	Tue,  7 May 2024 03:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3658D4EB44;
+	Tue,  7 May 2024 03:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LOWmYy6P"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0sUdCv+D"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0634450A7E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715054182; cv=none; b=HLj7tuEx1fssVDJ1lP/3saonU28EHtPn2cXCzQajHrr2CH07FEKpmnkMUg7gk0C8/Cs0rhDkxzUeSo312zfXhtQu+DQ7OH3ROeXowYKzPqdrwiUC+7Tfz7jCTjG5DdaNTQ0SxasAKJE1muHB7MwQhR2kTnCGMrAC5UEjVp2OtK0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715054182; c=relaxed/simple;
-	bh=uHGCgFTf2PoULArgJkw20TEvZCTEKOhTb7AlWBgjnHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iKJWHIQN80+KQKx7HP+HkXQhXjcWW4ghJJfVobNQA3C5psNd0wsEsdxnJKDzw6Cv18LDBWeQQO+ALkY5HIYsi+rQdWEXx6qsf89v0ECrrANnLEgwCOoC7sR5UFP98MuD7sPYzgrOy8W97YsIQDjH8n2LgKtpiEBqNUrO8dwz12o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LOWmYy6P; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-7f161a3eeb6so1149653241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 20:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715054179; x=1715658979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EEPSTkzCONFhi4zhV16EOLzI7dVRIqWkcaUFzFQRbWU=;
-        b=LOWmYy6Pa/lW9E2ziZOEfGXLqnkVWKDkbk+KMUdLYZqatnT+iSXS2ioSQu+0RvKhSF
-         qTRlIu5KtvChlcdpCChs93dWlw91Zfq2VirEwJWylRd3hF3UgxJHA9hTa9/OpZ1ocVd+
-         FiuHhKdkrtg7cFua//1UWUEXNJw8giqMjPo7TajtdG9U+fpVsQuE6QKqxvYj2QV8azJp
-         6MCF4ld4JInR5uTgojsraShbaomnozkIq1xYlFB6Utl+fPwl20Ip1t2j8rxzwrC9vqS/
-         SG9xUYGMEKOujH27os/zNfAQWw2p17Mgb6hFo/wahykECv1fcbXlgDb3fIE4kGRBrZ9W
-         qmnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715054179; x=1715658979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EEPSTkzCONFhi4zhV16EOLzI7dVRIqWkcaUFzFQRbWU=;
-        b=mu77WyoVuJ2sjIp8FLALDzxD87jeRg81EXLELc27+x039r2UzjZtU1z2ntYJb/gged
-         Zz6+COABsW8MJChk+UMnrTDuXsPteGsqsuBtb3v5j67hDlAiv5NIjgEei+pJxebbUDaU
-         Y5o4ACCfT2coE+XT0WZflVElcndV/3R3Gi++8rxm57stkJqsHK+fndiXyRfASqP1XunB
-         JyGDrcWA8vI93GwnyjQufQDB8VddDDc+C6gt7dZc8EVcGNfc3YaeM6yE6ZSu2Th19Zho
-         BfpxuWvQVCRx/XOalvXSQKHbdgaiLMOoLpykGUzOeAoVZS9GmcvrFB7s/NJ1tgqOD8FX
-         0Vig==
-X-Forwarded-Encrypted: i=1; AJvYcCUOfUtOvuMZJqJE9LnY1s0nV0EzAkIy9h/fIrz0aVi0rZAwd0UFtQpA7Owe75zNXfMAj9ljaLmH4gHCimWuMW9yjevvFOEkNnFSSkoX
-X-Gm-Message-State: AOJu0Yx64p3A+tCt9XblY7wfygz92z1glZZzIu/Wy2/Km7rteNB0CnOm
-	4T9CzRm7iT93CLUUBIQ++9242/TwZkoke7zfa19VrywH2c4UbVnNwsKo6ZIyuEJNcssv4hk7AgR
-	NJoa+/BA7JPton6TPfY3kS8sSHu3/PpOuSbNK
-X-Google-Smtp-Source: AGHT+IGShhYWI6mZpEjTIv/wXY/NMt0EKm8Ye6Q6/YQzd9ugb43BRYG+szXDcFahkTSWN8/XZTM0Mr7dHM+D+OZw+Fs=
-X-Received: by 2002:a67:f7c5:0:b0:47e:a1fc:3b82 with SMTP id
- a5-20020a67f7c5000000b0047ea1fc3b82mr12655312vsp.35.1715054178173; Mon, 06
- May 2024 20:56:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE623FBA2;
+	Tue,  7 May 2024 03:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715054296; cv=fail; b=h8fcJ2WB1voa/AT2knaoqxA1KomqTfo55u258htAzWEnBd7QDLUCP4+1go8e1ubtAan3J/PbnctjKnn3PJWO+dmUuTtnmZ9nOm8IjMMadlfjbYbp7rGFY9q368jp5EbZmu6O8ubZhfEDwuDJ5ZOPYjSKOYNsR9/hLzz7rBLdFuw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715054296; c=relaxed/simple;
+	bh=3xdI4w/XmQDea/5uVGsvzGTmTZxgSa5V28RtQ9dhVAc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nzTc6huUTspeCojddBZYDOE9y89zxegHaXaWnN1yhExntR0oqiSLhk/ohav+jQlF8+2YJcX8NHC21ey5i5Tlk2XOx8fnz5wX4jmwM+zasLcynYupH2h5u7wq9gzGLoDoJ8R2bjXrgPJca8mSqtC3q5yAq3M0eV2IBIaG1isZiEk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0sUdCv+D; arc=fail smtp.client-ip=40.107.237.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kusg3590TB4BCyD19xGphRCwkxW2tQBu8F2CD07GOFrmiTJD4+Fb2lb8hsdrapLcGBseEOK03rqw4SxT3LTJX+H6Z6kT3s1bicTD9YduwJ/U/tvsaIbkcI6mXT8rSN0G4IdZtDN8Cp4ZoEgp2dmxW62kcZa28wQQuKUZWAWr3AgAyFiXWDD6gE4i6l32669/1bDXm5FloMkcaSAiPFRkOhQstXyrsIPLjq+6uTfXte9UEIm2LLcRW+iCW2Mu5+Jk24nCxtSkxHjKfXrrn84GRA7wmat6+hdlscn6RRmy6bQPDRQAhHCpFeIP+qf/C76NJN98qGvEeZffLTzgJpiKjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9fc43EM9CsQlYhWIHs9oYl+ihVQ91YrozVmUqq58XAU=;
+ b=Fm/eCIu1R9jQDb3J20MHLOOmE4q8mE/svwzd+w5uG9rsDtvg4jvhbRrKtyXamvJeKsRsSUsM/fKk70NA458WT1oMhalvx757r0FM8JJ98xEi3deyYRno8u7VsSYYx/UrbBBA81R2TJZolXYLtPSgb4xqe/dzKYI97x3y+1/Sp0SkV7+oAwqO75EJboDK2STnX/wB0UsDJWCi7wzULiv7JsFh4OmDQ16M9FbuJLKrkSAOlSLQ9KRUYceJnUCWvAhD3nMLo5A1F8eAoJACkgy7qR0D4/MBcLW68XPzbBabP4n0GcSCeVg+dHZhDh3wk4hrGC7A0ihPWCY7wXkWPtG3Wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9fc43EM9CsQlYhWIHs9oYl+ihVQ91YrozVmUqq58XAU=;
+ b=0sUdCv+DjqH8D4B2rTSFpSZsi5ixV4UrB48T551pJlGU8EffmfBZQWo9RiLWULZWoJpXiojRPG1+/fQ1WirgETDb83QT0Cq81t4SSvtrHK8zxxl1y6K1v+0P3Ll5YuU3OqB5rIW9lZjg0k4YJuq9bRymp7kpqZ+WyNFci8z9Q+c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by BL3PR12MB6379.namprd12.prod.outlook.com (2603:10b6:208:3b2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Tue, 7 May
+ 2024 03:58:11 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%5]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 03:58:11 +0000
+Message-ID: <3685c15f-3485-53b0-7955-7931efaee960@amd.com>
+Date: Tue, 7 May 2024 09:27:45 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 2/3] x86/bus_lock: Add support for AMD
+To: Jim Mattson <jmattson@google.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, seanjc@google.com, pbonzini@redhat.com,
+ thomas.lendacky@amd.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk,
+ peterz@infradead.org, james.morse@arm.com, lukas.bulwahn@gmail.com,
+ arjan@linux.intel.com, j.granados@samsung.com, sibs@chinatelecom.cn,
+ nik.borisov@suse.com, michael.roth@amd.com, nikunj.dadhania@amd.com,
+ babu.moger@amd.com, x86@kernel.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, santosh.shukla@amd.com,
+ ananth.narayan@amd.com, sandipan.das@amd.com,
+ Ravi Bangoria <ravi.bangoria@amd.com>
+References: <20240429060643.211-1-ravi.bangoria@amd.com>
+ <20240429060643.211-3-ravi.bangoria@amd.com>
+ <CALMp9eQzbNVJpuxp1orNswnyfKy=aFSPYFRnd3H7fbi0+NfDvw@mail.gmail.com>
+Content-Language: en-US
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+In-Reply-To: <CALMp9eQzbNVJpuxp1orNswnyfKy=aFSPYFRnd3H7fbi0+NfDvw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2P153CA0028.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::9)
+ To PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-b4-sio-block-ioctl-v2-1-e11113aeb10f@google.com>
-In-Reply-To: <20240507-b4-sio-block-ioctl-v2-1-e11113aeb10f@google.com>
-From: Justin Stitt <justinstitt@google.com>
-Date: Mon, 6 May 2024 20:56:06 -0700
-Message-ID: <CAFhGd8rVZER=F9akZhdv0q=GXdVqvCNNdvWh8VKnOYmvTM3d+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] block/ioctl: prefer different overflow check Running
- syzkaller with the newly reintroduced signed integer overflow sanitizer shows
- this report:
-To: Jens Axboe <axboe@kernel.dk>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|BL3PR12MB6379:EE_
+X-MS-Office365-Filtering-Correlation-Id: ffcc83a0-93e1-441b-86a3-08dc6e49e999
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|7416005|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VlhpYWpoNkJiSTVEbjdOeUJyaVg2ajN1cVovVWZrcmhaRnlqdnNaWVRMWmha?=
+ =?utf-8?B?VG5QMGtuUXdHWlByajh2YmVRNitKaU4xMVhzZXJQSGliV3VwQUxvd01zR2VB?=
+ =?utf-8?B?R1hwRzlGYUlpWU5qRUZvN0NjWjdDbVlUYmZDc0dlZ3lmSkF4TjJGWXFFSHo5?=
+ =?utf-8?B?MGZTWmdwSElVMEh6bWdLV0RWTnJ1RElvN3ViT05Dc3c4YklCQUV6NzVxd2Ra?=
+ =?utf-8?B?M0VUdDVEWTF0NndCZ1k1REtXZnhDbERWZlcvUWJQTS9TSlVtbzB6cUFHRFJ4?=
+ =?utf-8?B?YW9JdGN3SVQ3YzA4Ykhnd3FvVUZWV2tTaXpBZ3FEdEdKa3lVZE5zVUYzb0VZ?=
+ =?utf-8?B?VlRyTFAwWVhjemRxZXBUcDdXL3h3ZjRxVWdyeWgrNWRsRWZCK2I5eHdudTFZ?=
+ =?utf-8?B?eUlka0VrRDlVRGxBRWxlbncrRktyK2VLUmYxWU5NVDNkNnV3RW9WeVNMbEgr?=
+ =?utf-8?B?TTZEdWp0b2NLeEF0RnluVktnQm1GK3NVc3NnQ1RJRGY0TlZ1UHR2NjJWR2F1?=
+ =?utf-8?B?Rzc4VlU1MjU1QmhUdWprN2d6cElSaDlFdmtWRHk5RHgxdW1tK1luMEx5RXBy?=
+ =?utf-8?B?NmU4dTkxanVDWUNGNzErRm81VjlDSlVPbWJ3ZjFmWWtOdDFZVjNrMzl6clNx?=
+ =?utf-8?B?bnUrSUJkeUtzZmRvR1dkWVVrS1FiQnRsOXVyT0cyL3RDblF1eGNuVDFYTlBu?=
+ =?utf-8?B?ZzZ4SDRXaXZNa05XTjlBTHNOTDk1R0c3RFpZNjJPdnc4SENQUXdTdk5zUHdr?=
+ =?utf-8?B?L0VlMEw4NHk1YXNjWGYxd1VpY0VGcXhndDJmeE0zbloyREQveDZNNjNhSmVT?=
+ =?utf-8?B?TUt3YUZmRStER3ptZEQ1dGhqdU8zRkZwNXRoMHBXdnZLaHppdndDVGtQYTFK?=
+ =?utf-8?B?UWtGcE1ONm8rT0Z5Q2MrT2VjYk1tUENpdXQxeE5Uc1R4d3ZqMExudHo3UWVh?=
+ =?utf-8?B?UlFSM21CNkd6dFJEemY1UW9vd2kyTjlycjVGUGUybjF6aURJcjM4Q092RHIx?=
+ =?utf-8?B?bFRyR0UvZkY0N1I3bVdZQzFXODJuUGN3dXJtNkdrUGhwQk9KNjJHNk5uVURZ?=
+ =?utf-8?B?aVNGeVhpa2Fyb1g0VDk2dnBBV0VIbmRWaFFhREZlODFLOGVaUXdrSWdZOWk0?=
+ =?utf-8?B?ZzZKcHFqbWlKdEY3M1FPb3hIUXZ3bHpvV085V2V0VWRWTm11aDExOWNXbDhk?=
+ =?utf-8?B?cFZseW1mQnFJQTRKU3ZROXlZMGNMRzlzUzQramIvNG9PK1FUaHNhY1dlVm5O?=
+ =?utf-8?B?NEdYSHNlY3A5SWNubmQ2N2RxKzdMY3oyamRsdVgwRWtnRDJ5RDZ6TEs4Uld6?=
+ =?utf-8?B?cDJHbngrNHhjenFsRWJreVVoLytGTXNaalg1UTM1L2p1K2taQ3ZvR0dvQW1V?=
+ =?utf-8?B?UHFmc3BzKzYySWoreHphaE8vSmNnUlFvQjJmSWl5aWJSbE1KWXJ5ckxZS3JW?=
+ =?utf-8?B?dUNZUkJFaVRKeWZHeDU2anpYaExtMlQ1NnhHUW1tWlU3eHNudVdzQUN2NXk4?=
+ =?utf-8?B?NUJuSDRlUldYMDQzVm9hc3RCb3pSOW5BTFFCZWN0S2tpVVdVc1Bid0RTVG5V?=
+ =?utf-8?B?b2hIRmdBMDhyVDBKVVFIQ2Erc0E5Mi90YUFVQ2wrRGFXcWNJc1JhWkdOUy9U?=
+ =?utf-8?Q?VptsQh91Y22xrG77zJ3kQFnwegCJjptePDYayM3EHIW8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(7416005)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?amp0cDNCY1E3OHF3ZUhZSUNHMTdURlp0c0pqYndOWFh1U24zMzlSaFY1SExT?=
+ =?utf-8?B?L1VldlRTVzdHdkE5cUlCTmZIZUpScytCc29vKzdzSkFmaks3S1VSUHFlcWlN?=
+ =?utf-8?B?cXplblFSMFR4a0lzYTNTR09DUFhJLzdIZXB2SE9tSW9qZE42U1dYZG5hOEtG?=
+ =?utf-8?B?RDBlTHUzVlo0M1Bna1oxWmVOSTlPT29lalJlNmd6Y25sbUFvbjFOVy9WbzZt?=
+ =?utf-8?B?ZjJUcVJucTYwSFJVNGllNm11a3l1Z1E3ZDI0THNxcHAvOVBIMThLM1pBSnBa?=
+ =?utf-8?B?L3RLV1UyOXZhNWdabUV1ZG9vQ0lmN0liQXFwR3VHaFlRc2NFbitwNzMvRjJU?=
+ =?utf-8?B?RFk4VmFTU3dsUk12R0ZMdkxKQWhlWDlyYTVUMlNZTkgwNGZqYnMxZHNhTnBp?=
+ =?utf-8?B?Rkt2dkYzVXpSallPV3VXNEVMQ1VwRllHRWRjNHVQNXVJTDM2Zk5zc2UwYW1u?=
+ =?utf-8?B?MTJqZTBmRmo3NFRCSEZZT3E3RWRGcmFvVDJBdlZGZSs4UmZzem9kZHQ4a0Jy?=
+ =?utf-8?B?aDlXYmg2dStUNVJ2Ry8zQjc0SDVzcUJGQUJKN1Q3VnhPL1cremljMEpXYTVz?=
+ =?utf-8?B?ZllwWTFFNTZLR09kSHFyQkV3allHckVpbW1YVHFzK1VKdjYzSWdKbkU1dkVB?=
+ =?utf-8?B?dXVJbERNM252YTRxNjJYWEpCMHdxOHlHS04xSFhaa21YeEY0SW1GS2Y0alpo?=
+ =?utf-8?B?am53WEdZeW1IblU2ZUh4azA1S2MybHFwZitnZ3JUZlY3MXlxT1hHQnY3dUIr?=
+ =?utf-8?B?ckE0aVFpZHFuWUpBUE1sL052RmhxVGhaRzdzTVpweURNV3owNTFaQmlKODFq?=
+ =?utf-8?B?bjN3MjVxMUlscW14alowc2ZxTGxYR1NuaFBkZzRZWEtsWmgrYnZ2eEQ3NU5y?=
+ =?utf-8?B?SGtrLzFPNDNaZG9pZ0NCZ1VEcHNMci9DTEZRUm1wRW5Yd282bm40V21xRUZF?=
+ =?utf-8?B?TGlZNjE4bk9WY0lsWDNieGlvYURDZFlDMEgrZkJOZG9iS2RkSVdvR2RWcVox?=
+ =?utf-8?B?emdYbVphU3JCRURQbXpJNjlSd2tLZmh3RzVZMWlwMHJhUzAwak56azZmZGlq?=
+ =?utf-8?B?R3pHdkVQN2Y1TmVHSWRaZ3oyTENWeWtEZnJsbzF0UURMbHl2NDBOSmY0cnI3?=
+ =?utf-8?B?dmJDM1V1VDhOVmdwcjlSUVgxdHd1M3h2dTgxdjBtK0NlZU42VHpYVTNLNmgx?=
+ =?utf-8?B?WUlCK25GMzFIY2JNVlppaUMxQlZKR3JFNGM3YVJCWnFMbml4ZE16ZGJLSjc5?=
+ =?utf-8?B?TEI5ZXVCNVZ3bEpqRmQvbTVwWFlKbE5lQldEL0ZVaFBFMHhpT1BTYnVsaEky?=
+ =?utf-8?B?a2hVallCdy93SThEenVwdjJzaTdQVUhETTN2QWJrclNIOXB3a3g5ODQvdlBZ?=
+ =?utf-8?B?VVM0bzREZTdMVEdNTHNBeG1UaWlldmJqUTZHNk9ZT3BQNGl4UDB3dDhhT0FG?=
+ =?utf-8?B?NXdlOHNvYzY2S2ZkUUxZdDRFS2czaXFRckg0eWdIaHNYU0VMWjhRNU13S0lX?=
+ =?utf-8?B?M2NIdDZhaDFuMVo0d0ZTZTVaeSs5dUQwMWdUdUlnQWlNZnZOb0txc2owSUVw?=
+ =?utf-8?B?N2FXOFdRK2hPSFA0RmJwUWk1ZXBaekxtREZlYVNyQkFvWk4rV3R5VjUwcENQ?=
+ =?utf-8?B?alRrQnFxWmpXa0lFOVRwWTVVLzlwSUs3MlpYR3p6K3hoUWR5aGhoMVlXNGRH?=
+ =?utf-8?B?QmpVTXUzTmdnWTVmOGZVZGY3QVhzWFZLVjVxLzk0WkdiaG5Fd0tBYXc1Q0Ft?=
+ =?utf-8?B?Z3h4MVdCQm84UU1SUHRvYjRnRXBrYy9PVS9EYXFBS3J6Z05xSm1wT2ZBaHQ1?=
+ =?utf-8?B?bGhBRVJvaFk2eHJwQ2pWVjIyNzUwWWZzSytnazlpSXRjdHBhUkx3STllbFd3?=
+ =?utf-8?B?Z1hGZEZPVytWbnRZV0lyYjhrVmEvdlV2VmRLWmlSZmJla3NmWlVERWVjNEo3?=
+ =?utf-8?B?VkVIOHNyZmxCMUtuSjZZZWdkaU9jQUY0Yy9JVHg5aTFjcUgwU0UxZ2M1NUln?=
+ =?utf-8?B?OUdMeGdwd0FqVGJJVEdZaXJQakd2cFlDU0hUN0lBRHl5Y2R6aFJJRnE2b3U3?=
+ =?utf-8?B?cFMyQkQrVUNEdjRrSVhhK0sycXJUdC9oRStoakMzdDdqbHBKVjNHc0J5SUVW?=
+ =?utf-8?Q?UV+lpifLtztrS191pVOc8niT8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffcc83a0-93e1-441b-86a3-08dc6e49e999
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 03:58:11.2732
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m6FvmLO/6VeZ5MsvREgr30Crw0eJf+NmqKnOnk29QthNfUUmmh3I2EG3zkBvyGyMbs2TBaSYRKm0uhxom9ZzjQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6379
 
-On Mon, May 6, 2024 at 8:48=E2=80=AFPM Justin Stitt <justinstitt@google.com=
-> wrote:
->
+On 06-May-24 9:54 PM, Jim Mattson wrote:
+> On Sun, Apr 28, 2024 at 11:08 PM Ravi Bangoria <ravi.bangoria@amd.com> wrote:
+>>
+>> Upcoming AMD uarch will support Bus Lock Detect (called Bus Lock Trap
+>> in AMD docs). Add support for the same in Linux. Bus Lock Detect is
+>> enumerated with cpuid CPUID Fn0000_0007_ECX_x0 bit [24 / BUSLOCKTRAP].
+>> It can be enabled through MSR_IA32_DEBUGCTLMSR. When enabled, hardware
+>> clears DR6[11] and raises a #DB exception on occurrence of Bus Lock if
+>> CPL > 0. More detail about the feature can be found in AMD APM[1].
+>>
+>> [1]: AMD64 Architecture Programmer's Manual Pub. 40332, Rev. 4.07 - June
+>>      2023, Vol 2, 13.1.3.6 Bus Lock Trap
+>>      https://bugzilla.kernel.org/attachment.cgi?id=304653
+> 
+> Is there any chance of getting something similar to Intel's "VMM
+> bus-lock detection," which causes a trap-style VM-exit on a bus lock
+> event?
 
-Agh. Sorry about the noise, the first line of my patch body got eaten
-by the subject line because a new line was missing in mutt.
+You are probably asking about "Bus Lock Threshold". Please see
+"15.14.5 Bus Lock Threshold" in the same doc. fwiw, Bus Lock Threshold
+is of fault style.
 
-FIXED in [v3] for real this time.
-
-> [   62.982337] ------------[ cut here ]------------
-> [   62.985692] cgroup: Invalid name
-> [   62.986211] UBSAN: signed-integer-overflow in ../block/ioctl.c:36:46
-> [   62.989370] 9pnet_fd: p9_fd_create_tcp (7343): problem connecting sock=
-et to 127.0.0.1
-> [   62.992992] 9223372036854775807 + 4095 cannot be represented in type '=
-long long'
-> [   62.997827] 9pnet_fd: p9_fd_create_tcp (7345): problem connecting sock=
-et to 127.0.0.1
-> [   62.999369] random: crng reseeded on system resumption
-> [   63.000634] GUP no longer grows the stack in syz-executor.2 (7353): 20=
-002000-20003000 (20001000)
-> [   63.000668] CPU: 0 PID: 7353 Comm: syz-executor.2 Not tainted 6.8.0-rc=
-2-00035-gb3ef86b5a957 #1
-> [   63.000677] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S 1.16.3-debian-1.16.3-2 04/01/2014
-> [   63.000682] Call Trace:
-> [   63.000686]  <TASK>
-> [   63.000731]  dump_stack_lvl+0x93/0xd0
-> [   63.000919]  __get_user_pages+0x903/0xd30
-> [   63.001030]  __gup_longterm_locked+0x153e/0x1ba0
-> [   63.001041]  ? _raw_read_unlock_irqrestore+0x17/0x50
-> [   63.001072]  ? try_get_folio+0x29c/0x2d0
-> [   63.001083]  internal_get_user_pages_fast+0x1119/0x1530
-> [   63.001109]  iov_iter_extract_pages+0x23b/0x580
-> [   63.001206]  bio_iov_iter_get_pages+0x4de/0x1220
-> [   63.001235]  iomap_dio_bio_iter+0x9b6/0x1410
-> [   63.001297]  __iomap_dio_rw+0xab4/0x1810
-> [   63.001316]  iomap_dio_rw+0x45/0xa0
-> [   63.001328]  ext4_file_write_iter+0xdde/0x1390
-> [   63.001372]  vfs_write+0x599/0xbd0
-> [   63.001394]  ksys_write+0xc8/0x190
-> [   63.001403]  do_syscall_64+0xd4/0x1b0
-> [   63.001421]  ? arch_exit_to_user_mode_prepare+0x3a/0x60
-> [   63.001479]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
-> [   63.001535] RIP: 0033:0x7f7fd3ebf539
-> [   63.001551] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 4=
-8 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <=
-48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> [   63.001562] RSP: 002b:00007f7fd32570c8 EFLAGS: 00000246 ORIG_RAX: 0000=
-000000000001
-> [   63.001584] RAX: ffffffffffffffda RBX: 00007f7fd3ff3f80 RCX: 00007f7fd=
-3ebf539
-> [   63.001590] RDX: 4db6d1e4f7e43360 RSI: 0000000020000000 RDI: 000000000=
-0000004
-> [   63.001595] RBP: 00007f7fd3f1e496 R08: 0000000000000000 R09: 000000000=
-0000000
-> [   63.001599] R10: 0000000000000000 R11: 0000000000000246 R12: 000000000=
-0000000
-> [   63.001604] R13: 0000000000000006 R14: 00007f7fd3ff3f80 R15: 00007ffd4=
-15ad2b8
-> ...
-> [   63.018142] ---[ end trace ]---
->
-> Historically, the signed integer overflow sanitizer did not work in the
-> kernel due to its interaction with `-fwrapv` but this has since been
-> changed [1] in the newest version of Clang; It being re-enabled in the
-> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-> sanitizer").
->
-> Let's rework this overflow checking logic to not actually perform an
-> overflow during the check itself, thus avoiding the UBSAN splat.
->
-> [1]: https://github.com/llvm/llvm-project/pull/82432
->
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
-> ---
-> Changes in v2:
-> - don't use check_add_overflow as I accidentally was writing to p.start
->   and the alternative of using a dummy (unused) variable does not seem gr=
-eat.
-> - Link to v1: https://lore.kernel.org/r/20240506-b4-sio-block-ioctl-v1-1-=
-da535cc020dc@google.com
-> ---
->  block/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/block/ioctl.c b/block/ioctl.c
-> index f505f9c341eb..2639ce9df385 100644
-> --- a/block/ioctl.c
-> +++ b/block/ioctl.c
-> @@ -33,7 +33,7 @@ static int blkpg_do_ioctl(struct block_device *bdev,
->         if (op =3D=3D BLKPG_DEL_PARTITION)
->                 return bdev_del_partition(disk, p.pno);
->
-> -       if (p.start < 0 || p.length <=3D 0 || p.start + p.length < 0)
-> +       if (p.start < 0 || p.length <=3D 0 || LLONG_MAX - p.length < p.st=
-art)
->                 return -EINVAL;
->         /* Check that the partition is aligned to the block size */
->         if (!IS_ALIGNED(p.start | p.length, bdev_logical_block_size(bdev)=
-))
->
-> ---
-> base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-> change-id: 20240506-b4-sio-block-ioctl-78efd742fff4
->
-> Best regards,
-> --
-> Justin Stitt <justinstitt@google.com>
->
-
-[v3]: https://lore.kernel.org/all/20240507-b4-sio-block-ioctl-v3-1-ba0c2b32=
-275e@google.com/
-
-Thanks
-Justin
+Thanks,
+Ravi
 
