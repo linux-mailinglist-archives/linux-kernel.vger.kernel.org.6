@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-170982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948388BDE8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:41:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855148BDE95
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7DE8B24A0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C420DB21E78
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800C415ECC4;
-	Tue,  7 May 2024 09:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92C215F410;
+	Tue,  7 May 2024 09:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/9ws5iR"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDdmL3aq"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5BB15E818;
-	Tue,  7 May 2024 09:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C58D15ECCC;
+	Tue,  7 May 2024 09:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074559; cv=none; b=V+fIsk8QHADVyT4fMGYbwsYb8d4n0puTtfeXoCHAem8OjmOQLHU9N2FK7Ef8b0WegvGewN0J5YeNGh3MP72LuLzPP7wC2L72xvXtIJCcrWVVgyTIHjWgLzQmBIX/haLmFHN7wYtvUrTPlv/OLkHTCRuWcBBYPrxHMPN+Jpj1B9w=
+	t=1715074564; cv=none; b=At1I2yLQk8QLXMhnn97+EqCeu5l+uVN0WNoAOIz9V2ljXVxJherWJ559JTek5j4ATy8+Ow/l/TO+psY81rLIrRurV3mSJF54xI4OXfFTP9+mt+x+yApmqKpQAb2tnOPr6ta4st3poeDAXzuShVo2mcqe2/fffu9Hat5VYl1hgoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074559; c=relaxed/simple;
-	bh=UN+MaHfAdkJ1rWWOKXorY2bu4/QkrbWb/32kAy3Tizk=;
+	s=arc-20240116; t=1715074564; c=relaxed/simple;
+	bh=EWsVRIZxGPSXoY2Njx9/Sp9Wsqp8UVQL2ck7eZ/1txM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tM6FzsWezZysHZMpgEbPsUwCrUaSPRZq7n8GJkfESNGZYXSQttvHFyvt3ewav1ONBBdn/sT+5Dha21LujDJ/uYBx31uej977Db9Tz3/Fz/WRAvRCH9f/Vh3RbMfnCdwGSa2ZQOar+EdbDJ7anONL8641M2Mt922RqD+oLUT53q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/9ws5iR; arc=none smtp.client-ip=209.85.208.170
+	 MIME-Version; b=P1YxwSukEcxJ0vS8P/tcudPtj79rKw3KbVa3E0xw8caUqMsqpT8RSw6Y7jRso94gh3HQZxkSzMqt9JqHZvJcuCVJjl7NK8h2DyvJ9oIY2vyLauN6Re2Qpwj2DO6/RLJexKKMeYVM/tTm3uCUvIYkn7ZPg1u2flQEf3IIBmsukX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDdmL3aq; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e0933d3b5fso37210831fa.2;
-        Tue, 07 May 2024 02:35:56 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e367c2457bso20449381fa.1;
+        Tue, 07 May 2024 02:35:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715074555; x=1715679355; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715074556; x=1715679356; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WDinHeFOFRoHZYFqFBiK+RU+jTH857k5hI4wyyJy1g4=;
-        b=C/9ws5iR8Fd7KKkeQ4Kn59FJN5sknAPLxGAfMJU2gJ+0U9rlCvyWfgE6CVG5/d3KI3
-         HX1b/Eq5/7pJpR//flWqXWVNvxZ3HlCmnmw8BadZ3G/Nsame69eM5URWCI/2SDl6/sHc
-         Zoq2Q8ubZt7wZ3VmBwPfE+ba/IIbprm+8djhwENN4XnQJKL7WaOLUQPZhYsccs4GXNTS
-         XeO941Ov2rhSfWjakwRuAgdonXdw38AV4N1JVx25HjAwdwfbstQhqhX0NOleyBK+LTtg
-         P7x3j5AaYpvS+tKNTWr3Y+xCB/GICTDJ1Y2UKe38N5gSG0LEAVYS+mCFqfjl0/+wtqNv
-         t9gg==
+        bh=PfH9K/eXzjwreUAemmntcMfIwoR9Zl46+OauXvPYO0k=;
+        b=mDdmL3aqYgEx5+BpKsDxmxnJ7WUsS/5vaVGb4vCzgdlQmtMSbcmZMH6kgXhgNVSYx1
+         0T1T3O0WQQ/EvdDNxeDwMXXLY+Uywl6j1/myp71r6UFEFaZKGQiN9wRCFoFntSAebNNt
+         wTptxJrvTH/oobxk3QhXRmYb3LXSR7YMNT+v0GY8EAd6rXpYMpFOx+FYjHh+LHSiXS+N
+         UoeCWS/+AebRcMPudgu3olf68Q+w0kjznrdLznVFoyTb6Elfdo0gOdKDTlQ+9/K8R8M1
+         noQXysCa9Od7udgSQs61RrJ0u2AnR+4Y3Vw0+Ui3HTg6lLZFZPUnXLB//4vQpqnK2CK0
+         K6xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715074555; x=1715679355;
+        d=1e100.net; s=20230601; t=1715074556; x=1715679356;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WDinHeFOFRoHZYFqFBiK+RU+jTH857k5hI4wyyJy1g4=;
-        b=sQqXiyKYuDIrzDIoeHBLatF7DUfMZTXNvn/loJ38aj0Ch7eIFzNIIwcVtKUhE3s47K
-         6anJkYw18C5SQXTDBrvZpaVlSwBypEz9/m6092I2Zha+6gZCDhB/Q7E4bu9fiScgb+ua
-         W7wt7xo09MpPYXpoSYbWH0LdyeWpZWNRHJAIW6Rbn7ymsiwaK9D/VN9Eq7ECmGIAhdYH
-         mhgSqnOY1nj7hq73kKfvJln3Ailwws1A/3lXJCSPNihndWfop6PYYrvdyvBxAmPSSlKN
-         qHoyNUnOSEoBxxmJ37dFfNS49X5y4hK64NfW3+6JRnrnm69vN3Ngbo1obYpoQSnhYInw
-         ym1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU9XtaAStYvvUQCW9FchbTIra3Xj98+Cc7YmiH4tu44tKCD85156DuCrhzUcdgRy5GXxtawV64QI6LoahAw3Crrego7FYvWMXXCj56T
-X-Gm-Message-State: AOJu0YwrNzw7SXiUQbBBEW4SElOucbFYwKySlPDOAClfHBJ6vDUCQ7oI
-	sOGkmtKX0GGXB+YMsijP6O4I8svaV1apT0sZ5wYl5I9PioJYc4tr
-X-Google-Smtp-Source: AGHT+IGFwWHJtNfle5tH6dVJd1sPaxZAFj/yLFYo/LOxrHHE0mYRMwj1W/uNqv+wKea2tN1WaCwzXA==
-X-Received: by 2002:a2e:981a:0:b0:2dd:409:3b25 with SMTP id a26-20020a2e981a000000b002dd04093b25mr8529160ljj.4.1715074554889;
-        Tue, 07 May 2024 02:35:54 -0700 (PDT)
+        bh=PfH9K/eXzjwreUAemmntcMfIwoR9Zl46+OauXvPYO0k=;
+        b=R4f5gfiOKHdhOBCyljkJ8Whv6CVImfUaNknddI4FMEzL0Oz+KLDZQv+NTMpqaduHuZ
+         pSHkl5UElBvosyqv+gXAaMqj1p24KgyCJCs8q2Bv6iQ4s3ruWSKfkZaCNOKT50TA4WEr
+         vipV+lLdVpaBJJUbfJRalAhvm7ruOPAYRnh8GMaQg8dUY/+q7A8NIuh64e44aZtkt495
+         rSA3XVWUPY0Izsh6hIpapWgIXW/J0USorZX+9+UBHAjCF7r2d7IS5ZIeupJ+6JIdlOR1
+         X3c/pPmDCUhWrgJaI0KV81h3m2XQIICKafPyk/O5k67KLygYf0+Ln/lVWmuOFLa+gdvQ
+         IOJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAMoruT66F1Bv4QNbBWJ1BUnMjhlxwc1GaX8BN9MWl2CW4SElZSYmH5G7GJXGGhgEvBqLBy2/PAW6S4N+6RXWIvg0pZYkjRtVj3J4K
+X-Gm-Message-State: AOJu0YzTKhEMca7m7c/m4xUxtW5Y3Vu22yqrZpBIh+lgCwiAxXIj+3Ka
+	XhqVRDMi8VBaMxnkjj8raoD+xRdbiMuyxoZTRYDFRr87Tn7jViKjHTJPU4MS
+X-Google-Smtp-Source: AGHT+IHOIZDj0khBN1W8nHdPykH/y4sTAyNBeP5xmuK7akM5SJ1vs4umBw3oDZhkNvNfs4Mj+xr4NQ==
+X-Received: by 2002:a2e:6109:0:b0:2e2:ab69:d10a with SMTP id v9-20020a2e6109000000b002e2ab69d10amr6164194ljb.39.1715074555694;
+        Tue, 07 May 2024 02:35:55 -0700 (PDT)
 Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.54
+        by smtp.gmail.com with ESMTPSA id t18-20020a2e9d12000000b002e29c50c4dcsm1335473lji.27.2024.05.07.02.35.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 02:35:54 -0700 (PDT)
+        Tue, 07 May 2024 02:35:55 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: "Paul E . McKenney" <paulmck@kernel.org>
 Cc: RCU <rcu@vger.kernel.org>,
@@ -76,12 +76,10 @@ Cc: RCU <rcu@vger.kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Julia Lawall <julia.lawall@inria.fr>
-Subject: [PATCH 23/48] rcu: Remove redundant READ_ONCE() of rcu_state.gp_flags in tree.c
-Date: Tue,  7 May 2024 11:35:05 +0200
-Message-Id: <20240507093530.3043-24-urezki@gmail.com>
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH 24/48] rcu: Bring diagnostic read of rcu_state.gp_flags into alignment
+Date: Tue,  7 May 2024 11:35:06 +0200
+Message-Id: <20240507093530.3043-25-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240507093530.3043-1-urezki@gmail.com>
 References: <20240507093530.3043-1-urezki@gmail.com>
@@ -95,66 +93,29 @@ Content-Transfer-Encoding: 8bit
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Although it is functionally OK to do READ_ONCE() of a variable that
-cannot change, it is confusing and at best an accident waiting to happen.
-This commit therefore removes a number of READ_ONCE(rcu_state.gp_flags)
-instances from kernel/rcu/tree.c that are not needed due to updates
-to this field being excluded by virtue of holding the root rcu_node
-structure's ->lock.
+This commit adds READ_ONCE() to a lockless diagnostic read from
+rcu_state.gp_flags to avoid giving the compiler any chance whatsoever
+of confusing the diagnostic state printed.
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Closes: https://lore.kernel.org/lkml/4857c5ef-bd8f-4670-87ac-0600a1699d05@paulmck-laptop/T/#mccb23c2a4902da4d3c750165329f8de056903c58
-Reported-by: Julia Lawall <julia.lawall@inria.fr>
-Closes: https://lore.kernel.org/lkml/4857c5ef-bd8f-4670-87ac-0600a1699d05@paulmck-laptop/T/#md1b5c026584f9c3c7b0fbc9240dd7de584597b73
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- kernel/rcu/tree.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ kernel/rcu/tree_stall.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 2795a1457acf..559f2d0d271f 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1463,7 +1463,7 @@ static noinline_for_stack bool rcu_gp_init(void)
- 
- 	WRITE_ONCE(rcu_state.gp_activity, jiffies);
- 	raw_spin_lock_irq_rcu_node(rnp);
--	if (!READ_ONCE(rcu_state.gp_flags)) {
-+	if (!rcu_state.gp_flags) {
- 		/* Spurious wakeup, tell caller to go back to sleep.  */
- 		raw_spin_unlock_irq_rcu_node(rnp);
- 		return false;
-@@ -1648,8 +1648,7 @@ static void rcu_gp_fqs(bool first_time)
- 	/* Clear flag to prevent immediate re-entry. */
- 	if (READ_ONCE(rcu_state.gp_flags) & RCU_GP_FLAG_FQS) {
- 		raw_spin_lock_irq_rcu_node(rnp);
--		WRITE_ONCE(rcu_state.gp_flags,
--			   READ_ONCE(rcu_state.gp_flags) & ~RCU_GP_FLAG_FQS);
-+		WRITE_ONCE(rcu_state.gp_flags, rcu_state.gp_flags & ~RCU_GP_FLAG_FQS);
- 		raw_spin_unlock_irq_rcu_node(rnp);
- 	}
- }
-@@ -1910,8 +1909,7 @@ static void rcu_report_qs_rsp(unsigned long flags)
- {
- 	raw_lockdep_assert_held_rcu_node(rcu_get_root());
- 	WARN_ON_ONCE(!rcu_gp_in_progress());
--	WRITE_ONCE(rcu_state.gp_flags,
--		   READ_ONCE(rcu_state.gp_flags) | RCU_GP_FLAG_FQS);
-+	WRITE_ONCE(rcu_state.gp_flags, rcu_state.gp_flags | RCU_GP_FLAG_FQS);
- 	raw_spin_unlock_irqrestore_rcu_node(rcu_get_root(), flags);
- 	rcu_gp_kthread_wake();
- }
-@@ -2426,8 +2424,7 @@ void rcu_force_quiescent_state(void)
- 		raw_spin_unlock_irqrestore_rcu_node(rnp_old, flags);
- 		return;  /* Someone beat us to it. */
- 	}
--	WRITE_ONCE(rcu_state.gp_flags,
--		   READ_ONCE(rcu_state.gp_flags) | RCU_GP_FLAG_FQS);
-+	WRITE_ONCE(rcu_state.gp_flags, rcu_state.gp_flags | RCU_GP_FLAG_FQS);
- 	raw_spin_unlock_irqrestore_rcu_node(rnp_old, flags);
- 	rcu_gp_kthread_wake();
- }
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index 5d666428546b..62b2c4858028 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -579,7 +579,7 @@ static void rcu_check_gp_kthread_expired_fqs_timer(void)
+ 		pr_err("%s kthread timer wakeup didn't happen for %ld jiffies! g%ld f%#x %s(%d) ->state=%#x\n",
+ 		       rcu_state.name, (jiffies - jiffies_fqs),
+ 		       (long)rcu_seq_current(&rcu_state.gp_seq),
+-		       data_race(rcu_state.gp_flags),
++		       data_race(READ_ONCE(rcu_state.gp_flags)), // Diagnostic read
+ 		       gp_state_getname(RCU_GP_WAIT_FQS), RCU_GP_WAIT_FQS,
+ 		       data_race(READ_ONCE(gpk->__state)));
+ 		pr_err("\tPossible timer handling issue on cpu=%d timer-softirq=%u\n",
 -- 
 2.39.2
 
