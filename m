@@ -1,142 +1,234 @@
-Return-Path: <linux-kernel+bounces-172186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620EB8BEE96
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:05:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E0B8BEE8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3A528327C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:05:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD5C1C20C95
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D860D73511;
-	Tue,  7 May 2024 21:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167F473196;
+	Tue,  7 May 2024 21:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cYq7jawS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZqNtQxR"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEEC71B4C;
-	Tue,  7 May 2024 21:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC92A71B3A;
+	Tue,  7 May 2024 21:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115916; cv=none; b=pc0fEyLv0QojeMgKGE779nnHYAMj4snsXmJjsGC7mdfjDbcKpq5p4nmDpF7yHJ/5JwYcvlAhFyLlOGFG3iAJ7IikcrWHimwIZ9i4pDplE241MJD9NfRWS+rRBrRGeWdilJxaQXD5SuxUDpIwSMTh0DbsuV5W0/oD1cxIo9R+okg=
+	t=1715115862; cv=none; b=tUcgtKvUAzHHILVi66kOnHlmZ5tfUK+0XBPxwIGb+TiGTJ4W5nu4EVs4aYQm7e9J9G4BIE+TSLpisrRtxpd+8NBMuSMvcXbtBBHEVaqF01FZ3zp9amBp97XwAUMV8Z4t/94T7ct6lLRPyY9flIAVIZbHXw4b9+JGCsK8Lopi1jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115916; c=relaxed/simple;
-	bh=yL7SPd/Z+l9glPuW2PWEe52G5klrbEChtwcCMsumYCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGjvDgUv+R4bTbeM3T1A/x9AV/x+LGN875fN5iLRsNLvHtCAJHr6z2QCHR1CMf7mCXw1iFAzMDb032Vpp8WFmuGdyttnm0hxBeFNrVr6gJJKoLfw9HWmgQIm+AM10fCYRvGErcBuKiIbOJa2hayi4QMUmY5PS09MuNglTIgS5SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cYq7jawS; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715115914; x=1746651914;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yL7SPd/Z+l9glPuW2PWEe52G5klrbEChtwcCMsumYCU=;
-  b=cYq7jawS10DmQQNcLcflLUThlT5khwYwXJvAZiSD6G4m50wU/gQ2pNjY
-   sgEF/HWzeCL8i0JCyR5pwd/18mnIQlA6cT5mBpcq0nL9XAf7Jhq+51iyw
-   bhA9yOcO3CbBE47ybzVlmdVyqPkaPJPpfE2b1k+zxkBNL6RH75+ybzESM
-   In88r7mFtExqW6vFencxrMPJRGC9fKs2rC/kRgQreyeq1dR8NeXLV0AQL
-   tqv0QME0Fp+7Oy64HaH48QxMjmGJusivmcKPeFqtV10V/cbWWrisThXMp
-   QCuqbj4ur4P6gTmsXVfHjB6XyMgynov+fXLM8bE7+RUVxMdyHqoh7J1R2
-   A==;
-X-CSE-ConnectionGUID: YscN/smtQISMNr9B7j2iMw==
-X-CSE-MsgGUID: AeCZlkQ0QzqKGcs2YE3MRQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="21613617"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="21613617"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 14:03:54 -0700
-X-CSE-ConnectionGUID: EdySXaasTj2nzIjcY31PIA==
-X-CSE-MsgGUID: u4wKf0RIRd6hD7WFn21Oig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="28750477"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 07 May 2024 14:03:49 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4RyV-0002dG-0W;
-	Tue, 07 May 2024 21:03:47 +0000
-Date: Wed, 8 May 2024 05:02:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-	manivannan.sadhasivam@linaro.org, andersson@kernel.org,
-	agross@kernel.org, konrad.dybcio@linaro.org, mani@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_msarkar@quicinc.com,
-	quic_kraravin@quicinc.com,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] PCI: qcom: Refactor common code
-Message-ID: <202405080444.RUQms5qs-lkp@intel.com>
-References: <20240501163610.8900-2-quic_schintav@quicinc.com>
+	s=arc-20240116; t=1715115862; c=relaxed/simple;
+	bh=9ythelcd555ehayoCK+v6PnGyHN2aIf5mfrvlET7y4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rlq3wbsDaluVZXYxNhnz6RHUVw0TwLtFTifXhnvpd46Lxfi8kb3ejVBqa++Wv3rTEJ6jcpqoZj21r5DMXHFxv4dTYyNwUU6og1Upi6watF2YIl38zpCYqdl7Lwz6SfkpbxLs7uJqYMerXPVF3oGwukGWj+/7dXt8WFElH4w+kNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZqNtQxR; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-61c4ebd0c99so2368262a12.0;
+        Tue, 07 May 2024 14:04:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715115860; x=1715720660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MFzLP9jypxz8zp9JCgtxnmrKkuxXPrSxPzVAWQBs/uM=;
+        b=jZqNtQxRsCskCePX71jcFMFj/K3q40uhIKi2if8KL/YIsEg2rFRdlgj8lCGD9Mewpj
+         DzaG9+2eDfIfpKaeKPfhxISweO5mOWhfYyhI/VCIRzsPWMgmkH6+YEUr076ePaDC8HYW
+         fOxfLrvq6trAImpWC6/ivbruvdBY3P0o3i6BdJWoMt+DgX7dbj5tY9RcYNMnTbj5jGTV
+         jvfP9I7Y5kGZWyiFucKwYpQAQ6qbjMdShiwmHAIyfWGunhUbMPTIOCQ5zGSHpJ0JQnzE
+         z8vdDKlptmwoWOQNzQ25DC8UIqF9oqKY3WAihX9DUYZ2c6ENlWiZxLQ+Lr/0GeDGe45e
+         9R4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715115860; x=1715720660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MFzLP9jypxz8zp9JCgtxnmrKkuxXPrSxPzVAWQBs/uM=;
+        b=VVzmgXdFHZkqNek/YmWR9AV9pjMucmKL93vg2U5fiOluZClNGR2XYsTKh4sMoXSK0g
+         78jefW2UGpqJ13MQCSU3v+N2yAa09Tnq2sdRUTrzUOj2HXhtcfAfOUXYgmCMlP55HCis
+         DF/o7qgI1AjNS0HioN5b0wKsnKSGEUPB5fWWvygV23R8k44YJLfBJvr3lCHtYPmihCH4
+         bKaNI+I0qVVv5bFGRBHJJ2Lh/btcVfwtL+UIihl70ppCymOZPfki6kGIwjVm/z9tb1vq
+         yV2otIM6PuQyzuwTJxnczlH13JiZCFqv1IAXOwU7SkPQ2W394cPPxDsSKTA6OT/PID57
+         OEog==
+X-Forwarded-Encrypted: i=1; AJvYcCV46FLTIRzbzsow448QTNhWlYd6rF4R8PSZyDJ+YSJQX/18aUa9s85YVVPqaafQJ+iu6qvh7yO2+H27OS8g1xbbktrKZQ1ZyG2yVa4B9l1BotvOeHhLkthhqRPuYFpR+yzIaQlTr0g9NFlgJr09K+gT/pmvZjjrxKI+DFYzD1VFq++ZbZB9
+X-Gm-Message-State: AOJu0YyAYA3tZGPTl7hnRmAbRgl3DyuzYu9RxSMGXIIIwlL1pLcN2Yf3
+	EHUzVYWEBo952RxxaQdMgXqPkgcpPSHKRFjNZ46bENN8ESp1p/EIHGkl/NfWqYJCl0GKKriZSrb
+	RO0pPnhsrPKoY2D0XaICUuzhdUAQ=
+X-Google-Smtp-Source: AGHT+IEvi+qh6FV6T7TpdH8lIa91LZDU7awvCKHqDLHp6p/u8XRcYsLVnh1NuA9JDVQ663ZK+HDD0OJS6hdKcdp/eaQ=
+X-Received: by 2002:a17:90b:348e:b0:2ac:513b:b316 with SMTP id
+ 98e67ed59e1d1-2b6163a32ebmr826188a91.10.1715115860101; Tue, 07 May 2024
+ 14:04:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240501163610.8900-2-quic_schintav@quicinc.com>
+References: <171318533841.254850.15841395205784342850.stgit@devnote2>
+ <CAEf4BzYMToveELxsOJ9dXz3H-9omhxRLKgGK-ppYvmK8pgDsfA@mail.gmail.com>
+ <20240429225119.410833c12d9f6fbcce0a58db@kernel.org> <CAEf4BzZDqD4fyLpoq9r2M0HnES7aO7YW=ZNH-k8uPJWd_VbAJg@mail.gmail.com>
+ <20240430223217.fd375d57d130a4207be18e94@kernel.org> <CAEf4BzZQLPL7419W1=yNw6gzB4gquiXfeANbUKbUL8bK+5if=w@mail.gmail.com>
+ <20240502110610.412d54a0cf194293b82ee787@kernel.org>
+In-Reply-To: <20240502110610.412d54a0cf194293b82ee787@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 7 May 2024 14:04:08 -0700
+Message-ID: <CAEf4BzYb0LUKo_BUnd72qrBOtnbbHRS8SaDz0XcTx-DTgb2mVA@mail.gmail.com>
+Subject: Re: [PATCH v9 00/36] tracing: fprobe: function_graph: Multi-function
+ graph and fprobe on fgraph
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Florent Revest <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Alan Maguire <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shashank,
+On Wed, May 1, 2024 at 7:06=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> On Tue, 30 Apr 2024 09:29:40 -0700
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+>
+> > On Tue, Apr 30, 2024 at 6:32=E2=80=AFAM Masami Hiramatsu <mhiramat@kern=
+el.org> wrote:
+> > >
+> > > On Mon, 29 Apr 2024 13:25:04 -0700
+> > > Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > > On Mon, Apr 29, 2024 at 6:51=E2=80=AFAM Masami Hiramatsu <mhiramat@=
+kernel.org> wrote:
+> > > > >
+> > > > > Hi Andrii,
+> > > > >
+> > > > > On Thu, 25 Apr 2024 13:31:53 -0700
+> > > > > Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+> > > > >
+> > > > > > Hey Masami,
+> > > > > >
+> > > > > > I can't really review most of that code as I'm completely unfam=
+iliar
+> > > > > > with all those inner workings of fprobe/ftrace/function_graph. =
+I left
+> > > > > > a few comments where there were somewhat more obvious BPF-relat=
+ed
+> > > > > > pieces.
+> > > > > >
+> > > > > > But I also did run our BPF benchmarks on probes/for-next as a b=
+aseline
+> > > > > > and then with your series applied on top. Just to see if there =
+are any
+> > > > > > regressions. I think it will be a useful data point for you.
+> > > > >
+> > > > > Thanks for testing!
+> > > > >
+> > > > > >
+> > > > > > You should be already familiar with the bench tool we have in B=
+PF
+> > > > > > selftests (I used it on some other patches for your tree).
+> > > > >
+> > > > > What patches we need?
+> > > > >
+> > > >
+> > > > You mean for this `bench` tool? They are part of BPF selftests (und=
+er
+> > > > tools/testing/selftests/bpf), you can build them by running:
+> > > >
+> > > > $ make RELEASE=3D1 -j$(nproc) bench
+> > > >
+> > > > After that you'll get a self-container `bench` binary, which has al=
+l
+> > > > the self-contained benchmarks.
+> > > >
+> > > > You might also find a small script (benchs/run_bench_trigger.sh ins=
+ide
+> > > > BPF selftests directory) helpful, it collects final summary of the
+> > > > benchmark run and optionally accepts a specific set of benchmarks. =
+So
+> > > > you can use it like this:
+> > > >
+> > > > $ benchs/run_bench_trigger.sh kprobe kprobe-multi
+> > > > kprobe         :   18.731 =C2=B1 0.639M/s
+> > > > kprobe-multi   :   23.938 =C2=B1 0.612M/s
+> > > >
+> > > > By default it will run a wider set of benchmarks (no uprobes, but a
+> > > > bunch of extra fentry/fexit tests and stuff like this).
+> > >
+> > > origin:
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.329 =C2=B1 0.007M/s
+> > > kretprobe-multi:    1.341 =C2=B1 0.004M/s
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.288 =C2=B1 0.014M/s
+> > > kretprobe-multi:    1.365 =C2=B1 0.002M/s
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.329 =C2=B1 0.002M/s
+> > > kretprobe-multi:    1.331 =C2=B1 0.011M/s
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.311 =C2=B1 0.003M/s
+> > > kretprobe-multi:    1.318 =C2=B1 0.002M/s s
+> > >
+> > > patched:
+> > >
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.274 =C2=B1 0.003M/s
+> > > kretprobe-multi:    1.397 =C2=B1 0.002M/s
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.307 =C2=B1 0.002M/s
+> > > kretprobe-multi:    1.406 =C2=B1 0.004M/s
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.279 =C2=B1 0.004M/s
+> > > kretprobe-multi:    1.330 =C2=B1 0.014M/s
+> > > # benchs/run_bench_trigger.sh
+> > > kretprobe :    1.256 =C2=B1 0.010M/s
+> > > kretprobe-multi:    1.412 =C2=B1 0.003M/s
+> > >
+> > > Hmm, in my case, it seems smaller differences (~3%?).
+> > > I attached perf report results for those, but I don't see large diffe=
+rence.
+> >
+> > I ran my benchmarks on bare metal machine (and quite powerful at that,
+> > you can see my numbers are almost 10x of yours), with mitigations
+> > disabled, no retpolines, etc. If you have any of those mitigations it
+> > might result in smaller differences, probably. If you are running
+> > inside QEMU/VM, the results might differ significantly as well.
+>
+> I ran it on my bare metal machines again, but could not find any differen=
+ce
+> between them. But I think I enabled intel mitigations on, so it might mak=
+e
+> a difference from your result.
+>
+> Can you run the benchmark with perf record? If there is such differences,
+> there should be recorded.
 
-kernel test robot noticed the following build warnings:
+I can, yes, will try to do this week, I'm just trying to keep up with
+the rest of the stuff on my plate and haven't found yet time to do
+this. I'll get back to you (and I'll use the latest version of your
+patch set, of course).
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master v6.9-rc7 next-20240507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Shashank-Babu-Chinta-Venkata/PCI-qcom-Refactor-common-code/20240502-003801
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240501163610.8900-2-quic_schintav%40quicinc.com
-patch subject: [PATCH v4 1/3] PCI: qcom: Refactor common code
-config: mips-randconfig-r112-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080444.RUQms5qs-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240508/202405080444.RUQms5qs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080444.RUQms5qs-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/pci/controller/dwc/pcie-qcom-common.c:25:31: sparse: sparse: incorrect type in return expression (different base types) @@     expected struct icc_path * @@     got long @@
-   drivers/pci/controller/dwc/pcie-qcom-common.c:25:31: sparse:     expected struct icc_path *
-   drivers/pci/controller/dwc/pcie-qcom-common.c:25:31: sparse:     got long
-
-vim +25 drivers/pci/controller/dwc/pcie-qcom-common.c
-
-    15	
-    16	#define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
-    17			Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
-    18	
-    19	struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
-    20	{
-    21		struct icc_path *icc_mem_p;
-    22	
-    23		icc_mem_p = devm_of_icc_get(pci->dev, path);
-    24		if (IS_ERR_OR_NULL(icc_mem_p))
-  > 25			return PTR_ERR(icc_mem_p);
-    26		return icc_mem_p;
-    27	}
-    28	EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_get_resource);
-    29	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> e.g.
+>
+> # perf record -g -o perf.data-kretprobe-nopatch-raw-bpf -- bench -w2 -d5 =
+-a trig-kretprobe
+> # perf report -G -i perf.data-kretprobe-nopatch-raw-bpf -k $VMLINUX --std=
+io > perf-out-kretprobe-nopatch-raw-bpf
+>
+> I attached the results in my side.
+> The interesting point is, the functions int the result are not touched by
+> this series. Thus there may be another reason if you see the kretprobe
+> regression.
+>
+> Thank you,
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
