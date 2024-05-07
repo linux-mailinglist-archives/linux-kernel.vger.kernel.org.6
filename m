@@ -1,78 +1,93 @@
-Return-Path: <linux-kernel+bounces-172210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5E18BEEC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B738BEEC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7F41F21D2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:14:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8605E281BC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFADC14B94D;
-	Tue,  7 May 2024 21:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF2376410;
+	Tue,  7 May 2024 21:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQyzNymN"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hW4YYgwR"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA69B71B5C;
-	Tue,  7 May 2024 21:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886842746B;
+	Tue,  7 May 2024 21:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715116439; cv=none; b=WRTehTHsK0aD1JfR5HsFUywR8CBT5aBABd4giqji51wNG8ZoLa8XL6BqRluyuvA/lvbRChwhMEuvJWLczDDkIk55+6ovmqkylFAbQzmZZ09MCKLHs1AJ9eixM7CRMzL53EtGtpVaawcqLg1BWcVDEsPS50sOaFCQ2CK4vE+96TI=
+	t=1715116559; cv=none; b=DfcKB43KsGAYh2GpcnoTP1uXLl0liY+NgUOF6I/dze5MFm9ZjAgNBDVeRCiA13o9Z8hD1HhI7vTUAURMccIxij+s0Lnagx9yMYT1Udl3MZSas/M2gXdw65iz42c/ygLE8Wj1luLywHsKjAVhTg4QrX2CuEeJ9JHhkuUSpuMgyD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715116439; c=relaxed/simple;
-	bh=tniya1MI4D0E7HadkP5SUtQrULgRW0O5FJAB2XEqmEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=B1Jzlp4PV8lAVo4GT8ImYrjyCLY5v1NtY/01STC1cNK2TljH8IB3YIkXTdEDSNsa0xgjSGX0I97qfv0eVMQJuadrZsIHo6klgL1idn3p/COkLLkJDtAelYpUi6Gfm787VtRHeue53t3vzNslTSfEAwLjKQIe0u9P+of6j7rF7a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQyzNymN; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1715116559; c=relaxed/simple;
+	bh=goUkuLckbYtMinqNxuCVrvPMEnCgp7dtnW5xcRA5XCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHZdvjroxPTI4aZp/Xt+nvZTd2Sk/0H9vTuvFcsWoOtB1c5k/Q9AILXIQFUzQHKFevthlqNBYba+El/j0dSnzqsesZzxV0OjNRyRjMJCqae+me8PrJ1KGr6c3Y+KZRXKWFa6JGhH6HCgfMmu4QkFqlULi62KbG7SBLWaitYhSdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hW4YYgwR; arc=none smtp.client-ip=209.85.128.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41b794510cdso29088555e9.2;
-        Tue, 07 May 2024 14:13:57 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6181d032bf9so35382707b3.3;
+        Tue, 07 May 2024 14:15:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715116436; x=1715721236; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qYFrxhuTIrqrxFkifa4GjWEZBcYt9ZP/lSNrLelrdGg=;
-        b=LQyzNymNK+erV42jMaew+eG3zqUYAEMjatIONDhy2spcH0kUJHLueQqJO9f1DkZrtA
-         HTK2hXaspAGTgnWjFKJbvuUtiLY/GoKWJmrQJYlHw0wehp5Y888/AX2NTgCSMRkCezTH
-         n1z0RpuH8otfDd7cgJb6mNYGy14i8LxViS2Z1cQ6w+h21f+cGqODcG+U5FefGWki5uDW
-         oHl+6dkkR4LhxD6F46xGGJmnpHF8z/QSJQSMzLt4xrTKudHqy6rnIVPPxh/lbTGFEcHA
-         TILH9MxsZC5M+18YLUAM3Ph72e2fsiI3LqNHL9K6psmQtC2tUPZXTSRs1HyMpEp2HGpG
-         /pbA==
+        d=gmail.com; s=20230601; t=1715116556; x=1715721356; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mYeGMToteaskIs6sMPrkW/JKjEbgC3kWhMUNPICMUpk=;
+        b=hW4YYgwRIZ5ICwtN0PsY/dE7VDSGa5C46FAZQCZrjcuOFdiIUNV70rYS31wdJzTTRR
+         LGDUDvnOj1AlDNr18INE36Omcxfzh/0GuKrKE7SnzMnz8f9JJuz2Pc1Ky3Z3+vxXRGud
+         dHxs3u10wE87d0vKF2+63vFf/9dCNi2vWdKgQzy8HuWMCcsUWUILzzBYd7eWwknof3zw
+         WJcyCW6PCVs02szeK/bYtTab490bl/6wiGZ8sEecP/85ZYMyI11xzapV4cuVdIMdG/iW
+         wyoGrSQIdfVut1uxsF3/+Jb5R+MBtJEhQaAUoDYYvIliAl0xEOgfIiPfYwWJXWPoyPA2
+         p51A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715116436; x=1715721236;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qYFrxhuTIrqrxFkifa4GjWEZBcYt9ZP/lSNrLelrdGg=;
-        b=vfVRaBuQ+sqmCUyrZ3pWy/JxKEysdYAd4g6PeNBUgy3DF0uK69HY+am+0q+uy/+zJO
-         PvXRP9HXusuTcu6BaT+xkZbrM1WgauK2nKwxCxecdJHyE3YgTJucDzmvRG1GZiuNKeqq
-         BE0kRNa2TKJae/7gAgM1tv553DVimlO7SpRN9aKtWEhuLX5+DZku/1C5LJwps0/2SM1B
-         /PsSAoQ72DK++j5Mh+1AQ7TMhF9+t9dLk+e2JGx5U+IRIX2dfoz5PONP8LWqK4SNrAqZ
-         2BOiiUlnTlEjfdk7aOrdKBgSRrax17zGGvPIm/KeUYA+QfvXqaS9X6wA4sdv8qs42fEk
-         ftZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUn1KhRbjD7reLYcKJ6xm13IESPZxw58lkQUZOOP7M/JnQHs3PtxWrrJDYGN3tILcUmsQpa2U/l+F/OMShyT87i/x2KW7HNN/Ju9slJR6MQRd0m8PgmNxT1b5wfKIxikKrkzoSgXeEmYg==
-X-Gm-Message-State: AOJu0Yy79IYaw6kjOPwhLGvY3PBJgDtV77b+7hxHDgVCO1T2W17yeD2v
-	gcLt5pRG5XuIlOoNlNGp97BybDEA6lp5R/BEdO0fjSTuIvWb1ocjPtuX/Vc=
-X-Google-Smtp-Source: AGHT+IFpKnD/taxvc+XbCDl5lYkaNLsC7exRQb2rbI+vmpaMlrcwCBRNi8IWItD49ePwGNPWIpRnuA==
-X-Received: by 2002:a05:600c:3d99:b0:41c:258:9b70 with SMTP id 5b1f17b1804b1-41f719d62d3mr6907085e9.28.1715116435248;
-        Tue, 07 May 2024 14:13:55 -0700 (PDT)
-Received: from octinomon.home (182.179.147.147.dyn.plus.net. [147.147.179.182])
-        by smtp.gmail.com with ESMTPSA id p9-20020a05600c1d8900b0041563096e15sm24808106wms.5.2024.05.07.14.13.53
+        d=1e100.net; s=20230601; t=1715116556; x=1715721356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mYeGMToteaskIs6sMPrkW/JKjEbgC3kWhMUNPICMUpk=;
+        b=YmKLOIlfCvhI4PU7GB0R9tG3DAaA1M/ZWP3+i7lKFcroF4CSdhL0/0rC8gM2WuevmI
+         QpRfSgrcQ+o3rCi3Bz37iCKKWIBXIS8DrygBa6yE4ib8xJ3WTPOZndw2KZ+Ss+nLjDMj
+         f1ayK2xeq75t6FKObMexn2WxedYbhr6PbPD/4xME0bwoRpel6ik+6XqOvqeXHhUaZkGP
+         VhXWkQCQA3yWQ9vyYrQiYmVMg+nipEhNUjR7YUkB+bnmmksfUyF6VMxLicRX5qGNJBkv
+         tZ6oKh8amsCzwoKwoBHj0DA0n3rMUC3rPKsvd3LG33jxzdsoFDAvoiwFntOky1sivM+g
+         trHg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+VXSNQWR6vjfy3/2zkbVKUbfBfLh4b7HyuPFc/gDAFZDIp0lk8y2KfDSiVcyOmarO22CP8iklghBH8IDAlDzQinethtZxVuKdhLnWHgyTnlPf6ct0mEUDS7sSy0PgiGs6juP13jWodjGRSGDVHfoNBuITa7q0m8vxC+JFGyJyDCVnkbejGOLGecgthreNKdROcIB/8aawR5qz0Lvl9cERYL9oIzPLpQALC0rfQWGyRwrBC8kT3Z/6FPJtQA==
+X-Gm-Message-State: AOJu0YxwNVTzm6F5l4ZZ5yWBMMo6Z57o/mDQ+PTj8kU69EYQEGiIGZFT
+	uhUy8p6/cm7bjkPELOBXBIACt8ENzLJbasLFsfq+Q1Bk/IEhyKQb
+X-Google-Smtp-Source: AGHT+IGkf8neUX4Td3fdf5viAkv7QSY2fzH2N80z+lW4vEfVjVZop7l7kDw3wXLDKTTm9Ao1ryNEdw==
+X-Received: by 2002:a05:690c:3603:b0:61b:1718:7302 with SMTP id 00721157ae682-62086299e20mr10077027b3.31.1715116556362;
+        Tue, 07 May 2024 14:15:56 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:e3c:6631:2efa:fee2])
+        by smtp.gmail.com with ESMTPSA id u70-20020a0deb49000000b00618876dc75fsm2879497ywe.27.2024.05.07.14.15.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 14:13:54 -0700 (PDT)
-Date: Tue, 7 May 2024 22:13:52 +0100
-From: Jules Irenge <jbi.octave@gmail.com>
-To: dengler@linux.ibm.com, svens@linux.ibm.com
-Cc: borntraeger@linux.ibm.com, agordeev@linux.ibm.com, hca@linux.ibm.com,
-	freude@linux.ibm.com, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] s390/pkey: use kfree_sensitive() to fix Coccinelle
- warnings
-Message-ID: <ZjqZkNi_JUJu73Rg@octinomon.home>
+        Tue, 07 May 2024 14:15:56 -0700 (PDT)
+Date: Tue, 7 May 2024 14:15:52 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-input@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 7/7] Input: mpr121: Use
+ devm_regulator_get_enable_read_voltage()
+Message-ID: <ZjqaCHUc7PlbKDCK@google.com>
+References: <20240429-regulator-get-enable-get-votlage-v2-0-b1f11ab766c1@baylibre.com>
+ <20240429-regulator-get-enable-get-votlage-v2-7-b1f11ab766c1@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,57 +96,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240429-regulator-get-enable-get-votlage-v2-7-b1f11ab766c1@baylibre.com>
 
-Replace memzero_explicit() and kfree() with kfree_sentive() to fix
-warnings reported by Coccinelle
+On Mon, Apr 29, 2024 at 06:40:15PM -0500, David Lechner wrote:
+> We can reduce boilerplate code by using
+> devm_regulator_get_enable_read_voltage().
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-WARNING opportunity for kfree_sensitive/kvfree_sensitive (line 1506)
-WARNING opportunity for kfree_sensitive/kvfree_sensitive (line 1643)
-WARNING opportunity for kfree_sensitive/kvfree_sensitive (line 1770)
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
-Changes in v3:
- - use kfree_sensitive() instead of kvfree_sensitive as a correction 
+Mark, maybe you will pick up this one as well?
 
- drivers/s390/crypto/pkey_api.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Thanks.
 
-diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
-index dccf664a3d95..933894065623 100644
---- a/drivers/s390/crypto/pkey_api.c
-+++ b/drivers/s390/crypto/pkey_api.c
-@@ -1503,8 +1503,7 @@ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
- 		rc = pkey_keyblob2pkey(kkey, ktp.keylen, ktp.protkey.protkey,
- 				       &ktp.protkey.len, &ktp.protkey.type);
- 		pr_debug("%s pkey_keyblob2pkey()=%d\n", __func__, rc);
--		memzero_explicit(kkey, ktp.keylen);
--		kfree(kkey);
-+		kfree_sensitive(kkey);
- 		if (rc)
- 			break;
- 		if (copy_to_user(utp, &ktp, sizeof(ktp)))
-@@ -1640,8 +1639,7 @@ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
- 					&ktp.protkey.type);
- 		pr_debug("%s pkey_keyblob2pkey2()=%d\n", __func__, rc);
- 		kfree(apqns);
--		memzero_explicit(kkey, ktp.keylen);
--		kfree(kkey);
-+		kfree_sensitive(kkey);
- 		if (rc)
- 			break;
- 		if (copy_to_user(utp, &ktp, sizeof(ktp)))
-@@ -1767,8 +1765,7 @@ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
- 					protkey, &protkeylen, &ktp.pkeytype);
- 		pr_debug("%s pkey_keyblob2pkey3()=%d\n", __func__, rc);
- 		kfree(apqns);
--		memzero_explicit(kkey, ktp.keylen);
--		kfree(kkey);
-+		kfree_sensitive(kkey);
- 		if (rc) {
- 			kfree(protkey);
- 			break;
 -- 
-2.43.2
-
+Dmitry
 
