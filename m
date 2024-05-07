@@ -1,64 +1,77 @@
-Return-Path: <linux-kernel+bounces-172045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FE08BEC64
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB9A8BEC65
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78BB91F2632B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13811C242C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44E116DEAC;
-	Tue,  7 May 2024 19:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA316DEAE;
+	Tue,  7 May 2024 19:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoKT9AEi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ef6HhOr1"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9549E16DEB5;
-	Tue,  7 May 2024 19:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DCD16D319
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715109275; cv=none; b=DNetAm61EY1h8T5W+nNyCV3Pjd/qoHOWHwpzPk8Ew9Qn0Gy2/+K4PJ4jjJjXSh0IMIzJL14hJC5ho5IG66WDzwLBFKbZPtimAxTlPMp1OBl/3nraIPHTr6ytLWc1VpqUUumvwTmPctKpYh2xvdUTxYGKRl4KvAdxMlsgRwdr35k=
+	t=1715109302; cv=none; b=ODAsD46CZ0LhyHwiTFJVSx7VQaH6LGrvKFHtcr3iQPWJb/g8KJC+wAQZ8O2adySWxlkrenZEkJrdRYdAoC3OTR2/kcKKgoOZhw+Kluqb70TlbqTIZxdYmpX9qrk5X4Bo/udnCx147UerGij3VnXXZJTM8zbf14j0bfuA+BAsM9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715109275; c=relaxed/simple;
-	bh=+eciEdgd6Kxs36Vv3ytpMLPQlDEH4wWJCOJ+bY3oaqs=;
+	s=arc-20240116; t=1715109302; c=relaxed/simple;
+	bh=tlldNfcByzJ4XQ7ta0Hf3J+SE8kzMt2alkaxZtOanBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESz93WdRmNSNHowGLWbceTtIW5AgGV0pZpZSIDmMQr3NkXTK0opokmZieSRt3VeoSNm8o1GdQU62xfsEew1wnMtp+vxWWA/FzUNO7UwnazMYd9hBXQyACEVhG1F7DH8+DThH/L+skwYA9sMfmNdSaC4/JTkPtcN7mwz5qs2rvJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoKT9AEi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B07C2BBFC;
-	Tue,  7 May 2024 19:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715109275;
-	bh=+eciEdgd6Kxs36Vv3ytpMLPQlDEH4wWJCOJ+bY3oaqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IoKT9AEi7R1nDq/QuH9bj6M4DsyZlA0+9MBGMCI2N8Y+Hy4XwxgQiApS3Jcq59PUF
-	 4zjW0l3yF3UsPSXbFaUKOkrZ88nZjmdu+x3y+HfgDiK5uAepzc5QSWi37IQIUgtj56
-	 1Fmb2MTTk4LMb7wXJhzuM6LkhPffVJuSQBL3t5oYA1W6UdaLis3ECdDd9Qc2sGCqJR
-	 NmMbw04y9Z5I41yYbtETnFP8VQ7F1XzbHoPjPRDV/zCBzS2pvjV6FtrC5ETdiZ3J/L
-	 l6XaciQ/8DYEi97qNw9B69u1+4OOlr96x3Uv5tUIpqIHwsKtUwNXqM8KxPZD0oVc5F
-	 lnBJXapdt4ZOA==
-Date: Tue, 7 May 2024 14:14:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v4 2/3] pinctrl: scmi: add blocklist
-Message-ID: <20240507191433.GA908134-robh@kernel.org>
-References: <20240505-pinctrl-scmi-oem-v3-v4-0-7c99f989e9ba@nxp.com>
- <20240505-pinctrl-scmi-oem-v3-v4-2-7c99f989e9ba@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqvj5KL1eH/tCxfsfTWczabMGCfWIxTI+pmbCCvhIcE4S7hepEG/a6l5MnK12FqseEz+j4XXmDYv0F/gISL2phj4s0g3aIsSZ83m85Ix/FR4Yq4dzWCjRDjTqlNJXP+2itQmXB+IJS3K7WIleefzQFGui9QGnFwpHfwiF33y0zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ef6HhOr1; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6203b1bc935so36742277b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:15:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715109300; x=1715714100; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6eo4SgJ7QCEB1nNYUR2zdqZ3ccKqwNFeVNFLBZzA2CQ=;
+        b=Ef6HhOr1hf7hWiJPrybOgBUGfn8QFZjltNt1WcJ90TpBprJWXesfWFCVBAUEprUa0c
+         tdNtOW/gWpB4B6/ZGheQkoHuVmJJOfrj0nz13Zioaokxkj4Ikvq7S4VmjKDc0iY7PZ5H
+         eTWEARSnVdbXp29gA23tC7OllMTwSEx+xN4rTzemOJduOk08FxhaotuapZpewO9bnpEK
+         LUF5CDRomk0m0IdNiL2xJrdoTsNQKsHTmzIEUcfXas21HwmaI9fVE78WLdSPeIjAC34I
+         ST3rX63DjR+pGtoNPgjxhHbfGZt1orSBHac20O5jGFvxxztRRPIRcRC8ycLzTUBTUu01
+         8sDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715109300; x=1715714100;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6eo4SgJ7QCEB1nNYUR2zdqZ3ccKqwNFeVNFLBZzA2CQ=;
+        b=Th/wt4LvJQM9A+e5nveguf4Wn8CW7xRBySwlGZQHRiq1p0hkCGyAb+IoJEJfmcNiFE
+         Q9Hfuod+o/O0Hvw9kuFrM+wLlf7G/CEb9SF095mV/nIQzzwjSSfqIZ1aLK5hmnJvXmWt
+         Vu/5HhtdjI4xAX/L9cPr92nvjfNG/+fJq6mjlCD+Yodt/NS3Bv//X0jHSFkcRvZDgW0F
+         Wpfv2IrrhMPNKGbXbpBBmJU6DqhmSogNKFIYY04u57GVyqMnAlWf+tzT52SXAMi8ORbu
+         d/L0SwtjFgnQLk+NZEFnHR3Zd1i/aVCaZ0Kts+Q8rRGO7UKF1GNYZgvb1y3As2ysDpTy
+         8Egw==
+X-Gm-Message-State: AOJu0YzoPP+60O5bGZBBijA4AY+mlc9Z3zcjVe2AXD7e+NVthbt92I9m
+	lSA2r3Ug9JlBvaEcfURGneI+aT/FsvKWZGSuuy2ouw3Q7jDQWf9F
+X-Google-Smtp-Source: AGHT+IEasfG7B0Q510dqj1rgc0zUzn6hPKlQPGPlgG1JyH5qj5YI9YQDThWQtNp946o9Q1gQdU/qSQ==
+X-Received: by 2002:a0d:eb11:0:b0:615:4700:94cb with SMTP id 00721157ae682-62085d1f5bbmr8376077b3.1.1715109299891;
+        Tue, 07 May 2024 12:14:59 -0700 (PDT)
+Received: from localhost ([2601:344:8301:57f0:5343:96f7:3e43:fa89])
+        by smtp.gmail.com with ESMTPSA id s3-20020a817703000000b0061beb26a082sm2886510ywc.112.2024.05.07.12.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 12:14:59 -0700 (PDT)
+Date: Tue, 7 May 2024 12:14:58 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v1 1/1] bitops: Move aligned_byte_mask() to wordpart.h
+Message-ID: <Zjp9sm8s50rb9N/+@yury-ThinkPad>
+References: <20240507140155.197304-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,64 +80,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240505-pinctrl-scmi-oem-v3-v4-2-7c99f989e9ba@nxp.com>
+In-Reply-To: <20240507140155.197304-1-andriy.shevchenko@linux.intel.com>
 
-On Sun, May 05, 2024 at 11:47:18AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Tue, May 07, 2024 at 05:01:54PM +0300, Andy Shevchenko wrote:
+> The bitops.h is for bit related operations. The aligned_byte_mask()
+> is about byte (or part of the machine word) operations, for which
+> we have a separate header, move the mentioned macro to wordpart.h
+> to consolidate similar operations.
 > 
-> i.MX95 will have its own pinctrl scmi driver, so need block
-> pinctrl-scmi driver for i.MX95, otherwise there will be two pinctrl
-> devices for a single scmi protocol@19.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Hi Andy,
+
+I see the macro is used in lib/strnlen_user.c and in lib/usercopy.c.
+In case of strnlen_user, the wordpart.h is included via linux/kernel.h,
+which is OK to me. But In case of usercopy.c, I can't find how the
+header is included. 
+
+I'm sure there is some inclusion path, but it's always better to have
+the dependencies listed explicitly.
+
+Can you please send a 2nd version with the lib/usercopy.c including
+wordpart.h?
+
+Thanks,
+Yury
+
 > ---
->  drivers/pinctrl/pinctrl-scmi.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  include/linux/bitops.h   | 7 -------
+>  include/linux/wordpart.h | 7 +++++++
+>  2 files changed, 7 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/pinctrl-scmi.c b/drivers/pinctrl/pinctrl-scmi.c
-> index 036bc1e3fc6c..331ca20ac68b 100644
-> --- a/drivers/pinctrl/pinctrl-scmi.c
-> +++ b/drivers/pinctrl/pinctrl-scmi.c
-> @@ -11,6 +11,7 @@
->  #include <linux/errno.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
-> +#include <linux/of.h>
->  #include <linux/scmi_protocol.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
-> @@ -504,6 +505,11 @@ static int pinctrl_scmi_get_pins(struct scmi_pinctrl *pmx,
->  	return 0;
->  }
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index 0b561ee6b4a4..ec45284c03f5 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -8,13 +8,6 @@
 >  
-> +static const struct of_device_id scmi_pinctrl_blocklist[] = {
-> +	{ .compatible = "fsl,imx95", },
-> +	{ }
-> +};
+>  #include <uapi/linux/kernel.h>
+>  
+> -/* Set bits in the first 'n' bytes when loaded from memory */
+> -#ifdef __LITTLE_ENDIAN
+> -#  define aligned_byte_mask(n) ((1UL << 8*(n))-1)
+> -#else
+> -#  define aligned_byte_mask(n) (~0xffUL << (BITS_PER_LONG - 8 - 8*(n)))
+> -#endif
+> -
+>  #define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
+>  #define BITS_TO_LONGS(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
+>  #define BITS_TO_U64(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
+> diff --git a/include/linux/wordpart.h b/include/linux/wordpart.h
+> index f6f8f83b15b0..4ca1ba66d2f0 100644
+> --- a/include/linux/wordpart.h
+> +++ b/include/linux/wordpart.h
+> @@ -39,4 +39,11 @@
+>   */
+>  #define REPEAT_BYTE(x)	((~0ul / 0xff) * (x))
+>  
+> +/* Set bits in the first 'n' bytes when loaded from memory */
+> +#ifdef __LITTLE_ENDIAN
+> +#  define aligned_byte_mask(n) ((1UL << 8*(n))-1)
+> +#else
+> +#  define aligned_byte_mask(n) (~0xffUL << (BITS_PER_LONG - 8 - 8*(n)))
+> +#endif
 > +
->  static int scmi_pinctrl_probe(struct scmi_device *sdev)
->  {
->  	int ret;
-> @@ -511,10 +517,14 @@ static int scmi_pinctrl_probe(struct scmi_device *sdev)
->  	struct scmi_pinctrl *pmx;
->  	const struct scmi_handle *handle;
->  	struct scmi_protocol_handle *ph;
-> +	struct device_node *np __free(device_node) = of_find_node_by_path("/");
->  
->  	if (!sdev->handle)
->  		return -EINVAL;
->  
-> +	if (of_match_node(scmi_pinctrl_blocklist, np))
-> +		return -ENODEV;
-
-Use of_machine_compatible_match() instead.
-
-> +
->  	handle = sdev->handle;
->  
->  	pinctrl_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_PINCTRL, &ph);
-> 
+>  #endif // _LINUX_WORDPART_H
 > -- 
-> 2.37.1
-> 
+> 2.43.0.rc1.1336.g36b5255a03ac
 
