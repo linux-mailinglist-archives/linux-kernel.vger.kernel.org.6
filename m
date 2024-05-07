@@ -1,81 +1,122 @@
-Return-Path: <linux-kernel+bounces-171488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580AC8BE519
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:04:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825A78BE509
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34C2DB228F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3904E1F22267
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D158215F311;
-	Tue,  7 May 2024 14:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D9D15F3E7;
+	Tue,  7 May 2024 14:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PorkDEb1"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aMtXC7D8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9551129CFE;
-	Tue,  7 May 2024 14:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C62158D9A;
+	Tue,  7 May 2024 14:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090450; cv=none; b=SWxtzBkR+3h2T6GS/glpi1z8KWnEQ7JXMYnGE2KjAb1lChTyjjc8iNGLoHtNagCX5HdRWb1yNKw1B/xorQwG0angscmV+8Ikocm8qfz/lZIJsVUwdHsBXzviEqMm+FnaVFdNoFVfVMULWv2ADMUsW3kG5ubS8K5h73uBIwvaT4c=
+	t=1715090475; cv=none; b=r9a4Ah+CH9GphiA4QxFUPh44AgZbSWTP9B50phhAvuDkgPilMJNr00A/zcSRk1NCLPLi1FAZZWnB4fsADi1hl+LDKwR53wCc9PD/NemndfkqOUSv+xYBn9nGn1BEZ2v5gMtG2B8uN3k18SnrS0Dq/QZmZk/LDdGhvlZLTBj+RME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090450; c=relaxed/simple;
-	bh=WLATgfjM1pgw+mH4HNiEcyXSQ/A0N59wyznIiC0EcKY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qWkmjOjIb9tiE0iV8+3WWkbiPZmtR/0awIKK8UaP2Xu/61s/vHVc/7R7YHNLImGFITQPPIkjSafC2fQyAp6nbmyGaEYnDCQu2Xc5UCSmptovQaGHx7Yzmi8CQJl0ZP3irQkXv3dIcG/qX+dqEAZqcISE9Iqawoy/FmB6waBtTeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PorkDEb1; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 157B247C32
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1715090442; bh=ZFy3ZvIDrVlfpMY8020FpW1aYPWVe03uD8xoVvbmYbk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=PorkDEb1m5SLntV0q2Q/b1R07BxCw2Oou7hd+zi945orA/8wIFDztLfwJroDOm6i2
-	 h6S4wsvLYoMT5rNT4dL8BA+VhP3sAXA9Mt1Qc7n5sglNuzPP0j3wIzOyRy6uSX8pYr
-	 llO0yxhEid9Tu8YjkiWHqJ1t/1XMJZ71NsBMoL62naIn8SViz+gTCPzvHzW61TA7MA
-	 tT75jrHRkSJgplFGZsmIzlTUWs6acg8gZC4Kqcubv50VvjOjLck4i+UYoU8Kh+qOct
-	 93ncRGNqy3fIKu8zBNdGSd7jeUpU+4mW7M2420Li2HbygDyUvViWwDaZT6sZv77w+d
-	 wngw36rDTr6dA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625:67c:16ff:fe81:5f9b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 157B247C32;
-	Tue,  7 May 2024 14:00:42 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Saurav Shah <sauravshah.31@gmail.com>, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, mark.rutland@arm.com
-Cc: Saurav Shah <sauravshah.31@gmail.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] Documentation: tracing: Fix spelling mistakes
-In-Reply-To: <20240501233659.25441-1-sauravshah.31@gmail.com>
-References: <20240501233659.25441-1-sauravshah.31@gmail.com>
-Date: Tue, 07 May 2024 08:00:41 -0600
-Message-ID: <874jb9hgc6.fsf@meer.lwn.net>
+	s=arc-20240116; t=1715090475; c=relaxed/simple;
+	bh=CBN7WFnHjroGrqYIJUTMdqFB6hXdom40CUM7ClZ40rU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RoWB2NxTOsd2eqm+/gdYPyZqO/WCHEUyenFF3X0PhK5MODW+FAKxhgEVnTcrilIuGIVrxmSwvFrp+jdP7sSSXK6eJg+oHhxwhfFZnnmM1gczUfU/GJ8OkVxIDdwqFTh3VQO2I+E8cPUQuuci+ZjTs11VVHxGha5Y2ZiGicKGC9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aMtXC7D8; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715090475; x=1746626475;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CBN7WFnHjroGrqYIJUTMdqFB6hXdom40CUM7ClZ40rU=;
+  b=aMtXC7D8zzUjSbm0iSPWejH2udij6krEBiMBDgPI3DiNHNlty548ZhwS
+   os+Stx0JYXNF4p7zBSg6esVe69GwjSg5/vCc52doxvN3JPOeMqY4nwZuI
+   ilRBBLN/bNJupjQTdlN/BUYdoISMT29QdXVkvSUDCZlH52J3vTea1s7wH
+   tLmMnSP2GXUbLdA+YNfIwbyOnWny6zVSDtorrf4Ud+QYXvGQ/9+5ncQbj
+   Hq00gZ+SVDET74ucWBP9og5h5vtS2AUhvxQF8+fkZPWxLGaPNbsv3pXrU
+   5xvMSVUVbJd3VYDT1FMJSkhJyW4fUkw0IrkZ/CsRtznLrSU60OdTtRaz7
+   w==;
+X-CSE-ConnectionGUID: vxR/wuW1Q42vH7jaFJjm2w==
+X-CSE-MsgGUID: /MwvqJh1Qdm2YHZykF/Aog==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11008225"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="11008225"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 07:01:07 -0700
+X-CSE-ConnectionGUID: 4KJVLTPET86GrEghmEec2g==
+X-CSE-MsgGUID: YUGGLjv9RQij8Y0ohHBbhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="65966854"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 07:01:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1s4LNM-000000053bq-3pUZ;
+	Tue, 07 May 2024 17:01:00 +0300
+Date: Tue, 7 May 2024 17:01:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Yury Norov <yury.norov@gmail.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Igor Mammedov <imammedo@redhat.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] PCI: Make minimum bridge window alignment
+ reference more obvious
+Message-ID: <Zjo0HJDBVr-FPFfn@smile.fi.intel.com>
+References: <20240507102523.57320-1-ilpo.jarvinen@linux.intel.com>
+ <20240507102523.57320-8-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240507102523.57320-8-ilpo.jarvinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Saurav Shah <sauravshah.31@gmail.com> writes:
+On Tue, May 07, 2024 at 01:25:22PM +0300, Ilpo Järvinen wrote:
+> Calculations related to bridge window size contain literal 20 that is
+> the minimum alignment for a bridge window. Make the code more obvious
+> by converting the literal 20 to __ffs(SZ_1MB).
 
-> Fix spelling mistakes in the documentation.
->
-> Signed-off-by: Saurav Shah <sauravshah.31@gmail.com>
-> ---
->  Documentation/trace/fprobetrace.rst | 4 ++--
->  Documentation/trace/ftrace.rst      | 2 +-
->  Documentation/trace/kprobetrace.rst | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
+..
 
-Applied, thanks.
+> -		align1 <<= (order + 20);
+> +		align1 <<= (order + __ffs(SZ_1M));
 
-jon
+No need for outer parentheses.
+
+..
+
+> +			order = __ffs(align) - __ffs(SZ_1M);
+
+Yeah, would be nice to have something like
+
+#define bit_distance(a, b)	(ffs(a) - fls(b))
+
+in bitops.h as we have a few users and I have heard about one more coming,
+but this is topic to another discussion. (Yuri, just FYI.)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
