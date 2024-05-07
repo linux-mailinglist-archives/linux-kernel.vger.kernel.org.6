@@ -1,213 +1,157 @@
-Return-Path: <linux-kernel+bounces-171866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0238BE9A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:49:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E918BE9A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE621F210D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C162D28C90F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E974215FA95;
-	Tue,  7 May 2024 16:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D965916C84A;
+	Tue,  7 May 2024 16:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IlhhHAXT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="et8FFqUq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IlhhHAXT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="et8FFqUq"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Gh0sPANd"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5983938DD6;
-	Tue,  7 May 2024 16:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373B6433D6
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715100280; cv=none; b=Tf0d6AVp+VFMJj93ygVBqIVPiN1CG5GXJYe1/nbP3eIvG/ESq6L4AiVRoWnuy+N3DAh5iOpMmg9T37SXBldKzULEsUcshFRlKM50Vk57GrBHuUhWK1FKdU0dwsV/2Hgyo6thzZpCMLoJkTAq70xJszPRGmqEbpJY8hb+PSCl0QE=
+	t=1715100412; cv=none; b=eDDHvfnIUGc/4Y3Uyen7RwmbIcEzAkTgMoQA0cJsR3hgKMaBRhdomjsE6vqpU8EvzlFPSaeGYBzgYyh+moC8ISp+t2RSAREue5cOOJxMk0d/+5uTuSX47ml6V9fTXWyvJ4yPZ6y5hkTx/AWmV5dYb2ByfdbzZyNZmt0BM+FpIc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715100280; c=relaxed/simple;
-	bh=kAKlVw87PPuSWXnb3AnyFkrp/Eif5CHqGGcqc9qtqpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Twa23Q8/ndV9jBMoeVhz7ly2o8SMUwYWpJmBXXFdjY769j3G7yemtPCWYoe6gBCt8D3Y+JKZllH/8GClxOWK0wMpZ5jm9KkZ9oG/chKsHcTlyRTF1qrMR6pWWWOtPk+LecnfsEY1ssoULadKI3cRgbFGPt83BkS/zeUPB5dPwiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IlhhHAXT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=et8FFqUq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IlhhHAXT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=et8FFqUq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7373C3422A;
-	Tue,  7 May 2024 16:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715100276;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DRUKIk56AMBa83RB7gUeR1KP/QLaFZJMu5dlZQb6BZ4=;
-	b=IlhhHAXTY8L0W7QnTFgiES7pmtNsDhum3EzUSRSQSeQ5NKVJ9Dj86e/SOtUf4JvMz3K/dD
-	jgZbU/azE4V6zepUIC9VQFry66yTz7Vf08L3W0tph5R5WJJlw35o2yFXTZ5N46uzNo5BDZ
-	MFD1KNdeQ3t3mahs8plWp1RkTxEUHxs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715100276;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DRUKIk56AMBa83RB7gUeR1KP/QLaFZJMu5dlZQb6BZ4=;
-	b=et8FFqUqj9uixX+E6fz0+sQVMVqu8BLSKYBERLZSZUmkKtA6kE1VODoMTiT6lhonCp5QfQ
-	cybSIrStt+OrcGCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715100276;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DRUKIk56AMBa83RB7gUeR1KP/QLaFZJMu5dlZQb6BZ4=;
-	b=IlhhHAXTY8L0W7QnTFgiES7pmtNsDhum3EzUSRSQSeQ5NKVJ9Dj86e/SOtUf4JvMz3K/dD
-	jgZbU/azE4V6zepUIC9VQFry66yTz7Vf08L3W0tph5R5WJJlw35o2yFXTZ5N46uzNo5BDZ
-	MFD1KNdeQ3t3mahs8plWp1RkTxEUHxs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715100276;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DRUKIk56AMBa83RB7gUeR1KP/QLaFZJMu5dlZQb6BZ4=;
-	b=et8FFqUqj9uixX+E6fz0+sQVMVqu8BLSKYBERLZSZUmkKtA6kE1VODoMTiT6lhonCp5QfQ
-	cybSIrStt+OrcGCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E30913A2D;
-	Tue,  7 May 2024 16:44:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id c5IdCXRaOmbHbgAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 07 May 2024 16:44:36 +0000
-Date: Tue, 7 May 2024 18:44:30 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-bcachefs@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>, Su Yue <l@damenly.org>,
-	Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC value to
- UAPI magic.h
-Message-ID: <20240507164430.GD138935@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20240507153757.150891-1-pvorel@suse.cz>
- <ZjpQV0ddhG9sUo8P@bfoster>
+	s=arc-20240116; t=1715100412; c=relaxed/simple;
+	bh=VcUsDxZUpDGF/2Z4CuONrG7q84Dnoj3KVEQQuxcgc5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=KPfjjXupj52w/CfB76Yl0raNjdvLK9SHcXPDHMq713JCCE1I7IFEH5Tjjx9qdXn8j/SMPGRf6yZSovCEDDdjyAF+rs0LSqb/99gPlaDGmg7H8ya+I+DyWNM05YOUGhdJRaX0pGB+YcxkK78cBQwKOLWlFyFgSSRY/bBAq28nbgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Gh0sPANd; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59a8f0d941so893513566b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715100408; x=1715705208; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x+/m+VOoT4mV8mZDo3MLSD/vsCL7+IgmGDq9kgXSLzI=;
+        b=Gh0sPANdAIxztz6wc8RnKlk5D9plUJt+b3jGu6OgOMPQ7EMrM/nkYuFW0KS544/W1e
+         jRYdcgAyetBa2+XP6SFlnSvOGYF+88EQY4Cp62rleBVbRSpsrsWfEkTfsuBt1zA//mZ4
+         naleibkChXQKPJ1tqMFPvxsFsX0sEKnS1t0Lo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715100408; x=1715705208;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x+/m+VOoT4mV8mZDo3MLSD/vsCL7+IgmGDq9kgXSLzI=;
+        b=T+Jv96sP3claDYv8oUzuwd6sHuJr08tDSK7UDWUzk8YWFXaIIpoNO5y51CJKRK+FOs
+         HLq3zUAbVHP3mw4U5WXA7cHrPIILd/TOsu5HZvm2bJKBB91jsA/Rq8qiOHPHBsw6tFts
+         p3Wotto8S9kH8fdbd6BLMX6V5OinGMaIZCYaX27oI/rxCIaL134THSpo2gpW5P0AZJn6
+         Rttcd4QNm+/jHCLIjvG+PNig8Z1nD3m6zCRFAGwBH1k4yDJTbKEA7ZUURF5s21ys+qIJ
+         1+7kE3X630qLluDBCQ+Ttsg2GzSexBxpH2QlsXchzW8e/+iXq7wCOewhE9L7065FPbGp
+         2InQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUDUqxhUuNnA8QOaxmuiVu3HIBHObiHIClhlqTaWNuPimh0kiSFAQ72/8W1LX4pJUZTZqWSokzquFKMx4TjGbfHA2ScrjPg3AF3Hq7
+X-Gm-Message-State: AOJu0YxNz7eXW2wB3ubjwwwZFN+wOkaG3dtKpRn7qBqRvQxSDlWSWtdw
+	9C/xq0eXdaB59Aqw0Iaw1M5HZEB1MVcAnHzHtH+Yyk+FJdwusFmw+8wHhOxLK1o1FzCtQYRI6vG
+	q8yBREA==
+X-Google-Smtp-Source: AGHT+IGG/ZTikXorC7pGAH5DZORLpUf3kKbfMVCloeJUSub/75I3uUKOdj2nqHs6P+7VP6u6ogSgKA==
+X-Received: by 2002:a17:906:f6c5:b0:a59:9b75:b8d with SMTP id a640c23a62f3a-a59fb9597b3mr2280866b.19.1715100408574;
+        Tue, 07 May 2024 09:46:48 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id b15-20020a17090636cf00b00a59ae204e2dsm4096626ejc.43.2024.05.07.09.46.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 09:46:48 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59e4136010so391728466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:46:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWFanc+7PKHtdfC4CbyNP/U/r4L/MlpNe3A1EUfM0a3yoE2qd62XLVqvKQE4fzyvSYtnt7THwtz8OHDzWHYBrBwb+tV4hAZx9Div4fo
+X-Received: by 2002:a17:906:d148:b0:a59:b099:1544 with SMTP id
+ a640c23a62f3a-a59fb96bda9mr1610066b.42.1715100407952; Tue, 07 May 2024
+ 09:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjpQV0ddhG9sUo8P@bfoster>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:replyto,suse.cz:email];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Score: -3.50
-X-Spam-Flag: NO
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+In-Reply-To: <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 7 May 2024 09:46:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+Message-ID: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
+ file lifetimes
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> On Tue, May 07, 2024 at 05:37:57PM +0200, Petr Vorel wrote:
-> > Move BCACHEFS_STATFS_MAGIC value to UAPI <linux/magic.h> under
-> > BCACHEFS_SUPER_MAGIC definition (use common approach for name) and reuse the
-> > definition in bcachefs_format.h BCACHEFS_STATFS_MAGIC.
+On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> It's really annoying that on some distros/builds we don't have that, and
+> for gpu driver stack reasons we _really_ need to know whether a fd is the
+> same as another, due to some messy uniqueness requirements on buffer
+> objects various drivers have.
 
-> > There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
-> > which use UUID_INIT() and are used only in libbcachefs. Therefore move
-> > only BCACHEFS_STATFS_MAGIC value, which can be used outside of
-> > libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
+It's sad that such a simple thing would require two other horrid
+models (EPOLL or KCMP).
 
-> > Suggested-by: Su Yue <l@damenly.org>
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
+There'[s a reason that KCMP is a config option - *some* of that is
+horrible code - but the "compare file descriptors for equality" is not
+that reason.
 
-> I was thinking you'd just rename the STATFS_MAGIC def locally as well,
-> but whatever.. LGTM, thanks for the tweaks!
+Note that KCMP really is a broken mess. It's also a potential security
+hole, even for the simple things, because of how it ends up comparing
+kernel pointers (ie it doesn't just say "same file descriptor", it
+gives an ordering of them, so you can use KCMP to sort things in
+kernel space).
 
-Ah, I thought it'd be more readable this way from bcachefs point.
-Kent, just let me know if you prefer Brian's way and I'll send v4.
+And yes, it orders them after obfuscating the pointer, but it's still
+not something I would consider sane as a baseline interface. It was
+designed for checkpoint-restore, it's the wrong thing to use for some
+"are these file descriptors the same".
 
-Kind regards,
-Petr
+The same argument goes for using EPOLL for that. Disgusting hack.
 
-> Acked-by: Brian Foster <bfoster@redhat.com>
+Just what are the requirements for the GPU stack? Is one of the file
+descriptors "trusted", IOW, you know what kind it is?
 
-> > Changes v2->v3:
-> > * Align tab with other entries.
+Because dammit, it's *so* easy to do. You could just add a core DRM
+ioctl for it. Literally just
 
-> > Changes v1->v2 (all suggested by Brian Foster - thanks!):
-> > * rename constant to BCACHEFS_SUPER_MAGIC,
-> > * keep BCACHEFS_STATFS_MAGIC in bcachefs_format.h, just include
-> >  <uapi/linux/magic.h> and use BCACHEFS_SUPER_MAGIC definition,
-> > * move the constant to the first chunk.
+        struct fd f1 = fdget(fd1);
+        struct fd f2 = fdget(fd2);
+        int same;
 
-> > Kind regards,
-> > Petr
+        same = f1.file && f1.file == f2.file;
+        fdput(fd1);
+        fdput(fd2);
+        return same;
 
-> >  fs/bcachefs/bcachefs_format.h | 3 ++-
-> >  include/uapi/linux/magic.h    | 1 +
-> >  2 files changed, 3 insertions(+), 1 deletion(-)
+where the only question is if you also woudl want to deal with O_PATH
+fd's, in which case the "fdget()" would be "fdget_raw()".
 
-> > diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-> > index f7fbfccd2b1e..3b831415409b 100644
-> > --- a/fs/bcachefs/bcachefs_format.h
-> > +++ b/fs/bcachefs/bcachefs_format.h
-> > @@ -76,6 +76,7 @@
-> >  #include <asm/byteorder.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/uuid.h>
-> > +#include <uapi/linux/magic.h>
-> >  #include "vstructs.h"
+Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
+less hacky than relying on EPOLL or KCMP.
 
-> >  #ifdef __KERNEL__
-> > @@ -1275,7 +1276,7 @@ enum bch_compression_opts {
-> >  	UUID_INIT(0xc68573f6, 0x66ce, 0x90a9,				\
-> >  		  0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
+I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
+too, if this is possibly a more common thing. and not just DRM wants
+it.
 
-> > -#define BCACHEFS_STATFS_MAGIC		0xca451a4e
-> > +#define BCACHEFS_STATFS_MAGIC		BCACHEFS_SUPER_MAGIC
+Would something like that work for you?
 
-> >  #define JSET_MAGIC		__cpu_to_le64(0x245235c1a3625032ULL)
-> >  #define BSET_MAGIC		__cpu_to_le64(0x90135c78b99e07f5ULL)
-> > diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> > index 1b40a968ba91..bb575f3ab45e 100644
-> > --- a/include/uapi/linux/magic.h
-> > +++ b/include/uapi/linux/magic.h
-> > @@ -37,6 +37,7 @@
-> >  #define HOSTFS_SUPER_MAGIC	0x00c0ffee
-> >  #define OVERLAYFS_SUPER_MAGIC	0x794c7630
-> >  #define FUSE_SUPER_MAGIC	0x65735546
-> > +#define BCACHEFS_SUPER_MAGIC	0xca451a4e
-
-> >  #define MINIX_SUPER_MAGIC	0x137F		/* minix v1 fs, 14 char names */
-> >  #define MINIX_SUPER_MAGIC2	0x138F		/* minix v1 fs, 30 char names */
-> > -- 
-> > 2.43.0
-
-
+                 Linus
 
