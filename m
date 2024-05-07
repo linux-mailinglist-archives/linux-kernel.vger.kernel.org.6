@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-171184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E9F8BE0CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:17:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DC48BE0D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9111F263D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444922830A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E57C152168;
-	Tue,  7 May 2024 11:17:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EE61514F8
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C184152191;
+	Tue,  7 May 2024 11:17:47 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D341509A6;
+	Tue,  7 May 2024 11:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715080644; cv=none; b=Aan1hOEy3ETh+JT2bdYUz+voEnKHvWK00s18B5dmLBVN2d8RnbSLGbzd45X3V6InSOi/Ah+OtVzMP4T7DnRd2YAc01sC5DA+UdTwZLnw3kWCODrPRHWx5rwiBDE5zj4JzKoFO4bvPxM1ptmImuzWlnvRp3QpZ9djBdJe/DqhsA4=
+	t=1715080667; cv=none; b=MSgOwyGL42azLar7kZmWlt9xgsj6HocGuanqu9/0QVCZyM52S8RS2CjiPWwbUao1pJ2eVzmNFF0ZFYlBngYJUctCBRab2RwYtl2ntuNcYnS85eqRa/76hVdg0EiHHinbSzNGmHl24xMRHpxFB1dTa4+Ry1SI6vRARRkESNYBJfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715080644; c=relaxed/simple;
-	bh=4RWDb3dhbxFzvMPLfYEXGp9RHbWBGzBigcrnGPG2AOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rnoWq9bCMiyqvbk6iT9PY7c4VFgoB2ZiQjl2v1bGP5BTApz34PMKLLPhT4QcIdsHH/rtWBi2qrgiTGW16NQFjwR4tmF+K46/4ZaAnqiHnNYYHT8u8e8km/DFmiV/8PWduY1OYSxFEXFhEKzNjGClNRCtyS6tymodFkHbClj3FOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 743D41063;
-	Tue,  7 May 2024 04:17:47 -0700 (PDT)
-Received: from [10.1.34.181] (XHFQ2J9959.cambridge.arm.com [10.1.34.181])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 009423F587;
-	Tue,  7 May 2024 04:17:19 -0700 (PDT)
-Message-ID: <3764382b-9fa6-4e94-ad5b-2e22e3e7c71a@arm.com>
-Date: Tue, 7 May 2024 12:17:18 +0100
+	s=arc-20240116; t=1715080667; c=relaxed/simple;
+	bh=0lxFd2GCE2ODuH3qgno60tjiH9OHy42/GKT7AMGXobw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F628KAY+qULV8rxp5/wahkMVkqdyMlv38Kxdpo+OccixweSgMIbhxq25AGIzbUm+mJfKn8uKuAXvUvRyj0Y1uSb/tWGd58ddbJltSYCJzUnzW/eOy9GHBBW73tgC5rZbYTcjyZGkyxrMh4YyoqcaiyOrm5lYRJgKHlENObKe5Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VYbK66NBsz1yn0M;
+	Tue,  7 May 2024 19:14:50 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2234B1401DC;
+	Tue,  7 May 2024 19:17:36 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 19:17:35 +0800
+Message-ID: <b98d71e7-9b0f-4c8d-4c90-d1cc1eb730a2@huawei.com>
+Date: Tue, 7 May 2024 19:17:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] arm64/mm: Enable userfaultfd write-protect
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Joey Gouly
- <joey.gouly@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
- Mike Rapoport <rppt@linux.ibm.com>, Shivansh Vij <shivanshvij@outlook.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240503144604.151095-1-ryan.roberts@arm.com>
- <20240507110750.GA22289@willie-the-truck>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240507110750.GA22289@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next] mm: memcg: use meaningful error code for return
+ value
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>
+CC: <hannes@cmpxchg.org>, <mhocko@kernel.org>, <roman.gushchin@linux.dev>,
+	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
+	<akpm@linux-foundation.org>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240506133643.1124102-1-xiujianfeng@huawei.com>
+ <Zjjg60ZW-d7r-DS9@casper.infradead.org>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <Zjjg60ZW-d7r-DS9@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-On 07/05/2024 12:07, Will Deacon wrote:
-> Hi Ryan,
+
+
+On 2024/5/6 21:53, Matthew Wilcox wrote:
+> On Mon, May 06, 2024 at 01:36:43PM +0000, Xiu Jianfeng wrote:
+>> alloc_mem_cgroup_per_node_info() returns 1 if failed, use -ENOMEM
+>> instead, which is more meaningful.
 > 
-> On Fri, May 03, 2024 at 03:45:58PM +0100, Ryan Roberts wrote:
->> This series adds uffd write-protect support for arm64.
->>
->> Previous attempts to add uffd-wp (and soft-dirty) have failed because of a
->> perceived lack of available PTE SW bits. However it actually turns out that
->> there are 2 available but they are hidden. PTE_PROT_NONE was previously
->> occupying a SW bit, but can be moved, freeing up the SW bit. Bit 63 is marked as
->> "IGNORED" in the Arm ARM, but it does not currently indicate "reserved for SW
->> use" like it does for the other SW bits. I've confirmed with the spec owner that
->> this is an oversight; the bit is intended to be reserved for SW use and the spec
->> will clarify this in a future update.
->>
->> So now we have two spare bits; patch 4 enables uffd-wp on arm64, using the SW
->> bit freed up by moving PTE_PROT_NONE. This leaves bit 63 spare for future use
->> (e.g. soft-dirty - see RFC at [4] - or some other usage).
->>
->> ---
->>
->> This applies on top of v6.9-rc5.
+> This should probably be changed to return true/false instead of
+> an int.
 > 
-> I chucked this into the CI on Friday and it looks to have survived the
-> long weekend, so I've gone ahead and merged it into for-next/core. Short
-> of any last minute failures (touch wood), this should land in 6.10.
-
-Oh great - thanks!
-
-Catalin was previously proposing to hold this until 6.11 - I'll leave you two to
-fight it out in case that's still his preference ;-)
-
-> 
-> Thanks!
-> 
-> Will
-
+OK, already sent v2.
 
