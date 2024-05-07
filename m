@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-173288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51ACC8BFE68
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A1F8BFE6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCFA286F6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0572875E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C140C85649;
-	Wed,  8 May 2024 13:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEDE85955;
+	Wed,  8 May 2024 13:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="holQK5JH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDvvLr21"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750AD85266;
-	Wed,  8 May 2024 13:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1EF85620;
+	Wed,  8 May 2024 13:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715174174; cv=none; b=ScMHKZZ/uIOCWQiNtpZ9eAcN4BNcOncr/aN+bCLbwswRb6zA7BFJ999UJPEiPVvge98w2jGkQfbwjg/la6KDIQ4xnhVcE/ZmSMzdfupC9HkBrvj2LQmHGYRPaA1FSq3qVFWw9UnmadiJWw6X0ixf+zx6tEIkkAyRTCcP36a8wzM=
+	t=1715174175; cv=none; b=Uq5fHTNuicrzplht502FWzbq3C0ymeChZOT6XbKoVn2idKWhRnP8vAaoO+w9OKo3GXDvdHBMNOEfT1kuNkkf8quWmDjj6GyEBMzDI5L8GB4ws/QyU3peTX5XJwOyaHN6XumD0GhDM63tNZi14p//d1IlVBknBZPvV043f9CxyWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715174174; c=relaxed/simple;
-	bh=E0Uv0/y9SRIfHmzAsDzPPoXeAyXGIWKGuhPGfCi6mjU=;
+	s=arc-20240116; t=1715174175; c=relaxed/simple;
+	bh=XNeckRnANZcfLQNUQ8Z5GX84AOZZtK3YH+F5AxvIfmQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t8yC2ULrZSwYELBYlTqcW3iVMZQtlqi/uqgCUOaf5L/9zYbgQXPejs6r/t1WdPYaRQAjLlrx/238GU7ohDK4DiOZ1aDpuHuz/ZlN9X1kA3rSYfJkTp7+qSuFnUnB3qPBpxF2YlrHTdPEZ+5lu9a77mvkNkji790PI2ekdtQrSkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=holQK5JH; arc=none smtp.client-ip=192.198.163.7
+	 In-Reply-To:Content-Type; b=RQFsB6EgnQji56Zv8m+B21iIDQhFJhjGpqbFT1/l+KDIK8EkYm8Y1mFE39je2rabk2zf2/69AR3qAe0ZN2W3cdobjwt2VyhYzgA9ZXLb5EOH/GY2vTx6j2PSnt2su9w1hVs2t3tjGPN19yor9a5VgdGzTZgUDlP4Gozw+OvONVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDvvLr21; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715174172; x=1746710172;
+  t=1715174174; x=1746710174;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=E0Uv0/y9SRIfHmzAsDzPPoXeAyXGIWKGuhPGfCi6mjU=;
-  b=holQK5JH8on/WeWFZ66/hSRM7zDK0Te5waiwyakKRy3hXIXKXKOurIii
-   HNsM+8V5gOU3XZAeYf4YbnC3oX20pwS2DxCUP/t8W+4lbzlapwrsHuPkp
-   Eh9eQ6X0BkqEhRWDN6io9shGk/rHEJf8nW9k46oiGqrTqKYlMZaWxHvEg
-   Uh5jT/hswRsUW9XV6yiXLjtAHc4NQVuWJEvwZfp4Ql03c6dRUZ4c6eDxB
-   SKh1vEYJ4mgT++dHvoHUxUIx6cRgfMeAZrAO6irifK8r8XfRot10x9qcP
-   Pa2U++Od60b47r78wfUUeElFVEKQbZEkw0Kx+p0vFEZmmMR9zY4N9g0nY
+  bh=XNeckRnANZcfLQNUQ8Z5GX84AOZZtK3YH+F5AxvIfmQ=;
+  b=iDvvLr21cD0nDvGDK7Ccpx5EDkAZ0y0gJK8zkxhicsiUZLvNWWKJZqOg
+   oB4NKz+TlvOsOj9zK9XHEJ9EjmNSfoEuxagZ74czcuqUnkdr4W27QE34z
+   1vLmSrLIj6iA+jBed7pKFe2/vcNsNR4mdXz3pTOdH55v/7nIgxrgC3xQ6
+   FIKwkD8H6oxZeI0XB89vzMFbe6LK2soyNLc/TPiluJmjt7X/fjVUTzewv
+   PVEL0niU/IALXjPJtYWeAB+vFDscxskkQeRLEbDXYVOktmZv6ZpveyiXo
+   LD2xG2s2LhF9GuFtZZuzqEoziaLMp9Rz5/epnNSkJqHOUCxrFRM0NOSzw
    Q==;
-X-CSE-ConnectionGUID: giZoyUoEQDWwbOzpWBU3FA==
-X-CSE-MsgGUID: CQsR+0EOTdqIV+KL1nvCPA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="36413225"
+X-CSE-ConnectionGUID: vH4wXSX0SnytZMSfExtWlA==
+X-CSE-MsgGUID: MKIfV/w4T96zPh6uQQfpPg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="36413239"
 X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="36413225"
+   d="scan'208";a="36413239"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 06:16:12 -0700
-X-CSE-ConnectionGUID: mCAmmzivQ0mn329nFX4BOA==
-X-CSE-MsgGUID: v9h/yVhhSMS2DKmDnbBcNw==
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 06:16:13 -0700
+X-CSE-ConnectionGUID: k1L20U8iT+SrjOlDKwEB5A==
+X-CSE-MsgGUID: hl5X9CpDQOm8ex+CqCP06g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33356756"
+   d="scan'208";a="33356774"
 Received: from sskolar-mobl.amr.corp.intel.com (HELO [10.212.67.115]) ([10.212.67.115])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 06:16:10 -0700
-Message-ID: <84dc55a6-22d6-4d4f-8bce-62fa4e37702b@linux.intel.com>
-Date: Tue, 7 May 2024 15:39:47 -0500
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 06:16:12 -0700
+Message-ID: <1e98935e-e35a-49e0-bbbf-ff326d40b581@linux.intel.com>
+Date: Tue, 7 May 2024 16:20:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,8 +66,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 11/39] ASoC: qcom: qdsp6: Add USB backend ASoC driver
- for Q6
+Subject: Re: [PATCH v21 22/39] ALSA: usb-audio: Prevent starting of audio
+ stream if in use
 To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
  mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
  corbet@lwn.net, lgirdwood@gmail.com, andersson@kernel.org,
@@ -79,24 +79,17 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
  alsa-devel@alsa-project.org
 References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
- <20240507195116.9464-12-quic_wcheng@quicinc.com>
+ <20240507195116.9464-23-quic_wcheng@quicinc.com>
 Content-Language: en-US
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240507195116.9464-12-quic_wcheng@quicinc.com>
+In-Reply-To: <20240507195116.9464-23-quic_wcheng@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
-> +config SND_SOC_QDSP6_USB
-> +    tristate "SoC ALSA USB offloading backing for QDSP6"
-> +    depends on SND_SOC_USB
-> +    help
-> +      Adds support for USB offloading for QDSP6 ASoC
-> +      based platform sound cards.  This will enable the
-> +      Q6USB DPCM backend DAI link, which will interact
-> +      with the SoC USB framework to initialize a session
-> +      with active USB SND devices.
+> If a PCM device is already in use, the check will return an error to
+> userspace notifying that the stream is currently busy.  This ensures that
+> only one path is using the USB substream.
 
-If this is set to 'n', don't you have a risk of the FE DAIs exposed in
-patch 9 not being connected to anything?
+What was the point of having a "USB Mixer" then?
 
