@@ -1,97 +1,217 @@
-Return-Path: <linux-kernel+bounces-170928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E26E8BDDF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 818E08BDDCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A29284D59
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061A31F21D4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8331214D712;
-	Tue,  7 May 2024 09:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4651B14D6EB;
+	Tue,  7 May 2024 09:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ArLEAsdz"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IUkaj/R7"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2063.outbound.protection.outlook.com [40.107.236.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F9214D451;
-	Tue,  7 May 2024 09:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715073616; cv=none; b=bYUaH3Sc6Jwk9kN+aOJ0RMoUChUu9ty24k4PDNr/bpWIv+PcfJOZODx+eG0O4Wj+/DfrDE51tV9a/0xgBYGh6iP8dI2kXbGBFHjX+tMxE9vWRLgnSv2UvAytapsulEBEIQ1YU2N/eC+hycXlpEPNWNF1xDeDKUVU9AHbgHmteYo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715073616; c=relaxed/simple;
-	bh=sGf8/xmI8qDULHoJO68RRuCV/ofbkTSGYEIclQqzzuI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cags6hqHaeghlQcYlldB4CqFEBD2HmBvvkhg/kxwTBnjhpnNmNIxdMegEokgSXqRkGdxJW+RlLMhDw10w1YvtmXUjWISRQgItBXnGySOnHv4MFj7cDMljc1hirAT/7WfYp2SNJ1jo8RbH3nSxSP330rhuSEei0ik+eE9iu7LgoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ArLEAsdz; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id A545488662;
-	Tue,  7 May 2024 11:12:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1715073140;
-	bh=gIiuGYeGovNn1vn+AbPqA/C3xilWFjjooh3cCUPXJPg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ArLEAsdz4l92leGhoyWDkV8sQUhnYA6o1EJlEc+Br8rlw2eUYYZMZgW4mqRKDmgjL
-	 tnyz4BaMDumIT1Ail6J+uruYZrQu8Q0zPp/cAbJH7DRcauhTJq3h0HNxUotlRh16YK
-	 UjNjF86KrS3u8F6oaviOfdUNyo43Ose8mw+U65qIvSTUtFtFZ4MWy6SHMLWIe1aTgN
-	 JS/dCdyB9QRlS23UJxlg4Obb3z1R1fjut4IjJXAuozq6lnheq7lM8kyWPmlQ+Aq+vk
-	 FCxNql/j7uLcY1IaUkgdF5gmpeRh7Xvt/5EfC/x/hkrT2z1dZwg9HWw40lyflk+fh0
-	 qAb65qHsZdeYg==
-From: Lukasz Majewski <lukma@denx.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next PATCH] test: hsr: Call cleanup_all_ns when hsr_redbox.sh script exits
-Date: Tue,  7 May 2024 11:11:55 +0200
-Message-Id: <20240507091155.3504198-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F1F14D451
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715073150; cv=fail; b=iSNkFZnO0qI3OkF7fVMIiPVxP9XEAAFqhtlmNfOQBVlPRK0V0iHhH+vvHP2kf5d+h5B/PVud6v4L9vvj5rkuN5dbBLpCJBnyrNbmcaFr3FbxXOSmqi7VBvDTSKpSwJ02q3hCzgVOh2h1Ug1zCCwROrYGq1afly9jeq5oWxEVQKQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715073150; c=relaxed/simple;
+	bh=2S62IvL0ljz2tEDMbgVhF+vCrAMFHwC18M+Hpsly2Nk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=e9mjLFw/+JDPYNseVPFRr1FdIJvqtI+oH483RJpjUJKNi+XS006IPKLV9mQ9LXFV437nhoDAZEk26ePGuhNdyyZul51UIhk1duJCG34zC3XJ/izsLEf2J0UKpNJTWaihohyIOKqzno/Si62aWO0SQwCWntLUhOs0FMPcCXkR/hk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IUkaj/R7; arc=fail smtp.client-ip=40.107.236.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KGzY4dTMvCFISF+QcZV9j3siT/sTMIJFhovGY/1hmCy+oRQZSY1VdsjzIPIO8EYqD2lyQuhPG/csWjjpWtcKhwKj1qSIZqSIoFr7gdCEBhYOu+Udp+YwJiiqI1FXGhsP5iqWMiXFl8w008lHf9pCKiyieyp0asiTNpXa7AZj2pwF5cR3H8kO0WunXuJgEza7Qffv46HedhgOq9tadi74Dw1DMY90NFz2FlGTDULzyltk5HHbzucJnXUT4sqV2Divh95LBfgokTMfr+Fg4wWDUYRZs8BI5C3jmKxKIYL20zfZkAFJR0jCVrTiRsnzTfgXabJMV9TMQYE2mEi0/qcong==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yj7LrqOjygi3z1Z2JrElLWZXMTu+A48l2vFz1k27VsQ=;
+ b=nAWrpa3hmmHTnnqhrvr1LEsLQI4asJeBxzA2TRIQ2SARuJZSzFkeW7s+gJoSFrkvk+ZpcRQlOcWC7C3vKm5I0kzNhdTO8aVRFIEvFxhuXIjKRZClerZcDkx+KiQYBQ5zNKkx764YIYxPEAY1qRFnucyRbcEIUj5+Rp/mlnd28unbU6eP1WTklZ1MV3LPAuvLZZjchowPYmvS6KELQcRFsXpN328HU7E597dkQA18u0MafpbxIszuFxZTX286LfPtugCvg+DWwyoAUH3Zj9+Hsk+sayzzQ7D+SmpvmSDRa/XTwYKyecpnQElRSl9MGokCE0e2irHDcuuYqdbb1SC9CQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yj7LrqOjygi3z1Z2JrElLWZXMTu+A48l2vFz1k27VsQ=;
+ b=IUkaj/R7XC4JiXbNMmuOhphpu1sN/zND90hZ/1MG+ah+VAWYdcHSxE9+Q3t1WfquLM9CxVKJ/FNFsHOu36nnIWl25bm+xixIhLBlnmfj/8CF0n6MCbYFRX5LwJXpJrbZsrpX8fBCUsTYi0npaSJyqH6Vl54duF9eOJgNqD82mLc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ PH7PR12MB9125.namprd12.prod.outlook.com (2603:10b6:510:2f4::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Tue, 7 May
+ 2024 09:12:23 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%7]) with mapi id 15.20.7519.035; Tue, 7 May 2024
+ 09:12:23 +0000
+Message-ID: <8cb9ad12-1426-43b6-830f-277d3b3b6a02@amd.com>
+Date: Tue, 7 May 2024 16:12:14 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/amd: Fix sysfs leak in iommu init
+Content-Language: en-US
+To: "Kun(llfl)" <llfl@linux.alibaba.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Vasant Hegde <vasant.hegde@amd.com>
+References: <4d516a6500ea0760e13cc19e2b14e663aa333518.1715048443.git.llfl@linux.alibaba.com>
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <4d516a6500ea0760e13cc19e2b14e663aa333518.1715048443.git.llfl@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG3P274CA0013.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::25)
+ To DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|PH7PR12MB9125:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e635798-fab4-4dff-8156-08dc6e75ce2c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a1VPNFFmRjVkNkk3MksreTJaYWVuMnNqUGlZRUkxTksvNzBXUFR2aEoyU2RO?=
+ =?utf-8?B?dG1nem11OExPZHl2L29QenlpNTlCbTVEdjVnZVRHSzVmVzNBRk9TYlcwdlFj?=
+ =?utf-8?B?QmF2bGZhUVdOQkhSZXA2eU1YMzU0dHJyZmFPZmh5N293UkJrVkVjaU8yNnZX?=
+ =?utf-8?B?MmlLRUltUzU3UUZCWFcwL3IyS3dDY2xMOE1iNmVzS2d2Nm42TW1Gek1ZaFpU?=
+ =?utf-8?B?MFphNks3TXpNaDNqcytRVCtjdzNQdTM4QkZWZmZ2SjRJbUJXM2RqYU1seUJZ?=
+ =?utf-8?B?ZUVOS3VzRkxleDhzN2hxVTYxWUQrOU1QTHlKTjVZaURzN3MrMWN5YUI2b1g3?=
+ =?utf-8?B?b2liY2dyaXAyb3Fjb0MvWkdLWVE4clFCNVBxM3lMdU5QR1crQ0tIZ2lrNFBT?=
+ =?utf-8?B?M0FSYmNFVmRKeUk5RlpVMGg3Um55QS8rNEZXRG41NXRYT0d6TU8yV01mNExo?=
+ =?utf-8?B?REd5bzJDSDdqS24wcjJITngrOWJrQ3I5TXcyMUZteG5BeldSbEJVeXh1aDM2?=
+ =?utf-8?B?eFJIcG5OMTFQK0h4T3BjU2ZKSm40dy9Vdlo5cWN4UXRoUDlXT3Era3ZLMnhX?=
+ =?utf-8?B?R1g2WkFFUG5FYzFyekRWRU4yRDh1S3l3a0J6UWFGdXVsK012TklublhJaFRX?=
+ =?utf-8?B?disxb2V6U2RvWFArM2tTM3BXNmpFKzRGOVpLMFl3R2lmYmkrTHFLM1IzcmFE?=
+ =?utf-8?B?K0NqT2NtK044R0hBSVUrNGRMSDZldlBYUkVyMGhsL2xTYTRrVk04OVE4SlpF?=
+ =?utf-8?B?Z3Z5N29ncHhNeDFoaVEwVGVXWjVSOU9TT09BaWo5Nm5pSzFiS3o3UjRaWnRT?=
+ =?utf-8?B?TkdoWVFEeEV1aDRJM2szT1JBNnFYSkliT0MvZm5Udk1STStLclBjbWZtTDh0?=
+ =?utf-8?B?cWhSUzdDL1QyMFhlVEFEOVlpMUlKZjFrcHhUUVFSOEpPeEFNQUxvNXN4ZWxD?=
+ =?utf-8?B?ejRwb2Y0THl6WG1QbHFzcEhPOHFzTmFsZU5qZ1hNcGtuWkVBWjlJcnpjcDd4?=
+ =?utf-8?B?WkE5eW0zdStscmJRc29EMzVJT2QxOVlzM01qQ1haTWlZakJWTkp2MmJvLzlQ?=
+ =?utf-8?B?WlpqeDc5VThrYWtBaEgvaHZxZk9DR0FFeStIdG1FTFgwQUNDTWVXMmo1d3pX?=
+ =?utf-8?B?QWgydUU4Q3NrVHEzLzZTaDlTbDBtU3U5aytSaHdacWlpR0Y2b25wdGZLckt6?=
+ =?utf-8?B?amxzVmhRM25TdVBaZlUrbmZ2R21HdGY0MWU5SWNtOXRjbHN1bDZ5bVQ4bVJJ?=
+ =?utf-8?B?ZVFzaDJvMWg2WW1LZnFSRE4zMDByYnNDbllaZmZJdFBUR2k5bTFLcmNuOFBX?=
+ =?utf-8?B?NXNDdGhBeDh4d1NVWGFtZkhHR2VnY2ttZGtmRmF4ZTl6Y1lrak5PM2VOaE1Y?=
+ =?utf-8?B?RjI2MFF4TzZHL2ZycUphbEZQMUYxVjdoKzNaKzdrNVZrcHJYOFBkbGxnL1hS?=
+ =?utf-8?B?MnF5alN6RGl5dDBBNXJIVWdTU2FYbkV3UVJ3UVdJakxja2dsM0pkdXdqWWpC?=
+ =?utf-8?B?WkM4b0N0NWhZeUg2NlBTcDNvMktVN05oSmVNZFZ3MjZHNWhrdWZYRWNsc243?=
+ =?utf-8?B?NC92ajVxd1dqVHNFN3FZT2dOaEhpUWxjRE1qQWx1T0NyRnBjdGdOUlhKTmU2?=
+ =?utf-8?B?WjFjcGp2K0RBeC9MeTgxR0E5cFM4QjRRYWs0aUd2aGh6ejZZdE91MmQ0cU9B?=
+ =?utf-8?B?NkZXV2pTakFOQzZ6dTZEbzI0LzVoQ01UMFREaE85M1JYMHVQcVJSUG1nPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NkZHb0xYN29vOUxiMFNrTGhOdXN6VVVoL0V2ZDlhQXFJcHZxVUw3TUZOSmlj?=
+ =?utf-8?B?YWoyTnA3N3JRNzNCSllzM29IRUNRdlNseURCUmRZdmJ2cWdGR0FQbElzcWFC?=
+ =?utf-8?B?Vitqd1ZIYWZ3L2x4K3g1SDhUZmFnRmVneFFIYjd3RkhoTUlPcTJhR3FNN085?=
+ =?utf-8?B?emx4L3YwRWpvdWlwbEUyNStUNDdkaTBYR250dm5LQVdlSFR4cDNZZzZKZWVa?=
+ =?utf-8?B?U0ZKekxLZ3U2MjBxNU0zRm5QU3IzcHhFMHBsWFZ1Mm1FQktlamF1RjR5N2Rx?=
+ =?utf-8?B?N1pyd1kwQWEvTGFQYWk0NjdNTWJObkFNWitYUUN2cWZHRmFLU3ZaZUswaVov?=
+ =?utf-8?B?OEdlMC83a1hMNmxtRFRUckRuTmNmK1RnNTFaU3JSYzA4eEZZVytYSC9PcWcr?=
+ =?utf-8?B?cUd1K29GVFhXZTRDWXRmb2ttK0RsVyt4TStodjdMRWJldWdFcHFVdU1FNHgy?=
+ =?utf-8?B?NldoZUM2a2c1bHR6cFZlbjJxQUk4eEVuQVhYUTRGK2ViSE04ZVBBWFpYdTdk?=
+ =?utf-8?B?dXZIcHE3UTQvZEhKZVcyZWl3WW4wY1BwM3hDM2lKV1hvZDFCV0VsalNPNjJh?=
+ =?utf-8?B?QlUyVzNwZVNSMHBqTGEvTWhmV3NHZyt2RGIrNG1OL0k1WEZkRHlzRHJxa3Vu?=
+ =?utf-8?B?YVdYSysxZ3FZeERFV2V1b0xMMC8yUFF4K3d0Nk5sbzJwT0h1Sms0SmE3SWJQ?=
+ =?utf-8?B?b0FMNFZUUjRPOTAwenZhQ2xEdjMwRkgybmgvdS9TWjBDM3dKUEVEZERFYTZo?=
+ =?utf-8?B?SEgxYzBCeFIyNjRCWitlQ0dMYjF4UGZ2MEtpeTV1YTQwK1ZmVDBmQmhuTzI3?=
+ =?utf-8?B?cVIydXJ2L3FlZyt2MVlaVi9hWGoyeGlpb3ZxbUZXK01WVDArN0hkVlRpYTln?=
+ =?utf-8?B?eFBZZURSTjBtcTRPQzBiUGFPQ3ZoS1Z4My8xcFhXR1hXYW5BSEhBaXliVGtE?=
+ =?utf-8?B?OVNVaXQ1YjgrakVVaWNuOVN4blltcGYrSmFtenFRM2xqQVhUeXFseVM1UXhw?=
+ =?utf-8?B?cDZCcjhrUzk2aGNZZTJmUkhOU1pPTEVUN3htU0I4SVlnYUJpR2x3d0hFeFpl?=
+ =?utf-8?B?dW9xN2krNi9aeGM4OVVXVE5peFRLVWtNOXRvSzNNMEI4U2JHS0dvUjBsS2NK?=
+ =?utf-8?B?RU1VeTgzS29qdWlIcFFpZElrQ0RMcUxXb3pzUXIwYnpmQ2ZsTFgydml0cEFT?=
+ =?utf-8?B?a0pnRUpkUGR5NzV5Y2dhdTZ5R2l3U05OSGxZSytCTk1UaTJlU2txKzZybUUx?=
+ =?utf-8?B?T3AzYmoyZ08rdFl4bW9pY1BrYnFMZlRyUlhIWEg5bHBFY1FIcU9Bajg1U3JN?=
+ =?utf-8?B?TkdTYkNvY3d3cTkvYWlpRnNuWHd2Q3BITlZIbi9XN0VmUXFGMmFla1B2dlBV?=
+ =?utf-8?B?UUt4MjRBQ1ErQkZSUytUVk4vcTJZN1pqUEtkaHQycmQxOGp4R0huQU5oWHNV?=
+ =?utf-8?B?ZHcyb2hsRlp4TktWVUFlL3JqWmg3OXhDNWRoSG9TSnovQWNBczhnMWtjU1Zt?=
+ =?utf-8?B?T2FrMnVydFRHeEJoTWNwZzE0cHpZcUdoRGJrQWNtdDBJcHNoVm91ZUlwY2Nz?=
+ =?utf-8?B?TE5wSFBVWVdVaXdyQkUxbUhhV2dncW8yTU8rVXRBRTB5VXMzRmt6WU13Z2Ni?=
+ =?utf-8?B?cVFKY016VG9QOFp0MlFWbnRLQjhtTUNhL0hLRTNVa3MyK1pZaWdoRUMzeXYy?=
+ =?utf-8?B?UEtVWmxRekFralppS2svUE1uRE9DN05KOElBWkxwYVhIbTVBc0twODBqYStW?=
+ =?utf-8?B?eUVQMnpPbWx0c3ZINllMS0taVGdadFZ4Q25MWGVOeC90THFsVzRNenJvWmx0?=
+ =?utf-8?B?aGNBYWloMG1yVmNGeFNGZDV0R2NIQ0NzaUM4K1dveEdsZmd4WVpTOFFDSDJy?=
+ =?utf-8?B?dEFPd1J1RlZVS3g2VjVWS2p5WmZGVzdyeTZERmZvSGdzRGxMaVRpbmxZNDhY?=
+ =?utf-8?B?TVdrQlF5WDRFbWNDaTBkT1lWSE9zM1BVbTdUczVMR1AwMnJ3TVJ0MEZIRjls?=
+ =?utf-8?B?ZUYyZHJaWit5UkNUWk9UMmFQZ0h1ekpSMnJIS3RHZjRnYTJtdDZrdiszaHc4?=
+ =?utf-8?B?eUs1cVpqK3JpYUZwUzBFQU9qVmZ4ZlB4VEd4bnd2VFNYR2tJRTV4UzRKNk1j?=
+ =?utf-8?Q?GoLU6A5GiybItVYGnmX7ImhIt?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e635798-fab4-4dff-8156-08dc6e75ce2c
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 09:12:23.2677
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v6lgspUkNNEaxE9GuUfi6+v0DXGN5XgHOaokWZN87u3RUkmEU9YDEQ0spzXTux02HfKiWxEzFeQGiTwWy+we8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9125
 
-Without this change the created netns instances are not cleared after
-this script execution. To fix this problem the cleanup_all_ns function
-from ../lib.sh is called.
+Thanks for finding this sysfs leak.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- tools/testing/selftests/net/hsr/hsr_redbox.sh | 2 ++
- 1 file changed, 2 insertions(+)
+On 5/7/2024 9:32 AM, Kun(llfl) wrote:
+> During the iommu initialization, iommu_init_pci() adds sysfs nodes.
+> However, these nodes aren't remove in free_iommu_resources() subsequently.
+> 
+> Fixes: ad8694bac410 ("iommu/amd: Move AMD IOMMU driver into subdirectory")
 
-diff --git a/tools/testing/selftests/net/hsr/hsr_redbox.sh b/tools/testing/selftests/net/hsr/hsr_redbox.sh
-index 52e0412c32e6..db69be95ecb3 100755
---- a/tools/testing/selftests/net/hsr/hsr_redbox.sh
-+++ b/tools/testing/selftests/net/hsr/hsr_redbox.sh
-@@ -86,6 +86,8 @@ setup_hsr_interfaces()
- check_prerequisites
- setup_ns ns1 ns2 ns3
- 
-+trap cleanup_all_ns EXIT
-+
- setup_hsr_interfaces 1
- do_complete_ping_test
- 
--- 
-2.20.1
+Actually, this commit only move the code into new directory structure. 
+The original commit was:
 
+commit 39ab9555c24110671f8dc671311a26e5c985b592
+Author: Joerg Roedel <jroedel@suse.de>
+Date:   Wed Feb 1 16:56:46 2017 +0100
+
+     iommu: Add sysfs bindings for struct iommu_device
+
+> Signed-off-by: Kun(llfl) <llfl@linux.alibaba.com>
+> ---
+>   drivers/iommu/amd/init.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
+> index ac6754a85f35..624ea2549f64 100644
+> --- a/drivers/iommu/amd/init.c
+> +++ b/drivers/iommu/amd/init.c
+> @@ -1678,8 +1678,15 @@ static void __init free_pci_segments(void)
+>   	}
+>   }
+>   
+> +static void __init free_sysfs(struct amd_iommu *iommu)
+> +{
+> +	if (iommu->iommu.dev)
+> +		iommu_device_sysfs_remove(&iommu->iommu);
+> +}
+> +
+>   static void __init free_iommu_one(struct amd_iommu *iommu)
+>   {
+> +	free_sysfs(iommu);
+
+As part of the clean up, we also need to also call 
+iommu_device_unregister() before iommu_device_sysfs_remove().
+
+Thanks,
+Suravee
+
+>   	free_cwwb_sem(iommu);
+>   	free_command_buffer(iommu);
+>   	free_event_buffer(iommu);
 
