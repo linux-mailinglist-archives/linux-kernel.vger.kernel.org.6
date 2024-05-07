@@ -1,90 +1,134 @@
-Return-Path: <linux-kernel+bounces-170768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A0C8BDBBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:40:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C148BDBC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F071C20BB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:40:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16B80B223A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C89D78C85;
-	Tue,  7 May 2024 06:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6283B78C8E;
+	Tue,  7 May 2024 06:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m/KDuJpq"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbWxii1a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F81177F12;
-	Tue,  7 May 2024 06:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB8478B50;
+	Tue,  7 May 2024 06:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715064028; cv=none; b=ZEKtLsosgu8seq4BkXIvYAPUl6T+R/l1ON6PKfiIc/tDitKt2Mip1xe1yccgpiXA8yRoYTG6SbiFKAXkh+WfdwEMdbB1WQ0Z12tymxIVUNH+0BTmDRvI8wYkR50I+gNhbMP+ieXDico/YxVyxRzQePZ7ekSJ7biwfJt0IGShOjE=
+	t=1715064070; cv=none; b=Yaz8lADQ9NWEUfagwSw80esR9+WRK4mz0TK3PyApDY5Jq/Zdh0qaFDwmhCLVRXBELvyxA5eWBRQQ2+51ymYKLmY9aODuFKamFmiD5Hf/ja1ryLip0LC4zsJJzMmzv9tu00EmKlnh8qXCCnw2gsWs5f4DYQUucbwjjcNZO9VUb8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715064028; c=relaxed/simple;
-	bh=C2mqlbjChb+Zb4jizOt6/qiS5xaLrNfrCbMuByqaQFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usPp0xT/8AtVdnGtKnhSu6qaBCYazOxHlsKmBmfO99j2DFr6VcuysP8P4L49G2CGKgOpiPO/36G8ayVJ6REErSP4285Od8hL/y0wH1BwCvpgCS2EdZxrEiYFexuEWbLWFOseeHct4Hs1Lqic90Jm7EgpKd58YLQ6cfPnxwCmZGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m/KDuJpq; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WuIN6nq3/l8uVmPgn8xJBtIN3q6SKM4SUD2H711BSy8=; b=m/KDuJpqz7ZZkloXUJ4oV1/tMg
-	e9CfJZ6n0M8BcvcddzDeJ/7/YSmZaMH3FzXBFQEa5U5pPtyQkWiXw8YHjzBZHLiUp9TVmyyTcjS1l
-	GCR44wkemCeDjQ70sMYUnQbt8ckhIsnoRvy/1Q8ZonIiXgpO+dGckhZiytPSTyiS3s/gElCf+rKPv
-	p44Q+xLijOz3bl/Gt1+/BWYL88cKmRgKSt5fqhysBgtFM1YNicOfNnnksovgse0pbphft3yzCDM3N
-	oVQDSAp6KXtgPjq32cQz21jcWC2bftzoc8IvueuyHuKarH6JWHrHbz+hFyshNL5zbFeOi4Cfclamp
-	EVkLXtEA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4EUz-00000009s5C-2ZTA;
-	Tue, 07 May 2024 06:40:25 +0000
-Date: Mon, 6 May 2024 23:40:25 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
-Message-ID: <ZjnM2QBtL68KJtio@infradead.org>
-References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
- <ZjnE2SjU7lGD0x5A@infradead.org>
- <d953392c-44d1-4c9f-a671-b25803181b97@moroto.mountain>
+	s=arc-20240116; t=1715064070; c=relaxed/simple;
+	bh=5eQd0Sx0nkNvoNKC2RtYfFZZ8Y8MDo0O95i8gKHAf/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YOUApXTebXVTqHeAH9pq7Kk57O6w8uhAwD5ueK4s66sfrXH39XjNgCWqYdfBYfmIwOxpG/NBuROjX8yUdibSs+vV3aHRxsO80QRzWUNuJ6TyYgS5nh5L++n+78Tktb5yR9qBmUT3op1oZTwpnQMfdxuBnyDLy0oLPY2Sn5l06Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbWxii1a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB66C2BBFC;
+	Tue,  7 May 2024 06:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715064070;
+	bh=5eQd0Sx0nkNvoNKC2RtYfFZZ8Y8MDo0O95i8gKHAf/o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RbWxii1agc1VNp9F5VnoykEMn0LJC7dPsrVtwC6wdulCP4xU4B1Cvrf6VVwfJk8Qg
+	 Ib8W8wAFoTdD+zHDnk8zykj6hFoK8cyJDQfnUXQsy2q3viEiDUsu8K4Tdss/32tECG
+	 JRkQqJUSlLdCi3+bwyqvw3UCJApfZg0iSfuUDZy/R8YZuk0DlLHxyudrXWdySoL/+K
+	 uOKjeB2ti9YRd860/eLY54fe9yeXji87biT6sM4ouTPQ2hAsiBj1FacvUW+khUmDTZ
+	 fXz1vu7WDokf/eAifZMwwPDTGXuszKKWAI65F6kHkMKIZKrcc0zHHsqg04Qv/Re20o
+	 rbNwJ8lT5FpZg==
+Message-ID: <cbf4e021-a128-4122-8e19-66f139edc4d9@kernel.org>
+Date: Tue, 7 May 2024 08:41:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d953392c-44d1-4c9f-a671-b25803181b97@moroto.mountain>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/13] dt-bindings: pinctrl: qcom,pmic-gpio: drop pm8008
+To: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-9-johan+linaro@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240506150830.23709-9-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 07, 2024 at 09:33:40AM +0300, Dan Carpenter wrote:
-> On Mon, May 06, 2024 at 11:06:17PM -0700, Christoph Hellwig wrote:
-> > On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
-> > > The fxr->file1_offset and fxr->file2_offset variables come from the user
-> > > in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
-> > > Check the they aren't negative.
-> > > 
-> > > Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
-> > 
-> > In this commit file1_offset and file2_offset are u64.  They used to
-> > be u64 in the initial submission, but we changed that as part of the
-> > review process.
+On 06/05/2024 17:08, Johan Hovold wrote:
+> The binding for PM8008 is being reworked so that internal details like
+> interrupts and register offsets are no longer described. This
+> specifically also involves dropping the gpio child node and its
+> compatible string which is no longer needed.
 > 
-> I've just checked again, and I think it was loff_t in that commit.
-> There are two related structs, the one that's userspace API and the
-> one that's internal.  The userspace API is u64 but internally it's
-> loff_t.
+> Note that there are currently no users of the upstream binding and
+> driver.
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 3 ---
+>  1 file changed, 3 deletions(-)
 
-Ah, yes.  The in-kernel ones probably just needs to move to use u64
-as well.
+Dropping compatibles from bindings must happen after they are dropped
+from kernel, so this should go after spmi-gpio patch.
+
+Best regards,
+Krzysztof
 
 
