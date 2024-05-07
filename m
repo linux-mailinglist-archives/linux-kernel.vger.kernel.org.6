@@ -1,118 +1,274 @@
-Return-Path: <linux-kernel+bounces-171438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F317F8BE4AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A18A8BE43A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1D99B2D6FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767EC1F24F0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418831649BF;
-	Tue,  7 May 2024 13:30:25 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E05C15E811;
+	Tue,  7 May 2024 13:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WRp7wQVR"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2075415F412;
-	Tue,  7 May 2024 13:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371A315E1FD
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715088624; cv=none; b=q8d4H/WH83lUPI+OYegzZZw2m1DL4LL0M/9+7h0BnkqcBIA+yZO2Ha2reY4SYlBG4hpkW4v+2BylLpTG1nS9AiAot7jqpUA36kCgk73rtIEP4Ad7kB1frkX51gaETGQpHbry4nQX3X4pHKF2xFj5YacUSFY42YU08G7vnsf9B/0=
+	t=1715088337; cv=none; b=bKQc2iETP4LTMIDBDM5jpgoT18mugF3OvSbp7m9qPKlehApicBJ62oBVZYF2C542bS1K1vLA2kDSs7HfnhhEz+1MCjWiC35ys4yD7V4sU2ay7lQChcR5CHbDy6eFt2SDVpzge/NklGEYLNMAqJIueoSroohCwttCF/UDVgzU/bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715088624; c=relaxed/simple;
-	bh=eIBo/rK4/UuN2nQCjJhvhD8Oggxyhot/vjrYauT0czM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RV01R4zQIrC0dRhA32t+4csu2z94FI65drahQtSWmqL+tNhmeZHdybhS+TL5TmdVt7KVyH+OQL/LcOVvTgULFJqhgfFeziY9fg1u5Fh6eNE4EZ0ZiaENNI/nrR8azgZKO4y3crt2rNbbFllRJ6uRhzTLMDs02OpxHDgNL+eW/sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VYfJ25KfdzCrNm;
-	Tue,  7 May 2024 21:29:06 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E844180065;
-	Tue,  7 May 2024 21:30:17 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 7 May 2024 21:30:17 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <hannes@cmpxchg.org>, <mhocko@kernel.org>, <roman.gushchin@linux.dev>,
-	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
-	<akpm@linux-foundation.org>
-CC: <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 -next] mm: memcg: make alloc_mem_cgroup_per_node_info() return bool
-Date: Tue, 7 May 2024 13:23:24 +0000
-Message-ID: <20240507132324.1158510-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715088337; c=relaxed/simple;
+	bh=1YdTwfuNwxYNe8Mmuq702r1+TT9SLoVk7UjbXryhPHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R6ZpPY8peKquFkFnL4lAMkLQPtB9OfNa0hY7CDzLqcInPQTNhrs4Xf26GuJlQLBGJGiwa6lEk4lz4dvNlO1fzBj+voisqiuay0kGijBMQhrMnmrbFa3pwmdfG63pwtkA+CqiqpDjJ8QSZaBXX5H3VckKGEMpR1xGSgUzMrL4mwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WRp7wQVR; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41b21ed19f5so21786205e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:25:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715088333; x=1715693133; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wlNzM09ry4x5F/SvfwoA6Cda7LNRXq8+feF1giEA3Z4=;
+        b=WRp7wQVRDonbMfkem1T93yUB/lPd4r/1yObNUWYsOZTIYUwHIvFDZXfqJLtn4rs8UR
+         diSJbyxi0hBBXfOkmrpnqT9XxHmzycFyfrRmu3g6hYEOZ0w1jxEhxCH95ImZUtZMeGMA
+         P/1JLblSxR8C/lH8r+iE0TmFEOtwH+a7o08BNG09Niwjrg4vI4kBDtVO5lcBN3UL8HLc
+         mSAc3pk1nAuq1PVVS5MlfuEPnJZNQx+pPG6yTXDhT5vRFtLNNNmyngIm5eAB9WOal4SC
+         gKw2jTVsxruUrGbCBCr/S33zrEkYamME4bGTrMpzc2Rdh9e1nis1FJNLGjaSHm236ABm
+         D+IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715088333; x=1715693133;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlNzM09ry4x5F/SvfwoA6Cda7LNRXq8+feF1giEA3Z4=;
+        b=BMuihYWfe6p/+oMseGNu7icqc+kC2AQFQbKcwj3PVuFFNcOvguyrEYmO9j43vL7Z32
+         hd9GRavv8SLA3eynDuMIcNacaosjb01Kv6gPypy+4qFTKiE/oS/D8MfNp34SpXWgNRQY
+         caymUTsBSbyPpYX9QZleD9Ctk0TEHGzS2xZ0Mw2ASFfya32aFjJ2jZgYFIWoXkjTZBpc
+         WKnL2SNd5UgT5IqU39RmoTLB9y6Rds+Lxpfq3DlQkkANIOj6IstPa3kJBsR84KuXSPCt
+         ePvYSFMYoEmB9+46GTsUiU3ExrH6TEcMJX8OxxijsG8zi4NHgNtvZoJF0NZKph1YE3jD
+         czUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUafJ8AsKR3pCrbbk9BYhaQ4mQuMIUJx1Bil3ODZk7WvsNdhYlzh2wEWkJt7HSlmjC35GqPeBvcRIIQi6+K0A4H7kbjpy2C1Kfnx92o
+X-Gm-Message-State: AOJu0YzusjE16S5SJ//JFfU/lTXXveLvTDoJSviS4e2ASmr7gqjLv15D
+	QleZEPRpIfWSYkmzXLzjWGPkh+yKxvLxAeCo0bPtKp/95yssuDvSl30ZRKHv5yA=
+X-Google-Smtp-Source: AGHT+IFlwogjnVk5W12TDpiJhf3o1G5wSzPvFgFvrXCif+LH31aJHWpIuIozCpHtIE/PUCFHrT5uaw==
+X-Received: by 2002:a05:600c:1d9c:b0:41b:dafe:ff78 with SMTP id p28-20020a05600c1d9c00b0041bdafeff78mr9340116wms.20.1715088333342;
+        Tue, 07 May 2024 06:25:33 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id p9-20020a05600c1d8900b0041563096e15sm23691996wms.5.2024.05.07.06.25.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 06:25:32 -0700 (PDT)
+Message-ID: <89cf75d8-1f85-43d8-9c33-377a04b36121@linaro.org>
+Date: Tue, 7 May 2024 14:25:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] ASoC: qcom: q6dsp: Implement proper channel mapping
+ in Audioreach
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ James Schulman <james.schulman@cirrus.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Banajit Goswami <bgoswami@quicinc.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240507-asoc-x1e80100-4-channel-mapping-v1-0-b12c13e0a55d@linaro.org>
+ <20240507-asoc-x1e80100-4-channel-mapping-v1-2-b12c13e0a55d@linaro.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240507-asoc-x1e80100-4-channel-mapping-v1-2-b12c13e0a55d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-alloc_mem_cgroup_per_node_info() returns int that doesn't map to any
-errno error code. The only existing caller doesn't really need an error
-code so change the the function to return bool (true on success) because
-this is slightly less confusing and more consistent with the other code.
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
----
- mm/memcontrol.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index feb6651ee1e8..5d4da23264fa 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5642,13 +5642,13 @@ struct mem_cgroup *mem_cgroup_get_from_ino(unsigned long ino)
- }
- #endif
- 
--static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
-+static bool alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
- {
- 	struct mem_cgroup_per_node *pn;
- 
- 	pn = kzalloc_node(sizeof(*pn), GFP_KERNEL, node);
- 	if (!pn)
--		return 1;
-+		return false;
- 
- 	pn->lruvec_stats = kzalloc_node(sizeof(struct lruvec_stats),
- 					GFP_KERNEL_ACCOUNT, node);
-@@ -5664,11 +5664,11 @@ static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
- 	pn->memcg = memcg;
- 
- 	memcg->nodeinfo[node] = pn;
--	return 0;
-+	return true;
- fail:
- 	kfree(pn->lruvec_stats);
- 	kfree(pn);
--	return 1;
-+	return false;
- }
- 
- static void free_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
-@@ -5741,7 +5741,7 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
- 	}
- 
- 	for_each_node(node)
--		if (alloc_mem_cgroup_per_node_info(memcg, node))
-+		if (!alloc_mem_cgroup_per_node_info(memcg, node))
- 			goto fail;
- 
- 	if (memcg_wb_domain_init(memcg, GFP_KERNEL))
--- 
-2.34.1
+On 07/05/2024 11:27, Krzysztof Kozlowski wrote:
+> Instead of relying on default channel mapping in all Audioreach
+> platforms, implement set_channel_map() callback to allow sound cards
+> customize the mapping depending on needs.
+> 
+> The channel mapping is set on frontend DAIs coming from the topology,
+> not DTS, thus need to add DAI ops in topology dai_load() callback.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   sound/soc/qcom/qdsp6/audioreach.c |  2 +-
+>   sound/soc/qcom/qdsp6/audioreach.h |  1 +
+>   sound/soc/qcom/qdsp6/q6apm.c      | 28 +++++++++++++++++++++++++++-
+>   sound/soc/qcom/qdsp6/q6apm.h      |  8 ++++++++
+>   sound/soc/qcom/qdsp6/topology.c   | 12 ++++++++++++
+>   5 files changed, 49 insertions(+), 2 deletions(-)
+Please use the existing q6dma_set_channel_map() and set the channel map 
+for the backend dai from machine driver, this should work.
 
+setting channels on FE is not a scalable one.
+
+Please take a look at some of the patches that I shared privately.
+
+--srini
+> 
+> diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/audioreach.c
+> index c655f0213723..8175678d8843 100644
+> --- a/sound/soc/qcom/qdsp6/audioreach.c
+> +++ b/sound/soc/qcom/qdsp6/audioreach.c
+> @@ -267,7 +267,7 @@ void *audioreach_alloc_apm_cmd_pkt(int pkt_size, uint32_t opcode, uint32_t token
+>   }
+>   EXPORT_SYMBOL_GPL(audioreach_alloc_apm_cmd_pkt);
+>   
+> -static void audioreach_set_channel_mapping(u8 *ch_map, int num_channels)
+> +void audioreach_set_channel_mapping(u8 *ch_map, int num_channels)
+>   {
+>   	if (num_channels == 1) {
+>   		ch_map[0] =  PCM_CHANNEL_FL;
+> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
+> index 2c82917b7162..cef9a9015dcc 100644
+> --- a/sound/soc/qcom/qdsp6/audioreach.h
+> +++ b/sound/soc/qcom/qdsp6/audioreach.h
+> @@ -767,6 +767,7 @@ struct audioreach_module_config {
+>   /* Packet Allocation routines */
+>   void *audioreach_alloc_apm_cmd_pkt(int pkt_size, uint32_t opcode, uint32_t
+>   				    token);
+> +void audioreach_set_channel_mapping(u8 *ch_map, int num_channels);
+>   void *audioreach_alloc_cmd_pkt(int payload_size, uint32_t opcode,
+>   			       uint32_t token, uint32_t src_port,
+>   			       uint32_t dest_port);
+> diff --git a/sound/soc/qcom/qdsp6/q6apm.c b/sound/soc/qcom/qdsp6/q6apm.c
+> index 2a2a5bd98110..c29a2dd36992 100644
+> --- a/sound/soc/qcom/qdsp6/q6apm.c
+> +++ b/sound/soc/qcom/qdsp6/q6apm.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/soc/qcom/apr.h>
+>   #include <linux/wait.h>
+>   #include <sound/soc.h>
+> +#include <sound/soc-dai.h>
+>   #include <sound/soc-dapm.h>
+>   #include <sound/pcm.h>
+>   #include "audioreach.h"
+> @@ -29,6 +30,29 @@ struct apm_graph_mgmt_cmd {
+>   
+>   static struct q6apm *g_apm;
+>   
+> +static int q6apm_dai_set_channel_map(struct snd_soc_dai *dai,
+> +				     unsigned int tx_num,
+> +				     const unsigned int *tx_ch_mask,
+> +				     unsigned int rx_num,
+> +				     const unsigned int *rx_ch_mask)
+> +{
+> +	struct q6apm *apm = dev_get_drvdata(dai->dev);
+> +	int i;
+> +
+> +	if (dai->id >= ARRAY_SIZE(apm->dai_config))
+> +		return -EINVAL;
+> +
+> +	apm->dai_config[dai->id].num_channels = rx_num;
+> +	for (i = 0; i < rx_num; i++)
+> +		apm->dai_config[dai->id].channel_map[i] = rx_ch_mask[i];
+> +
+> +	return 0;
+> +}
+> +
+> +const struct snd_soc_dai_ops q6apm_dai_ops = {
+> +	.set_channel_map	= q6apm_dai_set_channel_map,
+> +};
+> +
+>   int q6apm_send_cmd_sync(struct q6apm *apm, struct gpr_pkt *pkt, uint32_t rsp_opcode)
+>   {
+>   	gpr_device_t *gdev = apm->gdev;
+> @@ -722,7 +746,7 @@ static int apm_probe(gpr_device_t *gdev)
+>   {
+>   	struct device *dev = &gdev->dev;
+>   	struct q6apm *apm;
+> -	int ret;
+> +	int ret, i;
+>   
+>   	apm = devm_kzalloc(dev, sizeof(*apm), GFP_KERNEL);
+>   	if (!apm)
+> @@ -733,6 +757,8 @@ static int apm_probe(gpr_device_t *gdev)
+>   	mutex_init(&apm->lock);
+>   	apm->dev = dev;
+>   	apm->gdev = gdev;
+> +	for (i = 0; i < ARRAY_SIZE(apm->dai_config); i++)
+> +		audioreach_set_channel_mapping(apm->dai_config[i].channel_map, 4);
+>   	init_waitqueue_head(&apm->wait);
+>   
+>   	INIT_LIST_HEAD(&apm->widget_list);
+> diff --git a/sound/soc/qcom/qdsp6/q6apm.h b/sound/soc/qcom/qdsp6/q6apm.h
+> index c248c8d2b1ab..0e2e7b6cd6c1 100644
+> --- a/sound/soc/qcom/qdsp6/q6apm.h
+> +++ b/sound/soc/qcom/qdsp6/q6apm.h
+> @@ -47,6 +47,11 @@
+>   #define APM_LAST_BUFFER_FLAG			BIT(30)
+>   #define NO_TIMESTAMP				0xFF00
+>   
+> +struct q6apm_dai_config {
+> +	unsigned int num_channels;
+> +	u8 channel_map[AR_PCM_MAX_NUM_CHANNEL];
+> +};
+> +
+>   struct q6apm {
+>   	struct device *dev;
+>   	gpr_port_t *port;
+> @@ -65,6 +70,7 @@ struct q6apm {
+>   	struct idr sub_graphs_idr;
+>   	struct idr containers_idr;
+>   	struct idr modules_idr;
+> +	struct q6apm_dai_config dai_config[4];
+>   };
+>   
+>   struct audio_buffer {
+> @@ -108,6 +114,8 @@ struct q6apm_graph {
+>   	struct audioreach_graph_info *info;
+>   };
+>   
+> +extern const struct snd_soc_dai_ops q6apm_dai_ops;
+> +
+>   /* Graph Operations */
+>   struct q6apm_graph *q6apm_graph_open(struct device *dev, q6apm_cb cb,
+>   				     void *priv, int graph_id);
+> diff --git a/sound/soc/qcom/qdsp6/topology.c b/sound/soc/qcom/qdsp6/topology.c
+> index 70572c83e101..9708d200568d 100644
+> --- a/sound/soc/qcom/qdsp6/topology.c
+> +++ b/sound/soc/qcom/qdsp6/topology.c
+> @@ -1034,6 +1034,17 @@ static int audioreach_tplg_complete(struct snd_soc_component *component)
+>   	return 0;
+>   }
+>   
+> +static int audioreach_dai_load(struct snd_soc_component *cmp, int index,
+> +			       struct snd_soc_dai_driver *dai_drv,
+> +			       struct snd_soc_tplg_pcm *pcm,
+> +			       struct snd_soc_dai *dai)
+> +{
+> +	if (pcm)
+> +		dai_drv->ops = &q6apm_dai_ops;
+> +
+> +	return 0;
+> +}
+> +
+>   /* DAI link - used for any driver specific init */
+>   static int audioreach_link_load(struct snd_soc_component *component, int index,
+>   				struct snd_soc_dai_link *link,
+> @@ -1251,6 +1262,7 @@ static struct snd_soc_tplg_ops audioreach_tplg_ops  = {
+>   	.widget_unload = audioreach_widget_unload,
+>   
+>   	.complete = audioreach_tplg_complete,
+> +	.dai_load = audioreach_dai_load,
+>   	.link_load = audioreach_link_load,
+>   
+>   	.dapm_route_load	= audioreach_route_load,
+> 
 
