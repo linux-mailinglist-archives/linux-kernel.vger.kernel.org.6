@@ -1,129 +1,145 @@
-Return-Path: <linux-kernel+bounces-172053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE43D8BEC7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:20:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F33D8BEC7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A25928A0A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4E211F25D4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FC716DEC3;
-	Tue,  7 May 2024 19:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bxSCVAql"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160EB16DEC3;
+	Tue,  7 May 2024 19:22:07 +0000 (UTC)
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0AB6CDC2;
-	Tue,  7 May 2024 19:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFAD16D9B4;
+	Tue,  7 May 2024 19:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715109644; cv=none; b=kJsruWWRsNYGPlWsIOAPXNOcZOiIyhdjNXrU4TJYdeYcbgTyGnzZLE0sjYA093c2RcZLi8EcEbl4gCVMZo29PbLsTG5ZvYWfSoFfS3LgsN6y9TRFVAqildairW3rF7bPjlHduPr9UYzXBtFe41jlRCfyiVJZSYBsD3RIlTbUyGA=
+	t=1715109726; cv=none; b=s27oQUsYRNF1VTauRYITE9ajjrOBoKeaTvawP0gylFiZr2Dl0sXk95lR4RK32w3wpLWwvwtHuOjTnQwVm3XKzvbaQbXo3HQBK1neopjN18mmXcWP3Fjx1da8dXtTRSChhz1CDy/UKxyfVwrk5kSLhB++gnRSyiDShTkR6YvHAJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715109644; c=relaxed/simple;
-	bh=UmOAYChyytc3d3vdcOolrFvQRAouAlbOgpsqjqTT7oA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mfjtRgvMQmYLJL+59BrHealkpLaa/7YCvXVrZXsbhY8irnhzHHhkdnbc7LkwT+ZOqU3yyGzJ8oWoC5y0Sg6xREo+W5G4V/PSv//oSN6E3LBr/5DXHCMo18jjVB77P6S0dHQDpQ5qCci2IlaZez+6khUOse9nVrjeZJNmatLHc0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bxSCVAql; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447IYJIF010716;
-	Tue, 7 May 2024 19:20:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=IVCv6BtGrBA4/HwfnDs7C7sIdNBdWXCmiV58VQXdVdU=; b=bx
-	SCVAqldnyxsZFsJXM5XYipVzvcbLDIwO+1cTwAXOG3sEVHLPJQuvBRgWmRtlLJBh
-	IHD39mVJHqbav9FY4oXGHfo+wTKtyrSdSf2auTHNnZGIfAk+jmWiuROedIzU1qGv
-	ILQ1WIFpxTR2b6RU5OVxR+p6unYGXL7xGzzP4WX/OvsUb9SAHfjAKcczbf09N5dy
-	eYe5h4SDWhv1GVdEBg6MeERDkr4Ynl2xXbk7c9MXZZF63gVL6RerT3bBt+vTD7U6
-	WPMxaHeqKo1VF1jLmT6wzps/wWjC6qv+0xvRBE70TlOSshOf64xwPQVqSNbkvKXw
-	UZ7refpWFUGuYfLJgG8A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xysprr2tf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 19:20:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 447JKVYK002619
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 May 2024 19:20:31 GMT
-Received: from [10.110.125.244] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
- 12:20:30 -0700
-Message-ID: <9a48b0a8-d1d7-8e2d-dafa-47e136a46c99@quicinc.com>
-Date: Tue, 7 May 2024 12:20:30 -0700
+	s=arc-20240116; t=1715109726; c=relaxed/simple;
+	bh=qp+EXX+SaGOTNAAk6fUdXyQK4DSdv3tg215Ei2Un+OA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HcuZjSzIfcBPv9kJYGYZDiOgGDcCdv3sksG2AQkYAue9jjD8dyHsAqbMDkh6X/117Kf3Luv8CEHfQWlAQwDBVXRRlDIPq5xh5rt+l1C6Kitkuan/NHoWYzD6bUU3j3klvpdkQO0Rnvbp7M9u41C3YNpmG3MMgFURQUlNQpqeYQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c96ef6bda1so114975b6e.0;
+        Tue, 07 May 2024 12:22:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715109724; x=1715714524;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EbHKc868SB9HcUl+k2ACtYV5D4mU/L/TbmBCs0TDn/g=;
+        b=AwOhFxKub4GRIue+5Z7GLykguaNo8ozgMhimxRKy7PaISIOTJzL4JcK9L075TjJrer
+         CVLXKCn27jBzWZQ9fIgUpjOEZ6oUltAR4uldenXi/CcYdDGGyyJ0cZJVkCNdKEIANWn7
+         JRwI3rsrmirMzMZHCMdm158lksWrz1J7cmNeRGD2Uklp74DUkBqFAJQY3kG+HD5ncMrX
+         RHg1pWJA4LrEzTGqPt1sLDC6fMJOEBFbDraP0R60O3Y9+2kKulcr+etxkjKkcnpRf7Z8
+         F4E+hDNdATp/W0Iwtv6mwn2M183LgLqmg+2sb02+LlAhATCvbboyuJEZUry3FTvYEMnj
+         IIyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfq6xSoaA7DvJt8dSTJ8g2Ht/tLOObMe/JOrhxqvTBOpn/api/bhoDyT0v0dunK2cVK5dxkbKlzEShUB93Xl40IHtxXFbHg1sqWfq9
+X-Gm-Message-State: AOJu0YzNzCqftRGEBZDpg2gW98/hHUVJhMMekxXjPef/eM9FOZKeGFo7
+	obDyDRZiqA5PGc8J4nzXvxGVuxGlnyZJqMZr9tbhh901GP3QdkVZ
+X-Google-Smtp-Source: AGHT+IF6/Amm/9IUVwqPVK/3VfK6o6rocm8ala/XYv84JC/t3MO2ZMmHzbvtXvjZdxTbIyJfUGHM+w==
+X-Received: by 2002:a05:6808:1796:b0:3c8:64c2:73fa with SMTP id 5614622812f47-3c9851e5985mr601086b6e.0.1715109724427;
+        Tue, 07 May 2024 12:22:04 -0700 (PDT)
+Received: from sean-ThinkPad-T450s.lan ([207.191.35.252])
+        by smtp.gmail.com with ESMTPSA id ec18-20020a056808639200b003c8643f0e5csm1937839oib.16.2024.05.07.12.22.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 12:22:03 -0700 (PDT)
+From: sean.wang@kernel.org
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v4 1/5] Bluetooth: btmtk: add the function to get the fw name
+Date: Tue,  7 May 2024 12:21:57 -0700
+Message-Id: <965cd14922aea67e2750ff2c2ecad773f8ba485a.1715109394.git.sean.wang@kernel.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Venkata Prahlad
- Valluru" <quic_vvalluru@quicinc.com>,
-        <andersson@kernel.org>
-CC: <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_nankam@quicinc.com>, <robh@kernel.org>
-References: <jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc>
- <20240507163045.28450-1-quic_vvalluru@quicinc.com>
- <a32fa81d-bd70-4dfa-b512-e2adce4f8c35@linaro.org>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <a32fa81d-bd70-4dfa-b512-e2adce4f8c35@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vBUzsSskaw0WJRFND1PRC0GW27DIojLh
-X-Proofpoint-ORIG-GUID: vBUzsSskaw0WJRFND1PRC0GW27DIojLh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_12,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- suspectscore=0 spamscore=0 phishscore=0 mlxscore=0 mlxlogscore=816
- bulkscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405070135
+Content-Transfer-Encoding: 8bit
 
+From: Sean Wang <sean.wang@mediatek.com>
 
+Include a shared function to get the firmware name, to prevent repeating
+code for similar chipsets.
 
-On 5/7/2024 9:35 AM, Krzysztof Kozlowski wrote:
-> On 07/05/2024 18:30, Venkata Prahlad Valluru wrote:
->> Rb3Gen2 has a lt9611uxc DSI-to-HDMI bridge on i2c0, with
->> reset gpio from pm7250b gpio2 and irq gpio from tlmm gpio24.
->> Bridge supplies are Vdd connected to input supply directly
->> and vcc to L11c. Enable HDMI output, bridge and corresponding
->> DSI output.
->>
->> Signed-off-by: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
->> ---
->> v3: - Updated commit text
->>      - Arranged nodes in alphabetical order
->>      - Fixed signoff
->>      - Fixed drive strength for lt9611_irq_pin
->>      - Removed 'label' from hdmi-connector, which is optional
-> 
-> Please respond to each Bjorn comment and explain how did you implement it...
-> 
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+v3: first added to the series
+v4: rebase onto the latest code and add an additional parameter
+    fw_flavor into the function btmtk_fw_get_filename.
+---
+ drivers/bluetooth/btmtk.c | 18 ++++++++++++++++++
+ drivers/bluetooth/btmtk.h |  8 ++++++++
+ 2 files changed, 26 insertions(+)
 
-Yes, agreed. Even though it seems like you mostly just agreed to mine 
-and Bjorn's suggestions and decided to implement all those in v3 , it 
-would have been better to explicitly ack them or tell why you agreed or 
-what went wrong that you had not done it in v2 itself to close the loop.
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index 812fd2a8f853..a0a858a0706d 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -103,6 +103,24 @@ static void btmtk_coredump_notify(struct hci_dev *hdev, int state)
+ 	}
+ }
+ 
++void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
++			   u32 fw_flavor)
++{
++	if (dev_id == 0x7925)
++		snprintf(buf, size,
++			 "mediatek/mt%04x/BT_RAM_CODE_MT%04x_1_%x_hdr.bin",
++			 dev_id & 0xffff, dev_id & 0xffff, (fw_ver & 0xff) + 1);
++	else if (dev_id == 0x7961 && fw_flavor)
++		snprintf(buf, sizeof(size),
++			 "mediatek/BT_RAM_CODE_MT%04x_1a_%x_hdr.bin",
++			 dev_id & 0xffff, (fw_ver & 0xff) + 1);
++	else
++		snprintf(buf, size,
++			 "mediatek/BT_RAM_CODE_MT%04x_1_%x_hdr.bin",
++			 dev_id & 0xffff, (fw_ver & 0xff) + 1);
++}
++EXPORT_SYMBOL_GPL(btmtk_fw_get_filename);
++
+ int btmtk_setup_firmware_79xx(struct hci_dev *hdev, const char *fwname,
+ 			      wmt_cmd_sync_func_t wmt_cmd_sync)
+ {
+diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
+index cbcdb99a22e6..e76b8a358be8 100644
+--- a/drivers/bluetooth/btmtk.h
++++ b/drivers/bluetooth/btmtk.h
+@@ -160,6 +160,9 @@ int btmtk_register_coredump(struct hci_dev *hdev, const char *name,
+ 			    u32 fw_version);
+ 
+ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
++
++void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
++			   u32 fw_flavor);
+ #else
+ 
+ static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
+@@ -194,4 +197,9 @@ static int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+ 	return -EOPNOTSUPP;
+ }
++
++static void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id,
++				  u32 fw_ver, u32 fw_flavor)
++{
++}
+ #endif
+-- 
+2.25.1
 
-> Best regards,
-> Krzysztof
-> 
 
