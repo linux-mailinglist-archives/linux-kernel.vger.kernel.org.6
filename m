@@ -1,194 +1,136 @@
-Return-Path: <linux-kernel+bounces-171205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F2B8BE115
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:39:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6E68BE118
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF745283700
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1EE285709
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5603E152534;
-	Tue,  7 May 2024 11:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E670152E13;
+	Tue,  7 May 2024 11:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PEc7kltF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6QMOun+"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE47C522E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E36522E;
+	Tue,  7 May 2024 11:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715081934; cv=none; b=imO0xfianQg0bA3enQL9CTb5ykBKc0wOn0fKks6KSxEazxkTFpc9Z3XTHz9ypoxBoyr9an8zTby+Rpzj6XyVcEoekH7UNVx2xLyv7EQcrIoeYdQJZ6RUT6CJJCf6bbg0Bycyvg9d4n0VepGRQIFRwzBMbiL+muvjjO5mjWgjDrw=
+	t=1715081971; cv=none; b=RXKPuG1qve3GlXBpbCmugbH+z6UN4uaAocsycXpPLitmXJYxE7bOluGh8EfeM1QV0iQlPOXSoaMwhBkUMI96R2QtOecGw4h7hbRT4/WWLAZdSSvX9zBE4XfB9RfAVjZwgoHvngky4Bbgjn/ETqFwvvFDJdIQKucgZQFp8OIu/dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715081934; c=relaxed/simple;
-	bh=td2oQgwwjmrILmAuHSGqy6pdwz/J82jjZsz0KVhdl0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C7taRlnsR4PR66WVeEDL/cInIgNtRizyR7KPEdOnamoJ7avN4LkXvigG/xMnQnWxqQwNIjRVF9nGXAwEsYUJmK6/aDA4OYh/KueBfhH5EOW8gWhb2Bz/6/1L3XOb2NsH0Tt/cKsP+pwUWuK0x61hrUQosRs8HfvFvxKCRAeDXjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PEc7kltF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715081931;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Xka3buRHtm0QPVXUk36t3UR0bYtNteYd8XPxEHml5dM=;
-	b=PEc7kltFbzdF2vKlzgQgAZ2EPNMpwr7+7mKIOPaWu7Ev2NuIOmT2xNdfdPBKJC5drxb6i2
-	d2jcDe7lgaPfK4G54tZT5vk8AJi22mGLFO+4hmS1Uueq/3bLEVFiLdbp+vBae6dCN9KJnr
-	h+u9riy0m68kVGuhLCoEMQxgvH4wIFc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-167-S_Qy_fzkMkqECrpfAn8ayw-1; Tue, 07 May 2024 07:38:48 -0400
-X-MC-Unique: S_Qy_fzkMkqECrpfAn8ayw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-41a38f6e371so12910805e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 04:38:48 -0700 (PDT)
+	s=arc-20240116; t=1715081971; c=relaxed/simple;
+	bh=QWRglvQC+Ilxa+wYRcwzz9FMw6bA6Z/0j3tXMZ1TDSM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=Q/lGK1+F7KuF9P0ItlhC1NHUOOKwp1HJbiKGK8DiWgShRsIqPkD0lhtNs0wWXvmVLFV0B+QCm8Y9A+g4qMpc9C6+QYz/VTOr5s3fxxCNnz8J2YpRis4b1ZW7TbUehwAaflV/HAC0qJ/td7+ivTcZ5b8whz0xBUlMzaP8uIL7uTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6QMOun+; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43b06b803c4so20435271cf.1;
+        Tue, 07 May 2024 04:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715081969; x=1715686769; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bc2Fh6vr9HEHKy+AiZntTDAKa/QuaWvCqXRib6VLhHw=;
+        b=K6QMOun+SSSrGpJzlvMhU23ylUYSG2c0tdyw/O0E3Kwcya2bke5YQazo9EGKSmOe8j
+         6l70QSXWCivLUeeRZtzmpQApXuw9PCbc8HoR1bL8XVEl8Tav1qS78/cHBeUcJtShQ6j5
+         9HWBl82uUVuBU230UfAEZyHGSE25XPvh5P1/Ty0yk77D63VdsRxJpDOfpihnglLoMSsH
+         JRVPcyBg7XFxobjJZsyse55L5esqzJi+IV/tiHDeVCkuaSX9Gcgtx+e7vGT9XLgQ9icV
+         rnDzR9+QVRhf5oRkpgSoLdvoVB6Sh2fGeVwfRv8yElMaz0yUJobZQ1ABDroLFLaANv2p
+         RcYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715081927; x=1715686727;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Xka3buRHtm0QPVXUk36t3UR0bYtNteYd8XPxEHml5dM=;
-        b=naOF/mhcdAGe29Yb5A9jLG0E8ZESkY9LQ86RGFLVduyH1LNskKVJZm7Xk+X+Oz4J+A
-         j+bTGVvNP2BPildUHBBj/d7yOq0uKSXH6rsPBbRANrEuK/Mku/yjp2pwLAKkn3o1tNvt
-         LGfMxolb7ewAixGxfzNwMTYKQxFUWNg3gID6bG93e+rU2T9OaiE4j9nRgalWKfSRBAK8
-         H65Gc9AyScJXNeeHurvR3E2+KGo32UhxZSm0+kULFZAl9yDfd8QXyKZ/tbFvpsjvLhf3
-         zLjKr9CPN3UAEwCYbqWTiy+JSl4iyPZHX2lui5jDK2W2wjrUT9E7yU5pAM6ooARnnXwn
-         WQbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHrIHQE8djba24fgXkFbTKoFKwUHoh3So/fjnMW6juyBIRWLTntpLIYCb90d3231YjkYMTsZQDsT6aY2gT3CXKf+9ZyrDJ+aWNwojL
-X-Gm-Message-State: AOJu0YylL6t1RL5m2963YDE7W5srFiyNulZj5m4ljFbGM1s6Cw9Rmfb4
-	5Sw+w9ELr6v3NlYGguTOxYCVCY1PnPvbvKwPC86Z3yPszK40BtCp3hXceifmI0tF+Jp+ZYfwPxk
-	LD843wNP7bbyr0LS3EF2HnQo2MKITtcCQwFxl2TsuzuOrVTIpDmb7gE4OhUcvGA==
-X-Received: by 2002:a05:600c:3d92:b0:417:d4f5:6501 with SMTP id bi18-20020a05600c3d9200b00417d4f56501mr8815783wmb.27.1715081927034;
-        Tue, 07 May 2024 04:38:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCYBgCN718QLX35mkKWcVx+Qd8Sed2xUapYoO2gwXpxxfocrMLtjdRHD/ege6eXvxkBZrNEQ==
-X-Received: by 2002:a05:600c:3d92:b0:417:d4f5:6501 with SMTP id bi18-20020a05600c3d9200b00417d4f56501mr8815769wmb.27.1715081926621;
-        Tue, 07 May 2024 04:38:46 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id k8-20020a05600c1c8800b00418a6d62ad0sm23265977wms.34.2024.05.07.04.38.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 04:38:46 -0700 (PDT)
-Message-ID: <d8373b6d-ec81-4010-8e01-cfc7d7e219a7@redhat.com>
-Date: Tue, 7 May 2024 13:38:45 +0200
+        d=1e100.net; s=20230601; t=1715081969; x=1715686769;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bc2Fh6vr9HEHKy+AiZntTDAKa/QuaWvCqXRib6VLhHw=;
+        b=i/u69gyZXQuPwmyz/bGLAWutoshkQM7RvSReX6b8QuJJWQ6TqouAP7ue9klaGnco3w
+         JzG2yvAOYgk2JJeDhy+c4G5093TY3/gKGpLy1BgsybiGos6GN6ZX0pZ1aWFWbAOiSekF
+         IWKq9ABw4QyXDdcAingzkLFaBevVtgzutBsuwLTVtzqjwphhAq+kNZPEJuYCPGEgc6m2
+         pjIYBJQgtULobNAnmx37Oua6FW9gYQTwJ2PaRXO4t61QiJfMzLzddvtMGpB73HUL1tGV
+         eQU5BpotFBoCQx48dAiCEbeB6rF01nBXSZBwwhvVxC6b/hbn2wsgvt5tQFLIuPRvhnOJ
+         4+Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUG/KuANAgr7rQGxsMBF8MwLOmYbIT5GHjLAUJ7IaRx++jo19qC4X0JjNUaGV4nwtAQzr9HdkXeahGqUNSEICQqd08K6KzX+5f5xgW56DHrKcOdtfiuHpkxLX7VsQG+7C9CNQxLAVJTH/30DLJ5hc/7kEtIuvW50t4y
+X-Gm-Message-State: AOJu0YxTXs8lkR9Xwunj2eZRInZcsl82TYWBYw88NW24WGuQzjJEPdd9
+	pBuSRfy1W/nClOZfGhB8Eg9XQh+dpLtYu7P4ZW5EK3+hGxNDfxd2
+X-Google-Smtp-Source: AGHT+IEYa1mU6Tp3WBhIuUW/Dh9bS9a+VEaM8HEHI4XcFgssU84GL0HCwzAqkeL25nS4PeYPzFRieg==
+X-Received: by 2002:a05:622a:2989:b0:43a:dcd6:6507 with SMTP id hd9-20020a05622a298900b0043adcd66507mr17632581qtb.50.1715081969095;
+        Tue, 07 May 2024 04:39:29 -0700 (PDT)
+Received: from localhost (164.146.150.34.bc.googleusercontent.com. [34.150.146.164])
+        by smtp.gmail.com with ESMTPSA id er5-20020a05622a5e8500b0043cd93be06asm5598868qtb.62.2024.05.07.04.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 04:39:28 -0700 (PDT)
+Date: Tue, 07 May 2024 07:39:28 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Martin KaFai Lau <martin.lau@linux.dev>, 
+ Abhishek Chauhan <quic_abchauha@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Andrew Halaney <ahalaney@redhat.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Martin KaFai Lau <martin.lau@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ bpf <bpf@vger.kernel.org>, 
+ kernel@quicinc.com
+Message-ID: <663a12f089b81_726ea29426@willemb.c.googlers.com.notmuch>
+In-Reply-To: <cab0c7ba-90bf-49e2-908d-ecd879160667@linux.dev>
+References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
+ <20240504031331.2737365-3-quic_abchauha@quicinc.com>
+ <cab0c7ba-90bf-49e2-908d-ecd879160667@linux.dev>
+Subject: Re: [RFC PATCH bpf-next v6 2/3] net: Add additional bit to support
+ clockid_t timestamp type
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] arm64/mm: generalize PMD_PRESENT_INVALID for all
- levels
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Joey Gouly <joey.gouly@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>, Peter Xu <peterx@redhat.com>,
- Mike Rapoport <rppt@linux.ibm.com>, Shivansh Vij <shivanshvij@outlook.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240503144604.151095-1-ryan.roberts@arm.com>
- <20240503144604.151095-2-ryan.roberts@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240503144604.151095-2-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On 03.05.24 16:45, Ryan Roberts wrote:
-> As preparation for the next patch, which frees up the PTE_PROT_NONE
-> present pte and swap pte bit, generalize PMD_PRESENT_INVALID to
-> PTE_PRESENT_INVALID. This will then be used to mark PROT_NONE ptes (and
-> entries at any other level) in the next patch.
+Martin KaFai Lau wrote:
+> On 5/3/24 8:13 PM, Abhishek Chauhan wrote:
+> > diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+> > index fe86cadfa85b..c3d852eecb01 100644
+> > --- a/net/ipv4/ip_output.c
+> > +++ b/net/ipv4/ip_output.c
+> > @@ -1457,7 +1457,10 @@ struct sk_buff *__ip_make_skb(struct sock *sk,
+> >   
+> >   	skb->priority = (cork->tos != -1) ? cork->priority: READ_ONCE(sk->sk_priority);
+> >   	skb->mark = cork->mark;
+> > -	skb->tstamp = cork->transmit_time;
+> > +	if (sk_is_tcp(sk))
 > 
-> While we're at it, fix up the swap pte format comment to include
-> PTE_PRESENT_INVALID. This is not new, it just wasn't previously
-> documented.
+> This seems not catching all IPPROTO_TCP case. In particular, the percpu 
+> "ipv4_tcp_sk" is SOCK_RAW. sk_is_tcp() is checking SOCK_STREAM:
 > 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->   arch/arm64/include/asm/pgtable-prot.h |  8 ++++----
->   arch/arm64/include/asm/pgtable.h      | 21 ++++++++++++---------
->   2 files changed, 16 insertions(+), 13 deletions(-)
+> void __init tcp_v4_init(void)
+> {
 > 
-> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-> index dd9ee67d1d87..cdbf51eef7a6 100644
-> --- a/arch/arm64/include/asm/pgtable-prot.h
-> +++ b/arch/arm64/include/asm/pgtable-prot.h
-> @@ -21,11 +21,11 @@
->   #define PTE_PROT_NONE		(_AT(pteval_t, 1) << 58) /* only when !PTE_VALID */
->   
->   /*
-> - * This bit indicates that the entry is present i.e. pmd_page()
-> - * still points to a valid huge page in memory even if the pmd
-> - * has been invalidated.
-> + * PTE_PRESENT_INVALID=1 & PTE_VALID=0 indicates that the pte's fields should be
-> + * interpreted according to the HW layout by SW but any attempted HW access to
-> + * the address will result in a fault. pte_present() returns true.
->    */
-> -#define PMD_PRESENT_INVALID	(_AT(pteval_t, 1) << 59) /* only when !PMD_SECT_VALID */
-> +#define PTE_PRESENT_INVALID	(_AT(pteval_t, 1) << 59) /* only when !PTE_VALID */
+> 	/* ... */
+> 	res = inet_ctl_sock_create(&sk, PF_INET, SOCK_RAW,
+> 				   IPPROTO_TCP, &init_net);
+> 
+> 	/* ... */
+> }
+> 
+> "while :; do ./test_progs -t tc_redirect/tc_redirect_dtime || break; done" 
+> failed pretty often exactly in this case.
+> 
 
-Ah, so PTE_VALID == PMD_SECT_VALID. Would that also be a reasonable 
-generalization independent of this? (or do we keep it as is because it's 
-a HW def?)
+Interesting. The TCP stack opens non TCP sockets.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
-
--- 
-Cheers,
-
-David / dhildenb
+Initializing sk->sk_clockid for this socket should address that.
 
 
