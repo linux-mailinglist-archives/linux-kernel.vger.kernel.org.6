@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-171898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F7B8BEA2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:13:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4058BEA2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFA51C21FB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:13:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11F7F1F23358
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066D315ECC6;
-	Tue,  7 May 2024 17:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B1554BC3;
+	Tue,  7 May 2024 17:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcY/b8Dy"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIYAp7G/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F7453E28;
-	Tue,  7 May 2024 17:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AEA160865;
+	Tue,  7 May 2024 17:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715102024; cv=none; b=kpKAlnRMZkZSdtwQaNWTGY2+S5EVXKBlRrk6mNAJgeF/YVHyYwBQmE+7f+rsqUfat1RGWRw9tvWIWGlEGL8pW2T3EOVI4s2WMatrI8yRtDjvKNYrg0W0FwUGK0SJQmH01cBQS5i/DuLapnWOfUHzAqak6L94nye6kSgNjnLQ59M=
+	t=1715102049; cv=none; b=BxUEPw6svhyiHIEoQ8q2lCa7PpAlP50sc8Gwc3Soe0vumaHQmOLu0GdDTnGc+M5UnyYvbCUS3N0OWqJbkwfrsJ8ft0j+DuTcThHpPUVQQwKeBdgRuNNGjI/7lSIDspsiMMNlUYBHnrP5IiuauAgT1GC9r1ICzWZT0Wr7XQ9wF58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715102024; c=relaxed/simple;
-	bh=zccQnclxIldZ+IxR9G6WltGhLfvpZ5MaRvCWBfvHgtQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sxcDOkLtNPSc9H2EGTtNpbkAfD/FS9L/7md2hGpkr/SPRWvEMOwHlQAgxTQmBmI6Y+fHOMJuDBk0luLkm8b0T5xtBV44+GNBMvijJ31GWEaG2x4Pvu4XZ+V+dWV/WNv4LFwaSWPAI60zmUYMT4RMGtqBkAJW1VIPuU+fSVdYPbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcY/b8Dy; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-61bec6bab2bso36552757b3.1;
-        Tue, 07 May 2024 10:13:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715102022; x=1715706822; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EYum/RRI+2OZh34IaDs9A+wweg7qNiOwsJ++IUalaZs=;
-        b=RcY/b8DyooeVQbJsCyVPE3lQb+HGjAAiAhDzmR63Ap9GR9nCB9Pn9sKmW3BCTuooUV
-         aM5qcTLtX1JzLFijLXnxcKMFbFhNLDjXQ+sx40j+BiTXkwyldKzQLsgj77jFa73w6q4p
-         NHhBVGsFHOf/DYUdZTMY8bu8gz4QGEVWYVJOAxygDm2Qc50XDjZpQNiD1Ayh74kAwcEZ
-         WhfP/MKqO/loXjGjQ0ERae7kCxQak6v4SDld1krI1PX7c6WWVzqNu3BFZ41r5/d4aiw1
-         3kecQIaBVJIuQ5fEp6Z1wTAt6bhn7af+rxNfhXy+c7dGGddAGKljGHTIZJSKpdZuxs31
-         wybw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715102022; x=1715706822;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EYum/RRI+2OZh34IaDs9A+wweg7qNiOwsJ++IUalaZs=;
-        b=MnY1bWNSlzhuUqfNVm1+MAZQrP5QGUJwFQm6jGOwwX3fGOEsVdzeU/RkApXvmoFSXk
-         XCtvYFTENitW2sbwmqLpXt8ayhNUGcWA+pgksg7lckJOYl7Dw6eIJiksOL1eYFPSKVGA
-         ENgtFIbUriZwLi/8IflF7H7vdQUf04iVkp43bUYTQfu+ctx2F3KiNfIxkqBgjkxAAar7
-         vkOaA/BY2p96B9mLhCSMftHd31ABvU/aYAqmsXDICM6tqSoQ4ZC//rQW4l8u9vyH2hTY
-         JzqvFtLt/TCqI9hgWXlldoN3ZQ6grRH52n0UlZO1LAZbnRAVV3z2AS92f1McB4Y+oIzD
-         /L6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNI/R+aeS9dxilCIHvVHpbufm1WYK6tkPpn3uCrPLvTIGUcPaVC9EtKUHhjAJjmeFg/MMisxV4XSRlCxFOlEvFy+cAKPmsFannYunw
-X-Gm-Message-State: AOJu0YwvT0zC97IW1twXVBP7wkJLYtcPrC7D7hB1IBgpj0PRVwon2FmF
-	IYtDLVi0dRtzVU48yp3hle+Dufhy/HxVDH18rWqPW60f7zdjPaAGwXXw4uMVyWG6/KIcrHwGg6C
-	fTWNW04cOu3wN79NlX5NXf0kK+b8=
-X-Google-Smtp-Source: AGHT+IEtaUXVcDdFFPrSZfNzsTmU796n7ghfMyjhUtMghx8kl6qZabBPVyKTNI4/IqH+SGyg0CFCtF4iR3B+DBpgkkU=
-X-Received: by 2002:a81:4c0d:0:b0:618:5e8c:c66f with SMTP id
- 00721157ae682-62085d1b43dmr4533657b3.7.1715102021955; Tue, 07 May 2024
- 10:13:41 -0700 (PDT)
+	s=arc-20240116; t=1715102049; c=relaxed/simple;
+	bh=lmbWOT7TNgeizDvMTV/ftchusmhKpY8WBIGHLAWTrQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZJSq4prMlNBLIuyD5obScedzc0bW8jhVgjGbuEk+ou40TKgjDTqFXO2nPE+4StcO07ORAWRvloCBpt2NzjPo/kSCZNi7aOOg51TRlIRc9mcS7u+CSg4pwQqAUefYXMRjqquBL7EwNL1poja7Ray6UWs4QyCtIKXYoOqp3DM+Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIYAp7G/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1825C2BBFC;
+	Tue,  7 May 2024 17:14:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715102048;
+	bh=lmbWOT7TNgeizDvMTV/ftchusmhKpY8WBIGHLAWTrQ8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=MIYAp7G/KBx6IFvo4E46E3D6LvdGX6iTXIHdYcHiiEcXLfETvEisk9q/Q8Ut+2JPy
+	 xvYknQAR2kaLDE5xB9eed1ex6HvJM1gmyNVun79yD75QRVzdAf+KasDq29R4rTp7Ky
+	 BMw5bVlRAZIy8fWJ3aebPO8wpGvsPBLk3ndrM9/NEWNabtgiHaYS3XqBAS96EVJaNN
+	 Pu/DY4k5omP//BtluIY2vjJCsTLyE37ySHHiIFlVfxJQNcP2op7D/xsnaY+NgaSHyj
+	 XQ1KbiAKnDq1xyOtTV4VPtPLIpgpKxeerTfV2Bre802M2g8JWHdsQKbWMU5PLjGXIu
+	 CIM/AoqF/ISpA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 403B1CE14CC; Tue,  7 May 2024 10:14:08 -0700 (PDT)
+Date: Tue, 7 May 2024 10:14:08 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v2 18/27] rcu: Rename rcu_dynticks_in_eqs_since() into
+ rcu_watching_changed_since()
+Message-ID: <d3177337-51cd-4841-ba4b-8e0f8f5bbc84@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240430091740.1826862-1-vschneid@redhat.com>
+ <20240430091740.1826862-19-vschneid@redhat.com>
+ <ZjoxIhtCw4Pov0VH@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506193700.7884-1-apais@linux.microsoft.com> <171510137055.3977159.13112533071742599257.b4-ty@chromium.org>
-In-Reply-To: <171510137055.3977159.13112533071742599257.b4-ty@chromium.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Tue, 7 May 2024 10:13:30 -0700
-Message-ID: <CAOMdWS+u5gBpkJyryge5mWt-eX6+OmkiSkS5zc-VZ=_uJQszLw@mail.gmail.com>
-Subject: Re: [PATCH v4] fs/coredump: Enable dynamic configuration of max file
- note size
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org, Allen Pais <apais@linux.microsoft.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, ebiederm@xmission.com, mcgrof@kernel.org, 
-	j.granados@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjoxIhtCw4Pov0VH@localhost.localdomain>
 
-> On Mon, 06 May 2024 19:37:00 +0000, Allen Pais wrote:
-> > Introduce the capability to dynamically configure the maximum file
-> > note size for ELF core dumps via sysctl.
-> >
-> > Why is this being done?
-> > We have observed that during a crash when there are more than 65k mmaps
-> > in memory, the existing fixed limit on the size of the ELF notes section
-> > becomes a bottleneck. The notes section quickly reaches its capacity,
-> > leading to incomplete memory segment information in the resulting coredump.
-> > This truncation compromises the utility of the coredumps, as crucial
-> > information about the memory state at the time of the crash might be
-> > omitted.
-> >
-> > [...]
->
-> I adjusted file names, but put it in -next. I had given some confusing
-> feedback on v3, but I didn't realize until later; apologies for that! The
-> end result is the sysctl is named kernel.core_file_note_size_limit and
-> the internal const min/max variables have the _min and _max suffixes.
->
-> Applied to for-next/execve, thanks!
->
-> [1/1] fs/coredump: Enable dynamic configuration of max file note size
->       https://git.kernel.org/kees/c/81e238b1299e
->
+On Tue, May 07, 2024 at 03:48:18PM +0200, Frederic Weisbecker wrote:
+> Le Tue, Apr 30, 2024 at 11:17:22AM +0200, Valentin Schneider a écrit :
+> > The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> > RCU_WATCHING, the dynticks prefix can go.
+> > 
+> > Furthermore, the "in_eqs_since" part confuses me, as IIUC this only checks
+> > for a change in watching/eqs state, not that RCU transitionned *into* a
+> > EQS after the snapshot was taken.
+> > 
+> > e.g. if
+> >   snap = 0b1000 (EQS)
+> > and the following rcu_watching_snap(CPU) is:
+> > 	 0b1100 (watching)
+> > then
+> >   rcu_watching_in_eqs_since(rdp, snap) -> true
+> > 
+> > but because RCU was already in EQS at the time of the
+> > snap - it hasn't entered EQS "since" the snap was taken.
+> > 
+> > Update the name to reflect that we're only looking at watching/EQS
+> > transitions, not specifically transitions into EQS.
+> 
+> Indeed in practice the function only checks a change. But semantically it really
+> checks a trip to eqs because this function is only ever called after a failing
+> call to rcu_dynticks_in_eqs().
+> 
+> So not sure about that one rename. Paul?
 
- I should have put some thought into the feedback.
-Thank you for reviewing and fixing the patch.
+As you say, Valentin is technically correct.  Me, I am having a hard
+time getting too excited one way or the other.  ;-)
 
+I suggest thinking in terms of rate-bounding the change.  If you do
+change it, don't change it again for a few years.
 
--- 
-       - Allen
+Either way, should comments be changed or added?
+
+Of course, the scientific way to evaluate this is to whose a couple
+dozen people the old code and a couple dozen other people the new code,
+and see if one group or the other has statistically significantly lower
+levels of confusion.  I don't see how this is feasible, but it is the
+(painfully) correct way.  On the other hand, it would have the beneficial
+side effect of getting more people exposed to Linux-kernel-RCU internals.
+Unfortunately, it might also have the additional side effect of making
+them (more) annoyed at RCU.  ;-)
+
+							Thanx, Paul
 
