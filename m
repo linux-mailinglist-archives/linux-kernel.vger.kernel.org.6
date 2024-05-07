@@ -1,76 +1,113 @@
-Return-Path: <linux-kernel+bounces-172052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C9B8BEC77
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5902F8BEC6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E3E1F256CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:19:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7FD1F257D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ADD16EC0C;
-	Tue,  7 May 2024 19:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1132916DEB0;
+	Tue,  7 May 2024 19:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdEN10G4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ITl7Ivsl"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A36916DEAC;
-	Tue,  7 May 2024 19:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B7B73505
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715109515; cv=none; b=FQPY83EQLd6D44z/rIi4LPNQrlIJg5JPxSyiycWaLH6kfLVKhmWOMifHrVCgk5HExBaI16TLah8y+st8iMQEXdeD4HN1feNbmawztgy65VuaaLpkrJvky3Fnay67guc/Z3k97ujyYFMy/QMJAVwdF6f9p0OAAOzU/quyB5ZmFMI=
+	t=1715109459; cv=none; b=XzyllWgOw+YwXNrXOL7cdGEB/3bEQVdQwvY7etMdQAPli7iKzceUi56rQrn50oXobLuN9xpqdIoWCNCSEJ1gRyN6lj1Z2sa6oS3JhJZlNGCUqvK45oicL8r/u+Uv+p4tSFEDUX5dpsPHUNoaamtTf/PExK8AmZ4UtvRD6gsULcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715109515; c=relaxed/simple;
-	bh=uUZ0wRwqvt5AN23IbqpgPVlEjLnvM1VT4sztb1JpTlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETYQJx/Xl0NO6tNLPCSe39j/R8D9fcQldozjiZPnh8SNBoWPcCbb4UoJEaa88F5M2W7RcCcsuJ7MgwUE9H3dMCspUhY327dAOHSeSzNCSEd5al6znF0Bv4daSbvhJV+5rVfxwTZwgTSwR2ajtK17CftllQ7HvTeHNxiJi4NxT9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdEN10G4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4848C2BBFC;
-	Tue,  7 May 2024 19:18:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715109514;
-	bh=uUZ0wRwqvt5AN23IbqpgPVlEjLnvM1VT4sztb1JpTlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EdEN10G4X60VAwSbDobYx6poRz4kq/eSzLRO2um3y7rzL/h+t24eZgSqM3uit0SK/
-	 SiG+czgg6+nb/RQs8KEfD/qoNMyNnBPmIlshItMhm3GZpiCRDB+z0MUNcIk9nNe7bV
-	 /P2YVhWh4+g+xCCEX/mzEd2YpWpzy+oDsNLNsQZYyEZi9V+TK3XB4YptFn/Ci79JQQ
-	 gTQfmh4dBrqutvk0HsVQ+4EKxhY1Ss/EL7/Lbumpl2Wb5dJ4/4Hhn8kfryxNu0zKq0
-	 BLC/nueAXuuyvcafDLcs7SU4q0Cpgl20cDz8wxmbhx6UnZXHx3NtoHtVjZTkQrrTXd
-	 4SSsGI8P5fFdQ==
-Date: Tue, 7 May 2024 20:17:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	dccp@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dccp: Fix ccid2_rtt_estimator() kernel-doc
-Message-ID: <20240507191700.GJ15955@kernel.org>
-References: <20240505-ccid2_rtt_estimator-kdoc-v1-1-09231fcb9145@quicinc.com>
+	s=arc-20240116; t=1715109459; c=relaxed/simple;
+	bh=lFe6PLJLyMEdG0qUciQpwpKkHPkogNZMbmqjjed+jG0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mOSlFFzAxixh6+b97MageAVxevJDYE3NhgdfWIIn+8IrJDz8XqZxbVPpOXSC7iDPMA8678Ot5TEIiDoigEaLxUHzbKCGxZGUeHzNjDiFFec7t2ULP382gOGxigxRm4Tmc2oZgxTlVfl/NJExIYVUKu/ydl7KLgF1OnJfg0312as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ITl7Ivsl; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-61c13ed9938so161931a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715109456; x=1715714256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KJ05ivw5+rga7TzuAAcMhvPRoPZ5bNll4/XJScG7k8Q=;
+        b=ITl7Ivsl7q+QAotXe5SCjBIwgmdGhb/2EbdkzwOROHjp+w9McG/c9Zd0BRfd8MUFGg
+         tY0wpfAU3BtHZE4qCL+C+ZjgFCxDSN9DASuK/VprTGtc8ixqKuXvcEPr3y6n/rxC6fxB
+         l5YDr3v4bIGgyoqdyWFp1xRa2PLxwHiK7tUp4i85jgJhjMtWOX+r3qn/2MDRxt5RrSGe
+         dlqGjs+aDX/SKcOqm6ee2EXLDH9IQAURut2DRKf4TyyLNy2mlcNeApcWLIlPAOsoHdsd
+         2nWZGDnxhuP6p0LdINd4yUxvDjULjnrlIaSbnrUlcy3+3tciQKj9/Aeenb884xES06Fy
+         iFRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715109456; x=1715714256;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KJ05ivw5+rga7TzuAAcMhvPRoPZ5bNll4/XJScG7k8Q=;
+        b=PN5nYqe9hoM08ZlNkokkl0LPgteWtRyUVbMhY12x7EyaSqTlRz6vmXIrQY//GrUkOx
+         q56t0k8VpCgYzqLcSkVCn3rpjUQdDt8/Jd61HD4UTfbMUlJYaBMbOe3c/txqOOOjL/Hs
+         v6IF02I3uJMiUILm7YepQrmk03T1Lm09zf+WyPYVjbU3glgq2tNDRFdIcJBxDUp+Ni+p
+         aqJtdXncQOrRNoBZ7Ke1HSGDSEYkcXHBNMw3wMKUm9fHSpaxeoRjf0BqdTZ5BfMC/dLg
+         hTestlCHN++XqRts+gxK1+EOMDI+/pV6FSMYnIP/LIBgE2ylGXb6IU0cuWUJ94PLGZRH
+         T+8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWPKhscytG2Trnk+qxZK4s9DF9d7dqesv47RQ/aeUrIP05/2gjfo8AVeQVk3ZnCORur9YlJAYIhccQRDxiwZDCSspKhMAfeDX7kIXyO
+X-Gm-Message-State: AOJu0Yy50KRx5QdTEO6dpxPAUtb+jw91ajbaAzrS3uv+YIT1KnmISPD3
+	8Oh6nQJ9ELNE5MGkyGMEskaT+tu6ef0xHbRFxVpfsqkxspgRHUigXrslHq7TQLc=
+X-Google-Smtp-Source: AGHT+IHEFI6jOT0orjmfXNCVZ+/GA9aPYVnzkkhuI46G8zz1yX6OrIm0AVkoHDAyOF5AvXkFW+xmXg==
+X-Received: by 2002:a05:6a21:3392:b0:1af:acda:979d with SMTP id adf61e73a8af0-1afc8d516femr758154637.1.1715109456056;
+        Tue, 07 May 2024 12:17:36 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id z68-20020a636547000000b005fd74e632f0sm10126797pgb.38.2024.05.07.12.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 12:17:35 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Breno Leitao <leitao@debian.org>
+Cc: christophe.jaillet@wanadoo.fr, paulmck@kernel.org, 
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240507170002.2269003-1-leitao@debian.org>
+References: <20240507170002.2269003-1-leitao@debian.org>
+Subject: Re: [PATCH v3] io_uring/io-wq: Use set_bit() and test_bit() at
+ worker->flags
+Message-Id: <171510945496.45805.5070549169318056486.b4-ty@kernel.dk>
+Date: Tue, 07 May 2024 13:17:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240505-ccid2_rtt_estimator-kdoc-v1-1-09231fcb9145@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Sun, May 05, 2024 at 01:09:31PM -0700, Jeff Johnson wrote:
-> make C=1 reports:
-> 
-> warning: Function parameter or struct member 'mrtt' not described in 'ccid2_rtt_estimator'
-> 
-> So document the 'mrtt' parameter.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+On Tue, 07 May 2024 10:00:01 -0700, Breno Leitao wrote:
+> Utilize set_bit() and test_bit() on worker->flags within io_uring/io-wq
+> to address potential data races.
+> 
+> The structure io_worker->flags may be accessed through various data
+> paths, leading to concurrency issues. When KCSAN is enabled, it reveals
+> data races occurring in io_worker_handle_work and
+> io_wq_activate_free_worker functions.
+> 
+> [...]
 
-The comment just inside tcp_rtt_estimator is a good read :)
+Applied, thanks!
+
+[1/1] io_uring/io-wq: Use set_bit() and test_bit() at worker->flags
+      commit: 8a565304927fbd28c9f028c492b5c1714002cbab
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
