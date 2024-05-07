@@ -1,39 +1,74 @@
-Return-Path: <linux-kernel+bounces-170745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC128BDB5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:24:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD9D8BDB5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF34C1F22096
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FA72B22B54
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6686171739;
-	Tue,  7 May 2024 06:22:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695797C09F;
-	Tue,  7 May 2024 06:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFFF757F0;
+	Tue,  7 May 2024 06:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CB/HxcOU"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B8E71748
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062945; cv=none; b=fqOi++oNQOHxyaIbLyoIhaR4DaOOtlGqV8HFyWEzoc/OAxTnrkinpkEWX400aEAD3Ul5lCvIOaUiHgXIg7c2oLAC+7XQL1LdOLmJiUTt56jYEKdDg7gII0t8g0R8gj6TjEOoFgeHYVNLJQHrSRrp5bGX1M8W9ItuoIgTAqOmrk4=
+	t=1715062960; cv=none; b=QBPasKRxXK5Knuog0ylFez+0j6KG7qUUkn6gvpd9N5uN8j2T5Nx7SdgyUXozCDgvSP2IYg266g4lpp9Zkb9dR5o8Oc2+OfqQTgWNC7P4inOha4xmnqR1DVtioyWEq+63UEJ6Bf03lvYAAPzPi887EVm2jw1UNDgdJD2NmFpdh44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062945; c=relaxed/simple;
-	bh=UcXX3KNSYlqvFcS0Le04L6qUtC0bLkxJUWV2p8KPdSg=;
+	s=arc-20240116; t=1715062960; c=relaxed/simple;
+	bh=Q9AC4r0AoK1M0oAdVpTsYKUhXM2mN3GI1mDvVnQGC2Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oqvub1rqWlv16csSUxFpTSs4DCEBD9Hr4i8rjzZgPPXobF25FeoQsWAcdYMsaPSlKj/KH68idCMfsrx4Cja2tn5pNXwKGncdRaospCfL0sl34oOZsgObH4PGgMKxJNq1RvuU1FLwYNpWbc12W03hl1MchdVNrHNgBVK7aS2+i+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D42F01042;
-	Mon,  6 May 2024 23:22:48 -0700 (PDT)
-Received: from [10.163.37.41] (unknown [10.163.37.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B6093F587;
-	Mon,  6 May 2024 23:22:13 -0700 (PDT)
-Message-ID: <8080ae06-7014-4afe-8620-ffaca6e3c597@arm.com>
-Date: Tue, 7 May 2024 11:52:15 +0530
+	 In-Reply-To:Content-Type; b=nx7ZvmV1HGoiPL71J8iZ8Udx+OcR59Zv3go7qpXwp9smA/VLh8kZGWUK95YSvIeWDZJt3jn0vroinsAZuQh3zlWHlXU+0Oa578i4OEqu+/1wWKRf+epwrANArRxf+g1EnPNACvXWARjp3Cku4BOqKl4Qs8MrjHPL4BDepB5QxEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CB/HxcOU; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59b178b75bso442535166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:22:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715062957; x=1715667757; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=beiw27RTXIH5HRrfx88EYC36+Lb2A/WvRn/ALhCTLBU=;
+        b=CB/HxcOUN7v7THf5jYm/wD96f8cvjw+PfTEUE3TLz1YNchRtjijJHLILhYwoWUfVoF
+         z0Ry8VZZkdfYS+CMHeQZvIOPmevJ8Cpd3HR+Kv4/Oh0pxmSo4ATh1RXDulFNLl66c8gw
+         SJMjTIPqLIbSsfEah1Wy1RxXLzClrousGEooFwX0PGc+q+0rO2679QYl7S4SQhBuo6Lu
+         PlesTyVDtfA0MvIP2Q060xyWL3qazZV6P+AGgQKRppNEkem4vlbOL6Y0U/mVoNwovwcH
+         RYYGWiM1lngShA2lYiZVirs35+bT44HeoEegBN3F4geQZgppN52egBk9816Np4yWINe8
+         bKvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715062957; x=1715667757;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=beiw27RTXIH5HRrfx88EYC36+Lb2A/WvRn/ALhCTLBU=;
+        b=WHRcR11OK9JRhoJnD+DbGX7Vb7Oos6IoZe5GjC1qlDxkEDO8smS9pLtWVkllmZHMOM
+         5VU7uPkhe+DYd6IPeF1STejZ9Zh3oKBOlpQCQLlYxWca0uePlvy6wyUqcit2ruVkM4pX
+         hybv6NaPV+u06dF1b+xvjB5P81SzPQGklyLay76igsA5DbpTo7NYuvCby6anWog7Hlw6
+         3llU783Shu+5fsVwcvzOp+99eFToPoVZkeiUBPUiBA7OuOdPK8sjxw/L18RExu0VRkyH
+         tOwTb6gtqsEMS4arNFBjDHmePV12KNSWq0SSdNXAgoE1eDxYHTip0aNr1YoNo3D2FvCl
+         R9YA==
+X-Forwarded-Encrypted: i=1; AJvYcCXS4mDGj+l6QZ9rXLsLD31A6lcGT1yLWy5FLgH+ruQBV8UWUdXCG7q1ljFx/rZurLZyGxqn5GPDARKxpWp8nL5x4ZEI9J0QDQBv6P8m
+X-Gm-Message-State: AOJu0YxESrJRzTjyG4ZnGgHDv39efVISDnMvOfzRCGSnfYOIzMCDDlsP
+	QjtJIdK+wVDK0QGgbjVvXz1WuaUar8cHg3MdYE8YNhGXbu+NkTcYF87T5j9ZCjI=
+X-Google-Smtp-Source: AGHT+IGkmasyA6LmWUlawvuHFNSmPuwvaCT3lWPXH/IhCvTJz5otxmN9wRBrgft7QO7QH3iambCjZg==
+X-Received: by 2002:a17:907:94c1:b0:a59:cdf4:f940 with SMTP id dn1-20020a17090794c100b00a59cdf4f940mr3536242ejc.28.1715062957112;
+        Mon, 06 May 2024 23:22:37 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id r25-20020a170906351900b00a59b2683971sm3305778eja.187.2024.05.06.23.22.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 23:22:36 -0700 (PDT)
+Message-ID: <d3f9f091-37a5-42fb-aebf-62109db6fa42@linaro.org>
+Date: Tue, 7 May 2024 08:22:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,208 +76,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/17] coresight: Make CPU id map a property of a trace ID
- map
+Subject: Re: [PATCH] nfc: nci: Fix kcov check in nci_rx_work()
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Ryosuke Yasuoka <ryasuoka@redhat.com>, Jeremy Cline <jeremy@jcline.org>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: syzbot <syzbot+0438378d6f157baae1a2@syzkaller.appspotmail.com>,
+ edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>,
+ Johannes Berg <johannes@sipsolutions.net>, Dmitry Vyukov <dvyukov@google.com>
+References: <0000000000007b02500614b66e31@google.com>
+ <550cc81a3dffd07ec1235dc32fd7bbde22d9bf57.camel@sipsolutions.net>
+ <CA+fCnZe_fuT2y4ryFeb8A49k19MY3Nct79JCoGwQh0hjcq6bqA@mail.gmail.com>
+ <6d10f829-5a0c-405a-b39a-d7266f3a1a0b@I-love.SAKURA.ne.jp>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
- gankulkarni@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
- coresight@lists.linaro.org, suzuki.poulose@arm.com, mike.leach@linaro.org
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20240429152207.479221-1-james.clark@arm.com>
- <20240429152207.479221-14-james.clark@arm.com>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240429152207.479221-14-james.clark@arm.com>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <6d10f829-5a0c-405a-b39a-d7266f3a1a0b@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 4/29/24 20:51, James Clark wrote:
-> The global CPU ID mappings won't work for per-sink ID maps so move it to
-> the ID map struct. coresight_trace_id_release_all_pending() is hard
-> coded to operate on the default map, but once Perf sessions use their
-> own maps the pending release mechanism will be deleted. So it doesn't
-> need to be extended to accept a trace ID map argument at this point.
+On 05/05/2024 12:36, Tetsuo Handa wrote:
+> Commit 7e8cdc97148c ("nfc: Add KCOV annotations") added
+> kcov_remote_start_common()/kcov_remote_stop() pair into nci_rx_work(),
+> with an assumption that kcov_remote_stop() is called upon continue of
+> the for loop. But commit d24b03535e5e ("nfc: nci: Fix uninit-value in
+> nci_dev_up and nci_ntf_packet") forgot to call kcov_remote_stop() before
+> break of the for loop.
 > 
-> Signed-off-by: James Clark <james.clark@arm.com>
-> ---
->  .../hwtracing/coresight/coresight-etm-perf.c  |  3 +-
->  .../coresight/coresight-etm3x-core.c          |  3 +-
->  .../coresight/coresight-etm4x-core.c          |  3 +-
->  .../hwtracing/coresight/coresight-trace-id.c  | 28 ++++++++-----------
->  .../hwtracing/coresight/coresight-trace-id.h  |  2 +-
->  include/linux/coresight.h                     |  1 +
->  6 files changed, 20 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index 4afb9d29f355..25f1f87c90d1 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -508,7 +508,8 @@ static void etm_event_start(struct perf_event *event, int flags)
->  		hw_id = FIELD_PREP(CS_AUX_HW_ID_VERSION_MASK,
->  				   CS_AUX_HW_ID_CURR_VERSION);
->  		hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK,
-> -				    coresight_trace_id_read_cpu_id(cpu));
-> +				    coresight_trace_id_read_cpu_id(cpu,
-> +						coresight_trace_id_map_default()));
->  		perf_report_aux_output_id(event, hw_id);
->  	}
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> index 4149e7675ceb..b21f5ad94e63 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> @@ -501,7 +501,8 @@ static int etm_enable_perf(struct coresight_device *csdev,
->  	 * with perf locks - we know the ID cannot change until perf shuts down
->  	 * the session
->  	 */
-> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
-> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
-> +						  coresight_trace_id_map_default());
->  	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
->  		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
->  			dev_name(&drvdata->csdev->dev), drvdata->cpu);
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index f32c8cd7742d..d16d6efb26fa 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -776,7 +776,8 @@ static int etm4_enable_perf(struct coresight_device *csdev,
->  	 * with perf locks - we know the ID cannot change until perf shuts down
->  	 * the session
->  	 */
-> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
-> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
-> +						  coresight_trace_id_map_default());
->  	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
->  		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
->  			dev_name(&drvdata->csdev->dev), drvdata->cpu);
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
-> index 45ddd50d09a6..b393603dd713 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
-> @@ -13,10 +13,12 @@
->  #include "coresight-trace-id.h"
->  
->  /* Default trace ID map. Used in sysfs mode and for system sources */
-> -static struct coresight_trace_id_map id_map_default;
-> +static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
-> +static struct coresight_trace_id_map id_map_default = {
-> +	.cpu_map = &id_map_default_cpu_ids
-> +};
->  
-> -/* maintain a record of the mapping of IDs and pending releases per cpu */
-> -static DEFINE_PER_CPU(atomic_t, cpu_id) = ATOMIC_INIT(0);
-> +/* maintain a record of the pending releases per cpu */
->  static cpumask_t cpu_id_release_pending;
->  
->  /* perf session active counter */
-> @@ -46,12 +48,6 @@ static void coresight_trace_id_dump_table(struct coresight_trace_id_map *id_map,
->  #define PERF_SESSION(n)
->  #endif
->  
-> -/* unlocked read of current trace ID value for given CPU */
-> -static int _coresight_trace_id_read_cpu_id(int cpu)
-> -{
-> -	return atomic_read(&per_cpu(cpu_id, cpu));
-> -}
+> Reported-by: syzbot <syzbot+0438378d6f157baae1a2@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=0438378d6f157baae1a2
+> Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+> Debugged-by: Andrey Konovalov <andreyknvl@gmail.com>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-Just wondering where this per cpu cpu_id ^^ is being dropped off as well
-OR is it still getting used ?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> -
->  /* look for next available odd ID, return 0 if none found */
->  static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
->  {
-> @@ -145,7 +141,7 @@ static void coresight_trace_id_release_all_pending(void)
->  		clear_bit(bit, id_map->pend_rel_ids);
->  	}
->  	for_each_cpu(cpu, &cpu_id_release_pending) {
-> -		atomic_set(&per_cpu(cpu_id, cpu), 0);
-> +		atomic_set(per_cpu_ptr(id_map_default.cpu_map, cpu), 0);
->  		cpumask_clear_cpu(cpu, &cpu_id_release_pending);
->  	}
->  	spin_unlock_irqrestore(&id_map_lock, flags);
-> @@ -160,7 +156,7 @@ int coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map
->  	spin_lock_irqsave(&id_map_lock, flags);
->  
->  	/* check for existing allocation for this CPU */
-> -	id = _coresight_trace_id_read_cpu_id(cpu);
-> +	id = coresight_trace_id_read_cpu_id(cpu, id_map);
->  	if (id)
->  		goto get_cpu_id_clr_pend;
->  
-> @@ -181,7 +177,7 @@ int coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map *id_map
->  		goto get_cpu_id_out_unlock;
->  
->  	/* allocate the new id to the cpu */
-> -	atomic_set(&per_cpu(cpu_id, cpu), id);
-> +	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
->  
->  get_cpu_id_clr_pend:
->  	/* we are (re)using this ID - so ensure it is not marked for release */
-> @@ -203,7 +199,7 @@ void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_ma
->  	int id;
->  
->  	/* check for existing allocation for this CPU */
-> -	id = _coresight_trace_id_read_cpu_id(cpu);
-> +	id = coresight_trace_id_read_cpu_id(cpu, id_map);
->  	if (!id)
->  		return;
->  
-> @@ -216,7 +212,7 @@ void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_ma
->  	} else {
->  		/* otherwise clear id */
->  		coresight_trace_id_free(id, id_map);
-> -		atomic_set(&per_cpu(cpu_id, cpu), 0);
-> +		atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
->  	}
->  
->  	spin_unlock_irqrestore(&id_map_lock, flags);
-> @@ -258,9 +254,9 @@ struct coresight_trace_id_map *coresight_trace_id_map_default(void)
->  }
->  EXPORT_SYMBOL_GPL(coresight_trace_id_map_default);
->  
-> -int coresight_trace_id_read_cpu_id(int cpu)
-> +int coresight_trace_id_read_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
->  {
-> -	return _coresight_trace_id_read_cpu_id(cpu);
-> +	return atomic_read(per_cpu_ptr(id_map->cpu_map, cpu));
->  }
->  EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id);
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
-> index 54b9d8ed903b..ed2bc4b3ad2a 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
-> @@ -93,7 +93,7 @@ void coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_map *id_ma
->   *
->   * return: current value, will be 0 if unallocated.
->   */
-> -int coresight_trace_id_read_cpu_id(int cpu);
-> +int coresight_trace_id_read_cpu_id(int cpu, struct coresight_trace_id_map *id_map);
->  
->  /**
->   * Allocate a CoreSight trace ID for a system component.
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index c16c61a8411d..7d62b88bfb5c 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -234,6 +234,7 @@ struct coresight_sysfs_link {
->  struct coresight_trace_id_map {
->  	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
->  	DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
-> +	atomic_t __percpu *cpu_map;
->  };
->  
->  /**
+Best regards,
+Krzysztof
+
 
