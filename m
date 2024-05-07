@@ -1,112 +1,253 @@
-Return-Path: <linux-kernel+bounces-171796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C9C8BE8D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:26:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B79FC8BE960
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC04282195
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:26:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832D41C23CF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9D616C44F;
-	Tue,  7 May 2024 16:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FE216D324;
+	Tue,  7 May 2024 16:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpoiKtsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HrddjrBT"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1E2165FA4;
-	Tue,  7 May 2024 16:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268FF180A94;
+	Tue,  7 May 2024 16:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099179; cv=none; b=sYN/RKjuBxkAnRfaeKY4yN/Ghs/b3VbfzIORZaSk4YBgfvY4ZdUpKae8ddc/8wPT3WpS0MI76rJkJRL+mx+08NbZwmu2aiA2RljeSPF13Cuu2azEwVjjMF9O0JGytMMYy6A2c4jsA3DzQNn7JYx8F9AMvZPVdsajt1o5F0oc54A=
+	t=1715099713; cv=none; b=ADK09wUCIiqK+t2ELpN8gE13kuzc8Wam9dgUGxGoIfnOQFNRZ65HvUGqed5IIFsUhqA6l+CFm013mhvvKBV5hoAWxEOCEs31jsg+VR9ZErLWHWnNMPAbuUe2n8wk/g1pdip9RI8A35nPMUF6gM1vq6vpU9jzeNBziT4W4Z66tmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099179; c=relaxed/simple;
-	bh=/5I1D7aRR2QRwr2mUkZwUa89+yp2b+yvvGuDrXWWovQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fn2t/2RCvoR7JbjfuKUR61pnck/YmkYFMm7xzdP9gr/hGhUZVuIIxDDATQIfft+DPekDrU6ywfLcxUXZdEazOWNjvSJ3bIRD41NFmuTKHoEEWSizcsbwdnmj4pYh6XIbIKhsEuDiwlG/KvFSZd8RxE/CgDg22i34Rd84MEYpIt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpoiKtsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98957C2BBFC;
-	Tue,  7 May 2024 16:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715099178;
-	bh=/5I1D7aRR2QRwr2mUkZwUa89+yp2b+yvvGuDrXWWovQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JpoiKtsCDRWS9H1oYa/F6JwX9mrEjG8l7IWfcqtNn8AuxO8/CG1gIbh+CBbJ+550C
-	 WAlUqrQJbhClxSfpmosuhoTg6boD5NTMroeZI9Fd8abpXOQEC8Qfb61cMnMWTcqHGJ
-	 qc19+ywvq3bGZfGibwZ9QJ4MV75vqbdvXJoiTpNqc8OSCaY5cI20S51TOvsiyXl93Y
-	 WXEaFYRfmR3uzX2eY9TGF9k1Vmkq5xuO8R7wXsQ5ZIef9QFo0svLZwoTEIgMskSn5t
-	 fH+QFguKVRjj0sdmB5nqvzlmr5EutpSOO6F74VMLulMZCWuqpPJLvVVXw/9HQauPP4
-	 YN1cqa1a8rv2g==
-Date: Tue, 7 May 2024 11:26:16 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com,
-	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, conor+dt@kernel.org, ck.hu@mediatek.com,
-	airlied@gmail.com, linux-mediatek@lists.infradead.org,
-	wenst@chromium.org, chunkuang.hu@kernel.org, daniel@ffwll.ch,
-	tzimmermann@suse.de, matthias.bgg@gmail.com, jitao.shi@mediatek.com,
-	shawn.sung@mediatek.com, linux-arm-kernel@lists.infradead.org,
-	p.zabel@pengutronix.de, dri-devel@lists.freedesktop.org,
-	kernel@collabora.com, yu-chang.lee@mediatek.com
-Subject: Re: [PATCH v3 1/3] dt-bindings: display: mediatek: Add OF graph
- support for board path
-Message-ID: <171509917467.817282.9286531892598521217.robh@kernel.org>
-References: <20240502115622.248456-1-angelogioacchino.delregno@collabora.com>
- <20240502115622.248456-2-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1715099713; c=relaxed/simple;
+	bh=DPO19saSRN9Lr/ZlxmpldjvftdAMtvY2eyxdGYxJ72o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WsX1gQ0fOzAuR/Ibzee9MjOVk5doYrV9jX3I+SBY92vzg8c4iXeQgCVWYoRxTwrzLnG6+3Eq5Exup9e5/WLUlAPc9i8HJHJuQ92w1TH2Zdx/3YxCRntoV1P9WpTMbJDoOTUp82En4rnecIX++uBvSXncZjzzjhMURjiiBHfEKIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HrddjrBT; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447GT26c011816;
+	Tue, 7 May 2024 16:35:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=Ed3ABSWcS7HI/jvRWt0bJ9U+N+WC/8SToS21v9IJLHM=;
+ b=HrddjrBTsJdUEYGW6DqCP1vK7fXsQsXyTkwws8PD/srSexdr7bgmgzOCzMbvBv0QU99T
+ G2+D1pitFWbyybUPcfCfAiDGp3cJKLEZ1+N6RY1IMY3iIrpz6CMFtpFxcD4hdZtCJw0I
+ 2yn9Yjte43gEGXXg6OE/U1vjS4mj7n65WO7YNCE18FRo+sMAA2D1fBFHVAsrCkOb97PU
+ +NBaUB24igsL6Zoe+QtAMBDM0hUKsnxOd0O6IAddtLlRNA3W4cI9rnnuK49WTsTMIBKG
+ tMbZ6pbt3b5/VICVlQDGGtQ0tlJ/E0LPhTNVf4S8rHuQ71YZqVXdtanDxUmZrXq+ykzR tg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqup80g7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 16:35:08 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447GZ81t021994;
+	Tue, 7 May 2024 16:35:08 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqup80g5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 16:35:07 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447E4GMI005886;
+	Tue, 7 May 2024 16:35:07 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xx5yh5w2x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 16:35:07 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447GZ18655706066
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 7 May 2024 16:35:03 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7C75620043;
+	Tue,  7 May 2024 16:35:01 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 48B5C20040;
+	Tue,  7 May 2024 16:35:01 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  7 May 2024 16:35:01 +0000 (GMT)
+Date: Tue, 7 May 2024 18:26:19 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Gerald
+ Schaefer <gerald.schaefer@linux.ibm.com>,
+        Matthew Wilcox
+ <willy@infradead.org>, Thomas Huth <thuth@redhat.com>
+Subject: Re: [PATCH v2 08/10] s390/uv: convert
+ uv_convert_owned_from_secure() to uv_convert_from_secure_(folio|pte)()
+Message-ID: <20240507182619.2846ea8f@p-imbrenda.boeblingen.de.ibm.com>
+In-Reply-To: <20240412142120.220087-9-david@redhat.com>
+References: <20240412142120.220087-1-david@redhat.com>
+	<20240412142120.220087-9-david@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502115622.248456-2-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: crRXsyOa-oSrtq_E7AGyOl_OsN77sIgP
+X-Proofpoint-GUID: RKe4jzWmdoY5D01NMa7mcD3-5zrYeetO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_09,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 priorityscore=1501 adultscore=0 clxscore=1015
+ impostorscore=0 phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2405070112
 
+On Fri, 12 Apr 2024 16:21:18 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-On Thu, 02 May 2024 13:56:20 +0200, AngeloGioacchino Del Regno wrote:
-> The display IPs in MediaTek SoCs support being interconnected with
-> different instances of DDP IPs (for example, merge0 or merge1) and/or
-> with different DDP IPs (for example, rdma can be connected with either
-> color, dpi, dsi, merge, etc), forming a full Display Data Path that
-> ends with an actual display.
+> Let's do the same as we did for uv_destroy_(folio|pte)() and
+> have the following variants:
 > 
-> The final display pipeline is effectively board specific, as it does
-> depend on the display that is attached to it, and eventually on the
-> sensors supported by the board (for example, Adaptive Ambient Light
-> would need an Ambient Light Sensor, otherwise it's pointless!), other
-> than the output type.
+> (1) uv_convert_from_secure(): "low level" helper that operates on paddr
+> and does not mess with folios.
 > 
-> Add support for OF graphs to most of the MediaTek DDP (display) bindings
-> to add flexibility to build custom hardware paths, hence enabling board
-> specific configuration of the display pipeline and allowing to finally
-> migrate away from using hardcoded paths.
+> (2) uv_convert_from_secure_folio(): Consumes a folio to which we hold a
+> reference.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> (3) uv_convert_from_secure_pte(): Consumes a PTE that holds a reference
+> through the mapping.
+> 
+> Unfortunately we need uv_convert_from_secure_pte(), because pfn_folio()
+> and friends are not available in pgtable.h.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+
+Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+
 > ---
->  .../display/mediatek/mediatek,aal.yaml        | 40 +++++++++++++++++++
->  .../display/mediatek/mediatek,ccorr.yaml      | 21 ++++++++++
->  .../display/mediatek/mediatek,color.yaml      | 22 ++++++++++
->  .../display/mediatek/mediatek,dither.yaml     | 22 ++++++++++
->  .../display/mediatek/mediatek,dpi.yaml        | 25 +++++++++++-
->  .../display/mediatek/mediatek,dsc.yaml        | 24 +++++++++++
->  .../display/mediatek/mediatek,dsi.yaml        | 27 ++++++++++++-
->  .../display/mediatek/mediatek,ethdr.yaml      | 22 ++++++++++
->  .../display/mediatek/mediatek,gamma.yaml      | 19 +++++++++
->  .../display/mediatek/mediatek,merge.yaml      | 23 +++++++++++
->  .../display/mediatek/mediatek,od.yaml         | 22 ++++++++++
->  .../display/mediatek/mediatek,ovl-2l.yaml     | 22 ++++++++++
->  .../display/mediatek/mediatek,ovl.yaml        | 22 ++++++++++
->  .../display/mediatek/mediatek,postmask.yaml   | 21 ++++++++++
->  .../display/mediatek/mediatek,rdma.yaml       | 22 ++++++++++
->  .../display/mediatek/mediatek,ufoe.yaml       | 21 ++++++++++
->  16 files changed, 372 insertions(+), 3 deletions(-)
+>  arch/s390/include/asm/pgtable.h |  6 +++---
+>  arch/s390/include/asm/uv.h      |  4 ++--
+>  arch/s390/kernel/uv.c           | 18 +++++++++++++-----
+>  3 files changed, 18 insertions(+), 10 deletions(-)
 > 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+> index 97e040617c29..5ffc4828c25a 100644
+> --- a/arch/s390/include/asm/pgtable.h
+> +++ b/arch/s390/include/asm/pgtable.h
+> @@ -1149,7 +1149,7 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
+>  	res = ptep_xchg_lazy(mm, addr, ptep, __pte(_PAGE_INVALID));
+>  	/* At this point the reference through the mapping is still present */
+>  	if (mm_is_protected(mm) && pte_present(res))
+> -		uv_convert_owned_from_secure(pte_val(res) & PAGE_MASK);
+> +		uv_convert_from_secure_pte(res);
+>  	return res;
+>  }
+>  
+> @@ -1167,7 +1167,7 @@ static inline pte_t ptep_clear_flush(struct vm_area_struct *vma,
+>  	res = ptep_xchg_direct(vma->vm_mm, addr, ptep, __pte(_PAGE_INVALID));
+>  	/* At this point the reference through the mapping is still present */
+>  	if (mm_is_protected(vma->vm_mm) && pte_present(res))
+> -		uv_convert_owned_from_secure(pte_val(res) & PAGE_MASK);
+> +		uv_convert_from_secure_pte(res);
+>  	return res;
+>  }
+>  
+> @@ -1206,7 +1206,7 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
+>  	 * if this is not a mm teardown, the slower export is used as
+>  	 * fallback instead.
+>  	 */
+> -	uv_convert_owned_from_secure(pte_val(res) & PAGE_MASK);
+> +	uv_convert_from_secure_pte(res);
+>  	return res;
+>  }
+>  
+> diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
+> index a1bef30066ef..0679445cac0b 100644
+> --- a/arch/s390/include/asm/uv.h
+> +++ b/arch/s390/include/asm/uv.h
+> @@ -485,7 +485,7 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb);
+>  int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr);
+>  int uv_destroy_folio(struct folio *folio);
+>  int uv_destroy_pte(pte_t pte);
+> -int uv_convert_owned_from_secure(unsigned long paddr);
+> +int uv_convert_from_secure_pte(pte_t pte);
+>  int gmap_convert_to_secure(struct gmap *gmap, unsigned long gaddr);
+>  
+>  void setup_uv(void);
+> @@ -508,7 +508,7 @@ static inline int uv_destroy_pte(pte_t pte)
+>  	return 0;
+>  }
+>  
+> -static inline int uv_convert_owned_from_secure(unsigned long paddr)
+> +static inline int uv_convert_from_secure_pte(pte_t pte)
+>  {
+>  	return 0;
+>  }
+> diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
+> index 61c1ce51c883..b456066d72da 100644
+> --- a/arch/s390/kernel/uv.c
+> +++ b/arch/s390/kernel/uv.c
+> @@ -178,11 +178,10 @@ static int uv_convert_from_secure(unsigned long paddr)
+>  }
+>  
+>  /*
+> - * The caller must already hold a reference to the page
+> + * The caller must already hold a reference to the folio.
+>   */
+> -int uv_convert_owned_from_secure(unsigned long paddr)
+> +static int uv_convert_from_secure_folio(struct folio *folio)
+>  {
+> -	struct folio *folio = phys_to_folio(paddr);
+>  	int rc;
+>  
+>  	/* See gmap_make_secure(): large folios cannot be secure */
+> @@ -190,13 +189,22 @@ int uv_convert_owned_from_secure(unsigned long paddr)
+>  		return 0;
+>  
+>  	folio_get(folio);
+> -	rc = uv_convert_from_secure(paddr);
+> +	rc = uv_convert_from_secure(folio_to_phys(folio));
+>  	if (!rc)
+>  		clear_bit(PG_arch_1, &folio->flags);
+>  	folio_put(folio);
+>  	return rc;
+>  }
+>  
+> +/*
+> + * The present PTE still indirectly holds a folio reference through the mapping.
+> + */
+> +int uv_convert_from_secure_pte(pte_t pte)
+> +{
+> +	VM_WARN_ON(!pte_present(pte));
+> +	return uv_convert_from_secure_folio(pfn_folio(pte_pfn(pte)));
+> +}
+> +
+>  /*
+>   * Calculate the expected ref_count for a folio that would otherwise have no
+>   * further pins. This was cribbed from similar functions in other places in
+> @@ -481,7 +489,7 @@ int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
+>  	 * we instead try to export the page.
+>  	 */
+>  	if (rc)
+> -		rc = uv_convert_owned_from_secure(page_to_phys(page));
+> +		rc = uv_convert_from_secure_folio(folio);
+>  	folio_put(folio);
+>  out:
+>  	mmap_read_unlock(gmap->mm);
 
 
