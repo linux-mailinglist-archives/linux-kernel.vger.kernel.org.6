@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-172230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745828BEF32
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:48:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120D48BEF3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 142F9B21F51
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4A01F2596D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2474514B94D;
-	Tue,  7 May 2024 21:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E7F14B963;
+	Tue,  7 May 2024 21:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M25IOCRZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrv5QkKW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4C177658;
-	Tue,  7 May 2024 21:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF671B5C;
+	Tue,  7 May 2024 21:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715118517; cv=none; b=uzdZkBRnuO9/mMNFZzG9O95iqkfC2/5eWnbYyJ677iHrbSX6oPnXpZnwVuIxWavEqeqsXeZueMYC1q85K1to4Gl6A4WKyYiAoQB91ms8sk+7czAxOJut6fIkRAATkWMsCfditc1dBILHPYkMT3qLdymj++HDEAzDd5oYl8yJTGg=
+	t=1715118731; cv=none; b=NintjaIYUNtPikyWY3ZjWeiItYBjAjBzefLb715EaGkkDs/b4yR7Z3jp4AMR51zi1GM/ogjxGH7ln0QX0rluSxqXPX0YiUixZl19LwnSAok8ZdTSdvRsY9pGluMkw+Vnet257bRKAglrOXxnnrhEI070gYFW5e4w85+J+FJBaTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715118517; c=relaxed/simple;
-	bh=kYExVs3vNwZrtKx+Xy37TbIuGlIJdAuIbdrEdpK1v1w=;
+	s=arc-20240116; t=1715118731; c=relaxed/simple;
+	bh=DdIfWiVoX4WJikGmrYhiK9jfHI2XGJOD/rjGsuFWyHk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tzLamFpbp+KPo/x+4UV/3OXVF0Uz5R7JooNRNfuHgQPQqiTXQqUNTg57HLfy6tEquLqfACodFy+jkKYL5xuVdKYWsLkuQXnrXnGzvuTREtT27KxpG2oHQDKd5IG06UO3UVexwJSuMPrmypbe+lwyt76C5DBLkT4I8ipHPn2uSSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M25IOCRZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C75C2BBFC;
-	Tue,  7 May 2024 21:48:36 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=YfjB63MEedUVkYBEltsIQpV0FWVaw0E97LYjX8fJlYpm99f+U5MGwSDeyqN0VRAdFNSH+FQvQPiuG9Vn6hxvs1l3Ccyk/clqVdpgvzu56bqGQGkRaQgc5U7Jc1ZD8JmRsvBIZUWmt5vsVZ4GSwkuRPtRcRfLm4ETwNirZjoN3i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrv5QkKW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67580C2BBFC;
+	Tue,  7 May 2024 21:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715118516;
-	bh=kYExVs3vNwZrtKx+Xy37TbIuGlIJdAuIbdrEdpK1v1w=;
+	s=k20201202; t=1715118729;
+	bh=DdIfWiVoX4WJikGmrYhiK9jfHI2XGJOD/rjGsuFWyHk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=M25IOCRZTNR8OgIC66y02fXlHkoX8fDq82A9T1fvm2I0jY47iyDErvHoTEfFbchYl
-	 mSHHEfUmA1loX81Nbx+G0Y0kBF4uSlUF3mJbTr9ATPeCSLwLIFOzt66L8IcjtWLWr/
-	 EtJsZOkf5WVfpj0ug8T5jUyCG6EM5BOWL/bwWNhWOnhCElU8SR0Rf0GbwiaOl/cMgj
-	 hN9xwJJU5mwisMFd+/Ze4IN0bmph62tYR00qvhDPXmd3D5f/a8NFEgXtyqxFiEGcP5
-	 JuyEGh923mgDUcMVgFa2rNWUN2pd0NqCNttTvM9rIb2Hmoc/+S4UmNp7sF12wFeZ7Y
-	 okDaNLFtqTVbA==
-Message-ID: <62e1512be0bc44acae9afb34467753db.sboyd@kernel.org>
+	b=lrv5QkKWbIh/dkdhC2UOxgdtXuRWXRpQUShbolM8ov4AmoYK7wSPa36uaNkS2SWSk
+	 mdVvLcBd7yoB8G6G7e6Fk4Yg4frrla2Ygye0JB+AauUqwpNhC0shgwuU6/Quewvxl7
+	 lzf729tCzGjQdUJkLDTIsRxT6GsrVdmZajMpSVzuJuletv+q/QiteKKDoDvVYHmgez
+	 mwlTZkIzjaZOEIr9+3+u1eTuCdP4BSBdux3L1YQoMp1KU/3t2wlMzX+oplUzUew6bz
+	 Xf+1VezXbMcoYlp8NIqspXHWSLu/oj5hNWaoZpaN6mUtliKLOrqrQjkj0AGava7TFr
+	 pXb5JrG/9I2fA==
+Message-ID: <9440dd954294db7c02a11a1807d75ad9.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,83 +49,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
-References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com> <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org> <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
-Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support (clk, reset, pinctrl)
+In-Reply-To: <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
+References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org> <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org> <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org> <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org> <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org> <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org> <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on gcc_sdcc2_apps_clk_src
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-To: Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rafael J. Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-Date: Tue, 07 May 2024 14:48:34 -0700
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
+Date: Tue, 07 May 2024 14:52:07 -0700
 User-Agent: alot/0.10
 
-Quoting Th=C3=A9o Lebrun (2024-05-07 07:52:49)
-> On Sat May 4, 2024 at 4:34 AM CEST, Stephen Boyd wrote:
-> >
-> > Why can't you use auxiliary device and driver APIs?
+Quoting Konrad Dybcio (2024-05-07 14:17:01)
 >=20
-> Good question. Reasons I see:
 >=20
->  - I didn't know about auxdev beforehand. I discussed the rework with a
->    few colleagues and none mentioned it either.
+> On 5/7/24 22:28, Stephen Boyd wrote:
+> >>
+> >=20
+> > Can you share your patch that prints the message? What bit are you
+> > checking in the hardware to determine if the RCG is enabled? Do you also
+> > print the enable count in software?
 >=20
->  - It feels simpler to let each device access iomem resources. From my
->    understanding, an auxdev is supposed to make function calls to its
->    parent without inheriting iomem access. That sounds like it will put
->    the register logic/knowledge inside a single driver, which could or
->    could not be a better option.
-
-You can pass the iomem pointer to the child device, either through the
-struct device platform_data void pointer or you can make a wrapper
-struct for struct auxiliary_device that the child device/driver, e.g.
-pinctrl, would know about. Or you can use a regmap and pass that through
-to the function that creates the auxiliary device.
-
-Either way, we don't want the iomem register logic inside a single
-driver. Conor recently made that change for mpfs. See this patch[1].
-
-The syscon code uses a regmap so that register access uses a spinlock.
-Maybe you need that, or maybe you don't. I don't know. It depends on if
-the device has logical drivers that access some shared register. If that
-doesn't happen then letting the logical drivers map and access the
-registers with iomem accessors is fine. Otherwise, you want some sort of
-mediator function, where regmap helps make that easy to provide.
-
+> I already reset-ed the tree state, but I added something like
 >=20
->    Implementing a function like this feels like cheating:
->       int olb_read(struct device *dev, u32 offset, u32 *val);
+> if (rcg->cmd_rcgr =3D=3D the one in the declaration)
+>         pr_err("gcc_sdcc2_apps_clk_src is %s\n", clk_is_enabled(hw) ? "EN=
+ABLED" : "DISABLED");
 >=20
->    With an MFD, we hand over a part of the iomem resource to each child
->    and they deal with it however they like.
+> to drivers/clk/qcom/clk-rcg2.c : __clk_rcg2_set_rate()
 >=20
->  - Syscon is what I picked to share parts of OLB to other devices that
->    need it. Currently that is only for I2C speed mode but other devices
->    have wrapping-related registers. MFD and syscon are deeply connected
->    so an MFD felt natural.
->=20
->  - That would require picking one device that is platform driver, the
->    rest being all aux devices. Clock driver appears to be the one, same
->    as two existing mpfs and starfive-jh7110 that use auxdev for clk and
->    reset.
->=20
-> Main reason I see for picking auxdev is that it forces devices to
-> interact with a defined internal API. That can lead to nicer
-> abstractions rather than inheriting resources as is being done in MFD.
 >=20
 
-The simple-mfd binding encourages sub-nodes for drivers. This is an
-anti-pattern because we want nodes for devices, not drivers. We should
-discourage the use of that compatible in my opinion.
-
-I could see the MFD subsystem gaining support for creating child
-auxiliary devices for some compatible string node, and passing those
-devices a regmap. Maybe that would be preferable to having to pick a
-driver subsystem to put the platform driver in. Outside of making a
-general purpose framework, you could put the platform driver in
-drivers/mfd and have that populate the child devices like clk, reset,
-pinctrl, etc.
-
-The overall goal is still the same. Don't make child nodes.
-
-[1] https://lore.kernel.org/linux-clk/20240424-strangle-sharpener-34755c5e6=
-e3e@spud/
+Ok. You're reading the software state because there isn't an is_enabled
+clk_op for RCGs. Can you also read the CMD register (0x0 offset from
+base) and check for CMD_ROOT_EN (bit 1) being set? That's what I mean
+when I'm talking about the RCG being enabled in hardware. Similarly,
+read CMD_ROOT_OFF (bit 31) to see if some child branch of the RCG is
+enabled at this time.
 
