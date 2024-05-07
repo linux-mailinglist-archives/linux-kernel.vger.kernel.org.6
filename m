@@ -1,245 +1,103 @@
-Return-Path: <linux-kernel+bounces-171559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0C98BE5BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:23:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8333A8BE5BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E552928C0DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F11528C3F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6510A15E1E3;
-	Tue,  7 May 2024 14:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111C81635B9;
+	Tue,  7 May 2024 14:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xgLGmaUA"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLDRQR48"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AFD161313
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6F715CD57;
+	Tue,  7 May 2024 14:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091556; cv=none; b=oLID4eENPQ/meVsiqR2PiAQZGQMn+x7f+CW0fZeBVwhTStGyzE8ciGErN4gff/EaLmjRI1Ic/a26k6ZBtyg6qc/pBi9tKIFcfirYLeQzTzwJC0kp0n06JCBB3W1/aj/SgM+ypSGyHODOUGy0Bhz0bDEmreZQdXFNyMPxLbut4hM=
+	t=1715091592; cv=none; b=XPF6DdYkzIKV2ZMyzDapY82F+aBjeHeBYP06MgoMmvnu8ShfF8XejPrxS3aDb22QyIkMwyCyMi8FMTzs8+wyjpCfFmr3uCY1JVNyYLgubNEg8myi1jk+JpSHo0HIydXedV+RtZfwoMpJ5as/d/Xi+CECWmEjWjZrw4Vf+uhJ8lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091556; c=relaxed/simple;
-	bh=SrWV3lA7XZV3ok9IEOD7BsKymDLrsRzAizPNR5uZd54=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=i5IavypxHdZGESHxa35Zkjmd1YjxdkTPveHcc6NvBwxBKbp1DwapY0+aQ/vs4LQm9FPT9pzZxTPQ/tFShsJSSf3BzSRLDP4VhgrlWkPGeslwQDcxVx8kxzizcd69xBF3CE0yhVfbF9nib47jJmdCZl1069fevacCxZAKKIM7sTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xgLGmaUA; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41e82b78387so22964995e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715091552; x=1715696352; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8vPANJGtsF09EF/ofF75g4RAILfJhPKsyCQmhmZbuT0=;
-        b=xgLGmaUAkg177LwdvRmEOaWuOY4mPvu45YWzWODl5dnmd0nSt6i5Z+bFIwH5evWwt7
-         z4ipXQQvPi4HrI4k1YZQ36w5aaAY5E5pjPuh+D8XUTF/f2M4mgegEgZkWXcE2V1kOGNR
-         SyDnGmCkKVPlqlC1al8SCMx1WoCWM5haN1PHrAA+pgiW6umpGPksAXnsXxSq1MYUoRBK
-         Y4Z5EOgWAudzq1TPFlw/e/E+JE4j5imlfJJjG7gbO12SSaotjQ6DvBouHCMXPKkYZTg+
-         I8VGxu1wUlclvbJvq+dAYc81wt96yABZ+VgDd+Vtb+TWPH+bXuOB3ksHjF5TjLXnzWZH
-         10Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715091552; x=1715696352;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8vPANJGtsF09EF/ofF75g4RAILfJhPKsyCQmhmZbuT0=;
-        b=Eokwv1HrUVnHE24Ys5thmiyWXighcJuaW6lTEQiRCcZp+bnISqb1CbnYGr2xJOWKvd
-         dSc8GfSbPjbHCG+87bggDl6zqJ+fZ1DcWAEwJWjOOoBqCdc/pqadXjDjIHIRUcD0YA7/
-         oMkju3vilAUTVGLOWHidBfwwCGgdADnB9LFwZ7Khn3DUbkPScblB5Ay7gotCThwKmIQj
-         OVqwuK3PDe+IlfjXj3h19DGOhZQEK9/Mv0jHpz4WlL3McDF4HRsrZrBpBZrsBam8vzyd
-         HBl1VbkV8xR71NWKJ4f+tys+zFq4O052qf0LRDumoBFz6ZGUw5P74Ipcy3un8dSpsfPp
-         OL8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU4ivojS+c9euDl4T80LnVO3q0WCUrQ8wLxGrQWtCP1+eVAuOHsAx31KG9D9kGZPWo6fXw5ew8gKVwJzicBtD9py6JCHmnkteBdU8K4
-X-Gm-Message-State: AOJu0YwgNF4lfhe9MEdHTaXoAyEgBfzSI6t0rtBYMooFFlRo/84OJ4yQ
-	UooJoxJAdWAVBiho1VwHWupV7hNiTXuND9vsXM4/FyCcG95d1qAE1d37tW/Unsc=
-X-Google-Smtp-Source: AGHT+IHbnNFhErMeCitSdRIlebCZxX80ku9KyGdw8IX+BHr63FNPH7iKSIo9eVUpYzl/vVT5lyTjjw==
-X-Received: by 2002:a05:600c:3107:b0:41c:7bd:5a84 with SMTP id g7-20020a05600c310700b0041c07bd5a84mr10780775wmo.17.1715091551661;
-        Tue, 07 May 2024 07:19:11 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:cc5f:d864:2a53:b32f? ([2a01:e0a:982:cbb0:cc5f:d864:2a53:b32f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f42e74625sm17319345e9.0.2024.05.07.07.19.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 07:19:11 -0700 (PDT)
-Message-ID: <340982fb-9e30-4111-a4e7-67d935ca8973@linaro.org>
-Date: Tue, 7 May 2024 16:19:10 +0200
+	s=arc-20240116; t=1715091592; c=relaxed/simple;
+	bh=I6GSM79zSh0XAY+vKPdvnFPU4/CJ/hs9rhFrjdIAG0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=srExu3TSVPMJqIHVWNCWe5TkIRF0oGS3O8OP+oSEsD4pHBqKC/46muwMjwmaO6Y5ik+FRCucmvh3iYYGsutPKSWK/u0KlL8X55jxydz9l3KlxbsN/iGs3kBVm8SJAvHwmztVr8SBLDy7LMkxXPaBXTY7985QUPTAnAKyD2X8dsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLDRQR48; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E361C2BBFC;
+	Tue,  7 May 2024 14:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715091591;
+	bh=I6GSM79zSh0XAY+vKPdvnFPU4/CJ/hs9rhFrjdIAG0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bLDRQR48XooapH0ZewKit48IGIh2VTlTDQaF0bDxl9bUUpbf86uaszRua07O8jHL0
+	 aTaFFW24AqmPc1zr7XgXgqnx9ixM+wXZgsTcQ5BanYgjYlFVcWTEDdChdiC94sYHQR
+	 OfbSRmz8THMZvCtu5VKSggxfFxFI+z27g8ehJ7lwCZ4Gnr8Aagfv1mhO2Tq5ZHkj7D
+	 5xs7Vmd72SMSD7HNQLYdP1W06TUIBgP4x7SOnbEFwQ8j0yKm8CUzyNDjPnQBK48GTb
+	 89XDz4a3lsDixkI4866sO3x09XpCmVzjtpBjmJhXpAjOHclqx24aCg/V7x/eBHbv0W
+	 D59QZxReVJpJA==
+Date: Tue, 7 May 2024 07:19:49 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] lib/test_bitops: Add benchmark test for fns()
+Message-ID: <20240507141949.GA2746430@thelio-3990X>
+References: <20240503041701.GA3660305@thelio-3990X>
+ <ZjSSylciH+qJeEEG@visitorckw-System-Product-Name>
+ <ZjSUk4vgsQ63wfcn@visitorckw-System-Product-Name>
+ <20240503155401.GA3960118@thelio-3990X>
+ <ZjVdbavKgDo8a0CZ@yury-ThinkPad>
+ <20240503222338.GA1908482@thelio-3990X>
+ <CANiq72mJPPp=H6qb7sG1K1hxR3uiHA9+WEVAZkvymSt_dW3CbA@mail.gmail.com>
+ <20240506175209.GA1425562@thelio-3990X>
+ <CANiq72=mSafSJH1hab57LxYfyj_BD7UOtyAerOT8S41MD-MnAw@mail.gmail.com>
+ <Zjld/ImGmyBHTLO4@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] gpiolib: fix the speed of descriptor label setting with
- SRCU
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- "Paul E . McKenney" <paulmck@kernel.org>
-References: <20240507121346.16969-1-brgl@bgdev.pl>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240507121346.16969-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zjld/ImGmyBHTLO4@yury-ThinkPad>
 
-On 07/05/2024 14:13, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, May 06, 2024 at 03:47:24PM -0700, Yury Norov wrote:
+> On Mon, May 06, 2024 at 08:08:41PM +0200, Miguel Ojeda wrote:
+> > On Mon, May 6, 2024 at 7:52 PM Nathan Chancellor <nathan@kernel.org> wrote:
+> > >
+> > > No, unused can be used with local variables, used cannot.
+> > 
+> > Yeah, sorry, I meant `used`, i.e. it is that one the one that
+> > constraints the combination rather than `unused`.
+> > 
+> > >From a quick look at the links in `compiler_attributes.h`, `unused`
+> > can also be applied to types, while `used` cannot -- it is another
+> > difference, but your sentence above already implies it anyway. :)
+> > 
+> > Thanks for the correction!
 > 
-> Commit 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
-> caused a massive drop in performance of requesting GPIO lines due to the
-> call to synchronize_srcu() on each label change. Rework the code to not
-> wait until all read-only users are done with reading the label but
-> instead atomically replace the label pointer and schedule its release
-> after all read-only critical sections are done.
+> I have applied the patch in bitmap-for-next this weekend.
 > 
-> To that end wrap the descriptor label in a struct that also contains the
-> rcu_head struct required for deferring tasks using call_srcu() and stop
-> using kstrdup_const() as we're required to allocate memory anyway. Just
-> allocate enough for the label string and rcu_head in one go.
+> https://github.com/norov/linux/commit/eb21fc0c96b48d1e779a0ab16f9165a3e0cd76ad
 > 
-> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Closes: https://lore.kernel.org/linux-gpio/CAMRc=Mfig2oooDQYTqo23W3PXSdzhVO4p=G4+P8y1ppBOrkrJQ@mail.gmail.com/
-> Fixes: 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/gpio/gpiolib.c | 31 ++++++++++++++++++++++++-------
->   drivers/gpio/gpiolib.h |  7 ++++++-
->   2 files changed, 30 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 94903fc1c145..2fa3756c9073 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -101,6 +101,7 @@ static bool gpiolib_initialized;
->   
->   const char *gpiod_get_label(struct gpio_desc *desc)
->   {
-> +	struct gpio_desc_label *label;
->   	unsigned long flags;
->   
->   	flags = READ_ONCE(desc->flags);
-> @@ -108,23 +109,36 @@ const char *gpiod_get_label(struct gpio_desc *desc)
->   	    !test_bit(FLAG_REQUESTED, &flags))
->   		return "interrupt";
->   
-> -	return test_bit(FLAG_REQUESTED, &flags) ?
-> -			srcu_dereference(desc->label, &desc->srcu) : NULL;
-> +	if (!test_bit(FLAG_REQUESTED, &flags))
-> +		return NULL;
-> +
-> +	label = srcu_dereference_check(desc->label, &desc->srcu,
-> +				       srcu_read_lock_held(&desc->srcu));
-> +
-> +	return label->str;
-> +}
-> +
-> +static void desc_free_label(struct rcu_head *rh)
-> +{
-> +	kfree(container_of(rh, struct gpio_desc_label, rh));
->   }
->   
->   static int desc_set_label(struct gpio_desc *desc, const char *label)
->   {
-> -	const char *new = NULL, *old;
-> +	struct gpio_desc_label *new = NULL, *old;
->   
->   	if (label) {
-> -		new = kstrdup_const(label, GFP_KERNEL);
-> +		new = kzalloc(struct_size(new, str, strlen(label) + 1),
-> +			      GFP_KERNEL);
->   		if (!new)
->   			return -ENOMEM;
-> +
-> +		strcpy(new->str, label);
->   	}
->   
->   	old = rcu_replace_pointer(desc->label, new, 1);
-> -	synchronize_srcu(&desc->srcu);
-> -	kfree_const(old);
-> +	if (old)
-> +		call_srcu(&desc->srcu, &old->rh, desc_free_label);
->   
->   	return 0;
->   }
-> @@ -697,8 +711,11 @@ static void gpiodev_release(struct device *dev)
->   	struct gpio_device *gdev = to_gpio_device(dev);
->   	unsigned int i;
->   
-> -	for (i = 0; i < gdev->ngpio; i++)
-> +	for (i = 0; i < gdev->ngpio; i++) {
-> +		/* Free pending label. */
-> +		synchronize_srcu(&gdev->descs[i].srcu);
->   		cleanup_srcu_struct(&gdev->descs[i].srcu);
-> +	}
->   
->   	ida_free(&gpio_ida, gdev->id);
->   	kfree_const(gdev->label);
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index f67d5991ab1c..69a353c789f0 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -137,6 +137,11 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
->   
->   void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action);
->   
-> +struct gpio_desc_label {
-> +	struct rcu_head rh;
-> +	char str[];
-> +};
-> +
->   /**
->    * struct gpio_desc - Opaque descriptor for a GPIO
->    *
-> @@ -177,7 +182,7 @@ struct gpio_desc {
->   #define FLAG_EVENT_CLOCK_HTE		19 /* GPIO CDEV reports hardware timestamps in events */
->   
->   	/* Connection label */
-> -	const char __rcu	*label;
-> +	struct gpio_desc_label __rcu *label;
->   	/* Name of the GPIO */
->   	const char		*name;
->   #ifdef CONFIG_OF_DYNAMIC
+> Can you guys please take a look at it wrt the last comments? I think
+> it's OK. But if not, I will resend it.
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Yeah, I think it looks reasonable.
 
-Reduces the penalty from 100x / 2985x to only ~2x
-
-Thanks,
-Neil
+Cheers,
+Nathan
 
