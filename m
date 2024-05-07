@@ -1,219 +1,137 @@
-Return-Path: <linux-kernel+bounces-171344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F648BE314
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:08:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2F68BE319
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EC24B26F39
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:08:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88C99B20FBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AE115E1FA;
-	Tue,  7 May 2024 13:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA47215E1FD;
+	Tue,  7 May 2024 13:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="cnwaLcB6"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZHBlv72"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FF815D5C8
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A451F15D5C8;
+	Tue,  7 May 2024 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087301; cv=none; b=crp0GSxaXENTisiZ1j4TXJ1Oyww21I1gBC2Al0GxDsJ9kyeGYeD8UJ2PU+gA5Xe8rqe++/DT8Sz01aFgSiM59wS3uYbhYAw9XZo71ZWbOuIGCcpwDMMGjJvAm6Czj2Cvi5Q2bm5SzF3xMp/qpAjLcLVxEEcssj4XUQIlP06mLMo=
+	t=1715087406; cv=none; b=AIuxRhHDe/mJGKLfgtJgcSdx1SwUFKTWsIosenSnKHBZB6sZsJOmBTiWzB+vk4ClMmZLIgocQM+NcueIVdW2lJZNAOI2WZJ0aeAYYti8jSk0aNa4tBLWutn2sBFipvcYceaHaE8RL7KymmEQcKlS2QxuQNorNp7Dgm6UF9nyFBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715087301; c=relaxed/simple;
-	bh=n2Mq5Nu+Xkq5zWeIyowvn6gZM/ZUCpGAlvmf5z/RNW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cflolx0GRyYXEuwvEO0hJ3axWlZemPU3gmL9CeXT1OX8siLc5hGuN1/qzsVvlfW7l2oFNcPRzGBe5h463AIxLbWEj1Vvqo6Y3JJHtcaJRsSYPU4NsdsEYMAlixmse0uOAbLyUE4BfNxIAIDXI5+Gi8om9rRu83FWtZ+OjHF5DuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cnwaLcB6; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso15798a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:08:19 -0700 (PDT)
+	s=arc-20240116; t=1715087406; c=relaxed/simple;
+	bh=91/YT1VOTrFtLiK7baAlJz3Kqo9pUnO/BDQZ2CpxqjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TvLZd3n6BdEaQzoXFCoBInKJpEx21ujv+YqDWvYw+DsV7lYhOSyQDRjcS6X9Sp5WljHTE08OCrIOBsr5dXpW0e+30hS1TEStpH8dKFrps+53FxyYQ8d0dC2BzeCQYrLkNh+/SJYbzf6hyr8sReQD+vPC9tDcPCVsMB2OHg6QNI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZHBlv72; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34e0d8b737eso3181876f8f.1;
+        Tue, 07 May 2024 06:10:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715087298; x=1715692098; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lIrrWnnAT5iTVbpxiPvm1Ho3YYT5tUO0A7JLwTOVXK4=;
-        b=cnwaLcB62lsChwa8R54ug1CM+hY7lnDJJRjxhXg6XVWDFj5r0z7wf29VCvnZP8Vofl
-         1Oyb/OR2ku18OTX2gcvZhUpAXKMFKwunEd3ZhTD0mQKXi2LgZoaWQyoBiU1GoctkaUmt
-         Dg93s609D98KxOmH6BTtoG4m2ypHzDPnApLDRn7EYY00dbL+x4Nkdlxgzo9D8hz4ll3p
-         yGgcdioSs6UArj8WNAK5q6mgvsTdAhMnwtq9C3uJJDI5zZSZoTSen8pUOaYPjiwxFsV7
-         tHd2i1CnRrWCCWRmcRoBGtQe2GB5oeMjFiTct0GDNA/dCwpCEyupQVx+llOpUgwH3qbt
-         IHmw==
+        d=gmail.com; s=20230601; t=1715087403; x=1715692203; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zWhuKkDlnxPJbDbjOht3LPyoadKgxR6Zdq3ESsD59zE=;
+        b=EZHBlv72dXIxH3xbLCBJNJvqIX6XCngbh95T9XJ/+EM8+k2f/++9znPexmnWgF2pq2
+         IpwdXS6LoIQWWJvn27T+gwRgKuuoj2fC3PR5XLouyl9rYBG4Xu7UkHlZI6vyev9LK0T7
+         JAbhbxaeUuuhjau5PfKIdlxwOdfvEsS5yf7aTGDy9aI07BIgZkl2WYGOSWgzxLL+y0/K
+         cnT0skHO+pI8fWIYfDG/knyJ0U9L4NkxfhOhxYk8qtf/vkMMdfFCeHdyLre8NjwuUr+i
+         WIaa4uKvV0mjpunSb1Ao2Rs8Sq5afgnQG/u68McC9vXNdo4T9/1F7VjNSrBmwJuzOa8E
+         SeIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715087298; x=1715692098;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lIrrWnnAT5iTVbpxiPvm1Ho3YYT5tUO0A7JLwTOVXK4=;
-        b=FZpNEzOyvC/GBgJ1elMiMZ4w+u4Fjv+ZmwW9SPqUudAukxTNVqbBHsMXiUV1B3AG8R
-         Uw4x4VEzQz/Ekfr84ENT14UD+3PzBYzRH5Uk0ojCffeF9wBUrTprRlF47EPFN5t7jsWh
-         tv6Zh/BKpRVLuRwJBsj91T0QoMm5Ka4AIeXDtUoTbBVNK9bbWaXu8NJ0wqkJALJLU+PS
-         4WKC0WR+lnA2CaWdzj2+zBScFdhT77CGKduf3UI2kj6SbzIWH8XnO5tIpVBCHqo8oW9R
-         gMKqNIoaproHcI2jHMu/tji5MzsmopMh1/nPlOQtk4E4JLQaquVJCc/a4YXoWth22PTu
-         ovRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDMFetAx4YefdccIf4FrXcN9BQNVrSFd0u6xZfZ8qR1lhfVVCIKK4Z2yAbdjY1UxH6whASWoh86pt15OL14dW6DHmL5MdbGow/uEyr
-X-Gm-Message-State: AOJu0Yze8ioDk6wQunWSyPKjg0bo4jxg0R+3+lNkyk4CLU968PPeSrpB
-	kLWKvBgdGCtHa2eE6BTYcv8uPNui917uGIf9fbsGFnZYR2/pxEvs02uk1R0yjY75wQJbQcDnwdP
-	114FRnjS0JuYUMwNyfA0nlH/rMgi6oABY3/z/
-X-Google-Smtp-Source: AGHT+IGkGm6L4EiXNU4fc7UybKdRBmMSg1rAidexjsDVp+DghcKGIIa/DK6RPPIqRRMDKijvuWf3NQOkNsDLc3w1ubQ=
-X-Received: by 2002:a05:6402:35d1:b0:572:554b:ec66 with SMTP id
- 4fb4d7f45d1cf-5731310fe6fmr196133a12.3.1715087297784; Tue, 07 May 2024
- 06:08:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715087403; x=1715692203;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zWhuKkDlnxPJbDbjOht3LPyoadKgxR6Zdq3ESsD59zE=;
+        b=bdr6a7BWMX9+4DNeC4SJDMzhw8SKftyEGte0EjbBSP3s4ri+NKWjJiWvwRWa3HcO8P
+         BZpeJ/Hid9E3wM1VgNas17c3oWGh7UD3RrluowXbuPVO3ZOGysXtLTywbjO75rj4Ydx9
+         6uk0ZPVKCxC4o/t1+57u15SN8rLcp1KrPJaYW14lC94lCgA+3LG2qWFJ0FomqwUWxybX
+         nxOrj2HX5jdIdvYQ9GCBjtPaS/QNdzT/7X5AnHd7EO5vJ+IL4pdX9t0dckJ81car07gS
+         y62jVRli78XzL1fVqM5/4cknbkSZK9rQmBp7bRTun52wOQaqZMMzoN26MUqWmS4Q+P2g
+         8kkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1vKihVep/gJ8BuFnQ60RcuubB0doS+qni66ea2EidgPKBfBzmZyumwalb21KP9uvJ56Q4jsEcPksWqfbA+IWKSfDgx8sRU02U1s8=
+X-Gm-Message-State: AOJu0YxG8uxIu6f5QYdiAfSQnA7dQGRVju5RkzsTuJ9aiVcO/d3Y1SsQ
+	fnGtyCbP003mrgz3Yv76UicmMNeqzUj4mntZ5JPjKO+/GJm8CvW7
+X-Google-Smtp-Source: AGHT+IFVS0ZEkqevW9dP+NzuwvDByGtiCtcnyqB2hI1UWywKm3iKHmcKd7uoqFxyB8I12UOS6k4zcw==
+X-Received: by 2002:a05:6000:901:b0:34c:ce6a:96fa with SMTP id ffacd0b85a97d-34f81f39e52mr2553850f8f.34.1715087402694;
+        Tue, 07 May 2024 06:10:02 -0700 (PDT)
+Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id k8-20020a05600c1c8800b00418a6d62ad0sm23528898wms.34.2024.05.07.06.10.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 06:10:02 -0700 (PDT)
+Message-ID: <8980975d-87db-4d57-9e23-4fb7fbb62e7d@gmail.com>
+Date: Tue, 7 May 2024 15:09:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507124229.446802-1-leone4fernando@gmail.com>
-In-Reply-To: <20240507124229.446802-1-leone4fernando@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 7 May 2024 15:08:02 +0200
-Message-ID: <CANn89iKhHJDZZSwz1EtecZduNt7HxYW5o_1T0CJ9kqXxNbqMDA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 0/4] net: route: improve route hinting
-To: Leone Fernando <leone4fernando@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	dsahern@kernel.org, willemb@google.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linaro-mm-sig] [PATCH] dma-buf/sw-sync: don't enable IRQ from
+ sync_print_obj()
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ syzbot <syzbot+a225ee3df7e7f9372dbe@syzkaller.appspotmail.com>,
+ syzkaller-bugs@googlegroups.com, Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ Christian Konig <christian.koenig@amd.com>, Sean Paul
+ <seanpaul@chromium.org>, Chris Wilson <chris@chris-wilson.co.uk>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org
+References: <0000000000000946190610bf7bd5@google.com>
+ <c2e46020-aaa6-4e06-bf73-f05823f913f0@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <c2e46020-aaa6-4e06-bf73-f05823f913f0@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 7, 2024 at 2:43=E2=80=AFPM Leone Fernando <leone4fernando@gmail=
-com> wrote:
+Am 05.05.24 um 16:08 schrieb Tetsuo Handa:
+> Since commit a6aa8fca4d79 ("dma-buf/sw-sync: Reduce irqsave/irqrestore from
+> known context") by error replaced spin_unlock_irqrestore() with
+> spin_unlock_irq() for both sync_debugfs_show() and sync_print_obj() despite
+> sync_print_obj() is called from sync_debugfs_show(), lockdep complains
+> inconsistent lock state warning.
 >
-> In 2017, Paolo Abeni introduced the hinting mechanism [1] to the routing
-> sub-system. The hinting optimization improves performance by reusing
-> previously found dsts instead of looking them up for each skb.
+> Use plain spin_{lock,unlock}() for sync_print_obj(), for
+> sync_debugfs_show() is already using spin_{lock,unlock}_irq().
 >
-> This patch series introduces a generalized version of the hinting mechani=
-sm that
-> can "remember" a larger number of dsts. This reduces the number of dst
-> lookups for frequently encountered daddrs.
->
-> Before diving into the code and the benchmarking results, it's important
-> to address the deletion of the old route cache [2] and why
-> this solution is different. The original cache was complicated,
-> vulnerable to DOS attacks and had unstable performance.
->
-> The new input dst_cache is much simpler thanks to its lazy approach,
-> improving performance without the overhead of the removed cache
-> implementation. Instead of using timers and GC, the deletion of invalid
-> entries is performed lazily during their lookups.
-> The dsts are stored in a simple, lightweight, static hash table. This
-> keeps the lookup times fast yet stable, preventing DOS upon cache misses.
-> The new input dst_cache implementation is built over the existing
-> dst_cache code which supplies a fast lockless percpu behavior.
->
-> The measurement setup is comprised of 2 machines with mlx5 100Gbit NIC.
-> I sent small UDP packets with 5000 daddrs (10x of cache size) from one
-> machine to the other while also varying the saddr and the tos. I set
-> an iptables rule to drop the packets after routing. the receiving
-> machine's CPU (i9) was saturated.
->
-> Thanks a lot to David Ahern for all the help and guidance!
->
-> I measured the rx PPS using ifpps and the per-queue PPS using ethtool -S.
-> These are the results:
+> Reported-by: syzbot <syzbot+a225ee3df7e7f9372dbe@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=a225ee3df7e7f9372dbe
+> Fixes: a6aa8fca4d79 ("dma-buf/sw-sync: Reduce irqsave/irqrestore from known context")
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-How device dismantles are taken into account ?
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
-I am currently tracking a bug in dst_cache, triggering sometimes when
-running pmtu.sh selftest.
+> ---
+>   drivers/dma-buf/sync_debug.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
+> index 101394f16930..237bce21d1e7 100644
+> --- a/drivers/dma-buf/sync_debug.c
+> +++ b/drivers/dma-buf/sync_debug.c
+> @@ -110,12 +110,12 @@ static void sync_print_obj(struct seq_file *s, struct sync_timeline *obj)
+>   
+>   	seq_printf(s, "%s: %d\n", obj->name, obj->value);
+>   
+> -	spin_lock_irq(&obj->lock);
+> +	spin_lock(&obj->lock); /* Caller already disabled IRQ. */
+>   	list_for_each(pos, &obj->pt_list) {
+>   		struct sync_pt *pt = container_of(pos, struct sync_pt, link);
+>   		sync_print_fence(s, &pt->base, false);
+>   	}
+> -	spin_unlock_irq(&obj->lock);
+> +	spin_unlock(&obj->lock);
+>   }
+>   
+>   static void sync_print_sync_file(struct seq_file *s,
 
-Apparently, dst_cache_per_cpu_dst_set() can cache dst that have no
-dst->rt_uncached
-linkage.
-
-There is no cleanup (at least in vxlan) to make sure cached dst are
-either freed or
-their dst->dev changed.
-
-
-TEST: ipv6: cleanup of cached exceptions - nexthop objects          [ OK ]
-[ 1001.344490] vxlan: __vxlan_fdb_free calling
-dst_cache_destroy(ffff8f12422cbb90)
-[ 1001.345253] dst_cache_destroy dst_cache=3Dffff8f12422cbb90
-->cache=3D0000417580008d30
-[ 1001.378615] vxlan: __vxlan_fdb_free calling
-dst_cache_destroy(ffff8f12471e31d0)
-[ 1001.379260] dst_cache_destroy dst_cache=3Dffff8f12471e31d0
-->cache=3D0000417580008608
-[ 1011.349730] unregister_netdevice: waiting for veth_A-R1 to become
-free. Usage count =3D 7
-[ 1011.350562] ref_tracker: veth_A-R1@000000009392ed3b has 1/6 users at
-[ 1011.350562]      dst_alloc+0x76/0x160
-[ 1011.350562]      ip6_dst_alloc+0x25/0x80
-[ 1011.350562]      ip6_pol_route+0x2a8/0x450
-[ 1011.350562]      ip6_pol_route_output+0x1f/0x30
-[ 1011.350562]      fib6_rule_lookup+0x163/0x270
-[ 1011.350562]      ip6_route_output_flags+0xda/0x190
-[ 1011.350562]      ip6_dst_lookup_tail.constprop.0+0x1d0/0x260
-[ 1011.350562]      ip6_dst_lookup_flow+0x47/0xa0
-[ 1011.350562]      udp_tunnel6_dst_lookup+0x158/0x210
-[ 1011.350562]      vxlan_xmit_one+0x4c6/0x1550 [vxlan]
-[ 1011.350562]      vxlan_xmit+0x535/0x1500 [vxlan]
-[ 1011.350562]      dev_hard_start_xmit+0x7b/0x1e0
-[ 1011.350562]      __dev_queue_xmit+0x20c/0xe40
-[ 1011.350562]      arp_xmit+0x1d/0x50
-[ 1011.350562]      arp_send_dst+0x7f/0xa0
-[ 1011.350562]      arp_solicit+0xf6/0x2f0
-[ 1011.350562]
-[ 1011.350562] ref_tracker: veth_A-R1@000000009392ed3b has 3/6 users at
-[ 1011.350562]      dst_alloc+0x76/0x160
-[ 1011.350562]      ip6_dst_alloc+0x25/0x80
-[ 1011.350562]      ip6_pol_route+0x2a8/0x450
-[ 1011.350562]      ip6_pol_route_output+0x1f/0x30
-[ 1011.350562]      fib6_rule_lookup+0x163/0x270
-[ 1011.350562]      ip6_route_output_flags+0xda/0x190
-[ 1011.350562]      ip6_dst_lookup_tail.constprop.0+0x1d0/0x260
-[ 1011.350562]      ip6_dst_lookup_flow+0x47/0xa0
-[ 1011.350562]      udp_tunnel6_dst_lookup+0x158/0x210
-[ 1011.350562]      vxlan_xmit_one+0x4c6/0x1550 [vxlan]
-[ 1011.350562]      vxlan_xmit+0x535/0x1500 [vxlan]
-[ 1011.350562]      dev_hard_start_xmit+0x7b/0x1e0
-[ 1011.350562]      __dev_queue_xmit+0x20c/0xe40
-[ 1011.350562]      ip6_finish_output2+0x2ea/0x6e0
-[ 1011.350562]      ip6_finish_output+0x143/0x320
-[ 1011.350562]      ip6_output+0x74/0x140
-[ 1011.350562]
-[ 1011.350562] ref_tracker: veth_A-R1@000000009392ed3b has 1/6 users at
-[ 1011.350562]      netdev_get_by_index+0xc0/0xe0
-[ 1011.350562]      fib6_nh_init+0x1a9/0xa90
-[ 1011.350562]      rtm_new_nexthop+0x6fa/0x1580
-[ 1011.350562]      rtnetlink_rcv_msg+0x155/0x3e0
-[ 1011.350562]      netlink_rcv_skb+0x61/0x110
-[ 1011.350562]      rtnetlink_rcv+0x19/0x20
-[ 1011.350562]      netlink_unicast+0x23f/0x380
-[ 1011.350562]      netlink_sendmsg+0x1fc/0x430
-[ 1011.350562]      ____sys_sendmsg+0x2ef/0x320
-[ 1011.350562]      ___sys_sendmsg+0x86/0xd0
-[ 1011.350562]      __sys_sendmsg+0x67/0xc0
-[ 1011.350562]      __x64_sys_sendmsg+0x21/0x30
-[ 1011.350562]      x64_sys_call+0x252/0x2030
-[ 1011.350562]      do_syscall_64+0x6c/0x190
-[ 1011.350562]      entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[ 1011.350562]
-[ 1011.350562] ref_tracker: veth_A-R1@000000009392ed3b has 1/6 users at
-[ 1011.350562]      ipv6_add_dev+0x136/0x530
-[ 1011.350562]      addrconf_notify+0x19d/0x770
-[ 1011.350562]      notifier_call_chain+0x65/0xd0
-[ 1011.350562]      raw_notifier_call_chain+0x1a/0x20
-[ 1011.350562]      call_netdevice_notifiers_info+0x54/0x90
-[ 1011.350562]      register_netdevice+0x61e/0x790
-[ 1011.350562]      veth_newlink+0x230/0x440
-[ 1011.350562]      __rtnl_newlink+0x7d2/0xaa0
-[ 1011.350562]      rtnl_newlink+0x4c/0x70
-[ 1011.350562]      rtnetlink_rcv_msg+0x155/0x3e0
-[ 1011.350562]      netlink_rcv_skb+0x61/0x110
-[ 1011.350562]      rtnetlink_rcv+0x19/0x20
-[ 1011.350562]      netlink_unicast+0x23f/0x380
-[ 1011.350562]      netlink_sendmsg+0x1fc/0x430
-[ 1011.350562]      ____sys_sendmsg+0x2ef/0x320
-[ 1011.350562]      ___sys_sendmsg+0x86/0xd0
-[ 1011.350562]
 
