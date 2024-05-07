@@ -1,114 +1,188 @@
-Return-Path: <linux-kernel+bounces-171317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6457D8BE293
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:53:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4658BE295
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E261C20C7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:53:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CBD28C8C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E176F15CD5A;
-	Tue,  7 May 2024 12:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA26F15CD55;
+	Tue,  7 May 2024 12:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Oj1I7pDB"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QmKz/7si"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6942C53E18;
-	Tue,  7 May 2024 12:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6414C156885
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715086426; cv=none; b=MIw909k2SaAO0d0YhsloVwMOUnn6vYc6OC+NyiBd/CFDojhQ4mNKuZN/Q/atqEMX8VziV5LIQLOW8DmV3udRkLK+qQlq8S5YQ65WzgPVyQn0ptccZm6APbxBRATiezwfo5JDXENQkCiYQ9ew4uAyTI8BmgTqFtnezxVUYI/iLNE=
+	t=1715086441; cv=none; b=DKS131XMWam6WSoCPTI8A5xjuAQV7Xt3qCYVW6BAc1UBxJ1/wWawAuIxOdHLzBlV9JeRIBE8o5QE9gWFUbK2LH8L+f9uOEhGPkDyec589gAiZU9jjpJjxu2zJNKzwleKvOg22Wn4d4eXXlzVvQTLheIbMO/i76+smyRldNusK0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715086426; c=relaxed/simple;
-	bh=Yxnfyeh2IaAdO4T8qDfP6RexxVdxlIo3CQDZRvPFWAU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FodTaw06kIZ7JGgDWU9BHZxpmcERybVKaDCHL7Rv27GziomL/+tvAs+SQFTmKqJVdRY41tml1g607FPKHwWfQwgtmw/eXkZCKQbMRSS8/9JhWw7ri7OCQK+iGoecU7r34DqouFRvGM4EZBBMvNYrUcD/mVughDwFFJgETbZQF9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Oj1I7pDB; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715086414; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=+8CSt1B3wcEFd+rtPMw0xXAdxHRKF4spwCM9JWpEye4=;
-	b=Oj1I7pDBJ4R+a1Zd1TZG5Q6iCAdoJIhz7GZ1dEIylwO0kg6i4owFl+Ys+eUmAg+8k5HJ3RoZl3SBDuBiKwC4i7UAGylLpvTee5CN90MUbzpzaD/c4iWk66mckjJ0OT3oZNz+k8WaLBIVEqGLKWPwHe6dmzLDRuFcumgpc2Z+kog=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W607thJ_1715086411;
-Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W607thJ_1715086411)
-          by smtp.aliyun-inc.com;
-          Tue, 07 May 2024 20:53:33 +0800
-From: Wen Gu <guwen@linux.alibaba.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: kgraul@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] net/smc: fix neighbour and rtable leak in smc_ib_find_route()
-Date: Tue,  7 May 2024 20:53:31 +0800
-Message-Id: <20240507125331.2808-1-guwen@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1715086441; c=relaxed/simple;
+	bh=qXGfUlEuyq9acMc9wdmCRc4sbAYNXOqxy6N3x85FJp4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sRGS/8PwPaDH2XU22FJHh8RokCNQwrsDGTAbxfL870Dg6RHdRDIqhMst3vDGD2za/a5C1gxrlt6QxH5Bn0m12BBZIccFXDVKcUYIP2AKlzpAdtA5hdKZlDYhXUnlmWAKW6qdXYMhuwuzM3kPi7eGGomowrML8pTfYTirFf3rCLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QmKz/7si; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-5e4f79007ffso2071692a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 05:54:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715086440; x=1715691240; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qXGfUlEuyq9acMc9wdmCRc4sbAYNXOqxy6N3x85FJp4=;
+        b=QmKz/7si5sk2ZXhDFfHm4Abf4ivIBe+F8/ofEZwcQM6a1sH52euRDjf1S4sFC4JZXe
+         QJHq0XNWEv14zgxHPhrg1AdTzEKyHT6UR5NIcBeiq64oANkoFufMvh/PpM15KyRH+vtG
+         Z32UxiV+6US1OyOlTs/NNpmtDtMQC6+7BLPQ8HN2ITL3shQZGHt/gyF2zQE2lmn9uTF4
+         TMaMlNfH8V1YLsuVf8JENZ6gzgdOhgDieRM/HTW24gD2DV/23T4oh+XhADHLxga2cG2y
+         zLJv2oF3L5h7H3p6QoIVexAKiq8FFgEP9sM+wkSYvd5LC7UBeIUnoGm7W4iGFUJOR0Hl
+         XkBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715086440; x=1715691240;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qXGfUlEuyq9acMc9wdmCRc4sbAYNXOqxy6N3x85FJp4=;
+        b=kUQGt84AWRetPbmELSphksn3kEtMP4qIJha6jBQSdH0KFhuhZ2fpQDG1Br0TDX//NZ
+         lVHd7tN/0/PpO1vFlziOGnkPusWFbN8GLD/Zy6itnm5b6ox6cvpVnM4rGVVkSkkUmoq7
+         jN3SeyD3c+i1i32L4Juw5JIS4VZW2CuX42mcTDqsuEmSZLX5BRQOqSdUpCVsmVpvDHQp
+         Cf244o21nsASbhL9fP2RC40iRTtxUZpRM+UdpBiBuIOLIM91GE+d4nQIv32Q4+QPO9NQ
+         cXkEYmufxmtan0iqPQZ3gfldV84rgt0dWEs5y5XMa+EaVNXpW/TxAhFcXqqVpiOpEsOZ
+         GRrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXe+SH4xheY98rhYcQ96rqwCGXh0rgTmc5bunv1jNqdXKpQsqbq23/6Q0/PknNgy71XHX3mY2DQOk/ARMPIQaZ0YDw5yL9y8D+Y300w
+X-Gm-Message-State: AOJu0Yz5S4mqXBWBjBZ5JLyUaUaFtej21NrI+XDFJ1uqky5qyLorrE4y
+	A1NIe7lenw1rhD41CBVRuhwjdXBuUu1vgYh4z2tDvyNjxKZSilNdmR+7QsqRwPC4xnF6V7em29o
+	TF0sUEW1M4gdpYRYlJ3nop+MDGu6DdKUQXgoKoA==
+X-Google-Smtp-Source: AGHT+IF3096jy/BSNmowrhBG7/4P6Cfwvb5f60E87UNKn0QswOMKfkSoKQ0PEOrgiFEyqfvYve9FVZFHeqzt4AK+nAo=
+X-Received: by 2002:a17:90a:930c:b0:2a1:f586:d203 with SMTP id
+ p12-20020a17090a930c00b002a1f586d203mr10241315pjo.41.1715086438068; Tue, 07
+ May 2024 05:53:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240505233103.168766-1-qyousef@layalina.io> <CAKfTPtDvBAFauUfyWZhYRUz6f42iMAJcwcdDDQh+V8+QfDwc2Q@mail.gmail.com>
+ <20240507110809.a45amdmhy5vr5cuw@airbuntu>
+In-Reply-To: <20240507110809.a45amdmhy5vr5cuw@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 7 May 2024 14:53:46 +0200
+Message-ID: <CAKfTPtDHWBKfksW4jQJ3KZVb7_GDXLZB1F7auYVZE1ddyDpgYQ@mail.gmail.com>
+Subject: Re: [PATCH v2] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In smc_ib_find_route(), the neighbour found by neigh_lookup() and rtable
-resolved by ip_route_output_flow() are not released or put before return.
-It may cause the refcount leak, so fix it.
+On Tue, 7 May 2024 at 13:08, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 05/07/24 10:58, Vincent Guittot wrote:
+> > On Mon, 6 May 2024 at 01:31, Qais Yousef <qyousef@layalina.io> wrote:
+> > >
+> > > Improve the interaction with cpufreq governors by making the
+> > > cpufreq_update_util() calls more intentional.
+> > >
+> > > At the moment we send them when load is updated for CFS, bandwidth for
+> > > DL and at enqueue/dequeue for RT. But this can lead to too many updates
+> > > sent in a short period of time and potentially be ignored at a critical
+> > > moment due to the rate_limit_us in schedutil.
+> > >
+> > > For example, simultaneous task enqueue on the CPU where 2nd task is
+> > > bigger and requires higher freq. The trigger to cpufreq_update_util() by
+> > > the first task will lead to dropping the 2nd request until tick. Or
+> > > another CPU in the same policy triggers a freq update shortly after.
+> > >
+> > > Updates at enqueue for RT are not strictly required. Though they do help
+> > > to reduce the delay for switching the frequency and the potential
+> > > observation of lower frequency during this delay. But current logic
+> > > doesn't intentionally (at least to my understanding) try to speed up the
+> > > request.
+> > >
+> > > To help reduce the amount of cpufreq updates and make them more
+> > > purposeful, consolidate them into these locations:
+> > >
+> > > 1. context_switch()
+> >
+> > I don't see any cpufreq update when switching from idle to CFS. We
+>
+> You mean SCHED_IDLE to SCHED_NORMAL, right? Yes, if we switch policies even
+> from fair to RT an update could be missed.
 
-Link: https://lore.kernel.org/r/20240506015439.108739-1-guwen@linux.alibaba.com
-Fixes: e5c4744cfb59 ("net/smc: add SMC-Rv2 connection establishment")
-Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
----
-v2->v1
-- call ip_rt_put() to release rt as well.
----
- net/smc/smc_ib.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+No I mean going out of idle. On an idle cpu, nothing happens at CFS
+task wakeup and we have to wait for the next tick to apply the new
+freq. This happens for both short task with uclamp min or long
+running/sleeping task (i.e. with high util_est)
 
-diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
-index 97704a9e84c7..9297dc20bfe2 100644
---- a/net/smc/smc_ib.c
-+++ b/net/smc/smc_ib.c
-@@ -209,13 +209,18 @@ int smc_ib_find_route(struct net *net, __be32 saddr, __be32 daddr,
- 	if (IS_ERR(rt))
- 		goto out;
- 	if (rt->rt_uses_gateway && rt->rt_gw_family != AF_INET)
--		goto out;
--	neigh = rt->dst.ops->neigh_lookup(&rt->dst, NULL, &fl4.daddr);
--	if (neigh) {
--		memcpy(nexthop_mac, neigh->ha, ETH_ALEN);
--		*uses_gateway = rt->rt_uses_gateway;
--		return 0;
--	}
-+		goto out_rt;
-+	neigh = dst_neigh_lookup(&rt->dst, &fl4.daddr);
-+	if (!neigh)
-+		goto out_rt;
-+	memcpy(nexthop_mac, neigh->ha, ETH_ALEN);
-+	*uses_gateway = rt->rt_uses_gateway;
-+	neigh_release(neigh);
-+	ip_rt_put(rt);
-+	return 0;
-+
-+out_rt:
-+	ip_rt_put(rt);
- out:
- 	return -ENOENT;
- }
--- 
-2.32.0.3.g01195cf9f
+>
+> I'll need to think more about it, but I think adding an update when we switch
+> policies in the syscall looks sufficient to me, if the task is on rq already.
+> Agreed?
+>
+> > have to wait for the next tick to get a freq update whatever the value
+> > of util_est and uclamp
+> >
+> > > 2. task_tick_fair()
+> >
+> > Updating only during tick is ok with a tick at 1000hz/1000us when we
+> > compare it with the1048us slice of pelt but what about 4ms or even
+> > 10ms tick ? we can have an increase of almost 200 in 10ms
+>
+> IMHO the current code can still fail with these setups to update frequencies in
+> time. If there's a single task on the rq, then the only freq update will happen
+> at tick. So this is an existing problem.
 
+But any newly enqueued task can trigger a freq update without waiting
+1/4/10ms whereas we need to wait for next tick with this patch
+
+>
+> The way I see it is that setting such high TICK values implies low
+> responsiveness by definition. So the person who selects this setup needs to
+> cater that their worst case scenario is that and be happy with it. And this
+> worst case scenario does not change.
+>
+> That said, the right way to cater for this is via my other series to remove the
+> magic margins. DVFS headroom should rely on TICK value to ensure we run at
+> adequate frequency until the next worst case scenario update, which relies on
+> TICK. Which is sufficient to handle util_est changes. See below for uclamp.
+>
+> Wake up preemption should cause context switches to happen sooner than a tick
+> too as we add more tasks on the rq. So I think the worst case scenario is not
+> really changing that much. In my view, it's better to be consistent about the
+> behavior.
+>
+> >
+> > > 3. {attach, detach}_entity_load_avg()
+> >
+> > At enqueue/dequeue, the util_est will be updated and can make cpu
+> > utilization quite different especially with long sleeping tasks. The
+> > same applies for uclamp_min/max hints of a newly enqueued task. We
+> > might end up waiting 4/10ms depending of the tick period.
+>
+> uclamp_min is a property of the task. And waiting for the task that needs the
+> boost to run is fine IMHO. And I am actually hoping to remove uclamp max()
+
+But you will delay all CPU work and the running time fo the task
+
+And what about util_est ?
+
+> aggregation in favour of applying boosts/caps when tasks are RUNNING. But more
+> things need to be improved first.
+>
+> We are missing a freq update when uclamp values change by the way. This is
+> a known bug and I keep forgetting to post a patch to fix it. Let me do this
+> along update freq when policy changes.
+>
+> Thanks!
 
