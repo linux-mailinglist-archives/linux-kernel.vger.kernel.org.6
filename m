@@ -1,162 +1,178 @@
-Return-Path: <linux-kernel+bounces-170702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273B68BDABC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:44:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838E48BDAC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E741F21EDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5AF282BC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98C36BFBA;
-	Tue,  7 May 2024 05:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A826BFDD;
+	Tue,  7 May 2024 05:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="QeQkweQ1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ADWUYd67"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FuNCQ0Fc"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C062E6BB20;
-	Tue,  7 May 2024 05:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0656BB20;
+	Tue,  7 May 2024 05:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715060652; cv=none; b=fWC3WYOFmLU1L5STQ6H5CwQGlzxhT0j7byhSOxrEuCQdJT3wqDmIKPOwsqwb3RtfBOxQRuR73nLvwDc6NE3mbw05kZtFXVK6MwZs0uVrhXgF696QghqkYgzIh8ms/pHJkhuVpP5A2EUmQx/Oy2RNLX51XmoASsaCnglvxWp55Zk=
+	t=1715060807; cv=none; b=PdgPJxZkuKTN29O8PlB2ybhDO35V79ZBuWOI9FHlLzTsoDmaqyzmCu9tdMNPwiFw46Owk2PhitQVTffviQNtXdpi8b0b+jf0hW9SKPd/72jBJzEKQVSOwNOtNatcU5TqIkUmIIDrQ+wb03NiuIGGtEBcj8YN85a/xXW6PVnqXZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715060652; c=relaxed/simple;
-	bh=xUUikjw73Z2SWVDsnoMEjL6NWbOu9X7Pm9owE8s4BBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIbiZ3EZo9N7gMLrkT9aaCsIhNDiXxTaqTxjrfQymNhxPN8pxksqwD7lwy+uHbIYTDLyGbM5Tz5KagcI6scZBDGcPuIcB8dgssuh1wqMdwDji9AnddBlatDuspAenFjzOgDjQ1QVOeKy0ZE/Wi6Fh3zzPrYhFCgUye/tL1i/c8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=QeQkweQ1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ADWUYd67; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id CA3DA114010D;
-	Tue,  7 May 2024 01:44:08 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 07 May 2024 01:44:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1715060648; x=1715147048; bh=lkeboXyBVp
-	NmNRvKnjyj6x8sgel+2B8ncRxdOm+B4m4=; b=QeQkweQ1+bCG+NzV9FSr3Vpu4c
-	FR4kr6FpUMW/7D+ATsXbatQPO4TUNVgzI5xIsKhqsthkMm3PEyKqeuFj5QnVj7G2
-	YaCx7u00n3QYC9yZvbUrbGz8TQMw4VL96FI3LbAcQ9VGaLqddnlB9tIWgO1zJZfP
-	YJ3Xy1iAoLApjkDcBnBGSNr62XV8Cf5AUIbb74D8WjbDFlPavSyCqDv0TEFNfb2i
-	dmC/69b3+mvA8OLULvQCGBg1ycREVLf18qnD6sVq+iVYgyPPe6Y3qWZOO4M5Yop0
-	xDWRylj+tE8TPn72m+ACjbVm7VQW6eAjzye0st8Rd/dxm7Nz+uBXwJLxdtqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715060648; x=1715147048; bh=lkeboXyBVpNmNRvKnjyj6x8sgel+
-	2B8ncRxdOm+B4m4=; b=ADWUYd67gU3t6wO84l5Ys2TG+vpv4c8/rxVA9/MiHsnO
-	yGtp70MFyvgpofeyz3UTGPyGP+fPOLLUq4jav5ck951pVKmUDn2R1pmXhoiUySoT
-	4ncAFm7yQwB8kJz8AGyZLd8E9sCX9VF61BvZNB2JpbfClwlz+i/UX+rD+hCgomCQ
-	2FXfObMv+NqtGjH3ZR9AqamjC1pQDhK5xRzPaRe7IwMVcJtuser+1qAvuQT0NvGZ
-	3f7eLmKjwzzdRTOJL7aEOnHgOcdYSTonvdj5XPscDwlOu588sKDqzeG4YKV+gRj5
-	z8Nk5R3QQbTOP2Au+jiaPv8qhlpkoqfZsVdz+h0LLQ==
-X-ME-Sender: <xms:qL85Zv5bpem87foY8yva3ZgY8BqwUbmp2beoqHOQkps6ny9if3FOgw>
-    <xme:qL85Zk57LGYs2HWA1h9x20PXqAJndsUbLChHcaqw7rK_1CNPefxDI2RN9IVoF1dbQ
-    vdlNbIARysCmXV9PyM>
-X-ME-Received: <xmr:qL85ZmfsAL_w_R1iWvzhNSGuVLfKiH7cuzTXo02qM0GGRu8sVifKr0B44FPINevuvkd9yzhvTZfXrHr9zS91FdgfopNixhamo0xp>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvjedgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheprfgvthgv
-    rhcujfhuthhtvghrvghruceophgvthgvrhdrhhhuthhtvghrvghrseifhhhoqdhtrdhnvg
-    htqeenucggtffrrghtthgvrhhnpeekvdekgeehfeejgfdvudffhfevheejffevgfeigfek
-    hfduieefudfgtedugfetgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvth
-X-ME-Proxy: <xmx:qL85ZgKeoK0iG_pOUEJyngrRgD-qZQr_WVRyoGXxUmIebKdrh8Eqbw>
-    <xmx:qL85ZjLXdN2iGRSViUXKL1eHi372Qb2fMHNxOB3MDI3bKuTAT3YKjA>
-    <xmx:qL85ZpwoFYPnJ-VWosex2jtajpeCUaX8e4LZyj5jSygbS7JOvbtIIA>
-    <xmx:qL85ZvID7Py1eI5HiL8LHJKKqBawU-stWBtoQR8C2DUWfXGk03iyDA>
-    <xmx:qL85Zlya9pfG5BcaMtzX7R0zMqPC7mOPmDqMu59T_SNoal34jwQB_OmQ>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 May 2024 01:44:04 -0400 (EDT)
-Date: Tue, 7 May 2024 15:43:58 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: bentiss@kernel.org
-Cc: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-input@vger.kernel.org, Martin Sivak <mars@montik.net>,
-	Ping Cheng <pinglinux@gmail.com>,
-	Jason Gerecke <killertofu@gmail.com>,
-	Aaron Armstrong Skomra <skomra@gmail.com>,
-	Joshua Dickens <Joshua@joshua-dickens.com>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 19/18] selftests/hid: skip tests with HID-BPF if
- udev-hid-bpf is not installed
-Message-ID: <20240507054358.GA696790@quokka>
-References: <20240410-bpf_sources-v1-0-a8bf16033ef8@kernel.org>
- <20240506143612.148031-1-bentiss@kernel.org>
+	s=arc-20240116; t=1715060807; c=relaxed/simple;
+	bh=/NxMfXX51LM6wRVaE17ulyFtkVct5TM0jpzpKe/PK9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MrkHHrYmtT682O6mdbMY5bFf2hLQbB+JatsMPK47kO8kQUuC/kKWlZ9S+quHcexENezVS9w5mLS8XpzgUIXFvB3mmMdN7OYnepwc52I1Ay1X6JXc26GdDHzg269cLreTB5rjLNNPI5bfqvNirUoRYc49jeFd4ULtDF6XOcOHto0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FuNCQ0Fc; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715060797;
+	bh=/NxMfXX51LM6wRVaE17ulyFtkVct5TM0jpzpKe/PK9U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FuNCQ0FcD+ZiIfF/od4b4YLkcRCXp0rGoT+N7WjM9oDvvlxsjT6MHIJpOjY9CAeLi
+	 lbBqMMTrBcbEomZO8hEKDPeNiifXlvgQ5BefORRhZ1Nl4clkVZeQIRufHGARJ6C4Gw
+	 ng2QdkYlG4zyiHeI4HnDVEmdka24eWcpTLlh2c12W7tw2yxbzZ0CTP2kdUhrl8mvuH
+	 4gC+cNIrBnJ4z2e0d93ltIPinESo7lf5c/8fM3QHzetcQ2B0ERSZl6sqToa+s+mZpE
+	 su/MOeBms3n85AwVi5jrTulqPOCdt3gcitgUIVAxz94JxzVbcaoK99ml7BLHEgj7Yy
+	 jy7JMOcnJtY9w==
+Received: from [100.66.96.193] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 93DFB3781FE9;
+	Tue,  7 May 2024 05:46:34 +0000 (UTC)
+Message-ID: <0e56241a-859b-45d6-bc7e-da2ed894d01a@collabora.com>
+Date: Tue, 7 May 2024 11:16:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506143612.148031-1-bentiss@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/5] drm/ci: generate testlist from build
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
+ helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
+ robdclark@gmail.com, david.heidelberg@collabora.com,
+ guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com,
+ mcanal@igalia.com, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org,
+ linux-kernel@vger.kernel.org
+References: <20240430091121.508099-1-vignesh.raman@collabora.com>
+ <20240430091121.508099-3-vignesh.raman@collabora.com>
+ <k7sepoksttro3dgxxtwxfmlxwv5w5zn3aeso7p24mm3n74bo45@kx2dpe2qkqgo>
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <k7sepoksttro3dgxxtwxfmlxwv5w5zn3aeso7p24mm3n74bo45@kx2dpe2qkqgo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 06, 2024 at 04:36:12PM +0200, bentiss@kernel.org wrote:
-> From: Benjamin Tissoires <bentiss@kernel.org>
-> 
-> udev-hid-bpf is still not installed everywhere, and we should probably
-> not assume it is installed automatically.
-> 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> ---
-> 
-> I wanted to apply this series given that it wasn't reviewed in a month,
+Hi Dmitry,
 
-apologies. Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+On 30/04/24 15:47, Dmitry Baryshkov wrote:
+> On Tue, Apr 30, 2024 at 02:41:18PM +0530, Vignesh Raman wrote:
+>> Stop vendoring the testlist into the kernel. Instead, use the
+>> testlist from the IGT build to ensure we do not miss renamed
+>> or newly added tests.
+>>
+>> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+>> ---
+>>   drivers/gpu/drm/ci/build-igt.sh  |   23 +
+>>   drivers/gpu/drm/ci/igt_runner.sh |    9 +-
+>>   drivers/gpu/drm/ci/testlist.txt  | 2761 ------------------------------
+>>   3 files changed, 28 insertions(+), 2765 deletions(-)
+>>   delete mode 100644 drivers/gpu/drm/ci/testlist.txt
+>>
+>> diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
+>> index 500fa4f5c30a..cedc62baba1e 100644
+>> --- a/drivers/gpu/drm/ci/build-igt.sh
+>> +++ b/drivers/gpu/drm/ci/build-igt.sh
+>> @@ -26,6 +26,29 @@ meson build $MESON_OPTIONS $EXTRA_MESON_ARGS
+>>   ninja -C build -j${FDO_CI_CONCURRENT:-4} || ninja -C build -j 1
+>>   ninja -C build install
+>>   
+>> +set +ex
+>> +export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/igt/lib64
+>> +while read -r line; do
+>> +    if [ "$line" = "TESTLIST" ] || [ "$line" = "END TESTLIST" ]; then
+>> +        continue
+>> +    fi
+>> +
+>> +    tests=$(echo "$line" | tr ' ' '\n')
+>> +
+>> +    for test in $tests; do
+>> +        output=$(/igt/libexec/igt-gpu-tools/"$test" --list-subtests)
+>> +
+>> +        if [ -z "$output" ]; then
+>> +            echo "$test"
+>> +        else
+>> +            echo "$output" | while read -r subtest; do
+>> +                echo "$test@$subtest"
+>> +            done
+>> +        fi
+>> +    done
+>> +done < /igt/libexec/igt-gpu-tools/test-list.txt > /igt/libexec/igt-gpu-tools/testlist.txt
+>> +set -ex
+> 
+> Is the list in sync between x86 and arm/arm64 IGT builds? Is there a
+> chance of having a safety net here?
 
-(I have a few improvement suggestions for the hidtools code but it's
-better to do those there and then sync back).
+We need to handle arm/arm64 cases also. IGT is not generating test-list 
+for arm and it is fixed now with 
+https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/commit/1cf83083f855894dd287d9cf84bbcc2952b52d02
 
-Cheers,
-  Peter
+Will uprev IGT to latest commit to include this fix. Thanks.
 
-> but I thought that maybe I should not enforce ude-hid-bpf to be
-> installed everywhere.
-> 
-> I'll probably push this series tomorrow so it makes the 6.10 cut.
-> 
-> Cheers,
-> Benjamin
-> 
->  tools/testing/selftests/hid/tests/base.py | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/hid/tests/base.py b/tools/testing/selftests/hid/tests/base.py
-> index 2d006c0f5fcd..3a465768e507 100644
-> --- a/tools/testing/selftests/hid/tests/base.py
-> +++ b/tools/testing/selftests/hid/tests/base.py
-> @@ -8,6 +8,7 @@
->  import libevdev
->  import os
->  import pytest
-> +import shutil
->  import subprocess
->  import time
->  
-> @@ -240,6 +241,10 @@ class BaseTestCase:
->              root_dir = (script_dir / "../../../../..").resolve()
->              bpf_dir = root_dir / "drivers/hid/bpf/progs"
->  
-> +            udev_hid_bpf = shutil.which("udev-hid-bpf")
-> +            if not udev_hid_bpf:
-> +                pytest.skip("udev-hid-bpf not found in $PATH, skipping")
-> +
->              wait = False
->              for _, rdesc_fixup in self.hid_bpfs:
->                  if rdesc_fixup:
-> -- 
-> 2.44.0
+Regards,
+Vignesh
+
+>> +
+>>   mkdir -p artifacts/
+>>   tar -cf artifacts/igt.tar /igt
+>>   
+>> diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
+>> index f1a08b9b146f..20026612a9bd 100755
+>> --- a/drivers/gpu/drm/ci/igt_runner.sh
+>> +++ b/drivers/gpu/drm/ci/igt_runner.sh
+>> @@ -59,25 +59,26 @@ fi
+>>   
+>>   curl -L --retry 4 -f --retry-all-errors --retry-delay 60 -s ${FDO_HTTP_CACHE_URI:-}$PIPELINE_ARTIFACTS_BASE/$ARCH/igt.tar.gz | tar --zstd -v -x -C /
+>>   
+>> +TESTLIST="/igt/libexec/igt-gpu-tools/testlist.txt"
+>>   
+>>   # If the job is parallel at the gitab job level, take the corresponding fraction
+>>   # of the caselist.
+>>   if [ -n "$CI_NODE_INDEX" ]; then
+>> -    sed -ni $CI_NODE_INDEX~$CI_NODE_TOTAL"p" /install/testlist.txt
+>> +    sed -ni $CI_NODE_INDEX~$CI_NODE_TOTAL"p" $TESTLIST
+>>   fi
+>>   
+>>   # core_getversion checks if the driver is loaded and probed correctly
+>>   # so run it in all shards
+>> -if ! grep -q "core_getversion" /install/testlist.txt; then
+>> +if ! grep -q "core_getversion" $TESTLIST; then
+>>       # Add the line to the file
+>> -    echo "core_getversion" >> /install/testlist.txt
+>> +    echo "core_getversion" >> $TESTLIST
+>>   fi
+>>   
+>>   set +e
+>>   igt-runner \
+>>       run \
+>>       --igt-folder /igt/libexec/igt-gpu-tools \
+>> -    --caselist /install/testlist.txt \
+>> +    --caselist $TESTLIST \
+>>       --output /results \
+>>       $IGT_SKIPS \
+>>       $IGT_FLAKES \
 > 
 
