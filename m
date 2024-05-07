@@ -1,150 +1,227 @@
-Return-Path: <linux-kernel+bounces-172046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB9A8BEC65
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:15:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE8C8BEC6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13811C242C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B8F28835C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA316DEAE;
-	Tue,  7 May 2024 19:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69A716DECF;
+	Tue,  7 May 2024 19:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ef6HhOr1"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HDG4RCQR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DCD16D319
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310A816E88E;
+	Tue,  7 May 2024 19:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715109302; cv=none; b=ODAsD46CZ0LhyHwiTFJVSx7VQaH6LGrvKFHtcr3iQPWJb/g8KJC+wAQZ8O2adySWxlkrenZEkJrdRYdAoC3OTR2/kcKKgoOZhw+Kluqb70TlbqTIZxdYmpX9qrk5X4Bo/udnCx147UerGij3VnXXZJTM8zbf14j0bfuA+BAsM9g=
+	t=1715109345; cv=none; b=VbU9o3Iv/war8KwDpZrP3YMWRML3awnnH6pa8+wgxntLIE7TF3WhAOiN7WIEfAtbSU3NpzjOstXTN4TBPO+rv5njERWM+JVKRge7uAMjM7lTh0AWlCOguLd/OESESWPPKqW2PJqs9+J6dkdRpD9b9B8KJZcSHqLcwJ2OOjJihpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715109302; c=relaxed/simple;
-	bh=tlldNfcByzJ4XQ7ta0Hf3J+SE8kzMt2alkaxZtOanBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqvj5KL1eH/tCxfsfTWczabMGCfWIxTI+pmbCCvhIcE4S7hepEG/a6l5MnK12FqseEz+j4XXmDYv0F/gISL2phj4s0g3aIsSZ83m85Ix/FR4Yq4dzWCjRDjTqlNJXP+2itQmXB+IJS3K7WIleefzQFGui9QGnFwpHfwiF33y0zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ef6HhOr1; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6203b1bc935so36742277b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715109300; x=1715714100; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eo4SgJ7QCEB1nNYUR2zdqZ3ccKqwNFeVNFLBZzA2CQ=;
-        b=Ef6HhOr1hf7hWiJPrybOgBUGfn8QFZjltNt1WcJ90TpBprJWXesfWFCVBAUEprUa0c
-         tdNtOW/gWpB4B6/ZGheQkoHuVmJJOfrj0nz13Zioaokxkj4Ikvq7S4VmjKDc0iY7PZ5H
-         eTWEARSnVdbXp29gA23tC7OllMTwSEx+xN4rTzemOJduOk08FxhaotuapZpewO9bnpEK
-         LUF5CDRomk0m0IdNiL2xJrdoTsNQKsHTmzIEUcfXas21HwmaI9fVE78WLdSPeIjAC34I
-         ST3rX63DjR+pGtoNPgjxhHbfGZt1orSBHac20O5jGFvxxztRRPIRcRC8ycLzTUBTUu01
-         8sDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715109300; x=1715714100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6eo4SgJ7QCEB1nNYUR2zdqZ3ccKqwNFeVNFLBZzA2CQ=;
-        b=Th/wt4LvJQM9A+e5nveguf4Wn8CW7xRBySwlGZQHRiq1p0hkCGyAb+IoJEJfmcNiFE
-         Q9Hfuod+o/O0Hvw9kuFrM+wLlf7G/CEb9SF095mV/nIQzzwjSSfqIZ1aLK5hmnJvXmWt
-         Vu/5HhtdjI4xAX/L9cPr92nvjfNG/+fJq6mjlCD+Yodt/NS3Bv//X0jHSFkcRvZDgW0F
-         Wpfv2IrrhMPNKGbXbpBBmJU6DqhmSogNKFIYY04u57GVyqMnAlWf+tzT52SXAMi8ORbu
-         d/L0SwtjFgnQLk+NZEFnHR3Zd1i/aVCaZ0Kts+Q8rRGO7UKF1GNYZgvb1y3As2ysDpTy
-         8Egw==
-X-Gm-Message-State: AOJu0YzoPP+60O5bGZBBijA4AY+mlc9Z3zcjVe2AXD7e+NVthbt92I9m
-	lSA2r3Ug9JlBvaEcfURGneI+aT/FsvKWZGSuuy2ouw3Q7jDQWf9F
-X-Google-Smtp-Source: AGHT+IEasfG7B0Q510dqj1rgc0zUzn6hPKlQPGPlgG1JyH5qj5YI9YQDThWQtNp946o9Q1gQdU/qSQ==
-X-Received: by 2002:a0d:eb11:0:b0:615:4700:94cb with SMTP id 00721157ae682-62085d1f5bbmr8376077b3.1.1715109299891;
-        Tue, 07 May 2024 12:14:59 -0700 (PDT)
-Received: from localhost ([2601:344:8301:57f0:5343:96f7:3e43:fa89])
-        by smtp.gmail.com with ESMTPSA id s3-20020a817703000000b0061beb26a082sm2886510ywc.112.2024.05.07.12.14.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 12:14:59 -0700 (PDT)
-Date: Tue, 7 May 2024 12:14:58 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v1 1/1] bitops: Move aligned_byte_mask() to wordpart.h
-Message-ID: <Zjp9sm8s50rb9N/+@yury-ThinkPad>
-References: <20240507140155.197304-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1715109345; c=relaxed/simple;
+	bh=H0OrEbKkNSluiLf/r1ab0wfVjhBJw5DKB5glHgKQknw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qCx5vbnBTSJdTT/B3vLWnw796Pt6uihH0klbnfCxp19u6nhDe9iy+oq4/Rl9U5M2mUfs2pd8XwVcmZ95V/gjW1Exlejs7mgbEHjRsTIB6CdQw4xfuNqP733x1l5Vnfynye46jE683ljF16FP63jfBZofLYjs8BbEuHop5Q4wSos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HDG4RCQR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447IjSBp013292;
+	Tue, 7 May 2024 19:15:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=1ozfY6ERltqf/Cq7PFYWt9JbiYqu96TtyBwLN6d8sHs=; b=HD
+	G4RCQRkTUOY17Aggc4oDtV5vUNg4CZ53qHvHVEAGShQ58AlUsEuIjGVQDCFKd8D1
+	lVvpk9sIj6CIsCKNE86qlCpMuQtbOM6RDHVNIGZFXI+1JbVyPBwL+HzKxeke5qfT
+	eyqpBXxX9CQp5svBWkNKnEZDFWW6GU4S8M7Nw9lgaA2uoq4CPsOrETXRU985F4xT
+	N/+5UoZRHI1xhWqPUb6BYhb4weH7YUXj3mKFlBCb+1iBfB6qVm95AOFqHJitCCkv
+	A3B6Wo+O/9aK10lVscWTKfD4npwX8lUaLUVxYZZ9HZWOkT/lMfj3qTYfv9tW1nn6
+	rlqTmyCZBEE4iNXoRumw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyste024e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 19:15:22 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 447JFLO6030978
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 7 May 2024 19:15:21 GMT
+Received: from [10.110.127.27] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
+ 12:15:18 -0700
+Message-ID: <8569f47c-0c59-49f6-8b93-09bc0defb670@quicinc.com>
+Date: Tue, 7 May 2024 12:15:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507140155.197304-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH bpf-next v6 3/3] selftests/bpf: Handle forwarding of
+ UDP CLOCK_TAI packets
+Content-Language: en-US
+To: Martin KaFai Lau <martin.lau@linux.dev>
+CC: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Martin
+ KaFai Lau" <martin.lau@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
+ <20240504031331.2737365-4-quic_abchauha@quicinc.com>
+ <663929b249143_516de2945@willemb.c.googlers.com.notmuch>
+ <d613c5a6-5081-4760-8a86-db1107bdc207@quicinc.com>
+ <a4957aaf-6b3f-45e8-8c18-a9f74213d0f3@linux.dev>
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <a4957aaf-6b3f-45e8-8c18-a9f74213d0f3@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: k5pvUtUAARjbwZE0Nl3U4YmBMIwdPprY
+X-Proofpoint-ORIG-GUID: k5pvUtUAARjbwZE0Nl3U4YmBMIwdPprY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_11,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0 clxscore=1015
+ mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405070134
 
-On Tue, May 07, 2024 at 05:01:54PM +0300, Andy Shevchenko wrote:
-> The bitops.h is for bit related operations. The aligned_byte_mask()
-> is about byte (or part of the machine word) operations, for which
-> we have a separate header, move the mentioned macro to wordpart.h
-> to consolidate similar operations.
+
+
+On 5/6/2024 5:54 PM, Martin KaFai Lau wrote:
+> On 5/6/24 1:50 PM, Abhishek Chauhan (ABC) wrote:
+>>
+>>
+>> On 5/6/2024 12:04 PM, Willem de Bruijn wrote:
+>>> Abhishek Chauhan wrote:
+>>>> With changes in the design to forward CLOCK_TAI in the skbuff
+>>>> framework,  existing selftest framework needs modification
+>>>> to handle forwarding of UDP packets with CLOCK_TAI as clockid.
+>>>>
+>>>> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+>>>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>>>> ---
+>>>>   tools/include/uapi/linux/bpf.h                | 15 ++++---
+>>>>   .../selftests/bpf/prog_tests/ctx_rewrite.c    | 10 +++--
+>>>>   .../selftests/bpf/prog_tests/tc_redirect.c    |  3 --
+>>>>   .../selftests/bpf/progs/test_tc_dtime.c       | 39 +++++++++----------
+>>>>   4 files changed, 34 insertions(+), 33 deletions(-)
+>>>>
+>>>> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+>>>> index 90706a47f6ff..25ea393cf084 100644
+>>>> --- a/tools/include/uapi/linux/bpf.h
+>>>> +++ b/tools/include/uapi/linux/bpf.h
+>>>> @@ -6207,12 +6207,17 @@ union {                    \
+>>>>       __u64 :64;            \
+>>>>   } __attribute__((aligned(8)))
+>>>>   +/* The enum used in skb->tstamp_type. It specifies the clock type
+>>>> + * of the time stored in the skb->tstamp.
+>>>> + */
+>>>>   enum {
+>>>> -    BPF_SKB_TSTAMP_UNSPEC,
+>>>> -    BPF_SKB_TSTAMP_DELIVERY_MONO,    /* tstamp has mono delivery time */
+>>>> -    /* For any BPF_SKB_TSTAMP_* that the bpf prog cannot handle,
+>>>> -     * the bpf prog should handle it like BPF_SKB_TSTAMP_UNSPEC
+>>>> -     * and try to deduce it by ingress, egress or skb->sk->sk_clockid.
+>>>> +    BPF_SKB_TSTAMP_UNSPEC = 0,        /* DEPRECATED */
+>>>> +    BPF_SKB_TSTAMP_DELIVERY_MONO = 1,    /* DEPRECATED */
+>>>> +    BPF_SKB_CLOCK_REALTIME = 0,
+>>>> +    BPF_SKB_CLOCK_MONOTONIC = 1,
+>>>> +    BPF_SKB_CLOCK_TAI = 2,
+>>>> +    /* For any future BPF_SKB_CLOCK_* that the bpf prog cannot handle,
+>>>> +     * the bpf prog can try to deduce it by ingress/egress/skb->sk->sk_clockid.
+>>>>        */
+>>>>   };
+>>>>   diff --git a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>>>> index 3b7c57fe55a5..71940f4ef0fb 100644
+>>>> --- a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>>>> +++ b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>>>> @@ -69,15 +69,17 @@ static struct test_case test_cases[] = {
+>>>>       {
+>>>>           N(SCHED_CLS, struct __sk_buff, tstamp),
+>>>>           .read  = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+>>>> -             "w11 &= 3;"
+>>>> -             "if w11 != 0x3 goto pc+2;"
+>>>> +             "if w11 == 0x4 goto pc+1;"
+>>>> +             "goto pc+4;"
+>>>> +             "if w11 == 0x3 goto pc+1;"
+>>>> +             "goto pc+2;"
+>>>
+>>> Not an expert on this code, and I see that the existing code already
+>>> has this below, but: isn't it odd and unnecessary to jump to an
+>>> unconditional jump statement?
+>>>
+>> I am closely looking into your comment and i will evalute it(Martin can correct me
+>> if the jumps are correct or not as i am new to BPF as well) but i found out that
+>> JSET = "&" and not "==". So the above two ins has to change from -
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Hi Andy,
-
-I see the macro is used in lib/strnlen_user.c and in lib/usercopy.c.
-In case of strnlen_user, the wordpart.h is included via linux/kernel.h,
-which is OK to me. But In case of usercopy.c, I can't find how the
-header is included. 
-
-I'm sure there is some inclusion path, but it's always better to have
-the dependencies listed explicitly.
-
-Can you please send a 2nd version with the lib/usercopy.c including
-wordpart.h?
-
-Thanks,
-Yury
-
-> ---
->  include/linux/bitops.h   | 7 -------
->  include/linux/wordpart.h | 7 +++++++
->  2 files changed, 7 insertions(+), 7 deletions(-)
+> Yes, this should be bitwise "&" instead of "==".
 > 
-> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-> index 0b561ee6b4a4..ec45284c03f5 100644
-> --- a/include/linux/bitops.h
-> +++ b/include/linux/bitops.h
-> @@ -8,13 +8,6 @@
->  
->  #include <uapi/linux/kernel.h>
->  
-> -/* Set bits in the first 'n' bytes when loaded from memory */
-> -#ifdef __LITTLE_ENDIAN
-> -#  define aligned_byte_mask(n) ((1UL << 8*(n))-1)
-> -#else
-> -#  define aligned_byte_mask(n) (~0xffUL << (BITS_PER_LONG - 8 - 8*(n)))
-> -#endif
-> -
->  #define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
->  #define BITS_TO_LONGS(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
->  #define BITS_TO_U64(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
-> diff --git a/include/linux/wordpart.h b/include/linux/wordpart.h
-> index f6f8f83b15b0..4ca1ba66d2f0 100644
-> --- a/include/linux/wordpart.h
-> +++ b/include/linux/wordpart.h
-> @@ -39,4 +39,11 @@
->   */
->  #define REPEAT_BYTE(x)	((~0ul / 0xff) * (x))
->  
-> +/* Set bits in the first 'n' bytes when loaded from memory */
-> +#ifdef __LITTLE_ENDIAN
-> +#  define aligned_byte_mask(n) ((1UL << 8*(n))-1)
-> +#else
-> +#  define aligned_byte_mask(n) (~0xffUL << (BITS_PER_LONG - 8 - 8*(n)))
-> +#endif
-> +
->  #endif // _LINUX_WORDPART_H
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
+> The bpf CI did report this: https://github.com/kernel-patches/bpf/actions/runs/8947652196/job/24579927178
+> 
+> Please monitor the bpf CI test result.
+> 
+> Do you have issue running the test locally?
+> 
+Yes, To be honest. I am facing compilation issues when i follow the documentation to Make BPF on latest kernel. 
+
+This is slowing down my development with this patch. 
+
+Very similar to the problem described here :- https://github.com/jsitnicki/ebpf-summit-2020/issues/1
+
+local/mnt/workspace/kernel_master/linux-next/tools/testing/selftests/bpf/tools/build/bpftool/bootstrap/libbpf/include/bpf/bpf_core_read.h:379:26: note: expanded from macro '___arrow2'
+#define ___arrow2(a, b) a->b
+                        ~^
+skeleton/pid_iter.bpf.c:19:9: note: forward declaration of 'struct bpf_link'
+        struct bpf_link link;
+               ^
+skeleton/pid_iter.bpf.c:105:7: error: incomplete definition of type 'struct bpf_link'
+                if (BPF_CORE_READ(link, type) == bpf_core_enum_value(enum bpf_link_type___local,
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+>>
+>> "if w11 == 0x4 goto pc+1;" ==>(needs to be corrected to) "if w11 & 0x4 goto pc+1;"
+>>   "if w11 == 0x3 goto pc+1;" ==> (needs to be correct to) "if w11 & 0x3 goto pc+1;"
+>>
+>>
+>>>>                "$dst = 0;"
+>>>>                "goto pc+1;"
+>>>>                "$dst = *(u64 *)($ctx + sk_buff::tstamp);",
+>>>>           .write = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+>>>> -             "if w11 & 0x2 goto pc+1;"
+>>>> +             "if w11 & 0x4 goto pc+1;"
+>>>>                "goto pc+2;"
+>>>> -             "w11 &= -2;"
+>>>> +             "w11 &= -3;"
+>> Martin,
+>> Also i am not sure why the the dissembly complains because the value of SKB_TSTAMP_TYPE_MASK = 3 and we are
+>> negating it ~3 = -3.
+>>
+>>    Can't match disassembly(left) with pattern(right):
+>>    r11 = *(u8 *)(r1 +129)  ;  r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset)
+>>    if w11 & 0x4 goto pc+1  ;  if w11 & 0x4 goto pc+1
+>>    goto pc+2               ;  goto pc+2
+>>    w11 &= -4               ;  w11 &= -3
+>>
+>>>>                "*(u8 *)($ctx + sk_buff::__mono_tc_offset) = r11;"
+>>>>                "*(u64 *)($ctx + sk_buff::tstamp) = $src;",
+>>>>       },
+> 
 
