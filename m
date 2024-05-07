@@ -1,75 +1,89 @@
-Return-Path: <linux-kernel+bounces-170911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B508BDDB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:04:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F1E8BDDBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271E01F216BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C769C1F22C07
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE6714D711;
-	Tue,  7 May 2024 09:03:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3704914D447
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 09:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ADE14D6F1;
+	Tue,  7 May 2024 09:04:31 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1767314D2BB;
+	Tue,  7 May 2024 09:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715072638; cv=none; b=l59cUIr5wwG6gkTKNbUBvP3bg/rKiOvjzs6+1KhqgvGQaA9nbWScyotDX92UytcClcjVMOQZxT0gaSlP2WI1MP5zxeHfJafQ+m2cT3+8xRH/EW7sxK16aD/Ruf+u1nUpgC0QnqEjOr0+z8hzgd9/DYhY2ik3HV9psvBtTmJaqiI=
+	t=1715072671; cv=none; b=dNy+JtYo6rsleloDPVVdG+VBDWpHQBspb1zQlaYb/NkgTwa1Rmx6aG7ASZxrBniVaN26o0PiV7nBAwAqqZUtUbjno1GKLHZpRGcKoe8Z3PQwjuGyMZ8PQb0dGq1pNBcqE/QCeoAfBPXUIKpOZu/18qplb3C9v0uCMhc0q4pH1To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715072638; c=relaxed/simple;
-	bh=EwP9UbP45VBabyiXsN7jbi0PjJFOX2oFR+I/u/CqESU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WvdIG5TbdXyY2rPg2NnEZ0813V/0LFAXY4pbQGH0Lw5WRK8An2Y8eQW1y9tjIKecsl1gtAXfHQT/WNxIz37VX5YI4wR9PbmPqK/v4ExgzvFgbv+WKrVuaSO44gJjwfAOolghPgGFtg3dGdKdIRVIn9xUTqDILsvmbQlqtJj+bB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF93BC3277B;
-	Tue,  7 May 2024 09:03:56 +0000 (UTC)
-Date: Tue, 7 May 2024 05:03:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: David Airlie <airlied@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Maxime Ripard
- <mripard@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Alex Constantino
- <dreaming.about.electric.sheep@gmail.com>, Timo Lindfors
- <timo.lindfors@iki.fi>, Gerd Hoffmann <kraxel@redhat.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [BUG][v6.9-rc6] Deadlock with: Revert "drm/qxl: simplify
- qxl_fence_wait"
-Message-ID: <20240507050354.66bd88a0@rorschach.local.home>
-In-Reply-To: <CAMwc25qMXOFOfKsa7BRi3dz125PDyvVtgTty0Q4bkAFftJDLqQ@mail.gmail.com>
-References: <20240502081641.457aa25f@gandalf.local.home>
-	<20240504043957.417aa98c@rorschach.local.home>
-	<20240506-cuddly-elated-agouti-be981d@houat>
-	<CAHk-=wiS70D1sbhsvNfR0e5YjfG2NV0cVKWz9vp=_F_wkw3j9Q@mail.gmail.com>
-	<CAMwc25qMXOFOfKsa7BRi3dz125PDyvVtgTty0Q4bkAFftJDLqQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715072671; c=relaxed/simple;
+	bh=j2SvzrvJLCsy6kpAK+WmwwXSBx17F8WLHxiJ8YlMLuQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=UMrmm9+A1kVRMmWpR3EyFPE7VYR2d/zPOcBaBq01CwYt0kJRzgMqgHegy8chN04KLWwGkUM6rXj+v3OOTxzm2RgQ4kUmtTDHJcniMOZSL0tzMVkxzWkI1UVYcWCzurH8GQ5y7DIABT+hRRg8XAm0k5QFA4TTheOIr5br4tK42QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from duoming$zju.edu.cn ( [221.192.179.90] ) by
+ ajax-webmail-mail-app3 (Coremail) ; Tue, 7 May 2024 17:04:05 +0800
+ (GMT+08:00)
+Date: Tue, 7 May 2024 17:04:05 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: duoming@zju.edu.cn
+To: "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc: "Lars Kellogg-Stedman" <lars@oddbit.com>, linux-hams@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, jreuter@yaina.de
+Subject: Re: [PATCH net] ax25: Fix refcount leak issues of ax25_dev
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
+ 20231205(37e20f0e) Copyright (c) 2002-2024 www.mailtech.cn zju.edu.cn
+In-Reply-To: <79dc1067-76dc-43b2-9413-7754f96fe08e@moroto.mountain>
+References: <20240501060218.32898-1-duoming@zju.edu.cn>
+ <my4l7ljo35dnwxl33maqhyvw7666dmuwtduwtyhnzdlb6bbf5m@5sbp4tvg246f>
+ <78ae8aa0-eac5-4ade-8e85-0479a22e98a3@moroto.mountain>
+ <ekgwuycs3hioz6vve57e6z7igovpls6s644rvdxpxqqr7v7is6@u5lqegkuwcex>
+ <1e14f4f1-29dd-4fe5-8010-de7df0866e93@moroto.mountain>
+ <movur4qy7wwavdyw2ugwfsz6kvshrqlvx32ym3fyx5gg66llge@citxuw5ztgwc>
+ <eb5oil2exor2bq5n3pn62575phxjdex6wdjwwjxjd3pd4je55o@4k4iu2xobel5>
+ <79dc1067-76dc-43b2-9413-7754f96fe08e@moroto.mountain>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <5f92dba3.4404.18f524bb7a6.Coremail.duoming@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:cC_KCgBnMlqF7jlm2Fc3AA--.5839W
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwUOAWY4-AkVIgAAsV
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Tue, 7 May 2024 15:54:21 +1000
-David Airlie <airlied@redhat.com> wrote:
-
-> I expec this will reintroduce the other problems that caused this
-> change in the first place, but I think this should at least bring us
-> back to regression equilibrium. I can't recommend anyone use qxl hw
-> over virtio-gpu hw in their VMs, since virtio-gpu is actually hw
-> designed for virt.
-
-I agree that it will likely cause the issues that this was addressing
-to come back, but you can't have a fix that introduces a deadlock.
-
-Perhaps the deadlock didn't exist before, and the printk updates
-changed the way it works to introduce it now?
-
--- Steve
+T24gVHVlLCA3IE1heSAyMDI0IDExOjA4OjE0ICswMzAwIERhbiBDYXJwZW50ZXIgd3JvdGU6Cj4g
+SSBoYXZlIHJldmlld2VkIHRoaXMgY29kZSBzb21lIG1vcmUuICBNeSB0aGVvcnkgaXM6Cj4gCj4g
+YXgyNV9kZXZfZGV2aWNlX3VwKCkgPC0gc2V0cyByZWZjb3VudCB0byAxCj4gYXgyNV9kZXZfZGV2
+aWNlX2Rvd24oKSA8LSBzZXQgcmVmY291bnQgdG8gMCBhbmQgZnJlZXMgaXQKPiAKPiBJZiB0aGUg
+cmVmY291bnQgaXMgbm90IDEgYXQgYXgyNV9kZXZfZGV2aWNlX2Rvd24oKSB0aGVuIHNvbWV0aGlu
+ZyBpcwo+IHNjcmV3ZWQgdXAuICBTbyB3aHkgZG8gd2UgZXZlbiBuZWVkIG1vcmUgcmVmY291bnRp
+bmcgdGhhbiB0aGF0PyAgQnV0Cj4gYXBwYXJlbnRseSB3ZSBkby4gIEkgZG9uJ3QgcmVhbGx5IHVu
+ZGVyc3RhbmQgbmV0d29ya2luZyB0aGF0IHdlbGwgc28KPiBtYXliZSB3ZSBjYW4gaGF2ZSBsaW5n
+ZXJpbmcgY29ubmVjdGlvbnMgYWZ0ZXIgdGhlIGRldmljZSBpcyBkb3duLgoKV2UgZG8gbmVlZCBt
+b3JlIHJlZmVyZW5jZSBjb3VudC4gQmVjYXVzZSB0aGVyZSBpcyBhIHJhY2UgY29uZGl0aW9uIApi
+ZXR3ZWVuIGF4MjVfYmluZCgpIGFuZCB0aGUgY2xlYW51cCByb3V0aW5lLgoKVGhlIGNsZWFudXAg
+cm91dGluZSBpcyBjb25zaXN0ZWQgb2YgdGhyZWUgcGFydHM6IGF4MjVfa2lsbF9ieV9kZXZpY2Uo
+KSwKYXgyNV9ydF9kZXZpY2VfZG93bigpIGFuZCBheDI1X2Rldl9kZXZpY2VfZG93bigpLiBUaGUg
+YXgyNV9raWxsX2J5X2RldmljZSgpCmlzIHVzZWQgdG8gY2xlYW51cCB0aGUgY29ubmVjdGlvbnMg
+YW5kIHRoZSBheDI1X2Rldl9kZXZpY2VfZG93bigpIGlzIHVzZWQKdG8gY2xlYW51cCB0aGUgZGV2
+aWNlLiBJZiB3ZSBjYWxsIGF4MjVfYmluZCgpIGFuZCBheDI1X2Nvbm5lY3QoKSBiZXR3ZWVuCnRo
+ZSB3aW5kb3cgb2YgYXgyNV9raWxsX2J5X2RldmljZSgpIGFuZCBheDI1X2Rldl9kZXZpY2VfZG93
+bigpLCB0aGUgYXgyNV9kZXYKaXMgZnJlZWQgaW4gYXgyNV9kZXZfZGV2aWNlX2Rvd24oKS4gV2hl
+biB3ZSBjYWxsIGF4MjVfcmVsZWFzZSgpIHRvIHJlbGVhc2UKdGhlIGNvbm5lY3Rpb25zLCB0aGUg
+VUFGIGJ1Z3Mgd2lsbCBoYXBwZW4uIAoKQmVzdCByZWdhcmRzLApEdW9taW5nIFpob3U=
 
