@@ -1,417 +1,150 @@
-Return-Path: <linux-kernel+bounces-172515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279F68BF2E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:01:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19F48BF2F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66091F23160
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:01:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63A07B21E31
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B3E73183;
-	Tue,  7 May 2024 23:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8D012F5BE;
+	Tue,  7 May 2024 23:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="duUZC6JR"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l4WaEWPg"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40817F7D9
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4C112DDA1
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715124472; cv=none; b=TP/IXyOmk7tp20zDji8Mni9DySem5eBnlcwBdEZ+3XoV8kazXuVNQLt+yZKPUdjT/xEHhfb8nZfqewoMfhyOkZcrbXD6VTEZQoV+o9ZXajLH1fmKz24GEVLngPNJ9uMNaQDrhQQ2IEjxvAzchpP4Bza+p1mpW6B/dd+4YwGZQWo=
+	t=1715124540; cv=none; b=PHDUbdazwOhTgzYMSmhhAiQnxSf60NsomN4EPCgM8CcpR2vFLdF6eGRdso597jDmDTqvH0JrFP09Lkjaz54R2jBEC52ll/IyEZy7YfTrzLAWlaMcPB+VzCKhwReGibOZKibOFrLDpYsYXOMnG7EsfzZWeS7uI9Xw8wouphCxUmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715124472; c=relaxed/simple;
-	bh=QrC2XTjhaFqvIYFUQMLZeQ+wwdKsLry8CdwZ1QDrvhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=R7PR+cUBNPgbp+w89dnpKx5SWb2M7HMQRfP62BWt9qo7Iq6GWYyFFIesLGYqoCKaGhN9emOweVt7tguyqha9U0/WPiAClA3OlPDDqRz0mDpK67yWjUY6ekAG++dN6JY298uMREgKZDWDJTBm7e7w7BsIDxHOfKICz3T3G76f8Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=duUZC6JR; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1e4bf0b3e06so33169555ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 16:27:50 -0700 (PDT)
+	s=arc-20240116; t=1715124540; c=relaxed/simple;
+	bh=6N7YQ0tqw4GK3rBRagXlWIy9Y10OPMOiuDCFV37xTOw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lGy5jx6IP2nUGRRxYxMOVIiBhh8vkHQxGLEGrP6ZCOAbXa73vaQGTfTVQpmRVZRKO3IA8RNRb+OKmiO5Xk2ITLCX9WR3tSmhYD89tgdBrDlrQoQuMUrBmnPi4isIw8GwKxBkgWY9+FHJUCV5XUIMyRmeHywJQuVqLunwAMBue+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l4WaEWPg; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2df848f9325so43721031fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 16:28:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715124470; x=1715729270; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wLWEXjMZK05OdzWWn6dfRHIshRQNB3cz4ZxogUVoyI0=;
-        b=duUZC6JRW+uNEhPXpbkf0swf+XNyhhE+8zIWGADo30bEzkGZL13yRD8snKkoRvkcLa
-         VeOoIaa+iIBXa+UW7P0WWdgFVwyxRob/AIdD0Fupb2KsUD8mwYfXob77MA6ksgFCJPss
-         Q8TNgGEWr9zcsKF5Qq6baYJoiF3n50E9Th2oM=
+        d=linaro.org; s=google; t=1715124537; x=1715729337; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZnivb6l1xDPNW5GpJEM2VTzatebi8iz4jebWhunJco=;
+        b=l4WaEWPgsGXjk/8nafmVi310JcynF/KQatFvGiz6/dON5rfOjLwPgioNNbG2ftga2D
+         0YceC5cqb5Liwh5wfwxFRkkI8CIiWLTG9cODSp5uE1nP1VjG4kY7LpJP08nM5CPBDWk5
+         xZWMYqisdYMo5O2sZ3Dp+zKD3rqFTwsfDl6Gpuv/Y3LKRhQWKwFvHXoMZKeISmcJCg29
+         FZcj4lmmxDmiiSUYL4DR+HWNApwFb4Bkt4qi/x6lBVQZSsZcQuUnvv2HIhFdOllN+ZwM
+         aijbe2e/GfMhz84I2tKd9hI5jDZAFdvZ/3I8zhupt9h5YECXN3VBBzVZtmf77oSKQQa9
+         tu5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715124470; x=1715729270;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wLWEXjMZK05OdzWWn6dfRHIshRQNB3cz4ZxogUVoyI0=;
-        b=mcPRxhK7cYHCJ9id4ak3evFigDGn/dA6eXXIcKrNzGL9FqY2/ydPNUHG9IxAk068ai
-         sCV9tZkZNyacZi5b4W7TWXfMnD5W2/vr7LA8NeGKNtNuVEKxvDcrUJu/dkHG4SeWuavB
-         1EEFxIwEIKbLfnCHi/y8oWxQhNs0uwmTGBR626t1Qj069kzL68xvsRVv+DuvoE2K6niN
-         CBPk3sZC4fnD+RqK4jFJEKSiOnWzCVHDlPMLTMsLBAmZy7ugAfWnNXvQPfCxrgExHTXt
-         mq84JuaVLaDONQ7Yfxr6Gm/LgFTpEsTsxxWe1u10wmuYxpnnTedkj0zpxK6TMaT8PB6d
-         Ov2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUbSxlPDOdbISCEfK+p27wfNBhRxMgKeHHkxDiVTMVkaybWdnKJAIJnluLm3dnnJBHCUnxu/UOAw/hmyWWYOoepJ7uYE1KzlRjPxotl
-X-Gm-Message-State: AOJu0YwajENyrwuV9jFZmlf++3a1VEHqJC2G/4RSbj2PxjE6ca6/OFwz
-	xnYosJDfp8w1Vl7RihwHNxYnrXhhLrQ32c+GyU1mZtxrXXUlbv1yBzDNWGYDww==
-X-Google-Smtp-Source: AGHT+IHFl7rD94B/E5UxGvSKpBCTcyP5G60ZMyyC7CakBf3DE7hFWqFKhv2WIEHzdRnuTsR5ELP4CQ==
-X-Received: by 2002:a17:903:2303:b0:1ec:b6e2:da89 with SMTP id d9443c01a7336-1eeb0993064mr13723955ad.61.1715124469860;
-        Tue, 07 May 2024 16:27:49 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id l18-20020a170903121200b001eb03a2bb0asm10518113plh.53.2024.05.07.16.27.49
+        d=1e100.net; s=20230601; t=1715124537; x=1715729337;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SZnivb6l1xDPNW5GpJEM2VTzatebi8iz4jebWhunJco=;
+        b=OjEAjKd0LvA65p2GNfvk+QdnLBkyqn6ivVudg5pi2EsgMZz1fQ2+VOjUkhXvvUiPiH
+         oAX2+62S50QQwLnMHkrjfnwvAhlu1WGtJ7naaFtB/Jhdw2eq7vjp3wqBe6eNHS2lCkif
+         vLfXi3+KoJDY2lwPGjKJUG+/wKAw+nYG+88X4U51+TAaD59zrLIJsb++TpEs4ZjQoQMU
+         EnKqkB0qvPN6miQ77iEn+61Cth2IkVZN3z9Kcxugim26TeWoV1vgTrbjtSQDNj7gU2ez
+         38JSUR4o9OefKBN9JZexPgYzcRT1e3MwcwWvirNEb4k9yZskE+FYEOsxIF46AwkOdW7K
+         guNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaDf1vuNxQ6fGk4M6NU0TkrVmQqwNrFACoC0Jnllse/yLYc0zp4tZf1HdP9p6SpyEUymhoIKPZy12qP6PbJY051K4m8J/TOHcPGuyH
+X-Gm-Message-State: AOJu0Yymyk1u3MTdKW//B2ST6gAeiCpzc2xPSOEG1muisLZro3lG7ue4
+	fuoAoX547tve4m9a7qZ8ZAIQvS3VE1uwCydOTd/TmpIQz53g0upx0DPBmtlS/OA=
+X-Google-Smtp-Source: AGHT+IEPiXoxSzLzRXgrv9XDV9vtUW/h06YqEXe8uksqmJa5e8EscDHKjV8RrPV7tXMeqhjdWBg8Yg==
+X-Received: by 2002:a2e:97d7:0:b0:2e1:afa6:9291 with SMTP id 38308e7fff4ca-2e446d7a622mr6991041fa.8.1715124536837;
+        Tue, 07 May 2024 16:28:56 -0700 (PDT)
+Received: from [192.168.0.113] ([2a02:8109:aa0d:be00::8bb3])
+        by smtp.gmail.com with ESMTPSA id f20-20020a056402195400b005725c56b35bsm6851841edz.71.2024.05.07.16.28.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 16:27:49 -0700 (PDT)
-Date: Tue, 7 May 2024 16:27:48 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Justin Stitt <justinstitt@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <202404291502.612E0A10@keescook>
+        Tue, 07 May 2024 16:28:56 -0700 (PDT)
+From: Caleb Connolly <caleb.connolly@linaro.org>
+Subject: [PATCH 0/2] qcom: initial support for the SHIFTphone 8
+Date: Wed, 08 May 2024 01:28:46 +0200
+Message-Id: <20240508-otter-bringup-v1-0-c807d3d931f6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC65OmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUwNz3fySktQi3aSizLz00gJdYwuL5DTjxETz5ERTJaCegqLUtMwKsHn
+ RsbW1AHe6n1RfAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alexander Martinz <amartinz@shiftphones.com>, 
+ Luca Weiss <luca.weiss@fairphone.com>, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Caleb Connolly <caleb.connolly@linaro.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1280;
+ i=caleb.connolly@linaro.org; h=from:subject:message-id;
+ bh=6N7YQ0tqw4GK3rBRagXlWIy9Y10OPMOiuDCFV37xTOw=;
+ b=owEBbQKS/ZANAwAIAQWDMSsZX2S2AcsmYgBmOrk2B/4XeVkV74lSsQlHo/KIqvv30KzVQVOou
+ 8C7/EL5ezKJAjMEAAEIAB0WIQS2UaFGPGq+0GkMVc0FgzErGV9ktgUCZjq5NgAKCRAFgzErGV9k
+ tpPHD/9xh8ILKiI6drHKQPf2GAlPWWACEWKpC70RqEBfpRSwCzDoC3nh7TupxrCt1UdFLeoN5i3
+ rGDTOxM+BwP8AcvCIyVw6FUetbNQG0tm4BIgwFx0vNFi2znWY5TTm6rsuJh20C8Rd3x0fkN/ydf
+ 5arNFbKWVJfzfMkeRKqfE82ApbS4LMcOAcLTEq90Im7zJntJR/zrAPe0viHd6WBbBVx2NDMxYer
+ niIKxCrCcZ/7O3AAO4UxHo2i0o7/SSBtauMKRHyGBLCg4IM11WTtp4yove9l72zncqMeRcPql6K
+ IaIkjikjo/5mWnknEZ+G4/XOmpXaj0GfFhAZaVRTLagtG84Vs30C1AgzWtx+yBwRs8NmNmiMYxj
+ v1cwR/3PaWllWKaG64ed7rn0Xph9OcabmLCN3S/ZiHaUjCwRY6DiWEDIPjrRpbDgCvTN54y6y6r
+ g/6yeidUpEem04gM9N21mKt4mslDxxHNnrBwNebbV7GmqzrAH1j/WjjmPKFYORE58e98SAxxFRJ
+ Ovn42MYMVniMc5q8X7fCsNxTzklVq4TpiuwQcspxW0L1b8MfXdN4IuL6zOC5VvwQoXihzE6cESV
+ zGScL/5KTnRK+Wq8HLUlPGA22Mrr97xC3kPERcGAHKLXSzFzjWM6F2JJyHi7CvyU+lVF/jXKL5n
+ 5v73LqddEtOiaxA==
+X-Developer-Key: i=caleb.connolly@linaro.org; a=openpgp;
+ fpr=83B24DA7FE145076BC38BB250CD904EB673A7C47
 
-Hi,
+The SHIFTphone 8 is an upcoming QCM6490 smartphone, it has the following
+features:
 
-Over the last decade or so, our work hardening against weaknesses
-in various kernel APIs and eliminating the ambiguities in C language
-semantics have traditionally been somewhat off in one corner or another
-of the Linux codebase. This topic is going to be much different as
-it is ultimately about the C type system, which is rather front and
-center. So, hold on to your hats while I try to explain what's desired
-here. Please try to reserve judgement until the end; as we've explored
-the topic we've found a lot of nuances, which I've tried to touch on
-below. I'm hoping folks can have an open mind about all this and not
-jump to any conclusions without first hearing me out. :)
+* 12GB of RAM, 512GB UFS storage
+* 1080p display.
+* Hardware kill switches for cameras and microphones
+* UART access via type-c SBU pins (enabled by an internal switch)
 
+Initial support includes:
 
-Problem to Solve
-================
-The Linux kernel has consistently suffered from unexpected arithmetic
-overflow bugs. These lead to any number of exploitable conditions[0].
-Our continuing efforts to improve things (refcount_t, alloc_size(),
-etc) have helped in some specific areas, but on the whole, we've had a
-relatively unchanged count of serious arithmetic overflow flaws over the
-life of the project[1]. This is not tolerable, and we should, all of us,
-make the effort needed to put an end to it in a systematic way.
+* Framebuffer display
+* UFS and sdcard storage
+* Battery monitoring and USB role switching via pmic glink
+* Bluetooth
+* Thermals
 
+Wifi is not yet functional due to a crash in the remoteproc
+firmware.
 
-Terminology Considerations
-==========================
-When I say "overflow", I mean "overflow and underflow", but more
-specifically I mean "wrap-around". This is not about "undefined
-behavior". We already demand from our compilers that all our arithmetic
-uses a well-defined overflow resolution strategy; overflow results in
-wrap-around (thanks to "-fno-strict-overflow").
+The serial port on the device can be accessed via the usb-cereal
+adapter, it must first be enabled by flipping the switch under the
+display. Additional info can be found on the postmarketOS wiki page.
 
+https://wiki.postmarketos.org/wiki/SHIFT_SHIFTphone_8_(shift-otter)
 
-Root Cause Analysis
-===================
-The condition we need to catch is the case of unexpected wrap-around. We
-have plenty of places in the kernel where we _expect_ wrap-around,
-and many places in the kernel where we attempt to _manually check_
-for wrap-around. What is not covered are the cases where a check is
-missing or poorly implemented. Some of the more insidious bugs come from
-places where assumptions about the possible value ranges of variables are
-wrong, or got changed, or were never considered in the first place. But
-fundamentally the exceptional condition is the wrap-around: most bounds
-checks associated with a given calculation are prepared for a non-wrapping
-value range. Having a calculation wrap-around is what ends up knocking
-the rest of the logic on its head.
+---
+Caleb Connolly (2):
+      dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
+      arm64: dts: qcom: add QCM6490 SHIFTphone 8
 
-This is what is meant through-out by "ambiguous": the _intent of the
-author_ can be ambiguous as it relates to whether a calculation is
-meant to wrap-around. That it wraps around on overflow is not ambiguous:
-it will wrap-around. :) See "Terminology Considerations".
+ Documentation/devicetree/bindings/arm/qcom.yaml  |   1 +
+ arch/arm64/boot/dts/qcom/Makefile                |   1 +
+ arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 938 +++++++++++++++++++++++
+ 3 files changed, 940 insertions(+)
+---
+change-id: 20240507-otter-bringup-388cf3aa7ca5
+base-commit: dccb07f2914cdab2ac3a5b6c98406f765acab803
 
-This is the corner stone of the problem: even though the behavior of
-overflow is well-defined, so many authors so often don't correctly handle
-it that the results threaten the integrity of Linux as a whole. C makes
-it too easy to get it wrong, so we are left needing to fix this at a
-fundamental level. This is not a developer education problem; it is a
-problem with C language semantics. "Just do it correctly" has not worked.
+// Caleb (they/them)
 
-
-Mitigation Considerations
-=========================
-When making large scale changes to Linux where we're adding a check
-that didn't exist before, we must not break the old behavior as we're
-migrating to a new behavior/expectation. This has served us well
-across many hardening transitions we've made. Most recently this has
-been exemplified by the array bounds checking, where new checks are
-effectively phased in as a WARN[2], and once they've had sufficient
-bake time (usually measured in years), the check becomes more strongly
-enforced. All the while, there is a steady stream of refactoring going
-on to adopt the new behavior/pattern.
-
-
-Coverage Considerations
-=======================
-Just like any other kind of filtering, coverage for an exceptional
-state is best done with an allowlist, not a blocklist. Using a blocklist
-requires one to know _in advance_ which instances need to be caught. As
-mentioned above, we've spent decades proving we don't adequately know
-where we need to catch overflows. Therefore, we need to take an allowlist
-approach: we must identify the places where wrap-around _is_ expected,
-so that what remains is where it is _not_ expected. That which has not
-yet been identified therefore remains suspect, and we can incrementally
-grow the allowlist, since any not-yet-identified false positives will
-not break any existing behaviors (see "Mitigation Considerations").
-
-All of our hardening efforts have tried to follow this allowlist
-approach. Early on, one of the times we didn't do it was with
-refcount_t. We created a separate type to catch the overflow state and
-used it where we thought things might go wrong. This turned out to be
-a mistake: we've had a long tail of atomic_t overflows that turned into
-real bugs that would have been caught had we detected atomic_t overflows
-by default and instead created a separate type for the atomic_t cases
-that were meant to wrap around.
-
-The integer overflow situation is, as you may observe, very similar to
-the atomic_t situation, and so we must make sure we don't repeat the
-same mistake here. (Though just as an example about different overflow
-resolution strategies, it's worth noting that the major difference with
-atomic_t was that the desired strategy was saturation, not wrap-around.)
-
-
-Language Considerations
-=======================
-C has no formal exception handling system, and standard arithmetic was
-never designed to "fail". This is similar to the many problematic Standard
-C Library routines (e.g. memcpy), which were also never designed to
-have a "failure" case. This puts us in the uncomfortable (but familiar)
-situation where overflow mitigation becomes all-or-nothing, and this
-is what informs the approach detailed in Mitigation Considerations:
-warn but allow wrap-around until we find all false positives.
-
-The lack of unambiguous arithmetic intent in C has been recognized and
-addressed in more modern languages[3], but we're faced with needing to
-solve it in C, for Linux, today. As it happens, this is actually already
-starting to come up in other areas[4] now that we're trying to interface
-Rust with Linux's C internals. Being able to unambiguously describe
-wrapping vs non-wrapping expectations will stop an entire class of flaws,
-but will also help with the continuing Rust integration.
-
-C has no operator overloading, and the only practical way to change types
-is via attributes, which is additive in nature. Whatever the solution,
-we'll need to create new wrapping types that are separate from the
-existing types (as per Coverage Considerations), and the existing types
-will become the non-wrapping types.
-
-C also performs implicit integer promotion and implicit integer
-truncation, so things that look like they would overflow don't overflow
-until they get stored. For example: in "u8 var=255; ...; var++;"
-during what is "var = var + 1", the "var + 1" part doesn't overflow
-because it has been promoted to "int", which happily holds "256" without
-overflow. But the resulting "var = 256" gets truncated to 0 (effectively
-wrapping around). So to properly mitigate integer overflows in C, we
-must deal with both overflowing calculations and truncated assignments.
-
-
-Codebase Considerations
-=======================
-It's become clear from our investigatory efforts with arithmetic overflow
-mitigation that Linux has very few intentional overflows involving
-signed calculations. These overflows tend to either be legitimate bugs
-(many harmless), or are using an signed type when an unsigned type was
-intended (e.g. expecting to operate above INT_MAX, and possibly
-expecting wrap-around).
-
-For unsigned calculations, though, many places are expecting to be
-wrapping (hashes, counters, etc). As a result, there will be much more
-work involved to deal with unsigned calculations, but these are _also_ the
-calculations that have led to most of our wrap-around flaws (e.g. sizes,
-indexes, etc).
-
-
-Practical Considerations
-========================
-While simultaneously taking into account Mitigation, Coverage, Language,
-and Codebase Considerations, we must additionally continue to be able
-to build Linux with multiple version of GCC and Clang; we must remain
-"backward compatible" with our existing toolchains. We need to be able
-to make changes incrementally; the proven successful development strategy
-of Linux generally. We cannot have a "flag day".
-
-
-Potential Solution #1: Use sanitizers
-=====================================
-There already exists, for both GCC[5] and Clang, several sanitizers that
-were created specifically for handling integer overflow (and implicit
-truncation, the fun sibling to integer overflow[6]). These, today,
-already handle the unexpected overflow conditions we need to catch.
-
-Needed on compiler side:
-- create attribute that can be applied to typedefs and variable
-  definitions to indicate "expected to wrap" types. (Clang has this
-  at the ready[7].)
-- allow for common idioms to bypass sanitizers:
-  - explicit wrap-around tests: if (var + offset < var)
-  - loop iterator wrap-around during post-decrement: while (var--)
-  - negative unsigned constants: -1UL
-
-Needed on Linux side:
-- create "expected to wrap" typedefs
-- replace all expected-to-wrap variables with their appropriate wrapping
-  type over the next several years (yes, there's a lot)
-
-Changes to binary when mitigation is enabled:
-- All cases where non-wrapping types may overflow gain instrumentation
-  that checks for wrap-around and when found call (via cold branch) to
-  the sanitizer handler, and then continue on (if so configured).
-
-Example:
-
-    #define __wraps __attribute__((__wraps__))
-    typedef unsigned int __wraps u32_wrap;
-    ...
-    u16 area;
-    u32_wrap crc;
-    ...
-    area = x * y;	/* Sanitizer will check for overflow. */
-    ...
-    crc += word;	/* Wrap-around ignored by sanitizer */
-    ...
-
-Pros:
-- Much of the compiler work is done
-- Sanitizer semantics are well defined
-- Binary changes are well understood (other sanitizers have been in
-  production use for several years now)
-- Bootable proof of concept already exists[8]
-
-
-Potential Solution #2: Operator overloading
-===========================================
-Among some recent[9] C standards proposals was "Operator Overloading
-Without Name Mangling"[10]. This could allow for the redefinition of
-the basic arithmetic operators, overloaded via small static inline
-helpers. This could allow for arbitrary handling of overflows within
-those helpers, using typedefs to distinguish the wrapping types.
-
-Needed on compiler side:
-- Actually implement it
-- Handle all the idioms from solution #1 somehow, but without a clear
-  way to approach it
-
-Needed on Linux side:
-- create "expected to wrap" typedefs
-- create operator overflow functions
-- implement exception handling
-- replace all expected-to-wrap variables over the next several years
-
-Changes to binary when mitigation is enabled:
-- Unknown, but in theory similar to solution #1, though impact of redefining
-  all arithmetic in terms of static inlines is unclear.
-
-Example (in theory -- semantics aren't fully defined yet):
-
-	int int_mul_int(int a, int b)
-	{
-		int result;
-		if (__builtin_mul_overflow(a, b, &result))
-			__builtin_trap();
-		return result;
-	}
-	_Operator * int_mul_int;
-
-	typedef int int_wrap;
-	int int_mul_int_wrap(int_wrap a, int b)
-	{
-		return a * b;
-	}
-	_Operator * int_wrap_eq_int_mul_int;
-
-	int area = x * y;	  /* Traps on overflow */
-	...
-	int_wrap counter = x;
-	counter = counter * y;	  /* Wraps around */
-
-Pros:
-- Flexibility of overflow resolution strategy (though this is currently
-  a non-goal)
-
-Cons:
-- Semantics not fully defined
-- Amount of compiler work needed is unknown
-- More work on the Linux side than solution #1
-- May not handle implicit integer truncation
-- Unknown impact on binary output (e.g. does the compiler handle composing
-  the overloaded operators sanely? Is optimization trashed due to using
-  inlines for everything? etc)
-
-
-Conclusion
-==========
-I'm seeking some general consensus on taking approach #1 above. Any
-solution that actually gains us meaningful coverage is going to require
-pretty extensive changes to Linux's types so that's a universal pain
-point. But I've been beating the "make Linux safer" drum for a long time
-now, and I hope I can convince folks that we need to actually make a
-change here. The status quo isn't good enough, and we can do better. I
-just need to find a common solution we can agree on and realistically
-apply over the coming years.
-
-I'll go get my asbestos suit now... What are your thoughts, suggestions,
-alternatives?
-
-Thanks,
-
--Kees
-
-[0] I may be a broken record on this topic, but we have to do better.
-These attacks range from script kiddies sneaking bitcoin miners onto
-systems, to ransomware criminals locking healthcare providers out of all
-of their patient records, to fascist regimes tracking and disappearing
-dissidents and their families. We can't pretend Linux's flaws are just
-some academic consideration; there are real-world consequences to our
-use of C.
-
-[1] Looking through the last 10 years of medium and high CVEs (not a
-terrific metric, but it's been a relatively stable one over the same
-time period), we've averaged about 6 major integer overflow flaws a
-year. https://outflux.net/slides/2024/lss-na/#/2
-
-[2] This also lets early adopters of hardening mitigations use things
-like the "warn_limit" sysctl to get enforcement immediately once they've
-validated their workloads.
-
-[3] e.g. Rust has explicitly wrapping and non-wrapping types, C++ has
-operator overloading, etc.
-
-[4] https://lore.kernel.org/lkml/20240411230801.1504496-3-boqun.feng@gmail.com/
-
-[5] Things are more fully developed on the Clang side, so more work
-would be needed on GCC to reach parity, but the bulk of the
-infrastructure exists there. Compared to Clang, GCC needs:
- - unsigned integer overflow sanitizer
- - implicit truncation sanitizer
- - decouple "undefined" from "overflow" (i.e. allow sanitizers to work with
-   -fno-strict-overflow)
-
-[6] https://outflux.net/slides/2024/lss-na/#/30 and the next few slides
-
-[7] https://github.com/llvm/llvm-project/pull/86618
-
-[8] It's not pretty and totally not upstreamable as-is, but it does
-basically work. Many coverage areas are excluded, but the scope of what's
-needed is observable. Notably, this has not been updated to use the
-"wraps" attribute, which should make refactoring much less ugly:
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
-
-[9] https://lore.kernel.org/all/9162660e-2d6b-47a3-bfa2-77bfc55c817b@paulmck-laptop/
-
-[10] https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3201.pdf
-
--- 
-Kees Cook
 
