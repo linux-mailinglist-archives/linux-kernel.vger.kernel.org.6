@@ -1,99 +1,141 @@
-Return-Path: <linux-kernel+bounces-171076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7238BDF88
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:18:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495788BDF8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1951C21E11
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:18:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87FD2B220CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508E214EC57;
-	Tue,  7 May 2024 10:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="S/Qq5gzu"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F37714E2DA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CB014EC51;
+	Tue,  7 May 2024 10:20:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B11914E2E7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715077081; cv=none; b=pBy5P4gL3YWVLNdL0Eat5Ih4DR8sPyctNX+rPwxZ8Wl9aovN/VMkKgKYgjS5xMgMwvtwLxMUYHd59TJyC0K5ae9uaRrtEVfQIDH1qPgKqiTpH70X0vmMP7xvtm1CZd1fY6Cqv1DoNllfiIkezD+3fRvs9RmtiUMnfIvQf6NBKiQ=
+	t=1715077230; cv=none; b=pDoXPVlSZC/Wp4wQIZISJq4Gthy1a0JxoHE/pSZ2m2eQ9fZs3i3ymBdreODhU25e0u8/vaKxQ1GchNjYMA0BwnytSS+M5oeih9ZI35lG/Mzy5Oc0DpbZ1cAMGId8ZOw8TxGEvo+DDGCKl88z57HUUCjJRaMPTambazPSeldmN7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715077081; c=relaxed/simple;
-	bh=dnCLNFqvQAKBlSVAP7aFTgdYYOKaC4MBtRCs2QJDt2U=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=toBssSz+Sjukk4gIboPR4QuUSdCFUCCr6I1cA/qeceFDd3DiZGo0zVJbTyWz0RSxh5oJckF55CVN37z0Wm21JRbb4hvtm8jxS7cfsuNZ7qMAXoZsZKIUE/aEacU9GN46J+SN9gZZ37/rFFH7RK8PUVG0jRS5BlZdNlLb5TTk/9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=S/Qq5gzu; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a599af16934so720058366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715077078; x=1715681878; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ac5rOAJKSZYYZ0IEteEWbW9YdJJoGTwzrFFHY2kYg9Q=;
-        b=S/Qq5gzuKseZ7YCWKBf60ssxFOhGzkjH+zy5ZeYkFUiwmwPo+BabomtxTypUAInS0H
-         sVfc5KiMrP0ywt0Te4trO8vTsS/IP3jGUzYVrKaKInXxYz45Oa9P2QW8VQ2JGPVt97NK
-         2DBoJMKbOXOf8D2+CaiAaHd+YjojCBYo3AX/5K/cAV0hi6kCM/Jms8h9TmTKV5UMv+hd
-         4Lq/GPQ/IG2Z1Y6YS/GD8OMAfhNyKbJR5OzfmBva2Gv4FeNdQRgoH/nmYbYQzJB6tHOH
-         A8xtVaemSohmeJgbR0Hh7jK3JPhT7EPK1lkrTVUnXRPPlui6EKhlHKn1FBEPcio6RbmB
-         A5Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715077078; x=1715681878;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ac5rOAJKSZYYZ0IEteEWbW9YdJJoGTwzrFFHY2kYg9Q=;
-        b=rLF29pBXT8QY4mg6c39fwi6EjcLfV/mfvE+SW5/NBOH/ZqMQWwz2JM3GX/V9yub9fv
-         AWFPKkeq+pNVfwu/JZ1t9IEh02q5X9kXeCjd6JbaeZ+bIXiYxDWZpLRQQ1t6v+HQZY8y
-         JV5XeRtIJh7n3trDwM//G8cKsB8Za3N2eNbzc1jzHvHWnlLatnLVJquxdn0rOsJdPVYr
-         DxhAZAMS6ZS1z9i11TfqFOsYIBua8NWSBFyLHoP35xmq/EjYOS0j4TSG2tDeLbrhRaaL
-         0qkgX0CXYPat3wbi8oIkh5EP2wQs8yHhMGCiCB6C0DehZn9koSDcdYW/dsFHBuXvpL2x
-         u3Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWPL2ohdZNhiNOCIXxPxt2vNMzufDJ0WvvyKio7+1STrB2Xwh4W+vWUU3G3tScfQY8gWuXhYZwLYnf/xWXTg567ryQi32SDn63SNgXG
-X-Gm-Message-State: AOJu0Ywbw70u3fUDp0WTreRXxM4/9lml1WkakTgBG7ydMGznnuGVNqCN
-	fPX+b9wRiDIoVrRqoNKOy/wjXw6cxlrvHWvH/Bbh/2r+E0jMoinxJ6Jd+YVWmlY=
-X-Google-Smtp-Source: AGHT+IHidoSypSQADr6hPkvXXj9CkAePoe6AE430g+iLHQAqPdhRx8cN0msxxdBv0xp6B/nlsbgYlg==
-X-Received: by 2002:a17:907:7883:b0:a59:9e02:68fc with SMTP id ku3-20020a170907788300b00a599e0268fcmr7160173ejc.44.1715077078321;
-        Tue, 07 May 2024 03:17:58 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:aa3:5c01:5c28:520f:55e:647b])
-        by smtp.gmail.com with ESMTPSA id p16-20020a170906a01000b00a59c3cec28csm2976114ejy.10.2024.05.07.03.17.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 07 May 2024 03:17:57 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1715077230; c=relaxed/simple;
+	bh=l7a39ZOU+Mrj446gjZOKy3Bn0QGJfDOBT5AHwPvmWLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cwapg+3wDhVfkuADUsGv1WeW4bUXidtyjPscthBUc9sJOTOvUWmQwAs+scMRgL7nD+8/M058YbbuFjelg2RCv8jwNBKicrTOaHASqQl2n9TtgMnXJ+P3kH+gEwp9F/HfVKAOp4je7eIMkcZ6+KBnqghKo0Ax1hPACDQAKSwfJvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6D361063;
+	Tue,  7 May 2024 03:20:53 -0700 (PDT)
+Received: from [10.1.34.181] (unknown [10.1.34.181])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26B1B3F587;
+	Tue,  7 May 2024 03:20:26 -0700 (PDT)
+Message-ID: <d887b469-312f-433b-b7a1-a290a381d4d5@arm.com>
+Date: Tue, 7 May 2024 11:20:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] bug: Improve comment
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <20240412135406.155947-2-thorsten.blum@toblux.com>
-Date: Tue, 7 May 2024 12:17:46 +0200
-Cc: linux-arch@vger.kernel.org,
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, david@redhat.com, ioworker0@gmail.com,
+ wangkefeng.wang@huawei.com, ying.huang@intel.com, 21cnbao@gmail.com,
+ shy828301@gmail.com, ziy@nvidia.com, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <3E99B315-844D-4B5D-BD5B-CFC18EFE304D@toblux.com>
-References: <20240412135406.155947-2-thorsten.blum@toblux.com>
-To: Arnd Bergmann <arnd@arndb.de>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On 12. Apr 2024, at 15:54, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+On 06/05/2024 09:46, Baolin Wang wrote:
+> Anonymous pages have already been supported for multi-size (mTHP) allocation
+> through commit 19eaf44954df, that can allow THP to be configured through the
+> sysfs interface located at '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
 > 
-> Add parentheses to WARN_ON_ONCE() for consistency.
+> However, the anonymous shared pages will ignore the anonymous mTHP rule
+> configured through the sysfs interface, and can only use the PMD-mapped
+> THP, that is not reasonable. Many implement anonymous page sharing through
+> mmap(MAP_SHARED | MAP_ANONYMOUS), especially in database usage scenarios,
+> therefore, users expect to apply an unified mTHP strategy for anonymous pages,
+> also including the anonymous shared pages, in order to enjoy the benefits of
+> mTHP. For example, lower latency than PMD-mapped THP, smaller memory bloat
+> than PMD-mapped THP, contiguous PTEs on ARM architecture to reduce TLB miss etc.
+> 
+> The primary strategy is similar to supporting anonymous mTHP. Introduce
+> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
+> which can have all the same values as the top-level
 
-Hi Arnd,
+Didn't we agree that "force" would not be supported for now, and would return an
+error when attempting to set for a non-PMD-size hugepage-XXkb/shmem_enabled (or
+indirectly through inheritance)?
 
-could you add this trivial patch to your tree?
+> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
+> additional "inherit" option. By default all sizes will be set to "never"
+> except PMD size, which is set to "inherit". This ensures backward compatibility
+> with the shmem enabled of the top level, meanwhile also allows independent
+> control of shmem enabled for each mTHP.
+> 
+> Use the page fault latency tool to measure the performance of 1G anonymous shmem
+> with 32 threads on my machine environment with: ARM64 Architecture, 32 cores,
+> 125G memory:
+> base: mm-unstable
+> user-time    sys_time    faults_per_sec_per_cpu     faults_per_sec
+> 0.04s        3.10s         83516.416                  2669684.890
+> 
+> mm-unstable + patchset, anon shmem mTHP disabled
+> user-time    sys_time    faults_per_sec_per_cpu     faults_per_sec
+> 0.02s        3.14s         82936.359                  2630746.027
+> 
+> mm-unstable + patchset, anon shmem 64K mTHP enabled
+> user-time    sys_time    faults_per_sec_per_cpu     faults_per_sec
+> 0.08s        0.31s         678630.231                 17082522.495
+> 
+> From the data above, it is observed that the patchset has a minimal impact when
+> mTHP is not enabled (some fluctuations observed during testing). When enabling 64K
+> mTHP, there is a significant improvement of the page fault latency.
+> 
+> TODO:
+>  - Support mTHP for tmpfs.
+>  - Do not split the large folio when share memory swap out.
+>  - Can swap in a large folio for share memory.
+> 
+> Changes from RFC:
+>  - Rebase the patch set against the new mm-unstable branch, per Lance.
+>  - Add a new patch to export highest_order() and next_order().
+>  - Add a new patch to align mTHP size in shmem_get_unmapped_area().
+>  - Handle the uffd case and the VMA limits case when building mapping for
+>    large folio in the finish_fault() function, per Ryan.
+>  - Remove unnecessary 'order' variable in patch 3, per Kefeng.
+>  - Keep the anon shmem counters' name consistency.
+>  - Modify the strategy to support mTHP for anonymous shmem, discussed with
+>    Ryan and David.
+>  - Add reviewed tag from Barry.
+>  - Update the commit message.
+> 
+> Baolin Wang (8):
+>   mm: move highest_order() and next_order() out of the THP config
+>   mm: memory: extend finish_fault() to support large folio
+>   mm: shmem: add an 'order' parameter for shmem_alloc_hugefolio()
+>   mm: shmem: add THP validation for PMD-mapped THP related statistics
+>   mm: shmem: add multi-size THP sysfs interface for anonymous shmem
+>   mm: shmem: add mTHP support for anonymous shmem
+>   mm: shmem: add mTHP size alignment in shmem_get_unmapped_area
+>   mm: shmem: add mTHP counters for anonymous shmem
+> 
+>  Documentation/admin-guide/mm/transhuge.rst |  29 ++
+>  include/linux/huge_mm.h                    |  35 ++-
+>  mm/huge_memory.c                           |  17 +-
+>  mm/memory.c                                |  43 ++-
+>  mm/shmem.c                                 | 335 ++++++++++++++++++---
+>  5 files changed, 387 insertions(+), 72 deletions(-)
+> 
 
-Thanks,
-Thorsten
 
