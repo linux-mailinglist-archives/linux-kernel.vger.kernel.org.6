@@ -1,122 +1,238 @@
-Return-Path: <linux-kernel+bounces-171319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32C88BE29A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:56:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FFC8BE27F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDB63B24E33
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D1D28B9D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEB915D5BE;
-	Tue,  7 May 2024 12:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="szMkz5XQ"
-Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F28015B153;
-	Tue,  7 May 2024 12:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B11815B15A;
+	Tue,  7 May 2024 12:50:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1975156F24
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715086554; cv=none; b=lkyRw0wCtQjqgCMedezZ215X9JHBuZFdxwS9DdRtiN/iynYrJvxR/2zeO+EKyZtL+6ZQgKn8/Al4412tgHK0YNuEPBWhdBuDfgWiDTwx4BeeWCQ0B6V/in6YMe+PYwuxwumhd6FCKESr2eek33n/DIZLJRXu+fvMgcgV7r0M/ds=
+	t=1715086243; cv=none; b=KZnfl+Awgu4VPLKfPl7qqlsp4Ks5OkSolK4uycaqyNZT+LLq+OamwrCKcO+n0Eoq/QjBQcY/wk6Nk22P+E+MpZjmpN1XjxWmOmwwLG2kSv+qcG2KATLtZSaFHaZ1wiMQRKPV7+fB7pcIv5max36AiXqnVPZRvauxxYy6Q1d0+is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715086554; c=relaxed/simple;
-	bh=7mLQ4noYOwaZz0uIOPLa+mJodEytp0OT+zTex7p1R9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mR5WtHVhTbpXfW3Ql19fJiZYapBA4PEPF7fc6tO87EgnSocJx/b8bbkRI4Cru+zO/WfwfTxjfwK97rXml1iXGFjTunQPqmWhAsxthXr3jI+8AVzrqMzSz9zvRBShbUqMOsYomf+f+fPuSz1jXtC0ELRxduh8JBCl98Z1Mn7aPRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=szMkz5XQ; arc=none smtp.client-ip=178.154.239.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:230c:0:640:f8e:0])
-	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 3390E61277;
-	Tue,  7 May 2024 15:48:25 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id MmXuqmAmDqM0-G4BR5X7Q;
-	Tue, 07 May 2024 15:48:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1715086104; bh=zAPclAFMPPKUlH6qpuAnNZJMeX8QiDYjKI0Oitzf9Wg=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=szMkz5XQXmyp2MPWrKjBmUyCNvF4aEiWBUHmeQuOvbJ+FrIwFO5zMOe5s9r3DFbuY
-	 y3OvHyeI6zCWBYm8xV4pmdhi/ldtf9ACwxzz9kUvbTK84BTzHgCL8jB+0xLQIhuhwa
-	 SIuvfx3CMflI8RM6yWMNn/teOn3X4MbK3GIdz2fk=
-Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <7fcb3f51-468f-444d-9dd4-fa4028f018fc@yandex.ru>
-Date: Tue, 7 May 2024 15:48:22 +0300
+	s=arc-20240116; t=1715086243; c=relaxed/simple;
+	bh=Sr628eoIuCdX6Hr7vf8UDLcGevS6JWfBUFW53+MuhIA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YeCAoNL2XD7C6yjZivkbO8zobbvmqSCLWPLDHPEEctu8TVAeboR/YSIiJh7ucMHxUeWmPMbA0PvKQIZS+5tY/N4UDS2xR3EYy/t8Aa3SQ+5oRvZcrwCQ2VPYwWdKK8+h1NpODZxVCRVbbL0ccZO0gTJ5v6pplCRfK6zV0kpIRnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02E841063;
+	Tue,  7 May 2024 05:51:07 -0700 (PDT)
+Received: from e130256.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CDD33F793;
+	Tue,  7 May 2024 05:50:39 -0700 (PDT)
+From: Hongyan Xia <hongyan.xia2@arm.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Qais Yousef <qyousef@layalina.io>,
+	Morten Rasmussen <morten.rasmussen@arm.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	pierre.gondois@arm.com,
+	linux-kernel@vger.kernel.org,
+	Hongyan Xia <hongyan.xia2@arm.com>
+Subject: [RFC PATCH v3 0/6] Uclamp sum aggregation
+Date: Tue,  7 May 2024 13:50:23 +0100
+Message-Id: <cover.1715082714.git.hongyan.xia2@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Content-Language: en-US
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>,
- David Laight <David.Laight@aculab.com>, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-References: <20240427112451.1609471-1-stsp2@yandex.ru>
- <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
- <5b5cc31f-a5be-4f64-a97b-7708466ace82@yandex.ru>
- <20240507.110127-muggy.duff.trained.hobby-u9ZNUZ9CW5k@cyphar.com>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20240507.110127-muggy.duff.trained.hobby-u9ZNUZ9CW5k@cyphar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-07.05.2024 14:58, Aleksa Sarai пишет:
-> On 2024-05-07, stsp <stsp2@yandex.ru> wrote:
->> 07.05.2024 10:50, Aleksa Sarai пишет:
->>> If you are a privileged process which plans to change users,
->> Not privileged at all. But I think what you say is still possible with
->> userns?
-> It is possible to configure MOUNT_ATTR_IDMAP in a user namespace but
-> there are some restrictions that I suspect will make this complicated.
-> If you try to do something with a regular filesystem you'll probably run
-> into issues because you won't have CAP_SYS_ADMIN in the super block's
-> userns. But you could probably do it with tmpfs.
+Current uclamp implementation, max aggregation, has several drawbacks.
+This series gives an alternative implementation that addresses the
+problems and shows other advantages, mostly:
 
-Then its likely not a replacement for
-my proposal, as I really don't need that
-on tmpfs.
-Perhaps right now I can use the helper
-process and an rpc as a replacement.
-This is much more work and is slower,
-but more or less can approximate my
-original design decision quite precisely.
-Another disadvantage of an rpc approach
-is that the fds I get from the helper
-process, can not be trusted, as in this
-case kernel doesn't guarantee the fd
-actually refers to the resource I requested.
-I've seen a few OSes where rpc is checked
-by a trusted entity to avoid such problem.
+1. Simplicity. Sum aggregation implements uclamp with less than half of
+   code than max aggregation.
+2. Effectiveness. Sum aggregation shows better uclamp effectiveness,
+   either in benchmark scores or more importantly, in energy efficiency.
+3. Works on its own. No changes in cpufreq or other sub-systems are
+   needed.
+4. Low-overhead. No bucket operations and no need to tweak the number of
+   buckets to balance between overhead and uclamp granularity.
 
->>> A new attack I just thought of while writing this mail is that because
->>> there is no RESOLVE_NO_XDEV requirement, it should be possible for the
->>> process to get an arbitrary write primitive by creating a new
->>> userns+mountns and then bind-mounting / underneath the directory.
->> Doesn't this need a write perm to a
->> directory? In his case this is not a threat,
->> because you are not supposed to have a
->> write perm to that dir. OA2_CRED_INHERIT
->> is the only way to write.
-> No, bind-mounts don't require write permission.
+The key idea of sum aggregation is fairly simple. Each task has a
+util_avg_bias, which is obtained by:
 
-Oh, isn't this a problem by itself?
-Yes, in this case my patch needs to
-avoid RESOLVE_NO_XDEV, but I find this a harsh restriction. Maybe the 
-bind mount was done before a priv drop? Then it is fully legitimate. 
-Anyway, I don't know if I should work on it or not, as there seem to be 
-no indication of a possible acceptance.
+    util_avg_bias = clamp(util_avg, uclamp_min, uclamp_max) - util_avg;
+
+If a CPU has N tasks, p1, p2, p3... pN, then we sum the biases up and
+obtain a rq total bias:
+
+    rq_bias = util_avg_bias1 + util_avg_bias2... + util_avg_biasN;
+
+Then we use the biased rq utilization rq_util + rq_bias to select OPP
+and to schedule tasks.
+
+PATCH BREAKDOWN:
+
+Patch 1/6 reverts a patch that accommodate uclamp_max tasks under max
+aggregation. This patch is not needed and creates other problems for sum
+aggregation. It is discussed elsewhere that this patch will be improved
+and there may not be the need to revert it in the future.
+
+Patch 2 and 3 implement sum aggregation.
+
+Patch 4 and 5 remove max aggregation.
+
+Patch 6 applies PELT decay on negative util_avg_bias. This improves
+energy efficiency and task placement, but is not strictly necessary.
+
+TESTING:
+
+Two notebooks are shared at
+
+https://nbviewer.org/github/honxia02/notebooks/blob/bb97afd74f49d4b8add8b28ad4378ea337c695a8/whitebox/max.ipynb
+https://nbviewer.org/github/honxia02/notebooks/blob/bb97afd74f49d4b8add8b28ad4378ea337c695a8/whitebox/sum-offset.ipynb
+
+The experiments done in notebooks are on Arm Juno r2 board. CPU0-3 are
+little cores with capacity of 383. CPU4-5 are big cores. The rt-app
+profiles used for these experiments are included in the notebooks.
+
+Scenario 1: Scheduling 4 tasks with UCLAMP_MAX at 110.
+
+The scheduling decisions are plotted in Out[11]. Both max and sum
+aggregation understand the UCLAMP_MAX hint and schedule all 4 tasks on
+the little cluster. Max aggregation sometimes schedule 2 tasks on 1 CPU,
+and this is the reason why sum aggregation reverts the 1st commit.
+However, the reverted patch may be improved and this revert may not be
+needed in the future.
+
+Scenario 2: Scheduling 2 tasks with UCLAMP_MIN and UCLAMP_MAX at a value
+slightly above the capacity of the little CPU.
+
+Results are in Out[17]. The purpose is to use UCLAMP_MIN to place tasks
+on the big core. Both max and sum aggregation handle this correctly.
+
+Scenario 3: Task A is a task with a small utilization pinned to CPU4.
+Task B is an always-running task pinned to CPU5, but UCLAMP_MAX capped
+at 300. After a while, task A is then pinned to CPU5, joining B.
+
+Results are in Out[23]. Max aggregation sees a frequency spike at
+239.75s. When zoomed in, one can see square-wave-like utilization values
+because of A periodically going to sleep. When A wakes up, its default
+UCLAMP_MAX of 1024 will uncap B and reach the highest CPU frequency.
+When A sleeps, B's UCLAMP_MAX will be in effect and will reduce rq
+utilization. This happens repeatedly, hence the square wave. In
+contrast, sum aggregation sees a normal increase in utilization when A
+joins B, without any square-wave behavior.
+
+Scenario 4: 4 always-running tasks with UCLAMP_MAX of 110 pinned to the
+little PD (CPU0-3). 4 same tasks pinned to the big PD (CPU4-5).
+After a while, remove the CPU pinning of the 4 tasks on the big PD.
+
+Results are in Out[29]. After unpinning, max aggregation moves all 8
+tasks to the little cluster, but schedules 5 tasks on CPU0 and 1 each on
+CPU1-3. In contrast, sum aggregation schedules 2 on each little CPU
+after unpinning, which is the desired balanced task placement.
+
+Same as Scenario 1, the situation may not be as bad once the improvement
+of the reverted patch comes out in the future.
+
+Scenario 5: Scheduling 8 tasks with UCLAMP_MAX of 110.
+
+Results are in Out[35] and Out[36]. There's no doubt that sum
+aggregation yields substantially better scheduling decisions. This tests
+roughly the same thing as Scenario 4.
+
+EVALUATION:
+
+We backport patches to kernel v6.1 on Pixel 6 and run Android
+benchmarks.
+
+Speedometer:
+
+We run Speedometer 2.0 to test ADPF/uclamp effectiveness. Because sum
+aggregation does not circumvent the 20% OPP margin, we reduce uclamp
+values to 80% to be fair.
+
+------------------------------------------------------
+|   score   | score |   %   | CPU power (mW) |   %   |
+|    max    | 161.4 |       |    2358.9      |       |
+|  sum_0.8  | 166.0 | +2.85 |    2485.0      | +5.35 |
+| sum_tuned | 162.6 | +0.74 |    2332.0      | -1.14 |
+------------------------------------------------------
+
+We see a consistant higher score and higher average power consumption.
+Note that a higher score also means a reduction in run-time, so total
+energy increase for sum_0.8 is only 1.88%.
+
+We then reduce uclamp values so that the Speedometer score is roughly
+the same. If we do so, then sum aggregation actually gives a reduced
+average power and total energy consumption than max aggregation.
+
+UIBench:
+
+-----------------------------------------------------------------
+|   score   | jank percentage |   %    | CPU power (mW) |   %   |
+|    max    |     0.375%      |        |     122.75     |       |
+|  sum_0.8  |     0.440%      | +17.33 |     116.35     | -5.21 |
+| sum_tuned |     0.220%      | -41.33 |     119.35     | -2.77 |
+-----------------------------------------------------------------
+
+UIBench on Pixel 6 by default already has a low enough jank percentage.
+Moving to sum aggregation gives higher jank percentage and lower power
+consumption. We then tune the hardcoded uclamp values in the Android
+image to take advantage of the power budget, and can achieve more than
+41% jank reduction while still operating with less power consumption
+than max aggregation.
+
+This result is not suggesting that sum aggregation greatly outperforms
+max aggregation, because the jank percentage is already very low, but
+instead suggests that hardcoded uclamp values in the system (like in
+init scripts) need to be changed to perform well under sum aggregation.
+If tuned well, sum aggregation generally shows better effectiveness, or
+the same effectiveness but with less power consumption.
+
+---
+Changed in v3:
+- Addresses the biggest concern from multiple people, that PELT and
+  uclamp need to be separate. The new design is significantly simpler
+  than the previous revision and separates util_avg_uclamp into the
+  original util_avg (which this series doesn't touch at all) and the
+  util_avg_bias component.
+- Keep the tri-state return value of util_fits_cpu().
+- Keep both the unclamped and clamped util_est, so that we use the right
+  one depending on the caller in frequency or energy calculations.
+
+Hongyan Xia (6):
+  Revert "sched/uclamp: Set max_spare_cap_cpu even if max_spare_cap is
+    0"
+  sched/uclamp: Track a new util_avg_bias signal
+  sched/fair: Use util biases for utilization and frequency
+  sched/uclamp: Remove all uclamp bucket logic
+  sched/uclamp: Simplify uclamp_eff_value()
+  Propagate negative bias
+
+ include/linux/sched.h            |   8 +-
+ init/Kconfig                     |  32 ---
+ kernel/sched/core.c              | 321 ++----------------------
+ kernel/sched/cpufreq_schedutil.c |  12 +-
+ kernel/sched/debug.c             |   2 +-
+ kernel/sched/fair.c              | 411 ++++++++++++++++---------------
+ kernel/sched/pelt.c              |  39 +++
+ kernel/sched/rt.c                |   4 -
+ kernel/sched/sched.h             | 129 +++-------
+ 9 files changed, 319 insertions(+), 639 deletions(-)
+
+-- 
+2.34.1
 
 
