@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-172128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D64A8BEDDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:09:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7D48BEDDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26161B26A85
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A8DE1C24C4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C408514B94D;
-	Tue,  7 May 2024 20:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD0314B96A;
+	Tue,  7 May 2024 20:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SVcDlbpJ"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ayce0jpT"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF41814B940
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 20:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7854D14B940;
+	Tue,  7 May 2024 20:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715112459; cv=none; b=U5t+gIbuVu4XcS5KkPg7wdXWcGOTJQ0X2eBgdyWTcrf+4sacFqRO0fGdUSZEu5uKgQxa2TtUPDLwquz6KcModyvjcCWLvEcBhLGiG8ExETXdlwlNq4JbdpZc/Q40Nm7YnVjmBdSAHK716SZe4KMFLcZ+LVH92XvGJjodHc53ONU=
+	t=1715112470; cv=none; b=e1/mz8apJ34bN5mpoKjQ90Pth+ypVk3dl3OqMNrWQi5Hut3rhuz3ItxVw74Sx82mIsiN7NsYKVXk4uZPMe+yROGLZCILuTPJ6QoGt2NL2hSZfYuIQoKlDF5OCP39CKudo18Bu877KJDwE2Su5SttW9CtmW+EY5AjSlBtXFw9xH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715112459; c=relaxed/simple;
-	bh=n/UC63lLAcCezzowRd6HUrb0809BTC3BrdNXURqieAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CII9KkkH2z9haFjJtkQnEimkGa9JmApIIg1S+v3ghqYlD3WtbhtrXSBG109chGqa4UW09MCrMhNbNZ0ZYFBBuWoh69DO7TAfTBNwU/9O5mX8hIbK1AYd7LpYnjfPzWZrdxw8zS9FWhKZpv83kO+YYnPJQE158piHajeVJk5fjkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SVcDlbpJ; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-de8b683f76cso104268276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 13:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715112457; x=1715717257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n/UC63lLAcCezzowRd6HUrb0809BTC3BrdNXURqieAU=;
-        b=SVcDlbpJRsrU1CgzIPyIMBcSRiNQlb/5CSHCxeWcn8JMiEXYDqEwLhcQNvb+ii6/sJ
-         XtLcYclLlXJXaUXCPLg+AkOYmnBydERB7hEhtMEsyPvDOAonOizvQTvbYgfc3D5KTjDb
-         14lySm6QzBJITBBz4TG7m8RxTzrtlYmlQv4HlC5WTWQbzCjTWt81iaUjokYU0qYFHijs
-         mR8bWKCwDFDlLJZVGk6xgQdMI8QH4qVUDauUZFU9IbdWkA8828IlkyTKxg6OAlqALJdW
-         iVx3ZdeZAvzgKZszgZqHW+WKb1E8w0fpn7uXGawrpZvvmJhFoDY0u0WtJU/g3eoUxGBz
-         3SLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715112457; x=1715717257;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n/UC63lLAcCezzowRd6HUrb0809BTC3BrdNXURqieAU=;
-        b=bhQr4LlCl9nMAjsKzIOLVmQIhq1DbnPT4QJgJ0UrqPFx4v0yzCvxi7E84+8wl5vIUk
-         cD/u7qUsVzrOvSB1sV7EK37drnGfGLeh4yeRDY56MV/IUS3U8dzoOvtKxKBefD1Wkwt9
-         rQbP4EvhDMGMFFxLqcdpLLSPin7LGIgdEqPCiV7+8z9MDg887vQlzPVUMV4D3FarGm0v
-         gJe8tm/oiaiN5IMoajGhvD8V7Rt0AadAj8KfPuqneOR1cw8ty3PjN8hqCzGgrzwsW4BC
-         me63llwLtLOkk4Ptq+A7NTuCGMHOFXDeW8o3tUj9RUMWFydDd1EtvCipEpfpX+kbkyle
-         IoXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+2iBIfE9FRU2C3h2E4t1C7do758uqv+ZU3Gr8iKp2I1HWgWNNL4Jxmaqtg4rkMpryYzYZSmZN4kcjW3qmY2EHr1JRHCNHwa4JLFPL
-X-Gm-Message-State: AOJu0YwD5ZU0onikkUpxbL++djHh4QYytiikHcE/nCfr4NOax4dpaXtv
-	2OkFp2ThVdyezvkhC1uMX6LpSYast7QdpmLBG7QpYT2xSQ/B74+Oojja++GKTICe9FkGQZ04P9S
-	KOPq2ie/9JWb/70KNkwRaEdgqkSjdkkpW1lp5
-X-Google-Smtp-Source: AGHT+IEm/B5M9ij9+hhRe58Bv33yPC7ejrw1gilNago/rHkRrXGwhO7+GslzLf54b+pza6hk37izLWTtVb7zqaBYMVA=
-X-Received: by 2002:a25:7481:0:b0:de5:64db:170d with SMTP id
- 3f1490d57ef6-deba31e004emr2783330276.7.1715112456532; Tue, 07 May 2024
- 13:07:36 -0700 (PDT)
+	s=arc-20240116; t=1715112470; c=relaxed/simple;
+	bh=fipWuacVxzVGjU5VN53PElEjG/EVMb8BJ11r6n3Qv6w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DNY0H8zqwvwtEsOq3DQkDawbI4Mj6682maltOl+AjIoZX/TvxAZRFnTT/KR7Gye2dA36TXbF1G0AdQPxCUvMrignG1wzg9NPv+3t5IJI9rCbtWV5SEwKT3mtCjcrVlRhmp4tjDpW6uA3WX/SJepT0tE3mBqrNaqPfCiV/7vPY5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ayce0jpT; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715112466;
+	bh=fipWuacVxzVGjU5VN53PElEjG/EVMb8BJ11r6n3Qv6w=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ayce0jpTxn/KmZ5Mg7KGIx3PNbevbAYK9fpmSuiWhC9OoTF5RynAKB31qJBgqop6m
+	 SCuon0S6OseuU+bLsJvOo768IJ/HQxvJc7YlZDykNaHUatUmZVqZIOXAu67v3ObuAT
+	 rBWLOmR2jVrcZUNfXp3PDUuFNsnrSrhAU01VCRM9eytOy0S50jtKbjIClzR72op8ip
+	 mPuhRlzPQoYd5RWXWJ2OcqZY547pj/GLfuH5K/0S3QqIVuYq4nWRbltLhOMkFjR/y7
+	 okl4Xc8YxYOIThydVzngeXdBIGaSX3i+S0LmWZ4mLpwSITDBsfz5MYqC6w4GH/JLEU
+	 +93cxjjAc5JDA==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9274B37809D1;
+	Tue,  7 May 2024 20:07:43 +0000 (UTC)
+Message-ID: <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present
+ users (udev uaccess tag) ?
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter
+	 <daniel@ffwll.ch>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Sumit
+ Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Lennart
+ Poettering <mzxreary@0pointer.de>,  Robert Mader
+ <robert.mader@collabora.com>, Sebastien Bacher
+ <sebastien.bacher@canonical.com>, Linux Media Mailing List
+ <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>,  linaro-mm-sig@lists.linaro.org, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal
+ <mzamazal@redhat.com>, Maxime Ripard <mripard@redhat.com>, Andrey Konovalov
+ <andrey.konovalov.ynk@gmail.com>
+Date: Tue, 07 May 2024 16:07:39 -0400
+In-Reply-To: <20240507183613.GB20390@pendragon.ideasonboard.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+	 <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+	 <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
+	 <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
+	 <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
+	 <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
+	 <20240507183613.GB20390@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503183713.1557480-1-tjmercier@google.com>
- <20240506052955.GA4923@lst.de> <CABdmKX1XNTtoPTvfsJRobim8pHdDjPsKx=qVovVZDh5GEbKCfQ@mail.gmail.com>
- <20240506160244.GA16248@lst.de> <CABdmKX1n98+bw+1kewz=wdqq2Nbpaxao_Lx-Gq8oKGNUEP4ytQ@mail.gmail.com>
- <20240506161906.GA17237@lst.de> <CABdmKX3s_HnxciDA3XGM8Qj0kLY8OWENg+ifexrON4VYVbuLsA@mail.gmail.com>
- <20240507054314.GA31814@lst.de>
-In-Reply-To: <20240507054314.GA31814@lst.de>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Tue, 7 May 2024 13:07:25 -0700
-Message-ID: <CABdmKX3PgcXaRUH3L7OV+POMiMd5L6pEF4fLXYPgfmQUNu_trg@mail.gmail.com>
-Subject: Re: [PATCH] dma-direct: Set SG_DMA_SWIOTLB flag for dma-direct
-To: Christoph Hellwig <hch@lst.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	isaacmanjarres@google.com, Catalin Marinas <catalin.marinas@arm.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 6, 2024 at 10:43=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> On Mon, May 06, 2024 at 09:39:53AM -0700, T.J. Mercier wrote:
-> > > You should not check, you simply must handle it by doing the proper
-> > > DMA API based ownership management.
-> >
-> > That doesn't really work for uncached buffers.
->
-> What uncached buffers?
+Hi,
 
-For example these ones:
-https://android.googlesource.com/kernel/common/+/refs/heads/android-mainlin=
-e/drivers/dma-buf/heaps/system_heap.c#141
+Le mardi 07 mai 2024 =C3=A0 21:36 +0300, Laurent Pinchart a =C3=A9crit=C2=
+=A0:
+> Shorter term, we have a problem to solve, and the best option we have
+> found so far is to rely on dma-buf heaps as a backend for the frame
+> buffer allocatro helper in libcamera for the use case described above.
+> This won't work in 100% of the cases, clearly. It's a stop-gap measure
+> until we can do better.
 
-Vendors have their own drivers that also export uncached buffers in a
-similar way.
+Considering the security concerned raised on this thread with dmabuf heap
+allocation not be restricted by quotas, you'd get what you want quickly wit=
+h
+memfd + udmabuf instead (which is accounted already).
+
+It was raised that distro don't enable udmabuf, but as stated there by Hans=
+, in
+any cases distro needs to take action to make the softISP works. This
+alternative is easy and does not interfere in anyway with your future plan =
+or
+the libcamera API. You could even have both dmabuf heap (for Raspbian) and =
+the
+safer memfd+udmabuf for the distro with security concerns.
+
+And for the long term plan, we can certainly get closer by fixing that issu=
+e
+with accounting. This issue also applied to v4l2 io-ops, so it would be nic=
+e to
+find common set of helpers to fix these exporters.
+
+regards,
+Nicolas
 
