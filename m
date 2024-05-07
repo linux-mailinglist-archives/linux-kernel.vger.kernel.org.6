@@ -1,286 +1,138 @@
-Return-Path: <linux-kernel+bounces-171982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEB88BEB80
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:35:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5738BEB82
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CD3E1F256AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE691C227CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19D416D4DA;
-	Tue,  7 May 2024 18:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8F216D4F1;
+	Tue,  7 May 2024 18:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgtYPCVb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MOdzxAuw"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0451C13C825;
-	Tue,  7 May 2024 18:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D0E4C8A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715106926; cv=none; b=GmoGkMKD2ygRYSt9eAHdEEmTAk82/fvqZ2QvOAZsBdKiBNPDkzoT6lZuytyRZFOvj91oXtEd45wKyhbrHX9GZXroFZ7doAOjSy7osShKVJTArXbrjei7i6XqDVdQQKcH/l3KdyAyEgU32yD87xLCpRQMtl5xA22VwBEXQYYKXNw=
+	t=1715106966; cv=none; b=XZ2hzfeilCuktA0+IrvW2vGGOD614Vec0JjIpqN8U8zxhgA/J75cPmzbaa2/HqQ9bsXYLLPKSAXqKCiWnvLWU+BxfKmbLnKdMzSdqZ8MadGMHH1OcCRsjGTDtiqGmnEIu3BdtZ6jxYX+9Ftie4oe6cxp6uiqjI6MuNi9EDlC2Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715106926; c=relaxed/simple;
-	bh=TELV8mwIKIxcpUSfKl97kkO2PhVXm6bY9UQzIfbvyME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwMXd0EkXrhTIXuqfryqAhKHlo0Fje85Ob8a3YnhmWCgqaxAYcLXA4JlbBmMhs3+yvmBTQVqRkR2oFPfUhVEpZ9A36TfsnLPr7ObVHULybkioFU6wDXl3TUINzzOTyataeUV/jNntgGe0XPdU2ELWV6SUoocjq0u7oLj23UEhXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgtYPCVb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F710C2BBFC;
-	Tue,  7 May 2024 18:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715106925;
-	bh=TELV8mwIKIxcpUSfKl97kkO2PhVXm6bY9UQzIfbvyME=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AgtYPCVb8iZvLBsMlqjrcFAH6Ita4rUX/3mRDHYkc/6QjHQTFNibqtIE67w5EeOA+
-	 SiQyd7WHTnCtOvAco/6hGeIHlVy+KZppR3BtFsBY6C7BDXU6Yw6IkEjIG2+eInzUO7
-	 W4LGZC+kwNMUEnctl6dK+Iawra4TlrR2l7aCNxlHy0S9UrFVawwJjfspfS5TfurMY1
-	 oZMeXEi7kvUXbSSWlrqQlCfjSseUK2+Aig7zK4TIwml5scBu0k24JtYJ//DusS82NG
-	 MRGv/eMOcdixi61wHWpGYfi4MzJWItfXXOloauTAzqk2i+eGM88XPhGZHqytJdCfNS
-	 lp3lwv5v20RCg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1064DCE0C56; Tue,  7 May 2024 11:35:25 -0700 (PDT)
-Date: Tue, 7 May 2024 11:35:25 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] gpiolib: use a single SRCU struct for all GPIO
- descriptors
-Message-ID: <bee9f8b8-2b12-45a0-a440-04ecb71b98bd@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240507172414.28513-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1715106966; c=relaxed/simple;
+	bh=tzWS+kPyt79XbOX+5oaytxEr+MBWVTX6zlqUe/8VBnc=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=YXJDp2bOZpFVJlVYfetZ2Meoy370D3W1/RiH98mg3qQqwQ5mLAYHIiqjXbZjL4rXtR5MgILyFLhOLesDxJcY5Kt6/Zyz/lCnCscqyIC1CKJ4m9Nw0IhC2UQqAIKxNEXxBGI/bkkrvrshTZXMWMsGF+rtBYikNdp5wv2Njweyhew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MOdzxAuw; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de54be7066bso6494543276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:36:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715106964; x=1715711764; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SxLHBX613BezPFCosUL3vMa1Z1WB1g1HWATAv+V05wY=;
+        b=MOdzxAuwvzp28I7qBQQYnY8ctEtXxn2lqCdq8jISugFk2Y7dLx0A5pr67vsHkLRI9y
+         b6jWH0E6JUsa3NpjzaTWc5atX9+YwAKmH3LJLzC2MM88RlBw6x4MbkmhfthdxFEtJdKS
+         t5/IjtBT2yIhPHAAwVw3Hloonqb+9i2dOEGeaMuoozH+MF3gefA7AkMQ/Pbvc7d3twqe
+         kBfK1V+tqK03amzuJVCq9gO+I5SUXae9bXVyzNx7P+RDVicUiUN+rQQrCNfxxRfXufL+
+         XQkicNaCxRp02hU22r1VusPVqaVcJGlRm97PJ/ujalmMdlsAX5VJxUsO4QyFbp5fUT2u
+         wPQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715106964; x=1715711764;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SxLHBX613BezPFCosUL3vMa1Z1WB1g1HWATAv+V05wY=;
+        b=OFYU2mjHVSiMsAfOEwUpEQpGONffOcFAjJcVuSCuHJbaSs1DNLGA6jrJclxvbEFuhW
+         h/vDlsc/NRp+r8/rlT1l2dWSTkyWYjFSYbBQwBg7kW1PvVToVFcXLkBHTNNpEsT0Hc1e
+         t+RQB3vGe65e8Dw4UZiF/eqr6RmNG/ugWd9s6yq39PzL3d6dalxf1tHwvijOdiFG81nP
+         PeZBOwJbqdvTvZuJfdzP/uf95YExx19oF9lY7x8uy2x9EHkqqH9G9uTSykTRBpbAr4LC
+         p7jI6I7psxBAq57KZMETTkrXyg5+Rh5q3TwctYKFj+WYuzYysAnTt4Pps+tZ7eexXFW/
+         V15Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWL7k0BXMzLI6Kf3d92uUPm50QMDMGqzpl5BCejldw0Vwcj+FP5nwwas6jBN2ESGAtI8U091d+biTkImEF4e2WTUPD8xveuCti/Hz81
+X-Gm-Message-State: AOJu0YxqykQSxS11/Oi7Lt/pTMhezSk9feYdqqy64kp2MKakE1zcccBC
+	h5/ah+DCRcojdQ7S6CvxvvxuVyPfU6OYXJgXK1+xTdzE/Y0JkNuOfB7zF7QVGE/3VZw/a3FWVLJ
+	2LFbCKA==
+X-Google-Smtp-Source: AGHT+IHLQRJTCEv97D7oZ5BJYbjKtKtzp6hp1etnh5mXJgEBM/I0f4k6ffrpTNXBtnPmKqqKpoweO9puZjHH
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8095:fd7:9773:b1df])
+ (user=irogers job=sendgmr) by 2002:a25:b20a:0:b0:de6:1301:600a with SMTP id
+ 3f1490d57ef6-debb9da609fmr114708276.9.1715106963603; Tue, 07 May 2024
+ 11:36:03 -0700 (PDT)
+Date: Tue,  7 May 2024 11:35:37 -0700
+Message-Id: <20240507183545.1236093-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507172414.28513-1-brgl@bgdev.pl>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+Subject: [PATCH v1 0/8] Address/leak sanitizer clean ups
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Clark <james.clark@arm.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Yanteng Si <siyanteng@loongson.cn>, Sun Haiyong <sunhaiyong@loongson.cn>, 
+	Kajol Jain <kjain@linux.ibm.com>, Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>, 
+	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>, Andi Kleen <ak@linux.intel.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 07, 2024 at 07:24:14PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> We used a per-descriptor SRCU struct in order to not impose a wait with
-> synchronize_srcu() for descriptor X on read-only operations of
-> descriptor Y. Now that we no longer call synchronize_srcu() on
-> descriptor label change but only when releasing descriptor resources, we
-> can use a single SRCU structure for all GPIO descriptors in a given chip.
-> 
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Remove unnecessary reference counts for structs with no gets.  Add
+reference count checking to comm_str and mem_info.  Fix memory leaks
+and errors detected on "perf mem report" by address sanitizer and leak
+sanitizer.
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Ian Rogers (8):
+  perf ui browser: Don't save pointer to stack memory
+  perf annotate: Fix memory leak in annotated_source
+  perf block-info: Remove unused refcount
+  perf cpumap: Remove refcnt from cpu_aggr_map
+  perf comm: Add reference count checking to comm_str
+  perf mem-info: Move mem-info out of mem-events and symbol
+  perf mem-info: Add reference count checking
+  perf hist: Avoid hist_entry_iter mem_info memory leak
 
-> ---
->  drivers/gpio/gpiolib-cdev.c |  2 +-
->  drivers/gpio/gpiolib.c      | 41 +++++++++++++++++--------------------
->  drivers/gpio/gpiolib.h      | 10 ++++-----
->  3 files changed, 25 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index d09c7d728365..fea149ae7774 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -2351,7 +2351,7 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
->  
->  	dflags = READ_ONCE(desc->flags);
->  
-> -	scoped_guard(srcu, &desc->srcu) {
-> +	scoped_guard(srcu, &desc->gdev->desc_srcu) {
->  		label = gpiod_get_label(desc);
->  		if (label && test_bit(FLAG_REQUESTED, &dflags))
->  			strscpy(info->consumer, label,
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 2fa3756c9073..fa50db0c3605 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -112,8 +112,8 @@ const char *gpiod_get_label(struct gpio_desc *desc)
->  	if (!test_bit(FLAG_REQUESTED, &flags))
->  		return NULL;
->  
-> -	label = srcu_dereference_check(desc->label, &desc->srcu,
-> -				       srcu_read_lock_held(&desc->srcu));
-> +	label = srcu_dereference_check(desc->label, &desc->gdev->desc_srcu,
-> +				srcu_read_lock_held(&desc->gdev->desc_srcu));
->  
->  	return label->str;
->  }
-> @@ -138,7 +138,7 @@ static int desc_set_label(struct gpio_desc *desc, const char *label)
->  
->  	old = rcu_replace_pointer(desc->label, new, 1);
->  	if (old)
-> -		call_srcu(&desc->srcu, &old->rh, desc_free_label);
-> +		call_srcu(&desc->gdev->desc_srcu, &old->rh, desc_free_label);
->  
->  	return 0;
->  }
-> @@ -709,13 +709,10 @@ EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
->  static void gpiodev_release(struct device *dev)
->  {
->  	struct gpio_device *gdev = to_gpio_device(dev);
-> -	unsigned int i;
->  
-> -	for (i = 0; i < gdev->ngpio; i++) {
-> -		/* Free pending label. */
-> -		synchronize_srcu(&gdev->descs[i].srcu);
-> -		cleanup_srcu_struct(&gdev->descs[i].srcu);
-> -	}
-> +	/* Call pending kfree()s for descriptor labels. */
-> +	synchronize_srcu(&gdev->desc_srcu);
-> +	cleanup_srcu_struct(&gdev->desc_srcu);
->  
->  	ida_free(&gpio_ida, gdev->id);
->  	kfree_const(gdev->label);
-> @@ -992,6 +989,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->  	if (ret)
->  		goto err_remove_from_list;
->  
-> +	ret = init_srcu_struct(&gdev->desc_srcu);
-> +	if (ret)
-> +		goto err_cleanup_gdev_srcu;
-> +
->  #ifdef CONFIG_PINCTRL
->  	INIT_LIST_HEAD(&gdev->pin_ranges);
->  #endif
-> @@ -999,23 +1000,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->  	if (gc->names) {
->  		ret = gpiochip_set_desc_names(gc);
->  		if (ret)
-> -			goto err_cleanup_gdev_srcu;
-> +			goto err_cleanup_desc_srcu;
->  	}
->  	ret = gpiochip_set_names(gc);
->  	if (ret)
-> -		goto err_cleanup_gdev_srcu;
-> +		goto err_cleanup_desc_srcu;
->  
->  	ret = gpiochip_init_valid_mask(gc);
->  	if (ret)
-> -		goto err_cleanup_gdev_srcu;
-> +		goto err_cleanup_desc_srcu;
->  
->  	for (desc_index = 0; desc_index < gc->ngpio; desc_index++) {
->  		struct gpio_desc *desc = &gdev->descs[desc_index];
->  
-> -		ret = init_srcu_struct(&desc->srcu);
-> -		if (ret)
-> -			goto err_cleanup_desc_srcu;
-> -
->  		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index)) {
->  			assign_bit(FLAG_IS_OUT,
->  				   &desc->flags, !gc->get_direction(gc, desc_index));
-> @@ -1027,7 +1024,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->  
->  	ret = of_gpiochip_add(gc);
->  	if (ret)
-> -		goto err_cleanup_desc_srcu;
-> +		goto err_free_valid_mask;
->  
->  	ret = gpiochip_add_pin_ranges(gc);
->  	if (ret)
-> @@ -1074,10 +1071,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->  	gpiochip_remove_pin_ranges(gc);
->  err_remove_of_chip:
->  	of_gpiochip_remove(gc);
-> -err_cleanup_desc_srcu:
-> -	while (desc_index--)
-> -		cleanup_srcu_struct(&gdev->descs[desc_index].srcu);
-> +err_free_valid_mask:
->  	gpiochip_free_valid_mask(gc);
-> +err_cleanup_desc_srcu:
-> +	cleanup_srcu_struct(&gdev->desc_srcu);
->  err_cleanup_gdev_srcu:
->  	cleanup_srcu_struct(&gdev->srcu);
->  err_remove_from_list:
-> @@ -2407,7 +2404,7 @@ char *gpiochip_dup_line_label(struct gpio_chip *gc, unsigned int offset)
->  	if (!test_bit(FLAG_REQUESTED, &desc->flags))
->  		return NULL;
->  
-> -	guard(srcu)(&desc->srcu);
-> +	guard(srcu)(&desc->gdev->desc_srcu);
->  
->  	label = kstrdup(gpiod_get_label(desc), GFP_KERNEL);
->  	if (!label)
-> @@ -4798,7 +4795,7 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
->  	}
->  
->  	for_each_gpio_desc(gc, desc) {
-> -		guard(srcu)(&desc->srcu);
-> +		guard(srcu)(&desc->gdev->desc_srcu);
->  		if (test_bit(FLAG_REQUESTED, &desc->flags)) {
->  			gpiod_get_direction(desc);
->  			is_out = test_bit(FLAG_IS_OUT, &desc->flags);
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index 69a353c789f0..8e0e211ebf08 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -31,6 +31,7 @@
->   * @chip: pointer to the corresponding gpiochip, holding static
->   * data for this device
->   * @descs: array of ngpio descriptors.
-> + * @desc_srcu: ensures consistent state of GPIO descriptors exposed to users
->   * @ngpio: the number of GPIO lines on this GPIO device, equal to the size
->   * of the @descs array.
->   * @can_sleep: indicate whether the GPIO chip driver's callbacks can sleep
-> @@ -61,6 +62,7 @@ struct gpio_device {
->  	struct module		*owner;
->  	struct gpio_chip __rcu	*chip;
->  	struct gpio_desc	*descs;
-> +	struct srcu_struct	desc_srcu;
->  	int			base;
->  	u16			ngpio;
->  	bool			can_sleep;
-> @@ -150,7 +152,6 @@ struct gpio_desc_label {
->   * @label:		Name of the consumer
->   * @name:		Line name
->   * @hog:		Pointer to the device node that hogs this line (if any)
-> - * @srcu:		SRCU struct protecting the label pointer.
->   *
->   * These are obtained using gpiod_get() and are preferable to the old
->   * integer-based handles.
-> @@ -188,7 +189,6 @@ struct gpio_desc {
->  #ifdef CONFIG_OF_DYNAMIC
->  	struct device_node	*hog;
->  #endif
-> -	struct srcu_struct	srcu;
->  };
->  
->  #define gpiod_not_found(desc)		(IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
-> @@ -256,7 +256,7 @@ static inline int gpio_chip_hwgpio(const struct gpio_desc *desc)
->  
->  #define gpiod_err(desc, fmt, ...) \
->  do { \
-> -	scoped_guard(srcu, &desc->srcu) { \
-> +	scoped_guard(srcu, &desc->gdev->desc_srcu) { \
->  		pr_err("gpio-%d (%s): " fmt, desc_to_gpio(desc), \
->  		       gpiod_get_label(desc) ? : "?", ##__VA_ARGS__); \
->  	} \
-> @@ -264,7 +264,7 @@ do { \
->  
->  #define gpiod_warn(desc, fmt, ...) \
->  do { \
-> -	scoped_guard(srcu, &desc->srcu) { \
-> +	scoped_guard(srcu, &desc->gdev->desc_srcu) { \
->  		pr_warn("gpio-%d (%s): " fmt, desc_to_gpio(desc), \
->  			gpiod_get_label(desc) ? : "?", ##__VA_ARGS__); \
->  	} \
-> @@ -272,7 +272,7 @@ do { \
->  
->  #define gpiod_dbg(desc, fmt, ...) \
->  do { \
-> -	scoped_guard(srcu, &desc->srcu) { \
-> +	scoped_guard(srcu, &desc->gdev->desc_srcu) { \
->  		pr_debug("gpio-%d (%s): " fmt, desc_to_gpio(desc), \
->  			 gpiod_get_label(desc) ? : "?", ##__VA_ARGS__); \
->  	} \
-> -- 
-> 2.40.1
-> 
+ tools/perf/builtin-c2c.c                      |  13 +-
+ tools/perf/builtin-report.c                   |   3 +-
+ tools/perf/builtin-script.c                   |  12 +-
+ tools/perf/builtin-stat.c                     |  16 +-
+ tools/perf/tests/mem.c                        |  11 +-
+ tools/perf/ui/browser.c                       |   4 +-
+ tools/perf/ui/browser.h                       |   2 +-
+ tools/perf/util/Build                         |   1 +
+ tools/perf/util/annotate.c                    |   6 +
+ tools/perf/util/block-info.c                  |  22 +-
+ tools/perf/util/block-info.h                  |  15 +-
+ tools/perf/util/comm.c                        | 196 +++++++++++-------
+ tools/perf/util/cpumap.c                      |   2 -
+ tools/perf/util/cpumap.h                      |   2 -
+ tools/perf/util/hist.c                        |  62 +++---
+ tools/perf/util/hist.h                        |   8 +-
+ tools/perf/util/machine.c                     |   7 +-
+ tools/perf/util/mem-events.c                  |  36 ++--
+ tools/perf/util/mem-events.h                  |  29 +--
+ tools/perf/util/mem-info.c                    |  35 ++++
+ tools/perf/util/mem-info.h                    |  54 +++++
+ .../scripting-engines/trace-event-python.c    |  12 +-
+ tools/perf/util/sort.c                        |  69 +++---
+ tools/perf/util/symbol.c                      |  26 +--
+ tools/perf/util/symbol.h                      |  12 --
+ 25 files changed, 370 insertions(+), 285 deletions(-)
+ create mode 100644 tools/perf/util/mem-info.c
+ create mode 100644 tools/perf/util/mem-info.h
+
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
+
 
