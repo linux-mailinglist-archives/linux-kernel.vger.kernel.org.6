@@ -1,180 +1,122 @@
-Return-Path: <linux-kernel+bounces-171778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A93E8BE886
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:16:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8054A8BE892
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC08E1C21E3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:16:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B1DAB221E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A92016ABCD;
-	Tue,  7 May 2024 16:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E4716ABF7;
+	Tue,  7 May 2024 16:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AVLUXAvN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="762/2gCu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzyCpRuS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB45E168B19
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D443F1635AD;
+	Tue,  7 May 2024 16:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715098598; cv=none; b=Cbqjd2CIIar9nQ9NCAOu5TK4CSWqDYpy3LRM6UB+5PnJRSuZZOeR8h5arKXOpRYXljZsuWRADUyxJmmyd/eapPbU63aUHepcdZb6XywROduW6cq1ZuqibiFvKBDer2wwpRYruuPDuIHyPXaPKub0MdloypVrnWmPquGXVruZ4w0=
+	t=1715098674; cv=none; b=bi0qLqA4dE7XxUkV8Q/Wel6fQZEvz5M545SGi6VsSRrNYYiELW9h1OXYX3Bj7MEF9L/KtvqT8CR6DCbJTrRlXuDjTmrPGxVg+YySyd7/1HjSeCZmh3EV+s30+0fkrg7jWIrx3OfXtoWjqhy9lkoWGfhLykdb7QTUhXnmcsCxb1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715098598; c=relaxed/simple;
-	bh=diftbWAtEake/auuRRkWComXeatVo2PCzmGadHUO5m8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mfk1cC8JkxsaBeQn+08Z+J8n/Eoj7qB9HpOK+iT3qmPtmJ/M+TH/QofLuSHs6QjWbV68/RCHz2DhAjex8CpfULSqMya1xww3q7C1f0L0J9HUtWUeMj86gUMEf1jFd8AuKVxTcPl6vIGnk44EMg1BQ/Tmk9G2RYHAX3yBvY14+NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AVLUXAvN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=762/2gCu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715098594;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H8yRaINXb+2y+Yk0tF4WrmeylaPP4n6KW+waUEEZ/kU=;
-	b=AVLUXAvNUxqkqragrMixC29QZDPC0JoI+53MzzeCtHA9hI3DMLTprc4qDvCPhv9KzyqbaO
-	siHtCws6oRH2JjA8Wi82oC4hprJm2XjCnSN3/fX1maa7r9hKE2Wwn47oUqBcjoW7qNMWnH
-	lf+GZ2Y1u4m3I55Lat5PQkQvUtImH1/aoXmZI/Ri5SA6ZEZcP7eOjzdAgRzGQKpy2GMUrr
-	IiC2rectKeoQI5c8D9gfT/AynU9aihsN1On2prs4XelP8vHl4dQypGZaTEVkF+nS3OdNyC
-	MJsE92PonjvTMXV4vQFvaP3Dlst8ZpERT15qrKfKjGOPPBdjLzfMYmQL6VFLcA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715098594;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H8yRaINXb+2y+Yk0tF4WrmeylaPP4n6KW+waUEEZ/kU=;
-	b=762/2gCucT3McZ6Lf33umlP4j3V1SeZPhrmq4pdmpz6bMeZeche2A/rSLzzJ6NYfmOjEzU
-	V5mlhXW+2JnqsTAg==
-To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
- linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
- keith.lucas@oracle.com, aruna.ramakrishna@oracle.com
-Subject: Re: [PATCH v3 2/4] x86/pkeys: Add helper functions to update PKRU
- on sigframe
-In-Reply-To: <20240425180542.1042933-3-aruna.ramakrishna@oracle.com>
-References: <20240425180542.1042933-1-aruna.ramakrishna@oracle.com>
- <20240425180542.1042933-3-aruna.ramakrishna@oracle.com>
-Date: Tue, 07 May 2024 18:16:34 +0200
-Message-ID: <87zft1ppgd.ffs@tglx>
+	s=arc-20240116; t=1715098674; c=relaxed/simple;
+	bh=+EdSyGJvH/21wvtCtdWqpIduQUpmlkNHvWInRhO/rfM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HrsxHnhH3WXOx1vIgr5aHBSu5BVzj/iHIMce25SVUdO170pKQh/J1jvmQsGSv0i165t67JRRqqPqztUyAcVB4kadyUpL8h0PG3yPG3Zqe0i7cqj2H7ezCt9IZ9uhWTwxg0pcFXbrjUYWTr8mO9CWbLF7Lwb9GfYhK3zPMcd3yzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzyCpRuS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E230FC2BBFC;
+	Tue,  7 May 2024 16:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715098673;
+	bh=+EdSyGJvH/21wvtCtdWqpIduQUpmlkNHvWInRhO/rfM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DzyCpRuSW/aH3TOPxd84HNZGAObZKBcn5x5F//oO1euvpIRhnP0WaO52llBFnJNuz
+	 OPjNCF5G2gn/nSm7wIj9fNBD9PW+rpNwirCVy0FVfkARGLWZ2vbq8lMAIlRazgjwfB
+	 ckLJDeJEsrnjhjM4aFOaAHQ4MdmNgwGB8YuBZ+MZUZLO0lBIqDNkimAJm1HjI0iTTv
+	 Ay8d+b8Gpri7hKmkK3QYzsSG8P19Fwirec8qN8GXM+ZYfNBdhwEKPt+vO3MnzJLx8v
+	 bk1GFZuDDo8L64XcudNko1z4hZs0/m9UvUX8Rv2LWxTOuTGQ5cTAXAHpqfjLgSFnVW
+	 Dd10P6V/FK/yQ==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-next@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH mm-unstable] Docs/mm/damon/design: fix build warning
+Date: Tue,  7 May 2024 09:17:47 -0700
+Message-Id: <20240507161747.52430-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 25 2024 at 18:05, Aruna Ramakrishna wrote:
-> This patch adds helper functions that will update PKRU value on the
+Commit b7138c7d40b0 ("Docs/mm/damon/design: use a list for supported
+filters") of mm-unstable tree is causing below warning and error with
+'make htmldocs'.
 
-git grep 'This patch' Documentation/process/
+    Documentation/mm/damon/design.rst:482: ERROR: Unexpected indentation.
+    Documentation/mm/damon/design.rst:483: WARNING: Block quote ends without a blank line; unexpected unindent.
 
-Also please explain WHY this is needed and not just what.
+The problem caused by wrong indentation for nested list items.  Fix the
+wrong indentation.
 
-> sigframe after XSAVE.
+Fixes: b7138c7d40b0 ("Docs/mm/damon/design: use a list for supported filters")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/20240507162623.4d94d455@canb.auug.org.au
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ Documentation/mm/damon/design.rst | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-..
+diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
+index 1873755358af..3df387249937 100644
+--- a/Documentation/mm/damon/design.rst
++++ b/Documentation/mm/damon/design.rst
+@@ -472,21 +472,21 @@ counted as the scheme has tried.  This difference affects the statistics.
+ Below types of filters are currently supported.
+ 
+ - anonymous page
+-  - Applied to pages that containing data that not stored in files.
+-  - Handled by operations set layer.  Supported by only ``paddr`` set.
++    - Applied to pages that containing data that not stored in files.
++    - Handled by operations set layer.  Supported by only ``paddr`` set.
+ - memory cgroup
+-  - Applied to pages that belonging to a given cgroup.
+-  - Handled by operations set layer.  Supported by only ``paddr`` set.
++    - Applied to pages that belonging to a given cgroup.
++    - Handled by operations set layer.  Supported by only ``paddr`` set.
+ - young page
+-  - Applied to pages that are accessed after the last access check from the
+-    scheme.
+-  - Handled by operations set layer.  Supported by only ``paddr`` set.
++    - Applied to pages that are accessed after the last access check from the
++      scheme.
++    - Handled by operations set layer.  Supported by only ``paddr`` set.
+ - address range
+-  - Applied to pages that belonging to a given address range.
+-  - Handled by the core logic.
++    - Applied to pages that belonging to a given address range.
++    - Handled by the core logic.
+ - DAMON monitoring target
+-  - Applied to pages that belonging to a given DAMON monitoring target.
+-  - Handled by the core logic.
++    - Applied to pages that belonging to a given DAMON monitoring target.
++    - Handled by the core logic.
+ 
+ 
+ Application Programming Interface
+-- 
+2.39.2
 
-> +/*
-> + * Update the value of PKRU register that was already pushed
-> + * onto the signal frame.
-> + */
-> +static inline int
-> +__update_pkru_in_sigframe(struct xregs_state __user *buf, u32 pkru)
-
-No line break and why does this need two underscores in the function name?
-
-> +{
-> +	int err = -EFAULT;
-> +	struct _fpx_sw_bytes fx_sw;
-> +	struct pkru_state *pk = NULL;
-
-Why assign NULL to pk?
-
-Also this wants to have a
-
-	if (unlikely(!cpu_feature_enabled(X86_FEATURE_OSPKE)))
-     		return 0;
-
-Instead of doing it at the call site.
-
-> +	if (unlikely(!check_xstate_in_sigframe((void __user *) buf, &fx_sw)))
-
-What is this check for?
-
-More interesting: How is this check supposed to succeed at all?
-
-copy_fpstate_to_sigframe()
-  ....
-  copy_fpregs_to_sigframe()
-    xsave_to_user_sigframe();
-    __update_pkru_in_sigframe();
-  save_xstate_epilog();
-
-check_xstate_in_sigframe() validates the full frame including what
-save_xstate_epilog() writes afterwards. So this clearly cannot work.
-
-> +		goto out;
-
-What's wrong with 'return -EFAULT;'?
-
-> +	pk = get_xsave_addr_user(buf, XFEATURE_PKRU);
-> +	if (!pk || !user_write_access_begin(buf, sizeof(struct xregs_state)))
-> +		goto out;
-
-Why user_write_access_begin()?
-
-    1) The access to the FPU frame on the stack has been validated
-       already in copy_fpstate_to_sigframe() _before_
-       copy_fpregs_to_sigframe() is invoked.
-
-    2) This does not require the nospec_barrier() as this is not a user
-       controlled potentially malicious access.
-
-> +	unsafe_put_user(pkru, (unsigned int __user *) pk, uaccess_end);
-
-This type case would need __force to be valid for make C=1.
-
-But that's not required at all because get_xsave_addr_user() should
-return a user pointer in the first place.
-
-> +
-> +	err = 0;
-> +uaccess_end:
-> +	user_access_end();
-> +out:
-> +	return err;
-
-So none of the above voodoo is required at all.
-
-       return __put_user(pkru, get_xsave_addr_user(buf, XFEATURE_PKRU));
-
-Is all what's needed, no?
-
-> +/*
-> + * Given an xstate feature nr, calculate where in the xsave
-> + * buffer the state is. The xsave buffer should be in standard
-> + * format, not compacted (e.g. user mode signal frames).
-> + */
-> +void *get_xsave_addr_user(struct xregs_state __user *xsave, int xfeature_nr)
-
-void __user *
-
-> +{
-> +	if (WARN_ON_ONCE(!xfeature_enabled(xfeature_nr)))
-> +		return NULL;
-> +
-> +	return (void *)xsave + xstate_offsets[xfeature_nr];
-
-  return (void __user *)....
-
-Thanks,
-
-        tglx
 
