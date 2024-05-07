@@ -1,93 +1,159 @@
-Return-Path: <linux-kernel+bounces-172042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED0D8BEC5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:11:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0894D8BEC5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03441C23DB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:11:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8262CB2107F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5658616DEB6;
-	Tue,  7 May 2024 19:11:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869A616DEB5;
+	Tue,  7 May 2024 19:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uj6LsvUP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A173116D9DC
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA1416D9A0;
+	Tue,  7 May 2024 19:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715109065; cv=none; b=MKg+XUcH/VONip8ysfvl+2IuIWfTFTLRwXCdPmmcNFiiDh4igfVCKK6xmj5qo6rVCollfqUlDCn3mhw4GIfh0PMiUiSaLaeHe/bQnwfCZYX3UcH/SOknu5NoNgkRrzUsQ64YxH68qILnexBFEtilzakMvC7Bta706VaLcVPFPgk=
+	t=1715109095; cv=none; b=TMUPR4FX89ZY2wQhiz6PifPvUP3niocbv54+xAGx6JhcSt38FTxzOzCpZCp1jZ6MlrawvKiTcfEoXi4S1abqwoN0cDGRnG9S3St+8HM6FqU4kR0iYbFIxujPpJhJEktfyaH1nIuFz2mdWO5MeSNPHN/vk/SkgGL6fXdRmXS741M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715109065; c=relaxed/simple;
-	bh=MZDRcTYIrPY/KVDPzLf3Ur1jeAmwMRwZb4IO6MJFfP4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uhNYaP4TLZNP+G6HxuapEPseSnrYoPzIb4CYrnfB90jW9AVV9yN4xx4kIADwB2MalzTbeezaF1zDwYnTBO05k/o7dSKy2FnAnf5506IhkqoUOAnKZ0ImoqK3+B9HNAp30OwnIh8F5qvylQ34M1xooO0dmh31JPLuV8vMU9GWa2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36b1fda4c6dso39823245ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 12:11:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715109064; x=1715713864;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMMmdnnhlCk6lDibFaruqJ+bDg8KgHzYf4Lb5blyQuQ=;
-        b=aghpxapTGK5dFQufNKf/g8/BcvlWOmvrUhZIKbTmK8A53OWlwZ00GFfCcsLk86PqMQ
-         GRDieA2/YhaU+CcUEwRzj7TEfzCJumITXyb+ptkta5HV22r5UbALX60zpXpvdYXrs7sH
-         1lhnKwq3I6oBLQ+4zEYSKq382UcPbzUBK7MjpCk4snIaU8iIjp9jorbNLCwx2CL8bsfp
-         hWIY6qykSfq7yW+aQy9t7xv2WidHObx7E3Fz8ypX9qSKpNdSLLnGc2X+8mH4bHBGLTEU
-         BZibjea12z7JHyEIswy3F5Qz1sBSso7RfW0zkUzVPAApiglxsHWAGCIovjtKMsxa7nwc
-         RYsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUbkgDvomg8WICYi9vZ3/zFEDzzlyo00g6GFDJTtjVYBl8i8rZypE6nuBnNOMA0WMXH27nh0CacmZQnth2/ZvUCIOo0gBA2oOvjfJl
-X-Gm-Message-State: AOJu0YzhDDtpOykEo/WQJ0Zt1VOd1cqVjAXhJdOjc8bflrLaOjgeZ7jz
-	4icnRPHdTQ5QoFcf3IchpNTBiKwasyHnoF5XKT8/YQ8tqYyQoRVI7I9KJYhHP0giOs8mcJBklnM
-	p785rsJgw17XHNagilu1bjqhP23RknNKjxNMSUrYLj+MZhkqYIeXCjeo=
-X-Google-Smtp-Source: AGHT+IEtr+Z39qefIZO5XPc+3zq+HrmB0hikp4+IjhHgaHCLJ1/SO5ihOTsmd39/5axw913OgOIRhRdWd2p2AaH1XlWhF4l6RT8a
+	s=arc-20240116; t=1715109095; c=relaxed/simple;
+	bh=0QWF8zaj0qi8QUphv7YChHYzkRCmy97vi1jsbdB5UkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSvjp0HxZ4tVGv3I+jO1FX7D6OL0nFH9P/9Aq99YA8NV1k9EqsgQAoFmiMpA9SPXTRDDFPYwdyPu36dVzjxqkRIGwwn+xgJYgXzMt8mbTgymTX3fpkUXC2dC/ZL3gx+U6wfKYajKFlVLtb4+VLYe+OgXgweJcDPzrXoJo3I/vZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uj6LsvUP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03F6EC2BBFC;
+	Tue,  7 May 2024 19:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715109095;
+	bh=0QWF8zaj0qi8QUphv7YChHYzkRCmy97vi1jsbdB5UkI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uj6LsvUParyf07o2w6RO/eH3ICzXHMjmesw+8sHjWhcxLq3uBKJnDHMd8qAL6Fu7p
+	 F4t214j2bobOmaiBd05h7lIEUz3MDEzwXTUVphAqov6KEY94Sq54M2HJKLcua82r1D
+	 FGteBlJu3uDLGTiSNtX/8d77s+DzWR1HjabFZH1DcS49usYPdUnZYHJqtVq6RFZmUW
+	 qTNuPmJCkHsis4m4er16i0OH5kMxu+Es25aqJQO4nCcI9Y7txdBv/5BHjl427fVBS3
+	 g32z5tKj6Lo2WyClZvekeaewOIixgWHlr6ei3CalHj4kijMaFoV47VBtmh8SSPKT/1
+	 2SzjSuOfruJtA==
+Date: Tue, 7 May 2024 14:11:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: firmware: arm,scmi: Add properties
+ for i.MX95 Pinctrl OEM extensions
+Message-ID: <20240507191133.GA904879-robh@kernel.org>
+References: <20240505-pinctrl-scmi-oem-v3-v4-0-7c99f989e9ba@nxp.com>
+ <20240505-pinctrl-scmi-oem-v3-v4-1-7c99f989e9ba@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9c:b0:36c:5520:9597 with SMTP id
- e9e14a558f8ab-36caed58de7mr195005ab.6.1715109063836; Tue, 07 May 2024
- 12:11:03 -0700 (PDT)
-Date: Tue, 07 May 2024 12:11:03 -0700
-In-Reply-To: <0000000000000498630617b740d3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008059400617e1f284@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in rewrite_old_nodes_pred
-From: syzbot <syzbot+594427aebfefeebe91c6@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, eadavis@qq.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240505-pinctrl-scmi-oem-v3-v4-1-7c99f989e9ba@nxp.com>
 
-syzbot has bisected this issue to:
+On Sun, May 05, 2024 at 11:47:17AM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> i.MX95 Pinctrl is managed by System Control Management Interface(SCMI)
+> firmware using OEM extensions. No functions, no groups are provided by
+> the firmware. To reuse generic properties, add the binding to enable
+> pinmux, slew-rate, bias-pull-up and etc, under a subnode of '-pins'.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../devicetree/bindings/firmware/arm,scmi.yaml     |  9 ++++--
+>  .../bindings/firmware/nxp,imx95-scmi-pinctrl.yaml  | 37 ++++++++++++++++++++++
+>  2 files changed, 43 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> index 7de2c29606e5..bd4dfd7a85cd 100644
+> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> @@ -262,9 +262,12 @@ properties:
+>      patternProperties:
+>        '-pins$':
+>          type: object
+> -        allOf:
+> -          - $ref: /schemas/pinctrl/pincfg-node.yaml#
+> -          - $ref: /schemas/pinctrl/pinmux-node.yaml#
+> +        anyOf:
+> +          - $ref: /schemas/firmware/nxp,imx95-scmi-pinctrl.yaml
+> +          - allOf:
+> +              - $ref: /schemas/pinctrl/pincfg-node.yaml#
+> +              - $ref: /schemas/pinctrl/pinmux-node.yaml#
+> +
+>          unevaluatedProperties: false
+>  
+>          description:
+> diff --git a/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml b/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..1a694881f193
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/firmware/nxp,imx95-scmi-pinctrl.yaml
+> @@ -0,0 +1,37 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright 2024 NXP
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/firmware/nxp,imx95-scmi-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: i.MX System Control and Management Interface (SCMI) Pinctrl Protocol
+> +
+> +maintainers:
+> +  - Peng Fan <peng.fan@nxp.com>
+> +
+> +patternProperties:
+> +  'grp[0-9a-f]$':
+> +    type: object
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      pinmux:
+> +        description: |
+> +          An integer array for representing pinmux configurations of
+> +          a device. Each integer has the format, pinid[31:21], mux[20:16],
+> +          daisy_value[15:12], daisy_valid[11:11], daisy_id[10:0].
 
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
+I would format this with one field per line. Otherwise,
 
-    bcachefs: Ignore unknown mount options
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17afcbc0980000
-start commit:   7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=146fcbc0980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=106fcbc0980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-dashboard link: https://syzkaller.appspot.com/bug?extid=594427aebfefeebe91c6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d1b2a0980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=135c2ca8980000
-
-Reported-by: syzbot+594427aebfefeebe91c6@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +      drive-strength:
+> +        enum: [ 0, 1, 3, 7, 15, 31, 63 ]
+> +
+> +      slew-rate:
+> +        enum: [2, 3]
+> +
+> +      input-schmitt-enable: true
+> +      drive-open-drain: true
+> +      bias-pull-up: true
+> +      bias-pull-down: true
+> +
+> +additionalProperties: true
+> 
+> -- 
+> 2.37.1
+> 
 
