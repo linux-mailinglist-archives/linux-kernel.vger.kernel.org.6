@@ -1,189 +1,175 @@
-Return-Path: <linux-kernel+bounces-171051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83378BDF2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:59:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120788BDF2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FEF5281BD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:59:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF4DA282173
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772AC15250F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C1D152531;
+	Tue,  7 May 2024 09:57:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F94815250E;
 	Tue,  7 May 2024 09:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/rD0RZp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D4414E2FB;
-	Tue,  7 May 2024 09:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715075868; cv=none; b=Wj4LX0KQqb+ny/iL4HzdURHjPN0n7wmSNIbxl//8yU2lvNt88Ca0wE/4ofDNV9O8JkZzS6jRd1gwhZ5NMx5Xqn32a76PuFQj9LbVh1k27ppFZ6DzyecwYGEhVGJgVkkKIS614ltth3S96oXlmG80hzZiONuIyfm6eIZZB4bSy8Y=
+	t=1715075874; cv=none; b=l9I/bqsvK07JvFxxMawvzSkGgb2+KV6Hj9eHZKAGJEij1LrGPPOhCTlNTBCTtWk3xZEEwcmUKGhWZmCSuOGiPIJ9QUWxnOAWXtXVH5o46D0wNJO95uGWxb2juFxbCf8zNuj2HCi8H8z3wyIYUM7Fp3Ds11/v1E8g8zE9JLItNjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715075868; c=relaxed/simple;
-	bh=VxXd1pVTHgFPYpuyHPxoomX3P5xw2HYOOi9eD32Pv50=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OP05LV9x2bC2jc25aQDqSDYuLjRDkgSfX3KpEPiJOV2rYWj2Jhfumugmsi05TBWFGff1IZLrLi3OIl6I8Zbc/838KxCGbpQCfGrO759f7PfW8Jmk56i6POxA+LYjt1CXPaTBjLHprrsVoghL/HUTFkrQPouU4QrY7LG8AupEQj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/rD0RZp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F2A1FC4DDE1;
-	Tue,  7 May 2024 09:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715075868;
-	bh=VxXd1pVTHgFPYpuyHPxoomX3P5xw2HYOOi9eD32Pv50=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=R/rD0RZpzX60V6mKu6LHwlotXtVKIc0qG5leuoiKU8hHsS4eNft4MnkCIm7mvacgq
-	 XsLYauJ+Ajg4W9+Ajm7IGE2f5v8wQpY9WF2vCDGTLa+kE9ZbYiIzI1A8fRo6jyC6xq
-	 kzXvRwJ/NfhgnaX7vtOUMgy8eGV5IdUpELduEEzxkN+bZOIuP+iY760uFe5HnHVscI
-	 ry2xlKgv4EuxQmfvnSiKwJy1OrtuyNu9vIHimEgqe2QNRLv75UwF45cC3n4HD2K9+S
-	 O9urKOHWVrA+GlkQwcye/DKyXc3o2xkgGx99Ion3Z7JD2dXzo5yhi8j6JkpB0DbTSl
-	 Bi+d9VKDxHubA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C3EC25B78;
-	Tue,  7 May 2024 09:57:47 +0000 (UTC)
-From: =?utf-8?q?Noralf_Tr=C3=B8nnes_via_B4_Relay?= <devnull+noralf.tronnes.org@kernel.org>
-Date: Tue, 07 May 2024 11:57:30 +0200
-Subject: [PATCH 5/5] drm/tiny: panel-mipi-dbi: Support the pixel format
- property
+	s=arc-20240116; t=1715075874; c=relaxed/simple;
+	bh=u5LwolL8YZhKMmJ1a0cajaUoNHhi5YUay/+2/rPZvIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MmP9PxCMCB9i8HiwGJYHjE+outkT/N0Ikd5IGWd/n7sqRDGw/qod8fzHHTTRaMt9Vt6oAOrgWWEBwcheMMaOi0eamIs3Z8ruwTBPbi63JORozM6j6hJowtPZ7NqHIA7D/dt6w/erj1kZKo9Srb4Vf7nh1yoX4AGQm5MnZLzMZZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E9251063;
+	Tue,  7 May 2024 02:58:17 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46E393F587;
+	Tue,  7 May 2024 02:57:48 -0700 (PDT)
+Message-ID: <07e869aa-6c4d-46f1-bce1-fe37aa72ce87@arm.com>
+Date: Tue, 7 May 2024 10:57:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240507-panel-mipi-dbi-rgb666-v1-5-6799234afa3e@tronnes.org>
-References: <20240507-panel-mipi-dbi-rgb666-v1-0-6799234afa3e@tronnes.org>
-In-Reply-To: <20240507-panel-mipi-dbi-rgb666-v1-0-6799234afa3e@tronnes.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>, 
- Tommaso Merciai <tommaso.merciai@amarulasolutions.com>, 
- =?utf-8?q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715075866; l=2926;
- i=noralf@tronnes.org; s=20221122; h=from:subject:message-id;
- bh=VkhLn8bg4+tzwHP3nVSjku8IqF1KyX0WKDV/6VouitQ=;
- b=bFYvp+sDnQMW8JJzoM3HGr82mP1zBTTSlRLZyXFf66wZVKC4zboe/8gY/RmUDjx662lLgoh5A
- NqkP6in6eQxCj0jVHXhcQLFjg9uTxVfRuq5AgQHbKTIm7arpKb5w/D2
-X-Developer-Key: i=noralf@tronnes.org; a=ed25519;
- pk=0o9is4iddvvlrY3yON5SVtAbgPnVs0LfQsjfqR2Hvz8=
-X-Endpoint-Received: by B4 Relay for noralf@tronnes.org/20221122 with
- auth_id=8
-X-Original-From: =?utf-8?q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
-Reply-To: noralf@tronnes.org
-
-From: Noralf Trønnes <noralf@tronnes.org>
-
-Add support for these pixel format property values:
-- r5g6b5, RGB565
-- b6x2g6x2r6x2, BGR666
-
-BGR666 is presented to userspace as RGB888. The 2 LSB in each color
-are discarded by the controller. The pixel is sent on the wire using
-8 bits per word (little endian) so the controller sees it as BGR.
-
-RGB565 is the default if the property is not present.
-
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
----
- drivers/gpu/drm/tiny/panel-mipi-dbi.c | 55 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 54 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tiny/panel-mipi-dbi.c b/drivers/gpu/drm/tiny/panel-mipi-dbi.c
-index f80a141fcf36..f3aa2abce314 100644
---- a/drivers/gpu/drm/tiny/panel-mipi-dbi.c
-+++ b/drivers/gpu/drm/tiny/panel-mipi-dbi.c
-@@ -26,6 +26,49 @@
- 
- #include <video/mipi_display.h>
- 
-+struct panel_mipi_dbi_format {
-+	const char *name;
-+	u32 fourcc;
-+	unsigned int bpp;
-+};
-+
-+static const struct panel_mipi_dbi_format panel_mipi_dbi_formats[] = {
-+	{ "r5g6b5", DRM_FORMAT_RGB565, 16 },
-+	{ "b6x2g6x2r6x2", DRM_FORMAT_RGB888, 24 },
-+};
-+
-+static int panel_mipi_dbi_get_format(struct device *dev, u32 *formats, unsigned int *bpp)
-+{
-+	const char *format_name;
-+	unsigned int i;
-+	int ret;
-+
-+	formats[1] = DRM_FORMAT_XRGB8888;
-+
-+	ret = device_property_read_string(dev, "format", &format_name);
-+	if (ret) {
-+		/* Old Device Trees don't have this property */
-+		formats[0] = DRM_FORMAT_RGB565;
-+		*bpp = 16;
-+		return 0;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(panel_mipi_dbi_formats); i++) {
-+		const struct panel_mipi_dbi_format *format = &panel_mipi_dbi_formats[i];
-+
-+		if (strcmp(format_name, format->name))
-+			continue;
-+
-+		formats[0] = format->fourcc;
-+		*bpp = format->bpp;
-+		return 0;
-+	}
-+
-+	dev_err(dev, "Pixel format is not supported: '%s'\n", format_name);
-+
-+	return -EINVAL;
-+}
-+
- static const u8 panel_mipi_dbi_magic[15] = { 'M', 'I', 'P', 'I', ' ', 'D', 'B', 'I',
- 					     0, 0, 0, 0, 0, 0, 0 };
- 
-@@ -276,6 +319,9 @@ static int panel_mipi_dbi_spi_probe(struct spi_device *spi)
- 	struct drm_device *drm;
- 	struct mipi_dbi *dbi;
- 	struct gpio_desc *dc;
-+	unsigned int bpp;
-+	size_t buf_size;
-+	u32 formats[2];
- 	int ret;
- 
- 	dbidev = devm_drm_dev_alloc(dev, &panel_mipi_dbi_driver, struct mipi_dbi_dev, drm);
-@@ -323,7 +369,14 @@ static int panel_mipi_dbi_spi_probe(struct spi_device *spi)
- 	if (IS_ERR(dbidev->driver_private))
- 		return PTR_ERR(dbidev->driver_private);
- 
--	ret = mipi_dbi_dev_init(dbidev, &panel_mipi_dbi_pipe_funcs, &mode, 0);
-+	ret = panel_mipi_dbi_get_format(dev, formats, &bpp);
-+	if (ret)
-+		return ret;
-+
-+	buf_size = DIV_ROUND_UP(mode.hdisplay * mode.vdisplay * bpp, 8);
-+	ret = mipi_dbi_dev_init_with_formats(dbidev, &panel_mipi_dbi_pipe_funcs,
-+					     formats, ARRAY_SIZE(formats),
-+					     &mode, 0, buf_size);
- 	if (ret)
- 		return ret;
- 
-
--- 
-2.45.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/17] coresight: Make CPU id map a property of a trace ID
+ map
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-perf-users@vger.kernel.org, gankulkarni@os.amperecomputing.com,
+ scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
+ suzuki.poulose@arm.com, mike.leach@linaro.org
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-14-james.clark@arm.com>
+ <8080ae06-7014-4afe-8620-ffaca6e3c597@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <8080ae06-7014-4afe-8620-ffaca6e3c597@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+
+On 07/05/2024 07:22, Anshuman Khandual wrote:
+> 
+> 
+> On 4/29/24 20:51, James Clark wrote:
+>> The global CPU ID mappings won't work for per-sink ID maps so move it to
+>> the ID map struct. coresight_trace_id_release_all_pending() is hard
+>> coded to operate on the default map, but once Perf sessions use their
+>> own maps the pending release mechanism will be deleted. So it doesn't
+>> need to be extended to accept a trace ID map argument at this point.
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+>> ---
+>>  .../hwtracing/coresight/coresight-etm-perf.c  |  3 +-
+>>  .../coresight/coresight-etm3x-core.c          |  3 +-
+>>  .../coresight/coresight-etm4x-core.c          |  3 +-
+>>  .../hwtracing/coresight/coresight-trace-id.c  | 28 ++++++++-----------
+>>  .../hwtracing/coresight/coresight-trace-id.h  |  2 +-
+>>  include/linux/coresight.h                     |  1 +
+>>  6 files changed, 20 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index 4afb9d29f355..25f1f87c90d1 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -508,7 +508,8 @@ static void etm_event_start(struct perf_event *event, int flags)
+>>  		hw_id = FIELD_PREP(CS_AUX_HW_ID_VERSION_MASK,
+>>  				   CS_AUX_HW_ID_CURR_VERSION);
+>>  		hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK,
+>> -				    coresight_trace_id_read_cpu_id(cpu));
+>> +				    coresight_trace_id_read_cpu_id(cpu,
+>> +						coresight_trace_id_map_default()));
+>>  		perf_report_aux_output_id(event, hw_id);
+>>  	}
+>>  
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> index 4149e7675ceb..b21f5ad94e63 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+>> @@ -501,7 +501,8 @@ static int etm_enable_perf(struct coresight_device *csdev,
+>>  	 * with perf locks - we know the ID cannot change until perf shuts down
+>>  	 * the session
+>>  	 */
+>> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
+>> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
+>> +						  coresight_trace_id_map_default());
+>>  	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>>  		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
+>>  			dev_name(&drvdata->csdev->dev), drvdata->cpu);
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> index f32c8cd7742d..d16d6efb26fa 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+>> @@ -776,7 +776,8 @@ static int etm4_enable_perf(struct coresight_device *csdev,
+>>  	 * with perf locks - we know the ID cannot change until perf shuts down
+>>  	 * the session
+>>  	 */
+>> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu);
+>> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
+>> +						  coresight_trace_id_map_default());
+>>  	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>>  		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
+>>  			dev_name(&drvdata->csdev->dev), drvdata->cpu);
+>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+>> index 45ddd50d09a6..b393603dd713 100644
+>> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+>> @@ -13,10 +13,12 @@
+>>  #include "coresight-trace-id.h"
+>>  
+>>  /* Default trace ID map. Used in sysfs mode and for system sources */
+>> -static struct coresight_trace_id_map id_map_default;
+>> +static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
+>> +static struct coresight_trace_id_map id_map_default = {
+>> +	.cpu_map = &id_map_default_cpu_ids
+>> +};
+>>  
+>> -/* maintain a record of the mapping of IDs and pending releases per cpu */
+>> -static DEFINE_PER_CPU(atomic_t, cpu_id) = ATOMIC_INIT(0);
+>> +/* maintain a record of the pending releases per cpu */
+>>  static cpumask_t cpu_id_release_pending;
+>>  
+>>  /* perf session active counter */
+>> @@ -46,12 +48,6 @@ static void coresight_trace_id_dump_table(struct coresight_trace_id_map *id_map,
+>>  #define PERF_SESSION(n)
+>>  #endif
+>>  
+>> -/* unlocked read of current trace ID value for given CPU */
+>> -static int _coresight_trace_id_read_cpu_id(int cpu)
+>> -{
+>> -	return atomic_read(&per_cpu(cpu_id, cpu));
+>> -}
+> 
+> Just wondering where this per cpu cpu_id ^^ is being dropped off as well
+> OR is it still getting used ?
+> 
+
+No it's still needed. It's not dropped in this set.
+
+I just moved the implementation into coresight_trace_id_read_cpu_id()
+rather than add a new argument to _coresight_trace_id_read_cpu_id().
+Although I might change that because of Mike's comment about keeping
+both the map and non map versions of the functions to reduce some of the
+churn changing the callers.
 
