@@ -1,93 +1,102 @@
-Return-Path: <linux-kernel+bounces-170616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B978BD9BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 216938BD9BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC89E2848E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1848284899
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AA74F896;
-	Tue,  7 May 2024 03:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMlsUM0o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6EC42AAE;
+	Tue,  7 May 2024 03:33:03 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1D34EB55
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78D14C94;
+	Tue,  7 May 2024 03:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715052668; cv=none; b=jmsmClAQcgmlqgnhiQwmuZEK1tTvJkZS3/f7GXlmqE5PGrz75CtVmRSU0FfkUzhdM7zyqSr4sDk/PXZncRJZGLie3Es5w6O9vJfB1oeIUfg+E3TQtVoT7OOOOBoT0+aSAw5TagAxHVycOuoXdpxQMJ1yswOxCdvCxi/8Kb/98d0=
+	t=1715052782; cv=none; b=UdXsZFb3e8dF/BrqTRQHpsc7mYXPVnjvwha9m7ZXC0HHUnpEdtGh0Qw7jPkR87hcY+WK0C1apNdx2CpJQ1QpcVRiZqpBxN3evFD/cGNUHBRt89n5p3I+/Fsg0FvFhYWn6vvosrn2sLtGarmp1A4vSjFUvPVaq7yUUq5MF53tyhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715052668; c=relaxed/simple;
-	bh=WEn57ZpMPjcw1lMUxGYEU0m2DwBeLhYddgmX6aoQ1nM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pc5wXniy+fCEwzo/CAgGA1ktgLKjMQn0ZTxlnnTgLFMzQjpTG7tjH5lEackRQLWewDiYiK0hxxOBgF1CeLRKYq3QzdygKR9cGMWVUlFNqWe22xKqIwDvK4798ckbhhtKyMGWA21+JZOlPhjLPHDLzNGryAGaWJCvY+4A+6/c5Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMlsUM0o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9719C2BBFC;
-	Tue,  7 May 2024 03:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715052668;
-	bh=WEn57ZpMPjcw1lMUxGYEU0m2DwBeLhYddgmX6aoQ1nM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uMlsUM0oWh47ThJBil5c2EetKK0vGVlcuipp91NLbvzVr/malBRi/8qcDmZ+lXl5r
-	 cit/OxCDcuY0hlmc09NoP4A72ppqnHkdnKWdMy6IrAUHzACSTj66tGwLbHRCHvWLK+
-	 duX16sVoiecHSxu8WoLkcmt2jvtF7EJnNRblec/PAkhS/u1y9bYuOA1IBvYv2tn9aa
-	 Ejm5BFUFsTGTGRawYDH5osVPkyaeTr13c10R2C8W+JvGXF65rupgro1IeFUbKQdwS2
-	 5M8Ontb+7rN83I77Z1XwFcqXNHR0TpzeiGPq5kr6OlxmDx7kF07W2jKqaN1t9MCmCy
-	 6mE0s6DqFZVmA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2 1/3] f2fs: fix to release node block count in error path of f2fs_new_node_page()
-Date: Tue,  7 May 2024 11:31:00 +0800
-Message-Id: <20240507033100.1044884-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1715052782; c=relaxed/simple;
+	bh=7wd/yUfKcL6tjsmswtHH9lv5HGLnvEwVClY4hN6jGIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iU7Mw87T14BXVyCpL4zBzH6eCSFQ/Lql+BhoLepwTGbwwT4gybU1g3he8sOnAheE8E+VHMZOOd1L8r67r1j3ew+ruVjOfntVGrULUOAY5MXe1U7onwQPN8w5FYSncEwquadBBYKXDgOFrJdBkyLS9WeIRGcpJkBGXfwSv9NIdec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 77bd87380c2211ef9305a59a3cc225df-20240507
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.37,REQID:9ce386ab-0914-421d-8764-ed15d5d60748,IP:20,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:0
+X-CID-INFO: VERSION:1.1.37,REQID:9ce386ab-0914-421d-8764-ed15d5d60748,IP:20,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:0
+X-CID-META: VersionHash:6f543d0,CLOUDID:953b18f2e0dff68bcc53e53b1d5fe9c7,BulkI
+	D:2405071132467M9YECP2,BulkQuantity:0,Recheck:0,SF:19|44|66|24|17|102,TC:n
+	il,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
+	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 1,UOG
+X-CID-BAS: 1,UOG,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_ULS
+X-UUID: 77bd87380c2211ef9305a59a3cc225df-20240507
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luyun@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 764133066; Tue, 07 May 2024 11:32:44 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id A4719B8075B2;
+	Tue,  7 May 2024 11:32:44 +0800 (CST)
+X-ns-mid: postfix-6639A0DC-523906690
+Received: from localhost.localdomain (unknown [10.42.176.164])
+	by node2.com.cn (NSMail) with ESMTPA id DBB2FB8075B2;
+	Tue,  7 May 2024 03:32:42 +0000 (UTC)
+From: Yun Lu <luyun@kylinos.cn>
+To: hdanton@sina.com
+Cc: linux-kernel@vger.kernel.org,
+	syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	vinicius.gomes@intel.com,
+	jhs@mojatatu.com,
+	netdev@vger.kernel.org
+Subject: Re: [syzbot] [kasan?] [mm?] INFO: rcu detected stall in __run_timer_base
+Date: Tue,  7 May 2024 11:32:42 +0800
+Message-Id: <20240507033242.1616594-1-luyun@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240414025336.2016-1-hdanton@sina.com>
+References: <20240414025336.2016-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-It missed to call dec_valid_node_count() to release node block count
-in error path, fix it.
+Hello,
 
-Fixes: 141170b759e0 ("f2fs: fix to avoid use f2fs_bug_on() in f2fs_new_node_page()")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- avoid comppile warning if CONFIG_F2FS_CHECK_FS is off.
- fs/f2fs/node.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Indeed, the taprio hrtimer does cause CPU stuck in certain specific scena=
+rios,
+and this patch indirectly confirms it.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b3de6d6cdb02..7df5ad84cb5e 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1319,6 +1319,7 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
- 	}
- 	if (unlikely(new_ni.blk_addr != NULL_ADDR)) {
- 		err = -EFSCORRUPTED;
-+		dec_valid_node_count(sbi, dn->inode, !ofs);
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
- 		goto fail;
-@@ -1345,7 +1346,6 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
- 	if (ofs == 0)
- 		inc_valid_inode_count(sbi);
- 	return page;
--
- fail:
- 	clear_node_page_dirty(page);
- 	f2fs_put_page(page, 1);
--- 
-2.40.1
+However, it seems this patch isn't the final solution?=20
+
+On my testing machine, after starting Taprio hrtimer and then adjusting t=
+he
+system time backward, it can be observed that the taprio hrtimer indeed g=
+ets stuck
+in an infinite loop through tracing. And, the patch below can effectively=
+ resolve
+this issue, but it doesn't work for syzbot's tests.
+
+https://lore.kernel.org/all/20240506023617.1309937-1-luyun@kylinos.cn/
+
+Are there any better suggestions from others regarding the resolution of =
+this CPU stuck issue?
 
 
