@@ -1,161 +1,190 @@
-Return-Path: <linux-kernel+bounces-172501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30FD8BF2C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5328BF2C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131F11C20970
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:58:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3FAF1C21E61
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FFC1A2C3B;
-	Tue,  7 May 2024 23:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA1112A177;
+	Tue,  7 May 2024 23:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PtiqjXJs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="CzWCw4zl"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ABD1A2C2C;
-	Tue,  7 May 2024 23:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BED80BE5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123833; cv=none; b=KO+tinD8Sb7pQYISrA9YaO6Meb+sOEKuY5VtMYgH0ZiJ4D7vxMmyNBNT47eGPzAj/WX4AddO+AG4ZwcTXnuIpVzP3hQdlP1Obp5cWW1bncxt6ck4O3Pf/hP9b6lENhCIDrp+YnLQU2rsnG37cAng7/B/RQrw5TaqugWLcygabbc=
+	t=1715123880; cv=none; b=afe+mlfhDqzJIT09bXzZeTb0pxVo2gVBY7qJF987ZeqU9t161U23Qt+/97QpduTu05It8l4SHANZJ4sbqSn57daLdpguVpkZdKM7t/PZBdLy3gKSxaPBDf+z7HtGhjtkrJ03PNBPIHwfOv7JNuGzVOfIY0e2328JHeC4xTD4i0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123833; c=relaxed/simple;
-	bh=B5sed5cD0tFGfPPl8ZuyN1Mtoj9J0cyirngFnFvehDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MJwV3DbxGOIfnWzrXCDHm48+apoO2h8cLo7hoDDxo/Fj2YRS0+TdRCRpcNcB3YC9eVPs3DEJ/EOBFPQ8wd0I0pdSGy0E/5VcXsB4PMGwCuLWIXioJa94CM79qNjdk6Vdsw/IlZ4BauKVm7xDJKkUxWvUVMNZOaCzgf4xbTapQ0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PtiqjXJs; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715123832; x=1746659832;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=B5sed5cD0tFGfPPl8ZuyN1Mtoj9J0cyirngFnFvehDY=;
-  b=PtiqjXJs/0JIAHWHlbelLk4vGMjue7shVk+Wo4zW20nvcgJpjs4skYly
-   PrB5R/4LQA6sJsYeA1jmD4rKfgAGqJj9qis1shTuWEZO7SQXR35RxjZcA
-   F2e5xV6Su2v0k+fG1L7fVYpjsUFRlnFgUb9loTpqdw23nsfp7a1S6oQ3o
-   8WP6ScCdkMcGw07o+RiMttL6zw/aaKYdNQIhCKORPAR0JVNFcH4q/vcms
-   tYhF3Y7iPwJJAkgpFgLsM2jBp1//pX/THJPlNRUtvxIjpj3FHUT4OInOU
-   jQlkSU9nObJF42bCxX8MPg4hG07HQ6aoWFfyH6dldN72chch539edKpe6
-   g==;
-X-CSE-ConnectionGUID: 0aQWMACETtukRh5XduQpwA==
-X-CSE-MsgGUID: TFFCACrmRTOTQaXy0yOJsw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10824388"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="10824388"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:17:11 -0700
-X-CSE-ConnectionGUID: lyEAteqBTdexIi7z6YFrRw==
-X-CSE-MsgGUID: 2DuMD2hdQuGn3kmMuqF0sA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="28780835"
-Received: from vidhyath-mobl2.amr.corp.intel.com (HELO [10.212.210.63]) ([10.212.210.63])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:17:11 -0700
-Message-ID: <1159c4e1-dae6-462a-8e34-6f74be4c83b3@intel.com>
-Date: Tue, 7 May 2024 16:17:09 -0700
+	s=arc-20240116; t=1715123880; c=relaxed/simple;
+	bh=blSl364swsDcz/ERpxYIrtfmuULQVemGaeVD2pgedbw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WKy2hn6/FKtIcx2F5JhDlZdcgkNvPtSCftkAgJF1d6iokQIZeDpAONdxRPli71JMEdbUCjAKocZPz/aj6WDZ29QlCllYxH1FlyqE/vIYjnjUCs7CcmwVQMwwHOSJqMTZvTt0cuJOPfBrS2iJmtf4pbKe3pDUH/tL0Kj9N0Ps6w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CzWCw4zl; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6ceade361so8631313276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 16:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715123878; x=1715728678; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=90t3eEjytmnEM4io+FHTgKxLXZqFJBWBJ/adXIPm22Q=;
+        b=CzWCw4zl0Is6iW5jYXyFfkMlwxZ8o6abzYdSvd/cIb9EqAso6VHMnT83fcO4gseQWl
+         K7QNMHtkT8yK/4mlNFI3ZGXvlNxHO65frLy0uA97HBa9TP47yCiMLMzRmNwv6QqqeTdf
+         m1JvFwjyfS5ZGNIykmreFF27QhcQrRKkQHrAMu5UNh/8PM55nTR6ahBz8Qulx7q/NROC
+         fjxH8vXfNmzb7mpecQLDyZONQDDQSNRDtpflar9OuIeoSrnWqyjs1SoJ7si/UoSNupN5
+         sTW2GsWMTyiifqOtNbLHOVg2xB+iav0oufKx5repAInLa6Mo+e6NFFebNM0j7Dp/w/Q4
+         5dsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715123878; x=1715728678;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=90t3eEjytmnEM4io+FHTgKxLXZqFJBWBJ/adXIPm22Q=;
+        b=crUd+mdkQDFJDHmYqzKQURaXZanPmgM7inPhgYraVzVAaFFoHzFQ13ka2h/G80DIq5
+         vWxRD71yI6532YfnQzIHwGYZGpL2+QTaN+thctgeTH/BuSR2Vk3ivmTpOy8wSpNnmuUA
+         yV2mbEFNPVrMFfGXq3M7l4bNQMqO6apf5DICPBFt8w3X1qeuYeTasS+A39Pl0/+AYTHF
+         f/pUmhEvvz1lN53bdHEZZlh41DhjB10NSiAqwamxVBaEtYSBpgjUNa9sc+i+mYgKxzAt
+         kGCj4licYSUMTO5LRi71NIIGmu4Jj+nyZNUHdhGCijs6zk0djPK+KCan4BnqUFvBFsLB
+         HlBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWY+WL3p6kQG53gCFN15U2tKIA1CHrX9sDhFFsfeC65NVMoxLXfPzAprUz1KGlnav5AS4ELH5cxP3MsIkVtTuogNzQwkcFSS+E/7v8X
+X-Gm-Message-State: AOJu0Yzf/WCyYXGSxpldtuKnjHuYvLezCVuu/m7RD5uSF7baWAs/YbBV
+	pkX5pQ+D+BcdLlJAh8iz6KR4XlFKac3iKy67qEB2gcF/GNLYFito1Mi3j3QiYnJ0yeiHEwuEVu9
+	DZr6XL/EPZMLP/D0xpjGM/g==
+X-Google-Smtp-Source: AGHT+IGago2GGdxQm89gh39NlH33JmwS6GqCoBfbuogGsvoaLHySBMHGg6BnHjR0lMvUAF6sj1cRWbGYVdT+02bkdg==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a25:44:0:b0:dc2:466a:23c4 with SMTP id
+ 3f1490d57ef6-debb9d86d55mr321974276.4.1715123878004; Tue, 07 May 2024
+ 16:17:58 -0700 (PDT)
+Date: Tue, 07 May 2024 23:17:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 04/27] x86/fpu/xstate: Introduce
- XFEATURE_MASK_KERNEL_DYNAMIC xfeature set
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yang Weijiang <weijiang.yang@intel.com>, pbonzini@redhat.com,
- x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org, chao.gao@intel.com, rick.p.edgecombe@intel.com,
- mlevitsk@redhat.com, john.allen@amd.com
-References: <20240219074733.122080-1-weijiang.yang@intel.com>
- <20240219074733.122080-5-weijiang.yang@intel.com>
- <ZjKNxt1Sq71DI0K8@google.com>
- <893ac578-baaf-4f4f-96ee-e012dfc073a8@intel.com>
- <Zjqx8-ZPyB--6Eys@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <Zjqx8-ZPyB--6Eys@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAKS2OmYC/x2MQQqAIBAAvxJ7bkGtKPpKRKy11kJYaEgQ/T3pO
+ DAzD0QOwhH64oHASaIcPoMuC5g38iujLJnBKFOrRrVoa8wOJhcnR/t+zHQxtrYxprJUUachp2d gJ/e/Hcb3/QAwM9kbZgAAAA==
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715123877; l=3920;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=blSl364swsDcz/ERpxYIrtfmuULQVemGaeVD2pgedbw=; b=MLjQXcFsv9K2Tt+v1PmmzhEUpm6om4s2Veu1ZlHay+lCkxT157wDH7v2E6JBghpitVFvli2u2
+ JzL/WgNvUb/DEhYX8FWJxXs8D18zY52t2ZNlH6v1pNeUPgR+Vwdzxvo
+X-Mailer: b4 0.12.3
+Message-ID: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com>
+Subject: [PATCH] fs: remove accidental overflow during wraparound check
+From: Justin Stitt <justinstitt@google.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 5/7/24 15:57, Sean Christopherson wrote:
->> So I still prefer calling it "KERNEL" over "GUEST".  But I also don't
->> feel strongly about it and I've said my peace.  I won't NAK it one way
->> or the other.
-> I assume you mean "DYNAMIC" over "GUEST"?  I'm ok with DYNAMIC, reflecting the
-> impact on each buffer makes sense.
+Running syzkaller with the newly enabled signed integer overflow
+sanitizer produces this report:
 
-Yes.  Silly thinko/typo on my part.
+[  195.401651] ------------[ cut here ]------------
+[  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
+[  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
+[  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+[  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  195.425804] Call Trace:
+[  195.427360]  <TASK>
+[  195.428791]  dump_stack_lvl+0x93/0xd0
+[  195.431150]  handle_overflow+0x171/0x1b0
+[  195.433640]  vfs_fallocate+0x459/0x4f0
+..
+[  195.490053] ------------[ cut here ]------------
+[  195.493146] UBSAN: signed-integer-overflow in ../fs/open.c:321:61
+[  195.497030] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long)
+[  195.502940] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+[  195.508395] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  195.514075] Call Trace:
+[  195.515636]  <TASK>
+[  195.517000]  dump_stack_lvl+0x93/0xd0
+[  195.519255]  handle_overflow+0x171/0x1b0
+[  195.521677]  vfs_fallocate+0x4cb/0x4f0
+[  195.524033]  __x64_sys_fallocate+0xb2/0xf0
 
-> My one request would be to change the WARN in os_xsave() to fire on CET_KERNEL,
-> not KERNEL_DYNAMIC, because it's specifically CET_KERNEL that is guest-only.
-> Future dynamic xfeatures could be guest-only, but they could also be dynamic for
-> some completely different reason.  That was my other hang-up with "DYNAMIC";
-> as-is, os_xsave() implies that it really truly is GUEST_ONLY.
-> 
-> diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-> index 83ebf1e1cbb4..2a1ff49ccfd5 100644
-> --- a/arch/x86/kernel/fpu/xstate.h
-> +++ b/arch/x86/kernel/fpu/xstate.h
-> @@ -185,8 +185,7 @@ static inline void os_xsave(struct fpstate *fpstate)
->         WARN_ON_FPU(!alternatives_patched);
->         xfd_validate_state(fpstate, mask, false);
->  
-> -       WARN_ON_FPU(!fpstate->is_guest &&
-> -                   (mask & XFEATURE_MASK_KERNEL_DYNAMIC));
-> +       WARN_ON_FPU(!fpstate->is_guest && (mask & XFEATURE_MASK_CET_KERNEL));
->  
->         XSTATE_XSAVE(&fpstate->regs.xsave, lmask, hmask, err);
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
 
-Yeah, that would make a lot of sense.  We could add a more generic
-#define for it later if another feature gets added like this.
+Let's use the check_add_overflow helper to first verify the addition
+stays within the bounds of its type (long long); then we can use that
+sum for the following check.
+
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/356
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+I wonder, though, why isn't loff_t an unsigned type? We have plently of
+checks to ensure they are positive:
+
+	if (offset < 0 || len <= 0)
+		return -EINVAL;
+	...
+	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
+
+.. are there ABI concerns?
+
+Here's the syzkaller reproducer:
+r0 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file1\x00', 0x42, 0x0)
+fallocate(r0, 0x10, 0x7fffffffffffffff, 0x2000807fffff7)
+
+.. which was used against Kees' tree here (v6.8rc2):
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
+
+.. with this config:
+https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+---
+ fs/open.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index ee8460c83c77..d216e69d6872 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -247,6 +247,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	long ret;
++	loff_t sum;
+ 
+ 	if (offset < 0 || len <= 0)
+ 		return -EINVAL;
+@@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
+ 		return -ENODEV;
+ 
+-	/* Check for wrap through zero too */
+-	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
++	/* Check for wraparound */
++	if (check_add_overflow(offset, len, &sum))
++		return -EFBIG;
++
++	/* Now, check bounds */
++	if (sum > inode->i_sb->s_maxbytes || sum < 0)
+ 		return -EFBIG;
+ 
+ 	if (!file->f_op->fallocate)
+
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240507-b4-sio-vfs_fallocate-7b5223ba3a81
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
