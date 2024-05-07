@@ -1,178 +1,127 @@
-Return-Path: <linux-kernel+bounces-171553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A548BE5A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A91E8BE5AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C431C220C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:21:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4B3286B20
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B44716F82F;
-	Tue,  7 May 2024 14:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5483117106A;
+	Tue,  7 May 2024 14:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rwz6PqYh"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GAaDRJn8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0DC16F0DF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C8116F293
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091291; cv=none; b=tlj84JtPhcjkjtnIkjL9BgL8LIsrd/w6vPk8f7VEAY4xFKN5eg6faS5ZXnoTi7JgmyssYt8Tu6OWjoSpTuRhyc5W0dFG2B3vfLlLdaC+qxRKZuQy+UM171job3MRS4OLubyT25aGiePwxx9o+IXfhPQeSxOpgOLoDHLbHwHUlRg=
+	t=1715091299; cv=none; b=eLhmpy1dguDUPabRzL86dlEWZcXHrd76ybq5gCmNcV0uWkU2Fu9jORiGulBCYDV4RPKhQSsPAaHzqBqJC9zeg15qAUDyIC0MuEFF3iwA5obwHmqpmGOWhZmFgA+68ciLf97YJyUWyH+swz/1PkfskjUCvOMfsYLLi0/7wWOS/pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091291; c=relaxed/simple;
-	bh=nNkzepDc1fooDRMrZKnyw8mRCNAwIUztgx5zJ3NkPpA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pCNi7rjUajYV4O0MHdz0cs4TI/zSfYo8oalq/EVNQhZ/3QtQigW6xKyLo1EqGBycFm4QA7sqvGdvj2rPUy9ZcTU5L3oWFd71SP9TK+ZqtM6wOzCjWG+3xCJl5IoqAqXOkXeSr7K6nE0g1qbyo5mapLx4Z8GH1DUMs5r3zvDtmpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rwz6PqYh; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so5053062a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:14:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715091288; x=1715696088; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2AhGxPfO0jxLeMCNC4W84i2OQnqDzy87o4JACQM4lhg=;
-        b=rwz6PqYh12EfdzpbqGaIhigcNlzEMv20hALD5YwidYNpOkQ3mZFfYllao27HnUysO2
-         vD+jZIm8N6iESTx92EzUgXnsFqlzTOzrpIYHCIDsIGUzppEOnfJ4BBDniDzEW5invIfb
-         we7pa6HsMUsQ6WQRl9zi4WJ95rkFjxLitmNVoRCkeJxjJrFBLDbWG9UeUo0DYBnFTfh6
-         tukubdeWu9zbAfVhJfV3+ZqvhXuimZWzPknW33ThWF5zVWP7qVunTF9+Ucb2/o9J/e+G
-         HXV5By8Mp5E1KaT2m8w+60jow6Gc81pF3Jjr/11Be2ScV3cGTHNAU7b6Ryi9roAN90eq
-         fQLA==
+	s=arc-20240116; t=1715091299; c=relaxed/simple;
+	bh=tYFhuNKK572ei44KClvdIFHmT5dQxptc6wlidmEeIbA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QfbjfyoKKpHMthsl7EtBB4zhm2nERLhDiGih52v87NbwSfL5hqiJpv//5xYxa97TIc8ztXu4LWz3bAHmC03DHDU9w0EP4vcaXx3Tbeg4e1Wx6lHPJ2TV/vUXS9mrri6UOFPvSHtZRURlgiaXDrpg0IxgEQjTEJ28/lRTJN1uf/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GAaDRJn8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715091297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=X1TemjxCew8gfx5TJGpneLG70M3weE+hrm8/BhqnHVY=;
+	b=GAaDRJn8ulP9j+LywlpsZogPDbcgpO9XwGgwBIgYwBF6eQSoO+b343MtmebtF18aOIoB67
+	1aopzb7sXGRe+PiP0b+yvyqDR4wBcMQGTyA8xfY02UXioFiApBAA1rXtb8PZUaanmkHVEP
+	htlYxBUVtu3I1c2y9YI3cdk/pYhE29s=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-546-NkmbHfwTNbqn1l0yvSbSeQ-1; Tue, 07 May 2024 10:14:55 -0400
+X-MC-Unique: NkmbHfwTNbqn1l0yvSbSeQ-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-5202218b4d3so3122810e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:14:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715091288; x=1715696088;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2AhGxPfO0jxLeMCNC4W84i2OQnqDzy87o4JACQM4lhg=;
-        b=iQD9LDMD/zOw6Japgh+lJQE2BCtuu4c0W6kwphxBCEr22bbxKqCjqI5CTKl0cyjZVz
-         QR7Q2QoDrZFnlqmOtU4AXPRxTlVlIhNDM+doUucecJiCAL+WtHwpfAeAgMGSzsd+WHaS
-         o2mo/rtjDsRuJYEMVysnrvoJY7yw/gtTpPUwl8l8YqJnxwan7msWJbtZMbKEh+aJ0XTK
-         PAh3f6ijCghYbI9e8PLAQb95YbmOygCzIFjcLuIAb6f9SB0Ply4sOUpzi9qQyJlvZYoD
-         TC7XrGfrhvjYdOql92OdS1uOebGE2lTgPjoGCLvRZdDG5duFFVTFRf9TjFj8j+3qR5fg
-         TWRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhb76fxNgduqF/f3Ssy6Ou1MteCnuJMNDcAemXH00/oggNq1i4RzNN1OJgkmodZFymFv0zTFas+8MMd1duXYPf3xcZfO5/Srf6TAN+
-X-Gm-Message-State: AOJu0YynCNRbEJkJA5NItvMoElpbvsB7mpKm3ngQW40scJkcQeeiw8/d
-	TmgEIAn2GsVOW9+JAHT02nvxYYuSjbFPleXto4EOe5zoxmg2hpejZYPxa/yBpog=
-X-Google-Smtp-Source: AGHT+IF93U5EbjSwxazXGCgRUoQpkJwYIG6vkvVms1C680kr/QzgHDatBvsRnvscl1lkUzBabOX3fA==
-X-Received: by 2002:a50:f683:0:b0:572:a158:8a7b with SMTP id d3-20020a50f683000000b00572a1588a7bmr2479836edn.8.1715091287917;
-        Tue, 07 May 2024 07:14:47 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id x2-20020a056402414200b00572cf08369asm5621928eda.23.2024.05.07.07.14.47
+        d=1e100.net; s=20230601; t=1715091294; x=1715696094;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X1TemjxCew8gfx5TJGpneLG70M3weE+hrm8/BhqnHVY=;
+        b=IaiWuKj0HFMLHOhq0JeH/CRGD/hZflb2zR6Yk7N1lu+7DHOkR0nAzT1QO93Agzdabp
+         3IyXd/86CZxLxGWMwEkntPvvyqORVJ9VyzGipV3MziIV5ORAPDvZWIDmIqIYL3qNG/7o
+         qVmACVB5cCmG62MujsRzGa8POkuCbJhn5u1f7QC13NnVCLFWcuaRHx7UOE6/UwcIzB3L
+         nRWE45rTkAMNOfgCoF/mbcbgvDhIGqq4S6cJzRAAGOLZvVUSBQ6JcaS8W1FdBkZiNu8z
+         icc6o0P7xGY0r59tgPGjzDVj9j/ynjTh+1WwlROIWVa7oPs3LYZUHNV6Fqu0iZqRPi/P
+         mI1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVMbQOg6xVVdOgmbx2J2re3nRUGJv1q93TubvcC3oEBkDnFYLbf7jjYvAJpcLtghTBA50ZGa6AxRqyJ2E9213ULE8WJLzsBpHN+4dVH
+X-Gm-Message-State: AOJu0YxsuokupsIcv/gTCxGPHB5FBX5qwrBNfJj/NET5xKp7mimec1tM
+	oQ7BcwCCTKJDjPnndLhA6PgHoIcMbXhwmHf7669Muhc/o5vs0EhfYISYt3o62qpF6+FDt40T02A
+	WQwr4NwYslWT3OirgveuC/R2qTGIpLChdFaPliPwP6iy7Ex+AHmZgmF586q8rIQ==
+X-Received: by 2002:a05:6512:78d:b0:51d:1c56:b0f1 with SMTP id x13-20020a056512078d00b0051d1c56b0f1mr9151812lfr.17.1715091293924;
+        Tue, 07 May 2024 07:14:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHL6gtJQR2L/AKZnQJ9Vjdq0OBoXAmgXMJxKgRmEQ2ocaAFqN0lJ69a1Qg3oAiWGUjW/dsk3Q==
+X-Received: by 2002:a05:6512:78d:b0:51d:1c56:b0f1 with SMTP id x13-20020a056512078d00b0051d1c56b0f1mr9151789lfr.17.1715091293449;
+        Tue, 07 May 2024 07:14:53 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id s26-20020a170906169a00b00a59a09e34adsm4681491ejd.195.2024.05.07.07.14.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 07:14:47 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 07 May 2024 15:14:48 +0100
-Subject: [PATCH 5/5] phy: exynos5-usbdrd: set ref clk freq in
- exynos850_usbdrd_utmi_init()
+        Tue, 07 May 2024 07:14:52 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ray Liu <ray.liu@airoha.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: repair file entry in AIROHA SPI SNFI DRIVER
+Date: Tue,  7 May 2024 16:14:49 +0200
+Message-ID: <20240507141449.177538-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240507-samsung-usb-phy-fixes-v1-5-4ccba5afa7cc@linaro.org>
-References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org>
-In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.12.4
 
-While commit 255ec3879dd4 ("phy: exynos5-usbdrd: Add 26MHz ref clk
-support") correctly states that CLKRSTCTRL[7:5] doesn't need to be set
-on modern Exynos platforms, SSPPLLCTL[2:0] should be programmed with
-the frequency of the reference clock for the USB2.0 phy instead.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-I stumbled across this while adding support for the Google Tensor
-gs101, but this should apply to E850 just the same.
+Commit a403997c1201 ("spi: airoha: add SPI-NAND Flash controller driver")
+adds a new section AIROHA SPI SNFI DRIVER referring to the file
+spi-airoha.c. The commit however adds the file spi-airoha-snfi.c.
 
-Do so.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Fixes: 691525074db9 ("phy: exynos5-usbdrd: Add Exynos850 support")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Repair this file entry in the AIROHA SPI SNFI DRIVER section.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
-Feel free to drop the Fixes: if you think that is unwarranted here.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: add missing bitfield.h include (seems this is implied on some
-    platforms, but not on others)
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 1da7a4881f72..15be966b50ae 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -8,6 +8,7 @@
-  * Author: Vivek Gautam <gautam.vivek@samsung.com>
-  */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ca79616a4836..2fe4506f9fe8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -689,7 +689,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-spi@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
+-F:	drivers/spi/spi-airoha.c
++F:	drivers/spi/spi-airoha-snfi.c
  
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-@@ -141,6 +142,9 @@
- #define CLKRST_PORT_RST				BIT(1)
- #define CLKRST_LINK_SW_RST			BIT(0)
- 
-+#define EXYNOS850_DRD_SSPPLLCTL			0x30
-+#define SSPPLLCTL_FSEL				GENMASK(2, 0)
-+
- #define EXYNOS850_DRD_UTMI			0x50
- #define UTMI_FORCE_VBUSVALID			BIT(5)
- #define UTMI_FORCE_BVALID			BIT(4)
-@@ -773,6 +777,31 @@ static void exynos850_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	reg |= HSP_VBUSVLDEXT | HSP_VBUSVLDEXTSEL;
- 	writel(reg, regs_base + EXYNOS850_DRD_HSP);
- 
-+	reg = readl(regs_base + EXYNOS850_DRD_SSPPLLCTL);
-+	reg &= ~SSPPLLCTL_FSEL;
-+	switch (phy_drd->extrefclk) {
-+	case EXYNOS5_FSEL_50MHZ:
-+		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 7);
-+		break;
-+	case EXYNOS5_FSEL_26MHZ:
-+		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 6);
-+		break;
-+	case EXYNOS5_FSEL_24MHZ:
-+		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 2);
-+		break;
-+	case EXYNOS5_FSEL_20MHZ:
-+		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 1);
-+		break;
-+	case EXYNOS5_FSEL_19MHZ2:
-+		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 0);
-+		break;
-+	default:
-+		dev_warn(phy_drd->dev, "unsupported ref clk: %#.2x\n",
-+			 phy_drd->extrefclk);
-+		break;
-+	}
-+	writel(reg, regs_base + EXYNOS850_DRD_SSPPLLCTL);
-+
- 	/* Power up PHY analog blocks */
- 	reg = readl(regs_base + EXYNOS850_DRD_HSP_TEST);
- 	reg &= ~HSP_TEST_SIDDQ;
-
+ AIRSPY MEDIA DRIVER
+ L:	linux-media@vger.kernel.org
 -- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+2.44.0
 
 
