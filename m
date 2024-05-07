@@ -1,118 +1,82 @@
-Return-Path: <linux-kernel+bounces-171271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF818BE20A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:26:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411568BE1B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95A681F249A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9D7287711
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A03D15CD75;
-	Tue,  7 May 2024 12:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117F6156F48;
+	Tue,  7 May 2024 12:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="dj+djPZm"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZfie1WS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA20E15B995;
-	Tue,  7 May 2024 12:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6D9156864;
+	Tue,  7 May 2024 12:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715084704; cv=none; b=VtccfAYZQ0qjKj1ZkTc+oE1ee4u75SOv2ZSP/kW66Ym9jzlE9RMEtggKq8IXzt4NbGltrDkRYUmXbtuT48dwyzlFvThWXMAVIKC1TcWoHjP9GrWmFllUenVC8kyynv1l0usR6Fdam2tkuWw11igTNMNrCE9NHEhY0Ko/gMsyWfs=
+	t=1715083708; cv=none; b=ELDIbx14FSgZMA+v97L4wsyYqtk/bTn0Njud/aqDAVHtLH4mQxvf1gPPkcRqheiUXBoHQ6TD2ak5ajKFJIEr0NLr9P0HJ6XQSPyg9iP54FP2hBjImUWC38ToeGYmfFud30Q3maAuZMVbw5RMpitZBgi+2iSHGMRyGdNaUFNsDWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715084704; c=relaxed/simple;
-	bh=7SblqolKjySmEc6V7cBH+cBlOqX473FOdbBoGQaq4bk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMo+Ylvgm8p3tlpsLDi55vG+FA1vWY3SMkeAuOZILkzCVdgZIheg8cDSsXxr0BwNqQZkFAs/NuTQ0fYPbsrwKtS7LCO/DNqp5N2dZlZQzorCDwtqNm2a9v5H7Yv1kRrOMJnfrk+yzCVDVCUI1kxH7vEc1XFREfcCgIuQmWjcSjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=dj+djPZm; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4475oO0n004102;
-	Tue, 7 May 2024 06:57:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=PODMain02222019; bh=ftBlVY/8+8MJLqv
-	he1wF4ZSuv2MhawQfCqt8ygN3VQI=; b=dj+djPZm7UuJ4P1+gdmrC6npbftpIzV
-	Cn7oGOBQ94BeHYmQqp5rYZKlYgM6FZqeYDcR0h4yd2qreGTqIAQFKVvlZe51PSn5
-	fEQEUE28InOBFMIi7968yoZkf1ecC/VLfi0Wa6UFogK6XdidF5inddpDg+ZBy5Pj
-	yJs6PDiB+QDDarDxVILc53kk6pslk4FY7Sm5CZJWddfSLoTtXIrk2SVOXtLlwMew
-	D3YprLNu8d+EHHyfaDiirnemaycRdSUB4Lg+wCPFoSWYmL2+WNGXYkPnu2UcNgHy
-	Q/r7wIyubU0Csb6k0N7Oa6i30Lwmx9pmDSAl2j9uAPuPdcAIKsphE/w==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3xy2cmh154-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 06:57:13 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
- 12:57:11 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 7 May 2024 12:57:11 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id F1C16820244;
-	Tue,  7 May 2024 11:57:10 +0000 (UTC)
-Date: Tue, 7 May 2024 11:57:09 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: James Schulman <james.schulman@cirrus.com>,
-        David Rhodes
-	<david.rhodes@cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        "Liam
- Girdwood" <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Lars-Peter
- Clausen" <lars@metafoo.de>,
-        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami
-	<bgoswami@quicinc.com>, <alsa-devel@alsa-project.org>,
-        <patches@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] ASoC: Constify channel mapping array arguments in
- set_channel_map()
-Message-ID: <ZjoXFedPicgq8fyP@opensource.cirrus.com>
-References: <20240507-asoc-x1e80100-4-channel-mapping-v1-0-b12c13e0a55d@linaro.org>
- <20240507-asoc-x1e80100-4-channel-mapping-v1-1-b12c13e0a55d@linaro.org>
+	s=arc-20240116; t=1715083708; c=relaxed/simple;
+	bh=r/iiWHA20dF8NmTwth/leMkONbX7J6hLFAP3jTNvNqE=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=b8WUrKCL1pukMUFIGUwvFvdDt/6fGalcsQDbFWQ72Jkiwt6D/Ha9gkQp/rH6/O2R94QFEzLgUDUSrBwlSSM3HFLzphp7g+t1P5/5O2A3AdgJgXvSnvPd4VILjQ9/G4Uzn9aA2XRvk+kwckSQQIfQ65LpUWNuHaj/fmzxXL3uxR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZfie1WS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF2EC2BBFC;
+	Tue,  7 May 2024 12:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715083707;
+	bh=r/iiWHA20dF8NmTwth/leMkONbX7J6hLFAP3jTNvNqE=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=eZfie1WSHZxOdOtv3eKO9ktleaEjiJoh7TmxPPwfOBDd67C5qLJMi0tsvnpf9Azkb
+	 cAK+wTePFHiLKWGmbWc9Al26T8M9cnMKjOkpVHylxFgVTe4ZzavrebtltHIxRqouii
+	 iNHWvuq40iJMBXJXRHLhAOQfSbmxRuwCRI6/AOg11fxAdohyer2tUe+7xaF8Vn/j4U
+	 +lRPPmZ4qh/RumPPfz3DHXyHAb1MLjYE7WXrEcGMeoyQqdn7uQdZYMANZNxFMZsXPi
+	 c2yS9hDDWEbt/giSFZHgAj0VSbwFNuws22DGhp41QryA4l/BD4k39XjWxSOhdBTAE2
+	 Pacbvp2Rw1gVQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240507-asoc-x1e80100-4-channel-mapping-v1-1-b12c13e0a55d@linaro.org>
-X-Proofpoint-ORIG-GUID: _LFPFoz0pvkHmcCFOZwADU6UMjJP1mf7
-X-Proofpoint-GUID: _LFPFoz0pvkHmcCFOZwADU6UMjJP1mf7
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: mwl8k: initialize cmd->addr[] properly
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <b788be9a-15f5-4cca-a3fe-79df4c8ce7b2@moroto.mountain>
+References: <b788be9a-15f5-4cca-a3fe-79df4c8ce7b2@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jiri Pirko <jiri@resnulli.us>, Johannes Berg <johannes.berg@intel.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171508370426.12731.13082451310329470582.kvalo@kernel.org>
+Date: Tue,  7 May 2024 12:08:25 +0000 (UTC)
 
-On Tue, May 07, 2024 at 12:27:30PM +0200, Krzysztof Kozlowski wrote:
-> There is no need for implementations of DAI set_channel_map() to modify
-> contents of passed arrays with actual channel mapping.  Additionally,
-> the caller keeps full ownership of the array.
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+
+> This loop is supposed to copy the mac address to cmd->addr but the
+> i++ increment is missing so it copies everything to cmd->addr[0] and
+> only the last address is recorded.
 > 
-> Constify these pointer arguments so the code will be safer and easier to
-> read (documenting the caller's ownership).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  include/sound/cs35l41.h                 |  4 ++--
->  include/sound/soc-dai.h                 |  8 ++++----
->  sound/soc/codecs/adau7118.c             |  6 ++++--
->  sound/soc/codecs/cs35l41-lib.c          |  4 ++--
->  sound/soc/codecs/cs35l41.c              |  3 ++-
+> Fixes: 22bedad3ce11 ("net: convert multicast list to list_head")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-For the cs35l41 bits:
+Patch applied to wireless-next.git, thanks.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+1d60eabb8269 wifi: mwl8k: initialize cmd->addr[] properly
 
-Thanks,
-Charles
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/b788be9a-15f5-4cca-a3fe-79df4c8ce7b2@moroto.mountain/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
