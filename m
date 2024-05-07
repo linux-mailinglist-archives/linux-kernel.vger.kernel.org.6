@@ -1,269 +1,125 @@
-Return-Path: <linux-kernel+bounces-170824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003778BDC8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 382CA8BDC8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD9171F238EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:41:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8B231F238C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5903213C3E7;
-	Tue,  7 May 2024 07:41:40 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4746913BC30;
+	Tue,  7 May 2024 07:41:25 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE79A59;
-	Tue,  7 May 2024 07:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEFDA59
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 07:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715067699; cv=none; b=M3SbO2qIu1GMGC6NeLo+ZTXJEOLejz6lGtvU3tISn0kdQm6IOBky2zlep/BMHiX4nzPMtu+4sII61mTYxTtS1nNPAhOkyA94dvGK1oimcxWvIKCt2VFuodut09eM03erNz8cwkj01Fz5gPc7NnM3J5T4+iqWnDhOhjGReLOr3F4=
+	t=1715067684; cv=none; b=kdzjJsc6hEVK9xHe8cjYWkKHaUL7rG9ZJ6/gXR/r6X539LsSvL8L9J6K/W7J4hMbZcYYfdw+840XTY63rVjoCWquRV6e2pLVM17gDnEj8N5I6cdkUsNf4naTWN8bgzHTJosiDjIBL55bHtTPzR7WBXbeg2H9PvjsFDlF+8tdLW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715067699; c=relaxed/simple;
-	bh=ceduBYXRbbfogzwmGKdp8Jhm4BA04QpGl8pajoF75DQ=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=C2XOVnEBWL1tZZMOAFzTSLiTOeaflM47Pmwo/LVs3V2XF5d+6DS0EFJGdFYg4UG9hxP3TzuOCqsIadhBbc26guSkSQcPry47AOxgJIjuey8jmfLW2rNG+5nNVmT19kvgqPH+UM/4ay9WkRs5QQ3mtUiUXL8wLjKVVnD5OC3LCqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4VYVZz4x4kzCgyJ;
-	Tue,  7 May 2024 15:41:31 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4VYVZs6h7rzBRHKd;
-	Tue,  7 May 2024 15:41:25 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VYVZh0VzBz4xPBc;
-	Tue,  7 May 2024 15:41:16 +0800 (CST)
-Received: from xaxapp03.zte.com.cn ([10.88.97.17])
-	by mse-fl1.zte.com.cn with SMTP id 4477f1Mo043774;
-	Tue, 7 May 2024 15:41:01 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp03[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 7 May 2024 15:41:03 +0800 (CST)
-Date: Tue, 7 May 2024 15:41:03 +0800 (CST)
-X-Zmail-TransId: 2afb6639db0ffffffffff2f-66cf8
-X-Mailer: Zmail v1.0
-Message-ID: <202405071541038433DpxXxFl-a_4XcQGTy_BU@zte.com.cn>
+	s=arc-20240116; t=1715067684; c=relaxed/simple;
+	bh=s0uYKH7sT3FXzkClZdG3yO71HRP6nYGiBJTJ1UnI0KY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W/nuxKVogSpQANeu4Gc6mA2LYznMsmzxuUKYKz2vBRddIHk48EaHVs+v3VFimsgWIOnhJdwxc7ejsi/JX3hBzRwqP0kWu4ewMtuHgxqbOS54i/7CMLEmSDgXvNrj4KN6WitXlXIkdn96OcaLywc3D+1rXcHIc5tlZ7nXQlRtwEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VYVWR58SCzNw23;
+	Tue,  7 May 2024 15:38:27 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 343651403D2;
+	Tue,  7 May 2024 15:41:13 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Tue, 7 May 2024 15:41:09 +0800
+Message-ID: <cde4d448-dc9d-eaad-4a2d-a6d34bda4449@huawei.com>
+Date: Tue, 7 May 2024 15:41:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <kuba@kernel.org>
-Cc: <horms@kernel.org>, <davem@davemloft.net>, <rostedt@goodmis.org>,
-        <mhiramat@kernel.org>, <dsahern@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <he.peilin@zte.com.cn>, <liu.chun2@zte.com.cn>,
-        <jiang.xuexin@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
-        <kerneljasonxing@gmail.com>, <fan.yu9@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <ran.xiaokai@zte.com.cn>,
-        <zhang.run@zte.com.cn>, <wang.haoyi@zte.com.cn>, <si.hao@zte.com.cn>,
-        <lu.zhongjun@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0IHY5XSBuZXQvaXB2NDogYWRkIHRyYWNlcG9pbnQgZm9yIGljbXBfc2VuZA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 4477f1Mo043774
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6639DB2A.001/4VYVZz4x4kzCgyJ
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
+ versions of MSR ALLINT
+To: Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <maz@kernel.org>,
+	<oliver.upton@linux.dev>, <james.morse@arm.com>, <suzuki.poulose@arm.com>,
+	<yuzenghui@huawei.com>, <tglx@linutronix.de>, <ardb@kernel.org>,
+	<anshuman.khandual@arm.com>, <miguel.luis@oracle.com>, <joey.gouly@arm.com>,
+	<ryan.roberts@arm.com>, <jeremy.linton@arm.com>, <ericchancf@google.com>,
+	<kristina.martsenko@arm.com>, <robh@kernel.org>,
+	<scott@os.amperecomputing.com>, <songshuaishuai@tinylab.org>,
+	<shijie@os.amperecomputing.com>, <akpm@linux-foundation.org>,
+	<bhe@redhat.com>, <horms@kernel.org>, <mhiramat@kernel.org>,
+	<rmk+kernel@armlinux.org.uk>, <shahuang@redhat.com>,
+	<takakura@valinux.co.jp>, <dianders@chromium.org>, <swboyd@chromium.org>,
+	<sumit.garg@linaro.org>, <frederic@kernel.org>, <reijiw@google.com>,
+	<akihiko.odaki@daynix.com>, <ruanjinjie@huawei.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>
+References: <20240415064758.3250209-1-liaochang1@huawei.com>
+ <20240415064758.3250209-2-liaochang1@huawei.com>
+ <ZjUKMWPknEhLYoK8@FVFF77S0Q05N> <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-From: Peilin He <he.peilin@zte.com.cn>
+Hi, Mark.
 
-Introduce a tracepoint for icmp_send, which can help users to get more
-detail information conveniently when icmp abnormal events happen.
+在 2024/5/6 23:15, Mark Brown 写道:
+> On Fri, May 03, 2024 at 05:00:49PM +0100, Mark Rutland wrote:
+>> On Mon, Apr 15, 2024 at 06:47:51AM +0000, Liao Chang wrote:
+> 
+>> +#define PSTATE_ALLINT                  pstate_field(1, 0)
+> 
+>> +#define set_pstate_allint(x)           asm volatile(SET_PSTATE_ALLINT(x))
+> 
+> Hrm, those helpers are not ideally discoverable, partly due to the
+> system register description for ALLINT not providing any references to
+> this being a general scheme (which is fixable there) and partly due to
 
-1. Giving an usecase example:
-=============================
-When an application experiences packet loss due to an unreachable UDP
-destination port, the kernel will send an exception message through the
-icmp_send function. By adding a trace point for icmp_send, developers or
-system administrators can obtain detailed information about the UDP
-packet loss, including the type, code, source address, destination address,
-source port, and destination port. This facilitates the trouble-shooting
-of UDP packet loss issues especially for those network-service
-applications.
+Based on the Arm ISA reference manual, the instruction accessing the ALLINT
+field of PSTATE uses the following encoding:
+                    op0  op1   CRn    CRm    op2
+MSR ALLINT, #<imm>  0b00 0b001 0b0100 0b000x 0b000
 
-2. Operation Instructions:
-==========================
-Switch to the tracing directory.
-        cd /sys/kernel/tracing
-Filter for destination port unreachable.
-        echo "type==3 && code==3" > events/icmp/icmp_send/filter
-Enable trace event.
-        echo 1 > events/icmp/icmp_send/enable
+In this encoding, the 'x' represents the LSB of #<imm>, op1 is fixed as 0b001
+and op2 is fixed as 0b000. With this understanding, those helpers seem like a
+good approach for accessing the PSTATE.ALLINT field. I've aslo confirmed that
+the binary encoding generated by those helpers is same with the encoding of v3.
 
-3. Result View:
-================
- udp_client_erro-11370   [002] ...s.12   124.728002:
- icmp_send: icmp_send: type=3, code=3.
- From 127.0.0.1:41895 to 127.0.0.1:6666 ulen=23
- skbaddr=00000000589b167a
+> the use of __emit_inst() with a numeric literal - we should probably add
+> a comment next to the __emit_inst() saying what instruction we are
+> emitting
+Arm Architecture Reference Manual for A-profile outlines two variants for
+MSR instructions used to modify PSTATE fields direclty using immediate. The
+major difference between these variants lies in the CRm field encoding:
 
-Signed-off-by: Peilin He <he.peilin@zte.com.cn>
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
-Cc: Yang Yang <yang.yang29@zte.com.cn>
-Cc: Liu Chun <liu.chun2@zte.com.cn>
-Cc: Xuexin Jiang <jiang.xuexin@zte.com.cn>
----
-v8->v9:
-Rebase the patch on the latest net-next.
+- 4 bit immediate, examples include "MSR DAIFSET,#Imm4" and "MSR DAIFCLR,#Imm4".
+  The CRm field in this variant uses the least 4 bits of immediate.
+- 1 bit immediate, currently, only "MSR ALLINT,#Imm1" uses this variant.
+  The CRm field uses only the least 1 bit of immediate.
 
-v7->v8:
-Some fixes according to
-https://lore.kernel.org/all/CANn89iKNtKmN5im8K4dSZGqAV8=e3bZb
-Z5AhxbcNbjFxk5V1Jw@mail.gmail.com/
-1.Combine all variable definitions together without mixing
-code and variables.
+The current implementation of the macro SET_PSTATE() defaults to the 1 bit
+immediate variant (!!x << PSTATE_Imm_shift). Currently, this macro is used
+to generate instructions accessing PAN, UAO, SSBS, TCO and DIT which require
+1 bit immediate variant, hence I would say it also work for ALLINT as well.
 
-v6->v7:
-Some fixes according to
-https://lore.kernel.org/all/20240425081210.720a4cd9@kernel.org/
-1. Fix patch format issues.
+Thanks.
 
-v5->v6:
-Some fixes according to
-https://lore.kernel.org/all/20240413161319.GA853376@kernel.org/
-1.Resubmit patches based on the latest net-next code.
-
-v4->v5:
-Some fixes according to
-https://lore.kernel.org/all/CAL+tcoDeXXh+zcRk4PHnUk8ELnx=CE2pc
-Cqs7sFm0y9aK-Eehg@mail.gmail.com/
-1.Adjust the position of trace_icmp_send() to before icmp_push_reply().
-
-v3->v4:
-Some fixes according to
-https://lore.kernel.org/all/CANn89i+EFEr7VHXNdOi59Ba_R1nFKSBJz
-BzkJFVgCTdXBx=YBg@mail.gmail.com/
-1.Add legality check for UDP header in SKB.
-2.Target this patch for net-next.
-
-v2->v3:
-Some fixes according to
-https://lore.kernel.org/all/20240319102549.7f7f6f53@gandalf.local.home/
-1. Change the tracking directory to/sys/kernel/tracking.
-2. Adjust the layout of the TP-STRUCT_entry parameter structure.
-
-v1->v2:
-Some fixes according to
-https://lore.kernel.org/all/CANn89iL-y9e_VFpdw=sZtRnKRu_tnUwqHu
-FQTJvJsv-nz1xPDw@mail.gmail.com/
-1. adjust the trace_icmp_send() to more protocols than UDP.
-2. move the calling of trace_icmp_send after sanity checks
-in __icmp_send().
----
- include/trace/events/icmp.h | 67 +++++++++++++++++++++++++++++++++++++
- net/ipv4/icmp.c             |  4 +++
- 2 files changed, 71 insertions(+)
- create mode 100644 include/trace/events/icmp.h
-
-diff --git a/include/trace/events/icmp.h b/include/trace/events/icmp.h
-new file mode 100644
-index 000000000000..31559796949a
---- /dev/null
-+++ b/include/trace/events/icmp.h
-@@ -0,0 +1,67 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM icmp
-+
-+#if !defined(_TRACE_ICMP_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_ICMP_H
-+
-+#include <linux/icmp.h>
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(icmp_send,
-+
-+		TP_PROTO(const struct sk_buff *skb, int type, int code),
-+
-+		TP_ARGS(skb, type, code),
-+
-+		TP_STRUCT__entry(
-+			__field(const void *, skbaddr)
-+			__field(int, type)
-+			__field(int, code)
-+			__array(__u8, saddr, 4)
-+			__array(__u8, daddr, 4)
-+			__field(__u16, sport)
-+			__field(__u16, dport)
-+			__field(unsigned short, ulen)
-+		),
-+
-+		TP_fast_assign(
-+			struct iphdr *iph = ip_hdr(skb);
-+			struct udphdr *uh = udp_hdr(skb);
-+			int proto_4 = iph->protocol;
-+			__be32 *p32;
-+
-+			__entry->skbaddr = skb;
-+			__entry->type = type;
-+			__entry->code = code;
-+
-+			if (proto_4 != IPPROTO_UDP || (u8 *)uh < skb->head ||
-+				(u8 *)uh + sizeof(struct udphdr)
-+				> skb_tail_pointer(skb)) {
-+				__entry->sport = 0;
-+				__entry->dport = 0;
-+				__entry->ulen = 0;
-+			} else {
-+				__entry->sport = ntohs(uh->source);
-+				__entry->dport = ntohs(uh->dest);
-+				__entry->ulen = ntohs(uh->len);
-+			}
-+
-+			p32 = (__be32 *) __entry->saddr;
-+			*p32 = iph->saddr;
-+
-+			p32 = (__be32 *) __entry->daddr;
-+			*p32 = iph->daddr;
-+		),
-+
-+		TP_printk("icmp_send: type=%d, code=%d. From %pI4:%u to %pI4:%u ulen=%d skbaddr=%p",
-+			__entry->type, __entry->code,
-+			__entry->saddr, __entry->sport, __entry->daddr,
-+			__entry->dport, __entry->ulen, __entry->skbaddr)
-+);
-+
-+#endif /* _TRACE_ICMP_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-+
-diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
-index 207482d30dc7..ab6d0d98dbc3 100644
---- a/net/ipv4/icmp.c
-+++ b/net/ipv4/icmp.c
-@@ -93,6 +93,8 @@
- #include <net/ip_fib.h>
- #include <net/l3mdev.h>
- #include <net/addrconf.h>
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/icmp.h>
-
- /*
-  *	Build xmit assembly blocks
-@@ -770,6 +772,8 @@ void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
- 	if (!fl4.saddr)
- 		fl4.saddr = htonl(INADDR_DUMMY);
-
-+	trace_icmp_send(skb_in, type, code);
-+
- 	icmp_push_reply(sk, &icmp_param, &fl4, &ipc, &rt);
- ende:
- 	ip_rt_put(rt);
 -- 
-2.17.1
+BR
+Liao, Chang
 
