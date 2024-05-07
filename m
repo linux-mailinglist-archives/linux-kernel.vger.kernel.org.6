@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-171536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133848BE5D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:26:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF108BE587
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE35DB2BF39
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:17:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5A628922E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C8D16D4CA;
-	Tue,  7 May 2024 14:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B747016DEDE;
+	Tue,  7 May 2024 14:13:34 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC8516C849;
-	Tue,  7 May 2024 14:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE0616D32E;
+	Tue,  7 May 2024 14:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091204; cv=none; b=X9lldrCbSHcXsybgzwVxKUyKFABF/zu9jP/yCM/xUaMIdbGsFR+ya/I1qK9leckXl1vGFlltO3y70wRMHzEF3DOqrJgVeTVA621zppTFmk0AjAQ+6YPikZ+zmCFO3Gu3a9TpMTZdQSnE/i9sfB3xTn/l6c39yrRIGGxCt5zYDwI=
+	t=1715091213; cv=none; b=JLzbQVTh4g7WQ3NKCxqwxdaDs065pWALb3NcrpHnn46TL8f7zW1hEMaC7m7gjr6JU8MaQd30TR6TPAiYyD8iwz0XXinPoGx87xb8nXbMaeCoNZYNiVQDvOADKn7APmlna/rRj0hJ4mpgy/69UR/Zu3PvdX4UxJzD01CcSFoOw0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091204; c=relaxed/simple;
-	bh=sE3X07S6/95vfe+bBwB2Qtkb4OMn+hxVPTR3EAq1XMs=;
+	s=arc-20240116; t=1715091213; c=relaxed/simple;
+	bh=j60Lp76p4GCMge0RHYRlaMeijthkr1haXgYWLgtV6oU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rF4M9F3yC2QuKs1kXB6DZHFsjUDxYv9b0jrieqi7KgIZMix1Qf/AFcsGhsACNw1M6g2OMWiun20qY6F2P5znXNumHAMmRIuxfClLL0VhwBEm43VbmRhCncfhncPaiFoR2AyA/oO+0vOguEqQxxS0Rd98LZD7ziaT2CFkIqQSLiY=
+	 MIME-Version; b=IO6emxOByH9u6Q5Bv/0eVVneLeR4EvvE5zZhrGZjEQjwvBrQWX5lKm+K1NiJnZ1lzm7tgIPvC/W8JqbfmDYFmG+cpIePwm5T79L9sxKIz4g7HmFnF/RnNRRW941uNh54lfBHvrogx2HeOKft7rlosPJinhC4kD7u3/TNvLn2S+w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 595341515;
-	Tue,  7 May 2024 07:13:29 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 498F51516;
+	Tue,  7 May 2024 07:13:33 -0700 (PDT)
 Received: from e127643.broadband (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 78FCB3F6A8;
-	Tue,  7 May 2024 07:13:01 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 687C93F6A8;
+	Tue,  7 May 2024 07:13:05 -0700 (PDT)
 From: James Clark <james.clark@arm.com>
 To: linux-perf-users@vger.kernel.org,
 	atrajeev@linux.vnet.ibm.com,
@@ -47,9 +47,9 @@ Cc: James Clark <james.clark@arm.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	"Liang, Kan" <kan.liang@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] perf maps: Re-use __maps__free_maps_by_name()
-Date: Tue,  7 May 2024 15:12:06 +0100
-Message-Id: <20240507141210.195939-3-james.clark@arm.com>
+Subject: [PATCH 3/4] perf symbols: Update kcore map before merging in remaining symbols
+Date: Tue,  7 May 2024 15:12:07 +0100
+Message-Id: <20240507141210.195939-4-james.clark@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240507141210.195939-1-james.clark@arm.com>
 References: <20240507141210.195939-1-james.clark@arm.com>
@@ -61,66 +61,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-maps__merge_in() hard codes the steps to free the maps_by_name list. It
-seems to not map__put() each element before freeing, and it sets
-maps_by_name_sorted to true after freeing, which may be harmless but
-is inconsistent with maps__init() and other functions.
+When loading kcore, the main vmlinux map is updated in the same loop
+that merges the remaining maps. If a map that overlaps is merged in
+before kcore, the list can become unsortable when the main map addresses
+are updated. This will later trigger the check_invariants() assert:
 
-maps__maps_by_name_addr() is also quite hard to read because we already
-have maps__maps_by_name() and maps__maps_by_address(), but the function
-is only used in that place so delete it.
+  $ perf record
+  $ perf report
 
+  util/maps.c:96: check_invariants: Assertion `map__end(prev) <=
+    map__start(map) || map__start(prev) == map__start(map)' failed.
+  Aborted
+
+Fix it by moving the main map update prior to the loop so that
+maps__merge_in() can split it if necessary.
+
+Fixes: 659ad3492b91 ("perf maps: Switch from rbtree to lazily sorted array for addresses")
 Signed-off-by: James Clark <james.clark@arm.com>
 ---
- tools/perf/util/maps.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ tools/perf/util/symbol.c | 40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
-diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
-index 61eb742d91e3..16b39db594f4 100644
---- a/tools/perf/util/maps.c
-+++ b/tools/perf/util/maps.c
-@@ -124,11 +124,6 @@ static void maps__set_maps_by_address(struct maps *maps, struct map **new)
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 2d95f22d713d..e98dfe766da3 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1289,7 +1289,7 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+ {
+ 	struct maps *kmaps = map__kmaps(map);
+ 	struct kcore_mapfn_data md;
+-	struct map *replacement_map = NULL;
++	struct map *map_ref, *replacement_map = NULL;
+ 	struct machine *machine;
+ 	bool is_64_bit;
+ 	int err, fd;
+@@ -1367,6 +1367,24 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+ 	if (!replacement_map)
+ 		replacement_map = list_entry(md.maps.next, struct map_list_node, node)->map;
  
- }
++	/*
++	 * Update addresses of vmlinux map. Re-insert it to ensure maps are
++	 * correctly ordered. Do this before using maps__merge_in() for the
++	 * remaining maps so vmlinux gets split if necessary.
++	 */
++	map_ref = map__get(map);
++	maps__remove(kmaps, map_ref);
++
++	map__set_start(map_ref, map__start(replacement_map));
++	map__set_end(map_ref, map__end(replacement_map));
++	map__set_pgoff(map_ref, map__pgoff(replacement_map));
++	map__set_mapping_type(map_ref, map__mapping_type(replacement_map));
++
++	err = maps__insert(kmaps, map_ref);
++	map__put(map_ref);
++	if (err)
++		goto out_err;
++
+ 	/* Add new maps */
+ 	while (!list_empty(&md.maps)) {
+ 		struct map_list_node *new_node = list_entry(md.maps.next, struct map_list_node, node);
+@@ -1374,24 +1392,8 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
  
--static struct map ***maps__maps_by_name_addr(struct maps *maps)
--{
--	return &RC_CHK_ACCESS(maps)->maps_by_name;
--}
+ 		list_del_init(&new_node->node);
+ 
+-		if (RC_CHK_EQUAL(new_map, replacement_map)) {
+-			struct map *map_ref;
 -
- static void maps__set_nr_maps_allocated(struct maps *maps, unsigned int nr_maps_allocated)
- {
- 	RC_CHK_ACCESS(maps)->nr_maps_allocated = nr_maps_allocated;
-@@ -284,6 +279,9 @@ void maps__put(struct maps *maps)
- 
- static void __maps__free_maps_by_name(struct maps *maps)
- {
-+	if (!maps__maps_by_name(maps))
-+		return;
-+
- 	/*
- 	 * Free everything to try to do it from the rbtree in the next search
- 	 */
-@@ -291,6 +289,9 @@ static void __maps__free_maps_by_name(struct maps *maps)
- 		map__put(maps__maps_by_name(maps)[i]);
- 
- 	zfree(&RC_CHK_ACCESS(maps)->maps_by_name);
-+
-+	/* Consistent with maps__init(). When maps_by_name == NULL, maps_by_name_sorted == false */
-+	maps__set_maps_by_name_sorted(maps, false);
- }
- 
- static int map__start_cmp(const void *a, const void *b)
-@@ -1167,8 +1168,7 @@ int maps__merge_in(struct maps *kmaps, struct map *new_map)
- 	}
- 	maps__set_maps_by_address(kmaps, merged_maps_by_address);
- 	maps__set_maps_by_address_sorted(kmaps, true);
--	zfree(maps__maps_by_name_addr(kmaps));
--	maps__set_maps_by_name_sorted(kmaps, true);
-+	__maps__free_maps_by_name(kmaps);
- 	maps__set_nr_maps_allocated(kmaps, merged_nr_maps_allocated);
- 
- 	/* Copy entries before the new_map that can't overlap. */
+-			/* Ensure maps are correctly ordered */
+-			map_ref = map__get(map);
+-			maps__remove(kmaps, map_ref);
+-
+-			map__set_start(map_ref, map__start(new_map));
+-			map__set_end(map_ref, map__end(new_map));
+-			map__set_pgoff(map_ref, map__pgoff(new_map));
+-			map__set_mapping_type(map_ref, map__mapping_type(new_map));
+-
+-			err = maps__insert(kmaps, map_ref);
+-			map__put(map_ref);
+-			map__put(new_map);
+-			if (err)
+-				goto out_err;
+-		} else {
++		/* skip if replacement_map, already inserted above */
++		if (!RC_CHK_EQUAL(new_map, replacement_map)) {
+ 			/*
+ 			 * Merge kcore map into existing maps,
+ 			 * and ensure that current maps (eBPF)
 -- 
 2.34.1
 
