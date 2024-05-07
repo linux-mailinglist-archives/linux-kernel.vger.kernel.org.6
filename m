@@ -1,283 +1,203 @@
-Return-Path: <linux-kernel+bounces-171598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D9A8BE640
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:41:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC3D8BE643
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 281FE282DD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12406282D47
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C462A15FCF0;
-	Tue,  7 May 2024 14:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3795515FD19;
+	Tue,  7 May 2024 14:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qWfWsjBy"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2040.outbound.protection.outlook.com [40.107.95.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0xnmC1d"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D354015EFD8;
-	Tue,  7 May 2024 14:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715092898; cv=fail; b=KGkT70CeYu12yDB5bndG94nRuJU99R0A2MDN2hPIBtSEbsXIXMHYZFT/Yev6PL5AkuQLo6I2EVdKO8ECo5ZCZ4S2lg7d0wnPzUk6DEjE7CTwuDC8hKlyvdgsKMr27YGcWzKfYYyJ86lYE9NdXksBKwxyHUCnK/VTwrXh/sJnOEg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715092898; c=relaxed/simple;
-	bh=xIVw9cy1M5wgJC+gmwaMhBo/NWgM1ALS1XUubkhrAhU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PosvcWk21v0+pofw98UdKQGrm8mFUoB1tJMsVAzVggR3HR52uQhMkbTEIdUAxRRTBoDYpflmKmTkpYTDCAoYGG6prDQ0qVG1G8a8+ZAjcqYP0PziLPnp2klJwKsM2EPzzhnZMbdl8Jfp6TuzqkxDR2LyfCfhGUq6T22RpqiglV4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qWfWsjBy; arc=fail smtp.client-ip=40.107.95.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nj/eyGCKR8NY2srziSPMT8MRoSLAU1pIjbPJZlcwRwgw6clVYO8NnIIItLMtFWKuj8bS08+96P/C7QgLrMAjWi/3h3V78ejg1NGpBKm7OIpN64wepujSEPoY+CYNVLIfWlbzW6+DZbTlMtwH+/ZtIu3vc/kFxRIJ9MheY/0J3EU5mwgfc1nZ1FHOWVRGFZA59l1XjpTWYS99kDImzbwqANLpnHefrP34WT27DB/2GKR7UnkqCzLh60+yr0XXCnhcahBe8rAHuGGMtK22r+w+iCHtdjiF9rClDAmEqrXMufEWngbH045UQHCFPaWUuDwcsFtAfovux06PkPybpPRd2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7PTk2xU4hOkhgdVxy01zjPoOe50s5uwi8uvx0PUBZWk=;
- b=a5ApPNOGvt8+Guwc2vLZOpJX0RV9sejONf2W/2OTCpA5wZorAzbXenPeF+nNSOeMkk/P75rZGvbESkbrfiPz+QwwxWK0SPl0ysAcnPNQlZTDwELUvHVJWZR1MK1gO+sq1ktjrOLE7Iy7/mgRlodv/wZ1/I00zUTJ1T9JPv+3R/Kk5RPAtVZG/VbF/eCpU7f8IfD3Qwn27gAsuX4N+YfaLSIr8+vCGpOzWbLaO9qOMSt8xFUs6T8vMq6JsljRGir1LNuxeaYH78kQ7pC9HV5R2GvisodBlOZPswCEQETH4muy60DxrTdbZzcP2iimiFIlbaQ1a0RyjEqgpzP0Ww//Ug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7PTk2xU4hOkhgdVxy01zjPoOe50s5uwi8uvx0PUBZWk=;
- b=qWfWsjBypWf+wcZvsyshgsME1C1f6K5mv0JlnKnUbhRf+JuAF6VlDGFOJfTdj7rs2J9zWdeDbCkj8Lk+U/1W3yi0dtosEIZIBN1fcnLN4mN2w+neJFXCZ1IfB39ybeHUiPKNenXgQFKokL5cbIXfvi25i13CJZtBB7YvZObkSnQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by MN2PR12MB4318.namprd12.prod.outlook.com (2603:10b6:208:1d8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Tue, 7 May
- 2024 14:41:32 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.7544.041; Tue, 7 May 2024
- 14:41:32 +0000
-Message-ID: <3cd5fe9d-514c-4a09-a895-47d97a5c6b94@amd.com>
-Date: Tue, 7 May 2024 09:41:29 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] cpufreq: amd-pstate: automatically load pstate
- driver by default
-To: Perry Yuan <perry.yuan@amd.com>, rafael.j.wysocki@intel.com,
- viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
- Borislav.Petkov@amd.com
-Cc: Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, Xiaojian.Du@amd.com,
- Li.Meng@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1715065568.git.perry.yuan@amd.com>
- <60bdfbeb426512d74faa91597453fd7960ebd7b5.1715065568.git.perry.yuan@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <60bdfbeb426512d74faa91597453fd7960ebd7b5.1715065568.git.perry.yuan@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR05CA0024.namprd05.prod.outlook.com
- (2603:10b6:806:2d2::27) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA12B15ECF2;
+	Tue,  7 May 2024 14:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715092960; cv=none; b=NugQDbzSQlZ1UOsAQ2SOUL+j0VutUHlf5LSkTEmHzdZyo2EFQMTiEBZdLaph2fAFNglc+untfRtY52kVOrYfD19sHoBbuBjp6V0ZKjDbCd3FC/v581MuLSexu4nCq+hTEMhigEuPcZeo5FrORdo9fU41xSeKIBEkm56I05llQlo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715092960; c=relaxed/simple;
+	bh=2hDHe+BxfhbTIY+eRrN47IQp9mJ0BXA8h0pGpREmulU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jxnSqnDDyYBY+C7ye8MxdtXmmnGl9RhJwjCOJI1mXHl2A12zpPf6gGyWzhOGizJr2z+dnkr5iOcsB4zD9USA2YDtUu4GrdBV0NniymEHKLCl3YxW1GEC4MR6sQjqj/HBAkjHdTe/TPm7Q1KjS0z9ADUu3wNuG+zyqVvdy82/tfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0xnmC1d; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c97a485733so587411b6e.2;
+        Tue, 07 May 2024 07:42:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715092957; x=1715697757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=4sf/d1izAzYn8pGMlcSPp+yg8MEOH4IhpznhPjUIMeI=;
+        b=H0xnmC1dya106GzD5iPH0tua8h4eAAHP3ZITcU5/0TeE5abuj3byTNfl7Vz5PhTHjd
+         /HX5cS2oTbYXIEw62esUN6TU1WfAUp6yT6kzdoRO2l1F45Rq+mLEeqoeoynkVHRgLf5s
+         I1zDfYobybcCLfkcAXNjoj6Hyf1iqtEJPD3pCWXMAkL07mmjPzJNe1d7jTO1V6GoYrJi
+         9L9WMr+Ju0l4C9nX4Oocvii8UVaWstBLdLKqIPOpsA9MIlhAghZcJjgK/zgQocEqqQP2
+         HVydVCa2jp7yroVInO3VRxRkP47Q2QiZB0elIch3l/9WhlVQZHwHtL3uFN4dWj4wXrMX
+         oY/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715092957; x=1715697757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4sf/d1izAzYn8pGMlcSPp+yg8MEOH4IhpznhPjUIMeI=;
+        b=FthdtrItx8qckTcf74ztUB1YD/4epReXxKzIDff6S//NDV6hlTA0axIJssFeHieIWG
+         W+FKQ7V3WDW4+O912NA1f7/OXhZ0wBfjX1ax9kg8DfgFW5mt3ryIyX8npNjP9NXLOHBL
+         WuyfQTg3fgSIbMoIVXPnTr7YbGyD9w8LgONHHMQH/WSlARhKdS2O3ZL2vV7P/HU4uFE6
+         sViiEU3C5XGLGcfQTP77WdvMvWd9QqG+RrDr99uH0+E+TGwHyc/5H2Jz1Vm+S1GYRNgk
+         jLn8C11I4yl2xWTjvouwZ1gqd8bq/eOC3Gos8R9ZwrpfuHPcOoO8oaLPycV1h6PbUSQO
+         mmXQ==
+X-Gm-Message-State: AOJu0YzLElNYWbhapDKzWpMkBvriALlNcbtVzE5Y3j85zCBRnDdWr28v
+	hEcj3jhPKzVokVmVqzpGLqh8l30lPL7HAzZDfofPHZwdE+u6PkYWTJpxAD1B
+X-Google-Smtp-Source: AGHT+IHigzRue/7XVS9M6mYwNQD8aM3IkuuuN4CaPpPfqTKlH1xnPiTL2C7FDEPg4oLSnOd5LigDFw==
+X-Received: by 2002:a05:6808:1687:b0:3c7:2607:c541 with SMTP id bb7-20020a056808168700b003c72607c541mr18182153oib.13.1715092957394;
+        Tue, 07 May 2024 07:42:37 -0700 (PDT)
+Received: from fionn.redhat.com (bras-base-rdwyon0600w-grc-16-74-12-5-183.dsl.bell.ca. [74.12.5.183])
+        by smtp.gmail.com with ESMTPSA id t10-20020a0cef0a000000b006a0f7d872ccsm4719722qvr.59.2024.05.07.07.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 07:42:37 -0700 (PDT)
+Sender: John Kacur <jkacur@gmail.com>
+From: John Kacur <jkacur@redhat.com>
+To: RT <linux-rt-users@vger.kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+	Clark Williams <williams@redhat.com>,
+	Chris White <chwhite@redhat.com>,
+	Kate Carcia Poulin <kcarcia@redhat.com>,
+	Crystal Wood <crwood@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: ANNOUNCE rt-tests version 2.7
+Date: Tue,  7 May 2024 10:42:29 -0400
+Message-ID: <20240507144229.42909-1-jkacur@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MN2PR12MB4318:EE_
-X-MS-Office365-Filtering-Correlation-Id: b962ee54-ecbd-4bb3-843c-08dc6ea3c9c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WUdxSHZXSkxzN3pKQWlTcGhhdGJiR3FWdXRmTlZaRlhwYTBudmF0UGhMN3Nw?=
- =?utf-8?B?RStPeERXUmhnWkpxWS81bkpwR3Q5djJPWGU3TzlQL0VxOE9pMENFdjlsYTM2?=
- =?utf-8?B?ajJKeFhIZFlha2pMZ0NaOXZGSkMzbktoWVJzS2piK0Nra2tBV05rRHc0djB4?=
- =?utf-8?B?UURVSEQ0QWxSeEN3UHZJeGk3K1hwb0QvNG1LZTZpKzhDZHFLMGZsakRnenRj?=
- =?utf-8?B?V0dtOS80UFVyVWcvWmxJN1BXejI5RzZsazBmcGRmNTdSc0VvK2s1azEraytL?=
- =?utf-8?B?Nk1nMG94UVNzeHdpVXBEZkNaREErTk1nMmRZbjU1T0ZtM0VQNlF4N29XZzBJ?=
- =?utf-8?B?SFNoVWZubVpZbVdydDNxVnM2amZ2aWljbjIyeU14Nzl1dFV3bHVEM3BGWGRj?=
- =?utf-8?B?OTZDdUQvcFRZYjY1dXRtakd3eHg2eFllZS92aE5nZ1FiWFhaS2RGU2FQQVo3?=
- =?utf-8?B?UWFYUnFlV2tvZ0pleXVYQitsYlpYODNkT29qczZIbjMwcEdRQmhkTnF4b0lX?=
- =?utf-8?B?NTNWdTFNSVU3YjB2LzVsaUdZaGF6cjhvWnorTlNxQXA5aUJoc0RCbmZWU0hU?=
- =?utf-8?B?azRXdlpBbU8zd1g5LzlWUVRjWjBDVlA5eEtHbTZxaS8vd2pBSlduRiswTEQz?=
- =?utf-8?B?UTUvbzlnUHJtVTREZENmVVRvY0YyTWt1azJUYkoyVXlTcWFFaHI1bE1vcS9a?=
- =?utf-8?B?N3p2cXFnNjlaTmxQcngyb29VZ1Q4aUpVVTJJbWxWN1dCRVdadFlMMkROcE5D?=
- =?utf-8?B?eUJURmRoK21qZUFkMHp4eHo0RWFCMkRmWUpsbFZhOFlTTWNsbmgvdHVoY1dU?=
- =?utf-8?B?dy9pM3VkSzB4cFphRDNyVmxla29VN1hUS2ZwQ3MydCtzbjcyc2JyNmx0cXZq?=
- =?utf-8?B?NnhBY2VZYnZTa0w5QXk3aWFTdDNub0xHYm9QQ3NpVkRjSU9QRnBOYUNnZEV5?=
- =?utf-8?B?NXVPSmE2Wko5RFp5aUdmNi9PYno5SmVQTkgvd2JtWk4zRUt4TmRoRUd4cjk3?=
- =?utf-8?B?b2ZvYTlUMVJJbTdFK2ZmZkU5dmdQVjNwRGRPeW4xekxFK0pUUFkrSUdDbTlD?=
- =?utf-8?B?RUVLUVEyMjlrRTBmUnlpRWdTZ0YzNnEwc3piOWpocW1JMks0YStXbmhST1Fr?=
- =?utf-8?B?VGdqdFZLd1hTeHluRkcxbzBrdnNzajFEWW9obGJKUmJPbnN0WXAwY0JzK0p6?=
- =?utf-8?B?RVZDNHBIelVxdDhReWs2eFFwb1U5TlB6U1Y4Mlkyb2duZlczMlFmMGFNclZI?=
- =?utf-8?B?ekNzakk2RGN6NWlLY1VqSXM3aG02ZS9WYnY5Q09yM2N5dC92Y29HR2xCNHJs?=
- =?utf-8?B?S0Vzd0IxcXl4V2dlSXNkSHhXK1VZcHRmMDlWVjFPTnVDQTc4c1FFMG9MUjlk?=
- =?utf-8?B?V3dlYk03a2hvbURGVWF0NGtFekZYbTNYQXV4RHhNN1Juc2IxMHlqVEt1V2xm?=
- =?utf-8?B?dUNPRXlSVlBVVk00QkI1eEtrVFVNN2s1NnFoWFNXMU44M2ROK0dFUzhla2VN?=
- =?utf-8?B?U3VjVGIxUEJGNEY4S0pKRTBheFE1dlVyTXh2UVUrOXBNSXgzZlYrWVF2Z08x?=
- =?utf-8?B?UWh5UnlSRHNIYzN6dDVJTWpwQjU5SFVwZFpIWlZhdEdNR3VPSWQySjVrVTho?=
- =?utf-8?Q?XsnMXbWuxyDptsk3Y3eK1MmjJ76z7iuIJ2UQ1jR6XHPo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Qm95a2U1S093aXkrMlh0THVONGUvelo2cE5Pa3dkRDIwNnZLbGRNMlBSb054?=
- =?utf-8?B?OUpLdTZTVGgyMk9BUTNvY3I1a0dHZHo2MmJVWFNQZHQzRU4zRTcyZ2Y1UEtL?=
- =?utf-8?B?OFVRMlFGQlNWMnFSK01rWnFCbFZPcTI3a1lHOFhOWldlZUoxR2xWak1ZTVIw?=
- =?utf-8?B?ZXlwWWtOd0ZzUVJWZm5NOEpPWTA1WElhay9aenpjSG4xK25LZzQvdVNsUXdx?=
- =?utf-8?B?RlZLTDg1SkptR3g2ejlkNVI1ajV6WkVzRFZmdGlobUR2cVEzaWw2TTJ1U25N?=
- =?utf-8?B?QThNd2N3TFhpUG1ya0Fma3FwckNyZjZoSi9YWDh4ZzI0dk9yKzhGQzJyOWw1?=
- =?utf-8?B?S0FzK29FYUZ1WllvaVV6U0xTdGNEK0FDRVZKVHpKQ3Z6YnU1cm5uY2NoUXg5?=
- =?utf-8?B?QTRvWDQ0bllaNVF5ZWIxOUJtdi9JNk9ocmpIU3VybFpPaUZoL2hyZTRsMlpl?=
- =?utf-8?B?Z1pmTHpSUUNZNWZLcWdjR1BRTUtpTmFXclhlaC9MVTIyMHFGT2sxTFFuK3pZ?=
- =?utf-8?B?TEZ4M0c4S3krZ1U0OUszdmY1NkdpQXpDZHBGbm9DcnBCZVJ1Z2ZRR0VBUjRV?=
- =?utf-8?B?Vm1EQlhjRmxQd0Z1MkFuMDMzREVSWEdESmZzeE43bE9ILzdnMnF0c3FrY3hx?=
- =?utf-8?B?cG1ieUxiV1VaaGZ5b3pPT2NtUS83bzRVUDExMDZiRlVQV3pmOUZCdGw2TU9T?=
- =?utf-8?B?TVNDelpEbXNGY25NNjROc3haQ2ZyRlYwRkJLYThNcEkxN3JsR0NYaHdyc0xs?=
- =?utf-8?B?WDRXVkZDZitXVGNuNG8xWncyMGtXcmVSK29KV2ZsYnk1TjNDMVkzZE1vNVZH?=
- =?utf-8?B?R0xUMmY3d0VoZk16Yjl3L3VRV090ZlhGVFIxZ2FQckQvSmpkcFNwblpBZWZJ?=
- =?utf-8?B?dTY0RmxSUXVDWUdDOUh6dDJYWnFRQlZxMURzTTNJdWY4RG53Y3QxRmkxTFM5?=
- =?utf-8?B?Mm5SaStvMU5xS1lJZjF3YjUwOFBjRWVXYVBia0hvMUtVSEtVZDhDOHVOQUtn?=
- =?utf-8?B?SXIxZVhNVHZDTk52aXAyN1Z4Nk4vYkdtS2NHbXp3KzFiWmpTaGhnM3prNFA5?=
- =?utf-8?B?MkE5Q1JnajFrcjV4WUNVNTJsRjNyMDR4QURtbFIrQ21DVXJ3MWlZbExnZ09v?=
- =?utf-8?B?YXc4S3NrM3U1cG02VExBQURuZjJ0bGU4dGcrSWFMeVhHTXowZ3NuVUtaYklw?=
- =?utf-8?B?VEZaNDZEejZHVXhlQU9kZEJHRFh3SUx3M0YwMVcra1MwWDhLak1mMWYwdXZH?=
- =?utf-8?B?YU80WXRmVWVlTUQrRWFBQkU2MVN6aUhNNnltTVZwQnYveXAwVEkxM2NPU2la?=
- =?utf-8?B?MkFVRUU0N2JTemZzcWxNTE9SdEd0WlVqczNwUG9zY09lUHdseXV2c0pvdnB4?=
- =?utf-8?B?dUV3VnNBU1BHdU1oeWtGWi96K3piaUpZdndUVmNZcFpic3luRHovMktBa0pa?=
- =?utf-8?B?THpObVNSZ0QrOG1xZkZ2aEZPTm1uWnR4SGdrYmtyT0EwRlNEMGZROUlCYmdy?=
- =?utf-8?B?T0hKMjJCN0QwbTR0S0V2cE45NGR1RUlhM0wzRkFRSm1XbVVPL1NhOC81ZWcv?=
- =?utf-8?B?U2YvS3AwaEJHRUFuSHFsbEFldnZ0cWViVnBYSUlsS0VBbi8rVVBhWlp6Rnkx?=
- =?utf-8?B?QWwvZnZoNlQzNTl6WWZ2L2d6KzV5S2tJWGd5b3NyMmZJbTFERmdzbk45NnNN?=
- =?utf-8?B?MGZUS1ZaWFYxakdseFlPVjB3bnc1Wk1Hb1dtK3M3Wlhsa1I3emszOTRuSXN2?=
- =?utf-8?B?NWxrOWg5TFFnWHJDaVR2dzBtRktCS0JtQ1MwRTFaRjg1V3VsRCs5Z1FkVCtE?=
- =?utf-8?B?WHVDVWx2NFBMb0pmWHZRQ2hLTlpIRUh3T0p3MkMvdU1KVWxlMzVYRkFzVUZH?=
- =?utf-8?B?Mm9VVnNxcVV2TnBibTZhK0FyeWxiWHRMalp3MVgvbVJSMkFxdkh0dCtDUEVJ?=
- =?utf-8?B?YzFXaFR0Z1RQMkU1ZWZicWMxZkdHWVYyS1J5NGZzMVAxQ0FKdDRhSVYra003?=
- =?utf-8?B?R2tvaGVwdVpGUWhnQW9YSUVESG1wbVErSWcrQWtaR2NGOXY1QVlsQUFaSEtM?=
- =?utf-8?B?SHhmSHZJWllGUEdjWXpFdnhkQ3paOUpmK2RnandlU3VsWTJQTnJvaGcrUGZo?=
- =?utf-8?Q?0m+1sVFZ2IggXEbXE67oGu9jL?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b962ee54-ecbd-4bb3-843c-08dc6ea3c9c2
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 14:41:32.4946
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pSwTtty/GhPPt3j2k/6ra6rdA55PlpnmJtZVeZxaR2OXgPURnBnzni3S+E3AvEhi9h2XxlLe6ur9r757zKa8pQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4318
+Content-Transfer-Encoding: 8bit
 
-On 5/7/2024 02:15, Perry Yuan wrote:
-> If the `amd-pstate` driver is not loaded automatically by default,
-> it is because the kernel command line parameter has not been added.
-> To resolve this issue, it is necessary to call the `amd_pstate_set_driver()`
-> function to enable the desired mode (passive/active/guided) before registering
-> the driver instance.
-> This ensures that the driver is loaded correctly without relying on the kernel
-> command line parameter.
-> 
-> [    0.917789] usb usb6: Manufacturer: Linux 6.9.0-rc6-amd-pstate-new-fix-v1 xhci-hcd
-> [    0.982579] amd_pstate: failed to register with return -22
-> 
-> Reported-by: Andrei Amuraritei <andamu@posteo.net>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218705
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> ---
->   drivers/cpufreq/amd-pstate.c | 39 +++++++++++++++++++-----------------
->   1 file changed, 21 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 3ff381c4edf7..f5368497ee79 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -66,7 +66,7 @@
->   static struct cpufreq_driver *current_pstate_driver;
->   static struct cpufreq_driver amd_pstate_driver;
->   static struct cpufreq_driver amd_pstate_epp_driver;
-> -static int cppc_state = AMD_PSTATE_UNDEFINED;
-> +static int cppc_state;
->   static bool cppc_enabled;
->   static bool amd_pstate_prefcore = true;
->   static struct quirk_entry *quirks;
-> @@ -1762,6 +1762,16 @@ static int __init amd_pstate_init(void)
->   	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
->   		return -ENODEV;
->   
-> +	/* Disable on the following configs by default:
-> +	 * 1. Undefined platforms
-> +	 * 2. Server platforms
-> +	 */
-> +	if (amd_pstate_acpi_pm_profile_undefined() ||
-> +		amd_pstate_acpi_pm_profile_server()) {
-> +		pr_info("driver load is disabled for server or undefined platform\n");
-> +		return -ENODEV;
-> +	}
-> +
->   	/* show debug message only if CPPC is not supported */
->   	if (!amd_cppc_supported())
->   		return -EOPNOTSUPP;
-> @@ -1781,28 +1791,21 @@ static int __init amd_pstate_init(void)
->   	/* check if this machine need CPPC quirks */
->   	dmi_check_system(amd_pstate_quirks_table);
->   
-> +	/* get default driver mode for loading*/
-> +	cppc_state = CONFIG_X86_AMD_PSTATE_DEFAULT_MODE;
+I am pleased to announce rt-tests-2.7
 
-Rather than setting it here within amd_pstate_init() I think you can 
-just set it at line 67 to CONFIG_X86_AMD_PSTATE_DEFAULT_MODE.
+The most significant changes here are from Crystal who changed the
+cyclictest histogram code into a library and added it to cyclicdeadline.
+This makes it possible for tools like rteval to parse the results.
 
-> +	pr_debug("cppc working state set to mode:%d\n", cppc_state);
+histogram output could be added to other tools in the rt-tests suite as
+well.
 
-I think this debug line is going to be unnecessary when it's already 
-hardcoded to kernel config.
+In addition Chris White has added a dockerfile for people who want to
+experiment with running rt-tests in a container.
 
-> +
->   	switch (cppc_state) {
-> -	case AMD_PSTATE_UNDEFINED:
-> -		/* Disable on the following configs by default:
-> -		 * 1. Undefined platforms
-> -		 * 2. Server platforms
-> -		 * 3. Shared memory designs
-> -		 */
-> -		if (amd_pstate_acpi_pm_profile_undefined() ||
-> -		    amd_pstate_acpi_pm_profile_server() ||
-> -		    !cpu_feature_enabled(X86_FEATURE_CPPC)) {
-> -			pr_info("driver load is disabled, boot with specific mode to enable this\n");
-> -			return -ENODEV;
-> -		}
-> -		ret = amd_pstate_set_driver(CONFIG_X86_AMD_PSTATE_DEFAULT_MODE);
-> -		if (ret)
-> -			return ret;
-> -		break;
->   	case AMD_PSTATE_DISABLE:
-> +		pr_info("driver load is disabled, boot with specific mode to enable this\n");
->   		return -ENODEV;
-> +	case AMD_PSTATE_UNDEFINED:
+In addition there are various tweaks and fixes from a few different
+people, thank you to everyone who contributed.
 
-With the intent of this patch I no longer see a need for 
-AMD_PSTATE_UNDEFINED in the rest of the driver (or in this case 
-statement even).
+Bug reports and patches are always welcome
 
-I feel you can drop it from amd-pstate.h.
+To get rt-tests
 
->   	case AMD_PSTATE_PASSIVE:
->   	case AMD_PSTATE_ACTIVE:
->   	case AMD_PSTATE_GUIDED:
-> +		ret = amd_pstate_set_driver(cppc_state);
-> +		if (ret)
-> +			return ret;
->   		break;
->   	default:
->   		return -EINVAL;
-> @@ -1823,7 +1826,7 @@ static int __init amd_pstate_init(void)
->   	/* enable amd pstate feature */
->   	ret = amd_pstate_enable(true);
->   	if (ret) {
-> -		pr_err("failed to enable with return %d\n", ret);
-> +		pr_err("failed to enable driver mode(%d) with return %d\n", cppc_state, ret);
->   		return ret;
->   	}
->   
+Clone one of the following
+git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+https://kernel.googlesource.com/pub/scm/utils/rt-tests/rt-tests.git
+
+Branch: main
+Tag: v2.7
+
+Tarballs are available here:
+https://kernel.org/pub/linux/utils/rt-tests
+
+Older version tarballs are available here:
+https://kernel.org/pub/linux/utils/rt-tests/older
+
+Note in some distributions such as Fedora and RedHat the program is 
+renamed realtime-tests because of a naming conflict.
+
+Chris White (2):
+  rt-tests: Add interactive source-to-image Dockerfile
+  rt-tests: Add Dockerfile README
+
+Crystal Wood (8):
+  rt-tests: Fix warnings
+  rt-tests: cyclictest: Remove histogram totals
+  rt-tests: cyclictest: Replace histogram code with library
+  rt-tests: cyclicdeadline: Add histogram support
+  rt-tests: cyclics: Fix json segfault when not using histogram
+  rt-tests: cyclicdeadline: Print the histogram regardless of quiet
+  rt-tests: cyclicdeadline: Remove dead "verbose" code in print_stat()
+  rt-tests: cyclictest: Omit empty histogram buckets
+
+John Kacur (4):
+  rt-tests: Add missing SPDX licenses
+  rt-tests: Remove remaining unnecessary texts after adding SPDX
+    licenses
+  rt-tests:ssdd: Ensure there are one or more iterations
+  rt-tests: Change to version v2.7
+
+Marcelo Tosatti (2):
+  rt-tests: oslat should use MHz, not Mhz
+  rt-tests: oslat: convert to nanoseconds correctly
+
+Mathias Krause (1):
+  rt-tests: Makefile: Restore support for Exuberant Ctags
+
+Nam Cao (1):
+  rt-tests: hackbench: drop incorrect and unnecessary usage of optind
+
+Rodrigo Queiro (1):
+  Support --smi on newer processors
+
+ .gitignore                               |   1 +
+ Dockerfile                               |  26 +++
+ Makefile                                 |  15 +-
+ README-Dockerfile                        |  49 ++++++
+ src/backfire/backfire.4                  |   1 +
+ src/backfire/sendme.8                    |   1 +
+ src/backfire/sendme.c                    |  15 +-
+ src/cyclictest/cyclictest.8              |   1 +
+ src/cyclictest/cyclictest.c              | 196 +++++------------------
+ src/cyclictest/get_cyclictest_snapshot.8 |   1 +
+ src/hackbench/hackbench.8                |   1 +
+ src/hackbench/hackbench.c                |  12 +-
+ src/hwlatdetect/hwlatdetect.8            |   1 +
+ src/include/histogram.h                  |  42 +++++
+ src/lib/histogram.c                      | 181 +++++++++++++++++++++
+ src/oslat/oslat.8                        |   1 +
+ src/oslat/oslat.c                        |   4 +-
+ src/pi_tests/pi_stress.8                 |   1 +
+ src/pi_tests/pip_stress.8                |   1 +
+ src/pmqtest/pmqtest.8                    |   1 +
+ src/ptsematest/ptsematest.8              |   1 +
+ src/queuelat/determine_maximum_mpps.8    |   1 +
+ src/queuelat/queuelat.8                  |   1 +
+ src/queuelat/targeted-ipi/Kbuild         |   1 +
+ src/queuelat/targeted-ipi/Makefile       |   1 +
+ src/rt-migrate-test/rt-migrate-test.8    |   1 +
+ src/sched_deadline/cyclicdeadline.8      |   1 +
+ src/sched_deadline/cyclicdeadline.c      | 164 ++++++++++++++-----
+ src/sched_deadline/deadline_test.8       |   1 +
+ src/sched_deadline/deadline_test.c       |  10 +-
+ src/signaltest/signaltest.8              |   1 +
+ src/signaltest/signaltest.c              |   4 -
+ src/sigwaittest/sigwaittest.8            |   1 +
+ src/sigwaittest/sigwaittest.c            |  20 +--
+ src/ssdd/ssdd.8                          |   3 +
+ src/ssdd/ssdd.c                          |   5 +-
+ src/svsematest/svsematest.8              |   1 +
+ 37 files changed, 512 insertions(+), 256 deletions(-)
+ create mode 100644 Dockerfile
+ create mode 100644 README-Dockerfile
+ create mode 100644 src/include/histogram.h
+ create mode 100644 src/lib/histogram.c
+
+-- 
+2.44.0
 
 
