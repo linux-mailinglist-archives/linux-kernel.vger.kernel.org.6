@@ -1,223 +1,115 @@
-Return-Path: <linux-kernel+bounces-171864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933FD8BE99F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C468BE9A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B109D1C20D98
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:48:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7096928BFC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB4814D2A5;
-	Tue,  7 May 2024 16:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F03654BEA;
+	Tue,  7 May 2024 16:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R8NqGAHw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjyGiA7r"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FBC1170D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8001170D;
+	Tue,  7 May 2024 16:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715100202; cv=none; b=l3MYAcaOa+59c9yv8KQ1gfYiyura/lb7n2awxp0qidD6LbMx5bKfoW4Z0tRilD+j6wBVgREpE5Ks+ck2Ka/zmyMT61eNgjBi27gRq6F8TK9eNbOVOMXJ71ZyUqTiNtGjv4aKwbUYqGybTl1ZwylrRyOLCO3UZWe3fB0wN7DkzY4=
+	t=1715100213; cv=none; b=jmotOraGYkB+AOAoYhlsXh2Zepc5m+JK4hbcygLxOMzRMhJOs+C5+XM2fB1MJ0eDYyotYc4F53TJY67ei6QZ3GrXWnBzVB+lsKd06/rxTgOIXz2ptOKUJlcskeNZl8DdTLH6Qx6Jyq6LnHk+TggGJFMr/6CKrrzYSu45zezp9js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715100202; c=relaxed/simple;
-	bh=mjx4YuwQT5RG33y3PpbwfqnKZfaAWeAsTEj9n21RRe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kO5uITNI9myIQ0k3f07eFtE8ndCG7ElRLR/v8T5HVL5cYKU87jz1XIRKW8GEZFY/Dik/F8Oa/2WceATMtJGibc78J3UJnZJW5UGlnLRrbni4vTSO+FTd09gUDDhwyofOGmiM5koFXhrmL6V/2DsiKBqMP7rkZwxS5/lqvgv1LwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R8NqGAHw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715100190;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xZJS0dW3Vcgvju5+MtDkJV4kAwVzi3ExzNdfh26vvLg=;
-	b=R8NqGAHwRb42b9wCwbDWyqM6aMZ3a3hyTtgy4JSbqb3sBm1nSG3jaiwoH7R+rDAPELUWd9
-	0q5vLvaPi18/p5ri32J+g88LFL1GhVO3ZAkuRMVM4JWxvagGkNqe1EQH6yhfu4Q/8B1Ksj
-	f0sCGOo8ZHQNbkW9xhP4LZhbxrcFn/8=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-292-1nIKhEetMvKFbqHLkah8IQ-1; Tue, 07 May 2024 12:43:09 -0400
-X-MC-Unique: 1nIKhEetMvKFbqHLkah8IQ-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2e30840a08bso15084511fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:43:08 -0700 (PDT)
+	s=arc-20240116; t=1715100213; c=relaxed/simple;
+	bh=Y7kvUe7PWA91hGpbQvQz1NQycujZOyxpl3+EQ8UjYU0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PlitzZRc1sqBKiZorfskkFPwwY9U92/n2h0w6kVqLah8LDd6FLfZ8yUMyFSWWscjQxH1hJLGZsh6QippHix2uHPLtdIqYlDTBsDQw5aeQDSAQJXw8asrfxPufsF0Qqbkos5FKhg4b+7GMm7YgZxLvelxlInwS+HtY+0XsPw7Zmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjyGiA7r; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2b4aa87e01aso2403033a91.3;
+        Tue, 07 May 2024 09:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715100210; x=1715705010; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y7kvUe7PWA91hGpbQvQz1NQycujZOyxpl3+EQ8UjYU0=;
+        b=ZjyGiA7rjwX+1Z9GmQke9oKsybjswn5rPyOjIGkVb5M4G904lCjEc+iOep63JIlmWZ
+         cQrRn8fHhhOQAPMzpWaVoyY6Cr5Wu2Bsv4tCtlWVrWPNC10AmkHJdhuswLAUrCL8pwP5
+         2KRslaUuycQz3PZKou7e/CVcy8zJamU3jUbX1smC+bZFt2ZGknFtZEzWS3X1iE6rhv24
+         rVT1EhmNr9sM1yuXC7Xw/s5ZuwmtdRaxGo44VhLhfQ/JlETbzHRpvvmRWo4w2XvGOOKG
+         PL+nsz4CQ9E5lz/1uuCcphCyrRd24mmQca0QGid4jQs7qIMHKuPNdNyoRFmxzKc05iUm
+         ijZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715100187; x=1715704987;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xZJS0dW3Vcgvju5+MtDkJV4kAwVzi3ExzNdfh26vvLg=;
-        b=BzXgFW4nl+gRQtt/l1B6z0JS1SmpTdEoNUI0aNXDzNGTxWCPeIYyJHg4+xM5p4CnY1
-         lDMKbVf/7M0aAIZj9BzzAwVRIs5QZubxz87u6YeJy+SmGEQ9x6wLQBwqyRVfOMhjtfzD
-         Nh+siMg16ZBv7wipNbocti6t3elmlvyqc1nje54T5yGcv7KBhFZLfgHsO7+/N0sf02Xg
-         rwXcr/Yq+uXBy5FjSDt9b7qUmha04hRA7mnpRGhqWxTmOlTsW3bh2ibI3Gz+exzg6F+4
-         NWdB1/VGpsKbzlPgVoZFfAWBl9gspqKuGrjLxwaYwdK67teG6DSArYrAT59g8Yr6uaJ4
-         DVzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFgbqSDfoRtGbMjE2lZOYusIzNJFd2oEM/S/4Ht8+2MsnJchA1mZFPE6c9tPhwpTO1aYGJCB7vaj52SVKVxClMNWsyq20z2txJVwIT
-X-Gm-Message-State: AOJu0YwShsutnCybaXImfcnoJjBWBbcbrdMUYDdQAKHE3FXcNh9xsjRf
-	IrrX+RRsS26NZjktLvdWYE4vP/2um2ssFLK54QfSeLr+3e9s2NlzSBQV14al7lIJGr8rcL2gzfy
-	QBjVmyh7GtPyrViq+e6ZdEE7IOl/1V4FeWGbpB1HDOBKpdc/UbbVeXvXqKaHJTA==
-X-Received: by 2002:a2e:8049:0:b0:2d4:3d86:54e2 with SMTP id 38308e7fff4ca-2e44759fac7mr829861fa.27.1715100187502;
-        Tue, 07 May 2024 09:43:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBACWDOBhJ4Ida3FQAnllpXrAgCNg9QdxIMNm5rkzQSOHZXnDwSakbnVctVOBT3xkftZBMQw==
-X-Received: by 2002:a2e:8049:0:b0:2d4:3d86:54e2 with SMTP id 38308e7fff4ca-2e44759fac7mr829601fa.27.1715100186975;
-        Tue, 07 May 2024 09:43:06 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c744:b500:3f9d:130d:ea00:afc7? (p200300cbc744b5003f9d130dea00afc7.dip0.t-ipconnect.de. [2003:cb:c744:b500:3f9d:130d:ea00:afc7])
-        by smtp.gmail.com with ESMTPSA id p9-20020a05600c1d8900b0041563096e15sm24206317wms.5.2024.05.07.09.43.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 09:43:06 -0700 (PDT)
-Message-ID: <21d88422-7378-4a63-8fbf-f70889f309c1@redhat.com>
-Date: Tue, 7 May 2024 18:43:05 +0200
+        d=1e100.net; s=20230601; t=1715100210; x=1715705010;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y7kvUe7PWA91hGpbQvQz1NQycujZOyxpl3+EQ8UjYU0=;
+        b=XDeJRLVoTSmmT1soUqWd1bnvgLOjSqqV8ANDqVp/h7ciYpMp9UlKDFQdwMrWltiZw1
+         +mfZp+pvkwKdD08kAUAo+Out0d9EaWDVF1hUnfNIqP/kxqUYakza1qecph2LfHeF3QUk
+         EMvpK5dVVYVoLkCa3pdch46yIqby8zXASeXYgfktNrBAkgbIU9VN9a0xystCQauOF4ii
+         GgTfI56POT/vFGAem6kPa54QlvlXnBD+JOXd6BQIng0IdE3btr8Iis2tTTKeQnKEKvHC
+         5xUtCmrurhofF8dndC+D7MFMySKPAx2eiYAQBY72Mc/k+dotuBWlCf5YUjgLmT0/sMHg
+         dJxw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0HZz0t+wvIhkM2gPyaWrbjf4oqCPGrzPX3g02jQkiWaujlhIebtv07kPn2rbhHpDKVEQNR7B4hCCiDuAU+JoYDdN1tiSvrfjkvgKFkchu+WGDKYQ1mjS5VjVSnS2XevXd
+X-Gm-Message-State: AOJu0YzB84eN6kiG24zoWn79GDqIeUCVWF+PJzMAaxftSlK6ZMHFRukp
+	Q8m7nY5pqTYqZm7rLxROVYOYgHfPAqcE3kv/vI5mSDz+ZNlyFenw9nRtGogETtHPW1pPIfgz/cW
+	khFJZj23pQzDanl0iceD5+QmOJig=
+X-Google-Smtp-Source: AGHT+IEYuAfJMywxZpV3O5OsKNSTiLDeh3g8q0vDaOBApSsy19SVvUkbV7gY44A/c+tGNVmZJZetSZM4W0CXsT3JDXo=
+X-Received: by 2002:a17:90a:e384:b0:2b1:74be:1704 with SMTP id
+ 98e67ed59e1d1-2b6165a14e9mr109316a91.15.1715100210592; Tue, 07 May 2024
+ 09:43:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/fault: speed up uffd-unit-test by 10x: rate-limit
- "MCE: Killing" logs
-To: John Hubbard <jhubbard@nvidia.com>, Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
- LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
- Peter Xu <peterx@redhat.com>, Axel Rasmussen <axelrasmussen@google.com>
-References: <20240507022939.236896-1-jhubbard@nvidia.com>
- <016d8cff-efc3-4ef1-9aff-7c21c48f2d69@redhat.com>
- <302d50ac-45ff-470e-90a0-b349821706a6@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <302d50ac-45ff-470e-90a0-b349821706a6@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240507024952.1590681-1-haiyue.wang@intel.com> <CAADnVQK7zD312WRJboMib8HJnNzN=i2FKH2QxkVVy736b7sNTQ@mail.gmail.com>
+In-Reply-To: <CAADnVQK7zD312WRJboMib8HJnNzN=i2FKH2QxkVVy736b7sNTQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 7 May 2024 09:43:18 -0700
+Message-ID: <CAEf4Bzbze5D0M2V9d9q90E_XHCMEUa7oXum=wOCVQ_BAugox7A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v1] bpf,arena: Rename the kfunc set variable
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Haiyue Wang <haiyue.wang@intel.com>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07.05.24 18:28, John Hubbard wrote:
-> On 5/7/24 1:13 AM, David Hildenbrand wrote:
->> The patch subject is misleading. This should be "don't flood the system
-> 
-> I went back and forth on that subject line. :)
-> 
->> log". Nobody cares about the speed of a unittest ;)
-> 
-> Yes they do. People should actually run the selftests, which in turn have
-> enshrined their guidelines in kernel doc. See dev-tools/kselftest.rst,
-> "Contributing new tests", which says, as you would hope, "Don't take
-> too long".
-> 
-> It's important. Tests need to be quick, and having one out of 50 that
-> blows it up is worth fixing.
+On Tue, May 7, 2024 at 7:36=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, May 6, 2024 at 7:46=E2=80=AFPM Haiyue Wang <haiyue.wang@intel.com=
+> wrote:
+> >
+> > Rename the kfunc set variable to specify the 'arena' function scope,
+> > although the 'UNSPEC' type BPF program is mapped to 'COMMON' hook.
+> >
+> > And there is 'common_kfunc_set' defined for real 'common' function in
+> > file 'kernel/bpf/helpers.c'.
+>
+> I think common_kfunc_set is a better name to describe that these
+> two kfuncs are in a common category.
+> BPF_PROG_TYPE_UNSPEC is a lot less obvious.
+>
+> There are two static common_kfunc_set in helpers.c and arena.c
+> and that's fine.
 
-I'm pretty sure you got my point: it's much more important to not let 
-unprivileged users flood the log (possibly harming the system?) than 
-making a test run faster :)
+it is actually confusing when reading/grepping code, though, so why
+not have arena_common_kfunc_set and whatever the meaningful
+"qualifier" name for the other one?
 
-> 
->>
->> On 07.05.24 04:29, John Hubbard wrote:
->>> If a system experiences a lot of memory failures, then any associated
->>> printk() output really needs to be rate-limited. I noticed this while
->>> running selftests/mm/uffd-unit-tests, which logs 12,305 lines of output,
->>> adding (on my system) an extra 97 seconds of runtime due to printk time.
->>
->> Recently discussed:
->>
->> https://lkml.kernel.org/r/a9e3120d-8b79-4435-b113-ceb20aa45ee2@alu.unizg.hr
->>
->> See the pros/cons of using ratelimiting, and what an alternative for
->> uffd is that Axel is working on.
->>
->> (CCing Peter and Axel)
->>
-> 
-> That thread seems to have stalled.
-
-Yes, there was no follow-up.
-
-> I *do* have MCE experience (writing a
-> handler,
-> dealing with MCEs and related bugs), and what they wrote so far is exactly
-> correct: if you were going to flood the log, then no, we don't need to see
-> every single line printed. The first 10 or so, plus the fact that rate
-> limiting
-> kicked in, is sufficient to proceed with debugging and/or hardware
-> replacement.
-> 
-> I'd like to just do this patch almost as-is, just with a fixed up subject,
-> perhaps:
-> 
->       x86/fault: rate-limit to avoid flooding dmesg with "MCE: Killing"
-> reports
-> 
-> Yes?
-
-
-Makes sense to me (and thanks for confirming that we don't need 
-complexity elsewhere).
-
-I think we at least need "Fixes:" (not sure if stable is warranted as 
-well, 1b0a151c10a6d823f033023b9fdd9af72a89591b didn't CC stable).
-
-Consider adding a link to the report in that thread.
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+>
+> pw-bot: cr
 
