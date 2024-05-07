@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-172284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286698BF063
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:04:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC0A8BF040
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D780E281CB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:04:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25A5283429
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F46130A72;
-	Tue,  7 May 2024 22:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A2F127E17;
+	Tue,  7 May 2024 22:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qO4Gl5U/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uwhzibAd"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB039130A61;
-	Tue,  7 May 2024 22:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E736786AF4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 22:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715122721; cv=none; b=LO0rSXXOJ7Lufl9itEOgWZmNwA3j8NVZ3IdfBEcZ5Cvyyzz0nNZVAQFEXOxcp0HJDkeeCZs6lMUm7tlye2Hh7y/eau3I3mLTCkHLCMb/jhFtBCmef9uUheOcJNUV0S4z8IMwwhUXY2h2wjhwZ3cGhwcU8bsQfj0EgIZD3PYuskI=
+	t=1715122679; cv=none; b=fwOdnO7zw3m02DdYiHvuFzX6ZO2sDJ7tsBhAoGzDS3RALnahsWZlZnoLMn0aR63O+oEQvgFEDPsey00rbCZMmgq35V5Qfd83l+LJwExJKSVGWkBpaTFuaL0GU1lgfphRyd6YD2bmcHB6rQ5OtaeTYGUYYxGxqQVCRtiXWqtsMJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715122721; c=relaxed/simple;
-	bh=c3Zrankq9kyXbpJ5b7Mar568CnEDDczmTAIpy0VNr7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F1iXdJkaTHsuXo6DCsoPNufv/zV8wZy4RUizZc7mPFO65HmAqOE3mIcG5L3A8xEg5dMLcziWHg9ZVdjHfPRIoBEZCb0rmfd9IJ4f/oW/ivspR3mzY70d+VBys9PTJroCin3IhlxaPSa35STiAFvxCbX/4UiUCRPpyyNs5bx3IOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qO4Gl5U/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8D9C3277B;
-	Tue,  7 May 2024 22:58:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715122720;
-	bh=c3Zrankq9kyXbpJ5b7Mar568CnEDDczmTAIpy0VNr7s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qO4Gl5U/iQswwiqGF0es7stQykr9cj4hkkUMEPSMgHK54R38Sf2amVC9aRqoAB1mt
-	 UTxlNHiQF/r7rusbInho/jr/h2onF/HAUG6hb9efS7YBxlc3Qcq6oczjrFd++hCZiN
-	 Cq9bMh61jn/R93gmmoy/QfGsGDWapjUVG5Qt3Tzz8KuQ00CkBH2FB1yrByPpzjYc02
-	 vxGT2wzb5LZkCfDFW3YjYo2aujVYPoI3ysqzp0/wNiuXBlPk4Rzbv7Rp/7zb3Or/or
-	 MW3pU5YX+O6NZLt2OQzumkN+WVnZkOu1rnINXvO4sgkRCwMws44y3Za5bFwAnq77iV
-	 urxZEJWHgD5aA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Phil Auld <pauld@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Subject: [PATCH AUTOSEL 6.8 23/23] sched/isolation: Fix boot crash when maxcpus < first housekeeping CPU
-Date: Tue,  7 May 2024 18:56:49 -0400
-Message-ID: <20240507225725.390306-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240507225725.390306-1-sashal@kernel.org>
-References: <20240507225725.390306-1-sashal@kernel.org>
+	s=arc-20240116; t=1715122679; c=relaxed/simple;
+	bh=XyBcZnJlWUppCuQIMinKz47R/Vd3bwL8FhNo2NLewFs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Pxc0ZNiXCOuUGMgBbTCt91U1JWyEc62xPtf9LGXKaH8QPRbt5ny3QpLUbzGoF4vYnqExMWBbfpKSWL0spLZoTwAlfyrSLV0A1PJ2iEh5m4sh0tMkcjTql/NO4R2sw2rjYoW3IW23ToEGig2kkkCeJedAi+wJ8uHEDLRxXC7K6LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uwhzibAd; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de57643041bso6237839276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 15:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715122677; x=1715727477; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=If9Q7YXcI0jaMPx5yFMsDYt2AC8Km9g14o178fmmDSQ=;
+        b=uwhzibAdk7SJF5PiZr80OlUUfdpQ2nyF8AQn4b1e5BjyH468Th+vQZKHdagrj83BWz
+         weXeFRd5HFBXawGUiblHto7z1KcwSRQE0G3aWX6OJcFPrQMAgtifLfWtH9W4bIBA+9AP
+         RMNd0OLclTwa10ulL+uXASm/jHT/i3vhfGSWT/uada+mqE15RpEIklE0HkYI/RWm+urK
+         zroDzds6xwEueMtNwR+lbBO+8r4FtFOeq9W15V5MQronb3xg4P7eAFJWR1ckCGNV8x1Y
+         mQvVX5DOtCsEtiwtWDT9POcGD8ULvTuypv5fNspbXoWJPLpqwoyzxhmmuywu2wKiz4UU
+         CXKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715122677; x=1715727477;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=If9Q7YXcI0jaMPx5yFMsDYt2AC8Km9g14o178fmmDSQ=;
+        b=LllCALq0GmnYb3NGot+3RmGwMkflIclNyU9Lq3RdxllZWe+gPzJlUdFLGErpdVcmCt
+         CqXd+8VnKJ4/TWRqPO/hIWRCzjWgTN9WVDcUlvkoVMtZu9roCqMOvLjmQoBF998LinMC
+         JYUwIaMFvoocQ8+Y2402X9kFlh6w42qH8zchen2Xp/WQuFC0fumwhm7eONJSDgMFn7W9
+         AN5PDHh7iPqulup2x0OKpMNBU7ukTcsGqZfxBxNQBfOBCJLCUhMCJuWBXcxdvEkF2hpg
+         P6/HeiWkSoU7z3d7NIOiwl51A3Q8bgrfd8nn7I6n3U2kXpoifqgg6Sl0iT6+ZJdB1fZY
+         WDpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRdjpMVGzIXC+IMQ4jO8w1K5EGlxLo1xcdY2undYXSW4f6PFFpN4Fz5weCNGQHV13DLiCL13gXixb1dOticKbUH/CV9xPixa6W4yzc
+X-Gm-Message-State: AOJu0YzOx8j/SAp1MfE60gobmqBtYyJkzsIC08MLUYhVOhVc/9fYLnws
+	30e4QdNv/mLGOCrgZhVC6O8sSKAmGlqekN6vwfceY4BPBJRpKFduUkyikuIZcLjlNleKo1OZiX5
+	Luw==
+X-Google-Smtp-Source: AGHT+IE4ZzQs5DeCns7tV3JfldxH2PjYiaee+lvyRphhL7PiqwnLOnIrfJmA1n2xRqrLX2r28xpQ5tHNpeg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:110e:b0:dc7:7ce9:fb4d with SMTP id
+ 3f1490d57ef6-debb9e6d93bmr281205276.12.1715122677033; Tue, 07 May 2024
+ 15:57:57 -0700 (PDT)
+Date: Tue, 7 May 2024 15:57:55 -0700
+In-Reply-To: <893ac578-baaf-4f4f-96ee-e012dfc073a8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.8.9
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240219074733.122080-1-weijiang.yang@intel.com>
+ <20240219074733.122080-5-weijiang.yang@intel.com> <ZjKNxt1Sq71DI0K8@google.com>
+ <893ac578-baaf-4f4f-96ee-e012dfc073a8@intel.com>
+Message-ID: <Zjqx8-ZPyB--6Eys@google.com>
+Subject: Re: [PATCH v10 04/27] x86/fpu/xstate: Introduce XFEATURE_MASK_KERNEL_DYNAMIC
+ xfeature set
+From: Sean Christopherson <seanjc@google.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Yang Weijiang <weijiang.yang@intel.com>, pbonzini@redhat.com, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, 
+	chao.gao@intel.com, rick.p.edgecombe@intel.com, mlevitsk@redhat.com, 
+	john.allen@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-From: Oleg Nesterov <oleg@redhat.com>
+On Thu, May 02, 2024, Dave Hansen wrote:
+> On 5/1/24 11:45, Sean Christopherson wrote:
+> > On Sun, Feb 18, 2024, Yang Weijiang wrote:
+> >> Define a new XFEATURE_MASK_KERNEL_DYNAMIC mask to specify the features
+> > I still don't understand why this is being called DYNAMIC.  CET_SS isn't dynamic,
+> > as KVM is _always_ allowed to save/restore CET_SS, i.e. whether or not KVM can
+> > expose CET_SS to a guest is a static, boot-time decision.  Whether or not a guest
+> > XSS actually enables CET_SS is "dynamic", but that's true of literally every
+> > xfeature in XCR0 and XSS.
+> > 
+> > XFEATURE_MASK_XTILE_DATA is labeled as dynamic because userspace has to explicitly
+> > request that XTILE_DATA be enabled, and thus whether or not KVM is allowed to
+> > expose XTILE_DATA to the guest is a dynamic, runtime decision.
+> > 
+> > So IMO, the umbrella macro should be XFEATURE_MASK_KERNEL_GUEST_ONLY.
+> 
+> Here's how I got that naming.  First, "static" features are always
+> there.  "Dynamic" features might or might not be there.  I was also much
+> more focused on what's in the XSAVE buffer than on the enabling itself,
+> which are _slightly_ different.
 
-[ Upstream commit 257bf89d84121280904800acd25cc2c444c717ae ]
+Ah, and CET_KERNEL will be '0' in XSTATE_BV for non-guest buffers, but '1' for
+guest buffers.
 
-housekeeping_setup() checks cpumask_intersects(present, online) to ensure
-that the kernel will have at least one housekeeping CPU after smp_init(),
-but this doesn't work if the maxcpus= kernel parameter limits the number of
-processors available after bootup.
+> Then, it's a matter of whether the feature is user or supervisor.  The
+> kernel might need new state for multiple reasons.  Think of LBR state as
+> an example.  The kernel might want LBR state around for perf _or_ so it
+> can be exposed to a guest.
+> 
+> I just didn't want to tie it to "GUEST" too much in case we have more of
+> these things come along that get used for things unrelated to KVM.
+> Obviously, at this point, we've only got one and KVM is the only user so
+> the delta that I was worried about doesn't actually exist.
+> 
+> So I still prefer calling it "KERNEL" over "GUEST".  But I also don't
+> feel strongly about it and I've said my peace.  I won't NAK it one way
+> or the other.
 
-For example, a kernel with "maxcpus=2 nohz_full=0-2" parameters crashes at
-boot time on a virtual machine with 4 CPUs.
+I assume you mean "DYNAMIC" over "GUEST"?  I'm ok with DYNAMIC, reflecting the
+impact on each buffer makes sense.
 
-Change housekeeping_setup() to use cpumask_first_and() and check that the
-returned CPU number is valid and less than setup_max_cpus.
+My one request would be to change the WARN in os_xsave() to fire on CET_KERNEL,
+not KERNEL_DYNAMIC, because it's specifically CET_KERNEL that is guest-only.
+Future dynamic xfeatures could be guest-only, but they could also be dynamic for
+some completely different reason.  That was my other hang-up with "DYNAMIC";
+as-is, os_xsave() implies that it really truly is GUEST_ONLY.
 
-Another corner case is "nohz_full=0" on a machine with a single CPU or with
-the maxcpus=1 kernel argument. In this case non_housekeeping_mask is empty
-and tick_nohz_full_setup() makes no sense. And indeed, the kernel hits the
-WARN_ON(tick_nohz_full_running) in tick_sched_do_timer().
-
-And how should the kernel interpret the "nohz_full=" parameter? It should
-be silently ignored, but currently cpulist_parse() happily returns the
-empty cpumask and this leads to the same problem.
-
-Change housekeeping_setup() to check cpumask_empty(non_housekeeping_mask)
-and do nothing in this case.
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Phil Auld <pauld@redhat.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/r/20240413141746.GA10008@redhat.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/sched/isolation.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index 373d42c707bc5..82e2f7fc7c267 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -109,6 +109,7 @@ static void __init housekeeping_setup_type(enum hk_type type,
- static int __init housekeeping_setup(char *str, unsigned long flags)
- {
- 	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
-+	unsigned int first_cpu;
- 	int err = 0;
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index 83ebf1e1cbb4..2a1ff49ccfd5 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -185,8 +185,7 @@ static inline void os_xsave(struct fpstate *fpstate)
+        WARN_ON_FPU(!alternatives_patched);
+        xfd_validate_state(fpstate, mask, false);
  
- 	if ((flags & HK_FLAG_TICK) && !(housekeeping.flags & HK_FLAG_TICK)) {
-@@ -129,7 +130,8 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
- 	cpumask_andnot(housekeeping_staging,
- 		       cpu_possible_mask, non_housekeeping_mask);
+-       WARN_ON_FPU(!fpstate->is_guest &&
+-                   (mask & XFEATURE_MASK_KERNEL_DYNAMIC));
++       WARN_ON_FPU(!fpstate->is_guest && (mask & XFEATURE_MASK_CET_KERNEL));
  
--	if (!cpumask_intersects(cpu_present_mask, housekeeping_staging)) {
-+	first_cpu = cpumask_first_and(cpu_present_mask, housekeeping_staging);
-+	if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
- 		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
- 		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
- 		if (!housekeeping.flags) {
-@@ -138,6 +140,9 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
- 		}
- 	}
- 
-+	if (cpumask_empty(non_housekeeping_mask))
-+		goto free_housekeeping_staging;
-+
- 	if (!housekeeping.flags) {
- 		/* First setup call ("nohz_full=" or "isolcpus=") */
- 		enum hk_type type;
--- 
-2.43.0
-
+        XSTATE_XSAVE(&fpstate->regs.xsave, lmask, hmask, err);
 
