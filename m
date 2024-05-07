@@ -1,56 +1,66 @@
-Return-Path: <linux-kernel+bounces-171637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7491F8BE6B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:59:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C388BE6BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4CF1F23009
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB2C2822C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7A41635B6;
-	Tue,  7 May 2024 14:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A7F1649DE;
+	Tue,  7 May 2024 14:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKs3ycyt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaVLuODM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1D61607B6;
-	Tue,  7 May 2024 14:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E971A160880;
+	Tue,  7 May 2024 14:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093914; cv=none; b=R0ExgLCgqQbeiZns+1V8Ji8Dy0lYRfx9G4mqetWjdRGoOa00ti1/6sOgWoJExaAdL2CvMoYsW0CCuQScBrUCdZ7kgJcg2PsRuEE5ygA6q65OtTaNoQS4qFWqeZN697G19fMSry6EdatIUXo+BC19afiqPqnVwV3sUx9biNH/b4U=
+	t=1715093920; cv=none; b=Ay6zG/slMlJ0HtHftXw4emxz2S/cBVu/G8QHl5UlM7Xuret5tGu086fw08P93rovC66J0xDB19Qop4j7fdzRVaDVcVs68uKN0TnofsWaP9yIsDfYKM7y2atUCkgGTnJvMJceL5tGHbhxJ6/bH+lbU04UZLTsIDtyS5G8cjBCz+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093914; c=relaxed/simple;
-	bh=zjVM27MGPo89aeUz0huUA8gWCc4b0ZQ79aYH3y205pY=;
+	s=arc-20240116; t=1715093920; c=relaxed/simple;
+	bh=gsF49rpRd7cEvtum0swJOWyyH0y73tl9jTA077FL6Qw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Y0UEgxnUfyRyO6vDKVgZCKrd0648i/LDdZ1G/9/0hjk29rpJVJXmx7d59fSRGk7yEHz2lwYLTiTCcs0R99sb4knr1VxFjxkvwoIqnb1ECEkDJs+elImmYkYuPHs2t6fmRBrkj4KSXzhXCHA1fUVO4GAq7RmpxqWG9DmL7fvDSDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKs3ycyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999ECC4AF18;
-	Tue,  7 May 2024 14:58:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=WkZmWT1uKcz6joxxp9htqgUmwPr+stY5SPoe8fFrnyJnCiXE47p+C07Pd9PDfgisl1ivCoAQBPF/LHcrJnSasvFvgNsy9fLiTlt7zZJFd0purUCAjMUPOuVvVLZnZImmpKxojWt7p56dQ+VfwW2nSdLaeNgBI198sHFECBbdo7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaVLuODM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF7AC2BBFC;
+	Tue,  7 May 2024 14:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715093914;
-	bh=zjVM27MGPo89aeUz0huUA8gWCc4b0ZQ79aYH3y205pY=;
+	s=k20201202; t=1715093919;
+	bh=gsF49rpRd7cEvtum0swJOWyyH0y73tl9jTA077FL6Qw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DKs3ycyty6e3BYxm2xxitfzuMjRhiy8eWuAjSeByGojGhK0MHXiYZgwYf4qCqWsGJ
-	 dX9VKQ/H16X0gOwbmB6IKXNbiepod5E0g/1hRet9gWJzfpUgQFS318APfrNXwyJbH2
-	 QOcNOoQUilPOSVpRwQjZZsYz1+K93UqdV8z6mtIk1t5M78EXviHp076qE+I0zNL8ya
-	 NFlQNKUsARFMvdgLRrKaXW82N5PRwjZRumy0GteZSvjk3VI9Y3v+zRZGfjS8cGGb/A
-	 G/Y/j2LsuHW+wvRhrreZ0SjSz4RE+ftn343FR7aqneZ8EQ6pdtaRDGxJdSYlHX+6cO
-	 OHLaQzZUwlk/A==
+	b=MaVLuODMusqKr76w3NGsb6FBrSHT41EgQOFGJkVyUczjEkAXPgQna4W8w7b/wwfFQ
+	 5oL3ksgUpOuMfg87rkeJsH1wB5H/3Zvk1NP2v0RhmIDoCKyFCLPgunfXC0geT926Bh
+	 Sr405Gd/YESltUsO0+eqj4KSFcOfGe9ekWaAI5u2ac2ddt6kkMKZoeYCQVq8c8S6ZT
+	 xJXqRYZPsHtVAn1W79kR7Jjdj6mV0fCnKv7tohHRHcvF48HMNllnYj970xF64gkrdc
+	 i4i2beZQGR+UOhz4HZ6VK4WeHht+CJZrao9TCcbYRE1Oa41Dat/gCzXRHB+Owtoree
+	 rsyRcFRfahf6A==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
+To: Liam Girdwood <lgirdwood@gmail.com>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Cameron <jic23@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
  David Lechner <dlechner@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-In-Reply-To: <20240506-regulator-devm_regulator_get_enable_read_voltage-fixes-v1-0-356cdd152067@baylibre.com>
-References: <20240506-regulator-devm_regulator_get_enable_read_voltage-fixes-v1-0-356cdd152067@baylibre.com>
-Subject: Re: [PATCH 0/2] regulator: devm_regulator_get_enable_read_voltage
- fixes
-Message-Id: <171509391236.1991000.16256518379440947855.b4-ty@kernel.org>
-Date: Tue, 07 May 2024 23:58:32 +0900
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+ Support Opensource <support.opensource@diasemi.com>, 
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-staging@lists.linux.dev, 
+ linux-input@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+In-Reply-To: <20240429-regulator-get-enable-get-votlage-v2-0-b1f11ab766c1@baylibre.com>
+References: <20240429-regulator-get-enable-get-votlage-v2-0-b1f11ab766c1@baylibre.com>
+Subject: Re: (subset) [PATCH v2 0/7] regulator: new API for voltage
+ reference supplies
+Message-Id: <171509391425.1991000.13525667517853877249.b4-ty@kernel.org>
+Date: Tue, 07 May 2024 23:58:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,12 +71,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev
 
-On Mon, 06 May 2024 10:59:14 -0500, David Lechner wrote:
-> I was going to send a v3 of [1] with these changes, but v2 was partially
-> applied so here they are as additional patches.
+On Mon, 29 Apr 2024 18:40:08 -0500, David Lechner wrote:
+> In the IIO subsystem, we noticed a pattern in many drivers where we need
+> to get, enable and get the voltage of a supply that provides a reference
+> voltage. In these cases, we only need the voltage and not a handle to
+> the regulator. Another common pattern is for chips to have an internal
+> reference voltage that is used when an external reference is not
+> available. There are also a few drivers outside of IIO that do the same.
 > 
-> [1] https://lore.kernel.org/all/20240429-regulator-get-enable-get-votlage-v2-0-b1f11ab766c1@baylibre.com/
-> 
+> [...]
 
 Applied to
 
@@ -74,10 +87,12 @@ Applied to
 
 Thanks!
 
-[1/2] regulator: devres: fix devm_regulator_get_enable_read_voltage() return
-      commit: 257b2335eebf51e318db1f3b2d023512da46fa66
-[2/2] hwmon: (adc128d818) simplify final return in probe
-      commit: 346fe0ce1fd780038ca9e5bcb65aad54bae7c4d9
+[4/7] iio: addac: ad74115: Use devm_regulator_get_enable_read_voltage()
+      commit: 41b94bc6d96b9b046ef08114f057dcc6c52e28b6
+[5/7] iio: frequency: admv1013: Use devm_regulator_get_enable_read_voltage()
+      commit: 2f4bb1fa758abf4f5ee5a70ea7c2b1b8c8f7625d
+[6/7] staging: iio: impedance-analyzer: ad5933: Use devm_regulator_get_enable_read_voltage()
+      commit: 9fcf6ef3e10b9fc605d84802058c0f30517bbaa7
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
