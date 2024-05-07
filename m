@@ -1,158 +1,202 @@
-Return-Path: <linux-kernel+bounces-171060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C3F8BDF4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:03:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0B88BDF4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11CF9B23C84
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:03:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F8E281AE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC29014E2F0;
-	Tue,  7 May 2024 10:02:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE6014D6EB
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715076178; cv=none; b=GQtcSUncZTFMF6lMjaiAcFEhO/2kSXNxCil5fbdvXkXE7xEhY4AGTs58gAmWlzPtriNPp0ILFXTnkKreVeIEQPCha+IYseXfctY7xo5UI0MmrxxVnL8q6zmz7uuSwdyd3qO0kdyTxREozg/+ECgjQulzGr6E1VJpBjET60TC1zc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715076178; c=relaxed/simple;
-	bh=7Kis4nEEBzRiFLLc4dkS5IjPowhggqwv8B/amQlzr2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGB2+EsPQlmME8/P1x01yq0Om5kb1Zjv1tGZq2UeX2tTGk1XX1ekSsausYckZS7NpSOA+HrWZ+lmWOI4QyHDGtUCYxZVw1AClfvniLR0dAardopJ1rRWQaLvT00fiXieMZX7lvQFhBJCKYRIxGvJyVlHv70sdWdlJnsbSsZHb1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EDCA1063;
-	Tue,  7 May 2024 03:03:20 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2771C3F587;
-	Tue,  7 May 2024 03:02:51 -0700 (PDT)
-Date: Tue, 7 May 2024 12:02:44 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, vincent.guittot@linaro.org,
-	sumitg@nvidia.com, yang@os.amperecomputing.com,
-	lihuisong@huawei.com
-Subject: Re: [PATCH v4 4/4] cpufreq: Use arch specific feedback for
- cpuinfo_cur_freq
-Message-ID: <Zjn8RGSDfn3HrYYd@arm.com>
-References: <20240405133319.859813-1-beata.michalska@arm.com>
- <20240405133319.859813-5-beata.michalska@arm.com>
- <76zutrz47zs6i2cquvjo2qn7myxpq7e3c6alhper7n3wrkhf5h@22l5t5pio2cd>
- <Zh6dSrUnckoa-thV@arm.com>
- <s2bel7fzwpkyfyfkhod4xaihuklsaum75ycbcgmcanqaezxdu7@uxvqdqt3yo7l>
- <ZiuF0zgqkMlmkEZz@arm.com>
- <20240429092515.2ehk4ifcul6mbaxh@vireshk-i7>
- <Zjnm7LzrYLCbz-XX@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475B014E2F8;
+	Tue,  7 May 2024 10:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="JTjt+jVS"
+Received: from PR0P264CU014.outbound.protection.outlook.com (mail-francecentralazon11022018.outbound.protection.outlook.com [52.101.167.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF5513BAC3;
+	Tue,  7 May 2024 10:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715076189; cv=fail; b=UaYpc0EkDG43ey+pJ5nfjSa6R6hav9ovG48JZQkFIXHXhzV6cXgxBH7Bf5Y0QmterW/3PMXgCsAE0N25QbG8/69R858MTs38Ucq/MpGg4Vst4Ga2fu+xFR/e0vO7texM6qC5fFEmD+HjrxrCl4ZbbQW6uirlv9kVqNfU/cqm0TM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715076189; c=relaxed/simple;
+	bh=Dzphqq1NG8B9HmZpkMmC4ohjtJaIR+36j1HBMk6Edpk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=L+u7j9vC2qok/tSFsaTTsYKyP0JoX6muy2BQqmnmbJv8kh02Ebv1bn7M7e4q0OdJXZROqhglhQS6eTdYuEdwuWZnAnhOlf+gycXmLYJXKBvc6aPiDfmbBxwZbBExk63kGbnptMswYSg+E+bCQ6oXGHB15EbFgh9b3XitW/0iRQk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=JTjt+jVS; arc=fail smtp.client-ip=52.101.167.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oGWT4oa1OChSD7upnqiDPQbzybeQ4fpi1+ZsShoqcvKLVvoBzpgkF20cYcAmbbi1vO6t8odRr+dflgXn4uXYZfPWMp8/DxZBkwY9o4g+Iw3KuyNsr5PhQBLG39ap6RCSquNWFBsg2PFPxdJAcVChD4S1hzaJPwIU1JE9/oBLLPlYAOY+QE66L4umUY9CzSRKF2Kh/lZ0kTFEfR9DEfVXhz7vTml5Hu11cRtFhiOafPpE9R57u6dv+SWuF4RTBMFJCF+CsPoyVfjrVk2CsD03YndhF+WtR285bNjePJoGasEzckGeBQZZDcCao9Ns1gv/o9BcKPP41VzTWxgxzw1HHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dzphqq1NG8B9HmZpkMmC4ohjtJaIR+36j1HBMk6Edpk=;
+ b=dAWjPwNBo9i0CPWlRXJdJLs2bXYluTJzoqeVKgSvUQYYZ45NkV8gficASQt3fZ0iycMz3rI5UNTX2BHfpUQ2+iMF10TuUbQpgakICaITyJw1tsS8z//epWPF16lCVL0ISq4Jg1VilQ+hf1KePJfJeiFHQtJ9H+OfFesCk394bYB40i+sYpcd39E++VInu3+wXiRd9uPtG+l45C8Q8iYG0QtQilSSFBVRcNHMDQQzFEzH/uKO7u0T5w21kliouGy/k3xYR3me1hU6ltqKGTz2Mb7A5iqh0h4fwyZPc5n85Iygrn9IHyV6+16Xe9BMxGOR9FLHlanbgB2YWhCif/rn9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
+ dkim=pass header.d=csgroup.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dzphqq1NG8B9HmZpkMmC4ohjtJaIR+36j1HBMk6Edpk=;
+ b=JTjt+jVS7nFpudzZEODHExJ9b7sjND5g90p1plwifGv+1OenrGdG93rQKZCJi5KO4S7ts6ADYxG3HjQ+oYg7Rb9IRidnH+isUPWUxqR4a9j5+MO9TLMNKDOYo3GwNxTaRr+gE4yEQSe0knkfozpsaSibaLL/+KjdrGraxS/JbMO35eYpan+Aad1K7VN8SPcQj6i1fgyXuwSlWMrlyISfT8Gai50C950ApiMbV1ebbbFtqQKh1YHrpNuOcpDcnyA6YrnNsul0up3O97f05nFi5yl5YW4DXhsrZySeVObyXB+rbY0IbiZkIaMUEqF327+fMgEBWK8w2+UesC21Hl58lw==
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
+ by PR0P264MB3659.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:161::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Tue, 7 May
+ 2024 10:03:02 +0000
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::1f75:cb9f:416:4dbb]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::1f75:cb9f:416:4dbb%7]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 10:03:02 +0000
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, "acme@kernel.org"
+	<acme@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>,
+	"adrian.hunter@intel.com" <adrian.hunter@intel.com>, "irogers@google.com"
+	<irogers@google.com>, "namhyung@kernel.org" <namhyung@kernel.org>,
+	"segher@kernel.crashing.org" <segher@kernel.crashing.org>
+CC: "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"maddy@linux.ibm.com" <maddy@linux.ibm.com>, "kjain@linux.ibm.com"
+	<kjain@linux.ibm.com>, "disgoel@linux.vnet.ibm.com"
+	<disgoel@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "akanksha@linux.ibm.com"
+	<akanksha@linux.ibm.com>
+Subject: Re: [PATCH V2 8/9] tools/perf: Add support to find global register
+ variables using find_data_type_global_reg
+Thread-Topic: [PATCH V2 8/9] tools/perf: Add support to find global register
+ variables using find_data_type_global_reg
+Thread-Index: AQHan6+0Y0VouNVKREyFpHtxv5S0fbGLjB4A
+Date: Tue, 7 May 2024 10:03:02 +0000
+Message-ID: <05213684-d45b-4a6c-82ef-6ec7fd2653b2@csgroup.eu>
+References: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com>
+ <20240506121906.76639-9-atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <20240506121906.76639-9-atrajeev@linux.vnet.ibm.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=csgroup.eu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MRZP264MB2988:EE_|PR0P264MB3659:EE_
+x-ms-office365-filtering-correlation-id: a3488be4-64a2-462c-52d0-08dc6e7ce1ea
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|7416005|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?a1FrblFxa1NWU1NwS3lQS0d4bFVWd1oybkQvVUlueFZzYlhRK0JzNTJyZmNT?=
+ =?utf-8?B?dkdUemhsTzVQYTZjZjBvcFp5UExoNVAxaHZLQnVtVlVCRkJEak5RV3RQRmk3?=
+ =?utf-8?B?dUJEUy92Tms1dnFMbXVJd2pIZUlPK1dwajY3U1cyZHY2a3BzWHZkWUZHbTlx?=
+ =?utf-8?B?SDVpSDJGb0NadzBKL0taeVZGSnNrWlhqRnJ2V01WeUtlaG5xTWd0SWg1Q1B0?=
+ =?utf-8?B?Vk52Mm82dHBGcTZuUm1XQ1NXcy9UNVpSYmwvYlFDSU9hNm9vNjdBcHc4WHFT?=
+ =?utf-8?B?cDRxV2xkRlFYQ3h5MmJIbEZ1V3dFUStCU2RRQlg2Zm1NUmdqTlRBV3hBb3dS?=
+ =?utf-8?B?Q1MvbngwVHFQb0dVdVJuWUpMenRIZmM4N0dvcTlRaCtQT1RaZnNuYnE2UUNz?=
+ =?utf-8?B?b3E1WlFDZTIzWG1XTmdtdmJhQWJYOUdaSDRla0dqUDlLWER1K2dlRTRaUUZm?=
+ =?utf-8?B?Qk1xb1l0VkpreUhxdlQyNnJvY1V2SStReFlRNnZ3V2JmcjRNRXRJYUZqU2Jn?=
+ =?utf-8?B?cUpDcGlXNitCVkp5L1c1QWJCR2wzdXRRaE5FQkJwaHgvTHkvZDFOaGlsb3Qy?=
+ =?utf-8?B?VHVHd2xQcFVPWGZYNmszcVVWMmxmT2dmZHBmVEdNaVBzSHdLbzJldm9ESU9R?=
+ =?utf-8?B?RzhXUkgwNE1mdVRlKzJwSGovcklFSndIa3NQcWJYdlJ5T0J2K0NGZHQyOXNO?=
+ =?utf-8?B?K2RvazZFUTVRb2J0WFhNMXJzV1hMWi9PRUlrbnVCdlBDM2ZLOU5lVk5XSmJi?=
+ =?utf-8?B?ZDg0RjdZZ2lHTWxNemdRVEt4VUQyT3dCVkVMNysxaDhkdHhoVjQyOEcrbUYx?=
+ =?utf-8?B?YkhwbXo1bHRBYnRpajJ0eEo5QWYySDhtUTIrY0N0VzQxOTFSOHhuZk1FWEt6?=
+ =?utf-8?B?YkJoOElNMUdpOWpHV0hsTkV5OXRoeXNFOGN5bTVnM2JBcDg0Y1YyMzhybHVT?=
+ =?utf-8?B?Y1F1OEt0V04rWnBuRWdwMWlTT3FDb1dmamN0NVFpTmZuUGV4TnNLemZvS3E3?=
+ =?utf-8?B?VXF6VjZDTEFLWldHUVQ3L2pnNHVGVytzTDJZVlpyY1Zpd0pnNGJYSFFKVlZW?=
+ =?utf-8?B?RXRmV0JydXc5NzA0bzdLN3F3aTh0bEhXTzh4MDZDNEdSb0RmN0VrMWxZQzRS?=
+ =?utf-8?B?VTIwbXczVGlGSmp1dUg0b3BiZEUrVWVpbm1VYUhMNmpuRmpWRHFDQ2RrK1cx?=
+ =?utf-8?B?Um56NW56U3I3SE53SU1KMDVYRHc5UEt5ZWRYM2Q5Ulh1L0J1YWJGQ29jNno3?=
+ =?utf-8?B?SWRlL0JwbUhmUUgvbW5vUDdpR3NyZzZZbTVpNEFHVTJpeVdvVDR5NFYwQ3lk?=
+ =?utf-8?B?QWd0UTBONERmUWNldGI2ZVlYVUIwSHhqU0JWR1FpZ2pNTzhTaEpmY1RKdVVh?=
+ =?utf-8?B?WlBMMGlSRzdVTzRURHhROHQzQ0RGZVdHYzY2YU9rS09yMUJKdnNnZVp1ZGpZ?=
+ =?utf-8?B?YlhtM3N2ZWZ4bDZTSk1OeHNDMjc0QW1zWVlJejRuUmUyYVc2aHVyT3ZDU0lP?=
+ =?utf-8?B?eVlPZk5VYktpYjJkYXZ5UEVWQjIvenY5bDlzV1lXVVVndm5ITGk3UkxEamtJ?=
+ =?utf-8?B?MWZmbjZ2cmNpS1pvNVFGWklsTUUvZHovWUxWM2hzMTVoTmgyRFVLbFBIREV1?=
+ =?utf-8?B?WmhvNXpVUjZOWHU2RnhwY3ROY0dxR1BMRk9qN0Q3aUlwK0RqYkFkNVN0RG9z?=
+ =?utf-8?B?MXY5RzFTNTRDbE55SEpCcSszQURFMExjajlwN2gvMEk2TjNEY3dXbUxPejVz?=
+ =?utf-8?B?RzN6R2ZmUmtIbCt4OWxMWisvdmI3Wit2Z0ZxYktDaFpLZTU0WFpreVJYTTYv?=
+ =?utf-8?B?SDlvY1BLN0ZicEZNb0hDUT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?NCtQRXVuV3RIbi9sK01oNldnZ3llcUNpN01VejBmczFWa1dieC9oQmhWakpH?=
+ =?utf-8?B?SFRXaVAveUc0RmZCcEczQ2g4S3dISEF4RFdZYkcvamswZ2NVRGU4WSthTVQ5?=
+ =?utf-8?B?Z0F1ajZzNDdnS01NLzh4SUFtWUVma203Wm5FU0RYcVZYUnhQUzJKc2REVDhK?=
+ =?utf-8?B?NnRtaTVmM2k3eWVsTE5MeDRZWkZZT3JLRWlSNjJYckZGVS9FbGU5OTRvbzJV?=
+ =?utf-8?B?ODhBVk9RZDl4bXg0dXJoYktYZ2lHRC9qTnhWUzY1K3NEeUFxNnUxOFdJMUgy?=
+ =?utf-8?B?RjViNlA4K0krbm5wdGJvRXRIYjZRM2JGMGl6ZUpTUHg5TmFqc0ZBRWFYNXlU?=
+ =?utf-8?B?eUZiNTNwZjdJNTV2VEUwTWNKMFlXblNlVWF5Y1lNdC96Q09vNG96bzh1NlNX?=
+ =?utf-8?B?RFVtSVdDdzdWV2NtVnZyY1hVQTBEUHYrMml3bDFGRWNEZHR3MFNYaFBMMHlu?=
+ =?utf-8?B?MkZVcDlnSmhROS9IY0E0VW5ibThjdzFtYnpOaXh5RThxQmNPTktmR0xxcjE2?=
+ =?utf-8?B?MHBVL3FVNWtxYURmQlZLS2s3enhlWlFQUDdsN1lLY1N5SWJnNENZbjErZVhH?=
+ =?utf-8?B?OFp4SzRabllNNlFNWmVqTlVMNHhlTjNVdWhhOUVWZXh6NlRBTi9lL3kyUFk1?=
+ =?utf-8?B?NjFPdlhESU1HaFVDNENwTUh1TWg1L2FySHFrSnBJWWJRL0pZUy90czljZFNL?=
+ =?utf-8?B?MUphMytnc01BM2VYWWxjWitpb0M5VW45cnRDTjFpRm5hdkFOTWxSTnZYWVNR?=
+ =?utf-8?B?YzNwVzFsUStKaE1ySTkyUXo0R3F6d3UvbCtGSFE5VzQwYzhTb3l0NnBxb0c4?=
+ =?utf-8?B?cU1mSDU2cEt6eXp6bDNmejBSWm9Zc2FVaXNCTFZsMnFXZVBzWUtyT0NQalpY?=
+ =?utf-8?B?WFA3RXFBbTR3QlBUWjRpb0JRakhuMFlrNzQyazY5VW54bm1NeFh2cm90MGh0?=
+ =?utf-8?B?ZHZuWEJjRzJRRDNlS2ZvSmNQejg2dTFjc3M4bkdoN3lkMUFVMnlOYXNZNzUr?=
+ =?utf-8?B?Y2JydEZnNWpUWTJuT0ZxVE1wY0xFUkhJMDQ3L1B3RXlHamg4UERXYnViQ09r?=
+ =?utf-8?B?NW11ZE1kTWdCTDl3bDRVQ0VYNXJxa3NlNDRlUHBtQmJ5RndkcXp6aFN6blNu?=
+ =?utf-8?B?YnFRZVZTMjdSb1p0S0JLMFR2cnRNR3NGeTYwRXl3RFdmR0hFYmhTTHVBZUs3?=
+ =?utf-8?B?cG1oeFJxZVNOSncwa00wS2xpeVdSSW1tTjcyMHByUzcxTlJtRm9IWU5sc2hS?=
+ =?utf-8?B?TzJ3Y1BERVBDRnJFUlB2aTRDL1dJL01VdVRQT0x4eWlGUXg0WHhlb2JrTXBh?=
+ =?utf-8?B?cm5nR2NJbE9JTzczOHM1V1pROUZnRVAyOEhycXZCWEJ6MllCU0FpSUZjRzdF?=
+ =?utf-8?B?c1hVUnVBVHZtRFF6aHNTaEZIM3k1Q3ZlL1ZaTllBSTJrWXFad00zOFRwYXlE?=
+ =?utf-8?B?NGxReHpyS1IvdEt4N1BQbmo2OTJwTnFzNXd4bHVoSHZGTzBaZnRZakFQT1Nu?=
+ =?utf-8?B?OUF5aGRwd2JVMEV2b1hYZXVTTk5DVS80aWZqTkl6SnU4ZVlMb1hQSllSL1Js?=
+ =?utf-8?B?c0h1dVFOa2t2Nm1ybVNkdHdiYUtRVVMyb043NVF5YXF1ZnN3VW93SDBKdFpa?=
+ =?utf-8?B?NVBmZSttcXpaQm43RitHUTM4Q1JuVWhNNmsxK1pGME01WjNlUFM4Wk50MU5x?=
+ =?utf-8?B?N3Q4SFZPTDN1QkRRaTliVzV5UWhrMlBoMnZxZEdNYXZIZVZDb3ZlK2NVdTJQ?=
+ =?utf-8?B?bmFPN1FOZXhoRTdxa3lqWFVkUEllTlUvYW9CNUhxTW1EZWlQSWd4bG5aQ3pU?=
+ =?utf-8?B?dzNrRGRMVnlzMnRTdTZadmtiY3Z1RkI1LzdJUkljMmJXR0RFeDZUS1U4N3Bl?=
+ =?utf-8?B?eXlJdXltMUNqc2RWelpVQkFBL1ZsbGc1TThGOGkxQXY5OFFJckhaNnVhejRL?=
+ =?utf-8?B?Y0NtWEZRM0sxQUNVYSswYnhkMG5vdnZtOExoQUhkNXJZOFdFemd2NWovNStk?=
+ =?utf-8?B?UVlqUms3bUdjb2pHNE50QUpuMGhjNWRZZ1JHSU0zVWhUTVRBcWZrd05jMWRZ?=
+ =?utf-8?B?QWF4ZmlMc2Q0RCtJaFZKRGsvdTJsaEJKTUZuR1JsZUUyQUFBQW5VdVVTeDFJ?=
+ =?utf-8?B?THdLQUFKcXdLSmROK3BjYkpJcURwdFlmV2I3L1NEVnNhUWFma2RBMTRRYXBv?=
+ =?utf-8?B?VUpHblpmSEZONERrdmx5UTFFVlN4ZGVBbkFUeWVlbXVBMU9TVkwrTHZrbEtY?=
+ =?utf-8?B?UlAyUFpNUFdMZmQrNXUvallTRnh3PT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D3E42B8B0A11514EA8AAA2D8872C3298@FRAP264.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zjnm7LzrYLCbz-XX@arm.com>
+X-OriginatorOrg: csgroup.eu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3488be4-64a2-462c-52d0-08dc6e7ce1ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2024 10:03:02.4469
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YlQ2LB0D2+7KocL9I8l25n3ehUT4mMM9wQMJ1dnOzP2jEDI21P4RHoNn4wT6ImY6npzY1ErNUgedSzUiXKbi4WwOwIJzelBPL1tRIIBMljk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR0P264MB3659
 
-On Tue, May 07, 2024 at 10:31:52AM +0200, Beata Michalska wrote:
-> On Mon, Apr 29, 2024 at 02:55:15PM +0530, Viresh Kumar wrote:
-> > On 26-04-24, 12:45, Beata Michalska wrote:
-> > > It seems that we might need to revisit the discussion we've had around
-> > > scaling_cur_freq and cpuinfo_cur_freq and the use of arch_freq_get_on_cpu.
-> > > As Vanshi has raised, having both utilizing arch specific feedback for
-> > > getting current frequency is bit problematic and might be confusing at best.
-> > > As arch_freq_get_on_cpu is already used by show_scaling_cur_freq there are not
-> > > many options we are left with, if we want to kee all archs aligned:
-> > > we can either try to rework show_scaling_cur_freq and it's use of
-> > > arch_freq_get_on_cpu, and move it to cpuinfo_cur_freq, which would align with
-> > > relevant docs, though that will not work for x86, or we keep it only there and
-> > > skip updating cpuinfo_cur_freq, going against the guidelines. Other options,
-> > > purely theoretical, would involve making arch_freq_get_on_cpu aware of type of
-> > > the info requested (hw vs sw) or adding yet another arch-specific implementation,
-> > > and those are not really appealing alternatives to say at least.
-> > > What's your opinion on this one ?
-> > 
-> > Hi Beata / Vanshidhar,
-> > 
-> > Lets forget for once what X86 and ARM may have done and think about it
-> > once again. I also had a chat with Vincent today about this.
-> > 
-> > The documentation says it clearly, cpuinfo_cur_freq is the one
-> > received from hardware and scaling_cur_freq is the one requested from
-> > software.
-> > 
-> > Now, I know that X86 has made both of them quite similar and I
-> > suggested to make them all aligned (and never received a reply on my
-> > previous message).
-> > 
-> > There are few reasons why it may be worth keeping the definition (and
-> > behavior) of the sysfs files as is, at least for ARM:
-> > - First is that the documentation says so.
-> > - There is no point providing the same information via both the
-> >   interfaces, there are two interfaces here for a reason.
-> > - There maybe tools around which depend on the documented behavior.
-> > - From userspace, currently there is only one way to know the exact
-> >   frequency that the cpufreq governors have requested from a platform,
-> >   i.e. the value from scaling_cur_freq. If we make it similar to
-> >   cpuinfo_cur_freq, then userspace will never know about the requested
-> >   frequency and the eventual one and if they are same or different.
-> > 
-> > Lets keep the behavior as is and update only cpuinfo_cur_freq with
-> > arch_freq_get_on_cpu().
-> > 
-> > Makes sense ?
-> >
-> First of all - apologies for late reply.
-> 
-> It all makes sense, though to clarify things up, for my own benefit, and to
-> avoid any potential confusion ....
-> 
-> Adding arch_freq_get_on_cpu to cpuinfo_cur_freq does seem to be the right
-> approach - no argue on this one. Doing that though means we need a way to
-> skip calling arch_freq_get_on_cpu() from show_scaling_cur_freq(), to avoid
-> having both providing the same information when that should not be the case.
-> In the initial approach [1], that was handled by checking whether the cpufreq
-> driver supports 'get' callback (and thus cpuinfo_cur_freq). In case it didn't,
-> things remained unchanged for scaling_cur_freq. That does not seem to be a viable
-> option though, as there are at least few drivers, that will support both:
-> cpuinfo_cur_freq alongside scaling_cur_freq (+ APERF/MPERF) and for those,
-> we would hit the initial problem of both relying on arch_freq_get_on_cpu.
-> So I guess we need another way of avoiding calling arch_freq_get_on_cpu
-> for show_scaling_cur_freq (and most probably avoid calling that one for
-> cpuinfo_cur_freq). Quick idea on how to not bring arch specificity into
-> cpufreq generic code would be to introduce a new flag for cpufreq drivers though
-> that seems a bit stretched. Will ponder a bit about that but in the meantime
-> suggestions are more than welcomed.
-Alternatively we could add a parameter to arch_freq_get_on_cpu specifying type
-of feedback required: hw vs sw. Then the arch specific implementation could
-decide which to provide when. It will get slightly counter-intuitive, especially
-for cases when sw feedback provides hw one, as it is the case for current
-arch_freq_get_on_cpu() and scaling_cur_freq but at least the changes would be
-minimal and it will contain handling the tricky bits inside arch specific
-implementation - hiding those messy bits.
-
----
-BR
-Beata
-> 
-> Aside: I will most probably send the changes separately from this series to not
-> mix things any further.
-> 
-> ---
-> [1] https://lore.kernel.org/all/20230606155754.245998-1-beata.michalska@arm.com/
-> ---
-> BR
-> Beata
-> 
-> 
-> > -- 
-> > viresh
+DQoNCkxlIDA2LzA1LzIwMjQgw6AgMTQ6MTksIEF0aGlyYSBSYWplZXYgYSDDqWNyaXTCoDoNCj4g
+VGhlcmUgYXJlIGNhc2VzIHdoZXJlIGRlZmluZSBhIGdsb2JhbCByZWdpc3RlciB2YXJpYWJsZSBh
+bmQgYXNzb2NpYXRlIGl0DQo+IHdpdGggYSBzcGVjaWZpZWQgcmVnaXN0ZXIuIEV4YW1wbGUsIGlu
+IHBvd2VycGMsIHR3byByZWdpc3RlcnMgYXJlDQo+IGRlZmluZWQgdG8gcmVwcmVzZW50IHZhcmlh
+YmxlOg0KPiAxLiByMTM6IHJlcHJlc2VudHMgbG9jYWxfcGFjYQ0KPiByZWdpc3RlciBzdHJ1Y3Qg
+cGFjYV9zdHJ1Y3QgKmxvY2FsX3BhY2EgYXNtKCJyMTMiKTsNCj4gDQo+IDIuIHIxOiByZXByZXNl
+bnRzIHN0YWNrX3BvaW50ZXINCj4gcmVnaXN0ZXIgdm9pZCAqX19zdGFja19wb2ludGVyIGFzbSgi
+cjEiKTsNCg0KV2hhdCBhYm91dCByMjoNCg0KcmVnaXN0ZXIgc3RydWN0IHRhc2tfc3RydWN0ICpj
+dXJyZW50IGFzbSAoInIyIik7DQoNCj4gDQo+IFRoZXNlIHJlZ3MgYXJlIHByZXNlbnQgaW4gZHdh
+cmYgZGVidWcgYXMgRFdfT1BfcmVnIGFzIHBhcnQgb2YgdmFyaWFibGVzDQo+IGluIHRoZSBjdV9k
+aWUgKGNvbXBpbGUgdW5pdCkuIFRoZXNlIGFyZSBub3QgcHJlc2VudCBpbiBkaWUgc2VhcmNoIGRv
+bmUNCj4gaW4gdGhlIGxpc3Qgb2YgbmVzdGVkIHNjb3BlcyBzaW5jZSB0aGVzZSBhcmUgZ2xvYmFs
+IHJlZ2lzdGVyIHZhcmlhYmxlcy4NCj4gDQo=
 
