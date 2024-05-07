@@ -1,165 +1,112 @@
-Return-Path: <linux-kernel+bounces-171696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6148BE76C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:28:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC198BE771
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36ED8283908
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:28:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDD2FB286BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A40168B02;
-	Tue,  7 May 2024 15:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302C51635D5;
+	Tue,  7 May 2024 15:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueI4Ffa2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfrX2mdU"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B671635AD;
-	Tue,  7 May 2024 15:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98551635AD
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715095689; cv=none; b=Sa7GcNPwTs/IwFpJt1OG3nPd6cOr3utVJ2VYRTnExW1JEYypBx3AFeLzQOIKNfxL0m+pIkMa8d+EYwdQ/g14fZMNRUNChcQYQopKbiL1nWNC+DTdxniI01tvxT24Y/8kCyjF0SlWKnbOLQeqpsyrElv4MTXK9XZAbAWIdD+XnjI=
+	t=1715095705; cv=none; b=nUEbjgLk9jP8SDGi6Z3lJexmm38Pe41KfxxEi/Dit98ruEV9KQc7Dfz7ggHSGsjL1U9IihguGev8AjTjzAC0zIg6adBO6ZaFUf9D3Ifi4Ob16EPvmWyCb9jWGRcv+1tw4y1nhp018BL6bb9o7ZL6VGxrWKTwvzoJ2i8uR0HktMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715095689; c=relaxed/simple;
-	bh=bUcqpluJn/Rz13IlYVuaIwusJC716KhD/mfqB0Uebho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpSvBdD1bBUACfp0tr0J3wRUGLtJIkC9dtKCvyPul1y0m+iV0zrG69csmSoQVH8B8IFGpBJMbLCI++UIgMKgnlWiI2pLcK+csoklT1FU0snQwmxD6mqf6fKB1QP3qIE6XZpjIpYXiVrkwZ+Kra7XWtmUFOYhymQcD7VoTCWp53o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ueI4Ffa2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB01C2BBFC;
-	Tue,  7 May 2024 15:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715095688;
-	bh=bUcqpluJn/Rz13IlYVuaIwusJC716KhD/mfqB0Uebho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ueI4Ffa2UP/l8ER+d2ogio+WDRRKPi8HfM/T1vAO/4bCgScbT+r9DNYauzo5C1MYL
-	 pdK6e/VzyCPDazoPTSfT1LpEialTvuMiK3CrcnqCq57AgkcPodnFTWkpJMAvVOSW/F
-	 7kqPyPZa1lv0tC3TDxcTtrs1Pt4kMUPZfRu6SM7gr6cvSShrAyaGeZEFY4V8ezGARB
-	 e+Vcd1/IgP/OcvC1dAq048A4mpqAWJL9mzXU0sGPJ9ozqZTaTHZMlkTxwFMskI+OXH
-	 259bXKgnoOYyd3YRgBSfU0A5OhiBSnKntiSjClNfnQKCjkFfClrI3CfU+Bus1iCHQs
-	 ceTCaQQUGq9wQ==
-Date: Tue, 7 May 2024 10:28:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 09/17] dt-bindings: interrupt-controller: Add support for
- Microchip LAN966x OIC
-Message-ID: <20240507152806.GA505222-robh@kernel.org>
-References: <20240430083730.134918-1-herve.codina@bootlin.com>
- <20240430083730.134918-10-herve.codina@bootlin.com>
+	s=arc-20240116; t=1715095705; c=relaxed/simple;
+	bh=1eFN26KonT5yyFzsxJJ7Z00H9iYnZymVbLRwbWxwvnA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IoJ/xUVTj62jK9R5m/9OYR6v0IoJVwSigYLH43RJpXUd44l5tP1DsdFPqCIavf/11DPIv/SHHvS2UWXkCh5pc3veJhVfkcViv0wxDR9Ma1C3DOCbn8cw6c9OXakIfMItweElnCvYGUivF9c6mh4AroJvy+DEpwGSpuAJci5mqCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gfrX2mdU; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-deb99fa47c3so1738465276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715095703; x=1715700503; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qM+FC4CEUXNQ+inJpG0p+yw8Y03MFSDFW9+RZNkCDng=;
+        b=gfrX2mdU+9mBNFiASXxNEGY/irV2jogYw19ECj6/n4ZlYGMakAFR8jhL81t3LQSXbS
+         Zdn7ypiT9wETeXEJtOfCadS2hYUe6dxbS+T8zPN5PSWlhxN0LDnij20Z2JTefkSHmeNE
+         ju1Da7UDGBeXkxOsO29sARY9dBvt1lmQmQVVLj/UEU2lEgs9y7og9XzVjoXFcA/6vT2z
+         GmO1E9pM1ec8cSAFJsWV4dgEf2FKWa+RACiwdrl2VgGyLuH3M2KVOJKTC0yusf8VNXCL
+         4jE7cs2jkaTPZ25nnIXDEZCsg2wgbJstw+Imse7JfC9byAfQFPdyxKQcABQHYkJAG6LW
+         1R9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715095703; x=1715700503;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qM+FC4CEUXNQ+inJpG0p+yw8Y03MFSDFW9+RZNkCDng=;
+        b=OkUwW6mOjlIob51pU2rxhvq00zD+LMOBDle2nWxCOLgXicUjw8Lxq9Ky7tDaP4yaF1
+         l3VLp4zXz7jg3Te3Lp4KfqxOiqNUra3n2lT4pBGOHaC3x6CB5CGQiDj79q7HlYkkS1hz
+         2kSWdc9dbBEXfhxUSYkq9yqBkXpb5bxd7YzZLq5gyNaRfATIX+Nxsk6Jr5+LMjTrU9Ty
+         xLpiQUQ9iw4zaLqrwduwCgaH0/f0BTPWjarTuIvGYweYH/bZ5gr1iTJYcLYn5lVeyFIl
+         jpmPjUGoMbIfiVn8t7vSTI5qSRuVcqlbwZPPF95KJBrI/xfB6CWU7VlSh/e6gG9k6hxs
+         7meA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv+I3vxo82UrXUyRfrwvK/cDj7fi60tYAO5/X88oqY0YnH30HyjrMtCdC0yNcK3c22i4whE5GXreb5Svd6rrws/gn4em3M7+SD6shk
+X-Gm-Message-State: AOJu0YxH2BRAyf+fTHoIfq3o2SvWB1yfdKZmSz63LwePXRIs7o2N/HwG
+	LvNxu9zKL234OuxnY+6AydJh4yURk/U3IboglC4mC8t0QgvA5bJg4TH1GeXCI+UVYPBaKst0SUD
+	I8kcyZRvSajT2Uv+RByZIcrX2ZUWrn2VjEgd+Iw==
+X-Google-Smtp-Source: AGHT+IEcbcmFazU8TaQGERSPehFQMyW3IZsbwr73g5F4xiuMGtqaPbP9wO2UpFmDa4/+IdKS1sDCz7OELVDpunmfBxE=
+X-Received: by 2002:a05:6902:2211:b0:de0:f811:be41 with SMTP id
+ dm17-20020a056902221100b00de0f811be41mr16379061ybb.14.1715095702882; Tue, 07
+ May 2024 08:28:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240430083730.134918-10-herve.codina@bootlin.com>
+References: <CA+G9fYs1ZN2K=UHOjrwRR2JNE-M0nf9iW_Q-YPzVgmW+9daU4Q@mail.gmail.com>
+ <CA+G9fYs1F=kO11-+DtAOsNwZGEd8mmojXEfXfg431JG=Spubcg@mail.gmail.com>
+In-Reply-To: <CA+G9fYs1F=kO11-+DtAOsNwZGEd8mmojXEfXfg431JG=Spubcg@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 7 May 2024 18:28:11 +0300
+Message-ID: <CAA8EJpoMwy2w3a9VF3ejGkcxFK905DCczZOdD4k-cd7ouKHYcA@mail.gmail.com>
+Subject: Re: arm64: defconfig: gcc-8: failed: AttributeError: module
+ 'argparse' has no attribute 'BooleanOptionalAction'
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 30, 2024 at 10:37:18AM +0200, Herve Codina wrote:
-> The Microchip LAN966x outband interrupt controller (OIC) maps the
-> internal interrupt sources of the LAN966x device to an external
-> interrupt.
-> When the LAN966x device is used as a PCI device, the external interrupt
-> is routed to the PCI interrupt.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  .../microchip,lan966x-oic.yaml                | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/microchip,lan966x-oic.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/microchip,lan966x-oic.yaml b/Documentation/devicetree/bindings/interrupt-controller/microchip,lan966x-oic.yaml
-> new file mode 100644
-> index 000000000000..b2adc7174177
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/microchip,lan966x-oic.yaml
-> @@ -0,0 +1,55 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/microchip,lan966x-oic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip LAN966x outband interrupt controller
-> +
-> +maintainers:
-> +  - Herve Codina <herve.codina@bootlin.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/interrupt-controller.yaml#
-> +
-> +description: |
-> +  The Microchip LAN966x outband interrupt controller (OIC) maps the internal
-> +  interrupt sources of the LAN966x device to an external interrupt.
-> +  When the LAN966x device is used as a PCI device, the external interrupt is
-> +  routed to the PCI interrupt.
-> +
-> +properties:
-> +  compatible:
-> +    const: microchip,lan966x-oic
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +
-> +  interrupt-controller: true
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - '#interrupt-cells'
-> +  - interrupt-controller
-> +  - interrupts
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    interrupt-controller@e00c0120 {
-> +        compatible = "microchip,lan966x-oic";
-> +        reg = <0xe00c0120 0x190>;
+On Tue, 7 May 2024 at 16:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Tue, 7 May 2024 at 17:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > The arm and arm64 with gcc-8 builds failed on Linux next-20240507 tag
+> > with gcc-8 due to following warnings / errors.
+> >
+> > arm64 and arm:
+> >   defconfig - gcc-8 - failed
+>
+> Anders bisected this build problem and found the first bad commit:
+>
+> 07a2f8716c41 drm/msm/gen_header: allow skipping the validation
+>
+> Steps to reproduce:
+> -----
+> # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
+> --kconfig defconfig
 
-Looks like this is part of some larger block?
+What is the python version on that platform / system?
 
-> +        #interrupt-cells = <2>;
-> +        interrupt-controller;
-> +        interrupts = <0>;
-> +        interrupt-parent = <&intc>;
-> +    };
-> +...
-> -- 
-> 2.44.0
-> 
+
+-- 
+With best wishes
+Dmitry
 
