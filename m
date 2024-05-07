@@ -1,180 +1,177 @@
-Return-Path: <linux-kernel+bounces-170776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A668BDBE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A576E8BDBE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33C861C21574
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 348961F21B94
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CECE78C8C;
-	Tue,  7 May 2024 06:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlz54wGe"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC96F78C97;
+	Tue,  7 May 2024 06:52:27 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CC778C7E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3396178C7D;
+	Tue,  7 May 2024 06:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715064648; cv=none; b=UAs82Nblstr9pB0qmK8obBB+kOQ83b8ocqe7xU7p33NqGlgkpV+0ixGqUMOiPy4wrVhd24JJclAMoogC65kCVl6Wr/Z9RgnwLsyGFramakTW96JV5DhrjfiRZMpcYH6u9qebTh5dXWtvkrwKkxXqi/kXEJiyWS5I/qS+xv57tsk=
+	t=1715064747; cv=none; b=hUsv8sqL8Lzb6mcSx+wRDol32/4ULJgejPx07dLDhxCGVifaMJDQux5eBYz025k48sQl4ZhM0EG9QaNPMQABUT0XZcrnZR6MwKFwBYQP86HYnh7igx7yREJssxYYvPQWtNnLBgNnHW81kXMkSDJgaobSdJ62lSXnawn7N5vJ7eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715064648; c=relaxed/simple;
-	bh=B54nSfabufPf3bZUalOfLCZ3eIx8sLMVhlJmwFA+bkg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YB6gRcazKT5M5hfFVzbzvAGw43VvNfdNPrzq5l6WwXhlPQxIPNoBTZ6WHP1ggClFnhX6yJwwFX7MMDSU35WFSON0DCeJHM1Err2Q+t7FiAPLZtUhRfxO11GvrMu8YWZMC6Hu47+4b3pSeaRlbf3SsaWqxWyIFbUf4TKSQqZtSFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlz54wGe; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a5f81af4so698596466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:50:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715064645; x=1715669445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vtf9JTxvmEium7Z5IYrhPwaVkYIMsaQSn2TAuNeOINo=;
-        b=nlz54wGeOOT96Saim//9XtEwgqbVrcuKyCB+lqqUeKr0QbblIqg3xu2oTMTxxRGjVe
-         HyTtWL/Xmp8nadfvzV1SHJmpum7ZrB/BYBQfK2D0MOh1ZN/5d3DZbMLupr8cxXlQvlUR
-         htEOeZbBzd2K5Mm7ik70XwJvJYIJa6YuFS7tk1HueEzZVBSZw5YqY+3df2vvdTGFEK0n
-         TU34N5jRJbYZW+rUjTxfC5t6JQDsgQeL9pHl2JMrJSN9IW8xoh5J1CDM3EhRnWjUA3ih
-         OxIZ31EI+wDDfD6JVnywAy1IEJLVtKj1U77tUTWzTyDtU3w8PzmGNg2Fbh1oHLzL3s7F
-         JyHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715064645; x=1715669445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vtf9JTxvmEium7Z5IYrhPwaVkYIMsaQSn2TAuNeOINo=;
-        b=flSHm+Q5EE2sZO8rBBkVcfa/VK0Ig6gAZIUWVpdCrIoRG3jnKICoGcJ0Ro8YxRbWQm
-         QW4aux6tMf9q2MnijYg74bfkdzWP/ZTn8kDq2rz24gt7K3JmR0pNjneaFN697XSf0211
-         Ucp6oqInE/oTZkGv5MAQucajwD+omMfNGq9LIUtHCh8yr9iX9z66sKxglXrtwV6UKiEA
-         Ij8c+nP00+YANPQgUGe87WMqrWEc2kVxULS9yXA4jPPylKEBqtJlwKPPVTh94dK4fCCE
-         HVXt94ZcnQeZdjR1TUuAC1eAUoBEjrvDkEwaRzwV0+AzziP5l13m7KxZJ5OfvwD90xcw
-         LtDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuAQn1TnYhk4nltngVCZedfXKP3pZJS4sJvdtx9dR7IFE3Z/37GL8qfGKvD8jByhbR+Hv2Vkr6vsadk3P4xypx4qWS5ux8BU6YR/jy
-X-Gm-Message-State: AOJu0YwtFJw7PGh5pSjnKRMELtXgNHtUc2oTCuORaQQbfKAegbXVK2bu
-	3tbhDqxdjS3bDrb70dO5elUSt9TFgOB53iIa4yekpGGHor+L9hsKUsIkSUl14LLfiP0zlcpm+Er
-	6XYoFMHxumkRCPt0+85Dl1q9zeos=
-X-Google-Smtp-Source: AGHT+IFdfdm61Vn8oi+xzryCzRzJSFLKb1UrL2QHh03A24gevJJW27V1tPShZQ9It2eEb4A0AnspboCZwuS1463YKFs=
-X-Received: by 2002:a50:a404:0:b0:570:1de9:4cd7 with SMTP id
- u4-20020a50a404000000b005701de94cd7mr8065600edb.15.1715064645064; Mon, 06 May
- 2024 23:50:45 -0700 (PDT)
+	s=arc-20240116; t=1715064747; c=relaxed/simple;
+	bh=NXFA2n7R8fudSZ/3T2nEa5Ke4g54M+TnC5DNvRyOtkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a0FiZz/UKuLaF49GsFcncMEG+7eowegWZXF0jZ0zJtQPIx7ri07FVjOiZXoMX3WQ6M5vvMX1wJkV7vH2CYHBdZ2+p0BsF8W1yuFmV04of8w4npYx2sFDLYjqpwDZov+ye8JWCILDxNWQFuaON27gNthX3H0wbgZYMe17kkcnu60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VYTV73X47z4f3jkr;
+	Tue,  7 May 2024 14:52:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id BEF1B1A0179;
+	Tue,  7 May 2024 14:52:20 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g6gzzlmdMbyLw--.9131S3;
+	Tue, 07 May 2024 14:52:20 +0800 (CST)
+Message-ID: <7c5f0e28-100f-621e-61e2-65e5071f6a22@huaweicloud.com>
+Date: Tue, 7 May 2024 14:52:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <20240506105447.1171-1-ioworker0@gmail.com> <eaddd00d-8160-4800-b60f-25280dfe339b@linux.alibaba.com>
-In-Reply-To: <eaddd00d-8160-4800-b60f-25280dfe339b@linux.alibaba.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Tue, 7 May 2024 14:50:33 +0800
-Message-ID: <CAK1f24nB8D+zgphX3XXLWRq0_xwT+7EfV8dfxNmkHh_CCQrA-A@mail.gmail.com>
-Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, david@redhat.com, 
-	hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	ryan.roberts@arm.com, shy828301@gmail.com, wangkefeng.wang@huawei.com, 
-	willy@infradead.org, ying.huang@intel.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH 01/12] cachefiles: remove request from xarry during flush
+ requests
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev
+Cc: dhowells@redhat.com, jlayton@kernel.org, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240424033916.2748488-1-libaokun@huaweicloud.com>
+ <20240424033916.2748488-2-libaokun@huaweicloud.com>
+ <6e4a20f7-263a-46be-81cc-2667353c452d@linux.alibaba.com>
+ <ba40eb22-dc28-54b6-a8cb-7a8ba4464c9a@huaweicloud.com>
+ <876cd180-6268-4f1a-a3bc-6b7b2aa3279f@linux.alibaba.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <876cd180-6268-4f1a-a3bc-6b7b2aa3279f@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn9g6gzzlmdMbyLw--.9131S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFW7Ary3ZF4DCr13Xr47Arb_yoWrCr48pr
+	ySyFy7Jry8Gr1kJr1UJr1UJryUJr1UJ3WUXr1UJF18Ar1UAr1Yqr4UXr1vgryUJrW8Jr4U
+	Jr1UJr17Zr1UJr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCT
+	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-On Tue, May 7, 2024 at 9:47=E2=80=AFAM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
-> Hi Lance,
->
-> On 2024/5/6 18:54, Lance Yang wrote:
-> > Hey Baolin,
-> >
-> > I found a compilation issue that failed one[1] of my configurations
-> > after applying this series. The error message is as follows:
-> >
-> > mm/shmem.c: In function =E2=80=98shmem_get_unmapped_area=E2=80=99:
-> > ././include/linux/compiler_types.h:460:45: error: call to =E2=80=98__co=
-mpiletime_assert_481=E2=80=99 declared with attribute error: BUILD_BUG fail=
-ed
-> >          _compiletime_assert(condition, msg, __compiletime_assert_, __C=
-OUNTER__)
-> >                                              ^
-> > ././include/linux/compiler_types.h:441:25: note: in definition of macro=
- =E2=80=98__compiletime_assert=E2=80=99
-> >                           prefix ## suffix();                          =
-   \
-> >                           ^~~~~~
-> > ././include/linux/compiler_types.h:460:9: note: in expansion of macro =
-=E2=80=98_compiletime_assert=E2=80=99
-> >          _compiletime_assert(condition, msg, __compiletime_assert_, __C=
-OUNTER__)
-> >          ^~~~~~~~~~~~~~~~~~~
-> > ./include/linux/build_bug.h:39:37: note: in expansion of macro =E2=80=
-=98compiletime_assert=E2=80=99
-> >   #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-> >                                       ^~~~~~~~~~~~~~~~~~
-> > ./include/linux/build_bug.h:59:21: note: in expansion of macro =E2=80=
-=98BUILD_BUG_ON_MSG=E2=80=99
-> >   #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-> >                       ^~~~~~~~~~~~~~~~
-> > ./include/linux/huge_mm.h:97:28: note: in expansion of macro =E2=80=98B=
-UILD_BUG=E2=80=99
-> >   #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-> >                              ^~~~~~~~~
-> > ./include/linux/huge_mm.h:104:35: note: in expansion of macro =E2=80=98=
-HPAGE_PMD_SHIFT=E2=80=99
-> >   #define HPAGE_PMD_SIZE  ((1UL) << HPAGE_PMD_SHIFT)
-> >                                     ^~~~~~~~~~~~~~~
-> > mm/shmem.c:2419:36: note: in expansion of macro =E2=80=98HPAGE_PMD_SIZE=
-=E2=80=99
-> >          unsigned long hpage_size =3D HPAGE_PMD_SIZE;
-> >                                     ^~~~~~~~~~~~~~~
-> >
-> > It seems like we need to handle the case where CONFIG_PGTABLE_HAS_HUGE_=
-LEAVES
-> > is undefined.
-> >
-> > [1] export ARCH=3Darm64 && make allnoconfig && make olddefconfig && mak=
-e -j$(nproc)
->
-> Thanks for reporting. I can move the use of HPAGE_PMD_SIZE to after the
-> check for CONFIG_TRANSPARENT_HUGEPAGE, which can avoid the building error=
-:
+Hi Jingbo,
 
-I confirmed that the issue I reported before has disappeared after applying
-this change. For the fix,
+Sorry for the late reply.
 
-Tested-by: Lance Yang <ioworker0@gmail.com>
+On 2024/5/6 13:50, Jingbo Xu wrote:
+>
+> On 5/6/24 11:57 AM, Baokun Li wrote:
+>> On 2024/5/6 11:48, Jingbo Xu wrote:
+>>> On 4/24/24 11:39 AM, libaokun@huaweicloud.com wrote:
+>>>> From: Baokun Li <libaokun1@huawei.com>
+>>>>
+>>>> This prevents concurrency from causing access to a freed req.
+>>> Could you give more details on how the concurrent access will happen?
+>>> How could another process access the &cache->reqs xarray after it has
+>>> been flushed?
+>> Similar logic to restore leading to UAF:
+>>
+>>       mount  |   daemon_thread1    |    daemon_thread2
+>> ------------------------------------------------------------
+>>   cachefiles_ondemand_init_object
+>>    cachefiles_ondemand_send_req
+>>     REQ_A = kzalloc(sizeof(*req) + data_len)
+>>     wait_for_completion(&REQ_A->done)
+>>
+>>              cachefiles_daemon_read
+>>               cachefiles_ondemand_daemon_read
+>>                REQ_A = cachefiles_ondemand_select_req
+>>                cachefiles_ondemand_get_fd
+>>                copy_to_user(_buffer, msg, n)
+>>              process_open_req(REQ_A)
+>>                                    // close dev fd
+>>                                    cachefiles_flush_reqs
+>>                                     complete(&REQ_A->done)
+>>     kfree(REQ_A)
+>
+>>               cachefiles_ondemand_get_fd(REQ_A)
+>>                fd = get_unused_fd_flags
+>>                file = anon_inode_getfile
+>>                fd_install(fd, file)
+>>                load = (void *)REQ_A->msg.data;
+>>                load->fd = fd;
+>>                // load UAF !!!
+> How could the second cachefiles_ondemand_get_fd() get called here, given
+> the cache has been flushed and flagged as DEAD?
+>
+I was in a bit of a rush to reply earlier, and that graph above is
+wrong. Please see the one below:
+
+      mount  |   daemon_thread1    |    daemon_thread2
+------------------------------------------------------------
+  cachefiles_ondemand_init_object
+   cachefiles_ondemand_send_req
+    REQ_A = kzalloc(sizeof(*req) + data_len)
+    wait_for_completion(&REQ_A->done)
+             cachefiles_daemon_read
+              cachefiles_ondemand_daemon_read
+                                   // close dev fd
+                                   cachefiles_flush_reqs
+                                    complete(&REQ_A->done)
+    kfree(REQ_A)
+               xa_lock(&cache->reqs);
+               cachefiles_ondemand_select_req
+                 req->msg.opcode != CACHEFILES_OP_READ
+                 // req use-after-free !!!
+               xa_unlock(&cache->reqs);
+                                    xa_destroy(&cache->reqs)
+
+Even with CACHEFILES_DEAD set, we can still read the requests, so
+accessing it after the request has been freed will trigger use-after-free.
 
 Thanks,
-Lance
+Baokun
+>>>> ---
+>>>>    fs/cachefiles/daemon.c | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
+>>>> index 6465e2574230..ccb7b707ea4b 100644
+>>>> --- a/fs/cachefiles/daemon.c
+>>>> +++ b/fs/cachefiles/daemon.c
+>>>> @@ -159,6 +159,7 @@ static void cachefiles_flush_reqs(struct
+>>>> cachefiles_cache *cache)
+>>>>        xa_for_each(xa, index, req) {
+>>>>            req->error = -EIO;
+>>>>            complete(&req->done);
+>>>> +        __xa_erase(xa, index);
+>>>>        }
+>>>>        xa_unlock(xa);
+>>>>    
 
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 1af2f0aa384d..d603e36e0f4f 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2416,7 +2416,7 @@ unsigned long shmem_get_unmapped_area(struct file
-> *file,
->          unsigned long inflated_len;
->          unsigned long inflated_addr;
->          unsigned long inflated_offset;
-> -       unsigned long hpage_size =3D HPAGE_PMD_SIZE;
-> +       unsigned long hpage_size;
->
->          if (len > TASK_SIZE)
->                  return -ENOMEM;
-> @@ -2446,6 +2446,7 @@ unsigned long shmem_get_unmapped_area(struct file
-> *file,
->          if (uaddr =3D=3D addr)
->                  return addr;
->
-> +       hpage_size =3D HPAGE_PMD_SIZE;
->          if (shmem_huge !=3D SHMEM_HUGE_FORCE) {
->                  struct super_block *sb;
->                  unsigned long __maybe_unused hpage_orders;
+
 
