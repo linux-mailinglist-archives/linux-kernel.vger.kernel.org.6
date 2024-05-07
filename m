@@ -1,95 +1,76 @@
-Return-Path: <linux-kernel+bounces-170697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A126D8BDAB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:35:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6441B8BDAB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09BCAB23C85
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 961A51C234AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9535A6BFA2;
-	Tue,  7 May 2024 05:35:27 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB356BB5E;
+	Tue,  7 May 2024 05:36:17 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FD44F616
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0D76BB20
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715060127; cv=none; b=d04xB1XmcyjEjazyLxUXu5Hydlo254QQOK6fAnq2cIq0+vKWbBDVBLHoq0zT+K4Dguev87zjp+4YJqlqXHHC+yM0uYnHoKihQYbXhwK/2pcAY++dMXKjKcBJT+/80Auz+B3uwUB6Wq8Bg7JtNYTLKVWVVWSCg4FXQxKMCtV7bPw=
+	t=1715060177; cv=none; b=Jrz/HSIpe7AydNFXyG2mCqIn0QjmE3aAdXwDqKJy/RAxvPatmoMaSOC8J1G+qRAlob2emCnUrhohTpV8sBj8ufJyV8/OFL4BDsDEWDia1Evxt67EbnE0rt6m0MSeFvan7AZoZaDAy6LYsqnSXWfPKyEeVRKmYMV0ue67Ialqv3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715060127; c=relaxed/simple;
-	bh=R1izPi+9m/IigXoYuUTrLyfKZKRClql2EXOPJevJbxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VMwXycc1/e1VVuZWj7s9QXFiO2VIT6nX3z19e+hfiUQOCoOLnLwtRkJ/yXFvOD7lcdzxsxC3sWQKBia2X58XDzBa9DGonx0qngBOSaPtVshTWJfh9Whrybrqb6hBqfje92dicxffrCVzQDuaqL6aHbXMQ+hxq1ySuCmA32sRJIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4BD24C0003;
-	Tue,  7 May 2024 05:35:20 +0000 (UTC)
-Message-ID: <5a812c84-c3bb-4874-b29c-0816494b77a8@ghiti.fr>
-Date: Tue, 7 May 2024 07:35:20 +0200
+	s=arc-20240116; t=1715060177; c=relaxed/simple;
+	bh=1P2VbTrkd4MKGFI2HmWOgvqPu1CNUdtpUC7dSk0aT0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhV6D06DlEboNF7UMaNqDJjzqusb9PpycDmbTgOASfM0XAxFcP6aizs8BdG/iAnrTqnU4vVSmX/xyr/nxzB1JoExyVpo2mN6pPjC2cebr49woZ3pj+kEh/+YJ0OYek0ANXKV6fEdSe5zcmDWBy3iKvG941h01+27zUvKLtt26h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 66D67227A87; Tue,  7 May 2024 07:36:04 +0200 (CEST)
+Date: Tue, 7 May 2024 07:36:04 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: mhklinux@outlook.com
+Cc: robin.murphy@arm.com, joro@8bytes.org, will@kernel.org, jgross@suse.com,
+	sstabellini@kernel.org, oleksandr_tyshchenko@epam.com, hch@lst.de,
+	m.szyprowski@samsung.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+	petr@tesarici.cz, roberto.sassu@huaweicloud.com
+Subject: Re: [PATCH 2/2] iommu/dma: Fix zero'ing of bounce buffer padding
+ used by untrusted devices
+Message-ID: <20240507053604.GA31731@lst.de>
+References: <20240408041142.665563-1-mhklinux@outlook.com> <20240408041142.665563-2-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] riscv: Add update_mmu_tlb_range()
-Content-Language: en-US
-To: Bang Li <libang.li@antgroup.com>, akpm@linux-foundation.org,
- chenhuacai@kernel.org, tsbogend@alpha.franken.de, paul.walmsley@sifive.com,
- palmer@dabbelt.com, chris@zankel.net, jcmvbkbc@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- david@redhat.com, ryan.roberts@arm.com, ioworker0@gmail.com,
- libang.linux@gmail.com
-References: <20240506155120.83105-1-libang.li@antgroup.com>
- <20240506155120.83105-4-libang.li@antgroup.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240506155120.83105-4-libang.li@antgroup.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240408041142.665563-2-mhklinux@outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Bang,
+On Sun, Apr 07, 2024 at 09:11:42PM -0700, mhkelley58@gmail.com wrote:
+> I've wondered if this code for zero'ing the pre- and post-padding
+> should go in swiotlb_tbl_map_single(). The bounce buffer proper is
+> already being initialized there. But swiotlb_tbl_map_single()
+> would need to test for an untrusted device (or have a "zero the
+> padding" flag passed in as part of the "attrs" argument), which
+> adds complexity. Thoughts?
 
-On 06/05/2024 17:51, Bang Li wrote:
-> Added update_mmu_tlb_range function, we can batch update tlb of an
-> address range.
->
-> Signed-off-by: Bang Li <libang.li@antgroup.com>
-> ---
->   arch/riscv/include/asm/pgtable.h | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index 661b2b4fe758..f784c6dd2c66 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -489,6 +489,10 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
->   #define __HAVE_ARCH_UPDATE_MMU_TLB
->   #define update_mmu_tlb update_mmu_cache
->   
-> +#define __HAVE_ARCH_UPDATE_MMU_TLB_RANGE
-> +#define update_mmu_tlb_range(vma, addr, ptep, nr) \
-> +	update_mmu_cache_range(NULL, vma, addr, ptep, nr)
-> +
->   static inline void update_mmu_cache_pmd(struct vm_area_struct *vma,
->   		unsigned long address, pmd_t *pmdp)
->   {
+If we want to go down that route it should be the latter.  I'm
+not sure if it is an improvement, but we'd have to implement it
+to see if it does.
 
+> The commit ID of Petr's patch is X'ed out above because Petr's patch
+> hasn't gone into Linus' tree yet. We can add the real commit ID once
+> this patch is ready to go in.
 
-You can add:
+I've fixed that up and commit the series.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
+Thanks a lot!
 
 
